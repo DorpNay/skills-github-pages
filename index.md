@@ -273,8 +273,11 @@ permalink: /
       } catch (_) { return [createChat()]; }
     }
     function persistChats() {
-      safeSet(STORAGE.chats, JSON.stringify(chats));
-      safeSet(STORAGE.current, currentChatId);
+      const savedChats = safeSet(STORAGE.chats, JSON.stringify(chats));
+      const savedCurrent = safeSet(STORAGE.current, currentChatId);
+      if (!savedChats || !savedCurrent) {
+        showToast('История не подтверждена браузерным хранилищем. Сразу экспортируйте чаты и проверьте свободное место/разрешения сайта.', 'error');
+      }
     }
     function getCurrentChat() {
       return chats.find((chat) => chat.id === currentChatId) || chats[0];
@@ -918,16 +921,9 @@ permalink: /
             body: JSON.stringify({ ...body, model: candidate.model })
           }, signal);
           if (candidate.provider !== preferredProvider || candidate.model !== preferredModel) {
-            safeSet(STORAGE.provider, candidate.provider);
-            safeSet(STORAGE.baseUrl, candidate.baseUrl);
-            safeSet(STORAGE.model, candidate.model);
-            if (candidate.provider === 'gemini') safeSet(STORAGE.apiKey, candidate.key);
-            if ($('providerPreset')) $('providerPreset').value = candidate.provider;
-            if ($('baseUrl')) $('baseUrl').value = candidate.baseUrl;
-            if ($('modelName')) $('modelName').value = candidate.model;
-            if ($('apiKey')) $('apiKey').value = candidate.key;
-            if ($('modelPreset')) populateModelPresets(candidate.provider, candidate.model);
-            showToast(`Переключился на ${PROVIDERS[candidate.provider]?.label || candidate.provider}: ${candidate.model}`);
+            // Failover is request-scoped: never overwrite the user's saved provider/model/endpoint.
+            // Otherwise a temporary outage can silently change the settings used on the next visit.
+            showToast(`Резервный маршрут для этого запроса: ${PROVIDERS[candidate.provider]?.label || candidate.provider} · ${candidate.model}`);
           }
           return data;
         } catch (error) {
@@ -938,12 +934,19 @@ permalink: /
       }
       throw new Error('Не удалось выполнить запрос ни через одну сохранённую модель. Исходный запрос сохранён в чате. Последняя ошибка: ' + (lastError?.message || 'неизвестная ошибка'));
     }
+    function isGenericModelRefusal(value) {
+      const text = String(value || '').trim().replace(/[\s\u00a0]+/g, ' ');
+      return text.length < 240 && /^(i'?m sorry, but i can'?t help with that\.?|i cannot help with that request\.?|извините, но я не могу помочь с этим запросом\.?|я не могу помочь с этим запросом\.?)$/i.test(text);
+    }
     async function requestTextStage(systemPrompt, messages, signal, stageName) {
       throwIfAborted(signal); showStatus(stageName);
       const model = safeGet(STORAGE.model) || DEFAULT_MODEL;
       const data = await requestChatCompletion({ model, messages: [{ role: 'system', content: systemPrompt }, ...messages], stream: false }, signal, stageName);
       const content = data?.choices?.[0]?.message?.content;
       if (typeof content !== 'string' || !content.trim()) throw new Error('Этап «' + stageName + '» не вернул текстовый результат.');
+      if (isGenericModelRefusal(content)) {
+        throw new Error('Модель отказала на этапе «' + stageName + '». Конвейер остановлен, чтобы не записывать одинаковые отказы как успешное исследование. Настройки и исходный запрос сохранены; проверьте запрос или выберите другую модель.');
+      }
       return content;
     }
     async function runMultiAgentResearch(chat, signal, useSearch, mode, systemPrompt) {
@@ -954,6 +957,7 @@ permalink: /
       await runAssistant(workChat, signal, useSearch, false, mode, true, systemPrompt + '\nРоль: исследователь. Выполни план, используй веб-поиск, если он включён, и составь проверяемый черновик ответа.');
       const draft = workChat.messages.slice(researchStart).reverse().find((message) => message.role === 'assistant' && message.content && !message.error)?.content || '';
       if (!draft) throw new Error('Исследовательский этап не подготовил черновик.');
+      if (isGenericModelRefusal(draft)) throw new Error('Модель отказала на этапе «исследователь». Конвейер остановлен; отказ не будет выдан за готовое исследование. Настройки и исходный запрос сохранены.');
       const critique = await requestTextStage('Ты независимый критик ответа. Найди неподтверждённые утверждения, пропуски, противоречия и риски. Не переписывай ответ целиком. Если источники не предоставлены, укажи, что нельзя проверить.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик:\n' + draft }], signal, '🧪 Исследование 3/4: критик…');
       const finalText = await requestTextStage(systemPrompt + '\nРоль: синтезатор. Дай окончательный ответ на исходный запрос, используя черновик и критику. Исправь выявленные ошибки, отдели факты от предположений, не заявляй о непроверенных источниках.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик исследователя:\n' + draft + '\n\nКритика:\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
       const traceId = globalThis.crypto?.randomUUID?.() || ('trace-' + Date.now() + '-' + Math.random().toString(36).slice(2));
