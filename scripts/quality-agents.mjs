@@ -25,8 +25,19 @@ const suites = {
       matches(/<\/html>\s*$/, 'Document must close its html element.');
     }],
     ['critical UI controls exist', () => {
-      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent']) {
+      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint']) {
         matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
+      }
+    }],
+    ['independent processing controls and on-demand resources', () => {
+      includes('async function runMultiAgentResearch', 'Multi-agent research needs its own staged pipeline.');
+      includes("const maxToolRounds = mode === 'deep' ? MAX_TOOL_ROUNDS : 1;", 'Fast and deep modes must have different tool budgets.');
+      includes("if (mode !== 'deep' && !useMultiAgent) return '';", 'Skills must not load in fast mode unless research is explicitly enabled.');
+      includes("new URL('skills/' + skill + '.txt', document.baseURI)", 'Task skills should load from repository assets only on demand.');
+      assert.doesNotMatch(source, /<script\\s+src="https:\/\/cdn\\.jsdelivr\\.net\/pyodide\\/v0\\.29\\.5\/full\/pyodide\\.js"/, 'Pyodide must not load on initial page render.');
+      includes("script.src = 'https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js'", 'Pyodide should load only when requested.');
+      for (const skill of ['research', 'code-review', 'data-analysis', 'planning']) {
+        assert.ok(existsSync(resolve(root, 'skills/' + skill + '.txt')), 'Missing on-demand skill: ' + skill);
       }
     }],
     ['inline JavaScript parses without executing', () => {
@@ -104,6 +115,7 @@ const suites = {
       assert.match(html, /<html\s+lang="ru">/i, 'Built page is missing the expected document.');
       assert.match(html, /id="chatBox"/, 'Built page is missing the chat UI.');
       assert.match(html, /DOMPurify\.sanitize/, 'Built page is missing the sanitization path.');
+      assert.ok(existsSync(resolve(root, '_site/skills/research.txt')), 'Built site must publish the on-demand research skill.');
     }]
   ]
 };
