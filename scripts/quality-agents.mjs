@@ -53,7 +53,7 @@ const suites = {
       includes('type="password" id="apiKey"', 'API key field must be masked.');
     }],
     ['untrusted output is not inserted as raw HTML', () => {
-      includes('content.textContent = message.content', 'User message should use textContent.');
+      includes("bubble.textContent = message.content || ''", 'User message should use textContent.');
       includes('DOMPurify.sanitize', 'DOMPurify sanitizer must remain enabled.');
       const assignments = [...source.matchAll(/\.innerHTML\s*=\s*([^;\n]+)/g)].map((m) => m[1].trim());
       assert.ok(assignments.length > 0, 'Expected the one sanitized markdown rendering assignment.');
