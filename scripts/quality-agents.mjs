@@ -85,7 +85,7 @@ const suites = {
     ['API credentials are user-configured, not hard-coded', () => {
       includes("apiKey: 'ai_api_key'", 'API key storage slot is missing.');
       includes('safeGet(STORAGE.apiKey)', 'API key must be read from user settings.');
-      includes("'Authorization': `Bearer ${apiKey}`", 'Requests must use the configured bearer key.');
+      includes("'Authorization': `Bearer ${candidate.key}`", 'Requests must use a saved provider-specific bearer key.');
       includes('type="password" id="apiKey"', 'API key field must be masked.');
     }],
     ['untrusted output is not inserted as raw HTML', () => {
