@@ -102,6 +102,13 @@ const suites = {
     ['web search tool input is schema-bounded', () => {
       includes("additionalProperties: false", 'Tool schema must reject unexpected fields.');
       includes("args.query.trim().slice(0, 500)", 'Search queries must be trimmed and length-limited.');
+      includes("name: 'public_knowledge_search'", 'No-key public knowledge search tool must remain available.');
+      includes("name: 'read_webpage'", 'Direct public webpage reading must remain available.');
+      includes('async function performPublicKnowledgeSearch(source, query, signal', 'Specialized public APIs must be implemented in the browser.');
+      includes('async function readPublicWebpage(rawUrl, signal', 'Public webpage text extraction must remain implemented.');
+      includes('validatePublicHttpsUrl', 'Direct page reading must validate public HTTPS URLs.');
+      includes("https://hn.algolia.com/api/v1/search", 'Hacker News search API must be available without a key.');
+      includes("https://api.stackexchange.com/2.3/search/advanced", 'Stack Exchange search API must be available without a key.');
     }]
   ],
   context: [
