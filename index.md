@@ -109,7 +109,7 @@ permalink: /
     <button type="button" data-action="toggle-sidebar" aria-label="Открыть меню" class="text-xl px-2 py-1">☰</button>
     <h1 id="activeChatTitle" class="font-bold text-sm truncate flex-1 text-center">Новый чат</h1>
     <div class="flex items-center gap-2 shrink-0">
-      <span id="pyStatus" class="text-[10px] bg-yellow-600/30 text-yellow-300 px-2 py-0.5 rounded" title="Загрузка Python...">Py: загрузка</span>
+      <span id="pyStatus" class="text-[10px] bg-gray-700 text-gray-300 px-2 py-0.5 rounded" title="Python загрузится только после запуска блока кода">Py: по запросу</span>
       <button type="button" data-action="toggle-settings" aria-label="Настройки" class="text-xs bg-gray-700 px-2.5 py-1.5 rounded">⚙️</button>
     </div>
   </header>
