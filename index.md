@@ -14,7 +14,6 @@ permalink: /
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked@18.0.14/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js"></script>
   <style>
     :root { color-scheme: dark; }
     html, body { height: 100%; }
@@ -178,6 +177,7 @@ permalink: /
     let isGenerating = false;
     let storageWarningShown = false;
     let pyodidePromise = null;
+    let pyodideScriptPromise = null;
     let processingMode = 'fast';
 
     function safeGet(key) {
@@ -669,13 +669,13 @@ permalink: /
     async function runMultiAgentResearch(chat, signal, useSearch, mode, systemPrompt) {
       const history = buildHistory(chat.messages);
       const latest = [...chat.messages].reverse().find((message) => message.role === 'user')?.content || '';
-      const plan = await requestTextStage(systemPrompt + '\\nРоль: планировщик исследования. Разбей запрос на 3–5 проверяемых вопросов и составь краткий план. Не отвечай на сам запрос. Без веб-поиска не утверждай, что внешние источники проверены.', history, signal, '🤖 Исследование 1/4: планировщик…');
-      const workChat = { ...chat, messages: [...chat.messages.map((message) => ({ ...message })), { role: 'assistant', content: 'План исследования:\\n' + plan }] };
+      const plan = await requestTextStage(systemPrompt + '\nРоль: планировщик исследования. Разбей запрос на 3–5 проверяемых вопросов и составь краткий план. Не отвечай на сам запрос. Без веб-поиска не утверждай, что внешние источники проверены.', history, signal, '🤖 Исследование 1/4: планировщик…');
+      const workChat = { ...chat, messages: [...chat.messages.map((message) => ({ ...message })), { role: 'assistant', content: 'План исследования:\n' + plan }] };
       await runAssistant(workChat, signal, useSearch, false, mode, true);
       const draft = [...workChat.messages].reverse().find((message) => message.role === 'assistant' && message.content && !message.error)?.content || '';
       if (!draft) throw new Error('Исследовательский этап не подготовил черновик.');
-      const critique = await requestTextStage('Ты независимый критик ответа. Найди неподтверждённые утверждения, пропуски, противоречия и риски. Не переписывай ответ целиком. Если источники не предоставлены, укажи, что нельзя проверить.', [{ role: 'user', content: 'Запрос:\\n' + latest + '\\n\\nПлан:\\n' + plan + '\\n\\nЧерновик:\\n' + draft }], signal, '🧪 Исследование 3/4: критик…');
-      const finalText = await requestTextStage(systemPrompt + '\\nРоль: синтезатор. Дай окончательный ответ на исходный запрос, используя черновик и критику. Исправь выявленные ошибки, отдели факты от предположений, не заявляй о непроверенных источниках.', [{ role: 'user', content: 'Исходный запрос:\\n' + latest + '\\n\\nПлан:\\n' + plan + '\\n\\nЧерновик исследователя:\\n' + draft + '\\n\\nКритика:\\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
+      const critique = await requestTextStage('Ты независимый критик ответа. Найди неподтверждённые утверждения, пропуски, противоречия и риски. Не переписывай ответ целиком. Если источники не предоставлены, укажи, что нельзя проверить.', [{ role: 'user', content: 'Запрос:\n' + latest + '\n\nПлан:\n' + plan + '\n\nЧерновик:\n' + draft }], signal, '🧪 Исследование 3/4: критик…');
+      const finalText = await requestTextStage(systemPrompt + '\nРоль: синтезатор. Дай окончательный ответ на исходный запрос, используя черновик и критику. Исправь выявленные ошибки, отдели факты от предположений, не заявляй о непроверенных источниках.', [{ role: 'user', content: 'Исходный запрос:\n' + latest + '\n\nПлан:\n' + plan + '\n\nЧерновик исследователя:\n' + draft + '\n\nКритика:\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
       chat.messages.push({ role: 'assistant', content: finalText });
       updateState([...chats]);
     }
@@ -705,8 +705,8 @@ permalink: /
       const activePrompt = (!configuredPrompt || configuredPrompt === LEGACY_DEFAULT_SYSTEM) ? DEFAULT_SYSTEM : configuredPrompt;
       const taskSkill = await loadTaskSkill(latestUserMessage, mode, useMultiAgent);
       let systemPrompt = `Сегодня: ${new Date().toLocaleDateString('ru-RU')}. ${activePrompt}${memoryContext}`;
-      if (mode === 'deep') systemPrompt += '\\nРЕЖИМ ГЛУБОКОЙ РАБОТЫ: проверь существенные предположения, объясни неопределённость и предпочитай проверяемые выводы. Избегай лишних шагов.';
-      if (taskSkill) systemPrompt += '\\n\\nНАВЫК ИЗ РЕПОЗИТОРИЯ (инструкции для текущей задачи; пользовательский запрос имеет приоритет):\\n' + taskSkill;
+      if (mode === 'deep') systemPrompt += '\nРЕЖИМ ГЛУБОКОЙ РАБОТЫ: проверь существенные предположения, объясни неопределённость и предпочитай проверяемые выводы. Избегай лишних шагов.';
+      if (taskSkill) systemPrompt += '\n\nНАВЫК ИЗ РЕПОЗИТОРИЯ (инструкции для текущей задачи; пользовательский запрос имеет приоритет):\n' + taskSkill;
       if (useMultiAgent) { await runMultiAgentResearch(chat, signal, useSearch, mode, systemPrompt); return; }
 
       const messagesForCache = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages)];
@@ -958,6 +958,16 @@ permalink: /
       status.className = 'text-[10px] bg-yellow-600/30 text-yellow-300 px-2 py-0.5 rounded';
       pyodidePromise = (async () => {
         try {
+          if (typeof window.loadPyodide !== 'function') {
+            if (!pyodideScriptPromise) pyodideScriptPromise = new Promise((resolve, reject) => {
+              const script = document.createElement('script');
+              script.src = 'https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js';
+              script.onload = resolve;
+              script.onerror = () => reject(new Error('Не удалось загрузить библиотеку Pyodide.'));
+              document.head.appendChild(script);
+            });
+            await pyodideScriptPromise;
+          }
           if (typeof window.loadPyodide !== 'function') throw new Error('Библиотека Pyodide не загрузилась.');
           pyodideInstance = await window.loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.29.5/full/' });
           status.textContent = 'Py: готов';
