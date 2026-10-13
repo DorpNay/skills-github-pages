@@ -1,0 +1,8 @@
+TASK SKILL: PROPORTIONAL PLANNING
+
+Use for broad tasks, decisions, and multi-step plans.
+1. Define the desired outcome and constraints, then choose the fewest steps that achieve it.
+2. Separate reversible experiments from irreversible actions; request confirmation before consequential external changes.
+3. Give each step an observable completion condition and a recovery path for likely failures.
+4. Do not add agents, tools, services, or dependencies unless they provide a concrete advantage.
+5. Finish with a result and evidence, not merely a claim that the plan should work.
