@@ -34,7 +34,7 @@ const suites = {
       includes("const maxToolRounds = mode === 'deep' ? MAX_TOOL_ROUNDS : 1;", 'Fast and deep modes must have different tool budgets.');
       includes("if (mode !== 'deep' && !useMultiAgent) return '';", 'Skills must not load in fast mode unless research is explicitly enabled.');
       includes("new URL('skills/' + skill + '.txt', document.baseURI)", 'Task skills should load from repository assets only on demand.');
-      assert.doesNotMatch(source, /<script\\s+src="https:\/\/cdn\\.jsdelivr\\.net\/pyodide\\/v0\\.29\\.5\/full\/pyodide\\.js"/, 'Pyodide must not load on initial page render.');
+      assert.ok(!source.includes('<script src="https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js"'), 'Pyodide must not load on initial page render.');
       includes("script.src = 'https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js'", 'Pyodide should load only when requested.');
       for (const skill of ['research', 'code-review', 'data-analysis', 'planning']) {
         assert.ok(existsSync(resolve(root, 'skills/' + skill + '.txt')), 'Missing on-demand skill: ' + skill);
