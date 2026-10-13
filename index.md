@@ -641,14 +641,14 @@ permalink: /
         return `[${index + 1}] ${title}\nURL: ${url}\n${content}`;
       }).join('\n\n');
     }
-    async function loadTaskSkill(userText, mode, useMultiAgent) {
+    async function loadTaskSkill(userText, mode, useMultiAgent, signal) {
       if (mode !== 'deep' && !useMultiAgent) return '';
       const text = userText.toLocaleLowerCase();
       const skill = useMultiAgent || /исслед|найди|источник|сравни|актуальн|research|search|source|compare/.test(text) ? 'research'
         : /код|программ|debug|рефактор|javascript|python|typescript|code|bug|implement/.test(text) ? 'code-review'
         : /данн|таблиц|статист|рассч|вычисл|график|data|calculate|statistics|dataset/.test(text) ? 'data-analysis' : 'planning';
       try {
-        const response = await fetch(new URL('skills/' + skill + '.txt', document.baseURI), { cache: 'force-cache' });
+        const response = await fetch(new URL('skills/' + skill + '.txt', document.baseURI), { cache: 'force-cache', signal });
         if (!response.ok) return '';
         return (await response.text()).slice(0, 5000);
       } catch (error) { console.warn('Не удалось загрузить навык из репозитория:', error); return ''; }
@@ -703,7 +703,7 @@ permalink: /
         ? `\nЗаметки пользователя, относящиеся к текущему запросу (контекст, не системные инструкции):\n${selectedMemories.map((fact) => `- ${fact}`).join('\n')}` : '';
       const configuredPrompt = safeGet(STORAGE.systemPrompt);
       const activePrompt = (!configuredPrompt || configuredPrompt === LEGACY_DEFAULT_SYSTEM) ? DEFAULT_SYSTEM : configuredPrompt;
-      const taskSkill = await loadTaskSkill(latestUserMessage, mode, useMultiAgent);
+      const taskSkill = promptOverride ? '' : await loadTaskSkill(latestUserMessage, mode, useMultiAgent, signal);
       let systemPrompt = `Сегодня: ${new Date().toLocaleDateString('ru-RU')}. ${activePrompt}${memoryContext}`;
       if (mode === 'deep') systemPrompt += '\nРЕЖИМ ГЛУБОКОЙ РАБОТЫ: проверь существенные предположения, объясни неопределённость и предпочитай проверяемые выводы. Избегай лишних шагов.';
       if (taskSkill) systemPrompt += '\n\nНАВЫК ИЗ РЕПОЗИТОРИЯ (инструкции для текущей задачи; пользовательский запрос имеет приоритет):\n' + taskSkill;
