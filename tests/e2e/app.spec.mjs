@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
 test('published app boots and core controls are interactive', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
-  await page.goto('/');
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
   await expect(page).toHaveTitle(/AI Mobile Agent/);
   await expect(page.locator('#chatBox')).toBeVisible();
   await expect(page.locator('#userInput')).toBeEditable();
@@ -29,7 +29,7 @@ test('published app boots and core controls are interactive', async ({ page }) =
 });
 
 test('provider keys, Tavily key, and model settings remain isolated across switching and reload', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
 
   await page.locator('#providerPreset').selectOption('groq');
@@ -59,7 +59,7 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
 });
 
 test('chat creation persists after reload without calling a model', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
   const chats = page.locator('#chatList button[data-action="switch-chat"]');
   const before = await chats.count();
@@ -76,7 +76,7 @@ test('API authentication errors are shown without losing the original user promp
     contentType: 'application/json',
     body: JSON.stringify({ error: { message: 'invalid test credential' } })
   }));
-  await page.goto('/');
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
