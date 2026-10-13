@@ -671,11 +671,12 @@ permalink: /
       const latest = [...chat.messages].reverse().find((message) => message.role === 'user')?.content || '';
       const plan = await requestTextStage(systemPrompt + '\nРоль: планировщик исследования. Разбей запрос на 3–5 проверяемых вопросов и составь краткий план. Не отвечай на сам запрос. Без веб-поиска не утверждай, что внешние источники проверены.', history, signal, '🤖 Исследование 1/4: планировщик…');
       const workChat = { ...chat, messages: [...chat.messages.map((message) => ({ ...message })), { role: 'assistant', content: 'План исследования:\n' + plan }] };
+      const researchStart = workChat.messages.length;
       await runAssistant(workChat, signal, useSearch, false, mode, true, systemPrompt + '\nРоль: исследователь. Выполни план, используй веб-поиск, если он включён, и составь проверяемый черновик ответа.');
-      const draft = [...workChat.messages].reverse().find((message) => message.role === 'assistant' && message.content && !message.error)?.content || '';
+      const draft = workChat.messages.slice(researchStart).reverse().find((message) => message.role === 'assistant' && message.content && !message.error)?.content || '';
       if (!draft) throw new Error('Исследовательский этап не подготовил черновик.');
-      const critique = await requestTextStage('Ты независимый критик ответа. Найди неподтверждённые утверждения, пропуски, противоречия и риски. Не переписывай ответ целиком. Если источники не предоставлены, укажи, что нельзя проверить.', [{ role: 'user', content: 'Запрос:\n' + latest + '\n\nПлан:\n' + plan + '\n\nЧерновик:\n' + draft }], signal, '🧪 Исследование 3/4: критик…');
-      const finalText = await requestTextStage(systemPrompt + '\nРоль: синтезатор. Дай окончательный ответ на исходный запрос, используя черновик и критику. Исправь выявленные ошибки, отдели факты от предположений, не заявляй о непроверенных источниках.', [{ role: 'user', content: 'Исходный запрос:\n' + latest + '\n\nПлан:\n' + plan + '\n\nЧерновик исследователя:\n' + draft + '\n\nКритика:\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
+      const critique = await requestTextStage('Ты независимый критик ответа. Найди неподтверждённые утверждения, пропуски, противоречия и риски. Не переписывай ответ целиком. Если источники не предоставлены, укажи, что нельзя проверить.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик:\n' + draft }], signal, '🧪 Исследование 3/4: критик…');
+      const finalText = await requestTextStage(systemPrompt + '\nРоль: синтезатор. Дай окончательный ответ на исходный запрос, используя черновик и критику. Исправь выявленные ошибки, отдели факты от предположений, не заявляй о непроверенных источниках.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик исследователя:\n' + draft + '\n\nКритика:\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
       chat.messages.push({ role: 'assistant', content: finalText });
       updateState([...chats]);
     }
