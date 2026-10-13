@@ -98,6 +98,7 @@ permalink: /
       <input type="password" id="tavilyKey" autocomplete="off" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm outline-none">
       <label for="systemPromptInput" class="block text-xs text-gray-400">Системный промпт</label>
       <textarea id="systemPromptInput" rows="4" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm outline-none resize-y"></textarea>
+      <p class="text-[11px] leading-relaxed text-gray-400">Системные правила передаются модели с каждым API-вызовом — это нужно для совместимого Chat Completions API. Промпт намеренно компактный; история ограничена примерно 24 000 символами, а в запрос добавляются только совпадающие с темой заметки (до 4, максимум 1 200 символов).</p>
       <p class="text-[11px] leading-relaxed text-gray-400">Ключи хранятся в localStorage этого браузера. Не сохраняйте их на чужом или общем устройстве. Запросы отправляются напрямую провайдерам, без стороннего CORS-прокси.</p>
       <button type="button" data-action="restore-defaults" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-200">Восстановить параметры Gemini</button>
       <button type="button" data-action="save-settings" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded font-bold text-sm">Сохранить</button>
