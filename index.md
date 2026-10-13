@@ -935,8 +935,8 @@ permalink: /
       throw new Error('Не удалось выполнить запрос ни через одну сохранённую модель. Исходный запрос сохранён в чате. Последняя ошибка: ' + (lastError?.message || 'неизвестная ошибка'));
     }
     function isGenericModelRefusal(value) {
-      const text = String(value || '').trim().replace(/[\\s\\u00a0]+/g, ' ');
-      return text.length < 240 && /^(i'?m sorry, but i can'?t help with that\\.?|i cannot help with that request\\.?|извините, но я не могу помочь с этим запросом\\.?|я не могу помочь с этим запросом\\.?)$/i.test(text);
+      const text = String(value || '').trim().replace(/[\s\u00a0]+/g, ' ');
+      return text.length < 240 && /^(i'?m sorry, but i can'?t help with that\.?|i cannot help with that request\.?|извините, но я не могу помочь с этим запросом\.?|я не могу помочь с этим запросом\.?)$/i.test(text);
     }
     async function requestTextStage(systemPrompt, messages, signal, stageName) {
       throwIfAborted(signal); showStatus(stageName);
