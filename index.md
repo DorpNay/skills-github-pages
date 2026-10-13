@@ -90,7 +90,7 @@ permalink: /
       <div class="rounded-lg bg-gray-900 border border-gray-700 p-2.5 text-xs leading-relaxed text-gray-300 space-y-2">
         <p><strong>Быстрый старт:</strong> по умолчанию выбран Gemini. Для альтернатив выберите провайдера и модель ниже; для каждого сервиса нужен свой API-ключ.</p>
         <p><a class="text-blue-300 underline" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Получить ключ Gemini API в Google AI Studio</a>. Создайте ключ и вставьте его в поле API Key ниже.</p>
-        <p>Ключ хранится только в localStorage этого браузера. Не публикуйте его, не вставляйте в код и не используйте на чужом устройстве. Очистка данных сайта удалит сохранённые настройки и локальную историю.</p>
+        <p>Ключи провайдеров и Tavily хранятся отдельно в localStorage этого браузера. Пустое поле API Key означает, что ключ не сохранён для выбранного провайдера; ключи других провайдеров не удаляются при переключении. При автоматическом резервном переходе текст запроса и контекст могут быть отправлены другому провайдеру, если для него сохранён ключ. Не публикуйте ключи и не используйте их на чужом устройстве. Очистка данных сайта удалит локальные настройки и историю.</p>
         <p>Веб-поиск объединяет Tavily (если сохранён ключ) и открытые API без отдельного ключа: Wikipedia, Stack Exchange, GitHub, Hacker News и arXiv. Можно также попросить агента прочитать конкретную публичную HTTPS-страницу; доступ зависит от CORS сайта.</p>
       </div>
       <label for="providerPreset" class="block text-xs text-gray-400">Провайдер API</label>
@@ -112,8 +112,9 @@ permalink: /
       <label for="systemPromptInput" class="block text-xs text-gray-400">Системный промпт</label>
       <textarea id="systemPromptInput" rows="4" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y"></textarea>
       <p class="text-[11px] leading-relaxed text-gray-400">Системные правила передаются модели с каждым API-вызовом — это нужно для совместимого Chat Completions API. Промпт намеренно компактный; история ограничена примерно 24 000 символами, а в запрос добавляются только совпадающие с темой заметки (до 4, максимум 1 200 символов).</p>
-      <p class="text-[11px] leading-relaxed text-gray-400">Ключи хранятся в localStorage этого браузера. Не сохраняйте их на чужом или общем устройстве. Запросы идут напрямую провайдерам; некоторые API могут блокировать браузерные запросы (CORS). Тогда нужен безопасный серверный прокси, а не обход CORS в клиентском коде.</p>
+      <p class="text-[11px] leading-relaxed text-gray-400">Ключи хранятся в localStorage этого браузера и отправляются только тому API, к которому выполняется запрос. Но при автоматическом резервном переходе тот же запрос и его контекст могут уйти другому провайдеру с сохранённым ключом. Если это нежелательно, удалите ключи других провайдеров из настроек/хранилища. Не используйте ключи на общем устройстве. Некоторые API блокируют браузерные запросы (CORS); для них нужен защищённый серверный прокси, а не обход CORS в клиентском коде.</p>
       <button type="button" data-action="restore-defaults" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-200">Восстановить параметры Gemini</button>
+      <button type="button" id="recoveryBackupButton" data-action="download-recovery-backup" class="hidden w-full bg-amber-800 hover:bg-amber-700 py-2 rounded text-xs text-amber-50">Скачать резервную копию истории</button>
       <button type="button" data-action="save-settings" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded font-bold text-sm">Сохранить</button>
       <button type="button" data-action="close-settings" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-300">Закрыть</button>
     </div>
@@ -199,6 +200,9 @@ permalink: /
     const CACHE_TTL_MS = 15 * 60 * 1000;
     const $ = (id) => document.getElementById(id);
 
+    let chatRecoveryWarning = false;
+    let chatRecoveryBackupKey = '';
+    let chatStorageCorruptNotBackedUp = false;
     let db = null;
     let chats = loadChats();
     let currentChatId = safeGet(STORAGE.current) || chats[0].id;
@@ -253,10 +257,38 @@ permalink: /
     function createChat(title = 'Новый чат', messages = []) {
       return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages };
     }
-    function loadChats() {
+    function preserveUnreadableChats(rawText) {
+      if (!rawText) return;
+      const baseKey = 'ai_chats_recovery_backup';
+      let backupKey = baseKey;
       try {
-        const raw = JSON.parse(localStorage.getItem(STORAGE.chats) || 'null');
-        if (!Array.isArray(raw)) return [createChat()];
+        const existing = localStorage.getItem(baseKey);
+        if (existing === rawText) {
+          chatRecoveryBackupKey = baseKey;
+          chatRecoveryWarning = true;
+          return;
+        }
+        if (existing && existing !== rawText) backupKey = baseKey + '_' + Date.now();
+        localStorage.setItem(backupKey, rawText);
+        chatRecoveryBackupKey = backupKey;
+        chatRecoveryWarning = true;
+      } catch (error) {
+        // Do not overwrite the original unreadable history if its backup could not be stored.
+        chatRecoveryWarning = true;
+        chatStorageCorruptNotBackedUp = true;
+        console.warn('Не удалось сохранить резервную копию повреждённой истории; исходные данные не будут перезаписаны:', error);
+      }
+    }
+    function loadChats() {
+      let rawText = null;
+      try {
+        rawText = localStorage.getItem(STORAGE.chats);
+        if (!rawText) return [createChat()];
+        const raw = JSON.parse(rawText);
+        if (!Array.isArray(raw)) {
+          preserveUnreadableChats(rawText);
+          return [createChat()];
+        }
         const valid = raw.filter((item) => item && typeof item === 'object' && typeof item.id === 'string' && Array.isArray(item.messages))
           .map((item) => ({
             id: item.id.slice(0, 128),
@@ -269,10 +301,19 @@ permalink: /
               ...(m.error ? { error: true } : {})
             }))
           }));
+        if (!valid.length && raw.length) preserveUnreadableChats(rawText);
         return valid.length ? valid : [createChat()];
-      } catch (_) { return [createChat()]; }
+      } catch (error) {
+        preserveUnreadableChats(rawText);
+        console.warn('История чатов не читается; исходные данные сохранены для восстановления:', error);
+        return [createChat()];
+      }
     }
     function persistChats() {
+      if (chatStorageCorruptNotBackedUp) {
+        showToast('Повреждённая история не была перезаписана: не удалось создать резервную копию. Освободите место в браузере и перезагрузите страницу.', 'error');
+        return;
+      }
       const savedChats = safeSet(STORAGE.chats, JSON.stringify(chats));
       const savedCurrent = safeSet(STORAGE.current, currentChatId);
       if (!savedChats || !savedCurrent) {
@@ -281,6 +322,21 @@ permalink: /
     }
     function getCurrentChat() {
       return chats.find((chat) => chat.id === currentChatId) || chats[0];
+    }
+    function downloadRecoveryBackup() {
+      if (!chatRecoveryBackupKey) throw new Error('Резервная копия истории не найдена.');
+      const raw = safeGet(chatRecoveryBackupKey);
+      if (!raw) throw new Error('Резервная копия истории недоступна в этом браузере.');
+      const blob = new Blob([raw], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'ai-chat-recovery-backup.json';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast('Резервная копия истории скачивается.');
     }
 
     function requestResult(request) {
@@ -549,7 +605,7 @@ permalink: /
       $('apiKey').value = safeGet(providerKeyStorage(provider)) || (provider === 'gemini' ? safeGet(STORAGE.apiKey) : '') || '';
       $('providerHint').textContent = provider === 'custom'
         ? 'Введите Base URL, имя модели и ключ вашего OpenAI-совместимого API. Совместимость и CORS зависят от поставщика.'
-        : config.label + ': проверьте доступные модели, тариф и ограничения в официальной документации. Ключ вводится отдельно для каждого провайдера. Если модель не ответит, приложение попробует другие модели и провайдеры с уже сохранёнными ключами.';
+        : config.label + ': проверьте модели, тариф и ограничения в официальной документации. Ключ вводится отдельно для каждого провайдера. Пустое поле означает, что ключ не сохранён для выбранного провайдера; ключи других провайдеров сохраняются отдельно. При резервном переходе запрос и контекст могут быть отправлены другому провайдеру с сохранённым ключом.';
       const docs = $('providerDocsLink');
       if (config.docsUrl) { docs.href = config.docsUrl; docs.classList.remove('hidden'); }
       else docs.classList.add('hidden');
@@ -561,6 +617,13 @@ permalink: /
     }
     function initializeSettings() {
       const savedProvider=safeGet(STORAGE.provider);
+      if (savedProvider && savedProvider !== 'gemini') {
+        const legacyKey = safeGet(STORAGE.apiKey);
+        const selectedProviderKey = safeGet(providerKeyStorage(savedProvider));
+        // Older builds wrote every provider's key into the legacy Gemini slot.
+        // If the legacy value duplicates the active provider's own key, clear that ambiguous copy.
+        if (legacyKey && selectedProviderKey && legacyKey === selectedProviderKey) safeSet(STORAGE.apiKey, '');
+      }
       const provider=savedProvider && Object.prototype.hasOwnProperty.call(PROVIDERS,savedProvider)?savedProvider:'gemini';
       if (savedProvider && !Object.prototype.hasOwnProperty.call(PROVIDERS,savedProvider)) {
         // A removed provider preset must not leave a stale endpoint active.
@@ -627,7 +690,7 @@ permalink: /
       const saved = [
         safeSet(STORAGE.provider, provider),
         safeSet(STORAGE.baseUrl, baseUrl),
-        safeSet(STORAGE.apiKey, apiKey),
+        ...(provider === 'gemini' ? [safeSet(STORAGE.apiKey, apiKey)] : []),
         safeSet(providerKeyStorage(provider), apiKey),
         safeSet(STORAGE.model, model),
         safeSet(STORAGE.tavilyKey, tavilyKey),
@@ -1374,6 +1437,7 @@ permalink: /
           case 'toggle-settings': toggleSettings(true); break;
           case 'close-settings': toggleSettings(false); break;
           case 'save-settings': saveSettings(); break;
+          case 'download-recovery-backup': downloadRecoveryBackup(); break;
           case 'restore-defaults': restoreDefaultSettings(); break;
           case 'send': await sendMessage(false); break;
           case 'stop': stopGeneration(); break;
@@ -1424,6 +1488,24 @@ permalink: /
 
     async function init() {
       initializeSettings();
+      if (!chatRecoveryBackupKey) {
+        try {
+          const backupKeys = [];
+          for (let index = 0; index < localStorage.length; index++) {
+            const key = localStorage.key(index);
+            if (key && key.startsWith('ai_chats_recovery_backup') && safeGet(key)) backupKeys.push(key);
+          }
+          backupKeys.sort((a, b) => {
+            const time = (key) => Number(key.slice('ai_chats_recovery_backup_'.length)) || 0;
+            return time(b) - time(a);
+          });
+          chatRecoveryBackupKey = backupKeys[0] || '';
+        } catch (_) {}
+      }
+      if (chatRecoveryBackupKey) $('recoveryBackupButton').classList.remove('hidden');
+      if (chatRecoveryWarning) showToast(chatStorageCorruptNotBackedUp
+        ? 'История не прочиталась, резервная копия не создалась. Исходные данные не будут перезаписаны; освободите место и перезагрузите страницу.'
+        : 'История не прочиталась. Исходные данные сохранены локально; скачайте резервную копию в настройках.', 'error');
       const match=location.hash.match(/^#trace=([^&]+)/);
       if(match){try{const id=decodeURIComponent(match[1]),raw=safeGet('ai_research_trace_'+id);if(raw)showTrace(JSON.parse(raw));}catch(error){console.warn('Не удалось открыть локальный журнал:',error);}}
       await initDB();
