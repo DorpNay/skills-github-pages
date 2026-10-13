@@ -49,6 +49,8 @@ const suites = {
       includes("docsUrl: 'https://build.nvidia.com/settings'", 'NVIDIA API key setup link must be available.');
       includes('function getConfiguredApiKey()', 'API keys must be selected per provider.');
       includes('safeSet(providerKeyStorage(provider), apiKey)', 'Provider API keys must be stored under provider-specific keys.');
+      includes('текст запроса и контекст могут быть отправлены другому провайдеру', 'Cross-provider fallback must disclose that request content can be sent to another provider.');
+      includes('ключ не сохранён для выбранного провайдера', 'Settings must explain why the API key field is blank after switching providers.');
       includes("request-scoped: never overwrite the user's saved provider/model/endpoint.", 'Temporary fallback must not mutate saved provider settings.');
       includes('function isGenericModelRefusal(value)', 'Generic model refusals must not be accepted as successful research stages.');
       includes('Конвейер остановлен', 'A refused multi-agent stage must stop clearly rather than repeat the refusal as a final answer.');
