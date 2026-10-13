@@ -85,32 +85,32 @@ permalink: /
   <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 hidden" aria-hidden="true"></div>
 
   <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-    <div class="bg-gray-800 p-5 rounded-2xl max-w-sm mx-auto w-full border border-gray-700 space-y-3 my-auto max-h-[90dvh] overflow-y-auto">
+    <div class="bg-gray-800 p-4 rounded-xl max-w-sm mx-auto w-full border border-gray-700 space-y-2.5 my-auto max-h-[90dvh] overflow-y-auto">
       <h2 id="settingsTitle" class="text-lg font-bold">⚙️ Настройки</h2>
-      <div class="rounded-lg bg-gray-900 border border-gray-700 p-3 text-xs leading-relaxed text-gray-300 space-y-2">
+      <div class="rounded-lg bg-gray-900 border border-gray-700 p-2.5 text-xs leading-relaxed text-gray-300 space-y-2">
         <p><strong>Быстрый старт:</strong> по умолчанию выбран Gemini. Для альтернатив выберите провайдера и модель ниже; для каждого сервиса нужен свой API-ключ.</p>
         <p><a class="text-blue-300 underline" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Получить ключ Gemini API в Google AI Studio</a>. Создайте ключ и вставьте его в поле API Key ниже.</p>
         <p>Ключ хранится только в localStorage этого браузера. Не публикуйте его, не вставляйте в код и не используйте на чужом устройстве. Очистка данных сайта удалит сохранённые настройки и локальную историю.</p>
         <p>Веб-поиск через Tavily необязателен и требует отдельного ключа. Без него оставьте переключатель «Веб-поиск» выключенным.</p>
       </div>
       <label for="providerPreset" class="block text-xs text-gray-400">Провайдер API</label>
-      <select id="providerPreset" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm">
+      <select id="providerPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm">
         <option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые открытые модели</option><option value="openrouter">OpenRouter · бесплатные модели</option><option value="nvidia">NVIDIA NIM · бесплатные endpoints</option><option value="huggingface">Hugging Face · каталог моделей</option><option value="custom">Свой OpenAI-совместимый API</option>
       </select>
       <label for="modelPreset" class="block text-xs text-gray-400">Быстрый выбор модели</label>
-      <select id="modelPreset" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm"></select>
+      <select id="modelPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm"></select>
       <p id="providerHint" class="text-[11px] leading-relaxed text-gray-400">Выберите провайдера и модель. Ключи разных провайдеров сохраняются отдельно в этом браузере.</p>
       <a id="providerDocsLink" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-blue-300 underline underline-offset-2">Открыть страницу API-ключа</a>
       <label for="baseUrl" class="block text-xs text-gray-400">Base URL (без /chat/completions)</label>
-      <input type="url" id="baseUrl" autocomplete="url" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm outline-none">
+      <input type="url" id="baseUrl" autocomplete="url" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
       <label for="apiKey" class="block text-xs text-gray-400">API Key</label>
-      <input type="password" id="apiKey" autocomplete="off" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm outline-none">
+      <input type="password" id="apiKey" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
       <label for="modelName" class="block text-xs text-gray-400">Модель</label>
-      <input type="text" id="modelName" autocomplete="off" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm outline-none">
+      <input type="text" id="modelName" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
       <label for="tavilyKey" class="block text-xs text-gray-400">Tavily Search API Key</label>
-      <input type="password" id="tavilyKey" autocomplete="off" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm outline-none">
+      <input type="password" id="tavilyKey" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
       <label for="systemPromptInput" class="block text-xs text-gray-400">Системный промпт</label>
-      <textarea id="systemPromptInput" rows="4" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm outline-none resize-y"></textarea>
+      <textarea id="systemPromptInput" rows="4" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y"></textarea>
       <p class="text-[11px] leading-relaxed text-gray-400">Системные правила передаются модели с каждым API-вызовом — это нужно для совместимого Chat Completions API. Промпт намеренно компактный; история ограничена примерно 24 000 символами, а в запрос добавляются только совпадающие с темой заметки (до 4, максимум 1 200 символов).</p>
       <p class="text-[11px] leading-relaxed text-gray-400">Ключи хранятся в localStorage этого браузера. Не сохраняйте их на чужом или общем устройстве. Запросы идут напрямую провайдерам; некоторые API могут блокировать браузерные запросы (CORS). Тогда нужен безопасный серверный прокси, а не обход CORS в клиентском коде.</p>
       <button type="button" data-action="restore-defaults" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-200">Восстановить параметры Gemini</button>
@@ -119,7 +119,7 @@ permalink: /
     </div>
   </div>
 
-  <header class="p-3 bg-gray-800 border-b border-gray-700 flex justify-between items-center shrink-0 gap-2">
+  <header class="px-3 py-2 bg-gray-800 border-b border-gray-700 flex justify-between items-center shrink-0 gap-2">
     <button type="button" data-action="toggle-sidebar" aria-label="Открыть меню" class="text-xl px-2 py-1">☰</button>
     <h1 id="activeChatTitle" class="font-bold text-sm truncate flex-1 text-center">Новый чат</h1>
     <div class="flex items-center gap-2 shrink-0">
@@ -156,7 +156,7 @@ permalink: /
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
   <div id="traceModal" class="hidden fixed inset-0 z-[70] bg-black/75 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="traceTitle">
-    <div class="w-full max-w-3xl max-h-[90dvh] overflow-y-auto bg-gray-950 border border-gray-700 rounded-2xl p-4 sm:p-6 space-y-3">
+    <div class="w-full max-w-3xl max-h-[90dvh] overflow-y-auto bg-gray-950 border border-gray-700 rounded-xl p-3 sm:p-4 space-y-3">
       <div class="flex items-center justify-between gap-3"><h2 id="traceTitle" class="font-bold text-base">Журнал исследования</h2><button type="button" data-action="close-trace" class="text-gray-400 hover:text-white px-2 py-1" aria-label="Закрыть журнал">✕</button></div>
       <p class="text-xs text-gray-400">План, черновик исследователя и критика перед итоговым ответом. Это журнал выполненных этапов, а не скрытая внутренняя цепочка мыслей модели.</p>
       <div id="traceContent" class="space-y-4 text-sm"></div>
@@ -419,8 +419,8 @@ permalink: /
       row.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
       const bubble = document.createElement('div');
       bubble.className = `chat-bubble ${isUser
-        ? 'bg-blue-600 text-white px-4 py-2.5 rounded-2xl rounded-tr-sm max-w-[88%] whitespace-pre-wrap'
-        : 'assistant-content bg-gray-800 text-gray-100 px-4 py-3 rounded-2xl rounded-tl-sm max-w-[96%] border border-gray-700'}`;
+        ? 'bg-blue-600 text-white px-3 py-2 rounded-xl rounded-tr-sm max-w-[88%] whitespace-pre-wrap'
+        : 'assistant-content bg-gray-800 text-gray-100 px-3 py-2.5 rounded-xl rounded-tl-sm max-w-[96%] border border-gray-700'}`;
 
       if (message.role === 'tool') return row;
       if (isUser) bubble.textContent = message.content || '';
