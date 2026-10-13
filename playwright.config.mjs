@@ -9,17 +9,17 @@ export default defineConfig({
   reporter: process.env.CI ? 'github' : 'list',
   timeout: 30000,
   use: {
-    baseURL: 'http://127.0.0.1:4173',
+    baseURL: process.env.LIVE_SITE_URL || 'http://127.0.0.1:4173',
     browserName: 'chromium',
     headless: true,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure'
   },
-  webServer: {
+  ...(process.env.LIVE_SITE_URL ? {} : { webServer: {
     command: 'python3 -m http.server 4173 --bind 127.0.0.1 --directory _site',
     url: 'http://127.0.0.1:4173/',
     reuseExistingServer: !process.env.CI,
     timeout: 10000
-  }
+  } })
 });
