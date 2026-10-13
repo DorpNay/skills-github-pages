@@ -546,7 +546,7 @@ permalink: /
       $('apiKey').value = safeGet(providerKeyStorage(provider)) || (provider === 'gemini' ? safeGet(STORAGE.apiKey) : '') || '';
       $('providerHint').textContent = provider === 'custom'
         ? 'Введите Base URL, имя модели и ключ вашего OpenAI-совместимого API. Совместимость и CORS зависят от поставщика.'
-        : config.label + ': проверьте доступные модели, тариф и ограничения в официальной документации. Ключ вводится отдельно для каждого провайдера.';
+        : config.label + ': проверьте доступные модели, тариф и ограничения в официальной документации. Ключ вводится отдельно для каждого провайдера. Если модель не ответит, приложение попробует другие модели и провайдеры с уже сохранёнными ключами.';
       const docs = $('providerDocsLink');
       if (config.docsUrl) { docs.href = config.docsUrl; docs.classList.remove('hidden'); }
       else docs.classList.add('hidden');
