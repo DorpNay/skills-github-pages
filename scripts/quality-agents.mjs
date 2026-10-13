@@ -57,6 +57,9 @@ const suites = {
       includes('if (!savedChats || !savedCurrent)', 'Chat persistence failures must be visible to the user.');
       includes('function preserveUnreadableChats(rawText)', 'Unreadable chat history must be preserved before a fresh chat is persisted.');
       includes('ai_chats_recovery_backup', 'Chat recovery backup must use a separate local-storage key.');
+      includes('function downloadRecoveryBackup()', 'A user must be able to export the preserved recovery backup.');
+      includes('id="recoveryBackupButton"', 'The recovery backup download control must exist.');
+      includes('if (chatStorageCorruptNotBackedUp)', 'Unreadable source data must not be overwritten when backup creation fails.');
       includes('if (chatRecoveryWarning) showToast(', 'The user must be warned when stored chat history cannot be read.');
       includes('content: finalText, researchTrace', 'Multi-agent output must preserve the research journal.');
       includes('Открыть журнал исследования', 'Assistant research results must expose a trace action.');
