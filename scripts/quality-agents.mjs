@@ -1,0 +1,130 @@
+#!/usr/bin/env node
+/**
+ * Deterministic quality sentinels for the static AI Mobile Agent.
+ * No LLM, API key, runtime dependency, network access, or user-device work.
+ * Inspired by deterministic-before-LLM and evidence-first review practices.
+ */
+import assert from 'node:assert/strict';
+import { existsSync, readFileSync } from 'node:fs';
+import { Script } from 'node:vm';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
+
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const sourcePath = resolve(root, 'index.md');
+const source = readFileSync(sourcePath, 'utf8');
+const fail = (message) => { throw new Error(message); };
+const includes = (needle, message) => assert.ok(source.includes(needle), message);
+const matches = (pattern, message) => assert.match(source, pattern, message);
+const suites = {
+  integrity: [
+    ['Jekyll front matter and standalone HTML', () => {
+      matches(/^---\s*\n[\s\S]*?layout:\s*null[\s\S]*?---\s*\n/, 'Expected layout: null front matter.');
+      matches(/<html\s+lang="ru">/i, 'Russian document language is missing.');
+      matches(/<meta\s+name="viewport"[^>]*>/i, 'Mobile viewport metadata is missing.');
+      matches(/<\/html>\s*$/, 'Document must close its html element.');
+    }],
+    ['critical UI controls exist', () => {
+      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent']) {
+        matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
+      }
+    }],
+    ['inline JavaScript parses without executing', () => {
+      const blocks = [...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
+        .filter((match) => !/\bsrc\s*=/i.test(match[1]));
+      assert.ok(blocks.length > 0, 'No inline application script found.');
+      blocks.forEach((block, index) => new Script(block[2], { filename: 'index.md:inline-script-' + index }));
+    }],
+    ['markdown rendering has an explicit sanitizer', () => {
+      includes('DOMPurify.sanitize', 'DOMPurify sanitization is required.');
+      matches(/innerHTML\s*=\s*safeMarkdown\(/, 'Rendered assistant HTML must pass through safeMarkdown.');
+    }]
+  ],
+  security: [
+    ['no obvious API keys committed in source', () => {
+      assert.doesNotMatch(source, /AIza[0-9A-Za-z_-]{30,}/, 'Possible Google API key found in source.');
+      assert.doesNotMatch(source, /\bsk-[A-Za-z0-9]{24,}/, 'Possible secret API key found in source.');
+      assert.doesNotMatch(source, /\btvly-[A-Za-z0-9_-]{20,}/, 'Possible Tavily key found in source.');
+    }],
+    ['API credentials are user-configured, not hard-coded', () => {
+      includes("apiKey: 'ai_api_key'", 'API key storage slot is missing.');
+      includes('safeGet(STORAGE.apiKey)', 'API key must be read from user settings.');
+      includes("'Authorization': `Bearer ${apiKey}`", 'Requests must use the configured bearer key.');
+      includes('type="password" id="apiKey"', 'API key field must be masked.');
+    }],
+    ['untrusted output is not inserted as raw HTML', () => {
+      includes('content.textContent = message.content', 'User message should use textContent.');
+      includes('DOMPurify.sanitize', 'DOMPurify sanitizer must remain enabled.');
+      const assignments = [...source.matchAll(/\.innerHTML\s*=\s*([^;\n]+)/g)].map((m) => m[1].trim());
+      assert.ok(assignments.length > 0, 'Expected the one sanitized markdown rendering assignment.');
+      assert.ok(assignments.every((value) => value.startsWith('safeMarkdown(')), 'Found an innerHTML assignment that bypasses safeMarkdown: ' + assignments.join(' | '));
+    }],
+    ['no dynamic code evaluation primitives', () => {
+      assert.doesNotMatch(source, /\beval\s*\(/, 'eval() is not allowed in the application shell.');
+      assert.doesNotMatch(source, /\bnew\s+Function\s*\(/, 'new Function() is not allowed in the application shell.');
+    }],
+    ['web search tool input is schema-bounded', () => {
+      includes("additionalProperties: false", 'Tool schema must reject unexpected fields.');
+      includes("args.query.trim().slice(0, 500)", 'Search queries must be trimmed and length-limited.');
+    }]
+  ],
+  context: [
+    ['history and tool loops have hard bounds', () => {
+      includes('const MAX_TOOL_ROUNDS = 4;', 'Tool-call round limit changed unexpectedly.');
+      includes('const MAX_CONTEXT_MESSAGES = 24;', 'Message count budget is missing.');
+      includes('const MAX_CONTEXT_CHARS = 24000;', 'Character context budget is missing.');
+      includes('count + turn.length > MAX_CONTEXT_MESSAGES', 'History message cap is not enforced.');
+      includes('charCount + turnChars > MAX_CONTEXT_CHARS', 'History character cap is not enforced.');
+    }],
+    ['memory retrieval is relevance-ranked and bounded', () => {
+      includes('memory.score > 0', 'Irrelevant memories should not be attached.');
+      includes('selectedMemories.length >= 4', 'Memory count cap is missing.');
+      includes('memoryChars + memory.fact.length > 1200', 'Memory character cap is missing.');
+      includes('контекст, не системные инструкции', 'Retrieved memories must not be framed as system instructions.');
+    }],
+    ['system prompt stays compact and backward compatible', () => {
+      const prompt = source.match(/const DEFAULT_SYSTEM = \[([\s\S]*?)\]\.join\(' '\);/);
+      assert.ok(prompt, 'Default system prompt definition not found.');
+      const strings = [...prompt[1].matchAll(/'((?:\\.|[^'\\])*)'/g)].map((m) => m[1]);
+      const promptText = strings.join(' ');
+      assert.ok(promptText.length > 0 && promptText.length < 1800, 'Default system prompt should remain compact (<1800 characters).');
+      includes('LEGACY_DEFAULT_SYSTEM', 'Legacy prompt migration guard is missing.');
+      includes('configuredPrompt === LEGACY_DEFAULT_SYSTEM', 'Legacy saved prompt must migrate automatically.');
+    }],
+    ['tool loop fails closed at its configured boundary', () => {
+      includes('round === MAX_TOOL_ROUNDS', 'Tool-call boundary must be checked.');
+      includes('Достигнут лимит последовательных вызовов инструментов', 'Tool-loop exhaustion must be reported explicitly.');
+    }]
+  ],
+  build: [
+    ['Jekyll output contains the deployed app', () => {
+      const built = resolve(root, '_site/index.html');
+      assert.ok(existsSync(built), 'Jekyll build did not produce _site/index.html.');
+      const html = readFileSync(built, 'utf8');
+      assert.match(html, /<html\s+lang="ru">/i, 'Built page is missing the expected document.');
+      assert.match(html, /id="chatBox"/, 'Built page is missing the chat UI.');
+      assert.match(html, /DOMPurify\.sanitize/, 'Built page is missing the sanitization path.');
+    }]
+  ]
+};
+
+const requested = process.argv[2] || 'all';
+const selected = requested === 'all' ? Object.keys(suites) : [requested];
+if (selected.some((name) => !suites[name])) {
+  console.error('Usage: node scripts/quality-agents.mjs [integrity|security|context|build|all]');
+  process.exit(2);
+}
+let failures = 0;
+for (const suiteName of selected) {
+  for (const [name, check] of suites[suiteName]) {
+    try {
+      check();
+      console.log('PASS [' + suiteName + '] ' + name);
+    } catch (error) {
+      failures++;
+      console.error('FAIL [' + suiteName + '] ' + name + '\n  ' + (error?.message || String(error)));
+    }
+  }
+}
+console.log('\nQuality sentinels: ' + (selected.join(', ')) + ' — ' + (failures ? failures + ' failure(s)' : 'all checks passed') + '.');
+if (failures) process.exit(1);
