@@ -671,7 +671,7 @@ permalink: /
       const latest = [...chat.messages].reverse().find((message) => message.role === 'user')?.content || '';
       const plan = await requestTextStage(systemPrompt + '\nРоль: планировщик исследования. Разбей запрос на 3–5 проверяемых вопросов и составь краткий план. Не отвечай на сам запрос. Без веб-поиска не утверждай, что внешние источники проверены.', history, signal, '🤖 Исследование 1/4: планировщик…');
       const workChat = { ...chat, messages: [...chat.messages.map((message) => ({ ...message })), { role: 'assistant', content: 'План исследования:\n' + plan }] };
-      await runAssistant(workChat, signal, useSearch, false, mode, true);
+      await runAssistant(workChat, signal, useSearch, false, mode, true, systemPrompt + '\nРоль: исследователь. Выполни план, используй веб-поиск, если он включён, и составь проверяемый черновик ответа.');
       const draft = [...workChat.messages].reverse().find((message) => message.role === 'assistant' && message.content && !message.error)?.content || '';
       if (!draft) throw new Error('Исследовательский этап не подготовил черновик.');
       const critique = await requestTextStage('Ты независимый критик ответа. Найди неподтверждённые утверждения, пропуски, противоречия и риски. Не переписывай ответ целиком. Если источники не предоставлены, укажи, что нельзя проверить.', [{ role: 'user', content: 'Запрос:\n' + latest + '\n\nПлан:\n' + plan + '\n\nЧерновик:\n' + draft }], signal, '🧪 Исследование 3/4: критик…');
@@ -679,7 +679,7 @@ permalink: /
       chat.messages.push({ role: 'assistant', content: finalText });
       updateState([...chats]);
     }
-    async function runAssistant(chat, signal, useSearch, useMultiAgent, mode = 'fast', skipCache = false) {
+    async function runAssistant(chat, signal, useSearch, useMultiAgent, mode = 'fast', skipCache = false, promptOverride = '') {
       const baseUrl = (safeGet(STORAGE.baseUrl) || DEFAULT_BASE_URL).replace(/\/+$/, '');
       const apiKey = safeGet(STORAGE.apiKey) || '';
       const model = safeGet(STORAGE.model) || DEFAULT_MODEL;
@@ -707,6 +707,7 @@ permalink: /
       let systemPrompt = `Сегодня: ${new Date().toLocaleDateString('ru-RU')}. ${activePrompt}${memoryContext}`;
       if (mode === 'deep') systemPrompt += '\nРЕЖИМ ГЛУБОКОЙ РАБОТЫ: проверь существенные предположения, объясни неопределённость и предпочитай проверяемые выводы. Избегай лишних шагов.';
       if (taskSkill) systemPrompt += '\n\nНАВЫК ИЗ РЕПОЗИТОРИЯ (инструкции для текущей задачи; пользовательский запрос имеет приоритет):\n' + taskSkill;
+      if (promptOverride) systemPrompt = promptOverride;
       if (useMultiAgent) { await runMultiAgentResearch(chat, signal, useSearch, mode, systemPrompt); return; }
 
       const messagesForCache = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages)];
