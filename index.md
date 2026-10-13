@@ -668,7 +668,6 @@ permalink: /
     }
     async function runMultiAgentResearch(chat, signal, useSearch, mode, systemPrompt) {
       const history = buildHistory(chat.messages);
-      const latest = [...chat.messages].reverse().find((message) => message.role === 'user')?.content || '';
       const plan = await requestTextStage(systemPrompt + '\nРоль: планировщик исследования. Разбей запрос на 3–5 проверяемых вопросов и составь краткий план. Не отвечай на сам запрос. Без веб-поиска не утверждай, что внешние источники проверены.', history, signal, '🤖 Исследование 1/4: планировщик…');
       const workChat = { ...chat, messages: [...chat.messages.map((message) => ({ ...message })), { role: 'assistant', content: 'План исследования:\n' + plan }] };
       const researchStart = workChat.messages.length;
