@@ -25,12 +25,21 @@ const suites = {
       matches(/<\/html>\s*$/, 'Document must close its html element.');
     }],
     ['critical UI controls exist', () => {
-      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint']) {
+      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'providerHint', 'traceModal', 'traceContent']) {
         matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
       }
     }],
     ['independent processing controls and on-demand resources', () => {
       includes('async function runMultiAgentResearch', 'Multi-agent research needs its own staged pipeline.');
+      includes('const PROVIDERS = {', 'Provider/model presets must be available.');
+      includes('function getConfiguredApiKey()', 'API keys must be selected per provider.');
+      includes('safeSet(providerKeyStorage(provider), apiKey)', 'Provider API keys must be stored under provider-specific keys.');
+      includes('content: finalText, researchTrace', 'Multi-agent output must preserve the research journal.');
+      includes('Открыть журнал исследования', 'Assistant research results must expose a trace action.');
+      includes('body.textContent = typeof value', 'Research trace must render as text rather than unsafe HTML.');
+      includes('function downloadTrace()', 'Research journal must be downloadable.');
+      includes("location.hash.match(/^#trace=([^&]+)/)", 'Local trace deep links must be supported.');
+      includes('Локальная ссылка работает в этом же браузере', 'Trace links must disclose their local-only scope.');
       includes("const maxToolRounds = mode === 'deep' ? MAX_TOOL_ROUNDS : 1;", 'Fast and deep modes must have different tool budgets.');
       includes("mode === 'fast' && index > 0", 'Fast mode must cap tools executed per round.');
       includes("if (mode !== 'deep' && !useMultiAgent) return '';", 'Skills must not load in fast mode unless research is explicitly enabled.');
