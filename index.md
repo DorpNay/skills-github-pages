@@ -482,7 +482,7 @@ permalink: /
       $('modeDeep').setAttribute('aria-pressed', String(!fast));
       $('modeFast').className = 'flex-1 rounded-md px-2 py-1.5 ' + (fast ? 'bg-blue-600 font-semibold' : 'text-gray-300');
       $('modeDeep').className = 'flex-1 rounded-md px-2 py-1.5 ' + (!fast ? 'bg-blue-600 font-semibold' : 'text-gray-300');
-      $('modeHint').textContent = fast ? 'Быстро: один раунд инструментов и короткий поиск. Исследование включается отдельно.' : 'Глубоко: навык из репозитория по задаче, до четырёх раундов инструментов и расширенный поиск. Исследование отдельно.';
+      $('modeHint').textContent = fast ? 'Быстро: один раунд инструментов и короткий поиск. Исследование включается отдельно.' : 'Глубоко: навык из репозитория, больше раундов и более подробный поиск в пределах включённых инструментов. Исследование отдельно.';
     }
     function setProcessingMode(mode) {
       processingMode = mode === 'deep' ? 'deep' : 'fast';
@@ -977,6 +977,7 @@ permalink: /
           return pyodideInstance;
         } catch (error) {
           pyodidePromise = null;
+          pyodideScriptPromise = null;
           status.textContent = 'Py: не загружен';
           status.className = 'text-[10px] bg-gray-700 text-gray-300 px-2 py-0.5 rounded';
           status.title = error.message;
