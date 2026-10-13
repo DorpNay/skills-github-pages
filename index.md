@@ -253,10 +253,27 @@ permalink: /
     function createChat(title = 'Новый чат', messages = []) {
       return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages };
     }
-    function loadChats() {
+    let chatRecoveryWarning = false;
+    function preserveUnreadableChats(rawText) {
+      if (!rawText) return;
       try {
-        const raw = JSON.parse(localStorage.getItem(STORAGE.chats) || 'null');
-        if (!Array.isArray(raw)) return [createChat()];
+        const backupKey = 'ai_chats_recovery_backup';
+        if (!localStorage.getItem(backupKey)) localStorage.setItem(backupKey, rawText);
+        chatRecoveryWarning = true;
+      } catch (error) {
+        console.warn('Не удалось сохранить резервную копию повреждённой истории:', error);
+      }
+    }
+    function loadChats() {
+      let rawText = null;
+      try {
+        rawText = localStorage.getItem(STORAGE.chats);
+        if (!rawText) return [createChat()];
+        const raw = JSON.parse(rawText);
+        if (!Array.isArray(raw)) {
+          preserveUnreadableChats(rawText);
+          return [createChat()];
+        }
         const valid = raw.filter((item) => item && typeof item === 'object' && typeof item.id === 'string' && Array.isArray(item.messages))
           .map((item) => ({
             id: item.id.slice(0, 128),
@@ -269,8 +286,13 @@ permalink: /
               ...(m.error ? { error: true } : {})
             }))
           }));
+        if (!valid.length && raw.length) preserveUnreadableChats(rawText);
         return valid.length ? valid : [createChat()];
-      } catch (_) { return [createChat()]; }
+      } catch (error) {
+        preserveUnreadableChats(rawText);
+        console.warn('История чатов не читается; исходные данные сохранены для восстановления:', error);
+        return [createChat()];
+      }
     }
     function persistChats() {
       const savedChats = safeSet(STORAGE.chats, JSON.stringify(chats));
@@ -1424,6 +1446,7 @@ permalink: /
 
     async function init() {
       initializeSettings();
+      if (chatRecoveryWarning) showToast('История не прочиталась. Исходные данные сохранены в локальной резервной копии; не очищайте данные сайта.', 'error');
       const match=location.hash.match(/^#trace=([^&]+)/);
       if(match){try{const id=decodeURIComponent(match[1]),raw=safeGet('ai_research_trace_'+id);if(raw)showTrace(JSON.parse(raw));}catch(error){console.warn('Не удалось открыть локальный журнал:',error);}}
       await initDB();
