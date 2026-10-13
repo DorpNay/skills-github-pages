@@ -114,6 +114,7 @@ permalink: /
       <p class="text-[11px] leading-relaxed text-gray-400">Системные правила передаются модели с каждым API-вызовом — это нужно для совместимого Chat Completions API. Промпт намеренно компактный; история ограничена примерно 24 000 символами, а в запрос добавляются только совпадающие с темой заметки (до 4, максимум 1 200 символов).</p>
       <p class="text-[11px] leading-relaxed text-gray-400">Ключи хранятся в localStorage этого браузера и отправляются только тому API, к которому выполняется запрос. Но при автоматическом резервном переходе тот же запрос и его контекст могут уйти другому провайдеру с сохранённым ключом. Если это нежелательно, удалите ключи других провайдеров из настроек/хранилища. Не используйте ключи на общем устройстве. Некоторые API блокируют браузерные запросы (CORS); для них нужен защищённый серверный прокси, а не обход CORS в клиентском коде.</p>
       <button type="button" data-action="restore-defaults" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-200">Восстановить параметры Gemini</button>
+      <button type="button" id="recoveryBackupButton" data-action="download-recovery-backup" class="hidden w-full bg-amber-800 hover:bg-amber-700 py-2 rounded text-xs text-amber-50">Скачать резервную копию истории</button>
       <button type="button" data-action="save-settings" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded font-bold text-sm">Сохранить</button>
       <button type="button" data-action="close-settings" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-300">Закрыть</button>
     </div>
@@ -200,6 +201,8 @@ permalink: /
     const $ = (id) => document.getElementById(id);
 
     let chatRecoveryWarning = false;
+    let chatRecoveryBackupKey = '';
+    let chatStorageCorruptNotBackedUp = false;
     let db = null;
     let chats = loadChats();
     let currentChatId = safeGet(STORAGE.current) || chats[0].id;
@@ -256,12 +259,24 @@ permalink: /
     }
     function preserveUnreadableChats(rawText) {
       if (!rawText) return;
+      const baseKey = 'ai_chats_recovery_backup';
+      let backupKey = baseKey;
       try {
-        const backupKey = 'ai_chats_recovery_backup';
-        if (!localStorage.getItem(backupKey)) localStorage.setItem(backupKey, rawText);
+        const existing = localStorage.getItem(baseKey);
+        if (existing === rawText) {
+          chatRecoveryBackupKey = baseKey;
+          chatRecoveryWarning = true;
+          return;
+        }
+        if (existing && existing !== rawText) backupKey = baseKey + '_' + Date.now();
+        localStorage.setItem(backupKey, rawText);
+        chatRecoveryBackupKey = backupKey;
         chatRecoveryWarning = true;
       } catch (error) {
-        console.warn('Не удалось сохранить резервную копию повреждённой истории:', error);
+        // Do not overwrite the original unreadable history if its backup could not be stored.
+        chatRecoveryWarning = true;
+        chatStorageCorruptNotBackedUp = true;
+        console.warn('Не удалось сохранить резервную копию повреждённой истории; исходные данные не будут перезаписаны:', error);
       }
     }
     function loadChats() {
@@ -295,6 +310,10 @@ permalink: /
       }
     }
     function persistChats() {
+      if (chatStorageCorruptNotBackedUp) {
+        showToast('Повреждённая история не была перезаписана: не удалось создать резервную копию. Освободите место в браузере и перезагрузите страницу.', 'error');
+        return;
+      }
       const savedChats = safeSet(STORAGE.chats, JSON.stringify(chats));
       const savedCurrent = safeSet(STORAGE.current, currentChatId);
       if (!savedChats || !savedCurrent) {
@@ -303,6 +322,21 @@ permalink: /
     }
     function getCurrentChat() {
       return chats.find((chat) => chat.id === currentChatId) || chats[0];
+    }
+    function downloadRecoveryBackup() {
+      if (!chatRecoveryBackupKey) throw new Error('Резервная копия истории не найдена.');
+      const raw = safeGet(chatRecoveryBackupKey);
+      if (!raw) throw new Error('Резервная копия истории недоступна в этом браузере.');
+      const blob = new Blob([raw], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'ai-chat-recovery-backup.json';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast('Резервная копия истории скачивается.');
     }
 
     function requestResult(request) {
@@ -1396,6 +1430,7 @@ permalink: /
           case 'toggle-settings': toggleSettings(true); break;
           case 'close-settings': toggleSettings(false); break;
           case 'save-settings': saveSettings(); break;
+          case 'download-recovery-backup': downloadRecoveryBackup(); break;
           case 'restore-defaults': restoreDefaultSettings(); break;
           case 'send': await sendMessage(false); break;
           case 'stop': stopGeneration(); break;
@@ -1446,7 +1481,18 @@ permalink: /
 
     async function init() {
       initializeSettings();
-      if (chatRecoveryWarning) showToast('История не прочиталась. Исходные данные сохранены в локальной резервной копии; не очищайте данные сайта.', 'error');
+      if (!chatRecoveryBackupKey) {
+        try {
+          for (let index = 0; index < localStorage.length; index++) {
+            const key = localStorage.key(index);
+            if (key && key.startsWith('ai_chats_recovery_backup') && safeGet(key)) { chatRecoveryBackupKey = key; break; }
+          }
+        } catch (_) {}
+      }
+      if (chatRecoveryBackupKey) $('recoveryBackupButton').classList.remove('hidden');
+      if (chatRecoveryWarning) showToast(chatStorageCorruptNotBackedUp
+        ? 'История не прочиталась, резервная копия не создалась. Исходные данные не будут перезаписаны; освободите место и перезагрузите страницу.'
+        : 'История не прочиталась. Исходные данные сохранены локально; скачайте резервную копию в настройках.', 'error');
       const match=location.hash.match(/^#trace=([^&]+)/);
       if(match){try{const id=decodeURIComponent(match[1]),raw=safeGet('ai_research_trace_'+id);if(raw)showTrace(JSON.parse(raw));}catch(error){console.warn('Не удалось открыть локальный журнал:',error);}}
       await initDB();
