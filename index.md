@@ -1483,10 +1483,16 @@ permalink: /
       initializeSettings();
       if (!chatRecoveryBackupKey) {
         try {
+          const backupKeys = [];
           for (let index = 0; index < localStorage.length; index++) {
             const key = localStorage.key(index);
-            if (key && key.startsWith('ai_chats_recovery_backup') && safeGet(key)) { chatRecoveryBackupKey = key; break; }
+            if (key && key.startsWith('ai_chats_recovery_backup') && safeGet(key)) backupKeys.push(key);
           }
+          backupKeys.sort((a, b) => {
+            const time = (key) => Number(key.slice('ai_chats_recovery_backup_'.length)) || 0;
+            return time(b) - time(a);
+          });
+          chatRecoveryBackupKey = backupKeys[0] || '';
         } catch (_) {}
       }
       if (chatRecoveryBackupKey) $('recoveryBackupButton').classList.remove('hidden');
