@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
+
 test.beforeEach(async ({ page }) => {
   // Every test starts with a clean browser profile; no real provider key is used.
   await page.addInitScript(() => {\n    if (sessionStorage.getItem('e2e-cleaned') !== '1') {\n      localStorage.clear();\n      sessionStorage.setItem('e2e-cleaned', '1');\n    }\n  });
@@ -8,7 +10,7 @@ test.beforeEach(async ({ page }) => {
 test('published app boots and core controls are interactive', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page).toHaveTitle(/AI Mobile Agent/);
   await expect(page.locator('#chatBox')).toBeVisible();
   await expect(page.locator('#userInput')).toBeEditable();
@@ -29,7 +31,7 @@ test('published app boots and core controls are interactive', async ({ page }) =
 });
 
 test('provider keys, Tavily key, and model settings remain isolated across switching and reload', async ({ page }) => {
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
 
   await page.locator('#providerPreset').selectOption('groq');
@@ -59,7 +61,7 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
 });
 
 test('chat creation persists after reload without calling a model', async ({ page }) => {
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
   const chats = page.locator('#chatList button[data-action="switch-chat"]');
   const before = await chats.count();
@@ -76,7 +78,7 @@ test('API authentication errors are shown without losing the original user promp
     contentType: 'application/json',
     body: JSON.stringify({ error: { message: 'invalid test credential' } })
   }));
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
