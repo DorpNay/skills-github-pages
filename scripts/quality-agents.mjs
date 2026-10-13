@@ -55,6 +55,9 @@ const suites = {
       includes('function isGenericModelRefusal(value)', 'Generic model refusals must not be accepted as successful research stages.');
       includes('Конвейер остановлен', 'A refused multi-agent stage must stop clearly rather than repeat the refusal as a final answer.');
       includes('if (!savedChats || !savedCurrent)', 'Chat persistence failures must be visible to the user.');
+      includes('function preserveUnreadableChats(rawText)', 'Unreadable chat history must be preserved before a fresh chat is persisted.');
+      includes('ai_chats_recovery_backup', 'Chat recovery backup must use a separate local-storage key.');
+      includes('if (chatRecoveryWarning) showToast(', 'The user must be warned when stored chat history cannot be read.');
       includes('content: finalText, researchTrace', 'Multi-agent output must preserve the research journal.');
       includes('Открыть журнал исследования', 'Assistant research results must expose a trace action.');
       includes('body.textContent=typeof value', 'Research trace must render as text rather than unsafe HTML.');
