@@ -1,0 +1,9 @@
+TASK SKILL: SAFE CODE REVIEW
+
+Use for programming, debugging, refactoring, and implementation requests.
+1. Identify expected behavior and compatibility constraints before changing code.
+2. Prefer the smallest coherent change; preserve public behavior and existing data formats unless explicitly asked otherwise.
+3. Check input validation, async cancellation/error paths, resource cleanup, security boundaries, accessibility, and mobile behavior where relevant.
+4. Avoid dependencies and abstractions that do not pay for their maintenance cost. Load optional modules only when the user invokes the feature.
+5. Validate syntax and run focused tests plus regression checks. Distinguish automated checks from browser/API behavior that could not be tested.
+6. Report changed files, verification evidence, known limitations, and any behavior intentionally left unchanged.
