@@ -9,7 +9,7 @@ export default defineConfig({
   reporter: process.env.CI ? 'github' : 'list',
   timeout: 30000,
   use: {
-    baseURL: process.env.LIVE_SITE_URL || 'http://127.0.0.1:4173',
+    baseURL: (process.env.LIVE_SITE_URL ? process.env.LIVE_SITE_URL.replace(/\/?$/, '/') : 'http://127.0.0.1:4173'),
     browserName: 'chromium',
     headless: true,
     trace: 'retain-on-failure',
