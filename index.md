@@ -526,6 +526,10 @@ permalink: /
         ? 'Введите Base URL, имя модели и ключ вашего OpenAI-совместимого API. Совместимость и CORS зависят от поставщика.'
         : config.label + ': проверьте доступные модели, тариф и ограничения в официальной документации. Ключ вводится отдельно для каждого провайдера.';
       populateModelPresets(provider, $('modelName').value);
+      if (!initial) {
+        safeSet(STORAGE.baseUrl, $('baseUrl').value);
+        safeSet(STORAGE.model, $('modelName').value);
+      }
     }
     function initializeSettings() {
       const provider=safeGet(STORAGE.provider)||'gemini';
