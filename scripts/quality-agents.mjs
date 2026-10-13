@@ -103,7 +103,8 @@ const suites = {
       includes('configuredPrompt === LEGACY_DEFAULT_SYSTEM', 'Legacy saved prompt must migrate automatically.');
     }],
     ['tool loop fails closed at its configured boundary', () => {
-      includes('round === MAX_TOOL_ROUNDS', 'Tool-call boundary must be checked.');
+      includes('round === maxToolRounds', 'Tool-call boundary must be checked against the active mode budget.');
+      includes("const maxToolRounds = mode === 'deep' ? MAX_TOOL_ROUNDS : 1;", 'Mode-specific tool budget must be enforced.');
       includes('Достигнут лимит последовательных вызовов инструментов', 'Tool-loop exhaustion must be reported explicitly.');
     }]
   ],
