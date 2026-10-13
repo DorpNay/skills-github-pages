@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: null
 title: AI Mobile Agent v9.0
 permalink: /
 ---
@@ -82,6 +82,12 @@ permalink: /
   <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="bg-gray-800 p-5 rounded-2xl max-w-sm mx-auto w-full border border-gray-700 space-y-3 my-auto max-h-[90dvh] overflow-y-auto">
       <h2 id="settingsTitle" class="text-lg font-bold">⚙️ Настройки</h2>
+      <div class="rounded-lg bg-gray-900 border border-gray-700 p-3 text-xs leading-relaxed text-gray-300 space-y-2">
+        <p><strong>Быстрый старт:</strong> адрес API и модель Gemini уже заполнены. Нужен только ваш личный ключ API.</p>
+        <p><a class="text-blue-300 underline" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Получить ключ Gemini API в Google AI Studio</a>. Создайте ключ и вставьте его в поле API Key ниже.</p>
+        <p>Ключ хранится только в localStorage этого браузера. Не публикуйте его, не вставляйте в код и не используйте на чужом устройстве. Очистка данных сайта удалит сохранённые настройки и локальную историю.</p>
+        <p>Веб-поиск через Tavily необязателен и требует отдельного ключа. Без него оставьте переключатель «Веб-поиск» выключенным.</p>
+      </div>
       <label for="baseUrl" class="block text-xs text-gray-400">Base URL (без /chat/completions)</label>
       <input type="url" id="baseUrl" autocomplete="url" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm outline-none">
       <label for="apiKey" class="block text-xs text-gray-400">API Key</label>
@@ -93,6 +99,7 @@ permalink: /
       <label for="systemPromptInput" class="block text-xs text-gray-400">Системный промпт</label>
       <textarea id="systemPromptInput" rows="4" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm outline-none resize-y"></textarea>
       <p class="text-[11px] leading-relaxed text-gray-400">Ключи хранятся в localStorage этого браузера. Не сохраняйте их на чужом или общем устройстве. Запросы отправляются напрямую провайдерам, без стороннего CORS-прокси.</p>
+      <button type="button" data-action="restore-defaults" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-200">Восстановить параметры Gemini</button>
       <button type="button" data-action="save-settings" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded font-bold text-sm">Сохранить</button>
       <button type="button" data-action="close-settings" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-300">Закрыть</button>
     </div>
@@ -448,6 +455,13 @@ permalink: /
       $('tavilyKey').value = safeGet(STORAGE.tavilyKey) || '';
       $('systemPromptInput').value = safeGet(STORAGE.systemPrompt) || DEFAULT_SYSTEM;
     }
+    function restoreDefaultSettings() {
+      $('baseUrl').value = DEFAULT_BASE_URL;
+      $('modelName').value = DEFAULT_MODEL;
+      $('systemPromptInput').value = DEFAULT_SYSTEM;
+      alert('Адрес API, модель и системный промпт восстановлены. Ваши API-ключи не изменены. Нажмите «Сохранить».');
+    }
+
     function saveSettings() {
       let baseUrl = $('baseUrl').value.trim().replace(/\/+$/, '');
       const apiKey = $('apiKey').value.trim();
@@ -908,6 +922,7 @@ permalink: /
           case 'toggle-settings': toggleSettings(true); break;
           case 'close-settings': toggleSettings(false); break;
           case 'save-settings': saveSettings(); break;
+          case 'restore-defaults': restoreDefaultSettings(); break;
           case 'send': await sendMessage(false); break;
           case 'stop': stopGeneration(); break;
           case 'retry': await retryLastMessage(); break;
