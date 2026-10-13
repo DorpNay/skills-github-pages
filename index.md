@@ -1,4 +1,9 @@
-<!doctype html>
+---
+layout: null
+title: AI Mobile Agent v9.0
+permalink: /
+---
+
 <html lang="ru">
 <head>
   <meta charset="utf-8">
@@ -47,7 +52,6 @@
   </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
-  <!-- Навигационная панель -->
   <aside id="sidebar" aria-label="Диалоги и память" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[88vw] bg-gray-950 border-r border-gray-800 -translate-x-full transition-transform duration-300 flex flex-col">
     <div class="p-4 border-b border-gray-800 flex justify-between items-center">
       <h2 class="font-bold text-sm">💬 Диалоги и память</h2>
@@ -75,7 +79,6 @@
   </aside>
   <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 hidden" aria-hidden="true"></div>
 
-  <!-- Настройки -->
   <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="bg-gray-800 p-5 rounded-2xl max-w-sm mx-auto w-full border border-gray-700 space-y-3 my-auto max-h-[90dvh] overflow-y-auto">
       <h2 id="settingsTitle" class="text-lg font-bold">⚙️ Настройки</h2>
@@ -131,7 +134,6 @@
   (() => {
     'use strict';
 
-    // Хранение совместимо с исходным форматом v8.7.
     const STORAGE = {
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
@@ -199,7 +201,6 @@
       return chats.find((chat) => chat.id === currentChatId) || chats[0];
     }
 
-    // IndexedDB: значения имеют явные ключи, поэтому работает и со старым store без keyPath.
     function requestResult(request) {
       return new Promise((resolve, reject) => {
         request.onsuccess = () => resolve(request.result);
@@ -234,7 +235,7 @@
         try {
           const tx = db.transaction('cache', 'readonly');
           const value = await requestResult(tx.objectStore('cache').get(key));
-          if (typeof value === 'string') return value; // совместимость с кэшем v8.7
+          if (typeof value === 'string') return value;
           if (!value || typeof value.value !== 'string') return null;
           if (value.expiresAt && value.expiresAt < Date.now()) {
             this.delete(key);
@@ -291,8 +292,6 @@
       }
     };
 
-    // Markdown: фиксированная версия Marked принимает объект токена. Если CDN недоступен,
-    // чат всё равно работает в текстовом режиме.
     if (window.marked?.Renderer && typeof window.marked.use === 'function') {
       const renderer = new marked.Renderer();
       renderer.code = (token) => {
@@ -491,7 +490,6 @@
       }
     }
     function buildHistory(messages) {
-      // Не обрезаем отдельные tool-сообщения от вызова инструмента: это ломает формат OpenAI-compatible API.
       const turns = [];
       for (const message of messages) {
         if (message.role === 'user') turns.push([message]);
@@ -797,7 +795,6 @@
             ...(Array.isArray(m.tool_calls) ? { tool_calls: m.tool_calls } : {}), ...(m.error ? { error: true } : {})
           }))
         }));
-        // Нормализуем дублирующиеся id, встречающиеся в объединённых экспортах.
         const seen = new Set();
         clean.forEach((chat) => { if (seen.has(chat.id)) chat.id = `${chat.id}-${Math.random().toString(36).slice(2, 7)}`; seen.add(chat.id); });
         updateState(clean, clean[0].id); toggleSidebar(false); alert('Чаты импортированы.');
@@ -879,12 +876,10 @@
       }
     }
 
-    // События назначаются через делегирование; безопасно переживают санитизацию Markdown.
     document.addEventListener('click', async (event) => {
       const control = event.target.closest('[data-action]');
       if (!control) return;
       const action = control.dataset.action;
-      // Не позволяем сырому HTML из ответа модели подделывать управляющие кнопки приложения.
       if (control.closest('#chatBox')) {
         const isCodeAction = ['copy-code', 'download-code', 'run-python'].includes(action) &&
           control.classList.contains('code-action') && control.closest('.code-block');
@@ -947,7 +942,7 @@
       await initDB();
       await renderMemory();
       updateState(null, currentChatId);
-      initPyodide(); // Не блокируем запуск чата длительной загрузкой Python/WebAssembly.
+      initPyodide();
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
     else init();
@@ -955,4 +950,3 @@
   </script>
 </body>
 </html>
-
