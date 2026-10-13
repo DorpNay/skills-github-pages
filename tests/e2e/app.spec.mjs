@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
   // Every test starts with a clean browser profile; no real provider key is used.
-  await page.addInitScript(() => localStorage.clear());
+  await page.addInitScript(() => {\n    if (sessionStorage.getItem('e2e-cleaned') !== '1') {\n      localStorage.clear();\n      sessionStorage.setItem('e2e-cleaned', '1');\n    }\n  });
 });
 
 test('published app boots and core controls are interactive', async ({ page }) => {
