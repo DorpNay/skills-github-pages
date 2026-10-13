@@ -617,6 +617,13 @@ permalink: /
     }
     function initializeSettings() {
       const savedProvider=safeGet(STORAGE.provider);
+      if (savedProvider && savedProvider !== 'gemini') {
+        const legacyKey = safeGet(STORAGE.apiKey);
+        const selectedProviderKey = safeGet(providerKeyStorage(savedProvider));
+        // Older builds wrote every provider's key into the legacy Gemini slot.
+        // If the legacy value duplicates the active provider's own key, clear that ambiguous copy.
+        if (legacyKey && selectedProviderKey && legacyKey === selectedProviderKey) safeSet(STORAGE.apiKey, '');
+      }
       const provider=savedProvider && Object.prototype.hasOwnProperty.call(PROVIDERS,savedProvider)?savedProvider:'gemini';
       if (savedProvider && !Object.prototype.hasOwnProperty.call(PROVIDERS,savedProvider)) {
         // A removed provider preset must not leave a stale endpoint active.
@@ -683,7 +690,7 @@ permalink: /
       const saved = [
         safeSet(STORAGE.provider, provider),
         safeSet(STORAGE.baseUrl, baseUrl),
-        safeSet(STORAGE.apiKey, apiKey),
+        ...(provider === 'gemini' ? [safeSet(STORAGE.apiKey, apiKey)] : []),
         safeSet(providerKeyStorage(provider), apiKey),
         safeSet(STORAGE.model, model),
         safeSet(STORAGE.tavilyKey, tavilyKey),
