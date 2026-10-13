@@ -543,6 +543,10 @@ permalink: /
         safeSet(STORAGE.baseUrl, DEFAULT_BASE_URL);
         safeSet(STORAGE.model, DEFAULT_MODEL);
       }
+      if (safeGet(STORAGE.model) === 'gemini-3.8-flash') {
+        // Migrate the old typo/unsupported preset to the official stable Gemini model ID.
+        safeSet(STORAGE.model, DEFAULT_MODEL);
+      }
       $('providerPreset').value=provider;
       $('baseUrl').value=safeGet(STORAGE.baseUrl)||DEFAULT_BASE_URL;
       $('modelName').value=safeGet(STORAGE.model)||DEFAULT_MODEL;
@@ -908,7 +912,10 @@ permalink: /
       const text = input.value.trim();
       if (!text && !isRetry) return;
       const apiKey = getConfiguredApiKey();
-      if (!apiKey) { alert('Укажите API Key в настройках.'); toggleSettings(true); return; }
+      if (!apiKey && !getApiCandidates(safeGet(STORAGE.model) || DEFAULT_MODEL).length) {
+        showToast('Сначала сохраните API-ключ хотя бы одного провайдера в настройках.', 'error');
+        toggleSettings(true); return;
+      }
       const chat = getCurrentChat();
       if (!isRetry) {
         if (!chat.messages.some((message) => message.role === 'user')) {
@@ -1007,8 +1014,8 @@ permalink: /
         }));
         const seen = new Set();
         clean.forEach((chat) => { if (seen.has(chat.id)) chat.id = `${chat.id}-${Math.random().toString(36).slice(2, 7)}`; seen.add(chat.id); });
-        updateState(clean, clean[0].id); toggleSidebar(false); alert('Чаты импортированы.');
-      } catch (error) { alert(`Ошибка импорта: ${error.message}`); }
+        updateState(clean, clean[0].id); toggleSidebar(false); showToast('Чаты импортированы');
+      } catch (error) { showToast(`Ошибка импорта: ${error.message}`, 'error'); }
     }
 
     async function copyText(text) {
