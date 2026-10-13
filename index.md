@@ -1164,7 +1164,7 @@ permalink: /
             if (!activeTrace) break;
             safeSet('ai_research_trace_'+activeTrace.id,JSON.stringify(activeTrace));
             const link=location.href.split('#')[0]+'#trace='+encodeURIComponent(activeTrace.id);
-            await navigator.clipboard.writeText(link); alert('Ссылка скопирована. Она открывает журнал в этом же браузере, где сохранены данные.'); break;
+            await copyText(link); alert('Ссылка скопирована. Она открывает журнал в этом же браузере, где сохранены данные.'); break;
           }
         }
       } catch (error) { console.error('Ошибка действия интерфейса:', error); alert(error.message || 'Не удалось выполнить действие.'); }
