@@ -784,7 +784,9 @@ permalink: /
             updateState([...chats]);
             throw abortError();
           }
-          if (name !== 'web_search') {
+          if (mode === 'fast' && index > 0) {
+            result = 'Вызов пропущен: быстрый режим выполняет не более одного инструмента за раунд.';
+          } else if (name !== 'web_search') {
             result = `Инструмент ${String(name || 'без имени')} не поддерживается.`;
           } else {
             try {
