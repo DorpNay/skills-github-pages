@@ -199,6 +199,7 @@ permalink: /
     const CACHE_TTL_MS = 15 * 60 * 1000;
     const $ = (id) => document.getElementById(id);
 
+    let chatRecoveryWarning = false;
     let db = null;
     let chats = loadChats();
     let currentChatId = safeGet(STORAGE.current) || chats[0].id;
@@ -253,7 +254,6 @@ permalink: /
     function createChat(title = 'Новый чат', messages = []) {
       return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages };
     }
-    let chatRecoveryWarning = false;
     function preserveUnreadableChats(rawText) {
       if (!rawText) return;
       try {
