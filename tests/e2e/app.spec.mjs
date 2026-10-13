@@ -4,7 +4,12 @@ const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
 
 test.beforeEach(async ({ page }) => {
   // Every test starts with a clean browser profile; no real provider key is used.
-  await page.addInitScript(() => {\n    if (sessionStorage.getItem('e2e-cleaned') !== '1') {\n      localStorage.clear();\n      sessionStorage.setItem('e2e-cleaned', '1');\n    }\n  });
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem('e2e-cleaned') !== '1') {
+      localStorage.clear();
+      sessionStorage.setItem('e2e-cleaned', '1');
+    }
+  });
 });
 
 test('published app boots and core controls are interactive', async ({ page }) => {
