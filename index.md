@@ -82,7 +82,7 @@ permalink: /
     <div class="bg-gray-800 p-5 rounded-2xl max-w-sm mx-auto w-full border border-gray-700 space-y-3 my-auto max-h-[90dvh] overflow-y-auto">
       <h2 id="settingsTitle" class="text-lg font-bold">⚙️ Настройки</h2>
       <div class="rounded-lg bg-gray-900 border border-gray-700 p-3 text-xs leading-relaxed text-gray-300 space-y-2">
-        <p><strong>Быстрый старт:</strong> адрес API и модель Gemini уже заполнены. Нужен только ваш личный ключ API.</p>
+        <p><strong>Быстрый старт:</strong> по умолчанию выбран Gemini. Для альтернатив выберите провайдера и модель ниже; для каждого сервиса нужен свой API-ключ.</p>
         <p><a class="text-blue-300 underline" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Получить ключ Gemini API в Google AI Studio</a>. Создайте ключ и вставьте его в поле API Key ниже.</p>
         <p>Ключ хранится только в localStorage этого браузера. Не публикуйте его, не вставляйте в код и не используйте на чужом устройстве. Очистка данных сайта удалит сохранённые настройки и локальную историю.</p>
         <p>Веб-поиск через Tavily необязателен и требует отдельного ключа. Без него оставьте переключатель «Веб-поиск» выключенным.</p>
@@ -94,6 +94,7 @@ permalink: /
       <label for="modelPreset" class="block text-xs text-gray-400">Быстрый выбор модели</label>
       <select id="modelPreset" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm"></select>
       <p id="providerHint" class="text-[11px] leading-relaxed text-gray-400">Выберите провайдера и модель. Ключи разных провайдеров сохраняются отдельно в этом браузере.</p>
+      <a id="providerDocsLink" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-blue-300 underline underline-offset-2">Открыть страницу API-ключа</a>
       <label for="baseUrl" class="block text-xs text-gray-400">Base URL (без /chat/completions)</label>
       <input type="url" id="baseUrl" autocomplete="url" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm outline-none">
       <label for="apiKey" class="block text-xs text-gray-400">API Key</label>
@@ -178,13 +179,13 @@ permalink: /
     const DEFAULT_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/openai';
     const DEFAULT_MODEL = 'gemini-3.8-flash';
     const PROVIDERS = {
-      gemini: { label: 'Google AI Studio · Gemini', baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai', models: [['gemini-3.8-flash','Gemini Flash (быстро)'], ['gemini-2.5-flash','Gemini 2.5 Flash']] },
-      groq: { label: 'Groq', baseUrl: 'https://api.groq.com/openai/v1', models: [['openai/gpt-oss-120b','GPT-OSS 120B'], ['qwen/qwen3.8-27b','Qwen 3.8 27B']] },
-      openrouter: { label: 'OpenRouter', baseUrl: 'https://openrouter.ai/api/v1', models: [['openrouter/free','Автовыбор бесплатной модели'], ['deepseek/deepseek-r1:free','DeepSeek R1 · free (если доступна)']] },
-      github: { label: 'GitHub Models', baseUrl: 'https://models.github.ai/inference', models: [['openai/gpt-4.1-mini','GPT-4.1 mini'], ['deepseek/DeepSeek-R1','DeepSeek R1 (если доступна)']] },
-      huggingface: { label: 'Hugging Face', baseUrl: 'https://router.huggingface.co/v1', models: [['Qwen/Qwen2.5-Coder-32B-Instruct','Qwen2.5 Coder 32B'], ['Qwen/Qwen2.5-Coder-7B-Instruct','Qwen2.5 Coder 7B']] },
-      cerebras: { label: 'Cerebras', baseUrl: 'https://api.cerebras.ai/v1', models: [['gpt-oss-120b','GPT-OSS 120B'], ['qwen-3.8-27b','Qwen 3.8 27B']] },
-      custom: { label: 'Свой API', baseUrl: '', models: [['custom','Ввести имя модели вручную']] }
+      gemini: { label: 'Google AI Studio · Gemini', docsUrl: 'https://aistudio.google.com/apikey', baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai', models: [['gemini-3.8-flash','Gemini Flash (быстро)'], ['gemini-2.5-flash','Gemini 2.5 Flash']] },
+      groq: { label: 'Groq', docsUrl: 'https://console.groq.com/keys', baseUrl: 'https://api.groq.com/openai/v1', models: [['openai/gpt-oss-120b','GPT-OSS 120B'], ['qwen/qwen3.8-27b','Qwen 3.8 27B']] },
+      openrouter: { label: 'OpenRouter', docsUrl: 'https://openrouter.ai/settings/keys', baseUrl: 'https://openrouter.ai/api/v1', models: [['openrouter/free','Автовыбор бесплатной модели'], ['deepseek/deepseek-r1:free','DeepSeek R1 · free (если доступна)']] },
+      github: { label: 'GitHub Models', docsUrl: 'https://github.com/marketplace/models', baseUrl: 'https://models.github.ai/inference', models: [['openai/gpt-4.1-mini','GPT-4.1 mini'], ['deepseek/DeepSeek-R1','DeepSeek R1 (если доступна)']] },
+      huggingface: { label: 'Hugging Face', docsUrl: 'https://huggingface.co/settings/tokens', baseUrl: 'https://router.huggingface.co/v1', models: [['Qwen/Qwen2.5-Coder-32B-Instruct','Qwen2.5 Coder 32B'], ['Qwen/Qwen2.5-Coder-7B-Instruct','Qwen2.5 Coder 7B']] },
+      cerebras: { label: 'Cerebras', docsUrl: 'https://cloud.cerebras.ai/platform', baseUrl: 'https://api.cerebras.ai/v1', models: [['gpt-oss-120b','GPT-OSS 120B'], ['qwen-3.8-27b','Qwen 3.8 27B']] },
+      custom: { label: 'Свой API', baseUrl: '', docsUrl: '', models: [['custom','Ввести имя модели вручную']] }
     };
     const MAX_TOOL_ROUNDS = 4;
     const MAX_CONTEXT_MESSAGES = 24;
@@ -525,6 +526,9 @@ permalink: /
       $('providerHint').textContent = provider === 'custom'
         ? 'Введите Base URL, имя модели и ключ вашего OpenAI-совместимого API. Совместимость и CORS зависят от поставщика.'
         : config.label + ': проверьте доступные модели, тариф и ограничения в официальной документации. Ключ вводится отдельно для каждого провайдера.';
+      const docs = $('providerDocsLink');
+      if (config.docsUrl) { docs.href = config.docsUrl; docs.classList.remove('hidden'); }
+      else docs.classList.add('hidden');
       populateModelPresets(provider, $('modelName').value);
       if (!initial) {
         safeSet(STORAGE.baseUrl, $('baseUrl').value);
@@ -1166,6 +1170,7 @@ permalink: /
       } catch (error) { console.error('Ошибка действия интерфейса:', error); alert(error.message || 'Не удалось выполнить действие.'); }
     });
     $('providerPreset').addEventListener('change', () => applyProviderPreset($('providerPreset').value));
+    $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
     $('modelPreset').addEventListener('change', () => { const value=$('modelPreset').value; if(value!=='__custom__') $('modelName').value=value; else $('modelName').focus(); });
     $('modelName').addEventListener('change', () => populateModelPresets(currentProvider(),$('modelName').value));
     $('modeFast').addEventListener('click', () => setProcessingMode('fast'));
@@ -1183,7 +1188,8 @@ permalink: /
     });
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
-        if (!$('settingsModal').classList.contains('hidden')) toggleSettings(false);
+        if (!$('traceModal').classList.contains('hidden')) closeTrace();
+        else if (!$('settingsModal').classList.contains('hidden')) toggleSettings(false);
         else if (!$('sidebar').classList.contains('-translate-x-full')) toggleSidebar(false);
       }
     });
