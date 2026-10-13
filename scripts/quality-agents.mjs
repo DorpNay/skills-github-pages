@@ -34,6 +34,7 @@ const suites = {
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
       includes("nvidia: { label: 'NVIDIA NIM'", 'NVIDIA NIM should be included as an active alternative.');
       assert.ok(!source.includes('value="github">GitHub Models'), 'Retired GitHub Models must not be offered as a provider.');
+      includes('A removed provider preset must not leave a stale endpoint active.', 'Removed provider settings must migrate safely.');
       includes("docsUrl: 'https://openrouter.ai/settings/keys'", 'OpenRouter key setup link must be available.');
       includes("docsUrl: 'https://build.nvidia.com/settings'", 'NVIDIA API key setup link must be available.');
       includes('function getConfiguredApiKey()', 'API keys must be selected per provider.');
