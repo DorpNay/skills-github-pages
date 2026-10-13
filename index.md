@@ -89,7 +89,7 @@ permalink: /
       </div>
       <label for="providerPreset" class="block text-xs text-gray-400">Провайдер API</label>
       <select id="providerPreset" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm">
-        <option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые открытые модели</option><option value="openrouter">OpenRouter · бесплатные модели</option><option value="github">GitHub Models · тестовый доступ</option><option value="huggingface">Hugging Face · каталог моделей</option><option value="cerebras">Cerebras · быстрый инференс</option><option value="custom">Свой OpenAI-совместимый API</option>
+        <option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые открытые модели</option><option value="openrouter">OpenRouter · бесплатные модели</option><option value="nvidia">NVIDIA NIM · бесплатный пробный доступ</option><option value="huggingface">Hugging Face · каталог моделей</option><option value="cerebras">Cerebras · быстрый инференс</option><option value="custom">Свой OpenAI-совместимый API</option>
       </select>
       <label for="modelPreset" class="block text-xs text-gray-400">Быстрый выбор модели</label>
       <select id="modelPreset" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm"></select>
@@ -182,7 +182,7 @@ permalink: /
       gemini: { label: 'Google AI Studio · Gemini', docsUrl: 'https://aistudio.google.com/apikey', baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai', models: [['gemini-3.8-flash','Gemini Flash (быстро)'], ['gemini-2.5-flash','Gemini 2.5 Flash']] },
       groq: { label: 'Groq', docsUrl: 'https://console.groq.com/keys', baseUrl: 'https://api.groq.com/openai/v1', models: [['openai/gpt-oss-120b','GPT-OSS 120B'], ['qwen/qwen3.8-27b','Qwen 3.8 27B']] },
       openrouter: { label: 'OpenRouter', docsUrl: 'https://openrouter.ai/settings/keys', baseUrl: 'https://openrouter.ai/api/v1', models: [['openrouter/free','Автовыбор бесплатной модели'], ['deepseek/deepseek-r1:free','DeepSeek R1 · free (если доступна)']] },
-      github: { label: 'GitHub Models', docsUrl: 'https://github.com/marketplace/models', baseUrl: 'https://models.github.ai/inference', models: [['openai/gpt-4.1-mini','GPT-4.1 mini'], ['deepseek/DeepSeek-R1','DeepSeek R1 (если доступна)']] },
+      nvidia: { label: 'NVIDIA NIM', docsUrl: 'https://build.nvidia.com/settings', baseUrl: 'https://integrate.api.nvidia.com/v1', models: [['nvidia/llama-3.1-70b-instruct','Llama 3.1 70B Instruct']] },
       huggingface: { label: 'Hugging Face', docsUrl: 'https://huggingface.co/settings/tokens', baseUrl: 'https://router.huggingface.co/v1', models: [['Qwen/Qwen2.5-Coder-32B-Instruct','Qwen2.5 Coder 32B'], ['Qwen/Qwen2.5-Coder-7B-Instruct','Qwen2.5 Coder 7B']] },
       cerebras: { label: 'Cerebras', docsUrl: 'https://cloud.cerebras.ai/platform', baseUrl: 'https://api.cerebras.ai/v1', models: [['gpt-oss-120b','GPT-OSS 120B'], ['qwen-3.8-27b','Qwen 3.8 27B']] },
       custom: { label: 'Свой API', baseUrl: '', docsUrl: '', models: [['custom','Ввести имя модели вручную']] }
