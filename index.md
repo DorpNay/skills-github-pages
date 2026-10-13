@@ -224,7 +224,7 @@ permalink: /
     function safeGet(key) {
       try { return localStorage.getItem(key); } catch (_) { return null; }
     }
-    let toastTimer = null;
+    let toastTimer = null, toastHideTimer = null;
     function showToast(message, kind = 'success') {
       const node = $('toast');
       if (!node) return;
@@ -232,10 +232,11 @@ permalink: /
       node.classList.toggle('toast-error', kind === 'error');
       node.classList.remove('hidden', 'toast-visible');
       if (toastTimer) clearTimeout(toastTimer);
+      if (toastHideTimer) clearTimeout(toastHideTimer);
       requestAnimationFrame(() => node.classList.add('toast-visible'));
       toastTimer = setTimeout(() => {
         node.classList.remove('toast-visible');
-        setTimeout(() => node.classList.add('hidden'), 180);
+        toastHideTimer = setTimeout(() => node.classList.add('hidden'), 180);
       }, 2400);
     }
     function safeSet(key, value) {
@@ -697,7 +698,7 @@ permalink: /
       });
     }
     async function fetchJson(url, options, signal) {
-      for (let attempt = 0; attempt < 3; attempt++) {
+      for (let attempt = 0; attempt < 2; attempt++) {
         throwIfAborted(signal);
         let response;
         try { response = await fetch(url, { ...options, signal }); }
@@ -710,10 +711,8 @@ permalink: /
           catch (_) { throw new Error('API вернул ответ, который не удалось прочитать как JSON.'); }
         }
         const details = (await response.text().catch(() => '')).slice(0, 500);
-        if ([429, 500, 502, 503, 504].includes(response.status) && attempt < 2) {
-          const retryHeader = Number(response.headers.get('Retry-After'));
-          const delay = Number.isFinite(retryHeader) && retryHeader > 0 ? Math.min(retryHeader * 1000, 10000) : 900 * (attempt + 1);
-          await sleep(delay, signal); continue;
+        if ([500, 502, 503, 504].includes(response.status) && attempt < 1) {
+          await sleep(500, signal); continue;
         }
         throw new Error(`HTTP ${response.status}${details ? `: ${details}` : ''}`);
       }
@@ -811,7 +810,7 @@ permalink: /
             safeSet(STORAGE.provider, candidate.provider);
             safeSet(STORAGE.baseUrl, candidate.baseUrl);
             safeSet(STORAGE.model, candidate.model);
-            safeSet(STORAGE.apiKey, candidate.key);
+            if (candidate.provider === 'gemini') safeSet(STORAGE.apiKey, candidate.key);
             if ($('providerPreset')) $('providerPreset').value = candidate.provider;
             if ($('baseUrl')) $('baseUrl').value = candidate.baseUrl;
             if ($('modelName')) $('modelName').value = candidate.model;
