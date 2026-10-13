@@ -536,8 +536,14 @@ permalink: /
       }
     }
     function initializeSettings() {
-      const provider=safeGet(STORAGE.provider)||'gemini';
-      $('providerPreset').value=Object.prototype.hasOwnProperty.call(PROVIDERS,provider)?provider:'gemini';
+      const savedProvider=safeGet(STORAGE.provider);
+      const provider=savedProvider && Object.prototype.hasOwnProperty.call(PROVIDERS,savedProvider)?savedProvider:'gemini';
+      if (savedProvider && !Object.prototype.hasOwnProperty.call(PROVIDERS,savedProvider)) {
+        // A removed provider preset must not leave a stale endpoint active.
+        safeSet(STORAGE.baseUrl, DEFAULT_BASE_URL);
+        safeSet(STORAGE.model, DEFAULT_MODEL);
+      }
+      $('providerPreset').value=provider;
       $('baseUrl').value=safeGet(STORAGE.baseUrl)||DEFAULT_BASE_URL;
       $('modelName').value=safeGet(STORAGE.model)||DEFAULT_MODEL;
       applyProviderPreset($('providerPreset').value,true);
