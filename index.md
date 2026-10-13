@@ -47,6 +47,12 @@ permalink: /
     .memory-item button { color: #9ca3af; padding: 0 .2rem; }
     .memory-item button:hover { color: #f87171; }
     #settingsModal, #sidebar { overscroll-behavior: contain; }
+    button, a, input, textarea, select { transition: background-color .14s ease, border-color .14s ease, box-shadow .14s ease, color .14s ease; }
+    button:hover:not(:disabled) { filter: brightness(1.06); }
+    input:focus, textarea:focus, select:focus { border-color: #60a5fa; box-shadow: 0 0 0 2px rgb(96 165 250 / 12%); }
+    .toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 5.4rem); z-index: 100; max-width: min(92vw, 30rem); padding: .65rem .9rem; border: 1px solid rgb(96 165 250 / 40%); border-radius: .8rem; background: rgb(15 23 42 / 96%); color: #e5efff; font-size: .8rem; line-height: 1.35; text-align: center; box-shadow: 0 8px 28px rgb(0 0 0 / 25%); opacity: 0; transform: translate(-50%, .5rem); pointer-events: none; transition: opacity .16s ease, transform .16s ease; backdrop-filter: blur(8px); }
+    .toast.toast-visible { opacity: 1; transform: translate(-50%, 0); }
+    .toast.toast-error { border-color: rgb(248 113 113 / 55%); color: #fecaca; }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
   </style>
 </head>
@@ -89,7 +95,7 @@ permalink: /
       </div>
       <label for="providerPreset" class="block text-xs text-gray-400">Провайдер API</label>
       <select id="providerPreset" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm">
-        <option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые открытые модели</option><option value="openrouter">OpenRouter · бесплатные модели</option><option value="nvidia">NVIDIA NIM · бесплатный пробный доступ</option><option value="huggingface">Hugging Face · каталог моделей</option><option value="cerebras">Cerebras · быстрый инференс</option><option value="custom">Свой OpenAI-совместимый API</option>
+        <option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые открытые модели</option><option value="openrouter">OpenRouter · бесплатные модели</option><option value="nvidia">NVIDIA NIM · бесплатные endpoints</option><option value="huggingface">Hugging Face · каталог моделей</option><option value="custom">Свой OpenAI-совместимый API</option>
       </select>
       <label for="modelPreset" class="block text-xs text-gray-400">Быстрый выбор модели</label>
       <select id="modelPreset" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm"></select>
@@ -140,13 +146,14 @@ permalink: /
   <div id="searchStatus" class="hidden px-4 py-2 bg-gray-800/80 border-t border-gray-700 text-xs text-blue-300 flex items-center gap-2 shrink-0" role="status" aria-live="polite">
     <span class="animate-spin" aria-hidden="true">⏳</span><span id="statusText">Выполняется запрос...</span>
   </div>
-  <footer class="p-3 bg-gray-800 border-t border-gray-700 shrink-0 safe-bottom">
+  <footer class="px-3 py-2 bg-gray-800/95 border-t border-gray-700 shrink-0 safe-bottom">
     <div class="flex gap-2 items-end" id="inputArea">
-      <textarea id="userInput" rows="1" maxlength="30000" placeholder="Введите сообщение..." aria-label="Сообщение" class="flex-1 min-w-0 bg-gray-900 border border-gray-700 p-3 rounded-xl text-base outline-none resize-none max-h-32" ></textarea>
-      <button id="sendBtn" type="button" data-action="send" class="bg-blue-600 hover:bg-blue-500 px-4 py-3 rounded-xl font-bold text-sm shrink-0" aria-label="Отправить сообщение">➤</button>
-      <button id="stopBtn" type="button" data-action="stop" class="hidden bg-red-600 hover:bg-red-500 px-4 py-3 rounded-xl font-bold text-sm shrink-0" aria-label="Остановить генерацию">⏹</button>
+      <textarea id="userInput" rows="1" maxlength="30000" placeholder="Введите сообщение..." aria-label="Сообщение" class="flex-1 min-w-0 bg-gray-900 border border-gray-700 px-3 py-2.5 rounded-xl text-base outline-none resize-none max-h-32" ></textarea>
+      <button id="sendBtn" type="button" data-action="send" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Отправить сообщение">➤</button>
+      <button id="stopBtn" type="button" data-action="stop" class="hidden bg-red-600 hover:bg-red-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Остановить генерацию">⏹</button>
     </div>
   </footer>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
   <div id="traceModal" class="hidden fixed inset-0 z-[70] bg-black/75 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="traceTitle">
     <div class="w-full max-w-3xl max-h-[90dvh] overflow-y-auto bg-gray-950 border border-gray-700 rounded-2xl p-4 sm:p-6 space-y-3">
@@ -177,14 +184,13 @@ permalink: /
       'Перед необратимыми или внешне значимыми действиями запрашивай подтверждение. Не заявляй, что что-либо запущено, сохранено или проверено, если этого не подтверждают доступные результаты.'
     ].join(' ');
     const DEFAULT_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/openai';
-    const DEFAULT_MODEL = 'gemini-3.8-flash';
+    const DEFAULT_MODEL = 'gemini-3.6-flash';
     const PROVIDERS = {
-      gemini: { label: 'Google AI Studio · Gemini', docsUrl: 'https://aistudio.google.com/apikey', baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai', models: [['gemini-3.8-flash','Gemini Flash (быстро)'], ['gemini-2.5-flash','Gemini 2.5 Flash']] },
+      gemini: { label: 'Google AI Studio · Gemini', docsUrl: 'https://aistudio.google.com/apikey', baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai', models: [['gemini-3.6-flash','Gemini 3.6 Flash · стабильная'], ['gemini-3.5-flash','Gemini 3.5 Flash'], ['gemini-2.5-flash','Gemini 2.5 Flash']] },
       groq: { label: 'Groq', docsUrl: 'https://console.groq.com/keys', baseUrl: 'https://api.groq.com/openai/v1', models: [['openai/gpt-oss-120b','GPT-OSS 120B'], ['qwen/qwen3.8-27b','Qwen 3.8 27B']] },
       openrouter: { label: 'OpenRouter', docsUrl: 'https://openrouter.ai/settings/keys', baseUrl: 'https://openrouter.ai/api/v1', models: [['openrouter/free','Автовыбор бесплатной модели'], ['deepseek/deepseek-r1:free','DeepSeek R1 · free (если доступна)']] },
-      nvidia: { label: 'NVIDIA NIM', docsUrl: 'https://build.nvidia.com/settings', baseUrl: 'https://integrate.api.nvidia.com/v1', models: [['nvidia/llama-3.1-70b-instruct','Llama 3.1 70B Instruct']] },
-      huggingface: { label: 'Hugging Face', docsUrl: 'https://huggingface.co/settings/tokens', baseUrl: 'https://router.huggingface.co/v1', models: [['Qwen/Qwen2.5-Coder-32B-Instruct','Qwen2.5 Coder 32B'], ['Qwen/Qwen2.5-Coder-7B-Instruct','Qwen2.5 Coder 7B']] },
-      cerebras: { label: 'Cerebras', docsUrl: 'https://cloud.cerebras.ai/platform', baseUrl: 'https://api.cerebras.ai/v1', models: [['gpt-oss-120b','GPT-OSS 120B'], ['qwen-3.8-27b','Qwen 3.8 27B']] },
+      nvidia: { label: 'NVIDIA NIM', docsUrl: 'https://build.nvidia.com/settings', baseUrl: 'https://integrate.api.nvidia.com/v1', models: [['z-ai/glm-5.3','GLM-5.3 · reasoning/coding'], ['openai/gpt-oss-20b','GPT-OSS 20B · reasoning']] },
+      huggingface: { label: 'Hugging Face', docsUrl: 'https://huggingface.co/settings/tokens', baseUrl: 'https://router.huggingface.co/v1', models: [['openai/gpt-oss-120b:fastest','GPT-OSS 120B · fastest provider'], ['deepseek-ai/DeepSeek-V3-0324:fastest','DeepSeek V3 · fastest provider']] },
       custom: { label: 'Свой API', baseUrl: '', docsUrl: '', models: [['custom','Ввести имя модели вручную']] }
     };
     const MAX_TOOL_ROUNDS = 4;
@@ -218,13 +224,27 @@ permalink: /
     function safeGet(key) {
       try { return localStorage.getItem(key); } catch (_) { return null; }
     }
+    let toastTimer = null;
+    function showToast(message, kind = 'success') {
+      const node = $('toast');
+      if (!node) return;
+      node.textContent = String(message || '');
+      node.classList.toggle('toast-error', kind === 'error');
+      node.classList.remove('hidden', 'toast-visible');
+      if (toastTimer) clearTimeout(toastTimer);
+      requestAnimationFrame(() => node.classList.add('toast-visible'));
+      toastTimer = setTimeout(() => {
+        node.classList.remove('toast-visible');
+        setTimeout(() => node.classList.add('hidden'), 180);
+      }, 2400);
+    }
     function safeSet(key, value) {
       try { localStorage.setItem(key, value); return true; }
       catch (error) {
         console.error('Не удалось сохранить localStorage:', error);
         if (!storageWarningShown) {
           storageWarningShown = true;
-          alert('Браузер не смог сохранить данные. Экспортируйте историю и освободите место в хранилище.');
+          showToast('Не удалось сохранить данные. Экспортируйте историю и освободите место.', 'error');
         }
         return false;
       }
@@ -581,7 +601,7 @@ permalink: /
       applyProviderPreset('gemini', true);
       populateModelPresets('gemini', DEFAULT_MODEL);
       $('systemPromptInput').value = DEFAULT_SYSTEM;
-      alert('Адрес API, модель и системный промпт восстановлены. Ваши API-ключи не изменены. Нажмите «Сохранить».');
+      showToast('Параметры Gemini восстановлены. Нажмите «Сохранить», чтобы применить.');
     }
 
     function saveSettings() {
@@ -591,13 +611,13 @@ permalink: /
       const tavilyKey = $('tavilyKey').value.trim();
       let parsed;
       try { parsed = new URL(baseUrl); }
-      catch (_) { alert('Укажите корректный Base URL, например https://api.example.com/v1'); return; }
-      if (!['https:', 'http:'].includes(parsed.protocol)) { alert('Base URL должен начинаться с http:// или https://.'); return; }
+      catch (_) { showToast('Укажите корректный Base URL, например https://api.example.com/v1', 'error'); return; }
+      if (!['https:', 'http:'].includes(parsed.protocol)) { showToast('Base URL должен начинаться с http:// или https://.', 'error'); return; }
       const localHost = ['localhost', '127.0.0.1', '[::1]'].includes(parsed.hostname);
       if (parsed.protocol !== 'https:' && !localHost) {
-        alert('Для GitHub Pages нужен HTTPS Base URL. HTTP доступен только для localhost.'); return;
+        showToast('Для GitHub Pages нужен HTTPS Base URL. HTTP доступен только для localhost.', 'error'); return;
       }
-      if (!model) { alert('Укажите имя модели.'); return; }
+      if (!model) { showToast('Укажите имя модели.', 'error'); return; }
       if (/\/chat\/completions$/i.test(baseUrl)) baseUrl = baseUrl.replace(/\/chat\/completions$/i, '');
       const provider = currentProvider();
       const saved = [
@@ -610,8 +630,7 @@ permalink: /
         safeSet(STORAGE.systemPrompt, $('systemPromptInput').value.trim() || DEFAULT_SYSTEM)
       ].every(Boolean);
       if (!saved) return;
-      toggleSettings(false);
-      alert('Настройки сохранены.');
+      showToast('Настройки сохранены');
     }
 
     function buildApiUrl(baseUrl) {
@@ -657,7 +676,8 @@ permalink: /
     function setBusy(busy) {
       $('sendBtn').classList.toggle('hidden', busy);
       $('stopBtn').classList.toggle('hidden', !busy);
-      $('userInput').disabled = busy;
+      // Keep the composer fixed and editable while a request is running; queued text stays in the field.
+      $('userInput').disabled = false;
       $('sendBtn').disabled = busy;
     }
     function showStatus(message) {
@@ -744,15 +764,74 @@ permalink: /
         return (await response.text()).slice(0, 5000);
       } catch (error) { console.warn('Не удалось загрузить навык из репозитория:', error); return ''; }
     }
+    function getApiCandidates(requestedModel) {
+      const selectedProvider = safeGet(STORAGE.provider) || 'gemini';
+      const order = [selectedProvider, ...Object.keys(PROVIDERS).filter((provider) => provider !== selectedProvider && provider !== 'custom')];
+      const candidates = [], seen = new Set();
+      for (const provider of order) {
+        const config = PROVIDERS[provider];
+        if (!config) continue;
+        const key = safeGet(providerKeyStorage(provider)) || (provider === 'gemini' ? safeGet(STORAGE.apiKey) : '');
+        if (!key) continue;
+        const baseUrl = provider === selectedProvider
+          ? (safeGet(STORAGE.baseUrl) || config.baseUrl || DEFAULT_BASE_URL).replace(/\/+$/, '')
+          : (config.baseUrl || '').replace(/\/+$/, '');
+        if (!baseUrl) continue;
+        const primary = provider === selectedProvider ? (safeGet(STORAGE.model) || requestedModel) : config.models[0]?.[0];
+        const models = provider === selectedProvider
+          ? [primary, ...config.models.map(([model]) => model)]
+          : config.models.map(([model]) => model);
+        for (const model of models) {
+          if (!model || model === '__custom__') continue;
+          const keyId = provider + '|' + baseUrl + '|' + model;
+          if (seen.has(keyId)) continue;
+          seen.add(keyId);
+          candidates.push({ provider, baseUrl, model, key });
+        }
+      }
+      return candidates;
+    }
+    async function requestChatCompletion(body, signal, stageName = 'Ответ модели') {
+      throwIfAborted(signal);
+      const preferredProvider = safeGet(STORAGE.provider) || 'gemini';
+      const preferredModel = safeGet(STORAGE.model) || body.model || DEFAULT_MODEL;
+      const candidates = getApiCandidates(preferredModel);
+      if (!candidates.length) throw new Error('Не найден API-ключ для выбранного провайдера. Откройте настройки и сохраните ключ.');
+      let lastError = null;
+      for (let index = 0; index < candidates.length; index++) {
+        const candidate = candidates[index];
+        throwIfAborted(signal);
+        try {
+          const data = await fetchJson(buildApiUrl(candidate.baseUrl), {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${candidate.key}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...body, model: candidate.model })
+          }, signal);
+          if (candidate.provider !== preferredProvider || candidate.model !== preferredModel) {
+            safeSet(STORAGE.provider, candidate.provider);
+            safeSet(STORAGE.baseUrl, candidate.baseUrl);
+            safeSet(STORAGE.model, candidate.model);
+            safeSet(STORAGE.apiKey, candidate.key);
+            if ($('providerPreset')) $('providerPreset').value = candidate.provider;
+            if ($('baseUrl')) $('baseUrl').value = candidate.baseUrl;
+            if ($('modelName')) $('modelName').value = candidate.model;
+            if ($('apiKey')) $('apiKey').value = candidate.key;
+            if ($('modelPreset')) populateModelPresets(candidate.provider, candidate.model);
+            showToast(`Переключился на ${PROVIDERS[candidate.provider]?.label || candidate.provider}: ${candidate.model}`);
+          }
+          return data;
+        } catch (error) {
+          if (error?.name === 'AbortError') throw error;
+          lastError = error;
+          if (index < candidates.length - 1) showStatus(`Модель недоступна; пробую резерв ${index + 1}/${candidates.length - 1}…`);
+        }
+      }
+      throw new Error('Не удалось выполнить запрос ни через одну сохранённую модель. Исходный запрос сохранён в чате. Последняя ошибка: ' + (lastError?.message || 'неизвестная ошибка'));
+    }
     async function requestTextStage(systemPrompt, messages, signal, stageName) {
       throwIfAborted(signal); showStatus(stageName);
-      const baseUrl = (safeGet(STORAGE.baseUrl) || DEFAULT_BASE_URL).replace(/\/+$/, '');
-      const apiKey = getConfiguredApiKey();
       const model = safeGet(STORAGE.model) || DEFAULT_MODEL;
-      const data = await fetchJson(buildApiUrl(baseUrl), {
-        method: 'POST', headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model, messages: [{ role: 'system', content: systemPrompt }, ...messages], stream: false })
-      }, signal);
+      const data = await requestChatCompletion({ model, messages: [{ role: 'system', content: systemPrompt }, ...messages], stream: false }, signal, stageName);
       const content = data?.choices?.[0]?.message?.content;
       if (typeof content !== 'string' || !content.trim()) throw new Error('Этап «' + stageName + '» не вернул текстовый результат.');
       return content;
@@ -830,11 +909,7 @@ permalink: /
         const body = { model, messages: apiMessages, stream: false };
         if (tools) { body.tools = tools; body.tool_choice = 'auto'; }
         showStatus(round === 0 ? '🤖 Ожидание ответа модели…' : '🧠 Модель обрабатывает результаты поиска…');
-        const data = await fetchJson(buildApiUrl(baseUrl), {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        }, signal);
+        const data = await requestChatCompletion(body, signal, round === 0 ? 'Основной ответ' : 'Продолжение после инструмента');
         const message = data?.choices?.[0]?.message;
         if (!message) throw new Error('API не вернул сообщение модели. Проверьте выбранную модель и совместимость endpoint.');
         const toolCalls = (Array.isArray(message.tool_calls) ? message.tool_calls : []).map((call, index) => ({
@@ -1049,8 +1124,8 @@ permalink: /
       const code = block?.querySelector('code')?.textContent ?? '';
       const action = button.dataset.action;
       if (action === 'copy-code') {
-        try { await copyText(code); const old = button.textContent; button.textContent = 'Скопировано'; setTimeout(() => { button.textContent = old; }, 1500); }
-        catch (error) { alert(error.message); }
+        try { await copyText(code); showToast('Код скопирован'); const old = button.textContent; button.textContent = 'Скопировано'; setTimeout(() => { button.textContent = old; }, 1500); }
+        catch (error) { showToast(error.message, 'error'); }
       } else if (action === 'download-code') {
         const isPython = block?.querySelector('code')?.classList.contains('language-python');
         const answer = prompt('Имя файла для скачивания:', isPython ? 'snippet.py' : 'snippet.txt');
@@ -1177,10 +1252,10 @@ permalink: /
             if (!activeTrace) break;
             safeSet('ai_research_trace_'+activeTrace.id,JSON.stringify(activeTrace));
             const link=location.href.split('#')[0]+'#trace='+encodeURIComponent(activeTrace.id);
-            await copyText(link); alert('Ссылка скопирована. Она открывает журнал в этом же браузере, где сохранены данные.'); break;
+            await copyText(link); showToast('Локальная ссылка скопирована — работает в этом браузере'); break;
           }
         }
-      } catch (error) { console.error('Ошибка действия интерфейса:', error); alert(error.message || 'Не удалось выполнить действие.'); }
+      } catch (error) { console.error('Ошибка действия интерфейса:', error); showToast(error.message || 'Не удалось выполнить действие.', 'error'); }
     });
     $('providerPreset').addEventListener('change', () => applyProviderPreset($('providerPreset').value));
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
