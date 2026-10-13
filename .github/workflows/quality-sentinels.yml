@@ -119,7 +119,7 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Test the actual published site in Chromium
         env:
-          LIVE_SITE_URL: https://dorpnay.github.io/skills-github-pages
+          LIVE_SITE_URL: https://dorpnay.github.io/skills-github-pages/
         run: npx playwright test
       - name: Upload live-site diagnostics on failure
         if: failure()
