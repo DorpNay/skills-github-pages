@@ -147,6 +147,15 @@ permalink: /
     </div>
   </footer>
 
+  <div id="traceModal" class="hidden fixed inset-0 z-[70] bg-black/75 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="traceTitle">
+    <div class="w-full max-w-3xl max-h-[90dvh] overflow-y-auto bg-gray-950 border border-gray-700 rounded-2xl p-4 sm:p-6 space-y-3">
+      <div class="flex items-center justify-between gap-3"><h2 id="traceTitle" class="font-bold text-base">Журнал исследования</h2><button type="button" data-action="close-trace" class="text-gray-400 hover:text-white px-2 py-1" aria-label="Закрыть журнал">✕</button></div>
+      <p class="text-xs text-gray-400">План, черновик исследователя и критика перед итоговым ответом. Это журнал выполненных этапов, а не скрытая внутренняя цепочка мыслей модели.</p>
+      <div id="traceContent" class="space-y-4 text-sm"></div>
+      <div class="flex flex-wrap gap-2"><button type="button" data-action="download-trace" class="bg-blue-700 hover:bg-blue-600 rounded-lg px-3 py-2 text-sm">Скачать журнал .md</button><button type="button" data-action="copy-trace-link" class="bg-gray-700 hover:bg-gray-600 rounded-lg px-3 py-2 text-sm">Копировать локальную ссылку</button><button type="button" data-action="close-trace" class="bg-gray-800 hover:bg-gray-700 rounded-lg px-3 py-2 text-sm">Закрыть</button></div>
+      <p class="text-[11px] text-gray-500">Локальная ссылка работает в этом же браузере, где сохранена история. Для передачи на другое устройство используйте файл журнала.</p>
+    </div>
+  </div>
   <script>
   (() => {
     'use strict';
@@ -405,6 +414,12 @@ permalink: /
         bubble.appendChild(content);
       }
       row.appendChild(bubble);
+      if (!isUser && message.researchTrace) {
+        const actions = document.createElement('div'); actions.className = 'flex flex-wrap gap-2 mt-1';
+        const button = document.createElement('button'); button.type = 'button'; button.dataset.action = 'open-trace'; button.dataset.traceId = message.researchTrace.id || '';
+        button.className = 'text-xs text-blue-300 hover:text-blue-200 underline underline-offset-2 px-1 py-1'; button.textContent = 'Открыть журнал исследования';
+        actions.appendChild(button); row.className += ' flex-col items-start'; row.appendChild(actions);
+      }
       if (message.error) {
         const retryLine = document.createElement('div');
         retryLine.className = 'mt-1 text-xs text-red-400';
@@ -734,7 +749,10 @@ permalink: /
       if (!draft) throw new Error('Исследовательский этап не подготовил черновик.');
       const critique = await requestTextStage('Ты независимый критик ответа. Найди неподтверждённые утверждения, пропуски, противоречия и риски. Не переписывай ответ целиком. Если источники не предоставлены, укажи, что нельзя проверить.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик:\n' + draft }], signal, '🧪 Исследование 3/4: критик…');
       const finalText = await requestTextStage(systemPrompt + '\nРоль: синтезатор. Дай окончательный ответ на исходный запрос, используя черновик и критику. Исправь выявленные ошибки, отдели факты от предположений, не заявляй о непроверенных источниках.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик исследователя:\n' + draft + '\n\nКритика:\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
-      chat.messages.push({ role: 'assistant', content: finalText });
+      const traceId = globalThis.crypto?.randomUUID?.() || ('trace-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+      const researchTrace = { id: traceId, createdAt: new Date().toISOString(), provider: PROVIDERS[currentProvider()]?.label || currentProvider(), model: safeGet(STORAGE.model) || DEFAULT_MODEL, plan, draft, critique, finalText };
+      safeSet('ai_research_trace_' + traceId, JSON.stringify(researchTrace));
+      chat.messages.push({ role: 'assistant', content: finalText, researchTrace });
       updateState([...chats]);
     }
     async function runAssistant(chat, signal, useSearch, useMultiAgent, mode = 'fast', skipCache = false, promptOverride = '') {
@@ -986,6 +1004,25 @@ permalink: /
       const ok = document.execCommand('copy'); area.remove();
       if (!ok) throw new Error('Браузер не разрешил копирование.');
     }
+    let activeTrace = null;
+    function showTrace(trace) {
+      if (!trace || typeof trace !== 'object') throw new Error('Журнал исследования не найден.');
+      activeTrace = trace; const host = $('traceContent'); host.replaceChildren();
+      [['Планировщик',trace.plan],['Черновик исследователя',trace.draft],['Критика',trace.critique],['Итоговый ответ',trace.finalText]].forEach(([title,value]) => {
+        const section=document.createElement('section'); section.className='border border-gray-800 rounded-xl p-3';
+        const heading=document.createElement('h3'); heading.className='font-semibold text-blue-200 mb-2'; heading.textContent=title;
+        const body=document.createElement('pre'); body.className='whitespace-pre-wrap break-words text-gray-200 text-xs leading-relaxed'; body.textContent=typeof value==='string'&&value?value:'Нет данных для этого этапа.';
+        section.append(heading,body); host.appendChild(section);
+      });
+      $('traceModal').classList.remove('hidden');
+    }
+    function closeTrace() { $('traceModal').classList.add('hidden'); }
+    function downloadTrace() {
+      if (!activeTrace) return;
+      const body=['# Журнал исследования','', '- Дата: '+(activeTrace.createdAt||'не указана'), '- Провайдер: '+(activeTrace.provider||'не указан'), '- Модель: '+(activeTrace.model||'не указана'), '', '## Планировщик',activeTrace.plan||'', '', '## Черновик исследователя',activeTrace.draft||'', '', '## Критика',activeTrace.critique||'', '', '## Итоговый ответ',activeTrace.finalText||''].join('\n');
+      const url=URL.createObjectURL(new Blob([body],{type:'text/markdown;charset=utf-8'})), a=document.createElement('a');
+      a.href=url; a.download='research-trace-'+(activeTrace.createdAt||new Date().toISOString()).slice(0,10)+'.md'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+    }
     async function handleCodeAction(button) {
       const block = button.closest('.code-block');
       const code = block?.querySelector('code')?.textContent ?? '';
@@ -1080,10 +1117,10 @@ permalink: /
       if (!control) return;
       const action = control.dataset.action;
       if (control.closest('#chatBox')) {
-        const isCodeAction = ['copy-code', 'download-code', 'run-python'].includes(action) &&
-          control.classList.contains('code-action') && control.closest('.code-block');
+        const isCodeAction = ['copy-code','download-code','run-python'].includes(action) && control.classList.contains('code-action') && control.closest('.code-block');
         const isRetryAction = action === 'retry' && control.classList.contains('retry-action');
-        if (!isCodeAction && !isRetryAction) return;
+        const isTraceAction = ['open-trace','copy-trace-link','download-trace','close-trace'].includes(action);
+        if (!isCodeAction && !isRetryAction && !isTraceAction) return;
       }
       try {
         switch (action) {
@@ -1112,6 +1149,15 @@ permalink: /
           case 'stop': stopGeneration(); break;
           case 'retry': await retryLastMessage(); break;
           case 'copy-code': case 'download-code': case 'run-python': await handleCodeAction(control); break;
+          case 'open-trace': { const raw=safeGet('ai_research_trace_'+control.dataset.traceId); if(!raw) throw new Error('Журнал не найден: возможно, локальные данные очищены.'); showTrace(JSON.parse(raw)); break; }
+          case 'close-trace': closeTrace(); break;
+          case 'download-trace': downloadTrace(); break;
+          case 'copy-trace-link': {
+            if (!activeTrace) break;
+            safeSet('ai_research_trace_'+activeTrace.id,JSON.stringify(activeTrace));
+            const link=location.href.split('#')[0]+'#trace='+encodeURIComponent(activeTrace.id);
+            await navigator.clipboard.writeText(link); alert('Ссылка скопирована. Она открывает журнал в этом же браузере, где сохранены данные.'); break;
+          }
         }
       } catch (error) { console.error('Ошибка действия интерфейса:', error); alert(error.message || 'Не удалось выполнить действие.'); }
     });
@@ -1146,6 +1192,8 @@ permalink: /
 
     async function init() {
       initializeSettings();
+      const match=location.hash.match(/^#trace=([^&]+)/);
+      if(match){try{const id=decodeURIComponent(match[1]),raw=safeGet('ai_research_trace_'+id);if(raw)showTrace(JSON.parse(raw));}catch(error){console.warn('Не удалось открыть локальный журнал:',error);}}
       await initDB();
       await renderMemory();
       updateState(null, currentChatId);
