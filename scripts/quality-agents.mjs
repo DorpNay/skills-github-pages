@@ -51,7 +51,7 @@ const suites = {
       includes('safeSet(providerKeyStorage(provider), apiKey)', 'Provider API keys must be stored under provider-specific keys.');
       includes('content: finalText, researchTrace', 'Multi-agent output must preserve the research journal.');
       includes('Открыть журнал исследования', 'Assistant research results must expose a trace action.');
-      includes('body.textContent = typeof value', 'Research trace must render as text rather than unsafe HTML.');
+      includes('body.textContent=typeof value', 'Research trace must render as text rather than unsafe HTML.');
       includes('function downloadTrace()', 'Research journal must be downloadable.');
       includes("location.hash.match(/^#trace=([^&]+)/)", 'Local trace deep links must be supported.');
       includes('Локальная ссылка работает в этом же браузере', 'Trace links must disclose their local-only scope.');
