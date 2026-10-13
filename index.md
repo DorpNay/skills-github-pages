@@ -91,7 +91,7 @@ permalink: /
         <p><strong>Быстрый старт:</strong> по умолчанию выбран Gemini. Для альтернатив выберите провайдера и модель ниже; для каждого сервиса нужен свой API-ключ.</p>
         <p><a class="text-blue-300 underline" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Получить ключ Gemini API в Google AI Studio</a>. Создайте ключ и вставьте его в поле API Key ниже.</p>
         <p>Ключ хранится только в localStorage этого браузера. Не публикуйте его, не вставляйте в код и не используйте на чужом устройстве. Очистка данных сайта удалит сохранённые настройки и локальную историю.</p>
-        <p>Веб-поиск через Tavily необязателен и требует отдельного ключа. Без него оставьте переключатель «Веб-поиск» выключенным.</p>
+        <p>Веб-поиск объединяет Tavily (если сохранён ключ) и открытые API без отдельного ключа: Wikipedia, Stack Exchange, GitHub, Hacker News и arXiv. Можно также попросить агента прочитать конкретную публичную HTTPS-страницу; доступ зависит от CORS сайта.</p>
       </div>
       <label for="providerPreset" class="block text-xs text-gray-400">Провайдер API</label>
       <select id="providerPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm">
@@ -136,7 +136,7 @@ permalink: /
       </div>
     </div>
     <div class="flex justify-around text-xs gap-3">
-      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Внешний поиск Tavily; нужен API-ключ. Независим от режима и исследования."><input type="checkbox" id="toggleSearch" class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span>🌐 Веб-поиск</span></label>
+      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Tavily при наличии ключа плюс открытые источники знаний; независимо от режима и исследования."><input type="checkbox" id="toggleSearch" class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span>🌐 Интернет и источники</span></label>
       <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Отдельный конвейер из четырёх фаз/вызовов выбранной модели; не включает режим «Глубоко»."><input type="checkbox" id="toggleMultiAgent" class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span>🤖 Мультиагентное исследование</span></label>
     </div>
     <p id="modeHint" class="text-[10px] text-gray-500 leading-relaxed">Быстро: минимум дополнительных этапов. Исследование включается отдельно.</p>
@@ -751,6 +751,117 @@ permalink: /
         return `[${index + 1}] ${title}\nURL: ${url}\n${content}`;
       }).join('\n\n');
     }
+    function htmlToPlainText(html) {
+      const doc = new DOMParser().parseFromString(String(html || ''), 'text/html');
+      doc.querySelectorAll('script,style,noscript,nav,footer,header,form,svg,canvas,iframe,button,aside,[aria-hidden="true"]').forEach((node) => node.remove());
+      return (doc.body ? doc.body.textContent : '').replace(/\\s+/g, ' ').trim();
+    }
+    function validatePublicHttpsUrl(rawUrl) {
+      let url;
+      try { url = new URL(rawUrl); } catch (_) { throw new Error('Нужен корректный полный URL.'); }
+      if (url.protocol !== 'https:' || url.username || url.password) throw new Error('Разрешены только публичные HTTPS-ссылки без логина и пароля.');
+      const host = url.hostname.toLowerCase().replace(/^\\[|\\]$/g, '');
+      if (host === 'localhost' || host.endsWith('.localhost') || host.endsWith('.local') ||
+          /^(127\\.|10\\.|192\\.168\\.|169\\.254\\.|0\\.)/.test(host) ||
+          /^172\\.(1[6-9]|2\\d|3[01])\\./.test(host) || host === '::1' || host.startsWith('fc') || host.startsWith('fd') || host.startsWith('fe80:') ||
+          /^\\d{1,3}(\\.\\d{1,3}){3}$/.test(host)) {
+        throw new Error('Локальные адреса и IP-адреса напрямую читать нельзя.');
+      }
+      return url;
+    }
+    async function fetchPublicText(url, signal) {
+      let response;
+      try {
+        response = await fetch(url, { method: 'GET', mode: 'cors', credentials: 'omit', redirect: 'follow', headers: { 'Accept': 'application/json, application/atom+xml, application/xml, text/html, text/plain;q=0.9' }, signal });
+      } catch (error) {
+        if (error.name === 'AbortError') throw error;
+        throw new Error('Источник недоступен из браузера: сеть или CORS. Попробуй другой открытый источник либо Tavily, если настроен.');
+      }
+      if (!response.ok) throw new Error('Источник вернул HTTP ' + response.status + '.');
+      if (response.url) validatePublicHttpsUrl(response.url);
+      const declaredLength = Number(response.headers.get('content-length') || 0);
+      if (declaredLength > 1200000) throw new Error('Страница слишком большая для мобильного чтения (лимит 1,2 МБ).');
+      const text = (await response.text()).slice(0, 1200000);
+      if (!text) throw new Error('Источник вернул пустой ответ.');
+      return { text, contentType: response.headers.get('content-type') || '', url: response.url || url };
+    }
+    async function performPublicKnowledgeSearch(source, query, signal, mode = 'fast') {
+      const q = String(query || '').trim().slice(0, 300);
+      if (!q) return 'Пустой поисковый запрос.';
+      const limit = mode === 'deep' ? 5 : 3;
+      showStatus('📚 Открытый источник: ' + source + ' · ' + q.slice(0, 70));
+      let endpoint;
+      if (source === 'wikipedia') {
+        endpoint = 'https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srlimit=' + limit + '&srsearch=' + encodeURIComponent(q);
+        if (/[а-яё]/i.test(q)) endpoint = endpoint.replace('https://en.wikipedia.org/', 'https://ru.wikipedia.org/');
+      } else if (source === 'stackexchange') {
+        endpoint = 'https://api.stackexchange.com/2.3/search/advanced?site=stackoverflow&order=desc&sort=relevance&pagesize=' + limit + '&filter=withbody&q=' + encodeURIComponent(q);
+      } else if (source === 'github') {
+        endpoint = 'https://api.github.com/search/repositories?sort=stars&order=desc&per_page=' + limit + '&q=' + encodeURIComponent(q + ' in:name,description,readme');
+      } else if (source === 'hackernews') {
+        endpoint = 'https://hn.algolia.com/api/v1/search?tags=story&hitsPerPage=' + limit + '&query=' + encodeURIComponent(q);
+      } else if (source === 'arxiv') {
+        endpoint = 'https://export.arxiv.org/api/query?start=0&max_results=' + limit + '&search_query=' + encodeURIComponent('all:' + q);
+      } else if (source === 'wayback') {
+        let target;
+        try { target = validatePublicHttpsUrl(q); } catch (_) { return 'Для Wayback нужно передать полный публичный HTTPS URL в поле query.'; }
+        endpoint = 'https://archive.org/wayback/available?url=' + encodeURIComponent(target.href);
+      } else return 'Неизвестный источник.';
+      const response = await fetchPublicText(endpoint, signal);
+      const text = response.text;
+      const lines = [];
+      if (source === 'wikipedia') {
+        const data = JSON.parse(text);
+        for (const [index, item] of (data.query?.search || []).entries()) {
+          lines.push('[' + (index + 1) + '] ' + item.title + '\nURL: https://' + (/[а-яё]/i.test(q) ? 'ru' : 'en') + '.wikipedia.org/wiki/' + encodeURIComponent(String(item.title || '').replace(/ /g, '_')) + '\n' + htmlToPlainText(item.snippet || '').slice(0, 900));
+        }
+      } else if (source === 'stackexchange') {
+        const data = JSON.parse(text);
+        for (const [index, item] of (data.items || []).entries()) {
+          lines.push('[' + (index + 1) + '] ' + item.title + '\nURL: ' + item.link + '\nScore: ' + item.score + ' · Answers: ' + item.answer_count + '\n' + htmlToPlainText(item.body || '').slice(0, 900));
+        }
+      } else if (source === 'github') {
+        const data = JSON.parse(text);
+        for (const [index, item] of (data.items || []).entries()) {
+          lines.push('[' + (index + 1) + '] ' + item.full_name + '\nURL: ' + item.html_url + '\nStars: ' + item.stargazers_count + ' · Updated: ' + item.updated_at + '\n' + String(item.description || 'Без описания').slice(0, 700));
+        }
+      } else if (source === 'hackernews') {
+        const data = JSON.parse(text);
+        for (const [index, item] of (data.hits || []).entries()) {
+          lines.push('[' + (index + 1) + '] ' + (item.title || item.story_title || 'Hacker News') + '\nURL: ' + (item.url || item.story_url || ('https://news.ycombinator.com/item?id=' + item.objectID)) + '\nPoints: ' + (item.points || 0) + ' · Comments: ' + (item.num_comments || 0) + '\n' + String(item.story_text || '').slice(0, 500));
+        }
+      } else if (source === 'arxiv') {
+        const doc = new DOMParser().parseFromString(text, 'application/xml');
+        if (doc.querySelector('parsererror')) throw new Error('arXiv вернул некорректный XML.');
+        for (const [index, item] of [...doc.getElementsByTagName('entry')].entries()) {
+          const get = (tag) => item.getElementsByTagName(tag)[0]?.textContent?.trim() || '';
+          lines.push('[' + (index + 1) + '] ' + get('title').replace(/\\s+/g, ' ') + '\nURL: ' + get('id') + '\nAuthors: ' + [...item.getElementsByTagName('author')].slice(0, 4).map((a) => a.getElementsByTagName('name')[0]?.textContent || '').join(', ') + '\nAbstract: ' + get('summary').replace(/\\s+/g, ' ').slice(0, 1000));
+        }
+      } else if (source === 'wayback') {
+        const data = JSON.parse(text);
+        const snapshot = data.archived_snapshots?.closest;
+        if (snapshot?.url) lines.push('Архивная копия найдена.\nURL: ' + snapshot.url + '\nДата снимка: ' + (snapshot.timestamp || 'не указана') + '\nОригинал: ' + q);
+        else lines.push('Доступная архивная копия не найдена для ' + q);
+      }
+      return lines.length ? 'Источник: ' + source + '\n' + lines.join('\n\n') : 'Источник ' + source + ' не вернул результатов. Попробуй уточнить запрос или другой источник.';
+    }
+    async function readPublicWebpage(rawUrl, signal, mode = 'fast') {
+      const url = validatePublicHttpsUrl(rawUrl);
+      showStatus('📄 Читаю страницу: ' + url.hostname);
+      const response = await fetchPublicText(url.href, signal);
+      let content;
+      if (/json/i.test(response.contentType) || /^[\\s]*[\\[{]/.test(response.text)) {
+        try { content = JSON.stringify(JSON.parse(response.text), null, 2); } catch (_) { content = response.text; }
+      } else if (/html|xhtml/i.test(response.contentType) || /<html[\\s>]/i.test(response.text.slice(0, 5000))) {
+        content = htmlToPlainText(response.text);
+      } else {
+        content = response.text.replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim();
+      }
+      const cap = mode === 'deep' ? 9000 : 3500;
+      if (!content) throw new Error('Не удалось извлечь текст страницы.');
+      return 'URL: ' + response.url + '\nИзвлечённый текст (обрезан до ' + cap + ' символов):\n' + content.slice(0, cap) +
+        (content.length > cap ? '\n[Текст сокращён; уточни, что искать.]' : '');
+    }
     async function loadTaskSkill(userText, mode, useMultiAgent, signal) {
       if (mode !== 'deep' && !useMultiAgent) return '';
       const text = userText.toLocaleLowerCase();
@@ -892,14 +1003,26 @@ permalink: /
         }
       }
 
-      const tools = useSearch ? [{
-        type: 'function',
-        function: {
+      const tools = useSearch ? [
+        { type: 'function', function: {
           name: 'web_search',
-          description: 'Найти актуальную информацию в интернете по запросу.',
+          description: 'Поиск в интернете через Tavily, если ключ настроен. Используй для общего веб-поиска и свежих страниц.',
           parameters: { type: 'object', properties: { query: { type: 'string', description: 'Запрос для поиска' } }, required: ['query'], additionalProperties: false }
-        }
-      }] : undefined;
+        }},
+        { type: 'function', function: {
+          name: 'public_knowledge_search',
+          description: 'Бесплатный поиск без отдельного API-ключа. wikipedia — справки; stackexchange — вопросы/ответы по программированию; github — публичные репозитории; hackernews — IT-новости; arxiv — научные публикации; wayback — архивная копия известной страницы (передай полный URL в query). Можно использовать несколько источников для независимой проверки.',
+          parameters: { type: 'object', properties: {
+            source: { type: 'string', enum: ['wikipedia', 'stackexchange', 'github', 'hackernews', 'arxiv', 'wayback'] },
+            query: { type: 'string', description: 'Поисковый запрос; для wayback — полный HTTPS URL страницы' }
+          }, required: ['source', 'query'], additionalProperties: false }
+        }},
+        { type: 'function', function: {
+          name: 'read_webpage',
+          description: 'Прочитать публичную HTTPS-страницу по известному URL и извлечь основной текст. Чтение может не сработать из-за CORS, авторизации, paywall или защиты сайта.',
+          parameters: { type: 'object', properties: { url: { type: 'string', description: 'Полный публичный HTTPS URL страницы' } }, required: ['url'], additionalProperties: false }
+        }}
+      ] : undefined;
 
       const maxToolRounds = mode === 'deep' ? MAX_TOOL_ROUNDS : 1;
       for (let round = 0; round <= maxToolRounds; round++) {
@@ -954,13 +1077,21 @@ permalink: /
           }
           if (mode === 'fast' && index > 0) {
             result = 'Вызов пропущен: быстрый режим выполняет не более одного инструмента за раунд.';
-          } else if (name !== 'web_search') {
-            result = `Инструмент ${String(name || 'без имени')} не поддерживается.`;
+          } else if (!['web_search', 'public_knowledge_search', 'read_webpage'].includes(name)) {
+            result = 'Инструмент ' + String(name || 'без имени') + ' не поддерживается.';
           } else {
             try {
               const args = JSON.parse(toolCall.function?.arguments || '{}');
-              if (typeof args.query !== 'string' || !args.query.trim()) result = 'Ошибка инструмента: требуется непустое поле query.';
-              else result = await performTavilySearch(args.query.trim().slice(0, 500), signal, mode);
+              if (name === 'web_search') {
+                if (typeof args.query !== 'string' || !args.query.trim()) result = 'Ошибка инструмента: требуется непустое поле query.';
+                else result = await performTavilySearch(args.query.trim().slice(0, 500), signal, mode);
+              } else if (name === 'public_knowledge_search') {
+                if (typeof args.query !== 'string' || !args.query.trim() || typeof args.source !== 'string') result = 'Ошибка инструмента: нужны source и непустое поле query.';
+                else result = await performPublicKnowledgeSearch(args.source, args.query.trim().slice(0, 300), signal, mode);
+              } else {
+                if (typeof args.url !== 'string' || !args.url.trim()) result = 'Ошибка инструмента: требуется полный HTTPS URL.';
+                else result = await readPublicWebpage(args.url.trim().slice(0, 1500), signal, mode);
+              }
             } catch (error) {
               if (error.name === 'AbortError') {
                 chat.messages.push({ role: 'tool', tool_call_id: id, content: 'Вызов инструмента отменён пользователем.' });
@@ -970,7 +1101,7 @@ permalink: /
                 updateState([...chats]);
                 throw abortError();
               }
-              result = `Не удалось обработать вызов веб-поиска: ${error.message}`;
+              result = 'Не удалось выполнить инструмент ' + name + ': ' + error.message;
             }
           }
           chat.messages.push({ role: 'tool', tool_call_id: id, content: result });
