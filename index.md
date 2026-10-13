@@ -87,6 +87,13 @@ permalink: /
         <p>Ключ хранится только в localStorage этого браузера. Не публикуйте его, не вставляйте в код и не используйте на чужом устройстве. Очистка данных сайта удалит сохранённые настройки и локальную историю.</p>
         <p>Веб-поиск через Tavily необязателен и требует отдельного ключа. Без него оставьте переключатель «Веб-поиск» выключенным.</p>
       </div>
+      <label for="providerPreset" class="block text-xs text-gray-400">Провайдер API</label>
+      <select id="providerPreset" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm">
+        <option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые открытые модели</option><option value="openrouter">OpenRouter · бесплатные модели</option><option value="github">GitHub Models · тестовый доступ</option><option value="huggingface">Hugging Face · каталог моделей</option><option value="cerebras">Cerebras · быстрый инференс</option><option value="custom">Свой OpenAI-совместимый API</option>
+      </select>
+      <label for="modelPreset" class="block text-xs text-gray-400">Быстрый выбор модели</label>
+      <select id="modelPreset" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm"></select>
+      <p id="providerHint" class="text-[11px] leading-relaxed text-gray-400">Выберите провайдера и модель. Ключи разных провайдеров сохраняются отдельно в этом браузере.</p>
       <label for="baseUrl" class="block text-xs text-gray-400">Base URL (без /chat/completions)</label>
       <input type="url" id="baseUrl" autocomplete="url" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm outline-none">
       <label for="apiKey" class="block text-xs text-gray-400">API Key</label>
@@ -98,7 +105,7 @@ permalink: /
       <label for="systemPromptInput" class="block text-xs text-gray-400">Системный промпт</label>
       <textarea id="systemPromptInput" rows="4" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm outline-none resize-y"></textarea>
       <p class="text-[11px] leading-relaxed text-gray-400">Системные правила передаются модели с каждым API-вызовом — это нужно для совместимого Chat Completions API. Промпт намеренно компактный; история ограничена примерно 24 000 символами, а в запрос добавляются только совпадающие с темой заметки (до 4, максимум 1 200 символов).</p>
-      <p class="text-[11px] leading-relaxed text-gray-400">Ключи хранятся в localStorage этого браузера. Не сохраняйте их на чужом или общем устройстве. Запросы отправляются напрямую провайдерам, без стороннего CORS-прокси.</p>
+      <p class="text-[11px] leading-relaxed text-gray-400">Ключи хранятся в localStorage этого браузера. Не сохраняйте их на чужом или общем устройстве. Запросы идут напрямую провайдерам; некоторые API могут блокировать браузерные запросы (CORS). Тогда нужен безопасный серверный прокси, а не обход CORS в клиентском коде.</p>
       <button type="button" data-action="restore-defaults" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-200">Восстановить параметры Gemini</button>
       <button type="button" data-action="save-settings" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded font-bold text-sm">Сохранить</button>
       <button type="button" data-action="close-settings" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-300">Закрыть</button>
@@ -148,7 +155,7 @@ permalink: /
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
       tavilyKey: 'ai_tavily_key', systemPrompt: 'ai_system_prompt',
-      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search'
+      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', provider: 'ai_api_provider'
     };
     const LEGACY_DEFAULT_SYSTEM = 'Ты автономный ИИ-ассистент. Отвечай ясно, проверяй предположения и выдавай структурированные отчёты. Если включён веб-поиск, используй его для актуальной информации.';
     const DEFAULT_SYSTEM = [
@@ -161,6 +168,15 @@ permalink: /
     ].join(' ');
     const DEFAULT_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/openai';
     const DEFAULT_MODEL = 'gemini-3.8-flash';
+    const PROVIDERS = {
+      gemini: { label: 'Google AI Studio · Gemini', baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai', models: [['gemini-3.8-flash','Gemini Flash (быстро)'], ['gemini-2.5-flash','Gemini 2.5 Flash']] },
+      groq: { label: 'Groq', baseUrl: 'https://api.groq.com/openai/v1', models: [['openai/gpt-oss-120b','GPT-OSS 120B'], ['qwen/qwen3.8-27b','Qwen 3.8 27B']] },
+      openrouter: { label: 'OpenRouter', baseUrl: 'https://openrouter.ai/api/v1', models: [['openrouter/free','Автовыбор бесплатной модели'], ['deepseek/deepseek-r1:free','DeepSeek R1 · free (если доступна)']] },
+      github: { label: 'GitHub Models', baseUrl: 'https://models.github.ai/inference', models: [['openai/gpt-4.1-mini','GPT-4.1 mini'], ['deepseek/DeepSeek-R1','DeepSeek R1 (если доступна)']] },
+      huggingface: { label: 'Hugging Face', baseUrl: 'https://router.huggingface.co/v1', models: [['Qwen/Qwen2.5-Coder-32B-Instruct','Qwen2.5 Coder 32B'], ['Qwen/Qwen2.5-Coder-7B-Instruct','Qwen2.5 Coder 7B']] },
+      cerebras: { label: 'Cerebras', baseUrl: 'https://api.cerebras.ai/v1', models: [['gpt-oss-120b','GPT-OSS 120B'], ['qwen-3.8-27b','Qwen 3.8 27B']] },
+      custom: { label: 'Свой API', baseUrl: '', models: [['custom','Ввести имя модели вручную']] }
+    };
     const MAX_TOOL_ROUNDS = 4;
     const MAX_CONTEXT_MESSAGES = 24;
     const MAX_CONTEXT_CHARS = 24000;
@@ -180,6 +196,15 @@ permalink: /
     let pyodideScriptPromise = null;
     let processingMode = 'fast';
 
+    function currentProvider() {
+      const value = $('providerPreset')?.value || safeGet(STORAGE.provider) || 'gemini';
+      return Object.prototype.hasOwnProperty.call(PROVIDERS, value) ? value : 'gemini';
+    }
+    function providerKeyStorage(provider) { return 'ai_api_key_' + provider; }
+    function getConfiguredApiKey() {
+      const provider = currentProvider();
+      return safeGet(providerKeyStorage(provider)) || (provider === 'gemini' ? safeGet(STORAGE.apiKey) : '') || '';
+    }
     function safeGet(key) {
       try { return localStorage.getItem(key); } catch (_) { return null; }
     }
@@ -464,10 +489,37 @@ permalink: /
       modal.classList.toggle('hidden', !open);
       if (open) $('baseUrl').focus();
     }
+    function populateModelPresets(provider, selectedModel = '') {
+      const select = $('modelPreset'), config = PROVIDERS[provider] || PROVIDERS.custom;
+      select.replaceChildren();
+      config.models.forEach(([value,label]) => { const option=document.createElement('option'); option.value=value; option.textContent=label; select.appendChild(option); });
+      const model = selectedModel || $('modelName').value || config.models[0][0];
+      if ([...select.options].some(option=>option.value===model)) select.value=model;
+      else { const option=document.createElement('option'); option.value='__custom__'; option.textContent='Своя модель / сохранить введённое имя'; select.appendChild(option); select.value='__custom__'; }
+    }
+    function applyProviderPreset(provider, initial = false) {
+      const config = PROVIDERS[provider] || PROVIDERS.custom;
+      if (!initial) {
+        const oldProvider = safeGet(STORAGE.provider) || 'gemini', oldKey = $('apiKey').value.trim();
+        if (oldKey) safeSet(providerKeyStorage(oldProvider), oldKey);
+      }
+      safeSet(STORAGE.provider, provider);
+      if (!initial && provider !== 'custom') { $('baseUrl').value=config.baseUrl; $('modelName').value=config.models[0][0]; }
+      if (initial && provider !== 'custom' && !safeGet(STORAGE.baseUrl)) $('baseUrl').value=config.baseUrl;
+      $('apiKey').value = safeGet(providerKeyStorage(provider)) || (provider === 'gemini' ? safeGet(STORAGE.apiKey) : '') || '';
+      $('providerHint').textContent = provider === 'custom'
+        ? 'Введите Base URL, имя модели и ключ вашего OpenAI-совместимого API. Совместимость и CORS зависят от поставщика.'
+        : config.label + ': проверьте доступные модели, тариф и ограничения в официальной документации. Ключ вводится отдельно для каждого провайдера.';
+      populateModelPresets(provider, $('modelName').value);
+    }
     function initializeSettings() {
-      $('baseUrl').value = safeGet(STORAGE.baseUrl) || DEFAULT_BASE_URL;
-      $('apiKey').value = safeGet(STORAGE.apiKey) || '';
-      $('modelName').value = safeGet(STORAGE.model) || DEFAULT_MODEL;
+      const provider=safeGet(STORAGE.provider)||'gemini';
+      $('providerPreset').value=Object.prototype.hasOwnProperty.call(PROVIDERS,provider)?provider:'gemini';
+      $('baseUrl').value=safeGet(STORAGE.baseUrl)||DEFAULT_BASE_URL;
+      $('modelName').value=safeGet(STORAGE.model)||DEFAULT_MODEL;
+      applyProviderPreset($('providerPreset').value,true);
+      $('modelName').value=safeGet(STORAGE.model)||$('modelName').value;
+      populateModelPresets($('providerPreset').value,$('modelName').value);
       $('tavilyKey').value = safeGet(STORAGE.tavilyKey) || '';
       const savedPrompt = safeGet(STORAGE.systemPrompt);
       $('systemPromptInput').value = (!savedPrompt || savedPrompt === LEGACY_DEFAULT_SYSTEM) ? DEFAULT_SYSTEM : savedPrompt;
@@ -490,8 +542,11 @@ permalink: /
       updateModeUI();
     }
     function restoreDefaultSettings() {
+      $('providerPreset').value = 'gemini';
       $('baseUrl').value = DEFAULT_BASE_URL;
       $('modelName').value = DEFAULT_MODEL;
+      applyProviderPreset('gemini', true);
+      populateModelPresets('gemini', DEFAULT_MODEL);
       $('systemPromptInput').value = DEFAULT_SYSTEM;
       alert('Адрес API, модель и системный промпт восстановлены. Ваши API-ключи не изменены. Нажмите «Сохранить».');
     }
@@ -511,9 +566,12 @@ permalink: /
       }
       if (!model) { alert('Укажите имя модели.'); return; }
       if (/\/chat\/completions$/i.test(baseUrl)) baseUrl = baseUrl.replace(/\/chat\/completions$/i, '');
+      const provider = currentProvider();
       const saved = [
+        safeSet(STORAGE.provider, provider),
         safeSet(STORAGE.baseUrl, baseUrl),
         safeSet(STORAGE.apiKey, apiKey),
+        safeSet(providerKeyStorage(provider), apiKey),
         safeSet(STORAGE.model, model),
         safeSet(STORAGE.tavilyKey, tavilyKey),
         safeSet(STORAGE.systemPrompt, $('systemPromptInput').value.trim() || DEFAULT_SYSTEM)
@@ -656,7 +714,7 @@ permalink: /
     async function requestTextStage(systemPrompt, messages, signal, stageName) {
       throwIfAborted(signal); showStatus(stageName);
       const baseUrl = (safeGet(STORAGE.baseUrl) || DEFAULT_BASE_URL).replace(/\/+$/, '');
-      const apiKey = safeGet(STORAGE.apiKey) || '';
+      const apiKey = getConfiguredApiKey();
       const model = safeGet(STORAGE.model) || DEFAULT_MODEL;
       const data = await fetchJson(buildApiUrl(baseUrl), {
         method: 'POST', headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
@@ -681,7 +739,7 @@ permalink: /
     }
     async function runAssistant(chat, signal, useSearch, useMultiAgent, mode = 'fast', skipCache = false, promptOverride = '') {
       const baseUrl = (safeGet(STORAGE.baseUrl) || DEFAULT_BASE_URL).replace(/\/+$/, '');
-      const apiKey = safeGet(STORAGE.apiKey) || '';
+      const apiKey = getConfiguredApiKey();
       const model = safeGet(STORAGE.model) || DEFAULT_MODEL;
       const memories = await MemoryDB.getAll();
       const latestUserMessage = [...chat.messages].reverse().find((message) => message.role === 'user')?.content || '';
@@ -817,7 +875,7 @@ permalink: /
       const input = $('userInput');
       const text = input.value.trim();
       if (!text && !isRetry) return;
-      const apiKey = safeGet(STORAGE.apiKey) || '';
+      const apiKey = getConfiguredApiKey();
       if (!apiKey) { alert('Укажите API Key в настройках.'); toggleSettings(true); return; }
       const chat = getCurrentChat();
       if (!isRetry) {
@@ -1057,6 +1115,9 @@ permalink: /
         }
       } catch (error) { console.error('Ошибка действия интерфейса:', error); alert(error.message || 'Не удалось выполнить действие.'); }
     });
+    $('providerPreset').addEventListener('change', () => applyProviderPreset($('providerPreset').value));
+    $('modelPreset').addEventListener('change', () => { const value=$('modelPreset').value; if(value!=='__custom__') $('modelName').value=value; else $('modelName').focus(); });
+    $('modelName').addEventListener('change', () => populateModelPresets(currentProvider(),$('modelName').value));
     $('modeFast').addEventListener('click', () => setProcessingMode('fast'));
     $('modeDeep').addEventListener('click', () => setProcessingMode('deep'));
     $('toggleSearch').addEventListener('change', (event) => safeSet(STORAGE.search, String(event.target.checked)));
