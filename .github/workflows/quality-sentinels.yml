@@ -92,7 +92,7 @@ jobs:
 
   live-site-smoke:
     name: Published GitHub Pages browser smoke test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request'
     needs: [browser-e2e]
     runs-on: ubuntu-latest
     timeout-minutes: 15
