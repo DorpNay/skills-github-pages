@@ -4,6 +4,12 @@
 
 **Сайт:** https://dorpnay.github.io/skills-github-pages/
 
+## Проверка качества
+
+GitHub Actions выполняет статические quality sentinels, сборку Jekyll и браузерные E2E-тесты в Chromium без настоящих API-ключей. E2E проверяют запуск интерфейса, переключение и сохранение ключей провайдеров, Tavily, режим обработки, сохранение чатов и отображение ошибки API 401. При падении workflow прикладывает Playwright trace/screenshot/video для разбора.
+
+Локальный запуск E2E после установки Node.js и Playwright: `npm install --no-save @playwright/test@1.56.1`, `npx playwright install chromium`, затем сначала соберите сайт Jekyll в `_site`, и запустите `npx playwright test`.
+
 ## Первый запуск
 
 1. Откройте сайт и нажмите **⚙️ Настройки**.
