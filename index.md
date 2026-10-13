@@ -90,7 +90,7 @@ permalink: /
       <div class="rounded-lg bg-gray-900 border border-gray-700 p-2.5 text-xs leading-relaxed text-gray-300 space-y-2">
         <p><strong>Быстрый старт:</strong> по умолчанию выбран Gemini. Для альтернатив выберите провайдера и модель ниже; для каждого сервиса нужен свой API-ключ.</p>
         <p><a class="text-blue-300 underline" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Получить ключ Gemini API в Google AI Studio</a>. Создайте ключ и вставьте его в поле API Key ниже.</p>
-        <p>Ключ хранится только в localStorage этого браузера. Не публикуйте его, не вставляйте в код и не используйте на чужом устройстве. Очистка данных сайта удалит сохранённые настройки и локальную историю.</p>
+        <p>Ключи провайдеров и Tavily хранятся отдельно в localStorage этого браузера. Пустое поле API Key означает, что ключ не сохранён для выбранного провайдера; ключи других провайдеров не удаляются при переключении. При автоматическом резервном переходе текст запроса и контекст могут быть отправлены другому провайдеру, если для него сохранён ключ. Не публикуйте ключи и не используйте их на чужом устройстве. Очистка данных сайта удалит локальные настройки и историю.</p>
         <p>Веб-поиск объединяет Tavily (если сохранён ключ) и открытые API без отдельного ключа: Wikipedia, Stack Exchange, GitHub, Hacker News и arXiv. Можно также попросить агента прочитать конкретную публичную HTTPS-страницу; доступ зависит от CORS сайта.</p>
       </div>
       <label for="providerPreset" class="block text-xs text-gray-400">Провайдер API</label>
@@ -112,7 +112,7 @@ permalink: /
       <label for="systemPromptInput" class="block text-xs text-gray-400">Системный промпт</label>
       <textarea id="systemPromptInput" rows="4" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y"></textarea>
       <p class="text-[11px] leading-relaxed text-gray-400">Системные правила передаются модели с каждым API-вызовом — это нужно для совместимого Chat Completions API. Промпт намеренно компактный; история ограничена примерно 24 000 символами, а в запрос добавляются только совпадающие с темой заметки (до 4, максимум 1 200 символов).</p>
-      <p class="text-[11px] leading-relaxed text-gray-400">Ключи хранятся в localStorage этого браузера. Не сохраняйте их на чужом или общем устройстве. Запросы идут напрямую провайдерам; некоторые API могут блокировать браузерные запросы (CORS). Тогда нужен безопасный серверный прокси, а не обход CORS в клиентском коде.</p>
+      <p class="text-[11px] leading-relaxed text-gray-400">Ключи хранятся в localStorage этого браузера и отправляются только тому API, к которому выполняется запрос. Но при автоматическом резервном переходе тот же запрос и его контекст могут уйти другому провайдеру с сохранённым ключом. Если это нежелательно, удалите ключи других провайдеров из настроек/хранилища. Не используйте ключи на общем устройстве. Некоторые API блокируют браузерные запросы (CORS); для них нужен защищённый серверный прокси, а не обход CORS в клиентском коде.</p>
       <button type="button" data-action="restore-defaults" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-200">Восстановить параметры Gemini</button>
       <button type="button" data-action="save-settings" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded font-bold text-sm">Сохранить</button>
       <button type="button" data-action="close-settings" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-300">Закрыть</button>
@@ -549,7 +549,7 @@ permalink: /
       $('apiKey').value = safeGet(providerKeyStorage(provider)) || (provider === 'gemini' ? safeGet(STORAGE.apiKey) : '') || '';
       $('providerHint').textContent = provider === 'custom'
         ? 'Введите Base URL, имя модели и ключ вашего OpenAI-совместимого API. Совместимость и CORS зависят от поставщика.'
-        : config.label + ': проверьте доступные модели, тариф и ограничения в официальной документации. Ключ вводится отдельно для каждого провайдера. Если модель не ответит, приложение попробует другие модели и провайдеры с уже сохранёнными ключами.';
+        : config.label + ': проверьте модели, тариф и ограничения в официальной документации. Ключ вводится отдельно для каждого провайдера. Пустое поле означает, что ключ не сохранён для выбранного провайдера; ключи других провайдеров сохраняются отдельно. При резервном переходе запрос и контекст могут быть отправлены другому провайдеру с сохранённым ключом.';
       const docs = $('providerDocsLink');
       if (config.docsUrl) { docs.href = config.docsUrl; docs.classList.remove('hidden'); }
       else docs.classList.add('hidden');
