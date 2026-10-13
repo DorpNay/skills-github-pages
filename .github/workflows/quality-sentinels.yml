@@ -1,0 +1,63 @@
+name: Independent Quality Sentinels
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-sentinels-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  integrity-sentinel:
+    name: Integrity sentinel (HTML / JavaScript)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Parse app JavaScript and check UI structure
+        run: node scripts/quality-agents.mjs integrity
+
+  security-sentinel:
+    name: Security sentinel (keys / rendering / tools)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check secret hygiene and unsafe rendering paths
+        run: node scripts/quality-agents.mjs security
+
+  context-sentinel:
+    name: Context sentinel (budgets / memory / tool loop)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check context and tool-call limits
+        run: node scripts/quality-agents.mjs context
+
+  pages-build:
+    name: Jekyll build sentinel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify generated site artifact
+        run: node scripts/quality-agents.mjs build
