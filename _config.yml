@@ -1,0 +1,9 @@
+theme: minima
+title: DorpNay's GitHub Pages
+description: Personal site and project notes published with GitHub Pages
+author: DorpNay
+url: "https://DorpNay.github.io"
+baseurl: "/skills-github-pages"
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
