@@ -25,13 +25,17 @@ const suites = {
       matches(/<\/html>\s*$/, 'Document must close its html element.');
     }],
     ['critical UI controls exist', () => {
-      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'providerHint', 'traceModal', 'traceContent']) {
+      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent']) {
         matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
       }
     }],
     ['independent processing controls and on-demand resources', () => {
       includes('async function runMultiAgentResearch', 'Multi-agent research needs its own staged pipeline.');
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
+      includes("nvidia: { label: 'NVIDIA NIM'", 'NVIDIA NIM should be included as an active alternative.');
+      assert.ok(!source.includes('value="github">GitHub Models'), 'Retired GitHub Models must not be offered as a provider.');
+      includes("docsUrl: 'https://openrouter.ai/settings/keys'", 'OpenRouter key setup link must be available.');
+      includes("docsUrl: 'https://build.nvidia.com/settings'", 'NVIDIA API key setup link must be available.');
       includes('function getConfiguredApiKey()', 'API keys must be selected per provider.');
       includes('safeSet(providerKeyStorage(provider), apiKey)', 'Provider API keys must be stored under provider-specific keys.');
       includes('content: finalText, researchTrace', 'Multi-agent output must preserve the research journal.');
