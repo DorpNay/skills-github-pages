@@ -25,7 +25,7 @@ const suites = {
       matches(/<\/html>\s*$/, 'Document must close its html element.');
     }],
     ['critical UI controls exist', () => {
-      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent']) {
+      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'toast']) {
         matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
       }
     }],
@@ -33,7 +33,17 @@ const suites = {
       includes('async function runMultiAgentResearch', 'Multi-agent research needs its own staged pipeline.');
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
       includes("nvidia: { label: 'NVIDIA NIM'", 'NVIDIA NIM should be included as an active alternative.');
+      assert.ok(!source.includes('cerebras: {') && !source.includes('value="cerebras"'), 'Cerebras must remain removed per product decision.');
       assert.ok(!source.includes('value="github">GitHub Models'), 'Retired GitHub Models must not be offered as a provider.');
+      includes("const DEFAULT_MODEL = 'gemini-3.6-flash'", 'Default Gemini model must match the current official catalogue.');
+      includes("safeGet(STORAGE.model) === 'gemini-3.8-flash'", 'Obsolete Gemini model ID must migrate automatically.');
+      includes('function getApiCandidates(requestedModel)', 'Provider failover must discover only configured credentials.');
+      includes('async function requestChatCompletion(body, signal', 'All model calls must use the automatic fallback path.');
+      includes('Исходный запрос сохранён в чате', 'Fallback failure must preserve the original user prompt.');
+      includes("showToast('Настройки сохранены')", 'Saving settings should use the toast and keep the modal open.');
+      includes("node.classList.add('toast-visible')", 'Toast notification must use lightweight CSS animation.');
+      includes("$('userInput').disabled = false;", 'Composer must remain editable during generation.');
+      includes("['openai/gpt-oss-120b:fastest'", 'Hugging Face preset should use a routed chat model.');
       includes('A removed provider preset must not leave a stale endpoint active.', 'Removed provider settings must migrate safely.');
       includes("docsUrl: 'https://openrouter.ai/settings/keys'", 'OpenRouter key setup link must be available.');
       includes("docsUrl: 'https://build.nvidia.com/settings'", 'NVIDIA API key setup link must be available.');
