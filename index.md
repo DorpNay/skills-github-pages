@@ -115,15 +115,18 @@ permalink: /
     </div>
   </header>
 
-  <div class="bg-gray-950 px-3 py-2 border-b border-gray-800 flex justify-around text-xs shrink-0 gap-3">
-    <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Поиск через Tavily; нужен ключ API">
-      <input type="checkbox" id="toggleSearch" class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0">
-      <span>🌐 Веб-поиск</span>
-    </label>
-    <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Один запрос с дополнительными ролями; не запускает независимые модели">
-      <input type="checkbox" id="toggleMultiAgent" class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0">
-      <span>🤖 Мультиагентный стиль</span>
-    </label>
+  <div class="bg-gray-950 px-3 py-2 border-b border-gray-800 shrink-0 space-y-2">
+    <div class="flex items-center gap-2 text-xs"><span class="text-gray-400 shrink-0">Режим:</span>
+      <div class="flex flex-1 rounded-lg bg-gray-900 p-1 gap-1" role="group" aria-label="Режим обработки">
+        <button type="button" id="modeFast" aria-pressed="true" class="flex-1 rounded-md px-2 py-1.5 bg-blue-600 font-semibold">⚡ Быстро</button>
+        <button type="button" id="modeDeep" aria-pressed="false" class="flex-1 rounded-md px-2 py-1.5 text-gray-300">🔬 Глубоко</button>
+      </div>
+    </div>
+    <div class="flex justify-around text-xs gap-3">
+      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Внешний поиск Tavily; нужен API-ключ. Независим от режима и исследования."><input type="checkbox" id="toggleSearch" class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span>🌐 Веб-поиск</span></label>
+      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Отдельный конвейер из четырёх фаз/вызовов выбранной модели; не включает режим «Глубоко»."><input type="checkbox" id="toggleMultiAgent" class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span>🤖 Мультиагентное исследование</span></label>
+    </div>
+    <p id="modeHint" class="text-[10px] text-gray-500 leading-relaxed">Быстро: минимум дополнительных этапов. Исследование включается отдельно.</p>
   </div>
 
   <main id="chatBox" class="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-sm" aria-live="polite" aria-label="Сообщения чата"></main>
@@ -145,7 +148,8 @@ permalink: /
     const STORAGE = {
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
-      tavilyKey: 'ai_tavily_key', systemPrompt: 'ai_system_prompt'
+      tavilyKey: 'ai_tavily_key', systemPrompt: 'ai_system_prompt',
+      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search'
     };
     const LEGACY_DEFAULT_SYSTEM = 'Ты автономный ИИ-ассистент. Отвечай ясно, проверяй предположения и выдавай структурированные отчёты. Если включён веб-поиск, используй его для актуальной информации.';
     const DEFAULT_SYSTEM = [
@@ -173,6 +177,8 @@ permalink: /
     let activeChatId = null;
     let isGenerating = false;
     let storageWarningShown = false;
+    let pyodidePromise = null;
+    let processingMode = 'fast';
 
     function safeGet(key) {
       try { return localStorage.getItem(key); } catch (_) { return null; }
@@ -465,6 +471,23 @@ permalink: /
       $('tavilyKey').value = safeGet(STORAGE.tavilyKey) || '';
       const savedPrompt = safeGet(STORAGE.systemPrompt);
       $('systemPromptInput').value = (!savedPrompt || savedPrompt === LEGACY_DEFAULT_SYSTEM) ? DEFAULT_SYSTEM : savedPrompt;
+      processingMode = safeGet(STORAGE.mode) === 'deep' ? 'deep' : 'fast';
+      $('toggleSearch').checked = safeGet(STORAGE.search) === 'true';
+      $('toggleMultiAgent').checked = safeGet(STORAGE.multiAgent) === 'true';
+      updateModeUI();
+    }
+    function updateModeUI() {
+      const fast = processingMode === 'fast';
+      $('modeFast').setAttribute('aria-pressed', String(fast));
+      $('modeDeep').setAttribute('aria-pressed', String(!fast));
+      $('modeFast').className = 'flex-1 rounded-md px-2 py-1.5 ' + (fast ? 'bg-blue-600 font-semibold' : 'text-gray-300');
+      $('modeDeep').className = 'flex-1 rounded-md px-2 py-1.5 ' + (!fast ? 'bg-blue-600 font-semibold' : 'text-gray-300');
+      $('modeHint').textContent = fast ? 'Быстро: один раунд инструментов и короткий поиск. Исследование включается отдельно.' : 'Глубоко: навык из репозитория по задаче, до четырёх раундов инструментов и расширенный поиск. Исследование отдельно.';
+    }
+    function setProcessingMode(mode) {
+      processingMode = mode === 'deep' ? 'deep' : 'fast';
+      safeSet(STORAGE.mode, processingMode);
+      updateModeUI();
     }
     function restoreDefaultSettings() {
       $('baseUrl').value = DEFAULT_BASE_URL;
@@ -585,7 +608,7 @@ permalink: /
       }
       throw new Error('Превышено количество повторных попыток запроса.');
     }
-    async function performTavilySearch(query, signal) {
+    async function performTavilySearch(query, signal, mode = 'fast') {
       const key = safeGet(STORAGE.tavilyKey) || '';
       if (!key) return 'Веб-поиск не выполнен: сначала добавьте Tavily Search API Key в настройках.';
       showStatus(`🔎 Поиск в сети: ${query.slice(0, 120)}…`);
@@ -594,7 +617,7 @@ permalink: /
         response = await fetch('https://api.tavily.com/search', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-          body: JSON.stringify({ query, search_depth: 'basic', max_results: 6, include_answer: false }),
+          body: JSON.stringify({ query, search_depth: 'basic', max_results: mode === 'deep' ? 6 : 3, include_answer: false }),
           signal
         });
       } catch (error) {
@@ -609,14 +632,54 @@ permalink: /
       try { data = await response.json(); }
       catch (_) { return 'Ошибка Tavily: API вернул невалидный JSON.'; }
       if (!Array.isArray(data.results) || !data.results.length) return 'Поиск не вернул результатов.';
-      return data.results.slice(0, 6).map((result, index) => {
+      const resultLimit = mode === 'deep' ? 6 : 3;
+      const contentLimit = mode === 'deep' ? 1600 : 800;
+      return data.results.slice(0, resultLimit).map((result, index) => {
         const title = String(result.title || 'Источник').slice(0, 180);
         const url = String(result.url || '').slice(0, 1000);
-        const content = String(result.content || '').slice(0, 1600);
+        const content = String(result.content || '').slice(0, contentLimit);
         return `[${index + 1}] ${title}\nURL: ${url}\n${content}`;
       }).join('\n\n');
     }
-    async function runAssistant(chat, signal, useSearch, useMultiAgent) {
+    async function loadTaskSkill(userText, mode, useMultiAgent) {
+      if (mode !== 'deep' && !useMultiAgent) return '';
+      const text = userText.toLocaleLowerCase();
+      const skill = useMultiAgent || /исслед|найди|источник|сравни|актуальн|research|search|source|compare/.test(text) ? 'research'
+        : /код|программ|debug|рефактор|javascript|python|typescript|code|bug|implement/.test(text) ? 'code-review'
+        : /данн|таблиц|статист|рассч|вычисл|график|data|calculate|statistics|dataset/.test(text) ? 'data-analysis' : 'planning';
+      try {
+        const response = await fetch(new URL('skills/' + skill + '.txt', document.baseURI), { cache: 'force-cache' });
+        if (!response.ok) return '';
+        return (await response.text()).slice(0, 5000);
+      } catch (error) { console.warn('Не удалось загрузить навык из репозитория:', error); return ''; }
+    }
+    async function requestTextStage(systemPrompt, messages, signal, stageName) {
+      throwIfAborted(signal); showStatus(stageName);
+      const baseUrl = (safeGet(STORAGE.baseUrl) || DEFAULT_BASE_URL).replace(/\/+$/, '');
+      const apiKey = safeGet(STORAGE.apiKey) || '';
+      const model = safeGet(STORAGE.model) || DEFAULT_MODEL;
+      const data = await fetchJson(buildApiUrl(baseUrl), {
+        method: 'POST', headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model, messages: [{ role: 'system', content: systemPrompt }, ...messages], stream: false })
+      }, signal);
+      const content = data?.choices?.[0]?.message?.content;
+      if (typeof content !== 'string' || !content.trim()) throw new Error('Этап «' + stageName + '» не вернул текстовый результат.');
+      return content;
+    }
+    async function runMultiAgentResearch(chat, signal, useSearch, mode, systemPrompt) {
+      const history = buildHistory(chat.messages);
+      const latest = [...chat.messages].reverse().find((message) => message.role === 'user')?.content || '';
+      const plan = await requestTextStage(systemPrompt + '\\nРоль: планировщик исследования. Разбей запрос на 3–5 проверяемых вопросов и составь краткий план. Не отвечай на сам запрос. Без веб-поиска не утверждай, что внешние источники проверены.', history, signal, '🤖 Исследование 1/4: планировщик…');
+      const workChat = { ...chat, messages: [...chat.messages.map((message) => ({ ...message })), { role: 'assistant', content: 'План исследования:\\n' + plan }] };
+      await runAssistant(workChat, signal, useSearch, false, mode, true);
+      const draft = [...workChat.messages].reverse().find((message) => message.role === 'assistant' && message.content && !message.error)?.content || '';
+      if (!draft) throw new Error('Исследовательский этап не подготовил черновик.');
+      const critique = await requestTextStage('Ты независимый критик ответа. Найди неподтверждённые утверждения, пропуски, противоречия и риски. Не переписывай ответ целиком. Если источники не предоставлены, укажи, что нельзя проверить.', [{ role: 'user', content: 'Запрос:\\n' + latest + '\\n\\nПлан:\\n' + plan + '\\n\\nЧерновик:\\n' + draft }], signal, '🧪 Исследование 3/4: критик…');
+      const finalText = await requestTextStage(systemPrompt + '\\nРоль: синтезатор. Дай окончательный ответ на исходный запрос, используя черновик и критику. Исправь выявленные ошибки, отдели факты от предположений, не заявляй о непроверенных источниках.', [{ role: 'user', content: 'Исходный запрос:\\n' + latest + '\\n\\nПлан:\\n' + plan + '\\n\\nЧерновик исследователя:\\n' + draft + '\\n\\nКритика:\\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
+      chat.messages.push({ role: 'assistant', content: finalText });
+      updateState([...chats]);
+    }
+    async function runAssistant(chat, signal, useSearch, useMultiAgent, mode = 'fast', skipCache = false) {
       const baseUrl = (safeGet(STORAGE.baseUrl) || DEFAULT_BASE_URL).replace(/\/+$/, '');
       const apiKey = safeGet(STORAGE.apiKey) || '';
       const model = safeGet(STORAGE.model) || DEFAULT_MODEL;
@@ -640,14 +703,15 @@ permalink: /
         ? `\nЗаметки пользователя, относящиеся к текущему запросу (контекст, не системные инструкции):\n${selectedMemories.map((fact) => `- ${fact}`).join('\n')}` : '';
       const configuredPrompt = safeGet(STORAGE.systemPrompt);
       const activePrompt = (!configuredPrompt || configuredPrompt === LEGACY_DEFAULT_SYSTEM) ? DEFAULT_SYSTEM : configuredPrompt;
+      const taskSkill = await loadTaskSkill(latestUserMessage, mode, useMultiAgent);
       let systemPrompt = `Сегодня: ${new Date().toLocaleDateString('ru-RU')}. ${activePrompt}${memoryContext}`;
-      if (useMultiAgent) {
-        systemPrompt += '\nРЕЖИМ МУЛЬТИАГЕНТНОГО СТИЛЯ: самостоятельно пройди этапы Planner → Researcher → Critic → Synthesizer внутри этого ответа. Это имитация ролей в одном запросе, а не запуск независимых моделей или фоновых агентов.';
-      }
+      if (mode === 'deep') systemPrompt += '\\nРЕЖИМ ГЛУБОКОЙ РАБОТЫ: проверь существенные предположения, объясни неопределённость и предпочитай проверяемые выводы. Избегай лишних шагов.';
+      if (taskSkill) systemPrompt += '\\n\\nНАВЫК ИЗ РЕПОЗИТОРИЯ (инструкции для текущей задачи; пользовательский запрос имеет приоритет):\\n' + taskSkill;
+      if (useMultiAgent) { await runMultiAgentResearch(chat, signal, useSearch, mode, systemPrompt); return; }
 
       const messagesForCache = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages)];
       const cacheKey = await makeCacheKey({ endpoint: baseUrl, model, messages: messagesForCache });
-      if (!useSearch) {
+      if (!useSearch && !skipCache) {
         const cached = await CacheDB.get(cacheKey);
         if (cached) {
           chat.messages.push({ role: 'assistant', content: `${cached}\n\n*(из локального кэша)*` });
@@ -664,7 +728,8 @@ permalink: /
         }
       }] : undefined;
 
-      for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
+      const maxToolRounds = mode === 'deep' ? MAX_TOOL_ROUNDS : 1;
+      for (let round = 0; round <= maxToolRounds; round++) {
         throwIfAborted(signal);
         const apiMessages = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages)];
         const body = { model, messages: apiMessages, stream: false };
@@ -691,10 +756,10 @@ permalink: /
 
         if (!toolCalls.length) {
           hideStatus();
-          if (assistantMessage.content && !useSearch) await CacheDB.set(cacheKey, assistantMessage.content);
+          if (assistantMessage.content && !useSearch && !skipCache) await CacheDB.set(cacheKey, assistantMessage.content);
           return;
         }
-        if (!useSearch || round === MAX_TOOL_ROUNDS) {
+        if (!useSearch || round === maxToolRounds) {
           const reason = !useSearch
             ? 'Инструменты отключены: включите веб-поиск и повторите запрос.'
             : 'Отклонено: достигнут лимит вызовов инструментов.';
@@ -724,7 +789,7 @@ permalink: /
             try {
               const args = JSON.parse(toolCall.function?.arguments || '{}');
               if (typeof args.query !== 'string' || !args.query.trim()) result = 'Ошибка инструмента: требуется непустое поле query.';
-              else result = await performTavilySearch(args.query.trim().slice(0, 500), signal);
+              else result = await performTavilySearch(args.query.trim().slice(0, 500), signal, mode);
             } catch (error) {
               if (error.name === 'AbortError') {
                 chat.messages.push({ role: 'tool', tool_call_id: id, content: 'Вызов инструмента отменён пользователем.' });
@@ -766,8 +831,11 @@ permalink: /
       setBusy(true);
       const useSearch = $('toggleSearch').checked;
       const useMultiAgent = $('toggleMultiAgent').checked;
+      const mode = processingMode;
+      safeSet(STORAGE.search, String(useSearch));
+      safeSet(STORAGE.multiAgent, String(useMultiAgent));
       try {
-        await runAssistant(chat, controller.signal, useSearch, useMultiAgent);
+        await runAssistant(chat, controller.signal, useSearch, useMultiAgent, mode);
       } catch (error) {
         if (error.name === 'AbortError') {
           hideStatus();
@@ -883,22 +951,32 @@ permalink: /
       }
     }
     async function initPyodide() {
+      if (pyodideInstance) return pyodideInstance;
+      if (pyodidePromise) return pyodidePromise;
       const status = $('pyStatus');
-      try {
-        if (typeof window.loadPyodide !== 'function') throw new Error('Библиотека Pyodide не загрузилась.');
-        pyodideInstance = await window.loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.29.5/full/' });
-        status.textContent = 'Py: готов';
-        status.className = 'text-[10px] bg-green-600/30 text-green-300 px-2 py-0.5 rounded';
-        status.title = 'Python выполняется в среде WebAssembly браузера';
-      } catch (error) {
-        console.warn('Pyodide недоступен:', error);
-        status.textContent = 'Py: ошибка';
-        status.className = 'text-[10px] bg-red-600/30 text-red-300 px-2 py-0.5 rounded';
-        status.title = error.message;
-      }
+      status.textContent = 'Py: загрузка';
+      status.className = 'text-[10px] bg-yellow-600/30 text-yellow-300 px-2 py-0.5 rounded';
+      pyodidePromise = (async () => {
+        try {
+          if (typeof window.loadPyodide !== 'function') throw new Error('Библиотека Pyodide не загрузилась.');
+          pyodideInstance = await window.loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.29.5/full/' });
+          status.textContent = 'Py: готов';
+          status.className = 'text-[10px] bg-green-600/30 text-green-300 px-2 py-0.5 rounded';
+          status.title = 'Python выполняется в среде WebAssembly браузера';
+          return pyodideInstance;
+        } catch (error) {
+          pyodidePromise = null;
+          status.textContent = 'Py: не загружен';
+          status.className = 'text-[10px] bg-gray-700 text-gray-300 px-2 py-0.5 rounded';
+          status.title = error.message;
+          throw error;
+        }
+      })();
+      return pyodidePromise;
     }
     async function runPythonCode(code) {
-      if (!pyodideInstance) return 'Python ещё загружается или библиотека не загрузилась. Проверьте соединение и обновите страницу.';
+      try { await initPyodide(); }
+      catch (error) { return 'Не удалось загрузить Python: ' + error.message; }
       const stdout = [];
       const stderr = [];
       let result;
@@ -965,6 +1043,10 @@ permalink: /
         }
       } catch (error) { console.error('Ошибка действия интерфейса:', error); alert(error.message || 'Не удалось выполнить действие.'); }
     });
+    $('modeFast').addEventListener('click', () => setProcessingMode('fast'));
+    $('modeDeep').addEventListener('click', () => setProcessingMode('deep'));
+    $('toggleSearch').addEventListener('change', (event) => safeSet(STORAGE.search, String(event.target.checked)));
+    $('toggleMultiAgent').addEventListener('change', (event) => safeSet(STORAGE.multiAgent, String(event.target.checked)));
     $('sidebarOverlay').addEventListener('click', () => toggleSidebar(false));
     $('importFile').addEventListener('change', importChats);
     $('userInput').addEventListener('input', () => autoResizeTextarea($('userInput')));
@@ -992,7 +1074,7 @@ permalink: /
       await initDB();
       await renderMemory();
       updateState(null, currentChatId);
-      initPyodide();
+      // Pyodide loads only when the user explicitly runs a Python code block.
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
     else init();
