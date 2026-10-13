@@ -754,17 +754,17 @@ permalink: /
     function htmlToPlainText(html) {
       const doc = new DOMParser().parseFromString(String(html || ''), 'text/html');
       doc.querySelectorAll('script,style,noscript,nav,footer,header,form,svg,canvas,iframe,button,aside,[aria-hidden="true"]').forEach((node) => node.remove());
-      return (doc.body ? doc.body.textContent : '').replace(/\\s+/g, ' ').trim();
+      return (doc.body ? doc.body.textContent : '').replace(/\s+/g, ' ').trim();
     }
     function validatePublicHttpsUrl(rawUrl) {
       let url;
       try { url = new URL(rawUrl); } catch (_) { throw new Error('Нужен корректный полный URL.'); }
       if (url.protocol !== 'https:' || url.username || url.password) throw new Error('Разрешены только публичные HTTPS-ссылки без логина и пароля.');
-      const host = url.hostname.toLowerCase().replace(/^\\[|\\]$/g, '');
+      const host = url.hostname.toLowerCase().replace(/^\[|\]$/g, '');
       if (host === 'localhost' || host.endsWith('.localhost') || host.endsWith('.local') ||
-          /^(127\\.|10\\.|192\\.168\\.|169\\.254\\.|0\\.)/.test(host) ||
-          /^172\\.(1[6-9]|2\\d|3[01])\\./.test(host) || host === '::1' || host.startsWith('fc') || host.startsWith('fd') || host.startsWith('fe80:') ||
-          /^\\d{1,3}(\\.\\d{1,3}){3}$/.test(host)) {
+          /^(127\.|10\.|192\.168\.|169\.254\.|0\.)/.test(host) ||
+          /^172\.(1[6-9]|2\d|3[01])\./.test(host) || host === '::1' || host.startsWith('fc') || host.startsWith('fd') || host.startsWith('fe80:') ||
+          /^\d{1,3}(\.\d{1,3}){3}$/.test(host)) {
         throw new Error('Локальные адреса и IP-адреса напрямую читать нельзя.');
       }
       return url;
@@ -835,7 +835,7 @@ permalink: /
         if (doc.querySelector('parsererror')) throw new Error('arXiv вернул некорректный XML.');
         for (const [index, item] of [...doc.getElementsByTagName('entry')].entries()) {
           const get = (tag) => item.getElementsByTagName(tag)[0]?.textContent?.trim() || '';
-          lines.push('[' + (index + 1) + '] ' + get('title').replace(/\\s+/g, ' ') + '\nURL: ' + get('id') + '\nAuthors: ' + [...item.getElementsByTagName('author')].slice(0, 4).map((a) => a.getElementsByTagName('name')[0]?.textContent || '').join(', ') + '\nAbstract: ' + get('summary').replace(/\\s+/g, ' ').slice(0, 1000));
+          lines.push('[' + (index + 1) + '] ' + get('title').replace(/\s+/g, ' ') + '\nURL: ' + get('id') + '\nAuthors: ' + [...item.getElementsByTagName('author')].slice(0, 4).map((a) => a.getElementsByTagName('name')[0]?.textContent || '').join(', ') + '\nAbstract: ' + get('summary').replace(/\s+/g, ' ').slice(0, 1000));
         }
       } else if (source === 'wayback') {
         const data = JSON.parse(text);
@@ -850,12 +850,12 @@ permalink: /
       showStatus('📄 Читаю страницу: ' + url.hostname);
       const response = await fetchPublicText(url.href, signal);
       let content;
-      if (/json/i.test(response.contentType) || /^[\\s]*[\\[{]/.test(response.text)) {
+      if (/json/i.test(response.contentType) || /^[\s]*[\[{]/.test(response.text)) {
         try { content = JSON.stringify(JSON.parse(response.text), null, 2); } catch (_) { content = response.text; }
-      } else if (/html|xhtml/i.test(response.contentType) || /<html[\\s>]/i.test(response.text.slice(0, 5000))) {
+      } else if (/html|xhtml/i.test(response.contentType) || /<html[\s>]/i.test(response.text.slice(0, 5000))) {
         content = htmlToPlainText(response.text);
       } else {
-        content = response.text.replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim();
+        content = response.text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
       }
       const cap = mode === 'deep' ? 9000 : 3500;
       if (!content) throw new Error('Не удалось извлечь текст страницы.');
