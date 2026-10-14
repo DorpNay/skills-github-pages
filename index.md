@@ -1976,12 +1976,40 @@ permalink: /
     function showTrace(trace) {
       if (!trace || typeof trace !== 'object') throw new Error('Журнал исследования не найден.');
       activeTrace = trace; const host = $('traceContent'); host.replaceChildren();
-      [['Планировщик',trace.plan],['Черновик исследователя',trace.draft],['Критика',trace.critique],['Итоговый ответ',trace.finalText]].forEach(([title,value]) => {
+      const appendTraceSection = (title, value) => {
         const section=document.createElement('section'); section.className='border border-gray-800 rounded-xl p-3';
         const heading=document.createElement('h3'); heading.className='font-semibold text-blue-200 mb-2'; heading.textContent=title;
         const body=document.createElement('pre'); body.className='whitespace-pre-wrap break-words text-gray-200 text-xs leading-relaxed'; body.textContent=typeof value==='string'&&value?value:'Нет данных для этого этапа.';
         section.append(heading,body); host.appendChild(section);
-      });
+      };
+      if(trace.run&&typeof trace.run==='object'){
+        const run=trace.run;
+        appendTraceSection('Параметры запуска',[
+          'Версия журнала: '+(trace.schemaVersion||'legacy'),
+          'Рабочий процесс: '+(run.workflow||'не записан'),
+          'Режим: '+(run.mode||'не записан'),
+          'Веб-поиск: '+(typeof run.webSearchEnabled==='boolean'?(run.webSearchEnabled?'включён':'выключен'):'не записан'),
+          'Мультиагентный режим: '+(typeof run.multiAgentEnabled==='boolean'?(run.multiAgentEnabled?'включён':'выключен'):'не записан'),
+          'Межпровайдерный резерв: '+(typeof run.crossProviderFallbackEnabled==='boolean'?(run.crossProviderFallbackEnabled?'разрешён':'выключен'):'не записан'),
+          'Начало: '+(run.startedAt||'не записано'),
+          'Длительность: '+(Number.isFinite(run.durationMs)?run.durationMs+' мс':'не записана'),
+          'Отпечаток системного промпта: '+(run.configuredPromptFingerprint||'не записан')+' ('+(run.configuredPromptFingerprintAlgorithm||'unknown')+')'
+        ].join('\n'));
+      }
+      const attempts=Array.isArray(trace.attempts)?trace.attempts:[];
+      if(attempts.length){
+        appendTraceSection('Попытки вызова модели',attempts.map(item=>[
+          item.success?'OK':'FAIL',(item.stage||'этап'),
+          (item.providerLabel||item.provider||'провайдер')+' / '+(item.model||'модель'),
+          Number.isFinite(item.elapsedMs)?item.elapsedMs+' мс':'время неизвестно',
+          item.failureType||''
+        ].filter(Boolean).join(' · ')).join('\n'));
+      }
+      const routes=Array.isArray(trace.routes)?trace.routes:[];
+      if(routes.length){
+        appendTraceSection('Успешные маршруты',routes.map(route=>(route.stage||'этап')+': '+(route.providerLabel||route.provider||'провайдер')+' / '+(route.model||'модель')+(Number.isFinite(route.elapsedMs)?' — '+route.elapsedMs+' мс':'')).join('\n'));
+      }
+      [['Планировщик',trace.plan],['Черновик исследователя',trace.draft],['Критика',trace.critique],['Итоговый ответ',trace.finalText]].forEach(([title,value]) => appendTraceSection(title,value));
       $('traceModal').classList.remove('hidden');
     }
     function closeTrace() { $('traceModal').classList.add('hidden'); }
