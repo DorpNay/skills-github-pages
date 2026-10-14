@@ -157,6 +157,9 @@ test('provider connection loads filtered model catalog into selector and key del
   await expect(page.locator('#modelPreset option[value="e2e-dynamic-model"]')).toHaveCount(1);
   await expect(page.locator('#modelPreset option[value="e2e-text-embedding"]')).toHaveCount(0);
   await expect(page.locator('#modelPreset option[value="e2e-image-generation"]')).toHaveCount(0);
+  const cachedCatalog = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_provider_model_catalog_v1_custom') || 'null'));
+  expect(cachedCatalog.keyFingerprint).toMatch(/^[a-f0-9]{64}$/);
+  expect(JSON.stringify(cachedCatalog)).not.toContain('not-a-real-key');
   await page.locator('#modelPreset').selectOption('e2e-dynamic-model');
   await expect(page.locator('#modelName')).toHaveValue('e2e-dynamic-model');
   await page.locator('[data-action="clear-provider-key"]').click();
