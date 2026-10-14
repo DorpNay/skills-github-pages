@@ -2066,7 +2066,8 @@ permalink: /
           'Межпровайдерный резерв: '+(typeof run.crossProviderFallbackEnabled==='boolean'?(run.crossProviderFallbackEnabled?'разрешён':'выключен'):'не записан'),
           'Начало: '+(run.startedAt||'не записано'),
           'Длительность: '+(Number.isFinite(run.durationMs)?run.durationMs+' мс':'не записана'),
-          'Отпечаток системного промпта: '+(run.configuredPromptFingerprint||'не записан')+' ('+(run.configuredPromptFingerprintAlgorithm||'unknown')+')'
+          'Отпечаток системного промпта: '+(run.configuredPromptFingerprint||'не записан')+' ('+(run.configuredPromptFingerprintAlgorithm||'unknown')+')',
+          'Размер базового системного контекста: '+(Number.isFinite(trace.systemPromptCharCount)?trace.systemPromptCharCount+' символов':'не записан')
         ].join('\n'));
       }
       const attempts=Array.isArray(trace.attempts)?trace.attempts:[];
