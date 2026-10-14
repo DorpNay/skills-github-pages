@@ -11,7 +11,7 @@ test.beforeEach(async ({ page }) => {
     }
   });
   // Keep every catalog request deterministic: no real provider credentials or network.
-  await page.route(/(?:\\/models(?:\\?.*)?|\\/text\\/models(?:\\?.*)?|\\/language-models(?:\\?.*)?|\\/ai\\/models\\/search(?:\\?.*)?)$/, route => route.fulfill({
+  await page.route(/(?:\/models(?:\?.*)?|\/text\/models(?:\?.*)?|\/language-models(?:\?.*)?|\/ai\/models\/search(?:\?.*)?)$/, route => route.fulfill({
     status: 200, contentType: 'application/json',
     body: JSON.stringify({ data: [{ id: 'e2e-default-catalog-model' }] })
   }));
@@ -361,7 +361,7 @@ test('Pollinations requests use the OAuth token, not the public App Key', async 
 
 test('Cloudflare endpoint is built from Account ID and HF uses the Inference Providers router', async ({ page }) => {
   const cloudflareId = '0123456789abcdef0123456789abcdef';
-  await page.route(/\\/ai\\/models\\/search\\?/, route => route.fulfill({
+  await page.route(/\/ai\/models\/search\?/, route => route.fulfill({
     status: 200, contentType: 'application/json',
     body: JSON.stringify({ result: [{ name: '@cf/openai/gpt-oss-120b', task: 'text-generation' }, { name: '@cf/bge/embedding', task: 'text-generation' }] })
   }));
