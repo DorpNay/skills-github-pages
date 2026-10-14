@@ -320,7 +320,7 @@ permalink: /
         safeSessionSet(POLLINATIONS_SESSION.clientId,appKey)
       ].every(Boolean);
       if(!stored) { showToast('Не удалось подготовить защищённую OAuth-сессию. Проверьте настройки приватности браузера.', 'error'); return; }
-      const params=new URLSearchParams({response_type:'code',client_id:appKey,redirect_uri:redirectUri,state,code_challenge:challenge,code_challenge_method:'S256'});
+      const params=new URLSearchParams({response_type:'code',client_id:appKey,redirect_uri:redirectUri,models:'text',budget:'5',expiry:'7',state,code_challenge:challenge,code_challenge_method:'S256'});
       location.assign('https://enter.pollinations.ai/authorize?'+params.toString());
     }
     async function finishPollinationsOAuth() {
@@ -865,7 +865,7 @@ permalink: /
       else updateApiKeyLamp('pending','Янтарный — ключ задан, соединение ещё не подтверждено.');
     }
     async function testProviderConnection(){
-      const provider=currentProvider(),baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),key=getProviderRequestKey(provider),model=$('modelName').value.trim();
+      const provider=currentProvider(),baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),key=provider==='pollinations'?getProviderRequestKey(provider):($('apiKey').value.trim()||getProviderRequestKey(provider)),model=$('modelName').value.trim();
       if(!key){
         if(provider==='pollinations'&&($('apiKey').value.trim()||safeGet(providerKeyStorage('pollinations')))){updateApiKeyLamp('pending','App Key сохранён. Нажмите «Подключить аккаунт Pollinations · PKCE», затем повторите проверку.');showToast('Сначала подключите Pollinations через OAuth PKCE.','error');return;}
         updateApiKeyLamp('error','Сначала вставьте API-ключ.');showToast('Для проверки нужен API-ключ выбранного провайдера.','error');return;
