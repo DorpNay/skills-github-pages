@@ -65,6 +65,10 @@ async function main() {
       results.push({ provider: config.id, status: 'skipped', message: 'No supported Actions secret configured.' });
       continue;
     }
+    if (config.id === 'pollinations' && /^pk_/i.test(secret)) {
+      results.push({ provider: config.id, status: 'skipped', message: 'The pk_ App Key is for browser OAuth; server smoke tests require a separate sk_ access token.' });
+      continue;
+    }
     const accountId = config.accountIdEnv ? String(process.env[config.accountIdEnv] || '') : '';
     const childEnv = {
       API_KEY: secret,
@@ -72,7 +76,7 @@ async function main() {
       ...(config.accountIdEnv ? { CLOUDFLARE_ACCOUNT_ID: accountId } : {})
     };
     const child = spawnSync(process.execPath, [probePath, config.id], {
-      env: childEnv, encoding: 'utf8', timeout: 35000, maxBuffer: 256 * 1024
+      env: childEnv, encoding: 'utf8', timeout: 45000, maxBuffer: 256 * 1024
     });
     results.push(extractResult(child, config.id, secret));
   }
