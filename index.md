@@ -266,12 +266,96 @@ permalink: /
       return Object.prototype.hasOwnProperty.call(PROVIDERS, value) ? value : 'gemini';
     }
     function providerKeyStorage(provider) { return 'ai_api_key_' + provider; }
-    function getConfiguredApiKey() {
-      const provider = currentProvider();
+    const POLLINATIONS_SESSION = {
+      token: 'ai_pollinations_access_token_v1', expiresAt: 'ai_pollinations_access_expires_at_v1',
+      state: 'ai_pollinations_oauth_state_v1', verifier: 'ai_pollinations_pkce_verifier_v1',
+      redirectUri: 'ai_pollinations_redirect_uri_v1', clientId: 'ai_pollinations_client_id_v1'
+    };
+    function safeGet(key) { try { return localStorage.getItem(key); } catch (_) { return null; } }
+    function safeSessionGet(key) { try { return sessionStorage.getItem(key); } catch (_) { return null; } }
+    function safeSessionSet(key,value) { try { sessionStorage.setItem(key,String(value)); return true; } catch (_) { return false; } }
+    function safeSessionRemove(key) { try { sessionStorage.removeItem(key); } catch (_) {} }
+    function clearPollinationsSession() { Object.values(POLLINATIONS_SESSION).forEach(safeSessionRemove); safeSet('ai_provider_connection_pollinations',''); }
+    function getProviderRequestKey(provider) {
+      if (provider === 'pollinations') {
+        const token=safeSessionGet(POLLINATIONS_SESSION.token), expiry=Number(safeSessionGet(POLLINATIONS_SESSION.expiresAt)||0);
+        if(token&&expiry>Date.now()+15000) return token;
+        if(token) clearPollinationsSession();
+        return '';
+      }
       return safeGet(providerKeyStorage(provider)) || (provider === 'gemini' ? safeGet(STORAGE.apiKey) : '') || '';
     }
-    function safeGet(key) {
-      try { return localStorage.getItem(key); } catch (_) { return null; }
+    function getConfiguredApiKey() { return getProviderRequestKey(currentProvider()); }
+    function getProviderBaseUrl(provider) {
+      if (provider === 'cloudflare') {
+        const accountId=String(safeGet(STORAGE.cloudflareAccountId)||$('cloudflareAccountId')?.value||'').trim();
+        return /^[a-f0-9]{32}$/i.test(accountId) ? `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1` : '';
+      }
+      return (PROVIDERS[provider]?.baseUrl||'').replace(/\/+$/,'');
+    }
+    function randomBase64Url(bytes=32) {
+      const data=new Uint8Array(bytes); crypto.getRandomValues(data);
+      let binary=''; for(const value of data) binary+=String.fromCharCode(value);
+      return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    }
+    async function beginPollinationsOAuth() {
+      const appKey=$('apiKey').value.trim()||safeGet(providerKeyStorage('pollinations'))||'';
+      if(!/^pk_[A-Za-z0-9_-]+$/.test(appKey)) {
+        showToast('Нужен Pollinations App Key с префиксом pk_. Создайте его на enter.pollinations.ai/keys.', 'error'); return;
+      }
+      if(!crypto?.subtle||!crypto?.getRandomValues) { showToast('Этот браузер не поддерживает безопасный PKCE; откройте сайт по HTTPS в актуальном браузере.', 'error'); return; }
+      const redirect=new URL(location.href); redirect.search=''; redirect.hash='';
+      const redirectUri=redirect.toString(),state=randomBase64Url(32),verifier=randomBase64Url(48);
+      const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier));
+      let binary=''; for(const value of new Uint8Array(digest)) binary+=String.fromCharCode(value);
+      const challenge=btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+      const stored=[
+        safeSet(providerKeyStorage('pollinations'),appKey),
+        safeSet(STORAGE.provider,'pollinations'),
+        safeSet(STORAGE.model,$('modelName').value.trim()||PROVIDERS.pollinations.models[0][0]),
+        safeSet(STORAGE.baseUrl,PROVIDERS.pollinations.baseUrl),
+        safeSessionSet(POLLINATIONS_SESSION.state,state),
+        safeSessionSet(POLLINATIONS_SESSION.verifier,verifier),
+        safeSessionSet(POLLINATIONS_SESSION.redirectUri,redirectUri),
+        safeSessionSet(POLLINATIONS_SESSION.clientId,appKey)
+      ].every(Boolean);
+      if(!stored) { showToast('Не удалось подготовить защищённую OAuth-сессию. Проверьте настройки приватности браузера.', 'error'); return; }
+      const params=new URLSearchParams({response_type:'code',client_id:appKey,redirect_uri:redirectUri,scope:'usage',state,code_challenge:challenge,code_challenge_method:'S256'});
+      location.assign('https://enter.pollinations.ai/authorize?'+params.toString());
+    }
+    async function finishPollinationsOAuth() {
+      const callback=new URL(location.href),code=callback.searchParams.get('code'),error=callback.searchParams.get('error');
+      if(!code&&!error) return '';
+      const cleanUrl=new URL(safeSessionGet(POLLINATIONS_SESSION.redirectUri)||location.href); cleanUrl.search=''; cleanUrl.hash='';
+      if(error) { history.replaceState(null,'',cleanUrl.toString()); clearPollinationsSession(); return 'Авторизация Pollinations отменена или отклонена: '+String(error).slice(0,90); }
+      const state=callback.searchParams.get('state'),expectedState=safeSessionGet(POLLINATIONS_SESSION.state);
+      const verifier=safeSessionGet(POLLINATIONS_SESSION.verifier),clientId=safeSessionGet(POLLINATIONS_SESSION.clientId)||safeGet(providerKeyStorage('pollinations'))||'';
+      const redirectUri=safeSessionGet(POLLINATIONS_SESSION.redirectUri)||'';
+      history.replaceState(null,'',cleanUrl.toString());
+      if(!state||!expectedState||state!==expectedState||!verifier||!redirectUri||!clientId) {
+        clearPollinationsSession(); return 'Не удалось подтвердить state/PKCE Pollinations. Начните подключение заново.';
+      }
+      try {
+        const response=await fetch('https://enter.pollinations.ai/api/oauth/token',{
+          method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'},
+          body:new URLSearchParams({grant_type:'authorization_code',code,client_id:clientId,redirect_uri:redirectUri,code_verifier:verifier})
+        });
+        const payload=await response.json().catch(()=>({}));
+        if(!response.ok||typeof payload.access_token!=='string'||!payload.access_token) {
+          clearPollinationsSession();
+          const safeDetail=String(payload.error_description||payload.error||'неизвестная ошибка').slice(0,120);
+          return 'Pollinations не выдал токен доступа: '+safeDetail+'. Проверьте зарегистрированный Redirect URI.';
+        }
+        const lifetime=Math.max(60,Number(payload.expires_in)||604800);
+        if(!safeSessionSet(POLLINATIONS_SESSION.token,payload.access_token)||!safeSessionSet(POLLINATIONS_SESSION.expiresAt,String(Date.now()+lifetime*1000))) {
+          clearPollinationsSession(); return 'Браузер запретил sessionStorage: Pollinations-сессия не сохранена.';
+        }
+        safeSessionRemove(POLLINATIONS_SESSION.state);safeSessionRemove(POLLINATIONS_SESSION.verifier);safeSessionRemove(POLLINATIONS_SESSION.clientId);safeSessionRemove(POLLINATIONS_SESSION.redirectUri);
+        safeSet('ai_provider_connection_pollinations','');
+        return 'Pollinations подключён на эту вкладку. Нажмите «Проверить соединение и модель».';
+      } catch (_) {
+        clearPollinationsSession(); return 'Не удалось обменять OAuth-код Pollinations: ошибка сети/CORS.';
+      }
     }
     let toastTimer = null, toastHideTimer = null;
     function showToast(message, kind = 'success') {
