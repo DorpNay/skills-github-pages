@@ -12,11 +12,16 @@ test.beforeEach(async ({ page }) => {
   });
   // Keep every catalog request deterministic: no real provider credentials or network.
   await page.route(/(?:\/models(?:\?.*)?|\/text\/models(?:\?.*)?|\/language-models(?:\?.*)?|\/ai\/models\/search(?:\?.*)?)$/, async route => {
-    // Only mock the generic custom test endpoint; provider-specific tests own their routes.
-    if (new URL(route.request().url()).hostname !== 'api.example.test') return route.continue();
+    // Fail closed: only the custom test endpoint or explicit provider mocks may answer.
+    if (new URL(route.request().url()).hostname === 'api.example.test') {
+      return route.fulfill({
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({ data: [{ id: 'e2e-default-catalog-model' }] })
+      });
+    }
     return route.fulfill({
-      status: 200, contentType: 'application/json',
-      body: JSON.stringify({ data: [{ id: 'e2e-default-catalog-model' }] })
+      status: 503, contentType: 'application/json',
+      body: JSON.stringify({ error: { message: 'Catalog intentionally unavailable in deterministic E2E.' } })
     });
   });
 });
