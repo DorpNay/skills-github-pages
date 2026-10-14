@@ -1,0 +1,47 @@
+name: Provider smoke test — all configured secrets
+
+on:
+  workflow_dispatch:
+    inputs:
+      note:
+        description: Optional note for this validation run
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: provider-smoke-all-configured
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    name: Test every configured AI provider
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run one safe live request for every configured provider
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || secrets.GEMINI || secrets.GOOGLE_GEMINI_API_KEY || secrets.GOOGLE_GEMINI || secrets.GEMINI_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY || secrets.GROQ || secrets.GROQ_KEY }}
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY || secrets.XAI || secrets.GROK_API_KEY || secrets.GROK_KEY || secrets.GROK }}
+          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY || secrets.POLLINATIONS || secrets.POLLINATIONS_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY || secrets.OPENROUTER || secrets.OPENROUTER_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY || secrets.NVIDIA_NIM_API_KEY || secrets.NVIDIA || secrets.NVIDIA_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN || secrets.HUGGINGFACE_API_KEY || secrets.HUGGINGFACE || secrets.HUGGING_FACE || secrets.HF }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CLOUDFLARE_API_KEY || secrets.CLOUDFLARE_TOKEN || secrets.CLOUDFLARE }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || secrets.CF_ACCOUNT_ID || secrets.CF_ID }}
+        run: node scripts/provider-smoke-all.mjs
+
+      - name: Check secret-safe workflow output
+        if: always()
+        run: |
+          echo "This workflow intentionally prints only provider/model/status/duration metadata."
+          echo "Missing provider secrets are reported as skipped; configured-provider failures fail the workflow."
