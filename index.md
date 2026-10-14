@@ -122,18 +122,28 @@ permalink: /
       </div>
       <label for="providerPreset" class="block text-xs text-gray-400">Провайдер API</label>
       <select id="providerPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm">
-        <option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые открытые модели</option><option value="openrouter">OpenRouter · бесплатные модели</option><option value="nvidia">NVIDIA NIM · бесплатные endpoints</option><option value="huggingface">Hugging Face · каталог моделей</option><option value="custom">Свой OpenAI-совместимый API</option>
+        <option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="custom">Свой OpenAI-совместимый API</option>
       </select>
       <label for="modelPreset" class="block text-xs text-gray-400">Быстрый выбор модели</label>
       <select id="modelPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm"></select>
       <p id="providerHint" class="text-[11px] leading-relaxed text-gray-400">Выберите провайдера и модель. Ключи разных провайдеров сохраняются отдельно в этом браузере.</p>
       <a id="providerDocsLink" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-blue-300 underline underline-offset-2">Открыть страницу API-ключа</a>
+      <div id="cloudflareAccountGroup" class="hidden space-y-1.5">
+        <label for="cloudflareAccountId" class="block text-xs text-gray-400">Cloudflare Account ID (32 hex-символа)</label>
+        <input type="text" id="cloudflareAccountId" inputmode="text" autocomplete="off" spellcheck="false" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Ваш Account ID из Cloudflare Dashboard">
+        <p class="text-[10px] leading-relaxed text-gray-500">Endpoint будет собран автоматически. Нужен API Token с разрешением Workers AI Read; Account ID не является секретом.</p>
+      </div>
       <label for="baseUrl" class="block text-xs text-gray-400">Base URL (без /chat/completions)</label>
       <input type="url" id="baseUrl" autocomplete="url" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
-      <label for="apiKey" class="block text-xs text-gray-400">API Key · ключ-питание</label>
+      <label for="apiKey" id="apiKeyLabel" class="block text-xs text-gray-400">API Key · ключ провайдера</label>
       <div id="apiKeyShell" class="api-key-row" data-state="empty"><span class="key-lamp" aria-hidden="true"></span><input type="password" id="apiKey" autocomplete="off" aria-describedby="apiKeyStatus" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Вставьте ключ провайдера"></div>
       <p id="apiKeyStatus" class="text-[11px] leading-relaxed text-gray-400" role="status" aria-live="polite">Серый — ключ не введён; янтарный — ключ задан, но не проверен; зелёный — последняя проверка прошла.</p>
-      <div class="flex gap-2"><button type="button" data-action="test-connection" class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение и модель</button><button type="button" data-action="clear-provider-key" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
+      <div id="pollinationsAuthGroup" class="hidden rounded-lg border border-cyan-900/60 bg-cyan-950/20 p-3 space-y-2">
+        <p class="text-[11px] leading-relaxed text-cyan-100/90">Для браузерного приложения Pollinations рекомендует App Key <code>pk_…</code> и OAuth PKCE. Временный ключ доступа <code>sk_…</code> хранится только в sessionStorage текущей вкладки, не в localStorage.</p>
+        <button type="button" data-action="connect-pollinations" class="w-full bg-cyan-900/50 hover:bg-cyan-800/70 border border-cyan-700/50 py-2 rounded-lg text-xs text-cyan-100">Подключить аккаунт Pollinations · PKCE</button>
+        <button type="button" data-action="disconnect-pollinations" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 py-1.5 rounded-lg text-[11px] text-gray-300">Завершить сессию Pollinations</button>
+      </div>
+      <div class="flex gap-2"><button type="button" data-action="test-connection' class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение и модель</button><button type="button" data-action="clear-provider-key" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
       <label for="modelName" class="block text-xs text-gray-400">Модель</label>
       <input type="text" id="modelName" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
       <label for="tavilyKey" class="block text-xs text-gray-400">Tavily Search API Key</label>
@@ -205,7 +215,7 @@ permalink: /
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
       tavilyKey: 'ai_tavily_key', systemPrompt: 'ai_system_prompt',
-      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider'
+      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider', cloudflareAccountId: 'ai_cloudflare_account_id'
     };
     const LEGACY_DEFAULT_SYSTEM = 'Ты автономный ИИ-ассистент. Отвечай ясно, проверяй предположения и выдавай структурированные отчёты. Если включён веб-поиск, используй его для актуальной информации.';
     const DEFAULT_SYSTEM = [
@@ -220,10 +230,13 @@ permalink: /
     const DEFAULT_MODEL = 'gemini-3.8-flash';
     const PROVIDERS = {
       gemini: { label: 'Google AI Studio · Gemini', docsUrl: 'https://aistudio.google.com/apikey', baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai', models: [['gemini-3.8-flash','Gemini 3.8 Flash · стабильная'], ['gemini-3.6-flash','Gemini 3.6 Flash · стабильная'], ['gemini-3.5-flash-lite','Gemini 3.5 Flash-Lite · стабильная']] },
-      groq: { label: 'Groq', docsUrl: 'https://console.groq.com/keys', baseUrl: 'https://api.groq.com/openai/v1', models: [['openai/gpt-oss-120b','GPT-OSS 120B'], ['qwen/qwen3.8-27b','Qwen 3.8 27B']] },
+      groq: { label: 'Groq', docsUrl: 'https://console.groq.com/keys', baseUrl: 'https://api.groq.com/openai/v1', models: [['openai/gpt-oss-120b','GPT-OSS 120B · agentic'], ['qwen/qwen3.8-27b','Qwen 3.8 27B · reasoning'], ['openai/gpt-oss-20b','GPT-OSS 20B · fast']] },
+      xai: { label: 'xAI · Grok', docsUrl: 'https://console.x.ai/', baseUrl: 'https://api.x.ai/v1', models: [['grok-4.7','Grok 4.7'], ['grok-4.6','Grok 4.6']] },
+      pollinations: { label: 'Pollinations.ai', docsUrl: 'https://gen.pollinations.ai/docs', baseUrl: 'https://gen.pollinations.ai/v1', models: [['openai/gpt-5.4-nano','GPT-5.4 Nano · default'], ['deepseek/deepseek-v4-flash','DeepSeek V4 Flash'], ['x-ai/grok-4.7','Grok 4.7 через Pollinations'], ['google/gemini-3.8-flash','Gemini 3.8 Flash через Pollinations']] },
+      cloudflare: { label: 'Cloudflare Workers AI', docsUrl: 'https://developers.cloudflare.com/workers-ai/configuration/open-ai-compatibility/', baseUrl: '', models: [['@cf/openai/gpt-oss-120b','GPT-OSS 120B · reasoning'], ['@cf/openai/gpt-oss-20b','GPT-OSS 20B · lighter'], ['@cf/meta/llama-3.3-70b-instruct-fp8-fast','Llama 3.3 70B · fast']] },
       openrouter: { label: 'OpenRouter', docsUrl: 'https://openrouter.ai/settings/keys', baseUrl: 'https://openrouter.ai/api/v1', models: [['openrouter/free','Автовыбор бесплатной модели'], ['deepseek/deepseek-r1:free','DeepSeek R1 · free (если доступна)']] },
       nvidia: { label: 'NVIDIA NIM', docsUrl: 'https://build.nvidia.com/settings', baseUrl: 'https://integrate.api.nvidia.com/v1', models: [['z-ai/glm-5.3','GLM-5.3 · reasoning/coding'], ['openai/gpt-oss-20b','GPT-OSS 20B · reasoning']] },
-      huggingface: { label: 'Hugging Face', docsUrl: 'https://huggingface.co/settings/tokens', baseUrl: 'https://router.huggingface.co/v1', models: [['openai/gpt-oss-120b:fastest','GPT-OSS 120B · fastest provider'], ['deepseek-ai/DeepSeek-V3-0324:fastest','DeepSeek V3 · fastest provider']] },
+      huggingface: { label: 'Hugging Face Inference Providers', docsUrl: 'https://huggingface.co/settings/tokens', baseUrl: 'https://router.huggingface.co/v1', models: [['openai/gpt-oss-120b:fastest','GPT-OSS 120B · fastest'], ['deepseek-ai/DeepSeek-R1:fastest','DeepSeek R1 · fastest'], ['openai/gpt-oss-120b:cheapest','GPT-OSS 120B · cheapest']] },
       custom: { label: 'Свой API', baseUrl: '', docsUrl: '', models: [['custom','Ввести имя модели вручную']] }
     };
     const MAX_TOOL_ROUNDS = 4;
