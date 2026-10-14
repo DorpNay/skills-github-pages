@@ -1315,24 +1315,27 @@ permalink: /
         return `fnv-${(hash >>> 0).toString(16)}-${serialized.length}`;
       }
     }
-    function getHistoryCharBudget() {
+    function getHistoryCharBudget(systemPromptChars = 0) {
       const provider = currentProvider();
       const model = safeGet(STORAGE.model) || DEFAULT_MODEL;
       const entry = modelCatalogEntries(provider, false).find(item => item.id === model);
       const contextTokens = Number(entry?.contextLength);
       if (!Number.isFinite(contextTokens) || contextTokens <= 0) return MAX_CONTEXT_CHARS;
-      // Providers expose token windows, not a shared tokenizer. Use a cautious character
-      // approximation and keep the existing upper bound; this is a soft budget, not a token count.
-      return Math.min(MAX_CONTEXT_CHARS, Math.max(512, Math.floor(contextTokens * 1.25)));
+      // Providers expose token windows, not a shared tokenizer. Reserve room for the effective
+      // system prompt and for output; this remains a conservative character estimate, not token counting.
+      const estimatedWindowChars = Math.floor(contextTokens * 1.25);
+      const outputReserveChars = Math.floor(Math.min(2048, contextTokens * 0.25) * 1.25);
+      const promptReserveChars = Math.max(0, Number(systemPromptChars) || 0);
+      return Math.max(0, Math.min(MAX_CONTEXT_CHARS, estimatedWindowChars - outputReserveChars - promptReserveChars));
     }
-    function buildHistory(messages) {
+    function buildHistory(messages, systemPromptChars = 0) {
       const turns = [];
       for (const message of messages) {
         if (message.role === 'user') turns.push([message]);
         else if (turns.length) turns[turns.length - 1].push(message);
       }
       const selected = [];
-      const charBudget = getHistoryCharBudget();
+      const charBudget = getHistoryCharBudget(systemPromptChars);
       let count = 0;
       let charCount = 0;
       for (let i = turns.length - 1; i >= 0; i--) {
@@ -1709,7 +1712,7 @@ permalink: /
     }
 
     async function runMultiAgentResearch(chat, signal, useSearch, mode, systemPrompt) {
-      const history = buildHistory(chat.messages);
+      const history = buildHistory(chat.messages, String(systemPrompt || '').length);
       const plan = await requestTextStage(systemPrompt + '\nРоль: планировщик исследования. Сформируй краткий рабочий план максимум из 3–5 шагов только для сложной задачи. Укажи, какие проверяемые утверждения требуют свежих источников, какие инструменты помогут и что будет считаться достаточным результатом. Не отвечай на исходный вопрос, не добавляй шаблонные оговорки и не придумывай этапы, не нужные задаче. Не утверждай, что источники проверены, пока исследователь не выполнил поиск.', history, signal, '🤖 Исследование 1/4: планировщик…');
       const workChat = { ...chat, messages: [...chat.messages.map((message) => ({ ...message })), { role: 'assistant', content: 'План исследования:\n' + plan }] };
       const researchStart = workChat.messages.length;
@@ -1772,7 +1775,7 @@ permalink: /
       if(useMultiAgent&&!useResearchPipeline)showToast('Простой запрос: отвечаю напрямую без лишних агентных этапов.');
       if(useResearchPipeline){await runMultiAgentResearch(chat,signal,useSearch,mode,systemPrompt);return;}
 
-      const messagesForCache = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages)];
+      const messagesForCache = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages, systemPrompt.length)];
       const cacheKey = await makeCacheKey({ endpoint: baseUrl, model, messages: messagesForCache });
       if (!useSearch && !skipCache) {
         const cached = await CacheDB.get(cacheKey);
@@ -1806,7 +1809,7 @@ permalink: /
       const maxToolRounds = mode === 'deep' ? MAX_TOOL_ROUNDS : 1;
       for (let round = 0; round <= maxToolRounds; round++) {
         throwIfAborted(signal);
-        const apiMessages = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages)];
+        const apiMessages = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages, systemPrompt.length)];
         const body = { model, messages: apiMessages, stream: false };
         if (tools) { body.tools = tools; body.tool_choice = 'auto'; }
         showStatus(round === 0 ? '🤖 Ожидание ответа модели…' : '🧠 Модель обрабатывает результаты поиска…');
