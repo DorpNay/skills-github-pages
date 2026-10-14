@@ -1044,6 +1044,7 @@ permalink: /
         ];
         if (!saveResults.every(Boolean)) throw new Error('Не удалось сохранить все параметры в браузере.');
         $('providerPreset').value = settings.provider;
+        $('modelSearch').value = '';
         $('baseUrl').value = baseUrl;
         $('modelName').value = settings.model.trim();
         $('systemPromptInput').value = String(settings.systemPrompt || DEFAULT_SYSTEM);
