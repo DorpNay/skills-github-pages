@@ -11,10 +11,14 @@ test.beforeEach(async ({ page }) => {
     }
   });
   // Keep every catalog request deterministic: no real provider credentials or network.
-  await page.route(/(?:\/models(?:\?.*)?|\/text\/models(?:\?.*)?|\/language-models(?:\?.*)?|\/ai\/models\/search(?:\?.*)?)$/, route => route.fulfill({
-    status: 200, contentType: 'application/json',
-    body: JSON.stringify({ data: [{ id: 'e2e-default-catalog-model' }] })
-  }));
+  await page.route(/(?:\/models(?:\?.*)?|\/text\/models(?:\?.*)?|\/language-models(?:\?.*)?|\/ai\/models\/search(?:\?.*)?)$/, async route => {
+    // Only mock the generic custom test endpoint; provider-specific tests own their routes.
+    if (new URL(route.request().url()).hostname !== 'api.example.test') return route.continue();
+    return route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ data: [{ id: 'e2e-default-catalog-model' }] })
+    });
+  });
 });
 
 test('published app boots and core controls are interactive', async ({ page }) => {
