@@ -18,8 +18,9 @@ const providers = [
 ];
 
 function safeText(value, secret = '') {
-  return String(value ?? '')
-    .replaceAll(secret, '[REDACTED]')
+  let text = String(value ?? '');
+  if (secret) text = text.replaceAll(secret, '[REDACTED]');
+  return text
     .replace(/Bearer\s+\S+/gi, 'Bearer [REDACTED]')
     .replace(/(?:sk[_-]|pk[_-]|AIza)[A-Za-z0-9_-]{12,}/g, '[REDACTED]')
     .replace(/[\r\n\t]+/g, ' ')
