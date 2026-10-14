@@ -331,7 +331,7 @@ test('research trace supports a structured JSON download', async ({ page }) => {
 
 test('research trace records prompt fingerprint, run settings, timings, and model attempts without storing prompt text', async ({ page }) => {
   const responses = [
-    '1. Найти проверяемые утверждения.\\n2. Сопоставить их с источниками.\\n3. Проверить итог.',
+    '1. Найти проверяемые утверждения.\n2. Сопоставить их с источниками.\n3. Проверить итог.',
     'Черновик: утверждения следует сопоставлять с источниками.',
     'Существенных замечаний нет.',
     'Итог: факты необходимо связывать с проверяемыми источниками.'
@@ -375,9 +375,9 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
   expect(trace.run.webSearchEnabled).toBe(false);
   expect(trace.run.multiAgentEnabled).toBe(true);
   expect(trace.run.crossProviderFallbackEnabled).toBe(false);
-  expect(trace.run.startedAt).toMatch(/^\\d{4}-\\d{2}-\\d{2}T/);
+  expect(trace.run.startedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
   expect(trace.run.durationMs).toBeGreaterThanOrEqual(0);
-  expect(trace.run.configuredPromptFingerprint).toMatch(/^(?:[a-f0-9]{64}|fnv-[a-f0-9]+-\\d+)$/);
+  expect(trace.run.configuredPromptFingerprint).toMatch(/^(?:[a-f0-9]{64}|fnv-[a-f0-9]+-\d+)$/);
   expect(trace.run.configuredPromptFingerprintAlgorithm).toBe('sha-256');
   expect(trace.attempts).toHaveLength(4);
   expect(trace.attempts.every(attempt => attempt.success === true && attempt.elapsedMs >= 0)).toBe(true);
