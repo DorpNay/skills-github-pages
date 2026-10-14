@@ -40,6 +40,8 @@ const suites = {
       includes('function getApiCandidates(requestedModel)', 'Provider failover must discover only configured credentials.');
       includes('function shouldUseMultiAgentResearch(value)', 'Multi-agent orchestration must be routed by task complexity.');
       includes('async function testProviderConnection()', 'Provider connections must have an actionable diagnostic.');
+      includes('function parseRetryAfterMs(value)', 'HTTP Retry-After must be respected rather than using a fixed retry delay.');
+      includes('if(!modelError)break;', 'Transient server and rate-limit errors must not trigger fast model/provider failover.');
       includes('id="offlineToggle"', 'User must be able to explicitly disable online search tools.');
       includes('function getRunEstimateMs()', 'Response timing should learn a lightweight per-route estimate.');
       includes('data-state="connected"', 'A confirmed API connection must have a distinct UI state.');
