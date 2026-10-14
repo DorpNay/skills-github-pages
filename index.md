@@ -1315,9 +1315,7 @@ permalink: /
         return `fnv-${(hash >>> 0).toString(16)}-${serialized.length}`;
       }
     }
-    function getHistoryCharBudget(systemPromptChars = 0) {
-      const provider = currentProvider();
-      const model = safeGet(STORAGE.model) || DEFAULT_MODEL;
+    function getHistoryCharBudget(systemPromptChars = 0, provider = currentProvider(), model = safeGet(STORAGE.model) || DEFAULT_MODEL) {
       const entry = modelCatalogEntries(provider, false).find(item => item.id === model);
       const contextTokens = Number(entry?.contextLength);
       if (!Number.isFinite(contextTokens) || contextTokens <= 0) return MAX_CONTEXT_CHARS;
@@ -1328,14 +1326,14 @@ permalink: /
       const promptReserveChars = Math.max(0, Number(systemPromptChars) || 0);
       return Math.max(0, Math.min(MAX_CONTEXT_CHARS, estimatedWindowChars - outputReserveChars - promptReserveChars));
     }
-    function buildHistory(messages, systemPromptChars = 0) {
+    function buildHistory(messages, systemPromptChars = 0, provider = currentProvider(), model = safeGet(STORAGE.model) || DEFAULT_MODEL) {
       const turns = [];
       for (const message of messages) {
         if (message.role === 'user') turns.push([message]);
         else if (turns.length) turns[turns.length - 1].push(message);
       }
       const selected = [];
-      const charBudget = getHistoryCharBudget(systemPromptChars);
+      const charBudget = getHistoryCharBudget(systemPromptChars, provider, model);
       let count = 0;
       let charCount = 0;
       for (let i = turns.length - 1; i >= 0; i--) {
@@ -1628,7 +1626,16 @@ permalink: /
         const candidate=candidates[i];throwIfAborted(signal);
         const attemptStartedAt=Date.now(),attemptStartedIso=new Date(attemptStartedAt).toISOString();
         try{
-          const data=await fetchJson(buildApiUrl(candidate.baseUrl),{method:'POST',headers:{'Authorization':`Bearer ${candidate.key}`,'Content-Type':'application/json'},body:JSON.stringify({...body,model:candidate.model})},signal);
+          let candidateBody=body;
+          if(Array.isArray(body.messages)){
+            const systemMessages=body.messages.filter(message=>message?.role==='system');
+            const historyMessages=body.messages.filter(message=>message?.role!=='system');
+            if(systemMessages.length){
+              const systemChars=systemMessages.reduce((total,message)=>total+(typeof message.content==='string'?message.content.length:0),0);
+              candidateBody={...body,messages:[...systemMessages,...buildHistory(historyMessages,systemChars,candidate.provider,candidate.model)]};
+            }
+          }
+          const data=await fetchJson(buildApiUrl(candidate.baseUrl),{method:'POST',headers:{'Authorization':`Bearer ${candidate.key}`,'Content-Type':'application/json'},body:JSON.stringify({...candidateBody,model:candidate.model})},signal);
           const elapsedMs=Date.now()-attemptStartedAt;
           const attempt={provider:candidate.provider,providerLabel:PROVIDERS[candidate.provider]?.label||candidate.provider,model:typeof data?.model==='string'&&data.model.trim()?data.model:candidate.model,requestedModel:candidate.model,stage:stageName,attemptIndex:i+1,startedAt:attemptStartedIso,at:new Date().toISOString(),elapsedMs,success:true,failureType:null};
           if(activeRunTelemetry)activeRunTelemetry.attempts.push({...attempt});
