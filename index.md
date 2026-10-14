@@ -798,8 +798,9 @@ permalink: /
       const normalizedCatalogBase = String(catalog.baseUrl || '').replace(/\/+$/, '').replace(/\/chat\/completions$/i, '');
       const normalizedExpectedBase = String(expectedBase || '').replace(/\/+$/, '').replace(/\/chat\/completions$/i, '');
       if (provider !== 'pollinations' && (catalog.keyFingerprint !== fingerprint || normalizedCatalogBase !== normalizedExpectedBase)) return allowStale ? { ...catalog, stale: true } : null;
-      if (stale && !allowStale) return null;
-      return { ...catalog, stale: stale || (Date.now() - Number(catalog.fetchedAt || 0) > MODEL_CATALOG_TTL_MS) };
+      const expired = Date.now() - Number(catalog.fetchedAt || 0) > MODEL_CATALOG_TTL_MS;
+      if ((stale || expired) && !allowStale) return null;
+      return { ...catalog, stale: stale || expired };
     }
     function modelCatalogEntries(provider, allowStale = true) {
       const catalog = readProviderModelCatalog(provider, allowStale);
@@ -1003,6 +1004,7 @@ permalink: /
       $('systemPromptInput').readOnly=true;$('editSystemPrompt').setAttribute('aria-pressed','false');$('editSystemPrompt').textContent='✎';
       $('promptEditHint').textContent='Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.';
       refreshApiKeyLamp();showToast('Настройки сохранены');
+      if (getProviderRequestKey(provider) || provider === 'pollinations') void refreshModelCatalog({ quiet: true, force: false, provider });
     }
 
     function buildApiUrl(baseUrl) { return `${baseUrl.replace(/\/+$/,'')}/chat/completions`; }
@@ -1410,6 +1412,7 @@ permalink: /
       const selectedProvider=safeGet(STORAGE.provider)||'gemini',allowCrossProvider=safeGet(STORAGE.crossProviderFallback)==='true';
       const order=[selectedProvider,...(allowCrossProvider?Object.keys(PROVIDERS).filter(provider=>provider!==selectedProvider&&provider!=='custom'):[])];
       const candidates = [], seen = new Set();
+      const maxRouterCandidates = 16;
       for (const provider of order) {
         const config = PROVIDERS[provider];
         if (!config) continue;
@@ -1430,9 +1433,10 @@ permalink: /
           if (seen.has(keyId)) continue;
           seen.add(keyId);
           candidates.push({ provider, baseUrl, model, key });
+          if (candidates.length >= maxRouterCandidates) return candidates;
         }
       }
-      return candidates;
+      return candidates;      return candidates;
     }
     let lastSuccessfulRoute=null,activeRunTelemetry=null,activeRunStartedAt=0,statusTimerId=null;
     async function recordSuccessfulRoute(candidate,stageName,responseModel){
