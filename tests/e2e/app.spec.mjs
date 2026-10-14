@@ -168,17 +168,16 @@ test('multi-agent preference skips a greeting and shows the actual route', async
   await expect.poll(() => calls).toBe(1);
 });
 
-test('401 stops model fallback and preserves actionable error', async ({ page }) => {
+
+test('401 stops after the selected provider rejects credentials', async ({ page }) => {
   let calls = 0;
-  await page.route('https://api.example.test/v1/chat/completions', async route => {
+  await page.route('https://api.groq.com/openai/v1/chat/completions', async route => {
     calls++;
     await route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: { message: 'invalid credential' } }) });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
-  await page.locator('#providerPreset').selectOption('custom');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('e2e-model');
+  await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
@@ -188,4 +187,33 @@ test('401 stops model fallback and preserves actionable error', async ({ page })
   await expect(page.locator('#chatBox')).toContainText('HTTP 401');
   await expect(page.locator('#chatBox')).toContainText('Проверьте API-ключ.');
   await expect.poll(() => calls).toBe(1);
+});
+
+test('model-specific failure tries another model on the same provider first', async ({ page }) => {
+  const attemptedModels = [];
+  await page.route('https://api.groq.com/openai/v1/chat/completions', async route => {
+    const payload = route.request().postDataJSON();
+    attemptedModels.push(payload.model);
+    if (attemptedModels.length === 1) {
+      await route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ error: { message: 'model not found' } }) });
+      return;
+    }
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: payload.model, choices: [{ message: { role: 'assistant', content: 'Fallback worked.' } }] })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('groq');
+  await page.locator('#apiKey').fill('not-a-real-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('Check same-provider model fallback');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Fallback worked.');
+  await expect(page.locator('#chatBox')).toContainText('Groq · qwen/qwen3.8-27b');
+  await expect.poll(() => attemptedModels.length).toBe(2);
+  expect(attemptedModels[0]).toBe('openai/gpt-oss-120b');
+  expect(attemptedModels[1]).toBe('qwen/qwen3.8-27b');
 });
