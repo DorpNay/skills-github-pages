@@ -93,22 +93,28 @@ GitHub Actions Secrets — это секреты **серверной CI-сре�
 
 ## Безопасная проверка через GitHub Actions
 
-Если хотите проверить реальные ключи без отправки их в чат, добавьте нужные значения в **GitHub → Settings → Secrets and variables → Actions**.
+Чтобы проверить ключи без отправки их в чат, добавьте их в **GitHub → Settings → Secrets and variables → Actions**. Приложение поддерживает следующие канонические имена:
 
-| Провайдер | Имя секрета в Actions |
+| Провайдер | Рекомендуемые Secrets |
 |---|---|
 | Gemini | `GEMINI_API_KEY` |
 | Groq | `GROQ_API_KEY` |
-| xAI | `XAI_API_KEY` |
-| Pollinations (серверный smoke-test, нужен `sk_…`) | `POLLINATIONS_API_KEY` |
+| xAI / Grok | `XAI_API_KEY` |
+| Pollinations (для server smoke test нужен секретный `sk_…`, не App Key `pk_…`) | `POLLINATIONS_API_KEY` |
 | OpenRouter | `OPENROUTER_API_KEY` |
 | NVIDIA NIM | `NVIDIA_API_KEY` |
 | Hugging Face | `HF_TOKEN` |
 | Cloudflare | `CLOUDFLARE_API_TOKEN` и `CLOUDFLARE_ACCOUNT_ID` |
 
-Затем откройте **Actions → Provider smoke test → Run workflow**, выберите провайдера и при необходимости задайте точный ID модели. Workflow отправляет один короткий запрос, а в журнал выводит только провайдера, модель, HTTP-статус и длительность; ключи скрываются и не печатаются.
+### Проверить все ключи одним запуском
 
-Значения в Actions Secrets доступны самому отдельному workflow при запуске, но **не становятся видимыми сайту GitHub Pages или GitHub-коннектору ChatGPT**. Я не могу напрямую прочитать секреты из репозитория; могу подготовить тест, который использует их на стороне GitHub Actions.
+Откройте **Actions → Provider smoke test — all configured secrets → Run workflow**. Workflow проверит каждый провайдер, для которого найдётся подходящий Actions Secret; если ключа нет, этот провайдер будет помечен **SKIPPED**, а не ошибкой. Для каждого настроенного сервиса выполняется один короткий реальный запрос к указанной модели. Результат включает провайдер, модель, HTTP-статус, время ответа и безопасную причину ошибки. Любой неудачный реальный запрос приведёт к failed workflow, при этом остальные провайдеры всё равно будут проверены.
+
+Workflow принимает и распространённые короткие названия секретов: Gemini — `GEMINI`, `GOOGLE_GEMINI`, `GEMINI_KEY`; Groq — `GROQ`, `GROQ_KEY`; xAI — `XAI`, `GROK`, `GROK_API_KEY`, `GROK_KEY`; Pollinations — `POLLINATIONS`, `POLLINATIONS_KEY`; OpenRouter — `OPENROUTER`, `OPENROUTER_KEY`; NVIDIA — `NVIDIA`, `NVIDIA_NIM_API_KEY`; Hugging Face — `HUGGINGFACE`, `HUGGING_FACE`, `HF`; Cloudflare — `CLOUDFLARE`, `CLOUDFLARE_API_KEY`, `CLOUDFLARE_TOKEN` (и `CF_ACCOUNT_ID` / `CF_ID` для Account ID).
+
+**Учтите стоимость:** запросы небольшие, но провайдер может списать токены/квоту; Pollinations расходует Pollen. Не используйте этот workflow как непрерывный мониторинг. Значения секретов не выводятся в журнал.
+
+Actions Secrets доступны workflow на стороне GitHub, но **не становятся доступными статическому сайту GitHub Pages или GitHub-коннектору ChatGPT**. Каталог моделей в браузере всё равно требует ключ, введённый в настройках приложения (исключение — публичный каталог Pollinations).
 
 ## Что означает статус лампы и «Оффлайн»
 
