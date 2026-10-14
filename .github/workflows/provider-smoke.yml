@@ -42,49 +42,49 @@ jobs:
       - name: Test Gemini
         if: inputs.provider == 'gemini'
         env:
-          API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          API_KEY: ${{ secrets.GEMINI_API_KEY || secrets.GEMINI || secrets.GOOGLE_GEMINI_API_KEY }}
           MODEL_OVERRIDE: ${{ inputs.model }}
         run: node scripts/provider-smoke.mjs gemini
       - name: Test Groq
         if: inputs.provider == 'groq'
         env:
-          API_KEY: ${{ secrets.GROQ_API_KEY }}
+          API_KEY: ${{ secrets.GROQ_API_KEY || secrets.GROQ }}
           MODEL_OVERRIDE: ${{ inputs.model }}
         run: node scripts/provider-smoke.mjs groq
       - name: Test xAI Grok
         if: inputs.provider == 'xai'
         env:
-          API_KEY: ${{ secrets.XAI_API_KEY }}
+          API_KEY: ${{ secrets.XAI_API_KEY || secrets.GROK_API_KEY || secrets.GROK || secrets.XAI }}
           MODEL_OVERRIDE: ${{ inputs.model }}
         run: node scripts/provider-smoke.mjs xai
       - name: Test Pollinations
         if: inputs.provider == 'pollinations'
         env:
-          API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+          API_KEY: ${{ secrets.POLLINATIONS_API_KEY || secrets.POLLINATIONS }}
           MODEL_OVERRIDE: ${{ inputs.model }}
         run: node scripts/provider-smoke.mjs pollinations
       - name: Test Cloudflare Workers AI
         if: inputs.provider == 'cloudflare'
         env:
-          API_KEY: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          API_KEY: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CLOUDFLARE_API_KEY || secrets.CLOUDFLARE }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || secrets.CF_ACCOUNT_ID }}
           MODEL_OVERRIDE: ${{ inputs.model }}
         run: node scripts/provider-smoke.mjs cloudflare
       - name: Test OpenRouter
         if: inputs.provider == 'openrouter'
         env:
-          API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          API_KEY: ${{ secrets.OPENROUTER_API_KEY || secrets.OPENROUTER }}
           MODEL_OVERRIDE: ${{ inputs.model }}
         run: node scripts/provider-smoke.mjs openrouter
       - name: Test NVIDIA NIM
         if: inputs.provider == 'nvidia'
         env:
-          API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          API_KEY: ${{ secrets.NVIDIA_API_KEY || secrets.NVIDIA_NIM_API_KEY || secrets.NVIDIA }}
           MODEL_OVERRIDE: ${{ inputs.model }}
         run: node scripts/provider-smoke.mjs nvidia
       - name: Test Hugging Face
         if: inputs.provider == 'huggingface'
         env:
-          API_KEY: ${{ secrets.HF_TOKEN }}
+          API_KEY: ${{ secrets.HF_TOKEN || secrets.HUGGINGFACE_API_KEY || secrets.HUGGINGFACE }}
           MODEL_OVERRIDE: ${{ inputs.model }}
         run: node scripts/provider-smoke.mjs huggingface
