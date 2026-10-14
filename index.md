@@ -731,7 +731,7 @@ permalink: /
 
     function getModelCatalogBaseUrl(provider) {
       if (provider === 'cloudflare') return getProviderBaseUrl(provider).replace(/\/+$/, '');
-      if (provider === 'custom') return (provider === currentProvider() ? $('baseUrl').value : safeGet(STORAGE.baseUrl) || '').trim().replace(/\/+$/, '');
+      if (provider === 'custom') return (provider === currentProvider() ? $('baseUrl').value : safeGet(STORAGE.baseUrl) || '').trim().replace(/\/+$/, '').replace(/\/chat\/completions$/i, '');
       return (PROVIDERS[provider]?.baseUrl || '').replace(/\/+$/, '');
     }
     function getModelCatalogEndpoint(provider, baseUrl) {
