@@ -188,6 +188,30 @@ test('401 stops after the selected provider rejects credentials', async ({ page 
   await expect.poll(() => calls).toBe(1);
 });
 
+test('transient 503 retries only the same model and never fans out', async ({ page }) => {
+  const attemptedModels = [];
+  await page.route('https://api.groq.com/openai/v1/chat/completions', async route => {
+    attemptedModels.push(route.request().postDataJSON().model);
+    await route.fulfill({
+      status: 503,
+      headers: { 'Retry-After': '0' },
+      contentType: 'application/json',
+      body: JSON.stringify({ error: { message: 'temporarily unavailable' } })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('groq');
+  await page.locator('#apiKey').fill('not-a-real-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('Check transient server error handling');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('HTTP 503');
+  await expect.poll(() => attemptedModels.length).toBe(2);
+  expect(attemptedModels).toEqual(['openai/gpt-oss-120b', 'openai/gpt-oss-120b']);
+});
+
 test('model-specific failure tries another model on the same provider first', async ({ page }) => {
   const attemptedModels = [];
   await page.route('https://api.groq.com/openai/v1/chat/completions', async route => {
