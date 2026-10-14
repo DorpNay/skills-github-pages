@@ -338,6 +338,77 @@ test('research trace supports a structured JSON download', async ({ page }) => {
   expect(exportData.trace.sources[0].url).toBe('https://example.test/docs');
 });
 
+
+test('research trace captures retrieved source evidence and prompt fingerprint', async ({ page }) => {
+  await page.route(/^https:\/\/api\.example\.test\/v1\/chat\/completions$/, async route => {
+    const body = route.request().postDataJSON();
+    const system = body.messages.find(message => message.role === 'system')?.content || '';
+    const hasToolResult = body.messages.some(message => message.role === 'tool');
+    let message;
+    if (system.includes('Роль: планировщик исследования')) {
+      message = { role: 'assistant', content: 'Plan: query a public repository and verify its description.' };
+    } else if (system.includes('Роль: исследователь') && !hasToolResult) {
+      message = {
+        role: 'assistant', content: null,
+        tool_calls: [{
+          id: 'call-research-source', type: 'function',
+          function: { name: 'public_knowledge_search', arguments: JSON.stringify({ source: 'github', query: 'source-demo' }) }
+        }]
+      };
+    } else if (system.includes('Роль: исследователь') && hasToolResult) {
+      message = { role: 'assistant', content: 'Draft: the retrieved GitHub repository description supports the claim.' };
+    } else if (system.startsWith('Ты независимый проверяющий.')) {
+      message = { role: 'assistant', content: 'The draft is limited to what the retrieved description supports.' };
+    } else if (system.includes('Роль: синтезатор')) {
+      message = { role: 'assistant', content: 'Final answer from source-backed research.' };
+    } else {
+      message = { role: 'assistant', content: 'Unexpected test stage.' };
+    }
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'e2e-research-model', choices: [{ message }] })
+    });
+  });
+  await page.route(/^https:\/\/api\.github\.com\/search\/repositories\?/, route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ items: [{
+      full_name: 'demo/source-demo', html_url: 'https://github.com/demo/source-demo',
+      stargazers_count: 11, updated_at: '2026-10-15T00:00:00Z',
+      description: 'The source excerpt confirms a deterministic test result.'
+    }] })
+  }));
+
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('e2e-research-model');
+  await page.locator('#apiKey').fill('e2e-research-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#toggleMultiAgent').check();
+  await page.locator('#userInput').fill('Исследуй репозиторий и приведи источники для проверки.');
+  await page.locator('#sendBtn').click();
+
+  await expect(page.locator('#chatBox')).toContainText('Final answer from source-backed research.', { timeout: 20000 });
+  const savedTrace = await page.evaluate(() => {
+    const key = Object.keys(localStorage).find(name => name.startsWith('ai_research_trace_'));
+    return key ? JSON.parse(localStorage.getItem(key)) : null;
+  });
+  expect(savedTrace).not.toBeNull();
+  expect(savedTrace.schemaVersion).toBe(2);
+  expect(savedTrace.promptFingerprint).toMatch(/^[a-f0-9]{64}$/);
+  expect(savedTrace.promptCharCount).toBeGreaterThan(0);
+  expect(savedTrace.sources).toHaveLength(1);
+  expect(savedTrace.sources[0].url).toBe('https://github.com/demo/source-demo');
+  expect(savedTrace.sources[0].title).toBe('demo/source-demo');
+  expect(savedTrace.sources[0].source).toBe('github');
+  expect(savedTrace.sources[0].excerpt).toContain('The source excerpt confirms');
+  await page.locator('[data-action="open-trace"]').last().click();
+  await expect(page.locator('#traceContent')).toContainText('demo/source-demo');
+  await expect(page.locator('#traceContent')).toContainText('The source excerpt confirms');
+});
+
 test('multi-agent preference skips a greeting and shows the actual route', async ({ page }) => {
   let calls = 0;
   await page.route('https://api.example.test/v1/chat/completions', async route => {
