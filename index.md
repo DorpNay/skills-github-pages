@@ -1,6 +1,6 @@
 ---
 layout: null
-title: AI Mobile Agent v9.0
+title: AI Mobile Agent v10.0
 permalink: /
 ---
 
@@ -1088,14 +1088,14 @@ permalink: /
     }
     async function runMultiAgentResearch(chat, signal, useSearch, mode, systemPrompt) {
       const history = buildHistory(chat.messages);
-      const plan = await requestTextStage(systemPrompt + '\nРоль: планировщик исследования. Разбей запрос на 3–5 проверяемых вопросов и составь краткий план. Не отвечай на сам запрос. Без веб-поиска не утверждай, что внешние источники проверены.', history, signal, '🤖 Исследование 1/4: планировщик…');
+      const plan = await requestTextStage(systemPrompt + '\nРоль: планировщик исследования. Сформируй краткий рабочий план максимум из 3–5 шагов только для сложной задачи. Укажи, какие проверяемые утверждения требуют свежих источников, какие инструменты помогут и что будет считаться достаточным результатом. Не отвечай на исходный вопрос, не добавляй шаблонные оговорки и не придумывай этапы, не нужные задаче. Не утверждай, что источники проверены, пока исследователь не выполнил поиск.', history, signal, '🤖 Исследование 1/4: планировщик…');
       const workChat = { ...chat, messages: [...chat.messages.map((message) => ({ ...message })), { role: 'assistant', content: 'План исследования:\n' + plan }] };
       const researchStart = workChat.messages.length;
       await runAssistant(workChat, signal, useSearch, false, mode, true, systemPrompt + '\nРоль: исследователь. Выполни план, используй веб-поиск, если он включён, и составь проверяемый черновик ответа.');
       const draft = workChat.messages.slice(researchStart).reverse().find((message) => message.role === 'assistant' && message.content && !message.error)?.content || '';
       if (!draft) throw new Error('Исследовательский этап не подготовил черновик.');
       if (isGenericModelRefusal(draft)) throw new Error('Модель отказала на этапе «исследователь». Конвейер остановлен; отказ не будет выдан за готовое исследование. Настройки и исходный запрос сохранены.');
-      const critique = await requestTextStage('Ты независимый критик ответа. Найди неподтверждённые утверждения, пропуски, противоречия и риски. Не переписывай ответ целиком. Если источники не предоставлены, укажи, что нельзя проверить.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик:\n' + draft }], signal, '🧪 Исследование 3/4: критик…');
+      const critique = await requestTextStage('Ты независимый проверяющий. Сверь черновик с исходной задачей и приложенными доказательствами/ссылками. Ищи только существенные фактические ошибки, логические противоречия, невыполненные требования и реально отсутствующие важные данные. Не выдумывай риски, ограничения или пункты ради заполнения таблицы; не требуй источников для приветствий и мнений. Если всё нормально или утверждений для проверки нет, ответь одной короткой фразой. Иначе дай короткий приоритизированный список исправлений, не переписывая весь ответ.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик:\n' + draft }], signal, '🧪 Исследование 3/4: критик…');
       const finalText = await requestTextStage(systemPrompt + '\nРоль: синтезатор. Ответь прямо на исходный запрос. Используй план, факты из черновика и критику; исправь фактические ошибки, отличай подтверждённое от неопределённого, сохрани полезные ссылки. Не включай шаблонное вступление о возможностях ассистента и не добавляй общих рекомендаций, не нужных для задачи.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик исследователя:\n' + draft + '\n\nКритика:\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
       const traceId=globalThis.crypto?.randomUUID?.()||('trace-'+Date.now()+'-'+Math.random().toString(36).slice(2)),finalRoute=lastSuccessfulRoute?{...lastSuccessfulRoute}:null;
       const researchTrace={id:traceId,createdAt:new Date().toISOString(),provider:finalRoute?.providerLabel||(PROVIDERS[currentProvider()]?.label||currentProvider()),model:finalRoute?.model||(safeGet(STORAGE.model)||DEFAULT_MODEL),plan,draft,critique,finalText,routes:activeRunTelemetry?activeRunTelemetry.routes.map(route=>({...route})):[]};
@@ -1553,8 +1553,9 @@ permalink: /
     $('apiKey').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');updateApiKeyLamp($('apiKey').value.trim()?'pending':'empty',$('apiKey').value.trim()?'Ключ задан, проверка нужна заново.':'Ключ не введён.');});
     $('baseUrl').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
-    $('modelPreset').addEventListener('change',()=>{const value=$('modelPreset').value;if(value!=='__custom__')$('modelName').value=value;});
-    $('modelName').addEventListener('change', () => populateModelPresets(currentProvider(),$('modelName').value));
+    $('modelPreset').addEventListener('change',()=>{const value=$('modelPreset').value;if(value!=='__custom__')$('modelName').value=value;safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
+    $('modelName').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
+    $('modelName').addEventListener('change',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('modeFast').addEventListener('click', () => setProcessingMode('fast'));
     $('modeDeep').addEventListener('click', () => setProcessingMode('deep'));
     $('toggleSearch').addEventListener('change', (event) => safeSet(STORAGE.search, String(event.target.checked)));
