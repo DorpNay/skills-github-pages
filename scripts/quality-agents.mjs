@@ -32,6 +32,12 @@ const suites = {
     ['independent processing controls and on-demand resources', () => {
       includes('async function runMultiAgentResearch', 'Multi-agent research needs its own staged pipeline.');
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
+      includes("xai: { label: 'xAI · Grok'", 'xAI Grok must be a separate provider from Groq.');
+      includes("pollinations: { label: 'Pollinations.ai'", 'Pollinations must use its own API catalog and endpoint.');
+      includes("cloudflare: { label: 'Cloudflare Workers AI'", 'Cloudflare Workers AI must be a selectable provider.');
+      includes('function finishPollinationsOAuth()', 'Pollinations OAuth callback must be implemented.');
+      includes("token: 'ai_pollinations_access_token_v1'", 'Pollinations access token storage must be session-scoped.');
+      includes("https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1", 'Cloudflare endpoint must include the validated account ID.');
       includes("nvidia: { label: 'NVIDIA NIM'", 'NVIDIA NIM should be included as an active alternative.');
       assert.ok(!source.includes('cerebras: {') && !source.includes('value="cerebras"'), 'Cerebras must remain removed per product decision.');
       assert.ok(!source.includes('value="github">GitHub Models'), 'Retired GitHub Models must not be offered as a provider.');
