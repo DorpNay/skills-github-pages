@@ -108,6 +108,11 @@ const suites = {
       includes('body.textContent=typeof value', 'Research trace must render as text rather than unsafe HTML.');
       includes('function downloadTrace()', 'Research journal must be downloadable as Markdown.');
       includes('function downloadTraceJson()', 'Research journal must also have a structured JSON export.');
+      includes('configuredPromptFingerprint', 'Research traces must carry a one-way prompt fingerprint, not raw prompt text.');
+      includes('activeRunTelemetry.attempts.push({...attempt})', 'Successful provider attempts must be recorded for trace diagnostics.');
+      includes('failureType:classifyRouteFailure(error,modelError)', 'Failed attempts must record a safe category rather than raw error contents.');
+      includes("appendTraceSection('Параметры запуска'", 'The research trace viewer must show reproducibility metadata.');
+      includes("appendTraceSection('Попытки вызова модели'", 'The research trace viewer must show provider attempt telemetry.');
       includes("format: 'ai-mobile-agent-settings'", 'Portable settings profiles must be versioned.');
       includes('function exportSettingsProfile()', 'Settings profile export must be available.');
       includes('function importSettingsProfile(event)', 'Settings profile import must validate input.');
