@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { readFile } from 'node:fs/promises';
 
 const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
 
@@ -226,6 +227,106 @@ test('refresh all catalogs updates other configured providers for cross-provider
   })).toBe(true);
   await expect(page.locator('#modelPreset option[value="groq-live-chat-model"]')).toHaveCount(1);
   await expect(page.locator('#modelCatalogStatus')).toContainText('1 текстовых моделей');
+});
+
+test('settings profile exports portable preferences but never API secrets', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('groq');
+  await page.locator('#modelName').fill('openai/gpt-oss-120b');
+  await page.locator('#apiKey').fill('e2e-private-provider-secret-value');
+  await page.locator('#tavilyKey').fill('e2e-private-search-secret-value');
+  await page.locator('#allowCrossProviderFallback').check();
+  await page.locator('[data-action="save-settings"]').click();
+
+  const downloadPromise = page.waitForEvent('download');
+  await page.locator('[data-action="export-settings-profile"]').click();
+  const download = await downloadPromise;
+  const profile = JSON.parse(await readFile(await download.path(), 'utf8'));
+  const json = JSON.stringify(profile);
+  expect(profile.format).toBe('ai-mobile-agent-settings');
+  expect(profile.version).toBe(1);
+  expect(profile.settings.provider).toBe('groq');
+  expect(profile.settings.model).toBe('openai/gpt-oss-120b');
+  expect(profile.settings.crossProviderFallback).toBe(true);
+  expect(json).not.toContain('e2e-private-provider-secret-value');
+  expect(json).not.toContain('e2e-private-search-secret-value');
+  expect(json).not.toContain('ai_api_key_');
+  expect(json).not.toContain('apiKey');
+});
+
+test('settings profile import restores preferences while preserving existing provider and search keys', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('before-import');
+  await page.locator('#apiKey').fill('e2e-preserved-provider-secret');
+  await page.locator('#tavilyKey').fill('e2e-preserved-tavily-secret');
+  await page.locator('[data-action="save-settings"]').click();
+
+  const profile = {
+    format: 'ai-mobile-agent-settings',
+    version: 1,
+    settings: {
+      provider: 'custom',
+      baseUrl: 'https://api.example.test/v1',
+      model: 'imported-model-id',
+      systemPrompt: 'Профильный системный промпт',
+      mode: 'deep',
+      search: false,
+      multiAgent: true,
+      offline: true,
+      crossProviderFallback: false
+    }
+  };
+  await page.locator('#settingsProfileFile').setInputFiles({
+    name: 'ai-mobile-agent-settings.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(profile))
+  });
+  await expect(page.locator('#toast')).toContainText('Профиль импортирован');
+  await expect(page.locator('#providerPreset')).toHaveValue('custom');
+  await expect(page.locator('#baseUrl')).toHaveValue('https://api.example.test/v1');
+  await expect(page.locator('#modelName')).toHaveValue('imported-model-id');
+  await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#toggleSearch')).not.toBeChecked();
+  await expect(page.locator('#toggleMultiAgent')).toBeChecked();
+  await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'true');
+  await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#apiKey')).toHaveValue('e2e-preserved-provider-secret');
+  await expect(page.locator('#tavilyKey')).toHaveValue('e2e-preserved-tavily-secret');
+  expect(await page.evaluate(() => localStorage.getItem('ai_api_key_custom'))).toBe('e2e-preserved-provider-secret');
+  expect(await page.evaluate(() => localStorage.getItem('ai_tavily_key'))).toBe('e2e-preserved-tavily-secret');
+});
+
+test('research trace supports a structured JSON download', async ({ page }) => {
+  const trace = {
+    id: 'e2e-json-trace', createdAt: '2026-10-15T00:00:00.000Z',
+    provider: 'Groq', model: 'openai/gpt-oss-120b',
+    plan: 'Plan', draft: 'Draft with evidence URL https://example.test/', critique: 'Critique',
+    finalText: 'Final result', routes: [{ provider: 'groq', model: 'openai/gpt-oss-120b', stage: 'answer' }]
+  };
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate((traceData) => {
+    localStorage.setItem('ai_chats_v87', JSON.stringify([{
+      id: 'e2e-trace-chat', title: 'Trace test',
+      messages: [{ role: 'assistant', content: traceData.finalText, researchTrace: { id: traceData.id } }]
+    }]));
+    localStorage.setItem('ai_current_chat_v87', 'e2e-trace-chat');
+    localStorage.setItem('ai_research_trace_' + traceData.id, JSON.stringify(traceData));
+  }, trace);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="open-trace"][data-trace-id="e2e-json-trace"]').click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.locator('[data-action="download-trace-json"]').click();
+  const download = await downloadPromise;
+  const exportData = JSON.parse(await readFile(await download.path(), 'utf8'));
+  expect(exportData.format).toBe('ai-mobile-agent-research-trace');
+  expect(exportData.version).toBe(1);
+  expect(exportData.trace.id).toBe('e2e-json-trace');
+  expect(exportData.trace.routes[0].provider).toBe('groq');
+  expect(exportData.trace.finalText).toBe('Final result');
 });
 
 test('multi-agent preference skips a greeting and shows the actual route', async ({ page }) => {

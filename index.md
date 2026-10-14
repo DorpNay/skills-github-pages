@@ -160,6 +160,12 @@ permalink: /
       <label class="flex items-start gap-2 text-xs text-gray-300 mt-2"><input id="allowCrossProviderFallback" type="checkbox" class="mt-0.5 rounded bg-gray-800 border-gray-700"><span><strong>Разрешить резерв у другого провайдера</strong><span class="block text-[11px] leading-relaxed text-amber-200/80">По умолчанию выключено. При включении текст запроса и контекст могут передаваться другому сервису. Сначала система пробует модели выбранного провайдера.</span></span></label>
       <p class="text-[11px] leading-relaxed text-gray-400">Системные правила передаются модели с каждым API-вызовом — это нужно для совместимого Chat Completions API. Промпт намеренно компактный; история ограничена примерно 24 000 символами, а в запрос добавляются только совпадающие с темой заметки (до 4, максимум 1 200 символов).</p>
       <p class="text-[11px] leading-relaxed text-gray-400">Ключи хранятся в localStorage этого браузера и отправляются только тому API, к которому выполняется запрос. Но при автоматическом резервном переходе тот же запрос и его контекст могут уйти другому провайдеру с сохранённым ключом. Если это нежелательно, удалите ключи других провайдеров из настроек/хранилища. Не используйте ключи на общем устройстве. Некоторые API блокируют браузерные запросы (CORS); для них нужен защищённый серверный прокси, а не обход CORS в клиентском коде.</p>
+      <div class="grid grid-cols-2 gap-2">
+        <button type="button" data-action="export-settings-profile" class="bg-gray-700 hover:bg-gray-600 py-2 px-2 rounded text-xs text-gray-200">Скачать профиль настроек</button>
+        <button type="button" data-action="import-settings-profile" class="bg-gray-700 hover:bg-gray-600 py-2 px-2 rounded text-xs text-gray-200">Импорт профиля</button>
+      </div>
+      <input type="file" id="settingsProfileFile" class="hidden" accept="application/json,.json">
+      <p class="text-[10px] leading-relaxed text-gray-500">Профиль переносит настройки, но намеренно не содержит API-ключи и токены. Импорт не меняет уже сохранённые секреты.</p>
       <button type="button" data-action="restore-defaults" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-200">Восстановить параметры Gemini</button>
       <button type="button" id="recoveryBackupButton" data-action="download-recovery-backup" class="hidden w-full bg-amber-800 hover:bg-amber-700 py-2 rounded text-xs text-amber-50">Скачать резервную копию истории</button>
       <button type="button" data-action="save-settings" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded font-bold text-sm">Сохранить</button>
@@ -209,7 +215,7 @@ permalink: /
       <div class="flex items-center justify-between gap-3"><h2 id="traceTitle" class="font-bold text-base">Журнал исследования</h2><button type="button" data-action="close-trace" class="text-gray-400 hover:text-white px-2 py-1" aria-label="Закрыть журнал">✕</button></div>
       <p class="text-xs text-gray-400">План, черновик исследователя и критика перед итоговым ответом. Это журнал выполненных этапов, а не скрытая внутренняя цепочка мыслей модели.</p>
       <div id="traceContent" class="space-y-4 text-sm"></div>
-      <div class="flex flex-wrap gap-2"><button type="button" data-action="download-trace" class="bg-blue-700 hover:bg-blue-600 rounded-lg px-3 py-2 text-sm">Скачать журнал .md</button><button type="button" data-action="copy-trace-link" class="bg-gray-700 hover:bg-gray-600 rounded-lg px-3 py-2 text-sm">Копировать локальную ссылку</button><button type="button" data-action="close-trace" class="bg-gray-800 hover:bg-gray-700 rounded-lg px-3 py-2 text-sm">Закрыть</button></div>
+      <div class="flex flex-wrap gap-2"><button type="button" data-action="download-trace" class="bg-blue-700 hover:bg-blue-600 rounded-lg px-3 py-2 text-sm">Скачать журнал .md</button><button type="button" data-action="download-trace-json" class="bg-blue-900 hover:bg-blue-800 rounded-lg px-3 py-2 text-sm">Скачать журнал .json</button><button type="button" data-action="copy-trace-link" class="bg-gray-700 hover:bg-gray-600 rounded-lg px-3 py-2 text-sm">Копировать локальную ссылку</button><button type="button" data-action="close-trace" class="bg-gray-800 hover:bg-gray-700 rounded-lg px-3 py-2 text-sm">Закрыть</button></div>
       <p class="text-[11px] text-gray-500">Локальная ссылка работает в этом же браузере, где сохранена история. Для передачи на другое устройство используйте файл журнала.</p>
     </div>
   </div>
@@ -969,6 +975,104 @@ permalink: /
       showToast('Параметры Gemini восстановлены. Нажмите «Сохранить», чтобы применить.');
     }
 
+    function exportSettingsProfile() {
+      const profile = {
+        format: 'ai-mobile-agent-settings',
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        settings: {
+          provider: currentProvider(),
+          baseUrl: $('baseUrl').value.trim().replace(/\/+$/, ''),
+          model: $('modelName').value.trim(),
+          cloudflareAccountId: safeGet(STORAGE.cloudflareAccountId) || $('cloudflareAccountId').value.trim(),
+          systemPrompt: $('systemPromptInput').value,
+          mode: processingMode,
+          search: $('toggleSearch').checked,
+          multiAgent: $('toggleMultiAgent').checked,
+          offline: safeGet(STORAGE.offline) === 'true',
+          crossProviderFallback: $('allowCrossProviderFallback').checked
+        }
+      };
+      const body = JSON.stringify(profile, null, 2);
+      const url = URL.createObjectURL(new Blob([body], { type: 'application/json;charset=utf-8' }));
+      const a = document.createElement('a');
+      a.href = url; a.download = 'ai-mobile-agent-settings-' + new Date().toISOString().slice(0, 10) + '.json';
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast('Профиль настроек экспортирован без API-ключей и токенов.');
+    }
+    async function importSettingsProfile(event) {
+      const file = event.target.files?.[0];
+      event.target.value = '';
+      if (!file) return;
+      if (file.size > 512 * 1024) { showToast('Файл профиля слишком большой (лимит 512 КБ).', 'error'); return; }
+      try {
+        const profile = JSON.parse(await file.text());
+        const settings = profile?.settings;
+        if (profile?.format !== 'ai-mobile-agent-settings' || profile?.version !== 1 || !settings || typeof settings !== 'object') {
+          throw new Error('Формат файла не похож на профиль AI Mobile Agent версии 1.');
+        }
+        if (!Object.prototype.hasOwnProperty.call(PROVIDERS, settings.provider)) throw new Error('Неизвестный провайдер в профиле.');
+        if (typeof settings.model !== 'string' || !settings.model.trim() || settings.model.length > 180) throw new Error('ID модели должен содержать от 1 до 180 символов.');
+        if (typeof settings.baseUrl !== 'string' || settings.baseUrl.length > 2048) throw new Error('Base URL отсутствует или слишком длинный.');
+        let parsed;
+        try { parsed = new URL(settings.baseUrl); } catch (_) { throw new Error('Base URL в профиле некорректен.'); }
+        if (!['https:', 'http:'].includes(parsed.protocol)) throw new Error('Base URL должен начинаться с HTTPS (или HTTP только для localhost).');
+        const localHost = ['localhost', '127.0.0.1', '[::1]'].includes(parsed.hostname);
+        if (parsed.protocol !== 'https:' && !localHost) throw new Error('HTTP Base URL разрешён только для localhost.');
+        if (settings.provider === 'cloudflare' && (typeof settings.cloudflareAccountId !== 'string' || !/^[a-f0-9]{32}$/i.test(settings.cloudflareAccountId))) {
+          throw new Error('Cloudflare Account ID в профиле должен содержать 32 шестнадцатеричных символа.');
+        }
+        if (settings.systemPrompt !== undefined && (typeof settings.systemPrompt !== 'string' || settings.systemPrompt.length > 12000)) throw new Error('Системный промпт должен быть текстом до 12 000 символов.');
+        if (settings.mode !== undefined && !['fast', 'deep'].includes(settings.mode)) throw new Error('Неизвестный режим обработки в профиле.');
+        for (const key of ['search', 'multiAgent', 'offline', 'crossProviderFallback']) {
+          if (settings[key] !== undefined && typeof settings[key] !== 'boolean') throw new Error('Параметр ' + key + ' должен быть логическим значением.');
+        }
+        const baseUrl = settings.provider === 'cloudflare'
+          ? 'https://api.cloudflare.com/client/v4/accounts/' + settings.cloudflareAccountId + '/ai/v1'
+          : settings.baseUrl.trim().replace(/\/+$/, '').replace(/\/chat\/completions$/i, '');
+        const saveResults = [
+          safeSet(STORAGE.provider, settings.provider),
+          safeSet(STORAGE.baseUrl, baseUrl),
+          safeSet(STORAGE.model, settings.model.trim()),
+          safeSet(STORAGE.mode, settings.mode === 'deep' ? 'deep' : 'fast'),
+          safeSet(STORAGE.search, String(settings.search !== false)),
+          safeSet(STORAGE.multiAgent, String(settings.multiAgent === true)),
+          safeSet(STORAGE.offline, String(settings.offline === true)),
+          safeSet(STORAGE.crossProviderFallback, String(settings.crossProviderFallback === true)),
+          safeSet(STORAGE.systemPrompt, String(settings.systemPrompt || DEFAULT_SYSTEM)),
+          ...(settings.provider === 'cloudflare' ? [safeSet(STORAGE.cloudflareAccountId, settings.cloudflareAccountId)] : [])
+        ];
+        if (!saveResults.every(Boolean)) throw new Error('Не удалось сохранить все параметры в браузере.');
+        $('providerPreset').value = settings.provider;
+        $('modelSearch').value = '';
+        $('baseUrl').value = baseUrl;
+        $('modelName').value = settings.model.trim();
+        $('systemPromptInput').value = String(settings.systemPrompt || DEFAULT_SYSTEM);
+        $('toggleSearch').checked = settings.search !== false;
+        $('toggleMultiAgent').checked = settings.multiAgent === true;
+        $('allowCrossProviderFallback').checked = settings.crossProviderFallback === true;
+        processingMode = settings.mode === 'deep' ? 'deep' : 'fast';
+        updateModeUI();
+        applyProviderPreset(settings.provider, true);
+        $('modelName').value = settings.model.trim();
+        $('baseUrl').value = baseUrl;
+        $('systemPromptInput').value = String(settings.systemPrompt || DEFAULT_SYSTEM);
+        $('toggleSearch').checked = settings.search !== false;
+        $('toggleMultiAgent').checked = settings.multiAgent === true;
+        $('allowCrossProviderFallback').checked = settings.crossProviderFallback === true;
+        safeSet(STORAGE.model, $('modelName').value);
+        updateOfflineUI();
+        safeSet('ai_provider_model_catalog_stale_v1_' + settings.provider, 'true');
+        safeSet('ai_provider_connection_' + settings.provider, '');
+        populateModelPresets(settings.provider, settings.model.trim());
+        refreshApiKeyLamp();
+        if (getProviderRequestKey(settings.provider)) void refreshModelCatalog({ provider: settings.provider, quiet: true, force: true });
+        toggleSettings(false);
+        showToast('Профиль импортирован. Сохранённые API-ключи не изменены.');
+      } catch (error) {
+        showToast('Импорт профиля не выполнен: ' + String(error?.message || error), 'error');
+      }
+    }
     function saveSettings() {
       if(currentProvider()==='cloudflare'){
         const accountId=$('cloudflareAccountId').value.trim();
@@ -1872,6 +1976,20 @@ permalink: /
       const url=URL.createObjectURL(new Blob([body],{type:'text/markdown;charset=utf-8'})), a=document.createElement('a');
       a.href=url; a.download='research-trace-'+(activeTrace.createdAt||new Date().toISOString()).slice(0,10)+'.md'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
     }
+    function downloadTraceJson() {
+      if (!activeTrace || typeof activeTrace !== 'object') return;
+      const body = JSON.stringify({
+        format: 'ai-mobile-agent-research-trace',
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        trace: activeTrace
+      }, null, 2);
+      const url = URL.createObjectURL(new Blob([body], { type: 'application/json;charset=utf-8' }));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'research-trace-' + String(activeTrace.createdAt || new Date().toISOString()).slice(0, 10) + '.json';
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
     async function handleCodeAction(button) {
       const block = button.closest('.code-block');
       const code = block?.querySelector('code')?.textContent ?? '';
@@ -1968,7 +2086,7 @@ permalink: /
       if (control.closest('#chatBox')) {
         const isCodeAction = ['copy-code','download-code','run-python'].includes(action) && control.classList.contains('code-action') && control.closest('.code-block');
         const isRetryAction = action === 'retry' && control.classList.contains('retry-action');
-        const isTraceAction = ['open-trace','copy-trace-link','download-trace','close-trace'].includes(action);
+        const isTraceAction = ['open-trace','copy-trace-link','download-trace','download-trace-json','close-trace'].includes(action);
         if (!isCodeAction && !isRetryAction && !isTraceAction) return;
       }
       try {
@@ -1980,6 +2098,8 @@ permalink: /
           case 'switch-chat': switchChat(control.dataset.chatId); break;
           case 'delete-chat': deleteChat(control.dataset.chatId); break;
           case 'export-chats': exportChats(); break;
+          case 'export-settings-profile': exportSettingsProfile(); break;
+          case 'import-settings-profile': $('settingsProfileFile').click(); break;
           case 'save-memory': {
             const input = $('memoryInput'); const fact = input.value.trim();
             if (!fact) { input.focus(); break; }
@@ -2009,6 +2129,7 @@ permalink: /
           case 'open-trace': { const raw=safeGet('ai_research_trace_'+control.dataset.traceId); if(!raw) throw new Error('Журнал не найден: возможно, локальные данные очищены.'); showTrace(JSON.parse(raw)); break; }
           case 'close-trace': closeTrace(); break;
           case 'download-trace': downloadTrace(); break;
+          case 'download-trace-json': downloadTraceJson(); break;
           case 'copy-trace-link': {
             if (!activeTrace) break;
             safeSet('ai_research_trace_'+activeTrace.id,JSON.stringify(activeTrace));
@@ -2038,6 +2159,7 @@ permalink: /
     $('toggleMultiAgent').addEventListener('change', (event) => safeSet(STORAGE.multiAgent, String(event.target.checked)));
     $('sidebarOverlay').addEventListener('click', () => toggleSidebar(false));
     $('importFile').addEventListener('change', importChats);
+    $('settingsProfileFile').addEventListener('change', importSettingsProfile);
     $('userInput').addEventListener('input', () => autoResizeTextarea($('userInput')));
     $('userInput').addEventListener('keydown', (event) => {
       if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) { event.preventDefault(); sendMessage(false); }
