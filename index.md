@@ -2075,7 +2075,7 @@ permalink: /
           'Начало: '+(run.startedAt||'не записано'),
           'Длительность: '+(Number.isFinite(run.durationMs)?run.durationMs+' мс':'не записана'),
           'Отпечаток системного промпта: '+(run.configuredPromptFingerprint||'не записан')+' ('+(run.configuredPromptFingerprintAlgorithm||'unknown')+')',
-          'Размер базового системного контекста: '+(Number.isFinite(trace.systemPromptCharCount)?trace.systemPromptCharCount+' символов':'не записан')
+          'Размер системного промпта исследовательского pipeline: '+(Number.isFinite(trace.systemPromptCharCount)?trace.systemPromptCharCount+' символов':'не записан')
         ].join('\n'));
       }
       const attempts=Array.isArray(trace.attempts)?trace.attempts:[];
