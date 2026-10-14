@@ -779,7 +779,7 @@ permalink: /
 
       $('providerPreset').value=provider;
       $('baseUrl').value=safeGet(STORAGE.baseUrl)||DEFAULT_BASE_URL;
-      $('modelName').value=safeGet(STORAGE.model)||DEFAULT_MODEL;
+      $('modelName').value=safeGet(STORAGE.model)||(PROVIDERS[provider]?.models[0]?.[0]||DEFAULT_MODEL);
       applyProviderPreset($('providerPreset').value,true);
       $('modelName').value=safeGet(STORAGE.model)||$('modelName').value;
       populateModelPresets($('providerPreset').value,$('modelName').value);
