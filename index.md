@@ -8,15 +8,42 @@ permalink: /
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#111827">
+  <meta name="theme-color" content="#0a1220">
   <meta name="color-scheme" content="dark">
-  <title>AI Mobile Agent v9.0</title>
+  <title>AI Mobile Agent v10.0</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked@18.0.14/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js"></script>
   <style>
-    :root { color-scheme: dark; }
+    :root { color-scheme: dark; --ink: #e8eefc; --panel: #101827; --line: #273349; }
     html, body { height: 100%; }
+    body { background: radial-gradient(ellipse at 12% 0%, rgb(37 66 108 / 24%), transparent 36%), radial-gradient(ellipse at 95% 70%, rgb(26 85 74 / 12%), transparent 32%), linear-gradient(150deg, #080d17, #101827 55%, #0a1220); }
+    #settingsModal > .settings-surface { background: rgb(13 20 33 / 96%); border-color: rgb(96 165 250 / 24%); box-shadow: 0 24px 80px rgb(0 0 0 / 45%), 0 0 28px rgb(96 165 250 / 6%); backdrop-filter: blur(18px); }
+    #settingsModal label { letter-spacing: .015em; }
+    #settingsModal input, #settingsModal textarea, #settingsModal select { background: rgb(6 12 22 / 82%); border-color: #344158; }
+    #settingsModal input:focus, #settingsModal textarea:focus, #settingsModal select:focus { border-color: #7dd3fc; box-shadow: 0 0 0 1px rgb(125 211 252 / 18%), 0 0 18px rgb(96 165 250 / 11%); }
+    .ambient-control { border: 1px solid rgb(96 165 250 / 24%); background: linear-gradient(135deg, rgb(30 41 59 / 94%), rgb(12 20 34 / 94%)); box-shadow: inset 0 1px rgb(255 255 255 / 3%); }
+    .ambient-control[aria-pressed="true"] { color: #fef3c7; border-color: rgb(251 191 36 / 50%); box-shadow: inset 0 0 14px rgb(251 191 36 / 8%), 0 0 14px rgb(251 191 36 / 8%); }
+    .api-key-row { display: flex; align-items: center; gap: .55rem; border: 1px solid #344158; border-radius: .7rem; padding: .35rem .55rem; background: rgb(6 12 22 / 82%); transition: border-color .2s ease, box-shadow .2s ease; }
+    .api-key-row #apiKey { min-width: 0; flex: 1; border: 0; box-shadow: none; background: transparent; padding: .4rem .1rem; }
+    .api-key-row:focus-within { border-color: #7dd3fc; box-shadow: 0 0 0 1px rgb(125 211 252 / 12%); }
+    .api-key-row[data-state="pending"] { border-color: rgb(251 191 36 / 52%); box-shadow: inset 0 0 20px rgb(251 191 36 / 5%), 0 0 16px rgb(251 191 36 / 8%); }
+    .api-key-row[data-state="connected"] { border-color: rgb(74 222 128 / 65%); box-shadow: inset 0 0 22px rgb(74 222 128 / 7%), 0 0 18px rgb(74 222 128 / 11%); }
+    .api-key-row[data-state="error"] { border-color: rgb(248 113 113 / 72%); box-shadow: inset 0 0 20px rgb(248 113 113 / 5%), 0 0 15px rgb(248 113 113 / 10%); }
+    .key-lamp { width: .63rem; height: .63rem; flex: 0 0 .63rem; border-radius: 50%; background: #64748b; box-shadow: 0 0 0 3px rgb(100 116 139 / 9%); }
+    [data-state="pending"] .key-lamp { background: #fbbf24; box-shadow: 0 0 8px rgb(251 191 36 / 80%), 0 0 18px rgb(251 191 36 / 24%); }
+    [data-state="connected"] .key-lamp { background: #4ade80; box-shadow: 0 0 8px rgb(74 222 128 / 90%), 0 0 20px rgb(74 222 128 / 30%); }
+    [data-state="error"] .key-lamp { background: #f87171; box-shadow: 0 0 8px rgb(248 113 113 / 85%); }
+    .prompt-editor { position: relative; }
+    .prompt-editor textarea { padding-right: 3.2rem; }
+    .prompt-editor textarea[readonly] { cursor: default; opacity: .82; }
+    .prompt-pencil { position: absolute; right: .45rem; top: .45rem; width: 2.2rem; height: 2.2rem; border-radius: .6rem; border: 1px solid #344158; background: #111c2d; color: #bfdbfe; }
+    .prompt-pencil[aria-pressed="true"] { border-color: rgb(74 222 128 / 55%); color: #bbf7d0; box-shadow: 0 0 14px rgb(74 222 128 / 9%); }
+    .message-model-meta { color: #93a4bd; font-size: .67rem; line-height: 1.3; padding: .15rem .25rem; opacity: .9; }
+    .message-model-meta::before { content: "●"; display: inline-block; margin-right: .4rem; color: #4ade80; font-size: .58rem; text-shadow: 0 0 8px rgb(74 222 128 / 45%); }
+    #thinkingTime { color: #a5b4fc; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    #statusText { color: transparent; background: linear-gradient(100deg, #bfdbfe 5%, #c4b5fd 42%, #6ee7b7 70%, #bfdbfe 95%); background-size: 220% 100%; background-clip: text; -webkit-background-clip: text; animation: status-sheen 4.5s ease-in-out infinite; }
+    @keyframes status-sheen { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100dvh; min-height: 0; overflow: hidden; }
     button, input, textarea { font: inherit; }
     button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; }
@@ -85,7 +112,7 @@ permalink: /
   <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 hidden" aria-hidden="true"></div>
 
   <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-    <div class="bg-gray-800 p-4 rounded-xl max-w-sm mx-auto w-full border border-gray-700 space-y-2.5 my-auto max-h-[90dvh] overflow-y-auto">
+    <div class="settings-surface bg-gray-800 p-4 rounded-xl max-w-sm mx-auto w-full border border-gray-700 space-y-2.5 my-auto max-h-[90dvh] overflow-y-auto">
       <h2 id="settingsTitle" class="text-lg font-bold">⚙️ Настройки</h2>
       <div class="rounded-lg bg-gray-900 border border-gray-700 p-2.5 text-xs leading-relaxed text-gray-300 space-y-2">
         <p><strong>Быстрый старт:</strong> по умолчанию выбран Gemini. Для альтернатив выберите провайдера и модель ниже; для каждого сервиса нужен свой API-ключ.</p>
@@ -103,14 +130,18 @@ permalink: /
       <a id="providerDocsLink" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-blue-300 underline underline-offset-2">Открыть страницу API-ключа</a>
       <label for="baseUrl" class="block text-xs text-gray-400">Base URL (без /chat/completions)</label>
       <input type="url" id="baseUrl" autocomplete="url" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
-      <label for="apiKey" class="block text-xs text-gray-400">API Key</label>
-      <input type="password" id="apiKey" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
+      <label for="apiKey" class="block text-xs text-gray-400">API Key · ключ-питание</label>
+      <div id="apiKeyShell" class="api-key-row" data-state="empty"><span class="key-lamp" aria-hidden="true"></span><input type="password" id="apiKey" autocomplete="off" aria-describedby="apiKeyStatus" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Вставьте ключ провайдера"></div>
+      <p id="apiKeyStatus" class="text-[11px] leading-relaxed text-gray-400" role="status" aria-live="polite">Серый — ключ не введён; янтарный — ключ задан, но не проверен; зелёный — последняя проверка прошла.</p>
+      <div class="flex gap-2"><button type="button" data-action="test-connection" class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение</button><button type="button" data-action="clear-provider-key" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
       <label for="modelName" class="block text-xs text-gray-400">Модель</label>
       <input type="text" id="modelName" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
       <label for="tavilyKey" class="block text-xs text-gray-400">Tavily Search API Key</label>
       <input type="password" id="tavilyKey" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
-      <label for="systemPromptInput" class="block text-xs text-gray-400">Системный промпт</label>
-      <textarea id="systemPromptInput" rows="4" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y"></textarea>
+      <div class="flex items-center justify-between gap-2"><label for="systemPromptInput" class="block text-xs text-gray-400">Системный промпт</label><span class="text-[10px] text-gray-500">редактирование по кнопке</span></div>
+      <div class="prompt-editor"><textarea id="systemPromptInput" rows="4" readonly aria-describedby="promptEditHint" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y"></textarea><button type="button" id="editSystemPrompt" data-action="edit-system-prompt" class="prompt-pencil" aria-pressed="false" aria-label="Редактировать системный промпт" title="Разрешить редактирование">✎</button></div>
+      <p id="promptEditHint" class="text-[11px] text-gray-500">Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.</p>
+      <label class="flex items-start gap-2 text-xs text-gray-300 mt-2"><input id="allowCrossProviderFallback" type="checkbox" class="mt-0.5 rounded bg-gray-800 border-gray-700"><span><strong>Разрешить резерв у другого провайдера</strong><span class="block text-[11px] leading-relaxed text-amber-200/80">По умолчанию выключено. При включении текст запроса и контекст могут передаваться другому сервису. Сначала система пробует модели выбранного провайдера.</span></span></label>
       <p class="text-[11px] leading-relaxed text-gray-400">Системные правила передаются модели с каждым API-вызовом — это нужно для совместимого Chat Completions API. Промпт намеренно компактный; история ограничена примерно 24 000 символами, а в запрос добавляются только совпадающие с темой заметки (до 4, максимум 1 200 символов).</p>
       <p class="text-[11px] leading-relaxed text-gray-400">Ключи хранятся в localStorage этого браузера и отправляются только тому API, к которому выполняется запрос. Но при автоматическом резервном переходе тот же запрос и его контекст могут уйти другому провайдеру с сохранённым ключом. Если это нежелательно, удалите ключи других провайдеров из настроек/хранилища. Не используйте ключи на общем устройстве. Некоторые API блокируют браузерные запросы (CORS); для них нужен защищённый серверный прокси, а не обход CORS в клиентском коде.</p>
       <button type="button" data-action="restore-defaults" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-200">Восстановить параметры Gemini</button>
@@ -136,16 +167,17 @@ permalink: /
         <button type="button" id="modeDeep" aria-pressed="false" class="flex-1 rounded-md px-2 py-1.5 text-gray-300">🔬 Глубоко</button>
       </div>
     </div>
-    <div class="flex justify-around text-xs gap-3">
-      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Tavily при наличии ключа плюс открытые источники знаний; независимо от режима и исследования."><input type="checkbox" id="toggleSearch" class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span>🌐 Интернет и источники</span></label>
-      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Отдельный конвейер из четырёх фаз/вызовов выбранной модели; не включает режим «Глубоко»."><input type="checkbox" id="toggleMultiAgent" class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span>🤖 Мультиагентное исследование</span></label>
+    <div class="flex flex-wrap items-center justify-between text-xs gap-3">
+      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Инструменты поиска доступны по умолчанию; модель использует их по необходимости."><input type="checkbox" id="toggleSearch" checked class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span>🌐 Интернет и источники</span></label>
+      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Режим доступен для сложных задач; приветствия и простые вопросы не запускают многоэтапный конвейер."><input type="checkbox" id="toggleMultiAgent" class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span>🤖 Умное исследование</span></label>
+      <button type="button" id="offlineToggle" data-action="toggle-offline" aria-pressed="false" class="ambient-control rounded-lg px-3 py-1.5 text-[11px] font-semibold" title="Выключает веб-поиск и внешние источники. Облачный API модели по-прежнему требует интернет-соединения.">◉ Оффлайн: выкл.</button>
     </div>
-    <p id="modeHint" class="text-[10px] text-gray-500 leading-relaxed">Быстро: минимум дополнительных этапов. Исследование включается отдельно.</p>
+    <p id="modeHint" class="text-[10px] text-gray-500 leading-relaxed">Онлайн включён по умолчанию; поиск будет использоваться, когда помогает ответу. Оффлайн отключает веб-инструменты, но не превращает облачный API в локальную модель.</p>
   </div>
 
   <main id="chatBox" class="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-sm" aria-live="polite" aria-label="Сообщения чата"></main>
   <div id="searchStatus" class="hidden px-4 py-2 bg-gray-800/80 border-t border-gray-700 text-xs text-blue-300 flex items-center gap-2 shrink-0" role="status" aria-live="polite">
-    <span class="animate-spin" aria-hidden="true">⏳</span><span id="statusText">Выполняется запрос...</span>
+    <span class="animate-spin" aria-hidden="true">⏳</span><span id="statusText">Выполняется запрос...</span><span id="thinkingTime" class="ml-auto text-[10px]">Прошло 00:00</span>
   </div>
   <footer class="px-3 py-2 bg-gray-800/95 border-t border-gray-700 shrink-0 safe-bottom">
     <div class="flex gap-2 items-end" id="inputArea">
@@ -173,7 +205,7 @@ permalink: /
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
       tavilyKey: 'ai_tavily_key', systemPrompt: 'ai_system_prompt',
-      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', provider: 'ai_api_provider'
+      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider'
     };
     const LEGACY_DEFAULT_SYSTEM = 'Ты автономный ИИ-ассистент. Отвечай ясно, проверяй предположения и выдавай структурированные отчёты. Если включён веб-поиск, используй его для актуальной информации.';
     const DEFAULT_SYSTEM = [
@@ -185,9 +217,9 @@ permalink: /
       'Перед необратимыми или внешне значимыми действиями запрашивай подтверждение. Не заявляй, что что-либо запущено, сохранено или проверено, если этого не подтверждают доступные результаты.'
     ].join(' ');
     const DEFAULT_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/openai';
-    const DEFAULT_MODEL = 'gemini-3.6-flash';
+    const DEFAULT_MODEL = 'gemini-3.8-flash';
     const PROVIDERS = {
-      gemini: { label: 'Google AI Studio · Gemini', docsUrl: 'https://aistudio.google.com/apikey', baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai', models: [['gemini-3.6-flash','Gemini 3.6 Flash · стабильная'], ['gemini-3.5-flash','Gemini 3.5 Flash'], ['gemini-2.5-flash','Gemini 2.5 Flash']] },
+      gemini: { label: 'Google AI Studio · Gemini', docsUrl: 'https://aistudio.google.com/apikey', baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai', models: [['gemini-3.8-flash','Gemini 3.8 Flash · стабильная'], ['gemini-3.6-flash','Gemini 3.6 Flash · стабильная'], ['gemini-3.5-flash-lite','Gemini 3.5 Flash-Lite · стабильная']] },
       groq: { label: 'Groq', docsUrl: 'https://console.groq.com/keys', baseUrl: 'https://api.groq.com/openai/v1', models: [['openai/gpt-oss-120b','GPT-OSS 120B'], ['qwen/qwen3.8-27b','Qwen 3.8 27B']] },
       openrouter: { label: 'OpenRouter', docsUrl: 'https://openrouter.ai/settings/keys', baseUrl: 'https://openrouter.ai/api/v1', models: [['openrouter/free','Автовыбор бесплатной модели'], ['deepseek/deepseek-r1:free','DeepSeek R1 · free (если доступна)']] },
       nvidia: { label: 'NVIDIA NIM', docsUrl: 'https://build.nvidia.com/settings', baseUrl: 'https://integrate.api.nvidia.com/v1', models: [['z-ai/glm-5.3','GLM-5.3 · reasoning/coding'], ['openai/gpt-oss-20b','GPT-OSS 20B · reasoning']] },
@@ -298,6 +330,8 @@ permalink: /
               content: typeof m.content === 'string' ? m.content : '',
               ...(typeof m.tool_call_id === 'string' ? { tool_call_id: m.tool_call_id } : {}),
               ...(Array.isArray(m.tool_calls) ? { tool_calls: m.tool_calls } : {}),
+              ...(m.providerInfo && typeof m.providerInfo==='object' ? { providerInfo:{provider:String(m.providerInfo.provider||''),providerLabel:String(m.providerInfo.providerLabel||'').slice(0,120),model:String(m.providerInfo.model||'').slice(0,160),stage:String(m.providerInfo.stage||'').slice(0,120),at:String(m.providerInfo.at||'')} } : {}),
+              ...(m.researchTrace && typeof m.researchTrace.id==='string' ? { researchTrace:{id:m.researchTrace.id} } : {}),
               ...(m.error ? { error: true } : {})
             }))
           }));
@@ -495,6 +529,7 @@ permalink: /
         bubble.appendChild(content);
       }
       row.appendChild(bubble);
+      if (!isUser && message.providerInfo) { const meta=document.createElement('div'); meta.className='message-model-meta'; const r=message.providerInfo; meta.textContent=(r.providerLabel||r.provider||'Провайдер неизвестен')+' · '+(r.model||'модель не указана'); row.className+=' flex-col items-start'; row.appendChild(meta); }
       if (!isUser && message.researchTrace) {
         const actions = document.createElement('div'); actions.className = 'flex flex-wrap gap-2 mt-1';
         const button = document.createElement('button'); button.type = 'button'; button.dataset.action = 'open-trace'; button.dataset.traceId = message.researchTrace.id || '';
@@ -580,10 +615,9 @@ permalink: /
       overlay.classList.toggle('hidden', !open);
     }
     function toggleSettings(force) {
-      const modal = $('settingsModal');
-      const open = typeof force === 'boolean' ? force : modal.classList.contains('hidden');
-      modal.classList.toggle('hidden', !open);
-      if (open) $('baseUrl').focus();
+      const modal=$('settingsModal'),open=typeof force==='boolean'?force:modal.classList.contains('hidden');
+      modal.classList.toggle('hidden',!open);
+      if(open){$('systemPromptInput').readOnly=true;$('editSystemPrompt').setAttribute('aria-pressed','false');$('editSystemPrompt').textContent='✎';$('promptEditHint').textContent='Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.';refreshApiKeyLamp();}
     }
     function populateModelPresets(provider, selectedModel = '') {
       const select = $('modelPreset'), config = PROVIDERS[provider] || PROVIDERS.custom;
@@ -630,10 +664,7 @@ permalink: /
         safeSet(STORAGE.baseUrl, DEFAULT_BASE_URL);
         safeSet(STORAGE.model, DEFAULT_MODEL);
       }
-      if (safeGet(STORAGE.model) === 'gemini-3.8-flash') {
-        // Migrate the old typo/unsupported preset to the official stable Gemini model ID.
-        safeSet(STORAGE.model, DEFAULT_MODEL);
-      }
+
       $('providerPreset').value=provider;
       $('baseUrl').value=safeGet(STORAGE.baseUrl)||DEFAULT_BASE_URL;
       $('modelName').value=safeGet(STORAGE.model)||DEFAULT_MODEL;
@@ -644,9 +675,11 @@ permalink: /
       const savedPrompt = safeGet(STORAGE.systemPrompt);
       $('systemPromptInput').value = (!savedPrompt || savedPrompt === LEGACY_DEFAULT_SYSTEM) ? DEFAULT_SYSTEM : savedPrompt;
       processingMode = safeGet(STORAGE.mode) === 'deep' ? 'deep' : 'fast';
-      $('toggleSearch').checked = safeGet(STORAGE.search) === 'true';
+      $('toggleSearch').checked = safeGet(STORAGE.search) !== 'false';
       $('toggleMultiAgent').checked = safeGet(STORAGE.multiAgent) === 'true';
-      updateModeUI();
+      $('allowCrossProviderFallback').checked = safeGet(STORAGE.crossProviderFallback) === 'true';
+      $('offlineToggle').setAttribute('aria-pressed',String(safeGet(STORAGE.offline)==='true'));
+      updateOfflineUI(); updateModeUI(); refreshApiKeyLamp();
     }
     function updateModeUI() {
       const fast = processingMode === 'fast';
@@ -673,7 +706,7 @@ permalink: /
 
     function saveSettings() {
       let baseUrl = $('baseUrl').value.trim().replace(/\/+$/, '');
-      const apiKey = $('apiKey').value.trim();
+      const enteredApiKey = $('apiKey').value.trim();
       const model = $('modelName').value.trim();
       const tavilyKey = $('tavilyKey').value.trim();
       let parsed;
@@ -686,23 +719,48 @@ permalink: /
       }
       if (!model) { showToast('Укажите имя модели.', 'error'); return; }
       if (/\/chat\/completions$/i.test(baseUrl)) baseUrl = baseUrl.replace(/\/chat\/completions$/i, '');
-      const provider = currentProvider();
-      const saved = [
-        safeSet(STORAGE.provider, provider),
-        safeSet(STORAGE.baseUrl, baseUrl),
-        ...(provider === 'gemini' ? [safeSet(STORAGE.apiKey, apiKey)] : []),
-        safeSet(providerKeyStorage(provider), apiKey),
-        safeSet(STORAGE.model, model),
-        safeSet(STORAGE.tavilyKey, tavilyKey),
-        safeSet(STORAGE.systemPrompt, $('systemPromptInput').value.trim() || DEFAULT_SYSTEM)
+      const provider=currentProvider(),existingKey=safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'',apiKey=enteredApiKey||existingKey;
+      const saved=[
+        safeSet(STORAGE.provider,provider),safeSet(STORAGE.baseUrl,baseUrl),
+        ...(provider==='gemini'&&enteredApiKey?[safeSet(STORAGE.apiKey,enteredApiKey)]:[]),
+        ...(enteredApiKey?[safeSet(providerKeyStorage(provider),enteredApiKey)]:[]),
+        safeSet(STORAGE.model,model),safeSet(STORAGE.tavilyKey,tavilyKey),
+        safeSet(STORAGE.crossProviderFallback,String($('allowCrossProviderFallback').checked)),
+        safeSet(STORAGE.systemPrompt,$('systemPromptInput').value.trim()||DEFAULT_SYSTEM)
       ].every(Boolean);
-      if (!saved) return;
-      showToast('Настройки сохранены');
+      if(!saved)return;
+      if(!$('apiKey').value.trim()&&apiKey)$('apiKey').value=apiKey;
+      $('systemPromptInput').readOnly=true;$('editSystemPrompt').setAttribute('aria-pressed','false');$('editSystemPrompt').textContent='✎';
+      $('promptEditHint').textContent='Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.';
+      refreshApiKeyLamp();showToast('Настройки сохранены');
     }
 
-    function buildApiUrl(baseUrl) {
-      return `${baseUrl.replace(/\/+$/, '')}/chat/completions`;
+    function buildApiUrl(baseUrl) { return `${baseUrl.replace(/\/+$/,'')}/chat/completions`; }
+    function buildModelsUrl(baseUrl){return `${baseUrl.replace(/\/+$/,'')}/models`;}
+    function updateApiKeyLamp(state,message){const shell=$('apiKeyShell'),status=$('apiKeyStatus');if(!shell||!status)return;shell.dataset.state=state;status.textContent=message;}
+    function refreshApiKeyLamp(){
+      const provider=currentProvider(),key=$('apiKey').value.trim()||safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'',baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'');
+      if(!key){updateApiKeyLamp('empty','Серый — ключ не введён. Вставьте ключ и нажмите «Проверить соединение».');return;}
+      let v=null;try{v=JSON.parse(safeGet('ai_provider_connection_'+provider)||'null');}catch(_){}
+      if(v&&v.baseUrl===baseUrl&&v.ok)updateApiKeyLamp('connected','Зелёный — последняя проверка соединения прошла успешно. При изменении ключа или адреса проверьте снова.');
+      else updateApiKeyLamp('pending','Янтарный — ключ задан, соединение ещё не подтверждено.');
     }
+    async function testProviderConnection(){
+      const provider=currentProvider(),baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),key=$('apiKey').value.trim()||safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'';
+      if(!key){updateApiKeyLamp('error','Сначала вставьте API-ключ.');showToast('Для проверки нужен API-ключ выбранного провайдера.','error');return;}
+      try{new URL(baseUrl);}catch(_){updateApiKeyLamp('error','Base URL некорректен. Исправьте адрес и повторите проверку.');return;}
+      updateApiKeyLamp('pending','Проверяю API и доступ к списку моделей…');showStatus('🔌 Проверка соединения с провайдером…');
+      try{
+        const response=await fetch(buildModelsUrl(baseUrl),{method:'GET',headers:{'Authorization':'Bearer '+key,'Accept':'application/json'}});
+        if(!response.ok){const body=(await response.text().catch(()=>'' )).slice(0,240);updateApiKeyLamp('error','HTTP '+response.status+(body?': '+body:'')+([401,403].includes(response.status)?' — проверьте ключ и права.':response.status===404?' — проверьте Base URL и поддержку /models.':''));showToast('Проверка API не прошла: HTTP '+response.status,'error');safeSet('ai_provider_connection_'+provider,'');return;}
+        const payload=await response.json();if(!payload||(!Array.isArray(payload.data)&&!Array.isArray(payload.models))){updateApiKeyLamp('error','Ответ получен, но формат списка моделей не распознан.');showToast('API ответил, но формат /models неизвестен.','error');return;}
+        safeSet('ai_provider_connection_'+provider,JSON.stringify({ok:true,baseUrl,testedAt:new Date().toISOString()}));updateApiKeyLamp('connected','Соединение подтверждено · '+(Array.isArray(payload.data)?payload.data.length:payload.models.length)+' моделей в ответе API.');showToast('Соединение с API установлено');
+      }catch(_){safeSet('ai_provider_connection_'+provider,'');updateApiKeyLamp('error','Сеть/CORS не позволили проверить API. Это не доказывает, что ключ неверен; проверьте Base URL или используйте серверный прокси.');showToast('Проверка не удалась: сеть или CORS.','error');}
+      finally{hideStatus();}
+    }
+    function clearProviderKey(){const provider=currentProvider();safeSet(providerKeyStorage(provider),'');if(provider==='gemini')safeSet(STORAGE.apiKey,'');safeSet('ai_provider_connection_'+provider,'');$('apiKey').value='';updateApiKeyLamp('empty','Ключ удалён из локальных настроек этого браузера.');showToast('Ключ выбранного провайдера удалён');}
+    function updateOfflineUI(){const off=safeGet(STORAGE.offline)==='true',button=$('offlineToggle');if(!button)return;button.setAttribute('aria-pressed',String(off));button.textContent=off?'◉ Оффлайн: вкл.':'◉ Оффлайн: выкл.';button.title='Отключает веб-поиск и внешние источники. Облачный API модели всё равно требует интернет-соединения.';}
+    function toggleOfflineMode(){const off=safeGet(STORAGE.offline)!=='true';safeSet(STORAGE.offline,String(off));updateOfflineUI();showToast(off?'Оффлайн-режим: веб-поиск выключен':'Онлайн-режим: веб-инструменты доступны');}
     async function makeCacheKey(value) {
       const serialized = JSON.stringify(value);
       try {
@@ -747,11 +805,12 @@ permalink: /
       $('userInput').disabled = false;
       $('sendBtn').disabled = busy;
     }
-    function showStatus(message) {
-      $('statusText').textContent = message;
-      $('searchStatus').classList.remove('hidden');
-    }
-    function hideStatus() { $('searchStatus').classList.add('hidden'); }
+    function formatElapsed(ms){const n=Math.max(0,Math.floor(ms/1000));return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}
+    function getRunEstimateMs(){if(!activeRunTelemetry)return null;const key=[activeRunTelemetry.provider,activeRunTelemetry.model,activeRunTelemetry.workflow].join('|');try{const all=JSON.parse(safeGet('ai_request_timing_v1')||'{}'),values=(Array.isArray(all[key])?all[key].slice(-7):[]).filter(Number.isFinite).sort((a,b)=>a-b);return values.length?values[Math.floor(values.length/2)]:null;}catch(_){return null;}}
+    function updateStatusTimer(){if(!activeRunStartedAt||$('searchStatus').classList.contains('hidden'))return;const elapsed=Date.now()-activeRunStartedAt,estimate=getRunEstimateMs();$('thinkingTime').textContent=estimate?'Прошло '+formatElapsed(elapsed)+' · ориентир '+formatElapsed(Math.max(elapsed,estimate)):'Прошло '+formatElapsed(elapsed)+' · собираю оценку';}
+    function showStatus(message){$('statusText').textContent=message;$('searchStatus').classList.remove('hidden');if(!statusTimerId&&activeRunStartedAt)statusTimerId=setInterval(updateStatusTimer,1000);updateStatusTimer();}
+    function hideStatus(){$('searchStatus').classList.add('hidden');if(!isGenerating&&statusTimerId){clearInterval(statusTimerId);statusTimerId=null;}}
+    function saveRunDuration(){if(!activeRunTelemetry||!activeRunStartedAt)return;const key=[activeRunTelemetry.provider,activeRunTelemetry.model,activeRunTelemetry.workflow].join('|'),elapsed=Date.now()-activeRunStartedAt;try{const all=JSON.parse(safeGet('ai_request_timing_v1')||'{}'),values=Array.isArray(all[key])?all[key]:[];values.push(elapsed);all[key]=values.slice(-8);safeSet('ai_request_timing_v1',JSON.stringify(all));}catch(_){} }
     function abortError() { return new DOMException('Запрос отменён', 'AbortError'); }
     function throwIfAborted(signal) { if (signal.aborted) throw abortError(); }
     function sleep(ms, signal) {
@@ -780,7 +839,7 @@ permalink: /
         if ([500, 502, 503, 504].includes(response.status) && attempt < 1) {
           await sleep(500, signal); continue;
         }
-        throw new Error(`HTTP ${response.status}${details ? `: ${details}` : ''}`);
+        const apiError=new Error(`HTTP ${response.status}${details?`: ${details}`:''}`);apiError.status=response.status;apiError.details=details;apiError.retryAfter=response.headers.get('Retry-After');throw apiError;
       }
       throw new Error('Превышено количество повторных попыток запроса.');
     }
@@ -941,8 +1000,8 @@ permalink: /
       } catch (error) { console.warn('Не удалось загрузить навык из репозитория:', error); return ''; }
     }
     function getApiCandidates(requestedModel) {
-      const selectedProvider = safeGet(STORAGE.provider) || 'gemini';
-      const order = [selectedProvider, ...Object.keys(PROVIDERS).filter((provider) => provider !== selectedProvider && provider !== 'custom')];
+      const selectedProvider=safeGet(STORAGE.provider)||'gemini',allowCrossProvider=safeGet(STORAGE.crossProviderFallback)==='true';
+      const order=[selectedProvider,...(allowCrossProvider?Object.keys(PROVIDERS).filter(provider=>provider!==selectedProvider&&provider!=='custom'):[])];
       const candidates = [], seen = new Set();
       for (const provider of order) {
         const config = PROVIDERS[provider];
@@ -954,9 +1013,7 @@ permalink: /
           : (config.baseUrl || '').replace(/\/+$/, '');
         if (!baseUrl) continue;
         const primary = provider === selectedProvider ? (safeGet(STORAGE.model) || requestedModel) : config.models[0]?.[0];
-        const models = provider === selectedProvider
-          ? [primary, ...config.models.map(([model]) => model)]
-          : config.models.map(([model]) => model);
+        const models=provider===selectedProvider?(provider==='custom'?[primary]:[primary,...config.models.map(([model])=>model)]):config.models.map(([model])=>model);
         for (const model of models) {
           if (!model || model === '__custom__') continue;
           const keyId = provider + '|' + baseUrl + '|' + model;
@@ -967,35 +1024,28 @@ permalink: /
       }
       return candidates;
     }
-    async function requestChatCompletion(body, signal, stageName = 'Ответ модели') {
-      throwIfAborted(signal);
-      const preferredProvider = safeGet(STORAGE.provider) || 'gemini';
-      const preferredModel = safeGet(STORAGE.model) || body.model || DEFAULT_MODEL;
-      const candidates = getApiCandidates(preferredModel);
-      if (!candidates.length) throw new Error('Не найден API-ключ для выбранного провайдера. Откройте настройки и сохраните ключ.');
-      let lastError = null;
-      for (let index = 0; index < candidates.length; index++) {
-        const candidate = candidates[index];
-        throwIfAborted(signal);
-        try {
-          const data = await fetchJson(buildApiUrl(candidate.baseUrl), {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${candidate.key}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...body, model: candidate.model })
-          }, signal);
-          if (candidate.provider !== preferredProvider || candidate.model !== preferredModel) {
-            // Failover is request-scoped: never overwrite the user's saved provider/model/endpoint.
-            // Otherwise a temporary outage can silently change the settings used on the next visit.
-            showToast(`Резервный маршрут для этого запроса: ${PROVIDERS[candidate.provider]?.label || candidate.provider} · ${candidate.model}`);
-          }
+    let lastSuccessfulRoute=null,activeRunTelemetry=null,activeRunStartedAt=0,statusTimerId=null;
+    function recordSuccessfulRoute(candidate,stageName){lastSuccessfulRoute={provider:candidate.provider,providerLabel:PROVIDERS[candidate.provider]?.label||candidate.provider,model:candidate.model,stage:stageName,at:new Date().toISOString()};if(activeRunTelemetry)activeRunTelemetry.routes.push({...lastSuccessfulRoute});}
+    async function requestChatCompletion(body,signal,stageName='Ответ модели'){
+      throwIfAborted(signal);const preferredProvider=safeGet(STORAGE.provider)||'gemini',preferredModel=safeGet(STORAGE.model)||body.model||DEFAULT_MODEL,candidates=getApiCandidates(preferredModel),allowCross=safeGet(STORAGE.crossProviderFallback)==='true';
+      if(!candidates.length)throw new Error('Не найден API-ключ для выбранного провайдера. Откройте настройки и сохраните ключ.');
+      let lastError=null;
+      for(let i=0;i<candidates.length;i++){
+        const candidate=candidates[i];throwIfAborted(signal);
+        try{
+          const data=await fetchJson(buildApiUrl(candidate.baseUrl),{method:'POST',headers:{'Authorization':`Bearer ${candidate.key}`,'Content-Type':'application/json'},body:JSON.stringify({...body,model:candidate.model})},signal);
+          recordSuccessfulRoute(candidate,stageName);
+          if(candidate.provider!==preferredProvider||candidate.model!==preferredModel)showToast(`Резерв для этого запроса: ${PROVIDERS[candidate.provider]?.label||candidate.provider} · ${candidate.model}`);
           return data;
-        } catch (error) {
-          if (error?.name === 'AbortError') throw error;
-          lastError = error;
-          if (index < candidates.length - 1) showStatus(`Модель недоступна; пробую резерв ${index + 1}/${candidates.length - 1}…`);
+        }catch(error){
+          if(error?.name==='AbortError')throw error;lastError=error;
+          if([401,403,429].includes(error.status))break;
+          const detail=String(error.details||error.message||'').toLowerCase(),modelError=error.status===404||(error.status===400&&/model|unsupported|not found|not available/.test(detail)),serverError=[500,502,503,504].includes(error.status);
+          if(!(modelError||serverError))break;
+          if(i<candidates.length-1){const next=candidates[i+1];showStatus(next.provider===candidate.provider?'Модель недоступна; пробую другую модель этого провайдера…':(allowCross?'Провайдер недоступен; пробую разрешённый резерв…':''));}
         }
       }
-      throw new Error('Не удалось выполнить запрос ни через одну сохранённую модель. Исходный запрос сохранён в чате. Последняя ошибка: ' + (lastError?.message || 'неизвестная ошибка'));
+      throw new Error('Запрос не выполнен. Исходный текст сохранён. Последняя ошибка: '+(lastError?.message||'неизвестная ошибка')+(lastError?.status===401?' · Проверьте API-ключ.':lastError?.status===403?' · Проверьте права и доступность модели.':lastError?.status===429?' · Превышен лимит или квота. Проверьте лимиты провайдера и не повторяйте запросы подряд.':lastError?.status===404?' · Проверьте точный ID модели и Base URL.':' · Проверьте диагностический статус, модель и Base URL.'));
     }
     function isGenericModelRefusal(value) {
       const text = String(value || '').trim().replace(/[\s\u00a0]+/g, ' ');
@@ -1022,12 +1072,18 @@ permalink: /
       if (!draft) throw new Error('Исследовательский этап не подготовил черновик.');
       if (isGenericModelRefusal(draft)) throw new Error('Модель отказала на этапе «исследователь». Конвейер остановлен; отказ не будет выдан за готовое исследование. Настройки и исходный запрос сохранены.');
       const critique = await requestTextStage('Ты независимый критик ответа. Найди неподтверждённые утверждения, пропуски, противоречия и риски. Не переписывай ответ целиком. Если источники не предоставлены, укажи, что нельзя проверить.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик:\n' + draft }], signal, '🧪 Исследование 3/4: критик…');
-      const finalText = await requestTextStage(systemPrompt + '\nРоль: синтезатор. Дай окончательный ответ на исходный запрос, используя черновик и критику. Исправь выявленные ошибки, отдели факты от предположений, не заявляй о непроверенных источниках.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик исследователя:\n' + draft + '\n\nКритика:\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
-      const traceId = globalThis.crypto?.randomUUID?.() || ('trace-' + Date.now() + '-' + Math.random().toString(36).slice(2));
-      const researchTrace = { id: traceId, createdAt: new Date().toISOString(), provider: PROVIDERS[currentProvider()]?.label || currentProvider(), model: safeGet(STORAGE.model) || DEFAULT_MODEL, plan, draft, critique, finalText };
+      const finalText = await requestTextStage(systemPrompt + '\nРоль: синтезатор. Ответь прямо на исходный запрос. Используй план, факты из черновика и критику; исправь фактические ошибки, отличай подтверждённое от неопределённого, сохрани полезные ссылки. Не включай шаблонное вступление о возможностях ассистента и не добавляй общих рекомендаций, не нужных для задачи.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик исследователя:\n' + draft + '\n\nКритика:\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
+      const traceId=globalThis.crypto?.randomUUID?.()||('trace-'+Date.now()+'-'+Math.random().toString(36).slice(2)),finalRoute=lastSuccessfulRoute?{...lastSuccessfulRoute}:null;
+      const researchTrace={id:traceId,createdAt:new Date().toISOString(),provider:finalRoute?.providerLabel||(PROVIDERS[currentProvider()]?.label||currentProvider()),model:finalRoute?.model||(safeGet(STORAGE.model)||DEFAULT_MODEL),plan,draft,critique,finalText,routes:activeRunTelemetry?activeRunTelemetry.routes.map(route=>({...route})):[]};
       safeSet('ai_research_trace_' + traceId, JSON.stringify(researchTrace));
-      chat.messages.push({ role: 'assistant', content: finalText, researchTrace });
+      chat.messages.push({ role: 'assistant', content: finalText, researchTrace, providerInfo: finalRoute });
       updateState([...chats]);
+    }
+    function shouldUseMultiAgentResearch(value){
+      const text=String(value||'').trim();if(!text)return false;const normalized=text.toLocaleLowerCase().replace(/[\\s\\u00a0]+/g,' ');
+      if(normalized.length<140&&/^(привет|здравствуй(?:те)?|доброе утро|добрый день|добрый вечер|хай|хей|hello|hi|hey|приветик|как дела\\??|спасибо|понятно|ок(?:ей)?|thanks|thank you|good morning|good evening|good night)[!?. ,]*$/iu.test(normalized))return false;
+      const intent=/\\b(исследу|изучи|глубоко|подробно|сравни|сопостав|аудит|проанализ|разберись|проверь реализац|архитектур|спроектир|реализуй|разработай|план внедрен|roadmap|deep research|research|compare|audit|review|architecture|implement|debug|diagnos|root cause|benchmark|best practice|современн.*практик|источник|нескольк.*вариант)\\b/iu.test(text);
+      return intent||text.length>=420||(text.match(/[?？]/g)||[]).length>=3||(text.match(/^\\s*(?:[-*•]|\\d+[.)])\\s+/gm)||[]).length>=4;
     }
     async function runAssistant(chat, signal, useSearch, useMultiAgent, mode = 'fast', skipCache = false, promptOverride = '') {
       const baseUrl = (safeGet(STORAGE.baseUrl) || DEFAULT_BASE_URL).replace(/\/+$/, '');
@@ -1058,14 +1114,16 @@ permalink: /
       if (mode === 'deep') systemPrompt += '\nРЕЖИМ ГЛУБОКОЙ РАБОТЫ: проверь существенные предположения, объясни неопределённость и предпочитай проверяемые выводы. Избегай лишних шагов.';
       if (taskSkill) systemPrompt += '\n\nНАВЫК ИЗ РЕПОЗИТОРИЯ (инструкции для текущей задачи; пользовательский запрос имеет приоритет):\n' + taskSkill;
       if (promptOverride) systemPrompt = promptOverride;
-      if (useMultiAgent) { await runMultiAgentResearch(chat, signal, useSearch, mode, systemPrompt); return; }
+      const useResearchPipeline=useMultiAgent&&shouldUseMultiAgentResearch(latestUserMessage);
+      if(useMultiAgent&&!useResearchPipeline)showToast('Простой запрос: отвечаю напрямую без лишних агентных этапов.');
+      if(useResearchPipeline){await runMultiAgentResearch(chat,signal,useSearch,mode,systemPrompt);return;}
 
       const messagesForCache = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages)];
       const cacheKey = await makeCacheKey({ endpoint: baseUrl, model, messages: messagesForCache });
       if (!useSearch && !skipCache) {
         const cached = await CacheDB.get(cacheKey);
         if (cached) {
-          chat.messages.push({ role: 'assistant', content: `${cached}\n\n*(из локального кэша)*` });
+          chat.messages.push({ role: 'assistant', content: `${cached}\n\n*(из локального кэша)*`, providerInfo:{provider:'cache',providerLabel:'Локальный кэш',model:'cache'} });
           updateState([...chats]); return;
         }
       }
@@ -1110,6 +1168,7 @@ permalink: /
           role: 'assistant', content: typeof message.content === 'string' ? message.content : '',
           ...(toolCalls.length ? { tool_calls: toolCalls } : {})
         };
+        if(!toolCalls.length&&lastSuccessfulRoute)assistantMessage.providerInfo={...lastSuccessfulRoute};
         chat.messages.push(assistantMessage);
         updateState([...chats]);
 
@@ -1201,13 +1260,14 @@ permalink: /
       activeChatId = chat.id;
       const controller = new AbortController(); activeController = controller;
       setBusy(true);
-      const useSearch = $('toggleSearch').checked;
-      const useMultiAgent = $('toggleMultiAgent').checked;
-      const mode = processingMode;
+      const offlineMode=safeGet(STORAGE.offline)==='true',useSearch=!offlineMode&&$('toggleSearch').checked,useMultiAgent=$('toggleMultiAgent').checked,mode=processingMode;
+      const provider=safeGet(STORAGE.provider)||'gemini',model=safeGet(STORAGE.model)||DEFAULT_MODEL,workflow=useMultiAgent&&shouldUseMultiAgentResearch(text)?'research':'direct';
+      activeRunStartedAt=Date.now();activeRunTelemetry={provider,model,workflow,routes:[]};lastSuccessfulRoute=null;
       safeSet(STORAGE.search, String(useSearch));
       safeSet(STORAGE.multiAgent, String(useMultiAgent));
       try {
         await runAssistant(chat, controller.signal, useSearch, useMultiAgent, mode);
+        saveRunDuration();
       } catch (error) {
         if (error.name === 'AbortError') {
           hideStatus();
@@ -1219,8 +1279,9 @@ permalink: /
         }
       } finally {
         if (activeController === controller) {
-          activeController = null; activeChatId = null; isGenerating = false;
-          hideStatus(); setBusy(false); $('userInput').focus();
+          activeController=null;activeChatId=null;isGenerating=false;
+          hideStatus();if(statusTimerId){clearInterval(statusTimerId);statusTimerId=null;}
+          activeRunStartedAt=0;activeRunTelemetry=null;setBusy(false);$('userInput').focus();
         }
       }
     }
@@ -1435,6 +1496,10 @@ permalink: /
             if (confirm('Удалить этот факт из памяти?')) await MemoryDB.delete(control.dataset.memoryId);
             break;
           case 'toggle-settings': toggleSettings(true); break;
+          case 'test-connection': await testProviderConnection(); break;
+          case 'clear-provider-key': clearProviderKey(); break;
+          case 'edit-system-prompt': { const textarea=$('systemPromptInput'),button=$('editSystemPrompt'),editable=textarea.readOnly; textarea.readOnly=!editable;button.setAttribute('aria-pressed',String(editable));button.textContent=editable?'✓':'✎';button.title=editable?'Завершить редактирование; затем нажмите «Сохранить»':'Разрешить редактирование';$('promptEditHint').textContent=editable?'Редактирование включено. После изменений нажмите «Сохранить».':'Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.';if(editable)textarea.focus();break;}
+          case 'toggle-offline': toggleOfflineMode(); break;
           case 'close-settings': toggleSettings(false); break;
           case 'save-settings': saveSettings(); break;
           case 'download-recovery-backup': downloadRecoveryBackup(); break;
@@ -1455,9 +1520,11 @@ permalink: /
         }
       } catch (error) { console.error('Ошибка действия интерфейса:', error); showToast(error.message || 'Не удалось выполнить действие.', 'error'); }
     });
-    $('providerPreset').addEventListener('change', () => applyProviderPreset($('providerPreset').value));
+    $('providerPreset').addEventListener('change',()=>{applyProviderPreset($('providerPreset').value);safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
+    $('apiKey').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');updateApiKeyLamp($('apiKey').value.trim()?'pending':'empty',$('apiKey').value.trim()?'Ключ задан, проверка нужна заново.':'Ключ не введён.');});
+    $('baseUrl').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
-    $('modelPreset').addEventListener('change', () => { const value=$('modelPreset').value; if(value!=='__custom__') $('modelName').value=value; else $('modelName').focus(); });
+    $('modelPreset').addEventListener('change',()=>{const value=$('modelPreset').value;if(value!=='__custom__')$('modelName').value=value;});
     $('modelName').addEventListener('change', () => populateModelPresets(currentProvider(),$('modelName').value));
     $('modeFast').addEventListener('click', () => setProcessingMode('fast'));
     $('modeDeep').addEventListener('click', () => setProcessingMode('deep'));
