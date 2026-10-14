@@ -1210,7 +1210,18 @@ permalink: /
       return candidates;
     }
     let lastSuccessfulRoute=null,activeRunTelemetry=null,activeRunStartedAt=0,statusTimerId=null;
-    function recordSuccessfulRoute(candidate,stageName,responseModel){const actualModel=typeof responseModel==='string'&&responseModel.trim()?responseModel:candidate.model;lastSuccessfulRoute={provider:candidate.provider,providerLabel:PROVIDERS[candidate.provider]?.label||candidate.provider,model:actualModel,requestedModel:candidate.model,stage:stageName,at:new Date().toISOString()};if(activeRunTelemetry){activeRunTelemetry.routes.push({...lastSuccessfulRoute});activeRunTelemetry.provider=candidate.provider;activeRunTelemetry.model=actualModel;}}
+    async function recordSuccessfulRoute(candidate,stageName,responseModel){
+      const actualModel=typeof responseModel==='string'&&responseModel.trim()?responseModel:candidate.model;
+      lastSuccessfulRoute={provider:candidate.provider,providerLabel:PROVIDERS[candidate.provider]?.label||candidate.provider,model:actualModel,requestedModel:candidate.model,stage:stageName,at:new Date().toISOString()};
+      // Persist only a one-way fingerprint: never store the provider key in the connection marker.
+      const keyFingerprint=await providerKeyFingerprint(candidate.key);
+      if(keyFingerprint) safeSet('ai_provider_connection_'+candidate.provider,JSON.stringify({
+        ok:true,baseUrl:String(candidate.baseUrl||'').replace(/\/+$/,''),model:actualModel,keyFingerprint,
+        requestedModel:candidate.model,testedAt:new Date().toISOString(),source:'successful-request'
+      }));
+      if(activeRunTelemetry){activeRunTelemetry.routes.push({...lastSuccessfulRoute});activeRunTelemetry.provider=candidate.provider;activeRunTelemetry.model=actualModel;}
+      if(candidate.provider===currentProvider()) await refreshApiKeyLamp();
+    }
     async function requestChatCompletion(body,signal,stageName='Ответ модели'){
       throwIfAborted(signal);const preferredProvider=safeGet(STORAGE.provider)||'gemini',preferredModel=safeGet(STORAGE.model)||body.model||DEFAULT_MODEL,candidates=getApiCandidates(preferredModel),allowCross=safeGet(STORAGE.crossProviderFallback)==='true';
       if(!candidates.length)throw new Error('Не найден API-ключ для выбранного провайдера. Откройте настройки и сохраните ключ.');
@@ -1219,7 +1230,7 @@ permalink: /
         const candidate=candidates[i];throwIfAborted(signal);
         try{
           const data=await fetchJson(buildApiUrl(candidate.baseUrl),{method:'POST',headers:{'Authorization':`Bearer ${candidate.key}`,'Content-Type':'application/json'},body:JSON.stringify({...body,model:candidate.model})},signal);
-          recordSuccessfulRoute(candidate,stageName,data?.model);
+          await recordSuccessfulRoute(candidate,stageName,data?.model);
           if(candidate.provider!==preferredProvider||candidate.model!==preferredModel)showToast(`Резерв для этого запроса: ${PROVIDERS[candidate.provider]?.label||candidate.provider} · ${candidate.model}`);
           return data;
         }catch(error){
@@ -1459,6 +1470,7 @@ permalink: /
       safeSet(STORAGE.multiAgent, String(useMultiAgent));
       try {
         await runAssistant(chat, controller.signal, useSearch, useMultiAgent, mode);
+        syncSettingsToActualRoute(lastSuccessfulRoute);
         saveRunDuration();
       } catch (error) {
         if (error.name === 'AbortError') {
@@ -1476,6 +1488,26 @@ permalink: /
           activeRunStartedAt=0;activeRunTelemetry=null;setBusy(false);$('userInput').focus();
         }
       }
+    }
+    function syncSettingsToActualRoute(route) {
+      if(!route||!PROVIDERS[route.provider]||route.provider==='cache')return;
+      const provider=route.provider,model=route.model||route.requestedModel||'';
+      if(!model)return;
+      const oldProvider=safeGet(STORAGE.provider)||'gemini',oldModel=safeGet(STORAGE.model)||DEFAULT_MODEL;
+      if(oldProvider===provider&&oldModel===model)return;
+      // Settings change only after the entire answer/research chain completes, never mid-run.
+      if(oldProvider!==provider) {
+        $('providerPreset').value=provider;
+        applyProviderPreset(provider,false);
+      } else $('providerPreset').value=provider;
+      $('modelName').value=model;
+      populateModelPresets(provider,model);
+      const baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'');
+      safeSet(STORAGE.provider,provider);
+      safeSet(STORAGE.baseUrl,baseUrl);
+      safeSet(STORAGE.model,model);
+      refreshApiKeyLamp();
+      showToast('Настройки синхронизированы с фактическим маршрутом: '+(route.providerLabel||provider)+' · '+model);
     }
     function stopGeneration() {
       if (activeController) activeController.abort();
