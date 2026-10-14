@@ -97,7 +97,12 @@ const suites = {
       includes('content: finalText, researchTrace', 'Multi-agent output must preserve the research journal.');
       includes('Открыть журнал исследования', 'Assistant research results must expose a trace action.');
       includes('body.textContent=typeof value', 'Research trace must render as text rather than unsafe HTML.');
-      includes('function downloadTrace()', 'Research journal must be downloadable.');
+      includes('function downloadTrace()', 'Research journal must be downloadable as Markdown.');
+      includes('function downloadTraceJson()', 'Research journal must also have a structured JSON export.');
+      includes("format: 'ai-mobile-agent-settings'", 'Portable settings profiles must be versioned.');
+      includes('function exportSettingsProfile()', 'Settings profile export must be available.');
+      includes('function importSettingsProfile(event)', 'Settings profile import must validate input.');
+      includes('Профиль импортирован. Сохранённые API-ключи не изменены.', 'Profile import must make secret preservation explicit.');
       includes("location.hash.match(/^#trace=([^&]+)/)", 'Local trace deep links must be supported.');
       includes('Локальная ссылка работает в этом же браузере', 'Trace links must disclose their local-only scope.');
       includes("const maxToolRounds = mode === 'deep' ? MAX_TOOL_ROUNDS : 1;", 'Fast and deep modes must have different tool budgets.');
