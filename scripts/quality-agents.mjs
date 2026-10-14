@@ -77,7 +77,7 @@ const suites = {
       includes('function syncSettingsToActualRoute(route)', 'Settings must follow the final successful provider/model route after the response finishes.');
       includes('syncSettingsToActualRoute(lastSuccessfulRoute)', 'Settings must not change until the full answer pipeline completes.');
       includes("source:'successful-request'", 'A successful model response should store only non-secret connection-verification metadata.');
-      includes('await recordSuccessfulRoute(candidate,stageName,data?.model)', 'Successful requests must update the connection state for the actual route.');
+      includes('await recordSuccessfulRoute(candidate,stageName,data?.model,{elapsedMs,attemptIndex:i+1})', 'Successful requests must update the connection state and include per-attempt timings.');
       includes('async function requestChatCompletion(body,signal', 'All model calls must use the classified provider fallback path.');
       includes("Запрос не выполнен. Исходный текст сохранён.", 'Fallback errors must preserve the original user prompt.');
       includes("showToast('Настройки сохранены')", 'Saving settings should use the toast and keep the modal open.');
@@ -108,6 +108,11 @@ const suites = {
       includes('body.textContent=typeof value', 'Research trace must render as text rather than unsafe HTML.');
       includes('function downloadTrace()', 'Research journal must be downloadable as Markdown.');
       includes('function downloadTraceJson()', 'Research journal must also have a structured JSON export.');
+      includes('configuredPromptFingerprint', 'Research traces must carry a one-way prompt fingerprint, not raw prompt text.');
+      includes('activeRunTelemetry.attempts.push({...attempt})', 'Successful provider attempts must be recorded for trace diagnostics.');
+      includes('failureType:classifyRouteFailure(error,modelError)', 'Failed attempts must record a safe category rather than raw error contents.');
+      includes("appendTraceSection('Параметры запуска'", 'The research trace viewer must show reproducibility metadata.');
+      includes("appendTraceSection('Попытки вызова модели'", 'The research trace viewer must show provider attempt telemetry.');
       includes("format: 'ai-mobile-agent-settings'", 'Portable settings profiles must be versioned.');
       includes('function exportSettingsProfile()', 'Settings profile export must be available.');
       includes('function importSettingsProfile(event)', 'Settings profile import must validate input.');

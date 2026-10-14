@@ -329,6 +329,68 @@ test('research trace supports a structured JSON download', async ({ page }) => {
   expect(exportData.trace.finalText).toBe('Final result');
 });
 
+test('research trace records prompt fingerprint, run settings, timings, and model attempts without storing prompt text', async ({ page }) => {
+  const responses = [
+    '1. Найти проверяемые утверждения.\n2. Сопоставить их с источниками.\n3. Проверить итог.',
+    'Черновик: утверждения следует сопоставлять с источниками.',
+    'Существенных замечаний нет.',
+    'Итог: факты необходимо связывать с проверяемыми источниками.'
+  ];
+  const requests = [];
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    const payload = route.request().postDataJSON();
+    requests.push(payload);
+    const content = responses[Math.min(requests.length - 1, responses.length - 1)];
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({
+        model: payload.model,
+        choices: [{ message: { role: 'assistant', content } }]
+      })
+    });
+  });
+
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('e2e-trace-model');
+  await page.locator('#apiKey').fill('not-a-real-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#toggleSearch').uncheck();
+  await page.locator('#toggleMultiAgent').check();
+  await page.locator('#userInput').fill('Deep research: исследуй и проверь процесс проверки фактов по источникам; составь доказательный отчёт с планом, сравнением и итоговой проверкой.');
+  await page.locator('#sendBtn').click();
+
+  await expect(page.locator('#chatBox')).toContainText('Итог: факты необходимо связывать', { timeout: 20000 });
+  await expect.poll(() => requests.length).toBe(4);
+  const traceButton = page.locator('#chatBox [data-action="open-trace"]').last();
+  await expect(traceButton).toBeVisible();
+  const traceId = await traceButton.getAttribute('data-trace-id');
+  const trace = await page.evaluate(id => JSON.parse(localStorage.getItem('ai_research_trace_' + id) || 'null'), traceId);
+  expect(trace.schemaVersion).toBe(1);
+  expect(trace.run.workflow).toBe('research');
+  expect(trace.run.mode).toBe('fast');
+  expect(trace.run.webSearchEnabled).toBe(false);
+  expect(trace.run.multiAgentEnabled).toBe(true);
+  expect(trace.run.crossProviderFallbackEnabled).toBe(false);
+  expect(trace.run.startedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+  expect(trace.run.durationMs).toBeGreaterThanOrEqual(0);
+  if (trace.run.configuredPromptFingerprintAlgorithm === 'sha-256') {
+    expect(trace.run.configuredPromptFingerprint).toMatch(/^[a-f0-9]{64}$/);
+  } else {
+    expect(trace.run.configuredPromptFingerprintAlgorithm).toBe('fnv1a-fallback');
+    expect(trace.run.configuredPromptFingerprint).toMatch(/^fnv-[a-f0-9]+-\d+$/);
+  }
+  expect(trace.attempts).toHaveLength(4);
+  expect(trace.attempts.every(attempt => attempt.success === true && attempt.elapsedMs >= 0)).toBe(true);
+  expect(trace.routes).toHaveLength(4);
+  expect(trace.routes.every(route => route.elapsedMs >= 0 && route.attemptIndex === 1)).toBe(true);
+  expect(JSON.stringify(trace)).not.toContain('not-a-real-key');
+  expect(JSON.stringify(trace)).not.toContain('apiKey');
+});
+
 test('multi-agent preference skips a greeting and shows the actual route', async ({ page }) => {
   let calls = 0;
   await page.route('https://api.example.test/v1/chat/completions', async route => {
