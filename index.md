@@ -1585,9 +1585,9 @@ permalink: /
       return candidates;
     }
     let lastSuccessfulRoute=null,activeRunTelemetry=null,activeRunStartedAt=0,statusTimerId=null;
-    async function recordSuccessfulRoute(candidate,stageName,responseModel){
+    async function recordSuccessfulRoute(candidate,stageName,responseModel,telemetry = {}){
       const actualModel=typeof responseModel==='string'&&responseModel.trim()?responseModel:candidate.model;
-      lastSuccessfulRoute={provider:candidate.provider,providerLabel:PROVIDERS[candidate.provider]?.label||candidate.provider,model:actualModel,requestedModel:candidate.model,stage:stageName,at:new Date().toISOString()};
+      lastSuccessfulRoute={provider:candidate.provider,providerLabel:PROVIDERS[candidate.provider]?.label||candidate.provider,model:actualModel,requestedModel:candidate.model,stage:stageName,at:new Date().toISOString(),...(Number.isFinite(telemetry.elapsedMs)?{elapsedMs:telemetry.elapsedMs}:{}),...(Number.isFinite(telemetry.attemptIndex)?{attemptIndex:telemetry.attemptIndex}:{})};
       // Persist only a one-way fingerprint: never store the provider key in the connection marker.
       const keyFingerprint=await providerKeyFingerprint(candidate.key);
       if(keyFingerprint) safeSet('ai_provider_connection_'+candidate.provider,JSON.stringify({
@@ -1597,21 +1597,34 @@ permalink: /
       if(activeRunTelemetry){activeRunTelemetry.routes.push({...lastSuccessfulRoute});activeRunTelemetry.provider=candidate.provider;activeRunTelemetry.model=actualModel;}
       if(candidate.provider===currentProvider()) await refreshApiKeyLamp();
     }
+    function classifyRouteFailure(error,modelError=false){
+      if(modelError)return 'model-unavailable';
+      if([401,403].includes(error?.status))return 'authentication-or-permission';
+      if(error?.status===429)return 'rate-limit-or-quota';
+      if(Number.isFinite(error?.status))return 'http-error';
+      if(error?.name==='AbortError')return 'cancelled';
+      return 'network-or-cors';
+    }
     async function requestChatCompletion(body,signal,stageName='Ответ модели'){
       throwIfAborted(signal);const preferredProvider=safeGet(STORAGE.provider)||'gemini',preferredModel=safeGet(STORAGE.model)||body.model||DEFAULT_MODEL,candidates=getApiCandidates(preferredModel),allowCross=safeGet(STORAGE.crossProviderFallback)==='true';
       if(!candidates.length)throw new Error('Не найден API-ключ для выбранного провайдера. Откройте настройки и сохраните ключ.');
       let lastError=null;
       for(let i=0;i<candidates.length;i++){
         const candidate=candidates[i];throwIfAborted(signal);
+        const attemptStartedAt=Date.now(),attemptStartedIso=new Date(attemptStartedAt).toISOString();
         try{
           const data=await fetchJson(buildApiUrl(candidate.baseUrl),{method:'POST',headers:{'Authorization':`Bearer ${candidate.key}`,'Content-Type':'application/json'},body:JSON.stringify({...body,model:candidate.model})},signal);
-          await recordSuccessfulRoute(candidate,stageName,data?.model);
+          const elapsedMs=Date.now()-attemptStartedAt;
+          const attempt={provider:candidate.provider,providerLabel:PROVIDERS[candidate.provider]?.label||candidate.provider,model:typeof data?.model==='string'&&data.model.trim()?data.model:candidate.model,requestedModel:candidate.model,stage:stageName,attemptIndex:i+1,startedAt:attemptStartedIso,at:new Date().toISOString(),elapsedMs,success:true,failureType:null};
+          if(activeRunTelemetry)activeRunTelemetry.attempts.push({...attempt});
+          await recordSuccessfulRoute(candidate,stageName,data?.model,{elapsedMs,attemptIndex:i+1});
           if(candidate.provider!==preferredProvider||candidate.model!==preferredModel)showToast(`Резерв для этого запроса: ${PROVIDERS[candidate.provider]?.label||candidate.provider} · ${candidate.model}`);
           return data;
         }catch(error){
           if(error?.name==='AbortError')throw error;lastError=error;
-          if([401,403,429].includes(error.status))break;
           const detail=String(error.details||error.message||'').toLowerCase(),modelError=[400,404].includes(error.status)&&/model/.test(detail)&&/not found|unknown|invalid|unsupported|does not exist|not available|not accessible|no such/.test(detail);
+          if(activeRunTelemetry)activeRunTelemetry.attempts.push({provider:candidate.provider,providerLabel:PROVIDERS[candidate.provider]?.label||candidate.provider,model:candidate.model,requestedModel:candidate.model,stage:stageName,attemptIndex:i+1,startedAt:attemptStartedIso,at:new Date().toISOString(),elapsedMs:Date.now()-attemptStartedAt,success:false,status:Number.isFinite(error?.status)?error.status:null,failureType:classifyRouteFailure(error,modelError)});
+          if([401,403,429].includes(error.status))break;
           // Only a clearly model-specific error justifies choosing another model. Auth, quota,
           // network, malformed endpoint, and transient 5xx errors are not model-selection signals.
           if(!modelError)break;
@@ -1646,8 +1659,8 @@ permalink: /
       if (isGenericModelRefusal(draft)) throw new Error('Модель отказала на этапе «исследователь». Конвейер остановлен; отказ не будет выдан за готовое исследование. Настройки и исходный запрос сохранены.');
       const critique = await requestTextStage('Ты независимый проверяющий. Сверь черновик с исходной задачей и приложенными доказательствами/ссылками. Ищи только существенные фактические ошибки, логические противоречия, невыполненные требования и реально отсутствующие важные данные. Не выдумывай риски, ограничения или пункты ради заполнения таблицы; не требуй источников для приветствий и мнений. Если всё нормально или утверждений для проверки нет, ответь одной короткой фразой. Иначе дай короткий приоритизированный список исправлений, не переписывая весь ответ.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик:\n' + draft }], signal, '🧪 Исследование 3/4: критик…');
       const finalText = await requestTextStage(systemPrompt + '\nРоль: синтезатор. Ответь прямо на исходный запрос. Используй план, факты из черновика и критику; исправь фактические ошибки, отличай подтверждённое от неопределённого, сохрани полезные ссылки. Не включай шаблонное вступление о возможностях ассистента и не добавляй общих рекомендаций, не нужных для задачи.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик исследователя:\n' + draft + '\n\nКритика:\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
-      const traceId=globalThis.crypto?.randomUUID?.()||('trace-'+Date.now()+'-'+Math.random().toString(36).slice(2)),finalRoute=lastSuccessfulRoute?{...lastSuccessfulRoute}:null;
-      const researchTrace={id:traceId,createdAt:new Date().toISOString(),provider:finalRoute?.providerLabel||(PROVIDERS[currentProvider()]?.label||currentProvider()),model:finalRoute?.model||(safeGet(STORAGE.model)||DEFAULT_MODEL),plan,draft,critique,finalText,routes:activeRunTelemetry?activeRunTelemetry.routes.map(route=>({...route})):[]};
+      const traceId=globalThis.crypto?.randomUUID?.()||('trace-'+Date.now()+'-'+Math.random().toString(36).slice(2)),finalRoute=lastSuccessfulRoute?{...lastSuccessfulRoute}:null,traceCreatedAt=new Date().toISOString();
+      const researchTrace={schemaVersion:1,id:traceId,createdAt:traceCreatedAt,provider:finalRoute?.providerLabel||(PROVIDERS[currentProvider()]?.label||currentProvider()),model:finalRoute?.model||(safeGet(STORAGE.model)||DEFAULT_MODEL),run:activeRunTelemetry?{schemaVersion:activeRunTelemetry.schemaVersion,workflow:activeRunTelemetry.workflow,mode:activeRunTelemetry.mode,webSearchEnabled:activeRunTelemetry.webSearchEnabled,multiAgentEnabled:activeRunTelemetry.multiAgentEnabled,crossProviderFallbackEnabled:activeRunTelemetry.crossProviderFallbackEnabled,startedAt:activeRunTelemetry.startedAt,durationMs:activeRunStartedAt?Date.now()-activeRunStartedAt:null,configuredPromptFingerprint:activeRunTelemetry.configuredPromptFingerprint,configuredPromptFingerprintAlgorithm:activeRunTelemetry.configuredPromptFingerprintAlgorithm}:null,plan,draft,critique,finalText,routes:activeRunTelemetry?activeRunTelemetry.routes.map(route=>({...route})):[],attempts:activeRunTelemetry?activeRunTelemetry.attempts.map(attempt=>({...attempt})):[]};
       safeSet('ai_research_trace_' + traceId, JSON.stringify(researchTrace));
       chat.messages.push({ role: 'assistant', content: finalText, researchTrace, providerInfo: finalRoute });
       updateState([...chats]);
@@ -1840,7 +1853,9 @@ permalink: /
       setBusy(true);
       const offlineMode=safeGet(STORAGE.offline)==='true',useSearch=!offlineMode&&$('toggleSearch').checked,useMultiAgent=$('toggleMultiAgent').checked,mode=processingMode;
       const provider=safeGet(STORAGE.provider)||'gemini',model=safeGet(STORAGE.model)||DEFAULT_MODEL,workflow=useMultiAgent&&shouldUseMultiAgentResearch(text)?'research':'direct';
-      activeRunStartedAt=Date.now();activeRunTelemetry={provider,model,workflow,routes:[]};lastSuccessfulRoute=null;
+      const configuredPrompt=safeGet(STORAGE.systemPrompt),activeConfiguredPrompt=(!configuredPrompt||configuredPrompt===LEGACY_DEFAULT_SYSTEM)?DEFAULT_SYSTEM:configuredPrompt;
+      const configuredPromptFingerprint=await makeCacheKey(activeConfiguredPrompt);
+      activeRunStartedAt=Date.now();activeRunTelemetry={schemaVersion:1,provider,model,workflow,mode,webSearchEnabled:useSearch,multiAgentEnabled:useMultiAgent,crossProviderFallbackEnabled:safeGet(STORAGE.crossProviderFallback)==='true',startedAt:new Date(activeRunStartedAt).toISOString(),configuredPromptFingerprint,configuredPromptFingerprintAlgorithm:configuredPromptFingerprint.startsWith('fnv-')?'fnv1a-fallback':'sha-256',routes:[],attempts:[]};lastSuccessfulRoute=null;
       safeSet(STORAGE.search, String(useSearch));
       safeSet(STORAGE.multiAgent, String(useMultiAgent));
       try {
@@ -1972,7 +1987,10 @@ permalink: /
     function closeTrace() { $('traceModal').classList.add('hidden'); }
     function downloadTrace() {
       if (!activeTrace) return;
-      const body=['# Журнал исследования','', '- Дата: '+(activeTrace.createdAt||'не указана'), '- Провайдер: '+(activeTrace.provider||'не указан'), '- Модель: '+(activeTrace.model||'не указана'), '', '## Планировщик',activeTrace.plan||'', '', '## Черновик исследователя',activeTrace.draft||'', '', '## Критика',activeTrace.critique||'', '', '## Итоговый ответ',activeTrace.finalText||''].join('\n');
+      const run=activeTrace.run||{},routes=Array.isArray(activeTrace.routes)?activeTrace.routes:[],attempts=Array.isArray(activeTrace.attempts)?activeTrace.attempts:[];
+      const routeLines=routes.length?routes.map(route=>'- '+(route.stage||'этап')+': '+(route.providerLabel||route.provider||'провайдер')+' / '+(route.model||'модель')+(Number.isFinite(route.elapsedMs)?' — '+route.elapsedMs+' мс':'')).join('\n'):'Нет данных.';
+      const attemptLines=attempts.length?attempts.map(item=>'- '+(item.success?'OK':'FAIL')+' '+(item.stage||'этап')+': '+(item.providerLabel||item.provider||'провайдер')+' / '+(item.model||'модель')+' · '+(Number.isFinite(item.elapsedMs)?item.elapsedMs+' мс':'время неизвестно')+(item.failureType?' · '+item.failureType:'')).join('\n'):'Нет данных.';
+      const body=['# Журнал исследования','', '- Дата: '+(activeTrace.createdAt||'не указана'), '- Провайдер: '+(activeTrace.provider||'не указан'), '- Модель: '+(activeTrace.model||'не указана'), '', '## Параметры запуска','', '- Схема журнала: '+(activeTrace.schemaVersion||'legacy'), '- Режим: '+(run.mode||'не записан'), '- Веб-поиск: '+(typeof run.webSearchEnabled==='boolean'?(run.webSearchEnabled?'включён':'выключен'):'не записан'), '- Мультиагентный режим: '+(typeof run.multiAgentEnabled==='boolean'?(run.multiAgentEnabled?'включён':'выключен'):'не записан'), '- Резерв между провайдерами: '+(typeof run.crossProviderFallbackEnabled==='boolean'?(run.crossProviderFallbackEnabled?'разрешён':'выключен'):'не записан'), '- Начало: '+(run.startedAt||'не записано'), '- Длительность: '+(Number.isFinite(run.durationMs)?run.durationMs+' мс':'не записана'), '- Fingerprint промпта: '+(run.configuredPromptFingerprint||'не записан')+' ('+(run.configuredPromptFingerprintAlgorithm||'unknown')+')', '', '## Успешные маршруты',routeLines,'','## Все попытки маршрутизации',attemptLines,'', '## Планировщик',activeTrace.plan||'', '', '## Черновик исследователя',activeTrace.draft||'', '', '## Критика',activeTrace.critique||'', '', '## Итоговый ответ',activeTrace.finalText||''].join('\n');
       const url=URL.createObjectURL(new Blob([body],{type:'text/markdown;charset=utf-8'})), a=document.createElement('a');
       a.href=url; a.download='research-trace-'+(activeTrace.createdAt||new Date().toISOString()).slice(0,10)+'.md'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
     }
