@@ -52,6 +52,10 @@ const suites = {
       includes('function getRunEstimateMs()', 'Response timing should learn a lightweight per-route estimate.');
       includes('data-state="connected"', 'A confirmed API connection must have a distinct UI state.');
       includes('message.providerInfo', 'Assistant responses must display the actual provider/model route.');
+      includes('function syncSettingsToActualRoute(route)', 'Settings must follow the final successful provider/model route after the response finishes.');
+      includes('syncSettingsToActualRoute(lastSuccessfulRoute)', 'Settings must not change until the full answer pipeline completes.');
+      includes("source:'successful-request'", 'A successful model response should store only non-secret connection-verification metadata.');
+      includes('await recordSuccessfulRoute(candidate,stageName,data?.model)', 'Successful requests must update the connection state for the actual route.');
       includes('async function requestChatCompletion(body,signal', 'All model calls must use the classified provider fallback path.');
       includes("Запрос не выполнен. Исходный текст сохранён.", 'Fallback errors must preserve the original user prompt.');
       includes("showToast('Настройки сохранены')", 'Saving settings should use the toast and keep the modal open.');
