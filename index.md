@@ -1695,7 +1695,7 @@ permalink: /
           const excerpt = excerptParts.join(' ').replace(/\s+/g, ' ').trim().slice(0, 360);
           seen.add(url);
           sources.push({
-            id: 'S' + sources.length + 1,
+            id: 'S' + (sources.length + 1),
             title,
             url,
             source: sourceLabel || tool,
