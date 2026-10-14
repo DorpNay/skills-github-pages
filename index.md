@@ -2084,6 +2084,27 @@ permalink: /
         appendTraceSection('Успешные маршруты',routes.map(route=>(route.stage||'этап')+': '+(route.providerLabel||route.provider||'провайдер')+' / '+(route.model||'модель')+(Number.isFinite(route.elapsedMs)?' — '+route.elapsedMs+' мс':'')).join('\n'));
       }
       [['Планировщик',trace.plan],['Черновик исследователя',trace.draft],['Критика',trace.critique],['Итоговый ответ',trace.finalText]].forEach(([title,value]) => appendTraceSection(title,value));
+      const evidenceSection = document.createElement('section'); evidenceSection.className = 'border border-gray-800 rounded-xl p-3';
+      const evidenceHeading = document.createElement('h3'); evidenceHeading.className = 'font-semibold text-blue-200 mb-2'; evidenceHeading.textContent = 'Источники из инструментов';
+      evidenceSection.appendChild(evidenceHeading);
+      const sourceList = document.createElement('ol'); sourceList.className = 'list-decimal pl-5 space-y-3';
+      let shownSources = 0;
+      for (const source of (Array.isArray(trace.sources) ? trace.sources : []).slice(0, MAX_RESEARCH_EVIDENCE)) {
+        const safeUrl = normalizeResearchEvidenceUrl(source?.url);
+        if (!safeUrl) continue;
+        const item = document.createElement('li'); item.className = 'space-y-1 break-words text-xs';
+        const link = document.createElement('a'); link.href = safeUrl; link.target = '_blank'; link.rel = 'noopener noreferrer';
+        link.className = 'text-cyan-300 underline underline-offset-2 break-all';
+        link.textContent = String(source?.title || safeUrl).replace(/\s+/g, ' ').slice(0, 180);
+        item.appendChild(link);
+        const meta = [source?.source ? 'Источник: ' + String(source.source).slice(0, 80) : '', source?.tool ? 'Инструмент: ' + String(source.tool).slice(0, 80) : ''].filter(Boolean).join(' · ');
+        if (meta) { const node = document.createElement('p'); node.className = 'text-gray-400'; node.textContent = meta; item.appendChild(node); }
+        if (source?.excerpt) { const node = document.createElement('p'); node.className = 'text-gray-300 leading-relaxed'; node.textContent = String(source.excerpt).replace(/\s+/g, ' ').slice(0, 360); item.appendChild(node); }
+        sourceList.appendChild(item); shownSources++;
+      }
+      if (shownSources) evidenceSection.appendChild(sourceList);
+      else { const empty = document.createElement('p'); empty.className = 'text-gray-400 text-xs'; empty.textContent = 'В этом запуске не удалось сохранить распознанные HTTPS-ссылки из результатов инструментов.'; evidenceSection.appendChild(empty); }
+      host.appendChild(evidenceSection);
       $('traceModal').classList.remove('hidden');
     }
     function closeTrace() { $('traceModal').classList.add('hidden'); }
