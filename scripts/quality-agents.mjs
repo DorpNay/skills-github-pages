@@ -31,6 +31,13 @@ const suites = {
     }],
     ['independent processing controls and on-demand resources', () => {
       includes('async function runMultiAgentResearch', 'Multi-agent research needs its own staged pipeline.');
+      includes('function collectResearchEvidence(messages)', 'Research traces must preserve actual source results returned by tools.');
+      includes('function normalizeResearchEvidenceUrl(rawUrl)', 'Research evidence links must be validated as public HTTPS URLs.');
+      includes('const researchMessages = workChat.messages.slice(researchStart)', 'Evidence must come from the actual researcher execution.');
+      includes('systemPromptCharCount:String(systemPrompt||\'\').length', 'Research trace must include effective system context size.');
+      includes("id: 'S' + (sources.length + 1)", 'Research source identifiers must be sequential.');
+      includes('const evidenceSection = document.createElement', 'Research evidence must be rendered with DOM nodes rather than HTML strings.');
+      includes('const MAX_RESEARCH_EVIDENCE = 40;', 'Research evidence must have a deterministic size cap.');
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
       includes('async function refreshModelCatalog(options = {})', 'Provider model catalogs must be refreshed through the bounded safe loader.');
       includes('async function refreshConnectedModelCatalogs(options = {})', 'Connected provider catalogs must refresh for the cross-provider fallback.');
