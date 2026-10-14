@@ -302,10 +302,13 @@ test('settings profile import restores preferences while preserving existing pro
 
 test('research trace supports a structured JSON download', async ({ page }) => {
   const trace = {
-    id: 'e2e-json-trace', createdAt: '2026-10-15T00:00:00.000Z',
+    schemaVersion: 2, id: 'e2e-json-trace', createdAt: '2026-10-15T00:00:00.000Z',
     provider: 'Groq', model: 'openai/gpt-oss-120b',
+    run: { configuredPromptFingerprint: 'a'.repeat(64), configuredPromptFingerprintAlgorithm: 'sha-256' },
     plan: 'Plan', draft: 'Draft with evidence URL https://example.test/', critique: 'Critique',
-    finalText: 'Final result', routes: [{ provider: 'groq', model: 'openai/gpt-oss-120b', stage: 'answer' }]
+    finalText: 'Final result',
+    sources: [{ id: 'S1', title: 'Public API project', url: 'https://example.test/docs', source: 'github', tool: 'public_knowledge_search', excerpt: 'Short source excerpt.' }],
+    routes: [{ provider: 'groq', model: 'openai/gpt-oss-120b', stage: 'answer' }]
   };
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate((traceData) => {
