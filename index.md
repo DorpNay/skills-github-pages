@@ -1122,7 +1122,7 @@ permalink: /
           if ([400,404].includes(modelResponse.status) && provider === currentProvider()) {
             catalogue = await refreshModelCatalog({ quiet: true, force: true, provider, baseUrl, key });
           }
-          const catalogHelp = catalogue?.count ? ' Каталог обновлён: ' + catalogue.count + ' текстовых моделей. Выберите доступную модель в списке выше.' : '';
+          const catalogHelp = catalogue?.count && !catalogue.stale ? ' Каталог обновлён: ' + catalogue.count + ' текстовых моделей. Выберите доступную модель в списке выше.' : '';
           updateApiKeyLamp('error','Модель '+model+' не прошла проверку: HTTP '+modelResponse.status+(detail?': '+detail:'')+catalogHelp);
           showToast(catalogue?.count ? 'Список моделей обновлён; выберите другую модель.' : 'Модель не подтвердилась: HTTP '+modelResponse.status,'error');
           safeSet('ai_provider_connection_'+provider,'');return;
@@ -1132,7 +1132,7 @@ permalink: /
         let catalogueNote='каталог моделей недоступен';
         let refreshedCatalogue = null;
         if (provider === currentProvider()) refreshedCatalogue = await refreshModelCatalog({ quiet: true, force: true, provider, baseUrl, key });
-        if (refreshedCatalogue?.count) catalogueNote = 'в каталоге ' + refreshedCatalogue.count + ' текстовых моделей';
+        if (refreshedCatalogue?.count && !refreshedCatalogue.stale) catalogueNote = 'в каталоге ' + refreshedCatalogue.count + ' текстовых моделей';
         const keyFingerprint=await providerKeyFingerprint(key);
         if(keyFingerprint) safeSet('ai_provider_connection_'+provider,JSON.stringify({ok:true,baseUrl,model,keyFingerprint,testedAt:new Date().toISOString()}));
         else safeSet('ai_provider_connection_'+provider,'');
