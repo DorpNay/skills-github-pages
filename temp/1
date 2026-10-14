@@ -1,1 +1,249 @@
-q
+#   
+# Финальный инженерный документ: углублённый ресерч по всем 76 пунктам  
+  
+## Методология и что изменилось после глубокого ресерча  
+  
+Я прошёл по каждому из 76 пунктов через первичные источники (доки Google/MDN/W3C/Chrome, репозитории плагинов, production-кейсы на GitHub Actions, HTTP Archive). Ресерч вскрыл **5 критических ловушек**, которые меняют архитектуру, и **7 «гениальных» замен**, которые дают кратный прирост мощности при том же или меньшем рантайме. Сначала — ловушки, потому что они определяют, *как именно* строить остальные пункты.  
+  
+### ⚠️ Критические инженерные инсайты (обязательно учесть во всех сферах)  
+  
+| # | Ловушка, которую вскрыл ресерч | Последствие для архитектуры | Источник |  
+|---|---|---|---|  
+| **Л1** | **Cloudflare Auto Minify официально deprecated 05.08.2024** — тумблеры JS/CSS/HTML удалены | Минификацию **нельзя** делегировать CDN. Её надо делать в CI на build-time (пункт 3.5/3.8 меняется) | [[660]][[661]][[662]][[664]] |  
+| **Л2** | **Google sitemap ping endpoint отключён** (404 с конца 2023) | Пункт 8.9 «ping Google» мёртв. Замена — **IndexNow** (Bing/Yandex/DuckDuckGo) + GSC API | [[811]][[813]][[816]][[821]][[791]][[794]][[808]] |  
+| **Л3** | **GitHub Pages жёстко ставит `Cache-Control: max-age=600`** на всё, настроить нельзя | Без Cloudflare впереди — 10-минутный кэш и на HTML, и на ассеты. Нужны **Cache Response Rules** + **fingerprinting** имён файлов | [[829]][[830]][[853]][[857]][[861]][[831]][[832]] |  
+| **Л4** | **`concurrency.cancel-in-progress: true` на deploy-джобе убивает живой деплой** | Для `build`/`test` — `true` (экономит минуты), для `deploy` — **обязательно `false`** или отдельная группа | [[316]][[318]][[320]][[324]] |  
+| **Л5** | **Встроенный сборщик GH Pages — whitelist плагинов**; `jekyll-loading-lazy`, `jekyll_picture_tag`, `jekyll-toc`, `jekyll-paginate-v2`, `jekyll-last-modified-at`, `jekyll-llms-output` **не входят** | Все 12+ фич из сфер 2–4, 6, 10 **блокированы** без миграции на Actions (пункт 3.1 — фундамент всего) | [[464]][[467]][[468]][[546]][[547]][[596]][[597]][[601]][[1272]][[1273]] |  
+  
+> **Вывод ресерча:** миграция на GitHub Actions (3.1) — не «улучшение», а **обязательное условие** существования остальных 60+ пунктов. Без неё половина «гениальных» решений физически не запустится.  
+  
+---  
+  
+## Сфера 1. Информационная архитектура и контент-модель  
+  
+| Пункт | 🚀 Гениальное решение (из ресерча) | ⚙️ Инженерная реализация и связность | ⚡ Оптимизация быстродействия | Источники |  
+|---|---|---|---|---|  
+| **1.1** Схема front matter | **`mheap/frontmatter-json-schema-action`** — валидация YAML-front matter по JSON Schema прямо в CI, а не самописным скриптом | Схема `.schema/frontmatter.json` описывает типы/enum (`status: seedling\|budding\|evergreen`). Action парсит `---`-блоки и падает на PR при нарушении. Связан с 1.6 (enum статуса) и 2.2 (обязательный `description`). | Валидация только **изменённых** файлов в PR (`--changed-only`), полный прогон — раз в сутки по cron. | [[1173]][[1183]][[1186]][[1192]][[1197]] |  
+| **1.2** Главная как композиция | **Data-driven home через `_data/home.yml` + динамический `{% include {{ section.type }}.html %}`** | `_layouts/home.html` итерит `site.data.home.sections` и рендерит `_includes/sections/{hero,latest,featured,about,cta}.html`. Порядок/видимость секций — только YAML. Связан с 9.5. | Liquid-`include` с переменной именем работает в Jekyll (в отличие от `render`), но **не кэшируется** — поэтому тяжёлые секции (latest) выносить в `{% for ... limit %}` с готовыми `site.posts`. | [[1226]][[1228]][[1236]][[1237]][[1243]] |  
+| **1.3** Коллекции | **`collections_dir: _content` + `output: true` + кастомный `permalink: /:collection/:path/`** | Все не-посты (`projects`, `notes`, `talks`) в `_content/`. В `_config.yml` — `permalink` на коллекцию. Связан с 1.4 (архивы) и 10.2 (JSON-эндпоинты читают `site.projects`). | Jekyll обрабатывает коллекции **до** рендера страниц; держать `notes` с `output: false`, если они только для индекса — экономит сотни файлов. | [[1091]][[1101]][[1104]][[1107]][[1109]] |  
+| **1.4** Теги/категории/пагинация | **Zero-plugin: `group_by_exp`/`sort_natural` для облака тегов + `jekyll-paginate` строго на `index.html`** | Критично: `jekyll-paginate` **не работает в `.md`** — только `index.html` (Л5 + этот факт). Облако: `{% assign tags = site.tags | sort %}` + размер через `site.tags[tag].size`. Страницы тегов — один `_layouts/tag.html` + `page.tag`. | Пагинация по 10 постов; облако тегов рендерится один раз на build. Не использовать `jekyll-paginate-v2` (не в whitelist, Л5). | [[1246]][[1247]][[1249]][[1252]][[1257]][[1259]][[1264]][[1269]][[1281]][[1282]][[1288]][[1291]][[1292]][[1293]][[1295]] |  
+| **1.5** Авторские страницы | **`_data/authors.yml` + include-авторбокс + автогенерация страниц авторов через цикл в `_pages`** | Один YAML: `dorpnay: {name, bio, avatar, social[]}`. `_includes/author-box.html` читает `site.data.authors[page.author]`. Страница автора — `author.html` layout с фильтром `site.posts \| where: "author", page.author`. | Данные авторов — статичный YAML, ноль запросов. Аватары — через 3.4 (responsive). | [[1066]][[1067]][[1068]][[1071]][[1079]][[1081]][[1084]] |  
+| **1.6** Digital-garden статусы | **Enum-статус в схеме (1.1) + CSS-бейдж через `data-status` + сортировка «сада»** | Front matter `status: seedling`. Бейдж: `<span class="garden-badge" data-status="{{ page.status }}">`. Сортировка сада: `{% assign notes = site.notes \| sort: "status" %}`. Связан с 4.1 (токены цветов статусов). | Чистый CSS, ноль JS. Статусы — build-time атрибут. | [[1036]][[1037]][[1038]][[1039]][[1040]][[1042]][[1043]][[1044]][[1045]][[1053]] |  
+  
+---  
+  
+## Сфера 2. SEO и обнаруживаемость  
+  
+| Пункт | 🚀 Гениальное решение | ⚙️ Инженерная реализация и связность | ⚡ Оптимизация | Источники |  
+|---|---|---|---|---|  
+| **2.1** SEO-трио | **`jekyll-seo-tag` + `jekyll-sitemap` + `jekyll-feed`** — все три в whitelist GH Pages, работают и локально через Actions | `{% seo %}` в `<head>` базового layout. `jekyll-sitemap` авто-генерирует `sitemap.xml` с `<lastmod>`. `jekyll-feed` — `feed.xml` (Atom). Связан с 2.6 (robots указывает на sitemap) и 8.9 (IndexNow читает sitemap). | Все три — чистые Ruby-гема, оверхед при сборке пренебрежим. | [[1354]][[1363]][[1364]][[1380]][[1386]][[1390]][[1409]][[1416]][[1419]][[1420]][[467]][[468]] |  
+| **2.2** title/description | **`jekyll-seo-tag` делает fallback `description → excerpt → site.description` автоматически** | Достаточно задать `excerpt_separator: <!--more-->` и писать `description` только где нужен кастом. `jekyll-clean-descriptions` чистит HTML и режет до 160. Связан с 1.1 (валидация наличия). | Ноль ручного труда; fallback на build-time. | [[1354]][[1367]][[762]][[763]][[765]][[766]][[771]][[773]][[776]][[778]][[779]] |  
+| **2.3** OG-изображения | **Satori + resvg на build-time в CI** (не runtime-API, не Puppeteer) | Node-скрипт после `jekyll build`: читает `_site/**/*.html`, достаёт `title`/`description`, рендерит HTML→SVG→PNG 1200×630 в `_site/assets/og/`, инжектит `<meta og:image>`. `jekyll-og-image` (libvips) — альтернатива. Связан с 3.1 (Actions) и 2.1 (`{% seo %}` подхватит путь). | Satori генерирует 1–2 мс/картинку, **без браузера**; 143 картинки < 25 с. Runtime — 0 JS. | [[928]][[930]][[931]][[932]][[934]][[936]][[938]][[939]][[1376]][[963]] |  
+| **2.4** JSON-LD | **Условный `_includes/structured-data.html`: `WebSite`+`Person` на главной, `BlogPosting` на постах, `BreadcrumbList` на вложенных** | Google требует для `BreadcrumbList` ≥2 `ListItem` с `name`+`item`; для `Article` — `headline`, `datePublished`, `author`. Рендер по `page.layout`. Связан с 1.3 (коллекции → свой тип) и 2.1. | JSON-LD — статичный `<script type="application/ld+json">`, ноль рантайма. | [[1300]][[1302]][[1312]][[1319]][[1320]][[1310]][[1311]][[1314]] |  
+| **2.5** Canonical/пагинация | **Селф-референсные canonical на пагинационных страницах (НЕ канонить всё на /)** | `jekyll-seo-tag` ставит canonical = `page.url` + `site.url` + `baseurl`. Для `index.html` пагинации это корректно. Критично: `url` без trailing slash, `baseurl` = `/skills-github-pages`. | Build-time, ноль JS. | [[1354]][[1355]][[1356]][[1357]][[1359]][[1360]][[781]][[782]][[783]][[785]][[789]] |  
+| **2.6** robots.txt + GSC | **Условный `robots.txt` по `JEKYLL_ENV`**: production — `Allow: /` + `Sitemap:`, development — `Disallow: /` | Файл `robots.txt` с front matter `layout: null` + Liquid `{% if jekyll.environment == "production" %}`. Связан с 8.1 (`JEKYLL_ENV=production` в Actions) и 2.1 (sitemap). | Ноль рантайма; защищает dev-сборки от индексации. | [[1328]][[1331]][[1332]][[1334]][[1337]][[1340]] |  
+  
+---  
+  
+## Сфера 3. Производительность и Core Web Vitals  
+  
+| Пункт | 🚀 Гениальное решение | ⚙️ Инженерная реализация и связность | ⚡ Оптимизация | Источники |  
+|---|---|---|---|---|  
+| **3.1** Миграция на Actions | **Официальные `actions/upload-pages-artifact` + `actions/deploy-pages`** (не сторонние gh-pages-экшены) | `ruby/setup-ruby` с `bundler-cache: true` (сам кэширует gems). Отдельный `actions/cache` для `.jekyll-cache` и `vendor/bundle`. `JEKYLL_ENV=production`. Связан с Л5 (разблокирует плагины) и 8.1/8.2. | Кэш гемов + инкрементальная сборка → 20–30 с против 2–3 мин. | [[472]][[474]][[476]][[326]][[328]][[333]][[100]] |  
+| **3.2** Lazy-load | **`jekyll-loading-lazy`** (добавляет `loading="lazy"`+`decoding="async"` ко всем `img`/`iframe`) | Плагин хукается на post-render, правит HTML. Не трогает Markdown. Связан с 3.3 (размеры всё равно нужны) и 5.9 (giscus-iframe). | Ноль JS-рантайма, нативная ленивость браузера. | [[540]][[541]][[545]][[398]][[399]][[400]][[401]][[403]] |  
+| **3.3** CLS | **`aspect-ratio` + явные `width`/`height` в `_includes/figure.html`** | Для `srcset`/`<picture>` — вычислять ratio из исходника и ставить `width`/`height` атрибуты + CSS `aspect-ratio` + `object-fit`. Заглушка-скелет цветом. Связан с 3.4 (picture-tag сам добавляет размеры). | Резерв места до загрузки → CLS≈0. | [[389]][[390]][[391]][[392]][[393]][[394]][[395]][[396]][[397]][[588]] |  
+| **3.4** Responsive images | **`squoosh-cli` в CI-шаге ДО сборки** (WebP+AVIF) + `jekyll_picture_tag` для `<picture>`/srcset | Порядок: `squoosh-cli --webp --avif assets/**` → затем `jekyll build` с `jekyll_picture_tag` (конфиг `_data/picture.yml`, форматы `webp:50 avif:30`). AVIF первым в `<picture>` (иначе webp перекрывает). | -60–80% веса; Ruby-процесс Jekyll не нагружен кодированием. | [[29]][[30]][[31]][[32]][[33]][[34]][[36]][[37]][[20]][[21]][[22]][[25]][[588]][[589]][[591]][[595]] |  
+| **3.5** Critical CSS + defer | **`critical` (addyosmani) в CI post-build** + `sass.style: compressed` + `preload/onload` для остального | `npx critical _site/index.html --base _site --inline --extract`. Остальной CSS: `<link rel=preload as=style onload=this.rel=stylesheet>`. JS — `defer`. Шрифты — `preload`+`font-display:swap`. Связан с Л1 (минификация теперь здесь, не в Cloudflare). | Убирает render-blocking → FCP/LCP вниз. | [[38]][[42]][[47]][[636]][[679]][[680]][[684]][[694]][[695]][[723]][[724]][[725]][[727]] |  
+| **3.6** Resource hints | **`preconnect` к giscus/analytics/fonts + `dns-prefetch` fallback** | В `<head>`: `<link rel=preconnect href=https://giscus.app crossorigin>`. Только для 2–3 критичных origin (превышение — вред). Связан с 6.1/7.1. | TLS/DNS handshake до запроса. | [[36]](perf) |  
+| **3.7** CWV-телеметрия | **`web-vitals` (deferred) → `sendBeacon` на `visibilitychange`** | Библиотеку грузить `defer` (она сама рекомендует откладывать). `onLCP/onCLS/onINP` → `navigator.sendBeacon('/analytics', payload)` с fallback на `fetch(keepalive)`. Связан с 7.1/7.3. | `sendBeacon` не блокирует unload, данные доходят даже при закрытии. | [[59]][[61]][[63]][[896]][[1491]][[1501]][[1502]][[1505]][[1506]][[1507]][[1508]][[1509]] |  
+| **3.8** CDN + Brotli | **Cloudflare впереди GH Pages: Compression Rules (Brotli) + Cache Response Rules (immutable для fingerprinted-ассетов)** | Л1: Auto Minify мёртв → минификация в CI (3.5). Л3: GH Pages = `max-age=600` → Cache Rule: `/assets/*` → `Cache-Control: public, max-age=31536000, immutable`; HTML → `max-age=0, must-revalidate`. Brotli level 11 на Pro. | TTFB вниз, повторные визиты из edge. | [[372]][[373]][[375]][[379]][[380]][[829]][[831]][[832]][[833]][[836]][[839]][[840]][[841]][[842]][[843]][[844]][[845]][[846]][[848]][[849]][[850]][[851]][[852]][[853]][[854]][[855]][[856]][[857]][[861]][[863]] |  
+| **3.9** Service Worker / offline | **Workbox `generateSW` post-build + `networkFirst` для HTML, `CacheFirst` для ассетов, offline fallback `/offline.html`** | `workbox generateSW workbox-config.js` после `jekyll build`. Precache manifest генерируется из `_site`. Осторожно: `generateSW` с leading `/` ломает project-pages (бейс-путь) — задавать `importScripts`/`globDirectory` явно. | Повторные визиты мгновенны; офлайн-страница вместо ошибки. | [[381]][[383]][[385]][[387]][[388]][[1028]][[1029]][[1030]][[1033]] |  
+| **3.10** Speculation + View Transitions | **Speculation Rules (prefetch/prerender) + cross-document View Transitions (2 строки CSS)** | В `<head>`: `<script type=speculationrules>{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/assets/*",...]}}]},"eagerness":"moderate"}]}</script>`. В CSS: `@view-transition { navigation: auto; }`. Связан с 3.6. | Пререндер даёт «SPA-ощущение» на MPA без JS-роутера; eagerness=moderate не жрёт трафик. | [[966]][[975]][[976]][[978]][[979]][[981]][[983]][[984]][[985]][[986]][[989]] |  
+  
+---  
+  
+## Сфера 4. Дизайн-система и UI/UX  
+  
+| Пункт | 🚀 Гениальное решение | ⚙️ Инженерная реализация и связность | ⚡ Оптимизация | Источники |  
+|---|---|---|---|---|  
+| **4.1** Дизайн-токены | **CSS custom properties в `:root` + `@csstools/postcss-design-tokens` для импорта из JSON** | `_sass/_tokens.scss`: `--color-bg`, `--color-fg`, `--color-primary`, `--space-*`, `--radius-*`, `--font-*`. Тёмная тема переопределяет только значения под `[data-theme=dark]`. Связан с 4.2, 1.6, 4.8. | Ноль JS для тем; одна правка — весь сайт. | [[181]][[182]][[184]][[186]][[62]][[64]] |  
+| **4.2** Dark mode без FOUC | **Синхронный inline-скрипт в `<head>` (anti-flash) + `aria-pressed` на тумблере** | Скрипт до CSS: читает `localStorage.theme` → иначе `matchMedia(prefers-color-scheme)` → ставит `documentElement.dataset.theme`. Тумблер — `<button aria-pressed>` (не div). Связан с 4.1, 5.4. | Inline < 300 байт; FOUC устранён полностью. | [[1454]][[1457]][[1458]][[1461]][[1462]][[173]][[174]][[176]][[179]][[180]][[181]][[183]][[185]][[1003]][[1006]][[1008]][[1441]][[1446]][[1448]] |  
+| **4.3** Fluid typography | **`clamp()` + `ch`-measure 65–75 + поддержка 200% zoom** | `font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem)`; `line-height:1.6`; `max-width: 65ch`. Variable fonts где доступны. Связан с 5.5 (контраст при zoom). | Меньше медиа-запросов; плавная адаптация. | [[188]][[189]][[190]][[192]][[193]][[194]][[195]][[196]] |  
+| **4.4** Компонентные include | **Атомарные `_includes` с параметрами через `include.*`** | `button.html`, `callout.html`, `badge.html`, `code-block.html`, `table-wrapper.html`. Вызов: `{% include callout.html type="tip" text="..." %}`. Связан с 1.2, 4.1. | Переиспользование; ноль дублирования HTML. | [[1229]][[1234]][[1238]][[1244]] |  
+| **4.5** Sticky header + progress | **`position:sticky` + CSS scroll-driven animation (`animation-timeline: scroll()`)** | Progress-bar: `@keyframes grow{from{scaleX(0)}to{scaleX(1)}} .progress{animation:grow linear; animation-timeline:scroll(root)}`. Header: `position:sticky;top:0;backdrop-filter:blur(8px)` с `@supports` fallback. | GPU-композитинг, ноль JS-слушателей скролла. | [[197]][[198]][[199]][[200]][[201]][[202]][[203]][[204]] |  
+| **4.6** TOC + scroll-spy | **`allejo/jekyll-toc` (GH-Pages-совместим, без плагина) + CSS `scroll-target-group`/`:target-current`** | TOC генерится Liquid-regex на build. Scroll-spy: контейнер навигации `scroll-target-group:auto` + `:target-current` для активной ссылки (новая CSS-фича) — ноль JS. | Build-time TOC; нативный scroll-spy. | [[549]][[551]][[555]][[558]][[207]][[205]][[206]][[209]][[212]][[213]] |  
+| **4.7** Print stylesheet | **`@media print`: скрыть nav/comments/buttons, `a[href]::after{content:" ("attr(href)")"}`, чёрный текст** | Отдельный блок в `_sass`. Связан с 5.6 (анимации выключены). | Ноль рантайма; улучшает PDF-экспорт. | [[214]][[216]][[218]][[220]][[221]] |  
+| **4.8** PWA manifest + иконки | **`manifest.webmanifest` через Liquid + maskable 512 + `theme-color` с `media`-атрибутом для light/dark** | Manifest — Liquid-файл в корне (`layout:null`), генерит `start_url`/`scope` с `baseurl`. Иконки: SVG→PNG 192/512 + maskable (`purpose:"maskable"` отдельно, не `any maskable` в одном). `<meta name=theme-color media=(prefers-color-scheme:dark)>`. Связан с 4.1, 3.9. | Единый SVG-источник; installable без тяжёлого SW. | [[223]][[224]][[225]][[226]][[231]][[1001]][[1004]][[1012]][[1014]][[1016]][[1018]][[1020]][[1021]][[1022]][[1023]][[1026]][[1027]][[1463]][[1464]][[1465]][[1467]][[1472]][[1475]][[1476]][[1481]][[1482]] |  
+  
+---  
+  
+## Сфера 5. Доступность (a11y)  
+  
+| Пункт | 🚀 Гениальное решение | ⚙️ Инженерная реализация и связность | ⚡ Оптимизация | Источники |  
+|---|---|---|---|---|  
+| **5.1** Лендмарки | **Нативные `<header>/<nav aria-label>/<main>/<footer>` + ровно один `<h1>`** | `role` не нужен, если теги на верхнем уровне (не внутри `section/article`). `<nav aria-label="Primary">`. Связан с 5.2 (skip→`#main`). | Ноль ARIA-оверхеда; браузер сам экспонирует роли. | [[407]][[413]][[414]][[415]][[421]] |  
+| **5.2** Skip link | **`.skip-link:not(:focus){position:absolute;left:-9999px}` + `:focus-visible` кольцо** | Первый элемент `<body>`: `<a href=#main class=skip-link>К содержимому</a>`. При фокусе — появляется сверху. Связан с 5.4. | Ноль влияния на визуал. | [[407]][[404]][[405]] |  
+| **5.3** Alt-политика | **CI-скрипт (в 8.4 pa11y + отдельный grep) проверяет наличие `alt` у всех `<img>`** | Декоративные → `alt=""`; информативные → описание; сложные → `<figure>+<figcaption>`. Связан с 1.1 (схема требует `image.alt`). | Build-time проверка, ноль рантайма. | [[407]](alt) |  
+| **5.4** Клавиатура / focus | **`:focus-visible` + WCAG 2.2 SC 2.4.13 Focus Appearance (мин. область/контраст)** | `:focus-visible{outline:3px solid var(--color-primary);outline-offset:2px}`. Проверка контраста фокуса ≥3:1 к обоим соседним цветам. Связан с 4.2 (тумблер), 5.2. | Нативный фокус; не ломает мышь. | [[404]][[405]][[406]][[408]][[412]] |  
+| **5.5** Контраст AA | **Автоматическая проверка токенов в CI (axe через pa11y + контраст-скрипт по `:root`)** | Текст ≥4.5:1, крупный ≥3:1, UI-границы ≥3:1. Не полагаться только на цвет (добавлять иконку/текст). Связан с 4.1. | Build-time гейт. | [[404]][[405]][[406]] |  
+| **5.6** Reduced motion | **`@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}`** | Ставить **после** layout-медиазапросов (иначе ломает сетку — известная ловушка). Связан с 4.5, 3.10. | Ноль JS. | [[422]][[423]][[424]][[425]][[426]][[427]][[428]][[429]] |  
+| **5.7** Формы | **Явный `<label for>` + `aria-describedby` для ошибок/подсказок** | Каждое поле — `id`+`label`. Ошибка: `aria-describedby="err-id"`. `autocomplete` на email. Связан с 6.8 (newsletter). | Нативная семантика. | [[430]][[431]][[432]][[438]] |  
+| **5.8** A11y в CI | **`pa11y-ci` + axe по `sitemap.xml` (из 2.1), порог errors=0** | Запускать против локального `jekyll serve` в CI. `jekyll-sitemap` обязателен (pa11y читает sitemap). Известная боль: PDF в sitemap — исключать. | Shift-left; регрессы не мержатся. | [[76]][[77]][[78]][[82]][[84]] |  
+| **5.9** Доступные комментарии | **giscus `loading=lazy` + `title` на iframe + тема через `postMessage`** | `<iframe loading=lazy title="Комментарии">`. Синхронизация темы: `giscus-frame.contentWindow.postMessage({giscus:{setConfig:{theme}}}, origin)`. Связан с 4.2, 3.6. | Ленивая загрузка; не шумит в a11y-дереве до востребования. | [[67]][[68]][[69]][[70]][[75]] |  
+| **5.10** Язык/локаль | **`<html lang="{{ page.lang | default: site.lang | default:'ru' }}">` + `<span lang=en>` для вставок** | Связан с 10.4 (i18n-скелет). Screen reader меняет произношение. | Ноль рантайма. | [[422]](lang) |  
+  
+---  
+  
+## Сфера 6. Интерактивность и вовлечение  
+  
+| Пункт | 🚀 Гениальное решение | ⚙️ Инженерная реализация и связность | ⚡ Оптимизация | Источники |  
+|---|---|---|---|---|  
+| **6.1** Комментарии | **giscus `theme=preferred_color_scheme` + `loading=lazy` + postMessage-синхронизация** | GitHub Discussions как бэкенд — ноль своего сервера. Связан с 4.2, 5.9, 3.6. | Ленивый iframe; тема без перезагрузки. | [[67]][[68]][[69]][[70]][[75]] |  
+| **6.2** Поиск | **Pagefind вместо Simple-Jekyll-Search/Fuse.js** (state-of-the-art для SSG) | Шаг CI после build: `npx pagefind --site _site`. Индекс — фрагменты, грузятся по требованию; поиск в Web Worker; multilingual из коробки. Подключить `_pagefind/pagefind.js` + UI. Связан с 3.1, 10.2. | Runtime ~5KB; масштаб на тысячи страниц без раздувания индекса (в отличие от Lunr/Fuse, грузящих всё). | [[892]][[894]][[896]][[899]][[901]][[903]][[908]][[913]][[915]][[917]][[918]][[921]][[927]] |  
+| **6.3** Похожие посты | **Liquid-пересечение тегов + свежесть, лимит 3** | `{% for p in site.posts %}{% if p.url!=page.url %}{% assign common = p.tags | map:... %}...` — считать совпадения, сортировать по `common.size*recency`. Связан с 1.4. | Build-time; работает без JS. | [[753]][[755]][[756]][[757]][[759]] |  
+| **6.4** Reading time | **`number_of_words` Liquid-фильтр на build (не JS)** | `{{ content | number_of_words | divided_by: 200 | plus: 1 }}`. Точнее — `jekyll-smart-reading-time` (стрижёт code/HTML/Liquid перед счётом). Связан с 1.1. | Один расчёт при сборке. | [[743]][[745]][[747]][[748]][[749]][[750]][[751]][[752]] |  
+| **6.5** Share | **`navigator.share()` + fallback «копировать ссылку» + toast** | Кнопка: `if(navigator.share){share({title,url})}else{clipboard.writeText(url)+toast}`. `aria-label` обязательна. Связан с 6.6, 5.4. | Нативный UI ОС; ноль библиотек. | [[233]][[234]][[235]][[236]][[238]][[239]][[240]][[241]][[1603]][[1605]] |  
+| **6.6** Copy code | **Делегированный слушатель на `document` + `clipboard.writeText` + fallback + toast + `aria-label`** | Один `document.addEventListener('click', e=>{if(e.target.closest('.copy-btn')){...}})`. Fallback для Safari/non-HTTPS (`execCommand`). Обратная связь — toast + смена иконки. Связан с 6.5, 5.4. | Не вешает N слушателей; память O(1). | [[242]][[244]][[245]][[246]][[247]][[249]][[1608]][[1610]][[1612]][[1613]][[1621]][[1622]][[1625]][[1628]] |  
+| **6.7** Webmentions | **`webmention.io` + Bridgy + `jekyll-webmention_io` (рендер на build)** | `<link rel=webmention href=https://webmention.io/.../webmention>`. Bridgy подтягивает likes/replies из Mastodon. Плагин кэширует ответы в `_data/webmentions/` → рендер статичный. Связан с 2.1. | Build-time рендер; ноль рантайм-запросов после кэша. | [[250]][[251]][[252]][[253]][[254]][[255]][[256]][[258]][[259]] |  
+| **6.8** Newsletter | **Formspree + honeypot-поле + double opt-in** | `<form action=https://formspree.io/f/ID><input name=_gotcha hidden>`. Double opt-in на стороне ESP (Klaviyo/Loops). Связан с 5.7, 7.2 (событие `newsletter_signup`). | Нативный POST; анти-спам без CAPTCHA. | [[260]][[261]][[263]][[1548]][[1550]][[1551]][[1552]][[1556]][[1557]][[1566]][[1569]][[1572]][[1574]] |  
+| **6.9** Mermaid/KaTeX | **Условная загрузка по front matter `mermaid:true`/`math:true` + dynamic `import()`** | В layout: `{% if page.mermaid %}<script type=module>import('...mermaid.esm.min.mjs')</script>{% endif %}`. KaTeX — аналогично или compile-time (`jekyll-katex`). Связан с 3.1. | Сотни КБ библиотек грузятся только там, где реально нужны. | [[269]][[270]][[271]][[272]][[274]][[1576]][[1577]][[1580]][[1584]][[1586]][[1588]][[1592]][[1593]][[1594]][[1599]] |  
+  
+---  
+  
+## Сфера 7. Аналитика и измерение  
+  
+| Пункт | 🚀 Гениальное решение | ⚙️ Инженерная реализация и связность | ⚡ Оптимизация | Источники |  
+|---|---|---|---|---|  
+| **7.1** Cookieless analytics | **GoatCounter (~3.5KB, GDPR-free, no-banner) ИЛИ Plausible (<1KB)** | GoatCounter: `<script data-goatcounter=... src=count.js defer>`. Plausible: `<script defer data-domain=...>`. Для `github.io` без домена — GoatCounter (не требует согласия). Связан с 3.6, 7.3. | <4KB; не влияет на Lighthouse. | [[279]][[280]][[285]][[287]][[1518]][[1528]][[1529]][[1530]][[1531]] |  
+| **7.2** Кастомные события | **Data-атрибуты + единый делегированный обработчик** | Разметка `data-gc-event="newsletter_signup"` / `data-plausible-event`. Один слушатель на `document` → `goatcounter.count({path,event:true})` или `plausible('event',{props})`. Связан с 6.5/6.6/6.8/4.2. | Централизованно; ноль дублирования JS. | [[288]][[289]][[291]][[292]][[294]][[1538]][[1539]][[1544]][[1546]] |  
+| **7.3** CWV field data | **`web-vitals` → `sendBeacon` в ту же аналитику** | См. 3.7; события `lcp`/`cls`/`inp` как custom events с value. Связан с 7.1. | Надёжная доставка при unload. | [[59]][[61]][[63]][[1501]][[1502]][[1505]][[1506]][[1507]] |  
+| **7.4** GSC / Bing | **Верификация через `<meta>` в `_config.yml` (seo-tag) + мониторинг Coverage/CWV** | Связан с 2.1, 2.6, 8.9. | Ноль рантайма. | [[1354]][[1328]] |  
+| **7.5** UTM-атрибуция | **Сохранение UTM в `sessionStorage` при первом визите + прикрепление к форме** | Скрипт: `if(location.search.includes('utm_')) sessionStorage.setItem('utm',...)`. При submit формы — скрытые поля из sessionStorage. Связан с 6.8. | Без бэкенда; сессия-локально. | [[298]][[300]][[302]][[303]][[306]] |  
+| **7.6** Публичная статистика | **Shared-link Plausible / публичный GoatCounter на `/stats`** | Связан с 7.1. Прозрачность privacy-first. | Ноль затрат. | [[308]][[309]][[310]][[287]] |  
+  
+---  
+  
+## Сфера 8. Автоматизация и CI/CD  
+  
+| Пункт | 🚀 Гениальное решение | ⚙️ Инженерная реализация и связность | ⚡ Оптимизация | Источники |  
+|---|---|---|---|---|  
+| **8.1** Основной workflow | **Разделение `build`→`test`(параллельно)→`deploy`; `concurrency` с `cancel-in-progress:true` на build/test и **`false` на deploy** (Л4)** | `on: push:main + pull_request + schedule`. `permissions: pages:write, id-token:write`. Связан с 3.1, 8.2. | Отмена устаревших PR-сборок экономит минуты; deploy не прерывается. | [[316]][[318]][[320]][[322]][[324]][[472]][[474]][[476]] |  
+| **8.2** Кэширование | **`ruby/setup-ruby bundler-cache:true` + `actions/cache` для `.jekyll-cache`, `~/.npm` (Pagefind/Workbox/critical), `vendor/bundle`** | Ключи по hash `Gemfile.lock`/`package-lock.json`. Связан с 3.1, 6.2, 3.5, 3.9. | CI 2–3 мин → 20–30 с. | [[326]][[328]][[333]][[100]] |  
+| **8.3** Линковка | **`lycheeverse/lychee-action` на PR + weekly cron; `--exclude` для flaky-доменов** | Парсит `_site/**/*.html` и Markdown. Отчёт-файл → `create-issue-from-file`. Связан с 5.3, 9.7. | Rust-скорость; ловит 404 до мержа. | [[86]][[87]][[89]][[90]][[91]] |  
+| **8.4** A11y-аудит | **`pa11y-ci`+axe по sitemap (из 2.1), threshold 0** | См. 5.8. Исключить PDF/ассеты из sitemap для pa11y. | Гейт доступности. | [[76]][[77]][[78]][[82]][[84]] |  
+| **8.5** Lighthouse CI | **`treosh/lighthouse-ci-action` с assertions: perf≥95, a11y=100, BP≥95, SEO=100; комментарий в PR** | Запускать против preview-артефакта (`http-server _site`). `budget.json` для размеров JS/CSS. Связан с 9.2 (бейджи). | Визуальный контроль регрессий. | [[96]][[97]][[98]][[101]][[103]] |  
+| **8.6** Markdown/prose lint | **`markdownlint-cli2` (pre-commit + CI) + Vale (стиль/проза) по изменённым файлам** | `.markdownlint.json` (MD041/MD001 gotchas для генерируемых файлов). Vale-стили: `Readability`, `alex`, `proselint`. Связан с 9.4. | Единый стиль; проза-гейт. | [[105]][[106]][[107]][[108]][[110]][[112]][[114]][[345]][[115]][[116]][[118]][[119]][[120]][[121]][[122]][[123]][[124]] |  
+| **8.7** Scaffold постов | **`jekyll-compose` (`bundle exec jekyll post "Title"`) + Makefile-обёртка** | Шаблоны в `_config.yml: jekyll_compose`. Автоткрытие в редакторе. Связан с 1.1 (схема). | Гарантированная структура front matter. | [[559]][[564]][[565]][[567]] |  
+| **8.8** Scheduled publish | **Cron-джоба двигает `_drafts`→`_posts` по `date<=now` с автокоммитом** | `humanwhocodes`/`jekyll-publish-drafts` паттерн. Связан с 8.1 (триггерит deploy). | Публикация точно в срок без рук. | [[125]][[126]][[130]][[131]][[134]] |  
+| **8.9** Индексация после деплоя | **IndexNow (Bing/Yandex/DDG) + GSC Indexing API — НЕ Google sitemap ping (Л2, мёртв)** | Post-deploy step: `jakob-bagterp/index-now-submit-sitemap-urls-action` читает `sitemap.xml` (из 2.1), шлёт URL в IndexNow с ключом в корне. Для Google — только GSC (ping 404). | Ускоренное обнаружение нового контента. | [[791]][[794]][[799]][[800]][[805]][[808]][[811]][[813]][[816]][[821]] |  
+  
+---  
+  
+## Сфера 9. Поддерживаемость и DX  
+  
+| Пункт | 🚀 Гениальное решение | ⚙️ Инженерная реализация и связность | ⚡ Оптимизация | Источники |  
+|---|---|---|---|---|  
+| **9.1** Каноническая структура | **Строгое разделение: `_data/`(контент-конфиг), `_includes/`(UI), `_layouts/`(стр-ры), `_content/`(коллекции, 1.3), `assets/`, `scripts/`(CI-утилиты)** | Связан с 1.2, 1.3, 9.5. Предсказуемо для любого Jekyll-разработчика. | Ноль когнитивной нагрузки. | [[1091]][[1136]][[1222]] |  
+| **9.2** README как runbook | **Quickstart(1 команда)+Architecture+Content Model+CI/CD+Troubleshooting + бейджи (Actions status + lighthouse-badger)** | `lighthouse-badger` коммитит JSON-бейджи в `badges/` после CI; README ссылается на shields-эндпоинт. Связан с 8.5. | Самодокументирование; живые метрики. | [[1162]][[1163]][[1165]][[1166]][[1168]][[1170]] |  
+| **9.3** Локальный паритет | **`.devcontainer/devcontainer.json` на базе prebuilt `jekyll`-образа + `postCreateCommand: bundle install`** | Codespaces = CI-среда. Связан с 3.1 (те же версии Ruby/Node). | «На моей машине работает» = «в CI работает». | [[335]][[336]][[337]][[339]][[342]] |  
+| **9.4** Pre-commit hooks | **`lefthook` (быстрее husky): markdownlint + front matter schema (1.1) + `jekyll doctor`** | `lefthook.yml`: `pre-commit.commands`. `jekyll doctor` ловит конфликт URL/front matter. Связан с 8.6. | Ошибки до коммита; экономят CI-минуты. | [[346]][[347]][[348]][[350]][[352]][[105]][[1173]] |  
+| **9.5** Данные вместо хардкода | **Навигация/соцсети/футер/авторы/секции главной — всё в `_data/*.yml`** | `_data/navigation.yml`, `_data/authors.yml`, `_data/home.yml`, `_data/social.yml`. Шаблоны читают только `site.data.*`. Связан с 1.2, 1.5. | Правка одного YAML = изменение сайта. | [[1118]][[1119]][[1122]][[1123]][[1136]][[1066]][[1222]] |  
+| **9.6** Зависимости | **Dependabot для `bundler` + `github-actions` (eженедельно, PR-ы)** | `.github/dependabot.yml` с двумя `package-ecosystem`. Связан с 3.1, 8.1. | Актуальность без мониторинга. | [[353]][[354]][[355]][[357]] |  
+| **9.7** Шаблоны issue/PR | **`pull_request_template.md` с чек-листом: Lighthouse пройден, alt-тексты, lychee зелёный, front matter валиден** | Связан с 8.3/8.4/8.5/1.1. Формы-чекбоксы GitHub. | Стандартизация ревью. | [[1145]][[1146]][[1147]][[1150]][[1152]][[1153]] |  
+  
+---  
+  
+## Сфера 10. Расширяемость и future-proof  
+  
+| Пункт | 🚀 Гениальное решение | ⚙️ Инженерная реализация и связность | ⚡ Оптимизация | Источники |  
+|---|---|---|---|---|  
+| **10.1** Портативный Markdown | **Чистый Markdown + стандартные HTML-классы вместо theme-specific Liquid в контенте** | Кастомные блоки — через `{% include %}` с классами, не через экзотические теги. Front matter совместим с Hugo/Astro (`title/date/draft/tags`). Связан с 1.1. | Миграция = конвертация шаблонов, не контента. | [[439]][[440]][[441]][[443]] |  
+| **10.2** JSON-эндпоинты | **`search.json`/`posts.json`/`feed.json` через layout с `content-type:application/json` (build-time)** | `_layouts/json.html`: `{% for p in site.posts %}{"title":...,"url":...}{% endfor %}`. Pagefind (6.2) частично заменяет `search.json`, но эндпоинты остаются для внешних потребителей/headless. | Read-only API без сервера. | [[447]][[449]][[453]][[454]] |  
+| **10.3** PWA-ready | **Manifest (4.8) + Workbox SW (3.9) + install prompt + offline fallback** | Связан с 4.8, 3.9. `theme-color` синхронен с токенами (4.1). | Устанавливаемость + офлайн без раздувания. | [[1463]][[1467]][[1472]][[381]][[1029]] |  
+| **10.4** i18n-скелет | **`_data/locales/{ru,en}.yml` + хелп-функция `site.data.locales[page.lang].key` (без плагина)** | Все строки UI («Читать далее», «Поиск», «Комментарии») — ключи. Связан с 5.10, 9.5. `jekyll-polyglot` — опционально, но не в whitelist (Л5). | Добавление языка = новый YAML, без правки шаблонов. | [[455]][[459]][[460]][[462]] |  
+| **10.5** llms.txt / ai.txt | **`jekyll-llms-output` (генерит `/llms.txt` + `/llms-full.txt`) ИЛИ `jekyll-ai-visible-content`** | Плагин ходит по страницам, формирует индекс по стандарту llmstxt.org; `llms-full.txt` — полный текст (кураторский, не дамп sitemap). Связан с 1.1 (нужны `description`), 2.1. | AI-краулеры (Perplexity/ChatGPT/Claude) читают сайт нативно — тренд AEO 2025–2026. | [[363]][[569]][[573]][[578]][[586]][[365]] |  
+  
+---  
+  
+## 🧩 Архитектура взаимодействия: единый конвейер build-time → runtime  
+  
+Ресерч показал: мощность не в отдельных пунктах, а в **цепочках зависимостей**. Критические рёбра:  
+  
+```  
+[Контент: Markdown + front matter (1.1)]  
+        │  
+        **├─►** pre-commit (9.4): lefthook → markdownlint(8.6) + frontmatter-schema(1.1) + jekyll doctor  
+        │  
+        ▼  
+[GitHub Actions 8.1/8.2]  **◄──** Л5: разблокирует все плагины  
+        │  
+   **┌────┴─────────────────────────────────────────┐**  
+   │ build-шаг (3.1):                              │  
+   │  1. squoosh-cli → WebP/AVIF (3.4)             │  
+   │  2. bundle exec jekyll build (JEKYLL_ENV=prod)│  
+   │     **├─** jekyll-seo-tag/sitemap/feed (2.1)      │  
+   │     **├─** jekyll-loading-lazy (3.2)              │  
+   │     **├─** jekyll_picture_tag (3.4)                │  
+   │     **├─** jekyll-llms-output (10.5)               │  
+   │     **└─** minima + токены (4.1/4.2)               │  
+   │  3. critical --inline (3.5)                    │  
+   │  4. satori+resvg → OG PNG (2.3)                │  
+   │  5. pagefind --site _site (6.2)                │  
+   │  6. workbox generateSW (3.9)                   │  
+   │  7. fingerprint-имена ассетов (Л3)             │  
+   **└────┬─────────────────────────────────────────┘**  
+        │  
+   **┌────┴──** test-шаги (параллельно) **────┐**  
+   │ lychee (8.3) │ pa11y-ci (8.4/5.8)  │  
+   │ lighthouse-ci (8.5) │ vale (8.6)    │  
+   **└────┬───────────────────────────────┘**  
+        ▼  
+[deploy (actions/deploy-pages, concurrency=false)] **─►** Cloudflare (3.8: Brotli+CacheRules)  
+        │  
+        ▼  
+[post-deploy: IndexNow + GSC (8.9)]  
+        │  
+        ▼  
+[Пользователь: LCP<2.5 / CLS<0.1 / INP<200; поиск Pagefind; giscus ленивый;  
+ web-vitals→sendBeacon→GoatCounter (3.7/7.1/7.3); offline SW (3.9)]  
+```  
+  
+**Ключевые связки, которые ресерч выделил как неочевидные:**  
+- **2.1 → 8.4 → 8.9**: `jekyll-sitemap` питает и pa11y-ci (тестирует все страницы), и IndexNow (отправляет все URL). Без sitemap оба деградируют.  
+- **3.1 → всё**: Л5 делает Actions *предусловием*; без него 3.2/3.4/3.5/4.6/6.2/10.5 просто не запустятся.  
+- **4.1 → 4.2 → 4.8 → 5.5**: токены — единый источник правды для темы, манифеста и контраста; рассинхрон = FOUC/битый PWA/провал a11y.  
+- **Л1+Л3 → 3.5+3.8**: минификация переехала из Cloudflare в CI, а кэш-политика — из GH Pages в Cloudflare Cache Rules + fingerprinting.  
+- **6.2 (Pagefind) → 10.2**: Pagefind индексирует готовый HTML, поэтому `search.json` становится *опциональным* (для внешних потребителей), а не основным — это упрощение, а не усложнение.  
+  
+---  
+  
+## ⚡ Как сохранить быстродействие при росте сложности (оптимизации ресерча)  
+  
+| Вектор усложнения | Компенсирующая оптимизация | Обоснование |  
+|---|---|---|  
+| +12 плагинов (Л5) | Все тяжёлые операции (squoosh, satori, pagefind, workbox, critical) — **в CI, не в рантайм**; Jekyll-плагины только трансформируют HTML на build | Рантайм остаётся статикой; сборка +30–60 с, но кэш (8.2) сводит к 20–30 с |  
+| +Поиск (6.2) | Pagefind **фрагментирует** индекс и грузает чанки по требованию + Web Worker | В отличие от Lunr/Fuse (грузят весь индекс) — масштаб без раздувания [[896]][[899]][[913]] |  
+| +OG-картинки (2.3) | Satori build-time (1–2 мс/шт), кэш по хэшу `title` | Нет runtime-эндпоинта, нет браузера в CI [[932]][[963]] |  
+| +SW/offline (3.9) | `networkFirst` для HTML, `CacheFirst` только для fingerprinted-ассетов | Свежий контент + мгновенные повторные визиты [[388]][[1029]] |  
+| +Аналитика/CWV (7.x) | `defer` + `sendBeacon` + <4KB скрипт | Не блокирует рендер, не роняет Lighthouse [[1491]][[1502]] |  
+| +Тёмная тема (4.2) | Inline anti-flash <300 байт, CSS-переменные | Ноль FOUC, ноль**额外** запросов [[1457]] |  
+| +CI-гейты (8.x) | `concurrency cancel=true` на build/test, параллельные test-джобы, кэш | Суммарное время CI не растёт линейно [[316]][[324]] |  
+| +Кэш-политика (Л3) | Fingerprint имён + Cloudflare immutable для `/assets/*`, `must-revalidate` для HTML | Обходит жёсткий `max-age=600` GH Pages [[829]][[831]][[832]] |  
+  
+---  
+  
+## 🗺️ Дорожная карта внедрения (с учётом зависимостей из ресерча)  
+  
+| Фаза | Блокирующие условия | Состав | Ожидаемый эффект |  
+|---|---|---|---|  
+| **0. Фундамент** | Л5 обязателен | 3.1 (Actions), 8.1/8.2 (workflow+кэш), 9.1/9.3 (структура+devcontainer) | Разблокирует все плагины; паритет CI=локально |  
+| **1. SEO+a11y-базис** | Фаза 0 | 2.1–2.6, 5.1–5.5, 5.8, 4.1/4.2, 7.1/7.2 | Индексация, WCAG AA, приватная аналитика, тёмная тема |  
+| **2. Perf-ядро** | Фаза 0 | 3.2–3.5, 3.7, 3.8 (Cloudflare+Л1/Л3), 6.2 (Pagefind), 6.4 | Lighthouse 95+/100, CWV зелёные, поиск |  
+| **3. Контент-модель** | Фаза 1 | 1.1–1.6, 9.4/9.5, 8.6/8.7 | Масштабируемая база знаний, гейты качества |  
+| **4. Engagement+Polish** | Фазы 1–3 | 6.1/6.3/6.5–6.9, 7.3–7.6, 8.3–8.5/8.8/8.9, 3.9/3.10, 4.3–4.8, 5.6–5.10, 10.1–10.5, 9.2/9.6/9.7 | Полный production-ready хаб |  
+  
+---  
+  
+## Итог ресерча  
+  
+Глубокий проход по источникам дал **7 замен на более мощные аналоги** (Pagefind←SJS/Fuse, Satori build-time←runtime-OG, jekyll-llms-output←ручной llms.txt, IndexNow←мёртвый Google-ping, fingerprinting+CloudflareCacheRules←голый GH-Pages-кэш, CSS scroll-driven/scroll-target-group←JS scroll-spy, cross-document View Transitions←ничего, `mheap/frontmatter-json-schema-action`←самописная валидация) и **5 архитектурных ловушек** (Л1–Л5), без учёта которых план был бы технически нерабочим. Все 76 пунктов сохранены, каждый углублён первичными источниками, связан в единый конвейер и сбалансирован оптимизациями, удерживающими рантайм лёгким. Документ готов к пошаговой реализации; могу развернуть любую фазу в конкретные файлы (workflow, `_config.yml`, `_includes`, скрипты CI) под ваш репозиторий.  
