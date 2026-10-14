@@ -748,7 +748,7 @@ permalink: /
         custom:'Введите Base URL, имя модели и ключ своего OpenAI-совместимого API. Совместимость и CORS зависят от поставщика.',
         pollinations:'Pollinations: сюда вставляется App Key pk_… (не секретный sk_ токен). Зарегистрируйте точный Redirect URI в настройках App Key, затем нажмите «Подключить аккаунт»: OAuth PKCE хранит временный access token только в sessionStorage этой вкладки. Модели могут потреблять Pollen согласно бюджету.',
         huggingface:'Hugging Face Inference Providers: нужен fine-grained token с разрешением “Make calls to Inference Providers”. Endpoint router.huggingface.co/v1; модели должны быть из каталога и поддерживать Chat Completions.',
-        cloudflare:'Cloudflare Workers AI: укажите Account ID и API Token с разрешением Workers AI Read. Endpoint /ai/v1/chat/completions совместим с OpenAI. Запросы используют лимиты/платные единицы вашего аккаунта; бесплатность не гарантируется.',
+        cloudflare:'Cloudflare Workers AI: рекомендуемый вариант — создать стандартный Workers AI API Token на странице Workers AI → Use REST API. При ручной настройке токена укажите Account-level Workers AI Read и Workers AI Edit. Endpoint /ai/v1/chat/completions совместим с OpenAI; использование может тарифицироваться.',
         groq:'Groq использует официальный OpenAI-совместимый endpoint. Устаревшие llama3-8b-8192 и mixtral-8x7b-32768 не предлагаются; вместо них показаны модели из текущего каталога.',
         xai:'xAI · Grok — отдельный API-провайдер, не Groq. Endpoint https://api.x.ai/v1; ключ создаётся в xAI Console.',
         nvidia:'NVIDIA NIM: доступность моделей и лимиты зависят от вашего NVIDIA API key и endpoint.',

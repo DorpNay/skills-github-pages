@@ -60,7 +60,7 @@ Base URL: `https://router.huggingface.co/v1`. Полный запрос идёт
 ## Cloudflare Workers AI
 
 1. В Cloudflare Dashboard найдите **Account ID** нужного аккаунта.
-2. Создайте API Token с минимально необходимым доступом к Workers AI (например, разрешением Workers AI Read, если оно доступно в настройках токена).
+2. Рекомендуемый путь: на странице **Workers AI** выберите **Use REST API → Create a Workers AI API Token** и сохраните созданный токен. Если создаёте токен вручную, Cloudflare указывает разрешения уровня аккаунта **Workers AI Read** и **Workers AI Edit**. Не путайте их с разрешениями AI Gateway — это другой продукт.
 3. В AI Mobile Agent выберите **Cloudflare Workers AI** и заполните поле Account ID — ровно 32 шестнадцатеричных символа.
 4. Вставьте API Token в поле API Key и сохраните. Приложение само сформирует Base URL:
    `https://api.cloudflare.com/client/v4/accounts/<ACCOUNT_ID>/ai/v1`
