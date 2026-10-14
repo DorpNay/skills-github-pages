@@ -254,6 +254,7 @@ permalink: /
     const MAX_TOOL_ROUNDS = 4;
     const MAX_CONTEXT_MESSAGES = 24;
     const MAX_CONTEXT_CHARS = 24000;
+    const MAX_RESEARCH_EVIDENCE = 40;
     const CACHE_TTL_MS = 15 * 60 * 1000;
     const $ = (id) => document.getElementById(id);
 
@@ -1314,6 +1315,16 @@ permalink: /
         return `fnv-${(hash >>> 0).toString(16)}-${serialized.length}`;
       }
     }
+    function getHistoryCharBudget() {
+      const provider = currentProvider();
+      const model = safeGet(STORAGE.model) || DEFAULT_MODEL;
+      const entry = modelCatalogEntries(provider, false).find(item => item.id === model);
+      const contextTokens = Number(entry?.contextLength);
+      if (!Number.isFinite(contextTokens) || contextTokens <= 0) return MAX_CONTEXT_CHARS;
+      // Providers expose token windows, not a shared tokenizer. Use a cautious character
+      // approximation and keep the existing upper bound; this is a soft budget, not a token count.
+      return Math.min(MAX_CONTEXT_CHARS, Math.max(512, Math.floor(contextTokens * 1.25)));
+    }
     function buildHistory(messages) {
       const turns = [];
       for (const message of messages) {
@@ -1321,6 +1332,7 @@ permalink: /
         else if (turns.length) turns[turns.length - 1].push(message);
       }
       const selected = [];
+      const charBudget = getHistoryCharBudget();
       let count = 0;
       let charCount = 0;
       for (let i = turns.length - 1; i >= 0; i--) {
@@ -1328,7 +1340,7 @@ permalink: /
         const turnChars = turn.reduce((sum, message) => sum + (typeof message.content === 'string' ? message.content.length : 0) +
           (Array.isArray(message.tool_calls) ? JSON.stringify(message.tool_calls).length : 0), 0);
         // Keep the newest complete turn even when it alone exceeds the soft character budget.
-        if (selected.length && (count + turn.length > MAX_CONTEXT_MESSAGES || charCount + turnChars > MAX_CONTEXT_CHARS)) break;
+        if (selected.length && (count + turn.length > MAX_CONTEXT_MESSAGES || charCount + turnChars > charBudget)) break;
         selected.unshift(turn);
         count += turn.length;
         charCount += turnChars;
@@ -1635,6 +1647,67 @@ permalink: /
       }
       return content;
     }
+    function normalizeResearchEvidenceUrl(rawUrl) {
+      const candidate = String(rawUrl || '').trim().replace(/[),.;]+$/, '');
+      try {
+        const url = validatePublicHttpsUrl(candidate);
+        url.hash = '';
+        return url.href;
+      } catch (_) { return ''; }
+    }
+    function collectResearchEvidence(messages) {
+      const toolNames = new Map();
+      const safeMessages = Array.isArray(messages) ? messages : [];
+      for (const message of safeMessages) {
+        if (message?.role !== 'assistant' || !Array.isArray(message.tool_calls)) continue;
+        for (const call of message.tool_calls) {
+          if (typeof call?.id === 'string' && typeof call?.function?.name === 'string') {
+            toolNames.set(call.id, call.function.name.slice(0, 80));
+          }
+        }
+      }
+      const sources = [];
+      const seen = new Set();
+      for (const message of safeMessages) {
+        if (message?.role !== 'tool' || typeof message.content !== 'string') continue;
+        const content = message.content.slice(0, 50000);
+        const lines = content.split(/\r?\n/);
+        const sourceLabel = (content.match(/^Источник:\s*([^\n]+)/m)?.[1] || '').trim().slice(0, 80);
+        const tool = String(toolNames.get(message.tool_call_id) || 'tool').slice(0, 80);
+        for (let index = 0; index < lines.length; index++) {
+          const match = lines[index].match(/^\s*URL:\s*(https:\/\/\S+)/i);
+          if (!match) continue;
+          const url = normalizeResearchEvidenceUrl(match[1]);
+          if (!url || seen.has(url)) continue;
+          let parsed;
+          try { parsed = new URL(url); } catch (_) { continue; }
+          const heading = index > 0 ? lines[index - 1].trim() : '';
+          const numberedTitle = heading.match(/^\[\d+\]\s*(.+)$/)?.[1];
+          const title = String(numberedTitle || (heading && !/^Источник:/i.test(heading) && !/^URL:/i.test(heading) ? heading : '') || parsed.hostname)
+            .replace(/\s+/g, ' ').trim().slice(0, 180);
+          const excerptParts = [];
+          for (let next = index + 1; next < lines.length && excerptParts.length < 5; next++) {
+            const line = lines[next].trim();
+            if (!line || /^URL:/i.test(line)) break;
+            if (/^(?:Извлечённый текст|Stars:|Score:|Answers:|Authors:|Points:|Updated:|Дата снимка:|Оригинал:|Abstract:)/i.test(line)) continue;
+            excerptParts.push(line);
+          }
+          const excerpt = excerptParts.join(' ').replace(/\s+/g, ' ').trim().slice(0, 360);
+          seen.add(url);
+          sources.push({
+            id: 'S' + sources.length + 1,
+            title,
+            url,
+            source: sourceLabel || tool,
+            tool,
+            ...(excerpt ? { excerpt } : {})
+          });
+          if (sources.length >= MAX_RESEARCH_EVIDENCE) return sources;
+        }
+      }
+      return sources;
+    }
+
     async function runMultiAgentResearch(chat, signal, useSearch, mode, systemPrompt) {
       const history = buildHistory(chat.messages);
       const plan = await requestTextStage(systemPrompt + '\nРоль: планировщик исследования. Сформируй краткий рабочий план максимум из 3–5 шагов только для сложной задачи. Укажи, какие проверяемые утверждения требуют свежих источников, какие инструменты помогут и что будет считаться достаточным результатом. Не отвечай на исходный вопрос, не добавляй шаблонные оговорки и не придумывай этапы, не нужные задаче. Не утверждай, что источники проверены, пока исследователь не выполнил поиск.', history, signal, '🤖 Исследование 1/4: планировщик…');
@@ -1647,7 +1720,10 @@ permalink: /
       const critique = await requestTextStage('Ты независимый проверяющий. Сверь черновик с исходной задачей и приложенными доказательствами/ссылками. Ищи только существенные фактические ошибки, логические противоречия, невыполненные требования и реально отсутствующие важные данные. Не выдумывай риски, ограничения или пункты ради заполнения таблицы; не требуй источников для приветствий и мнений. Если всё нормально или утверждений для проверки нет, ответь одной короткой фразой. Иначе дай короткий приоритизированный список исправлений, не переписывая весь ответ.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик:\n' + draft }], signal, '🧪 Исследование 3/4: критик…');
       const finalText = await requestTextStage(systemPrompt + '\nРоль: синтезатор. Ответь прямо на исходный запрос. Используй план, факты из черновика и критику; исправь фактические ошибки, отличай подтверждённое от неопределённого, сохрани полезные ссылки. Не включай шаблонное вступление о возможностях ассистента и не добавляй общих рекомендаций, не нужных для задачи.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик исследователя:\n' + draft + '\n\nКритика:\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
       const traceId=globalThis.crypto?.randomUUID?.()||('trace-'+Date.now()+'-'+Math.random().toString(36).slice(2)),finalRoute=lastSuccessfulRoute?{...lastSuccessfulRoute}:null;
-      const researchTrace={id:traceId,createdAt:new Date().toISOString(),provider:finalRoute?.providerLabel||(PROVIDERS[currentProvider()]?.label||currentProvider()),model:finalRoute?.model||(safeGet(STORAGE.model)||DEFAULT_MODEL),plan,draft,critique,finalText,routes:activeRunTelemetry?activeRunTelemetry.routes.map(route=>({...route})):[]};
+      const researchMessages = workChat.messages.slice(researchStart);
+      const sources = collectResearchEvidence(researchMessages);
+      const promptFingerprint = await makeCacheKey({ type: 'effective-system-prompt', prompt: String(systemPrompt || '') });
+      const researchTrace={schemaVersion:2,id:traceId,createdAt:new Date().toISOString(),provider:finalRoute?.providerLabel||(PROVIDERS[currentProvider()]?.label||currentProvider()),model:finalRoute?.model||(safeGet(STORAGE.model)||DEFAULT_MODEL),promptFingerprint,promptCharCount:String(systemPrompt||'').length,plan,draft,critique,finalText,sources,routes:activeRunTelemetry?activeRunTelemetry.routes.map(route=>({...route})):[]};
       safeSet('ai_research_trace_' + traceId, JSON.stringify(researchTrace));
       chat.messages.push({ role: 'assistant', content: finalText, researchTrace, providerInfo: finalRoute });
       updateState([...chats]);
@@ -1961,18 +2037,84 @@ permalink: /
     function showTrace(trace) {
       if (!trace || typeof trace !== 'object') throw new Error('Журнал исследования не найден.');
       activeTrace = trace; const host = $('traceContent'); host.replaceChildren();
+      if (trace.promptFingerprint || Number.isFinite(trace.promptCharCount)) {
+        const section = document.createElement('section'); section.className = 'border border-gray-800 rounded-xl p-3';
+        const heading = document.createElement('h3'); heading.className = 'font-semibold text-blue-200 mb-2'; heading.textContent = 'Метаданные промпта';
+        const body = document.createElement('p'); body.className = 'text-gray-300 text-xs leading-relaxed';
+        body.textContent = [
+          trace.promptFingerprint ? 'Отпечаток: ' + String(trace.promptFingerprint).slice(0, 100) : '',
+          Number.isFinite(trace.promptCharCount) ? 'Размер эффективного системного контекста: ' + trace.promptCharCount + ' символов' : ''
+        ].filter(Boolean).join('\n');
+        section.append(heading, body); host.appendChild(section);
+      }
       [['Планировщик',trace.plan],['Черновик исследователя',trace.draft],['Критика',trace.critique],['Итоговый ответ',trace.finalText]].forEach(([title,value]) => {
         const section=document.createElement('section'); section.className='border border-gray-800 rounded-xl p-3';
         const heading=document.createElement('h3'); heading.className='font-semibold text-blue-200 mb-2'; heading.textContent=title;
         const body=document.createElement('pre'); body.className='whitespace-pre-wrap break-words text-gray-200 text-xs leading-relaxed'; body.textContent=typeof value==='string'&&value?value:'Нет данных для этого этапа.';
         section.append(heading,body); host.appendChild(section);
       });
+      const evidenceSection = document.createElement('section'); evidenceSection.className = 'border border-gray-800 rounded-xl p-3';
+      const evidenceHeading = document.createElement('h3'); evidenceHeading.className = 'font-semibold text-blue-200 mb-2'; evidenceHeading.textContent = 'Источники из инструментов';
+      evidenceSection.appendChild(evidenceHeading);
+      const sourceList = document.createElement('ol'); sourceList.className = 'list-decimal pl-5 space-y-3';
+      let shownSources = 0;
+      for (const source of (Array.isArray(trace.sources) ? trace.sources : []).slice(0, MAX_RESEARCH_EVIDENCE)) {
+        const safeUrl = normalizeResearchEvidenceUrl(source?.url);
+        if (!safeUrl) continue;
+        const item = document.createElement('li'); item.className = 'space-y-1 break-words text-xs';
+        const link = document.createElement('a'); link.href = safeUrl; link.target = '_blank'; link.rel = 'noopener noreferrer';
+        link.className = 'text-cyan-300 underline underline-offset-2 break-all';
+        link.textContent = String(source?.title || safeUrl).replace(/\s+/g, ' ').slice(0, 180);
+        item.appendChild(link);
+        const metadata = [source?.source ? 'Источник: ' + String(source.source).slice(0, 80) : '', source?.tool ? 'Инструмент: ' + String(source.tool).slice(0, 80) : ''].filter(Boolean).join(' · ');
+        if (metadata) {
+          const metaNode = document.createElement('p'); metaNode.className = 'text-gray-400'; metaNode.textContent = metadata; item.appendChild(metaNode);
+        }
+        if (source?.excerpt) {
+          const excerptNode = document.createElement('p'); excerptNode.className = 'text-gray-300 leading-relaxed';
+          excerptNode.textContent = String(source.excerpt).replace(/\s+/g, ' ').slice(0, 360); item.appendChild(excerptNode);
+        }
+        sourceList.appendChild(item); shownSources++;
+      }
+      if (shownSources) evidenceSection.appendChild(sourceList);
+      else {
+        const empty = document.createElement('p'); empty.className = 'text-gray-400 text-xs';
+        empty.textContent = 'В этом запуске не удалось сохранить распознанные HTTPS-ссылки из результатов инструментов.';
+        evidenceSection.appendChild(empty);
+      }
+      host.appendChild(evidenceSection);
       $('traceModal').classList.remove('hidden');
     }
     function closeTrace() { $('traceModal').classList.add('hidden'); }
     function downloadTrace() {
       if (!activeTrace) return;
-      const body=['# Журнал исследования','', '- Дата: '+(activeTrace.createdAt||'не указана'), '- Провайдер: '+(activeTrace.provider||'не указан'), '- Модель: '+(activeTrace.model||'не указана'), '', '## Планировщик',activeTrace.plan||'', '', '## Черновик исследователя',activeTrace.draft||'', '', '## Критика',activeTrace.critique||'', '', '## Итоговый ответ',activeTrace.finalText||''].join('\n');
+      const sourceLines = (Array.isArray(activeTrace.sources) ? activeTrace.sources : []).slice(0, MAX_RESEARCH_EVIDENCE).flatMap(source => {
+        const url = normalizeResearchEvidenceUrl(source?.url);
+        if (!url) return [];
+        const title = String(source?.title || url).replace(/\s+/g, ' ').slice(0, 180);
+        const excerpt = String(source?.excerpt || '').replace(/\s+/g, ' ').slice(0, 360);
+        const origin = [source?.source, source?.tool].filter(Boolean).map(value => String(value).replace(/[\r\n]+/g, ' ').slice(0, 80)).join(' · ');
+        return ['- ' + title, '  URL: ' + url, ...(origin ? ['  Retrieved by: ' + origin] : []), ...(excerpt ? ['  Excerpt: ' + excerpt] : [])];
+      });
+      const body=[
+        '# Журнал исследования','',
+        '- Дата: '+(activeTrace.createdAt||'не указана'),
+        '- Провайдер: '+(activeTrace.provider||'не указан'),
+        '- Модель: '+(activeTrace.model||'не указана'),
+        ...(activeTrace.promptFingerprint ? ['- Отпечаток промпта: '+String(activeTrace.promptFingerprint).slice(0,100)] : []),
+        ...(Number.isFinite(activeTrace.promptCharCount) ? ['- Размер промпта: '+activeTrace.promptCharCount+' символов'] : []),
+        '',
+        '## Планировщик',activeTrace.plan||'',
+        '',
+        '## Черновик исследователя',activeTrace.draft||'',
+        '',
+        '## Критика',activeTrace.critique||'',
+        '',
+        '## Итоговый ответ',activeTrace.finalText||'',
+        '',
+        '## Источники из инструментов',
+        ...(sourceLines.length ? sourceLines : ['Структурированные HTTPS-ссылки из результатов инструментов не найдены.'])
+      ].join('\n');
       const url=URL.createObjectURL(new Blob([body],{type:'text/markdown;charset=utf-8'})), a=document.createElement('a');
       a.href=url; a.download='research-trace-'+(activeTrace.createdAt||new Date().toISOString()).slice(0,10)+'.md'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
     }
