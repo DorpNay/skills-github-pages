@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { readFile } from 'node:fs/promises';
 
 const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
 
