@@ -1129,7 +1129,7 @@ permalink: /
         }
         const completion=await modelResponse.json(),answer=completion?.choices?.[0]?.message?.content;
         if(typeof answer!=='string'||!answer.trim()){updateApiKeyLamp('error','API ответил, но модель не вернула обычный текстовый ответ.');safeSet('ai_provider_connection_'+provider,'');return;}
-        // let catalogueNote='каталог моделей недоступен';
+        let catalogueNote='каталог моделей недоступен';
         let refreshedCatalogue = null;
         if (provider === currentProvider()) refreshedCatalogue = await refreshModelCatalog({ quiet: true, force: true, provider, baseUrl, key });
         if (refreshedCatalogue?.count) catalogueNote = 'в каталоге ' + refreshedCatalogue.count + ' текстовых моделей';
@@ -1436,7 +1436,7 @@ permalink: /
           if (candidates.length >= maxRouterCandidates) return candidates;
         }
       }
-      return candidates;      return candidates;
+      return candidates;
     }
     let lastSuccessfulRoute=null,activeRunTelemetry=null,activeRunStartedAt=0,statusTimerId=null;
     async function recordSuccessfulRoute(candidate,stageName,responseModel){
