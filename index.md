@@ -254,6 +254,7 @@ permalink: /
     const MAX_TOOL_ROUNDS = 4;
     const MAX_CONTEXT_MESSAGES = 24;
     const MAX_CONTEXT_CHARS = 24000;
+    const MAX_RESEARCH_EVIDENCE = 40;
     const CACHE_TTL_MS = 15 * 60 * 1000;
     const $ = (id) => document.getElementById(id);
 
@@ -1314,13 +1315,26 @@ permalink: /
         return `fnv-${(hash >>> 0).toString(16)}-${serialized.length}`;
       }
     }
-    function buildHistory(messages) {
-      const turns = [];
+    function getHistoryCharBudget(systemPromptChars = 0) {
+      const provider = currentProvider();
+      const model = safeGet(STORAGE.model) || DEFAULT_MODEL;
+      const entry = modelCatalogEntries(provider, false).find(item => item.id === model);
+      const contextTokens = Number(entry?.contextLength);
+      if (!Number.isFinite(contextTokens) || contextTokens <= 0) return MAX_CONTEXT_CHARS;
+      // Provider context windows are token counts, but there is no shared tokenizer here.
+      // Use a conservative character estimate and reserve space for prompt + output.
+      const estimatedWindowChars = Math.floor(contextTokens * 1.25);
+      const outputReserveChars = Math.floor(Math.min(2048, contextTokens * 0.25) * 1.25);
+      const promptReserveChars = Math.max(0, Number(systemPromptChars) || 0);
+      return Math.max(0, Math.min(MAX_CONTEXT_CHARS, estimatedWindowChars - outputReserveChars - promptReserveChars));
+    }
+    function buildHistory(messages, systemPromptChars = 0) {
       for (const message of messages) {
         if (message.role === 'user') turns.push([message]);
         else if (turns.length) turns[turns.length - 1].push(message);
       }
       const selected = [];
+      const charBudget = getHistoryCharBudget(systemPromptChars);
       let count = 0;
       let charCount = 0;
       for (let i = turns.length - 1; i >= 0; i--) {
@@ -1328,7 +1342,7 @@ permalink: /
         const turnChars = turn.reduce((sum, message) => sum + (typeof message.content === 'string' ? message.content.length : 0) +
           (Array.isArray(message.tool_calls) ? JSON.stringify(message.tool_calls).length : 0), 0);
         // Keep the newest complete turn even when it alone exceeds the soft character budget.
-        if (selected.length && (count + turn.length > MAX_CONTEXT_MESSAGES || charCount + turnChars > MAX_CONTEXT_CHARS)) break;
+        if (selected.length && (count + turn.length > MAX_CONTEXT_MESSAGES || charCount + turnChars > charBudget)) break;
         selected.unshift(turn);
         count += turn.length;
         charCount += turnChars;
@@ -1648,8 +1662,65 @@ permalink: /
       }
       return content;
     }
+    function normalizeResearchEvidenceUrl(rawUrl) {
+      const candidate = String(rawUrl || '').trim().replace(/[),.;]+$/, '');
+      try {
+        const url = validatePublicHttpsUrl(candidate);
+        url.hash = '';
+        return url.href;
+      } catch (_) { return ''; }
+    }
+    function collectResearchEvidence(messages) {
+      const toolNames = new Map();
+      const safeMessages = Array.isArray(messages) ? messages : [];
+      for (const message of safeMessages) {
+        if (message?.role !== 'assistant' || !Array.isArray(message.tool_calls)) continue;
+        for (const call of message.tool_calls) {
+          if (typeof call?.id === 'string' && typeof call?.function?.name === 'string') {
+            toolNames.set(call.id, call.function.name.slice(0, 80));
+          }
+        }
+      }
+      const sources = [];
+      const seen = new Set();
+      for (const message of safeMessages) {
+        if (message?.role !== 'tool' || typeof message.content !== 'string') continue;
+        const content = message.content.slice(0, 50000);
+        const lines = content.split(/\r?\n/);
+        const sourceLabel = (content.match(/^Источник:\s*([^\n]+)/m)?.[1] || '').trim().slice(0, 80);
+        const tool = String(toolNames.get(message.tool_call_id) || 'tool').slice(0, 80);
+        for (let index = 0; index < lines.length; index++) {
+          const match = lines[index].match(/^\s*URL:\s*(https:\/\/\S+)/i);
+          if (!match) continue;
+          const url = normalizeResearchEvidenceUrl(match[1]);
+          if (!url || seen.has(url)) continue;
+          let parsed;
+          try { parsed = new URL(url); } catch (_) { continue; }
+          const heading = index > 0 ? lines[index - 1].trim() : '';
+          const numberedTitle = heading.match(/^\[\d+\]\s*(.+)$/)?.[1];
+          const title = String(numberedTitle || (heading && !/^Источник:/i.test(heading) && !/^URL:/i.test(heading) ? heading : '') || parsed.hostname)
+            .replace(/\s+/g, ' ').trim().slice(0, 180);
+          const excerptParts = [];
+          for (let next = index + 1; next < lines.length && excerptParts.length < 5; next++) {
+            const line = lines[next].trim();
+            if (!line || /^URL:/i.test(line)) break;
+            if (/^(?:Извлечённый текст|Stars:|Score:|Answers:|Authors:|Points:|Updated:|Дата снимка:|Оригинал:|Abstract:)/i.test(line)) continue;
+            excerptParts.push(line);
+          }
+          const excerpt = excerptParts.join(' ').replace(/\s+/g, ' ').trim().slice(0, 360);
+          seen.add(url);
+          sources.push({
+            id: 'S' + (sources.length + 1), title, url, source: sourceLabel || tool, tool,
+            ...(excerpt ? { excerpt } : {})
+          });
+          if (sources.length >= MAX_RESEARCH_EVIDENCE) return sources;
+        }
+      }
+      return sources;
+    }
+
     async function runMultiAgentResearch(chat, signal, useSearch, mode, systemPrompt) {
-      const history = buildHistory(chat.messages);
+      const history = buildHistory(chat.messages, String(systemPrompt || '').length);
       const plan = await requestTextStage(systemPrompt + '\nРоль: планировщик исследования. Сформируй краткий рабочий план максимум из 3–5 шагов только для сложной задачи. Укажи, какие проверяемые утверждения требуют свежих источников, какие инструменты помогут и что будет считаться достаточным результатом. Не отвечай на исходный вопрос, не добавляй шаблонные оговорки и не придумывай этапы, не нужные задаче. Не утверждай, что источники проверены, пока исследователь не выполнил поиск.', history, signal, '🤖 Исследование 1/4: планировщик…');
       const workChat = { ...chat, messages: [...chat.messages.map((message) => ({ ...message })), { role: 'assistant', content: 'План исследования:\n' + plan }] };
       const researchStart = workChat.messages.length;
@@ -1660,7 +1731,9 @@ permalink: /
       const critique = await requestTextStage('Ты независимый проверяющий. Сверь черновик с исходной задачей и приложенными доказательствами/ссылками. Ищи только существенные фактические ошибки, логические противоречия, невыполненные требования и реально отсутствующие важные данные. Не выдумывай риски, ограничения или пункты ради заполнения таблицы; не требуй источников для приветствий и мнений. Если всё нормально или утверждений для проверки нет, ответь одной короткой фразой. Иначе дай короткий приоритизированный список исправлений, не переписывая весь ответ.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик:\n' + draft }], signal, '🧪 Исследование 3/4: критик…');
       const finalText = await requestTextStage(systemPrompt + '\nРоль: синтезатор. Ответь прямо на исходный запрос. Используй план, факты из черновика и критику; исправь фактические ошибки, отличай подтверждённое от неопределённого, сохрани полезные ссылки. Не включай шаблонное вступление о возможностях ассистента и не добавляй общих рекомендаций, не нужных для задачи.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик исследователя:\n' + draft + '\n\nКритика:\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
       const traceId=globalThis.crypto?.randomUUID?.()||('trace-'+Date.now()+'-'+Math.random().toString(36).slice(2)),finalRoute=lastSuccessfulRoute?{...lastSuccessfulRoute}:null,traceCreatedAt=new Date().toISOString();
-      const researchTrace={schemaVersion:1,id:traceId,createdAt:traceCreatedAt,provider:finalRoute?.providerLabel||(PROVIDERS[currentProvider()]?.label||currentProvider()),model:finalRoute?.model||(safeGet(STORAGE.model)||DEFAULT_MODEL),run:activeRunTelemetry?{schemaVersion:activeRunTelemetry.schemaVersion,workflow:activeRunTelemetry.workflow,mode:activeRunTelemetry.mode,webSearchEnabled:activeRunTelemetry.webSearchEnabled,multiAgentEnabled:activeRunTelemetry.multiAgentEnabled,crossProviderFallbackEnabled:activeRunTelemetry.crossProviderFallbackEnabled,startedAt:activeRunTelemetry.startedAt,durationMs:activeRunStartedAt?Date.now()-activeRunStartedAt:null,configuredPromptFingerprint:activeRunTelemetry.configuredPromptFingerprint,configuredPromptFingerprintAlgorithm:activeRunTelemetry.configuredPromptFingerprintAlgorithm}:null,plan,draft,critique,finalText,routes:activeRunTelemetry?activeRunTelemetry.routes.map(route=>({...route})):[],attempts:activeRunTelemetry?activeRunTelemetry.attempts.map(attempt=>({...attempt})):[]};
+      const researchMessages = workChat.messages.slice(researchStart);
+      const sources = collectResearchEvidence(researchMessages);
+      const researchTrace={schemaVersion:2,id:traceId,createdAt:traceCreatedAt,provider:finalRoute?.providerLabel||(PROVIDERS[currentProvider()]?.label||currentProvider()),model:finalRoute?.model||(safeGet(STORAGE.model)||DEFAULT_MODEL),systemPromptCharCount:String(systemPrompt||'').length,run:activeRunTelemetry?{schemaVersion:activeRunTelemetry.schemaVersion,workflow:activeRunTelemetry.workflow,mode:activeRunTelemetry.mode,webSearchEnabled:activeRunTelemetry.webSearchEnabled,multiAgentEnabled:activeRunTelemetry.multiAgentEnabled,crossProviderFallbackEnabled:activeRunTelemetry.crossProviderFallbackEnabled,startedAt:activeRunTelemetry.startedAt,durationMs:activeRunStartedAt?Date.now()-activeRunStartedAt:null,configuredPromptFingerprint:activeRunTelemetry.configuredPromptFingerprint,configuredPromptFingerprintAlgorithm:activeRunTelemetry.configuredPromptFingerprintAlgorithm}:null,plan,draft,critique,finalText,sources,routes:activeRunTelemetry?activeRunTelemetry.routes.map(route=>({...route})):[],attempts:activeRunTelemetry?activeRunTelemetry.attempts.map(attempt=>({...attempt})):[]};
       safeSet('ai_research_trace_' + traceId, JSON.stringify(researchTrace));
       chat.messages.push({ role: 'assistant', content: finalText, researchTrace, providerInfo: finalRoute });
       updateState([...chats]);
@@ -1709,7 +1782,7 @@ permalink: /
       if(useMultiAgent&&!useResearchPipeline)showToast('Простой запрос: отвечаю напрямую без лишних агентных этапов.');
       if(useResearchPipeline){await runMultiAgentResearch(chat,signal,useSearch,mode,systemPrompt);return;}
 
-      const messagesForCache = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages)];
+      const messagesForCache = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages, systemPrompt.length)];
       const cacheKey = await makeCacheKey({ endpoint: baseUrl, model, messages: messagesForCache });
       if (!useSearch && !skipCache) {
         const cached = await CacheDB.get(cacheKey);
@@ -1743,7 +1816,7 @@ permalink: /
       const maxToolRounds = mode === 'deep' ? MAX_TOOL_ROUNDS : 1;
       for (let round = 0; round <= maxToolRounds; round++) {
         throwIfAborted(signal);
-        const apiMessages = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages)];
+        const apiMessages = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages, systemPrompt.length)];
         const body = { model, messages: apiMessages, stream: false };
         if (tools) { body.tools = tools; body.tool_choice = 'auto'; }
         showStatus(round === 0 ? '🤖 Ожидание ответа модели…' : '🧠 Модель обрабатывает результаты поиска…');
