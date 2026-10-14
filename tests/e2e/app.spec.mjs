@@ -241,6 +241,11 @@ test('model-specific failure tries another model on the same provider first', as
   await expect(page.locator('#chatBox')).toContainText('Fallback worked.');
   await expect(page.locator('#chatBox')).toContainText('Groq · qwen/qwen3.8-27b');
   await expect.poll(() => attemptedModels.length).toBe(2);
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await expect(page.locator('#providerPreset')).toHaveValue('groq');
+  await expect(page.locator('#modelName')).toHaveValue('qwen/qwen3.8-27b');
+  await expect(page.locator('#modelPreset')).toHaveValue('qwen/qwen3.8-27b');
+  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected');
   expect(attemptedModels[0]).toBe('openai/gpt-oss-120b');
   expect(attemptedModels[1]).toBe('qwen/qwen3.8-27b');
 });
