@@ -1329,6 +1329,7 @@ permalink: /
       return Math.max(0, Math.min(MAX_CONTEXT_CHARS, estimatedWindowChars - outputReserveChars - promptReserveChars));
     }
     function buildHistory(messages, systemPromptChars = 0) {
+      const turns = [];
       for (const message of messages) {
         if (message.role === 'user') turns.push([message]);
         else if (turns.length) turns[turns.length - 1].push(message);
