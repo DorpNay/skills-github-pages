@@ -184,9 +184,11 @@ const suites = {
       includes('const MAX_CONTEXT_CHARS = 24000;', 'Character context budget is missing.');
       includes('count + turn.length > MAX_CONTEXT_MESSAGES', 'History message cap is not enforced.');
       includes('function getHistoryCharBudget()', 'History budget must account for known context windows from the selected model catalogue.');
-      includes('const charBudget = getHistoryCharBudget();', 'A single derived character budget must be used for the history trim.');
+      includes('const charBudget = getHistoryCharBudget(systemPromptChars);', 'History trimming must derive a budget using the effective system prompt length.');
       includes('charCount + turnChars > charBudget', 'History trimming must use the active model-aware soft budget.');
       includes('contextTokens * 1.25', 'The model context window must be converted to a conservative character budget, not represented as exact token counting.');
+      includes('estimatedWindowChars - outputReserveChars - promptReserveChars', 'Context budgeting must leave room for the effective prompt and generated output.');
+      includes('buildHistory(chat.messages, systemPrompt.length)', 'Model-aware trimming must be applied before each actual model request.');
     }],
     ['memory retrieval is relevance-ranked and bounded', () => {
       includes('memory.score > 0', 'Irrelevant memories should not be attached.');
