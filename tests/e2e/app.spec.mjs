@@ -240,3 +240,97 @@ test('model-specific failure tries another model on the same provider first', as
   expect(attemptedModels[0]).toBe('openai/gpt-oss-120b');
   expect(attemptedModels[1]).toBe('qwen/qwen3.8-27b');
 });
+
+test('Pollinations OAuth callback keeps its access token in sessionStorage only', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    localStorage.setItem('ai_api_provider', 'pollinations');
+    localStorage.setItem('ai_api_key_pollinations', 'pk_e2e-public-app-key');
+    sessionStorage.setItem('ai_pollinations_oauth_state_v1', 'e2e-state');
+    sessionStorage.setItem('ai_pollinations_pkce_verifier_v1', 'e2e-verifier');
+    sessionStorage.setItem('ai_pollinations_redirect_uri_v1', location.origin + location.pathname);
+    sessionStorage.setItem('ai_pollinations_client_id_v1', 'pk_e2e-public-app-key');
+  });
+  await page.route('https://enter.pollinations.ai/api/oauth/token', async route => {
+    const form = new URLSearchParams(route.request().postData() || '');
+    expect(form.get('grant_type')).toBe('authorization_code');
+    expect(form.get('code_verifier')).toBe('e2e-verifier');
+    expect(form.get('client_id')).toBe('pk_e2e-public-app-key');
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ access_token: 'sk_e2e_temporary_access_token', expires_in: 3600, token_type: 'bearer' })
+    });
+  });
+  await page.goto(APP_PATH + '?code=e2e-auth-code&state=e2e-state', { waitUntil: 'domcontentloaded' });
+  await expect.poll(() => page.evaluate(() => sessionStorage.getItem('ai_pollinations_access_token_v1'))).toBe('sk_e2e_temporary_access_token');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_pollinations_access_token_v1'))).toBeNull();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.locator('#providerPreset')).toHaveValue('pollinations');
+});
+
+test('Pollinations requests use the OAuth token, not the public App Key', async ({ page }) => {
+  let authorization = '';
+  await page.route('https://gen.pollinations.ai/v1/chat/completions', async route => {
+    authorization = route.request().headers()['authorization'] || '';
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'openai/gpt-5.4-nano', choices: [{ message: { role: 'assistant', content: 'Pollinations route worked.' } }] })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('pollinations');
+  await page.locator('#apiKey').fill('pk_e2e-public-app-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.evaluate(() => {
+    sessionStorage.setItem('ai_pollinations_access_token_v1', 'sk_e2e_temporary_access_token');
+    sessionStorage.setItem('ai_pollinations_access_expires_at_v1', String(Date.now() + 3600000));
+  });
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('Pollinations routing test');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Pollinations route worked.');
+  await expect.poll(() => authorization).toBe('Bearer sk_e2e_temporary_access_token');
+});
+
+test('Cloudflare endpoint is built from Account ID and HF uses the Inference Providers router', async ({ page }) => {
+  const cloudflareId = '0123456789abcdef0123456789abcdef';
+  let cloudflareModel = '';
+  await page.route('https://api.cloudflare.com/client/v4/accounts/' + cloudflareId + '/ai/v1/chat/completions', async route => {
+    cloudflareModel = route.request().postDataJSON().model;
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: cloudflareModel, choices: [{ message: { role: 'assistant', content: 'Cloudflare route worked.' } }] })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('cloudflare');
+  await page.locator('#cloudflareAccountId').fill(cloudflareId);
+  await expect(page.locator('#baseUrl')).toHaveValue('https://api.cloudflare.com/client/v4/accounts/' + cloudflareId + '/ai/v1');
+  await page.locator('#apiKey').fill('not-a-real-cloudflare-token');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('Cloudflare routing test');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Cloudflare route worked.');
+  await expect.poll(() => cloudflareModel).toBe('@cf/openai/gpt-oss-120b');
+
+  let hfModel = '';
+  await page.route('https://router.huggingface.co/v1/chat/completions', async route => {
+    hfModel = route.request().postDataJSON().model;
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: hfModel, choices: [{ message: { role: 'assistant', content: 'Hugging Face route worked.' } }] })
+    });
+  });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('huggingface');
+  await page.locator('#apiKey').fill('not-a-real-huggingface-token');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('Hugging Face routing test');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Hugging Face route worked.');
+  await expect.poll(() => hfModel).toBe('openai/gpt-oss-120b:fastest');
+});
