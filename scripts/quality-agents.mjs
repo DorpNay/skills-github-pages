@@ -31,6 +31,13 @@ const suites = {
     }],
     ['independent processing controls and on-demand resources', () => {
       includes('async function runMultiAgentResearch', 'Multi-agent research needs its own staged pipeline.');
+      includes('function collectResearchEvidence(messages)', 'Research traces must preserve source evidence collected from actual tool results.');
+      includes('function normalizeResearchEvidenceUrl(rawUrl)', 'Research evidence links must be public HTTPS URLs.');
+      includes('const researchMessages = workChat.messages.slice(researchStart)', 'Evidence extraction must operate on the researcher execution, not synthetic citations.');
+      includes('promptFingerprint,promptCharCount,plan,draft,critique,finalText,sources', 'Research traces must record prompt fingerprint metadata and source evidence.');
+      includes("id: 'S' + (sources.length + 1)", 'Research source identifiers must be sequential.');
+      includes('const evidenceSection = document.createElement', 'Research source evidence must be rendered through DOM nodes rather than raw HTML.');
+      includes('MAX_RESEARCH_EVIDENCE', 'Research evidence must have a deterministic size cap.');
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
       includes('async function refreshModelCatalog(options = {})', 'Provider model catalogs must be refreshed through the bounded safe loader.');
       includes('async function refreshConnectedModelCatalogs(options = {})', 'Connected provider catalogs must refresh for the cross-provider fallback.');
@@ -176,7 +183,10 @@ const suites = {
       includes('const MAX_CONTEXT_MESSAGES = 24;', 'Message count budget is missing.');
       includes('const MAX_CONTEXT_CHARS = 24000;', 'Character context budget is missing.');
       includes('count + turn.length > MAX_CONTEXT_MESSAGES', 'History message cap is not enforced.');
-      includes('charCount + turnChars > MAX_CONTEXT_CHARS', 'History character cap is not enforced.');
+      includes('function getHistoryCharBudget()', 'History budget must account for known context windows from the selected model catalogue.');
+      includes('const charBudget = getHistoryCharBudget();', 'A single derived character budget must be used for the history trim.');
+      includes('charCount + turnChars > charBudget', 'History trimming must use the active model-aware soft budget.');
+      includes('contextTokens * 1.25', 'The model context window must be converted to a conservative character budget, not represented as exact token counting.');
     }],
     ['memory retrieval is relevance-ranked and bounded', () => {
       includes('memory.score > 0', 'Irrelevant memories should not be attached.');
