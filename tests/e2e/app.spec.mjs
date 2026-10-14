@@ -20,14 +20,31 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await expect(page.locator('#chatBox')).toBeVisible();
   await expect(page.locator('#userInput')).toBeEditable();
   await expect(page.locator('#toggleSearch')).toBeVisible();
+  await expect(page.locator('#toggleSearch')).toBeChecked();
+  await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'false');
   await expect(page.locator('#toggleMultiAgent')).toBeVisible();
 
   await page.getByRole('button', { name: 'Настройки' }).click();
   await expect(page.locator('#settingsModal')).toBeVisible();
   await expect(page.locator('#providerPreset')).toHaveValue('gemini');
   await expect(page.locator('#apiKey')).toHaveAttribute('type', 'password');
+  await expect(page.locator('#baseUrl')).not.toBeFocused();
+  await expect(page.locator('#systemPromptInput')).toHaveAttribute('readonly', '');
+  await page.locator('#editSystemPrompt').click();
+  await expect(page.locator('#systemPromptInput')).not.toHaveAttribute('readonly', '');
+  await page.locator('#editSystemPrompt').click();
+  await expect(page.locator('#systemPromptInput')).toHaveAttribute('readonly', '');
+  await page.locator('#providerPreset').selectOption('gemini');
+  await page.locator('#modelPreset').selectOption('gemini-3.6-flash');
+  await expect(page.locator('#modelName')).toHaveValue('gemini-3.6-flash');
   await page.locator('[data-action="close-settings"]').click();
-
+  await page.locator('#offlineToggle').click();
+  await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'true');
+  await page.reload();
+  await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'true');
+  await page.locator('#offlineToggle').click();
+  await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'false');
+  await page.getByRole('button', { name: 'Настройки' }).click();
   await page.locator('#modeDeep').click();
   await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
   await page.reload();
@@ -45,6 +62,9 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
   await page.locator('#modelName').fill('openai/gpt-oss-120b');
   await page.locator('#tavilyKey').fill('e2e-tavily-placeholder-not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
+  await page.locator('#apiKey').fill('');
+  await page.locator('[data-action="save-settings"]').click();
+  await expect(page.locator('#apiKey')).toHaveValue('e2e-groq-placeholder-not-a-real-key');
 
   await page.locator('#providerPreset').selectOption('openrouter');
   await expect(page.locator('#apiKey')).toHaveValue('');
@@ -95,5 +115,73 @@ test('API authentication errors are shown without losing the original user promp
   await page.locator('#userInput').fill('E2E auth error preservation check');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('E2E auth error preservation check');
-  await expect(page.locator('#chatBox')).toContainText('Не удалось выполнить запрос ни через одну сохранённую модель', { timeout: 15000 });
+  await expect(page.locator('#chatBox')).toContainText('Запрос не выполнен.', { timeout: 15000 });
+  await expect(page.locator('#chatBox')).toContainText('Проверьте API-ключ.');
+  await expect.poll(async () => await page.locator('#chatBox').locator('.message-model-meta').count()).toBe(0);
+});
+
+test('provider connection lamp verifies /models and key deletion is explicit', async ({ page }) => {
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'e2e-model' }] })
+  }));
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('e2e-model');
+  await page.locator('#apiKey').fill('not-a-real-key');
+  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'pending');
+  await page.locator('[data-action="test-connection"]').click();
+  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected');
+  await expect(page.locator('#apiKeyStatus')).toContainText('Соединение подтверждено');
+  await page.locator('[data-action="clear-provider-key"]').click();
+  await expect(page.locator('#apiKey')).toHaveValue('');
+  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'empty');
+});
+
+test('multi-agent preference skips a greeting and shows the actual route', async ({ page }) => {
+  let calls = 0;
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    calls++;
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'Привет! Рад помочь.' } }] })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('e2e-model');
+  await page.locator('#apiKey').fill('not-a-real-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#toggleMultiAgent').check();
+  await page.locator('#userInput').fill('Привет!');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Привет! Рад помочь.');
+  await expect(page.locator('#chatBox')).toContainText('Свой API · e2e-model');
+  await expect.poll(() => calls).toBe(1);
+});
+
+test('401 stops model fallback and preserves actionable error', async ({ page }) => {
+  let calls = 0;
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    calls++;
+    await route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: { message: 'invalid credential' } }) });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('e2e-model');
+  await page.locator('#apiKey').fill('not-a-real-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('Auth error test');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Запрос не выполнен.');
+  await expect(page.locator('#chatBox')).toContainText('HTTP 401');
+  await expect(page.locator('#chatBox')).toContainText('Проверьте API-ключ.');
+  await expect.poll(() => calls).toBe(1);
 });
