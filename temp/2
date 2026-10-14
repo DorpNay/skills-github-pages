@@ -1,4 +1,81 @@
 #   
+**Полный углублённый список улучшений AI Mobile Agent v10.0+** (с ресёрчем по десяткам источников 2025–2026: LobeChat, Open WebUI, Streamdown, Pretext/Pretexify, vlist, smolagents, Mobile-Agent-E, agentskills.io / Hermes / OpenClaw, TencentDB Agent Memory, EngramRAG, Orama, MiniSearch, ndx, clientside-search, Simon Willison sandbox patterns, PWA Offline Cookbook и др.)  
+Все решения остаются в рамках **одного лёгкого SPA** (vanilla JS + Tailwind + marked + DOMPurify + IndexedDB + Service Worker). Никаких React/Vue, никаких backend, никаких тяжёлых бандлов. Цель — 60 fps, минимальный battery drain, низкий latency, токен-бюджет.  
+  
+**1. UI/UX и мобильная эффективность**  
+**Оригинал:** floating panel + gestures, streaming progressive markdown, virtualized list, contextual chips.  
+**Гениальные усиления:**  
+* **Gesture + floating panel (60 fps гарантировано)** Один PointerEvent listener + requestAnimationFrame. Состояние панели — один Map + localStorage. Long-press (400 ms) → pin/facts. Свайп deltaX > 80 + velocity. touch-action: pan-y, passive: true, will-change: transform только на панели. Инженерно: никаких лишних DOM-нод, состояние не раздувает дерево.  
+* **Streaming markdown (критический путь производительности)** Лучшая практика Open WebUI 2026 + Streamdown + GlyphStream:  
+    1. Во время стрима — **plain text** (или минимальный markdown) с debounce 16–32 ms (requestAnimationFrame).  
+    2. На finish_reason=stop — **один** полный marked.parse + DOMPurify. Это убирает 400–600 полных перепарсов markdown/KaTeX на одном длинном ответе. Mobile: буфер 50–100 ms. Двухфазный UI (быстрый preview → enhanced) как fallback.  
+* **Virtualized / windowed list с zero-reflow (Pretext / Pretexify)** Чистый vanilla windowing. Рендерим только viewport + overscan 5–8. Высоты сообщений вычисляются **до** появления в DOM через Pretext/Pretexify (Canvas measureText + чистая арифметика). Zero reflow даже при 10k+ сообщений. Placeholder-контейнер с totalHeight. Высоты кэшируются один раз. Результат: constant memory, 120 fps на скролле, поддержка CJK/emoji.  
+* **Контекстные чипы** После ответа — эвристика по последним 150–200 символам или лёгкий пост-промпт (только Deep/Research). 3–5 actionable кнопок. Генерация не блокирует основной поток.  
+**Взаимодействие:** Virtual list + progressive markdown = во время стрима обновляется только последнее окно. Pretext даёт высоты заранее → никакого layout thrashing.  
+  
+**2. Память и контекст**  
+**Оригинал:** иерархическая short/mid/long + BM25 + cross-chat.  
+**Гениальные усиления (TencentDB 4-tier, EngramRAG, agent-knowledge, Orama, MiniSearch, ndx):**  
+* **4-tier pyramid (клиентская, zero-server):**  
+    * L0 Working — текущий turn (in-memory).  
+    * L1 Session — текущий чат (IndexedDB).  
+    * L2 Atoms/Facts — claim + evidence + confidence + timestamp + usage-score (отдельный object store).  
+    * L3 Persona/Summary — evergreen факты + компактные summaries.  
+* **Компиляция памяти** Каждые N сообщений / по кнопке / requestIdleCallback: 1–2 предложения summary + атомарные факты. Auto-prune: recency × relevance × usage × confidence с exponential decay. Лимит 50–100 фактов.  
+* **Retrieval** Hybrid: чистый JS BM25 (MiniSearch ~7 kb, Orama < 2 kb, ndx или clientside-search) + keyword/TF-IDF. Optional embeddings (onnx-wasm лениво или через провайдера). Reciprocal Rank Fusion при нескольких сигналах. Cross-chat: top-3–5 фактов по запросу при создании нового чата.  
+**Инженерная реализация:** Versioned IndexedDB schema + миграция на activate. Write-path полностью async. Read-path перед каждым запросом: system + L3 + top-L2 + token-aware последние N. Индекс BM25 хранится рядом с фактами и обновляется инкрементально.  
+  
+**3. Режимы и агентский цикл**  
+**Оригинал:** state-machine + reflection + adaptive budget.  
+**Гениальные усиления (smolagents CodeAct + ReAct, Mobile-Agent-E hierarchy, Anatomy of Agent Loop):**  
+* **Явный state-machine** idle → plan → tool → reflect → answer. Максимум 3–4 шага. Adaptive budget: Fast = 0–1, Deep = 2–3, Research = до 5 с early-stop.  
+* **Reflection + early-stop** После каждого tool-раунда короткий self-check («достаточно ли данных?»). Если да — сразу final answer. Резко снижает latency и токены.  
+* **Code-as-action (лёгкая версия smolagents)** Агент пишет маленький JS-snippet для обработки результатов поиска. Один шаг вместо нескольких JSON tool-calls → ~30 % меньше шагов.  
+* **Hierarchy (упрощённый Mobile-Agent-E)** В Research: manager-prompt + 1–2 специализированных шага (search → synthesize) через разные system-prompts внутри одного цикла. Без настоящих multi-agent.  
+**Оптимизация:** Budget уменьшается при сетевых ошибках. Все tool-calls проходят единый JSON-schema валидатор.  
+  
+**4. Инструменты и мультимодальность**  
+**Оригинал:** расширяемый tool-layer + vision + structured cards.  
+**Гениальные усиления:**  
+* **Tool-layer** Массив {name, description, parameters: JSONSchema, execute}. Добавление = 1 функция + schema. Строгая валидация (OpenAI Agents SDK / Pydantic AI стиль). Базовый set: Tavily, calculator, code-exec, Pollinations image-gen, file→text.  
+* **Безопасный code-exec** Sandboxed iframe: sandbox="allow-scripts" (без allow-same-origin) + immutable (default-src 'none'; script-src 'unsafe-inline'). MessageChannel для общения. Или WebAssembly QuickJS (если нужна ещё большая изоляция). Данные только by-value.  
+* **Vision** getUserMedia + canvas resize до 768–1024 px (адаптивно по device). Только если провайдер поддерживает vision (auto-detect).  
+* **Structured cards / Generative UI** Marked extensions + custom renderers. JSON-блоки или лёгкие маркеры рендерятся как rich-компоненты (таблицы, карточки, сравнения). Появляются только после полного блока (streaming-safe).  
+  
+**5. Производительность и офлайн**  
+**Оригинал:** IndexedDB + SW + token-aware + lazy.  
+**Гениальные усиления (PWA Offline Cookbook, Background Sync, outbox pattern):**  
+* **Token-aware context** Эвристика chars/4 (или tiktoken-wasm лениво). Приоритет: system → L3/L2 → последние N → summary. Soft-limit + hard-cut.  
+* **Offline-first + durable outbox** Service Worker кэширует статику + последние ответы. Сообщения в offline → IndexedDB outbox → Background Sync (sync event) при появлении сети. Idempotency-Key для безопасных retry. Локальные инструменты (калькулятор, facts, summary) работают всегда.  
+* **Lazy + code-splitting** Dynamic import только для vision, advanced research, heavy markdown.  
+**Оптимизации:** Versioned schema, debounce, requestIdleCallback для prune/summary, Web Locks для сериализации drain.  
+  
+**6. Интеграции и провайдеры**  
+**Оригинал:** unified adapter + progressive skills.  
+**Гениальные усиления (agentskills.io / Hermes / OpenClaw 2026):**  
+* **Provider-adapter** Единый интерфейс chat({messages, stream, tools, ...}). Auto-detect capabilities. Test-connection + model-list. Fallback chain.  
+* **Skills Progressive Disclosure (самое мощное)** Level 0: только {name, description} (~100 токенов на skill, всего ~300–1800 токенов даже при 50–250 skills). Level 1: полный SKILL.md только при релевантности. Level 2: references/scripts по необходимости. Хранение: IndexedDB / localStorage / GitHub raw. Агент сам решает, когда загружать (по description match). Дополнительно: usage-frequency learning + token budget truncation (как freehul/progressive-skill) → ещё –70 % токенов на индекс.  
+Это даёт «бесконечные» возможности без раздувания контекста.  
+  
+**7. DX и расширяемость**  
+**Оригинал:** config-as-code + debug-overlay.  
+**Усиления:** Один JSON/YAML (system, tools, modes, skills). UI-редактор + export/import профиля. Debug-overlay только в Deep/Research (tool-calls, latency, token-estimate, budget). Toggleable, zero overhead в production.  
+  
+**Приоритет внедрения (быстрый ROI, 1–3 спринта одним разработчиком)**  
+1. Streaming progressive markdown + Pretext-windowed list + fact-summary  
+2. Adaptive tool-budget + reflection state-machine  
+3. IndexedDB 4-tier memory + BM25 + offline outbox  
+4. Vision + structured cards + secure sandbox  
+5. Skills progressive disclosure (agentskills.io)  
+**Итоговый эффект при сохранении лёгкости:**  
+* 2–4× более надёжные multi-step ответы  
+* Настоящая иерархическая память между чатами  
+* 60–120 fps mobile UX  
+* Расширяемые tools/skills без усложнения архитектуры  
+* Полноценный offline-first  
+Всё остаётся одним SPA на GitHub Pages.  
+
+#   
 ## Инженерное руководство по глубокой модернизации платформы GitHub Pages  
 **Исходный проект ⁠dorpnay.github.io/skills-github-pages⁠, развернутый на базе шаблона GitHub Skills, использует стандартную связку Ruby-Jekyll и деплой из Git-ветки. Несмотря на простую стартовую настройку, архитектура имеет фундаментальные ограничения: низкую скорость сборки, избыточный сетевой оверхед, отсутствие встроенного полнотекстового поиска, уязвимость к сдвигам верстки (CLS) и базовые показатели поисковой оптимизации.** [1][2][3][4][5][6]  
 **В данном обновленном руководстве представлена комплексная инженерная стратегия модернизации платформы, охватывающая все ключевые сферы (за исключением информационной безопасности). Все пункты углублены, снабжены описанием взаимодействия компонентов и дополнены передовыми оптимизациями, включая Astro 5/6 Content Layer API, Speculation Rules API, WASM-поиск Pagefind, генерацию OpenGraph через Satori, а также высокопроизводительный инструментарий на Rust (Biome, Lefthook, Lychee).** [1][2][3][4][5][6]  
