@@ -44,7 +44,6 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'true');
   await page.locator('#offlineToggle').click();
   await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'false');
-  await page.getByRole('button', { name: 'Настройки' }).click();
   await page.locator('#modeDeep').click();
   await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
   await page.reload();
@@ -137,7 +136,7 @@ test('provider connection lamp verifies /models and key deletion is explicit', a
   await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'pending');
   await page.locator('[data-action="test-connection"]').click();
   await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected');
-  await expect(page.locator('#apiKeyStatus')).toContainText('Соединение подтверждено');
+  await expect(page.locator('#apiKeyStatus')).toContainText('успешно ответила');
   await page.locator('[data-action="clear-provider-key"]').click();
   await expect(page.locator('#apiKey')).toHaveValue('');
   await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'empty');
