@@ -39,6 +39,9 @@ const suites = {
       includes("return 'https://gen.pollinations.ai/text/models'", 'Pollinations catalog should use the dedicated text-only public endpoint.');
       includes('output_modalities=text&sort=most-popular', 'OpenRouter catalog should request text output and popularity ordering.');
       includes('task=text-generation&hide_experimental=true', 'Cloudflare catalog should be scoped to text generation and non-experimental models.');
+      includes('const maxRouterCandidates = 16;', 'Cross-provider fallback must have a global attempt bound.');
+      includes('if ((stale || expired) && !allowStale) return null;', 'Expired or explicitly stale catalogs must not be used for automatic fallback.');
+      includes('keyFingerprint, fetchedAt: Date.now(), models', 'Catalog persistence must store credential fingerprints, not credentials.');
       includes('async function refreshModelCatalog(options = {})', 'Model list refresh is a first-class action.');
       includes("xai: { label: 'xAI · Grok'", 'xAI Grok must be a separate provider from Groq.');
       includes("pollinations: { label: 'Pollinations.ai'", 'Pollinations must use its own API catalog and endpoint.');
