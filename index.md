@@ -143,7 +143,7 @@ permalink: /
         <button type="button" data-action="connect-pollinations" class="w-full bg-cyan-900/50 hover:bg-cyan-800/70 border border-cyan-700/50 py-2 rounded-lg text-xs text-cyan-100">Подключить аккаунт Pollinations · PKCE</button>
         <button type="button" data-action="disconnect-pollinations" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 py-1.5 rounded-lg text-[11px] text-gray-300">Завершить сессию Pollinations</button>
       </div>
-      <div class="flex gap-2"><button type="button" data-action="test-connection' class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение и модель</button><button type="button" data-action="clear-provider-key" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
+      <div class="flex gap-2"><button type="button" data-action="test-connection" class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение и модель</button><button type="button" data-action="clear-provider-key" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
       <label for="modelName" class="block text-xs text-gray-400">Модель</label>
       <input type="text" id="modelName" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
       <label for="tavilyKey" class="block text-xs text-gray-400">Tavily Search API Key</label>
