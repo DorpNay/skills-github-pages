@@ -750,29 +750,31 @@ permalink: /
       if(!key){updateApiKeyLamp('error','Сначала вставьте API-ключ.');showToast('Для проверки нужен API-ключ выбранного провайдера.','error');return;}
       if(!model){updateApiKeyLamp('error','Укажите модель, которую нужно проверить.');return;}
       try{new URL(baseUrl);}catch(_){updateApiKeyLamp('error','Base URL некорректен. Исправьте адрес и повторите проверку.');return;}
-      updateApiKeyLamp('pending','Проверяю авторизацию, каталог и короткий вызов выбранной модели…');showStatus('🔌 Проверяю провайдера и выбранную модель…');
+      updateApiKeyLamp('pending','Проверяю короткий запрос к выбранной модели…');showStatus('🔌 Проверяю выбранную модель…');
       try{
-        const listResponse=await fetch(buildModelsUrl(baseUrl),{method:'GET',headers:{'Authorization':'Bearer '+key,'Accept':'application/json'}});
-        if(!listResponse.ok){
-          const detail=(await listResponse.text().catch(()=>'' )).slice(0,200).replaceAll(key,'[скрытый ключ]');
-          updateApiKeyLamp('error','Каталог моделей: HTTP '+listResponse.status+(detail?': '+detail:''));
-          showToast('Проверка каталога не прошла: HTTP '+listResponse.status,'error');safeSet('ai_provider_connection_'+provider,'');return;
-        }
-        const catalogue=await listResponse.json();
-        if(!catalogue||(!Array.isArray(catalogue.data)&&!Array.isArray(catalogue.models))){updateApiKeyLamp('error','API доступен, но формат каталога моделей не распознан.');safeSet('ai_provider_connection_'+provider,'');return;}
+        // A real minimal completion is the source of truth. Some compatible APIs do not expose /models.
         const modelResponse=await fetch(buildApiUrl(baseUrl),{
           method:'POST',headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
-          body:JSON.stringify({model,messages:[{role:'user',content:'Reply with exactly OK.'}],stream:false})
+          body:JSON.stringify({model,messages:[{role:'user',content:'Reply with exactly OK. No other words.'}],max_tokens:8,stream:false})
         });
         if(!modelResponse.ok){
           const detail=(await modelResponse.text().catch(()=>'' )).slice(0,220).replaceAll(key,'[скрытый ключ]');
-          updateApiKeyLamp('error','Каталог доступен, но модель '+model+' не прошла проверку: HTTP '+modelResponse.status+(detail?': '+detail:''));
+          updateApiKeyLamp('error','Модель '+model+' не прошла проверку: HTTP '+modelResponse.status+(detail?': '+detail:''));
           showToast('Модель не подтвердилась: HTTP '+modelResponse.status,'error');safeSet('ai_provider_connection_'+provider,'');return;
         }
         const completion=await modelResponse.json(),answer=completion?.choices?.[0]?.message?.content;
         if(typeof answer!=='string'||!answer.trim()){updateApiKeyLamp('error','API ответил, но модель не вернула обычный текстовый ответ.');safeSet('ai_provider_connection_'+provider,'');return;}
+        // Model listing is useful context, but it is optional; some compatible endpoints omit this route.
+        let catalogueNote='каталог моделей недоступен';
+        try{
+          const listResponse=await fetch(buildModelsUrl(baseUrl),{method:'GET',headers:{'Authorization':'Bearer '+key,'Accept':'application/json'}});
+          if(listResponse.ok){
+            const catalogue=await listResponse.json(),models=Array.isArray(catalogue?.data)?catalogue.data:Array.isArray(catalogue?.models)?catalogue.models:null;
+            if(models)catalogueNote='каталог API содержит '+models.length+' моделей';
+          }
+        }catch(_){}
         safeSet('ai_provider_connection_'+provider,JSON.stringify({ok:true,baseUrl,model,testedAt:new Date().toISOString()}));
-        updateApiKeyLamp('connected','Зелёный — каталог доступен и модель '+model+' успешно ответила. Проверено сейчас.');
+        updateApiKeyLamp('connected','Зелёный — модель '+model+' успешно ответила; '+catalogueNote+'.');
         showToast('Провайдер и модель прошли проверку');
       }catch(_){
         safeSet('ai_provider_connection_'+provider,'');
@@ -1047,7 +1049,7 @@ permalink: /
       return candidates;
     }
     let lastSuccessfulRoute=null,activeRunTelemetry=null,activeRunStartedAt=0,statusTimerId=null;
-    function recordSuccessfulRoute(candidate,stageName){lastSuccessfulRoute={provider:candidate.provider,providerLabel:PROVIDERS[candidate.provider]?.label||candidate.provider,model:candidate.model,stage:stageName,at:new Date().toISOString()};if(activeRunTelemetry)activeRunTelemetry.routes.push({...lastSuccessfulRoute});}
+    function recordSuccessfulRoute(candidate,stageName){lastSuccessfulRoute={provider:candidate.provider,providerLabel:PROVIDERS[candidate.provider]?.label||candidate.provider,model:candidate.model,stage:stageName,at:new Date().toISOString()};if(activeRunTelemetry){activeRunTelemetry.routes.push({...lastSuccessfulRoute});activeRunTelemetry.provider=candidate.provider;activeRunTelemetry.model=candidate.model;}}
     async function requestChatCompletion(body,signal,stageName='Ответ модели'){
       throwIfAborted(signal);const preferredProvider=safeGet(STORAGE.provider)||'gemini',preferredModel=safeGet(STORAGE.model)||body.model||DEFAULT_MODEL,candidates=getApiCandidates(preferredModel),allowCross=safeGet(STORAGE.crossProviderFallback)==='true';
       if(!candidates.length)throw new Error('Не найден API-ключ для выбранного провайдера. Откройте настройки и сохраните ключ.');
