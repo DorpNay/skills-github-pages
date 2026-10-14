@@ -122,7 +122,7 @@ jobs:
       - name: Test the actual published site in Chromium
         env:
           LIVE_SITE_URL: https://dorpnay.github.io/skills-github-pages/
-        run: npx playwright test
+        run: npx playwright test tests/e2e/live-site.spec.mjs
       - name: Upload live-site diagnostics on failure
         if: failure()
         uses: actions/upload-artifact@v4
