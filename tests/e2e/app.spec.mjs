@@ -555,7 +555,7 @@ test('history budget adapts to a catalogued model context window', async ({ page
   expect(contentText).not.toContain('OLD_CONTEXT_TURN_0');
   expect(contentText).toContain('OLD_CONTEXT_TURN_7');
   expect(contentText).toContain('LATEST_CONTEXT_REQUEST');
-  expect(sent.reduce((sum, message) => sum + String(message.content || '').length, 0)).toBeLessThanOrEqual(5200);
+  expect(sent.reduce((sum, message) => sum + String(message.content || '').length, 0)).toBeLessThanOrEqual(3400);
 });
 
 test('dynamic chat catalog is used for bounded same-provider model fallback', async ({ page }) => {
