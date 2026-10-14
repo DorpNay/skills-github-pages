@@ -442,6 +442,51 @@ test('model-specific failure tries another model on the same provider first', as
   expect(attemptedModels[1]).toBe('qwen/qwen3.8-27b');
 });
 
+
+test('history budget adapts to a catalogued model context window', async ({ page }) => {
+  let capturedMessages = null;
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ data: [{ id: 'e2e-small-context-model', context_length: 4096 }] })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    capturedMessages = route.request().postDataJSON().messages;
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'e2e-small-context-model', choices: [{ message: { role: 'assistant', content: 'Context budget test response.' } }] })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const oldTurns = Array.from({ length: 8 }, (_, i) => [
+    { role: 'user', content: 'OLD_CONTEXT_TURN_' + i + ' ' + 'x'.repeat(650) },
+    { role: 'assistant', content: 'OLD_CONTEXT_RESPONSE_' + i + ' ' + 'y'.repeat(200) }
+  ]).flat();
+  await page.evaluate(messages => {
+    localStorage.setItem('ai_chats_v87', JSON.stringify([{ id: 'e2e-context-chat', title: 'Context budget test', messages }]));
+    localStorage.setItem('ai_current_chat_v87', 'e2e-context-chat');
+  }, oldTurns);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('e2e-small-context-model');
+  await page.locator('#apiKey').fill('e2e-context-budget-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="refresh-model-catalog"]').click();
+  await expect(page.locator('#modelCatalogStatus')).toContainText('1 текстовых моделей');
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('LATEST_CONTEXT_REQUEST');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Context budget test response.');
+  await expect.poll(() => capturedMessages).not.toBeNull();
+  const sent = capturedMessages.filter(message => message.role !== 'system');
+  const contentText = sent.map(message => String(message.content || '')).join('\n');
+  expect(contentText).not.toContain('OLD_CONTEXT_TURN_0');
+  expect(contentText).toContain('OLD_CONTEXT_TURN_7');
+  expect(contentText).toContain('LATEST_CONTEXT_REQUEST');
+  expect(sent.reduce((sum, message) => sum + String(message.content || '').length, 0)).toBeLessThanOrEqual(5200);
+});
+
 test('dynamic chat catalog is used for bounded same-provider model fallback', async ({ page }) => {
   const attemptedModels = [];
   await page.route('https://api.example.test/v1/models', route => route.fulfill({
