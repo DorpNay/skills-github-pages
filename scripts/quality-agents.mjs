@@ -44,7 +44,7 @@ const suites = {
       includes('function getRunEstimateMs()', 'Response timing should learn a lightweight per-route estimate.');
       includes('data-state="connected"', 'A confirmed API connection must have a distinct UI state.');
       includes('message.providerInfo', 'Assistant responses must display the actual provider/model route.');
-      includes('async function requestChatCompletion(body, signal', 'All model calls must use the automatic fallback path.');
+      includes('async function requestChatCompletion(body,signal', 'All model calls must use the classified provider fallback path.');
       includes("Запрос не выполнен. Исходный текст сохранён.", 'Fallback errors must preserve the original user prompt.');
       includes("showToast('Настройки сохранены')", 'Saving settings should use the toast and keep the modal open.');
       includes("node.classList.add('toast-visible')", 'Toast notification must use lightweight CSS animation.');
@@ -105,7 +105,7 @@ const suites = {
     ['API credentials are user-configured, not hard-coded', () => {
       includes("apiKey: 'ai_api_key'", 'API key storage slot is missing.');
       includes('safeGet(STORAGE.apiKey)', 'API key must be read from user settings.');
-      includes("'Authorization': `Bearer ${candidate.key}`", 'Requests must use a saved provider-specific bearer key.');
+      includes("'Authorization':`Bearer ${candidate.key}`", 'Requests must use a saved provider-specific bearer key.');
       includes('type="password" id="apiKey"', 'API key field must be masked.');
     }],
     ['untrusted output is not inserted as raw HTML', () => {
