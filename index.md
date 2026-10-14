@@ -127,7 +127,7 @@ permalink: /
       <label for="modelPreset" class="block text-xs text-gray-400">Быстрый выбор модели</label>
       <select id="modelPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm"></select>
       <p id="providerHint" class="text-[11px] leading-relaxed text-gray-400">Выберите провайдера и модель. Ключи разных провайдеров сохраняются отдельно в этом браузере.</p>
-      <a id="providerDocsLink" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-blue-300 underline underline-offset-2">Открыть страницу API-ключа</a>
+      <a id="providerDocsLink" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-blue-300 underline underline-offset-2">Открыть страницу API-ключа</a> <a href="https://github.com/DorpNay/skills-github-pages/blob/main/PROVIDER_SETUP.md" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-cyan-300 underline underline-offset-2">Инструкция по подключению</a>
       <div id="cloudflareAccountGroup" class="hidden space-y-1.5">
         <label for="cloudflareAccountId" class="block text-xs text-gray-400">Cloudflare Account ID (32 hex-символа)</label>
         <input type="text" id="cloudflareAccountId" inputmode="text" autocomplete="off" spellcheck="false" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Ваш Account ID из Cloudflare Dashboard">
@@ -320,7 +320,7 @@ permalink: /
         safeSessionSet(POLLINATIONS_SESSION.clientId,appKey)
       ].every(Boolean);
       if(!stored) { showToast('Не удалось подготовить защищённую OAuth-сессию. Проверьте настройки приватности браузера.', 'error'); return; }
-      const params=new URLSearchParams({response_type:'code',client_id:appKey,redirect_uri:redirectUri,scope:'usage',state,code_challenge:challenge,code_challenge_method:'S256'});
+      const params=new URLSearchParams({response_type:'code',client_id:appKey,redirect_uri:redirectUri,state,code_challenge:challenge,code_challenge_method:'S256'});
       location.assign('https://enter.pollinations.ai/authorize?'+params.toString());
     }
     async function finishPollinationsOAuth() {
