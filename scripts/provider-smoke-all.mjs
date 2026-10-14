@@ -20,9 +20,9 @@ const providers = [
 function safeText(value, secret = '') {
   return String(value ?? '')
     .replaceAll(secret, '[REDACTED]')
-    .replace(/Bearer\\s+\\S+/gi, 'Bearer [REDACTED]')
+    .replace(/Bearer\s+\S+/gi, 'Bearer [REDACTED]')
     .replace(/(?:sk[_-]|pk[_-]|AIza)[A-Za-z0-9_-]{12,}/g, '[REDACTED]')
-    .replace(/[\\r\\n\\t]+/g, ' ')
+    .replace(/[\r\n\t]+/g, ' ')
     .slice(0, 240);
 }
 
@@ -30,7 +30,7 @@ function extractResult(child, provider, secret) {
   const raw = child.stdout?.trim() || child.stderr?.trim() || '';
   if (raw) {
     try {
-      const parsed = JSON.parse(raw.split(/\\r?\\n/).filter(Boolean).at(-1));
+      const parsed = JSON.parse(raw.split(/\r?\n/).filter(Boolean).at(-1));
       return {
         provider,
         status: child.status === 0 && parsed.status === 'success' ? 'success' : 'failed',
@@ -82,22 +82,25 @@ async function main() {
   console.log(JSON.stringify({ summary: { success, failed, skipped, total: results.length }, results }, null, 2));
 
   const cells = results.map(item => [
-    item.provider, item.status.toUpperCase(), item.model || '—',
-    item.httpStatus ?? '—', item.elapsedMs != null ? item.elapsedMs + ' ms' : '—',
-    item.message || item.catalogueModels != null ? (item.message || ('Catalog models: ' + item.catalogueModels)) : '—'
+    item.provider,
+    item.status.toUpperCase(),
+    item.model || '—',
+    item.httpStatus ?? '—',
+    item.elapsedMs != null ? item.elapsedMs + ' ms' : '—',
+    item.message || (item.catalogueModels != null ? 'Catalog models: ' + item.catalogueModels : '—')
   ]);
   const summary = [
     '## Provider smoke test — configured secrets',
     '',
     '| Provider | Result | Model | HTTP | Duration | Detail |',
     '|---|---|---|---:|---:|---|',
-    ...cells.map(row => '| ' + row.map(cell => safeText(cell).replace(/\\|/g, '\\|')).join(' | ') + ' |'),
+    ...cells.map(row => '| ' + row.map(cell => safeText(cell).replace(/\|/g, '\\|')).join(' | ') + ' |'),
     '',
     'Summary: ' + success + ' succeeded, ' + failed + ' failed, ' + skipped + ' skipped (no matching secret).',
     '',
     'Each configured provider receives one short completion request. Skipped providers are not treated as failures. Secret values are not included in this summary.',
     ''
-  ].join('\\n');
+  ].join('\n');
   if (process.env.GITHUB_STEP_SUMMARY) {
     try { appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary, { encoding: 'utf8' }); } catch (_) {}
   }
