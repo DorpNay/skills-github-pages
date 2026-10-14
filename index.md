@@ -817,6 +817,12 @@ permalink: /
     }
 
     function saveSettings() {
+      if(currentProvider()==='cloudflare'){
+        const accountId=$('cloudflareAccountId').value.trim();
+        if(!/^[a-f0-9]{32}$/i.test(accountId)){showToast('Cloudflare Account ID должен содержать 32 шестнадцатеричных символа.','error');return;}
+        safeSet(STORAGE.cloudflareAccountId,accountId);
+        $('baseUrl').value=`https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1`;
+      }
       let baseUrl = $('baseUrl').value.trim().replace(/\/+$/, '');
       const enteredApiKey = $('apiKey').value.trim();
       const model = $('modelName').value.trim();
@@ -851,15 +857,19 @@ permalink: /
     function buildModelsUrl(baseUrl){return `${baseUrl.replace(/\/+$/,'')}/models`;}
     function updateApiKeyLamp(state,message){const shell=$('apiKeyShell'),status=$('apiKeyStatus');if(!shell||!status)return;shell.dataset.state=state;status.textContent=message;}
     function refreshApiKeyLamp(){
-      const provider=currentProvider(),key=$('apiKey').value.trim()||safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'',baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'');
-      if(!key){updateApiKeyLamp('empty','Серый — ключ не введён. Вставьте ключ и нажмите «Проверить соединение».');return;}
+      const provider=currentProvider(),inputKey=$('apiKey').value.trim()||safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'',baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'');
+      if(provider==='pollinations'&&inputKey&&!getProviderRequestKey('pollinations')){updateApiKeyLamp('pending','App Key задан. Подключите Pollinations через OAuth PKCE; временный access token не сохраняется в localStorage.');return;}
+      if(!inputKey){updateApiKeyLamp('empty','Серый — ключ не введён. Вставьте ключ и нажмите «Проверить соединение».');return;}
       let v=null;try{v=JSON.parse(safeGet('ai_provider_connection_'+provider)||'null');}catch(_){}
-      if(v&&v.baseUrl===baseUrl&&v.model=== $('modelName').value.trim()&&v.ok)updateApiKeyLamp('connected','Зелёный — последняя проверка именно этой модели прошла успешно. При изменении ключа, модели или адреса проверьте снова.');
+      if(v&&v.baseUrl===baseUrl&&v.model===$('modelName').value.trim()&&v.ok)updateApiKeyLamp('connected','Зелёный — последняя проверка именно этой модели прошла успешно. При изменении ключа, модели или адреса проверьте снова.');
       else updateApiKeyLamp('pending','Янтарный — ключ задан, соединение ещё не подтверждено.');
     }
     async function testProviderConnection(){
-      const provider=currentProvider(),baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),key=$('apiKey').value.trim()||safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'',model=$('modelName').value.trim();
-      if(!key){updateApiKeyLamp('error','Сначала вставьте API-ключ.');showToast('Для проверки нужен API-ключ выбранного провайдера.','error');return;}
+      const provider=currentProvider(),baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),key=getProviderRequestKey(provider),model=$('modelName').value.trim();
+      if(!key){
+        if(provider==='pollinations'&&($('apiKey').value.trim()||safeGet(providerKeyStorage('pollinations')))){updateApiKeyLamp('pending','App Key сохранён. Нажмите «Подключить аккаунт Pollinations · PKCE», затем повторите проверку.');showToast('Сначала подключите Pollinations через OAuth PKCE.','error');return;}
+        updateApiKeyLamp('error','Сначала вставьте API-ключ.');showToast('Для проверки нужен API-ключ выбранного провайдера.','error');return;
+      }
       if(!model){updateApiKeyLamp('error','Укажите модель, которую нужно проверить.');return;}
       try{new URL(baseUrl);}catch(_){updateApiKeyLamp('error','Base URL некорректен. Исправьте адрес и повторите проверку.');return;}
       updateApiKeyLamp('pending','Проверяю короткий запрос к выбранной модели…');showStatus('🔌 Проверяю выбранную модель…');
@@ -894,7 +904,14 @@ permalink: /
         showToast('Проверка не удалась: сеть или CORS.','error');
       }finally{hideStatus();}
     }
-    function clearProviderKey(){const provider=currentProvider();safeSet(providerKeyStorage(provider),'');if(provider==='gemini')safeSet(STORAGE.apiKey,'');safeSet('ai_provider_connection_'+provider,'');$('apiKey').value='';updateApiKeyLamp('empty','Ключ удалён из локальных настроек этого браузера.');showToast('Ключ выбранного провайдера удалён');}
+    function clearProviderKey(){
+      const provider=currentProvider();safeSet(providerKeyStorage(provider),'');
+      if(provider==='pollinations')clearPollinationsSession();
+      if(provider==='cloudflare'){safeSet(STORAGE.cloudflareAccountId,'');$('cloudflareAccountId').value='';$('baseUrl').value='';}
+      if(provider==='gemini')safeSet(STORAGE.apiKey,'');
+      safeSet('ai_provider_connection_'+provider,'');$('apiKey').value='';
+      updateApiKeyLamp('empty','Ключ удалён из локальных настроек этого браузера.');showToast('Ключ выбранного провайдера удалён');
+    }
     function updateOfflineUI(){const off=safeGet(STORAGE.offline)==='true',button=$('offlineToggle');if(!button)return;button.setAttribute('aria-pressed',String(off));button.textContent=off?'◉ Оффлайн: вкл.':'◉ Оффлайн: выкл.';button.title='Отключает веб-поиск и внешние источники. Облачный API модели всё равно требует интернет-соединения.';}
     function toggleOfflineMode(){const off=safeGet(STORAGE.offline)!=='true';safeSet(STORAGE.offline,String(off));updateOfflineUI();showToast(off?'Оффлайн-режим: веб-поиск выключен':'Онлайн-режим: веб-инструменты доступны');}
     async function makeCacheKey(value) {
