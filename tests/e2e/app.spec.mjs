@@ -176,6 +176,58 @@ test('provider connection loads filtered model catalog into selector and key del
   await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'empty');
 });
 
+test('catalog remains usable when the saved model is missing from the live provider list', async ({ page }) => {
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ data: [
+      { id: 'e2e-live-model-a', name: 'Live Model A' },
+      { id: 'e2e-live-model-b', name: 'Live Model B' }
+    ] })
+  }));
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('retired-saved-model');
+  await page.locator('#apiKey').fill('e2e-custom-model-catalog-key');
+  await page.locator('[data-action="save-settings"]').click();
+
+  await expect(page.locator('#modelPreset option[value="e2e-live-model-a"]')).toHaveCount(1);
+  await expect(page.locator('#modelPreset option[value="e2e-live-model-b"]')).toHaveCount(1);
+  await expect(page.locator('#modelPreset')).toHaveValue('__custom__');
+  await expect(page.locator('#modelName')).toHaveValue('retired-saved-model');
+
+  await page.locator('#modelPreset').selectOption('e2e-live-model-a');
+  await expect(page.locator('#modelName')).toHaveValue('e2e-live-model-a');
+});
+
+test('refresh all catalogs updates other configured providers for cross-provider fallback', async ({ page }) => {
+  await page.route('https://api.groq.com/openai/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ data: [{ id: 'groq-live-chat-model', name: 'Groq Live Chat' }] })
+  }));
+  await page.route(/https:\/\/openrouter\.ai\/api\/v1\/models\?.*/, route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ data: [{ id: 'openrouter/vendor-live-model', name: 'OpenRouter Live Model', architecture: { output_modalities: ['text'] } }] })
+  }));
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => localStorage.setItem('ai_api_key_openrouter', 'e2e-openrouter-catalog-key'));
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('groq');
+  await page.locator('#apiKey').fill('e2e-groq-catalog-key');
+  await page.locator('[data-action="save-settings"]').click();
+
+  await page.locator('[data-action="refresh-model-catalog"]').click();
+  await expect.poll(() => page.evaluate(() => {
+    const groq = JSON.parse(localStorage.getItem('ai_provider_model_catalog_v1_groq') || 'null');
+    const openrouter = JSON.parse(localStorage.getItem('ai_provider_model_catalog_v1_openrouter') || 'null');
+    return Boolean(groq?.models?.some(model => model.id === 'groq-live-chat-model') &&
+      openrouter?.models?.some(model => model.id === 'openrouter/vendor-live-model'));
+  })).toBe(true);
+  await expect(page.locator('#modelPreset option[value="groq-live-chat-model"]')).toHaveCount(1);
+  await expect(page.locator('#modelCatalogStatus')).toContainText('1 текстовых моделей');
+});
+
 test('multi-agent preference skips a greeting and shows the actual route', async ({ page }) => {
   let calls = 0;
   await page.route('https://api.example.test/v1/chat/completions', async route => {

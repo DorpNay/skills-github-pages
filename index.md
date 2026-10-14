@@ -130,7 +130,7 @@ permalink: /
       <select id="modelPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm"></select>
       <div class="flex items-start justify-between gap-2">
         <p id="modelCatalogStatus" class="min-w-0 text-[11px] leading-relaxed text-gray-400" role="status" aria-live="polite">Показаны встроенные модели. Нажмите «Обновить каталог» для получения актуального списка.</p>
-        <button type="button" data-action="refresh-model-catalog" id="refreshModelCatalog" class="shrink-0 bg-gray-700 hover:bg-gray-600 border border-gray-600 px-2 py-1.5 rounded text-[11px] text-gray-200">Обновить каталог</button>
+        <button type="button" data-action="refresh-model-catalog" id="refreshModelCatalog" title="Обновить каталоги всех настроенных провайдеров; полезно для межпровайдерного резерва" class="shrink-0 bg-gray-700 hover:bg-gray-600 border border-gray-600 px-2 py-1.5 rounded text-[11px] text-gray-200">Обновить все</button>
       </div>
       <p id="providerHint" class="text-[11px] leading-relaxed text-gray-400">Выберите провайдера и модель. Ключи разных провайдеров сохраняются отдельно в этом браузере.</p>
       <a id="providerDocsLink" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-blue-300 underline underline-offset-2">Открыть страницу API-ключа</a> <a href="https://github.com/DorpNay/skills-github-pages/blob/main/PROVIDER_SETUP.md" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-cyan-300 underline underline-offset-2">Инструкция по подключению</a>
@@ -853,22 +853,22 @@ permalink: /
       const query = String($('modelSearch')?.value || '').trim().toLocaleLowerCase();
       let visible = query ? all.filter(item => (item.id + ' ' + item.label).toLocaleLowerCase().includes(query)) : all;
       const model = selectedModel || $('modelName').value || config.models[0][0];
-      if (model && !visible.some(item => item.id === model)) {
-        if (query && all.some(item => item.id === model)) visible = [{ id: model, label: model + ' · текущая модель' }, ...visible];
-        else if (!query && !all.some(item => item.id === model)) {
-          select.replaceChildren();
-          const option = document.createElement('option'); option.value = '__custom__'; option.textContent = 'Своя модель / сохранить введённое имя'; select.appendChild(option);
-          select.value = '__custom__';
-          updateModelCatalogStatus(provider);
-          return;
-        }
-      }
+      const modelIsListed = model && all.some(item => item.id === model);
+      const modelIsVisible = model && visible.some(item => item.id === model);
       select.replaceChildren();
+      if (model && !modelIsVisible) {
+        const option = document.createElement('option');
+        option.value = '__custom__';
+        option.textContent = modelIsListed
+          ? 'Текущая модель вне фильтра: ' + model
+          : 'Текущая / ручная модель: ' + model;
+        select.appendChild(option);
+      }
       for (const item of visible.slice(0, MODEL_CATALOG_MAX_ITEMS + 4)) {
         const option = document.createElement('option'); option.value = item.id; option.textContent = item.label; select.appendChild(option);
       }
       if (!select.options.length) {
-        const option = document.createElement('option'); option.value = '__custom__'; option.textContent = 'Совпадений нет — оставьте модель вручную'; select.appendChild(option);
+        const option = document.createElement('option'); option.value = '__custom__'; option.textContent = query ? 'Совпадений нет — введите модель вручную' : 'Своя модель / ввести имя вручную'; select.appendChild(option);
       }
       if ([...select.options].some(option => option.value === model)) select.value = model;
       else if ([...select.options].some(option => option.value === '__custom__')) select.value = '__custom__';
@@ -944,7 +944,7 @@ permalink: /
       $('allowCrossProviderFallback').checked = safeGet(STORAGE.crossProviderFallback) === 'true';
       $('offlineToggle').setAttribute('aria-pressed',String(safeGet(STORAGE.offline)==='true'));
       updateOfflineUI(); updateModeUI(); refreshApiKeyLamp();
-      if (provider === 'pollinations' || getProviderRequestKey(provider)) void refreshModelCatalog({ quiet: true, force: false, provider });
+      void refreshConnectedModelCatalogs({ quiet: true, force: false, includeOtherProviders: safeGet(STORAGE.crossProviderFallback) === 'true' });
     }
     function updateModeUI() {
       const fast = processingMode === 'fast';
@@ -1004,7 +1004,8 @@ permalink: /
       $('systemPromptInput').readOnly=true;$('editSystemPrompt').setAttribute('aria-pressed','false');$('editSystemPrompt').textContent='✎';
       $('promptEditHint').textContent='Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.';
       refreshApiKeyLamp();showToast('Настройки сохранены');
-      if (getProviderRequestKey(provider) || provider === 'pollinations') void refreshModelCatalog({ quiet: true, force: false, provider });
+      if ($('allowCrossProviderFallback').checked) void refreshConnectedModelCatalogs({ quiet: true, force: false });
+      else if (getProviderRequestKey(provider) || provider === 'pollinations') void refreshModelCatalog({ quiet: true, force: false, provider });
     }
 
     function buildApiUrl(baseUrl) { return `${baseUrl.replace(/\/+$/,'')}/chat/completions`; }
@@ -1028,9 +1029,12 @@ permalink: /
         if (provider === currentProvider()) $('modelCatalogStatus').textContent = 'Для каталога этой конфигурации нужен корректный Base URL / Cloudflare Account ID.';
         return { count: 0, error: 'missing-endpoint' };
       }
+      const manageButton = options.manageButton !== false;
       if (provider === currentProvider()) {
-        $('refreshModelCatalog').disabled = true;
-        $('refreshModelCatalog').textContent = 'Загрузка…';
+        if (manageButton) {
+          $('refreshModelCatalog').disabled = true;
+          $('refreshModelCatalog').textContent = 'Загрузка…';
+        }
         $('modelCatalogStatus').textContent = 'Запрашиваю актуальный каталог моделей…';
       }
       const controller = new AbortController();
@@ -1072,11 +1076,49 @@ permalink: /
         return { count: cached?.models?.length || 0, error: String(error?.message || 'catalog-error'), stale: true };
       } finally {
         clearTimeout(timeoutId);
-        if (provider === currentProvider()) {
+        if (provider === currentProvider() && manageButton) {
           $('refreshModelCatalog').disabled = false;
-          $('refreshModelCatalog').textContent = 'Обновить каталог';
+          $('refreshModelCatalog').textContent = 'Обновить все';
         }
       }
+    }
+    async function refreshConnectedModelCatalogs(options = {}) {
+      const quiet = options.quiet !== false;
+      const force = options.force === true;
+      const current = currentProvider();
+      const candidateProviders = options.includeOtherProviders === false ? [current] : Object.keys(PROVIDERS);
+      const providers = candidateProviders.filter(provider => {
+        if (provider === 'custom') return provider === current && Boolean($('apiKey').value.trim() || getProviderRequestKey(provider));
+        if (provider === 'pollinations') return Boolean(safeGet(providerKeyStorage(provider)) || getProviderRequestKey(provider));
+        return Boolean((provider === current ? $('apiKey').value.trim() : '') || getProviderRequestKey(provider));
+      });
+      if (!providers.length) {
+        updateModelCatalogStatus(current);
+        if (!quiet) showToast('Сначала сохраните ключ хотя бы одного провайдера.', 'error');
+        return { refreshed: 0, available: 0, skipped: 0 };
+      }
+      const button = $('refreshModelCatalog');
+      if (button) { button.disabled = true; button.textContent = 'Каталоги 0/' + providers.length; }
+      let nextIndex = 0, finished = 0, available = 0;
+      const results = new Array(providers.length);
+      const worker = async () => {
+        while (nextIndex < providers.length) {
+          const index = nextIndex++, provider = providers[index];
+          results[index] = await refreshModelCatalog({ provider, quiet: true, force, manageButton: false });
+          if (results[index]?.count > 0 && !results[index]?.stale) available++;
+          finished++;
+          if (button) button.textContent = 'Каталоги ' + finished + '/' + providers.length;
+        }
+      };
+      try {
+        await Promise.all(Array.from({ length: Math.min(2, providers.length) }, () => worker()));
+      } finally {
+        if (button) { button.disabled = false; button.textContent = 'Обновить все'; }
+        updateModelCatalogStatus(current);
+      }
+      const refreshed = results.filter(result => result && !result.cached && result.count > 0 && !result.stale).length;
+      if (!quiet) showToast('Каталоги провайдеров: ' + available + '/' + providers.length + ' актуальны; обновлено сейчас: ' + refreshed + '.');
+      return { refreshed, available, skipped: providers.length - available, results };
     }
     function updateApiKeyLamp(state,message){const shell=$('apiKeyShell'),status=$('apiKeyStatus');if(!shell||!status)return;shell.dataset.state=state;status.textContent=message;}
     async function providerKeyFingerprint(value) {
@@ -1950,7 +1992,7 @@ permalink: /
             break;
           case 'toggle-settings': toggleSettings(true); break;
           case 'test-connection': await testProviderConnection(); break;
-          case 'refresh-model-catalog': await refreshModelCatalog({ quiet: false, force: true }); break;
+          case 'refresh-model-catalog': await refreshConnectedModelCatalogs({ quiet: false, force: true }); break;
           case 'clear-provider-key': clearProviderKey(); break;
           case 'connect-pollinations': await beginPollinationsOAuth(); break;
           case 'disconnect-pollinations': clearPollinationsSession(); refreshApiKeyLamp(); showToast('Pollinations-сессия завершена для этой вкладки.'); break;

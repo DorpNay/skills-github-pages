@@ -33,6 +33,8 @@ const suites = {
       includes('async function runMultiAgentResearch', 'Multi-agent research needs its own staged pipeline.');
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
       includes('async function refreshModelCatalog(options = {})', 'Provider model catalogs must be refreshed through the bounded safe loader.');
+      includes('async function refreshConnectedModelCatalogs(options = {})', 'Connected provider catalogs must refresh for the cross-provider fallback.');
+      includes('const modelIsListed = model && all.some(item => item.id === model);', 'A missing saved model must not hide all discovered model options.');
       includes('function normalizeModelCatalog(payload, provider)', 'Dynamic models must be normalized and filtered before entering the UI.');
       includes('function getProviderFallbackModelIds(provider, primary, limit = MODEL_CATALOG_FALLBACK_LIMIT)', 'Auto fallback must share the bounded model inventory.');
       includes('const MODEL_CATALOG_MAX_ITEMS = 250', 'Dynamic catalog rendering must be capped for mobile browsers.');
