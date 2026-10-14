@@ -149,7 +149,7 @@ test('multi-agent preference skips a greeting and shows the actual route', async
     calls++;
     await route.fulfill({
       status: 200, contentType: 'application/json',
-      body: JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'Привет! Рад помочь.' } }] })
+      body: JSON.stringify({ model: 'e2e-actual-model', choices: [{ message: { role: 'assistant', content: 'Привет! Рад помочь.' } }] })
     });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
@@ -164,7 +164,7 @@ test('multi-agent preference skips a greeting and shows the actual route', async
   await page.locator('#userInput').fill('Привет!');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Привет! Рад помочь.');
-  await expect(page.locator('#chatBox')).toContainText('Свой API · e2e-model');
+  await expect(page.locator('#chatBox')).toContainText('Свой API · e2e-actual-model (запрошена e2e-model)');
   await expect.poll(() => calls).toBe(1);
 });
 
