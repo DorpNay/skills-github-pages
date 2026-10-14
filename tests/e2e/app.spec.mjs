@@ -321,6 +321,9 @@ test('research trace supports a structured JSON download', async ({ page }) => {
   }, trace);
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="open-trace"][data-trace-id="e2e-json-trace"]').click();
+  await expect(page.locator('#traceContent')).toContainText('Метаданные промпта');
+  await expect(page.locator('#traceContent a')).toHaveAttribute('href', 'https://example.test/docs');
+  await expect(page.locator('#traceContent')).toContainText('Short source excerpt.');
   const downloadPromise = page.waitForEvent('download');
   await page.locator('[data-action="download-trace-json"]').click();
   const download = await downloadPromise;
@@ -330,6 +333,9 @@ test('research trace supports a structured JSON download', async ({ page }) => {
   expect(exportData.trace.id).toBe('e2e-json-trace');
   expect(exportData.trace.routes[0].provider).toBe('groq');
   expect(exportData.trace.finalText).toBe('Final result');
+  expect(exportData.trace.promptFingerprint).toBe('a'.repeat(64));
+  expect(exportData.trace.promptCharCount).toBe(1200);
+  expect(exportData.trace.sources[0].url).toBe('https://example.test/docs');
 });
 
 test('multi-agent preference skips a greeting and shows the actual route', async ({ page }) => {
