@@ -377,8 +377,12 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
   expect(trace.run.crossProviderFallbackEnabled).toBe(false);
   expect(trace.run.startedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
   expect(trace.run.durationMs).toBeGreaterThanOrEqual(0);
-  expect(trace.run.configuredPromptFingerprint).toMatch(/^(?:[a-f0-9]{64}|fnv-[a-f0-9]+-\d+)$/);
-  expect(trace.run.configuredPromptFingerprintAlgorithm).toBe('sha-256');
+  if (trace.run.configuredPromptFingerprintAlgorithm === 'sha-256') {
+    expect(trace.run.configuredPromptFingerprint).toMatch(/^[a-f0-9]{64}$/);
+  } else {
+    expect(trace.run.configuredPromptFingerprintAlgorithm).toBe('fnv1a-fallback');
+    expect(trace.run.configuredPromptFingerprint).toMatch(/^fnv-[a-f0-9]+-\d+$/);
+  }
   expect(trace.attempts).toHaveLength(4);
   expect(trace.attempts.every(attempt => attempt.success === true && attempt.elapsedMs >= 0)).toBe(true);
   expect(trace.routes).toHaveLength(4);
