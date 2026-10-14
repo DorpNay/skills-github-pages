@@ -944,7 +944,7 @@ permalink: /
       $('allowCrossProviderFallback').checked = safeGet(STORAGE.crossProviderFallback) === 'true';
       $('offlineToggle').setAttribute('aria-pressed',String(safeGet(STORAGE.offline)==='true'));
       updateOfflineUI(); updateModeUI(); refreshApiKeyLamp();
-      void refreshConnectedModelCatalogs({ quiet: true, force: false });
+      void refreshConnectedModelCatalogs({ quiet: true, force: false, includeOtherProviders: safeGet(STORAGE.crossProviderFallback) === 'true' });
     }
     function updateModeUI() {
       const fast = processingMode === 'fast';
@@ -1086,7 +1086,8 @@ permalink: /
       const quiet = options.quiet !== false;
       const force = options.force === true;
       const current = currentProvider();
-      const providers = Object.keys(PROVIDERS).filter(provider => {
+      const candidateProviders = options.includeOtherProviders === false ? [current] : Object.keys(PROVIDERS);
+      const providers = candidateProviders.filter(provider => {
         if (provider === 'custom') return provider === current && Boolean($('apiKey').value.trim() || getProviderRequestKey(provider));
         if (provider === 'pollinations') return Boolean(safeGet(providerKeyStorage(provider)) || getProviderRequestKey(provider));
         return Boolean((provider === current ? $('apiKey').value.trim() : '') || getProviderRequestKey(provider));
