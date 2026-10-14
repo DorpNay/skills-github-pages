@@ -1,6 +1,6 @@
 ---
 layout: null
-title: AI Mobile Agent v9.0
+title: AI Mobile Agent v10.0
 permalink: /
 ---
 
@@ -8,15 +8,42 @@ permalink: /
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#111827">
+  <meta name="theme-color" content="#0a1220">
   <meta name="color-scheme" content="dark">
-  <title>AI Mobile Agent v9.0</title>
+  <title>AI Mobile Agent v10.0</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked@18.0.14/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js"></script>
   <style>
-    :root { color-scheme: dark; }
+    :root { color-scheme: dark; --ink: #e8eefc; --panel: #101827; --line: #273349; }
     html, body { height: 100%; }
+    body { background: radial-gradient(ellipse at 12% 0%, rgb(37 66 108 / 24%), transparent 36%), radial-gradient(ellipse at 95% 70%, rgb(26 85 74 / 12%), transparent 32%), linear-gradient(150deg, #080d17, #101827 55%, #0a1220); }
+    #settingsModal > .settings-surface { background: rgb(13 20 33 / 96%); border-color: rgb(96 165 250 / 24%); box-shadow: 0 24px 80px rgb(0 0 0 / 45%), 0 0 28px rgb(96 165 250 / 6%); backdrop-filter: blur(18px); }
+    #settingsModal label { letter-spacing: .015em; }
+    #settingsModal input, #settingsModal textarea, #settingsModal select { background: rgb(6 12 22 / 82%); border-color: #344158; }
+    #settingsModal input:focus, #settingsModal textarea:focus, #settingsModal select:focus { border-color: #7dd3fc; box-shadow: 0 0 0 1px rgb(125 211 252 / 18%), 0 0 18px rgb(96 165 250 / 11%); }
+    .ambient-control { border: 1px solid rgb(96 165 250 / 24%); background: linear-gradient(135deg, rgb(30 41 59 / 94%), rgb(12 20 34 / 94%)); box-shadow: inset 0 1px rgb(255 255 255 / 3%); }
+    .ambient-control[aria-pressed="true"] { color: #fef3c7; border-color: rgb(251 191 36 / 50%); box-shadow: inset 0 0 14px rgb(251 191 36 / 8%), 0 0 14px rgb(251 191 36 / 8%); }
+    .api-key-row { display: flex; align-items: center; gap: .55rem; border: 1px solid #344158; border-radius: .7rem; padding: .35rem .55rem; background: rgb(6 12 22 / 82%); transition: border-color .2s ease, box-shadow .2s ease; }
+    .api-key-row #apiKey { min-width: 0; flex: 1; border: 0; box-shadow: none; background: transparent; padding: .4rem .1rem; }
+    .api-key-row:focus-within { border-color: #7dd3fc; box-shadow: 0 0 0 1px rgb(125 211 252 / 12%); }
+    .api-key-row[data-state="pending"] { border-color: rgb(251 191 36 / 52%); box-shadow: inset 0 0 20px rgb(251 191 36 / 5%), 0 0 16px rgb(251 191 36 / 8%); }
+    .api-key-row[data-state="connected"] { border-color: rgb(74 222 128 / 65%); box-shadow: inset 0 0 22px rgb(74 222 128 / 7%), 0 0 18px rgb(74 222 128 / 11%); }
+    .api-key-row[data-state="error"] { border-color: rgb(248 113 113 / 72%); box-shadow: inset 0 0 20px rgb(248 113 113 / 5%), 0 0 15px rgb(248 113 113 / 10%); }
+    .key-lamp { width: .63rem; height: .63rem; flex: 0 0 .63rem; border-radius: 50%; background: #64748b; box-shadow: 0 0 0 3px rgb(100 116 139 / 9%); }
+    [data-state="pending"] .key-lamp { background: #fbbf24; box-shadow: 0 0 8px rgb(251 191 36 / 80%), 0 0 18px rgb(251 191 36 / 24%); }
+    [data-state="connected"] .key-lamp { background: #4ade80; box-shadow: 0 0 8px rgb(74 222 128 / 90%), 0 0 20px rgb(74 222 128 / 30%); }
+    [data-state="error"] .key-lamp { background: #f87171; box-shadow: 0 0 8px rgb(248 113 113 / 85%); }
+    .prompt-editor { position: relative; }
+    .prompt-editor textarea { padding-right: 3.2rem; }
+    .prompt-editor textarea[readonly] { cursor: default; opacity: .82; }
+    .prompt-pencil { position: absolute; right: .45rem; top: .45rem; width: 2.2rem; height: 2.2rem; border-radius: .6rem; border: 1px solid #344158; background: #111c2d; color: #bfdbfe; }
+    .prompt-pencil[aria-pressed="true"] { border-color: rgb(74 222 128 / 55%); color: #bbf7d0; box-shadow: 0 0 14px rgb(74 222 128 / 9%); }
+    .message-model-meta { color: #93a4bd; font-size: .67rem; line-height: 1.3; padding: .15rem .25rem; opacity: .9; }
+    .message-model-meta::before { content: "●"; display: inline-block; margin-right: .4rem; color: #4ade80; font-size: .58rem; text-shadow: 0 0 8px rgb(74 222 128 / 45%); }
+    #thinkingTime { color: #a5b4fc; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    #statusText { color: transparent; background: linear-gradient(100deg, #bfdbfe 5%, #c4b5fd 42%, #6ee7b7 70%, #bfdbfe 95%); background-size: 220% 100%; background-clip: text; -webkit-background-clip: text; animation: status-sheen 4.5s ease-in-out infinite; }
+    @keyframes status-sheen { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100dvh; min-height: 0; overflow: hidden; }
     button, input, textarea { font: inherit; }
     button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; }
@@ -85,7 +112,7 @@ permalink: /
   <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 hidden" aria-hidden="true"></div>
 
   <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-    <div class="bg-gray-800 p-4 rounded-xl max-w-sm mx-auto w-full border border-gray-700 space-y-2.5 my-auto max-h-[90dvh] overflow-y-auto">
+    <div class="settings-surface bg-gray-800 p-4 rounded-xl max-w-sm mx-auto w-full border border-gray-700 space-y-2.5 my-auto max-h-[90dvh] overflow-y-auto">
       <h2 id="settingsTitle" class="text-lg font-bold">⚙️ Настройки</h2>
       <div class="rounded-lg bg-gray-900 border border-gray-700 p-2.5 text-xs leading-relaxed text-gray-300 space-y-2">
         <p><strong>Быстрый старт:</strong> по умолчанию выбран Gemini. Для альтернатив выберите провайдера и модель ниже; для каждого сервиса нужен свой API-ключ.</p>
@@ -95,22 +122,36 @@ permalink: /
       </div>
       <label for="providerPreset" class="block text-xs text-gray-400">Провайдер API</label>
       <select id="providerPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm">
-        <option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые открытые модели</option><option value="openrouter">OpenRouter · бесплатные модели</option><option value="nvidia">NVIDIA NIM · бесплатные endpoints</option><option value="huggingface">Hugging Face · каталог моделей</option><option value="custom">Свой OpenAI-совместимый API</option>
+        <option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="custom">Свой OpenAI-совместимый API</option>
       </select>
       <label for="modelPreset" class="block text-xs text-gray-400">Быстрый выбор модели</label>
       <select id="modelPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm"></select>
       <p id="providerHint" class="text-[11px] leading-relaxed text-gray-400">Выберите провайдера и модель. Ключи разных провайдеров сохраняются отдельно в этом браузере.</p>
-      <a id="providerDocsLink" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-blue-300 underline underline-offset-2">Открыть страницу API-ключа</a>
+      <a id="providerDocsLink" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-blue-300 underline underline-offset-2">Открыть страницу API-ключа</a> <a href="https://github.com/DorpNay/skills-github-pages/blob/main/PROVIDER_SETUP.md" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-cyan-300 underline underline-offset-2">Инструкция по подключению</a>
+      <div id="cloudflareAccountGroup" class="hidden space-y-1.5">
+        <label for="cloudflareAccountId" class="block text-xs text-gray-400">Cloudflare Account ID (32 hex-символа)</label>
+        <input type="text" id="cloudflareAccountId" inputmode="text" autocomplete="off" spellcheck="false" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Ваш Account ID из Cloudflare Dashboard">
+        <p class="text-[10px] leading-relaxed text-gray-500">Endpoint будет собран автоматически. Нужен API Token с разрешением Workers AI Read; Account ID не является секретом.</p>
+      </div>
       <label for="baseUrl" class="block text-xs text-gray-400">Base URL (без /chat/completions)</label>
       <input type="url" id="baseUrl" autocomplete="url" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
-      <label for="apiKey" class="block text-xs text-gray-400">API Key</label>
-      <input type="password" id="apiKey" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
+      <label for="apiKey" id="apiKeyLabel" class="block text-xs text-gray-400">API Key · ключ провайдера</label>
+      <div id="apiKeyShell" class="api-key-row" data-state="empty"><span class="key-lamp" aria-hidden="true"></span><input type="password" id="apiKey" autocomplete="off" aria-describedby="apiKeyStatus" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Вставьте ключ провайдера"></div>
+      <p id="apiKeyStatus" class="text-[11px] leading-relaxed text-gray-400" role="status" aria-live="polite">Серый — ключ не введён; янтарный — ключ задан, но не проверен; зелёный — последняя проверка прошла.</p>
+      <div id="pollinationsAuthGroup" class="hidden rounded-lg border border-cyan-900/60 bg-cyan-950/20 p-3 space-y-2">
+        <p class="text-[11px] leading-relaxed text-cyan-100/90">Для браузерного приложения Pollinations рекомендует App Key <code>pk_…</code> и OAuth PKCE. Временный ключ доступа <code>sk_…</code> хранится только в sessionStorage текущей вкладки, не в localStorage.</p>
+        <button type="button" data-action="connect-pollinations" class="w-full bg-cyan-900/50 hover:bg-cyan-800/70 border border-cyan-700/50 py-2 rounded-lg text-xs text-cyan-100">Подключить аккаунт Pollinations · PKCE</button>
+        <button type="button" data-action="disconnect-pollinations" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 py-1.5 rounded-lg text-[11px] text-gray-300">Завершить сессию Pollinations</button>
+      </div>
+      <div class="flex gap-2"><button type="button" data-action="test-connection" class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение и модель</button><button type="button" data-action="clear-provider-key" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
       <label for="modelName" class="block text-xs text-gray-400">Модель</label>
       <input type="text" id="modelName" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
       <label for="tavilyKey" class="block text-xs text-gray-400">Tavily Search API Key</label>
       <input type="password" id="tavilyKey" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
-      <label for="systemPromptInput" class="block text-xs text-gray-400">Системный промпт</label>
-      <textarea id="systemPromptInput" rows="4" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y"></textarea>
+      <div class="flex items-center justify-between gap-2"><label for="systemPromptInput" class="block text-xs text-gray-400">Системный промпт</label><span class="text-[10px] text-gray-500">редактирование по кнопке</span></div>
+      <div class="prompt-editor"><textarea id="systemPromptInput" rows="4" readonly aria-describedby="promptEditHint" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y"></textarea><button type="button" id="editSystemPrompt" data-action="edit-system-prompt" class="prompt-pencil" aria-pressed="false" aria-label="Редактировать системный промпт" title="Разрешить редактирование">✎</button></div>
+      <p id="promptEditHint" class="text-[11px] text-gray-500">Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.</p>
+      <label class="flex items-start gap-2 text-xs text-gray-300 mt-2"><input id="allowCrossProviderFallback" type="checkbox" class="mt-0.5 rounded bg-gray-800 border-gray-700"><span><strong>Разрешить резерв у другого провайдера</strong><span class="block text-[11px] leading-relaxed text-amber-200/80">По умолчанию выключено. При включении текст запроса и контекст могут передаваться другому сервису. Сначала система пробует модели выбранного провайдера.</span></span></label>
       <p class="text-[11px] leading-relaxed text-gray-400">Системные правила передаются модели с каждым API-вызовом — это нужно для совместимого Chat Completions API. Промпт намеренно компактный; история ограничена примерно 24 000 символами, а в запрос добавляются только совпадающие с темой заметки (до 4, максимум 1 200 символов).</p>
       <p class="text-[11px] leading-relaxed text-gray-400">Ключи хранятся в localStorage этого браузера и отправляются только тому API, к которому выполняется запрос. Но при автоматическом резервном переходе тот же запрос и его контекст могут уйти другому провайдеру с сохранённым ключом. Если это нежелательно, удалите ключи других провайдеров из настроек/хранилища. Не используйте ключи на общем устройстве. Некоторые API блокируют браузерные запросы (CORS); для них нужен защищённый серверный прокси, а не обход CORS в клиентском коде.</p>
       <button type="button" data-action="restore-defaults" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-200">Восстановить параметры Gemini</button>
@@ -136,16 +177,17 @@ permalink: /
         <button type="button" id="modeDeep" aria-pressed="false" class="flex-1 rounded-md px-2 py-1.5 text-gray-300">🔬 Глубоко</button>
       </div>
     </div>
-    <div class="flex justify-around text-xs gap-3">
-      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Tavily при наличии ключа плюс открытые источники знаний; независимо от режима и исследования."><input type="checkbox" id="toggleSearch" class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span>🌐 Интернет и источники</span></label>
-      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Отдельный конвейер из четырёх фаз/вызовов выбранной модели; не включает режим «Глубоко»."><input type="checkbox" id="toggleMultiAgent" class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span>🤖 Мультиагентное исследование</span></label>
+    <div class="flex flex-wrap items-center justify-between text-xs gap-3">
+      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Инструменты поиска доступны по умолчанию; модель использует их по необходимости."><input type="checkbox" id="toggleSearch" checked class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span>🌐 Интернет и источники</span></label>
+      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Режим доступен для сложных задач; приветствия и простые вопросы не запускают многоэтапный конвейер."><input type="checkbox" id="toggleMultiAgent" class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span>🤖 Умное исследование</span></label>
+      <button type="button" id="offlineToggle" data-action="toggle-offline" aria-pressed="false" class="ambient-control rounded-lg px-3 py-1.5 text-[11px] font-semibold" title="Выключает веб-поиск и внешние источники. Облачный API модели по-прежнему требует интернет-соединения.">◉ Оффлайн: выкл.</button>
     </div>
-    <p id="modeHint" class="text-[10px] text-gray-500 leading-relaxed">Быстро: минимум дополнительных этапов. Исследование включается отдельно.</p>
+    <p id="modeHint" class="text-[10px] text-gray-500 leading-relaxed">Онлайн включён по умолчанию; поиск будет использоваться, когда помогает ответу. Оффлайн отключает веб-инструменты, но не превращает облачный API в локальную модель.</p>
   </div>
 
   <main id="chatBox" class="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-sm" aria-live="polite" aria-label="Сообщения чата"></main>
   <div id="searchStatus" class="hidden px-4 py-2 bg-gray-800/80 border-t border-gray-700 text-xs text-blue-300 flex items-center gap-2 shrink-0" role="status" aria-live="polite">
-    <span class="animate-spin" aria-hidden="true">⏳</span><span id="statusText">Выполняется запрос...</span>
+    <span class="animate-spin" aria-hidden="true">⏳</span><span id="statusText">Выполняется запрос...</span><span id="thinkingTime" class="ml-auto text-[10px]">Прошло 00:00</span>
   </div>
   <footer class="px-3 py-2 bg-gray-800/95 border-t border-gray-700 shrink-0 safe-bottom">
     <div class="flex gap-2 items-end" id="inputArea">
@@ -173,7 +215,7 @@ permalink: /
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
       tavilyKey: 'ai_tavily_key', systemPrompt: 'ai_system_prompt',
-      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', provider: 'ai_api_provider'
+      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider', cloudflareAccountId: 'ai_cloudflare_account_id'
     };
     const LEGACY_DEFAULT_SYSTEM = 'Ты автономный ИИ-ассистент. Отвечай ясно, проверяй предположения и выдавай структурированные отчёты. Если включён веб-поиск, используй его для актуальной информации.';
     const DEFAULT_SYSTEM = [
@@ -185,13 +227,16 @@ permalink: /
       'Перед необратимыми или внешне значимыми действиями запрашивай подтверждение. Не заявляй, что что-либо запущено, сохранено или проверено, если этого не подтверждают доступные результаты.'
     ].join(' ');
     const DEFAULT_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/openai';
-    const DEFAULT_MODEL = 'gemini-3.6-flash';
+    const DEFAULT_MODEL = 'gemini-3.8-flash';
     const PROVIDERS = {
-      gemini: { label: 'Google AI Studio · Gemini', docsUrl: 'https://aistudio.google.com/apikey', baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai', models: [['gemini-3.6-flash','Gemini 3.6 Flash · стабильная'], ['gemini-3.5-flash','Gemini 3.5 Flash'], ['gemini-2.5-flash','Gemini 2.5 Flash']] },
-      groq: { label: 'Groq', docsUrl: 'https://console.groq.com/keys', baseUrl: 'https://api.groq.com/openai/v1', models: [['openai/gpt-oss-120b','GPT-OSS 120B'], ['qwen/qwen3.8-27b','Qwen 3.8 27B']] },
+      gemini: { label: 'Google AI Studio · Gemini', docsUrl: 'https://aistudio.google.com/apikey', baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai', models: [['gemini-3.8-flash','Gemini 3.8 Flash · стабильная'], ['gemini-3.6-flash','Gemini 3.6 Flash · стабильная'], ['gemini-3.5-flash-lite','Gemini 3.5 Flash-Lite · стабильная']] },
+      groq: { label: 'Groq', docsUrl: 'https://console.groq.com/keys', baseUrl: 'https://api.groq.com/openai/v1', models: [['openai/gpt-oss-120b','GPT-OSS 120B · agentic'], ['qwen/qwen3.8-27b','Qwen 3.8 27B · reasoning'], ['openai/gpt-oss-20b','GPT-OSS 20B · fast']] },
+      xai: { label: 'xAI · Grok', docsUrl: 'https://console.x.ai/', baseUrl: 'https://api.x.ai/v1', models: [['grok-4.7','Grok 4.7'], ['grok-4.6','Grok 4.6']] },
+      pollinations: { label: 'Pollinations.ai', docsUrl: 'https://gen.pollinations.ai/docs', baseUrl: 'https://gen.pollinations.ai/v1', models: [['openai/gpt-5.4-nano','GPT-5.4 Nano · default'], ['deepseek/deepseek-v4-flash','DeepSeek V4 Flash'], ['x-ai/grok-4.7','Grok 4.7 через Pollinations'], ['google/gemini-3.8-flash','Gemini 3.8 Flash через Pollinations']] },
+      cloudflare: { label: 'Cloudflare Workers AI', docsUrl: 'https://developers.cloudflare.com/workers-ai/configuration/open-ai-compatibility/', baseUrl: '', models: [['@cf/openai/gpt-oss-120b','GPT-OSS 120B · reasoning'], ['@cf/openai/gpt-oss-20b','GPT-OSS 20B · lighter'], ['@cf/meta/llama-3.3-70b-instruct-fp8-fast','Llama 3.3 70B · fast']] },
       openrouter: { label: 'OpenRouter', docsUrl: 'https://openrouter.ai/settings/keys', baseUrl: 'https://openrouter.ai/api/v1', models: [['openrouter/free','Автовыбор бесплатной модели'], ['deepseek/deepseek-r1:free','DeepSeek R1 · free (если доступна)']] },
       nvidia: { label: 'NVIDIA NIM', docsUrl: 'https://build.nvidia.com/settings', baseUrl: 'https://integrate.api.nvidia.com/v1', models: [['z-ai/glm-5.3','GLM-5.3 · reasoning/coding'], ['openai/gpt-oss-20b','GPT-OSS 20B · reasoning']] },
-      huggingface: { label: 'Hugging Face', docsUrl: 'https://huggingface.co/settings/tokens', baseUrl: 'https://router.huggingface.co/v1', models: [['openai/gpt-oss-120b:fastest','GPT-OSS 120B · fastest provider'], ['deepseek-ai/DeepSeek-V3-0324:fastest','DeepSeek V3 · fastest provider']] },
+      huggingface: { label: 'Hugging Face Inference Providers', docsUrl: 'https://huggingface.co/settings/tokens', baseUrl: 'https://router.huggingface.co/v1', models: [['openai/gpt-oss-120b:fastest','GPT-OSS 120B · fastest'], ['deepseek-ai/DeepSeek-R1:fastest','DeepSeek R1 · fastest'], ['openai/gpt-oss-120b:cheapest','GPT-OSS 120B · cheapest']] },
       custom: { label: 'Свой API', baseUrl: '', docsUrl: '', models: [['custom','Ввести имя модели вручную']] }
     };
     const MAX_TOOL_ROUNDS = 4;
@@ -221,12 +266,96 @@ permalink: /
       return Object.prototype.hasOwnProperty.call(PROVIDERS, value) ? value : 'gemini';
     }
     function providerKeyStorage(provider) { return 'ai_api_key_' + provider; }
-    function getConfiguredApiKey() {
-      const provider = currentProvider();
+    const POLLINATIONS_SESSION = {
+      token: 'ai_pollinations_access_token_v1', expiresAt: 'ai_pollinations_access_expires_at_v1',
+      state: 'ai_pollinations_oauth_state_v1', verifier: 'ai_pollinations_pkce_verifier_v1',
+      redirectUri: 'ai_pollinations_redirect_uri_v1', clientId: 'ai_pollinations_client_id_v1'
+    };
+    function safeGet(key) { try { return localStorage.getItem(key); } catch (_) { return null; } }
+    function safeSessionGet(key) { try { return sessionStorage.getItem(key); } catch (_) { return null; } }
+    function safeSessionSet(key,value) { try { sessionStorage.setItem(key,String(value)); return true; } catch (_) { return false; } }
+    function safeSessionRemove(key) { try { sessionStorage.removeItem(key); } catch (_) {} }
+    function clearPollinationsSession() { Object.values(POLLINATIONS_SESSION).forEach(safeSessionRemove); safeSet('ai_provider_connection_pollinations',''); }
+    function getProviderRequestKey(provider) {
+      if (provider === 'pollinations') {
+        const token=safeSessionGet(POLLINATIONS_SESSION.token), expiry=Number(safeSessionGet(POLLINATIONS_SESSION.expiresAt)||0);
+        if(token&&expiry>Date.now()+15000) return token;
+        if(token) clearPollinationsSession();
+        return '';
+      }
       return safeGet(providerKeyStorage(provider)) || (provider === 'gemini' ? safeGet(STORAGE.apiKey) : '') || '';
     }
-    function safeGet(key) {
-      try { return localStorage.getItem(key); } catch (_) { return null; }
+    function getConfiguredApiKey() { return getProviderRequestKey(currentProvider()); }
+    function getProviderBaseUrl(provider) {
+      if (provider === 'cloudflare') {
+        const accountId=String(safeGet(STORAGE.cloudflareAccountId)||$('cloudflareAccountId')?.value||'').trim();
+        return /^[a-f0-9]{32}$/i.test(accountId) ? `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1` : '';
+      }
+      return (PROVIDERS[provider]?.baseUrl||'').replace(/\/+$/,'');
+    }
+    function randomBase64Url(bytes=32) {
+      const data=new Uint8Array(bytes); crypto.getRandomValues(data);
+      let binary=''; for(const value of data) binary+=String.fromCharCode(value);
+      return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    }
+    async function beginPollinationsOAuth() {
+      const appKey=$('apiKey').value.trim()||safeGet(providerKeyStorage('pollinations'))||'';
+      if(!/^pk_[A-Za-z0-9_-]+$/.test(appKey)) {
+        showToast('Нужен Pollinations App Key с префиксом pk_. Создайте его на enter.pollinations.ai/keys.', 'error'); return;
+      }
+      if(!crypto?.subtle||!crypto?.getRandomValues) { showToast('Этот браузер не поддерживает безопасный PKCE; откройте сайт по HTTPS в актуальном браузере.', 'error'); return; }
+      const redirect=new URL(location.href); redirect.search=''; redirect.hash='';
+      const redirectUri=redirect.toString(),state=randomBase64Url(32),verifier=randomBase64Url(48);
+      const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier));
+      let binary=''; for(const value of new Uint8Array(digest)) binary+=String.fromCharCode(value);
+      const challenge=btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+      const stored=[
+        safeSet(providerKeyStorage('pollinations'),appKey),
+        safeSet(STORAGE.provider,'pollinations'),
+        safeSet(STORAGE.model,$('modelName').value.trim()||PROVIDERS.pollinations.models[0][0]),
+        safeSet(STORAGE.baseUrl,PROVIDERS.pollinations.baseUrl),
+        safeSessionSet(POLLINATIONS_SESSION.state,state),
+        safeSessionSet(POLLINATIONS_SESSION.verifier,verifier),
+        safeSessionSet(POLLINATIONS_SESSION.redirectUri,redirectUri),
+        safeSessionSet(POLLINATIONS_SESSION.clientId,appKey)
+      ].every(Boolean);
+      if(!stored) { showToast('Не удалось подготовить защищённую OAuth-сессию. Проверьте настройки приватности браузера.', 'error'); return; }
+      const params=new URLSearchParams({response_type:'code',client_id:appKey,redirect_uri:redirectUri,models:'text',budget:'5',expiry:'7',state,code_challenge:challenge,code_challenge_method:'S256'});
+      location.assign('https://enter.pollinations.ai/authorize?'+params.toString());
+    }
+    async function finishPollinationsOAuth() {
+      const callback=new URL(location.href),code=callback.searchParams.get('code'),error=callback.searchParams.get('error');
+      if(!code&&!error) return '';
+      const cleanUrl=new URL(safeSessionGet(POLLINATIONS_SESSION.redirectUri)||location.href); cleanUrl.search=''; cleanUrl.hash='';
+      if(error) { history.replaceState(null,'',cleanUrl.toString()); clearPollinationsSession(); return 'Авторизация Pollinations отменена или отклонена: '+String(error).slice(0,90); }
+      const state=callback.searchParams.get('state'),expectedState=safeSessionGet(POLLINATIONS_SESSION.state);
+      const verifier=safeSessionGet(POLLINATIONS_SESSION.verifier),clientId=safeSessionGet(POLLINATIONS_SESSION.clientId)||safeGet(providerKeyStorage('pollinations'))||'';
+      const redirectUri=safeSessionGet(POLLINATIONS_SESSION.redirectUri)||'';
+      history.replaceState(null,'',cleanUrl.toString());
+      if(!state||!expectedState||state!==expectedState||!verifier||!redirectUri||!clientId) {
+        clearPollinationsSession(); return 'Не удалось подтвердить state/PKCE Pollinations. Начните подключение заново.';
+      }
+      try {
+        const response=await fetch('https://enter.pollinations.ai/api/oauth/token',{
+          method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'},
+          body:new URLSearchParams({grant_type:'authorization_code',code,client_id:clientId,redirect_uri:redirectUri,code_verifier:verifier})
+        });
+        const payload=await response.json().catch(()=>({}));
+        if(!response.ok||typeof payload.access_token!=='string'||!payload.access_token) {
+          clearPollinationsSession();
+          const safeDetail=String(payload.error_description||payload.error||'неизвестная ошибка').slice(0,120);
+          return 'Pollinations не выдал токен доступа: '+safeDetail+'. Проверьте зарегистрированный Redirect URI.';
+        }
+        const lifetime=Math.max(60,Number(payload.expires_in)||604800);
+        if(!safeSessionSet(POLLINATIONS_SESSION.token,payload.access_token)||!safeSessionSet(POLLINATIONS_SESSION.expiresAt,String(Date.now()+lifetime*1000))) {
+          clearPollinationsSession(); return 'Браузер запретил sessionStorage: Pollinations-сессия не сохранена.';
+        }
+        safeSessionRemove(POLLINATIONS_SESSION.state);safeSessionRemove(POLLINATIONS_SESSION.verifier);safeSessionRemove(POLLINATIONS_SESSION.clientId);safeSessionRemove(POLLINATIONS_SESSION.redirectUri);
+        safeSet('ai_provider_connection_pollinations','');
+        return 'Pollinations подключён на эту вкладку. Нажмите «Проверить соединение и модель».';
+      } catch (_) {
+        clearPollinationsSession(); return 'Не удалось обменять OAuth-код Pollinations: ошибка сети/CORS.';
+      }
     }
     let toastTimer = null, toastHideTimer = null;
     function showToast(message, kind = 'success') {
@@ -298,6 +427,8 @@ permalink: /
               content: typeof m.content === 'string' ? m.content : '',
               ...(typeof m.tool_call_id === 'string' ? { tool_call_id: m.tool_call_id } : {}),
               ...(Array.isArray(m.tool_calls) ? { tool_calls: m.tool_calls } : {}),
+              ...(m.providerInfo && typeof m.providerInfo==='object' ? { providerInfo:{provider:String(m.providerInfo.provider||''),providerLabel:String(m.providerInfo.providerLabel||'').slice(0,120),model:String(m.providerInfo.model||'').slice(0,160),requestedModel:String(m.providerInfo.requestedModel||'').slice(0,160),stage:String(m.providerInfo.stage||'').slice(0,120),at:String(m.providerInfo.at||'')} } : {}),
+              ...(m.researchTrace && typeof m.researchTrace.id==='string' ? { researchTrace:{id:m.researchTrace.id} } : {}),
               ...(m.error ? { error: true } : {})
             }))
           }));
@@ -495,6 +626,7 @@ permalink: /
         bubble.appendChild(content);
       }
       row.appendChild(bubble);
+      if (!isUser && message.providerInfo) { const meta=document.createElement('div'); meta.className='message-model-meta'; const r=message.providerInfo; meta.textContent=(r.providerLabel||r.provider||'Провайдер неизвестен')+' · '+(r.model||'модель не указана')+(r.requestedModel&&r.requestedModel!==r.model?' (запрошена '+r.requestedModel+')':''); row.className+=' flex-col items-start'; row.appendChild(meta); }
       if (!isUser && message.researchTrace) {
         const actions = document.createElement('div'); actions.className = 'flex flex-wrap gap-2 mt-1';
         const button = document.createElement('button'); button.type = 'button'; button.dataset.action = 'open-trace'; button.dataset.traceId = message.researchTrace.id || '';
@@ -580,10 +712,9 @@ permalink: /
       overlay.classList.toggle('hidden', !open);
     }
     function toggleSettings(force) {
-      const modal = $('settingsModal');
-      const open = typeof force === 'boolean' ? force : modal.classList.contains('hidden');
-      modal.classList.toggle('hidden', !open);
-      if (open) $('baseUrl').focus();
+      const modal=$('settingsModal'),open=typeof force==='boolean'?force:modal.classList.contains('hidden');
+      modal.classList.toggle('hidden',!open);
+      if(open){$('systemPromptInput').readOnly=true;$('editSystemPrompt').setAttribute('aria-pressed','false');$('editSystemPrompt').textContent='✎';$('promptEditHint').textContent='Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.';refreshApiKeyLamp();}
     }
     function populateModelPresets(provider, selectedModel = '') {
       const select = $('modelPreset'), config = PROVIDERS[provider] || PROVIDERS.custom;
@@ -594,26 +725,41 @@ permalink: /
       else { const option=document.createElement('option'); option.value='__custom__'; option.textContent='Своя модель / сохранить введённое имя'; select.appendChild(option); select.value='__custom__'; }
     }
     function applyProviderPreset(provider, initial = false) {
-      const config = PROVIDERS[provider] || PROVIDERS.custom;
-      if (!initial) {
-        const oldProvider = safeGet(STORAGE.provider) || 'gemini', oldKey = $('apiKey').value.trim();
-        if (oldKey) safeSet(providerKeyStorage(oldProvider), oldKey);
+      const config=PROVIDERS[provider]||PROVIDERS.custom;
+      if(!initial){
+        const oldProvider=safeGet(STORAGE.provider)||'gemini',oldKey=$('apiKey').value.trim();
+        if(oldKey)safeSet(providerKeyStorage(oldProvider),oldKey);
       }
-      safeSet(STORAGE.provider, provider);
-      if (!initial && provider !== 'custom') { $('baseUrl').value=config.baseUrl; $('modelName').value=config.models[0][0]; }
-      if (initial && provider !== 'custom' && !safeGet(STORAGE.baseUrl)) $('baseUrl').value=config.baseUrl;
-      $('apiKey').value = safeGet(providerKeyStorage(provider)) || (provider === 'gemini' ? safeGet(STORAGE.apiKey) : '') || '';
-      $('providerHint').textContent = provider === 'custom'
-        ? 'Введите Base URL, имя модели и ключ вашего OpenAI-совместимого API. Совместимость и CORS зависят от поставщика.'
-        : config.label + ': проверьте модели, тариф и ограничения в официальной документации. Ключ вводится отдельно для каждого провайдера. Пустое поле означает, что ключ не сохранён для выбранного провайдера; ключи других провайдеров сохраняются отдельно. При резервном переходе запрос и контекст могут быть отправлены другому провайдеру с сохранённым ключом.';
-      const docs = $('providerDocsLink');
-      if (config.docsUrl) { docs.href = config.docsUrl; docs.classList.remove('hidden'); }
-      else docs.classList.add('hidden');
-      populateModelPresets(provider, $('modelName').value);
-      if (!initial) {
-        safeSet(STORAGE.baseUrl, $('baseUrl').value);
-        safeSet(STORAGE.model, $('modelName').value);
-      }
+      safeSet(STORAGE.provider,provider);
+      $('cloudflareAccountGroup').classList.toggle('hidden',provider!=='cloudflare');
+      $('pollinationsAuthGroup').classList.toggle('hidden',provider!=='pollinations');
+      $('apiKeyLabel').textContent=provider==='pollinations'?'Pollinations App Key · pk_… (OAuth client ID)':'API Key · ключ провайдера';
+      $('apiKey').placeholder=provider==='pollinations'?'App Key с префиксом pk_…':'Вставьте ключ провайдера';
+      if(provider==='cloudflare'){
+        $('cloudflareAccountId').value=safeGet(STORAGE.cloudflareAccountId)||'';
+        $('baseUrl').value=getProviderBaseUrl('cloudflare');
+        if(!initial)$('modelName').value=config.models[0][0];
+      } else if(!initial&&provider!=='custom'){
+        $('baseUrl').value=config.baseUrl;
+        $('modelName').value=config.models[0][0];
+      } else if(initial&&provider!=='custom'&&!safeGet(STORAGE.baseUrl)) $('baseUrl').value=config.baseUrl;
+      $('apiKey').value=safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'';
+      const hints={
+        custom:'Введите Base URL, имя модели и ключ своего OpenAI-совместимого API. Совместимость и CORS зависят от поставщика.',
+        pollinations:'Pollinations: сюда вставляется App Key pk_… (не секретный sk_ токен). Зарегистрируйте точный Redirect URI в настройках App Key, затем нажмите «Подключить аккаунт»: OAuth PKCE хранит временный access token только в sessionStorage этой вкладки. Модели могут потреблять Pollen согласно бюджету.',
+        huggingface:'Hugging Face Inference Providers: нужен fine-grained token с разрешением “Make calls to Inference Providers”. Endpoint router.huggingface.co/v1; модели должны быть из каталога и поддерживать Chat Completions.',
+        cloudflare:'Cloudflare Workers AI: укажите Account ID и API Token с разрешением Workers AI Read. Endpoint /ai/v1/chat/completions совместим с OpenAI. Запросы используют лимиты/платные единицы вашего аккаунта; бесплатность не гарантируется.',
+        groq:'Groq использует официальный OpenAI-совместимый endpoint. Устаревшие llama3-8b-8192 и mixtral-8x7b-32768 не предлагаются; вместо них показаны модели из текущего каталога.',
+        xai:'xAI · Grok — отдельный API-провайдер, не Groq. Endpoint https://api.x.ai/v1; ключ создаётся в xAI Console.',
+        nvidia:'NVIDIA NIM: доступность моделей и лимиты зависят от вашего NVIDIA API key и endpoint.',
+        openrouter:'OpenRouter маршрутизирует запросы к моделям своего каталога. openrouter/free выбирает доступную бесплатную модель; доступность и лимиты зависят от каталога и аккаунта.',
+        gemini:'Google AI Studio · Gemini: используйте API-ключ AI Studio и точный ID модели из официального каталога.'
+      };
+      $('providerHint').textContent=hints[provider]||config.label+': ключи сохраняются отдельно в этом браузере. Межпровайдерный резерв выключен по умолчанию.';
+      const docs=$('providerDocsLink');
+      if(config.docsUrl){docs.href=config.docsUrl;docs.classList.remove('hidden');}else docs.classList.add('hidden');
+      populateModelPresets(provider,$('modelName').value);
+      if(!initial){safeSet(STORAGE.baseUrl,$('baseUrl').value);safeSet(STORAGE.model,$('modelName').value);}
     }
     function initializeSettings() {
       const savedProvider=safeGet(STORAGE.provider);
@@ -630,13 +776,10 @@ permalink: /
         safeSet(STORAGE.baseUrl, DEFAULT_BASE_URL);
         safeSet(STORAGE.model, DEFAULT_MODEL);
       }
-      if (safeGet(STORAGE.model) === 'gemini-3.8-flash') {
-        // Migrate the old typo/unsupported preset to the official stable Gemini model ID.
-        safeSet(STORAGE.model, DEFAULT_MODEL);
-      }
+
       $('providerPreset').value=provider;
       $('baseUrl').value=safeGet(STORAGE.baseUrl)||DEFAULT_BASE_URL;
-      $('modelName').value=safeGet(STORAGE.model)||DEFAULT_MODEL;
+      $('modelName').value=safeGet(STORAGE.model)||(PROVIDERS[provider]?.models[0]?.[0]||DEFAULT_MODEL);
       applyProviderPreset($('providerPreset').value,true);
       $('modelName').value=safeGet(STORAGE.model)||$('modelName').value;
       populateModelPresets($('providerPreset').value,$('modelName').value);
@@ -644,9 +787,11 @@ permalink: /
       const savedPrompt = safeGet(STORAGE.systemPrompt);
       $('systemPromptInput').value = (!savedPrompt || savedPrompt === LEGACY_DEFAULT_SYSTEM) ? DEFAULT_SYSTEM : savedPrompt;
       processingMode = safeGet(STORAGE.mode) === 'deep' ? 'deep' : 'fast';
-      $('toggleSearch').checked = safeGet(STORAGE.search) === 'true';
+      $('toggleSearch').checked = safeGet(STORAGE.search) !== 'false';
       $('toggleMultiAgent').checked = safeGet(STORAGE.multiAgent) === 'true';
-      updateModeUI();
+      $('allowCrossProviderFallback').checked = safeGet(STORAGE.crossProviderFallback) === 'true';
+      $('offlineToggle').setAttribute('aria-pressed',String(safeGet(STORAGE.offline)==='true'));
+      updateOfflineUI(); updateModeUI(); refreshApiKeyLamp();
     }
     function updateModeUI() {
       const fast = processingMode === 'fast';
@@ -672,8 +817,14 @@ permalink: /
     }
 
     function saveSettings() {
+      if(currentProvider()==='cloudflare'){
+        const accountId=$('cloudflareAccountId').value.trim();
+        if(!/^[a-f0-9]{32}$/i.test(accountId)){showToast('Cloudflare Account ID должен содержать 32 шестнадцатеричных символа.','error');return;}
+        safeSet(STORAGE.cloudflareAccountId,accountId);
+        $('baseUrl').value=`https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1`;
+      }
       let baseUrl = $('baseUrl').value.trim().replace(/\/+$/, '');
-      const apiKey = $('apiKey').value.trim();
+      const enteredApiKey = $('apiKey').value.trim();
       const model = $('modelName').value.trim();
       const tavilyKey = $('tavilyKey').value.trim();
       let parsed;
@@ -686,23 +837,101 @@ permalink: /
       }
       if (!model) { showToast('Укажите имя модели.', 'error'); return; }
       if (/\/chat\/completions$/i.test(baseUrl)) baseUrl = baseUrl.replace(/\/chat\/completions$/i, '');
-      const provider = currentProvider();
-      const saved = [
-        safeSet(STORAGE.provider, provider),
-        safeSet(STORAGE.baseUrl, baseUrl),
-        ...(provider === 'gemini' ? [safeSet(STORAGE.apiKey, apiKey)] : []),
-        safeSet(providerKeyStorage(provider), apiKey),
-        safeSet(STORAGE.model, model),
-        safeSet(STORAGE.tavilyKey, tavilyKey),
-        safeSet(STORAGE.systemPrompt, $('systemPromptInput').value.trim() || DEFAULT_SYSTEM)
+      const provider=currentProvider(),existingKey=safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'',apiKey=enteredApiKey||existingKey;
+      const saved=[
+        safeSet(STORAGE.provider,provider),safeSet(STORAGE.baseUrl,baseUrl),
+        ...(provider==='gemini'&&enteredApiKey?[safeSet(STORAGE.apiKey,enteredApiKey)]:[]),
+        ...(enteredApiKey?[safeSet(providerKeyStorage(provider),enteredApiKey)]:[]),
+        safeSet(STORAGE.model,model),safeSet(STORAGE.tavilyKey,tavilyKey),
+        safeSet(STORAGE.crossProviderFallback,String($('allowCrossProviderFallback').checked)),
+        safeSet(STORAGE.systemPrompt,$('systemPromptInput').value.trim()||DEFAULT_SYSTEM)
       ].every(Boolean);
-      if (!saved) return;
-      showToast('Настройки сохранены');
+      if(!saved)return;
+      if(!$('apiKey').value.trim()&&apiKey)$('apiKey').value=apiKey;
+      $('systemPromptInput').readOnly=true;$('editSystemPrompt').setAttribute('aria-pressed','false');$('editSystemPrompt').textContent='✎';
+      $('promptEditHint').textContent='Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.';
+      refreshApiKeyLamp();showToast('Настройки сохранены');
     }
 
-    function buildApiUrl(baseUrl) {
-      return `${baseUrl.replace(/\/+$/, '')}/chat/completions`;
+    function buildApiUrl(baseUrl) { return `${baseUrl.replace(/\/+$/,'')}/chat/completions`; }
+    function buildModelsUrl(baseUrl){return `${baseUrl.replace(/\/+$/,'')}/models`;}
+    function updateApiKeyLamp(state,message){const shell=$('apiKeyShell'),status=$('apiKeyStatus');if(!shell||!status)return;shell.dataset.state=state;status.textContent=message;}
+    async function providerKeyFingerprint(value) {
+      if(!value||!globalThis.crypto?.subtle)return '';
+      try {
+        const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value));
+        return Array.from(new Uint8Array(digest),byte=>byte.toString(16).padStart(2,'0')).join('');
+      } catch(_) { return ''; }
     }
+    async function refreshApiKeyLamp(){
+      const provider=currentProvider(),inputKey=$('apiKey').value.trim()||safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'';
+      const baseUrl=$('baseUrl').value.trim().replace(/\/+$/,''),model=$('modelName').value.trim();
+      if(provider==='pollinations'&&inputKey&&!getProviderRequestKey('pollinations')){updateApiKeyLamp('pending','App Key задан. Подключите Pollinations через OAuth PKCE; временный access token не сохраняется в localStorage.');return;}
+      if(!inputKey){updateApiKeyLamp('empty','Серый — ключ не введён. Вставьте ключ и нажмите «Проверить соединение».');return;}
+      const verificationKey=provider==='pollinations'?getProviderRequestKey(provider):inputKey;
+      if(!verificationKey){updateApiKeyLamp('pending','Ключ задан, но сеанс провайдера ещё не подключён.');return;}
+      let v=null;try{v=JSON.parse(safeGet('ai_provider_connection_'+provider)||'null');}catch(_){}
+      const fingerprint=await providerKeyFingerprint(verificationKey);
+      const currentProviderKey=provider==='pollinations'?getProviderRequestKey(provider):($('apiKey').value.trim()||safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'');
+      if(provider!==currentProvider()||baseUrl!==$('baseUrl').value.trim().replace(/\/+$/,'')||model!==$('modelName').value.trim()||verificationKey!==currentProviderKey)return;
+      if(fingerprint&&v&&v.keyFingerprint===fingerprint&&v.baseUrl===baseUrl&&v.model===model&&v.ok)
+        updateApiKeyLamp('connected','Зелёный — последняя проверка именно этой модели и текущего ключа прошла успешно.');
+      else updateApiKeyLamp('pending','Янтарный — ключ задан, но его текущая версия ещё не подтверждена.');
+    }
+    async function testProviderConnection(){
+      const provider=currentProvider(),baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),key=provider==='pollinations'?getProviderRequestKey(provider):($('apiKey').value.trim()||getProviderRequestKey(provider)),model=$('modelName').value.trim();
+      if(!key){
+        if(provider==='pollinations'&&($('apiKey').value.trim()||safeGet(providerKeyStorage('pollinations')))){updateApiKeyLamp('pending','App Key сохранён. Нажмите «Подключить аккаунт Pollinations · PKCE», затем повторите проверку.');showToast('Сначала подключите Pollinations через OAuth PKCE.','error');return;}
+        updateApiKeyLamp('error','Сначала вставьте API-ключ.');showToast('Для проверки нужен API-ключ выбранного провайдера.','error');return;
+      }
+      if(!model){updateApiKeyLamp('error','Укажите модель, которую нужно проверить.');return;}
+      try{new URL(baseUrl);}catch(_){updateApiKeyLamp('error','Base URL некорректен. Исправьте адрес и повторите проверку.');return;}
+      updateApiKeyLamp('pending','Проверяю короткий запрос к выбранной модели…');showStatus('🔌 Проверяю выбранную модель…');
+      try{
+        // A real minimal completion is the source of truth. Some compatible APIs do not expose /models.
+        const modelResponse=await fetch(buildApiUrl(baseUrl),{
+          method:'POST',headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
+          body:JSON.stringify({model,messages:[{role:'user',content:'Reply with exactly OK. No other words.'}],max_tokens:8,stream:false})
+        });
+        if(!modelResponse.ok){
+          const detail=(await modelResponse.text().catch(()=>'' )).slice(0,220).replaceAll(key,'[скрытый ключ]');
+          updateApiKeyLamp('error','Модель '+model+' не прошла проверку: HTTP '+modelResponse.status+(detail?': '+detail:''));
+          showToast('Модель не подтвердилась: HTTP '+modelResponse.status,'error');safeSet('ai_provider_connection_'+provider,'');return;
+        }
+        const completion=await modelResponse.json(),answer=completion?.choices?.[0]?.message?.content;
+        if(typeof answer!=='string'||!answer.trim()){updateApiKeyLamp('error','API ответил, но модель не вернула обычный текстовый ответ.');safeSet('ai_provider_connection_'+provider,'');return;}
+        // Model listing is useful context, but it is optional; some compatible endpoints omit this route.
+        let catalogueNote='каталог моделей недоступен';
+        try{
+          const listResponse=await fetch(buildModelsUrl(baseUrl),{method:'GET',headers:{'Authorization':'Bearer '+key,'Accept':'application/json'}});
+          if(listResponse.ok){
+            const catalogue=await listResponse.json(),models=Array.isArray(catalogue?.data)?catalogue.data:Array.isArray(catalogue?.models)?catalogue.models:null;
+            if(models)catalogueNote='каталог API содержит '+models.length+' моделей';
+          }
+        }catch(_){}
+        const keyFingerprint=await providerKeyFingerprint(key);
+        if(keyFingerprint) safeSet('ai_provider_connection_'+provider,JSON.stringify({ok:true,baseUrl,model,keyFingerprint,testedAt:new Date().toISOString()}));
+        else safeSet('ai_provider_connection_'+provider,'');
+        if(provider===currentProvider()&&model===$('modelName').value.trim()&&baseUrl===$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''))
+          updateApiKeyLamp('connected','Зелёный — модель '+model+' успешно ответила; '+catalogueNote+'.');
+        else refreshApiKeyLamp();
+        showToast('Провайдер и модель прошли проверку');
+      }catch(_){
+        safeSet('ai_provider_connection_'+provider,'');
+        updateApiKeyLamp('error','Сеть/CORS не позволили проверить API. Это не доказывает, что ключ неверен; проверьте Base URL или используйте серверный прокси.');
+        showToast('Проверка не удалась: сеть или CORS.','error');
+      }finally{hideStatus();}
+    }
+    function clearProviderKey(){
+      const provider=currentProvider();safeSet(providerKeyStorage(provider),'');
+      if(provider==='pollinations')clearPollinationsSession();
+      if(provider==='cloudflare'){safeSet(STORAGE.cloudflareAccountId,'');$('cloudflareAccountId').value='';$('baseUrl').value='';}
+      if(provider==='gemini')safeSet(STORAGE.apiKey,'');
+      safeSet('ai_provider_connection_'+provider,'');$('apiKey').value='';
+      updateApiKeyLamp('empty','Ключ удалён из локальных настроек этого браузера.');showToast('Ключ выбранного провайдера удалён');
+    }
+    function updateOfflineUI(){const off=safeGet(STORAGE.offline)==='true',button=$('offlineToggle');if(!button)return;button.setAttribute('aria-pressed',String(off));button.textContent=off?'◉ Оффлайн: вкл.':'◉ Оффлайн: выкл.';button.title='Отключает веб-поиск и внешние источники. Облачный API модели всё равно требует интернет-соединения.';}
+    function toggleOfflineMode(){const off=safeGet(STORAGE.offline)!=='true';safeSet(STORAGE.offline,String(off));updateOfflineUI();showToast(off?'Оффлайн-режим: веб-поиск выключен':'Онлайн-режим: веб-инструменты доступны');}
     async function makeCacheKey(value) {
       const serialized = JSON.stringify(value);
       try {
@@ -747,11 +976,12 @@ permalink: /
       $('userInput').disabled = false;
       $('sendBtn').disabled = busy;
     }
-    function showStatus(message) {
-      $('statusText').textContent = message;
-      $('searchStatus').classList.remove('hidden');
-    }
-    function hideStatus() { $('searchStatus').classList.add('hidden'); }
+    function formatElapsed(ms){const n=Math.max(0,Math.floor(ms/1000));return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}
+    function getRunEstimateMs(){if(!activeRunTelemetry)return null;const key=[activeRunTelemetry.provider,activeRunTelemetry.model,activeRunTelemetry.workflow].join('|');try{const all=JSON.parse(safeGet('ai_request_timing_v1')||'{}'),values=(Array.isArray(all[key])?all[key].slice(-7):[]).filter(Number.isFinite).sort((a,b)=>a-b);return values.length?values[Math.floor(values.length/2)]:null;}catch(_){return null;}}
+    function updateStatusTimer(){if(!activeRunStartedAt||$('searchStatus').classList.contains('hidden'))return;const elapsed=Date.now()-activeRunStartedAt,estimate=getRunEstimateMs();$('thinkingTime').textContent=estimate?'Прошло '+formatElapsed(elapsed)+' · ориентир '+formatElapsed(Math.max(elapsed,estimate)):'Прошло '+formatElapsed(elapsed)+' · собираю оценку';}
+    function showStatus(message){$('statusText').textContent=message;$('searchStatus').classList.remove('hidden');if(!statusTimerId&&activeRunStartedAt)statusTimerId=setInterval(updateStatusTimer,1000);updateStatusTimer();}
+    function hideStatus(){$('searchStatus').classList.add('hidden');if(!isGenerating&&statusTimerId){clearInterval(statusTimerId);statusTimerId=null;}}
+    function saveRunDuration(){if(!activeRunTelemetry||!activeRunStartedAt)return;const key=[activeRunTelemetry.provider,activeRunTelemetry.model,activeRunTelemetry.workflow].join('|'),elapsed=Date.now()-activeRunStartedAt;try{const all=JSON.parse(safeGet('ai_request_timing_v1')||'{}'),values=Array.isArray(all[key])?all[key]:[];values.push(elapsed);all[key]=values.slice(-8);safeSet('ai_request_timing_v1',JSON.stringify(all));}catch(_){} }
     function abortError() { return new DOMException('Запрос отменён', 'AbortError'); }
     function throwIfAborted(signal) { if (signal.aborted) throw abortError(); }
     function sleep(ms, signal) {
@@ -762,6 +992,13 @@ permalink: /
         function onAbort() { clearTimeout(timer); signal.removeEventListener('abort', onAbort); reject(abortError()); }
         signal.addEventListener('abort', onAbort, { once: true });
       });
+    }
+    function parseRetryAfterMs(value) {
+      if (!value) return null;
+      const seconds = Number(value);
+      if (Number.isFinite(seconds) && seconds >= 0) return Math.ceil(seconds * 1000);
+      const absolute = Date.parse(value);
+      return Number.isFinite(absolute) ? Math.max(0, absolute - Date.now()) : null;
     }
     async function fetchJson(url, options, signal) {
       for (let attempt = 0; attempt < 2; attempt++) {
@@ -778,9 +1015,15 @@ permalink: /
         }
         const details = (await response.text().catch(() => '')).slice(0, 500);
         if ([500, 502, 503, 504].includes(response.status) && attempt < 1) {
-          await sleep(500, signal); continue;
+          const retryAfter = response.headers.get('Retry-After');
+          const delay = parseRetryAfterMs(retryAfter);
+          // Honour short server back-off advice. Never retry early against a longer Retry-After.
+          if (delay === null || delay <= 10000) {
+            await sleep(delay === null ? 500 : delay, signal);
+            continue;
+          }
         }
-        throw new Error(`HTTP ${response.status}${details ? `: ${details}` : ''}`);
+        const apiError=new Error(`HTTP ${response.status}${details?`: ${details}`:''}`);apiError.status=response.status;apiError.details=details;apiError.retryAfter=response.headers.get('Retry-After');throw apiError;
       }
       throw new Error('Превышено количество повторных попыток запроса.');
     }
@@ -941,22 +1184,21 @@ permalink: /
       } catch (error) { console.warn('Не удалось загрузить навык из репозитория:', error); return ''; }
     }
     function getApiCandidates(requestedModel) {
-      const selectedProvider = safeGet(STORAGE.provider) || 'gemini';
-      const order = [selectedProvider, ...Object.keys(PROVIDERS).filter((provider) => provider !== selectedProvider && provider !== 'custom')];
+      const selectedProvider=safeGet(STORAGE.provider)||'gemini',allowCrossProvider=safeGet(STORAGE.crossProviderFallback)==='true';
+      const order=[selectedProvider,...(allowCrossProvider?Object.keys(PROVIDERS).filter(provider=>provider!==selectedProvider&&provider!=='custom'):[])];
       const candidates = [], seen = new Set();
       for (const provider of order) {
         const config = PROVIDERS[provider];
         if (!config) continue;
-        const key = safeGet(providerKeyStorage(provider)) || (provider === 'gemini' ? safeGet(STORAGE.apiKey) : '');
-        if (!key) continue;
-        const baseUrl = provider === selectedProvider
-          ? (safeGet(STORAGE.baseUrl) || config.baseUrl || DEFAULT_BASE_URL).replace(/\/+$/, '')
-          : (config.baseUrl || '').replace(/\/+$/, '');
+        const key=getProviderRequestKey(provider);
+        if(!key) continue;
+        const baseUrl=provider===selectedProvider
+          ? (provider==='cloudflare'?getProviderBaseUrl('cloudflare'):(safeGet(STORAGE.baseUrl)||config.baseUrl||DEFAULT_BASE_URL)).replace(/\/+$/,'')
+          : getProviderBaseUrl(provider);
+
         if (!baseUrl) continue;
         const primary = provider === selectedProvider ? (safeGet(STORAGE.model) || requestedModel) : config.models[0]?.[0];
-        const models = provider === selectedProvider
-          ? [primary, ...config.models.map(([model]) => model)]
-          : config.models.map(([model]) => model);
+        const models=provider===selectedProvider?(provider==='custom'?[primary]:[primary,...config.models.map(([model])=>model)]):config.models.map(([model])=>model);
         for (const model of models) {
           if (!model || model === '__custom__') continue;
           const keyId = provider + '|' + baseUrl + '|' + model;
@@ -967,35 +1209,41 @@ permalink: /
       }
       return candidates;
     }
-    async function requestChatCompletion(body, signal, stageName = 'Ответ модели') {
-      throwIfAborted(signal);
-      const preferredProvider = safeGet(STORAGE.provider) || 'gemini';
-      const preferredModel = safeGet(STORAGE.model) || body.model || DEFAULT_MODEL;
-      const candidates = getApiCandidates(preferredModel);
-      if (!candidates.length) throw new Error('Не найден API-ключ для выбранного провайдера. Откройте настройки и сохраните ключ.');
-      let lastError = null;
-      for (let index = 0; index < candidates.length; index++) {
-        const candidate = candidates[index];
-        throwIfAborted(signal);
-        try {
-          const data = await fetchJson(buildApiUrl(candidate.baseUrl), {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${candidate.key}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...body, model: candidate.model })
-          }, signal);
-          if (candidate.provider !== preferredProvider || candidate.model !== preferredModel) {
-            // Failover is request-scoped: never overwrite the user's saved provider/model/endpoint.
-            // Otherwise a temporary outage can silently change the settings used on the next visit.
-            showToast(`Резервный маршрут для этого запроса: ${PROVIDERS[candidate.provider]?.label || candidate.provider} · ${candidate.model}`);
-          }
+    let lastSuccessfulRoute=null,activeRunTelemetry=null,activeRunStartedAt=0,statusTimerId=null;
+    async function recordSuccessfulRoute(candidate,stageName,responseModel){
+      const actualModel=typeof responseModel==='string'&&responseModel.trim()?responseModel:candidate.model;
+      lastSuccessfulRoute={provider:candidate.provider,providerLabel:PROVIDERS[candidate.provider]?.label||candidate.provider,model:actualModel,requestedModel:candidate.model,stage:stageName,at:new Date().toISOString()};
+      // Persist only a one-way fingerprint: never store the provider key in the connection marker.
+      const keyFingerprint=await providerKeyFingerprint(candidate.key);
+      if(keyFingerprint) safeSet('ai_provider_connection_'+candidate.provider,JSON.stringify({
+        ok:true,baseUrl:String(candidate.baseUrl||'').replace(/\/+$/,''),model:actualModel,keyFingerprint,
+        requestedModel:candidate.model,testedAt:new Date().toISOString(),source:'successful-request'
+      }));
+      if(activeRunTelemetry){activeRunTelemetry.routes.push({...lastSuccessfulRoute});activeRunTelemetry.provider=candidate.provider;activeRunTelemetry.model=actualModel;}
+      if(candidate.provider===currentProvider()) await refreshApiKeyLamp();
+    }
+    async function requestChatCompletion(body,signal,stageName='Ответ модели'){
+      throwIfAborted(signal);const preferredProvider=safeGet(STORAGE.provider)||'gemini',preferredModel=safeGet(STORAGE.model)||body.model||DEFAULT_MODEL,candidates=getApiCandidates(preferredModel),allowCross=safeGet(STORAGE.crossProviderFallback)==='true';
+      if(!candidates.length)throw new Error('Не найден API-ключ для выбранного провайдера. Откройте настройки и сохраните ключ.');
+      let lastError=null;
+      for(let i=0;i<candidates.length;i++){
+        const candidate=candidates[i];throwIfAborted(signal);
+        try{
+          const data=await fetchJson(buildApiUrl(candidate.baseUrl),{method:'POST',headers:{'Authorization':`Bearer ${candidate.key}`,'Content-Type':'application/json'},body:JSON.stringify({...body,model:candidate.model})},signal);
+          await recordSuccessfulRoute(candidate,stageName,data?.model);
+          if(candidate.provider!==preferredProvider||candidate.model!==preferredModel)showToast(`Резерв для этого запроса: ${PROVIDERS[candidate.provider]?.label||candidate.provider} · ${candidate.model}`);
           return data;
-        } catch (error) {
-          if (error?.name === 'AbortError') throw error;
-          lastError = error;
-          if (index < candidates.length - 1) showStatus(`Модель недоступна; пробую резерв ${index + 1}/${candidates.length - 1}…`);
+        }catch(error){
+          if(error?.name==='AbortError')throw error;lastError=error;
+          if([401,403,429].includes(error.status))break;
+          const detail=String(error.details||error.message||'').toLowerCase(),modelError=[400,404].includes(error.status)&&/model/.test(detail)&&/not found|unknown|invalid|unsupported|does not exist|not available|not accessible|no such/.test(detail);
+          // Only a clearly model-specific error justifies choosing another model. Auth, quota,
+          // network, malformed endpoint, and transient 5xx errors are not model-selection signals.
+          if(!modelError)break;
+          if(i<candidates.length-1){const next=candidates[i+1];showStatus(next.provider===candidate.provider?'Модель недоступна; пробую другую модель этого провайдера…':(allowCross?'Провайдер недоступен; пробую разрешённый резерв…':''));}
         }
       }
-      throw new Error('Не удалось выполнить запрос ни через одну сохранённую модель. Исходный запрос сохранён в чате. Последняя ошибка: ' + (lastError?.message || 'неизвестная ошибка'));
+      throw new Error('Запрос не выполнен. Исходный текст сохранён. Последняя ошибка: '+(lastError?.message||'неизвестная ошибка')+(lastError?.status===401?' · Проверьте API-ключ.':lastError?.status===403?' · Проверьте права и доступность модели.':lastError?.status===429?' · Превышен лимит или квота. Не переключаю модели/провайдеры автоматически.':lastError?.status===404?' · Проверьте точный ID модели и Base URL.':' · Проверьте диагностический статус, модель и Base URL.')+(lastError?.retryAfter?' Провайдер прислал Retry-After: '+lastError.retryAfter+'. Не повторяйте запрос раньше указанного времени.':'')+(lastError?.status===429&&!lastError?.retryAfter?' Повторите вручную после паузы; автоматический резерв не запускается.':''));
     }
     function isGenericModelRefusal(value) {
       const text = String(value || '').trim().replace(/[\s\u00a0]+/g, ' ');
@@ -1014,20 +1262,31 @@ permalink: /
     }
     async function runMultiAgentResearch(chat, signal, useSearch, mode, systemPrompt) {
       const history = buildHistory(chat.messages);
-      const plan = await requestTextStage(systemPrompt + '\nРоль: планировщик исследования. Разбей запрос на 3–5 проверяемых вопросов и составь краткий план. Не отвечай на сам запрос. Без веб-поиска не утверждай, что внешние источники проверены.', history, signal, '🤖 Исследование 1/4: планировщик…');
+      const plan = await requestTextStage(systemPrompt + '\nРоль: планировщик исследования. Сформируй краткий рабочий план максимум из 3–5 шагов только для сложной задачи. Укажи, какие проверяемые утверждения требуют свежих источников, какие инструменты помогут и что будет считаться достаточным результатом. Не отвечай на исходный вопрос, не добавляй шаблонные оговорки и не придумывай этапы, не нужные задаче. Не утверждай, что источники проверены, пока исследователь не выполнил поиск.', history, signal, '🤖 Исследование 1/4: планировщик…');
       const workChat = { ...chat, messages: [...chat.messages.map((message) => ({ ...message })), { role: 'assistant', content: 'План исследования:\n' + plan }] };
       const researchStart = workChat.messages.length;
       await runAssistant(workChat, signal, useSearch, false, mode, true, systemPrompt + '\nРоль: исследователь. Выполни план, используй веб-поиск, если он включён, и составь проверяемый черновик ответа.');
       const draft = workChat.messages.slice(researchStart).reverse().find((message) => message.role === 'assistant' && message.content && !message.error)?.content || '';
       if (!draft) throw new Error('Исследовательский этап не подготовил черновик.');
       if (isGenericModelRefusal(draft)) throw new Error('Модель отказала на этапе «исследователь». Конвейер остановлен; отказ не будет выдан за готовое исследование. Настройки и исходный запрос сохранены.');
-      const critique = await requestTextStage('Ты независимый критик ответа. Найди неподтверждённые утверждения, пропуски, противоречия и риски. Не переписывай ответ целиком. Если источники не предоставлены, укажи, что нельзя проверить.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик:\n' + draft }], signal, '🧪 Исследование 3/4: критик…');
-      const finalText = await requestTextStage(systemPrompt + '\nРоль: синтезатор. Дай окончательный ответ на исходный запрос, используя черновик и критику. Исправь выявленные ошибки, отдели факты от предположений, не заявляй о непроверенных источниках.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик исследователя:\n' + draft + '\n\nКритика:\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
-      const traceId = globalThis.crypto?.randomUUID?.() || ('trace-' + Date.now() + '-' + Math.random().toString(36).slice(2));
-      const researchTrace = { id: traceId, createdAt: new Date().toISOString(), provider: PROVIDERS[currentProvider()]?.label || currentProvider(), model: safeGet(STORAGE.model) || DEFAULT_MODEL, plan, draft, critique, finalText };
+      const critique = await requestTextStage('Ты независимый проверяющий. Сверь черновик с исходной задачей и приложенными доказательствами/ссылками. Ищи только существенные фактические ошибки, логические противоречия, невыполненные требования и реально отсутствующие важные данные. Не выдумывай риски, ограничения или пункты ради заполнения таблицы; не требуй источников для приветствий и мнений. Если всё нормально или утверждений для проверки нет, ответь одной короткой фразой. Иначе дай короткий приоритизированный список исправлений, не переписывая весь ответ.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик:\n' + draft }], signal, '🧪 Исследование 3/4: критик…');
+      const finalText = await requestTextStage(systemPrompt + '\nРоль: синтезатор. Ответь прямо на исходный запрос. Используй план, факты из черновика и критику; исправь фактические ошибки, отличай подтверждённое от неопределённого, сохрани полезные ссылки. Не включай шаблонное вступление о возможностях ассистента и не добавляй общих рекомендаций, не нужных для задачи.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик исследователя:\n' + draft + '\n\nКритика:\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
+      const traceId=globalThis.crypto?.randomUUID?.()||('trace-'+Date.now()+'-'+Math.random().toString(36).slice(2)),finalRoute=lastSuccessfulRoute?{...lastSuccessfulRoute}:null;
+      const researchTrace={id:traceId,createdAt:new Date().toISOString(),provider:finalRoute?.providerLabel||(PROVIDERS[currentProvider()]?.label||currentProvider()),model:finalRoute?.model||(safeGet(STORAGE.model)||DEFAULT_MODEL),plan,draft,critique,finalText,routes:activeRunTelemetry?activeRunTelemetry.routes.map(route=>({...route})):[]};
       safeSet('ai_research_trace_' + traceId, JSON.stringify(researchTrace));
-      chat.messages.push({ role: 'assistant', content: finalText, researchTrace });
+      chat.messages.push({ role: 'assistant', content: finalText, researchTrace, providerInfo: finalRoute });
       updateState([...chats]);
+    }
+    function shouldUseMultiAgentResearch(value) {
+      const text = String(value || '').trim();
+      if (!text) return false;
+      const normalized = text.toLocaleLowerCase().replace(/[\s\u00a0]+/g, ' ');
+      // Courtesy turns should never become four pseudo-agent reports.
+      if (normalized.length < 140 && /^(привет|здравствуй(?:те)?|доброе утро|добрый день|добрый вечер|хай|хей|hello|hi|hey|приветик|как дела\??|спасибо|понятно|ок(?:ей)?|thanks|thank you|good morning|good evening|good night)[!?. ,]*$/iu.test(normalized)) return false;
+      const intent = /\b(исследу|изучи|глубоко|подробно|сравни|сопостав|аудит|проанализ|разберись|проверь реализац|архитектур|спроектир|реализуй|разработай|план внедрен|roadmap|deep research|research|compare|audit|review|architecture|implement|debug|diagnos|root cause|benchmark|best practice|современн.*практик|источник|нескольк.*вариант)\b/iu.test(text);
+      const questions = (text.match(/[?？]/g) || []).length;
+      const bullets = (text.match(/^\s*(?:[-*•]|\d+[.)])\s+/gm) || []).length;
+      return intent || text.length >= 420 || questions >= 3 || bullets >= 4;
     }
     async function runAssistant(chat, signal, useSearch, useMultiAgent, mode = 'fast', skipCache = false, promptOverride = '') {
       const baseUrl = (safeGet(STORAGE.baseUrl) || DEFAULT_BASE_URL).replace(/\/+$/, '');
@@ -1058,14 +1317,16 @@ permalink: /
       if (mode === 'deep') systemPrompt += '\nРЕЖИМ ГЛУБОКОЙ РАБОТЫ: проверь существенные предположения, объясни неопределённость и предпочитай проверяемые выводы. Избегай лишних шагов.';
       if (taskSkill) systemPrompt += '\n\nНАВЫК ИЗ РЕПОЗИТОРИЯ (инструкции для текущей задачи; пользовательский запрос имеет приоритет):\n' + taskSkill;
       if (promptOverride) systemPrompt = promptOverride;
-      if (useMultiAgent) { await runMultiAgentResearch(chat, signal, useSearch, mode, systemPrompt); return; }
+      const useResearchPipeline=useMultiAgent&&shouldUseMultiAgentResearch(latestUserMessage);
+      if(useMultiAgent&&!useResearchPipeline)showToast('Простой запрос: отвечаю напрямую без лишних агентных этапов.');
+      if(useResearchPipeline){await runMultiAgentResearch(chat,signal,useSearch,mode,systemPrompt);return;}
 
       const messagesForCache = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages)];
       const cacheKey = await makeCacheKey({ endpoint: baseUrl, model, messages: messagesForCache });
       if (!useSearch && !skipCache) {
         const cached = await CacheDB.get(cacheKey);
         if (cached) {
-          chat.messages.push({ role: 'assistant', content: `${cached}\n\n*(из локального кэша)*` });
+          chat.messages.push({ role: 'assistant', content: `${cached}\n\n*(из локального кэша)*`, providerInfo:{provider:'cache',providerLabel:'Локальный кэш',model:'cache'} });
           updateState([...chats]); return;
         }
       }
@@ -1110,6 +1371,7 @@ permalink: /
           role: 'assistant', content: typeof message.content === 'string' ? message.content : '',
           ...(toolCalls.length ? { tool_calls: toolCalls } : {})
         };
+        if(!toolCalls.length&&lastSuccessfulRoute)assistantMessage.providerInfo={...lastSuccessfulRoute};
         chat.messages.push(assistantMessage);
         updateState([...chats]);
 
@@ -1201,13 +1463,15 @@ permalink: /
       activeChatId = chat.id;
       const controller = new AbortController(); activeController = controller;
       setBusy(true);
-      const useSearch = $('toggleSearch').checked;
-      const useMultiAgent = $('toggleMultiAgent').checked;
-      const mode = processingMode;
+      const offlineMode=safeGet(STORAGE.offline)==='true',useSearch=!offlineMode&&$('toggleSearch').checked,useMultiAgent=$('toggleMultiAgent').checked,mode=processingMode;
+      const provider=safeGet(STORAGE.provider)||'gemini',model=safeGet(STORAGE.model)||DEFAULT_MODEL,workflow=useMultiAgent&&shouldUseMultiAgentResearch(text)?'research':'direct';
+      activeRunStartedAt=Date.now();activeRunTelemetry={provider,model,workflow,routes:[]};lastSuccessfulRoute=null;
       safeSet(STORAGE.search, String(useSearch));
       safeSet(STORAGE.multiAgent, String(useMultiAgent));
       try {
         await runAssistant(chat, controller.signal, useSearch, useMultiAgent, mode);
+        syncSettingsToActualRoute(lastSuccessfulRoute);
+        saveRunDuration();
       } catch (error) {
         if (error.name === 'AbortError') {
           hideStatus();
@@ -1219,10 +1483,31 @@ permalink: /
         }
       } finally {
         if (activeController === controller) {
-          activeController = null; activeChatId = null; isGenerating = false;
-          hideStatus(); setBusy(false); $('userInput').focus();
+          activeController=null;activeChatId=null;isGenerating=false;
+          hideStatus();if(statusTimerId){clearInterval(statusTimerId);statusTimerId=null;}
+          activeRunStartedAt=0;activeRunTelemetry=null;setBusy(false);$('userInput').focus();
         }
       }
+    }
+    function syncSettingsToActualRoute(route) {
+      if(!route||!PROVIDERS[route.provider]||route.provider==='cache')return;
+      const provider=route.provider,model=route.model||route.requestedModel||'';
+      if(!model)return;
+      const oldProvider=safeGet(STORAGE.provider)||'gemini',oldModel=safeGet(STORAGE.model)||DEFAULT_MODEL;
+      if(oldProvider===provider&&oldModel===model)return;
+      // Settings change only after the entire answer/research chain completes, never mid-run.
+      if(oldProvider!==provider) {
+        $('providerPreset').value=provider;
+        applyProviderPreset(provider,false);
+      } else $('providerPreset').value=provider;
+      $('modelName').value=model;
+      populateModelPresets(provider,model);
+      const baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'');
+      safeSet(STORAGE.provider,provider);
+      safeSet(STORAGE.baseUrl,baseUrl);
+      safeSet(STORAGE.model,model);
+      refreshApiKeyLamp();
+      showToast('Настройки синхронизированы с фактическим маршрутом: '+(route.providerLabel||provider)+' · '+model);
     }
     function stopGeneration() {
       if (activeController) activeController.abort();
@@ -1435,6 +1720,12 @@ permalink: /
             if (confirm('Удалить этот факт из памяти?')) await MemoryDB.delete(control.dataset.memoryId);
             break;
           case 'toggle-settings': toggleSettings(true); break;
+          case 'test-connection': await testProviderConnection(); break;
+          case 'clear-provider-key': clearProviderKey(); break;
+          case 'connect-pollinations': await beginPollinationsOAuth(); break;
+          case 'disconnect-pollinations': clearPollinationsSession(); refreshApiKeyLamp(); showToast('Pollinations-сессия завершена для этой вкладки.'); break;
+          case 'edit-system-prompt': { const textarea=$('systemPromptInput'),button=$('editSystemPrompt'),editable=textarea.readOnly; textarea.readOnly=!editable;button.setAttribute('aria-pressed',String(editable));button.textContent=editable?'✓':'✎';button.title=editable?'Завершить редактирование; затем нажмите «Сохранить»':'Разрешить редактирование';$('promptEditHint').textContent=editable?'Редактирование включено. После изменений нажмите «Сохранить».':'Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.';if(editable)textarea.focus();break;}
+          case 'toggle-offline': toggleOfflineMode(); break;
           case 'close-settings': toggleSettings(false); break;
           case 'save-settings': saveSettings(); break;
           case 'download-recovery-backup': downloadRecoveryBackup(); break;
@@ -1455,10 +1746,18 @@ permalink: /
         }
       } catch (error) { console.error('Ошибка действия интерфейса:', error); showToast(error.message || 'Не удалось выполнить действие.', 'error'); }
     });
-    $('providerPreset').addEventListener('change', () => applyProviderPreset($('providerPreset').value));
+    $('providerPreset').addEventListener('change',()=>{applyProviderPreset($('providerPreset').value);safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
+    $('cloudflareAccountId').addEventListener('input',()=>{
+      const id=$('cloudflareAccountId').value.trim();safeSet(STORAGE.cloudflareAccountId,id);
+      if(currentProvider()==='cloudflare')$('baseUrl').value=getProviderBaseUrl('cloudflare');
+      safeSet('ai_provider_connection_cloudflare','');refreshApiKeyLamp();
+    });
+    $('apiKey').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
+    $('baseUrl').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
-    $('modelPreset').addEventListener('change', () => { const value=$('modelPreset').value; if(value!=='__custom__') $('modelName').value=value; else $('modelName').focus(); });
-    $('modelName').addEventListener('change', () => populateModelPresets(currentProvider(),$('modelName').value));
+    $('modelPreset').addEventListener('change',()=>{const value=$('modelPreset').value;if(value!=='__custom__')$('modelName').value=value;safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
+    $('modelName').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
+    $('modelName').addEventListener('change',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('modeFast').addEventListener('click', () => setProcessingMode('fast'));
     $('modeDeep').addEventListener('click', () => setProcessingMode('deep'));
     $('toggleSearch').addEventListener('change', (event) => safeSet(STORAGE.search, String(event.target.checked)));
@@ -1487,7 +1786,9 @@ permalink: /
     }
 
     async function init() {
+      const pollinationsAuthMessage=await finishPollinationsOAuth();
       initializeSettings();
+      if(pollinationsAuthMessage) showToast(pollinationsAuthMessage,pollinationsAuthMessage.startsWith('Pollinations подключён')?'success':'error');
       if (!chatRecoveryBackupKey) {
         try {
           const backupKeys = [];

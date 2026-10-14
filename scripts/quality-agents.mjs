@@ -32,14 +32,32 @@ const suites = {
     ['independent processing controls and on-demand resources', () => {
       includes('async function runMultiAgentResearch', 'Multi-agent research needs its own staged pipeline.');
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
+      includes("xai: { label: 'xAI · Grok'", 'xAI Grok must be a separate provider from Groq.');
+      includes("pollinations: { label: 'Pollinations.ai'", 'Pollinations must use its own API catalog and endpoint.');
+      includes("cloudflare: { label: 'Cloudflare Workers AI'", 'Cloudflare Workers AI must be a selectable provider.');
+      includes('function finishPollinationsOAuth()', 'Pollinations OAuth callback must be implemented.');
+      includes("token: 'ai_pollinations_access_token_v1'", 'Pollinations access token storage must be session-scoped.');
+      includes("https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1", 'Cloudflare endpoint must include the validated account ID.');
       includes("nvidia: { label: 'NVIDIA NIM'", 'NVIDIA NIM should be included as an active alternative.');
       assert.ok(!source.includes('cerebras: {') && !source.includes('value="cerebras"'), 'Cerebras must remain removed per product decision.');
       assert.ok(!source.includes('value="github">GitHub Models'), 'Retired GitHub Models must not be offered as a provider.');
-      includes("const DEFAULT_MODEL = 'gemini-3.6-flash'", 'Default Gemini model must match the current official catalogue.');
-      includes("safeGet(STORAGE.model) === 'gemini-3.8-flash'", 'Obsolete Gemini model ID must migrate automatically.');
+      includes("const DEFAULT_MODEL = 'gemini-3.8-flash'", 'Default Gemini model must match the current official catalogue.');
+      assert.ok(!source.includes("safeGet(STORAGE.model) === 'gemini-3.8-flash'"), 'A valid Gemini 3.8 model must not be downgraded on load.');
       includes('function getApiCandidates(requestedModel)', 'Provider failover must discover only configured credentials.');
-      includes('async function requestChatCompletion(body, signal', 'All model calls must use the automatic fallback path.');
-      includes('Исходный запрос сохранён в чате', 'Fallback failure must preserve the original user prompt.');
+      includes('function shouldUseMultiAgentResearch(value)', 'Multi-agent orchestration must be routed by task complexity.');
+      includes('async function testProviderConnection()', 'Provider connections must have an actionable diagnostic.');
+      includes('function parseRetryAfterMs(value)', 'HTTP Retry-After must be respected rather than using a fixed retry delay.');
+      includes('if(!modelError)break;', 'Transient server and rate-limit errors must not trigger fast model/provider failover.');
+      includes('id="offlineToggle"', 'User must be able to explicitly disable online search tools.');
+      includes('function getRunEstimateMs()', 'Response timing should learn a lightweight per-route estimate.');
+      includes('data-state="connected"', 'A confirmed API connection must have a distinct UI state.');
+      includes('message.providerInfo', 'Assistant responses must display the actual provider/model route.');
+      includes('function syncSettingsToActualRoute(route)', 'Settings must follow the final successful provider/model route after the response finishes.');
+      includes('syncSettingsToActualRoute(lastSuccessfulRoute)', 'Settings must not change until the full answer pipeline completes.');
+      includes("source:'successful-request'", 'A successful model response should store only non-secret connection-verification metadata.');
+      includes('await recordSuccessfulRoute(candidate,stageName,data?.model)', 'Successful requests must update the connection state for the actual route.');
+      includes('async function requestChatCompletion(body,signal', 'All model calls must use the classified provider fallback path.');
+      includes("Запрос не выполнен. Исходный текст сохранён.", 'Fallback errors must preserve the original user prompt.');
       includes("showToast('Настройки сохранены')", 'Saving settings should use the toast and keep the modal open.');
       includes("node.classList.add('toast-visible')", 'Toast notification must use lightweight CSS animation.');
       includes("$('userInput').disabled = false;", 'Composer must remain editable during generation.');
@@ -48,12 +66,12 @@ const suites = {
       includes("docsUrl: 'https://openrouter.ai/settings/keys'", 'OpenRouter key setup link must be available.');
       includes("docsUrl: 'https://build.nvidia.com/settings'", 'NVIDIA API key setup link must be available.');
       includes('function getConfiguredApiKey()', 'API keys must be selected per provider.');
-      includes('safeSet(providerKeyStorage(provider), apiKey)', 'Provider API keys must be stored under provider-specific keys.');
-      includes("...(provider === 'gemini' ? [safeSet(STORAGE.apiKey, apiKey)] : [])", 'Saving another provider must not overwrite the legacy Gemini key slot.');
+      includes('safeSet(providerKeyStorage(provider),enteredApiKey)', 'Only an explicitly entered provider key should overwrite its stored value.');
+      includes("provider==='gemini'&&enteredApiKey?[safeSet(STORAGE.apiKey,enteredApiKey)]:[]", 'Saving settings must not erase the Gemini key when the password field is blank.');
       includes('Older builds wrote every provider\'s key into the legacy Gemini slot.', 'Legacy cross-provider key contamination must be migrated safely.');
       includes('текст запроса и контекст могут быть отправлены другому провайдеру', 'Cross-provider fallback must disclose that request content can be sent to another provider.');
       includes('ключ не сохранён для выбранного провайдера', 'Settings must explain why the API key field is blank after switching providers.');
-      includes("request-scoped: never overwrite the user's saved provider/model/endpoint.", 'Temporary fallback must not mutate saved provider settings.');
+      includes("const selectedProvider=safeGet(STORAGE.provider)||'gemini',allowCrossProvider=safeGet(STORAGE.crossProviderFallback)==='true'", 'Cross-provider fallback must be a user-controlled opt-in.');
       includes('function isGenericModelRefusal(value)', 'Generic model refusals must not be accepted as successful research stages.');
       includes('Конвейер остановлен', 'A refused multi-agent stage must stop clearly rather than repeat the refusal as a final answer.');
       includes('if (!savedChats || !savedCurrent)', 'Chat persistence failures must be visible to the user.');
@@ -99,7 +117,7 @@ const suites = {
     ['API credentials are user-configured, not hard-coded', () => {
       includes("apiKey: 'ai_api_key'", 'API key storage slot is missing.');
       includes('safeGet(STORAGE.apiKey)', 'API key must be read from user settings.');
-      includes("'Authorization': `Bearer ${candidate.key}`", 'Requests must use a saved provider-specific bearer key.');
+      includes("'Authorization':`Bearer ${candidate.key}`", 'Requests must use a saved provider-specific bearer key.');
       includes('type="password" id="apiKey"', 'API key field must be masked.');
     }],
     ['untrusted output is not inserted as raw HTML', () => {
