@@ -330,7 +330,7 @@ permalink: /
               content: typeof m.content === 'string' ? m.content : '',
               ...(typeof m.tool_call_id === 'string' ? { tool_call_id: m.tool_call_id } : {}),
               ...(Array.isArray(m.tool_calls) ? { tool_calls: m.tool_calls } : {}),
-              ...(m.providerInfo && typeof m.providerInfo==='object' ? { providerInfo:{provider:String(m.providerInfo.provider||''),providerLabel:String(m.providerInfo.providerLabel||'').slice(0,120),model:String(m.providerInfo.model||'').slice(0,160),stage:String(m.providerInfo.stage||'').slice(0,120),at:String(m.providerInfo.at||'')} } : {}),
+              ...(m.providerInfo && typeof m.providerInfo==='object' ? { providerInfo:{provider:String(m.providerInfo.provider||''),providerLabel:String(m.providerInfo.providerLabel||'').slice(0,120),model:String(m.providerInfo.model||'').slice(0,160),requestedModel:String(m.providerInfo.requestedModel||'').slice(0,160),stage:String(m.providerInfo.stage||'').slice(0,120),at:String(m.providerInfo.at||'')} } : {}),
               ...(m.researchTrace && typeof m.researchTrace.id==='string' ? { researchTrace:{id:m.researchTrace.id} } : {}),
               ...(m.error ? { error: true } : {})
             }))
@@ -529,7 +529,7 @@ permalink: /
         bubble.appendChild(content);
       }
       row.appendChild(bubble);
-      if (!isUser && message.providerInfo) { const meta=document.createElement('div'); meta.className='message-model-meta'; const r=message.providerInfo; meta.textContent=(r.providerLabel||r.provider||'Провайдер неизвестен')+' · '+(r.model||'модель не указана'); row.className+=' flex-col items-start'; row.appendChild(meta); }
+      if (!isUser && message.providerInfo) { const meta=document.createElement('div'); meta.className='message-model-meta'; const r=message.providerInfo; meta.textContent=(r.providerLabel||r.provider||'Провайдер неизвестен')+' · '+(r.model||'модель не указана')+(r.requestedModel&&r.requestedModel!==r.model?' (запрошена '+r.requestedModel+')':''); row.className+=' flex-col items-start'; row.appendChild(meta); }
       if (!isUser && message.researchTrace) {
         const actions = document.createElement('div'); actions.className = 'flex flex-wrap gap-2 mt-1';
         const button = document.createElement('button'); button.type = 'button'; button.dataset.action = 'open-trace'; button.dataset.traceId = message.researchTrace.id || '';
@@ -1049,7 +1049,7 @@ permalink: /
       return candidates;
     }
     let lastSuccessfulRoute=null,activeRunTelemetry=null,activeRunStartedAt=0,statusTimerId=null;
-    function recordSuccessfulRoute(candidate,stageName){lastSuccessfulRoute={provider:candidate.provider,providerLabel:PROVIDERS[candidate.provider]?.label||candidate.provider,model:candidate.model,stage:stageName,at:new Date().toISOString()};if(activeRunTelemetry){activeRunTelemetry.routes.push({...lastSuccessfulRoute});activeRunTelemetry.provider=candidate.provider;activeRunTelemetry.model=candidate.model;}}
+    function recordSuccessfulRoute(candidate,stageName,responseModel){const actualModel=typeof responseModel==='string'&&responseModel.trim()?responseModel:candidate.model;lastSuccessfulRoute={provider:candidate.provider,providerLabel:PROVIDERS[candidate.provider]?.label||candidate.provider,model:actualModel,requestedModel:candidate.model,stage:stageName,at:new Date().toISOString()};if(activeRunTelemetry){activeRunTelemetry.routes.push({...lastSuccessfulRoute});activeRunTelemetry.provider=candidate.provider;activeRunTelemetry.model=actualModel;}}
     async function requestChatCompletion(body,signal,stageName='Ответ модели'){
       throwIfAborted(signal);const preferredProvider=safeGet(STORAGE.provider)||'gemini',preferredModel=safeGet(STORAGE.model)||body.model||DEFAULT_MODEL,candidates=getApiCandidates(preferredModel),allowCross=safeGet(STORAGE.crossProviderFallback)==='true';
       if(!candidates.length)throw new Error('Не найден API-ключ для выбранного провайдера. Откройте настройки и сохраните ключ.');
@@ -1058,13 +1058,13 @@ permalink: /
         const candidate=candidates[i];throwIfAborted(signal);
         try{
           const data=await fetchJson(buildApiUrl(candidate.baseUrl),{method:'POST',headers:{'Authorization':`Bearer ${candidate.key}`,'Content-Type':'application/json'},body:JSON.stringify({...body,model:candidate.model})},signal);
-          recordSuccessfulRoute(candidate,stageName);
+          recordSuccessfulRoute(candidate,stageName,data?.model);
           if(candidate.provider!==preferredProvider||candidate.model!==preferredModel)showToast(`Резерв для этого запроса: ${PROVIDERS[candidate.provider]?.label||candidate.provider} · ${candidate.model}`);
           return data;
         }catch(error){
           if(error?.name==='AbortError')throw error;lastError=error;
           if([401,403,429].includes(error.status))break;
-          const detail=String(error.details||error.message||'').toLowerCase(),modelError=error.status===404||(error.status===400&&/model|unsupported|not found|not available/.test(detail)),serverError=[500,502,503,504].includes(error.status);
+          const detail=String(error.details||error.message||'').toLowerCase(),modelError=[400,404].includes(error.status)&&/model/.test(detail)&&/not found|unknown|invalid|unsupported|does not exist|not available|not accessible|no such/.test(detail),serverError=[500,502,503,504].includes(error.status);
           if(!(modelError||serverError))break;
           if(i<candidates.length-1){const next=candidates[i+1];showStatus(next.provider===candidate.provider?'Модель недоступна; пробую другую модель этого провайдера…':(allowCross?'Провайдер недоступен; пробую разрешённый резерв…':''));}
         }
