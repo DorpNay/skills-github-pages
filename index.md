@@ -133,7 +133,7 @@ permalink: /
       <label for="apiKey" class="block text-xs text-gray-400">API Key · ключ-питание</label>
       <div id="apiKeyShell" class="api-key-row" data-state="empty"><span class="key-lamp" aria-hidden="true"></span><input type="password" id="apiKey" autocomplete="off" aria-describedby="apiKeyStatus" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Вставьте ключ провайдера"></div>
       <p id="apiKeyStatus" class="text-[11px] leading-relaxed text-gray-400" role="status" aria-live="polite">Серый — ключ не введён; янтарный — ключ задан, но не проверен; зелёный — последняя проверка прошла.</p>
-      <div class="flex gap-2"><button type="button" data-action="test-connection" class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение</button><button type="button" data-action="clear-provider-key" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
+      <div class="flex gap-2"><button type="button" data-action="test-connection" class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение и модель</button><button type="button" data-action="clear-provider-key" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
       <label for="modelName" class="block text-xs text-gray-400">Модель</label>
       <input type="text" id="modelName" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
       <label for="tavilyKey" class="block text-xs text-gray-400">Tavily Search API Key</label>
@@ -742,21 +742,43 @@ permalink: /
       const provider=currentProvider(),key=$('apiKey').value.trim()||safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'',baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'');
       if(!key){updateApiKeyLamp('empty','Серый — ключ не введён. Вставьте ключ и нажмите «Проверить соединение».');return;}
       let v=null;try{v=JSON.parse(safeGet('ai_provider_connection_'+provider)||'null');}catch(_){}
-      if(v&&v.baseUrl===baseUrl&&v.ok)updateApiKeyLamp('connected','Зелёный — последняя проверка соединения прошла успешно. При изменении ключа или адреса проверьте снова.');
+      if(v&&v.baseUrl===baseUrl&&v.model=== $('modelName').value.trim()&&v.ok)updateApiKeyLamp('connected','Зелёный — последняя проверка именно этой модели прошла успешно. При изменении ключа, модели или адреса проверьте снова.');
       else updateApiKeyLamp('pending','Янтарный — ключ задан, соединение ещё не подтверждено.');
     }
     async function testProviderConnection(){
-      const provider=currentProvider(),baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),key=$('apiKey').value.trim()||safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'';
+      const provider=currentProvider(),baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),key=$('apiKey').value.trim()||safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'',model=$('modelName').value.trim();
       if(!key){updateApiKeyLamp('error','Сначала вставьте API-ключ.');showToast('Для проверки нужен API-ключ выбранного провайдера.','error');return;}
+      if(!model){updateApiKeyLamp('error','Укажите модель, которую нужно проверить.');return;}
       try{new URL(baseUrl);}catch(_){updateApiKeyLamp('error','Base URL некорректен. Исправьте адрес и повторите проверку.');return;}
-      updateApiKeyLamp('pending','Проверяю API и доступ к списку моделей…');showStatus('🔌 Проверка соединения с провайдером…');
+      updateApiKeyLamp('pending','Проверяю авторизацию, каталог и короткий вызов выбранной модели…');showStatus('🔌 Проверяю провайдера и выбранную модель…');
       try{
-        const response=await fetch(buildModelsUrl(baseUrl),{method:'GET',headers:{'Authorization':'Bearer '+key,'Accept':'application/json'}});
-        if(!response.ok){const body=(await response.text().catch(()=>'' )).slice(0,240);updateApiKeyLamp('error','HTTP '+response.status+(body?': '+body:'')+([401,403].includes(response.status)?' — проверьте ключ и права.':response.status===404?' — проверьте Base URL и поддержку /models.':''));showToast('Проверка API не прошла: HTTP '+response.status,'error');safeSet('ai_provider_connection_'+provider,'');return;}
-        const payload=await response.json();if(!payload||(!Array.isArray(payload.data)&&!Array.isArray(payload.models))){updateApiKeyLamp('error','Ответ получен, но формат списка моделей не распознан.');showToast('API ответил, но формат /models неизвестен.','error');return;}
-        safeSet('ai_provider_connection_'+provider,JSON.stringify({ok:true,baseUrl,testedAt:new Date().toISOString()}));updateApiKeyLamp('connected','Соединение подтверждено · '+(Array.isArray(payload.data)?payload.data.length:payload.models.length)+' моделей в ответе API.');showToast('Соединение с API установлено');
-      }catch(_){safeSet('ai_provider_connection_'+provider,'');updateApiKeyLamp('error','Сеть/CORS не позволили проверить API. Это не доказывает, что ключ неверен; проверьте Base URL или используйте серверный прокси.');showToast('Проверка не удалась: сеть или CORS.','error');}
-      finally{hideStatus();}
+        const listResponse=await fetch(buildModelsUrl(baseUrl),{method:'GET',headers:{'Authorization':'Bearer '+key,'Accept':'application/json'}});
+        if(!listResponse.ok){
+          const detail=(await listResponse.text().catch(()=>'' )).slice(0,200).replaceAll(key,'[скрытый ключ]');
+          updateApiKeyLamp('error','Каталог моделей: HTTP '+listResponse.status+(detail?': '+detail:''));
+          showToast('Проверка каталога не прошла: HTTP '+listResponse.status,'error');safeSet('ai_provider_connection_'+provider,'');return;
+        }
+        const catalogue=await listResponse.json();
+        if(!catalogue||(!Array.isArray(catalogue.data)&&!Array.isArray(catalogue.models))){updateApiKeyLamp('error','API доступен, но формат каталога моделей не распознан.');safeSet('ai_provider_connection_'+provider,'');return;}
+        const modelResponse=await fetch(buildApiUrl(baseUrl),{
+          method:'POST',headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
+          body:JSON.stringify({model,messages:[{role:'user',content:'Reply with exactly OK.'}],stream:false})
+        });
+        if(!modelResponse.ok){
+          const detail=(await modelResponse.text().catch(()=>'' )).slice(0,220).replaceAll(key,'[скрытый ключ]');
+          updateApiKeyLamp('error','Каталог доступен, но модель '+model+' не прошла проверку: HTTP '+modelResponse.status+(detail?': '+detail:''));
+          showToast('Модель не подтвердилась: HTTP '+modelResponse.status,'error');safeSet('ai_provider_connection_'+provider,'');return;
+        }
+        const completion=await modelResponse.json(),answer=completion?.choices?.[0]?.message?.content;
+        if(typeof answer!=='string'||!answer.trim()){updateApiKeyLamp('error','API ответил, но модель не вернула обычный текстовый ответ.');safeSet('ai_provider_connection_'+provider,'');return;}
+        safeSet('ai_provider_connection_'+provider,JSON.stringify({ok:true,baseUrl,model,testedAt:new Date().toISOString()}));
+        updateApiKeyLamp('connected','Зелёный — каталог доступен и модель '+model+' успешно ответила. Проверено сейчас.');
+        showToast('Провайдер и модель прошли проверку');
+      }catch(_){
+        safeSet('ai_provider_connection_'+provider,'');
+        updateApiKeyLamp('error','Сеть/CORS не позволили проверить API. Это не доказывает, что ключ неверен; проверьте Base URL или используйте серверный прокси.');
+        showToast('Проверка не удалась: сеть или CORS.','error');
+      }finally{hideStatus();}
     }
     function clearProviderKey(){const provider=currentProvider();safeSet(providerKeyStorage(provider),'');if(provider==='gemini')safeSet(STORAGE.apiKey,'');safeSet('ai_provider_connection_'+provider,'');$('apiKey').value='';updateApiKeyLamp('empty','Ключ удалён из локальных настроек этого браузера.');showToast('Ключ выбранного провайдера удалён');}
     function updateOfflineUI(){const off=safeGet(STORAGE.offline)==='true',button=$('offlineToggle');if(!button)return;button.setAttribute('aria-pressed',String(off));button.textContent=off?'◉ Оффлайн: вкл.':'◉ Оффлайн: выкл.';button.title='Отключает веб-поиск и внешние источники. Облачный API модели всё равно требует интернет-соединения.';}
