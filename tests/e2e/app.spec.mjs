@@ -360,7 +360,7 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
   await page.locator('[data-action="close-settings"]').click();
   await page.locator('#toggleSearch').uncheck();
   await page.locator('#toggleMultiAgent').check();
-  await page.locator('#userInput').fill('Исследуй и проверь процесс проверки фактов по источникам; составь доказательный отчёт с планом, сравнением и итоговой проверкой.');
+  await page.locator('#userInput').fill('Deep research: исследуй и проверь процесс проверки фактов по источникам; составь доказательный отчёт с планом, сравнением и итоговой проверкой.');
   await page.locator('#sendBtn').click();
 
   await expect(page.locator('#chatBox')).toContainText('Итог: факты необходимо связывать', { timeout: 20000 });
