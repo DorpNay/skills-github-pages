@@ -1172,11 +1172,12 @@ permalink: /
       for (const provider of order) {
         const config = PROVIDERS[provider];
         if (!config) continue;
-        const key = safeGet(providerKeyStorage(provider)) || (provider === 'gemini' ? safeGet(STORAGE.apiKey) : '');
-        if (!key) continue;
-        const baseUrl = provider === selectedProvider
-          ? (safeGet(STORAGE.baseUrl) || config.baseUrl || DEFAULT_BASE_URL).replace(/\/+$/, '')
-          : (config.baseUrl || '').replace(/\/+$/, '');
+        const key=getProviderRequestKey(provider);
+        if(!key) continue;
+        const baseUrl=provider===selectedProvider
+          ? (provider==='cloudflare'?getProviderBaseUrl('cloudflare'):(safeGet(STORAGE.baseUrl)||config.baseUrl||DEFAULT_BASE_URL)).replace(/\/+$/,'')
+          : getProviderBaseUrl(provider);
+
         if (!baseUrl) continue;
         const primary = provider === selectedProvider ? (safeGet(STORAGE.model) || requestedModel) : config.models[0]?.[0];
         const models=provider===selectedProvider?(provider==='custom'?[primary]:[primary,...config.models.map(([model])=>model)]):config.models.map(([model])=>model);
@@ -1671,6 +1672,8 @@ permalink: /
           case 'toggle-settings': toggleSettings(true); break;
           case 'test-connection': await testProviderConnection(); break;
           case 'clear-provider-key': clearProviderKey(); break;
+          case 'connect-pollinations': await beginPollinationsOAuth(); break;
+          case 'disconnect-pollinations': clearPollinationsSession(); refreshApiKeyLamp(); showToast('Pollinations-сессия завершена для этой вкладки.'); break;
           case 'edit-system-prompt': { const textarea=$('systemPromptInput'),button=$('editSystemPrompt'),editable=textarea.readOnly; textarea.readOnly=!editable;button.setAttribute('aria-pressed',String(editable));button.textContent=editable?'✓':'✎';button.title=editable?'Завершить редактирование; затем нажмите «Сохранить»':'Разрешить редактирование';$('promptEditHint').textContent=editable?'Редактирование включено. После изменений нажмите «Сохранить».':'Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.';if(editable)textarea.focus();break;}
           case 'toggle-offline': toggleOfflineMode(); break;
           case 'close-settings': toggleSettings(false); break;
@@ -1694,7 +1697,12 @@ permalink: /
       } catch (error) { console.error('Ошибка действия интерфейса:', error); showToast(error.message || 'Не удалось выполнить действие.', 'error'); }
     });
     $('providerPreset').addEventListener('change',()=>{applyProviderPreset($('providerPreset').value);safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
-    $('apiKey').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');updateApiKeyLamp($('apiKey').value.trim()?'pending':'empty',$('apiKey').value.trim()?'Ключ задан, проверка нужна заново.':'Ключ не введён.');});
+    $('cloudflareAccountId').addEventListener('input',()=>{
+      const id=$('cloudflareAccountId').value.trim();safeSet(STORAGE.cloudflareAccountId,id);
+      if(currentProvider()==='cloudflare')$('baseUrl').value=getProviderBaseUrl('cloudflare');
+      safeSet('ai_provider_connection_cloudflare','');refreshApiKeyLamp();
+    });
+    $('apiKey').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
     $('baseUrl').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
     $('modelPreset').addEventListener('change',()=>{const value=$('modelPreset').value;if(value!=='__custom__')$('modelName').value=value;safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
@@ -1728,7 +1736,9 @@ permalink: /
     }
 
     async function init() {
+      const pollinationsAuthMessage=await finishPollinationsOAuth();
       initializeSettings();
+      if(pollinationsAuthMessage) showToast(pollinationsAuthMessage,pollinationsAuthMessage.startsWith('Pollinations подключён')?'success':'error');
       if (!chatRecoveryBackupKey) {
         try {
           const backupKeys = [];
