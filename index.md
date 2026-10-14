@@ -124,8 +124,14 @@ permalink: /
       <select id="providerPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm">
         <option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="custom">Свой OpenAI-совместимый API</option>
       </select>
-      <label for="modelPreset" class="block text-xs text-gray-400">Быстрый выбор модели</label>
+      <label for="modelSearch" class="block text-xs text-gray-400">Поиск по каталогу моделей</label>
+      <input type="search" id="modelSearch" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Фильтр по имени или ID модели">
+      <label for="modelPreset" class="block text-xs text-gray-400">Быстрый выбор модели · список обновляется из API</label>
       <select id="modelPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm"></select>
+      <div class="flex items-start justify-between gap-2">
+        <p id="modelCatalogStatus" class="min-w-0 text-[11px] leading-relaxed text-gray-400" role="status" aria-live="polite">Показаны встроенные модели. Нажмите «Обновить каталог» для получения актуального списка.</p>
+        <button type="button" data-action="refresh-model-catalog" id="refreshModelCatalog" class="shrink-0 bg-gray-700 hover:bg-gray-600 border border-gray-600 px-2 py-1.5 rounded text-[11px] text-gray-200">Обновить каталог</button>
+      </div>
       <p id="providerHint" class="text-[11px] leading-relaxed text-gray-400">Выберите провайдера и модель. Ключи разных провайдеров сохраняются отдельно в этом браузере.</p>
       <a id="providerDocsLink" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-blue-300 underline underline-offset-2">Открыть страницу API-ключа</a> <a href="https://github.com/DorpNay/skills-github-pages/blob/main/PROVIDER_SETUP.md" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-cyan-300 underline underline-offset-2">Инструкция по подключению</a>
       <div id="cloudflareAccountGroup" class="hidden space-y-1.5">
@@ -716,13 +722,154 @@ permalink: /
       modal.classList.toggle('hidden',!open);
       if(open){$('systemPromptInput').readOnly=true;$('editSystemPrompt').setAttribute('aria-pressed','false');$('editSystemPrompt').textContent='✎';$('promptEditHint').textContent='Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.';refreshApiKeyLamp();}
     }
+    function providerModelCatalogKey(provider) { return 'ai_provider_model_catalog_v1_' + provider; }
+    function providerModelCatalogStaleKey(provider) { return 'ai_provider_model_catalog_stale_v1_' + provider; }
+    function providerModelCatalogFingerprintKey(provider) { return 'ai_provider_model_catalog_fingerprint_v1_' + provider; }
+    const MODEL_CATALOG_TTL_MS = 6 * 60 * 60 * 1000;
+    const MODEL_CATALOG_MAX_ITEMS = 250;
+    const MODEL_CATALOG_FALLBACK_LIMIT = 8;
+
+    function getModelCatalogBaseUrl(provider) {
+      if (provider === 'cloudflare') return getProviderBaseUrl(provider).replace(/\/+$/, '');
+      if (provider === 'custom') return (provider === currentProvider() ? $('baseUrl').value : safeGet(STORAGE.baseUrl) || '').trim().replace(/\/+$/, '');
+      return (PROVIDERS[provider]?.baseUrl || '').replace(/\/+$/, '');
+    }
+    function getModelCatalogEndpoint(provider, baseUrl) {
+      if (provider === 'pollinations') return 'https://gen.pollinations.ai/text/models';
+      if (provider === 'cloudflare') {
+        const accountId = String(safeGet(STORAGE.cloudflareAccountId) || $('cloudflareAccountId')?.value || '').trim();
+        if (!/^[a-f0-9]{32}$/i.test(accountId)) return '';
+        return 'https://api.cloudflare.com/client/v4/accounts/' + accountId + '/ai/models/search?task=text-generation&hide_experimental=true&include_deprecated=false&per_page=100';
+      }
+      if (provider === 'openrouter') return 'https://openrouter.ai/api/v1/models?output_modalities=text&sort=most-popular';
+      if (provider === 'xai') return 'https://api.x.ai/v1/language-models';
+      return baseUrl ? buildModelsUrl(baseUrl) : '';
+    }
+    function normalizeModelCatalog(payload, provider) {
+      let entries = Array.isArray(payload) ? payload
+        : Array.isArray(payload?.data) ? payload.data
+        : Array.isArray(payload?.models) ? payload.models
+        : Array.isArray(payload?.result) ? payload.result
+        : Array.isArray(payload?.result?.data) ? payload.result.data
+        : Array.isArray(payload?.items) ? payload.items : [];
+      const seen = new Set(), normalized = [];
+      const add = (rawId, item, isAlias = false) => {
+        let id = String(rawId || '').trim();
+        if (provider === 'gemini') id = id.replace(/^models\//, '');
+        if (!id || id.length > 180 || /[\r\n\0]/.test(id) || seen.has(id)) return;
+        if (/\b(?:embedding|embeddings|rerank(?:er|ing)?|moderation|prompt.guard|llama.guard|safeguard|tts|speech|whisper|transcription|text.to.image|image.generation|image.to.video|video.generation|classifier|reward.model)\b/i.test(id)) return;
+        const architecture = item?.architecture || {};
+        const outputModalities = architecture.output_modalities || item?.output_modalities || item?.modalities?.output || item?.modalities?.output_modalities || [];
+        if (Array.isArray(outputModalities) && outputModalities.length && !outputModalities.some(value => String(value).toLowerCase() === 'text')) return;
+        const itemProviders = Array.isArray(item?.providers) ? item.providers : [];
+        if (itemProviders.length && !itemProviders.some(value => !value?.status || String(value.status).toLowerCase() === 'live')) return;
+        const display = String(item?.display_name || item?.displayName || item?.title || item?.name || id).trim().slice(0, 90);
+        const context = Number(item?.context_length || item?.context_window || item?.max_context_length || item?.max_model_len || 0);
+        const inputModalities = architecture.input_modalities || item?.input_modalities || [];
+        const record = {
+          id, label: display && display.toLowerCase() !== id.toLowerCase() ? display : '',
+          ...(Number.isFinite(context) && context > 0 ? { contextLength: Math.min(context, 100000000) } : {}),
+          ...(Array.isArray(inputModalities) && inputModalities.length ? { inputModalities: inputModalities.map(value => String(value).slice(0, 20)).slice(0, 6) } : {}),
+          ...(Array.isArray(outputModalities) && outputModalities.length ? { outputModalities: outputModalities.map(value => String(value).slice(0, 20)).slice(0, 6) } : {}),
+          ...(typeof item?.supports_tools === 'boolean' ? { supportsTools: item.supports_tools } : {}),
+          ...(isAlias ? { aliasFor: String(item?.id || '') } : {})
+        };
+        seen.add(id);
+        normalized.push(record);
+      };
+      for (const item of entries) {
+        if (!item || typeof item !== 'object') continue;
+        const id = item.id || item.model_id || item.model || item.name;
+        add(id, item);
+        if (provider === 'pollinations' && Array.isArray(item.aliases)) {
+          for (const alias of item.aliases) add(typeof alias === 'string' ? alias : alias?.id || alias?.name, item, true);
+        }
+        if (normalized.length >= MODEL_CATALOG_MAX_ITEMS) break;
+      }
+      return normalized.slice(0, MODEL_CATALOG_MAX_ITEMS);
+    }
+    function readProviderModelCatalog(provider, allowStale = false) {
+      let catalog = null;
+      try { catalog = JSON.parse(safeGet(providerModelCatalogKey(provider)) || 'null'); } catch (_) {}
+      if (!catalog || catalog.provider !== provider || !Array.isArray(catalog.models) || !catalog.models.length) return null;
+      const expectedBase = getModelCatalogBaseUrl(provider);
+      const stale = provider !== 'pollinations' && safeGet(providerModelCatalogStaleKey(provider)) === 'true';
+      const fingerprint = safeGet(providerModelCatalogFingerprintKey(provider)) || '';
+      if (provider !== 'pollinations' && (catalog.keyFingerprint !== fingerprint || catalog.baseUrl !== expectedBase)) return allowStale ? { ...catalog, stale: true } : null;
+      if (stale && !allowStale) return null;
+      return { ...catalog, stale: stale || (Date.now() - Number(catalog.fetchedAt || 0) > MODEL_CATALOG_TTL_MS) };
+    }
+    function modelCatalogEntries(provider, allowStale = true) {
+      const catalog = readProviderModelCatalog(provider, allowStale);
+      return catalog?.models || [];
+    }
+    function modelLabel(entry) {
+      const parts = [entry.id];
+      if (entry.label && entry.label.toLowerCase() !== entry.id.toLowerCase()) parts.push(entry.label);
+      if (entry.contextLength && entry.contextLength >= 1024) parts.push(Math.round(entry.contextLength / 1024) + 'k контекст');
+      return parts.join(' · ');
+    }
+    function updateModelCatalogStatus(provider = currentProvider()) {
+      const node = $('modelCatalogStatus');
+      if (!node) return;
+      const catalog = readProviderModelCatalog(provider, true);
+      if (!catalog) {
+        node.textContent = 'Пока показаны встроенные модели. Обновите каталог, чтобы загрузить модели провайдера.';
+        return;
+      }
+      const count = catalog.models.length;
+      const time = new Date(Number(catalog.fetchedAt) || Date.now()).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+      const stale = catalog.stale || (provider !== 'pollinations' && safeGet(providerModelCatalogStaleKey(provider)) === 'true');
+      node.textContent = stale
+        ? 'В кэше ' + count + ' моделей от ' + time + '. Каталог требует обновления; устаревший список не используется для автопереключения.'
+        : 'Каталог: ' + count + ' текстовых моделей · обновлён ' + time + '. Автопереключение ограничено небольшим числом кандидатов.';
+    }
+    function uniqueModelIds(values) {
+      const seen = new Set();
+      return values.filter(value => typeof value === 'string' && value && value !== '__custom__' && !seen.has(value) && seen.add(value));
+    }
+    function getProviderFallbackModelIds(provider, primary, limit = MODEL_CATALOG_FALLBACK_LIMIT) {
+      const config = PROVIDERS[provider] || PROVIDERS.custom;
+      const dynamic = modelCatalogEntries(provider, false).map(item => item.id);
+      const curated = provider === 'custom' ? [] : config.models.map(([model]) => model);
+      return uniqueModelIds([primary, ...dynamic, ...curated]).slice(0, limit);
+    }
+
     function populateModelPresets(provider, selectedModel = '') {
       const select = $('modelPreset'), config = PROVIDERS[provider] || PROVIDERS.custom;
-      select.replaceChildren();
-      config.models.forEach(([value,label]) => { const option=document.createElement('option'); option.value=value; option.textContent=label; select.appendChild(option); });
+      const all = [];
+      const seen = new Set();
+      for (const [value, label] of config.models) {
+        if (value === '__custom__' || value === 'custom' || seen.has(value)) continue;
+        seen.add(value); all.push({ id: value, label });
+      }
+      for (const entry of modelCatalogEntries(provider, true)) {
+        if (seen.has(entry.id)) continue;
+        seen.add(entry.id); all.push({ id: entry.id, label: modelLabel(entry), dynamic: true });
+      }
+      const query = String($('modelSearch')?.value || '').trim().toLocaleLowerCase();
+      let visible = query ? all.filter(item => (item.id + ' ' + item.label).toLocaleLowerCase().includes(query)) : all;
       const model = selectedModel || $('modelName').value || config.models[0][0];
-      if ([...select.options].some(option=>option.value===model)) select.value=model;
-      else { const option=document.createElement('option'); option.value='__custom__'; option.textContent='Своя модель / сохранить введённое имя'; select.appendChild(option); select.value='__custom__'; }
+      if (model && !visible.some(item => item.id === model)) {
+        if (query && all.some(item => item.id === model)) visible = [{ id: model, label: model + ' · текущая модель' }, ...visible];
+        else if (!query && !all.some(item => item.id === model)) {
+          select.replaceChildren();
+          const option = document.createElement('option'); option.value = '__custom__'; option.textContent = 'Своя модель / сохранить введённое имя'; select.appendChild(option);
+          select.value = '__custom__';
+          updateModelCatalogStatus(provider);
+          return;
+        }
+      }
+      select.replaceChildren();
+      for (const item of visible.slice(0, MODEL_CATALOG_MAX_ITEMS + 4)) {
+        const option = document.createElement('option'); option.value = item.id; option.textContent = item.label; select.appendChild(option);
+      }
+      if (!select.options.length) {
+        const option = document.createElement('option'); option.value = '__custom__'; option.textContent = 'Совпадений нет — оставьте модель вручную'; select.appendChild(option);
+      }
+      if ([...select.options].some(option => option.value === model)) select.value = model;
+      else if ([...select.options].some(option => option.value === '__custom__')) select.value = '__custom__';
+      updateModelCatalogStatus(provider);
     }
     function applyProviderPreset(provider, initial = false) {
       const config=PROVIDERS[provider]||PROVIDERS.custom;
@@ -758,7 +905,9 @@ permalink: /
       $('providerHint').textContent=hints[provider]||config.label+': ключи сохраняются отдельно в этом браузере. Межпровайдерный резерв выключен по умолчанию.';
       const docs=$('providerDocsLink');
       if(config.docsUrl){docs.href=config.docsUrl;docs.classList.remove('hidden');}else docs.classList.add('hidden');
+      if (!initial && $('modelSearch')) $('modelSearch').value = '';
       populateModelPresets(provider,$('modelName').value);
+      updateModelCatalogStatus(provider);
       if(!initial){safeSet(STORAGE.baseUrl,$('baseUrl').value);safeSet(STORAGE.model,$('modelName').value);}
     }
     function initializeSettings() {
@@ -792,6 +941,7 @@ permalink: /
       $('allowCrossProviderFallback').checked = safeGet(STORAGE.crossProviderFallback) === 'true';
       $('offlineToggle').setAttribute('aria-pressed',String(safeGet(STORAGE.offline)==='true'));
       updateOfflineUI(); updateModeUI(); refreshApiKeyLamp();
+      if (provider === 'pollinations' || getProviderRequestKey(provider)) void refreshModelCatalog({ quiet: true, force: false, provider });
     }
     function updateModeUI() {
       const fast = processingMode === 'fast';
@@ -855,6 +1005,73 @@ permalink: /
 
     function buildApiUrl(baseUrl) { return `${baseUrl.replace(/\/+$/,'')}/chat/completions`; }
     function buildModelsUrl(baseUrl){return `${baseUrl.replace(/\/+$/,'')}/models`;}
+    async function refreshModelCatalog(options = {}) {
+      const provider = options.provider || currentProvider();
+      const baseUrl = options.baseUrl || getModelCatalogBaseUrl(provider);
+      const key = options.key || (provider === 'pollinations' ? getProviderRequestKey(provider) : (provider === currentProvider() ? $('apiKey').value.trim() : '') || getProviderRequestKey(provider));
+      const quiet = options.quiet === true, force = options.force === true;
+      const current = readProviderModelCatalog(provider, true);
+      if (!force && current && !current.stale && Date.now() - Number(current.fetchedAt || 0) < MODEL_CATALOG_TTL_MS) {
+        if (provider === currentProvider()) { populateModelPresets(provider, $('modelName').value); updateModelCatalogStatus(provider); }
+        return { count: current.models.length, cached: true };
+      }
+      if (provider !== 'pollinations' && !key) {
+        if (provider === currentProvider()) $('modelCatalogStatus').textContent = 'Введите ключ и сохраните настройки, затем обновите каталог.';
+        return { count: 0, error: 'missing-key' };
+      }
+      const endpoint = getModelCatalogEndpoint(provider, baseUrl);
+      if (!endpoint) {
+        if (provider === currentProvider()) $('modelCatalogStatus').textContent = 'Для каталога этой конфигурации нужен корректный Base URL / Cloudflare Account ID.';
+        return { count: 0, error: 'missing-endpoint' };
+      }
+      if (provider === currentProvider()) {
+        $('refreshModelCatalog').disabled = true;
+        $('refreshModelCatalog').textContent = 'Загрузка…';
+        $('modelCatalogStatus').textContent = 'Запрашиваю актуальный каталог моделей…';
+      }
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+      try {
+        const headers = { Accept: 'application/json' };
+        if (provider !== 'pollinations' && key) headers.Authorization = 'Bearer ' + key;
+        const response = await fetch(endpoint, { method: 'GET', headers, cache: 'no-store', signal: controller.signal });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const payload = await response.json();
+        const models = normalizeModelCatalog(payload, provider);
+        if (!models.length) throw new Error('Провайдер не вернул распознаваемые текстовые chat-модели.');
+        const keyFingerprint = provider === 'pollinations' ? '' : await providerKeyFingerprint(key);
+        const catalog = {
+          provider, baseUrl, keyFingerprint, fetchedAt: Date.now(),
+          models
+        };
+        if (!safeSet(providerModelCatalogKey(provider), JSON.stringify(catalog))) throw new Error('Не удалось сохранить каталог в хранилище браузера.');
+        safeSet(providerModelCatalogFingerprintKey(provider), keyFingerprint);
+        safeSet(providerModelCatalogStaleKey(provider), 'false');
+        if (provider === currentProvider()) {
+          populateModelPresets(provider, $('modelName').value);
+          updateModelCatalogStatus(provider);
+        }
+        return { count: models.length, models, cached: false };
+      } catch (error) {
+        const cached = readProviderModelCatalog(provider, true);
+        if (provider === currentProvider()) {
+          if (cached?.models?.length) {
+            $('modelCatalogStatus').textContent = 'Не удалось обновить каталог (' + (error?.message === 'AbortError' ? 'тайм-аут' : String(error?.message || 'ошибка сети/CORS')) + '). Сохранён старый список из ' + cached.models.length + ' моделей; при смене модели проверьте доступность вручную.';
+            populateModelPresets(provider, $('modelName').value);
+          } else {
+            $('modelCatalogStatus').textContent = 'Каталог недоступен (' + (error?.message === 'AbortError' ? 'тайм-аут' : String(error?.message || 'сеть/CORS')) + '). Встроенные модели и ручной ввод продолжают работать.';
+          }
+        }
+        if (!quiet) showToast('Не удалось обновить каталог моделей. Проверьте ключ, права API и доступ CORS.', 'error');
+        return { count: cached?.models?.length || 0, error: String(error?.message || 'catalog-error'), stale: true };
+      } finally {
+        clearTimeout(timeoutId);
+        if (provider === currentProvider()) {
+          $('refreshModelCatalog').disabled = false;
+          $('refreshModelCatalog').textContent = 'Обновить каталог';
+        }
+      }
+    }
     function updateApiKeyLamp(state,message){const shell=$('apiKeyShell'),status=$('apiKeyStatus');if(!shell||!status)return;shell.dataset.state=state;status.textContent=message;}
     async function providerKeyFingerprint(value) {
       if(!value||!globalThis.crypto?.subtle)return '';
@@ -909,6 +1126,9 @@ permalink: /
             if(models)catalogueNote='каталог API содержит '+models.length+' моделей';
           }
         }catch(_){}
+        let refreshedCatalogue = null;
+        if (provider === currentProvider()) refreshedCatalogue = await refreshModelCatalog({ quiet: true, force: true, provider, baseUrl, key });
+        if (refreshedCatalogue?.count) catalogueNote = 'в каталоге ' + refreshedCatalogue.count + ' текстовых моделей';
         const keyFingerprint=await providerKeyFingerprint(key);
         if(keyFingerprint) safeSet('ai_provider_connection_'+provider,JSON.stringify({ok:true,baseUrl,model,keyFingerprint,testedAt:new Date().toISOString()}));
         else safeSet('ai_provider_connection_'+provider,'');
@@ -924,6 +1144,7 @@ permalink: /
     }
     function clearProviderKey(){
       const provider=currentProvider();safeSet(providerKeyStorage(provider),'');
+      if (provider !== 'pollinations') safeSet(providerModelCatalogStaleKey(provider), 'true');
       if(provider==='pollinations')clearPollinationsSession();
       if(provider==='cloudflare'){safeSet(STORAGE.cloudflareAccountId,'');$('cloudflareAccountId').value='';$('baseUrl').value='';}
       if(provider==='gemini')safeSet(STORAGE.apiKey,'');
@@ -1197,8 +1418,10 @@ permalink: /
           : getProviderBaseUrl(provider);
 
         if (!baseUrl) continue;
-        const primary = provider === selectedProvider ? (safeGet(STORAGE.model) || requestedModel) : config.models[0]?.[0];
-        const models=provider===selectedProvider?(provider==='custom'?[primary]:[primary,...config.models.map(([model])=>model)]):config.models.map(([model])=>model);
+        const primary = provider === selectedProvider ? (safeGet(STORAGE.model) || requestedModel) : (modelCatalogEntries(provider, false)[0]?.id || config.models[0]?.[0]);
+        const models = provider === selectedProvider
+          ? getProviderFallbackModelIds(provider, primary, MODEL_CATALOG_FALLBACK_LIMIT)
+          : getProviderFallbackModelIds(provider, primary, 3);
         for (const model of models) {
           if (!model || model === '__custom__') continue;
           const keyId = provider + '|' + baseUrl + '|' + model;
@@ -1721,6 +1944,7 @@ permalink: /
             break;
           case 'toggle-settings': toggleSettings(true); break;
           case 'test-connection': await testProviderConnection(); break;
+          case 'refresh-model-catalog': await refreshModelCatalog({ quiet: false, force: true }); break;
           case 'clear-provider-key': clearProviderKey(); break;
           case 'connect-pollinations': await beginPollinationsOAuth(); break;
           case 'disconnect-pollinations': clearPollinationsSession(); refreshApiKeyLamp(); showToast('Pollinations-сессия завершена для этой вкладки.'); break;
@@ -1746,14 +1970,16 @@ permalink: /
         }
       } catch (error) { console.error('Ошибка действия интерфейса:', error); showToast(error.message || 'Не удалось выполнить действие.', 'error'); }
     });
-    $('providerPreset').addEventListener('change',()=>{applyProviderPreset($('providerPreset').value);safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
+    $('providerPreset').addEventListener('change',()=>{applyProviderPreset($('providerPreset').value);safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();if(currentProvider()==='pollinations'||getProviderRequestKey(currentProvider()))void refreshModelCatalog({quiet:true,force:false,provider:currentProvider()});});
     $('cloudflareAccountId').addEventListener('input',()=>{
       const id=$('cloudflareAccountId').value.trim();safeSet(STORAGE.cloudflareAccountId,id);
       if(currentProvider()==='cloudflare')$('baseUrl').value=getProviderBaseUrl('cloudflare');
+      safeSet(providerModelCatalogStaleKey('cloudflare'),'true');
       safeSet('ai_provider_connection_cloudflare','');refreshApiKeyLamp();
     });
-    $('apiKey').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
-    $('baseUrl').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
+    $('apiKey').addEventListener('input',()=>{if(currentProvider()!=='pollinations')safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
+    $('baseUrl').addEventListener('input',()=>{safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
+    $('modelSearch').addEventListener('input',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
     $('modelPreset').addEventListener('change',()=>{const value=$('modelPreset').value;if(value!=='__custom__')$('modelName').value=value;safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
     $('modelName').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
