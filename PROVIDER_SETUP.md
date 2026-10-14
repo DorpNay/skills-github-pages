@@ -112,6 +112,8 @@ GitHub Actions Secrets — это секреты **серверной CI-сре�
 
 Workflow принимает и распространённые короткие названия секретов: Gemini — `GEMINI`, `GOOGLE_GEMINI`, `GEMINI_KEY`; Groq — `GROQ`, `GROQ_KEY`; xAI — `XAI`, `GROK`, `GROK_API_KEY`, `GROK_KEY`; Pollinations — `POLLINATIONS`, `POLLINATIONS_KEY`; OpenRouter — `OPENROUTER`, `OPENROUTER_KEY`; NVIDIA — `NVIDIA`, `NVIDIA_NIM_API_KEY`; Hugging Face — `HUGGINGFACE`, `HUGGING_FACE`, `HF`; Cloudflare — `CLOUDFLARE`, `CLOUDFLARE_API_KEY`, `CLOUDFLARE_TOKEN` (и `CF_ACCOUNT_ID` / `CF_ID` для Account ID).
 
+Pollinations App Key с префиксом `pk_` не является server access token и будет помечен как **SKIPPED**, а не отправлен в API. Для live smoke-test нужен отдельный секретный токен `sk_`; браузерное подключение приложения по-прежнему использует App Key + OAuth PKCE.
+
 **Учтите стоимость:** запросы небольшие, но провайдер может списать токены/квоту; Pollinations расходует Pollen. Не используйте этот workflow как непрерывный мониторинг. Значения секретов не выводятся в журнал.
 
 Actions Secrets доступны workflow на стороне GitHub, но **не становятся доступными статическому сайту GitHub Pages или GitHub-коннектору ChatGPT**. Каталог моделей в браузере всё равно требует ключ, введённый в настройках приложения (исключение — публичный каталог Pollinations).
