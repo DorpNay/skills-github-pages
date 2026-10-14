@@ -307,6 +307,28 @@ test('dynamic chat catalog is used for bounded same-provider model fallback', as
   expect(attemptedModels).toEqual(['e2e-primary-model', 'e2e-dynamic-fallback']);
 });
 
+test('Pollinations catalog discovers text models and aliases without sending a token', async ({ page }) => {
+  let authorizationHeader = '';
+  await page.route('https://gen.pollinations.ai/text/models', async route => {
+    authorizationHeader = route.request().headers()['authorization'] || '';
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ data: [
+        { id: 'publisher/available-text-model', name: 'Available Text Model', aliases: ['old-text-model'] },
+        { id: 'publisher/image-generation-model', name: 'Image Model' }
+      ] })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('pollinations');
+  await expect(page.locator('#modelPreset option[value="publisher/available-text-model"]')).toHaveCount(1);
+  await expect(page.locator('#modelPreset option[value="old-text-model"]')).toHaveCount(1);
+  await expect(page.locator('#modelPreset option[value="publisher/image-generation-model"]')).toHaveCount(0);
+  await expect(page.locator('#modelCatalogStatus')).toContainText('2 текстовых моделей');
+  expect(authorizationHeader).toBe('');
+});
+
 test('Pollinations OAuth callback keeps its access token in sessionStorage only', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
