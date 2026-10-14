@@ -1079,11 +1079,16 @@ permalink: /
       chat.messages.push({ role: 'assistant', content: finalText, researchTrace, providerInfo: finalRoute });
       updateState([...chats]);
     }
-    function shouldUseMultiAgentResearch(value){
-      const text=String(value||'').trim();if(!text)return false;const normalized=text.toLocaleLowerCase().replace(/[\\s\\u00a0]+/g,' ');
-      if(normalized.length<140&&/^(привет|здравствуй(?:те)?|доброе утро|добрый день|добрый вечер|хай|хей|hello|hi|hey|приветик|как дела\\??|спасибо|понятно|ок(?:ей)?|thanks|thank you|good morning|good evening|good night)[!?. ,]*$/iu.test(normalized))return false;
-      const intent=/\\b(исследу|изучи|глубоко|подробно|сравни|сопостав|аудит|проанализ|разберись|проверь реализац|архитектур|спроектир|реализуй|разработай|план внедрен|roadmap|deep research|research|compare|audit|review|architecture|implement|debug|diagnos|root cause|benchmark|best practice|современн.*практик|источник|нескольк.*вариант)\\b/iu.test(text);
-      return intent||text.length>=420||(text.match(/[?？]/g)||[]).length>=3||(text.match(/^\\s*(?:[-*•]|\\d+[.)])\\s+/gm)||[]).length>=4;
+    function shouldUseMultiAgentResearch(value) {
+      const text = String(value || '').trim();
+      if (!text) return false;
+      const normalized = text.toLocaleLowerCase().replace(/[\s\u00a0]+/g, ' ');
+      // Courtesy turns should never become four pseudo-agent reports.
+      if (normalized.length < 140 && /^(привет|здравствуй(?:те)?|доброе утро|добрый день|добрый вечер|хай|хей|hello|hi|hey|приветик|как дела\??|спасибо|понятно|ок(?:ей)?|thanks|thank you|good morning|good evening|good night)[!?. ,]*$/iu.test(normalized)) return false;
+      const intent = /\b(исследу|изучи|глубоко|подробно|сравни|сопостав|аудит|проанализ|разберись|проверь реализац|архитектур|спроектир|реализуй|разработай|план внедрен|roadmap|deep research|research|compare|audit|review|architecture|implement|debug|diagnos|root cause|benchmark|best practice|современн.*практик|источник|нескольк.*вариант)\b/iu.test(text);
+      const questions = (text.match(/[?？]/g) || []).length;
+      const bullets = (text.match(/^\s*(?:[-*•]|\d+[.)])\s+/gm) || []).length;
+      return intent || text.length >= 420 || questions >= 3 || bullets >= 4;
     }
     async function runAssistant(chat, signal, useSearch, useMultiAgent, mode = 'fast', skipCache = false, promptOverride = '') {
       const baseUrl = (safeGet(STORAGE.baseUrl) || DEFAULT_BASE_URL).replace(/\/+$/, '');
