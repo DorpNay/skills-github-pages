@@ -725,26 +725,41 @@ permalink: /
       else { const option=document.createElement('option'); option.value='__custom__'; option.textContent='Своя модель / сохранить введённое имя'; select.appendChild(option); select.value='__custom__'; }
     }
     function applyProviderPreset(provider, initial = false) {
-      const config = PROVIDERS[provider] || PROVIDERS.custom;
-      if (!initial) {
-        const oldProvider = safeGet(STORAGE.provider) || 'gemini', oldKey = $('apiKey').value.trim();
-        if (oldKey) safeSet(providerKeyStorage(oldProvider), oldKey);
+      const config=PROVIDERS[provider]||PROVIDERS.custom;
+      if(!initial){
+        const oldProvider=safeGet(STORAGE.provider)||'gemini',oldKey=$('apiKey').value.trim();
+        if(oldKey)safeSet(providerKeyStorage(oldProvider),oldKey);
       }
-      safeSet(STORAGE.provider, provider);
-      if (!initial && provider !== 'custom') { $('baseUrl').value=config.baseUrl; $('modelName').value=config.models[0][0]; }
-      if (initial && provider !== 'custom' && !safeGet(STORAGE.baseUrl)) $('baseUrl').value=config.baseUrl;
-      $('apiKey').value = safeGet(providerKeyStorage(provider)) || (provider === 'gemini' ? safeGet(STORAGE.apiKey) : '') || '';
-      $('providerHint').textContent = provider === 'custom'
-        ? 'Введите Base URL, имя модели и ключ вашего OpenAI-совместимого API. Совместимость и CORS зависят от поставщика.'
-        : config.label + ': проверьте модели, тариф и ограничения в официальной документации. Ключ вводится отдельно для каждого провайдера. Пустое поле означает, что ключ не сохранён для выбранного провайдера; ключи других провайдеров сохраняются отдельно. При резервном переходе запрос и контекст могут быть отправлены другому провайдеру с сохранённым ключом.';
-      const docs = $('providerDocsLink');
-      if (config.docsUrl) { docs.href = config.docsUrl; docs.classList.remove('hidden'); }
-      else docs.classList.add('hidden');
-      populateModelPresets(provider, $('modelName').value);
-      if (!initial) {
-        safeSet(STORAGE.baseUrl, $('baseUrl').value);
-        safeSet(STORAGE.model, $('modelName').value);
-      }
+      safeSet(STORAGE.provider,provider);
+      $('cloudflareAccountGroup').classList.toggle('hidden',provider!=='cloudflare');
+      $('pollinationsAuthGroup').classList.toggle('hidden',provider!=='pollinations');
+      $('apiKeyLabel').textContent=provider==='pollinations'?'Pollinations App Key · pk_… (OAuth client ID)':'API Key · ключ провайдера';
+      $('apiKey').placeholder=provider==='pollinations'?'App Key с префиксом pk_…':'Вставьте ключ провайдера';
+      if(provider==='cloudflare'){
+        $('cloudflareAccountId').value=safeGet(STORAGE.cloudflareAccountId)||'';
+        $('baseUrl').value=getProviderBaseUrl('cloudflare');
+        if(!initial)$('modelName').value=config.models[0][0];
+      } else if(!initial&&provider!=='custom'){
+        $('baseUrl').value=config.baseUrl;
+        $('modelName').value=config.models[0][0];
+      } else if(initial&&provider!=='custom'&&!safeGet(STORAGE.baseUrl)) $('baseUrl').value=config.baseUrl;
+      $('apiKey').value=safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'';
+      const hints={
+        custom:'Введите Base URL, имя модели и ключ своего OpenAI-совместимого API. Совместимость и CORS зависят от поставщика.',
+        pollinations:'Pollinations: сюда вставляется App Key pk_… (не секретный sk_ токен). Зарегистрируйте точный Redirect URI в настройках App Key, затем нажмите «Подключить аккаунт»: OAuth PKCE хранит временный access token только в sessionStorage этой вкладки. Модели могут потреблять Pollen согласно бюджету.',
+        huggingface:'Hugging Face Inference Providers: нужен fine-grained token с разрешением “Make calls to Inference Providers”. Endpoint router.huggingface.co/v1; модели должны быть из каталога и поддерживать Chat Completions.',
+        cloudflare:'Cloudflare Workers AI: укажите Account ID и API Token с разрешением Workers AI Read. Endpoint /ai/v1/chat/completions совместим с OpenAI. Запросы используют лимиты/платные единицы вашего аккаунта; бесплатность не гарантируется.',
+        groq:'Groq использует официальный OpenAI-совместимый endpoint. Устаревшие llama3-8b-8192 и mixtral-8x7b-32768 не предлагаются; вместо них показаны модели из текущего каталога.',
+        xai:'xAI · Grok — отдельный API-провайдер, не Groq. Endpoint https://api.x.ai/v1; ключ создаётся в xAI Console.',
+        nvidia:'NVIDIA NIM: доступность моделей и лимиты зависят от вашего NVIDIA API key и endpoint.',
+        openrouter:'OpenRouter маршрутизирует запросы к моделям своего каталога. openrouter/free выбирает доступную бесплатную модель; доступность и лимиты зависят от каталога и аккаунта.',
+        gemini:'Google AI Studio · Gemini: используйте API-ключ AI Studio и точный ID модели из официального каталога.'
+      };
+      $('providerHint').textContent=hints[provider]||config.label+': ключи сохраняются отдельно в этом браузере. Межпровайдерный резерв выключен по умолчанию.';
+      const docs=$('providerDocsLink');
+      if(config.docsUrl){docs.href=config.docsUrl;docs.classList.remove('hidden');}else docs.classList.add('hidden');
+      populateModelPresets(provider,$('modelName').value);
+      if(!initial){safeSet(STORAGE.baseUrl,$('baseUrl').value);safeSet(STORAGE.model,$('modelName').value);}
     }
     function initializeSettings() {
       const savedProvider=safeGet(STORAGE.provider);
