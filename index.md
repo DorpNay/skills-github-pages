@@ -846,6 +846,13 @@ permalink: /
         signal.addEventListener('abort', onAbort, { once: true });
       });
     }
+    function parseRetryAfterMs(value) {
+      if (!value) return null;
+      const seconds = Number(value);
+      if (Number.isFinite(seconds) && seconds >= 0) return Math.ceil(seconds * 1000);
+      const absolute = Date.parse(value);
+      return Number.isFinite(absolute) ? Math.max(0, absolute - Date.now()) : null;
+    }
     async function fetchJson(url, options, signal) {
       for (let attempt = 0; attempt < 2; attempt++) {
         throwIfAborted(signal);
@@ -861,7 +868,13 @@ permalink: /
         }
         const details = (await response.text().catch(() => '')).slice(0, 500);
         if ([500, 502, 503, 504].includes(response.status) && attempt < 1) {
-          await sleep(500, signal); continue;
+          const retryAfter = response.headers.get('Retry-After');
+          const delay = parseRetryAfterMs(retryAfter);
+          // Honour short server back-off advice. Never retry early against a longer Retry-After.
+          if (delay === null || delay <= 10000) {
+            await sleep(delay === null ? 500 : delay, signal);
+            continue;
+          }
         }
         const apiError=new Error(`HTTP ${response.status}${details?`: ${details}`:''}`);apiError.status=response.status;apiError.details=details;apiError.retryAfter=response.headers.get('Retry-After');throw apiError;
       }
@@ -1064,12 +1077,14 @@ permalink: /
         }catch(error){
           if(error?.name==='AbortError')throw error;lastError=error;
           if([401,403,429].includes(error.status))break;
-          const detail=String(error.details||error.message||'').toLowerCase(),modelError=[400,404].includes(error.status)&&/model/.test(detail)&&/not found|unknown|invalid|unsupported|does not exist|not available|not accessible|no such/.test(detail),serverError=[500,502,503,504].includes(error.status);
-          if(!(modelError||serverError))break;
+          const detail=String(error.details||error.message||'').toLowerCase(),modelError=[400,404].includes(error.status)&&/model/.test(detail)&&/not found|unknown|invalid|unsupported|does not exist|not available|not accessible|no such/.test(detail);
+          // Only a clearly model-specific error justifies choosing another model. Auth, quota,
+          // network, malformed endpoint, and transient 5xx errors are not model-selection signals.
+          if(!modelError)break;
           if(i<candidates.length-1){const next=candidates[i+1];showStatus(next.provider===candidate.provider?'Модель недоступна; пробую другую модель этого провайдера…':(allowCross?'Провайдер недоступен; пробую разрешённый резерв…':''));}
         }
       }
-      throw new Error('Запрос не выполнен. Исходный текст сохранён. Последняя ошибка: '+(lastError?.message||'неизвестная ошибка')+(lastError?.status===401?' · Проверьте API-ключ.':lastError?.status===403?' · Проверьте права и доступность модели.':lastError?.status===429?' · Превышен лимит или квота. Проверьте лимиты провайдера и не повторяйте запросы подряд.':lastError?.status===404?' · Проверьте точный ID модели и Base URL.':' · Проверьте диагностический статус, модель и Base URL.'));
+      throw new Error('Запрос не выполнен. Исходный текст сохранён. Последняя ошибка: '+(lastError?.message||'неизвестная ошибка')+(lastError?.status===401?' · Проверьте API-ключ.':lastError?.status===403?' · Проверьте права и доступность модели.':lastError?.status===429?' · Превышен лимит или квота. Не переключаю модели/провайдеры автоматически.':lastError?.status===404?' · Проверьте точный ID модели и Base URL.':' · Проверьте диагностический статус, модель и Base URL.')+(lastError?.retryAfter?' Провайдер прислал Retry-After: '+lastError.retryAfter+'. Не повторяйте запрос раньше указанного времени.':'')+(lastError?.status===429&&!lastError?.retryAfter?' Повторите вручную после паузы; автоматический резерв не запускается.':''));
     }
     function isGenericModelRefusal(value) {
       const text = String(value || '').trim().replace(/[\s\u00a0]+/g, ' ');
