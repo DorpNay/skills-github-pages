@@ -24,8 +24,10 @@ jobs:
           node-version: 22
       - name: Parse app JavaScript and check UI structure
         run: node scripts/quality-agents.mjs integrity
-      - name: Syntax-check the secret-safe live provider probe
-        run: node --check scripts/provider-smoke.mjs
+      - name: Syntax-check the secret-safe live provider probes
+        run: |
+          node --check scripts/provider-smoke.mjs
+          node --check scripts/provider-smoke-all.mjs
 
   security-sentinel:
     name: Security sentinel (keys / rendering / tools)
