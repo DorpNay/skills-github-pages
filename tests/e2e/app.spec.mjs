@@ -376,7 +376,7 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
   await expect(traceButton).toBeVisible();
   const traceId = await traceButton.getAttribute('data-trace-id');
   const trace = await page.evaluate(id => JSON.parse(localStorage.getItem('ai_research_trace_' + id) || 'null'), traceId);
-  expect(trace.schemaVersion).toBe(1);
+  expect(trace.schemaVersion).toBe(2);
   expect(trace.run.workflow).toBe('research');
   expect(trace.run.mode).toBe('fast');
   expect(trace.run.webSearchEnabled).toBe(false);
