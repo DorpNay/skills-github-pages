@@ -795,7 +795,9 @@ permalink: /
       const expectedBase = getModelCatalogBaseUrl(provider);
       const stale = provider !== 'pollinations' && safeGet(providerModelCatalogStaleKey(provider)) === 'true';
       const fingerprint = safeGet(providerModelCatalogFingerprintKey(provider)) || '';
-      if (provider !== 'pollinations' && (catalog.keyFingerprint !== fingerprint || catalog.baseUrl !== expectedBase)) return allowStale ? { ...catalog, stale: true } : null;
+      const normalizedCatalogBase = String(catalog.baseUrl || '').replace(/\/+$/, '').replace(/\/chat\/completions$/i, '');
+      const normalizedExpectedBase = String(expectedBase || '').replace(/\/+$/, '').replace(/\/chat\/completions$/i, '');
+      if (provider !== 'pollinations' && (catalog.keyFingerprint !== fingerprint || normalizedCatalogBase !== normalizedExpectedBase)) return allowStale ? { ...catalog, stale: true } : null;
       if (stale && !allowStale) return null;
       return { ...catalog, stale: stale || (Date.now() - Number(catalog.fetchedAt || 0) > MODEL_CATALOG_TTL_MS) };
     }
@@ -1040,13 +1042,15 @@ permalink: /
         const models = normalizeModelCatalog(payload, provider);
         if (!models.length) throw new Error('Провайдер не вернул распознаваемые текстовые chat-модели.');
         const keyFingerprint = provider === 'pollinations' ? '' : await providerKeyFingerprint(key);
+        const storedKey = provider === 'pollinations' ? key : getProviderRequestKey(provider);
+        const keyWasSaved = provider === 'pollinations' || storedKey === key;
         const catalog = {
-          provider, baseUrl, keyFingerprint, fetchedAt: Date.now(),
-          models
+          provider, baseUrl: String(baseUrl || '').replace(/\/+$/, '').replace(/\/chat\/completions$/i, ''),
+          keyFingerprint, fetchedAt: Date.now(), models
         };
         if (!safeSet(providerModelCatalogKey(provider), JSON.stringify(catalog))) throw new Error('Не удалось сохранить каталог в хранилище браузера.');
         safeSet(providerModelCatalogFingerprintKey(provider), keyFingerprint);
-        safeSet(providerModelCatalogStaleKey(provider), 'false');
+        safeSet(providerModelCatalogStaleKey(provider), keyWasSaved ? 'false' : 'true');
         if (provider === currentProvider()) {
           populateModelPresets(provider, $('modelName').value);
           updateModelCatalogStatus(provider);
@@ -1112,20 +1116,18 @@ permalink: /
         });
         if(!modelResponse.ok){
           const detail=(await modelResponse.text().catch(()=>'' )).slice(0,220).replaceAll(key,'[скрытый ключ]');
-          updateApiKeyLamp('error','Модель '+model+' не прошла проверку: HTTP '+modelResponse.status+(detail?': '+detail:''));
-          showToast('Модель не подтвердилась: HTTP '+modelResponse.status,'error');safeSet('ai_provider_connection_'+provider,'');return;
+          let catalogue = null;
+          if ([400,404].includes(modelResponse.status) && provider === currentProvider()) {
+            catalogue = await refreshModelCatalog({ quiet: true, force: true, provider, baseUrl, key });
+          }
+          const catalogHelp = catalogue?.count ? ' Каталог обновлён: ' + catalogue.count + ' текстовых моделей. Выберите доступную модель в списке выше.' : '';
+          updateApiKeyLamp('error','Модель '+model+' не прошла проверку: HTTP '+modelResponse.status+(detail?': '+detail:'')+catalogHelp);
+          showToast(catalogue?.count ? 'Список моделей обновлён; выберите другую модель.' : 'Модель не подтвердилась: HTTP '+modelResponse.status,'error');
+          safeSet('ai_provider_connection_'+provider,'');return;
         }
         const completion=await modelResponse.json(),answer=completion?.choices?.[0]?.message?.content;
         if(typeof answer!=='string'||!answer.trim()){updateApiKeyLamp('error','API ответил, но модель не вернула обычный текстовый ответ.');safeSet('ai_provider_connection_'+provider,'');return;}
-        // Model listing is useful context, but it is optional; some compatible endpoints omit this route.
-        let catalogueNote='каталог моделей недоступен';
-        try{
-          const listResponse=await fetch(buildModelsUrl(baseUrl),{method:'GET',headers:{'Authorization':'Bearer '+key,'Accept':'application/json'}});
-          if(listResponse.ok){
-            const catalogue=await listResponse.json(),models=Array.isArray(catalogue?.data)?catalogue.data:Array.isArray(catalogue?.models)?catalogue.models:null;
-            if(models)catalogueNote='каталог API содержит '+models.length+' моделей';
-          }
-        }catch(_){}
+        // let catalogueNote='каталог моделей недоступен';
         let refreshedCatalogue = null;
         if (provider === currentProvider()) refreshedCatalogue = await refreshModelCatalog({ quiet: true, force: true, provider, baseUrl, key });
         if (refreshedCatalogue?.count) catalogueNote = 'в каталоге ' + refreshedCatalogue.count + ' текстовых моделей';
