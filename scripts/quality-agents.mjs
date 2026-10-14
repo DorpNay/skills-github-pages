@@ -54,7 +54,16 @@ const suites = {
       includes("nvidia: { label: 'NVIDIA NIM'", 'NVIDIA NIM should be included as an active alternative.');
       assert.ok(!source.includes('cerebras: {') && !source.includes('value="cerebras"'), 'Cerebras must remain removed per product decision.');
       assert.ok(!source.includes('value="github">GitHub Models'), 'Retired GitHub Models must not be offered as a provider.');
+      const allSmokeWorkflow = readFileSync(resolve(root, '.github/workflows/provider-smoke-all.yml'), 'utf8');
+      const allSmokeRunner = readFileSync(resolve(root, 'scripts/provider-smoke-all.mjs'), 'utf8');
+      assert.ok(allSmokeRunner.includes("config.id === 'pollinations' && /^pk_/i.test(secret)"), 'Pollinations browser App Keys must not be used as server smoke credentials.');
       includes("const DEFAULT_MODEL = 'gemini-3.8-flash'", 'Default Gemini model must match the current official catalogue.');
+      for (const alias of ['secrets.GEMINI ||', 'secrets.GROQ ||', 'secrets.GROK }', 'secrets.POLLINATIONS ||', 'secrets.OPENROUTER ||', 'secrets.NVIDIA ||', 'secrets.HUGGINGFACE ||', 'secrets.CLOUDFLARE }']) {
+        assert.ok(allSmokeWorkflow.includes(alias), 'All-provider smoke workflow is missing secret alias: ' + alias);
+      }
+      includes('function exportSettingsProfile()', 'Portable settings profile export must remain available.');
+      includes('async function importSettingsProfile(event)', 'Portable settings profile import must remain available.');
+      includes('function downloadTraceJson()', 'Research trace JSON export must remain available.');
       assert.ok(!source.includes("safeGet(STORAGE.model) === 'gemini-3.8-flash'"), 'A valid Gemini 3.8 model must not be downgraded on load.');
       includes('function getApiCandidates(requestedModel)', 'Provider failover must discover only configured credentials.');
       includes('function shouldUseMultiAgentResearch(value)', 'Multi-agent orchestration must be routed by task complexity.');
