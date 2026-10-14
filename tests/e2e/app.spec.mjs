@@ -10,6 +10,11 @@ test.beforeEach(async ({ page }) => {
       sessionStorage.setItem('e2e-cleaned', '1');
     }
   });
+  // Keep every catalog request deterministic: no real provider credentials or network.
+  await page.route(/(?:\\/models(?:\\?.*)?|\\/text\\/models(?:\\?.*)?|\\/language-models(?:\\?.*)?|\\/ai\\/models\\/search(?:\\?.*)?)$/, route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ data: [{ id: 'e2e-default-catalog-model' }] })
+  }));
 });
 
 test('published app boots and core controls are interactive', async ({ page }) => {
@@ -356,6 +361,17 @@ test('Pollinations requests use the OAuth token, not the public App Key', async 
 
 test('Cloudflare endpoint is built from Account ID and HF uses the Inference Providers router', async ({ page }) => {
   const cloudflareId = '0123456789abcdef0123456789abcdef';
+  await page.route(/\\/ai\\/models\\/search\\?/, route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ result: [{ name: '@cf/openai/gpt-oss-120b', task: 'text-generation' }, { name: '@cf/bge/embedding', task: 'text-generation' }] })
+  }));
+  await page.route('https://router.huggingface.co/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ data: [
+      { id: 'openai/gpt-oss-120b:fastest', architecture: { input_modalities: ['text'], output_modalities: ['text'] } },
+      { id: 'sentence-transformers/all-MiniLM-L6-v2', architecture: { input_modalities: ['text'], output_modalities: ['embeddings'] } }
+    ] })
+  }));
   let cloudflareModel = '';
   await page.route('https://api.cloudflare.com/client/v4/accounts/' + cloudflareId + '/ai/v1/chat/completions', async route => {
     cloudflareModel = route.request().postDataJSON().model;
