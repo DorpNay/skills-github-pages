@@ -56,7 +56,7 @@ const suites = {
       assert.ok(!source.includes('value="github">GitHub Models'), 'Retired GitHub Models must not be offered as a provider.');
       const allSmokeWorkflow = readFileSync(resolve(root, '.github/workflows/provider-smoke-all.yml'), 'utf8');
       includes("const DEFAULT_MODEL = 'gemini-3.8-flash'", 'Default Gemini model must match the current official catalogue.');
-      for (const alias of ['secrets.GEMINI ||', 'secrets.GROQ ||', 'secrets.GROK }', 'secrets.POLLINATIONS ||', 'secrets.OPENROUTER ||', 'secrets.NVIDIA ||', 'secrets.HUGGINGFACE ||', 'secrets.CLOUDFLARE ||']) {
+      for (const alias of ['secrets.GEMINI ||', 'secrets.GROQ ||', 'secrets.GROK }', 'secrets.POLLINATIONS ||', 'secrets.OPENROUTER ||', 'secrets.NVIDIA ||', 'secrets.HUGGINGFACE ||', 'secrets.CLOUDFLARE }']) {
         assert.ok(allSmokeWorkflow.includes(alias), 'All-provider smoke workflow is missing secret alias: ' + alias);
       }
       includes('function exportSettingsProfile()', 'Portable settings profile export must remain available.');
