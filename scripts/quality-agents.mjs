@@ -32,6 +32,14 @@ const suites = {
     ['independent processing controls and on-demand resources', () => {
       includes('async function runMultiAgentResearch', 'Multi-agent research needs its own staged pipeline.');
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
+      includes('async function refreshModelCatalog(options = {})', 'Provider model catalogs must be refreshed through the bounded safe loader.');
+      includes('function normalizeModelCatalog(payload, provider)', 'Dynamic models must be normalized and filtered before entering the UI.');
+      includes('function getProviderFallbackModelIds(provider, primary, limit = MODEL_CATALOG_FALLBACK_LIMIT)', 'Auto fallback must share the bounded model inventory.');
+      includes('const MODEL_CATALOG_MAX_ITEMS = 250', 'Dynamic catalog rendering must be capped for mobile browsers.');
+      includes("return 'https://gen.pollinations.ai/text/models'", 'Pollinations catalog should use the dedicated text-only public endpoint.');
+      includes('output_modalities=text&sort=most-popular', 'OpenRouter catalog should request text output and popularity ordering.');
+      includes('task=text-generation&hide_experimental=true', 'Cloudflare catalog should be scoped to text generation and non-experimental models.');
+      includes('async function refreshModelCatalog(options = {})', 'Model list refresh is a first-class action.');
       includes("xai: { label: 'xAI · Grok'", 'xAI Grok must be a separate provider from Groq.');
       includes("pollinations: { label: 'Pollinations.ai'", 'Pollinations must use its own API catalog and endpoint.');
       includes("cloudflare: { label: 'Cloudflare Workers AI'", 'Cloudflare Workers AI must be a selectable provider.');
