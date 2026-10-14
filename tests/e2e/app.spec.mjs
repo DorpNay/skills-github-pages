@@ -384,6 +384,7 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
   expect(trace.run.crossProviderFallbackEnabled).toBe(false);
   expect(trace.run.startedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
   expect(trace.run.durationMs).toBeGreaterThanOrEqual(0);
+  expect(trace.systemPromptCharCount).toBeGreaterThan(0);
   if (trace.run.configuredPromptFingerprintAlgorithm === 'sha-256') {
     expect(trace.run.configuredPromptFingerprint).toMatch(/^[a-f0-9]{64}$/);
   } else {
