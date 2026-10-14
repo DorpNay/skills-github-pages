@@ -856,13 +856,27 @@ permalink: /
     function buildApiUrl(baseUrl) { return `${baseUrl.replace(/\/+$/,'')}/chat/completions`; }
     function buildModelsUrl(baseUrl){return `${baseUrl.replace(/\/+$/,'')}/models`;}
     function updateApiKeyLamp(state,message){const shell=$('apiKeyShell'),status=$('apiKeyStatus');if(!shell||!status)return;shell.dataset.state=state;status.textContent=message;}
-    function refreshApiKeyLamp(){
-      const provider=currentProvider(),inputKey=$('apiKey').value.trim()||safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'',baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'');
+    async function providerKeyFingerprint(value) {
+      if(!value||!globalThis.crypto?.subtle)return '';
+      try {
+        const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value));
+        return Array.from(new Uint8Array(digest),byte=>byte.toString(16).padStart(2,'0')).join('');
+      } catch(_) { return ''; }
+    }
+    async function refreshApiKeyLamp(){
+      const provider=currentProvider(),inputKey=$('apiKey').value.trim()||safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'';
+      const baseUrl=$('baseUrl').value.trim().replace(/\/+$/,''),model=$('modelName').value.trim();
       if(provider==='pollinations'&&inputKey&&!getProviderRequestKey('pollinations')){updateApiKeyLamp('pending','App Key задан. Подключите Pollinations через OAuth PKCE; временный access token не сохраняется в localStorage.');return;}
       if(!inputKey){updateApiKeyLamp('empty','Серый — ключ не введён. Вставьте ключ и нажмите «Проверить соединение».');return;}
+      const verificationKey=provider==='pollinations'?getProviderRequestKey(provider):inputKey;
+      if(!verificationKey){updateApiKeyLamp('pending','Ключ задан, но сеанс провайдера ещё не подключён.');return;}
       let v=null;try{v=JSON.parse(safeGet('ai_provider_connection_'+provider)||'null');}catch(_){}
-      if(v&&v.baseUrl===baseUrl&&v.model===$('modelName').value.trim()&&v.ok)updateApiKeyLamp('connected','Зелёный — последняя проверка именно этой модели прошла успешно. При изменении ключа, модели или адреса проверьте снова.');
-      else updateApiKeyLamp('pending','Янтарный — ключ задан, соединение ещё не подтверждено.');
+      const fingerprint=await providerKeyFingerprint(verificationKey);
+      const currentProviderKey=provider==='pollinations'?getProviderRequestKey(provider):($('apiKey').value.trim()||safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'');
+      if(provider!==currentProvider()||baseUrl!==$('baseUrl').value.trim().replace(/\/+$/,'')||model!==$('modelName').value.trim()||verificationKey!==currentProviderKey)return;
+      if(fingerprint&&v&&v.keyFingerprint===fingerprint&&v.baseUrl===baseUrl&&v.model===model&&v.ok)
+        updateApiKeyLamp('connected','Зелёный — последняя проверка именно этой модели и текущего ключа прошла успешно.');
+      else updateApiKeyLamp('pending','Янтарный — ключ задан, но его текущая версия ещё не подтверждена.');
     }
     async function testProviderConnection(){
       const provider=currentProvider(),baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),key=provider==='pollinations'?getProviderRequestKey(provider):($('apiKey').value.trim()||getProviderRequestKey(provider)),model=$('modelName').value.trim();
@@ -895,8 +909,12 @@ permalink: /
             if(models)catalogueNote='каталог API содержит '+models.length+' моделей';
           }
         }catch(_){}
-        safeSet('ai_provider_connection_'+provider,JSON.stringify({ok:true,baseUrl,model,testedAt:new Date().toISOString()}));
-        updateApiKeyLamp('connected','Зелёный — модель '+model+' успешно ответила; '+catalogueNote+'.');
+        const keyFingerprint=await providerKeyFingerprint(key);
+        if(keyFingerprint) safeSet('ai_provider_connection_'+provider,JSON.stringify({ok:true,baseUrl,model,keyFingerprint,testedAt:new Date().toISOString()}));
+        else safeSet('ai_provider_connection_'+provider,'');
+        if(provider===currentProvider()&&model===$('modelName').value.trim()&&baseUrl===$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''))
+          updateApiKeyLamp('connected','Зелёный — модель '+model+' успешно ответила; '+catalogueNote+'.');
+        else refreshApiKeyLamp();
         showToast('Провайдер и модель прошли проверку');
       }catch(_){
         safeSet('ai_provider_connection_'+provider,'');
