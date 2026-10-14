@@ -124,6 +124,10 @@ test('provider connection lamp verifies /models and key deletion is explicit', a
   await page.route('https://api.example.test/v1/models', route => route.fulfill({
     status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'e2e-model' }] })
   }));
+  await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+  }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
   await page.locator('#providerPreset').selectOption('custom');
