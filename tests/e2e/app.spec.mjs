@@ -10,6 +10,20 @@ test.beforeEach(async ({ page }) => {
       sessionStorage.setItem('e2e-cleaned', '1');
     }
   });
+  // Keep every catalog request deterministic: no real provider credentials or network.
+  await page.route(/(?:\/models(?:\?.*)?|\/text\/models(?:\?.*)?|\/language-models(?:\?.*)?|\/ai\/models\/search(?:\?.*)?)$/, async route => {
+    // Fail closed: only the custom test endpoint or explicit provider mocks may answer.
+    if (new URL(route.request().url()).hostname === 'api.example.test') {
+      return route.fulfill({
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({ data: [{ id: 'e2e-default-catalog-model' }] })
+      });
+    }
+    return route.fulfill({
+      status: 503, contentType: 'application/json',
+      body: JSON.stringify({ error: { message: 'Catalog intentionally unavailable in deterministic E2E.' } })
+    });
+  });
 });
 
 test('published app boots and core controls are interactive', async ({ page }) => {
@@ -119,9 +133,15 @@ test('API authentication errors are shown without losing the original user promp
   await expect.poll(async () => await page.locator('#chatBox').locator('.message-model-meta').count()).toBe(0);
 });
 
-test('provider connection lamp verifies /models and key deletion is explicit', async ({ page }) => {
+test('provider connection loads filtered model catalog into selector and key deletion is explicit', async ({ page }) => {
   await page.route('https://api.example.test/v1/models', route => route.fulfill({
-    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'e2e-model' }] })
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ data: [
+      { id: 'e2e-model' },
+      { id: 'e2e-dynamic-model', name: 'Dynamic Chat Model' },
+      { id: 'e2e-text-embedding' },
+      { id: 'e2e-image-generation' }
+    ] })
   }));
   await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
     status: 200, contentType: 'application/json',
@@ -137,10 +157,20 @@ test('provider connection lamp verifies /models and key deletion is explicit', a
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-model');
   await page.locator('#apiKey').fill('not-a-real-key');
+  await page.locator('[data-action="save-settings"]').click();
   await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'pending');
   await page.locator('[data-action="test-connection"]').click();
   await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected');
   await expect(page.locator('#apiKeyStatus')).toContainText('успешно ответила');
+  await expect(page.locator('#modelCatalogStatus')).toContainText('2 текстовых моделей');
+  await expect(page.locator('#modelPreset option[value="e2e-dynamic-model"]')).toHaveCount(1);
+  await expect(page.locator('#modelPreset option[value="e2e-text-embedding"]')).toHaveCount(0);
+  await expect(page.locator('#modelPreset option[value="e2e-image-generation"]')).toHaveCount(0);
+  const cachedCatalog = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_provider_model_catalog_v1_custom') || 'null'));
+  expect(cachedCatalog.keyFingerprint).toMatch(/^[a-f0-9]{64}$/);
+  expect(JSON.stringify(cachedCatalog)).not.toContain('not-a-real-key');
+  await page.locator('#modelPreset').selectOption('e2e-dynamic-model');
+  await expect(page.locator('#modelName')).toHaveValue('e2e-dynamic-model');
   await page.locator('[data-action="clear-provider-key"]').click();
   await expect(page.locator('#apiKey')).toHaveValue('');
   await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'empty');
@@ -250,6 +280,67 @@ test('model-specific failure tries another model on the same provider first', as
   expect(attemptedModels[1]).toBe('qwen/qwen3.8-27b');
 });
 
+test('dynamic chat catalog is used for bounded same-provider model fallback', async ({ page }) => {
+  const attemptedModels = [];
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ data: [
+      { id: 'e2e-primary-model' },
+      { id: 'e2e-dynamic-fallback' },
+      { id: 'e2e-text-embedding' }
+    ] })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    const model = route.request().postDataJSON().model;
+    attemptedModels.push(model);
+    if (model === 'e2e-primary-model') {
+      await route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ error: { message: 'model not found' } }) });
+      return;
+    }
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model, choices: [{ message: { role: 'assistant', content: 'Dynamic fallback worked.' } }] })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('e2e-primary-model');
+  await page.locator('#apiKey').fill('e2e-dynamic-catalog-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="refresh-model-catalog"]').click();
+  await expect(page.locator('#modelPreset option[value="e2e-dynamic-fallback"]')).toHaveCount(1);
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('Use the model catalog for fallback');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Dynamic fallback worked.');
+  await expect.poll(() => attemptedModels.length).toBe(2);
+  expect(attemptedModels).toEqual(['e2e-primary-model', 'e2e-dynamic-fallback']);
+});
+
+test('Pollinations catalog discovers text models and aliases without sending a token', async ({ page }) => {
+  let authorizationHeader = '';
+  await page.route('https://gen.pollinations.ai/text/models', async route => {
+    authorizationHeader = route.request().headers()['authorization'] || '';
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ data: [
+        { id: 'publisher/available-text-model', name: 'Available Text Model', aliases: ['old-text-model'] },
+        { id: 'publisher/image-generation-model', name: 'Image Model' }
+      ] })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#providerPreset').selectOption('pollinations');
+  await expect(page.locator('#modelPreset option[value="publisher/available-text-model"]')).toHaveCount(1);
+  await expect(page.locator('#modelPreset option[value="old-text-model"]')).toHaveCount(1);
+  await expect(page.locator('#modelPreset option[value="publisher/image-generation-model"]')).toHaveCount(0);
+  await expect(page.locator('#modelCatalogStatus')).toContainText('2 текстовых моделей');
+  expect(authorizationHeader).toBe('');
+});
+
 test('Pollinations OAuth callback keeps its access token in sessionStorage only', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
@@ -304,6 +395,17 @@ test('Pollinations requests use the OAuth token, not the public App Key', async 
 
 test('Cloudflare endpoint is built from Account ID and HF uses the Inference Providers router', async ({ page }) => {
   const cloudflareId = '0123456789abcdef0123456789abcdef';
+  await page.route(/\/ai\/models\/search\?/, route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ result: [{ name: '@cf/openai/gpt-oss-120b', task: 'text-generation' }, { name: '@cf/bge/embedding', task: 'text-generation' }] })
+  }));
+  await page.route('https://router.huggingface.co/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ data: [
+      { id: 'openai/gpt-oss-120b:fastest', architecture: { input_modalities: ['text'], output_modalities: ['text'] } },
+      { id: 'sentence-transformers/all-MiniLM-L6-v2', architecture: { input_modalities: ['text'], output_modalities: ['embeddings'] } }
+    ] })
+  }));
   let cloudflareModel = '';
   await page.route('https://api.cloudflare.com/client/v4/accounts/' + cloudflareId + '/ai/v1/chat/completions', async route => {
     cloudflareModel = route.request().postDataJSON().model;
