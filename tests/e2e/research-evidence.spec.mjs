@@ -60,7 +60,7 @@ test('research trace captures a source returned by the webpage tool', async ({ p
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
   await page.locator('#toggleMultiAgent').check();
-  await page.locator('#userInput').fill('Исследуй подробно публичную страницу и проверь утверждения по источнику.');
+  await page.locator('#userInput').fill('Deep research: проверь публичную страницу, проведи исследование источника, сопоставь утверждения и составь короткий доказательный отчёт.');
   await page.locator('#sendBtn').click();
 
   await expect(page.locator('#chatBox')).toContainText('Final answer based on the retrieved page.', { timeout: 20000 });
