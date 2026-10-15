@@ -76,4 +76,10 @@ test('research trace captures a source returned by the webpage tool', async ({ p
   await expect(page.locator('#traceContent')).toContainText('Источники из инструментов');
   await expect(page.locator('#traceContent a')).toHaveAttribute('href', 'https://example.test/research-evidence');
   await expect(page.locator('#traceContent')).toContainText('The retrieved page contains a unique evidence sentence');
+  const markdownPromise = page.waitForEvent('download');
+  await page.locator('[data-action="download-trace"]').click();
+  const markdown = await markdownPromise;
+  const markdownText = await readFile(await markdown.path(), 'utf8');
+  expect(markdownText).toContain('https://example.test/research-evidence');
+  expect(markdownText).toContain('The retrieved page contains a unique evidence sentence');
 });
