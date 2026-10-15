@@ -254,6 +254,7 @@ permalink: /
     const MAX_TOOL_ROUNDS = 4;
     const MAX_CONTEXT_MESSAGES = 24;
     const MAX_CONTEXT_CHARS = 24000;
+    const MAX_RESEARCH_EVIDENCE = 40;
     const CACHE_TTL_MS = 15 * 60 * 1000;
     const $ = (id) => document.getElementById(id);
 
@@ -1314,13 +1315,25 @@ permalink: /
         return `fnv-${(hash >>> 0).toString(16)}-${serialized.length}`;
       }
     }
-    function buildHistory(messages) {
+    function getHistoryCharBudget(systemPromptChars = 0, provider = currentProvider(), model = safeGet(STORAGE.model) || DEFAULT_MODEL) {
+      const entry = modelCatalogEntries(provider, false).find(item => item.id === model);
+      const contextTokens = Number(entry?.contextLength);
+      if (!Number.isFinite(contextTokens) || contextTokens <= 0) return MAX_CONTEXT_CHARS;
+      // Provider context windows are token counts, but there is no shared tokenizer here.
+      // Use a conservative character estimate and reserve space for prompt + output.
+      const estimatedWindowChars = Math.floor(contextTokens * 1.25);
+      const outputReserveChars = Math.floor(Math.min(2048, contextTokens * 0.25) * 1.25);
+      const promptReserveChars = Math.max(0, Number(systemPromptChars) || 0);
+      return Math.max(0, Math.min(MAX_CONTEXT_CHARS, estimatedWindowChars - outputReserveChars - promptReserveChars));
+    }
+    function buildHistory(messages, systemPromptChars = 0, provider = currentProvider(), model = safeGet(STORAGE.model) || DEFAULT_MODEL) {
       const turns = [];
       for (const message of messages) {
         if (message.role === 'user') turns.push([message]);
         else if (turns.length) turns[turns.length - 1].push(message);
       }
       const selected = [];
+      const charBudget = getHistoryCharBudget(systemPromptChars, provider, model);
       let count = 0;
       let charCount = 0;
       for (let i = turns.length - 1; i >= 0; i--) {
@@ -1328,7 +1341,7 @@ permalink: /
         const turnChars = turn.reduce((sum, message) => sum + (typeof message.content === 'string' ? message.content.length : 0) +
           (Array.isArray(message.tool_calls) ? JSON.stringify(message.tool_calls).length : 0), 0);
         // Keep the newest complete turn even when it alone exceeds the soft character budget.
-        if (selected.length && (count + turn.length > MAX_CONTEXT_MESSAGES || charCount + turnChars > MAX_CONTEXT_CHARS)) break;
+        if (selected.length && (count + turn.length > MAX_CONTEXT_MESSAGES || charCount + turnChars > charBudget)) break;
         selected.unshift(turn);
         count += turn.length;
         charCount += turnChars;
@@ -1613,7 +1626,16 @@ permalink: /
         const candidate=candidates[i];throwIfAborted(signal);
         const attemptStartedAt=Date.now(),attemptStartedIso=new Date(attemptStartedAt).toISOString();
         try{
-          const data=await fetchJson(buildApiUrl(candidate.baseUrl),{method:'POST',headers:{'Authorization':`Bearer ${candidate.key}`,'Content-Type':'application/json'},body:JSON.stringify({...body,model:candidate.model})},signal);
+          let candidateBody=body;
+          if(Array.isArray(body.messages)){
+            const systemMessages=body.messages.filter(message=>message?.role==='system');
+            const historyMessages=body.messages.filter(message=>message?.role!=='system');
+            if(systemMessages.length){
+              const systemChars=systemMessages.reduce((total,message)=>total+(typeof message.content==='string'?message.content.length:0),0);
+              candidateBody={...body,messages:[...systemMessages,...buildHistory(historyMessages,systemChars,candidate.provider,candidate.model)]};
+            }
+          }
+          const data=await fetchJson(buildApiUrl(candidate.baseUrl),{method:'POST',headers:{'Authorization':`Bearer ${candidate.key}`,'Content-Type':'application/json'},body:JSON.stringify({...candidateBody,model:candidate.model})},signal);
           const elapsedMs=Date.now()-attemptStartedAt;
           const attempt={provider:candidate.provider,providerLabel:PROVIDERS[candidate.provider]?.label||candidate.provider,model:typeof data?.model==='string'&&data.model.trim()?data.model:candidate.model,requestedModel:candidate.model,stage:stageName,attemptIndex:i+1,startedAt:attemptStartedIso,at:new Date().toISOString(),elapsedMs,success:true,failureType:null};
           if(activeRunTelemetry)activeRunTelemetry.attempts.push({...attempt});
@@ -1648,8 +1670,65 @@ permalink: /
       }
       return content;
     }
+    function normalizeResearchEvidenceUrl(rawUrl) {
+      const candidate = String(rawUrl || '').trim().replace(/[),.;]+$/, '');
+      try {
+        const url = validatePublicHttpsUrl(candidate);
+        url.hash = '';
+        return url.href;
+      } catch (_) { return ''; }
+    }
+    function collectResearchEvidence(messages) {
+      const toolNames = new Map();
+      const safeMessages = Array.isArray(messages) ? messages : [];
+      for (const message of safeMessages) {
+        if (message?.role !== 'assistant' || !Array.isArray(message.tool_calls)) continue;
+        for (const call of message.tool_calls) {
+          if (typeof call?.id === 'string' && typeof call?.function?.name === 'string') {
+            toolNames.set(call.id, call.function.name.slice(0, 80));
+          }
+        }
+      }
+      const sources = [];
+      const seen = new Set();
+      for (const message of safeMessages) {
+        if (message?.role !== 'tool' || typeof message.content !== 'string') continue;
+        const content = message.content.slice(0, 50000);
+        const lines = content.split(/\r?\n/);
+        const sourceLabel = (content.match(/^Источник:\s*([^\n]+)/m)?.[1] || '').trim().slice(0, 80);
+        const tool = String(toolNames.get(message.tool_call_id) || 'tool').slice(0, 80);
+        for (let index = 0; index < lines.length; index++) {
+          const match = lines[index].match(/^\s*URL:\s*(https:\/\/\S+)/i);
+          if (!match) continue;
+          const url = normalizeResearchEvidenceUrl(match[1]);
+          if (!url || seen.has(url)) continue;
+          let parsed;
+          try { parsed = new URL(url); } catch (_) { continue; }
+          const heading = index > 0 ? lines[index - 1].trim() : '';
+          const numberedTitle = heading.match(/^\[\d+\]\s*(.+)$/)?.[1];
+          const title = String(numberedTitle || (heading && !/^Источник:/i.test(heading) && !/^URL:/i.test(heading) ? heading : '') || parsed.hostname)
+            .replace(/\s+/g, ' ').trim().slice(0, 180);
+          const excerptParts = [];
+          for (let next = index + 1; next < lines.length && excerptParts.length < 5; next++) {
+            const line = lines[next].trim();
+            if (!line || /^URL:/i.test(line)) break;
+            if (/^(?:Извлечённый текст|Stars:|Score:|Answers:|Authors:|Points:|Updated:|Дата снимка:|Оригинал:|Abstract:)/i.test(line)) continue;
+            excerptParts.push(line);
+          }
+          const excerpt = excerptParts.join(' ').replace(/\s+/g, ' ').trim().slice(0, 360);
+          seen.add(url);
+          sources.push({
+            id: 'S' + (sources.length + 1), title, url, source: sourceLabel || tool, tool,
+            ...(excerpt ? { excerpt } : {})
+          });
+          if (sources.length >= MAX_RESEARCH_EVIDENCE) return sources;
+        }
+      }
+      return sources;
+    }
+
     async function runMultiAgentResearch(chat, signal, useSearch, mode, systemPrompt) {
-      const history = buildHistory(chat.messages);
+      const history = buildHistory(chat.messages, String(systemPrompt || '').length);
       const plan = await requestTextStage(systemPrompt + '\nРоль: планировщик исследования. Сформируй краткий рабочий план максимум из 3–5 шагов только для сложной задачи. Укажи, какие проверяемые утверждения требуют свежих источников, какие инструменты помогут и что будет считаться достаточным результатом. Не отвечай на исходный вопрос, не добавляй шаблонные оговорки и не придумывай этапы, не нужные задаче. Не утверждай, что источники проверены, пока исследователь не выполнил поиск.', history, signal, '🤖 Исследование 1/4: планировщик…');
       const workChat = { ...chat, messages: [...chat.messages.map((message) => ({ ...message })), { role: 'assistant', content: 'План исследования:\n' + plan }] };
       const researchStart = workChat.messages.length;
@@ -1660,7 +1739,9 @@ permalink: /
       const critique = await requestTextStage('Ты независимый проверяющий. Сверь черновик с исходной задачей и приложенными доказательствами/ссылками. Ищи только существенные фактические ошибки, логические противоречия, невыполненные требования и реально отсутствующие важные данные. Не выдумывай риски, ограничения или пункты ради заполнения таблицы; не требуй источников для приветствий и мнений. Если всё нормально или утверждений для проверки нет, ответь одной короткой фразой. Иначе дай короткий приоритизированный список исправлений, не переписывая весь ответ.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик:\n' + draft }], signal, '🧪 Исследование 3/4: критик…');
       const finalText = await requestTextStage(systemPrompt + '\nРоль: синтезатор. Ответь прямо на исходный запрос. Используй план, факты из черновика и критику; исправь фактические ошибки, отличай подтверждённое от неопределённого, сохрани полезные ссылки. Не включай шаблонное вступление о возможностях ассистента и не добавляй общих рекомендаций, не нужных для задачи.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик исследователя:\n' + draft + '\n\nКритика:\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
       const traceId=globalThis.crypto?.randomUUID?.()||('trace-'+Date.now()+'-'+Math.random().toString(36).slice(2)),finalRoute=lastSuccessfulRoute?{...lastSuccessfulRoute}:null,traceCreatedAt=new Date().toISOString();
-      const researchTrace={schemaVersion:1,id:traceId,createdAt:traceCreatedAt,provider:finalRoute?.providerLabel||(PROVIDERS[currentProvider()]?.label||currentProvider()),model:finalRoute?.model||(safeGet(STORAGE.model)||DEFAULT_MODEL),run:activeRunTelemetry?{schemaVersion:activeRunTelemetry.schemaVersion,workflow:activeRunTelemetry.workflow,mode:activeRunTelemetry.mode,webSearchEnabled:activeRunTelemetry.webSearchEnabled,multiAgentEnabled:activeRunTelemetry.multiAgentEnabled,crossProviderFallbackEnabled:activeRunTelemetry.crossProviderFallbackEnabled,startedAt:activeRunTelemetry.startedAt,durationMs:activeRunStartedAt?Date.now()-activeRunStartedAt:null,configuredPromptFingerprint:activeRunTelemetry.configuredPromptFingerprint,configuredPromptFingerprintAlgorithm:activeRunTelemetry.configuredPromptFingerprintAlgorithm}:null,plan,draft,critique,finalText,routes:activeRunTelemetry?activeRunTelemetry.routes.map(route=>({...route})):[],attempts:activeRunTelemetry?activeRunTelemetry.attempts.map(attempt=>({...attempt})):[]};
+      const researchMessages = workChat.messages.slice(researchStart);
+      const sources = collectResearchEvidence(researchMessages);
+      const researchTrace={schemaVersion:2,id:traceId,createdAt:traceCreatedAt,provider:finalRoute?.providerLabel||(PROVIDERS[currentProvider()]?.label||currentProvider()),model:finalRoute?.model||(safeGet(STORAGE.model)||DEFAULT_MODEL),systemPromptCharCount:String(systemPrompt||'').length,run:activeRunTelemetry?{schemaVersion:activeRunTelemetry.schemaVersion,workflow:activeRunTelemetry.workflow,mode:activeRunTelemetry.mode,webSearchEnabled:activeRunTelemetry.webSearchEnabled,multiAgentEnabled:activeRunTelemetry.multiAgentEnabled,crossProviderFallbackEnabled:activeRunTelemetry.crossProviderFallbackEnabled,startedAt:activeRunTelemetry.startedAt,durationMs:activeRunStartedAt?Date.now()-activeRunStartedAt:null,configuredPromptFingerprint:activeRunTelemetry.configuredPromptFingerprint,configuredPromptFingerprintAlgorithm:activeRunTelemetry.configuredPromptFingerprintAlgorithm}:null,plan,draft,critique,finalText,sources,routes:activeRunTelemetry?activeRunTelemetry.routes.map(route=>({...route})):[],attempts:activeRunTelemetry?activeRunTelemetry.attempts.map(attempt=>({...attempt})):[]};
       safeSet('ai_research_trace_' + traceId, JSON.stringify(researchTrace));
       chat.messages.push({ role: 'assistant', content: finalText, researchTrace, providerInfo: finalRoute });
       updateState([...chats]);
@@ -1709,7 +1790,7 @@ permalink: /
       if(useMultiAgent&&!useResearchPipeline)showToast('Простой запрос: отвечаю напрямую без лишних агентных этапов.');
       if(useResearchPipeline){await runMultiAgentResearch(chat,signal,useSearch,mode,systemPrompt);return;}
 
-      const messagesForCache = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages)];
+      const messagesForCache = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages, systemPrompt.length)];
       const cacheKey = await makeCacheKey({ endpoint: baseUrl, model, messages: messagesForCache });
       if (!useSearch && !skipCache) {
         const cached = await CacheDB.get(cacheKey);
@@ -1743,7 +1824,7 @@ permalink: /
       const maxToolRounds = mode === 'deep' ? MAX_TOOL_ROUNDS : 1;
       for (let round = 0; round <= maxToolRounds; round++) {
         throwIfAborted(signal);
-        const apiMessages = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages)];
+        const apiMessages = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages, systemPrompt.length)];
         const body = { model, messages: apiMessages, stream: false };
         if (tools) { body.tools = tools; body.tool_choice = 'auto'; }
         showStatus(round === 0 ? '🤖 Ожидание ответа модели…' : '🧠 Модель обрабатывает результаты поиска…');
@@ -1993,7 +2074,8 @@ permalink: /
           'Межпровайдерный резерв: '+(typeof run.crossProviderFallbackEnabled==='boolean'?(run.crossProviderFallbackEnabled?'разрешён':'выключен'):'не записан'),
           'Начало: '+(run.startedAt||'не записано'),
           'Длительность: '+(Number.isFinite(run.durationMs)?run.durationMs+' мс':'не записана'),
-          'Отпечаток системного промпта: '+(run.configuredPromptFingerprint||'не записан')+' ('+(run.configuredPromptFingerprintAlgorithm||'unknown')+')'
+          'Отпечаток системного промпта: '+(run.configuredPromptFingerprint||'не записан')+' ('+(run.configuredPromptFingerprintAlgorithm||'unknown')+')',
+          'Размер системного промпта исследовательского pipeline: '+(Number.isFinite(trace.systemPromptCharCount)?trace.systemPromptCharCount+' символов':'не записан')
         ].join('\n'));
       }
       const attempts=Array.isArray(trace.attempts)?trace.attempts:[];
@@ -2010,6 +2092,27 @@ permalink: /
         appendTraceSection('Успешные маршруты',routes.map(route=>(route.stage||'этап')+': '+(route.providerLabel||route.provider||'провайдер')+' / '+(route.model||'модель')+(Number.isFinite(route.elapsedMs)?' — '+route.elapsedMs+' мс':'')).join('\n'));
       }
       [['Планировщик',trace.plan],['Черновик исследователя',trace.draft],['Критика',trace.critique],['Итоговый ответ',trace.finalText]].forEach(([title,value]) => appendTraceSection(title,value));
+      const evidenceSection = document.createElement('section'); evidenceSection.className = 'border border-gray-800 rounded-xl p-3';
+      const evidenceHeading = document.createElement('h3'); evidenceHeading.className = 'font-semibold text-blue-200 mb-2'; evidenceHeading.textContent = 'Источники из инструментов';
+      evidenceSection.appendChild(evidenceHeading);
+      const sourceList = document.createElement('ol'); sourceList.className = 'list-decimal pl-5 space-y-3';
+      let shownSources = 0;
+      for (const source of (Array.isArray(trace.sources) ? trace.sources : []).slice(0, MAX_RESEARCH_EVIDENCE)) {
+        const safeUrl = normalizeResearchEvidenceUrl(source?.url);
+        if (!safeUrl) continue;
+        const item = document.createElement('li'); item.className = 'space-y-1 break-words text-xs';
+        const link = document.createElement('a'); link.href = safeUrl; link.target = '_blank'; link.rel = 'noopener noreferrer';
+        link.className = 'text-cyan-300 underline underline-offset-2 break-all';
+        link.textContent = String(source?.title || safeUrl).replace(/\s+/g, ' ').slice(0, 180);
+        item.appendChild(link);
+        const meta = [source?.source ? 'Источник: ' + String(source.source).slice(0, 80) : '', source?.tool ? 'Инструмент: ' + String(source.tool).slice(0, 80) : ''].filter(Boolean).join(' · ');
+        if (meta) { const node = document.createElement('p'); node.className = 'text-gray-400'; node.textContent = meta; item.appendChild(node); }
+        if (source?.excerpt) { const node = document.createElement('p'); node.className = 'text-gray-300 leading-relaxed'; node.textContent = String(source.excerpt).replace(/\s+/g, ' ').slice(0, 360); item.appendChild(node); }
+        sourceList.appendChild(item); shownSources++;
+      }
+      if (shownSources) evidenceSection.appendChild(sourceList);
+      else { const empty = document.createElement('p'); empty.className = 'text-gray-400 text-xs'; empty.textContent = 'В этом запуске не удалось сохранить распознанные HTTPS-ссылки из результатов инструментов.'; evidenceSection.appendChild(empty); }
+      host.appendChild(evidenceSection);
       $('traceModal').classList.remove('hidden');
     }
     function closeTrace() { $('traceModal').classList.add('hidden'); }
@@ -2018,7 +2121,14 @@ permalink: /
       const run=activeTrace.run||{},routes=Array.isArray(activeTrace.routes)?activeTrace.routes:[],attempts=Array.isArray(activeTrace.attempts)?activeTrace.attempts:[];
       const routeLines=routes.length?routes.map(route=>'- '+(route.stage||'этап')+': '+(route.providerLabel||route.provider||'провайдер')+' / '+(route.model||'модель')+(Number.isFinite(route.elapsedMs)?' — '+route.elapsedMs+' мс':'')).join('\n'):'Нет данных.';
       const attemptLines=attempts.length?attempts.map(item=>'- '+(item.success?'OK':'FAIL')+' '+(item.stage||'этап')+': '+(item.providerLabel||item.provider||'провайдер')+' / '+(item.model||'модель')+' · '+(Number.isFinite(item.elapsedMs)?item.elapsedMs+' мс':'время неизвестно')+(item.failureType?' · '+item.failureType:'')).join('\n'):'Нет данных.';
-      const body=['# Журнал исследования','', '- Дата: '+(activeTrace.createdAt||'не указана'), '- Провайдер: '+(activeTrace.provider||'не указан'), '- Модель: '+(activeTrace.model||'не указана'), '', '## Параметры запуска','', '- Схема журнала: '+(activeTrace.schemaVersion||'legacy'), '- Режим: '+(run.mode||'не записан'), '- Веб-поиск: '+(typeof run.webSearchEnabled==='boolean'?(run.webSearchEnabled?'включён':'выключен'):'не записан'), '- Мультиагентный режим: '+(typeof run.multiAgentEnabled==='boolean'?(run.multiAgentEnabled?'включён':'выключен'):'не записан'), '- Резерв между провайдерами: '+(typeof run.crossProviderFallbackEnabled==='boolean'?(run.crossProviderFallbackEnabled?'разрешён':'выключен'):'не записан'), '- Начало: '+(run.startedAt||'не записано'), '- Длительность: '+(Number.isFinite(run.durationMs)?run.durationMs+' мс':'не записана'), '- Fingerprint промпта: '+(run.configuredPromptFingerprint||'не записан')+' ('+(run.configuredPromptFingerprintAlgorithm||'unknown')+')', '', '## Успешные маршруты',routeLines,'','## Все попытки маршрутизации',attemptLines,'', '## Планировщик',activeTrace.plan||'', '', '## Черновик исследователя',activeTrace.draft||'', '', '## Критика',activeTrace.critique||'', '', '## Итоговый ответ',activeTrace.finalText||''].join('\n');
+      const sourceLines=(Array.isArray(activeTrace.sources)?activeTrace.sources:[]).slice(0,MAX_RESEARCH_EVIDENCE).map(source=>{
+        const safeUrl=normalizeResearchEvidenceUrl(source?.url);
+        const title=String(source?.title||safeUrl).replace(/\s+/g,' ').slice(0,180);
+        const excerpt=String(source?.excerpt||'').replace(/\s+/g,' ').slice(0,360);
+        const origin=[source?.source,source?.tool].filter(Boolean).map(value=>String(value).replace(/[\r\n]+/g,' ').slice(0,80)).join(' · ');
+        return safeUrl?['- '+title,'  URL: '+safeUrl,...(origin?['  Retrieved by: '+origin]:[]),...(excerpt?['  Excerpt: '+excerpt]:[])].join('\n'):'';
+      }).filter(Boolean).join('\n');
+      const body=['# Журнал исследования','', '- Дата: '+(activeTrace.createdAt||'не указана'), '- Провайдер: '+(activeTrace.provider||'не указан'), '- Модель: '+(activeTrace.model||'не указана'), '', '## Параметры запуска','', '- Схема журнала: '+(activeTrace.schemaVersion||'legacy'), '- Режим: '+(run.mode||'не записан'), '- Веб-поиск: '+(typeof run.webSearchEnabled==='boolean'?(run.webSearchEnabled?'включён':'выключен'):'не записан'), '- Мультиагентный режим: '+(typeof run.multiAgentEnabled==='boolean'?(run.multiAgentEnabled?'включён':'выключен'):'не записан'), '- Резерв между провайдерами: '+(typeof run.crossProviderFallbackEnabled==='boolean'?(run.crossProviderFallbackEnabled?'разрешён':'выключен'):'не записан'), '- Начало: '+(run.startedAt||'не записано'), '- Длительность: '+(Number.isFinite(run.durationMs)?run.durationMs+' мс':'не записана'), '- Fingerprint промпта: '+(run.configuredPromptFingerprint||'не записан')+' ('+(run.configuredPromptFingerprintAlgorithm||'unknown')+')', '', '## Успешные маршруты',routeLines,'','## Все попытки маршрутизации',attemptLines,'','## Источники из инструментов',sourceLines||'Структурированные HTTPS-ссылки не найдены.','', '## Планировщик',activeTrace.plan||'', '', '## Черновик исследователя',activeTrace.draft||'', '', '## Критика',activeTrace.critique||'', '', '## Итоговый ответ',activeTrace.finalText||''].join('\n');
       const url=URL.createObjectURL(new Blob([body],{type:'text/markdown;charset=utf-8'})), a=document.createElement('a');
       a.href=url; a.download='research-trace-'+(activeTrace.createdAt||new Date().toISOString()).slice(0,10)+'.md'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
     }

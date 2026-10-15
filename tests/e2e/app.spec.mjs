@@ -302,10 +302,13 @@ test('settings profile import restores preferences while preserving existing pro
 
 test('research trace supports a structured JSON download', async ({ page }) => {
   const trace = {
-    id: 'e2e-json-trace', createdAt: '2026-10-15T00:00:00.000Z',
+    schemaVersion: 2, id: 'e2e-json-trace', createdAt: '2026-10-15T00:00:00.000Z',
     provider: 'Groq', model: 'openai/gpt-oss-120b',
+    run: { configuredPromptFingerprint: 'a'.repeat(64), configuredPromptFingerprintAlgorithm: 'sha-256' },
     plan: 'Plan', draft: 'Draft with evidence URL https://example.test/', critique: 'Critique',
-    finalText: 'Final result', routes: [{ provider: 'groq', model: 'openai/gpt-oss-120b', stage: 'answer' }]
+    finalText: 'Final result',
+    sources: [{ id: 'S1', title: 'Public API project', url: 'https://example.test/docs', source: 'github', tool: 'public_knowledge_search', excerpt: 'Short source excerpt.' }],
+    routes: [{ provider: 'groq', model: 'openai/gpt-oss-120b', stage: 'answer' }]
   };
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate((traceData) => {
@@ -318,6 +321,9 @@ test('research trace supports a structured JSON download', async ({ page }) => {
   }, trace);
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="open-trace"][data-trace-id="e2e-json-trace"]').click();
+  await expect(page.locator('#traceContent')).toContainText('Источники из инструментов');
+  await expect(page.locator('#traceContent a')).toHaveAttribute('href', 'https://example.test/docs');
+  await expect(page.locator('#traceContent')).toContainText('Short source excerpt.');
   const downloadPromise = page.waitForEvent('download');
   await page.locator('[data-action="download-trace-json"]').click();
   const download = await downloadPromise;
@@ -327,6 +333,7 @@ test('research trace supports a structured JSON download', async ({ page }) => {
   expect(exportData.trace.id).toBe('e2e-json-trace');
   expect(exportData.trace.routes[0].provider).toBe('groq');
   expect(exportData.trace.finalText).toBe('Final result');
+  expect(exportData.trace.sources[0].url).toBe('https://example.test/docs');
 });
 
 test('research trace records prompt fingerprint, run settings, timings, and model attempts without storing prompt text', async ({ page }) => {
@@ -369,7 +376,7 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
   await expect(traceButton).toBeVisible();
   const traceId = await traceButton.getAttribute('data-trace-id');
   const trace = await page.evaluate(id => JSON.parse(localStorage.getItem('ai_research_trace_' + id) || 'null'), traceId);
-  expect(trace.schemaVersion).toBe(1);
+  expect(trace.schemaVersion).toBe(2);
   expect(trace.run.workflow).toBe('research');
   expect(trace.run.mode).toBe('fast');
   expect(trace.run.webSearchEnabled).toBe(false);
@@ -377,6 +384,7 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
   expect(trace.run.crossProviderFallbackEnabled).toBe(false);
   expect(trace.run.startedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
   expect(trace.run.durationMs).toBeGreaterThanOrEqual(0);
+  expect(trace.systemPromptCharCount).toBeGreaterThan(0);
   if (trace.run.configuredPromptFingerprintAlgorithm === 'sha-256') {
     expect(trace.run.configuredPromptFingerprint).toMatch(/^[a-f0-9]{64}$/);
   } else {

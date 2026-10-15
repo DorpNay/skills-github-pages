@@ -31,6 +31,13 @@ const suites = {
     }],
     ['independent processing controls and on-demand resources', () => {
       includes('async function runMultiAgentResearch', 'Multi-agent research needs its own staged pipeline.');
+      includes('function collectResearchEvidence(messages)', 'Research traces must preserve actual source results returned by tools.');
+      includes('function normalizeResearchEvidenceUrl(rawUrl)', 'Research evidence links must be validated as public HTTPS URLs.');
+      includes('const researchMessages = workChat.messages.slice(researchStart)', 'Evidence must come from the actual researcher execution.');
+      includes('systemPromptCharCount:String(systemPrompt||\'\').length', 'Research trace must include effective system context size.');
+      includes("id: 'S' + (sources.length + 1)", 'Research source identifiers must be sequential.');
+      includes('const evidenceSection = document.createElement', 'Research evidence must be rendered with DOM nodes rather than HTML strings.');
+      includes('const MAX_RESEARCH_EVIDENCE = 40;', 'Research evidence must have a deterministic size cap.');
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
       includes('async function refreshModelCatalog(options = {})', 'Provider model catalogs must be refreshed through the bounded safe loader.');
       includes('async function refreshConnectedModelCatalogs(options = {})', 'Connected provider catalogs must refresh for the cross-provider fallback.');
@@ -181,7 +188,11 @@ const suites = {
       includes('const MAX_CONTEXT_MESSAGES = 24;', 'Message count budget is missing.');
       includes('const MAX_CONTEXT_CHARS = 24000;', 'Character context budget is missing.');
       includes('count + turn.length > MAX_CONTEXT_MESSAGES', 'History message cap is not enforced.');
-      includes('charCount + turnChars > MAX_CONTEXT_CHARS', 'History character cap is not enforced.');
+      includes('function getHistoryCharBudget(systemPromptChars = 0, provider = currentProvider()', 'History budget must use catalogued context-window metadata for the attempted provider/model.');
+      includes('buildHistory(historyMessages,systemChars,candidate.provider,candidate.model)', 'Every fallback candidate must apply its own context budget.');
+      includes('charCount + turnChars > charBudget', 'History trimming must use the active model-aware soft budget.');
+      includes('estimatedWindowChars - outputReserveChars - promptReserveChars', 'History budget must reserve room for the effective system context and output.');
+      includes('buildHistory(chat.messages, systemPrompt.length)', 'Adaptive trimming must be applied before each provider request.');
     }],
     ['memory retrieval is relevance-ranked and bounded', () => {
       includes('memory.score > 0', 'Irrelevant memories should not be attached.');
