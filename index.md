@@ -252,8 +252,7 @@ permalink: /
       custom: { label: 'Свой API', baseUrl: '', docsUrl: '', models: [['custom','Ввести имя модели вручную']] }
     };
     const MAX_TOOL_ROUNDS = 4;
-    const MAX_CONTEXT_MESSAGES = 24;
-    const MAX_CONTEXT_CHARS = 24000;
+    const FALLBACK_CONTEXT_TOKENS = 16384;
     const MAX_RESEARCH_EVIDENCE = 40;
     const CACHE_TTL_MS = 15 * 60 * 1000;
     const $ = (id) => document.getElementById(id);
@@ -1317,14 +1316,16 @@ permalink: /
     }
     function getHistoryCharBudget(systemPromptChars = 0, provider = currentProvider(), model = safeGet(STORAGE.model) || DEFAULT_MODEL) {
       const entry = modelCatalogEntries(provider, false).find(item => item.id === model);
-      const contextTokens = Number(entry?.contextLength);
-      if (!Number.isFinite(contextTokens) || contextTokens <= 0) return MAX_CONTEXT_CHARS;
-      // Provider context windows are token counts, but there is no shared tokenizer here.
-      // Use a conservative character estimate and reserve space for prompt + output.
+      const catalogContextTokens = Number(entry?.contextLength);
+      const contextTokens = Number.isFinite(catalogContextTokens) && catalogContextTokens > 0
+        ? catalogContextTokens
+        : FALLBACK_CONTEXT_TOKENS;
+      // Provider context metadata is in tokens, but this static shell has no shared tokenizer.
+      // Estimate conservatively and reserve room for the system prompt and generated answer.
       const estimatedWindowChars = Math.floor(contextTokens * 1.25);
       const outputReserveChars = Math.floor(Math.min(2048, contextTokens * 0.25) * 1.25);
       const promptReserveChars = Math.max(0, Number(systemPromptChars) || 0);
-      return Math.max(0, Math.min(MAX_CONTEXT_CHARS, estimatedWindowChars - outputReserveChars - promptReserveChars));
+      return Math.max(0, estimatedWindowChars - outputReserveChars - promptReserveChars);
     }
     function buildHistory(messages, systemPromptChars = 0, provider = currentProvider(), model = safeGet(STORAGE.model) || DEFAULT_MODEL) {
       const turns = [];
@@ -1334,16 +1335,14 @@ permalink: /
       }
       const selected = [];
       const charBudget = getHistoryCharBudget(systemPromptChars, provider, model);
-      let count = 0;
       let charCount = 0;
       for (let i = turns.length - 1; i >= 0; i--) {
         const turn = turns[i];
         const turnChars = turn.reduce((sum, message) => sum + (typeof message.content === 'string' ? message.content.length : 0) +
           (Array.isArray(message.tool_calls) ? JSON.stringify(message.tool_calls).length : 0), 0);
-        // Keep the newest complete turn even when it alone exceeds the soft character budget.
-        if (selected.length && (count + turn.length > MAX_CONTEXT_MESSAGES || charCount + turnChars > charBudget)) break;
+        // Keep the newest complete turn even when it alone exceeds the estimate.
+        if (selected.length && charCount + turnChars > charBudget) break;
         selected.unshift(turn);
-        count += turn.length;
         charCount += turnChars;
       }
       return selected.flat().map((message) => ({

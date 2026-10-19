@@ -185,9 +185,10 @@ const suites = {
   context: [
     ['history and tool loops have hard bounds', () => {
       includes('const MAX_TOOL_ROUNDS = 4;', 'Tool-call round limit changed unexpectedly.');
-      includes('const MAX_CONTEXT_MESSAGES = 24;', 'Message count budget is missing.');
-      includes('const MAX_CONTEXT_CHARS = 24000;', 'Character context budget is missing.');
-      includes('count + turn.length > MAX_CONTEXT_MESSAGES', 'History message cap is not enforced.');
+      includes('const FALLBACK_CONTEXT_TOKENS = 16384;', 'Fallback context budget for providers without metadata is missing.');
+      assert.ok(!source.includes('const MAX_CONTEXT_MESSAGES = 24;'), 'Do not reintroduce the arbitrary message-count cap.');
+      assert.ok(!source.includes('const MAX_CONTEXT_CHARS = 24000;'), 'Do not reintroduce the arbitrary global character cap.');
+      assert.ok(!source.includes('count + turn.length > MAX_CONTEXT_MESSAGES'), 'History must not be capped by a fixed message count.');
       includes('function getHistoryCharBudget(systemPromptChars = 0, provider = currentProvider()', 'History budget must use catalogued context-window metadata for the attempted provider/model.');
       includes('buildHistory(historyMessages,systemChars,candidate.provider,candidate.model)', 'Every fallback candidate must apply its own context budget.');
       includes('charCount + turnChars > charBudget', 'History trimming must use the active model-aware soft budget.');

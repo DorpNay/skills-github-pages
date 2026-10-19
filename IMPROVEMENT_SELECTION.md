@@ -30,3 +30,11 @@
 ## Готовность к merge
 
 Требуются Integrity/Security/Context sentinels, Jekyll build, Playwright в Chromium, smoke-test опубликованной Pages и успешный deploy. Реальные пользовательские ключи не читаются из коннектора и не вставляются в тесты; live-check запускается самим GitHub Actions с уже настроенными секретами.
+
+
+## Дополнение к Superstack Lite (2026-10-19)
+
+- Добавляется отдельный FastAPI gateway для частной Ollama: allowlist моделей, Bearer auth, ограничения тела/конкурентности, SSE forwarding и contract/security tests. Gateway ещё требуется развернуть на пользовательском VPS.
+- Фиксированный предел истории 24 сообщения/24 000 символов заменяется оценкой контекста выбранной модели и резервами под системный промпт/ответ. При отсутствии metadata используется fallback 16K токенов. Это не бесконечный контекст: реальные пределы модели, RAM, HTTP-body cap и ограничение циклов tools остаются.
+- Из Everything Claude Code приняты TDD, независимое code/security review, verification loop, осознанная compaction и curated learning. Claude-specific hooks/MCP не устанавливаются в сайт/runtime.
+- Подробности: docs/SUPERSTACK_FINAL_RU.md; обзор архива: docs/ECC_ARCHIVE_REVIEW_RU.md.
