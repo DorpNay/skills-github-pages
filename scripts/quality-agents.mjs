@@ -53,6 +53,11 @@ const suites = {
       includes('keyFingerprint, fetchedAt: Date.now(), models', 'Catalog persistence must store credential fingerprints, not credentials.');
       includes('async function refreshModelCatalog(options = {})', 'Model list refresh is a first-class action.');
       includes("xai: { label: 'xAI · Grok'", 'xAI Grok must be a separate provider from Groq.');
+      includes("alandi: { label: 'aLandi Self-hosted Gateway'", 'The private aLandi gateway must be available as an explicit provider preset.');
+      includes('<option value="alandi">aLandi Self-hosted Gateway · свой сервер</option>', 'The UI must expose the aLandi self-hosted provider.');
+      includes("alandi:'Локальный сервер aLandi:", 'The self-hosted provider must explain Base URL and local-only fallback behavior.');
+      includes("((provider==='custom'||provider==='alandi') ? (safeGet(STORAGE.baseUrl)||'')", 'Own API presets must never silently fall back to the Gemini endpoint.');
+      includes("preferredProvider==='alandi'||preferredProvider==='custom'", 'An unconfigured own API endpoint must return an actionable error.');
       includes("pollinations: { label: 'Pollinations.ai'", 'Pollinations must use its own API catalog and endpoint.');
       includes("cloudflare: { label: 'Cloudflare Workers AI'", 'Cloudflare Workers AI must be a selectable provider.');
       includes('function finishPollinationsOAuth()', 'Pollinations OAuth callback must be implemented.');

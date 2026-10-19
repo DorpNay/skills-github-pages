@@ -119,7 +119,7 @@ curl -fsS http://127.0.0.1:8000/v1/chat/completions \
 Файл gateway/alandi-gateway.service — пример; скорректируйте пользователя, пути и права под конкретный VPS. Установите unit в /etc/systemd/system/alandi-gateway.service, затем выполните systemctl daemon-reload и systemctl enable --now alandi-gateway. Настройте Cloudflare Tunnel origin http://127.0.0.1:8000 и Access/rate limits. Не публикуйте порты 11434/8000 и не коммитьте tunnel credentials.
 
 ### Шаг 6 — соединить сайт
-В AI Mobile Agent: «Свой API», Base URL = https://<ваш-hostname>/v1, Model = qwen3.5:4b, API Key = ALANDI_API_KEY. Для приватных локальных prompts отключить cross-provider fallback, иначе данные могут уйти в другой сохранённый provider. Хранение gateway key в localStorage подходит только для личного прототипа; не используйте это как публичную multi-user auth.
+В AI Mobile Agent выберите «aLandi Self-hosted Gateway» (в старой версии интерфейса — «Свой API»): Base URL = https://<ваш-hostname>/v1, Model = qwen3.5:4b, API Key = ALANDI_API_KEY. Для приватных локальных prompts отключить cross-provider fallback, иначе данные могут уйти в другой сохранённый provider. Хранение gateway key в localStorage подходит только для личного прототипа; не используйте это как публичную multi-user auth.
 
 ### Шаг 7 — тесты до merge
 ~~~bash

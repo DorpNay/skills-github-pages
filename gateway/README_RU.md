@@ -33,7 +33,7 @@
 
 ## Подключение сайта
 
-В AI Mobile Agent выберите «Свой API»:
+В AI Mobile Agent выберите «aLandi Self-hosted Gateway» (в старой версии интерфейса — «Свой API»):
 
 - Base URL: https://<ваш-hostname>/v1
 - Model: qwen3.5:4b

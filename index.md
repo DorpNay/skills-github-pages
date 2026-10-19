@@ -122,7 +122,7 @@ permalink: /
       </div>
       <label for="providerPreset" class="block text-xs text-gray-400">Провайдер API</label>
       <select id="providerPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm">
-        <option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="custom">Свой OpenAI-совместимый API</option>
+        <option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="alandi">aLandi Self-hosted Gateway · свой сервер</option><option value="custom">Свой OpenAI-совместимый API</option>
       </select>
       <label for="modelSearch" class="block text-xs text-gray-400">Поиск по каталогу моделей</label>
       <input type="search" id="modelSearch" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Фильтр по имени или ID модели">
@@ -249,6 +249,7 @@ permalink: /
       openrouter: { label: 'OpenRouter', docsUrl: 'https://openrouter.ai/settings/keys', baseUrl: 'https://openrouter.ai/api/v1', models: [['openrouter/free','Автовыбор бесплатной модели'], ['deepseek/deepseek-r1:free','DeepSeek R1 · free (если доступна)']] },
       nvidia: { label: 'NVIDIA NIM', docsUrl: 'https://build.nvidia.com/settings', baseUrl: 'https://integrate.api.nvidia.com/v1', models: [['z-ai/glm-5.3','GLM-5.3 · reasoning/coding'], ['openai/gpt-oss-20b','GPT-OSS 20B · reasoning']] },
       huggingface: { label: 'Hugging Face Inference Providers', docsUrl: 'https://huggingface.co/settings/tokens', baseUrl: 'https://router.huggingface.co/v1', models: [['openai/gpt-oss-120b:fastest','GPT-OSS 120B · fastest'], ['deepseek-ai/DeepSeek-R1:fastest','DeepSeek R1 · fastest'], ['openai/gpt-oss-120b:cheapest','GPT-OSS 120B · cheapest']] },
+      alandi: { label: 'aLandi Self-hosted Gateway', docsUrl: 'https://github.com/DorpNay/skills-github-pages/blob/main/docs/SUPERSTACK_FINAL_RU.md', baseUrl: '', models: [['qwen3.5:4b','Qwen3.5 4B · локальный сервер']] },
       custom: { label: 'Свой API', baseUrl: '', docsUrl: '', models: [['custom','Ввести имя модели вручную']] }
     };
     const MAX_TOOL_ROUNDS = 4;
@@ -901,6 +902,7 @@ permalink: /
       } else if(initial&&provider!=='custom'&&!safeGet(STORAGE.baseUrl)) $('baseUrl').value=config.baseUrl;
       $('apiKey').value=safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'';
       const hints={
+        alandi:'Локальный сервер aLandi: Base URL должен быть HTTPS-адресом шлюза с окончанием /v1; для теста на том же компьютере можно использовать http://localhost:8000/v1. API Key — ALANDI_API_KEY из серверного файла конфигурации. Межпровайдерный резервный переход оставьте выключенным, если запросы должны оставаться локальными.',
         custom:'Введите Base URL, имя модели и ключ своего OpenAI-совместимого API. Совместимость и CORS зависят от поставщика.',
         pollinations:'Pollinations: сюда вставляется App Key pk_… (не секретный sk_ токен). Зарегистрируйте точный Redirect URI в настройках App Key, затем нажмите «Подключить аккаунт»: OAuth PKCE хранит временный access token только в sessionStorage этой вкладки. Модели могут потреблять Pollen согласно бюджету.',
         huggingface:'Hugging Face Inference Providers: нужен fine-grained token с разрешением “Make calls to Inference Providers”. Endpoint router.huggingface.co/v1; модели должны быть из каталога и поддерживать Chat Completions.',
@@ -1577,7 +1579,9 @@ permalink: /
         const key=getProviderRequestKey(provider);
         if(!key) continue;
         const baseUrl=provider===selectedProvider
-          ? (provider==='cloudflare'?getProviderBaseUrl('cloudflare'):(safeGet(STORAGE.baseUrl)||config.baseUrl||DEFAULT_BASE_URL)).replace(/\/+$/,'')
+          ? (provider==='cloudflare'
+              ? getProviderBaseUrl('cloudflare')
+              : ((provider==='custom'||provider==='alandi') ? (safeGet(STORAGE.baseUrl)||'') : (safeGet(STORAGE.baseUrl)||config.baseUrl||DEFAULT_BASE_URL))).replace(/\/+$/,'')
           : getProviderBaseUrl(provider);
 
         if (!baseUrl) continue;
@@ -1619,6 +1623,7 @@ permalink: /
     }
     async function requestChatCompletion(body,signal,stageName='Ответ модели'){
       throwIfAborted(signal);const preferredProvider=safeGet(STORAGE.provider)||'gemini',preferredModel=safeGet(STORAGE.model)||body.model||DEFAULT_MODEL,candidates=getApiCandidates(preferredModel),allowCross=safeGet(STORAGE.crossProviderFallback)==='true';
+      if((preferredProvider==='alandi'||preferredProvider==='custom')&&!String(safeGet(STORAGE.baseUrl)||'').trim())throw new Error('Сначала укажите Base URL собственного API и сохраните настройки.');
       if(!candidates.length)throw new Error('Не найден API-ключ для выбранного провайдера. Откройте настройки и сохраните ключ.');
       let lastError=null;
       for(let i=0;i<candidates.length;i++){
