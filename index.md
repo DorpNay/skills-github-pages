@@ -1913,8 +1913,8 @@ permalink: /
       if(useResearchPipeline){await runMultiAgentResearch(chat,signal,useSearch,mode,systemPrompt);return;}
 
       const messagesForCache = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages, systemPrompt.length)];
-      const cacheKey = await makeCacheKey({ endpoint: baseUrl, model, messages: messagesForCache });
-      if (!useSearch && !skipCache) {
+      const cacheKey = await makeCacheKey({ provider: safeGet(STORAGE.provider)||'gemini', endpoint: baseUrl, model, messages: messagesForCache, request: { stream: false, temperature: (safeGet(STORAGE.provider)==='alandi'?0:null) } });
+      if (!useSearch && !skipCache && !useMultiAgent) {
         const cached = await CacheDB.get(cacheKey);
         if (cached) {
           chat.messages.push({ role: 'assistant', content: `${cached}\n\n*(из локального кэша)*`, providerInfo:{provider:'cache',providerLabel:'Локальный кэш',model:'cache'} });
@@ -1947,7 +1947,8 @@ permalink: /
       for (let round = 0; round <= maxToolRounds; round++) {
         throwIfAborted(signal);
         const apiMessages = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages, systemPrompt.length)];
-        const body = { model, messages: apiMessages, stream: false };
+        const localDeterministic = safeGet(STORAGE.provider)==='alandi' && !useSearch && !useMultiAgent && !tools;
+        const body = { model, messages: apiMessages, stream: false, ...(localDeterministic ? {temperature:0} : {}) };
         if (tools) { body.tools = tools; body.tool_choice = 'auto'; }
         showStatus(round === 0 ? '🤖 Ожидание ответа модели…' : '🧠 Модель обрабатывает результаты поиска…');
         const data = await requestChatCompletion(body, signal, round === 0 ? 'Основной ответ' : 'Продолжение после инструмента');
@@ -1968,7 +1969,7 @@ permalink: /
 
         if (!toolCalls.length) {
           hideStatus();
-          if (assistantMessage.content && !useSearch && !skipCache) await CacheDB.set(cacheKey, assistantMessage.content);
+          if (assistantMessage.content && !useSearch && !skipCache && !useMultiAgent) await CacheDB.set(cacheKey, assistantMessage.content);
           return;
         }
         if (!useSearch || round === maxToolRounds) {
