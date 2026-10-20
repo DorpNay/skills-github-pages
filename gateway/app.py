@@ -4,13 +4,16 @@ This service never executes tools, fetches arbitrary URLs, or stores prompt cont
 """
 from __future__ import annotations
 import asyncio
+import hashlib
 import json
 import logging
 import os
 import secrets
-from contextlib import asynccontextmanager
+import sqlite3
+import time
+from contextlib import asynccontextmanager, closing
 from dataclasses import dataclass
-from typing import AsyncIterator
+from typing import Any, AsyncIterator, Mapping
 from urllib.parse import urlsplit
 
 import httpx
@@ -50,6 +53,11 @@ class Settings:
     upstream_timeout_seconds: float = 300.0
     max_inflight_requests: int = 1
     model_context_length_tokens: int = 4096
+    cache_enabled: bool = True
+    cache_path: str = "/var/lib/alandi-gateway/response-cache.sqlite3"
+    cache_ttl_seconds: int = 900
+    cache_max_entries: int = 1000
+    cache_max_response_bytes: int = 1_000_000
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -78,6 +86,11 @@ class Settings:
             upstream_timeout_seconds=timeout,
             max_inflight_requests=int_env("ALANDI_MAX_INFLIGHT_REQUESTS", 1),
             model_context_length_tokens=int_env("ALANDI_MODEL_CONTEXT_LENGTH_TOKENS", 4096, 256),
+            cache_enabled=os.getenv("ALANDI_CACHE_ENABLED", "true").strip().lower() not in {"0", "false", "no", "off"},
+            cache_path=os.getenv("ALANDI_CACHE_PATH", "/var/lib/alandi-gateway/response-cache.sqlite3").strip() or "/var/lib/alandi-gateway/response-cache.sqlite3",
+            cache_ttl_seconds=int_env("ALANDI_CACHE_TTL_SECONDS", 900),
+            cache_max_entries=int_env("ALANDI_CACHE_MAX_ENTRIES", 1000),
+            cache_max_response_bytes=int_env("ALANDI_CACHE_MAX_RESPONSE_BYTES", 1_000_000, 1024),
         )
 
 
@@ -139,6 +152,177 @@ def upstream_error(status: int) -> JSONResponse:
                          content={"error": {"message": message, "type": "upstream_error"}})
 
 
+
+
+def connect_cache_db(settings: Settings) -> sqlite3.Connection:
+    """Open the local exact-response cache; no prompts are logged or stored as keys."""
+    directory = os.path.dirname(settings.cache_path)
+    if directory:
+        os.makedirs(directory, mode=0o750, exist_ok=True)
+    db = sqlite3.connect(settings.cache_path, timeout=5)
+    db.execute("PRAGMA journal_mode=WAL")
+    db.execute("PRAGMA synchronous=NORMAL")
+    db.execute("PRAGMA busy_timeout=5000")
+    db.execute(
+        """CREATE TABLE IF NOT EXISTS response_cache (
+             cache_key TEXT PRIMARY KEY,
+             response_json TEXT NOT NULL,
+             created_at INTEGER NOT NULL,
+             expires_at INTEGER NOT NULL,
+             response_bytes INTEGER NOT NULL
+           )"""
+    )
+    db.execute("CREATE INDEX IF NOT EXISTS idx_response_cache_expiry ON response_cache(expires_at)")
+    db.commit()
+    return db
+
+
+def is_cacheable(payload: object) -> bool:
+    """Allow only complete, ordinary text requests with explicit conservative temperature."""
+    if not isinstance(payload, dict):
+        return False
+    if payload.get("stream") is True or payload.get("tools") or payload.get("functions"):
+        return False
+    if payload.get("tool_choice") not in (None, "none") or payload.get("function_call") not in (None, "none"):
+        return False
+    temperature = payload.get("temperature")
+    if isinstance(temperature, bool) or not isinstance(temperature, (int, float)) or not 0 <= temperature <= 0.2:
+        return False
+    messages = payload.get("messages")
+    if not isinstance(messages, list) or not messages:
+        return False
+    for message in messages:
+        if not isinstance(message, dict) or message.get("role") == "tool":
+            return False
+        if message.get("tool_calls") or message.get("function_call"):
+            return False
+        if not isinstance(message.get("content"), str):
+            return False
+    return True
+
+
+def should_bypass_cache(
+    settings: Settings,
+    payload: object,
+    *,
+    method: str,
+    path: str,
+    headers: Mapping[str, str],
+) -> bool:
+    if not settings.cache_enabled or method.upper() != "POST" or path.strip("/") != "chat/completions":
+        return True
+    if not is_cacheable(payload):
+        return True
+    normalized = {str(key).lower(): str(value) for key, value in headers.items()}
+    if normalized.get("x-ai-cache-bypass", "").strip().lower() in {"1", "true", "yes", "on"}:
+        return True
+    directives = {
+        item.strip().lower().split("=", 1)[0]
+        for item in normalized.get("cache-control", "").split(",")
+        if item.strip()
+    }
+    return bool({"no-cache", "no-store"} & directives)
+
+
+def canonical_cache_key(settings: Settings, payload: dict, *, method: str, path: str, query: str = "") -> str:
+    envelope = {
+        "schema": "alandi-exact-cache-v1",
+        "key_scope": hashlib.sha256(settings.api_key.encode("utf-8")).hexdigest(),
+        "method": method.upper(),
+        "path": path.strip("/"),
+        "query": query,
+        "payload": payload,
+    }
+    serialized = json.dumps(envelope, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
+
+def cache_get(settings: Settings, key: str) -> dict[str, Any] | None:
+    if not settings.cache_enabled:
+        return None
+    try:
+        now = int(time.time())
+        with closing(connect_cache_db(settings)) as db:
+            row = db.execute(
+                "SELECT response_json FROM response_cache WHERE cache_key=? AND expires_at>?",
+                (key, now),
+            ).fetchone()
+            db.execute("DELETE FROM response_cache WHERE expires_at<=?", (now,))
+            db.commit()
+        if not row:
+            return None
+        parsed = json.loads(row[0])
+        return parsed if isinstance(parsed, dict) else None
+    except (OSError, sqlite3.Error, ValueError, TypeError):
+        logger.warning("Exact response cache read failed; proceeding without cache")
+        return None
+
+
+def response_is_complete_text(value: object) -> bool:
+    if not isinstance(value, dict):
+        return False
+    choices = value.get("choices")
+    if not isinstance(choices, list) or not choices or not isinstance(choices[0], dict):
+        return False
+    choice = choices[0]
+    message = choice.get("message")
+    return (
+        choice.get("finish_reason") == "stop"
+        and isinstance(message, dict)
+        and isinstance(message.get("content"), str)
+        and not message.get("tool_calls")
+        and not message.get("function_call")
+    )
+
+
+def cache_put(settings: Settings, key: str, value: dict[str, Any]) -> None:
+    if not settings.cache_enabled or not response_is_complete_text(value):
+        return
+    try:
+        serialized = json.dumps(value, separators=(",", ":"), ensure_ascii=False)
+        byte_count = len(serialized.encode("utf-8"))
+        if byte_count > settings.cache_max_response_bytes:
+            return
+        now = int(time.time())
+        with closing(connect_cache_db(settings)) as db:
+            db.execute(
+                """INSERT OR REPLACE INTO response_cache
+                   (cache_key,response_json,created_at,expires_at,response_bytes)
+                   VALUES (?,?,?,?,?)""",
+                (key, serialized, now, now + settings.cache_ttl_seconds, byte_count),
+            )
+            db.execute("DELETE FROM response_cache WHERE expires_at<=?", (now,))
+            db.execute(
+                """DELETE FROM response_cache WHERE cache_key IN (
+                     SELECT cache_key FROM response_cache
+                     ORDER BY created_at DESC LIMIT -1 OFFSET ?
+                   )""",
+                (settings.cache_max_entries,),
+            )
+            db.commit()
+    except (OSError, sqlite3.Error, ValueError, TypeError):
+        logger.warning("Exact response cache write failed; response will still be returned")
+
+
+def cache_statistics(settings: Settings) -> dict[str, int | bool]:
+    if not settings.cache_enabled:
+        return {"enabled": False, "entries": 0, "response_bytes": 0, "ttl_seconds": settings.cache_ttl_seconds}
+    now = int(time.time())
+    try:
+        with closing(connect_cache_db(settings)) as db:
+            db.execute("DELETE FROM response_cache WHERE expires_at<=?", (now,))
+            count, size = db.execute(
+                "SELECT COUNT(*), COALESCE(SUM(response_bytes),0) FROM response_cache"
+            ).fetchone()
+            db.commit()
+        return {"enabled": True, "entries": int(count), "response_bytes": int(size),
+                "ttl_seconds": settings.cache_ttl_seconds}
+    except (OSError, sqlite3.Error):
+        logger.warning("Exact response cache statistics unavailable")
+        return {"enabled": True, "entries": 0, "response_bytes": 0,
+                "ttl_seconds": settings.cache_ttl_seconds}
+
+
 def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTransport | None = None) -> FastAPI:
     config = settings or Settings.from_env()
     timeout = httpx.Timeout(connect=min(10.0, config.upstream_timeout_seconds),
@@ -146,6 +330,9 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        if config.cache_enabled:
+            with closing(connect_cache_db(config)):
+                pass
         app.state.client = httpx.AsyncClient(timeout=timeout, transport=transport)
         app.state.semaphore = asyncio.Semaphore(config.max_inflight_requests)
         yield
@@ -156,7 +343,8 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
     app.state.settings = config
     app.add_middleware(CORSMiddleware, allow_origins=list(config.cors_origins),
                        allow_credentials=False, allow_methods=["GET", "POST", "OPTIONS"],
-                       allow_headers=["Authorization", "Content-Type", "Accept"], max_age=600)
+                       allow_headers=["Authorization", "Content-Type", "Accept", "Cache-Control", "X-AI-Cache-Bypass"],
+                       expose_headers=["X-AI-Cache"], max_age=600)
 
     @app.get("/healthz")
     async def healthz(request: Request) -> JSONResponse:
@@ -187,6 +375,12 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             for model in config.allowed_models if model in found
         ]})
 
+    @app.get("/admin/cache/stats")
+    async def cache_stats(authorization: str | None = Header(default=None)) -> dict[str, int | bool]:
+        authorize(config, authorization)
+        return {**cache_statistics(config), "max_entries": config.cache_max_entries,
+                "max_response_bytes": config.cache_max_response_bytes}
+
     @app.post("/v1/chat/completions")
     async def completions(request: Request, authorization: str | None = Header(default=None)) -> Response:
         authorize(config, authorization)
@@ -195,6 +389,15 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             payload, stream = validate_payload(json.loads(body), config.allowed_models)
         except (json.JSONDecodeError, UnicodeDecodeError):
             raise HTTPException(400, "Request body must be valid UTF-8 JSON") from None
+
+        cache_key: str | None = None
+        if not should_bypass_cache(config, payload, method=request.method,
+                                   path="chat/completions", headers=request.headers):
+            cache_key = canonical_cache_key(config, payload, method=request.method,
+                                            path="chat/completions", query=request.url.query)
+            cached = cache_get(config, cache_key)
+            if cached is not None:
+                return JSONResponse(cached, headers={"Cache-Control": "no-store", "X-AI-Cache": "HIT"})
 
         semaphore: asyncio.Semaphore = request.app.state.semaphore
         try:
@@ -220,7 +423,10 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             await upstream.aclose()
             semaphore.release()
             logger.warning("Ollama rejected chat request with HTTP %s", status)
-            return upstream_error(status)
+            error_response = upstream_error(status)
+            error_response.headers["X-AI-Cache"] = "BYPASS"
+            error_response.headers["Cache-Control"] = "no-store"
+            return error_response
         if stream:
             async def forward_stream():
                 try:
@@ -234,15 +440,26 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                     semaphore.release()
             return StreamingResponse(forward_stream(), status_code=upstream.status_code,
                                      media_type="text/event-stream",
-                                     headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+                                     headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no",
+                                              "X-AI-Cache": "BYPASS"})
         try:
             response_body = await upstream.aread()
+            cache_label = "MISS" if cache_key else "BYPASS"
+            if cache_key and "application/json" in upstream.headers.get("content-type", "").lower():
+                try:
+                    parsed_response = json.loads(response_body)
+                    if response_is_complete_text(parsed_response):
+                        cache_put(config, cache_key, parsed_response)
+                except (json.JSONDecodeError, UnicodeDecodeError, TypeError):
+                    pass
             return Response(content=response_body, status_code=upstream.status_code,
-                            media_type="application/json")
+                            media_type="application/json",
+                            headers={"Cache-Control": "no-store", "X-AI-Cache": cache_label})
         except httpx.HTTPError:
             logger.warning("Ollama response body failed; request body omitted")
             return JSONResponse(status_code=502, content={"error": {"message": "Local response could not be read.",
-                                                                    "type": "upstream_error"}})
+                                                                    "type": "upstream_error"}},
+                                headers={"Cache-Control": "no-store", "X-AI-Cache": "BYPASS"})
         finally:
             await upstream.aclose()
             semaphore.release()
