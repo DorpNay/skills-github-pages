@@ -13,7 +13,7 @@ DEFAULT CANDIDATES
 - Russian/Thai speech: Qwen3-ASR-0.6B is the first benchmark candidate; upstream lists both languages and offline/streaming. Measure CPU RTF, first-hypothesis latency, peak RSS and WER before selecting it.
 - Language-specific candidates: Moonshine only for languages supported by the exact streaming checkpoint; ASR4ALL-S/L and Distil-Whisper for English; Canary 180M for EN/DE/FR/ES; ZIPFORMER VI for Vietnamese.
 - dots.mocr, DeepSeek-OCR2, HunyuanOCR-1.5 and LightOnOCR-3-4B are separate research-host candidates. LightOnOCR-3-4B BF16 weights alone take roughly 8 GB for 4B parameters before runtime, so do not run on the 8-GB VPS.
-- ASR does not produce speech. Full voice needs TTS, mic permission, VAD/chunking, cancellation/interruption and a confirmation UI.
+- ASR does not produce speech. Full voice needs TTS, mic permission, VAD/chunking, cancellation/interruption and a confirmation UI. Consider the official Moonshine Voice JS/WASM on-device toolkit for supported language models, but inspect the exact license of every TTS voice/data asset and benchmark the target mobile browser. Do not promise Russian/Thai TTS without an official artifact and local test.
 
 MANDATORY CHECKS
 1. Read docs/MULTIMODAL_MODEL_STACK_RU.md and docs/TECHNIQUE_REGISTER_RU.md. Record checkpoint/version/hash, target language, code/weights/runtime license, infrastructure and privacy route.
