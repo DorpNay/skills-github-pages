@@ -48,7 +48,7 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
     return route.fulfill({ status: 404, headers: corsHeaders, contentType: 'application/json', body: '{}' });
   });
   await page.route('https://generativelanguage.googleapis.com/**', async route => {
-    cloudChatRequests.push(route.request().url());
+    if (/\/chat\/completions|\/responses|:generateContent|:streamGenerateContent/.test(route.request().url())) cloudChatRequests.push(route.request().url());
     return route.fulfill({
       status: 503, contentType: 'application/json',
       body: JSON.stringify({ error: { message: 'Cloud fallback must not be used in this test.' } })
