@@ -38,3 +38,25 @@
 - Фиксированный предел истории 24 сообщения/24 000 символов заменяется оценкой контекста выбранной модели и резервами под системный промпт/ответ. При отсутствии metadata используется fallback 16K токенов. Это не бесконечный контекст: реальные пределы модели, RAM, HTTP-body cap и ограничение циклов tools остаются.
 - Из Everything Claude Code приняты TDD, независимое code/security review, verification loop, осознанная compaction и curated learning. Claude-specific hooks/MCP не устанавливаются в сайт/runtime.
 - Подробности: docs/SUPERSTACK_FINAL_RU.md; обзор архива: docs/ECC_ARCHIVE_REVIEW_RU.md.
+
+
+## Дополнение: мультимодальные модели и извлечённые техники (2026-10-21)
+
+Подробная проверка 9 OCR/document моделей и 10 ASR кандидатов, поддерживаемых языков, лицензий и resource gates: [docs/MULTIMODAL_MODEL_STACK_RU.md](docs/MULTIMODAL_MODEL_STACK_RU.md).
+
+Зафиксированный список техник, решения «принять / отложить / не интегрировать» и последовательность проверок: [docs/TECHNIQUE_REGISTER_RU.md](docs/TECHNIQUE_REGISTER_RU.md).
+
+### Принято и интегрировано в этой итерации
+- On-demand specialist skill: OCR/ASR/audio/PDF requests получают инструкцию-маршрут только в «Глубоко» или «Умном исследовании»; обычный быстрый режим не загружает skills по умолчанию.
+- Первичные ссылки, язык точного checkpoint, раздельные лицензии code/weights/runtime, peak RSS и golden-set обязательны до установки модели.
+- RAG-Anything: только parser → structured blocks → provenance/page/bbox → retrieval → citations, не полный runtime.
+- CLI-Anything: CLI allowlist, JSON, exit codes, dry-run и тестирование для будущих админских инструментов; никаких произвольных shell-команд из браузера.
+- AI Engineering from Scratch: build/run/test/benchmark/compare; taste-skill: audit-first visual QA без автоматического редизайна.
+- Pliny/L1B3RT4S: только контролируемые отрицательные prompt-injection fixtures, не jailbreak prompt в system prompt.
+
+### Отложено или отклонено
+- AirLLM: не runtime для текущего 8-GB CPU VPS.
+- dsh-our-free-model: не отправлять prompts/documents/keys публичным сторонним gateways.
+- Open-Generative-AI: отдельная будущая Image/Video задача, не подмена основного текстового runtime.
+- GOT-OCR 2.0, HunyuanOCR-1.5, DeepSeek-OCR2, dots.mocr и LightOnOCR-3-4B: не ставить до benchmark, выбора конкретной задачи и инфраструктуры.
+- На этом этапе не установлены OCR/ASR weights и не добавлены upload/mic/TTS/media endpoints. Модель считается интегрированной только после callable route, UI, tests, benchmark, license/privacy checks and rollback.

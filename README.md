@@ -91,3 +91,11 @@ node scripts/quality-agents.mjs context
 ## Локальный сервер и дальнейшая архитектура aLandi
 
 Опциональный FastAPI-шлюз для частной Ollama, contract/security-тесты и инструкция установки описаны в каталоге **gateway/** и документе **docs/SUPERSTACK_FINAL_RU.md**. Разбор приложенного Everything Claude Code ZIP находится в **docs/ECC_ARCHIVE_REVIEW_RU.md**. Сервер автоматически не развёртывается: VPS, секрет, CORS и туннель требуется настроить по инструкции.
+
+
+## Мультимодальные модели, OCR и голос
+
+- Реестр OCR/ASR моделей с языками, лицензиями, ресурсами и benchmark gate: [docs/MULTIMODAL_MODEL_STACK_RU.md](docs/MULTIMODAL_MODEL_STACK_RU.md).
+- Решения по AirLLM, Open-Generative-AI, dsh-our-free-model, CLI-Anything, RAG-Anything, Pliny/L1B3RT4S, taste-skill и AI Engineering from Scratch: [docs/TECHNIQUE_REGISTER_RU.md](docs/TECHNIQUE_REGISTER_RU.md).
+
+В режимах «Глубоко» и «Умное исследование» OCR/ASR/PDF/audio prompts выбирают дополнительный локальный skill только по необходимости. Он не означает, что загрузка файлов, microphone capture, TTS или media API уже реализованы. Новый runtime требует отдельной проверки приватности, лицензии, памяти и тестов. Существующий UI v10.0 и оформление сохраняются.
