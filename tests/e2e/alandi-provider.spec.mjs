@@ -59,13 +59,13 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
   await page.locator('#modelName').fill('qwen3.5:4b');
   await page.locator('#apiKey').fill('e2e-alandi-placeholder-key-not-a-secret-0123456789');
   await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
   await page.locator('#toggleSearch').uncheck();
   // Enable fallback only after startup to avoid triggering unrelated model-catalog probes.
   await page.evaluate(() => {
     localStorage.setItem('ai_cross_provider_fallback', 'true');
     localStorage.setItem('ai_api_key_gemini', 'not-a-real-gemini-key');
   });
-  await page.locator('[data-action="close-settings"]').click();
   await page.locator('#userInput').fill('Проверь локальный маршрут.');
   await page.locator('#sendBtn').click();
 
