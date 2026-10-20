@@ -89,7 +89,7 @@ systemctl --no-pager --full status alandi-gateway 2>/dev/null || true
 
 ~~~bash
 apt-get update
-apt-get install -y ca-certificates curl git openssl nano python3 python3-venv python3-pip
+apt-get install -y ca-certificates curl git openssl nano sudo ufw python3 python3-venv python3-pip
 ~~~
 
 ### Firewall
@@ -211,7 +211,7 @@ ls -ld /opt/alandi /opt/alandi/skills-github-pages /opt/alandi/venv /var/lib/ala
 ~~~bash
 openssl rand -hex 32
 install -o root -g root -m 0600 /dev/null /etc/alandi-gateway.env
-sudoedit /etc/alandi-gateway.env
+nano /etc/alandi-gateway.env
 ~~~
 
 Сгенерируй случайный 64-символьный hex-секрет; вставь его как ALANDI_API_KEY. Не пересылай его в чат или GitHub. Добавь в env-файл:
@@ -330,8 +330,21 @@ systemctl is-active alandi-gateway
 
 1. В Cloudflare Dashboard открой Networking → Tunnels.
 2. Сначала проверь существующие Tunnel. Если им пользуется другой сервис, не удаляй его; добавь отдельный hostname или создай новый Tunnel.
-3. При создании нового выбери cloudflared и Linux. Выполни актуальные команды, показанные Cloudflare в панели. Tunnel token — секрет; он вводится на VPS, не в GitHub или браузерный UI.
-4. Предпочтительно запускать cloudflared нативно на той же машине. Если connector в Docker, localhost указывает внутрь контейнера — не копируй этот origin без проектирования приватной связки.
+3. При создании нового выбери cloudflared и Linux, затем архитектуру VPS. Используй команду установки бинарника, которую Cloudflare показывает именно для твоей архитектуры; не копируй пакет для ARM на x86_64 или наоборот.
+4. После установки создай службу Tunnel. Чтобы не записать секрет в shell history, запусти shell с выключенной историей и введи токен через скрытый prompt:
+
+~~~bash
+set +o history
+read -rsp 'Cloudflare Tunnel token: ' CF_TUNNEL_TOKEN; echo
+cloudflared service install "$CF_TUNNEL_TOKEN"
+unset CF_TUNNEL_TOKEN
+set -o history
+systemctl enable --now cloudflared
+systemctl --no-pager --full status cloudflared
+~~~
+
+Выполняй это только для нового connector. Если cloudflared уже работает как служба, не устанавливай второй экземпляр — добавь новый hostname к существующему Tunnel. Сам token храни как пароль.
+5. Предпочтительно запускать cloudflared нативно на той же машине. Если connector в Docker, localhost указывает внутрь контейнера — не копируй этот origin без проектирования приватной связки.
 5. Добавь Published application route. Domain — подключённый домен, subdomain — например llm. Service URL — http://127.0.0.1:8000, если connector нативный на том же VPS.
 6. Сохрани маршрут и дождись статуса Healthy. Затем проверь route реальным авторизованным API-запросом.
 7. Не используй Quick Tunnel как постоянный endpoint: URL временный, SSE не поддерживается. Не публикуй порты 8000/11434.
