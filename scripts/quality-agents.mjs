@@ -94,7 +94,7 @@ const suites = {
       includes('function syncSettingsToActualRoute(route)', 'Settings must follow the final successful provider/model route after the response finishes.');
       includes('syncSettingsToActualRoute(lastSuccessfulRoute)', 'Settings must not change until the full answer pipeline completes.');
       includes("source:'successful-request'", 'A successful model response should store only non-secret connection-verification metadata.');
-      includes('await recordSuccessfulRoute(candidate,stageName,data?.model,{elapsedMs,attemptIndex:i+1})', 'Successful requests must update the connection state and include per-attempt timings.');
+      includes('await recordSuccessfulRoute(candidate,stageName,data?.model,{elapsedMs,attemptIndex:i+1,cacheStatus:data?.__alCacheStatus})', 'Successful requests must preserve per-attempt timings and carry the optional server-cache status.');
       includes('async function requestChatCompletion(body,signal', 'All model calls must use the classified provider fallback path.');
       includes("Запрос не выполнен. Исходный текст сохранён.", 'Fallback errors must preserve the original user prompt.');
       includes("showToast('Настройки сохранены')", 'Saving settings should use the toast and keep the modal open.');
