@@ -3,7 +3,11 @@ import { test, expect } from '@playwright/test';
 const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
 
 test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => { localStorage.clear(); sessionStorage.clear(); });
+  await page.addInitScript(() => {
+    localStorage.clear(); sessionStorage.clear();
+    localStorage.setItem('ai_cross_provider_fallback', 'true');
+    localStorage.setItem('ai_api_key_gemini', 'not-a-real-gemini-key');
+  });
 });
 
 test('aLandi private gateway route works, stays local, and exposes cache status', async ({ page }) => {
@@ -44,7 +48,7 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
     return route.fulfill({ status: 404, headers: corsHeaders, contentType: 'application/json', body: '{}' });
   });
   await page.route('https://generativelanguage.googleapis.com/**', async route => {
-    if (route.request().url().includes('/chat/completions')) cloudChatRequests.push(route.request().url());
+    cloudChatRequests.push(route.request().url());
     return route.fulfill({
       status: 503, contentType: 'application/json',
       body: JSON.stringify({ error: { message: 'Cloud fallback must not be used in this test.' } })
