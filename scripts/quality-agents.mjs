@@ -132,7 +132,9 @@ const suites = {
       includes("new URL('skills/' + skill + '.txt', document.baseURI)", 'Task skills should load from repository assets only on demand.');
       assert.ok(!source.includes('<script src="https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js"'), 'Pyodide must not load on initial page render.');
       includes("script.src = 'https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js'", 'Pyodide should load only when requested.');
-      for (const skill of ['research', 'code-review', 'data-analysis', 'planning']) {
+      includes("const isMultimodalTask = /", 'Multimodal task classifier must be explicit and reviewable.');
+      includes("const skill = isMultimodalTask ? 'multimodal'", 'Multimodal prompts must select the specialist skill before generic research.');
+      for (const skill of ['research', 'code-review', 'data-analysis', 'planning', 'multimodal']) {
         assert.ok(existsSync(resolve(root, 'skills/' + skill + '.txt')), 'Missing on-demand skill: ' + skill);
       }
     }],
@@ -225,6 +227,7 @@ const suites = {
       assert.match(html, /id="chatBox"/, 'Built page is missing the chat UI.');
       assert.match(html, /DOMPurify\.sanitize/, 'Built page is missing the sanitization path.');
       assert.ok(existsSync(resolve(root, '_site/skills/research.txt')), 'Built site must publish the on-demand research skill.');
+      assert.ok(existsSync(resolve(root, '_site/skills/multimodal.txt')), 'Built site must publish the on-demand multimodal skill.');
     }]
   ]
 };

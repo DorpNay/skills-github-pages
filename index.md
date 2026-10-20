@@ -1557,7 +1557,9 @@ permalink: /
     async function loadTaskSkill(userText, mode, useMultiAgent, signal) {
       if (mode !== 'deep' && !useMultiAgent) return '';
       const text = userText.toLocaleLowerCase();
-      const skill = useMultiAgent || /исслед|найди|источник|сравни|актуальн|research|search|source|compare/.test(text) ? 'research'
+      const isMultimodalTask = /(?:\bocr\b|\basr\b|qwen3-asr|moonshine|zipformer|canary\s*180m|nemotron.*asr|glm-ocr|paddleocr|surya|dots\.(?:ocr|mocr)|deepseek-ocr|lightonocr|asr4all|speech[- ]to[- ]text|transcrib|multimodal rag|rag-anything|распозн.{0,14}(?:реч|голос|ауди|изображ|фото|документ|pdf)|транскриб|голосов|диктовк|микрофон|аудио|распознаван.{0,12}реч|сканирован.{0,12}(?:документ|pdf)|извлеч.{0,12}текст.{0,12}(?:pdf|изображ|документ))/i.test(text);
+      const skill = isMultimodalTask ? 'multimodal'
+        : useMultiAgent || /исслед|найди|источник|сравни|актуальн|research|search|source|compare/.test(text) ? 'research'
         : /код|программ|debug|рефактор|javascript|python|typescript|code|bug|implement/.test(text) ? 'code-review'
         : /данн|таблиц|статист|рассч|вычисл|график|data|calculate|statistics|dataset/.test(text) ? 'data-analysis' : 'planning';
       try {
