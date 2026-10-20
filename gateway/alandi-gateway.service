@@ -19,6 +19,7 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectHome=true
 ProtectSystem=strict
+ReadWritePaths=/var/lib/alandi-gateway
 ProtectKernelTunables=true
 ProtectKernelModules=true
 ProtectControlGroups=true
