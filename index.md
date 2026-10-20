@@ -81,6 +81,78 @@ permalink: /
     .toast.toast-visible { opacity: 1; transform: translate(-50%, 0); }
     .toast.toast-error { border-color: rgb(248 113 113 / 55%); color: #fecaca; }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+
+    /* aLandi AI — Obsidian Studio / Clean Light + restrained Tiffany Motion. */
+    :root, html[data-theme="dark"] {
+      color-scheme: dark;
+      --ui-bg:#08111d; --ui-surface:#0f1b2b; --ui-surface-raised:#142438;
+      --ui-border:#26384b; --ui-text:#f1f6fa; --ui-text-muted:#a4b5c7;
+      --ui-primary:#3b82f6; --ui-success:#35d39a; --ui-danger:#ff737a;
+      --ui-tiffany:#68e8d0; --ui-tiffany-bright:#a3fff0; --ui-tiffany-soft:rgba(104,232,208,.13);
+      --motion-fast:140ms; --motion-normal:190ms; --motion-panel:220ms;
+      --motion-ease:cubic-bezier(.2,.7,.2,1);
+    }
+    html[data-theme="light"] {
+      color-scheme: light;
+      --ui-bg:#f4f7f8; --ui-surface:#ffffff; --ui-surface-raised:#f8fbfc;
+      --ui-border:#d9e4e8; --ui-text:#152633; --ui-text-muted:#526775;
+      --ui-primary:#2563eb; --ui-success:#087f72; --ui-danger:#c83244;
+      --ui-tiffany:#087f72; --ui-tiffany-bright:#25a995; --ui-tiffany-soft:rgba(8,127,114,.10);
+    }
+    body { background:var(--ui-bg)!important; color:var(--ui-text)!important; }
+    #sidebar, header, #searchStatus, footer { background:var(--ui-surface)!important; border-color:var(--ui-border)!important; }
+    #settingsModal > .settings-surface { background:var(--ui-surface)!important; border-color:var(--ui-border)!important; }
+    #chatBox, #memoryBox { color:var(--ui-text); }
+    #sidebar .border-b, #sidebar .border-t, header, footer, #searchStatus { border-color:var(--ui-border)!important; }
+    #settingsModal input, #settingsModal textarea, #settingsModal select, #userInput, #memoryInput,
+    #chatList button, #sidebar .bg-gray-900, #chatBox .bg-gray-800 { border-color:var(--ui-border)!important; }
+    #settingsModal input, #settingsModal textarea, #settingsModal select, #userInput, #memoryInput,
+    #sidebar .bg-gray-900 { background:var(--ui-bg)!important; color:var(--ui-text)!important; }
+    #settingsModal label, #settingsModal p { color:var(--ui-text-muted)!important; }
+    :where(button,input,textarea,select,[tabindex]):focus-visible { outline:2px solid var(--ui-tiffany)!important; outline-offset:2px; }
+    button { transition:color var(--motion-fast) var(--motion-ease),background-color var(--motion-fast) var(--motion-ease),border-color var(--motion-fast) var(--motion-ease),opacity var(--motion-fast) var(--motion-ease),transform var(--motion-fast) var(--motion-ease); }
+    button:active:not(:disabled) { transform:translateY(1px); }
+    .motion-accent { position:relative; isolation:isolate; overflow:hidden; }
+    .motion-accent::after { content:""; position:absolute; z-index:1; pointer-events:none; inset:auto auto 0 0; width:30%; height:2px; border-radius:999px; background:linear-gradient(90deg,transparent,var(--ui-tiffany) 48%,var(--ui-tiffany-bright) 58%,transparent); opacity:0; transform:translateX(-130%); }
+    .motion-active.motion-accent::after { opacity:.95; animation:tiffany-sweep 1450ms var(--motion-ease) infinite; }
+    @keyframes tiffany-sweep { from { transform:translateX(-130%); } to { transform:translateX(430%); } }
+    .status-thinking-dots { display:inline-flex; align-items:center; gap:4px; margin-left:.15rem; }
+    .status-thinking-dots > span { width:4px; height:4px; flex:0 0 4px; border-radius:50%; background:var(--ui-tiffany); opacity:.32; }
+    .status-thinking-dots.is-active > span { animation:tiffany-dot 1200ms ease-in-out infinite; }
+    .status-thinking-dots.is-active > span:nth-child(2) { animation-delay:140ms; }
+    .status-thinking-dots.is-active > span:nth-child(3) { animation-delay:280ms; }
+    @keyframes tiffany-dot { 0%,100% { opacity:.28; transform:translateY(0); } 50% { opacity:.95; transform:translateY(-2px); } }
+    html[data-motion="reduced"] .motion-active.motion-accent::after,
+    html[data-motion="off"] .motion-active.motion-accent::after,
+    html[data-motion="reduced"] .status-thinking-dots.is-active > span,
+    html[data-motion="off"] .status-thinking-dots.is-active > span { animation:none!important; transform:none!important; }
+    html[data-motion="reduced"] .motion-active.motion-accent::after { opacity:.7; }
+    html[data-motion="off"] .motion-active.motion-accent::after { opacity:0; }
+    html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="off"] *::after { animation:none!important; transition:none!important; }
+    @media (prefers-reduced-motion:reduce) {
+      html:not([data-motion="on"]) *, html:not([data-motion="on"]) *::before, html:not([data-motion="on"]) *::after {
+        scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important;
+      }
+      html:not([data-motion="on"]) .motion-active.motion-accent::after { opacity:.7; animation:none!important; transform:none!important; }
+    }
+    html[data-theme="light"] .bg-gray-950, html[data-theme="light"] .bg-gray-900,
+    html[data-theme="light"] .bg-gray-800, html[data-theme="light"] .bg-gray-700 { background:var(--ui-surface)!important; }
+    html[data-theme="light"] .border-gray-800, html[data-theme="light"] .border-gray-700,
+    html[data-theme="light"] .border-gray-600 { border-color:var(--ui-border)!important; }
+    html[data-theme="light"] .text-white, html[data-theme="light"] .text-gray-100,
+    html[data-theme="light"] .text-gray-200, html[data-theme="light"] .text-gray-300 { color:var(--ui-text)!important; }
+    html[data-theme="light"] .text-gray-400, html[data-theme="light"] .text-gray-500 { color:var(--ui-text-muted)!important; }
+    html[data-theme="light"] .assistant-content blockquote { color:var(--ui-text-muted)!important; border-color:var(--ui-border)!important; }
+    html[data-theme="light"] .assistant-content th, html[data-theme="light"] .assistant-content td { border-color:var(--ui-border)!important; }
+    html[data-theme="light"] .code-block pre, html[data-theme="light"] .code-output { background:var(--ui-surface-raised)!important; color:var(--ui-text)!important; border-color:var(--ui-border)!important; }
+    html[data-theme="light"] .assistant-content a { color:#1d4ed8!important; }
+    @media (max-width:639px) {
+      #settingsModal { padding:max(env(safe-area-inset-top),.5rem) .5rem max(env(safe-area-inset-bottom),.5rem)!important; }
+      #settingsModal > .settings-surface { max-height:calc(100dvh - 1rem)!important; max-width:none!important; border-radius:14px!important; }
+      #chatBox { padding:.75rem!important; }
+      #inputArea { gap:.4rem!important; }
+      #sendBtn,#stopBtn { padding:.7rem .8rem!important; }
+    }
   </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
@@ -114,6 +186,17 @@ permalink: /
   <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="settings-surface bg-gray-800 p-4 rounded-xl max-w-sm mx-auto w-full border border-gray-700 space-y-2.5 my-auto max-h-[90dvh] overflow-y-auto">
       <h2 id="settingsTitle" class="text-lg font-bold">⚙️ Настройки</h2>
+      <section class="rounded-xl border border-gray-700 p-3 space-y-2" aria-label="Внешний вид">
+        <h3 class="text-xs font-semibold">Внешний вид</h3>
+        <label for="uiTheme" class="block text-xs text-gray-400">Тема</label>
+        <select id="uiTheme" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm">
+          <option value="dark">Obsidian Studio · тёмная</option><option value="light">Clean Light · светлая</option>
+        </select>
+        <label for="uiMotion" class="block text-xs text-gray-400">Анимации</label>
+        <select id="uiMotion" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm">
+          <option value="auto">Авто · системные настройки</option><option value="reduced">Уменьшить движение</option><option value="off">Отключить эффекты</option>
+        </select>
+      </section>
       <div class="rounded-lg bg-gray-900 border border-gray-700 p-2.5 text-xs leading-relaxed text-gray-300 space-y-2">
         <p><strong>Быстрый старт:</strong> по умолчанию выбран Gemini. Для альтернатив выберите провайдера и модель ниже; для каждого сервиса нужен свой API-ключ.</p>
         <p><a class="text-blue-300 underline" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Получить ключ Gemini API в Google AI Studio</a>. Создайте ключ и вставьте его в поле API Key ниже.</p>
@@ -122,7 +205,7 @@ permalink: /
       </div>
       <label for="providerPreset" class="block text-xs text-gray-400">Провайдер API</label>
       <select id="providerPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm">
-        <option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="custom">Свой OpenAI-совместимый API</option>
+        <option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="alandi">aLandi Self-hosted Gateway · свой сервер</option><option value="custom">Свой OpenAI-совместимый API</option>
       </select>
       <label for="modelSearch" class="block text-xs text-gray-400">Поиск по каталогу моделей</label>
       <input type="search" id="modelSearch" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Фильтр по имени или ID модели">
@@ -199,7 +282,7 @@ permalink: /
 
   <main id="chatBox" class="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-sm" aria-live="polite" aria-label="Сообщения чата"></main>
   <div id="searchStatus" class="hidden px-4 py-2 bg-gray-800/80 border-t border-gray-700 text-xs text-blue-300 flex items-center gap-2 shrink-0" role="status" aria-live="polite">
-    <span class="animate-spin" aria-hidden="true">⏳</span><span id="statusText">Выполняется запрос...</span><span id="thinkingTime" class="ml-auto text-[10px]">Прошло 00:00</span>
+    <span class="animate-spin" aria-hidden="true">⏳</span><span id="statusText">Выполняется запрос...</span><span class="status-thinking-dots" aria-hidden="true"><span></span><span></span><span></span></span><span id="thinkingTime" class="ml-auto text-[10px]">Прошло 00:00</span>
   </div>
   <footer class="px-3 py-2 bg-gray-800/95 border-t border-gray-700 shrink-0 safe-bottom">
     <div class="flex gap-2 items-end" id="inputArea">
@@ -249,6 +332,7 @@ permalink: /
       openrouter: { label: 'OpenRouter', docsUrl: 'https://openrouter.ai/settings/keys', baseUrl: 'https://openrouter.ai/api/v1', models: [['openrouter/free','Автовыбор бесплатной модели'], ['deepseek/deepseek-r1:free','DeepSeek R1 · free (если доступна)']] },
       nvidia: { label: 'NVIDIA NIM', docsUrl: 'https://build.nvidia.com/settings', baseUrl: 'https://integrate.api.nvidia.com/v1', models: [['z-ai/glm-5.3','GLM-5.3 · reasoning/coding'], ['openai/gpt-oss-20b','GPT-OSS 20B · reasoning']] },
       huggingface: { label: 'Hugging Face Inference Providers', docsUrl: 'https://huggingface.co/settings/tokens', baseUrl: 'https://router.huggingface.co/v1', models: [['openai/gpt-oss-120b:fastest','GPT-OSS 120B · fastest'], ['deepseek-ai/DeepSeek-R1:fastest','DeepSeek R1 · fastest'], ['openai/gpt-oss-120b:cheapest','GPT-OSS 120B · cheapest']] },
+      alandi: { label: 'aLandi Self-hosted Gateway', docsUrl: 'https://github.com/DorpNay/skills-github-pages/blob/main/docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md', baseUrl: '', models: [['qwen3.5:4b','Qwen3.5 4B · локальный сервер']] },
       custom: { label: 'Свой API', baseUrl: '', docsUrl: '', models: [['custom','Ввести имя модели вручную']] }
     };
     const MAX_TOOL_ROUNDS = 4;
@@ -638,7 +722,7 @@ permalink: /
         bubble.appendChild(content);
       }
       row.appendChild(bubble);
-      if (!isUser && message.providerInfo) { const meta=document.createElement('div'); meta.className='message-model-meta'; const r=message.providerInfo; meta.textContent=(r.providerLabel||r.provider||'Провайдер неизвестен')+' · '+(r.model||'модель не указана')+(r.requestedModel&&r.requestedModel!==r.model?' (запрошена '+r.requestedModel+')':''); row.className+=' flex-col items-start'; row.appendChild(meta); }
+      if (!isUser && message.providerInfo) { const meta=document.createElement('div'); meta.className='message-model-meta'; const r=message.providerInfo; meta.textContent=(r.providerLabel||r.provider||'Провайдер неизвестен')+' · '+(r.model||'модель не указана')+(r.requestedModel&&r.requestedModel!==r.model?' (запрошена '+r.requestedModel+')':'')+(r.provider==='alandi'&&r.cacheStatus?' · кэш '+r.cacheStatus:''); row.className+=' flex-col items-start'; row.appendChild(meta); }
       if (!isUser && message.researchTrace) {
         const actions = document.createElement('div'); actions.className = 'flex flex-wrap gap-2 mt-1';
         const button = document.createElement('button'); button.type = 'button'; button.dataset.action = 'open-trace'; button.dataset.traceId = message.researchTrace.id || '';
@@ -901,6 +985,7 @@ permalink: /
       } else if(initial&&provider!=='custom'&&!safeGet(STORAGE.baseUrl)) $('baseUrl').value=config.baseUrl;
       $('apiKey').value=safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'';
       const hints={
+        alandi:'Частный локальный gateway. Base URL — HTTPS-хост туннеля с окончанием /v1; Model — точный тег Ollama, например qwen3.5:4b. API Key — ALANDI_API_KEY из закрытого файла на VPS. Отключите межпровайдерный fallback, чтобы приватные запросы не отправлялись другим провайдерам.',
         custom:'Введите Base URL, имя модели и ключ своего OpenAI-совместимого API. Совместимость и CORS зависят от поставщика.',
         pollinations:'Pollinations: сюда вставляется App Key pk_… (не секретный sk_ токен). Зарегистрируйте точный Redirect URI в настройках App Key, затем нажмите «Подключить аккаунт»: OAuth PKCE хранит временный access token только в sessionStorage этой вкладки. Модели могут потреблять Pollen согласно бюджету.',
         huggingface:'Hugging Face Inference Providers: нужен fine-grained token с разрешением “Make calls to Inference Providers”. Endpoint router.huggingface.co/v1; модели должны быть из каталога и поддерживать Chat Completions.',
@@ -920,6 +1005,11 @@ permalink: /
       if(!initial){safeSet(STORAGE.baseUrl,$('baseUrl').value);safeSet(STORAGE.model,$('modelName').value);}
     }
     function initializeSettings() {
+      const savedTheme = safeGet('ai_ui_theme_v2') || 'dark';
+      const savedMotion = safeGet('ai_ui_motion_v2') || 'auto';
+      $('uiTheme').value = ['dark','light'].includes(savedTheme) ? savedTheme : 'dark';
+      $('uiMotion').value = ['auto','reduced','off'].includes(savedMotion) ? savedMotion : 'auto';
+      applyAppearance($('uiTheme').value, $('uiMotion').value);
       const savedProvider=safeGet(STORAGE.provider);
       if (savedProvider && savedProvider !== 'gemini') {
         const legacyKey = safeGet(STORAGE.apiKey);
@@ -1073,6 +1163,23 @@ permalink: /
         showToast('Импорт профиля не выполнен: ' + String(error?.message || error), 'error');
       }
     }
+    function applyAppearance(theme, motion) {
+      const safeTheme = ['dark','light'].includes(theme) ? theme : 'dark';
+      const safeMotion = ['auto','reduced','off'].includes(motion) ? motion : 'auto';
+      document.documentElement.dataset.theme = safeTheme;
+      document.documentElement.dataset.motion = safeMotion;
+      const themeColor = document.querySelector('meta[name="theme-color"]');
+      if (themeColor) themeColor.content = safeTheme === 'light' ? '#f4f7f8' : '#08111d';
+    }
+    $('uiTheme').addEventListener('change', () => {
+      applyAppearance($('uiTheme').value, $('uiMotion').value);
+      safeSet('ai_ui_theme_v2', $('uiTheme').value);
+    });
+    $('uiMotion').addEventListener('change', () => {
+      applyAppearance($('uiTheme').value, $('uiMotion').value);
+      safeSet('ai_ui_motion_v2', $('uiMotion').value);
+    });
+
     function saveSettings() {
       if(currentProvider()==='cloudflare'){
         const accountId=$('cloudflareAccountId').value.trim();
@@ -1362,8 +1469,8 @@ permalink: /
     function formatElapsed(ms){const n=Math.max(0,Math.floor(ms/1000));return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}
     function getRunEstimateMs(){if(!activeRunTelemetry)return null;const key=[activeRunTelemetry.provider,activeRunTelemetry.model,activeRunTelemetry.workflow].join('|');try{const all=JSON.parse(safeGet('ai_request_timing_v1')||'{}'),values=(Array.isArray(all[key])?all[key].slice(-7):[]).filter(Number.isFinite).sort((a,b)=>a-b);return values.length?values[Math.floor(values.length/2)]:null;}catch(_){return null;}}
     function updateStatusTimer(){if(!activeRunStartedAt||$('searchStatus').classList.contains('hidden'))return;const elapsed=Date.now()-activeRunStartedAt,estimate=getRunEstimateMs();$('thinkingTime').textContent=estimate?'Прошло '+formatElapsed(elapsed)+' · ориентир '+formatElapsed(Math.max(elapsed,estimate)):'Прошло '+formatElapsed(elapsed)+' · собираю оценку';}
-    function showStatus(message){$('statusText').textContent=message;$('searchStatus').classList.remove('hidden');if(!statusTimerId&&activeRunStartedAt)statusTimerId=setInterval(updateStatusTimer,1000);updateStatusTimer();}
-    function hideStatus(){$('searchStatus').classList.add('hidden');if(!isGenerating&&statusTimerId){clearInterval(statusTimerId);statusTimerId=null;}}
+    function showStatus(message){$('statusText').textContent=message;$('searchStatus').classList.add('motion-accent','motion-active');$('searchStatus').classList.remove('hidden');$('searchStatus').querySelector('.status-thinking-dots')?.classList.add('is-active');if(!statusTimerId&&activeRunStartedAt)statusTimerId=setInterval(updateStatusTimer,1000);updateStatusTimer();}
+    function hideStatus(){$('searchStatus').classList.remove('motion-active');$('searchStatus').querySelector('.status-thinking-dots')?.classList.remove('is-active');$('searchStatus').classList.add('hidden');if(!isGenerating&&statusTimerId){clearInterval(statusTimerId);statusTimerId=null;}}
     function saveRunDuration(){if(!activeRunTelemetry||!activeRunStartedAt)return;const key=[activeRunTelemetry.provider,activeRunTelemetry.model,activeRunTelemetry.workflow].join('|'),elapsed=Date.now()-activeRunStartedAt;try{const all=JSON.parse(safeGet('ai_request_timing_v1')||'{}'),values=Array.isArray(all[key])?all[key]:[];values.push(elapsed);all[key]=values.slice(-8);safeSet('ai_request_timing_v1',JSON.stringify(all));}catch(_){} }
     function abortError() { return new DOMException('Запрос отменён', 'AbortError'); }
     function throwIfAborted(signal) { if (signal.aborted) throw abortError(); }
@@ -1393,8 +1500,14 @@ permalink: /
           throw new Error('Не удалось подключиться к API. Возможны сетевой сбой или ограничение CORS провайдера. Проверьте Base URL и попробуйте запрос через собственный серверный прокси.');
         }
         if (response.ok) {
-          try { return await response.json(); }
-          catch (_) { throw new Error('API вернул ответ, который не удалось прочитать как JSON.'); }
+          try {
+            const payload = await response.json();
+            const cacheStatus = response.headers.get('X-AI-Cache');
+            if (cacheStatus && payload && typeof payload === 'object') {
+              Object.defineProperty(payload, '__alCacheStatus', { value: cacheStatus, enumerable: false });
+            }
+            return payload;
+          } catch (_) { throw new Error('API вернул ответ, который не удалось прочитать как JSON.'); }
         }
         const details = (await response.text().catch(() => '')).slice(0, 500);
         if ([500, 502, 503, 504].includes(response.status) && attempt < 1) {
@@ -1579,7 +1692,9 @@ permalink: /
         const key=getProviderRequestKey(provider);
         if(!key) continue;
         const baseUrl=provider===selectedProvider
-          ? (provider==='cloudflare'?getProviderBaseUrl('cloudflare'):(safeGet(STORAGE.baseUrl)||config.baseUrl||DEFAULT_BASE_URL)).replace(/\/+$/,'')
+          ? (provider==='cloudflare'
+              ? getProviderBaseUrl('cloudflare')
+              : ((provider==='custom'||provider==='alandi') ? (safeGet(STORAGE.baseUrl)||'') : (safeGet(STORAGE.baseUrl)||config.baseUrl||DEFAULT_BASE_URL))).replace(/\/+$/,'')
           : getProviderBaseUrl(provider);
 
         if (!baseUrl) continue;
@@ -1601,7 +1716,7 @@ permalink: /
     let lastSuccessfulRoute=null,activeRunTelemetry=null,activeRunStartedAt=0,statusTimerId=null;
     async function recordSuccessfulRoute(candidate,stageName,responseModel,telemetry = {}){
       const actualModel=typeof responseModel==='string'&&responseModel.trim()?responseModel:candidate.model;
-      lastSuccessfulRoute={provider:candidate.provider,providerLabel:PROVIDERS[candidate.provider]?.label||candidate.provider,model:actualModel,requestedModel:candidate.model,stage:stageName,at:new Date().toISOString(),...(Number.isFinite(telemetry.elapsedMs)?{elapsedMs:telemetry.elapsedMs}:{}),...(Number.isFinite(telemetry.attemptIndex)?{attemptIndex:telemetry.attemptIndex}:{})};
+      lastSuccessfulRoute={provider:candidate.provider,providerLabel:PROVIDERS[candidate.provider]?.label||candidate.provider,model:actualModel,requestedModel:candidate.model,stage:stageName,at:new Date().toISOString(),...(Number.isFinite(telemetry.elapsedMs)?{elapsedMs:telemetry.elapsedMs}:{}),...(Number.isFinite(telemetry.attemptIndex)?{attemptIndex:telemetry.attemptIndex}:{}),...(typeof telemetry.cacheStatus==='string'?{cacheStatus:telemetry.cacheStatus}:{})};
       // Persist only a one-way fingerprint: never store the provider key in the connection marker.
       const keyFingerprint=await providerKeyFingerprint(candidate.key);
       if(keyFingerprint) safeSet('ai_provider_connection_'+candidate.provider,JSON.stringify({
@@ -1621,7 +1736,8 @@ permalink: /
     }
     async function requestChatCompletion(body,signal,stageName='Ответ модели'){
       throwIfAborted(signal);const preferredProvider=safeGet(STORAGE.provider)||'gemini',preferredModel=safeGet(STORAGE.model)||body.model||DEFAULT_MODEL,candidates=getApiCandidates(preferredModel),allowCross=safeGet(STORAGE.crossProviderFallback)==='true';
-      if(!candidates.length)throw new Error('Не найден API-ключ для выбранного провайдера. Откройте настройки и сохраните ключ.');
+      if((preferredProvider==='alandi'||preferredProvider==='custom')&&!String(safeGet(STORAGE.baseUrl)||'').trim())throw new Error('Сначала укажите Base URL собственного API и сохраните настройки.');
+      if(!candidates.length)throw new Error('Не найден API-ключ или Base URL для выбранного провайдера. Откройте настройки и проверьте подключение.');
       let lastError=null;
       for(let i=0;i<candidates.length;i++){
         const candidate=candidates[i];throwIfAborted(signal);
@@ -1636,11 +1752,16 @@ permalink: /
               candidateBody={...body,messages:[...systemMessages,...buildHistory(historyMessages,systemChars,candidate.provider,candidate.model)]};
             }
           }
-          const data=await fetchJson(buildApiUrl(candidate.baseUrl),{method:'POST',headers:{'Authorization':`Bearer ${candidate.key}`,'Content-Type':'application/json'},body:JSON.stringify({...candidateBody,model:candidate.model})},signal);
+          const dynamicTurn = Array.isArray(body.tools) || Array.isArray(body.functions) ||
+            (Array.isArray(body.messages) && body.messages.some(message => message?.role === 'tool' || Array.isArray(message?.tool_calls) || typeof message?.content !== 'string')) ||
+            /исслед|research|планировщик|синтезатор|критик|проверяющ|после инструмента/i.test(String(stageName||''));
+          const requestHeaders={'Authorization':`Bearer ${candidate.key}`,'Content-Type':'application/json'};
+          if(candidate.provider==='alandi'&&dynamicTurn)requestHeaders['X-AI-Cache-Bypass']='1';
+          const data=await fetchJson(buildApiUrl(candidate.baseUrl),{method:'POST',headers:requestHeaders,body:JSON.stringify({...candidateBody,model:candidate.model})},signal);
           const elapsedMs=Date.now()-attemptStartedAt;
           const attempt={provider:candidate.provider,providerLabel:PROVIDERS[candidate.provider]?.label||candidate.provider,model:typeof data?.model==='string'&&data.model.trim()?data.model:candidate.model,requestedModel:candidate.model,stage:stageName,attemptIndex:i+1,startedAt:attemptStartedIso,at:new Date().toISOString(),elapsedMs,success:true,failureType:null};
           if(activeRunTelemetry)activeRunTelemetry.attempts.push({...attempt});
-          await recordSuccessfulRoute(candidate,stageName,data?.model,{elapsedMs,attemptIndex:i+1});
+          await recordSuccessfulRoute(candidate,stageName,data?.model,{elapsedMs,attemptIndex:i+1,cacheStatus:data?.__alCacheStatus});
           if(candidate.provider!==preferredProvider||candidate.model!==preferredModel)showToast(`Резерв для этого запроса: ${PROVIDERS[candidate.provider]?.label||candidate.provider} · ${candidate.model}`);
           return data;
         }catch(error){
