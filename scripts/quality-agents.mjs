@@ -40,6 +40,7 @@ const suites = {
       includes('const MAX_RESEARCH_EVIDENCE = 40;', 'Research evidence must have a deterministic size cap.');
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
       includes("alandi: { label: 'aLandi Self-hosted Gateway'", 'The aLandi private gateway must be a first-class provider.');
+      includes("allowCrossProvider&&selectedProvider!=='alandi'", 'Selecting aLandi must never silently route private prompts to another provider even if global fallback is enabled.');
       includes('<option value="alandi">aLandi Self-hosted Gateway · свой сервер</option>', 'The aLandi provider must be selectable in settings.');
       includes("provider==='custom'||provider==='alandi'", 'Custom gateway providers must not fall back to the default cloud endpoint.');
       includes("requestHeaders['X-AI-Cache-Bypass']='1'", 'Dynamic agent turns must explicitly bypass the server response cache.');
