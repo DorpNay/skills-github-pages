@@ -60,3 +60,10 @@
 - Open-Generative-AI: отдельная будущая Image/Video задача, не подмена основного текстового runtime.
 - GOT-OCR 2.0, HunyuanOCR-1.5, DeepSeek-OCR2, dots.mocr и LightOnOCR-3-4B: не ставить до benchmark, выбора конкретной задачи и инфраструктуры.
 - На этом этапе не установлены OCR/ASR weights и не добавлены upload/mic/TTS/media endpoints. Модель считается интегрированной только после callable route, UI, tests, benchmark, license/privacy checks and rollback.
+
+
+## Корректировка приоритета: основной runbook aLandi
+
+Главная пошаговая инструкция — [docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md](docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md). Она намеренно опирается на текущий репозиторий и код, а не на старый Dify-first рецепт: новый Dify/PG/Redis стек не ставится по умолчанию на VPS с 8 GB RAM.
+
+В правильный repo дополнительно портируются UI Obsidian Studio / Clean Light с Tiffany Motion, явный preset aLandi, no-silent-fallback для custom endpoint и SQLite L2 cache. Кэш должен пройти gateway unit tests, а UI — quality sentinels и Playwright. Если CI красный, feature не объявляется завершённой.
