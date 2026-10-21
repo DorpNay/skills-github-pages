@@ -20,6 +20,18 @@ GOOGLE_REVOKE_URL = "https://oauth2.googleapis.com/revoke"
 GOOGLE_SCOPES = ("https://www.googleapis.com/auth/drive.file",)
 
 
+def _allowed_scopes(value: object, fallback: list[str] | None = None) -> list[str]:
+    if value is None:
+        scopes = list(fallback or GOOGLE_SCOPES)
+    elif isinstance(value, str):
+        scopes = value.split()
+    else:
+        raise ValueError("invalid OAuth scope response")
+    if not scopes or len(scopes) > 16 or not set(scopes).issubset(set(GOOGLE_SCOPES)):
+        raise ValueError("Google granted scopes outside the configured minimum")
+    return scopes
+
+
 def _vault(request: Request) -> Any:
     config = request.app.state.settings
     vault = getattr(request.app.state, "oauth_vault", None)
@@ -107,13 +119,21 @@ def build_google_oauth_router(config: Any, authorize) -> APIRouter:
             expires_in = tokens.get("expires_in")
             if expires_in is not None and (isinstance(expires_in, bool) or not isinstance(expires_in, int)):
                 raise ValueError("invalid OAuth token expiry")
-            raw_scopes = tokens.get("scope", " ".join(GOOGLE_SCOPES))
-            scopes = raw_scopes.split() if isinstance(raw_scopes, str) else list(GOOGLE_SCOPES)
+            scopes = _allowed_scopes(tokens.get("scope"))
             vault.save_tokens("google_drive", access_token=tokens["access_token"],
                               refresh_token=tokens.get("refresh_token"), expires_in=expires_in,
                               scopes=scopes)
         except (httpx.HTTPError, ValueError, TypeError):
-            logger.warning("Google OAuth code exchange failed; token response omitted")
+            # A token carrying broader-than-requested scope must never be stored. If the
+            # provider did issue one, make a best-effort revoke without logging its value.
+            try:
+                if "tokens" in locals() and isinstance(tokens, dict):
+                    revoke_token = tokens.get("refresh_token") or tokens.get("access_token")
+                    if isinstance(revoke_token, str) and revoke_token:
+                        await client.post(GOOGLE_REVOKE_URL, data={"token": revoke_token})
+            except httpx.HTTPError:
+                logger.warning("Could not revoke rejected Google OAuth grant; no credentials were stored")
+            logger.warning("Google OAuth code exchange failed or returned unapproved scopes; token response omitted")
             return _result_redirect(config, "error")
         return _result_redirect(config, "connected")
 
@@ -152,14 +172,13 @@ def build_google_oauth_router(config: Any, authorize) -> APIRouter:
             expires_in = renewed.get("expires_in")
             if expires_in is not None and (isinstance(expires_in, bool) or not isinstance(expires_in, int)):
                 raise ValueError("invalid OAuth token expiry")
-            scope_value = renewed.get("scope")
-            scopes = scope_value.split() if isinstance(scope_value, str) else tokens["scopes"]
+            scopes = _allowed_scopes(renewed.get("scope"), fallback=tokens["scopes"])
             vault.save_tokens("google_drive", access_token=renewed["access_token"],
                               refresh_token=renewed.get("refresh_token"), expires_in=expires_in,
                               scopes=scopes)
         except (httpx.HTTPError, ValueError, TypeError):
-            logger.warning("Google OAuth refresh failed; response body omitted")
-            raise HTTPException(502, "Google token refresh failed; reconnect if the grant was revoked") from None
+            logger.warning("Google OAuth refresh failed or returned unapproved scopes; response body omitted")
+            raise HTTPException(502, "Google token refresh failed or returned unapproved scopes; reconnect if needed") from None
         latest = vault.load_tokens("google_drive")
         return JSONResponse({"status": "refreshed", "expires_at": latest["expires_at"],
                              "has_refresh_token": bool(latest and latest.get("refresh_token"))},
