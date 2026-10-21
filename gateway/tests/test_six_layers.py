@@ -151,6 +151,77 @@ def test_rag_retrieval_preserves_citations_and_isolates_scopes(tmp_path):
     assert rag.retrieve("SQLite memory writes", scope="project", scope_id="alandi") == []
 
 
+def test_rag_scope_bound_ids_allow_same_document_name_without_leak_or_cross_delete(tmp_path):
+    rag = LazyGraphRAG(tmp_path / "rag.sqlite3")
+    rag.initialize()
+    rag.ingest_document("shared-doc", "https://example.test/alandi", [
+        {"chunk_id": "shared-chunk", "content": "Ollama architecture secret alpha project."}
+    ], scope="project", scope_id="alandi")
+    rag.ingest_document("shared-doc", "https://example.test/other", [
+        {"chunk_id": "shared-chunk", "content": "Ollama architecture secret beta project."}
+    ], scope="project", scope_id="other-project")
+
+    alpha = rag.retrieve("Ollama architecture secret alpha", scope="project", scope_id="alandi")
+    beta = rag.retrieve("Ollama architecture secret beta", scope="project", scope_id="other-project")
+    assert alpha and all(item["source_uri"] == "https://example.test/alandi" for item in alpha)
+    assert beta and all(item["source_uri"] == "https://example.test/other" for item in beta)
+    assert rag.delete_document("shared-doc", scope="project", scope_id="alandi") is True
+    assert rag.retrieve("Ollama architecture secret alpha", scope="project", scope_id="alandi") == []
+    assert rag.retrieve("Ollama architecture secret beta", scope="project", scope_id="other-project")
+
+
+def test_rag_migrates_legacy_global_ids_without_losing_citations_or_chunks(tmp_path):
+    path = tmp_path / "legacy-rag.sqlite3"
+    db = sqlite3.connect(path)
+    db.execute("PRAGMA foreign_keys=ON")
+    db.executescript("""
+        CREATE TABLE rag_documents (
+            document_id TEXT PRIMARY KEY, scope TEXT NOT NULL, scope_id TEXT NOT NULL,
+            source_uri TEXT NOT NULL, created_at INTEGER NOT NULL
+        );
+        CREATE TABLE rag_chunks (
+            chunk_id TEXT PRIMARY KEY,
+            document_id TEXT NOT NULL REFERENCES rag_documents(document_id) ON DELETE CASCADE,
+            scope TEXT NOT NULL, scope_id TEXT NOT NULL, source_uri TEXT NOT NULL,
+            page_number INTEGER, content TEXT NOT NULL, created_at INTEGER NOT NULL
+        );
+        CREATE VIRTUAL TABLE rag_fts USING fts5(chunk_id UNINDEXED, content, tokenize='unicode61');
+        CREATE TABLE rag_chunk_concepts (
+            chunk_id TEXT NOT NULL REFERENCES rag_chunks(chunk_id) ON DELETE CASCADE,
+            concept TEXT NOT NULL, PRIMARY KEY(chunk_id, concept)
+        );
+        CREATE INDEX idx_rag_chunk_scope ON rag_chunks(scope, scope_id, document_id);
+        CREATE INDEX idx_rag_concepts ON rag_chunk_concepts(concept, chunk_id);
+    """)
+    now = int(time.time())
+    db.execute("INSERT INTO rag_documents VALUES (?, ?, ?, ?, ?)",
+               ("legacy-doc", "project", "alandi", "https://example.test/legacy", now))
+    db.execute("INSERT INTO rag_chunks VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+               ("legacy-chunk", "legacy-doc", "project", "alandi", "https://example.test/legacy", 4,
+                "Legacy migration preserves SQLite architecture source citation.", now))
+    db.execute("INSERT INTO rag_fts VALUES (?, ?)",
+               ("legacy-chunk", "Legacy migration preserves SQLite architecture source citation."))
+    db.execute("INSERT INTO rag_chunk_concepts VALUES (?, ?)", ("legacy-chunk", "architecture"))
+    db.commit()
+    db.close()
+
+    rag = LazyGraphRAG(path)
+    rag.initialize()
+    legacy = rag.retrieve("SQLite architecture", scope="project", scope_id="alandi")
+    assert legacy and legacy[0]["chunk_id"] == "legacy-chunk"
+    assert legacy[0]["document_id"] == "legacy-doc"
+    assert legacy[0]["page_number"] == 4
+
+    # The same caller-facing identifiers can now safely exist in a different project.
+    rag.ingest_document("legacy-doc", "https://example.test/new-project", [
+        {"chunk_id": "legacy-chunk", "content": "Another project stores unrelated bounded search records."}
+    ], scope="project", scope_id="other-project")
+    assert rag.retrieve("SQLite architecture", scope="project", scope_id="alandi")
+    assert rag.retrieve("unrelated bounded search", scope="project", scope_id="other-project")
+    assert rag.delete_document("legacy-doc", scope="project", scope_id="other-project")
+    assert rag.retrieve("SQLite architecture", scope="project", scope_id="alandi")
+
+
 def test_rag_rejects_unsafe_citation_schemes_and_embedded_credentials(tmp_path):
     rag = LazyGraphRAG(tmp_path / "rag.sqlite3")
     rag.initialize()
