@@ -431,7 +431,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                   docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
     app.state.settings = config
     app.add_middleware(CORSMiddleware, allow_origins=list(config.cors_origins),
-                       allow_credentials=False, allow_methods=["GET", "POST", "OPTIONS"],
+                       allow_credentials=False, allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
                        allow_headers=["Authorization", "Content-Type", "Accept", "Cache-Control", "X-AI-Cache-Bypass"],
                        expose_headers=["X-AI-Cache", "X-AI-Route"], max_age=600)
 
@@ -503,6 +503,23 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             raise HTTPException(503, "Conversation memory store is unavailable") from None
         return JSONResponse(result, headers={"Cache-Control": "no-store"})
 
+    @app.delete("/v1/memory/state/{conversation_id}")
+    async def delete_memory_state(conversation_id: str, request: Request,
+                                  authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        store = request.app.state.delta_store
+        if store is None:
+            raise HTTPException(503, "Conversation memory sync is disabled")
+        try:
+            existed = store.delete_state(conversation_id)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from None
+        except sqlite3.Error:
+            logger.warning("Memory state deletion failed")
+            raise HTTPException(503, "Conversation memory store is unavailable") from None
+        return JSONResponse({"status": "deleted" if existed else "not_found"},
+                            headers={"Cache-Control": "no-store"})
+
     @app.post("/v1/memory/delta")
     async def memory_delta(request: Request, authorization: str | None = Header(default=None)) -> JSONResponse:
         authorize(config, authorization)
@@ -553,6 +570,23 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             logger.warning("RAG document ingest failed")
             raise HTTPException(503, "RAG index is unavailable") from None
         return JSONResponse({"status": "indexed", "chunks": inserted},
+                            headers={"Cache-Control": "no-store"})
+
+    @app.delete("/v1/rag/documents/{document_id}")
+    async def rag_delete_document(document_id: str, request: Request, scope: str, scope_id: str,
+                                  authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        store = request.app.state.rag_store
+        if store is None:
+            raise HTTPException(503, "RAG index is disabled")
+        try:
+            deleted = store.delete_document(document_id, scope=scope, scope_id=scope_id)
+        except (ValueError, TypeError) as exc:
+            raise HTTPException(400, str(exc)) from None
+        except sqlite3.Error:
+            logger.warning("RAG source deletion failed")
+            raise HTTPException(503, "RAG index is unavailable") from None
+        return JSONResponse({"status": "deleted" if deleted else "not_found"},
                             headers={"Cache-Control": "no-store"})
 
     @app.post("/v1/rag/retrieve")
