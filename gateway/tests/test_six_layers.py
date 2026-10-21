@@ -110,6 +110,9 @@ def test_rag_retrieval_preserves_citations_and_isolates_scopes(tmp_path):
     assert all(item["page_number"] in {2, 3} for item in results)
     assert any("fts5" in item["retrieval_path"] for item in results)
     assert rag.retrieve("SQLite memory writes", scope="project", scope_id="no-such-project") == []
+    assert rag.delete_document("doc-a", scope="project", scope_id="wrong-scope") is False
+    assert rag.delete_document("doc-a", scope="project", scope_id="alandi") is True
+    assert rag.retrieve("SQLite memory writes", scope="project", scope_id="alandi") == []
 
 
 def test_rag_fts_query_cannot_inject_search_operators():
@@ -223,6 +226,15 @@ def test_gateway_opt_in_memory_rag_and_exact_template_router(tmp_path):
         })
         assert retrieval.status_code == 200
         assert retrieval.json()["chunks"][0]["source_uri"] == "https://example.test/page"
+        deleted_doc = client.delete("/v1/rag/documents/doc-1", params={"scope": "project", "scope_id": "alandi"}, headers=auth)
+        assert deleted_doc.status_code == 200 and deleted_doc.json()["status"] == "deleted"
+        assert client.post("/v1/rag/retrieve", headers=auth, json={
+            "query": "gateway concurrency", "scope": "project", "scope_id": "alandi", "top_k": 3
+        }).json()["chunks"] == []
+
+        deleted_memory = client.delete("/v1/memory/state/chat-1", headers=auth)
+        assert deleted_memory.status_code == 200 and deleted_memory.json()["status"] == "deleted"
+        assert client.get("/v1/memory/state/chat-1", headers=auth).json()["revision"] == 0
 
 
 def test_google_oauth_pkce_flow_keeps_tokens_server_side_and_refresh_token(tmp_path):
