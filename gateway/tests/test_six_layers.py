@@ -124,6 +124,15 @@ def test_rag_retrieval_preserves_citations_and_isolates_scopes(tmp_path):
     assert rag.retrieve("SQLite memory writes", scope="project", scope_id="alandi") == []
 
 
+def test_rag_rejects_unsafe_citation_schemes_and_embedded_credentials(tmp_path):
+    rag = LazyGraphRAG(tmp_path / "rag.sqlite3")
+    rag.initialize()
+    chunks = [{"content": "sample safe chunk"}]
+    for uri in ("javascript:alert(1)", "http://example.test/", "https://user:pass@example.test/"):
+        with pytest.raises(ValueError):
+            rag.ingest_document("unsafe", uri, chunks, scope="project", scope_id="alandi")
+
+
 def test_rag_fts_query_cannot_inject_search_operators():
     from gateway.rag.lazy_graph_rag import safe_fts_query
     expression = safe_fts_query('" OR * MATCH NEAR')
