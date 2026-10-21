@@ -390,12 +390,12 @@ def test_host_process_metrics_parse_procfs_without_signaling_processes(tmp_path)
 
     (tmp_path / "100").mkdir()
     (tmp_path / "100" / "status").write_text(
-        "Name:\\tpython\\nVmRSS:\\t10240 kB\\nVmHWM:\\t20480 kB\\n", encoding="ascii"
+        "Name:\tpython\nVmRSS:\t10240 kB\nVmHWM:\t20480 kB\n", encoding="ascii"
     )
     (tmp_path / "200").mkdir()
-    (tmp_path / "200" / "comm").write_text("ollama\\n", encoding="ascii")
+    (tmp_path / "200" / "comm").write_text("ollama\n", encoding="ascii")
     (tmp_path / "200" / "status").write_text(
-        "Name:\\tollama\\nVmRSS:\\t1048576 kB\\nVmHWM:\\t2097152 kB\\n", encoding="ascii"
+        "Name:\tollama\nVmRSS:\t1048576 kB\nVmHWM:\t2097152 kB\n", encoding="ascii"
     )
     result = collect_host_metrics(tmp_path, gateway_pid=100)
     assert result["gateway_process"]["rss_mb"] == 10.0
