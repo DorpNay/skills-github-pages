@@ -97,6 +97,10 @@ def test_patch_rejects_root_and_out_of_scope_mutations():
         apply_patch(state, [{"op": "copy", "from": "/facts", "path": "/notes"}])
     with pytest.raises(DeltaSyncError):
         apply_patch(state, [{"op": "add", "path": "/facts/~2", "value": "bad escape"}])
+    with pytest.raises(DeltaSyncError):
+        apply_patch(state, [{"op": "add", "path": "/facts/01", "value": "leading zero index"}])
+    with pytest.raises(DeltaSyncError):
+        apply_patch(state, [{"op": "remove", "path": "/facts/0", "value": "unexpected"}])
 
 
 def test_delta_store_revision_is_atomic_and_rejects_replay(tmp_path):
