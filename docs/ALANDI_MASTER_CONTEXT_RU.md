@@ -16,9 +16,9 @@
 - Реестр архитектурных решений D-001–D-006: [DECISIONS.md](../DECISIONS.md)
 - Запуск offline smoke eval: [gateway/evals/README_RU.md](../gateway/evals/README_RU.md)
 
-## Подтверждённый статус текущей ветки (21 октября 2026)
+## Подтверждённый статус после merge (21 октября 2026)
 
-На ветке PR #18 добавлены backend-прототипы, а не live-deployment:
+PR #18 уже влит в `main` (merge commit `ac342efe29f6b9886425a83d04438ea25d731fee`). Он добавил backend-прототипы, но не live-deployment:
 - `gateway/routing.py`: deterministic exact-template fast path, выключен `ALANDI_FAST_ROUTING_ENABLED=false`; general draft cascade и embeddings пока не внедрены.
 - `gateway/kv_budget.py` + `gateway/host_metrics.py`: inventory `/api/ps` плюс read-only current/peak RSS gateway/Ollama через Linux procfs, если доступен; per-conversation KV telemetry/eviction не поддерживается, автодействий нет.
 - `gateway/rag/lazy_graph_rag.py`: SQLite FTS5 + lexical concept graph with source/page provenance, отключено `ALANDI_RAG_ENABLED=false`; это baseline, не полный LazyGraphRAG.
@@ -26,7 +26,7 @@
 - `gateway/security/oauth_vault.py` + `gateway/security/google_oauth.py`: Fernet vault и Google OAuth Authorization Code/PKCE routes; отключены `OAUTH_ENABLED=false`; реальные client credentials/callback, Drive Picker/UI и file import не настроены.
 - `gateway/evals/run_six_layer_eval.py`: offline synthetic smoke suite (не product benchmark), включена в gateway CI.
 
-Это код на feature branch. Не делать выводов, что компоненты развернуты на VPS, пока PR не слит, сервер не обновлён и live checks не пройдены.
+Код находится в `main`, но не следует делать выводов, что компоненты развернуты на VPS: gateway не обновлялся в этой работе, feature flags остаются выключенными, а реальные OAuth credentials не настроены.
 
 При конфликте источников приоритет: актуальный код и тесты → успешный CI/live-проверка → документация проекта → upstream → сторонние статьи → предположение.
 
