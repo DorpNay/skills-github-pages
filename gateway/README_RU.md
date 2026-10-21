@@ -51,3 +51,14 @@
 - Stream/SSE, tools, tool roles, мультимодальный/структурированный контент, пропущенный temperature, ошибки и частичные ответы обходят кэш. Для принудительного обхода передайте X-AI-Cache-Bypass: 1 или Cache-Control: no-cache.
 - Ответы содержат X-AI-Cache: HIT|MISS|BYPASS; CORS открывает этот заголовок странице https://dorpnay.github.io. GET /admin/cache/stats требует тот же Bearer key и возвращает только статистику.
 - Это кэш для личного gateway, не multi-user системы. Он хранит текстовые ответы, которые могут содержать приватные сведения. Ограничьте права каталога и доступ к VPS. Для отключения задайте ALANDI_CACHE_ENABLED=false и перезапустите службу.
+
+
+## Экспериментальные bounded-функции (по умолчанию выключены)
+
+- `ALANDI_FAST_ROUTING_ENABLED=false`: `gateway/routing.py` умеет отвечать шаблоном только на точную короткую фразу из allowlist; сложные запросы отправляются в main model.
+- `ALANDI_MEMORY_SYNC_ENABLED=false`: `GET /v1/memory/state/{conversation_id}` и `POST /v1/memory/delta` используют versioned bounded JSON Patch; append-only изменения коллекций используют компактное `add /-`, stale revision возвращает 409. Пока scope — отдельная беседа, не multi-user хранилище.
+- `ALANDI_RAG_ENABLED=false`: `POST /v1/rag/ingest` и `POST /v1/rag/retrieve` реализуют SQLite FTS5 + lexical concept graph с source URI/page metadata. Это baseline, не полный Microsoft LazyGraphRAG.
+- `GET /admin/runtime` (Bearer auth) показывает поля инвентаря моделей из `/api/ps` и best-effort current/peak RSS самого gateway и процессов Ollama через read-only Linux procfs (`gateway/host_metrics.py`). Поля `size`/`size_vram` — не KV-cache usage; права на procfs могут отсутствовать, тогда метрики возвращаются как null. Никакого автоматического выселения нет.
+- `OAUTH_ENABLED=false`: backend Google OAuth Code+PKCE routes `/oauth/google/initiate`, `/oauth/google/callback`, `/oauth/google/status`, `/oauth/google/refresh`, `/oauth/google/revoke`. `gateway/security/oauth_vault.py` encrypts tokens with Fernet; callback never returns tokens. Real Google credentials and exact HTTPS callback still need configuration; Google Picker/file import UI isn't implemented. `OAUTH_ENCRYPTION_KEY` must be generated once and stored outside Git, separately from the DB.
+
+Все новые флаги остаются `false`. Перед включением прогоните `python -m pytest -q gateway/tests` и изучите [шесть инженерных пластов](../docs/SIX_LAYER_ENGINEERING_RU.md) и [журнал решений](../DECISIONS.md). Не включайте одновременно несколько новых функций во время экспериментального сравнения. Все результаты в README — реализованный код локально, а не доказательство развертывания на VPS.
