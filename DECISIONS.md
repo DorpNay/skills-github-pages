@@ -21,10 +21,10 @@
 
 - **Статус:** Accepted for prototype monitoring; proposed eviction API rejected as specified.
 - **Проблема:** предотвращать OOM на ограниченной памяти.
-- **Решение:** `GET /admin/runtime` читает документированный `/api/ps` и отдаёт только явно названные поля reported model size / `size_vram`; он не измеряет host RSS или KV-cache usage. Поля `kv_cache_usage_mb` остаётся `null`, `automatic_eviction_performed` — `false`.
+- **Решение:** `GET /admin/runtime` отдаёт явно названные поля `/api/ps` плюс best-effort текущий/peak RSS gateway/Ollama из Linux procfs через `gateway/host_metrics.py`. Он не измеряет KV usage по беседе и не выполняет eviction. Поля `kv_cache_usage_mb` остаётся `null`, `automatic_eviction_performed` — `false`.
 - **Отклонено:** вызов несуществующего `/api/evict` с conversation ID. Документированный `/api/ps` не предоставляет per-conversation KV usage/eviction.
 - **Альтернативы:** concurrency/context limits; monitor RSS/OOM; при отсутствии активных запросов оператор может выгрузить неиспользуемую модель документированным `keep_alive: 0` или `ollama stop`.
-- **Acceptance:** runtime inventory честно отражает /api/ps; тесты malformed payload and budget; load test на хосте до изменения контекстных лимитов.
+- **Acceptance:** inventory честно отражает `/api/ps`; procfs current/peak RSS корректно читается там, где доступны права; недоступные данные возвращаются как null; malformed payload tests; target-host load test before context-limit changes.
 - **Rollback:** endpoint read-only; он не меняет модель и не разрушает сессии.
 - **Связи:** `gateway/kv_budget.py`, `/admin/runtime`, official [Ollama API](https://github.com/ollama/ollama/blob/main/docs/api.md), [FAQ](https://github.com/ollama/ollama/blob/main/docs/faq.mdx).
 
