@@ -63,11 +63,32 @@ def _split_pointer(path: object) -> list[str]:
 
 
 def compute_patch(old: Any, new: Any, path: str = "") -> list[dict[str, Any]]:
-    """Create a deterministic patch; arrays are replaced atomically when changed."""
+    """Create a deterministic patch; append/truncate arrays compactly, replace other edits."""
     if type(old) is not type(new):
         if not path:
             raise DeltaSyncError("Root state type cannot be changed")
         return [{"op": "replace", "path": path, "value": new}]
+    if isinstance(old, list):
+        common = 0
+        max_common = min(len(old), len(new))
+        while common < max_common and old[common] == new[common]:
+            common += 1
+        # Memory collections are append-heavy. Express a pure suffix append with /-,
+        # and a pure suffix removal from highest index downward. Other edits replace
+        # the array as a single operation to keep diff complexity and semantics bounded.
+        if common == len(old) and len(new) > len(old):
+            if not path:
+                raise DeltaSyncError("Root state cannot be an array")
+            return [{"op": "add", "path": f"{path}/-", "value": item} for item in new[common:]]
+        if common == len(new) and len(old) > len(new):
+            if not path:
+                raise DeltaSyncError("Root state cannot be an array")
+            return [{"op": "remove", "path": f"{path}/{index}"} for index in range(len(old) - 1, len(new) - 1, -1)]
+        if old != new:
+            if not path:
+                raise DeltaSyncError("Root state cannot be replaced")
+            return [{"op": "replace", "path": path, "value": new}]
+        return []
     if isinstance(old, dict):
         patch: list[dict[str, Any]] = []
         for key in sorted(old.keys() - new.keys()):
