@@ -671,7 +671,15 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
 
 
 test('Obsidian Studio and Clean Light preferences persist and respect motion controls', async ({ page }) => {
-  await page.addInitScript(() => { localStorage.clear(); sessionStorage.clear(); });
+  await page.addInitScript(() => {
+    // Reset only on the first document. addInitScript runs again on reload, so an unconditional
+    // clear would erase the very preferences this test is meant to verify persist.
+    if (localStorage.getItem('__e2e_reset_once') !== '1') {
+      localStorage.clear();
+      sessionStorage.clear();
+      localStorage.setItem('__e2e_reset_once', '1');
+    }
+  });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.getByRole('button', { name: 'Настройки' }).click();
