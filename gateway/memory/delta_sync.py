@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 import sqlite3
 import time
@@ -210,6 +211,8 @@ class DeltaMemoryStore:
                     ON memory_deltas(conversation_id, revision);
             """)
             db.commit()
+        if self.path != ":memory:":
+            os.chmod(self.path, 0o600)
 
     @staticmethod
     def _check_conversation_id(conversation_id: str) -> None:
@@ -222,8 +225,9 @@ class DeltaMemoryStore:
             row = db.execute("SELECT revision, state_json, state_sha256 FROM memory_states WHERE conversation_id=?",
                              (conversation_id,)).fetchone()
         if row is None:
+            default_state = json.loads(canonical_json(DEFAULT_STATE))
             return {"conversation_id": conversation_id, "revision": 0,
-                    "state": dict(DEFAULT_STATE), "state_sha256": state_digest(DEFAULT_STATE)}
+                    "state": default_state, "state_sha256": state_digest(default_state)}
         return {"conversation_id": conversation_id, "revision": int(row["revision"]),
                 "state": json.loads(row["state_json"]), "state_sha256": row["state_sha256"]}
 
@@ -263,6 +267,17 @@ class DeltaMemoryStore:
             db.commit()
         return {"conversation_id": conversation_id, "revision": revision, "state_sha256": digest,
                 "patch_bytes": patch_size, "state_bytes": len(updated_text.encode("utf-8"))}
+
+    def delete_state(self, conversation_id: str) -> bool:
+        """Delete one conversation's current state and its delta history."""
+        self._check_conversation_id(conversation_id)
+        with closing(self._connect()) as db:
+            db.execute("BEGIN IMMEDIATE")
+            existed = db.execute("SELECT 1 FROM memory_states WHERE conversation_id=?", (conversation_id,)).fetchone() is not None
+            db.execute("DELETE FROM memory_deltas WHERE conversation_id=?", (conversation_id,))
+            db.execute("DELETE FROM memory_states WHERE conversation_id=?", (conversation_id,))
+            db.commit()
+        return existed
 
     def compute_delta(self, conversation_id: str, new_state: object) -> dict[str, Any]:
         current = self.get_state(conversation_id)
