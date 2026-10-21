@@ -209,7 +209,7 @@ def test_gateway_opt_in_memory_rag_and_exact_template_router(tmp_path):
         routed = client.post("/v1/chat/completions", headers=auth,
             json={"model": "qwen3.5:4b", "messages": [{"role": "user", "content": "привет"}]})
         assert routed.status_code == 200
-        assert routed.headers["x-alandi-route"] == "exact_template"
+        assert routed.headers["x-ai-route"] == "exact_template"
         assert "upstream" not in routed.text
 
         state = client.get("/v1/memory/state/chat-1", headers=auth)
