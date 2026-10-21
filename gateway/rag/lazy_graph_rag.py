@@ -93,6 +93,8 @@ class LazyGraphRAG:
                     ON rag_chunk_concepts(concept, chunk_id);
             """)
             db.commit()
+        if self.path != ":memory:":
+            os.chmod(self.path, 0o600)
 
     def ingest_document(self, document_id: str, source_uri: str, chunks: list[dict[str, Any]], *,
                         scope: str, scope_id: str) -> int:
@@ -138,11 +140,37 @@ class LazyGraphRAG:
             db.commit()
             return inserted
 
+    def delete_document(self, document_id: str, *, scope: str, scope_id: str) -> bool:
+        """Delete one source and its FTS/concept rows only within the selected scope."""
+        if not isinstance(document_id, str) or not document_id or len(document_id) > 160:
+            raise ValueError("Invalid document_id")
+        if scope not in {"conversation", "project", "global"} or not scope_id or len(scope_id) > 160:
+            raise ValueError("Invalid RAG scope")
+        with closing(self._connect()) as db:
+            db.execute("PRAGMA foreign_keys=ON")
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT 1 FROM rag_documents WHERE document_id=? AND scope=? AND scope_id=?",
+                             (document_id, scope, scope_id)).fetchone()
+            if row is None:
+                db.rollback()
+                return False
+            chunk_rows = db.execute("SELECT chunk_id FROM rag_chunks WHERE document_id=?", (document_id,)).fetchall()
+            for chunk in chunk_rows:
+                db.execute("DELETE FROM rag_fts WHERE chunk_id=?", (chunk["chunk_id"],))
+            db.execute("DELETE FROM rag_chunk_concepts WHERE chunk_id IN (SELECT chunk_id FROM rag_chunks WHERE document_id=?)",
+                       (document_id,))
+            db.execute("DELETE FROM rag_chunks WHERE document_id=?", (document_id,))
+            db.execute("DELETE FROM rag_documents WHERE document_id=?", (document_id,))
+            db.commit()
+        return True
+
     def retrieve(self, query: str, *, scope: str, scope_id: str, top_k: int = 5,
                  candidate_limit: int = 20) -> list[dict[str, Any]]:
         if scope not in {"conversation", "project", "global"} or not scope_id or len(scope_id) > 160:
             raise ValueError("Invalid RAG scope")
-        if not 1 <= top_k <= 20 or not top_k <= candidate_limit <= 100:
+        if (isinstance(top_k, bool) or not isinstance(top_k, int) or
+                isinstance(candidate_limit, bool) or not isinstance(candidate_limit, int) or
+                not 1 <= top_k <= 20 or not top_k <= candidate_limit <= 100):
             raise ValueError("Invalid retrieval limits")
         fts_query = safe_fts_query(query)
         if not fts_query:
