@@ -34,6 +34,15 @@ def int_env(name: str, default: int, minimum: int = 1) -> int:
     return value
 
 
+def bool_env(name: str, default: bool = False) -> bool:
+    value = os.getenv(name, "true" if default else "false").strip().lower()
+    if value in {"1", "true", "yes", "on"}:
+        return True
+    if value in {"0", "false", "no", "off"}:
+        return False
+    raise ValueError(f"{name} must be a boolean (true/false)")
+
+
 def validate_origin(value: str) -> str:
     parsed = urlsplit(value)
     if parsed.scheme not in {"https", "http"} or not parsed.netloc:
@@ -58,6 +67,15 @@ class Settings:
     cache_ttl_seconds: int = 900
     cache_max_entries: int = 1000
     cache_max_response_bytes: int = 1_000_000
+    # New capabilities are opt-in until enabled and evaluated on the target VPS.
+    fast_routing_enabled: bool = False
+    memory_sync_enabled: bool = False
+    memory_path: str = "/var/lib/alandi-gateway/memory.sqlite3"
+    memory_max_state_bytes: int = 512_000
+    rag_enabled: bool = False
+    rag_path: str = "/var/lib/alandi-gateway/rag.sqlite3"
+    rag_max_chunk_chars: int = 20_000
+    runtime_memory_budget_mb: int = 6144
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -91,6 +109,14 @@ class Settings:
             cache_ttl_seconds=int_env("ALANDI_CACHE_TTL_SECONDS", 900),
             cache_max_entries=int_env("ALANDI_CACHE_MAX_ENTRIES", 1000),
             cache_max_response_bytes=int_env("ALANDI_CACHE_MAX_RESPONSE_BYTES", 1_000_000, 1024),
+            fast_routing_enabled=bool_env("ALANDI_FAST_ROUTING_ENABLED", False),
+            memory_sync_enabled=bool_env("ALANDI_MEMORY_SYNC_ENABLED", False),
+            memory_path=os.getenv("ALANDI_MEMORY_PATH", "/var/lib/alandi-gateway/memory.sqlite3").strip() or "/var/lib/alandi-gateway/memory.sqlite3",
+            memory_max_state_bytes=int_env("ALANDI_MEMORY_MAX_STATE_BYTES", 512_000, 1024),
+            rag_enabled=bool_env("ALANDI_RAG_ENABLED", False),
+            rag_path=os.getenv("ALANDI_RAG_PATH", "/var/lib/alandi-gateway/rag.sqlite3").strip() or "/var/lib/alandi-gateway/rag.sqlite3",
+            rag_max_chunk_chars=int_env("ALANDI_RAG_MAX_CHUNK_CHARS", 20_000, 100),
+            runtime_memory_budget_mb=int_env("ALANDI_RUNTIME_MEMORY_BUDGET_MB", 6144, 256),
         )
 
 
@@ -335,6 +361,26 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 pass
         app.state.client = httpx.AsyncClient(timeout=timeout, transport=transport)
         app.state.semaphore = asyncio.Semaphore(config.max_inflight_requests)
+        app.state.delta_store = None
+        app.state.rag_store = None
+        if config.memory_sync_enabled:
+            try:
+                from .memory.delta_sync import DeltaMemoryStore
+            except ImportError:  # supports "uvicorn app:app" from the gateway directory
+                from memory.delta_sync import DeltaMemoryStore
+            app.state.delta_store = DeltaMemoryStore(
+                config.memory_path, max_state_bytes=config.memory_max_state_bytes
+            )
+            app.state.delta_store.initialize()
+        if config.rag_enabled:
+            try:
+                from .rag.lazy_graph_rag import LazyGraphRAG
+            except ImportError:  # supports "uvicorn app:app" from the gateway directory
+                from rag.lazy_graph_rag import LazyGraphRAG
+            app.state.rag_store = LazyGraphRAG(
+                config.rag_path, max_chunk_chars=config.rag_max_chunk_chars
+            )
+            app.state.rag_store.initialize()
         yield
         await app.state.client.aclose()
 
@@ -344,7 +390,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
     app.add_middleware(CORSMiddleware, allow_origins=list(config.cors_origins),
                        allow_credentials=False, allow_methods=["GET", "POST", "OPTIONS"],
                        allow_headers=["Authorization", "Content-Type", "Accept", "Cache-Control", "X-AI-Cache-Bypass"],
-                       expose_headers=["X-AI-Cache"], max_age=600)
+                       expose_headers=["X-AI-Cache", "X-AI-Route"], max_age=600)
 
     @app.get("/healthz")
     async def healthz(request: Request) -> JSONResponse:
@@ -381,6 +427,119 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         return {**cache_statistics(config), "max_entries": config.cache_max_entries,
                 "max_response_bytes": config.cache_max_response_bytes}
 
+    @app.get("/admin/runtime")
+    async def runtime_inventory(request: Request, authorization: str | None = Header(default=None)) -> JSONResponse:
+        """Show Ollama's loaded-model inventory without pretending it exposes KV usage."""
+        authorize(config, authorization)
+        try:
+            response = await request.app.state.client.get(f"{config.ollama_base_url}/api/ps", timeout=3.0)
+            response.raise_for_status()
+            try:
+                from .kv_budget import analyze_runtime
+            except ImportError:
+                from kv_budget import analyze_runtime
+            result = analyze_runtime(response.json(), config.runtime_memory_budget_mb)
+        except (httpx.HTTPError, asyncio.TimeoutError, ValueError):
+            logger.warning("Ollama runtime inventory failed; upstream body omitted")
+            raise HTTPException(503, "Local runtime inventory is unavailable") from None
+        return JSONResponse(result, headers={"Cache-Control": "no-store"})
+
+    @app.get("/v1/memory/state/{conversation_id}")
+    async def memory_state(conversation_id: str, request: Request,
+                           authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        store = request.app.state.delta_store
+        if store is None:
+            raise HTTPException(503, "Conversation memory sync is disabled")
+        try:
+            result = store.get_state(conversation_id)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from None
+        except sqlite3.Error:
+            logger.warning("Memory state read failed")
+            raise HTTPException(503, "Conversation memory store is unavailable") from None
+        return JSONResponse(result, headers={"Cache-Control": "no-store"})
+
+    @app.post("/v1/memory/delta")
+    async def memory_delta(request: Request, authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        store = request.app.state.delta_store
+        if store is None:
+            raise HTTPException(503, "Conversation memory sync is disabled")
+        body = await read_limited_body(request, min(config.max_body_bytes, config.memory_max_state_bytes))
+        try:
+            payload = json.loads(body)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            raise HTTPException(400, "Request body must be valid UTF-8 JSON") from None
+        if not isinstance(payload, dict) or set(payload) != {"conversation_id", "base_revision", "patch"}:
+            raise HTTPException(400, "Expected conversation_id, base_revision, and patch")
+        try:
+            result = store.sync_delta(payload["conversation_id"], payload["base_revision"], payload["patch"])
+        except ValueError as exc:
+            try:
+                from .memory.delta_sync import RevisionConflict
+            except ImportError:
+                from memory.delta_sync import RevisionConflict
+            if isinstance(exc, RevisionConflict):
+                raise HTTPException(409, "Memory revision conflict; fetch current state and reconcile") from None
+            raise HTTPException(400, str(exc)) from None
+        except sqlite3.Error:
+            logger.warning("Memory delta write failed")
+            raise HTTPException(503, "Conversation memory store is unavailable") from None
+        return JSONResponse(result, headers={"Cache-Control": "no-store"})
+
+    @app.post("/v1/rag/ingest")
+    async def rag_ingest(request: Request, authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        store = request.app.state.rag_store
+        if store is None:
+            raise HTTPException(503, "RAG ingestion is disabled")
+        body = await read_limited_body(request, config.max_body_bytes)
+        try:
+            payload = json.loads(body)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            raise HTTPException(400, "Request body must be valid UTF-8 JSON") from None
+        if not isinstance(payload, dict) or set(payload) != {"document_id", "source_uri", "chunks", "scope", "scope_id"}:
+            raise HTTPException(400, "Expected document_id, source_uri, chunks, scope, and scope_id")
+        try:
+            inserted = store.ingest_document(payload["document_id"], payload["source_uri"], payload["chunks"],
+                                             scope=payload["scope"], scope_id=payload["scope_id"])
+        except (ValueError, TypeError) as exc:
+            raise HTTPException(400, str(exc)) from None
+        except sqlite3.Error:
+            logger.warning("RAG document ingest failed")
+            raise HTTPException(503, "RAG index is unavailable") from None
+        return JSONResponse({"status": "indexed", "chunks": inserted},
+                            headers={"Cache-Control": "no-store"})
+
+    @app.post("/v1/rag/retrieve")
+    async def rag_retrieve(request: Request, authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        store = request.app.state.rag_store
+        if store is None:
+            raise HTTPException(503, "RAG retrieval is disabled")
+        body = await read_limited_body(request, min(config.max_body_bytes, 64 * 1024))
+        try:
+            payload = json.loads(body)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            raise HTTPException(400, "Request body must be valid UTF-8 JSON") from None
+        if not isinstance(payload, dict) or set(payload) - {"query", "scope", "scope_id", "top_k"}:
+            raise HTTPException(400, "Unexpected RAG query fields")
+        if not isinstance(payload.get("query"), str) or len(payload["query"]) > 8_000:
+            raise HTTPException(400, "query must be a string of at most 8000 characters")
+        started = time.perf_counter()
+        try:
+            chunks = store.retrieve(payload["query"], scope=payload.get("scope"),
+                                    scope_id=payload.get("scope_id"), top_k=payload.get("top_k", 5))
+        except (ValueError, TypeError) as exc:
+            raise HTTPException(400, str(exc)) from None
+        except sqlite3.Error:
+            logger.warning("RAG retrieval failed")
+            raise HTTPException(503, "RAG index is unavailable") from None
+        return JSONResponse({"chunks": chunks, "retrieval_latency_ms": round((time.perf_counter() - started) * 1000, 2),
+                             "algorithm": "sqlite_fts5_plus_lexical_concept_graph"},
+                            headers={"Cache-Control": "no-store"})
+
     @app.post("/v1/chat/completions")
     async def completions(request: Request, authorization: str | None = Header(default=None)) -> Response:
         authorize(config, authorization)
@@ -389,6 +548,19 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             payload, stream = validate_payload(json.loads(body), config.allowed_models)
         except (json.JSONDecodeError, UnicodeDecodeError):
             raise HTTPException(400, "Request body must be valid UTF-8 JSON") from None
+
+        # Very narrow deterministic fast path. General questions always use the main model;
+        # no small-model confidence score is treated as evidence of factual correctness.
+        if config.fast_routing_enabled:
+            try:
+                from .routing import IntentRouter
+            except ImportError:  # supports "uvicorn app:app" from the gateway directory
+                from routing import IntentRouter
+            routed = IntentRouter().response_for(payload)
+            if routed is not None:
+                return JSONResponse(routed, headers={
+                    "Cache-Control": "no-store", "X-AI-Cache": "BYPASS", "X-AI-Route": "exact_template"
+                })
 
         cache_key: str | None = None
         if not should_bypass_cache(config, payload, method=request.method,
