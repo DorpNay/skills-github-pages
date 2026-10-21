@@ -113,3 +113,11 @@ node scripts/quality-agents.mjs context
 
 На правильном репозитории реализуются L2 exact-response cache (SQLite), явный bypass для динамических/tool/stream запросов, статус X-AI-Cache и preset aLandi Self-hosted Gateway в UI. Подробно: [Gateway README](gateway/README_RU.md) и [полный runbook](docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md).
 
+
+
+## Новая архитектура агентов и памяти (2026-10-21)
+
+- [64 роли агентов, память-граф, проекты, источники и roadmap](docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md)
+- [Аудит новых open-source проектов и решение по каждому](docs/TECHNOLOGY_AUDIT_2026-10-21_RU.md)
+
+Это архитектурные документы и on-demand skill; они не означают, что отдельные агенты, Google Drive OAuth или media workers уже развернуты.
