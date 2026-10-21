@@ -102,6 +102,11 @@ class Settings:
             raise ValueError("ALANDI_UPSTREAM_TIMEOUT_SECONDS must be a number") from exc
         if timeout < 1:
             raise ValueError("ALANDI_UPSTREAM_TIMEOUT_SECONDS must be >= 1")
+        model_size_budget_env = (
+            "ALANDI_MODEL_SIZE_ADVISORY_MB"
+            if "ALANDI_MODEL_SIZE_ADVISORY_MB" in os.environ
+            else "ALANDI_RUNTIME_MEMORY_BUDGET_MB"
+        )
         oauth_enabled = bool_env("OAUTH_ENABLED", False)
         oauth_encryption_key = os.getenv("OAUTH_ENCRYPTION_KEY", "").strip()
         google_oauth_client_id = os.getenv("GOOGLE_DRIVE_CLIENT_ID", "").strip()
@@ -144,10 +149,7 @@ class Settings:
             rag_enabled=bool_env("ALANDI_RAG_ENABLED", False),
             rag_path=os.getenv("ALANDI_RAG_PATH", "/var/lib/alandi-gateway/rag.sqlite3").strip() or "/var/lib/alandi-gateway/rag.sqlite3",
             rag_max_chunk_chars=int_env("ALANDI_RAG_MAX_CHUNK_CHARS", 20_000, 100),
-            model_size_advisory_mb=int_env(
-                "ALANDI_MODEL_SIZE_ADVISORY_MB",
-                int_env("ALANDI_RUNTIME_MEMORY_BUDGET_MB", 6144, 256), 256
-            ),
+            model_size_advisory_mb=int_env(model_size_budget_env, 6144, 256),
             oauth_enabled=oauth_enabled,
             oauth_path=os.getenv("OAUTH_TOKEN_VAULT_PATH", "/var/lib/alandi-gateway/oauth.sqlite3").strip() or "/var/lib/alandi-gateway/oauth.sqlite3",
             oauth_encryption_key=oauth_encryption_key,
