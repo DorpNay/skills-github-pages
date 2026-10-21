@@ -76,6 +76,13 @@ class Settings:
     rag_path: str = "/var/lib/alandi-gateway/rag.sqlite3"
     rag_max_chunk_chars: int = 20_000
     runtime_memory_budget_mb: int = 6144
+    oauth_enabled: bool = False
+    oauth_path: str = "/var/lib/alandi-gateway/oauth.sqlite3"
+    oauth_encryption_key: str = ""
+    google_oauth_client_id: str = ""
+    google_oauth_client_secret: str = ""
+    google_oauth_redirect_uri: str = ""
+    oauth_success_redirect: str = "https://dorpnay.github.io/skills-github-pages/"
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -95,6 +102,27 @@ class Settings:
             raise ValueError("ALANDI_UPSTREAM_TIMEOUT_SECONDS must be a number") from exc
         if timeout < 1:
             raise ValueError("ALANDI_UPSTREAM_TIMEOUT_SECONDS must be >= 1")
+        oauth_enabled = bool_env("OAUTH_ENABLED", False)
+        oauth_encryption_key = os.getenv("OAUTH_ENCRYPTION_KEY", "").strip()
+        google_oauth_client_id = os.getenv("GOOGLE_DRIVE_CLIENT_ID", "").strip()
+        google_oauth_client_secret = os.getenv("GOOGLE_DRIVE_CLIENT_SECRET", "").strip()
+        google_oauth_redirect_uri = os.getenv("GOOGLE_DRIVE_REDIRECT_URI", "").strip()
+        oauth_success_redirect = os.getenv(
+            "OAUTH_SUCCESS_REDIRECT", "https://dorpnay.github.io/skills-github-pages/"
+        ).strip()
+        if oauth_enabled:
+            if not all((oauth_encryption_key, google_oauth_client_id, google_oauth_client_secret,
+                        google_oauth_redirect_uri, oauth_success_redirect)):
+                raise ValueError("OAUTH_ENABLED requires encryption key, Google client ID/secret, callback URI and success redirect")
+            callback = urlsplit(google_oauth_redirect_uri)
+            success = urlsplit(oauth_success_redirect)
+            if callback.scheme != "https" or not callback.netloc or callback.username or callback.password or callback.query or callback.fragment:
+                raise ValueError("GOOGLE_DRIVE_REDIRECT_URI must be a fixed HTTPS URL without credentials, query or fragment")
+            if success.scheme != "https" or not success.netloc or success.username or success.password or success.query or success.fragment:
+                raise ValueError("OAUTH_SUCCESS_REDIRECT must be a fixed HTTPS URL without credentials, query or fragment")
+            success_origin = f"{success.scheme}://{success.netloc}"
+            if success_origin not in origins:
+                raise ValueError("OAUTH_SUCCESS_REDIRECT origin must be present in ALANDI_CORS_ORIGINS")
         return cls(
             api_key=os.getenv("ALANDI_API_KEY", "").strip(),
             ollama_base_url=base,
@@ -117,6 +145,13 @@ class Settings:
             rag_path=os.getenv("ALANDI_RAG_PATH", "/var/lib/alandi-gateway/rag.sqlite3").strip() or "/var/lib/alandi-gateway/rag.sqlite3",
             rag_max_chunk_chars=int_env("ALANDI_RAG_MAX_CHUNK_CHARS", 20_000, 100),
             runtime_memory_budget_mb=int_env("ALANDI_RUNTIME_MEMORY_BUDGET_MB", 6144, 256),
+            oauth_enabled=oauth_enabled,
+            oauth_path=os.getenv("OAUTH_TOKEN_VAULT_PATH", "/var/lib/alandi-gateway/oauth.sqlite3").strip() or "/var/lib/alandi-gateway/oauth.sqlite3",
+            oauth_encryption_key=oauth_encryption_key,
+            google_oauth_client_id=google_oauth_client_id,
+            google_oauth_client_secret=google_oauth_client_secret,
+            google_oauth_redirect_uri=google_oauth_redirect_uri,
+            oauth_success_redirect=oauth_success_redirect,
         )
 
 
@@ -363,6 +398,14 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         app.state.semaphore = asyncio.Semaphore(config.max_inflight_requests)
         app.state.delta_store = None
         app.state.rag_store = None
+        app.state.oauth_vault = None
+        if config.oauth_enabled:
+            try:
+                from .security.oauth_vault import OAuthVault
+            except ImportError:  # supports "uvicorn app:app" from the gateway directory
+                from security.oauth_vault import OAuthVault
+            app.state.oauth_vault = OAuthVault(config.oauth_path, config.oauth_encryption_key)
+            app.state.oauth_vault.initialize()
         if config.memory_sync_enabled:
             try:
                 from .memory.delta_sync import DeltaMemoryStore
@@ -635,6 +678,12 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         finally:
             await upstream.aclose()
             semaphore.release()
+
+    try:
+        from .security.google_oauth import build_google_oauth_router
+    except ImportError:  # supports "uvicorn app:app" from the gateway directory
+        from security.google_oauth import build_google_oauth_router
+    app.include_router(build_google_oauth_router(config, authorize))
 
     return app
 
