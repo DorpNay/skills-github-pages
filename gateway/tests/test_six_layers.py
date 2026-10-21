@@ -225,7 +225,7 @@ def test_gateway_opt_in_memory_rag_and_exact_template_router(tmp_path):
         assert retrieval.json()["chunks"][0]["source_uri"] == "https://example.test/page"
 
 
-def test_google_oauth_pkce_flow_keeps_tokens_server_side_and_refresh_token():
+def test_google_oauth_pkce_flow_keeps_tokens_server_side_and_refresh_token(tmp_path):
     from urllib.parse import parse_qs, urlsplit
     from fastapi.testclient import TestClient
     import httpx
@@ -250,45 +250,37 @@ def test_google_oauth_pkce_flow_keeps_tokens_server_side_and_refresh_token():
     config = Settings(
         api_key=key, ollama_base_url="http://ollama.test:11434",
         allowed_models=("qwen3.5:4b",), cors_origins=("https://dorpnay.github.io",),
-        cache_enabled=False, oauth_enabled=True, oauth_path="/tmp/alandi-oauth-test-not-used.sqlite3",
+        cache_enabled=False, oauth_enabled=True, oauth_path=str(tmp_path / "oauth.sqlite3"),
         oauth_encryption_key=vault_key, google_oauth_client_id="client-id",
         google_oauth_client_secret="client-secret",
         google_oauth_redirect_uri="https://gateway.example.test/oauth/google/callback",
         oauth_success_redirect="https://dorpnay.github.io/skills-github-pages/"
     )
-    # Override the default path with a per-test vault to avoid shared state.
-    config = __import__("dataclasses").replace(config, oauth_path=__import__("tempfile").mktemp(suffix=".sqlite3"))
-    try:
-        with TestClient(create_app(config, transport=httpx.MockTransport(handler))) as client:
-            auth = {"Authorization": f"Bearer {key}"}
-            assert client.get("/oauth/google/status", headers=auth).json()["connected"] is False
-            start = client.post("/oauth/google/initiate", headers=auth)
-            assert start.status_code == 200
-            auth_url = urlsplit(start.json()["auth_url"])
-            params = parse_qs(auth_url.query)
-            assert auth_url.netloc == "accounts.google.com"
-            assert params["code_challenge_method"] == ["S256"]
-            assert params["scope"] == ["https://www.googleapis.com/auth/drive.file"]
-            state = params["state"][0]
+    with TestClient(create_app(config, transport=httpx.MockTransport(handler))) as client:
+        auth = {"Authorization": f"Bearer {key}"}
+        assert client.get("/oauth/google/status", headers=auth).json()["connected"] is False
+        start = client.post("/oauth/google/initiate", headers=auth)
+        assert start.status_code == 200
+        auth_url = urlsplit(start.json()["auth_url"])
+        params = parse_qs(auth_url.query)
+        assert auth_url.netloc == "accounts.google.com"
+        assert params["code_challenge_method"] == ["S256"]
+        assert params["scope"] == ["https://www.googleapis.com/auth/drive.file"]
+        state = params["state"][0]
 
-            callback = client.get("/oauth/google/callback", params={"code": "fake-code", "state": state})
-            assert callback.status_code == 303
-            assert "drive=connected" in callback.headers["location"]
-            assert "access-secret" not in callback.headers["location"]
-            connected = client.get("/oauth/google/status", headers=auth).json()
-            assert connected["connected"] is True and connected["has_refresh_token"] is True
-            assert "access_token" not in connected and "refresh_token" not in connected
+        callback = client.get("/oauth/google/callback", params={"code": "fake-code", "state": state}, follow_redirects=False)
+        assert callback.status_code == 303
+        assert "drive=connected" in callback.headers["location"]
+        assert "access-secret" not in callback.headers["location"]
+        connected = client.get("/oauth/google/status", headers=auth).json()
+        assert connected["connected"] is True and connected["has_refresh_token"] is True
+        assert "access_token" not in connected and "refresh_token" not in connected
 
-            refresh = client.post("/oauth/google/refresh", headers=auth)
-            assert refresh.status_code == 200 and refresh.json()["has_refresh_token"] is True
-            assert client.post("/oauth/google/revoke", headers=auth).json()["status"] == "revoked"
-            assert client.get("/oauth/google/status", headers=auth).json()["connected"] is False
-    finally:
-        import os
-        try:
-            os.unlink(config.oauth_path)
-        except FileNotFoundError:
-            pass
+        refresh = client.post("/oauth/google/refresh", headers=auth)
+        assert refresh.status_code == 200 and refresh.json()["has_refresh_token"] is True
+        assert client.post("/oauth/google/revoke", headers=auth).json()["status"] == "revoked"
+        assert client.get("/oauth/google/status", headers=auth).json()["connected"] is False
+
 
 
 def test_google_oauth_routes_are_disabled_without_server_configuration():
