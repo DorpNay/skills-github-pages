@@ -1,4 +1,6 @@
 import json
+import os
+import tempfile
 from typing import AsyncIterator
 
 import httpx
@@ -14,7 +16,7 @@ def settings(**overrides):
     values = dict(api_key=API_KEY, ollama_base_url="http://ollama.test:11434",
                   allowed_models=(MODEL,), cors_origins=("https://dorpnay.github.io", "http://localhost:4000"),
                   max_body_bytes=4096, upstream_timeout_seconds=30.0, max_inflight_requests=2,
-                  model_context_length_tokens=4096)
+                  model_context_length_tokens=4096, cache_enabled=False)
     values.update(overrides)
     return Settings(**values)
 
@@ -134,3 +136,88 @@ def test_upstream_errors_do_not_leak_raw_body():
           json={"model": MODEL, "messages": [{"role": "user", "content": "hi"}]})
     assert response.status_code == 502
     assert "internal path" not in response.text
+
+
+def test_exact_cache_miss_then_hit_and_stats_require_auth():
+    with tempfile.TemporaryDirectory() as directory:
+        config = settings(cache_enabled=True, cache_path=os.path.join(directory, "cache.sqlite3"))
+        calls = []
+        def handler(request):
+            if request.url.path == "/api/tags":
+                return httpx.Response(200, json={"models": [{"name": MODEL}]})
+            if request.url.path == "/v1/chat/completions":
+                calls.append(1)
+                return httpx.Response(200, json={
+                    "id": "cache-check", "model": MODEL,
+                    "choices": [{"index": 0, "message": {"role": "assistant", "content": "exact-cache-answer"},
+                                 "finish_reason": "stop"}],
+                })
+            return httpx.Response(404, json={})
+        with client_for(config=config, handler=handler) as client:
+            assert client.get("/admin/cache/stats").status_code == 401
+            headers = {"Authorization": f"Bearer {API_KEY}"}
+            payload = {"model": MODEL, "messages": [{"role": "user", "content": "Repeat this exactly"}],
+                       "temperature": 0, "stream": False}
+            first = client.post("/v1/chat/completions", headers=headers, json=payload)
+            second = client.post("/v1/chat/completions", headers=headers, json=payload)
+            stats = client.get("/admin/cache/stats", headers=headers)
+        assert first.status_code == second.status_code == 200
+        assert first.headers["x-ai-cache"] == "MISS"
+        assert second.headers["x-ai-cache"] == "HIT"
+        assert second.json()["choices"][0]["message"]["content"] == "exact-cache-answer"
+        assert len(calls) == 1
+        assert stats.status_code == 200
+        assert stats.json()["entries"] == 1
+        assert stats.json()["response_bytes"] > 0
+
+
+def test_cache_bypasses_missing_temperature_tools_and_explicit_header():
+    with tempfile.TemporaryDirectory() as directory:
+        config = settings(cache_enabled=True, cache_path=os.path.join(directory, "cache.sqlite3"))
+        calls = []
+        def handler(request):
+            if request.url.path == "/api/tags":
+                return httpx.Response(200, json={"models": [{"name": MODEL}]})
+            calls.append(1)
+            return httpx.Response(200, json={
+                "model": MODEL, "choices": [{"message": {"role": "assistant", "content": "live"},
+                                              "finish_reason": "stop"}],
+            })
+        with client_for(config=config, handler=handler) as client:
+            headers = {"Authorization": f"Bearer {API_KEY}"}
+            base = {"model": MODEL, "messages": [{"role": "user", "content": "no cache"}]}
+            no_temperature = client.post("/v1/chat/completions", headers=headers, json=base)
+            no_temperature_again = client.post("/v1/chat/completions", headers=headers, json=base)
+            explicit_bypass = client.post("/v1/chat/completions",
+                headers={**headers, "X-AI-Cache-Bypass": "1"},
+                json={**base, "temperature": 0})
+            has_tools = client.post("/v1/chat/completions", headers=headers,
+                json={**base, "temperature": 0, "tools": [{"type": "function"}]})
+        assert no_temperature.headers["x-ai-cache"] == "BYPASS"
+        assert no_temperature_again.headers["x-ai-cache"] == "BYPASS"
+        assert explicit_bypass.headers["x-ai-cache"] == "BYPASS"
+        assert has_tools.headers["x-ai-cache"] == "BYPASS"
+        assert len(calls) == 4
+
+
+def test_truncated_response_is_never_cached():
+    with tempfile.TemporaryDirectory() as directory:
+        config = settings(cache_enabled=True, cache_path=os.path.join(directory, "cache.sqlite3"))
+        calls = []
+        def handler(request):
+            if request.url.path == "/api/tags":
+                return httpx.Response(200, json={"models": [{"name": MODEL}]})
+            calls.append(1)
+            return httpx.Response(200, json={
+                "model": MODEL, "choices": [{"message": {"role": "assistant", "content": "partial"},
+                                              "finish_reason": "length"}],
+            })
+        with client_for(config=config, handler=handler) as client:
+            headers = {"Authorization": f"Bearer {API_KEY}"}
+            payload = {"model": MODEL, "messages": [{"role": "user", "content": "truncated"}],
+                       "temperature": 0}
+            first = client.post("/v1/chat/completions", headers=headers, json=payload)
+            second = client.post("/v1/chat/completions", headers=headers, json=payload)
+        assert first.headers["x-ai-cache"] == "MISS"
+        assert second.headers["x-ai-cache"] == "MISS"
+        assert len(calls) == 2

@@ -145,33 +145,12 @@ node scripts/quality-agents.mjs context
 Готовность определяется успешными воспроизводимыми тестами и deployment smoke, а не только наличием файлов или branch.
 
 
-## 9. Расширение мультимодальности: пошаговый план
+## 9. Основная инструкция развёртывания aLandi
 
-Сверяйтесь с [реестром моделей](MULTIMODAL_MODEL_STACK_RU.md) и [реестром техник](TECHNIQUE_REGISTER_RU.md). Не скачивайте все weights и не добавляйте workers в текущую production-схему.
+Полная кликабельная инструкция — [docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md](ALANDI_IMPLEMENTATION_GUIDE_RU.md). Она охватывает регистрацию и финансовые ограничения Vultr, домен и Cloudflare Tunnel, Ollama на закрытом localhost, системную службу aLandi gateway, env-файл и секрет, настройку UI, проверки L0/L1/L2, мониторинг и откат.
 
-### Шаг 1 — зафиксировать исходное состояние
-Перед экспериментом сохраните конфигурацию Ollama/gateway и текущий commit. На VPS измерьте доступную память, свободный диск, stats контейнеров и время типичного text completion. Не применяйте git reset --hard для «починки» и не меняйте сеть Ollama без плана отката.
+Руководствоваться нужно именно ею для реального запуска. Отдельная документация OCR/ASR в [MULTIMODAL_MODEL_STACK_RU.md](MULTIMODAL_MODEL_STACK_RU.md) является факультативным исследовательским справочником; голосовой интерфейс и media endpoints не входят в текущую базовую инсталляцию.
 
-### Шаг 2 — выбрать один язык и сценарий
-- Простой OCR на языке из официального списка: PP-OCRv6 Tiny.
-- Сложные PDF, таблицы, формулы: GLM-OCR против PaddleOCR-VL-1.6 на одном наборе; Surya 2 — отдельный multilingual/layout challenger после проверки license.
-- Русская/тайская речь: первым проверить Qwen3-ASR-0.6B.
-- Английский streaming: ASR4ALL-S против Moonshine Tiny; английский batch — Distil-Whisper/ASR4ALL-L по benchmark. Вьетнамский — ZIPFORMER VI против Qwen3-ASR. EN/DE/FR/ES и перевод — Canary.
+## 10. Статус доказанной готовности
 
-### Шаг 3 — legal/resource gate
-Записать hash весов и версии, лицензии кода/модели/runtime раздельно, список языков, холодную загрузку, p50/p95 latency и peak RSS. Один тяжелый worker и один запрос за раз — начальный safe limit, пока измерения не докажут обратное. Не запускать модель одновременно с основной Ollama-моделью, если пиковая RAM не проверена.
-
-### Шаг 4 — benchmark вне обязательного CI
-Подготовьте одинаковый приватный golden dataset. Не отправляйте частные файлы сторонним API без согласия. Для OCR измерьте CER/WER, числа/даты, таблицы и порядок чтения. Для ASR — WER отдельно по каждому языку, latency первой гипотезы, RTF, VAD и long-audio stability. Тесты multi-GB weights не должны блокировать основной Pages workflow.
-
-### Шаг 5 — отдельный Media API (будущая работа)
-Существующий gateway — text-chat proxy. Новый Media API должен проверять Bearer auth, MIME allowlist, размер/длительность, timeout, bounded concurrency, cancellation и temporary-file cleanup. Содержимое медиа не писать в логи, localStorage, чат-экспорт или exact-response cache по умолчанию. Не публиковать Ollama 11434 и gateway listener.
-
-### Шаг 6 — UI только после контрактов
-Оставить текущий AI Mobile Agent v10.0 и визуальный стиль. В дальнейшем добавлять upload/microphone элементы минимально и в существующем стиле, с keyboard/focus/reduced-motion проверками. После распознавания показать текст для коррекции и явного подтверждения перед отправкой в чат. Для hosted API показать, куда уходят данные. ASR не заменяет TTS. Отдельно протестировать Moonshine Voice JS/WASM как on-device STT/TTS для поддерживаемых языков: exact model/voice license, размер скачивания, cold start, mobile-browser memory, latency и отмена. Это может обойтись без server media endpoint на этих языках, но не предполагает поддержку русского/тайского без точного артефакта.
-
-### Шаг 7 — acceptance и rollback
-Перед включением обязательны auth/size/timeout/cancel/cleanup tests, измерение модели, quality sentinels, Jekyll build и Chromium E2E. Проверить обычный чат, поиск, multi-agent исследование, отмену, локальную историю и provider settings. При неприемлемой памяти/latency остановить worker и вернуть исходную конфигурацию; не удалять gateway data при откате модели.
-
-### Статус этой итерации
-Внедряются документация, on-demand skill-routing и regression tests. Голосовой UI, TTS, загрузка файлов и отдельные OCR/ASR endpoints пока **не реализованы**. VPS не перенастраивается, model weights не скачиваются.
+GitHub Pages build, quality sentinels, gateway unit tests и Chromium E2E должны пройти в Actions для текущего commit. Успешная сборка сайта не доказывает, что конкретный Vultr VPS и Cloudflare DNS/Tunnel уже настроены: это отдельно проверяется по чек-листу установки.

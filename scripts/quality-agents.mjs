@@ -25,7 +25,7 @@ const suites = {
       matches(/<\/html>\s*$/, 'Document must close its html element.');
     }],
     ['critical UI controls exist', () => {
-      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast']) {
+      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiMotion']) {
         matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
       }
     }],
@@ -39,6 +39,16 @@ const suites = {
       includes('const evidenceSection = document.createElement', 'Research evidence must be rendered with DOM nodes rather than HTML strings.');
       includes('const MAX_RESEARCH_EVIDENCE = 40;', 'Research evidence must have a deterministic size cap.');
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
+      includes("alandi: { label: 'aLandi Self-hosted Gateway'", 'The aLandi private gateway must be a first-class provider.');
+      includes("allowCrossProvider&&selectedProvider!=='alandi'", 'Selecting aLandi must never silently route private prompts to another provider even if global fallback is enabled.');
+      includes('<option value="alandi">aLandi Self-hosted Gateway · свой сервер</option>', 'The aLandi provider must be selectable in settings.');
+      includes("provider==='custom'||provider==='alandi'", 'Custom gateway providers must not fall back to the default cloud endpoint.');
+      includes("requestHeaders['X-AI-Cache-Bypass']='1'", 'Dynamic agent turns must explicitly bypass the server response cache.');
+      includes('X-AI-Cache', 'The browser should read the exposed private gateway cache status.');
+      includes("safeSet('ai_ui_theme_v2'", 'Theme preference must persist locally.');
+      includes("safeSet('ai_ui_motion_v2'", 'Motion preference must persist locally.');
+      includes('function applyAppearance(theme, motion)', 'Appearance state needs a single validated application function.');
+      includes('tiffany-sweep', 'Tiffany Motion styles must be present.');
       includes('async function refreshModelCatalog(options = {})', 'Provider model catalogs must be refreshed through the bounded safe loader.');
       includes('async function refreshConnectedModelCatalogs(options = {})', 'Connected provider catalogs must refresh for the cross-provider fallback.');
       includes('const modelIsListed = model && all.some(item => item.id === model);', 'A missing saved model must not hide all discovered model options.');
@@ -84,7 +94,7 @@ const suites = {
       includes('function syncSettingsToActualRoute(route)', 'Settings must follow the final successful provider/model route after the response finishes.');
       includes('syncSettingsToActualRoute(lastSuccessfulRoute)', 'Settings must not change until the full answer pipeline completes.');
       includes("source:'successful-request'", 'A successful model response should store only non-secret connection-verification metadata.');
-      includes('await recordSuccessfulRoute(candidate,stageName,data?.model,{elapsedMs,attemptIndex:i+1})', 'Successful requests must update the connection state and include per-attempt timings.');
+      includes('await recordSuccessfulRoute(candidate,stageName,data?.model,{elapsedMs,attemptIndex:i+1,cacheStatus:data?.__alCacheStatus})', 'Successful requests must preserve per-attempt timings and carry the optional server-cache status.');
       includes('async function requestChatCompletion(body,signal', 'All model calls must use the classified provider fallback path.');
       includes("Запрос не выполнен. Исходный текст сохранён.", 'Fallback errors must preserve the original user prompt.');
       includes("showToast('Настройки сохранены')", 'Saving settings should use the toast and keep the modal open.');

@@ -1,5 +1,13 @@
 # AI Mobile Agent
 
+
+## Главная инструкция: установка aLandi
+
+**Пошаговое руководство от регистрации в сервисах до работающего приватного gateway, моделей, кэша и отката:** [docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md](docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md).
+
+Используй этот документ как основной runbook для развёртывания. Базовая схема — AI Mobile Agent → Cloudflare Tunnel → aLandi Lite Gateway → закрытая Ollama. Dify/Redis/векторная БД не являются обязательными установочными шагами; добавляй их только после подтверждения задачи и бюджета памяти.
+
+
 Мобильный веб-интерфейс ИИ-ассистента, публикуемый через GitHub Pages.
 
 **Сайт:** https://dorpnay.github.io/skills-github-pages/
@@ -99,3 +107,9 @@ node scripts/quality-agents.mjs context
 - Решения по AirLLM, Open-Generative-AI, dsh-our-free-model, CLI-Anything, RAG-Anything, Pliny/L1B3RT4S, taste-skill и AI Engineering from Scratch: [docs/TECHNIQUE_REGISTER_RU.md](docs/TECHNIQUE_REGISTER_RU.md).
 
 В режимах «Глубоко» и «Умное исследование» OCR/ASR/PDF/audio prompts выбирают дополнительный локальный skill только по необходимости. Он не означает, что загрузка файлов, microphone capture, TTS или media API уже реализованы. Новый runtime требует отдельной проверки приватности, лицензии, памяти и тестов. Существующий UI v10.0 и оформление сохраняются.
+
+
+## Точный серверный кэш и личный gateway
+
+На правильном репозитории реализуются L2 exact-response cache (SQLite), явный bypass для динамических/tool/stream запросов, статус X-AI-Cache и preset aLandi Self-hosted Gateway в UI. Подробно: [Gateway README](gateway/README_RU.md) и [полный runbook](docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md).
+

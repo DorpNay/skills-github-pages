@@ -668,3 +668,24 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
   await expect(page.locator('#chatBox')).toContainText('Hugging Face route worked.');
   await expect.poll(() => hfModel).toBe('openai/gpt-oss-120b:fastest');
 });
+
+
+test('Obsidian Studio and Clean Light preferences persist and respect motion controls', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#uiTheme').selectOption('light');
+  await page.locator('#uiMotion').selectOption('off');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_theme_v2'))).toBe('light');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_motion_v2'))).toBe('off');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#uiTheme').selectOption('dark');
+  await page.locator('#uiMotion').selectOption('auto');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'auto');
+});
