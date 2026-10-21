@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import os
 import re
+from urllib.parse import urlsplit
 import sqlite3
 import time
 from contextlib import closing
@@ -98,8 +99,15 @@ class LazyGraphRAG:
 
     def ingest_document(self, document_id: str, source_uri: str, chunks: list[dict[str, Any]], *,
                         scope: str, scope_id: str) -> int:
-        if not document_id or len(document_id) > 160 or not source_uri or len(source_uri) > 2048:
-            raise ValueError("document_id and source_uri must be present and bounded")
+        if not isinstance(document_id, str) or not document_id or len(document_id) > 160:
+            raise ValueError("document_id must be present and bounded")
+        if not isinstance(source_uri, str) or not source_uri or len(source_uri) > 2048:
+            raise ValueError("source_uri must be present and bounded")
+        parsed_source = urlsplit(source_uri)
+        if (parsed_source.scheme != "https" or not parsed_source.hostname or
+                parsed_source.username or parsed_source.password or
+                any(ord(char) < 32 for char in source_uri)):
+            raise ValueError("source_uri must be a safe HTTPS URL without embedded credentials or control characters")
         if scope not in {"conversation", "project", "global"} or not scope_id or len(scope_id) > 160:
             raise ValueError("Invalid RAG scope")
         if not isinstance(chunks, list) or len(chunks) > 10_000:
