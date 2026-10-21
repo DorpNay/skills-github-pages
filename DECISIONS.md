@@ -40,10 +40,10 @@
 
 ## D-004 — Server-side OAuth vault groundwork, no premature Drive integration
 
-- **Статус:** Accepted for prototype; full OAuth and UI deferred.
+- **Статус:** Accepted for opt-in backend prototype; live credentials and UI deferred.
 - **Проблема:** не хранить refresh tokens в browser localStorage или plaintext SQLite.
 - **Решение:** `gateway/security/oauth_vault.py` шифрует access/refresh tokens Fernet, хранит state hash, verifier в encrypted form, использует PKCE S256 и одноразовое TTL-limited состояние.
-- **Ограничения:** helper пока не подключён к OAuth endpoints или UI. Encryption key хранится вне Git и должен быть защищён отдельно от базы. Один gateway Bearer key не обеспечивает multi-user isolation.
+- **Ограничения:** реальные Google credentials/domain callback не заданы, live OAuth не проверен; Google Picker, UI и Drive file retrieval ещё не интегрированы. Encryption key хранится вне Git и должен быть защищён отдельно от базы. Один gateway Bearer key не обеспечивает multi-user isolation.
 - **Acceptance:** expired/replay/state mismatch/DB-only exposure/corrupted vault/no-refresh-token/rotation/revoke tests; отсутствие тестовых секретов в logs, API bodies, URLs и plaintext DB. Должны быть review redirect URI, scopes, OAuth callback and revocation before live use.
 - **Rollback:** не подключать OAuth endpoints; удалить OAuth vault DB/credentials с соблюдением retention, revoke grant у provider.
 - **Связи:** `gateway/security/oauth_vault.py`, [RFC 9700](https://www.rfc-editor.org/rfc/rfc9700.html), [Google OAuth web-server flow](https://developers.google.com/identity/protocols/oauth2/web-server).
