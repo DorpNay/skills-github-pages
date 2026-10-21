@@ -21,7 +21,7 @@
 
 - **Статус:** Accepted for prototype monitoring; proposed eviction API rejected as specified.
 - **Проблема:** предотвращать OOM на ограниченной памяти.
-- **Решение:** `GET /admin/runtime` читает документированный `/api/ps` и отдаёт resident model inventory и advisory budget. Поля `kv_cache_usage_mb` остаётся `null`, `automatic_eviction_performed` — `false`.
+- **Решение:** `GET /admin/runtime` читает документированный `/api/ps` и отдаёт только явно названные поля reported model size / `size_vram`; он не измеряет host RSS или KV-cache usage. Поля `kv_cache_usage_mb` остаётся `null`, `automatic_eviction_performed` — `false`.
 - **Отклонено:** вызов несуществующего `/api/evict` с conversation ID. Документированный `/api/ps` не предоставляет per-conversation KV usage/eviction.
 - **Альтернативы:** concurrency/context limits; monitor RSS/OOM; при отсутствии активных запросов оператор может выгрузить неиспользуемую модель документированным `keep_alive: 0` или `ollama stop`.
 - **Acceptance:** runtime inventory честно отражает /api/ps; тесты malformed payload and budget; load test на хосте до изменения контекстных лимитов.
