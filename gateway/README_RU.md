@@ -56,9 +56,9 @@
 ## Экспериментальные bounded-функции (по умолчанию выключены)
 
 - `ALANDI_FAST_ROUTING_ENABLED=false`: `gateway/routing.py` умеет отвечать шаблоном только на точную короткую фразу из allowlist; сложные запросы отправляются в main model.
-- `ALANDI_MEMORY_SYNC_ENABLED=false`: `GET /v1/memory/state/{conversation_id}` и `POST /v1/memory/delta` используют versioned bounded JSON Patch; stale revision возвращает 409. Пока scope — отдельная беседа, не multi-user хранилище.
+- `ALANDI_MEMORY_SYNC_ENABLED=false`: `GET /v1/memory/state/{conversation_id}` и `POST /v1/memory/delta` используют versioned bounded JSON Patch; append-only изменения коллекций используют компактное `add /-`, stale revision возвращает 409. Пока scope — отдельная беседа, не multi-user хранилище.
 - `ALANDI_RAG_ENABLED=false`: `POST /v1/rag/ingest` и `POST /v1/rag/retrieve` реализуют SQLite FTS5 + lexical concept graph с source URI/page metadata. Это baseline, не полный Microsoft LazyGraphRAG.
-- `GET /admin/runtime` (Bearer auth) показывает инвентарь `/api/ps` и advisory resident-model budget. Этот API не измеряет KV cache и не выселяет его.
+- `GET /admin/runtime` (Bearer auth) показывает поля инвентаря моделей из `/api/ps`. `size`/`size_vram` нельзя принимать за системный RSS или точный KV-cache usage; никакого автоматического выселения нет.
 - `OAUTH_ENABLED=false`: backend Google OAuth Code+PKCE routes `/oauth/google/initiate`, `/oauth/google/callback`, `/oauth/google/status`, `/oauth/google/refresh`, `/oauth/google/revoke`. `gateway/security/oauth_vault.py` encrypts tokens with Fernet; callback never returns tokens. Real Google credentials and exact HTTPS callback still need configuration; Google Picker/file import UI isn't implemented. `OAUTH_ENCRYPTION_KEY` must be generated once and stored outside Git, separately from the DB.
 
 Все новые флаги остаются `false`. Перед включением прогоните `python -m pytest -q gateway/tests` и изучите [шесть инженерных пластов](../docs/SIX_LAYER_ENGINEERING_RU.md) и [журнал решений](../DECISIONS.md). Не включайте одновременно несколько новых функций во время экспериментального сравнения. Все результаты в README — реализованный код локально, а не доказательство развертывания на VPS.
