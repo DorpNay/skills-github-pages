@@ -45,6 +45,11 @@ def _oauth_client_config(config: Any) -> None:
     redirect = urlsplit(config.google_oauth_redirect_uri)
     if redirect.scheme != "https" or not redirect.hostname or redirect.username or redirect.password or redirect.query or redirect.fragment:
         raise HTTPException(503, "Google OAuth redirect URI must be a fixed HTTPS URL without query or fragment")
+    success = urlsplit(config.oauth_success_redirect)
+    if success.scheme != "https" or not success.hostname or success.username or success.password or success.query or success.fragment:
+        raise HTTPException(503, "OAuth success redirect must be a fixed HTTPS URL without query or fragment")
+    if f"{success.scheme}://{success.netloc}" not in config.cors_origins:
+        raise HTTPException(503, "OAuth success redirect origin is not allowlisted")
 
 
 def build_google_oauth_router(config: Any, authorize) -> APIRouter:
