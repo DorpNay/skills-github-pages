@@ -38,7 +38,7 @@ def test_router_does_not_claim_keyword_hints_are_verified():
 
 def test_runtime_inventory_never_claims_to_measure_or_evict_kv_cache():
     result = analyze_runtime({"models": [{"name": "qwen:4b", "size": 2 * 1024**3, "size_vram": 0}]}, 6144)
-    assert result["resident_model_mb_reported_by_ollama"] == 2048.0
+    assert result["reported_model_size_total_mb"] == 2048.0
     assert result["kv_cache_usage_mb"] is None
     assert result["kv_cache_api_supported"] is False
     assert result["automatic_eviction_performed"] is False
@@ -47,7 +47,7 @@ def test_runtime_inventory_never_claims_to_measure_or_evict_kv_cache():
 
 def test_runtime_budget_advises_without_automatic_unload():
     result = analyze_runtime({"models": [{"model": "large", "size": 7 * 1024**3}]}, 6144)
-    assert result["resident_model_footprint_over_budget"]
+    assert result["reported_model_size_over_advisory_budget"]
     assert result["automatic_eviction_performed"] is False
 
 
