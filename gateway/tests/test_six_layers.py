@@ -25,6 +25,11 @@ def test_router_short_circuits_only_exact_low_risk_templates():
     assert router.response_for({"model": "local:test", "messages": [{"role": "user", "content": "спасибо, переведи это"}]}) is None
     assert router.response_for({"model": "local:test", "stream": True, "messages": [{"role": "user", "content": "привет"}]}) is None
     assert router.response_for({"model": "local:test", "tools": [{"type": "function"}], "messages": [{"role": "user", "content": "привет"}]}) is None
+    assert router.response_for({"model": "local:test", "temperature": 0, "messages": [{"role": "user", "content": "привет"}]}) is not None
+    assert router.response_for({"model": "local:test", "temperature": 0.7, "messages": [{"role": "user", "content": "привет"}]}) is None
+    assert router.response_for({"model": "local:test", "max_tokens": 1, "messages": [{"role": "user", "content": "привет"}]}) is None
+    assert router.response_for({"model": "local:test", "n": 2, "messages": [{"role": "user", "content": "привет"}]}) is None
+    assert router.response_for({"model": "local:test", "stop": ["!"], "messages": [{"role": "user", "content": "привет"}]}) is None
     assert router.response_for({"model": "local:test", "messages": [{"role": "user", "content": "привет"}, {"role": "assistant", "content": "да"} , {"role": "user", "content": "спасибо"}]}) is None
 
 
