@@ -61,6 +61,24 @@ def test_json_delta_roundtrip_and_size_reduction_for_small_scalar_change():
     assert len(json.dumps(patch)) < len(json.dumps(new))
 
 
+def test_json_delta_appends_new_memory_items_without_resending_existing_array():
+    old = {"facts": [{"id": f"fact-{index}", "text": "A saved project decision with provenance."} for index in range(100)],
+           "decisions": [], "questions": [], "notes": [], "summary": "stable"}
+    new = {**old, "facts": [*old["facts"], {"id": "fact-100", "text": "One new memory fact."}]}
+    patch = compute_patch(old, new)
+    assert patch == [{"op": "add", "path": "/facts/-", "value": {"id": "fact-100", "text": "One new memory fact."}}]
+    assert apply_patch(old, patch) == new
+    assert len(json.dumps(patch, separators=(",", ":"))) < len(json.dumps(new, separators=(",", ":"))) / 10
+
+
+def test_json_delta_removes_array_suffix_in_reverse_order():
+    old = {"facts": [{"id": "one"}, {"id": "two"}, {"id": "three"}], "decisions": [], "questions": [], "notes": [], "summary": ""}
+    new = {**old, "facts": [{"id": "one"}]}
+    patch = compute_patch(old, new)
+    assert patch == [{"op": "remove", "path": "/facts/2"}, {"op": "remove", "path": "/facts/1"}]
+    assert apply_patch(old, patch) == new
+
+
 def test_json_delta_roundtrip_when_arrays_change_even_if_delta_is_larger():
     old = {"facts": [{"id": "f1", "text": "Python"}], "decisions": [], "questions": [], "notes": [], "summary": ""}
     new = {"facts": [{"id": "f1", "text": "Python"}, {"id": "f2", "text": "Use SQLite"}],
