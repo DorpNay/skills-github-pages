@@ -689,3 +689,15 @@ test('Obsidian Studio and Clean Light preferences persist and respect motion con
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'auto');
 });
+
+
+test('agent systems skill is routed on demand and its safety contract stays available', async () => {
+  const source = await readFile('./index.md', 'utf8');
+  const skill = await readFile('./skills/agent-systems.txt', 'utf8');
+  expect(source).toContain("isAgentSystemsTask ? 'agent-systems'");
+  expect(source).toContain("new URL('skills/' + skill + '.txt', document.baseURI)");
+  expect(skill).toContain('The 64-role catalog is 64 logical roles');
+  expect(skill).toContain('Chat memory is isolated by default');
+  expect(skill).toContain('Google Drive requires backend OAuth callback');
+  expect(skill).toContain('candidate lesson');
+});

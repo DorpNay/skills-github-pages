@@ -49,3 +49,11 @@
 3. Проверить L0 / L1 / L2 как разные механизмы и запустить miss-hit-bypass тесты.
 4. Измерить один основной model tag на собственном golden set.
 5. И только после подтверждённой необходимости планировать OCR/RAG, дополнительные runtime или графовую память.
+
+
+## Дополнение 2026-10-21: память-граф и bounded agent teams
+
+- [64 роли, память, проекты, документы и RAG](ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md)
+- [Аудит OpenMAIC, Paperclip, HyperFrames, RuFlo, Coucou, OpenShell, Impeccable, DBX, Grok Register, Jev Ultrafast, Utopia, FreeDomain, witr, PinchTab и Vert](TECHNOLOGY_AUDIT_2026-10-21_RU.md)
+- Взяты принципы: bounded fan-out, role/task registry, budgets, approval/review gates, eval-gated learning, temporal facts, indexed browser actions, deterministic video rendering и provenance-aware RAG.
+- Полные сторонние runtime не добавляются в базовый 8-GB stack. Vert не интегрируется без точного upstream; Grok Register отклонён по причине массовой регистрации и обхода anti-abuse.
