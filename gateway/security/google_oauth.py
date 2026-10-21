@@ -111,7 +111,7 @@ def build_google_oauth_router(config: Any, authorize) -> APIRouter:
                 "code_verifier": verifier,
                 "grant_type": "authorization_code",
                 "redirect_uri": config.google_oauth_redirect_uri,
-            }, headers={"Accept": "application/json"})
+            }, headers={"Accept": "application/json"}, timeout=10.0)
             response.raise_for_status()
             tokens = response.json()
             if not isinstance(tokens, dict) or not isinstance(tokens.get("access_token"), str):
@@ -130,7 +130,7 @@ def build_google_oauth_router(config: Any, authorize) -> APIRouter:
                 if "tokens" in locals() and isinstance(tokens, dict):
                     revoke_token = tokens.get("refresh_token") or tokens.get("access_token")
                     if isinstance(revoke_token, str) and revoke_token:
-                        await client.post(GOOGLE_REVOKE_URL, data={"token": revoke_token})
+                        await client.post(GOOGLE_REVOKE_URL, data={"token": revoke_token}, timeout=5.0)
             except httpx.HTTPError:
                 logger.warning("Could not revoke rejected Google OAuth grant; no credentials were stored")
             logger.warning("Google OAuth code exchange failed or returned unapproved scopes; token response omitted")
@@ -164,7 +164,7 @@ def build_google_oauth_router(config: Any, authorize) -> APIRouter:
                 "client_secret": config.google_oauth_client_secret,
                 "grant_type": "refresh_token",
                 "refresh_token": tokens["refresh_token"],
-            }, headers={"Accept": "application/json"})
+            }, headers={"Accept": "application/json"}, timeout=10.0)
             response.raise_for_status()
             renewed = response.json()
             if not isinstance(renewed, dict) or not isinstance(renewed.get("access_token"), str):
@@ -194,7 +194,7 @@ def build_google_oauth_router(config: Any, authorize) -> APIRouter:
         token = tokens.get("refresh_token") or tokens["access_token"]
         client: httpx.AsyncClient = request.app.state.client
         try:
-            response = await client.post(GOOGLE_REVOKE_URL, data={"token": token})
+            response = await client.post(GOOGLE_REVOKE_URL, data={"token": token}, timeout=5.0)
             response.raise_for_status()
         except httpx.HTTPError:
             logger.warning("Google OAuth revocation failed; local credentials retained for retry")
