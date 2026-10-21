@@ -137,3 +137,28 @@ Google Drive: OAuth client secret и refresh token нельзя размещат
 P0: scope/privacy schema + golden set. P1: проекты, project instructions, memory toggles, import/export/delete. P2: SQLite FTS5, provenance, citations, SSRF-protected fetch. P3: 64-role catalog + bounded router + event timeline. P4: eval-gated learning. P5: isolated OCR/ASR/image/video workers. P6: OAuth integrations after backend token vault.
 
 DoD: нет cross-project leakage; каждый memory fact имеет provenance/scope/status/delete; конфликты не затираются; citations указывают место; skills не влияют на fast mode без нужды; tests покрывают injection, stale facts, deletion, citations и privacy boundaries; никакой агент не получает shell/network/secrets автоматически.
+
+
+## 8. Как раскрывать потенциал маленьких моделей без кратного роста ресурсов
+
+1. **Сужать action space.** Вместо свободного текста для каждого шага — схема с ограниченным набором действий, валидными аргументами и индексированными целями. Исследование Chain-of-Edits показывает перспективность stateful tool interaction для небольших моделей на задаче code repair, но это не универсальное доказательство превосходства на всех задачах: https://arxiv.org/html/2507.05065. Jev Ultrafast демонстрирует тот же инженерный принцип в browser agent: https://github.com/browser-use/jev-ultrafast.
+2. **Разделять выбор действия и генерацию текста.** Для CLICK/SELECT/WAIT/DONE не просить модель писать объяснение, когда достаточно типизированной операции. Для TYPE_TEXT просить только значение. Каждое действие проверять до исполнения.
+3. **Один шаг — одна наблюдаемая среда.** Возвращать маленькое структурированное наблюдение вместо всей DOM-страницы, полного лога или предыдущего chain-of-thought.
+4. **Квантизация и context length — только по замерам.** Сравнить Q4/Q5/Q8 или доступные варианты конкретного checkpoint на одинаковом golden set; измерить качество, peak RSS, cold start, tokens/sec и p95. Более агрессивная квантизация может ухудшить tool selection и русскоязычные задачи.
+5. **Управлять KV cache и контекстом.** Фиксировать разумный контекст, один inference одновременно на 8 GB, сокращать историю до проверенных решений/ограничений и загружать только top-k memory/evidence. Не путать prompt cache с кэшем готового ответа.
+6. **Кэшировать детерминированные этапы.** Кэшировать безопасные парсинги/индексы и точные завершённые статические ответы; не кэшировать stream, tool calls, web research, мультимодальные запросы и персональные ответы между пользователями.
+7. **Использовать маленькую модель там, где есть проверяемый контракт.** Классификация, extraction, language detection, routing и ранжирование — кандидаты. Открытый диалог, конфликтующие доказательства и необратимые действия остаются у более сильного маршрута/человеческого подтверждения.
+8. **Speculative decoding — не обещать как универсальную оптимизацию.** Требует совместимого draft/target runtime и памяти; сначала измерить, доступен ли он для конкретной связки Ollama/model/backend. Не добавлять отдельный постоянно работающий runtime только ради гипотетического ускорения.
+9. **Learning loop без самообмана.** Сохранять ошибки и пользовательские исправления как тестовые примеры; менять prompts/skills только после baseline-vs-candidate eval и независимого review. Не считать self-critique доказательством качества без внешнего критерия.
+
+## 9. Прозрачный ход выполнения без раскрытия скрытых рассуждений
+
+UI может показывать сворачиваемую ленту этапов: «план подготовлен», «ищу источники», «извлечено 8 фрагментов», «обнаружено противоречие», «проверяю цитаты», «тест пройден». В ленте должны быть фактические события, названия инструментов, источники, тайминг и результаты проверок. Не показывать скрытую chain-of-thought и не выдавать сгенерированное объяснение модели за телеметрию реального выполнения. Для каждого этапа хранить run_id, status, started_at, duration, evidence IDs и error class; пользователь может свернуть ленту, отменить задачу и скачать безопасный trace.
+
+## 10. Официальный Google Drive путь
+
+- [OAuth 2.0 web-server flow](https://developers.google.com/identity/protocols/oauth2/web-server): серверный callback, state, безопасное хранение access/refresh tokens и возможность отзыва.
+- [Google Picker API](https://developers.google.com/workspace/drive/picker/guides/web-picker): пользователь выбирает файлы внутри знакомого интерфейса Drive.
+- [Drive API scopes](https://developers.google.com/workspace/drive/api/guides/api-specific-auth): запрашивать минимально необходимые scopes; публичное приложение с чувствительными scope может потребовать verification.
+
+Эти ссылки определяют будущую интеграцию, но OAuth ещё не подключён в текущем статическом сайте.
