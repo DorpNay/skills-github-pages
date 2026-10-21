@@ -7,7 +7,7 @@ LLM or embedding model during indexing; evidence snippets retain source and page
 from __future__ import annotations
 
 import hashlib
-import json
+import os
 import re
 import sqlite3
 import time
