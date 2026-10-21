@@ -8,6 +8,7 @@ from __future__ import annotations
 import base64
 import hashlib
 import json
+import os
 import secrets
 import sqlite3
 import time
@@ -69,6 +70,8 @@ class OAuthVault:
                 );
             """)
             db.commit()
+        if self.path != ":memory:":
+            os.chmod(self.path, 0o600)
 
     @staticmethod
     def _hash_state(state: str) -> str:
