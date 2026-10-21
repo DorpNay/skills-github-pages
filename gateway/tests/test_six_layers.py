@@ -209,7 +209,10 @@ def test_gateway_routes_feature_flags_and_memory_api_are_opt_in(tmp_path):
         auth = {"Authorization": f"Bearer {key}"}
         assert client.get("/v1/memory/state/chat-1", headers=auth).status_code == 503
         assert client.post("/v1/rag/retrieve", headers=auth, json={"query": "hello", "scope": "project", "scope_id": "x"}).status_code == 503
-        assert client.get("/admin/runtime", headers=auth).json()["kv_cache_usage_mb"] is None
+        inventory = client.get("/admin/runtime", headers=auth).json()
+        assert inventory["kv_cache_usage_mb"] is None
+        assert inventory["host_process_memory"]["source"] == "linux_procfs"
+        assert inventory["host_process_memory"]["ollama_process_count"] == 0
 
 
 def test_gateway_opt_in_memory_rag_and_exact_template_router(tmp_path):
@@ -380,3 +383,24 @@ def test_google_oauth_rejects_broader_scope_and_attempts_revoke(tmp_path):
         assert "drive=error" in response.headers["location"]
         assert client.get("/oauth/google/status", headers=auth).json()["connected"] is False
         assert revoked == [True]
+
+
+def test_host_process_metrics_parse_procfs_without_signaling_processes(tmp_path):
+    from gateway.host_metrics import collect_host_metrics
+
+    (tmp_path / "100").mkdir()
+    (tmp_path / "100" / "status").write_text(
+        "Name:\\tpython\\nVmRSS:\\t10240 kB\\nVmHWM:\\t20480 kB\\n", encoding="ascii"
+    )
+    (tmp_path / "200").mkdir()
+    (tmp_path / "200" / "comm").write_text("ollama\\n", encoding="ascii")
+    (tmp_path / "200" / "status").write_text(
+        "Name:\\tollama\\nVmRSS:\\t1048576 kB\\nVmHWM:\\t2097152 kB\\n", encoding="ascii"
+    )
+    result = collect_host_metrics(tmp_path, gateway_pid=100)
+    assert result["gateway_process"]["rss_mb"] == 10.0
+    assert result["gateway_process"]["peak_rss_mb"] == 20.0
+    assert result["ollama_process_count"] == 1
+    assert result["ollama_rss_sum_mb"] == 1024.0
+    assert result["ollama_peak_rss_sum_mb"] == 2048.0
+    assert result["notes"]
