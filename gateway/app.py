@@ -75,7 +75,7 @@ class Settings:
     rag_enabled: bool = False
     rag_path: str = "/var/lib/alandi-gateway/rag.sqlite3"
     rag_max_chunk_chars: int = 20_000
-    runtime_memory_budget_mb: int = 6144
+    model_size_advisory_mb: int = 6144
     oauth_enabled: bool = False
     oauth_path: str = "/var/lib/alandi-gateway/oauth.sqlite3"
     oauth_encryption_key: str = ""
@@ -144,7 +144,10 @@ class Settings:
             rag_enabled=bool_env("ALANDI_RAG_ENABLED", False),
             rag_path=os.getenv("ALANDI_RAG_PATH", "/var/lib/alandi-gateway/rag.sqlite3").strip() or "/var/lib/alandi-gateway/rag.sqlite3",
             rag_max_chunk_chars=int_env("ALANDI_RAG_MAX_CHUNK_CHARS", 20_000, 100),
-            runtime_memory_budget_mb=int_env("ALANDI_RUNTIME_MEMORY_BUDGET_MB", 6144, 256),
+            model_size_advisory_mb=int_env(
+                "ALANDI_MODEL_SIZE_ADVISORY_MB",
+                int_env("ALANDI_RUNTIME_MEMORY_BUDGET_MB", 6144, 256), 256
+            ),
             oauth_enabled=oauth_enabled,
             oauth_path=os.getenv("OAUTH_TOKEN_VAULT_PATH", "/var/lib/alandi-gateway/oauth.sqlite3").strip() or "/var/lib/alandi-gateway/oauth.sqlite3",
             oauth_encryption_key=oauth_encryption_key,
@@ -481,7 +484,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 from .kv_budget import analyze_runtime
             except ImportError:
                 from kv_budget import analyze_runtime
-            result = analyze_runtime(response.json(), config.runtime_memory_budget_mb)
+            result = analyze_runtime(response.json(), config.model_size_advisory_mb)
             try:
                 from .host_metrics import collect_host_metrics
             except ImportError:  # supports "uvicorn app:app" from the gateway directory
