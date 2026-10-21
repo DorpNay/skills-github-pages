@@ -21,7 +21,7 @@
 | 1. Draft routing | Узкий exact-template fast path и консервативный IntentRouter в `gateway/routing.py`; интеграция за `ALANDI_FAST_ROUTING_ENABLED=false` | Draft model cascade, Qwen2.5 отдельным постоянно загруженным процессом, quality verifier; эти части не следует включать без измерений |
 | 2. KV/cache memory budget | `GET /admin/runtime` и `gateway/kv_budget.py`: truthful inventory и advisory budget | Per-conversation KV telemetry/eviction — отсутствует в документированном Ollama API; автоматическая eviction сознательно не реализована |
 | 3. LazyGraphRAG | `gateway/rag/lazy_graph_rag.py`: SQLite FTS5 + lexical concept graph, ссылки на источник/страницу и scope isolation | Embeddings, полноценный entity extraction/PPR, LLM reranker, автоматическое извлечение файлов/документов |
-| 4. OAuth | `gateway/security/oauth_vault.py`: Fernet vault, hashed single-use state, PKCE S256, TTL | Полный Google OAuth callback/token exchange, Drive Picker, UI и file-content API — не интегрированы и не включены |
+| 4. OAuth | `gateway/security/oauth_vault.py` + `gateway/security/google_oauth.py`: backend Authorization Code/PKCE endpoints, Fernet vault, hashed single-use state, TTL; OAuth flag off by default | Google credentials, actual domain callback, Drive Picker, browser UI, and file-content API are not configured/integrated |
 | 5. Delta sync | `gateway/memory/delta_sync.py`, `GET /v1/memory/state/{conversation_id}`, `POST /v1/memory/delta` с optimistic revision check | Browser UI ещё не использует gateway memory API; scope пока только conversation и gateway остаётся single-user |
 | 6. Semantic router | Детеминированный intent baseline и exact-phrase short-circuit, без дополнительного runtime | Embedding backend/FastEmbed, обученный router и его threshold calibration; не включать только на основании cosine similarity |
 
@@ -118,7 +118,7 @@ Qwen2.5 остаётся кандидатом для сравнения, не pr
 
 В `gateway/requirements.txt` добавлена фиксированная зависимость `cryptography`. Сам vault не включён в API и пока не означает наличие Google Drive integration.
 
-### Security contract для будущих endpoints
+### Security contract перед production-включением
 
 - Google Authorization Code flow, PKCE S256, точный server-configured redirect URI, state transaction с TTL и однократным callback.
 - Scope минимальный: планировать `drive.file` для файлов, специально открытых/выбранных пользователем, и проверить требования Picker до реализации.
@@ -130,7 +130,7 @@ Qwen2.5 остаётся кандидатом для сравнения, не pr
 
 ### Gate
 
-Тесты wrong/expired/replayed state, PKCE verifier mismatch, OAuth error response, no-refresh-token response, expired access token, revoke, corrupted vault, DB-only exposure, logging/callback query inspection и scope checks. Утверждение «0% token leaks» не является метрикой качества; требование — ни один тестовый секрет не должен появляться в API responses, logs, URLs или plaintext в SQLite.
+Расширить тесты wrong/expired/replayed state, PKCE verifier mismatch, OAuth error response, no-refresh-token response, expired access token, revoke, corrupted vault, DB-only exposure, logging/callback query inspection и scope checks. Утверждение «0% token leaks» не является метрикой качества; требование — ни один тестовый секрет не должен появляться в API responses, logs, URLs или plaintext в SQLite.
 
 ## Пласт 5 — Delta-Sync Memory Protocol
 
