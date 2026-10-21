@@ -45,6 +45,13 @@ def _escape_pointer(value: str) -> str:
     return value.replace("~", "~0").replace("/", "~1")
 
 
+def _array_index(segment: str) -> int:
+    """Parse RFC 6902 array index syntax; JSON arrays do not allow leading zeroes."""
+    if not re.fullmatch(r"0|[1-9][0-9]*", segment):
+        raise DeltaSyncError("Invalid JSON Patch array index")
+    return int(segment)
+
+
 def _split_pointer(path: object) -> list[str]:
     if not isinstance(path, str) or not path.startswith("/") or path == "/":
         raise DeltaSyncError("Patch path must address a field below an allowed memory root")
@@ -131,11 +138,17 @@ def apply_patch(state: dict[str, Any], patch: object, *, max_bytes: int = 512_00
     if not isinstance(patch, list) or len(patch) > max_operations:
         raise DeltaSyncError("Patch must be a bounded array of operations")
     for operation in patch:
-        if not isinstance(operation, dict) or set(operation) - {"op", "path", "value"}:
+        if not isinstance(operation, dict):
             raise DeltaSyncError("Invalid patch operation shape")
         op = operation.get("op")
-        if op not in {"add", "remove", "replace", "test"}:
-            raise DeltaSyncError("Only add/remove/replace/test operations are supported")
+        expected_keys = {
+            "add": {"op", "path", "value"},
+            "remove": {"op", "path"},
+            "replace": {"op", "path", "value"},
+            "test": {"op", "path", "value"},
+        }
+        if op not in expected_keys or set(operation) != expected_keys[op]:
+            raise DeltaSyncError("Invalid or unsupported patch operation shape")
         parts = _split_pointer(operation.get("path"))
         if op in {"add", "replace", "test"} and "value" not in operation:
             raise DeltaSyncError("Patch operation requires value")
@@ -146,8 +159,11 @@ def apply_patch(state: dict[str, Any], patch: object, *, max_bytes: int = 512_00
         for segment in parts[:-1]:
             if isinstance(parent, dict) and segment in parent:
                 parent = parent[segment]
-            elif isinstance(parent, list) and segment.isdigit() and int(segment) < len(parent):
-                parent = parent[int(segment)]
+            elif isinstance(parent, list):
+                index = _array_index(segment)
+                if index >= len(parent):
+                    raise DeltaSyncError("Patch parent array index out of range")
+                parent = parent[index]
             else:
                 raise DeltaSyncError("Patch parent path does not exist")
         leaf = parts[-1]
@@ -171,8 +187,8 @@ def apply_patch(state: dict[str, Any], patch: object, *, max_bytes: int = 512_00
         elif isinstance(parent, list):
             if leaf == "-" and op == "add":
                 parent.append(operation["value"])
-            elif leaf.isdigit():
-                index = int(leaf)
+            elif re.fullmatch(r"0|[1-9][0-9]*", leaf):
+                index = _array_index(leaf)
                 if op == "add":
                     if index > len(parent):
                         raise DeltaSyncError("Array add index out of range")
