@@ -12,6 +12,21 @@
 - Агентные роли и память: [ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md](ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md)
 - Техники и источники: [TECHNIQUE_REGISTER_RU.md](TECHNIQUE_REGISTER_RU.md)
 - Технологический аудит: [TECHNOLOGY_AUDIT_2026-10-21_RU.md](TECHNOLOGY_AUDIT_2026-10-21_RU.md)
+- Шесть инженерных пластов и критерии eval: [SIX_LAYER_ENGINEERING_RU.md](SIX_LAYER_ENGINEERING_RU.md)
+- Реестр архитектурных решений D-001–D-006: [DECISIONS.md](../DECISIONS.md)
+- Запуск offline smoke eval: [gateway/evals/README_RU.md](../gateway/evals/README_RU.md)
+
+## Подтверждённый статус текущей ветки (21 октября 2026)
+
+На ветке PR #18 добавлены backend-прототипы, а не live-deployment:
+- `gateway/routing.py`: deterministic exact-template fast path, выключен `ALANDI_FAST_ROUTING_ENABLED=false`; general draft cascade и embeddings пока не внедрены.
+- `gateway/kv_budget.py` + `gateway/host_metrics.py`: inventory `/api/ps` плюс read-only current/peak RSS gateway/Ollama через Linux procfs, если доступен; per-conversation KV telemetry/eviction не поддерживается, автодействий нет.
+- `gateway/rag/lazy_graph_rag.py`: SQLite FTS5 + lexical concept graph with source/page provenance, отключено `ALANDI_RAG_ENABLED=false`; это baseline, не полный LazyGraphRAG.
+- `gateway/memory/delta_sync.py`: bounded versioned JSON Patch, append/truncate deltas, conflict checks and deletion; API отключено `ALANDI_MEMORY_SYNC_ENABLED=false`, browser UI ещё не интегрирован.
+- `gateway/security/oauth_vault.py` + `gateway/security/google_oauth.py`: Fernet vault и Google OAuth Authorization Code/PKCE routes; отключены `OAUTH_ENABLED=false`; реальные client credentials/callback, Drive Picker/UI и file import не настроены.
+- `gateway/evals/run_six_layer_eval.py`: offline synthetic smoke suite (не product benchmark), включена в gateway CI.
+
+Это код на feature branch. Не делать выводов, что компоненты развернуты на VPS, пока PR не слит, сервер не обновлён и live checks не пройдены.
 
 При конфликте источников приоритет: актуальный код и тесты → успешный CI/live-проверка → документация проекта → upstream → сторонние статьи → предположение.
 
@@ -124,11 +139,11 @@ ASR-кандидаты: [Moonshine](https://github.com/moonshine-ai/moonshine), 
 Одобрены как целевые возможности: проекты с отдельными инструкциями/источниками/памятью, явные scope toggles, импорт файлов с provenance, подключение Drive только через официальный OAuth и Picker с минимальными scopes, индексация выбранных файлов и каскадное удаление производных данных.
 - OAuth web-server flow: https://developers.google.com/identity/protocols/oauth2/web-server
 - Google Picker: https://developers.google.com/workspace/drive/picker/guides/web-picker
-Это целевая спецификация, пока UI/backend и integration tests не докажут реализацию. Secrets/refresh tokens не помещать в статический клиент.
+OAuth backend prototype now exists behind OAUTH_ENABLED=false. Real client credentials, an exact HTTPS callback registration, production security review, Google Picker/browser UI and selected-file import are still not configured or deployed. Secrets/refresh tokens must never be placed in the static client.
 
 ## RAG, безопасность и оценки
 
-Pipeline: allowlisted ingest → parse → chunks with provenance → SQLite FTS5 baseline → retrieval → answer with citations → citation verifier. Golden set оценивает recall@k, citation correctness, latency и RAM. Vector index/reranker — только при измеримом приросте.
+Текущий backend prototype: allowlisted HTTPS source URI → chunks with provenance → SQLite FTS5 + lexical concept graph → scope-filtered retrieval with source/page citations. Gateway API выключен `ALANDI_RAG_ENABLED=false`. Это ещё не полный document ingest pipeline; vector index/reranker — только при измеримом приросте на real golden set. Удаление source и scope isolation покрываются тестами.
 
 Обязательные security boundaries:
 - SSRF: блокировать localhost/private/link-local/metadata, опасные схемы, redirect hops и DNS rebinding.
