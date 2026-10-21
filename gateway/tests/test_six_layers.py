@@ -51,13 +51,22 @@ def test_runtime_budget_advises_without_automatic_unload():
     assert result["automatic_eviction_performed"] is False
 
 
-def test_json_delta_roundtrip_and_size_reduction():
+def test_json_delta_roundtrip_and_size_reduction_for_small_scalar_change():
+    # A small delta beats sending a large unchanged state, but array replacement may not.
+    old = {"facts": [{"id": "f1", "text": "Python"}], "decisions": [], "questions": [],
+           "notes": [], "summary": "established context " * 120}
+    new = {**old, "summary": "short updated summary"}
+    patch = compute_patch(old, new)
+    assert apply_patch(old, patch) == new
+    assert len(json.dumps(patch)) < len(json.dumps(new))
+
+
+def test_json_delta_roundtrip_when_arrays_change_even_if_delta_is_larger():
     old = {"facts": [{"id": "f1", "text": "Python"}], "decisions": [], "questions": [], "notes": [], "summary": ""}
     new = {"facts": [{"id": "f1", "text": "Python"}, {"id": "f2", "text": "Use SQLite"}],
            "decisions": [{"id": "d1", "text": "Bounded concurrency"}], "questions": [], "notes": [], "summary": ""}
     patch = compute_patch(old, new)
     assert apply_patch(old, patch) == new
-    assert len(json.dumps(patch)) < len(json.dumps(new))
 
 
 def test_patch_rejects_root_and_out_of_scope_mutations():
