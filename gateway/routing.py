@@ -95,7 +95,20 @@ class IntentRouter:
         """
         if payload.get("stream") is True or payload.get("tools") or payload.get("tool_choice"):
             return None
-        if payload.get("response_format") or payload.get("functions"):
+        if payload.get("response_format") or payload.get("functions") or payload.get("function_call"):
+            return None
+        if "n" in payload and payload.get("n") != 1:
+            return None
+        # Do not silently bypass output limits, stop sequences, or requested scoring.
+        if any(key in payload for key in (
+            "max_tokens", "max_completion_tokens", "stop", "logprobs", "top_logprobs",
+            "logit_bias", "presence_penalty", "frequency_penalty", "seed", "stream_options",
+            "parallel_tool_calls", "reasoning_effort",
+        )):
+            return None
+        # The shipped aLandi provider emits temperature=0 for deterministic local requests.
+        temperature = payload.get("temperature")
+        if temperature is not None and temperature != 0:
             return None
         messages = payload.get("messages")
         if not isinstance(messages, list):
@@ -117,7 +130,7 @@ class IntentRouter:
                     "id": f"chatcmpl-alandi-template-{int(time.time() * 1000)}",
                     "object": "chat.completion",
                     "created": int(time.time()),
-                    "model": str(payload.get("model", "alandi-template")),
+                    "model": "alandi-template",
                     "choices": [{
                         "index": 0,
                         "message": {"role": "assistant", "content": response_text},
