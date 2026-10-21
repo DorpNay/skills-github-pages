@@ -342,3 +342,41 @@ def test_google_oauth_routes_are_disabled_without_server_configuration():
                       cache_enabled=False)
     with TestClient(create_app(config, transport=httpx.MockTransport(lambda request: httpx.Response(404)))) as client:
         assert client.post("/oauth/google/initiate", headers={"Authorization": f"Bearer {key}"}).status_code == 503
+
+
+def test_google_oauth_rejects_broader_scope_and_attempts_revoke(tmp_path):
+    from urllib.parse import parse_qs, urlsplit
+    from fastapi.testclient import TestClient
+    import httpx
+    from gateway.app import Settings, create_app
+
+    key = "r" * 64
+    revoked = []
+    def handler(request):
+        if request.url.path == "/token":
+            return httpx.Response(200, json={"access_token": "too-broad-access",
+                                             "refresh_token": "too-broad-refresh", "expires_in": 3600,
+                                             "scope": "https://www.googleapis.com/auth/drive.readonly"})
+        if request.url.path == "/revoke":
+            revoked.append(True)
+            return httpx.Response(200, text="")
+        return httpx.Response(404, json={})
+
+    config = Settings(
+        api_key=key, ollama_base_url="http://ollama.test:11434",
+        allowed_models=("qwen3.5:4b",), cors_origins=("https://dorpnay.github.io",),
+        cache_enabled=False, oauth_enabled=True, oauth_path=str(tmp_path / "oauth.sqlite3"),
+        oauth_encryption_key=OAuthVault.generate_key(), google_oauth_client_id="client-id",
+        google_oauth_client_secret="client-secret",
+        google_oauth_redirect_uri="https://gateway.example.test/oauth/google/callback",
+        oauth_success_redirect="https://dorpnay.github.io/skills-github-pages/"
+    )
+    with TestClient(create_app(config, transport=httpx.MockTransport(handler))) as client:
+        auth = {"Authorization": f"Bearer {key}"}
+        start = client.post("/oauth/google/initiate", headers=auth)
+        state = parse_qs(urlsplit(start.json()["auth_url"]).query)["state"][0]
+        response = client.get("/oauth/google/callback", params={"code": "code", "state": state}, follow_redirects=False)
+        assert response.status_code == 303
+        assert "drive=error" in response.headers["location"]
+        assert client.get("/oauth/google/status", headers=auth).json()["connected"] is False
+        assert revoked == [True]
