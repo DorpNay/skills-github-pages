@@ -146,3 +146,80 @@ def test_oauth_vault_encrypts_tokens_and_consumes_pkce_state_once(tmp_path):
 def test_oauth_vault_fails_closed_for_invalid_key(tmp_path):
     with pytest.raises(OAuthVaultError):
         OAuthVault(tmp_path / "oauth.sqlite3", "not-a-fernet-key")
+
+
+
+def test_gateway_routes_feature_flags_and_memory_api_are_opt_in(tmp_path):
+    from fastapi.testclient import TestClient
+    import httpx
+    from gateway.app import Settings, create_app
+
+    key = "z" * 64
+    config = Settings(api_key=key, ollama_base_url="http://ollama.test:11434",
+                      allowed_models=("qwen3.5:4b",), cors_origins=("https://dorpnay.github.io",),
+                      cache_enabled=False)
+    def handler(request):
+        if request.url.path == "/api/ps":
+            return httpx.Response(200, json={"models": []})
+        if request.url.path == "/api/tags":
+            return httpx.Response(200, json={"models": [{"name": "qwen3.5:4b"}]})
+        if request.url.path == "/v1/chat/completions":
+            return httpx.Response(200, json={"model": "qwen3.5:4b", "choices": [{"message": {"role": "assistant", "content": "upstream"}}]})
+        return httpx.Response(404, json={})
+    with TestClient(create_app(config, transport=httpx.MockTransport(handler))) as client:
+        auth = {"Authorization": f"Bearer {key}"}
+        assert client.get("/v1/memory/state/chat-1", headers=auth).status_code == 503
+        assert client.post("/v1/rag/retrieve", headers=auth, json={"query": "hello", "scope": "project", "scope_id": "x"}).status_code == 503
+        assert client.get("/admin/runtime", headers=auth).json()["kv_cache_usage_mb"] is None
+
+
+def test_gateway_opt_in_memory_rag_and_exact_template_router(tmp_path):
+    from fastapi.testclient import TestClient
+    import httpx
+    from gateway.app import Settings, create_app
+
+    key = "y" * 64
+    config = Settings(api_key=key, ollama_base_url="http://ollama.test:11434",
+                      allowed_models=("qwen3.5:4b",), cors_origins=("https://dorpnay.github.io",),
+                      cache_enabled=False, fast_routing_enabled=True, memory_sync_enabled=True,
+                      memory_path=str(tmp_path / "memory.sqlite3"), rag_enabled=True,
+                      rag_path=str(tmp_path / "rag.sqlite3"))
+    def handler(request):
+        if request.url.path == "/api/ps":
+            return httpx.Response(200, json={"models": []})
+        if request.url.path == "/api/tags":
+            return httpx.Response(200, json={"models": [{"name": "qwen3.5:4b"}]})
+        if request.url.path == "/v1/chat/completions":
+            return httpx.Response(200, json={"model": "qwen3.5:4b", "choices": [{"message": {"role": "assistant", "content": "upstream"}}]})
+        return httpx.Response(404, json={})
+    with TestClient(create_app(config, transport=httpx.MockTransport(handler))) as client:
+        auth = {"Authorization": f"Bearer {key}"}
+        routed = client.post("/v1/chat/completions", headers=auth,
+            json={"model": "qwen3.5:4b", "messages": [{"role": "user", "content": "привет"}]})
+        assert routed.status_code == 200
+        assert routed.headers["x-alandi-route"] == "exact_template"
+        assert "upstream" not in routed.text
+
+        state = client.get("/v1/memory/state/chat-1", headers=auth)
+        assert state.status_code == 200 and state.json()["revision"] == 0
+        delta = client.post("/v1/memory/delta", headers=auth, json={
+            "conversation_id": "chat-1", "base_revision": 0,
+            "patch": [{"op": "add", "path": "/facts/-", "value": {"id": "f1", "text": "aLandi"}}]
+        })
+        assert delta.status_code == 200 and delta.json()["revision"] == 1
+        stale = client.post("/v1/memory/delta", headers=auth, json={
+            "conversation_id": "chat-1", "base_revision": 0,
+            "patch": [{"op": "add", "path": "/facts/-", "value": {"id": "f2", "text": "stale"}}]
+        })
+        assert stale.status_code == 409
+        indexed = client.post("/v1/rag/ingest", headers=auth, json={
+            "document_id": "doc-1", "source_uri": "https://example.test/page",
+            "scope": "project", "scope_id": "alandi",
+            "chunks": [{"chunk_id": "c1", "content": "aLandi gateway uses bounded concurrency", "page_number": 1}]
+        })
+        assert indexed.status_code == 200 and indexed.json()["chunks"] == 1
+        retrieval = client.post("/v1/rag/retrieve", headers=auth, json={
+            "query": "gateway concurrency", "scope": "project", "scope_id": "alandi", "top_k": 3
+        })
+        assert retrieval.status_code == 200
+        assert retrieval.json()["chunks"][0]["source_uri"] == "https://example.test/page"
