@@ -482,6 +482,11 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             except ImportError:
                 from kv_budget import analyze_runtime
             result = analyze_runtime(response.json(), config.runtime_memory_budget_mb)
+            try:
+                from .host_metrics import collect_host_metrics
+            except ImportError:  # supports "uvicorn app:app" from the gateway directory
+                from host_metrics import collect_host_metrics
+            result["host_process_memory"] = await asyncio.to_thread(collect_host_metrics)
         except (httpx.HTTPError, asyncio.TimeoutError, ValueError):
             logger.warning("Ollama runtime inventory failed; upstream body omitted")
             raise HTTPException(503, "Local runtime inventory is unavailable") from None
