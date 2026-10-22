@@ -421,6 +421,35 @@ systemctl --no-pager --full status alandi-gateway
 
 Если latency/RAM плохие, сначала уменьши контекст/длину ответа и проверь активную модель. Не исправляй OOM установкой ещё трёх сервисов. Если прекращаешь платный VPS, выгрузи нужные данные, удали платный instance в панели провайдера и проверь, какие ресурсы дальше тарифицируются.
 
+## 9.1. Проверка обновлённой версии и экспериментальных прототипов
+
+Новые модули из [CODER_PACKET.md](CODER_PACKET.md) добавляют основу трассировки, scoped memory graph, цитат, voice orchestration и tool contracts. Это не означает, что microphone/ASR/TTS/AEC, CLI sandbox, tool execution или Google Drive UI уже готовы. Все неиспользуемые flags остаются выключенными.
+
+После merge, из корня проверенной копии репозитория, сначала выполни локальную проверку:
+
+~~~bash
+cd /opt/alandi/skills-github-pages
+git status --short
+git rev-parse --short HEAD
+python -m compileall -q gateway observability
+python -m pytest -q gateway/tests
+python gateway/evals/run_six_layer_eval.py
+python scripts/check_license_manifest.py
+~~~
+
+Если любой шаг не проходит — gateway не обновляй; сохрани вывод без секретов и открой issue/PR.
+
+Перед изменением systemd unit убедись, что запуск из каталога gateway сохраняет доступ к корню репозитория для trace middleware. Для локального теста в директории gateway используется:
+
+~~~bash
+cd /opt/alandi/skills-github-pages/gateway
+PYTHONPATH=/opt/alandi/skills-github-pages /opt/alandi/venv/bin/uvicorn app:app --host 127.0.0.1 --port 8000 --workers 1
+~~~
+
+Для systemd unit укажи эквивалентный `Environment=PYTHONPATH=/opt/alandi/skills-github-pages` и проверяй статус до переключения трафика. Не копируй секреты в shell history или логи.
+
+После установленного релиза проверяй `/healthz`, `/v1/models` и один обычный чат с Bearer auth. Не устанавливай сразу native voice dependencies и не скачивай голосовые модели: manifest пока содержит кандидатов с `ship=false`, hashes не записаны. Никакие voice/OTel/CLI feature flags не включай без целевых eval и отдельного rollback.
+
 ## 10. Диагностика
 
 | Симптом | Что проверить |
