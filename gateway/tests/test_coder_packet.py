@@ -294,6 +294,8 @@ def test_voice_tier_endpoint_bargein_and_native_event_contracts():
     assert endpoint_confirmed(signal, config)
     assert not endpoint_confirmed(EndpointSignal(100, 200, 0.1, "", 0.99, True, True), config)
     assert not endpoint_confirmed(EndpointSignal(400, 200, 0.1, "hello", 0.99, True, True), config)
+    # A stale timestamp cannot override a currently speech-like VAD frame.
+    assert not endpoint_confirmed(EndpointSignal(100, 1600, 0.99, "still speaking", 0.99, True, True), config)
 
     assert should_interrupt(BargeInSignal(0.95, 0.1, 0.9, True))
     assert not should_interrupt(BargeInSignal(0.96, 0.99, 0.2, True))
@@ -363,3 +365,43 @@ def test_license_manifest_checker_fails_closed_for_ship_true_without_hash(tmp_pa
     manifest.write_text(yaml.safe_dump(payload), encoding="utf-8")
     monkeypatch.setattr(module, "MANIFEST", manifest)
     assert module.main() == 1
+
+
+@pytest.mark.asyncio
+async def test_cpocket_cleanup_completes_when_rollback_caller_is_cancelled():
+    cpocket = TransactionalCPocket()
+    lease = await cpocket.acquire_lease("cancelled-cleanup", ttl_ms=2000)
+    started = asyncio.Event()
+    finished = asyncio.Event()
+
+    async def cleanup():
+        started.set()
+        await asyncio.sleep(0.05)
+        finished.set()
+
+    lease.add_cleanup(cleanup)
+    task = asyncio.create_task(cpocket.rollback(lease.branch_id, "caller_cancelled"))
+    await started.wait()
+    task.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await task
+    assert finished.is_set()
+    assert lease.state == "rolled_back"
+    assert lease.branch_id not in cpocket.leases
+
+
+@pytest.mark.asyncio
+async def test_speculative_tts_playback_failure_discards_committed_prefix():
+    class FailingTTS(_FakeTTS):
+        async def play_buffered_prefix(self, buffer):
+            raise RuntimeError("speaker unavailable")
+
+    cpocket = TransactionalCPocket()
+    tts = FailingTTS()
+    transaction = SpeculativeVoiceTransaction(_FakeRouter(), _FakeResponder(), tts, cpocket)
+    branch = await transaction.on_asr_stable_partial("tell me the answer")
+    with pytest.raises(RuntimeError):
+        await transaction.on_endpoint_confirmed("tell me the answer now", branch)
+    assert branch.committed and branch.rolled_back
+    assert branch.tts_prefix_buffer in tts.discarded
+    assert branch.branch_id not in cpocket.leases
