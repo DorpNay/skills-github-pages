@@ -13,7 +13,7 @@ python gateway/evals/run_six_layer_eval.py
 python scripts/check_license_manifest.py
 ~~~
 
-The prior gateway baseline passed 37 tests and the deterministic six-layer smoke eval on the PR #19 head. The new coder-packet test suite and manifest checks are pending the current branch CI.
+The prior gateway baseline passed 37 tests and the deterministic six-layer smoke eval on the PR #19 head. The coder-packet test suite, offline eval, and manifest checker must be judged from the latest Actions run attached to the current implementation PR; do not copy results from the older baseline into this release report.
 
 ## Eval registry
 
