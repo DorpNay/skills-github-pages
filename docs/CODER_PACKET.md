@@ -127,6 +127,8 @@ python -m pip install -r gateway/requirements-dev.txt
 python -m compileall -q gateway
 python -m pytest -q gateway/tests
 python gateway/evals/run_six_layer_eval.py
+python gateway/evals/serialization_benchmark.py --iterations 100
+python scripts/check_project_metadata.py
 python scripts/check_license_manifest.py
 ~~~
 
