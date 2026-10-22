@@ -15,7 +15,12 @@ on:
   pull_request:
     paths:
       - "infra/license/**"
+      - "infra/hardware_profiles.yaml"
+      - "infra/onnx/**"
+      - "evals/voice/**"
+      - "docs/PROJECT_STATE.yaml"
       - "scripts/check_license_manifest.py"
+      - "scripts/check_project_metadata.py"
       - "gateway/requirements-dev.txt"
       - ".github/workflows/license-manifest.yml"
   workflow_dispatch:
