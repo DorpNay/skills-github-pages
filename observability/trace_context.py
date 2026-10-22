@@ -113,7 +113,11 @@ class TraceContextMiddleware:
             await self.app(scope, receive, send)
             return
 
-        headers = {key.lower(): value.decode("latin-1") for key, value in scope.get("headers", [])}
+        # ASGI headers are bytes/bytes; decode both sides before string-key lookup.
+        headers = {
+            key.decode("latin-1").lower(): value.decode("latin-1")
+            for key, value in scope.get("headers", [])
+        }
         supplied = normalize_trace_id(headers.get("x-ai-trace-id"))
         if supplied is None:
             supplied = trace_id_from_traceparent(headers.get("traceparent"))
