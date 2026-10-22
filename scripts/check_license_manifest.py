@@ -2,7 +2,6 @@
 """Validate artifact provenance manifest; never downloads models or guesses licenses."""
 from __future__ import annotations
 
-import hashlib
 import re
 import sys
 from pathlib import Path
