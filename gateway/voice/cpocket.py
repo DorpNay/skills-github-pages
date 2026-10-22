@@ -65,6 +65,16 @@ class TransactionalCPocket:
         except asyncio.CancelledError:
             raise
 
+    async def _run_cleanups(self, lease: ResourceLease,
+                            cleaners: list[tuple[Callable[..., Any], tuple[Any, ...], dict[str, Any]]]) -> None:
+        for fn, args, kwargs in cleaners:
+            try:
+                result = fn(*args, **kwargs)
+                if inspect.isawaitable(result):
+                    await result
+            except Exception as exc:
+                lease.cleanup_errors.append(type(exc).__name__)
+
     async def _finish(self, branch_id: str, *, commit: bool, reason: str) -> bool:
         async with self._lock:
             lease = self.leases.pop(branch_id, None)
@@ -79,13 +89,16 @@ class TransactionalCPocket:
                 task.cancel()
 
         if not commit:
-            for fn, args, kwargs in cleaners:
+            # Shield cleanup from cancellation of the caller. The lease is already closed,
+            # so a cancelled rollback must not strand resources without a retry path.
+            cleanup_task = asyncio.create_task(self._run_cleanups(lease, cleaners))
+            try:
+                await asyncio.shield(cleanup_task)
+            except asyncio.CancelledError:
                 try:
-                    result = fn(*args, **kwargs)
-                    if inspect.isawaitable(result):
-                        await result
-                except Exception as exc:
-                    lease.cleanup_errors.append(type(exc).__name__)
+                    await asyncio.shield(cleanup_task)
+                finally:
+                    raise
         return True
 
     async def commit(self, branch_id: str) -> bool:
