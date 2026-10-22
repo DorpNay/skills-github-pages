@@ -45,10 +45,17 @@ class ToolDAG:
             raise DAGError("DAG must contain a bounded non-empty list of nodes")
         by_id: dict[str, ToolNode] = {}
         for node in nodes:
-            if not isinstance(node, ToolNode) or not node.id or len(node.id) > 128 or node.id in by_id:
+            if (not isinstance(node, ToolNode) or not isinstance(node.id, str) or
+                    not node.id or len(node.id) > 128 or node.id in by_id):
                 raise DAGError("node IDs must be unique, non-empty and bounded")
-            if node.tool_name not in self.tools:
+            if not isinstance(node.tool_name, str) or node.tool_name not in self.tools:
                 raise DAGError("node references an unknown tool")
+            if not isinstance(node.arguments, dict):
+                raise DAGError("node arguments must be an object")
+            if not isinstance(node.dependencies, (tuple, list)) or any(
+                not isinstance(dep, str) or not dep for dep in node.dependencies
+            ):
+                raise DAGError("node dependencies must be a sequence of node IDs")
             by_id[node.id] = node
         for node in nodes:
             if len(set(node.dependencies)) != len(node.dependencies):
