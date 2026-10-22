@@ -223,6 +223,22 @@ def test_truncated_response_is_never_cached():
         assert len(calls) == 2
 
 
+def test_cors_allows_trace_propagation_headers_for_configured_frontend():
+    client = TestClient(create_app(settings(), transport=transport()))
+    response = client.options(
+        "/healthz",
+        headers={
+            "Origin": "https://dorpnay.github.io",
+            "Access-Control-Request-Method": "GET",
+            "Access-Control-Request-Headers": "x-ai-trace-id,traceparent",
+        },
+    )
+    assert response.status_code == 200
+    allowed = response.headers["access-control-allow-headers"].lower()
+    assert "x-ai-trace-id" in allowed
+    assert "traceparent" in allowed
+
+
 def test_trace_context_header_is_validated_generated_and_exposed():
     client = TestClient(create_app(settings(), transport=transport()))
     with client:
