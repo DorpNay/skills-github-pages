@@ -9,6 +9,12 @@
 
 Большой обзор решений, статусов реализации, ограничений и планов eval: [docs/SIX_LAYER_ENGINEERING_RU.md](docs/SIX_LAYER_ENGINEERING_RU.md). Формальные решения D-001–D-006: [DECISIONS.md](DECISIONS.md). Новые gateway-модули есть в коде, но их feature flags выключены по умолчанию; наличие кода не означает live-деплой.
 
+## Полный инженерный пакет aLandi
+
+Единый пакет для кодера и агента @Поиск: [docs/CODER_PACKET.md](docs/CODER_PACKET.md). Статус каждого изменения: [docs/PROJECT_STATE.yaml](docs/PROJECT_STATE.yaml), eval-гейты: [EVALS.md](EVALS.md), цикл и откат: [LOOP.md](LOOP.md), источники и лицензии: [INTEL.md](INTEL.md), latency-контракт: [docs/LATENCY_CONTRACT.md](docs/LATENCY_CONTRACT.md), реестр улучшений: [docs/ACCEPTED_IMPROVEMENTS.md](docs/ACCEPTED_IMPROVEMENTS.md).
+
+Важная граница: voice, tool DAG, memory graph и evidence ledger сейчас являются прототипами/контрактами. Native ONNX/Rust hotpath, AEC, фактическая запись с микрофона и 8GB hardware benchmark не реализованы/не подтверждены. Не включайте экспериментальные функции на VPS по одному только факту merge.
+
 ## Главная инструкция: установка aLandi
 
 **Пошаговое руководство от регистрации в сервисах до работающего приватного gateway, моделей, кэша и отката:** [docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md](docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md).
