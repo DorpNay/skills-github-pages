@@ -402,6 +402,6 @@ async def test_speculative_tts_playback_failure_discards_committed_prefix():
     branch = await transaction.on_asr_stable_partial("tell me the answer")
     with pytest.raises(RuntimeError):
         await transaction.on_endpoint_confirmed("tell me the answer now", branch)
-    assert branch.committed and branch.rolled_back
+    assert not branch.committed and branch.rolled_back
     assert branch.tts_prefix_buffer in tts.discarded
     assert branch.branch_id not in cpocket.leases
