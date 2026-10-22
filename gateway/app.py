@@ -446,7 +446,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         app.add_middleware(TraceContextMiddleware)
     app.add_middleware(CORSMiddleware, allow_origins=list(config.cors_origins),
                        allow_credentials=False, allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
-                       allow_headers=["Authorization", "Content-Type", "Accept", "Cache-Control", "X-AI-Cache-Bypass"],
+                       allow_headers=["Authorization", "Content-Type", "Accept", "Cache-Control", "X-AI-Cache-Bypass", "X-AI-Trace-ID", "traceparent"],
                        expose_headers=["X-AI-Cache", "X-AI-Route", "X-AI-Trace-ID"], max_age=600)
 
     @app.get("/healthz")
