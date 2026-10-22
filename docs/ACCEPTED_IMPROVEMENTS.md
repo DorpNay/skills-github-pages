@@ -18,7 +18,7 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 | AI-CODE-002 | orjson serialization | gateway/evals/serialization_benchmark.py | Deferred until parity/perf/license benchmark |
 | AI-CODE-003 | uv package manager | pyproject.toml | Deferred until reviewed uv.lock can be generated and committed |
 | AI-OBS-001 | Unified trace ID | observability/trace_context.py | Prototype integrated with gateway |
-| AI-OBS-002 | OpenTelemetry | observability/otel_config.py | Optional and disabled; not a default network exporter |
+| AI-OBS-002 | OpenTelemetry | observability/otel_config.py | Optional config helper; disabled by default and not called from gateway startup |
 | AI-OBS-003 | Agent timeline | observability/events.schema.json | Schema first; UI deferred |
 | AI-MEM-001 | SQLite graph/provenance | gateway/memory/schema.sql | Prototype; opt-in storage module |
 | AI-MEM-002 | Bitemporal memory | gateway/memory/temporal.py | Timestamp semantics and graph fields; not yet used by frontend |
