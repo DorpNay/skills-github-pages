@@ -7,7 +7,6 @@ This module does not attach prompts, transcripts, OAuth tokens, or tool argument
 from __future__ import annotations
 
 import os
-import socket
 from dataclasses import dataclass
 from urllib.parse import urlsplit
 
@@ -31,7 +30,11 @@ def _truthy(value: str | None) -> bool:
 def validate_endpoint(endpoint: str, *, allow_remote: bool = False) -> str:
     if not isinstance(endpoint, str) or not endpoint.strip() or len(endpoint) > 512:
         raise OTelConfigurationError("OTEL endpoint must be a bounded URL")
-    parsed = urlsplit(endpoint.strip())
+    try:
+        parsed = urlsplit(endpoint.strip())
+        port = parsed.port
+    except ValueError as exc:
+        raise OTelConfigurationError("invalid OTEL endpoint authority or port") from exc
     if parsed.username or parsed.password or parsed.query or parsed.fragment:
         raise OTelConfigurationError("OTEL endpoint cannot contain credentials, query, or fragment")
     if parsed.scheme not in {"http", "https"} or not parsed.hostname:
@@ -47,7 +50,7 @@ def validate_endpoint(endpoint: str, *, allow_remote: bool = False) -> str:
     if not (is_loopback_name or is_loopback_ip):
         if not allow_remote or parsed.scheme != "https":
             raise OTelConfigurationError("remote OTEL export requires explicit opt-in and HTTPS")
-    if parsed.port is not None and not 1 <= parsed.port <= 65535:
+    if port is not None and not 1 <= port <= 65535:
         raise OTelConfigurationError("invalid OTEL port")
     # Return the original validated URL without modifying host, path or TLS semantics.
     return endpoint.strip()
