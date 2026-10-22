@@ -1,0 +1,55 @@
+schema_version: 2
+default_policy:
+  cloud_fallback: false
+  ship_only_with_artifact_sha256: true
+  ship_only_with_exact_license_approval: true
+  model_downloaded_into_repository: false
+languages:
+  ru:
+    asr_candidates:
+      - id: vosk-model-small-ru-0.22
+        upstream: "https://alphacephei.com/vosk/models"
+        api_license: "Apache-2.0"
+        model_license: "Apache-2.0 per upstream model catalogue"
+        approximate_download_size_mb: 45
+        sha256: null
+        status: "candidate_not_downloaded"
+        eval_required: ["clean_CER", "noisy_CER", "real_time_factor", "peak_PSS"]
+    tts_candidates:
+      - id: piper-ru-voice
+        upstream: "https://github.com/OHF-Voice/piper1-gpl"
+        engine_license: "GPL-3.0-or-later for current engine"
+        voice_license: "must inspect exact MODEL_CARD"
+        sha256: null
+        status: "blocked_until_voice_license_cleared"
+      - id: silero-tts-ru
+        upstream: "https://github.com/snakers4/silero-models"
+        license: "non-commercial by default; verify exact artifact exceptions"
+        sha256: null
+        status: "blocked_for_commercial_shipping"
+  en:
+    asr_candidates:
+      - id: moonshine-tiny-streaming-en
+        upstream: "https://github.com/moonshine-ai/moonshine"
+        model_license: "MIT according to upstream default for streaming/English models"
+        sha256: null
+        status: "candidate_not_downloaded"
+        eval_required: ["clean_WER", "noisy_WER", "real_time_factor", "peak_PSS"]
+      - id: vosk-model-small-en-us-0.15
+        upstream: "https://alphacephei.com/vosk/models"
+        model_license: "Apache-2.0 per upstream model catalogue"
+        sha256: null
+        status: "candidate_not_downloaded"
+    tts_candidates:
+      - id: piper-en-voice
+        upstream: "https://github.com/OHF-Voice/piper1-gpl"
+        engine_license: "GPL-3.0-or-later for current engine"
+        voice_license: "must inspect exact MODEL_CARD"
+        sha256: null
+        status: "blocked_until_voice_license_cleared"
+vad:
+  - id: silero-vad-onnx
+    upstream: "https://github.com/snakers4/silero-vad"
+    code_license: "MIT"
+    artifact_sha256: null
+    status: "candidate_not_downloaded"
