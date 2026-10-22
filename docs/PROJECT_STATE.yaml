@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-10-22"
   last_volley: "V-CODER-PACKET-FOUNDATIONS"
-  gate: "implementation branch; CI pending"
+  gate: "current PR Actions results govern code acceptance; gateway deployment remains unverified"
   source_of_truth:
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
