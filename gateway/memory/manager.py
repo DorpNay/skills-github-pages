@@ -114,6 +114,8 @@ class MemoryManager:
                     or not parsed_source.hostname or parsed_source.username or parsed_source.password
                     or any(ord(char) < 32 for char in source_uri)):
                 raise MemoryGraphError("source_uri must be safe HTTPS without embedded credentials")
+        if source_text is not None and (not isinstance(source_text, str) or len(source_text) > 5_000_000):
+            raise MemoryGraphError("source_text must be bounded text when provided")
         source_hash = hashlib.sha256(source_text.encode("utf-8")).hexdigest() if source_text is not None else None
         if metadata is None:
             metadata = {}
