@@ -5,6 +5,8 @@ or execute tools. Implementations must buffer TTS without playing until final en
 """
 from __future__ import annotations
 
+import asyncio
+
 from dataclasses import dataclass
 from typing import Any, Protocol
 
