@@ -45,6 +45,9 @@ def endpoint_confirmed(signal: EndpointSignal, config: EndpointConfig = Endpoint
     if not isinstance(signal.asr_partial, str) or not signal.asr_partial.strip():
         return False
     silence_ms = signal.now_ms - signal.last_voiced_ts_ms
+    # A stale last-voiced timestamp must not override evidence that the current frame is speech.
+    if signal.vad_prob >= config.vad_speech_threshold:
+        return False
 
     # Long-silence fallback still requires non-empty transcript and a previously observed utterance.
     if silence_ms >= config.max_hangover_ms:
