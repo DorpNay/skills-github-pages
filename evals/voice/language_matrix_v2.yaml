@@ -24,7 +24,7 @@ languages:
         status: "blocked_until_voice_license_cleared"
       - id: silero-tts-ru
         upstream: "https://github.com/snakers4/silero-models"
-        license: "non-commercial by default; verify exact artifact exceptions"
+        license: "UNVERIFIED_ARTIFACT_SPECIFIC_TERMS; no SPDX assertion until exact model card review"
         sha256: null
         status: "blocked_for_commercial_shipping"
   en:
