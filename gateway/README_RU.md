@@ -23,9 +23,18 @@
     cp .env.example .env
     openssl rand -hex 32
     set -a; . ./.env; set +a
-    uvicorn app:app --host 127.0.0.1 --port 8000 --workers 1
+    PYTHONPATH=.. uvicorn app:app --host 127.0.0.1 --port 8000 --workers 1
 
 В другом терминале проверьте /healthz и POST /v1/chat/completions через curl. Никогда не коммитьте реальный .env.
+
+## Полный пакет прототипов и тестов
+
+- Контракты voice, memory graph, scoped evidence, tools, SSRF и approvals перечислены в `../docs/CODER_PACKET.md`.
+- Реальные тесты: `python -m pytest -q gateway/tests`; deterministic prior smoke eval: `python gateway/evals/run_six_layer_eval.py`.
+- License ship gate: из корня репозитория `python scripts/check_license_manifest.py`. Vulture формирует report only — код автоматически не удаляется.
+- `gateway/voice/*` содержит интерфейсы/policy prototypes. Микрофон, ASR/TTS, AEC, native ONNX/Rust runtime и voice latency benchmark не подключены.
+- `observability/otel_config.py` требует явного вызова и optional OTel packages; никакой exporter не запускается сам по себе.
+- Feature flags по умолчанию выключены. Merge не означает, что gateway уже развернут на VPS.
 
 ## VPS
 
