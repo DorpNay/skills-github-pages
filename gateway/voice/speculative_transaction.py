@@ -67,6 +67,7 @@ class SpeculativeVoiceTransaction:
             raise ValueError("stable partial transcript must be non-empty and bounded")
         lease = await self.cpocket.acquire_lease("voice_speculation", ttl_ms=self.lease_ttl_ms)
         buffer = None
+        cleanup_registered = False
         try:
             intent = await self.router.classify_readonly(transcript)
             response = await self.responder.speculate_readonly(intent)
@@ -76,11 +77,12 @@ class SpeculativeVoiceTransaction:
                 response.text, max_duration_ms=self.max_prefix_audio_ms, destination="buffer_only"
             )
             lease.add_cleanup(self.tts.discard_buffer, buffer)
+            cleanup_registered = True
             return SpeculativeBranch(lease.branch_id, transcript, intent, response.text, buffer, lease)
         except Exception:
             await self.cpocket.rollback(lease.branch_id, reason="speculation_failed")
             # If failure occurred before cleanup registration, discard explicitly.
-            if buffer is not None and not lease.cleanup_errors:
+            if buffer is not None and not cleanup_registered:
                 try:
                     await self.tts.discard_buffer(buffer)
                 except Exception:
