@@ -53,12 +53,12 @@ artifacts:
     kind: tts_model_weights
     upstream: "https://github.com/snakers4/silero-models"
     source_version: "must specify exact model"
-    license_spdx: "CC-NC-BY by upstream repository default; verify exact model"
+    license_spdx: "UNVERIFIED_ARTIFACT_SPECIFIC_TERMS"
     commercial_use: "blocked_until_exact_exception_or_license_is_approved"
     sha256: null
     ship: false
     status: "blocked"
-    notes: "Do not infer that a model is commercially usable from the engine or package license."
+    notes: "Upstream describes non-commercial Community Edition terms for speech-recognition models; this entry is not a claim of one universal Silero TTS SPDX license. Inspect and record the exact selected TTS model's license before consideration."
 
   - id: piper-engine-current
     kind: tts_runtime_code
