@@ -107,15 +107,23 @@ class SpeculativeVoiceTransaction:
         # Playback happens only after the recognizer confirms compatible final text.
         try:
             await self.tts.play_buffered_prefix(branch.tts_prefix_buffer)
-            await self.tts.continue_streaming(branch.response_text)
         except BaseException:
-            # Commit ends the lease, so it no longer owns cleanup of the prefix buffer.
-            # Explicitly discard it on playback failure/cancellation.
+            # No user-visible audio began. The lease is already closed, so discard explicitly.
             try:
                 await asyncio.shield(self.tts.discard_buffer(branch.tts_prefix_buffer))
             finally:
+                branch.committed = False
                 branch.rolled_back = True
             raise
+        # Once the prefix has played, a later stream failure cannot be described as rollback:
+        # some audio has escaped. Preserve committed=true and let the caller report degraded playback.
+        try:
+            await self.tts.continue_streaming(branch.response_text)
+        except BaseException:
+            try:
+                await asyncio.shield(self.tts.discard_buffer(branch.tts_prefix_buffer))
+            finally:
+                raise
         return True
 
     async def rollback(self, branch: SpeculativeBranch, reason: str = "transcript_mismatch") -> bool:
