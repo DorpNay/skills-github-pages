@@ -10,6 +10,8 @@ python -m pip install -r gateway/requirements-dev.txt
 python -m compileall -q gateway
 python -m pytest -q gateway/tests
 python gateway/evals/run_six_layer_eval.py
+python gateway/evals/serialization_benchmark.py --iterations 100
+python scripts/check_project_metadata.py
 python scripts/check_license_manifest.py
 ~~~
 
@@ -45,6 +47,8 @@ The prior gateway baseline passed 37 tests and the deterministic six-layer smoke
 | EV-RAG-001 | Retrieval quality | gateway/evals/run_six_layer_eval.py | synthetic fixtures only; real golden set >=50 queries before product claims | not a product benchmark |
 
 ## Reporting rules
+
+The serialization microbenchmark only checks execution and data-format parity in CI; it does not authorize orjson as the gateway default. Project metadata parsing is enforced by the License and Artifact Provenance workflow.
 
 Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS version, hardware profile, model tags and artifact SHA256 where applicable, feature flags, sample count and p50/p95. Raw prompt, transcript, token, secret or document text must not be logged; use case IDs and aggregate metrics. For voice, keep clean/noisy conditions and languages separate and report cold/warm model states independently.
 
