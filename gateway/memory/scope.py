@@ -18,7 +18,7 @@ class ScopeRef:
 
     @classmethod
     def parse(cls, kind: object, scope_id: object) -> "ScopeRef":
-        if kind not in {"conversation", "project", "global"}:
+        if not isinstance(kind, str) or kind not in {"conversation", "project", "global"}:
             raise ScopeError("scope must be conversation, project, or global")
         if not isinstance(scope_id, str) or not scope_id or len(scope_id) > 160:
             raise ScopeError("scope_id must be a non-empty string of at most 160 characters")
