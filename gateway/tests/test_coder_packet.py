@@ -301,3 +301,65 @@ def test_voice_tier_endpoint_bargein_and_native_event_contracts():
         "text": "hello", "confidence": 0.98, "pcm_bytes": b"raw audio"
     })
     assert event.payload == {"text": "hello", "confidence": 0.98}
+
+
+def test_trace_event_schema_is_metadata_only_and_rejects_arbitrary_content():
+    import json
+    from jsonschema import Draft202012Validator
+
+    schema_path = Path(__file__).parents[2] / "observability" / "events.schema.json"
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    validator = Draft202012Validator(schema)
+    event = {
+        "trace_id": "0123456789abcdef0123456789abcdef",
+        "event": "request_finished",
+        "component": "gateway",
+        "timestamp_ns": time.time_ns(),
+        "attributes": {"http_status": 200, "duration_ms": 18.5, "outcome": "ok"}
+    }
+    assert validator.is_valid(event)
+    unsafe = {**event, "attributes": {"prompt": "this must never be recorded"}}
+    assert not validator.is_valid(unsafe)
+    unsafe_top_level = {**event, "transcript": "private transcript"}
+    assert not validator.is_valid(unsafe_top_level)
+
+
+def test_otel_is_disabled_by_default_and_remote_endpoint_requires_explicit_https_opt_in(monkeypatch):
+    from observability.otel_config import (
+        OTelConfigurationError, initialize_otel_from_env, validate_endpoint,
+    )
+
+    monkeypatch.delenv("ALANDI_OTEL_ENABLED", raising=False)
+    monkeypatch.delenv("ALANDI_OTEL_ALLOW_REMOTE", raising=False)
+    assert initialize_otel_from_env().reason == "disabled_by_default"
+    assert validate_endpoint("http://127.0.0.1:4318/v1/traces") == "http://127.0.0.1:4318/v1/traces"
+    with pytest.raises(OTelConfigurationError):
+        validate_endpoint("http://collector.example.test/v1/traces")
+    with pytest.raises(OTelConfigurationError):
+        validate_endpoint("https://user:password@collector.example.test/v1/traces", allow_remote=True)
+    with pytest.raises(OTelConfigurationError):
+        validate_endpoint("https://collector.example.test/v1/traces", allow_remote=False)
+    assert validate_endpoint("https://collector.example.test/v1/traces", allow_remote=True).startswith("https://")
+
+
+def test_license_manifest_checker_fails_closed_for_ship_true_without_hash(tmp_path, monkeypatch):
+    import importlib.util
+    import yaml
+
+    script_path = Path(__file__).parents[2] / "scripts" / "check_license_manifest.py"
+    spec = importlib.util.spec_from_file_location("alandi_license_check", script_path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    payload = {
+        "schema_version": 1,
+        "artifacts": [{
+            "id": "unsafe-model", "kind": "tts_voice_weights", "upstream": "https://example.test/model",
+            "source_version": "v1", "license_spdx": "MIT", "commercial_use": "allowed",
+            "sha256": None, "ship": True, "status": "approved"
+        }]
+    }
+    manifest = tmp_path / "provenance_manifest.yaml"
+    manifest.write_text(yaml.safe_dump(payload), encoding="utf-8")
+    monkeypatch.setattr(module, "MANIFEST", manifest)
+    assert module.main() == 1
