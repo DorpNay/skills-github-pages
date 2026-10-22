@@ -15,6 +15,7 @@ from contextlib import closing
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from .conflict import ConflictError, next_status_for_contradiction, validate_relation, validate_status
 from .scope import ScopeError, ScopeRef
@@ -108,11 +109,21 @@ class MemoryManager:
         except (ConflictError, TemporalError) as exc:
             raise MemoryGraphError(str(exc)) from exc
         if source_uri is not None:
-            if not isinstance(source_uri, str) or len(source_uri) > 2048 or not source_uri.startswith("https://"):
-                raise MemoryGraphError("source_uri must be HTTPS when provided")
+            parsed_source = urlsplit(source_uri) if isinstance(source_uri, str) else None
+            if (parsed_source is None or len(source_uri) > 2048 or parsed_source.scheme != "https"
+                    or not parsed_source.hostname or parsed_source.username or parsed_source.password
+                    or any(ord(char) < 32 for char in source_uri)):
+                raise MemoryGraphError("source_uri must be safe HTTPS without embedded credentials")
         source_hash = hashlib.sha256(source_text.encode("utf-8")).hexdigest() if source_text is not None else None
-        metadata = metadata or {}
-        if not isinstance(metadata, dict) or len(_canonical_json(metadata).encode("utf-8")) > self.max_metadata_bytes:
+        if metadata is None:
+            metadata = {}
+        if not isinstance(metadata, dict):
+            raise MemoryGraphError("metadata must be a bounded JSON object")
+        try:
+            metadata_text = _canonical_json(metadata)
+        except (TypeError, ValueError) as exc:
+            raise MemoryGraphError("metadata must contain finite JSON-compatible values") from exc
+        if len(metadata_text.encode("utf-8")) > self.max_metadata_bytes:
             raise MemoryGraphError("metadata must be a bounded JSON object")
         now = _now()
         identifier = node_id or uuid.uuid4().hex
@@ -227,6 +238,8 @@ class MemoryManager:
     def supersede(self, old_node_id: str, new_node_id: str, *, scope: str, scope_id: str,
                   evidence_source_kind: str, evidence_source_id: str) -> None:
         ref = self._scope(scope, scope_id)
+        if evidence_source_kind not in {"message", "document", "tool_result", "user_edit", "system_event"} or not isinstance(evidence_source_id, str) or not evidence_source_id:
+            raise MemoryGraphError("supersede relation provenance is required")
         now = _now()
         with closing(self._connect()) as db:
             db.execute("BEGIN IMMEDIATE")
