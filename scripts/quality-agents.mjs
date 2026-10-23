@@ -48,6 +48,9 @@ const suites = {
       includes('function loadProjects()', 'Project data must have a bounded and validated loader.');
       includes('chat.projectMemoryEnabled&&activeProject', 'Project memory must be opt-in at chat scope.');
       includes('data-action="export-project"', 'Project bundle export must be available.');
+      includes('project.projectId', 'Project associations must be modeled on chats.');
+      includes('projectInstructionContext', 'Project instructions must be included only for the selected project.');
+      includes("safeSet(STORAGE.globalMemoryEnabled,String(event.target.checked))", 'Global memory opt-in toggle must persist explicitly.');
       includes('function importProjectBundle(event)', 'Project bundle import must validate its version and size.');
       includes('data-action="voice-chat-preview"', 'Voice mode chooser must be present without claiming a live voice runtime.');
       includes('async function handleTextAttachment()', 'Text attachments must be size/type bounded and treated as untrusted data.');
@@ -184,7 +187,7 @@ const suites = {
     ['API credentials are user-configured, not hard-coded', () => {
       includes("apiKey: 'ai_api_key'", 'API key storage slot is missing.');
       includes('safeGet(STORAGE.apiKey)', 'API key must be read from user settings.');
-      includes("if(candidate.key)requestHeaders.Authorization=`Bearer ${candidate.key}`", 'Requests must use an optional provider-specific bearer key and omit Authorization for keyless Kilo Free.');
+      includes("...(candidate.key?{'Authorization':`Bearer ${candidate.key}`}:{})", 'Requests must use an optional provider-specific bearer key and omit Authorization for keyless Kilo Free.');
       includes('type="password" id="apiKey"', 'API key field must be masked.');
     }],
     ['untrusted output is not inserted as raw HTML', () => {
