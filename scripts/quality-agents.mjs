@@ -249,7 +249,7 @@ const suites = {
       includes('const MAX_TOOL_CALLS_PER_DEEP_RUN = 8;', 'Deep mode needs a strict total tool-call budget.');
       includes('seenToolCallKeys.has(toolSignature)', 'Duplicate tool calls must be suppressed within a run.');
       includes('round < maxToolRounds && executedToolCalls < maxToolCallsPerRun', 'The final response round must be reserved from additional tool fan-out.');
-      includes('Достигнут лимит последовательных вызовов инструментов', 'Tool-loop exhaustion must be reported explicitly.');
+      includes('Бюджет инструментов исчерпан', 'Tool-loop exhaustion must be reported explicitly.');
     }]
   ],
   build: [
