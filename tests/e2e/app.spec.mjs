@@ -963,7 +963,7 @@ test('Deep mode caps tool fan-out, suppresses repeated calls, and still returns 
         type: 'function',
         function: {
           name: 'read_webpage',
-          arguments: JSON.stringify({ url: 'https://example.com/page-' + modelCalls + '-' + i })
+          arguments: JSON.stringify({ url: 'https://example.com/page-' + (modelCalls===2&&i<3?1:modelCalls) + '-' + i })
         }
       }));
       await route.fulfill({
@@ -1005,5 +1005,5 @@ test('Deep mode caps tool fan-out, suppresses repeated calls, and still returns 
   await expect(page.locator('#chatBox')).toContainText('Completed within the tool budget.', { timeout: 30000 });
   expect(pageReads).toBe(8);
   expect(modelCalls).toBeLessThanOrEqual(5);
-  expect(maxModelToolCalls).toBeGreaterThan(0);
+  expect(maxModelToolCalls).toBe(3);
 });
