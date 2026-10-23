@@ -1,8 +1,8 @@
 project_state:
   version: 4
   reviewed_on: "2026-10-23"
-  last_volley: "V-2026-10-23-ALANDI-CLOUD-UI-PROJECTS"
-  gate: "PR #21 quality sentinels passed on prior head; latest-head Chromium E2E and final Actions must be green before merge; gateway deployment remains unverified"
+  last_volley: "V-2026-10-23-ALANDI-V016-SEARCH"
+  gate: "PR #21 remains open; latest-head quality, Chromium E2E and Lite Gateway tests must be green before merge; gateway deployment remains unverified"
   source_of_truth:
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
@@ -31,7 +31,19 @@ project_state:
     voice_runtime_live: false
     hardware_benchmark_8gb: "not run; no reference host in CI"
 
+current_v016_track:
+  source_state_hash: "implemented prototype; includes index.md; fingerprint is not a signature or safety proof"
+  intel_triad_gate: "offline completeness and URL-shape checks; no live license/URL/hash verification"
+  latency_budget: "target-only contract; no target-hardware measurements"
+  risk_router: "typed local policy prototype; not integrated into live request path"
+  web_search_fallback: "bounded keyless public-source fallback implemented; latest-head browser E2E pending"
+
 improvements:
+  AI-STATE-001b: {status: "implemented_source_fingerprint_not_signature", artifact: "scripts/manifest_state.py; gateway/tests/test_v016_foundation.py", eval: "EV-STATE-001"}
+  AI-INTEL-001: {status: "offline_provenance_triad_gate_prototype", artifact: "scripts/check_intel_triad.py; intel/RECON.yaml", eval: "EV-INTEL-001"}
+  AI-LATENCY-001: {status: "target_budget_contract_unmeasured", artifact: "latency/budget_v2.yaml", eval: "EV-VOICE-002"}
+  AI-ROUTER-001: {status: "typed_policy_prototype_not_runtime_integrated", artifact: "router/policy.py; gateway/tests/test_v016_foundation.py", eval: "EV-ROUTER-001"}
+  AI-SEARCH-001: {status: "keyless_public_source_fallback_e2e_pending", artifact: "index.md; tests/e2e/app.spec.mjs", eval: "EV-SEARCH-001"}
   AI-VOICE-001: {status: "conditional_interface_only", artifact: "gateway/voice/native_core_interface.py", eval: "EV-VOICE-001", benchmark: "pending"}
   AI-VOICE-002: {status: "prototype", artifact: "gateway/voice/cpocket.py", eval: "EV-CPOCKET-001"}
   AI-VOICE-003: {status: "target_unmeasured", artifact: "docs/LATENCY_CONTRACT.md", eval: "EV-VOICE-002"}
