@@ -11,7 +11,7 @@
 | V-2026-10-23-PROVIDER-SMOKE-CONSENT | 2026-10-23 | PR #25 requires explicit live-smoke consent (default false) and supports per-provider model override variables | Merged at `9006c7ed8737174e73c615504eb80362f4673949`; quality, Chromium, Pages smoke and provenance passed | Live provider smoke was not dispatched; no account availability claim |
 | V-2026-10-23-MEMORY-FTS5-SEARCH | 2026-10-23 | PR #26 adds bounded scope-filtered FTS5 search, confirmed-only default, delete triggers, legacy backfill and capability-gated secure-delete | Merged at `cbc5e19b14c5d464782108b4f0534faac88290c2`; Gateway/provenance/quality/Chromium/Pages passed | Module-level retrieval only; not whole-system crypto-erasure |
 | V-2026-10-23-MEMORY-GRAPH-API | 2026-10-23 | PR #27 adds authenticated feature-flagged single-owner graph API for candidate creation, search/list, explicit review, relations/supersede and scoped delete | Merged at `653febb01e2f9887dfec8116bf81f26f39e5077a`; post-merge Gateway/provenance/full quality/Pages passed | API not connected to browser localStorage; double opt-in for global scope; no multi-user ACL |
-| V-2026-10-23-CPOCKET-RUNBOOK | 2026-10-23 | cPocket bounds cleanup registration and continues after cleanup RuntimeError/CancelledError; from-zero guide documents memory API, current model/fallback behaviour and experiment limits | PR #28 current-head CI pending | No live audio runtime, target-host FD soak or gateway/VPS deploy is claimed |
+| V-2026-10-23-CPOCKET-RUNBOOK | 2026-10-23 | cPocket bounds cleanup registration and continues after cleanup RuntimeError/CancelledError; from-zero guide documents memory API, current model/fallback behaviour and experiment limits | PR #28 merged at e424d353; Gateway, Quality Sentinels, provenance and Pages passed on post-merge main | No live audio runtime, target-host FD soak or gateway/VPS deploy is claimed |
 
 ## Required fields for future entries
 
@@ -22,3 +22,5 @@
 - Accepted/rejected assumptions and remaining blockers
 - Rollback method
 - Whether the change is merely merged, or has been activated and verified on the target runtime
+
+| V-2026-10-23-MEMORY-BROWSER-BRIDGE | 2026-10-23 | Browser UI manually transfers local project facts as server candidates, reviews/deletes graph facts, and retrieves confirmed server facts only with two per-chat opt-ins | PR #29 implementation commits 7e5c8a7 / 6954d06; current-head CI pending | No live gateway activation; global memory remains disabled; no automatic migration |
