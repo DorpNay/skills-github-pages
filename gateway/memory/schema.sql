@@ -33,6 +33,29 @@ CREATE INDEX IF NOT EXISTS idx_memory_nodes_valid_time
 CREATE INDEX IF NOT EXISTS idx_memory_nodes_source
     ON memory_nodes(scope, scope_id, source_kind, source_id);
 
+-- FTS5 is a lexical index only. Every search still joins to the canonical scoped rows.
+CREATE VIRTUAL TABLE IF NOT EXISTS fts_memory USING fts5(
+    id UNINDEXED, content, content='memory_nodes', content_rowid='rowid'
+);
+
+CREATE TRIGGER IF NOT EXISTS trg_memory_nodes_fts_insert
+AFTER INSERT ON memory_nodes BEGIN
+    INSERT INTO fts_memory(rowid, id, content) VALUES (new.rowid, new.id, new.content);
+END;
+
+CREATE TRIGGER IF NOT EXISTS trg_memory_nodes_fts_delete
+AFTER DELETE ON memory_nodes BEGIN
+    INSERT INTO fts_memory(fts_memory, rowid, id, content)
+    VALUES ('delete', old.rowid, old.id, old.content);
+END;
+
+CREATE TRIGGER IF NOT EXISTS trg_memory_nodes_fts_update
+AFTER UPDATE OF id, content ON memory_nodes BEGIN
+    INSERT INTO fts_memory(fts_memory, rowid, id, content)
+    VALUES ('delete', old.rowid, old.id, old.content);
+    INSERT INTO fts_memory(rowid, id, content) VALUES (new.rowid, new.id, new.content);
+END;
+
 CREATE TABLE IF NOT EXISTS memory_edges (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     source_node TEXT NOT NULL REFERENCES memory_nodes(id) ON DELETE CASCADE,

@@ -24,6 +24,7 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 | AI-MEM-002 | Bitemporal memory | gateway/memory/temporal.py | Timestamp semantics and graph fields; not yet used by frontend |
 | AI-MEM-003 | Scope isolation | gateway/memory/scope.py | Prototype; no public graph API |
 | AI-MEM-004 | Conflict/supersede | gateway/memory/conflict.py | Explicit relations; no automatic winner selection |
+| AI-MEM-005 | Scoped FTS5 memory retrieval | gateway/memory/manager.py + gateway/tests/test_coder_packet.py | Prototype only; exact-scope filters, confirmed-only defaults, bounded terms and indexed deletion; not public API wiring |
 | AI-RAG-001 | Low-cost graph-assisted RAG | gateway/rag/lazy_graph_rag.py | FTS5+lexical baseline, not full LazyGraphRAG |
 | AI-RAG-002 | RAG-Anything multimodal | Future gateway/rag/rag_anything.py | Conditional; not installed |
 | AI-RAG-003 | Exact citations | gateway/rag/citations.py | Offset/hash validation; parser offsets pending |
@@ -39,6 +40,7 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 | AI-UI-002 | Authenticated memory/source viewer | Gateway contracts + frontend placeholders | Deferred until authenticated scoped memory/source API is implemented and tested |
 | AI-UI-003 | Home UX, bilingual controls, clock/theme and adaptive composer | index.md | **Partial** — Chromium E2E passed for core controls; voice menu remains preview-only; full translation/accessibility/mobile matrix still pending |
 | AI-PROVIDER-001 | Cloud-first settings and provider recovery | index.md + tests/e2e/app.spec.mjs | **Frontend implementation** — real completion probe, stale-state invalidation, single-flight probe, paste-triggered model catalog check and bounded same-provider model fallback; PR #21 full Chromium E2E passed |
+| AI-PROVIDER-002 | Explicit live provider smoke consent | .github/workflows/provider-smoke-all.yml + scripts/provider-smoke-all.mjs | Live smoke requires explicit confirmation (default false), supports per-provider model overrides, and is not considered a live account test until manually dispatched with consent; PR #25 quality/provenance CI passed |
 | AI-PROJECT-001 | Project CRUD, scope isolation and project bundle I/O | index.md + tests/e2e/app.spec.mjs | **Frontend implementation** — localStorage prototype only; server-side project/memory isolation and deletion propagation are not yet implemented |
 | AI-STATE-001b | Deterministic source-state fingerprint | scripts/manifest_state.py + gateway/tests/test_v016_foundation.py | **Prototype implemented** — sorted path/content hashes; index.md included; not a signature |
 | AI-INTEL-001 | Artifact provenance triad | scripts/check_intel_triad.py + intel/RECON.yaml | **Offline gate prototype** — rejects placeholders; no live URL/license/hash verification |

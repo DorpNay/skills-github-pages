@@ -99,6 +99,20 @@
 - **Rollback:** вернуть `performTavilySearch` к явной ошибке без fallback; `public_knowledge_search` остаётся отдельным инструментом.
 - **Связи:** `index.md`, `tests/e2e/app.spec.mjs`, EV-SEARCH-001.
 
+## D-010 — Scoped FTS5 retrieval for the memory graph; no crypto-erasure claims
+
+- **Status:** Accepted for prototype; public UI/API wiring and physical-erasure SLA deferred.
+- **Problem:** Search the existing SQLite memory graph without a new embedding/vector dependency or crossing chat/project/global boundaries.
+- **Decision:** Use an external-content FTS5 index with insert/update/delete triggers. `search_nodes()` bounds and quotes literal terms, filters exact `(scope, scope_id)`, defaults to confirmed nodes and supports temporal filters. Recursive deletion updates FTS through delete triggers.
+- **Deletion boundary:** `PRAGMA secure_delete=ON` applies to ordinary SQLite b-tree pages; FTS5 `secure-delete=1` is enabled only with SQLite >= 3.42.0 and a verified setting. These are defense-in-depth settings, not cryptographic erasure and do not clear external copies, WAL/journal files, snapshots or backups.
+- **Acceptance:** CI covers scope isolation, confirmed-only defaults, query parsing, index/delete consistency, legacy index rebuild and capability-gated secure-delete.
+- **Alternatives rejected:** embeddings before a representative quality/performance bake-off; rebuilding the entire index on every startup.
+- **Reversal cost:** medium; schema and query adapter can be reverted, index rebuilt from canonical nodes.
+- **Owner:** aLandi project owner / agent implementer.
+- **Kill criteria:** stale scoped results, unavailable FTS5, or resource cost outside the target profile. Disable search while retaining canonical rows and scoped list APIs.
+- **Rollback:** revert query/triggers in a reviewed migration; preserve canonical memory nodes.
+- **Links:** `gateway/memory/manager.py`, `gateway/memory/schema.sql`, `gateway/tests/test_coder_packet.py`, EV-MEM-005.
+
 ## Global release rules
 
 - Feature flag выключен до прохождения eval и review.

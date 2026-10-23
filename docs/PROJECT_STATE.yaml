@@ -1,8 +1,8 @@
 project_state:
   version: 4
   reviewed_on: "2026-10-23"
-  last_volley: "V-2026-10-23-ALANDI-PROVIDER-SMOKE-CONSENT"
-  gate: "Main is 0ae1ed1892380562d148574abc2d2cd64e5abe9d; PR #24 RAG checks and post-merge Quality, Lite Gateway, provenance and Pages deployment passed; PR #25 provider-smoke consent checks pending; live gateway/VPS remains unverified"
+  last_volley: "V-2026-10-23-MEMORY-FTS5-SEARCH"
+  gate: "Main is 9006c7ed8737174e73c615504eb80362f4673949 after PR #25; PR #24 RAG and PR #25 consent-gate PR-head CI passed, including Chromium and published Pages smoke. PR #26 memory FTS5 search is under current-head validation; live provider smoke and gateway/VPS remain unverified."
   source_of_truth:
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
@@ -65,6 +65,7 @@ improvements:
   AI-MEM-002: {status: "bitemporal_primitives_not_in_frontend", artifact: "gateway/memory/temporal.py", eval: "EV-MEM-002"}
   AI-MEM-003: {status: "scoped_manager_prototype", artifact: "gateway/memory/scope.py", eval: "EV-MEM-003"}
   AI-MEM-004: {status: "explicit_conflicts_no_auto_winner", artifact: "gateway/memory/conflict.py", eval: "EV-MEM-004"}
+  AI-MEM-005: {status: "scoped_fts5_memory_search_prototype_gateway_tests_passed_not_api_wired", artifact: "gateway/memory/manager.py; gateway/memory/schema.sql", eval: "EV-MEM-005"}
   AI-RAG-001: {status: "fts5_lexical_graph_not_full_lazygraphrag", artifact: "gateway/rag/lazy_graph_rag.py", eval: "EV-RAG-001"}
   AI-RAG-002: {status: "conditional_not_installed", artifact: "gateway/rag/rag_anything.py", eval: "EV-RAG-002"}
   AI-RAG-003: {status: "citation_hash_offset_primitives", artifact: "gateway/rag/citations.py", eval: "EV-RAG-003"}
@@ -80,6 +81,7 @@ improvements:
   AI-UI-002: {status: "project_and_global_memory_opt_in_client_side_backend_deferred", artifact: "index.md; gateway/memory/scope.py", eval: "EV-UI-003"}
   AI-UI-003: {status: "partial_bilingual_theme_clock_composer_voice_preview_e2e_passed", artifact: "index.md", eval: "EV-UI-004"}
   AI-PROVIDER-001: {status: "cloud_first_provider_recovery_e2e_passed_gateway_unconfigured", artifact: "index.md", eval: "EV-PROVIDER-UI-001"}
+  AI-PROVIDER-002: {status: "live_smoke_explicit_consent_guard_ci_passed_not_dispatched", artifact: ".github/workflows/provider-smoke-all.yml; scripts/provider-smoke-all.mjs", eval: "EV-PROVIDER-001"}
   AI-PROJECT-001: {status: "browser_local_crud_and_scope_e2e_passed_backend_deferred", artifact: "index.md; tests/e2e/app.spec.mjs", eval: "EV-PROJECT-001"}
   AI-AGENT-001: {status: "logical_roles_not_process_swarm", artifact: "docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md", eval: "EV-AGENT-001"}
   AI-AGENT-002: {status: "limited_existing_routing", artifact: "gateway/tools/dag_engine.py", eval: "EV-AGENT-002"}
