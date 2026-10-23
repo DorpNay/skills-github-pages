@@ -1118,13 +1118,20 @@ permalink: /
       try{
         const bundle=JSON.parse(await file.text());
         if(bundle?.format!=='alandi-project-bundle'||bundle?.version!==1||!bundle.project||typeof bundle.project.name!=='string'||!Array.isArray(bundle.chats)||bundle.chats.length>500)throw new Error('Неверный формат пакета проекта.');
+        if(projects.length>=200)throw new Error('Достигнут предел проектов (200). Сначала удали ненужный проект.');
         const importedChats=bundle.chats.filter(chat=>chat&&typeof chat==='object'&&Array.isArray(chat.messages)).map(chat=>sanitizeImportedProjectChat(chat,''));
-        let target=getProjectForChat();
-        if(!target){
-          const now=new Date().toISOString(),memory=Array.isArray(bundle.project.memory)?bundle.project.memory.filter(v=>v&&typeof v.text==='string').slice(0,500).map(v=>({id:projectIdNew(),text:v.text.slice(0,600),createdAt:String(v.createdAt||now)})):[];
-          target={id:projectIdNew(),name:bundle.project.name.slice(0,100),description:typeof bundle.project.description==='string'?bundle.project.description.slice(0,1000):'',instructions:typeof bundle.project.instructions==='string'?bundle.project.instructions.slice(0,6000):'',memory,createdAt:now,updatedAt:now};
-          projects.unshift(target);
+        if(chats.length+importedChats.length>1000)throw new Error('Импорт превысит безопасный лимит локальных чатов (1000).');
+        const now=new Date().toISOString();
+        const baseName=bundle.project.name.trim().slice(0,78)||'Импортированный проект';
+        const suffix=getUiLanguage()==='en'?' (imported)':' (импорт)';
+        let importedName=(baseName+suffix).slice(0,100),serial=2;
+        while(projects.some(item=>item.name.toLocaleLowerCase()===importedName.toLocaleLowerCase())){
+          const numbered=(getUiLanguage()==='en'?' (imported '+serial+')':' (импорт '+serial+')');
+          importedName=(baseName.slice(0,100-numbered.length)+numbered);serial++;
         }
+        const memory=Array.isArray(bundle.project.memory)?bundle.project.memory.filter(v=>v&&typeof v.text==='string').slice(0,500).map(v=>({id:projectIdNew(),text:v.text.slice(0,600),createdAt:String(v.createdAt||now)})):[];
+        const target={id:projectIdNew(),name:importedName,description:typeof bundle.project.description==='string'?bundle.project.description.slice(0,1000):'',instructions:typeof bundle.project.instructions==='string'?bundle.project.instructions.slice(0,6000):'',memory,createdAt:now,updatedAt:now};
+        projects.unshift(target);
         const seen=new Set(chats.map(chat=>chat.id));
         for(const chat of importedChats){if(seen.has(chat.id))chat.id=projectIdNew();seen.add(chat.id);chat.projectId=target.id;chats.unshift(chat);}
         persistProjects();updateState(chats,chats[0]?.id||currentChatId);renderProjectUI();$('projectManagerDetails').open=true;
