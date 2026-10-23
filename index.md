@@ -102,6 +102,57 @@ permalink: /
     body { background:var(--ui-bg)!important; color:var(--ui-text)!important; }
     #sidebar, header, #searchStatus, footer { background:var(--ui-surface)!important; border-color:var(--ui-border)!important; }
     #settingsModal > .settings-surface { background:var(--ui-surface)!important; border-color:var(--ui-border)!important; }
+    body,button,input,textarea,select { font-family:Inter,"Segoe UI",Roboto,system-ui,-apple-system,BlinkMacSystemFont,sans-serif; }
+    :root { --ui-radius-sm:10px; --ui-radius-md:14px; --ui-radius-lg:20px; }
+    button,input,textarea,select { border-radius:var(--ui-radius-sm); }
+    .settings-surface { border-radius:22px!important; }
+    .settings-subpanel { background:color-mix(in srgb,var(--ui-surface-raised) 86%,transparent); overflow:hidden; }
+    .settings-subpanel > summary::marker,#searchToolsSettings > summary::marker { color:var(--ui-tiffany); }
+    .settings-subpanel[open] > summary,#searchToolsSettings[open] > summary { border-bottom:1px solid var(--ui-border); background:var(--ui-tiffany-soft); }
+    .cloud-card { background:radial-gradient(ellipse at 95% 0%,rgba(104,232,208,.13),transparent 48%),linear-gradient(140deg,var(--ui-surface-raised),var(--ui-surface)); border-color:rgba(104,232,208,.34)!important; box-shadow:0 18px 45px rgba(0,0,0,.14),inset 0 1px rgba(255,255,255,.04); }
+    .cloud-card input { background:var(--ui-bg)!important;color:var(--ui-text)!important;border-color:var(--ui-border)!important; }
+    .cloud-status-indicator { width:12px;height:12px;flex:0 0 12px;margin-top:7px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 5px rgba(239,68,68,.12),0 0 16px rgba(239,68,68,.45); }
+    .cloud-status-indicator[data-state="connected"] { background:#22c55e;box-shadow:0 0 0 5px rgba(34,197,94,.12),0 0 18px rgba(34,197,94,.65); }
+    .cloud-status-indicator[data-state="checking"] { background:#f59e0b;box-shadow:0 0 0 5px rgba(245,158,11,.12),0 0 18px rgba(245,158,11,.45); }
+    .cloud-status-copy { color:var(--ui-danger); }
+    .cloud-status-copy[data-state="connected"] { color:var(--ui-success); }
+    .cloud-status-copy[data-state="checking"] { color:#f59e0b; }
+    .cloud-key-row button,.composer-tool,.header-icon { border-color:var(--ui-border);background:var(--ui-surface-raised);color:var(--ui-text); }
+    .cloud-key-row button:hover,.composer-tool:hover:not(:disabled),.header-icon:hover { border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
+    .app-header { background:var(--ui-surface)!important;border-color:var(--ui-border)!important; }
+    .brand-wordmark { background:linear-gradient(120deg,var(--ui-text),var(--ui-tiffany-bright));color:transparent;background-clip:text;-webkit-background-clip:text;white-space:nowrap; }
+    .brand-subtitle { display:block;font-size:9px;letter-spacing:.06em;color:var(--ui-text-muted);white-space:nowrap; }
+    .clock-face { position:relative;width:54px;height:54px;border:1px solid rgba(104,232,208,.55);border-radius:50%;background:radial-gradient(circle at 35% 22%,rgba(255,255,255,.09),transparent 48%),var(--ui-bg);box-shadow:inset 0 0 12px rgba(104,232,208,.08),0 0 16px rgba(104,232,208,.06);overflow:hidden; }
+    .clock-digital { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:800;font-size:11px;letter-spacing:-.08em;font-variant-numeric:tabular-nums;color:var(--ui-tiffany);opacity:.94;z-index:0; }
+    .clock-hand { position:absolute;left:calc(50% - 1px);bottom:50%;width:2px;border-radius:999px;transform-origin:50% 100%;transform:rotate(0deg);transition:none!important;z-index:2;background:var(--ui-text); }
+    .clock-hour { height:14px;width:3px;left:calc(50% - 1.5px);background:var(--ui-text); }
+    .clock-minute { height:20px;background:var(--ui-tiffany-bright); }
+    .clock-second { height:22px;width:1px;background:#f59e0b; }
+    .clock-pin { position:absolute;left:calc(50% - 2px);top:calc(50% - 2px);width:4px;height:4px;border-radius:50%;background:#f59e0b;z-index:3; }
+    .language-menu { position:relative; }
+    .language-menu summary { list-style:none;cursor:pointer;border:1px solid var(--ui-border);border-radius:10px; }
+    .language-menu summary::-webkit-details-marker { display:none; }
+    .language-menu-panel { position:absolute;right:0;top:calc(100% + 8px);z-index:80;min-width:130px;padding:5px;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:14px;box-shadow:0 16px 36px rgba(0,0,0,.25); }
+    .language-menu-panel button { display:block;width:100%;padding:9px 10px;border-radius:9px;text-align:left;font-size:12px; }
+    .language-menu-panel button[aria-pressed="true"] { color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
+    .header-chat-title { max-width:24vw; }
+    body.composer-centered footer { position:fixed;left:50%;right:auto;top:51%;bottom:auto;width:min(94vw,760px);transform:translate(-50%,-50%);z-index:25;border:1px solid var(--ui-border);border-radius:22px;padding:10px 12px;background:color-mix(in srgb,var(--ui-surface) 87%,transparent)!important;backdrop-filter:blur(24px);box-shadow:0 24px 72px rgba(0,0,0,.25),0 0 32px rgba(104,232,208,.06);transition:top 240ms cubic-bezier(.2,.7,.2,1),opacity 180ms ease,box-shadow 180ms ease; }
+    body.composer-centered footer #inputArea { align-items:center; }
+    body.composer-centered footer #userInput { max-height:min(35vh,320px);overflow-y:auto; }
+    body.composer-centered #chatBox > .text-center { display:none; }
+    body.composer-bottom-transition footer { top:auto;bottom:0;transform:translate(-50%,0); }
+    #inputArea { transition:gap 180ms ease; }
+    #userInput { min-height:44px;max-height:min(35vh,320px); }
+    @media (max-width:639px) {
+      .clock-face { width:46px;height:46px; }
+      .clock-digital { font-size:10px; }
+      .header-chat-title { max-width:22vw; }
+      .brand-subtitle { font-size:8px; }
+      body.composer-centered footer { width:calc(100vw - 16px);padding:8px;border-radius:18px; }
+      body.composer-centered footer #userInput { max-height:30vh; }
+      #voiceUnavailableButton { display:none; }
+    }
+    @media (prefers-reduced-motion:reduce) { body.composer-centered footer { transition:none!important; } }
     #chatBox, #memoryBox { color:var(--ui-text); }
     #sidebar .border-b, #sidebar .border-t, header, footer, #searchStatus { border-color:var(--ui-border)!important; }
     #settingsModal input, #settingsModal textarea, #settingsModal select, #userInput, #memoryInput,
@@ -185,7 +236,32 @@ permalink: /
 
   <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="settings-surface bg-gray-800 p-4 rounded-xl max-w-sm mx-auto w-full border border-gray-700 space-y-2.5 my-auto max-h-[90dvh] overflow-y-auto">
-      <h2 id="settingsTitle" class="text-lg font-bold">⚙️ Настройки</h2>
+      <h2 id="settingsTitle" class="text-lg font-bold" data-i18n="settingsTitle">⚙️ Настройки</h2>
+      <section id="cloudSettingsCard" class="cloud-card rounded-2xl border p-4 space-y-3" aria-labelledby="cloudCardTitle">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="text-[10px] uppercase tracking-[.22em] text-cyan-300 font-bold">aLandi · Cloud</p>
+            <h3 id="cloudCardTitle" class="text-lg font-semibold mt-1">Твоё облако — основной маршрут</h3>
+            <p class="text-xs leading-relaxed text-gray-400 mt-1">Подключи собственный gateway. Сигнал станет зелёным только после настоящего ответа модели.</p>
+          </div>
+          <span class="cloud-status-indicator" id="cloudStatusDot" data-state="disconnected" aria-hidden="true"></span>
+        </div>
+        <p id="cloudStatus" class="cloud-status-copy text-xs" data-state="disconnected" role="status" aria-live="polite">● Нет подтверждённого соединения. Адрес сервиса ещё не задан.</p>
+        <label for="cloudBaseUrl" class="block text-xs text-gray-400">Адрес твоего gateway</label>
+        <input id="cloudBaseUrl" type="url" autocomplete="url" class="w-full p-2.5 rounded-xl border text-sm" placeholder="https://твой-домен.example/v1">
+        <label for="cloudModel" class="block text-xs text-gray-400">Модель gateway</label>
+        <input id="cloudModel" type="text" autocomplete="off" class="w-full p-2.5 rounded-xl border text-sm" value="qwen3.5:4b" placeholder="Точный ID модели на gateway">
+        <label for="cloudApiKey" class="block text-xs text-gray-400">Ключ доступа к твоему gateway</label>
+        <div class="cloud-key-row flex gap-2">
+          <input id="cloudApiKey" type="password" autocomplete="off" class="min-w-0 flex-1 p-2.5 rounded-xl border text-sm" placeholder="Введи ключ gateway">
+          <button type="button" data-action="paste-cloud-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ из буфера обмена">Вставить</button>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" data-action="connect-alandi-cloud" class="rounded-xl bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-semibold text-sm py-2.5">Проверить и подключить</button>
+          <button type="button" data-action="use-kilo-free" class="rounded-xl border border-cyan-800 bg-cyan-950/50 hover:bg-cyan-900/60 text-cyan-100 text-xs py-2.5">Kilo Auto Free</button>
+        </div>
+        <p class="text-[10px] leading-relaxed text-gray-500">Kilo — отдельный внешний шлюз бесплатных моделей: если выбрать его, запросы покидают браузер и передаются Kilo/назначенной модели. Переключение явное; скрытого резервирования на него не будет.</p>
+      </section>
       <section class="rounded-xl border border-gray-700 p-3 space-y-2" aria-label="Внешний вид">
         <h3 class="text-xs font-semibold">Внешний вид</h3>
         <label for="uiTheme" class="block text-xs text-gray-400">Тема</label>
@@ -197,6 +273,9 @@ permalink: /
           <option value="auto">Авто · системные настройки</option><option value="reduced">Уменьшить движение</option><option value="off">Отключить эффекты</option>
         </select>
       </section>
+      <details id="legacyProviderSettings" class="settings-subpanel rounded-xl border border-gray-700">
+        <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none">Сторонние API, ключи и расширенные настройки</summary>
+        <div class="p-3 space-y-3">
       <div class="rounded-lg bg-gray-900 border border-gray-700 p-2.5 text-xs leading-relaxed text-gray-300 space-y-2">
         <p><strong>Быстрый старт:</strong> по умолчанию выбран Gemini. Для альтернатив выберите провайдера и модель ниже; для каждого сервиса нужен свой API-ключ.</p>
         <p><a class="text-blue-300 underline" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Получить ключ Gemini API в Google AI Studio</a>. Создайте ключ и вставьте его в поле API Key ниже.</p>
@@ -205,7 +284,7 @@ permalink: /
       </div>
       <label for="providerPreset" class="block text-xs text-gray-400">Провайдер API</label>
       <select id="providerPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm">
-        <option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="alandi">aLandi Self-hosted Gateway · свой сервер</option><option value="custom">Свой OpenAI-совместимый API</option>
+        <option value="alandi">aLandi · собственный gateway</option><option value="kilo">Kilo AI · Auto Free</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="alandi">aLandi Self-hosted Gateway · свой сервер</option><option value="custom">Свой OpenAI-совместимый API</option>
       </select>
       <label for="modelSearch" class="block text-xs text-gray-400">Поиск по каталогу моделей</label>
       <input type="search" id="modelSearch" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Фильтр по имени или ID модели">
@@ -225,7 +304,7 @@ permalink: /
       <label for="baseUrl" class="block text-xs text-gray-400">Base URL (без /chat/completions)</label>
       <input type="url" id="baseUrl" autocomplete="url" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
       <label for="apiKey" id="apiKeyLabel" class="block text-xs text-gray-400">API Key · ключ провайдера</label>
-      <div id="apiKeyShell" class="api-key-row" data-state="empty"><span class="key-lamp" aria-hidden="true"></span><input type="password" id="apiKey" autocomplete="off" aria-describedby="apiKeyStatus" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Вставьте ключ провайдера"></div>
+      <div id="apiKeyShell" class="api-key-row" data-state="empty"><span class="key-lamp" aria-hidden="true"></span><input type="password" id="apiKey" autocomplete="off" aria-describedby="apiKeyStatus" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Вставьте ключ провайдера"><button type="button" data-action="paste-provider-key" class="shrink-0 rounded-md border border-gray-700 px-2 py-1 text-[11px] text-gray-300" title="Вставить ключ из буфера обмена">Вставить</button></div>
       <p id="apiKeyStatus" class="text-[11px] leading-relaxed text-gray-400" role="status" aria-live="polite">Серый — ключ не введён; янтарный — ключ задан, но не проверен; зелёный — последняя проверка прошла.</p>
       <div id="pollinationsAuthGroup" class="hidden rounded-lg border border-cyan-900/60 bg-cyan-950/20 p-3 space-y-2">
         <p class="text-[11px] leading-relaxed text-cyan-100/90">Для браузерного приложения Pollinations рекомендует App Key <code>pk_…</code> и OAuth PKCE. Временный ключ доступа <code>sk_…</code> хранится только в sessionStorage текущей вкладки, не в localStorage.</p>
@@ -235,8 +314,14 @@ permalink: /
       <div class="flex gap-2"><button type="button" data-action="test-connection" class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение и модель</button><button type="button" data-action="clear-provider-key" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
       <label for="modelName" class="block text-xs text-gray-400">Модель</label>
       <input type="text" id="modelName" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
-      <label for="tavilyKey" class="block text-xs text-gray-400">Tavily Search API Key</label>
-      <input type="password" id="tavilyKey" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
+      <details id="searchToolsSettings" class="rounded-xl border border-gray-700">
+        <summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">Инструменты и веб-поиск</summary>
+        <div class="px-3 pb-3 space-y-2">
+          <p class="text-[11px] leading-relaxed text-gray-400">Веб-поиск уже поддерживает открытые источники. Tavily — дополнительный поисковый провайдер, а не обязательное условие поиска.</p>
+          <label for="tavilyKey" class="block text-xs text-gray-400">Tavily Search API Key · дополнительный</label>
+          <div class="flex gap-2"><input type="password" id="tavilyKey" autocomplete="off" class="min-w-0 flex-1 p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none"><button type="button" data-action="paste-tavily-key" class="rounded-lg border border-gray-700 px-3 text-xs">Вставить</button></div>
+        </div>
+      </details>
       <div class="flex items-center justify-between gap-2"><label for="systemPromptInput" class="block text-xs text-gray-400">Системный промпт</label><span class="text-[10px] text-gray-500">редактирование по кнопке</span></div>
       <div class="prompt-editor"><textarea id="systemPromptInput" rows="4" readonly aria-describedby="promptEditHint" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y"></textarea><button type="button" id="editSystemPrompt" data-action="edit-system-prompt" class="prompt-pencil" aria-pressed="false" aria-label="Редактировать системный промпт" title="Разрешить редактирование">✎</button></div>
       <p id="promptEditHint" class="text-[11px] text-gray-500">Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.</p>
@@ -250,18 +335,35 @@ permalink: /
       <input type="file" id="settingsProfileFile" class="hidden" accept="application/json,.json">
       <p class="text-[10px] leading-relaxed text-gray-500">Профиль переносит настройки, но намеренно не содержит API-ключи и токены. Импорт не меняет уже сохранённые секреты.</p>
       <button type="button" data-action="restore-defaults" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-200">Восстановить параметры Gemini</button>
-      <button type="button" id="recoveryBackupButton" data-action="download-recovery-backup" class="hidden w-full bg-amber-800 hover:bg-amber-700 py-2 rounded text-xs text-amber-50">Скачать резервную копию истории</button>
+        </div>
+      </details>
+      <button type="button" id="recoveryBackupButton data-action="download-recovery-backup" class="hidden w-full bg-amber-800 hover:bg-amber-700 py-2 rounded text-xs text-amber-50">Скачать резервную копию истории</button>
       <button type="button" data-action="save-settings" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded font-bold text-sm">Сохранить</button>
       <button type="button" data-action="close-settings" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-300">Закрыть</button>
     </div>
   </div>
 
-  <header class="px-3 py-2 bg-gray-800 border-b border-gray-700 flex justify-between items-center shrink-0 gap-2">
-    <button type="button" data-action="toggle-sidebar" aria-label="Открыть меню" class="text-xl px-2 py-1">☰</button>
-    <h1 id="activeChatTitle" class="font-bold text-sm truncate flex-1 text-center">Новый чат</h1>
-    <div class="flex items-center gap-2 shrink-0">
-      <span id="pyStatus" class="text-[10px] bg-gray-700 text-gray-300 px-2 py-0.5 rounded" title="Python загрузится только после запуска блока кода">Py: по запросу</span>
-      <button type="button" data-action="toggle-settings" aria-label="Настройки" class="text-xs bg-gray-700 px-2.5 py-1.5 rounded">⚙️</button>
+  <header class="app-header px-3 py-2 border-b flex justify-between items-center shrink-0 gap-2">
+    <button type="button" data-action="toggle-sidebar" aria-label="Открыть меню" class="header-icon text-xl px-2 py-1">☰</button>
+    <div class="brand-cluster flex items-center gap-2 min-w-0">
+      <button type="button" data-action="brand-easter-egg" id="brandWordmark" class="brand-wordmark font-bold text-lg tracking-tight" title="Нажми, чтобы раскрыть ребус">aLandi</button>
+      <div id="aLandiClock" class="clock-shell" aria-label="Местное время">
+        <div class="clock-face" aria-hidden="true"><span class="clock-digital" id="clockDigital">00:00</span><span class="clock-hand clock-hour" id="clockHour"></span><span class="clock-hand clock-minute" id="clockMinute"></span><span class="clock-hand clock-second" id="clockSecond"></span><span class="clock-pin"></span></div>
+        <span id="clockAccessible" class="sr-only" aria-live="off">Местное время</span>
+      </div>
+      <div class="header-chat-title min-w-0"><h1 id="activeChatTitle" class="font-semibold text-xs sm:text-sm truncate">Новый чат</h1><span class="brand-subtitle">i land AI · local-first</span></div>
+    </div>
+    <div class="flex items-center gap-1.5 shrink-0">
+      <details id="languageMenu" class="language-menu">
+        <summary id="languageSummary" aria-label="Язык интерфейса" class="header-icon px-2 py-1.5 text-xs">RU ▾</summary>
+        <div class="language-menu-panel">
+          <button type="button" data-action="set-language" data-language="ru" aria-pressed="true">Русский</button>
+          <button type="button" data-action="set-language" data-language="en" aria-pressed="false">English</button>
+        </div>
+      </details>
+      <button type="button" data-action="toggle-theme-cycle" id="homeThemeToggle" aria-label="Сменить тему" title="Сменить тему" class="header-icon px-2 py-1.5">☼</button>
+      <span id="pyStatus" class="text-[10px] bg-gray-700 text-gray-300 px-2 py-0.5 rounded hidden sm:inline-flex" title="Python загрузится только после запуска блока кода">Py: по запросу</span>
+      <button type="button" data-action="toggle-settings" aria-label="Настройки" class="header-icon px-2.5 py-1.5 rounded-xl">⚙️</button>
     </div>
   </header>
 
@@ -286,7 +388,10 @@ permalink: /
   </div>
   <footer class="px-3 py-2 bg-gray-800/95 border-t border-gray-700 shrink-0 safe-bottom">
     <div class="flex gap-2 items-end" id="inputArea">
-      <textarea id="userInput" rows="1" maxlength="30000" placeholder="Введите сообщение..." aria-label="Сообщение" class="flex-1 min-w-0 bg-gray-900 border border-gray-700 px-3 py-2.5 rounded-xl text-base outline-none resize-none max-h-32" ></textarea>
+      <button type="button" data-action="attach-text-file" id="attachTextButton" aria-label="Прикрепить текстовый файл" title="Прикрепить .txt, .md, .csv, .json или .log" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">＋</button>
+      <input type="file" id="textAttachmentInput" class="hidden" accept=".txt,.md,.csv,.json,.log,text/plain,text/markdown,text/csv,application/json">
+      <textarea id="userInput" rows="1" maxlength="30000" placeholder="Напиши сообщение..." aria-label="Сообщение" data-i18n-placeholder="composerPlaceholder" class="flex-1 min-w-0 bg-gray-900 border border-gray-700 px-3 py-2.5 rounded-xl text-base outline-none resize-none max-h-32"></textarea>
+      <button id="voiceUnavailableButton" type="button" disabled aria-label="Голосовой режим пока не подключён" title="Голосовой runtime ещё не подключён" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5 opacity-50 cursor-not-allowed">◉</button>
       <button id="sendBtn" type="button" data-action="send" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Отправить сообщение">➤</button>
       <button id="stopBtn" type="button" data-action="stop" class="hidden bg-red-600 hover:bg-red-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Остановить генерацию">⏹</button>
     </div>
