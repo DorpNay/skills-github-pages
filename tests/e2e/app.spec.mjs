@@ -40,8 +40,10 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await expect(page.locator('#toggleMultiAgent')).toBeVisible();
 
   await page.getByRole('button', { name: 'Настройки' }).click();
+  await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#settingsModal')).toBeVisible();
-  await expect(page.locator('#providerPreset')).toHaveValue('gemini');
+  await expect(page.locator('#providerPreset')).toHaveValue('alandi');
   await expect(page.locator('#apiKey')).toHaveAttribute('type', 'password');
   await expect(page.locator('#baseUrl')).not.toBeFocused();
   await expect(page.locator('#systemPromptInput')).toHaveAttribute('readonly', '');
@@ -69,6 +71,7 @@ test('published app boots and core controls are interactive', async ({ page }) =
 test('provider keys, Tavily key, and model settings remain isolated across switching and reload', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
 
   await page.locator('#providerPreset').selectOption('groq');
   await expect(page.locator('#apiKey')).toHaveValue('');
@@ -92,6 +95,7 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
 
   await page.reload();
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#providerPreset')).toHaveValue('groq');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-groq-placeholder-not-a-real-key');
   await expect(page.locator('#tavilyKey')).toHaveValue('e2e-tavily-placeholder-not-a-real-key');
@@ -119,6 +123,7 @@ test('API authentication errors are shown without losing the original user promp
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-test-model');
@@ -154,6 +159,7 @@ test('provider connection loads filtered model catalog into selector and key del
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-model');
@@ -187,6 +193,7 @@ test('catalog remains usable when the saved model is missing from the live provi
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('retired-saved-model');
@@ -214,6 +221,7 @@ test('refresh all catalogs updates other configured providers for cross-provider
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => localStorage.setItem('ai_api_key_openrouter', 'e2e-openrouter-catalog-key'));
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('e2e-groq-catalog-key');
   await page.locator('[data-action="save-settings"]').click();
@@ -232,6 +240,7 @@ test('refresh all catalogs updates other configured providers for cross-provider
 test('settings profile exports portable preferences but never API secrets', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#modelName').fill('openai/gpt-oss-120b');
   await page.locator('#apiKey').fill('e2e-private-provider-secret-value');
@@ -258,6 +267,7 @@ test('settings profile exports portable preferences but never API secrets', asyn
 test('settings profile import restores preferences while preserving existing provider and search keys', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('before-import');
@@ -359,6 +369,7 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-trace-model');
@@ -410,6 +421,7 @@ test('multi-agent preference skips a greeting and shows the actual route', async
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-model');
@@ -433,6 +445,7 @@ test('401 stops after the selected provider rejects credentials', async ({ page 
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
@@ -458,6 +471,7 @@ test('transient 503 retries only the same model and never fans out', async ({ pa
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
@@ -485,6 +499,7 @@ test('model-specific failure tries another model on the same provider first', as
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
@@ -495,6 +510,7 @@ test('model-specific failure tries another model on the same provider first', as
   await expect(page.locator('#chatBox')).toContainText('Groq · qwen/qwen3.8-27b');
   await expect.poll(() => attemptedModels.length).toBe(2);
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#providerPreset')).toHaveValue('groq');
   await expect(page.locator('#modelName')).toHaveValue('qwen/qwen3.8-27b');
   await expect(page.locator('#modelPreset')).toHaveValue('qwen/qwen3.8-27b');
@@ -527,6 +543,7 @@ test('dynamic chat catalog is used for bounded same-provider model fallback', as
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-primary-model');
@@ -556,6 +573,7 @@ test('Pollinations catalog discovers text models and aliases without sending a t
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('pollinations');
   await expect(page.locator('#modelPreset option[value="publisher/available-text-model"]')).toHaveCount(1);
   await expect(page.locator('#modelPreset option[value="old-text-model"]')).toHaveCount(1);
@@ -602,6 +620,7 @@ test('Pollinations requests use the OAuth token, not the public App Key', async 
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('pollinations');
   await page.locator('#apiKey').fill('pk_e2e-public-app-key');
   await page.locator('[data-action="save-settings"]').click();
@@ -639,6 +658,7 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('cloudflare');
   await page.locator('#cloudflareAccountId').fill(cloudflareId);
   await expect(page.locator('#baseUrl')).toHaveValue('https://api.cloudflare.com/client/v4/accounts/' + cloudflareId + '/ai/v1');
@@ -659,6 +679,7 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
     });
   });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('huggingface');
   await page.locator('#apiKey').fill('not-a-real-huggingface-token');
   await page.locator('[data-action="save-settings"]').click();
@@ -674,6 +695,7 @@ test('Obsidian Studio and Clean Light preferences persist and respect motion con
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#uiTheme').selectOption('light');
   await page.locator('#uiMotion').selectOption('off');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
@@ -684,6 +706,7 @@ test('Obsidian Studio and Clean Light preferences persist and respect motion con
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#uiTheme').selectOption('dark');
   await page.locator('#uiMotion').selectOption('auto');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -700,4 +723,81 @@ test('agent systems skill is routed on demand and its safety contract stays avai
   expect(skill).toContain('Chat memory is isolated by default');
   expect(skill).toContain('Google Drive requires backend OAuth callback');
   expect(skill).toContain('candidate lesson');
+});
+
+
+test('aLandi cloud status only turns green after a real model response, and core UX controls work', async ({ page }) => {
+  await page.route('https://cloud.example.test/v1/chat/completions', async route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+  }));
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#clockDigital')).toHaveText(/^\\d{2}:\\d{2}$/);
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await page.locator('#cloudBaseUrl').fill('https://cloud.example.test/v1');
+  await page.locator('#cloudModel').fill('qwen3.5:4b');
+  await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await page.locator('[data-action="connect-alandi-cloud"]').click();
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'connected');
+  await expect(page.locator('#cloudStatus')).toContainText('Облако подключено');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_provider'))).toBe('alandi');
+  await page.locator('#languageSummary').click();
+  await page.locator('[data-action="set-language"][data-language="en"]').click();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
+  await page.locator('#homeThemeToggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await page.locator('#homeThemeToggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+});
+
+test('Kilo Auto Free works without a key and is an explicit single-provider route', async ({ page }) => {
+  let authorization = 'not-checked';
+  await page.route('https://api.kilo.ai/api/gateway/chat/completions', async route => {
+    authorization = route.request().headers().authorization || '';
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'kilo-auto/free', choices: [{ message: { role: 'assistant', content: 'Kilo route worked.' } }] })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('kilo');
+  await expect(page.locator('#apiKey')).toHaveValue('');
+  await page.locator('[data-action="test-connection"]').click();
+  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected');
+  expect(authorization).toBe('');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_provider_cross_provider_fallback'))).not.toBe('true');
+});
+
+test('pasting a provider key starts one bounded model-catalog and connection check', async ({ page }) => {
+  let probes = 0;
+  await page.route('https://api.example.test/v1/models', async route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'e2e-paste-model' }, { id: 'e2e-paste-model-2' }] })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    probes++;
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'e2e-paste-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('e2e-paste-model');
+  await page.locator('#apiKey').evaluate(el => {
+    el.value = 'e2e-pasted-key';
+    el.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertFromPaste' }));
+  });
+  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
+  expect(probes).toBeGreaterThanOrEqual(1);
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_key_custom'))).toBe('e2e-pasted-key');
 });
