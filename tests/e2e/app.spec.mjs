@@ -755,8 +755,15 @@ test('aLandi cloud status only turns green after a real model response, and core
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 });
 
-test('Kilo Auto Free works without a key and is an explicit single-provider route', async ({ page }) => {
+test('Kilo Auto Free is an ordinary provider, loads the no-key catalog, and routes anonymously', async ({ page }) => {
   let authorization = 'not-checked';
+  await page.route('https://api.kilo.ai/api/gateway/models', async route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ data: [
+      { id: 'kilo-auto/free', name: 'Auto Free' },
+      { id: 'minimaxai/minimax-m2.7:free', name: 'MiniMax free test option', architecture: { output_modalities: ['text'] } }
+    ] })
+  }));
   await page.route('https://api.kilo.ai/api/gateway/chat/completions', async route => {
     authorization = route.request().headers().authorization || '';
     await route.fulfill({
@@ -770,6 +777,7 @@ test('Kilo Auto Free works without a key and is an explicit single-provider rout
   await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('kilo');
   await expect(page.locator('#kiloPrivacyWarning')).toBeVisible();
+  await expect(page.locator('#modelPreset option[value="minimaxai/minimax-m2.7:free"]')).toHaveCount(1, { timeout: 10000 });
   await expect(page.locator('[data-action="use-kilo-free"]')).toHaveCount(0);
   await expect(page.locator('#apiKey')).toHaveValue('');
   await page.locator('[data-action="test-connection"]').click();
