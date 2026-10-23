@@ -1177,7 +1177,7 @@ permalink: /
       } else if(!initial&&provider!=='custom'){
         $('baseUrl').value=config.baseUrl;
         $('modelName').value=config.models[0][0];
-      } else if(initial&&provider!=='custom'&&!safeGet(STORAGE.baseUrl)) $('baseUrl').value=config.baseUrl;
+      } else if(initial&&!safeGet(STORAGE.baseUrl)) $('baseUrl').value=config.baseUrl;
       $('apiKey').value=safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'';
       const hints={
         alandi:'Частный локальный gateway. Base URL — HTTPS-хост туннеля с окончанием /v1; Model — точный тег Ollama, например qwen3.5:4b. API Key — ALANDI_API_KEY из закрытого файла на VPS. Отключите межпровайдерный fallback, чтобы приватные запросы не отправлялись другим провайдерам.',
@@ -1224,7 +1224,8 @@ permalink: /
       }
 
       $('providerPreset').value=provider;
-      $('baseUrl').value=safeGet(STORAGE.baseUrl)||DEFAULT_BASE_URL;
+      const storedBaseUrl=safeGet(STORAGE.baseUrl);
+      $('baseUrl').value=storedBaseUrl||(provider==='alandi'||provider==='custom'||provider==='cloudflare'?'':(PROVIDERS[provider]?.baseUrl||DEFAULT_BASE_URL));
       $('modelName').value=safeGet(STORAGE.model)||(PROVIDERS[provider]?.models[0]?.[0]||DEFAULT_MODEL);
       applyProviderPreset($('providerPreset').value,true);
       $('modelName').value=safeGet(STORAGE.model)||$('modelName').value;
