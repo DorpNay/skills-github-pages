@@ -121,6 +121,8 @@ jobs:
           exit 1
       - name: Install browser test runtime
         run: |
+          # Avoid the known Ubuntu man-db trigger stall during Playwright --with-deps.
+          sudo apt-get --yes remove --purge man-db
           npm install --no-save --no-package-lock @playwright/test@1.56.1
           npx playwright install --with-deps chromium
       - name: Test the actual published site in Chromium
