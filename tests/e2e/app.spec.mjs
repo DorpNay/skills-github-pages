@@ -1007,3 +1007,21 @@ test('Deep mode caps tool fan-out, suppresses repeated calls, and still returns 
   expect(modelCalls).toBeLessThanOrEqual(5);
   expect(maxModelToolCalls).toBe(3);
 });
+
+
+
+test('aLandi cloud probe rejects HTTP 200 proxy text as proof of a model connection', async ({ page }) => {
+  await page.route('https://cloud.example.test/v1/chat/completions', async route => route.fulfill({
+    status: 200, contentType: 'text/plain; charset=utf-8',
+    body: 'upstream unavailable: invalid route'
+  }));
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#cloudBaseUrl').fill('https://cloud.example.test/v1');
+  await page.locator('#cloudModel').fill('qwen3.5:4b');
+  await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
+  await page.locator('[data-action="connect-alandi-cloud"]').click();
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await expect(page.locator('#cloudStatus')).toContainText('Не удалось подтвердить соединение');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
+});
