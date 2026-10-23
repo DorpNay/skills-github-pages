@@ -1,0 +1,48 @@
+name: License and Artifact Provenance Gate
+
+on:
+  push:
+    paths:
+      - "infra/license/**"
+      - "infra/hardware_profiles.yaml"
+      - "infra/onnx/**"
+      - "evals/voice/**"
+      - "docs/PROJECT_STATE.yaml"
+      - "scripts/check_license_manifest.py"
+      - "scripts/check_project_metadata.py"
+      - "gateway/requirements-dev.txt"
+      - ".github/workflows/license-manifest.yml"
+  pull_request:
+    paths:
+      - "infra/license/**"
+      - "infra/hardware_profiles.yaml"
+      - "infra/onnx/**"
+      - "evals/voice/**"
+      - "docs/PROJECT_STATE.yaml"
+      - "scripts/check_license_manifest.py"
+      - "scripts/check_project_metadata.py"
+      - "gateway/requirements-dev.txt"
+      - ".github/workflows/license-manifest.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  manifest:
+    name: Validate model and voice provenance
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: gateway/requirements-dev.txt
+      - name: Install YAML manifest parser
+        run: python -m pip install PyYAML==6.0.3
+      - name: Validate project state and runtime safety metadata
+        run: python scripts/check_project_metadata.py
+      - name: Validate artifact provenance and ship gates
+        run: python scripts/check_license_manifest.py

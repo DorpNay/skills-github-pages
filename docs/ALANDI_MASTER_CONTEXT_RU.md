@@ -15,6 +15,13 @@
 - Шесть инженерных пластов и критерии eval: [SIX_LAYER_ENGINEERING_RU.md](SIX_LAYER_ENGINEERING_RU.md)
 - Реестр архитектурных решений D-001–D-006: [DECISIONS.md](../DECISIONS.md)
 - Запуск offline smoke eval: [gateway/evals/README_RU.md](../gateway/evals/README_RU.md)
+- Полный имплементационный пакет: [CODER_PACKET.md](CODER_PACKET.md)
+- Формальное состояние улучшений: [PROJECT_STATE.yaml](PROJECT_STATE.yaml)
+- Evaluation registry: [EVALS.md](../EVALS.md)
+- Engineering loop / rollback protocol: [LOOP.md](../LOOP.md)
+- Upstream evidence and licenses: [INTEL.md](../INTEL.md)
+- Voice latency contract: [LATENCY_CONTRACT.md](LATENCY_CONTRACT.md)
+- Accepted improvement backlog: [ACCEPTED_IMPROVEMENTS.md](ACCEPTED_IMPROVEMENTS.md)
 
 ## Подтверждённый статус после merge (21 октября 2026)
 
@@ -29,6 +36,19 @@ PR #18 уже влит в `main` (merge commit `ac342efe29f6b9886425a83d04438ea2
 Код находится в `main`, но не следует делать выводов, что компоненты развернуты на VPS: gateway не обновлялся в этой работе, feature flags остаются выключенными, а реальные OAuth credentials не настроены.
 
 При конфликте источников приоритет: актуальный код и тесты → успешный CI/live-проверка → документация проекта → upstream → сторонние статьи → предположение.
+
+## Новые инженерные прототипы (Coder Packet, 22 октября 2026)
+
+Реализационные файлы и тесты присутствуют в ветке внедрения; перед ссылкой на production всегда проверять текущий merge SHA и Actions:
+- `observability/trace_context.py`: безопасный trace ID и ответный заголовок `X-AI-Trace-ID`; event schema запрещает произвольные атрибуты.
+- `gateway/memory/schema.sql` и `manager.py`: scoped graph, обязательный provenance, valid/recorded time, CONTRADICTS/SUPERSEDES и scoped delete.
+- `gateway/rag/citations.py`, `evidence_ledger.py`: цитаты проверяются по source hash и offsets; ledger локальный и не опубликован как API.
+- `gateway/voice/*`: Tier0 harmless commands, bounded endpoint heuristic, cPocket leases, speculative read-only response buffer и barge-in policy. Нет нативного audio capture/ASR/TTS/AEC runtime.
+- `gateway/tools/*`: JSON Schema, bounded read-only DAG, approval ticket; gateway не исполняет shell commands и не публикует executor.
+- `gateway/security/ssrf_protection.py`: SSRF policy primitive; arbitrary URL fetcher не подключён.
+- `infra/license/provenance_manifest.yaml` and CI: модель не допускается к shipping без artifact SHA-256 и отдельно проверенной лицензии engine/model/voice.
+
+`gateway/requirements-dev.txt` добавляет PyYAML для проверки манифеста и Vulture как report-only статический анализ. `orjson` пока только бенчмарк, `uv` пока metadata candidate: lockfile не считается готовым, пока его не создали в сети с package registry и не проверили. Все прототипы требуют CI и остаются отдельно от live deploy.
 
 ## Обязательные статусы
 

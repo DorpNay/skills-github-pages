@@ -1,0 +1,102 @@
+schema_version: 1
+updated_on: "2026-10-22"
+policy:
+  no_model_downloads_in_git: true
+  require_artifact_sha256_before_shipping: true
+  engine_and_voice_licenses_are_separate: true
+  unknown_or_blocked_license_means_ship_false: true
+artifacts:
+  - id: moonshine-tiny-streaming-en
+    kind: asr_model_weights
+    upstream: "https://github.com/moonshine-ai/moonshine/blob/main/LICENSE"
+    source_version: "pin upstream tag or commit before download"
+    license_spdx: "MIT"
+    commercial_use: "candidate_allowed_subject_to_artifact_hash_and_attribution_review"
+    sha256: null
+    ship: false
+    status: "not_downloaded"
+    notes: "Upstream says streaming and English models are MIT by default; verify model card and exact weights."
+
+  - id: vosk-api
+    kind: asr_runtime_code
+    upstream: "https://github.com/alphacep/vosk-api"
+    source_version: "pin commit before packaging"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice"
+    sha256: null
+    ship: false
+    status: "runtime_not_installed"
+
+  - id: vosk-model-small-ru-0.22
+    kind: asr_model_weights
+    upstream: "https://alphacephei.com/vosk/models"
+    source_version: "vosk-model-small-ru-0.22"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_subject_to_archive_hash_review"
+    sha256: null
+    ship: false
+    status: "not_downloaded"
+    notes: "Model catalogue lists Apache 2.0 and ~45 MB download; calculate SHA-256 on actual archive and unpacked artifacts."
+
+  - id: silero-vad-onnx
+    kind: vad_model_weights
+    upstream: "https://github.com/snakers4/silero-vad"
+    source_version: "pin commit and model asset path"
+    license_spdx: "MIT"
+    commercial_use: "candidate_allowed_with_license_notice"
+    sha256: null
+    ship: false
+    status: "not_downloaded"
+    notes: "VAD license does not cover Silero TTS models."
+
+  - id: silero-tts-models
+    kind: tts_model_weights
+    upstream: "https://github.com/snakers4/silero-models"
+    source_version: "must specify exact model"
+    license_spdx: "UNVERIFIED_ARTIFACT_SPECIFIC_TERMS"
+    commercial_use: "blocked_until_exact_exception_or_license_is_approved"
+    sha256: null
+    ship: false
+    status: "blocked"
+    notes: "Upstream describes non-commercial Community Edition terms for speech-recognition models; this entry is not a claim of one universal Silero TTS SPDX license. Inspect and record the exact selected TTS model's license before consideration."
+
+  - id: piper-engine-current
+    kind: tts_runtime_code
+    upstream: "https://github.com/OHF-Voice/piper1-gpl"
+    source_version: "pin commit and package version"
+    license_spdx: "GPL-3.0-or-later"
+    commercial_use: "legal_review_required_before_distribution"
+    sha256: null
+    ship: false
+    status: "blocked_pending_distribution_review"
+    notes: "Current OHF engine differs from archived rhasspy/piper; do not inherit the archived MIT label."
+
+  - id: piper-ru-voice
+    kind: tts_voice_weights
+    upstream: "https://github.com/OHF-Voice/piper1-gpl/tree/main/voices"
+    source_version: "no voice selected"
+    license_spdx: "TBD_PER_EXACT_MODEL_CARD"
+    commercial_use: "blocked"
+    sha256: null
+    ship: false
+    status: "blocked_until_voice_model_card_review"
+
+  - id: onnx-runtime
+    kind: inference_runtime
+    upstream: "https://github.com/microsoft/onnxruntime"
+    source_version: "not selected"
+    license_spdx: "verify exact release license before adopting"
+    commercial_use: "unreviewed"
+    sha256: null
+    ship: false
+    status: "candidate_not_installed"
+
+  - id: orjson
+    kind: serialization_dependency
+    upstream: "https://github.com/ijl/orjson"
+    source_version: "3.13.0 candidate only"
+    license_spdx: "MPL-2.0 AND (Apache-2.0 OR MIT)"
+    commercial_use: "candidate_subject_to_license_and_benchmark_review"
+    sha256: null
+    ship: false
+    status: "not_added_to_runtime"

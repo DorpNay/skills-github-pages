@@ -435,10 +435,19 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
     app = FastAPI(title="aLandi Lite Gateway", version="0.1.0",
                   docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
     app.state.settings = config
+    try:
+        from ..observability.trace_context import TraceContextMiddleware
+    except ImportError:
+        try:
+            from observability.trace_context import TraceContextMiddleware
+        except ImportError:
+            TraceContextMiddleware = None
+    if TraceContextMiddleware is not None:
+        app.add_middleware(TraceContextMiddleware)
     app.add_middleware(CORSMiddleware, allow_origins=list(config.cors_origins),
                        allow_credentials=False, allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
-                       allow_headers=["Authorization", "Content-Type", "Accept", "Cache-Control", "X-AI-Cache-Bypass"],
-                       expose_headers=["X-AI-Cache", "X-AI-Route"], max_age=600)
+                       allow_headers=["Authorization", "Content-Type", "Accept", "Cache-Control", "X-AI-Cache-Bypass", "X-AI-Trace-ID", "traceparent"],
+                       expose_headers=["X-AI-Cache", "X-AI-Route", "X-AI-Trace-ID"], max_age=600)
 
     @app.get("/healthz")
     async def healthz(request: Request) -> JSONResponse:

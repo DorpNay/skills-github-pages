@@ -1,0 +1,85 @@
+project_state:
+  version: 4
+  reviewed_on: "2026-10-22"
+  last_volley: "V-CODER-PACKET-FOUNDATIONS"
+  gate: "current PR Actions results govern code acceptance; gateway deployment remains unverified"
+  source_of_truth:
+    - "docs/PROJECT_STATE.yaml"
+    - "EVALS.md"
+    - "DECISIONS.md"
+    - "LOOP.md"
+    - "INTEL.md"
+    - "docs/CODER_PACKET.md"
+    - "docs/ACCEPTED_IMPROVEMENTS.md"
+  repository: "https://github.com/DorpNay/skills-github-pages"
+  public_client: "https://dorpnay.github.io/skills-github-pages/"
+  deployment:
+    pages: "published; unrelated to gateway deployment"
+    gateway_vps: "not verified by this change; do not claim deployed"
+    experimental_feature_flags: "false by default"
+    google_oauth_credentials_configured: false
+    voice_runtime_live: false
+    hardware_benchmark_8gb: "not run; no reference host in CI"
+
+improvements:
+  AI-VOICE-001: {status: "conditional_interface_only", artifact: "gateway/voice/native_core_interface.py", eval: "EV-VOICE-001", benchmark: "pending"}
+  AI-VOICE-002: {status: "prototype", artifact: "gateway/voice/cpocket.py", eval: "EV-CPOCKET-001"}
+  AI-VOICE-003: {status: "target_unmeasured", artifact: "docs/LATENCY_CONTRACT.md", eval: "EV-VOICE-002"}
+  AI-VOICE-004: {status: "read_only_prototype", artifact: "gateway/voice/speculative_transaction.py", eval: "EV-SPEC-001"}
+  AI-VOICE-005: {status: "candidate_license_review_pending", artifact: "evals/voice/language_matrix_v2.yaml", eval: "EV-LANG-001"}
+  AI-VOICE-006: {status: "decision_module_not_live", artifact: "gateway/voice/tier_router.py", eval: "EV-VOICE-003"}
+  AI-VOICE-007: {status: "policy_only_no_native_aec", artifact: "gateway/voice/barge_in.py", eval: "EV-VOICE-004"}
+  AI-VOICE-008: {status: "proposed_experiment", artifact: "gateway/voice/endpoint_heuristic.py", eval: "EV-ENDPOINT-001"}
+  AI-INFRA-001: {status: "optional_manual_path_no_vm_created", artifact: "docs/INFRASTRUCTURE_UPGRADE.md", eval: "EV-INFRA-001"}
+  AI-INFRA-002: {status: "manual_instructions_no_dns_changed", artifact: "docs/DOMAIN_SETUP.md", eval: "EV-INFRA-002"}
+  AI-INFRA-003: {status: "target_profile_unmeasured", artifact: "infra/hardware_profiles.yaml", eval: "EV-HW-001"}
+  AI-CODE-001: {status: "report_only", artifact: ".github/workflows/dead-code-check.yml", eval: "EV-CODE-001"}
+  AI-CODE-002: {status: "deferred_until_benchmark", artifact: "gateway/evals/serialization_benchmark.py", eval: "EV-CODE-002"}
+  AI-CODE-003: {status: "deferred_until_uv_lock_review", artifact: "pyproject.toml", eval: "EV-CODE-003"}
+  AI-OBS-001: {status: "prototype_integrated_in_gateway", artifact: "observability/trace_context.py", eval: "EV-OBS-001"}
+  AI-OBS-002: {status: "optional_disabled", artifact: "observability/otel_config.py", eval: "EV-OBS-002"}
+  AI-OBS-003: {status: "event_schema_only_ui_deferred", artifact: "observability/events.schema.json", eval: "EV-UI-001"}
+  AI-MEM-001: {status: "sqlite_prototype", artifact: "gateway/memory/schema.sql", eval: "EV-MEM-001"}
+  AI-MEM-002: {status: "bitemporal_primitives_not_in_frontend", artifact: "gateway/memory/temporal.py", eval: "EV-MEM-002"}
+  AI-MEM-003: {status: "scoped_manager_prototype", artifact: "gateway/memory/scope.py", eval: "EV-MEM-003"}
+  AI-MEM-004: {status: "explicit_conflicts_no_auto_winner", artifact: "gateway/memory/conflict.py", eval: "EV-MEM-004"}
+  AI-RAG-001: {status: "fts5_lexical_graph_not_full_lazygraphrag", artifact: "gateway/rag/lazy_graph_rag.py", eval: "EV-RAG-001"}
+  AI-RAG-002: {status: "conditional_not_installed", artifact: "gateway/rag/rag_anything.py", eval: "EV-RAG-002"}
+  AI-RAG-003: {status: "citation_hash_offset_primitives", artifact: "gateway/rag/citations.py", eval: "EV-RAG-003"}
+  AI-RAG-004: {status: "local_evidence_ledger_not_api_exposed", artifact: "gateway/rag/evidence_ledger.py", eval: "EV-RAG-004"}
+  AI-TOOLS-001: {status: "blocked_no_container_sandbox", artifact: "sandbox/cli_sandbox.py", eval: "EV-SANDBOX-001"}
+  AI-TOOLS-002: {status: "bounded_dag_prototype_no_default_tools", artifact: "gateway/tools/dag_engine.py", eval: "EV-TOOLS-001"}
+  AI-TOOLS-003: {status: "schema_validation_prototype", artifact: "gateway/tools/validator.py", eval: "EV-TOOLS-002"}
+  AI-TOOLS-004: {status: "ssrf_policy_helper_only", artifact: "gateway/security/ssrf_protection.py", eval: "EV-SEC-001"}
+  AI-TOOLS-005: {status: "approval_ticket_primitive_no_ui", artifact: "gateway/security/approval_gates.py", eval: "EV-SEC-002"}
+  AI-LICENSE-001: {status: "manifest_and_ci_gate_prototype_no_voice_shipped", artifact: "infra/license/provenance_manifest.yaml", eval: "EV-LICENSE-001"}
+  AI-UI-001: {status: "deferred", artifact: "docs/CODER_PACKET.md", eval: "EV-UI-002"}
+  AI-UI-002: {status: "deferred_until_authenticated_memory_api", artifact: "docs/CODER_PACKET.md", eval: "EV-UI-003"}
+  AI-UI-003: {status: "deferred", artifact: "docs/CODER_PACKET.md", eval: "EV-UI-004"}
+  AI-AGENT-001: {status: "logical_roles_not_process_swarm", artifact: "docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md", eval: "EV-AGENT-001"}
+  AI-AGENT-002: {status: "limited_existing_routing", artifact: "gateway/tools/dag_engine.py", eval: "EV-AGENT-002"}
+  AI-AGENT-003: {status: "bounded_dag_prototype", artifact: "gateway/tools/dag_engine.py", eval: "EV-AGENT-003"}
+  AI-LEARN-001: {status: "governance_only_no_self_modification", artifact: "LOOP.md", eval: "EV-LEARN-001"}
+  AI-LEARN-002: {status: "versioned_skill_rollback_deferred", artifact: "LOOP.md", eval: "EV-LEARN-002"}
+
+rejected_improvements:
+  - id: AI-CUT-001
+    title: "Universal wake-word latency guarantee"
+    reason: "Requires measured target hardware and cannot be promised from a paper design."
+  - id: AI-CUT-002
+    title: "Silero TTS as commercial default"
+    reason: "Most models in the upstream repository are non-commercial; exact exceptions must be individually verified."
+  - id: AI-CUT-003
+    title: "Pure Python raw PCM hotpath"
+    reason: "Raw audio should remain in native capture/inference subsystem; Python consumes bounded events."
+  - id: AI-CUT-004
+    title: "Cloud ASR/TTS fallback"
+    reason: "Violates the default local-first voice privacy contract."
+
+blocked_items:
+  - id: BLK-RU-TTS-COMMERCIAL
+    reason: "Exact Russian voice model card, artifact checksum and license approval required."
+  - id: BLK-NATIVE-BENCH
+    reason: "No native audio backend or reference 8GB hardware measurement."
+  - id: BLK-CLI-SANDBOX
+    reason: "No tested container/seccomp/Landlock implementation or escape test evidence."

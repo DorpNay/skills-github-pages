@@ -1,0 +1,33 @@
+[project]
+name = "alandi-ai-mobile-agent"
+version = "10.0.0"
+description = "Local-first AI Mobile Agent and private Ollama gateway"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi==0.128.2",
+  "httpx==0.28.1",
+  "uvicorn==0.48.0",
+  "cryptography==50.0.2",
+  "jsonschema==4.26.0",
+]
+
+[dependency-groups]
+dev = [
+  "pytest==9.0.2",
+  "pytest-asyncio==1.4.0",
+  "PyYAML==6.0.3",
+  "vulture==2.16",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["gateway/tests"]
+addopts = "-ra"
+asyncio_mode = "auto"
+
+[tool.vulture]
+paths = ["gateway", "observability"]
+exclude = ["**/tests/**"]
+min_confidence = 90

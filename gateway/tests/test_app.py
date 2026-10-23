@@ -221,3 +221,60 @@ def test_truncated_response_is_never_cached():
         assert first.headers["x-ai-cache"] == "MISS"
         assert second.headers["x-ai-cache"] == "MISS"
         assert len(calls) == 2
+
+
+def test_cors_allows_trace_propagation_headers_for_configured_frontend():
+    client = TestClient(create_app(settings(), transport=transport()))
+    response = client.options(
+        "/healthz",
+        headers={
+            "Origin": "https://dorpnay.github.io",
+            "Access-Control-Request-Method": "GET",
+            "Access-Control-Request-Headers": "x-ai-trace-id,traceparent",
+        },
+    )
+    assert response.status_code == 200
+    allowed = response.headers["access-control-allow-headers"].lower()
+    assert "x-ai-trace-id" in allowed
+    assert "traceparent" in allowed
+
+
+def test_trace_context_header_is_validated_generated_and_exposed():
+    client = TestClient(create_app(settings(), transport=transport()))
+    with client:
+        generated = client.get("/healthz")
+        generated_id = generated.headers["x-ai-trace-id"]
+        assert len(generated_id) == 32
+        assert generated_id != "0" * 32
+
+        propagated = client.get("/healthz", headers={"X-AI-Trace-ID": "0123456789abcdef0123456789abcdef"})
+        assert propagated.headers["x-ai-trace-id"] == "0123456789abcdef0123456789abcdef"
+
+        # Malformed external IDs must not be trusted or echoed.
+        malformed = client.get("/healthz", headers={"X-AI-Trace-ID": "not-a-trace-id"})
+        assert malformed.headers["x-ai-trace-id"] != "not-a-trace-id"
+        assert len(malformed.headers["x-ai-trace-id"]) == 32
+
+
+def test_trace_context_accepts_valid_w3c_traceparent_and_drops_sensitive_attributes():
+    from observability.trace_context import (
+        bind_trace_id, get_trace_id, make_trace_event, reset_trace_id, trace_id_from_traceparent
+    )
+
+    trace_id = "0123456789abcdef0123456789abcdef"
+    header = f"00-{trace_id}-0123456789abcdef-01"
+    assert trace_id_from_traceparent(header) == trace_id
+    assert trace_id_from_traceparent("00-" + "0" * 32 + "-0123456789abcdef-01") is None
+
+    bound, token = bind_trace_id(trace_id)
+    try:
+        assert get_trace_id() == bound
+        event = make_trace_event("request_complete", "gateway", {
+            "http_method": "GET", "http_status": 200, "component": "gateway",
+            "prompt": "private text", "request_body": "secret", "outcome": "ok",
+        })
+        assert event is not None and event.trace_id == trace_id
+        assert event.attributes == {"http_method": "GET", "http_status": 200,
+                                    "component": "gateway", "outcome": "ok"}
+    finally:
+        reset_trace_id(token)
