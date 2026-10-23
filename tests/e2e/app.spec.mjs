@@ -1368,13 +1368,34 @@ test('server project memory bridge is manual and requires both chat opt-ins', as
   expect(searchCalls).toBe(0);
   expect(capturedBodies[0].messages[0].content).not.toContain('SERVER_MEMORY_SENTINEL');
 
+  // Project-memory opt-in alone must not invoke the server graph.
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#projectMemoryToggle').check();
+  await page.locator('[data-action="close-sidebar"]').click();
+  await page.locator('#userInput').fill('Use only local project memory.');
+  await page.locator('#sendBtn').click();
+  await expect.poll(() => capturedBodies.length).toBe(2);
+  expect(searchCalls).toBe(0);
+  expect(capturedBodies[1].messages[0].content).toContain('SERVER_MEMORY_SENTINEL');
+
+  // Server-memory opt-in alone must not retrieve server context or bypass project opt-in.
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectMemoryToggle').uncheck();
   await page.locator('#serverProjectMemoryToggle').check();
+  await page.locator('[data-action="close-sidebar"]').click();
+  await page.locator('#userInput').fill('Server memory is opted in but project memory is not.');
+  await page.locator('#sendBtn').click();
+  await expect.poll(() => capturedBodies.length).toBe(3);
+  expect(searchCalls).toBe(0);
+  expect(capturedBodies[2].messages[0].content).not.toContain('SERVER_MEMORY_SENTINEL');
+
+  // Only both opt-ins together allow retrieval of confirmed server facts.
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectMemoryToggle').check();
   await page.locator('[data-action="close-sidebar"]').click();
   await page.locator('#userInput').fill('Use the approved server project memory.');
   await page.locator('#sendBtn').click();
-  await expect.poll(() => capturedBodies.length).toBe(2);
+  await expect.poll(() => capturedBodies.length).toBe(4);
   expect(searchCalls).toBe(1);
-  expect(capturedBodies[1].messages[0].content).toContain('SERVER_MEMORY_SENTINEL');
+  expect(capturedBodies[3].messages[0].content).toContain('SERVER_MEMORY_SENTINEL');
 });
