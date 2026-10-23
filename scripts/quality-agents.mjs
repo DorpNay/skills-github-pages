@@ -90,6 +90,13 @@ const suites = {
       const allSmokeWorkflow = readFileSync(resolve(root, '.github/workflows/provider-smoke-all.yml'), 'utf8');
       const allSmokeRunner = readFileSync(resolve(root, 'scripts/provider-smoke-all.mjs'), 'utf8');
       assert.ok(allSmokeRunner.includes("config.id === 'pollinations' && /^pk_/i.test(secret)"), 'Pollinations browser App Keys must not be used as server smoke credentials.');
+      assert.ok(allSmokeWorkflow.includes('confirm_live_requests:'), 'Live provider smoke must declare an explicit confirmation input.');
+      assert.ok(allSmokeWorkflow.includes('default: false'), 'Live provider smoke confirmation must default to unchecked.');
+      assert.ok(allSmokeWorkflow.includes('if: ${{ inputs.confirm_live_requests == true }}'), 'Live provider probes must run only after affirmative confirmation.');
+      assert.ok(allSmokeWorkflow.includes('if: ${{ inputs.confirm_live_requests != true }}'), 'Unconfirmed dispatches must report that no live requests were sent.');
+      for (const provider of ['GEMINI', 'GROQ', 'XAI', 'POLLINATIONS', 'OPENROUTER', 'NVIDIA', 'HUGGINGFACE', 'CLOUDFLARE']) {
+        assert.ok(allSmokeWorkflow.includes('MODEL_OVERRIDE_' + provider + ': ${{ vars.MODEL_OVERRIDE_' + provider), 'Provider smoke workflow must expose the optional model override variable for ' + provider + '.');
+      }
       includes("const DEFAULT_MODEL = 'gemini-3.8-flash'", 'Default Gemini model must match the current official catalogue.');
       for (const alias of ['secrets.GEMINI ||', 'secrets.GROQ ||', 'secrets.GROK }', 'secrets.POLLINATIONS ||', 'secrets.OPENROUTER ||', 'secrets.NVIDIA ||', 'secrets.HUGGINGFACE ||', 'secrets.CLOUDFLARE }']) {
         assert.ok(allSmokeWorkflow.includes(alias), 'All-provider smoke workflow is missing secret alias: ' + alias);

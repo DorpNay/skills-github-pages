@@ -3,11 +3,11 @@ name: Provider smoke test — all configured secrets
 on:
   workflow_dispatch:
     inputs:
-      note:
-        description: Optional note for this validation run
-        required: false
-        type: string
-        default: ''
+      confirm_live_requests:
+        description: "Confirm one real completion request per configured provider; may consume quota and sends a short test prompt to external services."
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -17,7 +17,23 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  no_live_requests:
+    if: ${{ inputs.confirm_live_requests != true }}
+    name: Skip live requests unless explicitly confirmed
+    runs-on: ubuntu-latest
+    steps:
+      - name: Explain why no live requests ran
+        run: |
+          echo "::notice title=Live requests skipped::The explicit confirmation checkbox was not checked."
+          {
+            echo "## Provider smoke test not run"
+            echo
+            echo "The **Confirm live requests** checkbox was not checked."
+            echo "No provider endpoint was contacted and no provider quota was intentionally consumed."
+          } >> "$GITHUB_STEP_SUMMARY"
+
   smoke:
+    if: ${{ inputs.confirm_live_requests == true }}
     name: Test every configured AI provider
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -38,6 +54,14 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN || secrets.HUGGINGFACE_API_KEY || secrets.HUGGINGFACE || secrets.HUGGING_FACE || secrets.HF }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CLOUDFLARE_API_KEY || secrets.CLOUDFLARE_TOKEN || secrets.CLOUDFLARE }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || secrets.CF_ACCOUNT_ID || secrets.CF_ID }}
+          MODEL_OVERRIDE_GEMINI: ${{ vars.MODEL_OVERRIDE_GEMINI || '' }}
+          MODEL_OVERRIDE_GROQ: ${{ vars.MODEL_OVERRIDE_GROQ || '' }}
+          MODEL_OVERRIDE_XAI: ${{ vars.MODEL_OVERRIDE_XAI || '' }}
+          MODEL_OVERRIDE_POLLINATIONS: ${{ vars.MODEL_OVERRIDE_POLLINATIONS || '' }}
+          MODEL_OVERRIDE_OPENROUTER: ${{ vars.MODEL_OVERRIDE_OPENROUTER || '' }}
+          MODEL_OVERRIDE_NVIDIA: ${{ vars.MODEL_OVERRIDE_NVIDIA || '' }}
+          MODEL_OVERRIDE_HUGGINGFACE: ${{ vars.MODEL_OVERRIDE_HUGGINGFACE || '' }}
+          MODEL_OVERRIDE_CLOUDFLARE: ${{ vars.MODEL_OVERRIDE_CLOUDFLARE || '' }}
         run: node scripts/provider-smoke-all.mjs
 
       - name: Check secret-safe workflow output
