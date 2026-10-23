@@ -1825,6 +1825,14 @@ permalink: /
       if(isTestingProviderConnection)return;
       const provider=currentProvider(),baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),key=provider==='kilo'?'':(provider==='pollinations'?getProviderRequestKey(provider):($('apiKey').value.trim()||getProviderRequestKey(provider))),model=$('modelName').value.trim();
       const initialKeyInput=$('apiKey').value.trim();
+      const initialCloudSettings=provider==='alandi'?getCloudSettings():null;
+      const isPrimaryCloudSettingsCurrent=()=>{
+        if(!initialCloudSettings)return false;
+        const current=getCloudSettings();
+        return current.baseUrl===initialCloudSettings.baseUrl
+          &&current.model===initialCloudSettings.model
+          &&current.key===initialCloudSettings.key;
+      };
       const isProviderProbeContextCurrent=()=>{
         const liveEffectiveKey=provider==='kilo'?'':(provider==='pollinations'?getProviderRequestKey(provider):($('apiKey').value.trim()||getProviderRequestKey(provider)));
         return provider===currentProvider()
@@ -1902,11 +1910,12 @@ permalink: /
         $('modelName').value=result.candidateModel;safeSet(STORAGE.model,result.candidateModel);safeSet(STORAGE.provider,provider);safeSet(STORAGE.baseUrl,baseUrl);
         if(key){safeSet(providerKeyStorage(provider),key);if(provider==='gemini')safeSet(STORAGE.apiKey,key);}
         safeSet('ai_provider_connection_'+provider,JSON.stringify({ok:true,baseUrl,model:result.candidateModel,keyFingerprint:fingerprint,requestedModel:model,testedAt:new Date().toISOString()}));
-        if(provider==='alandi'&&key){
+        if(provider==='alandi'&&key&&isPrimaryCloudSettingsCurrent()){
           safeSet('ai_alandi_cloud_base_url',baseUrl);safeSet('ai_alandi_cloud_model',result.candidateModel);
           safeSet('ai_alandi_cloud_connection_v1',JSON.stringify({ok:true,baseUrl,model:result.candidateModel,keyFingerprint:fingerprint,testedAt:new Date().toISOString()}));
           if($('cloudBaseUrl')){$('cloudBaseUrl').value=baseUrl;$('cloudModel').value=result.candidateModel;$('cloudApiKey').value=key;}
-          setCloudStatus('connected','Облако отвечает: успешная проверка модели подтверждена.');
+          // A model probe alone is not the full cloud-card health check; never show green before refreshCloudStatus validates /healthz.
+          setCloudStatus('checking','Модель ответила. Проверяю health-check gateway…');
         }
         if(result.candidateModel!==model)populateModelPresets(provider,result.candidateModel);
         updateApiKeyLamp('connected','Зелёный — модель '+result.candidateModel+' успешно ответила; соединение подтверждено.');
