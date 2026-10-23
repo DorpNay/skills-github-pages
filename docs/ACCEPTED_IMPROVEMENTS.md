@@ -5,7 +5,7 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 | ID | Subsystem | Decision / artifact | Status |
 |---|---|---|---|
 | AI-VOICE-001 | Native ONNX/Rust hotpath | gateway/voice/native_core_interface.py | **Conditional** — interface only; native runtime and target benchmark missing |
-| AI-VOICE-002 | Transactional cPocket | gateway/voice/cpocket.py | **Prototype** — cleanup/TTL invariants under test |
+| AI-VOICE-002 | Transactional cPocket | gateway/voice/cpocket.py | **Prototype / hardening patch** — bounded cleanup callbacks and failure-resilient rollback; current-head CI pending, no connected voice runtime |
 | AI-VOICE-003 | PT/WW/Natural latency | docs/LATENCY_CONTRACT.md | **Accepted contract** — numbers unmeasured |
 | AI-VOICE-004 | Read-only speculative voice | gateway/voice/speculative_transaction.py | **Prototype** — buffered adapters only |
 | AI-VOICE-005 | RU/EN license-safe matrix | evals/voice/language_matrix_v2.yaml | **Conditional** — artifact hashes pending |

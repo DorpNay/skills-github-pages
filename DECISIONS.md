@@ -124,6 +124,15 @@
 - **Acceptance:** tests prove disabled-by-default behaviour, Bearer auth, candidate-first lifecycle, confirmed-only default search, scope isolation, relation/delete propagation and global double opt-in.
 - **Links:** `gateway/app.py`, `gateway/memory/manager.py`, `gateway/tests/test_app.py`, EV-MEM-006.
 
+## D-012 — cPocket cleanup is bounded and failure-resilient
+
+- **Status:** Accepted for voice prototype; there is no live microphone/native audio runtime.
+- **Problem:** one cleanup callback raising `RuntimeError` or `CancelledError` could prevent later handlers from releasing their resources; registrations had no upper bound.
+- **Decision:** cap one lease at 128 cleanup callbacks, execute rollback handlers in reverse order, record only exception class names, and continue after per-handler exceptions including `CancelledError`. Preserve idempotent rollback and shield cleanup from caller cancellation.
+- **Acceptance:** deterministic regression tests cover reverse-order execution, mixed cleanup failures, bounded registration, concurrent rollback and caller cancellation.
+- **Remaining evidence:** current-head CI, followed later by a target-host resource/file-descriptor soak and integration with real audio adapters.
+- **Rollback:** revert this helper change or leave voice callers disabled.
+
 ## Global release rules
 
 - Feature flag выключен до прохождения eval и review.

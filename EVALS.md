@@ -22,7 +22,7 @@ The prior gateway baseline passed 37 tests and the deterministic six-layer smoke
 | Eval ID | Scope | Current fixture / command | Acceptance | Status |
 |---|---|---|---|---|
 | EV-VOICE-001 | Native voice core | Future tests/voice/test_native_hotpath_contract.py | No PCM in public event payload; native backend reports bounded metadata | not yet an actual native runtime |
-| EV-CPOCKET-001 | Transactional leases | gateway/tests/test_coder_packet.py | Cleanup exactly once; TTL/barg-in rollback; committed branches do not rollback | CI pending |
+| EV-CPOCKET-001 | Transactional leases | gateway/tests/test_coder_packet.py | Bounded cleanup registrations; cleanup continues after RuntimeError/CancelledError; concurrent rollback runs handlers exactly once; TTL/commit/caller-cancel semantics remain covered | PR #28 current-head CI pending; live voice runtime absent |
 | EV-VOICE-002 | Latency contracts | docs/LATENCY_CONTRACT.md | p50/p95 and false cut from actual 8GB CPU host, >=100 labelled utterances initially | unmeasured |
 | EV-SPEC-001 | Speculative voice | Fake read-only adapters in gateway/tests/test_coder_packet.py | No playback before final transcript; mismatch rolls back; zero write-tool calls | CI pending |
 | EV-LANG-001 | RU/EN ASR/TTS | evals/voice/language_matrix_v2.yaml | Per-language CER/WER, license/hash and memory report | candidate-only |
