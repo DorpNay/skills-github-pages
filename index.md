@@ -483,6 +483,9 @@ permalink: /
       custom: { label: 'Свой API', baseUrl: '', docsUrl: '', models: [['custom','Ввести имя модели вручную']] }
     };
     const MAX_TOOL_ROUNDS = 4;
+    const MAX_TOOL_CALLS_PER_RESPONSE = 8;
+    const MAX_TOOL_CALLS_PER_DEEP_ROUND = 3;
+    const MAX_TOOL_CALLS_PER_DEEP_RUN = 8;
     const FALLBACK_CONTEXT_TOKENS = 16384;
     const MAX_RESEARCH_EVIDENCE = 40;
     const CACHE_TTL_MS = 15 * 60 * 1000;
@@ -2504,21 +2507,31 @@ permalink: /
       ] : undefined;
 
       const maxToolRounds = mode === 'deep' ? MAX_TOOL_ROUNDS : 1;
+      const maxToolCallsPerRound = mode === 'deep' ? MAX_TOOL_CALLS_PER_DEEP_ROUND : 1;
+      const maxToolCallsPerRun = mode === 'deep' ? MAX_TOOL_CALLS_PER_DEEP_RUN : 1;
+      let executedToolCalls = 0, toolBudgetNoticeShown = false;
+      const seenToolCallKeys = new Set();
       for (let round = 0; round <= maxToolRounds; round++) {
         throwIfAborted(signal);
         const apiMessages = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages, systemPrompt.length)];
         const localDeterministic = safeGet(STORAGE.provider)==='alandi' && !useSearch && !useMultiAgent && !tools;
         const body = { model, messages: apiMessages, stream: false, ...(localDeterministic ? {temperature:0} : {}) };
-        if (tools) { body.tools = tools; body.tool_choice = 'auto'; }
+        if (tools && round < maxToolRounds && executedToolCalls < maxToolCallsPerRun) { body.tools = tools; body.tool_choice = 'auto'; }
         showStatus(round === 0 ? '🤖 Ожидание ответа модели…' : '🧠 Модель обрабатывает результаты поиска…');
         const data = await requestChatCompletion(body, signal, round === 0 ? 'Основной ответ' : 'Продолжение после инструмента');
         const message = data?.choices?.[0]?.message;
         if (!message) throw new Error('API не вернул сообщение модели. Проверьте выбранную модель и совместимость endpoint.');
-        const toolCalls = (Array.isArray(message.tool_calls) ? message.tool_calls : []).map((call, index) => ({
+        const returnedToolCalls = Array.isArray(message.tool_calls) ? message.tool_calls : [];
+        const overflowToolCalls = Math.max(0, returnedToolCalls.length - MAX_TOOL_CALLS_PER_RESPONSE);
+        const toolCalls = returnedToolCalls.slice(0, MAX_TOOL_CALLS_PER_RESPONSE).map((call, index) => ({
           ...call,
           id: typeof call.id === 'string' && call.id ? call.id : `local-tool-${round}-${index}-${Date.now()}`,
           type: call.type || 'function'
         }));
+        if (overflowToolCalls > 0 && !toolBudgetNoticeShown) {
+          toolBudgetNoticeShown = true;
+          showToast('Модель запросила слишком много инструментов за один ответ. Лишние вызовы остановлены безопасно.', 'error');
+        }
         const assistantMessage = {
           role: 'assistant', content: typeof message.content === 'string' ? message.content : '',
           ...(toolCalls.length ? { tool_calls: toolCalls } : {})
@@ -2532,20 +2545,27 @@ permalink: /
           if (assistantMessage.content && !useSearch && !skipCache && !useMultiAgent) await CacheDB.set(cacheKey, assistantMessage.content);
           return;
         }
-        if (!useSearch || round === maxToolRounds) {
-          const reason = !useSearch
-            ? 'Инструменты отключены: включите веб-поиск и повторите запрос.'
-            : 'Отклонено: достигнут лимит вызовов инструментов.';
-          toolCalls.forEach((toolCall) => chat.messages.push({ role: 'tool', tool_call_id: toolCall.id, content: reason }));
+        if (!useSearch) {
+          toolCalls.forEach((toolCall) => chat.messages.push({ role: 'tool', tool_call_id: toolCall.id, content: 'Инструменты отключены.' }));
           updateState([...chats]);
-          if (!useSearch) throw new Error('Модель попыталась вызвать инструмент, хотя веб-поиск выключен.');
-          throw new Error('Достигнут лимит последовательных вызовов инструментов. Уточните запрос и повторите.');
+          throw new Error('Модель попыталась вызвать инструмент, хотя веб-поиск выключен.');
+        }
+        if (round === maxToolRounds) {
+          assistantMessage.content = getUiLanguage() === 'en'
+            ? 'The tool budget was exhausted. I stopped further tool execution safely. Please narrow the request or run a new Deep-mode search.'
+            : 'Бюджет инструментов исчерпан. Дальнейшие вызовы остановлены безопасно. Уточни запрос или запусти новый поиск в режиме «Глубоко».';
+          delete assistantMessage.tool_calls;
+          assistantMessage.error = true;
+          updateState([...chats]);
+          hideStatus();
+          return;
         }
 
         for (let index = 0; index < toolCalls.length; index++) {
           const toolCall = toolCalls[index];
           const id = toolCall.id;
           const name = toolCall.function?.name;
+          const toolSignature = String(name || '') + '|' + String(toolCall.function?.arguments || '{}').trim();
           let result;
           if (signal.aborted) {
             result = 'Вызов инструмента отменён пользователем.';
@@ -2558,9 +2578,15 @@ permalink: /
           }
           if (mode === 'fast' && index > 0) {
             result = 'Вызов пропущен: быстрый режим выполняет не более одного инструмента за раунд.';
+          } else if (seenToolCallKeys.has(toolSignature)) {
+            result = 'Повторный идентичный вызов подавлен, чтобы не расходовать бюджет инструментов.';
+          } else if (index >= maxToolCallsPerRound || executedToolCalls >= maxToolCallsPerRun) {
+            result = 'Вызов пропущен: достигнут ограниченный бюджет инструментов для текущего запуска.';
           } else if (!['web_search', 'public_knowledge_search', 'read_webpage'].includes(name)) {
             result = 'Инструмент ' + String(name || 'без имени') + ' не поддерживается.';
           } else {
+            seenToolCallKeys.add(toolSignature);
+            executedToolCalls++;
             try {
               const args = JSON.parse(toolCall.function?.arguments || '{}');
               if (name === 'web_search') {
