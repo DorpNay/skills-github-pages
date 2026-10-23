@@ -39,6 +39,11 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 | AI-UI-003 | Home UX, bilingual controls, clock/theme and adaptive composer | index.md | **Partial** — controls implemented; voice menu is preview-only without a voice runtime; translation/accessibility/mobile coverage still pending |
 | AI-PROVIDER-001 | Cloud-first settings and provider recovery | index.md + tests/e2e/app.spec.mjs | **Frontend implementation** — real completion probe, stale-state invalidation, single-flight probe, paste-triggered model catalog check and bounded same-provider model fallback; latest full E2E pending |
 | AI-PROJECT-001 | Project CRUD, scope isolation and project bundle I/O | index.md + tests/e2e/app.spec.mjs | **Frontend implementation** — localStorage prototype only; server-side project/memory isolation and deletion propagation are not yet implemented |
+| AI-STATE-001b | Deterministic source-state fingerprint | scripts/manifest_state.py + gateway/tests/test_v016_foundation.py | **Prototype implemented** — sorted path/content hashes; index.md included; not a signature |
+| AI-INTEL-001 | Artifact provenance triad | scripts/check_intel_triad.py + intel/RECON.yaml | **Offline gate prototype** — rejects placeholders; no live URL/license/hash verification |
+| AI-LATENCY-001 | Tier0/Tier1 latency budget | latency/budget_v2.yaml | **Target only** — allocations and 15% margin documented; no target-hardware benchmark |
+| AI-ROUTER-001 | Risk-aware route policy | router/policy.py + gateway/tests/test_v016_foundation.py | **Typed prototype** — not connected to live request path; route regret not measured |
+| AI-SEARCH-001 | Keyless web-search recovery | index.md + tests/e2e/app.spec.mjs | **Prototype implemented** — bounded open-source fallback when Tavily is absent/unavailable; latest Chromium E2E pending |
 | AI-AGENT-001/002/003 | 64 logical roles, task routing, budgets | Master context + bounded DAG | Logical contracts; no 64-process swarm |
 | AI-LEARN-001/002 | Eval-gated learning, skill rollback | LOOP.md | Governance protocol; self-modification not implemented |
 
