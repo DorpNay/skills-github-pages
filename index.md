@@ -223,6 +223,37 @@ permalink: /
         <button type="button" data-action="save-memory" class="bg-blue-700 hover:bg-blue-600 px-2 rounded text-xs" aria-label="Сохранить факт">＋</button>
       </div>
       <div id="memoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет сохранённых фактов.</div>
+      <label class="flex items-start gap-2 mt-2 text-[11px] leading-relaxed text-gray-400"><input id="globalMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="globalMemoryOptIn">Разрешить подходящим заметкам глобальной памяти попадать в контекст запросов.</span></label>
+    </section>
+    <section id="projectPanel" class="px-3 py-2 border-t border-gray-800 space-y-2" aria-labelledby="projectsTitle">
+      <h3 id="projectsTitle" class="text-xs font-semibold" data-i18n="projectsTitle">▣ Проекты и проектная память</h3>
+      <label for="currentProjectSelect" class="block text-[11px] text-gray-400" data-i18n="currentProjectLabel">Проект текущего чата</label>
+      <select id="currentProjectSelect" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs"><option value="">Без проекта · личный чат</option></select>
+      <label class="flex items-start gap-2 text-[11px] text-gray-400"><input id="projectMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="projectMemoryOptIn">Использовать память выбранного проекта в этом чате</span></label>
+      <p id="projectSummary" class="text-[10px] leading-relaxed text-gray-500">Чат не привязан к проекту.</p>
+      <details id="projectManagerDetails" class="rounded-xl border border-gray-800">
+        <summary class="cursor-pointer select-none px-3 py-2 text-xs font-semibold" data-i18n="manageProject">Создать или настроить проект</summary>
+        <div class="p-2 space-y-2">
+          <label for="projectNameInput" class="block text-[11px] text-gray-400" data-i18n="projectNameLabel">Название</label>
+          <input id="projectNameInput" type="text" maxlength="100" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Название проекта">
+          <label for="projectInstructionsInput" class="block text-[11px] text-gray-400" data-i18n="projectInstructionsLabel">Инструкции проекта</label>
+          <textarea id="projectInstructionsInput" rows="3" maxlength="6000" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs resize-y" placeholder="Цель, стиль, ограничения и критерии результата"></textarea>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" data-action="create-project" class="bg-cyan-900/70 hover:bg-cyan-800 border border-cyan-800 rounded-lg py-2 text-xs" data-i18n="createProject">＋ Создать проект</button>
+            <button type="button" data-action="save-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="saveProject">Сохранить изменения</button>
+          </div>
+          <label for="projectMemoryInput" class="block text-[11px] text-gray-400" data-i18n="projectMemoryLabel">Добавить факт в память проекта</label>
+          <div class="flex gap-1"><input id="projectMemoryInput" type="text" maxlength="600" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Факт, решение или ограничение"><button type="button" data-action="add-project-memory" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Добавить факт">＋</button></div>
+          <div id="projectMemoryBox" class="max-h-24 overflow-y-auto text-[11px] text-gray-400 space-y-1"></div>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" data-action="export-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="exportProject">Экспорт проекта</button>
+            <button type="button" data-action="import-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="importProject">Импорт проекта</button>
+          </div>
+          <input type="file" id="importProjectFile" class="hidden" accept="application/json,.json">
+          <button type="button" data-action="detach-current-chat" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="detachChat">Извлечь чат из проекта</button>
+          <button type="button" data-action="delete-project" class="w-full bg-red-950/50 hover:bg-red-900/60 border border-red-900/50 rounded-lg py-2 text-xs text-red-200" data-i18n="deleteProject">Удалить проект и его чаты</button>
+        </div>
+      </details>
     </section>
     <div id="chatList" class="flex-1 overflow-y-auto p-3 space-y-2 text-sm" aria-label="Список чатов"></div>
     <div class="p-3 border-t border-gray-800 flex gap-2">
@@ -414,7 +445,7 @@ permalink: /
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
       tavilyKey: 'ai_tavily_key', systemPrompt: 'ai_system_prompt',
-      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider', cloudflareAccountId: 'ai_cloudflare_account_id'
+      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider', cloudflareAccountId: 'ai_cloudflare_account_id', projects: 'ai_projects_v1', globalMemoryEnabled: 'ai_global_memory_enabled_v1'
     };
     const LEGACY_DEFAULT_SYSTEM = 'Ты автономный ИИ-ассистент. Отвечай ясно, проверяй предположения и выдавай структурированные отчёты. Если включён веб-поиск, используй его для актуальной информации.';
     const DEFAULT_SYSTEM = [
@@ -451,6 +482,7 @@ permalink: /
     let chatStorageCorruptNotBackedUp = false;
     let db = null;
     let chats = loadChats();
+    let projects = loadProjects();
     let currentChatId = safeGet(STORAGE.current) || chats[0].id;
     if (!chats.some((chat) => chat.id === currentChatId)) currentChatId = chats[0].id;
     let pyodideInstance = null;
@@ -588,8 +620,8 @@ permalink: /
         return false;
       }
     }
-    function createChat(title = 'Новый чат', messages = []) {
-      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages };
+    function createChat(title = 'Новый чат', messages = [], projectId = null) {
+      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false };
     }
     function preserveUnreadableChats(rawText) {
       if (!rawText) return;
@@ -627,6 +659,8 @@ permalink: /
           .map((item) => ({
             id: item.id.slice(0, 128),
             title: typeof item.title === 'string' ? item.title.slice(0, 160) : 'Новый чат',
+            projectId: typeof item.projectId === 'string' ? item.projectId.slice(0, 128) : null,
+            projectMemoryEnabled: item.projectMemoryEnabled === true,
             messages: item.messages.filter((m) => m && ['user', 'assistant', 'tool'].includes(m.role)).map((m) => ({
               role: m.role,
               content: typeof m.content === 'string' ? m.content : '',
