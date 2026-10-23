@@ -987,6 +987,132 @@ permalink: /
       box.appendChild(fragment);
       scrollToBottom(true);
     }
+    function loadProjects(){
+      try{
+        const raw=JSON.parse(safeGet(STORAGE.projects)||'[]');
+        if(!Array.isArray(raw))return [];
+        return raw.filter(p=>p&&typeof p==='object'&&typeof p.id==='string'&&typeof p.name==='string').slice(0,200).map(p=>({
+          id:p.id.slice(0,128),name:p.name.slice(0,100),description:typeof p.description==='string'?p.description.slice(0,1000):'',
+          instructions:typeof p.instructions==='string'?p.instructions.slice(0,6000):'',
+          memory:Array.isArray(p.memory)?p.memory.filter(v=>v&&typeof v.id==='string'&&typeof v.text==='string').slice(0,500).map(v=>({id:v.id.slice(0,128),text:v.text.slice(0,600),createdAt:String(v.createdAt||'')})):[],
+          createdAt:String(p.createdAt||''),updatedAt:String(p.updatedAt||'')
+        }));
+      }catch(_){return [];}
+    }
+    function persistProjects(){
+      if(!safeSet(STORAGE.projects,JSON.stringify(projects)))showToast('Проекты не удалось сохранить в локальном хранилище. Экспортируй важные данные.','error');
+    }
+    function getProjectForChat(chat=getCurrentChat()){
+      return chat?.projectId ? projects.find(project=>project.id===chat.projectId)||null : null;
+    }
+    function projectIdNew(){return globalThis.crypto?.randomUUID?.()||('p-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10));}
+    function renderProjectUI(options={}){
+      const select=$('currentProjectSelect');if(!select)return;
+      const active=document.activeElement;
+      const preserveDraft=options.preserveDraft===true&&[ $('projectNameInput'),$('projectInstructionsInput') ].includes(active);
+      const chat=getCurrentChat(),project=getProjectForChat(chat);
+      const selected=chat?.projectId&&project?project.id:'';
+      select.replaceChildren();
+      const none=document.createElement('option');none.value='';none.textContent=getUiLanguage()==='en'?'No project · personal chat':'Без проекта · личный чат';select.appendChild(none);
+      for(const item of projects){const option=document.createElement('option');option.value=item.id;option.textContent=item.name;select.appendChild(option);}
+      select.value=selected;
+      $('projectMemoryToggle').checked=chat?.projectMemoryEnabled===true;
+      $('projectMemoryToggle').disabled=!project;
+      $('projectSummary').textContent=project
+        ? (getUiLanguage()==='en'?project.name+' · '+chats.filter(c=>c.projectId===project.id).length+' chats · '+project.memory.length+' memory items':project.name+' · чатов: '+chats.filter(c=>c.projectId===project.id).length+' · фактов памяти: '+project.memory.length)
+        : (getUiLanguage()==='en'?'This chat is not linked to a project.':'Чат не привязан к проекту.');
+      if(!preserveDraft){$('projectNameInput').value=project?.name||'';$('projectInstructionsInput').value=project?.instructions||'';}
+      const memBox=$('projectMemoryBox');memBox.replaceChildren();
+      if(!project||!project.memory.length){
+        const empty=document.createElement('p');empty.textContent=project?(getUiLanguage()==='en'?'No project memories yet.':'Пока нет фактов проектной памяти.'):(getUiLanguage()==='en'?'Select or create a project first.':'Сначала выбери или создай проект.');memBox.appendChild(empty);
+      }else{
+        for(const fact of project.memory){
+          const row=document.createElement('div');row.className='flex items-start gap-1.5';
+          const text=document.createElement('span');text.className='min-w-0 flex-1 break-words';text.textContent='• '+fact.text;
+          const del=document.createElement('button');del.type='button';del.dataset.action='delete-project-memory';del.dataset.memoryId=fact.id;del.className='text-red-300 px-1';del.setAttribute('aria-label',getUiLanguage()==='en'?'Delete project memory':'Удалить факт проектной памяти');del.textContent='×';
+          row.append(text,del);memBox.appendChild(row);
+        }
+      }
+      $('globalMemoryToggle').checked=safeGet(STORAGE.globalMemoryEnabled)==='true';
+    }
+    function createProject(){
+      const input=$('projectNameInput'),name=input.value.trim().slice(0,100);
+      if(!name){input.focus();showToast(getUiLanguage()==='en'?'Enter a project name first.':'Сначала введи название проекта.','error');return;}
+      if(projects.length>=200){showToast('Достигнут предел локальных проектов (200).','error');return;}
+      const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectInstructionsInput').value.trim().slice(0,6000),memory:[],createdAt:now,updatedAt:now};
+      projects.unshift(project);persistProjects();
+      const chat=getCurrentChat();chat.projectId=project.id;chat.projectMemoryEnabled=false;
+      persistChats();renderProjectUI();renderChatList();
+      showToast((getUiLanguage()==='en'?'Project created: ':'Создан проект: ')+name);
+    }
+    function saveProject(){
+      const project=getProjectForChat();
+      if(!project){showToast(getUiLanguage()==='en'?'Choose a project first.':'Сначала выбери проект.','error');return;}
+      const name=$('projectNameInput').value.trim().slice(0,100);
+      if(!name){showToast('Название проекта не может быть пустым.','error');return;}
+      project.name=name;project.instructions=$('projectInstructionsInput').value.trim().slice(0,6000);project.updatedAt=new Date().toISOString();
+      persistProjects();renderProjectUI();renderChatList();
+      showToast(getUiLanguage()==='en'?'Project instructions saved.':'Инструкции проекта сохранены.');
+    }
+    function moveCurrentChatToProject(projectId){
+      const chat=getCurrentChat(),target=projectId?projects.find(project=>project.id===projectId):null;
+      if(projectId&&!target){showToast('Проект не найден.','error');renderProjectUI();return;}
+      if(chat.projectId===(target?.id||null))return;
+      chat.projectId=target?.id||null;chat.projectMemoryEnabled=false;
+      persistChats();renderProjectUI();renderChatList();
+      showToast(target?(getUiLanguage()==='en'?'Chat moved to ':'Чат добавлен в проект: ')+target.name:(getUiLanguage()==='en'?'Chat removed from its project.':'Чат извлечён из проекта.'));
+    }
+    function addProjectMemory(){
+      const project=getProjectForChat(),input=$('projectMemoryInput'),text=input.value.trim().slice(0,600);
+      if(!project){showToast(getUiLanguage()==='en'?'Choose a project first.':'Сначала выбери проект.','error');return;}
+      if(!text){input.focus();return;}
+      if(project.memory.length>=500){showToast('Достигнут предел памяти проекта (500 записей).','error');return;}
+      project.memory.push({id:projectIdNew(),text,createdAt:new Date().toISOString()});project.updatedAt=new Date().toISOString();
+      input.value='';persistProjects();renderProjectUI();
+    }
+    function deleteProjectMemory(id){
+      const project=getProjectForChat();if(!project)return;
+      project.memory=project.memory.filter(item=>item.id!==id);project.updatedAt=new Date().toISOString();persistProjects();renderProjectUI();
+    }
+    function deleteCurrentProject(){
+      const project=getProjectForChat();if(!project){showToast('Сначала выбери проект.','error');return;}
+      const count=chats.filter(c=>c.projectId===project.id).length;
+      const msg=getUiLanguage()==='en'?'Delete project "'+project.name+'" and '+count+' chats? This cannot be undone.':'Удалить проект «'+project.name+'» вместе с '+count+' чатами? Это действие нельзя отменить.';
+      if(!confirm(msg))return;
+      chats=chats.filter(chat=>chat.projectId!==project.id);if(!chats.length)chats=[createChat()];
+      if(!chats.some(chat=>chat.id===currentChatId))currentChatId=chats[0].id;
+      projects=projects.filter(item=>item.id!==project.id);persistProjects();updateState(null,currentChatId);renderProjectUI();
+      showToast(getUiLanguage()==='en'?'Project and its chats deleted.':'Проект и его чаты удалены.');
+    }
+    function exportProjectBundle(){
+      const project=getProjectForChat();if(!project){showToast(getUiLanguage()==='en'?'Choose a project first.':'Сначала выбери проект.','error');return;}
+      const bundle={format:'alandi-project-bundle',version:1,exportedAt:new Date().toISOString(),project:{id:project.id,name:project.name,description:project.description,instructions:project.instructions,memory:project.memory,createdAt:project.createdAt,updatedAt:project.updatedAt},chats:chats.filter(chat=>chat.projectId===project.id)};
+      const blob=new Blob([JSON.stringify(bundle,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),anchor=document.createElement('a');
+      anchor.href=url;anchor.download='alandi-project-'+project.name.toLowerCase().replace(/[^a-z0-9а-яё_-]+/gi,'-').slice(0,48)+'.json';document.body.appendChild(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    }
+    function sanitizeImportedProjectChat(chat,projectId){
+      return {id:String(chat.id||projectIdNew()).slice(0,128),title:typeof chat.title==='string'?chat.title.slice(0,160):'Импортированный чат',projectId,projectMemoryEnabled:false,
+        messages:Array.isArray(chat.messages)?chat.messages.filter(m=>m&&['user','assistant','tool'].includes(m.role)).slice(0,10000).map(m=>({role:m.role,content:typeof m.content==='string'?m.content.slice(0,30000):'',...(typeof m.tool_call_id==='string'?{tool_call_id:m.tool_call_id.slice(0,200)}:{}),...(Array.isArray(m.tool_calls)?{tool_calls:m.tool_calls}:{}),...(m.error?{error:true}:{})})):[]};
+    }
+    async function importProjectBundle(event){
+      const file=event.target.files?.[0];event.target.value='';if(!file)return;
+      if(file.size>15*1024*1024){showToast('Файл проекта больше 15 МБ.','error');return;}
+      try{
+        const bundle=JSON.parse(await file.text());
+        if(bundle?.format!=='alandi-project-bundle'||bundle?.version!==1||!bundle.project||typeof bundle.project.name!=='string'||!Array.isArray(bundle.chats)||bundle.chats.length>500)throw new Error('Неверный формат пакета проекта.');
+        const importedChats=bundle.chats.filter(chat=>chat&&typeof chat==='object'&&Array.isArray(chat.messages)).map(chat=>sanitizeImportedProjectChat(chat,''));
+        let target=getProjectForChat();
+        if(!target){
+          const now=new Date().toISOString(),memory=Array.isArray(bundle.project.memory)?bundle.project.memory.filter(v=>v&&typeof v.text==='string').slice(0,500).map(v=>({id:projectIdNew(),text:v.text.slice(0,600),createdAt:String(v.createdAt||now)})):[];
+          target={id:projectIdNew(),name:bundle.project.name.slice(0,100),description:typeof bundle.project.description==='string'?bundle.project.description.slice(0,1000):'',instructions:typeof bundle.project.instructions==='string'?bundle.project.instructions.slice(0,6000):'',memory,createdAt:now,updatedAt:now};
+          projects.unshift(target);
+        }
+        const seen=new Set(chats.map(chat=>chat.id));
+        for(const chat of importedChats){if(seen.has(chat.id))chat.id=projectIdNew();seen.add(chat.id);chat.projectId=target.id;chats.unshift(chat);}
+        persistProjects();updateState(chats,chats[0]?.id||currentChatId);renderProjectUI();$('projectManagerDetails').open=true;
+        showToast(getUiLanguage()==='en'?'Imported '+importedChats.length+' chats into '+target.name+'.':'Импортировано чатов в проект «'+target.name+'»: '+importedChats.length+'.');
+      }catch(error){showToast('Импорт проекта не выполнен: '+String(error.message||error).slice(0,180),'error');}
+    }
     function renderChatList() {
       const list = $('chatList');
       list.replaceChildren();
@@ -999,7 +1125,9 @@ permalink: /
         const open = document.createElement('button');
         open.type = 'button'; open.dataset.action = 'switch-chat'; open.dataset.chatId = chat.id;
         open.className = 'text-left truncate font-medium text-sm flex-1 min-w-0';
-        open.textContent = chat.title || 'Новый чат';
+        const project=chat.projectId?projects.find(item=>item.id===chat.projectId):null;
+        open.textContent = (project?'▣ ':'')+(chat.title || 'Новый чат');
+        if(project)open.title=(getUiLanguage()==='en'?'Project: ':'Проект: ')+project.name;
         const remove = document.createElement('button');
         remove.type = 'button'; remove.dataset.action = 'delete-chat'; remove.dataset.chatId = chat.id;
         remove.className = 'text-gray-500 hover:text-red-400 p-1 shrink-0'; remove.setAttribute('aria-label', `Удалить чат ${chat.title || ''}`);
@@ -1027,7 +1155,7 @@ permalink: /
       }
       if (nextCurrentId && chats.some((chat) => chat.id === nextCurrentId)) currentChatId = nextCurrentId;
       if (!chats.some((chat) => chat.id === currentChatId)) currentChatId = chats[0].id;
-      persistChats(); renderChatList(); renderActiveChat();
+      persistChats(); renderChatList(); renderActiveChat(); renderProjectUI({preserveDraft:true});
     }
     function toggleSidebar(force) {
       const sidebar = $('sidebar'); const overlay = $('sidebarOverlay');
