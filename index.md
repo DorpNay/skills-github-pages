@@ -1077,16 +1077,16 @@ permalink: /
     }
     async function loadServerProjectMemory(){
       const project=getProjectForChat();if(!project){setServerMemoryStatus(memoryUiText('serverMemoryNoProject'));return;}setServerMemoryStatus(memoryUiText('serverMemoryLoading'));
-      try{const q=new URLSearchParams({scope:'project',scope_id:project.id,statuses:'all',limit:'100'});const payload=await memoryGraphRequest('nodes?'+q.toString());if(getProjectForChat()?.id!==project.id)return;
+      try{const q=new URLSearchParams({scope:'project',scope_id:project.id,statuses:'all',limit:'500'});const payload=await memoryGraphRequest('nodes?'+q.toString());if(getProjectForChat()?.id!==project.id)return;
         const nodes=Array.isArray(payload.nodes)?payload.nodes.filter(node=>node&&node.scope==='project'&&node.scope_id===project.id):[];serverMemoryRenderedScopeId=project.id;renderServerMemoryNodes(nodes);setServerMemoryStatus(memoryUiText('serverMemoryLoaded')+nodes.length);
       }catch(error){setServerMemoryStatus(String(error.message||error).slice(0,200));showToast('Не удалось загрузить серверную память.','error');}
     }
     async function uploadLocalProjectMemory(){
       const project=getProjectForChat();if(!project){setServerMemoryStatus(memoryUiText('serverMemoryNoProject'));return;}if(!project.memory.length){showToast('В локальной памяти проекта нет фактов для передачи.','error');return;}setServerMemoryStatus(memoryUiText('serverMemoryLoading'));
-      try{const q=new URLSearchParams({scope:'project',scope_id:project.id,statuses:'all',limit:'100'});const payload=await memoryGraphRequest('nodes?'+q.toString());const existing=new Set((Array.isArray(payload.nodes)?payload.nodes:[]).map(node=>String(node.source_id||'')));let created=0,skipped=0;
-        for(const fact of project.memory.slice(0,100)){const sourceId='alandi-browser-project:'+project.id.slice(0,100)+':'+fact.id.slice(0,100);if(existing.has(sourceId)){skipped++;continue;}
+      try{const q=new URLSearchParams({scope:'project',scope_id:project.id,statuses:'all',limit:'500'});const payload=await memoryGraphRequest('nodes?'+q.toString());const existing=new Set((Array.isArray(payload.nodes)?payload.nodes:[]).map(node=>String(node.source_id||'')));let created=0,skipped=0,deferred=0;
+        for(const fact of project.memory){const sourceId='alandi-browser-project:'+project.id.slice(0,100)+':'+fact.id.slice(0,100);if(existing.has(sourceId)){skipped++;continue;}if(created>=100){deferred++;continue;}
           await memoryGraphRequest('nodes',{method:'POST',body:{content:fact.text,scope:'project',scope_id:project.id,source_kind:'user_edit',source_id:sourceId,node_type:'FACT',confidence:1,sensitivity:'normal',metadata:{origin:'browser_project_memory'}}});existing.add(sourceId);created++;}
-        await loadServerProjectMemory();setServerMemoryStatus(memoryUiText('serverMemoryUploadDone')+' Новых: '+created+'; уже было: '+skipped+'.');showToast('Передано кандидатов: '+created+'; пропущено повторов: '+skipped+'.');
+        await loadServerProjectMemory();setServerMemoryStatus(memoryUiText('serverMemoryUploadDone')+' Новых: '+created+'; уже было: '+skipped+'; отложено до следующего нажатия: '+deferred+'.');showToast('Передано кандидатов: '+created+'; пропущено повторов: '+skipped+'; отложено: '+deferred+'.');
       }catch(error){setServerMemoryStatus(String(error.message||error).slice(0,200));showToast('Передача памяти остановлена; уже созданные кандидаты сохранены.','error');}
     }
     async function reviewServerProjectMemory(nodeId,status){
@@ -1143,7 +1143,7 @@ permalink: /
       if(projects.length>=200){showToast('Достигнут предел локальных проектов (200).','error');return;}
       const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectInstructionsInput').value.trim().slice(0,6000),memory:[],createdAt:now,updatedAt:now};
       projects.unshift(project);persistProjects();
-      const chat=getCurrentChat();chat.projectId=project.id;chat.projectMemoryEnabled=false;
+      const chat=getCurrentChat();chat.projectId=project.id;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
       persistChats();renderProjectUI();renderChatList();
       showToast((getUiLanguage()==='en'?'Project created: ':'Создан проект: ')+name);
     }
@@ -1160,7 +1160,7 @@ permalink: /
       const chat=getCurrentChat(),target=projectId?projects.find(project=>project.id===projectId):null;
       if(projectId&&!target){showToast('Проект не найден.','error');renderProjectUI();return;}
       if(chat.projectId===(target?.id||null))return;
-      chat.projectId=target?.id||null;chat.projectMemoryEnabled=false;
+      chat.projectId=target?.id||null;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
       persistChats();renderProjectUI();renderChatList();
       showToast(target?(getUiLanguage()==='en'?'Chat moved to ':'Чат добавлен в проект: ')+target.name:(getUiLanguage()==='en'?'Chat removed from its project.':'Чат извлечён из проекта.'));
     }
