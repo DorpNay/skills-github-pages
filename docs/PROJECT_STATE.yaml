@@ -1,8 +1,8 @@
 project_state:
   version: 4
   reviewed_on: "2026-10-23"
-  last_volley: "V-2026-10-23-MEMORY-FTS5-SEARCH"
-  gate: "Main is 9006c7ed8737174e73c615504eb80362f4673949 after PR #25; PR #24 RAG and PR #25 consent-gate PR-head CI passed, including Chromium and published Pages smoke. PR #26 memory FTS5 search is under current-head validation; live provider smoke and gateway/VPS remain unverified."
+  last_volley: "V-2026-10-23-MEMORY-GRAPH-API"
+  gate: "PR #26 merged at cbc5e19b14c5d464782108b4f0534faac88290c2; its Gateway, provenance and full quality/Chromium/published Pages checks passed on PR head. Main post-merge workflows are validating the merge. PR #27 adds feature-flagged authenticated memory graph API; CI pending. Live provider smoke, configured private gateway/VPS and hardware benchmarks remain unverified."
   source_of_truth:
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
@@ -65,7 +65,8 @@ improvements:
   AI-MEM-002: {status: "bitemporal_primitives_not_in_frontend", artifact: "gateway/memory/temporal.py", eval: "EV-MEM-002"}
   AI-MEM-003: {status: "scoped_manager_prototype", artifact: "gateway/memory/scope.py", eval: "EV-MEM-003"}
   AI-MEM-004: {status: "explicit_conflicts_no_auto_winner", artifact: "gateway/memory/conflict.py", eval: "EV-MEM-004"}
-  AI-MEM-005: {status: "scoped_fts5_memory_search_prototype_gateway_tests_passed_not_api_wired", artifact: "gateway/memory/manager.py; gateway/memory/schema.sql", eval: "EV-MEM-005"}
+  AI-MEM-005: {status: "scoped_fts5_memory_search_prototype_merged_not_ui_wired", artifact: "gateway/memory/manager.py; gateway/memory/schema.sql", eval: "EV-MEM-005"}
+  AI-MEM-006: {status: "authenticated_feature_flagged_single_owner_api_ci_pending_not_static_ui_wired", artifact: "gateway/app.py; gateway/memory/manager.py", eval: "EV-MEM-006"}
   AI-RAG-001: {status: "fts5_lexical_graph_not_full_lazygraphrag", artifact: "gateway/rag/lazy_graph_rag.py", eval: "EV-RAG-001"}
   AI-RAG-002: {status: "conditional_not_installed", artifact: "gateway/rag/rag_anything.py", eval: "EV-RAG-002"}
   AI-RAG-003: {status: "citation_hash_offset_primitives", artifact: "gateway/rag/citations.py", eval: "EV-RAG-003"}

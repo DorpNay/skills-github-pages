@@ -24,7 +24,8 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 | AI-MEM-002 | Bitemporal memory | gateway/memory/temporal.py | Timestamp semantics and graph fields; not yet used by frontend |
 | AI-MEM-003 | Scope isolation | gateway/memory/scope.py | Prototype; no public graph API |
 | AI-MEM-004 | Conflict/supersede | gateway/memory/conflict.py | Explicit relations; no automatic winner selection |
-| AI-MEM-005 | Scoped FTS5 memory retrieval | gateway/memory/manager.py + gateway/tests/test_coder_packet.py | Prototype only; exact-scope filters, confirmed-only defaults, bounded terms and indexed deletion; not public API wiring |
+| AI-MEM-005 | Scoped FTS5 memory retrieval | gateway/memory/manager.py + gateway/tests/test_coder_packet.py | Prototype only; exact-scope filters, confirmed-only defaults, bounded terms and indexed deletion |
+| AI-MEM-006 | Authenticated structured-memory graph API | gateway/app.py + gateway/tests/test_app.py | Feature-flagged authenticated single-owner endpoints for candidate/review/search/relations/delete; global scope has two opt-ins; no static UI integration yet |
 | AI-RAG-001 | Low-cost graph-assisted RAG | gateway/rag/lazy_graph_rag.py | FTS5+lexical baseline, not full LazyGraphRAG |
 | AI-RAG-002 | RAG-Anything multimodal | Future gateway/rag/rag_anything.py | Conditional; not installed |
 | AI-RAG-003 | Exact citations | gateway/rag/citations.py | Offset/hash validation; parser offsets pending |
