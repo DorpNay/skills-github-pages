@@ -68,3 +68,8 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - Citation mismatch means reject evidence, never auto-correct offset based on guess.
 - Every model/voice with ship=true must have verified checksum, upstream URL, artifact-specific license, distribution/commercial permission and required attribution.
 - Hard latency gates may run only on a verified self-hosted reference runner; other CI reports UNVERIFIED.
+
+| EV-AGENT-004 | Small helper-model dispatch | DECISIONS.md + docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md | compare one 0.8B–2B helper for extraction/classification/compression with main-model-only baseline; measure quality, latency and peak RAM | design only; no helper model wired into runtime |
+| EV-IMAGE-001 | Image generation request-to-image | docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md | exact backend/checkpoint/license/hash/VRAM; prompt submission, completion polling and returned image assertion | not implemented; no working image-generation UI/runtime |
+| EV-OPS-001 | Free-first resource guard | DECISIONS.md + docs/USER_REQUEST_CHECKLIST.md | no paid resources provisioned automatically; free API quotas and external data processing disclosed; paid transition requires benchmark and owner decision | accepted operating policy; no billing/provisioning integration |
+| EV-MODEL-001 | Local-model autonomy and refusal behavior | DECISIONS.md | no hidden app-level refusal filter; measure chosen checkpoint behavior; external provider policy remains provider-controlled | policy only; zero-refusal behavior is not guaranteed |
