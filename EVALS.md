@@ -1,6 +1,6 @@
 # aLandi Evaluation Registry (EVALS.md)
 
-**Updated:** 2026-10-22  
+**Updated:** 2026-10-23  
 **Rule:** metrics from synthetic fixtures are smoke checks, not product benchmarks. No number without a report, sample count and hardware/artifact information may be described as verified.
 
 ## Existing reproducible commands
@@ -44,6 +44,10 @@ The prior gateway baseline passed 37 tests and the deterministic six-layer smoke
 | EV-SEC-001 | SSRF | gateway/tests/test_coder_packet.py | private/loopback/link-local/metadata IP and mixed DNS answer set rejected | CI pending |
 | EV-SEC-002 | Approval gates | gateway/tests/test_coder_packet.py | action/scope/actor/expiry bound; single use; mismatch fails closed | CI pending |
 | EV-LICENSE-001 | License governance | scripts/check_license_manifest.py | shipped artifact has SPDX/license source and 64-char hash; blocked/unverified never ships | CI pending |
+| EV-STATE-001 | Source-state fingerprint | scripts/manifest_state.py + gateway/tests/test_v016_foundation.py | deterministic sorted SHA-256; main index.md included; secret/generated paths excluded | latest-head CI pending |
+| EV-INTEL-001 | Provenance triad | scripts/check_intel_triad.py + intel/RECON.yaml | accepted rows require explicit HTTPS source/claim URLs, exact-artifact license field and non-placeholder metadata | offline completeness gate; no live license/URL verification |
+| EV-ROUTER-001 | Risk-aware local routing | router/policy.py + gateway/tests/test_v016_foundation.py | destructive action requires confirmation; low budget and slow escalation obey policy; invalid input rejected | typed prototype; not runtime-integrated |
+| EV-SEARCH-001 | Keyless web-search fallback | tests/e2e/app.spec.mjs + index.md | no Tavily key triggers bounded open-source search; citations come from actual source responses; tool budget remains bounded | latest-head Chromium E2E pending |
 | EV-RAG-001 | Retrieval quality | gateway/evals/run_six_layer_eval.py | synthetic fixtures only; real golden set >=50 queries before product claims | not a product benchmark |
 
 ## Reporting rules
