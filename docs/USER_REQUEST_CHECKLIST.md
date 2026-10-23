@@ -59,7 +59,7 @@
 - [ ] Backend/API для проектной памяти, shared/cloud persistence и multi-device sync не считать реализованными: сейчас основной project experience хранится локально в браузере.
 - [ ] Реализовать authenticated API/индексацию project sources только после согласованного backend contract; не имитировать работающий индекс на пустой заглушке.
 - [ ] Добавить/проверить тест cross-project leak на серверной памяти, RAG, evidence, cache и deletion — где соответствующие слои существуют.
-- [ ] Проверить очистку зависимых индексов при удалении источников, а не только удаление project record/local facts.
+- [~] RAG source deletion is scope-checked and removes chunk/concept/FTS rows; SQLite `secure_delete` and version-gated FTS5 `secure-delete` are being added with regression coverage. This still does **not** erase evidence-ledger copies, WAL/journals, backups or browser-local source copies; system-wide crypto-erasure remains open.
 - [ ] Проверить экспорт, исправление и удаление пользовательских фактов и связанные derived records.
 - [ ] Реализовать удаление/криптостирание по всем реальным слоям; не обещать SLA ≤60 секунд без измерения.
 - [ ] Протестировать valid_from, valid_until, recorded_at, конфликты, supersede и scoped recursive delete в gateway memory prototypes.

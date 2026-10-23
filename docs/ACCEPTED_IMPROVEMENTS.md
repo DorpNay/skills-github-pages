@@ -28,6 +28,7 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 | AI-RAG-002 | RAG-Anything multimodal | Future gateway/rag/rag_anything.py | Conditional; not installed |
 | AI-RAG-003 | Exact citations | gateway/rag/citations.py | Offset/hash validation; parser offsets pending |
 | AI-RAG-004 | Evidence ledger | gateway/rag/evidence_ledger.py | Prototype; not exposed to public API |
+| AI-RAG-005 | Scope-safe source deletion | gateway/rag/lazy_graph_rag.py + gateway/tests/test_six_layers.py | Scope pairing validation and version-gated SQLite/FTS5 secure-delete options; no system-wide crypto-erasure claim |
 | AI-TOOLS-001 | Layered CLI sandbox | Future sandbox/cli_sandbox.py | Blocked until real container/isolation and escape tests |
 | AI-TOOLS-002 | Read-only tool DAG | gateway/tools/dag_engine.py | Prototype; no tools registered by default |
 | AI-TOOLS-003 | JSON Schema validation | gateway/tools/validator.py | Implemented module; not a public tool API |
