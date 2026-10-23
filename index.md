@@ -209,26 +209,26 @@ permalink: /
 <body class="bg-gray-900 text-white flex flex-col">
   <aside id="sidebar" aria-label="Диалоги и память" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[88vw] bg-gray-950 border-r border-gray-800 -translate-x-full transition-transform duration-300 flex flex-col">
     <div class="p-4 border-b border-gray-800 flex justify-between items-center">
-      <h2 class="font-bold text-sm">💬 Диалоги и память</h2>
+      <h2 class="font-bold text-sm" data-i18n="sidebarTitle">💬 Диалоги и память</h2>
       <button type="button" data-action="close-sidebar" aria-label="Закрыть меню" class="text-gray-400 hover:text-white text-lg p-1">✕</button>
     </div>
     <div class="p-3 space-y-2">
-      <button type="button" data-action="new-chat" class="w-full bg-blue-600 hover:bg-blue-500 py-2 rounded-lg font-bold text-sm">＋ Новый чат</button>
-      <button type="button" data-action="clear-chat" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 py-1.5 rounded-lg text-xs">🗑 Очистить чат</button>
+      <button type="button" data-action="new-chat" data-i18n="newChat" class="w-full bg-blue-600 hover:bg-blue-500 py-2 rounded-lg font-bold text-sm">＋ Новый чат</button>
+      <button type="button" data-action="clear-chat" data-i18n="clearChat" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 py-1.5 rounded-lg text-xs">🗑 Очистить чат</button>
     </div>
     <section class="px-3 py-1" aria-label="Долгосрочная память">
-      <label for="memoryInput" class="text-xs text-gray-400 font-semibold">🧠 Долгосрочная память</label>
+      <label for="memoryInput" data-i18n="memoryLabel" class="text-xs text-gray-400 font-semibold">🧠 Долгосрочная память</label>
       <div class="flex gap-1 mt-1">
-        <input id="memoryInput" type="text" maxlength="500" placeholder="Факт, который нужно запомнить" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs">
+        <input id="memoryInput" type="text" maxlength="500" placeholder="Факт, который нужно запомнить" data-i18n-placeholder="memoryPlaceholder" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs">
         <button type="button" data-action="save-memory" class="bg-blue-700 hover:bg-blue-600 px-2 rounded text-xs" aria-label="Сохранить факт">＋</button>
       </div>
       <div id="memoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет сохранённых фактов.</div>
     </section>
     <div id="chatList" class="flex-1 overflow-y-auto p-3 space-y-2 text-sm" aria-label="Список чатов"></div>
     <div class="p-3 border-t border-gray-800 flex gap-2">
-      <button type="button" data-action="export-chats" class="flex-1 bg-gray-800 hover:bg-gray-700 py-1.5 rounded text-xs">Экспорт</button>
+      <button type="button" data-action="export-chats" data-i18n="exportChats" class="flex-1 bg-gray-800 hover:bg-gray-700 py-1.5 rounded text-xs">Экспорт</button>
       <label class="flex-1 bg-gray-800 hover:bg-gray-700 py-1.5 rounded text-xs text-center cursor-pointer">
-        Импорт <input id="importFile" type="file" class="hidden" accept="application/json,.json">
+        <span data-i18n="importChats">Импорт</span> <input id="importFile" type="file" class="hidden" accept="application/json,.json">
       </label>
     </div>
   </aside>
@@ -241,40 +241,40 @@ permalink: /
         <div class="flex items-start justify-between gap-3">
           <div class="min-w-0">
             <p class="text-[10px] uppercase tracking-[.22em] text-cyan-300 font-bold">aLandi · Cloud</p>
-            <h3 id="cloudCardTitle" class="text-lg font-semibold mt-1">Твоё облако — основной маршрут</h3>
-            <p class="text-xs leading-relaxed text-gray-400 mt-1">Подключи собственный gateway. Сигнал станет зелёным только после настоящего ответа модели.</p>
+            <h3 id="cloudCardTitle" data-i18n="cloudCardTitle" class="text-lg font-semibold mt-1">Твоё облако — основной маршрут</h3>
+            <p class="text-xs leading-relaxed text-gray-400 mt-1" data-i18n="cloudCardCopy">Подключи собственный gateway. Сигнал станет зелёным только после настоящего ответа модели.</p>
           </div>
           <span class="cloud-status-indicator" id="cloudStatusDot" data-state="disconnected" aria-hidden="true"></span>
         </div>
         <p id="cloudStatus" class="cloud-status-copy text-xs" data-state="disconnected" role="status" aria-live="polite">● Нет подтверждённого соединения. Адрес сервиса ещё не задан.</p>
-        <label for="cloudBaseUrl" class="block text-xs text-gray-400">Адрес твоего gateway</label>
+        <label for="cloudBaseUrl" data-i18n="cloudBaseUrl" class="block text-xs text-gray-400">Адрес твоего gateway</label>
         <input id="cloudBaseUrl" type="url" autocomplete="url" class="w-full p-2.5 rounded-xl border text-sm" placeholder="https://твой-домен.example/v1">
-        <label for="cloudModel" class="block text-xs text-gray-400">Модель gateway</label>
+        <label for="cloudModel" data-i18n="cloudModel" class="block text-xs text-gray-400">Модель gateway</label>
         <input id="cloudModel" type="text" autocomplete="off" class="w-full p-2.5 rounded-xl border text-sm" value="qwen3.5:4b" placeholder="Точный ID модели на gateway">
-        <label for="cloudApiKey" class="block text-xs text-gray-400">Ключ доступа к твоему gateway</label>
+        <label for="cloudApiKey" data-i18n="cloudApiKey" class="block text-xs text-gray-400">Ключ доступа к твоему gateway</label>
         <div class="cloud-key-row flex gap-2">
           <input id="cloudApiKey" type="password" autocomplete="off" class="min-w-0 flex-1 p-2.5 rounded-xl border text-sm" placeholder="Введи ключ gateway">
           <button type="button" data-action="paste-cloud-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ из буфера обмена">Вставить</button>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <button type="button" data-action="connect-alandi-cloud" class="rounded-xl bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-semibold text-sm py-2.5">Проверить и подключить</button>
-          <button type="button" data-action="use-kilo-free" class="rounded-xl border border-cyan-800 bg-cyan-950/50 hover:bg-cyan-900/60 text-cyan-100 text-xs py-2.5">Kilo Auto Free</button>
+          <button type="button" data-action="connect-alandi-cloud" data-i18n="cloudConnect" class="rounded-xl bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-semibold text-sm py-2.5">Проверить и подключить</button>
+          <button type="button" data-action="use-kilo-free" data-i18n="kiloFree" class="rounded-xl border border-cyan-800 bg-cyan-950/50 hover:bg-cyan-900/60 text-cyan-100 text-xs py-2.5">Kilo Auto Free</button>
         </div>
         <p class="text-[10px] leading-relaxed text-gray-500">Kilo — отдельный внешний шлюз бесплатных моделей: если выбрать его, запросы покидают браузер и передаются Kilo/назначенной модели. Переключение явное; скрытого резервирования на него не будет.</p>
       </section>
       <section class="rounded-xl border border-gray-700 p-3 space-y-2" aria-label="Внешний вид">
-        <h3 class="text-xs font-semibold">Внешний вид</h3>
-        <label for="uiTheme" class="block text-xs text-gray-400">Тема</label>
+        <h3 class="text-xs font-semibold" data-i18n="appearanceTitle">Внешний вид</h3>
+        <label for="uiTheme" data-i18n="themeLabel" class="block text-xs text-gray-400">Тема</label>
         <select id="uiTheme" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm">
           <option value="dark">Obsidian Studio · тёмная</option><option value="light">Clean Light · светлая</option>
         </select>
-        <label for="uiMotion" class="block text-xs text-gray-400">Анимации</label>
+        <label for="uiMotion" data-i18n="motionLabel" class="block text-xs text-gray-400">Анимации</label>
         <select id="uiMotion" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm">
           <option value="auto">Авто · системные настройки</option><option value="reduced">Уменьшить движение</option><option value="off">Отключить эффекты</option>
         </select>
       </section>
       <details id="legacyProviderSettings" class="settings-subpanel rounded-xl border border-gray-700">
-        <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none">Сторонние API, ключи и расширенные настройки</summary>
+        <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none" data-i18n="legacySettings">Сторонние API, ключи и расширенные настройки</summary>
         <div class="p-3 space-y-3">
       <div class="rounded-lg bg-gray-900 border border-gray-700 p-2.5 text-xs leading-relaxed text-gray-300 space-y-2">
         <p><strong>Быстрый старт:</strong> по умолчанию выбран Gemini. Для альтернатив выберите провайдера и модель ниже; для каждого сервиса нужен свой API-ключ.</p>
@@ -282,13 +282,13 @@ permalink: /
         <p>Ключи провайдеров и Tavily хранятся отдельно в localStorage этого браузера. Пустое поле API Key означает, что ключ не сохранён для выбранного провайдера; ключи других провайдеров не удаляются при переключении. При автоматическом резервном переходе текст запроса и контекст могут быть отправлены другому провайдеру, если для него сохранён ключ. Не публикуйте ключи и не используйте их на чужом устройстве. Очистка данных сайта удалит локальные настройки и историю.</p>
         <p>Веб-поиск объединяет Tavily (если сохранён ключ) и открытые API без отдельного ключа: Wikipedia, Stack Exchange, GitHub, Hacker News и arXiv. Можно также попросить агента прочитать конкретную публичную HTTPS-страницу; доступ зависит от CORS сайта.</p>
       </div>
-      <label for="providerPreset" class="block text-xs text-gray-400">Провайдер API</label>
+      <label for="providerPreset" data-i18n="providerLabel" class="block text-xs text-gray-400">Провайдер API</label>
       <select id="providerPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm">
         <option value="alandi">aLandi · собственный gateway</option><option value="kilo">Kilo AI · Auto Free</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="alandi">aLandi Self-hosted Gateway · свой сервер</option><option value="custom">Свой OpenAI-совместимый API</option>
       </select>
-      <label for="modelSearch" class="block text-xs text-gray-400">Поиск по каталогу моделей</label>
+      <label for="modelSearch" data-i18n="modelSearchLabel" class="block text-xs text-gray-400">Поиск по каталогу моделей</label>
       <input type="search" id="modelSearch" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Фильтр по имени или ID модели">
-      <label for="modelPreset" class="block text-xs text-gray-400">Быстрый выбор модели · список обновляется из API</label>
+      <label for="modelPreset" data-i18n="modelPresetLabel" class="block text-xs text-gray-400">Быстрый выбор модели · список обновляется из API</label>
       <select id="modelPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm"></select>
       <div class="flex items-start justify-between gap-2">
         <p id="modelCatalogStatus" class="min-w-0 text-[11px] leading-relaxed text-gray-400" role="status" aria-live="polite">Показаны встроенные модели. Нажмите «Обновить каталог» для получения актуального списка.</p>
@@ -301,7 +301,7 @@ permalink: /
         <input type="text" id="cloudflareAccountId" inputmode="text" autocomplete="off" spellcheck="false" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Ваш Account ID из Cloudflare Dashboard">
         <p class="text-[10px] leading-relaxed text-gray-500">Endpoint будет собран автоматически. Нужен API Token с разрешением Workers AI Read; Account ID не является секретом.</p>
       </div>
-      <label for="baseUrl" class="block text-xs text-gray-400">Base URL (без /chat/completions)</label>
+      <label for="baseUrl" data-i18n="baseUrlLabel" class="block text-xs text-gray-400">Base URL (без /chat/completions)</label>
       <input type="url" id="baseUrl" autocomplete="url" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
       <label for="apiKey" id="apiKeyLabel" class="block text-xs text-gray-400">API Key · ключ провайдера</label>
       <div id="apiKeyShell" class="api-key-row" data-state="empty"><span class="key-lamp" aria-hidden="true"></span><input type="password" id="apiKey" autocomplete="off" aria-describedby="apiKeyStatus" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Вставьте ключ провайдера"><button type="button" data-action="paste-provider-key" class="shrink-0 rounded-md border border-gray-700 px-2 py-1 text-[11px] text-gray-300" title="Вставить ключ из буфера обмена">Вставить</button></div>
@@ -312,7 +312,7 @@ permalink: /
         <button type="button" data-action="disconnect-pollinations" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 py-1.5 rounded-lg text-[11px] text-gray-300">Завершить сессию Pollinations</button>
       </div>
       <div class="flex gap-2"><button type="button" data-action="test-connection" class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение и модель</button><button type="button" data-action="clear-provider-key" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
-      <label for="modelName" class="block text-xs text-gray-400">Модель</label>
+      <label for="modelName" data-i18n="modelNameLabel" class="block text-xs text-gray-400">Модель</label>
       <input type="text" id="modelName" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
       <details id="searchToolsSettings" class="rounded-xl border border-gray-700">
         <summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">Инструменты и веб-поиск</summary>
@@ -322,7 +322,7 @@ permalink: /
           <div class="flex gap-2"><input type="password" id="tavilyKey" autocomplete="off" class="min-w-0 flex-1 p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none"><button type="button" data-action="paste-tavily-key" class="rounded-lg border border-gray-700 px-3 text-xs">Вставить</button></div>
         </div>
       </details>
-      <div class="flex items-center justify-between gap-2"><label for="systemPromptInput" class="block text-xs text-gray-400">Системный промпт</label><span class="text-[10px] text-gray-500">редактирование по кнопке</span></div>
+      <div class="flex items-center justify-between gap-2"><label for="systemPromptInput" data-i18n="systemPromptLabel" class="block text-xs text-gray-400">Системный промпт</label><span class="text-[10px] text-gray-500">редактирование по кнопке</span></div>
       <div class="prompt-editor"><textarea id="systemPromptInput" rows="4" readonly aria-describedby="promptEditHint" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y"></textarea><button type="button" id="editSystemPrompt" data-action="edit-system-prompt" class="prompt-pencil" aria-pressed="false" aria-label="Редактировать системный промпт" title="Разрешить редактирование">✎</button></div>
       <p id="promptEditHint" class="text-[11px] text-gray-500">Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.</p>
       <label class="flex items-start gap-2 text-xs text-gray-300 mt-2"><input id="allowCrossProviderFallback" type="checkbox" class="mt-0.5 rounded bg-gray-800 border-gray-700"><span><strong>Разрешить резерв у другого провайдера</strong><span class="block text-[11px] leading-relaxed text-amber-200/80">По умолчанию выключено. При включении текст запроса и контекст могут передаваться другому сервису. Сначала система пробует модели выбранного провайдера.</span></span></label>
@@ -390,7 +390,7 @@ permalink: /
     <div class="flex gap-2 items-end" id="inputArea">
       <button type="button" data-action="attach-text-file" id="attachTextButton" aria-label="Прикрепить текстовый файл" title="Прикрепить .txt, .md, .csv, .json или .log" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">＋</button>
       <input type="file" id="textAttachmentInput" class="hidden" accept=".txt,.md,.csv,.json,.log,text/plain,text/markdown,text/csv,application/json">
-      <textarea id="userInput" rows="1" maxlength="30000" placeholder="Напиши сообщение..." aria-label="Сообщение" data-i18n-placeholder="composerPlaceholder" class="flex-1 min-w-0 bg-gray-900 border border-gray-700 px-3 py-2.5 rounded-xl text-base outline-none resize-none max-h-32"></textarea>
+      <textarea id="userInput" rows="1" maxlength="30000" placeholder="Напиши сообщение..." data-i18n-placeholder="composerPlaceholder" aria-label="Сообщение" data-i18n-placeholder="composerPlaceholder" class="flex-1 min-w-0 bg-gray-900 border border-gray-700 px-3 py-2.5 rounded-xl text-base outline-none resize-none max-h-32"></textarea>
       <button id="voiceUnavailableButton" type="button" disabled aria-label="Голосовой режим пока не подключён" title="Голосовой runtime ещё не подключён" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5 opacity-50 cursor-not-allowed">◉</button>
       <button id="sendBtn" type="button" data-action="send" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Отправить сообщение">➤</button>
       <button id="stopBtn" type="button" data-action="stop" class="hidden bg-red-600 hover:bg-red-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Остановить генерацию">⏹</button>
@@ -1621,7 +1621,7 @@ permalink: /
         }
         const fingerprint=await providerKeyFingerprint(key);
         if(!fingerprint)throw new Error('Не удалось вычислить контрольный отпечаток ключа в этом браузере.');
-        safeSet('ai_alandi_cloud_base_url',baseUrl);safeSet('ai_alandi_cloud_model,',model);
+        safeSet('ai_alandi_cloud_base_url',baseUrl);
         safeSet('ai_alandi_cloud_model',model);safeSet(providerKeyStorage('alandi'),key);
         safeSet(STORAGE.provider,'alandi');safeSet(STORAGE.baseUrl,baseUrl);safeSet(STORAGE.model,model);
         const verified={ok:true,baseUrl,model,keyFingerprint:fingerprint,testedAt:new Date().toISOString()};
