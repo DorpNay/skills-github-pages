@@ -23,7 +23,7 @@ Ollama → одна активная модель → VPS 8 GB RAM
   └─ внутреннее переиспользование модельного префикса/KV (L1)
 ~~~
 
-Это базовая архитектура для уже существующего приложения: статический UI остаётся на GitHub Pages, весами модели и серверными секретами управляет VPS, gateway обеспечивает единый API. Внешнему миру доступен только HTTPS hostname туннеля. Ollama и gateway не должны слушать публичный интерфейс. Backend memory graph API уже существует, но выключен по умолчанию и не подключён к браузерной памяти проектов.
+Это базовая архитектура для уже существующего приложения: статический UI остаётся на GitHub Pages, весами модели и серверными секретами управляет VPS, gateway обеспечивает единый API. Внешнему миру доступен только HTTPS hostname туннеля. Ollama и gateway не должны слушать публичный интерфейс. PR #29 добавил и CI проверил ручной мост браузерной project memory к server memory graph: загрузка candidate выполняется только по действию владельца, а retrieval ограничен подтверждёнными фактами точного project scope и двумя per-chat opt-in. Сам graph API и мост выключены до настройки и включения gateway flags; живой сервер не проверен.
 
 **В первом проходе не ставим Dify, PostgreSQL, Redis/Valkey, Qdrant/Weaviate, embedding-сервис и несколько агентных runtime.** В AI Mobile Agent уже есть история, память, skills, поиск и многоэтапное исследование. Dify — отдельный необязательный модуль, если позже понадобится самостоятельная визуальная платформа workflow/RAG. Его минимальные требования не гарантируют, что сама платформа и локальная модель стабильно поместятся в 8 GB RAM. Если Dify уже используется, не удаляй контейнеры/базу и не меняй сетевые настройки без аудита зависимостей.
 
@@ -430,7 +430,7 @@ systemctl --no-pager --full status alandi-gateway
 
 ## 9.1. Проверка обновлённой версии и экспериментальных прототипов
 
-Новые модули из [CODER_PACKET.md](CODER_PACKET.md) добавляют основу трассировки, scoped memory graph, FTS5-поиска, цитат, voice orchestration и tool contracts. PR #27 также добавил authenticated memory-graph API: создание candidate-фактов, scope-filtered search/list, явный review, отношения и каскадное удаление derived nodes. Этот API ещё не подключён к браузерной памяти проектов и выключен по умолчанию. Микрофон/ASR/TTS/AEC, production CLI sandbox, подключённое исполнение tool DAG и Google Drive Picker UI пока не готовы. Все необязательные flags остаются выключенными.
+Новые модули из [CODER_PACKET.md](CODER_PACKET.md) добавляют основу трассировки, scoped memory graph, FTS5-поиска, цитат, voice orchestration и tool contracts. PR #27 добавил authenticated memory-graph API, а PR #29 интегрировал с ним opt-in UI мост браузерной памяти: ручная передача фактов как candidate, list/review/delete и retrieval только confirmed-фактов точного проекта при двух per-chat opt-in. Chromium mock E2E и текущие post-merge Quality/Chromium/provenance/Pages checks прошли; gateway tests passed on unchanged base SHA e424d35. API и bridge остаются выключенными до реальной настройки. Микрофон/ASR/TTS/AEC, production CLI sandbox, подключённое исполнение tool DAG и Google Drive Picker UI пока не готовы. Все необязательные flags остаются выключенными.
 
 После merge, из корня проверенной копии репозитория, сначала выполни локальную проверку:
 

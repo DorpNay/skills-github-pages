@@ -7,7 +7,7 @@
 ## A. База, управление и непрерывность
 - [x] PR #20 с базовыми контрактами памяти, инструментария, происхождения источников и governance объединён; CI прошёл.
 - [x] Создана ветка для облачной настройки/UX: `feat/alandi-cloud-settings-ux`.
-- [x] PRs #21–#27 merged with required PR-head CI passing. After PR #27, main `653febb01e2f9887dfec8116bf81f26f39e5077a` passed Gateway, provenance, full Quality/Chromium/Pages smoke and Pages deployment. Live gateway/VPS remains unverified.
+- [x] PRs #21–#29 merged with required PR-head gates passing. Current main is `55248f81585c52d7cc7ba7cfc08158a291a761ca`; post-merge Quality/Chromium, integrity/security/context sentinels, provenance, Pages browser smoke and Pages deployment passed. Gateway contract/security tests passed on unchanged base `e424d353418cad62981eb269b4082d2925592708`. Live gateway/VPS remains unverified.
 - [x] Проведён аудит V-016 §0–40 и начальной инженерной фиксации; создан подробный 81-пунктный ledger в `docs/V016_IMPLEMENTATION_CHECKLIST.md`. Аудит завершён, но многие runtime-функции ещё не реализованы/не подтверждены.
 - [ ] Проверить все старые регрессии: создание чата, история, экспорт/импорт, отмена, повтор запроса.
 - [ ] Обновить сведения о реальном состоянии системы: код, контракт, эксперимент, развёрнутая служба, измеренная метрика.
@@ -57,7 +57,7 @@
 - [~] Текущий чат можно привязать/отвязать от проекта; проектная принадлежность видна в интерфейсе.
 - [~] Есть экспорт/импорт project bundle с чатом, инструкциями и памятью; проверить схему, duplicate IDs, limits, malicious content.
 - [~] Global memory и project memory имеют отдельные явные toggles; default выключен; подтвердить, что global facts не утекут в другой project scope.
-- [ ] Backend/API для проектной памяти, shared/cloud persistence и multi-device sync не считать реализованными: сейчас основной project experience хранится локально в браузере.
+- [~] Server memory graph API and opt-in browser bridge are implemented and CI-verified. Browser projects remain local-first; only a manual upload sends facts as server-side candidates, and only confirmed facts in the exact project scope can be retrieved when both per-chat toggles are enabled. Multi-device project sync and live gateway activation remain unverified.
 - [ ] Реализовать authenticated API/индексацию project sources только после согласованного backend contract; не имитировать работающий индекс на пустой заглушке.
 - [ ] Добавить/проверить тест cross-project leak на серверной памяти, RAG, evidence, cache и deletion — где соответствующие слои существуют.
 - [~] RAG source deletion is scope-checked and removes chunk/concept/FTS rows; SQLite `secure_delete` plus version-gated FTS5 `secure-delete` regression tests passed on PR #24 HEAD and post-merge main. This still does **not** erase evidence-ledger copies, WAL/journals, backups or browser-local source copies; system-wide crypto-erasure remains open.
@@ -89,7 +89,7 @@
 - [ ] Внедрить ALBF binary framing только вместе с real transport и тестами на усечение, CRC, max payload и cancellation.
 - [ ] Сделать bake-off ASR/TTS с измерением RTF, first audio, e2e p95 и потребления PSS; не опираться на неподтверждённые цифры.
 - [ ] Подтвердить native audio capture/processing прежде, чем обещать отсутствие PCM/аудио hotpath в Python.
-- [~] cPocket hardening added: cap 128 cleanup registrations per lease; an individual cleanup throwing RuntimeError/CancelledError no longer prevents remaining handlers; concurrent rollback has exactly-once regression tests. PR #28 CI pending. Target-runtime resource/FD soak still required before live voice claims.
+- [x] cPocket hardening merged in PR #28; gateway contract/security tests passed on post-merge main `e424d353418cad62981eb269b4082d2925592708`. Cap 128 cleanup registrations per lease; cleanup continues after RuntimeError/CancelledError and rollback is tested for exactly-once behavior. Target-runtime resource/FD soak and live voice integration remain unverified.
 - [ ] Проверить безопасную изоляцию tool workspace; не называть subprocess без sandbox production-изоляцией.
 - [ ] Проверить scope isolation, no-PII logs, prompt priority stack и fail-safe privacy policy.
 - [ ] Измерить профиль laptop_8gb_cpu_mvp на целевом 8-GB железе, включая combined LLM+RAG+tools и cold-tier eviction.
@@ -141,7 +141,7 @@
 | **AI-MEM-003** | scoped_manager_prototype | gateway/memory/scope.py | EV-MEM-003 |
 | **AI-MEM-004** | explicit_conflicts_no_auto_winner | gateway/memory/conflict.py | EV-MEM-004 |
 | **AI-MEM-005** | scoped_fts5_memory_search_prototype_merged_not_ui_wired | gateway/memory/manager.py; gateway/memory/schema.sql | EV-MEM-005 |
-| **AI-MEM-006** | authenticated_feature_flagged_single_owner_api_ci_pending_not_static_ui_wired | gateway/app.py; gateway/memory/manager.py | EV-MEM-006 |
+| **AI-MEM-006** | authenticated_single_owner_graph_api_and_manual_candidate_first_browser_bridge_ci_passed_live_activation_pending | gateway/app.py; gateway/memory/manager.py; index.md; tests/e2e/app.spec.mjs | EV-MEM-006 |
 | **AI-RAG-001** | fts5_lexical_graph_not_full_lazygraphrag | gateway/rag/lazy_graph_rag.py | EV-RAG-001 |
 | **AI-RAG-002** | conditional_not_installed | gateway/rag/rag_anything.py | EV-RAG-002 |
 | **AI-RAG-003** | citation_hash_offset_primitives | gateway/rag/citations.py | EV-RAG-003 |
@@ -153,7 +153,7 @@
 | **AI-TOOLS-005** | approval_ticket_primitive_no_ui | gateway/security/approval_gates.py | EV-SEC-002 |
 | **AI-LICENSE-001** | manifest_and_ci_gate_prototype_no_voice_shipped | infra/license/provenance_manifest.yaml | EV-LICENSE-001 |
 | **AI-UI-001** | browser_project_prototype_e2e_pending | index.md; docs/V016_IMPLEMENTATION_CHECKLIST.md | EV-UI-002 |
-| **AI-UI-002** | project_and_global_memory_opt_in_client_side_backend_deferred | index.md; gateway/memory/scope.py | EV-UI-003 |
+| **AI-UI-002** | manual_candidate_first_project_memory_bridge_e2e_passed_gateway_opt_in_live_unverified | index.md; gateway/app.py; tests/e2e/app.spec.mjs | EV-UI-003 |
 | **AI-UI-003** | partial_bilingual_theme_clock_composer_voice_preview_e2e_pending | index.md | EV-UI-004 |
 | **AI-AGENT-001** | logical_roles_not_process_swarm | docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md | EV-AGENT-001 |
 | **AI-AGENT-002** | limited_existing_routing | gateway/tools/dag_engine.py | EV-AGENT-002 |
@@ -193,9 +193,9 @@
 
 ## I. Следующие продуктовые вертикали
 
-- [~] Связать браузерные проекты с серверным memory graph без автоматической миграции: ручная передача локальных фактов как candidate, ручное подтверждение/отклонение/удаление, scope по ID проекта.
-- [~] Добавить per-chat opt-in серверной памяти; retrieval только confirmed и только при одновременно включённой памяти проекта и серверной памяти.
-- [ ] Дождаться CI текущего HEAD для memory bridge: Quality/Chromium, Gateway, provenance и Pages; исправить regressions перед merge.
+- [x] Связать браузерные проекты с серверным memory graph без автоматической миграции: ручная передача локальных фактов как candidate, ручное подтверждение/отклонение/удаление, scope по ID проекта. PR #29 merged; PR-head and post-merge Chromium/Quality checks passed.
+- [x] Добавить per-chat opt-in серверной памяти; retrieval только confirmed и только при одновременно включённой памяти проекта и серверной памяти. Chromium mock E2E passed on PR #29 head and merged main.
+- [x] PR #29 head checks passed: Quality/Chromium, provenance and published Pages smoke. Post-merge main Quality/Chromium, provenance and Pages deployment passed at `55248f81585c52d7cc7ba7cfc08158a291a761ca`; gateway contract/security tests passed on unchanged base `e424d353418cad62981eb269b4082d2925592708`.
 - [ ] На целевом gateway включить ALANDI_MEMORY_GRAPH_ENABLED=true только после резервной копии и smoke-test; ALANDI_GLOBAL_MEMORY_ENABLED оставить false.
 - [ ] Первый месяц не создавать платные ресурсы автоматически: GitHub Pages + уже имеющееся железо + Ollama локально; free-tier API считать квотируемым и внешним, не гарантированно бесплатным.
 - [ ] Оценить одну маленькую helper-модель для классификации, извлечения фактов, кратких сводок и чернового ранжирования. Главная модель остаётся для планирования, сложного reasoning и синтеза. Сравнить качество, latency и RAM перед включением.
