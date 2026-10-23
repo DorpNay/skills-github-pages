@@ -1064,3 +1064,23 @@ test('voice mode menu stays open after a long press and clearly marks both modes
   await expect(page.locator('#voiceMenu')).toBeHidden();
   await expect(page.locator('#toast')).toContainText('Живой голосовой диалог пока не подключён');
 });
+
+
+test('aLandi cloud remains disconnected when the model answers but gateway health check fails', async ({ page }) => {
+  await page.route('https://unhealthy-cloud.example.test/healthz', async route => route.fulfill({
+    status: 503, contentType: 'application/json', body: JSON.stringify({ status: 'unavailable' })
+  }));
+  await page.route('https://unhealthy-cloud.example.test/v1/chat/completions', async route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+  }));
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#cloudBaseUrl').fill('https://unhealthy-cloud.example.test/v1');
+  await page.locator('#cloudModel').fill('qwen3.5:4b');
+  await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
+  await page.locator('[data-action="connect-alandi-cloud"]').click();
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await expect(page.locator('#cloudStatus')).toContainText('health-check gateway вернул HTTP 503');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
+});
