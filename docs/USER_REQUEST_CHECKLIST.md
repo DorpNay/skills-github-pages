@@ -49,19 +49,19 @@
 - [ ] Провести визуальную регрессию desktop/mobile и проверить, что анимации не мешают длинному вводу.
 
 ## D. Чаты, проекты, инструкции и память
-- [ ] Реализовать Project CRUD: создать, переименовать, редактировать, архивировать/удалить с подтверждением.
-- [ ] Хранить и версионировать инструкции проекта; пользовательские инструкции не обходят safety policy.
-- [ ] Создавать чат в проекте и показывать его принадлежность в UI.
-- [ ] Переносить чат в/из проекта и проверять, что история при этом не теряется.
-- [ ] Импортировать чат в проект и экспортировать чат из проекта с ясной схемой/версией данных.
-- [ ] Разделить working memory текущего чата, project memory, global/user memory и evidence store.
-- [ ] Включать project/global memory только по явному toggle; по умолчанию — только текущий чат.
-- [ ] Реализовать физическую изоляцию project scope и тест `test_no_cross_project_leak`.
-- [ ] Реализовать источники проекта, статус индексации и корректное удаление зависимых индексов.
-- [ ] Добавить тесты удаления из SQLite/FTS5/embeddings/exact cache при реальном наличии этих слоёв.
-- [ ] Проверить экспорт, исправление и удаление сохранённых пользовательских фактов.
-- [ ] Реализовать удаление/криптостирание с корректным описанием гарантий; не обещать SLA ≤60 секунд без измерения.
-- [ ] Проверить временные поля valid_from/valid_until/recorded_at и сохранение конфликтующих фактов без молчаливого перезаписывания.
+- [~] Project CRUD присутствует в клиенте: создать, переименовать/редактировать, удалить с подтверждением; повторно проверить E2E на текущей ветке.
+- [~] Проектные инструкции редактируются и добавляются в контекст как предпочтения, не как политика безопасности; подтвердить тестами precedence.
+- [~] Текущий чат можно привязать/отвязать от проекта; проектная принадлежность видна в интерфейсе.
+- [~] Есть экспорт/импорт project bundle с чатом, инструкциями и памятью; проверить схему, duplicate IDs, limits, malicious content.
+- [~] Global memory и project memory имеют отдельные явные toggles; default выключен; подтвердить, что global facts не утекут в другой project scope.
+- [ ] Backend/API для проектной памяти, shared/cloud persistence и multi-device sync не считать реализованными: сейчас основной project experience хранится локально в браузере.
+- [ ] Реализовать authenticated API/индексацию project sources только после согласованного backend contract; не имитировать работающий индекс на пустой заглушке.
+- [ ] Добавить/проверить тест cross-project leak на серверной памяти, RAG, evidence, cache и deletion — где соответствующие слои существуют.
+- [ ] Проверить очистку зависимых индексов при удалении источников, а не только удаление project record/local facts.
+- [ ] Проверить экспорт, исправление и удаление пользовательских фактов и связанные derived records.
+- [ ] Реализовать удаление/криптостирание по всем реальным слоям; не обещать SLA ≤60 секунд без измерения.
+- [ ] Протестировать valid_from, valid_until, recorded_at, конфликты, supersede и scoped recursive delete в gateway memory prototypes.
+- [ ] Полноценный viewer источников/индекса, citation lineage и cross-device project memory остаются задачами последующих фаз.
 
 ## E. Инструменты, маршрутизация, веб-поиск и отказы
 - [~] Сохранить ограничение по числу шагов инструментов и исследовательских вызовов; не запускать неограниченный retry loop.
@@ -98,3 +98,86 @@
 - [ ] Проверить, что новая ветка не меняет чужую конфигурацию, историю, секреты или сохранённые настройки молча.
 - [ ] После merge проверить main SHA, успешные workflows и опубликованную GitHub Pages версию.
 - [ ] Перепроверить каждый пункт этого реестра перед итоговым отчётом; явно перечислить незавершённое и неподтверждённое.
+
+
+## H. Четырёхчастный аудит манифеста — без потерянных пунктов
+
+Этот раздел связывает пользовательский To do с четырьмя наборами источников, перечисленными в CODER_PACKET.md. Статусы ниже — статус кода/контракта, не подтверждение production deployment.
+
+### Part I — CODER_PACKET.md: архитектура, обязательные контракты, фазы 0–8
+- [x] Прочитаны разделы 1–8: канонические источники, non-negotiable contracts, текущая архитектура, план фаз 0–8, voice latency, model/license policy, eval/release gates и non-goals.
+- [x] Зафиксированы ограничения: не выдавать prototype за live, не обещать p95 без измерения, no fake sandbox, no fake citation checks, tool approval/SSRF, scoped deletion, локальный аудиотракт и отсутствие автоматического cloud provisioning.
+- [~] Фазы 0–4: gateway/trace, scoped temporal memory, FTS5/evidence/citations и tool safety имеют foundations/prototypes; у каждого остаются отдельные eval-гейты.
+- [ ] Фазы 5–6: подключить настоящий voice runtime и native ASR/VAD/TTS только после лицензий и воспроизводимого hardware benchmark.
+- [ ] Фазы 7–8: подключить реальную telemetry timeline, authenticated UI API и cloud integration только после backend contract/security review.
+
+### Part II — PROJECT_STATE.yaml: каждый принятый ID, отклонения и блокеры
+| ID | Текущее состояние из PROJECT_STATE.yaml | Артефакт | Eval gate |
+|---|---|---|---|
+| **AI-VOICE-002** | prototype | gateway/voice/cpocket.py | EV-CPOCKET-001 |
+| **AI-VOICE-003** | target_unmeasured | docs/LATENCY_CONTRACT.md | EV-VOICE-002 |
+| **AI-VOICE-004** | read_only_prototype | gateway/voice/speculative_transaction.py | EV-SPEC-001 |
+| **AI-VOICE-005** | candidate_license_review_pending | evals/voice/language_matrix_v2.yaml | EV-LANG-001 |
+| **AI-VOICE-006** | decision_module_not_live | gateway/voice/tier_router.py | EV-VOICE-003 |
+| **AI-VOICE-007** | policy_only_no_native_aec | gateway/voice/barge_in.py | EV-VOICE-004 |
+| **AI-VOICE-008** | proposed_experiment | gateway/voice/endpoint_heuristic.py | EV-ENDPOINT-001 |
+| **AI-INFRA-001** | optional_manual_path_no_vm_created | docs/INFRASTRUCTURE_UPGRADE.md | EV-INFRA-001 |
+| **AI-INFRA-002** | manual_instructions_no_dns_changed | docs/DOMAIN_SETUP.md | EV-INFRA-002 |
+| **AI-INFRA-003** | target_profile_unmeasured | infra/hardware_profiles.yaml | EV-HW-001 |
+| **AI-CODE-001** | report_only | .github/workflows/dead-code-check.yml | EV-CODE-001 |
+| **AI-CODE-002** | deferred_until_benchmark | gateway/evals/serialization_benchmark.py | EV-CODE-002 |
+| **AI-CODE-003** | deferred_until_uv_lock_review | pyproject.toml | EV-CODE-003 |
+| **AI-OBS-001** | prototype_integrated_in_gateway | observability/trace_context.py | EV-OBS-001 |
+| **AI-OBS-002** | optional_disabled | observability/otel_config.py | EV-OBS-002 |
+| **AI-OBS-003** | event_schema_only_ui_deferred | observability/events.schema.json | EV-UI-001 |
+| **AI-MEM-001** | sqlite_prototype | gateway/memory/schema.sql | EV-MEM-001 |
+| **AI-MEM-002** | bitemporal_primitives_not_in_frontend | gateway/memory/temporal.py | EV-MEM-002 |
+| **AI-MEM-003** | scoped_manager_prototype | gateway/memory/scope.py | EV-MEM-003 |
+| **AI-MEM-004** | explicit_conflicts_no_auto_winner | gateway/memory/conflict.py | EV-MEM-004 |
+| **AI-RAG-001** | fts5_lexical_graph_not_full_lazygraphrag | gateway/rag/lazy_graph_rag.py | EV-RAG-001 |
+| **AI-RAG-002** | conditional_not_installed | gateway/rag/rag_anything.py | EV-RAG-002 |
+| **AI-RAG-003** | citation_hash_offset_primitives | gateway/rag/citations.py | EV-RAG-003 |
+| **AI-RAG-004** | local_evidence_ledger_not_api_exposed | gateway/rag/evidence_ledger.py | EV-RAG-004 |
+| **AI-TOOLS-001** | blocked_no_container_sandbox | sandbox/cli_sandbox.py | EV-SANDBOX-001 |
+| **AI-TOOLS-002** | bounded_dag_prototype_no_default_tools | gateway/tools/dag_engine.py | EV-TOOLS-001 |
+| **AI-TOOLS-003** | schema_validation_prototype | gateway/tools/validator.py | EV-TOOLS-002 |
+| **AI-TOOLS-004** | ssrf_policy_helper_only | gateway/security/ssrf_protection.py | EV-SEC-001 |
+| **AI-TOOLS-005** | approval_ticket_primitive_no_ui | gateway/security/approval_gates.py | EV-SEC-002 |
+| **AI-LICENSE-001** | manifest_and_ci_gate_prototype_no_voice_shipped | infra/license/provenance_manifest.yaml | EV-LICENSE-001 |
+| **AI-UI-001** | deferred | docs/CODER_PACKET.md | EV-UI-002 |
+| **AI-UI-002** | deferred_until_authenticated_memory_api | docs/CODER_PACKET.md | EV-UI-003 |
+| **AI-UI-003** | deferred | docs/CODER_PACKET.md | EV-UI-004 |
+| **AI-AGENT-001** | logical_roles_not_process_swarm | docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md | EV-AGENT-001 |
+| **AI-AGENT-002** | limited_existing_routing | gateway/tools/dag_engine.py | EV-AGENT-002 |
+| **AI-AGENT-003** | bounded_dag_prototype | gateway/tools/dag_engine.py | EV-AGENT-003 |
+| **AI-LEARN-001** | governance_only_no_self_modification | LOOP.md | EV-LEARN-001 |
+| **AI-LEARN-002** | versioned_skill_rollback_deferred | LOOP.md | EV-LEARN-002 |
+
+### Part III — ACCEPTED_IMPROVEMENTS.md и связанные артефакты
+- [x] Сверены все строки реестра accepted improvements с идентификаторами в PROJECT_STATE.yaml; статус каждой строки сохранён отдельно, а не слит в одно «готово».
+- [x] Различены реализованные модули, prototypes, документационные контракты, deferred items и блокеры. Макет или unit primitive не приравниваются к production runtime.
+- [ ] На каждое изменение статуса дополнить eval-отчёт командой, результатом, sample size, SHA и rollback; обновить PROJECT_STATE.yaml, EVALS.md, LOOP.md, DECISIONS.md и соответствующий отчёт.
+
+### Part IV — EVALS.md, DECISIONS.md, LOOP.md, INTEL.md, license/latency/infra/domain gates
+- [x] Проверены eval registry, решения D-001…D-006, bounded engineering loop, source/licensing register, latency contract, infrastructure upgrade и domain setup.
+- [x] Voice performance, 8-GB profile, OTel exporter, native audio path, real sandbox, full LazyGraphRAG, external approval UI и live VPS обозначены как не подтверждённые/не развёрнутые.
+- [ ] Прогнать python -m compileall -q gateway, python -m pytest -q gateway/tests, python gateway/evals/run_six_layer_eval.py и лицензионный CI gate на текущем состоянии ветки.
+- [ ] Проверить provenance каждого реально поставляемого артефакта: точный источник, применимая лицензия модели/голоса, SHA-256. TBD/непроверенные hashes не могут отмечаться как ship-enabled.
+- [ ] Измерить на целевом хосте cold/warm p50/p95/p99, RTF, RAM/PSS, аудиодропы, CER/WER и regression sample counts до любых performance claims.
+- [ ] Развёртывание VPS, DNS, OAuth secrets и создание billable infrastructure не выполнять без актуального account access/проверенных параметров и отдельного согласованного действия.
+
+### Rejected and blocked inventory — retained, not silently dropped
+| ID | Решение / условие возврата | Причина |
+|---|---|---|
+| **AI-CUT-001** — Universal wake-word latency guarantee | Отклонено в текущей итерации | Requires measured target hardware and cannot be promised from a paper design. |
+| **AI-CUT-002** — Silero TTS as commercial default | Отклонено в текущей итерации | Most models in the upstream repository are non-commercial; exact exceptions must be individually verified. |
+| **AI-CUT-003** — Pure Python raw PCM hotpath | Отклонено в текущей итерации | Raw audio should remain in native capture/inference subsystem; Python consumes bounded events. |
+| **AI-CUT-004** — Cloud ASR/TTS fallback | Отклонено в текущей итерации | Violates the default local-first voice privacy contract. |
+| **BLK-RU-TTS-COMMERCIAL** | Заблокировано | Exact Russian voice model card, artifact checksum and license approval required. |
+| **BLK-NATIVE-BENCH** | Заблокировано | No native audio backend or reference 8GB hardware measurement. |
+| **BLK-CLI-SANDBOX** | Заблокировано | No tested container/seccomp/Landlock implementation or escape test evidence. |
+
+### Gate перед финальным ответом
+- [ ] Сверить весь этот To do и таблицу ID с текущим HEAD после завершения всех workflows.
+- [ ] Указать раздельно: фактически внедрено, проверено CI, подтверждено live, измерено benchmark, осталось prototype/deferred/blocked.
+- [ ] Не объединять PR и не сообщать о публикации до зелёных релевантных workflow и проверки merge result.
