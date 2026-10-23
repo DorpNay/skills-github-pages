@@ -850,7 +850,7 @@ permalink: /
         appearanceTitle:'Внешний вид',themeLabel:'Тема',motionLabel:'Анимации',cloudCardTitle:'Твоё облако — основной маршрут',
         cloudCardCopy:'Подключи собственный gateway. Сигнал станет зелёным только после настоящего ответа модели.',
         cloudBaseUrl:'Адрес твоего gateway',cloudModel:'Модель gateway',cloudApiKey:'Ключ доступа к твоему gateway',
-        cloudConnect:'Проверить и подключить',kiloFree:'Kilo Auto Free',providerLabel:'Провайдер API',
+        cloudConnect:'Проверить и подключить',providerLabel:'Провайдер API',
         modelSearchLabel:'Поиск по каталогу моделей',modelPresetLabel:'Быстрый выбор модели · список обновляется из API',
         baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',
         legacySettings:'Сторонние API, ключи и расширенные настройки',composerPlaceholder:'Напиши сообщение...',
@@ -864,7 +864,7 @@ permalink: /
         appearanceTitle:'Appearance',themeLabel:'Theme',motionLabel:'Motion',cloudCardTitle:'Your cloud — primary route',
         cloudCardCopy:'Connect your own gateway. The signal turns green only after a real model response.',
         cloudBaseUrl:'Your gateway URL',cloudModel:'Gateway model',cloudApiKey:'Gateway access key',
-        cloudConnect:'Check & connect',kiloFree:'Kilo Auto Free',providerLabel:'API provider',
+        cloudConnect:'Check & connect',providerLabel:'API provider',
         modelSearchLabel:'Search model catalog',modelPresetLabel:'Quick model pick · list loads from API',
         baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',
         legacySettings:'Third-party APIs, keys & advanced settings',composerPlaceholder:'Write a message...',
@@ -1949,18 +1949,6 @@ permalink: /
       if(cloudAutoConnectTimer)clearTimeout(cloudAutoConnectTimer);
       cloudAutoConnectTimer=setTimeout(()=>{cloudAutoConnectTimer=null;const cfg=getCloudSettings();if(cfg.baseUrl&&cfg.model&&cfg.key)void connectAlandiCloud();},700);
     }
-    function useKiloFree(){
-      safeSet('ai_alandi_cloud_connection_v1','');
-      safeSet(STORAGE.provider,'kilo');safeSet(STORAGE.baseUrl,PROVIDERS.kilo.baseUrl);safeSet(STORAGE.model,'kilo-auto/free');
-      safeSet(STORAGE.crossProviderFallback,'false');
-      $('providerPreset').value='kilo';applyProviderPreset('kilo',true);
-      $('baseUrl').value=PROVIDERS.kilo.baseUrl;$('modelName').value='kilo-auto/free';
-      $('allowCrossProviderFallback').checked=false;$('apiKey').value='';
-      safeSet('ai_provider_connection_kilo','');
-      updateApiKeyLamp('pending','Kilo Auto Free: без ключа, внешний запрос разрешён только после твоего выбора.');
-      showToast('Выбран Kilo Auto Free. Запросы будут отправляться внешнему шлюзу Kilo.');
-      void testProviderConnection();
-    }
     function clearProviderKey(){
       const provider=currentProvider();safeSet(providerKeyStorage(provider),'');
       if (provider !== 'pollinations') safeSet(providerModelCatalogStaleKey(provider), 'true');
@@ -2954,7 +2942,6 @@ permalink: /
           case 'paste-cloud-key': await pasteIntoField('cloudApiKey');break;
           case 'paste-tavily-key': await pasteIntoField('tavilyKey');break;
           case 'connect-alandi-cloud': await connectAlandiCloud();break;
-          case 'use-kilo-free': useKiloFree();break;
           case 'attach-text-file': $('textAttachmentInput').click();break;
           case 'create-project': createProject();break;
           case 'save-project': saveProject();break;
