@@ -2099,9 +2099,28 @@ permalink: /
       }
       throw new Error('Превышено количество повторных попыток запроса.');
     }
+    async function performOpenWebFallback(query, signal, mode = 'fast', reason = '') {
+      const sources = mode === 'deep' ? ['wikipedia','github','hackernews','arxiv','stackexchange'] : ['wikipedia','github','hackernews'];
+      showStatus('🔎 Tavily недоступен — переключаюсь на открытые источники…');
+      const attempts = await Promise.all(sources.map(async source => {
+        try {
+          const result = await performPublicKnowledgeSearch(source, query, signal, mode);
+          return typeof result === 'string' && /\\nURL: https?:\\/\\//.test(result) ? { source, result } : null;
+        } catch (error) {
+          if (error?.name === 'AbortError') throw error;
+          return null;
+        }
+      }));
+      const usable = attempts.filter(Boolean);
+      const header = reason
+        ? 'Tavily недоступен (' + reason + '). Использованы доступные открытые источники без отдельного ключа.'
+        : 'Ключ Tavily не настроен. Использованы доступные открытые источники без отдельного ключа.';
+      if (!usable.length) return header + '\\nОткрытые источники сейчас тоже недоступны. Проверь сеть или повтори поиск позже.';
+      return header + '\\n\\n' + usable.map((item, index) => '[Открытый источник ' + (index + 1) + ': ' + item.source + ']\\n' + item.result).join('\\n\\n');
+    }
     async function performTavilySearch(query, signal, mode = 'fast') {
       const key = safeGet(STORAGE.tavilyKey) || '';
-      if (!key) return 'Веб-поиск не выполнен: сначала добавьте Tavily Search API Key в настройках.';
+      if (!key) return performOpenWebFallback(query, signal, mode);
       showStatus(`🔎 Поиск в сети: ${query.slice(0, 120)}…`);
       let response;
       try {
@@ -2113,16 +2132,14 @@ permalink: /
         });
       } catch (error) {
         if (error.name === 'AbortError') throw error;
-        return 'Ошибка веб-поиска: браузер не смог подключиться к Tavily. Возможно, провайдер запрещает прямые CORS-запросы из GitHub Pages; тогда нужен собственный серверный прокси.';
+        return performOpenWebFallback(query, signal, mode, 'сетевая ошибка или CORS');
       }
-      if (!response.ok) {
-        const detail = (await response.text().catch(() => '')).slice(0, 250);
-        return `Ошибка Tavily HTTP ${response.status}${detail ? `: ${detail}` : ''}`;
-      }
+      if (!response.ok) return performOpenWebFallback(query, signal, mode, 'HTTP ' + response.status);
       let data;
       try { data = await response.json(); }
-      catch (_) { return 'Ошибка Tavily: API вернул невалидный JSON.'; }
-      if (!Array.isArray(data.results) || !data.results.length) return 'Поиск не вернул результатов.';
+      catch (_) { return performOpenWebFallback(query, signal, mode, 'невалидный JSON');
+      }
+      if (!Array.isArray(data.results) || !data.results.length) return performOpenWebFallback(query, signal, mode, 'нет результатов');
       const resultLimit = mode === 'deep' ? 6 : 3;
       const contentLimit = mode === 'deep' ? 1600 : 800;
       return data.results.slice(0, resultLimit).map((result, index) => {
