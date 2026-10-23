@@ -336,7 +336,7 @@ permalink: /
       <button type="button" data-action="restore-defaults" data-i18n="restoreDefaults" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-200">Восстановить параметры Gemini</button>
         </div>
       </details>
-      <button type="button" id="recoveryBackupButton data-action="download-recovery-backup" class="hidden w-full bg-amber-800 hover:bg-amber-700 py-2 rounded text-xs text-amber-50">Скачать резервную копию истории</button>
+      <button type="button" id="recoveryBackupButton" data-action="download-recovery-backup" class="hidden w-full bg-amber-800 hover:bg-amber-700 py-2 rounded text-xs text-amber-50">Скачать резервную копию истории</button>
       <button type="button" data-action="save-settings" data-i18n="saveSettings" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded font-bold text-sm">Сохранить</button>
       <button type="button" data-action="close-settings" data-i18n="closeSettings" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-300">Закрыть</button>
     </div>
@@ -2138,7 +2138,7 @@ permalink: /
           const dynamicTurn = Array.isArray(body.tools) || Array.isArray(body.functions) ||
             (Array.isArray(body.messages) && body.messages.some(message => message?.role === 'tool' || Array.isArray(message?.tool_calls) || typeof message?.content !== 'string')) ||
             /исслед|research|планировщик|синтезатор|критик|проверяющ|после инструмента/i.test(String(stageName||''));
-          const requestHeaders={'Content-Type':'application/json'};if(candidate.key)requestHeaders.Authorization=`Bearer ${candidate.key}`;
+          const requestHeaders={'Content-Type':'application/json',...(candidate.key?{'Authorization':`Bearer ${candidate.key}`}:{})};
           if(candidate.provider==='alandi'&&dynamicTurn)requestHeaders['X-AI-Cache-Bypass']='1';
           const data=await fetchJson(buildApiUrl(candidate.baseUrl),{method:'POST',headers:requestHeaders,body:JSON.stringify({...candidateBody,model:candidate.model})},signal);
           const elapsedMs=Date.now()-attemptStartedAt;
