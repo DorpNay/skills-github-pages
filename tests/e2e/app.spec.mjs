@@ -766,8 +766,11 @@ test('Kilo Auto Free works without a key and is an explicit single-provider rout
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#cloudSettingsCard')).not.toContainText('Kilo Auto Free');
   await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('kilo');
+  await expect(page.locator('#kiloPrivacyWarning')).toBeVisible();
+  await expect(page.locator('[data-action="use-kilo-free"]')).toHaveCount(0);
   await expect(page.locator('#apiKey')).toHaveValue('');
   await page.locator('[data-action="test-connection"]').click();
   await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected');
@@ -896,4 +899,38 @@ test('deleting a project removes its chats but preserves other projects and chat
   const storedChats = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]'));
   expect(storedChats.some(chat => chat.projectId === disposableId)).toBe(true);
   expect(storedChats.some(chat => chat.projectId === keepId)).toBe(false);
+});
+
+
+test('xAI accepts structured text response envelopes and authenticates with the selected key', async ({ page }) => {
+  let requestHeaders = {};
+  await page.route('https://api.x.ai/v1/language-models', async route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ models: [
+      { id: 'grok-4.7', input_modalities: ['text'], output_modalities: ['text'] },
+      { id: 'grok-e2e-alternative', input_modalities: ['text'], output_modalities: ['text'] }
+    ] })
+  }));
+  await page.route('https://api.x.ai/v1/chat/completions', async route => {
+    requestHeaders = route.request().headers();
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        model: 'grok-4.7',
+        choices: [{ message: { role: 'assistant', content: [{ type: 'text', text: 'OK' }] } }]
+      })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('xai');
+  await page.locator('#apiKey').fill('e2e-xai-placeholder-key');
+  await page.locator('#modelName').fill('grok-4.7');
+  await page.locator('[data-action="test-connection"]').click();
+  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected');
+  expect(requestHeaders.authorization).toBe('Bearer e2e-xai-placeholder-key');
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('ai_provider_connection_xai') || 'null')?.ok)).toBe(true);
 });
