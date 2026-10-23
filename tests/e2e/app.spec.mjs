@@ -732,7 +732,7 @@ test('aLandi cloud status only turns green after a real model response, and core
     body: JSON.stringify({ model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('#clockDigital')).toHaveText(/^\\d{2}:\\d{2}$/);
+  await expect(page.locator('#clockDigital')).toHaveText(/^\d{2}:\d{2}$/);
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
   await page.locator('[data-action="toggle-settings"]').click();
   await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
@@ -800,4 +800,101 @@ test('pasting a provider key starts one bounded model-catalog and connection che
   await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
   expect(probes).toBeGreaterThanOrEqual(1);
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_key_custom'))).toBe('e2e-pasted-key');
+});
+
+
+test('project instructions, project memory, and project bundles stay scoped to the current project', async ({ page }) => {
+  let capturedBody = null;
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    capturedBody = route.request().postDataJSON();
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'e2e-project-model', choices: [{ message: { role: 'assistant', content: 'Project scope verified.' } }] })
+    });
+  });
+
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectManagerDetails > summary').click();
+  await page.locator('#projectNameInput').fill('Alpha Project');
+  await page.locator('#projectInstructionsInput').fill('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
+  await page.locator('[data-action="create-project"]').click();
+  const alphaId = await page.locator('#currentProjectSelect').inputValue();
+  expect(alphaId).not.toBe('');
+  await page.locator('#projectMemoryInput').fill('ALPHA_PROJECT_MEMORY_SENTINEL');
+  await page.locator('[data-action="add-project-memory"]').click();
+  await expect(page.locator('#projectMemoryBox')).toContainText('ALPHA_PROJECT_MEMORY_SENTINEL');
+  await page.locator('#projectMemoryToggle').check();
+
+  const alphaDownloadPromise = page.waitForEvent('download');
+  await page.locator('[data-action="export-project"]').click();
+  const alphaDownload = await alphaDownloadPromise;
+  expect(alphaDownload.suggestedFilename()).toMatch(/^alandi-project-.*\.json$/);
+  const alphaPath = await alphaDownload.path();
+  const alphaBundle = JSON.parse(await readFile(alphaPath, 'utf8'));
+  expect(alphaBundle.format).toBe('alandi-project-bundle');
+  expect(alphaBundle.project.instructions).toContain('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
+  expect(alphaBundle.project.memory.some(item => item.text === 'ALPHA_PROJECT_MEMORY_SENTINEL')).toBe(true);
+  expect(JSON.stringify(alphaBundle)).not.toContain('apiKey');
+
+  // New chats inherit the current project; detach this one before creating Beta.
+  await page.locator('#sidebar [data-action="new-chat"]').click();
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await expect(page.locator('#currentProjectSelect')).toHaveValue(alphaId);
+  await page.locator('#currentProjectSelect').selectOption('');
+  await page.locator('#projectManagerDetails > summary').click();
+  await page.locator('#projectNameInput').fill('Beta Project');
+  await page.locator('#projectInstructionsInput').fill('BETA_PROJECT_INSTRUCTION_SENTINEL');
+  await page.locator('[data-action="create-project"]').click();
+  await page.locator('#projectMemoryInput').fill('BETA_PROJECT_MEMORY_SENTINEL');
+  await page.locator('[data-action="add-project-memory"]').click();
+  await page.locator('#projectMemoryToggle').check();
+
+  await page.locator('[data-action="toggle-settings"]').first().click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('e2e-project-model');
+  await page.locator('#apiKey').fill('e2e-project-placeholder-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+
+  await page.locator('#userInput').fill('Check which project context is included.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Project scope verified.');
+  expect(capturedBody).not.toBeNull();
+  const prompt = capturedBody.messages[0].content;
+  expect(prompt).toContain('BETA_PROJECT_INSTRUCTION_SENTINEL');
+  expect(prompt).toContain('BETA_PROJECT_MEMORY_SENTINEL');
+  expect(prompt).not.toContain('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
+  expect(prompt).not.toContain('ALPHA_PROJECT_MEMORY_SENTINEL');
+});
+
+test('deleting a project removes its chats but preserves other projects and chats', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectManagerDetails > summary').click();
+  await page.locator('#projectNameInput').fill('Disposable Project');
+  await page.locator('[data-action="create-project"]').click();
+  const disposableId = await page.locator('#currentProjectSelect').inputValue();
+  expect(disposableId).not.toBe('');
+
+  await page.locator('#sidebar [data-action="new-chat"]').click();
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#currentProjectSelect').selectOption('');
+  await page.locator('#projectManagerDetails > summary').click();
+  await page.locator('#projectNameInput').fill('Keep Project');
+  await page.locator('[data-action="create-project"]').click();
+  const keepId = await page.locator('#currentProjectSelect').inputValue();
+  expect(keepId).not.toBe(disposableId);
+
+  page.on('dialog', dialog => dialog.accept());
+  await page.locator('[data-action="delete-project"]').click();
+  await expect(page.locator('#currentProjectSelect')).toHaveValue('');
+  const storedProjects = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]'));
+  expect(storedProjects.some(project => project.id === keepId)).toBe(true);
+  expect(storedProjects.some(project => project.id === disposableId)).toBe(false);
+  const storedChats = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]'));
+  expect(storedChats.some(chat => chat.projectId === disposableId)).toBe(false);
+  expect(storedChats.some(chat => chat.projectId === keepId)).toBe(true);
 });
