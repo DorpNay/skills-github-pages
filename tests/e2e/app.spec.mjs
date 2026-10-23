@@ -727,6 +727,9 @@ test('agent systems skill is routed on demand and its safety contract stays avai
 
 
 test('aLandi cloud status only turns green after a real model response, and core UX controls work', async ({ page }) => {
+  await page.route('https://cloud.example.test/healthz', async route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' })
+  }));
   await page.route('https://cloud.example.test/v1/chat/completions', async route => route.fulfill({
     status: 200, contentType: 'application/json',
     body: JSON.stringify({ model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
