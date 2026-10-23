@@ -458,6 +458,8 @@ permalink: /
     let activeController = null;
     let activeChatId = null;
     let isGenerating = false;
+    let isTestingProviderConnection = false;
+    let providerAutoConnectTimer = null;
     let storageWarningShown = false;
     let pyodidePromise = null;
     let pyodideScriptPromise = null;
@@ -1451,11 +1453,65 @@ permalink: /
         return Array.from(new Uint8Array(digest),byte=>byte.toString(16).padStart(2,'0')).join('');
       } catch(_) { return ''; }
     }
+    function setCloudStatus(state,message){
+      const dot=$('cloudStatusDot'),copy=$('cloudStatus');
+      if(dot)dot.dataset.state=state;
+      if(copy){copy.dataset.state=state;copy.textContent=(state==='connected'?'● ':state==='checking'?'◌ ':'● ')+message;}
+    }
+    function getCloudSettings(){
+      return {
+        baseUrl:String($('cloudBaseUrl')?.value||'').trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),
+        model:String($('cloudModel')?.value||'').trim(),
+        key:String($('cloudApiKey')?.value||safeGet(providerKeyStorage('alandi'))||'').trim()
+      };
+    }
+    async function refreshCloudStatus(){
+      const {baseUrl,model,key}=getCloudSettings();
+      if(!baseUrl){setCloudStatus('disconnected','Нет соединения: адрес твоего облачного gateway ещё не задан.');return;}
+      if(!model||!key){setCloudStatus('disconnected','Ожидает настройки: нужны модель и ключ gateway.');return;}
+      let marker=null;try{marker=JSON.parse(safeGet('ai_alandi_cloud_connection_v1')||'null');}catch(_){}
+      const fingerprint=await providerKeyFingerprint(key);
+      if(!marker?.ok||marker.baseUrl!==baseUrl||marker.model!==model||marker.keyFingerprint!==fingerprint){
+        setCloudStatus('disconnected','Нет подтверждённого соединения. Нажми «Проверить и подключить».');return;
+      }
+      try{
+        const health=new URL(baseUrl);
+        health.pathname=health.pathname.replace(/\/v1\/?$/,'').replace(/\/$/,'')+'/healthz';
+        health.search='';health.hash='';
+        const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);
+        let response;
+        try{response=await fetch(health.toString(),{method:'GET',headers:{Accept:'application/json'},cache:'no-store',signal:controller.signal});}
+        finally{clearTimeout(timer);}
+        if(response.ok)setCloudStatus('connected','Облако отвечает. Последняя проверка модели подтверждена.');
+        else setCloudStatus('disconnected','Модель ранее ответила, но health-check gateway вернул HTTP '+response.status+'.');
+      }catch(_){setCloudStatus('disconnected','Сейчас не удалось подтвердить связь с gateway. Проверь адрес, сеть и доступность сервиса.');}
+    }
+    function isUsableProbeResponse(payload,rawText=''){
+      if(payload&&payload.error)return false;
+      if(payload&&Array.isArray(payload.choices)&&payload.choices.length){
+        const first=payload.choices[0],message=first?.message;
+        if(typeof first?.text==='string'&&first.text.trim())return true;
+        if(message&&typeof message.content==='string'&&message.content.trim())return true;
+        if(message&&Array.isArray(message.content)&&message.content.some(part=>typeof part?.text==='string'&&part.text.trim()))return true;
+        if(message&&message.content&&typeof message.content==='object'&&typeof message.content.text==='string'&&message.content.text.trim())return true;
+        if(message&&Array.isArray(message.tool_calls)&&message.tool_calls.length)return true;
+        if(message&&typeof message.refusal==='string'&&message.refusal.trim())return true;
+      }
+      if(typeof payload?.output_text==='string'&&payload.output_text.trim())return true;
+      return !payload&&String(rawText||'').trim().length>0&&String(rawText).trim().length<12000&&!/^\s*</.test(rawText);
+    }
     async function refreshApiKeyLamp(){
-      const provider=currentProvider(),inputKey=$('apiKey').value.trim()||safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'';
+      const provider=currentProvider();
+      const inputKey=$('apiKey').value.trim()||safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'';
       const baseUrl=$('baseUrl').value.trim().replace(/\/+$/,''),model=$('modelName').value.trim();
-      if(provider==='pollinations'&&inputKey&&!getProviderRequestKey('pollinations')){updateApiKeyLamp('pending','App Key задан. Подключите Pollinations через OAuth PKCE; временный access token не сохраняется в localStorage.');return;}
-      if(!inputKey){updateApiKeyLamp('empty','Серый — ключ не введён. Вставьте ключ и нажмите «Проверить соединение».');return;}
+      if(provider==='kilo'&&!inputKey){
+        let marker=null;try{marker=JSON.parse(safeGet('ai_provider_connection_kilo')||'null');}catch(_){}
+        if(marker?.ok&&marker.baseUrl===baseUrl&&marker.model===model)updateApiKeyLamp('connected','Kilo Auto Free отвечает; ключ не требуется.');
+        else updateApiKeyLamp('pending','Kilo Auto Free не требует ключа. Нажми «Проверить соединение», чтобы подтвердить доступность.');
+        return;
+      }
+      if(provider==='pollinations'&&inputKey&&!getProviderRequestKey('pollinations')){updateApiKeyLamp('pending','App Key задан. Подключи Pollinations через OAuth PKCE; временный access token не сохраняется в localStorage.');return;}
+      if(!inputKey){updateApiKeyLamp('empty','Ключ не введён. Для aLandi Cloud настрой ключ в верхней карточке.');return;}
       const verificationKey=provider==='pollinations'?getProviderRequestKey(provider):inputKey;
       if(!verificationKey){updateApiKeyLamp('pending','Ключ задан, но сеанс провайдера ещё не подключён.');return;}
       let v=null;try{v=JSON.parse(safeGet('ai_provider_connection_'+provider)||'null');}catch(_){}
@@ -1467,49 +1523,80 @@ permalink: /
       else updateApiKeyLamp('pending','Янтарный — ключ задан, но его текущая версия ещё не подтверждена.');
     }
     async function testProviderConnection(){
+      if(isTestingProviderConnection)return;
       const provider=currentProvider(),baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),key=provider==='pollinations'?getProviderRequestKey(provider):($('apiKey').value.trim()||getProviderRequestKey(provider)),model=$('modelName').value.trim();
-      if(!key){
-        if(provider==='pollinations'&&($('apiKey').value.trim()||safeGet(providerKeyStorage('pollinations')))){updateApiKeyLamp('pending','App Key сохранён. Нажмите «Подключить аккаунт Pollinations · PKCE», затем повторите проверку.');showToast('Сначала подключите Pollinations через OAuth PKCE.','error');return;}
-        updateApiKeyLamp('error','Сначала вставьте API-ключ.');showToast('Для проверки нужен API-ключ выбранного провайдера.','error');return;
+      if(!key&&provider!=='kilo'){
+        if(provider==='pollinations'&&($('apiKey').value.trim()||safeGet(providerKeyStorage('pollinations')))){updateApiKeyLamp('pending','App Key задан. Подключи Pollinations через OAuth PKCE, затем повтори проверку.');showToast('Сначала подключи Pollinations через OAuth PKCE.','error');return;}
+        updateApiKeyLamp('error','Сначала вставь API-ключ.');showToast('Для проверки нужен API-ключ выбранного провайдера.','error');return;
       }
-      if(!model){updateApiKeyLamp('error','Укажите модель, которую нужно проверить.');return;}
-      try{new URL(baseUrl);}catch(_){updateApiKeyLamp('error','Base URL некорректен. Исправьте адрес и повторите проверку.');return;}
-      updateApiKeyLamp('pending','Проверяю короткий запрос к выбранной модели…');showStatus('🔌 Проверяю выбранную модель…');
-      try{
-        // A real minimal completion is the source of truth. Some compatible APIs do not expose /models.
-        const modelResponse=await fetch(buildApiUrl(baseUrl),{
-          method:'POST',headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
-          body:JSON.stringify({model,messages:[{role:'user',content:'Reply with exactly OK. No other words.'}],max_tokens:8,stream:false})
-        });
-        if(!modelResponse.ok){
-          const detail=(await modelResponse.text().catch(()=>'' )).slice(0,220).replaceAll(key,'[скрытый ключ]');
-          let catalogue = null;
-          if ([400,404].includes(modelResponse.status) && provider === currentProvider()) {
-            catalogue = await refreshModelCatalog({ quiet: true, force: true, provider, baseUrl, key });
+      if(!model){updateApiKeyLamp('error','Укажи модель для проверки.');return;}
+      let parsed;try{parsed=new URL(baseUrl);}catch(_){updateApiKeyLamp('error','Укажи корректный Base URL.');return;}
+      if(parsed.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(parsed.hostname)){updateApiKeyLamp('error','Для удалённого API нужен HTTPS.');return;}
+      isTestingProviderConnection=true;
+      const button=document.querySelector('[data-action="test-connection"]');
+      if(button){button.disabled=true;button.textContent='Проверяю…';}
+      updateApiKeyLamp('pending','Проверяю модель. Повторю попытку только если API явно сообщил, что ID модели недоступен.');
+      showStatus('Проверяю подключение…');
+      let result=null,lastError=null;
+      const probe=async candidateModel=>{
+        const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
+        try{
+          const headers={'Content-Type':'application/json'};if(key)headers.Authorization='Bearer '+key;
+          const response=await fetch(buildApiUrl(baseUrl),{method:'POST',headers,body:JSON.stringify({model:candidateModel,messages:[{role:'user',content:'Reply with exactly OK. No other words.'}],max_tokens:8,stream:false}),cache:'no-store',signal:controller.signal});
+          const raw=await response.text();let payload=null;try{payload=JSON.parse(raw);}catch(_){}
+          if(!response.ok){
+            const detail=String(payload?.error?.message||payload?.message||raw||'').slice(0,240).replaceAll(key||'\u0000','[скрытый ключ]');
+            const error=new Error('HTTP '+response.status+(detail?': '+detail:''));error.status=response.status;error.details=detail;
+            error.modelUnavailable=[400,404].includes(response.status)&&/(model|deployment)/i.test(detail)&&/(not found|unknown|invalid model|does not exist|unsupported model|not available|no such model|not accessible|no route found)/i.test(detail);
+            throw error;
           }
-          const catalogHelp = catalogue?.count && !catalogue.stale ? ' Каталог обновлён: ' + catalogue.count + ' текстовых моделей. Выберите доступную модель в списке выше.' : '';
-          updateApiKeyLamp('error','Модель '+model+' не прошла проверку: HTTP '+modelResponse.status+(detail?': '+detail:'')+catalogHelp);
-          showToast(catalogue?.count ? 'Список моделей обновлён; выберите другую модель.' : 'Модель не подтвердилась: HTTP '+modelResponse.status,'error');
-          safeSet('ai_provider_connection_'+provider,'');return;
+          if(!isUsableProbeResponse(payload,raw))throw new Error('API ответил, но совместимый ответ модели не распознан.');
+          return {candidateModel,payload,raw};
+        }finally{clearTimeout(timer);}
+      };
+      try{
+        try{result=await probe(model);}catch(error){
+          lastError=error;
+          if(error.modelUnavailable){
+            await refreshModelCatalog({quiet:true,force:true,provider,baseUrl,key});
+            const available=modelCatalogEntries(provider,false).map(item=>item.id).filter(id=>id&&id!==model).slice(0,3);
+            for(const alternative of available){
+              try{result=await probe(alternative);break;}
+              catch(nextError){lastError=nextError;if(!nextError.modelUnavailable)break;}
+            }
+          }
         }
-        const completion=await modelResponse.json(),answer=completion?.choices?.[0]?.message?.content;
-        if(typeof answer!=='string'||!answer.trim()){updateApiKeyLamp('error','API ответил, но модель не вернула обычный текстовый ответ.');safeSet('ai_provider_connection_'+provider,'');return;}
-        let catalogueNote='каталог моделей недоступен';
-        let refreshedCatalogue = null;
-        if (provider === currentProvider()) refreshedCatalogue = await refreshModelCatalog({ quiet: true, force: true, provider, baseUrl, key });
-        if (refreshedCatalogue?.count && !refreshedCatalogue.stale) catalogueNote = 'в каталоге ' + refreshedCatalogue.count + ' текстовых моделей';
-        const keyFingerprint=await providerKeyFingerprint(key);
-        if(keyFingerprint) safeSet('ai_provider_connection_'+provider,JSON.stringify({ok:true,baseUrl,model,keyFingerprint,testedAt:new Date().toISOString()}));
-        else safeSet('ai_provider_connection_'+provider,'');
-        if(provider===currentProvider()&&model===$('modelName').value.trim()&&baseUrl===$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''))
-          updateApiKeyLamp('connected','Зелёный — модель '+model+' успешно ответила; '+catalogueNote+'.');
-        else refreshApiKeyLamp();
-        showToast('Провайдер и модель прошли проверку');
-      }catch(_){
+        if(!result){
+          safeSet('ai_provider_connection_'+provider,'');
+          updateApiKeyLamp('error','Не удалось подтвердить модель: '+String(lastError?.message||'нет совместимого ответа').slice(0,240));
+          showToast('Проверка провайдера не пройдена.','error');return;
+        }
+        const actualModel=String(result.payload?.model||result.candidateModel);
+        if(provider===currentProvider()&&baseUrl===$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,'')){
+          $('modelName').value=result.candidateModel;safeSet(STORAGE.model,result.candidateModel);safeSet(STORAGE.provider,provider);safeSet(STORAGE.baseUrl,baseUrl);
+          if(key){safeSet(providerKeyStorage(provider),key);if(provider==='gemini')safeSet(STORAGE.apiKey,key);}
+        }
+        const fingerprint=await providerKeyFingerprint(key);
+        safeSet('ai_provider_connection_'+provider,JSON.stringify({ok:true,baseUrl,model:result.candidateModel,keyFingerprint:fingerprint,requestedModel:model,testedAt:new Date().toISOString()}));
+        if(provider==='alandi'&&key){
+          safeSet('ai_alandi_cloud_base_url',baseUrl);safeSet('ai_alandi_cloud_model',result.candidateModel);
+          safeSet('ai_alandi_cloud_connection_v1',JSON.stringify({ok:true,baseUrl,model:result.candidateModel,keyFingerprint:fingerprint,testedAt:new Date().toISOString()}));
+          if($('cloudBaseUrl')){$('cloudBaseUrl').value=baseUrl;$('cloudModel').value=result.candidateModel;$('cloudApiKey').value=key;}
+          setCloudStatus('connected','Облако отвечает: успешная проверка модели подтверждена.');
+        }
+        if(result.candidateModel!==model)populateModelPresets(provider,result.candidateModel);
+        updateApiKeyLamp('connected','Зелёный — модель '+result.candidateModel+' успешно ответила; соединение подтверждено.');
+        showToast(result.candidateModel!==model?'Подобрана доступная модель: '+result.candidateModel:'Провайдер и модель прошли проверку');
+        await refreshModelCatalog({quiet:true,force:true,provider,baseUrl,key});
+      }catch(error){
         safeSet('ai_provider_connection_'+provider,'');
-        updateApiKeyLamp('error','Сеть/CORS не позволили проверить API. Это не доказывает, что ключ неверен; проверьте Base URL или используйте серверный прокси.');
-        showToast('Проверка не удалась: сеть или CORS.','error');
-      }finally{hideStatus();}
+        updateApiKeyLamp('error','Проверка не удалась: '+String(error?.message||error).slice(0,220));
+        showToast('Проверка не удалась: сеть, CORS или формат ответа.','error');
+      }finally{
+        isTestingProviderConnection=false;
+        if(button){button.disabled=false;button.textContent='Проверить соединение и модель';}
+        hideStatus();if(provider==='alandi')void refreshCloudStatus();
+      }
     }
     function clearProviderKey(){
       const provider=currentProvider();safeSet(providerKeyStorage(provider),'');
