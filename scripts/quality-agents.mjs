@@ -244,6 +244,11 @@ const suites = {
     ['tool loop fails closed at its configured boundary', () => {
       includes('round === maxToolRounds', 'Tool-call boundary must be checked against the active mode budget.');
       includes("const maxToolRounds = mode === 'deep' ? MAX_TOOL_ROUNDS : 1;", 'Mode-specific tool budget must be enforced.');
+      includes('const MAX_TOOL_CALLS_PER_RESPONSE = 8;', 'A provider cannot return an unbounded tool-call array.');
+      includes('const MAX_TOOL_CALLS_PER_DEEP_ROUND = 3;', 'Deep mode needs a strict per-round tool-call cap.');
+      includes('const MAX_TOOL_CALLS_PER_DEEP_RUN = 8;', 'Deep mode needs a strict total tool-call budget.');
+      includes('seenToolCallKeys.has(toolSignature)', 'Duplicate tool calls must be suppressed within a run.');
+      includes('round < maxToolRounds && executedToolCalls < maxToolCallsPerRun', 'The final response round must be reserved from additional tool fan-out.');
       includes('Достигнут лимит последовательных вызовов инструментов', 'Tool-loop exhaustion must be reported explicitly.');
     }]
   ],
