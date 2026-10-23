@@ -17,6 +17,11 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
+try:
+    from ..memory.scope import ScopeError, ScopeRef
+except ImportError:  # supports imports when launched with gateway/ as the working directory
+    from memory.scope import ScopeError, ScopeRef
+
 _WORD = re.compile(r"[^\w'-]+", re.UNICODE)
 _STOP = frozenset("""
 a an the and or but to of in on at for with from by as is are was were be been being it
@@ -56,12 +61,40 @@ class LazyGraphRAG:
     def __init__(self, path: str | Path, *, max_chunk_chars: int = 20_000):
         self.path = str(path)
         self.max_chunk_chars = max_chunk_chars
+        self.fts5_secure_delete_enabled = False
+
+    @staticmethod
+    def _scope(scope: object, scope_id: object) -> ScopeRef:
+        try:
+            return ScopeRef.parse(scope, scope_id)
+        except ScopeError as exc:
+            raise ValueError(f"Invalid RAG scope: {exc}") from exc
 
     def _connect(self) -> sqlite3.Connection:
         db = sqlite3.connect(self.path, timeout=5.0)
         db.row_factory = sqlite3.Row
         db.execute("PRAGMA busy_timeout=5000")
+        # Ordinary SQLite b-tree pages are scrubbed; FTS5 requires its own option too.
+        db.execute("PRAGMA secure_delete=ON")
+        db.execute("PRAGMA foreign_keys=ON")
         return db
+
+    @staticmethod
+    def _configure_fts5_secure_delete(db: sqlite3.Connection) -> bool:
+        """Enable FTS5 forensic deletion only where SQLite >= 3.42.0 supports it.
+
+        When enabled, FTS5 file format changes after writes/deletes. Do not downgrade
+        this database to SQLite older than 3.42.0 without rebuilding the FTS index on
+        a supported runtime. This does not scrub WALs, backups, or other storage layers.
+        """
+        if sqlite3.sqlite_version_info < (3, 42, 0):
+            return False
+        try:
+            db.execute("INSERT INTO rag_fts(rag_fts, rank) VALUES ('secure-delete', 1)")
+            row = db.execute("SELECT v FROM rag_fts_config WHERE k='secure-delete'").fetchone()
+        except sqlite3.Error:
+            return False
+        return row is not None and str(row["v"]) == "1"
 
     @staticmethod
     def _document_key(document_id: str, scope: str, scope_id: str) -> str:
@@ -172,11 +205,11 @@ class LazyGraphRAG:
                 else:
                     self._create_schema(db)
                     db.execute("PRAGMA user_version=2")
-                    db.commit()
             else:
                 self._create_schema(db)
                 db.execute("PRAGMA user_version=2")
-                db.commit()
+            self.fts5_secure_delete_enabled = self._configure_fts5_secure_delete(db)
+            db.commit()
         if self.path != ":memory:":
             os.chmod(self.path, 0o600)
 
@@ -191,8 +224,7 @@ class LazyGraphRAG:
                 parsed_source.username or parsed_source.password or
                 any(ord(char) < 32 for char in source_uri)):
             raise ValueError("source_uri must be a safe HTTPS URL without embedded credentials or control characters")
-        if scope not in {"conversation", "project", "global"} or not isinstance(scope_id, str) or not scope_id or len(scope_id) > 160:
-            raise ValueError("Invalid RAG scope")
+        self._scope(scope, scope_id)
         if not isinstance(chunks, list) or len(chunks) > 10_000:
             raise ValueError("chunks must be a bounded list")
 
@@ -247,8 +279,7 @@ class LazyGraphRAG:
     def delete_document(self, document_id: str, *, scope: str, scope_id: str) -> bool:
         if not isinstance(document_id, str) or not document_id or len(document_id) > 160:
             raise ValueError("Invalid document_id")
-        if scope not in {"conversation", "project", "global"} or not isinstance(scope_id, str) or not scope_id or len(scope_id) > 160:
-            raise ValueError("Invalid RAG scope")
+        self._scope(scope, scope_id)
         document_key = self._document_key(document_id, scope, scope_id)
         with closing(self._connect()) as db:
             db.execute("PRAGMA foreign_keys=ON")
@@ -269,8 +300,7 @@ class LazyGraphRAG:
 
     def retrieve(self, query: str, *, scope: str, scope_id: str, top_k: int = 5,
                  candidate_limit: int = 20) -> list[dict[str, Any]]:
-        if scope not in {"conversation", "project", "global"} or not isinstance(scope_id, str) or not scope_id or len(scope_id) > 160:
-            raise ValueError("Invalid RAG scope")
+        self._scope(scope, scope_id)
         if (isinstance(top_k, bool) or not isinstance(top_k, int) or
                 isinstance(candidate_limit, bool) or not isinstance(candidate_limit, int) or
                 not 1 <= top_k <= 20 or not top_k <= candidate_limit <= 100):

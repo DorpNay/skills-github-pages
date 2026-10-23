@@ -222,6 +222,44 @@ def test_rag_migrates_legacy_global_ids_without_losing_citations_or_chunks(tmp_p
     assert rag.retrieve("SQLite architecture", scope="project", scope_id="alandi")
 
 
+
+@pytest.mark.parametrize(("scope", "scope_id"), [
+    ("global", "alpha"),
+    ("project", "global"),
+])
+def test_rag_rejects_invalid_global_scope_pairings(tmp_path, scope, scope_id):
+    rag = LazyGraphRAG(tmp_path / "invalid-scope.sqlite3")
+    rag.initialize()
+    with pytest.raises(ValueError, match="Invalid RAG scope"):
+        rag.ingest_document(
+            "doc", "https://example.test/doc", [{"content": "scope isolation fixture"}],
+            scope=scope, scope_id=scope_id,
+        )
+    with pytest.raises(ValueError, match="Invalid RAG scope"):
+        rag.delete_document("doc", scope=scope, scope_id=scope_id)
+    with pytest.raises(ValueError, match="Invalid RAG scope"):
+        rag.retrieve("scope isolation", scope=scope, scope_id=scope_id)
+
+
+def test_rag_enables_sqlite_secure_delete_and_version_gated_fts5_secure_delete(tmp_path):
+    path = tmp_path / "secure-delete.sqlite3"
+    rag = LazyGraphRAG(path)
+    rag.initialize()
+    db = sqlite3.connect(path)
+    try:
+        assert db.execute("PRAGMA secure_delete").fetchone()[0] == 1
+        if sqlite3.sqlite_version_info >= (3, 42, 0):
+            value = db.execute(
+                "SELECT v FROM rag_fts_config WHERE k='secure-delete'"
+            ).fetchone()
+            assert value is not None and str(value[0]) == "1"
+            assert rag.fts5_secure_delete_enabled is True
+        else:
+            assert rag.fts5_secure_delete_enabled is False
+    finally:
+        db.close()
+
+
 def test_rag_rejects_unsafe_citation_schemes_and_embedded_credentials(tmp_path):
     rag = LazyGraphRAG(tmp_path / "rag.sqlite3")
     rag.initialize()

@@ -69,6 +69,7 @@ improvements:
   AI-RAG-002: {status: "conditional_not_installed", artifact: "gateway/rag/rag_anything.py", eval: "EV-RAG-002"}
   AI-RAG-003: {status: "citation_hash_offset_primitives", artifact: "gateway/rag/citations.py", eval: "EV-RAG-003"}
   AI-RAG-004: {status: "local_evidence_ledger_not_api_exposed", artifact: "gateway/rag/evidence_ledger.py", eval: "EV-RAG-004"}
+  AI-RAG-005: {status: "scoped_rag_delete_and_version_gated_fts_secure_delete_ci_pending", artifact: "gateway/rag/lazy_graph_rag.py; gateway/tests/test_six_layers.py", eval: "EV-RAG-005"}
   AI-TOOLS-001: {status: "blocked_no_container_sandbox", artifact: "sandbox/cli_sandbox.py", eval: "EV-SANDBOX-001"}
   AI-TOOLS-002: {status: "bounded_dag_prototype_no_default_tools", artifact: "gateway/tools/dag_engine.py", eval: "EV-TOOLS-001"}
   AI-TOOLS-003: {status: "schema_validation_prototype", artifact: "gateway/tools/validator.py", eval: "EV-TOOLS-002"}
