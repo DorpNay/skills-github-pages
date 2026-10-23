@@ -25,7 +25,7 @@ const suites = {
       matches(/<\/html>\s*$/, 'Document must close its html element.');
     }],
     ['critical UI controls exist', () => {
-      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiMotion']) {
+      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiMotion', 'cloudSettingsCard', 'cloudStatusDot', 'cloudStatus', 'cloudBaseUrl', 'cloudModel', 'cloudApiKey', 'cloudConnect', 'languageMenu', 'languageSummary', 'clockDigital', 'homeThemeToggle', 'brandWordmark', 'projectPanel', 'currentProjectSelect', 'projectMemoryToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
         matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
       }
     }],
@@ -42,6 +42,15 @@ const suites = {
       includes("alandi: { label: 'aLandi Self-hosted Gateway'", 'The aLandi private gateway must be a first-class provider.');
       includes("allowCrossProvider&&selectedProvider!=='alandi'", 'Selecting aLandi must never silently route private prompts to another provider even if global fallback is enabled.');
       includes('<option value="alandi">aLandi · собственный gateway</option>', 'The aLandi provider must be selectable in settings.');
+      assert.equal((source.match(/<option value="alandi">/g) || []).length, 1, 'The provider selector must not contain duplicate aLandi options.');
+      includes('function connectAlandiCloud()', 'The cloud UI must verify a real model response before showing connected.');
+      includes("globalMemoryEnabled=safeGet(STORAGE.globalMemoryEnabled)==='true'", 'Global memory must be explicitly enabled, not added to every request by default.');
+      includes('function loadProjects()', 'Project data must have a bounded and validated loader.');
+      includes('chat.projectMemoryEnabled&&activeProject', 'Project memory must be opt-in at chat scope.');
+      includes('data-action="export-project"', 'Project bundle export must be available.');
+      includes('function importProjectBundle(event)', 'Project bundle import must validate its version and size.');
+      includes('data-action="voice-chat-preview"', 'Voice mode chooser must be present without claiming a live voice runtime.');
+      includes('async function handleTextAttachment()', 'Text attachments must be size/type bounded and treated as untrusted data.');
       includes("provider==='custom'||provider==='alandi'", 'Custom gateway providers must not fall back to the default cloud endpoint.');
       includes("requestHeaders['X-AI-Cache-Bypass']='1'", 'Dynamic agent turns must explicitly bypass the server response cache.');
       includes('X-AI-Cache', 'The browser should read the exposed private gateway cache status.');
@@ -175,7 +184,7 @@ const suites = {
     ['API credentials are user-configured, not hard-coded', () => {
       includes("apiKey: 'ai_api_key'", 'API key storage slot is missing.');
       includes('safeGet(STORAGE.apiKey)', 'API key must be read from user settings.');
-      includes("'Authorization':`Bearer ${candidate.key}`", 'Requests must use a saved provider-specific bearer key.');
+      includes("if(candidate.key)requestHeaders.Authorization=`Bearer ${candidate.key}`", 'Requests must use an optional provider-specific bearer key and omit Authorization for keyless Kilo Free.');
       includes('type="password" id="apiKey"', 'API key field must be masked.');
     }],
     ['untrusted output is not inserted as raw HTML', () => {
