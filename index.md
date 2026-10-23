@@ -2105,7 +2105,7 @@ permalink: /
       const attempts = await Promise.all(sources.map(async source => {
         try {
           const result = await performPublicKnowledgeSearch(source, query, signal, mode);
-          return typeof result === 'string' && /\\nURL: https?:\\/\\//.test(result) ? { source, result } : null;
+          return typeof result === 'string' && /\nURL: https?:\/\//.test(result) ? { source, result } : null;
         } catch (error) {
           if (error?.name === 'AbortError') throw error;
           return null;
@@ -2115,8 +2115,8 @@ permalink: /
       const header = reason
         ? 'Tavily недоступен (' + reason + '). Использованы доступные открытые источники без отдельного ключа.'
         : 'Ключ Tavily не настроен. Использованы доступные открытые источники без отдельного ключа.';
-      if (!usable.length) return header + '\\nОткрытые источники сейчас тоже недоступны. Проверь сеть или повтори поиск позже.';
-      return header + '\\n\\n' + usable.map((item, index) => '[Открытый источник ' + (index + 1) + ': ' + item.source + ']\\n' + item.result).join('\\n\\n');
+      if (!usable.length) return header + '\nОткрытые источники сейчас тоже недоступны. Проверь сеть или повтори поиск позже.';
+      return header + '\n\n' + usable.map((item, index) => '[Открытый источник ' + (index + 1) + ': ' + item.source + ']\n' + item.result).join('\n\n');
     }
     async function performTavilySearch(query, signal, mode = 'fast') {
       const key = safeGet(STORAGE.tavilyKey) || '';
