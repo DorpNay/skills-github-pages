@@ -1,8 +1,8 @@
 project_state:
   version: 4
   reviewed_on: "2026-10-23"
-  last_volley: "V-2026-10-23-ALANDI-V016-SEARCH"
-  gate: "PR #21 merged as 97793ddfc00b1d364e9109ecd3efabe927a1f08a; PR-head quality, Chromium E2E, Lite Gateway and Pages deployment passed; post-merge quality run is still checking; live gateway/VPS remains unverified"
+  last_volley: "V-2026-10-23-ALANDI-PROVIDER-SMOKE-CONSENT"
+  gate: "Main is 0ae1ed1892380562d148574abc2d2cd64e5abe9d; PR #24 RAG checks and post-merge Quality, Lite Gateway, provenance and Pages deployment passed; PR #25 provider-smoke consent checks pending; live gateway/VPS remains unverified"
   source_of_truth:
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
@@ -20,7 +20,7 @@ project_state:
   current_ui_track:
     branch: "feat/alandi-cloud-settings-ux"
     pull_request: 21
-    status: "merged_ui_slice_postmerge_quality_check_pending"
+    status: "merged_provider_UI_and_race_guards_postmerge_quality_and_Pages_passed"
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback"
     projects: "Browser-local CRUD, instructions, chat association, project-memory opt-in, import/export; not an authenticated backend API"
@@ -69,7 +69,7 @@ improvements:
   AI-RAG-002: {status: "conditional_not_installed", artifact: "gateway/rag/rag_anything.py", eval: "EV-RAG-002"}
   AI-RAG-003: {status: "citation_hash_offset_primitives", artifact: "gateway/rag/citations.py", eval: "EV-RAG-003"}
   AI-RAG-004: {status: "local_evidence_ledger_not_api_exposed", artifact: "gateway/rag/evidence_ledger.py", eval: "EV-RAG-004"}
-  AI-RAG-005: {status: "scoped_rag_delete_and_version_gated_fts_secure_delete_ci_pending", artifact: "gateway/rag/lazy_graph_rag.py; gateway/tests/test_six_layers.py", eval: "EV-RAG-005"}
+  AI-RAG-005: {status: "scoped_rag_delete_and_version_gated_fts_secure_delete_postmerge_ci_passed_not_full_erasure", artifact: "gateway/rag/lazy_graph_rag.py; gateway/tests/test_six_layers.py", eval: "EV-RAG-005"}
   AI-TOOLS-001: {status: "blocked_no_container_sandbox", artifact: "sandbox/cli_sandbox.py", eval: "EV-SANDBOX-001"}
   AI-TOOLS-002: {status: "bounded_dag_prototype_no_default_tools", artifact: "gateway/tools/dag_engine.py", eval: "EV-TOOLS-001"}
   AI-TOOLS-003: {status: "schema_validation_prototype", artifact: "gateway/tools/validator.py", eval: "EV-TOOLS-002"}
