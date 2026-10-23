@@ -1291,41 +1291,44 @@ test('server project memory bridge is manual and requires both chat opt-ins', as
   const serverNodes = [];
   const capturedBodies = [];
   let searchCalls = 0;
+  const corsHeaders = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Content-Type': 'application/json' };
 
   await page.route('https://gateway.example.test/v1/memory/graph/**', async route => {
     const request = route.request();
     const url = new URL(request.url());
     const method = request.method();
     const scopeId = url.searchParams.get('scope_id');
+    if (method === 'OPTIONS') return route.fulfill({ status: 204, headers: corsHeaders });
     if (url.pathname.endsWith('/nodes') && method === 'GET') {
-      return route.fulfill({ status: 200, contentType: 'application/json',
+      return route.fulfill({ status: 200, headers: corsHeaders,
         body: JSON.stringify({ nodes: serverNodes.filter(node => node.scope_id === scopeId), count: serverNodes.length }) });
     }
     if (url.pathname.endsWith('/nodes') && method === 'POST') {
       const body = request.postDataJSON();
       const node = { id: 'server-node-' + (serverNodes.length + 1), status: 'candidate', ...body };
       serverNodes.push(node);
-      return route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify({ node }) });
+      return route.fulfill({ status: 201, headers: corsHeaders, body: JSON.stringify({ node }) });
     }
     if (url.pathname.endsWith('/search') && method === 'POST') {
       searchCalls++;
       const body = request.postDataJSON();
       const nodes = serverNodes.filter(node => node.scope === body.scope && node.scope_id === body.scope_id &&
         node.status === 'confirmed' && node.content.includes('SERVER_MEMORY_SENTINEL'));
-      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ nodes, count: nodes.length }) });
+      return route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({ nodes, count: nodes.length }) });
     }
     if (url.pathname.endsWith('/review') && method === 'POST') {
       const id = url.pathname.split('/').slice(-2)[0];
       const body = request.postDataJSON();
       const node = serverNodes.find(item => item.id === id);
       if (node) node.status = body.status;
-      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ node }) });
+      return route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({ node }) });
     }
-    return route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ detail: 'Unmocked graph route' }) });
+    return route.fulfill({ status: 404, headers: corsHeaders, body: JSON.stringify({ detail: 'Unmocked graph route' }) });
   });
   await page.route('https://gateway.example.test/v1/chat/completions', async route => {
+    if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: corsHeaders });
     capturedBodies.push(route.request().postDataJSON());
-    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+    return route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({
       model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'Bridge response.' }, finish_reason: 'stop' }]
     }) });
   });
