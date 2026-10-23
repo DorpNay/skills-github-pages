@@ -1906,6 +1906,7 @@ permalink: /
       const button=document.querySelector('[data-action="connect-alandi-cloud"]');
       if(button){button.disabled=true;button.textContent='Проверяю…';}
       setCloudStatus('checking','Ожидаю настоящий ответ модели…');
+      updateApiKeyLamp('checking','Проверяю модель и health-check собственного gateway…');
       const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
       try{
         const response=await fetch(buildApiUrl(baseUrl),{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model,messages:[{role:'user',content:'Reply with exactly OK.'}],max_tokens:8,stream:false}),cache:'no-store',signal:controller.signal});
@@ -1937,6 +1938,7 @@ permalink: /
       }catch(error){
         safeSet('ai_alandi_cloud_connection_v1','');safeSet('ai_provider_connection_alandi','');
         setCloudStatus('disconnected','Не удалось подтвердить соединение: '+String(error?.message||error).slice(0,190));
+        updateApiKeyLamp('disconnected','Соединение не подтверждено. Проверь модель и health-check gateway.');
         showToast('Не удалось подключить aLandi Cloud.','error');
       }finally{
         clearTimeout(timer);isTestingProviderConnection=false;
