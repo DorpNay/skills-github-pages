@@ -772,7 +772,7 @@ test('Kilo Auto Free works without a key and is an explicit single-provider rout
   await page.locator('[data-action="test-connection"]').click();
   await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected');
   expect(authorization).toBe('');
-  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_provider_cross_provider_fallback'))).not.toBe('true');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_cross_provider_fallback'))).not.toBe('true');
 });
 
 test('pasting a provider key starts one bounded model-catalog and connection check', async ({ page }) => {
