@@ -44,6 +44,7 @@ const suites = {
       includes('<option value="alandi">aLandi · собственный gateway</option>', 'The aLandi provider must be selectable in settings.');
       assert.equal((source.match(/<option value="alandi">/g) || []).length, 1, 'The provider selector must not contain duplicate aLandi options.');
       includes('function connectAlandiCloud()', 'The cloud UI must verify a real model response before showing connected.');
+      includes('Never show a green connection lamp for proxy text, HTML, or an unknown error body.', 'HTTP 200 with unrecognized text must not be considered a successful model probe.');
       includes("globalMemoryEnabled=safeGet(STORAGE.globalMemoryEnabled)==='true'", 'Global memory must be explicitly enabled, not added to every request by default.');
       includes('function loadProjects()', 'Project data must have a bounded and validated loader.');
       includes('chat.projectMemoryEnabled&&activeProject', 'Project memory must be opt-in at chat scope.');
