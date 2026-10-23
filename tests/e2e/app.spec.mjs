@@ -1285,3 +1285,93 @@ test('legacy aLandi provider probe does not overwrite changed primary cloud sett
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
 });
+
+
+test('server project memory bridge is manual and requires both chat opt-ins', async ({ page }) => {
+  const serverNodes = [];
+  const capturedBodies = [];
+  let searchCalls = 0;
+
+  await page.route('https://gateway.example.test/v1/memory/graph/**', async route => {
+    const request = route.request();
+    const url = new URL(request.url());
+    const method = request.method();
+    const scopeId = url.searchParams.get('scope_id');
+    if (url.pathname.endsWith('/nodes') && method === 'GET') {
+      return route.fulfill({ status: 200, contentType: 'application/json',
+        body: JSON.stringify({ nodes: serverNodes.filter(node => node.scope_id === scopeId), count: serverNodes.length }) });
+    }
+    if (url.pathname.endsWith('/nodes') && method === 'POST') {
+      const body = request.postDataJSON();
+      const node = { id: 'server-node-' + (serverNodes.length + 1), status: 'candidate', ...body };
+      serverNodes.push(node);
+      return route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify({ node }) });
+    }
+    if (url.pathname.endsWith('/search') && method === 'POST') {
+      searchCalls++;
+      const body = request.postDataJSON();
+      const nodes = serverNodes.filter(node => node.scope === body.scope && node.scope_id === body.scope_id &&
+        node.status === 'confirmed' && node.content.includes('SERVER_MEMORY_SENTINEL'));
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ nodes, count: nodes.length }) });
+    }
+    if (url.pathname.endsWith('/review') && method === 'POST') {
+      const id = url.pathname.split('/').slice(-2)[0];
+      const body = request.postDataJSON();
+      const node = serverNodes.find(item => item.id === id);
+      if (node) node.status = body.status;
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ node }) });
+    }
+    return route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ detail: 'Unmocked graph route' }) });
+  });
+  await page.route('https://gateway.example.test/v1/chat/completions', async route => {
+    capturedBodies.push(route.request().postDataJSON());
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+      model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'Bridge response.' }, finish_reason: 'stop' }]
+    }) });
+  });
+
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
+    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_provider', 'alandi');
+    localStorage.setItem('ai_model_name', 'qwen3.5:4b');
+    localStorage.setItem('ai_alandi_cloud_model', 'qwen3.5:4b');
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#toggleSearch').uncheck();
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectManagerDetails > summary').click();
+  await page.locator('#projectNameInput').fill('Server bridge project');
+  await page.locator('[data-action="create-project"]').click();
+  await page.locator('#projectMemoryInput').fill('SERVER_MEMORY_SENTINEL is a local project fact.');
+  await page.locator('[data-action="add-project-memory"]').click();
+  await expect(page.locator('#projectMemoryBox')).toContainText('SERVER_MEMORY_SENTINEL');
+  await expect(page.locator('#serverProjectMemoryToggle')).not.toBeChecked();
+  expect(serverNodes).toHaveLength(0); // Local facts are never uploaded automatically.
+
+  await page.locator('#serverMemoryDetails > summary').click();
+  await page.locator('[data-action="upload-server-memory"]').click();
+  await expect.poll(() => serverNodes.length).toBe(1);
+  await expect(page.locator('#serverMemoryBox')).toContainText('Candidate');
+  await page.locator('[data-action="review-server-memory"][data-review-status="confirmed"]').click();
+  await expect.poll(() => serverNodes[0]?.status).toBe('confirmed');
+
+  await page.locator('[data-action="close-sidebar"]').click();
+  await page.locator('#userInput').fill('Summarize this project.');
+  await page.locator('#sendBtn').click();
+  await expect.poll(() => capturedBodies.length).toBe(1);
+  expect(searchCalls).toBe(0);
+  expect(capturedBodies[0].messages[0].content).not.toContain('SERVER_MEMORY_SENTINEL');
+
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectMemoryToggle').check();
+  await page.locator('#serverProjectMemoryToggle').check();
+  await page.locator('[data-action="close-sidebar"]').click();
+  await page.locator('#userInput').fill('Use the approved server project memory.');
+  await page.locator('#sendBtn').click();
+  await expect.poll(() => capturedBodies.length).toBe(2);
+  expect(searchCalls).toBe(1);
+  expect(capturedBodies[1].messages[0].content).toContain('SERVER_MEMORY_SENTINEL');
+});
