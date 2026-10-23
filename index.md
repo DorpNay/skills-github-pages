@@ -390,7 +390,7 @@ permalink: /
     <div class="flex gap-2 items-end" id="inputArea">
       <button type="button" data-action="attach-text-file" id="attachTextButton" aria-label="Прикрепить текстовый файл" title="Прикрепить .txt, .md, .csv, .json или .log" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">＋</button>
       <input type="file" id="textAttachmentInput" class="hidden" accept=".txt,.md,.csv,.json,.log,text/plain,text/markdown,text/csv,application/json">
-      <textarea id="userInput" rows="1" maxlength="30000" placeholder="Напиши сообщение..." data-i18n-placeholder="composerPlaceholder" aria-label="Сообщение" data-i18n-placeholder="composerPlaceholder" class="flex-1 min-w-0 bg-gray-900 border border-gray-700 px-3 py-2.5 rounded-xl text-base outline-none resize-none max-h-32"></textarea>
+      <textarea id="userInput" rows="1" maxlength="30000" placeholder="Напиши сообщение..." aria-label="Сообщение" data-i18n-placeholder="composerPlaceholder" class="flex-1 min-w-0 bg-gray-900 border border-gray-700 px-3 py-2.5 rounded-xl text-base outline-none resize-none max-h-32"></textarea>
       <button id="voiceUnavailableButton" type="button" disabled aria-label="Голосовой режим пока не подключён" title="Голосовой runtime ещё не подключён" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5 opacity-50 cursor-not-allowed">◉</button>
       <button id="sendBtn" type="button" data-action="send" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Отправить сообщение">➤</button>
       <button id="stopBtn" type="button" data-action="stop" class="hidden bg-red-600 hover:bg-red-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Остановить генерацию">⏹</button>
@@ -460,9 +460,8 @@ permalink: /
     let isGenerating = false;
     let isTestingProviderConnection = false;
     let providerAutoConnectTimer = null;
+    let cloudAutoConnectTimer = null;
     let clockTimer = null;
-    let isTestingProviderConnection = false;
-    let providerAutoConnectTimer = null;
     let storageWarningShown = false;
     let pyodidePromise = null;
     let pyodideScriptPromise = null;
@@ -470,7 +469,7 @@ permalink: /
 
     function currentProvider() {
       const value = $('providerPreset')?.value || safeGet(STORAGE.provider) || 'alandi';
-      return Object.prototype.hasOwnProperty.call(PROVIDERS, value) ? value : 'gemini';
+      return Object.prototype.hasOwnProperty.call(PROVIDERS, value) ? value : 'alandi';
     }
     function providerKeyStorage(provider) { return 'ai_api_key_' + provider; }
     const POLLINATIONS_SESSION = {
@@ -1550,7 +1549,17 @@ permalink: /
     function setCloudStatus(state,message){
       const dot=$('cloudStatusDot'),copy=$('cloudStatus');
       if(dot)dot.dataset.state=state;
-      if(copy){copy.dataset.state=state;copy.textContent=(state==='connected'?'● ':state==='checking'?'◌ ':'● ')+message;}
+      let text=message;
+      if(getUiLanguage()==='en'){
+        if(/адрес.*gateway ещё не задан|No cloud gateway URL/i.test(message))text='No connection: the cloud gateway URL is not configured.';
+        else if(/нужны модель и ключ|Заполни адрес gateway/i.test(message))text='Configuration needed: enter a gateway URL, model and key.';
+        else if(/Нет подтверждённого соединения/i.test(message))text='No confirmed connection. Run the connection check.';
+        else if(/Облако подключено|Облако отвечает/i.test(message))text='Cloud is connected: the model responded successfully.';
+        else if(/Gateway settings changed|Model changed|Key changed/i.test(message))text=message;
+        else if(/Не удалось|не удалось подтвердить/i.test(message))text='Connection not confirmed: '+message.slice(message.indexOf(':')+1).trim();
+        else if(/Ожидает настройки/i.test(message))text='Waiting for setup: gateway model and key are required.';
+      }
+      if(copy){copy.dataset.state=state;copy.textContent=(state==='connected'?'● ':state==='checking'?'◌ ':'● ')+text;}
     }
     function getCloudSettings(){
       return {
@@ -1740,7 +1749,7 @@ permalink: /
         field.value=text.trim();field.dispatchEvent(new Event('input',{bubbles:true}));
         field.focus();field.setSelectionRange?.(field.value.length,field.value.length);
         if(id==='apiKey')scheduleProviderAutoConnect();
-        else if(id==='cloudApiKey'){safeSet('ai_alandi_cloud_connection_v1','');setCloudStatus('disconnected','Ключ изменён. Нажми «Проверить и подключить».');}
+        else if(id==='cloudApiKey'){safeSet('ai_alandi_cloud_connection_v1','');setCloudStatus('disconnected','Ключ изменён. Нажми «Проверить и подключить».');scheduleCloudAutoConnect();}
         showToast('Текст вставлен.');
       }catch(_){field.focus();showToast('Браузер не разрешил чтение буфера. Нажми Ctrl+V в поле.','error');}
     }
@@ -1753,6 +1762,10 @@ permalink: /
         try{await refreshModelCatalog({quiet:true,force:true,provider});}catch(_){}
         await testProviderConnection();
       },700);
+    }
+    function scheduleCloudAutoConnect(){
+      if(cloudAutoConnectTimer)clearTimeout(cloudAutoConnectTimer);
+      cloudAutoConnectTimer=setTimeout(()=>{cloudAutoConnectTimer=null;const cfg=getCloudSettings();if(cfg.baseUrl&&cfg.model&&cfg.key)void connectAlandiCloud();},700);
     }
     function useKiloFree(){
       safeSet('ai_alandi_cloud_connection_v1','');
@@ -2805,9 +2818,9 @@ permalink: /
     });
     $('apiKey').addEventListener('input',(event)=>{if(currentProvider()!=='pollinations')safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();if(event.inputType==='insertFromPaste')scheduleProviderAutoConnect();});
     $('baseUrl').addEventListener('input',()=>{safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
-    $('cloudBaseUrl').addEventListener('input',()=>{safeSet('ai_alandi_cloud_base_url',$('cloudBaseUrl').value.trim());safeSet('ai_alandi_cloud_connection_v1','');setCloudStatus('disconnected',$('cloudBaseUrl').value.trim()?'Gateway settings changed; run a fresh connection check.':'No cloud gateway URL configured.');});
+    $('cloudBaseUrl').addEventListener('input',(event)=>{safeSet('ai_alandi_cloud_base_url',$('cloudBaseUrl').value.trim());safeSet('ai_alandi_cloud_connection_v1','');setCloudStatus('disconnected',$('cloudBaseUrl').value.trim()?'Gateway settings changed; run a fresh connection check.':'No cloud gateway URL configured.');if(event.inputType==='insertFromPaste')scheduleCloudAutoConnect();});
     $('cloudModel').addEventListener('input',()=>{safeSet('ai_alandi_cloud_model',$('cloudModel').value.trim());safeSet('ai_alandi_cloud_connection_v1','');setCloudStatus('disconnected','Model changed; run a fresh connection check.');});
-    $('cloudApiKey').addEventListener('input',()=>{safeSet('ai_alandi_cloud_connection_v1','');setCloudStatus('disconnected','Key changed; run a fresh connection check.');});
+    $('cloudApiKey').addEventListener('input',(event)=>{safeSet('ai_alandi_cloud_connection_v1','');setCloudStatus('disconnected','Key changed; run a fresh connection check.');if(event.inputType==='insertFromPaste')scheduleCloudAutoConnect();});
     $('cloudApiKey').addEventListener('paste',()=>setTimeout(()=>{if($('cloudApiKey').value.trim())setCloudStatus('disconnected','Key pasted. Run the connection check to confirm it.');},0));
     $('textAttachmentInput').addEventListener('change',handleTextAttachment);
     $('providerPreset').addEventListener('change',()=>{safeSet('ai_alandi_cloud_connection_v1','');if(currentProvider()==='alandi'){const url=$('baseUrl').value.trim();if(url)$('cloudBaseUrl').value=url;}});
