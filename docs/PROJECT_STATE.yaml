@@ -1,8 +1,8 @@
 project_state:
   version: 4
   reviewed_on: "2026-10-23"
-  last_volley: "V-2026-10-23-CPOCKET-RUNBOOK"
-  gate: "Main is 653febb01e2f9887dfec8116bf81f26f39e5077a after PR #27; post-merge Gateway, provenance, Quality (including Chromium and published Pages smoke), and Pages deployment passed. PR #28 adds cPocket cleanup resilience and runbook reconciliation; CI pending. Live provider smoke, configured private gateway/VPS and hardware benchmarks remain unverified."
+  last_volley: "V-2026-10-23-MEMORY-BROWSER-BRIDGE"
+  gate: "Main is e424d353418cad62981eb269b4082d2925592708 after PR #28; post-merge Gateway, provenance, Quality and Pages passed. PR #29 adds opt-in browser-to-server project memory; current-head Quality/Chromium and provenance must pass before merge. Live provider smoke, configured private gateway/VPS and hardware benchmarks remain unverified."
   source_of_truth:
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
@@ -18,12 +18,12 @@ project_state:
     gateway_vps: "not verified by this change; do not claim deployed"
     experimental_feature_flags: "false by default"
   current_ui_track:
-    branch: "feat/alandi-cloud-settings-ux"
-    pull_request: 21
-    status: "merged_provider_UI_and_race_guards_postmerge_quality_and_Pages_passed"
+    branch: "feat/alandi-project-memory-bridge"
+    pull_request: 29
+    status: "PR29_opt_in_server_memory_bridge_CI_pending_no_live_gateway_activation"
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback"
-    projects: "Browser-local CRUD, instructions, chat association, project-memory opt-in, import/export; not an authenticated backend API"
+    projects: "Browser-local CRUD plus manual candidate-first server memory bridge; per-chat confirmed-only retrieval requires both project-memory opt-ins; CI pending; gateway feature flag off by default"
     voice_ui: "Preview chooser only; no live microphone/ASR/TTS runtime"
     detailed_ledger: "docs/V016_IMPLEMENTATION_CHECKLIST.md"
     user_todo: "docs/USER_REQUEST_CHECKLIST.md"
@@ -87,6 +87,10 @@ improvements:
   AI-AGENT-001: {status: "logical_roles_not_process_swarm", artifact: "docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md", eval: "EV-AGENT-001"}
   AI-AGENT-002: {status: "limited_existing_routing", artifact: "gateway/tools/dag_engine.py", eval: "EV-AGENT-002"}
   AI-AGENT-003: {status: "bounded_dag_prototype", artifact: "gateway/tools/dag_engine.py", eval: "EV-AGENT-003"}
+  AI-AGENT-004: {status: "accepted_helper_model_design_not_runtime_wired", artifact: "DECISIONS.md; docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md", eval: "EV-AGENT-004"}
+  AI-IMAGE-001: {status: "roadmap_only_no_image_generation_runtime", artifact: "docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md; docs/V016_IMPLEMENTATION_CHECKLIST.md", eval: "EV-IMAGE-001"}
+  AI-OPS-001: {status: "free_first_roadmap_no_billable_resources_provisioned", artifact: "DECISIONS.md; docs/USER_REQUEST_CHECKLIST.md", eval: "EV-OPS-001"}
+  AI-MODEL-001: {status: "no_hidden_refusal_filter_policy_only_no_zero_refusal_guarantee", artifact: "DECISIONS.md", eval: "EV-MODEL-001"}
   AI-LEARN-001: {status: "governance_only_no_self_modification", artifact: "LOOP.md", eval: "EV-LEARN-001"}
   AI-LEARN-002: {status: "versioned_skill_rollback_deferred", artifact: "LOOP.md", eval: "EV-LEARN-002"}
 
