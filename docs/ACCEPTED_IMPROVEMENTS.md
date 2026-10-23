@@ -57,3 +57,12 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 2. No model/voice ships on a family-level license assertion; each artifact needs model/voice card, checksum, upstream URL and distribution rights.
 3. No latency/quality number is a pass until a reproducible measured report exists.
 4. Each implementation updates PROJECT_STATE.yaml, EVALS.md, LOOP.md, DECISIONS.md and the relevant report.
+
+
+## AI-MEM-007 — Opt-in browser-to-server project memory bridge
+
+- **Status:** implemented on PR #29 branch; CI pending.
+- **Scope:** manual upload of local project facts as candidates; review candidates; inspect/delete server nodes; retrieve only confirmed nodes under the active project ID.
+- **Activation:** gateway flag `ALANDI_MEMORY_GRAPH_ENABLED=true`, Pages origin in CORS, configured aLandi gateway URL/key. Global memory stays off.
+- **Prompt inclusion:** both project-memory and server-project-memory toggles must be on for the current chat. Retrieval is bounded to six facts and degrades to local-only context if the graph API is unavailable.
+- **Not included:** automatic migration, global/profile memory, live gateway verification, multi-user ACL, or server cleanup on local project deletion.
