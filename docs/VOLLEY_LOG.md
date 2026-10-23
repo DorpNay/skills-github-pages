@@ -13,6 +13,8 @@
 | V-2026-10-23-MEMORY-GRAPH-API | 2026-10-23 | PR #27 adds authenticated feature-flagged single-owner graph API for candidate creation, search/list, explicit review, relations/supersede and scoped delete | Merged at `653febb01e2f9887dfec8116bf81f26f39e5077a`; post-merge Gateway/provenance/full quality/Pages passed | API not connected to browser localStorage; double opt-in for global scope; no multi-user ACL |
 | V-2026-10-23-CPOCKET-RUNBOOK | 2026-10-23 | cPocket bounds cleanup registration and continues after cleanup RuntimeError/CancelledError; from-zero guide documents memory API, current model/fallback behaviour and experiment limits | PR #28 merged at e424d353; Gateway, Quality Sentinels, provenance and Pages passed on post-merge main | No live audio runtime, target-host FD soak or gateway/VPS deploy is claimed |
 
+| V-2026-10-23-MEMORY-BROWSER-BRIDGE | 2026-10-23 | Browser UI manually transfers local project facts as server candidates, reviews/deletes graph facts, and retrieves confirmed server facts only with two per-chat opt-ins | PR #29 implementation commits 7e5c8a7 / 6954d06; current-head CI pending | No live gateway activation; global memory remains disabled; no automatic migration |
+
 ## Required fields for future entries
 
 - Git SHA and PR link
@@ -23,4 +25,3 @@
 - Rollback method
 - Whether the change is merely merged, or has been activated and verified on the target runtime
 
-| V-2026-10-23-MEMORY-BROWSER-BRIDGE | 2026-10-23 | Browser UI manually transfers local project facts as server candidates, reviews/deletes graph facts, and retrieves confirmed server facts only with two per-chat opt-ins | PR #29 implementation commits 7e5c8a7 / 6954d06; current-head CI pending | No live gateway activation; global memory remains disabled; no automatic migration |
