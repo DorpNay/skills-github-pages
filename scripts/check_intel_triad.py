@@ -25,7 +25,7 @@ def _https_url(value: str) -> bool:
     try:
         parsed = urlsplit(value.strip())
         host = (parsed.hostname or "").lower().rstrip(".")
-        if (parsed.scheme != "https" or not host or not parsed.path.startswith(("/", ""))
+        if (parsed.scheme != "https" or not host
                 or parsed.username or parsed.password
                 or host in {"example.com", "example.org", "example.net", "localhost"}
                 or host.endswith((".test", ".invalid", ".example", ".localhost", ".local"))):
