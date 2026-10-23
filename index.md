@@ -1689,6 +1689,7 @@ permalink: /
       const providers = candidateProviders.filter(provider => {
         if (provider === 'custom') return provider === current && Boolean($('apiKey').value.trim() || getProviderRequestKey(provider));
         if (provider === 'pollinations') return Boolean(safeGet(providerKeyStorage(provider)) || getProviderRequestKey(provider));
+        if (provider === 'kilo') return provider === current; // Auto Free model catalog is intentionally keyless.
         return Boolean((provider === current ? $('apiKey').value.trim() : '') || getProviderRequestKey(provider));
       });
       if (!providers.length) {
@@ -3001,7 +3002,7 @@ permalink: /
         }
       } catch (error) { console.error('Ошибка действия интерфейса:', error); showToast(error.message || 'Не удалось выполнить действие.', 'error'); }
     });
-    $('providerPreset').addEventListener('change',()=>{applyProviderPreset($('providerPreset').value);safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();if(currentProvider()==='pollinations'||getProviderRequestKey(currentProvider()))void refreshModelCatalog({quiet:true,force:false,provider:currentProvider()});});
+    $('providerPreset').addEventListener('change',()=>{applyProviderPreset($('providerPreset').value);safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();if(currentProvider()==='pollinations'||currentProvider()==='kilo'||getProviderRequestKey(currentProvider()))void refreshModelCatalog({quiet:true,force:false,provider:currentProvider()});});
     $('cloudflareAccountId').addEventListener('input',()=>{
       const id=$('cloudflareAccountId').value.trim();safeSet(STORAGE.cloudflareAccountId,id);
       if(currentProvider()==='cloudflare')$('baseUrl').value=getProviderBaseUrl('cloudflare');
