@@ -53,6 +53,9 @@ const suites = {
       includes('projectInstructionContext', 'Project instructions must be included only for the selected project.');
       includes("safeSet(STORAGE.globalMemoryEnabled,String(event.target.checked))", 'Global memory opt-in toggle must persist explicitly.');
       includes('function importProjectBundle(event)', 'Project bundle import must validate its version and size.');
+      includes("const suffix=getUiLanguage()==='en'?' (imported)':' (импорт)'", 'Importing a bundle must create a distinct project instead of silently merging it into the active project.');
+      includes("if(projects.length>=200)throw new Error('Достигнут предел проектов (200). Сначала удали ненужный проект.');", 'Project import must respect the local project-count bound.');
+      includes("if(chats.length+importedChats.length>1000)throw new Error('Импорт превысит безопасный лимит локальных чатов (1000).');", 'Project import must bound total local chat count.');
       includes('data-action="voice-chat-preview"', 'Voice mode chooser must be present without claiming a live voice runtime.');
       includes('async function handleTextAttachment()', 'Text attachments must be size/type bounded and treated as untrusted data.');
       includes("provider==='custom'||provider==='alandi'", 'Custom gateway providers must not fall back to the default cloud endpoint.');
