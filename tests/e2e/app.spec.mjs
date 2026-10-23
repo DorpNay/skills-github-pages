@@ -1041,3 +1041,23 @@ test('aLandi cloud probe rejects HTTP 200 proxy text as proof of a model connect
   await expect(page.locator('#cloudStatus')).toContainText('Не удалось подтвердить соединение');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
 });
+
+
+
+test('voice mode menu stays open after a long press and clearly marks both modes as previews', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const trigger = page.locator('#voiceUnavailableButton');
+  const bounds = await trigger.boundingBox();
+  expect(bounds).not.toBeNull();
+  await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(300);
+  await page.mouse.up();
+  await expect(page.locator('#voiceMenu')).toBeVisible();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#voiceMenu')).toContainText('ГОЛОСОВОЙ ДИАЛОГ');
+  await expect(page.locator('#voiceMenu')).toContainText('ГОЛОСОВОЕ СООБЩЕНИЕ');
+  await page.locator('[data-action="voice-chat-preview"]').click();
+  await expect(page.locator('#voiceMenu')).toBeHidden();
+  await expect(page.locator('#toast')).toContainText('Живой голосовой диалог пока не подключён');
+});
