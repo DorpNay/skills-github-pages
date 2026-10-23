@@ -53,6 +53,7 @@ test('research trace captures a source returned by the webpage tool', async ({ p
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-evidence-model');

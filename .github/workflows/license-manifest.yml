@@ -4,6 +4,12 @@ on:
   push:
     paths:
       - "infra/license/**"
+      - "intel/**"
+      - "latency/**"
+      - "router/**"
+      - "scripts/manifest_state.py"
+      - "scripts/check_intel_triad.py"
+      - "gateway/tests/test_v016_foundation.py"
       - "infra/hardware_profiles.yaml"
       - "infra/onnx/**"
       - "evals/voice/**"
@@ -15,6 +21,12 @@ on:
   pull_request:
     paths:
       - "infra/license/**"
+      - "intel/**"
+      - "latency/**"
+      - "router/**"
+      - "scripts/manifest_state.py"
+      - "scripts/check_intel_triad.py"
+      - "gateway/tests/test_v016_foundation.py"
       - "infra/hardware_profiles.yaml"
       - "infra/onnx/**"
       - "evals/voice/**"
@@ -46,3 +58,7 @@ jobs:
         run: python scripts/check_project_metadata.py
       - name: Validate artifact provenance and ship gates
         run: python scripts/check_license_manifest.py
+      - name: Validate INTEL triad and deterministic artifact state
+        run: |
+          python scripts/check_intel_triad.py
+          python scripts/manifest_state.py

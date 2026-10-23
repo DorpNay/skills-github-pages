@@ -1,0 +1,20 @@
+schema_version: 1
+updated_on: "2026-10-23"
+policy:
+  accepted_requires_verified_url: true
+  accepted_requires_exact_artifact_license: true
+  accepted_requires_claim_source: true
+  gate_does_not_download_or_enable_artifacts: true
+artifacts:
+  - id: vosk-model-small-ru-0.22
+    kind: asr_model_weights
+    status: accepted
+    decision_scope: bakeoff_only
+    verified_url: "https://alphacephei.com/vosk/models"
+    license_exact_artifact: "Apache-2.0"
+    claim: "The official catalogue lists vosk-model-small-ru-0.22 as a lightweight Russian ASR model and lists Apache 2.0. No latency, accuracy, or distribution-performance claim is approved without a project-owned evaluation."
+    claim_source: "https://alphacephei.com/vosk/models"
+    eval_gate: "EV-LANG-001"
+    ship: false
+    artifact_sha256: null
+    notes: "Accepted for controlled bake-off only. This project has not downloaded or hashed the archive/unpacked artifacts; the ship gate remains closed."

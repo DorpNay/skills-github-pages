@@ -25,7 +25,7 @@ const suites = {
       matches(/<\/html>\s*$/, 'Document must close its html element.');
     }],
     ['critical UI controls exist', () => {
-      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiMotion']) {
+      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiMotion', 'cloudSettingsCard', 'cloudStatusDot', 'cloudStatus', 'cloudBaseUrl', 'cloudModel', 'cloudApiKey', 'cloudConnect', 'languageMenu', 'languageSummary', 'clockDigital', 'homeThemeToggle', 'brandWordmark', 'projectPanel', 'currentProjectSelect', 'projectMemoryToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
         matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
       }
     }],
@@ -41,7 +41,23 @@ const suites = {
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
       includes("alandi: { label: 'aLandi Self-hosted Gateway'", 'The aLandi private gateway must be a first-class provider.');
       includes("allowCrossProvider&&selectedProvider!=='alandi'", 'Selecting aLandi must never silently route private prompts to another provider even if global fallback is enabled.');
-      includes('<option value="alandi">aLandi Self-hosted Gateway · свой сервер</option>', 'The aLandi provider must be selectable in settings.');
+      includes('<option value="alandi">aLandi · собственный gateway</option>', 'The aLandi provider must be selectable in settings.');
+      assert.equal((source.match(/<option value="alandi">/g) || []).length, 1, 'The provider selector must not contain duplicate aLandi options.');
+      includes('function connectAlandiCloud()', 'The cloud UI must verify a real model response before showing connected.');
+      includes('Never show a green connection lamp for proxy text, HTML, or an unknown error body.', 'HTTP 200 with unrecognized text must not be considered a successful model probe.');
+      includes("globalMemoryEnabled=safeGet(STORAGE.globalMemoryEnabled)==='true'", 'Global memory must be explicitly enabled, not added to every request by default.');
+      includes('function loadProjects()', 'Project data must have a bounded and validated loader.');
+      includes('chat.projectMemoryEnabled&&activeProject', 'Project memory must be opt-in at chat scope.');
+      includes('data-action="export-project"', 'Project bundle export must be available.');
+      includes('chat.projectId', 'Project associations must be modeled on chats.');
+      includes('projectInstructionContext', 'Project instructions must be included only for the selected project.');
+      includes("safeSet(STORAGE.globalMemoryEnabled,String(event.target.checked))", 'Global memory opt-in toggle must persist explicitly.');
+      includes('function importProjectBundle(event)', 'Project bundle import must validate its version and size.');
+      includes("const suffix=getUiLanguage()==='en'?' (imported)':' (импорт)'", 'Importing a bundle must create a distinct project instead of silently merging it into the active project.');
+      includes("if(projects.length>=200)throw new Error('Достигнут предел проектов (200). Сначала удали ненужный проект.');", 'Project import must respect the local project-count bound.');
+      includes("if(chats.length+importedChats.length>1000)throw new Error('Импорт превысит безопасный лимит локальных чатов (1000).');", 'Project import must bound total local chat count.');
+      includes('data-action="voice-chat-preview"', 'Voice mode chooser must be present without claiming a live voice runtime.');
+      includes('async function handleTextAttachment()', 'Text attachments must be size/type bounded and treated as untrusted data.');
       includes("provider==='custom'||provider==='alandi'", 'Custom gateway providers must not fall back to the default cloud endpoint.');
       includes("requestHeaders['X-AI-Cache-Bypass']='1'", 'Dynamic agent turns must explicitly bypass the server response cache.');
       includes('X-AI-Cache', 'The browser should read the exposed private gateway cache status.');
@@ -83,6 +99,13 @@ const suites = {
       includes('function downloadTraceJson()', 'Research trace JSON export must remain available.');
       assert.ok(!source.includes("safeGet(STORAGE.model) === 'gemini-3.8-flash'"), 'A valid Gemini 3.8 model must not be downgraded on load.');
       includes('function getApiCandidates(requestedModel)', 'Provider failover must discover only configured credentials.');
+      includes("if(!key && provider!=='kilo') continue;", 'Only the explicitly selected Kilo Free route may omit an API key.');
+      includes('function connectAlandiCloud()', 'The primary cloud status must be verified with a real completion.');
+      includes('id="cloudStatusDot" data-state="disconnected"', 'Cloud connection must begin unconfirmed.');
+      includes('if(error.modelUnavailable)', 'Only a model-specific provider failure may trigger same-provider model selection.');
+      includes('function applyUiLanguage(language)', 'The main UI must support a persisted language choice.');
+      includes('function updateClockFace()', 'The branded local clock must use real local time.');
+      includes('function handleTextAttachment()', 'Text attachment handling must validate extension, size and content boundaries.');
       includes('function shouldUseMultiAgentResearch(value)', 'Multi-agent orchestration must be routed by task complexity.');
       includes('async function testProviderConnection()', 'Provider connections must have an actionable diagnostic.');
       includes('function parseRetryAfterMs(value)', 'HTTP Retry-After must be respected rather than using a fixed retry delay.');
@@ -110,7 +133,7 @@ const suites = {
       includes('Older builds wrote every provider\'s key into the legacy Gemini slot.', 'Legacy cross-provider key contamination must be migrated safely.');
       includes('текст запроса и контекст могут быть отправлены другому провайдеру', 'Cross-provider fallback must disclose that request content can be sent to another provider.');
       includes('ключ не сохранён для выбранного провайдера', 'Settings must explain why the API key field is blank after switching providers.');
-      includes("const selectedProvider=safeGet(STORAGE.provider)||'gemini',allowCrossProvider=safeGet(STORAGE.crossProviderFallback)==='true'", 'Cross-provider fallback must be a user-controlled opt-in.');
+      includes("const selectedProvider=safeGet(STORAGE.provider)||'alandi',allowCrossProvider=safeGet(STORAGE.crossProviderFallback)==='true'", 'Cross-provider fallback must be a user-controlled opt-in.');
       includes('function isGenericModelRefusal(value)', 'Generic model refusals must not be accepted as successful research stages.');
       includes('Конвейер остановлен', 'A refused multi-agent stage must stop clearly rather than repeat the refusal as a final answer.');
       includes('if (!savedChats || !savedCurrent)', 'Chat persistence failures must be visible to the user.');
@@ -168,7 +191,7 @@ const suites = {
     ['API credentials are user-configured, not hard-coded', () => {
       includes("apiKey: 'ai_api_key'", 'API key storage slot is missing.');
       includes('safeGet(STORAGE.apiKey)', 'API key must be read from user settings.');
-      includes("'Authorization':`Bearer ${candidate.key}`", 'Requests must use a saved provider-specific bearer key.');
+      includes("...(candidate.key?{'Authorization':`Bearer ${candidate.key}`}:{})", 'Requests must use an optional provider-specific bearer key and omit Authorization for keyless Kilo Free.');
       includes('type="password" id="apiKey"', 'API key field must be masked.');
     }],
     ['untrusted output is not inserted as raw HTML', () => {
@@ -225,7 +248,12 @@ const suites = {
     ['tool loop fails closed at its configured boundary', () => {
       includes('round === maxToolRounds', 'Tool-call boundary must be checked against the active mode budget.');
       includes("const maxToolRounds = mode === 'deep' ? MAX_TOOL_ROUNDS : 1;", 'Mode-specific tool budget must be enforced.');
-      includes('Достигнут лимит последовательных вызовов инструментов', 'Tool-loop exhaustion must be reported explicitly.');
+      includes('const MAX_TOOL_CALLS_PER_RESPONSE = 8;', 'A provider cannot return an unbounded tool-call array.');
+      includes('const MAX_TOOL_CALLS_PER_DEEP_ROUND = 3;', 'Deep mode needs a strict per-round tool-call cap.');
+      includes('const MAX_TOOL_CALLS_PER_DEEP_RUN = 8;', 'Deep mode needs a strict total tool-call budget.');
+      includes('seenToolCallKeys.has(toolSignature)', 'Duplicate tool calls must be suppressed within a run.');
+      includes('round < maxToolRounds && executedToolCalls < maxToolCallsPerRun', 'The final response round must be reserved from additional tool fan-out.');
+      includes('Бюджет инструментов исчерпан', 'Tool-loop exhaustion must be reported explicitly.');
     }]
   ],
   build: [

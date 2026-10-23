@@ -69,6 +69,36 @@
 - **Rollback:** `ALANDI_FAST_ROUTING_ENABLED=false`; default remains false.
 - **Связи:** `gateway/routing.py`, [FastEmbed](https://github.com/qdrant/fastembed).
 
+## D-007 — Deterministic artifact fingerprint and provenance triad
+
+- **Статус:** Accepted for governance prototype; no cryptographic attestation or live artifact approval.
+- **Проблема:** сделать изменения исходников и лицензий заметными в CI, не включая секреты и generated artifacts.
+- **Решение:** `scripts/manifest_state.py` считает детерминированный SHA-256 по сортированным путям и SHA-256 каждого файла; главный `index.md` входит в список. `scripts/check_intel_triad.py` отклоняет принятые записи без явного HTTPS URL, идентификатора лицензии конкретного артефакта и URL источника утверждения.
+- **Ограничения:** state hash не является подписью/attestation и не доказывает безопасность; triad gate не проверяет DNS, доступность URL, текст лицензии, checksum весов или право коммерческого распространения. `ship: false` остаётся обязательным до ручной проверки и точного SHA-256.
+- **Acceptance:** тесты детерминизма, изменения hash при изменении `index.md`, исключение секретных/generated paths, отказ для placeholder domain и отсутствующего claim URL.
+- **Rollback:** отключить gate только отдельным review; не использовать manifest hash как единственную гарантию целостности.
+- **Связи:** `scripts/manifest_state.py`, `scripts/check_intel_triad.py`, `intel/RECON.yaml`, `gateway/tests/test_v016_foundation.py`, EV-STATE-001, EV-INTEL-001.
+
+## D-008 — Risk-aware router is a local policy prototype, not an active runtime router
+
+- **Статус:** Accepted for prototype; runtime integration and regret evaluation deferred.
+- **Проблема:** выбирать простой/поисковый/сложный маршрут по confidence, context cost, remaining budget and risk without granting hidden privileges.
+- **Решение:** `router/policy.py` validates bounded inputs, blocks unconfirmed destructive actions, exposes explicit notice/slow-escalation metadata and never returns a cloud route.
+- **Ограничения:** модуль пока не подключён к реальному gateway request path; текущие thresholds — policy fixtures, не измеренная оптимизация. No route-regret claim without oracle-labelled set.
+- **Acceptance:** deterministic tests pass; then wire via a reviewed adapter, build >=200 labelled RU/EN cases, measure regret and false-fast-route rate, keep feature disabled until review.
+- **Rollback:** leave module unused; existing runtime route remains authoritative until a separately tested integration PR.
+- **Связи:** `router/policy.py`, `latency/budget_v2.yaml`, EV-ROUTER-001.
+
+## D-009 — Keyless public-source fallback for web_search
+
+- **Статус:** Accepted for prototype; latest browser E2E pending.
+- **Проблема:** не прекращать исследование только потому, что Tavily не настроен, вернул ошибку или недоступен из браузера.
+- **Решение:** `web_search` переходит к ограниченному набору открытых источников; отдельные недоступные источники пропускаются, а в результат попадают только реальные ответы с URL.
+- **Ограничения:** браузерные API зависят от CORS, доступности и актуальности; отсутствие результатов остаётся явной ошибкой. Никаких выдуманных ссылок и неограниченных повторов.
+- **Acceptance:** E2E без Tavily key подтверждает обращения к открытым источникам, отсутствие Tavily request, наличие URL в tool result и bounded tool rounds.
+- **Rollback:** вернуть `performTavilySearch` к явной ошибке без fallback; `public_knowledge_search` остаётся отдельным инструментом.
+- **Связи:** `index.md`, `tests/e2e/app.spec.mjs`, EV-SEARCH-001.
+
 ## Global release rules
 
 - Feature flag выключен до прохождения eval и review.

@@ -4,10 +4,20 @@ on:
   push:
     paths:
       - "gateway/**"
+      - "intel/**"
+      - "latency/**"
+      - "router/**"
+      - "scripts/manifest_state.py"
+      - "scripts/check_intel_triad.py"
       - ".github/workflows/gateway-tests.yml"
   pull_request:
     paths:
       - "gateway/**"
+      - "intel/**"
+      - "latency/**"
+      - "router/**"
+      - "scripts/manifest_state.py"
+      - "scripts/check_intel_triad.py"
       - ".github/workflows/gateway-tests.yml"
   workflow_dispatch:
 
@@ -34,6 +44,10 @@ jobs:
         run: python -m pip install -r gateway/requirements-dev.txt
       - name: Compile Python source
         run: python -m compileall -q gateway
+      - name: Validate V-016 state fingerprint and INTEL triad
+        run: |
+          python scripts/manifest_state.py
+          python scripts/check_intel_triad.py
       - name: Run gateway tests without a real model or API key
         run: python -m pytest -q gateway/tests
       - name: Run deterministic six-layer offline evaluation

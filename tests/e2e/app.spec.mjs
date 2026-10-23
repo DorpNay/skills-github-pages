@@ -40,8 +40,10 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await expect(page.locator('#toggleMultiAgent')).toBeVisible();
 
   await page.getByRole('button', { name: 'Настройки' }).click();
+  await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#settingsModal')).toBeVisible();
-  await expect(page.locator('#providerPreset')).toHaveValue('gemini');
+  await expect(page.locator('#providerPreset')).toHaveValue('alandi');
   await expect(page.locator('#apiKey')).toHaveAttribute('type', 'password');
   await expect(page.locator('#baseUrl')).not.toBeFocused();
   await expect(page.locator('#systemPromptInput')).toHaveAttribute('readonly', '');
@@ -69,6 +71,8 @@ test('published app boots and core controls are interactive', async ({ page }) =
 test('provider keys, Tavily key, and model settings remain isolated across switching and reload', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
 
   await page.locator('#providerPreset').selectOption('groq');
   await expect(page.locator('#apiKey')).toHaveValue('');
@@ -92,6 +96,7 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
 
   await page.reload();
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#providerPreset')).toHaveValue('groq');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-groq-placeholder-not-a-real-key');
   await expect(page.locator('#tavilyKey')).toHaveValue('e2e-tavily-placeholder-not-a-real-key');
@@ -119,6 +124,7 @@ test('API authentication errors are shown without losing the original user promp
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-test-model');
@@ -154,6 +160,7 @@ test('provider connection loads filtered model catalog into selector and key del
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-model');
@@ -187,6 +194,7 @@ test('catalog remains usable when the saved model is missing from the live provi
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('retired-saved-model');
@@ -214,6 +222,7 @@ test('refresh all catalogs updates other configured providers for cross-provider
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => localStorage.setItem('ai_api_key_openrouter', 'e2e-openrouter-catalog-key'));
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('e2e-groq-catalog-key');
   await page.locator('[data-action="save-settings"]').click();
@@ -232,6 +241,8 @@ test('refresh all catalogs updates other configured providers for cross-provider
 test('settings profile exports portable preferences but never API secrets', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#modelName').fill('openai/gpt-oss-120b');
   await page.locator('#apiKey').fill('e2e-private-provider-secret-value');
@@ -258,6 +269,8 @@ test('settings profile exports portable preferences but never API secrets', asyn
 test('settings profile import restores preferences while preserving existing provider and search keys', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('before-import');
@@ -359,6 +372,7 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-trace-model');
@@ -410,6 +424,7 @@ test('multi-agent preference skips a greeting and shows the actual route', async
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-model');
@@ -433,6 +448,7 @@ test('401 stops after the selected provider rejects credentials', async ({ page 
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
@@ -458,6 +474,7 @@ test('transient 503 retries only the same model and never fans out', async ({ pa
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
@@ -485,6 +502,7 @@ test('model-specific failure tries another model on the same provider first', as
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
@@ -495,6 +513,7 @@ test('model-specific failure tries another model on the same provider first', as
   await expect(page.locator('#chatBox')).toContainText('Groq · qwen/qwen3.8-27b');
   await expect.poll(() => attemptedModels.length).toBe(2);
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#providerPreset')).toHaveValue('groq');
   await expect(page.locator('#modelName')).toHaveValue('qwen/qwen3.8-27b');
   await expect(page.locator('#modelPreset')).toHaveValue('qwen/qwen3.8-27b');
@@ -527,6 +546,7 @@ test('dynamic chat catalog is used for bounded same-provider model fallback', as
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-primary-model');
@@ -556,6 +576,7 @@ test('Pollinations catalog discovers text models and aliases without sending a t
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('pollinations');
   await expect(page.locator('#modelPreset option[value="publisher/available-text-model"]')).toHaveCount(1);
   await expect(page.locator('#modelPreset option[value="old-text-model"]')).toHaveCount(1);
@@ -602,6 +623,7 @@ test('Pollinations requests use the OAuth token, not the public App Key', async 
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('pollinations');
   await page.locator('#apiKey').fill('pk_e2e-public-app-key');
   await page.locator('[data-action="save-settings"]').click();
@@ -639,6 +661,7 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('cloudflare');
   await page.locator('#cloudflareAccountId').fill(cloudflareId);
   await expect(page.locator('#baseUrl')).toHaveValue('https://api.cloudflare.com/client/v4/accounts/' + cloudflareId + '/ai/v1');
@@ -659,6 +682,7 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
     });
   });
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('huggingface');
   await page.locator('#apiKey').fill('not-a-real-huggingface-token');
   await page.locator('[data-action="save-settings"]').click();
@@ -674,6 +698,7 @@ test('Obsidian Studio and Clean Light preferences persist and respect motion con
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#uiTheme').selectOption('light');
   await page.locator('#uiMotion').selectOption('off');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
@@ -684,6 +709,7 @@ test('Obsidian Studio and Clean Light preferences persist and respect motion con
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
   await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#uiTheme').selectOption('dark');
   await page.locator('#uiMotion').selectOption('auto');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -700,4 +726,462 @@ test('agent systems skill is routed on demand and its safety contract stays avai
   expect(skill).toContain('Chat memory is isolated by default');
   expect(skill).toContain('Google Drive requires backend OAuth callback');
   expect(skill).toContain('candidate lesson');
+});
+
+
+test('aLandi cloud status only turns green after a real model response, and core UX controls work', async ({ page }) => {
+  const cloudRequests = [];
+  await page.route('https://cloud.example.test/healthz', async route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' })
+  }));
+  await page.route('https://cloud.example.test/v1/chat/completions', async route => {
+    cloudRequests.push(route.request().postDataJSON());
+    return route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#clockDigital')).toHaveText(/^\d{2}:\d{2}$/);
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await page.locator('#cloudBaseUrl').fill('https://cloud.example.test/v1');
+  await page.locator('#cloudModel').fill('qwen3.5:4b');
+  await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await page.locator('[data-action="connect-alandi-cloud"]').click();
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'connected');
+  await expect(page.locator('#cloudStatus')).toContainText('Облако подключено');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_provider'))).toBe('alandi');
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('Verify the primary chat uses my aLandi cloud.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('OK', { timeout: 15000 });
+  expect(cloudRequests).toHaveLength(2);
+  expect(cloudRequests[1].messages.at(-1).content).toBe('Verify the primary chat uses my aLandi cloud.');
+  expect(cloudRequests.every(request => request.model === 'qwen3.5:4b')).toBe(true);
+  await page.locator('#languageSummary').click();
+  await page.locator('[data-action="set-language"][data-language="en"]').click();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
+  await page.locator('#homeThemeToggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await page.locator('#homeThemeToggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+});
+
+test('Kilo Auto Free is an ordinary provider, loads the no-key catalog, and routes anonymously', async ({ page }) => {
+  let authorization = 'not-checked';
+  await page.route('https://api.kilo.ai/api/gateway/models', async route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ data: [
+      { id: 'kilo-auto/free', name: 'Auto Free' },
+      { id: 'minimaxai/minimax-m2.7:free', name: 'MiniMax free test option', architecture: { output_modalities: ['text'] } }
+    ] })
+  }));
+  await page.route('https://api.kilo.ai/api/gateway/chat/completions', async route => {
+    authorization = route.request().headers().authorization || '';
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'kilo-auto/free', choices: [{ message: { role: 'assistant', content: 'Kilo route worked.' } }] })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#cloudSettingsCard')).not.toContainText('Kilo Auto Free');
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('kilo');
+  await expect(page.locator('#kiloPrivacyWarning')).toBeVisible();
+  await expect(page.locator('#modelPreset option[value="minimaxai/minimax-m2.7:free"]')).toHaveCount(1, { timeout: 10000 });
+  await expect(page.locator('[data-action="use-kilo-free"]')).toHaveCount(0);
+  await expect(page.locator('#apiKey')).toHaveValue('');
+  await page.locator('[data-action="test-connection"]').click();
+  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected');
+  expect(authorization).toBe('');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_cross_provider_fallback'))).not.toBe('true');
+});
+
+test('pasting a provider key starts one bounded model-catalog and connection check', async ({ page }) => {
+  let probes = 0;
+  await page.route('https://api.example.test/v1/models', async route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'e2e-paste-model' }, { id: 'e2e-paste-model-2' }] })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    probes++;
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'e2e-paste-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('e2e-paste-model');
+  await page.locator('#apiKey').evaluate(el => {
+    el.value = 'e2e-pasted-key';
+    el.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertFromPaste' }));
+  });
+  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
+  expect(probes).toBeGreaterThanOrEqual(1);
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_key_custom'))).toBe('e2e-pasted-key');
+});
+
+
+test('project instructions, project memory, and project bundles stay scoped to the current project', async ({ page }) => {
+  let capturedBody = null;
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    capturedBody = route.request().postDataJSON();
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'e2e-project-model', choices: [{ message: { role: 'assistant', content: 'Project scope verified.' } }] })
+    });
+  });
+
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectManagerDetails > summary').click();
+  await page.locator('#projectNameInput').fill('Alpha Project');
+  await page.locator('#projectInstructionsInput').fill('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
+  await page.locator('[data-action="create-project"]').click();
+  const alphaId = await page.locator('#currentProjectSelect').inputValue();
+  expect(alphaId).not.toBe('');
+  await page.locator('#projectMemoryInput').fill('ALPHA_PROJECT_MEMORY_SENTINEL');
+  await page.locator('[data-action="add-project-memory"]').click();
+  await expect(page.locator('#projectMemoryBox')).toContainText('ALPHA_PROJECT_MEMORY_SENTINEL');
+  await page.locator('#projectMemoryToggle').check();
+
+  const alphaDownloadPromise = page.waitForEvent('download');
+  await page.locator('[data-action="export-project"]').click();
+  const alphaDownload = await alphaDownloadPromise;
+  expect(alphaDownload.suggestedFilename()).toMatch(/^alandi-project-.*\.json$/);
+  const alphaPath = await alphaDownload.path();
+  const alphaBundle = JSON.parse(await readFile(alphaPath, 'utf8'));
+  expect(alphaBundle.format).toBe('alandi-project-bundle');
+  expect(alphaBundle.project.instructions).toContain('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
+  expect(alphaBundle.project.memory.some(item => item.text === 'ALPHA_PROJECT_MEMORY_SENTINEL')).toBe(true);
+  expect(JSON.stringify(alphaBundle)).not.toContain('apiKey');
+
+  // New chats inherit the current project; detach this one before creating Beta.
+  await page.locator('#sidebar [data-action="new-chat"]').click();
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await expect(page.locator('#currentProjectSelect')).toHaveValue(alphaId);
+  await page.locator('#currentProjectSelect').selectOption('');
+  await page.locator('#projectNameInput').fill('Beta Project');
+  await page.locator('#projectInstructionsInput').fill('BETA_PROJECT_INSTRUCTION_SENTINEL');
+  await page.locator('[data-action="create-project"]').click();
+  await page.locator('#projectMemoryInput').fill('BETA_PROJECT_MEMORY_SENTINEL');
+  await page.locator('[data-action="add-project-memory"]').click();
+  await page.locator('#projectMemoryToggle').check();
+  const betaId = await page.locator('#currentProjectSelect').inputValue();
+  expect(betaId).not.toBe(alphaId);
+
+  await page.locator('[data-action="close-sidebar"]').click();
+  await page.locator('[data-action="toggle-settings"]').first().click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('e2e-project-model');
+  await page.locator('#apiKey').fill('e2e-project-placeholder-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+
+  await page.locator('#userInput').fill('Check which project context is included.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Project scope verified.');
+  expect(capturedBody).not.toBeNull();
+  const prompt = capturedBody.messages[0].content;
+  expect(prompt).toContain('BETA_PROJECT_INSTRUCTION_SENTINEL');
+  expect(prompt).toContain('BETA_PROJECT_MEMORY_SENTINEL');
+  expect(prompt).not.toContain('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
+  expect(prompt).not.toContain('ALPHA_PROJECT_MEMORY_SENTINEL');
+
+  // Importing a bundle while Beta is selected must create a distinct Alpha copy, not merge into Beta.
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('[data-action="import-project"]').click();
+  await page.locator('#importProjectFile').setInputFiles(alphaPath);
+  await expect(page.locator('#projectNameInput')).toHaveValue('Alpha Project (импорт)');
+  const importedId = await page.locator('#currentProjectSelect').inputValue();
+  expect(importedId).not.toBe(alphaId);
+  expect(importedId).not.toBe(betaId);
+  await expect(page.locator('#projectInstructionsInput')).toHaveValue('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
+  await expect(page.locator('#projectMemoryBox')).toContainText('ALPHA_PROJECT_MEMORY_SENTINEL');
+  const allProjects = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]'));
+  expect(allProjects.some(project => project.id === betaId && project.instructions.includes('BETA_PROJECT_INSTRUCTION_SENTINEL'))).toBe(true);
+  expect(allProjects.some(project => project.id === importedId && project.instructions.includes('ALPHA_PROJECT_INSTRUCTION_SENTINEL'))).toBe(true);
+});
+
+test('deleting a project removes its chats but preserves other projects and chats', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectManagerDetails > summary').click();
+  await page.locator('#projectNameInput').fill('Disposable Project');
+  await page.locator('[data-action="create-project"]').click();
+  const disposableId = await page.locator('#currentProjectSelect').inputValue();
+  expect(disposableId).not.toBe('');
+  const disposableChatId = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    return chats.find(chat => chat.projectId)?.id || '';
+  });
+  expect(disposableChatId).not.toBe('');
+
+  // Detach the current chat before creating a separate project. The original chat
+  // remains in Disposable Project and must be deleted with that project.
+  await page.locator('[data-action="new-chat"]').first().click();
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#currentProjectSelect').selectOption('');
+  await page.locator('#projectNameInput').fill('Keep Project');
+  await page.locator('[data-action="create-project"]').click();
+  const keepId = await page.locator('#currentProjectSelect').inputValue();
+  expect(keepId).not.toBe(disposableId);
+  await page.locator('[data-action="new-chat"]').first().click();
+  const keepChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87') || '');
+  // Use the project-labelled sidebar row as the source of truth for the disposable chat.
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator(`#chatList [data-action="switch-chat"][data-chat-id="${disposableChatId}"]`).click();
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await expect(page.locator('#currentProjectSelect')).toHaveValue(disposableId);
+
+  page.on('dialog', dialog => dialog.accept());
+  await page.locator('[data-action="delete-project"]').click();
+  await expect(page.locator('#currentProjectSelect')).not.toHaveValue(disposableId);
+  const storedProjects = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]'));
+  expect(storedProjects.some(project => project.id === disposableId)).toBe(false);
+  expect(storedProjects.some(project => project.id === keepId)).toBe(true);
+  const storedChats = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]'));
+  expect(storedChats.some(chat => chat.id === disposableChatId)).toBe(false);
+  expect(storedChats.some(chat => chat.id === keepChatId && chat.projectId === keepId)).toBe(true);
+});
+
+
+test('xAI accepts structured text response envelopes and authenticates with the selected key', async ({ page }) => {
+  let requestHeaders = {};
+  await page.route('https://api.x.ai/v1/language-models', async route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ models: [
+      { id: 'grok-4.7', input_modalities: ['text'], output_modalities: ['text'] },
+      { id: 'grok-e2e-alternative', input_modalities: ['text'], output_modalities: ['text'] }
+    ] })
+  }));
+  await page.route('https://api.x.ai/v1/chat/completions', async route => {
+    requestHeaders = route.request().headers();
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        model: 'grok-4.7',
+        choices: [{ message: { role: 'assistant', content: [{ type: 'text', text: 'OK' }] } }]
+      })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('xai');
+  await page.locator('#apiKey').fill('e2e-xai-placeholder-key');
+  await page.locator('#modelName').fill('grok-4.7');
+  await page.locator('[data-action="test-connection"]').click();
+  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected');
+  expect(requestHeaders.authorization).toBe('Bearer e2e-xai-placeholder-key');
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('ai_provider_connection_xai') || 'null')?.ok)).toBe(true);
+});
+
+
+test('Deep mode caps tool fan-out, suppresses repeated calls, and still returns a final answer', async ({ page }) => {
+  let modelCalls = 0;
+  let pageReads = 0;
+  let maxModelToolCalls = 0;
+  await page.route('https://api.example.test/v1/models', async route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ data: [{ id: 'tool-budget-model' }] })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    const body = route.request().postDataJSON();
+    modelCalls++;
+    const toolsEnabled = Array.isArray(body.tools) && body.tools.length > 0;
+    maxModelToolCalls = Math.max(maxModelToolCalls, toolsEnabled ? body.tools.length : 0);
+    if (toolsEnabled) {
+      const calls = Array.from({ length: 5 }, (_, i) => ({
+        id: 'read-page-' + modelCalls + '-' + i,
+        type: 'function',
+        function: {
+          name: 'read_webpage',
+          arguments: JSON.stringify({ url: 'https://example.com/page-' + (modelCalls===2&&i<3?1:modelCalls) + '-' + i })
+        }
+      }));
+      await route.fulfill({
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({
+          model: 'tool-budget-model',
+          choices: [{ message: { role: 'assistant', content: null, tool_calls: calls }, finish_reason: 'tool_calls' }]
+        })
+      });
+      return;
+    }
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'tool-budget-model', choices: [{ message: { role: 'assistant', content: 'Completed within the tool budget.' } }] })
+    });
+  });
+  await page.route('https://example.com/**', async route => {
+    pageReads++;
+    await route.fulfill({
+      status: 200,
+      contentType: 'text/html; charset=utf-8',
+      headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET' },
+      body: '<html><body><main>Sample public page content for bounded-tool testing.</main></body></html>'
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('tool-budget-model');
+  await page.locator('#apiKey').fill('e2e-tool-budget-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#modeDeep').click();
+  await page.locator('#toggleSearch').check();
+  await page.locator('#userInput').fill('Read several public pages and summarize the useful evidence.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Completed within the tool budget.', { timeout: 30000 });
+  expect(pageReads).toBe(8);
+  expect(modelCalls).toBeLessThanOrEqual(5);
+  expect(maxModelToolCalls).toBe(3);
+});
+
+
+
+test('web_search falls back to public sources when Tavily is not configured', async ({ page }) => {
+  let modelCalls = 0, tavilyCalls = 0, publicSourceCalls = 0;
+  await page.route('https://api.example.test/v1/models', async route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'open-search-model' }] })
+  }));
+  await page.route('https://api.tavily.com/**', async route => {
+    tavilyCalls++;
+    return route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: 'should not be called without a key' }) });
+  });
+  await page.route('https://en.wikipedia.org/**', async route => {
+    publicSourceCalls++;
+    return route.fulfill({ status: 200, contentType: 'application/json',
+      body: JSON.stringify({ query: { search: [{ title: 'Open Search Evidence', snippet: 'A public source confirms the fallback works.' }] } }) });
+  });
+  await page.route('https://api.github.com/search/repositories**', async route => {
+    publicSourceCalls++;
+    return route.fulfill({ status: 200, contentType: 'application/json',
+      body: JSON.stringify({ items: [{ full_name: 'example/open-search', html_url: 'https://github.com/example/open-search', stargazers_count: 7, updated_at: '2026-10-01T00:00:00Z', description: 'Public search fallback fixture' }] }) });
+  });
+  await page.route('https://hn.algolia.com/**', async route => {
+    publicSourceCalls++;
+    return route.fulfill({ status: 200, contentType: 'application/json',
+      body: JSON.stringify({ hits: [{ title: 'Fallback source result', url: 'https://news.example.test/fallback', points: 3, created_at: '2026-10-01T00:00:00Z', story_text: 'A fallback fixture result.' }] }) });
+  });
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    modelCalls++;
+    const body = route.request().postDataJSON();
+    if (Array.isArray(body.tools) && body.tools.length) {
+      const webSearchTool = body.tools.find(tool => tool.function?.name === 'web_search');
+      expect(webSearchTool).toBeTruthy();
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+        model: 'open-search-model',
+        choices: [{ message: { role: 'assistant', content: null, tool_calls: [{
+          id: 'open-search-fallback-call', type: 'function',
+          function: { name: 'web_search', arguments: JSON.stringify({ query: 'open search fallback fixture' }) }
+        }] }, finish_reason: 'tool_calls' }]
+      }) });
+    }
+    expect(body.messages.some(message => message.role === 'tool' && String(message.content).includes('Open Search Evidence'))).toBe(true);
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+      model: 'open-search-model', choices: [{ message: { role: 'assistant', content: 'Open-source fallback completed.' } }]
+    }) });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('open-search-model');
+  await page.locator('#apiKey').fill('e2e-open-search-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#toggleSearch').check();
+  await page.locator('#userInput').fill('Find evidence using the keyless open-search fallback.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Open-source fallback completed.', { timeout: 20000 });
+  expect(modelCalls).toBe(2);
+  expect(publicSourceCalls).toBeGreaterThan(0);
+  expect(tavilyCalls).toBe(0);
+});
+
+
+test('aLandi cloud probe rejects HTTP 200 proxy text as proof of a model connection', async ({ page }) => {
+  await page.route('https://cloud.example.test/v1/chat/completions', async route => route.fulfill({
+    status: 200, contentType: 'text/plain; charset=utf-8',
+    body: 'upstream unavailable: invalid route'
+  }));
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#cloudBaseUrl').fill('https://cloud.example.test/v1');
+  await page.locator('#cloudModel').fill('qwen3.5:4b');
+  await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
+  await page.locator('[data-action="connect-alandi-cloud"]').click();
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await expect(page.locator('#cloudStatus')).toContainText('Не удалось подтвердить соединение');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
+});
+
+
+
+test('voice mode menu stays open after a long press and clearly marks both modes as previews', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const trigger = page.locator('#voiceUnavailableButton');
+  await expect(trigger).toBeVisible();
+  const bounds = await trigger.boundingBox();
+  expect(bounds).not.toBeNull();
+  await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(300);
+  await page.mouse.up();
+  await expect(page.locator('#voiceMenu')).toBeVisible();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#voiceMenu')).toContainText('ГОЛОСОВОЙ ДИАЛОГ');
+  await expect(page.locator('#voiceMenu')).toContainText('ГОЛОСОВОЕ СООБЩЕНИЕ');
+  await page.locator('[data-action="voice-chat-preview"]').click();
+  await expect(page.locator('#voiceMenu')).toBeHidden();
+  await expect(page.locator('#toast')).toContainText('Живой голосовой диалог пока не подключён');
+
+  // A quick upward swipe should select the same preview without requiring a tap.
+  const swipeBounds = await trigger.boundingBox();
+  await page.mouse.move(swipeBounds.x + swipeBounds.width / 2, swipeBounds.y + swipeBounds.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(swipeBounds.x + swipeBounds.width / 2, swipeBounds.y - 48, { steps: 3 });
+  await page.mouse.up();
+  await expect(page.locator('#toast')).toContainText('Голосовой диалог пока не подключён');
+  await expect(page.locator('#voiceMenu')).toBeVisible();
+});
+
+
+test('aLandi cloud remains disconnected when the model answers but gateway health check fails', async ({ page }) => {
+  await page.route('https://unhealthy-cloud.example.test/healthz', async route => route.fulfill({
+    status: 503, contentType: 'application/json', body: JSON.stringify({ status: 'unavailable' })
+  }));
+  await page.route('https://unhealthy-cloud.example.test/v1/chat/completions', async route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+  }));
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#cloudBaseUrl').fill('https://unhealthy-cloud.example.test/v1');
+  await page.locator('#cloudModel').fill('qwen3.5:4b');
+  await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
+  await page.locator('[data-action="connect-alandi-cloud"]').click();
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await expect(page.locator('#cloudStatus')).toContainText('health-check gateway вернул HTTP 503');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
 });
