@@ -163,6 +163,9 @@ permalink: /
       #voiceUnavailableButton { display:none; }
     }
     @media (prefers-reduced-motion:reduce) { body.composer-centered footer { transition:none!important; } }
+    #sidebar { overflow-y:auto; overscroll-behavior:contain; }
+    #sidebar > :not(#chatList) { flex-shrink:0; }
+    #sidebar #chatList { flex:1 0 8rem; min-height:8rem; }
     #chatBox, #memoryBox { color:var(--ui-text); }
     #sidebar .border-b, #sidebar .border-t, header, footer, #searchStatus { border-color:var(--ui-border)!important; }
     #settingsModal input, #settingsModal textarea, #settingsModal select, #userInput, #memoryInput,
@@ -217,7 +220,7 @@ permalink: /
   </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
-  <aside id="sidebar" aria-label="Диалоги и память" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[88vw] bg-gray-950 border-r border-gray-800 -translate-x-full transition-transform duration-300 flex flex-col">
+  <aside id="sidebar" aria-label="Диалоги и память" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[88vw] bg-gray-950 border-r border-gray-800 -translate-x-full transition-transform duration-300 flex flex-col overflow-y-auto overscroll-contain">
     <div class="p-4 border-b border-gray-800 flex justify-between items-center">
       <h2 class="font-bold text-sm" data-i18n="sidebarTitle">💬 Диалоги и память</h2>
       <button type="button" data-action="close-sidebar" aria-label="Закрыть меню" class="text-gray-400 hover:text-white text-lg p-1">✕</button>
