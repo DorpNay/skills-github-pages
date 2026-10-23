@@ -1077,15 +1077,15 @@ permalink: /
     }
     async function loadServerProjectMemory(){
       const project=getProjectForChat();if(!project){setServerMemoryStatus(memoryUiText('serverMemoryNoProject'));return;}setServerMemoryStatus(memoryUiText('serverMemoryLoading'));
-      try{const q=new URLSearchParams({scope:'project',scope_id:project.id,statuses:'all',limit:'500'});const payload=await memoryGraphRequest('nodes?'+q.toString());if(getProjectForChat()?.id!==project.id)return;
+      try{const q=new URLSearchParams({scope:'project',scope_id:project.id,statuses:'all',limit:'100'});const payload=await memoryGraphRequest('nodes?'+q.toString());if(getProjectForChat()?.id!==project.id)return;
         const nodes=Array.isArray(payload.nodes)?payload.nodes.filter(node=>node&&node.scope==='project'&&node.scope_id===project.id):[];serverMemoryRenderedScopeId=project.id;renderServerMemoryNodes(nodes);setServerMemoryStatus(memoryUiText('serverMemoryLoaded')+nodes.length);
       }catch(error){setServerMemoryStatus(String(error.message||error).slice(0,200));showToast('Не удалось загрузить серверную память.','error');}
     }
     async function uploadLocalProjectMemory(){
       const project=getProjectForChat();if(!project){setServerMemoryStatus(memoryUiText('serverMemoryNoProject'));return;}if(!project.memory.length){showToast('В локальной памяти проекта нет фактов для передачи.','error');return;}setServerMemoryStatus(memoryUiText('serverMemoryLoading'));
-      try{const q=new URLSearchParams({scope:'project',scope_id:project.id,statuses:'all',limit:'500'});const payload=await memoryGraphRequest('nodes?'+q.toString());const existing=new Set((Array.isArray(payload.nodes)?payload.nodes:[]).map(node=>String(node.source_id||'')));let created=0,skipped=0,deferred=0;
+      try{const q=new URLSearchParams({scope:'project',scope_id:project.id,statuses:'all',limit:'100'});const payload=await memoryGraphRequest('nodes?'+q.toString());const markerKey='ai_server_memory_uploaded_v1_'+project.id;let uploaded=[];try{const parsed=JSON.parse(safeGet(markerKey)||'[]');if(Array.isArray(parsed))uploaded=parsed.filter(value=>typeof value==='string').slice(-500);}catch(_){}const existing=new Set([...(Array.isArray(payload.nodes)?payload.nodes:[]).map(node=>String(node.source_id||'')),...uploaded]);let created=0,skipped=0,deferred=0;
         for(const fact of project.memory){const sourceId='alandi-browser-project:'+project.id.slice(0,100)+':'+fact.id.slice(0,100);if(existing.has(sourceId)){skipped++;continue;}if(created>=100){deferred++;continue;}
-          await memoryGraphRequest('nodes',{method:'POST',body:{content:fact.text,scope:'project',scope_id:project.id,source_kind:'user_edit',source_id:sourceId,node_type:'FACT',confidence:1,sensitivity:'normal',metadata:{origin:'browser_project_memory'}}});existing.add(sourceId);created++;}
+          await memoryGraphRequest('nodes',{method:'POST',body:{content:fact.text,scope:'project',scope_id:project.id,source_kind:'user_edit',source_id:sourceId,node_type:'FACT',confidence:1,sensitivity:'normal',metadata:{origin:'browser_project_memory'}}});existing.add(sourceId);uploaded.push(sourceId);uploaded=[...new Set(uploaded)].slice(-500);safeSet(markerKey,JSON.stringify(uploaded));created++;}
         await loadServerProjectMemory();setServerMemoryStatus(memoryUiText('serverMemoryUploadDone')+' Новых: '+created+'; уже было: '+skipped+'; отложено до следующего нажатия: '+deferred+'.');showToast('Передано кандидатов: '+created+'; пропущено повторов: '+skipped+'; отложено: '+deferred+'.');
       }catch(error){setServerMemoryStatus(String(error.message||error).slice(0,200));showToast('Передача памяти остановлена; уже созданные кандидаты сохранены.','error');}
     }
