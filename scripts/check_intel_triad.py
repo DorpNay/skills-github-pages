@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import ipaddress
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -20,11 +21,22 @@ def _blocked(value: str) -> bool:
 
 
 def _https_url(value: str) -> bool:
+    """Check URL shape and reject obvious placeholders/private IPs without network access."""
     try:
         parsed = urlsplit(value.strip())
-        return (parsed.scheme == "https" and bool(parsed.hostname)
-                and not parsed.username and not parsed.password
-                and parsed.hostname.lower() not in {"example.com", "example.org", "example.net"})
+        host = (parsed.hostname or "").lower().rstrip(".")
+        if (parsed.scheme != "https" or not host or not parsed.path.startswith(("/", ""))
+                or parsed.username or parsed.password
+                or host in {"example.com", "example.org", "example.net", "localhost"}
+                or host.endswith((".test", ".invalid", ".example", ".localhost", ".local"))):
+            return False
+        try:
+            address = ipaddress.ip_address(host)
+        except ValueError:
+            address = None
+        if address is not None and not address.is_global:
+            return False
+        return "." in host or address is not None
     except ValueError:
         return False
 
@@ -63,8 +75,8 @@ def validate_data(data: object) -> list[str]:
                 continue
             if field == "verified_url" and not _https_url(value):
                 failures.append(f"{label} ({artifact_id}): verified_url must be an absolute HTTPS URL")
-            if field == "claim_source" and value.strip().lower().startswith(("http://", "https://")) and not _https_url(value):
-                failures.append(f"{label} ({artifact_id}): URL claim_source must use HTTPS")
+            if field == "claim_source" and not _https_url(value):
+                failures.append(f"{label} ({artifact_id}): claim_source must be an absolute public HTTPS URL")
         license_value = record.get("license_exact_artifact")
         if isinstance(license_value, str) and any(
             marker in license_value.lower() for marker in ("per-voice verify", "license varies")
