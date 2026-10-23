@@ -1596,7 +1596,7 @@ permalink: /
         if(typeof first?.text==='string'&&first.text.trim())return true;
         if(message&&typeof message.content==='string'&&message.content.trim())return true;
         if(message&&Array.isArray(message.content)&&message.content.some(part=>typeof part?.text==='string'&&part.text.trim()))return true;
-        if(message&&message.content&&typeof message.content==='object'&&typeof message.content.text==='string'&&message.content.text.trim())return true;
+        if(message&&message.content&&typeof message.content==='object'&&JSON.stringify(message.content)!=='{}')return true;
         if(message&&Array.isArray(message.tool_calls)&&message.tool_calls.length)return true;
         if(message&&typeof message.refusal==='string'&&message.refusal.trim())return true;
       }
@@ -1675,7 +1675,8 @@ permalink: /
           showToast('Проверка провайдера не пройдена.','error');return;
         }
         const actualModel=String(result.payload?.model||result.candidateModel);
-        if(provider===currentProvider()&&baseUrl===$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,'')){
+        const stillSelected=provider===currentProvider()&&baseUrl===$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,'')&&model===$('modelName').value.trim();
+        if(stillSelected){
           $('modelName').value=result.candidateModel;safeSet(STORAGE.model,result.candidateModel);safeSet(STORAGE.provider,provider);safeSet(STORAGE.baseUrl,baseUrl);
           if(key){safeSet(providerKeyStorage(provider),key);if(provider==='gemini')safeSet(STORAGE.apiKey,key);}
         }
@@ -1687,8 +1688,8 @@ permalink: /
           if($('cloudBaseUrl')){$('cloudBaseUrl').value=baseUrl;$('cloudModel').value=result.candidateModel;$('cloudApiKey').value=key;}
           setCloudStatus('connected','Облако отвечает: успешная проверка модели подтверждена.');
         }
-        if(result.candidateModel!==model)populateModelPresets(provider,result.candidateModel);
-        updateApiKeyLamp('connected','Зелёный — модель '+result.candidateModel+' успешно ответила; соединение подтверждено.');
+        if(stillSelected){if(result.candidateModel!==model)populateModelPresets(provider,result.candidateModel);updateApiKeyLamp('connected','Зелёный — модель '+result.candidateModel+' успешно ответила; соединение подтверждено.');}
+        else await refreshApiKeyLamp();
         showToast(result.candidateModel!==model?'Подобрана доступная модель: '+result.candidateModel:'Провайдер и модель прошли проверку');
         await refreshModelCatalog({quiet:true,force:true,provider,baseUrl,key});
       }catch(error){
