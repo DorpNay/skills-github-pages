@@ -24,6 +24,15 @@ def test_manifest_state_is_deterministic_and_changes_with_source_content(tmp_pat
     assert build_manifest(tmp_path)["state_hash"] != first["state_hash"]
 
 
+def test_manifest_state_includes_root_app_entrypoint(tmp_path: Path):
+    app = tmp_path / "index.md"
+    app.write_text("app version one\\n", encoding="utf-8")
+    first = build_manifest(tmp_path)
+    assert "index.md" in {item["path"] for item in first["artifacts"]}
+    app.write_text("app version two\\n", encoding="utf-8")
+    assert build_manifest(tmp_path)["state_hash"] != first["state_hash"]
+
+
 def test_manifest_state_excludes_secret_and_generated_paths(tmp_path: Path):
     (tmp_path / "docs").mkdir()
     (tmp_path / "gateway" / "__pycache__").mkdir(parents=True)
@@ -60,6 +69,15 @@ def test_intel_triad_gate_rejects_missing_or_placeholder_accepted_fields(field: 
     data = valid_triad_data()
     data["artifacts"][0][field] = "TBD"
     assert any(field in failure for failure in validate_data(data))
+
+
+def test_intel_triad_gate_rejects_placeholder_domains_and_non_url_claim_sources():
+    data = valid_triad_data()
+    data["artifacts"][0]["verified_url"] = "https://model-catalog.test/fake"
+    assert any("verified_url" in failure for failure in validate_data(data))
+    data = valid_triad_data()
+    data["artifacts"][0]["claim_source"] = "Official model website"
+    assert any("claim_source" in failure for failure in validate_data(data))
 
 
 def test_intel_triad_gate_rejects_http_and_empty_registry():
