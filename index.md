@@ -438,6 +438,7 @@ permalink: /
       nvidia: { label: 'NVIDIA NIM', docsUrl: 'https://build.nvidia.com/settings', baseUrl: 'https://integrate.api.nvidia.com/v1', models: [['z-ai/glm-5.3','GLM-5.3 · reasoning/coding'], ['openai/gpt-oss-20b','GPT-OSS 20B · reasoning']] },
       huggingface: { label: 'Hugging Face Inference Providers', docsUrl: 'https://huggingface.co/settings/tokens', baseUrl: 'https://router.huggingface.co/v1', models: [['openai/gpt-oss-120b:fastest','GPT-OSS 120B · fastest'], ['deepseek-ai/DeepSeek-R1:fastest','DeepSeek R1 · fastest'], ['openai/gpt-oss-120b:cheapest','GPT-OSS 120B · cheapest']] },
       alandi: { label: 'aLandi Self-hosted Gateway', docsUrl: 'https://github.com/DorpNay/skills-github-pages/blob/main/docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md', baseUrl: '', models: [['qwen3.5:4b','Qwen3.5 4B · локальный сервер']] },
+      kilo: { label: 'Kilo AI Gateway · Auto Free', docsUrl: 'https://kilo.ai/docs/gateway', baseUrl: 'https://api.kilo.ai/api/gateway', models: [['kilo-auto/free','Kilo Auto Free · dynamic routing']] },
       custom: { label: 'Свой API', baseUrl: '', docsUrl: '', models: [['custom','Ввести имя модели вручную']] }
     };
     const MAX_TOOL_ROUNDS = 4;
@@ -463,7 +464,7 @@ permalink: /
     let processingMode = 'fast';
 
     function currentProvider() {
-      const value = $('providerPreset')?.value || safeGet(STORAGE.provider) || 'gemini';
+      const value = $('providerPreset')?.value || safeGet(STORAGE.provider) || 'alandi';
       return Object.prototype.hasOwnProperty.call(PROVIDERS, value) ? value : 'gemini';
     }
     function providerKeyStorage(provider) { return 'ai_api_key_' + provider; }
@@ -931,6 +932,7 @@ permalink: /
     }
     function getModelCatalogEndpoint(provider, baseUrl) {
       if (provider === 'pollinations') return 'https://gen.pollinations.ai/text/models';
+      if (provider === 'kilo') return (baseUrl || PROVIDERS.kilo.baseUrl) + '/models';
       if (provider === 'cloudflare') {
         const accountId = String(safeGet(STORAGE.cloudflareAccountId) || $('cloudflareAccountId')?.value || '').trim();
         if (!/^[a-f0-9]{32}$/i.test(accountId)) return '';
@@ -1123,11 +1125,11 @@ permalink: /
         // If the legacy value duplicates the active provider's own key, clear that ambiguous copy.
         if (legacyKey && selectedProviderKey && legacyKey === selectedProviderKey) safeSet(STORAGE.apiKey, '');
       }
-      const provider=savedProvider && Object.prototype.hasOwnProperty.call(PROVIDERS,savedProvider)?savedProvider:'gemini';
+      const provider=savedProvider && Object.prototype.hasOwnProperty.call(PROVIDERS,savedProvider)?savedProvider:'alandi';
       if (savedProvider && !Object.prototype.hasOwnProperty.call(PROVIDERS,savedProvider)) {
         // A removed provider preset must not leave a stale endpoint active.
-        safeSet(STORAGE.baseUrl, DEFAULT_BASE_URL);
-        safeSet(STORAGE.model, DEFAULT_MODEL);
+        safeSet(STORAGE.baseUrl, '');
+        safeSet(STORAGE.model, 'qwen3.5:4b');
       }
 
       $('providerPreset').value=provider;
@@ -1296,17 +1298,22 @@ permalink: /
       const enteredApiKey = $('apiKey').value.trim();
       const model = $('modelName').value.trim();
       const tavilyKey = $('tavilyKey').value.trim();
-      let parsed;
-      try { parsed = new URL(baseUrl); }
-      catch (_) { showToast('Укажите корректный Base URL, например https://api.example.com/v1', 'error'); return; }
-      if (!['https:', 'http:'].includes(parsed.protocol)) { showToast('Base URL должен начинаться с http:// или https://.', 'error'); return; }
-      const localHost = ['localhost', '127.0.0.1', '[::1]'].includes(parsed.hostname);
-      if (parsed.protocol !== 'https:' && !localHost) {
-        showToast('Для GitHub Pages нужен HTTPS Base URL. HTTP доступен только для localhost.', 'error'); return;
+      const provider=currentProvider();
+      let parsed=null;
+      if(baseUrl){
+        try { parsed = new URL(baseUrl); }
+        catch (_) { showToast('Укажите корректный Base URL, например https://api.example.com/v1', 'error'); return; }
+        if (!['https:', 'http:'].includes(parsed.protocol)) { showToast('Base URL должен начинаться с http:// или https://.', 'error'); return; }
+        const localHost = ['localhost', '127.0.0.1', '[::1]'].includes(parsed.hostname);
+        if (parsed.protocol !== 'https:' && !localHost) {
+          showToast('Для GitHub Pages нужен HTTPS Base URL. HTTP доступен только для localhost.', 'error'); return;
+        }
+      } else if(provider!=='alandi') {
+        showToast('Укажите Base URL для выбранного провайдера.', 'error'); return;
       }
       if (!model) { showToast('Укажите имя модели.', 'error'); return; }
       if (/\/chat\/completions$/i.test(baseUrl)) baseUrl = baseUrl.replace(/\/chat\/completions$/i, '');
-      const provider=currentProvider(),existingKey=safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'',apiKey=enteredApiKey||existingKey;
+      const existingKey=safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'',apiKey=enteredApiKey||existingKey;
       const saved=[
         safeSet(STORAGE.provider,provider),safeSet(STORAGE.baseUrl,baseUrl),
         ...(provider==='gemini'&&enteredApiKey?[safeSet(STORAGE.apiKey,enteredApiKey)]:[]),
@@ -1336,7 +1343,7 @@ permalink: /
         if (provider === currentProvider()) { populateModelPresets(provider, $('modelName').value); updateModelCatalogStatus(provider); }
         return { count: current.models.length, cached: true };
       }
-      if (provider !== 'pollinations' && !key) {
+      if (provider !== 'pollinations' && provider !== 'kilo' && !key) {
         if (provider === currentProvider()) $('modelCatalogStatus').textContent = 'Введите ключ и сохраните настройки, затем обновите каталог.';
         return { count: 0, error: 'missing-key' };
       }
@@ -1789,7 +1796,7 @@ permalink: /
       } catch (error) { console.warn('Не удалось загрузить навык из репозитория:', error); return ''; }
     }
     function getApiCandidates(requestedModel) {
-      const selectedProvider=safeGet(STORAGE.provider)||'gemini',allowCrossProvider=safeGet(STORAGE.crossProviderFallback)==='true';
+      const selectedProvider=safeGet(STORAGE.provider)||'alandi',allowCrossProvider=safeGet(STORAGE.crossProviderFallback)==='true';
       const order=[selectedProvider,...(allowCrossProvider&&selectedProvider!=='alandi'?Object.keys(PROVIDERS).filter(provider=>provider!==selectedProvider&&provider!=='custom'):[])];
       const candidates = [], seen = new Set();
       const maxRouterCandidates = 16;
@@ -1797,7 +1804,7 @@ permalink: /
         const config = PROVIDERS[provider];
         if (!config) continue;
         const key=getProviderRequestKey(provider);
-        if(!key) continue;
+        if(!key && provider!=='kilo') continue;
         const baseUrl=provider===selectedProvider
           ? (provider==='cloudflare'
               ? getProviderBaseUrl('cloudflare')
@@ -1842,7 +1849,7 @@ permalink: /
       return 'network-or-cors';
     }
     async function requestChatCompletion(body,signal,stageName='Ответ модели'){
-      throwIfAborted(signal);const preferredProvider=safeGet(STORAGE.provider)||'gemini',preferredModel=safeGet(STORAGE.model)||body.model||DEFAULT_MODEL,candidates=getApiCandidates(preferredModel),allowCross=safeGet(STORAGE.crossProviderFallback)==='true';
+      throwIfAborted(signal);const preferredProvider=safeGet(STORAGE.provider)||'alandi',preferredModel=safeGet(STORAGE.model)||body.model||DEFAULT_MODEL,candidates=getApiCandidates(preferredModel),allowCross=safeGet(STORAGE.crossProviderFallback)==='true';
       if((preferredProvider==='alandi'||preferredProvider==='custom')&&!String(safeGet(STORAGE.baseUrl)||'').trim())throw new Error('Сначала укажите Base URL собственного API и сохраните настройки.');
       if(!candidates.length)throw new Error('Не найден API-ключ или Base URL для выбранного провайдера. Откройте настройки и проверьте подключение.');
       let lastError=null;
@@ -1862,7 +1869,7 @@ permalink: /
           const dynamicTurn = Array.isArray(body.tools) || Array.isArray(body.functions) ||
             (Array.isArray(body.messages) && body.messages.some(message => message?.role === 'tool' || Array.isArray(message?.tool_calls) || typeof message?.content !== 'string')) ||
             /исслед|research|планировщик|синтезатор|критик|проверяющ|после инструмента/i.test(String(stageName||''));
-          const requestHeaders={'Authorization':`Bearer ${candidate.key}`,'Content-Type':'application/json'};
+          const requestHeaders={'Content-Type':'application/json'};if(candidate.key)requestHeaders.Authorization=`Bearer ${candidate.key}`;
           if(candidate.provider==='alandi'&&dynamicTurn)requestHeaders['X-AI-Cache-Bypass']='1';
           const data=await fetchJson(buildApiUrl(candidate.baseUrl),{method:'POST',headers:requestHeaders,body:JSON.stringify({...candidateBody,model:candidate.model})},signal);
           const elapsedMs=Date.now()-attemptStartedAt;
@@ -2163,7 +2170,7 @@ permalink: /
       const controller = new AbortController(); activeController = controller;
       setBusy(true);
       const offlineMode=safeGet(STORAGE.offline)==='true',useSearch=!offlineMode&&$('toggleSearch').checked,useMultiAgent=$('toggleMultiAgent').checked,mode=processingMode;
-      const provider=safeGet(STORAGE.provider)||'gemini',model=safeGet(STORAGE.model)||DEFAULT_MODEL,workflow=useMultiAgent&&shouldUseMultiAgentResearch(text)?'research':'direct';
+      const provider=safeGet(STORAGE.provider)||'alandi',model=safeGet(STORAGE.model)||DEFAULT_MODEL,workflow=useMultiAgent&&shouldUseMultiAgentResearch(text)?'research':'direct';
       const configuredPrompt=safeGet(STORAGE.systemPrompt),activeConfiguredPrompt=(!configuredPrompt||configuredPrompt===LEGACY_DEFAULT_SYSTEM)?DEFAULT_SYSTEM:configuredPrompt;
       const configuredPromptFingerprint=await makeCacheKey(activeConfiguredPrompt);
       activeRunStartedAt=Date.now();activeRunTelemetry={schemaVersion:1,provider,model,workflow,mode,webSearchEnabled:useSearch,multiAgentEnabled:useMultiAgent,crossProviderFallbackEnabled:safeGet(STORAGE.crossProviderFallback)==='true',startedAt:new Date(activeRunStartedAt).toISOString(),configuredPromptFingerprint,configuredPromptFingerprintAlgorithm:configuredPromptFingerprint.startsWith('fnv-')?'fnv1a-fallback':'sha-256',routes:[],attempts:[]};lastSuccessfulRoute=null;
