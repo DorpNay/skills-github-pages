@@ -144,7 +144,7 @@
 
 ## D-013 — Browser-to-server project memory bridge is explicit and candidate-first
 
-- **Status:** Implemented on PR #29 branch; current-head CI and live gateway activation pending.
+- **Status:** Merged in PR #29 at `55248f81585c52d7cc7ba7cfc08158a291a761ca`; PR-head and post-merge Quality/Chromium/provenance/Pages checks passed. Live gateway activation remains pending.
 - **Decision:** browser-local project facts remain local until the owner clicks “Send local facts”. Upload creates server-side candidate nodes; UI can list, confirm/reject and delete them. No automatic migration or global-memory write occurs.
 - **Retrieval gate:** server search runs only when the current chat has both project memory and server project memory opted in. Query scope is exactly `scope=project, scope_id=currentProject.id`; only `confirmed` nodes enter the prompt. Retrieval is capped at six facts and 1200 total characters; manual uploads are bounded to 100 new candidates per click, query up to 100 recent server nodes (the API limit), and keep a bounded local source-ID ledger for idempotency across batches. A failed lookup degrades to local-only context and is shown in the UI.
 - **Activation:** the browser uses the configured aLandi gateway URL ending in `/v1` and the aLandi bearer key. Gateway requires `ALANDI_MEMORY_GRAPH_ENABLED=true`; keep `ALANDI_GLOBAL_MEMORY_ENABLED=false`. CORS must allow the Pages origin. This is still a single-owner gateway, not multi-user ACL.

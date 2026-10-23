@@ -2,7 +2,7 @@
 
 **Purpose:** one auditable checklist for the 8-section engineering fixation document and all four parts of the V-Final manifesto (sections 0–40), plus the current UI/provider work.  
 **Reviewed:** 2026-10-23  
-**Branch:** `feat/alandi-cloud-settings-ux` · **PR:** [#21](https://github.com/DorpNay/skills-github-pages/pull/21)  
+**Current baseline:** `main` @ `55248f81585c52d7cc7ba7cfc08158a291a761ca` after [PR #29](https://github.com/DorpNay/skills-github-pages/pull/29).  
 **Rule:** a checked/audited requirement is not automatically a delivered feature. Statuses below refer to code and tests, not to a design proposal.
 
 ## Status key
@@ -118,7 +118,7 @@ The following items cover the initial fixation document plus manifesto sections 
 | 70 | MIME allowlist, archive depth, cleanup and extraction/time limits | **PARTIAL** — plain-text attachment has an extension/size guard | Validate MIME/content signatures in server ingestion before adding binary formats |
 | 71 | LOOP WIP limits, kill rules, Eureka clause, stuck protocol and anti-patterns | **SPEC / governance** | Enforce WIP in the work log and stop experiments with no baseline/evidence; record reversal cost |
 | 72 | Definition of Done by maturity: Core, Memory/Projects, Knowledge, Agent Teams, Multimodal, Transparency | **NOT YET MET for complete product** | Keep maturity levels separately scored; don't let project UI completion imply gateway/voice/RAG is production-ready |
-| 73 | Method: audit → hypothesis → probe → minimal patch → independent review → tests/benchmark → CI/E2E → merge → post-merge verification | **PRs #21–#27 merged with PR-head gates green** | Post-merge main `653febb01e2f9887dfec8116bf81f26f39e5077a` passed Gateway, provenance, quality/Chromium/Pages smoke and Pages deployment; PR #28 pending CI |
+| 73 | Method: audit → hypothesis → probe → minimal patch → independent review → tests/benchmark → CI/E2E → merge → post-merge verification | **PRs #21–#29 merged with relevant gates green** | Main `55248f81585c52d7cc7ba7cfc08158a291a761ca` passed post-merge Quality/Chromium, provenance and Pages checks; gateway contract/security tests passed on unchanged PR #29 base `e424d353418cad62981eb269b4082d2925592708`. Live VPS remains unverified |
 | 74 | 20-item final checklist in manifesto §39, including WIP/kill/eval multiplier/technology registry | **AUDITED; most items remain partially satisfied** | Treat each check as a separate acceptance gate, not a general “all good” checkbox |
 | 75 | UI lint, multilingual typography and accessibility | **PARTIAL** — system-font fallbacks, focus states, reduced-motion controls exist | Impeccable lint not installed; run contrast/keyboard/mobile/RTL where applicable before calling design complete |
 | 76 | Exact route telemetry and factual research trace (not chain-of-thought) | **PARTIAL** — per-attempt route trace and research trace are in the client | Event schema/API-wide timeline and source provenance still need integration; don't display imagined stages |
@@ -126,18 +126,20 @@ The following items cover the initial fixation document plus manifesto sections 
 | 78 | Target hardware profile `laptop_8gb_cpu_mvp` and optional ARM 24 GB upgrade | **SPEC ONLY / unmeasured**; upgrade doc says no VM created | Keep 8 GB CPU-only as target profile; no VM/DNS change without credentials/approval |
 | 79 | Manifest, latency, router, binary frames, hard-delete and Impeccable gates from the initial v8 execution plan | **NOT COMPLETE** — these are not proven live simply because later contracts mention them | Track each path and required test/measurement in the source-of-truth; implement in ordered phases |
 | 80 | API-provider catalog, real connection diagnosis, explicit key/paste controls and public web tools | **IMPLEMENTED / regression-backed**, with live-provider secrets unavailable in CI | Run live probe for each configured provider in a controlled session; preserve provider-specific errors and avoid model-specific fake success |
-| 81 | Merge, deployment, post-merge browser check and updated project state/volley log | **PARTIAL** | PRs #21–#27 merged; main at `653febb01e2f9887dfec8116bf81f26f39e5077a` passed the post-merge workflows. Live gateway/VPS remains unverified; PR #28 CI pending |
+| 81 | Merge, deployment, post-merge browser check and updated project state/volley log | **PARTIAL** | PRs #21–#29 merged; latest main `55248f81585c52d7cc7ba7cfc08158a291a761ca` passed post-merge Quality/Chromium, provenance and Pages deployment. Gateway tests passed on base `e424d353418cad62981eb269b4082d2925592708`. Live gateway/VPS remains unverified |
 
 ## C. Current execution To Do — ordered and checked each session
 
-### P0 — post-merge verification for PRs #21–#27; validate cPocket hardening and runbook in PR #28
+### P0 — post-merge verification through PR #29; live gateway remains a separate manual gate
 - [x] Confirmed merged PR #21 contains UI, project, quality-sentinel and E2E test updates.
 - [x] All Independent Quality Sentinels passed on PR head `acce1d7ce5ac6eb37251fe5d899a392150b82e9e`.
 - [x] Chromium E2E passed, including cloud-primary route, keyless web search, project scope/export/deletion and mobile voice swipe.
 - [x] Reviewed the changed-file diff and added regression coverage for auth, route, scope and recovery paths.
 - [x] PR #21 description records Kilo as an explicit alternate and project support as browser-local.
 - [x] Merged only after PR-head quality, Chromium E2E, Lite Gateway and provenance gates passed.
-- [~] Main SHA confirmed as `97793ddfc00b1d364e9109ecd3efabe927a1f08a` and Pages deployment workflow passed; final post-merge quality and live content check remain.
+- [x] PR #28 merged; gateway contract/security tests, provenance, quality and Pages checks passed on post-merge main `e424d353418cad62981eb269b4082d2925592708`.
+- [x] PR #29 merged at `55248f81585c52d7cc7ba7cfc08158a291a761ca`; PR-head and post-merge Quality/Chromium, provenance and Pages browser smoke passed; Pages deployment succeeded.
+- [x] Memory bridge merge state and all available workflow results reconciled. No live gateway/VPS, real provider smoke or target-hardware result is claimed.
 
 ### P1 — required next implementation slices
 - [ ] Add automated two-project isolation, deletion propagation, global opt-in and export/import tests against the backend memory graph.
@@ -172,8 +174,8 @@ The following items cover the initial fixation document plus manifesto sections 
 
 ## Supplement: product work after the original V-016 checklist (not part of its original 81 items)
 
-- [~] **AI-MEM-006 — Server graph API + browser bridge:** API remains feature-flagged and single-owner; browser can manually upload project-local facts as candidates, review/reject/delete them and list scoped nodes. PR #29 current-head CI pending.
-- [~] **AI-MEM-007 — Prompt retrieval gate:** server retrieval is scoped to the active project, confirmed-only, max 6 nodes / 1200 characters, and requires both per-chat project-memory toggles. Browser mock E2E pending current-head Chromium.
+- [x] **AI-MEM-006 — Server graph API + browser bridge:** API remains feature-flagged and single-owner; browser can manually upload project-local facts as candidates, review/reject/delete them and list scoped nodes. PR #29 merged; PR-head and post-merge Quality/Chromium/provenance/Pages checks passed. Gateway activation remains a separate step.
+- [x] **AI-MEM-007 — Prompt retrieval gate:** server retrieval is scoped to the active project, confirmed-only, max 6 nodes / 1200 characters, and requires both per-chat project-memory toggles. Browser mock E2E passed on PR #29 head and merged main; live gateway behavior remains unverified.
 - [ ] **AI-AGENT-004 — Small helper model:** design only. Benchmark one 0.8B–2B class local model for bounded extraction/classification/summarization against a single-main-model baseline. No separate helper model is wired into runtime yet.
 - [ ] **AI-IMAGE-001 — Image generation:** no working image-generation UI/runtime exists yet. Select local ComfyUI or explicit external provider, verify exact checkpoint/license/hash/VRAM and add request-to-image E2E before marking implemented.
 - [ ] **AI-OPS-001 — Free-first month:** no automatic paid resource provisioning. Use existing hardware and optional free-tier APIs with explicit quota/privacy caveats; paid hosting only after benchmark and owner decision.
