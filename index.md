@@ -1824,6 +1824,23 @@ permalink: /
     async function testProviderConnection(){
       if(isTestingProviderConnection)return;
       const provider=currentProvider(),baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),key=provider==='kilo'?'':(provider==='pollinations'?getProviderRequestKey(provider):($('apiKey').value.trim()||getProviderRequestKey(provider))),model=$('modelName').value.trim();
+      const initialKeyInput=$('apiKey').value.trim();
+      const initialCloudSettings=provider==='alandi'?getCloudSettings():null;
+      const isPrimaryCloudSettingsCurrent=()=>{
+        if(!initialCloudSettings)return false;
+        const current=getCloudSettings();
+        return current.baseUrl===initialCloudSettings.baseUrl
+          &&current.model===initialCloudSettings.model
+          &&current.key===initialCloudSettings.key;
+      };
+      const isProviderProbeContextCurrent=()=>{
+        const liveEffectiveKey=provider==='kilo'?'':(provider==='pollinations'?getProviderRequestKey(provider):($('apiKey').value.trim()||getProviderRequestKey(provider)));
+        return provider===currentProvider()
+          &&baseUrl===$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,'')
+          &&model===$('modelName').value.trim()
+          &&initialKeyInput===$('apiKey').value.trim()
+          &&key===liveEffectiveKey;
+      };
       if(!key&&provider!=='kilo'){
         if(provider==='pollinations'&&($('apiKey').value.trim()||safeGet(providerKeyStorage('pollinations')))){updateApiKeyLamp('pending','App Key задан. Подключи Pollinations через OAuth PKCE, затем повтори проверку.');showToast('Сначала подключи Pollinations через OAuth PKCE.','error');return;}
         updateApiKeyLamp('error','Сначала вставь API-ключ.');showToast('Для проверки нужен API-ключ выбранного провайдера.','error');return;
@@ -1866,30 +1883,52 @@ permalink: /
           }
         }
         if(!result){
+          if(!isProviderProbeContextCurrent()){
+            await refreshApiKeyLamp();
+            if(provider==='alandi')void refreshCloudStatus();
+            return;
+          }
+
           safeSet('ai_provider_connection_'+provider,'');
           updateApiKeyLamp('error','Не удалось подтвердить модель: '+String(lastError?.message||'нет совместимого ответа').slice(0,240));
           showToast('Проверка провайдера не пройдена.','error');return;
         }
-        const actualModel=String(result.payload?.model||result.candidateModel);
-        const stillSelected=provider===currentProvider()&&baseUrl===$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,'')&&model===$('modelName').value.trim();
-        if(stillSelected){
-          $('modelName').value=result.candidateModel;safeSet(STORAGE.model,result.candidateModel);safeSet(STORAGE.provider,provider);safeSet(STORAGE.baseUrl,baseUrl);
-          if(key){safeSet(providerKeyStorage(provider),key);if(provider==='gemini')safeSet(STORAGE.apiKey,key);}
+        if(!isProviderProbeContextCurrent()){
+          await refreshApiKeyLamp();
+          if(provider==='alandi')void refreshCloudStatus();
+          showToast('Настройки изменились во время проверки. Результат не сохранён; запусти проверку ещё раз.','error');
+          return;
         }
         const fingerprint=await providerKeyFingerprint(key);
+        // Web Crypto is asynchronous too: re-check the full selection before persisting success.
+        if(!isProviderProbeContextCurrent()){
+          await refreshApiKeyLamp();
+          if(provider==='alandi')void refreshCloudStatus();
+          showToast('Настройки изменились во время проверки. Результат не сохранён; запусти проверку ещё раз.','error');
+          return;
+        }
+        $('modelName').value=result.candidateModel;safeSet(STORAGE.model,result.candidateModel);safeSet(STORAGE.provider,provider);safeSet(STORAGE.baseUrl,baseUrl);
+        if(key){safeSet(providerKeyStorage(provider),key);if(provider==='gemini')safeSet(STORAGE.apiKey,key);}
         safeSet('ai_provider_connection_'+provider,JSON.stringify({ok:true,baseUrl,model:result.candidateModel,keyFingerprint:fingerprint,requestedModel:model,testedAt:new Date().toISOString()}));
-        if(provider==='alandi'&&key){
+        if(provider==='alandi'&&key&&isPrimaryCloudSettingsCurrent()){
           safeSet('ai_alandi_cloud_base_url',baseUrl);safeSet('ai_alandi_cloud_model',result.candidateModel);
           safeSet('ai_alandi_cloud_connection_v1',JSON.stringify({ok:true,baseUrl,model:result.candidateModel,keyFingerprint:fingerprint,testedAt:new Date().toISOString()}));
           if($('cloudBaseUrl')){$('cloudBaseUrl').value=baseUrl;$('cloudModel').value=result.candidateModel;$('cloudApiKey').value=key;}
-          setCloudStatus('connected','Облако отвечает: успешная проверка модели подтверждена.');
+          // A model probe alone is not the full cloud-card health check; never show green before refreshCloudStatus validates /healthz.
+          setCloudStatus('checking','Модель ответила. Проверяю health-check gateway…');
         }
-        if(stillSelected){if(result.candidateModel!==model)populateModelPresets(provider,result.candidateModel);updateApiKeyLamp('connected','Зелёный — модель '+result.candidateModel+' успешно ответила; соединение подтверждено.');}
-        else await refreshApiKeyLamp();
+        if(result.candidateModel!==model)populateModelPresets(provider,result.candidateModel);
+        updateApiKeyLamp('connected','Зелёный — модель '+result.candidateModel+' успешно ответила; соединение подтверждено.');
         showToast(result.candidateModel!==model?'Подобрана доступная модель: '+result.candidateModel:'Провайдер и модель прошли проверку');
         await refreshModelCatalog({quiet:true,force:true,provider,baseUrl,key});
       }catch(error){
-        safeSet('ai_provider_connection_'+provider,'');if(provider==='alandi')safeSet('ai_alandi_cloud_connection_v1','');
+        if(!isProviderProbeContextCurrent()){
+          await refreshApiKeyLamp();
+          if(provider==='alandi')void refreshCloudStatus();
+          return;
+        }
+        safeSet('ai_provider_connection_'+provider,'');
+        if(provider==='alandi'&&isPrimaryCloudSettingsCurrent())safeSet('ai_alandi_cloud_connection_v1','');
         updateApiKeyLamp('error','Проверка не удалась: '+String(error?.message||error).slice(0,220));
         showToast('Проверка не удалась: сеть, CORS или формат ответа.','error');
       }finally{
@@ -1901,6 +1940,7 @@ permalink: /
     async function connectAlandiCloud(){
       if(isTestingProviderConnection)return;
       const {baseUrl,model,key}=getCloudSettings();
+      const cloudSettingsStillCurrent=()=>{const current=getCloudSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
       if(!baseUrl||!model||!key){setCloudStatus('disconnected','Заполни адрес gateway, модель и ключ.');showToast('Для подключения нужны адрес, модель и ключ gateway.','error');return;}
       let parsed;try{parsed=new URL(baseUrl);}catch(_){setCloudStatus('disconnected','URL gateway некорректен.');showToast('Проверь Base URL.','error');return;}
       if(parsed.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(parsed.hostname)){setCloudStatus('disconnected','Для удалённого сервиса нужен HTTPS.');showToast('Облачный gateway должен использовать HTTPS.','error');return;}
@@ -1917,6 +1957,10 @@ permalink: /
           const detail=String(payload?.error?.message||payload?.message||raw||'ответ не распознан').slice(0,180).replaceAll(key,'[скрытый ключ]');
           throw new Error('HTTP '+response.status+(detail?': '+detail:''));
         }
+        if(!cloudSettingsStillCurrent()){
+          setCloudStatus('disconnected','Настройки изменились во время проверки. Результат не сохранён.');
+          return;
+        }
         const healthUrl=new URL(baseUrl);
         healthUrl.pathname=healthUrl.pathname.replace(/\/v1\/?$/,'').replace(/\/$/,'')+'/healthz';
         healthUrl.search='';healthUrl.hash='';
@@ -1927,6 +1971,10 @@ permalink: /
         if(!health.ok)throw new Error('Модель ответила, но health-check gateway вернул HTTP '+health.status+'.');
         const fingerprint=await providerKeyFingerprint(key);
         if(!fingerprint)throw new Error('Не удалось вычислить контрольный отпечаток ключа в этом браузере.');
+        if(!cloudSettingsStillCurrent()){
+          setCloudStatus('disconnected','Настройки изменились во время проверки. Результат не сохранён.');
+          return;
+        }
         safeSet('ai_alandi_cloud_base_url',baseUrl);
         safeSet('ai_alandi_cloud_model',model);safeSet(providerKeyStorage('alandi'),key);
         safeSet(STORAGE.provider,'alandi');safeSet(STORAGE.baseUrl,baseUrl);safeSet(STORAGE.model,model);
@@ -1938,6 +1986,10 @@ permalink: /
         updateApiKeyLamp('connected','Зелёный — собственный gateway ответил на тестовый запрос.');
         showToast('aLandi Cloud подключён и проверен.');
       }catch(error){
+        if(!cloudSettingsStillCurrent()){
+          setCloudStatus('disconnected','Настройки изменились во время проверки. Результат не сохранён.');
+          return;
+        }
         safeSet('ai_alandi_cloud_connection_v1','');safeSet('ai_provider_connection_alandi','');
         setCloudStatus('disconnected','Не удалось подтвердить соединение: '+String(error?.message||error).slice(0,190));
         updateApiKeyLamp('disconnected','Соединение не подтверждено. Проверь модель и health-check gateway.');
