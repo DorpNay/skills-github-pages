@@ -912,24 +912,37 @@ test('deleting a project removes its chats but preserves other projects and chat
   await page.locator('[data-action="create-project"]').click();
   const disposableId = await page.locator('#currentProjectSelect').inputValue();
   expect(disposableId).not.toBe('');
+  const disposableChatId = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    return chats.find(chat => chat.projectId)?.id || '';
+  });
+  expect(disposableChatId).not.toBe('');
 
-  await page.locator('#sidebar [data-action="new-chat"]').click();
+  // Detach the current chat before creating a separate project. The original chat
+  // remains in Disposable Project and must be deleted with that project.
+  await page.locator('[data-action="new-chat"]').first().click();
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#currentProjectSelect').selectOption('');
   await page.locator('#projectNameInput').fill('Keep Project');
   await page.locator('[data-action="create-project"]').click();
   const keepId = await page.locator('#currentProjectSelect').inputValue();
   expect(keepId).not.toBe(disposableId);
+  await page.locator('[data-action="new-chat"]').first().click();
+  const keepChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_id_v87') || '');
+  // Use the project-labelled sidebar row as the source of truth for the disposable chat.
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator(`#chatList [data-action="switch-chat"][data-chat-id="${disposableChatId}"]`).click();
+  await expect(page.locator('#currentProjectSelect')).toHaveValue(disposableId);
 
   page.on('dialog', dialog => dialog.accept());
   await page.locator('[data-action="delete-project"]').click();
-  await expect(page.locator('#currentProjectSelect')).toHaveValue(disposableId);
+  await expect(page.locator('#currentProjectSelect')).not.toHaveValue(disposableId);
   const storedProjects = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]'));
-  expect(storedProjects.some(project => project.id === disposableId)).toBe(true);
-  expect(storedProjects.some(project => project.id === keepId)).toBe(false);
+  expect(storedProjects.some(project => project.id === disposableId)).toBe(false);
+  expect(storedProjects.some(project => project.id === keepId)).toBe(true);
   const storedChats = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]'));
-  expect(storedChats.some(chat => chat.projectId === disposableId)).toBe(true);
-  expect(storedChats.some(chat => chat.projectId === keepId)).toBe(false);
+  expect(storedChats.some(chat => chat.id === disposableChatId)).toBe(false);
+  expect(storedChats.some(chat => chat.id === keepChatId && chat.projectId === keepId)).toBe(true);
 });
 
 
