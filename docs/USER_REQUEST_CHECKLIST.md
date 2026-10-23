@@ -13,6 +13,7 @@
 - [ ] Обновить сведения о реальном состоянии системы: код, контракт, эксперимент, развёрнутая служба, измеренная метрика.
 
 ## B. Первичное облако aLandi и API-провайдеры
+- [x] Зафиксировано продуктовое правило: aLandi Cloud — единственный главный облачный блок; Kilo остаётся обычным альтернативным провайдером в общем списке, без отдельной главной кнопки.
 - [~] Вывести собственное облако aLandi на первое место настроек крупной карточкой.
 - [~] Начальный статус облака — красный/неподтверждённый; зелёный возможен лишь после успешного модельного запроса.
 - [~] Хранить адрес, модель и ключ aLandi отдельно; не считать наличие ключа доказательством связи.
@@ -114,6 +115,7 @@
 ### Part II — PROJECT_STATE.yaml: каждый принятый ID, отклонения и блокеры
 | ID | Текущее состояние из PROJECT_STATE.yaml | Артефакт | Eval gate |
 |---|---|---|---|
+| **AI-VOICE-001** | conditional_interface_only | gateway/voice/native_core_interface.py | EV-VOICE-001; benchmark pending |
 | **AI-VOICE-002** | prototype | gateway/voice/cpocket.py | EV-CPOCKET-001 |
 | **AI-VOICE-003** | target_unmeasured | docs/LATENCY_CONTRACT.md | EV-VOICE-002 |
 | **AI-VOICE-004** | read_only_prototype | gateway/voice/speculative_transaction.py | EV-SPEC-001 |
