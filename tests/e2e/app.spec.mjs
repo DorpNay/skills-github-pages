@@ -942,3 +942,68 @@ test('xAI accepts structured text response envelopes and authenticates with the 
   expect(requestHeaders.authorization).toBe('Bearer e2e-xai-placeholder-key');
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('ai_provider_connection_xai') || 'null')?.ok)).toBe(true);
 });
+
+
+test('Deep mode caps tool fan-out, suppresses repeated calls, and still returns a final answer', async ({ page }) => {
+  let modelCalls = 0;
+  let pageReads = 0;
+  let maxModelToolCalls = 0;
+  await page.route('https://api.example.test/v1/models', async route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ data: [{ id: 'tool-budget-model' }] })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    const body = route.request().postDataJSON();
+    modelCalls++;
+    const toolsEnabled = Array.isArray(body.tools) && body.tools.length > 0;
+    maxModelToolCalls = Math.max(maxModelToolCalls, toolsEnabled ? body.tools.length : 0);
+    if (toolsEnabled) {
+      const calls = Array.from({ length: 5 }, (_, i) => ({
+        id: 'read-page-' + modelCalls + '-' + i,
+        type: 'function',
+        function: {
+          name: 'read_webpage',
+          arguments: JSON.stringify({ url: 'https://example.com/page-' + modelCalls + '-' + i })
+        }
+      }));
+      await route.fulfill({
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({
+          model: 'tool-budget-model',
+          choices: [{ message: { role: 'assistant', content: null, tool_calls: calls }, finish_reason: 'tool_calls' }]
+        })
+      });
+      return;
+    }
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'tool-budget-model', choices: [{ message: { role: 'assistant', content: 'Completed within the tool budget.' } }] })
+    });
+  });
+  await page.route('https://example.com/**', async route => {
+    pageReads++;
+    await route.fulfill({
+      status: 200,
+      contentType: 'text/html; charset=utf-8',
+      headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET' },
+      body: '<html><body><main>Sample public page content for bounded-tool testing.</main></body></html>'
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('tool-budget-model');
+  await page.locator('#apiKey').fill('e2e-tool-budget-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#modeDeep').click();
+  await page.locator('#toggleSearch').check();
+  await page.locator('#userInput').fill('Read several public pages and summarize the useful evidence.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Completed within the tool budget.', { timeout: 30000 });
+  expect(pageReads).toBe(8);
+  expect(modelCalls).toBeLessThanOrEqual(5);
+  expect(maxModelToolCalls).toBeGreaterThan(0);
+});
