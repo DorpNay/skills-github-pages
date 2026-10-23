@@ -730,13 +730,17 @@ test('agent systems skill is routed on demand and its safety contract stays avai
 
 
 test('aLandi cloud status only turns green after a real model response, and core UX controls work', async ({ page }) => {
+  const cloudRequests = [];
   await page.route('https://cloud.example.test/healthz', async route => route.fulfill({
     status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' })
   }));
-  await page.route('https://cloud.example.test/v1/chat/completions', async route => route.fulfill({
-    status: 200, contentType: 'application/json',
-    body: JSON.stringify({ model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
-  }));
+  await page.route('https://cloud.example.test/v1/chat/completions', async route => {
+    cloudRequests.push(route.request().postDataJSON());
+    return route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+    });
+  });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#clockDigital')).toHaveText(/^\d{2}:\d{2}$/);
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
@@ -752,6 +756,12 @@ test('aLandi cloud status only turns green after a real model response, and core
   await expect(page.locator('#cloudStatus')).toContainText('Облако подключено');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_provider'))).toBe('alandi');
   await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('Verify the primary chat uses my aLandi cloud.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('OK', { timeout: 15000 });
+  expect(cloudRequests).toHaveLength(2);
+  expect(cloudRequests[1].messages.at(-1).content).toBe('Verify the primary chat uses my aLandi cloud.');
+  expect(cloudRequests.every(request => request.model === 'qwen3.5:4b')).toBe(true);
   await page.locator('#languageSummary').click();
   await page.locator('[data-action="set-language"][data-language="en"]').click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
