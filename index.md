@@ -160,7 +160,6 @@ permalink: /
       .brand-subtitle { font-size:8px; }
       body.composer-centered footer { width:calc(100vw - 16px);padding:8px;border-radius:18px; }
       body.composer-centered footer #userInput { max-height:30vh; }
-      #voiceUnavailableButton { display:none; }
     }
     @media (prefers-reduced-motion:reduce) { body.composer-centered footer { transition:none!important; } }
     #sidebar { overflow-y:auto; overscroll-behavior:contain; }
