@@ -910,7 +910,7 @@ permalink: /
       const themeButton=$('homeThemeToggle');if(themeButton){themeButton.title=lang==='en'?'Switch theme':'Сменить тему';themeButton.setAttribute('aria-label',themeButton.title);}
       document.querySelectorAll('[data-action="toggle-settings"]').forEach(button=>button.setAttribute('aria-label',lang==='en'?'Settings':'Настройки'));
       const attach=$('attachTextButton');if(attach){attach.title=lang==='en'?'Attach a text file (.txt, .md, .csv, .json, .log)':'Прикрепить .txt, .md, .csv, .json или .log';attach.setAttribute('aria-label',attach.title);}
-      updateOfflineUI();updateModeUI();updateHomeThemeButton();renderProjectUI({preserveDraft:true});
+      updateOfflineUI();updateModeUI();updateHomeThemeButton();renderProjectUI({preserveDraft:true});renderHelperMemorySuggestions();
     }
     function updateHomeThemeButton(){
       const button=$('homeThemeToggle');if(!button)return;
@@ -1073,7 +1073,7 @@ permalink: /
     }
     async function localHelperMemoryRequest(facts){
       const config=getMemoryGraphConfig(),controller=new AbortController();let timedOut=false;
-      const timer=setTimeout(()=>{timedOut=true;controller.abort();},120000);
+      const timer=setTimeout(()=>{timedOut=true;controller.abort();},190000);
       try{
         const response=await fetch(config.baseUrl+'/helpers/project-memory-suggestions',{method:'POST',headers:{Accept:'application/json','Content-Type':'application/json',Authorization:'Bearer '+config.key},body:JSON.stringify({facts}),cache:'no-store',credentials:'omit',signal:controller.signal});
         let payload=null;try{payload=await response.json();}catch(_){}
@@ -1101,7 +1101,7 @@ permalink: /
       const facts=[];let chars=0;
       for(const item of project.memory){
         const text=String(item?.text||'').trim().slice(0,600);if(!text)continue;
-        if(facts.length>=80||chars+text.length>12000)break;
+        if(facts.length>=80||chars+text.length>6000)break;
         facts.push(text);chars+=text.length;
       }
       if(!facts.length){setHelperMemoryStatus(memoryUiText('helperMemoryNoFacts'));return;}

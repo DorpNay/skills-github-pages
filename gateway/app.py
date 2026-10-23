@@ -66,7 +66,7 @@ class Settings:
     # Optional local-only helper model; blank means the helper route is disabled.
     helper_model: str = ""
     helper_timeout_seconds: float = 90.0
-    helper_max_input_chars: int = 12_000
+    helper_max_input_chars: int = 6_000
     cache_enabled: bool = True
     cache_path: str = "/var/lib/alandi-gateway/response-cache.sqlite3"
     cache_ttl_seconds: int = 900
@@ -110,9 +110,9 @@ class Settings:
             raise ValueError("ALANDI_HELPER_TIMEOUT_SECONDS must be a number") from exc
         if not 1 <= helper_timeout <= 180:
             raise ValueError("ALANDI_HELPER_TIMEOUT_SECONDS must be between 1 and 180")
-        helper_max_input_chars = int_env("ALANDI_HELPER_MAX_INPUT_CHARS", 12_000, 512)
-        if helper_max_input_chars > 24_000:
-            raise ValueError("ALANDI_HELPER_MAX_INPUT_CHARS must be <= 24000")
+        helper_max_input_chars = int_env("ALANDI_HELPER_MAX_INPUT_CHARS", 6_000, 512)
+        if helper_max_input_chars > 8_000:
+            raise ValueError("ALANDI_HELPER_MAX_INPUT_CHARS must be <= 8000 for the fixed 4096-token helper context")
         origins = tuple(validate_origin(item.strip()) for item in os.getenv(
             "ALANDI_CORS_ORIGINS", "https://dorpnay.github.io"
         ).split(",") if item.strip())

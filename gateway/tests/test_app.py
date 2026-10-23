@@ -76,7 +76,7 @@ def test_helper_model_returns_bounded_deduplicated_candidates_and_unloads_model(
             })}})
         return httpx.Response(404, json={})
 
-    config = settings(helper_model="qwen3.5:0.8b", helper_max_input_chars=12000)
+    config = settings(helper_model="qwen3.5:0.8b", helper_max_input_chars=6000)
     with client_for(config, handler) as client:
         response = client.post(
             "/v1/helpers/project-memory-suggestions",
