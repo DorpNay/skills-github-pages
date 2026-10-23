@@ -41,7 +41,7 @@ const suites = {
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
       includes("alandi: { label: 'aLandi Self-hosted Gateway'", 'The aLandi private gateway must be a first-class provider.');
       includes("allowCrossProvider&&selectedProvider!=='alandi'", 'Selecting aLandi must never silently route private prompts to another provider even if global fallback is enabled.');
-      includes('<option value="alandi">aLandi Self-hosted Gateway · свой сервер</option>', 'The aLandi provider must be selectable in settings.');
+      includes('<option value="alandi">aLandi · собственный gateway</option>', 'The aLandi provider must be selectable in settings.');
       includes("provider==='custom'||provider==='alandi'", 'Custom gateway providers must not fall back to the default cloud endpoint.');
       includes("requestHeaders['X-AI-Cache-Bypass']='1'", 'Dynamic agent turns must explicitly bypass the server response cache.');
       includes('X-AI-Cache', 'The browser should read the exposed private gateway cache status.');
@@ -83,6 +83,13 @@ const suites = {
       includes('function downloadTraceJson()', 'Research trace JSON export must remain available.');
       assert.ok(!source.includes("safeGet(STORAGE.model) === 'gemini-3.8-flash'"), 'A valid Gemini 3.8 model must not be downgraded on load.');
       includes('function getApiCandidates(requestedModel)', 'Provider failover must discover only configured credentials.');
+      includes("if(!key && provider!=='kilo') continue;", 'Only the explicitly selected Kilo Free route may omit an API key.');
+      includes('function connectAlandiCloud()', 'The primary cloud status must be verified with a real completion.');
+      includes('id="cloudStatusDot" data-state="disconnected"', 'Cloud connection must begin unconfirmed.');
+      includes('if(error.modelUnavailable)', 'Only a model-specific provider failure may trigger same-provider model selection.');
+      includes('function applyUiLanguage(language)', 'The main UI must support a persisted language choice.');
+      includes('function updateClockFace()', 'The branded local clock must use real local time.');
+      includes('function handleTextAttachment()', 'Text attachment handling must validate extension, size and content boundaries.');
       includes('function shouldUseMultiAgentResearch(value)', 'Multi-agent orchestration must be routed by task complexity.');
       includes('async function testProviderConnection()', 'Provider connections must have an actionable diagnostic.');
       includes('function parseRetryAfterMs(value)', 'HTTP Retry-After must be respected rather than using a fixed retry delay.');
@@ -110,7 +117,7 @@ const suites = {
       includes('Older builds wrote every provider\'s key into the legacy Gemini slot.', 'Legacy cross-provider key contamination must be migrated safely.');
       includes('текст запроса и контекст могут быть отправлены другому провайдеру', 'Cross-provider fallback must disclose that request content can be sent to another provider.');
       includes('ключ не сохранён для выбранного провайдера', 'Settings must explain why the API key field is blank after switching providers.');
-      includes("const selectedProvider=safeGet(STORAGE.provider)||'gemini',allowCrossProvider=safeGet(STORAGE.crossProviderFallback)==='true'", 'Cross-provider fallback must be a user-controlled opt-in.');
+      includes("const selectedProvider=safeGet(STORAGE.provider)||'alandi',allowCrossProvider=safeGet(STORAGE.crossProviderFallback)==='true'", 'Cross-provider fallback must be a user-controlled opt-in.');
       includes('function isGenericModelRefusal(value)', 'Generic model refusals must not be accepted as successful research stages.');
       includes('Конвейер остановлен', 'A refused multi-agent stage must stop clearly rather than repeat the refusal as a final answer.');
       includes('if (!savedChats || !savedCurrent)', 'Chat persistence failures must be visible to the user.');
