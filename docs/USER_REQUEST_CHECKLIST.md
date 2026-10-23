@@ -7,7 +7,7 @@
 ## A. База, управление и непрерывность
 - [x] PR #20 с базовыми контрактами памяти, инструментария, происхождения источников и governance объединён; CI прошёл.
 - [x] Создана ветка для облачной настройки/UX: `feat/alandi-cloud-settings-ux`.
-- [~] PR #21 merged; diff reviewed, PR-head Chromium/quality tests passed and Pages deployment workflow succeeded. Final post-merge quality run and live page-content check remain.
+- [x] PRs #21–#25 merged with PR-head required CI passing, including Chromium and published Pages smoke on the verified heads. Main is `9006c7ed8737174e73c615504eb80362f4673949`; latest post-merge run still needs checking. Live gateway/VPS remains unverified.
 - [x] Проведён аудит V-016 §0–40 и начальной инженерной фиксации; создан подробный 81-пунктный ledger в `docs/V016_IMPLEMENTATION_CHECKLIST.md`. Аудит завершён, но многие runtime-функции ещё не реализованы/не подтверждены.
 - [ ] Проверить все старые регрессии: создание чата, история, экспорт/импорт, отмена, повтор запроса.
 - [ ] Обновить сведения о реальном состоянии системы: код, контракт, эксперимент, развёрнутая служба, измеренная метрика.
@@ -30,7 +30,7 @@
 - [~] Kilo Auto Free доступен как обычный альтернативный провайдер в общем списке: без ключа, только по явному выбору и без скрытого fallback. Официальная документация предупреждает, что промпты могут поступать провайдерам, которые логируют их/используют для улучшения моделей; конфиденциальные данные туда не отправлять. См. `docs/V016_IMPLEMENTATION_CHECKLIST.md` и [официальное предупреждение Kilo](https://kilo.ai/docs/getting-started/using-kilo-for-free).
 - [ ] Обновить все модельные ID по официальным динамическим каталогам; статические preset считать только fallback.
 - [ ] Провести E2E-проверку реального пользовательского выбора Kilo и документацию об обработке данных сторонним шлюзом.
-- [~] Ручной all-provider smoke workflow требует явной галочки перед реальными запросами и возможным расходом квоты; текущие модельные ID сверены по документации поставщиков, но live-доступность каждого аккаунта не проверялась.
+- [x] All-provider smoke workflow требует явного подтверждения (default false) и поддерживает per-provider model overrides; PR #25 quality/provenance CI passed. Live workflow не запускался из этой сессии; доступность аккаунтов не утверждается.
 - [ ] Проверить официальные endpoints, CORS, лимиты, схему аутентификации и формат ошибок каждого сохранённого провайдера.
 - [ ] Никогда не переносить ключи из одного провайдера в другой и не экспортировать ключи в settings-profile.
 
@@ -63,6 +63,7 @@
 - [~] RAG source deletion is scope-checked and removes chunk/concept/FTS rows; SQLite `secure_delete` plus version-gated FTS5 `secure-delete` regression tests passed on PR #24 HEAD and post-merge main. This still does **not** erase evidence-ledger copies, WAL/journals, backups or browser-local source copies; system-wide crypto-erasure remains open.
 - [ ] Проверить экспорт, исправление и удаление пользовательских фактов и связанные derived records.
 - [ ] Реализовать удаление/криптостирание по всем реальным слоям; не обещать SLA ≤60 секунд без измерения.
+- [~] Scoped memory FTS5 prototype добавляет `search_nodes()` с точной фильтрацией scope, confirmed-only по умолчанию, ограниченными literal terms, индексными триггерами, каскадным удалением производных узлов и migration backfill. Gateway tests passed on PR #26 head; full current-head quality/Pages check pending; UI/API wiring deferred.
 - [ ] Протестировать valid_from, valid_until, recorded_at, конфликты, supersede и scoped recursive delete в gateway memory prototypes.
 - [ ] Полноценный viewer источников/индекса, citation lineage и cross-device project memory остаются задачами последующих фаз.
 
@@ -138,6 +139,7 @@
 | **AI-MEM-002** | bitemporal_primitives_not_in_frontend | gateway/memory/temporal.py | EV-MEM-002 |
 | **AI-MEM-003** | scoped_manager_prototype | gateway/memory/scope.py | EV-MEM-003 |
 | **AI-MEM-004** | explicit_conflicts_no_auto_winner | gateway/memory/conflict.py | EV-MEM-004 |
+| **AI-MEM-005** | scoped_fts5_memory_search_prototype_gateway_tests_passed_not_api_wired | gateway/memory/manager.py; gateway/memory/schema.sql | EV-MEM-005 |
 | **AI-RAG-001** | fts5_lexical_graph_not_full_lazygraphrag | gateway/rag/lazy_graph_rag.py | EV-RAG-001 |
 | **AI-RAG-002** | conditional_not_installed | gateway/rag/rag_anything.py | EV-RAG-002 |
 | **AI-RAG-003** | citation_hash_offset_primitives | gateway/rag/citations.py | EV-RAG-003 |

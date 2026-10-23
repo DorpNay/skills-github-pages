@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import sqlite3
 import time
 import uuid
@@ -58,20 +59,42 @@ class MemoryManager:
     def __init__(self, path: str | Path, *, max_metadata_bytes: int = 16_384):
         self.path = str(path)
         self.max_metadata_bytes = max_metadata_bytes
+        self.fts5_secure_delete_enabled = False
 
     def _connect(self) -> sqlite3.Connection:
         db = sqlite3.connect(self.path, timeout=5.0)
         db.row_factory = sqlite3.Row
         db.execute("PRAGMA busy_timeout=5000")
         db.execute("PRAGMA foreign_keys=ON")
+        # Defense in depth for ordinary b-tree pages; this is not crypto-erasure.
+        db.execute("PRAGMA secure_delete=ON")
         return db
+
+    @staticmethod
+    def _configure_fts5_secure_delete(db: sqlite3.Connection) -> bool:
+        """Enable FTS5 secure-delete only on SQLite versions that support it (>=3.42.0)."""
+        if sqlite3.sqlite_version_info < (3, 42, 0):
+            return False
+        try:
+            db.execute("INSERT INTO fts_memory(fts_memory, rank) VALUES ('secure-delete', 1)")
+            row = db.execute("SELECT v FROM fts_memory_config WHERE k='secure-delete'").fetchone()
+        except sqlite3.Error:
+            return False
+        return row is not None and str(row["v"]) == "1"
 
     def initialize(self) -> None:
         if self.path != ":memory:":
             Path(self.path).parent.mkdir(parents=True, exist_ok=True)
         schema = Path(__file__).with_name("schema.sql").read_text(encoding="utf-8")
         with closing(self._connect()) as db:
+            index_exists = db.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name='fts_memory'"
+            ).fetchone() is not None
             db.executescript(schema)
+            # Backfill rows from legacy databases only when the index is first created.
+            if not index_exists:
+                db.execute("INSERT INTO fts_memory(fts_memory) VALUES ('rebuild')")
+            self.fts5_secure_delete_enabled = self._configure_fts5_secure_delete(db)
             db.commit()
         if self.path != ":memory:":
             os.chmod(self.path, 0o600)
@@ -191,6 +214,61 @@ class MemoryManager:
             clauses.append("recorded_at <= ?")
             args.append(at)
         sql = "SELECT * FROM memory_nodes WHERE " + " AND ".join(clauses) + " ORDER BY recorded_at DESC, id LIMIT ?"
+        args.append(limit)
+        with closing(self._connect()) as db:
+            rows = db.execute(sql, args).fetchall()
+        return [self._to_node(row) for row in rows]
+
+    def search_nodes(self, query: str, *, scope: str, scope_id: str,
+                     statuses: tuple[str, ...] = ("confirmed",), node_type: str | None = None,
+                     limit: int = 10, valid_at: str | None = None,
+                     recorded_at: str | None = None) -> list[MemoryNode]:
+        """Scope-filtered lexical search. Prototype only; not wired to the UI/API."""
+        ref = self._scope(scope, scope_id)
+        if not isinstance(query, str) or len(query) > 4_000:
+            raise MemoryGraphError("query must be text of at most 4000 characters")
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100:
+            raise MemoryGraphError("limit must be between 1 and 100")
+        for status in statuses:
+            try:
+                validate_status(status)
+            except ConflictError as exc:
+                raise MemoryGraphError(str(exc)) from exc
+        seen: set[str] = set()
+        terms: list[str] = []
+        for raw_term in re.findall(r"[\w'-]{2,}", query, flags=re.UNICODE):
+            term = raw_term[:128]
+            folded = term.casefold()
+            if folded not in seen:
+                seen.add(folded)
+                terms.append(term)
+            if len(terms) >= 24:
+                break
+        if not terms:
+            return []
+        # Quote each bounded token; only this method generates the OR operators.
+        match_query = " OR ".join('"' + term.replace('"', '""') + '"' for term in terms)
+        clauses = ["n.scope = ?", "n.scope_id = ?"]
+        args: list[Any] = [match_query, ref.kind, ref.scope_id]
+        if statuses:
+            clauses.append("n.status IN (" + ",".join("?" for _ in statuses) + ")")
+            args.extend(statuses)
+        if node_type:
+            clauses.append("n.node_type = ?")
+            args.append(node_type)
+        if valid_at:
+            at = normalize_timestamp(valid_at, field_name="valid_at")
+            clauses.extend(["(n.valid_from IS NULL OR n.valid_from <= ?)",
+                            "(n.valid_until IS NULL OR ? < n.valid_until)"])
+            args.extend([at, at])
+        if recorded_at:
+            at = normalize_timestamp(recorded_at, field_name="recorded_at")
+            clauses.append("n.recorded_at <= ?")
+            args.append(at)
+        sql = ("SELECT n.* FROM fts_memory JOIN memory_nodes AS n "
+               "ON n.rowid = fts_memory.rowid WHERE fts_memory MATCH ? AND "
+               + " AND ".join(clauses)
+               + " ORDER BY bm25(fts_memory), n.recorded_at DESC, n.id LIMIT ?")
         args.append(limit)
         with closing(self._connect()) as db:
             rows = db.execute(sql, args).fetchall()

@@ -36,7 +36,8 @@ The prior gateway baseline passed 37 tests and the deterministic six-layer smoke
 | EV-MEM-001 | Graph schema | gateway/tests/test_coder_packet.py | every node has provenance; sqlite foreign keys and permissions; scoped queries | CI pending |
 | EV-MEM-002 | Temporal memory | gateway/tests/test_coder_packet.py | UTC offset required; valid-time interval semantics correct | CI pending |
 | EV-MEM-003 | Memory scope | gateway/tests/test_coder_packet.py | cross-project read/edge/delete denied | CI pending |
-| EV-MEM-004 | Conflicts | gateway/tests/test_coder_packet.py | contradictory items become disputed; no automatic winner | CI pending |
+| EV-MEM-004 | Conflicts | gateway/tests/test_coder_packet.py | contradictory items become disputed; no automatic winner | graph prototype; broader conflict eval pending |
+| EV-MEM-005 | Scoped memory FTS5 retrieval | gateway/memory/manager.py + gateway/tests/test_coder_packet.py | exact-scope retrieval; confirmed-only default; bounded terms; deletion propagation; legacy index rebuild; capability-gated FTS5 secure-delete | Gateway tests passed on PR #26 head; full current-head quality/Pages check pending; not UI/API wired |
 | EV-RAG-003 | Citations | gateway/tests/test_coder_packet.py | quote equals source[start:end], source SHA matches, malformed offsets rejected | CI pending |
 | EV-RAG-004 | Evidence ledger | gateway/tests/test_coder_packet.py | scope isolation, source/page/offset/hash retained | CI pending |
 | EV-TOOLS-002 | JSON Schema | gateway/tests/test_coder_packet.py | rejects invalid types, unknown keys, remote refs and oversized bodies | CI pending |
@@ -49,7 +50,7 @@ The prior gateway baseline passed 37 tests and the deterministic six-layer smoke
 | EV-ROUTER-001 | Risk-aware local routing | router/policy.py + gateway/tests/test_v016_foundation.py | destructive action requires confirmation; low budget and slow escalation obey policy; invalid input rejected | tests passed; typed prototype not runtime-integrated |
 | EV-SEARCH-001 | Keyless web-search fallback | tests/e2e/app.spec.mjs + index.md | no Tavily key triggers bounded open-source search; citations come from actual source responses; tool budget remains bounded | PR #21 Chromium E2E passed; public sources remain CORS-dependent |
 | EV-RAG-001 | Retrieval quality | gateway/evals/run_six_layer_eval.py | synthetic fixtures only; real golden set >=50 queries before product claims | not a product benchmark |
-| EV-PROVIDER-001 | Configured provider live smoke | .github/workflows/provider-smoke-all.yml + scripts/provider-smoke-all.mjs | Live probes require an explicit true input; false/missing confirmation never reaches provider endpoints; secret values are not logged; unavailable secrets are skipped; configured failures fail the run | Workflow guarded in source; current CI pending; not dispatched from this session; live access unverified |
+| EV-PROVIDER-001 | Configured provider live smoke | .github/workflows/provider-smoke-all.yml + scripts/provider-smoke-all.mjs | Live probes require an explicit true input; false/missing confirmation never reaches provider endpoints; secret values are not logged; unavailable secrets are skipped; configured failures fail the run | PR #25 quality/provenance CI passed on its head; live smoke was not dispatched from this session; live access unverified |
 | EV-RAG-005 | Scope-safe source deletion | gateway/rag/lazy_graph_rag.py + gateway/tests/test_six_layers.py | reject invalid global-scope pairings; deleted document disappears from retrieval; SQLite secure-delete on and FTS5 secure-delete enabled only when SQLite >=3.42.0 | PR #24 HEAD and post-merge main CI passed; does not prove a whole-system crypto-erase guarantee |
 
 ## Reporting rules
