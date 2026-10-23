@@ -460,6 +460,9 @@ permalink: /
     let isGenerating = false;
     let isTestingProviderConnection = false;
     let providerAutoConnectTimer = null;
+    let clockTimer = null;
+    let isTestingProviderConnection = false;
+    let providerAutoConnectTimer = null;
     let storageWarningShown = false;
     let pyodidePromise = null;
     let pyodideScriptPromise = null;
@@ -1597,6 +1600,80 @@ permalink: /
         if(button){button.disabled=false;button.textContent='Проверить соединение и модель';}
         hideStatus();if(provider==='alandi')void refreshCloudStatus();
       }
+    }
+    async function connectAlandiCloud(){
+      if(isTestingProviderConnection)return;
+      const {baseUrl,model,key}=getCloudSettings();
+      if(!baseUrl||!model||!key){setCloudStatus('disconnected','Заполни адрес gateway, модель и ключ.');showToast('Для подключения нужны адрес, модель и ключ gateway.','error');return;}
+      let parsed;try{parsed=new URL(baseUrl);}catch(_){setCloudStatus('disconnected','URL gateway некорректен.');showToast('Проверь Base URL.','error');return;}
+      if(parsed.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(parsed.hostname)){setCloudStatus('disconnected','Для удалённого сервиса нужен HTTPS.');showToast('Облачный gateway должен использовать HTTPS.','error');return;}
+      isTestingProviderConnection=true;
+      const button=document.querySelector('[data-action="connect-alandi-cloud"]');
+      if(button){button.disabled=true;button.textContent='Проверяю…';}
+      setCloudStatus('checking','Ожидаю настоящий ответ модели…');
+      const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
+      try{
+        const response=await fetch(buildApiUrl(baseUrl),{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model,messages:[{role:'user',content:'Reply with exactly OK.'}],max_tokens:8,stream:false}),cache:'no-store',signal:controller.signal});
+        const raw=await response.text();let payload=null;try{payload=JSON.parse(raw);}catch(_){}
+        if(!response.ok||!isUsableProbeResponse(payload,raw)){
+          const detail=String(payload?.error?.message||payload?.message||raw||'ответ не распознан').slice(0,180).replaceAll(key,'[скрытый ключ]');
+          throw new Error('HTTP '+response.status+(detail?': '+detail:''));
+        }
+        const fingerprint=await providerKeyFingerprint(key);
+        if(!fingerprint)throw new Error('Не удалось вычислить контрольный отпечаток ключа в этом браузере.');
+        safeSet('ai_alandi_cloud_base_url',baseUrl);safeSet('ai_alandi_cloud_model,',model);
+        safeSet('ai_alandi_cloud_model',model);safeSet(providerKeyStorage('alandi'),key);
+        safeSet(STORAGE.provider,'alandi');safeSet(STORAGE.baseUrl,baseUrl);safeSet(STORAGE.model,model);
+        const verified={ok:true,baseUrl,model,keyFingerprint:fingerprint,testedAt:new Date().toISOString()};
+        safeSet('ai_alandi_cloud_connection_v1',JSON.stringify(verified));
+        safeSet('ai_provider_connection_alandi',JSON.stringify(verified));
+        $('providerPreset').value='alandi';applyProviderPreset('alandi',true);$('baseUrl').value=baseUrl;$('modelName').value=model;$('apiKey').value=key;
+        setCloudStatus('connected','Облако подключено: модель действительно ответила.');
+        updateApiKeyLamp('connected','Зелёный — собственный gateway ответил на тестовый запрос.');
+        showToast('aLandi Cloud подключён и проверен.');
+      }catch(error){
+        safeSet('ai_alandi_cloud_connection_v1','');safeSet('ai_provider_connection_alandi','');
+        setCloudStatus('disconnected','Не удалось подтвердить соединение: '+String(error?.message||error).slice(0,190));
+        showToast('Не удалось подключить aLandi Cloud.','error');
+      }finally{
+        clearTimeout(timer);isTestingProviderConnection=false;
+        if(button){button.disabled=false;button.textContent='Проверить и подключить';}
+      }
+    }
+    async function pasteIntoField(id){
+      const field=$(id);if(!field)return;
+      try{
+        if(!navigator.clipboard?.readText)throw new Error('clipboard-api-unavailable');
+        const text=await navigator.clipboard.readText();
+        if(!text){field.focus();showToast('Буфер обмена пуст. Вставь текст обычным Ctrl+V.','error');return;}
+        field.value=text.trim();field.dispatchEvent(new Event('input',{bubbles:true}));
+        field.focus();field.setSelectionRange?.(field.value.length,field.value.length);
+        if(id==='apiKey')scheduleProviderAutoConnect();
+        else if(id==='cloudApiKey'){safeSet('ai_alandi_cloud_connection_v1','');setCloudStatus('disconnected','Ключ изменён. Нажми «Проверить и подключить».');}
+        showToast('Текст вставлен.');
+      }catch(_){field.focus();showToast('Браузер не разрешил чтение буфера. Нажми Ctrl+V в поле.','error');}
+    }
+    function scheduleProviderAutoConnect(){
+      if(providerAutoConnectTimer)clearTimeout(providerAutoConnectTimer);
+      providerAutoConnectTimer=setTimeout(async()=>{
+        providerAutoConnectTimer=null;
+        if(!currentProvider()||!$('apiKey').value.trim())return;
+        const provider=currentProvider();
+        try{await refreshModelCatalog({quiet:true,force:true,provider});}catch(_){}
+        await testProviderConnection();
+      },700);
+    }
+    function useKiloFree(){
+      safeSet('ai_alandi_cloud_connection_v1','');
+      safeSet(STORAGE.provider,'kilo');safeSet(STORAGE.baseUrl,PROVIDERS.kilo.baseUrl);safeSet(STORAGE.model,'kilo-auto/free');
+      safeSet(STORAGE.crossProviderFallback,'false');
+      $('providerPreset').value='kilo';applyProviderPreset('kilo',true);
+      $('baseUrl').value=PROVIDERS.kilo.baseUrl;$('modelName').value='kilo-auto/free';
+      $('allowCrossProviderFallback').checked=false;$('apiKey').value='';
+      safeSet('ai_provider_connection_kilo','');
+      updateApiKeyLamp('pending','Kilo Auto Free: без ключа, внешний запрос разрешён только после твоего выбора.');
+      showToast('Выбран Kilo Auto Free. Запросы будут отправляться внешнему шлюзу Kilo.');
+      void testProviderConnection();
     }
     function clearProviderKey(){
       const provider=currentProvider();safeSet(providerKeyStorage(provider),'');
