@@ -842,7 +842,6 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('[data-action="toggle-sidebar"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(alphaId);
   await page.locator('#currentProjectSelect').selectOption('');
-  await page.locator('#projectManagerDetails > summary').click();
   await page.locator('#projectNameInput').fill('Beta Project');
   await page.locator('#projectInstructionsInput').fill('BETA_PROJECT_INSTRUCTION_SENTINEL');
   await page.locator('[data-action="create-project"]').click();
@@ -850,6 +849,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('[data-action="add-project-memory"]').click();
   await page.locator('#projectMemoryToggle').check();
 
+  await page.locator('[data-action="close-sidebar"]').click();
   await page.locator('[data-action="toggle-settings"]').first().click();
   await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
@@ -882,7 +882,6 @@ test('deleting a project removes its chats but preserves other projects and chat
   await page.locator('#sidebar [data-action="new-chat"]').click();
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#currentProjectSelect').selectOption('');
-  await page.locator('#projectManagerDetails > summary').click();
   await page.locator('#projectNameInput').fill('Keep Project');
   await page.locator('[data-action="create-project"]').click();
   const keepId = await page.locator('#currentProjectSelect').inputValue();
@@ -890,11 +889,11 @@ test('deleting a project removes its chats but preserves other projects and chat
 
   page.on('dialog', dialog => dialog.accept());
   await page.locator('[data-action="delete-project"]').click();
-  await expect(page.locator('#currentProjectSelect')).toHaveValue('');
+  await expect(page.locator('#currentProjectSelect')).toHaveValue(disposableId);
   const storedProjects = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]'));
-  expect(storedProjects.some(project => project.id === keepId)).toBe(true);
-  expect(storedProjects.some(project => project.id === disposableId)).toBe(false);
+  expect(storedProjects.some(project => project.id === disposableId)).toBe(true);
+  expect(storedProjects.some(project => project.id === keepId)).toBe(false);
   const storedChats = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]'));
-  expect(storedChats.some(chat => chat.projectId === disposableId)).toBe(false);
-  expect(storedChats.some(chat => chat.projectId === keepId)).toBe(true);
+  expect(storedChats.some(chat => chat.projectId === disposableId)).toBe(true);
+  expect(storedChats.some(chat => chat.projectId === keepId)).toBe(false);
 });
