@@ -3107,6 +3107,7 @@ permalink: /
     });
     $('voiceUnavailableButton').addEventListener('pointerdown',event=>{
       voicePointerStartY=event.clientY;voiceHoldOpened=false;
+      try{event.currentTarget.setPointerCapture(event.pointerId);}catch(_){}
       if(voiceHoldTimer)clearTimeout(voiceHoldTimer);
       voiceHoldTimer=setTimeout(()=>{voiceHoldTimer=null;voiceHoldOpened=true;suppressVoiceClick=true;showVoiceMenu();},220);
     });
