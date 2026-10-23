@@ -368,15 +368,15 @@ permalink: /
   </header>
 
   <div class="bg-gray-950 px-3 py-2 border-b border-gray-800 shrink-0 space-y-2">
-    <div class="flex items-center gap-2 text-xs"><span class="text-gray-400 shrink-0">Режим:</span>
+    <div class="flex items-center gap-2 text-xs"><span class="text-gray-400 shrink-0" data-i18n="modeLabel">Режим:</span>
       <div class="flex flex-1 rounded-lg bg-gray-900 p-1 gap-1" role="group" aria-label="Режим обработки">
-        <button type="button" id="modeFast" aria-pressed="true" class="flex-1 rounded-md px-2 py-1.5 bg-blue-600 font-semibold">⚡ Быстро</button>
-        <button type="button" id="modeDeep" aria-pressed="false" class="flex-1 rounded-md px-2 py-1.5 text-gray-300">🔬 Глубоко</button>
+        <button type="button" id="modeFast" data-i18n="modeFast" aria-pressed="true" class="flex-1 rounded-md px-2 py-1.5 bg-blue-600 font-semibold">⚡ Быстро</button>
+        <button type="button" id="modeDeep" data-i18n="modeDeep" aria-pressed="false" class="flex-1 rounded-md px-2 py-1.5 text-gray-300">🔬 Глубоко</button>
       </div>
     </div>
     <div class="flex flex-wrap items-center justify-between text-xs gap-3">
-      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Инструменты поиска доступны по умолчанию; модель использует их по необходимости."><input type="checkbox" id="toggleSearch" checked class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span>🌐 Интернет и источники</span></label>
-      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Режим доступен для сложных задач; приветствия и простые вопросы не запускают многоэтапный конвейер."><input type="checkbox" id="toggleMultiAgent" class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span>🤖 Умное исследование</span></label>
+      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Инструменты поиска доступны по умолчанию; модель использует их по необходимости."><input type="checkbox" id="toggleSearch" checked class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span data-i18n="searchLabel">🌐 Интернет и источники</span></label>
+      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Режим доступен для сложных задач; приветствия и простые вопросы не запускают многоэтапный конвейер."><input type="checkbox" id="toggleMultiAgent" class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span data-i18n="researchLabel">🤖 Умное исследование</span></label>
       <button type="button" id="offlineToggle" data-action="toggle-offline" aria-pressed="false" class="ambient-control rounded-lg px-3 py-1.5 text-[11px] font-semibold" title="Выключает веб-поиск и внешние источники. Облачный API модели по-прежнему требует интернет-соединения.">◉ Оффлайн: выкл.</button>
     </div>
     <p id="modeHint" class="text-[10px] text-gray-500 leading-relaxed">Онлайн включён по умолчанию; поиск будет использоваться, когда помогает ответу. Оффлайн отключает веб-инструменты, но не превращает облачный API в локальную модель.</p>
@@ -811,7 +811,7 @@ permalink: /
         modelSearchLabel:'Поиск по каталогу моделей',modelPresetLabel:'Быстрый выбор модели · список обновляется из API',
         baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',
         legacySettings:'Сторонние API, ключи и расширенные настройки',composerPlaceholder:'Напиши сообщение...',
-        modeLabel:'Режим:',modeFast:'⚡ Быстро',modeDeep:'🔬 Глубоко',searchLabel:'Интернет и источники',researchLabel:'Умное исследование',
+        modeLabel:'Режим:',modeFast:'⚡ Быстро',modeDeep:'🔬 Глубоко',searchLabel:'🌐 Интернет и источники',researchLabel:'🤖 Умное исследование',
         languageLabel:'Язык интерфейса',clockLabel:'Местное время'
       },
       en:{
@@ -824,7 +824,7 @@ permalink: /
         modelSearchLabel:'Search model catalog',modelPresetLabel:'Quick model pick · list loads from API',
         baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',
         legacySettings:'Third-party APIs, keys & advanced settings',composerPlaceholder:'Write a message...',
-        modeLabel:'Mode:',modeFast:'⚡ Fast',modeDeep:'🔬 Deep',searchLabel:'Web & sources',researchLabel:'Smart research',
+        modeLabel:'Mode:',modeFast:'⚡ Fast',modeDeep:'🔬 Deep',searchLabel:'🌐 Web & sources',researchLabel:'🤖 Smart research',
         languageLabel:'Interface language',clockLabel:'Local time'
       }
     };
@@ -1556,7 +1556,7 @@ permalink: /
       return {
         baseUrl:String($('cloudBaseUrl')?.value||'').trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),
         model:String($('cloudModel')?.value||'').trim(),
-        key:String($('cloudApiKey')?.value||safeGet(providerKeyStorage('alandi'))||'').trim()
+        key:String($('cloudApiKey')?.value||'').trim()
       };
     }
     async function refreshCloudStatus(){
@@ -1683,7 +1683,7 @@ permalink: /
         showToast(result.candidateModel!==model?'Подобрана доступная модель: '+result.candidateModel:'Провайдер и модель прошли проверку');
         await refreshModelCatalog({quiet:true,force:true,provider,baseUrl,key});
       }catch(error){
-        safeSet('ai_provider_connection_'+provider,'');
+        safeSet('ai_provider_connection_'+provider,'');if(provider==='alandi')safeSet('ai_alandi_cloud_connection_v1','');
         updateApiKeyLamp('error','Проверка не удалась: '+String(error?.message||error).slice(0,220));
         showToast('Проверка не удалась: сеть, CORS или формат ответа.','error');
       }finally{
@@ -2739,6 +2739,15 @@ permalink: /
       }
       try {
         switch (action) {
+          case 'set-language': applyUiLanguage(control.dataset.language);$('languageMenu').open=false;break;
+          case 'toggle-theme-cycle': toggleHomeTheme();break;
+          case 'brand-easter-egg': showToast(getUiLanguage()==='en'?'aLandi → “a land i” → “i land AI”: the name is a small word puzzle.':'aLandi → «a land i» → «i land AI»: имя — маленький ребус.');break;
+          case 'paste-provider-key': await pasteIntoField('apiKey');break;
+          case 'paste-cloud-key': await pasteIntoField('cloudApiKey');break;
+          case 'paste-tavily-key': await pasteIntoField('tavilyKey');break;
+          case 'connect-alandi-cloud': await connectAlandiCloud();break;
+          case 'use-kilo-free': useKiloFree();break;
+          case 'attach-text-file': $('textAttachmentInput').click();break;
           case 'toggle-sidebar': toggleSidebar(); break;
           case 'close-sidebar': toggleSidebar(false); break;
           case 'new-chat': createNewChat(); break;
@@ -2794,8 +2803,14 @@ permalink: /
       safeSet(providerModelCatalogStaleKey('cloudflare'),'true');
       safeSet('ai_provider_connection_cloudflare','');refreshApiKeyLamp();
     });
-    $('apiKey').addEventListener('input',()=>{if(currentProvider()!=='pollinations')safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
+    $('apiKey').addEventListener('input',(event)=>{if(currentProvider()!=='pollinations')safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();if(event.inputType==='insertFromPaste')scheduleProviderAutoConnect();});
     $('baseUrl').addEventListener('input',()=>{safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
+    $('cloudBaseUrl').addEventListener('input',()=>{safeSet('ai_alandi_cloud_base_url',$('cloudBaseUrl').value.trim());safeSet('ai_alandi_cloud_connection_v1','');setCloudStatus('disconnected',$('cloudBaseUrl').value.trim()?'Gateway settings changed; run a fresh connection check.':'No cloud gateway URL configured.');});
+    $('cloudModel').addEventListener('input',()=>{safeSet('ai_alandi_cloud_model',$('cloudModel').value.trim());safeSet('ai_alandi_cloud_connection_v1','');setCloudStatus('disconnected','Model changed; run a fresh connection check.');});
+    $('cloudApiKey').addEventListener('input',()=>{safeSet('ai_alandi_cloud_connection_v1','');setCloudStatus('disconnected','Key changed; run a fresh connection check.');});
+    $('cloudApiKey').addEventListener('paste',()=>setTimeout(()=>{if($('cloudApiKey').value.trim())setCloudStatus('disconnected','Key pasted. Run the connection check to confirm it.');},0));
+    $('textAttachmentInput').addEventListener('change',handleTextAttachment);
+    $('providerPreset').addEventListener('change',()=>{safeSet('ai_alandi_cloud_connection_v1','');if(currentProvider()==='alandi'){const url=$('baseUrl').value.trim();if(url)$('cloudBaseUrl').value=url;}});
     $('modelSearch').addEventListener('input',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
     $('modelPreset').addEventListener('change',()=>{const value=$('modelPreset').value;if(value!=='__custom__')$('modelName').value=value;safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
@@ -2832,6 +2847,7 @@ permalink: /
     async function init() {
       const pollinationsAuthMessage=await finishPollinationsOAuth();
       initializeSettings();
+      updateClockFace();if(clockTimer)clearInterval(clockTimer);clockTimer=setInterval(updateClockFace,1000);
       if(pollinationsAuthMessage) showToast(pollinationsAuthMessage,pollinationsAuthMessage.startsWith('Pollinations подключён')?'success':'error');
       if (!chatRecoveryBackupKey) {
         try {
