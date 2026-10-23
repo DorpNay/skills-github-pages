@@ -72,6 +72,7 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
 
   await page.locator('#providerPreset').selectOption('groq');
   await expect(page.locator('#apiKey')).toHaveValue('');
@@ -241,6 +242,7 @@ test('settings profile exports portable preferences but never API secrets', asyn
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#modelName').fill('openai/gpt-oss-120b');
   await page.locator('#apiKey').fill('e2e-private-provider-secret-value');
@@ -268,6 +270,7 @@ test('settings profile import restores preferences while preserving existing pro
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки' }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('before-import');
@@ -748,6 +751,7 @@ test('aLandi cloud status only turns green after a real model response, and core
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'connected');
   await expect(page.locator('#cloudStatus')).toContainText('Облако подключено');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_provider'))).toBe('alandi');
+  await page.locator('[data-action="close-settings"]').click();
   await page.locator('#languageSummary').click();
   await page.locator('[data-action="set-language"][data-language="en"]').click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
