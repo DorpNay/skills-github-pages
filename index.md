@@ -1914,6 +1914,14 @@ permalink: /
           const detail=String(payload?.error?.message||payload?.message||raw||'ответ не распознан').slice(0,180).replaceAll(key,'[скрытый ключ]');
           throw new Error('HTTP '+response.status+(detail?': '+detail:''));
         }
+        const healthUrl=new URL(baseUrl);
+        healthUrl.pathname=healthUrl.pathname.replace(/\/v1\/?$/,'').replace(/\/$/,'')+'/healthz';
+        healthUrl.search='';healthUrl.hash='';
+        const healthController=new AbortController(),healthTimer=setTimeout(()=>healthController.abort(),5000);
+        let health;
+        try{health=await fetch(healthUrl.toString(),{method:'GET',headers:{Accept:'application/json'},cache:'no-store',signal:healthController.signal});}
+        finally{clearTimeout(healthTimer);}
+        if(!health.ok)throw new Error('Модель ответила, но health-check gateway вернул HTTP '+health.status+'.');
         const fingerprint=await providerKeyFingerprint(key);
         if(!fingerprint)throw new Error('Не удалось вычислить контрольный отпечаток ключа в этом браузере.');
         safeSet('ai_alandi_cloud_base_url',baseUrl);
