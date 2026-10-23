@@ -102,7 +102,7 @@ permalink: /
     body { background:var(--ui-bg)!important; color:var(--ui-text)!important; }
     #sidebar, header, #searchStatus, footer { background:var(--ui-surface)!important; border-color:var(--ui-border)!important; }
     #settingsModal > .settings-surface { background:var(--ui-surface)!important; border-color:var(--ui-border)!important; }
-    body,button,input,textarea,select { font-family:Inter,"Segoe UI",Roboto,system-ui,-apple-system,BlinkMacSystemFont,sans-serif; }
+    body,button,input,textarea,select { font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Roboto,Arial,sans-serif; }
     :root { --ui-radius-sm:10px; --ui-radius-md:14px; --ui-radius-lg:20px; }
     button,input,textarea,select { border-radius:var(--ui-radius-sm); }
     .settings-surface { border-radius:22px!important; }
@@ -331,7 +331,7 @@ permalink: /
         <button type="button" data-action="refresh-model-catalog" id="refreshModelCatalog" title="Обновить каталоги всех настроенных провайдеров; полезно для межпровайдерного резерва" class="shrink-0 bg-gray-700 hover:bg-gray-600 border border-gray-600 px-2 py-1.5 rounded text-[11px] text-gray-200">Обновить все</button>
       </div>
       <p id="providerHint" class="text-[11px] leading-relaxed text-gray-400">Выберите провайдера и модель. Ключи разных провайдеров сохраняются отдельно в этом браузере.</p>
-      <p id="kiloPrivacyWarning" data-i18n="kiloPrivacyNotice" class="hidden rounded-lg border border-amber-800/60 bg-amber-950/25 p-2 text-[11px] leading-relaxed text-amber-100">Kilo Auto Free — внешний маршрут без ключа. Запросы могут передаваться сторонним поставщикам, которые сохраняют промпты или используют их для улучшения моделей. Не отправляй личные или конфиденциальные данные.</p>
+      <p id="kiloPrivacyWarning" data-i18n="kiloPrivacyNotice" class="hidden rounded-lg border border-amber-800/60 bg-amber-950/25 p-2 text-[11px] leading-relaxed text-amber-100">Kilo Auto Free — обычный альтернативный провайдер в общем списке API, не часть основного облака aLandi. Запросы могут обрабатываться сторонними моделями и использоваться для улучшения сервисов. Не отправляй конфиденциальные данные.</p>
       <a id="providerDocsLink" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-blue-300 underline underline-offset-2">Открыть страницу API-ключа</a> <a href="https://github.com/DorpNay/skills-github-pages/blob/main/PROVIDER_SETUP.md" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-cyan-300 underline underline-offset-2">Инструкция по подключению</a>
       <div id="cloudflareAccountGroup" class="hidden space-y-1.5">
         <label for="cloudflareAccountId" class="block text-xs text-gray-400">Cloudflare Account ID (32 hex-символа)</label>
@@ -855,7 +855,7 @@ permalink: /
         baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',
         legacySettings:'Сторонние API, ключи и расширенные настройки',composerPlaceholder:'Напиши сообщение...',
         modeLabel:'Режим:',modeFast:'⚡ Быстро',modeDeep:'🔬 Глубоко',searchLabel:'🌐 Интернет и источники',researchLabel:'🤖 Умное исследование',
-        kiloPrivacyNotice:'Kilo Auto Free — внешний маршрут без ключа. Запросы могут передаваться сторонним поставщикам, которые сохраняют промпты или используют их для улучшения моделей. Не отправляй личные или конфиденциальные данные. Только явное переключение; скрытого резервирования нет.',languageLabel:'Язык интерфейса',clockLabel:'Местное время',restoreDefaults:'Восстановить параметры Gemini',saveSettings:'Сохранить',closeSettings:'Закрыть',
+        kiloPrivacyNotice:'Kilo Auto Free — обычный альтернативный провайдер в общем списке API, не часть основного облака aLandi. Запросы передаются Kilo и назначенным им моделям; они могут сохранять запросы для улучшения сервисов. Не отправляй конфиденциальные данные. Скрытого резервирования нет.',languageLabel:'Язык интерфейса',clockLabel:'Местное время',restoreDefaults:'Восстановить параметры Gemini',saveSettings:'Сохранить',closeSettings:'Закрыть',
         globalMemoryOptIn:'Разрешить подходящим заметкам глобальной памяти попадать в контекст запросов.',projectsTitle:'▣ Проекты и проектная память',currentProjectLabel:'Проект текущего чата',projectMemoryOptIn:'Использовать память выбранного проекта в этом чате',manageProject:'Создать или настроить проект',projectNameLabel:'Название',projectInstructionsLabel:'Инструкции проекта',createProject:'＋ Создать проект',saveProject:'Сохранить изменения',projectMemoryLabel:'Добавить факт в память проекта',exportProject:'Экспорт проекта',importProject:'Импорт проекта',detachChat:'Извлечь чат из проекта',deleteProject:'Удалить проект и его чаты'
       },
       en:{
@@ -869,7 +869,7 @@ permalink: /
         baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',
         legacySettings:'Third-party APIs, keys & advanced settings',composerPlaceholder:'Write a message...',
         modeLabel:'Mode:',modeFast:'⚡ Fast',modeDeep:'🔬 Deep',searchLabel:'🌐 Web & sources',researchLabel:'🤖 Smart research',
-        kiloPrivacyNotice:'Kilo Auto Free is an external no-key route. Requests may reach third-party providers that log prompts or use them to improve models. Do not send personal or confidential data. Explicit opt-in only; no silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',restoreDefaults:'Restore Gemini defaults',saveSettings:'Save settings',closeSettings:'Close',
+        kiloPrivacyNotice:'Kilo Auto Free is an ordinary alternative provider in the API list, not part of the primary aLandi cloud. Requests go to Kilo and its selected models, which may log prompts or use them to improve services. Do not send confidential data. No silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',restoreDefaults:'Restore Gemini defaults',saveSettings:'Save settings',closeSettings:'Close',
         globalMemoryOptIn:'Allow relevant global-memory notes to be included in prompts.',projectsTitle:'▣ Projects & project memory',currentProjectLabel:'Project for this chat',projectMemoryOptIn:'Use the selected project memory in this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'＋ Create project',saveProject:'Save changes',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats'
       }
     };
