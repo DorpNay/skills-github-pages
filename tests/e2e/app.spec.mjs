@@ -1155,6 +1155,15 @@ test('voice mode menu stays open after a long press and clearly marks both modes
   await page.locator('[data-action="voice-chat-preview"]').click();
   await expect(page.locator('#voiceMenu')).toBeHidden();
   await expect(page.locator('#toast')).toContainText('Живой голосовой диалог пока не подключён');
+
+  // A quick upward swipe should select the same preview without requiring a tap.
+  const swipeBounds = await trigger.boundingBox();
+  await page.mouse.move(swipeBounds.x + swipeBounds.width / 2, swipeBounds.y + swipeBounds.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(swipeBounds.x + swipeBounds.width / 2, swipeBounds.y - 48, { steps: 3 });
+  await page.mouse.up();
+  await expect(page.locator('#toast')).toContainText('Голосовой диалог пока не подключён');
+  await expect(page.locator('#voiceMenu')).toBeVisible();
 });
 
 
