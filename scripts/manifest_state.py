@@ -15,7 +15,7 @@ SOURCE_PATHS = (
 )
 ROOT_FILES = (
     ".gitignore", "_config.yml", "AGENTS.md", "DECISIONS.md", "EVALS.md",
-    "IMPROVEMENT_SELECTION.md", "INTEL.md", "LICENSE", "LOOP.md",
+    "IMPROVEMENT_SELECTION.md", "INTEL.md", "LICENSE", "LOOP.md", "index.md",
     "PROVIDER_SETUP.md", "README.md", "pyproject.toml",
 )
 IGNORED_DIRS = {
