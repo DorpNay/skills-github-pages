@@ -129,6 +129,16 @@ permalink: /
     .clock-minute { height:20px;background:var(--ui-tiffany-bright); }
     .clock-second { height:22px;width:1px;background:#f59e0b; }
     .clock-pin { position:absolute;left:calc(50% - 2px);top:calc(50% - 2px);width:4px;height:4px;border-radius:50%;background:#f59e0b;z-index:3; }
+    .voice-menu { position:absolute;right:10px;bottom:calc(100% + 9px);z-index:30;width:min(92vw,330px);padding:8px;border:1px solid var(--ui-border);border-radius:20px;background:color-mix(in srgb,var(--ui-surface) 90%,transparent);backdrop-filter:blur(22px);box-shadow:0 16px 48px rgba(0,0,0,.28);transform-origin:bottom right;animation:voice-pop 170ms cubic-bezier(.2,.7,.2,1); }
+    .voice-menu-option { width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:13px 12px;border-radius:14px; }
+    .voice-menu-option:hover { background:var(--ui-tiffany-soft); }
+    .voice-menu-option strong { display:block;font-size:11px;letter-spacing:.04em; }
+    .voice-menu-option small { display:block;font-size:10px;color:var(--ui-text-muted);margin-top:3px; }
+    .voice-direction { display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--ui-border);border-radius:12px;color:var(--ui-tiffany);font-size:20px; }
+    @keyframes voice-pop { from { opacity:0;transform:translateY(6px) scale(.96); } to { opacity:1;transform:translateY(0) scale(1); } }
+    body.composer-centered #chatBox { padding-bottom:160px; }
+    body.composer-bottom-transition #chatBox { padding-bottom:175px; }
+    @media (prefers-reduced-motion:reduce) { .voice-menu { animation:none!important; } }
     .language-menu { position:relative; }
     .language-menu summary { list-style:none;cursor:pointer;border:1px solid var(--ui-border);border-radius:10px; }
     .language-menu summary::-webkit-details-marker { display:none; }
@@ -421,9 +431,13 @@ permalink: /
       <button type="button" data-action="attach-text-file" id="attachTextButton" aria-label="Прикрепить текстовый файл" title="Прикрепить .txt, .md, .csv, .json или .log" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">＋</button>
       <input type="file" id="textAttachmentInput" class="hidden" accept=".txt,.md,.csv,.json,.log,text/plain,text/markdown,text/csv,application/json">
       <textarea id="userInput" rows="1" maxlength="30000" placeholder="Напиши сообщение..." aria-label="Сообщение" data-i18n-placeholder="composerPlaceholder" class="flex-1 min-w-0 bg-gray-900 border border-gray-700 px-3 py-2.5 rounded-xl text-base outline-none resize-none max-h-32"></textarea>
-      <button id="voiceUnavailableButton" type="button" disabled aria-label="Голосовой режим пока не подключён" title="Голосовой runtime ещё не подключён" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5 opacity-50 cursor-not-allowed">◉</button>
+      <button id="voiceUnavailableButton" type="button" aria-label="Открыть режимы голоса" aria-expanded="false" title="Удержи и смахни вверх/вниз, чтобы выбрать режим голоса" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">◉</button>
       <button id="sendBtn" type="button" data-action="send" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Отправить сообщение">➤</button>
       <button id="stopBtn" type="button" data-action="stop" class="hidden bg-red-600 hover:bg-red-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Остановить генерацию">⏹</button>
+    </div>
+    <div id="voiceMenu" class="voice-menu hidden" role="group" aria-label="Режимы голоса">
+      <button type="button" data-action="voice-chat-preview" class="voice-menu-option"><span class="voice-direction">↑</span><span><strong>ГОЛОСОВОЙ ДИАЛОГ</strong><small>Живое общение · скоро</small></span></button>
+      <button type="button" data-action="voice-message-preview" class="voice-menu-option"><span class="voice-direction">↓</span><span><strong>ГОЛОСОВОЕ СООБЩЕНИЕ</strong><small>Запись и отправка · скоро</small></span></button>
     </div>
   </footer>
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
@@ -844,7 +858,8 @@ permalink: /
         baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',
         legacySettings:'Сторонние API, ключи и расширенные настройки',composerPlaceholder:'Напиши сообщение...',
         modeLabel:'Режим:',modeFast:'⚡ Быстро',modeDeep:'🔬 Глубоко',searchLabel:'🌐 Интернет и источники',researchLabel:'🤖 Умное исследование',
-        kiloPrivacyNotice:'Kilo Auto Free — внешний маршрут без ключа. Запросы могут передаваться сторонним поставщикам, которые сохраняют промпты или используют их для улучшения моделей. Не отправляй личные или конфиденциальные данные. Только явное переключение; скрытого резервирования нет.',languageLabel:'Язык интерфейса',clockLabel:'Местное время',restoreDefaults:'Восстановить параметры Gemini',saveSettings:'Сохранить',closeSettings:'Закрыть'
+        kiloPrivacyNotice:'Kilo Auto Free — внешний маршрут без ключа. Запросы могут передаваться сторонним поставщикам, которые сохраняют промпты или используют их для улучшения моделей. Не отправляй личные или конфиденциальные данные. Только явное переключение; скрытого резервирования нет.',languageLabel:'Язык интерфейса',clockLabel:'Местное время',restoreDefaults:'Восстановить параметры Gemini',saveSettings:'Сохранить',closeSettings:'Закрыть',
+        globalMemoryOptIn:'Разрешить подходящим заметкам глобальной памяти попадать в контекст запросов.',projectsTitle:'▣ Проекты и проектная память',currentProjectLabel:'Проект текущего чата',projectMemoryOptIn:'Использовать память выбранного проекта в этом чате',manageProject:'Создать или настроить проект',projectNameLabel:'Название',projectInstructionsLabel:'Инструкции проекта',createProject:'＋ Создать проект',saveProject:'Сохранить изменения',projectMemoryLabel:'Добавить факт в память проекта',exportProject:'Экспорт проекта',importProject:'Импорт проекта',detachChat:'Извлечь чат из проекта',deleteProject:'Удалить проект и его чаты'
       },
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Chats & memory',newChat:'＋ New chat',clearChat:'🗑 Clear chat',
@@ -857,7 +872,8 @@ permalink: /
         baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',
         legacySettings:'Third-party APIs, keys & advanced settings',composerPlaceholder:'Write a message...',
         modeLabel:'Mode:',modeFast:'⚡ Fast',modeDeep:'🔬 Deep',searchLabel:'🌐 Web & sources',researchLabel:'🤖 Smart research',
-        kiloPrivacyNotice:'Kilo Auto Free is an external no-key route. Requests may reach third-party providers that log prompts or use them to improve models. Do not send personal or confidential data. Explicit opt-in only; no silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',restoreDefaults:'Restore Gemini defaults',saveSettings:'Save settings',closeSettings:'Close'
+        kiloPrivacyNotice:'Kilo Auto Free is an external no-key route. Requests may reach third-party providers that log prompts or use them to improve models. Do not send personal or confidential data. Explicit opt-in only; no silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',restoreDefaults:'Restore Gemini defaults',saveSettings:'Save settings',closeSettings:'Close',
+        globalMemoryOptIn:'Allow relevant global-memory notes to be included in prompts.',projectsTitle:'▣ Projects & project memory',currentProjectLabel:'Project for this chat',projectMemoryOptIn:'Use the selected project memory in this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'＋ Create project',saveProject:'Save changes',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats'
       }
     };
     function getUiLanguage(){return safeGet('ai_ui_language_v1')==='en'?'en':'ru';}
@@ -872,7 +888,7 @@ permalink: /
       const themeButton=$('homeThemeToggle');if(themeButton){themeButton.title=lang==='en'?'Switch theme':'Сменить тему';themeButton.setAttribute('aria-label',themeButton.title);}
       document.querySelectorAll('[data-action="toggle-settings"]').forEach(button=>button.setAttribute('aria-label',lang==='en'?'Settings':'Настройки'));
       const attach=$('attachTextButton');if(attach){attach.title=lang==='en'?'Attach a text file (.txt, .md, .csv, .json, .log)':'Прикрепить .txt, .md, .csv, .json или .log';attach.setAttribute('aria-label',attach.title);}
-      updateOfflineUI();updateModeUI();updateHomeThemeButton();
+      updateOfflineUI();updateModeUI();updateHomeThemeButton();renderProjectUI({preserveDraft:true});
     }
     function updateHomeThemeButton(){
       const button=$('homeThemeToggle');if(!button)return;
@@ -2941,6 +2957,16 @@ permalink: /
           case 'connect-alandi-cloud': await connectAlandiCloud();break;
           case 'use-kilo-free': useKiloFree();break;
           case 'attach-text-file': $('textAttachmentInput').click();break;
+          case 'create-project': createProject();break;
+          case 'save-project': saveProject();break;
+          case 'detach-current-chat': moveCurrentChatToProject('');break;
+          case 'delete-project': deleteCurrentProject();break;
+          case 'add-project-memory': addProjectMemory();break;
+          case 'delete-project-memory': deleteProjectMemory(control.dataset.memoryId);break;
+          case 'export-project': exportProjectBundle();break;
+          case 'import-project': $('importProjectFile').click();break;
+          case 'voice-chat-preview': $('voiceMenu').classList.add('hidden');showToast(getUiLanguage()==='en'?'Live voice chat is not connected yet.':'Живой голосовой диалог пока не подключён.');break;
+          case 'voice-message-preview': $('voiceMenu').classList.add('hidden');showToast(getUiLanguage()==='en'?'Voice message recording is not connected yet.':'Запись голосового сообщения пока не подключена.');break;
           case 'toggle-sidebar': toggleSidebar(); break;
           case 'close-sidebar': toggleSidebar(false); break;
           case 'new-chat': createNewChat(); break;
@@ -3016,7 +3042,17 @@ permalink: /
     $('sidebarOverlay').addEventListener('click', () => toggleSidebar(false));
     $('importFile').addEventListener('change', importChats);
     $('settingsProfileFile').addEventListener('change', importSettingsProfile);
+    $('importProjectFile').addEventListener('change',importProjectBundle);
+    $('currentProjectSelect').addEventListener('change',event=>moveCurrentChatToProject(event.target.value));
+    $('projectMemoryToggle').addEventListener('change',event=>{const chat=getCurrentChat();chat.projectMemoryEnabled=Boolean(event.target.checked);persistChats();showToast(chat.projectMemoryEnabled?(getUiLanguage()==='en'?'Project memory enabled for this chat.':'Память проекта включена для этого чата.'):(getUiLanguage()==='en'?'Project memory is off for this chat.':'Память проекта отключена для этого чата.'));});
+    $('globalMemoryToggle').addEventListener('change',event=>{safeSet(STORAGE.globalMemoryEnabled,String(event.target.checked));showToast(event.target.checked?(getUiLanguage()==='en'?'Global memory enabled.':'Глобальная память включена.'):(getUiLanguage()==='en'?'Global memory disabled.':'Глобальная память отключена.'));});
+    $('projectMemoryInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();document.querySelector('[data-action="add-project-memory"]').click();}});
     $('userInput').addEventListener('input', () => autoResizeTextarea($('userInput')));
+    $('voiceUnavailableButton').addEventListener('click',()=>{$('voiceMenu').classList.toggle('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded',String(!$('voiceMenu').classList.contains('hidden')));});
+    let voicePointerStartY=null,voiceHoldTimer=null;
+    $('voiceUnavailableButton').addEventListener('pointerdown',event=>{voicePointerStartY=event.clientY;voiceHoldTimer=setTimeout(()=>{$('voiceMenu').classList.remove('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','true');},220);});
+    $('voiceUnavailableButton').addEventListener('pointerup',event=>{if(voiceHoldTimer){clearTimeout(voiceHoldTimer);voiceHoldTimer=null;}if(voicePointerStartY!==null){const delta=event.clientY-voicePointerStartY;if(Math.abs(delta)>35){$('voiceMenu').classList.remove('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','true');showToast(delta<0?'Голосовой диалог пока не подключён.':'Запись голосового сообщения пока не подключена.');}voicePointerStartY=null;}});
+    $('voiceUnavailableButton').addEventListener('pointercancel',()=>{if(voiceHoldTimer)clearTimeout(voiceHoldTimer);voiceHoldTimer=null;voicePointerStartY=null;});
     $('userInput').addEventListener('keydown', (event) => {
       if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) { event.preventDefault(); sendMessage(false); }
     });
