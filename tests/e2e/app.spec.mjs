@@ -1138,8 +1138,10 @@ test('aLandi cloud probe rejects HTTP 200 proxy text as proof of a model connect
 
 
 test('voice mode menu stays open after a long press and clearly marks both modes as previews', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const trigger = page.locator('#voiceUnavailableButton');
+  await expect(trigger).toBeVisible();
   const bounds = await trigger.boundingBox();
   expect(bounds).not.toBeNull();
   await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
