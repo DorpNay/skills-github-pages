@@ -1354,7 +1354,7 @@ test('server project memory bridge is manual and requires both chat opt-ins', as
   await page.locator('#serverMemoryDetails > summary').click();
   await page.locator('[data-action="upload-server-memory"]').click();
   await expect.poll(() => serverNodes.length).toBe(1);
-  await expect(page.locator('#serverMemoryBox')).toContainText('Candidate');
+  await expect(page.locator('#serverMemoryBox')).toContainText(/Кандидат|Candidate/);
   await page.locator('[data-action="review-server-memory"][data-review-status="confirmed"]').click();
   await expect.poll(() => serverNodes[0]?.status).toBe('confirmed');
 
