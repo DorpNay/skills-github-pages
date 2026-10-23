@@ -34,7 +34,11 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 | AI-TOOLS-004 | SSRF controls | gateway/security/ssrf_protection.py | Validation primitive only; no arbitrary fetch endpoint |
 | AI-TOOLS-005 | Approval gates | gateway/security/approval_gates.py | One-time scoped ticket; no approval UI/endpoint |
 | AI-LICENSE-001 | Model provenance CI gate | infra/license/provenance_manifest.yaml | Proposed gate; no audio model shipped |
-| AI-UI-001/002/003 | Projects, memory viewer, profile | Static client/backend contracts | Deferred until authenticated APIs and UX design |
+| AI-UI-001 | Projects + scoped project memory UI | index.md + tests/e2e/app.spec.mjs | **Partial prototype** — browser-local CRUD, instructions, chat attach/detach, scoped memory opt-in and JSON bundle import/export; latest E2E pending; source indexing/backend sync deferred |
+| AI-UI-002 | Authenticated memory/source viewer | Gateway contracts + frontend placeholders | Deferred until authenticated scoped memory/source API is implemented and tested |
+| AI-UI-003 | Home UX, bilingual controls, clock/theme and adaptive composer | index.md | **Partial** — controls implemented; voice menu is preview-only without a voice runtime; translation/accessibility/mobile coverage still pending |
+| AI-PROVIDER-001 | Cloud-first settings and provider recovery | index.md + tests/e2e/app.spec.mjs | **Frontend implementation** — real completion probe, stale-state invalidation, single-flight probe, paste-triggered model catalog check and bounded same-provider model fallback; latest full E2E pending |
+| AI-PROJECT-001 | Project CRUD, scope isolation and project bundle I/O | index.md + tests/e2e/app.spec.mjs | **Frontend implementation** — localStorage prototype only; server-side project/memory isolation and deletion propagation are not yet implemented |
 | AI-AGENT-001/002/003 | 64 logical roles, task routing, budgets | Master context + bounded DAG | Logical contracts; no 64-process swarm |
 | AI-LEARN-001/002 | Eval-gated learning, skill rollback | LOOP.md | Governance protocol; self-modification not implemented |
 
