@@ -48,7 +48,7 @@ const suites = {
       includes('function loadProjects()', 'Project data must have a bounded and validated loader.');
       includes('chat.projectMemoryEnabled&&activeProject', 'Project memory must be opt-in at chat scope.');
       includes('data-action="export-project"', 'Project bundle export must be available.');
-      includes('project.projectId', 'Project associations must be modeled on chats.');
+      includes('chat.projectId', 'Project associations must be modeled on chats.');
       includes('projectInstructionContext', 'Project instructions must be included only for the selected project.');
       includes("safeSet(STORAGE.globalMemoryEnabled,String(event.target.checked))", 'Global memory opt-in toggle must persist explicitly.');
       includes('function importProjectBundle(event)', 'Project bundle import must validate its version and size.');
