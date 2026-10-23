@@ -479,6 +479,63 @@ async def test_cpocket_cleanup_completes_when_rollback_caller_is_cancelled():
 
 
 @pytest.mark.asyncio
+async def test_cpocket_cleanup_continues_after_runtime_and_cancelled_errors():
+    cpocket = TransactionalCPocket()
+    lease = await cpocket.acquire_lease("cleanup-errors", ttl_ms=2000)
+    called = []
+
+    def first():
+        called.append("first")
+
+    def runtime_failure():
+        called.append("runtime_failure")
+        raise RuntimeError("do not retain this message")
+
+    async def cancelled_cleanup():
+        called.append("cancelled_cleanup")
+        raise asyncio.CancelledError()
+
+    def last():
+        called.append("last")
+
+    lease.add_cleanup(first)
+    lease.add_cleanup(runtime_failure)
+    lease.add_cleanup(cancelled_cleanup)
+    lease.add_cleanup(last)
+    assert await cpocket.rollback(lease.branch_id, "cleanup_test")
+    assert called == ["last", "cancelled_cleanup", "runtime_failure", "first"]
+    assert lease.cleanup_errors == ["CancelledError", "RuntimeError"]
+    assert "do not retain this message" not in repr(lease.cleanup_errors)
+    assert lease.state == "rolled_back"
+
+
+@pytest.mark.asyncio
+async def test_cpocket_concurrent_rollback_is_idempotent_and_runs_cleanup_once():
+    cpocket = TransactionalCPocket()
+    lease = await cpocket.acquire_lease("parallel-rollback", ttl_ms=2000)
+    called = []
+    lease.add_cleanup(lambda: called.append("once"))
+    results = await asyncio.gather(
+        cpocket.rollback(lease.branch_id, "barge_in"),
+        cpocket.rollback(lease.branch_id, "ttl_expired"),
+    )
+    assert sorted(results) == [False, True]
+    assert called == ["once"]
+    assert lease.state == "rolled_back"
+    assert lease.branch_id not in cpocket.leases
+
+
+@pytest.mark.asyncio
+async def test_cpocket_cleanup_registration_is_bounded():
+    cpocket = TransactionalCPocket()
+    lease = await cpocket.acquire_lease("bounded-cleanups", ttl_ms=2000)
+    for _ in range(128):
+        lease.add_cleanup(lambda: None)
+    with pytest.raises(RuntimeError, match="registration limit"):
+        lease.add_cleanup(lambda: None)
+    assert await cpocket.rollback(lease.branch_id, "bounded_test")
+
+@pytest.mark.asyncio
 async def test_speculative_tts_playback_failure_discards_committed_prefix():
     class FailingTTS(_FakeTTS):
         async def play_buffered_prefix(self, buffer):

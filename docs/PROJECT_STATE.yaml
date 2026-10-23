@@ -1,8 +1,8 @@
 project_state:
   version: 4
   reviewed_on: "2026-10-23"
-  last_volley: "V-2026-10-23-MEMORY-GRAPH-API"
-  gate: "PR #26 merged at cbc5e19b14c5d464782108b4f0534faac88290c2; its Gateway, provenance and full quality/Chromium/published Pages checks passed on PR head. Main post-merge workflows are validating the merge. PR #27 adds feature-flagged authenticated memory graph API; CI pending. Live provider smoke, configured private gateway/VPS and hardware benchmarks remain unverified."
+  last_volley: "V-2026-10-23-CPOCKET-RUNBOOK"
+  gate: "Main is 653febb01e2f9887dfec8116bf81f26f39e5077a after PR #27; post-merge Gateway, provenance, Quality (including Chromium and published Pages smoke), and Pages deployment passed. PR #28 adds cPocket cleanup resilience and runbook reconciliation; CI pending. Live provider smoke, configured private gateway/VPS and hardware benchmarks remain unverified."
   source_of_truth:
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
@@ -45,7 +45,7 @@ improvements:
   AI-ROUTER-001: {status: "typed_policy_tests_passed_not_runtime_integrated", artifact: "router/policy.py; gateway/tests/test_v016_foundation.py", eval: "EV-ROUTER-001"}
   AI-SEARCH-001: {status: "keyless_public_source_fallback_e2e_passed_cors_dependent", artifact: "index.md; tests/e2e/app.spec.mjs", eval: "EV-SEARCH-001"}
   AI-VOICE-001: {status: "conditional_interface_only", artifact: "gateway/voice/native_core_interface.py", eval: "EV-VOICE-001", benchmark: "pending"}
-  AI-VOICE-002: {status: "prototype", artifact: "gateway/voice/cpocket.py", eval: "EV-CPOCKET-001"}
+  AI-VOICE-002: {status: "cleanup_resilience_and_bounded_registrations_ci_pending_voice_runtime_not_live", artifact: "gateway/voice/cpocket.py", eval: "EV-CPOCKET-001"}
   AI-VOICE-003: {status: "target_unmeasured", artifact: "docs/LATENCY_CONTRACT.md", eval: "EV-VOICE-002"}
   AI-VOICE-004: {status: "read_only_prototype", artifact: "gateway/voice/speculative_transaction.py", eval: "EV-SPEC-001"}
   AI-VOICE-005: {status: "candidate_license_review_pending", artifact: "evals/voice/language_matrix_v2.yaml", eval: "EV-LANG-001"}

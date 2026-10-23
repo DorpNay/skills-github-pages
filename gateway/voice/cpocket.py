@@ -9,6 +9,9 @@ from dataclasses import dataclass, field
 from typing import Any, Callable
 
 
+MAX_CLEANUP_ACTIONS = 128
+
+
 @dataclass
 class ResourceLease:
     branch_id: str
@@ -36,6 +39,8 @@ class ResourceLease:
             raise RuntimeError("cannot register cleanup on a closed lease")
         if not callable(fn):
             raise TypeError("cleanup must be callable")
+        if len(self._cleaners) >= MAX_CLEANUP_ACTIONS:
+            raise RuntimeError("lease cleanup registration limit reached")
         self._cleaners.append((fn, args, kwargs))
 
 
@@ -72,7 +77,12 @@ class TransactionalCPocket:
                 result = fn(*args, **kwargs)
                 if inspect.isawaitable(result):
                     await result
+            except asyncio.CancelledError:
+                # A cleanup handler can itself raise CancelledError. Record only the
+                # type and continue so one bad handler cannot strand later resources.
+                lease.cleanup_errors.append("CancelledError")
             except Exception as exc:
+                # Never retain exception messages: they may include paths or user data.
                 lease.cleanup_errors.append(type(exc).__name__)
 
     async def _finish(self, branch_id: str, *, commit: bool, reason: str) -> bool:

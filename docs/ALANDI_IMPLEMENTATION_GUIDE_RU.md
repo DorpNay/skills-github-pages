@@ -1,6 +1,6 @@
 # aLandi: полная пошаговая установка и запуск на VPS 8 GB RAM
 
-**Срез проверки:** 21 октября 2026 г.  
+**Срез проверки:** 23 октября 2026 г.  
 **Назначение:** запустить существующий AI Mobile Agent через свой aLandi gateway и Ollama на VPS, настроить точный кэш и проверить цепочку от браузера до модели. Это не руководство по голосовому чату.
 
 ## 0. Архитектура и границы
@@ -23,7 +23,7 @@ Ollama → одна активная модель → VPS 8 GB RAM
   └─ внутреннее переиспользование модельного префикса/KV (L1)
 ~~~
 
-Это базовая архитектура для уже существующего приложения: статический UI остаётся на GitHub Pages, весами модели и серверными секретами управляет VPS, gateway обеспечивает единый защищённый API. Внешнему миру доступен только HTTPS hostname туннеля. Ollama и gateway не должны слушать публичный интерфейс.
+Это базовая архитектура для уже существующего приложения: статический UI остаётся на GitHub Pages, весами модели и серверными секретами управляет VPS, gateway обеспечивает единый API. Внешнему миру доступен только HTTPS hostname туннеля. Ollama и gateway не должны слушать публичный интерфейс. Backend memory graph API уже существует, но выключен по умолчанию и не подключён к браузерной памяти проектов.
 
 **В первом проходе не ставим Dify, PostgreSQL, Redis/Valkey, Qdrant/Weaviate, embedding-сервис и несколько агентных runtime.** В AI Mobile Agent уже есть история, память, skills, поиск и многоэтапное исследование. Dify — отдельный необязательный модуль, если позже понадобится самостоятельная визуальная платформа workflow/RAG. Его минимальные требования не гарантируют, что сама платформа и локальная модель стабильно поместятся в 8 GB RAM. Если Dify уже используется, не удаляй контейнеры/базу и не меняй сетевые настройки без аудита зависимостей.
 
@@ -65,7 +65,7 @@ GitHub Pages — статический хостинг: он не запуска
 
 ### 1.4 Требуются ли другие AI-аккаунты?
 
-Для локальной Ollama не нужны ключи Google Gemini, OpenAI, OpenRouter или Hugging Face. ALANDI_API_KEY будет сгенерирован на VPS. Затраты — стоимость самого VPS, если на него не распространяется подтверждённый промокредит.
+Для локальной Ollama не нужны ключи Google Gemini, OpenRouter или других облачных поставщиков. ALANDI_API_KEY будет сгенерирован на VPS. Затраты — стоимость самого VPS, если на него не распространяется подтверждённый промокредит. Облачные провайдеры необязательны: регистрация в них нужна только для внешнего маршрута. Актуальные ключи и OAuth PKCE описаны в [PROVIDER_SETUP.md](../PROVIDER_SETUP.md). All-provider live-smoke требует явного подтверждения; реальные запросы расходуют квоту и отправляют короткий prompt внешнему сервису.
 
 Tavily Search — необязательный дополнительный поисковый API: [Tavily](https://tavily.com/). Регистрируйся там только если нужен этот конкретный search provider; текущий интерфейс уже умеет обращаться к открытым источникам и без Tavily. Его ключ вводи только в локальные настройки браузера, не в репозиторий.
 
@@ -230,6 +230,13 @@ ALANDI_CACHE_PATH=/var/lib/alandi-gateway/response-cache.sqlite3
 ALANDI_CACHE_TTL_SECONDS=900
 ALANDI_CACHE_MAX_ENTRIES=1000
 ALANDI_CACHE_MAX_RESPONSE_BYTES=1000000
+# Experimental capabilities stay disabled during initial bring-up.
+ALANDI_FAST_ROUTING_ENABLED=false
+ALANDI_MEMORY_SYNC_ENABLED=false
+ALANDI_MEMORY_GRAPH_ENABLED=false
+ALANDI_GLOBAL_MEMORY_ENABLED=false
+ALANDI_RAG_ENABLED=false
+OAUTH_ENABLED=false
 ~~~
 
 CORS должен быть ровно origin сайта, без пути и без wildcard. Права env-файла:
@@ -423,7 +430,7 @@ systemctl --no-pager --full status alandi-gateway
 
 ## 9.1. Проверка обновлённой версии и экспериментальных прототипов
 
-Новые модули из [CODER_PACKET.md](CODER_PACKET.md) добавляют основу трассировки, scoped memory graph, цитат, voice orchestration и tool contracts. Это не означает, что microphone/ASR/TTS/AEC, CLI sandbox, tool execution или Google Drive UI уже готовы. Все неиспользуемые flags остаются выключенными.
+Новые модули из [CODER_PACKET.md](CODER_PACKET.md) добавляют основу трассировки, scoped memory graph, FTS5-поиска, цитат, voice orchestration и tool contracts. PR #27 также добавил authenticated memory-graph API: создание candidate-фактов, scope-filtered search/list, явный review, отношения и каскадное удаление derived nodes. Этот API ещё не подключён к браузерной памяти проектов и выключен по умолчанию. Микрофон/ASR/TTS/AEC, production CLI sandbox, подключённое исполнение tool DAG и Google Drive Picker UI пока не готовы. Все необязательные flags остаются выключенными.
 
 После merge, из корня проверенной копии репозитория, сначала выполни локальную проверку:
 
@@ -450,6 +457,23 @@ PYTHONPATH=/opt/alandi/skills-github-pages /opt/alandi/venv/bin/uvicorn app:app 
 
 После установленного релиза проверяй `/healthz`, `/v1/models` и один обычный чат с Bearer auth. Не устанавливай сразу native voice dependencies и не скачивай голосовые модели: manifest пока содержит кандидатов с `ship=false`, hashes не записаны. Никакие voice/OTel/CLI feature flags не включай без целевых eval и отдельного rollback.
 
+## 9.2. Опциональный API структурированной памяти
+
+По умолчанию оставь `ALANDI_MEMORY_GRAPH_ENABLED=false`: это правильный режим для первого запуска. Backend graph API не является хранилищем браузерной памяти проектов — та по-прежнему локальная в браузере.
+
+Если отдельно тестируешь graph API с одного доверенного компьютера:
+
+1. Сделай закрытую резервную копию `/var/lib/alandi-gateway` и `/etc/alandi-gateway.env`.
+2. В `/etc/alandi-gateway.env` выставь `ALANDI_MEMORY_GRAPH_ENABLED=true`; БД по умолчанию — `/var/lib/alandi-gateway/memory-graph.sqlite3`.
+3. Оставь `ALANDI_GLOBAL_MEMORY_ENABLED=false`, если глобальная память не нужна. Перезапусти службу и проверь `systemctl status alandi-gateway`.
+4. Все `/v1/memory/graph/*` routes требуют `Authorization: Bearer <ALANDI_API_KEY>`; ответы используют `Cache-Control: no-store`, body ограничен, неизвестные поля отклоняются.
+5. `POST /v1/memory/graph/nodes` принимает `content`, `scope`, `scope_id`, `source_kind`, `source_id` и необязательные provenance/temporal поля. Созданный факт всегда `candidate`; нельзя передать `status=confirmed` при создании.
+6. Только `/v1/memory/graph/nodes/{id}/review` может поставить `confirmed` или `rejected`; review пишет audit entry с reason code. `POST /v1/memory/graph/search` по умолчанию ищет только confirmed узлы; всегда передавай `scope` и `scope_id`.
+7. `POST /v1/memory/graph/relations` создаёт отношения только внутри одного scope. `SUPERSEDES` использует `old_node_id` и `new_node_id`. `DELETE /v1/memory/graph/nodes/{id}?scope=project&scope_id=...` удаляет узел и `DERIVED_FROM` descendants в этой же области.
+8. Global scope требует двойного opt-in: серверный `ALANDI_GLOBAL_MEMORY_ENABLED=true` и `global_opt_in=true` в каждом запросе.
+
+Это single-owner прототип, не multi-user ACL: не раздавай один Bearer key другим пользователям. До подключения к UI нужны per-user identity/ACL, migration/backup strategy и сквозное удаление из evidence/cache/source stores. SQLite/FTS5 secure-delete не гарантирует очистку WAL, backups, browser storage и других БД и не является crypto-erasure SLA. Чтобы выключить эксперимент, выставь оба graph-флага в `false` и перезапусти службу.
+
 ## 10. Диагностика
 
 | Симптом | Что проверить |
@@ -474,7 +498,9 @@ PYTHONPATH=/opt/alandi/skills-github-pages /opt/alandi/venv/bin/uvicorn app:app 
 - [ ] Из опубликованного сайта запрос проходит через aLandi.
 - [ ] Межпровайдерный fallback выключен для приватных запросов.
 - [ ] Прямой JSON-запрос даёт L2 MISS → HIT; bypass header работает.
-- [ ] Gateway tests, quality sentinels, Jekyll build и Chromium E2E прошли.
+- [ ] Gateway tests, quality sentinels, Jekyll build и Chromium E2E прошли на текущем main SHA.
+- [ ] Experimental memory/RAG/OAuth/voice flags remain off until their own gates and rollback are reviewed.
+- [ ] Если graph API включался для теста, проверены Bearer auth, candidate-first review, scope isolation, cascade delete и double opt-in global scope.
 - [ ] Есть резервная копия env, команда отключения L2 и процедура отката.
 - [ ] Известно, как остановить/удалить платные ресурсы до истечения кредита.
 
@@ -485,3 +511,6 @@ PYTHONPATH=/opt/alandi/skills-github-pages /opt/alandi/venv/bin/uvicorn app:app 
 - [Ollama Linux install](https://ollama.com/download/linux) · [memory/context FAQ](https://docs.ollama.com/faq) · [Qwen3.5 models](https://ollama.com/library/qwen3.5)
 - [Cloudflare account](https://dash.cloudflare.com/sign-up) · [Tunnel](https://developers.cloudflare.com/tunnel/get-started/) · [Quick Tunnel limitations](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/)
 - [Dify self-hosted prerequisites](https://docs.dify.ai/en/getting-started/install-self-hosted/docker-compose) — только если принято отдельное решение внедрять Dify.
+- [PROVIDER_SETUP.md — ключи и OAuth](../PROVIDER_SETUP.md): облачные провайдеры необязательны, live-smoke требует явного подтверждения.
+- [Google AI Studio API keys](https://aistudio.google.com/apikey) · [Groq API keys](https://console.groq.com/keys) · [OpenRouter keys](https://openrouter.ai/keys) · [NVIDIA NIM](https://build.nvidia.com/) · [Hugging Face tokens](https://huggingface.co/settings/tokens) · [Pollinations App Keys/OAuth](https://enter.pollinations.ai/keys).
+- [Google server-side OAuth](https://developers.google.com/identity/protocols/oauth2/web-server) — optional; requires client credentials and exact HTTPS callback; Drive Picker UI is not implemented.

@@ -7,7 +7,7 @@
 ## A. База, управление и непрерывность
 - [x] PR #20 с базовыми контрактами памяти, инструментария, происхождения источников и governance объединён; CI прошёл.
 - [x] Создана ветка для облачной настройки/UX: `feat/alandi-cloud-settings-ux`.
-- [x] PRs #21–#26 merged with their required PR-head CI passing; PR #26 passed Gateway tests, provenance, all quality sentinels, Chromium and published Pages smoke. Main is `cbc5e19b14c5d464782108b4f0534faac88290c2`; post-merge workflows still need confirmation. Live gateway/VPS remains unverified.
+- [x] PRs #21–#27 merged with required PR-head CI passing. After PR #27, main `653febb01e2f9887dfec8116bf81f26f39e5077a` passed Gateway, provenance, full Quality/Chromium/Pages smoke and Pages deployment. Live gateway/VPS remains unverified.
 - [x] Проведён аудит V-016 §0–40 и начальной инженерной фиксации; создан подробный 81-пунктный ledger в `docs/V016_IMPLEMENTATION_CHECKLIST.md`. Аудит завершён, но многие runtime-функции ещё не реализованы/не подтверждены.
 - [ ] Проверить все старые регрессии: создание чата, история, экспорт/импорт, отмена, повтор запроса.
 - [ ] Обновить сведения о реальном состоянии системы: код, контракт, эксперимент, развёрнутая служба, измеренная метрика.
@@ -63,8 +63,8 @@
 - [~] RAG source deletion is scope-checked and removes chunk/concept/FTS rows; SQLite `secure_delete` plus version-gated FTS5 `secure-delete` regression tests passed on PR #24 HEAD and post-merge main. This still does **not** erase evidence-ledger copies, WAL/journals, backups or browser-local source copies; system-wide crypto-erasure remains open.
 - [ ] Проверить экспорт, исправление и удаление пользовательских фактов и связанные derived records.
 - [ ] Реализовать удаление/криптостирание по всем реальным слоям; не обещать SLA ≤60 секунд без измерения.
-- [x] Scoped memory FTS5 `search_nodes()` добавлен в main и прошёл Gateway/provenance/quality/Chromium/Pages PR-head checks. Индекс scope-filtered, terms bounded/literal, confirmed-only default, deletes propagated and legacy index backfilled; UI/API wiring follows as a separate feature-flagged slice.
-- [~] PR #27 exposes the graph through authenticated API routes; current-head CI pending. API creation is candidate-only, review is explicit, scope filters are enforced, and global memory requires two opt-ins. Not yet wired to browser UI.
+- [x] Scoped memory FTS5 `search_nodes()` is merged and passed Gateway/provenance/full quality/Chromium/Pages PR-head checks. The index is scope-filtered; terms are bounded/literal; confirmed-only is default; deletes propagate and legacy index is backfilled. PR #27 adds opt-in authenticated routes, but the static UI still uses browser-local memory.
+- [x] PR #27 merged with Gateway, provenance and full Quality/Chromium/published Pages CI green on HEAD `e961a67d…`. Memory graph API remains feature-flagged, single-owner and not wired to browser UI.
 - [ ] Протестировать valid_from, valid_until, recorded_at, конфликты, supersede и scoped recursive delete в gateway memory prototypes.
 - [ ] Полноценный viewer источников/индекса, citation lineage и cross-device project memory остаются задачами последующих фаз.
 
@@ -89,7 +89,7 @@
 - [ ] Внедрить ALBF binary framing только вместе с real transport и тестами на усечение, CRC, max payload и cancellation.
 - [ ] Сделать bake-off ASR/TTS с измерением RTF, first audio, e2e p95 и потребления PSS; не опираться на неподтверждённые цифры.
 - [ ] Подтвердить native audio capture/processing прежде, чем обещать отсутствие PCM/аудио hotpath в Python.
-- [ ] Проверить cPocket/resource leases на race, cancellation, timeouts, cleanup, idempotent rollback и утечки FD.
+- [~] cPocket hardening added: cap 128 cleanup registrations per lease; an individual cleanup throwing RuntimeError/CancelledError no longer prevents remaining handlers; concurrent rollback has exactly-once regression tests. PR #28 CI pending. Target-runtime resource/FD soak still required before live voice claims.
 - [ ] Проверить безопасную изоляцию tool workspace; не называть subprocess без sandbox production-изоляцией.
 - [ ] Проверить scope isolation, no-PII logs, prompt priority stack и fail-safe privacy policy.
 - [ ] Измерить профиль laptop_8gb_cpu_mvp на целевом 8-GB железе, включая combined LLM+RAG+tools и cold-tier eviction.
