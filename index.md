@@ -1072,7 +1072,7 @@ permalink: /
         const status=document.createElement('p');status.className='text-[10px] text-gray-500';status.textContent=memoryUiText(({candidate:'serverMemoryCandidate',confirmed:'serverMemoryConfirmed',rejected:'serverMemoryRejected'})[node.status]||'serverMemoryCandidate')+' · '+String(node.source_kind||'memory');
         row.append(content,status);const actions=document.createElement('div');actions.className='flex flex-wrap gap-1';
         if(node.status==='candidate')for(const [statusValue,labelKey] of [['confirmed','serverMemoryConfirm'],['rejected','serverMemoryReject']]){const button=document.createElement('button');button.type='button';button.dataset.action='review-server-memory';button.dataset.memoryNodeId=String(node.id||'');button.dataset.reviewStatus=statusValue;button.className='rounded border border-gray-700 px-2 py-1 text-[10px]';button.textContent=memoryUiText(labelKey);actions.appendChild(button);}
-        const remove=document.createElement('button');remove.type='button';remove.dataset.action='delete-server-memory';remove.dataset.memoryNodeId=String(node.id||'');remove.className='rounded border border-red-900/70 px-2 py-1 text-[10px] text-red-300';remove.textContent=memoryUiText('serverMemoryDelete');actions.appendChild(remove);row.appendChild(actions);box.appendChild(row);
+        const remove=document.createElement('button');remove.type='button';remove.dataset.action='delete-server-memory';remove.dataset.memoryNodeId=String(node.id||'');remove.dataset.memorySourceId=String(node.source_id||'');remove.className='rounded border border-red-900/70 px-2 py-1 text-[10px] text-red-300';remove.textContent=memoryUiText('serverMemoryDelete');actions.appendChild(remove);row.appendChild(actions);box.appendChild(row);
       }
     }
     async function loadServerProjectMemory(){
@@ -1094,9 +1094,9 @@ permalink: /
       try{await memoryGraphRequest('nodes/'+encodeURIComponent(nodeId)+'/review',{method:'POST',body:{scope:'project',scope_id:project.id,status,reason_code:status==='confirmed'?'user_confirmed':'user_rejected'}});await loadServerProjectMemory();}
       catch(error){setServerMemoryStatus(String(error.message||error).slice(0,200));showToast('Не удалось изменить статус серверного факта.','error');}
     }
-    async function deleteServerProjectMemory(nodeId){
+    async function deleteServerProjectMemory(nodeId,sourceId){
       const project=getProjectForChat();if(!project||!nodeId)return;if(!confirm(getUiLanguage()==='en'?'Delete this server-memory fact and its dependent facts?':'Удалить этот серверный факт и связанные с ним производные факты?'))return;
-      try{const q=new URLSearchParams({scope:'project',scope_id:project.id});await memoryGraphRequest('nodes/'+encodeURIComponent(nodeId)+'?'+q.toString(),{method:'DELETE'});await loadServerProjectMemory();}
+      try{const q=new URLSearchParams({scope:'project',scope_id:project.id});await memoryGraphRequest('nodes/'+encodeURIComponent(nodeId)+'?'+q.toString(),{method:'DELETE'});if(sourceId&&sourceId.startsWith('alandi-browser-project:')){const markerKey='ai_server_memory_uploaded_v1_'+project.id;try{const values=JSON.parse(safeGet(markerKey)||'[]');safeSet(markerKey,JSON.stringify(Array.isArray(values)?values.filter(value=>value!==sourceId):[]));}catch(_){}}await loadServerProjectMemory();}
       catch(error){setServerMemoryStatus(String(error.message||error).slice(0,200));showToast('Не удалось удалить серверный факт.','error');}
     }
     async function getServerProjectMemories(chat,project,query,signal){
@@ -3154,7 +3154,7 @@ permalink: /
            case 'refresh-server-memory': await loadServerProjectMemory();break;
            case 'upload-server-memory': await uploadLocalProjectMemory();break;
            case 'review-server-memory': await reviewServerProjectMemory(control.dataset.memoryNodeId,control.dataset.reviewStatus);break;
-           case 'delete-server-memory': await deleteServerProjectMemory(control.dataset.memoryNodeId);break;
+           case 'delete-server-memory': await deleteServerProjectMemory(control.dataset.memoryNodeId,control.dataset.memorySourceId);break;
            case 'export-project': exportProjectBundle();break;
           case 'import-project': $('importProjectFile').click();break;
           case 'voice-chat-preview': $('voiceMenu').classList.add('hidden');showToast(getUiLanguage()==='en'?'Live voice chat is not connected yet.':'Живой голосовой диалог пока не подключён.');break;
