@@ -337,6 +337,36 @@ class MemoryManager:
                 (new_node_id, old_node_id, ref.kind, ref.scope_id, now, evidence_source_kind, evidence_source_id))
             db.commit()
 
+    def review_node(self, node_id: str, *, scope: str, scope_id: str,
+                    status: str, reason_code: str) -> MemoryNode:
+        """Apply an explicit owner review; there is no automatic candidate promotion."""
+        ref = self._scope(scope, scope_id)
+        if not isinstance(node_id, str) or not node_id or len(node_id) > 128:
+            raise MemoryGraphError("invalid node_id")
+        if status not in {"confirmed", "rejected"}:
+            raise MemoryGraphError("review status must be confirmed or rejected")
+        if not isinstance(reason_code, str) or not re.fullmatch(r"[a-z][a-z0-9_]{0,63}", reason_code):
+            raise MemoryGraphError("reason_code must be a short lowercase audit code")
+        now = _now()
+        with closing(self._connect()) as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT status FROM memory_nodes WHERE id=? AND scope=? AND scope_id=?",
+                             (node_id, ref.kind, ref.scope_id)).fetchone()
+            if row is None:
+                db.rollback()
+                raise MemoryGraphError("memory node not found in the requested scope")
+            if row["status"] in {"superseded", "rejected"}:
+                db.rollback()
+                raise MemoryGraphError("superseded or rejected nodes cannot be reviewed again")
+            db.execute("UPDATE memory_nodes SET status=? WHERE id=? AND scope=? AND scope_id=?",
+                       (status, node_id, ref.kind, ref.scope_id))
+            db.execute("""INSERT INTO memory_audit
+                (scope, scope_id, node_id, action, occurred_at, actor_kind, actor_id, reason_code)
+                VALUES (?, ?, ?, 'node_reviewed', ?, 'user', 'gateway_owner', ?)""",
+                (ref.kind, ref.scope_id, node_id, now, reason_code))
+            db.commit()
+        return self.get_node(node_id, scope=ref.kind, scope_id=ref.scope_id)
+
     def delete_with_propagation(self, node_id: str, *, scope: str, scope_id: str) -> list[str]:
         """Delete a node and its DERIVED_FROM descendants, bounded to one scope/transaction."""
         ref = self._scope(scope, scope_id)

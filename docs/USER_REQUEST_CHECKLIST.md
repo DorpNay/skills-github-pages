@@ -7,7 +7,7 @@
 ## A. База, управление и непрерывность
 - [x] PR #20 с базовыми контрактами памяти, инструментария, происхождения источников и governance объединён; CI прошёл.
 - [x] Создана ветка для облачной настройки/UX: `feat/alandi-cloud-settings-ux`.
-- [x] PRs #21–#25 merged with PR-head required CI passing, including Chromium and published Pages smoke on the verified heads. Main is `9006c7ed8737174e73c615504eb80362f4673949`; latest post-merge run still needs checking. Live gateway/VPS remains unverified.
+- [x] PRs #21–#26 merged with their required PR-head CI passing; PR #26 passed Gateway tests, provenance, all quality sentinels, Chromium and published Pages smoke. Main is `cbc5e19b14c5d464782108b4f0534faac88290c2`; post-merge workflows still need confirmation. Live gateway/VPS remains unverified.
 - [x] Проведён аудит V-016 §0–40 и начальной инженерной фиксации; создан подробный 81-пунктный ledger в `docs/V016_IMPLEMENTATION_CHECKLIST.md`. Аудит завершён, но многие runtime-функции ещё не реализованы/не подтверждены.
 - [ ] Проверить все старые регрессии: создание чата, история, экспорт/импорт, отмена, повтор запроса.
 - [ ] Обновить сведения о реальном состоянии системы: код, контракт, эксперимент, развёрнутая служба, измеренная метрика.
@@ -63,7 +63,8 @@
 - [~] RAG source deletion is scope-checked and removes chunk/concept/FTS rows; SQLite `secure_delete` plus version-gated FTS5 `secure-delete` regression tests passed on PR #24 HEAD and post-merge main. This still does **not** erase evidence-ledger copies, WAL/journals, backups or browser-local source copies; system-wide crypto-erasure remains open.
 - [ ] Проверить экспорт, исправление и удаление пользовательских фактов и связанные derived records.
 - [ ] Реализовать удаление/криптостирание по всем реальным слоям; не обещать SLA ≤60 секунд без измерения.
-- [~] Scoped memory FTS5 prototype добавляет `search_nodes()` с точной фильтрацией scope, confirmed-only по умолчанию, ограниченными literal terms, индексными триггерами, каскадным удалением производных узлов и migration backfill. Gateway tests passed on PR #26 head; full current-head quality/Pages check pending; UI/API wiring deferred.
+- [x] Scoped memory FTS5 `search_nodes()` добавлен в main и прошёл Gateway/provenance/quality/Chromium/Pages PR-head checks. Индекс scope-filtered, terms bounded/literal, confirmed-only default, deletes propagated and legacy index backfilled; UI/API wiring follows as a separate feature-flagged slice.
+- [~] PR #27 exposes the graph through authenticated API routes; current-head CI pending. API creation is candidate-only, review is explicit, scope filters are enforced, and global memory requires two opt-ins. Not yet wired to browser UI.
 - [ ] Протестировать valid_from, valid_until, recorded_at, конфликты, supersede и scoped recursive delete в gateway memory prototypes.
 - [ ] Полноценный viewer источников/индекса, citation lineage и cross-device project memory остаются задачами последующих фаз.
 
@@ -139,7 +140,8 @@
 | **AI-MEM-002** | bitemporal_primitives_not_in_frontend | gateway/memory/temporal.py | EV-MEM-002 |
 | **AI-MEM-003** | scoped_manager_prototype | gateway/memory/scope.py | EV-MEM-003 |
 | **AI-MEM-004** | explicit_conflicts_no_auto_winner | gateway/memory/conflict.py | EV-MEM-004 |
-| **AI-MEM-005** | scoped_fts5_memory_search_prototype_gateway_tests_passed_not_api_wired | gateway/memory/manager.py; gateway/memory/schema.sql | EV-MEM-005 |
+| **AI-MEM-005** | scoped_fts5_memory_search_prototype_merged_not_ui_wired | gateway/memory/manager.py; gateway/memory/schema.sql | EV-MEM-005 |
+| **AI-MEM-006** | authenticated_feature_flagged_single_owner_api_ci_pending_not_static_ui_wired | gateway/app.py; gateway/memory/manager.py | EV-MEM-006 |
 | **AI-RAG-001** | fts5_lexical_graph_not_full_lazygraphrag | gateway/rag/lazy_graph_rag.py | EV-RAG-001 |
 | **AI-RAG-002** | conditional_not_installed | gateway/rag/rag_anything.py | EV-RAG-002 |
 | **AI-RAG-003** | citation_hash_offset_primitives | gateway/rag/citations.py | EV-RAG-003 |
