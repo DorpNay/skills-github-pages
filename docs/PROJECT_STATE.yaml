@@ -1,8 +1,8 @@
 project_state:
   version: 4
   reviewed_on: "2026-10-23"
-  last_volley: "V-2026-10-23-MEMORY-BROWSER-BRIDGE"
-  gate: "Main is 55248f81585c52d7cc7ba7cfc08158a291a761ca after PR #29. PR-head and post-merge Quality/Chromium, integrity/security/context sentinels, Jekyll, Pages browser smoke, provenance and Pages deployment passed. FastAPI gateway contract/security tests passed on unchanged base SHA e424d353418cad62981eb269b4082d2925592708. Browser project-memory bridge is merged but remains opt-in and requires gateway configuration. Live provider smoke, configured private gateway/VPS and hardware benchmarks remain unverified."
+  last_volley: "V-2026-10-23-LOCAL-HELPER-MEMORY-SUGGESTIONS"
+  gate: "Main is c2160d5c10439f4ba7959bc8eda38d8c9424143d after PR #31. PR #31 post-merge Quality/Chromium, published Pages smoke and Pages deployment passed. Optional local helper-model memory-suggestion endpoint/UI is implemented on feat/local-helper-memory-suggestions; current branch CI pending. Helper is disabled unless ALANDI_HELPER_MODEL is configured. Live gateway/VPS, live helper model behavior and target-hardware performance remain unverified."
   source_of_truth:
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
@@ -87,7 +87,7 @@ improvements:
   AI-AGENT-001: {status: "logical_roles_not_process_swarm", artifact: "docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md", eval: "EV-AGENT-001"}
   AI-AGENT-002: {status: "limited_existing_routing", artifact: "gateway/tools/dag_engine.py", eval: "EV-AGENT-002"}
   AI-AGENT-003: {status: "bounded_dag_prototype", artifact: "gateway/tools/dag_engine.py", eval: "EV-AGENT-003"}
-  AI-AGENT-004: {status: "accepted_helper_model_design_not_runtime_wired", artifact: "DECISIONS.md; docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md", eval: "EV-AGENT-004"}
+  AI-AGENT-004: {status: "optional_local_helper_memory_candidate_suggestions_feature_branch_ci_pending_off_by_default_no_general_dispatch_or_benchmark", artifact: "gateway/app.py; gateway/tests/test_app.py; index.md; tests/e2e/app.spec.mjs", eval: "EV-AGENT-004"}
   AI-IMAGE-001: {status: "roadmap_only_no_image_generation_runtime", artifact: "docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md; docs/V016_IMPLEMENTATION_CHECKLIST.md", eval: "EV-IMAGE-001"}
   AI-OPS-001: {status: "free_first_roadmap_no_billable_resources_provisioned", artifact: "DECISIONS.md; docs/USER_REQUEST_CHECKLIST.md", eval: "EV-OPS-001"}
   AI-MODEL-001: {status: "no_hidden_refusal_filter_policy_only_no_zero_refusal_guarantee", artifact: "DECISIONS.md", eval: "EV-MODEL-001"}
