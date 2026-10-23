@@ -276,11 +276,10 @@ permalink: /
       <details id="legacyProviderSettings" class="settings-subpanel rounded-xl border border-gray-700">
         <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none" data-i18n="legacySettings">Сторонние API, ключи и расширенные настройки</summary>
         <div class="p-3 space-y-3">
-      <div class="rounded-lg bg-gray-900 border border-gray-700 p-2.5 text-xs leading-relaxed text-gray-300 space-y-2">
-        <p><strong>Быстрый старт:</strong> по умолчанию выбран Gemini. Для альтернатив выберите провайдера и модель ниже; для каждого сервиса нужен свой API-ключ.</p>
-        <p><a class="text-blue-300 underline" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Получить ключ Gemini API в Google AI Studio</a>. Создайте ключ и вставьте его в поле API Key ниже.</p>
-        <p>Ключи провайдеров и Tavily хранятся отдельно в localStorage этого браузера. Пустое поле API Key означает, что ключ не сохранён для выбранного провайдера; ключи других провайдеров не удаляются при переключении. При автоматическом резервном переходе текст запроса и контекст могут быть отправлены другому провайдеру, если для него сохранён ключ. Не публикуйте ключи и не используйте их на чужом устройстве. Очистка данных сайта удалит локальные настройки и историю.</p>
-        <p>Веб-поиск объединяет Tavily (если сохранён ключ) и открытые API без отдельного ключа: Wikipedia, Stack Exchange, GitHub, Hacker News и arXiv. Можно также попросить агента прочитать конкретную публичную HTTPS-страницу; доступ зависит от CORS сайта.</p>
+      <div class="rounded-lg bg-gray-900 border border-gray-700 p-2.5 text-xs leading-relaxed text-gray-300 space-y-2" data-i18n-group="providerHelp">
+        <p><strong>Подключение:</strong> выбери сервис и проверь модель. Для каждого провайдера нужен свой ключ; пустое поле значит, что ключ не сохранён для выбранного провайдера.</p>
+        <p>Ключи провайдеров и Tavily хранятся отдельно в localStorage этого браузера. Профиль настроек не включает секреты. Не используй ключи на общих устройствах.</p>
+        <p>Резерв к другому провайдеру выключен по умолчанию. При включении текст запроса и контекст могут быть отправлены другому провайдеру. Веб-поиск работает с открытыми источниками; Tavily — дополнительный источник. Некоторые сервисы блокируют браузерные запросы из-за CORS; для них нужен защищённый серверный прокси.</p>
       </div>
       <label for="providerPreset" data-i18n="providerLabel" class="block text-xs text-gray-400">Провайдер API</label>
       <select id="providerPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm">
@@ -334,12 +333,12 @@ permalink: /
       </div>
       <input type="file" id="settingsProfileFile" class="hidden" accept="application/json,.json">
       <p class="text-[10px] leading-relaxed text-gray-500">Профиль переносит настройки, но намеренно не содержит API-ключи и токены. Импорт не меняет уже сохранённые секреты.</p>
-      <button type="button" data-action="restore-defaults" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-200">Восстановить параметры Gemini</button>
+      <button type="button" data-action="restore-defaults" data-i18n="restoreDefaults" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-200">Восстановить параметры Gemini</button>
         </div>
       </details>
       <button type="button" id="recoveryBackupButton data-action="download-recovery-backup" class="hidden w-full bg-amber-800 hover:bg-amber-700 py-2 rounded text-xs text-amber-50">Скачать резервную копию истории</button>
-      <button type="button" data-action="save-settings" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded font-bold text-sm">Сохранить</button>
-      <button type="button" data-action="close-settings" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-300">Закрыть</button>
+      <button type="button" data-action="save-settings" data-i18n="saveSettings" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded font-bold text-sm">Сохранить</button>
+      <button type="button" data-action="close-settings" data-i18n="closeSettings" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-300">Закрыть</button>
     </div>
   </div>
 
@@ -811,7 +810,7 @@ permalink: /
         baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',
         legacySettings:'Сторонние API, ключи и расширенные настройки',composerPlaceholder:'Напиши сообщение...',
         modeLabel:'Режим:',modeFast:'⚡ Быстро',modeDeep:'🔬 Глубоко',searchLabel:'🌐 Интернет и источники',researchLabel:'🤖 Умное исследование',
-        languageLabel:'Язык интерфейса',clockLabel:'Местное время'
+        languageLabel:'Язык интерфейса',clockLabel:'Местное время',restoreDefaults:'Восстановить параметры Gemini',saveSettings:'Сохранить',closeSettings:'Закрыть'
       },
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Chats & memory',newChat:'＋ New chat',clearChat:'🗑 Clear chat',
@@ -824,7 +823,7 @@ permalink: /
         baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',
         legacySettings:'Third-party APIs, keys & advanced settings',composerPlaceholder:'Write a message...',
         modeLabel:'Mode:',modeFast:'⚡ Fast',modeDeep:'🔬 Deep',searchLabel:'🌐 Web & sources',researchLabel:'🤖 Smart research',
-        languageLabel:'Interface language',clockLabel:'Local time'
+        languageLabel:'Interface language',clockLabel:'Local time',restoreDefaults:'Restore Gemini defaults',saveSettings:'Save settings',closeSettings:'Close'
       }
     };
     function getUiLanguage(){return safeGet('ai_ui_language_v1')==='en'?'en':'ru';}
@@ -837,6 +836,7 @@ permalink: /
       document.querySelectorAll('[data-action="set-language"]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.language===lang)));
       const brand=$('brandWordmark');if(brand)brand.title=lang==='en'?'Tap to reveal the word puzzle':'Нажми, чтобы раскрыть ребус';
       const themeButton=$('homeThemeToggle');if(themeButton){themeButton.title=lang==='en'?'Switch theme':'Сменить тему';themeButton.setAttribute('aria-label',themeButton.title);}
+      document.querySelectorAll('[data-action="toggle-settings"]').forEach(button=>button.setAttribute('aria-label',lang==='en'?'Settings':'Настройки'));
       const attach=$('attachTextButton');if(attach){attach.title=lang==='en'?'Attach a text file (.txt, .md, .csv, .json, .log)':'Прикрепить .txt, .md, .csv, .json или .log';attach.setAttribute('aria-label',attach.title);}
       updateOfflineUI();updateModeUI();updateHomeThemeButton();
     }
