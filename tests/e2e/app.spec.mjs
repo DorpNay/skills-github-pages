@@ -928,7 +928,7 @@ test('deleting a project removes its chats but preserves other projects and chat
   const keepId = await page.locator('#currentProjectSelect').inputValue();
   expect(keepId).not.toBe(disposableId);
   await page.locator('[data-action="new-chat"]').first().click();
-  const keepChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_id_v87') || '');
+  const keepChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87') || '');
   // Use the project-labelled sidebar row as the source of truth for the disposable chat.
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator(`#chatList [data-action="switch-chat"][data-chat-id="${disposableChatId}"]`).click();
