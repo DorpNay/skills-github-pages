@@ -245,7 +245,8 @@ def test_rag_enables_sqlite_secure_delete_and_version_gated_fts5_secure_delete(t
     path = tmp_path / "secure-delete.sqlite3"
     rag = LazyGraphRAG(path)
     rag.initialize()
-    db = sqlite3.connect(path)
+    # secure_delete is connection-local; verify the connection the RAG store uses.
+    db = rag._connect()
     try:
         assert db.execute("PRAGMA secure_delete").fetchone()[0] == 1
         if sqlite3.sqlite_version_info >= (3, 42, 0):
