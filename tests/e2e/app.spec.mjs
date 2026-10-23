@@ -859,6 +859,8 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('#projectMemoryInput').fill('BETA_PROJECT_MEMORY_SENTINEL');
   await page.locator('[data-action="add-project-memory"]').click();
   await page.locator('#projectMemoryToggle').check();
+  const betaId = await page.locator('#currentProjectSelect').inputValue();
+  expect(betaId).not.toBe(alphaId);
 
   await page.locator('[data-action="close-sidebar"]').click();
   await page.locator('[data-action="toggle-settings"]').first().click();
@@ -879,6 +881,20 @@ test('project instructions, project memory, and project bundles stay scoped to t
   expect(prompt).toContain('BETA_PROJECT_MEMORY_SENTINEL');
   expect(prompt).not.toContain('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
   expect(prompt).not.toContain('ALPHA_PROJECT_MEMORY_SENTINEL');
+
+  // Importing a bundle while Beta is selected must create a distinct Alpha copy, not merge into Beta.
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('[data-action="import-project"]').click();
+  await page.locator('#importProjectFile').setInputFiles(alphaPath);
+  await expect(page.locator('#projectNameInput')).toHaveValue('Alpha Project (импорт)');
+  const importedId = await page.locator('#currentProjectSelect').inputValue();
+  expect(importedId).not.toBe(alphaId);
+  expect(importedId).not.toBe(betaId);
+  await expect(page.locator('#projectInstructionsInput')).toHaveValue('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
+  await expect(page.locator('#projectMemoryBox')).toContainText('ALPHA_PROJECT_MEMORY_SENTINEL');
+  const allProjects = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]'));
+  expect(allProjects.some(project => project.id === betaId && project.instructions.includes('BETA_PROJECT_INSTRUCTION_SENTINEL'))).toBe(true);
+  expect(allProjects.some(project => project.id === importedId && project.instructions.includes('ALPHA_PROJECT_INSTRUCTION_SENTINEL'))).toBe(true);
 });
 
 test('deleting a project removes its chats but preserves other projects and chats', async ({ page }) => {
