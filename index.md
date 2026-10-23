@@ -266,6 +266,10 @@ permalink: /
                 <button type="button" data-action="refresh-server-memory" class="rounded-lg border border-gray-700 bg-gray-800 px-2 py-2 text-[11px]" data-i18n="serverMemoryRefresh">Обновить список</button>
                 <button type="button" data-action="upload-server-memory" class="rounded-lg border border-cyan-800 bg-cyan-950/50 px-2 py-2 text-[11px]" data-i18n="serverMemoryUpload">Передать локальные факты</button>
               </div>
+              <p class="text-[10px] leading-relaxed text-gray-500" data-i18n="helperMemoryDescription">Необязательная локальная модель-помощник предложит компактные факты. Нужен ALANDI_HELPER_MODEL; предложения не сохраняются автоматически.</p>
+              <button type="button" data-action="suggest-helper-memory" class="w-full rounded-lg border border-violet-900/70 bg-violet-950/30 px-2 py-2 text-[11px]" data-i18n="helperMemorySuggest">Предложить компактные факты</button>
+              <p id="helperMemoryStatus" class="text-[10px] leading-relaxed text-gray-400" role="status" aria-live="polite" data-i18n="helperMemoryInitial">Помощник выключен, пока не настроен ALANDI_HELPER_MODEL.</p>
+              <div id="helperMemorySuggestionsBox" class="max-h-40 space-y-2 overflow-y-auto text-[11px] text-gray-300"></div>
               <p id="serverMemoryStatus" class="text-[10px] leading-relaxed text-gray-400" role="status" aria-live="polite" data-i18n="serverMemoryInitial">Серверная память выключена. Выбери проект и нажми «Обновить список».</p>
               <div id="serverMemoryBox" class="max-h-40 space-y-2 overflow-y-auto text-[11px] text-gray-300"></div>
             </div>
@@ -875,7 +879,8 @@ permalink: /
         legacySettings:'Сторонние API, ключи и расширенные настройки',composerPlaceholder:'Напиши сообщение...',
         modeLabel:'Режим:',modeFast:'⚡ Быстро',modeDeep:'🔬 Глубоко',searchLabel:'🌐 Интернет и источники',researchLabel:'🤖 Умное исследование',
         kiloPrivacyNotice:'Kilo Auto Free — обычный альтернативный провайдер в общем списке API, не часть основного облака aLandi. Запросы передаются Kilo и назначенным им моделям; они могут сохранять запросы для улучшения сервисов. Не отправляй конфиденциальные данные. Скрытого резервирования нет.',languageLabel:'Язык интерфейса',clockLabel:'Местное время',restoreDefaults:'Восстановить параметры Gemini',saveSettings:'Сохранить',closeSettings:'Закрыть',
-        globalMemoryOptIn:'Разрешить подходящим заметкам глобальной памяти попадать в контекст запросов.',projectsTitle:'▣ Проекты и проектная память',currentProjectLabel:'Проект текущего чата',projectMemoryOptIn:'Использовать память выбранного проекта в этом чате',manageProject:'Создать или настроить проект',projectNameLabel:'Название',projectInstructionsLabel:'Инструкции проекта',createProject:'＋ Создать проект',saveProject:'Сохранить изменения',projectMemoryLabel:'Добавить факт в память проекта',exportProject:'Экспорт проекта',importProject:'Импорт проекта',detachChat:'Извлечь чат из проекта',deleteProject:'Удалить проект и его чаты',serverMemoryTitle:'Серверная память · эксперимент',serverMemoryDescription:'Отдельный граф на твоём aLandi gateway. Перенос только вручную; новые факты сначала становятся кандидатами. Нужен включённый ALANDI_MEMORY_GRAPH_ENABLED.',serverMemoryOptIn:'Разрешить подтверждённым фактам сервера попадать в контекст этого чата. Также включи память проекта выше.',serverMemoryRefresh:'Обновить список',serverMemoryUpload:'Передать локальные факты',serverMemoryInitial:'Серверная память выключена. Выбери проект и нажми «Обновить список».',serverMemoryNoProject:'Сначала выбери или создай проект.',serverMemoryNoConfig:'Не найдены URL /v1 и ключ aLandi gateway. Подключи своё облако в настройках.',serverMemoryLoading:'Обращаюсь к серверной памяти…',serverMemoryLoaded:'Фактов на сервере: ',serverMemoryEmpty:'В серверной памяти этого проекта пока нет фактов.',serverMemoryCandidate:'Кандидат',serverMemoryConfirmed:'Подтверждён',serverMemoryRejected:'Отклонён',serverMemoryConfirm:'Подтвердить',serverMemoryReject:'Отклонить',serverMemoryDelete:'Удалить',serverMemoryUploadDone:'Передача завершена. Новые факты остаются кандидатами до подтверждения.',serverMemoryContextLoaded:'В контекст добавлено подтверждённых серверных фактов: ',serverMemoryUnavailable:'Серверная память недоступна; продолжаю без неё.'
+        globalMemoryOptIn:'Разрешить подходящим заметкам глобальной памяти попадать в контекст запросов.',projectsTitle:'▣ Проекты и проектная память',currentProjectLabel:'Проект текущего чата',projectMemoryOptIn:'Использовать память выбранного проекта в этом чате',manageProject:'Создать или настроить проект',projectNameLabel:'Название',projectInstructionsLabel:'Инструкции проекта',createProject:'＋ Создать проект',saveProject:'Сохранить изменения',projectMemoryLabel:'Добавить факт в память проекта',exportProject:'Экспорт проекта',importProject:'Импорт проекта',detachChat:'Извлечь чат из проекта',deleteProject:'Удалить проект и его чаты',serverMemoryTitle:'Серверная память · эксперимент',serverMemoryDescription:'Отдельный граф на твоём aLandi gateway. Перенос только вручную; новые факты сначала становятся кандидатами. Нужен включённый ALANDI_MEMORY_GRAPH_ENABLED.',serverMemoryOptIn:'Разрешить подтверждённым фактам сервера попадать в контекст этого чата. Также включи память проекта выше.',serverMemoryRefresh:'Обновить список',serverMemoryUpload:'Передать локальные факты',serverMemoryInitial:'Серверная память выключена. Выбери проект и нажми «Обновить список».',serverMemoryNoProject:'Сначала выбери или создай проект.',serverMemoryNoConfig:'Не найдены URL /v1 и ключ aLandi gateway. Подключи своё облако в настройках.',serverMemoryLoading:'Обращаюсь к серверной памяти…',serverMemoryLoaded:'Фактов на сервере: ',serverMemoryEmpty:'В серверной памяти этого проекта пока нет фактов.',serverMemoryCandidate:'Кандидат',serverMemoryConfirmed:'Подтверждён',serverMemoryRejected:'Отклонён',serverMemoryConfirm:'Подтвердить',serverMemoryReject:'Отклонить',serverMemoryDelete:'Удалить',serverMemoryUploadDone:'Передача завершена. Новые факты остаются кандидатами до подтверждения.',serverMemoryContextLoaded:'В контекст добавлено подтверждённых серверных фактов: ',serverMemoryUnavailable:'Серверная память недоступна; продолжаю без неё.',
+         helperMemoryDescription:'Необязательная локальная модель-помощник предложит компактные факты для этой памяти. Нужен ALANDI_HELPER_MODEL; предложения не сохраняются автоматически.',helperMemorySuggest:'Предложить компактные факты',helperMemoryInitial:'Помощник выключен, пока не настроен ALANDI_HELPER_MODEL.',helperMemoryLoading:'Маленькая локальная модель готовит предложения…',helperMemoryEmpty:'Помощник не нашёл подходящих новых фактов.',helperMemoryAdd:'Добавить в проект',helperMemoryAdded:'Факт добавлен в локальную память проекта.',helperMemoryNoFacts:'Сначала добавь факты в память выбранного проекта.',helperMemoryNotConfigured:'Локальная модель-помощник не настроена. Укажи ALANDI_HELPER_MODEL и установи этот тег через Ollama.',helperMemoryTimeout:'Помощник не ответил за отведённое время. Память не менялась; повтори позже.',helperMemoryFailed:'Не удалось получить предложения. Проверь настройки gateway и журнал Ollama.'
       },
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Chats & memory',newChat:'＋ New chat',clearChat:'🗑 Clear chat',
@@ -889,7 +894,8 @@ permalink: /
         legacySettings:'Third-party APIs, keys & advanced settings',composerPlaceholder:'Write a message...',
         modeLabel:'Mode:',modeFast:'⚡ Fast',modeDeep:'🔬 Deep',searchLabel:'🌐 Web & sources',researchLabel:'🤖 Smart research',
         kiloPrivacyNotice:'Kilo Auto Free is an ordinary alternative provider in the API list, not part of the primary aLandi cloud. Requests go to Kilo and its selected models, which may log prompts or use them to improve services. Do not send confidential data. No silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',restoreDefaults:'Restore Gemini defaults',saveSettings:'Save settings',closeSettings:'Close',
-        globalMemoryOptIn:'Allow relevant global-memory notes to be included in prompts.',projectsTitle:'▣ Projects & project memory',currentProjectLabel:'Project for this chat',projectMemoryOptIn:'Use the selected project memory in this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'＋ Create project',saveProject:'Save changes',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats',serverMemoryTitle:'Server memory · experimental',serverMemoryDescription:'A separate graph on your aLandi gateway. Transfer is manual; new facts start as candidates. Enable ALANDI_MEMORY_GRAPH_ENABLED on the server.',serverMemoryOptIn:'Allow confirmed server facts in this chat context. Also enable project memory above.',serverMemoryRefresh:'Refresh list',serverMemoryUpload:'Send local facts',serverMemoryInitial:'Server memory is off. Select a project and click “Refresh list”.',serverMemoryNoProject:'Select or create a project first.',serverMemoryNoConfig:'aLandi gateway /v1 URL or key is missing. Configure your cloud in Settings.',serverMemoryLoading:'Contacting server memory…',serverMemoryLoaded:'Server facts: ',serverMemoryEmpty:'No server facts for this project yet.',serverMemoryCandidate:'Candidate',serverMemoryConfirmed:'Confirmed',serverMemoryRejected:'Rejected',serverMemoryConfirm:'Confirm',serverMemoryReject:'Reject',serverMemoryDelete:'Delete',serverMemoryUploadDone:'Transfer complete. New facts remain candidates until reviewed.',serverMemoryContextLoaded:'Confirmed server facts added to context: ',serverMemoryUnavailable:'Server memory is unavailable; continuing without it.'
+        globalMemoryOptIn:'Allow relevant global-memory notes to be included in prompts.',projectsTitle:'▣ Projects & project memory',currentProjectLabel:'Project for this chat',projectMemoryOptIn:'Use the selected project memory in this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'＋ Create project',saveProject:'Save changes',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats',serverMemoryTitle:'Server memory · experimental',serverMemoryDescription:'A separate graph on your aLandi gateway. Transfer is manual; new facts start as candidates. Enable ALANDI_MEMORY_GRAPH_ENABLED on the server.',serverMemoryOptIn:'Allow confirmed server facts in this chat context. Also enable project memory above.',serverMemoryRefresh:'Refresh list',serverMemoryUpload:'Send local facts',serverMemoryInitial:'Server memory is off. Select a project and click “Refresh list”.',serverMemoryNoProject:'Select or create a project first.',serverMemoryNoConfig:'aLandi gateway /v1 URL or key is missing. Configure your cloud in Settings.',serverMemoryLoading:'Contacting server memory…',serverMemoryLoaded:'Server facts: ',serverMemoryEmpty:'No server facts for this project yet.',serverMemoryCandidate:'Candidate',serverMemoryConfirmed:'Confirmed',serverMemoryRejected:'Rejected',serverMemoryConfirm:'Confirm',serverMemoryReject:'Reject',serverMemoryDelete:'Delete',serverMemoryUploadDone:'Transfer complete. New facts remain candidates until reviewed.',serverMemoryContextLoaded:'Confirmed server facts added to context: ',serverMemoryUnavailable:'Server memory is unavailable; continuing without it.',
+         helperMemoryDescription:'An optional local helper model suggests compact facts for this project. Set ALANDI_HELPER_MODEL; suggestions are never saved automatically.',helperMemorySuggest:'Suggest compact facts',helperMemoryInitial:'Helper is disabled until ALANDI_HELPER_MODEL is configured.',helperMemoryLoading:'Local helper model is preparing suggestions…',helperMemoryEmpty:'The helper found no suitable new facts.',helperMemoryAdd:'Add to project',helperMemoryAdded:'Fact added to local project memory.',helperMemoryNoFacts:'Add facts to the selected project memory first.',helperMemoryNotConfigured:'The local helper model is not configured. Set ALANDI_HELPER_MODEL and pull that tag with Ollama.',helperMemoryTimeout:'The helper did not respond in time. Memory was not changed; retry later.',helperMemoryFailed:'Could not get suggestions. Check the gateway configuration and Ollama logs.'
       }
     };
     function getUiLanguage(){return safeGet('ai_ui_language_v1')==='en'?'en':'ru';}
@@ -1041,6 +1047,9 @@ permalink: /
     }
     function projectIdNew(){return globalThis.crypto?.randomUUID?.()||('p-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10));}
     let serverMemoryRenderedScopeId=null;
+    let helperMemorySuggestions=[];
+    let helperMemorySuggestionsProjectId=null;
+    let helperMemoryBusy=false;
     function memoryUiText(key){return UI_TEXT[getUiLanguage()]?.[key]||UI_TEXT.ru[key]||key;}
     function getMemoryGraphConfig(){
       const raw=String(safeGet('ai_alandi_cloud_base_url')||$('cloudBaseUrl')?.value||(safeGet(STORAGE.provider)==='alandi'?safeGet(STORAGE.baseUrl):'')||'').trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,'');
@@ -1061,6 +1070,69 @@ permalink: /
         if(!payload||typeof payload!=='object')throw new Error('Gateway вернул некорректный JSON.');return payload;
       }catch(error){if(timedOut)throw new Error('Тайм-аут серверной памяти (8 с).');throw error;}
       finally{clearTimeout(timer);if(externalSignal)externalSignal.removeEventListener('abort',abortExternal);}
+    }
+    async function localHelperMemoryRequest(facts){
+      const config=getMemoryGraphConfig(),controller=new AbortController();let timedOut=false;
+      const timer=setTimeout(()=>{timedOut=true;controller.abort();},120000);
+      try{
+        const response=await fetch(config.baseUrl+'/helpers/project-memory-suggestions',{method:'POST',headers:{Accept:'application/json','Content-Type':'application/json',Authorization:'Bearer '+config.key},body:JSON.stringify({facts}),cache:'no-store',credentials:'omit',signal:controller.signal});
+        let payload=null;try{payload=await response.json();}catch(_){}
+        if(!response.ok)throw new Error(String(payload?.detail||payload?.error?.message||('HTTP '+response.status)).slice(0,220));
+        if(!payload||!Array.isArray(payload.candidates))throw new Error('Gateway returned an invalid helper response.');
+        return payload;
+      }catch(error){if(timedOut)throw new Error(memoryUiText('helperMemoryTimeout'));throw error;}
+      finally{clearTimeout(timer);}
+    }
+    function setHelperMemoryStatus(text){const node=$('helperMemoryStatus');if(node)node.textContent=text;}
+    function renderHelperMemorySuggestions(){
+      const box=$('helperMemorySuggestionsBox');if(!box)return;box.replaceChildren();
+      helperMemorySuggestions.slice(0,12).forEach((candidate,index)=>{
+        const row=document.createElement('div');row.className='rounded-lg border border-gray-800 p-2 flex items-start gap-2';
+        const text=document.createElement('p');text.className='min-w-0 flex-1 break-words';text.textContent=candidate;
+        const add=document.createElement('button');add.type='button';add.dataset.action='add-helper-memory-suggestion';add.dataset.suggestionIndex=String(index);add.className='shrink-0 rounded border border-gray-700 px-2 py-1 text-[10px]';add.textContent=memoryUiText('helperMemoryAdd');
+        row.append(text,add);box.appendChild(row);
+      });
+      if(!helperMemorySuggestions.length){const empty=document.createElement('p');empty.className='text-gray-500';empty.textContent=memoryUiText('helperMemoryEmpty');box.appendChild(empty);}
+    }
+    async function suggestProjectMemoryWithHelper(){
+      const project=getProjectForChat();
+      if(!project){setHelperMemoryStatus(memoryUiText('serverMemoryNoProject'));return;}
+      if(!Array.isArray(project.memory)||!project.memory.length){setHelperMemoryStatus(memoryUiText('helperMemoryNoFacts'));return;}
+      const facts=[];let chars=0;
+      for(const item of project.memory){
+        const text=String(item?.text||'').trim().slice(0,600);if(!text)continue;
+        if(facts.length>=80||chars+text.length>12000)break;
+        facts.push(text);chars+=text.length;
+      }
+      if(!facts.length){setHelperMemoryStatus(memoryUiText('helperMemoryNoFacts'));return;}
+      const button=document.querySelector('[data-action="suggest-helper-memory"]');
+      helperMemoryBusy=true;if(button)button.disabled=true;
+      helperMemorySuggestions=[];helperMemorySuggestionsProjectId=project.id;renderHelperMemorySuggestions();setHelperMemoryStatus(memoryUiText('helperMemoryLoading'));
+      try{
+        const payload=await localHelperMemoryRequest(facts);
+        if(getProjectForChat()?.id!==project.id)return;
+        helperMemorySuggestions=(Array.isArray(payload.candidates)?payload.candidates:[]).filter(value=>typeof value==='string').map(value=>value.trim().replace(/\s+/g,' ')).filter(value=>value&&value.length<=240).slice(0,12);
+        helperMemorySuggestionsProjectId=project.id;renderHelperMemorySuggestions();
+        setHelperMemoryStatus(helperMemorySuggestions.length
+          ? (getUiLanguage()==='en'?'Suggestions: '+helperMemorySuggestions.length+'. Choose individually; nothing was saved automatically.':'Предложено: '+helperMemorySuggestions.length+'. Выбери нужные факты; автоматически ничего не сохранено.')
+          : memoryUiText('helperMemoryEmpty'));
+      }catch(error){
+        const message=String(error?.message||error);
+        setHelperMemoryStatus(/ALANDI_HELPER_MODEL|not configured/i.test(message)?memoryUiText('helperMemoryNotConfigured'):/timed out|время/i.test(message)?memoryUiText('helperMemoryTimeout'):message.slice(0,220)||memoryUiText('helperMemoryFailed'));
+        showToast(memoryUiText('helperMemoryFailed'),'error');
+      }finally{helperMemoryBusy=false;if(button)button.disabled=!getProjectForChat();}
+    }
+    function addHelperMemorySuggestion(index){
+      const project=getProjectForChat(),candidate=helperMemorySuggestions[index];
+      if(!project||project.id!==helperMemorySuggestionsProjectId||typeof candidate!=='string')return;
+      if(project.memory.length>=500){showToast('Достигнут предел памяти проекта (500 записей).','error');return;}
+      const normalized=candidate.toLocaleLowerCase().replace(/\s+/g,' ').trim();
+      if(project.memory.some(item=>String(item?.text||'').toLocaleLowerCase().replace(/\s+/g,' ').trim()===normalized)){
+        helperMemorySuggestions.splice(index,1);renderHelperMemorySuggestions();
+        setHelperMemoryStatus(getUiLanguage()==='en'?'That fact already exists in this project.':'Такой факт уже есть в проекте.');return;
+      }
+      project.memory.push({id:projectIdNew(),text:candidate,createdAt:new Date().toISOString()});project.updatedAt=new Date().toISOString();
+      helperMemorySuggestions.splice(index,1);persistProjects();renderProjectUI();renderHelperMemorySuggestions();setHelperMemoryStatus(memoryUiText('helperMemoryAdded'));
     }
     function setServerMemoryStatus(text){const node=$('serverMemoryStatus');if(node)node.textContent=text;}
     function renderServerMemoryNodes(nodes){
@@ -1119,6 +1191,8 @@ permalink: /
       $('projectMemoryToggle').disabled=!project;
       const serverToggle=$('serverProjectMemoryToggle');if(serverToggle){serverToggle.checked=chat?.serverProjectMemoryEnabled===true;serverToggle.disabled=!project;}
       document.querySelectorAll('[data-action="refresh-server-memory"],[data-action="upload-server-memory"]').forEach(button=>{button.disabled=!project;});
+      const helperButton=document.querySelector('[data-action="suggest-helper-memory"]');if(helperButton)helperButton.disabled=!project||helperMemoryBusy;
+      if(helperMemorySuggestionsProjectId&&(helperMemorySuggestionsProjectId!==(project?.id||null))){helperMemorySuggestions=[];helperMemorySuggestionsProjectId=null;renderHelperMemorySuggestions();setHelperMemoryStatus(memoryUiText('helperMemoryInitial'));}
       if(serverMemoryRenderedScopeId!==(project?.id||null)){serverMemoryRenderedScopeId=project?.id||null;$('serverMemoryBox')?.replaceChildren();setServerMemoryStatus(project?memoryUiText('serverMemoryInitial'):memoryUiText('serverMemoryNoProject'));}
       $('projectSummary').textContent=project
         ? (getUiLanguage()==='en'?project.name+' · '+chats.filter(c=>c.projectId===project.id).length+' chats · '+project.memory.length+' memory items':project.name+' · чатов: '+chats.filter(c=>c.projectId===project.id).length+' · фактов памяти: '+project.memory.length)
@@ -3151,7 +3225,9 @@ permalink: /
           case 'delete-project': deleteCurrentProject();break;
           case 'add-project-memory': addProjectMemory();break;
           case 'delete-project-memory': deleteProjectMemory(control.dataset.memoryId);break;
-           case 'refresh-server-memory': await loadServerProjectMemory();break;
+          case 'suggest-helper-memory': await suggestProjectMemoryWithHelper();break;
+          case 'add-helper-memory-suggestion': addHelperMemorySuggestion(Number(control.dataset.suggestionIndex));break;
+          case 'refresh-server-memory': await loadServerProjectMemory();break;
            case 'upload-server-memory': await uploadLocalProjectMemory();break;
            case 'review-server-memory': await reviewServerProjectMemory(control.dataset.memoryNodeId,control.dataset.reviewStatus);break;
            case 'delete-server-memory': await deleteServerProjectMemory(control.dataset.memoryNodeId,control.dataset.memorySourceId);break;
