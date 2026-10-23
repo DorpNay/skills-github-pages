@@ -108,11 +108,15 @@ GitHub Actions Secrets — это секреты **серверной CI-сре�
 
 ### Проверить все ключи одним запуском
 
-Откройте **Actions → Provider smoke test — all configured secrets → Run workflow**. Workflow проверит каждый провайдер, для которого найдётся подходящий Actions Secret; если ключа нет, этот провайдер будет помечен **SKIPPED**, а не ошибкой. Для каждого настроенного сервиса выполняется один короткий реальный запрос к указанной модели. Результат включает провайдер, модель, HTTP-статус, время ответа и безопасную причину ошибки. Любой неудачный реальный запрос приведёт к failed workflow, при этом остальные провайдеры всё равно будут проверены.
+Откройте **Actions → Provider smoke test — all configured secrets → Run workflow**. По умолчанию флажок **Confirm live requests** снят: в этом случае workflow завершится с пояснением и не обратится ни к одному провайдеру. Поставьте его только когда действительно согласны на реальные внешние запросы, возможную передачу короткого тестового промпта и расход квоты/Pollen.
+
+После явного подтверждения workflow проверит каждый провайдер, для которого найдётся подходящий Actions Secret; если ключа нет, этот провайдер будет помечен **SKIPPED**, а не ошибкой. Для каждого настроенного сервиса выполняется один короткий реальный запрос к выбранной модели. Результат включает провайдер, модель, HTTP-статус, время ответа и безопасную причину ошибки. Любой неудачный реальный запрос приведёт к failed workflow, при этом остальные провайдеры всё равно будут проверены.
 
 Workflow принимает и распространённые короткие названия секретов: Gemini — `GEMINI`, `GOOGLE_GEMINI`, `GEMINI_KEY`; Groq — `GROQ`, `GROQ_KEY`; xAI — `XAI`, `GROK`, `GROK_API_KEY`, `GROK_KEY`; Pollinations — `POLLINATIONS`, `POLLINATIONS_KEY`; OpenRouter — `OPENROUTER`, `OPENROUTER_KEY`; NVIDIA — `NVIDIA`, `NVIDIA_NIM_API_KEY`; Hugging Face — `HUGGINGFACE`, `HUGGING_FACE`, `HF`; Cloudflare — `CLOUDFLARE`, `CLOUDFLARE_API_KEY`, `CLOUDFLARE_TOKEN` (и `CF_ACCOUNT_ID` / `CF_ID` для Account ID).
 
 Pollinations App Key с префиксом `pk_` не является server access token и будет помечен как **SKIPPED**, а не отправлен в API. Для live smoke-test нужен отдельный секретный токен `sk_`; браузерное подключение приложения по-прежнему использует App Key + OAuth PKCE.
+
+Для аккаунтов, где стандартный model ID недоступен, можно задать repository **Variables** `MODEL_OVERRIDE_GEMINI`, `MODEL_OVERRIDE_GROQ`, `MODEL_OVERRIDE_XAI`, `MODEL_OVERRIDE_POLLINATIONS`, `MODEL_OVERRIDE_OPENROUTER`, `MODEL_OVERRIDE_NVIDIA`, `MODEL_OVERRIDE_HUGGINGFACE` или `MODEL_OVERRIDE_CLOUDFLARE`. Не помещайте секреты в Variables — используйте только имя общедоступной модели. Пустые значения сохраняют проверенный в документации стандартный ID.
 
 **Учтите стоимость:** запросы небольшие, но провайдер может списать токены/квоту; Pollinations расходует Pollen. Не используйте этот workflow как непрерывный мониторинг. Значения секретов не выводятся в журнал.
 

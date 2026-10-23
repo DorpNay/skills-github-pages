@@ -23,13 +23,14 @@
 - [~] Добавить кнопку вставки для ключей провайдера и своего gateway.
 - [~] После явной вставки ключа запускать один ограниченный refresh каталога и тест соединения.
 - [~] Блокировать конкурирующие одновременные тесты подключения.
-- [~] Проверять, что async-проверка не подтверждает другой провайдер/модель/ключ после их смены и что legacy-проверка aLandi не перезаписывает отдельно изменённую главную облачную карточку. Исправления и deterministic race E2E ожидают CI.
+- [x] Проверено: async-проверка не подтверждает другой провайдер/модель/ключ после их смены; legacy-проверка aLandi не перезаписывает отдельно изменённую главную облачную карточку. Deterministic race E2E прошли в PR #22 (HEAD `bd8fdddd…`) и post-merge Quality Sentinel прошёл на main `7fac23ce…`.
 - [~] При явной ошибке доступности модели искать не более трёх альтернатив того же провайдера.
 - [~] Не делать retry альтернативных моделей на 401/403, 429, сетевой ошибке или общем сбое API.
 - [~] Принимать корректные текстовые массивы, refusals/tool-calls и варианты совместимого ответа, не путать валидный JSON-envelope с ошибкой формата.
 - [~] Kilo Auto Free доступен как обычный альтернативный провайдер в общем списке: без ключа, только по явному выбору и без скрытого fallback. Официальная документация предупреждает, что промпты могут поступать провайдерам, которые логируют их/используют для улучшения моделей; конфиденциальные данные туда не отправлять. См. `docs/V016_IMPLEMENTATION_CHECKLIST.md` и [официальное предупреждение Kilo](https://kilo.ai/docs/getting-started/using-kilo-for-free).
 - [ ] Обновить все модельные ID по официальным динамическим каталогам; статические preset считать только fallback.
 - [ ] Провести E2E-проверку реального пользовательского выбора Kilo и документацию об обработке данных сторонним шлюзом.
+- [~] Ручной all-provider smoke workflow требует явной галочки перед реальными запросами и возможным расходом квоты; текущие модельные ID сверены по документации поставщиков, но live-доступность каждого аккаунта не проверялась.
 - [ ] Проверить официальные endpoints, CORS, лимиты, схему аутентификации и формат ошибок каждого сохранённого провайдера.
 - [ ] Никогда не переносить ключи из одного провайдера в другой и не экспортировать ключи в settings-profile.
 
@@ -59,7 +60,7 @@
 - [ ] Backend/API для проектной памяти, shared/cloud persistence и multi-device sync не считать реализованными: сейчас основной project experience хранится локально в браузере.
 - [ ] Реализовать authenticated API/индексацию project sources только после согласованного backend contract; не имитировать работающий индекс на пустой заглушке.
 - [ ] Добавить/проверить тест cross-project leak на серверной памяти, RAG, evidence, cache и deletion — где соответствующие слои существуют.
-- [~] RAG source deletion is scope-checked and removes chunk/concept/FTS rows; SQLite `secure_delete` and version-gated FTS5 `secure-delete` are being added with regression coverage. This still does **not** erase evidence-ledger copies, WAL/journals, backups or browser-local source copies; system-wide crypto-erasure remains open.
+- [~] RAG source deletion is scope-checked and removes chunk/concept/FTS rows; SQLite `secure_delete` plus version-gated FTS5 `secure-delete` regression tests passed on PR #24 HEAD and post-merge main. This still does **not** erase evidence-ledger copies, WAL/journals, backups or browser-local source copies; system-wide crypto-erasure remains open.
 - [ ] Проверить экспорт, исправление и удаление пользовательских фактов и связанные derived records.
 - [ ] Реализовать удаление/криптостирание по всем реальным слоям; не обещать SLA ≤60 секунд без измерения.
 - [ ] Протестировать valid_from, valid_until, recorded_at, конфликты, supersede и scoped recursive delete в gateway memory prototypes.
