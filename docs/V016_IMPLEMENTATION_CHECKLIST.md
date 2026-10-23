@@ -19,7 +19,7 @@
 
 | ID | Requirement | Status / evidence | Remaining gate |
 |---|---|---|---|
-| UX-01 | Main settings banner is for the user's own aLandi cloud only; no built-in or guessed gateway URL; green only after an actual successful model completion | **IMPLEMENTED / E2E pending** — `#cloudSettingsCard`, `connectAlandiCloud()`, `isUsableProbeResponse()`, initial `disconnected` state, 12-second timeout | No user's live gateway URL/credentials were supplied; real-world green status must remain unverified until user configures the gateway |
+| UX-01 | Main settings banner is for the user's own aLandi cloud only; no built-in or guessed gateway URL; green only after an actual successful model completion | **PR #21 Chromium E2E passed** — `#cloudSettingsCard`, `connectAlandiCloud()`, `isUsableProbeResponse()`, initial `disconnected` state, 12-second timeout | No user's live gateway URL/credentials were supplied; real-world green status must remain unverified until user configures the gateway |
 | UX-02 | Legacy provider API keys, endpoint/model settings and Tavily are in separate collapsible advanced/search sections | **IMPLEMENTED** — `#legacyProviderSettings`, `#searchToolsSettings` | Verify final Chromium tests |
 | UX-03 | Kilo is one alternate entry in the ordinary provider list, not a primary-cloud action or silent fallback | **DONE in source** — `kilo` option and `kilo-auto/free` preset in the common provider configuration; no Kilo action in `#cloudSettingsCard` | Kilo is an explicit external route. Its official docs warn that Auto Free may forward prompts to providers that log/use them for improvement; never use for confidential data ([Kilo Auto Free](https://kilo.ai/docs/getting-started/using-kilo-for-free), [models and providers](https://kilo.ai/docs/gateway/models-and-providers)) |
 | UX-04 | Provider connection is single-flight; no stale “connected” indicator after provider/model/key changes | **IMPLEMENTED** — shared `isTestingProviderConnection` lock, state invalidation and bounded probes | Current E2E run must finish green |
@@ -35,9 +35,9 @@
 | UX-14 | New-chat composer is centered; its textarea grows within bounds and transitions toward the bottom after the chat begins/large text appears | **IMPLEMENTED** — `composer-centered`, `composer-bottom-transition`, bounded auto-resize | Validate touch keyboards, landscape and reduced motion in Chromium/mobile tests |
 | UX-15 | Text attachment, filename/type/size limits, embedded prompt-injection warning and bounded content size | **PARTIAL** — only .txt/.md/.csv/.json/.log, 128 KiB and 25,000 chars | Not a general document uploader; no PDF/DOCX/XLSX/audio/video ingestion pipeline |
 | UX-16 | Hold/click/swipe voice chooser offers intuitive live conversation and voice-message directions | **UI preview only** — gesture/menu works, explicitly says “soon/not connected” | No mic capture, ASR, TTS, audio transport, AEC or playback runtime is connected; keep this status honest |
-| UX-17 | Projects: create, rename/edit instructions, link/move/detach a chat, opt-in project memory, add/delete project facts, export/import a JSON project bundle | **IMPLEMENTED / E2E pending** — browser-local project registry and chat `projectId` | LocalStorage is not encrypted or multi-user storage; no project source index, goals, history/audit API or server-backed sync |
+| UX-17 | Projects: create, rename/edit instructions, link/move/detach a chat, opt-in project memory, add/delete project facts, export/import a JSON project bundle | **PR #21 Chromium E2E passed** — browser-local project registry and chat `projectId` | LocalStorage is not encrypted or multi-user storage; no project source index, goals, history/audit API or server-backed sync |
 | UX-18 | Memory scope: project facts are inserted only when this chat belongs to the project and the chat-level toggle is on; global memory requires an explicit opt-in | **IMPLEMENTED in prompt assembly** — `chat.projectMemoryEnabled`, `STORAGE.globalMemoryEnabled` | E2E boundary assertions must pass; the separate SQLite memory graph is not yet the frontend storage backend |
-| UX-19 | Project deletion removes its linked chats while preserving other projects; imports are capped and normalized | **IMPLEMENTED / E2E pending** | The browser test added to this PR must confirm deletion/export/import behavior |
+| UX-19 | Project deletion removes its linked chats while preserving other projects; imports are capped and normalized | **PR #21 Chromium E2E passed** | Backend deletion propagation and server-side derived-index cleanup remain deferred |
 | UX-20 | Instructions inside the app become shorter and clearer without hiding privacy/model constraints | **PARTIAL** — provider help and default system prompt are compacted; key/privacy caveats remain visible | Audit all legacy microcopy and translation keys after the main E2E pass |
 
 ## B. 81-item audit of the fixation document and four-part manifesto
@@ -46,8 +46,8 @@ The following items cover the initial fixation document plus manifesto sections 
 
 | # | Manifest requirement | Current status / proof point | Action needed / acceptance gate |
 |---:|---|---|---|
-| 1 | Reconciled state hash from sorted artifact paths + individual SHA-256 values (`AI-STATE-001b`) | **IMPLEMENTED IN BRANCH; latest CI pending** — `scripts/manifest_state.py` hashes sorted path/content digests, excludes common secret/generated paths, and includes root `index.md` | Verify the new root-entrypoint test and deterministic output in latest CI; remember the fingerprint is not a signature or safety proof |
-| 2 | INTEL triad: verified upstream URL + exact artifact license + evidence/claim source | **IMPLEMENTED PROTOTYPE; latest CI pending** — `scripts/check_intel_triad.py` rejects missing/placeholder fields, obvious test domains and non-HTTPS claim sources | This is offline syntax/completeness validation, not live URL, license-text or artifact-hash verification; keep `ship: false` until manual provenance and hashes are confirmed |
+| 1 | Reconciled state hash from sorted artifact paths + individual SHA-256 values (`AI-STATE-001b`) | **PR #21 CI passed** — `scripts/manifest_state.py` hashes sorted path/content digests, excludes common secret/generated paths, and includes root `index.md` | Fingerprint is not a signature or safety proof; expand secret-pattern tests if new secret formats are added |
+| 2 | INTEL triad: verified upstream URL + exact artifact license + evidence/claim source | **PR #21 CI passed** — `scripts/check_intel_triad.py` rejects missing/placeholder fields, obvious test domains and non-HTTPS claim sources | This is offline syntax/completeness validation, not live URL, license-text or artifact-hash verification; keep `ship: false` until manual provenance and hashes are confirmed |
 | 3 | LOOP, DECISIONS, EVALS and ownership/reversal cost for every decision | **SPEC / governance docs present** | Run a completeness sweep across all four registers; missing metric/baseline means no production claim |
 | 4 | Tier0/Tier1 latency budgets with margin and correct p95 aggregation | **CONTRACT IMPLEMENTED / unmeasured** — `latency/budget_v2.yaml` defines target allocations, 15% acceptance margin and explicitly unmeasured status | Capture end-to-end distributions on target hardware; stage allocations are planning bounds, not p95 results |
 | 5 | Router inputs: intent confidence, context cost, budget remaining and risk class | **TYPED POLICY PROTOTYPE; not runtime-integrated** — `router/policy.py` validates inputs and tests destructive confirmation, low-budget fallback and opt-in large-model escalation | Wire the policy into a real router only after a defined adapter contract; build oracle-labelled cases and measure route regret before production claims |
@@ -85,7 +85,7 @@ The following items cover the initial fixation document plus manifesto sections 
 | 37 | Qwen hybrid attention positioning, if using such a model architecture | **CONDITIONAL / no verified Qwen-specific pipeline** | Implement only after model architecture is confirmed; do not claim general “first/last token” positioning is sufficient without eval |
 | 38 | Multilingual OCR benchmark (RU/EN/Thai where supported), tables, financial values, injection documents, page+bbox provenance | **NOT IMPLEMENTED** | Create versioned corpus, CER/WER/exact numeric match/table/order/citation/injection metrics and select only by measured results |
 | 39 | Final DoD: cross-project isolation, deletion propagation, privacy, honest timeline, hard RAM cap, provenance UI | **PARTIAL** — project isolation is being added to E2E; other maturity gates remain open | Every item needs a concrete automated test/measurement, not a sentence in docs |
-| 40 | Project CRUD, project instructions, chat move/detach, project bundle import/export, memory toggles | **IMPLEMENTED in static client / E2E pending** | Current E2E test must prove isolation and deletion; server-backed sources/audit history/user profile remain undone |
+| 40 | Project CRUD, project instructions, chat move/detach, project bundle import/export, memory toggles | **Static-client implementation / PR #21 E2E passed** | Server-backed sources/audit history/user profile remain undone |
 | 41 | Complete document intake: MIME/size/timeout validation, text/tables/formulas/images, provenance-preserving chunks and index | **PARTIAL** — bounded plain-text attachment only; backend RAG primitives exist | Secure ingest API, parser adapters, metadata/provenance, source UI, reindex/delete flow required |
 | 42 | Google Drive OAuth + PKCE, minimum read-only scopes, encrypted tokens, Picker, sync/revoke and cleanup | **PARTIAL backend contract/primitive only** | Add Picker and authenticated source UI; prove token encryption, revocation and index deletion; no refresh tokens in browser storage |
 | 43 | Memory graph node/edge vocabulary, candidate→confirmed/disputed/superseded/rejected lifecycle and review | **PROTOTYPE** — schema/temporal/conflict primitives exist | Wire extraction and user review/edit/export; no hidden chain-of-thought in memory |
@@ -118,7 +118,7 @@ The following items cover the initial fixation document plus manifesto sections 
 | 70 | MIME allowlist, archive depth, cleanup and extraction/time limits | **PARTIAL** — plain-text attachment has an extension/size guard | Validate MIME/content signatures in server ingestion before adding binary formats |
 | 71 | LOOP WIP limits, kill rules, Eureka clause, stuck protocol and anti-patterns | **SPEC / governance** | Enforce WIP in the work log and stop experiments with no baseline/evidence; record reversal cost |
 | 72 | Definition of Done by maturity: Core, Memory/Projects, Knowledge, Agent Teams, Multimodal, Transparency | **NOT YET MET for complete product** | Keep maturity levels separately scored; don't let project UI completion imply gateway/voice/RAG is production-ready |
-| 73 | Method: audit → hypothesis → probe → minimal patch → independent review → tests/benchmark → CI/E2E → merge → post-merge verification | **ACTIVE workflow** | Current PR #21 must finish E2E and pass fresh CI before merge; then verify published Pages |
+| 73 | Method: audit → hypothesis → probe → minimal patch → independent review → tests/benchmark → CI/E2E → merge → post-merge verification | **PR #21 merged; post-merge CI check running** | PR-head E2E and Pages deployment workflow passed; do not claim live gateway deployment |
 | 74 | 20-item final checklist in manifesto §39, including WIP/kill/eval multiplier/technology registry | **AUDITED; most items remain partially satisfied** | Treat each check as a separate acceptance gate, not a general “all good” checkbox |
 | 75 | UI lint, multilingual typography and accessibility | **PARTIAL** — system-font fallbacks, focus states, reduced-motion controls exist | Impeccable lint not installed; run contrast/keyboard/mobile/RTL where applicable before calling design complete |
 | 76 | Exact route telemetry and factual research trace (not chain-of-thought) | **PARTIAL** — per-attempt route trace and research trace are in the client | Event schema/API-wide timeline and source provenance still need integration; don't display imagined stages |
@@ -126,18 +126,18 @@ The following items cover the initial fixation document plus manifesto sections 
 | 78 | Target hardware profile `laptop_8gb_cpu_mvp` and optional ARM 24 GB upgrade | **SPEC ONLY / unmeasured**; upgrade doc says no VM created | Keep 8 GB CPU-only as target profile; no VM/DNS change without credentials/approval |
 | 79 | Manifest, latency, router, binary frames, hard-delete and Impeccable gates from the initial v8 execution plan | **NOT COMPLETE** — these are not proven live simply because later contracts mention them | Track each path and required test/measurement in the source-of-truth; implement in ordered phases |
 | 80 | API-provider catalog, real connection diagnosis, explicit key/paste controls and public web tools | **IMPLEMENTED / regression-backed**, with live-provider secrets unavailable in CI | Run live probe for each configured provider in a controlled session; preserve provider-specific errors and avoid model-specific fake success |
-| 81 | Merge, deployment, post-merge browser check and updated project state/volley log | **PENDING** | Merge only after current Actions finish green; then verify the exact main SHA and published URL, update this ledger, PROJECT_STATE, ACCEPTED_IMPROVEMENTS and VOLLEY_LOG |
+| 81 | Merge, deployment, post-merge browser check and updated project state/volley log | **PARTIAL** | PR #21 merged at `97793ddfc00b1d364e9109ecd3efabe927a1f08a`; Pages deployment workflow passed; final main-branch quality run and live page-content verification still pending |
 
 ## C. Current execution To Do — ordered and checked each session
 
-### P0 — finish the current PR safely
-- [ ] Confirm latest PR head includes UI, project, quality-sentinel and E2E test updates.
-- [ ] Get all Independent Quality Sentinels jobs green on that exact head.
-- [ ] Get Chromium E2E green, including the new project scope/export/deletion cases.
-- [ ] Review changed-file diff for accidental auth, key, route or scope regressions.
-- [ ] Update PR #21 description to state that Kilo is only an ordinary alternate provider and that project support is browser-local.
-- [ ] Merge only if the complete current run is green and mergeable.
-- [ ] Verify main SHA and deployed GitHub Pages output after merge; do not claim the gateway is live.
+### P0 — post-merge verification for PR #21
+- [x] Confirmed merged PR #21 contains UI, project, quality-sentinel and E2E test updates.
+- [x] All Independent Quality Sentinels passed on PR head `acce1d7ce5ac6eb37251fe5d899a392150b82e9e`.
+- [x] Chromium E2E passed, including cloud-primary route, keyless web search, project scope/export/deletion and mobile voice swipe.
+- [x] Reviewed the changed-file diff and added regression coverage for auth, route, scope and recovery paths.
+- [x] PR #21 description records Kilo as an explicit alternate and project support as browser-local.
+- [x] Merged only after PR-head quality, Chromium E2E, Lite Gateway and provenance gates passed.
+- [~] Main SHA confirmed as `97793ddfc00b1d364e9109ecd3efabe927a1f08a` and Pages deployment workflow passed; final post-merge quality and live content check remain.
 
 ### P1 — required next implementation slices
 - [ ] Add automated two-project isolation, deletion propagation, global opt-in and export/import tests against the backend memory graph.
