@@ -3070,11 +3070,30 @@ permalink: /
     $('globalMemoryToggle').addEventListener('change',event=>{safeSet(STORAGE.globalMemoryEnabled,String(event.target.checked));showToast(event.target.checked?(getUiLanguage()==='en'?'Global memory enabled.':'Глобальная память включена.'):(getUiLanguage()==='en'?'Global memory disabled.':'Глобальная память отключена.'));});
     $('projectMemoryInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();document.querySelector('[data-action="add-project-memory"]').click();}});
     $('userInput').addEventListener('input', () => autoResizeTextarea($('userInput')));
-    $('voiceUnavailableButton').addEventListener('click',()=>{$('voiceMenu').classList.toggle('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded',String(!$('voiceMenu').classList.contains('hidden')));});
-    let voicePointerStartY=null,voiceHoldTimer=null;
-    $('voiceUnavailableButton').addEventListener('pointerdown',event=>{voicePointerStartY=event.clientY;voiceHoldTimer=setTimeout(()=>{$('voiceMenu').classList.remove('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','true');},220);});
-    $('voiceUnavailableButton').addEventListener('pointerup',event=>{if(voiceHoldTimer){clearTimeout(voiceHoldTimer);voiceHoldTimer=null;}if(voicePointerStartY!==null){const delta=event.clientY-voicePointerStartY;if(Math.abs(delta)>35){$('voiceMenu').classList.remove('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','true');showToast(delta<0?'Голосовой диалог пока не подключён.':'Запись голосового сообщения пока не подключена.');}voicePointerStartY=null;}});
-    $('voiceUnavailableButton').addEventListener('pointercancel',()=>{if(voiceHoldTimer)clearTimeout(voiceHoldTimer);voiceHoldTimer=null;voicePointerStartY=null;});
+    let voicePointerStartY=null,voiceHoldTimer=null,suppressVoiceClick=false,voiceHoldOpened=false;
+    const showVoiceMenu=()=>{$('voiceMenu').classList.remove('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','true');};
+    $('voiceUnavailableButton').addEventListener('click',()=>{
+      if(suppressVoiceClick){suppressVoiceClick=false;return;}
+      $('voiceMenu').classList.toggle('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded',String(!$('voiceMenu').classList.contains('hidden')));
+    });
+    $('voiceUnavailableButton').addEventListener('pointerdown',event=>{
+      voicePointerStartY=event.clientY;voiceHoldOpened=false;
+      if(voiceHoldTimer)clearTimeout(voiceHoldTimer);
+      voiceHoldTimer=setTimeout(()=>{voiceHoldTimer=null;voiceHoldOpened=true;suppressVoiceClick=true;showVoiceMenu();},220);
+    });
+    $('voiceUnavailableButton').addEventListener('pointerup',event=>{
+      if(voiceHoldTimer){clearTimeout(voiceHoldTimer);voiceHoldTimer=null;}
+      if(voicePointerStartY!==null){
+        const delta=event.clientY-voicePointerStartY;
+        if(Math.abs(delta)>35){suppressVoiceClick=true;showVoiceMenu();showToast(delta<0?'Голосовой диалог пока не подключён.':'Запись голосового сообщения пока не подключена.');}
+        if(voiceHoldOpened)suppressVoiceClick=true;
+        voicePointerStartY=null;
+      }
+    });
+    $('voiceUnavailableButton').addEventListener('pointercancel',()=>{
+      if(voiceHoldTimer)clearTimeout(voiceHoldTimer);
+      voiceHoldTimer=null;voicePointerStartY=null;voiceHoldOpened=false;suppressVoiceClick=false;
+    });
     $('userInput').addEventListener('keydown', (event) => {
       if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) { event.preventDefault(); sendMessage(false); }
     });
