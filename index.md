@@ -1786,7 +1786,9 @@ permalink: /
         if(message&&typeof message.refusal==='string'&&message.refusal.trim())return true;
       }
       if(typeof payload?.output_text==='string'&&payload.output_text.trim())return true;
-      return !payload&&String(rawText||'').trim().length>0&&String(rawText).trim().length<12000&&!/^\s*</.test(rawText);
+      // A 200 response is not proof of model success unless the OpenAI-compatible JSON envelope is recognized.
+      // Never show a green connection lamp for proxy text, HTML, or an unknown error body.
+      return false;
     }
     async function refreshApiKeyLamp(){
       const provider=currentProvider();
