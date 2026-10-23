@@ -1057,6 +1057,68 @@ test('Deep mode caps tool fan-out, suppresses repeated calls, and still returns 
 
 
 
+test('web_search falls back to public sources when Tavily is not configured', async ({ page }) => {
+  let modelCalls = 0, tavilyCalls = 0, publicSourceCalls = 0;
+  await page.route('https://api.example.test/v1/models', async route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'open-search-model' }] })
+  }));
+  await page.route('https://api.tavily.com/**', async route => {
+    tavilyCalls++;
+    return route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: 'should not be called without a key' }) });
+  });
+  await page.route('https://en.wikipedia.org/**', async route => {
+    publicSourceCalls++;
+    return route.fulfill({ status: 200, contentType: 'application/json',
+      body: JSON.stringify({ query: { search: [{ title: 'Open Search Evidence', snippet: 'A public source confirms the fallback works.' }] } }) });
+  });
+  await page.route('https://api.github.com/search/repositories**', async route => {
+    publicSourceCalls++;
+    return route.fulfill({ status: 200, contentType: 'application/json',
+      body: JSON.stringify({ items: [{ full_name: 'example/open-search', html_url: 'https://github.com/example/open-search', stargazers_count: 7, updated_at: '2026-10-01T00:00:00Z', description: 'Public search fallback fixture' }] }) });
+  });
+  await page.route('https://hn.algolia.com/**', async route => {
+    publicSourceCalls++;
+    return route.fulfill({ status: 200, contentType: 'application/json',
+      body: JSON.stringify({ hits: [{ title: 'Fallback source result', url: 'https://news.example.test/fallback', points: 3, created_at: '2026-10-01T00:00:00Z', story_text: 'A fallback fixture result.' }] }) });
+  });
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    modelCalls++;
+    const body = route.request().postDataJSON();
+    if (Array.isArray(body.tools) && body.tools.length) {
+      const webSearchTool = body.tools.find(tool => tool.function?.name === 'web_search');
+      expect(webSearchTool).toBeTruthy();
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+        model: 'open-search-model',
+        choices: [{ message: { role: 'assistant', content: null, tool_calls: [{
+          id: 'open-search-fallback-call', type: 'function',
+          function: { name: 'web_search', arguments: JSON.stringify({ query: 'open search fallback fixture' }) }
+        }] }, finish_reason: 'tool_calls' }]
+      }) });
+    }
+    expect(body.messages.some(message => message.role === 'tool' && String(message.content).includes('Open Search Evidence'))).toBe(true);
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+      model: 'open-search-model', choices: [{ message: { role: 'assistant', content: 'Open-source fallback completed.' } }]
+    }) });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('open-search-model');
+  await page.locator('#apiKey').fill('e2e-open-search-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#toggleSearch').check();
+  await page.locator('#userInput').fill('Find evidence using the keyless open-search fallback.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Open-source fallback completed.', { timeout: 20000 });
+  expect(modelCalls).toBe(2);
+  expect(publicSourceCalls).toBeGreaterThan(0);
+  expect(tavilyCalls).toBe(0);
+});
+
+
 test('aLandi cloud probe rejects HTTP 200 proxy text as proof of a model connection', async ({ page }) => {
   await page.route('https://cloud.example.test/v1/chat/completions', async route => route.fulfill({
     status: 200, contentType: 'text/plain; charset=utf-8',
