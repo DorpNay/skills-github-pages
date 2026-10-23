@@ -1,8 +1,8 @@
 project_state:
   version: 4
   reviewed_on: "2026-10-23"
-  last_volley: "V-2026-10-23-CPOCKET-RUNBOOK"
-  gate: "Main is 653febb01e2f9887dfec8116bf81f26f39e5077a after PR #27; post-merge Gateway, provenance, Quality (including Chromium and published Pages smoke), and Pages deployment passed. PR #28 adds cPocket cleanup resilience and runbook reconciliation; CI pending. Live provider smoke, configured private gateway/VPS and hardware benchmarks remain unverified."
+  last_volley: "V-2026-10-23-MEMORY-BROWSER-BRIDGE"
+  gate: "Main is e424d353418cad62981eb269b4082d2925592708 after PR #28; post-merge Gateway, provenance, Quality and Pages passed. PR #29 adds opt-in browser-to-server project memory; current-head Quality/Chromium and provenance must pass before merge. Live provider smoke, configured private gateway/VPS and hardware benchmarks remain unverified."
   source_of_truth:
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
@@ -18,12 +18,12 @@ project_state:
     gateway_vps: "not verified by this change; do not claim deployed"
     experimental_feature_flags: "false by default"
   current_ui_track:
-    branch: "feat/alandi-cloud-settings-ux"
-    pull_request: 21
-    status: "merged_provider_UI_and_race_guards_postmerge_quality_and_Pages_passed"
+    branch: "feat/alandi-project-memory-bridge"
+    pull_request: 29
+    status: "PR29_opt_in_server_memory_bridge_CI_pending_no_live_gateway_activation"
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback"
-    projects: "Browser-local CRUD, instructions, chat association, project-memory opt-in, import/export; not an authenticated backend API"
+    projects: "Browser-local CRUD plus manual candidate-first server memory bridge; per-chat confirmed-only retrieval requires both project-memory opt-ins; CI pending; gateway feature flag off by default"
     voice_ui: "Preview chooser only; no live microphone/ASR/TTS runtime"
     detailed_ledger: "docs/V016_IMPLEMENTATION_CHECKLIST.md"
     user_todo: "docs/USER_REQUEST_CHECKLIST.md"
@@ -66,7 +66,7 @@ improvements:
   AI-MEM-003: {status: "scoped_manager_prototype", artifact: "gateway/memory/scope.py", eval: "EV-MEM-003"}
   AI-MEM-004: {status: "explicit_conflicts_no_auto_winner", artifact: "gateway/memory/conflict.py", eval: "EV-MEM-004"}
   AI-MEM-005: {status: "scoped_fts5_memory_search_prototype_merged_not_ui_wired", artifact: "gateway/memory/manager.py; gateway/memory/schema.sql", eval: "EV-MEM-005"}
-  AI-MEM-006: {status: "authenticated_feature_flagged_single_owner_api_ci_pending_not_static_ui_wired", artifact: "gateway/app.py; gateway/memory/manager.py", eval: "EV-MEM-006"}
+  AI-MEM-006: {status: "authenticated_single_owner_api_with_manual_browser_bridge_ci_pending_gateway_activation_required", artifact: "gateway/app.py; gateway/memory/manager.py; index.md; tests/e2e/app.spec.mjs", eval: "EV-MEM-006"}
   AI-RAG-001: {status: "fts5_lexical_graph_not_full_lazygraphrag", artifact: "gateway/rag/lazy_graph_rag.py", eval: "EV-RAG-001"}
   AI-RAG-002: {status: "conditional_not_installed", artifact: "gateway/rag/rag_anything.py", eval: "EV-RAG-002"}
   AI-RAG-003: {status: "citation_hash_offset_primitives", artifact: "gateway/rag/citations.py", eval: "EV-RAG-003"}
@@ -79,14 +79,18 @@ improvements:
   AI-TOOLS-005: {status: "approval_ticket_primitive_no_ui", artifact: "gateway/security/approval_gates.py", eval: "EV-SEC-002"}
   AI-LICENSE-001: {status: "manifest_and_ci_gate_prototype_no_voice_shipped", artifact: "infra/license/provenance_manifest.yaml", eval: "EV-LICENSE-001"}
   AI-UI-001: {status: "browser_project_prototype_e2e_passed_local_only", artifact: "index.md; docs/V016_IMPLEMENTATION_CHECKLIST.md", eval: "EV-UI-002"}
-  AI-UI-002: {status: "project_and_global_memory_opt_in_client_side_backend_deferred", artifact: "index.md; gateway/memory/scope.py", eval: "EV-UI-003"}
+  AI-UI-002: {status: "local_project_memory_plus_manual_server_graph_bridge_opt_in_per_chat_ci_pending", artifact: "index.md; gateway/app.py; tests/e2e/app.spec.mjs", eval: "EV-UI-003"}
   AI-UI-003: {status: "partial_bilingual_theme_clock_composer_voice_preview_e2e_passed", artifact: "index.md", eval: "EV-UI-004"}
   AI-PROVIDER-001: {status: "cloud_first_provider_recovery_e2e_passed_gateway_unconfigured", artifact: "index.md", eval: "EV-PROVIDER-UI-001"}
   AI-PROVIDER-002: {status: "live_smoke_explicit_consent_guard_ci_passed_not_dispatched", artifact: ".github/workflows/provider-smoke-all.yml; scripts/provider-smoke-all.mjs", eval: "EV-PROVIDER-001"}
-  AI-PROJECT-001: {status: "browser_local_crud_and_scope_e2e_passed_backend_deferred", artifact: "index.md; tests/e2e/app.spec.mjs", eval: "EV-PROJECT-001"}
+  AI-PROJECT-001: {status: "browser_local_crud_e2e_passed_server_bridge_ci_pending", artifact: "index.md; tests/e2e/app.spec.mjs", eval: "EV-PROJECT-001"}
   AI-AGENT-001: {status: "logical_roles_not_process_swarm", artifact: "docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md", eval: "EV-AGENT-001"}
   AI-AGENT-002: {status: "limited_existing_routing", artifact: "gateway/tools/dag_engine.py", eval: "EV-AGENT-002"}
   AI-AGENT-003: {status: "bounded_dag_prototype", artifact: "gateway/tools/dag_engine.py", eval: "EV-AGENT-003"}
+  AI-AGENT-004: {status: "accepted_helper_model_design_not_runtime_wired", artifact: "DECISIONS.md; docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md", eval: "EV-AGENT-004"}
+  AI-IMAGE-001: {status: "roadmap_only_no_image_generation_runtime", artifact: "docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md; docs/V016_IMPLEMENTATION_CHECKLIST.md", eval: "EV-IMAGE-001"}
+  AI-OPS-001: {status: "free_first_roadmap_no_billable_resources_provisioned", artifact: "DECISIONS.md; docs/USER_REQUEST_CHECKLIST.md", eval: "EV-OPS-001"}
+  AI-MODEL-001: {status: "no_hidden_refusal_filter_policy_only_no_zero_refusal_guarantee", artifact: "DECISIONS.md", eval: "EV-MODEL-001"}
   AI-LEARN-001: {status: "governance_only_no_self_modification", artifact: "LOOP.md", eval: "EV-LEARN-001"}
   AI-LEARN-002: {status: "versioned_skill_rollback_deferred", artifact: "LOOP.md", eval: "EV-LEARN-002"}
 

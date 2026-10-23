@@ -140,3 +140,24 @@
 - Не проводить destructive runtime changes автоматическим middleware.
 - Не публиковать API keys, OAuth secrets, refresh tokens или prompts в логах.
 - Любой live activation требует проверки на целевом VPS и отдельного rollback plan.
+
+
+## D-013 — Browser-to-server project memory bridge is explicit and candidate-first
+
+- **Status:** Implemented on PR #29 branch; current-head CI and live gateway activation pending.
+- **Decision:** browser-local project facts remain local until the owner clicks “Send local facts”. Upload creates server-side candidate nodes; UI can list, confirm/reject and delete them. No automatic migration or global-memory write occurs.
+- **Retrieval gate:** server search runs only when the current chat has both project memory and server project memory opted in. Query scope is exactly `scope=project, scope_id=currentProject.id`; only `confirmed` nodes enter the prompt. Retrieval is capped at six facts and 1200 total characters; manual uploads are bounded to 100 new candidates per click, query up to 100 recent server nodes (the API limit), and keep a bounded local source-ID ledger for idempotency across batches. A failed lookup degrades to local-only context and is shown in the UI.
+- **Activation:** the browser uses the configured aLandi gateway URL ending in `/v1` and the aLandi bearer key. Gateway requires `ALANDI_MEMORY_GRAPH_ENABLED=true`; keep `ALANDI_GLOBAL_MEMORY_ENABLED=false`. CORS must allow the Pages origin. This is still a single-owner gateway, not multi-user ACL.
+- **Deletion:** deleting a browser project does not silently delete server facts. Delete server facts explicitly in the memory panel before deleting the local project if they are no longer needed.
+- **Acceptance:** Chromium mock proves no auto-upload, candidate-first upload, review, no context inclusion when either toggle is off, and scoped retrieval with both on. Live gateway proof is separate.
+- **Rollback:** turn off the per-chat server-memory toggle or revert the UI bridge; leave the graph flag off if not needed.
+- **Links:** `index.md`, `gateway/app.py`, `gateway/memory/manager.py`, EV-MEM-007.
+
+## D-014 — Free-first stack and local model autonomy
+
+- **Status:** accepted direction; small-model dispatch and image generation are not yet implemented.
+- **Decision:** month-one development must not provision billable resources automatically. Use GitHub Pages, already-owned hardware and local Ollama where available; public free APIs are optional, quota-bound and disclose data to the selected provider.
+- **Agent split:** keep one main model for planning, difficult reasoning and synthesis. Evaluate one small helper for bounded extraction, routing hints, compression and candidate-memory extraction. Do not run dozens of concurrent model processes or load multiple weights on an 8 GB host without measured benefit.
+- **Model autonomy:** do not add a hidden refusal layer that blocks otherwise allowed requests. Local model behavior depends on the selected checkpoint; external providers enforce their own terms and filters. No model can be promised to never refuse.
+- **Image generation:** not a working feature in the current browser UI. Add only after a real local/provider backend, exact artifact/license, VRAM/runtime fit and end-to-end image-return test are selected.
+- **Upgrade gate:** compare free/local baseline and paid target on identical tasks: p50/p95, peak RAM, quality, quotas and expected monthly cost. Preserve the OpenAI-compatible gateway contract and explicit endpoint/model changes.

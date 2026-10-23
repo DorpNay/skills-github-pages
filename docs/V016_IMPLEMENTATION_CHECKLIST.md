@@ -168,3 +168,13 @@ The following items cover the initial fixation document plus manifesto sections 
 - Kilo Auto Free is a free external route, not a private/local route. The current upstream model mapping can change server-side; the user must choose it explicitly and must not send confidential data. Official docs: [Kilo Gateway API](https://kilo.ai/docs/gateway/api-reference), [Auto Free data handling and limits](https://kilo.ai/docs/gateway/models-and-providers).
 - Current browser/CI mocks prove integration behavior only. Live provider/gateway success must be established by a real request to the user's configured endpoint.
 - Latency, OCR/ASR/TTS quality, memory usage and sandbox safety remain **unmeasured/not proven** until their named target-specific reports and adversarial tests exist.
+
+
+## Supplement: product work after the original V-016 checklist (not part of its original 81 items)
+
+- [~] **AI-MEM-006 — Server graph API + browser bridge:** API remains feature-flagged and single-owner; browser can manually upload project-local facts as candidates, review/reject/delete them and list scoped nodes. PR #29 current-head CI pending.
+- [~] **AI-MEM-007 — Prompt retrieval gate:** server retrieval is scoped to the active project, confirmed-only, max 6 nodes / 1200 characters, and requires both per-chat project-memory toggles. Browser mock E2E pending current-head Chromium.
+- [ ] **AI-AGENT-004 — Small helper model:** design only. Benchmark one 0.8B–2B class local model for bounded extraction/classification/summarization against a single-main-model baseline. No separate helper model is wired into runtime yet.
+- [ ] **AI-IMAGE-001 — Image generation:** no working image-generation UI/runtime exists yet. Select local ComfyUI or explicit external provider, verify exact checkpoint/license/hash/VRAM and add request-to-image E2E before marking implemented.
+- [ ] **AI-OPS-001 — Free-first month:** no automatic paid resource provisioning. Use existing hardware and optional free-tier APIs with explicit quota/privacy caveats; paid hosting only after benchmark and owner decision.
+- [ ] **AI-MODEL-001 — Local-model autonomy:** no hidden application-level refusal filter is planned. Actual refusals remain checkpoint/provider-dependent; do not claim guaranteed zero refusals.
