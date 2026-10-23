@@ -1185,3 +1185,103 @@ test('aLandi cloud remains disconnected when the model answers but gateway healt
   await expect(page.locator('#cloudStatus')).toContainText('health-check gateway вернул HTTP 503');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
 });
+
+test('provider probe cannot mark changed credentials connected after an in-flight response', async ({ page }) => {
+  let beginProbe, releaseProbe;
+  const probeStarted = new Promise(resolve => { beginProbe = resolve; });
+  const probeGate = new Promise(resolve => { releaseProbe = resolve; });
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'race-model' }] })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    beginProbe();
+    await probeGate;
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'race-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('race-model');
+  await page.locator('#apiKey').fill('first-race-key');
+  await page.locator('[data-action="test-connection"]').click();
+  await probeStarted;
+  await page.locator('#apiKey').fill('second-race-key');
+  releaseProbe();
+  await expect(page.locator('#toast')).toContainText('Результат не сохранён', { timeout: 15000 });
+  await expect(page.locator('#apiKey')).toHaveValue('second-race-key');
+  await expect(page.locator('#apiKeyShell')).not.toHaveAttribute('data-state', 'connected');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_provider_connection_custom'))).toBe('');
+});
+
+
+test('aLandi cloud probe cannot overwrite settings changed while its request is in flight', async ({ page }) => {
+  let beginProbe, releaseProbe;
+  const probeStarted = new Promise(resolve => { beginProbe = resolve; });
+  const probeGate = new Promise(resolve => { releaseProbe = resolve; });
+  await page.route('https://race-cloud.example.test/v1/chat/completions', async route => {
+    beginProbe();
+    await probeGate;
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'race-cloud-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+    });
+  });
+  await page.route('https://race-cloud.example.test/healthz', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' })
+  }));
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#cloudBaseUrl').fill('https://race-cloud.example.test/v1');
+  await page.locator('#cloudModel').fill('race-cloud-model');
+  await page.locator('#cloudApiKey').fill('first-cloud-race-key');
+  await page.locator('[data-action="connect-alandi-cloud"]').click();
+  await probeStarted;
+  await page.locator('#cloudApiKey').fill('second-cloud-race-key');
+  releaseProbe();
+  await expect(page.locator('#cloudStatus')).toContainText('Настройки изменились во время проверки', { timeout: 15000 });
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await expect(page.locator('#cloudApiKey')).toHaveValue('second-cloud-race-key');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
+});
+
+
+test('legacy aLandi provider probe does not overwrite changed primary cloud settings', async ({ page }) => {
+  let beginProbe, releaseProbe;
+  const probeStarted = new Promise(resolve => { beginProbe = resolve; });
+  const probeGate = new Promise(resolve => { releaseProbe = resolve; });
+  await page.route('https://legacy-alandi.example.test/v1/chat/completions', async route => {
+    beginProbe();
+    await probeGate;
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'legacy-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('alandi');
+  await page.locator('#baseUrl').fill('https://legacy-alandi.example.test/v1');
+  await page.locator('#modelName').fill('legacy-model');
+  await page.locator('#apiKey').fill('legacy-probe-key');
+  await page.locator('#cloudBaseUrl').fill('https://cloud-initial.example.test/v1');
+  await page.locator('#cloudModel').fill('cloud-initial-model');
+  await page.locator('#cloudApiKey').fill('cloud-initial-key');
+  await page.locator('[data-action="test-connection"]').click();
+  await probeStarted;
+  await page.locator('#cloudBaseUrl').fill('https://cloud-updated.example.test/v1');
+  await page.locator('#cloudModel').fill('cloud-updated-model');
+  await page.locator('#cloudApiKey').fill('cloud-updated-key');
+  releaseProbe();
+  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
+  await expect(page.locator('#cloudBaseUrl')).toHaveValue('https://cloud-updated.example.test/v1');
+  await expect(page.locator('#cloudModel')).toHaveValue('cloud-updated-model');
+  await expect(page.locator('#cloudApiKey')).toHaveValue('cloud-updated-key');
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
+});
