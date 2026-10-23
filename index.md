@@ -338,7 +338,7 @@ permalink: /
       <div id="cloudflareAccountGroup" class="hidden space-y-1.5">
         <label for="cloudflareAccountId" class="block text-xs text-gray-400">Cloudflare Account ID (32 hex-символа)</label>
         <input type="text" id="cloudflareAccountId" inputmode="text" autocomplete="off" spellcheck="false" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Ваш Account ID из Cloudflare Dashboard">
-        <p class="text-[10px] leading-relaxed text-gray-500">Endpoint будет собран автоматически. Нужен API Token с разрешением Workers AI Read; Account ID не является секретом.</p>
+        <p class="text-[10px] leading-relaxed text-gray-500">Адрес соберётся автоматически. Нужен Workers AI Read token; Account ID не секрет.</p>
       </div>
       <label for="baseUrl" data-i18n="baseUrlLabel" class="block text-xs text-gray-400">Base URL (без /chat/completions)</label>
       <input type="url" id="baseUrl" autocomplete="url" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
@@ -346,7 +346,7 @@ permalink: /
       <div id="apiKeyShell" class="api-key-row" data-state="empty"><span class="key-lamp" aria-hidden="true"></span><input type="password" id="apiKey" autocomplete="off" aria-describedby="apiKeyStatus" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Вставьте ключ провайдера"><button type="button" data-action="paste-provider-key" class="shrink-0 rounded-md border border-gray-700 px-2 py-1 text-[11px] text-gray-300" title="Вставить ключ из буфера обмена">Вставить</button></div>
       <p id="apiKeyStatus" class="text-[11px] leading-relaxed text-gray-400" role="status" aria-live="polite">Серый — ключ не введён; янтарный — ключ задан, но не проверен; зелёный — последняя проверка прошла.</p>
       <div id="pollinationsAuthGroup" class="hidden rounded-lg border border-cyan-900/60 bg-cyan-950/20 p-3 space-y-2">
-        <p class="text-[11px] leading-relaxed text-cyan-100/90">Для браузерного приложения Pollinations рекомендует App Key <code>pk_…</code> и OAuth PKCE. Временный ключ доступа <code>sk_…</code> хранится только в sessionStorage текущей вкладки, не в localStorage.</p>
+        <p class="text-[11px] leading-relaxed text-cyan-100/90">Используй App Key <code>pk_…</code> и OAuth PKCE. Временный <code>sk_…</code> хранится только в sessionStorage этой вкладки.</p>
         <button type="button" data-action="connect-pollinations" class="w-full bg-cyan-900/50 hover:bg-cyan-800/70 border border-cyan-700/50 py-2 rounded-lg text-xs text-cyan-100">Подключить аккаунт Pollinations · PKCE</button>
         <button type="button" data-action="disconnect-pollinations" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 py-1.5 rounded-lg text-[11px] text-gray-300">Завершить сессию Pollinations</button>
       </div>
@@ -365,8 +365,8 @@ permalink: /
       <div class="prompt-editor"><textarea id="systemPromptInput" rows="4" readonly aria-describedby="promptEditHint" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y"></textarea><button type="button" id="editSystemPrompt" data-action="edit-system-prompt" class="prompt-pencil" aria-pressed="false" aria-label="Редактировать системный промпт" title="Разрешить редактирование">✎</button></div>
       <p id="promptEditHint" class="text-[11px] text-gray-500">Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.</p>
       <label class="flex items-start gap-2 text-xs text-gray-300 mt-2"><input id="allowCrossProviderFallback" type="checkbox" class="mt-0.5 rounded bg-gray-800 border-gray-700"><span><strong>Разрешить резерв у другого провайдера</strong><span class="block text-[11px] leading-relaxed text-amber-200/80">По умолчанию выключено. При включении текст запроса и контекст могут передаваться другому сервису. Сначала система пробует модели выбранного провайдера.</span></span></label>
-      <p class="text-[11px] leading-relaxed text-gray-400">Системные правила передаются модели с каждым API-вызовом — это нужно для совместимого Chat Completions API. Промпт намеренно компактный; история ограничена примерно 24 000 символами, а в запрос добавляются только совпадающие с темой заметки (до 4, максимум 1 200 символов).</p>
-      <p class="text-[11px] leading-relaxed text-gray-400">Ключи хранятся в localStorage этого браузера и отправляются только тому API, к которому выполняется запрос. Но при автоматическом резервном переходе тот же запрос и его контекст могут уйти другому провайдеру с сохранённым ключом. Если это нежелательно, удалите ключи других провайдеров из настроек/хранилища. Не используйте ключи на общем устройстве. Некоторые API блокируют браузерные запросы (CORS); для них нужен защищённый серверный прокси, а не обход CORS в клиентском коде.</p>
+      <p class="text-[11px] leading-relaxed text-gray-400">Системные правила отправляются с каждым запросом. История ограничена ~24 000 символами; добавляются до 4 релевантных заметок (суммарно до 1 200 символов).</p>
+      <p class="text-[11px] leading-relaxed text-gray-400">Ключи хранятся в этом браузере. Межпровайдерный резерв может передать запрос и контекст другому сервису. Не сохраняй ключи на общих устройствах. При CORS-ограничениях нужен защищённый серверный прокси.</p>
       <div class="grid grid-cols-2 gap-2">
         <button type="button" data-action="export-settings-profile" class="bg-gray-700 hover:bg-gray-600 py-2 px-2 rounded text-xs text-gray-200">Скачать профиль настроек</button>
         <button type="button" data-action="import-settings-profile" class="bg-gray-700 hover:bg-gray-600 py-2 px-2 rounded text-xs text-gray-200">Импорт профиля</button>
