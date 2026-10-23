@@ -1102,7 +1102,7 @@ permalink: /
     async function getServerProjectMemories(chat,project,query,signal){
       if(!chat?.serverProjectMemoryEnabled||chat.projectMemoryEnabled!==true||!project||!String(query||'').trim())return [];
       try{const payload=await memoryGraphRequest('search',{method:'POST',signal,body:{query:String(query).slice(0,4000),scope:'project',scope_id:project.id,statuses:['confirmed'],limit:6}});
-        const nodes=Array.isArray(payload.nodes)?payload.nodes.filter(node=>node&&node.status==='confirmed'&&node.scope==='project'&&node.scope_id===project.id&&typeof node.content==='string'):[];setServerMemoryStatus(memoryUiText('serverMemoryContextLoaded')+nodes.length);return nodes.slice(0,6).map(node=>node.content.slice(0,500));
+        const nodes=Array.isArray(payload.nodes)?payload.nodes.filter(node=>node&&node.status==='confirmed'&&node.scope==='project'&&node.scope_id===project.id&&typeof node.content==='string'):[];const selected=[];let chars=0;for(const node of nodes.slice(0,6)){const fact=node.content.slice(0,500);if(chars+fact.length>1200)continue;selected.push(fact);chars+=fact.length;}setServerMemoryStatus(memoryUiText('serverMemoryContextLoaded')+selected.length);return selected;
       }catch(error){if(signal?.aborted)throw error;setServerMemoryStatus(memoryUiText('serverMemoryUnavailable'));return [];}
     }
     function renderProjectUI(options={}){
