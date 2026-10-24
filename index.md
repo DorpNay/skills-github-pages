@@ -2997,7 +2997,7 @@ permalink: /
       if(!Number.isInteger(choice)||choice<0||choice>projects.length){showToast(english?'Invalid project number.':'Неверный номер проекта.','error');return;}
       chat.projectId=choice===0?null:projects[choice-1].id;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
       persistChats();renderChatList();renderProjectUI({preserveDraft:true});
-      showToast(choice===0?(english?'Chat detached from project.':'Чат извлечён из проекта.'):(english?'Chat moved to project “':'Чат перемещён в проект «')+projects[choice-1]?.name+(english?'”.':'».'));
+      const notice=choice===0?(english?'Chat detached from project.':'Чат извлечён из проекта.'):(english?'Chat moved to project “'+projects[choice-1].name+'”.':'Чат перемещён в проект «'+projects[choice-1].name+'».');showToast(notice);
     }
     function exportChats() {
       const blob = new Blob([JSON.stringify(chats, null, 2)], { type: 'application/json;charset=utf-8' });
