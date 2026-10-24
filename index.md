@@ -3144,7 +3144,18 @@ permalink: /
       if (isGenerating) return;
       const input = $('userInput');
       const text = input.value.trim();
-      if (!text && !isRetry) return;
+      const chosenAttachments=pendingComposerAttachments.slice();
+      const unsupported=chosenAttachments.filter(item=>item.kind==='unsupported');
+      if(unsupported.length){showToast('Сначала убери или обработай неподдерживаемые файлы: '+unsupported.map(item=>item.name).slice(0,2).join(', '),'error');return;}
+      if (!text && !chosenAttachments.length && !isRetry) return;
+      const requestProjectIds=[...selectedRequestProjectIds].filter(id=>projects.some(project=>project.id===id)).slice(0,5);
+      const requestImages=chosenAttachments.flatMap(item=>item.kind==='image'?[{name:item.name,dataUrl:item.dataUrl}]:item.kind==='video'?item.frames.map(frame=>({name:frame.name,dataUrl:frame.dataUrl})):[]).slice(0,8);
+      const attachmentText=chosenAttachments.map(item=>item.kind==='image'
+        ? '[Изображение прикреплено: '+item.name+'; передай изображение модели, если провайдер и модель поддерживают vision.]'
+        : item.kind==='video'
+          ? '[Видео прикреплено: '+item.name+'; извлечено кадров: '+item.frames.length+'. Отправляются только кадры; аудиодорожка не расшифровывается.]'
+          : '').filter(Boolean).join('\n');
+      const userContent=[text,attachmentText].filter(Boolean).join('\n\n');
       const apiKey = getConfiguredApiKey();
       const selectedProvider=safeGet(STORAGE.provider)||'alandi';
       if((selectedProvider==='alandi'||selectedProvider==='custom')&&!String(safeGet(STORAGE.baseUrl)||'').trim()){
@@ -3157,10 +3168,12 @@ permalink: /
       const chat = getCurrentChat();
       if (!isRetry) {
         if (!chat.messages.some((message) => message.role === 'user')) {
-          chat.title = text.slice(0, 38) + (text.length > 38 ? '…' : '');
+          const titleText=text||chosenAttachments[0]?.name||'Мультимодальный запрос';
+          chat.title = titleText.slice(0, 38) + (titleText.length > 38 ? '…' : '');
         }
-        chat.messages.push({ role: 'user', content: text });
+        chat.messages.push({ role: 'user', content: userContent });
         input.value = ''; autoResizeTextarea(input);
+        selectedRequestProjectIds.clear();pendingComposerAttachments=[];renderDraftAttachments();renderRequestProjectChoices();closeComposerPopovers();
       }
       updateState([...chats]);
       isGenerating = true;
@@ -3175,10 +3188,14 @@ permalink: /
       safeSet(STORAGE.search, String(useSearch));
       safeSet(STORAGE.multiAgent, String(useMultiAgent));
       try {
-        await runAssistant(chat, controller.signal, useSearch, useMultiAgent, mode);
+        await runAssistant(chat, controller.signal, useSearch, useMultiAgent, mode, false, '', requestProjectIds, requestImages);
         syncSettingsToActualRoute(lastSuccessfulRoute);
         saveRunDuration();
       } catch (error) {
+        if (requestProjectIds.length||chosenAttachments.length) {
+          requestProjectIds.forEach(id=>selectedRequestProjectIds.add(id));
+          pendingComposerAttachments=chosenAttachments;renderDraftAttachments();renderRequestProjectChoices();
+        }
         if (error.name === 'AbortError') {
           hideStatus();
         } else {
