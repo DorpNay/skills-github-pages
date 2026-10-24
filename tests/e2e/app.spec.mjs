@@ -893,6 +893,8 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('#chatActionProject').selectOption(betaId);
   await page.locator('[data-action="chat-action-save"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(betaId);
+  // Moving projects deliberately clears scoped memory consent; re-enable Beta explicitly.
+  await page.locator('#projectMemoryToggle').check();
 
   await page.locator('[data-action="close-sidebar"]').click();
   await page.locator('[data-action="toggle-settings"]').first().click();
