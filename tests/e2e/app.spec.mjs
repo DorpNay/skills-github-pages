@@ -1399,3 +1399,35 @@ test('server project memory bridge is manual and requires both chat opt-ins', as
   expect(searchCalls).toBe(1);
   expect(capturedBodies[3].messages[0].content).toContain('SERVER_MEMORY_SENTINEL');
 });
+
+test('Markdown fallback preserves tables and escapes HTML when renderer CDNs are unavailable', async ({ page }) => {
+  await page.route('https://cdn.jsdelivr.net/npm/marked@18.0.14/marked.min.js', route => route.abort());
+  await page.route('https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js', route => route.abort());
+  await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({
+      model: 'e2e-markdown-model',
+      choices: [{ message: { role: 'assistant', content: '# Fallback check\n\n| Feature | Status |\n| --- | --- |\n| **Tables** | `readable` |\n\n<img src=x onerror=alert(1)>' } }]
+    })
+  }));
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки' }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('e2e-markdown-model');
+  await page.locator('#apiKey').fill('not-a-real-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('Show the fallback formatting');
+  await page.locator('#sendBtn').click();
+
+  const assistantMessage = page.locator('#chatBox .message').filter({ hasText: 'Fallback check' }).last();
+  await expect(assistantMessage.locator('h1')).toHaveText('Fallback check');
+  await expect(assistantMessage.locator('table th')).toHaveCount(2);
+  await expect(assistantMessage.locator('table td strong')).toHaveText('Tables');
+  await expect(assistantMessage.locator('table td code')).toHaveText('readable');
+  await expect(assistantMessage.locator('img')).toHaveCount(0);
+  await expect(assistantMessage).toContainText('<img src=x onerror=alert(1)>');
+});
