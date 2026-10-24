@@ -8,14 +8,15 @@
 
 ## Очерёдность
 
-### P0 — клиентская эргономика и восстановление (PR #33 merged)
+### P0 — клиентская эргономика и восстановление (PR #33 + #34 merged)
 
-**PR #33:** [chat row actions + composer](https://github.com/DorpNay/skills-github-pages/pull/33). Merge commit `05f4c2454c279cc21dcbf08c83ff3c3025838257`. PR-head run #374 passed context, integrity, security, Jekyll, Chromium E2E and published Pages browser smoke. Post-merge run #377 is pending.
+**PR #33:** [chat row actions](https://github.com/DorpNay/skills-github-pages/pull/33) merged at `05f4c2454c279cc21dcbf08c83ff3c3025838257`. **PR #34:** [accessible action dialog](https://github.com/DorpNay/skills-github-pages/pull/34) merged at `e3463f9b048dfda742b8158faf054c617defda9a`. PR-head runs #374 and #387 passed context, integrity, security, Jekyll, Chromium E2E and published Pages browser smoke. Main run #384 and Pages deployment #115 passed before PR34; post-merge PR34 main gates pending.
 - Chat row: menu ⋯ right → Rename / Clone / Move-to-project / Extract / Delete; deletion confirm.
-- Glass menu: blur/saturation, contrast, fallback without transparency; reduced-motion/transparency.
-- Composer: mobile 16px; no disabling browser zoom. Real-device keyboard open/close, landscape, focus and screen-reader checks remain open.
-- Follow-up: replace native prompt for rename/project selection with an accessible in-app dialog/select; test project move/detach, localStorage persistence, mobile viewport and all RU/EN labels.
-**Gate:** PR-head checks passed. Remaining release gate is post-merge Pages workflow plus real-device accessibility/mobile review.
+- Rename/project selection use accessible glass dialog, labelled input/select, cancel/Escape/outside click and project validation. Project move clears scoped memory consent; owner explicitly re-enables it.
+- Glass menu/dialog: blur/saturation, contrast, fallback without transparency; reduced-transparency support.
+- Composer: mobile 16px; do not disable browser zoom. Real-device keyboard open/close, landscape, focus and screen-reader checks remain open.
+- Follow-up: test project delete/move and chat history/export/import, project CRUD and memory scopes; real mobile keyboard/focus/accessibility review.
+**Gate:** PR-head all passed. Remaining release gate is post-merge main workflow and actual-device accessibility/mobile review.
 
 ### P1 — real voice message (самый короткий полезный вертикальный срез)
 
