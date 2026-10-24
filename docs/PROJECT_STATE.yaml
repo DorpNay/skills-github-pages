@@ -1,8 +1,8 @@
 project_state:
-  version: 5
+  version: 6
   reviewed_on: "2026-10-24"
-  last_volley: "V-2026-10-24-MARKDOWN-FALLBACK-PR32"
-  gate: "PR #32 merged at 31eecce8203073dbc8e0e46b3ac338f64788d59b. Added escaped structured Markdown fallback for missing marked/DOMPurify and Chromium regression coverage. PR-head workflow run #359: all six jobs passed (context, Chromium, integrity, security, Jekyll, published Pages smoke); deployment is public-client Pages only. Live provider smoke, configured private gateway/VPS and hardware benchmarks remain unverified."
+  last_volley: "V-2026-10-24-CHAT-ROW-MENU-PR33"
+  gate: "PR #32 merged at 31eecce8203073dbc8e0e46b3ac338f64788d59b with all six jobs passed. Owner quickstart and subsystem roadmap added to main (docs/START_HERE_RU.md, docs/IMPLEMENTATION_ROADMAP_RU.md). PR #33 adds right-side chat action menu, clone/rename/project move/delete, glass styling and mobile 16px composer. PR-head context/security/integrity/Jekyll passed; Chromium browser E2E is still running, so PR #33 is not merged. Live provider smoke, configured private gateway/VPS, voice runtime and hardware benchmarks remain unverified."
   source_of_truth:
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
@@ -11,6 +11,8 @@ project_state:
     - "INTEL.md"
     - "docs/CODER_PACKET.md"
     - "docs/ACCEPTED_IMPROVEMENTS.md"
+    - "docs/START_HERE_RU.md"
+    - "docs/IMPLEMENTATION_ROADMAP_RU.md"
   repository: "https://github.com/DorpNay/skills-github-pages"
   public_client: "https://dorpnay.github.io/skills-github-pages/"
   deployment:
@@ -18,13 +20,13 @@ project_state:
     gateway_vps: "not verified by this change; do not claim deployed"
     experimental_feature_flags: "false by default"
   current_ui_track:
-    branch: "main"
-    pull_request: 32
-    status: "PR32_merged_at_31eecce_all_six_quality_jobs_passed_including_chromium_and_published_pages_smoke"
+    branch: "feat/chat-row-actions-and-mobile-composer-20261024"
+    pull_request: 33
+    status: "PR33_open; context_security_integrity_jekyll_passed; Chromium E2E in progress; not merged"
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback"
     projects: "Browser-local CRUD plus CI-verified manual candidate-first server-memory bridge; confirmed-only exact-project retrieval requires both per-chat project/server toggles; gateway flag off by default; live activation unverified"
-    voice_ui: "Preview chooser only; no live microphone/ASR/TTS runtime"
+    voice_ui: "Preview chooser only; no live microphone/ASR/TTS runtime"\n    chat_actions: "PR33 adds per-row right-side menu with rename/clone/project/delete; awaiting Chromium E2E"
     detailed_ledger: "docs/V016_IMPLEMENTATION_CHECKLIST.md"
     user_todo: "docs/USER_REQUEST_CHECKLIST.md"
     google_oauth_credentials_configured: false
