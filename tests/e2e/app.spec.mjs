@@ -879,7 +879,8 @@ test('project instructions, project memory, and project bundles stay scoped to t
   const betaId = await page.locator('#currentProjectSelect').inputValue();
   expect(betaId).not.toBe(alphaId);
 
-  await page.locator('[data-action="toggle-sidebar"]').click();
+  const sidebar=page.locator('#sidebar');
+  if(await sidebar.evaluate(el=>el.classList.contains('-translate-x-full')))await page.locator('[data-action="toggle-sidebar"]').click();
   const chatRow=page.locator('#chatList .chat-row').first();
   await chatRow.locator('summary[aria-label="Действия чата"]').click();
   await chatRow.locator('[data-action="chat-project"]').click();
