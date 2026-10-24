@@ -26,7 +26,8 @@ project_state:
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback"
     projects: "Browser-local CRUD plus CI-verified manual candidate-first server-memory bridge; confirmed-only exact-project retrieval requires both per-chat project/server toggles; gateway flag off by default; live activation unverified"
-    voice_ui: "Preview chooser only; no live microphone/ASR/TTS runtime"\n    chat_actions: "PR33 merged; right-side menu rename/clone/project/delete; PR-head Chromium and published Pages smoke passed; postmerge run pending"
+    voice_ui: "Preview chooser only; no live microphone/ASR/TTS runtime"
+    chat_actions: "PR33 merged; right-side menu rename/clone/project/delete; PR-head Chromium and published Pages smoke passed; postmerge run pending"
     detailed_ledger: "docs/V016_IMPLEMENTATION_CHECKLIST.md"
     user_todo: "docs/USER_REQUEST_CHECKLIST.md"
     google_oauth_credentials_configured: false
