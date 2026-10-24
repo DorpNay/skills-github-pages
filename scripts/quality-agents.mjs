@@ -185,7 +185,10 @@ const suites = {
       const blocks = [...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
         .filter((match) => !/\bsrc\s*=/i.test(match[1]));
       assert.ok(blocks.length > 0, 'No inline application script found.');
-      blocks.forEach((block, index) => new Script(block[2], { filename: 'index.md:inline-script-' + index }));
+      blocks.forEach((block, index) => {
+        try { new Script(block[2], { filename: 'index.md:inline-script-' + index }); }
+        catch (error) { console.error(error.stack || String(error)); throw error; }
+      });
     }],
     ['markdown rendering has an explicit sanitizer', () => {
       includes('DOMPurify.sanitize', 'DOMPurify sanitization is required.');
