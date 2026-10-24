@@ -3173,8 +3173,8 @@ permalink: /
         }
         chat.messages.push({ role: 'user', content: userContent });
         input.value = ''; autoResizeTextarea(input);
-        selectedRequestProjectIds.clear();pendingComposerAttachments=[];renderDraftAttachments();renderRequestProjectChoices();closeComposerPopovers();
       }
+      selectedRequestProjectIds.clear();pendingComposerAttachments=[];renderDraftAttachments();renderRequestProjectChoices();closeComposerPopovers();
       updateState([...chats]);
       isGenerating = true;
       activeChatId = chat.id;
@@ -3554,7 +3554,16 @@ permalink: /
           case 'paste-cloud-key': await pasteIntoField('cloudApiKey');break;
           case 'paste-tavily-key': await pasteIntoField('tavilyKey');break;
           case 'connect-alandi-cloud': await connectAlandiCloud();break;
-          case 'attach-text-file': $('textAttachmentInput').click();break;
+          case 'attach-text-file': {
+            const menu=$('attachmentMenu'),open=menu.classList.contains('hidden');closeComposerPopovers();if(open){menu.classList.remove('hidden');$('attachTextButton').setAttribute('aria-expanded','true');}break;
+          }
+          case 'choose-media': closeComposerPopovers();$('mediaAttachmentInput').click();break;
+          case 'choose-any-file': closeComposerPopovers();$('textAttachmentInput').click();break;
+          case 'toggle-request-context': {
+            const menu=$('requestContextMenu'),open=menu.classList.contains('hidden');closeComposerPopovers();if(open){menu.classList.remove('hidden');$('contextPickerButton').setAttribute('aria-expanded','true');renderRequestProjectChoices();}break;
+          }
+          case 'clear-request-context': selectedRequestProjectIds.clear();renderRequestProjectChoices();break;
+          case 'remove-draft-attachment': pendingComposerAttachments=pendingComposerAttachments.filter(item=>item.id!==control.dataset.attachmentId);renderDraftAttachments();break;
           case 'create-project': createProject();break;
           case 'save-project': saveProject();break;
           case 'toggle-project-navigation': {
@@ -3647,6 +3656,11 @@ permalink: /
     $('cloudApiKey').addEventListener('input',(event)=>{safeSet('ai_alandi_cloud_connection_v1','');setCloudStatus('disconnected','Key changed; run a fresh connection check.');if(event.inputType==='insertFromPaste')scheduleCloudAutoConnect();});
     $('cloudApiKey').addEventListener('paste',()=>setTimeout(()=>{if($('cloudApiKey').value.trim())setCloudStatus('disconnected','Key pasted. Run the connection check to confirm it.');},0));
     $('textAttachmentInput').addEventListener('change',handleTextAttachment);
+    $('mediaAttachmentInput').addEventListener('change',handleMediaAttachment);
+    document.addEventListener('pointerdown',event=>{
+      if(!$('attachmentMenu').classList.contains('hidden')&&!$('attachmentMenu').contains(event.target)&&!$('attachTextButton').contains(event.target))closeComposerPopovers();
+      if(!$('requestContextMenu').classList.contains('hidden')&&!$('requestContextMenu').contains(event.target)&&!$('contextPickerButton').contains(event.target))closeComposerPopovers();
+    });
     $('providerPreset').addEventListener('change',()=>{safeSet('ai_alandi_cloud_connection_v1','');if(currentProvider()==='alandi'){const url=$('baseUrl').value.trim();if(url)$('cloudBaseUrl').value=url;}});
     $('modelSearch').addEventListener('input',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
@@ -3668,30 +3682,28 @@ permalink: /
      $('globalMemoryToggle').addEventListener('change',event=>{safeSet(STORAGE.globalMemoryEnabled,String(event.target.checked));showToast(event.target.checked?(getUiLanguage()==='en'?'Global memory enabled.':'Глобальная память включена.'):(getUiLanguage()==='en'?'Global memory disabled.':'Глобальная память отключена.'));});
     $('projectMemoryInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();document.querySelector('[data-action="add-project-memory"]').click();}});
     $('userInput').addEventListener('input', () => autoResizeTextarea($('userInput')));
-    let voicePointerStartY=null,voiceHoldTimer=null,suppressVoiceClick=false,voiceHoldOpened=false;
+    let voiceHoldTimer=null,voiceHoldOpened=false;
     const showVoiceMenu=()=>{$('voiceMenu').classList.remove('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','true');};
-    $('voiceUnavailableButton').addEventListener('click',()=>{
-      if(suppressVoiceClick){suppressVoiceClick=false;return;}
-      $('voiceMenu').classList.toggle('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded',String(!$('voiceMenu').classList.contains('hidden')));
-    });
+    const hideVoiceMenu=()=>{$('voiceMenu').classList.add('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','false');};
     $('voiceUnavailableButton').addEventListener('pointerdown',event=>{
-      voicePointerStartY=event.clientY;voiceHoldOpened=false;
+      voiceHoldOpened=false;
       try{event.currentTarget.setPointerCapture(event.pointerId);}catch(_){}
       if(voiceHoldTimer)clearTimeout(voiceHoldTimer);
-      voiceHoldTimer=setTimeout(()=>{voiceHoldTimer=null;voiceHoldOpened=true;suppressVoiceClick=true;showVoiceMenu();},220);
+      voiceHoldTimer=setTimeout(()=>{voiceHoldTimer=null;voiceHoldOpened=true;showVoiceMenu();},430);
     });
-    $('voiceUnavailableButton').addEventListener('pointerup',event=>{
+    $('voiceUnavailableButton').addEventListener('pointerup',()=>{
       if(voiceHoldTimer){clearTimeout(voiceHoldTimer);voiceHoldTimer=null;}
-      if(voicePointerStartY!==null){
-        const delta=event.clientY-voicePointerStartY;
-        if(Math.abs(delta)>35){suppressVoiceClick=true;showVoiceMenu();showToast(delta<0?'Голосовой диалог пока не подключён.':'Запись голосового сообщения пока не подключена.');}
-        if(voiceHoldOpened)suppressVoiceClick=true;
-        voicePointerStartY=null;
-      }
     });
     $('voiceUnavailableButton').addEventListener('pointercancel',()=>{
       if(voiceHoldTimer)clearTimeout(voiceHoldTimer);
-      voiceHoldTimer=null;voicePointerStartY=null;voiceHoldOpened=false;suppressVoiceClick=false;
+      voiceHoldTimer=null;voiceHoldOpened=false;
+    });
+    $('voiceUnavailableButton').addEventListener('keydown',event=>{
+      if((event.key==='Enter'||event.key===' ')&&!event.repeat){event.preventDefault();showVoiceMenu();}
+    });
+    $('voiceUnavailableButton').addEventListener('contextmenu',event=>event.preventDefault());
+    document.addEventListener('pointerdown',event=>{
+      if(!$('voiceMenu').classList.contains('hidden')&&!$('voiceUnavailableButton').contains(event.target)&&!$('voiceMenu').contains(event.target))hideVoiceMenu();
     });
     $('userInput').addEventListener('keydown', (event) => {
       if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) { event.preventDefault(); sendMessage(false); }
