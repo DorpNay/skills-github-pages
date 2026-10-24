@@ -1423,7 +1423,7 @@ test('Markdown fallback preserves tables and escapes HTML when renderer CDNs are
   await page.locator('#userInput').fill('Show the fallback formatting');
   await page.locator('#sendBtn').click();
 
-  const assistantMessage = page.locator('#chatBox .message').filter({ hasText: 'Fallback check' }).last();
+  const assistantMessage = page.locator('#chatBox .assistant-content').filter({ hasText: 'Fallback check' }).last();
   await expect(assistantMessage.locator('h1')).toHaveText('Fallback check');
   await expect(assistantMessage.locator('table th')).toHaveCount(2);
   await expect(assistantMessage.locator('table td strong')).toHaveText('Tables');
