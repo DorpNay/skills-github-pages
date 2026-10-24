@@ -140,6 +140,26 @@ permalink: /
     body.composer-bottom-transition #chatBox { padding-bottom:175px; }
     @media (prefers-reduced-motion:reduce) { .voice-menu { animation:none!important; } }
     .chat-row { position:relative; min-height:44px; }
+    #composerFooter { position:relative; }
+    .composer-popover { position:absolute;left:8px;bottom:calc(100% + 8px);z-index:100;width:min(92vw,330px);padding:8px;border:1px solid var(--ui-border);border-radius:18px;background:color-mix(in srgb,var(--ui-surface) 94%,transparent);backdrop-filter:blur(26px) saturate(150%);-webkit-backdrop-filter:blur(26px) saturate(150%);box-shadow:0 20px 55px rgb(0 0 0 / 40%); }
+    .composer-popover-option { display:flex;align-items:center;gap:11px;width:100%;padding:12px;border-radius:12px;text-align:left; }
+    .composer-popover-option:hover { background:var(--ui-tiffany-soft); }
+    .composer-popover-option > span:first-child { display:grid;place-items:center;width:34px;height:34px;border-radius:10px;border:1px solid var(--ui-border);color:var(--ui-tiffany); }
+    .composer-popover-option strong { display:block;font-size:12px; }
+    .composer-popover-option small { display:block;margin-top:3px;color:var(--ui-text-muted);font-size:10px;line-height:1.35; }
+    .context-popover { max-height:min(72dvh,480px);overflow-y:auto; }
+    .request-project-choice { display:flex;align-items:flex-start;gap:9px;padding:10px;border-radius:10px;cursor:pointer;font-size:12px; }
+    .request-project-choice:hover { background:var(--ui-tiffany-soft); }
+    .request-project-choice input { margin-top:2px;accent-color:var(--ui-tiffany); }
+    .request-project-choice .description { display:block;margin-top:3px;color:var(--ui-text-muted);font-size:10px; }
+    .draft-attachment { display:flex;align-items:center;gap:7px;max-width:min(100%,300px);padding:6px 8px;border:1px solid var(--ui-border);border-radius:11px;background:color-mix(in srgb,var(--ui-surface) 85%,transparent);font-size:10px; }
+    .draft-attachment-warning { border-color:rgb(234 179 8 / 55%); }
+    .draft-attachment-name { overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:195px; }
+    .draft-attachment-remove { flex:none;border-radius:7px;padding:2px 5px;color:var(--ui-text-muted); }
+    .draft-attachment-remove:hover { background:rgb(244 63 94 / 14%);color:#fb7185; }
+    #voiceUnavailableButton { touch-action:manipulation;user-select:none;-webkit-user-select:none; }
+    @media (prefers-reduced-transparency:reduce) { .composer-popover,.draft-attachment { background:var(--ui-surface);backdrop-filter:none;-webkit-backdrop-filter:none; } }
+
     .project-nav-heading { color:var(--ui-text);background:var(--ui-surface-raised);border:1px solid var(--ui-border); }
     .project-nav-heading:hover { background:var(--ui-tiffany-soft);border-color:var(--ui-tiffany); }
     .project-nav-unassigned { color:var(--ui-text-muted);background:color-mix(in srgb,var(--ui-surface) 82%,transparent); }
@@ -496,14 +516,30 @@ permalink: /
   <div id="searchStatus" class="hidden px-4 py-2 bg-gray-800/80 border-t border-gray-700 text-xs text-blue-300 flex items-center gap-2 shrink-0" role="status" aria-live="polite">
     <span class="animate-spin" aria-hidden="true">⏳</span><span id="statusText">Выполняется запрос...</span><span class="status-thinking-dots" aria-hidden="true"><span></span><span></span><span></span></span><span id="thinkingTime" class="ml-auto text-[10px]">Прошло 00:00</span>
   </div>
-  <footer class="px-3 py-2 bg-gray-800/95 border-t border-gray-700 shrink-0 safe-bottom">
+  <footer id="composerFooter" class="px-3 py-2 bg-gray-800/95 border-t border-gray-700 shrink-0 safe-bottom">
+    <div id="draftAttachments" class="hidden flex flex-wrap gap-1.5 pb-2" aria-label="Вложения черновика"></div>
     <div class="flex gap-2 items-end" id="inputArea">
-      <button type="button" data-action="attach-text-file" id="attachTextButton" aria-label="Прикрепить текстовый файл" title="Прикрепить .txt, .md, .csv, .json или .log" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">＋</button>
-      <input type="file" id="textAttachmentInput" class="hidden" accept=".txt,.md,.csv,.json,.log,text/plain,text/markdown,text/csv,application/json">
+      <button id="contextPickerButton" type="button" data-action="toggle-request-context" aria-label="Выбрать контекст для следующего запроса" aria-expanded="false" title="Контекст этого запроса: выбрать проекты" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5 relative">◎<span id="requestContextCount" class="hidden absolute -top-1 -right-1 min-w-4 h-4 rounded-full bg-cyan-400 text-slate-950 text-[9px] font-bold items-center justify-center px-1">0</span></button>
+      <button type="button" data-action="attach-text-file" id="attachTextButton" aria-label="Добавить вложение" title="Выбрать фото, видео или файл любого формата" aria-expanded="false" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">＋</button>
+      <input type="file" id="mediaAttachmentInput" class="hidden" accept="image/*,video/*" multiple>
+      <input type="file" id="textAttachmentInput" class="hidden" multiple>
       <textarea id="userInput" rows="1" maxlength="30000" placeholder="Напиши сообщение..." aria-label="Сообщение" data-i18n-placeholder="composerPlaceholder" class="flex-1 min-w-0 bg-gray-900 border border-gray-700 px-3 py-2.5 rounded-xl text-base outline-none resize-none max-h-32"></textarea>
-      <button id="voiceUnavailableButton" type="button" aria-label="Открыть режимы голоса" aria-expanded="false" title="Удержи и смахни вверх/вниз, чтобы выбрать режим голоса" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">◉</button>
+      <button id="voiceUnavailableButton" type="button" aria-label="Зажми, чтобы открыть режимы голоса" aria-expanded="false" title="Удерживай, чтобы открыть голосовое меню; обычное нажатие ничего не открывает" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">◉</button>
       <button id="sendBtn" type="button" data-action="send" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Отправить сообщение">➤</button>
       <button id="stopBtn" type="button" data-action="stop" class="hidden bg-red-600 hover:bg-red-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Остановить генерацию">⏹</button>
+    </div>
+    <div id="attachmentMenu" class="composer-popover hidden" role="group" aria-label="Добавить вложение">
+      <button type="button" data-action="choose-media" class="composer-popover-option"><span aria-hidden="true">▧</span><span><strong>Фото или видео</strong><small>Изображения либо выбор кадров из ролика</small></span></button>
+      <button type="button" data-action="choose-any-file" class="composer-popover-option"><span aria-hidden="true">▤</span><span><strong>Файл любого формата</strong><small>Текст читается сразу; остальные форматы показываются явно</small></span></button>
+    </div>
+    <div id="requestContextMenu" class="composer-popover context-popover hidden" role="dialog" aria-label="Контекст следующего запроса" aria-describedby="requestContextHelp">
+      <div class="flex items-start justify-between gap-3 px-2 pb-2"><div><h3 class="text-sm font-semibold">Контекст этого запроса</h3><p id="requestContextHelp" class="text-[10px] text-gray-500 mt-1">Выбранные проекты будут учтены только при следующей отправке. Сам чат и его проект не изменятся.</p></div><button type="button" data-action="clear-request-context" aria-label="Снять выбор проектов" class="text-xs text-gray-400 hover:text-white">Сбросить</button></div>
+      <div id="requestProjectChecks" class="max-h-48 overflow-y-auto space-y-1"></div>
+      <div class="mt-2 pt-2 border-t border-gray-700 space-y-1.5">
+        <p class="text-[10px] text-gray-400"><strong>Навыки</strong> · применится автоматический подбор по задаче; отдельного каталога выбора пока нет.</p>
+        <p class="text-[10px] text-gray-400"><strong>Коннекторы</strong> · ещё не подключены. Здесь появится выбор доступных источников после их реальной интеграции.</p>
+        <p class="text-[10px] text-amber-300/80">Контекст ограничен пятью проектами и общим лимитом, чтобы не переполнять запрос.</p>
+      </div>
     </div>
     <div id="voiceMenu" class="voice-menu hidden" role="group" aria-label="Режимы голоса">
       <button type="button" data-action="voice-chat-preview" class="voice-menu-option"><span class="voice-direction">↑</span><span><strong>ГОЛОСОВОЙ ДИАЛОГ</strong><small>Живое общение · скоро</small></span></button>
@@ -596,6 +632,9 @@ permalink: /
     let pyodidePromise = null;
     let pyodideScriptPromise = null;
     let processingMode = 'fast';
+    const selectedRequestProjectIds = new Set();
+    let pendingComposerAttachments = [];
+
 
     function currentProvider() {
       const value = $('providerPreset')?.value || safeGet(STORAGE.provider) || 'alandi';
