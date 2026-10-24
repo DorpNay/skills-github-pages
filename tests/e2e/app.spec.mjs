@@ -1431,3 +1431,22 @@ test('Markdown fallback preserves tables and escapes HTML when renderer CDNs are
   await expect(assistantMessage.locator('img')).toHaveCount(0);
   await expect(assistantMessage).toContainText('<img src=x onerror=alert(1)>');
 });
+
+test('chat row actions are grouped in the right-side menu and rename/clone work', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const row = page.locator('#chatList .chat-row').first();
+  await expect(row.locator('details.chat-row-menu')).toBeVisible();
+  await expect(row.locator('button[data-action="delete-chat"]')).toHaveCount(0);
+  await row.locator('summary[aria-label="Действия чата"]').click();
+  await expect(row.locator('.chat-row-menu-panel button')).toHaveCount(4);
+
+  page.once('dialog', dialog => dialog.accept('Renamed from menu'));
+  await row.locator('[data-action="chat-rename"]').click();
+  await expect(row.locator('button[data-action="switch-chat"]')).toHaveText('Renamed from menu');
+
+  await row.locator('summary[aria-label="Действия чата"]').click();
+  await row.locator('[data-action="chat-clone"]').click();
+  await expect(page.locator('#chatList .chat-row')).toHaveCount(2);
+  await expect(page.locator('#chatList button[data-action="switch-chat"]').first()).toContainText('Renamed from menu — копия');
+  await expect(page.locator('#userInput')).toHaveCSS('font-size', '16px');
+});
