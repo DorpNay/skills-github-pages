@@ -140,6 +140,10 @@ permalink: /
     body.composer-bottom-transition #chatBox { padding-bottom:175px; }
     @media (prefers-reduced-motion:reduce) { .voice-menu { animation:none!important; } }
     .chat-row { position:relative; min-height:44px; }
+    .chat-action-dialog { background:color-mix(in srgb,var(--ui-surface) 94%,transparent);border:1px solid var(--ui-border);backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%);box-shadow:0 24px 80px rgb(0 0 0 / 45%); }
+    .chat-action-dialog input,.chat-action-dialog select { border-color:var(--ui-border);color:var(--ui-text);min-height:44px; }
+    .chat-action-dialog select option { color:#111827;background:#fff; }
+    @media (prefers-reduced-transparency:reduce) { .chat-action-dialog { background:var(--ui-surface);backdrop-filter:none;-webkit-backdrop-filter:none; } }
     .chat-row-menu { position:relative; }
     .chat-row-menu summary { list-style:none;display:grid;place-items:center;width:36px;height:36px;border:1px solid transparent;border-radius:10px;color:var(--ui-text-muted);font-size:19px;cursor:pointer; }
     .chat-row-menu summary::-webkit-details-marker { display:none; }
@@ -466,6 +470,18 @@ permalink: /
     </div>
   </footer>
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+  <div id="chatActionModal" class="hidden fixed inset-0 z-[85] bg-black/65 p-4 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="chatActionTitle" aria-describedby="chatActionHelp">
+    <section class="chat-action-dialog w-full max-w-sm rounded-2xl p-4 sm:p-5 space-y-4">
+      <header class="flex items-center justify-between gap-3"><h2 id="chatActionTitle" class="font-semibold text-base">Действие с чатом</h2><button type="button" data-action="chat-action-cancel" class="rounded-lg px-2.5 py-2" aria-label="Закрыть">✕</button></header>
+      <form id="chatActionForm" class="space-y-3">
+        <label id="chatActionFieldLabel" for="chatActionName" class="block text-sm">Название</label>
+        <input id="chatActionName" class="w-full rounded-xl border px-3 py-3 bg-transparent" maxlength="120" autocomplete="off">
+        <select id="chatActionProject" class="hidden w-full rounded-xl border px-3 py-3 bg-transparent"></select>
+        <p id="chatActionHelp" class="text-xs text-gray-500">Изменение применяется только к выбранному чату.</p>
+        <footer class="flex justify-end gap-2 pt-1"><button type="button" data-action="chat-action-cancel" class="rounded-xl border px-3 py-2.5 text-sm">Отмена</button><button type="submit" data-action="chat-action-save" class="rounded-xl bg-blue-600 text-white px-4 py-2.5 text-sm font-medium">Сохранить</button></footer>
+      </form>
+    </section>
+  </div>
 
   <div id="traceModal" class="hidden fixed inset-0 z-[70] bg-black/75 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="traceTitle">
     <div class="w-full max-w-3xl max-h-[90dvh] overflow-y-auto bg-gray-950 border border-gray-700 rounded-xl p-3 sm:p-4 space-y-3">
@@ -2974,12 +2990,43 @@ permalink: /
       const next = chats.filter((chat) => chat.id !== id);
       updateState(next, currentChatId === id ? next[0].id : currentChatId);
     }
-    function renameChat(id) {
+    function closeChatActionDialog() {
+      const modal=$('chatActionModal');modal.classList.add('hidden');modal.removeAttribute('data-chat-id');modal.removeAttribute('data-mode');
+    }
+    function openChatActionDialog(mode,id) {
       const chat=chats.find(item=>item.id===id);if(!chat)return;
-      const english=getUiLanguage()==='en';const title=prompt(english?'New chat name':'Новое название чата',chat.title||(english?'New chat':'Новый чат'));
-      if(title===null)return;const next=title.trim().slice(0,120);
-      if(!next){showToast(english?'Chat name cannot be empty.':'Название не может быть пустым.','error');return;}
-      chat.title=next;persistChats();renderChatList();renderActiveChat();
+      const english=getUiLanguage()==='en',modal=$('chatActionModal'),name=$('chatActionName'),select=$('chatActionProject');
+      modal.dataset.chatId=id;modal.dataset.mode=mode;
+      if(mode==='rename') {
+        $('chatActionTitle').textContent=english?'Rename chat':'Переименовать чат';
+        $('chatActionFieldLabel').textContent=english?'Chat name':'Название чата';
+        $('chatActionHelp').textContent=english?'Choose a short name for this chat.':'Укажи короткое название этого чата.';
+        name.value=chat.title||(english?'New chat':'Новый чат');name.classList.remove('hidden');select.classList.add('hidden');
+      } else {
+        if(!projects.length){showToast(english?'Create a project first.':'Сначала создай проект.','error');return;}
+        $('chatActionTitle').textContent=english?'Move chat to project':'Переместить чат в проект';
+        $('chatActionFieldLabel').textContent=english?'Project':'Проект';
+        $('chatActionHelp').textContent=english?'Choose a project or personal chat. Project memory toggles will be reset.':'Выбери проект или личный чат. Переключатели памяти проекта будут сброшены.';
+        name.classList.add('hidden');select.classList.remove('hidden');select.replaceChildren();
+        const personal=document.createElement('option');personal.value='';personal.textContent=english?'Personal chat (no project)':'Личный чат (без проекта)';select.appendChild(personal);
+        projects.forEach(project=>{const option=document.createElement('option');option.value=project.id;option.textContent=project.name;select.appendChild(option);});
+        select.value=chat.projectId||'';
+      }
+      modal.classList.remove('hidden');requestAnimationFrame(()=>mode==='rename'?name.focus():select.focus());
+    }
+    function saveChatActionDialog() {
+      const modal=$('chatActionModal'),chat=chats.find(item=>item.id===modal.dataset.chatId),mode=modal.dataset.mode,english=getUiLanguage()==='en';
+      if(!chat){closeChatActionDialog();return;}
+      if(mode==='rename') {
+        const next=$('chatActionName').value.trim().slice(0,120);
+        if(!next){showToast(english?'Chat name cannot be empty.':'Название не может быть пустым.','error');$('chatActionName').focus();return;}
+        chat.title=next;persistChats();renderChatList();renderActiveChat();closeChatActionDialog();return;
+      }
+      const projectId=$('chatActionProject').value||null;
+      if(projectId&&!projects.some(project=>project.id===projectId)){showToast(english?'Project no longer exists.':'Проект больше не существует.','error');return;}
+      chat.projectId=projectId;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
+      persistChats();renderChatList();renderProjectUI({preserveDraft:true});closeChatActionDialog();
+      showToast(projectId?(english?'Chat moved to project.':'Чат перемещён в проект.'):(english?'Chat detached from project.':'Чат извлечён из проекта.'));
     }
     function cloneChat(id) {
       const source=chats.find(item=>item.id===id);if(!source)return;
@@ -2987,17 +3034,6 @@ permalink: /
       copy.projectMemoryEnabled=false;copy.serverProjectMemoryEnabled=false;
       updateState([copy,...chats],copy.id);
       showToast(getUiLanguage()==='en'?'Chat cloned. Project memory is disabled in the copy.':'Чат клонирован. Память проекта отключена в копии.');
-    }
-    function chatProjectAction(id) {
-      const chat=chats.find(item=>item.id===id);if(!chat)return;
-      const english=getUiLanguage()==='en';if(!projects.length){showToast(english?'Create a project in the Projects section first.':'Сначала создай проект в разделе проектов.','error');return;}
-      const options=projects.map((project,index)=>`${index+1}. ${project.name}`).join('\n');
-      const answer=prompt((english?'Choose project number. 0 — detach from project.\n':'Выбери номер проекта. 0 — извлечь из проекта.\n')+options,chat.projectId?String(Math.max(1,projects.findIndex(p=>p.id===chat.projectId)+1)):'1');
-      if(answer===null)return;const choice=Number(answer);
-      if(!Number.isInteger(choice)||choice<0||choice>projects.length){showToast(english?'Invalid project number.':'Неверный номер проекта.','error');return;}
-      chat.projectId=choice===0?null:projects[choice-1].id;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
-      persistChats();renderChatList();renderProjectUI({preserveDraft:true});
-      const notice=choice===0?(english?'Chat detached from project.':'Чат извлечён из проекта.'):(english?'Chat moved to project “'+projects[choice-1].name+'”.':'Чат перемещён в проект «'+projects[choice-1].name+'».');showToast(notice);
     }
     function exportChats() {
       const blob = new Blob([JSON.stringify(chats, null, 2)], { type: 'application/json;charset=utf-8' });
@@ -3264,9 +3300,10 @@ permalink: /
           case 'new-chat': createNewChat(); break;
           case 'clear-chat': clearCurrentChat(); break;
           case 'switch-chat': switchChat(control.dataset.chatId); break;
-          case 'chat-rename': control.closest('.chat-row-menu')?.removeAttribute('open');renameChat(control.dataset.chatId);break;
+          case 'chat-rename': control.closest('.chat-row-menu')?.removeAttribute('open');openChatActionDialog('rename',control.dataset.chatId);break;
           case 'chat-clone': control.closest('.chat-row-menu')?.removeAttribute('open');cloneChat(control.dataset.chatId);break;
-          case 'chat-project': control.closest('.chat-row-menu')?.removeAttribute('open');chatProjectAction(control.dataset.chatId);break;
+          case 'chat-action-cancel': closeChatActionDialog();break;
+          case 'chat-project': control.closest('.chat-row-menu')?.removeAttribute('open');openChatActionDialog('project',control.dataset.chatId);break;
           case 'delete-chat': control.closest('.chat-row-menu')?.removeAttribute('open');if(confirm(getUiLanguage()==='en'?'Delete this chat?':'Удалить этот чат?'))deleteChat(control.dataset.chatId); break;
           case 'export-chats': exportChats(); break;
           case 'export-settings-profile': exportSettingsProfile(); break;
@@ -3375,9 +3412,12 @@ permalink: /
     $('memoryInput').addEventListener('keydown', (event) => {
       if (event.key === 'Enter') { event.preventDefault(); document.querySelector('[data-action="save-memory"]').click(); }
     });
+    $('chatActionForm').addEventListener('submit',event=>{event.preventDefault();saveChatActionDialog();});
+    $('chatActionModal').addEventListener('click',event=>{if(event.target===$('chatActionModal'))closeChatActionDialog();});
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
-        if (!$('traceModal').classList.contains('hidden')) closeTrace();
+        if (!$('chatActionModal').classList.contains('hidden')) closeChatActionDialog();
+        else if (!$('traceModal').classList.contains('hidden')) closeTrace();
         else if (!$('settingsModal').classList.contains('hidden')) toggleSettings(false);
         else if (!$('sidebar').classList.contains('-translate-x-full')) toggleSidebar(false);
       }

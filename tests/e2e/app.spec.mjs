@@ -879,6 +879,23 @@ test('project instructions, project memory, and project bundles stay scoped to t
   const betaId = await page.locator('#currentProjectSelect').inputValue();
   expect(betaId).not.toBe(alphaId);
 
+  const sidebar=page.locator('#sidebar');
+  if(await sidebar.evaluate(el=>el.classList.contains('-translate-x-full')))await page.locator('[data-action="toggle-sidebar"]').click();
+  const chatRow=page.locator('#chatList .chat-row').first();
+  await chatRow.locator('summary[aria-label="Действия чата"]').click();
+  await chatRow.locator('[data-action="chat-project"]').click();
+  await expect(page.locator('#chatActionModal')).toBeVisible();
+  await page.locator('#chatActionProject').selectOption(alphaId);
+  await page.locator('[data-action="chat-action-save"]').click();
+  await expect(page.locator('#currentProjectSelect')).toHaveValue(alphaId);
+  await chatRow.locator('summary[aria-label="Действия чата"]').click();
+  await chatRow.locator('[data-action="chat-project"]').click();
+  await page.locator('#chatActionProject').selectOption(betaId);
+  await page.locator('[data-action="chat-action-save"]').click();
+  await expect(page.locator('#currentProjectSelect')).toHaveValue(betaId);
+  // Moving projects deliberately clears scoped memory consent; re-enable Beta explicitly.
+  await page.locator('#projectMemoryToggle').check();
+
   await page.locator('[data-action="close-sidebar"]').click();
   await page.locator('[data-action="toggle-settings"]').first().click();
   await page.locator('#legacyProviderSettings > summary').click();
@@ -1441,8 +1458,10 @@ test('chat row actions are grouped in the right-side menu and rename/clone work'
   await row.locator('summary[aria-label="Действия чата"]').click();
   await expect(row.locator('.chat-row-menu-panel button')).toHaveCount(4);
 
-  page.once('dialog', dialog => dialog.accept('Renamed from menu'));
   await row.locator('[data-action="chat-rename"]').click();
+  await expect(page.locator('#chatActionModal')).toBeVisible();
+  await page.locator('#chatActionName').fill('Renamed from menu');
+  await page.locator('[data-action="chat-action-save"]').click();
   await expect(row.locator('button[data-action="switch-chat"]')).toHaveText('Renamed from menu');
 
   await row.locator('summary[aria-label="Действия чата"]').click();
