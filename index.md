@@ -1313,9 +1313,9 @@ permalink: /
         open.textContent = (project?'▣ ':'')+(chat.title || 'Новый чат');
         if(project)open.title=(getUiLanguage()==='en'?'Project: ':'Проект: ')+project.name;
         const menu=document.createElement('details');menu.className='chat-row-menu shrink-0';
-        const summary=document.createElement('summary');summary.textContent='⋯';summary.setAttribute('aria-label','Действия чата');summary.title='Действия чата';
+        const summary=document.createElement('summary');summary.textContent='⋯';summary.setAttribute('aria-label',getUiLanguage()==='en'?'Chat actions':'Действия чата');summary.title=summary.getAttribute('aria-label');
         const panel=document.createElement('div');panel.className='chat-row-menu-panel';
-        const actions=[['chat-rename','Переименовать'],['chat-clone','Клонировать'],['chat-project',project?'Переместить / извлечь из проекта':'Добавить в проект'],['delete-chat','Удалить чат']];
+        const english=getUiLanguage()==='en';const actions=[['chat-rename',english?'Rename':'Переименовать'],['chat-clone',english?'Clone':'Клонировать'],['chat-project',project?(english?'Move / detach from project':'Переместить / извлечь из проекта'):(english?'Add to project':'Добавить в проект')],['delete-chat',english?'Delete chat':'Удалить чат']];
         actions.forEach(([action,label])=>{const button=document.createElement('button');button.type='button';button.dataset.action=action;button.dataset.chatId=chat.id;button.textContent=label;if(action==='delete-chat')button.className='danger';panel.appendChild(button);});
         menu.append(summary,panel);item.append(open,menu);list.appendChild(item);
       });
@@ -2976,9 +2976,9 @@ permalink: /
     }
     function renameChat(id) {
       const chat=chats.find(item=>item.id===id);if(!chat)return;
-      const title=prompt('Новое название чата',chat.title||'Новый чат');
+      const english=getUiLanguage()==='en';const title=prompt(english?'New chat name':'Новое название чата',chat.title||(english?'New chat':'Новый чат'));
       if(title===null)return;const next=title.trim().slice(0,120);
-      if(!next){showToast('Название не может быть пустым.','error');return;}
+      if(!next){showToast(english?'Chat name cannot be empty.':'Название не может быть пустым.','error');return;}
       chat.title=next;persistChats();renderChatList();renderActiveChat();
     }
     function cloneChat(id) {
@@ -2986,18 +2986,18 @@ permalink: /
       const copy=createChat((source.title||'Новый чат')+' — копия',JSON.parse(JSON.stringify(source.messages||[])),source.projectId||null);
       copy.projectMemoryEnabled=false;copy.serverProjectMemoryEnabled=false;
       updateState([copy,...chats],copy.id);
-      showToast('Чат клонирован. Память проекта отключена в копии.');
+      showToast(getUiLanguage()==='en'?'Chat cloned. Project memory is disabled in the copy.':'Чат клонирован. Память проекта отключена в копии.');
     }
     function chatProjectAction(id) {
       const chat=chats.find(item=>item.id===id);if(!chat)return;
-      if(!projects.length){showToast('Сначала создай проект в разделе проектов.','error');return;}
+      const english=getUiLanguage()==='en';if(!projects.length){showToast(english?'Create a project in the Projects section first.':'Сначала создай проект в разделе проектов.','error');return;}
       const options=projects.map((project,index)=>`${index+1}. ${project.name}`).join('\n');
-      const answer=prompt('Выбери номер проекта. 0 — извлечь из проекта.\n'+options,chat.projectId?String(Math.max(1,projects.findIndex(p=>p.id===chat.projectId)+1)):'1');
+      const answer=prompt((english?'Choose project number. 0 — detach from project.\n':'Выбери номер проекта. 0 — извлечь из проекта.\n')+options,chat.projectId?String(Math.max(1,projects.findIndex(p=>p.id===chat.projectId)+1)):'1');
       if(answer===null)return;const choice=Number(answer);
-      if(!Number.isInteger(choice)||choice<0||choice>projects.length){showToast('Неверный номер проекта.','error');return;}
+      if(!Number.isInteger(choice)||choice<0||choice>projects.length){showToast(english?'Invalid project number.':'Неверный номер проекта.','error');return;}
       chat.projectId=choice===0?null:projects[choice-1].id;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
       persistChats();renderChatList();renderProjectUI({preserveDraft:true});
-      showToast(choice===0?'Чат извлечён из проекта.':'Чат перемещён в проект «'+projects[choice-1].name+'».');
+      showToast(choice===0?(english?'Chat detached from project.':'Чат извлечён из проекта.'):(english?'Chat moved to project “':'Чат перемещён в проект «')+projects[choice-1]?.name+(english?'”.':'».'));
     }
     function exportChats() {
       const blob = new Blob([JSON.stringify(chats, null, 2)], { type: 'application/json;charset=utf-8' });
@@ -3267,7 +3267,7 @@ permalink: /
           case 'chat-rename': control.closest('.chat-row-menu')?.removeAttribute('open');renameChat(control.dataset.chatId);break;
           case 'chat-clone': control.closest('.chat-row-menu')?.removeAttribute('open');cloneChat(control.dataset.chatId);break;
           case 'chat-project': control.closest('.chat-row-menu')?.removeAttribute('open');chatProjectAction(control.dataset.chatId);break;
-          case 'delete-chat': control.closest('.chat-row-menu')?.removeAttribute('open');if(confirm('Удалить этот чат?'))deleteChat(control.dataset.chatId); break;
+          case 'delete-chat': control.closest('.chat-row-menu')?.removeAttribute('open');if(confirm(getUiLanguage()==='en'?'Delete this chat?':'Удалить этот чат?'))deleteChat(control.dataset.chatId); break;
           case 'export-chats': exportChats(); break;
           case 'export-settings-profile': exportSettingsProfile(); break;
           case 'import-settings-profile': $('settingsProfileFile').click(); break;
