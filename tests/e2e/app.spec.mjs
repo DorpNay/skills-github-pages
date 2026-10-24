@@ -865,11 +865,10 @@ test('project instructions, project memory, and project bundles stay scoped to t
   expect(alphaBundle.project.memory.some(item => item.text === 'ALPHA_PROJECT_MEMORY_SENTINEL')).toBe(true);
   expect(JSON.stringify(alphaBundle)).not.toContain('apiKey');
 
-  // New chats inherit the current project; detach this one before creating Beta.
+  // A new chat from the top-level Chats section is personal unless created inside a project group.
   await page.locator('#sidebar [data-action="new-chat"]').click();
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await expect(page.locator('#currentProjectSelect')).toHaveValue(alphaId);
-  await page.locator('#currentProjectSelect').selectOption('');
+  await expect(page.locator('#currentProjectSelect')).toHaveValue('');
   await page.locator('#projectNameInput').fill('Beta Project');
   await page.locator('#projectInstructionsInput').fill('BETA_PROJECT_INSTRUCTION_SENTINEL');
   await page.locator('[data-action="create-project"]').click();
@@ -960,8 +959,12 @@ test('deleting a project removes its chats but preserves other projects and chat
   await page.locator('[data-action="create-project"]').click();
   const keepId = await page.locator('#currentProjectSelect').inputValue();
   expect(keepId).not.toBe(disposableId);
+  const keepChatId = await page.evaluate((id) => {
+    const chats=JSON.parse(localStorage.getItem('ai_chats_v87')||'[]');
+    return chats.find(chat=>chat.projectId===id)?.id||'';
+  }, keepId);
+  expect(keepChatId).not.toBe('');
   await page.locator('[data-action="new-chat"]').first().click();
-  const keepChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87') || '');
   // Use the project-labelled sidebar row as the source of truth for the disposable chat.
   await page.locator('[data-action="toggle-sidebar"]').click();
   if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
