@@ -1174,40 +1174,12 @@ test('voice mode menu stays open after a long press and clearly marks both modes
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const trigger = page.locator('#voiceUnavailableButton');
   await expect(trigger).toBeVisible();
-  const bounds = await trigger.boundingBox();
-  expect(bounds).not.toBeNull();
-  await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
-  await page.mouse.down();
-  await page.waitForTimeout(100);
-  await page.mouse.up();
+
+  // Locator.click waits for the element to finish CSS movement before pressing. The composer
+  // transitions from its centered welcome state to the mobile bottom dock after page startup.
+  await trigger.click({ delay: 100 });
   await expect(page.locator('#voiceMenu')).toBeHidden();
-  await page.evaluate(() => {
-    window.__voicePointerEvents = [];
-    const button = document.querySelector('#voiceUnavailableButton');
-    for (const type of ['pointerdown','pointerup','pointercancel','mousedown','mouseup','click','contextmenu']) {
-      button.addEventListener(type, event => window.__voicePointerEvents.push({
-        type, pointerType: event.pointerType || null, button: event.button ?? null,
-        targetAtPoint: document.elementFromPoint(event.clientX || 0, event.clientY || 0)?.id || ''
-      }), true);
-    }
-  });
-  await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
-  await page.mouse.down();
-  // Keep the pointer pressed until the menu actually opens. If that fails, log the
-  // event sequence and hit-test target so a browser-specific cancellation is diagnosable.
-  try {
-    await expect(page.locator('#voiceMenu')).toBeVisible({ timeout: 1500 });
-  } catch (error) {
-    const diagnostics = await page.evaluate(({x,y}) => ({
-      events: window.__voicePointerEvents,
-      hitTarget: document.elementFromPoint(x,y)?.id || '',
-      menuClass: document.querySelector('#voiceMenu')?.className || '',
-      expanded: document.querySelector('#voiceUnavailableButton')?.getAttribute('aria-expanded')
-    }), {x:bounds.x+bounds.width/2,y:bounds.y+bounds.height/2});
-    console.log('VOICE_HOLD_DIAGNOSTICS '+JSON.stringify(diagnostics));
-    throw error;
-  }
-  await page.mouse.up();
+  await trigger.click({ delay: 500 });
   await expect(page.locator('#voiceMenu')).toBeVisible();
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#voiceMenu')).toContainText('ГОЛОСОВОЙ ДИАЛОГ');
