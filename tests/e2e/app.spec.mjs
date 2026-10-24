@@ -1619,6 +1619,8 @@ test('image attachment is sent as multimodal content without persisting image by
 
 test('project memory scope edits the selected project, not the active chat project, and persists after reload', async ({ page }) => {
   await page.addInitScript(() => {
+    if (sessionStorage.getItem('seed-project-memory-scope-test') === '1') return;
+    sessionStorage.setItem('seed-project-memory-scope-test', '1');
     const project = (id, name) => ({
       id, name, description: '', instructions: '', memoryScope: 'project-only',
       memory: [], createdAt: '', updatedAt: ''
