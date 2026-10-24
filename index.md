@@ -1114,25 +1114,26 @@ permalink: /
     async function extractVideoPreviewFrames(file) {
       const url=URL.createObjectURL(file),video=document.createElement('video');
       video.preload='auto';video.muted=true;video.playsInline=true;video.src=url;
-      const waitFor=(name,timeout=9000)=>new Promise((resolve,reject)=>{
+      const waitFor=(name,readyState=0,timeout=9000)=>new Promise((resolve,reject)=>{
+        if(readyState&&video.readyState>=readyState){resolve();return;}
         const timer=setTimeout(()=>{cleanup();reject(new Error('Тайм-аут чтения видео.'));},timeout);
         const done=()=>{cleanup();resolve();},fail=()=>{cleanup();reject(new Error('Браузер не смог декодировать этот видеоформат.'));};
         const cleanup=()=>{clearTimeout(timer);video.removeEventListener(name,done);video.removeEventListener('error',fail);};
         video.addEventListener(name,done,{once:true});video.addEventListener('error',fail,{once:true});
       });
       try {
-        await waitFor('loadedmetadata');
-        await waitFor('loadeddata');
+        await waitFor('loadedmetadata',1);
+        await waitFor('loadeddata',2);
         const duration=Number(video.duration),width=Number(video.videoWidth),height=Number(video.videoHeight);
         if(!Number.isFinite(duration)||duration<=0||!width||!height)throw new Error('Видео не содержит доступных кадров.');
         const times=[0,Math.max(0,duration/2),Math.max(0,duration-0.12)].filter((time,index,arr)=>index===0||Math.abs(time-arr[index-1])>0.25);
         const frames=[];
         for(const time of times) {
           if(Math.abs(video.currentTime-time)>0.05) {
-            const seeked=new Promise((resolve,reject)=>{const timer=setTimeout(()=>{video.removeEventListener('seeked',done);reject(new Error('Не удалось перейти к кадру видео.'));},6000);const done=()=>{clearTimeout(timer);resolve();};video.addEventListener('seeked',done,{once:true});});
-            video.currentTime=time;await seeked;
+            const seeked=new Promise((resolve,reject)=>{const timer=setTimeout(()=>{video.removeEventListener('seeked',done);reject(new Error('Не удалось перейти к кадру видео.'));},6000);const done=()=>{clearTimeout(timer);resolve();};video.addEventListener('seeked',done,{once:true});video.currentTime=time;});
+            await seeked;
           }
-          if(video.readyState<2)await waitFor('loadeddata');
+          if(video.readyState<2)await waitFor('loadeddata',2);
           const scale=Math.min(1,1024/width,1024/height),canvas=document.createElement('canvas');
           canvas.width=Math.max(1,Math.round(width*scale));canvas.height=Math.max(1,Math.round(height*scale));
           const context=canvas.getContext('2d');if(!context)throw new Error('Canvas недоступен для чтения кадров.');
