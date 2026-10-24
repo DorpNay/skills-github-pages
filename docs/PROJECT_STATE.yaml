@@ -1,8 +1,8 @@
 project_state:
   version: 4
   reviewed_on: "2026-10-24"
-  last_volley: "V-2026-10-24-SIDEBAR-COMPOSER-CONTEXT-PR35-MERGED"
-  gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. A post-merge main-push run and deployment of the exact merge SHA are not yet confirmed at this checkpoint. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified."
+  last_volley: "V-2026-10-24-SIDEBAR-COMPOSER-CONTEXT-PR35-MAIN-VERIFIED"
+  gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified."
   source_of_truth:
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
@@ -22,12 +22,12 @@ project_state:
   current_ui_track:
     branch: "main"
     pull_request: 35
-    status: "PR33+34_merged; PR35_merged_at_23add254; head_b3e4a4af; PR-head_run418_all_gates_passed; postmerge_main_deploy_pending"
+    status: "PR33+34_merged; PR35_merged_at_23add254; PR-head_run418_passed; main_checkpoint_4fb39df_quality420_pages122_provenance159_passed; following_commit_docs_only"
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback"
-    projects: "PR35 merged: collapsed project list with per-project chat children; top-level unassigned chats only; project memory scope project-only vs project-and-global; one-shot project context scoped by chat; Chromium E2E passed. Server graph bridge remains experimental and disabled by default."
+    projects: "PR35 merged and Chromium E2E passed: collapsed project list with per-project chat children; top-level unassigned chats only; project memory scope project-only vs project-and-global; one-shot project context scoped by chat. Server graph bridge remains experimental and disabled by default."
     voice_ui: "PR35 merged: chooser opens on long-press; live microphone/ASR/TTS runtime still not implemented; real-device gestures not yet verified"
-    chat_actions: "PR33+34 merged; PR35 merged with project-grouped row lists, personal-chat list, clear-history action, attachment/context composer; PR-head test gates passed; post-merge main deployment verification pending"
+    chat_actions: "PR33+34 merged; PR35 merged with project-grouped row lists, personal-chat list, clear-history action and attachment/context composer; PR-head gates and post-merge main Quality/Pages checks passed for checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e"
     detailed_ledger: "docs/V016_IMPLEMENTATION_CHECKLIST.md"
     user_todo: "docs/USER_REQUEST_CHECKLIST.md"
     google_oauth_credentials_configured: false
