@@ -17,7 +17,11 @@
 
 ## Главная инструкция: установка aLandi
 
-**Пошаговое руководство от регистрации в сервисах до работающего приватного gateway, моделей, кэша и отката:** [docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md](docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md).
+**Начни с короткого чек-листа владельца:** [docs/START_HERE_RU.md](docs/START_HERE_RU.md). Он задаёт порядок действий с GitHub Pages, VPS, Cloudflare, Ollama и gateway.
+
+**Полное пошаговое руководство с командами и проверками:** [docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md](docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md).
+
+**План реализации всех подсистем по приоритетам и критериям готовности:** [docs/IMPLEMENTATION_ROADMAP_RU.md](docs/IMPLEMENTATION_ROADMAP_RU.md).
 
 Используй этот документ как основной runbook для развёртывания. Базовая схема — AI Mobile Agent → Cloudflare Tunnel → aLandi Lite Gateway → закрытая Ollama. Dify/Redis/векторная БД не являются обязательными установочными шагами; добавляй их только после подтверждения задачи и бюджета памяти.
 
