@@ -1528,7 +1528,7 @@ test('composer offers unrestricted file picking but blocks unsupported formats u
   await page.locator('#textAttachmentInput').setInputFiles({
     name:'notes.md',mimeType:'text/markdown',buffer:Buffer.from('Readable attachment sentinel')
   });
-  await expect(page.locator('#userInput')).toContainText('Readable attachment sentinel');
+  await expect(page.locator('#userInput')).toHaveValue(/Readable attachment sentinel/);
 });
 
 test('request-only project context is sent once and does not change the active chat project', async ({ page }) => {
