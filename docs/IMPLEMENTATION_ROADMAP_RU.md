@@ -8,7 +8,7 @@
 
 ## Очерёдность
 
-### P0 — sidebar, composer и контекст запроса (PR #35, проверки pending)
+### P0 — sidebar, composer и контекст запроса (PR #35 merged; PR-head CI green)
 
 **PR #35:** [Improve project sidebar, composer attachments, and request-scoped context](https://github.com/DorpNay/skills-github-pages/pull/35), branch feat/sidebar-composer-context-ergonomics-20261024. Ранее объединённые PR #33/#34 дают правое меню чата и доступный dialog для Rename/Move; PR #35 добавляет:
 - Projects вверху, свернутый список проектов; под каждым проектом — только его чаты. Верхний Chats раскрыт и содержит только личные/непривязанные чаты.
@@ -21,7 +21,7 @@
 
 **Ограничения:** unrestricted file input — это только доступ к системному file picker. Читаемый текст прикладывается в текстовом виде; изображения отправляются как multimodal image_url; видео отправляет до трёх уменьшенных кадров (общий предел восемь кадров/изображений). Прочие бинарные форматы пока распознаются как неподдержанные и не отправляются. Нет ingestion PDF/DOCX/XLSX, OCR, audio transcription, live voice, video generation pipeline либо подключённых коннекторов/ручного skill picker.
 
-**Gate:** CI должен пройти context, integrity, security, Jekyll и Chromium E2E, включая sidebar grouping, multi-project context one-shot, image payload and unsupported file handling. После merge отдельно подтвердить Pages smoke. Затем реальное устройство iOS/Android: удержание, клавиатура/viewport, screen reader и перехват файлов.
+**Gate (24 октября 2026):** PR-head run #418 passed context, integrity, security, Jekyll, all 48 Chromium E2E tests, the published-site browser smoke, plus license/provenance and dead-code gates. PR #35 merged into `main` at `23add2547a69df877b4baf213957827aa2e8e561`. Still confirm the main-push workflow and deployment of that exact revision. Real iOS/Android checks remain open: touch long-press/cancel, keyboard/viewport, screen reader and file handoff.
 
 ### P1 — real voice message (самый короткий полезный вертикальный срез)
 

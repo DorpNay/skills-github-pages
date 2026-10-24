@@ -1,8 +1,8 @@
 project_state:
   version: 4
   reviewed_on: "2026-10-24"
-  last_volley: "V-2026-10-24-SIDEBAR-COMPOSER-CONTEXT-PR35"
-  gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 is open on feat/sidebar-composer-context-ergonomics-20261024. It reorganizes project/chat navigation, moves memory settings under project settings, adds project memory scope, one-request multi-project context, attachment chooser and long-press voice menu, and makes aLandi a built-in primary route. PR-head run #396 is pending at this checkpoint; earlier run #393 failed only because the old quality sentinel expected a visible aLandi provider option, and the sentinel has been updated to enforce the new first-party route design. Current published Pages remains the previous main deployment; PR #35 is not deployed. Live provider smoke, configured private gateway/VPS, all-format document parsing, voice runtime and hardware benchmarks remain unverified."
+  last_volley: "V-2026-10-24-SIDEBAR-COMPOSER-CONTEXT-PR35-MERGED"
+  gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. A post-merge main-push run and deployment of the exact merge SHA are not yet confirmed at this checkpoint. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified."
   source_of_truth:
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
@@ -20,14 +20,14 @@ project_state:
     gateway_vps: "not verified by this change; do not claim deployed"
     experimental_feature_flags: "false by default"
   current_ui_track:
-    branch: "feat/sidebar-composer-context-ergonomics-20261024"
+    branch: "main"
     pull_request: 35
-    status: "PR33+34_merged; PR35_open; head_9e8b5cb4; quality_run396_pending; not_deployed"
+    status: "PR33+34_merged; PR35_merged_at_23add254; head_b3e4a4af; PR-head_run418_all_gates_passed; postmerge_main_deploy_pending"
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback"
-    projects: "PR35: collapsed project list with per-project chat children; top-level unassigned chats only; project memory scope project-only vs project-and-global; one-shot project context scoped by chat; tests pending. Server graph bridge remains experimental and disabled by default."
-    voice_ui: "PR35 switches chooser to long-press-only; live microphone/ASR/TTS runtime still not implemented"
-    chat_actions: "PR33+34 merged; PR35 adds project-grouped row lists, personal-chat list, clear-history action, attachment/context composer; PR35 test gates pending"
+    projects: "PR35 merged: collapsed project list with per-project chat children; top-level unassigned chats only; project memory scope project-only vs project-and-global; one-shot project context scoped by chat; Chromium E2E passed. Server graph bridge remains experimental and disabled by default."
+    voice_ui: "PR35 merged: chooser opens on long-press; live microphone/ASR/TTS runtime still not implemented; real-device gestures not yet verified"
+    chat_actions: "PR33+34 merged; PR35 merged with project-grouped row lists, personal-chat list, clear-history action, attachment/context composer; PR-head test gates passed; post-merge main deployment verification pending"
     detailed_ledger: "docs/V016_IMPLEMENTATION_CHECKLIST.md"
     user_todo: "docs/USER_REQUEST_CHECKLIST.md"
     google_oauth_credentials_configured: false
