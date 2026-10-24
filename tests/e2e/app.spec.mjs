@@ -39,7 +39,7 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'false');
   await expect(page.locator('#toggleMultiAgent')).toBeVisible();
 
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#settingsModal')).toBeVisible();
@@ -70,7 +70,7 @@ test('published app boots and core controls are interactive', async ({ page }) =
 
 test('provider keys, Tavily key, and model settings remain isolated across switching and reload', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
 
@@ -95,7 +95,7 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
   await page.locator('[data-action="close-settings"]').click();
 
   await page.reload();
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#providerPreset')).toHaveValue('groq');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-groq-placeholder-not-a-real-key');
@@ -123,7 +123,7 @@ test('API authentication errors are shown without losing the original user promp
     body: JSON.stringify({ error: { message: 'invalid test credential' } })
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -159,7 +159,7 @@ test('provider connection loads filtered model catalog into selector and key del
     body: JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'OK' } }] })
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -193,7 +193,7 @@ test('catalog remains usable when the saved model is missing from the live provi
     ] })
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -221,7 +221,7 @@ test('refresh all catalogs updates other configured providers for cross-provider
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => localStorage.setItem('ai_api_key_openrouter', 'e2e-openrouter-catalog-key'));
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('e2e-groq-catalog-key');
@@ -240,7 +240,7 @@ test('refresh all catalogs updates other configured providers for cross-provider
 
 test('settings profile exports portable preferences but never API secrets', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
@@ -268,7 +268,7 @@ test('settings profile exports portable preferences but never API secrets', asyn
 
 test('settings profile import restores preferences while preserving existing provider and search keys', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
@@ -371,7 +371,7 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
   });
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -423,7 +423,7 @@ test('multi-agent preference skips a greeting and shows the actual route', async
     });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -447,7 +447,7 @@ test('401 stops after the selected provider rejects credentials', async ({ page 
     await route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: { message: 'invalid credential' } }) });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
@@ -473,7 +473,7 @@ test('transient 503 retries only the same model and never fans out', async ({ pa
     });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
@@ -501,7 +501,7 @@ test('model-specific failure tries another model on the same provider first', as
     });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
@@ -512,7 +512,7 @@ test('model-specific failure tries another model on the same provider first', as
   await expect(page.locator('#chatBox')).toContainText('Fallback worked.');
   await expect(page.locator('#chatBox')).toContainText('Groq · qwen/qwen3.8-27b');
   await expect.poll(() => attemptedModels.length).toBe(2);
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#providerPreset')).toHaveValue('groq');
   await expect(page.locator('#modelName')).toHaveValue('qwen/qwen3.8-27b');
@@ -545,7 +545,7 @@ test('dynamic chat catalog is used for bounded same-provider model fallback', as
     });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -575,7 +575,7 @@ test('Pollinations catalog discovers text models and aliases without sending a t
     });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('pollinations');
   await expect(page.locator('#modelPreset option[value="publisher/available-text-model"]')).toHaveCount(1);
@@ -622,7 +622,7 @@ test('Pollinations requests use the OAuth token, not the public App Key', async 
     });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('pollinations');
   await page.locator('#apiKey').fill('pk_e2e-public-app-key');
@@ -660,7 +660,7 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
     });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('cloudflare');
   await page.locator('#cloudflareAccountId').fill(cloudflareId);
@@ -681,7 +681,7 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
       body: JSON.stringify({ model: hfModel, choices: [{ message: { role: 'assistant', content: 'Hugging Face route worked.' } }] })
     });
   });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('huggingface');
   await page.locator('#apiKey').fill('not-a-real-huggingface-token');
@@ -697,7 +697,7 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
 test('Obsidian Studio and Clean Light preferences persist and respect motion controls', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#uiTheme').selectOption('light');
   await page.locator('#uiMotion').selectOption('off');
@@ -708,7 +708,7 @@ test('Obsidian Studio and Clean Light preferences persist and respect motion con
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#uiTheme').selectOption('dark');
   await page.locator('#uiMotion').selectOption('auto');
@@ -971,6 +971,10 @@ test('deleting a project removes its chats but preserves other projects and chat
   const disposableGroup=page.locator('#projectNavigationList details[data-project-id="'+disposableId+'"]');
   await disposableGroup.locator(':scope > summary').click();
   await disposableGroup.locator(`[data-action="switch-chat"][data-chat-id="${disposableChatId}"]`).click();
+  // Project settings selection is independent from the active chat; explicitly target
+  // Disposable Project before deleting it rather than leaving the Keep Project selected.
+  await disposableGroup.locator('[data-action="open-project-settings"]').click();
+  await expect(page.locator('#projectSettingsStatus')).toContainText('Disposable Project');
   await page.locator('[data-action="toggle-sidebar"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(disposableId);
 
@@ -1180,7 +1184,9 @@ test('voice mode menu stays open after a long press and clearly marks both modes
   await expect(page.locator('#voiceMenu')).toBeHidden();
   await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
   await page.mouse.down();
-  await page.waitForTimeout(500);
+  // Keep the pointer pressed until the menu actually opens; CI timer scheduling
+  // can exceed a fixed 500 ms sleep even when the production hold handler is correct.
+  await expect(page.locator('#voiceMenu')).toBeVisible({ timeout: 1500 });
   await page.mouse.up();
   await expect(page.locator('#voiceMenu')).toBeVisible();
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
@@ -1439,7 +1445,7 @@ test('Markdown fallback preserves tables and escapes HTML when renderer CDNs are
     })
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -1466,7 +1472,7 @@ test('chat row actions are grouped in the right-side menu and rename/clone work'
   await expect(row.locator('details.chat-row-menu')).toBeVisible();
   await expect(row.locator('button[data-action="delete-chat"]')).toBeHidden();
   await row.locator('summary[aria-label="Действия чата"]').click();
-  await expect(row.locator('.chat-row-menu-panel button')).toHaveCount(4);
+  await expect(row.locator('.chat-row-menu-panel button')).toHaveCount(5);
 
   await row.locator('[data-action="chat-rename"]').click();
   await expect(page.locator('#chatActionModal')).toBeVisible();
@@ -1607,7 +1613,7 @@ test('image attachment is sent as multimodal content without persisting image by
   await page.locator('[data-action="close-settings"]').click();
   await page.locator('#attachTextButton').click();
   await page.locator('[data-action="choose-media"]').click();
-  await page.locator('#mediaAttachmentInput').setInputFiles({name:'pixel.png',mimeType:'image/png',buffer:Buffer.from([137,80,78,71,13,10,26,10,0])});
+  await page.locator('#mediaAttachmentInput').setInputFiles({name:'pixel.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADUlEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC','base64')});
   await expect(page.locator('#draftAttachments')).toContainText('pixel.png');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Image received.');
