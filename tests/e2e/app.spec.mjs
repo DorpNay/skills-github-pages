@@ -1556,6 +1556,23 @@ test('request-only project context is sent once and does not change the active c
   await expect(page.locator('#currentProjectSelect')).toHaveValue('project-alpha');
   await page.locator('#contextPickerButton').click();
   await page.locator('#requestProjectChecks input[data-request-project-id="project-beta"]').check();
+  // Selecting one-shot context in Alpha must not leak into Beta if the user switches chats before sending.
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
+  const betaGroup=page.locator('#projectNavigationList details[data-project-id="project-beta"]');
+  await betaGroup.locator(':scope > summary').click();
+  await betaGroup.locator('[data-action="switch-chat"][data-chat-id="chat-beta"]').click();
+  await page.locator('#contextPickerButton').click();
+  await expect(page.locator('#requestProjectChecks input[data-request-project-id="project-beta"]')).not.toBeChecked();
+  await page.locator('#contextPickerButton').click();
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
+  const alphaGroup=page.locator('#projectNavigationList details[data-project-id="project-alpha"]');
+  await alphaGroup.locator(':scope > summary').click();
+  await alphaGroup.locator('[data-action="switch-chat"][data-chat-id="chat-alpha"]').click();
+  await page.locator('#contextPickerButton').click();
+  await expect(page.locator('#requestProjectChecks input[data-request-project-id="project-beta"]')).toBeChecked();
+  await page.locator('#contextPickerButton').click();
   await page.locator('#userInput').fill('Use Beta context for this one request.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Request context verified.');
