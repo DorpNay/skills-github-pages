@@ -844,7 +844,7 @@ permalink: /
     }
     function safeMarkdown(text) {
       const source = String(text ?? '');
-      if (!window.marked || !window.DOMPurify) return `<p>${escapeHtml(source).replace(/\n/g, '<br>')}</p>`;
+      if (!window.marked || !window.DOMPurify) return safeMarkdownFallback(source);
       try {
         return DOMPurify.sanitize(marked.parse(source), {
           USE_PROFILES: { html: true },
@@ -853,8 +853,69 @@ permalink: /
         });
       } catch (error) {
         console.error('Ошибка Markdown:', error);
-        return `<p>${escapeHtml(source).replace(/\n/g, '<br>')}</p>`;
+        return safeMarkdownFallback(source);
       }
+    }
+
+    // A small escaped renderer keeps basic structure readable when either CDN is unavailable.
+    // It deliberately does not render raw HTML or links; the normal path remains DOMPurify + marked.
+    function safeMarkdownFallback(source) {
+      const lines = String(source).replace(/\r\n?/g, '\n').split('\n');
+      const out = [];
+      let paragraph = [], listType = '', codeLines = [], inCode = false;
+      const inline = (value) => escapeHtml(value)
+        .replace(/`([^`\n]+)`/g, '<code>$1</code>')
+        .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
+      const flushParagraph = () => {
+        if (paragraph.length) out.push('<p>' + paragraph.map(inline).join('<br>') + '</p>');
+        paragraph = [];
+      };
+      const closeList = () => {
+        if (listType) out.push('</' + listType + '>');
+        listType = '';
+      };
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (/^\s*```/.test(line)) {
+          flushParagraph(); closeList();
+          if (inCode) { out.push('<pre><code>' + escapeHtml(codeLines.join('\n')) + '</code></pre>'); codeLines = []; inCode = false; }
+          else inCode = true;
+          continue;
+        }
+        if (inCode) { codeLines.push(line); continue; }
+        if (!line.trim()) { flushParagraph(); closeList(); continue; }
+        if (/^\s*\|?.+\|\s*$/.test(line) && /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(lines[i + 1] || '')) {
+          flushParagraph(); closeList();
+          const cells = (value) => value.trim().replace(/^\||\|$/g, '').split('|').map(cell => cell.trim());
+          const headers = cells(line);
+          i += 2;
+          const rows = [];
+          while (i < lines.length && /^\s*\|?.+\|\s*$/.test(lines[i])) { rows.push(cells(lines[i])); i++; }
+          i--;
+          out.push('<table><thead><tr>' + headers.map(cell => '<th>' + inline(cell) + '</th>').join('') + '</tr></thead><tbody>' +
+            rows.map(row => '<tr>' + headers.map((_, index) => '<td>' + inline(row[index] || '') + '</td>').join('') + '</tr>').join('') +
+            '</tbody></table>');
+          continue;
+        }
+        const heading = line.match(/^\s*(#{1,6})\s+(.+)$/);
+        if (heading) { flushParagraph(); closeList(); const level = heading[1].length; out.push('<h' + level + '>' + inline(heading[2]) + '</h' + level + '>'); continue; }
+        const item = line.match(/^\s*(?:[-*+]\s+|(\d+)\.\s+)(.+)$/);
+        if (item) {
+          flushParagraph();
+          const nextType = item[1] ? 'ol' : 'ul';
+          if (listType !== nextType) { closeList(); out.push('<' + nextType + '>'); listType = nextType; }
+          out.push('<li>' + inline(item[2]) + '</li>');
+          continue;
+        }
+        const quote = line.match(/^\s*>\s?(.*)$/);
+        if (quote) { flushParagraph(); closeList(); out.push('<blockquote><p>' + inline(quote[1]) + '</p></blockquote>'); continue; }
+        closeList();
+        paragraph.push(line);
+      }
+      flushParagraph(); closeList();
+      if (inCode) out.push('<pre><code>' + escapeHtml(codeLines.join('\n')) + '</code></pre>');
+      return out.join('\n');
     }
     function escapeHtml(value) {
       return String(value).replace(/[&<>"']/g, (char) => ({
