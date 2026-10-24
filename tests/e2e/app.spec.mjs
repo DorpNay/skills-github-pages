@@ -1719,7 +1719,7 @@ test('clear history preserves the chat and other project data', async ({ page })
   const alpha = persisted.chats.find(chat => chat.id === 'chat-alpha');
   const beta = persisted.chats.find(chat => chat.id === 'chat-beta');
   expect(alpha).toBeTruthy();
-  expect(alpha.messages).toEqual([]);
+  expect(alpha.messages, 'Clear history must leave this chat with no messages').toEqual([]);
   expect(alpha.projectId).toBe('project-alpha');
   expect(beta.messages[0].content).toBe('BETA_HISTORY_TO_KEEP');
   expect(persisted.projects.map(project => project.id).sort()).toEqual(['project-alpha', 'project-beta']);
