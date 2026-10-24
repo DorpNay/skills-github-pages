@@ -1,8 +1,8 @@
 project_state:
   version: 4
   reviewed_on: "2026-10-24"
-  last_volley: "V-2026-10-24-CHAT-ROW-MENU-PR33-MERGED"
-  gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257. PR-head run #374 passed context, integrity, security, Jekyll, Chromium app E2E and published Pages browser smoke. Added right-side chat action menu, rename/clone/project move/delete, glass styling and mobile 16px composer. Post-merge main workflow #377 is pending. Owner quickstart, implementation roadmap and media API source register added to main. Live provider smoke, configured private gateway/VPS, voice runtime and hardware benchmarks remain unverified."
+  last_volley: "V-2026-10-24-CHAT-ACTIONS-DIALOG-PR34-MERGED"
+  gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR-head run #374 and #387 passed context, integrity, security, Jekyll, Chromium E2E and published Pages smoke. Chat action menu now uses accessible glass dialog for rename/project move, plus clone/delete and explicit scoped-memory reset. Main run #384 and Pages deployment #115 passed on pre-PR34 main; post-merge main checks for PR34 pending. Owner quickstart, subsystem roadmap and media API source register added. Live provider smoke, configured private gateway/VPS, voice runtime and hardware benchmarks remain unverified."
   source_of_truth:
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
@@ -21,13 +21,13 @@ project_state:
     experimental_feature_flags: "false by default"
   current_ui_track:
     branch: "main"
-    pull_request: 33
-    status: "PR33_merged_at_05f4c245; PR-head run374_all_required_jobs_passed; postmerge_main_run377_pending"
+    pull_request: 34
+    status: "PR33_merged_at_05f4c245; PR34_merged_at_e3463f9; PR-head run387_all_required_jobs_passed; postmerge_main_checks_pending"
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback"
     projects: "Browser-local CRUD plus CI-verified manual candidate-first server-memory bridge; confirmed-only exact-project retrieval requires both per-chat project/server toggles; gateway flag off by default; live activation unverified"
     voice_ui: "Preview chooser only; no live microphone/ASR/TTS runtime"
-    chat_actions: "PR33 merged; right-side menu rename/clone/project/delete; PR-head Chromium and published Pages smoke passed; postmerge run pending"
+    chat_actions: "PR33+34 merged; right-side menu rename/clone/project/delete; accessible dialog; PR-head Chromium and published Pages smoke passed; postmerge run pending"
     detailed_ledger: "docs/V016_IMPLEMENTATION_CHECKLIST.md"
     user_todo: "docs/USER_REQUEST_CHECKLIST.md"
     google_oauth_credentials_configured: false
