@@ -1480,3 +1480,123 @@ test('chat row actions are grouped in the right-side menu and rename/clone work'
   await expect(page.locator('#chatList button[data-action="switch-chat"]').first()).toContainText('Renamed from menu — копия');
   await expect(page.locator('#userInput')).toHaveCSS('font-size', '16px');
 });
+
+test('sidebar separates projects from personal chats and keeps navigation collapsible', async ({ page }) => {
+  await page.addInitScript(() => {
+    const project = (id, name) => ({ id, name, description: '', instructions: '', memoryScope: 'project-only', memory: [], createdAt: '', updatedAt: '' });
+    const chat = (id, title, projectId) => ({ id, title, projectId, projectMemoryEnabled: false, serverProjectMemoryEnabled: false, messages: [] });
+    localStorage.setItem('ai_projects_v1', JSON.stringify([project('project-alpha','Alpha project'), project('project-beta','Beta project')]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([chat('chat-personal','Personal chat',null),chat('chat-alpha','Alpha project chat','project-alpha'),chat('chat-beta','Beta project chat','project-beta')]));
+    localStorage.setItem('ai_current_chat_v87','chat-alpha');
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await expect(page.locator('#projectNavToggle')).toHaveAttribute('aria-expanded','false');
+  await expect(page.locator('#projectNavigationList')).toBeHidden();
+  await expect(page.locator('#chatSection')).toHaveAttribute('open','');
+  await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(1);
+  await expect(page.locator('#chatList [data-action="switch-chat"]')).toContainText('Personal chat');
+  await expect(page.locator('#chatList')).not.toContainText('Alpha project chat');
+  await expect(page.locator('#memoryToolsDetails')).toBeHidden();
+
+  await page.locator('#projectNavToggle').click();
+  await expect(page.locator('#projectNavigationList')).toBeVisible();
+  const alpha=page.locator('#projectNavigationList details[data-project-id="project-alpha"]');
+  await alpha.locator(':scope > summary').click();
+  await expect(alpha.locator('[data-action="switch-chat"]')).toHaveCount(1);
+  await expect(alpha.locator('[data-action="switch-chat"]')).toContainText('Alpha project chat');
+  await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(1);
+});
+
+test('composer offers unrestricted file picking but blocks unsupported formats until removed', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#textAttachmentInput')).not.toHaveAttribute('accept', /.+/);
+  await expect(page.locator('#textAttachmentInput')).toHaveAttribute('multiple','');
+  await page.locator('#attachTextButton').click();
+  await expect(page.locator('#attachmentMenu')).toBeVisible();
+  await page.locator('[data-action="choose-any-file"]').click();
+  await page.locator('#textAttachmentInput').setInputFiles({
+    name:'sample.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\nnot-a-real-pdf')
+  });
+  await expect(page.locator('#draftAttachments')).toContainText('sample.pdf');
+  await expect(page.locator('#draftAttachments')).toContainText('не распознаётся');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#toast')).toContainText('неподдерживаемые файлы');
+  await page.locator('#draftAttachments [data-action="remove-draft-attachment"]').click();
+  await page.locator('#attachTextButton').click();
+  await page.locator('[data-action="choose-any-file"]').click();
+  await page.locator('#textAttachmentInput').setInputFiles({
+    name:'notes.md',mimeType:'text/markdown',buffer:Buffer.from('Readable attachment sentinel')
+  });
+  await expect(page.locator('#userInput')).toContainText('Readable attachment sentinel');
+});
+
+test('request-only project context is sent once and does not change the active chat project', async ({ page }) => {
+  const captured=[];
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    captured.push(route.request().postDataJSON());
+    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({model:'context-e2e',choices:[{message:{role:'assistant',content:'Request context verified.'}}]})});
+  });
+  await page.addInitScript(() => {
+    const project=(id,name,instructions)=>({id,name,description:'',instructions,memoryScope:'project-only',memory:[{id:id+'-memory',text:name+' memory sentinel',createdAt:''}],createdAt:'',updatedAt:''});
+    const chat=(id,title,projectId)=>({id,title,projectId,projectMemoryEnabled:true,serverProjectMemoryEnabled:false,messages:[]});
+    localStorage.setItem('ai_projects_v1',JSON.stringify([project('project-alpha','Alpha project','ALPHA_ONLY_INSTRUCTION'),project('project-beta','Beta project','BETA_ONE_SHOT_INSTRUCTION')]));
+    localStorage.setItem('ai_chats_v87',JSON.stringify([chat('chat-alpha','Alpha chat','project-alpha'),chat('chat-beta','Beta chat','project-beta')]));
+    localStorage.setItem('ai_current_chat_v87','chat-alpha');
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('context-e2e');
+  await page.locator('#apiKey').fill('e2e-context-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await expect(page.locator('#currentProjectSelect')).toHaveValue('project-alpha');
+  await page.locator('#contextPickerButton').click();
+  await page.locator('#requestProjectChecks input[data-request-project-id="project-beta"]').check();
+  await page.locator('#userInput').fill('Use Beta context for this one request.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Request context verified.');
+  expect(captured).toHaveLength(1);
+  expect(captured[0].messages[0].content).toContain('BETA_ONE_SHOT_INSTRUCTION');
+  expect(captured[0].messages[0].content).toContain('ALPHA_ONLY_INSTRUCTION');
+  await expect(page.locator('#currentProjectSelect')).toHaveValue('project-alpha');
+
+  await page.locator('#userInput').fill('Do not include the one-shot project this time.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Request context verified.');
+  expect(captured).toHaveLength(2);
+  expect(captured[1].messages[0].content).toContain('ALPHA_ONLY_INSTRUCTION');
+  expect(captured[1].messages[0].content).not.toContain('BETA_ONE_SHOT_INSTRUCTION');
+  await expect(page.locator('#contextPickerButton')).toHaveAttribute('aria-expanded','false');
+});
+
+test('image attachment is sent as multimodal content without persisting image bytes in chat history', async ({ page }) => {
+  let captured=null;
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    captured=route.request().postDataJSON();
+    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({model:'vision-e2e',choices:[{message:{role:'assistant',content:'Image received.'}}]})});
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('vision-e2e');
+  await page.locator('#apiKey').fill('e2e-vision-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#attachTextButton').click();
+  await page.locator('[data-action="choose-media"]').click();
+  await page.locator('#mediaAttachmentInput').setInputFiles({name:'pixel.png',mimeType:'image/png',buffer:Buffer.from([137,80,78,71,13,10,26,10,0])});
+  await expect(page.locator('#draftAttachments')).toContainText('pixel.png');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Image received.');
+  const user=captured.messages.find(message=>message.role==='user');
+  expect(Array.isArray(user.content)).toBe(true);
+  expect(user.content.some(part=>part.type==='image_url'&&part.image_url.url.startsWith('data:image/png;base64,'))).toBe(true);
+  const stored=await page.evaluate(()=>localStorage.getItem('ai_chats_v87')||'');
+  expect(stored).not.toContain('data:image/png;base64,');
+});
