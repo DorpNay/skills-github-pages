@@ -1436,7 +1436,7 @@ test('chat row actions are grouped in the right-side menu and rename/clone work'
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const row = page.locator('#chatList .chat-row').first();
   await expect(row.locator('details.chat-row-menu')).toBeVisible();
-  await expect(row.locator('button[data-action="delete-chat"]')).toHaveCount(0);
+  await expect(row.locator('button[data-action="delete-chat"]')).toBeHidden();
   await row.locator('summary[aria-label="Действия чата"]').click();
   await expect(row.locator('.chat-row-menu-panel button')).toHaveCount(4);
 
