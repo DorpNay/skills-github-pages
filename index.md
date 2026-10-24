@@ -391,6 +391,8 @@ permalink: /
           <button type="button" data-action="paste-cloud-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ из буфера обмена">Вставить</button>
         </div>
         <button id="cloudConnect" type="button" data-action="connect-alandi-cloud" data-i18n="cloudConnect" class="w-full rounded-xl bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-semibold text-sm py-2.5">Проверить и подключить</button>
+        <button type="button" data-action="select-alandi-primary" class="w-full rounded-xl border border-cyan-700/60 bg-cyan-950/30 hover:bg-cyan-900/40 text-cyan-100 text-xs py-2.5">Использовать aLandi как основной маршрут</button>
+        <p class="text-[10px] text-gray-500">aLandi — встроенный основной маршрут. Внешние провайдеры находятся ниже в отдельном списке.</p>
       </section>
       <section class="rounded-xl border border-gray-700 p-3 space-y-2" aria-label="Внешний вид">
         <h3 class="text-xs font-semibold" data-i18n="appearanceTitle">Внешний вид</h3>
@@ -413,7 +415,7 @@ permalink: /
       </div>
       <label for="providerPreset" data-i18n="providerLabel" class="block text-xs text-gray-400">Провайдер API</label>
       <select id="providerPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm">
-        <option value="alandi">aLandi · собственный gateway</option><option value="kilo">Kilo AI · Auto Free</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="custom">Свой OpenAI-совместимый API</option>
+        <option value="alandi" hidden>aLandi · основной маршрут</option><option value="kilo">Kilo AI · Auto Free</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="custom">Свой OpenAI-совместимый API</option>
       </select>
       <label for="modelSearch" data-i18n="modelSearchLabel" class="block text-xs text-gray-400">Поиск по каталогу моделей</label>
       <input type="search" id="modelSearch" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Фильтр по имени или ID модели">
@@ -2344,6 +2346,24 @@ permalink: /
         hideStatus();if(provider==='alandi')void refreshCloudStatus();
       }
     }
+    async function selectAlandiPrimaryRoute() {
+      const {baseUrl,model,key}=getCloudSettings();
+      if(baseUrl)safeSet('ai_alandi_cloud_base_url',baseUrl);
+      if(model)safeSet('ai_alandi_cloud_model',model);
+      if(key)safeSet(providerKeyStorage('alandi'),key);
+      safeSet(STORAGE.provider,'alandi');
+      if(baseUrl)safeSet(STORAGE.baseUrl,baseUrl);
+      if(model)safeSet(STORAGE.model,model);
+      $('providerPreset').value='alandi';applyProviderPreset('alandi',true);
+      $('baseUrl').value=baseUrl;$('modelName').value=model;$('apiKey').value=key;
+      const raw=String(safeGet('ai_alandi_cloud_connection_v1')||'');let marker=null;try{marker=JSON.parse(raw);}catch(_){}
+      const fingerprint=key?await providerKeyFingerprint(key):'';
+      const verified=Boolean(marker?.ok&&marker.baseUrl===baseUrl&&marker.model===model&&fingerprint&&marker.keyFingerprint===fingerprint);
+      if(verified)setCloudStatus('connected','aLandi выбран основным. Последняя проверка прошла успешно; при сомнениях запусти проверку заново.');
+      else setCloudStatus('disconnected','aLandi выбран основным, но актуальное соединение ещё не подтверждено.');
+      refreshApiKeyLamp();
+      showToast(verified?'Основной маршрут переключён на aLandi.':'Основной маршрут переключён на aLandi. Сначала проверь адрес, модель и ключ.');
+    }
     async function connectAlandiCloud(){
       if(isTestingProviderConnection)return;
       const {baseUrl,model,key}=getCloudSettings();
@@ -3554,6 +3574,7 @@ permalink: /
           case 'paste-cloud-key': await pasteIntoField('cloudApiKey');break;
           case 'paste-tavily-key': await pasteIntoField('tavilyKey');break;
           case 'connect-alandi-cloud': await connectAlandiCloud();break;
+          case 'select-alandi-primary': await selectAlandiPrimaryRoute();break;
           case 'attach-text-file': {
             const menu=$('attachmentMenu'),open=menu.classList.contains('hidden');closeComposerPopovers();if(open){menu.classList.remove('hidden');$('attachTextButton').setAttribute('aria-expanded','true');}break;
           }
