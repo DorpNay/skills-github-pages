@@ -2991,8 +2991,8 @@ permalink: /
     function chatProjectAction(id) {
       const chat=chats.find(item=>item.id===id);if(!chat)return;
       if(!projects.length){showToast('Сначала создай проект в разделе проектов.','error');return;}
-      const options=projects.map((project,index)=>`${index+1}. ${project.name}`).join('\\n');
-      const answer=prompt('Выбери номер проекта. 0 — извлечь из проекта.\\n'+options,chat.projectId?String(Math.max(1,projects.findIndex(p=>p.id===chat.projectId)+1)):'1');
+      const options=projects.map((project,index)=>`${index+1}. ${project.name}`).join('\n');
+      const answer=prompt('Выбери номер проекта. 0 — извлечь из проекта.\n'+options,chat.projectId?String(Math.max(1,projects.findIndex(p=>p.id===chat.projectId)+1)):'1');
       if(answer===null)return;const choice=Number(answer);
       if(!Number.isInteger(choice)||choice<0||choice>projects.length){showToast('Неверный номер проекта.','error');return;}
       chat.projectId=choice===0?null:projects[choice-1].id;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
