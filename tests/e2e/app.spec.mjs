@@ -1724,3 +1724,58 @@ test('clear history preserves the chat and other project data', async ({ page })
   expect(beta.messages[0].content).toBe('BETA_HISTORY_TO_KEEP');
   expect(persisted.projects.map(project => project.id).sort()).toEqual(['project-alpha', 'project-beta']);
 });
+
+test('clearing a non-active project chat preserves the active chat and both project associations', async ({ page }) => {
+  await page.addInitScript(() => {
+    const project = (id, name) => ({
+      id, name, description: '', instructions: '', memoryScope: 'project-only',
+      memory: [], createdAt: '', updatedAt: ''
+    });
+    const chat = (id, title, projectId, sentinel) => ({
+      id, title, projectId, projectMemoryEnabled: false,
+      serverProjectMemoryEnabled: false,
+      messages: [{ role: 'user', content: sentinel }]
+    });
+    localStorage.setItem('ai_projects_v1', JSON.stringify([
+      project('project-alpha', 'Alpha project'),
+      project('project-beta', 'Beta project')
+    ]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([
+      chat('chat-alpha', 'Alpha chat', 'project-alpha', 'ACTIVE_ALPHA_HISTORY_TO_KEEP'),
+      chat('chat-beta', 'Beta chat', 'project-beta', 'BETA_HISTORY_TO_CLEAR')
+    ]));
+    localStorage.setItem('ai_current_chat_v87', 'chat-alpha');
+  });
+
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  if (await page.locator('#projectNavigationList').evaluate(el => el.classList.contains('hidden'))) {
+    await page.locator('#projectNavToggle').click();
+  }
+
+  const betaGroup = page.locator('#projectNavigationList details[data-project-id="project-beta"]');
+  await betaGroup.locator(':scope > summary').click();
+  const betaRow = betaGroup.locator('.chat-row').filter({ hasText: 'Beta chat' });
+  await betaRow.locator('summary[aria-label="Действия чата"]').click();
+
+  page.on('dialog', dialog => dialog.accept());
+  await betaRow.locator('[data-action="chat-clear"][data-chat-id="chat-beta"]').click();
+
+  await expect(page.locator('#chatBox')).toContainText('ACTIVE_ALPHA_HISTORY_TO_KEEP');
+  await expect(page.locator('#chatBox')).not.toContainText('BETA_HISTORY_TO_CLEAR');
+
+  const persisted = await page.evaluate(() => ({
+    currentChatId: localStorage.getItem('ai_current_chat_v87'),
+    chats: JSON.parse(localStorage.getItem('ai_chats_v87') || '[]'),
+    projects: JSON.parse(localStorage.getItem('ai_projects_v1') || '[]')
+  }));
+  const alpha = persisted.chats.find(chat => chat.id === 'chat-alpha');
+  const beta = persisted.chats.find(chat => chat.id === 'chat-beta');
+  expect(persisted.currentChatId, 'Clearing a background chat must not switch the active chat').toBe('chat-alpha');
+  expect(alpha.messages[0].content).toBe('ACTIVE_ALPHA_HISTORY_TO_KEEP');
+  expect(alpha.projectId).toBe('project-alpha');
+  expect(beta.messages, 'The selected background chat must be cleared').toEqual([]);
+  expect(beta.projectId).toBe('project-beta');
+  expect(persisted.projects.map(project => project.id).sort()).toEqual(['project-alpha', 'project-beta']);
+});
+
