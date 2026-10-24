@@ -1702,9 +1702,7 @@ test('clear history preserves the chat and other project data', async ({ page })
 
   const alphaGroup = page.locator('#projectNavigationList details[data-project-id="project-alpha"]');
   await alphaGroup.locator(':scope > summary').click();
-  const alphaRow = alphaGroup.locator('.chat-row').filter({
-    has: alphaGroup.locator('[data-action="switch-chat"][data-chat-id="chat-alpha"]')
-  });
+  const alphaRow = alphaGroup.locator('.chat-row').filter({ hasText: 'Alpha chat' });
   await alphaRow.locator('summary[aria-label="Действия чата"]').click();
 
   page.on('dialog', dialog => dialog.accept());
