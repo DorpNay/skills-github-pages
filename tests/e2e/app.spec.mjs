@@ -1434,6 +1434,7 @@ test('Markdown fallback preserves tables and escapes HTML when renderer CDNs are
 
 test('chat row actions are grouped in the right-side menu and rename/clone work', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
   const row = page.locator('#chatList .chat-row').first();
   await expect(row.locator('details.chat-row-menu')).toBeVisible();
   await expect(row.locator('button[data-action="delete-chat"]')).toBeHidden();
