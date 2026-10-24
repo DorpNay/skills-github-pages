@@ -1420,6 +1420,7 @@ permalink: /
         else composerAttachmentsByChat.delete(composerStateOwnerChatId);
         composerStateOwnerChatId=activeId;
         pendingComposerAttachments=(composerAttachmentsByChat.get(activeId)||[]).slice();
+        renderDraftAttachments();
       }
     }
     function saveRequestContextForActiveChat() {
