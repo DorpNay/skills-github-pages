@@ -174,7 +174,7 @@ permalink: /
     .chat-section-summary { color:var(--ui-text); }
     #chatSection[open] .chat-section-summary { border-bottom:1px solid var(--ui-border);color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
     #chatList { min-height:5rem;max-height:min(38vh,420px); }
-    #chatList:empty::after { content:'Нет личных чатов без проекта';display:block;padding:12px;color:var(--ui-text-muted);font-size:11px; }
+    #chatList.is-empty::after { content:attr(data-empty-label);display:block;padding:12px;color:var(--ui-text-muted);font-size:11px; }
     #projectNavigationList .chat-row { min-height:38px; }
     #projectNavigationList .chat-row .chat-row-menu summary { width:30px;height:30px; }
     @media (prefers-reduced-transparency:reduce) { .project-nav-item,#chatSection { background:var(--ui-surface); } }
@@ -1078,6 +1078,7 @@ permalink: /
       const themeButton=$('homeThemeToggle');if(themeButton){themeButton.title=lang==='en'?'Switch theme':'Сменить тему';themeButton.setAttribute('aria-label',themeButton.title);}
       document.querySelectorAll('[data-action="toggle-settings"]').forEach(button=>button.setAttribute('aria-label',lang==='en'?'Settings':'Настройки'));
       const attach=$('attachTextButton');if(attach){attach.title=lang==='en'?'Attach photo, video or any file format':'Добавить фото, видео или файл любого формата';attach.setAttribute('aria-label',attach.title);}
+      const voice=$('voiceUnavailableButton');if(voice){voice.title=lang==='en'?'Press and hold for voice modes':'Удерживай, чтобы открыть режимы голоса';voice.setAttribute('aria-label',voice.title);}
       updateOfflineUI();updateModeUI();updateHomeThemeButton();renderProjectUI({preserveDraft:true});
     }
     function updateHomeThemeButton(){
@@ -1187,7 +1188,7 @@ permalink: /
     function updateRequestContextButton() {
       const button=$('contextPickerButton'),badge=$('requestContextCount');if(!button||!badge)return;
       const count=selectedRequestProjectIds.size,english=getUiLanguage()==='en';badge.textContent=String(count);badge.classList.toggle('hidden',count===0);badge.classList.toggle('inline-flex',count>0);
-      button.classList.toggle('border-cyan-400',count>0);button.setAttribute('aria-label',count?(english?'Next request context: '+count+' projects':'Контекст следующего запроса: проектов '+count):(english?'Choose context for the next request':'Выбрать контекст для следующего запроса'));
+      button.classList.toggle('border-cyan-400',count>0);const label=count?(english?'Next request context: '+count+' projects':'Контекст следующего запроса: проектов '+count):(english?'Choose context for the next request':'Выбрать контекст для следующего запроса');button.setAttribute('aria-label',label);button.title=label;
     }
     function closeComposerPopovers() {
       $('attachmentMenu').classList.add('hidden');$('attachTextButton').setAttribute('aria-expanded','false');
@@ -1600,7 +1601,8 @@ permalink: /
     function renderChatList() {
       renderProjectUI({preserveDraft:true});
       const list=$('chatList');list.replaceChildren();
-      chats.filter(chat=>!chat.projectId).forEach(chat=>list.appendChild(createChatRow(chat,false)));
+      const personalChats=chats.filter(chat=>!chat.projectId);list.dataset.emptyLabel=getUiLanguage()==='en'?'No personal chats yet.':'Нет личных чатов без проекта';list.classList.toggle('is-empty',personalChats.length===0);
+      personalChats.forEach(chat=>list.appendChild(createChatRow(chat,false)));
     }
     async function renderMemory() {
       const box = $('memoryBox');
