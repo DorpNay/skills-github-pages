@@ -8,14 +8,14 @@
 
 ## Очерёдность
 
-### P0 — клиентская эргономика и восстановление (сейчас)
+### P0 — клиентская эргономика и восстановление (PR #33 merged)
 
-**PR #33:** [chat row actions + composer](https://github.com/DorpNay/skills-github-pages/pull/33)
-- Chat row: меню ⋯ справа → Rename / Clone / Move-to-project / Extract / Delete; удаление только после confirm.
-- Glass menu: blur/saturation, contrast, fallback без transparency; reduced-motion/transparency.
-- Composer: mobile 16px, keyboard/visual viewport behavior, сохранять draft и не сбрасывать страницу после blur.
-- Следом: доступность клавиатуры/focus, RU/EN все labels, мобильный portrait/landscape, reduced motion, chat history/export/import, проектные CRUD и memory scope.
-**Gate:** Chromium desktop+mobile, test rename/clone/move/delete, keyboard focus, keyboard open/close без jump/zoom-lock, localStorage persistence, accessibility smoke. Merge только после всех required jobs.
+**PR #33:** [chat row actions + composer](https://github.com/DorpNay/skills-github-pages/pull/33). Merge commit `05f4c2454c279cc21dcbf08c83ff3c3025838257`. PR-head run #374 passed context, integrity, security, Jekyll, Chromium E2E and published Pages browser smoke. Post-merge run #377 is pending.
+- Chat row: menu ⋯ right → Rename / Clone / Move-to-project / Extract / Delete; deletion confirm.
+- Glass menu: blur/saturation, contrast, fallback without transparency; reduced-motion/transparency.
+- Composer: mobile 16px; no disabling browser zoom. Real-device keyboard open/close, landscape, focus and screen-reader checks remain open.
+- Follow-up: replace native prompt for rename/project selection with an accessible in-app dialog/select; test project move/detach, localStorage persistence, mobile viewport and all RU/EN labels.
+**Gate:** PR-head checks passed. Remaining release gate is post-merge Pages workflow plus real-device accessibility/mobile review.
 
 ### P1 — real voice message (самый короткий полезный вертикальный срез)
 
