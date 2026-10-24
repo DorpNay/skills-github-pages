@@ -965,16 +965,15 @@ test('deleting a project removes its chats but preserves other projects and chat
   }, keepId);
   expect(keepChatId).not.toBe('');
   await page.locator('[data-action="new-chat"]').first().click();
-  // Use the project-labelled sidebar row as the source of truth for the disposable chat.
+  // Project settings selection is independent from the active chat. Select the target
+  // while the sidebar is settled, then switch to its chat (which closes the mobile sidebar).
   await page.locator('[data-action="toggle-sidebar"]').click();
   if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
   const disposableGroup=page.locator('#projectNavigationList details[data-project-id="'+disposableId+'"]');
   await disposableGroup.locator(':scope > summary').click();
-  await disposableGroup.locator(`[data-action="switch-chat"][data-chat-id="${disposableChatId}"]`).click();
-  // Project settings selection is independent from the active chat; explicitly target
-  // Disposable Project before deleting it rather than leaving the Keep Project selected.
   await disposableGroup.locator('[data-action="open-project-settings"]').click();
   await expect(page.locator('#projectSettingsStatus')).toContainText('Disposable Project');
+  await disposableGroup.locator(`[data-action="switch-chat"][data-chat-id="${disposableChatId}"]`).click();
   await page.locator('[data-action="toggle-sidebar"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(disposableId);
 
@@ -1182,11 +1181,32 @@ test('voice mode menu stays open after a long press and clearly marks both modes
   await page.waitForTimeout(100);
   await page.mouse.up();
   await expect(page.locator('#voiceMenu')).toBeHidden();
+  await page.evaluate(() => {
+    window.__voicePointerEvents = [];
+    const button = document.querySelector('#voiceUnavailableButton');
+    for (const type of ['pointerdown','pointerup','pointercancel','mousedown','mouseup','click','contextmenu']) {
+      button.addEventListener(type, event => window.__voicePointerEvents.push({
+        type, pointerType: event.pointerType || null, button: event.button ?? null,
+        targetAtPoint: document.elementFromPoint(event.clientX || 0, event.clientY || 0)?.id || ''
+      }), true);
+    }
+  });
   await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
   await page.mouse.down();
-  // Keep the pointer pressed until the menu actually opens; CI timer scheduling
-  // can exceed a fixed 500 ms sleep even when the production hold handler is correct.
-  await expect(page.locator('#voiceMenu')).toBeVisible({ timeout: 1500 });
+  // Keep the pointer pressed until the menu actually opens. If that fails, log the
+  // event sequence and hit-test target so a browser-specific cancellation is diagnosable.
+  try {
+    await expect(page.locator('#voiceMenu')).toBeVisible({ timeout: 1500 });
+  } catch (error) {
+    const diagnostics = await page.evaluate(({x,y}) => ({
+      events: window.__voicePointerEvents,
+      hitTarget: document.elementFromPoint(x,y)?.id || '',
+      menuClass: document.querySelector('#voiceMenu')?.className || '',
+      expanded: document.querySelector('#voiceUnavailableButton')?.getAttribute('aria-expanded')
+    }), {x:bounds.x+bounds.width/2,y:bounds.y+bounds.height/2});
+    console.log('VOICE_HOLD_DIAGNOSTICS '+JSON.stringify(diagnostics));
+    throw error;
+  }
   await page.mouse.up();
   await expect(page.locator('#voiceMenu')).toBeVisible();
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
