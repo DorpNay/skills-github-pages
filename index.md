@@ -140,6 +140,25 @@ permalink: /
     body.composer-bottom-transition #chatBox { padding-bottom:175px; }
     @media (prefers-reduced-motion:reduce) { .voice-menu { animation:none!important; } }
     .chat-row { position:relative; min-height:44px; }
+    .project-nav-heading { color:var(--ui-text);background:var(--ui-surface-raised);border:1px solid var(--ui-border); }
+    .project-nav-heading:hover { background:var(--ui-tiffany-soft);border-color:var(--ui-tiffany); }
+    .project-nav-unassigned { color:var(--ui-text-muted);background:color-mix(in srgb,var(--ui-surface) 82%,transparent); }
+    .project-nav-unassigned:hover,.project-nav-unassigned.is-active { color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
+    .project-nav-item { border:1px solid var(--ui-border);border-radius:11px;overflow:hidden;background:color-mix(in srgb,var(--ui-surface) 86%,transparent); }
+    .project-nav-item[open] { border-color:color-mix(in srgb,var(--ui-tiffany) 55%,var(--ui-border)); }
+    .project-nav-item > summary { display:flex;align-items:center;gap:8px;padding:10px 9px;cursor:pointer;list-style:none;font-size:12px; }
+    .project-nav-item > summary::-webkit-details-marker { display:none; }
+    .project-nav-item > summary:hover { background:var(--ui-tiffany-soft); }
+    .project-nav-chats { padding:0 6px 6px 13px;display:grid;gap:4px; }
+    #chatSection { border-color:var(--ui-border);background:color-mix(in srgb,var(--ui-surface) 60%,transparent); }
+    .chat-section-summary { color:var(--ui-text); }
+    #chatSection[open] .chat-section-summary { border-bottom:1px solid var(--ui-border);color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
+    #chatList { min-height:5rem;max-height:min(38vh,420px); }
+    #chatList:empty::after { content:'Нет личных чатов без проекта';display:block;padding:12px;color:var(--ui-text-muted);font-size:11px; }
+    #projectNavigationList .chat-row { min-height:38px; }
+    #projectNavigationList .chat-row .chat-row-menu summary { width:30px;height:30px; }
+    @media (prefers-reduced-transparency:reduce) { .project-nav-item,#chatSection { background:var(--ui-surface); } }
+
     .chat-action-dialog { background:color-mix(in srgb,var(--ui-surface) 94%,transparent);border:1px solid var(--ui-border);backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%);box-shadow:0 24px 80px rgb(0 0 0 / 45%); }
     .chat-action-dialog input,.chat-action-dialog select { border-color:var(--ui-border);color:var(--ui-text);min-height:44px; }
     .chat-action-dialog select option { color:#111827;background:#fff; }
@@ -245,25 +264,30 @@ permalink: /
       <button type="button" data-action="new-chat" data-i18n="newChat" class="w-full bg-blue-600 hover:bg-blue-500 py-2 rounded-lg font-bold text-sm">＋ Новый чат</button>
       <button type="button" data-action="clear-chat" data-i18n="clearChat" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 py-1.5 rounded-lg text-xs">🗑 Очистить чат</button>
     </div>
-    <section class="px-3 py-1" aria-label="Долгосрочная память">
-      <label for="memoryInput" data-i18n="memoryLabel" class="text-xs text-gray-400 font-semibold">🧠 Долгосрочная память</label>
-      <div class="flex gap-1 mt-1">
-        <input id="memoryInput" type="text" maxlength="500" placeholder="Факт, который нужно запомнить" data-i18n-placeholder="memoryPlaceholder" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs">
-        <button type="button" data-action="save-memory" class="bg-blue-700 hover:bg-blue-600 px-2 rounded text-xs" aria-label="Сохранить факт">＋</button>
+    <section id="projectPanel" class="px-3 py-2 border-t border-gray-800 space-y-2" aria-label="Проекты и настройки проекта">
+      <div id="projectNavigation" class="space-y-1.5">
+        <button id="projectNavToggle" type="button" data-action="toggle-project-navigation" aria-expanded="false" aria-controls="projectNavigationList" class="w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold project-nav-heading">
+          <span>▣ <span data-i18n="projectsTitle">Проекты</span></span><span id="projectNavChevron" aria-hidden="true">⌄</span>
+        </button>
+        <button id="projectlessNavButton" type="button" data-action="projectless-nav" class="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-xs project-nav-unassigned" aria-label="Показать чаты без проекта">
+          <span aria-hidden="true">○</span><span data-i18n="noProjectNav">Без проекта</span><span id="projectlessChatCount" class="ml-auto text-[10px] text-gray-500">0</span>
+        </button>
+        <div id="projectNavigationList" class="hidden pl-2 space-y-1" aria-label="Список проектов"></div>
+        <button type="button" data-action="open-project-settings" class="w-full rounded-lg px-3 py-2 text-left text-xs text-gray-400 hover:text-white hover:bg-white/5">⚙ Настройки проекта и памяти</button>
       </div>
-      <div id="memoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет сохранённых фактов.</div>
-      <label class="flex items-start gap-2 mt-2 text-[11px] leading-relaxed text-gray-400"><input id="globalMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="globalMemoryOptIn">Разрешить подходящим заметкам глобальной памяти попадать в контекст запросов.</span></label>
-    </section>
-    <section id="projectPanel" class="px-3 py-2 border-t border-gray-800 space-y-2" aria-labelledby="projectsTitle">
-      <h3 id="projectsTitle" class="text-xs font-semibold" data-i18n="projectsTitle">▣ Проекты и проектная память</h3>
-      <label for="currentProjectSelect" class="block text-[11px] text-gray-400" data-i18n="currentProjectLabel">Проект текущего чата</label>
-      <select id="currentProjectSelect" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs"><option value="">Без проекта · личный чат</option></select>
-      <label class="flex items-start gap-2 text-[11px] text-gray-400"><input id="projectMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="projectMemoryOptIn">Использовать память выбранного проекта в этом чате</span></label>
-      <p id="projectSummary" class="text-[10px] leading-relaxed text-gray-500">Чат не привязан к проекту.</p>
       <details id="projectManagerDetails" class="rounded-xl border border-gray-800">
-        <summary class="cursor-pointer select-none px-3 py-2 text-xs font-semibold" data-i18n="manageProject">Создать или настроить проект</summary>
+        <summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">⚙ <span data-i18n="manageProject">Настройки проекта</span></summary>
         <div class="p-2 space-y-2">
-          <label for="projectNameInput" class="block text-[11px] text-gray-400" data-i18n="projectNameLabel">Название</label>
+          <label for="currentProjectSelect" class="block text-[11px] text-gray-400" data-i18n="currentProjectLabel">Проект текущего чата</label>
+          <select id="currentProjectSelect" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs"><option value="">Без проекта · личный чат</option></select>
+          <label for="projectMemoryScopeSelect" class="block text-[11px] text-gray-400">Режим памяти проекта</label>
+          <select id="projectMemoryScopeSelect" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs">
+            <option value="project-only">Память только внутри проекта</option>
+            <option value="project-and-global">Память проекта + общая память (если она разрешена)</option>
+          </select>
+          <label class="flex items-start gap-2 text-[11px] text-gray-400"><input id="projectMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="projectMemoryOptIn">Использовать память выбранного проекта в этом чате</span></label>
+          <p id="projectSummary" class="text-[10px] leading-relaxed text-gray-500">Чат не привязан к проекту.</p>
+                    <label for="projectNameInput" class="block text-[11px] text-gray-400" data-i18n="projectNameLabel">Название</label>
           <input id="projectNameInput" type="text" maxlength="100" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Название проекта">
           <label for="projectInstructionsInput" class="block text-[11px] text-gray-400" data-i18n="projectInstructionsLabel">Инструкции проекта</label>
           <textarea id="projectInstructionsInput" rows="3" maxlength="6000" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs resize-y" placeholder="Цель, стиль, ограничения и критерии результата"></textarea>
@@ -271,6 +295,15 @@ permalink: /
             <button type="button" data-action="create-project" class="bg-cyan-900/70 hover:bg-cyan-800 border border-cyan-800 rounded-lg py-2 text-xs" data-i18n="createProject">＋ Создать проект</button>
             <button type="button" data-action="save-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="saveProject">Сохранить изменения</button>
           </div>
+<details id="memoryToolsDetails" class="rounded-xl border border-gray-800">
+            <summary class="cursor-pointer select-none px-3 py-2 text-xs font-semibold">🧠 Общая память и факты</summary>
+            <div class="p-2 space-y-2">
+              <label class="flex items-start gap-2 text-[11px] leading-relaxed text-gray-400"><input id="globalMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="globalMemoryOptIn">Разрешить подходящим заметкам общей памяти попадать в контекст, если режим памяти текущего проекта это допускает.</span></label>
+              <label for="memoryInput" data-i18n="memoryLabel" class="text-xs text-gray-400 font-semibold">Долгосрочная память</label>
+              <div class="flex gap-1 mt-1"><input id="memoryInput" type="text" maxlength="500" placeholder="Факт, который нужно запомнить" data-i18n-placeholder="memoryPlaceholder" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-memory" class="bg-blue-700 hover:bg-blue-600 px-2 rounded text-xs" aria-label="Сохранить факт">＋</button></div>
+              <div id="memoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет сохранённых фактов.</div>
+            </div>
+          </details>
           <label for="projectMemoryInput" class="block text-[11px] text-gray-400" data-i18n="projectMemoryLabel">Добавить факт в память проекта</label>
           <div class="flex gap-1"><input id="projectMemoryInput" type="text" maxlength="600" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Факт, решение или ограничение"><button type="button" data-action="add-project-memory" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Добавить факт">＋</button></div>
           <div id="projectMemoryBox" class="max-h-24 overflow-y-auto text-[11px] text-gray-400 space-y-1"></div>
@@ -294,10 +327,17 @@ permalink: /
           <input type="file" id="importProjectFile" class="hidden" accept="application/json,.json">
           <button type="button" data-action="detach-current-chat" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="detachChat">Извлечь чат из проекта</button>
           <button type="button" data-action="delete-project" class="w-full bg-red-950/50 hover:bg-red-900/60 border border-red-900/50 rounded-lg py-2 text-xs text-red-200" data-i18n="deleteProject">Удалить проект и его чаты</button>
+
         </div>
       </details>
     </section>
-    <div id="chatList" class="flex-1 overflow-y-auto p-3 space-y-2 text-sm" aria-label="Список чатов"></div>
+    <details id="chatSection" open class="mx-3 my-2 rounded-xl border border-gray-800">
+      <summary class="chat-section-summary flex items-center justify-between gap-2 px-3 py-2.5 text-sm font-semibold cursor-pointer select-none" aria-controls="chatList">
+        <span>💬 <span data-i18n="chatsTitle">Чаты</span></span><span id="chatSectionCount" class="text-[10px] text-gray-500">0</span>
+      </summary>
+      <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
+    </details>
+
     <div class="p-3 border-t border-gray-800 flex gap-2">
       <button type="button" data-action="export-chats" data-i18n="exportChats" class="flex-1 bg-gray-800 hover:bg-gray-700 py-1.5 rounded text-xs">Экспорт</button>
       <label class="flex-1 bg-gray-800 hover:bg-gray-700 py-1.5 rounded text-xs text-center cursor-pointer">
