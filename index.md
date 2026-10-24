@@ -632,7 +632,11 @@ permalink: /
     let pyodideScriptPromise = null;
     let processingMode = 'fast';
     const selectedRequestProjectIds = new Set();
+    const requestProjectContextByChat = new Map();
+    let requestContextOwnerChatId = null;
     let pendingComposerAttachments = [];
+    const composerAttachmentsByChat = new Map();
+    let composerStateOwnerChatId = null;
 
 
     function currentProvider() {
@@ -1168,6 +1172,7 @@ permalink: /
             if(selectedRequestProjectIds.size>=5){checkbox.checked=false;showToast(english?'Choose up to five projects per request.':'Для одного запроса можно выбрать не более пяти проектов.','error');return;}
             selectedRequestProjectIds.add(project.id);
           } else selectedRequestProjectIds.delete(project.id);
+          saveRequestContextForActiveChat();
           updateRequestContextButton();
         });
         const text=document.createElement('span');text.className='min-w-0 flex-1';
@@ -1399,7 +1404,32 @@ permalink: /
         const nodes=Array.isArray(payload.nodes)?payload.nodes.filter(node=>node&&node.status==='confirmed'&&node.scope==='project'&&node.scope_id===project.id&&typeof node.content==='string'):[];const selected=[];let chars=0;for(const node of nodes.slice(0,6)){const fact=node.content.slice(0,500);if(chars+fact.length>1200)continue;selected.push(fact);chars+=fact.length;}setServerMemoryStatus(memoryUiText('serverMemoryContextLoaded')+selected.length);return selected;
       }catch(error){if(signal?.aborted)throw error;setServerMemoryStatus(memoryUiText('serverMemoryUnavailable'));return [];}
     }
-    function renderProjectUI(options={}){
+    function syncComposerStateForCurrentChat() {
+      const activeId=currentChatId;
+      if(requestContextOwnerChatId===null)requestContextOwnerChatId=activeId;
+      else if(requestContextOwnerChatId!==activeId) {
+        if(selectedRequestProjectIds.size)requestProjectContextByChat.set(requestContextOwnerChatId,[...selectedRequestProjectIds]);
+        else requestProjectContextByChat.delete(requestContextOwnerChatId);
+        requestContextOwnerChatId=activeId;
+        selectedRequestProjectIds.clear();
+        for(const id of requestProjectContextByChat.get(activeId)||[])if(projects.some(project=>project.id===id))selectedRequestProjectIds.add(id);
+      }
+      if(composerStateOwnerChatId===null)composerStateOwnerChatId=activeId;
+      else if(composerStateOwnerChatId!==activeId) {
+        if(pendingComposerAttachments.length)composerAttachmentsByChat.set(composerStateOwnerChatId,pendingComposerAttachments);
+        else composerAttachmentsByChat.delete(composerStateOwnerChatId);
+        composerStateOwnerChatId=activeId;
+        pendingComposerAttachments=(composerAttachmentsByChat.get(activeId)||[]).slice();
+      }
+    }
+    function saveRequestContextForActiveChat() {
+      if(!requestContextOwnerChatId)requestContextOwnerChatId=currentChatId;
+      const valid=[...selectedRequestProjectIds].filter(id=>projects.some(project=>project.id===id)).slice(0,5);
+      if(valid.length)requestProjectContextByChat.set(requestContextOwnerChatId,valid);
+      else requestProjectContextByChat.delete(requestContextOwnerChatId);
+    }
+    function renderProjectUI(options={}) {
+      syncComposerStateForCurrentChat();
       const select=$('currentProjectSelect');if(!select)return;
       const active=document.activeElement;
       const preserveDraft=options.preserveDraft===true&&[ $('projectNameInput'),$('projectInstructionsInput') ].includes(active);
@@ -3191,7 +3221,7 @@ permalink: /
         chat.messages.push({ role: 'user', content: userContent });
         input.value = ''; autoResizeTextarea(input);
       }
-      selectedRequestProjectIds.clear();pendingComposerAttachments=[];renderDraftAttachments();renderRequestProjectChoices();closeComposerPopovers();
+      selectedRequestProjectIds.clear();requestProjectContextByChat.delete(chat.id);pendingComposerAttachments=[];composerAttachmentsByChat.delete(chat.id);renderDraftAttachments();renderRequestProjectChoices();closeComposerPopovers();
       updateState([...chats]);
       isGenerating = true;
       activeChatId = chat.id;
@@ -3211,7 +3241,7 @@ permalink: /
       } catch (error) {
         if (requestProjectIds.length||chosenAttachments.length) {
           requestProjectIds.forEach(id=>selectedRequestProjectIds.add(id));
-          pendingComposerAttachments=chosenAttachments;renderDraftAttachments();renderRequestProjectChoices();
+          saveRequestContextForActiveChat();pendingComposerAttachments=chosenAttachments;if(chosenAttachments.length)composerAttachmentsByChat.set(chat.id,chosenAttachments);renderDraftAttachments();renderRequestProjectChoices();
         }
         if (error.name === 'AbortError') {
           hideStatus();
@@ -3593,7 +3623,7 @@ permalink: /
           case 'toggle-request-context': {
             const menu=$('requestContextMenu'),open=menu.classList.contains('hidden');closeComposerPopovers();if(open){menu.classList.remove('hidden');$('contextPickerButton').setAttribute('aria-expanded','true');renderRequestProjectChoices();}break;
           }
-          case 'clear-request-context': selectedRequestProjectIds.clear();renderRequestProjectChoices();break;
+          case 'clear-request-context': selectedRequestProjectIds.clear();saveRequestContextForActiveChat();renderRequestProjectChoices();break;
           case 'remove-draft-attachment': pendingComposerAttachments=pendingComposerAttachments.filter(item=>item.id!==control.dataset.attachmentId);renderDraftAttachments();break;
           case 'create-project': createProject();break;
           case 'save-project': saveProject();break;
