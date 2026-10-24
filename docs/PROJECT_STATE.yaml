@@ -1,8 +1,8 @@
 project_state:
-  version: 4
-  reviewed_on: "2026-10-23"
-  last_volley: "V-2026-10-23-MEMORY-BROWSER-BRIDGE"
-  gate: "Main is 55248f81585c52d7cc7ba7cfc08158a291a761ca after PR #29. PR-head and post-merge Quality/Chromium, integrity/security/context sentinels, Jekyll, Pages browser smoke, provenance and Pages deployment passed. FastAPI gateway contract/security tests passed on unchanged base SHA e424d353418cad62981eb269b4082d2925592708. Browser project-memory bridge is merged but remains opt-in and requires gateway configuration. Live provider smoke, configured private gateway/VPS and hardware benchmarks remain unverified."
+  version: 5
+  reviewed_on: "2026-10-24"
+  last_volley: "V-2026-10-24-MARKDOWN-FALLBACK-PR32"
+  gate: "PR #32 merged at 31eecce8203073dbc8e0e46b3ac338f64788d59b. Added escaped structured Markdown fallback for missing marked/DOMPurify and Chromium regression coverage. PR-head workflow run #359: all six jobs passed (context, Chromium, integrity, security, Jekyll, published Pages smoke); deployment is public-client Pages only. Live provider smoke, configured private gateway/VPS and hardware benchmarks remain unverified."
   source_of_truth:
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
@@ -19,8 +19,8 @@ project_state:
     experimental_feature_flags: "false by default"
   current_ui_track:
     branch: "main"
-    pull_request: 29
-    status: "PR29_merged_at_55248f8_postmerge_quality_chromium_provenance_pages_passed_gateway_tests_passed_on_base_e424_no_live_activation"
+    pull_request: 32
+    status: "PR32_merged_at_31eecce_all_six_quality_jobs_passed_including_chromium_and_published_pages_smoke"
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback"
     projects: "Browser-local CRUD plus CI-verified manual candidate-first server-memory bridge; confirmed-only exact-project retrieval requires both per-chat project/server toggles; gateway flag off by default; live activation unverified"
@@ -81,6 +81,7 @@ improvements:
   AI-UI-001: {status: "browser_project_prototype_e2e_passed_local_only", artifact: "index.md; docs/V016_IMPLEMENTATION_CHECKLIST.md", eval: "EV-UI-002"}
   AI-UI-002: {status: "local_project_memory_plus_manual_server_graph_bridge_opt_in_per_chat_e2e_ci_passed_live_gateway_unverified", artifact: "index.md; gateway/app.py; tests/e2e/app.spec.mjs", eval: "EV-UI-003"}
   AI-UI-003: {status: "partial_bilingual_theme_clock_composer_voice_preview_e2e_passed", artifact: "index.md", eval: "EV-UI-004"}
+  AI-UI-004: {status: "safe_structured_markdown_fallback_merged_pr32_all_six_quality_jobs_passed", artifact: "index.md; tests/e2e/app.spec.mjs", eval: "EV-UI-005"}
   AI-PROVIDER-001: {status: "cloud_first_provider_recovery_e2e_passed_gateway_unconfigured", artifact: "index.md", eval: "EV-PROVIDER-UI-001"}
   AI-PROVIDER-002: {status: "live_smoke_explicit_consent_guard_ci_passed_not_dispatched", artifact: ".github/workflows/provider-smoke-all.yml; scripts/provider-smoke-all.mjs", eval: "EV-PROVIDER-001"}
   AI-PROJECT-001: {status: "browser_local_crud_and_manual_server_bridge_e2e_ci_passed_live_gateway_unverified", artifact: "index.md; tests/e2e/app.spec.mjs", eval: "EV-PROJECT-001"}
