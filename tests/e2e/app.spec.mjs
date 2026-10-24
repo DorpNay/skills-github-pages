@@ -1583,8 +1583,8 @@ test('request-only project context is sent once and does not change the active c
 
   await page.locator('#userInput').fill('Do not include the one-shot project this time.');
   await page.locator('#sendBtn').click();
+  await expect.poll(() => captured.length).toBe(2);
   await expect(page.locator('#chatBox')).toContainText('Request context verified.');
-  expect(captured).toHaveLength(2);
   expect(captured[1].messages[0].content).toContain('ALPHA_ONLY_INSTRUCTION');
   expect(captured[1].messages[0].content).not.toContain('BETA_ONE_SHOT_INSTRUCTION');
   await expect(page.locator('#contextPickerButton')).toHaveAttribute('aria-expanded','false');
