@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-10-24"
   last_volley: "V-2026-10-24-SIDEBAR-COMPOSER-CONTEXT-PR35"
-  gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 is open on feat/sidebar-composer-context-ergonomics-20261024. It reorganizes project/chat navigation, moves memory settings under project settings, adds project memory scope, one-request multi-project context, attachment chooser and long-press voice menu, and makes aLandi a built-in primary route. PR-head run #396 is pending at this checkpoint; earlier run #393 failed only because the old quality sentinel expected a visible aLandi provider option, and the sentinel has been updated to enforce the new first-party route design. Current published Pages remains the previous main deployment; PR #35 is not deployed. Live provider smoke, configured private gateway/VPS, all-format document parsing, voice runtime and hardware benchmarks remain unverified."
+  gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 is open on feat/sidebar-composer-context-ergonomics-20261024. The PR-head application/test commit b3e4a4af16ec4d90ab434db8a43f46973eb1995b passed Quality run #418: 48 built-app Chromium E2E tests and one Chromium smoke against the currently published Pages site; integrity, security, context and Jekyll jobs passed. License/provenance run #156 and dead-code audit run #124 also passed. PR #35 remains unmerged, so published Pages still serves main before PR #35. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified."
   source_of_truth:
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
@@ -22,12 +22,12 @@ project_state:
   current_ui_track:
     branch: "feat/sidebar-composer-context-ergonomics-20261024"
     pull_request: 35
-    status: "PR33+34_merged; PR35_open; head_9e8b5cb4; quality_run396_pending; not_deployed"
+    status: "PR33+34_merged; PR35_open; app_test_head_b3e4a4af; quality_run418_passed; chromium_48_e2e_plus_published_pages_smoke_passed; not_deployed"
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback"
-    projects: "PR35: collapsed project list with per-project chat children; top-level unassigned chats only; project memory scope project-only vs project-and-global; one-shot project context scoped by chat; tests pending. Server graph bridge remains experimental and disabled by default."
+    projects: "PR35: collapsed project list with per-project chat children; top-level unassigned chats only; project memory scope project-only vs project-and-global; one-shot project context scoped by chat; PR-head Chromium and quality gates passed. Dedicated memory-scope toggle/persistence test and real-device verification remain pending. Server graph bridge remains experimental and disabled by default."
     voice_ui: "PR35 switches chooser to long-press-only; live microphone/ASR/TTS runtime still not implemented"
-    chat_actions: "PR33+34 merged; PR35 adds project-grouped row lists, personal-chat list, clear-history action, attachment/context composer; PR35 test gates pending"
+    chat_actions: "PR33+34 merged; PR35 adds project-grouped row lists, personal-chat list, clear-history action, attachment/context composer; PR-head Chromium and quality gates passed; explicit clear-history E2E and real-device follow-up pending"
     detailed_ledger: "docs/V016_IMPLEMENTATION_CHECKLIST.md"
     user_todo: "docs/USER_REQUEST_CHECKLIST.md"
     google_oauth_credentials_configured: false

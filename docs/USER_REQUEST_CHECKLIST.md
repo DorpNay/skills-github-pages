@@ -212,13 +212,13 @@
 
 ## Supplement — 2026-10-24 project navigation and composer
 
-- [~] PR #35: Projects at top, collapsed by default; each project expands to its own chat list; top-level Chats is expanded and contains only unassigned/personal chats.
-- [~] New personal chat from Chats; create a project-scoped chat from that project's expanded group; per-row menu includes rename, clone, move/detach, clear history, delete.
-- [~] Move global memory controls and project facts under collapsed project settings; persisted project memory scope selects project-only vs project-and-global.
-- [~] Add composer + chooser for photo/video vs unrestricted multi-file picker. Known text formats and images are processed; video sends sampled frames. Other binary formats are selected but currently shown as unsupported and block sending until a parser/ingestion endpoint is implemented.
-- [~] Add ◎ request-context selector for up to five projects. Context is scoped by chat ID, bounded, added to the next request only, and cleared after successful send. Selected project context must not mutate the chat's own project.
-- [~] Voice chooser opens after press-and-hold, not a short tap. Live recording, ASR, TTS and audio transcript remain unimplemented.
-- [~] aLandi is a dedicated first-party primary-route card; third-party providers stay in advanced settings. Quality sentinel updated accordingly.
-- [ ] PR #35 Chromium and all quality gates must pass before merge; published Pages smoke must pass after merge.
+- [x] PR #35: Projects at top, collapsed by default; each project expands to its own chat list; top-level Chats is expanded and contains only unassigned/personal chats. PR-head Chromium E2E and quality gates passed.
+- [~] New personal chat from Chats; create a project-scoped chat from that project's expanded group; per-row menu includes rename/clone/move and delete coverage; explicit clear-history E2E and real-device validation remain follow-ups.
+- [~] Move global memory controls and project facts under collapsed project settings; persisted project memory scope selects project-only vs project-and-global. Main UI flow is implemented, but a dedicated memory-scope toggle/persistence E2E test is still pending; project memory remains browser-local unless the experimental server bridge is separately enabled.
+- [x] Add composer + chooser for photo/video vs unrestricted multi-file picker. Known text formats and images are processed; video sends sampled frames. Other binary formats are selected but currently shown as unsupported and block sending until a parser/ingestion endpoint is implemented. Chromium E2E covered image payload and readable/unsupported file handling; broad binary ingestion is not implemented.
+- [x] Add ◎ request-context selector for up to five projects. Context is scoped by chat ID, bounded, added to the next request only, and cleared after successful send. Selected project context must not mutate the chat's own project. Dedicated Chromium E2E passed.
+- [x] Voice chooser opens after press-and-hold, not a short tap. Chromium E2E passed. Live recording, ASR, TTS and audio transcript remain unimplemented.
+- [x] aLandi is a dedicated first-party primary-route card; third-party providers stay in advanced settings. Quality sentinel passed.
+- [x] PR #35 PR-head Chromium and all quality gates passed at application/test commit b3e4a4af; run #418 reported 48 Chromium E2E plus one smoke of the currently published Pages site, and license/provenance plus dead-code audit passed. PR #35 is still open and not deployed; main deployment and post-merge Pages smoke remain required.
 - [ ] Real device verification: touch long-press/cancel, mobile keyboard focus/viewport reset, screen reader flow, and large file handling.
 - [ ] Implement real file intake pipeline for PDF/DOCX/XLSX/OCR/audio/video metadata before claiming all formats are supported.

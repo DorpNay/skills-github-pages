@@ -8,7 +8,7 @@
 
 ## Очерёдность
 
-### P0 — sidebar, composer и контекст запроса (PR #35, проверки pending)
+### P0 — sidebar, composer и контекст запроса (PR #35, PR-head CI passed; merge/deployment pending)
 
 **PR #35:** [Improve project sidebar, composer attachments, and request-scoped context](https://github.com/DorpNay/skills-github-pages/pull/35), branch feat/sidebar-composer-context-ergonomics-20261024. Ранее объединённые PR #33/#34 дают правое меню чата и доступный dialog для Rename/Move; PR #35 добавляет:
 - Projects вверху, свернутый список проектов; под каждым проектом — только его чаты. Верхний Chats раскрыт и содержит только личные/непривязанные чаты.
@@ -21,7 +21,7 @@
 
 **Ограничения:** unrestricted file input — это только доступ к системному file picker. Читаемый текст прикладывается в текстовом виде; изображения отправляются как multimodal image_url; видео отправляет до трёх уменьшенных кадров (общий предел восемь кадров/изображений). Прочие бинарные форматы пока распознаются как неподдержанные и не отправляются. Нет ingestion PDF/DOCX/XLSX, OCR, audio transcription, live voice, video generation pipeline либо подключённых коннекторов/ручного skill picker.
 
-**Gate:** CI должен пройти context, integrity, security, Jekyll и Chromium E2E, включая sidebar grouping, multi-project context one-shot, image payload and unsupported file handling. После merge отдельно подтвердить Pages smoke. Затем реальное устройство iOS/Android: удержание, клавиатура/viewport, screen reader и перехват файлов.
+**Gate (обновлено 24.10.2026):** PR-head Quality run #418 прошёл: 48 Chromium E2E-тестов на собранном приложении и 1 Chromium smoke текущего опубликованного Pages-сайта; integrity, security, context и Jekyll прошли. License/provenance run #156 и dead-code audit run #124 тоже прошли. PR #35 ещё открыт и не опубликован: после merge нужна отдельная проверка main deployment/Pages. Затем проверить на реальном iOS/Android: удержание и отмену touch, клавиатуру/viewport, screen reader и работу с файлами.
 
 ### P1 — real voice message (самый короткий полезный вертикальный срез)
 
