@@ -61,7 +61,7 @@
 
 ## 6. Что сейчас реализуется в клиенте
 
-PR #33 — [chat row actions & mobile composer](https://github.com/DorpNay/skills-github-pages/pull/33) — в работе: правое меню `⋯` для чата (переименовать, клонировать, добавить/переместить/извлечь из проекта, удалить), glass styling, 16px composer на мобильных и E2E тест. Пока PR не прошёл полный CI и merge, эти изменения не считать опубликованными.
+PR #33 — [chat row actions & mobile composer](https://github.com/DorpNay/skills-github-pages/pull/33) — merged в main. PR-head workflow #374 прошёл context, integrity, security, Jekyll, Chromium E2E и опубликованный Pages browser smoke. Post-merge workflow #377 ещё ожидает завершения; дождись зелёного статуса и обновления Pages, прежде чем считать изменения опубликованными.
 
 Голосовая запись/диалог, транскрипция, генерация изображений/видео и полноценная загрузка документов — следующие отдельные этапы. Они не включаются автоматически этой серверной установкой.
 
