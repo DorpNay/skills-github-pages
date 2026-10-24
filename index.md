@@ -1158,6 +1158,7 @@ permalink: /
         return raw.filter(p=>p&&typeof p==='object'&&typeof p.id==='string'&&typeof p.name==='string').slice(0,200).map(p=>({
           id:p.id.slice(0,128),name:p.name.slice(0,100),description:typeof p.description==='string'?p.description.slice(0,1000):'',
           instructions:typeof p.instructions==='string'?p.instructions.slice(0,6000):'',
+          memoryScope:p.memoryScope==='project-and-global'?'project-and-global':'project-only',
           memory:Array.isArray(p.memory)?p.memory.filter(v=>v&&typeof v.id==='string'&&typeof v.text==='string').slice(0,500).map(v=>({id:v.id.slice(0,128),text:v.text.slice(0,600),createdAt:String(v.createdAt||'')})):[],
           createdAt:String(p.createdAt||''),updatedAt:String(p.updatedAt||'')
         }));
@@ -1245,6 +1246,7 @@ permalink: /
       const none=document.createElement('option');none.value='';none.textContent=getUiLanguage()==='en'?'No project · personal chat':'Без проекта · личный чат';select.appendChild(none);
       for(const item of projects){const option=document.createElement('option');option.value=item.id;option.textContent=item.name;select.appendChild(option);}
       select.value=selected;
+      $('projectMemoryScopeSelect').value=project?.memoryScope==='project-and-global'?'project-and-global':'project-only';
       $('projectMemoryToggle').checked=chat?.projectMemoryEnabled===true;
       $('projectMemoryToggle').disabled=!project;
       const serverToggle=$('serverProjectMemoryToggle');if(serverToggle){serverToggle.checked=chat?.serverProjectMemoryEnabled===true;serverToggle.disabled=!project;}
@@ -1266,12 +1268,13 @@ permalink: /
         }
       }
       $('globalMemoryToggle').checked=safeGet(STORAGE.globalMemoryEnabled)==='true';
+      renderProjectNavigation();
     }
     function createProject(){
       const input=$('projectNameInput'),name=input.value.trim().slice(0,100);
       if(!name){input.focus();showToast(getUiLanguage()==='en'?'Enter a project name first.':'Сначала введи название проекта.','error');return;}
       if(projects.length>=200){showToast('Достигнут предел локальных проектов (200).','error');return;}
-      const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectInstructionsInput').value.trim().slice(0,6000),memory:[],createdAt:now,updatedAt:now};
+      const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectInstructionsInput').value.trim().slice(0,6000),memoryScope:'project-only',memory:[],createdAt:now,updatedAt:now};
       projects.unshift(project);persistProjects();
       const chat=getCurrentChat();chat.projectId=project.id;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
       persistChats();renderProjectUI();renderChatList();
@@ -1282,7 +1285,7 @@ permalink: /
       if(!project){showToast(getUiLanguage()==='en'?'Choose a project first.':'Сначала выбери проект.','error');return;}
       const name=$('projectNameInput').value.trim().slice(0,100);
       if(!name){showToast('Название проекта не может быть пустым.','error');return;}
-      project.name=name;project.instructions=$('projectInstructionsInput').value.trim().slice(0,6000);project.updatedAt=new Date().toISOString();
+      project.name=name;project.instructions=$('projectInstructionsInput').value.trim().slice(0,6000);project.memoryScope=$('projectMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only';project.updatedAt=new Date().toISOString();
       persistProjects();renderProjectUI();renderChatList();
       showToast(getUiLanguage()==='en'?'Project instructions saved.':'Инструкции проекта сохранены.');
     }
@@ -1318,7 +1321,7 @@ permalink: /
     }
     function exportProjectBundle(){
       const project=getProjectForChat();if(!project){showToast(getUiLanguage()==='en'?'Choose a project first.':'Сначала выбери проект.','error');return;}
-      const bundle={format:'alandi-project-bundle',version:1,exportedAt:new Date().toISOString(),project:{id:project.id,name:project.name,description:project.description,instructions:project.instructions,memory:project.memory,createdAt:project.createdAt,updatedAt:project.updatedAt},chats:chats.filter(chat=>chat.projectId===project.id)};
+      const bundle={format:'alandi-project-bundle',version:1,exportedAt:new Date().toISOString(),project:{id:project.id,name:project.name,description:project.description,instructions:project.instructions,memoryScope:project.memoryScope||'project-only',memory:project.memory,createdAt:project.createdAt,updatedAt:project.updatedAt},chats:chats.filter(chat=>chat.projectId===project.id)};
       const blob=new Blob([JSON.stringify(bundle,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),anchor=document.createElement('a');
       anchor.href=url;anchor.download='alandi-project-'+project.name.toLowerCase().replace(/[^a-z0-9а-яё_-]+/gi,'-').slice(0,48)+'.json';document.body.appendChild(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
     }
@@ -1344,7 +1347,7 @@ permalink: /
           importedName=(baseName.slice(0,100-numbered.length)+numbered);serial++;
         }
         const memory=Array.isArray(bundle.project.memory)?bundle.project.memory.filter(v=>v&&typeof v.text==='string').slice(0,500).map(v=>({id:projectIdNew(),text:v.text.slice(0,600),createdAt:String(v.createdAt||now)})):[];
-        const target={id:projectIdNew(),name:importedName,description:typeof bundle.project.description==='string'?bundle.project.description.slice(0,1000):'',instructions:typeof bundle.project.instructions==='string'?bundle.project.instructions.slice(0,6000):'',memory,createdAt:now,updatedAt:now};
+        const target={id:projectIdNew(),name:importedName,description:typeof bundle.project.description==='string'?bundle.project.description.slice(0,1000):'',instructions:typeof bundle.project.instructions==='string'?bundle.project.instructions.slice(0,6000):'',memoryScope:bundle.project.memoryScope==='project-and-global'?'project-and-global':'project-only',memory,createdAt:now,updatedAt:now};
         projects.unshift(target);
         const seen=new Set(chats.map(chat=>chat.id));
         for(const chat of importedChats){if(seen.has(chat.id))chat.id=projectIdNew();seen.add(chat.id);chat.projectId=target.id;chats.unshift(chat);}
@@ -1352,29 +1355,49 @@ permalink: /
         showToast(getUiLanguage()==='en'?'Imported '+importedChats.length+' chats into '+target.name+'.':'Импортировано чатов в проект «'+target.name+'»: '+importedChats.length+'.');
       }catch(error){showToast('Импорт проекта не выполнен: '+String(error.message||error).slice(0,180),'error');}
     }
+    function createChatRow(chat,compact=false) {
+      const active=chat.id===currentChatId,item=document.createElement('div');
+      item.className=`chat-row ${compact?'chat-row-compact':''} p-2 rounded-xl flex items-center gap-1.5 group transition-colors ${active?'bg-blue-600/15 border border-blue-500/35 text-white':'hover:bg-white/5 border border-transparent text-gray-300'}`;
+      const open=document.createElement('button');open.type='button';open.dataset.action='switch-chat';open.dataset.chatId=chat.id;open.className='text-left truncate font-medium text-sm flex-1 min-w-0 rounded-lg px-1.5 py-2';open.textContent=chat.title||'Новый чат';
+      const menu=document.createElement('details');menu.className='chat-row-menu shrink-0';
+      const summary=document.createElement('summary');summary.textContent='⋯';summary.setAttribute('aria-label',getUiLanguage()==='en'?'Chat actions':'Действия чата');summary.title=summary.getAttribute('aria-label');
+      const panel=document.createElement('div');panel.className='chat-row-menu-panel';
+      const project=chat.projectId?projects.find(item=>item.id===chat.projectId):null,english=getUiLanguage()==='en';
+      const actions=[['chat-rename',english?'Rename':'Переименовать'],['chat-clone',english?'Clone':'Клонировать'],['chat-project',project?(english?'Move / detach from project':'Переместить / извлечь из проекта'):(english?'Add to project':'Добавить в проект')],['delete-chat',english?'Delete chat':'Удалить чат']];
+      actions.forEach(([action,label])=>{const button=document.createElement('button');button.type='button';button.dataset.action=action;button.dataset.chatId=chat.id;button.textContent=label;if(action==='delete-chat')button.className='danger';panel.appendChild(button);});
+      menu.append(summary,panel);item.append(open,menu);return item;
+    }
+    function renderProjectNavigation() {
+      const list=$('projectNavigationList');if(!list)return;
+      const expanded=new Set([...list.querySelectorAll('details.project-nav-item[open]')].map(item=>item.dataset.projectId));
+      list.replaceChildren();
+      const unassigned=chats.filter(chat=>!chat.projectId);
+      $('projectlessChatCount').textContent=String(unassigned.length);
+      $('chatSectionCount').textContent=String(unassigned.length);
+      const current=getCurrentChat();
+      $('projectlessNavButton').classList.toggle('is-active',!current?.projectId);
+      const english=getUiLanguage()==='en';
+      for(const project of projects) {
+        const group=document.createElement('details');group.className='project-nav-item';group.dataset.projectId=project.id;group.open=expanded.has(project.id);
+        const summary=document.createElement('summary');
+        const caret=document.createElement('span');caret.className='project-nav-caret';caret.textContent=group.open?'⌄':'›';caret.setAttribute('aria-hidden','true');
+        const title=document.createElement('span');title.className='min-w-0 flex-1 truncate';title.textContent=project.name;
+        const count=document.createElement('span');count.className='text-[10px] text-gray-500';count.textContent=String(chats.filter(chat=>chat.projectId===project.id).length);
+        summary.append(caret,title,count);group.appendChild(summary);
+        group.addEventListener('toggle',()=>{caret.textContent=group.open?'⌄':'›';});
+        const children=document.createElement('div');children.className='project-nav-chats';
+        const assigned=chats.filter(chat=>chat.projectId===project.id);
+        if(!assigned.length){const empty=document.createElement('p');empty.className='px-2 py-2 text-[10px] text-gray-500';empty.textContent=english?'No chats in this project yet.':'В проекте пока нет чатов.';children.appendChild(empty);}
+        assigned.forEach(chat=>children.appendChild(createChatRow(chat,true)));
+        const settings=document.createElement('button');settings.type='button';settings.dataset.action='open-project-settings';settings.dataset.projectId=project.id;settings.className='w-full text-left text-[10px] text-gray-500 hover:text-cyan-300 px-2 py-1';settings.textContent=english?'⚙ Project settings':'⚙ Настройки проекта';children.appendChild(settings);
+        group.appendChild(children);list.appendChild(group);
+      }
+      if(!projects.length){const empty=document.createElement('p');empty.className='px-2 py-2 text-[11px] text-gray-500';empty.textContent=english?'No projects yet.':'Проектов пока нет.';list.appendChild(empty);}
+    }
     function renderChatList() {
       renderProjectUI({preserveDraft:true});
-      const list = $('chatList');
-      list.replaceChildren();
-      chats.forEach((chat) => {
-        const active = chat.id === currentChatId;
-        const item = document.createElement('div');
-        item.className = `chat-row p-2 rounded-xl flex items-center gap-1.5 group transition-colors ${active
-          ? 'bg-blue-600/15 border border-blue-500/35 text-white'
-          : 'hover:bg-white/5 border border-transparent text-gray-300'}`;
-        const open = document.createElement('button');
-        open.type = 'button'; open.dataset.action = 'switch-chat'; open.dataset.chatId = chat.id;
-        open.className = 'text-left truncate font-medium text-sm flex-1 min-w-0 rounded-lg px-1.5 py-2';
-        const project=chat.projectId?projects.find(item=>item.id===chat.projectId):null;
-        open.textContent = (project?'▣ ':'')+(chat.title || 'Новый чат');
-        if(project)open.title=(getUiLanguage()==='en'?'Project: ':'Проект: ')+project.name;
-        const menu=document.createElement('details');menu.className='chat-row-menu shrink-0';
-        const summary=document.createElement('summary');summary.textContent='⋯';summary.setAttribute('aria-label',getUiLanguage()==='en'?'Chat actions':'Действия чата');summary.title=summary.getAttribute('aria-label');
-        const panel=document.createElement('div');panel.className='chat-row-menu-panel';
-        const english=getUiLanguage()==='en';const actions=[['chat-rename',english?'Rename':'Переименовать'],['chat-clone',english?'Clone':'Клонировать'],['chat-project',project?(english?'Move / detach from project':'Переместить / извлечь из проекта'):(english?'Add to project':'Добавить в проект')],['delete-chat',english?'Delete chat':'Удалить чат']];
-        actions.forEach(([action,label])=>{const button=document.createElement('button');button.type='button';button.dataset.action=action;button.dataset.chatId=chat.id;button.textContent=label;if(action==='delete-chat')button.className='danger';panel.appendChild(button);});
-        menu.append(summary,panel);item.append(open,menu);list.appendChild(item);
-      });
+      const list=$('chatList');list.replaceChildren();
+      chats.filter(chat=>!chat.projectId).forEach(chat=>list.appendChild(createChatRow(chat,false)));
     }
     async function renderMemory() {
       const box = $('memoryBox');
