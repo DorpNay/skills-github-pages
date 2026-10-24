@@ -45,10 +45,11 @@
 ### P4 — image and video generation / understanding
 
 - Separate **image understanding/OCR**, **image generation**, **video understanding**, and **video generation** interfaces; don't treat attachments as generation.
-- Select provider/runtime per task and privacy preference. Verify exact model/checkpoint, license, hash, resolution/duration, VRAM/RAM, rate limits and storage retention.
+- **Image:** OpenAI's current API guide documents Image API generations/edits and image_generation in Responses API. This is a separate API from our OpenAI-compatible chat completion; implement a server-side adapter/proxy, never put provider secret keys in public Pages/localStorage. Org verification may be required. Reference: [OpenAI image generation](https://developers.openai.com/api/docs/guides/image-generation).
+- **Video:** OpenAI Sora 2 and Videos API were shut down on **2026-09-24**; OpenAI says there is no one-to-one replacement API. Do not implement against the retired endpoint. Current API candidates discovered in official docs: [Runway Gen-4.5](https://docs.dev.runwayml.com/guides/using-the-api/) (async tasks, text/image-to-video), [Luma Ray 3.2](https://docs.agents.lumalabs.ai/guides/videos/) (video generate/edit/reframe), and [Google Veo 3.1 on Vertex AI](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/model-reference/veo-video-generation) (long-running operation; requires Google Cloud project/permissions/billing). Choose one after account access, price, region, data terms and output quality are compared; don't code all three.
 - 8 GB CPU VPS is gateway/text target, not assumed image/video inference host. External generation is explicit opt-in; local ComfyUI requires separate measured GPU/host.
-- Video MVP: upload → validate → extract bounded frames/audio → summarize with timestamps → cite source. Video generation is deferred until provider/account/runtime and billing verified.
-**Gate:** one end-to-end task per modality, cost/limits, safety policy, artifact provenance, delete controls and real provider/local runtime.
+- Video understanding MVP: upload → validate → extract bounded frames/audio → summarize with timestamps → cite source. Generation remains separate asynchronous job: submit → poll/webhook → download → retention/delete.
+**Gate:** one end-to-end task per modality, account/key setup, cost/limits, safety policy, artifact provenance, delete controls and real provider runtime.
 
 ### P5 — agent teams and research
 
