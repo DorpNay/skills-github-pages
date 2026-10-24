@@ -61,7 +61,7 @@
 
 ## 6. Что сейчас реализуется в клиенте
 
-PR #33 — [chat row actions & mobile composer](https://github.com/DorpNay/skills-github-pages/pull/33) — merged в main. PR-head workflow #374 прошёл context, integrity, security, Jekyll, Chromium E2E и опубликованный Pages browser smoke. Post-merge workflow #377 ещё ожидает завершения; дождись зелёного статуса и обновления Pages, прежде чем считать изменения опубликованными.
+PR #33 и PR #34 merged в main. PR-head runs #374 и #387 прошли context, integrity, security, Jekyll, Chromium E2E и published Pages browser smoke. Меню действий чата находится справа в строке; rename и project move используют доступный стеклянный dialog. Main run #384 и Pages deployment #115 прошли на предыдущем main; post-merge main gates после PR34 ещё ожидают завершения.
 
 Голосовая запись/диалог, транскрипция, генерация изображений/видео и полноценная загрузка документов — следующие отдельные этапы. Они не включаются автоматически этой серверной установкой.
 
