@@ -3240,9 +3240,11 @@ permalink: /
         syncSettingsToActualRoute(lastSuccessfulRoute);
         saveRunDuration();
       } catch (error) {
-        if (requestProjectIds.length||chosenAttachments.length) {
-          requestProjectIds.forEach(id=>selectedRequestProjectIds.add(id));
-          saveRequestContextForActiveChat();pendingComposerAttachments=chosenAttachments;if(chosenAttachments.length)composerAttachmentsByChat.set(chat.id,chosenAttachments);renderDraftAttachments();renderRequestProjectChoices();
+        if(requestProjectIds.length)requestProjectContextByChat.set(chat.id,requestProjectIds.slice());
+        if(chosenAttachments.length)composerAttachmentsByChat.set(chat.id,chosenAttachments.slice());
+        if((requestProjectIds.length||chosenAttachments.length)&&currentChatId===chat.id&&requestContextOwnerChatId===chat.id&&composerStateOwnerChatId===chat.id){
+          selectedRequestProjectIds.clear();requestProjectIds.forEach(id=>selectedRequestProjectIds.add(id));
+          pendingComposerAttachments=chosenAttachments.slice();saveRequestContextForActiveChat();renderDraftAttachments();renderRequestProjectChoices();
         }
         if (error.name === 'AbortError') {
           hideStatus();
