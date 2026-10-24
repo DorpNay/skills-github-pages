@@ -157,7 +157,7 @@ permalink: /
     .draft-attachment-name { overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:195px; }
     .draft-attachment-remove { flex:none;border-radius:7px;padding:2px 5px;color:var(--ui-text-muted); }
     .draft-attachment-remove:hover { background:rgb(244 63 94 / 14%);color:#fb7185; }
-    #voiceUnavailableButton { touch-action:manipulation;user-select:none;-webkit-user-select:none; }
+    #voiceUnavailableButton { touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none; }
     @media (prefers-reduced-transparency:reduce) { .composer-popover,.draft-attachment { background:var(--ui-surface);backdrop-filter:none;-webkit-backdrop-filter:none; } }
 
     .project-nav-heading { color:var(--ui-text);background:var(--ui-surface-raised);border:1px solid var(--ui-border); }
@@ -2520,6 +2520,27 @@ permalink: /
       const promptReserveChars = Math.max(0, Number(systemPromptChars) || 0);
       return Math.max(0, estimatedWindowChars - outputReserveChars - promptReserveChars);
     }
+    function normalizeHistoryContent(content) {
+      if (typeof content === 'string') return content;
+      if (!Array.isArray(content)) return '';
+      const normalized = [];
+      for (const part of content.slice(0, 9)) {
+        if (!part || typeof part !== 'object') continue;
+        if (part.type === 'text' && typeof part.text === 'string') {
+          normalized.push({ type: 'text', text: part.text.slice(0, 30000) });
+          continue;
+        }
+        if (part.type === 'image_url' && typeof part.image_url?.url === 'string') {
+          const url = part.image_url.url;
+          // Preserve only inline image data produced by this client; don't forward arbitrary URLs
+          // or unexpected content-block shapes when normalizing a request for a provider.
+          if (!/^data:image\/[a-z0-9.+-]+;base64,[a-z0-9+/=\\s]+$/i.test(url)) continue;
+          const detail = ['auto', 'low', 'high'].includes(part.image_url.detail) ? part.image_url.detail : 'auto';
+          normalized.push({ type: 'image_url', image_url: { url, detail } });
+        }
+      }
+      return normalized.length ? normalized : '';
+    }
     function buildHistory(messages, systemPromptChars = 0, provider = currentProvider(), model = safeGet(STORAGE.model) || DEFAULT_MODEL) {
       const turns = [];
       for (const message of messages) {
@@ -2531,8 +2552,15 @@ permalink: /
       let charCount = 0;
       for (let i = turns.length - 1; i >= 0; i--) {
         const turn = turns[i];
-        const turnChars = turn.reduce((sum, message) => sum + (typeof message.content === 'string' ? message.content.length : 0) +
-          (Array.isArray(message.tool_calls) ? JSON.stringify(message.tool_calls).length : 0), 0);
+        const turnChars = turn.reduce((sum, message) => {
+          const contentChars = typeof message.content === 'string'
+            ? message.content.length
+            : Array.isArray(message.content)
+              ? message.content.reduce((total, part) => total +
+                  (part?.type === 'text' && typeof part.text === 'string' ? part.text.length : part?.type === 'image_url' ? 2000 : 0), 0)
+              : 0;
+          return sum + contentChars + (Array.isArray(message.tool_calls) ? JSON.stringify(message.tool_calls).length : 0);
+        }, 0);
         // Keep the newest complete turn even when it alone exceeds the estimate.
         if (selected.length && charCount + turnChars > charBudget) break;
         selected.unshift(turn);
@@ -2540,7 +2568,7 @@ permalink: /
       }
       return selected.flat().map((message) => ({
         role: message.role,
-        content: typeof message.content === 'string' ? message.content : '',
+        content: normalizeHistoryContent(message.content),
         ...(message.tool_call_id ? { tool_call_id: message.tool_call_id } : {}),
         ...(message.tool_calls ? { tool_calls: message.tool_calls } : {})
       }));
@@ -3755,18 +3783,26 @@ permalink: /
     let voiceHoldTimer=null,voiceHoldOpened=false;
     const showVoiceMenu=()=>{$('voiceMenu').classList.remove('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','true');};
     const hideVoiceMenu=()=>{$('voiceMenu').classList.add('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','false');};
+    const cancelVoiceHold=()=>{
+      if(voiceHoldTimer)clearTimeout(voiceHoldTimer);
+      voiceHoldTimer=null;
+    };
     $('voiceUnavailableButton').addEventListener('pointerdown',event=>{
+      if(event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
       voiceHoldOpened=false;
-      try{event.currentTarget.setPointerCapture(event.pointerId);}catch(_){}
-      if(voiceHoldTimer)clearTimeout(voiceHoldTimer);
-      voiceHoldTimer=setTimeout(()=>{voiceHoldTimer=null;voiceHoldOpened=true;showVoiceMenu();},430);
+      cancelVoiceHold();
+      // Don't rely on pointer capture: a stationary hold doesn't need it, and mobile browsers
+      // may cancel a captured pointer when native gestures take over.
+      voiceHoldTimer=window.setTimeout(()=>{voiceHoldTimer=null;voiceHoldOpened=true;showVoiceMenu();},430);
     });
-    $('voiceUnavailableButton').addEventListener('pointerup',()=>{
-      if(voiceHoldTimer){clearTimeout(voiceHoldTimer);voiceHoldTimer=null;}
+    $('voiceUnavailableButton').addEventListener('pointerup',cancelVoiceHold);
+    $('voiceUnavailableButton').addEventListener('pointercancel',event=>{
+      // A mouse pointer cancel shouldn't cancel the long-press timer in browser automation.
+      if(event.pointerType!=='mouse')cancelVoiceHold();
     });
-    $('voiceUnavailableButton').addEventListener('pointercancel',()=>{
-      if(voiceHoldTimer)clearTimeout(voiceHoldTimer);
-      voiceHoldTimer=null;voiceHoldOpened=false;
+    document.addEventListener('pointerup',cancelVoiceHold);
+    document.addEventListener('pointercancel',event=>{
+      if(event.pointerType!=='mouse')cancelVoiceHold();
     });
     $('voiceUnavailableButton').addEventListener('keydown',event=>{
       if((event.key==='Enter'||event.key===' ')&&!event.repeat){event.preventDefault();showVoiceMenu();}
