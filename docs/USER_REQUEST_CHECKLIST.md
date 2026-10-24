@@ -7,7 +7,7 @@
 ## A. База, управление и непрерывность
 - [x] PR #20 с базовыми контрактами памяти, инструментария, происхождения источников и governance объединён; CI прошёл.
 - [x] Создана ветка для облачной настройки/UX: `feat/alandi-cloud-settings-ux`.
-- [x] PRs #21–#29 merged with required PR-head gates passing. Current main is `55248f81585c52d7cc7ba7cfc08158a291a761ca`; post-merge Quality/Chromium, integrity/security/context sentinels, provenance, Pages browser smoke and Pages deployment passed. Gateway contract/security tests passed on unchanged base `e424d353418cad62981eb269b4082d2925592708`. Live gateway/VPS remains unverified.
+- [x] PRs #21–#29 merged with required PR-head gates passing. PR #32 then merged at `31eecce8203073dbc8e0e46b3ac338f64788d59b`; all six PR-head jobs passed, including Chromium regression, integrity/security/context sentinels, Jekyll build and published Pages browser smoke. Added safe structured Markdown fallback when CDN renderer libraries are unavailable. Gateway contract/security tests passed on unchanged base `e424d353418cad62981eb269b4082d2925592708`. Live gateway/VPS and separate post-merge deployment remain unverified.
 - [x] Проведён аудит V-016 §0–40 и начальной инженерной фиксации; создан подробный 81-пунктный ledger в `docs/V016_IMPLEMENTATION_CHECKLIST.md`. Аудит завершён, но многие runtime-функции ещё не реализованы/не подтверждены.
 - [ ] Проверить все старые регрессии: создание чата, история, экспорт/импорт, отмена, повтор запроса.
 - [ ] Обновить сведения о реальном состоянии системы: код, контракт, эксперимент, развёрнутая служба, измеренная метрика.
