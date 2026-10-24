@@ -279,6 +279,7 @@ permalink: /
         <summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">⚙ <span data-i18n="manageProject">Настройки проекта</span></summary>
         <div class="p-2 space-y-2">
           <label for="currentProjectSelect" class="block text-[11px] text-gray-400" data-i18n="currentProjectLabel">Проект текущего чата</label>
+          <p id="projectSettingsStatus" class="text-[10px] text-gray-500">Проект не выбран — создай его ниже.</p>
           <select id="currentProjectSelect" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs"><option value="">Без проекта · личный чат</option></select>
           <label for="projectMemoryScopeSelect" class="block text-[11px] text-gray-400">Режим памяти проекта</label>
           <select id="projectMemoryScopeSelect" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs">
@@ -1167,7 +1168,9 @@ permalink: /
     function persistProjects(){
       if(!safeSet(STORAGE.projects,JSON.stringify(projects)))showToast('Проекты не удалось сохранить в локальном хранилище. Экспортируй важные данные.','error');
     }
-    function getProjectForChat(chat=getCurrentChat()){
+    let selectedProjectForSettingsId=null;
+    function getProjectForChat(chat){
+      if(arguments.length===0) return projects.find(project=>project.id===selectedProjectForSettingsId)||null;
       return chat?.projectId ? projects.find(project=>project.id===chat.projectId)||null : null;
     }
     function projectIdNew(){return globalThis.crypto?.randomUUID?.()||('p-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10));}
@@ -1241,26 +1244,30 @@ permalink: /
       const active=document.activeElement;
       const preserveDraft=options.preserveDraft===true&&[ $('projectNameInput'),$('projectInstructionsInput') ].includes(active);
       const chat=getCurrentChat(),project=getProjectForChat(chat);
+      if(!selectedProjectForSettingsId||!projects.some(item=>item.id===selectedProjectForSettingsId))selectedProjectForSettingsId=project?.id||null;
+      const settingsProject=projects.find(item=>item.id===selectedProjectForSettingsId)||null;
       const selected=chat?.projectId&&project?project.id:'';
       select.replaceChildren();
       const none=document.createElement('option');none.value='';none.textContent=getUiLanguage()==='en'?'No project · personal chat':'Без проекта · личный чат';select.appendChild(none);
       for(const item of projects){const option=document.createElement('option');option.value=item.id;option.textContent=item.name;select.appendChild(option);}
       select.value=selected;
-      $('projectMemoryScopeSelect').value=project?.memoryScope==='project-and-global'?'project-and-global':'project-only';
+      $('projectMemoryScopeSelect').value=settingsProject?.memoryScope==='project-and-global'?'project-and-global':'project-only';
+      $('projectSettingsStatus').textContent=settingsProject?(getUiLanguage()==='en'?'Editing project: ':'Настраивается проект: ')+settingsProject.name:(getUiLanguage()==='en'?'No project selected — create one below.':'Проект не выбран — создай его ниже.');
+      $('projectMemoryScopeSelect').disabled=!settingsProject;
       $('projectMemoryToggle').checked=chat?.projectMemoryEnabled===true;
       $('projectMemoryToggle').disabled=!project;
       const serverToggle=$('serverProjectMemoryToggle');if(serverToggle){serverToggle.checked=chat?.serverProjectMemoryEnabled===true;serverToggle.disabled=!project;}
       document.querySelectorAll('[data-action="refresh-server-memory"],[data-action="upload-server-memory"]').forEach(button=>{button.disabled=!project;});
-      if(serverMemoryRenderedScopeId!==(project?.id||null)){serverMemoryRenderedScopeId=project?.id||null;$('serverMemoryBox')?.replaceChildren();setServerMemoryStatus(project?memoryUiText('serverMemoryInitial'):memoryUiText('serverMemoryNoProject'));}
+      if(serverMemoryRenderedScopeId!==(settingsProject?.id||null)){serverMemoryRenderedScopeId=settingsProject?.id||null;$('serverMemoryBox')?.replaceChildren();setServerMemoryStatus(settingsProject?memoryUiText('serverMemoryInitial'):memoryUiText('serverMemoryNoProject'));}
       $('projectSummary').textContent=project
         ? (getUiLanguage()==='en'?project.name+' · '+chats.filter(c=>c.projectId===project.id).length+' chats · '+project.memory.length+' memory items':project.name+' · чатов: '+chats.filter(c=>c.projectId===project.id).length+' · фактов памяти: '+project.memory.length)
         : (getUiLanguage()==='en'?'This chat is not linked to a project.':'Чат не привязан к проекту.');
-      if(!preserveDraft){$('projectNameInput').value=project?.name||'';$('projectInstructionsInput').value=project?.instructions||'';}
+      if(!preserveDraft){$('projectNameInput').value=settingsProject?.name||'';$('projectInstructionsInput').value=settingsProject?.instructions||'';}
       const memBox=$('projectMemoryBox');memBox.replaceChildren();
-      if(!project||!project.memory.length){
-        const empty=document.createElement('p');empty.textContent=project?(getUiLanguage()==='en'?'No project memories yet.':'Пока нет фактов проектной памяти.'):(getUiLanguage()==='en'?'Select or create a project first.':'Сначала выбери или создай проект.');memBox.appendChild(empty);
+      if(!settingsProject||!settingsProject.memory.length){
+        const empty=document.createElement('p');empty.textContent=settingsProject?(getUiLanguage()==='en'?'No project memories yet.':'Пока нет фактов проектной памяти.'):(getUiLanguage()==='en'?'Select or create a project first.':'Сначала выбери или создай проект.');memBox.appendChild(empty);
       }else{
-        for(const fact of project.memory){
+        for(const fact of settingsProject.memory){
           const row=document.createElement('div');row.className='flex items-start gap-1.5';
           const text=document.createElement('span');text.className='min-w-0 flex-1 break-words';text.textContent='• '+fact.text;
           const del=document.createElement('button');del.type='button';del.dataset.action='delete-project-memory';del.dataset.memoryId=fact.id;del.className='text-red-300 px-1';del.setAttribute('aria-label',getUiLanguage()==='en'?'Delete project memory':'Удалить факт проектной памяти');del.textContent='×';
@@ -1268,6 +1275,8 @@ permalink: /
         }
       }
       $('globalMemoryToggle').checked=safeGet(STORAGE.globalMemoryEnabled)==='true';
+      $('projectMemoryInput').disabled=!settingsProject;
+      document.querySelector('[data-action="add-project-memory"]')?.toggleAttribute('disabled',!settingsProject);
       renderProjectNavigation();
     }
     function createProject(){
@@ -1275,14 +1284,14 @@ permalink: /
       if(!name){input.focus();showToast(getUiLanguage()==='en'?'Enter a project name first.':'Сначала введи название проекта.','error');return;}
       if(projects.length>=200){showToast('Достигнут предел локальных проектов (200).','error');return;}
       const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectInstructionsInput').value.trim().slice(0,6000),memoryScope:'project-only',memory:[],createdAt:now,updatedAt:now};
-      projects.unshift(project);persistProjects();
+      projects.unshift(project);selectedProjectForSettingsId=project.id;persistProjects();
       const chat=getCurrentChat();chat.projectId=project.id;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
       persistChats();renderProjectUI();renderChatList();
       showToast((getUiLanguage()==='en'?'Project created: ':'Создан проект: ')+name);
     }
     function saveProject(){
       const project=getProjectForChat();
-      if(!project){showToast(getUiLanguage()==='en'?'Choose a project first.':'Сначала выбери проект.','error');return;}
+      if(!project){showToast(getUiLanguage()==='en'?'Select a project in the Projects list or create one.':'Выбери проект в списке или создай новый.','error');return;}
       const name=$('projectNameInput').value.trim().slice(0,100);
       if(!name){showToast('Название проекта не может быть пустым.','error');return;}
       project.name=name;project.instructions=$('projectInstructionsInput').value.trim().slice(0,6000);project.memoryScope=$('projectMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only';project.updatedAt=new Date().toISOString();
@@ -1293,7 +1302,7 @@ permalink: /
       const chat=getCurrentChat(),target=projectId?projects.find(project=>project.id===projectId):null;
       if(projectId&&!target){showToast('Проект не найден.','error');renderProjectUI();return;}
       if(chat.projectId===(target?.id||null))return;
-      chat.projectId=target?.id||null;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
+      chat.projectId=target?.id||null;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;selectedProjectForSettingsId=target?.id||null;
       persistChats();renderProjectUI();renderChatList();
       showToast(target?(getUiLanguage()==='en'?'Chat moved to ':'Чат добавлен в проект: ')+target.name:(getUiLanguage()==='en'?'Chat removed from its project.':'Чат извлечён из проекта.'));
     }
@@ -1348,7 +1357,7 @@ permalink: /
         }
         const memory=Array.isArray(bundle.project.memory)?bundle.project.memory.filter(v=>v&&typeof v.text==='string').slice(0,500).map(v=>({id:projectIdNew(),text:v.text.slice(0,600),createdAt:String(v.createdAt||now)})):[];
         const target={id:projectIdNew(),name:importedName,description:typeof bundle.project.description==='string'?bundle.project.description.slice(0,1000):'',instructions:typeof bundle.project.instructions==='string'?bundle.project.instructions.slice(0,6000):'',memoryScope:bundle.project.memoryScope==='project-and-global'?'project-and-global':'project-only',memory,createdAt:now,updatedAt:now};
-        projects.unshift(target);
+        projects.unshift(target);selectedProjectForSettingsId=target.id;
         const seen=new Set(chats.map(chat=>chat.id));
         for(const chat of importedChats){if(seen.has(chat.id))chat.id=projectIdNew();seen.add(chat.id);chat.projectId=target.id;chats.unshift(chat);}
         persistProjects();updateState(chats,chats[0]?.id||currentChatId);renderProjectUI();$('projectManagerDetails').open=true;
@@ -3346,6 +3355,18 @@ permalink: /
           case 'attach-text-file': $('textAttachmentInput').click();break;
           case 'create-project': createProject();break;
           case 'save-project': saveProject();break;
+          case 'toggle-project-navigation': {
+            const list=$('projectNavigationList'),open=list.classList.toggle('hidden')===false;
+            $('projectNavToggle').setAttribute('aria-expanded',String(open));$('projectNavChevron').textContent=open?'⌃':'⌄';break;
+          }
+          case 'projectless-nav': {
+            $('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});
+            $('chatSection').querySelector('summary')?.focus();break;
+          }
+          case 'open-project-settings': {
+            selectedProjectForSettingsId=projects.some(project=>project.id===control.dataset.projectId)?control.dataset.projectId:null;
+            $('projectManagerDetails').open=true;renderProjectUI();$('projectManagerDetails').scrollIntoView({block:'nearest',behavior:'smooth'});break;
+          }
           case 'detach-current-chat': moveCurrentChatToProject('');break;
           case 'delete-project': deleteCurrentProject();break;
           case 'add-project-memory': addProjectMemory();break;
@@ -3439,6 +3460,7 @@ permalink: /
     $('settingsProfileFile').addEventListener('change', importSettingsProfile);
     $('importProjectFile').addEventListener('change',importProjectBundle);
     $('currentProjectSelect').addEventListener('change',event=>moveCurrentChatToProject(event.target.value));
+    $('projectMemoryScopeSelect').addEventListener('change',event=>{const project=getProjectForChat();if(!project){event.target.value='project-only';return;}project.memoryScope=event.target.value==='project-and-global'?'project-and-global':'project-only';project.updatedAt=new Date().toISOString();persistProjects();showToast(project.memoryScope==='project-and-global'?'Для проекта разрешена общая память (если общий доступ включён).':'Общая память выключена для этого проекта.');});
     $('projectMemoryToggle').addEventListener('change',event=>{const chat=getCurrentChat();chat.projectMemoryEnabled=Boolean(event.target.checked);persistChats();showToast(chat.projectMemoryEnabled?(getUiLanguage()==='en'?'Project memory enabled for this chat.':'Память проекта включена для этого чата.'):(getUiLanguage()==='en'?'Project memory is off for this chat.':'Память проекта отключена для этого чата.'));});
     $('serverProjectMemoryToggle').addEventListener('change',event=>{const chat=getCurrentChat();chat.serverProjectMemoryEnabled=Boolean(event.target.checked);persistChats();showToast(chat.serverProjectMemoryEnabled?(getUiLanguage()==='en'?'Server project memory opted in for this chat.':'Серверная память разрешена для этого чата.'):(getUiLanguage()==='en'?'Server project memory is off.':'Серверная память отключена.'));});
      $('globalMemoryToggle').addEventListener('change',event=>{safeSet(STORAGE.globalMemoryEnabled,String(event.target.checked));showToast(event.target.checked?(getUiLanguage()==='en'?'Global memory enabled.':'Глобальная память включена.'):(getUiLanguage()==='en'?'Global memory disabled.':'Глобальная память отключена.'));});
