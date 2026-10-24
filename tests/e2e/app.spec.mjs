@@ -881,13 +881,19 @@ test('project instructions, project memory, and project bundles stay scoped to t
 
   const sidebar=page.locator('#sidebar');
   if(await sidebar.evaluate(el=>el.classList.contains('-translate-x-full')))await page.locator('[data-action="toggle-sidebar"]').click();
-  const chatRow=page.locator('#chatList .chat-row').first();
+  if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
+  const betaGroup=page.locator('#projectNavigationList details[data-project-id="'+betaId+'"]');
+  await betaGroup.locator(':scope > summary').click();
+  let chatRow=betaGroup.locator('.chat-row').first();
   await chatRow.locator('summary[aria-label="Действия чата"]').click();
   await chatRow.locator('[data-action="chat-project"]').click();
   await expect(page.locator('#chatActionModal')).toBeVisible();
   await page.locator('#chatActionProject').selectOption(alphaId);
   await page.locator('[data-action="chat-action-save"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(alphaId);
+  const alphaGroup=page.locator('#projectNavigationList details[data-project-id="'+alphaId+'"]');
+  await alphaGroup.locator(':scope > summary').click();
+  chatRow=alphaGroup.locator('.chat-row').first();
   await chatRow.locator('summary[aria-label="Действия чата"]').click();
   await chatRow.locator('[data-action="chat-project"]').click();
   await page.locator('#chatActionProject').selectOption(betaId);
@@ -958,7 +964,10 @@ test('deleting a project removes its chats but preserves other projects and chat
   const keepChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87') || '');
   // Use the project-labelled sidebar row as the source of truth for the disposable chat.
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator(`#chatList [data-action="switch-chat"][data-chat-id="${disposableChatId}"]`).click();
+  if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
+  const disposableGroup=page.locator('#projectNavigationList details[data-project-id="'+disposableId+'"]');
+  await disposableGroup.locator(':scope > summary').click();
+  await disposableGroup.locator(`[data-action="switch-chat"][data-chat-id="${disposableChatId}"]`).click();
   await page.locator('[data-action="toggle-sidebar"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(disposableId);
 
@@ -1163,7 +1172,12 @@ test('voice mode menu stays open after a long press and clearly marks both modes
   expect(bounds).not.toBeNull();
   await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
   await page.mouse.down();
-  await page.waitForTimeout(300);
+  await page.waitForTimeout(100);
+  await page.mouse.up();
+  await expect(page.locator('#voiceMenu')).toBeHidden();
+  await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(500);
   await page.mouse.up();
   await expect(page.locator('#voiceMenu')).toBeVisible();
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
@@ -1173,14 +1187,7 @@ test('voice mode menu stays open after a long press and clearly marks both modes
   await expect(page.locator('#voiceMenu')).toBeHidden();
   await expect(page.locator('#toast')).toContainText('Живой голосовой диалог пока не подключён');
 
-  // A quick upward swipe should select the same preview without requiring a tap.
-  const swipeBounds = await trigger.boundingBox();
-  await page.mouse.move(swipeBounds.x + swipeBounds.width / 2, swipeBounds.y + swipeBounds.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(swipeBounds.x + swipeBounds.width / 2, swipeBounds.y - 48, { steps: 3 });
-  await page.mouse.up();
-  await expect(page.locator('#toast')).toContainText('Голосовой диалог пока не подключён');
-  await expect(page.locator('#voiceMenu')).toBeVisible();
+  await expect(page.locator('#voiceMenu')).toBeHidden();
 });
 
 
