@@ -206,6 +206,6 @@
 ## Supplement — 2026-10-24 owner quickstart and chat ergonomics
 - [x] Added owner-first setup sequence: `docs/START_HERE_RU.md`, linked from detailed VPS guide. It distinguishes existing VPS diagnostics from new Vultr setup and gates tunnel/client setup on local health/auth/completion/cache checks.
 - [x] Added evidence-based subsystem roadmap: `docs/IMPLEMENTATION_ROADMAP_RU.md`, ordered P0 client UX → voice message → live voice → document/RAG → image/video → agent teams → memory/security → provider operations/governance.
-- [~] PR #33 implements right-side chat row action menu (rename/clone/project/delete), glass treatment and mobile 16px composer. Context/security/integrity/Jekyll sentinels passed; Chromium E2E is still running at this checkpoint; not merged/deployed.
+- [x] PR #33 merged at `05f4c2454c279cc21dcbf08c83ff3c3025838257`. PR-head run #374 passed context, integrity, security, Jekyll, Chromium E2E and published Pages browser smoke. Post-merge run #377 is pending; real-device mobile keyboard/accessibility and prompt-based project picker remain follow-up.
 - [ ] Replace prompt-based rename/project chooser with accessible in-app dialog/select; add mobile keyboard open/close, focus, persistence and project move/delete E2E.
 - [ ] Real voice capture/ASR/TTS, image/video pipelines and complete document ingestion remain separate unimplemented work; see `docs/IMPLEMENTATION_ROADMAP_RU.md` and the original V-016 evidence ledger.
