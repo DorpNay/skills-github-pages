@@ -139,6 +139,19 @@ permalink: /
     body.composer-centered #chatBox { padding-bottom:160px; }
     body.composer-bottom-transition #chatBox { padding-bottom:175px; }
     @media (prefers-reduced-motion:reduce) { .voice-menu { animation:none!important; } }
+    .chat-row { position:relative; min-height:44px; }
+    .chat-row-menu { position:relative; }
+    .chat-row-menu summary { list-style:none;display:grid;place-items:center;width:36px;height:36px;border:1px solid transparent;border-radius:10px;color:var(--ui-text-muted);font-size:19px;cursor:pointer; }
+    .chat-row-menu summary::-webkit-details-marker { display:none; }
+    .chat-row-menu[open] summary,.chat-row-menu summary:hover { background:var(--ui-tiffany-soft);border-color:var(--ui-border);color:var(--ui-tiffany); }
+    .chat-row-menu-panel { position:absolute;right:0;top:calc(100% + 5px);z-index:90;width:190px;padding:5px;border:1px solid var(--ui-border);border-radius:14px;background:color-mix(in srgb,var(--ui-surface) 94%,transparent);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);box-shadow:0 18px 50px rgb(0 0 0 / 38%); }
+    .chat-row-menu-panel button { display:block;width:100%;padding:10px;border-radius:9px;text-align:left;font-size:12px; }
+    .chat-row-menu-panel button:hover { background:var(--ui-tiffany-soft); }
+    .chat-row-menu-panel button.danger { color:#fb7185; }
+    .chat-row-menu-panel button.danger:hover { background:rgb(244 63 94 / 12%); }
+    #userInput { scroll-margin-block:24px 180px; }
+    @media (max-width:640px) { #userInput { font-size:16px!important;line-height:1.45; } .chat-row-menu-panel { width:200px; } }
+    @media (prefers-reduced-transparency:reduce) { .chat-row-menu-panel { background:var(--ui-surface);backdrop-filter:none;-webkit-backdrop-filter:none; } }
     .language-menu { position:relative; }
     .language-menu summary { list-style:none;cursor:pointer;border:1px solid var(--ui-border);border-radius:10px; }
     .language-menu summary::-webkit-details-marker { display:none; }
@@ -1290,20 +1303,21 @@ permalink: /
       chats.forEach((chat) => {
         const active = chat.id === currentChatId;
         const item = document.createElement('div');
-        item.className = `p-2.5 rounded-lg flex items-center gap-2 group transition-colors ${active
-          ? 'bg-blue-600/20 border border-blue-600/50 text-white'
-          : 'hover:bg-gray-800 border border-transparent text-gray-300'}`;
+        item.className = `chat-row p-2 rounded-xl flex items-center gap-1.5 group transition-colors ${active
+          ? 'bg-blue-600/15 border border-blue-500/35 text-white'
+          : 'hover:bg-white/5 border border-transparent text-gray-300'}`;
         const open = document.createElement('button');
         open.type = 'button'; open.dataset.action = 'switch-chat'; open.dataset.chatId = chat.id;
-        open.className = 'text-left truncate font-medium text-sm flex-1 min-w-0';
+        open.className = 'text-left truncate font-medium text-sm flex-1 min-w-0 rounded-lg px-1.5 py-2';
         const project=chat.projectId?projects.find(item=>item.id===chat.projectId):null;
         open.textContent = (project?'▣ ':'')+(chat.title || 'Новый чат');
         if(project)open.title=(getUiLanguage()==='en'?'Project: ':'Проект: ')+project.name;
-        const remove = document.createElement('button');
-        remove.type = 'button'; remove.dataset.action = 'delete-chat'; remove.dataset.chatId = chat.id;
-        remove.className = 'text-gray-500 hover:text-red-400 p-1 shrink-0'; remove.setAttribute('aria-label', `Удалить чат ${chat.title || ''}`);
-        remove.textContent = '✕';
-        item.append(open, remove); list.appendChild(item);
+        const menu=document.createElement('details');menu.className='chat-row-menu shrink-0';
+        const summary=document.createElement('summary');summary.textContent='⋯';summary.setAttribute('aria-label',getUiLanguage()==='en'?'Chat actions':'Действия чата');summary.title=summary.getAttribute('aria-label');
+        const panel=document.createElement('div');panel.className='chat-row-menu-panel';
+        const english=getUiLanguage()==='en';const actions=[['chat-rename',english?'Rename':'Переименовать'],['chat-clone',english?'Clone':'Клонировать'],['chat-project',project?(english?'Move / detach from project':'Переместить / извлечь из проекта'):(english?'Add to project':'Добавить в проект')],['delete-chat',english?'Delete chat':'Удалить чат']];
+        actions.forEach(([action,label])=>{const button=document.createElement('button');button.type='button';button.dataset.action=action;button.dataset.chatId=chat.id;button.textContent=label;if(action==='delete-chat')button.className='danger';panel.appendChild(button);});
+        menu.append(summary,panel);item.append(open,menu);list.appendChild(item);
       });
     }
     async function renderMemory() {
@@ -2960,6 +2974,31 @@ permalink: /
       const next = chats.filter((chat) => chat.id !== id);
       updateState(next, currentChatId === id ? next[0].id : currentChatId);
     }
+    function renameChat(id) {
+      const chat=chats.find(item=>item.id===id);if(!chat)return;
+      const english=getUiLanguage()==='en';const title=prompt(english?'New chat name':'Новое название чата',chat.title||(english?'New chat':'Новый чат'));
+      if(title===null)return;const next=title.trim().slice(0,120);
+      if(!next){showToast(english?'Chat name cannot be empty.':'Название не может быть пустым.','error');return;}
+      chat.title=next;persistChats();renderChatList();renderActiveChat();
+    }
+    function cloneChat(id) {
+      const source=chats.find(item=>item.id===id);if(!source)return;
+      const copy=createChat((source.title||'Новый чат')+' — копия',JSON.parse(JSON.stringify(source.messages||[])),source.projectId||null);
+      copy.projectMemoryEnabled=false;copy.serverProjectMemoryEnabled=false;
+      updateState([copy,...chats],copy.id);
+      showToast(getUiLanguage()==='en'?'Chat cloned. Project memory is disabled in the copy.':'Чат клонирован. Память проекта отключена в копии.');
+    }
+    function chatProjectAction(id) {
+      const chat=chats.find(item=>item.id===id);if(!chat)return;
+      const english=getUiLanguage()==='en';if(!projects.length){showToast(english?'Create a project in the Projects section first.':'Сначала создай проект в разделе проектов.','error');return;}
+      const options=projects.map((project,index)=>`${index+1}. ${project.name}`).join('\n');
+      const answer=prompt((english?'Choose project number. 0 — detach from project.\n':'Выбери номер проекта. 0 — извлечь из проекта.\n')+options,chat.projectId?String(Math.max(1,projects.findIndex(p=>p.id===chat.projectId)+1)):'1');
+      if(answer===null)return;const choice=Number(answer);
+      if(!Number.isInteger(choice)||choice<0||choice>projects.length){showToast(english?'Invalid project number.':'Неверный номер проекта.','error');return;}
+      chat.projectId=choice===0?null:projects[choice-1].id;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
+      persistChats();renderChatList();renderProjectUI({preserveDraft:true});
+      const notice=choice===0?(english?'Chat detached from project.':'Чат извлечён из проекта.'):(english?'Chat moved to project “'+projects[choice-1].name+'”.':'Чат перемещён в проект «'+projects[choice-1].name+'».');showToast(notice);
+    }
     function exportChats() {
       const blob = new Blob([JSON.stringify(chats, null, 2)], { type: 'application/json;charset=utf-8' });
       const url = URL.createObjectURL(blob);
@@ -3225,7 +3264,10 @@ permalink: /
           case 'new-chat': createNewChat(); break;
           case 'clear-chat': clearCurrentChat(); break;
           case 'switch-chat': switchChat(control.dataset.chatId); break;
-          case 'delete-chat': deleteChat(control.dataset.chatId); break;
+          case 'chat-rename': control.closest('.chat-row-menu')?.removeAttribute('open');renameChat(control.dataset.chatId);break;
+          case 'chat-clone': control.closest('.chat-row-menu')?.removeAttribute('open');cloneChat(control.dataset.chatId);break;
+          case 'chat-project': control.closest('.chat-row-menu')?.removeAttribute('open');chatProjectAction(control.dataset.chatId);break;
+          case 'delete-chat': control.closest('.chat-row-menu')?.removeAttribute('open');if(confirm(getUiLanguage()==='en'?'Delete this chat?':'Удалить этот чат?'))deleteChat(control.dataset.chatId); break;
           case 'export-chats': exportChats(); break;
           case 'export-settings-profile': exportSettingsProfile(); break;
           case 'import-settings-profile': $('settingsProfileFile').click(); break;
