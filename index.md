@@ -280,10 +280,6 @@ permalink: /
       <h2 class="font-bold text-sm" data-i18n="sidebarTitle">💬 Диалоги и память</h2>
       <button type="button" data-action="close-sidebar" aria-label="Закрыть меню" class="text-gray-400 hover:text-white text-lg p-1">✕</button>
     </div>
-    <div class="p-3 space-y-2">
-      <button type="button" data-action="new-chat" data-i18n="newChat" class="w-full bg-blue-600 hover:bg-blue-500 py-2 rounded-lg font-bold text-sm">＋ Новый чат</button>
-      <button type="button" data-action="clear-chat" data-i18n="clearChat" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 py-1.5 rounded-lg text-xs">🗑 Очистить чат</button>
-    </div>
     <section id="projectPanel" class="px-3 py-2 border-t border-gray-800 space-y-2" aria-label="Проекты и настройки проекта">
       <div id="projectNavigation" class="space-y-1.5">
         <button id="projectNavToggle" type="button" data-action="toggle-project-navigation" aria-expanded="false" aria-controls="projectNavigationList" class="w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold project-nav-heading">
@@ -356,6 +352,7 @@ permalink: /
       <summary class="chat-section-summary flex items-center justify-between gap-2 px-3 py-2.5 text-sm font-semibold cursor-pointer select-none" aria-controls="chatList">
         <span>💬 <span data-i18n="chatsTitle">Чаты</span></span><span id="chatSectionCount" class="text-[10px] text-gray-500">0</span>
       </summary>
+      <div class="px-2 pt-2"><button type="button" data-action="new-chat" data-i18n="newChat" class="w-full rounded-lg border border-blue-500/25 bg-blue-600/10 hover:bg-blue-600/20 py-2 text-xs font-semibold text-blue-200">＋ Новый личный чат</button></div>
       <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
     </details>
 
@@ -1536,7 +1533,7 @@ permalink: /
       const summary=document.createElement('summary');summary.textContent='⋯';summary.setAttribute('aria-label',getUiLanguage()==='en'?'Chat actions':'Действия чата');summary.title=summary.getAttribute('aria-label');
       const panel=document.createElement('div');panel.className='chat-row-menu-panel';
       const project=chat.projectId?projects.find(item=>item.id===chat.projectId):null,english=getUiLanguage()==='en';
-      const actions=[['chat-rename',english?'Rename':'Переименовать'],['chat-clone',english?'Clone':'Клонировать'],['chat-project',project?(english?'Move / detach from project':'Переместить / извлечь из проекта'):(english?'Add to project':'Добавить в проект')],['delete-chat',english?'Delete chat':'Удалить чат']];
+      const actions=[['chat-rename',english?'Rename':'Переименовать'],['chat-clone',english?'Clone':'Клонировать'],['chat-project',project?(english?'Move / detach from project':'Переместить / извлечь из проекта'):(english?'Add to project':'Добавить в проект')],['chat-clear',english?'Clear history':'Очистить историю'],['delete-chat',english?'Delete chat':'Удалить чат']];
       actions.forEach(([action,label])=>{const button=document.createElement('button');button.type='button';button.dataset.action=action;button.dataset.chatId=chat.id;button.textContent=label;if(action==='delete-chat')button.className='danger';panel.appendChild(button);});
       menu.append(summary,panel);item.append(open,menu);return item;
     }
@@ -1562,7 +1559,7 @@ permalink: /
         const assigned=chats.filter(chat=>chat.projectId===project.id);
         if(!assigned.length){const empty=document.createElement('p');empty.className='px-2 py-2 text-[10px] text-gray-500';empty.textContent=english?'No chats in this project yet.':'В проекте пока нет чатов.';children.appendChild(empty);}
         assigned.forEach(chat=>children.appendChild(createChatRow(chat,true)));
-        const settings=document.createElement('button');settings.type='button';settings.dataset.action='open-project-settings';settings.dataset.projectId=project.id;settings.className='w-full text-left text-[10px] text-gray-500 hover:text-cyan-300 px-2 py-1';settings.textContent=english?'⚙ Project settings':'⚙ Настройки проекта';children.appendChild(settings);
+        const toolbar=document.createElement('div');toolbar.className='flex gap-1 px-1 pt-1';const addChat=document.createElement('button');addChat.type='button';addChat.dataset.action='new-chat-in-project';addChat.dataset.projectId=project.id;addChat.className='flex-1 rounded-lg border border-cyan-900/50 px-2 py-1.5 text-[10px] text-cyan-200 hover:bg-cyan-950/40';addChat.textContent=english?'＋ New chat':'＋ Новый чат';const settings=document.createElement('button');settings.type='button';settings.dataset.action='open-project-settings';settings.dataset.projectId=project.id;settings.className='rounded-lg px-2 py-1.5 text-[10px] text-gray-500 hover:text-cyan-300';settings.textContent=english?'⚙ Settings':'⚙ Настройки';toolbar.append(addChat,settings);children.appendChild(toolbar);
         group.appendChild(children);list.appendChild(group);
       }
       if(!projects.length){const empty=document.createElement('p');empty.className='px-2 py-2 text-[11px] text-gray-500';empty.textContent=english?'No projects yet.':'Проектов пока нет.';list.appendChild(empty);}
@@ -3264,9 +3261,22 @@ permalink: /
       sendMessage(true);
     }
     function createNewChat() {
-      const chat = createChat('Новый чат', [], getCurrentChat()?.projectId||null);
-      updateState([chat, ...chats], chat.id);
+      const chat=createChat('Новый личный чат',[],null);
+      updateState([chat,...chats],chat.id);
       toggleSidebar(false);
+    }
+    function createNewChatInProject(projectId) {
+      const project=projects.find(item=>item.id===projectId);if(!project){showToast('Проект больше не существует.','error');return;}
+      const chat=createChat('Новый чат · '+project.name,[],project.id);
+      updateState([chat,...chats],chat.id);toggleSidebar(false);
+    }
+    function clearChatById(id) {
+      const chat=chats.find(item=>item.id===id);if(!chat)return;
+      const english=getUiLanguage()==='en';
+      if(!confirm(english?'Clear the history of this chat?':'Очистить историю этого чата?'))return;
+      if(activeChatId===id)stopGeneration();
+      chat.messages=[];chat.title=english?'New chat':'Новый чат';
+      updateState([...chats],currentChatId);
     }
     function clearCurrentChat() {
       if (!confirm('Очистить историю текущего чата?')) return;
@@ -3614,6 +3624,8 @@ permalink: /
           case 'toggle-sidebar': toggleSidebar(); break;
           case 'close-sidebar': toggleSidebar(false); break;
           case 'new-chat': createNewChat(); break;
+          case 'new-chat-in-project': createNewChatInProject(control.dataset.projectId);break;
+          case 'chat-clear': control.closest('.chat-row-menu')?.removeAttribute('open');clearChatById(control.dataset.chatId);break;
           case 'clear-chat': clearCurrentChat(); break;
           case 'switch-chat': switchChat(control.dataset.chatId); break;
           case 'chat-rename': control.closest('.chat-row-menu')?.removeAttribute('open');openChatActionDialog('rename',control.dataset.chatId);break;
