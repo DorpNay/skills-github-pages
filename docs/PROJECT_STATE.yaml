@@ -1,8 +1,8 @@
 project_state:
   version: 4
   reviewed_on: "2026-10-24"
-  last_volley: "V-2026-10-24-SIDEBAR-COMPOSER-CONTEXT-PR35-MERGED"
-  gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. A post-merge main-push run and deployment of the exact merge SHA are not yet confirmed at this checkpoint. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified."
+  last_volley: "V-2026-10-24-PR35-MERGED-PR36-REGRESSION-CI-PASSED"
+  gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561; Pages deployment run #121 passed for that merge SHA. Current main documentation/state commit 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality run #420 and Pages deployment run #122; license/provenance run #159 passed. PR-head run #418 passed 48 Chromium E2E and published-site smoke. Test-only PR #36 head fd080b24f9573bbc494fd2345154dc72facbc1b1 passed Quality run #424: all 50 Chromium E2E tests and one published-site smoke; PR #36 remains open and is not merged. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified."
   source_of_truth:
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
@@ -22,12 +22,12 @@ project_state:
   current_ui_track:
     branch: "main"
     pull_request: 35
-    status: "PR33+34_merged; PR35_merged_at_23add254; head_b3e4a4af; PR-head_run418_all_gates_passed; postmerge_main_deploy_pending"
+    status: "PR33+34_merged; PR35_merged_at_23add254; merged_deploy_run121_passed; main_head_4fb39df2; quality_run420_passed; pages_deploy_run122_passed; PR36_test_only_open; head_fd080b24; quality_run424_passed_50_e2e_plus_published_smoke"
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback"
-    projects: "PR35 merged: collapsed project list with per-project chat children; top-level unassigned chats only; project memory scope project-only vs project-and-global; one-shot project context scoped by chat; Chromium E2E passed. Server graph bridge remains experimental and disabled by default."
+    projects: "PR35 merged: collapsed project list with per-project chat children; top-level unassigned chats only; project memory scope project-only vs project-and-global; one-shot project context scoped by chat; PR36 test-only follow-up verifies selected-project scope persistence and passed on run #424. Server graph bridge remains experimental and disabled by default."
     voice_ui: "PR35 merged: chooser opens on long-press; live microphone/ASR/TTS runtime still not implemented; real-device gestures not yet verified"
-    chat_actions: "PR33+34 merged; PR35 merged with project-grouped row lists, personal-chat list, clear-history action, attachment/context composer; PR-head test gates passed; post-merge main deployment verification pending"
+    chat_actions: "PR33+34 merged; PR35 merged with project-grouped row lists, personal-chat list, clear-history action, attachment/context composer; merge deployment run #121 and current-main run #122 passed; PR36 follow-up validates clear-history isolation with 50 Chromium E2E passing."
     detailed_ledger: "docs/V016_IMPLEMENTATION_CHECKLIST.md"
     user_todo: "docs/USER_REQUEST_CHECKLIST.md"
     google_oauth_credentials_configured: false

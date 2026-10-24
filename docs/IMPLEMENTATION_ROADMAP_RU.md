@@ -21,7 +21,7 @@
 
 **Ограничения:** unrestricted file input — это только доступ к системному file picker. Читаемый текст прикладывается в текстовом виде; изображения отправляются как multimodal image_url; видео отправляет до трёх уменьшенных кадров (общий предел восемь кадров/изображений). Прочие бинарные форматы пока распознаются как неподдержанные и не отправляются. Нет ingestion PDF/DOCX/XLSX, OCR, audio transcription, live voice, video generation pipeline либо подключённых коннекторов/ручного skill picker.
 
-**Gate (24 октября 2026):** PR-head run #418 passed context, integrity, security, Jekyll, all 48 Chromium E2E tests, the published-site browser smoke, plus license/provenance and dead-code gates. PR #35 merged into `main` at `23add2547a69df877b4baf213957827aa2e8e561`. Still confirm the main-push workflow and deployment of that exact revision. Real iOS/Android checks remain open: touch long-press/cancel, keyboard/viewport, screen reader and file handoff.
+**Gate (24 октября 2026):** PR-head run #418 passed context, integrity, security, Jekyll, all 48 Chromium E2E tests and published-site smoke. PR #35 merged into `main` at `23add2547a69df877b4baf213957827aa2e8e561`; deployment run #121 passed for that exact merge SHA. Current main state commit `4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e` passed Quality run #420 and Pages deployment #122; license/provenance run #159 passed. Test-only PR #36 head `fd080b24f9573bbc494fd2345154dc72facbc1b1` passed Quality run #424 with 50 Chromium E2E and one published-site smoke. Real iOS/Android checks remain open: touch long-press/cancel, keyboard/viewport, screen reader and file handoff.
 
 ### P1 — real voice message (самый короткий полезный вертикальный срез)
 

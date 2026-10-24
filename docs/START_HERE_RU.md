@@ -61,7 +61,7 @@
 
 ## 6. Состояние интерфейса на 24 октября 2026
 
-PR #33 и PR #34 ранее объединены в main. PR #35 — [перестройка навигации и composer](https://github.com/DorpNay/skills-github-pages/pull/35) — объединён в main коммитом `23add2547a69df877b4baf213957827aa2e8e561`. PR-head run #418 прошёл все quality gates: integrity, security, context, Jekyll, 48 Chromium E2E-тестов и smoke опубликованного сайта; отдельные license/provenance и dead-code checks тоже прошли. Эти изменения реализованы в main; отдельно проверяется post-merge workflow и публикация именно этого SHA.
+PR #33 и PR #34 ранее объединены в main. PR #35 — [перестройка навигации и composer](https://github.com/DorpNay/skills-github-pages/pull/35) — объединён в main коммитом `23add2547a69df877b4baf213957827aa2e8e561`. PR-head run #418 прошёл все quality gates: integrity, security, context, Jekyll, 48 Chromium E2E-тестов и smoke опубликованного сайта. Post-merge Pages deployment run #121 для merge SHA завершился успешно; текущий main state commit `4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e` также прошёл Quality run #420 и Pages deployment #122. License/provenance run #159 прошёл. Тестовый PR #36 (без production-кода) дополнительно прошёл run #424: 50 Chromium E2E и один smoke текущего опубликованного сайта.
 
 Ограничения вложений: системный picker открывает любые типы файлов. Читаемые текстовые файлы и изображения обрабатываются; видео разбивается на выборку кадров, без расшифровки аудио. PDF/DOCX/XLSX и другие не поддержанные парсерами форматы пока отображаются как неподдержанные и блокируют отправку, чтобы приложение не делало вид, будто прочитало их. Live voice ASR/TTS и полноценный ingestion документов — отдельные незавершённые этапы.
 

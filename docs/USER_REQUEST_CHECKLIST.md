@@ -213,12 +213,12 @@
 ## Supplement — 2026-10-24 project navigation and composer
 
 - [x] PR #35: Projects at top, collapsed by default; each project expands to its own chat list; top-level Chats is expanded and contains only unassigned/personal chats. Covered by Chromium E2E.
-- [x] New personal chat from Chats; create a project-scoped chat from that project's expanded group; per-row menu includes rename, clone, move/detach, clear history, delete. Covered by Chromium E2E.
-- [x] Move global memory controls and project facts under collapsed project settings; persisted project memory scope selects project-only vs project-and-global. Implemented; UI/browser checks pass.
+- [x] New personal chat from Chats; create a project-scoped chat from that project's expanded group; per-row menu includes rename, clone, move/detach, clear history, delete. PR #36 adds cross-project clear-history isolation coverage; run #424 passed.
+- [x] Move global memory controls and project facts under collapsed project settings; persisted project memory scope selects project-only vs project-and-global. Follow-up E2E in PR #36 proves selected-project persistence while another project chat is active (run #424 passed).
 - [x] Add composer + chooser for photo/video vs unrestricted multi-file picker. Known text formats and images are processed; video sends sampled frames. Other binary formats are selected but currently shown as unsupported and block sending until a parser/ingestion endpoint is implemented. Chromium E2E passes.
 - [x] Add ◎ request-context selector for up to five projects. Context is scoped by chat ID, bounded, added to the next request only, and cleared after successful send. Selected project context must not mutate the chat's own project. Chromium E2E passes.
 - [x] Voice chooser opens after press-and-hold, not a short tap. Long-press and short-tap behavior pass Chromium E2E; real-device touch/cancel still needs verification. Live recording, ASR, TTS and audio transcript remain unimplemented.
 - [x] aLandi is a dedicated first-party primary-route card; third-party providers stay in advanced settings. Quality sentinel and Chromium E2E pass.
-- [x] PR #35 was merged at `23add2547a69df877b4baf213957827aa2e8e561`; PR-head run #418 passed all quality gates, 48 Chromium E2E tests and published-site browser smoke. [ ] Post-merge main workflow and deployment of the exact main SHA still need confirmation.
+- [x] PR #35 merged at `23add2547a69df877b4baf213957827aa2e8e561`; main merge deployment run #121 passed, and current main state commit `4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e` passed Quality #420 and Pages deployment #122; license/provenance run #159 passed. Test-only PR #36 head `fd080b24f9573bbc494fd2345154dc72facbc1b1` passed Quality #424: 50 Chromium E2E tests and one published-site smoke. PR #36 remains open and is not merged; real-device iOS/Android verification remains follow-up.
 - [ ] Real device verification: touch long-press/cancel, mobile keyboard focus/viewport reset, screen reader flow, and large file handling.
 - [ ] Implement real file intake pipeline for PDF/DOCX/XLSX/OCR/audio/video metadata before claiming all formats are supported.
