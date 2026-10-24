@@ -1,5 +1,5 @@
 project_state:
-  version: 7
+  version: 4
   reviewed_on: "2026-10-24"
   last_volley: "V-2026-10-24-CHAT-ROW-MENU-PR33-MERGED"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257. PR-head run #374 passed context, integrity, security, Jekyll, Chromium app E2E and published Pages browser smoke. Added right-side chat action menu, rename/clone/project move/delete, glass styling and mobile 16px composer. Post-merge main workflow #377 is pending. Owner quickstart, implementation roadmap and media API source register added to main. Live provider smoke, configured private gateway/VPS, voice runtime and hardware benchmarks remain unverified."
