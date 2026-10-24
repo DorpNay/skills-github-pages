@@ -209,3 +209,16 @@
 - [x] PR #33 merged at `05f4c2454c279cc21dcbf08c83ff3c3025838257`; PR #34 merged at `e3463f9b048dfda742b8158faf054c617defda9a`. Runs #374 and #387 passed context, integrity, security, Jekyll, Chromium E2E and published Pages smoke. Accessible rename/project dialog replaced prompt-based selection. Main post-merge checks for PR34 are pending; real-device mobile keyboard/accessibility remain follow-up.
 - [x] Replace prompt-based rename/project chooser with accessible in-app dialog/select; Chromium E2E covers rename and moving between projects. [ ] Real-device mobile keyboard open/close, focus, persistence and project delete/move accessibility follow-up.
 - [ ] Real voice capture/ASR/TTS, image/video pipelines and complete document ingestion remain separate unimplemented work; see `docs/IMPLEMENTATION_ROADMAP_RU.md` and the original V-016 evidence ledger.
+
+## Supplement — 2026-10-24 project navigation and composer
+
+- [~] PR #35: Projects at top, collapsed by default; each project expands to its own chat list; top-level Chats is expanded and contains only unassigned/personal chats.
+- [~] New personal chat from Chats; create a project-scoped chat from that project's expanded group; per-row menu includes rename, clone, move/detach, clear history, delete.
+- [~] Move global memory controls and project facts under collapsed project settings; persisted project memory scope selects project-only vs project-and-global.
+- [~] Add composer + chooser for photo/video vs unrestricted multi-file picker. Known text formats and images are processed; video sends sampled frames. Other binary formats are selected but currently shown as unsupported and block sending until a parser/ingestion endpoint is implemented.
+- [~] Add ◎ request-context selector for up to five projects. Context is scoped by chat ID, bounded, added to the next request only, and cleared after successful send. Selected project context must not mutate the chat's own project.
+- [~] Voice chooser opens after press-and-hold, not a short tap. Live recording, ASR, TTS and audio transcript remain unimplemented.
+- [~] aLandi is a dedicated first-party primary-route card; third-party providers stay in advanced settings. Quality sentinel updated accordingly.
+- [ ] PR #35 Chromium and all quality gates must pass before merge; published Pages smoke must pass after merge.
+- [ ] Real device verification: touch long-press/cancel, mobile keyboard focus/viewport reset, screen reader flow, and large file handling.
+- [ ] Implement real file intake pipeline for PDF/DOCX/XLSX/OCR/audio/video metadata before claiming all formats are supported.

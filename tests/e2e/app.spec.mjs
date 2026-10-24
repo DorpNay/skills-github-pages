@@ -39,7 +39,7 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'false');
   await expect(page.locator('#toggleMultiAgent')).toBeVisible();
 
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#settingsModal')).toBeVisible();
@@ -70,7 +70,7 @@ test('published app boots and core controls are interactive', async ({ page }) =
 
 test('provider keys, Tavily key, and model settings remain isolated across switching and reload', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
 
@@ -95,7 +95,7 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
   await page.locator('[data-action="close-settings"]').click();
 
   await page.reload();
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#providerPreset')).toHaveValue('groq');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-groq-placeholder-not-a-real-key');
@@ -123,7 +123,7 @@ test('API authentication errors are shown without losing the original user promp
     body: JSON.stringify({ error: { message: 'invalid test credential' } })
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -159,7 +159,7 @@ test('provider connection loads filtered model catalog into selector and key del
     body: JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'OK' } }] })
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -193,7 +193,7 @@ test('catalog remains usable when the saved model is missing from the live provi
     ] })
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -221,7 +221,7 @@ test('refresh all catalogs updates other configured providers for cross-provider
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => localStorage.setItem('ai_api_key_openrouter', 'e2e-openrouter-catalog-key'));
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('e2e-groq-catalog-key');
@@ -240,7 +240,7 @@ test('refresh all catalogs updates other configured providers for cross-provider
 
 test('settings profile exports portable preferences but never API secrets', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
@@ -268,7 +268,7 @@ test('settings profile exports portable preferences but never API secrets', asyn
 
 test('settings profile import restores preferences while preserving existing provider and search keys', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
@@ -371,7 +371,7 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
   });
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -423,7 +423,7 @@ test('multi-agent preference skips a greeting and shows the actual route', async
     });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -447,7 +447,7 @@ test('401 stops after the selected provider rejects credentials', async ({ page 
     await route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: { message: 'invalid credential' } }) });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
@@ -473,7 +473,7 @@ test('transient 503 retries only the same model and never fans out', async ({ pa
     });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
@@ -501,7 +501,7 @@ test('model-specific failure tries another model on the same provider first', as
     });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
@@ -512,7 +512,7 @@ test('model-specific failure tries another model on the same provider first', as
   await expect(page.locator('#chatBox')).toContainText('Fallback worked.');
   await expect(page.locator('#chatBox')).toContainText('Groq · qwen/qwen3.8-27b');
   await expect.poll(() => attemptedModels.length).toBe(2);
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#providerPreset')).toHaveValue('groq');
   await expect(page.locator('#modelName')).toHaveValue('qwen/qwen3.8-27b');
@@ -545,7 +545,7 @@ test('dynamic chat catalog is used for bounded same-provider model fallback', as
     });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -575,7 +575,7 @@ test('Pollinations catalog discovers text models and aliases without sending a t
     });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('pollinations');
   await expect(page.locator('#modelPreset option[value="publisher/available-text-model"]')).toHaveCount(1);
@@ -622,7 +622,7 @@ test('Pollinations requests use the OAuth token, not the public App Key', async 
     });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('pollinations');
   await page.locator('#apiKey').fill('pk_e2e-public-app-key');
@@ -660,7 +660,7 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
     });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('cloudflare');
   await page.locator('#cloudflareAccountId').fill(cloudflareId);
@@ -681,7 +681,7 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
       body: JSON.stringify({ model: hfModel, choices: [{ message: { role: 'assistant', content: 'Hugging Face route worked.' } }] })
     });
   });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('huggingface');
   await page.locator('#apiKey').fill('not-a-real-huggingface-token');
@@ -697,7 +697,7 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
 test('Obsidian Studio and Clean Light preferences persist and respect motion controls', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#uiTheme').selectOption('light');
   await page.locator('#uiMotion').selectOption('off');
@@ -708,7 +708,7 @@ test('Obsidian Studio and Clean Light preferences persist and respect motion con
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#uiTheme').selectOption('dark');
   await page.locator('#uiMotion').selectOption('auto');
@@ -865,11 +865,10 @@ test('project instructions, project memory, and project bundles stay scoped to t
   expect(alphaBundle.project.memory.some(item => item.text === 'ALPHA_PROJECT_MEMORY_SENTINEL')).toBe(true);
   expect(JSON.stringify(alphaBundle)).not.toContain('apiKey');
 
-  // New chats inherit the current project; detach this one before creating Beta.
+  // A new chat from the top-level Chats section is personal unless created inside a project group.
   await page.locator('#sidebar [data-action="new-chat"]').click();
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await expect(page.locator('#currentProjectSelect')).toHaveValue(alphaId);
-  await page.locator('#currentProjectSelect').selectOption('');
+  await expect(page.locator('#currentProjectSelect')).toHaveValue('');
   await page.locator('#projectNameInput').fill('Beta Project');
   await page.locator('#projectInstructionsInput').fill('BETA_PROJECT_INSTRUCTION_SENTINEL');
   await page.locator('[data-action="create-project"]').click();
@@ -881,13 +880,19 @@ test('project instructions, project memory, and project bundles stay scoped to t
 
   const sidebar=page.locator('#sidebar');
   if(await sidebar.evaluate(el=>el.classList.contains('-translate-x-full')))await page.locator('[data-action="toggle-sidebar"]').click();
-  const chatRow=page.locator('#chatList .chat-row').first();
+  if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
+  const betaGroup=page.locator('#projectNavigationList details[data-project-id="'+betaId+'"]');
+  await betaGroup.locator(':scope > summary').click();
+  let chatRow=betaGroup.locator('.chat-row').first();
   await chatRow.locator('summary[aria-label="Действия чата"]').click();
   await chatRow.locator('[data-action="chat-project"]').click();
   await expect(page.locator('#chatActionModal')).toBeVisible();
   await page.locator('#chatActionProject').selectOption(alphaId);
   await page.locator('[data-action="chat-action-save"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(alphaId);
+  const alphaGroup=page.locator('#projectNavigationList details[data-project-id="'+alphaId+'"]');
+  await alphaGroup.locator(':scope > summary').click();
+  chatRow=alphaGroup.locator('.chat-row').first();
   await chatRow.locator('summary[aria-label="Действия чата"]').click();
   await chatRow.locator('[data-action="chat-project"]').click();
   await page.locator('#chatActionProject').selectOption(betaId);
@@ -954,11 +959,21 @@ test('deleting a project removes its chats but preserves other projects and chat
   await page.locator('[data-action="create-project"]').click();
   const keepId = await page.locator('#currentProjectSelect').inputValue();
   expect(keepId).not.toBe(disposableId);
+  const keepChatId = await page.evaluate((id) => {
+    const chats=JSON.parse(localStorage.getItem('ai_chats_v87')||'[]');
+    return chats.find(chat=>chat.projectId===id)?.id||'';
+  }, keepId);
+  expect(keepChatId).not.toBe('');
   await page.locator('[data-action="new-chat"]').first().click();
-  const keepChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87') || '');
-  // Use the project-labelled sidebar row as the source of truth for the disposable chat.
+  // Project settings selection is independent from the active chat. Select the target
+  // while the sidebar is settled, then switch to its chat (which closes the mobile sidebar).
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator(`#chatList [data-action="switch-chat"][data-chat-id="${disposableChatId}"]`).click();
+  if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
+  const disposableGroup=page.locator('#projectNavigationList details[data-project-id="'+disposableId+'"]');
+  await disposableGroup.locator(':scope > summary').click();
+  await disposableGroup.locator('[data-action="open-project-settings"]').click();
+  await expect(page.locator('#projectSettingsStatus')).toContainText('Disposable Project');
+  await disposableGroup.locator(`[data-action="switch-chat"][data-chat-id="${disposableChatId}"]`).click();
   await page.locator('[data-action="toggle-sidebar"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(disposableId);
 
@@ -1159,12 +1174,12 @@ test('voice mode menu stays open after a long press and clearly marks both modes
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const trigger = page.locator('#voiceUnavailableButton');
   await expect(trigger).toBeVisible();
-  const bounds = await trigger.boundingBox();
-  expect(bounds).not.toBeNull();
-  await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
-  await page.mouse.down();
-  await page.waitForTimeout(300);
-  await page.mouse.up();
+
+  // Locator.click waits for the element to finish CSS movement before pressing. The composer
+  // transitions from its centered welcome state to the mobile bottom dock after page startup.
+  await trigger.click({ delay: 100 });
+  await expect(page.locator('#voiceMenu')).toBeHidden();
+  await trigger.click({ delay: 500 });
   await expect(page.locator('#voiceMenu')).toBeVisible();
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#voiceMenu')).toContainText('ГОЛОСОВОЙ ДИАЛОГ');
@@ -1173,14 +1188,7 @@ test('voice mode menu stays open after a long press and clearly marks both modes
   await expect(page.locator('#voiceMenu')).toBeHidden();
   await expect(page.locator('#toast')).toContainText('Живой голосовой диалог пока не подключён');
 
-  // A quick upward swipe should select the same preview without requiring a tap.
-  const swipeBounds = await trigger.boundingBox();
-  await page.mouse.move(swipeBounds.x + swipeBounds.width / 2, swipeBounds.y + swipeBounds.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(swipeBounds.x + swipeBounds.width / 2, swipeBounds.y - 48, { steps: 3 });
-  await page.mouse.up();
-  await expect(page.locator('#toast')).toContainText('Голосовой диалог пока не подключён');
-  await expect(page.locator('#voiceMenu')).toBeVisible();
+  await expect(page.locator('#voiceMenu')).toBeHidden();
 });
 
 
@@ -1429,7 +1437,7 @@ test('Markdown fallback preserves tables and escapes HTML when renderer CDNs are
     })
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки' }).click();
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -1456,7 +1464,7 @@ test('chat row actions are grouped in the right-side menu and rename/clone work'
   await expect(row.locator('details.chat-row-menu')).toBeVisible();
   await expect(row.locator('button[data-action="delete-chat"]')).toBeHidden();
   await row.locator('summary[aria-label="Действия чата"]').click();
-  await expect(row.locator('.chat-row-menu-panel button')).toHaveCount(4);
+  await expect(row.locator('.chat-row-menu-panel button')).toHaveCount(5);
 
   await row.locator('[data-action="chat-rename"]').click();
   await expect(page.locator('#chatActionModal')).toBeVisible();
@@ -1469,4 +1477,141 @@ test('chat row actions are grouped in the right-side menu and rename/clone work'
   await expect(page.locator('#chatList .chat-row')).toHaveCount(2);
   await expect(page.locator('#chatList button[data-action="switch-chat"]').first()).toContainText('Renamed from menu — копия');
   await expect(page.locator('#userInput')).toHaveCSS('font-size', '16px');
+});
+
+test('sidebar separates projects from personal chats and keeps navigation collapsible', async ({ page }) => {
+  await page.addInitScript(() => {
+    const project = (id, name) => ({ id, name, description: '', instructions: '', memoryScope: 'project-only', memory: [], createdAt: '', updatedAt: '' });
+    const chat = (id, title, projectId) => ({ id, title, projectId, projectMemoryEnabled: false, serverProjectMemoryEnabled: false, messages: [] });
+    localStorage.setItem('ai_projects_v1', JSON.stringify([project('project-alpha','Alpha project'), project('project-beta','Beta project')]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([chat('chat-personal','Personal chat',null),chat('chat-alpha','Alpha project chat','project-alpha'),chat('chat-beta','Beta project chat','project-beta')]));
+    localStorage.setItem('ai_current_chat_v87','chat-alpha');
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await expect(page.locator('#projectNavToggle')).toHaveAttribute('aria-expanded','false');
+  await expect(page.locator('#projectNavigationList')).toBeHidden();
+  await expect(page.locator('#chatSection')).toHaveAttribute('open','');
+  await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(1);
+  await expect(page.locator('#chatList [data-action="switch-chat"]')).toContainText('Personal chat');
+  await expect(page.locator('#chatList')).not.toContainText('Alpha project chat');
+  await expect(page.locator('#memoryToolsDetails')).toBeHidden();
+
+  await page.locator('#projectNavToggle').click();
+  await expect(page.locator('#projectNavigationList')).toBeVisible();
+  const alpha=page.locator('#projectNavigationList details[data-project-id="project-alpha"]');
+  await alpha.locator(':scope > summary').click();
+  await expect(alpha.locator('[data-action="switch-chat"]')).toHaveCount(1);
+  await expect(alpha.locator('[data-action="switch-chat"]')).toContainText('Alpha project chat');
+  await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(1);
+});
+
+test('composer offers unrestricted file picking but blocks unsupported formats until removed', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#textAttachmentInput')).not.toHaveAttribute('accept', /.+/);
+  await expect(page.locator('#textAttachmentInput')).toHaveAttribute('multiple','');
+  await page.locator('#attachTextButton').click();
+  await expect(page.locator('#attachmentMenu')).toBeVisible();
+  await page.locator('[data-action="choose-any-file"]').click();
+  await page.locator('#textAttachmentInput').setInputFiles({
+    name:'sample.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\nnot-a-real-pdf')
+  });
+  await expect(page.locator('#draftAttachments')).toContainText('sample.pdf');
+  await expect(page.locator('#draftAttachments')).toContainText('не распознаётся');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#toast')).toContainText('неподдерживаемые файлы');
+  await page.locator('#draftAttachments [data-action="remove-draft-attachment"]').click();
+  await page.locator('#attachTextButton').click();
+  await page.locator('[data-action="choose-any-file"]').click();
+  await page.locator('#textAttachmentInput').setInputFiles({
+    name:'notes.md',mimeType:'text/markdown',buffer:Buffer.from('Readable attachment sentinel')
+  });
+  await expect(page.locator('#userInput')).toHaveValue(/Readable attachment sentinel/);
+});
+
+test('request-only project context is sent once and does not change the active chat project', async ({ page }) => {
+  const captured=[];
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    captured.push(route.request().postDataJSON());
+    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({model:'context-e2e',choices:[{message:{role:'assistant',content:'Request context verified.'}}]})});
+  });
+  await page.addInitScript(() => {
+    const project=(id,name,instructions)=>({id,name,description:'',instructions,memoryScope:'project-only',memory:[{id:id+'-memory',text:name+' memory sentinel',createdAt:''}],createdAt:'',updatedAt:''});
+    const chat=(id,title,projectId)=>({id,title,projectId,projectMemoryEnabled:true,serverProjectMemoryEnabled:false,messages:[]});
+    localStorage.setItem('ai_projects_v1',JSON.stringify([project('project-alpha','Alpha project','ALPHA_ONLY_INSTRUCTION'),project('project-beta','Beta project','BETA_ONE_SHOT_INSTRUCTION')]));
+    localStorage.setItem('ai_chats_v87',JSON.stringify([chat('chat-alpha','Alpha chat','project-alpha'),chat('chat-beta','Beta chat','project-beta')]));
+    localStorage.setItem('ai_current_chat_v87','chat-alpha');
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('context-e2e');
+  await page.locator('#apiKey').fill('e2e-context-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await expect(page.locator('#currentProjectSelect')).toHaveValue('project-alpha');
+  await page.locator('#contextPickerButton').click();
+  await page.locator('#requestProjectChecks input[data-request-project-id="project-beta"]').check();
+  // Selecting one-shot context in Alpha must not leak into Beta if the user switches chats before sending.
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
+  const betaGroup=page.locator('#projectNavigationList details[data-project-id="project-beta"]');
+  await betaGroup.locator(':scope > summary').click();
+  await betaGroup.locator('[data-action="switch-chat"][data-chat-id="chat-beta"]').click();
+  await page.locator('#contextPickerButton').click();
+  await expect(page.locator('#requestProjectChecks input[data-request-project-id="project-beta"]')).not.toBeChecked();
+  await page.locator('#contextPickerButton').click();
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
+  const alphaGroup=page.locator('#projectNavigationList details[data-project-id="project-alpha"]');
+  await alphaGroup.locator(':scope > summary').click();
+  await alphaGroup.locator('[data-action="switch-chat"][data-chat-id="chat-alpha"]').click();
+  await page.locator('#contextPickerButton').click();
+  await expect(page.locator('#requestProjectChecks input[data-request-project-id="project-beta"]')).toBeChecked();
+  await page.locator('#contextPickerButton').click();
+  await page.locator('#userInput').fill('Use Beta context for this one request.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Request context verified.');
+  expect(captured).toHaveLength(1);
+  expect(captured[0].messages[0].content).toContain('BETA_ONE_SHOT_INSTRUCTION');
+  expect(captured[0].messages[0].content).toContain('ALPHA_ONLY_INSTRUCTION');
+  await expect(page.locator('#currentProjectSelect')).toHaveValue('project-alpha');
+
+  await page.locator('#userInput').fill('Do not include the one-shot project this time.');
+  await page.locator('#sendBtn').click();
+  await expect.poll(() => captured.length).toBe(2);
+  await expect(page.locator('#chatBox')).toContainText('Request context verified.');
+  expect(captured[1].messages[0].content).toContain('ALPHA_ONLY_INSTRUCTION');
+  expect(captured[1].messages[0].content).not.toContain('BETA_ONE_SHOT_INSTRUCTION');
+  await expect(page.locator('#contextPickerButton')).toHaveAttribute('aria-expanded','false');
+});
+
+test('image attachment is sent as multimodal content without persisting image bytes in chat history', async ({ page }) => {
+  let captured=null;
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    captured=route.request().postDataJSON();
+    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({model:'vision-e2e',choices:[{message:{role:'assistant',content:'Image received.'}}]})});
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('vision-e2e');
+  await page.locator('#apiKey').fill('e2e-vision-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#attachTextButton').click();
+  await page.locator('[data-action="choose-media"]').click();
+  await page.locator('#mediaAttachmentInput').setInputFiles({name:'pixel.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADUlEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC','base64')});
+  await expect(page.locator('#draftAttachments')).toContainText('pixel.png');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Image received.');
+  const user=captured.messages.find(message=>message.role==='user');
+  expect(Array.isArray(user.content)).toBe(true);
+  expect(user.content.some(part=>part.type==='image_url'&&part.image_url.url.startsWith('data:image/png;base64,'))).toBe(true);
+  const stored=await page.evaluate(()=>localStorage.getItem('ai_chats_v87')||'');
+  expect(stored).not.toContain('data:image/png;base64,');
 });

@@ -8,15 +8,20 @@
 
 ## Очерёдность
 
-### P0 — клиентская эргономика и восстановление (PR #33 + #34 merged)
+### P0 — sidebar, composer и контекст запроса (PR #35, проверки pending)
 
-**PR #33:** [chat row actions](https://github.com/DorpNay/skills-github-pages/pull/33) merged at `05f4c2454c279cc21dcbf08c83ff3c3025838257`. **PR #34:** [accessible action dialog](https://github.com/DorpNay/skills-github-pages/pull/34) merged at `e3463f9b048dfda742b8158faf054c617defda9a`. PR-head runs #374 and #387 passed context, integrity, security, Jekyll, Chromium E2E and published Pages browser smoke. Main run #384 and Pages deployment #115 passed before PR34; post-merge PR34 main gates pending.
-- Chat row: menu ⋯ right → Rename / Clone / Move-to-project / Extract / Delete; deletion confirm.
-- Rename/project selection use accessible glass dialog, labelled input/select, cancel/Escape/outside click and project validation. Project move clears scoped memory consent; owner explicitly re-enables it.
-- Glass menu/dialog: blur/saturation, contrast, fallback without transparency; reduced-transparency support.
-- Composer: mobile 16px; do not disable browser zoom. Real-device keyboard open/close, landscape, focus and screen-reader checks remain open.
-- Follow-up: test project delete/move and chat history/export/import, project CRUD and memory scopes; real mobile keyboard/focus/accessibility review.
-**Gate:** PR-head all passed. Remaining release gate is post-merge main workflow and actual-device accessibility/mobile review.
+**PR #35:** [Improve project sidebar, composer attachments, and request-scoped context](https://github.com/DorpNay/skills-github-pages/pull/35), branch feat/sidebar-composer-context-ergonomics-20261024. Ранее объединённые PR #33/#34 дают правое меню чата и доступный dialog для Rename/Move; PR #35 добавляет:
+- Projects вверху, свернутый список проектов; под каждым проектом — только его чаты. Верхний Chats раскрыт и содержит только личные/непривязанные чаты.
+- Создание личного чата из Chats и чата в проекте из меню самого проекта. Clear history находится в меню каждой строки вместе с Rename/Clone/Move/Delete.
+- Память и инструкции в настройках проекта; режим project-only или project-and-global хранится на уровне проекта. Общая память по-прежнему требует отдельного opt-in.
+- Две кнопки composer: + → «Фото или видео» / «Файл любого формата», ◎ → выбор до пяти проектов только для следующего запроса.
+- Выбор контекста и вложения изолированы по ID текущего чата; контекст добавляется только к следующему запросу и очищается после успешной отправки.
+- Голосовое меню открывается удержанием; обычный короткий тап не открывает его. Реальная запись/ASR/TTS этим изменением не добавляется.
+- aLandi выделен в отдельную карточку основного маршрута; провайдерный список оставлен для внешних сервисов.
+
+**Ограничения:** unrestricted file input — это только доступ к системному file picker. Читаемый текст прикладывается в текстовом виде; изображения отправляются как multimodal image_url; видео отправляет до трёх уменьшенных кадров (общий предел восемь кадров/изображений). Прочие бинарные форматы пока распознаются как неподдержанные и не отправляются. Нет ingestion PDF/DOCX/XLSX, OCR, audio transcription, live voice, video generation pipeline либо подключённых коннекторов/ручного skill picker.
+
+**Gate:** CI должен пройти context, integrity, security, Jekyll и Chromium E2E, включая sidebar grouping, multi-project context one-shot, image payload and unsupported file handling. После merge отдельно подтвердить Pages smoke. Затем реальное устройство iOS/Android: удержание, клавиатура/viewport, screen reader и перехват файлов.
 
 ### P1 — real voice message (самый короткий полезный вертикальный срез)
 
