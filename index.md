@@ -272,7 +272,25 @@ permalink: /
       #inputArea { gap:.4rem!important; }
       #sendBtn,#stopBtn { padding:.7rem .8rem!important; }
     }
-  </style>
+      .app-header{background:var(--ui-surface);backdrop-filter:none!important;-webkit-backdrop-filter:none!important}.app-header .header-chat-title{min-width:0;max-width:none;flex:1 1 auto}
+    #activeProjectTitle{display:block;color:var(--ui-tiffany);font-size:10px;font-weight:700;line-height:1.1;margin-bottom:3px}#activeProjectTitle.hidden{display:none}
+    .brand-wordmark,.brand-wordmark:hover,.brand-wordmark:active{border:0!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;padding:0 .1rem!important;filter:none!important;color:var(--ui-text)!important}
+    .clock-face{isolation:isolate;border-color:color-mix(in srgb,var(--ui-tiffany) 28%,var(--ui-border))!important;box-shadow:0 0 8px color-mix(in srgb,var(--ui-tiffany) 10%,transparent)!important}.clock-face::before{content:"";position:absolute;inset:2px;border-radius:50%;pointer-events:none;z-index:1;background:repeating-conic-gradient(from -1deg,color-mix(in srgb,var(--ui-tiffany) 78%,transparent) 0deg 1deg,transparent 1deg 30deg);mask:radial-gradient(circle,transparent 62%,#000 64%,#000 69%,transparent 71%);opacity:.42}.clock-digital{z-index:4!important}
+    #modeToolbar{position:relative;border-color:var(--ui-border);background:var(--ui-surface)}.mode-hint{margin:0 0 6px;color:var(--ui-text-muted);font-size:10px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .mode-toolbar-controls{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:6px}.mode-switch{display:flex;min-width:0;align-items:center;gap:3px;padding:3px;border:1px solid var(--ui-border);border-radius:11px;background:var(--ui-bg)}.mode-switch button{min-width:0;flex:1;white-space:nowrap;text-align:center;border-radius:8px;padding:7px 5px;font-size:11px;line-height:1.2;color:var(--ui-text-muted)}.mode-switch button[aria-pressed="true"]{color:#fff;background:#2563eb;font-weight:700}
+    .toolbar-trigger{display:flex;align-items:center;justify-content:center;gap:5px;min-height:38px;padding:7px 9px;border:1px solid var(--ui-border);border-radius:11px;background:var(--ui-surface-raised);color:var(--ui-text);font-size:11px;white-space:nowrap}.toolbar-trigger:hover,.toolbar-trigger[aria-expanded="true"]{border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft)}.search-mode-dot{font-size:8px;color:var(--ui-success)}.search-mode-dot[data-mode="deep"]{color:#f59e0b}.search-mode-dot[data-mode="offline"]{color:var(--ui-text-muted)}.mode-menu-host{position:relative;min-width:0}
+    .toolbar-popover{position:fixed;z-index:100;width:min(88vw,360px);max-height:min(72dvh,520px);overflow-y:auto;padding:6px;border:1px solid var(--ui-border);border-radius:16px;background:var(--ui-surface);box-shadow:0 20px 60px rgb(0 0 0 / 42%);overscroll-behavior:contain}.toolbar-popover-option{display:flex;align-items:center;gap:10px;width:100%;padding:11px 10px;border-radius:11px;text-align:left}.toolbar-popover-option+.toolbar-popover-option{margin-top:2px}.toolbar-popover-option:hover,.toolbar-popover-option[aria-pressed="true"]{background:var(--ui-tiffany-soft)}.toolbar-option-icon{flex:0 0 30px;width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--ui-border);border-radius:9px;color:var(--ui-tiffany)}.toolbar-popover-option strong{display:block;font-size:12px;color:var(--ui-text)}.toolbar-popover-option small{display:block;margin-top:3px;font-size:10px;color:var(--ui-text-muted);line-height:1.35}
+    #legacyModeControls{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important}
+    #composerFooter{position:relative;flex-shrink:0;z-index:10;background:var(--ui-surface)!important;border-top:1px solid var(--ui-border)!important;border-bottom:1px solid var(--ui-border)!important;box-shadow:0 -6px 24px rgb(0 0 0 / 9%);backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding-bottom:max(calc(env(safe-area-inset-bottom) + 1.15rem),1.25rem)!important}body.composer-centered #composerFooter,body.composer-bottom-transition #composerFooter{position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;width:auto!important;border-radius:0!important}#userInput{position:relative;scroll-margin-block:20px 180px;max-height:min(32vh,260px);overflow-y:auto}
+    body[data-composer-position="top"] #composerFooter{order:2;border-top:0!important;border-bottom:1px solid var(--ui-border)!important;box-shadow:0 6px 20px rgb(0 0 0 / 10%);padding-top:10px}body[data-composer-position="top"] #searchStatus{order:3}body[data-composer-position="top"] #chatBox{order:4}body[data-composer-position="top"] #composerFooter .composer-popover,body[data-composer-position="top"] #composerFooter .voice-menu{bottom:auto;top:calc(100% + 8px)}
+    .composer-popover,.voice-menu{max-height:min(68dvh,460px);overflow-y:auto}.voice-menu{z-index:100!important}html[data-theme="light"] #offlineToggle{color:#16252f!important;background:#e7f0f2!important;border-color:#7f929e!important}html[data-theme="light"] #offlineToggle[aria-pressed="true"]{color:#fff!important;background:#334155!important;border-color:#334155!important}
+    .message-actions{display:flex;align-items:center;gap:6px;margin-top:1px;min-height:28px;opacity:.9}.message-actions button{min-width:32px;min-height:30px;padding:4px 8px;border:1px solid var(--ui-border);border-radius:9px;color:var(--ui-text-muted);background:var(--ui-surface-raised);font-size:13px}.message-actions button:hover{color:var(--ui-tiffany);border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft)}
+    .message-viewer-surface,.function-settings-surface{background:var(--ui-surface);border:1px solid var(--ui-border);box-shadow:0 24px 80px rgb(0 0 0 / 50%);color:var(--ui-text)}.message-viewer-eye{flex:0 0 46px;width:46px;height:46px;display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--ui-tiffany) 38%,var(--ui-border));border-radius:14px;background:var(--ui-tiffany-soft);color:var(--ui-tiffany);font-size:25px}.message-viewer-content{min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain;user-select:text;-webkit-user-select:text;overflow-wrap:anywhere;white-space:normal;padding:8px 4px 16px;line-height:1.65;font-size:14px;color:var(--ui-text)}.message-viewer-content pre,.message-viewer-content table{max-width:100%;overflow:auto}.message-viewer-content .plain-message{white-space:pre-wrap;overflow-wrap:anywhere;user-select:text;-webkit-user-select:text}
+    .settings-sticky-actions{position:sticky;bottom:-1rem;z-index:5;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px -1rem -1rem;padding:10px 1rem max(10px,env(safe-area-inset-bottom));border-top:1px solid var(--ui-border);background:var(--ui-surface)}.settings-sticky-actions button{min-height:44px;border-radius:11px;padding:10px;font-size:12px;font-weight:650}.settings-close-button{border:1px solid var(--ui-border);background:var(--ui-surface-raised);color:var(--ui-text)}.settings-save-button{background:#2563eb;color:#fff}
+    .jump-to-latest{position:fixed;z-index:35;right:14px;bottom:max(calc(env(safe-area-inset-bottom) + 6.5rem),6.5rem);min-width:42px;min-height:42px;border-radius:14px;border:1px solid color-mix(in srgb,var(--ui-tiffany) 42%,var(--ui-border));background:var(--ui-surface-raised);color:var(--ui-tiffany);font-size:24px;box-shadow:0 5px 22px rgb(0 0 0 / 24%)}.chat-row-menu-panel.opens-up{top:auto;bottom:calc(100% + 5px)}.chat-row-menu-panel.align-left{left:0;right:auto}
+    .function-option-row,.function-connection-row{display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-bg)}.function-option-row input{margin-top:4px}.function-option-row strong,.function-connection-row strong{display:block;font-size:13px;color:var(--ui-text)}.function-option-row small,.function-connection-row small{display:block;margin-top:4px;font-size:11px;line-height:1.45;color:var(--ui-text-muted)}.function-setting-field{display:grid;gap:7px}.function-setting-field label{font-size:12px;color:var(--ui-text-muted)}.function-setting-field select{border:1px solid var(--ui-border);border-radius:11px;background:var(--ui-bg);color:var(--ui-text);padding:11px;font-size:13px}.function-state-dot{flex:0 0 9px;width:9px;height:9px;margin-top:5px;border-radius:50%;background:#64748b}.function-state-dot[data-state="ready"]{background:#10b981}
+    @media(max-width:640px){.app-header{gap:5px!important;padding-left:7px!important;padding-right:7px!important}.app-header #activeChatTitle{font-size:11px}.app-header #activeProjectTitle{font-size:9px}.app-header #aLandiClock .clock-face{width:38px;height:38px}.app-header #clockDigital{font-size:9px}.app-header #brandWordmark{font-size:15px}.app-header #homeThemeToggle,.app-header #languageSummary{padding-left:5px!important;padding-right:5px!important;font-size:11px}.mode-toolbar-controls{gap:4px;grid-template-columns:minmax(0,1fr) auto auto}.mode-switch button{padding-left:4px;padding-right:4px;font-size:10px}.toolbar-trigger{min-height:37px;padding:6px 7px;gap:3px;font-size:10px}}
+</style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
   <aside id="sidebar" aria-label="Проекты и чаты" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[88vw] bg-gray-950 border-r border-gray-800 -translate-x-full transition-transform duration-300 flex flex-col overflow-y-auto overscroll-contain">
@@ -401,6 +419,8 @@ permalink: /
         <select id="uiMotion" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm">
           <option value="auto">Авто · системные настройки</option><option value="reduced">Уменьшить движение</option><option value="off">Отключить эффекты</option>
         </select>
+        <label for="composerPosition" class="block text-xs text-gray-400" data-i18n="composerPositionLabel">Расположение поля ввода</label>
+        <select id="composerPosition" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm"><option value="bottom" data-i18n="composerBottom">Снизу — по умолчанию</option><option value="top" data-i18n="composerTop">Сверху, под режимами</option></select>
       </section>
       <details id="legacyProviderSettings" class="settings-subpanel rounded-xl border border-gray-700">
         <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none" data-i18n="legacySettings">Сторонние API, ключи и расширенные настройки</summary>
@@ -467,49 +487,40 @@ permalink: /
         </div>
       </details>
       <button type="button" id="recoveryBackupButton" data-action="download-recovery-backup" class="hidden w-full bg-amber-800 hover:bg-amber-700 py-2 rounded text-xs text-amber-50">Скачать резервную копию истории</button>
-      <button type="button" data-action="save-settings" data-i18n="saveSettings" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded font-bold text-sm">Сохранить</button>
-      <button type="button" data-action="close-settings" data-i18n="closeSettings" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-300">Закрыть</button>
+      <div class="settings-sticky-actions"><button type="button" data-action="close-settings" data-i18n="closeSettings" class="settings-close-button">Закрыть</button><button type="button" data-action="save-settings" data-i18n="saveSettings" class="settings-save-button">Сохранить</button></div>
     </div>
   </div>
 
-  <header class="app-header px-3 py-2 border-b flex justify-between items-center shrink-0 gap-2">
-    <button type="button" data-action="toggle-sidebar" aria-label="Открыть меню" class="header-icon text-xl px-2 py-1">☰</button>
-    <div class="brand-cluster flex items-center gap-2 min-w-0">
-      <button type="button" data-action="brand-easter-egg" id="brandWordmark" class="brand-wordmark font-bold text-lg tracking-tight" title="Нажми, чтобы раскрыть ребус">aLandi</button>
-      <div id="aLandiClock" class="clock-shell" aria-label="Местное время">
-        <div class="clock-face" aria-hidden="true"><span class="clock-digital" id="clockDigital">00:00</span><span class="clock-hand clock-hour" id="clockHour"></span><span class="clock-hand clock-minute" id="clockMinute"></span><span class="clock-hand clock-second" id="clockSecond"></span><span class="clock-pin"></span></div>
-        <span id="clockAccessible" class="sr-only" aria-live="off">Местное время</span>
-      </div>
-      <div class="header-chat-title min-w-0"><h1 id="activeChatTitle" class="font-semibold text-xs sm:text-sm truncate">Новый чат</h1><span class="brand-subtitle">i land AI · local-first</span></div>
-    </div>
-    <div class="flex items-center gap-1.5 shrink-0">
-      <details id="languageMenu" class="language-menu">
-        <summary id="languageSummary" aria-label="Язык интерфейса" class="header-icon px-2 py-1.5 text-xs">RU ▾</summary>
-        <div class="language-menu-panel">
-          <button type="button" data-action="set-language" data-language="ru" aria-pressed="true">Русский</button>
-          <button type="button" data-action="set-language" data-language="en" aria-pressed="false">English</button>
-        </div>
-      </details>
-      <button type="button" data-action="toggle-theme-cycle" id="homeThemeToggle" aria-label="Сменить тему" title="Сменить тему" class="header-icon px-2 py-1.5">☼</button>
-      <span id="pyStatus" class="text-[10px] bg-gray-700 text-gray-300 px-2 py-0.5 rounded hidden sm:inline-flex" title="Python загрузится только после запуска блока кода">Py: по запросу</span>
-      <button type="button" data-action="toggle-settings" aria-label="Настройки" class="header-icon px-2.5 py-1.5 rounded-xl">⚙️</button>
-    </div>
+  <header class="app-header px-3 py-2 border-b flex items-center shrink-0 gap-2" aria-label="aLandi">
+    <button type="button" data-action="toggle-sidebar" aria-label="Открыть меню" class="header-icon text-xl px-2 py-1 shrink-0">☰</button>
+    <div class="header-chat-title min-w-0 flex-1"><span id="activeProjectTitle" class="active-project-title hidden"></span><h1 id="activeChatTitle" class="font-semibold text-xs sm:text-sm truncate">Новый чат</h1></div>
+    <div id="aLandiClock" class="clock-shell shrink-0" aria-label="Местное время"><div class="clock-face" aria-hidden="true"><span class="clock-digital" id="clockDigital">00:00</span><span class="clock-hand clock-hour" id="clockHour"></span><span class="clock-hand clock-minute" id="clockMinute"></span><span class="clock-hand clock-second" id="clockSecond"></span><span class="clock-pin"></span></div><span id="clockAccessible" class="sr-only" aria-live="off">Местное время</span></div>
+    <button type="button" data-action="brand-easter-egg" id="brandWordmark" class="brand-wordmark font-bold text-lg tracking-tight shrink-0" title="Нажми, чтобы раскрыть ребус">aLandi</button>
+    <button type="button" data-action="toggle-theme-cycle" id="homeThemeToggle" aria-label="Сменить тему" title="Сменить тему" class="header-icon px-2 py-1.5 shrink-0">☼</button>
+    <details id="languageMenu" class="language-menu shrink-0"><summary id="languageSummary" aria-label="Язык интерфейса" class="header-icon px-2 py-1.5 text-xs">RU ▾</summary><div class="language-menu-panel"><button type="button" data-action="set-language" data-language="ru" aria-pressed="true">Русский</button><button type="button" data-action="set-language" data-language="en" aria-pressed="false">English</button></div></details>
+    <button type="button" data-action="toggle-settings" aria-label="Настройки" class="header-icon px-2.5 py-1.5 rounded-xl shrink-0">⚙️</button>
+    <span id="pyStatus" class="sr-only" title="Python загрузится только после запуска блока кода">Py: по запросу</span>
+  </header>
   </header>
 
-  <div class="bg-gray-950 px-3 py-2 border-b border-gray-800 shrink-0 space-y-2">
-    <div class="flex items-center gap-2 text-xs"><span class="text-gray-400 shrink-0" data-i18n="modeLabel">Режим:</span>
-      <div class="flex flex-1 rounded-lg bg-gray-900 p-1 gap-1" role="group" aria-label="Режим обработки">
-        <button type="button" id="modeFast" data-i18n="modeFast" aria-pressed="true" class="flex-1 rounded-md px-2 py-1.5 bg-blue-600 font-semibold">⚡ Быстро</button>
-        <button type="button" id="modeDeep" data-i18n="modeDeep" aria-pressed="false" class="flex-1 rounded-md px-2 py-1.5 text-gray-300">🔬 Глубоко</button>
-      </div>
-    </div>
-    <div class="flex flex-wrap items-center justify-between text-xs gap-3">
-      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Инструменты поиска доступны по умолчанию; модель использует их по необходимости."><input type="checkbox" id="toggleSearch" checked class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span data-i18n="searchLabel">🌐 Интернет и источники</span></label>
-      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Режим доступен для сложных задач; приветствия и простые вопросы не запускают многоэтапный конвейер."><input type="checkbox" id="toggleMultiAgent" class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span data-i18n="researchLabel">🤖 Умное исследование</span></label>
-      <button type="button" id="offlineToggle" data-action="toggle-offline" aria-pressed="false" class="ambient-control rounded-lg px-3 py-1.5 text-[11px] font-semibold" title="Выключает веб-поиск и внешние источники. Облачный API модели по-прежнему требует интернет-соединения.">◉ Оффлайн: выкл.</button>
-    </div>
-    <p id="modeHint" class="text-[10px] text-gray-500 leading-relaxed">Онлайн включён по умолчанию; поиск будет использоваться, когда помогает ответу. Оффлайн отключает веб-инструменты, но не превращает облачный API в локальную модель.</p>
-  </div>
+  <section id="modeToolbar" class="mode-toolbar px-3 py-2 border-b shrink-0" aria-label="Режим запроса">
+    <p id="modeHint" class="mode-hint" aria-live="polite">Быстро · обычный веб-поиск · без исследования</p>
+    <div class="mode-toolbar-controls"><div class="mode-switch" role="group" aria-label="Длительность обдумывания"><button type="button" id="modeFast" data-i18n="modeFast" aria-pressed="true">⚡ Быстро</button><button type="button" id="modeDeep" data-i18n="modeDeep" aria-pressed="false">🔬 Дольше</button></div>
+      <div class="mode-menu-host"><button type="button" id="searchModeButton" class="toolbar-trigger" data-action="toggle-search-menu" aria-expanded="false" aria-controls="searchModeMenu"><span>🌐</span><span id="searchModeLabel">Веб</span><span id="searchModeDot" class="search-mode-dot" data-mode="normal">●</span><span>⌄</span></button>
+        <div id="searchModeMenu" class="toolbar-popover hidden" role="menu">
+          <button type="button" role="menuitemradio" data-action="select-search-mode" data-search-mode="normal" aria-pressed="true" class="toolbar-popover-option"><span class="toolbar-option-icon">⌕</span><span><strong data-i18n="searchNormalTitle">Обычный веб-поиск</strong><small data-i18n="searchNormalHelp">Несколько быстрых источников по необходимости</small></span></button>
+          <button type="button" role="menuitemradio" data-action="select-search-mode" data-search-mode="deep" aria-pressed="false" class="toolbar-popover-option"><span class="toolbar-option-icon">⌕+</span><span><strong data-i18n="searchDeepTitle">Искать больше</strong><small data-i18n="searchDeepHelp">Больше результатов и открытых источников</small></span></button>
+          <button type="button" role="menuitemradio" data-action="select-search-mode" data-search-mode="offline" aria-pressed="false" class="toolbar-popover-option"><span class="toolbar-option-icon">◌</span><span><strong data-i18n="searchOfflineTitle">Без веб-поиска</strong><small data-i18n="searchOfflineHelp">Только знания выбранной модели и контекст</small></span></button>
+        </div></div>
+      <div class="mode-menu-host"><button type="button" id="functionsButton" class="toolbar-trigger" data-action="toggle-functions-menu" aria-expanded="false" aria-controls="functionsMenu"><span>☷</span><span data-i18n="functionsLabel">Функции</span><span>⌄</span></button>
+        <div id="functionsMenu" class="toolbar-popover hidden" role="menu">
+          <button type="button" role="menuitem" data-action="open-function-settings" data-function="research" class="toolbar-popover-option"><span class="toolbar-option-icon">⌕</span><span><strong data-i18n="functionResearchTitle">Исследование</strong><small data-i18n="functionResearchHelp">Многоэтапный разбор и проверка результата</small></span></button>
+          <button type="button" role="menuitem" data-action="open-function-settings" data-function="agents" class="toolbar-popover-option"><span class="toolbar-option-icon">◇</span><span><strong data-i18n="functionAgentsTitle">Агенты</strong><small data-i18n="functionAgentsHelp">Одна модель в четырёх последовательных ролях</small></span></button>
+          <button type="button" role="menuitem" data-action="open-function-settings" data-function="skills" class="toolbar-popover-option"><span class="toolbar-option-icon">✳</span><span><strong data-i18n="functionSkillsTitle">Скиллы</strong><small data-i18n="functionSkillsHelp">Автоподбор или выбор навыка из репозитория</small></span></button>
+          <button type="button" role="menuitem" data-action="open-function-settings" data-function="connectors" class="toolbar-popover-option"><span class="toolbar-option-icon">↗</span><span><strong data-i18n="functionConnectorsTitle">Коннекторы</strong><small data-i18n="functionConnectorsHelp">Источники и фактический статус интеграций</small></span></button>
+        </div></div></div>
+    <div id="legacyModeControls" class="sr-only" aria-hidden="true"><label><input type="checkbox" id="toggleSearch" checked><span data-i18n="searchLabel">Интернет и источники</span></label><label><input type="checkbox" id="toggleMultiAgent"><span data-i18n="researchLabel">Умное исследование</span></label><button type="button" id="offlineToggle" data-action="toggle-offline" aria-pressed="false">Оффлайн: выкл.</button></div>
+  </section>
 
   <main id="chatBox" class="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-sm" aria-live="polite" aria-label="Сообщения чата"></main>
   <div id="searchStatus" class="hidden px-4 py-2 bg-gray-800/80 border-t border-gray-700 text-xs text-blue-300 flex items-center gap-2 shrink-0" role="status" aria-live="polite">
@@ -546,6 +557,10 @@ permalink: /
     </div>
   </footer>
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+  <div id="popupBackdrop" class="hidden fixed inset-0 bg-black/55 z-40" aria-hidden="true"></div>
+  <button id="jumpToLatest" type="button" data-action="jump-to-latest" class="jump-to-latest hidden" aria-label="Перейти к последнему сообщению" title="В конец чата">↓</button>
+  <div id="functionSettingsModal" class="hidden fixed inset-0 z-[80] bg-black/75 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="functionSettingsTitle"><section class="function-settings-surface w-full max-w-lg max-h-[88dvh] overflow-y-auto rounded-2xl p-4 sm:p-5"><header class="flex items-center justify-between gap-3 mb-3"><h2 id="functionSettingsTitle" class="font-semibold text-base">Настройки функции</h2><button type="button" data-action="close-function-settings" class="modal-close-button" aria-label="Закрыть">✕</button></header><div id="functionSettingsBody" class="space-y-3 text-sm"></div><p class="text-[10px] text-gray-500 mt-4" data-i18n="functionOptionsSaved">Настройки сохраняются для этого чата автоматически.</p></section></div>
+  <div id="messageViewerModal" class="hidden fixed inset-0 z-[85] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="messageViewerTitle"><section class="message-viewer-surface w-full max-w-4xl max-h-[92dvh] rounded-2xl p-3 sm:p-5 flex flex-col"><header class="flex items-center gap-3 border-b border-gray-700 pb-3 mb-3 shrink-0"><button type="button" data-action="close-message-viewer" class="message-viewer-eye" aria-label="Вернуться в чат" title="Вернуться в чат">◉</button><div class="min-w-0"><h2 id="messageViewerTitle" class="font-semibold text-base">Сообщение</h2><p id="messageViewerRole" class="text-xs text-gray-400"></p></div></header><div id="messageViewerContent" class="message-viewer-content" tabindex="0" aria-label="Полный текст сообщения"></div></section></div>
   <div id="chatActionModal" class="hidden fixed inset-0 z-[85] bg-black/65 p-4 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="chatActionTitle" aria-describedby="chatActionHelp">
     <section class="chat-action-dialog w-full max-w-sm rounded-2xl p-4 sm:p-5 space-y-4">
       <header class="flex items-center justify-between gap-3"><h2 id="chatActionTitle" class="font-semibold text-base">Действие с чатом</h2><button type="button" data-action="chat-action-cancel" class="rounded-lg px-2.5 py-2" aria-label="Закрыть">✕</button></header>
@@ -576,7 +591,7 @@ permalink: /
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
       tavilyKey: 'ai_tavily_key', systemPrompt: 'ai_system_prompt',
-      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider', cloudflareAccountId: 'ai_cloudflare_account_id', projects: 'ai_projects_v1', globalMemoryEnabled: 'ai_global_memory_enabled_v1'
+      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', searchDepth: 'ai_web_search_depth_v1', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider', cloudflareAccountId: 'ai_cloudflare_account_id', projects: 'ai_projects_v1', globalMemoryEnabled: 'ai_global_memory_enabled_v1'
     };
     const LEGACY_DEFAULT_SYSTEM = 'Ты автономный ИИ-ассистент. Отвечай ясно, проверяй предположения и выдавай структурированные отчёты. Если включён веб-поиск, используй его для актуальной информации.';
     const DEFAULT_SYSTEM = [
@@ -610,6 +625,15 @@ permalink: /
     const MAX_RESEARCH_EVIDENCE = 40;
     const CACHE_TTL_MS = 15 * 60 * 1000;
     const $ = (id) => document.getElementById(id);
+    const CHAT_UI_DEFAULTS=Object.freeze({thinkingMode:'fast',searchMode:'normal',research:false,skill:'auto'});
+    const ALLOWED_SKILLS=new Set(['auto','research','multimodal','agent-systems','code-review','data-analysis','planning']);
+    function defaultChatUiOptions(){return {...CHAT_UI_DEFAULTS};}
+    function normalizeChatUiOptions(raw,migrate=false){
+      if(raw&&typeof raw==='object')return {thinkingMode:raw.thinkingMode==='deep'?'deep':'fast',searchMode:['normal','deep','offline'].includes(raw.searchMode)?raw.searchMode:'normal',research:raw.research===true,skill:ALLOWED_SKILLS.has(raw.skill)?raw.skill:'auto'};
+      if(migrate)return {thinkingMode:safeGet(STORAGE.mode)==='deep'?'deep':'fast',searchMode:safeGet(STORAGE.offline)==='true'?'offline':(safeGet(STORAGE.searchDepth)==='deep'?'deep':'normal'),research:safeGet(STORAGE.multiAgent)==='true',skill:'auto'};
+      return defaultChatUiOptions();
+    }
+    function currentSearchMode(){return safeGet(STORAGE.offline)==='true'?'offline':(safeGet(STORAGE.searchDepth)==='deep'?'deep':'normal');}
 
     let chatRecoveryWarning = false;
     let chatRecoveryBackupKey = '';
@@ -762,7 +786,7 @@ permalink: /
       }
     }
     function createChat(title = 'Новый чат', messages = [], projectId = null) {
-      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false, serverProjectMemoryEnabled: false };
+      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false, serverProjectMemoryEnabled: false, uiOptions: defaultChatUiOptions() };
     }
     function preserveUnreadableChats(rawText) {
       if (!rawText) return;
@@ -803,6 +827,7 @@ permalink: /
             projectId: typeof item.projectId === 'string' ? item.projectId.slice(0, 128) : null,
             projectMemoryEnabled: item.projectMemoryEnabled === true,
             serverProjectMemoryEnabled: item.serverProjectMemoryEnabled === true,
+            uiOptions: normalizeChatUiOptions(item.uiOptions,item.id===(safeGet(STORAGE.current)||'')),
             messages: item.messages.filter((m) => m && ['user', 'assistant', 'tool'].includes(m.role)).map((m) => ({
               role: m.role,
               content: typeof m.content === 'string' ? m.content : '',
@@ -1046,7 +1071,7 @@ permalink: /
         modelSearchLabel:'Поиск по каталогу моделей',modelPresetLabel:'Быстрый выбор модели · список обновляется из API',
         baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',
         legacySettings:'Сторонние API, ключи и расширенные настройки',composerPlaceholder:'Напиши сообщение...',
-        modeLabel:'Режим:',modeFast:'⚡ Быстро',modeDeep:'🔬 Глубоко',searchLabel:'🌐 Интернет и источники',researchLabel:'🤖 Умное исследование',
+        modeLabel:'Режим:',modeFast:'⚡ Быстро',modeDeep:'🔬 Дольше',searchLabel:'🌐 Интернет и источники',researchLabel:'🤖 Умное исследование',searchNormalTitle:'Обычный веб-поиск',searchNormalHelp:'Несколько быстрых источников по необходимости',searchDeepTitle:'Искать больше',searchDeepHelp:'Больше результатов и открытых источников',searchOfflineTitle:'Без веб-поиска',searchOfflineHelp:'Только знания выбранной модели и контекст',functionsLabel:'Функции',functionResearchTitle:'Исследование',functionResearchHelp:'Многоэтапный разбор и проверка результата',functionAgentsTitle:'Агенты',functionAgentsHelp:'Одна модель в четырёх последовательных ролях',functionSkillsTitle:'Скиллы',functionSkillsHelp:'Автоподбор или выбор навыка из репозитория',functionConnectorsTitle:'Коннекторы',functionConnectorsHelp:'Источники и фактический статус интеграций',functionOptionsSaved:'Настройки сохраняются для этого чата автоматически.',composerPositionLabel:'Расположение поля ввода',composerBottom:'Снизу — по умолчанию',composerTop:'Сверху, под режимами',
         kiloPrivacyNotice:'Kilo Auto Free — обычный альтернативный провайдер в общем списке API, не часть основного облака aLandi. Запросы передаются Kilo и назначенным им моделям; они могут сохранять запросы для улучшения сервисов. Не отправляй конфиденциальные данные. Скрытого резервирования нет.',languageLabel:'Язык интерфейса',clockLabel:'Местное время',restoreDefaults:'Восстановить параметры Gemini',saveSettings:'Сохранить',closeSettings:'Закрыть',
         globalMemoryOptIn:'Разрешить подходящим заметкам общей памяти попадать в контекст запросов.',noProjectNav:'Без проекта',projectMemoryScopeLabel:'Режим памяти проекта',projectMemoryScopeOnly:'Память только внутри проекта',projectMemoryScopeGlobal:'Память проекта + общая память (если она разрешена)',selectAlandiPrimary:'Использовать aLandi как основной маршрут',alandiPrimaryCopy:'aLandi — встроенный основной маршрут. Внешние провайдеры находятся ниже в отдельном меню.',attachMediaTitle:'Фото или видео',attachMediaHelp:'Изображения и выбор кадров из ролика',attachAnyFileTitle:'Файл любого формата',attachAnyFileHelp:'Системный выбор нескольких файлов; доступность разбора зависит от формата.',requestContextTitle:'Контекст этого запроса',requestContextHelp:'Выбранные проекты будут учтены только при следующей отправке. Сам чат и его проект не изменятся.',clearRequestContext:'Сбросить',skillsAutoHint:'Навыки: автоматический подбор по задаче; отдельный каталог выбора пока не подключён.',connectorsFutureHint:'Коннекторы ещё не подключены; здесь появятся доступные источники после реальной интеграции.',requestContextLimitHint:'Контекст ограничен пятью проектами и общим лимитом, чтобы не переполнять запрос.',projectsTitle:'▣ Проекты',currentProjectLabel:'Проект текущего чата',projectMemoryOptIn:'Использовать память выбранного проекта в этом чате',manageProject:'Создать или настроить проект',projectNameLabel:'Название',projectInstructionsLabel:'Инструкции проекта',createProject:'＋ Создать проект',saveProject:'Сохранить изменения',projectMemoryLabel:'Добавить факт в память проекта',exportProject:'Экспорт проекта',importProject:'Импорт проекта',detachChat:'Извлечь чат из проекта',deleteProject:'Удалить проект и его чаты',serverMemoryTitle:'Серверная память · эксперимент',serverMemoryDescription:'Отдельный граф на твоём aLandi gateway. Перенос только вручную; новые факты сначала становятся кандидатами. Нужен включённый ALANDI_MEMORY_GRAPH_ENABLED.',serverMemoryOptIn:'Разрешить подтверждённым фактам сервера попадать в контекст этого чата. Также включи память проекта выше.',serverMemoryRefresh:'Обновить список',serverMemoryUpload:'Передать локальные факты',serverMemoryInitial:'Серверная память выключена. Выбери проект и нажми «Обновить список».',serverMemoryNoProject:'Сначала выбери или создай проект.',serverMemoryNoConfig:'Не найдены URL /v1 и ключ aLandi gateway. Подключи своё облако в настройках.',serverMemoryLoading:'Обращаюсь к серверной памяти…',serverMemoryLoaded:'Фактов на сервере: ',serverMemoryEmpty:'В серверной памяти этого проекта пока нет фактов.',serverMemoryCandidate:'Кандидат',serverMemoryConfirmed:'Подтверждён',serverMemoryRejected:'Отклонён',serverMemoryConfirm:'Подтвердить',serverMemoryReject:'Отклонить',serverMemoryDelete:'Удалить',serverMemoryUploadDone:'Передача завершена. Новые факты остаются кандидатами до подтверждения.',serverMemoryContextLoaded:'В контекст добавлено подтверждённых серверных фактов: ',serverMemoryUnavailable:'Серверная память недоступна; продолжаю без неё.'
       },
@@ -1060,7 +1085,7 @@ permalink: /
         modelSearchLabel:'Search model catalog',modelPresetLabel:'Quick model pick · list loads from API',
         baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',
         legacySettings:'Third-party APIs, keys & advanced settings',composerPlaceholder:'Write a message...',
-        modeLabel:'Mode:',modeFast:'⚡ Fast',modeDeep:'🔬 Deep',searchLabel:'🌐 Web & sources',researchLabel:'🤖 Smart research',
+        modeLabel:'Mode:',modeFast:'⚡ Fast',modeDeep:'🔬 Longer',searchLabel:'🌐 Web & sources',researchLabel:'🤖 Smart research',searchNormalTitle:'Normal web search',searchNormalHelp:'A few useful sources when needed',searchDeepTitle:'Search more',searchDeepHelp:'More results and open sources',searchOfflineTitle:'No web search',searchOfflineHelp:'Selected model knowledge and context only',functionsLabel:'Functions',functionResearchTitle:'Research',functionResearchHelp:'Multi-stage work and result review',functionAgentsTitle:'Agents',functionAgentsHelp:'One model in four sequential roles',functionSkillsTitle:'Skills',functionSkillsHelp:'Automatic selection or a repository skill',functionConnectorsTitle:'Connectors',functionConnectorsHelp:'Sources and actual integration status',functionOptionsSaved:'Settings are saved for this chat automatically.',composerPositionLabel:'Composer placement',composerBottom:'Bottom — default',composerTop:'Top, under the modes',
         kiloPrivacyNotice:'Kilo Auto Free is an ordinary alternative provider in the API list, not part of the primary aLandi cloud. Requests go to Kilo and its selected models, which may log prompts or use them to improve services. Do not send confidential data. No silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',restoreDefaults:'Restore Gemini defaults',saveSettings:'Save settings',closeSettings:'Close',
         globalMemoryOptIn:'Allow relevant shared-memory notes to be included in prompts.',noProjectNav:'No project',projectMemoryScopeLabel:'Project memory scope',projectMemoryScopeOnly:'Memory inside this project only',projectMemoryScopeGlobal:'Project memory + shared memory (when enabled)',selectAlandiPrimary:'Use aLandi as the primary route',alandiPrimaryCopy:'aLandi is the built-in primary route. External providers are listed separately below.',attachMediaTitle:'Photo or video',attachMediaHelp:'Images or sampled frames from a video',attachAnyFileTitle:'Any file format',attachAnyFileHelp:'Native multi-file picker; parsing depends on file type.',requestContextTitle:'Context for this request',requestContextHelp:'Selected projects apply only to the next send. The active chat and its project do not change.',clearRequestContext:'Clear selection',skillsAutoHint:'Skills: automatically selected for the task; a manual catalog is not connected yet.',connectorsFutureHint:'Connectors are not connected yet; available sources will appear here after real integration.',requestContextLimitHint:'Context is limited to five projects and a shared size budget.',projectsTitle:'▣ Projects',currentProjectLabel:'Project for this chat',projectMemoryOptIn:'Use the selected project memory in this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'＋ Create project',saveProject:'Save changes',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats',serverMemoryTitle:'Server memory · experimental',serverMemoryDescription:'A separate graph on your aLandi gateway. Transfer is manual; new facts start as candidates. Enable ALANDI_MEMORY_GRAPH_ENABLED on the server.',serverMemoryOptIn:'Allow confirmed server facts in this chat context. Also enable project memory above.',serverMemoryRefresh:'Refresh list',serverMemoryUpload:'Send local facts',serverMemoryInitial:'Server memory is off. Select a project and click “Refresh list”.',serverMemoryNoProject:'Select or create a project first.',serverMemoryNoConfig:'aLandi gateway /v1 URL or key is missing. Configure your cloud in Settings.',serverMemoryLoading:'Contacting server memory…',serverMemoryLoaded:'Server facts: ',serverMemoryEmpty:'No server facts for this project yet.',serverMemoryCandidate:'Candidate',serverMemoryConfirmed:'Confirmed',serverMemoryRejected:'Rejected',serverMemoryConfirm:'Confirm',serverMemoryReject:'Reject',serverMemoryDelete:'Delete',serverMemoryUploadDone:'Transfer complete. New facts remain candidates until reviewed.',serverMemoryContextLoaded:'Confirmed server facts added to context: ',serverMemoryUnavailable:'Server memory is unavailable; continuing without it.'
       }
@@ -1071,7 +1096,7 @@ permalink: /
       const text=UI_TEXT[lang];
       document.querySelectorAll('[data-i18n]').forEach(node=>{const value=text[node.dataset.i18n];if(typeof value==='string')node.textContent=value;});
       document.querySelectorAll('[data-i18n-placeholder]').forEach(node=>{const value=text[node.dataset.i18nPlaceholder];if(typeof value==='string')node.placeholder=value;});
-      $('languageSummary').textContent=lang==='en'?'EN ▾':'RU ▾';
+      $('languageSummary').textContent=lang==='en'?'EN ▾':'RU ▾';updateSearchModeUI();updateModeUI();
       $('sidebar')?.setAttribute('aria-label',lang==='en'?'Projects and chats':'Проекты и чаты');
       document.querySelectorAll('[data-action="set-language"]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.language===lang)));
       const brand=$('brandWordmark');if(brand)brand.title=lang==='en'?'Tap to reveal the word puzzle':'Нажми, чтобы раскрыть ребус';
@@ -1192,7 +1217,7 @@ permalink: /
     }
     function closeComposerPopovers() {
       $('attachmentMenu').classList.add('hidden');$('attachTextButton').setAttribute('aria-expanded','false');
-      $('requestContextMenu').classList.add('hidden');$('contextPickerButton').setAttribute('aria-expanded','false');
+      $('requestContextMenu').classList.add('hidden');$('contextPickerButton').setAttribute('aria-expanded','false');syncPopupBackdrop();
     }
     async function addMediaFiles(files) {
       const english=getUiLanguage()==='en';
@@ -1261,7 +1286,7 @@ permalink: /
     function renderMessage(message) {
       const isUser = message.role === 'user';
       const row = document.createElement('div');
-      row.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
+      row.className = `chat-message-row flex flex-col gap-1 ${isUser ? 'items-end' : 'items-start'}`;
       const bubble = document.createElement('div');
       bubble.className = `chat-bubble ${isUser
         ? 'bg-blue-600 text-white px-3 py-2 rounded-xl rounded-tr-sm max-w-[88%] whitespace-pre-wrap'
@@ -1296,14 +1321,40 @@ permalink: /
         retry.className = 'retry-action underline hover:text-red-300'; retry.textContent = 'Повторить запрос';
         retryLine.appendChild(retry); row.appendChild(retryLine);
       }
+      const messageActions=document.createElement('div');messageActions.className='message-actions '+(isUser?'self-end':'self-start');
+      const copy=document.createElement('button');copy.type='button';copy.dataset.action='copy-message';copy.__message=message;copy.setAttribute('aria-label',getUiLanguage()==='en'?'Copy entire message':'Скопировать всё сообщение');copy.title=getUiLanguage()==='en'?'Copy entire message':'Скопировать весь текст сообщения';copy.textContent='⧉';
+      const view=document.createElement('button');view.type='button';view.dataset.action='view-message';view.__message=message;view.setAttribute('aria-label',getUiLanguage()==='en'?'Open readable message view':'Открыть сообщение в большом окне');view.title=getUiLanguage()==='en'?'Read and select the full message':'Удобно читать, прокручивать и выделять текст';view.textContent='◉';messageActions.append(copy,view);row.appendChild(messageActions);
       return row;
     }
+    function messageTextForCopy(message){if(!message||typeof message!=='object')return '';if(typeof message.content==='string')return message.content;if(Array.isArray(message.content))return message.content.map(part=>typeof part==='string'?part:(part?.type==='text'&&typeof part.text==='string'?part.text:(part?.type==='image_url'?'[Изображение]':''))).filter(Boolean).join('\n');return '';}
+    function getChatUiOptions(chat=getCurrentChat()){if(!chat.uiOptions||typeof chat.uiOptions!=='object')chat.uiOptions=defaultChatUiOptions();chat.uiOptions=normalizeChatUiOptions(chat.uiOptions);return chat.uiOptions;}
+    function saveChatUiOptions(){const chat=getCurrentChat();if(!chat)return;chat.uiOptions={thinkingMode:processingMode==='deep'?'deep':'fast',searchMode:currentSearchMode(),research:$('toggleMultiAgent').checked===true,skill:ALLOWED_SKILLS.has(chat.uiOptions?.skill)?chat.uiOptions.skill:'auto'};persistChats();updateModeUI();}
+    function applyChatUiOptions(chat){const o=getChatUiOptions(chat);processingMode=o.thinkingMode;$('toggleSearch').checked=o.searchMode!=='offline';$('toggleMultiAgent').checked=o.research;safeSet(STORAGE.mode,o.thinkingMode);safeSet(STORAGE.search,String(o.searchMode!=='offline'));safeSet(STORAGE.searchDepth,o.searchMode==='deep'?'deep':'normal');safeSet(STORAGE.offline,String(o.searchMode==='offline'));safeSet(STORAGE.multiAgent,String(o.research));updateOfflineUI();updateModeUI();updateSearchModeUI();}
+    function setSearchMode(mode,persist=true){const v=['normal','deep','offline'].includes(mode)?mode:'normal';$('toggleSearch').checked=v!=='offline';safeSet(STORAGE.search,String(v!=='offline'));safeSet(STORAGE.searchDepth,v==='deep'?'deep':'normal');safeSet(STORAGE.offline,String(v==='offline'));updateOfflineUI();updateSearchModeUI();updateModeUI();if(persist)saveChatUiOptions();}
+    function setResearchEnabled(value,persist=true){$('toggleMultiAgent').checked=Boolean(value);safeSet(STORAGE.multiAgent,String(Boolean(value)));updateModeUI();if(persist)saveChatUiOptions();}
+    function applyComposerPosition(value){const v=value==='top'?'top':'bottom';document.body.dataset.composerPosition=v;if($('composerPosition'))$('composerPosition').value=v;return v;}
+    function updateSearchModeUI(){const mode=currentSearchMode(),en=getUiLanguage()==='en',label=$('searchModeLabel'),dot=$('searchModeDot'),button=$('searchModeButton');if(label)label.textContent=en?'Web':'Веб';if(dot)dot.dataset.mode=mode;if(button){const names=en?{normal:'Normal web search',deep:'Search more on the web',offline:'No web search; model only'}:{normal:'Обычный веб-поиск',deep:'Искать больше в интернете',offline:'Не искать в интернете; модель и контекст'};button.title=names[mode];button.setAttribute('aria-label',names[mode]);}document.querySelectorAll('[data-search-mode]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.searchMode===mode)));$('offlineToggle')?.setAttribute('aria-pressed',String(mode==='offline'));}
+    function updateModeHint(){const el=$('modeHint');if(!el)return;const en=getUiLanguage()==='en',mode=currentSearchMode(),thinking=processingMode==='deep'?(en?'Longer':'Дольше'):(en?'Fast':'Быстро'),search=en?(mode==='deep'?'more web search':mode==='offline'?'no web search':'normal web search'):(mode==='deep'?'больше веб-поиска':mode==='offline'?'без веб-поиска':'обычный веб-поиск'),research=$('toggleMultiAgent')?.checked?(en?' · research on':' · исследование вкл.'):(en?' · no research':' · без исследования');el.textContent=thinking+' · '+search+research;el.title=en?'Thinking effort, web-search depth and research are independent settings.':'Обдумывание, глубина веб-поиска и исследование — независимые настройки.';}
+    function positionToolbarPopover(menuId,triggerId){const m=$(menuId),t=$(triggerId);if(!m||!t||m.classList.contains('hidden'))return;const r=t.getBoundingClientRect(),w=Math.min(Math.round(innerWidth*.88),360),h=Math.min(m.scrollHeight||250,Math.round(innerHeight*.72)),left=Math.max(8,Math.min(r.left,innerWidth-w-8));let top=r.bottom+7;if(top+h>innerHeight-8)top=Math.max(8,r.top-h-7);m.style.left=left+'px';m.style.top=top+'px';m.style.width=w+'px';}
+    function syncPopupBackdrop(){const ids=['searchModeMenu','functionsMenu','attachmentMenu','requestContextMenu','voiceMenu'];$('popupBackdrop')?.classList.toggle('hidden',!ids.some(id=>$(id)&&!$(id).classList.contains('hidden')));}
+    function closeAllPopupMenus(){['searchModeMenu','functionsMenu','attachmentMenu','requestContextMenu','voiceMenu'].forEach(id=>$(id)?.classList.add('hidden'));['searchModeButton','functionsButton','attachTextButton','contextPickerButton','voiceUnavailableButton'].forEach(id=>$(id)?.setAttribute('aria-expanded','false'));syncPopupBackdrop();}
+    function toggleTopPopup(menuId,triggerId){const m=$(menuId),t=$(triggerId);if(!m||!t)return;const opening=m.classList.contains('hidden');closeAllPopupMenus();if(!opening)return;m.classList.remove('hidden');t.setAttribute('aria-expanded','true');positionToolbarPopover(menuId,triggerId);syncPopupBackdrop();}
+    function openFunctionSettings(kind){closeAllPopupMenus();const en=getUiLanguage()==='en',title=$('functionSettingsTitle'),body=$('functionSettingsBody'),o=getChatUiOptions();const labels=en?{auto:'Automatic selection',research:'Research',multimodal:'Images, OCR and audio tasks','agent-systems':'Agent systems and memory','code-review':'Code review and implementation','data-analysis':'Data analysis',planning:'Planning'}:{auto:'Автоматический подбор',research:'Исследование',multimodal:'Изображения, OCR и аудио','agent-systems':'Системы агентов и память','code-review':'Проверка и написание кода','data-analysis':'Анализ данных',planning:'Планирование'};const esc=v=>String(v).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+      if(kind==='research'){title.textContent=en?'Research settings':'Настройки исследования';body.innerHTML=`<label class="function-option-row"><input id="researchEnabledModal" type="checkbox" ${$('toggleMultiAgent').checked?'checked':''}><span><strong>${en?'Enable multi-stage research':'Включить многоэтапное исследование'}</strong><small>${en?'Planner → researcher → critic → synthesizer for complex tasks.':'Для сложных задач: планировщик → исследователь → критик → синтезатор.'}</small></span></label><div class="function-setting-field"><label for="researchDepthModal">${en?'Source search intensity':'Интенсивность поиска источников'}</label><select id="researchDepthModal" class="w-full"><option value="normal">${en?'Normal':'Обычный'}</option><option value="deep">${en?'Search more':'Искать больше'}</option><option value="offline">${en?'No web search':'Без веб-поиска'}</option></select></div><p class="text-xs text-gray-500">${en?'Controls change the actual pipeline and web-search depth.':'Настройки меняют реальный конвейер запроса и глубину поиска.'}</p>`;$('researchDepthModal').value=currentSearchMode();$('researchEnabledModal').addEventListener('change',e=>setResearchEnabled(e.target.checked));$('researchDepthModal').addEventListener('change',e=>setSearchMode(e.target.value));}
+      else if(kind==='agents'){title.textContent=en?'Agent orchestration':'Оркестрация агентов';body.innerHTML=`<div class="function-setting-field"><label for="agentPreset">${en?'Execution preset':'Вариант выполнения'}</label><select id="agentPreset" class="w-full"><option value="single">${en?'Single model response':'Один ответ выбранной модели'}</option><option value="team">${en?'Four-stage sequential team':'Команда из четырёх последовательных ролей'}</option></select></div><p class="text-xs text-gray-500">${en?'The implemented pipeline uses one selected model for four stages and only runs for complex tasks. Independent parallel agents and role graphs are not connected.':'Реализованная команда использует одну модель в четырёх этапах и запускается только для сложных запросов. Независимые параллельные агенты и графы ролей пока не подключены.'}</p>`;$('agentPreset').value=$('toggleMultiAgent').checked?'team':'single';$('agentPreset').addEventListener('change',e=>setResearchEnabled(e.target.value==='team'));}
+      else if(kind==='skills'){title.textContent=en?'Task skills':'Навыки (скиллы)';body.innerHTML=`<div class="function-setting-field"><label for="skillPreset">${en?'Skill selection':'Выбор навыка'}</label><select id="skillPreset" class="w-full">${Object.entries(labels).map(([v,l])=>'<option value="'+esc(v)+'">'+esc(l)+'</option>').join('')}</select></div><p class="text-xs text-gray-500">${en?'Automatic mode infers the task skill. A manual choice loads the selected repository skill if available.':'В авто-режиме скилл выбирается автоматически. Ручной выбор загружает инструкции скилла из репозитория, если файл доступен.'}</p>`;$('skillPreset').value=o.skill;$('skillPreset').addEventListener('change',e=>{const chat=getCurrentChat();chat.uiOptions=getChatUiOptions(chat);chat.uiOptions.skill=ALLOWED_SKILLS.has(e.target.value)?e.target.value:'auto';persistChats();});}
+      else{title.textContent=en?'Connectors and sources':'Коннекторы и источники';const tavily=Boolean(safeGet(STORAGE.tavilyKey));body.innerHTML=`<div class="function-connection-row"><span class="function-state-dot" data-state="ready"></span><span><strong>${en?'Open web sources':'Открытые веб-источники'}</strong><small>${en?'Wikipedia, Stack Exchange, GitHub, Hacker News and arXiv are attempted where network/CORS permits.':'Wikipedia, Stack Exchange, GitHub, Hacker News и arXiv доступны при работающей сети и CORS.'}</small></span></div><div class="function-connection-row"><span class="function-state-dot" data-state="${tavily?'ready':'idle'}"></span><span><strong>Tavily</strong><small>${tavily?(en?'API key stored in this browser.':'Ключ API сохранён в этом браузере.'):(en?'Optional, configured under additional APIs in Settings.':'Необязателен, настраивается в дополнительных API.')}</small></span></div><p class="text-xs text-gray-500">${en?'Plugin connectors such as Drive are not connected yet.':'Плагины вроде Drive пока не подключены.'}</p><button type="button" data-action="open-web-search-options" class="w-full rounded-xl border px-3 py-2.5 text-sm">${en?'Choose web-search mode':'Выбрать режим веб-поиска'}</button><button type="button" data-action="toggle-settings" class="w-full rounded-xl border px-3 py-2.5 text-sm">${en?'Open provider settings':'Открыть настройки провайдера'}</button>`;}
+      $('functionSettingsModal').classList.remove('hidden');
+    }
+    function showMessageViewer(message){if(!message||!['user','assistant'].includes(message.role))return;const en=getUiLanguage()==='en';$('messageViewerTitle').textContent=en?(message.role==='user'?'Your message':'Assistant message'):(message.role==='user'?'Твоё сообщение':'Ответ aLandi');$('messageViewerRole').textContent=en?(message.role==='user'?'User':'Assistant'):(message.role==='user'?'Пользователь':'Ассистент');const el=$('messageViewerContent'),text=messageTextForCopy(message);el.replaceChildren();if(message.role==='user'){const p=document.createElement('div');p.className='plain-message';p.textContent=text;el.appendChild(p);}else el.innerHTML=safeMarkdown(text||(message.tool_calls?.length?(en?'Tool call':'Вызов инструмента'):''));$('messageViewerModal').classList.remove('hidden');requestAnimationFrame(()=>el.focus({preventScroll:true}));}
+    function updateJumpToLatest(){const box=$('chatBox'),btn=$('jumpToLatest');if(!box||!btn)return;const d=box.scrollHeight-box.scrollTop-box.clientHeight;btn.classList.toggle('hidden',d<220||box.scrollHeight<=box.clientHeight+40);}
     function renderActiveChat() {
       const chat = getCurrentChat();
-      $('activeChatTitle').textContent = chat.title || 'Новый чат';
-      const box = $('chatBox');
-      document.body.classList.add('composer-centered');
-      document.body.classList.toggle('composer-bottom-transition',chat.messages.length>0||$('userInput').scrollHeight>window.innerHeight*0.30);
+      $('activeChatTitle').textContent=chat.title||(getUiLanguage()==='en'?'New chat':'Новый чат');
+      const projectTitle=projects.find(project=>project.id===chat.projectId)?.name||'';
+      $('activeProjectTitle').textContent=projectTitle;$('activeProjectTitle').classList.toggle('hidden',!projectTitle);
+      applyChatUiOptions(chat);
+      const box=$('chatBox');
       box.replaceChildren();
       if (!chat.messages.length) {
         const welcome = document.createElement('div');
@@ -1837,6 +1888,8 @@ permalink: /
       const savedMotion = safeGet('ai_ui_motion_v2') || 'auto';
       $('uiTheme').value = ['dark','light'].includes(savedTheme) ? savedTheme : 'dark';
       $('uiMotion').value = ['auto','reduced','off'].includes(savedMotion) ? savedMotion : 'auto';
+      $('composerPosition').value=safeGet('ai_composer_position_v1')==='top'?'top':'bottom';
+      applyComposerPosition($('composerPosition').value);
       applyAppearance($('uiTheme').value, $('uiMotion').value);
       const savedProvider=safeGet(STORAGE.provider);
       $('cloudBaseUrl').value=safeGet('ai_alandi_cloud_base_url')||(savedProvider==='alandi'?safeGet(STORAGE.baseUrl):'')||'';
@@ -1865,7 +1918,7 @@ permalink: /
       populateModelPresets($('providerPreset').value,$('modelName').value);
       $('tavilyKey').value = safeGet(STORAGE.tavilyKey) || '';
       const savedPrompt = safeGet(STORAGE.systemPrompt);
-      $('systemPromptInput').value = (!savedPrompt || savedPrompt === LEGACY_DEFAULT_SYSTEM) ? DEFAULT_SYSTEM : savedPrompt;
+      $('systemPromptInput').value = (!savedPrompt || savedPrompt === LEGACY_DEFAULT_SYSTEM || savedPrompt === DEFAULT_SYSTEM) ? '' : savedPrompt;
       processingMode = safeGet(STORAGE.mode) === 'deep' ? 'deep' : 'fast';
       $('toggleSearch').checked = safeGet(STORAGE.search) !== 'false';
       $('toggleMultiAgent').checked = safeGet(STORAGE.multiAgent) === 'true';
@@ -1881,14 +1934,13 @@ permalink: /
       $('modeDeep').setAttribute('aria-pressed', String(!fast));
       $('modeFast').className = 'flex-1 rounded-md px-2 py-1.5 ' + (fast ? 'bg-blue-600 font-semibold' : 'text-gray-300');
       $('modeDeep').className = 'flex-1 rounded-md px-2 py-1.5 ' + (!fast ? 'bg-blue-600 font-semibold' : 'text-gray-300');
-      $('modeHint').textContent = getUiLanguage()==='en'
-        ? (fast ? 'Fast: limited tool rounds and a short search. Research is optional.' : 'Deep: more tool rounds and broader evidence gathering within enabled tools.')
-        : (fast ? 'Быстро: один раунд инструментов и короткий поиск. Исследование включается отдельно.' : 'Глубоко: больше раундов и более подробный поиск в пределах включённых инструментов. Исследование отдельно.');
+      updateModeHint();
     }
     function setProcessingMode(mode) {
       processingMode = mode === 'deep' ? 'deep' : 'fast';
       safeSet(STORAGE.mode, processingMode);
       updateModeUI();
+      if(typeof saveChatUiOptions==='function')saveChatUiOptions();
     }
     function restoreDefaultSettings() {
       $('providerPreset').value = 'gemini';
@@ -2015,6 +2067,7 @@ permalink: /
       applyAppearance($('uiTheme').value, $('uiMotion').value);
       safeSet('ai_ui_motion_v2', $('uiMotion').value);
     });
+    $('composerPosition').addEventListener('change',e=>safeSet('ai_composer_position_v1',applyComposerPosition(e.target.value)));
 
     function saveSettings() {
       if(currentProvider()==='cloudflare'){
@@ -2494,8 +2547,8 @@ permalink: /
       safeSet('ai_provider_connection_'+provider,'');$('apiKey').value='';
       updateApiKeyLamp('empty','Ключ удалён из локальных настроек этого браузера.');showToast('Ключ выбранного провайдера удалён');
     }
-    function updateOfflineUI(){const off=safeGet(STORAGE.offline)==='true',button=$('offlineToggle');if(!button)return;button.setAttribute('aria-pressed',String(off));button.textContent=getUiLanguage()==='en'?(off?'◉ Offline: on':'◉ Offline: off'):(off?'◉ Оффлайн: вкл.':'◉ Оффлайн: выкл.');button.title=getUiLanguage()==='en'?'Disables web search and external sources. Cloud model APIs still require internet.':'Отключает веб-поиск и внешние источники. Облачный API модели всё равно требует интернет-соединения.';}
-    function toggleOfflineMode(){const off=safeGet(STORAGE.offline)!=='true';safeSet(STORAGE.offline,String(off));updateOfflineUI();showToast(off?'Оффлайн-режим: веб-поиск выключен':'Онлайн-режим: веб-инструменты доступны');}
+    function updateOfflineUI(){const off=currentSearchMode()==='offline',button=$('offlineToggle');if(!button)return;button.setAttribute('aria-pressed',String(off));button.textContent=getUiLanguage()==='en'?(off?'◉ Offline: on':'◉ Offline: off'):(off?'◉ Оффлайн: вкл.':'◉ Оффлайн: выкл.');button.title=getUiLanguage()==='en'?'Disables web search and external sources. Cloud model APIs still require internet.':'Отключает веб-поиск и внешние источники. Облачный API модели всё равно требует интернет-соединения.';}
+    function toggleOfflineMode(){const off=currentSearchMode()!=='offline';setSearchMode(off?'offline':'normal');showToast(off?'Оффлайн-режим: веб-поиск выключен':'Онлайн-режим: веб-поиск включён');}
     async function makeCacheKey(value) {
       const serialized = JSON.stringify(value);
       try {
@@ -2665,7 +2718,7 @@ permalink: /
         response = await fetch('https://api.tavily.com/search', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-          body: JSON.stringify({ query, search_depth: 'basic', max_results: mode === 'deep' ? 6 : 3, include_answer: false }),
+          body: JSON.stringify({ query, search_depth: mode === 'deep' ? 'advanced' : 'basic', max_results: mode === 'deep' ? 6 : 3, include_answer: false }),
           signal
         });
       } catch (error) {
@@ -3193,7 +3246,7 @@ permalink: /
               const args = JSON.parse(toolCall.function?.arguments || '{}');
               if (name === 'web_search') {
                 if (typeof args.query !== 'string' || !args.query.trim()) result = 'Ошибка инструмента: требуется непустое поле query.';
-                else result = await performTavilySearch(args.query.trim().slice(0, 500), signal, mode);
+                else result = await performTavilySearch(args.query.trim().slice(0, 500), signal, currentSearchMode()==='deep'?'deep':'fast');
               } else if (name === 'public_knowledge_search') {
                 if (typeof args.query !== 'string' || !args.query.trim() || typeof args.source !== 'string') result = 'Ошибка инструмента: нужны source и непустое поле query.';
                 else result = await performPublicKnowledgeSearch(args.source, args.query.trim().slice(0, 300), signal, mode);
@@ -3326,7 +3379,7 @@ permalink: /
       sendMessage(true);
     }
     function createNewChat() {
-      const chat=createChat('Новый личный чат',[],null);
+      const chat=createChat(getUiLanguage()==='en'?'New personal chat':'Новый личный чат',[],null)
       updateState([chat,...chats],chat.id);
       toggleSidebar(false);
     }
@@ -3638,10 +3691,21 @@ permalink: /
         const isCodeAction = ['copy-code','download-code','run-python'].includes(action) && control.classList.contains('code-action') && control.closest('.code-block');
         const isRetryAction = action === 'retry' && control.classList.contains('retry-action');
         const isTraceAction = ['open-trace','copy-trace-link','download-trace','download-trace-json','close-trace'].includes(action);
-        if (!isCodeAction && !isRetryAction && !isTraceAction) return;
+        const isMessageAction = ['copy-message','view-message'].includes(action);
+        if (!isCodeAction && !isRetryAction && !isTraceAction && !isMessageAction) return;
       }
       try {
         switch (action) {
+          case 'toggle-search-menu': toggleTopPopup('searchModeMenu','searchModeButton'); break;
+          case 'toggle-functions-menu': toggleTopPopup('functionsMenu','functionsButton'); break;
+          case 'select-search-mode': setSearchMode(control.dataset.searchMode);closeAllPopupMenus();break;
+          case 'open-function-settings': openFunctionSettings(control.dataset.function);break;
+          case 'close-function-settings': $('functionSettingsModal').classList.add('hidden');break;
+          case 'open-web-search-options': $('functionSettingsModal').classList.add('hidden');toggleTopPopup('searchModeMenu','searchModeButton');break;
+          case 'close-message-viewer': $('messageViewerModal').classList.add('hidden');break;
+          case 'jump-to-latest': $('chatBox').scrollTo({top:$('chatBox').scrollHeight,behavior:document.documentElement.dataset.motion==='off'?'auto':'smooth'});updateJumpToLatest();break;
+          case 'copy-message': await copyText(messageTextForCopy(control.__message));showToast(getUiLanguage()==='en'?'Message copied':'Сообщение скопировано');break;
+          case 'view-message': showMessageViewer(control.__message);break;
           case 'set-language': applyUiLanguage(control.dataset.language);$('languageMenu').open=false;break;
           case 'toggle-theme-cycle': toggleHomeTheme();break;
           case 'brand-easter-egg': showToast(getUiLanguage()==='en'?'aLandi → “a land i” → “i land AI”: the name is a small word puzzle.':'aLandi → «a land i» → «i land AI»: имя — маленький ребус.');break;
@@ -3651,12 +3715,12 @@ permalink: /
           case 'connect-alandi-cloud': await connectAlandiCloud();break;
           case 'select-alandi-primary': await selectAlandiPrimaryRoute();break;
           case 'attach-text-file': {
-            const menu=$('attachmentMenu'),open=menu.classList.contains('hidden');closeComposerPopovers();if(open){menu.classList.remove('hidden');$('attachTextButton').setAttribute('aria-expanded','true');}break;
+            const menu=$('attachmentMenu'),open=menu.classList.contains('hidden');closeAllPopupMenus();if(open){menu.classList.remove('hidden');$('attachTextButton').setAttribute('aria-expanded','true');syncPopupBackdrop();}break;
           }
           case 'choose-media': closeComposerPopovers();$('mediaAttachmentInput').click();break;
           case 'choose-any-file': closeComposerPopovers();$('textAttachmentInput').click();break;
           case 'toggle-request-context': {
-            const menu=$('requestContextMenu'),open=menu.classList.contains('hidden');closeComposerPopovers();if(open){menu.classList.remove('hidden');$('contextPickerButton').setAttribute('aria-expanded','true');renderRequestProjectChoices();}break;
+            const menu=$('requestContextMenu'),open=menu.classList.contains('hidden');closeAllPopupMenus();if(open){menu.classList.remove('hidden');$('contextPickerButton').setAttribute('aria-expanded','true');renderRequestProjectChoices();syncPopupBackdrop();}break;
           }
           case 'clear-request-context': selectedRequestProjectIds.clear();saveRequestContextForActiveChat();renderRequestProjectChoices();break;
           case 'remove-draft-attachment': pendingComposerAttachments=pendingComposerAttachments.filter(item=>item.id!==control.dataset.attachmentId);renderDraftAttachments();break;
@@ -3761,14 +3825,22 @@ permalink: /
     });
     $('providerPreset').addEventListener('change',()=>{safeSet('ai_alandi_cloud_connection_v1','');if(currentProvider()==='alandi'){const url=$('baseUrl').value.trim();if(url)$('cloudBaseUrl').value=url;}});
     $('modelSearch').addEventListener('input',()=>populateModelPresets(currentProvider(),$('modelName').value));
+    $('popupBackdrop').addEventListener('click',event=>{event.preventDefault();event.stopPropagation();closeAllPopupMenus();});
+    $('functionSettingsModal').addEventListener('click',event=>{if(event.target===$('functionSettingsModal'))$('functionSettingsModal').classList.add('hidden');});
+    $('messageViewerModal').addEventListener('click',event=>{if(event.target===$('messageViewerModal'))$('messageViewerModal').classList.add('hidden');});
+    $('chatBox').addEventListener('scroll',updateJumpToLatest,{passive:true});
+    window.addEventListener('resize',()=>{updateJumpToLatest();if(!$('searchModeMenu').classList.contains('hidden'))positionToolbarPopover('searchModeMenu','searchModeButton');if(!$('functionsMenu').classList.contains('hidden'))positionToolbarPopover('functionsMenu','functionsButton');},{passive:true});
+    document.addEventListener('pointerdown',event=>{const opened=Array.from(document.querySelectorAll('.chat-row-menu[open]'));if(!opened.length||opened.some(menu=>menu.contains(event.target)))return;opened.forEach(menu=>menu.removeAttribute('open'));event.preventDefault();event.stopPropagation();},true);
+    document.addEventListener('click',event=>{const s=event.target.closest('.chat-row-menu > summary');if(s)requestAnimationFrame(()=>{const menu=s.closest('.chat-row-menu'),panel=menu?.querySelector('.chat-row-menu-panel');if(!menu||!panel||!menu.open)return;menu.classList.remove('opens-up','align-left');let r=panel.getBoundingClientRect();if(r.bottom>innerHeight-8){menu.classList.add('opens-up');r=panel.getBoundingClientRect();}if(r.right>innerWidth-8)menu.classList.add('align-left');});});
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
     $('modelPreset').addEventListener('change',()=>{const value=$('modelPreset').value;if(value!=='__custom__')$('modelName').value=value;safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
     $('modelName').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
     $('modelName').addEventListener('change',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('modeFast').addEventListener('click', () => setProcessingMode('fast'));
     $('modeDeep').addEventListener('click', () => setProcessingMode('deep'));
-    $('toggleSearch').addEventListener('change', (event) => safeSet(STORAGE.search, String(event.target.checked)));
-    $('toggleMultiAgent').addEventListener('change', (event) => safeSet(STORAGE.multiAgent, String(event.target.checked)));
+    $('toggleSearch').addEventListener('change',e=>{safeSet(STORAGE.search,String(e.target.checked));saveChatUiOptions();});
+    $('toggleMultiAgent').addEventListener('change',e=>{safeSet(STORAGE.multiAgent,String(e.target.checked));saveChatUiOptions();});
+    $('userInput').addEventListener('focus',()=>requestAnimationFrame(()=>{try{$('userInput').scrollIntoView({block:'nearest',behavior:'auto'});}catch(_){}}));
     $('sidebarOverlay').addEventListener('click', () => toggleSidebar(false));
     $('importFile').addEventListener('change', importChats);
     $('settingsProfileFile').addEventListener('change', importSettingsProfile);
@@ -3781,12 +3853,13 @@ permalink: /
     $('projectMemoryInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();document.querySelector('[data-action="add-project-memory"]').click();}});
     $('userInput').addEventListener('input', () => autoResizeTextarea($('userInput')));
     let voiceHoldTimer=null,voiceHoldOpened=false;
-    const showVoiceMenu=()=>{$('voiceMenu').classList.remove('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','true');};
-    const hideVoiceMenu=()=>{$('voiceMenu').classList.add('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','false');};
+    const showVoiceMenu=()=>{closeAllPopupMenus();$('voiceMenu').classList.remove('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','true');syncPopupBackdrop();};
+    const hideVoiceMenu=()=>{$('voiceMenu').classList.add('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','false');syncPopupBackdrop();};
     const cancelVoiceHold=()=>{
       if(voiceHoldTimer)clearTimeout(voiceHoldTimer);
       voiceHoldTimer=null;
     };
+    $('voiceUnavailableButton').addEventListener('click',()=>{if(!$('voiceMenu').classList.contains('hidden'))hideVoiceMenu();else showVoiceMenu();});
     $('voiceUnavailableButton').addEventListener('pointerdown',event=>{
       if(event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
       voiceHoldOpened=false;
@@ -3821,17 +3894,17 @@ permalink: /
     $('chatActionModal').addEventListener('click',event=>{if(event.target===$('chatActionModal'))closeChatActionDialog();});
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
-        if (!$('chatActionModal').classList.contains('hidden')) closeChatActionDialog();
+        if (!$('messageViewerModal').classList.contains('hidden')) $('messageViewerModal').classList.add('hidden');
+        else if (!$('functionSettingsModal').classList.contains('hidden')) $('functionSettingsModal').classList.add('hidden');
+        else if (!$('chatActionModal').classList.contains('hidden')) closeChatActionDialog();
         else if (!$('traceModal').classList.contains('hidden')) closeTrace();
         else if (!$('settingsModal').classList.contains('hidden')) toggleSettings(false);
         else if (!$('sidebar').classList.contains('-translate-x-full')) toggleSidebar(false);
       }
     });
     if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', () => {
-        document.body.style.height = `${window.visualViewport.height}px`;
-        scrollToBottom(false);
-      });
+      const syncVisualViewport=()=>{const v=window.visualViewport;if(!v)return;document.body.style.position='relative';document.body.style.height=`${Math.max(1,Math.round(v.height))}px`;document.body.style.top=`${Math.max(0,Math.round(v.offsetTop))}px`;};
+      window.visualViewport.addEventListener('resize',syncVisualViewport,{passive:true});window.visualViewport.addEventListener('scroll',syncVisualViewport,{passive:true});syncVisualViewport();
     }
 
     async function init() {
