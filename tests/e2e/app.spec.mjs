@@ -130,6 +130,48 @@ test('chat creation persists after reload without calling a model', async ({ pag
   await expect(page.locator('#chatList button[data-action="switch-chat"]')).toHaveCount(before + 1);
 });
 
+test('mobile new-chat composer stays in flow and message actions copy/read full text', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#sidebar [data-action="new-chat"]').click();
+
+  await expect(page.locator('#userInput')).toBeEditable();
+  await expect(page.locator('#searchModeButton')).toBeVisible();
+  await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#searchModeDot')).toHaveAttribute('data-mode', 'normal');
+  await expect(page.locator('#toggleMultiAgent')).not.toBeChecked();
+  await expect.poll(() => page.locator('#composerFooter').evaluate(el => getComputedStyle(el).position)).toBe('relative');
+
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('message-viewer-model');
+  await page.locator('#apiKey').fill('e2e-message-viewer-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+
+  await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ model: 'message-viewer-model', choices: [{ message: { role: 'assistant', content: 'MESSAGE_VIEWER_SENTINEL\\nFull selectable assistant text.' } }] })
+  }));
+  await page.locator('#userInput').fill('Show a full message.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('MESSAGE_VIEWER_SENTINEL', { timeout: 15000 });
+  await expect(page.locator('#chatBox [data-action="copy-message"]')).toHaveCount(2);
+  await expect(page.locator('#chatBox [data-action="view-message"]')).toHaveCount(2);
+
+  await page.locator('#chatBox [data-action="view-message"]').last().click();
+  await expect(page.locator('#messageViewerModal')).toBeVisible();
+  await expect(page.locator('#messageViewerContent')).toContainText('Full selectable assistant text.');
+  await page.locator('#messageViewerModal [data-action="close-message-viewer"]').click();
+  await expect(page.locator('#messageViewerModal')).toBeHidden();
+
+  await page.locator('#chatBox [data-action="copy-message"]').last().click();
+  await expect(page.locator('#toast')).toContainText('Сообщение скопировано');
+});
+
 test('API authentication errors are shown without losing the original user prompt', async ({ page }) => {
   await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
     status: 401,
