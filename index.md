@@ -1378,7 +1378,7 @@ permalink: /
         body.append(field(en?'Skill selection':'Выбор навыка','skillPreset',Object.entries(labels).map(([value,label])=>({value,label})),options.skill,e=>{
           const chat=getCurrentChat();if(!chat)return;chat.uiOptions=getChatUiOptions(chat);chat.uiOptions.skill=ALLOWED_SKILLS.has(e.target.value)?e.target.value:'auto';persistChats();
           showToast(en?'Skill preference saved for this chat.':'Выбор навыка сохранён для этого чата.');
-        }),note(en?'Automatic mode infers the task skill. A manual choice loads the selected repository skill if available.':'В авто-режиме скилл выбирается автоматически. Ручной выбор загружает инструкции выбранного навыка, если файл доступен.'));
+        }),note(en?'Skills are not loaded in Fast mode. In Longer mode or research, choose a repository skill or use automatic selection.':'В быстром режиме скиллы не загружаются. В режиме «Дольше» или при исследовании можно выбрать навык вручную либо оставить автоподбор.'));
       }else{
         title.textContent=en?'Connectors and sources':'Коннекторы и источники';
         const connection=(name,description,state)=>{
@@ -1396,7 +1396,7 @@ permalink: /
       }
       $('functionSettingsModal').classList.remove('hidden');
     }
-    function showMessageViewer(message)    function showMessageViewer(message){if(!message||!['user','assistant'].includes(message.role))return;const en=getUiLanguage()==='en';$('messageViewerTitle').textContent=en?(message.role==='user'?'Your message':'Assistant message'):(message.role==='user'?'Твоё сообщение':'Ответ aLandi');$('messageViewerRole').textContent=en?(message.role==='user'?'User':'Assistant'):(message.role==='user'?'Пользователь':'Ассистент');const el=$('messageViewerContent'),text=messageTextForCopy(message);el.replaceChildren();if(message.role==='user'){const p=document.createElement('div');p.className='plain-message';p.textContent=text;el.appendChild(p);}else el.innerHTML=safeMarkdown(text||(message.tool_calls?.length?(en?'Tool call':'Вызов инструмента'):''));$('messageViewerModal').classList.remove('hidden');requestAnimationFrame(()=>el.focus({preventScroll:true}));}
+    function showMessageViewer(message){if(!message||!['user','assistant'].includes(message.role))return;const en=getUiLanguage()==='en';$('messageViewerTitle').textContent=en?(message.role==='user'?'Your message':'Assistant message'):(message.role==='user'?'Твоё сообщение':'Ответ aLandi');$('messageViewerRole').textContent=en?(message.role==='user'?'User':'Assistant'):(message.role==='user'?'Пользователь':'Ассистент');const el=$('messageViewerContent'),text=messageTextForCopy(message);el.replaceChildren();if(message.role==='user'){const p=document.createElement('div');p.className='plain-message';p.textContent=text;el.appendChild(p);}else el.innerHTML=safeMarkdown(text||(message.tool_calls?.length?(en?'Tool call':'Вызов инструмента'):''));$('messageViewerModal').classList.remove('hidden');requestAnimationFrame(()=>el.focus({preventScroll:true}));}
     function updateJumpToLatest(){const box=$('chatBox'),btn=$('jumpToLatest');if(!box||!btn)return;const d=box.scrollHeight-box.scrollTop-box.clientHeight;btn.classList.toggle('hidden',d<220||box.scrollHeight<=box.clientHeight+40);}
     function renderActiveChat() {
       const chat = getCurrentChat();
@@ -2902,8 +2902,8 @@ permalink: /
         (content.length > cap ? '\n[Текст сокращён; уточни, что искать.]' : '');
     }
     async function loadTaskSkill(userText, mode, useMultiAgent, signal, skillOverride='auto') {
+      if (mode !== 'deep' && !useMultiAgent) return '';
       const forcedSkill=ALLOWED_SKILLS.has(skillOverride)&&skillOverride!=='auto'?skillOverride:'';
-      if(mode!=='deep'&&!useMultiAgent&&!forcedSkill)return '';
       const text = userText.toLocaleLowerCase();
       const isMultimodalTask = /(?:\bocr\b|\basr\b|qwen3-asr|moonshine|zipformer|canary\s*180m|nemotron.*asr|glm-ocr|paddleocr|surya|dots\.(?:ocr|mocr)|deepseek-ocr|lightonocr|asr4all|speech[- ]to[- ]text|transcrib|multimodal rag|rag-anything|распозн.{0,14}(?:реч|голос|ауди|изображ|фото|документ|pdf)|транскриб|голосов|диктовк|микрофон|аудио|распознаван.{0,12}реч|сканирован.{0,12}(?:документ|pdf)|извлеч.{0,12}текст.{0,12}(?:pdf|изображ|документ))/i.test(text);
       const isAgentSystemsTask = /(?:\b(?:multi[- ]?agent|agent swarm|agent orchestration|agent memory|knowledge graph|graph memory|rag|paperclip|ruflo|openshell|pinchtab|hyperframes|utopia)\b|памят|граф знан|баз[аы] знан|источник.{0,20}проект|проектн.{0,15}инструкц|агент.{0,20}(?:систем|роут|оркестр|обуч|команд)|самообуч|долгосрочн.{0,10}памят)/i.test(text);
