@@ -3,6 +3,20 @@ import { readFile } from 'node:fs/promises';
 
 const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
 
+async function selectSearchMode(page, mode) {
+  await page.locator('#searchModeButton').click();
+  const option = page.locator(`[data-action="select-search-mode"][data-search-mode="${mode}"]`);
+  await expect(option).toBeVisible();
+  await option.click();
+}
+
+async function setResearchEnabled(page, enabled) {
+  await page.locator('#functionsButton').click();
+  await page.locator('[data-action="open-function-settings"][data-function="research"]').click();
+  await page.locator('#researchEnabledModal').setChecked(enabled);
+  await page.locator('[data-action="close-function-settings"]').click();
+}
+
 test.beforeEach(async ({ page }) => {
   // Every test starts with a clean browser profile; no real provider key is used.
   await page.addInitScript(() => {
@@ -34,10 +48,10 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await expect(page).toHaveTitle(/AI Mobile Agent/);
   await expect(page.locator('#chatBox')).toBeVisible();
   await expect(page.locator('#userInput')).toBeEditable();
-  await expect(page.locator('#toggleSearch')).toBeVisible();
+  await expect(page.locator('#searchModeButton')).toBeVisible();
   await expect(page.locator('#toggleSearch')).toBeChecked();
   await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'false');
-  await expect(page.locator('#toggleMultiAgent')).toBeVisible();
+  await expect(page.locator('#functionsButton')).toBeVisible();
 
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
@@ -55,12 +69,12 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await page.locator('#modelPreset').selectOption('gemini-3.6-flash');
   await expect(page.locator('#modelName')).toHaveValue('gemini-3.6-flash');
   await page.locator('[data-action="close-settings"]').click();
-  await page.locator('#offlineToggle').click();
-  await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'true');
+  await selectSearchMode(page, 'offline');
+  await expect(page.locator('#searchModeDot')).toHaveAttribute('data-mode', 'offline');
   await page.reload();
-  await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'true');
-  await page.locator('#offlineToggle').click();
-  await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.locator('#searchModeDot')).toHaveAttribute('data-mode', 'offline');
+  await selectSearchMode(page, 'normal');
+  await expect(page.locator('#searchModeDot')).toHaveAttribute('data-mode', 'normal');
   await page.locator('#modeDeep').click();
   await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
   await page.reload();
@@ -379,8 +393,8 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
-  await page.locator('#toggleSearch').uncheck();
-  await page.locator('#toggleMultiAgent').check();
+  await selectSearchMode(page, 'offline');
+  await setResearchEnabled(page, true);
   await page.locator('#userInput').fill('Deep research: исследуй и проверь процесс проверки фактов по источникам; составь доказательный отчёт с планом, сравнением и итоговой проверкой.');
   await page.locator('#sendBtn').click();
 
@@ -431,7 +445,7 @@ test('multi-agent preference skips a greeting and shows the actual route', async
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
-  await page.locator('#toggleMultiAgent').check();
+  await setResearchEnabled(page, true);
   await page.locator('#userInput').fill('Привет!');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Привет! Рад помочь.');
@@ -1078,7 +1092,7 @@ test('Deep mode caps tool fan-out, suppresses repeated calls, and still returns 
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
   await page.locator('#modeDeep').click();
-  await page.locator('#toggleSearch').check();
+  await selectSearchMode(page, 'deep');
   await page.locator('#userInput').fill('Read several public pages and summarize the useful evidence.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Completed within the tool budget.', { timeout: 30000 });
@@ -1141,7 +1155,7 @@ test('web_search falls back to public sources when Tavily is not configured', as
   await page.locator('#apiKey').fill('e2e-open-search-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
-  await page.locator('#toggleSearch').check();
+  await selectSearchMode(page, 'normal');
   await page.locator('#userInput').fill('Find evidence using the keyless open-search fallback.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Open-source fallback completed.', { timeout: 20000 });
@@ -1169,17 +1183,13 @@ test('aLandi cloud probe rejects HTTP 200 proxy text as proof of a model connect
 
 
 
-test('voice mode menu stays open after a long press and clearly marks both modes as previews', async ({ page }) => {
+test('voice mode menu opens immediately on tap and clearly marks both modes as previews', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const trigger = page.locator('#voiceUnavailableButton');
   await expect(trigger).toBeVisible();
 
-  // Locator.click waits for the element to finish CSS movement before pressing. The composer
-  // transitions from its centered welcome state to the mobile bottom dock after page startup.
-  await trigger.click({ delay: 100 });
-  await expect(page.locator('#voiceMenu')).toBeHidden();
-  await trigger.click({ delay: 500 });
+  await trigger.click();
   await expect(page.locator('#voiceMenu')).toBeVisible();
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#voiceMenu')).toContainText('ГОЛОСОВОЙ ДИАЛОГ');
@@ -1368,7 +1378,7 @@ test('server project memory bridge is manual and requires both chat opt-ins', as
     localStorage.setItem('ai_alandi_cloud_model', 'qwen3.5:4b');
   });
   await page.reload({ waitUntil: 'domcontentloaded' });
-  await page.locator('#toggleSearch').uncheck();
+  await selectSearchMode(page, 'offline');
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#projectManagerDetails > summary').click();
   await page.locator('#projectNameInput').fill('Server bridge project');
