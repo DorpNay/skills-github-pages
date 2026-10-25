@@ -900,8 +900,9 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#projectManagerDetails > summary').click();
-  await page.locator('#projectNameInput').fill('Alpha Project');
-  await page.locator('#projectInstructionsInput').fill('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
+  await await page.locator('[data-action="open-create-project"]').first().click();
+  page.locator('#createProjectNameInput').fill('Alpha Project');
+  await page.locator('#createProjectInstructionsInput').fill('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
   await page.locator('[data-action="create-project"]').click();
   const alphaId = await page.locator('#currentProjectSelect').inputValue();
   expect(alphaId).not.toBe('');
