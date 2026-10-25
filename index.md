@@ -374,12 +374,8 @@ permalink: /
       <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
     </details>
 
-    <div class="p-3 border-t border-gray-800 flex gap-2">
-      <button type="button" data-action="export-chats" data-i18n="exportChats" class="flex-1 bg-gray-800 hover:bg-gray-700 py-1.5 rounded text-xs">Экспорт</button>
-      <label class="flex-1 bg-gray-800 hover:bg-gray-700 py-1.5 rounded text-xs text-center cursor-pointer">
-        <span data-i18n="importChats">Импорт</span> <input id="importFile" type="file" class="hidden" accept="application/json,.json">
-      </label>
-    </div>
+    <div class="sidebar-quick-controls" aria-label="Быстрые настройки"><button type="button" data-action="toggle-theme-cycle" class="quick-setting-button">◐ <span data-i18n="themeLabel">Тема</span></button><button type="button" data-action="set-language" data-language="ru" class="quick-setting-button">RU</button><button type="button" data-action="set-language" data-language="en" class="quick-setting-button">EN</button></div>
+    <input id="importFile" type="file" class="hidden" accept="application/json,.json">
   </aside>
   <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 hidden" aria-hidden="true"></div>
 
@@ -406,13 +402,12 @@ permalink: /
           <button type="button" data-action="paste-cloud-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ из буфера обмена">Вставить</button>
         </div>
         <button id="cloudConnect" type="button" data-action="connect-alandi-cloud" data-i18n="cloudConnect" class="w-full rounded-xl bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-semibold text-sm py-2.5">Проверить и подключить</button>
-        <button type="button" data-action="select-alandi-primary" data-i18n="selectAlandiPrimary" class="w-full rounded-xl border border-cyan-700/60 bg-cyan-950/30 hover:bg-cyan-900/40 text-cyan-100 text-xs py-2.5">Использовать aLandi как основной маршрут</button>
-        <p class="text-[10px] text-gray-500" data-i18n="alandiPrimaryCopy">aLandi — встроенный основной маршрут. Внешние провайдеры находятся ниже в отдельном меню.</p>
+        <p class="text-[10px] text-gray-500" data-i18n="alandiPrimaryCopy">Собственный gateway — отдельный маршрут. При выборе API-провайдера ниже запросы идут только через него.</p>
       </section>
       <section class="rounded-xl border border-gray-700 p-3 space-y-2" aria-label="Внешний вид">
         <h3 class="text-xs font-semibold" data-i18n="appearanceTitle">Внешний вид</h3>
-        <label for="uiTheme" data-i18n="themeLabel" class="block text-xs text-gray-400">Тема</label>
-        <select id="uiTheme" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm">
+        <label for="uiTheme" data-i18n="themeLabel" class="hidden block text-xs text-gray-400">Тема</label>
+        <select id="uiTheme" class="hidden w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm">
           <option value="dark">Obsidian Studio · тёмная</option><option value="light">Clean Light · светлая</option>
         </select>
         <label for="uiMotion" data-i18n="motionLabel" class="block text-xs text-gray-400">Анимации</label>
@@ -432,7 +427,7 @@ permalink: /
       </div>
       <label for="providerPreset" data-i18n="providerLabel" class="block text-xs text-gray-400">Провайдер API</label>
       <select id="providerPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm">
-        <option value="alandi" hidden>aLandi · основной маршрут</option><option value="kilo">Kilo AI · Auto Free</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="custom">Свой OpenAI-совместимый API</option>
+        <option value="" disabled>Выбери сторонний API-провайдер</option><option value="kilo">Kilo AI · Auto Free</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="custom">Свой OpenAI-совместимый API</option>
       </select>
       <label for="modelSearch" data-i18n="modelSearchLabel" class="block text-xs text-gray-400">Поиск по каталогу моделей</label>
       <input type="search" id="modelSearch" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Фильтр по имени или ID модели">
@@ -443,7 +438,7 @@ permalink: /
         <button type="button" data-action="refresh-model-catalog" id="refreshModelCatalog" title="Обновить каталоги всех настроенных провайдеров; полезно для межпровайдерного резерва" class="shrink-0 bg-gray-700 hover:bg-gray-600 border border-gray-600 px-2 py-1.5 rounded text-[11px] text-gray-200">Обновить все</button>
       </div>
       <p id="providerHint" class="text-[11px] leading-relaxed text-gray-400">Выберите провайдера и модель. Ключи разных провайдеров сохраняются отдельно в этом браузере.</p>
-      <p id="kiloPrivacyWarning" data-i18n="kiloPrivacyNotice" class="hidden rounded-lg border border-amber-800/60 bg-amber-950/25 p-2 text-[11px] leading-relaxed text-amber-100">Kilo Auto Free — обычный альтернативный провайдер в общем списке API, не часть основного облака aLandi. Запросы могут обрабатываться сторонними моделями и использоваться для улучшения сервисов. Не отправляй конфиденциальные данные.</p>
+      <p id="kiloPrivacyWarning" data-i18n="kiloPrivacyNotice" class="hidden text-[10px] leading-relaxed text-gray-500">Kilo Auto Free uses an external API provider.</p>
       <a id="providerDocsLink" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-blue-300 underline underline-offset-2">Открыть страницу API-ключа</a> <a href="https://github.com/DorpNay/skills-github-pages/blob/main/PROVIDER_SETUP.md" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-cyan-300 underline underline-offset-2">Инструкция по подключению</a>
       <div id="cloudflareAccountGroup" class="hidden space-y-1.5">
         <label for="cloudflareAccountId" class="block text-xs text-gray-400">Cloudflare Account ID (32 hex-символа)</label>
@@ -483,10 +478,10 @@ permalink: /
       </div>
       <input type="file" id="settingsProfileFile" class="hidden" accept="application/json,.json">
       <p class="text-[10px] leading-relaxed text-gray-500">Профиль переносит настройки, но намеренно не содержит API-ключи и токены. Импорт не меняет уже сохранённые секреты.</p>
-      <button type="button" data-action="restore-defaults" data-i18n="restoreDefaults" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-200">Восстановить параметры Gemini</button>
         </div>
       </details>
       <button type="button" id="recoveryBackupButton" data-action="download-recovery-backup" class="hidden w-full bg-amber-800 hover:bg-amber-700 py-2 rounded text-xs text-amber-50">Скачать резервную копию истории</button>
+      <div class="settings-quick-controls" aria-label="Быстрые настройки"><button type="button" data-action="toggle-theme-cycle" class="quick-setting-button" title="Сменить тему">◐ <span data-i18n="themeLabel">Тема</span></button><button type="button" data-action="set-language" data-language="ru" class="quick-setting-button">RU</button><button type="button" data-action="set-language" data-language="en" class="quick-setting-button">EN</button></div>
       <div class="settings-sticky-actions"><button type="button" data-action="close-settings" data-i18n="closeSettings" class="settings-close-button">Закрыть</button><button type="button" data-action="save-settings" data-i18n="saveSettings" class="settings-save-button">Сохранить</button></div>
     </div>
   </div>
@@ -500,7 +495,6 @@ permalink: /
     <details id="languageMenu" class="language-menu shrink-0"><summary id="languageSummary" aria-label="Язык интерфейса" class="header-icon px-2 py-1.5 text-xs">RU ▾</summary><div class="language-menu-panel"><button type="button" data-action="set-language" data-language="ru" aria-pressed="true">Русский</button><button type="button" data-action="set-language" data-language="en" aria-pressed="false">English</button></div></details>
     <button type="button" data-action="toggle-settings" aria-label="Настройки" class="header-icon px-2.5 py-1.5 rounded-xl shrink-0">⚙️</button>
     <span id="pyStatus" class="sr-only" title="Python загрузится только после запуска блока кода">Py: по запросу</span>
-  </header>
   </header>
 
   <section id="modeToolbar" class="mode-toolbar px-3 py-2 border-b shrink-0" aria-label="Режим запроса">
@@ -2920,7 +2914,7 @@ permalink: /
     }
     function getApiCandidates(requestedModel) {
       const selectedProvider=safeGet(STORAGE.provider)||'alandi',allowCrossProvider=safeGet(STORAGE.crossProviderFallback)==='true';
-      const order=[selectedProvider,...(allowCrossProvider&&selectedProvider!=='alandi'?Object.keys(PROVIDERS).filter(provider=>provider!==selectedProvider&&provider!=='custom'):[])];
+      const order=[selectedProvider,...(allowCrossProvider&&selectedProvider!=='alandi'?Object.keys(PROVIDERS).filter(provider=>provider!==selectedProvider&&provider!=='custom'&&provider!=='alandi'):[])];
       const candidates = [], seen = new Set();
       const maxRouterCandidates = 16;
       for (const provider of order) {
