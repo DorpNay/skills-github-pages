@@ -402,7 +402,8 @@ permalink: /
           <button type="button" data-action="paste-cloud-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ из буфера обмена">Вставить</button>
         </div>
         <button id="cloudConnect" type="button" data-action="connect-alandi-cloud" data-i18n="cloudConnect" class="w-full rounded-xl bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-semibold text-sm py-2.5">Проверить и подключить</button>
-        <p class="text-[10px] text-gray-500" data-i18n="alandiPrimaryCopy">Собственный gateway — отдельный маршрут. При выборе API-провайдера ниже запросы идут только через него.</p>
+        <button type="button" data-action="select-alandi-primary" data-i18n="selectAlandiPrimary" class="w-full rounded-xl border border-cyan-700/60 bg-cyan-950/25 hover:bg-cyan-900/40 text-cyan-100 text-xs py-2.5">Использовать собственное облако aLandi</button>
+        <p class="text-[10px] text-gray-500" data-i18n="alandiPrimaryCopy">Собственный gateway — отдельный маршрут. Сторонние API выбираются отдельно и не используются как резервный маршрут для aLandi.</p>
       </section>
       <section class="rounded-xl border border-gray-700 p-3 space-y-2" aria-label="Внешний вид">
         <h3 class="text-xs font-semibold" data-i18n="appearanceTitle">Внешний вид</h3>
@@ -427,7 +428,7 @@ permalink: /
       </div>
       <label for="providerPreset" data-i18n="providerLabel" class="block text-xs text-gray-400">Провайдер API</label>
       <select id="providerPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm">
-        <option value="" disabled>Выбери сторонний API-провайдер</option><option value="kilo">Kilo AI · Auto Free</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="custom">Свой OpenAI-совместимый API</option>
+        <option value="alandi" hidden>aLandi · основной маршрут</option><option value="kilo">Kilo AI · Auto Free</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="custom">Свой OpenAI-совместимый API</option>
       </select>
       <label for="modelSearch" data-i18n="modelSearchLabel" class="block text-xs text-gray-400">Поиск по каталогу моделей</label>
       <input type="search" id="modelSearch" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Фильтр по имени или ID модели">
