@@ -300,6 +300,7 @@ permalink: /
     .project-nav-empty{padding:8px;font-size:10px;color:var(--ui-text-muted)}.project-nav-row-actions{display:flex;gap:6px;padding-top:6px}
     .project-add-chat,.project-open-settings{padding:7px 9px;border:1px solid var(--ui-border);border-radius:9px;font-size:10px;color:var(--ui-text-muted);background:var(--ui-surface-raised)}.project-add-chat{flex:1;color:var(--ui-tiffany);border-color:color-mix(in srgb,var(--ui-tiffany) 35%,var(--ui-border))}
 
+    .project-data-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;padding-top:9px;border-top:1px solid var(--ui-border)}.project-data-actions button{flex:1;min-width:96px}
 </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
@@ -347,7 +348,8 @@ permalink: /
               <div class="flex gap-1 mt-1"><input id="memoryInput" type="text" maxlength="500" placeholder="Факт, который нужно запомнить" data-i18n-placeholder="memoryPlaceholder" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-memory" class="bg-blue-700 hover:bg-blue-600 px-2 rounded text-xs" aria-label="Сохранить факт">＋</button></div>
               <div id="memoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет сохранённых фактов.</div>
             </div>
-          </details>
+              <div class="project-data-actions"><button type="button" data-action="export-chats" class="quick-setting-button">↓ Экспорт истории</button><button type="button" data-action="import-chats" class="quick-setting-button">↑ Импорт истории</button></div>
+    </details>
           <label for="projectMemoryInput" class="block text-[11px] text-gray-400" data-i18n="projectMemoryLabel">Добавить факт в память проекта</label>
           <div class="flex gap-1"><input id="projectMemoryInput" type="text" maxlength="600" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Факт, решение или ограничение"><button type="button" data-action="add-project-memory" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Добавить факт">＋</button></div>
           <div id="projectMemoryBox" class="max-h-24 overflow-y-auto text-[11px] text-gray-400 space-y-1"></div>
@@ -3839,6 +3841,7 @@ permalink: /
           case 'chat-action-cancel': closeChatActionDialog();break;
           case 'chat-project': control.closest('.chat-row-menu')?.removeAttribute('open');openChatActionDialog('project',control.dataset.chatId);break;
           case 'delete-chat': control.closest('.chat-row-menu')?.removeAttribute('open');if(confirm(getUiLanguage()==='en'?'Delete this chat?':'Удалить этот чат?'))deleteChat(control.dataset.chatId); break;
+          case 'import-chats': $('importFile').click(); break;
           case 'export-chats': exportChats(); break;
           case 'export-settings-profile': exportSettingsProfile(); break;
           case 'import-settings-profile': $('settingsProfileFile').click(); break;
