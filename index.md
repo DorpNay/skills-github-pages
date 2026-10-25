@@ -1339,14 +1339,64 @@ permalink: /
     function syncPopupBackdrop(){const ids=['searchModeMenu','functionsMenu','attachmentMenu','requestContextMenu','voiceMenu'];$('popupBackdrop')?.classList.toggle('hidden',!ids.some(id=>$(id)&&!$(id).classList.contains('hidden')));}
     function closeAllPopupMenus(){['searchModeMenu','functionsMenu','attachmentMenu','requestContextMenu','voiceMenu'].forEach(id=>$(id)?.classList.add('hidden'));['searchModeButton','functionsButton','attachTextButton','contextPickerButton','voiceUnavailableButton'].forEach(id=>$(id)?.setAttribute('aria-expanded','false'));syncPopupBackdrop();}
     function toggleTopPopup(menuId,triggerId){const m=$(menuId),t=$(triggerId);if(!m||!t)return;const opening=m.classList.contains('hidden');closeAllPopupMenus();if(!opening)return;m.classList.remove('hidden');t.setAttribute('aria-expanded','true');positionToolbarPopover(menuId,triggerId);syncPopupBackdrop();}
-    function openFunctionSettings(kind){closeAllPopupMenus();const en=getUiLanguage()==='en',title=$('functionSettingsTitle'),body=$('functionSettingsBody'),o=getChatUiOptions();const labels=en?{auto:'Automatic selection',research:'Research',multimodal:'Images, OCR and audio tasks','agent-systems':'Agent systems and memory','code-review':'Code review and implementation','data-analysis':'Data analysis',planning:'Planning'}:{auto:'Автоматический подбор',research:'Исследование',multimodal:'Изображения, OCR и аудио','agent-systems':'Системы агентов и память','code-review':'Проверка и написание кода','data-analysis':'Анализ данных',planning:'Планирование'};const esc=v=>String(v).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-      if(kind==='research'){title.textContent=en?'Research settings':'Настройки исследования';body.innerHTML=`<label class="function-option-row"><input id="researchEnabledModal" type="checkbox" ${$('toggleMultiAgent').checked?'checked':''}><span><strong>${en?'Enable multi-stage research':'Включить многоэтапное исследование'}</strong><small>${en?'Planner → researcher → critic → synthesizer for complex tasks.':'Для сложных задач: планировщик → исследователь → критик → синтезатор.'}</small></span></label><div class="function-setting-field"><label for="researchDepthModal">${en?'Source search intensity':'Интенсивность поиска источников'}</label><select id="researchDepthModal" class="w-full"><option value="normal">${en?'Normal':'Обычный'}</option><option value="deep">${en?'Search more':'Искать больше'}</option><option value="offline">${en?'No web search':'Без веб-поиска'}</option></select></div><p class="text-xs text-gray-500">${en?'Controls change the actual pipeline and web-search depth.':'Настройки меняют реальный конвейер запроса и глубину поиска.'}</p>`;$('researchDepthModal').value=currentSearchMode();$('researchEnabledModal').addEventListener('change',e=>setResearchEnabled(e.target.checked));$('researchDepthModal').addEventListener('change',e=>setSearchMode(e.target.value));}
-      else if(kind==='agents'){title.textContent=en?'Agent orchestration':'Оркестрация агентов';body.innerHTML=`<div class="function-setting-field"><label for="agentPreset">${en?'Execution preset':'Вариант выполнения'}</label><select id="agentPreset" class="w-full"><option value="single">${en?'Single model response':'Один ответ выбранной модели'}</option><option value="team">${en?'Four-stage sequential team':'Команда из четырёх последовательных ролей'}</option></select></div><p class="text-xs text-gray-500">${en?'The implemented pipeline uses one selected model for four stages and only runs for complex tasks. Independent parallel agents and role graphs are not connected.':'Реализованная команда использует одну модель в четырёх этапах и запускается только для сложных запросов. Независимые параллельные агенты и графы ролей пока не подключены.'}</p>`;$('agentPreset').value=$('toggleMultiAgent').checked?'team':'single';$('agentPreset').addEventListener('change',e=>setResearchEnabled(e.target.value==='team'));}
-      else if(kind==='skills'){title.textContent=en?'Task skills':'Навыки (скиллы)';body.innerHTML=`<div class="function-setting-field"><label for="skillPreset">${en?'Skill selection':'Выбор навыка'}</label><select id="skillPreset" class="w-full">${Object.entries(labels).map(([v,l])=>'<option value="'+esc(v)+'">'+esc(l)+'</option>').join('')}</select></div><p class="text-xs text-gray-500">${en?'Automatic mode infers the task skill. A manual choice loads the selected repository skill if available.':'В авто-режиме скилл выбирается автоматически. Ручной выбор загружает инструкции скилла из репозитория, если файл доступен.'}</p>`;$('skillPreset').value=o.skill;$('skillPreset').addEventListener('change',e=>{const chat=getCurrentChat();chat.uiOptions=getChatUiOptions(chat);chat.uiOptions.skill=ALLOWED_SKILLS.has(e.target.value)?e.target.value:'auto';persistChats();});}
-      else{title.textContent=en?'Connectors and sources':'Коннекторы и источники';const tavily=Boolean(safeGet(STORAGE.tavilyKey));body.innerHTML=`<div class="function-connection-row"><span class="function-state-dot" data-state="ready"></span><span><strong>${en?'Open web sources':'Открытые веб-источники'}</strong><small>${en?'Wikipedia, Stack Exchange, GitHub, Hacker News and arXiv are attempted where network/CORS permits.':'Wikipedia, Stack Exchange, GitHub, Hacker News и arXiv доступны при работающей сети и CORS.'}</small></span></div><div class="function-connection-row"><span class="function-state-dot" data-state="${tavily?'ready':'idle'}"></span><span><strong>Tavily</strong><small>${tavily?(en?'API key stored in this browser.':'Ключ API сохранён в этом браузере.'):(en?'Optional, configured under additional APIs in Settings.':'Необязателен, настраивается в дополнительных API.')}</small></span></div><p class="text-xs text-gray-500">${en?'Plugin connectors such as Drive are not connected yet.':'Плагины вроде Drive пока не подключены.'}</p><button type="button" data-action="open-web-search-options" class="w-full rounded-xl border px-3 py-2.5 text-sm">${en?'Choose web-search mode':'Выбрать режим веб-поиска'}</button><button type="button" data-action="toggle-settings" class="w-full rounded-xl border px-3 py-2.5 text-sm">${en?'Open provider settings':'Открыть настройки провайдера'}</button>`;}
+    function openFunctionSettings(kind){
+      closeAllPopupMenus();
+      const en=getUiLanguage()==='en', title=$('functionSettingsTitle'), body=$('functionSettingsBody'), options=getChatUiOptions();
+      const labels=en
+        ? {auto:'Automatic selection',research:'Research',multimodal:'Images, OCR and audio tasks','agent-systems':'Agent systems and memory','code-review':'Code review and implementation','data-analysis':'Data analysis',planning:'Planning'}
+        : {auto:'Автоматический подбор',research:'Исследование',multimodal:'Изображения, OCR и аудио','agent-systems':'Системы агентов и память','code-review':'Проверка и написание кода','data-analysis':'Анализ данных',planning:'Планирование'};
+      const make=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el;};
+      const field=(labelText,id,values,current,onChange)=>{
+        const wrap=make('div','function-setting-field'),label=make('label','',labelText),select=make('select','w-full');
+        label.htmlFor=id;select.id=id;
+        for(const item of values){const opt=make('option','',item.label);opt.value=item.value;select.appendChild(opt);}
+        select.value=current;select.addEventListener('change',onChange);wrap.append(label,select);return wrap;
+      };
+      const note=text=>make('p','text-xs text-gray-500',text);
+      body.replaceChildren();
+      if(kind==='research'){
+        title.textContent=en?'Research settings':'Настройки исследования';
+        const row=make('label','function-option-row'),input=make('input');input.type='checkbox';input.id='researchEnabledModal';input.checked=$('toggleMultiAgent').checked;
+        const text=make('span'),strong=make('strong','',en?'Enable multi-stage research':'Включить многоэтапное исследование');
+        const small=make('small','',en?'Planner → researcher → critic → synthesizer for complex tasks.':'Для сложных задач: планировщик → исследователь → критик → синтезатор.');
+        text.append(strong,small);row.append(input,text);input.addEventListener('change',e=>setResearchEnabled(e.target.checked));
+        const depth=field(en?'Source search intensity':'Интенсивность поиска источников','researchDepthModal',[
+          {value:'normal',label:en?'Normal':'Обычный'},
+          {value:'deep',label:en?'Search more':'Искать больше'},
+          {value:'offline',label:en?'No web search':'Без веб-поиска'}
+        ],currentSearchMode(),e=>setSearchMode(e.target.value));
+        body.append(row,depth,note(en?'Controls change the actual pipeline and web-search depth.':'Настройки меняют реальный конвейер запроса и глубину поиска.'));
+      }else if(kind==='agents'){
+        title.textContent=en?'Agent orchestration':'Оркестрация агентов';
+        body.append(field(en?'Execution preset':'Вариант выполнения','agentPreset',[
+          {value:'single',label:en?'Single model response':'Один ответ выбранной модели'},
+          {value:'team',label:en?'Four-stage sequential team':'Команда из четырёх последовательных ролей'}
+        ],$('toggleMultiAgent').checked?'team':'single',e=>setResearchEnabled(e.target.value==='team')),
+        note(en?'The implemented pipeline uses one selected model for four stages and only runs for complex tasks. Independent parallel agents and role graphs are not connected.':'Реализованная команда использует одну модель в четырёх этапах и запускается только для сложных запросов. Независимые параллельные агенты и графы ролей пока не подключены.'));
+      }else if(kind==='skills'){
+        title.textContent=en?'Task skills':'Навыки (скиллы)';
+        body.append(field(en?'Skill selection':'Выбор навыка','skillPreset',Object.entries(labels).map(([value,label])=>({value,label})),options.skill,e=>{
+          const chat=getCurrentChat();if(!chat)return;chat.uiOptions=getChatUiOptions(chat);chat.uiOptions.skill=ALLOWED_SKILLS.has(e.target.value)?e.target.value:'auto';persistChats();
+          showToast(en?'Skill preference saved for this chat.':'Выбор навыка сохранён для этого чата.');
+        }),note(en?'Automatic mode infers the task skill. A manual choice loads the selected repository skill if available.':'В авто-режиме скилл выбирается автоматически. Ручной выбор загружает инструкции выбранного навыка, если файл доступен.'));
+      }else{
+        title.textContent=en?'Connectors and sources':'Коннекторы и источники';
+        const connection=(name,description,state)=>{
+          const row=make('div','function-connection-row'),dot=make('span','function-state-dot');dot.dataset.state=state;
+          const text=make('span'),strong=make('strong','',name),small=make('small','',description);text.append(strong,small);row.append(dot,text);return row;
+        };
+        const tavily=Boolean(safeGet(STORAGE.tavilyKey));
+        body.append(connection(en?'Open web sources':'Открытые веб-источники',
+          en?'Wikipedia, Stack Exchange, GitHub, Hacker News and arXiv are attempted where network/CORS permits.':'Wikipedia, Stack Exchange, GitHub, Hacker News и arXiv доступны при работающей сети и CORS.','ready'),
+          connection('Tavily',tavily?(en?'API key stored in this browser.':'Ключ API сохранён в этом браузере.'):(en?'Optional, configured under additional APIs in Settings.':'Необязателен, настраивается в дополнительных API.'),tavily?'ready':'idle'),
+          note(en?'Plugin connectors such as Drive are not connected yet.':'Плагины вроде Drive пока не подключены.'));
+        const search=make('button','w-full rounded-xl border px-3 py-2.5 text-sm',en?'Choose web-search mode':'Выбрать режим веб-поиска');search.type='button';search.dataset.action='open-web-search-options';
+        const settings=make('button','w-full rounded-xl border px-3 py-2.5 text-sm',en?'Open provider settings':'Открыть настройки провайдера');settings.type='button';settings.dataset.action='toggle-settings';
+        body.append(search,settings);
+      }
       $('functionSettingsModal').classList.remove('hidden');
     }
-    function showMessageViewer(message){if(!message||!['user','assistant'].includes(message.role))return;const en=getUiLanguage()==='en';$('messageViewerTitle').textContent=en?(message.role==='user'?'Your message':'Assistant message'):(message.role==='user'?'Твоё сообщение':'Ответ aLandi');$('messageViewerRole').textContent=en?(message.role==='user'?'User':'Assistant'):(message.role==='user'?'Пользователь':'Ассистент');const el=$('messageViewerContent'),text=messageTextForCopy(message);el.replaceChildren();if(message.role==='user'){const p=document.createElement('div');p.className='plain-message';p.textContent=text;el.appendChild(p);}else el.innerHTML=safeMarkdown(text||(message.tool_calls?.length?(en?'Tool call':'Вызов инструмента'):''));$('messageViewerModal').classList.remove('hidden');requestAnimationFrame(()=>el.focus({preventScroll:true}));}
+    function showMessageViewer(message)    function showMessageViewer(message){if(!message||!['user','assistant'].includes(message.role))return;const en=getUiLanguage()==='en';$('messageViewerTitle').textContent=en?(message.role==='user'?'Your message':'Assistant message'):(message.role==='user'?'Твоё сообщение':'Ответ aLandi');$('messageViewerRole').textContent=en?(message.role==='user'?'User':'Assistant'):(message.role==='user'?'Пользователь':'Ассистент');const el=$('messageViewerContent'),text=messageTextForCopy(message);el.replaceChildren();if(message.role==='user'){const p=document.createElement('div');p.className='plain-message';p.textContent=text;el.appendChild(p);}else el.innerHTML=safeMarkdown(text||(message.tool_calls?.length?(en?'Tool call':'Вызов инструмента'):''));$('messageViewerModal').classList.remove('hidden');requestAnimationFrame(()=>el.focus({preventScroll:true}));}
     function updateJumpToLatest(){const box=$('chatBox'),btn=$('jumpToLatest');if(!box||!btn)return;const d=box.scrollHeight-box.scrollTop-box.clientHeight;btn.classList.toggle('hidden',d<220||box.scrollHeight<=box.clientHeight+40);}
     function renderActiveChat() {
       const chat = getCurrentChat();
@@ -2851,16 +2901,17 @@ permalink: /
       return 'URL: ' + response.url + '\nИзвлечённый текст (обрезан до ' + cap + ' символов):\n' + content.slice(0, cap) +
         (content.length > cap ? '\n[Текст сокращён; уточни, что искать.]' : '');
     }
-    async function loadTaskSkill(userText, mode, useMultiAgent, signal) {
-      if (mode !== 'deep' && !useMultiAgent) return '';
+    async function loadTaskSkill(userText, mode, useMultiAgent, signal, skillOverride='auto') {
+      const forcedSkill=ALLOWED_SKILLS.has(skillOverride)&&skillOverride!=='auto'?skillOverride:'';
+      if(mode!=='deep'&&!useMultiAgent&&!forcedSkill)return '';
       const text = userText.toLocaleLowerCase();
       const isMultimodalTask = /(?:\bocr\b|\basr\b|qwen3-asr|moonshine|zipformer|canary\s*180m|nemotron.*asr|glm-ocr|paddleocr|surya|dots\.(?:ocr|mocr)|deepseek-ocr|lightonocr|asr4all|speech[- ]to[- ]text|transcrib|multimodal rag|rag-anything|распозн.{0,14}(?:реч|голос|ауди|изображ|фото|документ|pdf)|транскриб|голосов|диктовк|микрофон|аудио|распознаван.{0,12}реч|сканирован.{0,12}(?:документ|pdf)|извлеч.{0,12}текст.{0,12}(?:pdf|изображ|документ))/i.test(text);
       const isAgentSystemsTask = /(?:\b(?:multi[- ]?agent|agent swarm|agent orchestration|agent memory|knowledge graph|graph memory|rag|paperclip|ruflo|openshell|pinchtab|hyperframes|utopia)\b|памят|граф знан|баз[аы] знан|источник.{0,20}проект|проектн.{0,15}инструкц|агент.{0,20}(?:систем|роут|оркестр|обуч|команд)|самообуч|долгосрочн.{0,10}памят)/i.test(text);
-      const skill = isMultimodalTask ? 'multimodal'
+      const skill = forcedSkill || (isMultimodalTask ? 'multimodal'
         : isAgentSystemsTask ? 'agent-systems'
         : useMultiAgent || /исслед|найди|источник|сравни|актуальн|research|search|source|compare/.test(text) ? 'research'
         : /код|программ|debug|рефактор|javascript|python|typescript|code|bug|implement/.test(text) ? 'code-review'
-        : /данн|таблиц|статист|рассч|вычисл|график|data|calculate|statistics|dataset/.test(text) ? 'data-analysis' : 'planning';
+        : /данн|таблиц|статист|рассч|вычисл|график|data|calculate|statistics|dataset/.test(text) ? 'data-analysis' : 'planning');
       try {
         const response = await fetch(new URL('skills/' + skill + '.txt', document.baseURI), { cache: 'force-cache', signal });
         if (!response.ok) return '';
@@ -3114,7 +3165,7 @@ permalink: /
       if(requestProjectContext)requestProjectContext+='\nКонец контекста выбранных проектов. Учитывай его только для текущего сообщения и продолжай соблюдать системные ограничения.';
       const configuredPrompt = safeGet(STORAGE.systemPrompt);
       const activePrompt = (!configuredPrompt || configuredPrompt === LEGACY_DEFAULT_SYSTEM) ? DEFAULT_SYSTEM : configuredPrompt;
-      const taskSkill = promptOverride ? '' : await loadTaskSkill(latestUserMessage, mode, useMultiAgent, signal);
+      const taskSkill = promptOverride ? '' : await loadTaskSkill(latestUserMessage, mode, useMultiAgent, signal, getChatUiOptions(chat).skill);
       let systemPrompt = `Сегодня: ${new Date().toLocaleDateString('ru-RU')}. ${activePrompt}${projectInstructionContext}${requestProjectContext}${memoryContext}${projectMemoryContext}${serverProjectMemoryContext}`;
       if (mode === 'deep') systemPrompt += '\nРЕЖИМ ГЛУБОКОЙ РАБОТЫ: проверь существенные предположения, объясни неопределённость и предпочитай проверяемые выводы. Избегай лишних шагов.';
       if (taskSkill) systemPrompt += '\n\nНАВЫК ИЗ РЕПОЗИТОРИЯ (инструкции для текущей задачи; пользовательский запрос имеет приоритет):\n' + taskSkill;
