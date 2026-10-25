@@ -290,6 +290,16 @@ permalink: /
     .jump-to-latest{position:fixed;z-index:35;right:14px;bottom:max(calc(env(safe-area-inset-bottom) + 6.5rem),6.5rem);min-width:42px;min-height:42px;border-radius:14px;border:1px solid color-mix(in srgb,var(--ui-tiffany) 42%,var(--ui-border));background:var(--ui-surface-raised);color:var(--ui-tiffany);font-size:24px;box-shadow:0 5px 22px rgb(0 0 0 / 24%)}.chat-row-menu-panel.opens-up{top:auto;bottom:calc(100% + 5px)}.chat-row-menu-panel.align-left{left:0;right:auto}
     .function-option-row,.function-connection-row{display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-bg)}.function-option-row input{margin-top:4px}.function-option-row strong,.function-connection-row strong{display:block;font-size:13px;color:var(--ui-text)}.function-option-row small,.function-connection-row small{display:block;margin-top:4px;font-size:11px;line-height:1.45;color:var(--ui-text-muted)}.function-setting-field{display:grid;gap:7px}.function-setting-field label{font-size:12px;color:var(--ui-text-muted)}.function-setting-field select{border:1px solid var(--ui-border);border-radius:11px;background:var(--ui-bg);color:var(--ui-text);padding:11px;font-size:13px}.function-state-dot{flex:0 0 9px;width:9px;height:9px;margin-top:5px;border-radius:50%;background:#64748b}.function-state-dot[data-state="ready"]{background:#10b981}
     @media(max-width:640px){.app-header{gap:5px!important;padding-left:7px!important;padding-right:7px!important}.app-header #activeChatTitle{font-size:11px}.app-header #activeProjectTitle{font-size:9px}.app-header #aLandiClock .clock-face{width:38px;height:38px}.app-header #clockDigital{font-size:9px}.app-header #brandWordmark{font-size:15px}.app-header #homeThemeToggle,.app-header #languageSummary{padding-left:5px!important;padding-right:5px!important;font-size:11px}.mode-toolbar-controls{gap:4px;grid-template-columns:minmax(0,1fr) auto auto}.mode-switch button{padding-left:4px;padding-right:4px;font-size:10px}.toolbar-trigger{min-height:37px;padding:6px 7px;gap:3px;font-size:10px}}
+    .project-navigation-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:7px;margin:2px 0 9px;padding:0 1px}
+    .project-create-action,.project-settings-action{min-height:40px;padding:8px;border:1px solid var(--ui-border);border-radius:11px;font-size:11px;font-weight:650;color:var(--ui-text);background:var(--ui-surface-raised)}
+    .project-create-action{border-color:color-mix(in srgb,var(--ui-tiffany) 48%,var(--ui-border));color:var(--ui-tiffany)}.project-settings-action:disabled{opacity:.34;cursor:not-allowed}
+    .project-nav-item{margin:0 0 7px;border:1px solid var(--ui-border);border-radius:12px;overflow:hidden;background:var(--ui-surface-raised)}
+    .project-nav-item>summary{display:flex;align-items:center;gap:8px;min-height:42px;padding:9px 10px;font-size:12px;font-weight:650;color:var(--ui-text);cursor:pointer;list-style:none}
+    .project-nav-item>summary::-webkit-details-marker{display:none}.project-nav-item[open]{border-color:color-mix(in srgb,var(--ui-tiffany) 48%,var(--ui-border));box-shadow:0 0 0 1px color-mix(in srgb,var(--ui-tiffany) 8%,transparent)}
+    .project-nav-item.is-settings-selected>summary{background:var(--ui-tiffany-soft)}.project-nav-chats{padding:7px;border-top:1px solid var(--ui-border);background:var(--ui-bg)}
+    .project-nav-empty{padding:8px;font-size:10px;color:var(--ui-text-muted)}.project-nav-row-actions{display:flex;gap:6px;padding-top:6px}
+    .project-add-chat,.project-open-settings{padding:7px 9px;border:1px solid var(--ui-border);border-radius:9px;font-size:10px;color:var(--ui-text-muted);background:var(--ui-surface-raised)}.project-add-chat{flex:1;color:var(--ui-tiffany);border-color:color-mix(in srgb,var(--ui-tiffany) 35%,var(--ui-border))}
+
 </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
@@ -307,7 +317,6 @@ permalink: /
           <span aria-hidden="true">○</span><span data-i18n="noProjectNav">Без проекта</span><span id="projectlessChatCount" class="ml-auto text-[10px] text-gray-500">0</span>
         </button>
         <div id="projectNavigationList" class="hidden pl-2 space-y-1" aria-label="Список проектов"></div>
-        <button type="button" data-action="open-project-settings" class="w-full rounded-lg px-3 py-2 text-left text-xs text-gray-400 hover:text-white hover:bg-white/5">⚙ Настройки проекта и памяти</button>
       </div>
       <details id="projectManagerDetails" class="rounded-xl border border-gray-800">
         <summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">⚙ <span data-i18n="manageProject">Настройки проекта</span></summary>
@@ -327,7 +336,7 @@ permalink: /
           <label for="projectInstructionsInput" class="block text-[11px] text-gray-400" data-i18n="projectInstructionsLabel">Инструкции проекта</label>
           <textarea id="projectInstructionsInput" rows="3" maxlength="6000" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs resize-y" placeholder="Цель, стиль, ограничения и критерии результата"></textarea>
           <div class="grid grid-cols-2 gap-2">
-            <button type="button" data-action="create-project" class="bg-cyan-900/70 hover:bg-cyan-800 border border-cyan-800 rounded-lg py-2 text-xs" data-i18n="createProject">＋ Создать проект</button>
+            <button type="button" data-action="open-create-project" class="bg-cyan-900/70 hover:bg-cyan-800 border border-cyan-800 rounded-lg py-2 text-xs" data-i18n="createProject">＋ Создать проект</button>
             <button type="button" data-action="save-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="saveProject">Сохранить изменения</button>
           </div>
 <details id="memoryToolsDetails" class="rounded-xl border border-gray-800">
@@ -554,6 +563,17 @@ permalink: /
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
   <div id="popupBackdrop" class="hidden fixed inset-0 bg-black/55 z-40" aria-hidden="true"></div>
   <button id="jumpToLatest" type="button" data-action="jump-to-latest" class="jump-to-latest hidden" aria-label="Перейти к последнему сообщению" title="В конец чата">↓</button>
+  <div id="createProjectModal" class="hidden fixed inset-0 z-[80] bg-black/75 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="createProjectModalTitle">
+    <section class="function-settings-surface w-full max-w-lg max-h-[88dvh] overflow-y-auto rounded-2xl p-4 sm:p-5">
+      <header class="flex items-center justify-between gap-3 mb-4"><h2 id="createProjectModalTitle" class="font-semibold text-base">Создать проект</h2><button type="button" data-action="cancel-create-project" class="modal-close-button" aria-label="Закрыть">✕</button></header>
+      <div class="space-y-3">
+        <div class="function-setting-field"><label for="createProjectNameInput">Название проекта</label><input id="createProjectNameInput" maxlength="100" class="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm" placeholder="Например, Исследования" /></div>
+        <div class="function-setting-field"><label for="createProjectInstructionsInput">Инструкции проекта (необязательно)</label><textarea id="createProjectInstructionsInput" rows="4" maxlength="6000" class="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm resize-y" placeholder="Контекст и правила для чатов этого проекта"></textarea></div>
+        <div class="function-setting-field"><label for="createProjectMemoryScope">Область памяти</label><select id="createProjectMemoryScope" class="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm"><option value="project-only">Только внутри проекта</option><option value="project-and-global">Проект и общая память</option></select></div>
+      </div>
+      <div class="flex gap-2 mt-5"><button type="button" data-action="cancel-create-project" class="settings-close-button flex-1 py-2.5">Отмена</button><button type="button" data-action="create-project" class="settings-save-button flex-1 py-2.5 rounded-xl">Создать проект</button></div>
+    </section>
+  </div>
   <div id="functionSettingsModal" class="hidden fixed inset-0 z-[80] bg-black/75 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="functionSettingsTitle"><section class="function-settings-surface w-full max-w-lg max-h-[88dvh] overflow-y-auto rounded-2xl p-4 sm:p-5"><header class="flex items-center justify-between gap-3 mb-3"><h2 id="functionSettingsTitle" class="font-semibold text-base">Настройки функции</h2><button type="button" data-action="close-function-settings" class="modal-close-button" aria-label="Закрыть">✕</button></header><div id="functionSettingsBody" class="space-y-3 text-sm"></div><p class="text-[10px] text-gray-500 mt-4" data-i18n="functionOptionsSaved">Настройки сохраняются для этого чата автоматически.</p></section></div>
   <div id="messageViewerModal" class="hidden fixed inset-0 z-[85] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="messageViewerTitle"><section class="message-viewer-surface w-full max-w-4xl max-h-[92dvh] rounded-2xl p-3 sm:p-5 flex flex-col"><header class="flex items-center gap-3 border-b border-gray-700 pb-3 mb-3 shrink-0"><button type="button" data-action="close-message-viewer" class="message-viewer-eye" aria-label="Вернуться в чат" title="Вернуться в чат">◉</button><div class="min-w-0"><h2 id="messageViewerTitle" class="font-semibold text-base">Сообщение</h2><p id="messageViewerRole" class="text-xs text-gray-400"></p></div></header><div id="messageViewerContent" class="message-viewer-content" tabindex="0" aria-label="Полный текст сообщения"></div></section></div>
   <div id="chatActionModal" class="hidden fixed inset-0 z-[85] bg-black/65 p-4 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="chatActionTitle" aria-describedby="chatActionHelp">
@@ -1571,13 +1591,17 @@ permalink: /
       renderRequestProjectChoices();
     }
     function createProject(){
-      const input=$('projectNameInput'),name=input.value.trim().slice(0,100);
+      const modal=$('createProjectModal'),fromModal=modal&&!modal.classList.contains('hidden');
+      const input=fromModal?$('createProjectNameInput'):$('projectNameInput'),name=input.value.trim().slice(0,100);
       if(!name){input.focus();showToast(getUiLanguage()==='en'?'Enter a project name first.':'Сначала введи название проекта.','error');return;}
       if(projects.length>=200){showToast('Достигнут предел локальных проектов (200).','error');return;}
-      const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectInstructionsInput').value.trim().slice(0,6000),memoryScope:'project-only',memory:[],createdAt:now,updatedAt:now};
+      const instructions=(fromModal?$('createProjectInstructionsInput'):$('projectInstructionsInput')).value.trim().slice(0,6000);
+      const memoryScope=fromModal?$('createProjectMemoryScope').value:'project-only';
+      const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions,memoryScope:memoryScope==='project-and-global'?'project-and-global':'project-only',memory:[],createdAt:now,updatedAt:now};
       projects.unshift(project);selectedProjectForSettingsId=project.id;persistProjects();
-      const chat=getCurrentChat();chat.projectId=project.id;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
-      persistChats();renderProjectUI();renderChatList();
+      const chat=getCurrentChat();if(chat){chat.projectId=project.id;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;persistChats();}
+      if(fromModal){modal.classList.add('hidden');$('createProjectNameInput').value='';$('createProjectInstructionsInput').value='';$('createProjectMemoryScope').value='project-only';}
+      renderProjectUI();renderChatList();
       showToast((getUiLanguage()==='en'?'Project created: ':'Создан проект: ')+name);
     }
     function saveProject(){
@@ -1671,6 +1695,10 @@ permalink: /
       const list=$('projectNavigationList');if(!list)return;
       const expanded=new Set([...list.querySelectorAll('details.project-nav-item[open]')].map(item=>item.dataset.projectId));
       list.replaceChildren();
+      const projectToolbar=document.createElement('div');projectToolbar.className='project-navigation-actions';
+      const createProjectButton=document.createElement('button');createProjectButton.type='button';createProjectButton.dataset.action='open-create-project';createProjectButton.className='project-create-action';createProjectButton.textContent=getUiLanguage()==='en'?'＋ Create project':'＋ Создать проект';
+      const projectSettingsButton=document.createElement('button');projectSettingsButton.type='button';projectSettingsButton.id='projectSettingsNavigationButton';projectSettingsButton.dataset.action='open-selected-project-settings';projectSettingsButton.className='project-settings-action';projectSettingsButton.textContent=getUiLanguage()==='en'?'⚙ Project settings':'⚙ Настройки проекта';projectSettingsButton.disabled=!projects.some(project=>project.id===selectedProjectForSettingsId);
+      projectToolbar.append(createProjectButton,projectSettingsButton);list.appendChild(projectToolbar);
       const unassigned=chats.filter(chat=>!chat.projectId);
       $('projectlessChatCount').textContent=String(unassigned.length);
       $('chatSectionCount').textContent=String(unassigned.length);
@@ -1684,7 +1712,7 @@ permalink: /
         const title=document.createElement('span');title.className='min-w-0 flex-1 truncate';title.textContent=project.name;
         const count=document.createElement('span');count.className='text-[10px] text-gray-500';count.textContent=String(chats.filter(chat=>chat.projectId===project.id).length);
         summary.append(caret,title,count);group.appendChild(summary);
-        group.addEventListener('toggle',()=>{caret.textContent=group.open?'⌄':'›';});
+        group.addEventListener('toggle',()=>{caret.textContent=group.open?'⌄':'›';if(group.open){selectedProjectForSettingsId=project.id;$('projectSettingsNavigationButton').disabled=false;list.querySelectorAll('.project-nav-item').forEach(item=>item.classList.toggle('is-settings-selected',item.dataset.projectId===project.id));}});
         const children=document.createElement('div');children.className='project-nav-chats';
         const assigned=chats.filter(chat=>chat.projectId===project.id);
         if(!assigned.length){const empty=document.createElement('p');empty.className='px-2 py-2 text-[10px] text-gray-500';empty.textContent=english?'No chats in this project yet.':'В проекте пока нет чатов.';children.appendChild(empty);}
@@ -3770,6 +3798,8 @@ permalink: /
           }
           case 'clear-request-context': selectedRequestProjectIds.clear();saveRequestContextForActiveChat();renderRequestProjectChoices();break;
           case 'remove-draft-attachment': pendingComposerAttachments=pendingComposerAttachments.filter(item=>item.id!==control.dataset.attachmentId);renderDraftAttachments();break;
+          case 'open-create-project': $('createProjectNameInput').value='';$('createProjectInstructionsInput').value='';$('createProjectMemoryScope').value='project-only';$('createProjectModal').classList.remove('hidden');requestAnimationFrame(()=>$('createProjectNameInput').focus({preventScroll:true}));break;
+          case 'cancel-create-project': $('createProjectModal').classList.add('hidden');break;
           case 'create-project': createProject();break;
           case 'save-project': saveProject();break;
           case 'toggle-project-navigation': {
@@ -3780,6 +3810,7 @@ permalink: /
             $('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});
             $('chatSection').querySelector('summary')?.focus();break;
           }
+          case 'open-selected-project-settings': { if(!projects.some(project=>project.id===selectedProjectForSettingsId)){showToast(getUiLanguage()==='en'?'Choose a project first.':'Сначала выбери проект в списке.','error');break;} $('projectManagerDetails').open=true;renderProjectUI();$('projectManagerDetails').scrollIntoView({block:'nearest',behavior:'smooth'});break; }
           case 'open-project-settings': {
             selectedProjectForSettingsId=projects.some(project=>project.id===control.dataset.projectId)?control.dataset.projectId:null;
             $('projectManagerDetails').open=true;renderProjectUI();$('projectManagerDetails').scrollIntoView({block:'nearest',behavior:'smooth'});break;
@@ -3874,6 +3905,7 @@ permalink: /
     $('modelSearch').addEventListener('input',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('popupBackdrop').addEventListener('click',event=>{event.preventDefault();event.stopPropagation();closeAllPopupMenus();});
     $('functionSettingsModal').addEventListener('click',event=>{if(event.target===$('functionSettingsModal'))$('functionSettingsModal').classList.add('hidden');});
+    $('createProjectModal').addEventListener('click',event=>{if(event.target===$('createProjectModal'))$('createProjectModal').classList.add('hidden');});
     $('messageViewerModal').addEventListener('click',event=>{if(event.target===$('messageViewerModal'))$('messageViewerModal').classList.add('hidden');});
     $('chatBox').addEventListener('scroll',updateJumpToLatest,{passive:true});
     window.addEventListener('resize',()=>{updateJumpToLatest();if(!$('searchModeMenu').classList.contains('hidden'))positionToolbarPopover('searchModeMenu','searchModeButton');if(!$('functionsMenu').classList.contains('hidden'))positionToolbarPopover('functionsMenu','functionsButton');},{passive:true});
@@ -3942,7 +3974,8 @@ permalink: /
     $('chatActionModal').addEventListener('click',event=>{if(event.target===$('chatActionModal'))closeChatActionDialog();});
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
-        if (!$('messageViewerModal').classList.contains('hidden')) $('messageViewerModal').classList.add('hidden');
+        if (!$('createProjectModal').classList.contains('hidden')) $('createProjectModal').classList.add('hidden');
+        else if (!$('messageViewerModal').classList.contains('hidden')) $('messageViewerModal').classList.add('hidden');
         else if (!$('functionSettingsModal').classList.contains('hidden')) $('functionSettingsModal').classList.add('hidden');
         else if (!$('chatActionModal').classList.contains('hidden')) closeChatActionDialog();
         else if (!$('traceModal').classList.contains('hidden')) closeTrace();
