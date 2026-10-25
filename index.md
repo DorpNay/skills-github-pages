@@ -3820,6 +3820,7 @@ permalink: /
     $('textAttachmentInput').addEventListener('change',handleTextAttachment);
     $('mediaAttachmentInput').addEventListener('change',handleMediaAttachment);
     document.addEventListener('pointerdown',event=>{
+      if(event.target===$('popupBackdrop'))return;
       if(!$('attachmentMenu').classList.contains('hidden')&&!$('attachmentMenu').contains(event.target)&&!$('attachTextButton').contains(event.target))closeComposerPopovers();
       if(!$('requestContextMenu').classList.contains('hidden')&&!$('requestContextMenu').contains(event.target)&&!$('contextPickerButton').contains(event.target))closeComposerPopovers();
     });
@@ -3882,6 +3883,7 @@ permalink: /
     });
     $('voiceUnavailableButton').addEventListener('contextmenu',event=>event.preventDefault());
     document.addEventListener('pointerdown',event=>{
+      if(event.target===$('popupBackdrop'))return;
       if(!$('voiceMenu').classList.contains('hidden')&&!$('voiceUnavailableButton').contains(event.target)&&!$('voiceMenu').contains(event.target))hideVoiceMenu();
     });
     $('userInput').addEventListener('keydown', (event) => {
