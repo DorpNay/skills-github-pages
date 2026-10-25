@@ -3938,7 +3938,7 @@ permalink: /
       if(voiceHoldTimer)clearTimeout(voiceHoldTimer);
       voiceHoldTimer=null;
     };
-    $('voiceUnavailableButton').addEventListener('click',()=>{if(!$('voiceMenu').classList.contains('hidden'))hideVoiceMenu();else showVoiceMenu();});
+    $('voiceUnavailableButton').addEventListener('click',()=>{if($('voiceMenu').classList.contains('hidden'))showVoiceMenu();});
     $('voiceUnavailableButton').addEventListener('pointerdown',event=>{
       if(event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
       voiceHoldOpened=false;
