@@ -3469,7 +3469,8 @@ permalink: /
       const composer = $('userInput');
       $('researchStudioPrompt').value = composer.value.trim();
       $('researchStudioWeb').checked = $('toggleSearch').checked;
-      $('researchStudioDepth').value = $('modeDeep').getAttribute('aria-pressed') === 'true' ? 'deep' : 'fast';
+      // Research Studio defaults to deep mode; the user can explicitly switch to quick search.
+      $('researchStudioDepth').value = 'deep';
       $('researchStudioStatus').textContent = getUiLanguage() === 'en' ? 'Uses the current chat and existing aLandi tools; no separate services start automatically.' : 'Студия использует текущий чат и существующие инструменты aLandi; отдельные сервисы не запускаются автоматически.';
       modal.classList.remove('hidden');
       requestAnimationFrame(() => $('researchStudioPrompt').focus());
