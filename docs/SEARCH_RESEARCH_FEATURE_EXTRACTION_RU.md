@@ -300,3 +300,56 @@ Upstream описывает переиспользуемые workflow/subgraphs,
 - Таблица 92 пунктов опирается на пользовательский triage в docs/OPEN_SOURCE_TRIAGE_RU.md. Для неоднозначных названий без точного upstream функциональность не приписывается по догадке.
 - Глубокая первичная проверка в этом документе выполнена для Open Notebook, RAG-Anything, ComfyUI, taste-skill и Agent Skills; для SearXNG/Scrapy/yt-dlp зафиксирована целевая роль adapter, но перед интеграцией нужно отдельно проверить актуальные README/API/security docs и лицензии.
 - Никакие внешние сервисы, модели или MCP servers этим документом не установлены и не активированы.
+
+
+## Дополнительные первичные проверки: context retrieval и агентные циклы
+
+После первого прохода проверены ещё несколько upstream, полезных для Search & Research. Это уточняет выбор архитектурных принципов, но не меняет решения не устанавливать дополнительные сервисы до eval.
+
+### OpenViking — структурированный контекст вместо плоского vector pool
+
+Upstream: https://github.com/volcengine/OpenViking  
+Источник: https://github.com/volcengine/OpenViking/blob/main/README.md
+
+README описывает виртуальную файловую структуру для знаний, памяти и skills; directory-scoped semantic search; summary levels, позволяющие сначала прочитать краткое описание, а затем открывать полный материал; retrieval, который можно осматривать и редактировать. В README также явно указано, что установка context database сама по себе не подключает retrieval к агентскому prompt.
+
+**Сильная идея для aLandi:** scope-first retrieval и видимая навигация по источникам. Поиск сначала ограничивается выбранным проектом/коллекцией, показывает summary/overview, затем раскрывает оригинал и его provenance. Это особенно хорошо сочетается с Notebook-like панелью. **Не мигрировать на OpenViking автоматически:** upstream указывает AGPL-3.0, а новый context database будет конкурировать с уже имеющимися SQLite/FTS5 и project memory. Сначала сравнить recall, citations, memory footprint и экспортируемость.
+
+### Graphiti — temporal facts и гибридное извлечение
+
+Upstream: https://github.com/getzep/graphiti
+
+README описывает временной граф фактов с validity windows, provenance до исходных episodes, инкрементальными обновлениями и гибридным retrieval: semantic embeddings + keyword/BM25 + graph traversal. Это полезно, когда ответ зависит от того, что верно сейчас и что было верно раньше.
+
+**Заимствовать:** хранить источник каждого извлечённого факта; различать время события и время получения/записи; не стирать старый факт при конфликте, а отмечать superseded/conflicts; поддерживать исторические вопросы. **Не добавлять отдельную graph DB без eval:** существующий aLandi memory graph пока остаётся scoped/opt-in прототипом; нужно доказать, что temporal graph лучше текущего SQLite/FTS5 на реальных вопросах, прежде чем вводить второй store.
+
+### AgentScope — event stream, отмена и typed tool execution
+
+Upstream: https://github.com/agentscope-ai/agentscope
+
+README описывает structured ReAct loop, interruption/resume, пакетный tool execution, единый event bus для reasoning/tool calls/multimodal content, middleware для context compaction, fine-grained permissions/HITL и несколько sandbox backend.
+
+**Заимствовать:** унифицированные события для UI Search: этапы, tool start/end, число источников, предупреждения, отмена и возобновление; typed tools и явные разрешения. Пользователь должен видеть фактический статус каждого источника, а не декоративный spinner. **Не переносить SDK целиком** в текущий статический клиент/FastAPI gateway без сравнительного обоснования и оценки зависимостей.
+
+### Sun2Agent — практический паттерн настройки web search и защиты
+
+Upstream: https://github.com/snowhypers/Sun2Agent
+
+README описывает web search как opt-in capability, локальную keyword memory, Skills, MCP, browser automation по требованию, risk-based approval и несколько слоёв guardrails. Там же предупреждается, что опубликованный npm package может отставать от текущего checkout, а значит версию и поведение нужно фиксировать.
+
+**Заимствовать:** web-search provider выключен, пока владелец его не настроил; браузер/компьютерные инструменты подключаются только по запросу; read-only и mutating tools различаются; уроки после ошибок сохраняются только после явного одобрения. Для Search это означает: просмотр публичных источников не должен автоматически давать разрешение на загрузку файлов, логин, отправку формы или запуск команды.
+
+### Scrapy — разделение HTTP middleware, extraction и item pipeline
+
+Документация: https://docs.scrapy.org/en/latest/topics/concepts.html
+
+Scrapy разделяет downloader middleware (HTTP-level политика/redirect/retry), spider middleware, item pipelines (очистка, валидация, дедупликация и хранение), feed exports и extensions/metrics. Это полезное разделение обязанностей для собственного ограниченного extractor.
+
+**Заимствовать:** URL policy до сетевого запроса; извлечение в нормализованный типизированный объект; отдельная проверка/дедупликация после извлечения; метрики и причины отказа. Не импортировать полноценный crawler в gateway, если задача решается простым bounded fetch worker.
+
+### Что эти проверки меняют в решении
+
+1. Для Search UI приоритетны **scope-first, citations/provenance, visible event stream и user-controlled context**.
+2. Для retrieval сначала сравниваем существующие exact/FTS5 пути с web search и семантическим поиском; граф добавляем только если temporal/relationship queries показывают измеримый выигрыш.
+3. Для агентных инструментов нужны typed schemas, отдельные permissions, opt-in network/browser access, approval на side effects и видимый audit trail.
+4. OpenViking/Graphiti/AgentScope/Sun2Agent/Scrapy используются как источники паттернов. Ни один не объявляется интегрированным или прошедшим aLandi runtime tests.
