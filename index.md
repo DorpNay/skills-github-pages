@@ -645,6 +645,7 @@ permalink: /
     let activeController = null;
     let activeChatId = null;
     let isGenerating = false;
+    let isPreparingDocumentAttachments = false;
     let isTestingProviderConnection = false;
     let providerAutoConnectTimer = null;
     let cloudAutoConnectTimer = null;
@@ -3294,7 +3295,7 @@ permalink: /
     }
 
     async function sendMessage(isRetry = false) {
-      if (isGenerating) return;
+      if (isGenerating || isPreparingDocumentAttachments) return;
       const input = $('userInput');
       const text = input.value.trim();
       const chosenAttachments=pendingComposerAttachments.slice();
@@ -3322,6 +3323,7 @@ permalink: /
         if(totalBytes>12*1024*1024){showToast('Общий размер документов для одного запроса ограничен 12 МБ.','error');return;}
         const gatewayBaseUrl=getConfiguredAlandiGatewayBaseUrl();
         if(!gatewayBaseUrl||!apiKey){showToast('Для разбора документов нужны адрес и ключ собственного gateway.','error');toggleSettings(true);return;}
+        isPreparingDocumentAttachments=true;
         try {
           for(const item of documents) {
             const extracted=await extractDocumentThroughAlandi(item.file,gatewayBaseUrl,apiKey);
@@ -3330,7 +3332,7 @@ permalink: /
         } catch(error) {
           showToast(String(error?.name==='AbortError'?'Разбор документа превысил лимит времени.':error.message||'Не удалось извлечь текст из документа.'),'error');
           return;
-        }
+        } finally { isPreparingDocumentAttachments=false; }
       }
       const attachmentText=chosenAttachments.map(item=>item.kind==='image'
         ? '[Изображение прикреплено: '+item.name+'; передай изображение модели, если провайдер и модель поддерживают vision.]'
