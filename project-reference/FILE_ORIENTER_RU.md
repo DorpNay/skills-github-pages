@@ -2,7 +2,7 @@
 
 > **Первым делом в новом чате:** прочитай этот файл, затем актуальный `docs/PROJECT_STATE.yaml`, потом только конкретные файлы по текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-Последний подтверждённый main: **623f1865ee4021debade9000bbecf6004c6b4cfa** (PR #63 merged после успешных 6/6 Quality jobs и provenance). Live queue snapshot at 2026-10-27: **0 open PRs, 0 open issues**. Повторно проверять HEAD/очереди перед каждым изменением.
+Последний подтверждённый main: **b91aab316c224588baea99fbb9b966b8865de0a6** (docs-only commit `docs: promote orienter to root first-read entry point`). На этом SHA Provenance и Pages deployment прошли; Quality Sentinels run #40522824202 ещё выполнялся на момент последней проверки. Live queue snapshot 2026-10-27: **0 open PRs, 0 open issues**. Повторно проверять HEAD/очереди перед каждым изменением.
 
 ## 1. Быстрый маршрут
 
@@ -25,7 +25,11 @@
 - PR #48: non-queueing local audio concurrency — merged.
 - PR #50: UI routes PDF/DOCX/XLSX only through configured local gateway — merged, CI reportedly passed.
 - PR #51: stop cancels in-flight TTS and prevents stale playback — merged.
-- PR #53: attached-audio transcription through local ASR — merged in main commit above.
+- PR #53: attached-audio transcription through local ASR — merged.
+- PR #60: local half-duplex voice dialogue prototype — merged; CI mocks media/model calls; target hardware/audio quality unverified.
+- PR #61: mobile message viewer/copy fallback/jump-to-latest — merged at `529b1d0b86aef58c2b84663a44e78677a31ce9b1`; exact-head Quality (6 jobs) and provenance passed.
+- PR #62: open-source triage docs — merged at `f689cbe17a2996ebd4cd2ca9fcb71d60102a6c25`; triage decisions are not runtime installs.
+- PR #63: root orienter + AGENTS first-read protocol — merged at `623f1865ee4021debade9000bbecf6004c6b4cfa`; main has since advanced with docs-only commit `b91aab316c224588baea99fbb9b966b8865de0a6`.
 - Open PRs at index creation: #52 document attachment integration (branch `feat/document-attachment-ui-v3`), #37 mobile chat ergonomics, #36 project-memory scope regression tests. Check live PR status before assuming any remain open.
 - Local whisper.cpp ASR and Piper TTS + mini-player are code-level features, **not enabled/deployed by default**. Verify models, binary paths, flags, and target hardware before saying audio works on the user's server.
 - Search & Research Studio exists; SearXNG adapter is optional/configured-server-only, not an independently deployed search cluster.
@@ -78,3 +82,13 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Текущая ветка документации: `docs/root-orienter-checkpoint-20261027`; корневой `AGENTS.md` дополнен протоколом первого чтения, ведения чекпоинтов и отдельной границей Graphify vs memory graph.
 - На main в момент старта: `623f1865ee4021debade9000bbecf6004c6b4cfa`; PR/Issues очередь была пустой.
 - Следующий шаг после merge этого docs PR: Graphify pilot в среде с сетевым доступом и локальной копией репозитория. Если текущая среда не позволяет checkout/install, зафиксировать blocker и перейти к доступным безопасным улучшениям, не выдавая пилот за выполненный.
+
+
+## Checkpoint — reconcile current main and evidence ledgers (2026-10-27)
+
+- **Current main at start of this stage:** `b91aab316c224588baea99fbb9b966b8865de0a6`.
+- **Queue:** live GitHub API returned 0 open PRs and 0 open issues.
+- **Exact-main workflows:** Provenance run #40522824071 passed; Pages build/deployment run #40522822481 passed; Quality Sentinels run #40522824202 was still in progress when checked. Do not report all gates green until that run completes.
+- **Documentation drift found:** `EVALS.md` still said the mobile message tools were pending despite PR #61 being merged and its exact-head Quality/Chromium + provenance passing; roadmap still labelled the PR #61 slice “validation pending”. These statuses are being reconciled in a small docs-only change.
+- **Graphify:** still not run. Prior container clone failed due DNS resolution of github.com; GitHub API reading is not a local checkout and does not satisfy the pilot. Do not claim graph integration.
+- **Next action:** wait/check Quality run #40522824202; then run Graphify only if a network-enabled isolated execution workspace is available. Meanwhile inspect product modules and only implement changes whose source, tests, and rollback can be verified.
