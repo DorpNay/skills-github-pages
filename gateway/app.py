@@ -52,6 +52,20 @@ def validate_origin(value: str) -> str:
     return f"{parsed.scheme}://{parsed.netloc}"
 
 
+def validate_fixed_service_base_url(value: str, name: str) -> str:
+    """Validate a fixed operator-configured service URL; callers must never accept it per request."""
+    if not isinstance(value, str) or not value or len(value) > 2048 or any(ord(char) < 32 for char in value):
+        raise ValueError(f"{name} must be a bounded fixed HTTP(S) URL")
+    parsed = urlsplit(value)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc or parsed.username or parsed.password or parsed.query or parsed.fragment:
+        raise ValueError(f"{name} must be a fixed HTTP(S) base URL without credentials, query or fragment")
+    try:
+        parsed.port
+    except ValueError as exc:
+        raise ValueError(f"{name} has an invalid port") from exc
+    return value.rstrip("/")
+
+
 @dataclass(frozen=True)
 class Settings:
     api_key: str
@@ -78,6 +92,10 @@ class Settings:
     rag_enabled: bool = False
     rag_path: str = "/var/lib/alandi-gateway/rag.sqlite3"
     rag_max_chunk_chars: int = 20_000
+    # Optional fixed SearXNG service; disabled until the operator deploys and verifies it.
+    searxng_enabled: bool = False
+    searxng_base_url: str = ""
+    searxng_max_results: int = 5
     model_size_advisory_mb: int = 6144
     oauth_enabled: bool = False
     oauth_path: str = "/var/lib/alandi-gateway/oauth.sqlite3"
@@ -131,6 +149,12 @@ class Settings:
             success_origin = f"{success.scheme}://{success.netloc}"
             if success_origin not in origins:
                 raise ValueError("OAUTH_SUCCESS_REDIRECT origin must be present in ALANDI_CORS_ORIGINS")
+        searxng_enabled = bool_env("ALANDI_SEARXNG_ENABLED", False)
+        searxng_base_url = os.getenv("ALANDI_SEARXNG_BASE_URL", "").strip()
+        if searxng_base_url:
+            searxng_base_url = validate_fixed_service_base_url(searxng_base_url, "ALANDI_SEARXNG_BASE_URL")
+        if searxng_enabled and not searxng_base_url:
+            raise ValueError("ALANDI_SEARXNG_ENABLED requires ALANDI_SEARXNG_BASE_URL")
         return cls(
             api_key=os.getenv("ALANDI_API_KEY", "").strip(),
             ollama_base_url=base,
@@ -155,6 +179,9 @@ class Settings:
             rag_enabled=bool_env("ALANDI_RAG_ENABLED", False),
             rag_path=os.getenv("ALANDI_RAG_PATH", "/var/lib/alandi-gateway/rag.sqlite3").strip() or "/var/lib/alandi-gateway/rag.sqlite3",
             rag_max_chunk_chars=int_env("ALANDI_RAG_MAX_CHUNK_CHARS", 20_000, 100),
+            searxng_enabled=searxng_enabled,
+            searxng_base_url=searxng_base_url,
+            searxng_max_results=int_env("ALANDI_SEARXNG_MAX_RESULTS", 5, 1),
             model_size_advisory_mb=int_env(model_size_budget_env, 6144, 256),
             oauth_enabled=oauth_enabled,
             oauth_path=os.getenv("OAUTH_TOKEN_VAULT_PATH", "/var/lib/alandi-gateway/oauth.sqlite3").strip() or "/var/lib/alandi-gateway/oauth.sqlite3",
@@ -841,6 +868,70 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             raise HTTPException(503, "RAG index is unavailable") from None
         return JSONResponse({"chunks": chunks, "retrieval_latency_ms": round((time.perf_counter() - started) * 1000, 2),
                              "algorithm": "sqlite_fts5_plus_lexical_concept_graph"},
+                            headers={"Cache-Control": "no-store"})
+
+    @app.get("/v1/search/web")
+    async def search_web(request: Request, q: str, limit: int = 5,
+                         authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        if not config.searxng_enabled or not config.searxng_base_url:
+            raise HTTPException(503, "SearXNG search is disabled")
+        query = q.strip()
+        if not query or len(query) > 300 or any(ord(char) < 32 for char in query):
+            raise HTTPException(400, "q must contain 1 to 300 printable characters")
+        if limit < 1 or limit > config.searxng_max_results:
+            raise HTTPException(400, f"limit must be between 1 and {config.searxng_max_results}")
+        try:
+            response = await request.app.state.client.get(
+                config.searxng_base_url + "/search",
+                params={"q": query, "format": "json", "categories": "general", "safesearch": 1},
+                headers={"Accept": "application/json"}, timeout=8.0, follow_redirects=False,
+            )
+        except httpx.TimeoutException:
+            raise HTTPException(504, "SearXNG search timed out") from None
+        except httpx.RequestError:
+            logger.warning("Configured SearXNG request failed")
+            raise HTTPException(502, "SearXNG search is unavailable") from None
+        if response.status_code != 200:
+            logger.warning("Configured SearXNG returned HTTP %s", response.status_code)
+            raise HTTPException(502, "SearXNG returned an unsuccessful response")
+        if len(response.content) > 1_000_000:
+            raise HTTPException(502, "SearXNG response exceeds 1 MB")
+        try:
+            payload = response.json()
+        except ValueError:
+            raise HTTPException(502, "SearXNG returned invalid JSON") from None
+        raw_results = payload.get("results") if isinstance(payload, dict) else None
+        if not isinstance(raw_results, list):
+            raise HTTPException(502, "SearXNG response has no results array")
+        results: list[dict[str, Any]] = []
+        seen_urls: set[str] = set()
+        for item in raw_results:
+            if not isinstance(item, dict):
+                continue
+            raw_url = item.get("url")
+            if not isinstance(raw_url, str) or len(raw_url) > 4096:
+                continue
+            parsed_url = urlsplit(raw_url)
+            if parsed_url.scheme.lower() != "https" or not parsed_url.hostname or parsed_url.username or parsed_url.password:
+                continue
+            canonical_url = raw_url.strip()
+            if canonical_url in seen_urls:
+                continue
+            seen_urls.add(canonical_url)
+            engines = item.get("engines", [])
+            if not isinstance(engines, list):
+                engines = []
+            results.append({
+                "title": str(item.get("title") or "Untitled result").strip()[:300],
+                "url": canonical_url,
+                "snippet": str(item.get("content") or "").strip()[:1200],
+                "engines": [str(engine)[:80] for engine in engines[:8] if isinstance(engine, str)],
+                "published_at": str(item.get("publishedDate") or "")[:80] or None,
+            })
+            if len(results) >= limit:
+                break
+        return JSONResponse({"provider": "searxng", "query": query, "results": results, "count": len(results)},
                             headers={"Cache-Control": "no-store"})
 
     @app.post("/v1/chat/completions")
