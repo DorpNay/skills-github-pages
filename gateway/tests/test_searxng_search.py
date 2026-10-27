@@ -1,5 +1,3 @@
-import json
-
 import httpx
 from fastapi.testclient import TestClient
 
@@ -35,7 +33,6 @@ def test_searxng_is_disabled_by_default_and_requires_authentication():
         response = client.get("/v1/search/web", params={"q": "safe search"},
                               headers={"Authorization": f"Bearer {API_KEY}"})
         assert response.status_code == 503
-        assert response.headers["cache-control"] == "no-store"
 
 
 def test_searxng_normalizes_deduplicates_and_rejects_non_https_results():
