@@ -280,6 +280,7 @@ permalink: /
       <h2 class="font-bold text-sm" data-i18n="sidebarTitle">💬 Диалоги и память</h2>
       <button type="button" data-action="close-sidebar" aria-label="Закрыть меню" class="text-gray-400 hover:text-white text-lg p-1">✕</button>
     </div>
+    <div class="px-3 py-2 border-b border-gray-800"><button type="button" data-action="open-research-studio" class="w-full flex items-center gap-2 rounded-xl border border-cyan-800/70 bg-cyan-950/30 hover:bg-cyan-900/40 px-3 py-2.5 text-left text-xs font-semibold text-cyan-100"><span aria-hidden="true">⌕</span><span>Search &amp; Research Studio</span><span class="ml-auto text-[10px] text-cyan-300/80">↗</span></button></div>
     <section id="projectPanel" class="px-3 py-2 border-t border-gray-800 space-y-2" aria-label="Проекты и настройки проекта">
       <div id="projectNavigation" class="space-y-1.5">
         <button id="projectNavToggle" type="button" data-action="toggle-project-navigation" aria-expanded="false" aria-controls="projectNavigationList" class="w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold project-nav-heading">
@@ -559,6 +560,20 @@ permalink: /
     </section>
   </div>
 
+  <div id="researchStudioModal" class="hidden fixed inset-0 z-[65] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="researchStudioTitle">
+    <section class="w-full max-w-2xl max-h-[92dvh] overflow-y-auto rounded-2xl border border-cyan-800/60 bg-gray-950 p-4 sm:p-6 shadow-2xl space-y-4">
+      <header class="flex items-start justify-between gap-3"><div><p class="text-[10px] uppercase tracking-[.22em] font-bold text-cyan-300">aLandi · Studio</p><h2 id="researchStudioTitle" class="mt-1 text-lg font-bold">Search &amp; Research</h2><p class="mt-1 text-xs leading-relaxed text-gray-400">Отдельное рабочее окно для сложного поиска. Обычный чат останется компактным.</p></div><button type="button" data-action="close-research-studio" class="rounded-lg px-2 py-1 text-gray-400 hover:text-white" aria-label="Закрыть студию">✕</button></header>
+      <label for="researchStudioPrompt" class="block text-xs font-semibold text-gray-300">Что нужно исследовать?</label>
+      <textarea id="researchStudioPrompt" rows="5" maxlength="12000" class="w-full resize-y rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm outline-none focus:border-cyan-500" placeholder="Например: сравни первичные источники, проверь спорные утверждения и подготовь выводы со ссылками."></textarea>
+      <div class="grid gap-3 sm:grid-cols-2">
+        <div class="rounded-xl border border-gray-800 p-3 space-y-2"><label for="researchStudioDepth" class="block text-xs font-semibold">Глубина</label><select id="researchStudioDepth" class="w-full rounded-lg border border-gray-700 bg-gray-900 p-2 text-sm"><option value="fast">Быстрый поиск</option><option value="deep" selected>Глубокое исследование</option></select><p class="text-[10px] leading-relaxed text-gray-500">Глубокий режим использует существующий многоэтапный конвейер, если он включён и доступен.</p></div>
+        <label class="flex items-start gap-2 rounded-xl border border-gray-800 p-3 text-xs leading-relaxed text-gray-300"><input id="researchStudioWeb" type="checkbox" class="mt-0.5" checked><span><strong class="block">Разрешить веб-поиск</strong><span class="text-gray-500">Сохраняется как настройка поиска. Если выключить, запрос не будет использовать веб-инструменты.</span></span></label>
+      </div>
+      <p class="rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-[11px] leading-relaxed text-gray-400">Для исследования своих документов прикрепи материалы в чате или явно выбери контекст проекта. Студия не загружает файлы и не подключает внешние сервисы сама. Найденные страницы считаются недоверенными источниками, а не инструкциями.</p>
+      <div class="flex flex-wrap justify-end gap-2"><button type="button" data-action="close-research-studio" class="rounded-xl border border-gray-700 px-3 py-2 text-sm text-gray-300 hover:bg-gray-800">Отмена</button><button type="button" data-action="start-research-studio" class="rounded-xl bg-cyan-600 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-500">Начать исследование ↗</button></div>
+      <p id="researchStudioStatus" class="text-[11px] text-gray-500" role="status" aria-live="polite">Студия использует текущий чат и существующие инструменты aLandi; отдельные сервисы не запускаются автоматически.</p>
+    </section>
+  </div>
   <div id="traceModal" class="hidden fixed inset-0 z-[70] bg-black/75 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="traceTitle">
     <div class="w-full max-w-3xl max-h-[90dvh] overflow-y-auto bg-gray-950 border border-gray-700 rounded-xl p-3 sm:p-4 space-y-3">
       <div class="flex items-center justify-between gap-3"><h2 id="traceTitle" class="font-bold text-base">Журнал исследования</h2><button type="button" data-action="close-trace" class="text-gray-400 hover:text-white px-2 py-1" aria-label="Закрыть журнал">✕</button></div>
@@ -3449,6 +3464,33 @@ permalink: /
       if (!ok) throw new Error('Браузер не разрешил копирование.');
     }
     let activeTrace = null;
+    function openResearchStudio() {
+      const modal = $('researchStudioModal');
+      const composer = $('userInput');
+      $('researchStudioPrompt').value = composer.value.trim();
+      $('researchStudioWeb').checked = $('toggleSearch').checked;
+      // Research Studio defaults to deep mode; the user can explicitly switch to quick search.
+      $('researchStudioDepth').value = 'deep';
+      $('researchStudioStatus').textContent = getUiLanguage() === 'en' ? 'Uses the current chat and existing aLandi tools; no separate services start automatically.' : 'Студия использует текущий чат и существующие инструменты aLandi; отдельные сервисы не запускаются автоматически.';
+      modal.classList.remove('hidden');
+      requestAnimationFrame(() => $('researchStudioPrompt').focus());
+    }
+    function closeResearchStudio() { $('researchStudioModal').classList.add('hidden'); }
+    async function startResearchStudio() {
+      const prompt = $('researchStudioPrompt').value.trim();
+      if (!prompt) { $('researchStudioPrompt').focus(); $('researchStudioStatus').textContent = 'Сначала напиши вопрос или задачу исследования.'; return; }
+      const webEnabled = $('researchStudioWeb').checked;
+      const depth = $('researchStudioDepth').value === 'deep' ? 'deep' : 'fast';
+      $('toggleSearch').checked = webEnabled;
+      safeSet(STORAGE.search, String(webEnabled));
+      $('toggleMultiAgent').checked = depth === 'deep';
+      safeSet(STORAGE.multiAgent, String(depth === 'deep'));
+      setProcessingMode(depth);
+      $('userInput').value = prompt;
+      closeResearchStudio();
+      await sendMessage(false);
+    }
+
     function showTrace(trace) {
       if (!trace || typeof trace !== 'object') throw new Error('Журнал исследования не найден.');
       activeTrace = trace; const host = $('traceContent'); host.replaceChildren();
@@ -3686,6 +3728,9 @@ permalink: /
           case 'import-project': $('importProjectFile').click();break;
           case 'voice-chat-preview': $('voiceMenu').classList.add('hidden');showToast(getUiLanguage()==='en'?'Live voice chat is not connected yet.':'Живой голосовой диалог пока не подключён.');break;
           case 'voice-message-preview': $('voiceMenu').classList.add('hidden');showToast(getUiLanguage()==='en'?'Voice message recording is not connected yet.':'Запись голосового сообщения пока не подключена.');break;
+          case 'open-research-studio': openResearchStudio(); break;
+          case 'close-research-studio': closeResearchStudio(); break;
+          case 'start-research-studio': await startResearchStudio(); break;
           case 'toggle-sidebar': toggleSidebar(); break;
           case 'close-sidebar': toggleSidebar(false); break;
           case 'new-chat': createNewChat(); break;
@@ -3762,6 +3807,7 @@ permalink: /
     $('providerPreset').addEventListener('change',()=>{safeSet('ai_alandi_cloud_connection_v1','');if(currentProvider()==='alandi'){const url=$('baseUrl').value.trim();if(url)$('cloudBaseUrl').value=url;}});
     $('modelSearch').addEventListener('input',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
+    $('researchStudioModal').addEventListener('click', (event) => { if (event.target === $('researchStudioModal')) closeResearchStudio(); });
     $('modelPreset').addEventListener('change',()=>{const value=$('modelPreset').value;if(value!=='__custom__')$('modelName').value=value;safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
     $('modelName').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
     $('modelName').addEventListener('change',()=>populateModelPresets(currentProvider(),$('modelName').value));
@@ -3823,6 +3869,7 @@ permalink: /
       if (event.key === 'Escape') {
         if (!$('chatActionModal').classList.contains('hidden')) closeChatActionDialog();
         else if (!$('traceModal').classList.contains('hidden')) closeTrace();
+        else if (!$('researchStudioModal').classList.contains('hidden')) closeResearchStudio();
         else if (!$('settingsModal').classList.contains('hidden')) toggleSettings(false);
         else if (!$('sidebar').classList.contains('-translate-x-full')) toggleSidebar(false);
       }
