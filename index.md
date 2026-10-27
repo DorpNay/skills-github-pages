@@ -3299,6 +3299,7 @@ permalink: /
       if (isGenerating || isPreparingDocumentAttachments) return;
       const input = $('userInput');
       const text = input.value.trim();
+      const sourceChatId=currentChatId;
       const chosenAttachments=pendingComposerAttachments.slice();
       const unsupported=chosenAttachments.filter(item=>item.kind==='unsupported');
       if(unsupported.length){showToast('Сначала убери или обработай неподдерживаемые файлы: '+unsupported.map(item=>item.name).slice(0,2).join(', '),'error');return;}
@@ -3335,6 +3336,11 @@ permalink: /
           showToast(String(error?.name==='AbortError'?'Разбор документа превысил лимит времени.':error.message||'Не удалось извлечь текст из документа.'),'error');
           return;
         } finally { isPreparingDocumentAttachments=false; }
+      }
+      const attachmentsStillMatch=pendingComposerAttachments.map(item=>item.id).join('|')===chosenAttachments.map(item=>item.id).join('|');
+      if(currentChatId!==sourceChatId||input.value.trim()!==text||!attachmentsStillMatch) {
+        showToast('Черновик изменился во время разбора. Ничего не отправлено; проверь вложения и отправь снова.','error');
+        return;
       }
       const attachmentText=chosenAttachments.map(item=>item.kind==='image'
         ? '[Изображение прикреплено: '+item.name+'; передай изображение модели, если провайдер и модель поддерживают vision.]'
