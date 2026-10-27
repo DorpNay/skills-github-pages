@@ -543,7 +543,10 @@ permalink: /
     </div>
     <div id="voiceMenu" class="voice-menu hidden" role="group" aria-label="Режимы голоса">
       <button type="button" data-action="voice-chat-preview" class="voice-menu-option"><span class="voice-direction">↑</span><span><strong>ГОЛОСОВОЙ ДИАЛОГ</strong><small>Живое общение · скоро</small></span></button>
-      <button type="button" data-action="voice-message-preview" class="voice-menu-option"><span class="voice-direction">↓</span><span><strong>ГОЛОСОВОЕ СООБЩЕНИЕ</strong><small>Запись и отправка · скоро</small></span></button>
+      <button type="button" data-action="voice-message-preview" class="voice-menu-option"><span class="voice-direction">↓</span><span><strong>ГОЛОСОВОЕ СООБЩЕНИЕ</strong><small>Записать → локально расшифровать → отредактировать</small></span></button>
+    </div>
+    <div id="voiceRecordingPanel" class="hidden mx-auto mb-2 w-full max-w-3xl rounded-xl border border-red-500/40 bg-gray-900 px-3 py-2 shadow-lg" role="group" aria-label="Запись голосового сообщения">
+      <div class="flex items-center justify-between gap-3"><p id="voiceRecordingStatus" class="text-xs text-gray-200" role="status" aria-live="polite">● Запись…</p><div class="flex gap-2"><button type="button" data-action="cancel-voice-recording" class="rounded-lg border border-gray-700 px-3 py-2 text-xs">Отмена</button><button type="button" data-action="stop-voice-recording" class="rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white">Остановить и расшифровать</button></div></div>
     </div>
   </footer>
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
@@ -3491,6 +3494,110 @@ permalink: /
       await sendMessage(false);
     }
 
+    let activeVoiceRecorder = null;
+    let activeVoiceStream = null;
+    let activeVoiceChunks = [];
+    let voiceRecordingLimitTimer = null;
+    let discardVoiceRecording = false;
+
+    async function startVoiceMessageRecording() {
+      if (activeVoiceRecorder) return;
+      if (currentProvider() !== 'alandi') {
+        showToast('Для приватной локальной расшифровки сначала выбери собственный aLandi gateway.', 'error');
+        return;
+      }
+      let baseUrl = String(safeGet(STORAGE.baseUrl) || $('baseUrl').value || '').trim();
+      while (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+      if (baseUrl.endsWith('/chat/completions')) baseUrl = baseUrl.slice(0, -'/chat/completions'.length);
+      const key = getConfiguredApiKey();
+      if (!baseUrl || !key) {
+        showToast('Сначала укажи адрес и ключ собственного gateway в настройках.', 'error');
+        toggleSettings(true);
+        return;
+      }
+      if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') {
+        showToast('Этот браузер не поддерживает запись аудио. Попробуй актуальную версию браузера.', 'error');
+        return;
+      }
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+      } catch (error) {
+        showToast(error?.name === 'NotAllowedError'
+          ? 'Нет разрешения на микрофон. Разреши доступ в настройках браузера и попробуй снова.'
+          : 'Не удалось открыть микрофон. Проверь подключение устройства и разрешения.', 'error');
+        return;
+      }
+      try {
+        const preferred = ['audio/webm;codecs=opus', 'audio/ogg;codecs=opus', 'audio/mp4'];
+        const mimeType = preferred.find(type => MediaRecorder.isTypeSupported?.(type)) || '';
+        activeVoiceRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+        activeVoiceStream = stream;
+        activeVoiceChunks = [];
+        discardVoiceRecording = false;
+        activeVoiceRecorder.addEventListener('dataavailable', event => {
+          if (event.data?.size) activeVoiceChunks.push(event.data);
+        });
+        activeVoiceRecorder.addEventListener('stop', async () => {
+          const recorder = activeVoiceRecorder;
+          const chunks = activeVoiceChunks.slice();
+          const discarded = discardVoiceRecording;
+          activeVoiceRecorder = null;
+          activeVoiceChunks = [];
+          if (activeVoiceStream) activeVoiceStream.getTracks().forEach(track => track.stop());
+          activeVoiceStream = null;
+          if (voiceRecordingLimitTimer) clearTimeout(voiceRecordingLimitTimer);
+          voiceRecordingLimitTimer = null;
+          $('voiceRecordingPanel').classList.add('hidden');
+          if (discarded) return;
+          const blob = new Blob(chunks, { type: recorder?.mimeType || chunks[0]?.type || 'audio/webm' });
+          if (!blob.size) { showToast('Запись пустая. Попробуй ещё раз.', 'error'); return; }
+          if (blob.size > 15 * 1024 * 1024) { showToast('Аудио превышает лимит 15 МБ. Запиши короткое сообщение.', 'error'); return; }
+          $('voiceRecordingStatus').textContent = 'Отправляю аудио в локальный ASR…';
+          try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 125000);
+            let response;
+            try {
+              response = await fetch(baseUrl + '/audio/transcriptions?lang=auto', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': blob.type.split(';')[0] || 'audio/webm' },
+                body: blob,
+                cache: 'no-store',
+                signal: controller.signal
+              });
+            } finally { clearTimeout(timeout); }
+            const payload = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(payload?.detail || payload?.error?.message || ('HTTP ' + response.status));
+            if (typeof payload.text !== 'string' || !payload.text.trim()) throw new Error('Речь не распознана. Попробуй говорить ближе к микрофону.');
+            const field = $('userInput');
+            field.value = (field.value.trim() ? field.value.trim() + '\n\n' : '') + payload.text.trim();
+            autoResizeTextarea(field);
+            field.focus();
+            showToast('Расшифровка готова. Проверь и отредактируй текст перед отправкой.');
+          } catch (error) {
+            showToast(error?.name === 'AbortError' ? 'Расшифровка превысила лимит времени.' : String(error.message || 'Не удалось расшифровать аудио.'), 'error');
+          }
+        }, { once: true });
+        activeVoiceRecorder.start(250);
+        $('voiceRecordingStatus').textContent = '● Запись… не более 2 минут · аудио не сохраняется в истории';
+        $('voiceRecordingPanel').classList.remove('hidden');
+        $('voiceMenu').classList.add('hidden');
+        voiceRecordingLimitTimer = setTimeout(() => stopVoiceMessageRecording(false), 120000);
+      } catch (error) {
+        stream.getTracks().forEach(track => track.stop());
+        activeVoiceRecorder = null;
+        activeVoiceStream = null;
+        showToast('Не удалось начать запись: ' + String(error.message || error), 'error');
+      }
+    }
+
+    function stopVoiceMessageRecording(discard = false) {
+      if (!activeVoiceRecorder) return;
+      discardVoiceRecording = discard;
+      if (activeVoiceRecorder.state !== 'inactive') activeVoiceRecorder.stop();
+    }
+
     function showTrace(trace) {
       if (!trace || typeof trace !== 'object') throw new Error('Журнал исследования не найден.');
       activeTrace = trace; const host = $('traceContent'); host.replaceChildren();
@@ -3727,7 +3834,9 @@ permalink: /
            case 'export-project': exportProjectBundle();break;
           case 'import-project': $('importProjectFile').click();break;
           case 'voice-chat-preview': $('voiceMenu').classList.add('hidden');showToast(getUiLanguage()==='en'?'Live voice chat is not connected yet.':'Живой голосовой диалог пока не подключён.');break;
-          case 'voice-message-preview': $('voiceMenu').classList.add('hidden');showToast(getUiLanguage()==='en'?'Voice message recording is not connected yet.':'Запись голосового сообщения пока не подключена.');break;
+          case 'voice-message-preview': await startVoiceMessageRecording(); break;
+          case 'stop-voice-recording': stopVoiceMessageRecording(false); break;
+          case 'cancel-voice-recording': stopVoiceMessageRecording(true); break;
           case 'open-research-studio': openResearchStudio(); break;
           case 'close-research-studio': closeResearchStudio(); break;
           case 'start-research-studio': await startResearchStudio(); break;
