@@ -882,24 +882,30 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         if limit < 1 or limit > config.searxng_max_results:
             raise HTTPException(400, f"limit must be between 1 and {config.searxng_max_results}")
         try:
-            response = await request.app.state.client.get(
-                config.searxng_base_url + "/search",
+            async with request.app.state.client.stream(
+                "GET", config.searxng_base_url + "/search",
                 params={"q": query, "format": "json", "categories": "general", "safesearch": 1},
                 headers={"Accept": "application/json"}, timeout=8.0, follow_redirects=False,
-            )
+            ) as response:
+                if response.status_code != 200:
+                    logger.warning("Configured SearXNG returned HTTP %s", response.status_code)
+                    raise HTTPException(502, "SearXNG returned an unsuccessful response")
+                declared_length = response.headers.get("content-length", "")
+                if declared_length.isdigit() and int(declared_length) > 1_000_000:
+                    raise HTTPException(502, "SearXNG response exceeds 1 MB")
+                body = bytearray()
+                async for chunk in response.aiter_bytes():
+                    body.extend(chunk)
+                    if len(body) > 1_000_000:
+                        raise HTTPException(502, "SearXNG response exceeds 1 MB")
         except httpx.TimeoutException:
             raise HTTPException(504, "SearXNG search timed out") from None
         except httpx.RequestError:
             logger.warning("Configured SearXNG request failed")
             raise HTTPException(502, "SearXNG search is unavailable") from None
-        if response.status_code != 200:
-            logger.warning("Configured SearXNG returned HTTP %s", response.status_code)
-            raise HTTPException(502, "SearXNG returned an unsuccessful response")
-        if len(response.content) > 1_000_000:
-            raise HTTPException(502, "SearXNG response exceeds 1 MB")
         try:
-            payload = response.json()
-        except ValueError:
+            payload = json.loads(body)
+        except (ValueError, UnicodeDecodeError):
             raise HTTPException(502, "SearXNG returned invalid JSON") from None
         raw_results = payload.get("results") if isinstance(payload, dict) else None
         if not isinstance(raw_results, list):
