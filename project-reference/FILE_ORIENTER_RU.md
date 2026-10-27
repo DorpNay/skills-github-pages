@@ -13,12 +13,12 @@
 5. **Решения / eval / цикл:** корневые `DECISIONS.md`, `EVALS.md`, `LOOP.md`, `INTEL.md`, `IMPROVEMENT_SELECTION.md`.
 6. **Поиск и исследования:** `docs/SEARCH_RESEARCH_FEATURE_EXTRACTION_RU.md`, `docs/OPEN_SOURCE_TRIAGE_RU.md`.
 7. **Карта модулей:** `docs/ALANDI_ARCHITECTURE_MAP_RU.md` — кураторская схема, не автоматически извлечённый Graphify graph.
-7. **Лицензии и происхождение:** `infra/license/provenance_manifest.yaml`; не подключать runtime/model/voice без отдельной проверки лицензии и SHA-256.
-8. **Основной клиент:** `index.md` (большой единый HTML/JS файл). Перед правками найди точные функции/якоря, не делай широких замен без проверки единственности.
-9. **Backend/API:** `gateway/app.py`; тесты в `gateway/tests/`; зависимости в `gateway/requirements*.txt`.
-10. **Память:** `gateway/memory/{manager.py,schema.sql,delta_sync.py,scope.py,conflict.py,temporal.py}`; браузерное хранение и экспорт — `index.md` около `safeSet`, `downloadRecoveryBackup`, `exportChats`, `exportProjectBundle`.
-11. **Голос и вложения:** `gateway/voice/`, `gateway/tests/test_audio_*.py`, `tests/e2e/audio-transcription.spec.mjs`, `tests/e2e/document-attachments.spec.mjs`.
-12. **Реальные browser checks:** `tests/e2e/`, workflow Quality Sentinels; отдельная GitHub Pages публикация не означает, что VPS gateway обновлён.
+8. **Лицензии и происхождение:** `infra/license/provenance_manifest.yaml`; не подключать runtime/model/voice без отдельной проверки лицензии и SHA-256.
+9. **Основной клиент:** `index.md` (большой единый HTML/JS файл). Перед правками найди точные функции/якоря, не делай широких замен без проверки единственности.
+10. **Backend/API:** `gateway/app.py`; тесты в `gateway/tests/`; зависимости в `gateway/requirements*.txt`.
+11. **Память:** `gateway/memory/{manager.py,schema.sql,delta_sync.py,scope.py,conflict.py,temporal.py}`; браузерное хранение и экспорт — `index.md` около `safeSet`, `downloadRecoveryBackup`, `exportChats`, `exportProjectBundle`.
+12. **Голос и вложения:** `gateway/voice/`, `gateway/tests/test_audio_*.py`, `tests/e2e/audio-transcription.spec.mjs`, `tests/e2e/document-attachments.spec.mjs`.
+13. **Реальные browser checks:** `tests/e2e/`, workflow Quality Sentinels; отдельная GitHub Pages публикация не означает, что VPS gateway обновлён.
 
 ## 2. Ключевые статусы на момент проверки
 
@@ -100,7 +100,7 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - PR #65 merged into main at `3887b408988e0476251736a8e7a3e3374eb2ce58`; exact PR-head checks 7/7 passed (integrity, security, context, Jekyll, Chromium, published-site smoke, provenance).
 - Post-merge Quality run #40527418639: 4/5 jobs passed; Chromium was in progress at last poll. Do not claim post-merge gate green until complete.
 - GitHub API tree: 140 tracked files across static UI, FastAPI gateway, memory, RAG/evidence, security, tools, voice, browser E2E and quality/provenance scripts. Local checkout remains blocked by DNS.
-- Graphify upstream rechecked via Exa: Apache-2.0, package `graphifyy`, Python >=3.10, local tree-sitter code extraction; docs/media semantic pass may use a model; dependency footprint is substantial.
-- `docs/ALANDI_ARCHITECTURE_MAP_RU.md` adds a curated module map, routes, tests and a bounded Graphify pilot plan. It is not a generated dependency graph.
+- Graphify upstream rechecked via Exa: Apache-2.0, package `graphifyy`, Python >=3.10, local tree-sitter code extraction; docs/media semantic pass may use a model; dependency footprint is substantial. Official code-only commands now documented in the architecture map (`extract --code-only`, `cluster-only --no-label`, `export html`, `query`).
+- `docs/ALANDI_ARCHITECTURE_MAP_RU.md` adds a curated module map, routes, tests and a bounded Graphify pilot plan. `.graphifyignore` is added as a precautionary exclusion list; its interpretation by Graphify remains unverified until the pilot. It is not a generated dependency graph.
 - Graphify is **not run**: `git clone https://github.com/DorpNay/skills-github-pages.git /tmp/alandirepo` failed with `Could not resolve host: github.com`. No CLI install or graph generation claimed.
 - Next: confirm exact-main Quality/Pages/Provenance; inspect official code-only workflow and ignore semantics; run isolated pilot only in a network-enabled workspace; meanwhile choose a bounded product change supported by current source/tests.
