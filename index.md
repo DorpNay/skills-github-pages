@@ -4256,11 +4256,11 @@ permalink: /
           case 'start-research-studio': await startResearchStudio(); break;
           case 'toggle-sidebar': toggleSidebar(); break;
           case 'close-sidebar': toggleSidebar(false); break;
-          case 'new-chat': createNewChat(); break;
+          case 'new-chat': if(voiceConversationActive)stopVoiceConversation(false);createNewChat(); break;
           case 'new-chat-in-project': createNewChatInProject(control.dataset.projectId);break;
           case 'chat-clear': control.closest('.chat-row-menu')?.removeAttribute('open');clearChatById(control.dataset.chatId);break;
           case 'clear-chat': clearCurrentChat(); break;
-          case 'switch-chat': switchChat(control.dataset.chatId); break;
+          case 'switch-chat': if(voiceConversationActive)stopVoiceConversation(false);switchChat(control.dataset.chatId); break;
           case 'chat-rename': control.closest('.chat-row-menu')?.removeAttribute('open');openChatActionDialog('rename',control.dataset.chatId);break;
           case 'chat-clone': control.closest('.chat-row-menu')?.removeAttribute('open');cloneChat(control.dataset.chatId);break;
           case 'chat-action-cancel': closeChatActionDialog();break;
