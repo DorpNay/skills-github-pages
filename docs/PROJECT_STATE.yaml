@@ -2,14 +2,17 @@ project_state:
   version: 4
   reviewed_on: "2026-10-27"
   source_triage:
-    status: "documented_initial_pass; implementation_and_graphify_pilot_pending"
+    status: "triage_documentation_merged; graphify_pilot_blocked_by_no_network; selective_pr37_followups_pending"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
     technique_register: "docs/TECHNIQUE_REGISTER_RU.md"
     branch: "docs/source-triage-and-next-steps-20261027"
     verified_main_at_start: "529b1d0b86aef58c2b84663a44e78677a31ce9b1"
+    docs_merge_commit: "f689cbe17a2996ebd4cd2ca9fcb71d60102a6c25"
+    queue_after_triage: "PR #37 closed without merge; PR #62 merged; Issue #1 closed as not_planned"
+    graphify_execution: "blocked: container cannot resolve github.com; no local repo checkout"
     open_pr_at_start: 37
     open_issue_at_start: 1
-    next: "inspect PR #37 against current main; run isolated Graphify pilot; triage issue #1 without deleting exercise history"
+    next: "run Graphify in a network-enabled isolated checkout; port PR #37 ideas one at a time with exact-head tests; audit remaining open queue"
   last_volley: "V-2026-10-27-OPEN-SOURCE-TRIAGE-001"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Current browser half-duplex voice dialogue prototype is under PR validation; it uses mocked ASR/TTS in CI, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; first read in new chats, then verify current main HEAD and open PRs"
