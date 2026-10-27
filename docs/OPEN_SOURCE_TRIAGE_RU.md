@@ -190,8 +190,8 @@
 
 ### Следующие действия после первичного triage
 
-1. Проверить Graphify локально/в изолированной рабочей копии, не добавляя generated graph и зависимости в production без подтверждённого выигрыша.
-2. Разобрать PR #37 относительно текущего main, проверить diff и актуальные CI; объединить только неперекрывающиеся полезные изменения.
-3. Проверить открытые Issues отдельно; не закрывать issue #1 автоматически, поскольку это исходная GitHub Skills exercise с историей комментариев.
+1. Graphify: upstream изучен, но локальный запуск заблокирован отсутствием сетевого доступа в рабочем контейнере (git clone завершился DNS error); повторить пилот в среде с репозиторием и Python/uv.
+2. PR #37 закрыт без merge: ветка отстала от main, Chromium и HTML/JavaScript integrity checks упали, Pages smoke был skipped. Не потерять полезные идеи из PR: composer positioning/safe-area, per-chat search/research settings, voice-menu tap/backdrop и Tavily depth; перепроверить и переносить по одному на актуальную базу.
+3. Issue #1 закрыт с reason not_planned и пояснением: это исторический GitHub Skills exercise, не дефект aLandi; закрытие не утверждает, что tutorial завершён.
 4. Для строк «уточнить» запросить точный URL только если пользователь ожидает дальнейшее исследование конкретного кандидата; до этого не внедрять.
 5. Для runtime-кандидата требовать лицензию, происхождение, resource budget, feature flag, regression/eval и rollback.
