@@ -5,7 +5,7 @@
 ## Возможности
 
 - GET /healthz, GET /v1/models, authenticated GET /v1/capabilities и POST /v1/chat/completions; JSON и SSE streaming.
-- Bearer auth, allowlist модели, CORS allowlist, проверка messages, лимит тела по умолчанию 8 MiB и bounded concurrency.
+- Bearer auth, allowlist модели, CORS allowlist, проверка messages, лимит тела по умолчанию 8 MiB и bounded concurrency; локальные ASR/TTS отклоняют конкурентную задачу HTTP 429, а не накапливают очередь.
 - Метаданные context_length в /v1/models; значение обязано совпадать с контекстом, реально настроенным для Ollama.
 - Prompts не пишутся в логи; upstream errors не раскрывают raw body.
 
