@@ -25,3 +25,19 @@
 - Record what was actually tested. A green GitHub Pages deployment is not proof that a live VPS/Tunnel was deployed.
 - Update user-facing runbook and troubleshooting alongside operational code.
 - No git reset --hard; do not overwrite unknown user changes.
+
+
+## Fast entry point / first-read protocol (2026-10-27)
+
+Before any aLandi task:
+1. Read `project-reference/FILE_ORIENTER_RU.md` first; it is the canonical navigation index.
+2. Read `docs/PROJECT_STATE.yaml` and verify live GitHub `main`, open PRs and issues; stored SHAs and queue counts are checkpoints, not live truth.
+3. Read only the task-relevant source files, tests, and applicable architecture/security docs.
+4. After each meaningful stage, update the orienter checkpoint, `docs/PROJECT_STATE.yaml`, and `docs/VOLLEY_LOG.md`; record what was verified, exact SHA/PR, test evidence, blockers, rollback and next action.
+5. Never leave a PR/issue untriaged. Merge only when current-head checks pass and change is safe; close stale/failed PRs with a clear reason and preserve useful ideas as small follow-up tasks. Do not close issues merely to clear the queue.
+
+## Graph/navigation tools
+- Code/dependency graph is distinct from the product's experimental memory graph.
+- Graphify is a dev-only pilot, not a runtime dependency. It has not run in the prior checkpoint because the execution container could not resolve github.com. Retry only in a network-enabled isolated checkout; record command, version, generated files, languages/coverage, limitations, and whether the graph materially improves navigation.
+- Do not commit generated graph artifacts or add runtime dependencies unless measured benefit is clear.
+- GitIngest = text snapshot; GitMCP = MCP access to a specific upstream; GitReverse = synthetic repository prompt. These are not interchangeable.
