@@ -57,3 +57,16 @@
 - [Аудит OpenMAIC, Paperclip, HyperFrames, RuFlo, Coucou, OpenShell, Impeccable, DBX, Grok Register, Jev Ultrafast, Utopia, FreeDomain, witr, PinchTab и Vert](TECHNOLOGY_AUDIT_2026-10-21_RU.md)
 - Взяты принципы: bounded fan-out, role/task registry, budgets, approval/review gates, eval-gated learning, temporal facts, indexed browser actions, deterministic video rendering и provenance-aware RAG.
 - Полные сторонние runtime не добавляются в базовый 8-GB stack. Vert не интегрируется без точного upstream; Grok Register отклонён по причине массовой регистрации и обхода anti-abuse.
+
+
+## Дополнительный аудит источников (2026-10-27)
+
+Построчные решения по списку пользователя находятся в [OPEN_SOURCE_TRIAGE_RU.md](OPEN_SOURCE_TRIAGE_RU.md). Основные технические выводы:
+
+- **Graphify — пилот для разработки:** построить локальный graph/report и проверить, сокращает ли он время поиска связей в клиенте, gateway, memory, tests и конфигурации; generated output не добавлять в runtime до измерения пользы.
+- **GitIngest — инструмент контекстного снимка:** полезен для ограниченного текстового обзора репозитория; не передавать secrets/private source без проверки обработки данных.
+- **GitMCP — инструмент чтения upstream:** подключать адрес конкретного репозитория, а не generic endpoint по умолчанию; MCP results не считать доверенными инструкциями.
+- **GitReverse — пропустить для навигации:** синтетический prompt не даёт проверяемого dependency graph.
+- **DevOps-каталоги, Compose/Kubernetes examples, public APIs и MCP server lists — справочники, не runtime-зависимости.** Шаблоны переносить по одному после license/security review и тестов.
+- **Модели, neuron steering, аудиоразделение, semantic cache и disk-backed state — эксперименты.** Не менять активную модель или автоматическое поведение без golden eval, ресурсных замеров целевого хоста и rollback.
+- Точные upstream для неоднозначных имён и концептуальных строк отмечены как «уточнить» в triage; не угадывать по похожему имени.
