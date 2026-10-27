@@ -75,8 +75,11 @@ def test_speech_runs_documented_local_piper_cli_and_returns_wav(tmp_path, monkey
         assert args[:3] == (binary, "-m", "piper")
         assert "-m" in args and VOICE in args
         assert "--data-dir" in args and str(tmp_path) in args
-        assert "--" in args and args[args.index("--") + 1] == "Hello local world"
-        captured["text"] = args[args.index("--") + 1]
+        assert "--input-file" in args
+        input_path = args[args.index("--input-file") + 1]
+        with open(input_path, "r", encoding="utf-8") as text_file:
+            captured["text"] = text_file.read()
+        assert captured["text"] == "Hello local world"
         output_path = args[args.index("-f") + 1]
         wav = b"RIFF" + (36).to_bytes(4, "little") + b"WAVE" + bytes(32)
         with open(output_path, "wb") as output:
