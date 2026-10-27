@@ -3730,8 +3730,76 @@ permalink: /
     let activeVoiceChunks = [];
     let voiceRecordingLimitTimer = null;
     let discardVoiceRecording = false;
+    let voiceConversationActive = false;
+    let voiceConversationGeneration = 0;
+    let voiceConversationBaseUrl = '';
+    let voiceConversationApiKey = '';
+    let voiceConversationTurnInFlight = false;
+    let activeVoiceTranscriptionController = null;
 
-    async function startVoiceMessageRecording() {
+    function voiceConversationRouteStillSelected() {
+      return voiceConversationActive && currentProvider()==='alandi'
+        && getConfiguredAlandiGatewayBaseUrl()===voiceConversationBaseUrl
+        && getConfiguredApiKey()===voiceConversationApiKey;
+    }
+
+    async function startVoiceConversation() {
+      if(voiceConversationActive)return;
+      if(currentProvider()!=='alandi') {
+        showToast('Голосовой диалог работает только через собственный aLandi gateway.','error');return;
+      }
+      const baseUrl=getConfiguredAlandiGatewayBaseUrl(),key=getConfiguredApiKey();
+      if(!baseUrl||!key){showToast('Сначала настрой адрес и ключ собственного gateway.','error');toggleSettings(true);return;}
+      try {
+        const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),8000);
+        let response;
+        try { response=await fetch(baseUrl+'/capabilities',{headers:{'Authorization':'Bearer '+key},cache:'no-store',signal:controller.signal}); }
+        finally { clearTimeout(timeout); }
+        const capabilities=await response.json().catch(()=>({}));
+        if(!response.ok)throw new Error(capabilities?.detail||'Не удалось проверить возможности gateway.');
+        if(capabilities?.audio?.transcription!==true||capabilities?.audio?.speech!==true) {
+          showToast('Для голосового диалога включи локальные ASR и TTS на gateway.','error');return;
+        }
+        if(currentProvider()!=='alandi'||getConfiguredAlandiGatewayBaseUrl()!==baseUrl||getConfiguredApiKey()!==key) {
+          showToast('Настройки gateway изменились. Проверь маршрут и начни диалог снова.','error');return;
+        }
+        voiceConversationActive=true;
+        voiceConversationGeneration+=1;
+        voiceConversationBaseUrl=baseUrl;
+        voiceConversationApiKey=key;
+        $('voiceMenu').classList.add('hidden');
+        $('voiceRecordingPanel').classList.remove('hidden');
+        $('voiceRecordingActions').classList.remove('hidden');
+        $('stopVoiceConversationBtn').classList.remove('hidden');
+        $('voiceRecordingStatus').textContent='Подключаю микрофон…';
+        showToast('Голосовой диалог запущен. Останови запись после каждой реплики; ответ будет озвучен локально.');
+        await startVoiceMessageRecording({voiceConversation:true});
+        if(voiceConversationActive&&!activeVoiceRecorder)stopVoiceConversation(false);
+      } catch(error) {
+        showToast(error?.name==='AbortError'?'Проверка голосовых возможностей превысила лимит времени.':String(error.message||'Не удалось запустить голосовой диалог.'),'error');
+      }
+    }
+
+    function stopVoiceConversation(showMessage=true) {
+      const wasActive=voiceConversationActive;
+      voiceConversationActive=false;
+      voiceConversationGeneration+=1;
+      voiceConversationTurnInFlight=false;
+      if(activeVoiceTranscriptionController){activeVoiceTranscriptionController.abort();activeVoiceTranscriptionController=null;}
+      if(activeController&&wasActive)activeController.abort();
+      if(activeVoiceRecorder)stopVoiceMessageRecording(true);
+      if(activeVoiceStream)activeVoiceStream.getTracks().forEach(track=>track.stop());
+      activeVoiceStream=null;
+      voiceConversationBaseUrl='';
+      voiceConversationApiKey='';
+      $('voiceRecordingPanel').classList.add('hidden');
+      $('voiceRecordingActions').classList.remove('hidden');
+      $('stopVoiceConversationBtn').classList.add('hidden');
+      stopAssistantSpeech();
+      if(wasActive&&showMessage)showToast('Голосовой диалог завершён.');
+    }
+
+    async function startVoiceMessageRecording({voiceConversation=false}={}) {
       if (activeVoiceRecorder) return;
       if (currentProvider() !== 'alandi') {
         showToast('Для приватной локальной расшифровки сначала выбери собственный aLandi gateway.', 'error');
@@ -3746,6 +3814,8 @@ permalink: /
         toggleSettings(true);
         return;
       }
+      if(voiceConversation&&(!voiceConversationRouteStillSelected()))return;
+      const conversationGeneration=voiceConversationGeneration;
       if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') {
         showToast('Этот браузер не поддерживает запись аудио. Попробуй актуальную версию браузера.', 'error');
         return;
@@ -3758,6 +3828,9 @@ permalink: /
           ? 'Нет разрешения на микрофон. Разреши доступ в настройках браузера и попробуй снова.'
           : 'Не удалось открыть микрофон. Проверь подключение устройства и разрешения.', 'error');
         return;
+      }
+      if(voiceConversation&&(!voiceConversationActive||conversationGeneration!==voiceConversationGeneration||!voiceConversationRouteStillSelected())) {
+        stream.getTracks().forEach(track=>track.stop());return;
       }
       try {
         const preferred = ['audio/webm;codecs=opus', 'audio/ogg;codecs=opus', 'audio/mp4'];
