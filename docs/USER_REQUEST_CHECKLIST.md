@@ -222,3 +222,12 @@
 - [x] PR #35 was merged at `23add2547a69df877b4baf213957827aa2e8e561`; PR-head run #418 passed all quality gates, 48 Chromium E2E tests and published-site browser smoke. [x] Post-merge main checkpoint `4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e` passed Quality workflow #420, live-site Chromium smoke, Pages deployment #122 and provenance gate #159.
 - [ ] Real device verification: touch long-press/cancel, mobile keyboard focus/viewport reset, screen reader flow, and large file handling.
 - [ ] Implement real file intake pipeline for PDF/DOCX/XLSX/OCR/audio/video metadata before claiming all formats are supported.
+
+
+## Supplement — local helper memory suggestions (2026-10-27)
+
+- [~] Add a manual, bounded local-model flow to propose compact project-memory facts. Implementation is on feat/local-helper-memory-suggestions-current-main-20261027; exact-head CI pending.
+- [~] Keep it disabled when ALANDI_HELPER_MODEL is blank; use only the operator-configured local Ollama tag; share inference concurrency; unload helper after request.
+- [~] Filter common secret-like input/output patterns and require an explicit click for every saved candidate.
+- [ ] Pass exact-head gateway tests, all Quality Sentinels, Chromium E2E, published-site smoke and provenance.
+- [ ] After merge, update the checkpoint with exact merge SHA and post-merge results; real VPS inference, model quality, RAM and latency remain separately unverified.
