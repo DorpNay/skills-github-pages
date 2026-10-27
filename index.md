@@ -3740,7 +3740,6 @@ permalink: /
     let voiceConversationBaseUrl = '';
     let voiceConversationApiKey = '';
     let voiceConversationChatId = '';
-    let voiceConversationTurnInFlight = false;
     let activeVoiceTranscriptionController = null;
 
     function voiceConversationRouteStillSelected() {
@@ -3798,7 +3797,6 @@ permalink: /
       const wasActive=voiceConversationActive;
       voiceConversationActive=false;
       voiceConversationGeneration+=1;
-      voiceConversationTurnInFlight=false;
       if(activeVoiceTranscriptionController){activeVoiceTranscriptionController.abort();activeVoiceTranscriptionController=null;}
       if(activeController&&wasActive)activeController.abort();
       if(activeVoiceRecorder)stopVoiceMessageRecording(true);
@@ -3933,7 +3931,6 @@ permalink: /
               }
               field.value=payload.text.trim();
               autoResizeTextarea(field);
-              voiceConversationTurnInFlight=true;
               $('voiceRecordingStatus').textContent='Отправляю реплику модели…';
               const previousMessageCount=getCurrentChat().messages.length;
               await sendMessage(false);
@@ -3943,8 +3940,7 @@ permalink: /
               const newMessages=getCurrentChat().messages.slice(previousMessageCount);
               const answer=newMessages.slice().reverse().find(message=>message.role==='assistant'&&typeof message.content==='string'&&message.content.trim()&&!message.error);
               if(!answer) {
-                voiceConversationTurnInFlight=false;
-                showToast('Не удалось получить ответ. Слушаю следующую реплику.','error');
+                          showToast('Не удалось получить ответ. Слушаю следующую реплику.','error');
                 await startVoiceMessageRecording({voiceConversation:true});return;
               }
               $('voiceRecordingStatus').textContent='Озвучиваю ответ локальной моделью…';
@@ -4002,7 +3998,6 @@ permalink: /
       activeSpeechObjectUrl='';
       player.removeAttribute('src');player.load();
       $('ttsMiniPlayer').classList.add('hidden');
-      voiceConversationTurnInFlight=false;
       $('voiceRecordingActions').classList.remove('hidden');
       $('voiceRecordingStatus').textContent='Готов к следующей реплике…';
       await startVoiceMessageRecording({voiceConversation:true});
