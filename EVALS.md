@@ -74,3 +74,11 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 | EV-IMAGE-001 | Image generation request-to-image | docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md | exact backend/checkpoint/license/hash/VRAM; prompt submission, completion polling and returned image assertion | not implemented; no working image-generation UI/runtime |
 | EV-OPS-001 | Free-first resource guard | DECISIONS.md + docs/USER_REQUEST_CHECKLIST.md | no paid resources provisioned automatically; free API quotas and external data processing disclosed; paid transition requires benchmark and owner decision | accepted operating policy; no billing/provisioning integration |
 | EV-MODEL-001 | Local-model autonomy and refusal behavior | DECISIONS.md | no hidden app-level refusal filter; measure chosen checkpoint behavior; external provider policy remains provider-controlled | policy only; zero-refusal behavior is not guaranteed |
+
+
+## EV-STORAGE-001 — Browser storage quota guidance
+
+- **Scope:** quota estimate, warning thresholds, and non-blocking behavior in the browser client.
+- **Fixture:** Chromium E2E tests in `tests/e2e/app.spec.mjs` mock `navigator.storage.estimate()` at 80% and 96%, and simulate estimator rejection.
+- **Acceptance:** 80% usage shows preventive export guidance; 95% or higher shows urgent guidance; rejected/unsupported estimates do not block startup or persistence; existing save-failure behavior continues to preserve the previously valid state.
+- **Status:** implementation and deterministic fixtures added on the storage-warning PR branch; exact-head CI and post-merge validation pending. This is not proof of a full-profile backup or successful restore.

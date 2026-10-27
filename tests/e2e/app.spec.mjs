@@ -1615,3 +1615,41 @@ test('image attachment is sent as multimodal content without persisting image by
   const stored=await page.evaluate(()=>localStorage.getItem('ai_chats_v87')||'');
   expect(stored).not.toContain('data:image/png;base64,');
 });
+
+
+test('warns before browser storage reaches the critical quota threshold', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(window.navigator, 'storage', {
+      configurable: true,
+      value: { estimate: async () => ({ usage: 80, quota: 100 }) }
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#toast')).toContainText('Хранилище сайта заполнено на 80%');
+  await expect(page.locator('#toast')).toContainText('экспортировать чаты');
+});
+
+test('gives urgent export guidance at 95% storage use', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(window.navigator, 'storage', {
+      configurable: true,
+      value: { estimate: async () => ({ usage: 96, quota: 100 }) }
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#toast')).toContainText('Хранилище сайта почти заполнено (96%)');
+  await expect(page.locator('#toast')).toContainText('Не очищай данные сайта до экспорта');
+});
+
+test('storage estimate failures do not block app startup or persistence', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(window.navigator, 'storage', {
+      configurable: true,
+      value: { estimate: async () => { throw new Error('estimate unavailable'); } }
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#chatBox')).toBeVisible();
+  await expect(page.locator('#userInput')).toBeEditable();
+  await expect(page.locator('#toast')).not.toContainText('Хранилище сайта');
+});
