@@ -3734,11 +3734,13 @@ permalink: /
     let voiceConversationGeneration = 0;
     let voiceConversationBaseUrl = '';
     let voiceConversationApiKey = '';
+    let voiceConversationChatId = '';
     let voiceConversationTurnInFlight = false;
     let activeVoiceTranscriptionController = null;
 
     function voiceConversationRouteStillSelected() {
       return voiceConversationActive && currentProvider()==='alandi'
+        && currentChatId===voiceConversationChatId
         && getConfiguredAlandiGatewayBaseUrl()===voiceConversationBaseUrl
         && getConfiguredApiKey()===voiceConversationApiKey;
     }
@@ -3767,6 +3769,7 @@ permalink: /
         voiceConversationGeneration+=1;
         voiceConversationBaseUrl=baseUrl;
         voiceConversationApiKey=key;
+        voiceConversationChatId=currentChatId;
         $('voiceMenu').classList.add('hidden');
         $('voiceRecordingPanel').classList.remove('hidden');
         $('voiceRecordingActions').classList.remove('hidden');
@@ -3792,6 +3795,7 @@ permalink: /
       activeVoiceStream=null;
       voiceConversationBaseUrl='';
       voiceConversationApiKey='';
+      voiceConversationChatId='';
       $('voiceRecordingPanel').classList.add('hidden');
       $('voiceRecordingActions').classList.remove('hidden');
       $('stopVoiceConversationBtn').classList.add('hidden');
@@ -3846,20 +3850,46 @@ permalink: /
           const recorder = activeVoiceRecorder;
           const chunks = activeVoiceChunks.slice();
           const discarded = discardVoiceRecording;
+          const conversationTurn = voiceConversation;
+          const conversationGenerationForTurn = conversationGeneration;
           activeVoiceRecorder = null;
           activeVoiceChunks = [];
           if (activeVoiceStream) activeVoiceStream.getTracks().forEach(track => track.stop());
           activeVoiceStream = null;
           if (voiceRecordingLimitTimer) clearTimeout(voiceRecordingLimitTimer);
           voiceRecordingLimitTimer = null;
-          $('voiceRecordingPanel').classList.add('hidden');
-          if (discarded) return;
+          const conversationStillActive = conversationTurn && voiceConversationActive
+            && conversationGenerationForTurn === voiceConversationGeneration;
+          if (discarded) {
+            if (conversationStillActive) {
+              $('voiceRecordingStatus').textContent = 'Слушаю следующую реплику…';
+              $('voiceRecordingActions').classList.remove('hidden');
+              await startVoiceMessageRecording({voiceConversation:true});
+            }
+            return;
+          }
+          if (conversationStillActive) {
+            $('voiceRecordingStatus').textContent = 'Расшифровываю локально…';
+            $('voiceRecordingActions').classList.add('hidden');
+            $('stopVoiceConversationBtn').classList.remove('hidden');
+          } else {
+            $('voiceRecordingPanel').classList.add('hidden');
+          }
           const blob = new Blob(chunks, { type: recorder?.mimeType || chunks[0]?.type || 'audio/webm' });
-          if (!blob.size) { showToast('Запись пустая. Попробуй ещё раз.', 'error'); return; }
-          if (blob.size > 15 * 1024 * 1024) { showToast('Аудио превышает лимит 15 МБ. Запиши короткое сообщение.', 'error'); return; }
-          $('voiceRecordingStatus').textContent = 'Отправляю аудио в локальный ASR…';
+          if (!blob.size) {
+            showToast('Запись пустая. Попробуй ещё раз.', 'error');
+            if(conversationStillActive)await startVoiceMessageRecording({voiceConversation:true});
+            return;
+          }
+          if (blob.size > 15 * 1024 * 1024) {
+            showToast('Аудио превышает лимит 15 МБ. Запиши короткое сообщение.', 'error');
+            if(conversationStillActive)await startVoiceMessageRecording({voiceConversation:true});
+            return;
+          }
+          $('voiceRecordingStatus').textContent = conversationStillActive ? 'Расшифровываю локально…' : 'Отправляю аудио в локальный ASR…';
           try {
             const controller = new AbortController();
+            if(conversationStillActive)activeVoiceTranscriptionController=controller;
             const timeout = setTimeout(() => controller.abort(), 125000);
             let response;
             try {
@@ -3870,17 +3900,51 @@ permalink: /
                 cache: 'no-store',
                 signal: controller.signal
               });
-            } finally { clearTimeout(timeout); }
+            } finally {
+              clearTimeout(timeout);
+              if(activeVoiceTranscriptionController===controller)activeVoiceTranscriptionController=null;
+            }
             const payload = await response.json().catch(() => ({}));
+            if(conversationTurn&&(!voiceConversationActive||conversationGenerationForTurn!==voiceConversationGeneration))return;
             if (!response.ok) throw new Error(payload?.detail || payload?.error?.message || ('HTTP ' + response.status));
             if (typeof payload.text !== 'string' || !payload.text.trim()) throw new Error('Речь не распознана. Попробуй говорить ближе к микрофону.');
             const field = $('userInput');
+            if(conversationStillActive) {
+              if(!voiceConversationRouteStillSelected()) {
+                stopVoiceConversation(false);showToast('Маршрут изменился. Голосовой диалог остановлен, чтобы не отправить данные другому провайдеру.','error');return;
+              }
+              if(isGenerating||isPreparingDocumentAttachments) {
+                showToast('Дождись завершения текущего запроса перед следующей голосовой репликой.','error');
+                await startVoiceMessageRecording({voiceConversation:true});return;
+              }
+              field.value=payload.text.trim();
+              autoResizeTextarea(field);
+              voiceConversationTurnInFlight=true;
+              $('voiceRecordingStatus').textContent='Отправляю реплику модели…';
+              const previousMessageCount=getCurrentChat().messages.length;
+              await sendMessage(false);
+              if(!voiceConversationRouteStillSelected()) {
+                stopVoiceConversation(false);showToast('Маршрут или чат изменился. Голосовой диалог остановлен.','error');return;
+              }
+              const newMessages=getCurrentChat().messages.slice(previousMessageCount);
+              const answer=newMessages.slice().reverse().find(message=>message.role==='assistant'&&typeof message.content==='string'&&message.content.trim()&&!message.error);
+              if(!answer) {
+                voiceConversationTurnInFlight=false;
+                showToast('Не удалось получить ответ. Слушаю следующую реплику.','error');
+                await startVoiceMessageRecording({voiceConversation:true});return;
+              }
+              $('voiceRecordingStatus').textContent='Озвучиваю ответ локальной моделью…';
+              await playAssistantMessage(answer.content);
+              return;
+            }
             field.value = (field.value.trim() ? field.value.trim() + '\n\n' : '') + payload.text.trim();
             autoResizeTextarea(field);
             field.focus();
             showToast('Расшифровка готова. Проверь и отредактируй текст перед отправкой.');
           } catch (error) {
+            if(conversationTurn&&(!voiceConversationActive||conversationGenerationForTurn!==voiceConversationGeneration))return;
             showToast(error?.name === 'AbortError' ? 'Расшифровка превысила лимит времени.' : String(error.message || 'Не удалось расшифровать аудио.'), 'error');
+            if(conversationStillActive)await startVoiceMessageRecording({voiceConversation:true});
           }
         }, { once: true });
         activeVoiceRecorder.start(250);
