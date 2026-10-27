@@ -185,4 +185,9 @@ architecture_map_checkpoint:
     docs_media: "semantic pass may use configured model"
     execution: "blocked; git clone failed DNS resolution for github.com"
     runtime_dependency: false
-  next: "verify post-merge checks; run code-only Graphify pilot in network-enabled isolated checkout; choose one bounded implementation with tests"
+  next: "verify PR #66 checks; run code-only Graphify pilot in network-enabled isolated checkout and verify ignore behavior; choose one bounded implementation with tests"
+
+graphify_exclusions:
+  file: ".graphifyignore"
+  status: "added in PR #66; actual Graphify interpretation not yet tested"
+  intended_exclusions: "env/secrets, databases, generated outputs, dependencies, model/media weights"
