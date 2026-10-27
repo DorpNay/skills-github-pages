@@ -272,6 +272,14 @@ permalink: /
       #inputArea { gap:.4rem!important; }
       #sendBtn,#stopBtn { padding:.7rem .8rem!important; }
     }
+      .message-actions{display:flex;align-items:center;gap:6px;margin-top:1px;min-height:28px;opacity:.9}
+    .message-actions button{min-width:32px;min-height:30px;padding:4px 8px;border:1px solid var(--ui-border);border-radius:9px;color:var(--ui-text-muted);background:var(--ui-surface-raised);font-size:13px}
+    .message-actions button:hover{color:var(--ui-tiffany);border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft)}
+    .message-viewer-surface{background:var(--ui-surface);border:1px solid var(--ui-border);box-shadow:0 24px 80px rgb(0 0 0 / 50%);color:var(--ui-text)}
+    .message-viewer-content{min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain;user-select:text;-webkit-user-select:text;overflow-wrap:anywhere;white-space:normal;padding:8px 4px 16px;line-height:1.65;font-size:14px;color:var(--ui-text)}
+    .message-viewer-content pre,.message-viewer-content table{max-width:100%;overflow:auto}
+    .message-viewer-content .plain-message{white-space:pre-wrap;overflow-wrap:anywhere;user-select:text;-webkit-user-select:text}
+    .jump-to-latest{position:fixed;z-index:35;right:14px;bottom:max(calc(env(safe-area-inset-bottom) + 6.5rem),6.5rem);min-width:42px;min-height:42px;border-radius:14px;border:1px solid color-mix(in srgb,var(--ui-tiffany) 42%,var(--ui-border));background:var(--ui-surface-raised);color:var(--ui-tiffany);font-size:24px;box-shadow:0 5px 22px rgb(0 0 0 / 24%)}
   </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
@@ -554,6 +562,16 @@ permalink: /
     <audio id="ttsAudioPlayer" class="w-full" controls preload="none"></audio>
   </div>
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+  <button id="jumpToLatest" type="button" data-action="jump-to-latest" class="jump-to-latest hidden" aria-label="Перейти к последнему сообщению" title="В конец чата">↓</button>
+  <div id="messageViewerModal" class="hidden fixed inset-0 z-[86] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="messageViewerTitle">
+    <section class="message-viewer-surface w-full max-w-4xl max-h-[92dvh] rounded-2xl p-3 sm:p-5 flex flex-col">
+      <header class="flex items-center gap-3 border-b border-gray-700 pb-3 mb-3 shrink-0">
+        <button type="button" data-action="close-message-viewer" class="rounded-xl border px-3 py-2 text-xl" aria-label="Вернуться в чат" title="Вернуться в чат">←</button>
+        <div class="min-w-0"><h2 id="messageViewerTitle" class="font-semibold text-base">Сообщение</h2><p id="messageViewerRole" class="text-xs text-gray-400"></p></div>
+      </header>
+      <div id="messageViewerContent" class="message-viewer-content" tabindex="0" aria-label="Полный текст сообщения"></div>
+    </section>
+  </div>
   <div id="chatActionModal" class="hidden fixed inset-0 z-[85] bg-black/65 p-4 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="chatActionTitle" aria-describedby="chatActionHelp">
     <section class="chat-action-dialog w-full max-w-sm rounded-2xl p-4 sm:p-5 space-y-4">
       <header class="flex items-center justify-between gap-3"><h2 id="chatActionTitle" class="font-semibold text-base">Действие с чатом</h2><button type="button" data-action="chat-action-cancel" class="rounded-lg px-2.5 py-2" aria-label="Закрыть">✕</button></header>
@@ -1378,6 +1396,40 @@ permalink: /
       const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 150;
       if (force || nearBottom) requestAnimationFrame(() => box.scrollTo({ top: box.scrollHeight, behavior: 'auto' }));
     }
+    function messageTextForCopy(message) {
+      if (!message || typeof message !== 'object') return '';
+      if (typeof message.content === 'string') return message.content;
+      if (Array.isArray(message.content)) return message.content.map(part =>
+        typeof part === 'string' ? part :
+        (part?.type === 'text' && typeof part.text === 'string' ? part.text :
+        (part?.type === 'image_url' ? '[Изображение]' : ''))
+      ).filter(Boolean).join('\n');
+      return '';
+    }
+    function showMessageViewer(role, text) {
+      if (!['user', 'assistant'].includes(role) || typeof text !== 'string') return;
+      const en = getUiLanguage() === 'en';
+      $('messageViewerTitle').textContent = en ? (role === 'user' ? 'Your message' : 'Assistant message') : (role === 'user' ? 'Твоё сообщение' : 'Ответ aLandi');
+      $('messageViewerRole').textContent = en ? (role === 'user' ? 'User' : 'Assistant') : (role === 'user' ? 'Пользователь' : 'Ассистент');
+      const target = $('messageViewerContent');
+      target.replaceChildren();
+      if (role === 'user') {
+        const plain = document.createElement('div');
+        plain.className = 'plain-message';
+        plain.textContent = text;
+        target.appendChild(plain);
+      } else {
+        target.innerHTML = safeMarkdown(text);
+      }
+      $('messageViewerModal').classList.remove('hidden');
+      requestAnimationFrame(() => target.focus({ preventScroll: true }));
+    }
+    function updateJumpToLatest() {
+      const box = $('chatBox'), button = $('jumpToLatest');
+      if (!box || !button) return;
+      const distance = box.scrollHeight - box.scrollTop - box.clientHeight;
+      button.classList.toggle('hidden', distance < 220 || box.scrollHeight <= box.clientHeight + 40);
+    }
     function renderMessage(message) {
       const isUser = message.role === 'user';
       const row = document.createElement('div');
@@ -1388,7 +1440,7 @@ permalink: /
         : 'assistant-content bg-gray-800 text-gray-100 px-3 py-2.5 rounded-xl rounded-tl-sm max-w-[96%] border border-gray-700'}`;
 
       if (message.role === 'tool') return row;
-      if (isUser) bubble.textContent = message.content || '';
+      if (isUser) bubble.textContent = messageTextForCopy(message);
       else {
         if (Array.isArray(message.tool_calls) && message.tool_calls.length) {
           const indicator = document.createElement('div');
@@ -1401,20 +1453,30 @@ permalink: /
         bubble.appendChild(content);
       }
       row.appendChild(bubble);
-      if (!isUser && typeof message.content === 'string' && message.content.trim()) {
-        row.className += ' flex-col items-start';
+      const messageActionText = messageTextForCopy(message);
+      if (messageActionText.trim() && (isUser || typeof message.content === 'string')) {
+        row.className += isUser ? ' flex-col items-end' : ' flex-col items-start';
         const actions = document.createElement('div');
         actions.className = 'message-actions flex flex-wrap items-center gap-2 mt-1';
         const copy = document.createElement('button');
-        copy.type = 'button'; copy.dataset.action = 'copy-message'; copy.dataset.messageText = message.content;
+        copy.type = 'button'; copy.dataset.action = 'copy-message'; copy.dataset.messageText = messageActionText;
         copy.className = 'text-xs text-gray-400 hover:text-gray-100 px-1.5 py-1 rounded-md';
         copy.textContent = getUiLanguage() === 'en' ? 'Copy' : 'Копировать';
-        const speak = document.createElement('button');
-        speak.type = 'button'; speak.dataset.action = 'speak-message'; speak.dataset.messageText = message.content;
-        speak.className = 'text-xs text-cyan-300 hover:text-cyan-100 px-1.5 py-1 rounded-md';
-        speak.textContent = getUiLanguage() === 'en' ? '🔊 Read aloud' : '🔊 Озвучить';
-        speak.title = getUiLanguage() === 'en' ? 'Generate speech with your configured local TTS model' : 'Создать речь локальной TTS-моделью на твоём gateway';
-        actions.append(copy, speak);
+        copy.setAttribute('aria-label', getUiLanguage() === 'en' ? 'Copy message' : 'Скопировать сообщение');
+        const view = document.createElement('button');
+        view.type = 'button'; view.dataset.action = 'view-message'; view.dataset.messageRole = message.role; view.dataset.messageText = messageActionText;
+        view.className = 'text-xs text-gray-400 hover:text-gray-100 px-1.5 py-1 rounded-md';
+        view.textContent = getUiLanguage() === 'en' ? 'Read full message' : 'Открыть целиком';
+        view.setAttribute('aria-label', getUiLanguage() === 'en' ? 'Open readable message view' : 'Открыть полный текст сообщения');
+        actions.append(copy, view);
+        if (!isUser) {
+          const speak = document.createElement('button');
+          speak.type = 'button'; speak.dataset.action = 'speak-message'; speak.dataset.messageText = messageActionText;
+          speak.className = 'text-xs text-cyan-300 hover:text-cyan-100 px-1.5 py-1 rounded-md';
+          speak.textContent = getUiLanguage() === 'en' ? '🔊 Read aloud' : '🔊 Озвучить';
+          speak.title = getUiLanguage() === 'en' ? 'Generate speech with your configured local TTS model' : 'Создать речь локальной TTS-моделью на твоём gateway';
+          actions.appendChild(speak);
+        }
         row.appendChild(actions);
       }
       if (!isUser && message.providerInfo) { const meta=document.createElement('div'); meta.className='message-model-meta'; const r=message.providerInfo; meta.textContent=(r.providerLabel||r.provider||'Провайдер неизвестен')+' · '+(r.model||'модель не указана')+(r.requestedModel&&r.requestedModel!==r.model?' (запрошена '+r.requestedModel+')':'')+(r.provider==='alandi'&&r.cacheStatus?' · кэш '+r.cacheStatus:''); row.className+=' flex-col items-start'; row.appendChild(meta); }
@@ -1445,7 +1507,9 @@ permalink: /
         const welcome = document.createElement('div');
         welcome.className = 'text-center text-gray-500 mt-10';
         welcome.textContent = getUiLanguage()==='en' ? 'Welcome. Connect aLandi Cloud or choose an API provider in settings.' : 'Привет! Подключи aLandi Cloud или выбери провайдера в настройках.';
-        box.appendChild(welcome); return;
+        box.appendChild(welcome);
+        updateJumpToLatest();
+        return;
       }
       const fragment = document.createDocumentFragment();
       chat.messages.forEach((message) => {
@@ -1455,6 +1519,7 @@ permalink: /
       });
       box.appendChild(fragment);
       scrollToBottom(true);
+      requestAnimationFrame(updateJumpToLatest);
     }
     function loadProjects(){
       try{
@@ -3637,10 +3702,18 @@ permalink: /
     }
 
     async function copyText(text) {
-      if (navigator.clipboard?.writeText && window.isSecureContext) return navigator.clipboard.writeText(text);
-      const area = document.createElement('textarea'); area.value = text;
-      area.style.position = 'fixed'; area.style.opacity = '0'; document.body.appendChild(area); area.select();
-      const ok = document.execCommand('copy'); area.remove();
+      if (navigator.clipboard?.writeText && window.isSecureContext) {
+        try { await navigator.clipboard.writeText(text); return; }
+        catch (error) { console.warn('Clipboard API недоступен; пробую резервное копирование.', error); }
+      }
+      const area = document.createElement('textarea');
+      area.value = text;
+      area.setAttribute('readonly', '');
+      area.style.position = 'fixed'; area.style.opacity = '0'; area.style.pointerEvents = 'none';
+      document.body.appendChild(area); area.select();
+      let ok = false;
+      try { ok = document.execCommand('copy'); }
+      finally { area.remove(); }
       if (!ok) throw new Error('Браузер не разрешил копирование.');
     }
     let activeTrace = null;
@@ -4049,7 +4122,7 @@ permalink: /
         const isCodeAction = ['copy-code','download-code','run-python'].includes(action) && control.classList.contains('code-action') && control.closest('.code-block');
         const isRetryAction = action === 'retry' && control.classList.contains('retry-action');
         const isTraceAction = ['open-trace','copy-trace-link','download-trace','download-trace-json','close-trace'].includes(action);
-        const isMessageAction = ['copy-message','speak-message'].includes(action);
+        const isMessageAction = ['copy-message','speak-message','view-message'].includes(action);
         if (!isCodeAction && !isRetryAction && !isTraceAction && !isMessageAction) return;
       }
       try {
@@ -4099,6 +4172,9 @@ permalink: /
           case 'voice-chat-preview': $('voiceMenu').classList.add('hidden');showToast(getUiLanguage()==='en'?'Live voice chat is not connected yet.':'Живой голосовой диалог пока не подключён.');break;
           case 'voice-message-preview': await startVoiceMessageRecording(); break;
           case 'copy-message': await copyText(control.dataset.messageText || ''); showToast(getUiLanguage()==='en'?'Message copied.':'Сообщение скопировано.'); break;
+          case 'view-message': showMessageViewer(control.dataset.messageRole, control.dataset.messageText || ''); break;
+          case 'close-message-viewer': $('messageViewerModal').classList.add('hidden'); break;
+          case 'jump-to-latest': $('chatBox').scrollTo({top:$('chatBox').scrollHeight,behavior:document.documentElement.dataset.motion==='off'?'auto':'smooth'}); requestAnimationFrame(updateJumpToLatest); break;
           case 'speak-message': await playAssistantMessage(control.dataset.messageText || ''); break;
           case 'stop-speech': stopAssistantSpeech(); break;
           case 'stop-voice-recording': stopVoiceMessageRecording(false); break;
@@ -4259,6 +4335,10 @@ permalink: /
     async function init() {
       const pollinationsAuthMessage=await finishPollinationsOAuth();
       initializeSettings();
+      $('chatBox').addEventListener('scroll', updateJumpToLatest, { passive: true });
+      $('messageViewerModal').addEventListener('click', event => {
+        if (event.target === $('messageViewerModal')) $('messageViewerModal').classList.add('hidden');
+      });
       updateClockFace();if(clockTimer)clearInterval(clockTimer);clockTimer=setInterval(updateClockFace,1000);
       if(pollinationsAuthMessage) showToast(pollinationsAuthMessage,pollinationsAuthMessage.startsWith('Pollinations подключён')?'success':'error');
       if (!chatRecoveryBackupKey) {
