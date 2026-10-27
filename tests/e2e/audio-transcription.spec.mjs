@@ -94,3 +94,48 @@ test('assistant message offers copy and local TTS controls with a mini-player', 
   await page.locator('#ttsMiniPlayer [data-action="stop-speech"]').click();
   await expect(page.locator('#ttsMiniPlayer')).toBeHidden();
 });
+
+
+test('stopping local TTS cancels generation and prevents late playback', async ({ page }) => {
+  await page.addInitScript(() => {
+    const originalFetch = window.fetch.bind(window);
+    window.fetch = (input, init = {}) => {
+      if (String(input).endsWith('/audio/speech')) {
+        return new Promise((resolve, reject) => {
+          const abort = () => reject(new DOMException('Aborted', 'AbortError'));
+          if (init.signal?.aborted) abort();
+          else init.signal?.addEventListener('abort', abort, { once: true });
+        });
+      }
+      return originalFetch(input, init);
+    };
+  });
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'e2e-model' }] })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ model: 'e2e-model', choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: 'A response whose speech will be cancelled.' } }] })
+  }));
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#legacyProviderSettings > summary').click();
+  }
+  await page.locator('#providerPreset').selectOption('alandi');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('e2e-model');
+  await page.locator('#apiKey').fill('x'.repeat(64));
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('Test cancellation.');
+  await page.locator('#sendBtn').click();
+  const assistant = page.locator('#chatBox .assistant-content').filter({ hasText: 'A response whose speech will be cancelled.' });
+  await expect(assistant).toBeVisible();
+  await page.locator('#chatBox [data-action="speak-message"]').last().click();
+  await expect(page.locator('#ttsMiniPlayerStatus')).toContainText('Генерирую речь');
+  await page.locator('#ttsMiniPlayer [data-action="stop-speech"]').click();
+  await expect(page.locator('#ttsMiniPlayer')).toBeHidden();
+  await expect(page.locator('#ttsAudioPlayer')).not.toHaveAttribute('src', /^blob:/);
+  await expect(page.locator('#toast')).toBeHidden();
+});
