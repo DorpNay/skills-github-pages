@@ -77,4 +77,4 @@
 - Назначение: dev-only code navigation/cross-file graph; не runtime feature.
 - Основание: upstream README/quickstart/pyproject.toml; Apache-2.0, package `graphifyy`, CLI `graphify`, Python >=3.10; local tree-sitter parsing for code; semantic pass for docs/media may use a model.
 - Риски: substantial dependency footprint, fast-moving release, model usage for docs/media, stale generated output. Pin version and exclude secrets/build output.
-- Решение: **pilot pending**. Local execution impossible in current container because DNS cannot resolve `github.com`; do not report graph generated or add it to runtime. See `docs/ALANDI_ARCHITECTURE_MAP_RU.md`.
+- Решение: **pilot pending**. Официальный code-only workflow уточнён: `extract --code-only` → `cluster-only --no-label` → `export html` → `query`; exclusions задаются через `.graphifyignore`, но ещё не проверены на реальном запуске. Local execution impossible in current container because DNS cannot resolve `github.com`; do not report graph generated or add it to runtime. See `docs/ALANDI_ARCHITECTURE_MAP_RU.md`.
