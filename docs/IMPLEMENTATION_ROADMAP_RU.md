@@ -116,3 +116,12 @@ PR #53 merged opt-in local transcription for audio files attached from disk; no 
 - **First slice (PR #61 merged and CI-verified):** full-text viewer and copy controls for user/assistant messages, Clipboard API failure fallback, and a jump-to-latest control. Keeps the current document/audio attachments, storage safeguards and local voice prototype rather than replacing `index.md` with the stale legacy branch. Exact-head Quality/Chromium and provenance passed; native iOS Safari/real-device behavior remains unverified.
 - **Deferred until isolated and retested:** compact mode/search/research toolbar, per-chat mode preferences, composer placement and visual-viewport handling, sidebar/popover layering, and extended search-depth controls. The legacy PR #37 currently has reproducible Playwright failures involving hidden selectors, clipboard permissions, duplicate theme controls, language selector ambiguity, and click interception; it is not safe to merge wholesale.
 - **Acceptance gate:** move one slice at a time onto current `main`, fix locators against the visible user interface rather than force-clicking hidden controls, pass current-head Chromium + published-site smoke, then close the legacy PR as superseded only after its unique accepted work has been migrated.
+
+
+## Пересмотр приоритетов по полному инженерному пакету (2026-10-27)
+
+- Полный разбор предложений записан в [ENGINEERING_PACKAGE_AUDIT_RU.md](ENGINEERING_PACKAGE_AUDIT_RU.md).
+- Первый измеримый кодовый шаг — RRF в LazyGraphRAG, поскольку текущий алгоритм складывал несопоставимые score-шкалы. Принимать только после exact-head CI и сохранения синтетического Recall@5/citations; это не доказательство качества на реальном корпусе.
+- Следующая продуктовая вертикаль — безопасное сжатие длинного контекста или 409 conflict UX. Сжатие не должно помещать недоверенное summary в system role, терять tool-call pairing или менять исходную историю; сначала feature flag off + golden/adversarial eval.
+- Не блокировать весь roadmap Graphify. Он остаётся dev-only навигационным экспериментом; PR #68 с отменённым Chromium check нужно отдельно довести до определённого решения.
+- Не повторно реализовывать уже имеющиеся exact cache, opt-in cross-provider fallback, delta-store conflict detection, runtime inventory, voice/document routes или eval runner без конкретного тестируемого пробела.
