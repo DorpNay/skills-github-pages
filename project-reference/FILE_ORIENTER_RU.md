@@ -2,7 +2,7 @@
 
 > **Первым делом в новом чате:** прочитай этот файл, затем актуальный `docs/PROJECT_STATE.yaml`, потом только конкретные файлы по текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-Последняя записанная контрольная точка перед текущим docs-only обновлением: main **1faf60164b9a0f82eb5e0c56b143ba90499be4a5** (PR #66 merged). При старте всегда получить live HEAD и очередь PR/Issues заново; сохранённый SHA — исторический checkpoint, не live truth.
+Подтверждённая база текущего implementation slice: main **82beb7fcddbe9a1438e811693c76bc731d3a5de3** (после post-architecture-map docs checkpoint). При старте всегда получать live HEAD и очередь PR/Issues заново; сохранённый SHA — контрольная точка, а не live truth. Короткий root-launcher: ORIENTEER.md; этот файл остаётся каноническим полным ориентиром.
 
 ## 1. Быстрый маршрут
 
@@ -115,3 +115,12 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - GitHub API queue after merge: 0 open PRs, 0 open Issues.
 - Local Graphify remains blocked by container DNS. Official code-only CLI workflow and staged-copy safeguards are documented; no CLI install/graph generation claimed.
 - Next action: verify post-merge Quality run; use network-enabled disposable workspace for actual Graphify pilot. Do not add Graphify to runtime. Then continue from prioritized roadmap with one bounded, test-backed product change.
+
+
+## Checkpoint — полный инженерный пакет / RRF (2026-10-27)
+
+- Прочитан предоставленный инженерный пакет до конца: 4 694 строки, включая части 0–4, пофайловое ревью, контекстное сжатие и полный EXECUTION_PLAN.
+- Полный технический аудит и решения: docs/ENGINEERING_PACKAGE_AUDIT_RU.md. Не переносить псевдокод автоматически: SSRF не подключается к фиксированным upstream без URL-fetcher; device fingerprint/WebCrypto не защищает от действующего XSS; Service Worker не кэширует приватные /v1-ответы; однопроцессный «speculative decoding» не является speculative decoding.
+- Первая кодовая вертикаль в ветке feat/rag-rrf-orienter-audit-20261027: заменить сложение разных шкал FTS rank и concept-graph score на RRF; добавить тесты на ranking, bounds, determinism и сохранение scope/source metadata. Feature flags/production deployment не менялись.
+- Текущая база main на старте: 82beb7fcddbe9a1438e811693c76bc731d3a5de3; на старте были открыты PR #68 (Graphify pilot workflow, Chromium job ранее cancelled) и PR #69 (local memory helper, exact-head CI ещё не найден); standalone open issues — 0.
+- Следующий шаг: открыть/проверить PR #70 и ждать его exact-head checks, после этого не зацикливаться на Graphify: проверить #69, восстановить Chromium в #68 либо закрыть с объяснением, затем продолжить с safe context compression или delta-sync conflict UX. Ни одна feature не считается deployed до отдельного VPS проверки.
