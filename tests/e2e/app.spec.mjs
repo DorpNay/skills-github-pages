@@ -1940,7 +1940,7 @@ test('mobile composer stays visible at the bottom in new chats across viewport r
   await expect(input).toHaveValue('');
   await assertDocked();
 
-  await input.fill(Array.from({ length: 8 }, (_, index) => 'Draft line ' + index).join('\\n'));
+  await input.fill(Array.from({ length: 8 }, (_, index) => 'Draft line ' + index).join('\n'));
   await page.setViewportSize({ width: 390, height: 440 });
   await expect(input).toBeVisible();
   await expect(input).toHaveValue(/Draft line 7/);
