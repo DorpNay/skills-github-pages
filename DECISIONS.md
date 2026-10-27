@@ -133,6 +133,14 @@
 - **Remaining evidence:** current-head CI, followed later by a target-host resource/file-descriptor soak and integration with real audio adapters.
 - **Rollback:** revert this helper change or leave voice callers disabled.
 
+## D-015 — Local helper for project-memory compression
+
+- **Статус:** Accepted for prototype; implementation branch awaiting exact-head CI.
+- **Решение:** разрешить только ручное предложение компактных фактов из памяти текущего проекта с операторски выбранной локальной Ollama-моделью. Браузер не задаёт имя модели, а helper не сохраняет кандидаты автоматически.
+- **Ограничения:** пустой ALANDI_HELPER_MODEL выключает маршрут; Bearer auth; input/output limits and structured JSON; common secret-like patterns filtered on both sides; same inference semaphore; keep_alive=0; no-store response; per-candidate explicit save; active project ID and duplicate recheck.
+- **Причина:** облегчает обслуживание проектной памяти без второго always-on агента и без скрытого изменения user data.
+- **Риски/rollback:** модель может предложить неточный факт; пользователь обязан проверить кандидаты. Откат — revert feature PR and leave ALANDI_HELPER_MODEL blank; no schema migration.
+
 ## Global release rules
 
 - Feature flag выключен до прохождения eval и review.
