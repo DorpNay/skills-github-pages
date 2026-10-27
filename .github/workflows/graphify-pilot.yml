@@ -1,0 +1,114 @@
+name: Graphify Code-Only Architecture Pilot
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/graphify-pilot.yml"
+      - ".graphifyignore"
+      - "docs/ALANDI_ARCHITECTURE_MAP_RU.md"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/graphify-pilot.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: graphify-pilot-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  code-only-graph:
+    name: Build disposable source graph (no model calls)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GRAPHIFY_QUERY_LOG_DISABLE: "1"
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: Checkout source without persisting credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install pinned Graphify CLI
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "graphifyy==0.9.96"
+          graphify --version
+      - name: Create a tracked-files-only staging copy
+        env:
+          STAGING: ${{ runner.temp }}/alandirepo
+        run: |
+          set -euo pipefail
+          mkdir -p "$STAGING"
+          git archive "$GITHUB_SHA" | tar -x -C "$STAGING"
+          # Defense in depth: never feed credentials, local databases, model weights,
+          # user uploads, or generated/dependency directories to the graph builder.
+          find "$STAGING" -type f \( \
+            -name '.env' -o -name '.env.*' -o \
+            -name '*.pem' -o -name '*.key' -o -name '*.p12' -o -name '*.pfx' -o \
+            -name '*.sqlite' -o -name '*.sqlite3' -o -name '*.db' -o -name '*.db-*' -o \
+            -name '*.gguf' -o -name '*.safetensors' -o -name '*.onnx' -o \
+            -name '*.pt' -o -name '*.pth' -o -name '*.wav' -o -name '*.mp3' -o \
+            -name '*.m4a' -o -name '*.mp4' -o -name '*.webm' -o -name '*.log' \
+          \) -delete
+          find "$STAGING" -type d \( \
+            -name node_modules -o -name .venv -o -name __pycache__ -o \
+            -name .cache -o -name _site -o -name dist -o -name build -o \
+            -name uploads -o -name backups -o -name user-data -o -name user_data \
+          \) -prune -exec rm -rf {} +
+          test -f "$STAGING/.graphifyignore"
+          printf 'Tracked files in source commit: '
+          git ls-tree -r --name-only "$GITHUB_SHA" | wc -l
+          printf 'Files remaining in staging: '
+          find "$STAGING" -type f | wc -l
+      - name: Extract, cluster and query the local code graph
+        env:
+          STAGING: ${{ runner.temp }}/alandirepo
+        run: |
+          set -euo pipefail
+          cd "$STAGING"
+          {
+            echo "## Graphify code-only pilot"
+            echo
+            echo "- Commit: $GITHUB_SHA"
+            echo "- Python: $(python --version)"
+            echo "- Graphify: $(graphify --version)"
+            echo "- Semantic/model processing: disabled via --code-only"
+            echo "- Git ignore override: --no-gitignore (staging copy contains tracked files only; .graphifyignore remains in place)"
+            echo
+            echo "### Extract"
+            graphify extract . --code-only --no-gitignore --timing
+            echo
+            echo "### Cluster"
+            graphify cluster-only . --no-label
+            echo
+            echo "### HTML export"
+            graphify export html
+            echo
+            echo "### Navigation query"
+            graphify query "How does a chat request reach the gateway and model provider?"
+            echo
+            echo "### Generated artifacts"
+            find graphify-out -maxdepth 1 -type f -printf '%f (%s bytes)\n' | sort
+            test -s graphify-out/graph.json
+            test -s graphify-out/GRAPH_REPORT.md
+            test -s graphify-out/graph.html
+          } 2>&1 | tee "${{ runner.temp }}/graphify-pilot-summary.txt"
+      - name: Upload graph and run report (no source checkout)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: graphify-code-only-pilot-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/alandirepo/graphify-out/
+            ${{ runner.temp }}/graphify-pilot-summary.txt
+          if-no-files-found: warn
+          retention-days: 7
