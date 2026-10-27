@@ -47,7 +47,7 @@ permalink: /
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100dvh; min-height: 0; overflow: hidden; }
     button, input, textarea { font: inherit; }
     button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; }
-    .safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), .75rem); }
+    .safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 1rem); }
     #chatBox { overscroll-behavior: contain; overflow-wrap: anywhere; }
     #userInput { line-height: 1.45; }
     .assistant-content p { margin: 0 0 .65rem; }
@@ -136,8 +136,6 @@ permalink: /
     .voice-menu-option small { display:block;font-size:10px;color:var(--ui-text-muted);margin-top:3px; }
     .voice-direction { display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--ui-border);border-radius:12px;color:var(--ui-tiffany);font-size:20px; }
     @keyframes voice-pop { from { opacity:0;transform:translateY(6px) scale(.96); } to { opacity:1;transform:translateY(0) scale(1); } }
-    body.composer-centered #chatBox { padding-bottom:160px; }
-    body.composer-bottom-transition #chatBox { padding-bottom:175px; }
     @media (prefers-reduced-motion:reduce) { .voice-menu { animation:none!important; } }
     .chat-row { position:relative; min-height:44px; }
     #composerFooter { position:relative; }
@@ -202,22 +200,20 @@ permalink: /
     .language-menu-panel button { display:block;width:100%;padding:9px 10px;border-radius:9px;text-align:left;font-size:12px; }
     .language-menu-panel button[aria-pressed="true"] { color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
     .header-chat-title { max-width:24vw; }
-    body.composer-centered footer { position:fixed;left:50%;right:auto;top:51%;bottom:auto;width:min(94vw,760px);transform:translate(-50%,-50%);z-index:25;border:1px solid var(--ui-border);border-radius:22px;padding:10px 12px;background:color-mix(in srgb,var(--ui-surface) 87%,transparent)!important;backdrop-filter:blur(24px);box-shadow:0 24px 72px rgba(0,0,0,.25),0 0 32px rgba(104,232,208,.06);transition:top 240ms cubic-bezier(.2,.7,.2,1),opacity 180ms ease,box-shadow 180ms ease; }
-    body.composer-centered footer #inputArea { align-items:center; }
-    body.composer-centered footer #userInput { max-height:min(35vh,320px);overflow-y:auto; }
-    body.composer-centered #chatBox > .text-center { display:none; }
-    body.composer-bottom-transition footer { top:auto;bottom:0;transform:translate(-50%,0); }
+    /* The composer stays in the normal flex layout at the bottom. Centering it on
+       an empty chat caused iOS keyboard resizes to move the whole input surface. */
+    #composerFooter { position:relative; flex-shrink:0; width:100%; }
+    #composerFooter #inputArea { align-items:flex-end; }
     #inputArea { transition:gap 180ms ease; }
-    #userInput { min-height:44px;max-height:min(35vh,320px); }
+    #userInput { min-height:44px;max-height:min(35vh,320px);max-height:min(35dvh,320px); }
     @media (max-width:639px) {
       .clock-face { width:46px;height:46px; }
       .clock-digital { font-size:10px; }
       .header-chat-title { max-width:22vw; }
       .brand-subtitle { font-size:8px; }
-      body.composer-centered footer { width:calc(100vw - 16px);padding:8px;border-radius:18px; }
-      body.composer-centered footer #userInput { max-height:30vh; }
+      #composerFooter { padding-left:8px;padding-right:8px; }
+      #userInput { max-height:min(30vh,240px);max-height:min(30dvh,240px); }
     }
-    @media (prefers-reduced-motion:reduce) { body.composer-centered footer { transition:none!important; } }
     #sidebar { overflow-y:auto; overscroll-behavior:contain; }
     #sidebar > :not(#chatList) { flex-shrink:0; }
     #sidebar #chatList { flex:1 0 8rem; min-height:8rem; }
@@ -1384,15 +1380,12 @@ permalink: /
       $('userInput').focus();
     }
     function autoResizeTextarea(textarea) {
+      if (!textarea) return;
       textarea.style.height = 'auto';
-      const maxHeight=Math.min(Math.max(window.innerHeight*0.34,120),320);
-      const contentHeight=textarea.scrollHeight;
-      textarea.style.height = `${Math.min(contentHeight,maxHeight)}px`;
-      if(textarea===$('userInput')){
-        document.body.classList.add('composer-centered');
-        if(getCurrentChat().messages.length||contentHeight>window.innerHeight*0.30)document.body.classList.add('composer-bottom-transition');
-        else document.body.classList.remove('composer-bottom-transition');
-      }
+      const viewportHeight = window.visualViewport?.height || window.innerHeight;
+      const maxHeight = Math.min(Math.max(viewportHeight * 0.34, 96), 320);
+      const contentHeight = textarea.scrollHeight;
+      textarea.style.height = `${Math.min(contentHeight, maxHeight)}px`;
     }
     function scrollToBottom(force = false) {
       const box = $('chatBox');
@@ -1505,8 +1498,6 @@ permalink: /
       const chat = getCurrentChat();
       $('activeChatTitle').textContent = chat.title || 'Новый чат';
       const box = $('chatBox');
-      document.body.classList.add('composer-centered');
-      document.body.classList.toggle('composer-bottom-transition',chat.messages.length>0||$('userInput').scrollHeight>window.innerHeight*0.30);
       box.replaceChildren();
       if (!chat.messages.length) {
         const welcome = document.createElement('div');
@@ -4580,10 +4571,13 @@ permalink: /
       }
     });
     if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', () => {
-        document.body.style.height = `${window.visualViewport.height}px`;
+      const syncComposerViewport = () => {
+        const viewportHeight = Math.max(240, Math.round(window.visualViewport.height));
+        document.body.style.height = `${viewportHeight}px`;
+        autoResizeTextarea($('userInput'));
         scrollToBottom(false);
-      });
+      };
+      window.visualViewport.addEventListener('resize', syncComposerViewport, { passive: true });
     }
 
     async function init() {
