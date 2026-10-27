@@ -122,3 +122,76 @@
 - «Источник решения» не означает копирование исходников.
 - Этот документ не устанавливает пакеты и не доказывает live-поведение.
 - До переноса кода проверить лицензию upstream, зависимостей и модели.
+
+
+## Проход по дополнительному списку пользователя — 2026-10-27
+
+Формат журнала: **[Название] | [статус] | [конкретный вывод]**. Статусы отражают решение по текущей архитектуре, а не рейтинг проекта. «Пилот» означает сначала проверить локально/в CI; «уточнить» — не найден однозначный upstream или не хватает данных для безопасного решения.
+
+- [Graphify](https://github.com/Graphify-Labs/graphify) | пилот | Построить локальный граф кода/документации и оценить пользу для ориентирования; не включать графогенератор в runtime.
+- [GitIngest](https://github.com/coderamp-labs/gitingest) | использовать по запросу | Получать ограниченный текстовый слепок публичного репозитория; не отправлять приватные данные/секреты в hosted-сервис.
+- [GitMCP](https://github.com/idosal/git-mcp) | использовать по запросу | Читать документы и код конкретного upstream через MCP; результаты считать недоверенными и проверять по исходному репозиторию.
+- [GitReverse](https://github.com/filiksyos/gitreverse) | пропустить для навигации | Генерирует синтетический prompt, но не заменяет граф зависимостей и проверяемую навигацию по коду.
+- [DrawDB](https://github.com/drawdb-io/drawdb) | источник решения | Использовать для ER-диаграмм при реальной задаче схемы; не добавлять отдельный runtime в aLandi.
+- [esp32-ai] | уточнить | Название неоднозначно; без точного URL нельзя подтвердить upstream, лицензию и пользу.
+- [xtool] | уточнить | Не найден однозначный проект по одному имени; не внедрять до точной ссылки.
+- [GPU unlock 1.1.1] | пропустить до идентификации | Неясны издатель, назначение и безопасность бинарного инструмента; не запускать и не загружать на сервер.
+- [ps5lm] | уточнить | Не найден однозначный upstream; не подключать неидентифицированный инструмент.
+- [PentAGI](https://github.com/vxcontrol/pentagi) | пропустить из ядра | Автономный агентный стек требует отдельного аудита полномочий и инфраструктуры; не переносить runtime.
+- [AutoGPT](https://github.com/Significant-Gravitas/AutoGPT) | источник решения | Сравнивать bounded task execution и human approval; не добавлять второй оркестратор без eval.
+- [Strix](https://github.com/usestrix/strix) | исследовать отдельно | Security testing допустим только в разрешённом тестовом контуре; не давать агенту произвольное сканирование/эксплуатацию.
+- [turnitout] | уточнить | Имя не идентифицирует надёжно конкретный репозиторий; не делать выводов по догадке.
+- [decomwtf] | уточнить | Не найден однозначный upstream; нужна точная ссылка или описание.
+- [AppFlowy](https://github.com/AppFlowy-IO/AppFlowy) | отложить | Возможен knowledge/export connector, но второй workspace не оправдан без конкретного сценария и плана синхронизации.
+- [Minimo (video)] | уточнить | Неясно, какой именно видеопроект имеется в виду; нужен URL, лицензия и use case.
+- [experiential] | уточнить | Слишком общее название для однозначной идентификации.
+- [Perplexia] | уточнить | Неоднозначные продукты с похожим названием; требуется канонический URL.
+- [Hugging Bay] | уточнить | Возможно опечатка или неофициальный ресурс; не приравнивать автоматически к Hugging Face.
+- [angkorgit] | уточнить | Не удалось однозначно установить upstream по названию; нужна ссылка.
+- [DevOps Exercises](https://github.com/bregman-arie/devops-exercises) | справочник | Использовать как учебный каталог и чек-листы; не добавлять в runtime.
+- [Awesome Compose](https://github.com/docker/awesome-compose) | справочник | Выбирать отдельные проверенные Compose-примеры для разработки; не копировать весь каталог в deployment.
+- [Starter Workflows](https://github.com/actions/starter-workflows) | использовать выборочно | Брать шаблоны GitHub Actions только после проверки permissions, pinning actions и минимальных прав.
+- [Terraform Samples] | уточнить | Название не указывает однозначный репозиторий; до URL не переносить инфраструктурный код.
+- [Kubernetes Examples](https://github.com/kubernetes/examples) | справочник | Брать отдельные примеры только при реальном переходе на Kubernetes; не вводить кластер для малого VPS.
+- [Real DevOps Projects] | уточнить | Не найден однозначный upstream по общему названию.
+- [Google Online Boutique](https://github.com/GoogleCloudPlatform/microservices-demo) | отложить | Полезен как тестовый пример распределённой системы, но чрезмерен для обычного aLandi deployment.
+- [Alertmanager](https://github.com/prometheus/alertmanager) | использовать при настройке мониторинга | Рассмотреть для маршрутизации реальных Prometheus alerts, только если появится полноценный мониторинг и on-call сценарий.
+- [Argo CD](https://github.com/argoproj/argo-cd) | отложить | GitOps полезен при наличии Kubernetes; не вводить Kubernetes/Argo CD ради одного приложения на VPS.
+- [Minikube](https://github.com/kubernetes/minikube) | dev-only | Подходит для локального обучения и smoke-тестов Kubernetes, не production runtime.
+- [SPECTRALAYERS PRO + UVR5](https://github.com/Anjok07/ultimatevocalremovergui) | кандидат на отдельный аудио-пилот | Проверить разделение источников аудио для голосового сценария; отдельно подтвердить точную модель, лицензии весов и пользу.
+- [GLM-5.3-Flash] | уточнить | Не подтверждён однозначный model card/upstream и лицензия под этим точным именем; не менять основной model route до верификации.
+- [memvid](https://github.com/memvid/memvid) | эксперимент | Проверить компактную мультимодальную архивную память на тестовом корпусе; не заменять source-linked records без теста целостности, поиска и восстановления.
+- [obra] | источник процесса при подтверждении upstream | Если имеется в виду obra/superpowers, изучить skills и TDD-workflow как dev-only; не подключать набор без аудита инструкций.
+- [opendroid] | уточнить | Имя неоднозначно; нужен канонический URL и threat model.
+- [kev] | уточнить | Не найден однозначный upstream/назначение по одному имени.
+- [kev-4b] | уточнить | Не считать модель пригодной без карточки, лицензии, размера и benchmark на целевом устройстве.
+- [paperthin] | уточнить | Не найден однозначный проект; не внедрять по названию.
+- [Apache2.0 instant wake up - aws infinity] | уточнить | Похоже на концепцию/публикацию, а не подтверждённый артефакт; нужен исходный URL и воспроизводимые замеры.
+- [STATELESS COROUTINE SLICES FLUSH TO DISK ZERO RAM WASTED] | экспериментальная гипотеза | Проверить bounded disk-backed state и crash recovery; абсолютное «zero RAM» технически неверно и не является критерием приёмки.
+- [Steering neurons L14 N8949 +1 / L13 N7956 -1 for Qwen 3.5 4B] | отложить | Не применять steering без точного checkpoint, происхождения/лицензии, воспроизводимого метода и safety/quality eval.
+- [harness learning research] | источник принципа | Принять цикл гипотеза → ограниченный probe → измерение → решение; самообучение не меняет production без review и rollback.
+- [semantic cache] | пилот | Исследовать после exact-cache baseline; обязательны scope/model/prompt version keys, privacy, TTL и eval ложных совпадений.
+- [sana] | уточнить | Название неоднозначно между моделями/проектами; нужен точный URL/model card.
+- [agent-usage-guard] | исследовать отдельно | Лимиты/учёт использования потенциально полезны, но нужен точный upstream и сравнение с текущими gateway budgets.
+- [xerj] | уточнить | Не удалось подтвердить конкретный проект по одному имени.
+- [Harper](https://github.com/Automattic/harper) | кандидат dev-tool | Проверить локальную грамматику для русско- и англоязычных чатов; не исправлять пользовательский текст автоматически без отмены и eval.
+- [vane] | уточнить | Название неоднозначно; нужен канонический URL.
+- [dessa] | уточнить | Не удалось идентифицировать однозначный upstream по названию.
+- [Cloudflare R2] | кандидат хранения | Рассматривать для object storage с шифрованием, lifecycle и тестом восстановления; R2 сам по себе не является backup-политикой.
+- [ripienaar/free-for-dev](https://github.com/ripienaar/free-for-dev) | справочник | Использовать для discovery бесплатных сервисов; проверять актуальные лимиты, privacy и условия.
+- [public-apis/public-apis](https://github.com/public-apis/public-apis) | справочник | Каталог полезен для discovery, но не allowlist; каждый endpoint требует проверки auth, privacy, CORS и стабильности.
+- [punkpeye/awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers) | справочник | Использовать для поиска MCP-инструментов; проверять владельца, разрешения, цепочку поставки и изоляцию.
+- [NaiboWang/EasySpider](https://github.com/NaiboWang/EasySpider) | отдельный browser-automation пилот | Может пригодиться для UI-задач; запускать в изолированной сессии с allowlist доменов, лимитами и подтверждением внешних действий.
+- [slee-persis/GVS5H](https://github.com/slee-persis/GVS5H) | уточнить перед исследованием | Репозиторий идентифицирован по URL из списка, но назначение, лицензия и полезный API не подтверждены; не переносить код до аудита.
+- [Open Notebook](https://github.com/lfnovo/open-notebook) | источник решения | Взять workflow коллекций источников, заметок и Q&A с citations; не встраивать вторую самостоятельную платформу.
+- [Bruno](https://github.com/usebruno/bruno) | dev-only | Git-версионируемые API-коллекции полезны для ручной проверки gateway; не добавлять в пользовательский runtime.
+- [Hugging Face Transformers](https://github.com/huggingface/transformers) | справочник/benchmark tooling | Использовать для проверки model cards, совместимости и локальных экспериментов; не тянуть библиотеку в production gateway без конкретной задачи.
+- [Cloudflare R2 / GitMCP / GitIngest / GitReverse] | разделять по назначению | R2 — object storage; GitMCP — удалённый MCP-доступ к upstream; GitIngest — текстовый snapshot; GitReverse — синтетический prompt; технологии не взаимозаменяемы.
+
+### Следующие действия после первичного triage
+
+1. Проверить Graphify локально/в изолированной рабочей копии, не добавляя generated graph и зависимости в production без подтверждённого выигрыша.
+2. Разобрать PR #37 относительно текущего main, проверить diff и актуальные CI; объединить только неперекрывающиеся полезные изменения.
+3. Проверить открытые Issues отдельно; не закрывать issue #1 автоматически, поскольку это исходная GitHub Skills exercise с историей комментариев.
+4. Для строк «уточнить» запросить точный URL только если пользователь ожидает дальнейшее исследование конкретного кандидата; до этого не внедрять.
+5. Для runtime-кандидата требовать лицензию, происхождение, resource budget, feature flag, regression/eval и rollback.
