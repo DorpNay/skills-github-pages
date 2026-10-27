@@ -1071,7 +1071,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         if not isinstance(payload, dict) or not isinstance(payload.get("text"), str):
             raise HTTPException(400, "text must be a string")
         text = payload["text"].strip()
-        if not text or len(text) > 5000 or any(ord(char) < 32 and char not in "\\n\\r\\t" for char in text):
+        if not text or len(text) > 5000 or any(ord(char) < 32 and char not in "\n\r\t" for char in text):
             raise HTTPException(400, "text must contain 1 to 5000 printable characters")
         if not os.path.isfile(config.audio_speech_binary) or not os.access(config.audio_speech_binary, os.X_OK):
             raise HTTPException(503, "Configured local TTS executable is unavailable")
