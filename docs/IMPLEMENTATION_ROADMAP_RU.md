@@ -116,3 +116,12 @@ PR #53 merged opt-in local transcription for audio files attached from disk; no 
 - **First slice (PR #61 merged and CI-verified):** full-text viewer and copy controls for user/assistant messages, Clipboard API failure fallback, and a jump-to-latest control. Keeps the current document/audio attachments, storage safeguards and local voice prototype rather than replacing `index.md` with the stale legacy branch. Exact-head Quality/Chromium and provenance passed; native iOS Safari/real-device behavior remains unverified.
 - **Deferred until isolated and retested:** compact mode/search/research toolbar, per-chat mode preferences, composer placement and visual-viewport handling, sidebar/popover layering, and extended search-depth controls. The legacy PR #37 currently has reproducible Playwright failures involving hidden selectors, clipboard permissions, duplicate theme controls, language selector ambiguity, and click interception; it is not safe to merge wholesale.
 - **Acceptance gate:** move one slice at a time onto current `main`, fix locators against the visible user interface rather than force-clicking hidden controls, pass current-head Chromium + published-site smoke, then close the legacy PR as superseded only after its unique accepted work has been migrated.
+
+
+## Дополнительный bounded vertical slice — local helper memory suggestions
+
+- **Задача:** уменьшить ручную работу по поддержанию проектной памяти, не передавая управление памятью модели.
+- **Контракт:** пользователь нажимает кнопку → UI отправляет только ограниченный набор фактов выбранного проекта в настроенный aLandi gateway → gateway использует только операторский ALANDI_HELPER_MODEL через локальный Ollama → возвращает до 12 коротких кандидатов → пользователь отдельно добавляет нужные факты.
+- **Ограничения:** пустая переменная модели отключает endpoint; общий inference semaphore не позволяет помощнику конкурировать без лимита с основной моделью; keep_alive=0; вход и выход фильтруются от типичных секретов; нет автозаписи, cloud fallback или model override от браузера.
+- **Gate:** точные gateway tests + Chromium E2E + security/context/integrity/Jekyll + published-site smoke + provenance; затем документационный статус merge. Live inference и RAM/latency на VPS остаются отдельными задачами.
+- **Статус:** реализация на feature branch, CI ожидается; не активировать на VPS до выбора и установки модели.
