@@ -651,6 +651,26 @@ permalink: /
     let cloudAutoConnectTimer = null;
     let clockTimer = null;
     let storageWarningShown = false;
+    let storageHealthWarningLevel = 0;
+    let storageHealthLastCheck = 0;
+    function scheduleStorageHealthCheck() {
+      if (typeof navigator.storage?.estimate !== 'function') return;
+      const now = Date.now();
+      if (now - storageHealthLastCheck < 5 * 60 * 1000) return;
+      storageHealthLastCheck = now;
+      navigator.storage.estimate().then(({ usage, quota }) => {
+        if (!Number.isFinite(usage) || !Number.isFinite(quota) || quota <= 0) return;
+        const ratio = usage / quota;
+        const level = ratio >= 0.95 ? 2 : ratio >= 0.80 ? 1 : 0;
+        if (level === 0 && ratio < 0.75) storageHealthWarningLevel = 0;
+        if (level <= storageHealthWarningLevel) return;
+        storageHealthWarningLevel = level;
+        const percent = Math.round(ratio * 100);
+        showToast(level === 2
+          ? 'Хранилище сайта почти заполнено (' + percent + '%). Срочно экспортируй чаты через «Экспорт» и проверь резервную копию. Не очищай данные сайта до экспорта.'
+          : 'Хранилище сайта заполнено на ' + percent + '%. Рекомендуется экспортировать чаты через «Экспорт» и сохранить копию вне этого устройства.', 'error');
+      }).catch(() => {});
+    }
     let pyodidePromise = null;
     let pyodideScriptPromise = null;
     let processingMode = 'fast';
@@ -853,6 +873,8 @@ permalink: /
       const savedCurrent = safeSet(STORAGE.current, currentChatId);
       if (!savedChats || !savedCurrent) {
         showToast('История не подтверждена браузерным хранилищем. Сразу экспортируйте чаты и проверьте свободное место/разрешения сайта.', 'error');
+      } else {
+        scheduleStorageHealthCheck();
       }
     }
     function getCurrentChat() {
@@ -4262,6 +4284,7 @@ permalink: /
       await initDB();
       await renderMemory();
       updateState(null, currentChatId);
+      scheduleStorageHealthCheck();
       // Pyodide loads only when the user explicitly runs a Python code block.
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
