@@ -2408,6 +2408,14 @@ permalink: /
         $('toggleMultiAgent').checked = settings.multiAgent === true;
         $('allowCrossProviderFallback').checked = settings.crossProviderFallback === true;
         safeSet(STORAGE.model, $('modelName').value);
+        const activeChat = getCurrentChat();
+        activeChat.processingMode = settings.mode === 'deep' ? 'deep' : 'fast';
+        activeChat.searchMode = settings.offline === true || settings.search === false ? 'offline' : 'normal';
+        activeChat.multiAgentEnabled = settings.multiAgent === true;
+        if (!VALID_SKILL_PRESETS.has(activeChat.skillPreset)) activeChat.skillPreset = 'auto';
+        safeSet(STORAGE.searchMode, activeChat.searchMode);
+        persistChats();
+        updateModeUI();
         updateOfflineUI();
         safeSet('ai_provider_model_catalog_stale_v1_' + settings.provider, 'true');
         safeSet('ai_provider_connection_' + settings.provider, '');

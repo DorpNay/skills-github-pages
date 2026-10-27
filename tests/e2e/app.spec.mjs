@@ -3,6 +3,26 @@ import { readFile } from 'node:fs/promises';
 
 const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
 
+async function chooseSearchMode(page, mode) {
+  await page.locator('#searchModeSummary').click();
+  await page.locator(`[data-action="select-search-mode"][data-search-mode="${mode}"]`).click();
+}
+async function setAgentMode(page, enabled) {
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  const control = page.locator('#agentModeControl');
+  if (enabled && !(await control.isChecked())) await control.check();
+  if (!enabled && await control.isChecked()) await control.uncheck();
+  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
+}
+async function setSkillPreset(page, preset) {
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
+  await page.locator('#skillPresetSelect').selectOption(preset);
+  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
+}
+
+
 test.beforeEach(async ({ page }) => {
   // Every test starts with a clean browser profile; no real provider key is used.
   await page.addInitScript(() => {
@@ -34,10 +54,11 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await expect(page).toHaveTitle(/AI Mobile Agent/);
   await expect(page.locator('#chatBox')).toBeVisible();
   await expect(page.locator('#userInput')).toBeEditable();
-  await expect(page.locator('#toggleSearch')).toBeVisible();
+  await expect(page.locator('#searchModeSummary')).toBeVisible();
+  await expect(page.locator('#searchModeSummary')).toContainText('обычный');
   await expect(page.locator('#toggleSearch')).toBeChecked();
-  await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'false');
-  await expect(page.locator('#toggleMultiAgent')).toBeVisible();
+  await expect(page.locator('#functionsMenuSummary')).toBeVisible();
+  await expect(page.locator('#toggleMultiAgent')).not.toBeChecked();
 
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
@@ -55,12 +76,12 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await page.locator('#modelPreset').selectOption('gemini-3.6-flash');
   await expect(page.locator('#modelName')).toHaveValue('gemini-3.6-flash');
   await page.locator('[data-action="close-settings"]').click();
-  await page.locator('#offlineToggle').click();
-  await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'true');
+  await chooseSearchMode(page, 'offline');
+  await expect(page.locator('#searchModeSummary')).toContainText('без веба');
   await page.reload();
-  await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'true');
-  await page.locator('#offlineToggle').click();
-  await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.locator('#searchModeSummary')).toContainText('без веба');
+  await chooseSearchMode(page, 'normal');
+  await expect(page.locator('#searchModeSummary')).toContainText('обычный');
   await page.locator('#modeDeep').click();
   await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
   await page.reload();
@@ -305,7 +326,7 @@ test('settings profile import restores preferences while preserving existing pro
   await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('#toggleSearch')).not.toBeChecked();
   await expect(page.locator('#toggleMultiAgent')).toBeChecked();
-  await expect(page.locator('#offlineToggle')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#offlineToggle')).toContainText('Веб-поиск выключен');
   await page.locator('[data-action="toggle-settings"]').click();
   await expect(page.locator('#apiKey')).toHaveValue('e2e-preserved-provider-secret');
   await expect(page.locator('#tavilyKey')).toHaveValue('e2e-preserved-tavily-secret');
@@ -379,8 +400,8 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
-  await page.locator('#toggleSearch').uncheck();
-  await page.locator('#toggleMultiAgent').check();
+  await chooseSearchMode(page, 'offline');
+  await setAgentMode(page, true);
   await page.locator('#userInput').fill('Deep research: исследуй и проверь процесс проверки фактов по источникам; составь доказательный отчёт с планом, сравнением и итоговой проверкой.');
   await page.locator('#sendBtn').click();
 
@@ -431,7 +452,7 @@ test('multi-agent preference skips a greeting and shows the actual route', async
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
-  await page.locator('#toggleMultiAgent').check();
+  await setAgentMode(page, true);
   await page.locator('#userInput').fill('Привет!');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Привет! Рад помочь.');
@@ -1078,7 +1099,7 @@ test('Deep mode caps tool fan-out, suppresses repeated calls, and still returns 
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
   await page.locator('#modeDeep').click();
-  await page.locator('#toggleSearch').check();
+  await chooseSearchMode(page, 'normal');
   await page.locator('#userInput').fill('Read several public pages and summarize the useful evidence.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Completed within the tool budget.', { timeout: 30000 });
@@ -1141,7 +1162,7 @@ test('web_search falls back to public sources when Tavily is not configured', as
   await page.locator('#apiKey').fill('e2e-open-search-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
-  await page.locator('#toggleSearch').check();
+  await chooseSearchMode(page, 'normal');
   await page.locator('#userInput').fill('Find evidence using the keyless open-search fallback.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Open-source fallback completed.', { timeout: 20000 });
@@ -1404,7 +1425,7 @@ test('server project memory bridge is manual and requires both chat opt-ins', as
     localStorage.setItem('ai_alandi_cloud_model', 'qwen3.5:4b');
   });
   await page.reload({ waitUntil: 'domcontentloaded' });
-  await page.locator('#toggleSearch').uncheck();
+  await chooseSearchMode(page, 'offline');
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#projectManagerDetails > summary').click();
   await page.locator('#projectNameInput').fill('Server bridge project');
@@ -1948,4 +1969,66 @@ test('mobile composer stays visible at the bottom in new chats across viewport r
 
   await page.setViewportSize({ width: 390, height: 844 });
   await assertDocked();
+});
+
+test('search presets and function settings fit one line, localize, and persist per chat', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  const searchRect = await page.locator('#searchModeMenu').boundingBox();
+  const functionsRect = await page.locator('#functionsMenu').boundingBox();
+  expect(searchRect).not.toBeNull();
+  expect(functionsRect).not.toBeNull();
+  expect(Math.abs(searchRect.y - functionsRect.y)).toBeLessThan(5);
+  expect(searchRect.x + searchRect.width).toBeLessThanOrEqual(functionsRect.x + 3);
+
+  await chooseSearchMode(page, 'more');
+  await expect(page.locator('#searchModeSummary')).toContainText('искать больше');
+  await expect(page.locator('#modeHint')).toContainText('расширенный бюджет');
+  await chooseSearchMode(page, 'offline');
+  await expect(page.locator('#toggleSearch')).not.toBeChecked();
+  await expect(page.locator('#modeHint')).toContainText('веб-инструменты выключены');
+  await chooseSearchMode(page, 'normal');
+
+  await setAgentMode(page, true);
+  await expect(page.locator('#toggleMultiAgent')).toBeChecked();
+  await setSkillPreset(page, 'code-review');
+  await expect.poll(() => page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const current = localStorage.getItem('ai_current_chat_v87');
+    return chats.find(chat => chat.id === current)?.skillPreset;
+  })).toBe('code-review');
+
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="connectors"]').click();
+  await expect(page.locator('#functionPanelModal')).toBeVisible();
+  await expect(page.locator('#functionPanelDescription')).toContainText('Коннекторы');
+  await expect(page.locator('#functionPanelDescription')).toContainText('не подключены');
+  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
+
+  const sidebar = page.locator('#sidebar');
+  if (await sidebar.evaluate(element => element.classList.contains('-translate-x-full'))) {
+    await page.locator('[data-action="toggle-sidebar"]').click();
+  }
+  await page.locator('#sidebar [data-action="new-chat"]').click();
+  await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#toggleSearch')).toBeChecked();
+  await expect(page.locator('#toggleMultiAgent')).not.toBeChecked();
+  await expect(page.locator('#searchModeSummary')).toContainText('обычный');
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
+  await expect(page.locator('#skillPresetSelect')).toHaveValue('auto');
+  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
+
+  await page.locator('#languageSummary').click();
+  await page.locator('[data-action="set-language"][data-language="en"]').click();
+  await expect(page.locator('#modeDeep')).toContainText('Longer');
+  await expect(page.locator('#functionsMenuSummary')).toContainText('Functions');
+  await expect(page.locator('#searchModeSummary')).toContainText('Search');
+
+  // The first tap outside an open toolbar menu must only close it.
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('#modeFast').click();
+  await expect(page.locator('#functionsMenu')).not.toHaveAttribute('open', '');
+  await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
 });
