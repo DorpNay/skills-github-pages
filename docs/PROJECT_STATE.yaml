@@ -191,3 +191,15 @@ graphify_exclusions:
   file: ".graphifyignore"
   status: "added in PR #66; actual Graphify interpretation not yet tested"
   intended_exclusions: "env/secrets, databases, generated outputs, dependencies, model/media weights"
+
+
+post_architecture_map_checkpoint:
+  date: "2026-10-27"
+  main_checkpoint_before_this_docs_pr: "1faf60164b9a0f82eb5e0c56b143ba90499be4a5"
+  pr66: "merged; exact-head quality 6/6 and provenance passed"
+  post_merge_pages: "40530195904 success"
+  post_merge_provenance: "40530196480 success"
+  post_merge_quality: "40530196483 in_progress at last poll"
+  open_prs_after_pr66: 0
+  open_issues_after_pr66: 0
+  next: "verify post-merge Quality; run Graphify code-only in isolated network-enabled staging; continue with one bounded product improvement backed by tests"
