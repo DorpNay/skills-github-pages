@@ -81,4 +81,11 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - **Scope:** quota estimate, warning thresholds, and non-blocking behavior in the browser client.
 - **Fixture:** Chromium E2E tests in `tests/e2e/app.spec.mjs` mock `navigator.storage.estimate()` at 80% and 96%, and simulate estimator rejection.
 - **Acceptance:** 80% usage shows preventive export guidance; 95% or higher shows urgent guidance; rejected/unsupported estimates do not block startup or persistence; existing save-failure behavior continues to preserve the previously valid state.
-- **Status:** implementation and deterministic fixtures added on branch `feat/browser-storage-quota-warning`; exact-head CI and post-merge validation pending. This is not proof of a full-profile backup or successful restore.
+- **Status:** merged via PR #56 at `31ea7fd3b56a80f93f8d667d843cf743918ff23f`; Quality run #40490650505 passed all jobs including Chromium E2E and published-site smoke, Provenance run #40490650488 passed. This is not proof of a full-profile backup or successful restore.
+
+## EV-PROJECT-SCOPE-001 — Project memory and clear-history isolation
+
+- **Scope:** project settings target the explicitly selected project, persist after reload, and clear-history operations do not change project association or clear other chats.
+- **Fixture:** three deterministic Chromium E2E tests in `tests/e2e/app.spec.mjs`.
+- **Acceptance:** changing one project's memory scope does not change another or the active chat's project; clearing history leaves the selected chat/project in place; clearing a non-active chat leaves the active chat, history, and both project associations unchanged.
+- **Status:** regression tests ported from legacy PR #36 onto current main; exact-head Quality/Chromium validation pending. No production application code changes.

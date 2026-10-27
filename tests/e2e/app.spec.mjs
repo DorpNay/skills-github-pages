@@ -1654,3 +1654,165 @@ test('storage estimate failures do not block app startup or persistence', async 
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_chats_v87'))).toBeTruthy();
   await expect(page.locator('#toast')).not.toContainText('Хранилище сайта');
 });
+
+test('project memory scope edits the selected project, not the active chat project, and persists after reload', async ({ page }) => {
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem('seed-project-memory-scope-test') === '1') return;
+    sessionStorage.setItem('seed-project-memory-scope-test', '1');
+    const project = (id, name) => ({
+      id, name, description: '', instructions: '', memoryScope: 'project-only',
+      memory: [], createdAt: '', updatedAt: ''
+    });
+    const chat = (id, title, projectId) => ({
+      id, title, projectId, projectMemoryEnabled: false,
+      serverProjectMemoryEnabled: false, messages: []
+    });
+    localStorage.setItem('ai_projects_v1', JSON.stringify([
+      project('project-alpha', 'Alpha project'),
+      project('project-beta', 'Beta project')
+    ]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([
+      chat('chat-alpha', 'Alpha chat', 'project-alpha'),
+      chat('chat-beta', 'Beta chat', 'project-beta')
+    ]));
+    localStorage.setItem('ai_current_chat_v87', 'chat-alpha');
+  });
+
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  if (await page.locator('#projectNavigationList').evaluate(el => el.classList.contains('hidden'))) {
+    await page.locator('#projectNavToggle').click();
+  }
+
+  const betaGroup = page.locator('#projectNavigationList details[data-project-id="project-beta"]');
+  await betaGroup.locator(':scope > summary').click();
+  await betaGroup.locator('[data-action="open-project-settings"]').click();
+  await expect(page.locator('#projectSettingsStatus')).toContainText('Beta project');
+  await expect(page.locator('#currentProjectSelect')).toHaveValue('project-alpha');
+
+  await page.locator('#projectMemoryScopeSelect').selectOption('project-and-global');
+  await expect.poll(() => page.evaluate(() => {
+    const projects = JSON.parse(localStorage.getItem('ai_projects_v1') || '[]');
+    return Object.fromEntries(projects.map(project => [project.id, project.memoryScope]));
+  })).toEqual({
+    'project-alpha': 'project-only',
+    'project-beta': 'project-and-global'
+  });
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  if (await page.locator('#projectNavigationList').evaluate(el => el.classList.contains('hidden'))) {
+    await page.locator('#projectNavToggle').click();
+  }
+  const reloadedBeta = page.locator('#projectNavigationList details[data-project-id="project-beta"]');
+  await reloadedBeta.locator(':scope > summary').click();
+  await reloadedBeta.locator('[data-action="open-project-settings"]').click();
+  await expect(page.locator('#projectSettingsStatus')).toContainText('Beta project');
+  await expect(page.locator('#projectMemoryScopeSelect')).toHaveValue('project-and-global');
+  await expect(page.locator('#currentProjectSelect')).toHaveValue('project-alpha');
+});
+
+test('clear history preserves the chat and other project data', async ({ page }) => {
+  await page.addInitScript(() => {
+    const project = (id, name) => ({
+      id, name, description: '', instructions: '', memoryScope: 'project-only',
+      memory: [], createdAt: '', updatedAt: ''
+    });
+    const chat = (id, title, projectId, sentinel) => ({
+      id, title, projectId, projectMemoryEnabled: false,
+      serverProjectMemoryEnabled: false,
+      messages: [{ role: 'user', content: sentinel }]
+    });
+    localStorage.setItem('ai_projects_v1', JSON.stringify([
+      project('project-alpha', 'Alpha project'),
+      project('project-beta', 'Beta project')
+    ]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([
+      chat('chat-alpha', 'Alpha chat', 'project-alpha', 'ALPHA_HISTORY_TO_CLEAR'),
+      chat('chat-beta', 'Beta chat', 'project-beta', 'BETA_HISTORY_TO_KEEP')
+    ]));
+    localStorage.setItem('ai_current_chat_v87', 'chat-alpha');
+  });
+
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  if (await page.locator('#projectNavigationList').evaluate(el => el.classList.contains('hidden'))) {
+    await page.locator('#projectNavToggle').click();
+  }
+
+  const alphaGroup = page.locator('#projectNavigationList details[data-project-id="project-alpha"]');
+  await alphaGroup.locator(':scope > summary').click();
+  const alphaRow = alphaGroup.locator('.chat-row').filter({ hasText: 'Alpha chat' });
+  await alphaRow.locator('summary[aria-label="Действия чата"]').click();
+
+  page.on('dialog', dialog => dialog.accept());
+  await alphaRow.locator('[data-action="chat-clear"][data-chat-id="chat-alpha"]').click();
+  await expect(page.locator('#chatBox')).not.toContainText('ALPHA_HISTORY_TO_CLEAR');
+  await expect(page.locator('#projectNavigationList [data-action="switch-chat"][data-chat-id="chat-alpha"]')).toHaveText('Новый чат');
+
+  const persisted = await page.evaluate(() => ({
+    chats: JSON.parse(localStorage.getItem('ai_chats_v87') || '[]'),
+    projects: JSON.parse(localStorage.getItem('ai_projects_v1') || '[]')
+  }));
+  const alpha = persisted.chats.find(chat => chat.id === 'chat-alpha');
+  const beta = persisted.chats.find(chat => chat.id === 'chat-beta');
+  expect(alpha).toBeTruthy();
+  expect(alpha.messages, 'Clear history must leave this chat with no messages').toEqual([]);
+  expect(alpha.projectId).toBe('project-alpha');
+  expect(beta.messages[0].content).toBe('BETA_HISTORY_TO_KEEP');
+  expect(persisted.projects.map(project => project.id).sort()).toEqual(['project-alpha', 'project-beta']);
+});
+
+test('clearing a non-active project chat preserves the active chat and both project associations', async ({ page }) => {
+  await page.addInitScript(() => {
+    const project = (id, name) => ({
+      id, name, description: '', instructions: '', memoryScope: 'project-only',
+      memory: [], createdAt: '', updatedAt: ''
+    });
+    const chat = (id, title, projectId, sentinel) => ({
+      id, title, projectId, projectMemoryEnabled: false,
+      serverProjectMemoryEnabled: false,
+      messages: [{ role: 'user', content: sentinel }]
+    });
+    localStorage.setItem('ai_projects_v1', JSON.stringify([
+      project('project-alpha', 'Alpha project'),
+      project('project-beta', 'Beta project')
+    ]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([
+      chat('chat-alpha', 'Alpha chat', 'project-alpha', 'ACTIVE_ALPHA_HISTORY_TO_KEEP'),
+      chat('chat-beta', 'Beta chat', 'project-beta', 'BETA_HISTORY_TO_CLEAR')
+    ]));
+    localStorage.setItem('ai_current_chat_v87', 'chat-alpha');
+  });
+
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  if (await page.locator('#projectNavigationList').evaluate(el => el.classList.contains('hidden'))) {
+    await page.locator('#projectNavToggle').click();
+  }
+
+  const betaGroup = page.locator('#projectNavigationList details[data-project-id="project-beta"]');
+  await betaGroup.locator(':scope > summary').click();
+  const betaRow = betaGroup.locator('.chat-row').filter({ hasText: 'Beta chat' });
+  await betaRow.locator('summary[aria-label="Действия чата"]').click();
+
+  page.on('dialog', dialog => dialog.accept());
+  await betaRow.locator('[data-action="chat-clear"][data-chat-id="chat-beta"]').click();
+
+  await expect(page.locator('#chatBox')).toContainText('ACTIVE_ALPHA_HISTORY_TO_KEEP');
+  await expect(page.locator('#chatBox')).not.toContainText('BETA_HISTORY_TO_CLEAR');
+
+  const persisted = await page.evaluate(() => ({
+    currentChatId: localStorage.getItem('ai_current_chat_v87'),
+    chats: JSON.parse(localStorage.getItem('ai_chats_v87') || '[]'),
+    projects: JSON.parse(localStorage.getItem('ai_projects_v1') || '[]')
+  }));
+  const alpha = persisted.chats.find(chat => chat.id === 'chat-alpha');
+  const beta = persisted.chats.find(chat => chat.id === 'chat-beta');
+  expect(persisted.currentChatId, 'Clearing a background chat must not switch the active chat').toBe('chat-alpha');
+  expect(alpha.messages[0].content).toBe('ACTIVE_ALPHA_HISTORY_TO_KEEP');
+  expect(alpha.projectId).toBe('project-alpha');
+  expect(beta.messages, 'The selected background chat must be cleared').toEqual([]);
+  expect(beta.projectId).toBe('project-beta');
+  expect(persisted.projects.map(project => project.id).sort()).toEqual(['project-alpha', 'project-beta']);
+});
