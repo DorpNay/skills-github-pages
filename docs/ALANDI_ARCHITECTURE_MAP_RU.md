@@ -86,8 +86,17 @@ flowchart TD
 4. Записать files/nodes/edges, coverage, время/память и результаты 10 реальных вопросов по навигации.
 5. Сравнить с прямыми исходниками и orienter; generated graph сохранять вне production, пока польза и воспроизводимость не доказаны.
 
-**Блокер:** `git clone` не удался из-за DNS `Could not resolve host: github.com`; CLI не установлен, граф не создан. `.graphifyignore` подготавливает исключения; его фактическое применение Graphify ещё нужно проверить в пилоте. `--no-gitignore` нужен только в tracked staging-копии, чтобы не потерять SQL schema из-за `*.sql` в `.gitignore`. Чтение upstream через коннектор не считается выполненным пилотом.
+**Блокер локальной среды:** `git clone` не удался из-за DNS `Could not resolve host: github.com`; локальный CLI не установлен. Чтобы получить реальный результат без локальной сети, добавлен `.github/workflows/graphify-pilot.yml`: он запускает `graphifyy==0.9.96` в GitHub Actions на копии `git archive` из tracked-файлов, принудительно удаляет секретоподобные файлы, БД, веса, медиа и user-data каталоги, использует `--code-only --no-gitignore`, не передаёт model keys и сохраняет graph только как артефакт на 7 дней. PR-head run и артефакт ещё должны быть проверены; до этого граф не считается успешно построенным. `--no-gitignore` нужен для сохранения tracked SQL schema, игнорируемой общим `*.sql` правилом, а `.graphifyignore` остаётся дополнительным фильтром.
+
+**Лицензионная оговорка:** release tag `v0.9.96` и PyPI package `graphifyy==0.9.96` указывают Apache-2.0, но default-branch `pyproject.toml` на момент исследования показывал старые metadata `0.1.14`/MIT. Пилот фиксирует конкретную опубликованную версию; не распространять вывод о лицензии на все upstream refs без отдельной сверки.
 
 ## 6. Правило поддержки
 
 Карта помогает навигации, но не заменяет исходники. Обновлять её, если изменились границы модулей. После каждого этапа обновлять orienter, `docs/PROJECT_STATE.yaml` и `docs/VOLLEY_LOG.md` с точным SHA, проверками, blockers и следующим действием.
+
+
+### 5.1. Автоматизированный пилот в CI
+
+- Workflow `.github/workflows/graphify-pilot.yml` запускается при изменении самого workflow на `main`, при PR с изменением workflow/ignore/architecture map и вручную через `workflow_dispatch`.
+- Разрешения: только `contents: read`; checkout не сохраняет credentials; semantic/model processing отключён.
+- Результат хранится как краткоживущий artifact, не коммитится. После выполнения нужно проверить отчёт и минимум 10 навигационных вопросов; один лишь зелёный exit code не доказывает полезность графа.
