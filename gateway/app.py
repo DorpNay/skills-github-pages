@@ -1057,8 +1057,8 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                     raise HTTPException(413, "Audio duration must be between 0 and 120 seconds")
                 converter = await asyncio.create_subprocess_exec(
                     config.audio_transcription_ffmpeg_binary, "-nostdin", "-v", "error", "-y",
-                    "-i", input_path, "-t", "120", "-vn", "-ac", "1", "-ar", "16000",
-                    "-c:a", "pcm_s16le", normalized_path,
+                    "-i", input_path, "-map", "0:a:0", "-t", "120", "-vn", "-ac", "1", "-ar", "16000",
+                    "-c:a", "pcm_s16le", "-f", "wav", normalized_path,
                     stdin=asyncio.subprocess.DEVNULL, stdout=asyncio.subprocess.DEVNULL,
                     stderr=asyncio.subprocess.DEVNULL,
                 )
@@ -1070,6 +1070,12 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                     raise HTTPException(504, "Audio normalization timed out") from None
                 if converter.returncode != 0 or not os.path.isfile(normalized_path):
                     raise HTTPException(400, "Audio could not be normalized to PCM WAV")
+                try:
+                    normalized_size = os.path.getsize(normalized_path)
+                except OSError:
+                    raise HTTPException(400, "Normalized audio is unavailable") from None
+                if normalized_size < 44 or normalized_size > 4_000_000:
+                    raise HTTPException(413, "Normalized audio is outside the permitted size")
                 process = await asyncio.create_subprocess_exec(
                     config.audio_transcription_binary,
                     "-m", config.audio_transcription_model,
