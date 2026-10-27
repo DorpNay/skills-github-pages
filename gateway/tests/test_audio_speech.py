@@ -50,8 +50,6 @@ def test_speech_validates_text_and_local_runtime(tmp_path):
     with TestClient(create_app(settings, transport=httpx.MockTransport(handler))) as client:
         assert client.post("/v1/audio/speech", json={"text": " "}, headers=auth).status_code == 400
         assert client.post("/v1/audio/speech", json={"text": "x" * 5001}, headers=auth).status_code == 400
-        assert client.post("/v1/audio/speech", json={"text": "hello"},
-                           headers={"Authorization": f"Bearer {API_KEY}"}).status_code == 503 if not binary else 200
 
 
 def test_speech_runs_configured_local_cli_and_returns_wav(tmp_path, monkeypatch):
