@@ -60,6 +60,28 @@ artifacts:
     status: "blocked"
     notes: "Upstream describes non-commercial Community Edition terms for speech-recognition models; this entry is not a claim of one universal Silero TTS SPDX license. Inspect and record the exact selected TTS model's license before consideration."
 
+  - id: whisper-cpp-runtime
+    kind: asr_runtime_code
+    upstream: "https://github.com/ggml-org/whisper.cpp"
+    source_version: "pin upstream release or commit before installation"
+    license_spdx: "MIT"
+    commercial_use: "candidate_allowed_with_license_notice"
+    sha256: null
+    ship: false
+    status: "runtime_not_installed"
+    notes: "The gateway invokes a configured local whisper-cli; runtime binaries are not bundled. Pin version and record the actual binary hash before host setup."
+
+  - id: whisper-cpp-model-weights
+    kind: asr_model_weights
+    upstream: "https://huggingface.co/ggerganov/whisper.cpp"
+    source_version: "no exact model selected"
+    license_spdx: "MODEL_CARD_REVIEW_REQUIRED"
+    commercial_use: "blocked_until_exact_artifact_license_and_hash_review"
+    sha256: null
+    ship: false
+    status: "not_downloaded"
+    notes: "Runtime MIT license does not replace model-weight provenance. Choose a model after RU/EN/Thai quality, latency and RAM evaluation; pin the exact artifact and hash."
+
   - id: piper-engine-current
     kind: tts_runtime_code
     upstream: "https://github.com/OHF-Voice/piper1-gpl"

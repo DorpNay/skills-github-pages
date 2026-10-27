@@ -7,6 +7,14 @@ default_policy:
 languages:
   ru:
     asr_candidates:
+      - id: whisper-base-multilingual
+        upstream: "https://huggingface.co/ggerganov/whisper.cpp"
+        runtime_license: "MIT (whisper.cpp)"
+        model_license: "MIT per upstream model card; exact artifact hash still required"
+        approximate_download_size_mb: 142
+        sha256: null
+        status: "adapter_in_branch_model_not_downloaded"
+        eval_required: ["clean_CER", "noisy_CER", "real_time_factor", "peak_PSS", "ru_en_th_language_accuracy"]
       - id: vosk-model-small-ru-0.22
         upstream: "https://alphacephei.com/vosk/models"
         api_license: "Apache-2.0"
@@ -27,8 +35,27 @@ languages:
         license: "UNVERIFIED_ARTIFACT_SPECIFIC_TERMS; no SPDX assertion until exact model card review"
         sha256: null
         status: "blocked_for_commercial_shipping"
+  th:
+    asr_candidates:
+      - id: whisper-base-multilingual
+        upstream: "https://huggingface.co/ggerganov/whisper.cpp"
+        runtime_license: "MIT (whisper.cpp)"
+        model_license: "MIT per upstream model card; exact artifact hash still required"
+        approximate_download_size_mb: 142
+        sha256: null
+        status: "adapter_in_branch_model_not_downloaded"
+        eval_required: ["clean_WER", "noisy_WER", "real_time_factor", "peak_PSS", "thai_language_accuracy"]
+    tts_candidates: []
   en:
     asr_candidates:
+      - id: whisper-base-multilingual
+        upstream: "https://huggingface.co/ggerganov/whisper.cpp"
+        runtime_license: "MIT (whisper.cpp)"
+        model_license: "MIT per upstream model card; exact artifact hash still required"
+        approximate_download_size_mb: 142
+        sha256: null
+        status: "adapter_in_branch_model_not_downloaded"
+        eval_required: ["clean_WER", "noisy_WER", "real_time_factor", "peak_PSS", "ru_en_th_language_accuracy"]
       - id: moonshine-tiny-streaming-en
         upstream: "https://github.com/moonshine-ai/moonshine"
         model_license: "MIT according to upstream default for streaming/English models"

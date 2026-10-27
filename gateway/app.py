@@ -10,9 +10,11 @@ import logging
 import os
 import secrets
 import sqlite3
+import tempfile
 import time
 from contextlib import asynccontextmanager, closing
 from dataclasses import asdict, dataclass
+from functools import wraps
 from typing import Any, AsyncIterator, Mapping
 from urllib.parse import urlsplit
 
@@ -96,6 +98,20 @@ class Settings:
     searxng_enabled: bool = False
     searxng_base_url: str = ""
     searxng_max_results: int = 5
+    # Optional local whisper.cpp CLI; no remote ASR provider is contacted.
+    audio_transcription_enabled: bool = False
+    audio_transcription_binary: str = ""
+    audio_transcription_model: str = ""
+    audio_transcription_ffprobe_binary: str = "/usr/bin/ffprobe"
+    audio_transcription_ffmpeg_binary: str = "/usr/bin/ffmpeg"
+    audio_transcription_max_bytes: int = 15 * 1024 * 1024
+    audio_transcription_timeout_seconds: int = 120
+    # Optional local Piper TTS CLI; model and voice are installed by the operator.
+    audio_speech_enabled: bool = False
+    audio_speech_binary: str = ""
+    audio_speech_model: str = ""
+    audio_speech_data_dir: str = ""
+    audio_speech_timeout_seconds: int = 60
     model_size_advisory_mb: int = 6144
     oauth_enabled: bool = False
     oauth_path: str = "/var/lib/alandi-gateway/oauth.sqlite3"
@@ -155,6 +171,21 @@ class Settings:
             searxng_base_url = validate_fixed_service_base_url(searxng_base_url, "ALANDI_SEARXNG_BASE_URL")
         if searxng_enabled and not searxng_base_url:
             raise ValueError("ALANDI_SEARXNG_ENABLED requires ALANDI_SEARXNG_BASE_URL")
+        audio_transcription_enabled = bool_env("ALANDI_AUDIO_TRANSCRIPTION_ENABLED", False)
+        audio_transcription_binary = os.getenv("ALANDI_AUDIO_TRANSCRIPTION_BINARY", "").strip()
+        audio_transcription_model = os.getenv("ALANDI_AUDIO_TRANSCRIPTION_MODEL", "").strip()
+        audio_transcription_ffprobe_binary = os.getenv("ALANDI_AUDIO_TRANSCRIPTION_FFPROBE_BINARY", "/usr/bin/ffprobe").strip()
+        audio_transcription_ffmpeg_binary = os.getenv("ALANDI_AUDIO_TRANSCRIPTION_FFMPEG_BINARY", "/usr/bin/ffmpeg").strip()
+        if audio_transcription_enabled and not (audio_transcription_binary and audio_transcription_model and audio_transcription_ffprobe_binary and audio_transcription_ffmpeg_binary):
+            raise ValueError("ALANDI_AUDIO_TRANSCRIPTION_ENABLED requires local ASR, ffprobe, ffmpeg and model paths")
+        audio_speech_enabled = bool_env("ALANDI_AUDIO_SPEECH_ENABLED", False)
+        audio_speech_binary = os.getenv("ALANDI_AUDIO_SPEECH_BINARY", "").strip()
+        audio_speech_model = os.getenv("ALANDI_AUDIO_SPEECH_MODEL", "").strip()
+        audio_speech_data_dir = os.getenv("ALANDI_AUDIO_SPEECH_DATA_DIR", "").strip()
+        if audio_speech_enabled and not (audio_speech_binary and audio_speech_model and audio_speech_data_dir):
+            raise ValueError("ALANDI_AUDIO_SPEECH_ENABLED requires Python executable, Piper voice name and data directory")
+        if audio_speech_model and (os.path.basename(audio_speech_model) != audio_speech_model or not all(char.isalnum() or char in "._-" for char in audio_speech_model)):
+            raise ValueError("ALANDI_AUDIO_SPEECH_MODEL must be a voice name, not a path")
         return cls(
             api_key=os.getenv("ALANDI_API_KEY", "").strip(),
             ollama_base_url=base,
@@ -182,6 +213,18 @@ class Settings:
             searxng_enabled=searxng_enabled,
             searxng_base_url=searxng_base_url,
             searxng_max_results=int_env("ALANDI_SEARXNG_MAX_RESULTS", 5, 1),
+            audio_transcription_enabled=audio_transcription_enabled,
+            audio_transcription_binary=audio_transcription_binary,
+            audio_transcription_model=audio_transcription_model,
+            audio_transcription_ffprobe_binary=audio_transcription_ffprobe_binary,
+            audio_transcription_ffmpeg_binary=audio_transcription_ffmpeg_binary,
+            audio_transcription_max_bytes=int_env("ALANDI_AUDIO_TRANSCRIPTION_MAX_BYTES", 15 * 1024 * 1024, 1024),
+            audio_transcription_timeout_seconds=int_env("ALANDI_AUDIO_TRANSCRIPTION_TIMEOUT_SECONDS", 120, 1),
+            audio_speech_enabled=audio_speech_enabled,
+            audio_speech_binary=audio_speech_binary,
+            audio_speech_model=audio_speech_model,
+            audio_speech_data_dir=audio_speech_data_dir,
+            audio_speech_timeout_seconds=int_env("ALANDI_AUDIO_SPEECH_TIMEOUT_SECONDS", 60, 1),
             model_size_advisory_mb=int_env(model_size_budget_env, 6144, 256),
             oauth_enabled=oauth_enabled,
             oauth_path=os.getenv("OAUTH_TOKEN_VAULT_PATH", "/var/lib/alandi-gateway/oauth.sqlite3").strip() or "/var/lib/alandi-gateway/oauth.sqlite3",
@@ -191,6 +234,22 @@ class Settings:
             google_oauth_redirect_uri=google_oauth_redirect_uri,
             oauth_success_redirect=oauth_success_redirect,
         )
+
+
+def local_audio_limited(settings: Settings):
+    """Serialize expensive local audio jobs and reject excess work without queueing."""
+    def decorate(endpoint):
+        @wraps(endpoint)
+        async def wrapped(request: Request, *args, **kwargs):
+            authorize(settings, kwargs.get("authorization"))
+            # Share the gateway-wide slot with Ollama to avoid overlapping model memory peaks.
+            semaphore = request.app.state.semaphore
+            if semaphore.locked():
+                raise HTTPException(429, "Another local audio job is already running")
+            async with semaphore:
+                return await endpoint(request, *args, **kwargs)
+        return wrapped
+    return decorate
 
 
 def authorize(settings: Settings, authorization: str | None) -> None:
@@ -939,6 +998,176 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 break
         return JSONResponse({"provider": "searxng", "query": query, "results": results, "count": len(results)},
                             headers={"Cache-Control": "no-store"})
+
+    @app.post("/v1/audio/transcriptions")
+    @local_audio_limited(config)
+    async def transcribe_audio(request: Request, lang: str = "auto",
+                               authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        if not config.audio_transcription_enabled:
+            raise HTTPException(503, "Local audio transcription is disabled")
+        if lang not in {"auto", "ru", "en", "th"}:
+            raise HTTPException(400, "lang must be auto, ru, en or th")
+        media_type = request.headers.get("content-type", "").split(";", 1)[0].strip().lower()
+        suffix_by_type = {
+            "audio/webm": ".webm", "audio/ogg": ".ogg", "audio/wav": ".wav",
+            "audio/x-wav": ".wav", "audio/mpeg": ".mp3", "audio/mp4": ".m4a",
+            "audio/aac": ".aac",
+        }
+        suffix = suffix_by_type.get(media_type)
+        if not suffix:
+            raise HTTPException(415, "Unsupported audio type; use WebM, Ogg, WAV, MP3, MP4/M4A or AAC")
+        audio = await read_limited_body(request, config.audio_transcription_max_bytes)
+        if not audio:
+            raise HTTPException(400, "Audio body is empty")
+        if not os.path.isfile(config.audio_transcription_binary) or not os.access(config.audio_transcription_binary, os.X_OK):
+            raise HTTPException(503, "Configured local ASR executable is unavailable")
+        if not os.path.isfile(config.audio_transcription_model):
+            raise HTTPException(503, "Configured local ASR model file is unavailable")
+        if not os.path.isfile(config.audio_transcription_ffprobe_binary) or not os.access(config.audio_transcription_ffprobe_binary, os.X_OK):
+            raise HTTPException(503, "Configured local ffprobe executable is unavailable")
+        if not os.path.isfile(config.audio_transcription_ffmpeg_binary) or not os.access(config.audio_transcription_ffmpeg_binary, os.X_OK):
+            raise HTTPException(503, "Configured local ffmpeg executable is unavailable")
+        with tempfile.TemporaryDirectory(prefix="alandi-asr-") as temp_dir:
+            input_path = os.path.join(temp_dir, "audio" + suffix)
+            normalized_path = os.path.join(temp_dir, "normalized.wav")
+            output_prefix = os.path.join(temp_dir, "transcript")
+            try:
+                with open(input_path, "wb") as audio_file:
+                    audio_file.write(audio)
+                probe = await asyncio.create_subprocess_exec(
+                    config.audio_transcription_ffprobe_binary, "-v", "error",
+                    "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", input_path,
+                    stdin=asyncio.subprocess.DEVNULL, stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.DEVNULL,
+                )
+                try:
+                    probe_stdout, _ = await asyncio.wait_for(probe.communicate(), timeout=5)
+                except asyncio.TimeoutError:
+                    probe.kill()
+                    await probe.wait()
+                    raise HTTPException(504, "Audio validation timed out") from None
+                if probe.returncode != 0 or len(probe_stdout) > 64:
+                    raise HTTPException(400, "Audio container could not be validated")
+                try:
+                    duration_seconds = float(probe_stdout.strip())
+                except ValueError:
+                    raise HTTPException(400, "Audio duration is missing or invalid") from None
+                if not 0 < duration_seconds <= 120:
+                    raise HTTPException(413, "Audio duration must be between 0 and 120 seconds")
+                converter = await asyncio.create_subprocess_exec(
+                    config.audio_transcription_ffmpeg_binary, "-nostdin", "-v", "error", "-y",
+                    "-i", input_path, "-map", "0:a:0", "-t", "120", "-vn", "-ac", "1", "-ar", "16000",
+                    "-c:a", "pcm_s16le", "-f", "wav", normalized_path,
+                    stdin=asyncio.subprocess.DEVNULL, stdout=asyncio.subprocess.DEVNULL,
+                    stderr=asyncio.subprocess.DEVNULL,
+                )
+                try:
+                    await asyncio.wait_for(converter.wait(), timeout=10)
+                except asyncio.TimeoutError:
+                    converter.kill()
+                    await converter.wait()
+                    raise HTTPException(504, "Audio normalization timed out") from None
+                if converter.returncode != 0 or not os.path.isfile(normalized_path):
+                    raise HTTPException(400, "Audio could not be normalized to PCM WAV")
+                try:
+                    normalized_size = os.path.getsize(normalized_path)
+                except OSError:
+                    raise HTTPException(400, "Normalized audio is unavailable") from None
+                if normalized_size < 44 or normalized_size > 4_000_000:
+                    raise HTTPException(413, "Normalized audio is outside the permitted size")
+                process = await asyncio.create_subprocess_exec(
+                    config.audio_transcription_binary,
+                    "-m", config.audio_transcription_model,
+                    "-f", normalized_path,
+                    "-l", lang,
+                    "-otxt", "-of", output_prefix, "-nt",
+                    stdin=asyncio.subprocess.DEVNULL,
+                    stdout=asyncio.subprocess.DEVNULL,
+                    stderr=asyncio.subprocess.DEVNULL,
+                )
+                try:
+                    await asyncio.wait_for(process.wait(), timeout=config.audio_transcription_timeout_seconds)
+                except asyncio.TimeoutError:
+                    process.kill()
+                    await process.wait()
+                    raise HTTPException(504, "Local transcription timed out") from None
+                if process.returncode != 0:
+                    raise HTTPException(502, "Local ASR process failed; check the local runtime configuration")
+                transcript_path = output_prefix + ".txt"
+                try:
+                    with open(transcript_path, "r", encoding="utf-8") as transcript_file:
+                        transcript = transcript_file.read(100_001).strip()
+                except OSError:
+                    raise HTTPException(502, "Local ASR did not produce a transcript") from None
+                if len(transcript) > 100_000:
+                    raise HTTPException(502, "Transcript exceeds the output limit")
+                return JSONResponse({"text": transcript, "language": lang, "provider": "local-whisper.cpp"},
+                                    headers={"Cache-Control": "no-store"})
+            except OSError:
+                raise HTTPException(503, "Could not start the configured local ASR executable") from None
+
+    @app.post("/v1/audio/speech")
+    @local_audio_limited(config)
+    async def synthesize_speech(request: Request,
+                                authorization: str | None = Header(default=None)) -> Response:
+        authorize(config, authorization)
+        if not config.audio_speech_enabled:
+            raise HTTPException(503, "Local text-to-speech is disabled")
+        body = await read_limited_body(request, 24 * 1024)
+        try:
+            payload = json.loads(body)
+        except (ValueError, UnicodeDecodeError):
+            raise HTTPException(400, "JSON body is invalid") from None
+        if not isinstance(payload, dict) or not isinstance(payload.get("text"), str):
+            raise HTTPException(400, "text must be a string")
+        text = payload["text"].strip()
+        if not text or len(text) > 5000 or any(ord(char) < 32 and char not in "\n\r\t" for char in text):
+            raise HTTPException(400, "text must contain 1 to 5000 printable characters")
+        if not os.path.isfile(config.audio_speech_binary) or not os.access(config.audio_speech_binary, os.X_OK):
+            raise HTTPException(503, "Configured local TTS executable is unavailable")
+        if not config.audio_speech_data_dir or not os.path.isdir(config.audio_speech_data_dir):
+            raise HTTPException(503, "Configured local TTS voice directory is unavailable")
+        voice_path = os.path.join(config.audio_speech_data_dir, config.audio_speech_model + ".onnx")
+        if not os.path.isfile(voice_path) or not os.path.isfile(voice_path + ".json"):
+            raise HTTPException(503, "Configured local TTS voice model or config is unavailable")
+        with tempfile.TemporaryDirectory(prefix="alandi-tts-") as temp_dir:
+            input_path = os.path.join(temp_dir, "input.txt")
+            output_path = os.path.join(temp_dir, "speech.wav")
+            try:
+                with open(input_path, "x", encoding="utf-8") as text_file:
+                    os.chmod(input_path, 0o600)
+                    text_file.write(text)
+                process = await asyncio.create_subprocess_exec(
+                    config.audio_speech_binary, "-m", "piper",
+                    "-m", config.audio_speech_model,
+                    "--data-dir", config.audio_speech_data_dir,
+                    "-f", output_path, "--input-file", input_path,
+                    stdin=asyncio.subprocess.DEVNULL,
+                    stdout=asyncio.subprocess.DEVNULL,
+                    stderr=asyncio.subprocess.DEVNULL,
+                )
+                try:
+                    await asyncio.wait_for(process.wait(), timeout=config.audio_speech_timeout_seconds)
+                except asyncio.TimeoutError:
+                    process.kill()
+                    await process.wait()
+                    raise HTTPException(504, "Local speech synthesis timed out") from None
+                if process.returncode != 0:
+                    raise HTTPException(502, "Local TTS process failed; check the local runtime configuration")
+                try:
+                    with open(output_path, "rb") as audio_file:
+                        audio = audio_file.read(25 * 1024 * 1024 + 1)
+                except OSError:
+                    raise HTTPException(502, "Local TTS did not produce an audio file") from None
+                if len(audio) > 25 * 1024 * 1024:
+                    raise HTTPException(502, "Generated audio exceeds the output limit")
+                if len(audio) < 44 or audio[:4] != b"RIFF" or audio[8:12] != b"WAVE":
+                    raise HTTPException(502, "Local TTS output is not a valid WAV file")
+                return Response(content=audio, media_type="audio/wav",
+                                headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"})
+            except OSError:
+                raise HTTPException(503, "Could not start the configured local TTS executable") from None
 
     @app.post("/v1/chat/completions")
     async def completions(request: Request, authorization: str | None = Header(default=None)) -> Response:
