@@ -106,7 +106,6 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - **Acceptance:** both message roles have copy and full-view actions; assistant speech control remains available; user content is rendered as text in the viewer; copy does not fail solely because Clipboard API permission was rejected if the selection fallback succeeds; jump control appears away from bottom and hides after returning to the latest message.
 - **Status:** merged in PR #61 at `529b1d0b86aef58c2b84663a44e78677a31ce9b1`; exact-head Quality workflow #40495106752 passed all six jobs including Chromium and published-site smoke, and provenance run #40495106735 passed. Native iOS Safari/real-device behavior remains unverified.
 
-
 ## EV-RAG-006 — Reciprocal rank fusion for low-footprint hybrid retrieval
 
 - Scope: fuse the independently ranked SQLite FTS5/BM25 and lexical-concept-graph candidate lists in LazyGraphRAG with reciprocal rank fusion (default rank constant 60).
