@@ -2,7 +2,7 @@
 
 > **Первым делом в новом чате:** прочитай этот файл, затем актуальный `docs/PROJECT_STATE.yaml`, потом только конкретные файлы по текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-Последний подтверждённый main: **3887b408988e0476251736a8e7a3e3374eb2ce58** (PR #65 merged; state/eval/roadmap reconciled). Post-merge Quality run #40527418639 был in progress при последней проверке. После merge GitHub API вернул 0 открытых PR и 0 открытых Issues. Перепроверять HEAD/очереди перед каждым изменением.
+Последний подтверждённый main: **3887b408988e0476251736a8e7a3e3374eb2ce58** (PR #65 merged; state/eval/roadmap reconciled). Post-merge Quality run #40527418639 завершился success: 6/6 jobs, включая Chromium и published-site smoke. После merge GitHub API вернул 0 открытых PR и 0 открытых Issues. Перепроверять HEAD/очереди перед каждым изменением.
 
 ## 1. Быстрый маршрут
 
@@ -98,9 +98,9 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 ## Checkpoint — PR #65 merged; architecture map and Graphify research (2026-10-27)
 
 - PR #65 merged into main at `3887b408988e0476251736a8e7a3e3374eb2ce58`; exact PR-head checks 7/7 passed (integrity, security, context, Jekyll, Chromium, published-site smoke, provenance).
-- Post-merge Quality run #40527418639: 4/5 jobs passed; Chromium was in progress at last poll. Do not claim post-merge gate green until complete.
+- Post-merge Quality run #40527418639 completed successfully: 6/6 jobs, including Chromium and published-site smoke.
 - GitHub API tree: 140 tracked files across static UI, FastAPI gateway, memory, RAG/evidence, security, tools, voice, browser E2E and quality/provenance scripts. Local checkout remains blocked by DNS.
-- Graphify upstream rechecked via Exa: Apache-2.0, package `graphifyy`, Python >=3.10, local tree-sitter code extraction; docs/media semantic pass may use a model; dependency footprint is substantial. Official code-only commands now documented in the architecture map (`extract --code-only`, `cluster-only --no-label`, `export html`, `query`).
-- `docs/ALANDI_ARCHITECTURE_MAP_RU.md` adds a curated module map, routes, tests and a bounded Graphify pilot plan. `.graphifyignore` is added as a precautionary exclusion list; its interpretation by Graphify remains unverified until the pilot. It is not a generated dependency graph.
+- Graphify upstream rechecked via Exa: Apache-2.0, package `graphifyy`, Python >=3.10, local tree-sitter code extraction; docs/media semantic pass may use a model; dependency footprint is substantial. Official code-only commands now documented in the architecture map (`extract --code-only --no-gitignore` in a tracked staging copy, `cluster-only --no-label`, `export html`, `query`).
+- `docs/ALANDI_ARCHITECTURE_MAP_RU.md` adds a curated module map, routes, tests and a bounded Graphify pilot plan. `.graphifyignore` is added as a precautionary exclusion list; its interpretation by Graphify remains unverified until the pilot. The staging-copy approach prevents indexing untracked local secrets, and `--no-gitignore` preserves the SQL schema ignored by the repository's `*.sql` rule. It is not a generated dependency graph.
 - Graphify is **not run**: `git clone https://github.com/DorpNay/skills-github-pages.git /tmp/alandirepo` failed with `Could not resolve host: github.com`. No CLI install or graph generation claimed.
 - Next: confirm exact-main Quality/Pages/Provenance; inspect official code-only workflow and ignore semantics; run isolated pilot only in a network-enabled workspace; meanwhile choose a bounded product change supported by current source/tests.
