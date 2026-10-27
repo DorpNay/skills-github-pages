@@ -174,7 +174,7 @@ architecture_map_checkpoint:
   date: "2026-10-27"
   main_sha_at_checkpoint: "3887b408988e0476251736a8e7a3e3374eb2ce58"
   pr65: "merged; exact PR-head 7/7 checks passed"
-  post_merge_quality_run: "40527418639; in_progress at last poll, Chromium pending"
+  post_merge_quality_run: "40527418639; success; 6/6 jobs including Chromium and published-site smoke"
   repository_tree: "140 tracked files inspected via GitHub API"
   architecture_map: "docs/ALANDI_ARCHITECTURE_MAP_RU.md; curated, not generated AST graph"
   graphify:
@@ -185,7 +185,7 @@ architecture_map_checkpoint:
     docs_media: "semantic pass may use configured model"
     execution: "blocked; git clone failed DNS resolution for github.com"
     runtime_dependency: false
-  next: "verify PR #66 checks; run code-only Graphify pilot in network-enabled isolated checkout and verify ignore behavior; choose one bounded implementation with tests"
+  next: "verify latest PR #66 checks; run Graphify in a network-enabled disposable staging copy from tracked files, with code-only extraction and ignore verification; choose one bounded implementation with tests"
 
 graphify_exclusions:
   file: ".graphifyignore"
