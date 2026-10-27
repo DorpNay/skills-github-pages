@@ -1279,6 +1279,7 @@ permalink: /
       for(const file of files) {
         if(file.type.startsWith('image/')||file.type.startsWith('video/')){await addMediaFiles([file]);continue;}
         if(isLocalDocumentFile(file)) {
+          if(pendingComposerAttachments.length>=8){showToast('В одном черновике допускается не более восьми вложений.','error');break;}
           if(file.size>8*1024*1024){showToast('Документ превышает локальный лимит 8 МБ: '+file.name,'error');continue;}
           if(pendingComposerAttachments.filter(item=>item.kind==='document').length>=3){showToast('За один запрос можно обработать не более трёх документов.','error');break;}
           pendingComposerAttachments.push({id:projectIdNew(),kind:'document',name:file.name,mime:file.type||'application/octet-stream',size:file.size,file});
@@ -3316,7 +3317,7 @@ permalink: /
       const documents=chosenAttachments.filter(item=>item.kind==='document');
       let documentTextById=new Map();
       if(documents.length) {
-        if(selectedProvider!=='alandi') {
+        if(currentProvider()!=='alandi') {
           showToast('PDF/DOCX/XLSX отправляются только на явно выбранный собственный aLandi gateway. Выбери aLandi или убери документы.','error');return;
         }
         const totalBytes=documents.reduce((sum,item)=>sum+item.size,0);
@@ -3324,6 +3325,7 @@ permalink: /
         const gatewayBaseUrl=getConfiguredAlandiGatewayBaseUrl();
         if(!gatewayBaseUrl||!apiKey){showToast('Для разбора документов нужны адрес и ключ собственного gateway.','error');toggleSettings(true);return;}
         isPreparingDocumentAttachments=true;
+        showToast('Извлекаю текст документов на собственном aLandi gateway…');
         try {
           for(const item of documents) {
             const extracted=await extractDocumentThroughAlandi(item.file,gatewayBaseUrl,apiKey);
