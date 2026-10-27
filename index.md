@@ -3658,7 +3658,7 @@ permalink: /
             updateState([...chats]);
             throw abortError();
           }
-          if (!extendedToolBudget && index > 0) {
+          if (mode === 'fast' && index > 0 && !extendedSearch) {
             result = 'Вызов пропущен: быстрый режим выполняет не более одного инструмента за раунд.';
           } else if (seenToolCallKeys.has(toolSignature)) {
             result = 'Повторный идентичный вызов подавлен, чтобы не расходовать бюджет инструментов.';
