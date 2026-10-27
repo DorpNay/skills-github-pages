@@ -44,12 +44,20 @@ def zip_bytes(files):
 def pdf_bytes(text="PDF evidence"):
     writer = PdfWriter()
     page = writer.add_blank_page(width=300, height=300)
-    from pypdf.generic import RectangleObject
-    page.mediabox = RectangleObject((0, 0, 300, 300))
-    # Add a minimal text content stream so extraction has a deterministic payload.
-    from pypdf.generic import DecodedStreamObject, NameObject
+    from pypdf.generic import (
+        DecodedStreamObject, DictionaryObject, NameObject, NumberObject,
+    )
+    font = DictionaryObject({
+        NameObject("/Type"): NameObject("/Font"),
+        NameObject("/Subtype"): NameObject("/Type1"),
+        NameObject("/BaseFont"): NameObject("/Helvetica"),
+    })
+    page[NameObject("/Resources")] = DictionaryObject({
+        NameObject("/Font"): DictionaryObject({NameObject("/F1"): font}),
+    })
     stream = DecodedStreamObject()
-    stream.set_data(b"BT /F1 12 Tf 10 200 Td (PDF evidence) Tj ET")
+    safe_text = text.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+    stream.set_data(f"BT /F1 12 Tf 10 200 Td ({safe_text}) Tj ET".encode("ascii"))
     page[NameObject("/Contents")] = stream
     buffer = io.BytesIO()
     writer.write(buffer)
