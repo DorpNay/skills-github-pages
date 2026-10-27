@@ -549,6 +549,10 @@ permalink: /
       <div class="flex items-center justify-between gap-3"><p id="voiceRecordingStatus" class="text-xs text-gray-200" role="status" aria-live="polite">● Запись…</p><div class="flex gap-2"><button type="button" data-action="cancel-voice-recording" class="rounded-lg border border-gray-700 px-3 py-2 text-xs">Отмена</button><button type="button" data-action="stop-voice-recording" class="rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white">Остановить и расшифровать</button></div></div>
     </div>
   </footer>
+  <div id="ttsMiniPlayer" class="hidden fixed bottom-24 right-3 z-[75] w-[min(22rem,calc(100vw-1.5rem))] rounded-xl border border-cyan-700/60 bg-gray-950 p-3 shadow-2xl" role="region" aria-label="Миниплеер озвучивания">
+    <div class="mb-2 flex items-center justify-between gap-3"><p id="ttsMiniPlayerStatus" class="text-xs text-gray-300">Локальное озвучивание</p><button type="button" data-action="stop-speech" class="rounded-md border border-gray-700 px-2 py-1 text-xs">Стоп</button></div>
+    <audio id="ttsAudioPlayer" class="w-full" controls preload="none"></audio>
+  </div>
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
   <div id="chatActionModal" class="hidden fixed inset-0 z-[85] bg-black/65 p-4 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="chatActionTitle" aria-describedby="chatActionHelp">
     <section class="chat-action-dialog w-full max-w-sm rounded-2xl p-4 sm:p-5 space-y-4">
@@ -1299,6 +1303,22 @@ permalink: /
         bubble.appendChild(content);
       }
       row.appendChild(bubble);
+      if (!isUser && typeof message.content === 'string' && message.content.trim()) {
+        row.className += ' flex-col items-start';
+        const actions = document.createElement('div');
+        actions.className = 'message-actions flex flex-wrap items-center gap-2 mt-1';
+        const copy = document.createElement('button');
+        copy.type = 'button'; copy.dataset.action = 'copy-message'; copy.dataset.messageText = message.content;
+        copy.className = 'text-xs text-gray-400 hover:text-gray-100 px-1.5 py-1 rounded-md';
+        copy.textContent = getUiLanguage() === 'en' ? 'Copy' : 'Копировать';
+        const speak = document.createElement('button');
+        speak.type = 'button'; speak.dataset.action = 'speak-message'; speak.dataset.messageText = message.content;
+        speak.className = 'text-xs text-cyan-300 hover:text-cyan-100 px-1.5 py-1 rounded-md';
+        speak.textContent = getUiLanguage() === 'en' ? '🔊 Read aloud' : '🔊 Озвучить';
+        speak.title = getUiLanguage() === 'en' ? 'Generate speech with your configured local TTS model' : 'Создать речь локальной TTS-моделью на твоём gateway';
+        actions.append(copy, speak);
+        row.appendChild(actions);
+      }
       if (!isUser && message.providerInfo) { const meta=document.createElement('div'); meta.className='message-model-meta'; const r=message.providerInfo; meta.textContent=(r.providerLabel||r.provider||'Провайдер неизвестен')+' · '+(r.model||'модель не указана')+(r.requestedModel&&r.requestedModel!==r.model?' (запрошена '+r.requestedModel+')':'')+(r.provider==='alandi'&&r.cacheStatus?' · кэш '+r.cacheStatus:''); row.className+=' flex-col items-start'; row.appendChild(meta); }
       if (!isUser && message.researchTrace) {
         const actions = document.createElement('div'); actions.className = 'flex flex-wrap gap-2 mt-1';
@@ -3787,7 +3807,8 @@ permalink: /
         const isCodeAction = ['copy-code','download-code','run-python'].includes(action) && control.classList.contains('code-action') && control.closest('.code-block');
         const isRetryAction = action === 'retry' && control.classList.contains('retry-action');
         const isTraceAction = ['open-trace','copy-trace-link','download-trace','download-trace-json','close-trace'].includes(action);
-        if (!isCodeAction && !isRetryAction && !isTraceAction) return;
+        const isMessageAction = ['copy-message','speak-message'].includes(action);
+        if (!isCodeAction && !isRetryAction && !isTraceAction && !isMessageAction) return;
       }
       try {
         switch (action) {
@@ -3835,6 +3856,9 @@ permalink: /
           case 'import-project': $('importProjectFile').click();break;
           case 'voice-chat-preview': $('voiceMenu').classList.add('hidden');showToast(getUiLanguage()==='en'?'Live voice chat is not connected yet.':'Живой голосовой диалог пока не подключён.');break;
           case 'voice-message-preview': await startVoiceMessageRecording(); break;
+          case 'copy-message': await copyText(control.dataset.messageText || ''); showToast(getUiLanguage()==='en'?'Message copied.':'Сообщение скопировано.'); break;
+          case 'speak-message': await playAssistantMessage(control.dataset.messageText || ''); break;
+          case 'stop-speech': stopAssistantSpeech(); break;
           case 'stop-voice-recording': stopVoiceMessageRecording(false); break;
           case 'cancel-voice-recording': stopVoiceMessageRecording(true); break;
           case 'open-research-studio': openResearchStudio(); break;
