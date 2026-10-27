@@ -2,7 +2,7 @@
 
 > **Первым делом в новом чате:** прочитай этот файл, затем актуальный `docs/PROJECT_STATE.yaml`, потом только конкретные файлы по текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-Исторический SHA в предыдущем снимке устарел. Срез начала работы: main **529b1d0b86aef58c2b84663a44e78677a31ce9b1**; после документационного PR #62 main перешёл на **f689cbe17a2996ebd4cd2ca9fcb71d60102a6c25**. PR #37 закрыт без merge после неуспешных Chromium/integrity checks; Issue #1 закрыт как not_planned с объяснением. Перед работой повторно проверять HEAD и очереди.
+Последний подтверждённый main: **623f1865ee4021debade9000bbecf6004c6b4cfa** (PR #63 merged после успешных 6/6 Quality jobs и provenance). Live queue snapshot at 2026-10-27: **0 open PRs, 0 open issues**. Повторно проверять HEAD/очереди перед каждым изменением.
 
 ## 1. Быстрый маршрут
 
@@ -55,6 +55,13 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Never equate code merged, CI passed, Pages deployed and VPS configured; these are separate statuses.
 
 
+## Текущий checkpoint — root orienter and queue cleanup (2026-10-27)
+
+- Root `AGENTS.md` теперь явно направляет агента сначала к этому orienter и state file.
+- PR #63 merged at `623f1865ee4021debade9000bbecf6004c6b4cfa`; its checks: Quality Sentinels, Chromium, published Pages smoke and provenance all passed.
+- Live queue checked after merge: 0 open PRs, 0 open issues. This is a snapshot; always refresh before edits.
+- Graphify is not installed/run: the previous execution container could not resolve github.com. The next real implementation step is a network-enabled isolated pilot, not claiming graph integration.
+
 ## Текущий checkpoint — open-source triage (2026-10-27)
 
 - Решения по дополнительному списку внесены в docs/OPEN_SOURCE_TRIAGE_RU.md; техники и способы применения — в docs/TECHNIQUE_REGISTER_RU.md.
@@ -64,3 +71,10 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Не считать Graphify установленным/запущенным: в этом checkpoint изучен upstream README и задокументирован пилот, но локальный запуск ещё не подтверждён.
 
 - Ограничение текущего окружения: `git clone https://github.com/...` не удался из-за DNS (`Could not resolve host: github.com`); не утверждать, что Graphify был установлен или запускался.
+
+
+## Checkpoint — root orienter rollout
+
+- Текущая ветка документации: `docs/root-orienter-checkpoint-20261027`; корневой `AGENTS.md` дополнен протоколом первого чтения, ведения чекпоинтов и отдельной границей Graphify vs memory graph.
+- На main в момент старта: `623f1865ee4021debade9000bbecf6004c6b4cfa`; PR/Issues очередь была пустой.
+- Следующий шаг после merge этого docs PR: Graphify pilot в среде с сетевым доступом и локальной копией репозитория. Если текущая среда не позволяет checkout/install, зафиксировать blocker и перейти к доступным безопасным улучшениям, не выдавая пилот за выполненный.
