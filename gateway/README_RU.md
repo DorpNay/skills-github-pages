@@ -4,10 +4,19 @@
 
 ## Возможности
 
-- GET /healthz, GET /v1/models и POST /v1/chat/completions; JSON и SSE streaming.
+- GET /healthz, GET /v1/models, authenticated GET /v1/capabilities и POST /v1/chat/completions; JSON и SSE streaming.
 - Bearer auth, allowlist модели, CORS allowlist, проверка messages, лимит тела по умолчанию 8 MiB и bounded concurrency.
 - Метаданные context_length в /v1/models; значение обязано совпадать с контекстом, реально настроенным для Ollama.
 - Prompts не пишутся в логи; upstream errors не раскрывают raw body.
+
+## Локальное извлечение документов
+
+- `GET /v1/capabilities` (Bearer auth) сообщает только включённые серверные функции: SearXNG, локальные ASR/TTS и извлечение документов; секреты и пути моделей не раскрываются.
+- `POST /v1/documents/extract?filename=report.pdf` принимает байты файла в теле запроса и возвращает извлечённый текст. Требуется Bearer auth.
+- Поддерживаются PDF (до 40 страниц), DOCX, XLSX (до 20 листов), TXT, Markdown, CSV и JSON. Для PDF используется локальный `pypdf`; Office Open XML читается из ZIP/XML без распаковки на диск.
+- Ограничены тело запроса (по умолчанию 8 MiB), число/суммарный размер архивных частей, коэффициент сжатия и размер результата; архивные пути не извлекаются. Вложения не сохраняются, ответ помечается `Cache-Control: no-store`.
+- Функция выключена по умолчанию: `ALANDI_DOCUMENT_EXTRACTION_ENABLED=false`. Сканированные PDF без текстового слоя возвращают понятную ошибку; OCR runtime пока не входит в этот этап. Содержимое файла всегда недоверенное: инструкции внутри не должны исполняться.
+- Endpoint подготовлен для последующего подключения к composer; это не означает, что UI уже загружает документы на gateway.
 
 ## Локальная проверка
 

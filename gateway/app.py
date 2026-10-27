@@ -5,13 +5,18 @@ This service never executes tools, fetches arbitrary URLs, or stores prompt cont
 from __future__ import annotations
 import asyncio
 import hashlib
+import io
 import json
 import logging
 import os
+import posixpath
+import re
 import secrets
 import sqlite3
 import tempfile
 import time
+import zipfile
+import xml.etree.ElementTree as ET
 from contextlib import asynccontextmanager, closing
 from dataclasses import asdict, dataclass
 from functools import wraps
@@ -19,7 +24,8 @@ from typing import Any, AsyncIterator, Mapping
 from urllib.parse import urlsplit
 
 import httpx
-from fastapi import FastAPI, Header, HTTPException, Request
+from pypdf import PdfReader
+from fastapi import FastAPI, Header, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 
@@ -112,6 +118,10 @@ class Settings:
     audio_speech_model: str = ""
     audio_speech_data_dir: str = ""
     audio_speech_timeout_seconds: int = 60
+    # Local bounded document extraction; no file persistence or remote parser.
+    document_extraction_enabled: bool = False
+    document_extraction_max_bytes: int = 8 * 1024 * 1024
+    document_extraction_max_chars: int = 80_000
     model_size_advisory_mb: int = 6144
     oauth_enabled: bool = False
     oauth_path: str = "/var/lib/alandi-gateway/oauth.sqlite3"
@@ -225,6 +235,9 @@ class Settings:
             audio_speech_model=audio_speech_model,
             audio_speech_data_dir=audio_speech_data_dir,
             audio_speech_timeout_seconds=int_env("ALANDI_AUDIO_SPEECH_TIMEOUT_SECONDS", 60, 1),
+            document_extraction_enabled=bool_env("ALANDI_DOCUMENT_EXTRACTION_ENABLED", False),
+            document_extraction_max_bytes=int_env("ALANDI_DOCUMENT_EXTRACTION_MAX_BYTES", 8 * 1024 * 1024, 1024),
+            document_extraction_max_chars=int_env("ALANDI_DOCUMENT_EXTRACTION_MAX_CHARS", 80_000, 1000),
             model_size_advisory_mb=int_env(model_size_budget_env, 6144, 256),
             oauth_enabled=oauth_enabled,
             oauth_path=os.getenv("OAUTH_TOKEN_VAULT_PATH", "/var/lib/alandi-gateway/oauth.sqlite3").strip() or "/var/lib/alandi-gateway/oauth.sqlite3",
@@ -277,6 +290,174 @@ async def read_limited_body(request: Request, limit: int) -> bytes:
         parts.append(part)
     return b"".join(parts)
 
+
+
+DOCUMENT_TEXT_EXTENSIONS = {".txt", ".md", ".csv", ".json"}
+DOCUMENT_ARCHIVE_EXTENSIONS = {".docx", ".xlsx"}
+DOCUMENT_ALLOWED_EXTENSIONS = DOCUMENT_TEXT_EXTENSIONS | DOCUMENT_ARCHIVE_EXTENSIONS | {".pdf"}
+DOCUMENT_MAX_ARCHIVE_ENTRIES = 500
+DOCUMENT_MAX_EXPANDED_BYTES = 20 * 1024 * 1024
+
+
+def _bounded_zip_entries(data: bytes) -> tuple[zipfile.ZipFile, dict[str, zipfile.ZipInfo]]:
+    try:
+        archive = zipfile.ZipFile(io.BytesIO(data))
+        entries = archive.infolist()
+    except (zipfile.BadZipFile, OSError, ValueError):
+        raise HTTPException(400, "Document archive is invalid") from None
+    if len(entries) > DOCUMENT_MAX_ARCHIVE_ENTRIES:
+        archive.close()
+        raise HTTPException(413, "Document archive has too many entries")
+    total = 0
+    indexed: dict[str, zipfile.ZipInfo] = {}
+    for entry in entries:
+        name = entry.filename
+        if name.startswith("/") or "\\" in name or any(part == ".." for part in name.split("/")):
+            archive.close()
+            raise HTTPException(400, "Document archive contains an unsafe path")
+        if entry.flag_bits & 0x1:
+            archive.close()
+            raise HTTPException(400, "Encrypted document archives are not supported")
+        total += entry.file_size
+        if total > DOCUMENT_MAX_EXPANDED_BYTES:
+            archive.close()
+            raise HTTPException(413, "Expanded document archive exceeds the permitted size")
+        if entry.file_size > 1024 * 1024 and entry.file_size > max(entry.compress_size, 1) * 200:
+            archive.close()
+            raise HTTPException(413, "Document archive compression ratio is too high")
+        indexed[name] = entry
+    return archive, indexed
+
+
+def _xml_from_archive(archive: zipfile.ZipFile, entries: dict[str, zipfile.ZipInfo], name: str) -> ET.Element:
+    entry = entries.get(name)
+    if entry is None or entry.file_size > DOCUMENT_MAX_EXPANDED_BYTES:
+        raise HTTPException(400, "Document is missing a required XML part")
+    try:
+        with archive.open(entry) as stream:
+            return ET.fromstring(stream.read(DOCUMENT_MAX_EXPANDED_BYTES + 1))
+    except (ET.ParseError, OSError, RuntimeError, ValueError):
+        raise HTTPException(400, "Document XML is invalid") from None
+
+
+def _extract_docx(data: bytes) -> str:
+    archive, entries = _bounded_zip_entries(data)
+    try:
+        if "[Content_Types].xml" not in entries or "word/document.xml" not in entries:
+            raise HTTPException(400, "DOCX package is missing required parts")
+        root = _xml_from_archive(archive, entries, "word/document.xml")
+        texts = []
+        for paragraph in root.iter("{http://schemas.openxmlformats.org/wordprocessingml/2006/main}p"):
+            value = "".join(node.text or "" for node in paragraph.iter("{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t"))
+            if value:
+                texts.append(value)
+        return "\n".join(texts)
+    finally:
+        archive.close()
+
+
+def _extract_xlsx(data: bytes) -> str:
+    archive, entries = _bounded_zip_entries(data)
+    try:
+        if "[Content_Types].xml" not in entries or "xl/workbook.xml" not in entries or "xl/_rels/workbook.xml.rels" not in entries:
+            raise HTTPException(400, "XLSX package is missing required parts")
+        workbook = _xml_from_archive(archive, entries, "xl/workbook.xml")
+        relationships = _xml_from_archive(archive, entries, "xl/_rels/workbook.xml.rels")
+        rel_ns = "{http://schemas.openxmlformats.org/package/2006/relationships}"
+        rel_targets = {node.attrib.get("Id"): node.attrib.get("Target", "") for node in relationships.iter(rel_ns + "Relationship")}
+        sheets_ns = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
+        document_ns = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
+        shared: list[str] = []
+        if "xl/sharedStrings.xml" in entries:
+            shared_root = _xml_from_archive(archive, entries, "xl/sharedStrings.xml")
+            shared = ["".join(node.text or "" for node in item.iter(sheets_ns + "t")) for item in shared_root.iter(sheets_ns + "si")]
+        output: list[str] = []
+        sheets = list(workbook.iter(sheets_ns + "sheet"))
+        if not sheets:
+            raise HTTPException(400, "XLSX workbook contains no sheets")
+        for sheet in sheets[:20]:
+            rel_id = sheet.attrib.get(document_ns + "id", "")
+            target = rel_targets.get(rel_id, "")
+            if not target or target.startswith("/") or "\\" in target:
+                raise HTTPException(400, "XLSX workbook contains an unsafe worksheet reference")
+            path = posixpath.normpath(posixpath.join("xl", target))
+            if not path.startswith("xl/") or path not in entries:
+                raise HTTPException(400, "XLSX worksheet reference is invalid")
+            root = _xml_from_archive(archive, entries, path)
+            output.append("[Sheet: " + sheet.attrib.get("name", "Sheet") + "]")
+            for row in root.iter(sheets_ns + "row"):
+                values = []
+                for cell in row.findall(sheets_ns + "c"):
+                    cell_type = cell.attrib.get("t", "")
+                    value_node = cell.find(sheets_ns + "v")
+                    value = value_node.text if value_node is not None and value_node.text is not None else ""
+                    if cell_type == "s":
+                        try:
+                            value = shared[int(value)]
+                        except (ValueError, IndexError):
+                            raise HTTPException(400, "XLSX shared-string reference is invalid") from None
+                    elif cell_type == "inlineStr":
+                        inline = cell.find(sheets_ns + "is")
+                        value = "".join(node.text or "" for node in inline.iter(sheets_ns + "t")) if inline is not None else ""
+                    if value:
+                        values.append(f"{cell.attrib.get('r', '')}={value}")
+                if values:
+                    output.append(" | ".join(values))
+        return "\n".join(output)
+    finally:
+        archive.close()
+
+
+def extract_local_document(filename: str, data: bytes, max_chars: int) -> tuple[str, str]:
+    extension = os.path.splitext(filename)[1].lower()
+    if extension not in DOCUMENT_ALLOWED_EXTENSIONS:
+        raise HTTPException(415, "Supported formats: PDF, DOCX, XLSX, TXT, MD, CSV and JSON")
+    if not data:
+        raise HTTPException(400, "Document body is empty")
+    if extension in DOCUMENT_TEXT_EXTENSIONS:
+        if data.startswith((b"\xff\xfe", b"\xfe\xff")):
+            raise HTTPException(415, "Only UTF-8 text documents are supported")
+        try:
+            text = data.decode("utf-8-sig", errors="strict")
+        except UnicodeDecodeError:
+            raise HTTPException(415, "Text document must be UTF-8 encoded") from None
+        parser = "local-utf8"
+    elif extension == ".pdf":
+        if not data.startswith(b"%PDF-"):
+            raise HTTPException(400, "PDF signature is invalid")
+        try:
+            reader = PdfReader(io.BytesIO(data), strict=False)
+            if reader.is_encrypted:
+                raise HTTPException(415, "Encrypted PDFs are not supported")
+            if len(reader.pages) > 40:
+                raise HTTPException(413, "PDF exceeds the 40-page extraction limit")
+            parts = []
+            for page in reader.pages:
+                parts.append(page.extract_text() or "")
+                if sum(len(part) for part in parts) > max_chars:
+                    break
+            text = "\n\n".join(parts)
+        except HTTPException:
+            raise
+        except Exception as exc:
+            raise HTTPException(400, "PDF could not be parsed") from None
+        parser = "local-pypdf"
+    elif extension == ".docx":
+        if not data.startswith(b"PK"):
+            raise HTTPException(400, "DOCX archive signature is invalid")
+        text = _extract_docx(data)
+        parser = "local-docx-xml"
+    else:
+        if not data.startswith(b"PK"):
+            raise HTTPException(400, "XLSX archive signature is invalid")
+        text = _extract_xlsx(data)
+        parser = "local-xlsx-xml"
+    text = text.replace("\x00", "").strip()
+    if not text:
+        raise HTTPException(422, "No extractable text was found; scanned PDFs need a separate local OCR runtime")
+    if len(text) > max_chars:
+        text = text[:max_chars]
+    return text, parser
 
 def validate_payload(payload: object, allowed: tuple[str, ...]) -> tuple[dict, bool]:
     if not isinstance(payload, dict):
@@ -559,6 +740,18 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                                                           "auth_configured": len(config.api_key) >= 32})
         return JSONResponse(content={"status": "ok", "ollama": "reachable",
                                       "auth_configured": len(config.api_key) >= 32})
+
+    @app.get("/v1/capabilities")
+    async def capabilities(authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        return JSONResponse({
+            "search": {"searxng": config.searxng_enabled},
+            "audio": {
+                "transcription": config.audio_transcription_enabled,
+                "speech": config.audio_speech_enabled,
+            },
+            "documents": {"extraction": config.document_extraction_enabled},
+        }, headers={"Cache-Control": "no-store"})
 
     @app.get("/v1/models")
     async def models(request: Request, authorization: str | None = Header(default=None)) -> JSONResponse:
@@ -998,6 +1191,20 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 break
         return JSONResponse({"provider": "searxng", "query": query, "results": results, "count": len(results)},
                             headers={"Cache-Control": "no-store"})
+
+
+    @app.post("/v1/documents/extract")
+    async def extract_document(request: Request, filename: str = Query(min_length=1, max_length=255),
+                               authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        if not config.document_extraction_enabled:
+            raise HTTPException(503, "Local document extraction is disabled")
+        if filename != os.path.basename(filename) or any(ord(char) < 32 for char in filename):
+            raise HTTPException(400, "filename must be a plain file name")
+        data = await read_limited_body(request, config.document_extraction_max_bytes)
+        text, parser = extract_local_document(filename, data, config.document_extraction_max_chars)
+        return JSONResponse({"filename": filename, "text": text, "parser": parser, "characters": len(text)},
+                            headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"})
 
     @app.post("/v1/audio/transcriptions")
     @local_audio_limited(config)
