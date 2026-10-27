@@ -30,8 +30,8 @@
 ## Fast entry point / first-read protocol (2026-10-27)
 
 Before any aLandi task:
-1. Read `project-reference/FILE_ORIENTER_RU.md` first; it is the canonical navigation index.
-2. Read `docs/PROJECT_STATE.yaml` and verify live GitHub `main`, open PRs and issues; stored SHAs and queue counts are checkpoints, not live truth.
+1. Read root `ORIENTEER.md` first; it is the short launch pointer for fast orientation, not a duplicate source of truth.
+2. Read `project-reference/FILE_ORIENTER_RU.md` and `docs/PROJECT_STATE.yaml`; verify live GitHub `main`, open PRs and issues because stored SHAs and queue counts are checkpoints, not live truth.
 3. Read only the task-relevant source files, tests, and applicable architecture/security docs.
 4. After each meaningful stage, update the orienter checkpoint, `docs/PROJECT_STATE.yaml`, and `docs/VOLLEY_LOG.md`; record what was verified, exact SHA/PR, test evidence, blockers, rollback and next action.
 5. Never leave a PR/issue untriaged. Merge only when current-head checks pass and change is safe; close stale/failed PRs with a clear reason and preserve useful ideas as small follow-up tasks. Do not close issues merely to clear the queue.
