@@ -168,3 +168,26 @@ latest_checkpoint:
     - "Implementation roadmap still labelled PR #61 first slice validation pending"
   graphify: "not run; local checkout blocked by DNS in prior execution environment"
   next: "verify quality run completion, merge documentation reconciliation if checks pass, then resume Graphify pilot or safe product slice"
+
+
+architecture_map_checkpoint:
+  date: "2026-10-27"
+  main_sha_at_checkpoint: "3887b408988e0476251736a8e7a3e3374eb2ce58"
+  pr65: "merged; exact PR-head 7/7 checks passed"
+  post_merge_quality_run: "40527418639; success; 6/6 jobs including Chromium and published-site smoke"
+  repository_tree: "140 tracked files inspected via GitHub API"
+  architecture_map: "docs/ALANDI_ARCHITECTURE_MAP_RU.md; curated, not generated AST graph"
+  graphify:
+    upstream: "Graphify-Labs/graphify"
+    package: "graphifyy"
+    license: "Apache-2.0"
+    code_extraction: "local tree-sitter AST per upstream docs"
+    docs_media: "semantic pass may use configured model"
+    execution: "blocked; git clone failed DNS resolution for github.com"
+    runtime_dependency: false
+  next: "verify latest PR #66 checks; run Graphify in a network-enabled disposable staging copy from tracked files, with code-only extraction and ignore verification; choose one bounded implementation with tests"
+
+graphify_exclusions:
+  file: ".graphifyignore"
+  status: "added in PR #66; actual Graphify interpretation not yet tested"
+  intended_exclusions: "env/secrets, databases, generated outputs, dependencies, model/media weights"
