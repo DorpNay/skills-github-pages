@@ -257,10 +257,14 @@ def local_audio_limited(settings: Settings):
             authorize(settings, kwargs.get("authorization"))
             # Share the gateway-wide slot with Ollama to avoid overlapping model memory peaks.
             semaphore = request.app.state.semaphore
-            if semaphore.locked():
-                raise HTTPException(429, "Another local audio job is already running")
-            async with semaphore:
+            try:
+                await asyncio.wait_for(semaphore.acquire(), timeout=0.05)
+            except asyncio.TimeoutError:
+                raise HTTPException(429, "Gateway is busy; retry shortly") from None
+            try:
                 return await endpoint(request, *args, **kwargs)
+            finally:
+                semaphore.release()
         return wrapped
     return decorate
 
