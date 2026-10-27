@@ -63,7 +63,7 @@ improvements:
   AI-DOC-001: {status: "merged_PR45_local_bounded_extraction_capability_discovery_live_setup_unverified", artifact: "gateway/app.py; gateway/tests/test_document_extraction.py; gateway/requirements.txt; infra/license/provenance_manifest.yaml", eval: "EV-DOC-001"}
   AI-DOC-002: {status: "merged_PR50_composer_local_document_extraction_quality_chromium_and_provenance_passed_live_setup_unverified", artifact: "index.md; tests/e2e/document-attachments.spec.mjs; tests/e2e/app.spec.mjs", eval: "EV-DOC-002"}
   AI-AUDIO-012: {status: "local_audio_file_attachment_transcription_in_branch_pending_ci_and_live_model_quality", artifact: "index.md; tests/e2e/audio-transcription.spec.mjs; gateway/app.py", eval: "EV-VOICE-008"}
-  AI-STORAGE-001: {status: "browser_quota_warning_80_95_thresholds_and_silent_estimate_failure_in_branch_pending_ci", artifact: "index.md; tests/e2e/app.spec.mjs", eval: "EV-STORAGE-001"}
+  AI-STORAGE-001: {status: "browser_quota_warning_80_95_thresholds_and_silent_estimate_failure_pending_CI", artifact: "index.md; tests/e2e/app.spec.mjs", eval: "EV-STORAGE-001"}
   AI-INFRA-001: {status: "optional_manual_path_no_vm_created", artifact: "docs/INFRASTRUCTURE_UPGRADE.md", eval: "EV-INFRA-001"}
   AI-INFRA-002: {status: "manual_instructions_no_dns_changed", artifact: "docs/DOMAIN_SETUP.md", eval: "EV-INFRA-002"}
   AI-INFRA-003: {status: "target_profile_unmeasured", artifact: "infra/hardware_profiles.yaml", eval: "EV-HW-001"}
