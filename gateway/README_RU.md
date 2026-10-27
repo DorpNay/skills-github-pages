@@ -85,3 +85,17 @@
 - `OAUTH_ENABLED=false`: backend Google OAuth Code+PKCE routes `/oauth/google/initiate`, `/oauth/google/callback`, `/oauth/google/status`, `/oauth/google/refresh`, `/oauth/google/revoke`. `gateway/security/oauth_vault.py` encrypts tokens with Fernet; callback never returns tokens. Real Google credentials and exact HTTPS callback still need configuration; Google Picker/file import UI isn't implemented. `OAUTH_ENCRYPTION_KEY` must be generated once and stored outside Git, separately from the DB.
 
 Все экспериментальные флаги остаются `false` по умолчанию. Граф памяти может быть включён отдельно только после проверки этого API и резервного копирования его SQLite-файла; глобальная память требует двойного opt-in. Перед включением любого флага прогоните `python -m pytest -q gateway/tests` и изучите [шесть инженерных пластов](../docs/SIX_LAYER_ENGINEERING_RU.md) и [журнал решений](../DECISIONS.md). Не включайте одновременно несколько новых функций во время экспериментального сравнения. Все результаты в README — реализованный код локально, а не доказательство развертывания на VPS.
+
+
+## Optional local helper for project-memory suggestions
+
+POST /v1/helpers/project-memory-suggestions is an optional, Bearer-authenticated route for manually compressing existing project-memory facts with an operator-selected local Ollama model.
+
+Configuration:
+- ALANDI_HELPER_MODEL= (blank by default; disables the endpoint)
+- ALANDI_HELPER_TIMEOUT_SECONDS=90 (1–180 seconds)
+- ALANDI_HELPER_MAX_INPUT_CHARS=6000 (512–8000)
+
+The helper does not accept a model name from the browser. It shares the gateway inference semaphore, uses bounded structured JSON output and keep_alive=0, and filters common secret-like patterns from input and output. UI suggestions are never stored automatically: the user adds each candidate individually to the current local project memory.
+
+This is still an opt-in code path. Install the exact model tag locally before configuring it; run gateway tests and E2E first. No live VPS/model inference is implied by CI.
