@@ -108,3 +108,10 @@ Next P1 work: support local transcription of audio files attached from disk (PR 
 3. Send only non-secret outputs: OS, RAM/disk, service active/inactive, health HTTP code, model ID, cache MISS/HIT, Tunnel Healthy.
 4. Do not send API keys, Tunnel tokens, env files, OAuth tokens or private logs.
 5. We can then activate the gateway and verify a real completion; until then, local/provider/runtime statuses remain **unverified**.
+
+
+## Mobile ergonomics — staged retarget of legacy PR #37
+
+- **First slice (PR #61, validation pending):** full-text viewer and copy controls for user/assistant messages, Clipboard API failure fallback, and a jump-to-latest control. Keeps the current document/audio attachments and storage safeguards rather than replacing `index.md` with the stale legacy branch.
+- **Deferred until isolated and retested:** compact mode/search/research toolbar, per-chat mode preferences, composer placement and visual-viewport handling, sidebar/popover layering, and extended search-depth controls. The legacy PR #37 currently has reproducible Playwright failures involving hidden selectors, clipboard permissions, duplicate theme controls, language selector ambiguity, and click interception; it is not safe to merge wholesale.
+- **Acceptance gate:** move one slice at a time onto current `main`, fix locators against the visible user interface rather than force-clicking hidden controls, pass current-head Chromium + published-site smoke, then close the legacy PR as superseded only after its unique accepted work has been migrated.
