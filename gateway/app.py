@@ -741,6 +741,18 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         return JSONResponse(content={"status": "ok", "ollama": "reachable",
                                       "auth_configured": len(config.api_key) >= 32})
 
+    @app.get("/v1/capabilities")
+    async def capabilities(authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        return JSONResponse({
+            "search": {"searxng": config.searxng_enabled},
+            "audio": {
+                "transcription": config.audio_transcription_enabled,
+                "speech": config.audio_speech_enabled,
+            },
+            "documents": {"extraction": config.document_extraction_enabled},
+        }, headers={"Cache-Control": "no-store"})
+
     @app.get("/v1/models")
     async def models(request: Request, authorization: str | None = Header(default=None)) -> JSONResponse:
         authorize(config, authorization)
