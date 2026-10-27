@@ -89,3 +89,11 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - **Fixture:** three deterministic Chromium E2E tests in `tests/e2e/app.spec.mjs`.
 - **Acceptance:** changing one project's memory scope does not change another or the active chat's project; clearing history leaves the selected chat/project in place; clearing a non-active chat leaves the active chat, history, and both project associations unchanged.
 - **Status:** regression tests ported from legacy PR #36 onto current main; exact-head Quality/Chromium validation pending. No production application code changes.
+
+
+## EV-MOBILE-MESSAGE-TOOLS-001 — Full message access and resilient mobile controls
+
+- **Scope:** readable/selectable message view for user and assistant messages, copy fallback when `navigator.clipboard.writeText()` rejects, and a jump-to-latest control that only appears when the chat is sufficiently far from its bottom.
+- **Fixture:** Chromium E2E uses a 390×844 viewport, a long mocked assistant reply, forced clipboard permission rejection, and asserts user/assistant viewer content, fallback copy feedback, and scroll-to-bottom behavior.
+- **Acceptance:** both message roles have copy and full-view actions; assistant speech control remains available; user content is rendered as text in the viewer; copy does not fail solely because Clipboard API permission was rejected if the selection fallback succeeds; jump control appears away from bottom and hides after returning to the latest message.
+- **Status:** implementation and deterministic regression added on branch `feat/mobile-message-tools-current-main`; exact-head Quality/Chromium validation pending. Native iOS Safari clipboard, safe-area and keyboard behavior remain unverified.
