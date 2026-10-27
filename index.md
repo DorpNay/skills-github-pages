@@ -3280,16 +3280,18 @@ permalink: /
       const text = userText.toLocaleLowerCase();
       const isMultimodalTask = /(?:\bocr\b|\basr\b|qwen3-asr|moonshine|zipformer|canary\s*180m|nemotron.*asr|glm-ocr|paddleocr|surya|dots\.(?:ocr|mocr)|deepseek-ocr|lightonocr|asr4all|speech[- ]to[- ]text|transcrib|multimodal rag|rag-anything|распозн.{0,14}(?:реч|голос|ауди|изображ|фото|документ|pdf)|транскриб|голосов|диктовк|микрофон|аудио|распознаван.{0,12}реч|сканирован.{0,12}(?:документ|pdf)|извлеч.{0,12}текст.{0,12}(?:pdf|изображ|документ))/i.test(text);
       const isAgentSystemsTask = /(?:\b(?:multi[- ]?agent|agent swarm|agent orchestration|agent memory|knowledge graph|graph memory|rag|paperclip|ruflo|openshell|pinchtab|hyperframes|utopia)\b|памят|граф знан|баз[аы] знан|источник.{0,20}проект|проектн.{0,15}инструкц|агент.{0,20}(?:систем|роут|оркестр|обуч|команд)|самообуч|долгосрочн.{0,10}памят)/i.test(text);
-      const skill = chosenSkill !== 'auto' ? chosenSkill : (isMultimodalTask ? 'multimodal'
+      const skill = isMultimodalTask ? 'multimodal'
         : isAgentSystemsTask ? 'agent-systems'
         : useMultiAgent || /исслед|найди|источник|сравни|актуальн|research|search|source|compare/.test(text) ? 'research'
         : /код|программ|debug|рефактор|javascript|python|typescript|code|bug|implement/.test(text) ? 'code-review'
-        : /данн|таблиц|статист|рассч|вычисл|график|data|calculate|statistics|dataset/.test(text) ? 'data-analysis' : 'planning');
+        : /данн|таблиц|статист|рассч|вычисл|график|data|calculate|statistics|dataset/.test(text) ? 'data-analysis' : 'planning';
+      // Safety-specialized multimodal/agent-system skills outrank manual presets; other tasks honor the user's choice.
+      const selectedSkill = (isMultimodalTask || isAgentSystemsTask) ? skill : (chosenSkill !== 'auto' ? chosenSkill : skill);
       try {
-        const response = await fetch(new URL('skills/' + skill + '.txt', document.baseURI), { cache: 'force-cache', signal });
+        const response = await fetch(new URL('skills/' + selectedSkill + '.txt', document.baseURI), { cache: 'force-cache', signal });
         if (!response.ok) return '';
         return (await response.text()).slice(0, 5000);
-      } catch (error) { console.warn('Не удалось загрузить навык из репозитория:', error); return ''; }
+      } catch (error) { console.warn('Не удалось загрузить навык из репозитория:', selectedSkill, error); return ''; }
     }
     function getApiCandidates(requestedModel) {
       const selectedProvider=safeGet(STORAGE.provider)||'alandi',allowCrossProvider=safeGet(STORAGE.crossProviderFallback)==='true';
