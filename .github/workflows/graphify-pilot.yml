@@ -126,14 +126,24 @@ jobs:
             echo "### HTML export"
             graphify export html
             echo
-            echo "### Client-to-gateway code query"
-            graphify query "startResearchStudio sendMessage" --context call --budget 1000
-            echo
-            echo "### Gateway request-body call query"
-            graphify query "completions read_limited_body" --context call --budget 1000
-            echo
-            echo "### Memory and retrieval call query"
-            graphify query "MemoryManager LazyGraphRAG" --context call --budget 1000
+            echo "### Ten focused navigation queries"
+            while IFS='|' read -r label query; do
+              [ -z "$label" ] && continue
+              echo
+              echo "#### $label"
+              graphify query "$query" --context call --budget 700
+            done <<'EOF'
+          UI Research Studio|startResearchStudio
+          UI send path|sendMessage runAssistant
+          Gateway auth/provider client|authorize client_for
+          Bounded request parsing|read_limited_body completions
+          Scoped memory|MemoryManager search_nodes
+          RAG retrieval|LazyGraphRAG retrieve
+          Audio generation|synthesize_speech
+          Audio transcription|transcribe_audio
+          Document extraction|extract_document
+          Evidence provenance|EvidenceLedger CitationManager
+          EOF
             echo
             echo "### Graph coverage metrics"
             python - <<'PY'
