@@ -1815,3 +1815,55 @@ test('clearing a non-active project chat preserves the active chat and both proj
   expect(beta.projectId).toBe('project-beta');
   expect(persisted.projects.map(project => project.id).sort()).toEqual(['project-alpha', 'project-beta']);
 });
+
+test('mobile messages expose full text and retain a jump-to-latest control', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText: async () => { throw new DOMException('permission denied', 'NotAllowedError'); } }
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#legacyProviderSettings > summary').click();
+  }
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('message-viewer-model');
+  await page.locator('#apiKey').fill('e2e-message-viewer-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+
+  const longAnswer = Array.from({ length: 70 }, (_, index) => 'MESSAGE_VIEWER_LINE_' + index).join('\\n');
+  await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ model: 'message-viewer-model', choices: [{ message: { role: 'assistant', content: longAnswer } }] })
+  }));
+  await page.locator('#userInput').fill('Show a full message.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('MESSAGE_VIEWER_LINE_69', { timeout: 15000 });
+  await expect(page.locator('#chatBox [data-action="copy-message"]')).toHaveCount(2);
+  await expect(page.locator('#chatBox [data-action="view-message"]')).toHaveCount(2);
+
+  await page.locator('#chatBox [data-action="view-message"]').last().click();
+  await expect(page.locator('#messageViewerModal')).toBeVisible();
+  await expect(page.locator('#messageViewerContent')).toContainText('MESSAGE_VIEWER_LINE_69');
+  await page.locator('#messageViewerModal [data-action="close-message-viewer"]').click();
+  await expect(page.locator('#messageViewerModal')).toBeHidden();
+
+  await page.locator('#chatBox [data-action="view-message"]').first().click();
+  await expect(page.locator('#messageViewerContent')).toContainText('Show a full message.');
+  await page.locator('#messageViewerModal [data-action="close-message-viewer"]').click();
+
+  await page.locator('#chatBox [data-action="copy-message"]').last().click();
+  await expect(page.locator('#toast')).toContainText('Сообщение скопировано');
+
+  await page.locator('#chatBox').evaluate(el => { el.scrollTop = 0; el.dispatchEvent(new Event('scroll')); });
+  await expect(page.locator('#jumpToLatest')).toBeVisible();
+  await page.locator('#jumpToLatest').click();
+  await expect.poll(() => page.locator('#chatBox').evaluate(el => el.scrollHeight - el.scrollTop - el.clientHeight), { timeout: 8000 }).toBeLessThan(8);
+  await expect(page.locator('#jumpToLatest')).toBeHidden();
+});

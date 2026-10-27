@@ -96,4 +96,12 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - **Scope:** voice menu preconditions, per-turn recording, authenticated local ASR, configured chat-provider response, local TTS playback, and restart of listening only after playback.
 - **Fixture:** deterministic Chromium E2E with a mocked `MediaRecorder`, mocked ASR/TTS gateway responses, and a mocked configured chat provider. No real microphone or speech model is exercised in CI.
 - **Acceptance:** selecting voice dialogue closes the menu and gives explicit gateway setup guidance when configuration is missing; an enabled flow transcribes the recording, submits the user message through the selected provider, plays the assistant reply through the configured local TTS route, then records the next turn; route/chat/draft preconditions stop or prevent the session rather than silently sending stale context.
-- **Status:** browser turn loop and deterministic test ported from legacy PR #55 into current-main branch; exact-head Quality/Chromium validation pending. Target hardware, real ASR/TTS quality, RU/EN/Thai accuracy, latency, echo, and Piper voice-model license remain unverified.
+- **Status:** merged via PR #60 at `65cdae7a895d58b9f4371e99f64402bdcfe7513d`; Quality #40492599339 passed all six jobs, including Chromium and published-site smoke, and Provenance #40492599312 passed. This does not prove real hardware or model quality. Target hardware, real ASR/TTS quality, RU/EN/Thai accuracy, latency, echo, and Piper voice-model license remain unverified.
+
+
+## EV-MOBILE-MESSAGE-TOOLS-001 — Full message access and resilient mobile controls
+
+- **Scope:** readable/selectable message view for user and assistant messages, copy fallback when `navigator.clipboard.writeText()` rejects, and a jump-to-latest control that only appears when the chat is sufficiently far from its bottom.
+- **Fixture:** Chromium E2E uses a 390×844 viewport, a long mocked assistant reply, forced clipboard permission rejection, and asserts user/assistant viewer content, fallback copy feedback, and scroll-to-bottom behavior.
+- **Acceptance:** both message roles have copy and full-view actions; assistant speech control remains available; user content is rendered as text in the viewer; copy does not fail solely because Clipboard API permission was rejected if the selection fallback succeeds; jump control appears away from bottom and hides after returning to the latest message.
+- **Status:** implementation and deterministic regression added on branch `feat/mobile-message-tools-current-main`; exact-head Quality/Chromium validation pending. Native iOS Safari/real-device behavior remains unverified.
