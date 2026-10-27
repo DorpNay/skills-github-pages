@@ -143,7 +143,7 @@ def test_helper_model_excludes_secret_like_facts_before_local_inference():
     def handler(request):
         if request.url.path == "/api/chat":
             calls.append(json.loads(request.content))
-            return httpx.Response(200, json={"message": {"content": json.dumps({"candidates": ["A safe project fact."]})}})
+            return httpx.Response(200, json={"message": {"content": json.dumps({"candidates": ["A safe project fact.", "ALANDI_API_KEY=output-secret-value-12345"]})}})
         return httpx.Response(404, json={})
 
     config = settings(helper_model="qwen3.5:0.8b", helper_max_input_chars=6000)
@@ -157,6 +157,7 @@ def test_helper_model_excludes_secret_like_facts_before_local_inference():
     assert response.status_code == 200, response.text
     assert response.json()["skipped_secret_like_count"] == 1
     assert response.json()["source_fact_count"] == 1
+    assert response.json()["candidates"] == ["A safe project fact."]
     assert len(calls) == 1
     sent = json.dumps(calls[0])
     assert "super-secret-value-123456" not in sent
