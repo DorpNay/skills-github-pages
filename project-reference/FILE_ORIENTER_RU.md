@@ -1,11 +1,12 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
-> **Первым делом в новом чате:** прочитай этот файл, затем актуальный `docs/PROJECT_STATE.yaml`, потом только конкретные файлы по текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
+> **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-Подтверждённая база текущего implementation slice: main **82beb7fcddbe9a1438e811693c76bc731d3a5de3** (после post-architecture-map docs checkpoint). При старте всегда получать live HEAD и очередь PR/Issues заново; сохранённый SHA — контрольная точка, а не live truth. Короткий root-launcher: ORIENTEER.md; этот файл остаётся каноническим полным ориентиром.
+Последняя подтверждённая контрольная точка: main **9aa36465158c27c49ff647a6ce349b46a6e1151e** (PR #68 merged). Post-merge Quality #40537790474, Graphify #40537790122, Pages #40537789513 and Provenance #40537789685 all succeeded. On each new request re-fetch live HEAD and queues; saved SHAs are checkpoints, not live truth.
 
 ## 1. Быстрый маршрут
 
+0. **Короткая точка входа:** корневой `ORIENTER.md`.
 1. **Текущий статус и флаги:** `docs/PROJECT_STATE.yaml`.
 2. **Архитектура и границы:** `docs/ALANDI_MASTER_CONTEXT_RU.md`.
 3. **Что пользователь просил и что осталось:** `docs/USER_REQUEST_CHECKLIST.md`.
@@ -111,16 +112,28 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 
 - Merge SHA: `1faf60164b9a0f82eb5e0c56b143ba90499be4a5`.
 - Added curated architecture map `docs/ALANDI_ARCHITECTURE_MAP_RU.md`, README link, source-triage/technique updates, and `.graphifyignore` exclusions. This is not a generated AST graph.
-- PR-head Quality run #40529576448 passed all 6 jobs, and provenance #40529576476 passed. Post-merge Pages run #40530195904 and provenance #40530196480 passed. Post-merge Quality #40530196483 was still in progress at last poll.
-- GitHub API queue after merge: 0 open PRs, 0 open Issues.
-- Local Graphify remains blocked by container DNS. Official code-only CLI workflow and staged-copy safeguards are documented; no CLI install/graph generation claimed.
-- Next action: verify post-merge Quality run; use network-enabled disposable workspace for actual Graphify pilot. Do not add Graphify to runtime. Then continue from prioritized roadmap with one bounded, test-backed product change.
+- PR-head Quality run #40529576448 passed all 6 jobs, and provenance #40529576476 passed. Post-merge Pages run #40530195904 and provenance #40530196480 passed. Post-merge Quality #40530196483 завершился success (6/6 jobs).
+- GitHub API queue after PR #66 and again after PR #67: 0 open PRs and 0 open Issues at the respective checks.
+- Post-merge Quality #40530196483, Pages #40530195904 and provenance #40530196480 all completed successfully.
+- Local Graphify still cannot run in this execution container because DNS resolution for github.com fails. A read-only GitHub Actions pilot workflow is now being prepared to run code-only Graphify in an ephemeral staging copy, with no model calls and no runtime dependency.
+- Next action: inspect the Graphify pilot workflow's PR-head CI and its artifact/logs; record actual coverage, runtime, memory and query usefulness before deciding whether a generated graph should be retained. Do not add Graphify to runtime.
 
 
-## Checkpoint — полный инженерный пакет / RRF (2026-10-27)
+## Checkpoint — Graphify code-only CI pilot added (2026-10-27)
 
-- Прочитан предоставленный инженерный пакет до конца: 4 694 строки, включая части 0–4, пофайловое ревью, контекстное сжатие и полный EXECUTION_PLAN.
-- Полный технический аудит и решения: docs/ENGINEERING_PACKAGE_AUDIT_RU.md. Не переносить псевдокод автоматически: SSRF не подключается к фиксированным upstream без URL-fetcher; device fingerprint/WebCrypto не защищает от действующего XSS; Service Worker не кэширует приватные /v1-ответы; однопроцессный «speculative decoding» не является speculative decoding.
-- Первая кодовая вертикаль в ветке feat/rag-rrf-orienter-audit-20261027: заменить сложение разных шкал FTS rank и concept-graph score на RRF; добавить тесты на ranking, bounds, determinism и сохранение scope/source metadata. Feature flags/production deployment не менялись.
-- Текущая база main на старте: 82beb7fcddbe9a1438e811693c76bc731d3a5de3; на старте были открыты PR #68 (Graphify pilot workflow, Chromium job ранее cancelled) и PR #69 (local memory helper, exact-head CI ещё не найден); standalone open issues — 0.
-- Следующий шаг: открыть/проверить PR #70 и ждать его exact-head checks, после этого не зацикливаться на Graphify: проверить #69, восстановить Chromium в #68 либо закрыть с объяснением, затем продолжить с safe context compression или delta-sync conflict UX. Ни одна feature не считается deployed до отдельного VPS проверки.
+- Current base before this PR: `82beb7fcddbe9a1438e811693c76bc731d3a5de3`; PR #67 is merged. Post-merge Quality run #40531356851, Pages run #40531354887 and provenance run #40531357120 all passed.
+- New workflow: `.github/workflows/graphify-pilot.yml`. It runs on a narrowly filtered PR, on main when the workflow is added/changed, or manually via `workflow_dispatch`.
+- First PR-head pilot run #40532798178 succeeded but exposed quality problems: 1,717 nodes/2,877 edges/140 communities, with 539 nodes from `docs/PROJECT_STATE.yaml`, 460 from workflow YAML, a missing SQL grammar, no `index.md` JS and a broad query over budget.
+- Refined run #40534094060 succeeded after installing `graphifyy[sql]==0.9.96`, excluding YAML/YML/TOML from the disposable corpus, extracting inline JS from `index.md` into `index-inline.js` with original line count preserved, and narrowing queries: 940 nodes, 2,637 edges, 44 communities, 59 source files with nodes; 209 nodes from UI JS and 14 from `gateway/memory/schema.sql`. Three queries returned 134, 50 and 59 nodes.
+- The refined ten-query run #40534892152 succeeded: all ten queries found graph neighborhoods (10–151 nodes each); examples: UI Research Studio 55, request parsing 50, RAG retrieval 52, audio 31 each, evidence provenance 10. The 700-token budget is approximate; evidence-provenance output (10 nodes/9 edges) still reported ~762 tokens. This demonstrates useful source navigation, though community labels remain generic because `--no-label` avoids model calls. Artifact #12747755798, SHA-256 `e16c01df143a3380bfd66be523ec709d2dc85bf35fd4d8e5133a64922a841b22`, is retained for 7 days. Generated graph remains artifact-only, not a runtime dependency.
+- License/version discrepancy: release tag `v0.9.96` LICENSE and PyPI metadata identify Apache-2.0, while default-branch `pyproject.toml` appeared to show older `0.1.14`/MIT metadata. The workflow pins the published package release; do not assume every upstream ref has identical provenance.
+
+
+## Checkpoint — полный инженерный пакет и RRF (2026-10-27)
+
+- Полный документ владельца (4,694 строки) прочитан и разобран; решения, выявленные дефекты псевдокода, существующие компоненты и порядок реализации записаны в `docs/ENGINEERING_PACKAGE_AUDIT_RU.md`.
+- PR #68 merged в main: `9aa36465158c27c49ff647a6ce349b46a6e1151e`. Graphify workflow executes code-only on a tracked-files-only disposable copy. Exact-head Quality/Chromium and provenance passed; post-merge Quality, Pages, Graphify and provenance passed. Graph artifact is temporary and not a runtime dependency.
+- Graphify snapshot: 940 nodes, 2,637 edges, 44 communities, 59 source files with nodes; ten focused queries returned relevant neighborhoods. Limitations: generic community labels without model calls, inferred edges and approximate query token budget; use graph for navigation only and verify in source.
+- PR #70: RRF implementation for existing FTS5/BM25 + lexical concept graph, deterministic tests, package audit and orienter records. This is a proposed ranking improvement, not a proven quality gain. The latest review refinement deduplicates IDs before assigning a unique rank, so a repeated ID cannot reduce the rank of later distinct candidates. Exact-head Quality is being rerun after that refinement.
+- PR #69: opt-in local project-memory suggestion helper is still open; its latest head must be refreshed and tested independently. Helper must remain disabled when `ALANDI_HELPER_MODEL` is blank, share the inference semaphore, never auto-save candidates and never be described as live on the VPS without separate evidence.
+- Next: confirm PR #70 current head, exact-head gateway/Quality/Chromium/provenance and existing six-layer synthetic Recall@5 >= 0.75; merge only if all gates pass. Then rebase/review PR #69 against updated main and verify its exact-head tests. After queue triage, the next product slice is safe context compression or client-side delta-sync 409 conflict UX, not a new server writer.
