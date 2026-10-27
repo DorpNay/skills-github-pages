@@ -185,9 +185,32 @@ architecture_map_checkpoint:
     docs_media: "semantic pass may use configured model"
     execution: "blocked; git clone failed DNS resolution for github.com"
     runtime_dependency: false
-  next: "verify latest PR #66 checks; run Graphify in a network-enabled disposable staging copy from tracked files, with code-only extraction and ignore verification; choose one bounded implementation with tests"
+  next: "PR #66 post-merge quality is green; Graphify still needs a network-enabled isolated run; local helper-memory suggestion vertical slice is on a separate feature branch with CI pending"
 
 graphify_exclusions:
   file: ".graphifyignore"
   status: "added in PR #66; actual Graphify interpretation not yet tested"
   intended_exclusions: "env/secrets, databases, generated outputs, dependencies, model/media weights"
+
+
+post_architecture_map_checkpoint:
+  date: "2026-10-27"
+  main_checkpoint_before_this_docs_pr: "1faf60164b9a0f82eb5e0c56b143ba90499be4a5"
+  pr66: "merged; exact-head quality 6/6 and provenance passed"
+  post_merge_pages: "40530195904 success"
+  post_merge_provenance: "40530196480 success"
+  post_merge_quality: "40530196483 success; all 6 jobs including Chromium and published-site smoke"
+  open_prs_after_pr66: 0
+  open_issues_after_pr66: 0
+  next: "verify post-merge Quality; run Graphify code-only in isolated network-enabled staging; continue with one bounded product improvement backed by tests"
+
+
+local_helper_memory_suggestions:
+  status: "implemented_on_feature_branch; exact_head_ci_pending; disabled_until_operator_sets_ALANDI_HELPER_MODEL"
+  branch: "feat/local-helper-memory-suggestions-current-main-20261027"
+  endpoint: "POST /v1/helpers/project-memory-suggestions"
+  security: "Bearer-authenticated; bounded input/output; shares inference semaphore; keep_alive=0; secret-like input facts filtered before Ollama; candidate output is filtered; Cache-Control no-store"
+  user_control: "manual request only; candidates are not persisted automatically; each candidate is added to local project memory only after explicit user click"
+  model_runtime: "local Ollama configured by ALANDI_HELPER_MODEL; blank default disables the endpoint"
+  tests: "gateway contract tests and Chromium E2E added; exact-head CI not yet completed"
+  rollback: "revert feature branch/PR; leave ALANDI_HELPER_MODEL blank; no data migration"
