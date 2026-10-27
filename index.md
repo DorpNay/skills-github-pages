@@ -1934,6 +1934,7 @@ permalink: /
       }
       if (nextCurrentId && chats.some((chat) => chat.id === nextCurrentId)) currentChatId = nextCurrentId;
       if (!chats.some((chat) => chat.id === currentChatId)) currentChatId = chats[0].id;
+      if ($('modeFast')) syncCurrentChatFunctionSettings();
       persistChats(); renderChatList(); renderActiveChat(); renderProjectUI({preserveDraft:true});
     }
     function toggleSidebar(force) {
@@ -2180,24 +2181,109 @@ permalink: /
       $('toggleSearch').checked = safeGet(STORAGE.search) !== 'false';
       $('toggleMultiAgent').checked = safeGet(STORAGE.multiAgent) === 'true';
       $('allowCrossProviderFallback').checked = safeGet(STORAGE.crossProviderFallback) === 'true';
-      $('offlineToggle').setAttribute('aria-pressed',String(safeGet(STORAGE.offline)==='true'));
       applyUiLanguage(safeGet('ai_ui_language_v1')||'ru');
       updateOfflineUI(); updateModeUI(); refreshApiKeyLamp();void refreshCloudStatus();
       void refreshConnectedModelCatalogs({ quiet: true, force: false, includeOtherProviders: safeGet(STORAGE.crossProviderFallback) === 'true' });
     }
+    const VALID_SEARCH_MODES = new Set(['normal','more','offline']);
+    const VALID_SKILL_PRESETS = new Set(['auto','planning','research','code-review','data-analysis','agent-systems','multimodal']);
+    function ensureChatFunctionSettings(chat) {
+      if (!chat || typeof chat !== 'object') return false;
+      let changed = false;
+      if (!['fast','deep'].includes(chat.processingMode)) { chat.processingMode = safeGet(STORAGE.mode) === 'deep' ? 'deep' : 'fast'; changed = true; }
+      if (!VALID_SEARCH_MODES.has(chat.searchMode)) { chat.searchMode = safeGet(STORAGE.offline) === 'true' || safeGet(STORAGE.search) === 'false' ? 'offline' : 'normal'; changed = true; }
+      if (typeof chat.multiAgentEnabled !== 'boolean') { chat.multiAgentEnabled = safeGet(STORAGE.multiAgent) === 'true'; changed = true; }
+      if (!VALID_SKILL_PRESETS.has(chat.skillPreset)) { chat.skillPreset = 'auto'; changed = true; }
+      return changed;
+    }
+    function migrateLegacyChatFunctionSettings() {
+      let changed = false;
+      for (const chat of chats) changed = ensureChatFunctionSettings(chat) || changed;
+      if (changed) persistChats();
+    }
+    function syncCurrentChatFunctionSettings() {
+      const chat = getCurrentChat();
+      if (!chat) return;
+      ensureChatFunctionSettings(chat);
+      processingMode = chat.processingMode;
+      $('toggleSearch').checked = chat.searchMode !== 'offline';
+      $('toggleMultiAgent').checked = chat.multiAgentEnabled;
+      safeSet(STORAGE.mode, chat.processingMode);
+      safeSet(STORAGE.searchMode, chat.searchMode);
+      safeSet(STORAGE.search, String(chat.searchMode !== 'offline'));
+      safeSet(STORAGE.offline, String(chat.searchMode === 'offline'));
+      safeSet(STORAGE.multiAgent, String(chat.multiAgentEnabled));
+      if ($('skillPresetSelect') && !$('functionPanelModal')?.classList.contains('hidden')) $('skillPresetSelect').value = chat.skillPreset;
+      updateOfflineUI();
+      updateModeUI();
+    }
+    function setSearchMode(mode) {
+      if (!VALID_SEARCH_MODES.has(mode)) return;
+      const chat = getCurrentChat();
+      ensureChatFunctionSettings(chat);
+      chat.searchMode = mode;
+      $('toggleSearch').checked = mode !== 'offline';
+      safeSet(STORAGE.searchMode, mode);
+      safeSet(STORAGE.search, String(mode !== 'offline'));
+      safeSet(STORAGE.offline, String(mode === 'offline'));
+      persistChats();
+      $('searchModeMenu').open = false;
+      updateOfflineUI();
+      updateModeUI();
+    }
+    function setAgentMode(enabled) {
+      const chat = getCurrentChat();
+      ensureChatFunctionSettings(chat);
+      chat.multiAgentEnabled = Boolean(enabled);
+      $('toggleMultiAgent').checked = chat.multiAgentEnabled;
+      if ($('agentModeControl')) $('agentModeControl').checked = chat.multiAgentEnabled;
+      safeSet(STORAGE.multiAgent, String(chat.multiAgentEnabled));
+      persistChats();
+      updateModeUI();
+    }
+    function setSkillPreset(preset) {
+      if (!VALID_SKILL_PRESETS.has(preset)) preset = 'auto';
+      const chat = getCurrentChat();
+      ensureChatFunctionSettings(chat);
+      chat.skillPreset = preset;
+      if ($('skillPresetSelect')) $('skillPresetSelect').value = preset;
+      persistChats();
+      updateModeUI();
+    }
     function updateModeUI() {
+      const chat = getCurrentChat();
+      ensureChatFunctionSettings(chat);
+      processingMode = chat.processingMode;
       const fast = processingMode === 'fast';
       $('modeFast').setAttribute('aria-pressed', String(fast));
       $('modeDeep').setAttribute('aria-pressed', String(!fast));
-      $('modeFast').className = 'flex-1 rounded-md px-2 py-1.5 ' + (fast ? 'bg-blue-600 font-semibold' : 'text-gray-300');
-      $('modeDeep').className = 'flex-1 rounded-md px-2 py-1.5 ' + (!fast ? 'bg-blue-600 font-semibold' : 'text-gray-300');
-      $('modeHint').textContent = getUiLanguage()==='en'
-        ? (fast ? 'Fast: limited tool rounds and a short search. Research is optional.' : 'Deep: more tool rounds and broader evidence gathering within enabled tools.')
-        : (fast ? 'Быстро: один раунд инструментов и короткий поиск. Исследование включается отдельно.' : 'Глубоко: больше раундов и более подробный поиск в пределах включённых инструментов. Исследование отдельно.');
+      $('modeFast').className = 'flex-1 min-w-0 rounded-md px-2 py-1 ' + (fast ? 'bg-blue-600 font-semibold' : 'text-gray-300');
+      $('modeDeep').className = 'flex-1 min-w-0 rounded-md px-2 py-1 ' + (!fast ? 'bg-blue-600 font-semibold' : 'text-gray-300');
+      const english = getUiLanguage() === 'en';
+      const searchMode = chat.searchMode;
+      let hint;
+      if (searchMode === 'offline') {
+        hint = english ? (fast ? 'Fast' : 'Longer') + ' · web tools off; cloud APIs may still need internet.'
+          : (fast ? 'Быстро' : 'Дольше') + ' · веб-инструменты выключены; облачному API может требоваться сеть.';
+      } else if (searchMode === 'more') {
+        hint = english ? (fast ? 'Fast' : 'Longer') + ' · extended web-search budget: up to 4 tool rounds.'
+          : (fast ? 'Быстро' : 'Дольше') + ' · расширенный бюджет веб-поиска: до 4 раундов инструментов.';
+      } else {
+        hint = english ? (fast ? 'Fast' : 'Longer') + ' · normal web search; research is separate.'
+          : (fast ? 'Быстро' : 'Дольше') + ' · обычный веб-поиск; исследование отдельно.';
+      }
+      if (chat.multiAgentEnabled) hint += english ? ' · agents for complex tasks on' : ' · агенты для сложных задач включены';
+      if (chat.skillPreset && chat.skillPreset !== 'auto') hint += (english ? ' · skill: ' : ' · навык: ') + chat.skillPreset;
+      $('modeHint').textContent = hint;
+      $('modeHint').title = hint;
     }
     function setProcessingMode(mode) {
-      processingMode = mode === 'deep' ? 'deep' : 'fast';
+      const chat = getCurrentChat();
+      ensureChatFunctionSettings(chat);
+      chat.processingMode = mode === 'deep' ? 'deep' : 'fast';
+      processingMode = chat.processingMode;
       safeSet(STORAGE.mode, processingMode);
+      persistChats();
       updateModeUI();
     }
     function restoreDefaultSettings() {
@@ -2804,8 +2890,23 @@ permalink: /
       safeSet('ai_provider_connection_'+provider,'');$('apiKey').value='';
       updateApiKeyLamp('empty','Ключ удалён из локальных настроек этого браузера.');showToast('Ключ выбранного провайдера удалён');
     }
-    function updateOfflineUI(){const off=safeGet(STORAGE.offline)==='true',button=$('offlineToggle');if(!button)return;button.setAttribute('aria-pressed',String(off));button.textContent=getUiLanguage()==='en'?(off?'◉ Offline: on':'◉ Offline: off'):(off?'◉ Оффлайн: вкл.':'◉ Оффлайн: выкл.');button.title=getUiLanguage()==='en'?'Disables web search and external sources. Cloud model APIs still require internet.':'Отключает веб-поиск и внешние источники. Облачный API модели всё равно требует интернет-соединения.';}
-    function toggleOfflineMode(){const off=safeGet(STORAGE.offline)!=='true';safeSet(STORAGE.offline,String(off));updateOfflineUI();showToast(off?'Оффлайн-режим: веб-поиск выключен':'Онлайн-режим: веб-инструменты доступны');}
+    function updateOfflineUI() {
+      const chat = getCurrentChat();
+      const mode = chat && VALID_SEARCH_MODES.has(chat.searchMode) ? chat.searchMode : (safeGet(STORAGE.offline) === 'true' ? 'offline' : 'normal');
+      const english = getUiLanguage() === 'en';
+      const label = mode === 'offline' ? (english ? 'no web' : 'без веба') : mode === 'more' ? (english ? 'search more' : 'искать больше') : (english ? 'normal' : 'обычный');
+      const summary = $('searchModeSummary');
+      if (summary) {
+        summary.textContent = (english ? '🌐 Search: ' : '🌐 Поиск: ') + label + ' ▾';
+        summary.title = mode === 'offline' ? (english ? 'Web tools are off; cloud APIs may still need internet.' : 'Веб-инструменты выключены; облачному API может требоваться интернет.')
+          : mode === 'more' ? (english ? 'Extended search budget: up to four tool rounds.' : 'Расширенный бюджет поиска: до четырёх раундов инструментов.')
+          : (english ? 'Normal web-search budget.' : 'Обычный бюджет веб-поиска.');
+        summary.setAttribute('aria-label', summary.title);
+      }
+      const status = $('offlineToggle');
+      if (status) status.textContent = mode === 'offline' ? (english ? 'Web search off' : 'Веб-поиск выключен') : mode === 'more' ? (english ? 'Extended web search' : 'Расширенный веб-поиск') : (english ? 'Normal web search' : 'Обычный веб-поиск');
+    }
+    function toggleOfflineMode(){setSearchMode(getCurrentChat()?.searchMode==='offline'?'normal':'offline');}
     async function makeCacheKey(value) {
       const serialized = JSON.stringify(value);
       try {
