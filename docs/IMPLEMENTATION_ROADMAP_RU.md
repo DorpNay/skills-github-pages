@@ -42,11 +42,13 @@ The merged UI and gateway provide local `whisper.cpp` transcription for explicit
 
 **Still required before calling the feature ready:** run PR CI; test real supported browsers/devices and actual local whisper.cpp + model; measure RU/EN/Thai quality, cold/warm latency, RTF and RSS on the target host; verify binary/model provenance and licenses. The current browser test does not prove microphone hardware or model accuracy.
 
-Next P1 work: support local transcription of audio files attached from disk (PR #53, pending CI), improve upload-failure recovery, add backend tests for over-duration/over-size/timeouts, and keep endpoints off until local binaries/models are installed and evaluated. PR #51 adds cancellation of in-flight TTS requests. No external ASR/TTS API is used.
+PR #53 merged: supported audio attachments now use local ASR through the configured aLandi gateway; only transcript text reaches the chat model and failed/disabled ASR preserves the draft. PR #51 also merged TTS request cancellation. Remaining P1 work: improve upload-failure recovery, add backend tests for over-duration/over-size/timeouts, and keep endpoints off until local binaries/models are installed and evaluated. No external ASR/TTS API is used.
 
 ### P2 — live voice dialogue
 
-- Reuse the voice-message capture/transcription path; add streaming ASR events, VAD, TTS playback queue, interruption/barge-in, turn state and device routing.
+**First stage under PR #54:** local push-to-talk turn-taking reuses the existing ASR, chat and TTS paths; each spoken turn is transcribed locally, sent through the configured gateway, and the assistant reply is spoken locally before the microphone reopens. This is half-duplex turn-taking, not full-duplex streaming.
+
+- Remaining upgrade: streaming ASR events, VAD, TTS playback queue, interruption/barge-in, turn state and device routing.
 - Start with one ASR and one TTS candidate; no model zoo. Candidate ASR: Qwen3-ASR (RU/EN/Thai) or Vosk/Moonshine after license + hardware evaluation. TTS exact voice licensing must pass; no default Piper/Silero commercial assumption.
 - Voice pipeline: capture → VAD → ASR partial/final → turn router → gateway/model → text/audio response → playback; add cancellation and echo handling.
 - **Gate:** audio quality corpus, cold/warm RTF, p50/p95 TTFA and turn latency, PSS/RAM, no runaway model/queue, interruption tests, artifact hashes/license. Target numbers in LATENCY_CONTRACT are budgets until measured.
