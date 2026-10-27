@@ -3514,6 +3514,66 @@ permalink: /
       await sendMessage(false);
     }
 
+    let activeSpeechObjectUrl = '';
+    async function playAssistantMessage(rawText) {
+      const text = String(rawText || '').trim();
+      if (!text) { showToast('В сообщении нет текста для озвучивания.', 'error'); return; }
+      if (text.length > 5000) { showToast('Для озвучивания сократи сообщение до 5 000 символов.', 'error'); return; }
+      if (currentProvider() !== 'alandi') {
+        showToast('Локальное озвучивание доступно через собственный aLandi gateway.', 'error');
+        return;
+      }
+      let baseUrl = String(safeGet(STORAGE.baseUrl) || $('baseUrl').value || '').trim();
+      while (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+      if (baseUrl.endsWith('/chat/completions')) baseUrl = baseUrl.slice(0, -'/chat/completions'.length);
+      const key = getConfiguredApiKey();
+      if (!baseUrl || !key) { showToast('Сначала настрой собственный gateway и его ключ.', 'error'); toggleSettings(true); return; }
+      const status = $('ttsMiniPlayerStatus');
+      status.textContent = 'Генерирую речь локальной моделью…';
+      $('ttsMiniPlayer').classList.remove('hidden');
+      $('ttsAudioPlayer').pause();
+      if (activeSpeechObjectUrl) URL.revokeObjectURL(activeSpeechObjectUrl);
+      activeSpeechObjectUrl = '';
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 65000);
+        let response;
+        try {
+          response = await fetch(baseUrl + '/audio/speech', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text }), cache: 'no-store', signal: controller.signal
+          });
+        } finally { clearTimeout(timeout); }
+        if (!response.ok) {
+          const detail = await response.text().catch(() => '');
+          throw new Error(detail.slice(0, 180) || ('HTTP ' + response.status));
+        }
+        const audio = await response.blob();
+        if (!audio.size || audio.size > 25 * 1024 * 1024 || !audio.type.startsWith('audio/')) throw new Error('Gateway вернул некорректный аудиофайл.');
+        activeSpeechObjectUrl = URL.createObjectURL(audio);
+        const player = $('ttsAudioPlayer');
+        player.src = activeSpeechObjectUrl;
+        player.load();
+        status.textContent = 'Готово · локальная модель · аудио не сохраняется в истории';
+        try { await player.play(); }
+        catch (_) { status.textContent = 'Речь готова. Нажми ▶ в миниплеере для воспроизведения.'; }
+      } catch (error) {
+        status.textContent = error?.name === 'AbortError' ? 'Озвучивание превысило лимит времени.' : 'Локальный TTS недоступен или выключен.';
+        showToast(error?.name === 'AbortError' ? 'Озвучивание превысило лимит времени.' : String(error.message || 'Локальный TTS недоступен.'), 'error');
+      }
+    }
+
+    function stopAssistantSpeech() {
+      const player = $('ttsAudioPlayer');
+      player.pause();
+      player.removeAttribute('src');
+      player.load();
+      if (activeSpeechObjectUrl) URL.revokeObjectURL(activeSpeechObjectUrl);
+      activeSpeechObjectUrl = '';
+      $('ttsMiniPlayer').classList.add('hidden');
+    }
+
     let activeVoiceRecorder = null;
     let activeVoiceStream = null;
     let activeVoiceChunks = [];
