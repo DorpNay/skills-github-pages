@@ -139,3 +139,106 @@ test('stopping local TTS cancels generation and prevents late playback', async (
   await expect(page.locator('#ttsAudioPlayer')).not.toHaveAttribute('src', /^blob:/);
   await expect(page.locator('#toast')).toBeHidden();
 });
+
+
+test('attached audio is transcribed locally before model submission', async ({ page }) => {
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'audio-attachment-model' }] })
+  }));
+  let receivedAudio = null;
+  let submittedUserContent = '';
+  await page.route('https://api.example.test/v1/capabilities', async route => {
+    expect(route.request().headers().authorization).toBe('Bearer ' + 'a'.repeat(64));
+    await route.fulfill({
+      status: 200, contentType: 'application/json', headers: { 'Cache-Control': 'no-store' },
+      body: JSON.stringify({ search: { searxng: false }, audio: { transcription: true, speech: false }, documents: { extraction: false } })
+    });
+  });
+  await page.route('https://api.example.test/v1/audio/transcriptions?lang=auto', async route => {
+    receivedAudio = {
+      authorization: route.request().headers().authorization,
+      contentType: route.request().headers()['content-type'],
+      body: (await route.request().postDataBuffer()).toString()
+    };
+    await route.fulfill({
+      status: 200, contentType: 'application/json', headers: { 'Cache-Control': 'no-store' },
+      body: JSON.stringify({ text: 'Turn left at the next street.', language: 'en', provider: 'local-whisper.cpp' })
+    });
+  });
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    const payload = route.request().postDataJSON();
+    submittedUserContent = payload.messages.filter(message => message.role === 'user').map(message => message.content).join('\n');
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'audio-attachment-model', choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: 'Audio transcript received.' } }] })
+    });
+  });
+
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#legacyProviderSettings > summary').click();
+  }
+  await page.locator('#providerPreset').selectOption('alandi');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('audio-attachment-model');
+  await page.locator('#apiKey').fill('a'.repeat(64));
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#attachTextButton').click();
+  await page.locator('[data-action="choose-any-file"]').click();
+  await page.locator('#textAttachmentInput').setInputFiles({
+    name: 'voice-note.webm', mimeType: 'audio/webm', buffer: Buffer.from('private audio fixture')
+  });
+  await expect(page.locator('#draftAttachments')).toContainText('voice-note.webm');
+  await page.locator('#userInput').fill('Summarize this recording.');
+  await page.locator('#sendBtn').click();
+
+  await expect.poll(() => submittedUserContent).toContain('Turn left at the next street.');
+  expect(receivedAudio).toEqual({
+    authorization: 'Bearer ' + 'a'.repeat(64),
+    contentType: 'audio/webm',
+    body: 'private audio fixture'
+  });
+  expect(submittedUserContent).toContain('недоверенные справочные данные');
+  expect(submittedUserContent).toContain('Summarize this recording.');
+  expect(submittedUserContent).not.toContain('private audio fixture');
+  await expect(page.locator('#chatBox')).toContainText('Audio transcript received.');
+});
+
+test('attached audio remains in the draft when local ASR is disabled', async ({ page }) => {
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'audio-disabled-model' }] })
+  }));
+  let chatSubmitted = false;
+  await page.route('https://api.example.test/v1/capabilities', route => route.fulfill({
+    status: 200, contentType: 'application/json', headers: { 'Cache-Control': 'no-store' },
+    body: JSON.stringify({ audio: { transcription: false }, documents: { extraction: false }, search: { searxng: false } })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', route => {
+    chatSubmitted = true;
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'Should not be reached.' } }] }) });
+  });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#legacyProviderSettings > summary').click();
+  }
+  await page.locator('#providerPreset').selectOption('alandi');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('audio-disabled-model');
+  await page.locator('#apiKey').fill('b'.repeat(64));
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#attachTextButton').click();
+  await page.locator('[data-action="choose-any-file"]').click();
+  await page.locator('#textAttachmentInput').setInputFiles({
+    name: 'private.wav', mimeType: 'audio/wav', buffer: Buffer.from('private audio bytes')
+  });
+  await page.locator('#userInput').fill('Please transcribe this.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#toast')).toContainText('выключена');
+  await expect(page.locator('#userInput')).toHaveValue('Please transcribe this.');
+  await expect(page.locator('#draftAttachments')).toContainText('private.wav');
+  expect(chatSubmitted).toBe(false);
+});

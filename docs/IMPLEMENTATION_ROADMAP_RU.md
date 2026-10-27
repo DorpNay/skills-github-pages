@@ -19,19 +19,19 @@
 - Голосовое меню открывается удержанием; обычный короткий тап не открывает его. Реальная запись/ASR/TTS этим изменением не добавляется.
 - aLandi выделен в отдельную карточку основного маршрута; провайдерный список оставлен для внешних сервисов.
 
-**Ограничения:** unrestricted file input — это только доступ к системному file picker. Читаемый текст прикладывается в текстовом виде; изображения отправляются как multimodal image_url; видео отправляет до трёх уменьшенных кадров (общий предел восемь кадров/изображений). Прочие бинарные форматы пока распознаются как неподдержанные и не отправляются. Нет ingestion PDF/DOCX/XLSX, OCR, audio transcription, live voice, video generation pipeline либо подключённых коннекторов/ручного skill picker.
+**Исторический снимок ограничений после PR #35 (24 октября):** unrestricted file input — это только доступ к системному file picker. Читаемый текст прикладывается в текстовом виде; изображения отправляются как multimodal image_url; видео отправляет до трёх уменьшенных кадров (общий предел восемь кадров/изображений). Прочие бинарные форматы тогда не поддерживались; последующие этапы ниже добавили локальное извлечение PDF/DOCX/XLSX и локальные ASR/TTS адаптеры.
 
 **Gate (24 октября 2026):** PR-head run #418 passed context, integrity, security, Jekyll, all 48 Chromium E2E tests and published-site browser smoke; license/provenance and dead-code gates also passed. PR #35 merged into `main` at `23add2547a69df877b4baf213957827aa2e8e561`. Post-merge main Quality workflow #420 passed all five sentinels and all 48 Chromium E2E tests plus the live-site smoke; GitHub Pages deployment run #122 and provenance run #159 also succeeded for main checkpoint `4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e`. The later status-only docs commit does not change app code. Real iOS/Android checks remain open: touch long-press/cancel, keyboard/viewport, screen reader and file handoff.
 
 ### P1 — локальный разбор вложений (backend vertical slice)
 
-Ветка `feat/local-document-extraction-v1` добавляет закрытый endpoint `POST /v1/documents/extract` для PDF/DOCX/XLSX/TXT/MD/CSV/JSON. Обработка локальная, без сохранения файлов и внешних parser API; лимиты применяются к телу, ZIP-структуре, числу листов/страниц и текстовому выводу. Feature flag выключен по умолчанию.
+PR #45 добавил и слил закрытый endpoint `POST /v1/documents/extract` для PDF/DOCX/XLSX/TXT/MD/CSV/JSON и авторизованный `GET /v1/capabilities`. Обработка локальная, без сохранения файлов и внешних parser API; лимиты применяются к телу, ZIP-структуре, числу листов/страниц и текстовому выводу. Feature flag выключен по умолчанию.
 
-**Реализовано в PR #47 (повторная ветка от актуального main):** composer распознаёт PDF/DOCX/XLSX, сохраняет байты только в памяти до submit, проверяет авторизованный `/v1/capabilities`, отправляет документы только на явно выбранный aLandi gateway и маркирует извлечённый текст как недоверенные данные. Лимиты: 8 MiB на документ, до трёх документов/12 MiB на запрос; ошибки не отправляют сообщение и сохраняют черновик. Chromium E2E проверяет маршрут и текст извлечения. До merge требуется полный CI на актуальном PR head; OCR сканированных PDF, live gateway и VPS пока не проверены.
+**PR #50 merged:** composer распознаёт PDF/DOCX/XLSX, сохраняет байты только в памяти до submit, проверяет авторизованный `/v1/capabilities`, отправляет документы только на явно выбранный aLandi gateway и маркирует извлечённый текст как недоверенные данные. Лимиты: 8 MiB на документ, до трёх документов/12 MiB на запрос; ошибки не отправляют сообщение и сохраняют черновик. Chromium E2E проверяет маршрут и текст извлечения. Сканированные PDF без OCR, live gateway и VPS остаются непроверенными.
 
-### P1 — real voice message (active implementation branch)
+### P1 — local voice message and read-aloud (PR #44 merged; runtime setup unverified)
 
-**Branch `feat/local-audio-transcription-v1` — pending CI/review, not merged or deployed.** Current slice adds:
+The merged UI and gateway provide local `whisper.cpp` transcription for explicit voice recordings and local Piper speech generation for assistant replies. Both remain disabled until the operator installs compatible binaries/models and enables the flags. This is not yet a continuous hands-free dialogue. Current slice adds:
 - Browser MediaRecorder capture after explicit permission; cancel/stop, 120-second UI cap, 15 MiB cap, mic-track cleanup and clear permission/browser errors.
 - Authenticated `POST /v1/audio/transcriptions?lang=auto|ru|en|th` with bounded raw audio body, allowlisted audio MIME types, local ffprobe duration check (max 120 seconds), timeout and temporary-file cleanup.
 - Local-only `whisper.cpp` CLI adapter using argv (no shell), configured executable/model paths, no remote ASR request and no audio logging; disabled by default.
@@ -42,7 +42,7 @@
 
 **Still required before calling the feature ready:** run PR CI; test real supported browsers/devices and actual local whisper.cpp + model; measure RU/EN/Thai quality, cold/warm latency, RTF and RSS on the target host; verify binary/model provenance and licenses. The current browser test does not prove microphone hardware or model accuracy.
 
-Next P1 work: add pause/resume and audio preview if useful, improve upload-failure recovery, add backend tests for over-duration/over-size/timeouts, and keep the endpoint off until local binaries/model are installed and evaluated. No external ASR API is used.
+Next P1 work: support local transcription of audio files attached from disk (PR #53, pending CI), improve upload-failure recovery, add backend tests for over-duration/over-size/timeouts, and keep endpoints off until local binaries/models are installed and evaluated. PR #51 adds cancellation of in-flight TTS requests. No external ASR/TTS API is used.
 
 ### P2 — live voice dialogue
 
