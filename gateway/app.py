@@ -242,7 +242,8 @@ def local_audio_limited(settings: Settings):
         @wraps(endpoint)
         async def wrapped(request: Request, *args, **kwargs):
             authorize(settings, kwargs.get("authorization"))
-            semaphore = request.app.state.audio_semaphore
+            # Share the gateway-wide slot with Ollama to avoid overlapping model memory peaks.
+            semaphore = request.app.state.semaphore
             if semaphore.locked():
                 raise HTTPException(429, "Another local audio job is already running")
             async with semaphore:
@@ -492,7 +493,6 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 pass
         app.state.client = httpx.AsyncClient(timeout=timeout, transport=transport)
         app.state.semaphore = asyncio.Semaphore(config.max_inflight_requests)
-        app.state.audio_semaphore = asyncio.Semaphore(1)
         app.state.delta_store = None
         app.state.memory_graph_store = None
         app.state.rag_store = None
