@@ -3583,6 +3583,8 @@ permalink: /
     }
 
     let activeSpeechObjectUrl = '';
+    let activeSpeechController = null;
+    let speechRequestGeneration = 0;
     async function playAssistantMessage(rawText) {
       const text = String(rawText || '').trim();
       if (!text) { showToast('В сообщении нет текста для озвучивания.', 'error'); return; }
@@ -3596,28 +3598,31 @@ permalink: /
       if (baseUrl.endsWith('/chat/completions')) baseUrl = baseUrl.slice(0, -'/chat/completions'.length);
       const key = getConfiguredApiKey();
       if (!baseUrl || !key) { showToast('Сначала настрой собственный gateway и его ключ.', 'error'); toggleSettings(true); return; }
+      if (activeSpeechController) activeSpeechController.abort();
+      const requestId = ++speechRequestGeneration;
+      const controller = new AbortController();
+      activeSpeechController = controller;
       const status = $('ttsMiniPlayerStatus');
       status.textContent = 'Генерирую речь локальной моделью…';
       $('ttsMiniPlayer').classList.remove('hidden');
       $('ttsAudioPlayer').pause();
       if (activeSpeechObjectUrl) URL.revokeObjectURL(activeSpeechObjectUrl);
       activeSpeechObjectUrl = '';
+      let timedOut = false;
+      const timeout = setTimeout(() => { timedOut = true; controller.abort(); }, 65000);
       try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 65000);
-        let response;
-        try {
-          response = await fetch(baseUrl + '/audio/speech', {
-            method: 'POST',
-            headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text }), cache: 'no-store', signal: controller.signal
-          });
-        } finally { clearTimeout(timeout); }
+        const response = await fetch(baseUrl + '/audio/speech', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text }), cache: 'no-store', signal: controller.signal
+        });
+        if (requestId !== speechRequestGeneration) return;
         if (!response.ok) {
           const detail = await response.text().catch(() => '');
           throw new Error(detail.slice(0, 180) || ('HTTP ' + response.status));
         }
         const audio = await response.blob();
+        if (requestId !== speechRequestGeneration) return;
         if (!audio.size || audio.size > 25 * 1024 * 1024 || !audio.type.startsWith('audio/')) throw new Error('Gateway вернул некорректный аудиофайл.');
         activeSpeechObjectUrl = URL.createObjectURL(audio);
         const player = $('ttsAudioPlayer');
@@ -3625,14 +3630,25 @@ permalink: /
         player.load();
         status.textContent = 'Готово · локальная модель · аудио не сохраняется в истории';
         try { await player.play(); }
-        catch (_) { status.textContent = 'Речь готова. Нажми ▶ в миниплеере для воспроизведения.'; }
+        catch (_) {
+          if (requestId === speechRequestGeneration) status.textContent = 'Речь готова. Нажми ▶ в миниплеере для воспроизведения.';
+        }
       } catch (error) {
-        status.textContent = error?.name === 'AbortError' ? 'Озвучивание превысило лимит времени.' : 'Локальный TTS недоступен или выключен.';
-        showToast(error?.name === 'AbortError' ? 'Озвучивание превысило лимит времени.' : String(error.message || 'Локальный TTS недоступен.'), 'error');
+        if (requestId !== speechRequestGeneration) return;
+        status.textContent = timedOut ? 'Озвучивание превысило лимит времени.' : 'Локальный TTS недоступен или выключен.';
+        showToast(timedOut ? 'Озвучивание превысило лимит времени.' : String(error.message || 'Локальный TTS недоступен.'), 'error');
+      } finally {
+        clearTimeout(timeout);
+        if (activeSpeechController === controller) activeSpeechController = null;
       }
     }
 
     function stopAssistantSpeech() {
+      speechRequestGeneration += 1;
+      if (activeSpeechController) {
+        activeSpeechController.abort();
+        activeSpeechController = null;
+      }
       const player = $('ttsAudioPlayer');
       player.pause();
       player.removeAttribute('src');
