@@ -1514,9 +1514,9 @@ test('composer offers unrestricted file picking but blocks unsupported formats u
   await expect(page.locator('#attachmentMenu')).toBeVisible();
   await page.locator('[data-action="choose-any-file"]').click();
   await page.locator('#textAttachmentInput').setInputFiles({
-    name:'sample.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\nnot-a-real-pdf')
+    name:'sample.bin',mimeType:'application/octet-stream',buffer:Buffer.from('unsupported binary fixture')
   });
-  await expect(page.locator('#draftAttachments')).toContainText('sample.pdf');
+  await expect(page.locator('#draftAttachments')).toContainText('sample.bin');
   await expect(page.locator('#draftAttachments')).toContainText('не распознаётся');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#toast')).toContainText('неподдерживаемые файлы');
