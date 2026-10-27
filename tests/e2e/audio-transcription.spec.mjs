@@ -242,3 +242,85 @@ test('attached audio remains in the draft when local ASR is disabled', async ({ 
   await expect(page.locator('#draftAttachments')).toContainText('private.wav');
   expect(chatSubmitted).toBe(false);
 });
+
+
+test('local voice dialogue transcribes, sends, speaks, and listens for the next turn', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'mediaDevices', {
+      configurable: true,
+      value: { getUserMedia: async () => ({ getTracks: () => [{ stop() {} }] }) }
+    });
+    class FakeMediaRecorder extends EventTarget {
+      constructor(_stream, options = {}) { super(); this.mimeType = options.mimeType || 'audio/webm'; this.state = 'inactive'; }
+      static isTypeSupported() { return true; }
+      start() { this.state = 'recording'; }
+      stop() {
+        this.state = 'inactive';
+        const event = new Event('dataavailable');
+        Object.defineProperty(event, 'data', { value: new Blob(['spoken turn'], { type: 'audio/webm' }) });
+        this.dispatchEvent(event);
+        this.dispatchEvent(new Event('stop'));
+      }
+    }
+    window.MediaRecorder = FakeMediaRecorder;
+    HTMLMediaElement.prototype.play = function () {
+      if (this.id === 'ttsAudioPlayer') setTimeout(() => this.dispatchEvent(new Event('ended')), 30);
+      return Promise.resolve();
+    };
+  });
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'voice-dialogue-model' }] })
+  }));
+  await page.route('https://api.example.test/v1/capabilities', route => route.fulfill({
+    status: 200, contentType: 'application/json', headers: { 'Cache-Control': 'no-store' },
+    body: JSON.stringify({ audio: { transcription: true, speech: true }, documents: { extraction: false }, search: { searxng: false } })
+  }));
+  let transcriptionCount = 0;
+  let speechCount = 0;
+  await page.route('https://api.example.test/v1/audio/transcriptions?lang=auto', async route => {
+    transcriptionCount += 1;
+    expect(route.request().headers().authorization).toBe('Bearer ' + 'c'.repeat(64));
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ text: 'Please tell me a short greeting.', language: 'en', provider: 'local-whisper.cpp' })
+    });
+  });
+  await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ model: 'voice-dialogue-model', choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: 'Hello from the local voice dialogue.' } }] })
+  }));
+  await page.route('https://api.example.test/v1/audio/speech', async route => {
+    speechCount += 1;
+    expect(route.request().headers().authorization).toBe('Bearer ' + 'c'.repeat(64));
+    const wav = Buffer.from('524946462400000057415645' + '00'.repeat(32), 'hex');
+    await route.fulfill({ status: 200, contentType: 'audio/wav', headers: { 'Cache-Control': 'no-store' }, body: wav });
+  });
+
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#legacyProviderSettings > summary').click();
+  }
+  await page.locator('#providerPreset').selectOption('alandi');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('voice-dialogue-model');
+  await page.locator('#apiKey').fill('c'.repeat(64));
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#voiceMenu').evaluate(el => el.classList.remove('hidden'));
+  await page.locator('[data-action="voice-chat-preview"]').click();
+
+  await expect(page.locator('#voiceRecordingPanel')).toBeVisible();
+  await expect(page.locator('#voiceRecordingStatus')).toContainText('Запись');
+  await page.locator('[data-action="stop-voice-recording"]').click();
+  await expect(page.locator('#chatBox')).toContainText('Please tell me a short greeting.');
+  await expect(page.locator('#chatBox')).toContainText('Hello from the local voice dialogue.');
+  await expect.poll(() => transcriptionCount).toBe(1);
+  await expect.poll(() => speechCount).toBe(1);
+  await expect(page.locator('#voiceRecordingStatus')).toContainText('Запись');
+  await expect(page.locator('#voiceRecordingPanel')).toBeVisible();
+
+  await page.locator('[data-action="stop-voice-conversation"]').click();
+  await expect(page.locator('#voiceRecordingPanel')).toBeHidden();
+  await expect(page.locator('#ttsMiniPlayer')).toBeHidden();
+});
