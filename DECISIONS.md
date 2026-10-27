@@ -162,7 +162,6 @@
 - **Image generation:** not a working feature in the current browser UI. Add only after a real local/provider backend, exact artifact/license, VRAM/runtime fit and end-to-end image-return test are selected.
 - **Upgrade gate:** compare free/local baseline and paid target on identical tasks: p50/p95, peak RAM, quality, quotas and expected monthly cost. Preserve the OpenAI-compatible gateway contract and explicit endpoint/model changes.
 
-
 ## D-016 — Fuse FTS5 and concept-graph ranks with RRF
 
 - **Status:** bounded implementation in review; exact-head verification pending.
