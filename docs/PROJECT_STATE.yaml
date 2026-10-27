@@ -188,7 +188,9 @@ architecture_map_checkpoint:
   refinement: "include tree-sitter-sql; exclude declarative YAML/YML/TOML from graph corpus; extract inline index.md JavaScript with source line numbers preserved; focused --context call queries"
   first_run_metrics: "1,717 nodes; 2,877 edges; 140 communities; YAML/YML/TOML noise dominated 999 nodes; SQL grammar missing; index.md inline JS absent"
   refined_run_metrics: "940 nodes; 2,637 edges; 44 communities; 59 source files; 209 index-inline.js nodes; 14 SQL schema nodes; three query result sizes 134/50/59"
-  refinement: "completed: tree-sitter-sql, YAML/YML/TOML exclusion, line-preserving index.md JS extraction; ten focused --context call queries now pending"
+  refinement: "completed: tree-sitter-sql, YAML/YML/TOML exclusion, line-preserving index.md JS extraction; all ten focused --context call queries returned 10-151 nodes"
+  ten_query_run: "40534892152 success; 10/10 queries returned nodes; result sizes 55,151,104,50,83,52,31,31,40,10"
+  artifact: "12747755798; SHA-256 e16c01df143a3380bfd66be523ec709d2dc85bf35fd4d8e5133a64922a841b22; expires 2026-11-03"
   runtime_dependency: false
   next: "verify latest PR #66 checks; run Graphify in a network-enabled disposable staging copy from tracked files, with code-only extraction and ignore verification; choose one bounded implementation with tests"
 
@@ -212,7 +214,7 @@ post_architecture_map_checkpoint:
 
 graphify_pilot_workflow:
   file: ".github/workflows/graphify-pilot.yml"
-  status: "refined run success; ten-query navigation validation pending"
+  status: "refined graph and ten-query navigation validation passed; exact-head Quality gate pending"
   package: "graphifyy[sql]==0.9.96 (PyPI exact version; release-tag LICENSE checked as Apache-2.0)"
   mode: "code-only; no model credentials; read-only token; checkout credentials disabled"
   staging: "git archive of tracked PR commit into runner temp, then prune secrets/dbs/weights/media/user-data patterns"
