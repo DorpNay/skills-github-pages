@@ -2,7 +2,7 @@
 
 > **Первым делом в новом чате:** прочитай этот файл, затем актуальный `docs/PROJECT_STATE.yaml`, потом только конкретные файлы по текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-Проверено по GitHub `main`: **98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07** (2026-10-27). Перед работой всегда проверь актуальный HEAD и открытые PR: состояние могло измениться.
+Исторический SHA в предыдущем снимке устарел. При восстановлении 2026-10-27 подтверждён main **529b1d0b86aef58c2b84663a44e78677a31ce9b1**; открыты PR #37 и Issue #1. Всегда повторно проверять HEAD и очереди перед любым merge/close.
 
 ## 1. Быстрый маршрут
 
@@ -53,3 +53,12 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Run relevant gateway tests plus security/context/integrity/Jekyll/Chromium and provenance checks; report exact evidence.
 - Update `docs/PROJECT_STATE.yaml` and `docs/VOLLEY_LOG.md` after a meaningful milestone.
 - Never equate code merged, CI passed, Pages deployed and VPS configured; these are separate statuses.
+
+
+## Текущий checkpoint — open-source triage (2026-10-27)
+
+- Решения по дополнительному списку внесены в docs/OPEN_SOURCE_TRIAGE_RU.md; техники и способы применения — в docs/TECHNIQUE_REGISTER_RU.md.
+- Состояние и продолжение записаны в docs/PROJECT_STATE.yaml; журнал этапов — в docs/VOLLEY_LOG.md.
+- Ветка документации: docs/source-triage-and-next-steps-20261027. Это документационный этап, не runtime-интеграция.
+- Следующий этап: (1) проверить PR #37 относительно актуального main и текущих тестов; (2) проверить Issue #1 и закрыть только если exercise реально завершён/не нужен; (3) выполнить Graphify в изолированной рабочей копии и сравнить результат с обычным чтением репозитория; (4) начать только измеримые, безопасные реализации.
+- Не считать Graphify установленным/запущенным: в этом checkpoint изучен upstream README и задокументирован пилот, но локальный запуск ещё не подтверждён.
