@@ -30,7 +30,9 @@
 - Authenticated `POST /v1/audio/transcriptions?lang=auto|ru|en|th` with bounded raw audio body, allowlisted audio MIME types, local ffprobe duration check (max 120 seconds), timeout and temporary-file cleanup.
 - Local-only `whisper.cpp` CLI adapter using argv (no shell), configured executable/model paths, no remote ASR request and no audio logging; disabled by default.
 - Editable transcript inserted into the current composer; it is not automatically sent and raw audio is not saved to chat history.
-- Contract tests and a deterministic browser test using a mocked MediaRecorder/gateway.
+- Authenticated `POST /v1/audio/speech` with local Piper CLI, bounded text/time/output and WAV validation; generated audio is returned to the browser without server-side retention. This is a local TTS adapter, not live voice dialogue.
+- Assistant messages now expose copy/read-aloud actions and a native HTML audio mini-player. The player calls only the configured aLandi gateway; it does not use browser/cloud speech APIs.
+- Contract tests and deterministic browser tests use mocked local runtimes, MediaRecorder and gateway responses.
 
 **Still required before calling the feature ready:** run PR CI; test real supported browsers/devices and actual local whisper.cpp + model; measure RU/EN/Thai quality, cold/warm latency, RTF and RSS on the target host; verify binary/model provenance and licenses. The current browser test does not prove microphone hardware or model accuracy.
 
