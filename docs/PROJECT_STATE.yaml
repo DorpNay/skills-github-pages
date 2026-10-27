@@ -8,7 +8,7 @@ project_state:
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 0
     graphify: "local run blocked by DNS; isolated read-only GitHub Actions code-only pilot added in PR, not yet executed/verified"
-    next: "inspect PR-head Graphify pilot result/artifact; record coverage/runtime/memory and 10 navigation queries; then select a bounded product improvement"
+    next: "inspect refined PR-head Graphify run and artifact; assess source coverage and focused query quality; if useful, retain artifact-only workflow and continue with a bounded product feature"
   source_triage:
     status: "triage_documentation_merged; graphify_pilot_blocked_by_no_network; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -184,7 +184,9 @@ architecture_map_checkpoint:
     code_extraction: "local tree-sitter AST per upstream docs"
     docs_media: "semantic pass may use configured model"
     execution: "blocked; git clone failed DNS resolution for github.com"
-    runtime_dependency: false
+    first_run_metrics: "1,717 nodes; 2,877 edges; 140 communities; 80 code files found; 52 docs skipped; YAML/YML/TOML noise dominated 999 nodes; SQL grammar missing; index.md inline JS not represented"
+  refinement: "include tree-sitter-sql; exclude declarative YAML/YML/TOML from graph corpus; extract inline index.md JavaScript with source line numbers preserved; focused --context call queries"
+  runtime_dependency: false
   next: "verify latest PR #66 checks; run Graphify in a network-enabled disposable staging copy from tracked files, with code-only extraction and ignore verification; choose one bounded implementation with tests"
 
 graphify_exclusions:
@@ -207,11 +209,11 @@ post_architecture_map_checkpoint:
 
 graphify_pilot_workflow:
   file: ".github/workflows/graphify-pilot.yml"
-  status: "added in PR; PR-head execution pending"
-  package: "graphifyy==0.9.96 (PyPI exact version; release-tag LICENSE checked as Apache-2.0)"
+  status: "first run success; refinement underway after graph-quality review"
+  package: "graphifyy[sql]==0.9.96 (PyPI exact version; release-tag LICENSE checked as Apache-2.0)"
   mode: "code-only; no model credentials; read-only token; checkout credentials disabled"
   staging: "git archive of tracked PR commit into runner temp, then prune secrets/dbs/weights/media/user-data patterns"
-  output: "graphify-out graph.json/GRAPH_REPORT.md/graph.html plus run summary artifact; 7-day retention; never committed"
+  output: "graph.json/GRAPH_REPORT.md/graph.html/manifest plus run summary artifact; cache excluded; 7-day retention; never committed"
   license_note: "PyPI release v0.9.96 says Apache-2.0; default-branch pyproject metadata appears stale/different (0.1.14/MIT); source provenance discrepancy recorded"
   runtime_dependency: false
   rollback: "remove workflow file and revert documentation-only references; no product/runtime behavior changes"
