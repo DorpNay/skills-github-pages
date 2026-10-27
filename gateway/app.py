@@ -1107,13 +1107,17 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         if not os.path.isfile(voice_path) or not os.path.isfile(voice_path + ".json"):
             raise HTTPException(503, "Configured local TTS voice model or config is unavailable")
         with tempfile.TemporaryDirectory(prefix="alandi-tts-") as temp_dir:
+            input_path = os.path.join(temp_dir, "input.txt")
             output_path = os.path.join(temp_dir, "speech.wav")
             try:
+                with open(input_path, "x", encoding="utf-8") as text_file:
+                    os.chmod(input_path, 0o600)
+                    text_file.write(text)
                 process = await asyncio.create_subprocess_exec(
                     config.audio_speech_binary, "-m", "piper",
                     "-m", config.audio_speech_model,
                     "--data-dir", config.audio_speech_data_dir,
-                    "-f", output_path, "--", text,
+                    "-f", output_path, "--input-file", input_path,
                     stdin=asyncio.subprocess.DEVNULL,
                     stdout=asyncio.subprocess.DEVNULL,
                     stderr=asyncio.subprocess.DEVNULL,
