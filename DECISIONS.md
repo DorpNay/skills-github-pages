@@ -161,3 +161,13 @@
 - **Model autonomy:** do not add a hidden refusal layer that blocks otherwise allowed requests. Local model behavior depends on the selected checkpoint; external providers enforce their own terms and filters. No model can be promised to never refuse.
 - **Image generation:** not a working feature in the current browser UI. Add only after a real local/provider backend, exact artifact/license, VRAM/runtime fit and end-to-end image-return test are selected.
 - **Upgrade gate:** compare free/local baseline and paid target on identical tasks: p50/p95, peak RAM, quality, quotas and expected monthly cost. Preserve the OpenAI-compatible gateway contract and explicit endpoint/model changes.
+
+
+## D-016 — Fuse FTS5 and concept-graph ranks with RRF
+
+- **Status:** bounded implementation in review; exact-head verification pending.
+- **Decision:** use reciprocal rank fusion over the FTS5/BM25 list and lexical-concept-graph list, rather than adding 1/(rank) and a hand-scaled overlap score. Use stable secondary keys for equal BM25/concept counts.
+- **Scope:** current LazyGraphRAG retrieval only. Preserve scope filtering, source/page provenance, deletion, migration and disabled-by-default RAG flag; no model, embedding, external service or database schema added.
+- **Evidence contract:** deterministic RRF unit tests plus existing synthetic six-layer RAG recall/citation smoke on exact PR head. Before/after quality result must be recorded; current score is not a confidence probability.
+- **Kill/rollback:** if the synthetic recall gate regresses below 0.75, source/page metadata is lost, scope isolation fails or ranking becomes nondeterministic, do not merge or revert this slice.
+- **Cost / rollback:** low; one function in lazy_graph_rag.py and a focused test file; revert the PR to restore previous ranking.
