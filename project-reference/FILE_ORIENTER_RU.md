@@ -2,7 +2,7 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-Последняя подтверждённая контрольная точка: main **9aa36465158c27c49ff647a6ce349b46a6e1151e** (PR #68 merged). Post-merge Quality #40537790474, Pages #40537789513, provenance #40537789685 и Graphify pilot #40537790122 завершились успешно; ten-query check #40534892152 вернул результаты для 10/10 запросов. При старте всё равно получать live HEAD и очередь PR/Issues заново.
+Последняя подтверждённая контрольная точка: main **4c9096999fbb3e1265150c420b136066c555285b** (PR #69 merged). Post-merge Quality #40543594371, Gateway #40543594098, Pages #40543593819 и provenance #40543594296 завершились успешно. PR #70 остаётся отдельной работой; PR #71 исправляет мобильное позиционирование composer. При старте всё равно получать live HEAD и очередь PR/Issues заново.
 
 ## 1. Быстрый маршрут
 
@@ -136,3 +136,12 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Found and fixed a server filter gap: `\bAPI_KEY` did not match a prefixed environment variable such as `ALANDI_API_KEY`. New regex accepts underscore/hyphen prefixes, and the regression test now checks both input facts and returned candidates.
 - Lite Gateway Tests run #40538692632 passed on earlier code SHA `c12391cbbbd2fb917035919c29ee900af477ec83`. Exact-head Quality, Chromium, Pages smoke and provenance must pass again on the post-sync head before merge.
 - No live inference or target-VPS model/resource claim is made. Keep `ALANDI_HELPER_MODEL` blank until the owner chooses and installs an exact local model tag.
+
+
+## Checkpoint — mobile composer docking (2026-10-27)
+
+- Base main: `4c9096999fbb3e1265150c420b136066c555285b`; active PR #71, branch `fix/mobile-composer-docking-20261027`.
+- Current source centered `#composerFooter` on an empty chat via `body.composer-centered` and hid the empty-chat welcome message. That makes keyboard/visual-viewport stability the first priority rather than changing layout speculatively elsewhere.
+- PR #71 removes the fixed centered state, keeps the composer in the bottom flex layout, resizes the textarea against `visualViewport.height`, recomputes on viewport resize, and increases the bottom safe touch inset.
+- E2E covers visibility in a new chat and viewport shrink/restore. Exact-head CI is pending; native iOS Safari behavior is not proven by Playwright.
+- Full legacy request audit: `docs/LEGACY_UX_REQUEST_AUDIT_RU.md`. Already-present features include per-message copy/viewer and jump-to-latest (PR #61), web-driven attachment-type menu and per-chat row actions (PR #35); do not rewrite them wholesale. Outstanding larger verticals are function/search dropdowns, overlay/focus/outside-click contracts, provider/settings simplification, and persisting/resetting modes per chat.

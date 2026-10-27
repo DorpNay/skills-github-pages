@@ -154,25 +154,22 @@ blocked_items:
 
 latest_checkpoint:
   date: "2026-10-27"
-  main_sha: "9aa36465158c27c49ff647a6ce349b46a6e1151e"
+  main_sha: "4c9096999fbb3e1265150c420b136066c555285b"
   open_prs: 2
   open_issues: 0
-  quality_run_id: 40537790474
-  quality_run_status_at_check: "success"
-  provenance_run_id: 40537789685
-  provenance_status: "success"
-  pages_run_id: 40537789513
-  pages_status: "success"
-  graphify_run_id: 40537790122
-  graphify_status: "success"
-  graphify_ten_query_run_id: 40534892152
-  graphify_ten_query_status: "success"
-  graphify_artifact_id: 12747755798
-  graphify_artifact_expires: "2026-11-03"
+  merged_pr_69_sha: "4c9096999fbb3e1265150c420b136066c555285b"
+  main_quality_run_id: 40543594371
+  main_quality_status: "success"
+  main_gateway_run_id: 40543594098
+  main_gateway_status: "success"
+  main_provenance_run_id: 40543594296
+  main_provenance_status: "success"
+  main_pages_run_id: 40543593819
+  main_pages_status: "success"
   open_prs_at_checkpoint:
-    - 69
     - 70
-  next: "complete PR #69 helper-memory regression and full exact-head gates; review PR #70 independently; keep Graphify output artifact-only"
+    - 71
+  next: "finish PR #71 mobile composer docking with exact-head Chromium and all required gates; then proceed through the legacy UX audit in priority order"
 
 architecture_map_checkpoint:
   date: "2026-10-27"
@@ -229,16 +226,31 @@ graphify_pilot_workflow:
 
 
 local_helper_memory_suggestions:
-  status: "implemented on PR #69 branch; secret-filter regression fixed; gateway suite passed before current-main sync; exact-head Quality, Chromium and provenance pending"
+  status: "merged in PR #69; exact-head Gateway, Quality/Chromium, published-site smoke and provenance passed; helper remains disabled by default"
   pr: 69
   branch: "feat/local-helper-memory-suggestions-current-main-20261027"
   baseline_main: "9aa36465158c27c49ff647a6ce349b46a6e1151e"
+  merged_main_sha: "4c9096999fbb3e1265150c420b136066c555285b"
+  exact_head_gateway_run_id: 40539476154
+  exact_head_quality_run_id: 40539476242
+  exact_head_provenance_run_id: 40539476214
   implementation_head_before_sync: "c12391cbbbd2fb917035919c29ee900af477ec83"
   endpoint: "POST /v1/helpers/project-memory-suggestions"
   security: "Bearer-authenticated; bounded inputs and outputs; common secret-like patterns filtered before and after inference; shares inference semaphore; keep_alive=0; Cache-Control no-store"
   user_control: "manual request only; candidates rendered as text; no automatic writes; each fact requires explicit click and project/duplicate recheck"
   model_runtime: "local Ollama model chosen by operator via ALANDI_HELPER_MODEL; blank default disables route; no browser model selection or cloud fallback"
   regression: "server secret filter now recognizes secret names after underscore/hyphen prefixes such as ALANDI_API_KEY; test covers input filtering and candidate-output filtering"
-  gateway_test_run_before_sync: "40538692632 success on c12391cbbbd2fb917035919c29ee900af477ec83; rerun all required gates after sync"
+  gateway_test_run_before_sync: "40538692632 success on c12391cbbbd2fb917035919c29ee900af477ec83; exact post-sync Gateway/Quality/Chromium/published-site/provenance passed on 16ea47ac8a9b94675b67ed2bba4adbb6c15c906c"
   live_runtime: "not tested; VPS inference, installed model, quality, RAM and latency remain unverified"
   rollback: "revert PR #69; leave ALANDI_HELPER_MODEL blank; no schema migration"
+
+mobile_composer_docking:
+  status: "implemented on PR #71 branch; exact-head CI pending"
+  pr: 71
+  branch: "fix/mobile-composer-docking-20261027"
+  base_main: "4c9096999fbb3e1265150c420b136066c555285b"
+  fix: "composer remains a normal bottom flex item; removed centered fixed positioning and compensating chat padding"
+  viewport_handling: "textarea height follows visualViewport; recomputed on viewport resize; bottom touch-safe inset increased"
+  regression_test: "mobile composer stays visible at the bottom in new chats across viewport resizes"
+  test_limit: "Chromium viewport resizing is a regression proxy; real iOS Safari keyboard and swipe-area behavior still need device verification"
+  next: "pass exact-head Gateway, Quality/Chromium, published-site smoke and provenance, then merge only after GitHub reports clean"

@@ -1904,3 +1904,48 @@ test('mobile messages expose full text and retain a jump-to-latest control', asy
   await expect.poll(() => page.locator('#chatBox').evaluate(el => el.scrollHeight - el.scrollTop - el.clientHeight), { timeout: 8000 }).toBeLessThan(8);
   await expect(page.locator('#jumpToLatest')).toBeHidden();
 });
+
+test('mobile composer stays visible at the bottom in new chats across viewport resizes', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  const input = page.locator('#userInput');
+  const footer = page.locator('#composerFooter');
+  await expect(input).toBeVisible();
+  const measureDock = () => footer.evaluate(element => {
+    const rect = element.getBoundingClientRect();
+    return {
+      position: getComputedStyle(element).position,
+      top: rect.top,
+      bottom: rect.bottom,
+      viewportHeight: window.innerHeight,
+      centered: document.body.classList.contains('composer-centered')
+    };
+  });
+  const assertDocked = async () => {
+    const metrics = await measureDock();
+    expect(metrics.position).not.toBe('fixed');
+    expect(metrics.centered).toBe(false);
+    expect(metrics.bottom).toBeGreaterThan(metrics.viewportHeight - 5);
+    expect(metrics.bottom).toBeLessThanOrEqual(metrics.viewportHeight + 2);
+  };
+  await assertDocked();
+
+  const sidebar = page.locator('#sidebar');
+  if (await sidebar.evaluate(element => element.classList.contains('-translate-x-full'))) {
+    await page.locator('[data-action="toggle-sidebar"]').click();
+  }
+  await page.locator('#sidebar [data-action="new-chat"]').click();
+  await expect(input).toBeVisible();
+  await expect(input).toHaveValue('');
+  await assertDocked();
+
+  await input.fill(Array.from({ length: 8 }, (_, index) => 'Draft line ' + index).join('\n'));
+  await page.setViewportSize({ width: 390, height: 440 });
+  await expect(input).toBeVisible();
+  await expect(input).toHaveValue(/Draft line 7/);
+  await assertDocked();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await assertDocked();
+});

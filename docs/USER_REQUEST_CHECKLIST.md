@@ -226,8 +226,15 @@
 
 ## Supplement — local helper memory suggestions (2026-10-27)
 
-- [~] Add a manual, bounded local-model flow to propose compact project-memory facts. Implementation is on feat/local-helper-memory-suggestions-current-main-20261027; exact-head CI pending.
-- [~] Keep it disabled when ALANDI_HELPER_MODEL is blank; use only the operator-configured local Ollama tag; share inference concurrency; unload helper after request.
-- [~] Filter common secret-like input/output patterns and require an explicit click for every saved candidate.
-- [ ] Pass exact-head gateway tests, all Quality Sentinels, Chromium E2E, published-site smoke and provenance.
-- [ ] After merge, update the checkpoint with exact merge SHA and post-merge results; real VPS inference, model quality, RAM and latency remain separately unverified.
+- [x] Added a manual, bounded local-model flow to propose compact project-memory facts. PR #69 merged at `4c9096999fbb3e1265150c420b136066c555285b`.
+- [x] Kept it disabled when `ALANDI_HELPER_MODEL` is blank; only the operator-configured local Ollama tag can be used; the route shares inference concurrency and asks Ollama to unload after the request.
+- [x] Filtered common secret-like input/output patterns and require an explicit click for every saved candidate. A regression fix handles prefixed names such as `ALANDI_API_KEY`.
+- [x] Exact PR-head Gateway run #40539476154, Quality/Chromium/published-site smoke #40539476242, and provenance #40539476214 passed.
+- [ ] Live inference, selected/installed VPS model, output quality, RAM and latency remain unverified.
+
+## Supplement — reconciliation of the older mobile and interface request (2026-10-27)
+
+- [x] Compared the full owner message with current `main`, the implementation roadmap, existing browser tests, and visible UI/source identifiers. The audit separates already implemented behavior from partial work and unimplemented interaction design in `docs/LEGACY_UX_REQUEST_AUDIT_RU.md`.
+- [~] PR #71 (`fix/mobile-composer-docking-20261027`) removes the centered fixed composer state, keeps the input docked at the bottom in empty and populated chats, syncs text-area height to `visualViewport`, and adds a mobile viewport regression test. Exact-head CI and merge are pending.
+- [ ] After PR #71, continue in bounded PRs: (1) focus/overlay/popover behavior and chat menu placement; (2) one-line web-search and function-selection menus; (3) provider/settings cleanup; (4) header, clock and list visual polish; (5) per-chat mode persistence and default reset, only after the state model is confirmed.
+- [ ] Run native iPhone Safari/keyboard/touch verification separately; passing Chromium viewport simulation is not proof of native behavior.
