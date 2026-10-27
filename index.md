@@ -1438,7 +1438,10 @@ permalink: /
         : 'assistant-content bg-gray-800 text-gray-100 px-3 py-2.5 rounded-xl rounded-tl-sm max-w-[96%] border border-gray-700'}`;
 
       if (message.role === 'tool') return row;
-      if (isUser) bubble.textContent = messageTextForCopy(message);
+      if (isUser) {
+        bubble.textContent = message.content || '';
+        if (Array.isArray(message.content)) bubble.textContent = messageTextForCopy(message);
+      }
       else {
         if (Array.isArray(message.tool_calls) && message.tool_calls.length) {
           const indicator = document.createElement('div');
