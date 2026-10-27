@@ -1169,7 +1169,7 @@ test('aLandi cloud probe rejects HTTP 200 proxy text as proof of a model connect
 
 
 
-test('voice mode menu stays open after a long press and clearly marks both modes as previews', async ({ page }) => {
+test('voice mode menu closes after selecting voice dialogue and keeps gateway setup explicit', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const trigger = page.locator('#voiceUnavailableButton');
@@ -1186,9 +1186,8 @@ test('voice mode menu stays open after a long press and clearly marks both modes
   await expect(page.locator('#voiceMenu')).toContainText('ГОЛОСОВОЕ СООБЩЕНИЕ');
   await page.locator('[data-action="voice-chat-preview"]').click();
   await expect(page.locator('#voiceMenu')).toBeHidden();
-  await expect(page.locator('#toast')).toContainText('Живой голосовой диалог пока не подключён');
-
-  await expect(page.locator('#voiceMenu')).toBeHidden();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('#toast')).toContainText('Сначала настрой адрес и ключ собственного gateway.');
 });
 
 
@@ -1816,7 +1815,6 @@ test('clearing a non-active project chat preserves the active chat and both proj
   expect(beta.projectId).toBe('project-beta');
   expect(persisted.projects.map(project => project.id).sort()).toEqual(['project-alpha', 'project-beta']);
 });
-
 
 test('mobile messages expose full text and retain a jump-to-latest control', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
