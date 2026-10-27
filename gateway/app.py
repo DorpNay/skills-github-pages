@@ -101,6 +101,7 @@ class Settings:
     audio_transcription_enabled: bool = False
     audio_transcription_binary: str = ""
     audio_transcription_model: str = ""
+    audio_transcription_ffprobe_binary: str = "/usr/bin/ffprobe"
     audio_transcription_max_bytes: int = 15 * 1024 * 1024
     audio_transcription_timeout_seconds: int = 120
     model_size_advisory_mb: int = 6144
@@ -165,8 +166,9 @@ class Settings:
         audio_transcription_enabled = bool_env("ALANDI_AUDIO_TRANSCRIPTION_ENABLED", False)
         audio_transcription_binary = os.getenv("ALANDI_AUDIO_TRANSCRIPTION_BINARY", "").strip()
         audio_transcription_model = os.getenv("ALANDI_AUDIO_TRANSCRIPTION_MODEL", "").strip()
-        if audio_transcription_enabled and not (audio_transcription_binary and audio_transcription_model):
-            raise ValueError("ALANDI_AUDIO_TRANSCRIPTION_ENABLED requires local binary and model paths")
+        audio_transcription_ffprobe_binary = os.getenv("ALANDI_AUDIO_TRANSCRIPTION_FFPROBE_BINARY", "/usr/bin/ffprobe").strip()
+        if audio_transcription_enabled and not (audio_transcription_binary and audio_transcription_model and audio_transcription_ffprobe_binary):
+            raise ValueError("ALANDI_AUDIO_TRANSCRIPTION_ENABLED requires local ASR, ffprobe and model paths")
         return cls(
             api_key=os.getenv("ALANDI_API_KEY", "").strip(),
             ollama_base_url=base,
@@ -197,6 +199,7 @@ class Settings:
             audio_transcription_enabled=audio_transcription_enabled,
             audio_transcription_binary=audio_transcription_binary,
             audio_transcription_model=audio_transcription_model,
+            audio_transcription_ffprobe_binary=audio_transcription_ffprobe_binary,
             audio_transcription_max_bytes=int_env("ALANDI_AUDIO_TRANSCRIPTION_MAX_BYTES", 15 * 1024 * 1024, 1024),
             audio_transcription_timeout_seconds=int_env("ALANDI_AUDIO_TRANSCRIPTION_TIMEOUT_SECONDS", 120, 1),
             model_size_advisory_mb=int_env(model_size_budget_env, 6144, 256),
@@ -981,12 +984,34 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             raise HTTPException(503, "Configured local ASR executable is unavailable")
         if not os.path.isfile(config.audio_transcription_model):
             raise HTTPException(503, "Configured local ASR model file is unavailable")
+        if not os.path.isfile(config.audio_transcription_ffprobe_binary) or not os.access(config.audio_transcription_ffprobe_binary, os.X_OK):
+            raise HTTPException(503, "Configured local ffprobe executable is unavailable")
         with tempfile.TemporaryDirectory(prefix="alandi-asr-") as temp_dir:
             input_path = os.path.join(temp_dir, "audio" + suffix)
             output_prefix = os.path.join(temp_dir, "transcript")
             try:
                 with open(input_path, "wb") as audio_file:
                     audio_file.write(audio)
+                probe = await asyncio.create_subprocess_exec(
+                    config.audio_transcription_ffprobe_binary, "-v", "error",
+                    "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", input_path,
+                    stdin=asyncio.subprocess.DEVNULL, stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.DEVNULL,
+                )
+                try:
+                    probe_stdout, _ = await asyncio.wait_for(probe.communicate(), timeout=5)
+                except asyncio.TimeoutError:
+                    probe.kill()
+                    await probe.wait()
+                    raise HTTPException(504, "Audio validation timed out") from None
+                if probe.returncode != 0 or len(probe_stdout) > 64:
+                    raise HTTPException(400, "Audio container could not be validated")
+                try:
+                    duration_seconds = float(probe_stdout.strip())
+                except ValueError:
+                    raise HTTPException(400, "Audio duration is missing or invalid") from None
+                if not 0 < duration_seconds <= 120:
+                    raise HTTPException(413, "Audio duration must be between 0 and 120 seconds")
                 process = await asyncio.create_subprocess_exec(
                     config.audio_transcription_binary,
                     "-m", config.audio_transcription_model,
