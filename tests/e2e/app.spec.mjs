@@ -1651,5 +1651,6 @@ test('storage estimate failures do not block app startup or persistence', async 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#chatBox')).toBeVisible();
   await expect(page.locator('#userInput')).toBeEditable();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_chats_v87'))).toBeTruthy();
   await expect(page.locator('#toast')).not.toContainText('Хранилище сайта');
 });
