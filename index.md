@@ -3678,6 +3678,15 @@ permalink: /
       if (activeVoiceRecorder.state !== 'inactive') activeVoiceRecorder.stop();
     }
 
+    window.addEventListener('pagehide', () => {
+      if (activeVoiceRecorder && activeVoiceRecorder.state !== 'inactive') {
+        discardVoiceRecording = true;
+        activeVoiceRecorder.stop();
+      }
+      if (activeVoiceStream) activeVoiceStream.getTracks().forEach(track => track.stop());
+      if (activeSpeechObjectUrl) URL.revokeObjectURL(activeSpeechObjectUrl);
+    });
+
     function showTrace(trace) {
       if (!trace || typeof trace !== 'object') throw new Error('Журнал исследования не найден.');
       activeTrace = trace; const host = $('traceContent'); host.replaceChildren();
