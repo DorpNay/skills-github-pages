@@ -89,3 +89,11 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - **Fixture:** three deterministic Chromium E2E tests in `tests/e2e/app.spec.mjs`.
 - **Acceptance:** changing one project's memory scope does not change another or the active chat's project; clearing history leaves the selected chat/project in place; clearing a non-active chat leaves the active chat, history, and both project associations unchanged.
 - **Status:** regression tests ported from legacy PR #36 onto current main; exact-head Quality/Chromium validation pending. No production application code changes.
+
+
+## EV-LOCAL-VOICE-DIALOGUE-001 — Browser half-duplex local voice dialogue
+
+- **Scope:** voice menu preconditions, per-turn recording, authenticated local ASR, configured chat-provider response, local TTS playback, and restart of listening only after playback.
+- **Fixture:** deterministic Chromium E2E with a mocked `MediaRecorder`, mocked ASR/TTS gateway responses, and a mocked configured chat provider. No real microphone or speech model is exercised in CI.
+- **Acceptance:** selecting voice dialogue closes the menu and gives explicit gateway setup guidance when configuration is missing; an enabled flow transcribes the recording, submits the user message through the selected provider, plays the assistant reply through the configured local TTS route, then records the next turn; route/chat/draft preconditions stop or prevent the session rather than silently sending stale context.
+- **Status:** browser turn loop and deterministic test ported from legacy PR #55 into current-main branch; exact-head Quality/Chromium validation pending. Target hardware, real ASR/TTS quality, RU/EN/Thai accuracy, latency, echo, and Piper voice-model license remain unverified.
