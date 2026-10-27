@@ -1,6 +1,7 @@
 # aLandi Engineering Volley Log
 
 | Volley | Date | Scope | Result | Gate |
+| V-2026-10-27-VOICE-MENU-REGRESSION-001 | 2026-10-27 | Fixed voice dialogue menu remaining open when gateway setup preconditions fail; E2E now asserts menu closure and explicit setup guidance | Code/test updated after Quality run #40472713103 exposed stale preview-era assertion; rerun pending on new head | Voice runtime/hardware behavior remains unverified |
 | V-2026-10-21 | 2026-10-21 | Gateway foundations: memory delta, RAG baseline, OAuth vault, RSS metrics | Merged in PR #18; RAG identity isolation/legacy migration merged in PR #19 | Contract tests and offline smoke eval passed |
 | V-CODER-PACKET-FOUNDATIONS | 2026-10-22 | Trace IDs, provenance-first temporal memory, voice contracts, bounded tool DAG, JSON Schema, SSRF/approval primitives, citations/evidence ledger, hardware/license/latency docs | Contract foundations merged; runtime remains prototype-only until separately deployed | Do not enable voice/tool/OAuth/RAG flags or claim live deployment |
 | V-2026-10-23-CLOUD-UI-PROJECTS | 2026-10-23 | Primary aLandi cloud card, provider recovery, project CRUD/instructions/browser-local memory/export, theme/language/clock/composer/text attachments and voice preview | PR #21 merged at `97793ddfc00b1d364e9109ecd3efabe927a1f08a`; PR-head Chromium/quality/gateway/provenance/Pages checks passed | Live aLandi gateway unconfigured; project data remains browser-local; voice is preview-only; latency unmeasured |
