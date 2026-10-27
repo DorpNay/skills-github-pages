@@ -30,6 +30,12 @@ def upstream_handler(request):
     raise AssertionError(f"Unexpected upstream request: {request.url}")
 
 
+def make_executable(path):
+    path.write_bytes(b"local test stub")
+    path.chmod(0o700)
+    return str(path)
+
+
 def test_transcription_requires_auth_and_is_disabled_by_default():
     with client(config(), upstream_handler) as app:
         assert app.post("/v1/audio/transcriptions", content=b"audio",
@@ -40,13 +46,12 @@ def test_transcription_requires_auth_and_is_disabled_by_default():
 
 
 def test_transcription_validates_audio_type_language_and_empty_body(tmp_path):
-    binary = tmp_path / "whisper-cli"
+    binary = make_executable(tmp_path / "whisper-cli")
+    ffprobe = make_executable(tmp_path / "ffprobe")
     model = tmp_path / "model.gguf"
-    binary.write_bytes(b"local test stub")
-    binary.chmod(0o700)
     model.write_bytes(b"model")
-    settings = config(audio_transcription_enabled=True, audio_transcription_binary=str(binary),
-                      audio_transcription_model=str(model))
+    settings = config(audio_transcription_enabled=True, audio_transcription_binary=binary,
+                      audio_transcription_model=str(model), audio_transcription_ffprobe_binary=ffprobe)
     auth = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "audio/webm"}
     with client(settings, upstream_handler) as app:
         assert app.post("/v1/audio/transcriptions?lang=fr", content=b"audio", headers=auth).status_code == 400
@@ -56,10 +61,9 @@ def test_transcription_validates_audio_type_language_and_empty_body(tmp_path):
 
 
 def test_transcription_runs_configured_local_cli_and_returns_no_store(tmp_path, monkeypatch):
-    binary = tmp_path / "whisper-cli"
+    binary = make_executable(tmp_path / "whisper-cli")
+    ffprobe = make_executable(tmp_path / "ffprobe")
     model = tmp_path / "model.gguf"
-    binary.write_bytes(b"local test stub")
-    binary.chmod(0o700)
     model.write_bytes(b"model")
 
     class FakeProcess:
@@ -68,8 +72,17 @@ def test_transcription_runs_configured_local_cli_and_returns_no_store(tmp_path, 
         async def wait(self):
             return 0
 
+        async def communicate(self):
+            return b"3.5\\n", b""
+
+        def kill(self):
+            self.returncode = -9
+
     async def fake_create_subprocess_exec(*args, **kwargs):
-        assert args[0] == str(binary)
+        if args[0] == ffprobe:
+            assert "-show_entries" in args and "format=duration" in args
+            return FakeProcess()
+        assert args[0] == binary
         assert "-m" in args and str(model) in args
         assert "-l" in args and "ru" in args
         prefix = args[args.index("-of") + 1]
@@ -78,8 +91,8 @@ def test_transcription_runs_configured_local_cli_and_returns_no_store(tmp_path, 
         return FakeProcess()
 
     monkeypatch.setattr(gateway_app.asyncio, "create_subprocess_exec", fake_create_subprocess_exec)
-    settings = config(audio_transcription_enabled=True, audio_transcription_binary=str(binary),
-                      audio_transcription_model=str(model))
+    settings = config(audio_transcription_enabled=True, audio_transcription_binary=binary,
+                      audio_transcription_model=str(model), audio_transcription_ffprobe_binary=ffprobe)
     with client(settings, upstream_handler) as app:
         response = app.post("/v1/audio/transcriptions?lang=ru", content=b"fake-audio",
                             headers={"Authorization": f"Bearer {API_KEY}", "Content-Type": "audio/webm"})
@@ -93,10 +106,11 @@ def test_transcription_runs_configured_local_cli_and_returns_no_store(tmp_path, 
 
 
 def test_transcription_rejects_unavailable_local_runtime(tmp_path):
+    ffprobe = make_executable(tmp_path / "ffprobe")
     model = tmp_path / "model.gguf"
     model.write_bytes(b"model")
     settings = config(audio_transcription_enabled=True, audio_transcription_binary=str(tmp_path / "missing"),
-                      audio_transcription_model=str(model))
+                      audio_transcription_model=str(model), audio_transcription_ffprobe_binary=ffprobe)
     with client(settings, upstream_handler) as app:
         response = app.post("/v1/audio/transcriptions", content=b"fake-audio",
                             headers={"Authorization": f"Bearer {API_KEY}", "Content-Type": "audio/webm"})
