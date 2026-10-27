@@ -2,13 +2,13 @@ project_state:
   version: 4
   reviewed_on: "2026-10-27"
   root_orienter:
-    status: "merged; current-main checkpoint reconciled in follow-up docs PR"
+    status: "merged; latest post-merge checks verified; Graphify pilot workflow under PR validation"
     branch: "docs/current-state-and-mobile-ledger-20261027"
     base_main: "b91aab316c224588baea99fbb9b966b8865de0a6"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 0
-    graphify: "not run; prior execution container could not resolve github.com"
-    next: "finish current-main quality gate; run Graphify in network-enabled isolated checkout; reconcile stale eval/roadmap entries"
+    graphify: "local run blocked by DNS; isolated read-only GitHub Actions code-only pilot added in PR, not yet executed/verified"
+    next: "inspect PR-head Graphify pilot result/artifact; record coverage/runtime/memory and 10 navigation queries; then select a bounded product improvement"
   source_triage:
     status: "triage_documentation_merged; graphify_pilot_blocked_by_no_network; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -21,7 +21,7 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "run Graphify in a network-enabled isolated checkout; select PR #37 follow-ups only when they add unique value; audit live queue before changes"
-  last_volley: "V-2026-10-27-STATE-RECONCILIATION-001"
+  last_volley: "V-2026-10-27-GRAPHIFY-CI-PILOT-001"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Current browser half-duplex voice dialogue prototype is under PR validation; it uses mocked ASR/TTS in CI, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; first read in new chats, then verify current main HEAD and open PRs"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
@@ -199,7 +199,19 @@ post_architecture_map_checkpoint:
   pr66: "merged; exact-head quality 6/6 and provenance passed"
   post_merge_pages: "40530195904 success"
   post_merge_provenance: "40530196480 success"
-  post_merge_quality: "40530196483 in_progress at last poll"
+  post_merge_quality: "40530196483 success"
   open_prs_after_pr66: 0
   open_issues_after_pr66: 0
-  next: "verify post-merge Quality; run Graphify code-only in isolated network-enabled staging; continue with one bounded product improvement backed by tests"
+  next: "inspect PR-head Graphify pilot workflow run and artifact; record graph coverage, runtime, memory, query results and ignore safety; then implement one bounded feature backed by tests"
+
+
+graphify_pilot_workflow:
+  file: ".github/workflows/graphify-pilot.yml"
+  status: "added in PR; PR-head execution pending"
+  package: "graphifyy==0.9.96 (PyPI exact version; release-tag LICENSE checked as Apache-2.0)"
+  mode: "code-only; no model credentials; read-only token; checkout credentials disabled"
+  staging: "git archive of tracked PR commit into runner temp, then prune secrets/dbs/weights/media/user-data patterns"
+  output: "graphify-out graph.json/GRAPH_REPORT.md/graph.html plus run summary artifact; 7-day retention; never committed"
+  license_note: "PyPI release v0.9.96 says Apache-2.0; default-branch pyproject metadata appears stale/different (0.1.14/MIT); source provenance discrepancy recorded"
+  runtime_dependency: false
+  rollback: "remove workflow file and revert documentation-only references; no product/runtime behavior changes"
