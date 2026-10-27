@@ -78,3 +78,10 @@
 - Основание: upstream README/quickstart/pyproject.toml; Apache-2.0, package `graphifyy`, CLI `graphify`, Python >=3.10; local tree-sitter parsing for code; semantic pass for docs/media may use a model.
 - Риски: substantial dependency footprint, fast-moving release, model usage for docs/media, stale generated output. Pin version and exclude secrets/build output.
 - Решение: **pilot pending**. Официальный code-only workflow уточнён: `extract --code-only` → `cluster-only --no-label` → `export html` → `query`; exclusions задаются через `.graphifyignore`, но ещё не проверены на реальном запуске. Local execution impossible in current container because DNS cannot resolve `github.com`; do not report graph generated or add it to runtime. See `docs/ALANDI_ARCHITECTURE_MAP_RU.md`.
+
+
+## RRF и пересмотр инженерного пакета — 2026-10-27
+
+- **RRF / hybrid retrieval:** внедряется в LazyGraphRAG как ранговое объединение FTS5/BM25 и lexical-concept graph; не считать score вероятностью. См. [EV-RAG-006](../EVALS.md) и [полный аудит инженерного пакета](ENGINEERING_PACKAGE_AUDIT_RU.md).
+- **Context compression:** accepted as a candidate pilot, not a shipped capability. Must preserve original history, maintain trust boundaries (summary is not a system instruction), and pass quality/adversarial eval.
+- **Service Worker, WebCrypto/device binding, generic SSRF wiring, capacity automation and systemd changes:** adopt the goal only after deployment-specific threat model and tests; pseudocode in the source package is not production-ready and must not be copied verbatim.
