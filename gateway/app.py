@@ -108,6 +108,7 @@ class Settings:
     audio_speech_enabled: bool = False
     audio_speech_binary: str = ""
     audio_speech_model: str = ""
+    audio_speech_data_dir: str = ""
     audio_speech_timeout_seconds: int = 60
     model_size_advisory_mb: int = 6144
     oauth_enabled: bool = False
@@ -177,8 +178,11 @@ class Settings:
         audio_speech_enabled = bool_env("ALANDI_AUDIO_SPEECH_ENABLED", False)
         audio_speech_binary = os.getenv("ALANDI_AUDIO_SPEECH_BINARY", "").strip()
         audio_speech_model = os.getenv("ALANDI_AUDIO_SPEECH_MODEL", "").strip()
-        if audio_speech_enabled and not (audio_speech_binary and audio_speech_model):
-            raise ValueError("ALANDI_AUDIO_SPEECH_ENABLED requires local Piper binary and model paths")
+        audio_speech_data_dir = os.getenv("ALANDI_AUDIO_SPEECH_DATA_DIR", "").strip()
+        if audio_speech_enabled and not (audio_speech_binary and audio_speech_model and audio_speech_data_dir):
+            raise ValueError("ALANDI_AUDIO_SPEECH_ENABLED requires Python executable, Piper voice name and data directory")
+        if audio_speech_model and (os.path.basename(audio_speech_model) != audio_speech_model or not all(char.isalnum() or char in "._-" for char in audio_speech_model)):
+            raise ValueError("ALANDI_AUDIO_SPEECH_MODEL must be a voice name, not a path")
         return cls(
             api_key=os.getenv("ALANDI_API_KEY", "").strip(),
             ollama_base_url=base,
@@ -215,6 +219,7 @@ class Settings:
             audio_speech_enabled=audio_speech_enabled,
             audio_speech_binary=audio_speech_binary,
             audio_speech_model=audio_speech_model,
+            audio_speech_data_dir=audio_speech_data_dir,
             audio_speech_timeout_seconds=int_env("ALANDI_AUDIO_SPEECH_TIMEOUT_SECONDS", 60, 1),
             model_size_advisory_mb=int_env(model_size_budget_env, 6144, 256),
             oauth_enabled=oauth_enabled,
@@ -1075,22 +1080,25 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             raise HTTPException(400, "text must contain 1 to 5000 printable characters")
         if not os.path.isfile(config.audio_speech_binary) or not os.access(config.audio_speech_binary, os.X_OK):
             raise HTTPException(503, "Configured local TTS executable is unavailable")
-        if not os.path.isfile(config.audio_speech_model):
-            raise HTTPException(503, "Configured local TTS model file is unavailable")
+        if not config.audio_speech_data_dir or not os.path.isdir(config.audio_speech_data_dir):
+            raise HTTPException(503, "Configured local TTS voice directory is unavailable")
+        voice_path = os.path.join(config.audio_speech_data_dir, config.audio_speech_model + ".onnx")
+        if not os.path.isfile(voice_path) or not os.path.isfile(voice_path + ".json"):
+            raise HTTPException(503, "Configured local TTS voice model or config is unavailable")
         with tempfile.TemporaryDirectory(prefix="alandi-tts-") as temp_dir:
             output_path = os.path.join(temp_dir, "speech.wav")
             try:
                 process = await asyncio.create_subprocess_exec(
-                    config.audio_speech_binary,
-                    "--model", config.audio_speech_model,
-                    "--output_file", output_path,
-                    stdin=asyncio.subprocess.PIPE,
+                    config.audio_speech_binary, "-m", "piper",
+                    "-m", config.audio_speech_model,
+                    "--data-dir", config.audio_speech_data_dir,
+                    "-f", output_path, "--", text,
+                    stdin=asyncio.subprocess.DEVNULL,
                     stdout=asyncio.subprocess.DEVNULL,
                     stderr=asyncio.subprocess.DEVNULL,
                 )
                 try:
-                    await asyncio.wait_for(process.communicate(input=text.encode("utf-8")),
-                                           timeout=config.audio_speech_timeout_seconds)
+                    await asyncio.wait_for(process.wait(), timeout=config.audio_speech_timeout_seconds)
                 except asyncio.TimeoutError:
                     process.kill()
                     await process.wait()
