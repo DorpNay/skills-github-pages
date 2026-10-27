@@ -654,11 +654,11 @@ permalink: /
     let storageHealthWarningLevel = 0;
     let storageHealthLastCheck = 0;
     function scheduleStorageHealthCheck() {
-      if (!navigator.storage?.estimate) return;
+      if (typeof navigator.storage?.estimate !== 'function') return;
       const now = Date.now();
       if (now - storageHealthLastCheck < 5 * 60 * 1000) return;
       storageHealthLastCheck = now;
-      navigator.storage.estimate().then(({usage, quota}) => {
+      navigator.storage.estimate().then(({ usage, quota }) => {
         if (!Number.isFinite(usage) || !Number.isFinite(quota) || quota <= 0) return;
         const ratio = usage / quota;
         const level = ratio >= 0.95 ? 2 : ratio >= 0.80 ? 1 : 0;
