@@ -73,7 +73,7 @@ def test_transcription_runs_configured_local_cli_and_returns_no_store(tmp_path, 
             return 0
 
         async def communicate(self):
-            return b"3.5\\n", b""
+            return b"3.5\n", b""
 
         def kill(self):
             self.returncode = -9
