@@ -104,6 +104,11 @@ class Settings:
     audio_transcription_ffprobe_binary: str = "/usr/bin/ffprobe"
     audio_transcription_max_bytes: int = 15 * 1024 * 1024
     audio_transcription_timeout_seconds: int = 120
+    # Optional local Piper TTS CLI; model and voice are installed by the operator.
+    audio_speech_enabled: bool = False
+    audio_speech_binary: str = ""
+    audio_speech_model: str = ""
+    audio_speech_timeout_seconds: int = 60
     model_size_advisory_mb: int = 6144
     oauth_enabled: bool = False
     oauth_path: str = "/var/lib/alandi-gateway/oauth.sqlite3"
@@ -169,6 +174,11 @@ class Settings:
         audio_transcription_ffprobe_binary = os.getenv("ALANDI_AUDIO_TRANSCRIPTION_FFPROBE_BINARY", "/usr/bin/ffprobe").strip()
         if audio_transcription_enabled and not (audio_transcription_binary and audio_transcription_model and audio_transcription_ffprobe_binary):
             raise ValueError("ALANDI_AUDIO_TRANSCRIPTION_ENABLED requires local ASR, ffprobe and model paths")
+        audio_speech_enabled = bool_env("ALANDI_AUDIO_SPEECH_ENABLED", False)
+        audio_speech_binary = os.getenv("ALANDI_AUDIO_SPEECH_BINARY", "").strip()
+        audio_speech_model = os.getenv("ALANDI_AUDIO_SPEECH_MODEL", "").strip()
+        if audio_speech_enabled and not (audio_speech_binary and audio_speech_model):
+            raise ValueError("ALANDI_AUDIO_SPEECH_ENABLED requires local Piper binary and model paths")
         return cls(
             api_key=os.getenv("ALANDI_API_KEY", "").strip(),
             ollama_base_url=base,
@@ -202,6 +212,10 @@ class Settings:
             audio_transcription_ffprobe_binary=audio_transcription_ffprobe_binary,
             audio_transcription_max_bytes=int_env("ALANDI_AUDIO_TRANSCRIPTION_MAX_BYTES", 15 * 1024 * 1024, 1024),
             audio_transcription_timeout_seconds=int_env("ALANDI_AUDIO_TRANSCRIPTION_TIMEOUT_SECONDS", 120, 1),
+            audio_speech_enabled=audio_speech_enabled,
+            audio_speech_binary=audio_speech_binary,
+            audio_speech_model=audio_speech_model,
+            audio_speech_timeout_seconds=int_env("ALANDI_AUDIO_SPEECH_TIMEOUT_SECONDS", 60, 1),
             model_size_advisory_mb=int_env(model_size_budget_env, 6144, 256),
             oauth_enabled=oauth_enabled,
             oauth_path=os.getenv("OAUTH_TOKEN_VAULT_PATH", "/var/lib/alandi-gateway/oauth.sqlite3").strip() or "/var/lib/alandi-gateway/oauth.sqlite3",
@@ -1042,6 +1056,60 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                                     headers={"Cache-Control": "no-store"})
             except OSError:
                 raise HTTPException(503, "Could not start the configured local ASR executable") from None
+
+    @app.post("/v1/audio/speech")
+    async def synthesize_speech(request: Request,
+                                authorization: str | None = Header(default=None)) -> Response:
+        authorize(config, authorization)
+        if not config.audio_speech_enabled:
+            raise HTTPException(503, "Local text-to-speech is disabled")
+        body = await read_limited_body(request, 24 * 1024)
+        try:
+            payload = json.loads(body)
+        except (ValueError, UnicodeDecodeError):
+            raise HTTPException(400, "JSON body is invalid") from None
+        if not isinstance(payload, dict) or not isinstance(payload.get("text"), str):
+            raise HTTPException(400, "text must be a string")
+        text = payload["text"].strip()
+        if not text or len(text) > 5000 or any(ord(char) < 32 and char not in "\\n\\r\\t" for char in text):
+            raise HTTPException(400, "text must contain 1 to 5000 printable characters")
+        if not os.path.isfile(config.audio_speech_binary) or not os.access(config.audio_speech_binary, os.X_OK):
+            raise HTTPException(503, "Configured local TTS executable is unavailable")
+        if not os.path.isfile(config.audio_speech_model):
+            raise HTTPException(503, "Configured local TTS model file is unavailable")
+        with tempfile.TemporaryDirectory(prefix="alandi-tts-") as temp_dir:
+            output_path = os.path.join(temp_dir, "speech.wav")
+            try:
+                process = await asyncio.create_subprocess_exec(
+                    config.audio_speech_binary,
+                    "--model", config.audio_speech_model,
+                    "--output_file", output_path,
+                    stdin=asyncio.subprocess.PIPE,
+                    stdout=asyncio.subprocess.DEVNULL,
+                    stderr=asyncio.subprocess.DEVNULL,
+                )
+                try:
+                    await asyncio.wait_for(process.communicate(input=text.encode("utf-8")),
+                                           timeout=config.audio_speech_timeout_seconds)
+                except asyncio.TimeoutError:
+                    process.kill()
+                    await process.wait()
+                    raise HTTPException(504, "Local speech synthesis timed out") from None
+                if process.returncode != 0:
+                    raise HTTPException(502, "Local TTS process failed; check the local runtime configuration")
+                try:
+                    with open(output_path, "rb") as audio_file:
+                        audio = audio_file.read(25 * 1024 * 1024 + 1)
+                except OSError:
+                    raise HTTPException(502, "Local TTS did not produce an audio file") from None
+                if len(audio) > 25 * 1024 * 1024:
+                    raise HTTPException(502, "Generated audio exceeds the output limit")
+                if len(audio) < 44 or audio[:4] != b"RIFF" or audio[8:12] != b"WAVE":
+                    raise HTTPException(502, "Local TTS output is not a valid WAV file")
+                return Response(content=audio, media_type="audio/wav",
+                                headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"})
+            except OSError:
+                raise HTTPException(503, "Could not start the configured local TTS executable") from None
 
     @app.post("/v1/chat/completions")
     async def completions(request: Request, authorization: str | None = Header(default=None)) -> Response:
