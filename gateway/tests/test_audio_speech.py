@@ -66,7 +66,7 @@ def test_speech_runs_configured_local_cli_and_returns_wav(tmp_path, monkeypatch)
 
         async def communicate(self, input=None):
             captured["text"] = input.decode("utf-8")
-            wav = b"RIFF" + (36).to_bytes(4, "little") + b"WAVE" + bytes(28)
+            wav = b"RIFF" + (36).to_bytes(4, "little") + b"WAVE" + bytes(32)
             with open(self.output_path, "wb") as output:
                 output.write(wav)
             return b"", b""
