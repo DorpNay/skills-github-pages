@@ -46,7 +46,7 @@ PR #53 merged: supported audio attachments now use local ASR through the configu
 
 ### P2 — live voice dialogue
 
-**First stage under PR #54:** local push-to-talk turn-taking reuses the existing ASR, chat and TTS paths; each spoken turn is transcribed locally, sent through the configured gateway, and the assistant reply is spoken locally before the microphone reopens. This is half-duplex turn-taking, not full-duplex streaming.
+**First stage under PR #54:** local push-to-talk turn-taking reuses the existing ASR, chat and TTS paths; each spoken turn is transcribed locally, sent through the configured gateway, and the assistant reply is spoken locally before the microphone reopens. This is half-duplex turn-taking, not full-duplex streaming. The composer draft, pending attachments and one-shot project context block session start; chat/provider/gateway changes stop the session. Tests mock MediaRecorder, local ASR, chat and TTS, so real device/model latency remains unverified.
 
 - Remaining upgrade: streaming ASR events, VAD, TTS playback queue, interruption/barge-in, turn state and device routing.
 - Start with one ASR and one TTS candidate; no model zoo. Candidate ASR: Qwen3-ASR (RU/EN/Thai) or Vosk/Moonshine after license + hardware evaluation. TTS exact voice licensing must pass; no default Piper/Silero commercial assumption.
