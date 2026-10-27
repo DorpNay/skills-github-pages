@@ -102,6 +102,7 @@ class Settings:
     audio_transcription_binary: str = ""
     audio_transcription_model: str = ""
     audio_transcription_ffprobe_binary: str = "/usr/bin/ffprobe"
+    audio_transcription_ffmpeg_binary: str = "/usr/bin/ffmpeg"
     audio_transcription_max_bytes: int = 15 * 1024 * 1024
     audio_transcription_timeout_seconds: int = 120
     # Optional local Piper TTS CLI; model and voice are installed by the operator.
@@ -173,8 +174,9 @@ class Settings:
         audio_transcription_binary = os.getenv("ALANDI_AUDIO_TRANSCRIPTION_BINARY", "").strip()
         audio_transcription_model = os.getenv("ALANDI_AUDIO_TRANSCRIPTION_MODEL", "").strip()
         audio_transcription_ffprobe_binary = os.getenv("ALANDI_AUDIO_TRANSCRIPTION_FFPROBE_BINARY", "/usr/bin/ffprobe").strip()
-        if audio_transcription_enabled and not (audio_transcription_binary and audio_transcription_model and audio_transcription_ffprobe_binary):
-            raise ValueError("ALANDI_AUDIO_TRANSCRIPTION_ENABLED requires local ASR, ffprobe and model paths")
+        audio_transcription_ffmpeg_binary = os.getenv("ALANDI_AUDIO_TRANSCRIPTION_FFMPEG_BINARY", "/usr/bin/ffmpeg").strip()
+        if audio_transcription_enabled and not (audio_transcription_binary and audio_transcription_model and audio_transcription_ffprobe_binary and audio_transcription_ffmpeg_binary):
+            raise ValueError("ALANDI_AUDIO_TRANSCRIPTION_ENABLED requires local ASR, ffprobe, ffmpeg and model paths")
         audio_speech_enabled = bool_env("ALANDI_AUDIO_SPEECH_ENABLED", False)
         audio_speech_binary = os.getenv("ALANDI_AUDIO_SPEECH_BINARY", "").strip()
         audio_speech_model = os.getenv("ALANDI_AUDIO_SPEECH_MODEL", "").strip()
@@ -214,6 +216,7 @@ class Settings:
             audio_transcription_binary=audio_transcription_binary,
             audio_transcription_model=audio_transcription_model,
             audio_transcription_ffprobe_binary=audio_transcription_ffprobe_binary,
+            audio_transcription_ffmpeg_binary=audio_transcription_ffmpeg_binary,
             audio_transcription_max_bytes=int_env("ALANDI_AUDIO_TRANSCRIPTION_MAX_BYTES", 15 * 1024 * 1024, 1024),
             audio_transcription_timeout_seconds=int_env("ALANDI_AUDIO_TRANSCRIPTION_TIMEOUT_SECONDS", 120, 1),
             audio_speech_enabled=audio_speech_enabled,
@@ -1005,8 +1008,11 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             raise HTTPException(503, "Configured local ASR model file is unavailable")
         if not os.path.isfile(config.audio_transcription_ffprobe_binary) or not os.access(config.audio_transcription_ffprobe_binary, os.X_OK):
             raise HTTPException(503, "Configured local ffprobe executable is unavailable")
+        if not os.path.isfile(config.audio_transcription_ffmpeg_binary) or not os.access(config.audio_transcription_ffmpeg_binary, os.X_OK):
+            raise HTTPException(503, "Configured local ffmpeg executable is unavailable")
         with tempfile.TemporaryDirectory(prefix="alandi-asr-") as temp_dir:
             input_path = os.path.join(temp_dir, "audio" + suffix)
+            normalized_path = os.path.join(temp_dir, "normalized.wav")
             output_prefix = os.path.join(temp_dir, "transcript")
             try:
                 with open(input_path, "wb") as audio_file:
@@ -1031,10 +1037,25 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                     raise HTTPException(400, "Audio duration is missing or invalid") from None
                 if not 0 < duration_seconds <= 120:
                     raise HTTPException(413, "Audio duration must be between 0 and 120 seconds")
+                converter = await asyncio.create_subprocess_exec(
+                    config.audio_transcription_ffmpeg_binary, "-nostdin", "-v", "error", "-y",
+                    "-i", input_path, "-t", "120", "-vn", "-ac", "1", "-ar", "16000",
+                    "-c:a", "pcm_s16le", normalized_path,
+                    stdin=asyncio.subprocess.DEVNULL, stdout=asyncio.subprocess.DEVNULL,
+                    stderr=asyncio.subprocess.DEVNULL,
+                )
+                try:
+                    await asyncio.wait_for(converter.wait(), timeout=10)
+                except asyncio.TimeoutError:
+                    converter.kill()
+                    await converter.wait()
+                    raise HTTPException(504, "Audio normalization timed out") from None
+                if converter.returncode != 0 or not os.path.isfile(normalized_path):
+                    raise HTTPException(400, "Audio could not be normalized to PCM WAV")
                 process = await asyncio.create_subprocess_exec(
                     config.audio_transcription_binary,
                     "-m", config.audio_transcription_model,
-                    "-f", input_path,
+                    "-f", normalized_path,
                     "-l", lang,
                     "-otxt", "-of", output_prefix, "-nt",
                     stdin=asyncio.subprocess.DEVNULL,
