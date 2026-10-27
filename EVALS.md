@@ -81,4 +81,4 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - **Scope:** quota estimate, warning thresholds, and non-blocking behavior in the browser client.
 - **Fixture:** Chromium E2E tests in `tests/e2e/app.spec.mjs` mock `navigator.storage.estimate()` at 80% and 96%, and simulate estimator rejection.
 - **Acceptance:** 80% usage shows preventive export guidance; 95% or higher shows urgent guidance; rejected/unsupported estimates do not block startup or persistence; existing save-failure behavior continues to preserve the previously valid state.
-- **Status:** implementation and deterministic fixtures added on the storage-warning PR branch; exact-head CI and post-merge validation pending. This is not proof of a full-profile backup or successful restore.
+- **Status:** implementation and deterministic fixtures added on branch `feat/browser-storage-quota-warning`; exact-head CI and post-merge validation pending. This is not proof of a full-profile backup or successful restore.
