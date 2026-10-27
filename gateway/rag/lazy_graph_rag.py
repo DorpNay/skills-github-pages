@@ -75,12 +75,14 @@ def reciprocal_rank_fusion(rankings: list[list[str]], *, rank_constant: int = 60
         if not isinstance(ranking, list) or len(ranking) > 1000:
             raise ValueError("each ranking must be a bounded list")
         seen: set[str] = set()
-        for rank, candidate_id in enumerate(ranking, start=1):
+        rank = 0
+        for candidate_id in ranking:
             if not isinstance(candidate_id, str) or not candidate_id:
                 raise ValueError("candidate IDs must be non-empty strings")
             if candidate_id in seen:
                 continue
             seen.add(candidate_id)
+            rank += 1
             fused[candidate_id] = fused.get(candidate_id, 0.0) + 1.0 / (rank_constant + rank)
     return fused
 
