@@ -3381,6 +3381,9 @@ permalink: /
         } finally { isPreparingDocumentAttachments=false; }
       }
       if(audioAttachments.length) {
+        if(documents.length&&(currentProvider()!=='alandi'||getConfiguredAlandiGatewayBaseUrl()!==documentGatewayBaseUrl||getConfiguredApiKey()!==apiKey)) {
+          showToast('Маршрут gateway изменился после разбора документов. Ничего не отправлено; проверь настройки и отправь снова.','error');return;
+        }
         if(currentProvider()!=='alandi') {
           showToast('Аудиофайлы расшифровываются только на явно выбранном собственном aLandi gateway. Выбери aLandi или убери аудио.','error');return;
         }
