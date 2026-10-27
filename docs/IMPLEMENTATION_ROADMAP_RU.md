@@ -42,11 +42,12 @@ The merged UI and gateway provide local `whisper.cpp` transcription for explicit
 
 **Still required before calling the feature ready:** run PR CI; test real supported browsers/devices and actual local whisper.cpp + model; measure RU/EN/Thai quality, cold/warm latency, RTF and RSS on the target host; verify binary/model provenance and licenses. The current browser test does not prove microphone hardware or model accuracy.
 
-Next P1 work: support local transcription of audio files attached from disk (PR #53, pending CI), improve upload-failure recovery, add backend tests for over-duration/over-size/timeouts, and keep endpoints off until local binaries/models are installed and evaluated. PR #51 adds cancellation of in-flight TTS requests. No external ASR/TTS API is used.
+PR #53 merged opt-in local transcription for audio files attached from disk; no external ASR/TTS API is used. Remaining P1 work: improve upload-failure recovery, test over-duration/over-size/timeouts, and validate real local binaries/models on the target host. PR #51 cancellation of in-flight TTS requests is already in main.
 
 ### P2 — live voice dialogue
 
-- Reuse the voice-message capture/transcription path; add streaming ASR events, VAD, TTS playback queue, interruption/barge-in, turn state and device routing.
+- **Merged prototype (PR #60; browser Quality/Chromium passed):** browser half-duplex turn loop reuses the existing local ASR and TTS endpoints, sends the transcript through the explicitly configured chat provider, plays the response, and reopens the microphone only after playback. CI uses deterministic mocks; this does not prove real microphone/model operation or continuous streaming.
+- **Still required:** streaming ASR events, VAD, TTS queue management, interruption/barge-in, turn state, device routing, echo handling and target-device benchmarks.
 - Start with one ASR and one TTS candidate; no model zoo. Candidate ASR: Qwen3-ASR (RU/EN/Thai) or Vosk/Moonshine after license + hardware evaluation. TTS exact voice licensing must pass; no default Piper/Silero commercial assumption.
 - Voice pipeline: capture → VAD → ASR partial/final → turn router → gateway/model → text/audio response → playback; add cancellation and echo handling.
 - **Gate:** audio quality corpus, cold/warm RTF, p50/p95 TTFA and turn latency, PSS/RAM, no runaway model/queue, interruption tests, artifact hashes/license. Target numbers in LATENCY_CONTRACT are budgets until measured.
@@ -112,6 +113,6 @@ Next P1 work: support local transcription of audio files attached from disk (PR 
 
 ## Mobile ergonomics — staged retarget of legacy PR #37
 
-- **First slice (PR #61, validation pending):** full-text viewer and copy controls for user/assistant messages, Clipboard API failure fallback, and a jump-to-latest control. Keeps the current document/audio attachments and storage safeguards rather than replacing `index.md` with the stale legacy branch.
+- **First slice (PR #61, validation pending):** full-text viewer and copy controls for user/assistant messages, Clipboard API failure fallback, and a jump-to-latest control. Keeps the current document/audio attachments, storage safeguards and local voice prototype rather than replacing `index.md` with the stale legacy branch.
 - **Deferred until isolated and retested:** compact mode/search/research toolbar, per-chat mode preferences, composer placement and visual-viewport handling, sidebar/popover layering, and extended search-depth controls. The legacy PR #37 currently has reproducible Playwright failures involving hidden selectors, clipboard permissions, duplicate theme controls, language selector ambiguity, and click interception; it is not safe to merge wholesale.
 - **Acceptance gate:** move one slice at a time onto current `main`, fix locators against the visible user interface rather than force-clicking hidden controls, pass current-head Chromium + published-site smoke, then close the legacy PR as superseded only after its unique accepted work has been migrated.
