@@ -1,11 +1,12 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
-> **Первым делом в новом чате:** прочитай этот файл, затем актуальный `docs/PROJECT_STATE.yaml`, потом только конкретные файлы по текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
+> **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-Последняя записанная контрольная точка перед текущим docs-only обновлением: main **1faf60164b9a0f82eb5e0c56b143ba90499be4a5** (PR #66 merged). При старте всегда получить live HEAD и очередь PR/Issues заново; сохранённый SHA — исторический checkpoint, не live truth.
+Последняя подтверждённая контрольная точка: main **9aa36465158c27c49ff647a6ce349b46a6e1151e** (PR #68 merged). Post-merge Quality #40537790474, Pages #40537789513, provenance #40537789685 и Graphify pilot #40537790122 завершились успешно; ten-query check #40534892152 вернул результаты для 10/10 запросов. При старте всё равно получать live HEAD и очередь PR/Issues заново.
 
 ## 1. Быстрый маршрут
 
+0. **Короткая точка входа:** корневой `ORIENTER.md`.
 1. **Текущий статус и флаги:** `docs/PROJECT_STATE.yaml`.
 2. **Архитектура и границы:** `docs/ALANDI_MASTER_CONTEXT_RU.md`.
 3. **Что пользователь просил и что осталось:** `docs/USER_REQUEST_CHECKLIST.md`.
@@ -111,17 +112,27 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 
 - Merge SHA: `1faf60164b9a0f82eb5e0c56b143ba90499be4a5`.
 - Added curated architecture map `docs/ALANDI_ARCHITECTURE_MAP_RU.md`, README link, source-triage/technique updates, and `.graphifyignore` exclusions. This is not a generated AST graph.
-- PR-head Quality run #40529576448 passed all 6 jobs, and provenance #40529576476 passed. Post-merge Pages run #40530195904 and provenance #40530196480 passed. Post-merge Quality #40530196483 was still in progress at last poll.
-- GitHub API queue after merge: 0 open PRs, 0 open Issues.
-- Local Graphify remains blocked by container DNS. Official code-only CLI workflow and staged-copy safeguards are documented; no CLI install/graph generation claimed.
-- Next action: verify post-merge Quality run; use network-enabled disposable workspace for actual Graphify pilot. Do not add Graphify to runtime. Then continue from prioritized roadmap with one bounded, test-backed product change.
+- PR-head Quality run #40529576448 passed all 6 jobs, and provenance #40529576476 passed. Post-merge Pages run #40530195904 and provenance #40530196480 passed. Post-merge Quality #40530196483 завершился success (6/6 jobs).
+- GitHub API queue after PR #66 and again after PR #67: 0 open PRs and 0 open Issues at the respective checks.
+- Post-merge Quality #40530196483, Pages #40530195904 and provenance #40530196480 all completed successfully.
+- Local Graphify still cannot run in this execution container because DNS resolution for github.com fails. A read-only GitHub Actions pilot workflow is now being prepared to run code-only Graphify in an ephemeral staging copy, with no model calls and no runtime dependency.
+- Next action: inspect the Graphify pilot workflow's PR-head CI and its artifact/logs; record actual coverage, runtime, memory and query usefulness before deciding whether a generated graph should be retained. Do not add Graphify to runtime.
+
+
+## Checkpoint — Graphify code-only CI pilot added (2026-10-27)
+
+- Current base before this PR: `82beb7fcddbe9a1438e811693c76bc731d3a5de3`; PR #67 is merged. Post-merge Quality run #40531356851, Pages run #40531354887 and provenance run #40531357120 all passed.
+- New workflow: `.github/workflows/graphify-pilot.yml`. It runs on a narrowly filtered PR, on main when the workflow is added/changed, or manually via `workflow_dispatch`.
+- First PR-head pilot run #40532798178 succeeded but exposed quality problems: 1,717 nodes/2,877 edges/140 communities, with 539 nodes from `docs/PROJECT_STATE.yaml`, 460 from workflow YAML, a missing SQL grammar, no `index.md` JS and a broad query over budget.
+- Refined run #40534094060 succeeded after installing `graphifyy[sql]==0.9.96`, excluding YAML/YML/TOML from the disposable corpus, extracting inline JS from `index.md` into `index-inline.js` with original line count preserved, and narrowing queries: 940 nodes, 2,637 edges, 44 communities, 59 source files with nodes; 209 nodes from UI JS and 14 from `gateway/memory/schema.sql`. Three queries returned 134, 50 and 59 nodes.
+- The refined ten-query run #40534892152 succeeded: all ten queries found graph neighborhoods (10–151 nodes each); examples: UI Research Studio 55, request parsing 50, RAG retrieval 52, audio 31 each, evidence provenance 10. The 700-token budget is approximate; evidence-provenance output (10 nodes/9 edges) still reported ~762 tokens. This demonstrates useful source navigation, though community labels remain generic because `--no-label` avoids model calls. Artifact #12747755798, SHA-256 `e16c01df143a3380bfd66be523ec709d2dc85bf35fd4d8e5133a64922a841b22`, is retained for 7 days. Generated graph remains artifact-only, not a runtime dependency.
+- License/version discrepancy: release tag `v0.9.96` LICENSE and PyPI metadata identify Apache-2.0, while default-branch `pyproject.toml` appeared to show older `0.1.14`/MIT metadata. The workflow pins the published package release; do not assume every upstream ref has identical provenance.
 
 
 ## Checkpoint — local helper-memory suggestions vertical slice (2026-10-27)
 
-- Base main: 1faf60164b9a0f82eb5e0c56b143ba90499be4a5; PR #66 is merged and its post-merge Quality/Pages/provenance runs passed.
-- Feature branch: feat/local-helper-memory-suggestions-current-main-20261027.
-- Added a manual UI flow and authenticated gateway route for bounded local helper-model suggestions. Secret-like input is filtered client-side and server-side; outputs are structured, bounded and filtered; candidates require individual explicit save.
-- Configuration is blank/disabled by default. No model weights are included and no live inference was run.
-- Exact-head CI and PR number are pending. Next: inspect the branch diff, verify gateway tests and Chromium E2E on the exact head, fix any regressions, then merge only if every required gate passes.
-- Graphify remains unexecuted because the current container cannot resolve github.com; architecture map is curated, not generated AST graph.
+- Current main baseline before PR #69 sync: `9aa36465158c27c49ff647a6ce349b46a6e1151e`; PR #69 is open. PR #70 is independent and must be reviewed separately.
+- The helper uses an operator-configured local Ollama model, blank/disabled by default. Request is manual, bounded and authenticated; suggestions remain text candidates and are saved one at a time only after explicit user choice.
+- Found and fixed a server filter gap: `\bAPI_KEY` did not match a prefixed environment variable such as `ALANDI_API_KEY`. New regex accepts underscore/hyphen prefixes, and the regression test now checks both input facts and returned candidates.
+- Lite Gateway Tests run #40538692632 passed on earlier code SHA `c12391cbbbd2fb917035919c29ee900af477ec83`. Exact-head Quality, Chromium, Pages smoke and provenance must pass again on the post-sync head before merge.
+- No live inference or target-VPS model/resource claim is made. Keep `ALANDI_HELPER_MODEL` blank until the owner chooses and installs an exact local model tag.

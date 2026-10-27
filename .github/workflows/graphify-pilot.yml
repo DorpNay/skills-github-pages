@@ -1,0 +1,186 @@
+name: Graphify Code-Only Architecture Pilot
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/graphify-pilot.yml"
+      - ".graphifyignore"
+      - "docs/ALANDI_ARCHITECTURE_MAP_RU.md"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/graphify-pilot.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: graphify-pilot-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  code-only-graph:
+    name: Build disposable source graph (no model calls)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GRAPHIFY_QUERY_LOG_DISABLE: "1"
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: Checkout source without persisting credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install pinned Graphify CLI
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "graphifyy[sql]==0.9.96"
+          graphify --version
+      - name: Create a tracked-files-only staging copy
+        env:
+          STAGING: ${{ runner.temp }}/alandirepo
+        run: |
+          set -euo pipefail
+          mkdir -p "$STAGING"
+          git archive "$GITHUB_SHA" | tar -x -C "$STAGING"
+          # Defense in depth: never feed credentials, local databases, model weights,
+          # user uploads, or generated/dependency directories to the graph builder.
+          find "$STAGING" -type f \( \
+            -name '.env' -o -name '.env.*' -o \
+            -name '*.pem' -o -name '*.key' -o -name '*.p12' -o -name '*.pfx' -o \
+            -name '*.sqlite' -o -name '*.sqlite3' -o -name '*.db' -o -name '*.db-*' -o \
+            -name '*.gguf' -o -name '*.safetensors' -o -name '*.onnx' -o \
+            -name '*.pt' -o -name '*.pth' -o -name '*.wav' -o -name '*.mp3' -o \
+            -name '*.m4a' -o -name '*.mp4' -o -name '*.webm' -o -name '*.log' \
+          \) -delete
+          find "$STAGING" -type d \( \
+            -name node_modules -o -name .venv -o -name __pycache__ -o \
+            -name .cache -o -name _site -o -name dist -o -name build -o \
+            -name uploads -o -name backups -o -name user-data -o -name user_data \
+          \) -prune -exec rm -rf {} +
+          # Graphify's generic YAML/TOML parser creates config-key nodes rather than useful
+          # call relationships; keep those contracts in the curated architecture map instead.
+          find "$STAGING" -type f \( -name '*.yaml' -o -name '*.yml' -o -name '*.toml' \) -delete
+          # index.md is the primary client and contains one large inline JavaScript block.
+          # Extract executable inline JS while preserving every source newline so line numbers
+          # map directly back to the original index.md.
+          python - <<'PY'
+          from pathlib import Path
+          import os
+          import re
+
+          source_path = Path(os.environ["STAGING"]) / "index.md"
+          source = source_path.read_text(encoding="utf-8")
+          masked = ["\n" if char == "\n" else "\r" if char == "\r" else " " for char in source]
+          extracted = 0
+          for match in re.finditer(r"<script\b([^>]*)>([\s\S]*?)</script\s*>", source, re.IGNORECASE):
+              attrs, body = match.group(1), match.group(2)
+              if re.search(r"\bsrc\s*=", attrs, re.IGNORECASE):
+                  continue
+              kind = re.search(r"""\btype\s*=\s*["']?([^"'\s>]+)""", attrs, re.IGNORECASE)
+              if kind and kind.group(1).lower() not in {"text/javascript", "application/javascript", "module"}:
+                  continue
+              start, end = match.span(2)
+              if not body.strip():
+                  continue
+              masked[start:end] = source[start:end]
+              extracted += len(body.strip())
+          if extracted < 1000:
+              raise SystemExit(f"Refusing to graph an empty or unexpected inline script ({extracted} chars)")
+          target = Path(os.environ["STAGING"]) / "index-inline.js"
+          target.write_text("".join(masked), encoding="utf-8")
+          print(f"Extracted {extracted} inline JavaScript characters to {target}; source line numbers preserved from index.md")
+          PY
+          test -f "$STAGING/.graphifyignore"
+          printf 'Tracked files in source commit: '
+          git ls-tree -r --name-only "$GITHUB_SHA" | wc -l
+          printf 'Files remaining in staging: '
+          find "$STAGING" -type f | wc -l
+      - name: Extract, cluster and query the local code graph
+        env:
+          STAGING: ${{ runner.temp }}/alandirepo
+        run: |
+          set -euo pipefail
+          cd "$STAGING"
+          {
+            echo "## Graphify code-only pilot"
+            echo
+            echo "- Commit: $GITHUB_SHA"
+            echo "- Python: $(python --version)"
+            echo "- Graphify: $(graphify --version)"
+            echo "- Semantic/model processing: disabled via --code-only"
+            echo "- Git ignore override: --no-gitignore (staging copy contains tracked files only; .graphifyignore remains in place)"
+            echo
+            echo "### Extract"
+            graphify extract . --code-only --no-gitignore --timing
+            echo
+            echo "### Cluster"
+            graphify cluster-only . --no-label
+            echo
+            echo "### HTML export"
+            graphify export html
+            echo
+            echo "### Ten focused navigation queries"
+            while IFS='|' read -r label query; do
+              [ -z "$label" ] && continue
+              echo
+              echo "#### $label"
+              graphify query "$query" --context call --budget 700
+            done <<'EOF'
+          UI Research Studio|startResearchStudio
+          UI send path|sendMessage runAssistant
+          Gateway auth/provider client|authorize client_for
+          Bounded request parsing|read_limited_body completions
+          Scoped memory|MemoryManager search_nodes
+          RAG retrieval|LazyGraphRAG retrieve
+          Audio generation|synthesize_speech
+          Audio transcription|transcribe_audio
+          Document extraction|extract_document
+          Evidence provenance|EvidenceLedger CitationManager
+          EOF
+            echo
+            echo "### Graph coverage metrics"
+            python - <<'PY'
+          import collections
+          import json
+          from pathlib import Path
+
+          graph = json.loads(Path("graphify-out/graph.json").read_text(encoding="utf-8"))
+          nodes, links = graph.get("nodes", []), graph.get("links", [])
+          files = sorted({node.get("source_file") for node in nodes if node.get("source_file")})
+          extensions = collections.Counter(Path(path).suffix or "<none>" for path in files)
+          print(f"Nodes: {len(nodes)}; edges: {len(links)}; source files with nodes: {len(files)}")
+          print("Extensions: " + ", ".join(f"{key}={value}" for key, value in sorted(extensions.items())))
+          print("Top source files by node count:")
+          for path, count in collections.Counter(node.get("source_file") for node in nodes if node.get("source_file")).most_common(12):
+              print(f"  {count:4d}  {path}")
+          if not any(node.get("source_file") == "index-inline.js" for node in nodes):
+              raise SystemExit("Graphify did not include the extracted inline JavaScript from index.md")
+          PY
+            echo
+            echo "### Generated artifacts"
+            find graphify-out -maxdepth 1 -type f -printf '%f (%s bytes)\n' | sort
+            test -s graphify-out/graph.json
+            test -s graphify-out/GRAPH_REPORT.md
+            test -s graphify-out/graph.html
+            rm -rf graphify-out/cache
+          } 2>&1 | tee "${{ runner.temp }}/graphify-pilot-summary.txt"
+      - name: Upload graph and run report (no source checkout)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: graphify-code-only-pilot-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/alandirepo/graphify-out/graph.json
+            ${{ runner.temp }}/alandirepo/graphify-out/GRAPH_REPORT.md
+            ${{ runner.temp }}/alandirepo/graphify-out/graph.html
+            ${{ runner.temp }}/alandirepo/graphify-out/manifest.json
+            ${{ runner.temp }}/graphify-pilot-summary.txt
+          if-no-files-found: warn
+          retention-days: 7

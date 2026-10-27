@@ -86,8 +86,19 @@ flowchart TD
 4. Записать files/nodes/edges, coverage, время/память и результаты 10 реальных вопросов по навигации.
 5. Сравнить с прямыми исходниками и orienter; generated graph сохранять вне production, пока польза и воспроизводимость не доказаны.
 
-**Блокер:** `git clone` не удался из-за DNS `Could not resolve host: github.com`; CLI не установлен, граф не создан. `.graphifyignore` подготавливает исключения; его фактическое применение Graphify ещё нужно проверить в пилоте. `--no-gitignore` нужен только в tracked staging-копии, чтобы не потерять SQL schema из-за `*.sql` в `.gitignore`. Чтение upstream через коннектор не считается выполненным пилотом.
+**Первый реальный прогон (PR #68, run #40532798178):** Graphify `0.9.96` успешно построил 1,717 nodes / 2,877 edges / 140 communities; extraction + clustering заняли примерно 5 секунд. Артефакт #12745794677 сохранён на 7 дней и проверен локально. Но первый граф не принят как качественная навигация: 539 узлов пришли из `docs/PROJECT_STATE.yaml`, 460 из workflow YAML; SQL schema была пропущена из-за отсутствующего `tree_sitter_sql`; `index.md` — основной UI — не попал в graph; широкая query вернула 49 nodes/45 edges и over-budget notice; `--no-label` оставил названия `Community N`.
+
+**Улучшение пилота:** workflow дополнен SQL extra, исключением YAML/YML/TOML metadata из graph corpus и извлечением inline JavaScript из `index.md` в временный `index-inline.js` с сохранением исходного количества строк, чтобы line numbers соответствовали `index.md`. Refined run #40534094060 успешен: 940 nodes, 2,637 edges, 44 communities, 59 source files; UI JS и SQL schema представлены. Последующий run #40534892152 успешно выполнил 10 узких вопросов: каждый вернул 10–151 узел (UI Research Studio 55, bounded parsing 50, RAG 52, audio 31, evidence provenance 10). Budget 700 — приблизительный; один ответ вышел на ~762 токена. Artifact #12747755798 (SHA-256 `e16c01df143a3380bfd66be523ec709d2dc85bf35fd4d8e5133a64922a841b22`) хранится 7 дней. Cache не попадает в artifact. Граф полезен для dev-навигации, но communities не имеют семантических имён без model calls; Graphify остаётся dev-only, не runtime dependency.
+
+**Лицензионная оговорка:** release tag `v0.9.96` и PyPI package `graphifyy==0.9.96` указывают Apache-2.0, но default-branch `pyproject.toml` на момент исследования показывал старые metadata `0.1.14`/MIT. Пилот фиксирует конкретную опубликованную версию; не распространять вывод о лицензии на все upstream refs без отдельной сверки.
 
 ## 6. Правило поддержки
 
 Карта помогает навигации, но не заменяет исходники. Обновлять её, если изменились границы модулей. После каждого этапа обновлять orienter, `docs/PROJECT_STATE.yaml` и `docs/VOLLEY_LOG.md` с точным SHA, проверками, blockers и следующим действием.
+
+
+### 5.1. Автоматизированный пилот в CI
+
+- Workflow `.github/workflows/graphify-pilot.yml` запускается при изменении самого workflow на `main`, при PR с изменением workflow/ignore/architecture map и вручную через `workflow_dispatch`.
+- Разрешения: только `contents: read`; checkout не сохраняет credentials; semantic/model processing отключён.
+- Результат хранится как краткоживущий artifact, не коммитится. После выполнения нужно проверить отчёт и минимум 10 навигационных вопросов; один лишь зелёный exit code не доказывает полезность графа.
