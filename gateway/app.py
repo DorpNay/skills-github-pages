@@ -415,7 +415,7 @@ def extract_local_document(filename: str, data: bytes, max_chars: int) -> tuple[
     if not data:
         raise HTTPException(400, "Document body is empty")
     if extension in DOCUMENT_TEXT_EXTENSIONS:
-        if data.startswith((b"\\xff\\xfe", b"\\xfe\\xff")):
+        if data.startswith((b"\xff\xfe", b"\xfe\xff")):
             raise HTTPException(415, "Only UTF-8 text documents are supported")
         try:
             text = data.decode("utf-8-sig", errors="strict")
