@@ -14,6 +14,7 @@ import tempfile
 import time
 from contextlib import asynccontextmanager, closing
 from dataclasses import asdict, dataclass
+from functools import wraps
 from typing import Any, AsyncIterator, Mapping
 from urllib.parse import urlsplit
 
@@ -233,6 +234,21 @@ class Settings:
             google_oauth_redirect_uri=google_oauth_redirect_uri,
             oauth_success_redirect=oauth_success_redirect,
         )
+
+
+def local_audio_limited(settings: Settings):
+    """Serialize expensive local audio jobs and reject excess work without queueing."""
+    def decorate(endpoint):
+        @wraps(endpoint)
+        async def wrapped(request: Request, *args, **kwargs):
+            authorize(settings, kwargs.get("authorization"))
+            semaphore = request.app.state.audio_semaphore
+            if semaphore.locked():
+                raise HTTPException(429, "Another local audio job is already running")
+            async with semaphore:
+                return await endpoint(request, *args, **kwargs)
+        return wrapped
+    return decorate
 
 
 def authorize(settings: Settings, authorization: str | None) -> None:
@@ -476,6 +492,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 pass
         app.state.client = httpx.AsyncClient(timeout=timeout, transport=transport)
         app.state.semaphore = asyncio.Semaphore(config.max_inflight_requests)
+        app.state.audio_semaphore = asyncio.Semaphore(1)
         app.state.delta_store = None
         app.state.memory_graph_store = None
         app.state.rag_store = None
@@ -983,6 +1000,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                             headers={"Cache-Control": "no-store"})
 
     @app.post("/v1/audio/transcriptions")
+    @local_audio_limited(config)
     async def transcribe_audio(request: Request, lang: str = "auto",
                                authorization: str | None = Header(default=None)) -> JSONResponse:
         authorize(config, authorization)
@@ -1084,6 +1102,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 raise HTTPException(503, "Could not start the configured local ASR executable") from None
 
     @app.post("/v1/audio/speech")
+    @local_audio_limited(config)
     async def synthesize_speech(request: Request,
                                 authorization: str | None = Header(default=None)) -> Response:
         authorize(config, authorization)
