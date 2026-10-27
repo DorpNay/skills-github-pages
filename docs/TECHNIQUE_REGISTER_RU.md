@@ -70,3 +70,11 @@
 - **DevOps-каталоги, Compose/Kubernetes examples, public APIs и MCP server lists — справочники, не runtime-зависимости.** Шаблоны переносить по одному после license/security review и тестов.
 - **Модели, neuron steering, аудиоразделение, semantic cache и disk-backed state — эксперименты.** Не менять активную модель или автоматическое поведение без golden eval, ресурсных замеров целевого хоста и rollback.
 - Точные upstream для неоднозначных имён и концептуальных строк отмечены как «уточнить» в triage; не угадывать по похожему имени.
+
+
+## Graphify — решение после повторного чтения upstream (2026-10-27)
+
+- Назначение: dev-only code navigation/cross-file graph; не runtime feature.
+- Основание: upstream README/quickstart/pyproject.toml; Apache-2.0, package `graphifyy`, CLI `graphify`, Python >=3.10; local tree-sitter parsing for code; semantic pass for docs/media may use a model.
+- Риски: substantial dependency footprint, fast-moving release, model usage for docs/media, stale generated output. Pin version and exclude secrets/build output.
+- Решение: **pilot pending**. Local execution impossible in current container because DNS cannot resolve `github.com`; do not report graph generated or add it to runtime. See `docs/ALANDI_ARCHITECTURE_MAP_RU.md`.
