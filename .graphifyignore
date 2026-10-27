@@ -38,3 +38,26 @@ dist/
 build/
 graphify-out/
 **/graphify-out/
+# Other generated/binary artifacts; use --no-gitignore only in a tracked staging copy.
+.git/
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+.DS_Store
+.DS_Store?
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+._*
