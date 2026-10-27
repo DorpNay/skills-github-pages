@@ -3755,6 +3755,9 @@ permalink: /
       if(isGenerating||isPreparingDocumentAttachments) {
         showToast('Сначала дождись завершения текущего запроса.','error');return;
       }
+      if($('userInput').value.trim()||pendingComposerAttachments.length||selectedRequestProjectIds.size) {
+        showToast('Перед голосовым диалогом отправь или очисти черновик, вложения и разовый контекст.','error');return;
+      }
       if(currentProvider()!=='alandi') {
         showToast('Голосовой диалог работает только через собственный aLandi gateway.','error');return;
       }
@@ -3921,6 +3924,9 @@ permalink: /
               if(!voiceConversationRouteStillSelected()) {
                 stopVoiceConversation(false);showToast('Маршрут изменился. Голосовой диалог остановлен, чтобы не отправить данные другому провайдеру.','error');return;
               }
+              if(field.value.trim()||pendingComposerAttachments.length||selectedRequestProjectIds.size) {
+                stopVoiceConversation(false);showToast('Черновик изменился во время расшифровки. Он сохранён; голосовой диалог остановлен.','error');return;
+              }
               if(isGenerating||isPreparingDocumentAttachments) {
                 showToast('Дождись завершения текущего запроса перед следующей голосовой репликой.','error');
                 await startVoiceMessageRecording({voiceConversation:true});return;
@@ -3984,6 +3990,11 @@ permalink: /
       if(!voiceConversationRouteStillSelected()) {
         stopVoiceConversation(false);
         showToast('Маршрут или чат изменился. Голосовой диалог остановлен.','error');
+        return;
+      }
+      if($('userInput').value.trim()||pendingComposerAttachments.length||selectedRequestProjectIds.size) {
+        stopVoiceConversation(false);
+        showToast('Есть новый черновик. Голосовой диалог остановлен, чтобы не перезаписать его.','error');
         return;
       }
       const player=$('ttsAudioPlayer');
