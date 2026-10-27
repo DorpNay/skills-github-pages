@@ -2,7 +2,7 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-Последняя подтверждённая контрольная точка: main **82beb7fcddbe9a1438e811693c76bc731d3a5de3** (PR #67 merged). Post-merge Quality, Pages и provenance прошли успешно; после этого начат PR-пилот Graphify. При старте всё равно получать live HEAD и очередь PR/Issues заново.
+Последняя подтверждённая контрольная точка: main **9aa36465158c27c49ff647a6ce349b46a6e1151e** (PR #68 merged). Post-merge Quality #40537790474, Pages #40537789513, provenance #40537789685 и Graphify pilot #40537790122 завершились успешно; ten-query check #40534892152 вернул результаты для 10/10 запросов. При старте всё равно получать live HEAD и очередь PR/Issues заново.
 
 ## 1. Быстрый маршрут
 
@@ -127,3 +127,12 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Refined run #40534094060 succeeded after installing `graphifyy[sql]==0.9.96`, excluding YAML/YML/TOML from the disposable corpus, extracting inline JS from `index.md` into `index-inline.js` with original line count preserved, and narrowing queries: 940 nodes, 2,637 edges, 44 communities, 59 source files with nodes; 209 nodes from UI JS and 14 from `gateway/memory/schema.sql`. Three queries returned 134, 50 and 59 nodes.
 - The refined ten-query run #40534892152 succeeded: all ten queries found graph neighborhoods (10–151 nodes each); examples: UI Research Studio 55, request parsing 50, RAG retrieval 52, audio 31 each, evidence provenance 10. The 700-token budget is approximate; evidence-provenance output (10 nodes/9 edges) still reported ~762 tokens. This demonstrates useful source navigation, though community labels remain generic because `--no-label` avoids model calls. Artifact #12747755798, SHA-256 `e16c01df143a3380bfd66be523ec709d2dc85bf35fd4d8e5133a64922a841b22`, is retained for 7 days. Generated graph remains artifact-only, not a runtime dependency.
 - License/version discrepancy: release tag `v0.9.96` LICENSE and PyPI metadata identify Apache-2.0, while default-branch `pyproject.toml` appeared to show older `0.1.14`/MIT metadata. The workflow pins the published package release; do not assume every upstream ref has identical provenance.
+
+
+## Checkpoint — local helper-memory suggestions vertical slice (2026-10-27)
+
+- Current main baseline before PR #69 sync: `9aa36465158c27c49ff647a6ce349b46a6e1151e`; PR #69 is open. PR #70 is independent and must be reviewed separately.
+- The helper uses an operator-configured local Ollama model, blank/disabled by default. Request is manual, bounded and authenticated; suggestions remain text candidates and are saved one at a time only after explicit user choice.
+- Found and fixed a server filter gap: `\bAPI_KEY` did not match a prefixed environment variable such as `ALANDI_API_KEY`. New regex accepts underscore/hyphen prefixes, and the regression test now checks both input facts and returned candidates.
+- Lite Gateway Tests run #40538692632 passed on earlier code SHA `c12391cbbbd2fb917035919c29ee900af477ec83`. Exact-head Quality, Chromium, Pages smoke and provenance must pass again on the post-sync head before merge.
+- No live inference or target-VPS model/resource claim is made. Keep `ALANDI_HELPER_MODEL` blank until the owner chooses and installs an exact local model tag.

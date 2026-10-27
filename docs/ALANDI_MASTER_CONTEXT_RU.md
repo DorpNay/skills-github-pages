@@ -100,6 +100,13 @@ Exact-response cache должен учитывать нормализованн�
 
 Каждая задача получает цель, разрешённые инструменты, max steps, deadline, budget, cancellation и проверяемый критерий остановки.
 
+## Актуальная контрольная точка — 2026-10-27
+
+- Последний подтверждённый main после PR #66: 1faf60164b9a0f82eb5e0c56b143ba90499be4a5; post-merge Quality, Pages и provenance прошли на точных SHA.
+- PR #66 добавил кураторскую карту docs/ALANDI_ARCHITECTURE_MAP_RU.md и безопасные exclusions для Graphify. Это не автоматически построенный code graph; локальный Graphify run остаётся заблокирован DNS-ошибкой в execution container.
+- Ветка feat/local-helper-memory-suggestions-current-main-20261027 содержит новую вертикаль ручных suggestions для проектной памяти: операторский локальный helper model, ограниченные факты, фильтрация секретов, JSON schema, общий inference semaphore и явное сохранение только после клика. На момент записи это feature branch; exact-head CI ещё не подтверждён.
+- Не путать: browser local project memory, server memory graph и helper suggestions — три разных слоя. Helper не включает server memory graph, не меняет prompt автоматически и не подтверждает качество модели на VPS.
+
 ## Одобренные техники и происхождение
 
 Ссылки указывают на upstream идей, а не на установку или одобрение всего проекта. Перед переносом кода проверять commit/tag, лицензию кода, весов, данных и ассетов, зависимости и безопасность.

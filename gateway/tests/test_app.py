@@ -45,6 +45,145 @@ def client_for(config=None, handler=None):
     return TestClient(create_app(config or settings(), transport=transport(handler)))
 
 
+def test_helper_model_route_is_disabled_by_default_and_requires_bearer_auth():
+    payload = {"facts": ["The project uses a local gateway."]}
+    with client_for(settings()) as client:
+        assert client.post("/v1/helpers/project-memory-suggestions", json=payload).status_code == 401
+        response = client.post(
+            "/v1/helpers/project-memory-suggestions",
+            headers={"Authorization": f"Bearer {API_KEY}"},
+            json=payload,
+        )
+    assert response.status_code == 503
+    assert "ALANDI_HELPER_MODEL" in response.json()["detail"]
+    assert response.headers["cache-control"] == "no-store"
+
+
+def test_helper_model_returns_bounded_deduplicated_candidates_and_unloads_model():
+    calls = []
+
+    def handler(request):
+        if request.url.path == "/api/chat":
+            body = json.loads(request.content)
+            calls.append(body)
+            return httpx.Response(200, json={"message": {"content": json.dumps({
+                "candidates": [
+                    "The project uses a local gateway.",
+                    "The project uses a local gateway.",
+                    "  Keep server memory opt-in.  ",
+                    "x" * 241,
+                ]
+            })}})
+        return httpx.Response(404, json={})
+
+    config = settings(helper_model="qwen3.5:0.8b", helper_max_input_chars=6000)
+    with client_for(config, handler) as client:
+        response = client.post(
+            "/v1/helpers/project-memory-suggestions",
+            headers={"Authorization": f"Bearer {API_KEY}"},
+            json={"facts": ["The project uses a local gateway.", "Keep server memory opt-in."]},
+        )
+
+    assert response.status_code == 200, response.text
+    assert response.headers["cache-control"] == "no-store"
+    assert response.json()["candidates"] == [
+        "The project uses a local gateway.", "Keep server memory opt-in."
+    ]
+    assert response.json()["source_fact_count"] == 2
+    assert len(calls) == 1
+    sent = calls[0]
+    assert sent["model"] == "qwen3.5:0.8b"
+    assert sent["stream"] is False
+    assert sent["keep_alive"] == 0
+    assert sent["options"] == {"temperature": 0, "num_ctx": 4096, "num_predict": 512}
+    assert sent["format"]["properties"]["candidates"]["maxItems"] == 12
+    assert sent["messages"][1]["content"].find("The project uses a local gateway.") >= 0
+
+
+def test_helper_model_route_rejects_oversized_or_unknown_input_without_inference():
+    upstream_calls = 0
+
+    def handler(request):
+        nonlocal upstream_calls
+        if request.url.path == "/api/chat":
+            upstream_calls += 1
+        return httpx.Response(404, json={})
+
+    config = settings(helper_model="qwen3.5:0.8b", helper_max_input_chars=512)
+    with client_for(config, handler) as client:
+        headers = {"Authorization": f"Bearer {API_KEY}"}
+        assert client.post("/v1/helpers/project-memory-suggestions", headers=headers,
+                           json={"facts": ["ok"], "model": "other-model"}).status_code == 400
+        too_long = client.post("/v1/helpers/project-memory-suggestions", headers=headers,
+                               json={"facts": ["x" * 600]})
+        assert too_long.status_code == 413
+        assert client.post("/v1/helpers/project-memory-suggestions", headers=headers,
+                           json={"facts": ["   "]}).status_code == 400
+    assert upstream_calls == 0
+
+
+def test_helper_model_route_rejects_invalid_model_output():
+    def handler(request):
+        if request.url.path == "/api/chat":
+            return httpx.Response(200, json={"message": {"content": "not-json"}})
+        return httpx.Response(404, json={})
+
+    with client_for(settings(helper_model="qwen3.5:0.8b"), handler) as client:
+        response = client.post(
+            "/v1/helpers/project-memory-suggestions",
+            headers={"Authorization": f"Bearer {API_KEY}"},
+            json={"facts": ["Keep the helper read-only."]},
+        )
+    assert response.status_code == 502
+    assert "no memory was changed" in response.json()["detail"]
+
+def test_helper_model_excludes_secret_like_facts_before_local_inference():
+    calls = []
+
+    def handler(request):
+        if request.url.path == "/api/chat":
+            calls.append(json.loads(request.content))
+            return httpx.Response(200, json={"message": {"content": json.dumps({"candidates": ["A safe project fact.", "ALANDI_API_KEY=output-secret-value-12345"]})}})
+        return httpx.Response(404, json={})
+
+    config = settings(helper_model="qwen3.5:0.8b", helper_max_input_chars=6000)
+    with client_for(config, handler) as client:
+        response = client.post(
+            "/v1/helpers/project-memory-suggestions",
+            headers={"Authorization": f"Bearer {API_KEY}"},
+            json={"facts": ["ALANDI_API_KEY=super-secret-value-123456", "The project uses a local gateway."]},
+        )
+
+    assert response.status_code == 200, response.text
+    assert response.json()["skipped_secret_like_count"] == 1
+    assert response.json()["source_fact_count"] == 1
+    assert response.json()["candidates"] == ["A safe project fact."]
+    assert len(calls) == 1
+    sent = json.dumps(calls[0])
+    assert "super-secret-value-123456" not in sent
+    assert "The project uses a local gateway." in sent
+
+
+def test_helper_model_rejects_all_secret_like_facts_without_inference():
+    calls = 0
+
+    def handler(request):
+        nonlocal calls
+        if request.url.path == "/api/chat":
+            calls += 1
+        return httpx.Response(404, json={})
+
+    config = settings(helper_model="qwen3.5:0.8b", helper_max_input_chars=6000)
+    with client_for(config, handler) as client:
+        response = client.post(
+            "/v1/helpers/project-memory-suggestions",
+            headers={"Authorization": f"Bearer {API_KEY}"},
+            json={"facts": ["password=very-secret-value-123456"]},
+        )
+    assert response.status_code == 400
+    assert calls == 0
+
+
 def test_memory_graph_api_is_disabled_by_default_and_requires_bearer_auth(tmp_path):
     config = settings(memory_graph_path=str(tmp_path / "graph.sqlite3"))
     with client_for(config) as client:

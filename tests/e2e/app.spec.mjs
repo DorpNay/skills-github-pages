@@ -1311,6 +1311,43 @@ test('legacy aLandi provider probe does not overwrite changed primary cloud sett
 });
 
 
+test('local helper suggests compact project-memory facts without saving them automatically', async ({ page }) => {
+  const helperRequests = [];
+  const corsHeaders = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Content-Type': 'application/json' };
+  await page.route('https://gateway.example.test/v1/helpers/project-memory-suggestions', async route => {
+    if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: corsHeaders });
+    helperRequests.push(route.request().postDataJSON());
+    return route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({
+      model: 'qwen3.5:0.8b', source_fact_count: 1, candidates: ['Project work must be verified with tests.'], count: 1
+    }) });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
+    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_provider', 'alandi');
+    localStorage.setItem('ai_model_name', 'qwen3.5:4b');
+    localStorage.setItem('ai_alandi_cloud_model', 'qwen3.5:4b');
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectManagerDetails > summary').click();
+  await page.locator('#projectNameInput').fill('Helper suggestion project');
+  await page.locator('[data-action="create-project"]').click();
+  await page.locator('#projectMemoryInput').fill('Keep the main model for synthesis and use small helpers for bounded extraction.');
+  await page.locator('[data-action="add-project-memory"]').click();
+  await page.locator('#serverMemoryDetails > summary').click();
+  await page.locator('[data-action="suggest-helper-memory"]').click();
+  await expect.poll(() => helperRequests.length).toBe(1);
+  expect(helperRequests[0].facts).toEqual(['Keep the main model for synthesis and use small helpers for bounded extraction.']);
+  await expect(page.locator('#helperMemorySuggestionsBox')).toContainText('Project work must be verified with tests.');
+  await expect(page.locator('#projectMemoryBox')).not.toContainText('Project work must be verified with tests.');
+  await page.locator('[data-action="add-helper-memory-suggestion"]').click();
+  await expect(page.locator('#projectMemoryBox')).toContainText('Project work must be verified with tests.');
+  expect(helperRequests).toHaveLength(1);
+});
+
 test('server project memory bridge is manual and requires both chat opt-ins', async ({ page }) => {
   const serverNodes = [];
   const capturedBodies = [];

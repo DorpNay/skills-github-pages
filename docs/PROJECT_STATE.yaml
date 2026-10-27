@@ -2,13 +2,13 @@ project_state:
   version: 4
   reviewed_on: "2026-10-27"
   root_orienter:
-    status: "merged; latest post-merge checks verified; Graphify pilot workflow under PR validation"
+    status: "merged; main Quality, Pages and provenance passed; Graphify code-only pilot merged and validated"
     branch: "docs/current-state-and-mobile-ledger-20261027"
     base_main: "b91aab316c224588baea99fbb9b966b8865de0a6"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 0
-    graphify: "local run blocked by DNS; isolated read-only GitHub Actions code-only pilot added in PR, not yet executed/verified"
-    next: "inspect refined PR-head Graphify run and artifact; assess source coverage and focused query quality; if useful, retain artifact-only workflow and continue with a bounded product feature"
+    graphify: "local run blocked by DNS; isolated read-only GitHub Actions pilot succeeded; artifact-only, no runtime dependency"
+    next: "finish helper-memory PR #69 only after exact-head gateway, Quality, Chromium, Pages smoke and provenance gates; triage PR #70 separately"
   source_triage:
     status: "triage_documentation_merged; graphify_pilot_blocked_by_no_network; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -154,21 +154,25 @@ blocked_items:
 
 latest_checkpoint:
   date: "2026-10-27"
-  main_sha: "b91aab316c224588baea99fbb9b966b8865de0a6"
-  open_prs: 0
+  main_sha: "9aa36465158c27c49ff647a6ce349b46a6e1151e"
+  open_prs: 2
   open_issues: 0
-  quality_run_id: 40522824202
-  quality_run_status_at_check: "in_progress"
-  provenance_run_id: 40522824071
+  quality_run_id: 40537790474
+  quality_run_status_at_check: "success"
+  provenance_run_id: 40537789685
   provenance_status: "success"
-  pages_run_id: 40522822481
+  pages_run_id: 40537789513
   pages_status: "success"
-  documentation_drift:
-    - "EVALS.md mobile message tools status lagged behind merged PR #61"
-    - "Implementation roadmap still labelled PR #61 first slice validation pending"
-  graphify: "not run; local checkout blocked by DNS in prior execution environment"
-  next: "verify quality run completion, merge documentation reconciliation if checks pass, then resume Graphify pilot or safe product slice"
-
+  graphify_run_id: 40537790122
+  graphify_status: "success"
+  graphify_ten_query_run_id: 40534892152
+  graphify_ten_query_status: "success"
+  graphify_artifact_id: 12747755798
+  graphify_artifact_expires: "2026-11-03"
+  open_prs_at_checkpoint:
+    - 69
+    - 70
+  next: "complete PR #69 helper-memory regression and full exact-head gates; review PR #70 independently; keep Graphify output artifact-only"
 
 architecture_map_checkpoint:
   date: "2026-10-27"
@@ -192,7 +196,7 @@ architecture_map_checkpoint:
   ten_query_run: "40534892152 success; 10/10 queries returned nodes; result sizes 55,151,104,50,83,52,31,31,40,10"
   artifact: "12747755798; SHA-256 e16c01df143a3380bfd66be523ec709d2dc85bf35fd4d8e5133a64922a841b22; expires 2026-11-03"
   runtime_dependency: false
-  next: "verify latest PR #66 checks; run Graphify in a network-enabled disposable staging copy from tracked files, with code-only extraction and ignore verification; choose one bounded implementation with tests"
+  next: "Graphify CI pilot and ten focused queries passed; keep output artifact-only. Next: complete helper-memory PR #69 after exact-head gates"
 
 graphify_exclusions:
   file: ".graphifyignore"
@@ -214,7 +218,7 @@ post_architecture_map_checkpoint:
 
 graphify_pilot_workflow:
   file: ".github/workflows/graphify-pilot.yml"
-  status: "refined graph and ten-query navigation validation passed; exact-head Quality gate pending"
+  status: "merged in PR #68; main Graphify run #40537790122 passed; ten-query navigation validation passed; output retained as artifact only"
   package: "graphifyy[sql]==0.9.96 (PyPI exact version; release-tag LICENSE checked as Apache-2.0)"
   mode: "code-only; no model credentials; read-only token; checkout credentials disabled"
   staging: "git archive of tracked PR commit into runner temp, then prune secrets/dbs/weights/media/user-data patterns"
@@ -222,3 +226,19 @@ graphify_pilot_workflow:
   license_note: "PyPI release v0.9.96 says Apache-2.0; default-branch pyproject metadata appears stale/different (0.1.14/MIT); source provenance discrepancy recorded"
   runtime_dependency: false
   rollback: "remove workflow file and revert documentation-only references; no product/runtime behavior changes"
+
+
+local_helper_memory_suggestions:
+  status: "implemented on PR #69 branch; secret-filter regression fixed; gateway suite passed before current-main sync; exact-head Quality, Chromium and provenance pending"
+  pr: 69
+  branch: "feat/local-helper-memory-suggestions-current-main-20261027"
+  baseline_main: "9aa36465158c27c49ff647a6ce349b46a6e1151e"
+  implementation_head_before_sync: "c12391cbbbd2fb917035919c29ee900af477ec83"
+  endpoint: "POST /v1/helpers/project-memory-suggestions"
+  security: "Bearer-authenticated; bounded inputs and outputs; common secret-like patterns filtered before and after inference; shares inference semaphore; keep_alive=0; Cache-Control no-store"
+  user_control: "manual request only; candidates rendered as text; no automatic writes; each fact requires explicit click and project/duplicate recheck"
+  model_runtime: "local Ollama model chosen by operator via ALANDI_HELPER_MODEL; blank default disables route; no browser model selection or cloud fallback"
+  regression: "server secret filter now recognizes secret names after underscore/hyphen prefixes such as ALANDI_API_KEY; test covers input filtering and candidate-output filtering"
+  gateway_test_run_before_sync: "40538692632 success on c12391cbbbd2fb917035919c29ee900af477ec83; rerun all required gates after sync"
+  live_runtime: "not tested; VPS inference, installed model, quality, RAM and latency remain unverified"
+  rollback: "revert PR #69; leave ALANDI_HELPER_MODEL blank; no schema migration"

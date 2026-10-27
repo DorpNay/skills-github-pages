@@ -78,3 +78,12 @@
 - Основание: upstream README/quickstart/pyproject.toml; Apache-2.0, package `graphifyy`, CLI `graphify`, Python >=3.10; local tree-sitter parsing for code; semantic pass for docs/media may use a model.
 - Риски: substantial dependency footprint, fast-moving release, model usage for docs/media, stale generated output. Pin version and exclude secrets/build output.
 - Решение: **pilot pending**. Официальный code-only workflow уточнён: `extract --code-only` → `cluster-only --no-label` → `export html` → `query`; exclusions задаются через `.graphifyignore`, но ещё не проверены на реальном запуске. Local execution impossible in current container because DNS cannot resolve `github.com`; do not report graph generated or add it to runtime. See `docs/ALANDI_ARCHITECTURE_MAP_RU.md`.
+
+
+## Local helper model for project-memory compression — prototype
+
+- A small model is used only after a manual click to propose durable project-memory candidates; it does not plan tasks, change active chat model or automatically alter memory.
+- The browser cannot choose a model. ALANDI_HELPER_MODEL is an exact operator-configured Ollama tag and blank by default.
+- Boundaries: max 80 source facts, per-fact 600 chars, combined input 512–8000 chars, at most 12 candidates of 240 chars, timeout 1–180 s, same inference semaphore, keep_alive=0, no-store response, secret-like input/output filtering.
+- Each candidate is rendered via textContent and saved only by explicit user action after rechecking the active project and duplicates.
+- Status: implemented on feature branch; CI and merge pending; no live VPS inference claim.
