@@ -3708,6 +3708,7 @@ permalink: /
         if (requestId !== speechRequestGeneration) return;
         status.textContent = timedOut ? 'Озвучивание превысило лимит времени.' : 'Локальный TTS недоступен или выключен.';
         showToast(timedOut ? 'Озвучивание превысило лимит времени.' : String(error.message || 'Локальный TTS недоступен.'), 'error');
+        if(voiceConversationActive)stopVoiceConversation(false);
       } finally {
         clearTimeout(timeout);
         if (activeSpeechController === controller) activeSpeechController = null;
@@ -3950,6 +3951,11 @@ permalink: /
             showToast('Расшифровка готова. Проверь и отредактируй текст перед отправкой.');
           } catch (error) {
             if(conversationTurn&&(!voiceConversationActive||conversationGenerationForTurn!==voiceConversationGeneration))return;
+            if(conversationStillActive&&!voiceConversationRouteStillSelected()) {
+              stopVoiceConversation(false);
+              showToast('Маршрут изменился. Голосовой диалог остановлен, чтобы не отправить данные другому провайдеру.','error');
+              return;
+            }
             showToast(error?.name === 'AbortError' ? 'Расшифровка превысила лимит времени.' : String(error.message || 'Не удалось расшифровать аудио.'), 'error');
             if(conversationStillActive)await startVoiceMessageRecording({voiceConversation:true});
           }
