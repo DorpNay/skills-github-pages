@@ -504,9 +504,9 @@ HELPER_SYSTEM_PROMPT = (
 )
 
 _HELPER_SECRET_PATTERNS = (
-    re.compile(r"(?i)\\b(?:api[_ -]?key|access[_ -]?token|refresh[_ -]?token|password|secret)\\s*[:=]\\s*\\S{8,}"),
-    re.compile(r"(?i)\\b(?:sk-[A-Za-z0-9_-]{16,}|gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{16})\\b"),
-    re.compile(r"(?i)\\bauthorization\\s*:\\s*bearer\\s+\\S{16,}"),
+    re.compile(r"(?i)\b(?:api[_ -]?key|access[_ -]?token|refresh[_ -]?token|password|secret)\s*[:=]\s*\S{8,}"),
+    re.compile(r"(?i)\b(?:sk-[A-Za-z0-9_-]{16,}|gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{16})\b"),
+    re.compile(r"(?i)\bauthorization\s*:\s*bearer\s+\S{16,}"),
 )
 
 
