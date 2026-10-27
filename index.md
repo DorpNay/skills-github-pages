@@ -3699,6 +3699,10 @@ permalink: /
         try { await player.play(); }
         catch (_) {
           if (requestId === speechRequestGeneration) status.textContent = 'Речь готова. Нажми ▶ в миниплеере для воспроизведения.';
+          if(voiceConversationActive) {
+            stopVoiceConversation(false);
+            showToast('Автовоспроизведение недоступно. Голосовой диалог остановлен; нажми ▶ вручную.','error');
+          }
         }
       } catch (error) {
         if (requestId !== speechRequestGeneration) return;
@@ -3747,6 +3751,9 @@ permalink: /
 
     async function startVoiceConversation() {
       if(voiceConversationActive)return;
+      if(isGenerating||isPreparingDocumentAttachments) {
+        showToast('Сначала дождись завершения текущего запроса.','error');return;
+      }
       if(currentProvider()!=='alandi') {
         showToast('Голосовой диалог работает только через собственный aLandi gateway.','error');return;
       }
@@ -3965,6 +3972,25 @@ permalink: /
       discardVoiceRecording = discard;
       if (activeVoiceRecorder.state !== 'inactive') activeVoiceRecorder.stop();
     }
+
+    $('ttsAudioPlayer').addEventListener('ended', async () => {
+      if(!voiceConversationActive)return;
+      if(!voiceConversationRouteStillSelected()) {
+        stopVoiceConversation(false);
+        showToast('Маршрут или чат изменился. Голосовой диалог остановлен.','error');
+        return;
+      }
+      const player=$('ttsAudioPlayer');
+      if(activeSpeechObjectUrl)URL.revokeObjectURL(activeSpeechObjectUrl);
+      activeSpeechObjectUrl='';
+      player.removeAttribute('src');player.load();
+      $('ttsMiniPlayer').classList.add('hidden');
+      voiceConversationTurnInFlight=false;
+      $('voiceRecordingActions').classList.remove('hidden');
+      $('voiceRecordingStatus').textContent='Готов к следующей реплике…';
+      await startVoiceMessageRecording({voiceConversation:true});
+      if(voiceConversationActive&&!activeVoiceRecorder)stopVoiceConversation(false);
+    });
 
     window.addEventListener('pagehide', () => {
       if (activeVoiceRecorder && activeVoiceRecorder.state !== 'inactive') {
@@ -4211,11 +4237,12 @@ permalink: /
            case 'delete-server-memory': await deleteServerProjectMemory(control.dataset.memoryNodeId,control.dataset.memorySourceId);break;
            case 'export-project': exportProjectBundle();break;
           case 'import-project': $('importProjectFile').click();break;
-          case 'voice-chat-preview': $('voiceMenu').classList.add('hidden');showToast(getUiLanguage()==='en'?'Live voice chat is not connected yet.':'Живой голосовой диалог пока не подключён.');break;
+          case 'voice-chat-preview': await startVoiceConversation(); break;
           case 'voice-message-preview': await startVoiceMessageRecording(); break;
           case 'copy-message': await copyText(control.dataset.messageText || ''); showToast(getUiLanguage()==='en'?'Message copied.':'Сообщение скопировано.'); break;
           case 'speak-message': await playAssistantMessage(control.dataset.messageText || ''); break;
-          case 'stop-speech': stopAssistantSpeech(); break;
+          case 'stop-speech': if(voiceConversationActive)stopVoiceConversation();else stopAssistantSpeech(); break;
+          case 'stop-voice-conversation': stopVoiceConversation(); break;
           case 'stop-voice-recording': stopVoiceMessageRecording(false); break;
           case 'cancel-voice-recording': stopVoiceMessageRecording(true); break;
           case 'open-research-studio': openResearchStudio(); break;
