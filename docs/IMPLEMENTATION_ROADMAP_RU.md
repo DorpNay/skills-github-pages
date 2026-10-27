@@ -23,14 +23,18 @@
 
 **Gate (24 октября 2026):** PR-head run #418 passed context, integrity, security, Jekyll, all 48 Chromium E2E tests and published-site browser smoke; license/provenance and dead-code gates also passed. PR #35 merged into `main` at `23add2547a69df877b4baf213957827aa2e8e561`. Post-merge main Quality workflow #420 passed all five sentinels and all 48 Chromium E2E tests plus the live-site smoke; GitHub Pages deployment run #122 and provenance run #159 also succeeded for main checkpoint `4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e`. The later status-only docs commit does not change app code. Real iOS/Android checks remain open: touch long-press/cancel, keyboard/viewport, screen reader and file handoff.
 
-### P1 — real voice message (самый короткий полезный вертикальный срез)
+### P1 — real voice message (active implementation branch)
 
-1. UI states: permission → recording → pause/stop → preview → discard/send; duration/size cap; clear mic denial and unsupported-browser state.
-2. Capture: browser MediaRecorder only after explicit click/tap permission. Store temporary Blob in memory; revoke object URL and release mic tracks on stop/cancel/page exit.
-3. Transcription: define one backend audio contract and choose a licensed model after language/device benchmark. Keep raw audio local unless user chooses cloud. Transcript editable before sending; preserve timestamps/confidence where available.
-4. Send: audio file upload endpoint must validate MIME, size, duration, timeout and auth; server temp storage TTL; never log audio; deletion/cleanup tests.
-5. Add tests for permission denied, cancel, empty clip, oversized clip, upload failure, transcript correction and no duplicate send.
-**Gate:** real browser microphone E2E on supported browser, RU + EN + Thai eval, license/hash manifest, measured latency/RTF/RAM on target hardware. No “voice message ready” until endpoint and real device test exist.
+**Branch `feat/local-audio-transcription-v1` — pending CI/review, not merged or deployed.** Current slice adds:
+- Browser MediaRecorder capture after explicit permission; cancel/stop, 120-second UI cap, 15 MiB cap, mic-track cleanup and clear permission/browser errors.
+- Authenticated `POST /v1/audio/transcriptions?lang=auto|ru|en|th` with bounded raw audio body, allowlisted audio MIME types, local ffprobe duration check (max 120 seconds), timeout and temporary-file cleanup.
+- Local-only `whisper.cpp` CLI adapter using argv (no shell), configured executable/model paths, no remote ASR request and no audio logging; disabled by default.
+- Editable transcript inserted into the current composer; it is not automatically sent and raw audio is not saved to chat history.
+- Contract tests and a deterministic browser test using a mocked MediaRecorder/gateway.
+
+**Still required before calling the feature ready:** run PR CI; test real supported browsers/devices and actual local whisper.cpp + model; measure RU/EN/Thai quality, cold/warm latency, RTF and RSS on the target host; verify binary/model provenance and licenses. The current browser test does not prove microphone hardware or model accuracy.
+
+Next P1 work: add pause/resume and audio preview if useful, improve upload-failure recovery, add backend tests for over-duration/over-size/timeouts, and keep the endpoint off until local binaries/model are installed and evaluated. No external ASR API is used.
 
 ### P2 — live voice dialogue
 
