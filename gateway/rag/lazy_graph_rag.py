@@ -1,8 +1,9 @@
 """Low-footprint SQLite FTS5 + lexical-concept graph retrieval baseline.
 
-This is a small retrieval baseline inspired by staged/cost-aware GraphRAG ideas, not a
-reimplementation of Microsoft's full LazyGraphRAG algorithm. No LLM or embedding model is
-loaded; chunks preserve source/page provenance, and all document/chunk IDs are scope-bound.
+FTS5/BM25 and lexical-concept graph candidate lists are fused with reciprocal rank fusion
+(RRF), avoiding the addition of unrelated score scales. This is a small staged retrieval
+baseline, not a reimplementation of Microsoft's full LazyGraphRAG algorithm. No LLM or
+embedding model is loaded; source/page provenance and scope-bound IDs are preserved.
 """
 from __future__ import annotations
 
@@ -55,6 +56,35 @@ def safe_fts_query(query: str) -> str:
 def _stable_key(*parts: str) -> str:
     payload = json.dumps(parts, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
+
+
+def reciprocal_rank_fusion(rankings: list[list[str]], *, rank_constant: int = 60) -> dict[str, float]:
+    """Fuse independent ranked candidate lists without mixing their raw score scales.
+
+    Each candidate contributes 1 / (rank_constant + one_based_rank) once per ranking.
+    Duplicate IDs in the same input ranking do not gain extra weight. The returned scores
+    are ranking scores, not calibrated probabilities or confidence estimates.
+    """
+    if isinstance(rank_constant, bool) or not isinstance(rank_constant, int) or rank_constant < 1:
+        raise ValueError("rank_constant must be a positive integer")
+    if not isinstance(rankings, list) or len(rankings) > 8:
+        raise ValueError("rankings must be a bounded list of ranked lists")
+
+    fused: dict[str, float] = {}
+    for ranking in rankings:
+        if not isinstance(ranking, list) or len(ranking) > 1000:
+            raise ValueError("each ranking must be a bounded list")
+        seen: set[str] = set()
+        rank = 0
+        for candidate_id in ranking:
+            if not isinstance(candidate_id, str) or not candidate_id:
+                raise ValueError("candidate IDs must be non-empty strings")
+            if candidate_id in seen:
+                continue
+            seen.add(candidate_id)
+            rank += 1
+            fused[candidate_id] = fused.get(candidate_id, 0.0) + 1.0 / (rank_constant + rank)
+    return fused
 
 
 class LazyGraphRAG:
@@ -314,19 +344,23 @@ class LazyGraphRAG:
                     SELECT c.*, bm25(rag_fts) AS bm25_score
                     FROM rag_fts JOIN rag_chunks c ON c.chunk_key=rag_fts.chunk_key
                     WHERE rag_fts MATCH ? AND c.scope=? AND c.scope_id=?
-                    ORDER BY bm25_score ASC LIMIT ?
+                    ORDER BY bm25_score ASC, c.document_id ASC, c.chunk_id ASC LIMIT ?
                 """, (fts_query, scope, scope_id, candidate_limit)).fetchall()
             except sqlite3.OperationalError:
                 return []
             results: dict[str, dict[str, Any]] = {}
-            for position, row in enumerate(lexical):
-                results[row["chunk_key"]] = {
+            lexical_ranked_ids: list[str] = []
+            for row in lexical:
+                chunk_key = row["chunk_key"]
+                lexical_ranked_ids.append(chunk_key)
+                results[chunk_key] = {
                     "chunk_id": row["chunk_id"], "document_id": row["document_id"],
                     "content": row["content"], "source_uri": row["source_uri"],
                     "page_number": row["page_number"], "scope": row["scope"], "scope_id": row["scope_id"],
-                    "score": 1.0 / (position + 1), "retrieval_path": ["fts5"],
+                    "score": 0.0, "retrieval_path": ["fts5"],
                 }
 
+            graph_ranked_ids: list[str] = []
             query_concepts = concepts(query, limit=12)
             if query_concepts:
                 placeholders = ",".join("?" for _ in query_concepts)
@@ -336,20 +370,24 @@ class LazyGraphRAG:
                     JOIN rag_chunks c ON c.chunk_key=ce.chunk_key
                     WHERE ce.concept IN ({placeholders}) AND c.scope=? AND c.scope_id=?
                     GROUP BY c.chunk_key
-                    ORDER BY shared_concepts DESC LIMIT ?
+                    ORDER BY shared_concepts DESC, c.document_id ASC, c.chunk_id ASC LIMIT ?
                 """, (*query_concepts, scope, scope_id, candidate_limit)).fetchall()
                 for row in graph_rows:
-                    record = results.get(row["chunk_key"])
-                    graph_score = min(0.7, 0.15 * int(row["shared_concepts"]))
+                    chunk_key = row["chunk_key"]
+                    graph_ranked_ids.append(chunk_key)
+                    record = results.get(chunk_key)
                     if record is None:
                         record = {
                             "chunk_id": row["chunk_id"], "document_id": row["document_id"],
                             "content": row["content"], "source_uri": row["source_uri"],
                             "page_number": row["page_number"], "scope": row["scope"], "scope_id": row["scope_id"],
-                            "score": graph_score, "retrieval_path": [],
+                            "score": 0.0, "retrieval_path": [],
                         }
-                        results[row["chunk_key"]] = record
-                    else:
-                        record["score"] = min(1.7, record["score"] + graph_score)
+                        results[chunk_key] = record
                     record["retrieval_path"].append("concept_graph")
+
+            fused_scores = reciprocal_rank_fusion([lexical_ranked_ids, graph_ranked_ids])
+            for chunk_key, score in fused_scores.items():
+                results[chunk_key]["score"] = score
+
             return sorted(results.values(), key=lambda item: (-item["score"], item["document_id"], item["chunk_id"]))[:top_k]
