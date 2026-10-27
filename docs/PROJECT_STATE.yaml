@@ -1,8 +1,8 @@
 project_state:
   version: 4
-  reviewed_on: "2026-10-24"
-  last_volley: "V-2026-10-24-SIDEBAR-COMPOSER-CONTEXT-PR35-MAIN-VERIFIED"
-  gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified."
+  reviewed_on: "2026-10-27"
+  last_volley: "V-2026-10-27-LOCAL-AUDIO-TRANSCRIPTION-PR-PENDING"
+  gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. Branch feat/local-audio-transcription-v1 adds an opt-in authenticated local whisper.cpp transcription route, ffprobe duration validation, browser MediaRecorder capture and editable transcript; CI and real-device/model execution are pending, the feature is disabled by default and not deployed."
   source_of_truth:
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
@@ -26,7 +26,7 @@ project_state:
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback"
     projects: "PR35 merged and Chromium E2E passed: collapsed project list with per-project chat children; top-level unassigned chats only; project memory scope project-only vs project-and-global; one-shot project context scoped by chat. Server graph bridge remains experimental and disabled by default."
-    voice_ui: "PR35 merged: chooser opens on long-press; live microphone/ASR/TTS runtime still not implemented; real-device gestures not yet verified"
+    voice_ui: "PR35 merged; branch feat/local-audio-transcription-v1 adds browser MediaRecorder capture and editable transcript via authenticated local ASR gateway; pending CI and real-device verification, gateway/model disabled unless explicitly configured"
     chat_actions: "PR33+34 merged; PR35 merged with project-grouped row lists, personal-chat list, clear-history action and attachment/context composer; PR-head gates and post-merge main Quality/Pages checks passed for checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e"
     detailed_ledger: "docs/V016_IMPLEMENTATION_CHECKLIST.md"
     user_todo: "docs/USER_REQUEST_CHECKLIST.md"
@@ -55,6 +55,7 @@ improvements:
   AI-VOICE-006: {status: "decision_module_not_live", artifact: "gateway/voice/tier_router.py", eval: "EV-VOICE-003"}
   AI-VOICE-007: {status: "policy_only_no_native_aec", artifact: "gateway/voice/barge_in.py", eval: "EV-VOICE-004"}
   AI-VOICE-008: {status: "proposed_experiment", artifact: "gateway/voice/endpoint_heuristic.py", eval: "EV-ENDPOINT-001"}
+  AI-VOICE-009: {status: "implementation_in_branch_pending_ci_and_target_hardware", artifact: "gateway/app.py; gateway/tests/test_audio_transcription.py; index.md; tests/e2e/audio-transcription.spec.mjs", eval: "EV-VOICE-005"}
   AI-INFRA-001: {status: "optional_manual_path_no_vm_created", artifact: "docs/INFRASTRUCTURE_UPGRADE.md", eval: "EV-INFRA-001"}
   AI-INFRA-002: {status: "manual_instructions_no_dns_changed", artifact: "docs/DOMAIN_SETUP.md", eval: "EV-INFRA-002"}
   AI-INFRA-003: {status: "target_profile_unmeasured", artifact: "infra/hardware_profiles.yaml", eval: "EV-HW-001"}
