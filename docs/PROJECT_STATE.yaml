@@ -57,8 +57,9 @@ improvements:
   AI-VOICE-008: {status: "proposed_experiment", artifact: "gateway/voice/endpoint_heuristic.py", eval: "EV-ENDPOINT-001"}
   AI-VOICE-009: {status: "implementation_in_branch_pending_ci_and_target_hardware", artifact: "gateway/app.py; gateway/tests/test_audio_transcription.py; index.md; tests/e2e/audio-transcription.spec.mjs", eval: "EV-VOICE-005"}
   AI-VOICE-010: {status: "local_piper_adapter_and_miniplayer_in_branch_pending_ci_license_and_target_hardware", artifact: "gateway/app.py; gateway/tests/test_audio_speech.py; index.md; infra/license/provenance_manifest.yaml", eval: "EV-VOICE-006"}
+  AI-VOICE-011: {status: "bounded_nonblocking_audio_concurrency_fix_in_branch_pending_ci", artifact: "gateway/app.py; gateway/tests/test_audio_concurrency.py", eval: "EV-VOICE-007"}
   AI-DOC-001: {status: "local_bounded_extraction_and_authenticated_capability_discovery_merged_backend_live_setup_unverified", artifact: "gateway/app.py; gateway/tests/test_document_extraction.py; gateway/requirements.txt; infra/license/provenance_manifest.yaml", eval: "EV-DOC-001"}
-  AI-DOC-002: {status: "composer_integration_in_branch_pending_ci", artifact: "index.md; tests/e2e/document-attachments.spec.mjs", eval: "EV-DOC-002"}
+  AI-DOC-002: {status: "composer_integration_in_branch_pending_ci", artifact: "index.md; tests/e2e/document-attachments.spec.mjs; tests/e2e/app.spec.mjs", eval: "EV-DOC-002"}
   AI-INFRA-001: {status: "optional_manual_path_no_vm_created", artifact: "docs/INFRASTRUCTURE_UPGRADE.md", eval: "EV-INFRA-001"}
   AI-INFRA-002: {status: "manual_instructions_no_dns_changed", artifact: "docs/DOMAIN_SETUP.md", eval: "EV-INFRA-002"}
   AI-INFRA-003: {status: "target_profile_unmeasured", artifact: "infra/hardware_profiles.yaml", eval: "EV-HW-001"}
