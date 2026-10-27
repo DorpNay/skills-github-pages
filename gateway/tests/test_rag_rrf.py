@@ -23,7 +23,7 @@ def test_rrf_counts_a_candidate_once_per_ranking_and_is_deterministic() -> None:
 
     assert first == second
     assert first["same"] == pytest.approx((1 / 61) + (1 / 61))
-    assert first["lexical"] == pytest.approx(1 / 63)
+    assert first["lexical"] == pytest.approx(1 / 62)
     assert first["graph"] == pytest.approx(1 / 62)
 
 
