@@ -542,11 +542,11 @@ permalink: /
       </div>
     </div>
     <div id="voiceMenu" class="voice-menu hidden" role="group" aria-label="Режимы голоса">
-      <button type="button" data-action="voice-chat-preview" class="voice-menu-option"><span class="voice-direction">↑</span><span><strong>ГОЛОСОВОЙ ДИАЛОГ</strong><small>Живое общение · скоро</small></span></button>
+      <button type="button" data-action="voice-chat-preview" class="voice-menu-option"><span class="voice-direction">↑</span><span><strong>ГОЛОСОВОЙ ДИАЛОГ</strong><small>Локально · реплики по очереди</small></span></button>
       <button type="button" data-action="voice-message-preview" class="voice-menu-option"><span class="voice-direction">↓</span><span><strong>ГОЛОСОВОЕ СООБЩЕНИЕ</strong><small>Записать → локально расшифровать → отредактировать</small></span></button>
     </div>
     <div id="voiceRecordingPanel" class="hidden mx-auto mb-2 w-full max-w-3xl rounded-xl border border-red-500/40 bg-gray-900 px-3 py-2 shadow-lg" role="group" aria-label="Запись голосового сообщения">
-      <div class="flex items-center justify-between gap-3"><p id="voiceRecordingStatus" class="text-xs text-gray-200" role="status" aria-live="polite">● Запись…</p><div class="flex gap-2"><button type="button" data-action="cancel-voice-recording" class="rounded-lg border border-gray-700 px-3 py-2 text-xs">Отмена</button><button type="button" data-action="stop-voice-recording" class="rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white">Остановить и расшифровать</button></div></div>
+      <div class="flex items-center justify-between gap-3"><p id="voiceRecordingStatus" class="text-xs text-gray-200" role="status" aria-live="polite">● Запись…</p><div id="voiceRecordingActions" class="flex gap-2"><button type="button" data-action="cancel-voice-recording" class="rounded-lg border border-gray-700 px-3 py-2 text-xs">Отмена</button><button type="button" data-action="stop-voice-recording" class="rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white">Остановить и расшифровать</button></div><button id="stopVoiceConversationBtn" type="button" data-action="stop-voice-conversation" class="hidden rounded-lg border border-red-500/60 px-3 py-2 text-xs text-red-200">Завершить диалог</button></div>
     </div>
   </footer>
   <div id="ttsMiniPlayer" class="hidden fixed bottom-24 right-3 z-[75] w-[min(22rem,calc(100vw-1.5rem))] rounded-xl border border-cyan-700/60 bg-gray-950 p-3 shadow-2xl" role="region" aria-label="Миниплеер озвучивания">
