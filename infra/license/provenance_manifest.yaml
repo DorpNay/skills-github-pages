@@ -1,5 +1,5 @@
 schema_version: 1
-updated_on: "2026-10-22"
+updated_on: "2026-10-27"
 policy:
   no_model_downloads_in_git: true
   require_artifact_sha256_before_shipping: true
@@ -122,3 +122,14 @@ artifacts:
     sha256: null
     ship: false
     status: "not_added_to_runtime"
+
+  - id: pypdf-runtime
+    kind: document_parser_runtime
+    upstream: "https://github.com/py-pdf/pypdf"
+    source_version: "6.4.1"
+    license_spdx: "BSD-3-Clause"
+    commercial_use: "allowed_with_license_notice"
+    sha256: null
+    ship: false
+    status: "dependency_pinned_not_bundled"
+    notes: "Runtime dependency pinned for local PDF text extraction; package artifacts are resolved by the Python package manager and are not vendored in this repository."
