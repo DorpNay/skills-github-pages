@@ -3750,6 +3750,8 @@ permalink: /
     }
 
     async function startVoiceConversation() {
+      $('voiceMenu').classList.add('hidden');
+      $('voiceUnavailableButton').setAttribute('aria-expanded','false');
       if(voiceConversationActive)return;
       if(isGenerating||isPreparingDocumentAttachments) {
         showToast('Сначала дождись завершения текущего запроса.','error');return;
