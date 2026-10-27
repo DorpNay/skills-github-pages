@@ -23,6 +23,12 @@
 
 **Gate (24 октября 2026):** PR-head run #418 passed context, integrity, security, Jekyll, all 48 Chromium E2E tests and published-site browser smoke; license/provenance and dead-code gates also passed. PR #35 merged into `main` at `23add2547a69df877b4baf213957827aa2e8e561`. Post-merge main Quality workflow #420 passed all five sentinels and all 48 Chromium E2E tests plus the live-site smoke; GitHub Pages deployment run #122 and provenance run #159 also succeeded for main checkpoint `4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e`. The later status-only docs commit does not change app code. Real iOS/Android checks remain open: touch long-press/cancel, keyboard/viewport, screen reader and file handoff.
 
+### P1 — локальный разбор вложений (backend vertical slice)
+
+Ветка `feat/local-document-extraction-v1` добавляет закрытый endpoint `POST /v1/documents/extract` для PDF/DOCX/XLSX/TXT/MD/CSV/JSON. Обработка локальная, без сохранения файлов и внешних parser API; лимиты применяются к телу, ZIP-структуре, числу листов/страниц и текстовому выводу. Feature flag выключен по умолчанию.
+
+**Оставшиеся шаги:** пройти gateway/security/Chromium CI, затем подключить composer только для маршрута aLandi gateway с реальной capability discovery; проверить сохранение/восстановление черновика, отмену, ошибки сети и то, что документ не отправляется внешнему провайдеру незаметно. OCR для сканированных PDF — отдельный этап после выбора и измерения локального движка.
+
 ### P1 — real voice message (active implementation branch)
 
 **Branch `feat/local-audio-transcription-v1` — pending CI/review, not merged or deployed.** Current slice adds:
