@@ -27,6 +27,18 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
+test('warns and recommends export when browser storage is nearly full', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(window.navigator, 'storage', {
+      configurable: true,
+      value: { estimate: async () => ({ usage: 96, quota: 100 }) }
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#toast')).toContainText('Хранилище сайта почти заполнено (96%)');
+  await expect(page.locator('#toast')).toContainText('экспортируй чаты');
+});
+
 test('published app boots and core controls are interactive', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
