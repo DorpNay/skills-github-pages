@@ -80,7 +80,7 @@
 
 ### Этап A — инвентаризация и резервные копии
 
-- Сними безопасный read-only отчёт командой **bash scripts/diagnose_model_runtime.sh** из checkout репозитория. Он предназначен для вывода CPU/RAM/GPU/Ollama/service status и не должен печатать содержимое .env.
+- Read-only инвентаризируй CPU/RAM/GPU, диск, Ollama, systemd и listen addresses. Скрипт **bash scripts/diagnose_model_runtime.sh** добавляется в PR #86, но пока не находится в main; используй его только после merge/review этого PR и предварительного просмотра файла. До этого применяй read-only команды из раздела 2 [полного install guide](ALANDI_IMPLEMENTATION_GUIDE_RU.md), не копируя непроверенный script на сервер. Не выводи содержимое .env.
 - Сделай резервную копию существующей конфигурации и проверь процедуру её восстановления.
 - Проверь, что доступ по SSH-ключу настроен и текущая SSH-сессия не является единственным способом входа, который будет потерян при firewall changes.
 - Не меняй firewall, Tunnel, systemd units и Ollama bind до сопоставления фактического состояния с runbook.
