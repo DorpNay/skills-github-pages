@@ -33,7 +33,7 @@
 Открой VPS Console и выполняй **по порядку**:
 
 1. Полный гайд → раздел 2: диагностика ОС, памяти, диска, портов и служб.
-2. Раздел 3: установка Ollama, bind только на приватный интерфейс, одна модель `qwen3.5:4b`, context 4096 и concurrency 1.
+2. Раздел 3: установка Ollama, bind только на приватный интерфейс, одна модель `alandi-huihui-qwen35-4b` (или 2B по RAM), context 4096 и concurrency 1; импорт — по uncensored model runbook.
 3. Раздел 4: отдельный Linux user `alandi`, checkout репозитория, Python venv, закрытый `/etc/alandi-gateway.env`, systemd service.
 4. Раздел 5: локальные проверки. Не переходи к Tunnel, пока:
    - `/healthz` возвращает 200;
