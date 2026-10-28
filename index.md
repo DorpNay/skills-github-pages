@@ -3814,6 +3814,25 @@ permalink: /
         showToast('Этот чат использовал личную память локальной модели. Сторонние провайдеры заблокированы для этого чата, чтобы не передать им историю. Создай новый чат для внешнего провайдера или вернись к aLandi gateway.','error');
         return;
       }
+      if(text && !chosenAttachments.length) {
+        const privateCommand=text.match(/^(?:запомни|сохрани в личную память)\\s*[:,-]?\\s*(.{1,500})$/i);
+        const sharedCommand=text.match(/^(?:сохрани в общую память|добавь в общую память)\\s*[:,-]?\\s*(.{1,500})$/i);
+        if(privateCommand) {
+          if(selectedProvider!=='alandi') {
+            showToast('Личная память доступна только через aLandi gateway. Команда не отправлена провайдеру.','error');
+            return;
+          }
+          await MemoryDB.add(privateCommand[1].trim());
+          activeChatForPrivacy.messages.push({role:'user',content:text},{role:'assistant',content:'Сохранил указанный факт в личную память локальной модели. Он не добавлен в общую память.'});
+          input.value=''; updateState([...chats]); return;
+        }
+        if(sharedCommand) {
+          if(!confirm('Сохранить этот факт в ОБЩУЮ память? При включённом использовании общей памяти он может передаваться сторонним провайдерам.')) return;
+          await SharedMemoryDB.add(sharedCommand[1].trim());
+          activeChatForPrivacy.messages.push({role:'user',content:text},{role:'assistant',content:'Сохранил указанный факт в общую память. Личная память не изменена.'});
+          input.value=''; updateState([...chats]); return;
+        }
+      }
       if((selectedProvider==='alandi'||selectedProvider==='custom')&&!String(safeGet(STORAGE.baseUrl)||'').trim()){
         showToast(getUiLanguage()==='en'?'Configure your gateway URL in settings before sending.':'Сначала укажи адрес собственного gateway в настройках.','error');toggleSettings(true);return;
       }
