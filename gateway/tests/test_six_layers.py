@@ -314,15 +314,15 @@ def test_gateway_routes_feature_flags_and_memory_api_are_opt_in(tmp_path):
 
     key = "z" * 64
     config = Settings(api_key=key, ollama_base_url="http://ollama.test:11434",
-                      allowed_models=("qwen3.5:4b",), cors_origins=("https://dorpnay.github.io",),
+                      allowed_models=("alandi-huihui-qwen35-4b",), cors_origins=("https://dorpnay.github.io",),
                       cache_enabled=False)
     def handler(request):
         if request.url.path == "/api/ps":
             return httpx.Response(200, json={"models": []})
         if request.url.path == "/api/tags":
-            return httpx.Response(200, json={"models": [{"name": "qwen3.5:4b"}]})
+            return httpx.Response(200, json={"models": [{"name": "alandi-huihui-qwen35-4b"}]})
         if request.url.path == "/v1/chat/completions":
-            return httpx.Response(200, json={"model": "qwen3.5:4b", "choices": [{"message": {"role": "assistant", "content": "upstream"}}]})
+            return httpx.Response(200, json={"model": "alandi-huihui-qwen35-4b", "choices": [{"message": {"role": "assistant", "content": "upstream"}}]})
         return httpx.Response(404, json={})
     with TestClient(create_app(config, transport=httpx.MockTransport(handler))) as client:
         auth = {"Authorization": f"Bearer {key}"}
@@ -341,7 +341,7 @@ def test_gateway_opt_in_memory_rag_and_exact_template_router(tmp_path):
 
     key = "y" * 64
     config = Settings(api_key=key, ollama_base_url="http://ollama.test:11434",
-                      allowed_models=("qwen3.5:4b",), cors_origins=("https://dorpnay.github.io",),
+                      allowed_models=("alandi-huihui-qwen35-4b",), cors_origins=("https://dorpnay.github.io",),
                       cache_enabled=False, fast_routing_enabled=True, memory_sync_enabled=True,
                       memory_path=str(tmp_path / "memory.sqlite3"), rag_enabled=True,
                       rag_path=str(tmp_path / "rag.sqlite3"))
@@ -349,14 +349,14 @@ def test_gateway_opt_in_memory_rag_and_exact_template_router(tmp_path):
         if request.url.path == "/api/ps":
             return httpx.Response(200, json={"models": []})
         if request.url.path == "/api/tags":
-            return httpx.Response(200, json={"models": [{"name": "qwen3.5:4b"}]})
+            return httpx.Response(200, json={"models": [{"name": "alandi-huihui-qwen35-4b"}]})
         if request.url.path == "/v1/chat/completions":
-            return httpx.Response(200, json={"model": "qwen3.5:4b", "choices": [{"message": {"role": "assistant", "content": "upstream"}}]})
+            return httpx.Response(200, json={"model": "alandi-huihui-qwen35-4b", "choices": [{"message": {"role": "assistant", "content": "upstream"}}]})
         return httpx.Response(404, json={})
     with TestClient(create_app(config, transport=httpx.MockTransport(handler))) as client:
         auth = {"Authorization": f"Bearer {key}"}
         routed = client.post("/v1/chat/completions", headers=auth,
-            json={"model": "qwen3.5:4b", "messages": [{"role": "user", "content": "привет"}]})
+            json={"model": "alandi-huihui-qwen35-4b", "messages": [{"role": "user", "content": "привет"}]})
         assert routed.status_code == 200
         assert routed.headers["x-ai-route"] == "exact_template"
         assert "upstream" not in routed.text
@@ -419,7 +419,7 @@ def test_google_oauth_pkce_flow_keeps_tokens_server_side_and_refresh_token(tmp_p
 
     config = Settings(
         api_key=key, ollama_base_url="http://ollama.test:11434",
-        allowed_models=("qwen3.5:4b",), cors_origins=("https://dorpnay.github.io",),
+        allowed_models=("alandi-huihui-qwen35-4b",), cors_origins=("https://dorpnay.github.io",),
         cache_enabled=False, oauth_enabled=True, oauth_path=str(tmp_path / "oauth.sqlite3"),
         oauth_encryption_key=vault_key, google_oauth_client_id="client-id",
         google_oauth_client_secret="client-secret",
@@ -460,7 +460,7 @@ def test_google_oauth_routes_are_disabled_without_server_configuration():
 
     key = "p" * 64
     config = Settings(api_key=key, ollama_base_url="http://ollama.test:11434",
-                      allowed_models=("qwen3.5:4b",), cors_origins=("https://dorpnay.github.io",),
+                      allowed_models=("alandi-huihui-qwen35-4b",), cors_origins=("https://dorpnay.github.io",),
                       cache_enabled=False)
     with TestClient(create_app(config, transport=httpx.MockTransport(lambda request: httpx.Response(404)))) as client:
         assert client.post("/oauth/google/initiate", headers={"Authorization": f"Bearer {key}"}).status_code == 503
@@ -486,7 +486,7 @@ def test_google_oauth_rejects_broader_scope_and_attempts_revoke(tmp_path):
 
     config = Settings(
         api_key=key, ollama_base_url="http://ollama.test:11434",
-        allowed_models=("qwen3.5:4b",), cors_origins=("https://dorpnay.github.io",),
+        allowed_models=("alandi-huihui-qwen35-4b",), cors_origins=("https://dorpnay.github.io",),
         cache_enabled=False, oauth_enabled=True, oauth_path=str(tmp_path / "oauth.sqlite3"),
         oauth_encryption_key=OAuthVault.generate_key(), google_oauth_client_id="client-id",
         google_oauth_client_secret="client-secret",
