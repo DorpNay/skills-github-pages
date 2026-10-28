@@ -3815,8 +3815,8 @@ permalink: /
         return;
       }
       if(text && !chosenAttachments.length) {
-        const privateCommand=text.match(/^(?:запомни|сохрани в личную память)\\s*[:,-]?\\s*(.{1,500})$/i);
-        const sharedCommand=text.match(/^(?:сохрани в общую память|добавь в общую память)\\s*[:,-]?\\s*(.{1,500})$/i);
+        const privateCommand=text.match(/^(?:запомни|сохрани в личную память)\s*[:,-]?\s*(.{1,500})$/i);
+        const sharedCommand=text.match(/^(?:сохрани в общую память|добавь в общую память)\s*[:,-]?\s*(.{1,500})$/i);
         if(privateCommand) {
           if(selectedProvider!=='alandi') {
             showToast('Личная память доступна только через aLandi gateway. Команда не отправлена провайдеру.','error');
