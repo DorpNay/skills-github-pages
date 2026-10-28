@@ -83,3 +83,28 @@
 - **PR #84 — CORS origin canonicalization:** прежняя проверка принимала hostname в смешанном регистре и malformed/out-of-range port без нормализации; это могло привести к silently broken CORS или ошибочной конфигурации. Добавлена нормализация hostname/default ports/IPv6 и тесты негативных портов. Allowlist не расширен.
 - Для обоих PR требуется дождаться всех обязательных checks на **текущем exact head**. До этого это proposed fixes, не merged/main functionality.
 - Из-за недоступности DNS в рабочем контейнере git clone и локальный запуск pytest не удались; это ограничение окружения, а не успешный тест. CI — единственный доступный execution evidence в этой сессии.
+
+
+## Рекомендуемая сборка по текущим доказательствам
+
+Это не максимальное число компонентов, а минимальная согласованная сборка с возможностью расширения только после измерений.
+
+| Слой | Конкретный выбор сейчас | Почему / условие расширения |
+|---|---|---|
+| Клиент | Существующий статический GitHub Pages/Jekyll + HTML/CSS/JS; сохранить совместимость skills/*.txt | Мобильный интерфейс уже существует; React-переписывание не даёт доказанной пользы и повышает регрессионный риск |
+| API gateway | FastAPI + httpx; bearer auth, model allowlist, body/time limits, bounded concurrency, explicit CORS, loopback-only | Одна точка контроля доступа и лимитов; не выставлять Ollama наружу |
+| Публикация API | Cloudflare Tunnel + Access/rate limits; gateway 127.0.0.1:8000, Ollama 127.0.0.1:11434 | Конкретный Tunnel/Access остаётся owner-configured и должен быть проверен live; не считать шаблон preflight доказательством реальной сети |
+| Инференс | Ollama, один активный model, concurrency=1, context=4096 как стартовый режим; qwen3.5:4b — кандидат baseline, не подтверждённая оптимальная модель | Утвердить окончательно только после cold/warm latency, peak RAM/PSS, quality и rollback на целевом VPS |
+| Основные данные | SQLite для response cache, delta sync, scoped memory и FTS5; раздельные схемы/scopes, provenance и revision checks | Не добавлять Postgres/Redis/vector DB, пока объём/конкурентность/benchmark не покажут ограничение SQLite |
+| Retrieval/RAG | FTS5/BM25 + lexical concept graph + RRF, точный scope и source provenance | Удерживать как baseline; менять ранжирование только после ≥50 реальных разрешённых и обезличенных запросов и метрик retrieval/citation |
+| Документы | Локальное извлечение поддерживаемых PDF/DOCX/XLSX и текстовых форматов за feature flag | Сканированный PDF без OCR остаётся неподдержанным; Docling/OCR добавить только для конкретной потребности и после тестов лицензии/ресурсов |
+| Голос | Существующие локальные whisper.cpp ASR/Piper TTS adapters; только allowlisted paths/voices; flags off | Не заявлять hands-free: native audio hot path, VAD/AEC, echo cancellation и target-device tests не подтверждены |
+| Инструменты | JSON Schema validator + read-only bounded DAG; явные approval contracts | Никакого произвольного shell/browser execution до отдельного sandbox, изоляции профиля и adversarial escape tests |
+| Наблюдаемость | Trace ID + ограниченная schema событий; локальные безопасные логи без prompts/transcripts/secrets | OpenTelemetry остаётся optional/disabled до решения о privacy и exporter; не отправлять пользовательские данные внешнему collector |
+| Проверки | pytest gateway suite + Playwright/Chromium + quality sentinels + provenance + Graphify artifact-only | Утверждать изменение только по exact-head checks; затем post-merge main/Pages. Живой VPS и физические устройства — отдельные gates |
+| Зависимости | Текущие pinned requirements; uv migration только после генерации/ревью lockfile | Не вводить uv.lock как фиктивный; не добавлять orjson без semantic-parity/performance/license report |
+| Модели/веса | Не хранить бинарные веса в Git; ручная установка вне репозитория, фиксированный upstream/version/license/SHA-256 | Ни один ASR/TTS artifact не готов к поставке без отдельной лицензии engine/weights/voice/phonemizer и target benchmark |
+
+### Документальная ловушка: старый «окончательный» stack guide
+
+Документ docs/SUPERSTACK_FINAL_RU.md датирован 2026-10-19 и содержит команды установки и модельный baseline, которые нельзя трактовать как актуальное подтверждение состояния. Его статус обновлён до исторического архитектурного baseline; текущий owner path — docs/START_HERE_RU.md и docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md. Перед выполнением команд нужно проверить актуальный main, upstream installer, systemd template, model tag и лицензии. В частности, не запускать удалённый shell installer вслепую и не скрывать ошибки создания пользователя через `|| true`.
