@@ -10,6 +10,7 @@ python -m pip install -r gateway/requirements-dev.txt
 python -m compileall -q gateway
 python -m pytest -q gateway/tests
 python gateway/evals/run_six_layer_eval.py
+python gateway/evals/run_rag_golden_eval.py gateway/evals/fixtures/rag_golden_smoke.json --top-k 3
 python gateway/evals/serialization_benchmark.py --iterations 100
 python scripts/check_project_metadata.py
 python scripts/check_license_manifest.py
@@ -51,11 +52,11 @@ The prior gateway baseline passed 37 tests and the deterministic six-layer smoke
 | EV-INTEL-001 | Provenance triad | scripts/check_intel_triad.py + intel/RECON.yaml | accepted rows require explicit HTTPS source/claim URLs, exact-artifact license field and non-placeholder metadata | CI passed; offline completeness only, no live license/URL verification |
 | EV-ROUTER-001 | Risk-aware local routing | router/policy.py + gateway/tests/test_v016_foundation.py | destructive action requires confirmation; low budget and slow escalation obey policy; invalid input rejected | tests passed; typed prototype not runtime-integrated |
 | EV-SEARCH-001 | Keyless web-search fallback | tests/e2e/app.spec.mjs + index.md | no Tavily key triggers bounded open-source search; citations come from actual source responses; tool budget remains bounded | PR #21 Chromium E2E passed; public sources remain CORS-dependent |
-| EV-RAG-001 | Retrieval quality | gateway/evals/run_six_layer_eval.py | synthetic fixtures only; real golden set >=50 queries before product claims | not a product benchmark |
+| EV-RAG-001 | Retrieval quality | gateway/evals/run_six_layer_eval.py + gateway/evals/run_rag_golden_eval.py | labelled Recall@k, MRR, nDCG@k, relevant-source precision, provenance completeness and local retrieval p50/p95; baseline/candidate comparison on >=50 permissioned queries before product claims | evaluator added; smoke fixture is synthetic, product benchmark pending |
 | EV-PROVIDER-001 | Configured provider live smoke | .github/workflows/provider-smoke-all.yml + scripts/provider-smoke-all.mjs | Live probes require an explicit true input; false/missing confirmation never reaches provider endpoints; secret values are not logged; unavailable secrets are skipped; configured failures fail the run | PR #25 quality/provenance CI passed on its head; live smoke was not dispatched from this session; live access unverified |
 | EV-RAG-005 | Scope-safe source deletion | gateway/rag/lazy_graph_rag.py + gateway/tests/test_six_layers.py | reject invalid global-scope pairings; deleted document disappears from retrieval; SQLite secure-delete on and FTS5 secure-delete enabled only when SQLite >=3.42.0 | PR #24 HEAD and post-merge main CI passed; does not prove a whole-system crypto-erase guarantee |
 
-## Reporting rules
+| EV-RAG-GOLD-001 | Labelled retrieval evaluation | gateway/evals/run_rag_golden_eval.py; gateway/tests/test_rag_golden_eval.py | dataset scope validation, Recall@k, MRR, nDCG@k, relevant-source precision, provenance completeness and local retrieval latency; optional recall threshold | implementation pending exact-head CI; synthetic smoke fixture is not representative |\n\n## Reporting rules
 
 The serialization microbenchmark only checks execution and data-format parity in CI; it does not authorize orjson as the gateway default. Project metadata parsing is enforced by the License and Artifact Provenance workflow.
 
