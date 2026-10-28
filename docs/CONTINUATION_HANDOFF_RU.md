@@ -22,9 +22,10 @@
 - Файлы: landing/index.html, docs/PRE_LAUNCH_STACK_RU.md, docs/LAUNCH_PRIVACY_REVIEW_RU.md, tests/e2e/landing.spec.mjs, README.md.
 - Страница отдельная и не заменяет существующее приложение на корневом URL. Не считать опубликованной до разрешённого merge и успешного Pages deployment.
 - Исторический неуспешный HEAD `2ce3681acc0c355e778b7d729456b80ca7efb747`: Quality run `40717768512` завершился failure. Прочитан job log `122920373641`: landing E2E падал на CTA `href`, потому что локальный static server отдавал литеральный `{{ site.baseurl }}/`. Тот же run показал нестабильный существующий mobile composer assertion (`bottom=440`, viewport `844`); 66 тестов прошли, один упал и один был flaky.
-- На проверенном HEAD `c06aba99659382f5c79054b6a9eb5005a9e338a2` CTA и canonical/og:url используют явные `https://dorpnay.github.io/skills-github-pages/...` URLs. Quality Sentinels run `40747789996` завершился `success`: все 6 jobs зелёные, включая Chromium и published Pages browser smoke. Graphify run `40747948369` также `success`.
-- В успешном Chromium job `123026272271` шаги built-app Chromium и published-site browser smoke завершились `success`. Мобильный composer тест прошёл в этом run; ручное тестирование на устройстве не выполнялось.
-- Эти результаты относятся к точному SHA `c06aba99659382f5c79054b6a9eb5005a9e338a2`. Любой следующий commit требует повторной проверки exact-head CI. Merge/deploy не выполнялись; PR #87 остаётся draft и не опубликован.
+- На текущем HEAD `2418f8561403ba4b5b0e23200863d0446834e5cb` удалён дублирующий front matter в `landing/index.html`; CTA и canonical/og:url используют явные `https://dorpnay.github.io/skills-github-pages/...` URLs.
+- Exact-head Quality Sentinels run `40748851166` завершился `success`: все 6 jobs зелёные. Chromium job `123030007500` подтвердил успешные шаги Jekyll build, built-app Chromium, ожидание опубликованного сайта и Chromium smoke опубликованного сайта. Graphify run `40748851249` также завершился `success`.
+- Context7 проверен для Jekyll (`/jekyll/jekyll`) и Playwright (`/microsoft/playwright`): документация подтверждает, что front matter включает Liquid processing, а `layout: null` позволяет обработать HTML без layout. Playwright E2E остаётся browser-level проверкой, не заменяющей ручную проверку на устройстве.
+- Эти результаты относятся только к точному SHA `2418f8561403ba4b5b0e23200863d0446834e5cb`. После следующего commit нужен новый exact-head CI. Merge/deploy не выполнялись; PR #87 остаётся draft и не опубликован.
 
 ## Следующие конкретные действия
 1. Перед изменением сверить текущий HEAD PR #87 и его exact-SHA workflow runs.
