@@ -83,6 +83,14 @@ def validate_files(service_text: str, env_text: str) -> list[str]:
         "ProtectHome=true",
         "ProtectSystem=strict",
         "ReadWritePaths=/var/lib/alandi-gateway",
+        "ProtectKernelTunables=true",
+        "ProtectKernelModules=true",
+        "ProtectControlGroups=true",
+        "RestrictSUIDSGID=true",
+        "LockPersonality=true",
+        "RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6",
+        "Restart=on-failure",
+        "TimeoutStopSec=15",
     ):
         if required not in service:
             errors.append(f"systemd [Service] must retain {required}")
@@ -100,12 +108,19 @@ def validate_files(service_text: str, env_text: str) -> list[str]:
     if env.get("ALANDI_API_KEY") != "replace-with-a-new-random-64-character-hex-secret":
         errors.append(".env.example must contain only the API-key placeholder, never a real key")
     ollama = urlsplit(env.get("OLLAMA_BASE_URL", ""))
-    if ollama.scheme != "http" or ollama.hostname not in {"127.0.0.1", "localhost", "::1"} or ollama.port != 11434:
+    if (ollama.scheme != "http" or ollama.hostname not in {"127.0.0.1", "localhost", "::1"} or
+            ollama.port != 11434 or ollama.path not in {"", "/"} or ollama.query or ollama.fragment or
+            ollama.username is not None or ollama.password is not None):
         errors.append("OLLAMA_BASE_URL must target the local loopback listener on port 11434")
     cors = [origin.strip() for origin in env.get("ALANDI_CORS_ORIGINS", "").split(",") if origin.strip()]
     if not cors or "*" in cors:
         errors.append("ALANDI_CORS_ORIGINS must be a non-empty exact-origin allowlist, not wildcard")
-    elif any(urlsplit(origin).scheme != "https" or not urlsplit(origin).hostname for origin in cors):
+    elif any(
+        urlsplit(origin).scheme != "https" or not urlsplit(origin).hostname or
+        urlsplit(origin).path not in {"", "/"} or urlsplit(origin).query or urlsplit(origin).fragment or
+        urlsplit(origin).username is not None or urlsplit(origin).password is not None
+        for origin in cors
+    ):
         errors.append("every CORS origin in the deployment template must be an explicit HTTPS origin")
     if not env.get("ALANDI_ALLOWED_MODELS", "").strip():
         errors.append("ALANDI_ALLOWED_MODELS must not be empty")
