@@ -75,3 +75,31 @@ test('explicit shared-memory command requires confirmation and uses a separate s
   expect(stores.privateFacts.some(item => item.fact === 'синтетический общий факт для теста')).toBeFalsy();
   expect(modelRequests, 'Shared-memory commands must be handled before any provider request').toEqual([]);
 });
+
+test('a chat marked private cannot be sent to an external provider after reload', async ({ page }) => {
+  const modelRequests = [];
+  page.on('request', request => {
+    if (/\/v1\/chat\/completions|generativelanguage\.googleapis\.com|api\.groq\.com|openrouter\.ai|api\.x\.ai/i.test(request.url())) {
+      modelRequests.push(request.url());
+    }
+  });
+
+  await page.goto('/');
+  await page.waitForFunction(async () => (await indexedDB.databases()).some(item => item.name === 'AI_Agent_DB_v87' && item.version === 2));
+  await page.locator('#userInput').fill('Запомни: приватный тестовый маркер чата');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Сохранил указанный факт в личную память локальной модели');
+
+  await page.evaluate(() => {
+    localStorage.setItem('ai_api_provider', 'gemini');
+    localStorage.setItem('ai_cross_provider_fallback', 'true');
+  });
+  await page.reload();
+  await page.waitForFunction(async () => (await indexedDB.databases()).some(item => item.name === 'AI_Agent_DB_v87' && item.version === 2));
+  await page.locator('#userInput').fill('Проверь приватность этого чата');
+  await page.locator('#sendBtn').click();
+
+  await expect(page.locator('body')).toContainText('Сторонние провайдеры заблокированы для этого чата');
+  await expect(page.locator('#chatBox')).not.toContainText('Проверь приватность этого чата');
+  expect(modelRequests, 'A private chat must be blocked before any third-party model request').toEqual([]);
+});
