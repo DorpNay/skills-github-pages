@@ -17,9 +17,23 @@ WHISPER_MODEL_URL="https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggm
 WHISPER_MODEL_SHA256="1be3a9b2063867b937e64e2ec7483364a79917e157fa98c5d94b5c1fffea987b"
 WHISPER_MODEL="${WHISPER_MODEL_DIR}/ggml-small.bin"
 BACKUP_FILE="${ENV_FILE}.backup-$(date +%Y%m%d-%H%M%S)"
+ENV_UPDATED=0
+CAPS_FILE=""
 
 die() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
 info() { printf '\n==> %s\n' "$*"; }
+cleanup_and_rollback() {
+  local status=$?
+  rm -f "${CAPS_FILE:-}"
+  if [[ "$status" -ne 0 && "${ENV_UPDATED:-0}" == "1" ]]; then
+    trap - EXIT
+    printf 'Voice setup failed after changing gateway config; restoring backup.\n' >&2
+    cp -a "$BACKUP_FILE" "$ENV_FILE" || true
+    systemctl restart "$SERVICE" || true
+    exit "$status"
+  fi
+}
+trap cleanup_and_rollback EXIT
 
 [[ $EUID -eq 0 ]] || die "Run with sudo: sudo bash scripts/voice_first_run.sh"
 [[ -f "$ENV_FILE" ]] || die "Missing $ENV_FILE. Complete the base gateway setup first."
@@ -103,7 +117,7 @@ info "Enable voice capabilities in the existing environment"
 set_env() {
   local key="$1" value="$2" tmp
   tmp="$(mktemp)"
-  if grep -q "^\${key}=" "$ENV_FILE"; then
+  if grep -q "^${key}=" "$ENV_FILE"; then
     awk -v key="$key" -v value="$value" 'BEGIN { FS=OFS="=" } $1 == key { $0=key "=" value; found=1 } { print } END { if (!found) print key "=" value }' "$ENV_FILE" > "$tmp"
   else
     cat "$ENV_FILE" > "$tmp"
@@ -125,16 +139,9 @@ set_env ALANDI_AUDIO_SPEECH_DATA_DIR "$PIPER_MODEL_DIR"
 chmod 600 "$ENV_FILE"
 
 info "Restart gateway and check service"
-if ! systemctl restart "$SERVICE"; then
-  cp -a "$BACKUP_FILE" "$ENV_FILE"
-  systemctl restart "$SERVICE" || true
-  die "Gateway restart failed; previous environment restored. Inspect journalctl -u $SERVICE."
-fi
-systemctl is-active --quiet "$SERVICE" || {
-  cp -a "$BACKUP_FILE" "$ENV_FILE"
-  systemctl restart "$SERVICE" || true
-  die "Gateway is not active; previous environment restored. Inspect journalctl -u $SERVICE."
-}
+ENV_UPDATED=1
+systemctl restart "$SERVICE" || die "Gateway restart failed. Inspect journalctl -u $SERVICE."
+systemctl is-active --quiet "$SERVICE" || die "Gateway is not active. Inspect journalctl -u $SERVICE."
 
 info "Verify health and authenticated voice capabilities"
 API_KEY="$(sed -n 's/^ALANDI_API_KEY=//p' "$ENV_FILE" | tail -n1)"
@@ -142,15 +149,9 @@ API_KEY="$(sed -n 's/^ALANDI_API_KEY=//p' "$ENV_FILE" | tail -n1)"
 HEALTH_CODE="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' http://127.0.0.1:8000/healthz)"
 [[ "$HEALTH_CODE" == "200" ]] || die "/healthz returned HTTP $HEALTH_CODE."
 CAPS_FILE="$(mktemp)"
-trap 'rm -f "$CAPS_FILE"' EXIT
 CAPS_CODE="$(curl --silent --show-error --output "$CAPS_FILE" --write-out '%{http_code}' \
   -H "Authorization: Bearer $API_KEY" http://127.0.0.1:8000/v1/capabilities)"
-if [[ "$CAPS_CODE" != "200" ]]; then
-  rm -f "$CAPS_FILE"
-  cp -a "$BACKUP_FILE" "$ENV_FILE"
-  systemctl restart "$SERVICE" || true
-  die "Authenticated /v1/capabilities returned HTTP $CAPS_CODE; previous environment restored."
-fi
+[[ "$CAPS_CODE" == "200" ]] || die "Authenticated /v1/capabilities returned HTTP $CAPS_CODE."
 "$VENV_PY" - "$CAPS_FILE" "$VOICE_ID" <<'PY'
 import json, sys
 with open(sys.argv[1], encoding="utf-8") as f:
@@ -167,6 +168,7 @@ print("PASS: authenticated capabilities report ASR, TTS, and selected voice.")
 PY
 rm -f "$CAPS_FILE"
 unset API_KEY
+ENV_UPDATED=0
 
 info "Voice setup finished"
 printf 'Next: open the published HTTPS site on your phone and complete docs/VOICE_FIRST_RUN_RU.md §5 (real microphone → editable transcript → explicit send → audible TTS → Stop).\n'
