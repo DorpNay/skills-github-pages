@@ -2,13 +2,13 @@ project_state:
   version: 4
   reviewed_on: "2026-10-28"
   root_orienter:
-    status: "main HEAD 91557e4; PR #76 Graphify checks passed and merged, PR #72 UI checks passed and merged, PR #77 RRF checks passed and merged; post-merge main workflows still pending"
+    status: "main HEAD 91557e4; PR #76 Graphify, PR #72 UI and PR #77 RRF merged after green exact-head gates; post-merge Gateway, Quality/Chromium, Graphify and Pages all passed"
     branch: "docs/current-state-and-mobile-ledger-20261027"
     base_main: "b91aab316c224588baea99fbb9b966b8865de0a6"
     open_prs_at_checkpoint: 2
     open_issues_at_checkpoint: 0
-    graphify: "PR #76 code-only run 40637433024 succeeded: 965 nodes, 2706 edges, 59 source files; 216 inline UI JS nodes and 14 SQL schema nodes; ten focused queries returned neighborhoods, but output truncates at 700 tokens and nine E2E files yielded no symbols. Artifact-only; scheduled/source-change triggers merged."
-    next: "verify post-merge main Quality/Pages/Graphify/provenance for SHA 91557e4; preserve unique engineering-package audit from superseded PR #70 and voice/document readiness audit from draft PR #74 before closing/reconciling both"
+    graphify: "Latest main run 40637941303 succeeded: 988 nodes, 2780 edges, 60 source files; 224 inline UI JS nodes, 14 SQL schema nodes, 23 nodes in gateway/rag/lazy_graph_rag.py; ten focused queries returned neighborhoods. Query budget may truncate output and nine E2E files yield no symbols. Artifact-only; source-change/weekly triggers merged."
+    next: "preserve and update unique engineering-package audit from PR #70 and voice/document readiness audit from PR #74; close superseded/stale PRs after preservation; choose next bounded delta-sync recovery or static-asset/CSP slice"
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -278,7 +278,7 @@ current_checkpoint:
     pr_72: "compact search/function menus and per-chat preferences; exact-head Quality and published-site smoke passed; merge d332a6b2ab09911145520c9d10588d0bcb8e0e41"
     pr_77: "RRF fusion for scoped FTS5/concept-graph ranking; gateway tests and Quality/Chromium/published-site smoke passed; merge 91557e4eab1b122341bed578cdf4775ff867007f"
   exact_head_evidence:
-    graphify_run: "40637433024 success; 965 nodes, 2706 edges, 59 files, 216 inline UI JS nodes, 14 SQL schema nodes; ten focused queries"
+    graphify_run: "main run 40637941303 success; 988 nodes, 2780 edges, 60 files, 224 inline UI JS nodes, 14 SQL schema nodes, 23 RAG module nodes; ten focused queries"
     pr_72_quality: "40637581310 success; six Quality jobs including Chromium and published-site smoke; dead-code report 40637581341 success"
     pr_77_gateway: "40637641493 success"
     pr_77_quality: "40637641255 success; six Quality jobs including Chromium and published-site smoke; dead-code report 40637641563 success"
@@ -286,4 +286,4 @@ current_checkpoint:
   open_pull_requests: "PR #70 (RRF implementation superseded by #77; unique engineering audit to preserve), PR #74 (draft voice/document readiness audit on stale base)"
   graphify_limits: "developer navigation only, not runtime feature or correctness proof; graph queries may truncate at 700 tokens; nine Playwright E2E files yielded no symbols"
   runtime_boundary: "GitHub Pages is deployed; private gateway/VPS, live providers, ASR/TTS model artifacts, real microphone/device playback and target-host performance remain unverified"
-  next: "preserve unique audit documents from PR #70 and #74, close superseded/stale PRs only after preserving useful content, then verify latest-main CI and continue a bounded delta-sync recovery or safe static-asset/CSP slice"
+  next: "preserve unique audit documents from PR #70 and #74, close superseded/stale PRs only after preserving useful content, then choose a bounded delta-sync recovery or safe static-asset/CSP slice"
