@@ -12,6 +12,7 @@ import os
 import re
 import sqlite3
 import time
+import uuid
 from contextlib import closing
 from pathlib import Path
 from typing import Any
@@ -212,18 +213,33 @@ def apply_patch(state: dict[str, Any], patch: object, *, max_bytes: int = 512_00
 
 class DeltaMemoryStore:
     def __init__(self, path: str | Path, *, max_state_bytes: int = 512_000, max_patch_bytes: int = 128_000):
-        self.path = str(path)
+        self._in_memory = str(path) == ":memory:"
+        self.path = (
+            f"file:alandi-delta-{uuid.uuid4().hex}?mode=memory&cache=shared"
+            if self._in_memory else str(path)
+        )
+        # A named shared-memory database survives short-lived connections only while at
+        # least one connection remains open. Keep this private anchor for this store's life.
+        self._keeper: sqlite3.Connection | None = (
+            sqlite3.connect(self.path, uri=True, timeout=5.0) if self._in_memory else None
+        )
         self.max_state_bytes = max_state_bytes
         self.max_patch_bytes = max_patch_bytes
 
     def _connect(self) -> sqlite3.Connection:
-        connection = sqlite3.connect(self.path, timeout=5.0)
+        connection = sqlite3.connect(self.path, timeout=5.0, uri=self._in_memory)
         connection.row_factory = sqlite3.Row
         connection.execute("PRAGMA busy_timeout=5000")
         return connection
 
+    def close(self) -> None:
+        """Release the shared in-memory database; persistent-path stores need no anchor."""
+        if self._keeper is not None:
+            self._keeper.close()
+            self._keeper = None
+
     def initialize(self) -> None:
-        if self.path != ":memory:":
+        if not self._in_memory:
             Path(self.path).parent.mkdir(parents=True, exist_ok=True)
         with closing(self._connect()) as db:
             db.executescript("""
@@ -248,7 +264,7 @@ class DeltaMemoryStore:
                     ON memory_deltas(conversation_id, revision);
             """)
             db.commit()
-        if self.path != ":memory:":
+        if not self._in_memory:
             os.chmod(self.path, 0o600)
 
     @staticmethod
