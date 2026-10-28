@@ -15,6 +15,7 @@ test('explicit remember commands stay in browser memory stores and do not call a
   await page.locator('#userInput').fill('Запомни: тестовый личный факт только для локального aLandi');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Сохранил указанный факт в личную память локальной модели');
+  await expect(page.locator('#chatBox')).not.toContainText('тестовый личный факт только для локального aLandi');
 
   await page.evaluate(async () => {
     const db = await new Promise((resolve, reject) => {
@@ -52,6 +53,7 @@ test('explicit shared-memory command requires confirmation and uses a separate s
   await page.locator('#userInput').fill('Сохрани в общую память: синтетический общий факт для теста');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Сохранил указанный факт в общую память');
+  await expect(page.locator('#chatBox')).not.toContainText('синтетический общий факт для теста');
 
   const stores = await page.evaluate(async () => {
     const db = await new Promise((resolve, reject) => {
