@@ -3851,6 +3851,7 @@ permalink: /
       if (baseUrl.endsWith('/chat/completions')) baseUrl = baseUrl.slice(0, -'/chat/completions'.length);
       const key = getConfiguredApiKey();
       if (!baseUrl || !key) { showToast('Сначала настрой собственный gateway и его ключ.', 'error'); toggleSettings(true); return; }
+       await refreshLocalSpeechVoices(baseUrl, key);
       if (activeSpeechController) activeSpeechController.abort();
       const requestId = ++speechRequestGeneration;
       const controller = new AbortController();
