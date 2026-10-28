@@ -27,7 +27,7 @@
     python -m pip install -r gateway/requirements-dev.txt
     python -m pytest -q gateway/tests
     python -m compileall -q gateway
-    ollama pull qwen3.5:4b
+    # Import the selected GGUF using docs/UNCENSORED_MODEL_AND_FREE_CPU_RUNBOOK_RU.md
     cd gateway
     cp .env.example .env
     openssl rand -hex 32
