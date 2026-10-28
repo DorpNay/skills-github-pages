@@ -13,7 +13,7 @@ def config():
     return Settings(
         api_key=API_KEY,
         ollama_base_url="http://ollama.test:11434",
-        allowed_models=("qwen3.5:4b",),
+        allowed_models=("alandi-huihui-qwen35-4b",),
         cors_origins=("https://dorpnay.github.io",),
         cache_enabled=False,
     )
