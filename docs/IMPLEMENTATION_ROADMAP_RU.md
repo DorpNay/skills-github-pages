@@ -125,3 +125,13 @@ PR #53 merged opt-in local transcription for audio files attached from disk; no 
 - **Ограничения:** пустая переменная модели отключает endpoint; общий inference semaphore не позволяет помощнику конкурировать без лимита с основной моделью; keep_alive=0; вход и выход фильтруются от типичных секретов; нет автозаписи, cloud fallback или model override от браузера.
 - **Gate:** точные gateway tests + Chromium E2E + security/context/integrity/Jekyll + published-site smoke + provenance; затем документационный статус merge. Live inference и RAM/latency на VPS остаются отдельными задачами.
 - **Статус:** реализация на feature branch, CI ожидается; не активировать на VPS до выбора и установки модели.
+
+
+## 2026-10-28 — unified model mode, workspace tools and low-RAM uncensored candidate
+
+1. **UI route mode:** mutually exclusive `self-hosted` and `free-cloud`; aLandi remains the first-party route, not a visible third-party provider. Self-hosted mode disables provider credential fields and forcibly disables cross-provider fallback. Switching to a third-party provider explicitly switches mode.
+2. **Composer ergonomics:** persistent top/bottom position preference; top mode places the composer just below the header and keeps textarea auto-growth downward with bounded height. Desktop Chromium is not a substitute for native iOS keyboard testing.
+3. **Chat tools:** expose bounded project list/create/add-note and Mermaid-source tools directly in chat, independent of web-search mode. Project writes are scoped to the current browser profile; sync is not implied. Mermaid source is returned in chat, but visual rendering is not implemented by this slice.
+4. **Uncensored model candidate:** 2B Q4_K_M for tight RAM; 4B Q4_K_M as challenger at 8 GB. Exact SHA-256 and upstream refs are in `docs/UNCENSORED_MODEL_AND_FREE_CPU_RUNBOOK_RU.md`. No weight binaries are committed.
+5. **Performance:** run `python gateway/evals/run_local_model_benchmark.py --model <exact-tag> --runs 2` against the configured local gateway. This synthetic smoke reports full-response latency p50/p95 and usage-based tokens/s only when the endpoint returns completion-token usage. It does not rate answer quality or first-token latency.
+6. **Release gates:** exact-head Gateway/Quality/Chromium/provenance checks; then owner-side VPS import, actual model/tool-call test, reboot/rollback, ASR/TTS, and physical mobile-device voice test. Do not mark live readiness from CI.
