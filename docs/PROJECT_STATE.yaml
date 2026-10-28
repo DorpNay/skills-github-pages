@@ -291,6 +291,9 @@ privacy_memory_checkpoint:
     - "docs/PRIVACY_MEMORY_BOUNDARIES_RU.md"
     - "docs/START_HERE_RU.md"
     - "docs/VOLLEY_LOG.md"
+    - "docs/LOCAL_MODEL_RUNTIME_AND_AGENTS_RU.md"
+    - "scripts/diagnose_model_runtime.sh"
+  model_runtime_research: "Official Ollama GPU/FAQ, llama.cpp backend documentation and Qwen3.5 0.8B/2B/4B model cards reviewed; target profile says 8 GB RAM, GPU none, target_not_benchmarked. No GPU-only inference can be enabled without actual GPU/VRAM; diagnostic script is read-only."
   implementation:
     indexeddb: "schema v2; existing memory store retained as private; new sharedMemory store; no implicit migration of old facts into shared"
     private_scope: "selected only for provider alandi; tagged prompt marker; chat privateMemoryUsed persisted; third-party send blocked for that chat; fallback candidates filtered to alandi when marker exists"
