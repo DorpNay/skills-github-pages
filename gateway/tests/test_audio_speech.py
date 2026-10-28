@@ -124,7 +124,7 @@ def test_speech_allows_only_configured_installed_voice(tmp_path, monkeypatch):
         def kill(self): self.returncode = -9
 
     async def fake_create_subprocess_exec(*args, **kwargs):
-        captured["voice"] = args[args.index("-m") + 1]
+        captured["voice"] = args[args.index("-m", 3) + 1]
         output_path = args[args.index("-f") + 1]
         with open(output_path, "wb") as output:
             output.write(b"RIFF" + (36).to_bytes(4, "little") + b"WAVE" + bytes(32))
