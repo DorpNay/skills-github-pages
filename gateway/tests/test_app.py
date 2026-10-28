@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 from gateway.app import Settings, create_app
 
 API_KEY = "a" * 64
-MODEL = "qwen3.5:4b"
+MODEL = "alandi-huihui-qwen35-4b"
 
 
 def settings(**overrides):
