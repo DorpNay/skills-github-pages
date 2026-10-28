@@ -31,7 +31,7 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
     if (request.url().includes('/v1/models')) {
       return route.fulfill({
         status: 200, headers: corsHeaders, contentType: 'application/json',
-        body: JSON.stringify({ data: [{ id: 'qwen3.5:4b', context_length: 4096 }] })
+        body: JSON.stringify({ data: [{ id: 'alandi-huihui-qwen35-4b', context_length: 4096 }] })
       });
     }
     if (request.url().includes('/v1/chat/completions')) {
@@ -42,7 +42,7 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
         headers: { ...corsHeaders, 'x-ai-cache': 'MISS', 'cache-control': 'no-store' },
         contentType: 'application/json',
         body: JSON.stringify({
-          id: 'local-chatcmpl-test', object: 'chat.completion', model: 'qwen3.5:4b',
+          id: 'local-chatcmpl-test', object: 'chat.completion', model: 'alandi-huihui-qwen35-4b',
           choices: [{ index: 0, message: { role: 'assistant', content: 'aLandi local gateway works.' }, finish_reason: 'stop' }]
         })
       });
@@ -59,27 +59,21 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await page.locator('#legacyProviderSettings > summary').click();
-  await page.locator('#providerPreset').selectOption('alandi');
-  await expect(page.locator('#modelName')).toHaveValue('qwen3.5:4b');
-  await page.locator('#baseUrl').fill('https://alandi.example.test/v1');
-  await page.locator('#modelName').fill('qwen3.5:4b');
-  await page.locator('#apiKey').fill('e2e-alandi-placeholder-key-not-a-secret-0123456789');
+  await page.locator('#cloudBaseUrl').fill('https://alandi.example.test/v1');
+  await expect(page.locator('#cloudModel')).toHaveValue('alandi-huihui-qwen35-4b');
+  await page.locator('#cloudModel').fill('alandi-huihui-qwen35-4b');
+  await page.locator('#cloudApiKey').fill('e2e-alandi-placeholder-key-not-a-secret-0123456789');
+  await page.locator('[data-action="select-alandi-primary"]').click();
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
   await chooseSearchMode(page, 'offline');
-  // Enable fallback only after startup to avoid triggering unrelated model-catalog probes.
-  await page.evaluate(() => {
-    localStorage.setItem('ai_cross_provider_fallback', 'true');
-    localStorage.setItem('ai_api_key_gemini', 'not-a-real-gemini-key');
-  });
   await page.locator('#userInput').fill('Проверь локальный маршрут.');
   await page.locator('#sendBtn').click();
 
   await expect(page.locator('#chatBox')).toContainText('aLandi local gateway works.', { timeout: 15000 });
   await expect(page.locator('#chatBox .message-model-meta').last()).toContainText('кэш MISS');
   expect(chatPayloads).toHaveLength(1);
-  expect(chatPayloads[0].model).toBe('qwen3.5:4b');
+  expect(chatPayloads[0].model).toBe('alandi-huihui-qwen35-4b');
   expect(chatPayloads[0].temperature).toBe(0);
   expect(cloudChatRequests).toEqual([]);
 });
