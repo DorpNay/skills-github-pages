@@ -280,3 +280,31 @@ current_checkpoint:
   graphify_follow_up: "branch ci/graphify-regular-architecture-checks-20261028; workflow triggers proposed for relevant source changes plus weekly schedule; awaiting exact-head CI"
   runtime_boundary: "GitHub Pages verified; private gateway/VPS, live providers, ASR/TTS artifacts, real microphone/device playback and target-host performance remain unverified"
   next: "finish PR #72 exact-head checks; port and verify RRF on current main in a conflict-free branch; merge Graphify trigger improvement only after Quality, Graphify and provenance checks pass; reconcile stale PR #74 without losing its audit"
+
+privacy_memory_checkpoint:
+  date: "2026-10-28"
+  branch: "feat/privacy-scoped-memory-20261028"
+  purpose: "Separate browser-local private memory from explicitly shared memory; fail closed against external provider routing after private-memory use."
+  changed_files:
+    - "index.md"
+    - "scripts/quality-agents.mjs"
+    - "docs/PRIVACY_MEMORY_BOUNDARIES_RU.md"
+    - "docs/START_HERE_RU.md"
+    - "docs/VOLLEY_LOG.md"
+  implementation:
+    indexeddb: "schema v2; existing memory store retained as private; new sharedMemory store; no implicit migration of old facts into shared"
+    private_scope: "selected only for provider alandi; tagged prompt marker; chat privateMemoryUsed persisted; third-party send blocked for that chat; fallback candidates filtered to alandi when marker exists"
+    shared_scope: "separate list/store; explicit add and per-fact promotion confirmation; injected only when global-memory opt-in and project scope permit"
+    remember_commands: "Запомни: ... saves locally before network; Сохрани в общую память: ... requires confirmation and is intercepted before provider call"
+  verification:
+    source_review: "GitHub default branch files and current client/gateway code inspected; memory graph API is separate opt-in groundwork"
+    tests_added: "Static privacy assertions added to scripts/quality-agents.mjs"
+    exact_head_ci: "pending"
+    chromium_behavior: "pending"
+    production_or_vps: "not tested or changed"
+  known_gaps:
+    - "No automatic fact extraction/candidate review pipeline yet; memory saves only by UI or explicit remember command"
+    - "No cross-device sync; shared means shared across opted-in providers in the same browser profile"
+    - "IndexedDB is not encrypted storage and cannot defend against same-origin script compromise or a user with profile access"
+    - "User chat history remains provider-bound data; privacy guard prevents uploading a chat after private-memory context was used"
+  source_state_discrepancy: "The checked-in current_checkpoint reports main 4fc342b468e370c792f1e87e77a20fda4de6bbaa, while PR #85 metadata reported base 337e38690af8f22a712c6442192c5ea62d354c3d. Reconcile the live main ref before merging; do not treat either stale metadata field as deployment proof."
