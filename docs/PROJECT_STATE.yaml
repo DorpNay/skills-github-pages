@@ -5,7 +5,7 @@ project_state:
     status: "main HEAD 91557e4; PR #76 Graphify, PR #72 UI and PR #77 RRF merged after green exact-head gates; post-merge Gateway, Quality/Chromium, Graphify and Pages all passed"
     branch: "docs/current-state-and-mobile-ledger-20261027"
     base_main: "b91aab316c224588baea99fbb9b966b8865de0a6"
-    open_prs_at_checkpoint: 2
+    open_prs_at_checkpoint: 1
     open_issues_at_checkpoint: 0
     graphify: "Latest main run 40637941303 succeeded: 988 nodes, 2780 edges, 60 source files; 224 inline UI JS nodes, 14 SQL schema nodes, 23 nodes in gateway/rag/lazy_graph_rag.py; ten focused queries returned neighborhoods. Query budget may truncate output and nine E2E files yield no symbols. Artifact-only; source-change/weekly triggers merged."
     next: "preserve and update unique engineering-package audit from PR #70 and voice/document readiness audit from PR #74; close superseded/stale PRs after preservation; choose next bounded delta-sync recovery or static-asset/CSP slice"
@@ -283,8 +283,8 @@ voice_selection:
       pr_77_gateway: "40637641493 success"
       pr_77_quality: "40637641255 success; six Quality jobs including Chromium and published-site smoke; dead-code report 40637641563 success"
       pr_76_provenance: "40637433125 success"
-    open_pull_requests: "PR #70 (RRF implementation superseded by #77; unique engineering audit to preserve), PR #74 (draft voice/document readiness audit on stale base)"
+    open_pull_requests: "PR #78 documentation reconciliation only; PR #70 closed as superseded after porting RRF and preserving the engineering audit; PR #74 closed after preserving the readiness audit"
     graphify_limits: "developer navigation only, not runtime feature or correctness proof; graph queries may truncate at 700 tokens; nine Playwright E2E files yielded no symbols"
     runtime_boundary: "GitHub Pages is deployed; private gateway/VPS, live providers, ASR/TTS model artifacts, real microphone/device playback and target-host performance remain unverified"
-    next: "preserve unique audit documents from PR #70 and #74, close superseded/stale PRs only after preserving useful content, then choose a bounded delta-sync recovery or safe static-asset/CSP slice"
+    next: "finish exact-head gates and merge PR #78; then choose a bounded delta-sync recovery or safe static-asset/CSP slice based on current integration points and tests"
   
