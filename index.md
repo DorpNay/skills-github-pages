@@ -3826,13 +3826,14 @@ permalink: /
             return;
           }
           await MemoryDB.add(privateCommand[1].trim());
-          activeChatForPrivacy.messages.push({role:'user',content:text},{role:'assistant',content:'Сохранил указанный факт в личную память локальной модели. Он не добавлен в общую память.'});
+          activeChatForPrivacy.privateMemoryUsed=true;
+          activeChatForPrivacy.messages.push({role:'user',content:'[Команда сохранения в личную память; содержимое не дублируется в истории чата.]'},{role:'assistant',content:'Сохранил указанный факт в личную память локальной модели. Он не добавлен в общую память.'});
           input.value=''; updateState([...chats]); return;
         }
         if(sharedCommand) {
           if(!confirm('Сохранить этот факт в ОБЩУЮ память? При включённом использовании общей памяти он может передаваться сторонним провайдерам.')) return;
           await SharedMemoryDB.add(sharedCommand[1].trim());
-          activeChatForPrivacy.messages.push({role:'user',content:text},{role:'assistant',content:'Сохранил указанный факт в общую память. Личная память не изменена.'});
+          activeChatForPrivacy.messages.push({role:'user',content:'[Команда сохранения факта в общую память; значение не дублируется в истории чата.]'},{role:'assistant',content:'Сохранил указанный факт в общую память. Личная память не изменена.'});
           input.value=''; updateState([...chats]); return;
         }
       }
