@@ -49,10 +49,10 @@ test('PDF attachment is extracted only by the configured aLandi gateway before m
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
     await page.locator('#legacyProviderSettings > summary').click();
   }
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('e2e-local-model');
-  await page.locator('#apiKey').fill('d'.repeat(64));
+  await page.locator('#cloudBaseUrl').fill('https://api.example.test/v1');
+  await page.locator('#cloudModel').fill('e2e-local-model');
+  await page.locator('#cloudApiKey').fill('d'.repeat(64));
+  await page.locator('[data-action="select-alandi-primary"]').click();
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
   await chooseSearchMode(page, 'offline');
