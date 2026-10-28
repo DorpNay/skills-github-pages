@@ -125,3 +125,11 @@ PR #53 merged opt-in local transcription for audio files attached from disk; no 
 - **Ограничения:** пустая переменная модели отключает endpoint; общий inference semaphore не позволяет помощнику конкурировать без лимита с основной моделью; keep_alive=0; вход и выход фильтруются от типичных секретов; нет автозаписи, cloud fallback или model override от браузера.
 - **Gate:** точные gateway tests + Chromium E2E + security/context/integrity/Jekyll + published-site smoke + provenance; затем документационный статус merge. Live inference и RAM/latency на VPS остаются отдельными задачами.
 - **Статус:** реализация на feature branch, CI ожидается; не активировать на VPS до выбора и установки модели.
+
+## Проверенный срез реализации — 2026-10-28
+
+- **PR #76 merged:** Graphify code-only navigation is now run on meaningful source/architecture changes and weekly. Current artifact: 965 nodes, 2706 edges, 59 files; useful for impact navigation, not runtime proof.
+- **PR #72 merged:** compact search/functions menus, separate processing mode vs search depth, per-chat preferences, honest connector state and browser regression coverage. Exact-head Quality/Chromium/published-site smoke passed.
+- **PR #77 merged:** RRF combines FTS5/BM25 and lexical-concept-graph candidate ranks with deterministic ordering. Exact-head Gateway tests, Quality/Chromium/published-site smoke passed. RAG remains disabled by default; no production relevance improvement is claimed without a labelled >=50-query set.
+- **Post-merge gate:** after rapid merges, verify Quality, Pages, Graphify and provenance on the latest exact `main` SHA before calling the new main fully verified.
+- **Next priorities:** preserve and update unique audit documents from superseded PR #70 and draft PR #74; then implement one next bounded gap (delta-sync conflict/recovery UX or safe static-asset/CSP groundwork) after checking actual current code and relevant ADRs. Do not add a parallel framework, vector database or model runtime without measured need.
