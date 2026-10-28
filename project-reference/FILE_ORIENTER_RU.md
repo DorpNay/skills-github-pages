@@ -185,3 +185,12 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - PR #78 remains the documentation reconciliation PR and should be reviewed after implementation PRs #80–#86. Its current head before this refresh was `3de8980a9b8a298a6d7fcdc8a288e13c9dd62891`; a docs update requires fresh exact-head checks.
 - PR #85 CI is green, but voice-license review and live microphone/device/VPS tests are not done.
 - No merge, deployment, model pull, driver installation or production change was performed.
+
+
+## Checkpoint — launch landing and first stack (2026-10-28)
+
+- PR #87 (`feat/launch-landing-stack-20261028`) HEAD `01040fed70e323018bd2de1173a161b13e496123`: Quality `40718463517` passed all six jobs, including 68 Chromium E2E tests and published Pages smoke; Graphify `40718463612` passed. Landing lives at `/landing/` only after merge/deployment; root app is preserved.
+- The first Chromium run exposed unprocessed Jekyll Liquid placeholders in the landing URL; explicit front matter (`layout: null`, `permalink: /landing/`) fixed the output and the exact-head browser suite passed.
+- Added `docs/PRE_LAUNCH_STACK_RU.md` with a personal/closed beta stack and gates, plus `docs/LAUNCH_PRIVACY_REVIEW_RU.md` as an internal input checklist—not a publishable legal notice. Recommended first stack: existing GitHub Pages UI, FastAPI/systemd, one Ollama model candidate, Cloudflare Tunnel to loopback, no open origin ports; benchmark before declaring model fit.
+- Nine PRs are open (#78, #80–#87); no non-PR issues were open in the last live check. Keep #78 last because it reconciles overlapping state/docs. Do not merge or deploy without direct authorization.
+- Owner-side gates remain: confirm the VPS/domain/budget, inventory the existing host, safeguard and test backups, run local auth/model/cache gates before configuring the Tunnel, then test reboot, restore/rollback and target-device behavior. Gateway, model, voice/doc flags and production runtime remain unverified.

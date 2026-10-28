@@ -92,3 +92,14 @@
 - PR #78 HEAD `3de8980a9b8a298a6d7fcdc8a288e13c9dd62891`: Quality `40684455984` (all six jobs passed), Lite Gateway `40684455890`, Dead Code `40684455906`, and Provenance `40684455929` succeeded. This is the pre-refresh head; any new docs commit requires fresh exact-head checks.
 - PR #85 HEAD `bd33425c836bb5f8e2c72c28b05ff86ccdfc417b`: Quality `40675123823` and Dead Code `40675123853` succeeded. Voice license review and live device/VPS acceptance remain owner-side gaps.
 - No PR was merged and no runtime, model, driver, or VPS state was changed.
+
+
+## V-2026-10-28-LANDING-STACK-001 — лендинг, первый стек и owner-side gates
+
+- Создан draft PR #87 на ветке `feat/launch-landing-stack-20261028`; HEAD `01040fed70e323018bd2de1173a161b13e496123`. Новая страница `landing/index.html` имеет permalink `/landing/` и не заменяет корневой AI Mobile Agent.
+- На точном HEAD Quality Sentinels `40718463517` прошёл 6/6 jobs; Chromium E2E `122922499046` прошёл 68 tests и опубликованный Pages smoke. Graphify `40718463612` также green.
+- Первый E2E нашёл оставшиеся буквальными Liquid URL placeholders; добавлен Jekyll front matter `layout: null`, `permalink: /landing/`, после чего exact-head браузерная проверка прошла.
+- Добавлены `docs/PRE_LAUNCH_STACK_RU.md` (первый стек, порядок локальных API gates, Tunnel, backup/rollback и Definition of Done), `docs/LAUNCH_PRIVACY_REVIEW_RU.md` (внутренняя карта потоков и owner questions, не публичная юридическая политика), README ссылки и `tests/e2e/landing.spec.mjs`.
+- Рекомендованный первый контур: GitHub Pages + текущий UI; FastAPI/systemd, Ollama с одной моделью-кандидатом `qwen3.5:4b`, context=4096/concurrency=1; Cloudflare Tunnel → loopback gateway; порты 8000/11434 не публиковать. Измерения модели на хосте не выполнены; документы/голос выключены до отдельных gates; публичный multi-user SaaS не заявляется.
+- Владелец всё ещё должен подтвердить наличие/состояние VPS, домен/Cloudflare и бюджет, безопасно выполнить host inventory, установить gateway/model только после backup и проверить /healthz=200, unauthorized /v1/models=401, allowlist, completion, cache MISS/HIT, loopback-only binding, Tunnel/HTTPS, reboot, backup restore и rollback. Ни ключи, ни серверы нами не менялись.
+- PR #87 остаётся draft и не опубликован; PR #78 также остаётся open. Merge/deploy не выполнялись.
