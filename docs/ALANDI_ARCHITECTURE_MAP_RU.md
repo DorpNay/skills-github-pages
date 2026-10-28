@@ -1,6 +1,6 @@
 # aLandi — карта архитектуры и модулей
 
-**Срез:** `main` = `3887b408988e0476251736a8e7a3e3374eb2ce58`.  
+**Срез:** ветка `feat/privacy-scoped-memory-20261028`, обновлено 2026-10-28. Это схема PR-ветки, не текущего `main`; точный HEAD проверяй в PR #86.  
 **Тип:** кураторская схема границ модулей по дереву репозитория и фактическим route/function declarations. Это **не** автоматически извлечённый call graph и не доказательство live deployment.
 
 ## 1. Системная схема
@@ -8,6 +8,7 @@
 ```mermaid
 flowchart TD
   User[Пользователь] --> UI[GitHub Pages UI / index.md]
+  UI <--> BrowserMemory[Browser IndexedDB: private/shared stores]
   UI -->|HTTPS / provider API| Providers[Внешние LLM providers]
   UI -->|HTTPS + Bearer, если настроен| Tunnel[Cloudflare Tunnel / не подтверждён live]
   Tunnel --> GW[FastAPI gateway/app.py]
@@ -37,6 +38,7 @@ flowchart TD
 | Контур | Точки входа | Что важно |
 |---|---|---|
 | Клиент | `index.md` | Большой статический HTML/JS; история и настройки в браузере. Browser API keys не являются server-side vault. |
+| Browser memory | `index.md`: `MemoryDB`, `SharedMemoryDB`, `privateMemoryUsed` | Раздельные IndexedDB stores; явное подтверждение переноса и opt-in общей памяти; чат с приватным контекстом остаётся на `alandi`. Не шифруется приложением и не синхронизируется между устройствами. |
 | Gateway | `gateway/app.py`, `gateway/README_RU.md` | FastAPI: health/capabilities/models/chat, admin, memory, RAG, search, documents, audio. VPS не подтверждён live. |
 | Routing | `gateway/routing.py` | Детерминированная allowlist-политика; общий helper-model cascade не считать включённым. |
 | Memory graph | `gateway/memory/manager.py`, `scope.py`, `conflict.py`, `temporal.py` | SQLite, scope, provenance, статусы фактов; API opt-in. Это граф памяти продукта, не граф исходного кода. |
@@ -69,7 +71,7 @@ flowchart TD
 - Release: Quality Sentinels, Pages deployment/browser smoke, provenance gate. Проверять exact PR HEAD, затем post-merge main.
 - Для memory: project scope, candidate/confirmed, deletion propagation и recovery semantics.
 
-## 5. Graphify — следующий эксперимент, не runtime-интеграция
+## 5. Graphify — code-only CI navigation, не runtime-интеграция
 
 Источники: [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify), [quickstart](https://docs.graphify.com/quickstart), [pyproject.toml](https://github.com/Graphify-Labs/graphify/blob/v8/pyproject.toml).
 
@@ -102,3 +104,11 @@ flowchart TD
 - Workflow `.github/workflows/graphify-pilot.yml` запускается при изменении самого workflow на `main`, при PR с изменением workflow/ignore/architecture map и вручную через `workflow_dispatch`.
 - Разрешения: только `contents: read`; checkout не сохраняет credentials; semantic/model processing отключён.
 - Результат хранится как краткоживущий artifact, не коммитится. После выполнения нужно проверить отчёт и минимум 10 навигационных вопросов; один лишь зелёный exit code не доказывает полезность графа.
+
+## 6. Граница приватной памяти в браузере (PR #86)
+
+- `Запомни:` обрабатывается до вызова провайдера; команда сохраняется в private IndexedDB и не дублируется в истории чата. `Сохрани в общую память:` пишет в отдельный store после подтверждения.
+- При включении личного факта в контекст чат получает приватный маркер; `requestChatCompletion()` вызывает `getApiCandidates()`, а приватный контекст ограничивает маршрут `alandi`. Это защита маршрута, а не шифрование browser storage.
+- E2E покрывает команды без provider request, раздельные stores, запрет внешнего маршрута после reload и upgrade IndexedDB v1→v2 без переноса старых фактов в shared store.
+- Текущий Graphify AST уверенно показывает `runAssistant → requestChatCompletion → getApiCandidates`, но не создаёт отдельные callable nodes для методов `MemoryDB` / `SharedMemoryDB` как object literals и для свойства `privateMemoryUsed`. Поэтому граф — навигация, а не замена прямому чтению кода и E2E.
+- Стандартные 10 Graphify-запросов используют бюджет 700 токенов; 9 из 10 результатов в последнем прогоне были усечены. Добавлен отдельный privacy-route query с большим бюджетом; проверяй его точный результат в артефакте CI.

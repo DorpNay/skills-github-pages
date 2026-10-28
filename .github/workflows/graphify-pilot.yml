@@ -145,7 +145,7 @@ jobs:
             echo "### HTML export"
             graphify export html
             echo
-            echo "### Ten focused navigation queries"
+            echo "### Ten focused navigation queries plus private-memory route trace"
             while IFS='|' read -r label query; do
               [ -z "$label" ] && continue
               echo
@@ -163,6 +163,9 @@ jobs:
           Document extraction|extract_document
           Evidence provenance|EvidenceLedger CitationManager
           EOF
+            echo
+            echo "### Private-memory provider boundary (targeted query)"
+            graphify query "requestChatCompletion getApiCandidates" --context call --budget 2200
             echo
             echo "### Graph coverage metrics"
             python - <<'PY'
