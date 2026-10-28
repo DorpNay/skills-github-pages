@@ -200,3 +200,13 @@
 - **Автономность:** aLandi может выполнять ограниченные разрешённые задачи в отсутствие владельца, проводить проверки и готовить PR с обоснованием, результатами тестов, известными рисками и инструкцией отката.
 - **Контроль:** только владелец принимает финальное решение о слиянии в `main`. Успешные тесты не дают агенту права на merge.
 - **Приёмка:** проверить удобство базовых и расширенных сценариев, непрерывность контекста, изоляцию доступа, границы исполнения и обязательное подтверждение merge. До получения доказательств тестирования и развёртывания не считать функциональность реализованной.
+
+## D-016 — Fuse scoped RAG rankings with Reciprocal Rank Fusion
+
+- **Status:** merged in PR #77 at `91557e4eab1b122341bed578cdf4775ff867007f`; exact-head Gateway and Quality/Chromium/published-site gates passed.
+- **Decision:** combine FTS5/BM25 and lexical-concept-graph candidate lists by rank positions, using RRF with `k=60`, stable SQL tie-breaks, and bounded input lists. Do not add raw BM25 and hand-scaled concept scores.
+- **Invariants:** preserve scope filters, scoped document/chunk IDs, source URI/page provenance, upsert/delete behavior and the existing API/schema. `ALANDI_RAG_ENABLED=false` remains the default.
+- **Interpretation:** fused values are ranking scores, not calibrated confidence/probability. This is a ranking baseline, not a claim that relevance improved on real data.
+- **Acceptance:** deterministic RRF and retrieval-contract tests plus the existing synthetic six-layer evaluation must pass. Before promoting a quality claim, compare baseline vs RRF on the same labelled set of >=50 queries using Recall@5, MRR/nDCG, citation correctness, latency and peak RSS; verify scope isolation and source deletion.
+- **Rollback:** revert PR #77; if an operational issue requires an immediate stop, leave RAG disabled. Do not add embeddings/reranking until the golden set shows a measurable benefit.
+- **Reference:** Cormack, Clarke & Büttcher, SIGIR 2009, https://cormack.uwaterloo.ca/cormacksigir09-rrf.pdf.
