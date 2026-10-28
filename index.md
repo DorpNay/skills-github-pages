@@ -418,7 +418,7 @@ permalink: /
         <label for="cloudBaseUrl" data-i18n="cloudBaseUrl" class="block text-xs text-gray-400">Адрес твоего gateway</label>
         <input id="cloudBaseUrl" type="url" autocomplete="url" class="w-full p-2.5 rounded-xl border text-sm" placeholder="https://твой-домен.example/v1">
         <label for="cloudModel" data-i18n="cloudModel" class="block text-xs text-gray-400">Модель gateway</label>
-        <input id="cloudModel" type="text" autocomplete="off" class="w-full p-2.5 rounded-xl border text-sm" value="qwen3.5:4b" placeholder="Точный ID модели на gateway">
+        <input id="cloudModel" type="text" autocomplete="off" class="w-full p-2.5 rounded-xl border text-sm" value="alandi-huihui-qwen35-4b" placeholder="Точный ID модели на gateway">
         <label for="cloudApiKey" data-i18n="cloudApiKey" class="block text-xs text-gray-400">Ключ доступа к твоему gateway</label>
         <div class="cloud-key-row flex gap-2">
           <input id="cloudApiKey" type="password" autocomplete="off" class="min-w-0 flex-1 p-2.5 rounded-xl border text-sm" placeholder="Введи ключ gateway">
@@ -718,7 +718,7 @@ permalink: /
       openrouter: { label: 'OpenRouter', docsUrl: 'https://openrouter.ai/settings/keys', baseUrl: 'https://openrouter.ai/api/v1', models: [['openrouter/free','Автовыбор бесплатной модели'], ['deepseek/deepseek-r1:free','DeepSeek R1 · free (если доступна)']] },
       nvidia: { label: 'NVIDIA NIM', docsUrl: 'https://build.nvidia.com/settings', baseUrl: 'https://integrate.api.nvidia.com/v1', models: [['z-ai/glm-5.3','GLM-5.3 · reasoning/coding'], ['openai/gpt-oss-20b','GPT-OSS 20B · reasoning']] },
       huggingface: { label: 'Hugging Face Inference Providers', docsUrl: 'https://huggingface.co/settings/tokens', baseUrl: 'https://router.huggingface.co/v1', models: [['openai/gpt-oss-120b:fastest','GPT-OSS 120B · fastest'], ['deepseek-ai/DeepSeek-R1:fastest','DeepSeek R1 · fastest'], ['openai/gpt-oss-120b:cheapest','GPT-OSS 120B · cheapest']] },
-      alandi: { label: 'aLandi Self-hosted Gateway', docsUrl: 'https://github.com/DorpNay/skills-github-pages/blob/main/docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md', baseUrl: '', models: [['qwen3.5:4b','Qwen3.5 4B · локальный сервер']] },
+      alandi: { label: 'aLandi Self-hosted Gateway', docsUrl: 'https://github.com/DorpNay/skills-github-pages/blob/main/docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md', baseUrl: '', models: [['alandi-huihui-qwen35-4b','Qwen3.5 4B · локальный сервер']] },
       kilo: { label: 'Kilo AI Gateway · Auto Free', docsUrl: 'https://kilo.ai/docs/gateway', baseUrl: 'https://api.kilo.ai/api/gateway', models: [['kilo-auto/free','Kilo Auto Free · dynamic routing']] },
       custom: { label: 'Свой API', baseUrl: '', docsUrl: '', models: [['custom','Ввести имя модели вручную']] }
     };
@@ -2218,7 +2218,7 @@ permalink: /
       } else if(initial&&!safeGet(STORAGE.baseUrl)) $('baseUrl').value=config.baseUrl;
       $('apiKey').value=safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'';
       const hints={
-        alandi:'Частный локальный gateway. Base URL — HTTPS-хост туннеля с окончанием /v1; Model — точный тег Ollama, например qwen3.5:4b. API Key — ALANDI_API_KEY из закрытого файла на VPS. Отключите межпровайдерный fallback, чтобы приватные запросы не отправлялись другим провайдерам.',
+        alandi:'Частный локальный gateway. Base URL — HTTPS-хост туннеля с окончанием /v1; Model — точный тег Ollama, например alandi-huihui-qwen35-4b. API Key — ALANDI_API_KEY из закрытого файла на VPS. Отключите межпровайдерный fallback, чтобы приватные запросы не отправлялись другим провайдерам.',
         custom:'Введите Base URL, имя модели и ключ своего OpenAI-совместимого API. Совместимость и CORS зависят от поставщика.',
         pollinations:'Pollinations: сюда вставляется App Key pk_… (не секретный sk_ токен). Зарегистрируйте точный Redirect URI в настройках App Key, затем нажмите «Подключить аккаунт»: OAuth PKCE хранит временный access token только в sessionStorage этой вкладки. Модели могут потреблять Pollen согласно бюджету.',
         huggingface:'Hugging Face Inference Providers: нужен fine-grained token с разрешением “Make calls to Inference Providers”. Endpoint router.huggingface.co/v1; модели должны быть из каталога и поддерживать Chat Completions.',
@@ -2246,7 +2246,7 @@ permalink: /
       applyAppearance($('uiTheme').value, $('uiMotion').value);
       const savedProvider=safeGet(STORAGE.provider);
       $('cloudBaseUrl').value=safeGet('ai_alandi_cloud_base_url')||(savedProvider==='alandi'?safeGet(STORAGE.baseUrl):'')||'';
-      $('cloudModel').value=safeGet('ai_alandi_cloud_model')||(savedProvider==='alandi'?safeGet(STORAGE.model):'')||'qwen3.5:4b';
+      $('cloudModel').value=safeGet('ai_alandi_cloud_model')||(savedProvider==='alandi'?safeGet(STORAGE.model):'')||'alandi-huihui-qwen35-4b';
       $('cloudApiKey').value=safeGet(providerKeyStorage('alandi'))||'';
       if (savedProvider && savedProvider !== 'gemini') {
         const legacyKey = safeGet(STORAGE.apiKey);
@@ -2262,7 +2262,7 @@ permalink: /
       const provider=modelMode==='self-hosted'?'alandi':(providerCandidate==='alandi'?'kilo':providerCandidate);
       if (modelMode === 'self-hosted') {
         safeSet(STORAGE.baseUrl, safeGet('ai_alandi_cloud_base_url') || '');
-        safeSet(STORAGE.model, safeGet('ai_alandi_cloud_model') || 'qwen3.5:4b');
+        safeSet(STORAGE.model, safeGet('ai_alandi_cloud_model') || 'alandi-huihui-qwen35-4b');
       } else if (savedProvider !== provider) {
         safeSet(STORAGE.baseUrl, provider === 'custom' ? '' : getProviderBaseUrl(provider));
         safeSet(STORAGE.model, PROVIDERS[provider]?.models?.[0]?.[0] || DEFAULT_MODEL);
@@ -2270,17 +2270,17 @@ permalink: /
       if (savedProvider && !Object.prototype.hasOwnProperty.call(PROVIDERS,savedProvider)) {
         // A removed provider preset must not leave a stale endpoint active.
         safeSet(STORAGE.baseUrl, '');
-        safeSet(STORAGE.model, 'qwen3.5:4b');
+        safeSet(STORAGE.model, 'alandi-huihui-qwen35-4b');
       }
 
       $('providerPreset').value=provider;
       const savedProviderMatchesMode=savedProvider===provider;
       const storedBaseUrl=modelMode==='self-hosted'?(safeGet('ai_alandi_cloud_base_url')||''):(provider==='custom'?(savedProviderMatchesMode?safeGet(STORAGE.baseUrl)||'':''):getProviderBaseUrl(provider));
       $('baseUrl').value=storedBaseUrl;
-      $('modelName').value=modelMode==='self-hosted'?(safeGet('ai_alandi_cloud_model')||'qwen3.5:4b'):(savedProviderMatchesMode?(safeGet(STORAGE.model)||(PROVIDERS[provider]?.models[0]?.[0]||DEFAULT_MODEL)):(PROVIDERS[provider]?.models[0]?.[0]||DEFAULT_MODEL));
+      $('modelName').value=modelMode==='self-hosted'?(safeGet('ai_alandi_cloud_model')||'alandi-huihui-qwen35-4b'):(savedProviderMatchesMode?(safeGet(STORAGE.model)||(PROVIDERS[provider]?.models[0]?.[0]||DEFAULT_MODEL)):(PROVIDERS[provider]?.models[0]?.[0]||DEFAULT_MODEL));
       applyProviderPreset($('providerPreset').value,true);
       $('baseUrl').value=storedBaseUrl;
-      $('modelName').value=modelMode==='self-hosted'?(safeGet('ai_alandi_cloud_model')||'qwen3.5:4b'):(savedProviderMatchesMode?(safeGet(STORAGE.model)||$('modelName').value):$('modelName').value);
+      $('modelName').value=modelMode==='self-hosted'?(safeGet('ai_alandi_cloud_model')||'alandi-huihui-qwen35-4b'):(savedProviderMatchesMode?(safeGet(STORAGE.model)||$('modelName').value):$('modelName').value);
       populateModelPresets($('providerPreset').value,$('modelName').value);
       $('tavilyKey').value = safeGet(STORAGE.tavilyKey) || '';
       const savedPrompt = safeGet(STORAGE.systemPrompt);
@@ -4874,7 +4874,7 @@ permalink: /
     });
     $('modelModeSelect').addEventListener('change',()=>{void setModelMode($('modelModeSelect').value);});
     $('composerPositionSelect').addEventListener('change',()=>applyComposerPosition($('composerPositionSelect').value));
-    $('providerPreset').addEventListener('change',()=>{safeSet(STORAGE.modelMode,'free-cloud');applyModelModeUI();applyProviderPreset($('providerPreset').value);safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();if(currentProvider()==='pollinations'||currentProvider()==='kilo'||getProviderRequestKey(currentProvider()))void refreshModelCatalog({quiet:true,force:false,provider:currentProvider()});});
+    $('providerPreset').addEventListener('change',()=>{if(currentProvider()==='alandi'){void setModelMode('self-hosted');return;}safeSet(STORAGE.modelMode,'free-cloud');applyModelModeUI();applyProviderPreset($('providerPreset').value);safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();if(currentProvider()==='pollinations'||currentProvider()==='kilo'||getProviderRequestKey(currentProvider()))void refreshModelCatalog({quiet:true,force:false,provider:currentProvider()});});
     $('cloudflareAccountId').addEventListener('input',()=>{
       const id=$('cloudflareAccountId').value.trim();safeSet(STORAGE.cloudflareAccountId,id);
       if(currentProvider()==='cloudflare')$('baseUrl').value=getProviderBaseUrl('cloudflare');
