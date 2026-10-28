@@ -3576,6 +3576,9 @@ permalink: /
       const apiKey = getConfiguredApiKey();
       const model = safeGet(STORAGE.model) || (PROVIDERS[selectedProvider]?.models?.[0]?.[0]||DEFAULT_MODEL);
       const activeProject=getProjectForChat(chat);
+      const latestUserMessage=[...chat.messages].reverse().find(message=>message.role==='user');
+      const latestUserText=typeof latestUserMessage?.content==='string'?latestUserMessage.content:'';
+      const workspaceToolsRequested=/(создай.{0,20}проект|проект(?:а|е|у|ом|ы)?|диаграмм|mermaid|студи|добавь.{0,30}памят|сохрани.{0,30}(?:проект|памят)|create.{0,20}project|project.{0,20}(?:create|note|memory)|diagram|studio|remember.{0,20}(?:project|memory))/iu.test(latestUserText);
       const requestProjects=[...new Set((Array.isArray(requestProjectIds)?requestProjectIds:[]).filter(id=>typeof id==='string'))].slice(0,5).map(id=>projects.find(project=>project.id===id)).filter(Boolean);
       const projectScopes=[activeProject,...requestProjects].filter(Boolean);
       const scopeAllowsGlobal=projectScopes.length===0||projectScopes.every(project=>project.memoryScope==='project-and-global');
@@ -3630,7 +3633,7 @@ permalink: /
 
       const messagesForCache = [{ role: 'system', content: systemPrompt }, ...buildHistory(chat.messages, systemPrompt.length)];
       const cacheKey = await makeCacheKey({ provider: safeGet(STORAGE.provider)||'alandi', endpoint: baseUrl, model, messages: messagesForCache, request: { stream: false, temperature: (safeGet(STORAGE.provider)==='alandi'?0:null) } });
-      if (!useSearch && !skipCache && !useMultiAgent && requestImages.length===0) {
+      if (!useSearch && !skipCache && !useMultiAgent && !workspaceToolsRequested && requestImages.length===0) {
         const cached = await CacheDB.get(cacheKey);
         if (cached) {
           chat.messages.push({ role: 'assistant', content: `${cached}\n\n*(из локального кэша)*`, providerInfo:{provider:'cache',providerLabel:'Локальный кэш',model:'cache'} });
@@ -3638,7 +3641,7 @@ permalink: /
         }
       }
 
-      const tools = useSearch ? [
+      const webTools = useSearch ? [
         { type: 'function', function: {
           name: 'web_search',
           description: 'Поиск в интернете через Tavily, если ключ настроен. Используй для общего веб-поиска и свежих страниц.',
@@ -3657,7 +3660,30 @@ permalink: /
           description: 'Прочитать публичную HTTPS-страницу по известному URL и извлечь основной текст. Чтение может не сработать из-за CORS, авторизации, paywall или защиты сайта.',
           parameters: { type: 'object', properties: { url: { type: 'string', description: 'Полный публичный HTTPS URL страницы' } }, required: ['url'], additionalProperties: false }
         }}
-      ] : undefined;
+      ] : [];
+      const workspaceTools = workspaceToolsRequested ? [
+        { type: 'function', function: {
+          name: 'project_list',
+          description: 'List this browser profile’s own aLandi projects. Returns only project IDs, names, update timestamps, and which project is attached to the current chat. Never exposes project memory notes unless separately requested.',
+          parameters: { type: 'object', properties: {}, additionalProperties: false }
+        }},
+        { type: 'function', function: {
+          name: 'project_create',
+          description: 'Create a project in the current user’s local aLandi browser storage and attach the current chat to it. Use only when the user asks to create a project. This does not sync to a server or other devices.',
+          parameters: { type: 'object', properties: { name: { type: 'string', minLength: 1, maxLength: 100 }, description: { type: 'string', maxLength: 1000 }, instructions: { type: 'string', maxLength: 6000 } }, required: ['name'], additionalProperties: false }
+        }},
+        { type: 'function', function: {
+          name: 'project_add_note',
+          description: 'Add one explicit user-requested note to a project in this browser profile. Requires a known project_id or the current chat to belong to a project. This is a write to local project memory; never invent project IDs.',
+          parameters: { type: 'object', properties: { project_id: { type: 'string', maxLength: 128 }, note: { type: 'string', minLength: 1, maxLength: 600 } }, required: ['note'], additionalProperties: false }
+        }},
+        { type: 'function', function: {
+          name: 'diagram_create',
+          description: 'Create Mermaid diagram source directly for the current chat (no studio modal). Use only for a user-requested diagram. The validated source will be returned in the chat; this client does not currently render Mermaid into a visual image.',
+          parameters: { type: 'object', properties: { title: { type: 'string', maxLength: 120 }, diagram_type: { type: 'string', enum: ['flowchart TD','flowchart LR','sequenceDiagram','stateDiagram-v2','erDiagram','classDiagram','gantt','timeline'] }, mermaid_source: { type: 'string', minLength: 1, maxLength: 12000 } }, required: ['diagram_type','mermaid_source'], additionalProperties: false }
+        }}
+      ] : [];
+      const tools = [...webTools, ...workspaceTools];
 
       const extendedSearch = chat.searchMode === 'more';
       const extendedToolBudget = mode === 'deep' || extendedSearch;
@@ -3677,9 +3703,9 @@ permalink: /
             lastUserMessage.content=[{type:'text',text:textPart},...requestImages.slice(0,8).map(image=>({type:'image_url',image_url:{url:image.dataUrl,detail:'auto'}}))];
           }
         }
-        const localDeterministic = safeGet(STORAGE.provider)==='alandi' && !useSearch && !useMultiAgent && !tools;
+        const localDeterministic = safeGet(STORAGE.provider)==='alandi' && !useSearch && !useMultiAgent && tools.length===0;
         const body = { model, messages: apiMessages, stream: false, ...(localDeterministic ? {temperature:0} : {}) };
-        if (tools && round < maxToolRounds && executedToolCalls < maxToolCallsPerRun) { body.tools = tools; body.tool_choice = 'auto'; }
+        if (tools.length > 0 && round < maxToolRounds && executedToolCalls < maxToolCallsPerRun) { body.tools = tools; body.tool_choice = 'auto'; }
         showStatus(round === 0 ? '🤖 Ожидание ответа модели…' : '🧠 Модель обрабатывает результаты поиска…');
         const data = await requestChatCompletion(body, signal, round === 0 ? 'Основной ответ' : 'Продолжение после инструмента');
         const message = data?.choices?.[0]?.message;
@@ -3707,11 +3733,6 @@ permalink: /
           hideStatus();
           if (assistantMessage.content && !useSearch && !skipCache && !useMultiAgent) await CacheDB.set(cacheKey, assistantMessage.content);
           return;
-        }
-        if (!useSearch) {
-          toolCalls.forEach((toolCall) => chat.messages.push({ role: 'tool', tool_call_id: toolCall.id, content: 'Инструменты отключены.' }));
-          updateState([...chats]);
-          throw new Error('Модель попыталась вызвать инструмент, хотя веб-поиск выключен.');
         }
         if (round === maxToolRounds) {
           assistantMessage.content = getUiLanguage() === 'en'
@@ -3745,14 +3766,52 @@ permalink: /
             result = 'Повторный идентичный вызов подавлен, чтобы не расходовать бюджет инструментов.';
           } else if (index >= maxToolCallsPerRound || executedToolCalls >= maxToolCallsPerRun) {
             result = 'Вызов пропущен: достигнут ограниченный бюджет инструментов для текущего запуска.';
-          } else if (!['web_search', 'public_knowledge_search', 'read_webpage'].includes(name)) {
+          } else if (['web_search', 'public_knowledge_search', 'read_webpage'].includes(name) && !useSearch) {
+            result = 'Веб-поиск выключен для этого запроса. Используй только локальные инструменты.';
+          } else if (!['web_search','public_knowledge_search','read_webpage','project_list','project_create','project_add_note','diagram_create'].includes(name)) {
             result = 'Инструмент ' + String(name || 'без имени') + ' не поддерживается.';
           } else {
             seenToolCallKeys.add(toolSignature);
             executedToolCalls++;
             try {
               const args = JSON.parse(toolCall.function?.arguments || '{}');
-              if (name === 'web_search') {
+              if (name === 'project_list') {
+                result = JSON.stringify({scope:'current-browser-profile',current_chat_project_id:chat.projectId||null,projects:projects.slice(0,200).map(project=>({id:project.id,name:project.name,updatedAt:project.updatedAt||'',is_current_chat_project:project.id===chat.projectId}))});
+              } else if (name === 'project_create') {
+                const nameValue=typeof args.name==='string'?args.name.trim().slice(0,100):'';
+                if(!nameValue) result='Ошибка инструмента: требуется непустое имя проекта.';
+                else if(projects.length>=200) result='Создание остановлено: достигнут предел 200 локальных проектов.';
+                else {
+                  const existing=projects.find(project=>String(project.name||'').trim().toLocaleLowerCase()===nameValue.toLocaleLowerCase());
+                  const now=new Date().toISOString();
+                  const project=existing||{id:projectIdNew(),name:nameValue,description:typeof args.description==='string'?args.description.trim().slice(0,1000):'',instructions:typeof args.instructions==='string'?args.instructions.trim().slice(0,6000):'',memoryScope:'project-only',memory:[],createdAt:now,updatedAt:now};
+                  if(!existing)projects.unshift(project);
+                  project.updatedAt=now;selectedProjectForSettingsId=project.id;chat.projectId=project.id;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
+                  persistProjects();persistChats();renderProjectUI();renderChatList();renderRequestProjectChoices();updateState([...chats]);
+                  result=JSON.stringify({ok:true,created:!existing,scope:'current-browser-profile',project:{id:project.id,name:project.name},current_chat_attached:true,sync:'not-enabled'});
+                }
+              } else if (name === 'project_add_note') {
+                const note=typeof args.note==='string'?args.note.trim().slice(0,600):'';
+                const projectId=typeof args.project_id==='string'&&args.project_id.trim()?args.project_id.trim():chat.projectId||selectedProjectForSettingsId;
+                const project=projects.find(item=>item.id===projectId);
+                if(!note) result='Ошибка инструмента: заметка пуста.';
+                else if(!project) result='Запись не выполнена: выбери существующий проект или сначала создай проект. Ничего не сохранено.';
+                else if(!Array.isArray(project.memory)) project.memory=[];
+                else if(project.memory.length>=500) result='Запись остановлена: достигнут предел 500 заметок проекта.';
+                if(!result && project) {
+                  const normalized=note.toLocaleLowerCase().replace(/[\\s\\u00a0]+/g,' ');
+                  const duplicate=project.memory.find(item=>String(item.text||'').toLocaleLowerCase().replace(/[\\s\\u00a0]+/g,' ')===normalized);
+                  if(duplicate) result=JSON.stringify({ok:true,duplicate:true,project_id:project.id,note_id:duplicate.id});
+                  else {const entry={id:projectIdNew(),text:note,createdAt:new Date().toISOString()};project.memory.push(entry);project.updatedAt=entry.createdAt;persistProjects();renderProjectUI();result=JSON.stringify({ok:true,project_id:project.id,note_id:entry.id,scope:'project-only'});}
+                }
+              } else if (name === 'diagram_create') {
+                const allowedTypes=new Set(['flowchart TD','flowchart LR','sequenceDiagram','stateDiagram-v2','erDiagram','classDiagram','gantt','timeline']);
+                const source=typeof args.mermaid_source==='string'?args.mermaid_source.trim():'';
+                const firstLine=source.split(/\\r?\\n/,1)[0].trim();
+                if(!allowedTypes.has(args.diagram_type)||!source||source.length>12000) result='Диаграмма отклонена: неизвестный тип или пустой/слишком большой исходник.';
+                else if(!firstLine.startsWith(args.diagram_type)||/<\\/?(?:script|iframe|object)|javascript:|%%\\s*\\{|^\\s*click\\s+/im.test(source)) result='Диаграмма отклонена: исходник не соответствует заявленному типу или содержит запрещённые директивы.';
+                else result='Диаграмма подготовлена прямо в чате. Это Mermaid-исходник; текущий клиент показывает его как код, не как отрендеренное изображение.\\n\\n```mermaid\\n'+source+'\\n```';
+              } else if (name === 'web_search') {
                 if (typeof args.query !== 'string' || !args.query.trim()) result = 'Ошибка инструмента: требуется непустое поле query.';
                 else result = await performTavilySearch(args.query.trim().slice(0, 500), signal, toolMode);
               } else if (name === 'public_knowledge_search') {
