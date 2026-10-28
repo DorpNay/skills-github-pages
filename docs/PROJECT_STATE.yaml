@@ -124,6 +124,7 @@ improvements:
   AI-AGENT-002: {status: "limited_existing_routing", artifact: "gateway/tools/dag_engine.py", eval: "EV-AGENT-002"}
   AI-AGENT-003: {status: "bounded_dag_prototype", artifact: "gateway/tools/dag_engine.py", eval: "EV-AGENT-003"}
   AI-AGENT-004: {status: "accepted_helper_model_design_not_runtime_wired", artifact: "DECISIONS.md; docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md", eval: "EV-AGENT-004"}
+  AI-AGENT-005: {status: "accepted_design_documented_runtime_not_implemented", artifact: "docs/AGENT_ORCHESTRATION_RESEARCH_RU.md; DECISIONS.md; docs/CODER_PACKET.md", eval: "EV-AGENT-005"}
   AI-IMAGE-001: {status: "roadmap_only_no_image_generation_runtime", artifact: "docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md; docs/V016_IMPLEMENTATION_CHECKLIST.md", eval: "EV-IMAGE-001"}
   AI-OPS-001: {status: "free_first_roadmap_no_billable_resources_provisioned", artifact: "DECISIONS.md; docs/USER_REQUEST_CHECKLIST.md", eval: "EV-OPS-001"}
   AI-MODEL-001: {status: "no_hidden_refusal_filter_policy_only_no_zero_refusal_guarantee", artifact: "DECISIONS.md", eval: "EV-MODEL-001"}
