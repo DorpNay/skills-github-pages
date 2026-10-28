@@ -177,3 +177,11 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - PR #74 closed after preserving its unique, updated `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md` in PR #79. Real VPS, microphone, model, license/hash and hardware metrics remain explicitly unverified.
 
 - Обновлено 2026-10-28: историческая ветка `feat/deployment-preflight-gates-20261028` остаётся отдельным WIP; активная реализация — PR #81 (`feat/deployment-preflight-ci-20261028`), exact-head Gateway/Quality/Graphify/dead-code checks зелёные, но live VPS/Tunnel не проверены. Очередь PR #78, #80–#86 см. в `docs/PROJECT_STATE.yaml`; PR #78 интегрировать последним после reconciliation документов. Не сливать PR и не разворачивать на VPS без прямого разрешения.
+
+
+## Checkpoint — PR queue refresh (2026-10-28)
+
+- PR #86 latest verified HEAD: `6785bb03f6975e9d60ccc8eba56b6ca207860b97`; Quality (six jobs including Chromium and published Pages smoke), Graphify, Dead Code and Provenance all green. The cancellation regression is included.
+- PR #78 remains the documentation reconciliation PR and should be reviewed after implementation PRs #80–#86. Its current head before this refresh was `3de8980a9b8a298a6d7fcdc8a288e13c9dd62891`; a docs update requires fresh exact-head checks.
+- PR #85 CI is green, but voice-license review and live microphone/device/VPS tests are not done.
+- No merge, deployment, model pull, driver installation or production change was performed.
