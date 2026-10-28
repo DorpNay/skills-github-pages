@@ -793,8 +793,9 @@ permalink: /
       const mode = getModelMode();
       if ($('modelModeSelect')) $('modelModeSelect').value = mode;
       $('cloudSettingsCard')?.classList.toggle('hidden', mode !== 'self-hosted');
-      const externalControls = ['modelSearch','modelPreset','refreshModelCatalog','baseUrl','apiKey','modelName','cloudflareAccountId'];
+      const externalControls = ['modelSearch','modelPreset','refreshModelCatalog','baseUrl','apiKey','modelName','cloudflareAccountId','allowCrossProviderFallback'];
       for (const id of externalControls) if ($(id)) $(id).disabled = mode !== 'free-cloud';
+      if (mode === 'self-hosted' && $('allowCrossProviderFallback')) { $('allowCrossProviderFallback').checked=false; safeSet(STORAGE.crossProviderFallback,'false'); }
       if ($('providerHint')) $('providerHint').textContent = mode === 'self-hosted'
         ? (getUiLanguage()==='en' ? 'Your own aLandi gateway is active. Third-party provider controls are locked until you switch modes.' : 'Активен собственный aLandi gateway. Сторонние провайдеры заблокированы, пока не переключишь режим.')
         : (getUiLanguage()==='en' ? 'Free cloud mode is active. Only the explicitly selected provider receives requests.' : 'Активен режим бесплатных облачных провайдеров. Запросы получает только явно выбранный сервис.');
@@ -2286,7 +2287,7 @@ permalink: /
       applyModelModeUI();
       applyUiLanguage(safeGet('ai_ui_language_v1')||'ru');
       updateOfflineUI(); updateModeUI(); refreshApiKeyLamp();void refreshCloudStatus();
-      void refreshConnectedModelCatalogs({ quiet: true, force: false, includeOtherProviders: safeGet(STORAGE.crossProviderFallback) === 'true' });
+      void refreshConnectedModelCatalogs({ quiet: true, force: false, includeOtherProviders: modelMode === 'free-cloud' && safeGet(STORAGE.crossProviderFallback) === 'true' });
     }
     const VALID_SEARCH_MODES = new Set(['normal','more','offline']);
     const VALID_SKILL_PRESETS = new Set(['auto','planning','research','code-review','data-analysis','agent-systems','multimodal']);
