@@ -54,6 +54,8 @@ PR #53 merged opt-in local transcription for audio files attached from disk; no 
 
 ### P3 — files, knowledge and RAG
 
+**Quality gate added:** `gateway/evals/run_rag_golden_eval.py` runs a labelled JSON dataset against the scoped FTS5 + concept-graph + RRF retriever and reports Recall@k, MRR, nDCG@k, relevant-source precision, provenance completeness and local retrieval p50/p95. The committed two-query smoke fixture checks evaluator wiring only. Before claiming relevance improvement or changing flags, collect at least 50 permissioned, de-identified, human-labelled queries; compare baseline/candidate on the same dataset and record query count, artifact/runtime details, metric deltas and latency. The evaluator does not measure generated-answer factuality or end-to-end latency.
+
 - Replace current text-only attachment with upload staging and explicit supported-type picker.
 - Ingest pipeline: MIME sniff + size/page/time limits → parser → text/table/image extraction → chunk with page/offset/source hash → preview → confirm index.
 - Stage 1: TXT/MD/CSV/JSON/LOG; then PDF and DOCX; XLSX tables/formulas; images OCR; audio transcription; video keyframes/transcript only after worker contract.
