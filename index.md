@@ -139,6 +139,12 @@ permalink: /
     @media (prefers-reduced-motion:reduce) { .voice-menu { animation:none!important; } }
     .chat-row { position:relative; min-height:44px; }
     #composerFooter { position:relative; }
+    body.composer-top #composerFooter { order:1; margin-top:.35rem; border-top:0; border-bottom:1px solid var(--ui-border); }
+    body.composer-top #searchStatus { order:2; }
+    body.composer-top #chatBox { order:3; }
+    body.composer-top .composer-popover { top:calc(100% + 8px); bottom:auto; }
+    body.composer-top #userInput { align-self:stretch; }
+    #userInput { max-height:min(40dvh, 320px); overflow-y:auto; }
     .composer-popover { position:absolute;left:8px;bottom:calc(100% + 8px);z-index:100;width:min(92vw,330px);padding:8px;border:1px solid var(--ui-border);border-radius:18px;background:color-mix(in srgb,var(--ui-surface) 94%,transparent);backdrop-filter:blur(26px) saturate(150%);-webkit-backdrop-filter:blur(26px) saturate(150%);box-shadow:0 20px 55px rgb(0 0 0 / 40%); }
     .composer-popover-option { display:flex;align-items:center;gap:11px;width:100%;padding:12px;border-radius:12px;text-align:left; }
     .composer-popover-option:hover { background:var(--ui-tiffany-soft); }
@@ -391,6 +397,14 @@ permalink: /
   <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="settings-surface bg-gray-800 p-4 rounded-xl max-w-sm mx-auto w-full border border-gray-700 space-y-2.5 my-auto max-h-[90dvh] overflow-y-auto">
       <h2 id="settingsTitle" class="text-lg font-bold" data-i18n="settingsTitle">⚙️ Настройки</h2>
+      <section class="rounded-xl border border-cyan-800/60 bg-cyan-950/15 p-3 space-y-2" aria-labelledby="modelModeLabel">
+        <label id="modelModeLabel" for="modelModeSelect" class="block text-xs font-semibold text-cyan-100" data-i18n="modelModeLabel">Режим модели</label>
+        <select id="modelModeSelect" class="w-full p-2.5 rounded-xl border border-cyan-800/60 bg-gray-900 text-sm" aria-describedby="modelModeHelp">
+          <option value="self-hosted">Своя модель · aLandi gateway</option>
+          <option value="free-cloud">Бесплатные облачные провайдеры</option>
+        </select>
+        <p id="modelModeHelp" class="text-[11px] leading-relaxed text-gray-400" data-i18n="modelModeHelp">Режимы взаимоисключающие. Свой gateway не отправляет запросы сторонним провайдерам; бесплатные облачные сервисы получают данные согласно своим правилам.</p>
+      </section>
       <section id="cloudSettingsCard" class="cloud-card rounded-2xl border p-4 space-y-3" aria-labelledby="cloudCardTitle">
         <div class="flex items-start justify-between gap-3">
           <div class="min-w-0">
@@ -426,8 +440,16 @@ permalink: /
         </select>
       </section>
       <details id="legacyProviderSettings" class="settings-subpanel rounded-xl border border-gray-700">
-        <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none" data-i18n="legacySettings">Сторонние API, ключи и расширенные настройки</summary>
+        <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none" data-i18n="advancedSettingsTitle">Дополнительные настройки</summary>
         <div class="p-3 space-y-3">
+      <section class="rounded-lg border border-gray-700 bg-gray-900/70 p-3 space-y-2" aria-labelledby="composerPositionLabel">
+        <label id="composerPositionLabel" for="composerPositionSelect" class="block text-xs font-semibold" data-i18n="composerPositionLabel">Положение строки чата</label>
+        <select id="composerPositionSelect" class="w-full p-2.5 rounded-lg border border-gray-700 bg-gray-950 text-sm">
+          <option value="bottom" data-i18n="composerBottom">Снизу · привычное расположение</option>
+          <option value="top" data-i18n="composerTop">Сверху · под шапкой</option>
+        </select>
+        <p class="text-[11px] leading-relaxed text-gray-500" data-i18n="composerPositionHelp">При верхнем положении поле растёт вниз при вводе, а история чата остаётся прокручиваемой ниже.</p>
+      </section>
       <div class="rounded-lg bg-gray-900 border border-gray-700 p-2.5 text-xs leading-relaxed text-gray-300 space-y-2" data-i18n-group="providerHelp">
         <p><strong>Подключение:</strong> выбери сервис и проверь модель. Для каждого провайдера нужен свой ключ; пустое поле значит, что ключ не сохранён для выбранного провайдера.</p>
         <p>Ключи провайдеров и Tavily хранятся отдельно в localStorage этого браузера. Профиль настроек не включает секреты. Не используй ключи на общих устройствах.</p>
@@ -563,7 +585,7 @@ permalink: /
       <button type="button" data-action="attach-text-file" id="attachTextButton" aria-label="Добавить вложение" title="Выбрать фото, видео или файл любого формата" aria-expanded="false" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">＋</button>
       <input type="file" id="mediaAttachmentInput" class="hidden" accept="image/*,video/*" multiple>
       <input type="file" id="textAttachmentInput" class="hidden" multiple>
-      <textarea id="userInput" rows="1" maxlength="30000" placeholder="Напиши сообщение..." aria-label="Сообщение" data-i18n-placeholder="composerPlaceholder" class="flex-1 min-w-0 bg-gray-900 border border-gray-700 px-3 py-2.5 rounded-xl text-base outline-none resize-none max-h-32"></textarea>
+      <textarea id="userInput" rows="1" maxlength="30000" placeholder="Напиши сообщение..." aria-label="Сообщение" data-i18n-placeholder="composerPlaceholder" class="flex-1 min-w-0 bg-gray-900 border border-gray-700 px-3 py-2.5 rounded-xl text-base outline-none resize-none overflow-y-auto"></textarea>
       <button id="voiceUnavailableButton" type="button" aria-label="Зажми, чтобы открыть режимы голоса" aria-expanded="false" title="Удерживай, чтобы открыть голосовое меню; обычное нажатие ничего не открывает" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">◉</button>
       <button id="sendBtn" type="button" data-action="send" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Отправить сообщение">➤</button>
       <button id="stopBtn" type="button" data-action="stop" class="hidden bg-red-600 hover:bg-red-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Остановить генерацию">⏹</button>
@@ -674,7 +696,7 @@ permalink: /
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
       tavilyKey: 'ai_tavily_key', systemPrompt: 'ai_system_prompt',
-      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', searchMode: 'ai_web_search_preset_v1', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider', cloudflareAccountId: 'ai_cloudflare_account_id', projects: 'ai_projects_v1', globalMemoryEnabled: 'ai_global_memory_enabled_v1'
+      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', searchMode: 'ai_web_search_preset_v1', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider', modelMode: 'ai_model_mode_v1', composerPosition: 'ai_composer_position_v1', cloudflareAccountId: 'ai_cloudflare_account_id', projects: 'ai_projects_v1', globalMemoryEnabled: 'ai_global_memory_enabled_v1'
     };
     const LEGACY_DEFAULT_SYSTEM = 'Ты автономный ИИ-ассистент. Отвечай ясно, проверяй предположения и выдавай структурированные отчёты. Если включён веб-поиск, используй его для актуальной информации.';
     const DEFAULT_SYSTEM = [
@@ -761,6 +783,52 @@ permalink: /
     function currentProvider() {
       const value = $('providerPreset')?.value || safeGet(STORAGE.provider) || 'alandi';
       return Object.prototype.hasOwnProperty.call(PROVIDERS, value) ? value : 'alandi';
+    }
+    function getModelMode() {
+      const stored = safeGet(STORAGE.modelMode);
+      if (stored === 'self-hosted' || stored === 'free-cloud') return stored;
+      return safeGet(STORAGE.provider) && safeGet(STORAGE.provider) !== 'alandi' ? 'free-cloud' : 'self-hosted';
+    }
+    function applyModelModeUI() {
+      const mode = getModelMode();
+      if ($('modelModeSelect')) $('modelModeSelect').value = mode;
+      $('cloudSettingsCard')?.classList.toggle('hidden', mode !== 'self-hosted');
+      const externalControls = ['providerPreset','modelSearch','modelPreset','refreshModelCatalog','baseUrl','apiKey','modelName','cloudflareAccountId'];
+      for (const id of externalControls) if ($(id)) $(id).disabled = mode !== 'free-cloud';
+      if ($('providerHint')) $('providerHint').textContent = mode === 'self-hosted'
+        ? (getUiLanguage()==='en' ? 'Your own aLandi gateway is active. Third-party provider controls are locked until you switch modes.' : 'Активен собственный aLandi gateway. Сторонние провайдеры заблокированы, пока не переключишь режим.')
+        : (getUiLanguage()==='en' ? 'Free cloud mode is active. Only the explicitly selected provider receives requests.' : 'Активен режим бесплатных облачных провайдеров. Запросы получает только явно выбранный сервис.');
+    }
+    async function setModelMode(mode) {
+      if (!['self-hosted','free-cloud'].includes(mode)) return;
+      safeSet(STORAGE.modelMode, mode);
+      if (mode === 'self-hosted') {
+        await selectAlandiPrimaryRoute();
+      } else {
+        let provider = safeGet(STORAGE.provider) || 'kilo';
+        if (provider === 'alandi' || !Object.prototype.hasOwnProperty.call(PROVIDERS, provider)) provider = 'kilo';
+        $('providerPreset').value = provider;
+        applyProviderPreset(provider, true);
+        const baseUrl = provider === 'custom' ? (safeGet(STORAGE.baseUrl) || '') : getProviderBaseUrl(provider);
+        const model = safeGet(STORAGE.provider + '_model_' + provider) || (PROVIDERS[provider]?.models?.[0]?.[0] || DEFAULT_MODEL);
+        $('baseUrl').value = baseUrl;
+        $('modelName').value = model;
+        safeSet(STORAGE.provider, provider);
+        safeSet(STORAGE.baseUrl, baseUrl);
+        safeSet(STORAGE.model, model);
+        if (provider === 'kilo') $('apiKey').value = '';
+        refreshApiKeyLamp();
+        showToast(getUiLanguage()==='en' ? 'Free cloud mode selected. No cross-provider fallback is enabled.' : 'Выбран режим бесплатных облачных провайдеров. Скрытого резервирования нет.');
+      }
+      applyModelModeUI();
+    }
+    function applyComposerPosition(position) {
+      const safePosition = position === 'top' ? 'top' : 'bottom';
+      document.body.classList.toggle('composer-top', safePosition === 'top');
+      if ($('composerPositionSelect')) $('composerPositionSelect').value = safePosition;
+      safeSet(STORAGE.composerPosition, safePosition);
+      autoResizeTextarea($('userInput'));
+      requestAnimationFrame(() => scrollToBottom(false));
     }
     function providerKeyStorage(provider) { return 'ai_api_key_' + provider; }
     const POLLINATIONS_SESSION = {
@@ -1160,7 +1228,7 @@ permalink: /
       ru:{
         settingsTitle:'⚙️ Настройки',sidebarTitle:'💬 Проекты и чаты',newChat:'＋ Новый чат',clearChat:'🗑 Очистить чат',newPersonalChat:'＋ Новый личный чат',
         memoryLabel:'🧠 Долгосрочная память',memoryPlaceholder:'Факт, который нужно запомнить',exportChats:'Экспорт',importChats:'Импорт',
-        appearanceTitle:'Внешний вид',themeLabel:'Тема',motionLabel:'Анимации',cloudCardTitle:'Твоё облако — основной маршрут',
+        appearanceTitle:'Внешний вид',themeLabel:'Тема',motionLabel:'Анимации',modelModeLabel:'Режим модели',modelModeHelp:'Режимы взаимоисключающие. Свой gateway не отправляет запросы сторонним провайдерам; бесплатные облачные сервисы получают данные согласно своим правилам.',advancedSettingsTitle:'Дополнительные настройки',composerPositionLabel:'Положение строки чата',composerBottom:'Снизу · привычное расположение',composerTop:'Сверху · под шапкой',composerPositionHelp:'При верхнем положении поле растёт вниз при вводе, а история чата остаётся прокручиваемой ниже.',cloudCardTitle:'Твоё облако — основной маршрут',
         cloudCardCopy:'Подключи собственный gateway. Сигнал станет зелёным только после настоящего ответа модели.',
         cloudBaseUrl:'Адрес твоего gateway',cloudModel:'Модель gateway',cloudApiKey:'Ключ доступа к твоему gateway',
         cloudConnect:'Проверить и подключить',providerLabel:'Провайдер API',
@@ -1179,7 +1247,7 @@ permalink: /
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Projects & chats',newChat:'＋ New chat',clearChat:'🗑 Clear chat',newPersonalChat:'＋ New personal chat',
         memoryLabel:'🧠 Long-term memory',memoryPlaceholder:'A fact to remember',exportChats:'Export',importChats:'Import',
-        appearanceTitle:'Appearance',themeLabel:'Theme',motionLabel:'Motion',cloudCardTitle:'Your cloud — primary route',
+        appearanceTitle:'Appearance',themeLabel:'Theme',motionLabel:'Motion',modelModeLabel:'Model mode',modelModeHelp:'These modes are mutually exclusive. Your own gateway does not send prompts to third-party providers; free cloud services process data under their own terms.',advancedSettingsTitle:'Additional settings',composerPositionLabel:'Chat composer position',composerBottom:'Bottom · familiar layout',composerTop:'Top · below the header',composerPositionHelp:'With the top layout, the composer grows downward as you type and chat history stays scrollable below.',cloudCardTitle:'Your cloud — primary route',
         cloudCardCopy:'Connect your own gateway. The signal turns green only after a real model response.',
         cloudBaseUrl:'Your gateway URL',cloudModel:'Gateway model',cloudApiKey:'Gateway access key',
         cloudConnect:'Check & connect',providerLabel:'API provider',
@@ -2186,7 +2254,11 @@ permalink: /
         // If the legacy value duplicates the active provider's own key, clear that ambiguous copy.
         if (legacyKey && selectedProviderKey && legacyKey === selectedProviderKey) safeSet(STORAGE.apiKey, '');
       }
-      const provider=savedProvider && Object.prototype.hasOwnProperty.call(PROVIDERS,savedProvider)?savedProvider:'alandi';
+      const storedModelMode=safeGet(STORAGE.modelMode);
+      const modelMode=storedModelMode==='self-hosted'||storedModelMode==='free-cloud'?storedModelMode:(savedProvider&&savedProvider!=='alandi'?'free-cloud':'self-hosted');
+      safeSet(STORAGE.modelMode,modelMode);
+      const providerCandidate=savedProvider && Object.prototype.hasOwnProperty.call(PROVIDERS,savedProvider)?savedProvider:'alandi';
+      const provider=modelMode==='self-hosted'?'alandi':(providerCandidate==='alandi'?'kilo':providerCandidate);
       if (savedProvider && !Object.prototype.hasOwnProperty.call(PROVIDERS,savedProvider)) {
         // A removed provider preset must not leave a stale endpoint active.
         safeSet(STORAGE.baseUrl, '');
@@ -2194,11 +2266,11 @@ permalink: /
       }
 
       $('providerPreset').value=provider;
-      const storedBaseUrl=safeGet(STORAGE.baseUrl);
+      const storedBaseUrl=modelMode==='self-hosted'?(safeGet('ai_alandi_cloud_base_url')||''):(safeGet(STORAGE.baseUrl)||'');
       $('baseUrl').value=storedBaseUrl||(provider==='alandi'||provider==='custom'||provider==='cloudflare'?'':(PROVIDERS[provider]?.baseUrl||DEFAULT_BASE_URL));
-      $('modelName').value=safeGet(STORAGE.model)||(PROVIDERS[provider]?.models[0]?.[0]||DEFAULT_MODEL);
+      $('modelName').value=modelMode==='self-hosted'?(safeGet('ai_alandi_cloud_model')||'qwen3.5:4b'):(safeGet(STORAGE.model)||(PROVIDERS[provider]?.models[0]?.[0]||DEFAULT_MODEL));
       applyProviderPreset($('providerPreset').value,true);
-      $('modelName').value=safeGet(STORAGE.model)||$('modelName').value;
+      $('modelName').value=modelMode==='self-hosted'?(safeGet('ai_alandi_cloud_model')||'qwen3.5:4b'):(safeGet(STORAGE.model)||$('modelName').value);
       populateModelPresets($('providerPreset').value,$('modelName').value);
       $('tavilyKey').value = safeGet(STORAGE.tavilyKey) || '';
       const savedPrompt = safeGet(STORAGE.systemPrompt);
@@ -2207,6 +2279,9 @@ permalink: /
       $('toggleSearch').checked = safeGet(STORAGE.search) !== 'false';
       $('toggleMultiAgent').checked = safeGet(STORAGE.multiAgent) === 'true';
       $('allowCrossProviderFallback').checked = safeGet(STORAGE.crossProviderFallback) === 'true';
+      $('composerPositionSelect').value = safeGet(STORAGE.composerPosition)==='top'?'top':'bottom';
+      applyComposerPosition($('composerPositionSelect').value);
+      applyModelModeUI();
       applyUiLanguage(safeGet('ai_ui_language_v1')||'ru');
       updateOfflineUI(); updateModeUI(); refreshApiKeyLamp();void refreshCloudStatus();
       void refreshConnectedModelCatalogs({ quiet: true, force: false, includeOtherProviders: safeGet(STORAGE.crossProviderFallback) === 'true' });
@@ -2813,6 +2888,7 @@ permalink: /
       if(baseUrl)safeSet('ai_alandi_cloud_base_url',baseUrl);
       if(model)safeSet('ai_alandi_cloud_model',model);
       if(key)safeSet(providerKeyStorage('alandi'),key);
+      safeSet(STORAGE.modelMode,'self-hosted');
       safeSet(STORAGE.provider,'alandi');
       if(baseUrl)safeSet(STORAGE.baseUrl,baseUrl);
       if(model)safeSet(STORAGE.model,model);
@@ -2823,6 +2899,7 @@ permalink: /
       const verified=Boolean(marker?.ok&&marker.baseUrl===baseUrl&&marker.model===model&&fingerprint&&marker.keyFingerprint===fingerprint);
       if(verified)setCloudStatus('connected','aLandi выбран основным. Последняя проверка прошла успешно; при сомнениях запусти проверку заново.');
       else setCloudStatus('disconnected','aLandi выбран основным, но актуальное соединение ещё не подтверждено.');
+      applyModelModeUI();
       refreshApiKeyLamp();
       showToast(verified?'Основной маршрут переключён на aLandi.':'Основной маршрут переключён на aLandi. Сначала проверь адрес, модель и ключ.');
     }
@@ -3715,6 +3792,10 @@ permalink: /
       const requestImages=chosenAttachments.flatMap(item=>item.kind==='image'?[{name:item.name,dataUrl:item.dataUrl}]:item.kind==='video'?item.frames.map(frame=>({name:frame.name,dataUrl:frame.dataUrl})):[]).slice(0,8);
       const apiKey = getConfiguredApiKey();
       const selectedProvider=safeGet(STORAGE.provider)||'alandi';
+      const selectedMode=getModelMode();
+      if((selectedMode==='self-hosted'&&selectedProvider!=='alandi')||(selectedMode==='free-cloud'&&selectedProvider==='alandi')){
+        showToast(getUiLanguage()==='en'?'The selected model mode and provider are inconsistent. Open settings and select one mode.':'Режим модели и провайдер не совпадают. Открой настройки и выбери один режим.','error');toggleSettings(true);return;
+      }
       if((selectedProvider==='alandi'||selectedProvider==='custom')&&!String(safeGet(STORAGE.baseUrl)||'').trim()){
         showToast(getUiLanguage()==='en'?'Configure your gateway URL in settings before sending.':'Сначала укажи адрес собственного gateway в настройках.','error');toggleSettings(true);return;
       }
@@ -4722,7 +4803,9 @@ permalink: /
         }
       } catch (error) { console.error('Ошибка действия интерфейса:', error); showToast(error.message || 'Не удалось выполнить действие.', 'error'); }
     });
-    $('providerPreset').addEventListener('change',()=>{applyProviderPreset($('providerPreset').value);safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();if(currentProvider()==='pollinations'||currentProvider()==='kilo'||getProviderRequestKey(currentProvider()))void refreshModelCatalog({quiet:true,force:false,provider:currentProvider()});});
+    $('modelModeSelect').addEventListener('change',()=>{void setModelMode($('modelModeSelect').value);});
+    $('composerPositionSelect').addEventListener('change',()=>applyComposerPosition($('composerPositionSelect').value));
+    $('providerPreset').addEventListener('change',()=>{safeSet(STORAGE.modelMode,'free-cloud');applyModelModeUI();applyProviderPreset($('providerPreset').value);safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();if(currentProvider()==='pollinations'||currentProvider()==='kilo'||getProviderRequestKey(currentProvider()))void refreshModelCatalog({quiet:true,force:false,provider:currentProvider()});});
     $('cloudflareAccountId').addEventListener('input',()=>{
       const id=$('cloudflareAccountId').value.trim();safeSet(STORAGE.cloudflareAccountId,id);
       if(currentProvider()==='cloudflare')$('baseUrl').value=getProviderBaseUrl('cloudflare');
