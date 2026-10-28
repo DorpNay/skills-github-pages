@@ -87,3 +87,12 @@
 - Boundaries: max 80 source facts, per-fact 600 chars, combined input 512–8000 chars, at most 12 candidates of 240 chars, timeout 1–180 s, same inference semaphore, keep_alive=0, no-store response, secret-like input/output filtering.
 - Each candidate is rendered via textContent and saved only by explicit user action after rechecking the active project and duplicates.
 - Status: implemented on feature branch; CI and merge pending; no live VPS inference claim.
+
+
+## 2026-10-28 — small uncensored inference profile
+
+- **Abliteration:** prebuilt Huihui Qwen3.5 2B/4B checkpoints are the first evaluation candidates; no weight surgery on production hosts. Research upstreams: [OBLITERATUS](https://github.com/elder-plinius/OBLITERATUS), [FailSpy/abliterator](https://github.com/FailSpy/abliterator). Abliteration may change refusal behavior and can also degrade capability; it is not a quality guarantee.
+- **Quantization:** Q4_K_M is the initial memory/quality compromise. Verify the exact artifact SHA-256 and use the GGUF importer documented in the owner runbook. Do not use the metadata's advertised 262k context as an operating target; start at 4096.
+- **Importance-matrix quantization:** [llama.cpp imatrix](https://github.com/ggml-org/llama.cpp/blob/master/tools/imatrix/README.md) is a future challenger only if a locally quantized artifact materially beats the ready-made quant on the same eval set.
+- **Speculative decoding:** [llama.cpp speculative decoding](https://github.com/ggml-org/llama.cpp/blob/master/docs/speculative.md) is not enabled by default. A draft model costs additional RAM; measure speedup and acceptance before considering it on small free-tier hardware.
+- **Performance acceptance:** identical synthetic prompts and target hardware, 2B vs 4B, cold/warm latency, p50/p95, usage-based tokens/s, peak RSS/PSS, RU/EN/TH correctness and tool-call success. No benchmark number until a report exists.
