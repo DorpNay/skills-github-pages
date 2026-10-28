@@ -1,6 +1,16 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
+async function setAgentMode(page, enabled) {
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  const control = page.locator('#agentModeControl');
+  if (enabled && !(await control.isChecked())) await control.check();
+  if (!enabled && await control.isChecked()) await control.uncheck();
+  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
+}
+
+
 const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
 
 test.beforeEach(async ({ page }) => {
@@ -60,7 +70,7 @@ test('research trace captures a source returned by the webpage tool', async ({ p
   await page.locator('#apiKey').fill('test-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
-  await page.locator('#toggleMultiAgent').check();
+  await setAgentMode(page, true);
   await page.locator('#userInput').fill('Deep research: проверь публичную страницу, проведи исследование источника, сопоставь утверждения и составь короткий доказательный отчёт.');
   await page.locator('#sendBtn').click();
 

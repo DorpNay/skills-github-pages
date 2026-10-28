@@ -173,7 +173,7 @@ const suites = {
       includes("mode === 'fast' && index > 0 && !extendedSearch", 'Fast mode must cap tools unless the bounded search-more preset is selected.');
       includes("if (mode !== 'deep' && !useMultiAgent && chosenSkill === 'auto') return '';", 'Automatic skills must not load in fast mode unless research is explicitly enabled.');
       includes("chosenSkill !== 'auto' ? chosenSkill", 'A manually selected skill must be usable in fast mode.');
-      includes("new URL('skills/' + skill + '.txt', document.baseURI)", 'Task skills should load from repository assets only on demand.');
+      includes("new URL('skills/' + selectedSkill + '.txt', document.baseURI)", 'Task skills should load from repository assets only on demand.');
       assert.ok(!source.includes('<script src="https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js"'), 'Pyodide must not load on initial page render.');
       includes("script.src = 'https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js'", 'Pyodide should load only when requested.');
       includes("const isMultimodalTask = /", 'Multimodal task classifier must be explicit and reviewable.');

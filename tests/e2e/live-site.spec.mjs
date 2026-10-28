@@ -12,6 +12,7 @@ test('live public site serves the app shell and basic chat controls', async ({ p
   await expect(page.locator('#chatBox')).toBeVisible();
   await expect(page.locator('#userInput')).toBeEditable();
   await expect(page.locator('#sendBtn')).toBeVisible();
-  await expect(page.locator('#toggleSearch')).toBeVisible();
+  await expect(page.locator('#searchModeSummary')).toBeVisible();
+  await expect(page.locator('#functionsMenuSummary')).toBeVisible();
   expect(pageErrors, 'No uncaught browser errors should occur on the live site').toEqual([]);
 });

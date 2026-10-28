@@ -1,5 +1,11 @@
 import { test, expect } from '@playwright/test';
 
+async function chooseSearchMode(page, mode) {
+  await page.locator('#searchModeSummary').click();
+  await page.locator(`[data-action="select-search-mode"][data-search-mode="${mode}"]`).click();
+}
+
+
 test('PDF attachment is extracted only by the configured aLandi gateway before model submission', async ({ page }) => {
   await page.addInitScript(() => { localStorage.clear(); sessionStorage.clear(); });
   await page.route('https://api.example.test/v1/models', route => route.fulfill({
@@ -49,7 +55,7 @@ test('PDF attachment is extracted only by the configured aLandi gateway before m
   await page.locator('#apiKey').fill('d'.repeat(64));
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
-  await page.locator('#toggleSearch').uncheck();
+  await chooseSearchMode(page, 'offline');
 
   await page.locator('[data-action="attach-text-file"]').click();
   await page.locator('[data-action="choose-any-file"]').click();
