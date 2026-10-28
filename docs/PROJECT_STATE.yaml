@@ -257,7 +257,7 @@ mobile_composer_docking:
   next: "pass exact-head Gateway, Quality/Chromium, published-site smoke and provenance, then merge only after GitHub reports clean"
 
 voice_selection:
-  status: "merged; exact PR-head gates passed; post-merge main Quality/Pages also passed on 4fc342b; latest main after PRs #76/#72/#77 is awaiting post-merge verification; live runtime unverified"
+  status: "merged; exact PR-head gates passed; latest main 91557e4 passed Gateway, Quality/Chromium, Graphify and Pages; live runtime unverified"
   branch: "feat/configurable-local-tts-voices-20261028"
   merged_pr: 75
   merge_commit: "4296a8decc12710fafb0a1a4e9644cd8f00b2dfa"
@@ -265,10 +265,10 @@ voice_selection:
   source_register: "evals/voice/language_matrix_v2.yaml"
   implementation: "operator-configured local Piper voice allowlist; authenticated /v1/capabilities exposes only installed allowlisted voices; /v1/audio/speech validates the selected voice; mini-player selects an available voice"
   security: "voice artifacts must pre-exist; no auto-download; authenticated endpoints; safe voice IDs; transcription and speech flags remain false by default; gateway and Ollama must remain loopback-bound behind the private HTTPS gateway"
-  verification: "PR-head Gateway run 40633704413 success; Quality run 40633704436 success including 6/6 jobs and published Pages smoke; provenance run 40633704435 success; dead-code audit run 40633704411 success. These runs correspond to PR head 006d5d5; local tests not run. Post-merge main runs not yet verified."
+  verification: "PR-head Gateway run 40633704413 success; Quality run 40633704436 success including 6/6 jobs and published Pages smoke; provenance run 40633704435 success; dead-code audit run 40633704411 success. These runs correspond to PR head 006d5d5. Post-merge main 91557e4 also passed Gateway run 40637941350, Quality/Chromium 40637941308, Graphify 40637941303 and Pages deployment 40637941951."
   licensing: "engine and individual model/voice/phonemizer licenses must be reviewed separately; exact artifact SHA-256 and compatibility remain operator ship gates"
   deployment_runbook: "docs/VOICE_IMPLEMENTATION_PLAN_RU.md; owner-facing install, checksum/license review, flags, private bind, smoke, metrics and rollback steps"
-  next: "verify post-merge main workflows on the exact current main SHA; owner validates exact installed artifacts, hashes/licenses and compatibility on private VPS; enable document extraction and ASR/TTS only one at a time after checks; test all three voice scenarios on target device"
+  next: "owner validates exact installed artifacts, hashes/licenses and compatibility on private VPS; enable document extraction and ASR/TTS only one at a time after checks; test all three voice scenarios on target device"
 
 current_checkpoint:
   date: "2026-10-28"
