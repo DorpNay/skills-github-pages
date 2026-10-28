@@ -86,3 +86,12 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 - **Autonomous work:** bounded authorized work may continue while the owner is away; return a reviewable PR with rationale, test evidence, limitations and rollback plan. Only the owner decides whether to merge into `main`.
 - **Acceptance:** validate basic/advanced discoverability, context continuity, access isolation, bounded execution, evidence-bearing PRs and the explicit merge-approval gate. Do not mark implemented without verified tests and deployment evidence.
 - **Decision record:** `DECISIONS.md`, D-016.
+
+## AI-UI-005 — Adaptive-minimalist private workspace and owner-controlled merge
+
+- **Status:** accepted target design; runtime not implemented by this record.
+- **Interface:** calm minimal default, contextual warmth/continuity, discoverable advanced tools without intrusive prompts; adaptation remains predictable and user-controllable.
+- **Personal workspace:** dedicated private chat with persistent context and task continuity; privacy requires technical access controls and a reviewed threat model.
+- **Autonomous work:** bounded authorized work may continue while the owner is away; return a reviewable PR with rationale, test evidence, limitations and rollback plan. Only the owner decides whether to merge into `main`.
+- **Acceptance:** validate basic/advanced discoverability, context continuity, access isolation, bounded execution, evidence-bearing PRs and the explicit merge-approval gate. Do not mark implemented without verified tests and deployment evidence.
+- **Decision record:** `DECISIONS.md`, D-016.
