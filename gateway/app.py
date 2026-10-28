@@ -120,6 +120,8 @@ class Settings:
     audio_speech_enabled: bool = False
     audio_speech_binary: str = ""
     audio_speech_model: str = ""
+    # Explicit operator allowlist: voice ID -> user-facing label. Empty means default voice only.
+    audio_speech_voices: tuple[tuple[str, str], ...] = ()
     audio_speech_data_dir: str = ""
     audio_speech_timeout_seconds: int = 60
     # Local bounded document extraction; no file persistence or remote parser.
@@ -208,6 +210,23 @@ class Settings:
         audio_speech_binary = os.getenv("ALANDI_AUDIO_SPEECH_BINARY", "").strip()
         audio_speech_model = os.getenv("ALANDI_AUDIO_SPEECH_MODEL", "").strip()
         audio_speech_data_dir = os.getenv("ALANDI_AUDIO_SPEECH_DATA_DIR", "").strip()
+        configured_voices: list[tuple[str, str]] = []
+        for item in os.getenv("ALANDI_AUDIO_SPEECH_VOICES", "").split(","):
+            item = item.strip()
+            if not item:
+                continue
+            voice_id, separator, label = item.partition("=")
+            voice_id = voice_id.strip()
+            label = label.strip() if separator else voice_id
+            if not voice_id or os.path.basename(voice_id) != voice_id or not all(char.isalnum() or char in "._-" for char in voice_id):
+                raise ValueError("ALANDI_AUDIO_SPEECH_VOICES must contain safe voice IDs optionally followed by =label")
+            if not label or len(label) > 80 or any(ord(char) < 32 for char in label):
+                raise ValueError("ALANDI_AUDIO_SPEECH_VOICES labels must contain 1 to 80 printable characters")
+            if any(existing_id == voice_id for existing_id, _ in configured_voices):
+                raise ValueError("ALANDI_AUDIO_SPEECH_VOICES contains duplicate voice IDs")
+            configured_voices.append((voice_id, label))
+        if audio_speech_model and not any(voice_id == audio_speech_model for voice_id, _ in configured_voices):
+            configured_voices.insert(0, (audio_speech_model, audio_speech_model))
         if audio_speech_enabled and not (audio_speech_binary and audio_speech_model and audio_speech_data_dir):
             raise ValueError("ALANDI_AUDIO_SPEECH_ENABLED requires Python executable, Piper voice name and data directory")
         if audio_speech_model and (os.path.basename(audio_speech_model) != audio_speech_model or not all(char.isalnum() or char in "._-" for char in audio_speech_model)):
@@ -252,6 +271,7 @@ class Settings:
             audio_speech_enabled=audio_speech_enabled,
             audio_speech_binary=audio_speech_binary,
             audio_speech_model=audio_speech_model,
+            audio_speech_voices=tuple(configured_voices),
             audio_speech_data_dir=audio_speech_data_dir,
             audio_speech_timeout_seconds=int_env("ALANDI_AUDIO_SPEECH_TIMEOUT_SECONDS", 60, 1),
             document_extraction_enabled=bool_env("ALANDI_DOCUMENT_EXTRACTION_ENABLED", False),
@@ -829,6 +849,13 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             "audio": {
                 "transcription": config.audio_transcription_enabled,
                 "speech": config.audio_speech_enabled,
+                "speech_voices": [
+                    {"id": voice_id, "label": label}
+                    for voice_id, label in config.audio_speech_voices
+                    if config.audio_speech_data_dir
+                    and os.path.isfile(os.path.join(config.audio_speech_data_dir, voice_id + ".onnx"))
+                    and os.path.isfile(os.path.join(config.audio_speech_data_dir, voice_id + ".onnx.json"))
+                ] if config.audio_speech_enabled else [],
             },
             "documents": {"extraction": config.document_extraction_enabled},
         }, headers={"Cache-Control": "no-store"})
@@ -1512,13 +1539,16 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         if not isinstance(payload, dict) or not isinstance(payload.get("text"), str):
             raise HTTPException(400, "text must be a string")
         text = payload["text"].strip()
+        requested_voice = payload.get("voice", config.audio_speech_model)
+        if not isinstance(requested_voice, str) or requested_voice not in {voice_id for voice_id, _ in config.audio_speech_voices}:
+            raise HTTPException(400, "voice is not in the configured local voice allowlist")
         if not text or len(text) > 5000 or any(ord(char) < 32 and char not in "\n\r\t" for char in text):
             raise HTTPException(400, "text must contain 1 to 5000 printable characters")
         if not os.path.isfile(config.audio_speech_binary) or not os.access(config.audio_speech_binary, os.X_OK):
             raise HTTPException(503, "Configured local TTS executable is unavailable")
         if not config.audio_speech_data_dir or not os.path.isdir(config.audio_speech_data_dir):
             raise HTTPException(503, "Configured local TTS voice directory is unavailable")
-        voice_path = os.path.join(config.audio_speech_data_dir, config.audio_speech_model + ".onnx")
+        voice_path = os.path.join(config.audio_speech_data_dir, requested_voice + ".onnx")
         if not os.path.isfile(voice_path) or not os.path.isfile(voice_path + ".json"):
             raise HTTPException(503, "Configured local TTS voice model or config is unavailable")
         with tempfile.TemporaryDirectory(prefix="alandi-tts-") as temp_dir:
@@ -1530,7 +1560,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                     text_file.write(text)
                 process = await asyncio.create_subprocess_exec(
                     config.audio_speech_binary, "-m", "piper",
-                    "-m", config.audio_speech_model,
+                    "-m", requested_voice,
                     "--data-dir", config.audio_speech_data_dir,
                     "-f", output_path, "--input-file", input_path,
                     stdin=asyncio.subprocess.DEVNULL,
