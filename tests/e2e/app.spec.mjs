@@ -1952,6 +1952,7 @@ test('mobile composer stays visible at the bottom in new chats across viewport r
     const metrics = await measureDock();
     expect(metrics.position).not.toBe('fixed');
     expect(metrics.centered).toBe(false);
+    expect(metrics.bottom).toBeGreaterThan(metrics.viewportHeight - 5);
     expect(metrics.bottom).toBeLessThanOrEqual(metrics.viewportHeight + 2);
   };
   await assertDocked();
