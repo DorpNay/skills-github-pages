@@ -2,7 +2,9 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-Актуальная проверенная контрольная точка: main `4fc342b468e370c792f1e87e77a20fda4de6bbaa`; Quality Sentinels run `40634598755` прошёл все 6 jobs, включая Chromium и опубликованный Pages smoke; Pages deployment `40634598517` успешен. Очередь на момент проверки: PR #70, #72 и #74. Эти SHA и статусы — снимок; перед каждым merge проверять актуальный head и его обязательные проверки.
+Последний подтверждённый снимок main на 2026-10-28: `337e38690af8f22a712c6442192c5ea62d354c3d`. На актуальном снимке открыты PR #78, #80, #81, #82, #83 и #84; Issues отсутствуют. Точные SHA и CI проверяй через GitHub перед каждым merge — старые записи ниже являются историческими срезами, а не текущим статусом.
+
+**Активная рабочая ветка:** `feat/advanced-settings-model-modes-uncensored-20261028`. Она добавляет взаимоисключающие режимы self-hosted/free-cloud, верхнее/нижнее поле чата, scoped project/diagram tools в обычном чате, uncensored GGUF runbook и локальный benchmark harness. Не считать модель загруженной, инструменты проверенными на реальной модели или VPS развёрнутым до фактических тестов.
 
 ## 1. Быстрый маршрут
 
@@ -13,6 +15,8 @@
 4. **Порядок внедрения:** `docs/IMPLEMENTATION_ROADMAP_RU.md`, `docs/CODER_PACKET.md`.
 5. **Решения / eval / цикл:** корневые `DECISIONS.md`, `EVALS.md`, `LOOP.md`, `INTEL.md`, `IMPROVEMENT_SELECTION.md`.
 6. **Поиск и исследования:** `docs/SEARCH_RESEARCH_FEATURE_EXTRACTION_RU.md`, `docs/OPEN_SOURCE_TRIAGE_RU.md`.
+6a. **Uncensored модель и полный owner runbook:** `docs/UNCENSORED_MODEL_AND_FREE_CPU_RUNBOOK_RU.md`.
+6b. **Локальный model benchmark:** `gateway/evals/run_local_model_benchmark.py` (синтетический smoke; не product quality score).
 7. **Карта модулей:** `docs/ALANDI_ARCHITECTURE_MAP_RU.md` — кураторская схема, не автоматически извлечённый Graphify graph.
 8. **Лицензии и происхождение:** `infra/license/provenance_manifest.yaml`; не подключать runtime/model/voice без отдельной проверки лицензии и SHA-256.
 9. **Основной клиент:** `index.md` (большой единый HTML/JS файл). Перед правками найди точные функции/якоря, не делай широких замен без проверки единственности.
