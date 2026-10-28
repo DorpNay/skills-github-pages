@@ -175,3 +175,5 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - PR #74 — черновик, основан на устаревшем base; сохранить полезный аудит готовности голоса/документов, но не мерджить старую ветку без повторного review.
 
 - PR #74 closed after preserving its unique, updated `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md` in PR #79. Real VPS, microphone, model, license/hash and hardware metrics remain explicitly unverified.
+
+- Незавершённая ветка `feat/deployment-preflight-gates-20261028` содержит template-only deployment preflight, тесты и runbook, но PR/CI отсутствуют; не считать реализованной до нормального review и зелёных exact-head checks.
