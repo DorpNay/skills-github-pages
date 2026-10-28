@@ -2,7 +2,7 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-Последняя подтверждённая контрольная точка: main **4c9096999fbb3e1265150c420b136066c555285b** (PR #69 merged). Post-merge Quality #40543594371, Gateway #40543594098, Pages #40543593819 и provenance #40543594296 завершились успешно. PR #70 остаётся отдельной работой; PR #71 исправляет мобильное позиционирование composer. При старте всё равно получать live HEAD и очередь PR/Issues заново.
+Последняя контрольная точка до голосового PR: main b92c35060a37776024e4c995191bc7b931572560. PR #75 merged at 4296a8decc12710fafb0a1a4e9644cd8f00b2dfa; затем обновлены status registries. Live HEAD и post-merge CI нужно перепроверять, поскольку эти документационные commits продвинули main.
 
 ## 1. Быстрый маршрут
 
@@ -145,3 +145,13 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - PR #71 removes the fixed centered state, keeps the composer in the bottom flex layout, resizes the textarea against `visualViewport.height`, recomputes on viewport resize, and increases the bottom safe touch inset.
 - E2E covers visibility in a new chat and viewport shrink/restore. Exact-head CI is pending; native iOS Safari behavior is not proven by Playwright.
 - Full legacy request audit: `docs/LEGACY_UX_REQUEST_AUDIT_RU.md`. Already-present features include per-message copy/viewer and jump-to-latest (PR #61), web-driven attachment-type menu and per-chat row actions (PR #35); do not rewrite them wholesale. Outstanding larger verticals are function/search dropdowns, overlay/focus/outside-click contracts, provider/settings simplification, and persisting/resetting modes per chat.
+
+
+## Checkpoint — PR #75 local TTS voice selection merged (2026-10-28)
+
+- PR #75 (feat/configurable-local-tts-voices-20261028) merged by squash at 4296a8decc12710fafb0a1a4e9644cd8f00b2dfa; reviewed head was 006d5d564b6afd4606a604baab0cf1f78e745565.
+- Exact PR-head checks succeeded: Gateway #40633704413; Quality #40633704436 (6/6, including Chromium and published Pages smoke); provenance #40633704435; dead-code audit #40633704411. These are PR-head results, not post-merge main evidence.
+- Added operator-configured Piper voice allowlist, authenticated capabilities listing only installed .onnx + .onnx.json pairs, server-side voice-ID validation, mini-player voice selector and mock E2E coverage.
+- ASR/TTS flags remain off by default. No model is auto-downloaded. docs/VOICE_IMPLEMENTATION_PLAN_RU.md contains owner-run VPS instructions for binary/model installation, SHA-256 and license review, private loopback binding, staged flag activation, smoke tests, metrics and rollback.
+- Remaining ship gates: exact artifact hashes and individual model/voice/phonemizer license review; compatible binaries and models installed on the real VPS; current post-merge main CI; real microphone and device playback; measured latency/RAM/quality. No local test, live VPS, or physical-device validation is claimed.
+- Next: verify current main SHA and post-merge checks, inspect remaining voice TODO/model provenance, then prepare the owner’s first-run checklist without enabling flags or fetching models automatically.
