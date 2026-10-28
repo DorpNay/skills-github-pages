@@ -53,9 +53,11 @@
 
 В AI Mobile Agent выберите «Свой API»:
 
+- Режим модели: «Своя модель · aLandi gateway» (взаимоисключающий с бесплатными облачными провайдерами)
 - Base URL: https://<ваш-hostname>/v1
-- Model: qwen3.5:4b
+- Model: alandi-huihui-qwen35-4b (или alandi-huihui-qwen35-2b при ограниченной RAM)
 - API Key: значение ALANDI_API_KEY, введённое в локальные настройки браузера
+- Установка выбранного GGUF и проверка SHA-256: [uncensored model runbook](../docs/UNCENSORED_MODEL_AND_FREE_CPU_RUNBOOK_RU.md)
 
 Выключите cross-provider fallback для приватных запросов: иначе запрос может уйти другому сохранённому поставщику. Ключ в static-site localStorage подходит только для личного прототипа; не раздавайте его и не считайте такую схему multi-user авторизацией.
 
