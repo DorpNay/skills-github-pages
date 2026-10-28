@@ -173,3 +173,12 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - PR #72: в E2E обнаружены два устаревших assertion (маршрут проверял `skill` вместо `selectedSkill`; текст «Коннекторы» проверялся с несовпадающим регистром). Оба исправлены на head `407a42ca16dfd69bee91620ae8deed098d229226`; повторный Chromium gate выполняется.
 - PR #70: не объединять текущую ветку вслепую — GitHub сообщает `mergeable=false`, exact-head CI не подтверждён. Перенести RRF как отдельный change на актуальный main, сохранить scope/provenance и прогнать RAG unit + synthetic eval.
 - PR #74 — черновик, основан на устаревшем base; сохранить полезный аудит готовности голоса/документов, но не мерджить старую ветку без повторного review.
+
+
+## Checkpoint — RAG golden-set evaluator (2026-10-28; branch, CI pending)
+
+- Branch: `feat/rag-golden-set-evaluator-20261028`.
+- New offline evaluator: `gateway/evals/run_rag_golden_eval.py`; smoke data: `gateway/evals/fixtures/rag_golden_smoke.json`; tests: `gateway/tests/test_rag_golden_eval.py`.
+- Reports Recall@k, MRR, nDCG@k, relevant-source precision, source provenance completeness and local retrieval p50/p95. Checks that labelled relevant chunks exist in the same scope as each query.
+- The two-query fixture is only an evaluator smoke check. Do not claim production relevance improvement until a >=50-query permissioned, de-identified, human-labelled golden set compares baseline vs candidate. No model/network calls or feature-flag changes.
+- Next: verify exact-head CI, then gather labelled data and publish baseline/candidate metric deltas; separately measure the real gateway on target hardware.
