@@ -558,7 +558,7 @@ permalink: /
     </div>
   </footer>
   <div id="ttsMiniPlayer" class="hidden fixed bottom-24 right-3 z-[75] w-[min(22rem,calc(100vw-1.5rem))] rounded-xl border border-cyan-700/60 bg-gray-950 p-3 shadow-2xl" role="region" aria-label="Миниплеер озвучивания">
-    <div class="mb-2 flex items-center justify-between gap-3"><p id="ttsMiniPlayerStatus" class="text-xs text-gray-300">Локальное озвучивание</p><button type="button" data-action="stop-speech" class="rounded-md border border-gray-700 px-2 py-1 text-xs">Стоп</button></div>
+    <div class="mb-2 flex items-center justify-between gap-3"><p id="ttsMiniPlayerStatus" class="text-xs text-gray-300">Локальное озвучивание</p><button type="button" data-action="stop-speech" class="rounded-md border border-gray-700 px-2 py-1 text-xs">Стоп</button></div><label id="ttsVoiceChoiceWrap" class="hidden mb-2 block text-xs text-gray-300">Голос ответа<select id="ttsVoiceSelect" class="mt-1 w-full rounded-lg border border-gray-700 bg-gray-900 px-2 py-2 text-sm" aria-label="Голос локального озвучивания"></select></label>
     <audio id="ttsAudioPlayer" class="w-full" controls preload="none"></audio>
   </div>
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
@@ -3812,6 +3812,32 @@ permalink: /
     let activeSpeechObjectUrl = '';
     let activeSpeechController = null;
     let speechRequestGeneration = 0;
+    async function refreshLocalSpeechVoices(baseUrl, key) {
+      const select = $('ttsVoiceSelect');
+      const wrap = $('ttsVoiceChoiceWrap');
+      if (!select || !wrap) return;
+      try {
+        const response = await fetch(baseUrl + '/capabilities', {
+          headers: { 'Authorization': 'Bearer ' + key }, cache: 'no-store'
+        });
+        if (!response.ok) return;
+        const payload = await response.json();
+        const voices = Array.isArray(payload?.audio?.speech_voices) ? payload.audio.speech_voices : [];
+        const previous = select.value;
+        select.replaceChildren();
+        for (const voice of voices) {
+          if (!voice || typeof voice.id !== 'string' || typeof voice.label !== 'string') continue;
+          const option = document.createElement('option');
+          option.value = voice.id;
+          option.textContent = voice.label;
+          select.append(option);
+        }
+        wrap.classList.toggle('hidden', select.options.length < 2);
+        if (Array.from(select.options).some(option => option.value === previous)) select.value = previous;
+      } catch (_) {
+        // Voice discovery is best-effort; the gateway still validates the default voice.
+      }
+    }
     async function playAssistantMessage(rawText) {
       const text = String(rawText || '').trim();
       if (!text) { showToast('В сообщении нет текста для озвучивания.', 'error'); return; }
@@ -3825,6 +3851,7 @@ permalink: /
       if (baseUrl.endsWith('/chat/completions')) baseUrl = baseUrl.slice(0, -'/chat/completions'.length);
       const key = getConfiguredApiKey();
       if (!baseUrl || !key) { showToast('Сначала настрой собственный gateway и его ключ.', 'error'); toggleSettings(true); return; }
+       await refreshLocalSpeechVoices(baseUrl, key);
       if (activeSpeechController) activeSpeechController.abort();
       const requestId = ++speechRequestGeneration;
       const controller = new AbortController();
@@ -3841,7 +3868,7 @@ permalink: /
         const response = await fetch(baseUrl + '/audio/speech', {
           method: 'POST',
           headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text }), cache: 'no-store', signal: controller.signal
+          body: JSON.stringify({ text, ...($('ttsVoiceSelect')?.value ? { voice: $('ttsVoiceSelect').value } : {}) }), cache: 'no-store', signal: controller.signal
         });
         if (requestId !== speechRequestGeneration) return;
         if (!response.ok) {

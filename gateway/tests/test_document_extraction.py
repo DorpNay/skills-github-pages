@@ -74,7 +74,7 @@ def test_capabilities_require_auth_and_only_report_enabled_flags():
     assert response.headers["cache-control"] == "no-store"
     assert response.json() == {
         "search": {"searxng": False},
-        "audio": {"transcription": True, "speech": False},
+        "audio": {"transcription": True, "speech": False, "speech_voices": []},
         "documents": {"extraction": True},
     }
 

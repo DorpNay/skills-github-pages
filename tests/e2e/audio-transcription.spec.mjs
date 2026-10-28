@@ -64,8 +64,16 @@ test('assistant message offers copy and local TTS controls with a mini-player', 
     status: 200, contentType: 'application/json',
     body: JSON.stringify({ model: 'e2e-model', choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: 'A local response to read aloud.' } }] })
   }));
+  await page.route('https://api.example.test/v1/capabilities', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ audio: { speech: true, speech_voices: [
+      { id: 'en_US-test', label: 'English voice A' }, { id: 'en_GB-test', label: 'English voice B' }
+    ] } })
+  }));
+  const selectedVoices = [];
   await page.route('https://api.example.test/v1/audio/speech', async route => {
     expect(route.request().headers().authorization).toBe('Bearer ' + 'w'.repeat(64));
+    selectedVoices.push(route.request().postDataJSON().voice);
     const wav = Buffer.from('524946462400000057415645' + '00'.repeat(32), 'hex');
     await route.fulfill({ status: 200, contentType: 'audio/wav', headers: { 'Cache-Control': 'no-store' }, body: wav });
   });
@@ -91,6 +99,11 @@ test('assistant message offers copy and local TTS controls with a mini-player', 
   await speak.click();
   await expect(page.locator('#ttsMiniPlayer')).toBeVisible();
   await expect(page.locator('#ttsAudioPlayer')).toHaveAttribute('src', /^blob:/);
+  await expect(page.locator('#ttsVoiceChoiceWrap')).toBeVisible();
+  await page.locator('#ttsVoiceSelect').selectOption('en_GB-test');
+  await speak.click();
+  await expect.poll(() => selectedVoices.length).toBe(2);
+  expect(selectedVoices[1]).toBe('en_GB-test');
   await page.locator('#ttsMiniPlayer [data-action="stop-speech"]').click();
   await expect(page.locator('#ttsMiniPlayer')).toBeHidden();
 });

@@ -6,6 +6,7 @@ from gateway.app import Settings, create_app
 
 API_KEY = "b" * 64
 VOICE = "en_US-test"
+ALT_VOICE = "en_GB-test"
 
 
 def config(**overrides):
@@ -107,3 +108,39 @@ def test_speech_rejects_missing_local_runtime_or_voice(tmp_path):
         response = client.post("/v1/audio/speech", json={"text": "hello"},
                                headers={"Authorization": f"Bearer {API_KEY}"})
     assert response.status_code == 503
+
+
+
+def test_speech_allows_only_configured_installed_voice(tmp_path, monkeypatch):
+    binary = make_executable(tmp_path / "python")
+    make_voice(tmp_path)
+    (tmp_path / f"{ALT_VOICE}.onnx").write_bytes(b"model")
+    (tmp_path / f"{ALT_VOICE}.onnx.json").write_text("{}", encoding="utf-8")
+    captured = {}
+
+    class FakeProcess:
+        returncode = 0
+        async def wait(self): return 0
+        def kill(self): self.returncode = -9
+
+    async def fake_create_subprocess_exec(*args, **kwargs):
+        captured["voice"] = args[args.index("-m", 3) + 1]
+        output_path = args[args.index("-f") + 1]
+        with open(output_path, "wb") as output:
+            output.write(b"RIFF" + (36).to_bytes(4, "little") + b"WAVE" + bytes(32))
+        return FakeProcess()
+
+    monkeypatch.setattr(gateway_app.asyncio, "create_subprocess_exec", fake_create_subprocess_exec)
+    settings = config(audio_speech_enabled=True, audio_speech_binary=binary,
+                      audio_speech_model=VOICE, audio_speech_voices=((VOICE, "Default"), (ALT_VOICE, "English alternate")),
+                      audio_speech_data_dir=str(tmp_path))
+    auth = {"Authorization": f"Bearer {API_KEY}"}
+    with TestClient(create_app(settings, transport=httpx.MockTransport(handler))) as client:
+        capabilities = client.get("/v1/capabilities", headers=auth)
+        assert capabilities.status_code == 200
+        assert [voice["id"] for voice in capabilities.json()["audio"]["speech_voices"]] == [VOICE, ALT_VOICE]
+        response = client.post("/v1/audio/speech", json={"text": "hello", "voice": ALT_VOICE}, headers=auth)
+        rejected = client.post("/v1/audio/speech", json={"text": "hello", "voice": "../outside"}, headers=auth)
+    assert response.status_code == 200
+    assert captured["voice"] == ALT_VOICE
+    assert rejected.status_code == 400
