@@ -335,9 +335,14 @@ permalink: /
             <summary class="cursor-pointer select-none px-3 py-2 text-xs font-semibold">🧠 Общая память и факты</summary>
             <div class="p-2 space-y-2">
               <label class="flex items-start gap-2 text-[11px] leading-relaxed text-gray-400"><input id="globalMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="globalMemoryOptIn">Разрешить подходящим заметкам общей памяти попадать в контекст, если режим памяти текущего проекта это допускает.</span></label>
-              <label for="memoryInput" data-i18n="memoryLabel" class="text-xs text-gray-400 font-semibold">Долгосрочная память</label>
-              <div class="flex gap-1 mt-1"><input id="memoryInput" type="text" maxlength="500" placeholder="Факт, который нужно запомнить" data-i18n-placeholder="memoryPlaceholder" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-memory" class="bg-blue-700 hover:bg-blue-600 px-2 rounded text-xs" aria-label="Сохранить факт">＋</button></div>
-              <div id="memoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет сохранённых фактов.</div>
+              <label for="memoryInput" class="text-xs text-gray-200 font-semibold">Личная память локальной модели</label>
+              <p class="text-[10px] leading-relaxed text-emerald-200/80">Хранится в IndexedDB этого браузера. Используется только через aLandi gateway. Если личная память вошла в контекст, сторонние провайдеры блокируются для всего чата, включая fallback.</p>
+              <div class="flex gap-1 mt-1"><input id="memoryInput" type="text" maxlength="500" placeholder="Личный факт для локальной модели" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-memory" class="bg-blue-700 hover:bg-blue-600 px-2 rounded text-xs" aria-label="Сохранить в личную память">＋</button></div>
+              <div id="memoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет личных заметок.</div>
+              <label for="sharedMemoryInput" class="mt-3 block text-xs text-amber-200 font-semibold">Общая память (только выбранные факты)</label>
+              <p class="text-[10px] leading-relaxed text-amber-100/80">Общие факты могут попасть внешнему провайдеру, только если выше включено использование общей памяти. Перенос личной заметки требует отдельного подтверждения.</p>
+              <div class="flex gap-1 mt-1"><input id="sharedMemoryInput" type="text" maxlength="500" placeholder="Факт для общей памяти" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-shared-memory" class="bg-amber-800 hover:bg-amber-700 px-2 rounded text-xs" aria-label="Сохранить в общую память">＋</button></div>
+              <div id="sharedMemoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет общих заметок.</div>
             </div>
           </details>
           <label for="projectMemoryInput" class="block text-[11px] text-gray-400" data-i18n="projectMemoryLabel">Добавить факт в память проекта</label>
@@ -982,11 +987,13 @@ permalink: /
       if (!('indexedDB' in window)) return null;
       try {
         db = await new Promise((resolve, reject) => {
-          const request = indexedDB.open('AI_Agent_DB_v87', 1);
+          const request = indexedDB.open('AI_Agent_DB_v87', 2);
           request.onupgradeneeded = (event) => {
             const database = event.target.result;
             if (!database.objectStoreNames.contains('cache')) database.createObjectStore('cache');
+            // Existing v1 memory remains private; never migrate it into shared memory.
             if (!database.objectStoreNames.contains('memory')) database.createObjectStore('memory');
+            if (!database.objectStoreNames.contains('sharedMemory')) database.createObjectStore('sharedMemory');
           };
           request.onsuccess = () => resolve(request.result);
           request.onerror = () => reject(request.error || new Error('Не удалось открыть IndexedDB'));
@@ -1041,7 +1048,7 @@ permalink: /
       async add(fact) {
         if (!db) throw new Error('IndexedDB недоступна в этом браузере.');
         const id = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-        const entry = { id, fact: fact.slice(0, 500), time: Date.now() };
+        const entry = { id, fact: fact.slice(0, 500), time: Date.now(), scope: 'private-local' };
         await new Promise((resolve, reject) => {
           const tx = db.transaction('memory', 'readwrite');
           tx.objectStore('memory').put(entry, id);
@@ -1060,6 +1067,41 @@ permalink: /
           tx.onerror = () => reject(tx.error || new Error('Не удалось удалить факт'));
         });
         await renderMemory();
+      }
+    };
+    const SharedMemoryDB = {
+      async getAll() {
+        if (!db) return [];
+        try {
+          const tx = db.transaction('sharedMemory', 'readonly');
+          const store = tx.objectStore('sharedMemory');
+          const [values, keys] = await Promise.all([requestResult(store.getAll()), requestResult(store.getAllKeys())]);
+          return values.map((item, index) => ({ ...item, id: String(item.id ?? keys[index]) }))
+            .filter((item) => typeof item.fact === 'string');
+        } catch (_) { return []; }
+      },
+      async add(fact, sourcePrivateId = null) {
+        if (!db) throw new Error('IndexedDB недоступна в этом браузере.');
+        const id = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        const entry = { id, fact: fact.slice(0, 500), time: Date.now(), scope: 'shared', ...(sourcePrivateId ? { promotedFromPrivateId: String(sourcePrivateId).slice(0, 128) } : {}) };
+        await new Promise((resolve, reject) => {
+          const tx = db.transaction('sharedMemory', 'readwrite');
+          tx.objectStore('sharedMemory').put(entry, id);
+          tx.oncomplete = resolve;
+          tx.onerror = () => reject(tx.error || new Error('Не удалось сохранить факт в общей памяти'));
+          tx.onabort = () => reject(tx.error || new Error('Сохранение отменено'));
+        });
+        await renderSharedMemory();
+      },
+      async delete(id) {
+        if (!db) return;
+        await new Promise((resolve, reject) => {
+          const tx = db.transaction('sharedMemory', 'readwrite');
+          tx.objectStore('sharedMemory').delete(id);
+          tx.oncomplete = resolve;
+          tx.onerror = () => reject(tx.error || new Error('Не удалось удалить общий факт'));
+        });
+        await renderSharedMemory();
       }
     };
 
@@ -1944,15 +1986,41 @@ permalink: /
       const box = $('memoryBox');
       const facts = await MemoryDB.getAll();
       box.replaceChildren();
-      if (!facts.length) { box.textContent = 'Нет сохранённых фактов.'; return; }
+      if (!facts.length) { box.textContent = 'Нет личных заметок.'; return; }
       facts.sort((a, b) => (b.time || 0) - (a.time || 0)).forEach((fact) => {
         const row = document.createElement('div'); row.className = 'memory-item';
-        const value = document.createElement('span'); value.textContent = `• ${fact.fact}`;
+        const value = document.createElement('span'); value.className = 'min-w-0 flex-1'; value.textContent = `• ${fact.fact}`;
+        const promote = document.createElement('button'); promote.type = 'button';
+        promote.dataset.action = 'promote-memory'; promote.dataset.memoryId = fact.id;
+        promote.textContent = '↗'; promote.title = 'Перенести этот факт в общую память';
+        promote.setAttribute('aria-label', 'Перенести выбранный личный факт в общую память');
         const remove = document.createElement('button'); remove.type = 'button';
         remove.dataset.action = 'delete-memory'; remove.dataset.memoryId = fact.id;
-        remove.textContent = '×'; remove.setAttribute('aria-label', 'Удалить факт из памяти');
+        remove.textContent = '×'; remove.setAttribute('aria-label', 'Удалить личный факт');
+        row.append(value, promote, remove); box.appendChild(row);
+      });
+    }
+    async function renderSharedMemory() {
+      const box = $('sharedMemoryBox');
+      if (!box) return;
+      const facts = await SharedMemoryDB.getAll();
+      box.replaceChildren();
+      if (!facts.length) { box.textContent = 'Нет общих заметок.'; return; }
+      facts.sort((a, b) => (b.time || 0) - (a.time || 0)).forEach((fact) => {
+        const row = document.createElement('div'); row.className = 'memory-item';
+        const value = document.createElement('span'); value.className = 'min-w-0 flex-1'; value.textContent = `• ${fact.fact}`;
+        const remove = document.createElement('button'); remove.type = 'button';
+        remove.dataset.action = 'delete-shared-memory'; remove.dataset.memoryId = fact.id;
+        remove.textContent = '×'; remove.setAttribute('aria-label', 'Удалить общий факт');
         row.append(value, remove); box.appendChild(row);
       });
+    }
+    async function promotePrivateMemory(id) {
+      const fact = (await MemoryDB.getAll()).find(item => item.id === id);
+      if (!fact) throw new Error('Личный факт не найден. Обнови список памяти.');
+      if (!confirm('Перенести только этот факт в общую память? Он может попасть внешнему провайдеру, если включено использование общей памяти. Личная копия останется локальной.')) return;
+      await SharedMemoryDB.add(fact.fact, fact.id);
+      showToast('Выбранный факт добавлен в общую память. Личная копия сохранена.');
     }
     function updateState(nextChats = null, nextCurrentId = null) {
       if (Array.isArray(nextChats)) {
