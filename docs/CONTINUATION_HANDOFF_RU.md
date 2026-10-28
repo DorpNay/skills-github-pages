@@ -19,23 +19,21 @@
 ## PR #87 — лендинг и предпусковой пакет
 - PR: https://github.com/DorpNay/skills-github-pages/pull/87
 - Ветка: feat/launch-landing-stack-20261028
-- Базовые файлы: landing/index.html, docs/PRE_LAUNCH_STACK_RU.md, docs/LAUNCH_PRIVACY_REVIEW_RU.md, tests/e2e/landing.spec.mjs, README.md.
-- Страница отдельная и не заменяет существующее приложение на корневом URL. Не считать опубликованной до merge и успешного Pages deployment.
-- На SHA 2ce3681acc0c355e778b7d729456b80ca7efb747 Graphify/Jekyll/Integrity/Security/Context прошли, но Chromium job упала.
-- Причина landing E2E подтверждена логом: тестовый static server отдаёт сырые {{ site.baseurl }}/ шаблоны, поэтому CTA href не обработан. Параллельно существующий тест tests/e2e/app.spec.mjs:1929 был flaky: composer bottom=440 при viewportHeight=844; 66 tests passed, один landing failed, один flaky. Не скрывать и не списывать существующий flaky тест без отдельного анализа.
-- В landing/index.html ссылки и canonical/og:url заменены на явные https://dorpnay.github.io/skills-github-pages/ URLs в коммите 2fab7263e70b5b4544db5cb7744b796d9271a109. Это ещё не подтверждено тестом: первым делом проверь актуальный PR HEAD и exact-SHA CI.
-- Предыдущий commit beb45b8... ничего не менял: файл уже имел Jekyll front matter; не повторять этот шаг.
-- Не считать лендинг готовым, пока Chromium на новом SHA не прошёл и static CTA/canonical проверки не подтверждены.
+- Файлы: landing/index.html, docs/PRE_LAUNCH_STACK_RU.md, docs/LAUNCH_PRIVACY_REVIEW_RU.md, tests/e2e/landing.spec.mjs, README.md.
+- Страница отдельная и не заменяет существующее приложение на корневом URL. Не считать опубликованной до разрешённого merge и успешного Pages deployment.
+- Исторический неуспешный HEAD `2ce3681acc0c355e778b7d729456b80ca7efb747`: Quality run `40717768512` завершился failure. Прочитан job log `122920373641`: landing E2E падал на CTA `href`, потому что локальный static server отдавал литеральный `{{ site.baseurl }}/`. Тот же run показал нестабильный существующий mobile composer assertion (`bottom=440`, viewport `844`); 66 тестов прошли, один упал и один был flaky.
+- На проверенном HEAD `c06aba99659382f5c79054b6a9eb5005a9e338a2` CTA и canonical/og:url используют явные `https://dorpnay.github.io/skills-github-pages/...` URLs. Quality Sentinels run `40747789996` завершился `success`: все 6 jobs зелёные, включая Chromium и published Pages browser smoke. Graphify run `40747948369` также `success`.
+- В успешном Chromium job `123026272271` шаги built-app Chromium и published-site browser smoke завершились `success`. Мобильный composer тест прошёл в этом run; ручное тестирование на устройстве не выполнялось.
+- Эти результаты относятся к точному SHA `c06aba99659382f5c79054b6a9eb5005a9e338a2`. Любой следующий commit требует повторной проверки exact-head CI. Merge/deploy не выполнялись; PR #87 остаётся draft и не опубликован.
 
 ## Следующие конкретные действия
-1. Получить свежий PR #87 и убедиться, что head SHA включает 2fab7263... или более поздний фикс.
-2. Проверить exact-head workflow runs. Если Chromium всё ещё падает, прочитать логи нового run и диагностировать реальную причину. Проверить не только landing test, но и исходный flaky mobile composer test.
-3. При успехе обновить PR body: текущий HEAD, точные checks и оговорка, что это не production deployment.
-4. Проверить PR #78 и #80–#87, сверяя текущие HEAD и workflow runs. Не делать вывод по старым SHA.
-5. Устранить stale checkpoint в docs/PROJECT_STATE.yaml/docs/VOLLEY_LOG.md и PR #78 body после сверки фактических HEAD/CI. PR #78 должен идти последним из-за пересечения с другими docs.
-6. Продолжить аудит лендинга и первого запуска, но не добавлять зависимости без конкретной необходимости.
-7. Перед завершением обновить этот файл: проверенные HEAD, CI, изменённые файлы, unresolved issues, точный next step.
-
+1. Перед изменением сверить текущий HEAD PR #87 и его exact-SHA workflow runs.
+2. Сверить PR #78 и #80–#87 по актуальным HEAD/checks. На проверенном срезе: #78 `0a32ec471548da1d4a7d053439ac66b9326182ec`; #80 `e1a0ac9662fb1c81a9e3a1bc828db0594da7ae4a`; #81 `18e573333105a19e50c3b363ce36df11a38cdf52`; #82 `7e6429c68de9bcd430cfa6337dbca2c872cfa101`; #83 `9aad4c0525d48e9ea1b6060d512ef433d55ef431`; #84 `426743b3e6a8771d9dd5910076b4d3ea5621f957`; #85 `bd33425c836bb5f8e2c72c28b05ff86ccdfc417b`; #86 `6785bb03f6975e9d60ccc8eba56b6ca207860b97`; #87 `c06aba99659382f5c79054b6a9eb5005a9e338a2`.
+3. Сверить и обновить checkpoint в `docs/PROJECT_STATE.yaml` и `docs/VOLLEY_LOG.md` на ветке PR #78, включая exact-head checks лендинга. У PR #78 есть пересечения с другими docs, его рассматривать последним; перед любым merge повторно сравнить с актуальным main.
+4. Оставить PR #87 draft, пока не завершены review copy/privacy и не определены owner-side gates. Не заявлять публичную доступность `/landing/` до разрешённого merge и Pages deployment.
+5. VPS inventory, домен/бюджет, live gateway/model, retention/legal contact и target-device checks остаются неизвестными. Не менять инфраструктуру без явного разрешения.
+6. После любого существенного изменения записать новый HEAD и повторно проверить его CI; не переносить старые статусы на новый SHA.
+ 
 ## Неизвестно / требует владельца
 - Есть ли VPS, какой ОС/архитектуры, какие services/Tunnel уже используются.
 - Подтверждённый месячный бюджет и домен/DNS.
