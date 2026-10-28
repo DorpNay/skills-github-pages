@@ -80,7 +80,15 @@
 
 - Текущая очередь: восемь открытых PR (#78, #80–#86), открытых non-PR issues нет. PR #78 — docs reconciliation, оставлять последним из-за пересечений с #80/#86.
 - PR #81: hardening systemd preflight отклоняет дублирующиеся `--host`; exact-head `18e573333105a19e50c3b363ce36df11a38cdf52` прошёл Gateway, Quality, Graphify и dead-code checks. Live VPS/Tunnel не проверены.
-- PR #86: exact-head `b38b085de3d3d2a6ba43393171291cee20d5f60a` прошёл 72 Chromium E2E tests, published Pages smoke, Graphify, Dead Code и provenance. Добавлены non-blocking Markdown CDNs, regression на CDN outage, resize synchronization, IndexedDB v1→v2 migration и detection Kilo gateway.
+- PR #86: exact-head `6785bb03f6975e9d60ccc8eba56b6ca207860b97` прошёл Quality Sentinels (все шесть jobs, включая 72 Chromium E2E tests и published Pages smoke), Graphify `40684664977`, Dead Code `40684664968` и Provenance `40684664998`. Добавлен тест отмены promotion: факт остаётся private, shared store пуст.
 - Graphify PR #86: code-only graph 996 nodes / 2796 edges / 62 source files; девять из десяти broad queries усекались при 700 tokens. Targeted `requestChatCompletion → getApiCandidates` query возвращает все 93 nodes / 321 edges при budget 2600 (ответ over-budget, но не truncated). Graphify не моделирует методы `MemoryDB` object-literal как отдельные callable nodes, поэтому нужны прямые E2E и source review.
 - Все восемь PR остаются открытыми; слияния и production/VPS изменений не выполнялись.
 - Следующий шаг: устранить документальные пересечения перед любым разрешённым merge; закрыть оставшиеся acceptance gaps по проектным scope, voice licensing и target-device tests.
+
+
+## V-2026-10-28-PR-QUEUE-PRIVACY-GRAPHIFY-003 — exact-head refresh
+
+- PR #86 HEAD `6785bb03f6975e9d60ccc8eba56b6ca207860b97`: Quality Sentinels `40684664969` (all six jobs passed), Graphify `40684664977`, Dead Code `40684664968`, and License/Artifact Provenance `40684664998` all succeeded. The new cancellation regression verifies that dismissing promotion keeps a fact private and leaves shared storage empty.
+- PR #78 HEAD `3de8980a9b8a298a6d7fcdc8a288e13c9dd62891`: Quality `40684455984` (all six jobs passed), Lite Gateway `40684455890`, Dead Code `40684455906`, and Provenance `40684455929` succeeded. This is the pre-refresh head; any new docs commit requires fresh exact-head checks.
+- PR #85 HEAD `bd33425c836bb5f8e2c72c28b05ff86ccdfc417b`: Quality `40675123823` and Dead Code `40675123853` succeeded. Voice license review and live device/VPS acceptance remain owner-side gaps.
+- No PR was merged and no runtime, model, driver, or VPS state was changed.
