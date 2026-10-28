@@ -12,8 +12,8 @@ permalink: /
   <meta name="color-scheme" content="dark">
   <title>AI Mobile Agent v10.0</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked@18.0.14/marked.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js"></script>
+  <script id="markedRuntime" async src="https://cdn.jsdelivr.net/npm/marked@18.0.14/marked.min.js"></script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js"></script>
   <style>
     :root { color-scheme: dark; --ink: #e8eefc; --panel: #101827; --line: #273349; }
     html, body { height: 100%; }
@@ -1106,8 +1106,10 @@ permalink: /
       }
     };
 
-    if (window.marked?.Renderer && typeof window.marked.use === 'function') {
-      const renderer = new marked.Renderer();
+    let markedRendererConfigured = false;
+    function configureMarkedRenderer() {
+      if (markedRendererConfigured || !window.marked?.Renderer || typeof window.marked.use !== 'function') return;
+      const renderer = new window.marked.Renderer();
       renderer.code = (token) => {
         const code = typeof token.text === 'string' ? token.text : '';
         const rawLang = typeof token.lang === 'string' ? token.lang.trim().split(/\s+/)[0] : '';
@@ -1116,8 +1118,11 @@ permalink: /
           ? '<button type="button" class="code-action" data-action="run-python">▶ Запустить</button>' : '';
         return `<div class="code-block relative group mt-2 mb-2"><pre><code class="${language ? `language-${language}` : ''}">${escapeHtml(code)}</code></pre><div class="code-actions"><button type="button" class="code-action" data-action="download-code">📥 Скачать</button><button type="button" class="code-action" data-action="copy-code">Копировать</button>${runButton}</div><pre class="code-output hidden" data-code-output></pre></div>`;
       };
-      marked.use({ renderer, breaks: true, gfm: true });
+      window.marked.use({ renderer, breaks: true, gfm: true });
+      markedRendererConfigured = true;
     }
+    configureMarkedRenderer();
+    document.getElementById('markedRuntime')?.addEventListener('load', configureMarkedRenderer, { once: true });
     function safeMarkdown(text) {
       const source = String(text ?? '');
       if (!window.marked || !window.DOMPurify) return safeMarkdownFallback(source);
