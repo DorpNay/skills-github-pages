@@ -2,7 +2,7 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-Последняя контрольная точка до голосового PR: main b92c35060a37776024e4c995191bc7b931572560. PR #75 merged at 4296a8decc12710fafb0a1a4e9644cd8f00b2dfa; затем обновлены status registries. Live HEAD и post-merge CI нужно перепроверять, поскольку эти документационные commits продвинули main.
+Актуальная проверенная контрольная точка: main `4fc342b468e370c792f1e87e77a20fda4de6bbaa`; Quality Sentinels run `40634598755` прошёл все 6 jobs, включая Chromium и опубликованный Pages smoke; Pages deployment `40634598517` успешен. Очередь на момент проверки: PR #70, #72 и #74. Эти SHA и статусы — снимок; перед каждым merge проверять актуальный head и его обязательные проверки.
 
 ## 1. Быстрый маршрут
 
@@ -161,5 +161,15 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Updated docs/START_HERE_RU.md to provide the ordered path from account/VPS/Tunnel setup to first authenticated text completion, then local PDF/DOCX/XLSX extraction, then three separate voice scenarios: record-to-editable-transcript, same-chat half-duplex dialogue, and per-message TTS mini-player/voice selection.
 - Corrected stale quickstart text that incorrectly labelled PDF/DOCX/XLSX extraction unsupported. Extraction still requires the server flag ALANDI_DOCUMENT_EXTRACTION_ENABLED=true, a configured private gateway, supported format and size within configured limits; it remains off by default.
 - Updated docs/PROJECT_STATE.yaml and docs/VOLLEY_LOG.md with exact PR-head evidence and remaining gates.
-- Current limitation: the connector returned no combined commit statuses for main docs commits and its workflow-run query only covers PR-triggered runs. Therefore post-merge main CI is **not confirmed** by this session. Recheck GitHub Actions on the latest main SHA before treating the branch as fully verified.
+- Follow-up verification corrected the earlier limitation: direct GitHub Actions API lookup for exact main SHA `4fc342b468e370c792f1e87e77a20fda4de6bbaa` confirms Quality run `40634598755` and Pages deployment `40634598517` both succeeded.
 - No VPS/server/device was accessed; no model weights downloaded; no voice/document flags were enabled. Model/voice/phonemizer licenses and SHA-256 remain mandatory per-artifact ship gates.
+
+
+## 6. Контроль Graphify и актуального CI — 2026-10-28
+
+- Graphify подтверждён не только по exit code: run [#40534892152](https://github.com/DorpNay/skills-github-pages/actions/runs/40534892152) собрал 940 узлов / 2637 рёбер из 59 source files; 10/10 целевых запросов вернули соседства графа. Артефакты сохраняются на 7 дней и не коммитятся в репозиторий.
+- Graphify остаётся dev-only навигацией, не runtime-зависимостью и не доказательством корректности. Важные запросы: UI send path, gateway auth/provider, scoped memory, RAG, ASR/TTS, document extraction и evidence provenance.
+- Ветка `ci/graphify-regular-architecture-checks-20261028` расширяет triggers на исходники и добавляет еженедельный drift-check; не считать изменение принятым до прохождения Graphify, Quality/Chromium, Pages smoke и provenance.
+- PR #72: в E2E обнаружены два устаревших assertion (маршрут проверял `skill` вместо `selectedSkill`; текст «Коннекторы» проверялся с несовпадающим регистром). Оба исправлены на head `407a42ca16dfd69bee91620ae8deed098d229226`; повторный Chromium gate выполняется.
+- PR #70: не объединять текущую ветку вслепую — GitHub сообщает `mergeable=false`, exact-head CI не подтверждён. Перенести RRF как отдельный change на актуальный main, сохранить scope/provenance и прогнать RAG unit + synthetic eval.
+- PR #74 — черновик, основан на устаревшем base; сохранить полезный аудит готовности голоса/документов, но не мерджить старую ветку без повторного review.
