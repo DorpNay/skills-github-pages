@@ -2266,11 +2266,13 @@ permalink: /
       }
 
       $('providerPreset').value=provider;
-      const storedBaseUrl=modelMode==='self-hosted'?(safeGet('ai_alandi_cloud_base_url')||''):(safeGet(STORAGE.baseUrl)||'');
-      $('baseUrl').value=storedBaseUrl||(provider==='alandi'||provider==='custom'||provider==='cloudflare'?'':(PROVIDERS[provider]?.baseUrl||DEFAULT_BASE_URL));
-      $('modelName').value=modelMode==='self-hosted'?(safeGet('ai_alandi_cloud_model')||'qwen3.5:4b'):(safeGet(STORAGE.model)||(PROVIDERS[provider]?.models[0]?.[0]||DEFAULT_MODEL));
+      const savedProviderMatchesMode=savedProvider===provider;
+      const storedBaseUrl=modelMode==='self-hosted'?(safeGet('ai_alandi_cloud_base_url')||''):(provider==='custom'?(savedProviderMatchesMode?safeGet(STORAGE.baseUrl)||'':''):(provider==='cloudflare'?'':(PROVIDERS[provider]?.baseUrl||'')));
+      $('baseUrl').value=storedBaseUrl;
+      $('modelName').value=modelMode==='self-hosted'?(safeGet('ai_alandi_cloud_model')||'qwen3.5:4b'):(savedProviderMatchesMode?(safeGet(STORAGE.model)||(PROVIDERS[provider]?.models[0]?.[0]||DEFAULT_MODEL)):(PROVIDERS[provider]?.models[0]?.[0]||DEFAULT_MODEL));
       applyProviderPreset($('providerPreset').value,true);
-      $('modelName').value=modelMode==='self-hosted'?(safeGet('ai_alandi_cloud_model')||'qwen3.5:4b'):(safeGet(STORAGE.model)||$('modelName').value);
+      $('baseUrl').value=storedBaseUrl;
+      $('modelName').value=modelMode==='self-hosted'?(safeGet('ai_alandi_cloud_model')||'qwen3.5:4b'):(savedProviderMatchesMode?(safeGet(STORAGE.model)||$('modelName').value):$('modelName').value);
       populateModelPresets($('providerPreset').value,$('modelName').value);
       $('tavilyKey').value = safeGet(STORAGE.tavilyKey) || '';
       const savedPrompt = safeGet(STORAGE.systemPrompt);
