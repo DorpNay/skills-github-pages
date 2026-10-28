@@ -28,6 +28,8 @@ jobs:
         run: |
           node --check scripts/provider-smoke.mjs
           node --check scripts/provider-smoke-all.mjs
+      - name: Syntax-check the opt-in voice installer
+        run: bash -n scripts/voice_first_run.sh
 
   security-sentinel:
     name: Security sentinel (keys / rendering / tools)
