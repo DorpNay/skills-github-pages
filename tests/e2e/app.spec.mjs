@@ -2032,3 +2032,13 @@ test('search presets and function settings fit one line, localize, and persist p
   await expect(page.locator('#functionsMenu')).not.toHaveAttribute('open', '');
   await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
 });
+
+
+test('app shell remains interactive when optional Markdown CDNs fail', async ({ page }) => {
+  await page.route('https://cdn.jsdelivr.net/npm/marked@18.0.14/marked.min.js', route => route.abort());
+  await page.route('https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js', route => route.abort());
+
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#userInput')).toBeEditable();
+  await expect(page.locator('#chatBox')).toBeAttached();
+});
