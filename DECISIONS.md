@@ -182,3 +182,12 @@
 - **Acceptance:** unknown tools denied; policy/approval errors fail closed; changed arguments invalidate approval; no blind retry of non-idempotent side effects; crash/restart recovery tested; verifier requires evidence; injection tests cover user input, retrieved content and tool outputs; helper model can be disabled without breaking core path.
 - **Rollout:** one bounded phase at a time, feature flags off by default, with golden-set evaluation and target-host resource measurements. No production-safety claim before sandbox validation.
 - **Links:** `gateway/tools/dag_engine.py`, `gateway/tools/validator.py`, `gateway/security/approval_gates.py`, `gateway/routing.py`, `observability/trace_context.py`, `docs/AGENT_ORCHESTRATION_RESEARCH_RU.md`.
+
+## D-016 — Adaptive-minimalist interface and private autonomous work partner
+
+- **Status:** Accepted target architecture; implementation not implied.
+- **Interface:** begin calm and minimal, then build a sense of continuity and warmth through relevant context. Keep advanced tools discoverable and close to core workflows for users who need them, without unsolicited prompts or added complexity for basic use. Adaptation must remain predictable and user-controllable.
+- **Personal workspace and privacy:** provide a dedicated owner-only chat with persistent task/context continuity. Enforce access restrictions technically across identity, storage, credentials, backups and connected services; do not claim absolute privacy without a defined threat model and verified controls.
+- **Autonomy contract:** aLandi may continue bounded, authorized work while the owner is away, run checks and prepare a reviewable Pull Request with rationale, evidence, known limitations and rollback instructions. The owner retains the final decision to merge into `main`; successful tests do not grant merge authority.
+- **Safety boundary:** fail closed on ambiguity, missing evidence or out-of-scope actions; isolate execution and protect secrets. Do not describe target capabilities as implemented until verified by tests and deployment evidence.
+- **Acceptance direction:** usability review for beginner/basic and advanced workflows; tests for access isolation and task continuity; PR evidence and rollback review; explicit approval gate for merging.
