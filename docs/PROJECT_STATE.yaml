@@ -280,3 +280,12 @@ current_checkpoint:
   graphify_follow_up: "branch ci/graphify-regular-architecture-checks-20261028; workflow triggers proposed for relevant source changes plus weekly schedule; awaiting exact-head CI"
   runtime_boundary: "GitHub Pages verified; private gateway/VPS, live providers, ASR/TTS artifacts, real microphone/device playback and target-host performance remain unverified"
   next: "finish PR #72 exact-head checks; port and verify RRF on current main in a conflict-free branch; merge Graphify trigger improvement only after Quality, Graphify and provenance checks pass; reconcile stale PR #74 without losing its audit"
+
+deployment_preflight_checkpoint:
+  date: "2026-10-28"
+  branch: "feat/deployment-preflight-ci-20261028"
+  status: "repository-template checker and tests added; exact-head CI not yet observed"
+  artifacts: "scripts/check_deploy_preflight.py; gateway/tests/test_deploy_preflight.py; docs/DEPLOYMENT_PREFLIGHT_RU.md"
+  ci: ".github/workflows/gateway-tests.yml runs preflight; workflow triggers on checker changes"
+  scope: "repository service/env templates only; does not read live secrets, connect to VPS, verify DNS/Tunnel, or prove service readiness"
+  next: "pass exact-head Gateway/Quality/Chromium/provenance; then keep real VPS checks as a separate owner-run release gate"
