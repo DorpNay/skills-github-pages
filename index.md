@@ -4813,15 +4813,19 @@ permalink: /
         else if (!$('sidebar').classList.contains('-translate-x-full')) toggleSidebar(false);
       }
     });
-    if (window.visualViewport) {
-      const syncComposerViewport = () => {
-        const viewportHeight = Math.max(240, Math.round(window.visualViewport.height));
+    const syncComposerViewport = () => {
+      // Resize events can arrive in different orders when a focused textarea and
+      // the visual viewport change together. Defer one frame so measurements use
+      // the browser's settled viewport, and listen to both resize event sources.
+      window.requestAnimationFrame(() => {
+        const viewportHeight = Math.max(240, Math.round(window.visualViewport?.height || window.innerHeight));
         document.body.style.height = `${viewportHeight}px`;
         autoResizeTextarea($('userInput'));
         scrollToBottom(false);
-      };
-      window.visualViewport.addEventListener('resize', syncComposerViewport, { passive: true });
-    }
+      });
+    };
+    window.visualViewport?.addEventListener('resize', syncComposerViewport, { passive: true });
+    window.addEventListener('resize', syncComposerViewport, { passive: true });
 
     async function init() {
       const pollinationsAuthMessage=await finishPollinationsOAuth();
