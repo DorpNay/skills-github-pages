@@ -367,6 +367,20 @@ def test_validate_origin_canonicalizes_host_case_and_default_ports():
     assert validate_origin("https://[2001:DB8::1]:8443") == "https://[2001:db8::1]:8443"
 
 
+def test_oauth_redirect_origin_matches_canonicalized_cors_allowlist(monkeypatch):
+    monkeypatch.setenv("OAUTH_ENABLED", "true")
+    monkeypatch.setenv("OAUTH_ENCRYPTION_KEY", "test-encryption-key")
+    monkeypatch.setenv("GOOGLE_DRIVE_CLIENT_ID", "test-client")
+    monkeypatch.setenv("GOOGLE_DRIVE_CLIENT_SECRET", "test-secret")
+    monkeypatch.setenv("GOOGLE_DRIVE_REDIRECT_URI", "https://example.com/oauth/callback")
+    monkeypatch.setenv("OAUTH_SUCCESS_REDIRECT", "https://DORPNAY.GitHub.io:443/return")
+    monkeypatch.setenv("ALANDI_CORS_ORIGINS", "https://dorpnay.github.io")
+
+    config = Settings.from_env()
+    assert config.cors_origins == ("https://dorpnay.github.io",)
+    assert config.oauth_success_redirect == "https://DORPNAY.GitHub.io:443/return"
+
+
 def test_validate_origin_rejects_invalid_ports():
     for origin in ("https://example.com:99999", "https://example.com:not-a-port"):
         try:
