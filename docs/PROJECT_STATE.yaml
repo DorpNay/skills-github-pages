@@ -255,3 +255,13 @@ mobile_composer_docking:
   regression_test: "mobile composer stays visible at the bottom in new chats across viewport resizes"
   test_limit: "Chromium viewport resizing is a regression proxy; real iOS Safari keyboard and swipe-area behavior still need device verification"
   next: "pass exact-head Gateway, Quality/Chromium, published-site smoke and provenance, then merge only after GitHub reports clean"
+
+voice_selection:
+  status: "implemented on feature branch; CI and runtime unverified"
+  branch: "feat/configurable-local-tts-voices-20261028"
+  source_register: "evals/voice/language_matrix_v2.yaml"
+  research_summary: "docs/VOICE_IMPLEMENTATION_PLAN_RU.md consolidates existing whisper.cpp, Qwen3-ASR, Moonshine, Vosk, Piper and Silero VAD candidates"
+  implementation: "operator-configured local Piper voice allowlist; /v1/capabilities lists only installed allowlisted voices; /v1/audio/speech accepts an allowlisted voice ID; mini-player can select among available voices"
+  security: "voice files must already exist; no auto-download; auth required; voice ID allowlist; flags remain off by default"
+  verification: "unit/E2E tests added but not run locally; awaiting exact-head CI; actual model hashes/licenses and target-device audio not verified"
+  next: "run exact-head Gateway, Quality/Chromium, Pages smoke and provenance; fix failures before merge; then configure and test actual local voice packs"
