@@ -742,7 +742,7 @@ test('agent systems skill is routed on demand and its safety contract stays avai
   const source = await readFile('./index.md', 'utf8');
   const skill = await readFile('./skills/agent-systems.txt', 'utf8');
   expect(source).toContain("isAgentSystemsTask ? 'agent-systems'");
-  expect(source).toContain("new URL('skills/' + skill + '.txt', document.baseURI)");
+  expect(source).toContain("new URL('skills/' + selectedSkill + '.txt', document.baseURI)");
   expect(skill).toContain('The 64-role catalog is 64 logical roles');
   expect(skill).toContain('Chat memory is isolated by default');
   expect(skill).toContain('Google Drive requires backend OAuth callback');
@@ -2002,7 +2002,7 @@ test('search presets and function settings fit one line, localize, and persist p
   await page.locator('#functionsMenuSummary').click();
   await page.locator('[data-action="open-function-panel"][data-function="connectors"]').click();
   await expect(page.locator('#functionPanelModal')).toBeVisible();
-  await expect(page.locator('#functionPanelDescription')).toContainText('Коннекторы');
+  await expect(page.locator('#functionPanelDescription')).toContainText('коннекторы');
   await expect(page.locator('#functionPanelDescription')).toContainText('не подключены');
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
 
