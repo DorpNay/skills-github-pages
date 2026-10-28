@@ -203,7 +203,11 @@ class Settings:
                 raise ValueError("GOOGLE_DRIVE_REDIRECT_URI must be a fixed HTTPS URL without credentials, query or fragment")
             if success.scheme != "https" or not success.netloc or success.username or success.password or success.query or success.fragment:
                 raise ValueError("OAUTH_SUCCESS_REDIRECT must be a fixed HTTPS URL without credentials, query or fragment")
-            success_origin = f"{success.scheme}://{success.netloc}"
+            try:
+                callback.port  # Accessing .port validates the configured callback port.
+                success_origin = validate_origin(f"{success.scheme}://{success.netloc}")
+            except ValueError as exc:
+                raise ValueError("OAuth redirect URLs must use valid ports") from exc
             if success_origin not in origins:
                 raise ValueError("OAUTH_SUCCESS_REDIRECT origin must be present in ALANDI_CORS_ORIGINS")
         searxng_enabled = bool_env("ALANDI_SEARXNG_ENABLED", False)
