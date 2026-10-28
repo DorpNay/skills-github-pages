@@ -3676,9 +3676,19 @@ permalink: /
           parameters: { type: 'object', properties: {}, additionalProperties: false }
         }},
         { type: 'function', function: {
+          name: 'project_read',
+          description: 'Read the details and bounded memory notes of one project in this browser profile. Use project_id from project_list or the current chat project; never invent IDs. Return only the selected project scope.',
+          parameters: { type: 'object', properties: { project_id: { type: 'string', maxLength: 128 } }, additionalProperties: false }
+        }},
+        { type: 'function', function: {
           name: 'project_create',
           description: 'Create a project in the current user’s local aLandi browser storage and attach the current chat to it. Use only when the user asks to create a project. This does not sync to a server or other devices.',
           parameters: { type: 'object', properties: { name: { type: 'string', minLength: 1, maxLength: 100 }, description: { type: 'string', maxLength: 1000 }, instructions: { type: 'string', maxLength: 6000 } }, required: ['name'], additionalProperties: false }
+        }},
+        { type: 'function', function: {
+          name: 'project_update',
+          description: 'Update the current or explicitly identified project name, description, instructions, or memory scope in this browser profile. Only execute when the user explicitly asks to change project settings. Never delete a project.',
+          parameters: { type: 'object', properties: { project_id: { type: 'string', maxLength: 128 }, name: { type: 'string', minLength: 1, maxLength: 100 }, description: { type: 'string', maxLength: 1000 }, instructions: { type: 'string', maxLength: 6000 }, memory_scope: { type: 'string', enum: ['project-only','project-and-global'] } }, additionalProperties: false }
         }},
         { type: 'function', function: {
           name: 'project_add_note',
@@ -3776,7 +3786,7 @@ permalink: /
             result = 'Вызов пропущен: достигнут ограниченный бюджет инструментов для текущего запуска.';
           } else if (['web_search', 'public_knowledge_search', 'read_webpage'].includes(name) && !useSearch) {
             result = 'Веб-поиск выключен для этого запроса. Используй только локальные инструменты.';
-          } else if (!['web_search','public_knowledge_search','read_webpage','project_list','project_create','project_add_note','diagram_create'].includes(name)) {
+          } else if (!['web_search','public_knowledge_search','read_webpage','project_list','project_read','project_create','project_update','project_add_note','diagram_create'].includes(name)) {
             result = 'Инструмент ' + String(name || 'без имени') + ' не поддерживается.';
           } else {
             seenToolCallKeys.add(toolSignature);
@@ -3785,6 +3795,11 @@ permalink: /
               const args = JSON.parse(toolCall.function?.arguments || '{}');
               if (name === 'project_list') {
                 result = JSON.stringify({scope:'current-browser-profile',current_chat_project_id:chat.projectId||null,projects:projects.slice(0,200).map(project=>({id:project.id,name:project.name,updatedAt:project.updatedAt||'',is_current_chat_project:project.id===chat.projectId}))});
+              } else if (name === 'project_read') {
+                const projectId=typeof args.project_id==='string'&&args.project_id.trim()?args.project_id.trim():chat.projectId||selectedProjectForSettingsId;
+                const project=projects.find(item=>item.id===projectId);
+                if(!project) result='Проект не найден в текущем browser profile. Ничего не прочитано.';
+                else result=JSON.stringify({scope:'current-browser-profile',project:{id:project.id,name:project.name,description:project.description||'',instructions:project.instructions||'',memoryScope:project.memoryScope||'project-only',updatedAt:project.updatedAt||'',notes:(Array.isArray(project.memory)?project.memory:[]).slice(-100).map(note=>({id:note.id,text:String(note.text||'').slice(0,600),createdAt:note.createdAt||''}))}});
               } else if (name === 'project_create') {
                 const nameValue=typeof args.name==='string'?args.name.trim().slice(0,100):'';
                 if(!nameValue) result='Ошибка инструмента: требуется непустое имя проекта.';
@@ -3797,6 +3812,19 @@ permalink: /
                   project.updatedAt=now;selectedProjectForSettingsId=project.id;chat.projectId=project.id;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
                   persistProjects();persistChats();renderProjectUI();renderChatList();renderRequestProjectChoices();updateState([...chats]);
                   result=JSON.stringify({ok:true,created:!existing,scope:'current-browser-profile',project:{id:project.id,name:project.name},current_chat_attached:true,sync:'not-enabled'});
+                }
+              } else if (name === 'project_update') {
+                const projectId=typeof args.project_id==='string'&&args.project_id.trim()?args.project_id.trim():chat.projectId||selectedProjectForSettingsId;
+                const project=projects.find(item=>item.id===projectId);
+                if(!project) result='Обновление остановлено: проект не найден в текущем browser profile.';
+                else {
+                  let changed=false;
+                  if(Object.prototype.hasOwnProperty.call(args,'name')){const value=typeof args.name==='string'?args.name.trim().slice(0,100):'';if(!value)result='Имя проекта не может быть пустым.';else{project.name=value;changed=true;}}
+                  if(!result&&Object.prototype.hasOwnProperty.call(args,'description')){project.description=typeof args.description==='string'?args.description.trim().slice(0,1000):'';changed=true;}
+                  if(!result&&Object.prototype.hasOwnProperty.call(args,'instructions')){project.instructions=typeof args.instructions==='string'?args.instructions.trim().slice(0,6000):'';changed=true;}
+                  if(!result&&Object.prototype.hasOwnProperty.call(args,'memory_scope')){if(!['project-only','project-and-global'].includes(args.memory_scope))result='Недопустимый memory_scope.';else{project.memoryScope=args.memory_scope;changed=true;}}
+                  if(!result&&!changed)result='Не указаны поля для изменения; проект не изменён.';
+                  if(!result&&changed){project.updatedAt=new Date().toISOString();persistProjects();renderProjectUI();renderChatList();result=JSON.stringify({ok:true,project:{id:project.id,name:project.name,description:project.description||'',memoryScope:project.memoryScope||'project-only'}});}
                 }
               } else if (name === 'project_add_note') {
                 const note=typeof args.note==='string'?args.note.trim().slice(0,600):'';
