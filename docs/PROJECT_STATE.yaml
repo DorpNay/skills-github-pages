@@ -280,3 +280,16 @@ current_checkpoint:
   graphify_follow_up: "branch ci/graphify-regular-architecture-checks-20261028; workflow triggers proposed for relevant source changes plus weekly schedule; awaiting exact-head CI"
   runtime_boundary: "GitHub Pages verified; private gateway/VPS, live providers, ASR/TTS artifacts, real microphone/device playback and target-host performance remain unverified"
   next: "finish PR #72 exact-head checks; port and verify RRF on current main in a conflict-free branch; merge Graphify trigger improvement only after Quality, Graphify and provenance checks pass; reconcile stale PR #74 without losing its audit"
+
+rag_golden_eval_checkpoint:
+  date: "2026-10-28"
+  branch: "feat/rag-golden-set-evaluator-20261028"
+  status: "implementation committed on branch; exact-head CI not yet observed"
+  artifacts:
+    evaluator: "gateway/evals/run_rag_golden_eval.py"
+    fixture: "gateway/evals/fixtures/rag_golden_smoke.json (2 synthetic queries; harness smoke only)"
+    tests: "gateway/tests/test_rag_golden_eval.py"
+  metrics: "Recall@k, MRR, nDCG@k, relevant-source precision, provenance completeness, local retrieval p50/p95"
+  safety: "validates gold labels against exact scope; no network/model calls; experimental flags unchanged"
+  limitations: "No representative >=50-query labelled benchmark yet; no baseline-vs-candidate quality claim; target VPS latency not measured"
+  next: "run exact-head Quality/Gateway/provenance checks; fix failures; then collect a permissioned human-labelled dataset and compare baseline with RRF"
