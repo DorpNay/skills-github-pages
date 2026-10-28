@@ -162,3 +162,63 @@ test('upgrading an existing v1 database preserves private facts and leaves share
   expect(stores.privateFacts.some(item => item.fact === 'legacy private fact stays private')).toBeTruthy();
   expect(stores.sharedFacts).toHaveLength(0);
 });
+
+
+test('canceling private-to-shared promotion keeps the fact private', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForFunction(async () => (await indexedDB.databases())
+    .some(item => item.name === 'AI_Agent_DB_v87' && item.version === 2));
+
+  await page.evaluate(async () => {
+    const database = await new Promise((resolve, reject) => {
+      const request = indexedDB.open('AI_Agent_DB_v87');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    await new Promise((resolve, reject) => {
+      const transaction = database.transaction('memory', 'readwrite');
+      transaction.objectStore('memory').put({
+        id: 'cancel-promotion',
+        fact: 'cancelled promotion stays private',
+        time: Date.now(),
+        scope: 'private'
+      }, 'cancel-promotion');
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(transaction.error);
+      transaction.onabort = () => reject(transaction.error || new Error('Seed transaction aborted'));
+    });
+    database.close();
+  });
+  await page.reload();
+
+  await page.evaluate(() => {
+    document.getElementById('sidebar')?.classList.remove('-translate-x-full');
+    const projectDetails = document.getElementById('projectManagerDetails');
+    const memoryDetails = document.getElementById('memoryToolsDetails');
+    if (projectDetails) projectDetails.open = true;
+    if (memoryDetails) memoryDetails.open = true;
+  });
+  await expect(page.locator('#memoryBox')).toContainText('cancelled promotion stays private');
+
+  page.once('dialog', dialog => dialog.dismiss());
+  await page.locator('[data-action="promote-memory"][data-memory-id="cancel-promotion"]').click();
+  await expect(page.locator('#sharedMemoryBox')).toContainText('Нет общих заметок.');
+
+  const stores = await page.evaluate(async () => {
+    const database = await new Promise((resolve, reject) => {
+      const request = indexedDB.open('AI_Agent_DB_v87');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const read = name => new Promise((resolve, reject) => {
+      const request = database.transaction(name, 'readonly').objectStore(name).getAll();
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const result = { privateFacts: await read('memory'), sharedFacts: await read('sharedMemory') };
+    database.close();
+    return result;
+  });
+  expect(stores.privateFacts.some(item => item.fact === 'cancelled promotion stays private')).toBeTruthy();
+  expect(stores.sharedFacts).toHaveLength(0);
+});
