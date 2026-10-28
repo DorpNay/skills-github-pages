@@ -5,10 +5,10 @@ project_state:
     status: "main HEAD 337e386; PR #76 Graphify, PR #72 UI and PR #77 RRF merged after green exact-head gates; latest docs-only main Quality and Pages passed, Gateway and Graphify passed on code-identical parent 91557e4"
     branch: "docs/current-state-and-mobile-ledger-20261027"
     base_main: "b91aab316c224588baea99fbb9b966b8865de0a6"
-    open_prs_at_checkpoint: 1
+    open_prs_at_checkpoint: 8
     open_issues_at_checkpoint: 0
     graphify: "Latest main run 40637941303 succeeded: 988 nodes, 2780 edges, 60 source files; 224 inline UI JS nodes, 14 SQL schema nodes, 23 nodes in gateway/rag/lazy_graph_rag.py; ten focused queries returned neighborhoods. Query budget may truncate output and nine E2E files yield no symbols. Artifact-only; source-change/weekly triggers merged."
-    next: "preserve and update unique engineering-package audit from PR #70 and voice/document readiness audit from PR #74; close superseded/stale PRs after preservation; choose next bounded delta-sync recovery or static-asset/CSP slice"
+    next: "finish exact-head PR queue review; reconcile overlapping docs in PR #78 after implementation PRs; then choose a bounded next slice from verified gaps. No automatic merge or VPS deployment."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -21,7 +21,7 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
-  last_volley: "V-2026-10-28-RAG-UI-GRAPHIFY-MERGE-001"
+  last_volley: "V-2026-10-28-PR-QUEUE-PRIVACY-GRAPHIFY-002"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. PR #60 merged the browser half-duplex voice dialogue prototype; CI mocks ASR/TTS, while hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; first read in new chats, then verify current main HEAD and open PRs"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
@@ -270,23 +270,32 @@ voice_selection:
   deployment_runbook: "docs/VOICE_IMPLEMENTATION_PLAN_RU.md; owner-facing install, checksum/license review, flags, private bind, smoke, metrics and rollback steps"
   next: "owner validates exact installed artifacts, hashes/licenses and compatibility on private VPS; enable document extraction and ASR/TTS only one at a time after checks; test all three voice scenarios on target device"
 
-  current_checkpoint:
-    date: "2026-10-28"
-    verified_main: "337e38690af8f22a712c6442192c5ea62d354c3d (docs-only follow-up; code unchanged from 91557e4)"
-    merged_changes:
-      pr_76: "Graphify workflow now runs on source/architecture changes and weekly schedule; exact PR-head Graphify, Quality/Chromium and provenance passed; merge 708b9e4780ce2e33541a7f09c1395cf4aafa1b9e"
-      pr_72: "compact search/function menus and per-chat preferences; exact-head Quality and published-site smoke passed; merge d332a6b2ab09911145520c9d10588d0bcb8e0e41"
-      pr_77: "RRF fusion for scoped FTS5/concept-graph ranking; gateway tests and Quality/Chromium/published-site smoke passed; merge 91557e4eab1b122341bed578cdf4775ff867007f"
-    exact_head_evidence:
-      latest_main_docs_only: "337e38690af8f22a712c6442192c5ea62d354c3d; Quality run 40639031308 and Pages deployment 40639030224 success"
-      graphify_run: "main run 40637941303 success; 988 nodes, 2780 edges, 60 files, 224 inline UI JS nodes, 14 SQL schema nodes, 23 RAG module nodes; ten focused queries"
-      pr_72_quality: "40637581310 success; six Quality jobs including Chromium and published-site smoke; dead-code report 40637581341 success"
-      pr_77_gateway: "40637641493 success"
-      pr_77_quality: "40637641255 success; six Quality jobs including Chromium and published-site smoke; dead-code report 40637641563 success"
-      pr_76_provenance: "40637433125 success"
-    open_pull_requests: "PR #78 documentation reconciliation only; PR #70 closed as superseded after porting RRF and preserving the engineering audit; PR #74 closed after preserving the readiness audit"
-    graphify_limits: "developer navigation only, not runtime feature or correctness proof; graph queries may truncate at 700 tokens; nine Playwright E2E files yielded no symbols"
-    unsubmitted_work: "branch feat/deployment-preflight-gates-20261028 contains a repository-template-only preflight script, tests and runbook; no PR was created, no CI ran, and it is not merged or deployment evidence. Review and test through the normal PR path before use."
-    runtime_boundary: "GitHub Pages is deployed; private gateway/VPS, live providers, ASR/TTS model artifacts, real microphone/device playback and target-host performance remain unverified"
-    next: "finish exact-head gates and merge PR #78; then choose a bounded delta-sync recovery or safe static-asset/CSP slice based on current integration points and tests"
-  
+current_checkpoint:
+  date: "2026-10-28"
+  open_issues_at_checkpoint: 0
+  verified_main: "337e38690af8f22a712c6442192c5ea62d354c3d (docs-only follow-up; code unchanged from 91557e4)"
+  merged_changes:
+    pr_76: "Graphify workflow now runs on source/architecture changes and weekly schedule; exact PR-head Graphify, Quality/Chromium and provenance passed; merge 708b9e4780ce2e33541a7f09c1395cf4aafa1b9e"
+    pr_72: "compact search/function menus and per-chat preferences; exact-head Quality and published-site smoke passed; merge d332a6b2ab09911145520c9d10588d0bcb8e0e41"
+    pr_77: "RRF fusion for scoped FTS5/concept-graph ranking; gateway tests and Quality/Chromium/published-site smoke passed; merge 91557e4eab1b122341bed578cdf4775ff867007f"
+  exact_head_evidence:
+    latest_main_docs_only: "337e38690af8f22a712c6442192c5ea62d354c3d; Quality run 40639031308 and Pages deployment 40639030224 success"
+    graphify_run: "main run 40637941303 success; 988 nodes, 2780 edges, 60 files, 224 inline UI JS nodes, 14 SQL schema nodes, 23 RAG module nodes; ten focused queries"
+    pr_72_quality: "40637581310 success; six Quality jobs including Chromium and published-site smoke; dead-code report 40637581341 success"
+    pr_77_gateway: "40637641493 success"
+    pr_77_quality: "40637641255 success; six Quality jobs including Chromium and published-site smoke; dead-code report 40637641563 success"
+    pr_76_provenance: "40637433125 success"
+  pr_80_rag: "head e1a0ac9662fb1c81a9e3a1bc828db0594da7ae4a; exact-head checks green; evaluator uses two synthetic smoke queries, not a production benchmark"
+  pr_81_preflight: "head 18e573333105a19e50c3b363ce36df11a38cdf52; Gateway, Quality, Graphify and dead-code checks green; live VPS/Tunnel unverified"
+  pr_82_readiness: "head 7e6429c68de9bcd430cfa6337dbca2c872cfa101; documentation-only readiness audit; exact-head Quality green"
+  pr_83_sqlite: "head 9aad4c0525d48e9ea1b6060d512ef433d55ef431; in-memory SQLite delta-store fix; exact-head tests green"
+  pr_84_cors: "head 426743b3e6a8771d9dd5910076b4d3ea5621f957; CORS normalization and invalid-port validation; exact-head checks green"
+  pr_85_voice: "head bd33425c836bb5f8e2c72c28b05ff86ccdfc417b; Quality and dead-code checks green; draft pending operator voice-license review and live device/VPS tests"
+  pr_86_privacy: "head b38b085de3d3d2a6ba43393171291cee20d5f60a; Quality 40683775465 (72 Chromium tests + Pages smoke), Graphify 40683775641, Dead Code 40683775599, Provenance 40683775441 all green"
+  repository_rulesets: "rulesets API returned an empty list; classic branch-protection endpoint denied to integration (403), so protection status unverified"
+  open_pull_requests: "Eight open PRs: #78 docs reconciliation (merge last after overlap review); #80 RAG evaluator (green, synthetic smoke only); #81 deployment preflight (green, templates only); #82 readiness audit docs (green); #83 SQLite delta fix (green); #84 CORS/port hardening (green); #85 voice installer (green but draft/license/device validation pending); #86 privacy/memory (green exact-head checks, draft pending project-scope/manual acceptance). All eight remain open; no open non-PR issues."
+  graphify_limits: "code-only developer navigation, not runtime feature or correctness proof; baseline graph 988/2780/60 files. PR #86 graph 996/2796/62 files; nine of ten broad queries truncate at 700 tokens. Targeted requestChatCompletion/getApiCandidates query returns all 93 nodes and 321 edges at budget 2600 (complete but over-budget). Six code files yield no symbols, including privacy-memory E2E; MemoryDB object-literal methods/privateMemoryUsed property are not callable nodes."
+  unsubmitted_work: "Historical branch feat/deployment-preflight-gates-20261028 remains separate/unsubmitted. Active implementation is PR #81 on feat/deployment-preflight-ci-20261028, exact-head CI green; neither branch proves live VPS deployment."
+  runtime_boundary: "GitHub Pages is deployed; private gateway/VPS, live providers, ASR/TTS model artifacts, real microphone/device playback and target-host performance remain unverified"
+  next: "reconcile documentation overlaps across #78/#80/#86, validate remaining target-device/project-scope gaps, and request explicit owner authorization before any merge or deployment."
+

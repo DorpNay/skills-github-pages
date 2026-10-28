@@ -176,4 +176,4 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 
 - PR #74 closed after preserving its unique, updated `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md` in PR #79. Real VPS, microphone, model, license/hash and hardware metrics remain explicitly unverified.
 
-- Незавершённая ветка `feat/deployment-preflight-gates-20261028` содержит template-only deployment preflight, тесты и runbook, но PR/CI отсутствуют; не считать реализованной до нормального review и зелёных exact-head checks.
+- Обновлено 2026-10-28: историческая ветка `feat/deployment-preflight-gates-20261028` остаётся отдельным WIP; активная реализация — PR #81 (`feat/deployment-preflight-ci-20261028`), exact-head Gateway/Quality/Graphify/dead-code checks зелёные, но live VPS/Tunnel не проверены. Очередь PR #78, #80–#86 см. в `docs/PROJECT_STATE.yaml`; PR #78 интегрировать последним после reconciliation документов. Не сливать PR и не разворачивать на VPS без прямого разрешения.

@@ -75,3 +75,12 @@
 - Создана ветка `feat/deployment-preflight-gates-20261028` с repository-only проверкой systemd/.env.example, тестами и коротким runbook. Проверка задумана как guardrail, а не live VPS smoke.
 - **Статус:** PR не создан; CI не запускался; код не объединён и не является частью проверенного main. Не использовать как доказательство production safety. Перед продолжением открыть обычный PR, просмотреть parser/allowlist, прогнать Gateway tests, Quality/Chromium, Graphify и provenance.
 - **Ограничение:** checker читает только репозиторные шаблоны; он не читает реальный `/etc/alandi-gateway.env`, не подключается к VPS/Tunnel и не проверяет установленные модели.
+
+## V-2026-10-28-PR-QUEUE-PRIVACY-GRAPHIFY-002 — cross-PR checkpoint
+
+- Текущая очередь: восемь открытых PR (#78, #80–#86), открытых non-PR issues нет. PR #78 — docs reconciliation, оставлять последним из-за пересечений с #80/#86.
+- PR #81: hardening systemd preflight отклоняет дублирующиеся `--host`; exact-head `18e573333105a19e50c3b363ce36df11a38cdf52` прошёл Gateway, Quality, Graphify и dead-code checks. Live VPS/Tunnel не проверены.
+- PR #86: exact-head `b38b085de3d3d2a6ba43393171291cee20d5f60a` прошёл 72 Chromium E2E tests, published Pages smoke, Graphify, Dead Code и provenance. Добавлены non-blocking Markdown CDNs, regression на CDN outage, resize synchronization, IndexedDB v1→v2 migration и detection Kilo gateway.
+- Graphify PR #86: code-only graph 996 nodes / 2796 edges / 62 source files; девять из десяти broad queries усекались при 700 tokens. Targeted `requestChatCompletion → getApiCandidates` query возвращает все 93 nodes / 321 edges при budget 2600 (ответ over-budget, но не truncated). Graphify не моделирует методы `MemoryDB` object-literal как отдельные callable nodes, поэтому нужны прямые E2E и source review.
+- Все восемь PR остаются открытыми; слияния и production/VPS изменений не выполнялись.
+- Следующий шаг: устранить документальные пересечения перед любым разрешённым merge; закрыть оставшиеся acceptance gaps по проектным scope, voice licensing и target-device tests.
