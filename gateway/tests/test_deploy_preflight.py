@@ -45,3 +45,12 @@ def test_real_api_key_in_example_is_rejected() -> None:
 def test_systemd_hardening_is_required() -> None:
     unsafe = SERVICE.replace("NoNewPrivileges=true", "NoNewPrivileges=false")
     assert any("NoNewPrivileges=true" in error for error in preflight.validate_files(unsafe, ENV))
+
+def test_paths_or_credentials_in_origins_are_rejected() -> None:
+    unsafe = ENV.replace("ALANDI_CORS_ORIGINS=https://dorpnay.github.io", "ALANDI_CORS_ORIGINS=https://dorpnay.github.io/path")
+    assert any("explicit HTTPS origin" in error for error in preflight.validate_files(SERVICE, unsafe))
+
+
+def test_ollama_url_with_path_is_rejected() -> None:
+    unsafe = ENV.replace("OLLAMA_BASE_URL=http://127.0.0.1:11434", "OLLAMA_BASE_URL=http://127.0.0.1:11434/admin")
+    assert any("loopback listener" in error for error in preflight.validate_files(SERVICE, unsafe))
