@@ -66,3 +66,32 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 - **Activation:** gateway flag `ALANDI_MEMORY_GRAPH_ENABLED=true`, Pages origin in CORS, configured aLandi gateway URL/key. Global memory stays off.
 - **Prompt inclusion:** both project-memory and server-project-memory toggles must be on for the current chat. Retrieval is bounded to six facts and degrades to local-only context if the graph API is unavailable.
 - **Not included:** automatic migration, global/profile memory, live gateway verification, multi-user ACL, or server cleanup on local project deletion.
+
+
+## AI-AGENT-005 — Policy-enforced autonomous orchestration
+
+- **Status:** accepted for implementation planning; no claim of runtime implementation.
+- **Scope:** task contract/state machine; bounded delegation; deterministic fail-closed policy; least-capability executor; approval bound to exact operation; independent verifier; durable journal/checkpoints; idempotency/reconciliation; bounded retries, cancellation and recovery.
+- **Role separation:** planner proposes, policy authorizes, executor acts, verifier validates evidence. LLM agents cannot grant permissions or approve their own side effects.
+- **Security:** arbitrary command/code execution remains blocked until a real sandbox and escape/isolation tests are verified. MCP, a confirmation prompt or a second model is not a sandbox.
+- **Research:** `docs/AGENT_ORCHESTRATION_RESEARCH_RU.md` compares upstream patterns from Microsoft Agent Framework/Semantic Kernel, CrewAI, Hatchet, Restate, DBOS, OPA, Cedar, gVisor, Firecracker, promptfoo, Inspect, garak, Graphiti, Mem0, A2A, MCP, OpenTelemetry, NATS and PydanticAI.
+- **Acceptance/evidence:** schema and policy gate for every tool call; unknown capability denied; approval invalidated by operation/argument/scope change or expiry; no blind retry of non-idempotent effects; crash/restart and injection tests; verifier rejects missing evidence; helper model off leaves core path operational.
+- **Remaining:** current-head code audit, design of task schema and state transitions, sandbox selection, golden eval set and measured target-host profile.
+
+## AI-UI-005 — Adaptive-minimalist private workspace and owner-controlled merge
+
+- **Status:** accepted target design; runtime not implemented by this record.
+- **Interface:** calm minimal default, growing warmth/continuity from relevant context, advanced tools discoverable without nagging or burdening basic users; adaptation remains predictable and user-controllable.
+- **Personal workspace:** dedicated owner-only chat with persistent context and task continuity; privacy must be enforced by technical access controls and reviewed against a threat model.
+- **Autonomous work:** bounded authorized work may continue while the owner is away; return a reviewable PR with rationale, test evidence, limitations and rollback plan. Only the owner decides whether to merge into `main`.
+- **Acceptance:** validate basic/advanced discoverability, context continuity, access isolation, bounded execution, evidence-bearing PRs and the explicit merge-approval gate. Do not mark implemented without verified tests and deployment evidence.
+- **Decision record:** `DECISIONS.md`, D-016.
+
+## AI-UI-005 — Adaptive-minimalist private workspace and owner-controlled merge
+
+- **Status:** accepted target design; runtime not implemented by this record.
+- **Interface:** calm minimal default, contextual warmth/continuity, discoverable advanced tools without intrusive prompts; adaptation remains predictable and user-controllable.
+- **Personal workspace:** dedicated private chat with persistent context and task continuity; privacy requires technical access controls and a reviewed threat model.
+- **Autonomous work:** bounded authorized work may continue while the owner is away; return a reviewable PR with rationale, test evidence, limitations and rollback plan. Only the owner decides whether to merge into `main`.
+- **Acceptance:** validate basic/advanced discoverability, context continuity, access isolation, bounded execution, evidence-bearing PRs and the explicit merge-approval gate. Do not mark implemented without verified tests and deployment evidence.
+- **Decision record:** `DECISIONS.md`, D-016.

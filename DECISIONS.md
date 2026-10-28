@@ -169,3 +169,34 @@
 - **Model autonomy:** do not add a hidden refusal layer that blocks otherwise allowed requests. Local model behavior depends on the selected checkpoint; external providers enforce their own terms and filters. No model can be promised to never refuse.
 - **Image generation:** not a working feature in the current browser UI. Add only after a real local/provider backend, exact artifact/license, VRAM/runtime fit and end-to-end image-return test are selected.
 - **Upgrade gate:** compare free/local baseline and paid target on identical tasks: p50/p95, peak RAM, quality, quotas and expected monthly cost. Preserve the OpenAI-compatible gateway contract and explicit endpoint/model changes.
+
+
+## D-015 — Autonomous orchestration with policy-enforced capabilities
+
+- **Статус:** Accepted direction for implementation planning; runtime implementation and security verification deferred.
+- **Проблема:** bounded DAG/tool primitives and logical agent roles do not yet establish a durable, independently checked and permission-enforced multi-agent runtime.
+- **Решение:** build a small orchestration layer on the existing gateway. Use a versioned task contract and explicit state machine; bounded delegation; schema validation; deterministic fail-closed policy before every tool call; minimal-capability executor; approval tickets bound to exact operation/arguments/scope/expiry; independent verifier; durable event/state journal; idempotency or reconciliation for external side effects; cancellation, bounded retries and crash recovery.
+- **Role separation:** planner proposes; policy code authorizes; executor performs only permitted actions; verifier checks evidence and acceptance criteria. No LLM may grant itself permissions or self-approve a side effect. A verifier result of INCONCLUSIVE is not success.
+- **Security boundary:** arbitrary shell/code execution remains blocked until a real sandbox and escape/isolation tests exist. A permission prompt, container alone, MCP, or a second model is not a substitute for isolation.
+- **Dependencies:** do not immediately adopt a complete framework. Compare existing gateway implementation with LangGraph (state/checkpoints), Restate/Temporal/Hatchet/DBOS (durability), OPA/Cedar (policy), gVisor/Firecracker (isolation), promptfoo/Inspect/garak (evaluation), OpenTelemetry (tracing). Research and exact upstream links: [AGENT_ORCHESTRATION_RESEARCH_RU.md](docs/AGENT_ORCHESTRATION_RESEARCH_RU.md).
+- **Acceptance:** unknown tools denied; policy/approval errors fail closed; changed arguments invalidate approval; no blind retry of non-idempotent side effects; crash/restart recovery tested; verifier requires evidence; injection tests cover user input, retrieved content and tool outputs; helper model can be disabled without breaking core path.
+- **Rollout:** one bounded phase at a time, feature flags off by default, with golden-set evaluation and target-host resource measurements. No production-safety claim before sandbox validation.
+- **Links:** `gateway/tools/dag_engine.py`, `gateway/tools/validator.py`, `gateway/security/approval_gates.py`, `gateway/routing.py`, `observability/trace_context.py`, `docs/AGENT_ORCHESTRATION_RESEARCH_RU.md`.
+
+## D-016 — Adaptive-minimalist interface and private autonomous work partner
+
+- **Status:** Accepted target architecture; implementation not implied.
+- **Interface:** begin calm and minimal, then build a sense of continuity and warmth through relevant context. Keep advanced tools discoverable and close to core workflows for users who need them, without unsolicited prompts or added complexity for basic use. Adaptation must remain predictable and user-controllable.
+- **Personal workspace and privacy:** provide a dedicated owner-only chat with persistent task/context continuity. Enforce access restrictions technically across identity, storage, credentials, backups and connected services; do not claim absolute privacy without a defined threat model and verified controls.
+- **Autonomy contract:** aLandi may continue bounded, authorized work while the owner is away, run checks and prepare a reviewable Pull Request with rationale, evidence, known limitations and rollback instructions. The owner retains the final decision to merge into `main`; successful tests do not grant merge authority.
+- **Safety boundary:** fail closed on ambiguity, missing evidence or out-of-scope actions; isolate execution and protect secrets. Do not describe target capabilities as implemented until verified by tests and deployment evidence.
+- **Acceptance direction:** usability review for beginner/basic and advanced workflows; tests for access isolation and task continuity; PR evidence and rollback review; explicit approval gate for merging.
+
+## D-016 — Адаптивный минимализм и приватный автономный партнёр
+
+- **Статус:** принято как целевое направление; реализация не подразумевается.
+- **Интерфейс:** спокойный минималистичный старт; ощущение уюта и непрерывности формируется за счёт релевантного контекста. Расширенные инструменты легко обнаружимы и связаны с базовыми сценариями, но не навязываются пользователям базовых функций. Адаптация предсказуема и управляема пользователем.
+- **Приватное пространство:** отдельный личный чат с сохранением контекста и задач. Доступ ограничивается технически; абсолютная приватность не заявляется без модели угроз и проверенных мер защиты.
+- **Автономность:** aLandi может выполнять ограниченные разрешённые задачи в отсутствие владельца, проводить проверки и готовить PR с обоснованием, результатами тестов, известными рисками и инструкцией отката.
+- **Контроль:** только владелец принимает финальное решение о слиянии в `main`. Успешные тесты не дают агенту права на merge.
+- **Приёмка:** проверить удобство базовых и расширенных сценариев, непрерывность контекста, изоляцию доступа, границы исполнения и обязательное подтверждение merge. До получения доказательств тестирования и развёртывания не считать функциональность реализованной.
