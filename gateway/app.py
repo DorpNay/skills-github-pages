@@ -851,7 +851,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 "speech": config.audio_speech_enabled,
                 "speech_voices": [
                     {"id": voice_id, "label": label}
-                    for voice_id, label in config.audio_speech_voices
+                    for voice_id, label in (config.audio_speech_voices or ((config.audio_speech_model, config.audio_speech_model),))
                     if config.audio_speech_data_dir
                     and os.path.isfile(os.path.join(config.audio_speech_data_dir, voice_id + ".onnx"))
                     and os.path.isfile(os.path.join(config.audio_speech_data_dir, voice_id + ".onnx.json"))
@@ -1540,7 +1540,8 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             raise HTTPException(400, "text must be a string")
         text = payload["text"].strip()
         requested_voice = payload.get("voice", config.audio_speech_model)
-        if not isinstance(requested_voice, str) or requested_voice not in {voice_id for voice_id, _ in config.audio_speech_voices}:
+        allowed_voices = {voice_id for voice_id, _ in config.audio_speech_voices} or {config.audio_speech_model}
+        if not isinstance(requested_voice, str) or requested_voice not in allowed_voices:
             raise HTTPException(400, "voice is not in the configured local voice allowlist")
         if not text or len(text) > 5000 or any(ord(char) < 32 and char not in "\n\r\t" for char in text):
             raise HTTPException(400, "text must contain 1 to 5000 printable characters")
