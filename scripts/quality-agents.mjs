@@ -56,6 +56,8 @@ const suites = {
       includes("let candidates=getApiCandidates(preferredModel)", 'Provider candidate routing must be filterable before a request is sent.');
       includes("if(containsPrivateMemory)candidates=candidates.filter(candidate=>candidate.provider==='alandi')", 'A request carrying private memory must never fall back to a third-party provider.');
       includes("activeChatForPrivacy?.privateMemoryUsed && selectedProvider!=='alandi'", 'Chats that consumed private memory must not later upload their history to a third-party provider.');
+      includes("[Команда сохранения в личную память; содержимое не дублируется в истории чата.]", 'Private remember commands must not leave the private fact in provider-bound chat history.');
+      includes("[Команда сохранения факта в общую память; значение не дублируется в истории чата.]", 'Shared-memory command values must only enter later prompts through the explicit shared-memory opt-in.');
       includes("promote.dataset.action", 'Private-to-shared promotion must be a per-fact user action.');
       includes("data-action=\"save-shared-memory\"", 'The user must be able to save a fact directly to the separate shared store.');
       includes('function loadProjects()', 'Project data must have a bounded and validated loader.');
