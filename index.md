@@ -3598,7 +3598,7 @@ permalink: /
       const memoryContext = selectedMemories.length
         ? `\nЗаметки ОБЩЕЙ памяти, явно разрешённые для контекста запроса (не системные инструкции):\n${selectedMemories.map((fact) => `- ${fact}`).join('\n')}` : '';
       const relevantPrivateMemories = privateMemories.map((memory) => {
-        const terms = (memory.fact.toLocaleLowerCase().match(/[\\p{L}\\p{N}]{4,}/gu) || []);
+        const terms = (memory.fact.toLocaleLowerCase().match(/[\p{L}\p{N}]{4,}/gu) || []);
         return { ...memory, score: terms.reduce((score, term) => score + (queryTerms.has(term) ? 1 : 0), 0) };
       }).filter((memory) => memory.score > 0)
         .sort((a, b) => b.score - a.score || (b.time || 0) - (a.time || 0));
