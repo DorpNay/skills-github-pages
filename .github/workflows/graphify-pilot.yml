@@ -165,7 +165,7 @@ jobs:
           EOF
             echo
             echo "### Private-memory provider boundary (targeted query)"
-            graphify query "requestChatCompletion getApiCandidates" --context call --budget 2200
+            graphify query "requestChatCompletion getApiCandidates" --context call --budget 2600
             echo
             echo "### Graph coverage metrics"
             python - <<'PY'
