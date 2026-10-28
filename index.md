@@ -1781,6 +1781,8 @@ permalink: /
       catch(error){setServerMemoryStatus(String(error.message||error).slice(0,200));showToast('Не удалось удалить серверный факт.','error');}
     }
     async function getServerProjectMemories(chat,project,query,signal){
+      // Server-side memory is local-model context only; never add it to third-party prompts.
+      if((safeGet(STORAGE.provider)||'alandi')!=='alandi')return [];
       if(!chat?.serverProjectMemoryEnabled||chat.projectMemoryEnabled!==true||!project||!String(query||'').trim())return [];
       try{const payload=await memoryGraphRequest('search',{method:'POST',signal,body:{query:String(query).slice(0,4000),scope:'project',scope_id:project.id,statuses:['confirmed'],limit:6}});
         const nodes=Array.isArray(payload.nodes)?payload.nodes.filter(node=>node&&node.status==='confirmed'&&node.scope==='project'&&node.scope_id===project.id&&typeof node.content==='string'):[];const selected=[];let chars=0;for(const node of nodes.slice(0,6)){const fact=node.content.slice(0,500);if(chars+fact.length>1200)continue;selected.push(fact);chars+=fact.length;}setServerMemoryStatus(memoryUiText('serverMemoryContextLoaded')+selected.length);return selected;
