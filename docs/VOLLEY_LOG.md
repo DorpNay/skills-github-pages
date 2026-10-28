@@ -32,6 +32,8 @@
 
 | V-2026-10-23-MEMORY-BROWSER-BRIDGE | 2026-10-23 | Browser UI manually transfers local project facts as server candidates, reviews/deletes graph facts, and retrieves confirmed server facts only with two per-chat opt-ins | PR #29 merged at `55248f81585c52d7cc7ba7cfc08158a291a761ca`; PR-head and post-merge Quality/Chromium, provenance and Pages checks passed; Gateway tests passed on unchanged base `e424d353418cad62981eb269b4082d2925592708` | No live gateway activation; graph flag remains off by default; global memory remains disabled; no automatic migration |
 
+| V-2026-10-28-LOCAL-TTS-VOICE-CHOICE-001 | 2026-10-28 | Собраны существующие ASR/TTS источники и матрица лицензий; добавлен allowlist установленных Piper voice IDs, авторизованный inventory в capabilities, выбор голоса в mini-player и тесты | Ветка `feat/configurable-local-tts-voices-20261028`; PR ещё не открыт; голосовые runtime-флаги остаются off by default | Тесты локально не запускались; exact-head CI, реальные голосовые файлы, лицензии/hash и микрофон целевого устройства не проверены; rollback — revert коммитов ветки |
+
 ## Required fields for future entries
 
 - Git SHA and PR link
