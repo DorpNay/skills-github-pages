@@ -61,3 +61,25 @@
 3. Запустить RAG evaluator на первом реальном permissioned golden set; не подменять его synthetic fixture.
 4. Выполнить deployment preflight на VPS и затем live gateway/device acceptance.
 5. Только после выбора сценария вручную установить один model/voice artifact; не добавлять веса в Git.
+
+
+## Сверка с исходными принципами aLandi
+
+В мастер-контексте перечислены **7 основных принципов**; V-016 — отдельный 81-пунктный ledger требований по разделам 0–40. Не подменяем один список другим и не ставим галочку по факту существования файла.
+
+| Принцип мастер-контекста | Что подтверждается исходниками | Что ещё не доказано / следующий gate |
+|---|---|---|
+| 1. Работающий вертикальный сценарий важнее swarm | Клиент → authenticated gateway → allowlisted model; роли описаны как логические профили, а не отдельные процессы | Сквозной live-сценарий на реальном gateway/provider не подтверждён; проверить timeout/cancel/retry, attachment, history recovery и ошибки совместно |
+| 2. Малые модели получают короткие наблюдения и типизированные действия | Ограниченные схемы tool DAG/validator и bounded helper-memory suggestions существуют | Production executor намеренно не включён; CLI/browser sandbox остаётся BLOCKED до реальной изоляции и escape-тестов |
+| 3. Минимальный diff, YAGNI, стек не переписывается без измеримой пользы | Статический GitHub Pages клиент + небольшой FastAPI gateway + Ollama + SQLite; Redis/vector DB/второй orchestrator не обязательны | Не мигрировать на uv/orjson/vector DB без воспроизводимого benchmark, semantic parity и проверки лицензий |
+| 4. Provenance обязателен, источники и tool outputs — недоверенные данные | Есть provenance manifest, source hashes/offset validation, scoped RAG deletion и evaluator | Parser-offset parity и citation correctness на реальных документах нужно отдельно измерить; synthetic fixture не считается продуктовым evidence |
+| 5. Самообучение только после golden eval, approval и rollback | Автоматическое самообучение не включено; evaluator #80 задаёт метрики и требования к labelled set | Нужны ≥50 permissioned/de-identified human-labelled queries, baseline/candidate сравнение, approval и rollback; две synthetic queries недостаточны |
+| 6. RAM, latency, cost, privacy и licenses — ограничения первого класса | Один активный model / concurrency 1 как безопасный профиль; model/voice hashes и отдельные лицензии обязательны | Нет подтверждённого полного target-host benchmark; не заявлять RTF/p95/RAM или RU/EN/TH качество без отчёта на целевом железе |
+| 7. Не сохранять секреты или скрытые рассуждения | Gateway описан как не сохраняющий prompt contents; trace schema ограничивает атрибуты; helper suggestions требуют ручного сохранения | Перепроверить логи/ошибки/экспорты и клиентские backup paths в live-сценарии; не прикладывать реальные ключи, аудио или транскрипты к issue/artifact |
+
+### Дополнительные дефекты, найденные при свежем статическом просмотре
+
+- **PR #83 — SQLite in-memory delta store:** подтверждён дефект жизненного цикла :memory: — короткоживущие соединения не видели схему друг друга. Добавлен per-instance shared-memory URI, keeper connection и два регрессионных теста на persistence/isolation. Это dev/test correctness fix; persistent-file production path не меняется.
+- **PR #84 — CORS origin canonicalization:** прежняя проверка принимала hostname в смешанном регистре и malformed/out-of-range port без нормализации; это могло привести к silently broken CORS или ошибочной конфигурации. Добавлена нормализация hostname/default ports/IPv6 и тесты негативных портов. Allowlist не расширен.
+- Для обоих PR требуется дождаться всех обязательных checks на **текущем exact head**. До этого это proposed fixes, не merged/main functionality.
+- Из-за недоступности DNS в рабочем контейнере git clone и локальный запуск pytest не удались; это ограничение окружения, а не успешный тест. CI — единственный доступный execution evidence в этой сессии.
