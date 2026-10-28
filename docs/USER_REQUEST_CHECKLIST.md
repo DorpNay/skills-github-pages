@@ -249,3 +249,12 @@
 - [ ] Select and verify a real sandbox before allowing arbitrary command/code execution.
 - [ ] Add adversarial/golden evaluations, crash/restart and idempotency tests; measure target-host RAM/latency.
 - [ ] Update PROJECT_STATE.yaml and EVALS.md only with verified implementation/test evidence. Research/documentation completion does not mean runtime implementation.
+## Supplement — voice model landing and VPS owner steps (2026-10-28)
+
+- [x] Added a VPS deployment runbook to `docs/VOICE_IMPLEMENTATION_PLAN_RU.md`: model install, voice/model hash and license review, feature-flag sequencing, private gateway binding, smoke checks, and release acceptance.
+- [ ] After PR #75 exact-head CI passes and the code is merged, deploy that exact code revision to the VPS; GitHub Pages deployment alone does not update the private gateway.
+- [ ] On the VPS, inspect OS/architecture/RAM/disk before installing Python 3.12+, ffmpeg/ffprobe, whisper.cpp, Piper and selected local model artifacts.
+- [ ] Download only upstream-verified, license-reviewed artifacts; record exact source/version/license/SHA-256. For Piper, verify matching `.onnx` + `.onnx.json`; do not auto-download models from user requests.
+- [ ] Configure `/etc/alandi-gateway.env` with `0600` permissions; keep ASR/TTS flags false until binaries, models and authenticated capabilities are checked. Then enable one feature at a time and restart the service.
+- [ ] Validate the real microphone → editable transcript → explicit send → same-chat response → local TTS playback/voice choice/Stop path on the target device; record RAM, latency and speech quality.
+- [ ] Never share secrets or full env files in chat. SSH/VPS access is not available through the current GitHub integration, so server-side installation must be executed by the owner using the runbook.
