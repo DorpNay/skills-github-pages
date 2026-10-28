@@ -59,3 +59,14 @@
 - **Сопутствующий triage:** на PR #72 выявлены два устаревших E2E assertion; поправлены на head `407a42ca16dfd69bee91620ae8deed098d229226`, повторный Chromium gate выполняется. PR #70 нельзя объединять напрямую (`mergeable=false`, exact-head checks не подтверждены); RRF следует перенести отдельным изменением на актуальный main. PR #74 оставить черновиком до сохранения полезного readiness-аудита и reconciliation.
 - **Границы:** Graphify не runtime-модуль, не тест функциональной корректности и не замена RAG golden set. VPS, реальная модель/голос и физические устройства по-прежнему требуют отдельных проверок.
 - **Следующий шаг:** дождаться exact-head gates; затем портировать RRF на актуальный main и проверить deterministic ranking, Recall@5, citation metadata, scope isolation и deletion/upsert behavior.
+
+
+## V-2026-10-28-RAG-GOLDEN-EVAL-001 — воспроизводимая оценка качества retrieval
+
+- **Цель:** заменить неподтверждённые заявления о пользе RRF измеряемым offline протоколом.
+- **Изменения на ветке:** `gateway/evals/run_rag_golden_eval.py`, синтетический smoke fixture, тесты валидности разметки/изоляции scope и инструкции в EVALS/roadmap.
+- **Метрики:** Recall@k, MRR, nDCG@k, relevant-source precision, provenance completeness, локальные p50/p95 retrieval latency; опциональный порог Recall@k завершает CLI кодом 2 при провале.
+- **Безопасность:** никаких сетевых вызовов или LLM; ограничение размера dataset; релевантные chunk labels проверяются на совпадение scope/scope_id; feature flags не менялись.
+- **Проверка:** exact-head CI ещё не наблюдался на момент записи. Не считать тесты пройденными до результата Actions.
+- **Ограничения:** 2-query fixture синтетический; нет репрезентативного >=50-query golden set, baseline/candidate delta или замеров на VPS.
+- **Следующий шаг:** пройти Gateway/Quality/Chromium/provenance на точном SHA, устранить замечания, затем провести человеческую разметку и парное сравнение baseline/RRF.
