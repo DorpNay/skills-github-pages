@@ -43,4 +43,4 @@
 - Accepted/rejected assumptions and remaining blockers
 - Rollback method
 - Whether the change is merely merged, or has been activated and verified on the target runtime
-
+| V-2026-10-28-VOICE-LANDING-RUNBOOK-001 | 2026-10-28 | Add owner-executable VPS landing instructions for local ASR/TTS artifacts, voice allowlist, SHA-256/license provenance, feature-flag sequencing, private bind, smoke and release acceptance | Updated `docs/VOICE_IMPLEMENTATION_PLAN_RU.md`, `docs/USER_REQUEST_CHECKLIST.md`, and `docs/PROJECT_STATE.yaml` on `feat/configurable-local-tts-voices-20261028`; code-head CI for `b8b7bde4` passed Gateway, Quality/Chromium, and provenance | Latest docs-updated branch head needs exact-head CI confirmation; private VPS cannot be reached through current GitHub integration; actual voice artifacts/licenses and real microphone remain owner-side ship gates |
