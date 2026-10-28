@@ -793,7 +793,7 @@ permalink: /
       const mode = getModelMode();
       if ($('modelModeSelect')) $('modelModeSelect').value = mode;
       $('cloudSettingsCard')?.classList.toggle('hidden', mode !== 'self-hosted');
-      const externalControls = ['providerPreset','modelSearch','modelPreset','refreshModelCatalog','baseUrl','apiKey','modelName','cloudflareAccountId'];
+      const externalControls = ['modelSearch','modelPreset','refreshModelCatalog','baseUrl','apiKey','modelName','cloudflareAccountId'];
       for (const id of externalControls) if ($(id)) $(id).disabled = mode !== 'free-cloud';
       if ($('providerHint')) $('providerHint').textContent = mode === 'self-hosted'
         ? (getUiLanguage()==='en' ? 'Your own aLandi gateway is active. Third-party provider controls are locked until you switch modes.' : 'Активен собственный aLandi gateway. Сторонние провайдеры заблокированы, пока не переключишь режим.')
