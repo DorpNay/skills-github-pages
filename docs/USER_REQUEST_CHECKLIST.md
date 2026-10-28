@@ -258,3 +258,19 @@
 - [ ] Configure `/etc/alandi-gateway.env` with `0600` permissions; keep ASR/TTS flags false until binaries, models and authenticated capabilities are checked. Then enable one feature at a time and restart the service.
 - [ ] Validate the real microphone → editable transcript → explicit send → same-chat response → local TTS playback/voice choice/Stop path on the target device; record RAM, latency and speech quality.
 - [ ] Never share secrets or full env files in chat. SSH/VPS access is not available through the current GitHub integration, so server-side installation must be executed by the owner using the runbook.
+
+
+## Q. Последний запрос владельца — интеграция интерфейса, инструменты и uncensored-модель (2026-10-28)
+
+- [x] Добавить явные взаимоисключающие режимы `self-hosted` и `free-cloud`; aLandi остаётся first-party маршрутом, а не видимым сторонним провайдером.
+- [x] При self-hosted режиме блокировать внешние provider fields и отключать cross-provider fallback; при выборе внешнего провайдера явно переключать режим.
+- [x] Добавить «Дополнительные настройки» с положением composer сверху/снизу; ограничить высоту textarea и дать ей расти вниз при верхнем положении.
+- [x] Добавить в обычный чат ограниченные инструменты project_list/project_create/project_add_note и diagram_create; web tools остаются отдельными и не требуются для локальных действий.
+- [~] Tool writes сохраняются в browser-local project scope. Нужны exact-head E2E, проверка модели с реальным tool calling и дальнейшие тесты на отсутствие cross-project access; это не серверная синхронизация.
+- [~] Mermaid source можно запросить в чате, без открытия Studio; текущий клиент ещё не рендерит Mermaid в визуальную диаграмму.
+- [x] Выбрать конкретные abliterated GGUF-кандидаты 2B Q4_K_M (1.27 GB) и 4B Q4_K_M (2.71 GB), зафиксировать expected SHA-256 и owner install runbook; не коммитить веса.
+- [x] Добавить синтетический latency/correctness smoke harness `gateway/evals/run_local_model_benchmark.py` и тесты статистики.
+- [ ] Прогнать точные Gateway/Quality/Chromium/provenance проверки на текущем PR head.
+- [ ] На реальном бесплатном/доступном хосте подтвердить RAM, модельный импорт, RU/EN/TH, tool calling, p50/p95, tokens/s, peak RSS/PSS, reboot и rollback. Free Pages не означает бесплатные model inference ресурсы.
+- [ ] Выполнить голосовой сценарий на физическом устройстве: mic → editable transcript → explicit send → same-chat answer → local TTS → Stop. VAD/AEC/barge-in и hands-free остаются отдельными acceptance gates.
+- [ ] Проверить нативный iOS Safari и Android Chrome; Playwright не заменяет физическую клавиатуру, микрофон, Bluetooth и screen reader.
