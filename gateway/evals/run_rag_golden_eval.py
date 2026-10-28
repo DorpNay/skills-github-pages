@@ -236,7 +236,7 @@ def evaluate_dataset(dataset: dict[str, Any], *, top_k: int = 5) -> dict[str, An
     count = len(dataset["queries"])
     return {
         "schema_version": 1,
-        "evaluator": "alandI-rag-golden-set-v1",
+        "evaluator": "alandi-rag-golden-set-v1",
         "dataset_query_count": count,
         "document_count": len(dataset["documents"]),
         "chunk_count": sum(len(doc["chunks"]) for doc in dataset["documents"]),
