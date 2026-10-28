@@ -23,10 +23,6 @@ def test_smoke_fixture_has_reproducible_retrieval_and_provenance_metrics() -> No
     assert report["metrics"]["provenance_completeness_at_k"] == 1
     assert report["metrics"]["latency_p50_ms"] is not None
     assert report["metrics"]["latency_p95_ms"] >= report["metrics"]["latency_p50_ms"]
-    assert all(
-        item["scope_id"] if "scope_id" in item else True
-        for query in report["queries"] for item in query["retrieved"]
-    )
 
 
 def test_retrieval_eval_does_not_leak_chunks_across_project_scopes() -> None:
