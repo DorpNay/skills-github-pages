@@ -77,3 +77,12 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 - **Research:** `docs/AGENT_ORCHESTRATION_RESEARCH_RU.md` compares upstream patterns from Microsoft Agent Framework/Semantic Kernel, CrewAI, Hatchet, Restate, DBOS, OPA, Cedar, gVisor, Firecracker, promptfoo, Inspect, garak, Graphiti, Mem0, A2A, MCP, OpenTelemetry, NATS and PydanticAI.
 - **Acceptance/evidence:** schema and policy gate for every tool call; unknown capability denied; approval invalidated by operation/argument/scope change or expiry; no blind retry of non-idempotent effects; crash/restart and injection tests; verifier rejects missing evidence; helper model off leaves core path operational.
 - **Remaining:** current-head code audit, design of task schema and state transitions, sandbox selection, golden eval set and measured target-host profile.
+
+## AI-UI-005 — Adaptive-minimalist private workspace and owner-controlled merge
+
+- **Status:** accepted target design; runtime not implemented by this record.
+- **Interface:** calm minimal default, growing warmth/continuity from relevant context, advanced tools discoverable without nagging or burdening basic users; adaptation remains predictable and user-controllable.
+- **Personal workspace:** dedicated owner-only chat with persistent context and task continuity; privacy must be enforced by technical access controls and reviewed against a threat model.
+- **Autonomous work:** bounded authorized work may continue while the owner is away; return a reviewable PR with rationale, test evidence, limitations and rollback plan. Only the owner decides whether to merge into `main`.
+- **Acceptance:** validate basic/advanced discoverability, context continuity, access isolation, bounded execution, evidence-bearing PRs and the explicit merge-approval gate. Do not mark implemented without verified tests and deployment evidence.
+- **Decision record:** `DECISIONS.md`, D-016.
