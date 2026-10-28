@@ -90,6 +90,8 @@ PR #53 merged opt-in local transcription for audio files attached from disk; no 
 
 ### P7 — provider/model reliability and operations
 
+**Deployment preflight:** `scripts/check_deploy_preflight.py` is being integrated into Gateway CI to guard the repository's systemd/env template baseline. It must pass before a deployment candidate is prepared, but it is not evidence of live VPS readiness. A real release still requires owner-run checks for production env permissions, loopback binds, Tunnel/DNS/TLS, authenticated health, installed runtime/model versions, license/hash provenance, rollback and target-host latency/RAM.
+
 - Model catalog freshness and real provider probe per configured provider; provider-specific API/response contracts; exact errors retained.
 - Bounded same-provider model fallback only for classified model-not-available errors; never fallback on auth, quota, network or generic server failure. Cross-provider fallback explicit opt-in.
 - Gateway: auth, CORS exact origin, body/context limits, concurrency=1 initially, timeout, exact cache key invalidation, SSE error semantics, request IDs and safe metrics.
