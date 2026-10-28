@@ -164,3 +164,14 @@ Read [docs/AGENT_ORCHESTRATION_RESEARCH_RU.md](AGENT_ORCHESTRATION_RESEARCH_RU.m
 - Consider OPA or Cedar for policy, gVisor or Firecracker for isolation, Restate/Temporal/Hatchet/DBOS for durable execution, promptfoo/Inspect/garak for evals, OpenTelemetry for traces. Select at most one candidate per layer after a minimal prototype; avoid dependencies chosen only for popularity.
 - Start with deterministic routing and the existing gateway; evaluate one local helper model later. It may classify or review, but cannot authorize its own actions. Core operation must work with the helper disabled.
 - Update PROJECT_STATE.yaml, EVALS.md and the decision/evaluation record with exact commit, tests, target profile, false-positive/negative results and rollback. Do not mark implemented/verified until evidence exists.
+
+## Owner-approved product contract — D-016
+
+Read `DECISIONS.md` → **D-016 — Адаптивный минимализм и приватный автономный партнёр** before implementation.
+
+- Keep the default interface calm and minimal; build warmth through useful context continuity. Advanced tools should be easy to discover and connected to ordinary workflows, but never intrusive for basic users.
+- Keep adaptation predictable and user-controllable; do not unexpectedly disrupt familiar workflows.
+- Target a dedicated private chat with persistent task/context continuity. Implement and test technical access isolation; do not claim absolute privacy without a threat model and evidence.
+- Permit autonomous work only within explicit task scope and capabilities. Return a reviewable PR with rationale, changed areas, test results, unresolved risks and rollback steps.
+- The owner retains the final merge decision. Never merge into `main` merely because automated checks pass.
+- These are accepted design constraints, not evidence of existing runtime functionality. Update project state only when implementation and verification evidence exist.
