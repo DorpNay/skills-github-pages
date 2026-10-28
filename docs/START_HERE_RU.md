@@ -4,6 +4,8 @@
 **Цель:** подключить существующий AI Mobile Agent к приватному gateway и одной локальной модели на VPS.  
 **Не делай:** не создавай второй сайт; не публикуй API keys; не открывай наружу порт 8000 или 11434; не удаляй существующий Dify/Tunnel.
 
+**Выбранная локальная модель и пошаговая установка:** [UNCENSORED_MODEL_AND_FREE_CPU_RUNBOOK_RU.md](UNCENSORED_MODEL_AND_FREE_CPU_RUNBOOK_RU.md).
+
 ## 1. Открой уже существующий клиент
 
 1. Открой https://dorpnay.github.io/skills-github-pages/.
