@@ -69,3 +69,9 @@
 - **Post-merge main verification:** на code SHA `91557e4eab1b122341bed578cdf4775ff867007f` прошли Lite Gateway Tests `40637941350`, Quality/Chromium `40637941308`, Graphify `40637941303` и Pages deployment `40637941951`. Последующий docs-only main `337e38690af8f22a712c6442192c5ea62d354c3d` прошёл Quality `40639031308` и Pages deployment `40639030224`. Latest Graphify artifact: 988 nodes / 2780 edges / 60 files; 224 inline UI JS nodes, 14 SQL schema nodes, 23 RAG-module nodes. RAG остаётся выключен по умолчанию; RRF не объявляется улучшением качества до сравнения на labelled golden set >=50 запросов. VPS, live voice и аппаратные метрики не проверялись.
 - **Очередь reconciled:** PR #70 закрыт как superseded после merge RRF в #77 и сохранения инженерного аудита в #79; PR #74 закрыт после сохранения обновлённого readiness-аудита в #79. Остался PR #78 — документационная сверка и реестр решений/оценок; merge только после exact-head Quality/Chromium/provenance.
 - **Следующий шаг:** проверить post-merge Quality/Pages/Graphify/provenance exact main SHA; сохранить и адаптировать аудит инженерного пакета и readiness-аудит; затем выбрать следующий bounded vertical slice по фактическому gap, а не добавлять стек ради стека.
+
+## V-2026-10-28-DEPLOY-PREFLIGHT-WIP-001 — незавершённая ветка, не релиз
+
+- Создана ветка `feat/deployment-preflight-gates-20261028` с repository-only проверкой systemd/.env.example, тестами и коротким runbook. Проверка задумана как guardrail, а не live VPS smoke.
+- **Статус:** PR не создан; CI не запускался; код не объединён и не является частью проверенного main. Не использовать как доказательство production safety. Перед продолжением открыть обычный PR, просмотреть parser/allowlist, прогнать Gateway tests, Quality/Chromium, Graphify и provenance.
+- **Ограничение:** checker читает только репозиторные шаблоны; он не читает реальный `/etc/alandi-gateway.env`, не подключается к VPS/Tunnel и не проверяет установленные модели.
