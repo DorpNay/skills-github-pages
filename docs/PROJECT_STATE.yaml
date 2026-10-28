@@ -307,4 +307,4 @@ privacy_memory_checkpoint:
     - "No cross-device sync; shared means shared across opted-in providers in the same browser profile"
     - "IndexedDB is not encrypted storage and cannot defend against same-origin script compromise or a user with profile access"
     - "User chat history remains provider-bound data; privacy guard prevents uploading a chat after private-memory context was used"
-  source_state_discrepancy: "The checked-in current_checkpoint reports main 4fc342b468e370c792f1e87e77a20fda4de6bbaa, while PR #85 metadata reported base 337e38690af8f22a712c6442192c5ea62d354c3d. Reconcile the live main ref before merging; do not treat either stale metadata field as deployment proof."
+  source_state_discrepancy: "Live compare endpoint confirms current main ref 337e38690af8f22a712c6442192c5ea62d354c3d (branch is 12 commits ahead, 0 behind at checkpoint); checked-in current_checkpoint value 4fc342b468e370c792f1e87e77a20fda4de6bbaa is stale and should be reconciled in a dedicated state refresh. No deployment proof is implied."
