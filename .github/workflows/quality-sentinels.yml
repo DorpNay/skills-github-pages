@@ -28,6 +28,8 @@ jobs:
         run: |
           node --check scripts/provider-smoke.mjs
           node --check scripts/provider-smoke-all.mjs
+      - name: Syntax-check the read-only hardware inventory
+        run: bash -n scripts/diagnose_model_runtime.sh
 
   security-sentinel:
     name: Security sentinel (keys / rendering / tools)
