@@ -270,20 +270,21 @@ voice_selection:
   deployment_runbook: "docs/VOICE_IMPLEMENTATION_PLAN_RU.md; owner-facing install, checksum/license review, flags, private bind, smoke, metrics and rollback steps"
   next: "owner validates exact installed artifacts, hashes/licenses and compatibility on private VPS; enable document extraction and ASR/TTS only one at a time after checks; test all three voice scenarios on target device"
 
-current_checkpoint:
-  date: "2026-10-28"
-  verified_main: "91557e4eab1b122341bed578cdf4775ff867007f"
-  merged_changes:
-    pr_76: "Graphify workflow now runs on source/architecture changes and weekly schedule; exact PR-head Graphify, Quality/Chromium and provenance passed; merge 708b9e4780ce2e33541a7f09c1395cf4aafa1b9e"
-    pr_72: "compact search/function menus and per-chat preferences; exact-head Quality and published-site smoke passed; merge d332a6b2ab09911145520c9d10588d0bcb8e0e41"
-    pr_77: "RRF fusion for scoped FTS5/concept-graph ranking; gateway tests and Quality/Chromium/published-site smoke passed; merge 91557e4eab1b122341bed578cdf4775ff867007f"
-  exact_head_evidence:
-    graphify_run: "main run 40637941303 success; 988 nodes, 2780 edges, 60 files, 224 inline UI JS nodes, 14 SQL schema nodes, 23 RAG module nodes; ten focused queries"
-    pr_72_quality: "40637581310 success; six Quality jobs including Chromium and published-site smoke; dead-code report 40637581341 success"
-    pr_77_gateway: "40637641493 success"
-    pr_77_quality: "40637641255 success; six Quality jobs including Chromium and published-site smoke; dead-code report 40637641563 success"
-    pr_76_provenance: "40637433125 success"
-  open_pull_requests: "PR #70 (RRF implementation superseded by #77; unique engineering audit to preserve), PR #74 (draft voice/document readiness audit on stale base)"
-  graphify_limits: "developer navigation only, not runtime feature or correctness proof; graph queries may truncate at 700 tokens; nine Playwright E2E files yielded no symbols"
-  runtime_boundary: "GitHub Pages is deployed; private gateway/VPS, live providers, ASR/TTS model artifacts, real microphone/device playback and target-host performance remain unverified"
-  next: "preserve unique audit documents from PR #70 and #74, close superseded/stale PRs only after preserving useful content, then choose a bounded delta-sync recovery or safe static-asset/CSP slice"
+  current_checkpoint:
+    date: "2026-10-28"
+    verified_main: "91557e4eab1b122341bed578cdf4775ff867007f"
+    merged_changes:
+      pr_76: "Graphify workflow now runs on source/architecture changes and weekly schedule; exact PR-head Graphify, Quality/Chromium and provenance passed; merge 708b9e4780ce2e33541a7f09c1395cf4aafa1b9e"
+      pr_72: "compact search/function menus and per-chat preferences; exact-head Quality and published-site smoke passed; merge d332a6b2ab09911145520c9d10588d0bcb8e0e41"
+      pr_77: "RRF fusion for scoped FTS5/concept-graph ranking; gateway tests and Quality/Chromium/published-site smoke passed; merge 91557e4eab1b122341bed578cdf4775ff867007f"
+    exact_head_evidence:
+      graphify_run: "main run 40637941303 success; 988 nodes, 2780 edges, 60 files, 224 inline UI JS nodes, 14 SQL schema nodes, 23 RAG module nodes; ten focused queries"
+      pr_72_quality: "40637581310 success; six Quality jobs including Chromium and published-site smoke; dead-code report 40637581341 success"
+      pr_77_gateway: "40637641493 success"
+      pr_77_quality: "40637641255 success; six Quality jobs including Chromium and published-site smoke; dead-code report 40637641563 success"
+      pr_76_provenance: "40637433125 success"
+    open_pull_requests: "PR #70 (RRF implementation superseded by #77; unique engineering audit to preserve), PR #74 (draft voice/document readiness audit on stale base)"
+    graphify_limits: "developer navigation only, not runtime feature or correctness proof; graph queries may truncate at 700 tokens; nine Playwright E2E files yielded no symbols"
+    runtime_boundary: "GitHub Pages is deployed; private gateway/VPS, live providers, ASR/TTS model artifacts, real microphone/device playback and target-host performance remain unverified"
+    next: "preserve unique audit documents from PR #70 and #74, close superseded/stale PRs only after preserving useful content, then choose a bounded delta-sync recovery or safe static-asset/CSP slice"
+  
