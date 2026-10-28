@@ -191,3 +191,12 @@
 - **Autonomy contract:** aLandi may continue bounded, authorized work while the owner is away, run checks and prepare a reviewable Pull Request with rationale, evidence, known limitations and rollback instructions. The owner retains the final decision to merge into `main`; successful tests do not grant merge authority.
 - **Safety boundary:** fail closed on ambiguity, missing evidence or out-of-scope actions; isolate execution and protect secrets. Do not describe target capabilities as implemented until verified by tests and deployment evidence.
 - **Acceptance direction:** usability review for beginner/basic and advanced workflows; tests for access isolation and task continuity; PR evidence and rollback review; explicit approval gate for merging.
+
+## D-016 — Адаптивный минимализм и приватный автономный партнёр
+
+- **Статус:** принято как целевое направление; реализация не подразумевается.
+- **Интерфейс:** спокойный минималистичный старт; ощущение уюта и непрерывности формируется за счёт релевантного контекста. Расширенные инструменты легко обнаружимы и связаны с базовыми сценариями, но не навязываются пользователям базовых функций. Адаптация предсказуема и управляема пользователем.
+- **Приватное пространство:** отдельный личный чат с сохранением контекста и задач. Доступ ограничивается технически; абсолютная приватность не заявляется без модели угроз и проверенных мер защиты.
+- **Автономность:** aLandi может выполнять ограниченные разрешённые задачи в отсутствие владельца, проводить проверки и готовить PR с обоснованием, результатами тестов, известными рисками и инструкцией отката.
+- **Контроль:** только владелец принимает финальное решение о слиянии в `main`. Успешные тесты не дают агенту права на merge.
+- **Приёмка:** проверить удобство базовых и расширенных сценариев, непрерывность контекста, изоляцию доступа, границы исполнения и обязательное подтверждение merge. До получения доказательств тестирования и развёртывания не считать функциональность реализованной.
