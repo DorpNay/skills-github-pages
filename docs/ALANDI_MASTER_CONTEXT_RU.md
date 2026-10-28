@@ -214,3 +214,11 @@ OAuth backend prototype now exists behind OAUTH_ENABLED=false. Real client crede
 ## Краткая инструкция агенту
 
 Ты работаешь над aLandi в `DorpNay/skills-github-pages`. Сначала прочитай этот мастер-контекст и связанные документы, затем исследуй актуальный код. Одобренная идея не равна реализованной функции. Работай небольшими проверяемыми шагами, используй bounded roles, provenance, evals и rollback. Не раскрывай секреты и не выполняй действия с побочными эффектами без разрешения. В финале сообщай, что реально изменено, что проверено, какие ограничения остались и как откатить изменение.
+
+
+## 2026-10-28 — model and chat integration decision
+
+- Self-hosted and free-cloud are mutually exclusive modes. In self-hosted mode the first-party aLandi gateway is the only route; provider credential fields and cross-provider fallback are disabled.
+- Current uncensored candidate: Huihui Qwen3.5-4B abliterated Q4_K_M for an 8 GB host; 2B Q4_K_M for tighter RAM. Expected hashes and install commands are in `docs/UNCENSORED_MODEL_AND_FREE_CPU_RUNBOOK_RU.md`. Neither artifact is installed or measured on the actual VPS yet.
+- Workspace tools are requested directly from chat and do not depend on web search: list/create project, add a scoped browser-local project note, and generate Mermaid source in the chat. Mermaid visual rendering and cross-device project sync remain unimplemented in this slice.
+- Local model benchmark: `gateway/evals/run_local_model_benchmark.py`; synthetic non-streaming smoke only, not a quality score or first-token benchmark.
