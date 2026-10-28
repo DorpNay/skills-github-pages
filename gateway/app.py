@@ -152,10 +152,10 @@ class Settings:
 
     @classmethod
     def from_env(cls) -> "Settings":
-        base = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").strip().rstrip("/")
-        parsed = urlsplit(base)
-        if parsed.scheme not in {"http", "https"} or not parsed.netloc or parsed.query or parsed.fragment or parsed.username or parsed.password:
-            raise ValueError("OLLAMA_BASE_URL must be a fixed HTTP(S) base URL without credentials, query, or fragment")
+        base = validate_fixed_service_base_url(
+            os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").strip().rstrip("/"),
+            "OLLAMA_BASE_URL",
+        )
         models = tuple(item.strip() for item in os.getenv("ALANDI_ALLOWED_MODELS", "qwen3.5:4b").split(",") if item.strip())
         if not models or len(set(models)) != len(models):
             raise ValueError("ALANDI_ALLOWED_MODELS must contain unique model tags")
