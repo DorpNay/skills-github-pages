@@ -1295,42 +1295,30 @@ test('aLandi cloud probe cannot overwrite settings changed while its request is 
 });
 
 
-test('legacy aLandi provider probe does not overwrite changed primary cloud settings', async ({ page }) => {
-  let beginProbe, releaseProbe;
-  const probeStarted = new Promise(resolve => { beginProbe = resolve; });
-  const probeGate = new Promise(resolve => { releaseProbe = resolve; });
-  await page.route('https://legacy-alandi.example.test/v1/chat/completions', async route => {
-    beginProbe();
-    await probeGate;
-    await route.fulfill({
-      status: 200, contentType: 'application/json',
-      body: JSON.stringify({ model: 'legacy-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
-    });
-  });
+test('self-hosted mode locks third-party credentials and disables cross-provider fallback', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://legacy-alandi.example.test/v1');
-  await page.locator('#modelName').fill('legacy-model');
-  await page.locator('#apiKey').fill('legacy-probe-key');
-  await page.locator('#cloudBaseUrl').fill('https://cloud-initial.example.test/v1');
-  await page.locator('#cloudModel').fill('cloud-initial-model');
-  await page.locator('#cloudApiKey').fill('cloud-initial-key');
-  await page.locator('[data-action="test-connection"]').click();
-  await probeStarted;
-  await page.locator('#cloudBaseUrl').fill('https://cloud-updated.example.test/v1');
-  await page.locator('#cloudModel').fill('cloud-updated-model');
-  await page.locator('#cloudApiKey').fill('cloud-updated-key');
-  releaseProbe();
-  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
-  await expect(page.locator('#cloudBaseUrl')).toHaveValue('https://cloud-updated.example.test/v1');
-  await expect(page.locator('#cloudModel')).toHaveValue('cloud-updated-model');
-  await expect(page.locator('#cloudApiKey')).toHaveValue('cloud-updated-key');
-  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
-  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
-});
+  await expect(page.locator('#modelModeSelect')).toHaveValue('self-hosted');
+  await expect(page.locator('#cloudSettingsCard')).toBeVisible();
 
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#legacyProviderSettings > summary').click();
+  }
+  await expect(page.locator('#baseUrl')).toBeDisabled();
+  await expect(page.locator('#apiKey')).toBeDisabled();
+  await expect(page.locator('#modelName')).toBeDisabled();
+  await expect(page.locator('#allowCrossProviderFallback')).toBeDisabled();
+  await expect(page.locator('#allowCrossProviderFallback')).not.toBeChecked();
+
+  await page.evaluate(() => localStorage.setItem('ai_cross_provider_fallback', 'true'));
+  await page.reload();
+  await page.locator('[data-action="toggle-settings"]').click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#legacyProviderSettings > summary').click();
+  }
+  await expect(page.locator('#allowCrossProviderFallback')).not.toBeChecked();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_cross_provider_fallback'))).toBe('false');
+});
 
 test('local helper suggests compact project-memory facts without saving them automatically', async ({ page }) => {
   const helperRequests = [];
