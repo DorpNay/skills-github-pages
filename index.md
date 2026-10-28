@@ -3807,10 +3807,10 @@ permalink: /
               } else if (name === 'diagram_create') {
                 const allowedTypes=new Set(['flowchart TD','flowchart LR','sequenceDiagram','stateDiagram-v2','erDiagram','classDiagram','gantt','timeline']);
                 const source=typeof args.mermaid_source==='string'?args.mermaid_source.trim():'';
-                const firstLine=source.split(/\\r?\\n/,1)[0].trim();
+                const firstLine=source.split(/\r?\n/,1)[0].trim();
                 if(!allowedTypes.has(args.diagram_type)||!source||source.length>12000) result='Диаграмма отклонена: неизвестный тип или пустой/слишком большой исходник.';
-                else if(!firstLine.startsWith(args.diagram_type)||/<\\/?(?:script|iframe|object)|javascript:|%%\\s*\\{|^\\s*click\\s+/im.test(source)) result='Диаграмма отклонена: исходник не соответствует заявленному типу или содержит запрещённые директивы.';
-                else result='Диаграмма подготовлена прямо в чате. Это Mermaid-исходник; текущий клиент показывает его как код, не как отрендеренное изображение.\\n\\n```mermaid\\n'+source+'\\n```';
+                else if(!firstLine.startsWith(args.diagram_type)||/<\/?(?:script|iframe|object)|javascript:|%%\s*\{|^\s*click\s+/im.test(source)) result='Диаграмма отклонена: исходник не соответствует заявленному типу или содержит запрещённые директивы.';
+                else result='Диаграмма подготовлена прямо в чате. Это Mermaid-исходник; текущий клиент показывает его как код, не как отрендеренное изображение.\n\n```mermaid\n'+source+'\n```';
               } else if (name === 'web_search') {
                 if (typeof args.query !== 'string' || !args.query.trim()) result = 'Ошибка инструмента: требуется непустое поле query.';
                 else result = await performTavilySearch(args.query.trim().slice(0, 500), signal, toolMode);
