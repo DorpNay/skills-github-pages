@@ -2260,6 +2260,13 @@ permalink: /
       safeSet(STORAGE.modelMode,modelMode);
       const providerCandidate=savedProvider && Object.prototype.hasOwnProperty.call(PROVIDERS,savedProvider)?savedProvider:'alandi';
       const provider=modelMode==='self-hosted'?'alandi':(providerCandidate==='alandi'?'kilo':providerCandidate);
+      if (modelMode === 'self-hosted') {
+        safeSet(STORAGE.baseUrl, safeGet('ai_alandi_cloud_base_url') || '');
+        safeSet(STORAGE.model, safeGet('ai_alandi_cloud_model') || 'qwen3.5:4b');
+      } else if (savedProvider !== provider) {
+        safeSet(STORAGE.baseUrl, provider === 'custom' ? '' : getProviderBaseUrl(provider));
+        safeSet(STORAGE.model, PROVIDERS[provider]?.models?.[0]?.[0] || DEFAULT_MODEL);
+      }
       if (savedProvider && !Object.prototype.hasOwnProperty.call(PROVIDERS,savedProvider)) {
         // A removed provider preset must not leave a stale endpoint active.
         safeSet(STORAGE.baseUrl, '');
@@ -2268,7 +2275,7 @@ permalink: /
 
       $('providerPreset').value=provider;
       const savedProviderMatchesMode=savedProvider===provider;
-      const storedBaseUrl=modelMode==='self-hosted'?(safeGet('ai_alandi_cloud_base_url')||''):(provider==='custom'?(savedProviderMatchesMode?safeGet(STORAGE.baseUrl)||'':''):(provider==='cloudflare'?'':(PROVIDERS[provider]?.baseUrl||'')));
+      const storedBaseUrl=modelMode==='self-hosted'?(safeGet('ai_alandi_cloud_base_url')||''):(provider==='custom'?(savedProviderMatchesMode?safeGet(STORAGE.baseUrl)||'':''):getProviderBaseUrl(provider));
       $('baseUrl').value=storedBaseUrl;
       $('modelName').value=modelMode==='self-hosted'?(safeGet('ai_alandi_cloud_model')||'qwen3.5:4b'):(savedProviderMatchesMode?(safeGet(STORAGE.model)||(PROVIDERS[provider]?.models[0]?.[0]||DEFAULT_MODEL)):(PROVIDERS[provider]?.models[0]?.[0]||DEFAULT_MODEL));
       applyProviderPreset($('providerPreset').value,true);
@@ -2888,13 +2895,13 @@ permalink: /
     }
     async function selectAlandiPrimaryRoute() {
       const {baseUrl,model,key}=getCloudSettings();
-      if(baseUrl)safeSet('ai_alandi_cloud_base_url',baseUrl);
-      if(model)safeSet('ai_alandi_cloud_model',model);
-      if(key)safeSet(providerKeyStorage('alandi'),key);
+      safeSet('ai_alandi_cloud_base_url',baseUrl);
+      safeSet('ai_alandi_cloud_model',model);
+      safeSet(providerKeyStorage('alandi'),key);
       safeSet(STORAGE.modelMode,'self-hosted');
       safeSet(STORAGE.provider,'alandi');
-      if(baseUrl)safeSet(STORAGE.baseUrl,baseUrl);
-      if(model)safeSet(STORAGE.model,model);
+      safeSet(STORAGE.baseUrl,baseUrl);
+      safeSet(STORAGE.model,model);
       $('providerPreset').value='alandi';applyProviderPreset('alandi',true);
       $('baseUrl').value=baseUrl;$('modelName').value=model;$('apiKey').value=key;
       const raw=String(safeGet('ai_alandi_cloud_connection_v1')||'');let marker=null;try{marker=JSON.parse(raw);}catch(_){}
