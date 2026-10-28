@@ -19,6 +19,7 @@ on:
       - "router/**"
       - "scripts/manifest_state.py"
       - "scripts/check_intel_triad.py"
+      - "scripts/check_deploy_preflight.py"
       - ".github/workflows/gateway-tests.yml"
   workflow_dispatch:
 
