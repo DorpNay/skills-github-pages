@@ -1,15 +1,34 @@
 name: Graphify Code-Only Architecture Pilot
 
 on:
+  # Run on meaningful source/architecture changes, not only edits to this workflow.
   pull_request:
     paths:
       - ".github/workflows/graphify-pilot.yml"
       - ".graphifyignore"
       - "docs/ALANDI_ARCHITECTURE_MAP_RU.md"
+      - "index.md"
+      - "gateway/**/*.py"
+      - "gateway/**/*.sql"
+      - "scripts/**/*.mjs"
+      - "tests/**/*.mjs"
+      - "skills/**/*.txt"
   push:
     branches: [main]
     paths:
       - ".github/workflows/graphify-pilot.yml"
+      - ".graphifyignore"
+      - "docs/ALANDI_ARCHITECTURE_MAP_RU.md"
+      - "index.md"
+      - "gateway/**/*.py"
+      - "gateway/**/*.sql"
+      - "scripts/**/*.mjs"
+      - "tests/**/*.mjs"
+      - "skills/**/*.txt"
+  # A periodic drift check catches dependency changes and coverage drift even
+  # when no qualifying source change has triggered the workflow recently.
+  schedule:
+    - cron: "17 5 * * 1"
   workflow_dispatch:
 
 permissions:
