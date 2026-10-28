@@ -1,0 +1,73 @@
+import { test, expect } from '@playwright/test';
+
+test('explicit remember commands stay in browser memory stores and do not call a provider', async ({ page }) => {
+  const modelRequests = [];
+  page.on('request', request => {
+    if (/\/v1\/chat\/completions|generativelanguage\.googleapis\.com|api\.groq\.com|openrouter\.ai|api\.x\.ai/i.test(request.url())) {
+      modelRequests.push(request.url());
+    }
+  });
+
+  await page.goto('/');
+  await expect(page.locator('#userInput')).toBeEditable();
+
+  await page.locator('#userInput').fill('Запомни: тестовый личный факт только для локального aLandi');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Сохранил указанный факт в личную память локальной модели');
+
+  await page.evaluate(async () => {
+    const db = await new Promise((resolve, reject) => {
+      const request = indexedDB.open('AI_Agent_DB_v87');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const read = name => new Promise((resolve, reject) => {
+      const request = db.transaction(name, 'readonly').objectStore(name).getAll();
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const result = { privateFacts: await read('memory'), sharedFacts: await read('sharedMemory') };
+    db.close();
+    return result;
+  }).then(result => {
+    expect(result.privateFacts.some(item => item.fact === 'тестовый личный факт только для локального aLandi')).toBeTruthy();
+    expect(result.sharedFacts).toHaveLength(0);
+  });
+
+  expect(modelRequests, 'Remember commands must be handled before any provider request').toEqual([]);
+});
+
+test('explicit shared-memory command requires confirmation and uses a separate store', async ({ page }) => {
+  const modelRequests = [];
+  page.on('request', request => {
+    if (/\/v1\/chat\/completions|generativelanguage\.googleapis\.com|api\.groq\.com|openrouter\.ai|api\.x\.ai/i.test(request.url())) {
+      modelRequests.push(request.url());
+    }
+  });
+  page.on('dialog', dialog => dialog.accept());
+
+  await page.goto('/');
+  await page.locator('#userInput').fill('Сохрани в общую память: синтетический общий факт для теста');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Сохранил указанный факт в общую память');
+
+  const stores = await page.evaluate(async () => {
+    const db = await new Promise((resolve, reject) => {
+      const request = indexedDB.open('AI_Agent_DB_v87');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const read = name => new Promise((resolve, reject) => {
+      const request = db.transaction(name, 'readonly').objectStore(name).getAll();
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const result = { privateFacts: await read('memory'), sharedFacts: await read('sharedMemory') };
+    db.close();
+    return result;
+  });
+
+  expect(stores.sharedFacts.some(item => item.fact === 'синтетический общий факт для теста')).toBeTruthy();
+  expect(stores.privateFacts.some(item => item.fact === 'синтетический общий факт для теста')).toBeFalsy();
+  expect(modelRequests, 'Shared-memory commands must be handled before any provider request').toEqual([]);
+});
