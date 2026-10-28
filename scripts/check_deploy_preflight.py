@@ -7,6 +7,7 @@ not inspect /etc/alandi-gateway.env, a VPS, running services, DNS, or a tunnel.
 from __future__ import annotations
 
 import re
+import shlex
 import sys
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -98,12 +99,20 @@ def validate_files(service_text: str, env_text: str) -> list[str]:
     if len(exec_starts) != 1:
         errors.append("systemd [Service] must have exactly one ExecStart")
     else:
-        command = exec_starts[0]
-        for token in ("--host 127.0.0.1", "--port 8000", "--workers 1"):
-            if token not in command:
-                errors.append(f"ExecStart must retain {token}")
-        if "--host 0.0.0.0" in command or "--host :: " in command:
-            errors.append("gateway must not bind to a public interface in the baseline unit")
+        command = exec_starts[0].split("=", 1)[1]
+        try:
+            argv = shlex.split(command)
+        except ValueError:
+            errors.append("systemd ExecStart must use valid shell-style quoting")
+            argv = []
+
+        # Require one unambiguous value for each network/process option. Merely
+        # searching for a safe substring misses duplicate options such as
+        # "--host 127.0.0.1 --host ::" where the later value may win.
+        for option, expected in (("--host", "127.0.0.1"), ("--port", "8000"), ("--workers", "1")):
+            positions = [index for index, token in enumerate(argv) if token == option]
+            if len(positions) != 1 or positions[0] + 1 >= len(argv) or argv[positions[0] + 1] != expected:
+                errors.append(f"ExecStart must set {option} exactly once to {expected}")
 
     if env.get("ALANDI_API_KEY") != "replace-with-a-new-random-64-character-hex-secret":
         errors.append(".env.example must contain only the API-key placeholder, never a real key")
