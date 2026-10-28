@@ -17,6 +17,7 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 
 PROMPTS: tuple[dict[str, str], ...] = (
@@ -95,8 +96,12 @@ def main() -> int:
         parser.error("--runs must be between 1 and 10")
     if not 1 <= args.timeout <= 600:
         parser.error("--timeout must be between 1 and 600 seconds")
-    if not args.base_url.startswith(("http://127.0.0.1", "http://localhost", "http://[::1]", "https://")):
-        parser.error("--base-url must be HTTPS or a loopback HTTP URL")
+    parsed_url = urlsplit(args.base_url)
+    if (parsed_url.scheme not in {"http", "https"} or not parsed_url.hostname or
+            parsed_url.username or parsed_url.password or parsed_url.query or parsed_url.fragment):
+        parser.error("--base-url must be a valid HTTP(S) base URL without credentials, query or fragment")
+    if parsed_url.scheme == "http" and parsed_url.hostname not in {"127.0.0.1", "localhost", "::1"}:
+        parser.error("Plain HTTP is allowed only for a loopback benchmark endpoint")
 
     results: list[dict[str, Any]] = []
     all_latencies: list[float] = []
