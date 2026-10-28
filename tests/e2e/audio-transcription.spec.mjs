@@ -39,10 +39,10 @@ test('voice recording is sent to the configured gateway and transcript stays edi
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
     await page.locator('#legacyProviderSettings > summary').click();
   }
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('e2e-model');
-  await page.locator('#apiKey').fill('v'.repeat(64));
+  await page.locator('#cloudBaseUrl').fill('https://api.example.test/v1');
+  await page.locator('#cloudModel').fill('e2e-model');
+  await page.locator('#cloudApiKey').fill('v'.repeat(64));
+  await page.locator('[data-action="select-alandi-primary"]').click();
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
   await page.locator('#voiceMenu').evaluate(el => el.classList.remove('hidden'));
@@ -82,10 +82,10 @@ test('assistant message offers copy and local TTS controls with a mini-player', 
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
     await page.locator('#legacyProviderSettings > summary').click();
   }
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('e2e-model');
-  await page.locator('#apiKey').fill('w'.repeat(64));
+  await page.locator('#cloudBaseUrl').fill('https://api.example.test/v1');
+  await page.locator('#cloudModel').fill('e2e-model');
+  await page.locator('#cloudApiKey').fill('w'.repeat(64));
+  await page.locator('[data-action="select-alandi-primary"]').click();
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
   await page.locator('#userInput').fill('Please answer so I can test the audio player.');
@@ -135,10 +135,10 @@ test('stopping local TTS cancels generation and prevents late playback', async (
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
     await page.locator('#legacyProviderSettings > summary').click();
   }
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('e2e-model');
-  await page.locator('#apiKey').fill('x'.repeat(64));
+  await page.locator('#cloudBaseUrl').fill('https://api.example.test/v1');
+  await page.locator('#cloudModel').fill('e2e-model');
+  await page.locator('#cloudApiKey').fill('x'.repeat(64));
+  await page.locator('[data-action="select-alandi-primary"]').click();
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
   await page.locator('#userInput').fill('Test cancellation.');
@@ -192,10 +192,10 @@ test('attached audio is transcribed locally before model submission', async ({ p
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
     await page.locator('#legacyProviderSettings > summary').click();
   }
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('audio-attachment-model');
-  await page.locator('#apiKey').fill('a'.repeat(64));
+  await page.locator('#cloudBaseUrl').fill('https://api.example.test/v1');
+  await page.locator('#cloudModel').fill('audio-attachment-model');
+  await page.locator('#cloudApiKey').fill('a'.repeat(64));
+  await page.locator('[data-action="select-alandi-primary"]').click();
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
   await page.locator('#attachTextButton').click();
@@ -237,10 +237,10 @@ test('attached audio remains in the draft when local ASR is disabled', async ({ 
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
     await page.locator('#legacyProviderSettings > summary').click();
   }
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('audio-disabled-model');
-  await page.locator('#apiKey').fill('b'.repeat(64));
+  await page.locator('#cloudBaseUrl').fill('https://api.example.test/v1');
+  await page.locator('#cloudModel').fill('audio-disabled-model');
+  await page.locator('#cloudApiKey').fill('b'.repeat(64));
+  await page.locator('[data-action="select-alandi-primary"]').click();
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
   await page.locator('#attachTextButton').click();
@@ -313,10 +313,10 @@ test('local voice dialogue transcribes, sends, speaks, and listens for the next 
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
     await page.locator('#legacyProviderSettings > summary').click();
   }
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('voice-dialogue-model');
-  await page.locator('#apiKey').fill('c'.repeat(64));
+  await page.locator('#cloudBaseUrl').fill('https://api.example.test/v1');
+  await page.locator('#cloudModel').fill('voice-dialogue-model');
+  await page.locator('#cloudApiKey').fill('c'.repeat(64));
+  await page.locator('[data-action="select-alandi-primary"]').click();
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
   await page.locator('#voiceMenu').evaluate(el => el.classList.remove('hidden'));
