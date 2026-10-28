@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-10-28"
   root_orienter:
-    status: "main HEAD 91557e4; PR #76 Graphify, PR #72 UI and PR #77 RRF merged after green exact-head gates; post-merge Gateway, Quality/Chromium, Graphify and Pages all passed"
+    status: "main HEAD 337e386; PR #76 Graphify, PR #72 UI and PR #77 RRF merged after green exact-head gates; latest docs-only main Quality and Pages passed, Gateway and Graphify passed on code-identical parent 91557e4"
     branch: "docs/current-state-and-mobile-ledger-20261027"
     base_main: "b91aab316c224588baea99fbb9b966b8865de0a6"
     open_prs_at_checkpoint: 1
@@ -257,7 +257,7 @@ mobile_composer_docking:
   next: "pass exact-head Gateway, Quality/Chromium, published-site smoke and provenance, then merge only after GitHub reports clean"
 
 voice_selection:
-  status: "merged; exact PR-head gates passed; latest main 91557e4 passed Gateway, Quality/Chromium, Graphify and Pages; live runtime unverified"
+  status: "merged; exact PR-head gates passed; code SHA 91557e4 passed Gateway/Quality/Graphify/Pages and docs-only main 337e passed Quality/Pages; live runtime unverified"
   branch: "feat/configurable-local-tts-voices-20261028"
   merged_pr: 75
   merge_commit: "4296a8decc12710fafb0a1a4e9644cd8f00b2dfa"
@@ -265,19 +265,20 @@ voice_selection:
   source_register: "evals/voice/language_matrix_v2.yaml"
   implementation: "operator-configured local Piper voice allowlist; authenticated /v1/capabilities exposes only installed allowlisted voices; /v1/audio/speech validates the selected voice; mini-player selects an available voice"
   security: "voice artifacts must pre-exist; no auto-download; authenticated endpoints; safe voice IDs; transcription and speech flags remain false by default; gateway and Ollama must remain loopback-bound behind the private HTTPS gateway"
-  verification: "PR-head Gateway run 40633704413 success; Quality run 40633704436 success including 6/6 jobs and published Pages smoke; provenance run 40633704435 success; dead-code audit run 40633704411 success. These runs correspond to PR head 006d5d5. Post-merge main 91557e4 also passed Gateway run 40637941350, Quality/Chromium 40637941308, Graphify 40637941303 and Pages deployment 40637941951."
+  verification: "PR-head Gateway run 40633704413 success; Quality run 40633704436 success including 6/6 jobs and published Pages smoke; provenance run 40633704435 success; dead-code audit run 40633704411 success. These runs correspond to PR head 006d5d5. Code SHA 91557e4 passed Gateway run 40637941350, Quality/Chromium 40637941308, Graphify 40637941303 and Pages deployment 40637941951. Following docs-only main commit 337e386, Quality run 40639031308 and Pages deployment 40639030224 passed."
   licensing: "engine and individual model/voice/phonemizer licenses must be reviewed separately; exact artifact SHA-256 and compatibility remain operator ship gates"
   deployment_runbook: "docs/VOICE_IMPLEMENTATION_PLAN_RU.md; owner-facing install, checksum/license review, flags, private bind, smoke, metrics and rollback steps"
   next: "owner validates exact installed artifacts, hashes/licenses and compatibility on private VPS; enable document extraction and ASR/TTS only one at a time after checks; test all three voice scenarios on target device"
 
   current_checkpoint:
     date: "2026-10-28"
-    verified_main: "91557e4eab1b122341bed578cdf4775ff867007f"
+    verified_main: "337e38690af8f22a712c6442192c5ea62d354c3d (docs-only follow-up; code unchanged from 91557e4)"
     merged_changes:
       pr_76: "Graphify workflow now runs on source/architecture changes and weekly schedule; exact PR-head Graphify, Quality/Chromium and provenance passed; merge 708b9e4780ce2e33541a7f09c1395cf4aafa1b9e"
       pr_72: "compact search/function menus and per-chat preferences; exact-head Quality and published-site smoke passed; merge d332a6b2ab09911145520c9d10588d0bcb8e0e41"
       pr_77: "RRF fusion for scoped FTS5/concept-graph ranking; gateway tests and Quality/Chromium/published-site smoke passed; merge 91557e4eab1b122341bed578cdf4775ff867007f"
     exact_head_evidence:
+      latest_main_docs_only: "337e38690af8f22a712c6442192c5ea62d354c3d; Quality run 40639031308 and Pages deployment 40639030224 success"
       graphify_run: "main run 40637941303 success; 988 nodes, 2780 edges, 60 files, 224 inline UI JS nodes, 14 SQL schema nodes, 23 RAG module nodes; ten focused queries"
       pr_72_quality: "40637581310 success; six Quality jobs including Chromium and published-site smoke; dead-code report 40637581341 success"
       pr_77_gateway: "40637641493 success"
