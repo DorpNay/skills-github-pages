@@ -16,6 +16,7 @@ import tempfile
 import time
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
@@ -75,6 +76,11 @@ def load_dataset(path: str | Path) -> dict[str, Any]:
         doc = _object(raw_doc, f"documents[{index}]")
         document_id = _nonempty(doc.get("document_id"), f"documents[{index}].document_id", 160)
         source_uri = _nonempty(doc.get("source_uri"), f"documents[{index}].source_uri", 2048)
+        parsed_source = urlsplit(source_uri)
+        if (parsed_source.scheme != "https" or not parsed_source.hostname or
+                parsed_source.username or parsed_source.password or
+                any(ord(char) < 32 for char in source_uri)):
+            raise DatasetError(f"documents[{index}].source_uri must be a safe HTTPS URL without embedded credentials or control characters")
         scope = _nonempty(doc.get("scope", "project"), f"documents[{index}].scope", 32)
         scope_id = _nonempty(doc.get("scope_id", "golden-set"), f"documents[{index}].scope_id", 160)
         document_key = (scope, scope_id, document_id)
