@@ -115,3 +115,20 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - **Fixtures:** gateway tests cover disabled-by-default/auth, structured output, duplicates/limits, oversized/unknown input, invalid model output, and secret-like input filtering. Chromium E2E verifies the request is manual and candidate memory is unchanged until explicit selection.
 - **Acceptance:** all gateway tests, security/context/integrity/Jekyll sentinels, Chromium E2E, published-site smoke and provenance pass on the exact PR head; helper remains disabled unless the operator installs/configures an exact local Ollama tag.
 - **Status:** implementation on feat/local-helper-memory-suggestions-current-main-20261027; exact-head CI pending. This does not prove the helper model is installed on any VPS or that real inference quality is acceptable.
+
+
+## Local model latency smoke (2026-10-28)
+
+Run against a configured OpenAI-compatible local gateway using synthetic prompts only:
+
+~~~bash
+ALANDI_API_KEY='…' python gateway/evals/run_local_model_benchmark.py --base-url http://127.0.0.1:8000/v1 --model <exact-allowlisted-tag> --runs 2 --output /tmp/alandi-model-benchmark.json
+~~~
+
+The script records full non-streaming response latency, p50/p95, non-empty response rate and tokens/s only if the endpoint returns `usage.completion_tokens`. It deliberately does not claim first-token latency or a human-rated quality score. Run identical prompts, context, hardware and repeats for every candidate. Keep reports private if endpoint metadata is sensitive. Unit tests: `gateway/tests/test_local_model_benchmark.py`.
+
+## Uncensored model candidates
+
+- 2B Q4_K_M: [Huihui Qwen3.5-2B abliterated GGUF](https://huggingface.co/interimlabs/InterimLabs-Huihui-Qwen3.5-2B-abliterated-GGUF-Q4_K_M), expected SHA-256 `aa25eea787afe56a097268f7ed3460cb623e1901d2e89cd2b654cabb42f80636`.
+- 4B Q4_K_M: [Huihui Qwen3.5-4B abliterated GGUF](https://huggingface.co/interimlabs/InterimLabs-Huihui-Qwen3.5-4B-abliterated-GGUF-Q4_K_M), expected SHA-256 `423f10b6ec2d99c3378143d7cd3b80eb4887b3ed92103103ac59173b404f4f7c`.
+- Installation and end-to-end acceptance: [uncensored model/free CPU runbook](docs/UNCENSORED_MODEL_AND_FREE_CPU_RUNBOOK_RU.md). These are candidates; no live quality/performance result is asserted.
