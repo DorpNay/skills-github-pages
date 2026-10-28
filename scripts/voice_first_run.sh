@@ -50,7 +50,7 @@ if [[ -z "$VOICE_ID" ]]; then
   read -r VOICE_ID
 fi
 [[ "$VOICE_ID" =~ ^[A-Za-z0-9._-]+$ ]] || die "Unsafe voice ID."
-printf '\nBefore continuing, review this voice\'s MODEL_CARD/license at the official Piper voice repository.\n'
+printf "\nBefore continuing, review this voice's MODEL_CARD/license at the official Piper voice repository.\n"
 printf 'Voice selected: %s\nContinue only if the voice license is acceptable for your intended use. [y/N] ' "$VOICE_ID"
 read -r LICENSE_OK
 [[ "$LICENSE_OK" == "y" || "$LICENSE_OK" == "Y" ]] || die "Stopped before downloading the voice."
