@@ -214,3 +214,15 @@
 - Решение: disposable dev environment, pinned version, `graphify extract . --code-only --timing`, `graphify cluster-only . --no-label`, `graphify export html`, `graphify query`; проверка exclusions, ресурсные замеры и сравнение на реальных навигационных вопросах. Не ставить в gateway и не использовать hosted Cloud для пользовательских данных.
 - Исполнение **BLOCKED**: локальный `git clone` завершился DNS-ошибкой `Could not resolve host: github.com`; CLI не установлен и граф не создан.
 - Промежуточный артефакт `docs/ALANDI_ARCHITECTURE_MAP_RU.md` — кураторская схема, не подмена AST graph.
+
+
+## 2026-10-28 — uncensored CPU model and optimization decision
+
+**Primary low-resource candidate:** [Interim Labs Huihui Qwen3.5-2B abliterated GGUF Q4_K_M](https://huggingface.co/interimlabs/InterimLabs-Huihui-Qwen3.5-2B-abliterated-GGUF-Q4_K_M), 1,270,809,024-byte weight file, expected SHA-256 `aa25eea787afe56a097268f7ed3460cb623e1901d2e89cd2b654cabb42f80636`.
+
+**Quality challenger for an 8 GB host:** [Huihui Qwen3.5-4B abliterated GGUF Q4_K_M](https://huggingface.co/interimlabs/InterimLabs-Huihui-Qwen3.5-4B-abliterated-GGUF-Q4_K_M), 2,707,514,688-byte weight file, expected SHA-256 `423f10b6ec2d99c3378143d7cd3b80eb4887b3ed92103103ac59173b404f4f7c`.
+
+- These are prebuilt abliterated candidates, not evidence of measured refusal-rate reduction or preserved reasoning quality. The current client/gateway has not been tested against either exact artifact yet.
+- Use [OBLITERATUS](https://github.com/elder-plinius/OBLITERATUS) and [FailSpy/abliterator](https://github.com/FailSpy/abliterator) as isolated research tools only. Do not run weight surgery on the production host; no private prompts or telemetry should leave the disposable experiment environment.
+- Keep the current Ollama contract until the exact `qwen35` GGUF imports and passes local and gateway tests. Check [Ollama GGUF import docs](https://docs.ollama.com/import) and [llama.cpp importance-matrix guidance](https://github.com/ggml-org/llama.cpp/blob/master/tools/imatrix/README.md). Quantization, abliteration, speculative decoding and long context are hypotheses to benchmark, not automatic performance wins.
+- Owner runbook with download, SHA-256, import, API, Tunnel, landing and voice steps: [UNCENSORED_MODEL_AND_FREE_CPU_RUNBOOK_RU.md](UNCENSORED_MODEL_AND_FREE_CPU_RUNBOOK_RU.md).
