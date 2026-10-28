@@ -158,6 +158,20 @@ permalink: /
     #voiceUnavailableButton { touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none; }
     @media (prefers-reduced-transparency:reduce) { .composer-popover,.draft-attachment { background:var(--ui-surface);backdrop-filter:none;-webkit-backdrop-filter:none; } }
 
+    .mode-hint { min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .toolbar-menu { position:relative;min-width:0; }
+    .toolbar-menu > summary { list-style:none;display:block;width:100%;min-width:0;padding:8px 10px;border:1px solid var(--ui-border);border-radius:11px;background:var(--ui-surface);color:var(--ui-text);font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer; }
+    .toolbar-menu > summary::-webkit-details-marker { display:none; }
+    .toolbar-menu[open] > summary,.toolbar-menu > summary:hover { background:var(--ui-tiffany-soft);border-color:var(--ui-tiffany); }
+    .toolbar-menu-panel { position:absolute;left:0;top:calc(100% + 6px);z-index:110;width:min(92vw,340px);max-height:min(58dvh,420px);overflow-y:auto;padding:6px;border:1px solid var(--ui-border);border-radius:14px;background:var(--ui-surface);color:var(--ui-text);box-shadow:0 18px 48px rgb(0 0 0 / 38%); }
+    .toolbar-menu-panel-right { left:auto;right:0; }
+    .toolbar-menu-option { display:block;width:100%;padding:10px;text-align:left;border-radius:9px;font-size:12px; }
+    .toolbar-menu-option:hover,.toolbar-menu-option:focus-visible { background:var(--ui-tiffany-soft);outline-color:var(--ui-tiffany); }
+    .toolbar-menu-option strong { display:block;font-size:12px; }
+    .toolbar-menu-option small { display:block;margin-top:3px;color:var(--ui-text-muted);font-size:10px;line-height:1.35;white-space:normal; }
+    @media (max-width:380px) { .toolbar-menu > summary { padding:7px 6px;font-size:10px; } .toolbar-menu-option { padding:9px; } }
+    @media (prefers-reduced-transparency:reduce) { .toolbar-menu-panel { background:var(--ui-surface);backdrop-filter:none;-webkit-backdrop-filter:none; } }
+
     .project-nav-heading { color:var(--ui-text);background:var(--ui-surface-raised);border:1px solid var(--ui-border); }
     .project-nav-heading:hover { background:var(--ui-tiffany-soft);border-color:var(--ui-tiffany); }
     .project-nav-unassigned { color:var(--ui-text-muted);background:color-mix(in srgb,var(--ui-surface) 82%,transparent); }
@@ -505,19 +519,37 @@ permalink: /
     </div>
   </header>
 
-  <div class="bg-gray-950 px-3 py-2 border-b border-gray-800 shrink-0 space-y-2">
-    <div class="flex items-center gap-2 text-xs"><span class="text-gray-400 shrink-0" data-i18n="modeLabel">Режим:</span>
-      <div class="flex flex-1 rounded-lg bg-gray-900 p-1 gap-1" role="group" aria-label="Режим обработки">
-        <button type="button" id="modeFast" data-i18n="modeFast" aria-pressed="true" class="flex-1 rounded-md px-2 py-1.5 bg-blue-600 font-semibold">⚡ Быстро</button>
-        <button type="button" id="modeDeep" data-i18n="modeDeep" aria-pressed="false" class="flex-1 rounded-md px-2 py-1.5 text-gray-300">🔬 Глубоко</button>
+  <div class="bg-gray-950 px-3 py-2 border-b border-gray-800 shrink-0 space-y-1.5">
+    <p id="modeHint" class="mode-hint text-[10px] text-gray-500 leading-tight" title="Быстро ограничивает число раундов инструментов; Дольше разрешает больше раундов. Выбранная строка поиска уточняет бюджет веб-поиска.">Быстро · обычный веб-поиск · исследование отдельно.</p>
+    <div class="flex items-center gap-2 text-xs">
+      <span class="text-gray-400 shrink-0" data-i18n="modeLabel">Думать:</span>
+      <div class="flex flex-1 min-w-0 rounded-lg bg-gray-900 p-1 gap-1" role="group" aria-label="Режим обработки">
+        <button type="button" id="modeFast" data-i18n="modeFast" aria-pressed="true" class="flex-1 min-w-0 rounded-md px-2 py-1 bg-blue-600 font-semibold">⚡ Быстро</button>
+        <button type="button" id="modeDeep" data-i18n="modeDeep" aria-pressed="false" class="flex-1 min-w-0 rounded-md px-2 py-1 text-gray-300">🔬 Дольше</button>
       </div>
     </div>
-    <div class="flex flex-wrap items-center justify-between text-xs gap-3">
-      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Инструменты поиска доступны по умолчанию; модель использует их по необходимости."><input type="checkbox" id="toggleSearch" checked class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span data-i18n="searchLabel">🌐 Интернет и источники</span></label>
-      <label class="flex items-center gap-1.5 cursor-pointer text-gray-300" title="Режим доступен для сложных задач; приветствия и простые вопросы не запускают многоэтапный конвейер."><input type="checkbox" id="toggleMultiAgent" class="rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span data-i18n="researchLabel">🤖 Умное исследование</span></label>
-      <button type="button" id="offlineToggle" data-action="toggle-offline" aria-pressed="false" class="ambient-control rounded-lg px-3 py-1.5 text-[11px] font-semibold" title="Выключает веб-поиск и внешние источники. Облачный API модели по-прежнему требует интернет-соединения.">◉ Оффлайн: выкл.</button>
+    <div class="flex items-center gap-2 text-xs">
+      <details id="searchModeMenu" class="toolbar-menu flex-1 min-w-0">
+        <summary id="searchModeSummary" class="toolbar-menu-summary">🌐 Поиск: обычный ▾</summary>
+        <div class="toolbar-menu-panel">
+          <button type="button" data-action="select-search-mode" data-search-mode="normal" class="toolbar-menu-option"><strong data-i18n="searchModeNormal">Обычный веб-поиск</strong><small data-i18n="searchModeNormalHelp">Ограниченный поиск по необходимости.</small></button>
+          <button type="button" data-action="select-search-mode" data-search-mode="more" class="toolbar-menu-option"><strong data-i18n="searchModeMore">Искать больше</strong><small data-i18n="searchModeMoreHelp">Повышенный лимит раундов и более полные результаты.</small></button>
+          <button type="button" data-action="select-search-mode" data-search-mode="offline" class="toolbar-menu-option"><strong data-i18n="searchModeOffline">Без веб-поиска</strong><small data-i18n="searchModeOfflineHelp">Веб-инструменты отключены; облачному API всё ещё нужен интернет.</small></button>
+        </div>
+      </details>
+      <details id="functionsMenu" class="toolbar-menu flex-1 min-w-0">
+        <summary id="functionsMenuSummary" class="toolbar-menu-summary" data-i18n="functionsMenuLabel">Функции ▾</summary>
+        <div class="toolbar-menu-panel toolbar-menu-panel-right">
+          <button type="button" data-action="open-function-panel" data-function="research" class="toolbar-menu-option" data-i18n="functionResearch">🔎 Исследование</button>
+          <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option" data-i18n="functionAgents">🤖 Агенты</button>
+          <button type="button" data-action="open-function-panel" data-function="skills" class="toolbar-menu-option" data-i18n="functionSkills">🧩 Навыки</button>
+          <button type="button" data-action="open-function-panel" data-function="connectors" class="toolbar-menu-option" data-i18n="functionConnectors">🔌 Коннекторы</button>
+        </div>
+      </details>
     </div>
-    <p id="modeHint" class="text-[10px] text-gray-500 leading-relaxed">Онлайн включён по умолчанию; поиск будет использоваться, когда помогает ответу. Оффлайн отключает веб-инструменты, но не превращает облачный API в локальную модель.</p>
+    <input type="checkbox" id="toggleSearch" class="hidden" checked>
+    <input type="checkbox" id="toggleMultiAgent" class="hidden">
+    <span id="offlineToggle" class="sr-only" aria-live="polite"></span>
   </div>
 
   <main id="chatBox" class="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-sm" aria-live="polite" aria-label="Сообщения чата"></main>
@@ -599,6 +631,32 @@ permalink: /
       <p id="researchStudioStatus" class="text-[11px] text-gray-500" role="status" aria-live="polite">Студия использует текущий чат и существующие инструменты aLandi; отдельные сервисы не запускаются автоматически.</p>
     </section>
   </div>
+  <div id="functionPanelModal" class="hidden fixed inset-0 z-[66] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="functionPanelTitle">
+    <section class="w-full max-w-lg max-h-[88dvh] overflow-y-auto rounded-2xl border border-gray-700 bg-gray-950 p-4 sm:p-5 shadow-2xl space-y-4">
+      <header class="flex items-start justify-between gap-3">
+        <div class="min-w-0"><h2 id="functionPanelTitle" class="font-bold text-base">Функции</h2><p id="functionPanelDescription" class="mt-1 text-xs leading-relaxed text-gray-400"></p></div>
+        <button type="button" data-action="close-function-panel" class="shrink-0 rounded-lg px-2 py-1 text-gray-400 hover:text-white" aria-label="Закрыть">✕</button>
+      </header>
+      <section id="agentFunctionSettings" class="hidden space-y-3">
+        <label class="flex items-start gap-2 rounded-xl border border-gray-800 p-3 text-sm"><input type="checkbox" id="agentModeControl" class="mt-1 rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span><strong class="block" data-i18n="agentModeOption">Использовать многоэтапное исследование для сложных задач</strong><span class="mt-1 block text-[11px] leading-relaxed text-gray-500" data-i18n="agentModeHelp">Приветствия и простые запросы не запускают многоэтапный конвейер.</span></span></label>
+      </section>
+      <section id="skillFunctionSettings" class="hidden space-y-2">
+        <label for="skillPresetSelect" class="block text-xs font-semibold" data-i18n="skillPresetLabel">Навык этого чата</label>
+        <select id="skillPresetSelect" class="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm">
+          <option value="auto" data-i18n="skillAuto">Автоматически по задаче</option>
+          <option value="planning" data-i18n="skillPlanning">Планирование</option>
+          <option value="research" data-i18n="skillResearch">Исследование</option>
+          <option value="code-review" data-i18n="skillCodeReview">Код и ревью</option>
+          <option value="data-analysis" data-i18n="skillDataAnalysis">Анализ данных</option>
+          <option value="agent-systems" data-i18n="skillAgentSystems">Системы агентов</option>
+          <option value="multimodal" data-i18n="skillMultimodal">Мультимодальные задачи</option>
+        </select>
+        <p class="text-[11px] leading-relaxed text-gray-500" data-i18n="skillPresetHelp">Выбор действует только в этом чате; новый чат начинает с автоматического выбора.</p>
+      </section>
+      <section id="connectorFunctionStatus" class="hidden rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-sm leading-relaxed text-gray-300" data-i18n="functionConnectorsDescription">Показываем только реально подключённые источники. Внешние коннекторы пока не подключены; они не будут имитироваться переключателями.</section>
+      <footer class="flex justify-end border-t border-gray-800 pt-3"><button type="button" data-action="close-function-panel" data-i18n="functionPanelClose" class="rounded-xl border border-gray-700 px-4 py-2 text-sm">Закрыть</button></footer>
+    </section>
+  </div>
   <div id="traceModal" class="hidden fixed inset-0 z-[70] bg-black/75 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="traceTitle">
     <div class="w-full max-w-3xl max-h-[90dvh] overflow-y-auto bg-gray-950 border border-gray-700 rounded-xl p-3 sm:p-4 space-y-3">
       <div class="flex items-center justify-between gap-3"><h2 id="traceTitle" class="font-bold text-base">Журнал исследования</h2><button type="button" data-action="close-trace" class="text-gray-400 hover:text-white px-2 py-1" aria-label="Закрыть журнал">✕</button></div>
@@ -616,7 +674,7 @@ permalink: /
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
       tavilyKey: 'ai_tavily_key', systemPrompt: 'ai_system_prompt',
-      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider', cloudflareAccountId: 'ai_cloudflare_account_id', projects: 'ai_projects_v1', globalMemoryEnabled: 'ai_global_memory_enabled_v1'
+      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', searchMode: 'ai_web_search_preset_v1', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider', cloudflareAccountId: 'ai_cloudflare_account_id', projects: 'ai_projects_v1', globalMemoryEnabled: 'ai_global_memory_enabled_v1'
     };
     const LEGACY_DEFAULT_SYSTEM = 'Ты автономный ИИ-ассистент. Отвечай ясно, проверяй предположения и выдавай структурированные отчёты. Если включён веб-поиск, используй его для актуальной информации.';
     const DEFAULT_SYSTEM = [
@@ -823,7 +881,7 @@ permalink: /
       }
     }
     function createChat(title = 'Новый чат', messages = [], projectId = null) {
-      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false, serverProjectMemoryEnabled: false };
+      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false, serverProjectMemoryEnabled: false, processingMode: 'fast', searchMode: 'normal', multiAgentEnabled: false, skillPreset: 'auto' };
     }
     function preserveUnreadableChats(rawText) {
       if (!rawText) return;
@@ -1109,7 +1167,12 @@ permalink: /
         modelSearchLabel:'Поиск по каталогу моделей',modelPresetLabel:'Быстрый выбор модели · список обновляется из API',
         baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',
         legacySettings:'Сторонние API, ключи и расширенные настройки',composerPlaceholder:'Напиши сообщение...',
-        modeLabel:'Режим:',modeFast:'⚡ Быстро',modeDeep:'🔬 Глубоко',searchLabel:'🌐 Интернет и источники',researchLabel:'🤖 Умное исследование',
+        modeLabel:'Думать:',modeFast:'⚡ Быстро',modeDeep:'🔬 Дольше',searchLabel:'🌐 Интернет и источники',researchLabel:'🤖 Умное исследование',
+        functionsMenuLabel:'Функции ▾',searchModeNormal:'Обычный веб-поиск',searchModeNormalHelp:'Ограниченный поиск по необходимости.',searchModeMore:'Искать больше',searchModeMoreHelp:'Повышенный лимит раундов и более полные результаты.',searchModeOffline:'Без веб-поиска',searchModeOfflineHelp:'Веб-инструменты отключены; облачному API всё ещё нужен интернет.',
+        functionResearch:'🔎 Исследование',functionAgents:'🤖 Агенты',functionSkills:'🧩 Навыки',functionConnectors:'🔌 Коннекторы',functionPanelClose:'Закрыть',
+        functionAgentsTitle:'Агенты',functionAgentsDescription:'Многоэтапный конвейер aLandi запускает планировщика, исследователя, критика и синтезатора для подходящих сложных задач. Редактор произвольной сети ролей пока не реализован.',agentModeOption:'Использовать многоэтапное исследование для сложных задач',agentModeHelp:'Приветствия и простые запросы не запускают многоэтапный конвейер.',
+        functionSkillsTitle:'Навыки',functionSkillsDescription:'Можно выбрать один из встроенных навыков для этого чата или оставить автоматический выбор по задаче.',skillPresetLabel:'Навык этого чата',skillAuto:'Автоматически по задаче',skillPlanning:'Планирование',skillResearch:'Исследование',skillCodeReview:'Код и ревью',skillDataAnalysis:'Анализ данных',skillAgentSystems:'Системы агентов',skillMultimodal:'Мультимодальные задачи',skillPresetHelp:'Выбор действует только в этом чате; новый чат начинает с автоматического выбора.',
+        functionConnectorsTitle:'Коннекторы',functionConnectorsDescription:'Показываем только реально подключённые источники. Внешние коннекторы пока не подключены; они не будут имитироваться переключателями.',
         kiloPrivacyNotice:'Kilo Auto Free — обычный альтернативный провайдер в общем списке API, не часть основного облака aLandi. Запросы передаются Kilo и назначенным им моделям; они могут сохранять запросы для улучшения сервисов. Не отправляй конфиденциальные данные. Скрытого резервирования нет.',languageLabel:'Язык интерфейса',clockLabel:'Местное время',restoreDefaults:'Восстановить параметры Gemini',saveSettings:'Сохранить',closeSettings:'Закрыть',
         globalMemoryOptIn:'Разрешить подходящим заметкам общей памяти попадать в контекст запросов.',noProjectNav:'Без проекта',projectMemoryScopeLabel:'Режим памяти проекта',projectMemoryScopeOnly:'Память только внутри проекта',projectMemoryScopeGlobal:'Память проекта + общая память (если она разрешена)',selectAlandiPrimary:'Использовать aLandi как основной маршрут',alandiPrimaryCopy:'aLandi — встроенный основной маршрут. Внешние провайдеры находятся ниже в отдельном меню.',attachMediaTitle:'Фото или видео',attachMediaHelp:'Изображения и выбор кадров из ролика',attachAnyFileTitle:'Файл любого формата',attachAnyFileHelp:'Системный выбор нескольких файлов; доступность разбора зависит от формата.',requestContextTitle:'Контекст этого запроса',requestContextHelp:'Выбранные проекты будут учтены только при следующей отправке. Сам чат и его проект не изменятся.',clearRequestContext:'Сбросить',skillsAutoHint:'Навыки: автоматический подбор по задаче; отдельный каталог выбора пока не подключён.',connectorsFutureHint:'Коннекторы ещё не подключены; здесь появятся доступные источники после реальной интеграции.',requestContextLimitHint:'Контекст ограничен пятью проектами и общим лимитом, чтобы не переполнять запрос.',projectsTitle:'▣ Проекты',currentProjectLabel:'Проект текущего чата',projectMemoryOptIn:'Использовать память выбранного проекта в этом чате',manageProject:'Создать или настроить проект',projectNameLabel:'Название',projectInstructionsLabel:'Инструкции проекта',createProject:'＋ Создать проект',saveProject:'Сохранить изменения',projectMemoryLabel:'Добавить факт в память проекта',exportProject:'Экспорт проекта',importProject:'Импорт проекта',detachChat:'Извлечь чат из проекта',deleteProject:'Удалить проект и его чаты',serverMemoryTitle:'Серверная память · эксперимент',serverMemoryDescription:'Отдельный граф на твоём aLandi gateway. Перенос только вручную; новые факты сначала становятся кандидатами. Нужен включённый ALANDI_MEMORY_GRAPH_ENABLED.',serverMemoryOptIn:'Разрешить подтверждённым фактам сервера попадать в контекст этого чата. Также включи память проекта выше.',serverMemoryRefresh:'Обновить список',serverMemoryUpload:'Передать локальные факты',serverMemoryInitial:'Серверная память выключена. Выбери проект и нажми «Обновить список».',serverMemoryNoProject:'Сначала выбери или создай проект.',serverMemoryNoConfig:'Не найдены URL /v1 и ключ aLandi gateway. Подключи своё облако в настройках.',serverMemoryLoading:'Обращаюсь к серверной памяти…',serverMemoryLoaded:'Фактов на сервере: ',serverMemoryEmpty:'В серверной памяти этого проекта пока нет фактов.',serverMemoryCandidate:'Кандидат',serverMemoryConfirmed:'Подтверждён',serverMemoryRejected:'Отклонён',serverMemoryConfirm:'Подтвердить',serverMemoryReject:'Отклонить',serverMemoryDelete:'Удалить',serverMemoryUploadDone:'Передача завершена. Новые факты остаются кандидатами до подтверждения.',serverMemoryContextLoaded:'В контекст добавлено подтверждённых серверных фактов: ',serverMemoryUnavailable:'Серверная память недоступна; продолжаю без неё.',helperMemoryDescription:'Необязательная модель на настроенном aLandi gateway предложит компактные факты. Отправка только по кнопке; сохранение — только после выбора.',helperMemorySuggest:'Предложить компактные факты',helperMemoryInitial:'Помощник выключен, пока не настроен ALANDI_HELPER_MODEL.',helperMemoryLoading:'Модель-помощник готовит предложения…',helperMemoryEmpty:'Помощник не нашёл новых фактов.',helperMemoryAdd:'Добавить в проект',helperMemoryAdded:'Факт добавлен в локальную память проекта.',helperMemoryNoFacts:'Сначала добавь факты в память выбранного проекта.',helperMemoryNotConfigured:'Модель-помощник не настроена. Укажи ALANDI_HELPER_MODEL и установи этот тег в Ollama.',helperMemoryTimeout:'Помощник не ответил вовремя; память не менялась.',helperMemoryFailed:'Не удалось получить предложения. Проверь gateway и Ollama.',helperMemorySkippedSensitive:'Пропущены потенциально чувствительные факты:',helperMemoryOnlySensitive:'Все факты похожи на секреты и не были отправлены помощнику.'
       },
@@ -1123,7 +1186,12 @@ permalink: /
         modelSearchLabel:'Search model catalog',modelPresetLabel:'Quick model pick · list loads from API',
         baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',
         legacySettings:'Third-party APIs, keys & advanced settings',composerPlaceholder:'Write a message...',
-        modeLabel:'Mode:',modeFast:'⚡ Fast',modeDeep:'🔬 Deep',searchLabel:'🌐 Web & sources',researchLabel:'🤖 Smart research',
+        modeLabel:'Think:',modeFast:'⚡ Fast',modeDeep:'🔬 Longer',searchLabel:'🌐 Web & sources',researchLabel:'🤖 Smart research',
+        functionsMenuLabel:'Functions ▾',searchModeNormal:'Normal web search',searchModeNormalHelp:'Limited search when sources are useful.',searchModeMore:'Search more',searchModeMoreHelp:'Higher tool-round budget and fuller search results.',searchModeOffline:'No web search',searchModeOfflineHelp:'Web tools are off; cloud APIs may still need internet.',
+        functionResearch:'🔎 Research',functionAgents:'🤖 Agents',functionSkills:'🧩 Skills',functionConnectors:'🔌 Connectors',functionPanelClose:'Close',
+        functionAgentsTitle:'Agents',functionAgentsDescription:'For suitable complex tasks, aLandi can use a staged planner, researcher, critic and synthesizer. A custom arbitrary role-network editor is not implemented yet.',agentModeOption:'Use multi-stage research for complex tasks',agentModeHelp:'Greetings and simple prompts do not launch the multi-stage workflow.',
+        functionSkillsTitle:'Skills',functionSkillsDescription:'Choose a built-in skill for this chat, or keep automatic selection by task.',skillPresetLabel:'Skill for this chat',skillAuto:'Automatic by task',skillPlanning:'Planning',skillResearch:'Research',skillCodeReview:'Code and review',skillDataAnalysis:'Data analysis',skillAgentSystems:'Agent systems',skillMultimodal:'Multimodal tasks',skillPresetHelp:'This choice applies only to this chat; new chats start with automatic skill selection.',
+        functionConnectorsTitle:'Connectors',functionConnectorsDescription:'Only real integrations will be listed. External connectors are not connected yet; no placeholder switches are shown.',
         kiloPrivacyNotice:'Kilo Auto Free is an ordinary alternative provider in the API list, not part of the primary aLandi cloud. Requests go to Kilo and its selected models, which may log prompts or use them to improve services. Do not send confidential data. No silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',restoreDefaults:'Restore Gemini defaults',saveSettings:'Save settings',closeSettings:'Close',
         globalMemoryOptIn:'Allow relevant shared-memory notes to be included in prompts.',noProjectNav:'No project',projectMemoryScopeLabel:'Project memory scope',projectMemoryScopeOnly:'Memory inside this project only',projectMemoryScopeGlobal:'Project memory + shared memory (when enabled)',selectAlandiPrimary:'Use aLandi as the primary route',alandiPrimaryCopy:'aLandi is the built-in primary route. External providers are listed separately below.',attachMediaTitle:'Photo or video',attachMediaHelp:'Images or sampled frames from a video',attachAnyFileTitle:'Any file format',attachAnyFileHelp:'Native multi-file picker; parsing depends on file type.',requestContextTitle:'Context for this request',requestContextHelp:'Selected projects apply only to the next send. The active chat and its project do not change.',clearRequestContext:'Clear selection',skillsAutoHint:'Skills: automatically selected for the task; a manual catalog is not connected yet.',connectorsFutureHint:'Connectors are not connected yet; available sources will appear here after real integration.',requestContextLimitHint:'Context is limited to five projects and a shared size budget.',projectsTitle:'▣ Projects',currentProjectLabel:'Project for this chat',projectMemoryOptIn:'Use the selected project memory in this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'＋ Create project',saveProject:'Save changes',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats',serverMemoryTitle:'Server memory · experimental',serverMemoryDescription:'A separate graph on your aLandi gateway. Transfer is manual; new facts start as candidates. Enable ALANDI_MEMORY_GRAPH_ENABLED on the server.',serverMemoryOptIn:'Allow confirmed server facts in this chat context. Also enable project memory above.',serverMemoryRefresh:'Refresh list',serverMemoryUpload:'Send local facts',serverMemoryInitial:'Server memory is off. Select a project and click “Refresh list”.',serverMemoryNoProject:'Select or create a project first.',serverMemoryNoConfig:'aLandi gateway /v1 URL or key is missing. Configure your cloud in Settings.',serverMemoryLoading:'Contacting server memory…',serverMemoryLoaded:'Server facts: ',serverMemoryEmpty:'No server facts for this project yet.',serverMemoryCandidate:'Candidate',serverMemoryConfirmed:'Confirmed',serverMemoryRejected:'Rejected',serverMemoryConfirm:'Confirm',serverMemoryReject:'Reject',serverMemoryDelete:'Delete',serverMemoryUploadDone:'Transfer complete. New facts remain candidates until reviewed.',serverMemoryContextLoaded:'Confirmed server facts added to context: ',serverMemoryUnavailable:'Server memory is unavailable; continuing without it.',helperMemoryDescription:'An optional model on the configured aLandi gateway can suggest compact facts. Sending is manual; facts are saved only after you choose them.',helperMemorySuggest:'Suggest compact facts',helperMemoryInitial:'Helper is off until ALANDI_HELPER_MODEL is configured.',helperMemoryLoading:'The helper model is preparing suggestions…',helperMemoryEmpty:'The helper found no new facts.',helperMemoryAdd:'Add to project',helperMemoryAdded:'Fact added to local project memory.',helperMemoryNoFacts:'Add facts to the selected project memory first.',helperMemoryNotConfigured:'Helper model is not configured. Set ALANDI_HELPER_MODEL and install that exact Ollama tag.',helperMemoryTimeout:'The helper timed out; memory was not changed.',helperMemoryFailed:'Could not get suggestions. Check the gateway and Ollama.',helperMemorySkippedSensitive:'Potentially sensitive facts skipped:',helperMemoryOnlySensitive:'All facts looked secret-like and were not sent to the helper.'
       }
@@ -1892,6 +1960,7 @@ permalink: /
       }
       if (nextCurrentId && chats.some((chat) => chat.id === nextCurrentId)) currentChatId = nextCurrentId;
       if (!chats.some((chat) => chat.id === currentChatId)) currentChatId = chats[0].id;
+      if ($('modeFast')) syncCurrentChatFunctionSettings();
       persistChats(); renderChatList(); renderActiveChat(); renderProjectUI({preserveDraft:true});
     }
     function toggleSidebar(force) {
@@ -2138,24 +2207,109 @@ permalink: /
       $('toggleSearch').checked = safeGet(STORAGE.search) !== 'false';
       $('toggleMultiAgent').checked = safeGet(STORAGE.multiAgent) === 'true';
       $('allowCrossProviderFallback').checked = safeGet(STORAGE.crossProviderFallback) === 'true';
-      $('offlineToggle').setAttribute('aria-pressed',String(safeGet(STORAGE.offline)==='true'));
       applyUiLanguage(safeGet('ai_ui_language_v1')||'ru');
       updateOfflineUI(); updateModeUI(); refreshApiKeyLamp();void refreshCloudStatus();
       void refreshConnectedModelCatalogs({ quiet: true, force: false, includeOtherProviders: safeGet(STORAGE.crossProviderFallback) === 'true' });
     }
+    const VALID_SEARCH_MODES = new Set(['normal','more','offline']);
+    const VALID_SKILL_PRESETS = new Set(['auto','planning','research','code-review','data-analysis','agent-systems','multimodal']);
+    function ensureChatFunctionSettings(chat) {
+      if (!chat || typeof chat !== 'object') return false;
+      let changed = false;
+      if (!['fast','deep'].includes(chat.processingMode)) { chat.processingMode = safeGet(STORAGE.mode) === 'deep' ? 'deep' : 'fast'; changed = true; }
+      if (!VALID_SEARCH_MODES.has(chat.searchMode)) { chat.searchMode = safeGet(STORAGE.offline) === 'true' || safeGet(STORAGE.search) === 'false' ? 'offline' : 'normal'; changed = true; }
+      if (typeof chat.multiAgentEnabled !== 'boolean') { chat.multiAgentEnabled = safeGet(STORAGE.multiAgent) === 'true'; changed = true; }
+      if (!VALID_SKILL_PRESETS.has(chat.skillPreset)) { chat.skillPreset = 'auto'; changed = true; }
+      return changed;
+    }
+    function migrateLegacyChatFunctionSettings() {
+      let changed = false;
+      for (const chat of chats) changed = ensureChatFunctionSettings(chat) || changed;
+      if (changed) persistChats();
+    }
+    function syncCurrentChatFunctionSettings() {
+      const chat = getCurrentChat();
+      if (!chat) return;
+      ensureChatFunctionSettings(chat);
+      processingMode = chat.processingMode;
+      $('toggleSearch').checked = chat.searchMode !== 'offline';
+      $('toggleMultiAgent').checked = chat.multiAgentEnabled;
+      safeSet(STORAGE.mode, chat.processingMode);
+      safeSet(STORAGE.searchMode, chat.searchMode);
+      safeSet(STORAGE.search, String(chat.searchMode !== 'offline'));
+      safeSet(STORAGE.offline, String(chat.searchMode === 'offline'));
+      safeSet(STORAGE.multiAgent, String(chat.multiAgentEnabled));
+      if ($('skillPresetSelect') && !$('functionPanelModal')?.classList.contains('hidden')) $('skillPresetSelect').value = chat.skillPreset;
+      updateOfflineUI();
+      updateModeUI();
+    }
+    function setSearchMode(mode) {
+      if (!VALID_SEARCH_MODES.has(mode)) return;
+      const chat = getCurrentChat();
+      ensureChatFunctionSettings(chat);
+      chat.searchMode = mode;
+      $('toggleSearch').checked = mode !== 'offline';
+      safeSet(STORAGE.searchMode, mode);
+      safeSet(STORAGE.search, String(mode !== 'offline'));
+      safeSet(STORAGE.offline, String(mode === 'offline'));
+      persistChats();
+      $('searchModeMenu').open = false;
+      updateOfflineUI();
+      updateModeUI();
+    }
+    function setAgentMode(enabled) {
+      const chat = getCurrentChat();
+      ensureChatFunctionSettings(chat);
+      chat.multiAgentEnabled = Boolean(enabled);
+      $('toggleMultiAgent').checked = chat.multiAgentEnabled;
+      if ($('agentModeControl')) $('agentModeControl').checked = chat.multiAgentEnabled;
+      safeSet(STORAGE.multiAgent, String(chat.multiAgentEnabled));
+      persistChats();
+      updateModeUI();
+    }
+    function setSkillPreset(preset) {
+      if (!VALID_SKILL_PRESETS.has(preset)) preset = 'auto';
+      const chat = getCurrentChat();
+      ensureChatFunctionSettings(chat);
+      chat.skillPreset = preset;
+      if ($('skillPresetSelect')) $('skillPresetSelect').value = preset;
+      persistChats();
+      updateModeUI();
+    }
     function updateModeUI() {
+      const chat = getCurrentChat();
+      ensureChatFunctionSettings(chat);
+      processingMode = chat.processingMode;
       const fast = processingMode === 'fast';
       $('modeFast').setAttribute('aria-pressed', String(fast));
       $('modeDeep').setAttribute('aria-pressed', String(!fast));
-      $('modeFast').className = 'flex-1 rounded-md px-2 py-1.5 ' + (fast ? 'bg-blue-600 font-semibold' : 'text-gray-300');
-      $('modeDeep').className = 'flex-1 rounded-md px-2 py-1.5 ' + (!fast ? 'bg-blue-600 font-semibold' : 'text-gray-300');
-      $('modeHint').textContent = getUiLanguage()==='en'
-        ? (fast ? 'Fast: limited tool rounds and a short search. Research is optional.' : 'Deep: more tool rounds and broader evidence gathering within enabled tools.')
-        : (fast ? 'Быстро: один раунд инструментов и короткий поиск. Исследование включается отдельно.' : 'Глубоко: больше раундов и более подробный поиск в пределах включённых инструментов. Исследование отдельно.');
+      $('modeFast').className = 'flex-1 min-w-0 rounded-md px-2 py-1 ' + (fast ? 'bg-blue-600 font-semibold' : 'text-gray-300');
+      $('modeDeep').className = 'flex-1 min-w-0 rounded-md px-2 py-1 ' + (!fast ? 'bg-blue-600 font-semibold' : 'text-gray-300');
+      const english = getUiLanguage() === 'en';
+      const searchMode = chat.searchMode;
+      let hint;
+      if (searchMode === 'offline') {
+        hint = english ? (fast ? 'Fast' : 'Longer') + ' · web tools off; cloud APIs may still need internet.'
+          : (fast ? 'Быстро' : 'Дольше') + ' · веб-инструменты выключены; облачному API может требоваться сеть.';
+      } else if (searchMode === 'more') {
+        hint = english ? (fast ? 'Fast' : 'Longer') + ' · extended web-search budget: up to 4 tool rounds.'
+          : (fast ? 'Быстро' : 'Дольше') + ' · расширенный бюджет веб-поиска: до 4 раундов инструментов.';
+      } else {
+        hint = english ? (fast ? 'Fast' : 'Longer') + ' · normal web search; research is separate.'
+          : (fast ? 'Быстро' : 'Дольше') + ' · обычный веб-поиск; исследование отдельно.';
+      }
+      if (chat.multiAgentEnabled) hint += english ? ' · agents for complex tasks on' : ' · агенты для сложных задач включены';
+      if (chat.skillPreset && chat.skillPreset !== 'auto') hint += (english ? ' · skill: ' : ' · навык: ') + chat.skillPreset;
+      $('modeHint').textContent = hint;
+      $('modeHint').title = hint;
     }
     function setProcessingMode(mode) {
-      processingMode = mode === 'deep' ? 'deep' : 'fast';
+      const chat = getCurrentChat();
+      ensureChatFunctionSettings(chat);
+      chat.processingMode = mode === 'deep' ? 'deep' : 'fast';
+      processingMode = chat.processingMode;
       safeSet(STORAGE.mode, processingMode);
+      persistChats();
       updateModeUI();
     }
     function restoreDefaultSettings() {
@@ -2254,6 +2408,14 @@ permalink: /
         $('toggleMultiAgent').checked = settings.multiAgent === true;
         $('allowCrossProviderFallback').checked = settings.crossProviderFallback === true;
         safeSet(STORAGE.model, $('modelName').value);
+        const activeChat = getCurrentChat();
+        activeChat.processingMode = settings.mode === 'deep' ? 'deep' : 'fast';
+        activeChat.searchMode = settings.offline === true || settings.search === false ? 'offline' : 'normal';
+        activeChat.multiAgentEnabled = settings.multiAgent === true;
+        if (!VALID_SKILL_PRESETS.has(activeChat.skillPreset)) activeChat.skillPreset = 'auto';
+        safeSet(STORAGE.searchMode, activeChat.searchMode);
+        persistChats();
+        updateModeUI();
         updateOfflineUI();
         safeSet('ai_provider_model_catalog_stale_v1_' + settings.provider, 'true');
         safeSet('ai_provider_connection_' + settings.provider, '');
@@ -2762,8 +2924,54 @@ permalink: /
       safeSet('ai_provider_connection_'+provider,'');$('apiKey').value='';
       updateApiKeyLamp('empty','Ключ удалён из локальных настроек этого браузера.');showToast('Ключ выбранного провайдера удалён');
     }
-    function updateOfflineUI(){const off=safeGet(STORAGE.offline)==='true',button=$('offlineToggle');if(!button)return;button.setAttribute('aria-pressed',String(off));button.textContent=getUiLanguage()==='en'?(off?'◉ Offline: on':'◉ Offline: off'):(off?'◉ Оффлайн: вкл.':'◉ Оффлайн: выкл.');button.title=getUiLanguage()==='en'?'Disables web search and external sources. Cloud model APIs still require internet.':'Отключает веб-поиск и внешние источники. Облачный API модели всё равно требует интернет-соединения.';}
-    function toggleOfflineMode(){const off=safeGet(STORAGE.offline)!=='true';safeSet(STORAGE.offline,String(off));updateOfflineUI();showToast(off?'Оффлайн-режим: веб-поиск выключен':'Онлайн-режим: веб-инструменты доступны');}
+    function updateOfflineUI() {
+      const chat = getCurrentChat();
+      const mode = chat && VALID_SEARCH_MODES.has(chat.searchMode) ? chat.searchMode : (safeGet(STORAGE.offline) === 'true' ? 'offline' : 'normal');
+      const english = getUiLanguage() === 'en';
+      const label = mode === 'offline' ? (english ? 'no web' : 'без веба') : mode === 'more' ? (english ? 'search more' : 'искать больше') : (english ? 'normal' : 'обычный');
+      const summary = $('searchModeSummary');
+      if (summary) {
+        summary.textContent = (english ? '🌐 Search: ' : '🌐 Поиск: ') + label + ' ▾';
+        summary.title = mode === 'offline' ? (english ? 'Web tools are off; cloud APIs may still need internet.' : 'Веб-инструменты выключены; облачному API может требоваться интернет.')
+          : mode === 'more' ? (english ? 'Extended search budget: up to four tool rounds.' : 'Расширенный бюджет поиска: до четырёх раундов инструментов.')
+          : (english ? 'Normal web-search budget.' : 'Обычный бюджет веб-поиска.');
+        summary.setAttribute('aria-label', summary.title);
+      }
+      const status = $('offlineToggle');
+      if (status) status.textContent = mode === 'offline' ? (english ? 'Web search off' : 'Веб-поиск выключен') : mode === 'more' ? (english ? 'Extended web search' : 'Расширенный веб-поиск') : (english ? 'Normal web search' : 'Обычный веб-поиск');
+    }
+    function toggleOfflineMode(){setSearchMode(getCurrentChat()?.searchMode==='offline'?'normal':'offline');}
+    function openFunctionPanel(kind) {
+      $('functionsMenu').open = false;
+      if (kind === 'research') { openResearchStudio(); return; }
+      const views = {
+        agents: ['agentFunctionSettings','functionAgentsTitle','functionAgentsDescription'],
+        skills: ['skillFunctionSettings','functionSkillsTitle','functionSkillsDescription'],
+        connectors: ['connectorFunctionStatus','functionConnectorsTitle','functionConnectorsDescription']
+      };
+      const view = views[kind];
+      if (!view) return;
+      const text = UI_TEXT[getUiLanguage()];
+      ['agentFunctionSettings','skillFunctionSettings','connectorFunctionStatus'].forEach(id => $(id).classList.add('hidden'));
+      $('functionPanelTitle').textContent = text[view[1]];
+      $('functionPanelDescription').textContent = text[view[2]];
+      $(view[0]).classList.remove('hidden');
+      if (kind === 'agents') $('agentModeControl').checked = getCurrentChat().multiAgentEnabled === true;
+      if (kind === 'skills') $('skillPresetSelect').value = getCurrentChat().skillPreset || 'auto';
+      $('functionPanelModal').classList.remove('hidden');
+    }
+    function closeFunctionPanel() {
+      $('functionPanelModal').classList.add('hidden');
+      $('functionsMenuSummary')?.focus();
+    }
+    document.addEventListener('click', (event) => {
+      const menus = ['searchModeMenu','functionsMenu'].map(id => $(id)).filter(menu => menu?.open);
+      if (!menus.length || event.target.closest('#searchModeMenu, #functionsMenu')) return;
+      menus.forEach(menu => { menu.open = false; });
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+    }, true);
     async function makeCacheKey(value) {
       const serialized = JSON.stringify(value);
       try {
@@ -3066,8 +3274,9 @@ permalink: /
       return 'URL: ' + response.url + '\nИзвлечённый текст (обрезан до ' + cap + ' символов):\n' + content.slice(0, cap) +
         (content.length > cap ? '\n[Текст сокращён; уточни, что искать.]' : '');
     }
-    async function loadTaskSkill(userText, mode, useMultiAgent, signal) {
-      if (mode !== 'deep' && !useMultiAgent) return '';
+    async function loadTaskSkill(userText, mode, useMultiAgent, signal, skillPreset = 'auto') {
+      const chosenSkill = VALID_SKILL_PRESETS.has(skillPreset) ? skillPreset : 'auto';
+      if (mode !== 'deep' && !useMultiAgent && chosenSkill === 'auto') return '';
       const text = userText.toLocaleLowerCase();
       const isMultimodalTask = /(?:\bocr\b|\basr\b|qwen3-asr|moonshine|zipformer|canary\s*180m|nemotron.*asr|glm-ocr|paddleocr|surya|dots\.(?:ocr|mocr)|deepseek-ocr|lightonocr|asr4all|speech[- ]to[- ]text|transcrib|multimodal rag|rag-anything|распозн.{0,14}(?:реч|голос|ауди|изображ|фото|документ|pdf)|транскриб|голосов|диктовк|микрофон|аудио|распознаван.{0,12}реч|сканирован.{0,12}(?:документ|pdf)|извлеч.{0,12}текст.{0,12}(?:pdf|изображ|документ))/i.test(text);
       const isAgentSystemsTask = /(?:\b(?:multi[- ]?agent|agent swarm|agent orchestration|agent memory|knowledge graph|graph memory|rag|paperclip|ruflo|openshell|pinchtab|hyperframes|utopia)\b|памят|граф знан|баз[аы] знан|источник.{0,20}проект|проектн.{0,15}инструкц|агент.{0,20}(?:систем|роут|оркестр|обуч|команд)|самообуч|долгосрочн.{0,10}памят)/i.test(text);
@@ -3076,11 +3285,13 @@ permalink: /
         : useMultiAgent || /исслед|найди|источник|сравни|актуальн|research|search|source|compare/.test(text) ? 'research'
         : /код|программ|debug|рефактор|javascript|python|typescript|code|bug|implement/.test(text) ? 'code-review'
         : /данн|таблиц|статист|рассч|вычисл|график|data|calculate|statistics|dataset/.test(text) ? 'data-analysis' : 'planning';
+      // Safety-specialized multimodal/agent-system skills outrank manual presets; other tasks honor the user's choice.
+      const selectedSkill = (isMultimodalTask || isAgentSystemsTask) ? skill : (chosenSkill !== 'auto' ? chosenSkill : skill);
       try {
-        const response = await fetch(new URL('skills/' + skill + '.txt', document.baseURI), { cache: 'force-cache', signal });
+        const response = await fetch(new URL('skills/' + selectedSkill + '.txt', document.baseURI), { cache: 'force-cache', signal });
         if (!response.ok) return '';
         return (await response.text()).slice(0, 5000);
-      } catch (error) { console.warn('Не удалось загрузить навык из репозитория:', error); return ''; }
+      } catch (error) { console.warn('Не удалось загрузить навык из репозитория:', selectedSkill, error); return ''; }
     }
     function getApiCandidates(requestedModel) {
       const selectedProvider=safeGet(STORAGE.provider)||'alandi',allowCrossProvider=safeGet(STORAGE.crossProviderFallback)==='true';
@@ -3329,7 +3540,7 @@ permalink: /
       if(requestProjectContext)requestProjectContext+='\nКонец контекста выбранных проектов. Учитывай его только для текущего сообщения и продолжай соблюдать системные ограничения.';
       const configuredPrompt = safeGet(STORAGE.systemPrompt);
       const activePrompt = (!configuredPrompt || configuredPrompt === LEGACY_DEFAULT_SYSTEM) ? DEFAULT_SYSTEM : configuredPrompt;
-      const taskSkill = promptOverride ? '' : await loadTaskSkill(latestUserMessage, mode, useMultiAgent, signal);
+      const taskSkill = promptOverride ? '' : await loadTaskSkill(latestUserMessage, mode, useMultiAgent, signal, chat.skillPreset || 'auto');
       let systemPrompt = `Сегодня: ${new Date().toLocaleDateString('ru-RU')}. ${activePrompt}${projectInstructionContext}${requestProjectContext}${memoryContext}${projectMemoryContext}${serverProjectMemoryContext}`;
       if (mode === 'deep') systemPrompt += '\nРЕЖИМ ГЛУБОКОЙ РАБОТЫ: проверь существенные предположения, объясни неопределённость и предпочитай проверяемые выводы. Избегай лишних шагов.';
       if (taskSkill) systemPrompt += '\n\nНАВЫК ИЗ РЕПОЗИТОРИЯ (инструкции для текущей задачи; пользовательский запрос имеет приоритет):\n' + taskSkill;
@@ -3369,9 +3580,12 @@ permalink: /
         }}
       ] : undefined;
 
-      const maxToolRounds = mode === 'deep' ? MAX_TOOL_ROUNDS : 1;
-      const maxToolCallsPerRound = mode === 'deep' ? MAX_TOOL_CALLS_PER_DEEP_ROUND : 1;
-      const maxToolCallsPerRun = mode === 'deep' ? MAX_TOOL_CALLS_PER_DEEP_RUN : 1;
+      const extendedSearch = chat.searchMode === 'more';
+      const extendedToolBudget = mode === 'deep' || extendedSearch;
+      const toolMode = extendedSearch ? 'deep' : mode;
+      const maxToolRounds = extendedToolBudget ? MAX_TOOL_ROUNDS : 1;
+      const maxToolCallsPerRound = extendedToolBudget ? MAX_TOOL_CALLS_PER_DEEP_ROUND : 1;
+      const maxToolCallsPerRun = extendedToolBudget ? MAX_TOOL_CALLS_PER_DEEP_RUN : 1;
       let executedToolCalls = 0, toolBudgetNoticeShown = false;
       const seenToolCallKeys = new Set();
       for (let round = 0; round <= maxToolRounds; round++) {
@@ -3446,7 +3660,7 @@ permalink: /
             updateState([...chats]);
             throw abortError();
           }
-          if (mode === 'fast' && index > 0) {
+          if (mode === 'fast' && index > 0 && !extendedSearch) {
             result = 'Вызов пропущен: быстрый режим выполняет не более одного инструмента за раунд.';
           } else if (seenToolCallKeys.has(toolSignature)) {
             result = 'Повторный идентичный вызов подавлен, чтобы не расходовать бюджет инструментов.';
@@ -3461,13 +3675,13 @@ permalink: /
               const args = JSON.parse(toolCall.function?.arguments || '{}');
               if (name === 'web_search') {
                 if (typeof args.query !== 'string' || !args.query.trim()) result = 'Ошибка инструмента: требуется непустое поле query.';
-                else result = await performTavilySearch(args.query.trim().slice(0, 500), signal, mode);
+                else result = await performTavilySearch(args.query.trim().slice(0, 500), signal, toolMode);
               } else if (name === 'public_knowledge_search') {
                 if (typeof args.query !== 'string' || !args.query.trim() || typeof args.source !== 'string') result = 'Ошибка инструмента: нужны source и непустое поле query.';
-                else result = await performPublicKnowledgeSearch(args.source, args.query.trim().slice(0, 300), signal, mode);
+                else result = await performPublicKnowledgeSearch(args.source, args.query.trim().slice(0, 300), signal, toolMode);
               } else {
                 if (typeof args.url !== 'string' || !args.url.trim()) result = 'Ошибка инструмента: требуется полный HTTPS URL.';
-                else result = await readPublicWebpage(args.url.trim().slice(0, 1500), signal, mode);
+                else result = await readPublicWebpage(args.url.trim().slice(0, 1500), signal, toolMode);
               }
             } catch (error) {
               if (error.name === 'AbortError') {
@@ -3799,10 +4013,7 @@ permalink: /
       if (!prompt) { $('researchStudioPrompt').focus(); $('researchStudioStatus').textContent = 'Сначала напиши вопрос или задачу исследования.'; return; }
       const webEnabled = $('researchStudioWeb').checked;
       const depth = $('researchStudioDepth').value === 'deep' ? 'deep' : 'fast';
-      $('toggleSearch').checked = webEnabled;
-      safeSet(STORAGE.search, String(webEnabled));
-      $('toggleMultiAgent').checked = depth === 'deep';
-      safeSet(STORAGE.multiAgent, String(depth === 'deep'));
+      setSearchMode(webEnabled ? (getCurrentChat().searchMode === 'more' ? 'more' : 'normal') : 'offline');
       setProcessingMode(depth);
       $('userInput').value = prompt;
       closeResearchStudio();
@@ -4397,6 +4608,9 @@ permalink: /
       try {
         switch (action) {
           case 'set-language': applyUiLanguage(control.dataset.language);$('languageMenu').open=false;break;
+          case 'select-search-mode': setSearchMode(control.dataset.searchMode);break;
+          case 'open-function-panel': openFunctionPanel(control.dataset.function);break;
+          case 'close-function-panel': closeFunctionPanel();break;
           case 'toggle-theme-cycle': toggleHomeTheme();break;
           case 'brand-easter-egg': showToast(getUiLanguage()==='en'?'aLandi → “a land i” → “i land AI”: the name is a small word puzzle.':'aLandi → «a land i» → «i land AI»: имя — маленький ребус.');break;
           case 'paste-provider-key': await pasteIntoField('apiKey');break;
@@ -4538,6 +4752,8 @@ permalink: /
     $('modeDeep').addEventListener('click', () => setProcessingMode('deep'));
     $('toggleSearch').addEventListener('change', (event) => safeSet(STORAGE.search, String(event.target.checked)));
     $('toggleMultiAgent').addEventListener('change', (event) => safeSet(STORAGE.multiAgent, String(event.target.checked)));
+    $('agentModeControl').addEventListener('change', event => setAgentMode(event.target.checked));
+    $('skillPresetSelect').addEventListener('change', event => setSkillPreset(event.target.value));
     $('sidebarOverlay').addEventListener('click', () => toggleSidebar(false));
     $('importFile').addEventListener('change', importChats);
     $('settingsProfileFile').addEventListener('change', importSettingsProfile);
@@ -4609,7 +4825,9 @@ permalink: /
 
     async function init() {
       const pollinationsAuthMessage=await finishPollinationsOAuth();
+      migrateLegacyChatFunctionSettings();
       initializeSettings();
+      syncCurrentChatFunctionSettings();
       $('chatBox').addEventListener('scroll', updateJumpToLatest, { passive: true });
       $('messageViewerModal').addEventListener('click', event => {
         if (event.target === $('messageViewerModal')) $('messageViewerModal').classList.add('hidden');

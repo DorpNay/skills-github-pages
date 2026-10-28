@@ -1,5 +1,11 @@
 import { test, expect } from '@playwright/test';
 
+async function chooseSearchMode(page, mode) {
+  await page.locator('#searchModeSummary').click();
+  await page.locator(`[data-action="select-search-mode"][data-search-mode="${mode}"]`).click();
+}
+
+
 const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
 
 test.beforeEach(async ({ page }) => {
@@ -61,7 +67,7 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
   await page.locator('#apiKey').fill('e2e-alandi-placeholder-key-not-a-secret-0123456789');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
-  await page.locator('#toggleSearch').uncheck();
+  await chooseSearchMode(page, 'offline');
   // Enable fallback only after startup to avoid triggering unrelated model-catalog probes.
   await page.evaluate(() => {
     localStorage.setItem('ai_cross_provider_fallback', 'true');

@@ -169,10 +169,11 @@ const suites = {
       includes('Профиль импортирован. Сохранённые API-ключи не изменены.', 'Profile import must make secret preservation explicit.');
       includes("location.hash.match(/^#trace=([^&]+)/)", 'Local trace deep links must be supported.');
       includes('Локальная ссылка работает в этом же браузере', 'Trace links must disclose their local-only scope.');
-      includes("const maxToolRounds = mode === 'deep' ? MAX_TOOL_ROUNDS : 1;", 'Fast and deep modes must have different tool budgets.');
-      includes("mode === 'fast' && index > 0", 'Fast mode must cap tools executed per round.');
-      includes("if (mode !== 'deep' && !useMultiAgent) return '';", 'Skills must not load in fast mode unless research is explicitly enabled.');
-      includes("new URL('skills/' + skill + '.txt', document.baseURI)", 'Task skills should load from repository assets only on demand.');
+      includes("const maxToolRounds = extendedToolBudget ? MAX_TOOL_ROUNDS : 1;", 'Fast and deep modes must have different tool budgets.');
+      includes("mode === 'fast' && index > 0 && !extendedSearch", 'Fast mode must cap tools unless the bounded search-more preset is selected.');
+      includes("if (mode !== 'deep' && !useMultiAgent && chosenSkill === 'auto') return '';", 'Automatic skills must not load in fast mode unless research is explicitly enabled.');
+      includes("chosenSkill !== 'auto' ? chosenSkill", 'A manually selected skill must be usable in fast mode.');
+      includes("new URL('skills/' + selectedSkill + '.txt', document.baseURI)", 'Task skills should load from repository assets only on demand.');
       assert.ok(!source.includes('<script src="https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js"'), 'Pyodide must not load on initial page render.');
       includes("script.src = 'https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js'", 'Pyodide should load only when requested.');
       includes("const isMultimodalTask = /", 'Multimodal task classifier must be explicit and reviewable.');
@@ -260,7 +261,7 @@ const suites = {
     }],
     ['tool loop fails closed at its configured boundary', () => {
       includes('round === maxToolRounds', 'Tool-call boundary must be checked against the active mode budget.');
-      includes("const maxToolRounds = mode === 'deep' ? MAX_TOOL_ROUNDS : 1;", 'Mode-specific tool budget must be enforced.');
+      includes("const maxToolRounds = extendedToolBudget ? MAX_TOOL_ROUNDS : 1;", 'Mode-specific tool budget must be enforced.');
       includes('const MAX_TOOL_CALLS_PER_RESPONSE = 8;', 'A provider cannot return an unbounded tool-call array.');
       includes('const MAX_TOOL_CALLS_PER_DEEP_ROUND = 3;', 'Deep mode needs a strict per-round tool-call cap.');
       includes('const MAX_TOOL_CALLS_PER_DEEP_RUN = 8;', 'Deep mode needs a strict total tool-call budget.');

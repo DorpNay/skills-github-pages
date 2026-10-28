@@ -12,6 +12,7 @@ test('live public site serves the app shell and basic chat controls', async ({ p
   await expect(page.locator('#chatBox')).toBeVisible();
   await expect(page.locator('#userInput')).toBeEditable();
   await expect(page.locator('#sendBtn')).toBeVisible();
-  await expect(page.locator('#toggleSearch')).toBeVisible();
+  // This test targets the currently published main site, not the unmerged PR preview.
+  // Feature-specific menu assertions belong in app.spec.mjs against the built PR artifact.
   expect(pageErrors, 'No uncaught browser errors should occur on the live site').toEqual([]);
 });
