@@ -52,12 +52,25 @@ def bool_env(name: str, default: bool = False) -> bool:
 
 
 def validate_origin(value: str) -> str:
-    parsed = urlsplit(value)
-    if parsed.scheme not in {"https", "http"} or not parsed.netloc:
+    try:
+        parsed = urlsplit(value)
+        port = parsed.port
+    except ValueError as exc:
+        raise ValueError(f"Invalid CORS origin: {value!r}") from exc
+    if parsed.scheme not in {"https", "http"} or not parsed.netloc or not parsed.hostname:
         raise ValueError(f"Invalid CORS origin: {value!r}")
-    if parsed.path not in {"", "/"} or parsed.query or parsed.fragment or parsed.username or parsed.password or value == "*":
+    if parsed.path not in {"", "/"} or parsed.query or parsed.fragment or parsed.username or parsed.password:
         raise ValueError("CORS entries must be explicit origins without paths or credentials")
-    return f"{parsed.scheme}://{parsed.netloc}"
+
+    # Browser Origin serialization lowercases hosts and omits default ports. Canonicalize
+    # configuration the same way so valid mixed-case origins do not silently fail CORS.
+    hostname = parsed.hostname.lower()
+    if ":" in hostname:  # IPv6 literals must retain their brackets in the authority.
+        hostname = f"[{hostname}]"
+    if port is not None and not ((parsed.scheme == "https" and port == 443) or
+                                 (parsed.scheme == "http" and port == 80)):
+        hostname = f"{hostname}:{port}"
+    return f"{parsed.scheme}://{hostname}"
 
 
 def validate_fixed_service_base_url(value: str, name: str) -> str:
