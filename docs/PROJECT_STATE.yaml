@@ -263,5 +263,6 @@ voice_selection:
   research_summary: "docs/VOICE_IMPLEMENTATION_PLAN_RU.md consolidates existing whisper.cpp, Qwen3-ASR, Moonshine, Vosk, Piper and Silero VAD candidates"
   implementation: "operator-configured local Piper voice allowlist; /v1/capabilities lists only installed allowlisted voices; /v1/audio/speech accepts an allowlisted voice ID; mini-player can select among available voices"
   security: "voice files must already exist; no auto-download; auth required; voice ID allowlist; flags remain off by default"
-  verification: "unit/E2E tests added but not run locally; awaiting exact-head CI; actual model hashes/licenses and target-device audio not verified"
-  next: "run exact-head Gateway, Quality/Chromium, Pages smoke and provenance; fix failures before merge; then configure and test actual local voice packs"
+  verification: "voice-code commit b8b7bde4 exact-head Gateway, Quality sentinels and provenance passed; Chromium E2E completed successfully; local tests not run; subsequent documentation-only commits require exact-latest-head CI confirmation; actual model hashes/licenses and target-device audio not verified"
+  deployment_runbook: "docs/VOICE_IMPLEMENTATION_PLAN_RU.md; owner-facing VPS model installation, hash/license, flags, smoke and rollback steps; docs/USER_REQUEST_CHECKLIST.md updated"
+  next: "confirm CI for latest docs commit; merge only after all required gates are green; owner installs verified local model artifacts on private VPS and runs real-device smoke tests"
