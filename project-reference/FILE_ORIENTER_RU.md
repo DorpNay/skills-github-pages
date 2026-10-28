@@ -2,7 +2,7 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-Текущая контрольная точка после трёх merge: main `91557e4eab1b122341bed578cdf4775ff867007f` (PR #77). PR #76 (Graphify workflow), #72 (search/functions UI) и #77 (RRF) объединены после зелёных exact-head ворот. Post-merge main проверки уже подтверждены на SHA `91557e4`: Gateway `40637941350`, Quality/Chromium `40637941308`, Graphify `40637941303`, Pages `40637941951` — success. Перед каждым новым merge проверять актуальный head и его обязательные проверки.
+Текущий main `337e38690af8f22a712c6442192c5ea62d354c3d` — документационный follow-up к code SHA `91557e4eab1b122341bed578cdf4775ff867007f`. На code SHA прошли Gateway `40637941350`, Quality/Chromium `40637941308`, Graphify `40637941303`, Pages `40637941951`; на docs-only main `337e` повторно прошли Quality `40639031308` и Pages `40639030224`. PR #76, #72 и #77 merged после зелёных exact-head gates. Перед каждым новым merge проверять актуальный head и его обязательные проверки.
 
 ## 1. Быстрый маршрут
 
@@ -167,7 +167,7 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 
 ## 6. Контроль Graphify и актуального CI — 2026-10-28
 
-- Graphify подтверждён по новому артефакту PR #76: run [#40637941303](https://github.com/DorpNay/skills-github-pages/actions/runs/40637941303) на main собрал 988 узлов / 2780 рёбер из 60 source files; 224 nodes относятся к inline UI JS, 14 — к SQL schema, 23 — к RAG module; 10/10 сфокусированных запросов вернули соседства. Артефакты сохраняются на 7 дней и не коммитятся в репозиторий.
+- Graphify подтверждён по новому артефакту PR #76: run [#40637941303](https://github.com/DorpNay/skills-github-pages/actions/runs/40637941303) на code SHA `91557e4` собрал 988 узлов / 2780 рёбер из 60 source files; 224 nodes относятся к inline UI JS, 14 — к SQL schema, 23 — к RAG module; 10/10 сфокусированных запросов вернули соседства. Документационный follow-up `337e` не менял код. Артефакты сохраняются на 7 дней и не коммитятся в репозиторий.
 - Graphify остаётся dev-only навигацией, не runtime-зависимостью и не доказательством корректности. Важные запросы: UI send path, gateway auth/provider, scoped memory, RAG, ASR/TTS, document extraction и evidence provenance.
 - PR #76 merged at `708b9e4780ce2e33541a7f09c1395cf4aafa1b9e`: Graphify workflow запускается на изменениях source/architecture paths и еженедельно; exact-head Graphify, Quality/Chromium и provenance passed. Это dev-only navigation; 9 Playwright E2E files дали no symbols, часть query output ограничена 700 tokens.
 - PR #72 merged at `d332a6b2ab09911145520c9d10588d0bcb8e0e41`; exact-head Quality run `40637581310` passed all 6 jobs including Chromium and published-site smoke. Исправлены два stale assertion и удалена проверка PR-only UI на опубликованном main site.
