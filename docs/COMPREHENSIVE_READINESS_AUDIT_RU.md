@@ -80,7 +80,7 @@
 ### Дополнительные дефекты, найденные при свежем статическом просмотре
 
 - **PR #83 — SQLite in-memory delta store:** подтверждён дефект жизненного цикла :memory: — короткоживущие соединения не видели схему друг друга. Добавлен per-instance shared-memory URI, keeper connection и два регрессионных теста на persistence/isolation. Это dev/test correctness fix; persistent-file production path не меняется.
-- **PR #84 — CORS origin canonicalization:** прежняя проверка принимала hostname в смешанном регистре и malformed/out-of-range port без нормализации; это могло привести к silently broken CORS или ошибочной конфигурации. Добавлена нормализация hostname/default ports/IPv6 и тесты негативных портов. Allowlist не расширен.
+- **PR #84 — URL configuration normalization:** прежняя CORS-проверка принимала hostname в смешанном регистре и malformed/out-of-range port без нормализации; OAuth success-redirect сравнивался с allowlist в ненормализованном виде; Ollama URL не проверял port при startup. Добавлены canonical CORS origins (hostname/default ports/IPv6), нормализация OAuth origin, общая fixed-URL validation для Ollama и regression tests. Allowlist не расширен.
 - Для обоих PR требуется дождаться всех обязательных checks на **текущем exact head**. До этого это proposed fixes, не merged/main functionality.
 - Из-за недоступности DNS в рабочем контейнере git clone и локальный запуск pytest не удались; это ограничение окружения, а не успешный тест. CI — единственный доступный execution evidence в этой сессии.
 
