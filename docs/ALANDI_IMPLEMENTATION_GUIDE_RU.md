@@ -173,18 +173,19 @@ ss -lntp | grep 11434
 
 ### 3.2 Одна модель на старте
 
-Проверь [официальную библиотеку Qwen3.5](https://ollama.com/library/qwen3.5). Базовый тег текущего проекта — qwen3.5:4b. Это стартовый кандидат для 8 GB RAM, а не обещание одинаковой скорости на каждом CPU.
+Для выбранной владельцем uncensored-сборки **не скачивай обычный `qwen3.5:4b` поверх неё**. Используй пошаговый [runbook модели и малого CPU](UNCENSORED_MODEL_AND_FREE_CPU_RUNBOOK_RU.md): 2B Q4_K_M для тесной RAM; 4B Q4_K_M при RAM не менее 8 GB. В нём указаны upstream, expected SHA-256, импорт GGUF и проверка архитектуры `qwen35`.
+
+После импорта проверь точный тег:
 
 ~~~bash
-ollama pull qwen3.5:4b
 ollama list
-ollama show qwen3.5:4b
-ollama run qwen3.5:4b "Ответь по-русски одним предложением: Ollama работает?"
+ollama show alandi-huihui-qwen35-4b
+ollama run alandi-huihui-qwen35-4b "Ответь по-русски одним предложением: чему равно 19 + 23?"
 ollama ps
 free -h
 ~~~
 
-Сохрани точный тег из ollama list. Если он отличается, синхронизируй ALANDI_ALLOWED_MODELS и модель в UI. Если 4B не проходит memory/latency тест, измерь меньшую модель на тех же задачах. Не загружай несколько моделей без необходимости.
+Если выбран 2B профиль, замени тег на `alandi-huihui-qwen35-2b`. Синхронизируй точное значение `ollama list` с `ALANDI_ALLOWED_MODELS` и моделью в UI. Не загружай обе модели одновременно без отдельного RAM/latency измерения.
 
 ## 4. Установить aLandi Lite Gateway
 
@@ -226,7 +227,7 @@ nano /etc/alandi-gateway.env
 ~~~dotenv
 ALANDI_API_KEY=ВСТАВЬ_СЮДА_64_СИМВОЛЬНЫЙ_HEX_СЕКРЕТ
 OLLAMA_BASE_URL=http://127.0.0.1:11434
-ALANDI_ALLOWED_MODELS=qwen3.5:4b
+ALANDI_ALLOWED_MODELS=alandi-huihui-qwen35-4b
 ALANDI_CORS_ORIGINS=https://dorpnay.github.io
 ALANDI_MAX_BODY_BYTES=8388608
 ALANDI_UPSTREAM_TIMEOUT_SECONDS=300
@@ -298,7 +299,7 @@ curl -i http://127.0.0.1:8000/v1/chat/completions \
   -H "Authorization: Bearer $ALANDI_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
-    "model":"qwen3.5:4b",
+    "model":"alandi-huihui-qwen35-4b",
     "messages":[{"role":"user","content":"Ответь одним словом: работает?"}],
     "temperature":0,
     "stream":false
@@ -315,7 +316,7 @@ curl -i http://127.0.0.1:8000/v1/chat/completions \
   -H 'Content-Type: application/json' \
   -H 'X-AI-Cache-Bypass: 1' \
   -d '{
-    "model":"qwen3.5:4b",
+    "model":"alandi-huihui-qwen35-4b",
     "messages":[{"role":"user","content":"Ответь одним словом: работает?"}],
     "temperature":0,
     "stream":false
@@ -372,7 +373,7 @@ systemctl --no-pager --full status cloudflared
 1. Нажми Настройки.
 2. Выбери провайдера **aLandi Self-hosted Gateway**.
 3. Base URL — HTTPS hostname туннеля с суффиксом /v1, например https://llm.example.com/v1.
-4. Model — точный тег из Ollama и /v1/models, например qwen3.5:4b.
+4. Model — точный тег из Ollama и /v1/models, например alandi-huihui-qwen35-4b.
 5. API Key — значение ALANDI_API_KEY из закрытого env-файла, не имя переменной.
 6. Сохрани настройки, обнови каталог и проверь соединение, если доступен соответствующий control.
 7. Для первого теста выключи поиск, отправь короткое сообщение и убедись, что ответ пришёл от aLandi Self-hosted Gateway.
