@@ -2,26 +2,26 @@ project_state:
   version: 4
   reviewed_on: "2026-10-28"
   root_orienter:
-    status: "merged; main Quality, Pages and provenance passed; Graphify code-only pilot merged and validated"
+    status: "current main 4fc342b; Quality Sentinels 9/9 and Pages deployment passed; queue contains PR #70, #72, #74"
     branch: "docs/current-state-and-mobile-ledger-20261027"
     base_main: "b91aab316c224588baea99fbb9b966b8865de0a6"
-    open_prs_at_checkpoint: 0
+    open_prs_at_checkpoint: 3
     open_issues_at_checkpoint: 0
-    graphify: "local run blocked by DNS; isolated read-only GitHub Actions pilot succeeded; artifact-only, no runtime dependency"
-    next: "finish helper-memory PR #69 only after exact-head gateway, Quality, Chromium, Pages smoke and provenance gates; triage PR #70 separately"
+    graphify: "code-only GitHub Actions pilot succeeded: 940 nodes, 2637 edges, 59 source files; artifact-only, no runtime dependency; periodic source-change/weekly runs proposed in branch ci/graphify-regular-architecture-checks-20261028"
+    next: "PR #72 exact-head Chromium gate in progress after assertion fixes; review/port PR #70 RRF onto current main without stale-doc conflicts; preserve useful PR #74 readiness audit and close/rebase stale branch only after reconciliation"
   source_triage:
-    status: "triage_documentation_merged; graphify_pilot_blocked_by_no_network; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
+    status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
     technique_register: "docs/TECHNIQUE_REGISTER_RU.md"
     branch: "docs/source-triage-and-next-steps-20261027"
     verified_main_at_start: "529b1d0b86aef58c2b84663a44e78677a31ce9b1"
     docs_merge_commit: "f689cbe17a2996ebd4cd2ca9fcb71d60102a6c25"
     queue_after_triage: "PR #37 closed without merge; PR #62 merged; Issue #1 closed as not_planned"
-    graphify_execution: "blocked: container cannot resolve github.com; no local repo checkout"
+    graphify_execution: "isolated GitHub Actions execution verified on PR head; graph output artifact-only; local container still has no repository checkout"
     open_pr_at_start: 37
     open_issue_at_start: 1
-    next: "run Graphify in a network-enabled isolated checkout; select PR #37 follow-ups only when they add unique value; audit live queue before changes"
-  last_volley: "V-2026-10-28-FIRST-RUN-GUIDE-001"
+    next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
+  last_volley: "V-2026-10-28-GRAPHIFY-REGULAR-CHECKS-001"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Current browser half-duplex voice dialogue prototype is under PR validation; it uses mocked ASR/TTS in CI, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; first read in new chats, then verify current main HEAD and open PRs"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
@@ -269,3 +269,14 @@ voice_selection:
   licensing: "engine and individual model/voice/phonemizer licenses must be reviewed separately; exact artifact SHA-256 and compatibility remain operator ship gates"
   deployment_runbook: "docs/VOICE_IMPLEMENTATION_PLAN_RU.md; owner-facing install, checksum/license review, flags, private bind, smoke, metrics and rollback steps"
   next: "verify post-merge main workflows on the exact current main SHA; owner validates exact installed artifacts, hashes/licenses and compatibility on private VPS; enable document extraction and ASR/TTS only one at a time after checks; test all three voice scenarios on target device"
+
+current_checkpoint:
+  date: "2026-10-28"
+  verified_main: "4fc342b468e370c792f1e87e77a20fda4de6bbaa"
+  main_quality: "run 40634598755 success; all 6 named Quality jobs succeeded, including Chromium and published-site smoke"
+  pages_deployment: "run 40634598517 success; deploy/build jobs succeeded"
+  open_pull_requests: "#70 RRF/engineering audit (mergeable=false; no exact-head required checks observed), #72 search/functions UX (Chromium failure investigated; two stale assertions fixed on head 407a42c; rerun in progress), #74 voice/document readiness audit (draft; based on old main)"
+  graphify: "run 40534892152 success; 940 nodes, 2637 edges, 59 source files, ten focused queries returned graph neighborhoods; artifact retained seven days"
+  graphify_follow_up: "branch ci/graphify-regular-architecture-checks-20261028; workflow triggers proposed for relevant source changes plus weekly schedule; awaiting exact-head CI"
+  runtime_boundary: "GitHub Pages verified; private gateway/VPS, live providers, ASR/TTS artifacts, real microphone/device playback and target-host performance remain unverified"
+  next: "finish PR #72 exact-head checks; port and verify RRF on current main in a conflict-free branch; merge Graphify trigger improvement only after Quality, Graphify and provenance checks pass; reconcile stale PR #74 without losing its audit"
