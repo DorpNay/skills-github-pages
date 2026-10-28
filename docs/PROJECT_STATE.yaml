@@ -286,6 +286,7 @@ voice_selection:
       pr_76_provenance: "40637433125 success"
     open_pull_requests: "PR #78 documentation reconciliation only; PR #70 closed as superseded after porting RRF and preserving the engineering audit; PR #74 closed after preserving the readiness audit"
     graphify_limits: "developer navigation only, not runtime feature or correctness proof; graph queries may truncate at 700 tokens; nine Playwright E2E files yielded no symbols"
+    unsubmitted_work: "branch feat/deployment-preflight-gates-20261028 contains a repository-template-only preflight script, tests and runbook; no PR was created, no CI ran, and it is not merged or deployment evidence. Review and test through the normal PR path before use."
     runtime_boundary: "GitHub Pages is deployed; private gateway/VPS, live providers, ASR/TTS model artifacts, real microphone/device playback and target-host performance remain unverified"
     next: "finish exact-head gates and merge PR #78; then choose a bounded delta-sync recovery or safe static-asset/CSP slice based on current integration points and tests"
   
