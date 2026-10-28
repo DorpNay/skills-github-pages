@@ -200,3 +200,14 @@
 - **Автономность:** aLandi может выполнять ограниченные разрешённые задачи в отсутствие владельца, проводить проверки и готовить PR с обоснованием, результатами тестов, известными рисками и инструкцией отката.
 - **Контроль:** только владелец принимает финальное решение о слиянии в `main`. Успешные тесты не дают агенту права на merge.
 - **Приёмка:** проверить удобство базовых и расширенных сценариев, непрерывность контекста, изоляцию доступа, границы исполнения и обязательное подтверждение merge. До получения доказательств тестирования и развёртывания не считать функциональность реализованной.
+
+## D-017 — Local-private memory is non-exportable by default; shared memory requires explicit promotion
+
+- **Статус:** Accepted for prototype; automatic extraction, cross-device sync and server-wide profile memory deferred.
+- **Проблема:** личные факты локального помощника не должны попадать стороннему LLM через общий prompt, provider fallback или повторную отправку истории чата.
+- **Решение:** browser IndexedDB v2 keeps legacy `memory` as private-local and creates a separate `sharedMemory` store. Private facts are injected only on the `alandi` route. When a private fact enters prompt—or a private remember command is issued—the chat is marked private and third-party routes are blocked. Request candidate filtering is a second guard. Server graph memory is local-route-only. Shared facts are sent only when the user explicitly enables shared-memory context; private-to-shared promotion is per-fact and confirmed.
+- **Commands:** `Запомни: …` writes only to local private memory before any provider request; `Сохрани в общую память: …` requires confirmation. The source fact is redacted from chat history so later provider changes do not upload it accidentally.
+- **Boundaries:** browser shared memory is only shared across opted-in routes in that browser profile; it is not server/cloud sync. IndexedDB is not encrypted-at-rest storage and does not protect against same-origin script compromise. Arbitrary conversation auto-extraction remains disabled; it requires a candidate review flow and sensitive-data tests.
+- **Acceptance:** IndexedDB v1→v2 preserves existing private notes and creates empty shared store; private facts never appear in external provider requests; chat history with private memory cannot be sent to external providers after reload; explicit shared promotion affects only selected fact; project-only scope excludes shared memory; all cases have browser regression tests.
+- **Rollback:** revert client memory UI/context changes; existing v1 `memory` store remains intact. Do not enable server memory sync as a workaround.
+- **Связи:** `index.md`, `scripts/quality-agents.mjs`, `tests/e2e/privacy-memory.spec.mjs`, `docs/PRIVACY_MEMORY_BOUNDARIES_RU.md`, D-005, D-010, D-011, D-013.
