@@ -108,3 +108,11 @@
 ### Документальная ловушка: старый «окончательный» stack guide
 
 Документ docs/SUPERSTACK_FINAL_RU.md датирован 2026-10-19 и содержит команды установки и модельный baseline, которые нельзя трактовать как актуальное подтверждение состояния. Его статус обновлён до исторического архитектурного baseline; текущий owner path — docs/START_HERE_RU.md и docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md. Перед выполнением команд нужно проверить актуальный main, upstream installer, systemd template, model tag и лицензии. В частности, не запускать удалённый shell installer вслепую и не скрывать ошибки создания пользователя через `|| true`.
+
+
+## Интеграционный риск, найденный при сравнении PR
+
+- PR #78 и #80 **пересекаются по пяти общим файлам**: EVALS.md, docs/IMPLEMENTATION_ROADMAP_RU.md, docs/PROJECT_STATE.yaml, docs/VOLLEY_LOG.md и project-reference/FILE_ORIENTER_RU.md. Безопасный порядок: сначала #78, затем перенести/ребейзнуть содержательные изменения #80 на обновлённый main и проверить golden-evaluator changes заново. Не перезаписывать shared ledgers целиком из старой ветки.
+- #81 изолирован в workflow/preflight/runbook; #83 — в delta sync/test; #84 — в gateway config/tests. Эти PR можно рассматривать отдельно после точных проверок, но их базовый SHA всё равно должен быть актуален к моменту merge.
+- Обнаружено расхождение состояния: main/base SHA, возвращённый GitHub для открытых PR, — `337e38690af8f22a712c6442192c5ea62d354c3d`, тогда как текст текущего `docs/PROJECT_STATE.yaml` заявляет `4fc342b...` как main. Это именно stale status в документации, не основание угадывать SHA; PR #78 предназначен для такой сверки.
+- Перед merge каждого PR проверять: актуальный head SHA, обязательные checks, changed-file overlap и mergeability; после merge — новый main SHA, post-merge Quality/Pages/provenance. Ни один старый зелёный run не заменяет эти проверки.
