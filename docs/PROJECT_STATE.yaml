@@ -280,3 +280,22 @@ current_checkpoint:
   graphify_follow_up: "branch ci/graphify-regular-architecture-checks-20261028; workflow triggers proposed for relevant source changes plus weekly schedule; awaiting exact-head CI"
   runtime_boundary: "GitHub Pages verified; private gateway/VPS, live providers, ASR/TTS artifacts, real microphone/device playback and target-host performance remain unverified"
   next: "finish PR #72 exact-head checks; port and verify RRF on current main in a conflict-free branch; merge Graphify trigger improvement only after Quality, Graphify and provenance checks pass; reconcile stale PR #74 without losing its audit"
+
+
+  active_work_snapshot:
+    reviewed_on: "2026-10-28"
+    main_sha_at_start: "337e38690af8f22a712c6442192c5ea62d354c3d"
+    open_prs_at_start: [78, 80, 81, 82, 83, 84]
+    branch: "feat/advanced-settings-model-modes-uncensored-20261028"
+    implementation:
+      model_mode: "self-hosted and free-cloud mutually exclusive; third-party provider selection explicitly switches to free-cloud"
+      composer: "persistent top/bottom position; bounded auto-grow"
+      chat_tools: "browser-local project list/create/add-note and Mermaid source generation; web search remains separate"
+      uncensored_candidates: "Huihui Qwen3.5 2B Q4_K_M and 4B Q4_K_M; expected SHA-256 and owner install steps in docs/UNCENSORED_MODEL_AND_FREE_CPU_RUNBOOK_RU.md"
+      benchmark: "gateway/evals/run_local_model_benchmark.py; synthetic non-streaming smoke only"
+    verification:
+      branch_ci: "pending at documentation snapshot"
+      model_downloaded: false
+      live_vps_verified: false
+      physical_voice_verified: false
+    next: "run exact-head CI; fix any regressions; owner imports the selected model only after RAM/version checks, then verifies gateway, tool calling, performance, ASR/TTS and rollback"
