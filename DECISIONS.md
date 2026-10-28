@@ -169,3 +169,16 @@
 - **Model autonomy:** do not add a hidden refusal layer that blocks otherwise allowed requests. Local model behavior depends on the selected checkpoint; external providers enforce their own terms and filters. No model can be promised to never refuse.
 - **Image generation:** not a working feature in the current browser UI. Add only after a real local/provider backend, exact artifact/license, VRAM/runtime fit and end-to-end image-return test are selected.
 - **Upgrade gate:** compare free/local baseline and paid target on identical tasks: p50/p95, peak RAM, quality, quotas and expected monthly cost. Preserve the OpenAI-compatible gateway contract and explicit endpoint/model changes.
+
+
+## D-015 — Autonomous orchestration with policy-enforced capabilities
+
+- **Статус:** Accepted direction for implementation planning; runtime implementation and security verification deferred.
+- **Проблема:** bounded DAG/tool primitives and logical agent roles do not yet establish a durable, independently checked and permission-enforced multi-agent runtime.
+- **Решение:** build a small orchestration layer on the existing gateway. Use a versioned task contract and explicit state machine; bounded delegation; schema validation; deterministic fail-closed policy before every tool call; minimal-capability executor; approval tickets bound to exact operation/arguments/scope/expiry; independent verifier; durable event/state journal; idempotency or reconciliation for external side effects; cancellation, bounded retries and crash recovery.
+- **Role separation:** planner proposes; policy code authorizes; executor performs only permitted actions; verifier checks evidence and acceptance criteria. No LLM may grant itself permissions or self-approve a side effect. A verifier result of INCONCLUSIVE is not success.
+- **Security boundary:** arbitrary shell/code execution remains blocked until a real sandbox and escape/isolation tests exist. A permission prompt, container alone, MCP, or a second model is not a substitute for isolation.
+- **Dependencies:** do not immediately adopt a complete framework. Compare existing gateway implementation with LangGraph (state/checkpoints), Restate/Temporal/Hatchet/DBOS (durability), OPA/Cedar (policy), gVisor/Firecracker (isolation), promptfoo/Inspect/garak (evaluation), OpenTelemetry (tracing). Research and exact upstream links: [AGENT_ORCHESTRATION_RESEARCH_RU.md](docs/AGENT_ORCHESTRATION_RESEARCH_RU.md).
+- **Acceptance:** unknown tools denied; policy/approval errors fail closed; changed arguments invalidate approval; no blind retry of non-idempotent side effects; crash/restart recovery tested; verifier requires evidence; injection tests cover user input, retrieved content and tool outputs; helper model can be disabled without breaking core path.
+- **Rollout:** one bounded phase at a time, feature flags off by default, with golden-set evaluation and target-host resource measurements. No production-safety claim before sandbox validation.
+- **Links:** `gateway/tools/dag_engine.py`, `gateway/tools/validator.py`, `gateway/security/approval_gates.py`, `gateway/routing.py`, `observability/trace_context.py`, `docs/AGENT_ORCHESTRATION_RESEARCH_RU.md`.
