@@ -361,6 +361,16 @@ def test_invalid_message_role_is_rejected():
     assert response.status_code == 400
 
 
+def test_settings_rejects_invalid_ollama_base_url_port(monkeypatch):
+    monkeypatch.setenv("OLLAMA_BASE_URL", "http://127.0.0.1:99999")
+    try:
+        Settings.from_env()
+    except ValueError as exc:
+        assert "OLLAMA_BASE_URL" in str(exc)
+    else:
+        raise AssertionError("Invalid Ollama port should fail during configuration")
+
+
 def test_validate_origin_canonicalizes_host_case_and_default_ports():
     assert validate_origin("HTTPS://DorpNay.GitHub.io:443/") == "https://dorpnay.github.io"
     assert validate_origin("http://LOCALHOST:80") == "http://localhost"
