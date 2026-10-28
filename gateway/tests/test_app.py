@@ -6,7 +6,7 @@ from typing import AsyncIterator
 import httpx
 from fastapi.testclient import TestClient
 
-from gateway.app import Settings, create_app
+from gateway.app import Settings, create_app, validate_origin
 
 API_KEY = "a" * 64
 MODEL = "qwen3.5:4b"
@@ -359,6 +359,22 @@ def test_invalid_message_role_is_rejected():
         response = client.post("/v1/chat/completions", headers={"Authorization": f"Bearer {API_KEY}"},
           json={"model": MODEL, "messages": [{"role": "godmode", "content": "hi"}]})
     assert response.status_code == 400
+
+
+def test_validate_origin_canonicalizes_host_case_and_default_ports():
+    assert validate_origin("HTTPS://DorpNay.GitHub.io:443/") == "https://dorpnay.github.io"
+    assert validate_origin("http://LOCALHOST:80") == "http://localhost"
+    assert validate_origin("https://[2001:DB8::1]:8443") == "https://[2001:db8::1]:8443"
+
+
+def test_validate_origin_rejects_invalid_ports():
+    for origin in ("https://example.com:99999", "https://example.com:not-a-port"):
+        try:
+            validate_origin(origin)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError(f"Invalid CORS origin accepted: {origin}")
 
 
 def test_cors_allows_only_configured_origin():
