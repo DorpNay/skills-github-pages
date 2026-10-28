@@ -147,3 +147,20 @@ Do not enable feature flags together during comparative experiments. Start with 
 No fake Rust backend, no fake ONNX load, no actual microphone access in CI, no model downloads into Git, no auto-provisioning OCI, no guessed DNS/IP allowlists, no arbitrary CLI execution, no remote OTel exporter enabled by default, no automatic deletion of conflicting memory, and no claim of production deployment.
 
 The packet is the contract and roadmap, not proof all components exist. Always update PROJECT_STATE and EVALS after each merge.
+
+
+## 9. Autonomous orchestration — accepted engineering direction
+
+Read [docs/AGENT_ORCHESTRATION_RESEARCH_RU.md](AGENT_ORCHESTRATION_RESEARCH_RU.md) and D-015 before implementation. This is an accepted design direction, not evidence that the runtime already exists.
+
+- Define a versioned task contract: task ID, goal, scope, inputs/evidence, acceptance criteria, allowed capabilities, risk tier, deadline and bounded resource/retry budgets.
+- Implement an explicit state machine: PROPOSED, VALIDATED, RUNNABLE, RUNNING, VERIFYING, SUCCEEDED plus AWAITING_APPROVAL, REJECTED, FAILED, CANCELLED, BUDGET_EXHAUSTED and NEEDS_HUMAN. Validate and audit every transition.
+- Separate planner, deterministic policy enforcement, executor and verifier. Agent roles/prompts alone are not security boundaries. Every tool invocation passes schema validation and a fail-closed policy check.
+- Grant least privilege per task. Approval tickets bind exact operation, arguments, scope, actor and expiry; any material change invalidates the ticket.
+- Do not enable arbitrary shell/code execution until a real isolated worker is present and escape/isolation tests pass. Do not expose secrets to workers by default; restrict filesystem, CPU/RAM/time and network egress.
+- Persist state and event outcomes. Before retrying an external side effect, use idempotency keys or reconcile the actual remote outcome. Never claim exactly-once effects without evidence.
+- The verifier returns PASS, FAIL or INCONCLUSIVE with evidence references; INCONCLUSIVE is not success. Bound retries and parallelism; support cancellation and safe recovery after restart.
+- Add adversarial evals for prompt injection from user content, retrieved documents, tool outputs and inter-agent messages; false approvals, scope leakage, duplicate effects and crash/restart. Keep new flags off by default.
+- Consider OPA or Cedar for policy, gVisor or Firecracker for isolation, Restate/Temporal/Hatchet/DBOS for durable execution, promptfoo/Inspect/garak for evals, OpenTelemetry for traces. Select at most one candidate per layer after a minimal prototype; avoid dependencies chosen only for popularity.
+- Start with deterministic routing and the existing gateway; evaluate one local helper model later. It may classify or review, but cannot authorize its own actions. Core operation must work with the helper disabled.
+- Update PROJECT_STATE.yaml, EVALS.md and the decision/evaluation record with exact commit, tests, target profile, false-positive/negative results and rollback. Do not mark implemented/verified until evidence exists.
