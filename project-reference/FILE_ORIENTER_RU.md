@@ -155,3 +155,11 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - ASR/TTS flags remain off by default. No model is auto-downloaded. docs/VOICE_IMPLEMENTATION_PLAN_RU.md contains owner-run VPS instructions for binary/model installation, SHA-256 and license review, private loopback binding, staged flag activation, smoke tests, metrics and rollback.
 - Remaining ship gates: exact artifact hashes and individual model/voice/phonemizer license review; compatible binaries and models installed on the real VPS; current post-merge main CI; real microphone and device playback; measured latency/RAM/quality. No local test, live VPS, or physical-device validation is claimed.
 - Next: verify current main SHA and post-merge checks, inspect remaining voice TODO/model provenance, then prepare the owner’s first-run checklist without enabling flags or fetching models automatically.
+
+## Checkpoint — first-request runbook reconciliation (2026-10-28)
+
+- Updated docs/START_HERE_RU.md to provide the ordered path from account/VPS/Tunnel setup to first authenticated text completion, then local PDF/DOCX/XLSX extraction, then three separate voice scenarios: record-to-editable-transcript, same-chat half-duplex dialogue, and per-message TTS mini-player/voice selection.
+- Corrected stale quickstart text that incorrectly labelled PDF/DOCX/XLSX extraction unsupported. Extraction still requires the server flag ALANDI_DOCUMENT_EXTRACTION_ENABLED=true, a configured private gateway, supported format and size within configured limits; it remains off by default.
+- Updated docs/PROJECT_STATE.yaml and docs/VOLLEY_LOG.md with exact PR-head evidence and remaining gates.
+- Current limitation: the connector returned no combined commit statuses for main docs commits and its workflow-run query only covers PR-triggered runs. Therefore post-merge main CI is **not confirmed** by this session. Recheck GitHub Actions on the latest main SHA before treating the branch as fully verified.
+- No VPS/server/device was accessed; no model weights downloaded; no voice/document flags were enabled. Model/voice/phonemizer licenses and SHA-256 remain mandatory per-artifact ship gates.
