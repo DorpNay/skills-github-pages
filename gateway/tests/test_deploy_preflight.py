@@ -21,7 +21,13 @@ def test_repository_deployment_baseline_is_safe() -> None:
 
 def test_public_gateway_bind_is_rejected() -> None:
     unsafe = SERVICE.replace("--host 127.0.0.1", "--host 0.0.0.0")
-    assert any("127.0.0.1" in error for error in preflight.validate_files(unsafe, ENV))
+    assert any("--host" in error and "127.0.0.1" in error for error in preflight.validate_files(unsafe, ENV))
+
+
+def test_duplicate_host_options_are_rejected_even_if_first_is_loopback() -> None:
+    # The later option can override the safe one, including IPv6 wildcard syntax.
+    unsafe = SERVICE.replace("--host 127.0.0.1", "--host 127.0.0.1 --host ::")
+    assert any("--host" in error and "exactly once" in error for error in preflight.validate_files(unsafe, ENV))
 
 
 def test_experimental_flags_must_stay_off() -> None:
