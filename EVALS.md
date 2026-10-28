@@ -12,6 +12,7 @@ python -m pytest -q gateway/tests
 python gateway/evals/run_six_layer_eval.py
 python gateway/evals/serialization_benchmark.py --iterations 100
 python scripts/check_project_metadata.py
+python scripts/check_deploy_preflight.py
 python scripts/check_license_manifest.py
 ~~~
 
@@ -55,7 +56,7 @@ The prior gateway baseline passed 37 tests and the deterministic six-layer smoke
 | EV-PROVIDER-001 | Configured provider live smoke | .github/workflows/provider-smoke-all.yml + scripts/provider-smoke-all.mjs | Live probes require an explicit true input; false/missing confirmation never reaches provider endpoints; secret values are not logged; unavailable secrets are skipped; configured failures fail the run | PR #25 quality/provenance CI passed on its head; live smoke was not dispatched from this session; live access unverified |
 | EV-RAG-005 | Scope-safe source deletion | gateway/rag/lazy_graph_rag.py + gateway/tests/test_six_layers.py | reject invalid global-scope pairings; deleted document disappears from retrieval; SQLite secure-delete on and FTS5 secure-delete enabled only when SQLite >=3.42.0 | PR #24 HEAD and post-merge main CI passed; does not prove a whole-system crypto-erase guarantee |
 
-## Reporting rules
+| EV-DEPLOY-001 | Safe deployment template | scripts/check_deploy_preflight.py + gateway/tests/test_deploy_preflight.py | loopback-only service, required systemd hardening, placeholder secret, exact HTTPS CORS, experimental flags off; repository templates only | implementation pending exact-head CI; not a live VPS check |\n\n## Reporting rules
 
 The serialization microbenchmark only checks execution and data-format parity in CI; it does not authorize orjson as the gateway default. Project metadata parsing is enforced by the License and Artifact Provenance workflow.
 
