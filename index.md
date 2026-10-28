@@ -3867,7 +3867,7 @@ permalink: /
         const response = await fetch(baseUrl + '/audio/speech', {
           method: 'POST',
           headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text }), cache: 'no-store', signal: controller.signal
+          body: JSON.stringify({ text, ...($('ttsVoiceSelect')?.value ? { voice: $('ttsVoiceSelect').value } : {}) }), cache: 'no-store', signal: controller.signal
         });
         if (requestId !== speechRequestGeneration) return;
         if (!response.ok) {
