@@ -105,3 +105,17 @@ def test_top_k_validation_rejects_boolean_and_out_of_range_values() -> None:
     for value in (True, 0, 21, 1.5):
         with pytest.raises(ValueError, match="top_k"):
             evaluate_dataset(dataset, top_k=value)  # type: ignore[arg-type]
+
+
+def test_dataset_rejects_non_https_or_credentialed_source_urls(tmp_path: Path) -> None:
+    dataset = json.loads(FIXTURE.read_text(encoding="utf-8"))
+    dataset["documents"][0]["source_uri"] = "http://example.test/docs"
+    path = tmp_path / "http-source.json"
+    path.write_text(json.dumps(dataset), encoding="utf-8")
+    with pytest.raises(DatasetError, match="safe HTTPS URL"):
+        load_dataset(path)
+
+    dataset["documents"][0]["source_uri"] = "https://user:secret@example.test/docs"
+    path.write_text(json.dumps(dataset), encoding="utf-8")
+    with pytest.raises(DatasetError, match="safe HTTPS URL"):
+        load_dataset(path)
