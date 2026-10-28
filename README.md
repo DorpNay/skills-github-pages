@@ -143,3 +143,9 @@ node scripts/quality-agents.mjs context
 - [Аудит новых open-source проектов и решение по каждому](docs/TECHNOLOGY_AUDIT_2026-10-21_RU.md)
 
 Это архитектурные документы и on-demand skill; они не означают, что отдельные агенты, Google Drive OAuth или media workers уже развернуты.
+
+
+## Модель на малом CPU и полный путь владельца
+
+- [Uncensored GGUF: выбор 2B/4B, проверка SHA-256, импорт в Ollama, подключение gateway, первый prompt и голосовой диалог](docs/UNCENSORED_MODEL_AND_FREE_CPU_RUNBOOK_RU.md)
+- [Синтетический локальный model benchmark](gateway/evals/run_local_model_benchmark.py)
