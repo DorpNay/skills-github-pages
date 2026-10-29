@@ -2,6 +2,19 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
+## Текущая контрольная точка — 2026-10-29
+
+- Текущий main: `c848212832b44a7f4c8ae08cf090de590a47cc89`.
+- PR #108 merged: launch page + first-stack runbook + mobile viewport fix; Quality Sentinels `40896977015` и Graphify `40896977071` passed на exact PR HEAD. Это не live VPS acceptance.
+- PR #107 merged: private/shared browser memory scope, explicit promotion confirmation, local-only private context, privacy E2E.
+- PR #106 merged: offline RAG evaluator core; smoke fixture не является production golden set.
+- PRs #84/#81/#83/#82 merged: CORS canonicalization, deployment-template preflight, SQLite in-memory delta fix, readiness audit.
+- PRs #80/#85/#86/#87 closed as superseded/deferred after preserving the useful implementation in reconciled PRs #106/#107/#108; their remaining unique documentation is handled through this reconciliation.
+- No unrelated open PRs remain. PR #109 is the current state-refresh PR and is excluded from its own queue check.
+- Exact queue markers: open PRs (0): none; open issues (1): #111.
+- Only open issue: #111, the consolidated release-gates tracker. Research-only issues #88–#92 and #96–#104 are closed with explicit comments pointing to the retained implementation/live-host blockers.
+- Still unverified: live VPS/Tunnel/Ollama, target-hardware RAM/latency, voice artifacts and device, OAuth/Drive credentials, real labelled RAG corpus, main branch protection/rulesets.
+
 Этот документ содержит исторические записи ниже; их SHA, очередь и статусы не являются текущей истиной. Актуальный контрольный блок находится непосредственно после этого вводного абзаца и сверяется workflow `Project State Freshness`.
 
 ## Текущая проверенная контрольная точка — 2026-10-29
