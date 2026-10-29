@@ -4,7 +4,7 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 
 ## Verified repository checkpoint — 2026-10-29
 
-- **Last main action:** docs: preserve engineering and runtime readiness audits.
+- Last main action: docs: preserve engineering and runtime readiness audits.
 - **Baseline main SHA:** `337e38690af8f22a712c6442192c5ea62d354c3d` (commit dated 2026-10-28; documentation-only follow-up).
 - **Last functional-code checkpoint:** `91557e4eab1b122341bed578cdf4775ff867007f` — parent of the latest documentation-only main commit. PR #77 RRF fusion, PR #76 Graphify workflow, and PR #72 search/functions UX are already on main.
 - **Checks:** main SHA 337e386 passed Quality Sentinels run [#40639031308](https://github.com/DorpNay/skills-github-pages/actions/runs/40639031308) and Pages deployment [#40639030224](https://github.com/DorpNay/skills-github-pages/actions/runs/40639030224). The code parent passed Gateway [#40637941350](https://github.com/DorpNay/skills-github-pages/actions/runs/40637941350), Quality [#40637941308](https://github.com/DorpNay/skills-github-pages/actions/runs/40637941308), Graphify [#40637941303](https://github.com/DorpNay/skills-github-pages/actions/runs/40637941303), and Pages [#40637941951](https://github.com/DorpNay/skills-github-pages/actions/runs/40637941951).
