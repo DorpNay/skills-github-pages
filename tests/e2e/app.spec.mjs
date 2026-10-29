@@ -73,6 +73,9 @@ test('composer position persists and provider selection separates aLandi Cloud f
 
   await page.locator('#composerPosition').selectOption('top');
   await expect(page.locator('body')).toHaveClass(/composer-at-top/);
+  const topComposer = await page.locator('#composerFooter').boundingBox();
+  const topMessages = await page.locator('#chatBox').boundingBox();
+  expect(topComposer.y).toBeLessThan(topMessages.y);
   await page.locator('[data-action="save-settings"]').click();
   await page.reload();
   await expect(page.locator('#composerPosition')).toHaveValue('top');
@@ -82,6 +85,9 @@ test('composer position persists and provider selection separates aLandi Cloud f
   await page.locator('#composerPosition').selectOption('bottom');
   await page.locator('[data-action="save-settings"]').click();
   await expect(page.locator('body')).not.toHaveClass(/composer-at-top/);
+  const bottomComposer = await page.locator('#composerFooter').boundingBox();
+  const bottomMessages = await page.locator('#chatBox').boundingBox();
+  expect(bottomMessages.y).toBeLessThan(bottomComposer.y);
   await page.reload();
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
 });
