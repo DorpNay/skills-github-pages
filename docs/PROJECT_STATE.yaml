@@ -2,15 +2,15 @@ project_state:
   version: 4
   reviewed_on: "2026-10-29"
   root_orienter:
-    status: "Verified main 375bcc10efe7b3a0e3e999b6504face1974a7cce after reconciled landing/runbook merge; live runtime remains unverified"
-    branch: "docs/reconcile-research-and-state-20261029"
-    base_main: "375bcc10efe7b3a0e3e999b6504face1974a7cce"
+    status: "Verified main c848212832b44a7f4c8ae08cf090de590a47cc89 after PR #109 state reconciliation; post-merge CI and live runtime remain unverified"
+    branch: "security/pin-actions-current-main-20261029"
+    base_main: "c848212832b44a7f4c8ae08cf090de590a47cc89"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #84 CORS; #81 deploy preflight; #83 SQLite delta; #82 readiness audit; #106 RAG evaluator core; #107 private/shared memory; #108 landing/runbook and mobile viewport fix"
     exact_head_checks: "PR #108 Quality Sentinels 40896977015 success; Graphify 40896977071 success; includes Chromium and published-site smoke"
     runtime_boundary: "GitHub Pages browser smoke verified; live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
-    next: "Refresh state snapshot and close stale PR #78 only after preserving its unique decisions/roadmap changes; consolidate research-only issues into explicit remaining release gates"
+    next: "Verify PR #113 exact-head CI; owner must configure main ruleset and provide live-host/device/evaluation evidence tracked by issue #111. No merge or deploy without owner approval."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -274,15 +274,15 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-10-29"
-  verified_main: "375bcc10efe7b3a0e3e999b6504face1974a7cce"
-  last_main_action: "feat(landing): reconcile launch page and first-stack runbook; SHA 375bcc10efe7b3a0e3e999b6504face1974a7cce"
+  verified_main: "c848212832b44a7f4c8ae08cf090de590a47cc89"
+  last_main_action: "docs(state): reconcile engineering decisions and refresh live checkpoint; SHA c848212832b44a7f4c8ae08cf090de590a47cc89"
   last_functional_checkpoint: "375bcc10efe7b3a0e3e999b6504face1974a7cce"
-  main_quality: "PR #108 Quality Sentinels run 40896977015 success on exact PR head; includes Chromium and published-site smoke. Post-merge workflow result not separately verified."
-  main_graphify: "PR #108 Graphify run 40896977071 success on exact PR head; artifact-only, no runtime dependency."
+  main_quality: "Post-merge checks on documentation reconciliation merge SHA c848212832b44a7f4c8ae08cf090de590a47cc89 not yet independently verified; PR #109 exact-head checks passed."
+  main_graphify: "Post-merge Graphify result on c848212832b44a7f4c8ae08cf090de590a47cc89 not yet independently verified; Graphify remains artifact-only."
   main_gateway: "No new Gateway workflow was triggered by the frontend-only PR #108; latest gateway-related exact-head evidence is tracked in individual PR records."
   merged_prs: "84 CORS canonicalization; 81 deployment preflight; 83 in-memory SQLite delta; 82 readiness audit; 106 RAG evaluator core; 107 private/shared memory UI; 108 launch page/runbook and viewport fix"
-  open_pull_requests: "No unrelated open PRs; current state-refresh PR #109 is excluded from its own check"
+  open_pull_requests: "No open PRs at this checkpoint; later PR #113 is excluded from its own freshness check"
   open_issues: "Issue #111 only: consolidated owner/live-host release gates; research-only workstreams #88–#92 and #96–#104 closed after transferring unresolved actions"
   freshness_guard: "scripts/check_project_state_freshness.py; compares exact SHA and exact queue. A refresh commit must update ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG and snapshot; it no longer requires artificial edits to checker/tests/workflow."
   runtime_boundary: "GitHub Pages browser smoke verified; live VPS/Tunnel/Ollama, actual model performance, voice/device, OAuth/Drive and target-host measurements remain unverified"
-  next: "Merge this state refresh after exact-head checks; issue #111 is the only remaining open item because it requires owner/live-host evidence"
+  next: "Verify PR #113 exact-head CI; issue #111 retains owner-only ruleset, live-host, hardware, RAG golden-set, voice/device, OAuth and sandbox gates. No merge or deploy without owner approval."wner/live-host evidence"
