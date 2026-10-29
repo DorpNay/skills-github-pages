@@ -2924,24 +2924,6 @@ permalink: /
       }
     }
     async async function connectAlandiCloud(){
-      const {baseUrl,model,key}=getCloudSettings();
-      if(baseUrl)safeSet('ai_alandi_cloud_base_url',baseUrl);
-      if(model)safeSet('ai_alandi_cloud_model',model);
-      if(key)safeSet(providerKeyStorage('alandi'),key);
-      safeSet(STORAGE.provider,'alandi');
-      if(baseUrl)safeSet(STORAGE.baseUrl,baseUrl);
-      if(model)safeSet(STORAGE.model,model);
-      $('providerPreset').value='alandi';applyProviderPreset('alandi',true);
-      $('baseUrl').value=baseUrl;$('modelName').value=model;$('apiKey').value=key;
-      const raw=String(safeGet('ai_alandi_cloud_connection_v1')||'');let marker=null;try{marker=JSON.parse(raw);}catch(_){}
-      const fingerprint=key?await providerKeyFingerprint(key):'';
-      const verified=Boolean(marker?.ok&&marker.baseUrl===baseUrl&&marker.model===model&&fingerprint&&marker.keyFingerprint===fingerprint);
-      if(verified)setCloudStatus('connected','aLandi выбран основным. Последняя проверка прошла успешно; при сомнениях запусти проверку заново.');
-      else setCloudStatus('disconnected','aLandi выбран основным, но актуальное соединение ещё не подтверждено.');
-      refreshApiKeyLamp();
-      showToast(verified?'Основной маршрут переключён на aLandi.':'Основной маршрут переключён на aLandi. Сначала проверь адрес, модель и ключ.');
-    }
-    async function connectAlandiCloud(){
       if(isTestingProviderConnection)return;
       const {baseUrl,model,key}=getCloudSettings();
       const cloudSettingsStillCurrent=()=>{const current=getCloudSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
