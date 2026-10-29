@@ -404,7 +404,7 @@ permalink: /
       <div class="px-2 pt-2"><button type="button" data-action="new-chat" data-i18n="newPersonalChat" class="w-full rounded-lg border border-blue-500/25 bg-blue-600/10 hover:bg-blue-600/20 py-2 text-xs font-semibold text-blue-200">＋ Новый личный чат</button></div>
       <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
     </details>
-    <div class="px-3 py-2 border-b border-gray-800"><button type="button" data-action="open-research-studio" class="w-full flex items-center gap-2 rounded-xl border border-cyan-800/70 bg-cyan-950/30 hover:bg-cyan-900/40 px-3 py-2.5 text-left text-xs font-semibold text-cyan-100"><span aria-hidden="true">⌕</span><span>Search &amp; Research Studio</span><span class="ml-auto text-[10px] text-cyan-300/80">↗</span></button></div>
+    <div class="px-3 py-2 border-b border-gray-800"><button type="button" data-action="open-research-studio" class="w-full flex items-center gap-2 rounded-xl border border-cyan-800/70 bg-cyan-950/30 hover:bg-cyan-900/40 px-3 py-2.5 text-left text-xs font-semibold text-cyan-100"><span aria-hidden="true">⌕</span><span data-i18n="researchStudio">Search &amp; Research Studio</span><span class="ml-auto text-[10px] text-cyan-300/80">↗</span></button></div>
 
     <div id="sidebarPreferences" class="sticky bottom-0 mt-auto border-t border-gray-800 bg-gray-950/95 backdrop-blur px-3 py-3 grid grid-cols-2 gap-2">
       <button id="sidebarThemeToggle" type="button" data-action="toggle-theme-cycle" class="rounded-lg border border-gray-700 px-3 py-2 text-xs text-left" aria-label="Сменить тему">☼ Тема: тёмная</button>
@@ -447,6 +447,10 @@ permalink: /
       </section>
       <section class="rounded-xl border border-gray-700 p-3 space-y-2" aria-label="Внешний вид">
         <h3 class="text-xs font-semibold" data-i18n="appearanceTitle">Внешний вид</h3>
+        <label for="uiLanguage" data-i18n="languageLabel" class="block text-xs text-gray-400">Язык</label>
+        <select id="uiLanguage" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm">
+          <option value="ru" data-i18n="languageRussian">Русский</option><option value="en" data-i18n="languageEnglish">English</option>
+        </select>
         <label for="uiTheme" data-i18n="themeLabel" class="block text-xs text-gray-400">Тема</label>
         <select id="uiTheme" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm">
           <option value="dark">Obsidian Studio · тёмная</option><option value="light">Clean Light · светлая</option>
@@ -1233,7 +1237,7 @@ permalink: /
       ru:{
         settingsTitle:'⚙️ Настройки',sidebarTitle:'💬 Проекты и чаты',newChat:'＋ Новый чат',clearChat:'🗑 Очистить чат',newPersonalChat:'＋ Новый личный чат',
         memoryLabel:'🧠 Долгосрочная память',memoryPlaceholder:'Факт, который нужно запомнить',exportChats:'Экспорт',importChats:'Импорт',
-        appearanceTitle:'Внешний вид',themeLabel:'Тема',motionLabel:'Анимации',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',providerGroupPrimary:'aLandi Cloud · основной маршрут',providerGroupExternal:'Сторонние провайдеры',cloudRouteChoiceHelp:'Выбери один маршрут в поле «Провайдер API»: aLandi Cloud или один сторонний провайдер.',cloudCardTitle:'Собственное облако aLandi',
+        appearanceTitle:'Внешний вид',languageLabel:'Язык',languageRussian:'Русский',languageEnglish:'English',researchStudio:'Поиск и исследование',themeLabel:'Тема',motionLabel:'Анимации',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',providerGroupPrimary:'aLandi Cloud · основной маршрут',providerGroupExternal:'Сторонние провайдеры',cloudRouteChoiceHelp:'Выбери один маршрут в поле «Провайдер API»: aLandi Cloud или один сторонний провайдер.',cloudCardTitle:'Собственное облако aLandi',
         cloudCardCopy:'Настрой собственный gateway. Маршрут выбирается отдельно в списке провайдеров; зелёный статус требует настоящего ответа модели.',
         cloudBaseUrl:'Адрес твоего gateway',cloudModel:'Модель gateway',cloudApiKey:'Ключ доступа к твоему gateway',
         cloudConnect:'Проверить и подключить',providerLabel:'Провайдер API',
@@ -1252,7 +1256,7 @@ permalink: /
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Projects & chats',newChat:'＋ New chat',clearChat:'🗑 Clear chat',newPersonalChat:'＋ New personal chat',
         memoryLabel:'🧠 Long-term memory',memoryPlaceholder:'A fact to remember',exportChats:'Export',importChats:'Import',
-        appearanceTitle:'Appearance',themeLabel:'Theme',motionLabel:'Motion',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',providerGroupPrimary:'aLandi Cloud · primary route',providerGroupExternal:'Third-party providers',cloudRouteChoiceHelp:'Choose one route in the API provider field: aLandi Cloud or one third-party provider.',cloudCardTitle:'Your aLandi cloud',
+        appearanceTitle:'Appearance',languageLabel:'Language',languageRussian:'Russian',languageEnglish:'English',researchStudio:'Search & Research Studio',themeLabel:'Theme',motionLabel:'Motion',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',providerGroupPrimary:'aLandi Cloud · primary route',providerGroupExternal:'Third-party providers',cloudRouteChoiceHelp:'Choose one route in the API provider field: aLandi Cloud or one third-party provider.',cloudCardTitle:'Your aLandi cloud',
         cloudCardCopy:'Configure your own gateway. Choose the active route separately in the provider list; green status requires a real model response.',
         cloudBaseUrl:'Your gateway URL',cloudModel:'Gateway model',cloudApiKey:'Gateway access key',
         cloudConnect:'Check & connect',providerLabel:'API provider',
@@ -1279,21 +1283,26 @@ permalink: /
       document.querySelectorAll('[data-i18n]').forEach(node=>{const value=text[node.dataset.i18n];if(typeof value==='string')node.textContent=value;});
       document.querySelectorAll('[data-i18n-placeholder]').forEach(node=>{const value=text[node.dataset.i18nPlaceholder];if(typeof value==='string')node.placeholder=value;});
       $('languageSummary').textContent=lang==='en'?'EN ▾':'RU ▾';
+      const sidebarLanguageSummary=$('languageSummarySidebar');if(sidebarLanguageSummary)sidebarLanguageSummary.textContent=lang==='en'?'EN ▾':'RU ▾';
+      const languageSelect=$('uiLanguage');if(languageSelect)languageSelect.value=lang;
       $('sidebar')?.setAttribute('aria-label',lang==='en'?'Projects and chats':'Проекты и чаты');
+      $('memoryPanel')?.setAttribute('aria-label',lang==='en'?'Memory settings':'Настройки памяти');
+      $('projectPanel')?.setAttribute('aria-label',lang==='en'?'Projects and project settings':'Проекты и настройки проекта');
       document.querySelectorAll('[data-action="set-language"]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.language===lang)));
       // The aLandi wordmark is intentionally decorative, not a clickable control.
       const themeButton=$('homeThemeToggle');if(themeButton){themeButton.title=lang==='en'?'Switch theme':'Сменить тему';themeButton.setAttribute('aria-label',themeButton.title);}
       document.querySelectorAll('[data-action="toggle-settings"]').forEach(button=>button.setAttribute('aria-label',lang==='en'?'Settings':'Настройки'));
       const attach=$('attachTextButton');if(attach){attach.title=lang==='en'?'Attach photo, video or any file format':'Добавить фото, видео или файл любого формата';attach.setAttribute('aria-label',attach.title);}
       const voice=$('voiceUnavailableButton');if(voice){voice.title=lang==='en'?'Press and hold for voice modes':'Удерживай, чтобы открыть режимы голоса';voice.setAttribute('aria-label',voice.title);}
-      updateOfflineUI();updateModeUI();updateHomeThemeButton();renderProjectUI({preserveDraft:true});
+      updateOfflineUI();updateModeUI();updateHomeThemeButton();renderProjectUI({preserveDraft:true});updateMemoryStatusLine();
     }
     function updateHomeThemeButton(){
-      const button=$('homeThemeToggle');if(!button)return;
       const light=document.documentElement.dataset.theme==='light';
-      button.textContent=light?'☾':'☼';
-      button.title=getUiLanguage()==='en'?'Switch theme':'Сменить тему';
-      button.setAttribute('aria-label',button.title);
+      const english=getUiLanguage()==='en';
+      const button=$('homeThemeToggle');
+      if(button){button.textContent=light?'☾':'☼';button.title=english?'Switch theme':'Сменить тему';button.setAttribute('aria-label',button.title);}
+      const sidebarButton=$('sidebarThemeToggle');
+      if(sidebarButton){sidebarButton.textContent=light?(english?'☾ Theme: light':'☾ Тема: светлая'):(english?'☼ Theme: dark':'☼ Тема: тёмная');sidebarButton.title=english?'Switch theme':'Сменить тему';sidebarButton.setAttribute('aria-label',sidebarButton.title);}
     }
     function toggleHomeTheme(){
       const next=document.documentElement.dataset.theme==='light'?'dark':'light';
@@ -2576,6 +2585,7 @@ permalink: /
       if (themeColor) themeColor.content = safeTheme === 'light' ? '#f4f7f8' : '#08111d';
       updateHomeThemeButton();
     }
+    $('uiLanguage').addEventListener('change', event => applyUiLanguage(event.target.value));
     $('uiTheme').addEventListener('change', () => {
       applyAppearance($('uiTheme').value, $('uiMotion').value);
       safeSet('ai_ui_theme_v2', $('uiTheme').value);updateHomeThemeButton();
@@ -4796,7 +4806,7 @@ permalink: /
       }
       try {
         switch (action) {
-          case 'set-language': applyUiLanguage(control.dataset.language);$('languageMenu').open=false;break;
+          case 'set-language': applyUiLanguage(control.dataset.language);$('languageMenu').open=false;if($('languageMenuSidebar'))$('languageMenuSidebar').open=false;break;
           case 'select-search-mode': setSearchMode(control.dataset.searchMode);break;
           case 'open-function-panel': openFunctionPanel(control.dataset.function);break;
           case 'close-function-panel': closeFunctionPanel();break;
