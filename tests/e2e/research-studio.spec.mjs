@@ -40,6 +40,10 @@ test('Search & Research Studio opens on demand and pre-fills the current draft',
   const studioBox = await studio.boundingBox();
   expect(studioBox).not.toBeNull();
   expect(studioBox.width).toBeLessThanOrEqual(390);
+  const studioActionHeights = await page.locator('#researchStudioModal [data-action="close-research-studio"], #researchStudioModal [data-action="start-research-studio"]').evaluateAll(elements => elements.map(element => element.getBoundingClientRect().height));
+  expect(studioActionHeights.every(height => height >= 44)).toBe(true);
+  const studioHeaderClose = await page.locator('#researchStudioModal header [data-action="close-research-studio"]').boundingBox();
+  expect(studioHeaderClose?.width || 0).toBeGreaterThanOrEqual(44);
   const summaryDimensions = await page.locator('#researchStudioSettingsSummary').evaluate(element => ({ clientWidth: element.clientWidth, scrollWidth: element.scrollWidth }));
   expect(summaryDimensions.scrollWidth).toBeLessThanOrEqual(summaryDimensions.clientWidth);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
