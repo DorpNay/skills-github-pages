@@ -79,10 +79,9 @@ test('first outside tap dismisses an open chat row menu without activating the c
   await expect(menu).toBeVisible();
   await menu.locator('summary').click();
   await expect(menu).toHaveAttribute('open', '');
-  await page.locator('#modeDeep').click();
+  await page.locator('#projectNavToggle').click();
   await expect(menu).not.toHaveAttribute('open', '');
-  await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.locator('#projectNavToggle')).toHaveAttribute('aria-expanded', 'false');
 });
 
 test('published app boots and core controls are interactive', async ({ page }) => {
