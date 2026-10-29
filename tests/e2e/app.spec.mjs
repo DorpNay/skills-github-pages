@@ -67,7 +67,8 @@ test('composer position persists and provider selection separates aLandi Cloud f
   await page.locator('[data-action="toggle-settings"]').click();
   await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
-  await expect(page.locator('#providerPreset option[value="alandi"]')).toBeVisible();
+  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(1);
+  await expect(page.locator('#providerPreset option[value="alandi"]')).not.toHaveAttribute('hidden');
   await expect(page.locator('#providerPreset optgroup').first()).toHaveAttribute('label', 'aLandi Cloud · основной маршрут');
   await expect(page.locator('#providerPreset optgroup').nth(1)).toHaveAttribute('label', 'Сторонние провайдеры');
   await expect(page.locator('[data-action="select-alandi-primary"]')).toHaveCount(0);
