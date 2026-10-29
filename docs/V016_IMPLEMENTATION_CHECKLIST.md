@@ -1,8 +1,8 @@
 # V-016 / aLandi — implementation checklist and evidence ledger
 
 **Purpose:** one auditable checklist for the 8-section engineering fixation document and all four parts of the V-Final manifesto (sections 0–40), plus the current UI/provider work.  
-**Reviewed:** 2026-10-29  
-**Current baseline:** `main` @ `80597f61c000d691e95d67893edea60e75da1033` after PRs #113–#115. Exact main Quality, Pages, Gateway, provenance and Graphify checks passed; live VPS/device/runtime remains unverified.  
+**Reviewed:** 2026-10-30  
+**Current baseline:** `main` @ `4bde19249b1ac05ccf55c2499a8ee08a27b9a198` after PR #118. PR #118 exact-head integrity/security/context, Jekyll, Chromium regression, published Pages smoke and Graphify checks passed before merge; live VPS/device/runtime remains unverified. Follow-up branch `fix/ui-request-closure-20261030` is awaiting CI.  
 **Rule:** a checked/audited requirement is not automatically a delivered feature. Statuses below refer to code and tests, not to a design proposal.
 
 ## Status key
@@ -39,6 +39,10 @@
 | UX-18 | Memory scope: project facts are inserted only when this chat belongs to the project and the chat-level toggle is on; global memory requires an explicit opt-in | **IMPLEMENTED in prompt assembly** — `chat.projectMemoryEnabled`, `STORAGE.globalMemoryEnabled` | E2E boundary assertions must pass; the separate SQLite memory graph is not yet the frontend storage backend |
 | UX-19 | Project deletion removes its linked chats while preserving other projects; imports are capped and normalized | **PR #21 Chromium E2E passed** | Backend deletion propagation and server-side derived-index cleanup remain deferred |
 | UX-20 | Instructions inside the app become shorter and clearer without hiding privacy/model constraints | **PARTIAL** — provider help and default system prompt are compacted; key/privacy caveats remain visible | Audit all legacy microcopy and translation keys after the main E2E pass |
+| UX-21 | Composer may be pinned at the bottom or above chat history and preference persists | **IMPLEMENTED on follow-up branch** — `ai_composer_position_v1`, flex ordering, viewport-aware body height | Exact-head Chromium geometry/reload test pending CI; native iOS remains manual |
+| UX-22 | aLandi Cloud and third-party provider routes are mutually exclusive and visually distinct | **IMPLEMENTED on follow-up branch** — one provider selector with separate primary/external optgroups; redundant route-switch button removed | Confirm provider switching, settings persistence and all provider E2E tests |
+| UX-23 | Request context contains project choices only, not connector/scheduler controls | **IMPLEMENTED on follow-up branch** — connector hint removed from request-context popover | Exact-head Chromium test pending CI |
+| UX-24 | “Agents” UI describes actual multi-stage pipeline without implying independent agent processes | **IMPLEMENTED on follow-up branch** — explicit explanation that custom role profiles/independent team are not connected | Verify copy in RU/EN and confirm existing pipeline tests remain green |
 
 ## B. 81-item audit of the fixation document and four-part manifesto
 
@@ -189,3 +193,12 @@ The following items cover the initial fixation document plus manifesto sections 
 - [x] PR #115: dim/blur scrim for attachment/context/voice popovers; modal backdrop blur respects reduced-transparency; first outside tap closes composer popover or toolbar/language/chat-row menu without activating underlying controls. Exact-head Chromium and published-site smoke passed.
 - [ ] Remaining UI work: edge-aware chat-row menu placement; header order and project label; non-interactive brand treatment and clock polish; sticky settings actions; provider/project export-import cleanup; one-line web-search/functions controls; per-chat mode persistence and default reset verification.
 - [ ] Native iPhone Safari, software keyboard, edge-swipe and touchcancel behavior remain unverified. Do not mark complete based only on Chromium.
+
+
+## Supplement — consolidated interface closure, 2026-10-30
+
+- [x] PR #118 merged: chat-scoped import/export, merge-with-existing-history behavior, ID collision handling, validation and size/count bounds; exact-head quality and browser gates passed.
+- [~] Follow-up branch `fix/ui-request-closure-20261030` implements UX-21–UX-24 above. It also adds deterministic browser assertions for composer geometry/persistence, route grouping, request-context boundaries and truthful agent wording.
+- [ ] Do not mark follow-up delivered until exact-head Chromium and published Pages smoke pass.
+- [ ] Native iPhone Safari keyboard/safe-area/focus and real touch interaction remain unverified. Provider credentials, live gateway, connector OAuth/sync, independent agent processes and full audio transport remain infrastructure/runtime gates rather than UI acceptance claims.
+- Research basis reviewed for this slice: [MDN VisualViewport](https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport), [MDN VirtualKeyboard API](https://developer.mozilla.org/en-US/docs/Web/API/VirtualKeyboard_API), [Playwright best practices](https://playwright.dev/docs/best-practices), [OWASP HTML5 Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html), [Springer Nature Frontend Playbook](https://github.com/springernature/frontend-playbook), and [awesome-agent-skills](https://github.com/danielteles/awesome-agent-skills). Applied patterns selectively to the existing vanilla-JS/Jekyll app; no framework rewrite or new dependency added.
