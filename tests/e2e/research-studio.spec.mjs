@@ -28,7 +28,7 @@ test('Search & Research Studio opens on demand and pre-fills the current draft',
 test('Search & Research Studio closes on Escape without starting a request', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.getByRole('button', { name: /Search & Research Studio/ }).click();
+  await page.locator('#sidebar [data-action="open-research-studio"]').click();
   const studio = page.getByRole('dialog', { name: 'Search & Research' });
   await expect(studio).toBeVisible();
 
