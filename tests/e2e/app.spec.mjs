@@ -993,7 +993,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#projectManagerDetails > summary').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectNameInput').fill('Alpha Project');
   await page.locator('#projectInstructionsInput').fill('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
   await page.locator('[data-action="create-project"]').click();
@@ -1019,6 +1019,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('#sidebar [data-action="new-chat"]').click();
   await page.locator('[data-action="toggle-sidebar"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue('');
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectNameInput').fill('Beta Project');
   await page.locator('#projectInstructionsInput').fill('BETA_PROJECT_INSTRUCTION_SENTINEL');
   await page.locator('[data-action="create-project"]').click();
@@ -1089,7 +1090,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
 test('deleting a project removes its chats but preserves other projects and chats', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#projectManagerDetails > summary').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectNameInput').fill('Disposable Project');
   await page.locator('[data-action="create-project"]').click();
   const disposableId = await page.locator('#currentProjectSelect').inputValue();
@@ -1105,6 +1106,7 @@ test('deleting a project removes its chats but preserves other projects and chat
   await page.locator('[data-action="new-chat"]').first().click();
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#currentProjectSelect').selectOption('');
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectNameInput').fill('Keep Project');
   await page.locator('[data-action="create-project"]').click();
   const keepId = await page.locator('#currentProjectSelect').inputValue();
@@ -1482,7 +1484,7 @@ test('local helper suggests compact project-memory facts without saving them aut
   });
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#projectManagerDetails > summary').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectNameInput').fill('Helper suggestion project');
   await page.locator('[data-action="create-project"]').click();
   await page.locator('#projectMemoryInput').fill('Keep the main model for synthesis and use small helpers for bounded extraction.');
@@ -1556,7 +1558,7 @@ test('server project memory bridge is manual and requires both chat opt-ins', as
   await page.reload({ waitUntil: 'domcontentloaded' });
   await chooseSearchMode(page, 'offline');
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#projectManagerDetails > summary').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectNameInput').fill('Server bridge project');
   await page.locator('[data-action="create-project"]').click();
   await page.locator('#projectMemoryInput').fill('SERVER_MEMORY_SENTINEL is a local project fact.');
