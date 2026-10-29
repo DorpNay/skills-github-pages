@@ -68,8 +68,9 @@ test('sidebar order separates memory, projects, status, chats, and research', as
   const positions = await page.locator('#sidebar').evaluate(sidebar => [
     sidebar.querySelector('#memoryPanel'),
     sidebar.querySelector('#projectPanel'),
+    sidebar.querySelector('#projectStatusLine'),
     sidebar.querySelector('#chatSection'),
-    sidebar.querySelector('[data-action="open-research-studio"]'),
+    sidebar.querySelector('[data-action="open-research-studio"]')?.parentElement,
     sidebar.querySelector('#sidebarPreferences')
   ].map(el => Array.prototype.indexOf.call(sidebar.children, el)));
   expect(positions.every(Number.isInteger)).toBe(true);
@@ -179,7 +180,7 @@ test('language switch updates provider group labels without deleting options', a
   await expect(page.locator('#providerPreset option[value="custom"]')).toHaveCount(1);
   await page.locator('[data-action="close-settings"]').click();
   await page.locator('#languageSummary').click();
-  await page.locator('[data-action="set-language"][data-language="ru"]').click();
+  await page.locator('#languageMenu [data-action="set-language"][data-language="ru"]').click();
 });
 
 test('request context stays project-only and agent label describes the real pipeline', async ({ page }) => {
@@ -220,9 +221,17 @@ test('first outside tap dismisses an open chat row menu without activating the c
   await expect(menu).toBeVisible();
   await menu.locator('summary').click();
   await expect(menu).toHaveAttribute('open', '');
-  await page.locator('#projectNavToggle').click();
+  await expect(page.locator('#chatRowMenuSidebarScrim')).toBeVisible();
+  await page.locator('#chatRowMenuSidebarScrim').click({ position: { x: 12, y: 12 } });
   await expect(menu).not.toHaveAttribute('open', '');
   await expect(page.locator('#projectNavToggle')).toHaveAttribute('aria-expanded', 'false');
+
+  await menu.locator('summary').click();
+  await expect(menu).toHaveAttribute('open', '');
+  await expect(page.locator('#chatRowMenuPageScrim')).toBeVisible();
+  await page.locator('#chatRowMenuPageScrim').click({ position: { x: 350, y: 40 } });
+  await expect(menu).not.toHaveAttribute('open', '');
+  await expect(page.locator('#sidebarOverlay')).toBeVisible();
 });
 
 test('published app boots and core controls are interactive', async ({ page }) => {
@@ -2244,7 +2253,7 @@ test('search presets and function settings fit one line, localize, and persist p
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
 
   await page.locator('#languageSummary').click();
-  await page.locator('[data-action="set-language"][data-language="en"]').click();
+  await page.locator('#languageMenu [data-action="set-language"][data-language="en"]').click();
   await expect(page.locator('#modeDeep')).toContainText('Longer');
   await expect(page.locator('#functionsMenuSummary')).toContainText('Functions');
   await expect(page.locator('#searchModeSummary')).toContainText('Search');
