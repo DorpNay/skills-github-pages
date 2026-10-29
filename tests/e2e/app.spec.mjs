@@ -23,6 +23,14 @@ async function setSkillPreset(page, preset) {
 }
 
 
+async function dismissComposerPopoverWithOutsideTap(page, targetSelector) {
+  const target = page.locator(targetSelector);
+  const box = await target.boundingBox();
+  expect(box).not.toBeNull();
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  await expect(page.locator('#composerPopoverScrim')).toBeHidden();
+}
+
 test.beforeEach(async ({ page }) => {
   // Every test starts with a clean browser profile; no real provider key is used.
   await page.addInitScript(() => {
@@ -52,6 +60,36 @@ test('global system prompt is empty by default and obsolete Gemini reset is abse
   await page.locator('[data-action="toggle-settings"]').click();
   await expect(page.locator('#systemPromptInput')).toHaveValue('');
   await expect(page.locator('[data-action="restore-defaults"]')).toHaveCount(0);
+});
+
+test('composer popover dims the page and the first outside tap only dismisses it', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#userInput').fill('SCRIM_FIRST_TAP_SENTINEL');
+  await page.locator('#attachTextButton').click();
+  await expect(page.locator('#attachmentMenu')).toBeVisible();
+  await expect(page.locator('#composerPopoverScrim')).toBeVisible();
+
+  const send = await page.locator('#sendBtn').boundingBox();
+  expect(send).not.toBeNull();
+  await page.mouse.click(send.x + send.width / 2, send.y + send.height / 2);
+  await expect(page.locator('#attachmentMenu')).toBeHidden();
+  await expect(page.locator('#composerPopoverScrim')).toBeHidden();
+  await expect(page.locator('#userInput')).toHaveValue('SCRIM_FIRST_TAP_SENTINEL');
+  await expect(page.locator('#chatBox')).not.toContainText('SCRIM_FIRST_TAP_SENTINEL');
+});
+
+test('first outside tap dismisses an open chat row menu without activating the control underneath', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const menu = page.locator('#sidebar .chat-row-menu').first();
+  await expect(menu).toBeVisible();
+  await menu.locator('summary').click();
+  await expect(menu).toHaveAttribute('open', '');
+  await page.locator('#projectNavToggle').click();
+  await expect(menu).not.toHaveAttribute('open', '');
+  await expect(page.locator('#projectNavToggle')).toHaveAttribute('aria-expanded', 'false');
 });
 
 test('published app boots and core controls are interactive', async ({ page }) => {
@@ -1618,15 +1656,21 @@ test('request-only project context is sent once and does not change the active c
   await expect(page.locator('#currentProjectSelect')).toHaveValue('project-alpha');
   await page.locator('#contextPickerButton').click();
   await page.locator('#requestProjectChecks input[data-request-project-id="project-beta"]').check();
+  // The first tap outside the context popover only dismisses it; a second tap opens the sidebar.
+  const sidebarToggle=page.locator('[data-action="toggle-sidebar"]');
+  const sidebarToggleBox=await sidebarToggle.boundingBox();
+  expect(sidebarToggleBox).not.toBeNull();
+  await page.mouse.click(sidebarToggleBox.x+sidebarToggleBox.width/2,sidebarToggleBox.y+sidebarToggleBox.height/2);
+  await expect(page.locator('#composerPopoverScrim')).toBeHidden();
+  await sidebarToggle.click();
   // Selecting one-shot context in Alpha must not leak into Beta if the user switches chats before sending.
-  await page.locator('[data-action="toggle-sidebar"]').click();
   if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
   const betaGroup=page.locator('#projectNavigationList details[data-project-id="project-beta"]');
   await betaGroup.locator(':scope > summary').click();
   await betaGroup.locator('[data-action="switch-chat"][data-chat-id="chat-beta"]').click();
   await page.locator('#contextPickerButton').click();
   await expect(page.locator('#requestProjectChecks input[data-request-project-id="project-beta"]')).not.toBeChecked();
-  await page.locator('#contextPickerButton').click();
+  await dismissComposerPopoverWithOutsideTap(page, '#contextPickerButton');
   await page.locator('[data-action="toggle-sidebar"]').click();
   if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
   const alphaGroup=page.locator('#projectNavigationList details[data-project-id="project-alpha"]');
@@ -1634,7 +1678,7 @@ test('request-only project context is sent once and does not change the active c
   await alphaGroup.locator('[data-action="switch-chat"][data-chat-id="chat-alpha"]').click();
   await page.locator('#contextPickerButton').click();
   await expect(page.locator('#requestProjectChecks input[data-request-project-id="project-beta"]')).toBeChecked();
-  await page.locator('#contextPickerButton').click();
+  await dismissComposerPopoverWithOutsideTap(page, '#contextPickerButton');
   await page.locator('#userInput').fill('Use Beta context for this one request.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Request context verified.');

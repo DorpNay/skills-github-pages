@@ -235,8 +235,10 @@
 ## Supplement — reconciliation of the older mobile and interface request (2026-10-27)
 
 - [x] Compared the full owner message with current `main`, the implementation roadmap, existing browser tests, and visible UI/source identifiers. The audit separates already implemented behavior from partial work and unimplemented interaction design in `docs/LEGACY_UX_REQUEST_AUDIT_RU.md`.
-- [~] PR #71 (`fix/mobile-composer-docking-20261027`) removes the centered fixed composer state, keeps the input docked at the bottom in empty and populated chats, syncs text-area height to `visualViewport`, and adds a mobile viewport regression test. Exact-head CI and merge are pending.
-- [ ] After PR #71, continue in bounded PRs: (1) focus/overlay/popover behavior and chat menu placement; (2) one-line web-search and function-selection menus; (3) provider/settings cleanup; (4) header, clock and list visual polish; (5) per-chat mode persistence and default reset, only after the state model is confirmed.
+- [x] PR #71 (`fix/mobile-composer-docking-20261027`) merged: composer stays at the bottom in empty and populated chats, textarea height follows `visualViewport`, and Chromium viewport regression passes. Native iPhone Safari remains unverified.
+- [x] PR #114 merged at `25bfe66b5454e45fb5f6cef9dd86ae3c0ef1c5e5`: empty global system prompt by default, obsolete Gemini reset removed, quality sentinel aligned with the opt-in prompt contract, and history budgeting reserves serialization headroom. Exact-head Quality/Chromium/published-site smoke passed.
+- [~] Current bounded slice: add background scrim for composer popovers, blur modal backdrops, and make the first outside tap dismiss chat/language menus without activating controls beneath them.
+- [ ] Continue after this slice: smart edge-aware chat/popover placement; compact header/clock and project label; sticky settings actions; provider/project export/import cleanup; audit each remaining requirement against current code.
 - [ ] Run native iPhone Safari/keyboard/touch verification separately; passing Chromium viewport simulation is not proof of native behavior.
 
 
