@@ -260,3 +260,12 @@
 - [ ] Configure `/etc/alandi-gateway.env` with `0600` permissions; keep ASR/TTS flags false until binaries, models and authenticated capabilities are checked. Then enable one feature at a time and restart the service.
 - [ ] Validate the real microphone → editable transcript → explicit send → same-chat response → local TTS playback/voice choice/Stop path on the target device; record RAM, latency and speech quality.
 - [ ] Never share secrets or full env files in chat. SSH/VPS access is not available through the current GitHub integration, so server-side installation must be executed by the owner using the runbook.
+
+
+## Supplement — consolidated interface cleanup, 2026-10-30
+
+- [x] PR #118 merged at `4bde19249b1ac05ccf55c2499a8ee08a27b9a198`: chat export/import actions live in each chat menu; chat import merges rather than replaces existing history, deduplicates IDs, validates settings and bounds imported data. Project bundle import/export remains in project settings.
+- [~] Follow-up branch `fix/ui-request-closure-20261030`: adds a persisted top/bottom composer preference; separates the aLandi Cloud route from third-party providers in the single route selector; removes the redundant “use aLandi as primary route” action; removes connector hints from request-context selection; clarifies that the current “Agents” toggle enables the existing multi-stage research pipeline rather than an independent agent swarm; adds project-first quick actions and makes new-project memory scope selectable/persisted.
+- [ ] Await exact-head Chromium, security/integrity/context sentinels, Jekyll and published Pages smoke checks before merging the follow-up.
+- [ ] Native iPhone Safari keyboard, safe-area, touch and accessibility checks remain manual gates. Chromium geometry assertions do not establish native iOS behavior.
+- [ ] Live aLandi gateway, third-party provider credentials, external connectors, independent agent teams and production voice transport are not verified by these UI changes.

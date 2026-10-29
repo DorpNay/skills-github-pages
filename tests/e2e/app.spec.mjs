@@ -62,6 +62,91 @@ test('global system prompt is empty by default and obsolete Gemini reset is abse
   await expect(page.locator('[data-action="restore-defaults"]')).toHaveCount(0);
 });
 
+test('composer position persists and provider selection separates aLandi Cloud from external routes', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await expect(page.locator('#composerPosition')).toHaveValue('bottom');
+  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(1);
+  await expect(page.locator('#providerPreset option[value="alandi"]')).not.toHaveAttribute('hidden');
+  await expect(page.locator('#providerPreset optgroup').first()).toHaveAttribute('label', 'aLandi Cloud · основной маршрут');
+  await expect(page.locator('#providerPreset optgroup').nth(1)).toHaveAttribute('label', 'Сторонние провайдеры');
+  await expect(page.locator('[data-action="select-alandi-primary"]')).toHaveCount(0);
+
+  await page.locator('#composerPosition').selectOption('top');
+  await expect(page.locator('body')).toHaveClass(/composer-at-top/);
+  const topComposer = await page.locator('#composerFooter').boundingBox();
+  const topMessages = await page.locator('#chatBox').boundingBox();
+  expect(topComposer.y).toBeLessThan(topMessages.y);
+  await page.locator('[data-action="save-settings"]').click();
+  await page.reload();
+  await expect(page.locator('#composerPosition')).toHaveValue('top');
+  await expect(page.locator('body')).toHaveClass(/composer-at-top/);
+
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#composerPosition').selectOption('bottom');
+  await page.locator('[data-action="save-settings"]').click();
+  await expect(page.locator('body')).not.toHaveClass(/composer-at-top/);
+  const bottomComposer = await page.locator('#composerFooter').boundingBox();
+  const bottomMessages = await page.locator('#chatBox').boundingBox();
+  expect(bottomMessages.y).toBeLessThan(bottomComposer.y);
+  await page.reload();
+  await expect(page.locator('#composerPosition')).toHaveValue('bottom');
+});
+
+test('project quick actions open a real create form and persist the chosen memory scope', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await expect(page.locator('#projectPanel > div').first()).toContainText('Создать проект');
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await expect(page.locator('#projectManagerDetails')).toHaveAttribute('open', '');
+  await expect(page.locator('#projectNameInput')).toHaveValue('');
+  await expect(page.locator('#projectMemoryScopeSelect')).toBeEnabled();
+  await expect(page.locator('#createProjectSubmit')).toBeVisible();
+  await expect(page.locator('#saveProjectSubmit')).toBeHidden();
+
+  await page.locator('#projectNameInput').fill('Shared scope project');
+  await page.locator('#projectInstructionsInput').fill('A scoped project instruction');
+  await page.locator('#projectMemoryScopeSelect').selectOption('project-and-global');
+  await page.locator('#createProjectSubmit').click();
+  await expect(page.locator('#projectSettingsStatus')).toContainText('Shared scope project');
+  await expect.poll(() => page.evaluate(() => {
+    const projects = JSON.parse(localStorage.getItem('ai_projects_v1') || '[]');
+    return projects.find(project => project.name === 'Shared scope project')?.memoryScope;
+  })).toBe('project-and-global');
+  await expect(page.locator('#saveProjectSubmit')).toBeVisible();
+  await expect(page.locator('#createProjectSubmit')).toBeHidden();
+});
+
+test('language switch updates provider group labels without deleting options', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#languageSummary').click();
+  await page.locator('[data-action="set-language"][data-language="en"]').click();
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await expect(page.locator('#providerPrimaryGroup')).toHaveAttribute('label', 'aLandi Cloud · primary route');
+  await expect(page.locator('#providerExternalGroup')).toHaveAttribute('label', 'Third-party providers');
+  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(1);
+  await expect(page.locator('#providerPreset option[value="gemini"]')).toHaveCount(1);
+  await expect(page.locator('#providerPreset option[value="custom"]')).toHaveCount(1);
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#languageSummary').click();
+  await page.locator('[data-action="set-language"][data-language="ru"]').click();
+});
+
+test('request context stays project-only and agent label describes the real pipeline', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#contextPickerButton').click();
+  await expect(page.locator('#requestContextMenu')).toBeVisible();
+  await expect(page.locator('#requestContextMenu')).not.toContainText(/connectors|коннектор|scheduler|планировщик/i);
+  await page.locator('#composerPopoverScrim').click({ position: { x: 5, y: 5 } });
+
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  await expect(page.locator('#functionPanelDescription')).toContainText(/не реализован|not implemented/i);
+  await expect(page.locator('#agentModeControl')).toBeVisible();
+});
+
 test('composer popover dims the page and the first outside tap only dismisses it', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
@@ -909,7 +994,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#projectManagerDetails > summary').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectNameInput').fill('Alpha Project');
   await page.locator('#projectInstructionsInput').fill('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
   await page.locator('[data-action="create-project"]').click();
@@ -935,6 +1020,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('#sidebar [data-action="new-chat"]').click();
   await page.locator('[data-action="toggle-sidebar"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue('');
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectNameInput').fill('Beta Project');
   await page.locator('#projectInstructionsInput').fill('BETA_PROJECT_INSTRUCTION_SENTINEL');
   await page.locator('[data-action="create-project"]').click();
@@ -1005,7 +1091,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
 test('deleting a project removes its chats but preserves other projects and chats', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#projectManagerDetails > summary').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectNameInput').fill('Disposable Project');
   await page.locator('[data-action="create-project"]').click();
   const disposableId = await page.locator('#currentProjectSelect').inputValue();
@@ -1021,6 +1107,7 @@ test('deleting a project removes its chats but preserves other projects and chat
   await page.locator('[data-action="new-chat"]').first().click();
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#currentProjectSelect').selectOption('');
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectNameInput').fill('Keep Project');
   await page.locator('[data-action="create-project"]').click();
   const keepId = await page.locator('#currentProjectSelect').inputValue();
@@ -1398,7 +1485,7 @@ test('local helper suggests compact project-memory facts without saving them aut
   });
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#projectManagerDetails > summary').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectNameInput').fill('Helper suggestion project');
   await page.locator('[data-action="create-project"]').click();
   await page.locator('#projectMemoryInput').fill('Keep the main model for synthesis and use small helpers for bounded extraction.');
@@ -1472,7 +1559,7 @@ test('server project memory bridge is manual and requires both chat opt-ins', as
   await page.reload({ waitUntil: 'domcontentloaded' });
   await chooseSearchMode(page, 'offline');
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#projectManagerDetails > summary').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectNameInput').fill('Server bridge project');
   await page.locator('[data-action="create-project"]').click();
   await page.locator('#projectMemoryInput').fill('SERVER_MEMORY_SENTINEL is a local project fact.');
