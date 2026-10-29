@@ -10,7 +10,7 @@
 - PR #106 merged: offline RAG evaluator core; smoke fixture не является production golden set.
 - PRs #84/#81/#83/#82 merged: CORS canonicalization, deployment-template preflight, SQLite in-memory delta fix, readiness audit.
 - PRs #80/#85/#86/#87 closed as superseded/deferred after preserving the useful implementation in reconciled PRs #106/#107/#108; their remaining unique documentation is handled through this reconciliation.
-- No unrelated open PRs remain. PR #109 is the current state-refresh PR and is excluded from its own queue check.
+- PR #109 merged; at this checkpoint open PRs: 0. Verify the live queue before acting.
 - Exact queue markers: open PRs (0): none; open issues (1): #111.
 - Only open issue: #111, the consolidated release-gates tracker. Research-only issues #88–#92 and #96–#104 are closed with explicit comments pointing to the retained implementation/live-host blockers.
 - Still unverified: live VPS/Tunnel/Ollama, target-hardware RAM/latency, voice artifacts and device, OAuth/Drive credentials, real labelled RAG corpus, main branch protection/rulesets.
