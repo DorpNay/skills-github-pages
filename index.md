@@ -1894,6 +1894,10 @@ permalink: /
       $('projectSummary').textContent=project
         ? (getUiLanguage()==='en'?project.name+' · '+chats.filter(c=>c.projectId===project.id).length+' chats · '+project.memory.length+' memory items':project.name+' · чатов: '+chats.filter(c=>c.projectId===project.id).length+' · фактов памяти: '+project.memory.length)
         : (getUiLanguage()==='en'?'This chat is not linked to a project.':'Чат не привязан к проекту.');
+      const projectStatus=$('projectStatusLine');
+      if(projectStatus)projectStatus.textContent=project
+        ? (getUiLanguage()==='en'?project.name+' · '+chats.filter(c=>c.projectId===project.id).length+' chats · memory: '+(project.memoryScope==='project-and-global'?'project + global':'project only'):project.name+' · чатов: '+chats.filter(c=>c.projectId===project.id).length+' · память: '+(project.memoryScope==='project-and-global'?'проект + общая':'только проект'))
+        : (getUiLanguage()==='en'?'Personal chat · no project':'Личный чат · без проекта');
       if(!preserveDraft){$('projectNameInput').value=creatingProject?'':(settingsProject?.name||'');$('projectInstructionsInput').value=creatingProject?'':(settingsProject?.instructions||'');}
       const memBox=$('projectMemoryBox');memBox.replaceChildren();
       if(!settingsProject||!settingsProject.memory.length){
@@ -1907,6 +1911,7 @@ permalink: /
         }
       }
       $('globalMemoryToggle').checked=safeGet(STORAGE.globalMemoryEnabled)==='true';
+      updateMemoryStatusLine();
       $('projectMemoryInput').disabled=!settingsProject;
       document.querySelector('[data-action="add-project-memory"]')?.toggleAttribute('disabled',!settingsProject);
       renderProjectNavigation();
@@ -2065,11 +2070,20 @@ permalink: /
       const personalChats=chats.filter(chat=>!chat.projectId);list.dataset.emptyLabel=getUiLanguage()==='en'?'No personal chats yet.':'Нет личных чатов без проекта';list.classList.toggle('is-empty',personalChats.length===0);
       personalChats.forEach(chat=>list.appendChild(createChatRow(chat,false)));
     }
+    function updateMemoryStatusLine(){
+      const line=$('memoryStatusLine');if(!line)return;
+      const personalCount=$('memoryBox')?.querySelectorAll('.memory-item').length||0;
+      const sharedCount=$('sharedMemoryBox')?.querySelectorAll('.memory-item').length||0;
+      const globalEnabled=$('globalMemoryToggle')?.checked===true;
+      line.textContent=getUiLanguage()==='en'
+        ? `Memory · personal ${personalCount} · shared ${sharedCount} · global context ${globalEnabled?'on':'off'}`
+        : `Память · личных ${personalCount} · общих ${sharedCount} · общая в контексте ${globalEnabled?'вкл.':'выкл.'}`;
+    }
     async function renderMemory() {
       const box = $('memoryBox');
       const facts = await MemoryDB.getAll();
       box.replaceChildren();
-      if (!facts.length) { box.textContent = 'Нет личных заметок.'; return; }
+      if (!facts.length) { box.textContent = 'Нет личных заметок.'; updateMemoryStatusLine(); return; }
       facts.sort((a, b) => (b.time || 0) - (a.time || 0)).forEach((fact) => {
         const row = document.createElement('div'); row.className = 'memory-item';
         const value = document.createElement('span'); value.className = 'min-w-0 flex-1'; value.textContent = `• ${fact.fact}`;
@@ -2082,13 +2096,14 @@ permalink: /
         remove.textContent = '×'; remove.setAttribute('aria-label', 'Удалить личный факт');
         row.append(value, promote, remove); box.appendChild(row);
       });
+      updateMemoryStatusLine();
     }
     async function renderSharedMemory() {
       const box = $('sharedMemoryBox');
       if (!box) return;
       const facts = await SharedMemoryDB.getAll();
       box.replaceChildren();
-      if (!facts.length) { box.textContent = 'Нет общих заметок.'; return; }
+      if (!facts.length) { box.textContent = 'Нет общих заметок.'; updateMemoryStatusLine(); return; }
       facts.sort((a, b) => (b.time || 0) - (a.time || 0)).forEach((fact) => {
         const row = document.createElement('div'); row.className = 'memory-item';
         const value = document.createElement('span'); value.className = 'min-w-0 flex-1'; value.textContent = `• ${fact.fact}`;
@@ -2097,6 +2112,7 @@ permalink: /
         remove.textContent = '×'; remove.setAttribute('aria-label', 'Удалить общий факт');
         row.append(value, remove); box.appendChild(row);
       });
+      updateMemoryStatusLine();
     }
     async function promotePrivateMemory(id) {
       const fact = (await MemoryDB.getAll()).find(item => item.id === id);
@@ -4976,7 +4992,7 @@ permalink: /
     $('projectMemoryScopeSelect').addEventListener('change',event=>{if(creatingProject)return;const project=getProjectForChat();if(!project){event.target.value='project-only';return;}project.memoryScope=event.target.value==='project-and-global'?'project-and-global':'project-only';project.updatedAt=new Date().toISOString();persistProjects();showToast(project.memoryScope==='project-and-global'?'Для проекта разрешена общая память (если общий доступ включён).':'Общая память выключена для этого проекта.');});
     $('projectMemoryToggle').addEventListener('change',event=>{const chat=getCurrentChat();chat.projectMemoryEnabled=Boolean(event.target.checked);persistChats();showToast(chat.projectMemoryEnabled?(getUiLanguage()==='en'?'Project memory enabled for this chat.':'Память проекта включена для этого чата.'):(getUiLanguage()==='en'?'Project memory is off for this chat.':'Память проекта отключена для этого чата.'));});
     $('serverProjectMemoryToggle').addEventListener('change',event=>{const chat=getCurrentChat();chat.serverProjectMemoryEnabled=Boolean(event.target.checked);persistChats();showToast(chat.serverProjectMemoryEnabled?(getUiLanguage()==='en'?'Server project memory opted in for this chat.':'Серверная память разрешена для этого чата.'):(getUiLanguage()==='en'?'Server project memory is off.':'Серверная память отключена.'));});
-     $('globalMemoryToggle').addEventListener('change',event=>{safeSet(STORAGE.globalMemoryEnabled,String(event.target.checked));showToast(event.target.checked?(getUiLanguage()==='en'?'Global memory enabled.':'Глобальная память включена.'):(getUiLanguage()==='en'?'Global memory disabled.':'Глобальная память отключена.'));});
+     $('globalMemoryToggle').addEventListener('change',event=>{safeSet(STORAGE.globalMemoryEnabled,String(event.target.checked));updateMemoryStatusLine();showToast(event.target.checked?(getUiLanguage()==='en'?'Global memory enabled.':'Глобальная память включена.'):(getUiLanguage()==='en'?'Global memory disabled.':'Глобальная память отключена.'));});
     $('projectMemoryInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();document.querySelector('[data-action="add-project-memory"]').click();}});
     $('userInput').addEventListener('input', () => autoResizeTextarea($('userInput')));
     let voiceHoldTimer=null,voiceHoldOpened=false;
