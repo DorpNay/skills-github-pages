@@ -43,6 +43,7 @@
 | UX-22 | aLandi Cloud and third-party provider routes are mutually exclusive and visually distinct | **IMPLEMENTED on follow-up branch** — one provider selector with separate primary/external optgroups; redundant route-switch button removed | Confirm provider switching, settings persistence and all provider E2E tests |
 | UX-23 | Request context contains project choices only, not connector/scheduler controls | **IMPLEMENTED on follow-up branch** — connector hint removed from request-context popover | Exact-head Chromium test pending CI |
 | UX-24 | “Agents” UI describes actual multi-stage pipeline without implying independent agent processes | **IMPLEMENTED on follow-up branch** — explicit explanation that custom role profiles/independent team are not connected | Verify copy in RU/EN and confirm existing pipeline tests remain green |
+| UX-25 | Project actions are first in the project panel; create form honors selected memory scope; settings are disabled without a selected project | **IMPLEMENTED on follow-up branch** — top-level Create project / Project settings actions; creation mode enables scope selection and persists `project-only` or `project-and-global` | Exact-head Chromium test pending CI; verify existing project move/delete and memory-scope regressions |
 
 ## B. 81-item audit of the fixation document and four-part manifesto
 
@@ -198,7 +199,7 @@ The following items cover the initial fixation document plus manifesto sections 
 ## Supplement — consolidated interface closure, 2026-10-30
 
 - [x] PR #118 merged: chat-scoped import/export, merge-with-existing-history behavior, ID collision handling, validation and size/count bounds; exact-head quality and browser gates passed.
-- [~] Follow-up branch `fix/ui-request-closure-20261030` implements UX-21–UX-24 above. It also adds deterministic browser assertions for composer geometry/persistence, route grouping, request-context boundaries and truthful agent wording.
+- [~] Follow-up branch `fix/ui-request-closure-20261030` implements UX-21–UX-24 above. It also adds deterministic browser assertions for composer geometry/persistence, route grouping, request-context boundaries, truthful agent wording, and project-first actions with persisted creation memory scope.
 - [ ] Do not mark follow-up delivered until exact-head Chromium and published Pages smoke pass.
 - [ ] Native iPhone Safari keyboard/safe-area/focus and real touch interaction remain unverified. Provider credentials, live gateway, connector OAuth/sync, independent agent processes and full audio transport remain infrastructure/runtime gates rather than UI acceptance claims.
 - Research basis reviewed for this slice: [MDN VisualViewport](https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport), [MDN VirtualKeyboard API](https://developer.mozilla.org/en-US/docs/Web/API/VirtualKeyboard_API), [Playwright best practices](https://playwright.dev/docs/best-practices), [OWASP HTML5 Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html), [Springer Nature Frontend Playbook](https://github.com/springernature/frontend-playbook), and [awesome-agent-skills](https://github.com/danielteles/awesome-agent-skills). Applied patterns selectively to the existing vanilla-JS/Jekyll app; no framework rewrite or new dependency added.
