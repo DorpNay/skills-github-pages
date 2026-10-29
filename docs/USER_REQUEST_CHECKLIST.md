@@ -269,3 +269,10 @@
 - [ ] Await exact-head Chromium, security/integrity/context sentinels, Jekyll and published Pages smoke checks before merging the follow-up.
 - [ ] Native iPhone Safari keyboard, safe-area, touch and accessibility checks remain manual gates. Chromium geometry assertions do not establish native iOS behavior.
 - [ ] Live aLandi gateway, third-party provider credentials, external connectors, independent agent teams and production voice transport are not verified by these UI changes.
+
+
+## Supplement — sidebar hierarchy and preferences, 2026-10-30
+
+- [~] Branch `fix/sidebar-memory-order-20261030`: memory controls now have their own first sidebar section; project/chat navigation and compact status lines follow; Research Studio is below chats; theme/language controls are pinned at the sidebar bottom and language is also selectable in Settings.
+- [ ] Exact-head CI and published Pages smoke must pass before merging.
+- [ ] Native iPhone Safari keyboard, safe-area, focus, touch and screen-reader behavior remain unverified. Live gateway, provider credentials, connector sync, independent agent teams and voice transport remain separate runtime/infrastructure gates.
