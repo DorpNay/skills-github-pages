@@ -1566,7 +1566,7 @@ test('chat row actions are grouped in the right-side menu and rename/clone work'
   await expect(row.locator('details.chat-row-menu')).toBeVisible();
   await expect(row.locator('button[data-action="delete-chat"]')).toBeHidden();
   await row.locator('summary[aria-label="Действия чата"]').click();
-  await expect(row.locator('.chat-row-menu-panel button')).toHaveCount(5);
+  await expect(row.locator('.chat-row-menu-panel button')).toHaveCount(7);
 
   await row.locator('[data-action="chat-rename"]').click();
   await expect(page.locator('#chatActionModal')).toBeVisible();
@@ -1579,6 +1579,38 @@ test('chat row actions are grouped in the right-side menu and rename/clone work'
   await expect(page.locator('#chatList .chat-row')).toHaveCount(2);
   await expect(page.locator('#chatList button[data-action="switch-chat"]').first()).toContainText('Renamed from menu — копия');
   await expect(page.locator('#userInput')).toHaveCSS('font-size', '16px');
+});
+
+test('chat menu export is scoped and chat import merges without replacing history', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#userInput').fill('Keep this existing chat');
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const row = page.locator('#chatList .chat-row').first();
+  await row.locator('summary[aria-label="Действия чата"]').click();
+
+  const downloadPromise = page.waitForEvent('download');
+  await row.locator('[data-action="export-chat"]').click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toContain('alandi-chat-');
+
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#importFile').setInputFiles({
+    name: 'imported-chats.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify([{
+      id: 'imported-chat-test',
+      title: 'Imported chat',
+      messages: [{ role: 'user', content: 'Imported content' }],
+      processingMode: 'deep',
+      searchMode: 'more',
+      multiAgentEnabled: true,
+      skillPreset: 'research'
+    }]))
+  });
+  await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(2);
+  await expect(page.locator('#chatList')).toContainText('Imported chat');
+  await expect(page.locator('#chatBox')).toContainText('Imported content');
+  await expect(page.locator('#userInput')).toHaveValue('Keep this existing chat');
 });
 
 test('sidebar separates projects from personal chats and keeps navigation collapsible', async ({ page }) => {
