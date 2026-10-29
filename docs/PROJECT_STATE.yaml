@@ -2,14 +2,14 @@ project_state:
   version: 4
   reviewed_on: "2026-10-29"
   root_orienter:
-    status: "Verified baseline main 337e38690af8f22a712c6442192c5ea62d354c3d; latest main action is documentation-only readiness-audit preservation; functional-code parent is 91557e4eab1b122341bed578cdf4775ff867007f"
-    branch: "docs/project-state-freshness-guard-20261029"
-    base_main: "337e38690af8f22a712c6442192c5ea62d354c3d"
-    open_prs_at_checkpoint: 9
+    status: "Checkpoint refreshed against live GitHub main after PR #107 privacy reconciliation and PR #108 landing/runbook merge; current-main CI conclusions not verified in this review"
+    branch: "docs/refresh-orientation-checkpoint-20261029"
+    base_main: "375bcc10efe7b3a0e3e999b6504face1974a7cce"
+    open_prs_at_checkpoint: 1
     open_issues_at_checkpoint: 14
-    graphify: "Latest verified main run 40637941303 succeeded on code parent 91557e4: 988 nodes, 2780 edges, 60 source files; 224 inline UI JS nodes, 14 SQL schema nodes, 23 RAG module nodes; artifact-only, no runtime dependency. Results are commit-specific."
-    freshness_guard: "scripts/check_project_state_freshness.py and .github/workflows/project-state-freshness.yml; exact main SHA and exact open PR/issue IDs are checked daily and on relevant PR updates."
-    next: "Review/rebase PR #78 against current main without losing its unique docs; inspect exact-head gates for PRs #80–#87; then choose one bounded gap from verified evidence. No automatic merge, queue mutation, or VPS deployment."
+    graphify: "Prior Graphify artifacts are commit-specific and do not verify current main 375bcc10efe7b3a0e3e999b6504face1974a7cce; no current-main Graphify conclusion was confirmed in this review."
+    freshness_guard: "scripts/check_project_state_freshness.py and .github/workflows/project-state-freshness.yml; checks exact main SHA and exact open PR/issue IDs daily and on relevant PR updates."
+    next: "Review PR #78 diff/base/head/checks against current main; then select one bounded workstream from the verified code and tests. No automatic merge, queue mutation, or VPS deployment."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -22,7 +22,7 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
-  last_volley: "V-2026-10-29-STATE-FRESHNESS-GUARD-001"
+  last_volley: "V-2026-10-29-ORIENTATION-REFRESH-001"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Current browser half-duplex voice dialogue prototype is under PR validation; it uses mocked ASR/TTS in CI, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; first read in new chats, then verify current main HEAD and open PRs"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
