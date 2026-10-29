@@ -23,6 +23,14 @@ async function setSkillPreset(page, preset) {
 }
 
 
+async function dismissComposerPopoverWithOutsideTap(page, targetSelector) {
+  const target = page.locator(targetSelector);
+  const box = await target.boundingBox();
+  expect(box).not.toBeNull();
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  await expect(page.locator('#composerPopoverScrim')).toBeHidden();
+}
+
 test.beforeEach(async ({ page }) => {
   // Every test starts with a clean browser profile; no real provider key is used.
   await page.addInitScript(() => {
@@ -1662,7 +1670,7 @@ test('request-only project context is sent once and does not change the active c
   await betaGroup.locator('[data-action="switch-chat"][data-chat-id="chat-beta"]').click();
   await page.locator('#contextPickerButton').click();
   await expect(page.locator('#requestProjectChecks input[data-request-project-id="project-beta"]')).not.toBeChecked();
-  await page.locator('#contextPickerButton').click();
+  await dismissComposerPopoverWithOutsideTap(page, '#contextPickerButton');
   await page.locator('[data-action="toggle-sidebar"]').click();
   if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
   const alphaGroup=page.locator('#projectNavigationList details[data-project-id="project-alpha"]');
@@ -1670,7 +1678,7 @@ test('request-only project context is sent once and does not change the active c
   await alphaGroup.locator('[data-action="switch-chat"][data-chat-id="chat-alpha"]').click();
   await page.locator('#contextPickerButton').click();
   await expect(page.locator('#requestProjectChecks input[data-request-project-id="project-beta"]')).toBeChecked();
-  await page.locator('#contextPickerButton').click();
+  await dismissComposerPopoverWithOutsideTap(page, '#contextPickerButton');
   await page.locator('#userInput').fill('Use Beta context for this one request.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Request context verified.');
