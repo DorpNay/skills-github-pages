@@ -28,7 +28,7 @@
 | **Сделано с ограничением** | Веб-интерфейс сам предлагает тип вложения в `#attachmentMenu`: фото/видео либо файл любого формата, затем открывает соответствующий hidden input. Сам диалог выбора файла остаётся системным окном iOS/браузера — веб-страница не может заменить ОС и не должна обещать это. Известные текстовые форматы и изображения обрабатываются; видео передаётся выборкой кадров; неизвестные binary-файлы блокируют отправку до появления extractor. |
 | **Частично** | Голосовое меню открывается удержанием, короткий тап не открывает его; Chromium E2E проверяет оба пути. На реальном iPhone нужно проверить touchcancel, скорость, отсутствие прокрутки viewport и случайного сворачивания. |
 | **Частично** | Composer popover позиционируются над полем, но универсальный flip/shift у границ экрана не подтверждён. Chat-row menu в CSS закреплён `right:0; top:calc(100% + 5px)`; автоматическое открытие вверх не подтверждено. Нужны измерение свободного места и тесты у всех краёв. |
-| **Не подтверждено** | Нет единого доказанного контракта, что первый тап снаружи любого меню только закрывает его и не запускает control под ним. Добавить общий outside-click контракт с тестами sidebar, settings, attach, functions, chat actions и language menu. |
+| **Сделано частично — PR #115 merged** | Первый тап снаружи закрывает composer popover и toolbar/language/chat-row menu без активации контрола под ним; есть Chromium regressions. Остальные modal interactions (например, фокус-ловушка и полный keyboard navigation) не считаются проверенными только этим изменением. |
 
 ## 4. Поиск, «думать», исследование, агенты, навыки и коннекторы
 
@@ -44,7 +44,7 @@
 
 | Статус | Наблюдение и действие |
 |---|---|
-| **Частично** | Settings и Research Studio уже используют затемняющий modal backdrop; небольшие composer/chat/language меню имеют свои поверхности и границы. Единого overlay/focus поведения для всех модальных задач и dropdown нет. Сделать затемнение единообразным для модалок; не накрывать весь экран тяжёлым backdrop без необходимости для частых controls. |
+| **Сделано частично — PR #115 merged** | Composer attachment/context/voice popovers теперь используют dimmed/light-blur scrim; основные settings/message viewer/chat action/research/functions/trace modal backdrops получили лёгкий blur с учётом reduced-transparency. Focus trap и полный accessibility review остаются отдельной задачей. |
 | **Не подтверждено** | Chat-row меню фиксировано под кнопкой и может выходить за край. Нужны up/down, left/right с учётом viewport и экранных краёв. |
 | **Частично** | Проекты и чаты уже получают визуальные панели, а активный чат имеет рамку. Провести один визуальный проход по контрасту, разделителям и mobile hit areas после изменения структуры меню. |
 
@@ -96,6 +96,7 @@
 ## Пересверка 2026-10-29
 
 - **PR #71 — merged:** нижняя компоновка composer и `visualViewport` regression test. Не выдавать Chromium за нативный iOS-тест.
-- **PR #114 — merged at `25bfe66b5454e45fb5f6cef9dd86ae3c0ef1c5e5`:** пустой пользовательский системный prompt по умолчанию; удалена кнопка восстановления Gemini и dead handler; обновлён quality sentinel под opt-in prompt; добавлен 400-character headroom в расчёт бюджета истории для framing/provider overhead. Exact-head Quality Sentinels, Graphify, dead-code report, local Chromium suite и опубликованный Pages smoke прошли на PR head `df3449db132393cdad1a93080d736bb973ae4bc2`.
-- **Следующий bounded slice:** общий scrim для composer popovers, modal backdrop blur, единое закрытие toolbar/chat-row меню с инертным первым outside tap. Затем отдельно — header/clock/layout и provider/project-settings cleanup.
+- **PR #114 — merged at `25bfe66b5454e45fb5f6cef9dd86ae3c0ef1c5e5`:** пустой пользовательский системный prompt по умолчанию; удалена кнопка восстановления Gemini и dead handler; обновлён quality sentinel под opt-in prompt; добавлен 400-character headroom в расчёт бюджета истории для framing/provider overhead. Exact-head Quality/Chromium/Pages smoke passed on PR head `df3449db132393cdad1a93080d736bb973ae4bc2`.
+- **PR #115 — merged at `ed2c4c7ee3a67c7a0cf5b541c1ab6206609dd32c`:** scrim for composer popovers, modal backdrop blur, inert first outside tap for toolbar/language/chat-row menus. Exact-head Quality/Chromium/published-site smoke passed on PR head `d7f57d0abfba46a5764e6a1182bcc9a847f7a6ef`.
+- **Следующий bounded slice:** edge-aware chat-row/popover placement, header order/project label, calm brand/clock styling and sticky settings actions; provider/project export-import cleanup follows separately.
 - **Остаётся не подтверждено:** реальный iPhone Safari/клавиатура/edge swipes; реальные провайдеры и self-hosted gateway; все обещания runtime, которых нет в live проверках.
