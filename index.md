@@ -206,8 +206,8 @@ permalink: /
     .chat-action-dialog select option { color:#111827;background:#fff; }
     @media (prefers-reduced-transparency:reduce) { .chat-action-dialog { background:var(--ui-surface);backdrop-filter:none;-webkit-backdrop-filter:none; } }
     .chat-row-menu { position:relative; }
-    #chatRowMenuPageScrim { position:fixed;inset:0;z-index:49;background:rgba(0,0,0,.07); }
-    #chatRowMenuSidebarScrim { position:absolute;inset:0;z-index:89;background:transparent; }
+    #chatRowMenuPageScrim { display:none;position:fixed;inset:0;z-index:49;background:rgba(0,0,0,.07); }
+    #chatRowMenuSidebarScrim { display:none;position:absolute;inset:0;z-index:89;background:transparent; }
     body:has(#sidebar .chat-row-menu[open]) #chatRowMenuPageScrim,
     body:has(#sidebar .chat-row-menu[open]) #chatRowMenuSidebarScrim { display:block; }
     .chat-row-menu summary { list-style:none;display:grid;place-items:center;width:36px;height:36px;border:1px solid transparent;border-radius:10px;color:var(--ui-text-muted);font-size:19px;cursor:pointer; }
@@ -4813,12 +4813,6 @@ permalink: /
         try { pyodideInstance.setStdout?.(); pyodideInstance.setStderr?.(); } catch (_) {}
       }
     }
-
-    function dismissOpenChatRowMenus() {
-      document.querySelectorAll('#sidebar .chat-row-menu[open]').forEach(menu => menu.removeAttribute('open'));
-    }
-    $('chatRowMenuSidebarScrim')?.addEventListener('click', dismissOpenChatRowMenus);
-    $('chatRowMenuPageScrim')?.addEventListener('click', dismissOpenChatRowMenus);
 
     document.addEventListener('click', async (event) => {
       const control = event.target.closest('[data-action]');
