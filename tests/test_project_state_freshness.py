@@ -49,6 +49,11 @@ class SnapshotSchemaTests(unittest.TestCase):
         errors = validate_snapshot(snapshot(), "other/repo")
         self.assertTrue(any("does not match" in error for error in errors))
 
+    def test_allows_current_main_to_be_the_functional_checkpoint(self):
+        value = snapshot()
+        value["checkpoint"]["last_functional_checkpoint_sha"] = MAIN_SHA
+        self.assertEqual(validate_snapshot(value, "DorpNay/skills-github-pages"), [])
+
 
 class QueueComparisonTests(unittest.TestCase):
     def test_exact_queue_passes_and_excludes_only_current_pr(self):
