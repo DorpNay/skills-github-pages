@@ -8,8 +8,8 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - **Latest functional baseline:** current main SHA above. Earlier functional milestones include private/shared memory UI (`2b2ecec5310aa25c695cfd8cb8198f2bb329cb51`) and the offline RAG evaluator core (`ef6e9b490ff964a8f77abdcd40a8448ab1c57d3d`).
 - **Merged and verified on exact PR heads:** #84 CORS canonicalization, #81 deployment repository preflight, #83 in-memory SQLite delta persistence, #82 readiness/model policy audit, #106 RAG evaluator core, #107 private/shared memory UI, and #108 launch page/runbook.
 - **Latest PR-head CI:** PR #108 Quality Sentinels run [#40896977015](https://github.com/DorpNay/skills-github-pages/actions/runs/40896977015) and Graphify run [#40896977071](https://github.com/DorpNay/skills-github-pages/actions/runs/40896977071) succeeded, including Chromium and published-site smoke. This is not proof of a live VPS deployment.
-- **Open PR queue:** only #78 remains open; its original base is stale and its overlapping state files must be reconciled, not merged blindly.
-- **Research issue queue:** #88–#92 and #96–#104 remain open for triage/consolidation; do not close implementation blockers merely to empty the queue.
+- **Open PR queue:** no unrelated PRs remain. PR #109 is the current state-refresh PR and is excluded from its own queue check.
+- **Open issue queue:** only #111 remains; it tracks owner/live-host release gates. Research-only issues #88–#92 and #96–#104 were closed after their findings and unresolved actions were transferred to #111.
 - **Runtime boundary:** GitHub Pages browser smoke is verified; live VPS/gateway, Ollama model performance, voice artifacts/device playback, OAuth credentials and target-host measurements remain unverified.
 
 ## First-read order
