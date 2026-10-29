@@ -77,7 +77,7 @@
 - Назначение: dev-only code navigation/cross-file graph; не runtime feature.
 - Основание: upstream README/quickstart/pyproject.toml; Apache-2.0, package `graphifyy`, CLI `graphify`, Python >=3.10; local tree-sitter parsing for code; semantic pass for docs/media may use a model.
 - Риски: substantial dependency footprint, fast-moving release, model usage for docs/media, stale generated output. Pin version and exclude secrets/build output.
-- Решение: **pilot pending**. Официальный code-only workflow уточнён: `extract --code-only` → `cluster-only --no-label` → `export html` → `query`; exclusions задаются через `.graphifyignore`, но ещё не проверены на реальном запуске. Local execution impossible in current container because DNS cannot resolve `github.com`; do not report graph generated or add it to runtime. See `docs/ALANDI_ARCHITECTURE_MAP_RU.md`.
+- Решение: **pilot verified, dev-only**. Main run `40637941303` built a code-only graph with 988 nodes, 2780 edges and 60 source files (224 inline UI JS nodes, 14 SQL schema nodes, 23 RAG module nodes); ten focused queries returned graph neighborhoods. PR #76 added source-change and weekly triggers. Artifacts expire after seven days and are not committed or loaded at runtime. Limits: some query output truncates at 700 tokens, nine Playwright E2E files yielded no symbols, and community labels are generic. See `docs/ALANDI_ARCHITECTURE_MAP_RU.md` and `project-reference/FILE_ORIENTER_RU.md`.
 
 
 ## Local helper model for project-memory compression — prototype
@@ -86,4 +86,11 @@
 - The browser cannot choose a model. ALANDI_HELPER_MODEL is an exact operator-configured Ollama tag and blank by default.
 - Boundaries: max 80 source facts, per-fact 600 chars, combined input 512–8000 chars, at most 12 candidates of 240 chars, timeout 1–180 s, same inference semaphore, keep_alive=0, no-store response, secret-like input/output filtering.
 - Each candidate is rendered via textContent and saved only by explicit user action after rechecking the active project and duplicates.
-- Status: implemented on feature branch; CI and merge pending; no live VPS inference claim.
+- Status: merged in PR #69 at `4c9096999fbb3e1265150c420b136066c555285b`; exact-head Gateway/Quality/Chromium/published-site/provenance passed. Live helper model inference remains unverified; the endpoint stays disabled unless the operator configures an exact local Ollama tag.
+
+## Reciprocal Rank Fusion for scoped RAG — merged baseline (2026-10-28)
+
+- PR #77 merged at `91557e4eab1b122341bed578cdf4775ff867007f`; combines FTS5/BM25 and lexical-concept graph candidate rankings using RRF with `k=60` and deterministic tie-breaks.
+- No schema/API/dependency change; source/page provenance and scope filtering remain intact; `ALANDI_RAG_ENABLED=false` stays the default.
+- The score is only for ordering, not confidence/probability. Automated tests passed on exact PR head; no production-quality improvement is claimed until a labelled >=50-query golden set compares Recall@5, MRR/nDCG, citation correctness, latency and peak RSS.
+- Full criteria: `docs/RAG_RRF_EVALUATION_RU.md`, `EVALS.md` EV-RAG-RRF-001, `DECISIONS.md` D-016.
