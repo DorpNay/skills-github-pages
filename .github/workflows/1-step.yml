@@ -15,7 +15,7 @@ env:
 jobs:
   find_exercise:
     name: Find Exercise Issue
-    uses: skills/exercise-toolkit/.github/workflows/find-exercise-issue.yml@v0.6.0
+    uses: skills/exercise-toolkit/.github/workflows/find-exercise-issue.yml@ebf43bb96882683e03e667184c6445ed4c8074e6 # v0.6.0
 
   post_next_step_content:
     name: Post next step content
@@ -26,10 +26,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Get response templates
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           repository: skills/exercise-toolkit
           path: exercise-toolkit
@@ -37,7 +37,7 @@ jobs:
 
       - name: Build message - step finished
         id: build-message-step-finish
-        uses: skills/action-text-variables@v2
+        uses: skills/action-text-variables@3b6c75e091007b8a7660c17071aa2503cccf6af2 # v2
         with:
           template-file: exercise-toolkit/markdown-templates/step-feedback/step-finished-prepare-next-step.md
           template-vars: |
@@ -53,7 +53,7 @@ jobs:
 
       - name: Build comment - add step content
         id: build-comment
-        uses: skills/action-text-variables@v2
+        uses: skills/action-text-variables@3b6c75e091007b8a7660c17071aa2503cccf6af2 # v2
         with:
           template-file: ${{ env.STEP_2_FILE }}
           template-vars: |
