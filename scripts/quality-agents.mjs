@@ -195,6 +195,7 @@ const suites = {
       assert.ok(!source.includes('id="researchStudioDepth"') && !source.includes('id="researchStudioWeb"'), 'Research Studio must not duplicate chat settings.');
       assert.ok(!source.includes('data-function="research"'), 'Research Studio must have a single entry point.');
       assert.ok(!source.includes("setProcessingMode(depth)") && !source.includes("setSearchMode(webEnabled ?"), 'Research Studio must not mutate active chat settings.');
+      includes("await runAssistant(workChat, signal, useSearch, false, mode, true,", 'The structured workflow must honor the selected effort budget in its research stage.');
       includes("const studioSummary = $('researchStudioSettingsSummary');", 'Research Studio must show the active chat settings.');
       includes("if (mode !== 'deep' && !useMultiAgent && chosenSkill === 'auto') return '';", 'Automatic skills must not load in fast mode unless research is explicitly enabled.');
       includes("chosenSkill !== 'auto' ? chosenSkill", 'A manually selected skill must be usable in fast mode.');
