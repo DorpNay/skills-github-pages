@@ -6,7 +6,7 @@ from typing import AsyncIterator
 import httpx
 from fastapi.testclient import TestClient
 
-from gateway.app import Settings, create_app
+from gateway.app import Settings, create_app, validate_origin
 
 API_KEY = "a" * 64
 MODEL = "qwen3.5:4b"
@@ -359,6 +359,46 @@ def test_invalid_message_role_is_rejected():
         response = client.post("/v1/chat/completions", headers={"Authorization": f"Bearer {API_KEY}"},
           json={"model": MODEL, "messages": [{"role": "godmode", "content": "hi"}]})
     assert response.status_code == 400
+
+
+def test_settings_rejects_invalid_ollama_base_url_port(monkeypatch):
+    monkeypatch.setenv("OLLAMA_BASE_URL", "http://127.0.0.1:99999")
+    try:
+        Settings.from_env()
+    except ValueError as exc:
+        assert "OLLAMA_BASE_URL" in str(exc)
+    else:
+        raise AssertionError("Invalid Ollama port should fail during configuration")
+
+
+def test_validate_origin_canonicalizes_host_case_and_default_ports():
+    assert validate_origin("HTTPS://DorpNay.GitHub.io:443/") == "https://dorpnay.github.io"
+    assert validate_origin("http://LOCALHOST:80") == "http://localhost"
+    assert validate_origin("https://[2001:DB8::1]:8443") == "https://[2001:db8::1]:8443"
+
+
+def test_oauth_redirect_origin_matches_canonicalized_cors_allowlist(monkeypatch):
+    monkeypatch.setenv("OAUTH_ENABLED", "true")
+    monkeypatch.setenv("OAUTH_ENCRYPTION_KEY", "test-encryption-key")
+    monkeypatch.setenv("GOOGLE_DRIVE_CLIENT_ID", "test-client")
+    monkeypatch.setenv("GOOGLE_DRIVE_CLIENT_SECRET", "test-secret")
+    monkeypatch.setenv("GOOGLE_DRIVE_REDIRECT_URI", "https://example.com/oauth/callback")
+    monkeypatch.setenv("OAUTH_SUCCESS_REDIRECT", "https://DORPNAY.GitHub.io:443/return")
+    monkeypatch.setenv("ALANDI_CORS_ORIGINS", "https://dorpnay.github.io")
+
+    config = Settings.from_env()
+    assert config.cors_origins == ("https://dorpnay.github.io",)
+    assert config.oauth_success_redirect == "https://DORPNAY.GitHub.io:443/return"
+
+
+def test_validate_origin_rejects_invalid_ports():
+    for origin in ("https://example.com:99999", "https://example.com:not-a-port"):
+        try:
+            validate_origin(origin)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError(f"Invalid CORS origin accepted: {origin}")
 
 
 def test_cors_allows_only_configured_origin():

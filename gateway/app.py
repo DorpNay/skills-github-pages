@@ -52,12 +52,25 @@ def bool_env(name: str, default: bool = False) -> bool:
 
 
 def validate_origin(value: str) -> str:
-    parsed = urlsplit(value)
-    if parsed.scheme not in {"https", "http"} or not parsed.netloc:
+    try:
+        parsed = urlsplit(value)
+        port = parsed.port
+    except ValueError as exc:
+        raise ValueError(f"Invalid CORS origin: {value!r}") from exc
+    if parsed.scheme not in {"https", "http"} or not parsed.netloc or not parsed.hostname:
         raise ValueError(f"Invalid CORS origin: {value!r}")
-    if parsed.path not in {"", "/"} or parsed.query or parsed.fragment or parsed.username or parsed.password or value == "*":
+    if parsed.path not in {"", "/"} or parsed.query or parsed.fragment or parsed.username or parsed.password:
         raise ValueError("CORS entries must be explicit origins without paths or credentials")
-    return f"{parsed.scheme}://{parsed.netloc}"
+
+    # Browser Origin serialization lowercases hosts and omits default ports. Canonicalize
+    # configuration the same way so valid mixed-case origins do not silently fail CORS.
+    hostname = parsed.hostname.lower()
+    if ":" in hostname:  # IPv6 literals must retain their brackets in the authority.
+        hostname = f"[{hostname}]"
+    if port is not None and not ((parsed.scheme == "https" and port == 443) or
+                                 (parsed.scheme == "http" and port == 80)):
+        hostname = f"{hostname}:{port}"
+    return f"{parsed.scheme}://{hostname}"
 
 
 def validate_fixed_service_base_url(value: str, name: str) -> str:
@@ -139,10 +152,10 @@ class Settings:
 
     @classmethod
     def from_env(cls) -> "Settings":
-        base = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").strip().rstrip("/")
-        parsed = urlsplit(base)
-        if parsed.scheme not in {"http", "https"} or not parsed.netloc or parsed.query or parsed.fragment or parsed.username or parsed.password:
-            raise ValueError("OLLAMA_BASE_URL must be a fixed HTTP(S) base URL without credentials, query, or fragment")
+        base = validate_fixed_service_base_url(
+            os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").strip().rstrip("/"),
+            "OLLAMA_BASE_URL",
+        )
         models = tuple(item.strip() for item in os.getenv("ALANDI_ALLOWED_MODELS", "qwen3.5:4b").split(",") if item.strip())
         if not models or len(set(models)) != len(models):
             raise ValueError("ALANDI_ALLOWED_MODELS must contain unique model tags")
@@ -190,7 +203,11 @@ class Settings:
                 raise ValueError("GOOGLE_DRIVE_REDIRECT_URI must be a fixed HTTPS URL without credentials, query or fragment")
             if success.scheme != "https" or not success.netloc or success.username or success.password or success.query or success.fragment:
                 raise ValueError("OAUTH_SUCCESS_REDIRECT must be a fixed HTTPS URL without credentials, query or fragment")
-            success_origin = f"{success.scheme}://{success.netloc}"
+            try:
+                callback.port  # Accessing .port validates the configured callback port.
+                success_origin = validate_origin(f"{success.scheme}://{success.netloc}")
+            except ValueError as exc:
+                raise ValueError("OAuth redirect URLs must use valid ports") from exc
             if success_origin not in origins:
                 raise ValueError("OAUTH_SUCCESS_REDIRECT origin must be present in ALANDI_CORS_ORIGINS")
         searxng_enabled = bool_env("ALANDI_SEARXNG_ENABLED", False)
