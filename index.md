@@ -569,7 +569,7 @@ permalink: /
     <div class="mode-hint-row"><p id="modeHint" class="mode-hint text-[10px] text-gray-500 leading-tight" aria-live="polite" title="Объём работы и ширина веб-поиска управляются независимо.">Быстро · Веб: обычный · Прямой · Авто</p><span id="pyStatus" class="hidden sm:inline-flex shrink-0 text-[9px] text-gray-500" title="Python загрузится только после запуска блока кода">Py: по запросу</span></div>
     <div class="flex items-center gap-2 text-xs">
       <span class="text-gray-400 shrink-0" data-i18n="modeLabel">Объём:</span>
-      <div class="flex flex-1 min-w-0 rounded-lg bg-gray-900 p-1 gap-1" role="group" aria-label="Режим обработки">
+      <div class="flex flex-1 min-w-0 rounded-lg bg-gray-900 p-1 gap-1" role="group" aria-label="Объём работы" data-i18n-aria-label="modeGroupAria">
         <button type="button" id="modeFast" data-i18n="modeFast" aria-pressed="true" class="flex-1 min-w-0 rounded-md px-2 py-1 bg-blue-600 font-semibold">⚡ Быстро</button>
         <button type="button" id="modeDeep" data-i18n="modeDeep" aria-pressed="false" class="flex-1 min-w-0 rounded-md px-2 py-1 text-gray-300">🔬 Тщательно</button>
       </div>
@@ -3740,7 +3740,7 @@ permalink: /
       const activePrompt = (!configuredPrompt || configuredPrompt === LEGACY_DEFAULT_SYSTEM) ? DEFAULT_SYSTEM : configuredPrompt;
       const taskSkill = promptOverride ? '' : await loadTaskSkill(latestUserMessage, mode, useMultiAgent, signal, chat.skillPreset || 'auto');
       let systemPrompt = `Сегодня: ${new Date().toLocaleDateString('ru-RU')}. ${activePrompt}${projectInstructionContext}${requestProjectContext}${privateMemoryContext}${memoryContext}${projectMemoryContext}${serverProjectMemoryContext}`;
-      if (mode === 'deep') systemPrompt += '\nРЕЖИМ ГЛУБОКОЙ РАБОТЫ: проверь существенные предположения, объясни неопределённость и предпочитай проверяемые выводы. Избегай лишних шагов.';
+      if (mode === 'deep') systemPrompt += '\nРЕЖИМ ТЩАТЕЛЬНОЙ РАБОТЫ: проверь существенные предположения, объясни неопределённость и предпочитай проверяемые выводы. Избегай лишних шагов.';
       if (taskSkill) systemPrompt += '\n\nНАВЫК ИЗ РЕПОЗИТОРИЯ (инструкции для текущей задачи; пользовательский запрос имеет приоритет):\n' + taskSkill;
       if (promptOverride) systemPrompt = promptOverride;
       if (systemPrompt.includes('<ALANDI_PRIVATE_MEMORY_BEGIN>') && chat && typeof chat === 'object' && !chat.privateMemoryUsed) {
@@ -3783,8 +3783,8 @@ permalink: /
       ] : undefined;
 
       const extendedSearch = chat.searchMode === 'more';
-      const extendedToolBudget = mode === 'deep' || extendedSearch;
-      const toolMode = extendedSearch ? 'deep' : mode;
+      const extendedToolBudget = mode === 'deep';
+      const searchResultMode = extendedSearch ? 'deep' : 'fast';
       const maxToolRounds = extendedToolBudget ? MAX_TOOL_ROUNDS : 1;
       const maxToolCallsPerRound = extendedToolBudget ? MAX_TOOL_CALLS_PER_DEEP_ROUND : 1;
       const maxToolCallsPerRun = extendedToolBudget ? MAX_TOOL_CALLS_PER_DEEP_RUN : 1;
@@ -3838,8 +3838,8 @@ permalink: /
         }
         if (round === maxToolRounds) {
           assistantMessage.content = getUiLanguage() === 'en'
-            ? 'The tool budget was exhausted. I stopped further tool execution safely. Please narrow the request or run a new Deep-mode search.'
-            : 'Бюджет инструментов исчерпан. Дальнейшие вызовы остановлены безопасно. Уточни запрос или запусти новый поиск в режиме «Глубоко».';
+            ? 'The tool budget was exhausted. I stopped further tool execution safely. Please narrow the request or choose Thorough mode for a larger execution budget.'
+            : 'Бюджет инструментов исчерпан. Дальнейшие вызовы остановлены безопасно. Уточни запрос или выбери режим «Тщательно» для большего бюджета обработки.';
           delete assistantMessage.tool_calls;
           assistantMessage.error = true;
           updateState([...chats]);
@@ -3862,9 +3862,7 @@ permalink: /
             updateState([...chats]);
             throw abortError();
           }
-          if (mode === 'fast' && index > 0 && !extendedSearch) {
-            result = 'Вызов пропущен: быстрый режим выполняет не более одного инструмента за раунд.';
-          } else if (seenToolCallKeys.has(toolSignature)) {
+          if (seenToolCallKeys.has(toolSignature)) {
             result = 'Повторный идентичный вызов подавлен, чтобы не расходовать бюджет инструментов.';
           } else if (index >= maxToolCallsPerRound || executedToolCalls >= maxToolCallsPerRun) {
             result = 'Вызов пропущен: достигнут ограниченный бюджет инструментов для текущего запуска.';
@@ -3877,13 +3875,13 @@ permalink: /
               const args = JSON.parse(toolCall.function?.arguments || '{}');
               if (name === 'web_search') {
                 if (typeof args.query !== 'string' || !args.query.trim()) result = 'Ошибка инструмента: требуется непустое поле query.';
-                else result = await performTavilySearch(args.query.trim().slice(0, 500), signal, toolMode);
+                else result = await performTavilySearch(args.query.trim().slice(0, 500), signal, searchResultMode);
               } else if (name === 'public_knowledge_search') {
                 if (typeof args.query !== 'string' || !args.query.trim() || typeof args.source !== 'string') result = 'Ошибка инструмента: нужны source и непустое поле query.';
-                else result = await performPublicKnowledgeSearch(args.source, args.query.trim().slice(0, 300), signal, toolMode);
+                else result = await performPublicKnowledgeSearch(args.source, args.query.trim().slice(0, 300), signal, searchResultMode);
               } else {
                 if (typeof args.url !== 'string' || !args.url.trim()) result = 'Ошибка инструмента: требуется полный HTTPS URL.';
-                else result = await readPublicWebpage(args.url.trim().slice(0, 1500), signal, toolMode);
+                else result = await readPublicWebpage(args.url.trim().slice(0, 1500), signal, searchResultMode);
               }
             } catch (error) {
               if (error.name === 'AbortError') {
