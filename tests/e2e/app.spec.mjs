@@ -92,6 +92,21 @@ test('composer position persists and provider selection separates aLandi Cloud f
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
 });
 
+test('language switch updates provider group labels without deleting options', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#languageSummary').click();
+  await page.locator('[data-action="set-language"][data-language="en"]').click();
+  await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#providerPrimaryGroup')).toHaveAttribute('label', 'aLandi Cloud · primary route');
+  await expect(page.locator('#providerExternalGroup')).toHaveAttribute('label', 'Third-party providers');
+  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(1);
+  await expect(page.locator('#providerPreset option[value="gemini"]')).toHaveCount(1);
+  await expect(page.locator('#providerPreset option[value="custom"]')).toHaveCount(1);
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#languageSummary').click();
+  await page.locator('[data-action="set-language"][data-language="ru"]').click();
+});
+
 test('request context stays project-only and agent label describes the real pipeline', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#contextPickerButton').click();
