@@ -6,14 +6,16 @@
 
 ## Текущая проверенная контрольная точка — 2026-10-29
 
-- **Last main action:** docs: preserve engineering and runtime readiness audits.
-- **Baseline main SHA:** `337e38690af8f22a712c6442192c5ea62d354c3d` (2026-10-28T05:36:59Z; documentation-only; parent `91557e4eab1b122341bed578cdf4775ff867007f`).
-- **Последний функциональный checkpoint:** `91557e4eab1b122341bed578cdf4775ff867007f`; на main уже находятся PR #77 (RRF), #76 (Graphify workflow) и #72 (search/functions UX).
-- **Точные проверки main:** Quality Sentinels #40639031308 и Pages deployment #40639030224 прошли на `337e38690af8f22a712c6442192c5ea62d354c3d`. На code-identical parent `91557e4eab1b122341bed578cdf4775ff867007f` прошли Gateway #40637941350, Quality #40637941308, Graphify #40637941303 и Pages #40637941951.
-- **GitHub API snapshot от 2026-10-29:** open PRs (9): #78, #80, #81, #82, #83, #84, #85, #86, #87; open issues (14): #88, #89, #90, #91, #92, #96, #97, #98, #99, #100, #101, #102, #103, #104.
-- **PR #78:** остаётся открытым; его base SHA — `91557e4eab1b122341bed578cdf4775ff867007f`, поэтому он отстаёт от актуального main на документационный коммит `337e38690af8f22a712c6442192c5ea62d354c3d`. Не считать его изменения влитым состоянием и не закрывать/сливать без проверки конфликтов и exact-head gates.
-- **Runtime boundary:** GitHub Pages и указанные CI run-ы подтверждены; live VPS/gateway, установленные model/voice artifacts, реальное микрофонное воспроизведение и performance на целевом хосте не подтверждены.
-- **Проверка актуальности:** `scripts/check_project_state_freshness.py`; ежедневный workflow `.github/workflows/project-state-freshness.yml`. Точный SHA и точные ID очереди сверяются с GitHub API; проверяемый PR исключается только из собственного сравнения. При любом ином изменении очередь/ориентир должны быть согласованно обновлены.
+- **Last main action:** feat(landing): reconcile launch page and first-stack runbook.
+- **Baseline main SHA:** `375bcc10efe7b3a0e3e999b6504face1974a7cce` (2026-10-29T15:03:41Z; merge PR #108).
+- **Последние функциональные изменения:** PR #107 private/shared memory UI + tests merged at `2b2ecec5310aa25c695cfd8cb8198f2bb329cb51`; RAG golden-set evaluator core integrated at `ef6e9b490ff964a8f77abdcd40a8448ab1c57d3d`; PR #108 adds a separate Russian landing/runbook and mobile viewport-resize fix/tests.
+- **Точные CI на текущем main:** в этой проверке не удалось подтвердить conclusions Quality/Gateway/Graphify/Pages/provenance для `375bcc10efe7b3a0e3e999b6504face1974a7cce`. Описание PR #108 до merge всё ещё указывало exact-head checks как pending. Поэтому merge SHA не трактуется как доказательство зелёного CI или успешной публикации Pages.
+- **GitHub API snapshot от 2026-10-29:** open PRs (1): #78; open issues (14): #88, #89, #90, #91, #92, #96, #97, #98, #99, #100, #101, #102, #103, #104.
+- **PR #78:** единственный обнаруженный открытый PR; его документационный diff и base/head/checks требуется пересверить с текущим main до интеграции. Не сливать без проверки конфликтов и exact-head gates.
+- **PR #108:** уже merged в `375bcc10efe7b3a0e3e999b6504face1974a7cce`; однако exact-head checks и фактическую доступность опубликованного landing в рамках этой проверки не подтвердили.
+- **Runtime boundary:** VPS/gateway, установленные model/voice artifacts, реальное микрофонное воспроизведение и target-host performance не подтверждены.
+- **Проверка актуальности:** `scripts/check_project_state_freshness.py` и `.github/workflows/project-state-freshness.yml`; при следующем обновлении сверять точный SHA и точные ID очереди.
+
 
 ## 1. Быстрый маршрут
 
