@@ -2359,6 +2359,15 @@ test('search presets and function settings fit one line, localize, and persist p
   expect(functionsRect).not.toBeNull();
   expect(Math.abs(searchRect.y - functionsRect.y)).toBeLessThan(5);
   expect(searchRect.x + searchRect.width).toBeLessThanOrEqual(functionsRect.x + 3);
+  for (const selector of ['#modeFast', '#modeDeep', '#searchModeSummary', '#functionsMenuSummary']) {
+    const box = await page.locator(selector).boundingBox();
+    expect(box?.height || 0, selector + ' should have a 44px mobile hit target').toBeGreaterThanOrEqual(44);
+  }
+  await page.locator('#searchModeSummary').click();
+  const menuOptionBox = await page.locator('#searchModeMenu .toolbar-menu-option').first().boundingBox();
+  expect(menuOptionBox?.height || 0, 'Search menu options should have a 44px mobile hit target').toBeGreaterThanOrEqual(44);
+  await page.locator('#searchModeSummary').click();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 
   await chooseSearchMode(page, 'more');
   await expect(page.locator('#searchModeSummary')).toContainText('Расширенный');
