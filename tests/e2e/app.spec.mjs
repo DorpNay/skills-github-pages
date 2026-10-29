@@ -65,6 +65,7 @@ test('global system prompt is empty by default and obsolete Gemini reset is abse
 test('composer position persists and provider selection separates aLandi Cloud from external routes', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
   await expect(page.locator('#providerPreset option[value="alandi"]')).toBeVisible();
   await expect(page.locator('#providerPreset optgroup').first()).toHaveAttribute('label', 'aLandi Cloud · основной маршрут');
@@ -121,6 +122,7 @@ test('language switch updates provider group labels without deleting options', a
   await page.locator('#languageSummary').click();
   await page.locator('[data-action="set-language"][data-language="en"]').click();
   await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#providerPrimaryGroup')).toHaveAttribute('label', 'aLandi Cloud · primary route');
   await expect(page.locator('#providerExternalGroup')).toHaveAttribute('label', 'Third-party providers');
   await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(1);
