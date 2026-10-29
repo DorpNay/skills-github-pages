@@ -2,14 +2,15 @@ project_state:
   version: 4
   reviewed_on: "2026-10-29"
   root_orienter:
-    status: "Verified baseline main 337e38690af8f22a712c6442192c5ea62d354c3d; latest main action is documentation-only readiness-audit preservation; functional-code parent is 91557e4eab1b122341bed578cdf4775ff867007f"
-    branch: "docs/project-state-freshness-guard-20261029"
-    base_main: "337e38690af8f22a712c6442192c5ea62d354c3d"
-    open_prs_at_checkpoint: 9
-    open_issues_at_checkpoint: 14
-    graphify: "Latest verified main run 40637941303 succeeded on code parent 91557e4: 988 nodes, 2780 edges, 60 source files; 224 inline UI JS nodes, 14 SQL schema nodes, 23 RAG module nodes; artifact-only, no runtime dependency. Results are commit-specific."
-    freshness_guard: "scripts/check_project_state_freshness.py and .github/workflows/project-state-freshness.yml; exact main SHA and exact open PR/issue IDs are checked daily and on relevant PR updates."
-    next: "Review/rebase PR #78 against current main without losing its unique docs; inspect exact-head gates for PRs #80–#87; then choose one bounded gap from verified evidence. No automatic merge, queue mutation, or VPS deployment."
+    status: "Verified main 375bcc10efe7b3a0e3e999b6504face1974a7cce after reconciled landing/runbook merge; live runtime remains unverified"
+    branch: "docs/reconcile-research-and-state-20261029"
+    base_main: "375bcc10efe7b3a0e3e999b6504face1974a7cce"
+    open_prs_at_checkpoint: 1
+    open_issue_workstreams_at_checkpoint: 14
+    merged_changes: "PR #84 CORS; #81 deploy preflight; #83 SQLite delta; #82 readiness audit; #106 RAG evaluator core; #107 private/shared memory; #108 landing/runbook and mobile viewport fix"
+    exact_head_checks: "PR #108 Quality Sentinels 40896977015 success; Graphify 40896977071 success; includes Chromium and published-site smoke"
+    runtime_boundary: "GitHub Pages browser smoke verified; live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
+    next: "Refresh state snapshot and close stale PR #78 only after preserving its unique decisions/roadmap changes; consolidate research-only issues into explicit remaining release gates"
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
