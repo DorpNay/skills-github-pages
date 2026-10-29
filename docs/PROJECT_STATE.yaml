@@ -2,14 +2,15 @@ project_state:
   version: 4
   reviewed_on: "2026-10-29"
   root_orienter:
-    status: "Verified baseline main 337e38690af8f22a712c6442192c5ea62d354c3d; latest main action is documentation-only readiness-audit preservation; functional-code parent is 91557e4eab1b122341bed578cdf4775ff867007f"
-    branch: "docs/project-state-freshness-guard-20261029"
-    base_main: "337e38690af8f22a712c6442192c5ea62d354c3d"
-    open_prs_at_checkpoint: 9
-    open_issues_at_checkpoint: 14
-    graphify: "Latest verified main run 40637941303 succeeded on code parent 91557e4: 988 nodes, 2780 edges, 60 source files; 224 inline UI JS nodes, 14 SQL schema nodes, 23 RAG module nodes; artifact-only, no runtime dependency. Results are commit-specific."
-    freshness_guard: "scripts/check_project_state_freshness.py and .github/workflows/project-state-freshness.yml; exact main SHA and exact open PR/issue IDs are checked daily and on relevant PR updates."
-    next: "Review/rebase PR #78 against current main without losing its unique docs; inspect exact-head gates for PRs #80–#87; then choose one bounded gap from verified evidence. No automatic merge, queue mutation, or VPS deployment."
+    status: "Verified main 375bcc10efe7b3a0e3e999b6504face1974a7cce after reconciled landing/runbook merge; live runtime remains unverified"
+    branch: "docs/reconcile-research-and-state-20261029"
+    base_main: "375bcc10efe7b3a0e3e999b6504face1974a7cce"
+    open_prs_at_checkpoint: 0
+    open_issues_at_checkpoint: 1
+    merged_changes: "PR #84 CORS; #81 deploy preflight; #83 SQLite delta; #82 readiness audit; #106 RAG evaluator core; #107 private/shared memory; #108 landing/runbook and mobile viewport fix"
+    exact_head_checks: "PR #108 Quality Sentinels 40896977015 success; Graphify 40896977071 success; includes Chromium and published-site smoke"
+    runtime_boundary: "GitHub Pages browser smoke verified; live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
+    next: "Refresh state snapshot and close stale PR #78 only after preserving its unique decisions/roadmap changes; consolidate research-only issues into explicit remaining release gates"
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -273,17 +274,15 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-10-29"
-  verified_main: "337e38690af8f22a712c6442192c5ea62d354c3d"
-  last_main_action: "docs: preserve engineering and runtime readiness audits; SHA 337e38690af8f22a712c6442192c5ea62d354c3d; documentation-only commit"
-  last_functional_checkpoint: "91557e4eab1b122341bed578cdf4775ff867007f"
-  main_quality: "run 40639031308 success on 337e38690af8f22a712c6442192c5ea62d354c3d; all six Quality Sentinels jobs, including Chromium and published-site smoke"
-  pages_deployment: "run 40639030224 success on 337e38690af8f22a712c6442192c5ea62d354c3d; Pages build/deployment passed"
-  functional_parent_gate: "on 91557e4eab1b122341bed578cdf4775ff867007f: Gateway 40637941350, Quality/Chromium 40637941308, Graphify 40637941303, Pages 40637941951 passed"
-  graphify: "run 40637941303 on code parent: 988 nodes, 2780 edges, 60 source files; targeted artifact-only navigation; not runtime integration"
-  open_pull_requests: "GitHub API snapshot IDs #78, #80, #81, #82, #83, #84, #85, #86, #87; PR #78 remains open with stale base 91557e4eab1b122341bed578cdf4775ff867007f"
-  open_issues: "GitHub API snapshot IDs #88, #89, #90, #91, #92, #96, #97, #98, #99, #100, #101, #102, #103, #104"
-  open_prs_at_checkpoint: 9
-  open_issues_at_checkpoint: 14
-  freshness_guard: "scripts/check_project_state_freshness.py; daily, workflow_dispatch, relevant PR and main updates; exact IDs and SHA; current PR excluded only from its own comparison"
-  runtime_boundary: "GitHub Pages verified; private gateway/VPS, live providers, ASR/TTS artifacts, real microphone/device playback and target-host performance remain unverified"
-  next: "Review/rebase PR #78 against current main while preserving unique docs; validate exact-head checks for open PRs; choose next bounded engineering slice from the cross-PR/source-of-truth audit"
+  verified_main: "c848212832b44a7f4c8ae08cf090de590a47cc89"
+  last_main_action: "docs(state): reconcile engineering decisions and refresh live checkpoint; SHA c848212832b44a7f4c8ae08cf090de590a47cc89"
+  last_functional_checkpoint: "c848212832b44a7f4c8ae08cf090de590a47cc89"
+  main_quality: "Post-merge checks on docs reconciliation merge SHA c848212832b44a7f4c8ae08cf090de590a47cc89: not yet independently verified; PR #109 exact-head checks passed."
+  main_graphify: "PR #109 state/documentation merge; Graphify post-merge result on c848212832b44a7f4c8ae08cf090de590a47cc89 not yet independently verified."
+  main_gateway: "No new Gateway workflow was triggered by the frontend-only PR #108; latest gateway-related exact-head evidence is tracked in individual PR records."
+  merged_prs: "84 CORS canonicalization; 81 deployment preflight; 83 in-memory SQLite delta; 82 readiness audit; 106 RAG evaluator core; 107 private/shared memory UI; 108 launch page/runbook and viewport fix"
+  open_pull_requests: "No unrelated open PRs at main checkpoint; PR #112 is a later CI-hardening PR and is excluded from its own freshness check"
+  open_issues: "Issue #111 only: consolidated owner/live-host release gates; research-only workstreams #88–#92 and #96–#104 closed after transferring unresolved actions"
+  freshness_guard: "scripts/check_project_state_freshness.py; compares exact SHA and exact queue. A refresh commit must update ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG and snapshot; it no longer requires artificial edits to checker/tests/workflow."
+  runtime_boundary: "GitHub Pages browser smoke verified; live VPS/Tunnel/Ollama, actual model performance, voice/device, OAuth/Drive and target-host measurements remain unverified"
+  next: "Verify PR #112 exact-head CI; then owner must configure main ruleset and provide live-host/device/evaluation evidence tracked by issue #111. No merge or deploy without owner approval."wner/live-host evidence"
