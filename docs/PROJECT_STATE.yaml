@@ -5,8 +5,8 @@ project_state:
     status: "Verified main 375bcc10efe7b3a0e3e999b6504face1974a7cce after reconciled landing/runbook merge; live runtime remains unverified"
     branch: "docs/reconcile-research-and-state-20261029"
     base_main: "375bcc10efe7b3a0e3e999b6504face1974a7cce"
-    open_prs_at_checkpoint: 1
-    open_issues_at_checkpoint: 14
+    open_prs_at_checkpoint: 0
+    open_issues_at_checkpoint: 1
     merged_changes: "PR #84 CORS; #81 deploy preflight; #83 SQLite delta; #82 readiness audit; #106 RAG evaluator core; #107 private/shared memory; #108 landing/runbook and mobile viewport fix"
     exact_head_checks: "PR #108 Quality Sentinels 40896977015 success; Graphify 40896977071 success; includes Chromium and published-site smoke"
     runtime_boundary: "GitHub Pages browser smoke verified; live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
@@ -281,8 +281,8 @@ current_checkpoint:
   main_graphify: "PR #108 Graphify run 40896977071 success on exact PR head; artifact-only, no runtime dependency."
   main_gateway: "No new Gateway workflow was triggered by the frontend-only PR #108; latest gateway-related exact-head evidence is tracked in individual PR records."
   merged_prs: "84 CORS canonicalization; 81 deployment preflight; 83 in-memory SQLite delta; 82 readiness audit; 106 RAG evaluator core; 107 private/shared memory UI; 108 launch page/runbook and viewport fix"
-  open_pull_requests: "GitHub API snapshot: #78 only"
-  open_issues: "Research workstreams #88, #89, #90, #91, #92, #96, #97, #98, #99, #100, #101, #102, #103, #104; consolidate research-only tracking without hiding real release blockers"
+  open_pull_requests: "No unrelated open PRs; current state-refresh PR #109 is excluded from its own check"
+  open_issues: "Issue #111 only: consolidated owner/live-host release gates; research-only workstreams #88–#92 and #96–#104 closed after transferring unresolved actions"
   freshness_guard: "scripts/check_project_state_freshness.py; compares exact SHA and exact queue. A refresh commit must update ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG and snapshot; it no longer requires artificial edits to checker/tests/workflow."
   runtime_boundary: "GitHub Pages browser smoke verified; live VPS/Tunnel/Ollama, actual model performance, voice/device, OAuth/Drive and target-host measurements remain unverified"
-  next: "Merge this state refresh after exact-head checks; reconcile/close stale PR #78; triage research issues into completed research vs explicit owner/live-host release gates"
+  next: "Merge this state refresh after exact-head checks; issue #111 is the only remaining open item because it requires owner/live-host evidence"
