@@ -3053,8 +3053,8 @@ permalink: /
       const estimatedWindowChars = Math.floor(contextTokens * 1.25);
       const outputReserveChars = Math.floor(Math.min(2048, contextTokens * 0.25) * 1.25);
       const promptReserveChars = Math.max(0, Number(systemPromptChars) || 0);
-      // Leave room for role/message framing and separators added when history is serialized.
-      const serializationReserveChars = 64;
+      // Reserve headroom for role/message framing, separators, and provider-side prompt overhead.
+      const serializationReserveChars = 400;
       return Math.max(0, estimatedWindowChars - outputReserveChars - promptReserveChars - serializationReserveChars);
     }
     function normalizeHistoryContent(content) {
