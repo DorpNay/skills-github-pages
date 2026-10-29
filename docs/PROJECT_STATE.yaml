@@ -2,15 +2,15 @@ project_state:
   version: 4
   reviewed_on: "2026-10-29"
   root_orienter:
-    status: "Verified main 375bcc10efe7b3a0e3e999b6504face1974a7cce after reconciled landing/runbook merge; live runtime remains unverified"
-    branch: "docs/reconcile-research-and-state-20261029"
-    base_main: "375bcc10efe7b3a0e3e999b6504face1974a7cce"
+    status: "Verified main c848212832b44a7f4c8ae08cf090de590a47cc89 after PR #109 state reconciliation; post-merge checks and live runtime remain unverified"
+    branch: "security/pin-github-actions-sha-20261029"
+    base_main: "c848212832b44a7f4c8ae08cf090de590a47cc89"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #84 CORS; #81 deploy preflight; #83 SQLite delta; #82 readiness audit; #106 RAG evaluator core; #107 private/shared memory; #108 landing/runbook and mobile viewport fix"
     exact_head_checks: "PR #108 Quality Sentinels 40896977015 success; Graphify 40896977071 success; includes Chromium and published-site smoke"
     runtime_boundary: "GitHub Pages browser smoke verified; live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
-    next: "Refresh state snapshot and close stale PR #78 only after preserving its unique decisions/roadmap changes; consolidate research-only issues into explicit remaining release gates"
+    next: "Verify PR #112 exact-head checks; then owner must configure main ruleset and provide live-host/device/evaluation evidence tracked by issue #111. No merge or deploy without owner approval."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
