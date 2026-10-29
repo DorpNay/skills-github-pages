@@ -2926,7 +2926,7 @@ permalink: /
         hideStatus();if(provider==='alandi')void refreshCloudStatus();
       }
     }
-    async async function connectAlandiCloud(){
+    async function connectAlandiCloud(){
       if(isTestingProviderConnection)return;
       const {baseUrl,model,key}=getCloudSettings();
       const cloudSettingsStillCurrent=()=>{const current=getCloudSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
