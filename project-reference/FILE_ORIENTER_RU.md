@@ -4,16 +4,16 @@
 
 ## Текущая контрольная точка — 2026-10-29
 
-- Текущий main: `c848212832b44a7f4c8ae08cf090de590a47cc89` (документационный merge PR #109; post-merge CI на этом SHA ещё не подтверждён).
-- PR #108 merged: launch page + first-stack runbook + mobile viewport fix; Quality Sentinels `40896977015` и Graphify `40896977071` passed на exact PR HEAD. Это не live VPS acceptance.
+- Текущий main: `80597f61c000d691e95d67893edea60e75da1033` (PR #113 — immutable GitHub Actions pins). Quality Sentinels #40915070855, Pages #40915070655, Gateway #40915070886, provenance #40915070933 и Graphify #40915070939 прошли на exact main SHA.
+- PR #115 merged: composer popover scrim, modal backdrop blur, inert first outside tap for toolbar/language/chat-row menus; exact-head Quality/Chromium and published-site smoke passed. PR #114 merged: empty user prompt by default, Gemini reset removed, history serialization headroom added. PR #71 mobile composer fix remains native-device unverified.
 - PR #107 merged: private/shared browser memory scope, explicit promotion confirmation, local-only private context, privacy E2E.
 - PR #106 merged: offline RAG evaluator core; smoke fixture не является production golden set.
 - PRs #84/#81/#83/#82 merged: CORS canonicalization, deployment-template preflight, SQLite in-memory delta fix, readiness audit.
 - PRs #80/#85/#86/#87 closed as superseded/deferred after preserving the useful implementation in reconciled PRs #106/#107/#108; their remaining unique documentation is handled through this reconciliation.
-- PR #109 merged; at this checkpoint open PRs: 0. Verify the live queue before acting.
+- PR #113, #114 and #115 merged; at this checkpoint open PRs: 0. Verify the live queue before acting.
 - Exact queue markers: open PRs (0): none; open issues (1): #111.
 - Only open issue: #111, the consolidated release-gates tracker. Research-only issues #88–#92 and #96–#104 are closed with explicit comments pointing to the retained implementation/live-host blockers.
-- Still unverified: live VPS/Tunnel/Ollama, target-hardware RAM/latency, voice artifacts and device, OAuth/Drive credentials, real labelled RAG corpus, main branch protection/rulesets.
+- Still unverified: native iPhone Safari/keyboard/touch, live VPS/Tunnel/Ollama, target-hardware RAM/latency, voice artifacts/device playback, OAuth/Drive credentials, real labelled RAG corpus, and main branch protection/rulesets.
 
 Этот документ содержит исторические записи ниже; их SHA, очередь и статусы не являются текущей истиной. Актуальный контрольный блок находится непосредственно после этого вводного абзаца и сверяется workflow `Project State Freshness`.
 
