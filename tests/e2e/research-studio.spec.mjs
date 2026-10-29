@@ -4,7 +4,7 @@ const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
 
 async function configureCustomProvider(page) {
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(element => element.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('studio-settings-model');
