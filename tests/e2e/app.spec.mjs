@@ -1648,8 +1648,14 @@ test('request-only project context is sent once and does not change the active c
   await expect(page.locator('#currentProjectSelect')).toHaveValue('project-alpha');
   await page.locator('#contextPickerButton').click();
   await page.locator('#requestProjectChecks input[data-request-project-id="project-beta"]').check();
+  // The first tap outside the context popover only dismisses it; a second tap opens the sidebar.
+  const sidebarToggle=page.locator('[data-action="toggle-sidebar"]');
+  const sidebarToggleBox=await sidebarToggle.boundingBox();
+  expect(sidebarToggleBox).not.toBeNull();
+  await page.mouse.click(sidebarToggleBox.x+sidebarToggleBox.width/2,sidebarToggleBox.y+sidebarToggleBox.height/2);
+  await expect(page.locator('#composerPopoverScrim')).toBeHidden();
+  await sidebarToggle.click();
   // Selecting one-shot context in Alpha must not leak into Beta if the user switches chats before sending.
-  await page.locator('[data-action="toggle-sidebar"]').click();
   if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
   const betaGroup=page.locator('#projectNavigationList details[data-project-id="project-beta"]');
   await betaGroup.locator(':scope > summary').click();
