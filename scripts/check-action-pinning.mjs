@@ -11,7 +11,7 @@ const workflowDir = ".github/workflows";
 const workflowFiles = readdirSync(workflowDir)
   .filter((name) => name.endsWith(".yml") || name.endsWith(".yaml"))
   .sort();
-const useLine = /^\s*uses:\s*([^\s#]+)(?:\s+#.*)?$/gm;
+const useLine = /^\s*(?:-\s*)?uses:\s*([^\s#]+)(?:\s+#.*)?$/gm;
 const immutableSha = /^[0-9a-f]{40}$/i;
 const problems = [];
 
