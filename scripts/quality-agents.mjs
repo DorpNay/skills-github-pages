@@ -49,6 +49,17 @@ const suites = {
       includes('function connectAlandiCloud()', 'The cloud UI must verify a real model response before showing connected.');
       includes('Never show a green connection lamp for proxy text, HTML, or an unknown error body.', 'HTTP 200 with unrecognized text must not be considered a successful model probe.');
       includes("globalMemoryEnabled=safeGet(STORAGE.globalMemoryEnabled)==='true'", 'Global memory must be explicitly enabled, not added to every request by default.');
+      includes("indexedDB.open('AI_Agent_DB_v87', 2)", 'Memory schema migration must create a separate shared store without deleting legacy private notes.');
+      includes("database.createObjectStore('sharedMemory')", 'Shared memory must use a distinct IndexedDB object store.');
+      includes("const privateMemories=selectedProviderForMemory==='alandi'?await MemoryDB.getAll():[]", 'Private notes must only be read for the local aLandi route.');
+      includes("if((safeGet(STORAGE.provider)||'alandi')!=='alandi')return [];", 'Server graph memory must never be included in third-party prompts.');
+      includes("let candidates=getApiCandidates(preferredModel)", 'Provider candidate routing must be filterable before a request is sent.');
+      includes("if(containsPrivateMemory)candidates=candidates.filter(candidate=>candidate.provider==='alandi')", 'A request carrying private memory must never fall back to a third-party provider.');
+      includes("activeChatForPrivacy?.privateMemoryUsed && selectedProvider!=='alandi'", 'Chats that consumed private memory must not later upload their history to a third-party provider.');
+      includes("[Команда сохранения в личную память; содержимое не дублируется в истории чата.]", 'Private remember commands must not leave the private fact in provider-bound chat history.');
+      includes("[Команда сохранения факта в общую память; значение не дублируется в истории чата.]", 'Shared-memory command values must only enter later prompts through the explicit shared-memory opt-in.');
+      includes("promote.dataset.action", 'Private-to-shared promotion must be a per-fact user action.');
+      includes("data-action=\"save-shared-memory\"", 'The user must be able to save a fact directly to the separate shared store.');
       includes('function loadProjects()', 'Project data must have a bounded and validated loader.');
       includes('chat.projectMemoryEnabled&&activeProject', 'Project memory must be opt-in at chat scope.');
       includes('data-action="export-project"', 'Project bundle export must be available.');
