@@ -2351,7 +2351,7 @@ test('search presets and function settings fit one line, localize, and persist p
 
   await setAgentMode(page, true);
   await expect(page.locator('#toggleMultiAgent')).toBeChecked();
-  await expect(page.locator('#modeHint')).toContainText('Многоэтапный');
+  await expect(page.locator('#modeHint')).toContainText('Конвейер');
   await setSkillPreset(page, 'code-review');
   await expect(page.locator('#toggleMultiAgent')).toBeChecked();
   await expect(page.locator('#modeHint')).toContainText('Код');
