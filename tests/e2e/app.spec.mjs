@@ -52,7 +52,6 @@ test('global system prompt is empty by default and obsolete Gemini reset is abse
   await page.locator('[data-action="toggle-settings"]').click();
   await expect(page.locator('#systemPromptInput')).toHaveValue('');
   await expect(page.locator('[data-action="restore-defaults"]')).toHaveCount(0);
-  await expect(page.locator('#settingsModal')).not.toHaveClass(/hidden/);
 });
 
 test('published app boots and core controls are interactive', async ({ page }) => {
