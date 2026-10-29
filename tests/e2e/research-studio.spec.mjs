@@ -97,7 +97,7 @@ test('Search & Research Studio closes on Escape without starting a request', asy
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#sidebar [data-action="open-research-studio"]').click();
-  const studio = page.getByRole('dialog', { name: 'Search & Research' });
+  const studio = page.getByRole('dialog', { name: 'Студия исследования' });
   await expect(studio).toBeVisible();
 
   await page.keyboard.press('Escape');
