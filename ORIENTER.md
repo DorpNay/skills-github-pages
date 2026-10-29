@@ -4,13 +4,13 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 
 ## Verified repository checkpoint — 2026-10-29
 
-- Last main action: docs: preserve engineering and runtime readiness audits.
-- **Baseline main SHA:** `337e38690af8f22a712c6442192c5ea62d354c3d` (commit dated 2026-10-28; documentation-only follow-up).
-- **Last functional-code checkpoint:** `91557e4eab1b122341bed578cdf4775ff867007f` — parent of the latest documentation-only main commit. PR #77 RRF fusion, PR #76 Graphify workflow, and PR #72 search/functions UX are already on main.
-- **Checks:** main SHA 337e386 passed Quality Sentinels run [#40639031308](https://github.com/DorpNay/skills-github-pages/actions/runs/40639031308) and Pages deployment [#40639030224](https://github.com/DorpNay/skills-github-pages/actions/runs/40639030224). The code parent passed Gateway [#40637941350](https://github.com/DorpNay/skills-github-pages/actions/runs/40637941350), Quality [#40637941308](https://github.com/DorpNay/skills-github-pages/actions/runs/40637941308), Graphify [#40637941303](https://github.com/DorpNay/skills-github-pages/actions/runs/40637941303), and Pages [#40637941951](https://github.com/DorpNay/skills-github-pages/actions/runs/40637941951).
-- **Live queue at this checkpoint:** 9 open PRs (#78, #80, #81, #82, #83, #84, #85, #86, #87) and 14 open issues (#88–#92 and #96–#104). Exact IDs are recorded in `docs/project-state-snapshot.json`; verify them live before acting.
-- **Important open work:** PR #78 is still open and its base SHA is the older functional checkpoint `91557e4eab1b122341bed578cdf4775ff867007f`; its docs are not yet integrated into current main.
-- **Runtime boundary:** GitHub Pages and listed CI gates are verified; live VPS/gateway, installed model/voice artifacts, microphone/device playback, and target-host performance remain unverified.
+- **Current main SHA:** `c848212832b44a7f4c8ae08cf090de590a47cc89` — reconciled first-stack landing/runbook and mobile viewport regression fix.
+- **Latest functional baseline:** current main SHA above. Earlier functional milestones include private/shared memory UI (`2b2ecec5310aa25c695cfd8cb8198f2bb329cb51`) and the offline RAG evaluator core (`ef6e9b490ff964a8f77abdcd40a8448ab1c57d3d`).
+- **Merged and verified on exact PR heads:** #84 CORS canonicalization, #81 deployment repository preflight, #83 in-memory SQLite delta persistence, #82 readiness/model policy audit, #106 RAG evaluator core, #107 private/shared memory UI, and #108 launch page/runbook.
+- **Latest PR-head CI:** PR #108 Quality Sentinels run [#40896977015](https://github.com/DorpNay/skills-github-pages/actions/runs/40896977015) and Graphify run [#40896977071](https://github.com/DorpNay/skills-github-pages/actions/runs/40896977071) succeeded, including Chromium and published-site smoke. This is not proof of a live VPS deployment.
+- **Open PR queue at this checkpoint:** none; PR #109 has merged. Verify live before acting.
+- **Open issue queue:** #111 tracks owner/live-host release gates. Research-only issues #88–#92 and #96–#104 were closed after their findings and unresolved actions were transferred to #111.
+- **Runtime boundary:** GitHub Pages browser smoke is verified; live VPS/gateway, Ollama model performance, voice artifacts/device playback, OAuth credentials and target-host measurements remain unverified.
 
 ## First-read order
 
