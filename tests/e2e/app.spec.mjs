@@ -1944,6 +1944,11 @@ test('mobile composer stays visible at the bottom in new chats across viewport r
     };
   });
   const assertDocked = async () => {
+    // Let resize/visualViewport handlers settle before asserting final geometry.
+    await expect.poll(async () => {
+      const metrics = await measureDock();
+      return metrics.bottom - metrics.viewportHeight;
+    }, { timeout: 3000 }).toBeGreaterThan(-5);
     const metrics = await measureDock();
     expect(metrics.position).not.toBe('fixed');
     expect(metrics.centered).toBe(false);
