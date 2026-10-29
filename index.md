@@ -313,6 +313,10 @@ permalink: /
     </div>
     <div class="px-3 py-2 border-b border-gray-800"><button type="button" data-action="open-research-studio" class="w-full flex items-center gap-2 rounded-xl border border-cyan-800/70 bg-cyan-950/30 hover:bg-cyan-900/40 px-3 py-2.5 text-left text-xs font-semibold text-cyan-100"><span aria-hidden="true">⌕</span><span>Search &amp; Research Studio</span><span class="ml-auto text-[10px] text-cyan-300/80">↗</span></button></div>
     <section id="projectPanel" class="px-3 py-2 border-t border-gray-800 space-y-2" aria-label="Проекты и настройки проекта">
+      <div class="grid grid-cols-2 gap-2 mb-2">
+        <button type="button" data-action="open-project-create" data-i18n="createProject" class="rounded-lg border border-cyan-800 bg-cyan-950/40 px-2 py-2 text-left text-xs font-semibold">＋ Создать проект</button>
+        <button type="button" data-action="open-project-settings" data-i18n="projectSettingsAction" class="rounded-lg border border-gray-700 px-2 py-2 text-left text-xs">⚙ Настройки проекта</button>
+      </div>
       <div id="projectNavigation" class="space-y-1.5">
         <button id="projectNavToggle" type="button" data-action="toggle-project-navigation" aria-expanded="false" aria-controls="projectNavigationList" class="w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold project-nav-heading">
           <span>▣ <span data-i18n="projectsTitle">Проекты</span></span><span id="projectNavChevron" aria-hidden="true">⌄</span>
@@ -321,7 +325,6 @@ permalink: /
           <span aria-hidden="true">○</span><span data-i18n="noProjectNav">Без проекта</span><span id="projectlessChatCount" class="ml-auto text-[10px] text-gray-500">0</span>
         </button>
         <div id="projectNavigationList" class="hidden pl-2 space-y-1" aria-label="Список проектов"></div>
-        <button type="button" data-action="open-project-settings" class="w-full rounded-lg px-3 py-2 text-left text-xs text-gray-400 hover:text-white hover:bg-white/5">⚙ Настройки проекта и памяти</button>
       </div>
       <details id="projectManagerDetails" class="rounded-xl border border-gray-800">
         <summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">⚙ <span data-i18n="manageProject">Настройки проекта</span></summary>
@@ -341,8 +344,8 @@ permalink: /
           <label for="projectInstructionsInput" class="block text-[11px] text-gray-400" data-i18n="projectInstructionsLabel">Инструкции проекта</label>
           <textarea id="projectInstructionsInput" rows="3" maxlength="6000" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs resize-y" placeholder="Цель, стиль, ограничения и критерии результата"></textarea>
           <div class="grid grid-cols-2 gap-2">
-            <button type="button" data-action="create-project" class="bg-cyan-900/70 hover:bg-cyan-800 border border-cyan-800 rounded-lg py-2 text-xs" data-i18n="createProject">＋ Создать проект</button>
-            <button type="button" data-action="save-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="saveProject">Сохранить изменения</button>
+            <button id="createProjectSubmit" type="button" data-action="create-project" class="hidden bg-cyan-900/70 hover:bg-cyan-800 border border-cyan-800 rounded-lg py-2 text-xs" data-i18n="createProject">＋ Создать проект</button>
+            <button id="saveProjectSubmit" type="button" data-action="save-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="saveProject">Сохранить изменения</button>
           </div>
 <details id="memoryToolsDetails" class="rounded-xl border border-gray-800">
             <summary class="cursor-pointer select-none px-3 py-2 text-xs font-semibold">🧠 Общая память и факты</summary>
@@ -1214,7 +1217,7 @@ permalink: /
       ru:{
         settingsTitle:'⚙️ Настройки',sidebarTitle:'💬 Проекты и чаты',newChat:'＋ Новый чат',clearChat:'🗑 Очистить чат',newPersonalChat:'＋ Новый личный чат',
         memoryLabel:'🧠 Долгосрочная память',memoryPlaceholder:'Факт, который нужно запомнить',exportChats:'Экспорт',importChats:'Импорт',
-        appearanceTitle:'Внешний вид',themeLabel:'Тема',motionLabel:'Анимации',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',providerGroupPrimary:'aLandi Cloud · основной маршрут',providerGroupExternal:'Сторонние провайдеры',cloudRouteChoiceHelp:'Выбери один маршрут в поле «Провайдер API»: aLandi Cloud или один сторонний провайдер.',cloudCardTitle:'Собственное облако aLandi',
+        appearanceTitle:'Внешний вид',themeLabel:'Тема',motionLabel:'Анимации',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',providerGroupPrimary:'aLandi Cloud · основной маршрут',providerGroupExternal:'Сторонние провайдеры',cloudRouteChoiceHelp:'Выбери один маршрут в поле «Провайдер API»: aLandi Cloud или один сторонний провайдер.',cloudCardTitle:'Собственное облако aLandi',
         cloudCardCopy:'Настрой собственный gateway. Маршрут выбирается отдельно в списке провайдеров; зелёный статус требует настоящего ответа модели.',
         cloudBaseUrl:'Адрес твоего gateway',cloudModel:'Модель gateway',cloudApiKey:'Ключ доступа к твоему gateway',
         cloudConnect:'Проверить и подключить',providerLabel:'Провайдер API',
@@ -1233,7 +1236,7 @@ permalink: /
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Projects & chats',newChat:'＋ New chat',clearChat:'🗑 Clear chat',newPersonalChat:'＋ New personal chat',
         memoryLabel:'🧠 Long-term memory',memoryPlaceholder:'A fact to remember',exportChats:'Export',importChats:'Import',
-        appearanceTitle:'Appearance',themeLabel:'Theme',motionLabel:'Motion',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',providerGroupPrimary:'aLandi Cloud · primary route',providerGroupExternal:'Third-party providers',cloudRouteChoiceHelp:'Choose one route in the API provider field: aLandi Cloud or one third-party provider.',cloudCardTitle:'Your aLandi cloud',
+        appearanceTitle:'Appearance',themeLabel:'Theme',motionLabel:'Motion',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',providerGroupPrimary:'aLandi Cloud · primary route',providerGroupExternal:'Third-party providers',cloudRouteChoiceHelp:'Choose one route in the API provider field: aLandi Cloud or one third-party provider.',cloudCardTitle:'Your aLandi cloud',
         cloudCardCopy:'Configure your own gateway. Choose the active route separately in the provider list; green status requires a real model response.',
         cloudBaseUrl:'Your gateway URL',cloudModel:'Gateway model',cloudApiKey:'Gateway access key',
         cloudConnect:'Check & connect',providerLabel:'API provider',
@@ -1668,6 +1671,11 @@ permalink: /
       if(!safeSet(STORAGE.projects,JSON.stringify(projects)))showToast('Проекты не удалось сохранить в локальном хранилище. Экспортируй важные данные.','error');
     }
     let selectedProjectForSettingsId=null;
+    let creatingProject=false;
+    function syncProjectEditorMode(){
+      $('createProjectSubmit')?.classList.toggle('hidden',!creatingProject);
+      $('saveProjectSubmit')?.classList.toggle('hidden',creatingProject);
+    }
     function getProjectForChat(chat){
       if(arguments.length===0) return projects.find(project=>project.id===selectedProjectForSettingsId)||null;
       return chat?.projectId ? projects.find(project=>project.id===chat.projectId)||null : null;
@@ -1842,16 +1850,17 @@ permalink: /
       const active=document.activeElement;
       const preserveDraft=options.preserveDraft===true&&[ $('projectNameInput'),$('projectInstructionsInput') ].includes(active);
       const chat=getCurrentChat(),project=getProjectForChat(chat);
-      if(!selectedProjectForSettingsId||!projects.some(item=>item.id===selectedProjectForSettingsId))selectedProjectForSettingsId=project?.id||null;
-      const settingsProject=projects.find(item=>item.id===selectedProjectForSettingsId)||null;
+      if(!creatingProject&&(!selectedProjectForSettingsId||!projects.some(item=>item.id===selectedProjectForSettingsId)))selectedProjectForSettingsId=project?.id||null;
+      const settingsProject=creatingProject?null:(projects.find(item=>item.id===selectedProjectForSettingsId)||null);
       const selected=chat?.projectId&&project?project.id:'';
       select.replaceChildren();
       const none=document.createElement('option');none.value='';none.textContent=getUiLanguage()==='en'?'No project · personal chat':'Без проекта · личный чат';select.appendChild(none);
       for(const item of projects){const option=document.createElement('option');option.value=item.id;option.textContent=item.name;select.appendChild(option);}
       select.value=selected;
       $('projectMemoryScopeSelect').value=settingsProject?.memoryScope==='project-and-global'?'project-and-global':'project-only';
-      $('projectSettingsStatus').textContent=settingsProject?(getUiLanguage()==='en'?'Editing project: ':'Настраивается проект: ')+settingsProject.name:(getUiLanguage()==='en'?'No project selected — create one below.':'Проект не выбран — создай его ниже.');
-      $('projectMemoryScopeSelect').disabled=!settingsProject;
+      $('projectSettingsStatus').textContent=creatingProject?(getUiLanguage()==='en'?'Creating a new project. Choose its memory scope before creating.':'Создание проекта. Выбери область памяти перед созданием.'):settingsProject?(getUiLanguage()==='en'?'Editing project: ':'Настраивается проект: ')+settingsProject.name:(getUiLanguage()==='en'?'No project selected — create one below.':'Проект не выбран — создай его ниже.');
+      $('projectMemoryScopeSelect').disabled=!settingsProject&&!creatingProject;
+      syncProjectEditorMode();
       $('projectMemoryToggle').checked=chat?.projectMemoryEnabled===true;
       $('projectMemoryToggle').disabled=!project;
       const serverToggle=$('serverProjectMemoryToggle');if(serverToggle){serverToggle.checked=chat?.serverProjectMemoryEnabled===true;serverToggle.disabled=!project;}
@@ -1860,7 +1869,7 @@ permalink: /
       $('projectSummary').textContent=project
         ? (getUiLanguage()==='en'?project.name+' · '+chats.filter(c=>c.projectId===project.id).length+' chats · '+project.memory.length+' memory items':project.name+' · чатов: '+chats.filter(c=>c.projectId===project.id).length+' · фактов памяти: '+project.memory.length)
         : (getUiLanguage()==='en'?'This chat is not linked to a project.':'Чат не привязан к проекту.');
-      if(!preserveDraft){$('projectNameInput').value=settingsProject?.name||'';$('projectInstructionsInput').value=settingsProject?.instructions||'';}
+      if(!preserveDraft){$('projectNameInput').value=creatingProject?'':(settingsProject?.name||'');$('projectInstructionsInput').value=creatingProject?'':(settingsProject?.instructions||'');}
       const memBox=$('projectMemoryBox');memBox.replaceChildren();
       if(!settingsProject||!settingsProject.memory.length){
         const empty=document.createElement('p');empty.textContent=settingsProject?(getUiLanguage()==='en'?'No project memories yet.':'Пока нет фактов проектной памяти.'):(getUiLanguage()==='en'?'Select or create a project first.':'Сначала выбери или создай проект.');memBox.appendChild(empty);
@@ -1882,13 +1891,14 @@ permalink: /
       const input=$('projectNameInput'),name=input.value.trim().slice(0,100);
       if(!name){input.focus();showToast(getUiLanguage()==='en'?'Enter a project name first.':'Сначала введи название проекта.','error');return;}
       if(projects.length>=200){showToast('Достигнут предел локальных проектов (200).','error');return;}
-      const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectInstructionsInput').value.trim().slice(0,6000),memoryScope:'project-only',memory:[],createdAt:now,updatedAt:now};
-      projects.unshift(project);selectedProjectForSettingsId=project.id;persistProjects();
+      const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectInstructionsInput').value.trim().slice(0,6000),memoryScope:$('projectMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only',memory:[],createdAt:now,updatedAt:now};
+      creatingProject=false;projects.unshift(project);selectedProjectForSettingsId=project.id;persistProjects();
       const chat=getCurrentChat();chat.projectId=project.id;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
       persistChats();renderProjectUI();renderChatList();
       showToast((getUiLanguage()==='en'?'Project created: ':'Создан проект: ')+name);
     }
     function saveProject(){
+      if(creatingProject){createProject();return;}
       const project=getProjectForChat();
       if(!project){showToast(getUiLanguage()==='en'?'Select a project in the Projects list or create one.':'Выбери проект в списке или создай новый.','error');return;}
       const name=$('projectNameInput').value.trim().slice(0,100);
@@ -4789,6 +4799,9 @@ permalink: /
           }
           case 'clear-request-context': selectedRequestProjectIds.clear();saveRequestContextForActiveChat();renderRequestProjectChoices();break;
           case 'remove-draft-attachment': pendingComposerAttachments=pendingComposerAttachments.filter(item=>item.id!==control.dataset.attachmentId);renderDraftAttachments();break;
+          case 'open-project-create': {
+            creatingProject=true;selectedProjectForSettingsId=null;$('projectManagerDetails').open=true;$('projectMemoryScopeSelect').value='project-only';renderProjectUI();$('projectNameInput').focus({preventScroll:true});break;
+          }
           case 'create-project': createProject();break;
           case 'save-project': saveProject();break;
           case 'toggle-project-navigation': {
@@ -4800,7 +4813,7 @@ permalink: /
             $('chatSection').querySelector('summary')?.focus();break;
           }
           case 'open-project-settings': {
-            selectedProjectForSettingsId=projects.some(project=>project.id===control.dataset.projectId)?control.dataset.projectId:null;
+            creatingProject=false;selectedProjectForSettingsId=projects.some(project=>project.id===control.dataset.projectId)?control.dataset.projectId:null;
             $('projectManagerDetails').open=true;renderProjectUI();$('projectManagerDetails').scrollIntoView({block:'nearest',behavior:'smooth'});break;
           }
           case 'detach-current-chat': moveCurrentChatToProject('');break;
