@@ -1,0 +1,64 @@
+name: Project State Freshness
+
+on:
+  pull_request:
+    paths:
+      - "ORIENTER.md"
+      - "project-reference/FILE_ORIENTER_RU.md"
+      - "docs/PROJECT_STATE.yaml"
+      - "docs/VOLLEY_LOG.md"
+      - "docs/project-state-snapshot.json"
+      - "scripts/check_project_state_freshness.py"
+      - "tests/test_project_state_freshness.py"
+      - ".github/workflows/project-state-freshness.yml"
+  push:
+    branches: [main]
+    paths:
+      - "ORIENTER.md"
+      - "project-reference/FILE_ORIENTER_RU.md"
+      - "docs/PROJECT_STATE.yaml"
+      - "docs/VOLLEY_LOG.md"
+      - "docs/project-state-snapshot.json"
+      - "scripts/check_project_state_freshness.py"
+      - "tests/test_project_state_freshness.py"
+      - ".github/workflows/project-state-freshness.yml"
+  schedule:
+    - cron: "23 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+concurrency:
+  group: project-state-freshness-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-state:
+    name: Verify current orientation and GitHub queue
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run deterministic freshness-checker unit tests
+        run: python -m unittest discover -s tests -p 'test_project_state_freshness.py' -v
+      - name: Check the PR against current main and exclude this PR from the queue
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: python scripts/check_project_state_freshness.py --mode pull_request --exclude-pr "$PR_NUMBER"
+      - name: Check main checkpoint and exact live queue
+        if: github.event_name != 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python scripts/check_project_state_freshness.py --mode main

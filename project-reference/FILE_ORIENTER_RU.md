@@ -2,7 +2,18 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-Актуальная проверенная контрольная точка: main `4fc342b468e370c792f1e87e77a20fda4de6bbaa`; Quality Sentinels run `40634598755` прошёл все 6 jobs, включая Chromium и опубликованный Pages smoke; Pages deployment `40634598517` успешен. Очередь на момент проверки: PR #70, #72 и #74. Эти SHA и статусы — снимок; перед каждым merge проверять актуальный head и его обязательные проверки.
+Этот документ содержит исторические записи ниже; их SHA, очередь и статусы не являются текущей истиной. Актуальный контрольный блок находится непосредственно после этого вводного абзаца и сверяется workflow `Project State Freshness`.
+
+## Текущая проверенная контрольная точка — 2026-10-29
+
+- **Last main action:** docs: preserve engineering and runtime readiness audits.
+- **Baseline main SHA:** `337e38690af8f22a712c6442192c5ea62d354c3d` (2026-10-28T05:36:59Z; documentation-only; parent `91557e4eab1b122341bed578cdf4775ff867007f`).
+- **Последний функциональный checkpoint:** `91557e4eab1b122341bed578cdf4775ff867007f`; на main уже находятся PR #77 (RRF), #76 (Graphify workflow) и #72 (search/functions UX).
+- **Точные проверки main:** Quality Sentinels #40639031308 и Pages deployment #40639030224 прошли на `337e38690af8f22a712c6442192c5ea62d354c3d`. На code-identical parent `91557e4eab1b122341bed578cdf4775ff867007f` прошли Gateway #40637941350, Quality #40637941308, Graphify #40637941303 и Pages #40637941951.
+- **GitHub API snapshot от 2026-10-29:** open PRs (9): #78, #80, #81, #82, #83, #84, #85, #86, #87; open issues (14): #88, #89, #90, #91, #92, #96, #97, #98, #99, #100, #101, #102, #103, #104.
+- **PR #78:** остаётся открытым; его base SHA — `91557e4eab1b122341bed578cdf4775ff867007f`, поэтому он отстаёт от актуального main на документационный коммит `337e38690af8f22a712c6442192c5ea62d354c3d`. Не считать его изменения влитым состоянием и не закрывать/сливать без проверки конфликтов и exact-head gates.
+- **Runtime boundary:** GitHub Pages и указанные CI run-ы подтверждены; live VPS/gateway, установленные model/voice artifacts, реальное микрофонное воспроизведение и performance на целевом хосте не подтверждены.
+- **Проверка актуальности:** `scripts/check_project_state_freshness.py`; ежедневный workflow `.github/workflows/project-state-freshness.yml`. Точный SHA и точные ID очереди сверяются с GitHub API; проверяемый PR исключается только из собственного сравнения. При любом ином изменении очередь/ориентир должны быть согласованно обновлены.
 
 ## 1. Быстрый маршрут
 
@@ -21,7 +32,7 @@
 12. **Голос и вложения:** `gateway/voice/`, `gateway/tests/test_audio_*.py`, `tests/e2e/audio-transcription.spec.mjs`, `tests/e2e/document-attachments.spec.mjs`.
 13. **Реальные browser checks:** `tests/e2e/`, workflow Quality Sentinels; отдельная GitHub Pages публикация не означает, что VPS gateway обновлён.
 
-## 2. Ключевые статусы на момент проверки
+## 2. Исторические milestones реализации (не current queue/status)
 
 - PR #45: local document extraction + authenticated capabilities — merged; server flag off by default, actual VPS configuration unverified.
 - PR #48: non-queueing local audio concurrency — merged.
@@ -61,14 +72,14 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Never equate code merged, CI passed, Pages deployed and VPS configured; these are separate statuses.
 
 
-## Текущий checkpoint — root orienter and queue cleanup (2026-10-27)
+## Historical checkpoint — root orienter and queue cleanup (2026-10-27)
 
 - Root `AGENTS.md` теперь явно направляет агента сначала к этому orienter и state file.
 - PR #63 merged at `623f1865ee4021debade9000bbecf6004c6b4cfa`; its checks: Quality Sentinels, Chromium, published Pages smoke and provenance all passed.
 - Live queue checked after merge: 0 open PRs, 0 open issues. This is a snapshot; always refresh before edits.
 - Graphify is not installed/run: the previous execution container could not resolve github.com. The next real implementation step is a network-enabled isolated pilot, not claiming graph integration.
 
-## Текущий checkpoint — open-source triage (2026-10-27)
+## Historical checkpoint — open-source triage (2026-10-27)
 
 - Решения по дополнительному списку внесены в docs/OPEN_SOURCE_TRIAGE_RU.md; техники и способы применения — в docs/TECHNIQUE_REGISTER_RU.md.
 - Состояние и продолжение записаны в docs/PROJECT_STATE.yaml; журнал этапов — в docs/VOLLEY_LOG.md.
@@ -79,14 +90,14 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Ограничение текущего окружения: `git clone https://github.com/...` не удался из-за DNS (`Could not resolve host: github.com`); не утверждать, что Graphify был установлен или запускался.
 
 
-## Checkpoint — root orienter rollout
+## Historical checkpoint — root orienter rollout
 
 - Текущая ветка документации: `docs/root-orienter-checkpoint-20261027`; корневой `AGENTS.md` дополнен протоколом первого чтения, ведения чекпоинтов и отдельной границей Graphify vs memory graph.
 - На main в момент старта: `623f1865ee4021debade9000bbecf6004c6b4cfa`; PR/Issues очередь была пустой.
 - Следующий шаг после merge этого docs PR: Graphify pilot в среде с сетевым доступом и локальной копией репозитория. Если текущая среда не позволяет checkout/install, зафиксировать blocker и перейти к доступным безопасным улучшениям, не выдавая пилот за выполненный.
 
 
-## Checkpoint — reconcile current main and evidence ledgers (2026-10-27)
+## Historical checkpoint — reconcile current main and evidence ledgers (2026-10-27)
 
 - **Current main at start of this stage:** `b91aab316c224588baea99fbb9b966b8865de0a6`.
 - **Queue:** live GitHub API returned 0 open PRs and 0 open issues.
@@ -96,7 +107,7 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - **Next action:** wait/check Quality run #40522824202; then run Graphify only if a network-enabled isolated execution workspace is available. Meanwhile inspect product modules and only implement changes whose source, tests, and rollback can be verified.
 
 
-## Checkpoint — PR #65 merged; architecture map and Graphify research (2026-10-27)
+## Historical checkpoint — PR #65 merged; architecture map and Graphify research (2026-10-27)
 
 - PR #65 merged into main at `3887b408988e0476251736a8e7a3e3374eb2ce58`; exact PR-head checks 7/7 passed (integrity, security, context, Jekyll, Chromium, published-site smoke, provenance).
 - PR #66 merged into main at `1faf60164b9a0f82eb5e0c56b143ba90499be4a5`; exact PR-head Quality checks and provenance passed; post-merge Pages and provenance passed. Post-merge Quality run #40530196483 was still in progress at last poll.
@@ -108,7 +119,7 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Next: confirm exact-main Quality/Pages/Provenance; inspect official code-only workflow and ignore semantics; run isolated pilot only in a network-enabled workspace; meanwhile choose a bounded product change supported by current source/tests.
 
 
-## Checkpoint — PR #66 merged (2026-10-27)
+## Historical checkpoint — PR #66 merged (2026-10-27)
 
 - Merge SHA: `1faf60164b9a0f82eb5e0c56b143ba90499be4a5`.
 - Added curated architecture map `docs/ALANDI_ARCHITECTURE_MAP_RU.md`, README link, source-triage/technique updates, and `.graphifyignore` exclusions. This is not a generated AST graph.
@@ -119,7 +130,7 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Next action: inspect the Graphify pilot workflow's PR-head CI and its artifact/logs; record actual coverage, runtime, memory and query usefulness before deciding whether a generated graph should be retained. Do not add Graphify to runtime.
 
 
-## Checkpoint — Graphify code-only CI pilot added (2026-10-27)
+## Historical checkpoint — Graphify code-only CI pilot added (2026-10-27)
 
 - Current base before this PR: `82beb7fcddbe9a1438e811693c76bc731d3a5de3`; PR #67 is merged. Post-merge Quality run #40531356851, Pages run #40531354887 and provenance run #40531357120 all passed.
 - New workflow: `.github/workflows/graphify-pilot.yml`. It runs on a narrowly filtered PR, on main when the workflow is added/changed, or manually via `workflow_dispatch`.
@@ -129,7 +140,7 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - License/version discrepancy: release tag `v0.9.96` LICENSE and PyPI metadata identify Apache-2.0, while default-branch `pyproject.toml` appeared to show older `0.1.14`/MIT metadata. The workflow pins the published package release; do not assume every upstream ref has identical provenance.
 
 
-## Checkpoint — local helper-memory suggestions vertical slice (2026-10-27)
+## Historical checkpoint — local helper-memory suggestions vertical slice (2026-10-27)
 
 - Current main baseline before PR #69 sync: `9aa36465158c27c49ff647a6ce349b46a6e1151e`; PR #69 is open. PR #70 is independent and must be reviewed separately.
 - The helper uses an operator-configured local Ollama model, blank/disabled by default. Request is manual, bounded and authenticated; suggestions remain text candidates and are saved one at a time only after explicit user choice.
@@ -138,7 +149,7 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - No live inference or target-VPS model/resource claim is made. Keep `ALANDI_HELPER_MODEL` blank until the owner chooses and installs an exact local model tag.
 
 
-## Checkpoint — mobile composer docking (2026-10-27)
+## Historical checkpoint — mobile composer docking (2026-10-27)
 
 - Base main: `4c9096999fbb3e1265150c420b136066c555285b`; active PR #71, branch `fix/mobile-composer-docking-20261027`.
 - Current source centered `#composerFooter` on an empty chat via `body.composer-centered` and hid the empty-chat welcome message. That makes keyboard/visual-viewport stability the first priority rather than changing layout speculatively elsewhere.
@@ -147,7 +158,7 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Full legacy request audit: `docs/LEGACY_UX_REQUEST_AUDIT_RU.md`. Already-present features include per-message copy/viewer and jump-to-latest (PR #61), web-driven attachment-type menu and per-chat row actions (PR #35); do not rewrite them wholesale. Outstanding larger verticals are function/search dropdowns, overlay/focus/outside-click contracts, provider/settings simplification, and persisting/resetting modes per chat.
 
 
-## Checkpoint — PR #75 local TTS voice selection merged (2026-10-28)
+## Historical checkpoint — PR #75 local TTS voice selection merged (2026-10-28)
 
 - PR #75 (feat/configurable-local-tts-voices-20261028) merged by squash at 4296a8decc12710fafb0a1a4e9644cd8f00b2dfa; reviewed head was 006d5d564b6afd4606a604baab0cf1f78e745565.
 - Exact PR-head checks succeeded: Gateway #40633704413; Quality #40633704436 (6/6, including Chromium and published Pages smoke); provenance #40633704435; dead-code audit #40633704411. These are PR-head results, not post-merge main evidence.
@@ -156,7 +167,7 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Remaining ship gates: exact artifact hashes and individual model/voice/phonemizer license review; compatible binaries and models installed on the real VPS; current post-merge main CI; real microphone and device playback; measured latency/RAM/quality. No local test, live VPS, or physical-device validation is claimed.
 - Next: verify current main SHA and post-merge checks, inspect remaining voice TODO/model provenance, then prepare the owner’s first-run checklist without enabling flags or fetching models automatically.
 
-## Checkpoint — first-request runbook reconciliation (2026-10-28)
+## Historical checkpoint — first-request runbook reconciliation (2026-10-28)
 
 - Updated docs/START_HERE_RU.md to provide the ordered path from account/VPS/Tunnel setup to first authenticated text completion, then local PDF/DOCX/XLSX extraction, then three separate voice scenarios: record-to-editable-transcript, same-chat half-duplex dialogue, and per-message TTS mini-player/voice selection.
 - Corrected stale quickstart text that incorrectly labelled PDF/DOCX/XLSX extraction unsupported. Extraction still requires the server flag ALANDI_DOCUMENT_EXTRACTION_ENABLED=true, a configured private gateway, supported format and size within configured limits; it remains off by default.
