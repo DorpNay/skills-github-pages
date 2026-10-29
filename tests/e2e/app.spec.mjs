@@ -22,6 +22,17 @@ async function setSkillPreset(page, preset) {
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
 }
 
+async function configureCustomProvider(page, modelName) {
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill(modelName);
+  await page.locator('#apiKey').fill('e2e-settings-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+}
+
 
 async function dismissComposerPopoverWithOutsideTap(page, targetSelector) {
   const target = page.locator(targetSelector);
@@ -242,7 +253,7 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await expect(page.locator('#chatBox')).toBeVisible();
   await expect(page.locator('#userInput')).toBeEditable();
   await expect(page.locator('#searchModeSummary')).toBeVisible();
-  await expect(page.locator('#searchModeSummary')).toContainText('обычный');
+  await expect(page.locator('#searchModeSummary')).toContainText('Обычный');
   await expect(page.locator('#toggleSearch')).toBeChecked();
   await expect(page.locator('#functionsMenuSummary')).toBeVisible();
   await expect(page.locator('#toggleMultiAgent')).not.toBeChecked();
@@ -1299,6 +1310,115 @@ test('Deep mode caps tool fan-out, suppresses repeated calls, and still returns 
 
 
 
+test('expanded web search does not expand the quick execution budget', async ({ page }) => {
+  let modelCalls = 0;
+  const toolAvailability = [];
+  let tavilyMaxResults = 0;
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    const body = route.request().postDataJSON();
+    modelCalls++;
+    toolAvailability.push(Array.isArray(body.tools) && body.tools.length > 0);
+    if (modelCalls === 1) {
+      expect(body.tools?.some(tool => tool.function?.name === 'web_search')).toBe(true);
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+        model: 'effort-search-model',
+        choices: [{ message: { role: 'assistant', content: null, tool_calls: [{
+          id: 'expanded-search-call', type: 'function',
+          function: { name: 'web_search', arguments: JSON.stringify({ query: 'expanded search fixture' }) }
+        }] }, finish_reason: 'tool_calls' }]
+      }) });
+    }
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+      model: 'effort-search-model', choices: [{ message: { role: 'assistant', content: 'Expanded search completed in quick mode.' } }]
+    }) });
+  });
+  await page.route('https://api.tavily.com/search', async route => {
+    tavilyMaxResults = route.request().postDataJSON().max_results;
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+      results: Array.from({ length: 6 }, (_, index) => ({
+        title: 'Expanded result ' + index,
+        url: 'https://example.com/expanded-' + index,
+        content: 'Expanded search evidence ' + index
+      }))
+    }) });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => localStorage.setItem('ai_tavily_key', 'e2e-tavily-key'));
+  await configureCustomProvider(page, 'effort-search-model');
+  await chooseSearchMode(page, 'more');
+  await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
+  await page.locator('#userInput').fill('Find evidence using expanded web search.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Expanded search completed in quick mode.', { timeout: 20000 });
+  expect(tavilyMaxResults).toBe(6);
+  expect(toolAvailability).toEqual([true, false]);
+  expect(modelCalls).toBe(2);
+});
+
+test('thorough processing keeps standard web-search breadth', async ({ page }) => {
+  let modelCalls = 0;
+  const toolAvailability = [];
+  let tavilyMaxResults = 0;
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    const body = route.request().postDataJSON();
+    modelCalls++;
+    toolAvailability.push(Array.isArray(body.tools) && body.tools.length > 0);
+    if (modelCalls === 1) {
+      expect(body.tools?.some(tool => tool.function?.name === 'web_search')).toBe(true);
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+        model: 'effort-search-model',
+        choices: [{ message: { role: 'assistant', content: null, tool_calls: [{
+          id: 'standard-search-call', type: 'function',
+          function: { name: 'web_search', arguments: JSON.stringify({ query: 'standard search fixture' }) }
+        }] }, finish_reason: 'tool_calls' }]
+      }) });
+    }
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+      model: 'effort-search-model', choices: [{ message: { role: 'assistant', content: 'Standard search completed in thorough mode.' } }]
+    }) });
+  });
+  await page.route('https://api.tavily.com/search', async route => {
+    tavilyMaxResults = route.request().postDataJSON().max_results;
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+      results: Array.from({ length: 3 }, (_, index) => ({
+        title: 'Standard result ' + index,
+        url: 'https://example.com/standard-' + index,
+        content: 'Standard search evidence ' + index
+      }))
+    }) });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => localStorage.setItem('ai_tavily_key', 'e2e-tavily-key'));
+  await configureCustomProvider(page, 'effort-search-model');
+  await page.locator('#modeDeep').click();
+  await chooseSearchMode(page, 'normal');
+  await page.locator('#userInput').fill('Find evidence using standard web search carefully.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Standard search completed in thorough mode.', { timeout: 20000 });
+  expect(tavilyMaxResults).toBe(3);
+  expect(toolAvailability).toEqual([true, true]);
+  expect(modelCalls).toBe(2);
+});
+
+test('thorough mode with web search off does not expose web tools', async ({ page }) => {
+  let toolsAvailable = null;
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    const body = route.request().postDataJSON();
+    toolsAvailable = Array.isArray(body.tools) && body.tools.length > 0;
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+      model: 'effort-search-model', choices: [{ message: { role: 'assistant', content: 'Offline thorough analysis completed.' } }]
+    }) });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await configureCustomProvider(page, 'effort-search-model');
+  await page.locator('#modeDeep').click();
+  await chooseSearchMode(page, 'offline');
+  await page.locator('#userInput').fill('Analyze the supplied context without web access.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Offline thorough analysis completed.', { timeout: 20000 });
+  expect(toolsAvailable).toBe(false);
+});
+
 test('web_search falls back to public sources when Tavily is not configured', async ({ page }) => {
   let modelCalls = 0, tavilyCalls = 0, publicSourceCalls = 0;
   await page.route('https://api.example.test/v1/models', async route => route.fulfill({
@@ -2215,16 +2335,21 @@ test('search presets and function settings fit one line, localize, and persist p
   expect(searchRect.x + searchRect.width).toBeLessThanOrEqual(functionsRect.x + 3);
 
   await chooseSearchMode(page, 'more');
-  await expect(page.locator('#searchModeSummary')).toContainText('искать больше');
-  await expect(page.locator('#modeHint')).toContainText('расширенный бюджет');
+  await expect(page.locator('#searchModeSummary')).toContainText('Расширенный');
+  await expect(page.locator('#modeHint')).toContainText('Веб: расширенный');
+  await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
   await chooseSearchMode(page, 'offline');
   await expect(page.locator('#toggleSearch')).not.toBeChecked();
-  await expect(page.locator('#modeHint')).toContainText('веб-инструменты выключены');
+  await expect(page.locator('#modeHint')).toContainText('Веб: выкл.');
+  await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
   await chooseSearchMode(page, 'normal');
 
   await setAgentMode(page, true);
   await expect(page.locator('#toggleMultiAgent')).toBeChecked();
+  await expect(page.locator('#modeHint')).toContainText('Многоэтапный');
   await setSkillPreset(page, 'code-review');
+  await expect(page.locator('#toggleMultiAgent')).toBeChecked();
+  await expect(page.locator('#modeHint')).toContainText('Код');
   await expect.poll(() => page.evaluate(() => {
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
     const current = localStorage.getItem('ai_current_chat_v87');
@@ -2234,7 +2359,7 @@ test('search presets and function settings fit one line, localize, and persist p
   await page.locator('#functionsMenuSummary').click();
   await page.locator('[data-action="open-function-panel"][data-function="connectors"]').click();
   await expect(page.locator('#functionPanelModal')).toBeVisible();
-  await expect(page.locator('#functionPanelDescription')).toContainText('коннекторы');
+  await expect(page.locator('#functionPanelDescription')).toContainText('интеграции');
   await expect(page.locator('#functionPanelDescription')).toContainText('не подключены');
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
 
@@ -2250,13 +2375,16 @@ test('search presets and function settings fit one line, localize, and persist p
   await page.locator('#functionsMenuSummary').click();
   await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
   await expect(page.locator('#skillPresetSelect')).toHaveValue('auto');
+  await expect(page.locator('#functionPanelTitle')).toContainText('Профиль задачи');
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
 
   await page.locator('#languageSummary').click();
   await page.locator('#languageMenu [data-action="set-language"][data-language="en"]').click();
-  await expect(page.locator('#modeDeep')).toContainText('Longer');
+  await expect(page.locator('#modeDeep')).toContainText('Thorough');
+  await expect(page.locator('#modeToolbar [role="group"]')).toHaveAttribute('aria-label', 'Effort');
   await expect(page.locator('#functionsMenuSummary')).toContainText('Functions');
-  await expect(page.locator('#searchModeSummary')).toContainText('Search');
+  await expect(page.locator('#searchModeSummary')).toContainText('Web');
+  await expect(page.locator('#modeHint')).toContainText('Quick · Web: standard · Direct · Auto');
 
   // The first tap outside an open toolbar menu must only close it.
   await page.locator('#functionsMenuSummary').click();
