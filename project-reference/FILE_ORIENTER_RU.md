@@ -4,7 +4,7 @@
 
 ## Текущая контрольная точка — 2026-10-29
 
-- Текущий main: `375bcc10efe7b3a0e3e999b6504face1974a7cce`.
+- Текущий main: `c848212832b44a7f4c8ae08cf090de590a47cc89` (документационный merge PR #109; post-merge CI на этом SHA ещё не подтверждён).
 - PR #108 merged: launch page + first-stack runbook + mobile viewport fix; Quality Sentinels `40896977015` и Graphify `40896977071` passed на exact PR HEAD. Это не live VPS acceptance.
 - PR #107 merged: private/shared browser memory scope, explicit promotion confirmation, local-only private context, privacy E2E.
 - PR #106 merged: offline RAG evaluator core; smoke fixture не является production golden set.
@@ -17,10 +17,10 @@
 
 Этот документ содержит исторические записи ниже; их SHA, очередь и статусы не являются текущей истиной. Актуальный контрольный блок находится непосредственно после этого вводного абзаца и сверяется workflow `Project State Freshness`.
 
-## Текущая проверенная контрольная точка — 2026-10-29
+## Историческая контрольная точка — 2026-10-28
 
 - **Last main action:** docs: preserve engineering and runtime readiness audits.
-- **Baseline main SHA:** `337e38690af8f22a712c6442192c5ea62d354c3d` (2026-10-28T05:36:59Z; documentation-only; parent `91557e4eab1b122341bed578cdf4775ff867007f`).
+- **Baseline main SHA на историческом срезе:** `337e38690af8f22a712c6442192c5ea62d354c3d` (2026-10-28T05:36:59Z; documentation-only; parent `91557e4eab1b122341bed578cdf4775ff867007f`).
 - **Последний функциональный checkpoint:** `91557e4eab1b122341bed578cdf4775ff867007f`; на main уже находятся PR #77 (RRF), #76 (Graphify workflow) и #72 (search/functions UX).
 - **Точные проверки main:** Quality Sentinels #40639031308 и Pages deployment #40639030224 прошли на `337e38690af8f22a712c6442192c5ea62d354c3d`. На code-identical parent `91557e4eab1b122341bed578cdf4775ff867007f` прошли Gateway #40637941350, Quality #40637941308, Graphify #40637941303 и Pages #40637941951.
 - **GitHub API snapshot от 2026-10-29:** open PRs (9): #78, #80, #81, #82, #83, #84, #85, #86, #87; open issues (14): #88, #89, #90, #91, #92, #96, #97, #98, #99, #100, #101, #102, #103, #104.
