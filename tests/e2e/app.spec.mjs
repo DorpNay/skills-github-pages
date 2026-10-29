@@ -203,7 +203,7 @@ test('request context stays project-only and agent label describes the real pipe
 
   await page.locator('#functionsMenuSummary').click();
   await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
-  await expect(page.locator('#functionPanelDescription')).toContainText(/не реализован|not implemented/i);
+  await expect(page.locator('#functionPanelDescription')).toContainText(/четыре этапа|four stages/i);
   await expect(page.locator('#agentModeControl')).toBeVisible();
 });
 
@@ -275,7 +275,7 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await expect(page.locator('#modelName')).toHaveValue('gemini-3.6-flash');
   await page.locator('[data-action="close-settings"]').click();
   await chooseSearchMode(page, 'offline');
-  await expect(page.locator('#searchModeSummary')).toContainText('без веба');
+  await expect(page.locator('#searchModeSummary')).toContainText(/выкл\./i);
   await page.reload();
   await expect(page.locator('#searchModeSummary')).toContainText('без веба');
   await chooseSearchMode(page, 'normal');
@@ -1343,8 +1343,8 @@ test('expanded web search does not expand the quick execution budget', async ({ 
     }) });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.evaluate(() => localStorage.setItem('ai_tavily_key', 'e2e-tavily-key'));
   await configureCustomProvider(page, 'effort-search-model');
+  await page.evaluate(() => localStorage.setItem('ai_tavily_key', 'e2e-tavily-key'));
   await chooseSearchMode(page, 'more');
   await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
   await page.locator('#userInput').fill('Find evidence using expanded web search.');
@@ -2418,7 +2418,7 @@ test('search presets and function settings fit one line, localize, and persist p
   await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('#toggleSearch')).toBeChecked();
   await expect(page.locator('#toggleMultiAgent')).not.toBeChecked();
-  await expect(page.locator('#searchModeSummary')).toContainText('обычный');
+  await expect(page.locator('#searchModeSummary')).toContainText(/обычный/i);
   await page.locator('#functionsMenuSummary').click();
   await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
   await expect(page.locator('#skillPresetSelect')).toHaveValue('auto');
