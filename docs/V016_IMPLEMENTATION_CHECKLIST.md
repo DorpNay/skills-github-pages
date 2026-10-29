@@ -194,21 +194,26 @@ The following items cover the initial fixation document plus manifesto sections 
 - [x] PR #71: stable bottom composer for empty/populated chats and visualViewport-aware textarea; native iPhone Safari remains a separate manual gate.
 - [x] PR #114: optional global user system prompt empty by default; obsolete Gemini reset removed; legacy default migrates to empty; context history budget reserves serialization/provider overhead.
 - [x] PR #115: dim/blur scrim for attachment/context/voice popovers; modal backdrop blur respects reduced-transparency; first outside tap closes composer popover or toolbar/language/chat-row menu without activating underlying controls. Exact-head Chromium and published-site smoke passed.
-- [~] Remaining UI work after PRs #117–#119 and current branch `fix/sidebar-memory-order-20261030`: complete RU/EN microcopy audit and native iPhone Safari verification. Sidebar order/status and duplicate theme/language controls are implemented on this branch but remain pending exact-head CI. Live gateway/provider, connector sync, independent agent teams and voice transport remain separate runtime/infrastructure gates.
+- [x] PR #120 merged at `2bda22229cba3576628f92c821bb6e1562d8abc5`: dedicated memory section, ordered project/chat navigation, live status lines, Research Studio placement and synchronized sidebar theme/language preferences.
 - [ ] Native iPhone Safari, software keyboard, edge-swipe and touchcancel behavior remain unverified. Do not mark complete based only on Chromium.
 
 
 ## Supplement — consolidated interface closure, 2026-10-30
 
 - [x] PR #118 merged: chat-scoped import/export, merge-with-existing-history behavior, ID collision handling, validation and size/count bounds; exact-head quality and browser gates passed.
-- [~] Follow-up branch `fix/ui-request-closure-20261030` implements UX-21–UX-25 above. It also adds deterministic browser assertions for composer geometry/persistence, route grouping, request-context boundaries, truthful agent wording, and project-first actions with persisted creation memory scope.
-- [ ] Do not mark follow-up delivered until exact-head Chromium and published Pages smoke pass.
+- [x] PR #119 merged: UX-21–UX-25 delivered, including persisted composer position, clear provider route grouping, request-context boundaries, truthful staged-workflow wording, project-first actions and persisted project memory scope.
+- [x] PR #120 merged: sidebar hierarchy, memory status, Research Studio placement and synchronized theme/language controls delivered.
 - [ ] Native iPhone Safari keyboard/safe-area/focus and real touch interaction remain unverified. Provider credentials, live gateway, connector OAuth/sync, independent agent processes and full audio transport remain infrastructure/runtime gates rather than UI acceptance claims.
 - Research basis reviewed for this slice: [MDN VisualViewport](https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport), [MDN VirtualKeyboard API](https://developer.mozilla.org/en-US/docs/Web/API/VirtualKeyboard_API), [Playwright best practices](https://playwright.dev/docs/best-practices), [OWASP HTML5 Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html), [Springer Nature Frontend Playbook](https://github.com/springernature/frontend-playbook), and [awesome-agent-skills](https://github.com/danielteles/awesome-agent-skills). Applied patterns selectively to the existing vanilla-JS/Jekyll app; no framework rewrite or new dependency added.
 
 
 ## Supplement — sidebar hierarchy and preference synchronization, 2026-10-30
 
-- [~] Branch `fix/sidebar-memory-order-20261030` implements UX-26 and UX-27: moves personal/shared memory controls into a dedicated first sidebar section, adds live memory/project status lines, moves Research Studio below chats, pins sidebar theme/language controls at the bottom, and adds a synchronized language selector to Settings.
-- [ ] Exact-head Chromium, Jekyll, integrity/security/context sentinels and published Pages smoke must pass before merge.
-- [ ] Real iPhone Safari keyboard/touch/accessibility behavior remains unverified; the new tests cover DOM order, live status updates and cross-surface preference synchronization in Chromium only.
+- [x] PR #120 merged: UX-26 and UX-27 delivered with dedicated memory controls, live status lines, Research Studio placement and synchronized theme/language preferences.
+- [ ] Real iPhone Safari keyboard/touch/accessibility behavior remains unverified; Chromium tests cover DOM order, live status updates and cross-surface preference synchronization only.
+
+## Supplement — orthogonal chat settings, 2026-10-30
+
+- [~] Branch `feat/chat-settings-orthogonal-controls-20261030`: effort controls only execution budget; web-search scope controls only availability/result breadth; structured workflow and task profile are separate; Research Studio uses current chat settings without mutation.
+- [ ] Exact-head tests must pass for Quick+Expanded, Thorough+Standard, Thorough+Off, RU/EN, per-chat persistence and Research Studio non-mutation before merge.
+- [ ] Native iPhone Safari and live gateway/provider behavior remain unverified.
