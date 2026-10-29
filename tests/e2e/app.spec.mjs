@@ -54,6 +54,37 @@ test('global system prompt is empty by default and obsolete Gemini reset is abse
   await expect(page.locator('[data-action="restore-defaults"]')).toHaveCount(0);
 });
 
+test('composer popover dims the page and the first outside tap only dismisses it', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#userInput').fill('SCRIM_FIRST_TAP_SENTINEL');
+  await page.locator('#attachTextButton').click();
+  await expect(page.locator('#attachmentMenu')).toBeVisible();
+  await expect(page.locator('#composerPopoverScrim')).toBeVisible();
+
+  const send = await page.locator('#sendBtn').boundingBox();
+  expect(send).not.toBeNull();
+  await page.mouse.click(send.x + send.width / 2, send.y + send.height / 2);
+  await expect(page.locator('#attachmentMenu')).toBeHidden();
+  await expect(page.locator('#composerPopoverScrim')).toBeHidden();
+  await expect(page.locator('#userInput')).toHaveValue('SCRIM_FIRST_TAP_SENTINEL');
+  await expect(page.locator('#chatBox')).not.toContainText('SCRIM_FIRST_TAP_SENTINEL');
+});
+
+test('first outside tap dismisses an open chat row menu without activating the control underneath', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const menu = page.locator('#sidebar .chat-row-menu').first();
+  await expect(menu).toBeVisible();
+  await menu.locator('summary').click();
+  await expect(menu).toHaveAttribute('open', '');
+  await page.locator('#modeDeep').click();
+  await expect(menu).not.toHaveAttribute('open', '');
+  await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'false');
+});
+
 test('published app boots and core controls are interactive', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
