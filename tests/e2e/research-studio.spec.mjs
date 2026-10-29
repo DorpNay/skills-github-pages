@@ -13,7 +13,7 @@ test('Search & Research Studio opens on demand and pre-fills the current draft',
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#userInput').fill('Compare official sources about browser security and cite the evidence.');
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.getByRole('button', { name: /Search & Research Studio/ }).click();
+  await page.locator('#sidebar [data-action="open-research-studio"]').click();
 
   const studio = page.getByRole('dialog', { name: 'Search & Research' });
   await expect(studio).toBeVisible();
