@@ -2344,6 +2344,11 @@ test('search presets and function settings fit one line, localize, and persist p
   await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
   await chooseSearchMode(page, 'normal');
 
+  await page.locator('#functionsMenuSummary').click();
+  await expect(page.locator('#functionsMenu [data-function="research"]')).toHaveCount(0);
+  await expect(page.locator('#functionsMenu .toolbar-menu-option')).toHaveCount(3);
+  await page.locator('#functionsMenuSummary').click();
+
   await setAgentMode(page, true);
   await expect(page.locator('#toggleMultiAgent')).toBeChecked();
   await expect(page.locator('#modeHint')).toContainText('Многоэтапный');
