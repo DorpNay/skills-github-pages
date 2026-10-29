@@ -214,6 +214,6 @@ The following items cover the initial fixation document plus manifesto sections 
 
 ## Supplement — orthogonal chat settings, 2026-10-30
 
-- [~] Branch `feat/chat-settings-orthogonal-controls-20261030`: effort controls only execution budget; web-search scope controls only availability/result breadth; structured workflow and task profile are separate; Research Studio uses current chat settings without mutation.
+- [~] Branch `feat/chat-settings-orthogonal-controls-20261030`: effort controls only execution budget; web-search scope controls only availability/result breadth; structured workflow and task profile are separate; Research Studio uses current chat settings without mutation; primary mobile controls use 44px hit areas.
 - [ ] Exact-head tests must pass for Quick+Expanded, Thorough+Standard, Thorough+Off, RU/EN, per-chat persistence and Research Studio non-mutation before merge.
 - [ ] Native iPhone Safari and live gateway/provider behavior remain unverified.
