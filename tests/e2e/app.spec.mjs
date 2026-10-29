@@ -92,6 +92,30 @@ test('composer position persists and provider selection separates aLandi Cloud f
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
 });
 
+test('project quick actions open a real create form and persist the chosen memory scope', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await expect(page.locator('#projectPanel > div').first()).toContainText('Создать проект');
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await expect(page.locator('#projectManagerDetails')).toHaveAttribute('open', '');
+  await expect(page.locator('#projectNameInput')).toHaveValue('');
+  await expect(page.locator('#projectMemoryScopeSelect')).toBeEnabled();
+  await expect(page.locator('#createProjectSubmit')).toBeVisible();
+  await expect(page.locator('#saveProjectSubmit')).toBeHidden();
+
+  await page.locator('#projectNameInput').fill('Shared scope project');
+  await page.locator('#projectInstructionsInput').fill('A scoped project instruction');
+  await page.locator('#projectMemoryScopeSelect').selectOption('project-and-global');
+  await page.locator('#createProjectSubmit').click();
+  await expect(page.locator('#projectSettingsStatus')).toContainText('Shared scope project');
+  await expect.poll(() => page.evaluate(() => {
+    const projects = JSON.parse(localStorage.getItem('ai_projects_v1') || '[]');
+    return projects.find(project => project.name === 'Shared scope project')?.memoryScope;
+  })).toBe('project-and-global');
+  await expect(page.locator('#saveProjectSubmit')).toBeVisible();
+  await expect(page.locator('#createProjectSubmit')).toBeHidden();
+});
+
 test('language switch updates provider group labels without deleting options', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#languageSummary').click();
