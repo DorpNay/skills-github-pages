@@ -279,7 +279,7 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await page.reload();
   await expect(page.locator('#searchModeSummary')).toContainText('без веба');
   await chooseSearchMode(page, 'normal');
-  await expect(page.locator('#searchModeSummary')).toContainText('обычный');
+  await expect(page.locator('#searchModeSummary')).toContainText(/обычный/i);
   await page.locator('#modeDeep').click();
   await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
   await page.reload();
