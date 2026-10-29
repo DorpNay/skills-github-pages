@@ -566,30 +566,29 @@ permalink: /
   </header>
 
   <div id="modeToolbar" class="bg-gray-950 px-3 py-2 border-b border-gray-800 shrink-0 space-y-1.5">
-    <div class="mode-hint-row"><p id="modeHint" class="mode-hint text-[10px] text-gray-500 leading-tight" title="Быстро ограничивает число раундов инструментов; Дольше разрешает больше раундов. Выбранная строка поиска уточняет бюджет веб-поиска.">Быстро · обычный веб-поиск · исследование отдельно.</p><span id="pyStatus" class="hidden sm:inline-flex shrink-0 text-[9px] text-gray-500" title="Python загрузится только после запуска блока кода">Py: по запросу</span></div>
+    <div class="mode-hint-row"><p id="modeHint" class="mode-hint text-[10px] text-gray-500 leading-tight" aria-live="polite" title="Объём работы и ширина веб-поиска управляются независимо.">Быстро · Веб: обычный · Прямой · Авто</p><span id="pyStatus" class="hidden sm:inline-flex shrink-0 text-[9px] text-gray-500" title="Python загрузится только после запуска блока кода">Py: по запросу</span></div>
     <div class="flex items-center gap-2 text-xs">
-      <span class="text-gray-400 shrink-0" data-i18n="modeLabel">Думать:</span>
+      <span class="text-gray-400 shrink-0" data-i18n="modeLabel">Объём:</span>
       <div class="flex flex-1 min-w-0 rounded-lg bg-gray-900 p-1 gap-1" role="group" aria-label="Режим обработки">
         <button type="button" id="modeFast" data-i18n="modeFast" aria-pressed="true" class="flex-1 min-w-0 rounded-md px-2 py-1 bg-blue-600 font-semibold">⚡ Быстро</button>
-        <button type="button" id="modeDeep" data-i18n="modeDeep" aria-pressed="false" class="flex-1 min-w-0 rounded-md px-2 py-1 text-gray-300">🔬 Дольше</button>
+        <button type="button" id="modeDeep" data-i18n="modeDeep" aria-pressed="false" class="flex-1 min-w-0 rounded-md px-2 py-1 text-gray-300">🔬 Тщательно</button>
       </div>
     </div>
     <div class="flex items-center gap-2 text-xs">
       <details id="searchModeMenu" class="toolbar-menu flex-1 min-w-0">
-        <summary id="searchModeSummary" class="toolbar-menu-summary">🌐 Поиск: обычный ▾</summary>
+        <summary id="searchModeSummary" class="toolbar-menu-summary">🌐 Веб: обычный ▾</summary>
         <div class="toolbar-menu-panel">
-          <button type="button" data-action="select-search-mode" data-search-mode="normal" class="toolbar-menu-option"><strong data-i18n="searchModeNormal">Обычный веб-поиск</strong><small data-i18n="searchModeNormalHelp">Ограниченный поиск по необходимости.</small></button>
-          <button type="button" data-action="select-search-mode" data-search-mode="more" class="toolbar-menu-option"><strong data-i18n="searchModeMore">Искать больше</strong><small data-i18n="searchModeMoreHelp">Повышенный лимит раундов и более полные результаты.</small></button>
-          <button type="button" data-action="select-search-mode" data-search-mode="offline" class="toolbar-menu-option"><strong data-i18n="searchModeOffline">Без веб-поиска</strong><small data-i18n="searchModeOfflineHelp">Веб-инструменты отключены; облачному API всё ещё нужен интернет.</small></button>
+          <button type="button" data-action="select-search-mode" data-search-mode="normal" class="toolbar-menu-option"><strong data-i18n="searchModeNormal">Обычный</strong><small data-i18n="searchModeNormalHelp">Стандартный охват результатов и источников; не меняет бюджет обработки.</small></button>
+          <button type="button" data-action="select-search-mode" data-search-mode="more" class="toolbar-menu-option"><strong data-i18n="searchModeMore">Расширенный</strong><small data-i18n="searchModeMoreHelp">Больше результатов и источников на каждый поиск; не увеличивает число раундов.</small></button>
+          <button type="button" data-action="select-search-mode" data-search-mode="offline" class="toolbar-menu-option"><strong data-i18n="searchModeOffline">Выкл.</strong><small data-i18n="searchModeOfflineHelp">Веб-инструменты выключены; облачному API всё ещё может требоваться интернет.</small></button>
         </div>
       </details>
       <details id="functionsMenu" class="toolbar-menu flex-1 min-w-0">
         <summary id="functionsMenuSummary" class="toolbar-menu-summary" data-i18n="functionsMenuLabel">Функции ▾</summary>
         <div class="toolbar-menu-panel toolbar-menu-panel-right">
-          <button type="button" data-action="open-function-panel" data-function="research" class="toolbar-menu-option" data-i18n="functionResearch">🔎 Исследование</button>
-          <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option" data-i18n="functionAgents">🤖 Агенты</button>
-          <button type="button" data-action="open-function-panel" data-function="skills" class="toolbar-menu-option" data-i18n="functionSkills">🧩 Навыки</button>
-          <button type="button" data-action="open-function-panel" data-function="connectors" class="toolbar-menu-option" data-i18n="functionConnectors">🔌 Коннекторы</button>
+          <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option" data-i18n="functionAgents">🧭 Структурированный разбор</button>
+          <button type="button" data-action="open-function-panel" data-function="skills" class="toolbar-menu-option" data-i18n="functionSkills">🧩 Профиль задачи</button>
+          <button type="button" data-action="open-function-panel" data-function="connectors" class="toolbar-menu-option" data-i18n="functionConnectors">🔌 Интеграции</button>
         </div>
       </details>
     </div>
@@ -665,16 +664,17 @@ permalink: /
 
   <div id="researchStudioModal" class="hidden fixed inset-0 z-[65] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="researchStudioTitle">
     <section class="w-full max-w-2xl max-h-[92dvh] overflow-y-auto rounded-2xl border border-cyan-800/60 bg-gray-950 p-4 sm:p-6 shadow-2xl space-y-4">
-      <header class="flex items-start justify-between gap-3"><div><p class="text-[10px] uppercase tracking-[.22em] font-bold text-cyan-300">aLandi · Studio</p><h2 id="researchStudioTitle" class="mt-1 text-lg font-bold">Search &amp; Research</h2><p class="mt-1 text-xs leading-relaxed text-gray-400">Отдельное рабочее окно для сложного поиска. Обычный чат останется компактным.</p></div><button type="button" data-action="close-research-studio" class="rounded-lg px-2 py-1 text-gray-400 hover:text-white" aria-label="Закрыть студию">✕</button></header>
-      <label for="researchStudioPrompt" class="block text-xs font-semibold text-gray-300">Что нужно исследовать?</label>
-      <textarea id="researchStudioPrompt" rows="5" maxlength="12000" class="w-full resize-y rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm outline-none focus:border-cyan-500" placeholder="Например: сравни первичные источники, проверь спорные утверждения и подготовь выводы со ссылками."></textarea>
-      <div class="grid gap-3 sm:grid-cols-2">
-        <div class="rounded-xl border border-gray-800 p-3 space-y-2"><label for="researchStudioDepth" class="block text-xs font-semibold">Глубина</label><select id="researchStudioDepth" class="w-full rounded-lg border border-gray-700 bg-gray-900 p-2 text-sm"><option value="fast">Быстрый поиск</option><option value="deep" selected>Глубокое исследование</option></select><p class="text-[10px] leading-relaxed text-gray-500">Глубокий режим использует существующий многоэтапный конвейер, если он включён и доступен.</p></div>
-        <label class="flex items-start gap-2 rounded-xl border border-gray-800 p-3 text-xs leading-relaxed text-gray-300"><input id="researchStudioWeb" type="checkbox" class="mt-0.5" checked><span><strong class="block">Разрешить веб-поиск</strong><span class="text-gray-500">Сохраняется как настройка поиска. Если выключить, запрос не будет использовать веб-инструменты.</span></span></label>
+      <header class="flex items-start justify-between gap-3"><div><p class="text-[10px] uppercase tracking-[.22em] font-bold text-cyan-300">aLandi · Studio</p><h2 id="researchStudioTitle" class="mt-1 text-lg font-bold" data-i18n="researchStudioTitle">Студия исследования</h2><p class="mt-1 text-xs leading-relaxed text-gray-400" data-i18n="researchStudioDescription">Окно подготовки исследовательского запроса. Запуск использует текущие параметры этого чата.</p></div><button type="button" data-action="close-research-studio" class="rounded-lg px-2 py-1 text-gray-400 hover:text-white" aria-label="Закрыть студию" data-i18n-aria-label="researchStudioClose">✕</button></header>
+      <label for="researchStudioPrompt" class="block text-xs font-semibold text-gray-300" data-i18n="researchStudioPromptLabel">Что нужно исследовать?</label>
+      <textarea id="researchStudioPrompt" rows="5" maxlength="12000" class="w-full resize-y rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm outline-none focus:border-cyan-500" placeholder="Например: сравни первичные источники, проверь спорные утверждения и подготовь выводы со ссылками." data-i18n-placeholder="researchStudioPromptPlaceholder"></textarea>
+      <div class="rounded-xl border border-gray-800 bg-gray-900/60 p-3 space-y-1.5">
+        <p class="text-[10px] uppercase tracking-wide font-semibold text-gray-500" data-i18n="researchStudioCurrentSettingsLabel">Текущие параметры чата</p>
+        <p id="researchStudioSettingsSummary" class="text-xs font-semibold text-gray-200" aria-live="polite">Быстро · Веб: обычный · Прямой · Авто</p>
+        <p class="text-[11px] leading-relaxed text-gray-500" data-i18n="researchStudioSettingsHelp">Студия использует эти параметры и не изменяет их. Чтобы изменить их, закрой окно и настрой панель чата.</p>
       </div>
-      <p class="rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-[11px] leading-relaxed text-gray-400">Для исследования своих документов прикрепи материалы в чате или явно выбери контекст проекта. Студия не загружает файлы и не подключает внешние сервисы сама. Найденные страницы считаются недоверенными источниками, а не инструкциями.</p>
-      <div class="flex flex-wrap justify-end gap-2"><button type="button" data-action="close-research-studio" class="rounded-xl border border-gray-700 px-3 py-2 text-sm text-gray-300 hover:bg-gray-800">Отмена</button><button type="button" data-action="start-research-studio" class="rounded-xl bg-cyan-600 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-500">Начать исследование ↗</button></div>
-      <p id="researchStudioStatus" class="text-[11px] text-gray-500" role="status" aria-live="polite">Студия использует текущий чат и существующие инструменты aLandi; отдельные сервисы не запускаются автоматически.</p>
+      <p class="rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-[11px] leading-relaxed text-gray-400" data-i18n="researchStudioContextHelp">Для исследования своих документов прикрепи материалы в чате или явно выбери контекст проекта. Студия не загружает файлы и не подключает внешние сервисы сама. Найденные страницы считаются недоверенными источниками, а не инструкциями.</p>
+      <div class="flex flex-wrap justify-end gap-2"><button type="button" data-action="close-research-studio" class="rounded-xl border border-gray-700 px-3 py-2 text-sm text-gray-300 hover:bg-gray-800" data-i18n="researchStudioCancel">Отмена</button><button type="button" data-action="start-research-studio" class="rounded-xl bg-cyan-600 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-500" data-i18n="researchStudioStart">Начать исследование ↗</button></div>
+      <p id="researchStudioStatus" class="text-[11px] text-gray-500" role="status" aria-live="polite" data-i18n="researchStudioStatusDefault">Студия использует текущие параметры чата и не изменяет их.</p>
     </section>
   </div>
   <div id="functionPanelModal" class="hidden fixed inset-0 z-[66] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="functionPanelTitle">
@@ -1250,12 +1250,16 @@ permalink: /
         modelSearchLabel:'Поиск по каталогу моделей',modelPresetLabel:'Быстрый выбор модели · список обновляется из API',
         baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',
         legacySettings:'Сторонние API, ключи и расширенные настройки',composerPlaceholder:'Напиши сообщение...',
-        modeLabel:'Думать:',modeFast:'⚡ Быстро',modeDeep:'🔬 Дольше',searchLabel:'🌐 Интернет и источники',researchLabel:'🤖 Умное исследование',
-        functionsMenuLabel:'Функции ▾',searchModeNormal:'Обычный веб-поиск',searchModeNormalHelp:'Ограниченный поиск по необходимости.',searchModeMore:'Искать больше',searchModeMoreHelp:'Повышенный лимит раундов и более полные результаты.',searchModeOffline:'Без веб-поиска',searchModeOfflineHelp:'Веб-инструменты отключены; облачному API всё ещё нужен интернет.',
-        functionResearch:'🔎 Исследование',functionAgents:'🤖 Агенты',functionSkills:'🧩 Навыки',functionConnectors:'🔌 Коннекторы',functionPanelClose:'Закрыть',
-        functionAgentsTitle:'Агенты',functionAgentsDescription:'Многоэтапный конвейер aLandi запускает планировщика, исследователя, критика и синтезатора для подходящих сложных задач. Редактор произвольной сети ролей пока не реализован.',agentModeOption:'Использовать многоэтапное исследование для сложных задач',agentModeHelp:'Это существующий многоэтапный конвейер, а не независимая команда агентов; произвольные профили ролей пока не подключены.',
-        functionSkillsTitle:'Навыки',functionSkillsDescription:'Можно выбрать один из встроенных навыков для этого чата или оставить автоматический выбор по задаче.',skillPresetLabel:'Навык этого чата',skillAuto:'Автоматически по задаче',skillPlanning:'Планирование',skillResearch:'Исследование',skillCodeReview:'Код и ревью',skillDataAnalysis:'Анализ данных',skillAgentSystems:'Системы агентов',skillMultimodal:'Мультимодальные задачи',skillPresetHelp:'Выбор действует только в этом чате; новый чат начинает с автоматического выбора.',
-        functionConnectorsTitle:'Коннекторы',functionConnectorsDescription:'Показываем только реально подключённые источники. Внешние коннекторы пока не подключены; они не будут имитироваться переключателями.',
+        modeLabel:'Объём:',modeFast:'⚡ Быстро',modeDeep:'🔬 Тщательно',searchLabel:'🌐 Веб-поиск',
+        modeFastShort:'Быстро',modeDeepShort:'Тщательно',modeFastHelp:'Быстро: один раунд инструментов и один вызов за запуск.',modeDeepHelp:'Тщательно: до 4 раундов, до 3 вызовов за раунд и до 8 вызовов за запуск.',
+        searchModeSummaryPrefix:'🌐 Веб',searchModeNormal:'Обычный',searchModeNormalShort:'Веб: обычный',searchModeNormalHelp:'Стандартный охват результатов и источников; не меняет бюджет обработки.',searchModeMore:'Расширенный',searchModeMoreShort:'Веб: расширенный',searchModeMoreHelp:'Больше результатов и источников на каждый поиск; не увеличивает число раундов.',searchModeOffline:'Выкл.',searchModeOfflineShort:'Веб: выкл.',searchModeOfflineHelp:'Веб-инструменты выключены; облачному API всё ещё может требоваться интернет.',
+        workflowDirectShort:'Прямой',workflowStructuredShort:'Конвейер',workflowDirectHelp:'Прямой способ выполнения: модель использует доступные инструменты в пределах выбранного бюджета.',workflowStructuredHelp:'Для сложных запросов может запускаться конвейер планировщик → исследователь → критик → синтезатор; он использует выбранную модель.',
+        skillAutoShort:'Авто',skillPlanningShort:'План',skillResearchShort:'Исслед.',skillCodeReviewShort:'Код',skillDataAnalysisShort:'Данные',skillAgentSystemsShort:'Агентные системы',skillMultimodalShort:'Мультимод.',taskProfileHelp:'Профиль меняет только инструкции и не включает инструменты или доступ к данным.',
+        functionsMenuLabel:'Функции ▾',functionAgents:'🧭 Структурированный разбор',functionSkills:'🧩 Профиль задачи',functionConnectors:'🔌 Интеграции',functionPanelClose:'Закрыть',
+        functionAgentsTitle:'Структурированный разбор',functionAgentsDescription:'Для подходящих сложных задач aLandi может пройти этапы планирования, исследования, критики и синтеза. Все этапы используют выбранную модель; это не независимая команда агентов.',agentModeOption:'Разрешить структурированный разбор сложных задач',agentModeHelp:'Планировщик → исследователь → критик → синтезатор. Запускается только для подходящих сложных запросов и использует выбранную модель; отдельная команда моделей не создаётся.',
+        functionSkillsTitle:'Профиль задачи',functionSkillsDescription:'Профиль добавляет специализированные инструкции для этого чата. Он не включает инструменты, веб-поиск или дополнительные разрешения.',skillPresetLabel:'Профиль этого чата',skillAuto:'Авто (для сложных задач)',skillPlanning:'Планирование',skillResearch:'Исследование',skillCodeReview:'Код и ревью',skillDataAnalysis:'Анализ данных',skillAgentSystems:'Системы агентов',skillMultimodal:'Мультимодальные задачи',skillPresetHelp:'Меняет только инструкции; не включает инструменты и доступ к данным. Выбор действует в этом чате; новый чат начинает с Авто.',
+        functionConnectorsTitle:'Интеграции',functionConnectorsDescription:'Показываем только реально подключённые интеграции. Сейчас внешние источники не подключены; переключателей-заглушек нет.',
+        researchStudioTitle:'Студия исследования',researchStudioDescription:'Окно подготовки исследовательского запроса. Запуск использует текущие параметры этого чата.',researchStudioPromptLabel:'Что нужно исследовать?',researchStudioPromptPlaceholder:'Например: сравни первичные источники, проверь спорные утверждения и подготовь выводы со ссылками.',researchStudioCurrentSettingsLabel:'Текущие параметры чата',researchStudioSettingsHelp:'Студия использует эти параметры и не изменяет их. Чтобы изменить их, закрой окно и настрой панель чата.',researchStudioContextHelp:'Для исследования своих документов прикрепи материалы в чате или явно выбери контекст проекта. Студия не загружает файлы и не подключает внешние сервисы сама. Найденные страницы считаются недоверенными источниками, а не инструкциями.',researchStudioCancel:'Отмена',researchStudioStart:'Начать исследование ↗',researchStudioClose:'Закрыть студию',researchStudioStatusDefault:'Студия использует текущие параметры чата и не изменяет их.',researchStudioPromptRequired:'Сначала напиши вопрос или задачу исследования.',
         kiloPrivacyNotice:'Kilo Auto Free — обычный альтернативный провайдер в общем списке API, не часть основного облака aLandi. Запросы передаются Kilo и назначенным им моделям; они могут сохранять запросы для улучшения сервисов. Не отправляй конфиденциальные данные. Скрытого резервирования нет.',languageLabel:'Язык интерфейса',clockLabel:'Местное время',saveSettings:'Сохранить',closeSettings:'Закрыть',
         globalMemoryOptIn:'Разрешить подходящим заметкам общей памяти попадать в контекст запросов.',noProjectNav:'Без проекта',projectMemoryScopeLabel:'Режим памяти проекта',projectMemoryScopeOnly:'Память только внутри проекта',projectMemoryScopeGlobal:'Память проекта + общая память (если она разрешена)',selectAlandiPrimary:'Использовать aLandi как основной маршрут',alandiPrimaryCopy:'aLandi — встроенный основной маршрут. Внешние провайдеры находятся ниже в отдельном меню.',attachMediaTitle:'Фото или видео',attachMediaHelp:'Изображения и выбор кадров из ролика',attachAnyFileTitle:'Файл любого формата',attachAnyFileHelp:'Системный выбор нескольких файлов; доступность разбора зависит от формата.',requestContextTitle:'Контекст этого запроса',requestContextHelp:'Выбранные проекты будут учтены только при следующей отправке. Сам чат и его проект не изменятся.',clearRequestContext:'Сбросить',skillsAutoHint:'Навыки: автоматический подбор по задаче; отдельный каталог выбора пока не подключён.',requestContextLimitHint:'Контекст ограничен пятью проектами и общим лимитом, чтобы не переполнять запрос.',projectsTitle:'▣ Проекты',currentProjectLabel:'Проект текущего чата',projectMemoryOptIn:'Использовать память выбранного проекта в этом чате',manageProject:'Создать или настроить проект',projectNameLabel:'Название',projectInstructionsLabel:'Инструкции проекта',createProject:'＋ Создать проект',saveProject:'Сохранить изменения',projectMemoryLabel:'Добавить факт в память проекта',exportProject:'Экспорт проекта',importProject:'Импорт проекта',detachChat:'Извлечь чат из проекта',deleteProject:'Удалить проект и его чаты',serverMemoryTitle:'Серверная память · эксперимент',serverMemoryDescription:'Отдельный граф на твоём aLandi gateway. Перенос только вручную; новые факты сначала становятся кандидатами. Нужен включённый ALANDI_MEMORY_GRAPH_ENABLED.',serverMemoryOptIn:'Разрешить подтверждённым фактам сервера попадать в контекст этого чата. Также включи память проекта выше.',serverMemoryRefresh:'Обновить список',serverMemoryUpload:'Передать локальные факты',serverMemoryInitial:'Серверная память выключена. Выбери проект и нажми «Обновить список».',serverMemoryNoProject:'Сначала выбери или создай проект.',serverMemoryNoConfig:'Не найдены URL /v1 и ключ aLandi gateway. Подключи своё облако в настройках.',serverMemoryLoading:'Обращаюсь к серверной памяти…',serverMemoryLoaded:'Фактов на сервере: ',serverMemoryEmpty:'В серверной памяти этого проекта пока нет фактов.',serverMemoryCandidate:'Кандидат',serverMemoryConfirmed:'Подтверждён',serverMemoryRejected:'Отклонён',serverMemoryConfirm:'Подтвердить',serverMemoryReject:'Отклонить',serverMemoryDelete:'Удалить',serverMemoryUploadDone:'Передача завершена. Новые факты остаются кандидатами до подтверждения.',serverMemoryContextLoaded:'В контекст добавлено подтверждённых серверных фактов: ',serverMemoryUnavailable:'Серверная память недоступна; продолжаю без неё.',helperMemoryDescription:'Необязательная модель на настроенном aLandi gateway предложит компактные факты. Отправка только по кнопке; сохранение — только после выбора.',helperMemorySuggest:'Предложить компактные факты',helperMemoryInitial:'Помощник выключен, пока не настроен ALANDI_HELPER_MODEL.',helperMemoryLoading:'Модель-помощник готовит предложения…',helperMemoryEmpty:'Помощник не нашёл новых фактов.',helperMemoryAdd:'Добавить в проект',helperMemoryAdded:'Факт добавлен в локальную память проекта.',helperMemoryNoFacts:'Сначала добавь факты в память выбранного проекта.',helperMemoryNotConfigured:'Модель-помощник не настроена. Укажи ALANDI_HELPER_MODEL и установи этот тег в Ollama.',helperMemoryTimeout:'Помощник не ответил вовремя; память не менялась.',helperMemoryFailed:'Не удалось получить предложения. Проверь gateway и Ollama.',helperMemorySkippedSensitive:'Пропущены потенциально чувствительные факты:',helperMemoryOnlySensitive:'Все факты похожи на секреты и не были отправлены помощнику.'
       },
@@ -1269,12 +1273,16 @@ permalink: /
         modelSearchLabel:'Search model catalog',modelPresetLabel:'Quick model pick · list loads from API',
         baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',
         legacySettings:'Third-party APIs, keys & advanced settings',composerPlaceholder:'Write a message...',
-        modeLabel:'Think:',modeFast:'⚡ Fast',modeDeep:'🔬 Longer',searchLabel:'🌐 Web & sources',researchLabel:'🤖 Smart research',
-        functionsMenuLabel:'Functions ▾',searchModeNormal:'Normal web search',searchModeNormalHelp:'Limited search when sources are useful.',searchModeMore:'Search more',searchModeMoreHelp:'Higher tool-round budget and fuller search results.',searchModeOffline:'No web search',searchModeOfflineHelp:'Web tools are off; cloud APIs may still need internet.',
-        functionResearch:'🔎 Research',functionAgents:'🤖 Agents',functionSkills:'🧩 Skills',functionConnectors:'🔌 Connectors',functionPanelClose:'Close',
-        functionAgentsTitle:'Agents',functionAgentsDescription:'For suitable complex tasks, aLandi can use a staged planner, researcher, critic and synthesizer. A custom arbitrary role-network editor is not implemented yet.',agentModeOption:'Use multi-stage research for complex tasks',agentModeHelp:'This is the existing multi-stage workflow, not an independent team of agents; custom role profiles are not connected yet.',
-        functionSkillsTitle:'Skills',functionSkillsDescription:'Choose a built-in skill for this chat, or keep automatic selection by task.',skillPresetLabel:'Skill for this chat',skillAuto:'Automatic by task',skillPlanning:'Planning',skillResearch:'Research',skillCodeReview:'Code and review',skillDataAnalysis:'Data analysis',skillAgentSystems:'Agent systems',skillMultimodal:'Multimodal tasks',skillPresetHelp:'This choice applies only to this chat; new chats start with automatic skill selection.',
-        functionConnectorsTitle:'Connectors',functionConnectorsDescription:'Only real integrations will be listed. External connectors are not connected yet; no placeholder switches are shown.',
+        modeLabel:'Effort:',modeFast:'⚡ Quick',modeDeep:'🔬 Thorough',searchLabel:'🌐 Web search',
+        modeFastShort:'Quick',modeDeepShort:'Thorough',modeFastHelp:'Quick: one tool round and one tool call for the run.',modeDeepHelp:'Thorough: up to 4 rounds, up to 3 calls per round and up to 8 calls per run.',
+        searchModeSummaryPrefix:'🌐 Web',searchModeNormal:'Standard',searchModeNormalShort:'Web: standard',searchModeNormalHelp:'Standard result and source coverage; does not change the execution budget.',searchModeMore:'Expanded',searchModeMoreShort:'Web: expanded',searchModeMoreHelp:'More results and sources per search; does not increase execution rounds.',searchModeOffline:'Off',searchModeOfflineShort:'Web: off',searchModeOfflineHelp:'Web tools are off; cloud APIs may still need internet.',
+        workflowDirectShort:'Direct',workflowStructuredShort:'Structured',workflowDirectHelp:'Direct execution: the model can still use available tools within the selected effort budget.',workflowStructuredHelp:'Suitable complex requests may use the planner → researcher → critic → synthesizer pipeline; all stages use the selected model.',
+        skillAutoShort:'Auto',skillPlanningShort:'Plan',skillResearchShort:'Research',skillCodeReviewShort:'Code',skillDataAnalysisShort:'Data',skillAgentSystemsShort:'Agent systems',skillMultimodalShort:'Multimodal',taskProfileHelp:'A task profile changes instructions only; it does not enable tools or data access.',
+        functionsMenuLabel:'Functions ▾',functionAgents:'🧭 Structured workflow',functionSkills:'🧩 Task profile',functionConnectors:'🔌 Integrations',functionPanelClose:'Close',
+        functionAgentsTitle:'Structured workflow',functionAgentsDescription:'For suitable complex tasks, aLandi can use planning, research, critique and synthesis stages. All stages use the selected model; this is not an independent team of agents.',agentModeOption:'Allow structured workflow for complex tasks',agentModeHelp:'Planner → researcher → critic → synthesizer. It runs only for suitable complex requests and uses the selected model; no separate model team is created.',
+        functionSkillsTitle:'Task profile',functionSkillsDescription:'A profile adds task-specific instructions for this chat. It does not enable tools, web search or additional permissions.',skillPresetLabel:'Task profile for this chat',skillAuto:'Auto (complex tasks)',skillPlanning:'Planning',skillResearch:'Research',skillCodeReview:'Code and review',skillDataAnalysis:'Data analysis',skillAgentSystems:'Agent systems',skillMultimodal:'Multimodal tasks',skillPresetHelp:'Changes instructions only; it does not enable tools or data access. This choice applies to this chat; new chats start with Auto.',
+        functionConnectorsTitle:'Integrations',functionConnectorsDescription:'Only real connected integrations are listed. No external sources are connected yet; there are no placeholder switches.',
+        researchStudioTitle:'Research Studio',researchStudioDescription:'A workspace for preparing a research request. Running it uses this chat’s current settings.',researchStudioPromptLabel:'What should be researched?',researchStudioPromptPlaceholder:'For example: compare primary sources, verify disputed claims and prepare cited conclusions.',researchStudioCurrentSettingsLabel:'Current chat settings',researchStudioSettingsHelp:'The Studio uses these settings without changing them. Close this window and use the chat controls to change them.',researchStudioContextHelp:'To research your own documents, attach them in the chat or explicitly select project context. The Studio does not upload files or connect external services by itself. Retrieved pages are untrusted sources, not instructions.',researchStudioCancel:'Cancel',researchStudioStart:'Start research ↗',researchStudioClose:'Close Studio',researchStudioStatusDefault:'The Studio uses the current chat settings and does not change them.',researchStudioPromptRequired:'Enter a research question or task first.',
         kiloPrivacyNotice:'Kilo Auto Free is an ordinary alternative provider in the API list, not part of the primary aLandi cloud. Requests go to Kilo and its selected models, which may log prompts or use them to improve services. Do not send confidential data. No silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',saveSettings:'Save settings',closeSettings:'Close',
         globalMemoryOptIn:'Allow relevant shared-memory notes to be included in prompts.',noProjectNav:'No project',projectMemoryScopeLabel:'Project memory scope',projectMemoryScopeOnly:'Memory inside this project only',projectMemoryScopeGlobal:'Project memory + shared memory (when enabled)',selectAlandiPrimary:'Use aLandi as the primary route',alandiPrimaryCopy:'aLandi is the built-in primary route. External providers are listed separately below.',attachMediaTitle:'Photo or video',attachMediaHelp:'Images or sampled frames from a video',attachAnyFileTitle:'Any file format',attachAnyFileHelp:'Native multi-file picker; parsing depends on file type.',requestContextTitle:'Context for this request',requestContextHelp:'Selected projects apply only to the next send. The active chat and its project do not change.',clearRequestContext:'Clear selection',skillsAutoHint:'Skills: automatically selected for the task; a manual catalog is not connected yet.',requestContextLimitHint:'Context is limited to five projects and a shared size budget.',projectsTitle:'▣ Projects',currentProjectLabel:'Project for this chat',projectMemoryOptIn:'Use the selected project memory in this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'＋ Create project',saveProject:'Save changes',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats',serverMemoryTitle:'Server memory · experimental',serverMemoryDescription:'A separate graph on your aLandi gateway. Transfer is manual; new facts start as candidates. Enable ALANDI_MEMORY_GRAPH_ENABLED on the server.',serverMemoryOptIn:'Allow confirmed server facts in this chat context. Also enable project memory above.',serverMemoryRefresh:'Refresh list',serverMemoryUpload:'Send local facts',serverMemoryInitial:'Server memory is off. Select a project and click “Refresh list”.',serverMemoryNoProject:'Select or create a project first.',serverMemoryNoConfig:'aLandi gateway /v1 URL or key is missing. Configure your cloud in Settings.',serverMemoryLoading:'Contacting server memory…',serverMemoryLoaded:'Server facts: ',serverMemoryEmpty:'No server facts for this project yet.',serverMemoryCandidate:'Candidate',serverMemoryConfirmed:'Confirmed',serverMemoryRejected:'Rejected',serverMemoryConfirm:'Confirm',serverMemoryReject:'Reject',serverMemoryDelete:'Delete',serverMemoryUploadDone:'Transfer complete. New facts remain candidates until reviewed.',serverMemoryContextLoaded:'Confirmed server facts added to context: ',serverMemoryUnavailable:'Server memory is unavailable; continuing without it.',helperMemoryDescription:'An optional model on the configured aLandi gateway can suggest compact facts. Sending is manual; facts are saved only after you choose them.',helperMemorySuggest:'Suggest compact facts',helperMemoryInitial:'Helper is off until ALANDI_HELPER_MODEL is configured.',helperMemoryLoading:'The helper model is preparing suggestions…',helperMemoryEmpty:'The helper found no new facts.',helperMemoryAdd:'Add to project',helperMemoryAdded:'Fact added to local project memory.',helperMemoryNoFacts:'Add facts to the selected project memory first.',helperMemoryNotConfigured:'Helper model is not configured. Set ALANDI_HELPER_MODEL and install that exact Ollama tag.',helperMemoryTimeout:'The helper timed out; memory was not changed.',helperMemoryFailed:'Could not get suggestions. Check the gateway and Ollama.',helperMemorySkippedSensitive:'Potentially sensitive facts skipped:',helperMemoryOnlySensitive:'All facts looked secret-like and were not sent to the helper.'
       }
@@ -2465,23 +2473,31 @@ permalink: /
       $('modeDeep').setAttribute('aria-pressed', String(!fast));
       $('modeFast').className = 'flex-1 min-w-0 rounded-md px-2 py-1 ' + (fast ? 'bg-blue-600 font-semibold' : 'text-gray-300');
       $('modeDeep').className = 'flex-1 min-w-0 rounded-md px-2 py-1 ' + (!fast ? 'bg-blue-600 font-semibold' : 'text-gray-300');
-      const english = getUiLanguage() === 'en';
+      const text = UI_TEXT[getUiLanguage()];
+      const profileKeys = {
+        auto: 'skillAutoShort', planning: 'skillPlanningShort', research: 'skillResearchShort',
+        'code-review': 'skillCodeReviewShort', 'data-analysis': 'skillDataAnalysisShort',
+        'agent-systems': 'skillAgentSystemsShort', multimodal: 'skillMultimodalShort'
+      };
       const searchMode = chat.searchMode;
-      let hint;
-      if (searchMode === 'offline') {
-        hint = english ? (fast ? 'Fast' : 'Longer') + ' · web tools off; cloud APIs may still need internet.'
-          : (fast ? 'Быстро' : 'Дольше') + ' · веб-инструменты выключены; облачному API может требоваться сеть.';
-      } else if (searchMode === 'more') {
-        hint = english ? (fast ? 'Fast' : 'Longer') + ' · extended web-search budget: up to 4 tool rounds.'
-          : (fast ? 'Быстро' : 'Дольше') + ' · расширенный бюджет веб-поиска: до 4 раундов инструментов.';
-      } else {
-        hint = english ? (fast ? 'Fast' : 'Longer') + ' · normal web search; research is separate.'
-          : (fast ? 'Быстро' : 'Дольше') + ' · обычный веб-поиск; исследование отдельно.';
-      }
-      if (chat.multiAgentEnabled) hint += english ? ' · agents for complex tasks on' : ' · агенты для сложных задач включены';
-      if (chat.skillPreset && chat.skillPreset !== 'auto') hint += (english ? ' · skill: ' : ' · навык: ') + chat.skillPreset;
-      $('modeHint').textContent = hint;
-      $('modeHint').title = hint;
+      const searchKey = searchMode === 'offline' ? 'searchModeOfflineShort' : searchMode === 'more' ? 'searchModeMoreShort' : 'searchModeNormalShort';
+      const summary = [
+        fast ? text.modeFastShort : text.modeDeepShort,
+        text[searchKey],
+        chat.multiAgentEnabled ? text.workflowStructuredShort : text.workflowDirectShort,
+        text[profileKeys[chat.skillPreset] || 'skillAutoShort']
+      ].join(' · ');
+      const searchHelp = searchMode === 'offline' ? text.searchModeOfflineHelp : searchMode === 'more' ? text.searchModeMoreHelp : text.searchModeNormalHelp;
+      const title = [
+        fast ? text.modeFastHelp : text.modeDeepHelp,
+        searchHelp,
+        chat.multiAgentEnabled ? text.workflowStructuredHelp : text.workflowDirectHelp,
+        text.taskProfileHelp
+      ].join(' ');
+      $('modeHint').textContent = summary;
+      $('modeHint').title = title;
+      const studioSummary = $('researchStudioSettingsSummary');
+      if (studioSummary) studioSummary.textContent = summary;
     }
     function setProcessingMode(mode) {
       const chat = getCurrentChat();
@@ -3085,23 +3101,21 @@ permalink: /
     function updateOfflineUI() {
       const chat = getCurrentChat();
       const mode = chat && VALID_SEARCH_MODES.has(chat.searchMode) ? chat.searchMode : (safeGet(STORAGE.offline) === 'true' ? 'offline' : 'normal');
-      const english = getUiLanguage() === 'en';
-      const label = mode === 'offline' ? (english ? 'no web' : 'без веба') : mode === 'more' ? (english ? 'search more' : 'искать больше') : (english ? 'normal' : 'обычный');
+      const text = UI_TEXT[getUiLanguage()];
+      const modeKey = mode === 'offline' ? 'searchModeOffline' : mode === 'more' ? 'searchModeMore' : 'searchModeNormal';
+      const helpKey = mode === 'offline' ? 'searchModeOfflineHelp' : mode === 'more' ? 'searchModeMoreHelp' : 'searchModeNormalHelp';
       const summary = $('searchModeSummary');
       if (summary) {
-        summary.textContent = (english ? '🌐 Search: ' : '🌐 Поиск: ') + label + ' ▾';
-        summary.title = mode === 'offline' ? (english ? 'Web tools are off; cloud APIs may still need internet.' : 'Веб-инструменты выключены; облачному API может требоваться интернет.')
-          : mode === 'more' ? (english ? 'Extended search budget: up to four tool rounds.' : 'Расширенный бюджет поиска: до четырёх раундов инструментов.')
-          : (english ? 'Normal web-search budget.' : 'Обычный бюджет веб-поиска.');
+        summary.textContent = text.searchModeSummaryPrefix + ': ' + text[modeKey] + ' ▾';
+        summary.title = text[helpKey];
         summary.setAttribute('aria-label', summary.title);
       }
       const status = $('offlineToggle');
-      if (status) status.textContent = mode === 'offline' ? (english ? 'Web search off' : 'Веб-поиск выключен') : mode === 'more' ? (english ? 'Extended web search' : 'Расширенный веб-поиск') : (english ? 'Normal web search' : 'Обычный веб-поиск');
+      if (status) status.textContent = mode === 'offline' ? (getUiLanguage() === 'en' ? 'Web search off' : 'Веб-поиск выключен') : mode === 'more' ? (getUiLanguage() === 'en' ? 'Expanded web search' : 'Расширенный веб-поиск') : (getUiLanguage() === 'en' ? 'Standard web search' : 'Обычный веб-поиск');
     }
     function toggleOfflineMode(){setSearchMode(getCurrentChat()?.searchMode==='offline'?'normal':'offline');}
     function openFunctionPanel(kind) {
       $('functionsMenu').open = false;
-      if (kind === 'research') { openResearchStudio(); return; }
       const views = {
         agents: ['agentFunctionSettings','functionAgentsTitle','functionAgentsDescription'],
         skills: ['skillFunctionSettings','functionSkillsTitle','functionSkillsDescription'],
@@ -4220,21 +4234,16 @@ permalink: /
       const modal = $('researchStudioModal');
       const composer = $('userInput');
       $('researchStudioPrompt').value = composer.value.trim();
-      $('researchStudioWeb').checked = $('toggleSearch').checked;
-      // Research Studio defaults to deep mode; the user can explicitly switch to quick search.
-      $('researchStudioDepth').value = 'deep';
-      $('researchStudioStatus').textContent = getUiLanguage() === 'en' ? 'Uses the current chat and existing aLandi tools; no separate services start automatically.' : 'Студия использует текущий чат и существующие инструменты aLandi; отдельные сервисы не запускаются автоматически.';
+      updateModeUI();
+      $('researchStudioStatus').textContent = UI_TEXT[getUiLanguage()].researchStudioStatusDefault;
       modal.classList.remove('hidden');
       requestAnimationFrame(() => $('researchStudioPrompt').focus());
     }
     function closeResearchStudio() { $('researchStudioModal').classList.add('hidden'); }
     async function startResearchStudio() {
       const prompt = $('researchStudioPrompt').value.trim();
-      if (!prompt) { $('researchStudioPrompt').focus(); $('researchStudioStatus').textContent = 'Сначала напиши вопрос или задачу исследования.'; return; }
-      const webEnabled = $('researchStudioWeb').checked;
-      const depth = $('researchStudioDepth').value === 'deep' ? 'deep' : 'fast';
-      setSearchMode(webEnabled ? (getCurrentChat().searchMode === 'more' ? 'more' : 'normal') : 'offline');
-      setProcessingMode(depth);
+      const text = UI_TEXT[getUiLanguage()];
+      if (!prompt) { $('researchStudioPrompt').focus(); $('researchStudioStatus').textContent = text.researchStudioPromptRequired; return; }
       $('userInput').value = prompt;
       closeResearchStudio();
       await sendMessage(false);
