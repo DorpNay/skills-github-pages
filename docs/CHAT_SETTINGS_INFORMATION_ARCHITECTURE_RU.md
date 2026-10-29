@@ -95,6 +95,12 @@ Studio — отдельное рабочее окно для составлен�
 
 Профиль задачи может сочетаться с любой строкой таблицы: он меняет инструкции, а не бюджет и разрешения. Структурированный конвейер — отдельная топология выполнения, поэтому он добавляет собственные этапы даже при режиме Быстро; это явно объясняется в подсказке переключателя.
 
+## Мобильные области нажатия
+
+На ширине экрана до 640 CSS px основные элементы управления получают минимальную высоту 44 px: кнопки шапки, переключатели объёма, меню веб-поиска/функций, пункты этих меню, кнопки composer и действия Research Studio. Иконки шапки и composer также имеют минимальную ширину 44 px.
+
+Это ориентир по Apple HIG (hit region 44×44 pt); он превышает минимальную цель WCAG 2.2 SC 2.5.8 (24×24 CSS px с предусмотренными стандартом исключениями). Chromium E2E проверяет геометрию на viewport 390×844. Это не заменяет ручную проверку реального iPhone Safari, VoiceOver, safe area и клавиатуры.
+
 ## Раунд 5. Критерии приёмки
 
 - [ ] Расширенный веб-поиск не увеличивает число раундов/вызовов инструментов.
@@ -109,9 +115,12 @@ Studio — отдельное рабочее окно для составлен�
 
 ## Внешние ориентиры
 
-- [Open WebUI](https://github.com/open-webui/open-webui) — разделение настроек модели, аккаунта и чата.
-- [LibreChat](https://github.com/LibreChat-AI/LibreChat) — группировка общих настроек, поведения чата, речи и приватности.
-- [Apple Human Interface Guidelines: Layout](https://developer.apple.com/design/human-interface-guidelines/layout/) — постепенное раскрытие сложности.
-- [WCAG 2.2](https://www.w3.org/TR/WCAG22/) — доступность, размеры целей и видимость фокуса.
+- [Open WebUI: chat parameters](https://github.com/open-webui/docs/blob/main/docs/features/chat-conversations/chat-features/chat-params.md) и [Controls.svelte](https://github.com/open-webui/open-webui/blob/e4e69a10/src/lib/components/chat/Controls/Controls.svelte) — иерархия параметров аккаунта/модели/чата и сворачиваемые группы.
+- [LibreChat: ToolsDropdown](https://github.com/danny-avila/LibreChat/blob/53b3e166/client/src/components/Chat/Input/ToolsDropdown.tsx) и [access control](https://github.com/LibreChat-AI/librechat.ai/blob/main/content/docs/features/access_control.mdx) — раздельное представление возможностей и разрешений.
+- [LobeChat: ControlsForm](https://github.com/lobehub/lobe-chat/blob/e816a83e/src/features/ModelSwitchPanel/components/ControlsForm/ControlsForm.tsx) — отделение пользовательского reasoning effort от настроек агента/сессии.
+- [Dify app modes](https://github.com/langgenius/dify) и [Langflow component concepts](https://docs.langflow.org/concepts-overview) — runtime-чаты отдельно от workflow builder и расширенных параметров.
+- [Material Design: Settings](https://developer.android.com/design/ui/mobile/guides/patterns/settings) — группировка редких настроек и сохранение частых действий в основном контексте.
+- [Apple HIG: Buttons](https://developer.apple.com/design/human-interface-guidelines/buttons) и [Layout](https://developer.apple.com/design/human-interface-guidelines/layout) — 44×44 pt hit region, ясные состояния и безопасная область.
+- [WCAG 2.2: Target Size Minimum](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html) и [Focus Appearance](https://www.w3.org/WAI/WCAG22/Understanding/focus-appearance.html) — нормативный минимум интерактивной цели и видимость фокуса.
 
 Чужой код не переносится напрямую: aLandi сохраняет статическую архитектуру и существующую модель состояния.
