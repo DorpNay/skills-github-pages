@@ -129,7 +129,9 @@ permalink: /
     .clock-minute { height:20px;background:var(--ui-tiffany-bright); }
     .clock-second { height:22px;width:1px;background:#f59e0b; }
     .clock-pin { position:absolute;left:calc(50% - 2px);top:calc(50% - 2px);width:4px;height:4px;border-radius:50%;background:#f59e0b;z-index:3; }
-    .voice-menu { position:absolute;right:10px;bottom:calc(100% + 9px);z-index:30;width:min(92vw,330px);padding:8px;border:1px solid var(--ui-border);border-radius:20px;background:color-mix(in srgb,var(--ui-surface) 90%,transparent);backdrop-filter:blur(22px);box-shadow:0 16px 48px rgba(0,0,0,.28);transform-origin:bottom right;animation:voice-pop 170ms cubic-bezier(.2,.7,.2,1); }
+    .voice-menu { position:absolute;right:10px;bottom:calc(100% + 9px);z-index:70;width:min(92vw,330px);padding:8px;border:1px solid var(--ui-border);border-radius:20px;background:color-mix(in srgb,var(--ui-surface) 90%,transparent);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 16px 48px rgba(0,0,0,.28);transform-origin:bottom right;animation:voice-pop 170ms cubic-bezier(.2,.7,.2,1); }
+    #settingsModal,#messageViewerModal,#chatActionModal,#researchStudioModal,#functionPanelModal,#traceModal { backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px); }
+    @media (prefers-reduced-transparency:reduce) { #settingsModal,#messageViewerModal,#chatActionModal,#researchStudioModal,#functionPanelModal,#traceModal { backdrop-filter:none;-webkit-backdrop-filter:none; } }
     .voice-menu-option { width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:13px 12px;border-radius:14px; }
     .voice-menu-option:hover { background:var(--ui-tiffany-soft); }
     .voice-menu-option strong { display:block;font-size:11px;letter-spacing:.04em; }
@@ -599,6 +601,7 @@ permalink: /
   </div>
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
   <button id="jumpToLatest" type="button" data-action="jump-to-latest" class="jump-to-latest hidden" aria-label="Перейти к последнему сообщению" title="В конец чата">↓</button>
+  <div id="composerPopoverScrim" class="hidden fixed inset-0 z-40 bg-black/45 backdrop-blur-[2px]" aria-hidden="true"></div>
   <div id="messageViewerModal" class="hidden fixed inset-0 z-[86] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="messageViewerTitle">
     <section class="message-viewer-surface w-full max-w-4xl max-h-[92dvh] rounded-2xl p-3 sm:p-5 flex flex-col">
       <header class="flex items-center gap-3 border-b border-gray-700 pb-3 mb-3 shrink-0">
@@ -1422,9 +1425,14 @@ permalink: /
       const count=selectedRequestProjectIds.size,english=getUiLanguage()==='en';badge.textContent=String(count);badge.classList.toggle('hidden',count===0);badge.classList.toggle('inline-flex',count>0);
       button.classList.toggle('border-cyan-400',count>0);const label=count?(english?'Next request context: '+count+' projects':'Контекст следующего запроса: проектов '+count):(english?'Choose context for the next request':'Выбрать контекст для следующего запроса');button.setAttribute('aria-label',label);button.title=label;
     }
+    function syncComposerPopoverScrim() {
+      const open = ['attachmentMenu','requestContextMenu','voiceMenu'].some(id => !$(id).classList.contains('hidden'));
+      $('composerPopoverScrim').classList.toggle('hidden', !open);
+    }
     function closeComposerPopovers() {
       $('attachmentMenu').classList.add('hidden');$('attachTextButton').setAttribute('aria-expanded','false');
       $('requestContextMenu').classList.add('hidden');$('contextPickerButton').setAttribute('aria-expanded','false');
+      syncComposerPopoverScrim();
     }
     async function addMediaFiles(files) {
       const english=getUiLanguage()==='en';
@@ -3024,9 +3032,12 @@ permalink: /
       $('functionsMenuSummary')?.focus();
     }
     document.addEventListener('click', (event) => {
-      const menus = ['searchModeMenu','functionsMenu'].map(id => $(id)).filter(menu => menu?.open);
-      if (!menus.length || event.target.closest('#searchModeMenu, #functionsMenu')) return;
-      menus.forEach(menu => { menu.open = false; });
+      const toolbarMenus = ['searchModeMenu','functionsMenu','languageMenu'].map(id => $(id)).filter(menu => menu?.open);
+      const chatMenus = [...document.querySelectorAll('.chat-row-menu[open]')];
+      if (!toolbarMenus.length && !chatMenus.length) return;
+      if (event.target.closest('#searchModeMenu, #functionsMenu, #languageMenu, .chat-row-menu')) return;
+      toolbarMenus.forEach(menu => { menu.open = false; });
+      chatMenus.forEach(menu => { menu.open = false; });
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
@@ -4731,12 +4742,12 @@ permalink: /
           case 'connect-alandi-cloud': await connectAlandiCloud();break;
           case 'select-alandi-primary': await selectAlandiPrimaryRoute();break;
           case 'attach-text-file': {
-            const menu=$('attachmentMenu'),open=menu.classList.contains('hidden');closeComposerPopovers();if(open){menu.classList.remove('hidden');$('attachTextButton').setAttribute('aria-expanded','true');}break;
+            const menu=$('attachmentMenu'),open=menu.classList.contains('hidden');hideVoiceMenu();closeComposerPopovers();if(open){menu.classList.remove('hidden');$('attachTextButton').setAttribute('aria-expanded','true');syncComposerPopoverScrim();}break;
           }
           case 'choose-media': closeComposerPopovers();$('mediaAttachmentInput').click();break;
           case 'choose-any-file': closeComposerPopovers();$('textAttachmentInput').click();break;
           case 'toggle-request-context': {
-            const menu=$('requestContextMenu'),open=menu.classList.contains('hidden');closeComposerPopovers();if(open){menu.classList.remove('hidden');$('contextPickerButton').setAttribute('aria-expanded','true');renderRequestProjectChoices();}break;
+            const menu=$('requestContextMenu'),open=menu.classList.contains('hidden');hideVoiceMenu();closeComposerPopovers();if(open){menu.classList.remove('hidden');$('contextPickerButton').setAttribute('aria-expanded','true');renderRequestProjectChoices();syncComposerPopoverScrim();}break;
           }
           case 'clear-request-context': selectedRequestProjectIds.clear();saveRequestContextForActiveChat();renderRequestProjectChoices();break;
           case 'remove-draft-attachment': pendingComposerAttachments=pendingComposerAttachments.filter(item=>item.id!==control.dataset.attachmentId);renderDraftAttachments();break;
@@ -4891,8 +4902,12 @@ permalink: /
     $('projectMemoryInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();document.querySelector('[data-action="add-project-memory"]').click();}});
     $('userInput').addEventListener('input', () => autoResizeTextarea($('userInput')));
     let voiceHoldTimer=null,voiceHoldOpened=false;
-    const showVoiceMenu=()=>{$('voiceMenu').classList.remove('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','true');};
-    const hideVoiceMenu=()=>{$('voiceMenu').classList.add('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','false');};
+    const showVoiceMenu=()=>{closeComposerPopovers();$('voiceMenu').classList.remove('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','true');syncComposerPopoverScrim();};
+    const hideVoiceMenu=()=>{$('voiceMenu').classList.add('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','false');syncComposerPopoverScrim();};
+    $('composerPopoverScrim').addEventListener('click',event=>{
+      event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
+      closeComposerPopovers();hideVoiceMenu();
+    });
     const cancelVoiceHold=()=>{
       if(voiceHoldTimer)clearTimeout(voiceHoldTimer);
       voiceHoldTimer=null;
