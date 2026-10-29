@@ -44,6 +44,8 @@
 | UX-23 | Request context contains project choices only, not connector/scheduler controls | **IMPLEMENTED on follow-up branch** — connector hint removed from request-context popover | Exact-head Chromium test pending CI |
 | UX-24 | “Agents” UI describes actual multi-stage pipeline without implying independent agent processes | **IMPLEMENTED on follow-up branch** — explicit explanation that custom role profiles/independent team are not connected | Verify copy in RU/EN and confirm existing pipeline tests remain green |
 | UX-25 | Project actions are first in the project panel; create form honors selected memory scope; settings are disabled without a selected project | **IMPLEMENTED on follow-up branch** — top-level Create project / Project settings actions; creation mode enables scope selection and persists `project-only` or `project-and-global` | Exact-head Chromium test pending CI; verify existing project move/delete and memory-scope regressions |
+| UX-26 | Sidebar order is memory → projects → project status → chats, with compact live status lines | **IMPLEMENTED on follow-up branch** — dedicated memory panel, live personal/shared/global status, current-project status line; Research Studio moved below chats | Exact-head Chromium E2E pending; verify memory CRUD and project navigation regressions |
+| UX-27 | Theme and language are available at the sidebar bottom and synchronized with Settings | **IMPLEMENTED on follow-up branch** — pinned sidebar controls, language selector in Settings, single language/theme state across header/sidebar/settings | Exact-head Chromium E2E pending; native touch/focus remains a manual gate |
 
 ## B. 81-item audit of the fixation document and four-part manifesto
 
@@ -192,7 +194,7 @@ The following items cover the initial fixation document plus manifesto sections 
 - [x] PR #71: stable bottom composer for empty/populated chats and visualViewport-aware textarea; native iPhone Safari remains a separate manual gate.
 - [x] PR #114: optional global user system prompt empty by default; obsolete Gemini reset removed; legacy default migrates to empty; context history budget reserves serialization/provider overhead.
 - [x] PR #115: dim/blur scrim for attachment/context/voice popovers; modal backdrop blur respects reduced-transparency; first outside tap closes composer popover or toolbar/language/chat-row menu without activating underlying controls. Exact-head Chromium and published-site smoke passed.
-- [~] Remaining UI work after PRs #117/#118 and the current follow-up: sidebar memory/project/chat ordering and status indicators; duplicate theme/language controls in the sidebar; complete RU/EN microcopy; native iPhone Safari verification. Live gateway/provider, connector sync, independent agent teams and voice transport remain separate runtime/infrastructure gates.
+- [~] Remaining UI work after PRs #117–#119 and current branch `fix/sidebar-memory-order-20261030`: complete RU/EN microcopy audit and native iPhone Safari verification. Sidebar order/status and duplicate theme/language controls are implemented on this branch but remain pending exact-head CI. Live gateway/provider, connector sync, independent agent teams and voice transport remain separate runtime/infrastructure gates.
 - [ ] Native iPhone Safari, software keyboard, edge-swipe and touchcancel behavior remain unverified. Do not mark complete based only on Chromium.
 
 
@@ -203,3 +205,10 @@ The following items cover the initial fixation document plus manifesto sections 
 - [ ] Do not mark follow-up delivered until exact-head Chromium and published Pages smoke pass.
 - [ ] Native iPhone Safari keyboard/safe-area/focus and real touch interaction remain unverified. Provider credentials, live gateway, connector OAuth/sync, independent agent processes and full audio transport remain infrastructure/runtime gates rather than UI acceptance claims.
 - Research basis reviewed for this slice: [MDN VisualViewport](https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport), [MDN VirtualKeyboard API](https://developer.mozilla.org/en-US/docs/Web/API/VirtualKeyboard_API), [Playwright best practices](https://playwright.dev/docs/best-practices), [OWASP HTML5 Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html), [Springer Nature Frontend Playbook](https://github.com/springernature/frontend-playbook), and [awesome-agent-skills](https://github.com/danielteles/awesome-agent-skills). Applied patterns selectively to the existing vanilla-JS/Jekyll app; no framework rewrite or new dependency added.
+
+
+## Supplement — sidebar hierarchy and preference synchronization, 2026-10-30
+
+- [~] Branch `fix/sidebar-memory-order-20261030` implements UX-26 and UX-27: moves personal/shared memory controls into a dedicated first sidebar section, adds live memory/project status lines, moves Research Studio below chats, pins sidebar theme/language controls at the bottom, and adds a synchronized language selector to Settings.
+- [ ] Exact-head Chromium, Jekyll, integrity/security/context sentinels and published Pages smoke must pass before merge.
+- [ ] Real iPhone Safari keyboard/touch/accessibility behavior remains unverified; the new tests cover DOM order, live status updates and cross-surface preference synchronization in Chromium only.
