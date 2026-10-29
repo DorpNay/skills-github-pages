@@ -181,8 +181,13 @@ permalink: /
     .toolbar-menu-option small { display:block;margin-top:3px;color:var(--ui-text-muted);font-size:10px;line-height:1.35;white-space:normal; }
     @media (max-width:380px) { .toolbar-menu > summary { padding:7px 6px;font-size:10px; } .toolbar-menu-option { padding:9px; } }
     @media (max-width:640px) {
+      .app-header .header-icon { min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center; }
       #modeToolbar [role="group"] > button,#modeToolbar .toolbar-menu > summary,#modeToolbar .toolbar-menu-option { min-height:44px; }
       #modeToolbar .toolbar-menu > summary { display:flex;align-items:center; }
+      #inputArea .composer-tool,#inputArea #sendBtn,#inputArea #stopBtn { min-width:44px;min-height:44px;display:grid;place-items:center; }
+      #inputArea #userInput { min-height:44px; }
+      #researchStudioModal [data-action="close-research-studio"],#researchStudioModal [data-action="start-research-studio"] { min-height:44px; }
+      #researchStudioModal header [data-action="close-research-studio"] { min-width:44px; }
     }
     @media (prefers-reduced-transparency:reduce) { .toolbar-menu-panel { background:var(--ui-surface);backdrop-filter:none;-webkit-backdrop-filter:none; } }
 
