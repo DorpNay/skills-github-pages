@@ -213,8 +213,6 @@ permalink: /
     @media (max-width:360px) { .app-header { gap:.3rem!important;padding-inline:.45rem!important; } .clock-face { width:42px;height:42px; } .brand-wordmark { font-size:1rem!important; } .header-chat-title { max-width:none; } }
     .chat-row-menu[open] summary,.chat-row-menu summary:hover { background:var(--ui-tiffany-soft);border-color:var(--ui-border);color:var(--ui-tiffany); }
     .chat-row-menu-panel { position:fixed;left:0;top:0;right:auto;bottom:auto;z-index:90;width:min(190px,calc(100vw - 16px));max-height:min(70dvh,420px);overflow-y:auto;padding:5px;border:1px solid var(--ui-border);border-radius:14px;background:color-mix(in srgb,var(--ui-surface) 94%,transparent);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);box-shadow:0 18px 50px rgb(0 0 0 / 38%); }
-    /* An open fixed chat menu can overlap controls beneath it. The transparent dismissal layer makes the first outside tap dismiss only, never activate the covered control. */
-    body:has(.chat-row-menu[open])::after { content:"";position:fixed;inset:0;z-index:89;background:transparent; }
     .chat-row-menu-panel button { display:block;width:100%;padding:10px;border-radius:9px;text-align:left;font-size:12px; }
     .chat-row-menu-panel button:hover { background:var(--ui-tiffany-soft); }
     .chat-row-menu-panel button.danger { color:#fb7185; }
@@ -4810,6 +4808,16 @@ permalink: /
         try { pyodideInstance.setStdout?.(); pyodideInstance.setStderr?.(); } catch (_) {}
       }
     }
+
+    // Dismiss an open chat-row menu on the first outside click without activating the control underneath.
+    // Capture phase is deliberate: it prevents the underlying action before delegated click handling runs.
+    document.addEventListener('click', (event) => {
+      const openMenu = document.querySelector('#sidebar .chat-row-menu[open]');
+      if (!openMenu || event.target.closest('.chat-row-menu')) return;
+      openMenu.removeAttribute('open');
+      event.preventDefault();
+      event.stopPropagation();
+    }, true);
 
     document.addEventListener('click', async (event) => {
       const control = event.target.closest('[data-action]');
