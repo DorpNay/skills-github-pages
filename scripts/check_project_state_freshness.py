@@ -172,10 +172,11 @@ def validate_local_docs(root: Path, snapshot: dict[str, Any]) -> list[str]:
     issue_marker = f"open issues ({len(issues)}): {', '.join(f'#{number}' for number in issues)}"
     if issue_marker not in contents.get("project-reference/FILE_ORIENTER_RU.md", ""):
         errors.append("project-reference/FILE_ORIENTER_RU.md: exact open-issue snapshot marker is missing")
-    if "V-2026-10-29-STATE-FRESHNESS-GUARD-001" not in contents.get("docs/VOLLEY_LOG.md", ""):
-        errors.append("docs/VOLLEY_LOG.md: missing V-2026-10-29-STATE-FRESHNESS-GUARD-001 entry")
-    if "Last main action: docs: preserve engineering and runtime readiness audits" not in contents.get("ORIENTER.md", ""):
-        errors.append("ORIENTER.md: last-main-action marker is missing")
+    if "V-2026-10-29-RESEARCH-APPLY-001" not in contents.get("docs/VOLLEY_LOG.md", ""):
+        errors.append("docs/VOLLEY_LOG.md: missing latest report-application entry")
+    orienter = contents.get("ORIENTER.md", "")
+    if "**Current main SHA:**" not in orienter or "Open PR queue:" not in orienter:
+        errors.append("ORIENTER.md: current checkpoint or queue marker is missing")
     return errors
 
 
