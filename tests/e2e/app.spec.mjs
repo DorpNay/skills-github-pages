@@ -62,6 +62,43 @@ test('global system prompt is empty by default and obsolete Gemini reset is abse
   await expect(page.locator('[data-action="restore-defaults"]')).toHaveCount(0);
 });
 
+test('composer position persists and provider selection separates aLandi Cloud from external routes', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#composerPosition')).toHaveValue('bottom');
+  await expect(page.locator('#providerPreset option[value="alandi"]')).toBeVisible();
+  await expect(page.locator('#providerPreset optgroup').first()).toHaveAttribute('label', 'aLandi Cloud · основной маршрут');
+  await expect(page.locator('#providerPreset optgroup').nth(1)).toHaveAttribute('label', 'Сторонние провайдеры');
+  await expect(page.locator('[data-action="select-alandi-primary"]')).toHaveCount(0);
+
+  await page.locator('#composerPosition').selectOption('top');
+  await expect(page.locator('body')).toHaveClass(/composer-at-top/);
+  await page.locator('[data-action="save-settings"]').click();
+  await page.reload();
+  await expect(page.locator('#composerPosition')).toHaveValue('top');
+  await expect(page.locator('body')).toHaveClass(/composer-at-top/);
+
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#composerPosition').selectOption('bottom');
+  await page.locator('[data-action="save-settings"]').click();
+  await expect(page.locator('body')).not.toHaveClass(/composer-at-top/);
+  await page.reload();
+  await expect(page.locator('#composerPosition')).toHaveValue('bottom');
+});
+
+test('request context stays project-only and agent label describes the real pipeline', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#contextPickerButton').click();
+  await expect(page.locator('#requestContextMenu')).toBeVisible();
+  await expect(page.locator('#requestContextMenu')).not.toContainText(/connectors|коннектор|scheduler|планировщик/i);
+  await page.locator('#composerPopoverScrim').click({ position: { x: 5, y: 5 } });
+
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  await expect(page.locator('#functionPanelDescription')).toContainText(/не реализован|not implemented/i);
+  await expect(page.locator('#agentModeControl')).toBeVisible();
+});
+
 test('composer popover dims the page and the first outside tap only dismisses it', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
