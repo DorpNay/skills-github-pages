@@ -9,6 +9,7 @@ on:
       - "router/**"
       - "scripts/manifest_state.py"
       - "scripts/check_intel_triad.py"
+      - "scripts/check_deploy_preflight.py"
       - ".github/workflows/gateway-tests.yml"
   pull_request:
     paths:
@@ -18,6 +19,7 @@ on:
       - "router/**"
       - "scripts/manifest_state.py"
       - "scripts/check_intel_triad.py"
+      - "scripts/check_deploy_preflight.py"
       - ".github/workflows/gateway-tests.yml"
   workflow_dispatch:
 
@@ -50,5 +52,7 @@ jobs:
           python scripts/check_intel_triad.py
       - name: Run gateway tests without a real model or API key
         run: python -m pytest -q gateway/tests
+      - name: Run deployment template preflight
+        run: python scripts/check_deploy_preflight.py
       - name: Run deterministic six-layer offline evaluation
         run: python gateway/evals/run_six_layer_eval.py
