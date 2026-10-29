@@ -1400,6 +1400,32 @@ test('thorough processing keeps standard web-search breadth', async ({ page }) =
   expect(modelCalls).toBe(2);
 });
 
+test('task profiles add instructions without granting web tools or structured workflow', async ({ page }) => {
+  let webToolsAvailable = null;
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    const body = route.request().postDataJSON();
+    webToolsAvailable = Array.isArray(body.tools) && body.tools.some(tool => ['web_search', 'public_knowledge_search', 'read_webpage'].includes(tool.function?.name));
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+      model: 'effort-search-model', choices: [{ message: { role: 'assistant', content: 'Task-profile response completed.' } }]
+    }) });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await configureCustomProvider(page, 'effort-search-model');
+  await chooseSearchMode(page, 'offline');
+  await setSkillPreset(page, 'code-review');
+  await page.locator('#userInput').fill('Review this small snippet: const value = 1;');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Task-profile response completed.', { timeout: 20000 });
+  expect(webToolsAvailable).toBe(false);
+  const settings = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const current = localStorage.getItem('ai_current_chat_v87');
+    const chat = chats.find(item => item.id === current);
+    return { skillPreset: chat?.skillPreset, multiAgentEnabled: chat?.multiAgentEnabled };
+  });
+  expect(settings).toEqual({ skillPreset: 'code-review', multiAgentEnabled: false });
+});
+
 test('thorough mode with web search off does not expose web tools', async ({ page }) => {
   let toolsAvailable = null;
   await page.route('https://api.example.test/v1/chat/completions', async route => {
