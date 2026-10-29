@@ -962,7 +962,7 @@ test('aLandi cloud status only turns green after a real model response, and core
   expect(cloudRequests[1].messages.at(-1).content).toBe('Verify the primary chat uses my aLandi cloud.');
   expect(cloudRequests.every(request => request.model === 'qwen3.5:4b')).toBe(true);
   await page.locator('#languageSummary').click();
-  await page.locator('[data-action="set-language"][data-language="en"]').click();
+  await page.locator('#languageMenu [data-action="set-language"][data-language="en"]').click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
   await page.locator('#homeThemeToggle').click();
