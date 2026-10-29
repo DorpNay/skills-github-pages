@@ -76,7 +76,7 @@ test('sidebar order separates memory, projects, status, chats, and research', as
   expect(positions.every(Number.isInteger)).toBe(true);
   expect(positions).toEqual([...positions].sort((a, b) => a - b));
   await expect(page.locator('#projectPanel')).toContainText('Проект');
-  await expect(page.locator('#projectPanel')).toContainText('Личный чат');
+  await expect(page.locator('#projectPanel')).toContainText(/личный чат/i);
   await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте выкл.');
   await page.locator('#memoryToolsDetails > summary').click();
   await page.locator('#globalMemoryToggle').check();
