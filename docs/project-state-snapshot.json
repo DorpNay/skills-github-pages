@@ -3,49 +3,26 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-10-29",
   "checkpoint": {
-    "main_sha": "337e38690af8f22a712c6442192c5ea62d354c3d",
-    "main_commit_subject": "docs: preserve engineering and runtime readiness audits",
-    "main_commit_date": "2026-10-28T05:36:59Z",
-    "last_functional_checkpoint_sha": "91557e4eab1b122341bed578cdf4775ff867007f",
-    "last_functional_milestone": "PR #77 RRF fusion merged; PR #76 Graphify workflow and PR #72 search/functions UX are also on main",
+    "main_sha": "375bcc10efe7b3a0e3e999b6504face1974a7cce",
+    "main_commit_subject": "feat(landing): reconcile launch page and first-stack runbook",
+    "main_commit_date": "2026-10-29",
+    "last_functional_checkpoint_sha": "375bcc10efe7b3a0e3e999b6504face1974a7cce",
+    "last_functional_milestone": "PR #108 landing/first-stack runbook and mobile viewport fix merged; PR #107 private/shared memory UI and #106 offline RAG evaluator core are also on main",
     "main_quality_run": 40639031308,
     "main_pages_deployment_run": 40639030224,
     "functional_parent_gateway_run": 40637941350,
     "functional_parent_quality_run": 40637941308,
     "functional_parent_graphify_run": 40637941303,
     "functional_parent_pages_run": 40637941951,
-    "open_pull_requests": [
-      78,
-      80,
-      81,
-      82,
-      83,
-      84,
-      85,
-      86,
-      87
-    ],
+    "open_pull_requests": [],
     "open_issues": [
-      88,
-      89,
-      90,
-      91,
-      92,
-      96,
-      97,
-      98,
-      99,
-      100,
-      101,
-      102,
-      103,
-      104
+      111
     ]
   },
   "interpretation": {
-    "last_main_commit_is_documentation_only": true,
+    "last_main_commit_is_documentation_only": false,
     "live_vps_gateway_device_and_model_runtime_verified": false,
-    "queue_policy": "exact IDs; any addition/removal is drift and must be reconciled",
+    "queue_policy": "exact IDs; state-refresh PR excluded from its own PR check; any unrelated addition/removal is drift",
     "pr_check_policy": "exclude only the PR currently running this check"
   }
 }

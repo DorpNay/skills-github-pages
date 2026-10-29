@@ -14,15 +14,14 @@ from urllib.request import Request, urlopen
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SNAPSHOT = ROOT / "docs/project-state-snapshot.json"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+# A state refresh must update the human- and machine-readable checkpoints together.
+# The checker, its tests and workflow do not need artificial edits on every refresh.
 REQUIRED_REFRESH_PATHS = {
     "ORIENTER.md",
     "project-reference/FILE_ORIENTER_RU.md",
     "docs/PROJECT_STATE.yaml",
     "docs/VOLLEY_LOG.md",
     "docs/project-state-snapshot.json",
-    "scripts/check_project_state_freshness.py",
-    "tests/test_project_state_freshness.py",
-    ".github/workflows/project-state-freshness.yml",
 }
 DOC_PATHS = (
     "ORIENTER.md",
@@ -63,9 +62,11 @@ def validate_snapshot(snapshot: Any, expected_repo: str | None = None) -> list[s
     functional_sha = checkpoint.get("last_functional_checkpoint_sha")
     if not isinstance(functional_sha, str) or not SHA_RE.fullmatch(functional_sha):
         errors.append("checkpoint.last_functional_checkpoint_sha must be a full commit SHA")
+    interpretation = snapshot.get("interpretation", {})
+    documentation_only = interpretation.get("last_main_commit_is_documentation_only", True)
     if isinstance(main_sha, str) and isinstance(functional_sha, str) and SHA_RE.fullmatch(main_sha) and SHA_RE.fullmatch(functional_sha):
-        if main_sha == functional_sha:
-            errors.append("documentation checkpoint and last functional checkpoint must be distinguished")
+        if main_sha == functional_sha and documentation_only:
+            errors.append("documentation-only checkpoint must distinguish main SHA from last functional checkpoint")
     if not isinstance(checkpoint.get("main_commit_subject"), str) or not checkpoint["main_commit_subject"].strip():
         errors.append("checkpoint.main_commit_subject is required")
     if not isinstance(checkpoint.get("main_commit_date"), str) or not checkpoint["main_commit_date"].strip():
@@ -171,10 +172,11 @@ def validate_local_docs(root: Path, snapshot: dict[str, Any]) -> list[str]:
     issue_marker = f"open issues ({len(issues)}): {', '.join(f'#{number}' for number in issues)}"
     if issue_marker not in contents.get("project-reference/FILE_ORIENTER_RU.md", ""):
         errors.append("project-reference/FILE_ORIENTER_RU.md: exact open-issue snapshot marker is missing")
-    if "V-2026-10-29-STATE-FRESHNESS-GUARD-001" not in contents.get("docs/VOLLEY_LOG.md", ""):
-        errors.append("docs/VOLLEY_LOG.md: missing V-2026-10-29-STATE-FRESHNESS-GUARD-001 entry")
-    if "Last main action: docs: preserve engineering and runtime readiness audits" not in contents.get("ORIENTER.md", ""):
-        errors.append("ORIENTER.md: last-main-action marker is missing")
+    if "V-2026-10-29-RESEARCH-APPLY-001" not in contents.get("docs/VOLLEY_LOG.md", ""):
+        errors.append("docs/VOLLEY_LOG.md: missing latest report-application entry")
+    orienter = contents.get("ORIENTER.md", "")
+    if "**Current main SHA:**" not in orienter or "Open PR queue:" not in orienter:
+        errors.append("ORIENTER.md: current checkpoint or queue marker is missing")
     return errors
 
 
