@@ -1296,6 +1296,7 @@ permalink: /
       if(externalGroup)externalGroup.label=lang==='en'?'Third-party providers':'Сторонние провайдеры';
       document.querySelectorAll('[data-i18n]').forEach(node=>{const value=text[node.dataset.i18n];if(typeof value==='string')node.textContent=value;});
       document.querySelectorAll('[data-i18n-placeholder]').forEach(node=>{const value=text[node.dataset.i18nPlaceholder];if(typeof value==='string')node.placeholder=value;});
+      document.querySelectorAll('[data-i18n-aria-label]').forEach(node=>{const value=text[node.dataset.i18nAriaLabel];if(typeof value==='string')node.setAttribute('aria-label',value);});
       $('languageSummary').textContent=lang==='en'?'EN ▾':'RU ▾';
       const sidebarLanguageSummary=$('languageSummarySidebar');if(sidebarLanguageSummary)sidebarLanguageSummary.textContent=lang==='en'?'EN ▾':'RU ▾';
       const languageSelect=$('uiLanguage');if(languageSelect)languageSelect.value=lang;
