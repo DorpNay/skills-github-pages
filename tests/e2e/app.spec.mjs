@@ -62,6 +62,53 @@ test('global system prompt is empty by default and obsolete Gemini reset is abse
   await expect(page.locator('[data-action="restore-defaults"]')).toHaveCount(0);
 });
 
+test('sidebar order separates memory, projects, status, chats, and research', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const positions = await page.locator('#sidebar').evaluate(sidebar => [
+    sidebar.querySelector('#memoryPanel'),
+    sidebar.querySelector('#projectPanel'),
+    sidebar.querySelector('#projectStatusLine'),
+    sidebar.querySelector('#chatSection'),
+    sidebar.querySelector('[data-action="open-research-studio"]'),
+    sidebar.querySelector('#sidebarPreferences')
+  ].map(el => Array.prototype.indexOf.call(sidebar.children, el)));
+  expect(positions.every(Number.isInteger)).toBe(true);
+  expect(positions).toEqual([...positions].sort((a, b) => a - b));
+  await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте выкл.');
+  await page.locator('#memoryToolsDetails > summary').click();
+  await page.locator('#globalMemoryToggle').check();
+  await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте вкл.');
+  await expect(page.locator('#projectStatusLine')).toContainText('Личный чат');
+});
+
+test('theme and language controls stay synchronized in settings and sidebar', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await expect(page.locator('#sidebarThemeToggle')).toContainText('Тема: тёмная');
+  await page.locator('#sidebarThemeToggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('#uiTheme')).toHaveValue('light');
+
+  await page.locator('[data-action="close-sidebar"]').click();
+  await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#uiLanguage')).toHaveValue('ru');
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('#languageSummary')).toContainText('EN');
+  await expect(page.locator('#languageSummarySidebar')).toContainText('EN');
+  await page.locator('[data-action="close-settings"]').click();
+
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#languageMenuSidebar > summary').click();
+  await page.locator('#languageMenuSidebar [data-action="set-language"][data-language="ru"]').click();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
+  await expect(page.locator('#uiLanguage')).toHaveValue('ru');
+  await page.locator('#sidebarThemeToggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(page.locator('#uiTheme')).toHaveValue('dark');
+});
+
 test('composer position persists and provider selection separates aLandi Cloud from external routes', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
