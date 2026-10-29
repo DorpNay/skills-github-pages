@@ -451,7 +451,7 @@ permalink: /
       </div>
       <label for="providerPreset" data-i18n="providerLabel" class="block text-xs text-gray-400">Провайдер API</label>
       <select id="providerPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm">
-        <optgroup label="aLandi Cloud · основной маршрут" data-i18n="providerGroupPrimary"><option value="alandi">aLandi Cloud · свой gateway</option></optgroup><optgroup label="Сторонние провайдеры" data-i18n="providerGroupExternal"><option value="kilo">Kilo AI · Auto Free</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="custom">Свой OpenAI-совместимый API</option></optgroup>
+        <optgroup id="providerPrimaryGroup" label="aLandi Cloud · основной маршрут"><option value="alandi">aLandi Cloud · свой gateway</option></optgroup><optgroup id="providerExternalGroup" label="Сторонние провайдеры"><option value="kilo">Kilo AI · Auto Free</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="custom">Свой OpenAI-совместимый API</option></optgroup>
       </select>
       <label for="modelSearch" data-i18n="modelSearchLabel" class="block text-xs text-gray-400">Поиск по каталогу моделей</label>
       <input type="search" id="modelSearch" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Фильтр по имени или ID модели">
@@ -1254,6 +1254,9 @@ permalink: /
     function applyUiLanguage(language){
       const lang=language==='en'?'en':'ru';safeSet('ai_ui_language_v1',lang);document.documentElement.lang=lang;
       const text=UI_TEXT[lang];
+      const primaryGroup=$('providerPrimaryGroup'),externalGroup=$('providerExternalGroup');
+      if(primaryGroup)primaryGroup.label=lang==='en'?'aLandi Cloud · primary route':'aLandi Cloud · основной маршрут';
+      if(externalGroup)externalGroup.label=lang==='en'?'Third-party providers':'Сторонние провайдеры';
       document.querySelectorAll('[data-i18n]').forEach(node=>{const value=text[node.dataset.i18n];if(typeof value==='string')node.textContent=value;});
       document.querySelectorAll('[data-i18n-placeholder]').forEach(node=>{const value=text[node.dataset.i18nPlaceholder];if(typeof value==='string')node.placeholder=value;});
       $('languageSummary').textContent=lang==='en'?'EN ▾':'RU ▾';
