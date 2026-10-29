@@ -4,12 +4,12 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 
 ## Verified repository checkpoint — 2026-10-29
 
-- **Current main SHA:** `c848212832b44a7f4c8ae08cf090de590a47cc89` — documentation-only reconciliation merge (PR #109); post-merge CI on this exact SHA is not yet independently verified.
-- **Latest functional baseline:** `375bcc10efe7b3a0e3e999b6504face1974a7cce` — landing/first-stack runbook and mobile viewport fix. Earlier functional milestones include private/shared memory UI (`2b2ecec5310aa25c695cfd8cb8198f2bb329cb51`) and the offline RAG evaluator core (`ef6e9b490ff964a8f77abdcd40a8448ab1c57d3d`).
-- **Merged and verified on exact PR heads:** #84 CORS canonicalization, #81 deployment repository preflight, #83 in-memory SQLite delta persistence, #82 readiness/model policy audit, #106 RAG evaluator core, #107 private/shared memory UI, and #108 launch page/runbook.
-- **Latest PR-head CI:** PR #108 Quality Sentinels run [#40896977015](https://github.com/DorpNay/skills-github-pages/actions/runs/40896977015) and Graphify run [#40896977071](https://github.com/DorpNay/skills-github-pages/actions/runs/40896977071) succeeded, including Chromium and published-site smoke. This is not proof of a live VPS deployment.
-- **Open PR queue:** none; PR #109 has merged. Verify the live queue before acting.
-- **Open issue queue:** only #111 remains; it tracks owner/live-host release gates. Research-only issues #88–#92 and #96–#104 were closed after their findings and unresolved actions were transferred to #111.
+- **Current main SHA:** `80597f61c000d691e95d67893edea60e75da1033` — PR #113 pinned GitHub Actions to immutable SHAs; post-merge Quality Sentinels #40915070855 and Pages deployment #40915070655 succeeded on this exact SHA.
+- **Latest functional UI baseline:** `ed2c4c7ee3a67c7a0cf5b541c1ab6206609dd32c` — modal scrims and inert outside-tap behavior (PR #115). PR #114 added an empty-by-default user system prompt and context-budget headroom; PR #71 stabilized mobile composer docking.
+- **Merged and verified on exact PR heads:** #113 immutable GitHub Actions pins; #115 modal scrims/outside-tap UX; #114 prompt default/context budgeting; #71 mobile composer; #84 CORS canonicalization; #81 deployment preflight; #83 SQLite delta; #82 readiness audit; #106 RAG evaluator; #107 private/shared memory; #108 launch page/runbook.
+- **Latest main CI:** Quality Sentinels [#40915070855](https://github.com/DorpNay/skills-github-pages/actions/runs/40915070855), Pages deployment [#40915070655](https://github.com/DorpNay/skills-github-pages/actions/runs/40915070655), Gateway Tests [#40915070886](https://github.com/DorpNay/skills-github-pages/actions/runs/40915070886), provenance [#40915070933](https://github.com/DorpNay/skills-github-pages/actions/runs/40915070933) and Graphify [#40915070939](https://github.com/DorpNay/skills-github-pages/actions/runs/40915070939) succeeded on exact main SHA. This is not proof of a live VPS deployment.
+- **Open PR queue:** none at the state-refresh baseline; verify the live queue before acting.
+- **Open issue queue:** only #111 remains; it tracks owner/live-host release gates. Research-only issues #88–#92 and #96–#104 were closed after transferring unresolved actions to #111.
 - **Runtime boundary:** GitHub Pages browser smoke is verified; live VPS/gateway, Ollama model performance, voice artifacts/device playback, OAuth credentials and target-host measurements remain unverified.
 
 ## First-read order

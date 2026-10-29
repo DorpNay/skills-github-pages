@@ -2,15 +2,15 @@ project_state:
   version: 4
   reviewed_on: "2026-10-29"
   root_orienter:
-    status: "Verified main c848212832b44a7f4c8ae08cf090de590a47cc89 after PR #109 state reconciliation; post-merge CI and live runtime remain unverified"
-    branch: "security/pin-actions-current-main-20261029"
-    base_main: "c848212832b44a7f4c8ae08cf090de590a47cc89"
+    status: "Verified main 80597f61c000d691e95d67893edea60e75da1033 after PR #113 security CI merge; Quality, Pages, Gateway, provenance and Graphify checks passed; live runtime remains unverified"
+    branch: "docs/state-refresh-after-ui-merges-20261029"
+    base_main: "80597f61c000d691e95d67893edea60e75da1033"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
-    merged_changes: "PR #84 CORS; #81 deploy preflight; #83 SQLite delta; #82 readiness audit; #106 RAG evaluator core; #107 private/shared memory; #108 landing/runbook and mobile viewport fix"
-    exact_head_checks: "PR #108 Quality Sentinels 40896977015 success; Graphify 40896977071 success; includes Chromium and published-site smoke"
-    runtime_boundary: "GitHub Pages browser smoke verified; live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
-    next: "Verify PR #113 exact-head CI; owner must configure main ruleset and provide live-host/device/evaluation evidence tracked by issue #111. No merge or deploy without owner approval."
+    merged_changes: "PR #113 immutable Actions pins; #115 modal scrim/outside-tap UX; #114 empty-by-default user prompt/context budget; #71 mobile composer; #84 CORS; #81 deploy preflight; #83 SQLite delta; #82 readiness audit; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
+    exact_head_checks: "Main Quality #40915070855 success; Pages #40915070655 success; Gateway #40915070886 success; provenance #40915070933 success; Graphify #40915070939 success"
+    runtime_boundary: "GitHub Pages browser smoke verified; native iPhone, live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
+    next: "Continue UX backlog in bounded PRs: edge-aware menu placement; header/project label/clock and sticky settings actions; provider/project export-import cleanup. Issue #111 remains owner/live-host release gate. No paid infrastructure or runtime claims without evidence."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -23,7 +23,7 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
-  last_volley: "V-2026-10-29-STATE-FRESHNESS-GUARD-001"
+  last_volley: "V-2026-10-29-UX-POPOVER-002"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Current browser half-duplex voice dialogue prototype is under PR validation; it uses mocked ASR/TTS in CI, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; first read in new chats, then verify current main HEAD and open PRs"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
@@ -46,12 +46,12 @@ project_state:
   current_ui_track:
     branch: "main"
     pull_request: 35
-    status: "PR33+34_merged; PR35_merged_at_23add254; PR-head_run418_passed; main_checkpoint_4fb39df_quality420_pages122_provenance159_passed; following_commit_docs_only"
+    status: "PR33+34+35 merged; PR71 mobile composer merged; PR114 prompt/context budget merged; PR115 modal scrim/outside-click merged; PR113 Actions SHA pinning merged; main 80597f61 Quality/Pages/Gateway/provenance/Graphify passed"
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
-    providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback"
+    providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback; PR114 leaves the optional global system prompt empty by default and removes the obsolete Gemini reset"
     projects: "PR35 merged and Chromium E2E passed: collapsed project list with per-project chat children; top-level unassigned chats only; project memory scope project-only vs project-and-global; one-shot project context scoped by chat. Server graph bridge remains experimental and disabled by default."
     voice_ui: "PR44 merged at 9145b5f; gateway/security/context/integrity/Jekyll/Chromium/live-site checks passed; local whisper.cpp ASR, Piper TTS and message mini-player are implemented but disabled by default; target device/model quality and VPS setup remain unverified"
-    chat_actions: "PR33+34 merged; PR35 merged with project-grouped row lists, personal-chat list, clear-history action and attachment/context composer; PR-head gates and post-merge main Quality/Pages checks passed for checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e"
+    chat_actions: "PR33+34+35 merged; PR71 stable bottom composer; PR115 composer popover scrim, modal backdrop blur and inert first outside tap for toolbar/language/chat-row menus; exact-head Chromium and published-site smoke passed on PR head d7f57d0abfba46a5764e6a1182bcc9a847f7a6ef"
     detailed_ledger: "docs/V016_IMPLEMENTATION_CHECKLIST.md"
     user_todo: "docs/USER_REQUEST_CHECKLIST.md"
     google_oauth_credentials_configured: false
@@ -274,15 +274,15 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-10-29"
-  verified_main: "c848212832b44a7f4c8ae08cf090de590a47cc89"
-  last_main_action: "docs(state): reconcile engineering decisions and refresh live checkpoint; SHA c848212832b44a7f4c8ae08cf090de590a47cc89"
-  last_functional_checkpoint: "375bcc10efe7b3a0e3e999b6504face1974a7cce"
-  main_quality: "Post-merge checks on documentation reconciliation merge SHA c848212832b44a7f4c8ae08cf090de590a47cc89 not yet independently verified; PR #109 exact-head checks passed."
-  main_graphify: "Post-merge Graphify result on c848212832b44a7f4c8ae08cf090de590a47cc89 not yet independently verified; Graphify remains artifact-only."
-  main_gateway: "No new Gateway workflow was triggered by the frontend-only PR #108; latest gateway-related exact-head evidence is tracked in individual PR records."
-  merged_prs: "84 CORS canonicalization; 81 deployment preflight; 83 in-memory SQLite delta; 82 readiness audit; 106 RAG evaluator core; 107 private/shared memory UI; 108 launch page/runbook and viewport fix"
-  open_pull_requests: "No open PRs at this checkpoint; later PR #113 is excluded from its own freshness check"
+  verified_main: "80597f61c000d691e95d67893edea60e75da1033"
+  last_main_action: "security(ci): pin GitHub Actions to immutable commit SHAs; SHA 80597f61c000d691e95d67893edea60e75da1033"
+  last_functional_checkpoint: "ed2c4c7ee3a67c7a0cf5b541c1ab6206609dd32c"
+  main_quality: "Quality Sentinels #40915070855 success on exact main SHA; includes Chromium and published-site smoke."
+  main_graphify: "Graphify #40915070939 success on exact main SHA; output remains a developer navigation artifact, not a runtime component."
+  main_gateway: "Lite Gateway Tests #40915070886 success on exact main SHA; live VPS/gateway/provider connectivity remains unverified."
+  merged_prs: "113 immutable GitHub Actions pins; 115 modal scrim and inert outside-tap UX; 114 empty-by-default user prompt and context-budget headroom; 71 mobile composer docking; 84 CORS; 81 deployment preflight; 83 SQLite delta; 82 readiness audit; 106 RAG evaluator; 107 private/shared memory; 108 landing/runbook"
+  open_pull_requests: "No open PRs at this checkpoint"
   open_issues: "Issue #111 only: consolidated owner/live-host release gates; research-only workstreams #88–#92 and #96–#104 closed after transferring unresolved actions"
   freshness_guard: "scripts/check_project_state_freshness.py; compares exact SHA and exact queue. A refresh commit must update ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG and snapshot; it no longer requires artificial edits to checker/tests/workflow."
   runtime_boundary: "GitHub Pages browser smoke verified; live VPS/Tunnel/Ollama, actual model performance, voice/device, OAuth/Drive and target-host measurements remain unverified"
-  next: "Verify PR #113 exact-head CI; issue #111 retains owner-only ruleset, live-host, hardware, RAG golden-set, voice/device, OAuth and sandbox gates. No merge or deploy without owner approval."
+  next: "Continue UX backlog with edge-aware popover/chat-menu placement, header/project label/clock and sticky settings actions, then provider/project export-import cleanup. Issue #111 retains owner-only ruleset, live-host, hardware, RAG golden-set, voice/device, OAuth and sandbox gates."

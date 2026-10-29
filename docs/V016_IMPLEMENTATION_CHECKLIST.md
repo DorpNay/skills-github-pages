@@ -1,8 +1,8 @@
 # V-016 / aLandi — implementation checklist and evidence ledger
 
 **Purpose:** one auditable checklist for the 8-section engineering fixation document and all four parts of the V-Final manifesto (sections 0–40), plus the current UI/provider work.  
-**Reviewed:** 2026-10-23  
-**Current baseline:** `main` @ `55248f81585c52d7cc7ba7cfc08158a291a761ca` after [PR #29](https://github.com/DorpNay/skills-github-pages/pull/29).  
+**Reviewed:** 2026-10-29  
+**Current baseline:** `main` @ `80597f61c000d691e95d67893edea60e75da1033` after PRs #113–#115. Exact main Quality, Pages, Gateway, provenance and Graphify checks passed; live VPS/device/runtime remains unverified.  
 **Rule:** a checked/audited requirement is not automatically a delivered feature. Statuses below refer to code and tests, not to a design proposal.
 
 ## Status key
@@ -180,3 +180,12 @@ The following items cover the initial fixation document plus manifesto sections 
 - [ ] **AI-IMAGE-001 — Image generation:** no working image-generation UI/runtime exists yet. Select local ComfyUI or explicit external provider, verify exact checkpoint/license/hash/VRAM and add request-to-image E2E before marking implemented.
 - [ ] **AI-OPS-001 — Free-first month:** no automatic paid resource provisioning. Use existing hardware and optional free-tier APIs with explicit quota/privacy caveats; paid hosting only after benchmark and owner decision.
 - [ ] **AI-MODEL-001 — Local-model autonomy:** no hidden application-level refusal filter is planned. Actual refusals remain checkpoint/provider-dependent; do not claim guaranteed zero refusals.
+
+
+## Supplement — legacy mobile and interface request, 2026-10-29
+
+- [x] PR #71: stable bottom composer for empty/populated chats and visualViewport-aware textarea; native iPhone Safari remains a separate manual gate.
+- [x] PR #114: optional global user system prompt empty by default; obsolete Gemini reset removed; legacy default migrates to empty; context history budget reserves serialization/provider overhead.
+- [x] PR #115: dim/blur scrim for attachment/context/voice popovers; modal backdrop blur respects reduced-transparency; first outside tap closes composer popover or toolbar/language/chat-row menu without activating underlying controls. Exact-head Chromium and published-site smoke passed.
+- [ ] Remaining UI work: edge-aware chat-row menu placement; header order and project label; non-interactive brand treatment and clock polish; sticky settings actions; provider/project export-import cleanup; one-line web-search/functions controls; per-chat mode persistence and default reset verification.
+- [ ] Native iPhone Safari, software keyboard, edge-swipe and touchcancel behavior remain unverified. Do not mark complete based only on Chromium.

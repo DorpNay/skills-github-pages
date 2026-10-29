@@ -237,8 +237,8 @@
 - [x] Compared the full owner message with current `main`, the implementation roadmap, existing browser tests, and visible UI/source identifiers. The audit separates already implemented behavior from partial work and unimplemented interaction design in `docs/LEGACY_UX_REQUEST_AUDIT_RU.md`.
 - [x] PR #71 (`fix/mobile-composer-docking-20261027`) merged: composer stays at the bottom in empty and populated chats, textarea height follows `visualViewport`, and Chromium viewport regression passes. Native iPhone Safari remains unverified.
 - [x] PR #114 merged at `25bfe66b5454e45fb5f6cef9dd86ae3c0ef1c5e5`: empty global system prompt by default, obsolete Gemini reset removed, quality sentinel aligned with the opt-in prompt contract, and history budgeting reserves serialization headroom. Exact-head Quality/Chromium/published-site smoke passed.
-- [~] Current bounded slice: add background scrim for composer popovers, blur modal backdrops, and make the first outside tap dismiss chat/language menus without activating controls beneath them.
-- [ ] Continue after this slice: smart edge-aware chat/popover placement; compact header/clock and project label; sticky settings actions; provider/project export/import cleanup; audit each remaining requirement against current code.
+- [x] PR #115 merged at `ed2c4c7ee3a67c7a0cf5b541c1ab6206609dd32c`: composer popover scrim, modal backdrop blur respecting reduced-transparency, inert first outside tap for toolbar/language/chat-row menus; exact-head Chromium and published-site smoke passed.
+- [~] Next bounded slice: edge-aware chat-row/popover placement and compact header order/project label/clock polish. Keep these separate from provider/project export-import cleanup and per-chat settings audit.
 - [ ] Run native iPhone Safari/keyboard/touch verification separately; passing Chromium viewport simulation is not proof of native behavior.
 
 
