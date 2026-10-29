@@ -1,4 +1,5 @@
 name: Project State Freshness
+run-name: Verify aLandi checkpoint and live GitHub queue
 
 on:
   pull_request:
