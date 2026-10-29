@@ -3124,7 +3124,7 @@ permalink: /
       toolbarMenus.forEach(menu => { menu.open = false; });
       chatMenus.forEach(menu => { menu.open = false; });
       event.preventDefault();
-      event.stopPropagation();
+      event.stopImmediatePropagation();
       event.stopImmediatePropagation();
     }, true);
     async function makeCacheKey(value) {
