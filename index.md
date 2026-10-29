@@ -209,7 +209,7 @@ permalink: /
     .settings-actions [data-action="download-recovery-backup"] { grid-column:1 / -1; }
     @media (max-width:360px) { .app-header { gap:.3rem!important;padding-inline:.45rem!important; } .clock-face { width:42px;height:42px; } .brand-wordmark { font-size:1rem!important; } .header-chat-title { max-width:none; } }
     .chat-row-menu[open] summary,.chat-row-menu summary:hover { background:var(--ui-tiffany-soft);border-color:var(--ui-border);color:var(--ui-tiffany); }
-    .chat-row-menu-panel { position:fixed;left:0;top:0;right:auto;bottom:auto;z-index:90;width:min(190px,calc(100vw - 16px));padding:5px;border:1px solid var(--ui-border);border-radius:14px;background:color-mix(in srgb,var(--ui-surface) 94%,transparent);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);box-shadow:0 18px 50px rgb(0 0 0 / 38%); }
+    .chat-row-menu-panel { position:fixed;left:0;top:0;right:auto;bottom:auto;z-index:90;width:min(190px,calc(100vw - 16px));max-height:min(70dvh,420px);overflow-y:auto;padding:5px;border:1px solid var(--ui-border);border-radius:14px;background:color-mix(in srgb,var(--ui-surface) 94%,transparent);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);box-shadow:0 18px 50px rgb(0 0 0 / 38%); }
     .chat-row-menu-panel button { display:block;width:100%;padding:10px;border-radius:9px;text-align:left;font-size:12px; }
     .chat-row-menu-panel button:hover { background:var(--ui-tiffany-soft); }
     .chat-row-menu-panel button.danger { color:#fb7185; }
@@ -394,12 +394,7 @@ permalink: /
       <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
     </details>
 
-    <div class="p-3 border-t border-gray-800 flex gap-2">
-      <button type="button" data-action="export-chats" data-i18n="exportChats" class="flex-1 bg-gray-800 hover:bg-gray-700 py-1.5 rounded text-xs">Экспорт</button>
-      <label class="flex-1 bg-gray-800 hover:bg-gray-700 py-1.5 rounded text-xs text-center cursor-pointer">
-        <span data-i18n="importChats">Импорт</span> <input id="importFile" type="file" class="hidden" accept="application/json,.json">
-      </label>
-    </div>
+    <input id="importFile" type="file" class="hidden" accept="application/json,.json">
   </aside>
   <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 hidden" aria-hidden="true"></div>
 
@@ -1968,7 +1963,7 @@ permalink: /
       const summary=document.createElement('summary');summary.textContent='⋯';summary.setAttribute('aria-label',getUiLanguage()==='en'?'Chat actions':'Действия чата');summary.title=summary.getAttribute('aria-label');
       const panel=document.createElement('div');panel.className='chat-row-menu-panel';
       const project=chat.projectId?projects.find(item=>item.id===chat.projectId):null,english=getUiLanguage()==='en';
-      const actions=[['chat-rename',english?'Rename':'Переименовать'],['chat-clone',english?'Clone':'Клонировать'],['chat-project',project?(english?'Move / detach from project':'Переместить / извлечь из проекта'):(english?'Add to project':'Добавить в проект')],['chat-clear',english?'Clear history':'Очистить историю'],['delete-chat',english?'Delete chat':'Удалить чат']];
+      const actions=[['chat-rename',english?'Rename':'Переименовать'],['chat-clone',english?'Clone':'Клонировать'],['export-chat',english?'Export chat':'Экспортировать чат'],['import-chats',english?'Import chats…':'Импортировать чаты…'],['chat-project',project?(english?'Move / detach from project':'Переместить / извлечь из проекта'):(english?'Add to project':'Добавить в проект')],['chat-clear',english?'Clear history':'Очистить историю'],['delete-chat',english?'Delete chat':'Удалить чат']];
       actions.forEach(([action,label])=>{const button=document.createElement('button');button.type='button';button.dataset.action=action;button.dataset.chatId=chat.id;button.textContent=label;if(action==='delete-chat')button.className='danger';panel.appendChild(button);});
       menu.append(summary,panel);
       const positionMenu=()=>{
@@ -4104,13 +4099,14 @@ permalink: /
       updateState([copy,...chats],copy.id);
       showToast(getUiLanguage()==='en'?'Chat cloned. Project memory is disabled in the copy.':'Чат клонирован. Память проекта отключена в копии.');
     }
-    function exportChats() {
-      const blob = new Blob([JSON.stringify(chats, null, 2)], { type: 'application/json;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement('a'); anchor.href = url;
-      anchor.download = `ai_chats_${new Date().toISOString().slice(0, 10)}.json`;
-      document.body.appendChild(anchor); anchor.click(); anchor.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    function exportChatById(id) {
+      const chat=chats.find(item=>item.id===id);
+      if(!chat){showToast(getUiLanguage()==='en'?'Chat not found.':'Чат не найден.','error');return;}
+      const blob=new Blob([JSON.stringify([chat],null,2)],{type:'application/json;charset=utf-8'});
+      const url=URL.createObjectURL(blob),anchor=document.createElement('a');
+      anchor.href=url;anchor.download='alandi-chat-'+(chat.title||'chat').toLowerCase().replace(/[^a-z0-9а-яё_-]+/gi,'-').slice(0,48)+'-'+new Date().toISOString().slice(0,10)+'.json';
+      document.body.appendChild(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+      showToast(getUiLanguage()==='en'?'Chat exported.':'Чат экспортирован.');
     }
     async function importChats(event) {
       const file = event.target.files?.[0];
@@ -4123,21 +4119,27 @@ permalink: /
             imported.some((chat) => !chat || typeof chat.id !== 'string' || !Array.isArray(chat.messages))) {
           throw new Error('Структура файла не похожа на экспорт чатов.');
         }
-        if (activeController) stopGeneration();
+        if (chats.length + imported.length > 1000) throw new Error('Импорт превысит лимит 1000 чатов. Сначала удали ненужные чаты.');
+        const seen = new Set(chats.map(chat=>chat.id));
         const clean = imported.map((chat) => ({
           id: chat.id.slice(0, 128), title: typeof chat.title === 'string' ? chat.title.slice(0, 160) : 'Импортированный чат',
           projectId: typeof chat.projectId==='string'&&projects.some(project=>project.id===chat.projectId)?chat.projectId:null,
           projectMemoryEnabled: chat.projectMemoryEnabled===true,
           serverProjectMemoryEnabled: false,
-          messages: chat.messages.filter((m) => m && ['user', 'assistant', 'tool'].includes(m.role)).map((m) => ({
-            role: m.role, content: typeof m.content === 'string' ? m.content : '',
-            ...(typeof m.tool_call_id === 'string' ? { tool_call_id: m.tool_call_id } : {}),
-            ...(Array.isArray(m.tool_calls) ? { tool_calls: m.tool_calls } : {}), ...(m.error ? { error: true } : {})
+          processingMode: ['fast','deep'].includes(chat.processingMode)?chat.processingMode:'fast',
+          searchMode: ['normal','more','offline'].includes(chat.searchMode)?chat.searchMode:'normal',
+          multiAgentEnabled: chat.multiAgentEnabled===true,
+          skillPreset: ['auto','planning','research','code-review','data-analysis','agent-systems','multimodal'].includes(chat.skillPreset)?chat.skillPreset:'auto',
+          messages: chat.messages.filter((m) => m && ['user', 'assistant', 'tool'].includes(m.role)).slice(0,10000).map((m) => ({
+            role: m.role, content: typeof m.content === 'string' ? m.content.slice(0,30000) : '',
+            ...(typeof m.tool_call_id === 'string' ? { tool_call_id: m.tool_call_id.slice(0,200) } : {}),
+            ...(Array.isArray(m.tool_calls) ? { tool_calls: m.tool_calls.slice(0,100) } : {}), ...(m.error ? { error: true } : {})
           }))
         }));
-        const seen = new Set();
-        clean.forEach((chat) => { if (seen.has(chat.id)) chat.id = `${chat.id}-${Math.random().toString(36).slice(2, 7)}`; seen.add(chat.id); });
-        updateState(clean, clean[0].id); toggleSidebar(false); showToast('Чаты импортированы');
+        clean.forEach((chat) => { const original=chat.id;if(seen.has(chat.id)){chat.id=projectIdNew();}seen.add(chat.id); });
+        if (activeController) stopGeneration();
+        updateState([...clean,...chats], clean[0].id); toggleSidebar(false);
+        showToast(getUiLanguage()==='en'?'Imported chats were added without replacing existing history.':'Импортированные чаты добавлены; существующая история не заменена.');
       } catch (error) { showToast(`Ошибка импорта: ${error.message}`, 'error'); }
     }
 
@@ -4838,7 +4840,8 @@ permalink: /
           case 'chat-action-cancel': closeChatActionDialog();break;
           case 'chat-project': control.closest('.chat-row-menu')?.removeAttribute('open');openChatActionDialog('project',control.dataset.chatId);break;
           case 'delete-chat': control.closest('.chat-row-menu')?.removeAttribute('open');if(confirm(getUiLanguage()==='en'?'Delete this chat?':'Удалить этот чат?'))deleteChat(control.dataset.chatId); break;
-          case 'export-chats': exportChats(); break;
+          case 'export-chat': control.closest('.chat-row-menu')?.removeAttribute('open');exportChatById(control.dataset.chatId);break;
+          case 'import-chats': control.closest('.chat-row-menu')?.removeAttribute('open');$('importFile').click();break;
           case 'export-settings-profile': exportSettingsProfile(); break;
           case 'import-settings-profile': $('settingsProfileFile').click(); break;
           case 'save-memory': {
