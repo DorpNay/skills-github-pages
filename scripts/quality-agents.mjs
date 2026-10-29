@@ -42,10 +42,12 @@ const suites = {
       includes("alandi: { label: 'aLandi Self-hosted Gateway'", 'The aLandi private gateway must be a first-class provider.');
       includes("allowCrossProvider&&selectedProvider!=='alandi'", 'Selecting aLandi must never silently route private prompts to another provider even if global fallback is enabled.');
       includes('<section id="cloudSettingsCard"', 'aLandi must have a dedicated first-party primary-route card.');
-      includes('data-action="select-alandi-primary"', 'aLandi must be selectable as the first-party primary route.');
-      includes('<option value="alandi" hidden>aLandi · основной маршрут</option>', 'The internal aLandi route must remain available to code but hidden from the third-party provider list.');
-      assert.equal((source.match(/<option value="alandi" hidden>/g) || []).length, 1, 'The provider selector must contain exactly one hidden internal aLandi route.');
-      assert.equal((source.match(/<option value="alandi">/g) || []).length, 0, 'aLandi must not appear as a visible third-party provider option.');
+      assert.equal((source.match(/data-action="select-alandi-primary"/g) || []).length, 0, 'The redundant separate primary-route action must not bypass the single provider selector.');
+      includes('<optgroup id="providerPrimaryGroup" label="aLandi Cloud · основной маршрут">', 'aLandi Cloud must have its own primary-route group.');
+      includes('<optgroup id="providerExternalGroup" label="Сторонние провайдеры">', 'Third-party providers must be grouped separately from aLandi Cloud.');
+      includes('<option value="alandi">aLandi Cloud · свой gateway</option>', 'The aLandi Cloud route must remain selectable in the shared route selector.');
+      assert.equal((source.match(/<option value="alandi">/g) || []).length, 1, 'The route selector must contain exactly one visible aLandi option in its own group.');
+      assert.equal((source.match(/<option value="alandi" hidden>/g) || []).length, 0, 'The aLandi route must not be hidden behind a separate route-switch action.');
       includes('function connectAlandiCloud()', 'The cloud UI must verify a real model response before showing connected.');
       includes('Never show a green connection lamp for proxy text, HTML, or an unknown error body.', 'HTTP 200 with unrecognized text must not be considered a successful model probe.');
       includes("globalMemoryEnabled=safeGet(STORAGE.globalMemoryEnabled)==='true'", 'Global memory must be explicitly enabled, not added to every request by default.');
