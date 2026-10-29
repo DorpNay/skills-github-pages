@@ -206,6 +206,10 @@ permalink: /
     .chat-action-dialog select option { color:#111827;background:#fff; }
     @media (prefers-reduced-transparency:reduce) { .chat-action-dialog { background:var(--ui-surface);backdrop-filter:none;-webkit-backdrop-filter:none; } }
     .chat-row-menu { position:relative; }
+    #chatRowMenuPageScrim { position:fixed;inset:0;z-index:49;background:rgba(0,0,0,.07); }
+    #chatRowMenuSidebarScrim { position:absolute;inset:0;z-index:89;background:transparent; }
+    body:has(#sidebar .chat-row-menu[open]) #chatRowMenuPageScrim,
+    body:has(#sidebar .chat-row-menu[open]) #chatRowMenuSidebarScrim { display:block; }
     .chat-row-menu summary { list-style:none;display:grid;place-items:center;width:36px;height:36px;border:1px solid transparent;border-radius:10px;color:var(--ui-text-muted);font-size:19px;cursor:pointer; }
     .chat-row-menu summary::-webkit-details-marker { display:none; }
     .settings-actions { position:sticky;bottom:-1rem;z-index:5;display:grid;grid-template-columns:1fr 1fr;gap:.5rem;padding:.8rem 0 .25rem;background:linear-gradient(to bottom,transparent 0,var(--ui-surface) 14px,var(--ui-surface) 100%); }
@@ -416,9 +420,11 @@ permalink: /
         </div>
       </details>
     </div>
+    <div id="chatRowMenuSidebarScrim" aria-hidden="true"></div>
     <input id="importFile" type="file" class="hidden" accept="application/json,.json">
   </aside>
   <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 hidden" aria-hidden="true"></div>
+  <div id="chatRowMenuPageScrim" aria-hidden="true"></div>
 
   <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="settings-surface bg-gray-800 p-4 rounded-xl max-w-sm mx-auto w-full border border-gray-700 space-y-2.5 my-auto max-h-[90dvh] overflow-y-auto">
@@ -3125,7 +3131,6 @@ permalink: /
       chatMenus.forEach(menu => { menu.open = false; });
       event.preventDefault();
       event.stopImmediatePropagation();
-      event.stopImmediatePropagation();
     }, true);
     async function makeCacheKey(value) {
       const serialized = JSON.stringify(value);
@@ -4809,15 +4814,11 @@ permalink: /
       }
     }
 
-    // Dismiss an open chat-row menu on the first outside click without activating the control underneath.
-    // Capture phase is deliberate: it prevents the underlying action before delegated click handling runs.
-    document.addEventListener('click', (event) => {
-      const openMenu = document.querySelector('#sidebar .chat-row-menu[open]');
-      if (!openMenu || event.target.closest('.chat-row-menu')) return;
-      openMenu.removeAttribute('open');
-      event.preventDefault();
-      event.stopPropagation();
-    }, true);
+    function dismissOpenChatRowMenus() {
+      document.querySelectorAll('#sidebar .chat-row-menu[open]').forEach(menu => menu.removeAttribute('open'));
+    }
+    $('chatRowMenuSidebarScrim')?.addEventListener('click', dismissOpenChatRowMenus);
+    $('chatRowMenuPageScrim')?.addEventListener('click', dismissOpenChatRowMenus);
 
     document.addEventListener('click', async (event) => {
       const control = event.target.closest('[data-action]');
