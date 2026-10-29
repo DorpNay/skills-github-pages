@@ -11,6 +11,7 @@
 - PRs #84/#81/#83/#82 merged: CORS canonicalization, deployment-template preflight, SQLite in-memory delta fix, readiness audit.
 - PRs #80/#85/#86/#87 closed as superseded/deferred after preserving the useful implementation in reconciled PRs #106/#107/#108; their remaining unique documentation is handled through this reconciliation.
 - Open PR: #78 only. Do not merge its stale state files without refreshing them against this main.
+- Exact queue markers: open PRs (1): #78; open issues (14): #88, #89, #90, #91, #92, #96, #97, #98, #99, #100, #101, #102, #103, #104.
 - Open research issues: #88–#92 and #96–#104; consolidate completed research into durable decisions and keep real owner/live-host blockers tracked.
 - Still unverified: live VPS/Tunnel/Ollama, target-hardware RAM/latency, voice artifacts and device, OAuth/Drive credentials, real labelled RAG corpus, main branch protection/rulesets.
 
