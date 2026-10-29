@@ -311,7 +311,24 @@ permalink: /
       <h2 class="font-bold text-sm" data-i18n="sidebarTitle">💬 Диалоги и память</h2>
       <button type="button" data-action="close-sidebar" aria-label="Закрыть меню" class="text-gray-400 hover:text-white text-lg p-1">✕</button>
     </div>
-    <div class="px-3 py-2 border-b border-gray-800"><button type="button" data-action="open-research-studio" class="w-full flex items-center gap-2 rounded-xl border border-cyan-800/70 bg-cyan-950/30 hover:bg-cyan-900/40 px-3 py-2.5 text-left text-xs font-semibold text-cyan-100"><span aria-hidden="true">⌕</span><span>Search &amp; Research Studio</span><span class="ml-auto text-[10px] text-cyan-300/80">↗</span></button></div>
+    
+    <section id="memoryPanel" class="mx-3 my-2 rounded-xl border border-gray-800 p-2 space-y-2" aria-label="Настройки памяти">
+      <details id="memoryToolsDetails" class="rounded-xl border border-gray-800">
+            <summary class="cursor-pointer select-none px-3 py-2 text-xs font-semibold">🧠 Общая память и факты</summary>
+            <div class="p-2 space-y-2">
+              <label class="flex items-start gap-2 text-[11px] leading-relaxed text-gray-400"><input id="globalMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="globalMemoryOptIn">Разрешить подходящим заметкам общей памяти попадать в контекст, если режим памяти текущего проекта это допускает.</span></label>
+              <label for="memoryInput" class="text-xs text-gray-200 font-semibold">Личная память локальной модели</label>
+              <p class="text-[10px] leading-relaxed text-emerald-200/80">Хранится в IndexedDB этого браузера. Используется только через aLandi gateway. Если личная память вошла в контекст, сторонние провайдеры блокируются для всего чата, включая fallback.</p>
+              <div class="flex gap-1 mt-1"><input id="memoryInput" type="text" maxlength="500" placeholder="Личный факт для локальной модели" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-memory" class="bg-blue-700 hover:bg-blue-600 px-2 rounded text-xs" aria-label="Сохранить в личную память">＋</button></div>
+              <div id="memoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет личных заметок.</div>
+              <label for="sharedMemoryInput" class="mt-3 block text-xs text-amber-200 font-semibold">Общая память (только выбранные факты)</label>
+              <p class="text-[10px] leading-relaxed text-amber-100/80">Общие факты могут попасть внешнему провайдеру, только если выше включено использование общей памяти. Перенос личной заметки требует отдельного подтверждения.</p>
+              <div class="flex gap-1 mt-1"><input id="sharedMemoryInput" type="text" maxlength="500" placeholder="Факт для общей памяти" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-shared-memory" class="bg-amber-800 hover:bg-amber-700 px-2 rounded text-xs" aria-label="Сохранить в общую память">＋</button></div>
+              <div id="sharedMemoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет общих заметок.</div>
+            </div>
+          </details>
+      <p id="memoryStatusLine" class="px-2 pb-1 text-[10px] leading-relaxed text-gray-500" role="status" aria-live="polite">Память · личных 0 · общих 0 · общая в контексте выкл.</p>
+    </section>
     <section id="projectPanel" class="px-3 py-2 border-t border-gray-800 space-y-2" aria-label="Проекты и настройки проекта">
       <div class="grid grid-cols-2 gap-2 mb-2">
         <button type="button" data-action="open-project-create" data-i18n="createProject" class="rounded-lg border border-cyan-800 bg-cyan-950/40 px-2 py-2 text-left text-xs font-semibold">＋ Создать проект</button>
@@ -347,20 +364,7 @@ permalink: /
             <button id="createProjectSubmit" type="button" data-action="create-project" class="hidden bg-cyan-900/70 hover:bg-cyan-800 border border-cyan-800 rounded-lg py-2 text-xs" data-i18n="createProject">＋ Создать проект</button>
             <button id="saveProjectSubmit" type="button" data-action="save-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="saveProject">Сохранить изменения</button>
           </div>
-<details id="memoryToolsDetails" class="rounded-xl border border-gray-800">
-            <summary class="cursor-pointer select-none px-3 py-2 text-xs font-semibold">🧠 Общая память и факты</summary>
-            <div class="p-2 space-y-2">
-              <label class="flex items-start gap-2 text-[11px] leading-relaxed text-gray-400"><input id="globalMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="globalMemoryOptIn">Разрешить подходящим заметкам общей памяти попадать в контекст, если режим памяти текущего проекта это допускает.</span></label>
-              <label for="memoryInput" class="text-xs text-gray-200 font-semibold">Личная память локальной модели</label>
-              <p class="text-[10px] leading-relaxed text-emerald-200/80">Хранится в IndexedDB этого браузера. Используется только через aLandi gateway. Если личная память вошла в контекст, сторонние провайдеры блокируются для всего чата, включая fallback.</p>
-              <div class="flex gap-1 mt-1"><input id="memoryInput" type="text" maxlength="500" placeholder="Личный факт для локальной модели" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-memory" class="bg-blue-700 hover:bg-blue-600 px-2 rounded text-xs" aria-label="Сохранить в личную память">＋</button></div>
-              <div id="memoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет личных заметок.</div>
-              <label for="sharedMemoryInput" class="mt-3 block text-xs text-amber-200 font-semibold">Общая память (только выбранные факты)</label>
-              <p class="text-[10px] leading-relaxed text-amber-100/80">Общие факты могут попасть внешнему провайдеру, только если выше включено использование общей памяти. Перенос личной заметки требует отдельного подтверждения.</p>
-              <div class="flex gap-1 mt-1"><input id="sharedMemoryInput" type="text" maxlength="500" placeholder="Факт для общей памяти" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-shared-memory" class="bg-amber-800 hover:bg-amber-700 px-2 rounded text-xs" aria-label="Сохранить в общую память">＋</button></div>
-              <div id="sharedMemoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет общих заметок.</div>
-            </div>
-          </details>
+
           <label for="projectMemoryInput" class="block text-[11px] text-gray-400" data-i18n="projectMemoryLabel">Добавить факт в память проекта</label>
           <div class="flex gap-1"><input id="projectMemoryInput" type="text" maxlength="600" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Факт, решение или ограничение"><button type="button" data-action="add-project-memory" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Добавить факт">＋</button></div>
           <div id="projectMemoryBox" class="max-h-24 overflow-y-auto text-[11px] text-gray-400 space-y-1"></div>
@@ -392,6 +396,7 @@ permalink: /
         </div>
       </details>
     </section>
+    <p id="projectStatusLine" class="mx-3 -mt-1 mb-1 px-2 text-[10px] leading-relaxed text-gray-500" role="status" aria-live="polite">Личный чат · без проекта</p>
     <details id="chatSection" open class="mx-3 my-2 rounded-xl border border-gray-800">
       <summary class="chat-section-summary flex items-center justify-between gap-2 px-3 py-2.5 text-sm font-semibold cursor-pointer select-none" aria-controls="chatList">
         <span>💬 <span data-i18n="chatsTitle">Чаты</span></span><span id="chatSectionCount" class="text-[10px] text-gray-500">0</span>
@@ -399,7 +404,18 @@ permalink: /
       <div class="px-2 pt-2"><button type="button" data-action="new-chat" data-i18n="newPersonalChat" class="w-full rounded-lg border border-blue-500/25 bg-blue-600/10 hover:bg-blue-600/20 py-2 text-xs font-semibold text-blue-200">＋ Новый личный чат</button></div>
       <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
     </details>
+    <div class="px-3 py-2 border-b border-gray-800"><button type="button" data-action="open-research-studio" class="w-full flex items-center gap-2 rounded-xl border border-cyan-800/70 bg-cyan-950/30 hover:bg-cyan-900/40 px-3 py-2.5 text-left text-xs font-semibold text-cyan-100"><span aria-hidden="true">⌕</span><span>Search &amp; Research Studio</span><span class="ml-auto text-[10px] text-cyan-300/80">↗</span></button></div>
 
+    <div id="sidebarPreferences" class="sticky bottom-0 mt-auto border-t border-gray-800 bg-gray-950/95 backdrop-blur px-3 py-3 grid grid-cols-2 gap-2">
+      <button id="sidebarThemeToggle" type="button" data-action="toggle-theme-cycle" class="rounded-lg border border-gray-700 px-3 py-2 text-xs text-left" aria-label="Сменить тему">☼ Тема: тёмная</button>
+      <details id="languageMenuSidebar" class="relative rounded-lg border border-gray-700">
+        <summary id="languageSummarySidebar" class="cursor-pointer select-none px-3 py-2 text-xs">RU ▾</summary>
+        <div class="absolute bottom-full left-0 right-0 mb-1 rounded-lg border border-gray-700 bg-gray-900 p-1 shadow-xl z-50">
+          <button type="button" data-action="set-language" data-language="ru" data-i18n="languageRussian" class="w-full rounded px-2 py-2 text-left text-xs">Русский</button>
+          <button type="button" data-action="set-language" data-language="en" data-i18n="languageEnglish" class="w-full rounded px-2 py-2 text-left text-xs">English</button>
+        </div>
+      </details>
+    </div>
     <input id="importFile" type="file" class="hidden" accept="application/json,.json">
   </aside>
   <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 hidden" aria-hidden="true"></div>
