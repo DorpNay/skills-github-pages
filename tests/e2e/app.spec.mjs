@@ -1593,7 +1593,6 @@ test('chat menu export is scoped and chat import merges without replacing histor
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toContain('alandi-chat-');
 
-  await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#importFile').setInputFiles({
     name: 'imported-chats.json',
     mimeType: 'application/json',
