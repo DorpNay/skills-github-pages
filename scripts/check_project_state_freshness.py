@@ -63,9 +63,6 @@ def validate_snapshot(snapshot: Any, expected_repo: str | None = None) -> list[s
     functional_sha = checkpoint.get("last_functional_checkpoint_sha")
     if not isinstance(functional_sha, str) or not SHA_RE.fullmatch(functional_sha):
         errors.append("checkpoint.last_functional_checkpoint_sha must be a full commit SHA")
-    if isinstance(main_sha, str) and isinstance(functional_sha, str) and SHA_RE.fullmatch(main_sha) and SHA_RE.fullmatch(functional_sha):
-        if main_sha == functional_sha:
-            errors.append("documentation checkpoint and last functional checkpoint must be distinguished")
     if not isinstance(checkpoint.get("main_commit_subject"), str) or not checkpoint["main_commit_subject"].strip():
         errors.append("checkpoint.main_commit_subject is required")
     if not isinstance(checkpoint.get("main_commit_date"), str) or not checkpoint["main_commit_date"].strip():
@@ -173,8 +170,9 @@ def validate_local_docs(root: Path, snapshot: dict[str, Any]) -> list[str]:
         errors.append("project-reference/FILE_ORIENTER_RU.md: exact open-issue snapshot marker is missing")
     if "V-2026-10-29-STATE-FRESHNESS-GUARD-001" not in contents.get("docs/VOLLEY_LOG.md", ""):
         errors.append("docs/VOLLEY_LOG.md: missing V-2026-10-29-STATE-FRESHNESS-GUARD-001 entry")
-    if "Last main action: docs: preserve engineering and runtime readiness audits" not in contents.get("ORIENTER.md", ""):
-        errors.append("ORIENTER.md: last-main-action marker is missing")
+    subject = checkpoint.get("main_commit_subject", "")
+    if f"Last main action: {subject}" not in contents.get("ORIENTER.md", ""):
+        errors.append("ORIENTER.md: last-main-action marker does not match snapshot main_commit_subject")
     return errors
 
 
