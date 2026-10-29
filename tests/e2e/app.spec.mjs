@@ -2363,6 +2363,13 @@ test('search presets and function settings fit one line, localize, and persist p
     const box = await page.locator(selector).boundingBox();
     expect(box?.height || 0, selector + ' should have a 44px mobile hit target').toBeGreaterThanOrEqual(44);
   }
+  const headerTargetHeights = await page.locator('.app-header .header-icon').evaluateAll(elements => elements.map(element => element.getBoundingClientRect().height));
+  expect(headerTargetHeights.length).toBeGreaterThan(0);
+  expect(headerTargetHeights.every(height => height >= 44)).toBe(true);
+  for (const selector of ['#contextPickerButton', '#attachTextButton', '#voiceUnavailableButton', '#sendBtn', '#userInput']) {
+    const box = await page.locator(selector).boundingBox();
+    expect(box?.height || 0, selector + ' should have a 44px mobile hit target').toBeGreaterThanOrEqual(44);
+  }
   await page.locator('#searchModeSummary').click();
   const menuOptionBox = await page.locator('#searchModeMenu .toolbar-menu-option').first().boundingBox();
   expect(menuOptionBox?.height || 0, 'Search menu options should have a 44px mobile hit target').toBeGreaterThanOrEqual(44);
