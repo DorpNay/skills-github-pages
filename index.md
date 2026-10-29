@@ -120,10 +120,15 @@ permalink: /
     .cloud-key-row button,.composer-tool,.header-icon { border-color:var(--ui-border);background:var(--ui-surface-raised);color:var(--ui-text); }
     .cloud-key-row button:hover,.composer-tool:hover:not(:disabled),.header-icon:hover { border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
     .app-header { background:var(--ui-surface)!important;border-color:var(--ui-border)!important; }
-    .brand-wordmark { background:linear-gradient(120deg,var(--ui-text),var(--ui-tiffany-bright));color:transparent;background-clip:text;-webkit-background-clip:text;white-space:nowrap; }
+    .brand-wordmark { display:inline-block;background:linear-gradient(120deg,var(--ui-text),var(--ui-tiffany-bright));color:transparent;background-clip:text;-webkit-background-clip:text;white-space:nowrap;user-select:none; }
+    .header-chat-title { flex:1;min-width:0;max-width:none;line-height:1.2; }
+    .active-project-title { display:block;color:var(--ui-tiffany-bright);font-size:9px;font-weight:750;line-height:1.15;letter-spacing:.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .mode-hint-row { display:flex;align-items:center;gap:.5rem;min-width:0; }
+    .mode-hint { min-width:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
     .brand-subtitle { display:block;font-size:9px;letter-spacing:.06em;color:var(--ui-text-muted);white-space:nowrap; }
     .clock-face { position:relative;width:54px;height:54px;border:1px solid rgba(104,232,208,.55);border-radius:50%;background:radial-gradient(circle at 35% 22%,rgba(255,255,255,.09),transparent 48%),var(--ui-bg);box-shadow:inset 0 0 12px rgba(104,232,208,.08),0 0 16px rgba(104,232,208,.06);overflow:hidden; }
-    .clock-digital { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:800;font-size:11px;letter-spacing:-.08em;font-variant-numeric:tabular-nums;color:var(--ui-tiffany);opacity:.94;z-index:0; }
+    .clock-face::before { content:"";position:absolute;inset:2px;border-radius:50%;background:repeating-conic-gradient(from -90deg,rgba(104,232,208,.78) 0deg 1.3deg,transparent 1.3deg 30deg);mask:radial-gradient(circle,transparent 0 72%,#000 74%);-webkit-mask:radial-gradient(circle,transparent 0 72%,#000 74%);opacity:.75;pointer-events:none;z-index:0; }
+    .clock-digital { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:800;font-size:11px;letter-spacing:-.08em;font-variant-numeric:tabular-nums;color:var(--ui-tiffany);opacity:.94;z-index:1;text-shadow:0 0 5px color-mix(in srgb,var(--ui-tiffany) 30%,transparent); }
     .clock-hand { position:absolute;left:calc(50% - 1px);bottom:50%;width:2px;border-radius:999px;transform-origin:50% 100%;transform:rotate(0deg);transition:none!important;z-index:2;background:var(--ui-text); }
     .clock-hour { height:14px;width:3px;left:calc(50% - 1.5px);background:var(--ui-text); }
     .clock-minute { height:20px;background:var(--ui-tiffany-bright); }
@@ -200,14 +205,17 @@ permalink: /
     .chat-row-menu { position:relative; }
     .chat-row-menu summary { list-style:none;display:grid;place-items:center;width:36px;height:36px;border:1px solid transparent;border-radius:10px;color:var(--ui-text-muted);font-size:19px;cursor:pointer; }
     .chat-row-menu summary::-webkit-details-marker { display:none; }
+    .settings-actions { position:sticky;bottom:-1rem;z-index:5;display:grid;grid-template-columns:1fr 1fr;gap:.5rem;padding:.8rem 0 .25rem;background:linear-gradient(to bottom,transparent 0,var(--ui-surface) 14px,var(--ui-surface) 100%); }
+    .settings-actions [data-action="download-recovery-backup"] { grid-column:1 / -1; }
+    @media (max-width:360px) { .app-header { gap:.3rem!important;padding-inline:.45rem!important; } .clock-face { width:42px;height:42px; } .brand-wordmark { font-size:1rem!important; } .header-chat-title { max-width:none; } }
     .chat-row-menu[open] summary,.chat-row-menu summary:hover { background:var(--ui-tiffany-soft);border-color:var(--ui-border);color:var(--ui-tiffany); }
-    .chat-row-menu-panel { position:absolute;right:0;top:calc(100% + 5px);z-index:90;width:190px;padding:5px;border:1px solid var(--ui-border);border-radius:14px;background:color-mix(in srgb,var(--ui-surface) 94%,transparent);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);box-shadow:0 18px 50px rgb(0 0 0 / 38%); }
+    .chat-row-menu-panel { position:fixed;left:0;top:0;right:auto;bottom:auto;z-index:90;width:min(190px,calc(100vw - 16px));padding:5px;border:1px solid var(--ui-border);border-radius:14px;background:color-mix(in srgb,var(--ui-surface) 94%,transparent);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);box-shadow:0 18px 50px rgb(0 0 0 / 38%); }
     .chat-row-menu-panel button { display:block;width:100%;padding:10px;border-radius:9px;text-align:left;font-size:12px; }
     .chat-row-menu-panel button:hover { background:var(--ui-tiffany-soft); }
     .chat-row-menu-panel button.danger { color:#fb7185; }
     .chat-row-menu-panel button.danger:hover { background:rgb(244 63 94 / 12%); }
     #userInput { scroll-margin-block:24px 180px; }
-    @media (max-width:640px) { #userInput { font-size:16px!important;line-height:1.45; } .chat-row-menu-panel { width:200px; } }
+    @media (max-width:640px) { #userInput { font-size:16px!important;line-height:1.45; } .chat-row-menu-panel { width:min(190px,calc(100vw - 16px)); } }
     @media (prefers-reduced-transparency:reduce) { .chat-row-menu-panel { background:var(--ui-surface);backdrop-filter:none;-webkit-backdrop-filter:none; } }
     .language-menu { position:relative; }
     .language-menu summary { list-style:none;cursor:pointer;border:1px solid var(--ui-border);border-radius:10px; }
@@ -215,7 +223,7 @@ permalink: /
     .language-menu-panel { position:absolute;right:0;top:calc(100% + 8px);z-index:80;min-width:130px;padding:5px;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:14px;box-shadow:0 16px 36px rgba(0,0,0,.25); }
     .language-menu-panel button { display:block;width:100%;padding:9px 10px;border-radius:9px;text-align:left;font-size:12px; }
     .language-menu-panel button[aria-pressed="true"] { color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
-    .header-chat-title { max-width:24vw; }
+    .header-chat-title { max-width:none; }
     /* The composer stays in the normal flex layout at the bottom. Centering it on
        an empty chat caused iOS keyboard resizes to move the whole input surface. */
     #composerFooter { position:relative; flex-shrink:0; width:100%; }
@@ -225,7 +233,7 @@ permalink: /
     @media (max-width:639px) {
       .clock-face { width:46px;height:46px; }
       .clock-digital { font-size:10px; }
-      .header-chat-title { max-width:22vw; }
+      .header-chat-title { max-width:none; }
       .brand-subtitle { font-size:8px; }
       #composerFooter { padding-left:8px;padding-right:8px; }
       #userInput { max-height:min(30vh,240px);max-height:min(30dvh,240px); }
@@ -495,23 +503,27 @@ permalink: /
       <p class="text-[10px] leading-relaxed text-gray-500">Профиль переносит настройки, но намеренно не содержит API-ключи и токены. Импорт не меняет уже сохранённые секреты.</p>
         </div>
       </details>
-      <button type="button" id="recoveryBackupButton" data-action="download-recovery-backup" class="hidden w-full bg-amber-800 hover:bg-amber-700 py-2 rounded text-xs text-amber-50">Скачать резервную копию истории</button>
-      <button type="button" data-action="save-settings" data-i18n="saveSettings" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded font-bold text-sm">Сохранить</button>
-      <button type="button" data-action="close-settings" data-i18n="closeSettings" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-300">Закрыть</button>
+      <div class="settings-actions">
+        <button type="button" id="recoveryBackupButton" data-action="download-recovery-backup" class="hidden w-full bg-amber-800 hover:bg-amber-700 py-2 rounded text-xs text-amber-50">Скачать резервную копию истории</button>
+        <button type="button" data-action="save-settings" data-i18n="saveSettings" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded font-bold text-sm">Сохранить</button>
+        <button type="button" data-action="close-settings" data-i18n="closeSettings" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-300">Закрыть</button>
+      </div>
     </div>
   </div>
 
-  <header class="app-header px-3 py-2 border-b flex justify-between items-center shrink-0 gap-2">
-    <button type="button" data-action="toggle-sidebar" aria-label="Открыть меню" class="header-icon text-xl px-2 py-1">☰</button>
-    <div class="brand-cluster flex items-center gap-2 min-w-0">
-      <button type="button" data-action="brand-easter-egg" id="brandWordmark" class="brand-wordmark font-bold text-lg tracking-tight" title="Нажми, чтобы раскрыть ребус">aLandi</button>
-      <div id="aLandiClock" class="clock-shell" aria-label="Местное время">
-        <div class="clock-face" aria-hidden="true"><span class="clock-digital" id="clockDigital">00:00</span><span class="clock-hand clock-hour" id="clockHour"></span><span class="clock-hand clock-minute" id="clockMinute"></span><span class="clock-hand clock-second" id="clockSecond"></span><span class="clock-pin"></span></div>
-        <span id="clockAccessible" class="sr-only" aria-live="off">Местное время</span>
-      </div>
-      <div class="header-chat-title min-w-0"><h1 id="activeChatTitle" class="font-semibold text-xs sm:text-sm truncate">Новый чат</h1><span class="brand-subtitle">i land AI · local-first</span></div>
+  <header class="app-header px-3 py-2 border-b flex items-center shrink-0 gap-2">
+    <button type="button" data-action="toggle-sidebar" aria-label="Открыть меню" class="header-icon text-xl px-2 py-1 shrink-0">☰</button>
+    <div class="header-chat-title min-w-0 flex-1">
+      <span id="activeProjectTitle" class="active-project-title hidden"></span>
+      <h1 id="activeChatTitle" class="font-semibold text-xs sm:text-sm truncate">Новый чат</h1>
     </div>
+    <div id="aLandiClock" class="clock-shell shrink-0" aria-label="Местное время">
+      <div class="clock-face" aria-hidden="true"><span class="clock-digital" id="clockDigital">00:00</span><span class="clock-hand clock-hour" id="clockHour"></span><span class="clock-hand clock-minute" id="clockMinute"></span><span class="clock-hand clock-second" id="clockSecond"></span><span class="clock-pin"></span></div>
+      <span id="clockAccessible" class="sr-only" aria-live="off">Местное время</span>
+    </div>
+    <span id="brandWordmark" class="brand-wordmark font-bold text-lg tracking-tight shrink-0">aLandi</span>
     <div class="flex items-center gap-1.5 shrink-0">
+      <button type="button" data-action="toggle-theme-cycle" id="homeThemeToggle" aria-label="Сменить тему" title="Сменить тему" class="header-icon px-2 py-1.5">☼</button>
       <details id="languageMenu" class="language-menu">
         <summary id="languageSummary" aria-label="Язык интерфейса" class="header-icon px-2 py-1.5 text-xs">RU ▾</summary>
         <div class="language-menu-panel">
@@ -519,14 +531,12 @@ permalink: /
           <button type="button" data-action="set-language" data-language="en" aria-pressed="false">English</button>
         </div>
       </details>
-      <button type="button" data-action="toggle-theme-cycle" id="homeThemeToggle" aria-label="Сменить тему" title="Сменить тему" class="header-icon px-2 py-1.5">☼</button>
-      <span id="pyStatus" class="text-[10px] bg-gray-700 text-gray-300 px-2 py-0.5 rounded hidden sm:inline-flex" title="Python загрузится только после запуска блока кода">Py: по запросу</span>
       <button type="button" data-action="toggle-settings" aria-label="Настройки" class="header-icon px-2.5 py-1.5 rounded-xl">⚙️</button>
     </div>
   </header>
 
   <div class="bg-gray-950 px-3 py-2 border-b border-gray-800 shrink-0 space-y-1.5">
-    <p id="modeHint" class="mode-hint text-[10px] text-gray-500 leading-tight" title="Быстро ограничивает число раундов инструментов; Дольше разрешает больше раундов. Выбранная строка поиска уточняет бюджет веб-поиска.">Быстро · обычный веб-поиск · исследование отдельно.</p>
+    <div class="mode-hint-row"><p id="modeHint" class="mode-hint text-[10px] text-gray-500 leading-tight" title="Быстро ограничивает число раундов инструментов; Дольше разрешает больше раундов. Выбранная строка поиска уточняет бюджет веб-поиска.">Быстро · обычный веб-поиск · исследование отдельно.</p><span id="pyStatus" class="hidden sm:inline-flex shrink-0 text-[9px] text-gray-500" title="Python загрузится только после запуска блока кода">Py: по запросу</span></div>
     <div class="flex items-center gap-2 text-xs">
       <span class="text-gray-400 shrink-0" data-i18n="modeLabel">Думать:</span>
       <div class="flex flex-1 min-w-0 rounded-lg bg-gray-900 p-1 gap-1" role="group" aria-label="Режим обработки">
@@ -1249,7 +1259,7 @@ permalink: /
       $('languageSummary').textContent=lang==='en'?'EN ▾':'RU ▾';
       $('sidebar')?.setAttribute('aria-label',lang==='en'?'Projects and chats':'Проекты и чаты');
       document.querySelectorAll('[data-action="set-language"]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.language===lang)));
-      const brand=$('brandWordmark');if(brand)brand.title=lang==='en'?'Tap to reveal the word puzzle':'Нажми, чтобы раскрыть ребус';
+      // The aLandi wordmark is intentionally decorative, not a clickable control.
       const themeButton=$('homeThemeToggle');if(themeButton){themeButton.title=lang==='en'?'Switch theme':'Сменить тему';themeButton.setAttribute('aria-label',themeButton.title);}
       document.querySelectorAll('[data-action="toggle-settings"]').forEach(button=>button.setAttribute('aria-label',lang==='en'?'Settings':'Настройки'));
       const attach=$('attachTextButton');if(attach){attach.title=lang==='en'?'Attach photo, video or any file format':'Добавить фото, видео или файл любого формата';attach.setAttribute('aria-label',attach.title);}
@@ -1614,6 +1624,10 @@ permalink: /
     function renderActiveChat() {
       const chat = getCurrentChat();
       $('activeChatTitle').textContent = chat.title || 'Новый чат';
+      const activeProject=chat.projectId?projects.find(project=>project.id===chat.projectId):null;
+      const projectTitle=$('activeProjectTitle');
+      projectTitle.textContent=activeProject?.name||'';
+      projectTitle.classList.toggle('hidden',!activeProject);
       const box = $('chatBox');
       box.replaceChildren();
       if (!chat.messages.length) {
@@ -1956,7 +1970,29 @@ permalink: /
       const project=chat.projectId?projects.find(item=>item.id===chat.projectId):null,english=getUiLanguage()==='en';
       const actions=[['chat-rename',english?'Rename':'Переименовать'],['chat-clone',english?'Clone':'Клонировать'],['chat-project',project?(english?'Move / detach from project':'Переместить / извлечь из проекта'):(english?'Add to project':'Добавить в проект')],['chat-clear',english?'Clear history':'Очистить историю'],['delete-chat',english?'Delete chat':'Удалить чат']];
       actions.forEach(([action,label])=>{const button=document.createElement('button');button.type='button';button.dataset.action=action;button.dataset.chatId=chat.id;button.textContent=label;if(action==='delete-chat')button.className='danger';panel.appendChild(button);});
-      menu.append(summary,panel);item.append(open,menu);return item;
+      menu.append(summary,panel);
+      const positionMenu=()=>{
+        if(!menu.open)return;
+        const anchor=summary.getBoundingClientRect(),viewportWidth=window.visualViewport?.width||window.innerWidth,viewportHeight=window.visualViewport?.height||window.innerHeight;
+        const width=panel.offsetWidth||190,height=panel.offsetHeight,margin=8,gap=5;
+        const left=Math.max(margin,Math.min(anchor.right-width,viewportWidth-width-margin));
+        const fitsBelow=anchor.bottom+gap+height<=viewportHeight-margin;
+        const top=fitsBelow?anchor.bottom+gap:Math.max(margin,anchor.top-height-gap);
+        panel.style.left=left+'px';panel.style.top=top+'px';menu.dataset.placement=fitsBelow?'below':'above';
+      };
+      const stopTrackingMenu=()=>{
+        window.removeEventListener('resize',positionMenu);
+        window.removeEventListener('scroll',positionMenu,true);
+        panel.style.left='';panel.style.top='';delete menu.dataset.placement;
+      };
+      menu.addEventListener('toggle',()=>{
+        if(menu.open){
+          positionMenu();requestAnimationFrame(positionMenu);
+          window.addEventListener('resize',positionMenu);
+          window.addEventListener('scroll',positionMenu,true);
+        }else stopTrackingMenu();
+      });
+      item.append(open,menu);return item;
     }
     function renderProjectNavigation() {
       const list=$('projectNavigationList');if(!list)return;
@@ -4735,7 +4771,6 @@ permalink: /
           case 'open-function-panel': openFunctionPanel(control.dataset.function);break;
           case 'close-function-panel': closeFunctionPanel();break;
           case 'toggle-theme-cycle': toggleHomeTheme();break;
-          case 'brand-easter-egg': showToast(getUiLanguage()==='en'?'aLandi → “a land i” → “i land AI”: the name is a small word puzzle.':'aLandi → «a land i» → «i land AI»: имя — маленький ребус.');break;
           case 'paste-provider-key': await pasteIntoField('apiKey');break;
           case 'paste-cloud-key': await pasteIntoField('cloudApiKey');break;
           case 'paste-tavily-key': await pasteIntoField('tavilyKey');break;
