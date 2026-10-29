@@ -261,12 +261,8 @@ const suites = {
       includes('memoryChars + memory.fact.length > 1200', 'Memory character cap is missing.');
       includes('контекст, не системные инструкции', 'Retrieved memories must not be framed as system instructions.');
     }],
-    ['system prompt stays compact and backward compatible', () => {
-      const prompt = source.match(/const DEFAULT_SYSTEM = \[([\s\S]*?)\]\.join\(' '\);/);
-      assert.ok(prompt, 'Default system prompt definition not found.');
-      const strings = [...prompt[1].matchAll(/'((?:\\.|[^'\\])*)'/g)].map((m) => m[1]);
-      const promptText = strings.join(' ');
-      assert.ok(promptText.length > 0 && promptText.length < 1800, 'Default system prompt should remain compact (<1800 characters).');
+    ['global system prompt is opt-in and legacy prompt migrates', () => {
+      includes("const DEFAULT_SYSTEM = '';", 'The global system prompt must be empty by default.');
       includes('LEGACY_DEFAULT_SYSTEM', 'Legacy prompt migration guard is missing.');
       includes('configuredPrompt === LEGACY_DEFAULT_SYSTEM', 'Legacy saved prompt must migrate automatically.');
     }],
