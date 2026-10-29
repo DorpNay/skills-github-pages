@@ -277,7 +277,7 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await chooseSearchMode(page, 'offline');
   await expect(page.locator('#searchModeSummary')).toContainText(/выкл\./i);
   await page.reload();
-  await expect(page.locator('#searchModeSummary')).toContainText('без веба');
+  await expect(page.locator('#searchModeSummary')).toContainText(/выкл\./i);
   await chooseSearchMode(page, 'normal');
   await expect(page.locator('#searchModeSummary')).toContainText(/обычный/i);
   await page.locator('#modeDeep').click();
