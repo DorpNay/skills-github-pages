@@ -26,6 +26,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Search & Research Studio opens on demand and pre-fills the current draft', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#userInput').fill('Compare official sources about browser security and cite the evidence.');
   await page.locator('[data-action="toggle-sidebar"]').click();
@@ -36,6 +37,12 @@ test('Search & Research Studio opens on demand and pre-fills the current draft',
   await expect(page.locator('#researchStudioPrompt')).toHaveValue('Compare official sources about browser security and cite the evidence.');
   await expect(studio).toContainText('Окно подготовки исследовательского запроса');
   await expect(page.locator('#researchStudioSettingsSummary')).toContainText('Быстро · Веб: обычный · Прямой · Авто');
+  const studioBox = await studio.boundingBox();
+  expect(studioBox).not.toBeNull();
+  expect(studioBox.width).toBeLessThanOrEqual(390);
+  const summaryDimensions = await page.locator('#researchStudioSettingsSummary').evaluate(element => ({ clientWidth: element.clientWidth, scrollWidth: element.scrollWidth }));
+  expect(summaryDimensions.scrollWidth).toBeLessThanOrEqual(summaryDimensions.clientWidth);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await expect(page.locator('#researchStudioDepth')).toHaveCount(0);
   await expect(page.locator('#researchStudioWeb')).toHaveCount(0);
 
