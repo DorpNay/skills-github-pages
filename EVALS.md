@@ -115,3 +115,11 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - **Fixtures:** gateway tests cover disabled-by-default/auth, structured output, duplicates/limits, oversized/unknown input, invalid model output, and secret-like input filtering. Chromium E2E verifies the request is manual and candidate memory is unchanged until explicit selection.
 - **Acceptance:** all gateway tests, security/context/integrity/Jekyll sentinels, Chromium E2E, published-site smoke and provenance pass on the exact PR head; helper remains disabled unless the operator installs/configures an exact local Ollama tag.
 - **Status:** implementation on feat/local-helper-memory-suggestions-current-main-20261027; exact-head CI pending. This does not prove the helper model is installed on any VPS or that real inference quality is acceptable.
+
+## EV-RAG-RRF-001 — deterministic rank fusion for scoped retrieval
+
+- **Implementation:** PR #77, `gateway/rag/lazy_graph_rag.py`, `gateway/tests/test_rag_rrf.py`, `docs/RAG_RRF_EVALUATION_RU.md`.
+- **Fixture:** candidate consensus across FTS5/BM25 and concept-graph lists; duplicate IDs, invalid/unbounded inputs, deterministic ordering, score ordering, scope isolation, source URI/page provenance and retrieval-path metadata.
+- **Required automated gates:** Gateway contract/security run `40637641493`; Quality/Chromium/published-site run `40637641255`; dead-code report `40637641563` — all passed on PR head `c09c4db9afc3b763b4900b34712223c40b729cd7`.
+- **Limit:** these gates establish deterministic behavior and contract preservation, not production retrieval quality. No labelled >=50-query corpus or target-host latency/RSS benchmark was run. Recall@5 >=0.75 remains a proposed threshold, not an observed production result.
+- **Acceptance before quality claims:** compare baseline and RRF on identical labelled queries; report Recall@5, MRR/nDCG, citation correctness, p50/p95 latency, peak RSS, scope leakage, upsert and deletion correctness. Keep `ALANDI_RAG_ENABLED=false` until operator setup and validation.
