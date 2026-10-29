@@ -277,6 +277,6 @@
 
 ## Supplement — orthogonal chat settings and Research Studio, 2026-10-30
 
-- [~] Branch `feat/chat-settings-orthogonal-controls-20261030`: separates work effort from web-search breadth; clarifies the structured workflow and task-profile permissions; removes duplicated Research Studio selectors and makes Studio use active chat settings without mutating them; localizes the settings summary and removes the duplicate Research entry point.
+- [~] Branch `feat/chat-settings-orthogonal-controls-20261030`: separates work effort from web-search scope; clarifies the structured workflow and task-profile permissions; removes duplicated Research Studio selectors and makes Studio use active chat settings without mutating them; localizes the settings summary and removes the duplicate Research entry point.
 - [ ] Exact-head Chromium E2E must verify Quick+Expanded, Thorough+Standard, Thorough+Off, per-chat settings, RU/EN and Research Studio non-mutation before merge.
 - [ ] Native iPhone Safari behavior and live gateway/provider execution remain separate manual/runtime gates.
