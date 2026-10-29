@@ -68,13 +68,14 @@ test('sidebar order separates memory, projects, status, chats, and research', as
   const positions = await page.locator('#sidebar').evaluate(sidebar => [
     sidebar.querySelector('#memoryPanel'),
     sidebar.querySelector('#projectPanel'),
-    sidebar.querySelector('#projectStatusLine'),
     sidebar.querySelector('#chatSection'),
     sidebar.querySelector('[data-action="open-research-studio"]'),
     sidebar.querySelector('#sidebarPreferences')
   ].map(el => Array.prototype.indexOf.call(sidebar.children, el)));
   expect(positions.every(Number.isInteger)).toBe(true);
   expect(positions).toEqual([...positions].sort((a, b) => a - b));
+  await expect(page.locator('#projectPanel')).toContainText('Проект');
+  await expect(page.locator('#projectPanel')).toContainText('Личный чат');
   await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте выкл.');
   await page.locator('#memoryToolsDetails > summary').click();
   await page.locator('#globalMemoryToggle').check();
@@ -168,7 +169,7 @@ test('project quick actions open a real create form and persist the chosen memor
 test('language switch updates provider group labels without deleting options', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#languageSummary').click();
-  await page.locator('[data-action="set-language"][data-language="en"]').click();
+  await page.locator('#languageMenu [data-action="set-language"][data-language="en"]').click();
   await page.locator('[data-action="toggle-settings"]').click();
   await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#providerPrimaryGroup')).toHaveAttribute('label', 'aLandi Cloud · primary route');
@@ -1762,7 +1763,8 @@ test('sidebar separates projects from personal chats and keeps navigation collap
   await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(1);
   await expect(page.locator('#chatList [data-action="switch-chat"]')).toContainText('Personal chat');
   await expect(page.locator('#chatList')).not.toContainText('Alpha project chat');
-  await expect(page.locator('#memoryToolsDetails')).toBeHidden();
+  await expect(page.locator('#memoryToolsDetails')).toBeVisible();
+  await expect(page.locator('#memoryToolsDetails')).not.toHaveAttribute('open', '');
 
   await page.locator('#projectNavToggle').click();
   await expect(page.locator('#projectNavigationList')).toBeVisible();
