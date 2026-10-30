@@ -205,3 +205,10 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Голос: текущая реализация — editable ASR, single-message local Piper TTS и half-duplex voice loop. Selection-to-speech, multi-message queue, streaming turn-taking и native AEC/barge-in не реализованы/не доказаны.
 - Новые кандидаты: `virgiliojr94/book-to-skill` для Knowledge-to-Skill; `moonshine-ai/moonshine` для streaming voice (проверить RU/TH); llama.cpp/vLLM как GPU-serving benchmarks. Не добавлять без artifact/license/hardware eval.
 - Ни один VPS, Tunnel, GPU host или физическое устройство не проверялись; ни один файл не удалён.
+
+## Дополнительные требования владельца — 2026-10-30 (продолжение)
+- Голос теперь является P0 deliverable первого функционального релиза: editable ASR; естественный streaming dialogue; interruption/barge-in; TTS выделенного текста, целого сообщения и очереди выбранных сообщений; реальные RU/EN/TH device tests. См. P0-13…P0-18 в docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md.
+- Helper models/GPU/agent orchestration и Knowledge-to-Skill зарегистрированы как P1-10…P1-17 в том же backlog.
+- Moonshine Voice перспективен для streaming STT/agent loop, но listed STT languages currently exclude RU/TH; no replacement for Whisper until language-specific model and license checks.
+- OpenWOP v2, LangGraph and Temporal are orchestration research candidates; none is integrated. Existing ToolDAG remains a bounded prototype.
+- Не удалять файлы на основании одного Vulture report: единственное предупреждение оказалось false positive в Protocol signature.
