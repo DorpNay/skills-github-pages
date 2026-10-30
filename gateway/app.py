@@ -1496,8 +1496,6 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 try:
                     probe_stdout, _ = await await_local_process(probe, probe.communicate(), timeout_seconds=5)
                 except asyncio.TimeoutError:
-                    probe.kill()
-                    await probe.wait()
                     raise HTTPException(504, "Audio validation timed out") from None
                 if probe.returncode != 0 or len(probe_stdout) > 64:
                     raise HTTPException(400, "Audio container could not be validated")
@@ -1517,8 +1515,6 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 try:
                     await await_local_process(converter, converter.wait(), timeout_seconds=10)
                 except asyncio.TimeoutError:
-                    converter.kill()
-                    await converter.wait()
                     raise HTTPException(504, "Audio normalization timed out") from None
                 if converter.returncode != 0 or not os.path.isfile(normalized_path):
                     raise HTTPException(400, "Audio could not be normalized to PCM WAV")
@@ -1541,8 +1537,6 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 try:
                     await await_local_process(process, process.wait(), timeout_seconds=config.audio_transcription_timeout_seconds)
                 except asyncio.TimeoutError:
-                    process.kill()
-                    await process.wait()
                     raise HTTPException(504, "Local transcription timed out") from None
                 if process.returncode != 0:
                     raise HTTPException(502, "Local ASR process failed; check the local runtime configuration")
@@ -1606,8 +1600,6 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 try:
                     await await_local_process(process, process.wait(), timeout_seconds=config.audio_speech_timeout_seconds)
                 except asyncio.TimeoutError:
-                    process.kill()
-                    await process.wait()
                     raise HTTPException(504, "Local speech synthesis timed out") from None
                 if process.returncode != 0:
                     raise HTTPException(502, "Local TTS process failed; check the local runtime configuration")
