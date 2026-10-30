@@ -179,7 +179,46 @@ jobs:
           bandit -r gateway scripts router observability intel latency -x gateway/tests,gateway/evals -f json \
             > audit-reports/bandit.json 2> audit-reports/bandit.stderr
           echo "$?" > audit-reports/bandit.exit
-          semgrep scan --config p/default --json gateway scripts router observability intel latency \
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          class InlineScripts(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.active = False
+                  self.current = []
+                  self.scripts = []
+
+              def handle_starttag(self, tag, attrs):
+                  if tag.lower() == "script" and not dict(attrs).get("src"):
+                      self.active = True
+                      self.current = []
+
+              def handle_data(self, data):
+                  if self.active:
+                      self.current.append(data)
+
+              def handle_endtag(self, tag):
+                  if tag.lower() == "script" and self.active:
+                      source = "".join(self.current).strip()
+                      if source:
+                          self.scripts.append(source)
+                      self.active = False
+                      self.current = []
+
+          extractor = InlineScripts()
+          extractor.feed(Path("index.md").read_text(encoding="utf-8"))
+          for index, source in enumerate(extractor.scripts):
+              Path(f"audit-reports/ui-inline-{index}.js").write_text(source, encoding="utf-8")
+
+          landing = Path("landing/index.html").read_text(encoding="utf-8")
+          if landing.startswith("---\\n"):
+              _, _, landing = landing.split("---\\n", 2)
+          Path("audit-reports/landing-page.html").write_text(landing, encoding="utf-8")
+          print(f"Extracted {len(extractor.scripts)} inline UI scripts and normalized the Jekyll landing page for SAST.")
+          PY
+          semgrep scan --config p/default --json gateway scripts router observability intel latency gateway/tests tests audit-reports/ui-inline-*.js audit-reports/landing-page.html \
             > audit-reports/semgrep.json 2> audit-reports/semgrep.stderr
           echo "$?" > audit-reports/semgrep.exit
           echo "Findings are report-only at this stage; scanner/runtime errors are checked separately."
