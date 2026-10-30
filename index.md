@@ -38,7 +38,21 @@ permalink: /
     .prompt-editor textarea { padding-right: 3.2rem; }
     .prompt-editor textarea[readonly] { cursor: default; opacity: .82; }
     .prompt-pencil { position: absolute; right: .45rem; top: .45rem; width: 2.2rem; height: 2.2rem; border-radius: .6rem; border: 1px solid #344158; background: #111c2d; color: #bfdbfe; }
-    .prompt-pencil[aria-pressed="true"] { border-color: rgb(74 222 128 / 55%); color: #bbf7d0; box-shadow: 0 0 14px rgb(74 222 128 / 9%); }
+    .prompt-pencil { width:2.65rem;height:2.65rem;border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft);color:var(--ui-tiffany-bright);font-size:1.3rem;box-shadow:0 0 16px color-mix(in srgb,var(--ui-tiffany) 20%,transparent); }
+    .prompt-pencil[aria-pressed="true"] { border-color:rgb(74 222 128 / 75%);color:#bbf7d0;box-shadow:0 0 0 2px rgb(74 222 128 / 12%),0 0 18px rgb(74 222 128 / 26%);animation:prompt-edit-pulse 1.5s ease-in-out infinite; }
+    @keyframes prompt-edit-pulse { 0%,100%{box-shadow:0 0 0 2px rgb(74 222 128 / 10%),0 0 10px rgb(74 222 128 / 16%)} 50%{box-shadow:0 0 0 5px rgb(74 222 128 / 16%),0 0 23px rgb(74 222 128 / 42%)} }
+    @media (prefers-reduced-motion:reduce){.prompt-pencil[aria-pressed="true"]{animation:none}}
+    .settings-header { position:sticky;top:-1rem;z-index:12;display:flex;align-items:center;justify-content:space-between;gap:.55rem;margin:-1rem -1rem .5rem;padding:.8rem 1rem;background:color-mix(in srgb,var(--ui-surface) 94%,transparent);border-bottom:1px solid var(--ui-border);backdrop-filter:blur(16px); }
+    .settings-header-actions { display:flex;align-items:center;gap:.35rem; }
+    .settings-header-actions button { min-height:36px;padding:.45rem .65rem;border:1px solid var(--ui-border);border-radius:10px;font-size:11px;white-space:nowrap; }
+    .settings-header-actions [data-action="save-settings"] { background:var(--ui-primary);color:#fff;border-color:transparent;font-weight:750; }
+    .settings-header-actions [data-action="close-settings"] { background:var(--ui-surface-raised);color:var(--ui-text-muted); }
+    .cloud-card input[data-state="connected"] { border-color:#35d39a!important;box-shadow:0 0 0 1px rgb(53 211 154 / 14%),0 0 13px rgb(53 211 154 / 8%); }
+    .cloud-card input[data-state="error"] { border-color:#ff737a!important;box-shadow:0 0 0 1px rgb(255 115 122 / 14%); }
+    .field-error { margin-top:-.35rem;font-size:10px;line-height:1.25;color:var(--ui-danger); }
+    .advanced-field,.advanced-control { font-size:11px!important;padding:.42rem .55rem!important;min-height:30px; }
+    #cloudStatus { margin:0;font-size:10px;line-height:1.2; }
+    #cloudStatusDot { margin-top:0; }
     .message-model-meta { color: #93a4bd; font-size: .67rem; line-height: 1.3; padding: .15rem .25rem; opacity: .9; }
     .message-model-meta::before { content: "●"; display: inline-block; margin-right: .4rem; color: #4ade80; font-size: .58rem; text-shadow: 0 0 8px rgb(74 222 128 / 45%); }
     #thinkingTime { color: #a5b4fc; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -419,69 +433,35 @@ permalink: /
     </details>
     <div class="px-3 py-2 border-b border-gray-800"><button type="button" data-action="open-research-studio" class="w-full flex items-center gap-2 rounded-xl border border-cyan-800/70 bg-cyan-950/30 hover:bg-cyan-900/40 px-3 py-2.5 text-left text-xs font-semibold text-cyan-100"><span aria-hidden="true">⌕</span><span data-i18n="researchStudio">Search &amp; Research Studio</span><span class="ml-auto text-[10px] text-cyan-300/80">↗</span></button></div>
 
-    <div id="sidebarPreferences" class="sticky bottom-0 mt-auto border-t border-gray-800 bg-gray-950/95 backdrop-blur px-3 py-3 grid grid-cols-2 gap-2">
-      <button id="sidebarThemeToggle" type="button" data-action="toggle-theme-cycle" class="rounded-lg border border-gray-700 px-3 py-2 text-xs text-left" aria-label="Сменить тему">☼ Тема: тёмная</button>
-      <details id="languageMenuSidebar" class="relative rounded-lg border border-gray-700">
-        <summary id="languageSummarySidebar" class="cursor-pointer select-none px-3 py-2 text-xs">RU ▾</summary>
-        <div class="absolute bottom-full left-0 right-0 mb-1 rounded-lg border border-gray-700 bg-gray-900 p-1 shadow-xl z-50">
-          <button type="button" data-action="set-language" data-language="ru" data-i18n="languageRussian" class="w-full rounded px-2 py-2 text-left text-xs">Русский</button>
-          <button type="button" data-action="set-language" data-language="en" data-i18n="languageEnglish" class="w-full rounded px-2 py-2 text-left text-xs">English</button>
-        </div>
-      </details>
-    </div>
-    <div id="chatRowMenuSidebarScrim" aria-hidden="true"></div>
+    <div id="sidebarPreferences" class="sticky bottom-0 mt-auto border-t border-gray-800 bg-gray-950/95 backdrop-blur px-3 py-2"><button id="sidebarThemeToggle" type="button" data-action="toggle-theme-cycle" class="rounded-lg border border-gray-700 px-2 py-1.5 text-[11px] text-left" aria-label="Сменить тему">☼ Тема</button></div>
+     <div id="chatRowMenuSidebarScrim" aria-hidden="true"></div>
     <input id="importFile" type="file" class="hidden" accept="application/json,.json">
   </aside>
   <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 hidden" aria-hidden="true"></div>
   <div id="chatRowMenuPageScrim" aria-hidden="true"></div>
 
-  <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-    <div class="settings-surface bg-gray-800 p-4 rounded-xl max-w-sm mx-auto w-full border border-gray-700 space-y-2.5 my-auto max-h-[90dvh] overflow-y-auto">
-      <h2 id="settingsTitle" class="text-lg font-bold" data-i18n="settingsTitle">⚙️ Настройки</h2>
+  <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 p-2 sm:p-4 z-50 overflow-y-auto overscroll-contain" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="settings-surface bg-gray-800 p-3 sm:p-4 rounded-xl max-w-2xl mx-auto w-full border border-gray-700 space-y-3 my-auto max-h-[94dvh] overflow-y-auto overscroll-contain">
+      <header class="settings-header"><h2 id="settingsTitle" class="text-base font-bold" data-i18n="settingsTitle">⚙️ Настройки</h2><div class="settings-header-actions"><button type="button" data-action="save-settings" data-i18n="saveSettings">Сохранить</button><button type="button" data-action="close-settings" data-i18n="closeSettings">Закрыть</button><button type="button" data-action="close-settings" aria-label="Закрыть настройки" title="Закрыть">✕</button></div></header>
       <section id="cloudSettingsCard" class="cloud-card rounded-2xl border p-4 space-y-3" aria-labelledby="cloudCardTitle">
-        <div class="flex items-start justify-between gap-3">
-          <div class="min-w-0">
-            <p class="text-[10px] uppercase tracking-[.22em] text-cyan-300 font-bold">aLandi · Cloud</p>
-            <h3 id="cloudCardTitle" data-i18n="cloudCardTitle" class="text-lg font-semibold mt-1">Твоё облако — основной маршрут</h3>
-            <p class="text-xs leading-relaxed text-gray-400 mt-1" data-i18n="cloudCardCopy">Подключи собственный gateway. Сигнал станет зелёным только после настоящего ответа модели.</p>
-          </div>
-          <span class="cloud-status-indicator" id="cloudStatusDot" data-state="disconnected" aria-hidden="true"></span>
+        <div class="flex items-center justify-between gap-3"><div class="min-w-0 flex-1"><p class="text-lg uppercase tracking-[.18em] text-cyan-300 font-extrabold leading-none">aLandi · cloud</p><h3 id="cloudCardTitle" data-i18n="cloudCardTitle" class="text-2xl font-bold mt-2">Мой сервер</h3></div><span class="cloud-status-indicator" id="cloudStatusDot" data-state="disconnected" aria-hidden="true"></span></div>
+        <div class="grid grid-cols-1 gap-2">
+          <input id="cloudBaseUrl" type="url" autocomplete="url" aria-label="URL моего сервера" class="w-full p-3 rounded-xl border text-sm" placeholder="URL моего сервера · https://…/v1"><p id="cloudBaseUrlError" class="field-error hidden" role="alert"></p>
+          <input id="cloudModel" type="text" autocomplete="off" aria-label="Модель моего сервера" class="w-full p-3 rounded-xl border text-sm" value="qwen3.5:4b" placeholder="Модель · точный ID на сервере"><p id="cloudModelError" class="field-error hidden" role="alert"></p>
+          <div class="cloud-key-row flex gap-2"><input id="cloudApiKey" type="password" autocomplete="off" aria-label="Ключ доступа к серверу" class="min-w-0 flex-1 p-3 rounded-xl border text-sm" placeholder="Ключ доступа"><button type="button" data-action="paste-cloud-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ">↓</button></div><p id="cloudApiKeyError" class="field-error hidden" role="alert"></p>
         </div>
-        <p id="cloudStatus" class="cloud-status-copy text-xs" data-state="disconnected" role="status" aria-live="polite">● Нет подтверждённого соединения. Адрес сервиса ещё не задан.</p>
-        <label for="cloudBaseUrl" data-i18n="cloudBaseUrl" class="block text-xs text-gray-400">Адрес твоего gateway</label>
-        <input id="cloudBaseUrl" type="url" autocomplete="url" class="w-full p-2.5 rounded-xl border text-sm" placeholder="https://твой-домен.example/v1">
-        <label for="cloudModel" data-i18n="cloudModel" class="block text-xs text-gray-400">Модель gateway</label>
-        <input id="cloudModel" type="text" autocomplete="off" class="w-full p-2.5 rounded-xl border text-sm" value="qwen3.5:4b" placeholder="Точный ID модели на gateway">
-        <label for="cloudApiKey" data-i18n="cloudApiKey" class="block text-xs text-gray-400">Ключ доступа к твоему gateway</label>
-        <div class="cloud-key-row flex gap-2">
-          <input id="cloudApiKey" type="password" autocomplete="off" class="min-w-0 flex-1 p-2.5 rounded-xl border text-sm" placeholder="Введи ключ gateway">
-          <button type="button" data-action="paste-cloud-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ из буфера обмена">Вставить</button>
-        </div>
-        <button id="cloudConnect" type="button" data-action="connect-alandi-cloud" data-i18n="cloudConnect" class="w-full rounded-xl bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-semibold text-sm py-2.5">Проверить и подключить</button>
-        <p class="text-[10px] text-gray-500" data-i18n="cloudRouteChoiceHelp">Выбери один маршрут в поле «Провайдер API»: aLandi Cloud или один сторонний провайдер.</p>
-      </section>
-      <section class="rounded-xl border border-gray-700 p-3 space-y-2" aria-label="Внешний вид">
-        <h3 class="text-xs font-semibold" data-i18n="appearanceTitle">Внешний вид</h3>
-        <label for="uiLanguage" data-i18n="languageLabel" class="block text-xs text-gray-400">Язык</label>
-        <select id="uiLanguage" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm">
-          <option value="ru" data-i18n="languageRussian">Русский</option><option value="en" data-i18n="languageEnglish">English</option>
-        </select>
-        <label for="uiTheme" data-i18n="themeLabel" class="block text-xs text-gray-400">Тема</label>
-        <select id="uiTheme" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm">
-          <option value="dark">Obsidian Studio · тёмная</option><option value="light">Clean Light · светлая</option>
-        </select>
-        <label for="uiMotion" data-i18n="motionLabel" class="block text-xs text-gray-400">Анимации</label>
-        <select id="uiMotion" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm">
-          <option value="auto">Авто · системные настройки</option><option value="reduced">Уменьшить движение</option><option value="off">Отключить эффекты</option>
-        </select>
-        <label for="composerPosition" data-i18n="composerPositionLabel" class="block text-xs text-gray-400">Положение поля ввода</label>
-        <select id="composerPosition" class="w-full p-2.5 bg-gray-900 rounded border border-gray-700 text-sm">
-          <option value="bottom" data-i18n="composerBottom">Снизу</option><option value="top" data-i18n="composerTop">Сверху, под панелью режимов</option>
-        </select>
+        <p id="cloudStatus" class="cloud-status-copy text-[10px]" data-state="disconnected" role="status" aria-live="polite">Не подключено</p>
       </section>
       <details id="legacyProviderSettings" class="settings-subpanel rounded-xl border border-gray-700">
-        <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none" data-i18n="legacySettings">Сторонние API, ключи и расширенные настройки</summary>
+        <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none" data-i18n="legacySettings">Дополнительные настройки</summary>
         <div class="p-3 space-y-3">
+          <input type="hidden" id="uiTheme" value="dark">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 border-b border-gray-800 pb-3">
+            <label class="text-[11px] text-gray-400">Язык<select id="uiLanguage" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="ru">Русский</option><option value="en">English</option></select></label>
+            <label class="text-[11px] text-gray-400">Анимация<select id="uiMotion" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="auto">Авто</option><option value="reduced">Уменьшить</option><option value="off">Выкл.</option></select></label>
+            <label class="text-[11px] text-gray-400">Поле ввода<select id="composerPosition" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="bottom" data-i18n="composerBottom">Снизу</option><option value="top" data-i18n="composerTop">Сверху</option></select></label>
+            <button type="button" data-action="toggle-theme-cycle" class="advanced-control self-end rounded border border-gray-700 bg-gray-900 text-left text-gray-300" aria-label="Сменить тему">☼ Тема</button>
+          </div>
       <div class="rounded-lg bg-gray-900 border border-gray-700 p-2.5 text-xs leading-relaxed text-gray-300 space-y-2" data-i18n-group="providerHelp">
         <p><strong>Подключение:</strong> выбери сервис и проверь модель. Для каждого провайдера нужен свой ключ; пустое поле значит, что ключ не сохранён для выбранного провайдера.</p>
         <p>Ключи провайдеров и Tavily хранятся отдельно в localStorage этого браузера. Профиль настроек не включает секреты. Не используй ключи на общих устройствах.</p>
@@ -561,17 +541,7 @@ permalink: /
       <span id="clockAccessible" class="sr-only" aria-live="off">Местное время</span>
     </div>
     <span id="brandWordmark" class="brand-wordmark font-bold text-lg tracking-tight shrink-0">aLandi</span>
-    <div class="flex items-center gap-1.5 shrink-0">
-      <button type="button" data-action="toggle-theme-cycle" id="homeThemeToggle" aria-label="Сменить тему" title="Сменить тему" class="header-icon px-2 py-1.5">☼</button>
-      <details id="languageMenu" class="language-menu">
-        <summary id="languageSummary" aria-label="Язык интерфейса" class="header-icon px-2 py-1.5 text-xs">RU ▾</summary>
-        <div class="language-menu-panel">
-          <button type="button" data-action="set-language" data-language="ru" aria-pressed="true">Русский</button>
-          <button type="button" data-action="set-language" data-language="en" aria-pressed="false">English</button>
-        </div>
-      </details>
-      <button type="button" data-action="toggle-settings" aria-label="Настройки" class="header-icon px-2.5 py-1.5 rounded-xl">⚙️</button>
-    </div>
+    <div class="flex items-center gap-1.5 shrink-0"><button type="button" data-action="toggle-theme-cycle" id="homeThemeToggle" aria-label="Сменить тему" title="Сменить тему" class="header-icon px-2 py-1.5">☼</button><button type="button" data-action="toggle-settings" aria-label="Настройки" class="header-icon px-2.5 py-1.5 rounded-xl">⚙️</button></div>
   </header>
 
   <div id="modeToolbar" class="bg-gray-950 px-3 py-2 border-b border-gray-800 shrink-0 space-y-1.5">
