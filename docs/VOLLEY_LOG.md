@@ -95,3 +95,6 @@ Confirmed defect: local ffprobe/ffmpeg/whisper.cpp and Piper child processes wer
 
 ### 2026-10-30 — Verified temporary-file cleanup
 Inspected temp/1 through temp/5 and searched repository references. Updated IMPROVEMENT_SELECTION.md, then removed temp/3 (obsolete conversation scratch), temp/4 (simulated brainstorming with stale claims), and temp/5 (generic Jekyll plan unrelated to aLandi). Kept temp/1 and temp/2 as historical research. No production code removed. See detailed tracker and project state for deletion commit SHAs.
+
+### 2026-10-30 — Sync latest main and merge landing polish requirements
+Main advanced by docs-only commit e6404d510229fa64a7bb375995d76dcba55de623, adding docs/LANDING_UX_POLISH_BACKLOG_RU.md. Synced PR #121 through two-parent merge commit 2c1e6bd811546a87f0ac86bc5e550dd9a31aeb13; compare was 194 ahead / 0 behind immediately after sync. Merged the remaining screenshot, keyboard/screen-reader, app visual consistency, popover/dialog, mobile Safari, VoiceOver and published Pages tasks into FIRST_FREE_LAUNCH_BACKLOG_RU.md. Refreshed PROJECT_STATE, project-state-snapshot, ORIENTER and FILE_ORIENTER. Current base main e6404d5; exact-head CI remains incomplete.
