@@ -52,7 +52,8 @@ flowchart TD
 
 ## 3. Маршруты gateway, проверенные в `gateway/app.py`
 
-- `GET /healthz`, `GET /v1/capabilities`, `GET /v1/models`
+- `GET /livez` (process liveness), `GET /readyz` (Ollama readiness), legacy `GET /healthz` (alias readiness)
+- `GET /v1/capabilities`, `GET /v1/models`
 - `GET /admin/cache/stats`, `GET /admin/runtime`
 - `GET/DELETE /v1/memory/state/{conversation_id}`, `POST /v1/memory/delta`
 - `GET/POST /v1/memory/graph/nodes`, `POST /v1/memory/graph/search`, `POST /v1/memory/graph/relations`, review/delete routes
