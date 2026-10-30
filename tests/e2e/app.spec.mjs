@@ -2441,3 +2441,43 @@ test('search presets and function settings fit one line, localize, and persist p
   await expect(page.locator('#functionsMenu')).not.toHaveAttribute('open', '');
   await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
 });
+
+
+test('planned agent and connector directions show a clearly non-runtime innovation cue', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#functionPanelModal .roadmap-ticker')).toBeHidden();
+
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  const agentPanel = page.locator('#agentFunctionSettings');
+  await expect(agentPanel).toBeVisible();
+  const agentTicker = agentPanel.locator('.roadmap-ticker-track');
+  await expect(agentTicker).toBeVisible();
+  await expect(agentTicker).toContainText('1nv3nt10n 1n PrOc3ss');
+  await expect(agentTicker).toHaveAttribute('aria-hidden', 'true');
+  await expect(agentPanel.locator('.roadmap-note')).toContainText('не активный runtime');
+  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
+  await expect(agentTicker).toBeHidden();
+
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="connectors"]').click();
+  const connectorPanel = page.locator('#connectorFunctionStatus');
+  await expect(connectorPanel).toBeVisible();
+  const connectorTicker = connectorPanel.locator('.roadmap-ticker-track');
+  await expect(connectorTicker).toBeVisible();
+  await expect(connectorTicker).toContainText('1nv3nt10n 1n PrOc3ss');
+  await expect(connectorPanel.locator('.roadmap-note')).toContainText('не означает, что сервис уже выполняет работу');
+  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
+  await expect(connectorTicker).toBeHidden();
+});
+
+test('application innovation ticker is static when reduced motion is requested', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  const ticker = page.locator('#agentFunctionSettings .roadmap-ticker-track');
+  await expect(ticker).toBeVisible();
+  expect(await ticker.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
+  await expect(page.locator('#agentFunctionSettings .roadmap-note')).toBeVisible();
+});
