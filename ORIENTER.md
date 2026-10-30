@@ -2,15 +2,17 @@
 
 This is the short entry point for an assistant or engineer. Use the detailed navigation index at `project-reference/FILE_ORIENTER_RU.md`, the machine-readable state at `docs/PROJECT_STATE.yaml`, and the chronological log at `docs/VOLLEY_LOG.md`.
 
-## Verified repository checkpoint — 2026-10-29
+## Current working checkpoint — 2026-10-30
 
-- **Current main SHA:** `80597f61c000d691e95d67893edea60e75da1033` — PR #113 pinned GitHub Actions to immutable SHAs; post-merge Quality Sentinels #40915070855 and Pages deployment #40915070655 succeeded on this exact SHA.
-- **Latest functional UI baseline:** `ed2c4c7ee3a67c7a0cf5b541c1ab6206609dd32c` — modal scrims and inert outside-tap behavior (PR #115). PR #114 added an empty-by-default user system prompt and context-budget headroom; PR #71 stabilized mobile composer docking.
-- **Merged and verified on exact PR heads:** #113 immutable GitHub Actions pins; #115 modal scrims/outside-tap UX; #114 prompt default/context budgeting; #71 mobile composer; #84 CORS canonicalization; #81 deployment preflight; #83 SQLite delta; #82 readiness audit; #106 RAG evaluator; #107 private/shared memory; #108 launch page/runbook.
-- **Latest main CI:** Quality Sentinels [#40915070855](https://github.com/DorpNay/skills-github-pages/actions/runs/40915070855), Pages deployment [#40915070655](https://github.com/DorpNay/skills-github-pages/actions/runs/40915070655), Gateway Tests [#40915070886](https://github.com/DorpNay/skills-github-pages/actions/runs/40915070886), provenance [#40915070933](https://github.com/DorpNay/skills-github-pages/actions/runs/40915070933) and Graphify [#40915070939](https://github.com/DorpNay/skills-github-pages/actions/runs/40915070939) succeeded on exact main SHA. This is not proof of a live VPS deployment.
-- **Open PR queue:** none at the state-refresh baseline; verify the live queue before acting.
-- **Open issue queue:** only #111 remains; it tracks owner/live-host release gates. Research-only issues #88–#92 and #96–#104 were closed after transferring unresolved actions to #111.
-- **Runtime boundary:** GitHub Pages browser smoke is verified; live VPS/gateway, Ollama model performance, voice artifacts/device playback, OAuth credentials and target-host measurements remain unverified.
+- **Current main SHA:** 2bda22229cba3576628f92c821bb6e1562d8abc5 — PR #120 aligned sidebar hierarchy, project/memory navigation and synchronized theme/language preferences. Its merge commit reports Chromium, published Pages smoke, Jekyll, integrity, security, context and Graphify checks passed; a separate combined-status query returned no status entries for this merge SHA, so do not invent run IDs.
+- **Active UI branch:** feat/chat-settings-orthogonal-controls-20261030, tracked by the only open PR #121. Scope: orthogonal effort/search settings, Research Studio mode-only flow, separate private server card, project modal, mobile hit areas, free/static landing copy and staged future roadmap.
+- **Latest changes on the PR branch:** repaired duplicate Settings close action, replaced a malformed regex-based provider group sentinel with deterministic string extraction, corrected the Research Studio E2E probe counter, added the living V1 UI release checklist, landing roadmap and reduced-motion coverage. These changes are not merged or deployed.
+- **Latest exact-head Actions at the last check:** PR workflow run #40991938982 was pending on the then-current branch head. A documentation/test commit advances the head; consult the live PR checks before treating any run as final.
+- **Open PR queue:** PR #121 only. Exact marker: open PRs (1): #121.
+- **Open issue queue:** issue #111 only. Exact marker: open issues (1): #111. It remains the consolidated owner/live-host release gate; do not close it just to clear the queue.
+- **V1 UI source of truth:** docs/V1_UI_FINALIZATION_RU.md. The broader request history remains in docs/USER_REQUEST_CHECKLIST.md; whole-stack/deployment readiness remains in docs/PRE_LAUNCH_STACK_RU.md and issue #111.
+- **Product boundary:** free static GitHub Pages UI ≠ free hosted inference. No hosted model endpoint is supplied. The first gateway remains a personal/limited setup; live VPS/Tunnel/Ollama, credentials, hardware, native iPhone Safari, voice/device, OAuth and real RAG corpus are not verified.
+- **No deployment claim:** a PR branch or green CI does not imply the live landing/application or private gateway was deployed.
 
 ## First-read order
 
