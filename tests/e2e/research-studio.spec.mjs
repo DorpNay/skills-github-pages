@@ -104,7 +104,7 @@ test('Research Studio applies selected settings without sending or replacing the
   await expect(page.locator('#toggleMultiAgent')).toBeChecked();
   await expect(page.locator('#modeHint')).toContainText('Конвейер');
   expect(await readCurrentChatSettings(page)).toEqual({
-    processingMode: 'deep', searchMode: 'normal', multiAgentEnabled: true, skillPreset: 'research'
+    processingMode: 'deep', searchMode: 'normal', multiAgentEnabled: true, skillPreset: 'auto'
   });
   expect(modelCalls).toBe(0);
 });
