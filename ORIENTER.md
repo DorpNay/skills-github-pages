@@ -53,3 +53,10 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Agent orchestration candidates: OpenWOP v2 protocol, LangGraph checkpoint/interrupt, Temporal durable workflows. OpenWOP is not production-proven; no runtime adopted.
 - Small helper candidates: Qwen3.5-0.8B for narrow low-risk classification/extraction; Granite-4.2-3B for tool-call experiments. Both require RU/EN/TH eval; no automatic model selection.
 - Next: continue module/security audit and complete Chromium checks; see detailed tracker.
+
+### Confirmed audio process cleanup fix — 2026-10-30
+- Debugger found that ASR ffprobe/ffmpeg/whisper.cpp and Piper TTS child processes were terminated on timeout but not on request cancellation.
+- Fixed with shared `await_local_process()` in gateway/app.py; cancellation/timeout now kills and reaps the child. Added regression tests in gateway/tests/test_audio_concurrency.py.
+- Functional code commits: `77b2691` (helper) and `363bb5c` (tests). Equivalent local subprocess smoke passed for both cancellation and timeout (child return codes -9). This is not the repository Gateway test run.
+- Gateway #483 passed 150 tests on the previous code SHA; the new subprocess fix still needs Gateway CI. GitHub connector can rerun existing jobs but cannot dispatch a new workflow on the current SHA. Do not claim this fix CI-verified.
+- Next: get Gateway tests running on `363bb5c`, then continue audio/document/security audit.
