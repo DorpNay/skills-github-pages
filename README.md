@@ -58,7 +58,7 @@ GitHub Actions выполняет статические quality sentinels, сб
 
 ## Первый запуск V1
 
-1. Откройте [рабочий клиент](https://dorpnay.github.io/skills-github-pages/) или изучите [лендинг aLandi](/skills-github-pages/landing/).
+1. Откройте [рабочий клиент](https://dorpnay.github.io/skills-github-pages/) или изучите [лендинг aLandi](https://dorpnay.github.io/skills-github-pages/landing/).
 2. В настройках явно выберите маршрут и модель. Статический сайт не содержит общего hosted AI endpoint и не выдаёт бесплатные токены: для внешнего API нужны собственные credentials и соблюдение тарифов/лимитов выбранного поставщика.
 3. Для личного self-hosted маршрута сначала пройдите [START_HERE_RU.md](docs/START_HERE_RU.md) и [PRE_LAUNCH_STACK_RU.md](docs/PRE_LAUNCH_STACK_RU.md). Не вводите gateway key, пока локальный FastAPI/Ollama и HTTPS Tunnel не проверены владельцем.
 4. Для первой проверки используйте короткий несекретный prompt. Проверьте выбранный маршрут, модель и ответ; не используйте персональные или рабочие данные в непроверенном endpoint.
