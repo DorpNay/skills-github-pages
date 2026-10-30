@@ -69,7 +69,7 @@ test('research trace captures a source returned by the webpage tool', async ({ p
   await page.locator('#modelName').fill('e2e-evidence-model');
   await page.locator('#apiKey').fill('test-key');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await setAgentMode(page, true);
   await page.locator('#userInput').fill('Deep research: проверь публичную страницу, проведи исследование источника, сопоставь утверждения и составь короткий доказательный отчёт.');
   await page.locator('#sendBtn').click();
