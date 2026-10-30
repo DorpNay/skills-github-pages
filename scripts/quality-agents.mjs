@@ -44,8 +44,13 @@ const suites = {
       includes('<section id="cloudSettingsCard"', 'aLandi must have a dedicated first-party server card.');
       includes('<h3 id="cloudCardTitle"', 'The private server card must have its own heading.');
       includes('<optgroup id="providerExternalGroup" label="Сторонние провайдеры">', 'The external provider picker must contain only third-party providers.');
-      assert.equal((source.match(/<option value="alandi"/g) || []).length, 0, 'The private aLandi route must not appear in the third-party provider picker.');
-      assert.equal((source.match(/<optgroup id="providerPrimaryGroup"/g) || []).length, 0, 'Do not place the private server in a third-party route group.');
+      const providerPicker = source.match(/<select id="providerPreset"[\\s\\S]*?<\\/select>/)?.[0] || '';
+      const internalRouteGroup = providerPicker.match(/<optgroup id="providerPrimaryGroup"[^>]*>[\\s\\S]*?<\\/optgroup>/)?.[0] || '';
+      const externalRouteGroup = providerPicker.match(/<optgroup id="providerExternalGroup"[^>]*>[\\s\\S]*?<\\/optgroup>/)?.[0] || '';
+      assert.match(internalRouteGroup, /\\shidden(?:\\s|>)/, 'The private compatibility route must remain hidden from users.');
+      assert.equal((internalRouteGroup.match(/<option value="alandi"/g) || []).length, 1, 'Keep exactly one hidden internal route for saved-chat migration and routing.');
+      assert.doesNotMatch(externalRouteGroup, /<option value="alandi"/, 'The private aLandi route must not appear among third-party providers.');
+      assert.ok(externalRouteGroup.includes('<option value="gemini">') && externalRouteGroup.includes('<option value="custom">'), 'External providers must remain selectable.');
       assert.equal((source.match(/id="cloudConnect"/g) || []).length, 0, 'The private server must connect automatically, without a permanent manual-check button.');
       includes('function connectAlandiCloud()', 'The cloud UI must verify a real model response before showing connected.');
       includes('function scheduleCloudAutoConnect()', 'Changes to private server settings must trigger a bounded automatic connection check.');
