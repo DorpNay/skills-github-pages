@@ -101,11 +101,11 @@ title: aLandi — личная AI-среда с собственным gateway
     .roadmap-state { flex:0 1 auto; color:var(--amber); font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
     .roadmap-item[open] { border-color:rgba(146,243,208,.35); }
     .innovation-ticker { position:relative; isolation:isolate; contain:paint; max-width:100%; overflow:hidden; margin-top:.8rem; padding-right:5.2rem; border:1px solid rgba(146,243,208,.25); border-radius:999px; color:var(--mint); background:rgba(146,243,208,.055); }
-    .innovation-track { display:inline-block; min-width:max-content; padding:.35rem 1rem; animation:innovation-marquee 22s linear infinite; animation-play-state:paused; }
+    .innovation-track { position:relative; z-index:0; display:inline-block; min-width:max-content; padding:.35rem 1rem; animation:innovation-marquee 22s linear infinite; animation-play-state:paused; pointer-events:none; }
     .roadmap-item[open] .innovation-track { animation-play-state:running; }
-    .innovation-toggle { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .innovation-toggle { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; pointer-events:none; }
     .innovation-toggle:checked ~ .innovation-track { animation-play-state:paused; }
-    .innovation-toggle-label { position:absolute; z-index:1; inset:.18rem .22rem .18rem auto; display:inline-flex; align-items:center; justify-content:center; min-width:4.5rem; padding:.2rem .65rem; border:1px solid rgba(146,243,208,.28); border-radius:999px; color:var(--text); background:var(--surface-2); font-size:.72rem; font-weight:700; cursor:pointer; }
+    .innovation-toggle-label { position:absolute; z-index:2; pointer-events:auto; inset:.18rem .22rem .18rem auto; display:inline-flex; align-items:center; justify-content:center; min-width:4.5rem; padding:.2rem .65rem; border:1px solid rgba(146,243,208,.28); border-radius:999px; color:var(--text); background:var(--surface-2); font-size:.72rem; font-weight:700; cursor:pointer; }
     .innovation-toggle:focus-visible + .innovation-toggle-label { outline:3px solid var(--mint); outline-offset:2px; }
     .innovation-toggle:checked + .innovation-toggle-label { color:var(--mint); }
     @keyframes innovation-marquee { from { transform:translateX(100%); } to { transform:translateX(-100%); } }
@@ -267,7 +267,7 @@ title: aLandi — личная AI-среда с собственным gateway
           </details>
           <details class="roadmap-item">
             <summary><span>Голос, транскрипция и озвучивание</span><span class="roadmap-state">Первое обновление</span></summary>
-            <p>Целевой контур: редактируемая транскрипция речи; естественный разговорный режим с потоковой обработкой, определением конца реплики и прерыванием; чтение выделенного фрагмента; озвучивание целого сообщения; последовательная очередь нескольких выбранных сообщений. Сейчас локальные ASR/Piper TTS и полудуплексный диалог существуют как основа. потоковая обработка, эхоподавление, прерывание ответа голосом, очередь воспроизведения, RU/EN/TH качество и лицензии должны пройти отдельную проверку до включения. Документное извлечение и расширенный offline path остаются отдельными gates.</p>
+            <p>Целевой контур: редактируемая транскрипция речи; естественный разговорный режим с потоковой обработкой, определением конца реплики и прерыванием; чтение выделенного фрагмента; озвучивание целого сообщения; последовательная очередь нескольких выбранных сообщений. Сейчас локальные ASR/Piper TTS и полудуплексный диалог существуют как основа. Потоковая обработка, эхоподавление, прерывание ответа голосом, очередь воспроизведения, RU/EN/TH качество и лицензии должны пройти отдельную проверку до включения. Документное извлечение и расширенный offline path остаются отдельными gates.</p>
             <div class="innovation-ticker"><input class="innovation-toggle" type="checkbox" id="ticker-voice-pause" aria-label="Приостановить бегущую строку"><label class="innovation-toggle-label" for="ticker-voice-pause">Пауза</label><span class="innovation-track" aria-hidden="true">1nv3nt10n 1n PrOc3ss… · локальная обработка · лицензии · реальные device tests ·</span></div>
             <p class="roadmap-disclaimer">Без проверок интерфейс не должен показывать эти направления как готовые функции.</p>
           </details>

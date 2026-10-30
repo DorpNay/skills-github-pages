@@ -91,13 +91,16 @@ test('landing roadmap tickers can be paused and resumed without JavaScript', asy
 
   const ticker = item.locator('.innovation-track');
   const pause = item.locator('input.innovation-toggle');
+  const pauseLabel = item.locator('label.innovation-toggle-label');
   await expect(pause).toHaveAttribute('aria-label', 'Приостановить бегущую строку');
-  await expect(item.locator('label.innovation-toggle-label')).toHaveText('Пауза');
+  await expect(pauseLabel).toHaveText('Пауза');
   expect(await ticker.evaluate(element => getComputedStyle(element).animationPlayState)).toBe('running');
 
-  await pause.check();
+  await pauseLabel.click();
+  await expect(pause).toBeChecked();
   expect(await ticker.evaluate(element => getComputedStyle(element).animationPlayState)).toBe('paused');
-  await pause.uncheck();
+  await pauseLabel.click();
+  await expect(pause).not.toBeChecked();
   expect(await ticker.evaluate(element => getComputedStyle(element).animationPlayState)).toBe('running');
   expect(await page.locator('script').count()).toBe(0);
 });

@@ -3,6 +3,24 @@ import { readFile } from 'node:fs/promises';
 
 const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
 
+
+async function ensureSidebarOpen(page) {
+  const sidebar = page.locator('#sidebar');
+  if (await sidebar.evaluate(element => element.classList.contains('-translate-x-full'))) {
+    await page.locator('[data-action="toggle-sidebar"]').click();
+  }
+  await expect(sidebar).not.toHaveClass(/-translate-x-full/);
+}
+
+async function ensureSidebarClosed(page) {
+  const sidebar = page.locator('#sidebar');
+  if (!(await sidebar.evaluate(element => element.classList.contains('-translate-x-full')))) {
+    await sidebar.evaluate(element => { element.scrollTop = 0; });
+    await sidebar.locator('[data-action="close-sidebar"]').click();
+  }
+  await expect(sidebar).toHaveClass(/-translate-x-full/);
+}
+
 async function openProjectSettingsForId(page, projectId) {
   const sidebar = page.locator('#sidebar');
   if (await sidebar.evaluate(element => element.classList.contains('-translate-x-full'))) {
@@ -1215,7 +1233,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('#projectMemoryToggle').check();
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 
-  await page.locator('[data-action="close-sidebar"]').click();
+  await ensureSidebarClosed(page);
   await page.locator('[data-action="toggle-settings"]').first().click();
   await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
@@ -1266,11 +1284,11 @@ test('deleting a project removes its chats but preserves other projects and chat
   expect(disposableChatId).not.toBe('');
 
   // Project creation closes the sidebar; reopen it to detach the current chat.
-  await page.locator('[data-action="toggle-sidebar"]').click();
+  await ensureSidebarOpen(page);
   // Detach the current chat before creating a separate project. The original chat
   // remains in Disposable Project and must be deleted with that project.
-  await page.locator('[data-action="new-chat"]').first().click();
-  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#sidebar [data-action="new-chat"]').click();
+  await ensureSidebarOpen(page);
   // createNewChat() already creates an unassigned personal chat; the project selector
   // belongs to the closed Project Settings modal and must not be used here.
   const personalChatProjectId = await page.evaluate(() => {
@@ -1290,10 +1308,11 @@ test('deleting a project removes its chats but preserves other projects and chat
     return chats.find(chat=>chat.projectId===id)?.id||'';
   }, keepId);
   expect(keepChatId).not.toBe('');
-  await page.locator('[data-action="new-chat"]').first().click();
+  await ensureSidebarOpen(page);
+  await page.locator('#sidebar [data-action="new-chat"]').click();
   // Project settings selection is independent from the active chat. Select the target
   // while the sidebar is settled, then switch to its chat (which closes the mobile sidebar).
-  await page.locator('[data-action="toggle-sidebar"]').click();
+  await ensureSidebarOpen(page);
   if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
   const disposableGroup=page.locator('#projectNavigationList details[data-project-id="'+disposableId+'"]');
   await disposableGroup.locator(':scope > summary').click();
