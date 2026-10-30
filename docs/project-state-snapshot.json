@@ -27,7 +27,7 @@
     "active_ui_pr": {
       "number": 121,
       "head_sha": "363bb5c46c6a0fcad55bb5d243289e065ee6450a",
-      "exact_head_ci": "Audio subprocess cancellation cleanup added at 77b2691 and regression tests at 363bb5c. Equivalent local smoke killed/reaped child processes on timeout/cancellation. Gateway #483 (150 tests) predates this fix; new functional SHA still requires Gateway CI. Quality #916 attempt 2 on prior SHA has Integrity/Security/Context/Jekyll passed and Chromium in progress; current PR branch contains later docs-only checkpoints."
+      "exact_head_ci": "Latest functional code commits include audio subprocess cleanup (77b2691, tests 363bb5c); equivalent local smoke passed, but Gateway CI on this new code SHA is still required. Previous Gateway #483 (150 tests) predates this fix. Quality #916 attempts were cancelled during PR branch updates; current PR branch contains docs cleanup and checkpoints. Do not claim full exact-head green."
     }
   }
 }
