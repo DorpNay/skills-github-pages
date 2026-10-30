@@ -199,16 +199,18 @@
 ### Раунд 1: текущие работающие решения и accessibility
 
 **ChatGPT (официальные источники):**
-- Поиск в sidebar охватывает chats/projects/images/files, фильтрует результаты и открывается через Ctrl+K/Cmd+K на web. Это полезная модель discoverability для длинной истории, но не обязательная функция V1. [Finding your chats, projects, and files](https://help.openai.com/en/articles/10056348-finding-your-chats-projects-and-files-in-chatgpt)
-- Pinned chats на web выбираются через ⋯ у чата; pinned status помогает держать часто используемое рядом. Для aLandi заимствовать контекстное размещение действия, не усложняя V1 отдельной синхронизацией. [ChatGPT release notes, 21 Sep 2026](https://help.openai.com/en/articles/6825453-chatgpt-release-notes)
-- Sidebar и recent list должны оставаться навигацией, а не превращаться в перегруженную панель всех настроек.
+- Sidebar Search ищет chats, projects, images и files; web поддерживает Ctrl+K/Cmd+K и фильтры по типу контента. Для aLandi это подтверждает полезность поиска по истории как отдельного будущего среза, но не делает его обязательным release blocker V1. [OpenAI Help Center — Finding your chats, projects, and files (updated 24 Oct 2026)](https://help.openai.com/en/articles/10056348-finding-your-chats-projects-and-files-in-chatgpt)
+- Pinned chats поднимаются в начало списка; на web действие находится в меню чата ⋯, на mobile — long-press. Перенимаем контекстное размещение редких действий и принцип быстрых важных элементов; не добавляем синхронизацию/сложную pin-management модель в V1. [ChatGPT release notes — Pinned chats](https://help.openai.com/en/articles/6825453-chatgpt-release-notes)
+- Не копируем весь ChatGPT sidebar: его объём зависит от account/workspace features. aLandi оставляет только работающие локальные разделы и явные runtime boundaries.
 
 **Платформенные/стандартные практики:**
-- Apple: sidebar подходит для top-level navigation и коллекций, но требует ширины/высоты; на узком экране лучше компактный адаптивный navigation pattern. [Apple HIG — Sidebars, 8 Jun 2026](https://developer.apple.com/design/human-interface-guidelines/sidebars)
-- Nielsen Norman Group: progressive disclosure показывает сначала essential controls, редкие — по запросу; чрезмерная вложенность увеличивает потерю контекста. [Progressive Disclosure](https://www.nngroup.com/articles/progressive-disclosure/)
-- WCAG 2.2: 24×24 CSS px — AA minimum criterion с оговорками; 44×44 CSS px — AAA enhanced target. Для часто используемых мобильных элементов aLandi сохраняет 44px как проектную цель. [W3C Target Size (Enhanced)](https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced)
-- GOV.UK: inline errors должны объяснять, что произошло и как исправить поле; короткий, конкретный copy предпочтительнее абстрактного error banner. [GOV.UK error messages](https://design-system.service.gov.uk/components/error-message/)
-- MDN: уважать prefers-reduced-motion; постоянное движение не должно быть единственным носителем состояния. [MDN prefers-reduced-motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion)
+- Apple: sidebar предназначен для top-level areas/collections и требует заметного пространства; узкие экраны выигрывают от компактной навигации. Отдельные search fields позволяют suggestions/recents и фильтрацию по scope, когда это оправдано задачей. [Apple HIG — Sidebars](https://developer.apple.com/design/human-interface-guidelines/sidebars); [Searching](https://developer.apple.com/design/human-interface-guidelines/searching) (обновлено 8 Jun 2026).
+- Nielsen Norman Group: progressive disclosure сначала показывает нужное большинству, редкое переносит во вторичный уровень; это помогает learnability, efficiency и снижает ошибки. [Progressive Disclosure](https://www.nngroup.com/articles/progressive-disclosure/)
+- WCAG 2.2: 24×24 CSS px — AA minimum с оговорками; 44×44 CSS px — AAA enhanced target. Для часто используемых мобильных действий aLandi оставляет 44px как проектную цель. [Target Size (Enhanced)](https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced)
+- WCAG 2.2 требует видимого keyboard focus (2.4.7) и не допускает полного перекрытия сфокусированного control авторским контентом (2.4.11). [Focus Visible](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible); [Focus Not Obscured](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum)
+- GOV.UK: error messages помогают понять, что произошло и как исправить ошибку; ошибки следует проверять с реальными пользователями и отслеживать. [GOV.UK error message](https://design-system.service.gov.uk/components/error-message/)
+- MDN: уважать prefers-reduced-motion; continuous ticker не должен постоянно озвучиваться ассистивными технологиями, если обновление не является основной функцией виджета. В aLandi визуальная строка aria-hidden, рядом есть статическое пояснение, а анимация отключается при reduce. [prefers-reduced-motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion); [aria-live](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-live)
+- GitHub Pages: доступен в публичных репозиториях GitHub Free и публикует статические HTML/CSS/JS/Jekyll assets; server-side languages не поддерживаются. Поэтому UI может быть бесплатной статической частью, но FastAPI/model inference должны быть отдельно развёрнуты/оплачены владельцем. [What is GitHub Pages?](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages); [Creating a GitHub Pages site](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site)
 
 ### Раунд 2: что перенимаем, что не переносим
 
@@ -226,7 +228,7 @@
 
 ## 6. Источники и дата проверки
 
-Дата online review: 2026-10-30. Это выборочный audit официальных и практических UX-источников, не заявление, что просмотрены буквально все интерфейсы рынка.
+Дата online review: 2026-10-30. Два раунда: (1) current ChatGPT/OpenAI UI and standards research; (2) map each technique to the constraints of the V1 static client, selecting only low-cost/high-signal improvements. Это выборочный audit официальных и практических UX-источников, не заявление, что просмотрены буквально все интерфейсы рынка.
 
 - OpenAI Help Center — [ChatGPT release notes](https://help.openai.com/en/articles/6825453-chatgpt-release-notes), проверено 2026-10-30; pinning on web, sidebar chat management.
 - OpenAI Help Center — [Finding your chats, projects, and files](https://help.openai.com/en/articles/10056348-finding-your-chats-projects-and-files-in-chatgpt), проверено 2026-10-30; search scope, filters and keyboard shortcut.
