@@ -353,3 +353,25 @@ audit_update_2026_10_30:
     files_deleted: []
     rationale: "No obsolete file has yet been proven unreachable across dynamic references, CI, deployment, rollback and docs."
   next: "Complete exact-head Quality/Chromium rerun, then continue request/provider, memory/RAG, tools/security, voice and document subsystem audit."
+
+
+owner_addendum_2026_10_30:
+  backlog: "docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md"
+  required_first_release_voice:
+    - "editable local speech-to-text"
+    - "natural streaming conversational voice with turn detection and interruption"
+    - "read selected text aloud"
+    - "read one complete message aloud"
+    - "ordered queue for multiple selected messages"
+    - "real-device RU/EN/TH accuracy, latency, echo and resource acceptance"
+  helper_and_agent_scope:
+    - "role-based helper model registry with task-specific evaluations"
+    - "GPU inference profile; CPU remains for OS/API/orchestration"
+    - "optional high-throughput vLLM only on compatible GPU hardware"
+    - "bounded durable multi-agent execution with budgets, queue, cancellation, idempotency, scopes and traces"
+    - "private Knowledge-to-Skill conversion with provenance, license and prompt-injection review"
+  research_decisions:
+    - "Moonshine Voice is a streaming candidate but listed STT languages omit Russian and Thai; keep whisper.cpp for those languages"
+    - "OpenWOP v2, LangGraph and Temporal are protocol/runtime research only; no adoption"
+    - "Qwen3.5-0.8B and Granite-4.2-3B are eval candidates, not selected production helpers"
+  implementation_status: "requirements and acceptance criteria recorded; code implementation and target hardware tests pending"
