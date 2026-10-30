@@ -652,6 +652,14 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
   const requests = [];
   await page.route('https://api.example.test/v1/chat/completions', async route => {
     const payload = route.request().postDataJSON();
+    const lastMessage = payload.messages?.at(-1)?.content;
+    // Provider save triggers a model-connectivity probe; it is not research stage 1.
+    if (lastMessage === 'Reply with exactly OK. No other words.') {
+      return route.fulfill({
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({ model: payload.model, choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+      });
+    }
     requests.push(payload);
     const content = responses[Math.min(requests.length - 1, responses.length - 1)];
     await route.fulfill({
@@ -1352,6 +1360,14 @@ test('Deep mode caps tool fan-out, suppresses repeated calls, and still returns 
   }));
   await page.route('https://api.example.test/v1/chat/completions', async route => {
     const body = route.request().postDataJSON();
+    const lastMessage = body.messages?.at(-1)?.content;
+    // Exclude the settings-time provider probe from the user-run execution budget.
+    if (lastMessage === 'Reply with exactly OK. No other words.') {
+      return route.fulfill({
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({ model: 'tool-budget-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+      });
+    }
     modelCalls++;
     const toolsEnabled = Array.isArray(body.tools) && body.tools.length > 0;
     maxModelToolCalls = Math.max(maxModelToolCalls, toolsEnabled ? body.tools.length : 0);
