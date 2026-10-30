@@ -291,6 +291,12 @@ permalink: /
     .status-thinking-dots.is-active > span:nth-child(2) { animation-delay:140ms; }
     .status-thinking-dots.is-active > span:nth-child(3) { animation-delay:280ms; }
     @keyframes tiffany-dot { 0%,100% { opacity:.28; transform:translateY(0); } 50% { opacity:.95; transform:translateY(-2px); } }
+    .roadmap-ticker { overflow:hidden; border:1px solid var(--ui-border); border-radius:999px; background:var(--ui-surface); color:var(--ui-tiffany); }
+    .roadmap-ticker-track { display:inline-block; min-width:max-content; padding:4px 1.5rem; animation:roadmap-marquee 22s linear infinite; will-change:transform; }
+    @keyframes roadmap-marquee { from { transform:translateX(100%); } to { transform:translateX(-100%); } }
+    .roadmap-note { margin:.35rem 0 0; color:var(--ui-text-muted); font-size:10px; line-height:1.45; }
+    html[data-motion="reduced"] .roadmap-ticker-track, html[data-motion="off"] .roadmap-ticker-track { animation:none!important; transform:none!important; }
+    @media (prefers-reduced-motion:reduce) { .roadmap-ticker-track { animation:none!important; transform:none!important; padding-inline:.75rem; white-space:normal; } }
     html[data-motion="reduced"] .motion-active.motion-accent::after,
     html[data-motion="off"] .motion-active.motion-accent::after,
     html[data-motion="reduced"] .status-thinking-dots.is-active > span,
@@ -675,6 +681,8 @@ permalink: /
           <textarea id="agentCustomRoles" maxlength="1500" rows="3" class="advanced-control w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Роли и обязанности, по одной на строку"></textarea>
         </div>
         <p class="rounded-lg border border-amber-900/50 bg-amber-950/20 p-2 text-[10px] leading-relaxed text-amber-100/80">Команда — сохраняемый blueprint. Runtime сейчас выполняет четыре фиксированных этапа на одной выбранной модели; создание 50 независимых агентов ещё не реализовано.</p>
+        <div class="roadmap-ticker mt-2" aria-label="Планируемое улучшение"><span class="roadmap-ticker-track" aria-hidden="true">1nv3nt10n 1n PrOc3ss… · Независимое исполнение ролей — в дорожной карте</span></div>
+        <p class="roadmap-note">Это планируемое направление, а не активный runtime или индикатор фоновой работы.</p>
         <p id="agentConfigSummary" class="text-[10px] text-gray-500" aria-live="polite"></p>
       </section>
       <section id="skillFunctionSettings" class="hidden space-y-2">
@@ -706,7 +714,7 @@ permalink: /
         <p id="skillConfigSummary" class="text-[10px] text-gray-500" aria-live="polite"></p>
         <p class="text-[11px] leading-relaxed text-gray-500" data-i18n="skillPresetHelp">Профиль добавляет инструкции, но не открывает инструменты или данные.</p>
       </section>
-      <section id="connectorFunctionStatus" class="hidden rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-sm leading-relaxed text-gray-300" data-i18n="functionConnectorsDescription">Показываем только реально подключённые источники. Внешние коннекторы пока не подключены; они не будут имитироваться переключателями.</section>
+      <section id="connectorFunctionStatus" class="hidden rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-sm leading-relaxed text-gray-300"><p data-i18n="functionConnectorsDescription">Показываем только реально подключённые источники. Внешние коннекторы пока не подключены; они не будут имитироваться переключателями.</p><div class="roadmap-ticker mt-3" aria-label="Планируемое улучшение"><span class="roadmap-ticker-track" aria-hidden="true">1nv3nt10n 1n PrOc3ss… · Интеграции с контролируемыми разрешениями — в дорожной карте</span></div><p class="roadmap-note">Подключение источников появится только после проверки прав, границ данных и реального соединения. Анимация декоративная и не означает, что сервис уже выполняет работу.</p></section>
       <footer class="flex justify-end border-t border-gray-800 pt-3"><button type="button" data-action="close-function-panel" data-i18n="functionPanelClose" class="rounded-xl border border-gray-700 px-4 py-2 text-sm">Закрыть</button></footer>
     </section>
   </div>
