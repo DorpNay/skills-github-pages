@@ -37,3 +37,10 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - **Exact-head evidence before fix:** Project State Freshness, Provenance, Dead Code Audit and Graphify passed; Lite Gateway Tests failed; Independent Quality Sentinels were still in progress. Do not mark all checks green until the post-fix SHA has completed every required workflow.
 - **Research decisions:** book-to-skill upstream `virgiliojr94/book-to-skill` (MIT tool; source-book copyright remains separate) is a strong pattern for internal Knowledge-to-Skill. Graphify remains dev-only. Keep whisper.cpp/Piper baseline; benchmark LiveKit/Pipecat only as optional realtime voice runtime. Benchmark llama.cpp GPU offload against current Ollama before any migration.
 - **Next:** inspect latest PR SHA and CI, then audit request/provider lifecycle, memory/RAG scopes, DAG/tools/security, voice, document extraction and landing. No file deletions until static + dynamic reference checks and rollback/CI roles are reviewed.
+
+### Audit update — 2026-10-30
+- Gateway test import fix is verified: Lite Gateway Tests run #483 passed after commit `f9d5afaae983675d2c616e3fbc70942840d314e5`.
+- Graphify artifact #12956306584 inspected: 1,109 nodes / 3,103 edges / 53 communities; no import cycles detected. The Graphify workflow itself was cancelled during later branch updates, so only the artifact inspection is recorded as done.
+- Dead-code report #389 contains one Vulture false positive: `BufferedTTS.synthesize_prefix(max_duration_ms)` is a protocol contract parameter. No deletions are authorized by this report.
+- Voice capability gap: current UI has editable local transcription, one-message Piper playback and a half-duplex voice loop; selection-to-speech, multi-message queue, real-time streaming and native AEC/barge-in remain to implement/verify. See the detailed audit tracker.
+- Current next: finish Quality/Chromium rerun; continue targeted module audit; update state after each verified stage.
