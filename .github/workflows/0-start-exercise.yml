@@ -30,7 +30,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
 
@@ -46,7 +46,7 @@ jobs:
           ---
           EOF
       - name: Commit files
-        uses: EndBug/add-and-commit@a94899bca583c204427a224a7af87c02f9b325d5 # v9
+        uses: EndBug/add-and-commit@cc9c08ba6c8df3b93a8f2db63e89b98368ae2ae8 # v11.1.1
         with:
           add: |
             - _config.yml
@@ -63,10 +63,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Get response templates
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: skills/exercise-toolkit
           path: exercise-toolkit
@@ -74,7 +74,7 @@ jobs:
 
       - name: Build comment - add step content
         id: build-comment
-        uses: skills/action-text-variables@3b6c75e091007b8a7660c17071aa2503cccf6af2 # v2
+        uses: skills/action-text-variables@d277ce34621ab00a53db0517d18304a7032453c5 # v4.0.1
         with:
           template-file: ${{ env.STEP_1_FILE }}
           template-vars: |

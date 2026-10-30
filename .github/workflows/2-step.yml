@@ -30,10 +30,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Get response templates
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: skills/exercise-toolkit
           path: exercise-toolkit
@@ -41,7 +41,7 @@ jobs:
 
       - name: Build message - step finished
         id: build-message-step-finish
-        uses: skills/action-text-variables@3b6c75e091007b8a7660c17071aa2503cccf6af2 # v2
+        uses: skills/action-text-variables@d277ce34621ab00a53db0517d18304a7032453c5 # v4.0.1
         with:
           template-file: exercise-toolkit/markdown-templates/step-feedback/step-finished-prepare-next-step.md
           template-vars: |
@@ -57,7 +57,7 @@ jobs:
 
       - name: Build comment - add step content
         id: build-comment
-        uses: skills/action-text-variables@3b6c75e091007b8a7660c17071aa2503cccf6af2 # v2
+        uses: skills/action-text-variables@d277ce34621ab00a53db0517d18304a7032453c5 # v4.0.1
         with:
           template-file: ${{ env.STEP_3_FILE }}
           template-vars: |
