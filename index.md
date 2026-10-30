@@ -3468,10 +3468,10 @@ permalink: /
       if (!q) return 'Пустой поисковый запрос.';
       const limit = mode === 'deep' ? 5 : 3;
       showStatus('📚 Открытый источник: ' + source + ' · ' + q.slice(0, 70));
+      const wikiLanguage = /[\\u0E00-\\u0E7F]/u.test(q) ? 'th' : (/[а-яё]/i.test(q) ? 'ru' : 'en');
       let endpoint;
       if (source === 'wikipedia') {
-        endpoint = 'https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srlimit=' + limit + '&srsearch=' + encodeURIComponent(q);
-        if (/[а-яё]/i.test(q)) endpoint = endpoint.replace('https://en.wikipedia.org/', 'https://ru.wikipedia.org/');
+        endpoint = 'https://' + wikiLanguage + '.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srlimit=' + limit + '&srsearch=' + encodeURIComponent(q);
       } else if (source === 'stackexchange') {
         endpoint = 'https://api.stackexchange.com/2.3/search/advanced?site=stackoverflow&order=desc&sort=relevance&pagesize=' + limit + '&filter=withbody&q=' + encodeURIComponent(q);
       } else if (source === 'github') {
@@ -3491,7 +3491,7 @@ permalink: /
       if (source === 'wikipedia') {
         const data = JSON.parse(text);
         for (const [index, item] of (data.query?.search || []).entries()) {
-          lines.push('[' + (index + 1) + '] ' + item.title + '\nURL: https://' + (/[а-яё]/i.test(q) ? 'ru' : 'en') + '.wikipedia.org/wiki/' + encodeURIComponent(String(item.title || '').replace(/ /g, '_')) + '\n' + htmlToPlainText(item.snippet || '').slice(0, 900));
+          lines.push('[' + (index + 1) + '] ' + item.title + '\nURL: https://' + wikiLanguage + '.wikipedia.org/wiki/' + encodeURIComponent(String(item.title || '').replace(/ /g, '_')) + '\n' + htmlToPlainText(item.snippet || '').slice(0, 900));
         }
       } else if (source === 'stackexchange') {
         const data = JSON.parse(text);
