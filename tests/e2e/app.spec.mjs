@@ -121,6 +121,7 @@ test('theme stays in the header/sidebar and language lives in advanced settings'
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#sidebarThemeToggle').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await page.locator('#sidebar [data-action="close-sidebar"]').click();
   await selectLanguage(page, 'ru');
   await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
   await expect(page.locator('#uiLanguage')).toHaveValue('ru');
@@ -1224,6 +1225,7 @@ test('deleting a project removes its chats but preserves other projects and chat
   await disposableGroup.locator(':scope > summary').click();
   await disposableGroup.locator('[data-action="open-project-settings"]').click();
   await expect(page.locator('#projectSettingsStatus')).toContainText('Disposable Project');
+  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
   await disposableGroup.locator(`[data-action="switch-chat"][data-chat-id="${disposableChatId}"]`).click();
   await page.locator('[data-action="toggle-sidebar"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(disposableId);
