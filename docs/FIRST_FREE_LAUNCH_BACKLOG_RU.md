@@ -1,7 +1,7 @@
 # aLandi — объединённый backlog первого бесплатного релиза и полного стека
 
 **Срез:** 2026-10-30  
-**База main:** `2bda22229cba3576628f92c821bb6e1562d8abc5`  
+**База main:** `e6404d510229fa64a7bb375995d76dcba55de623`  
 **Текущий UI-кандидат:** PR #121, `feat/chat-settings-orthogonal-controls-20261030` (проверять фактический HEAD перед каждым решением).  
 **Единый release tracker для инфраструктуры:** [Issue #111](https://github.com/DorpNay/skills-github-pages/issues/111).  
 **Детальный UI DoD:** [V1_UI_FINALIZATION_RU.md](V1_UI_FINALIZATION_RU.md).
@@ -263,3 +263,17 @@ Ollama — 127.0.0.1:11434 — одна активная модель
 
 ### Правило планирования
 Сначала завершить и опубликовать честный статический лендинг и текущий клиентский UI. Первый функциональный update после публикации должен объединить эти обязательные вертикали с реальным backend/runtime и тестами; не загружать UI-кнопки, которые не имеют работающего end-to-end пути.
+
+## 8. Остаток landing/app polish из актуального main
+Синхронизирован документ [LANDING_UX_POLISH_BACKLOG_RU.md](LANDING_UX_POLISH_BACKLOG_RU.md). Его пункты также являются частью release checklist:
+- [ ] Скриншоты и визуальная проверка landing на 320/360/390/768/1024/1440 px; hero, карточки, CTA, spacing, contrast, footer.
+- [ ] Keyboard-only и screen-reader проверка трёх раскрываемых roadmap секций и pause controls.
+- [ ] Published Pages smoke после merge; canonical, ссылки и реальный deployment.
+- [ ] App screenshot pass desktop/mobile; typography, contrast, spacing, empty/error states, RU/EN, light/dark.
+- [ ] Все composer popovers на краях viewport, коротком viewport, с клавиатурой и nested scroll.
+- [ ] Dialog Escape/focus trap/return/scroll lock/background inert; sticky Settings actions.
+- [ ] Проверка дублирования chat import/export и project bundle actions.
+- [ ] Long names, large lists, keyboard navigation, 44px touch targets.
+- [ ] Functional menu отражает только реально зарегистрированные skills/agents/connectors and permissions.
+- [ ] Native iPhone Safari, VoiceOver, safe-area, keyboard, rotation and touch cancellation — owner gate.
+- [ ] Keep Native Popover API/CSS Anchor Positioning progressive enhancement only; preserve JS fallback.
