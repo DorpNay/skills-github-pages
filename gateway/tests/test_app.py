@@ -300,6 +300,49 @@ def test_health_has_no_secret():
     assert API_KEY not in response.text
 
 
+def test_livez_is_process_only_and_does_not_probe_ollama():
+    calls = []
+
+    def handler(request):
+        calls.append(request.url.path)
+        return httpx.Response(503)
+
+    with client_for(handler=handler) as client:
+        response = client.get("/livez")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+    assert response.headers["cache-control"] == "no-store"
+    assert calls == []
+
+
+def test_readyz_reports_unreachable_ollama_without_secret():
+    def handler(request):
+        if request.url.path == "/api/tags":
+            return httpx.Response(503)
+        return httpx.Response(404)
+
+    with client_for(handler=handler) as client:
+        response = client.get("/readyz")
+
+    assert response.status_code == 503
+    assert response.json() == {
+        "status": "degraded", "ollama": "unreachable", "auth_configured": True
+    }
+    assert response.headers["cache-control"] == "no-store"
+    assert API_KEY not in response.text
+
+
+def test_healthz_remains_a_compatible_alias_for_readyz():
+    with client_for() as client:
+        ready = client.get("/readyz")
+        legacy = client.get("/healthz")
+
+    assert ready.status_code == legacy.status_code == 200
+    assert ready.json() == legacy.json()
+    assert legacy.headers["cache-control"] == "no-store"
+
+
 def test_models_require_auth_and_return_only_allowlisted_installed_model():
     with client_for() as client:
         assert client.get("/v1/models").status_code == 401
