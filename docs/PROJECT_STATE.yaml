@@ -375,3 +375,15 @@ owner_addendum_2026_10_30:
     - "OpenWOP v2, LangGraph and Temporal are protocol/runtime research only; no adoption"
     - "Qwen3.5-0.8B and Granite-4.2-3B are eval candidates, not selected production helpers"
   implementation_status: "requirements and acceptance criteria recorded; code implementation and target hardware tests pending"
+
+
+audio_subprocess_cancellation_fix:
+  implementation_commit: "77b2691f4a9cedfab280384667ece9ae92ba9bd3"
+  regression_tests_commit: "363bb5c46c6a0fcad55bb5d243289e065ee6450a"
+  finding: "ASR ffprobe/ffmpeg/whisper.cpp and Piper TTS subprocesses were not terminated/reaped when request tasks were cancelled; timeout path already killed them."
+  change: "Shared await_local_process helper now kills/reaps child on timeout and asyncio.CancelledError; applied to all local ASR/TTS subprocess waits."
+  tests_added:
+    - "test_local_audio_process_is_killed_and_reaped_on_request_cancellation"
+    - "test_local_audio_process_is_killed_and_reaped_on_timeout"
+  local_equivalent_smoke: "Both subprocesses killed/reaped; return code -9. Not a repository pytest run."
+  ci_status: "Gateway #483 passed 150 tests before this fix; new functional SHA requires Gateway CI. GitHub connector cannot dispatch a new workflow on the current SHA."
