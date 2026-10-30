@@ -1,22 +1,19 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
-> **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
+> **Первым делом:** прочитай корневой `ORIENTER.md`, затем этот ориентир, `docs/MASTER_TASK_REGISTRY_RU.md`, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче.
 
 ## Текущая контрольная точка — 2026-10-31
 
-- Проверенный main: `e78a73b25725bfa63370d9946887cbbacbf51b82` — PR #123 merged.
-- PR #123 merged at `e78a73b25725bfa63370d9946887cbbacbf51b82`; exact head `fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222`; 6/6 workflow groups passed.
-- Exact queue snapshot (current PR excluded only from its own freshness comparison): **open PRs (4): #124, #125, #126, #128; open issues (1): #111**.
-- PR #124: dependency refresh and reproducible Python lock; exact head `d10afe2b5bc1cbe84b9396cbfcbe6a3d9ac881ff`; Gateway, Quality, Graphify, Provenance and Dead Code passed.
-- PR #125: separate agent-platform research/design Draft; exact head `7efaa06f0ba4c428501dff325746d916dba983cd`; Quality, Freshness and Provenance passed. Documentation only; no agent runtime adopted.
-- PR #126: code-currency/dependency audit Draft; exact head `21104af6733b6ea4eb04bdec6d409c4a2d347558`; all six workflow groups passed.
-- PR #128: deep agent workforce, VERT conversion and output-limit research; exact head `bec513ef9658ae193935ebd3268f04fa85d5f167`; documentation-only, no runtime adoption.
-- Issue #111 remains the owner/live-host release gate. Do not close it based on CI.
-- **Master task registry:** `docs/MASTER_TASK_REGISTRY_RU.md`. Initial lossless migration: 275 open/partial rows from six sources (218 unchecked, 57 partial), before deduplication. Original checklists remain untouched.
-- **Agent direction:** at least five genuinely parallel independent workers alongside the main model; no hard cap at 64 professions. Research dynamic profiles/skills, hierarchical and decentralized swarms, task queues, leases, durable state, backpressure and hundreds/thousands of logical workers. 64 profiles are one useful starter catalogue, not a ceiling.
-- **VERT:** investigate conversion engine routing and WASM UX; do not wholesale embed AGPL/GPL implementation. Distinguish user-facing conversion from model-facing parsing/normalization.
-- **Output limits:** inspect real source paths. Known values include 16,384 fallback context-token estimate, 4 deep tool rounds, 3 tool calls per deep round, 8 calls per response and 8 per deep run; these are not an output-character cap, but may over-constrain orchestration. Document extraction separately has 8 MiB input and 80,000-character output defaults. No arbitrary answer truncation should be added.
-- Unverified owner/environment gates remain: live VPS/Tunnel/Ollama, provider credentials, target-host RAM/latency/quality, native iPhone, real voice runtime, production RAG, OAuth/Drive and sandbox isolation.
+- Проверенный main: `e78a73b25725bfa63370d9946887cbbacbf51b82` — PR #123 merged; перепроверен через GitHub.
+- PR #127 — единый реестр и continuity; ветка `docs/continuity-master-registry-20261031`, target main. Текущие изменения реестра/ориентиров входят в этот PR; exact-head CI требуется после обновления.
+- Очередь без самого PR #127: #124 dependency refresh; #125 Agent Studio 2.0 (Draft/FUTURE — DO NOT MERGE); #126 code-currency audit; #128 Agent Workforce 2.0 (Draft/RESEARCH — HOLD); #129 Voice 2.0 (Draft/RESEARCH — HOLD); #130 Deep Research 2.0 (Draft/RESEARCH — HOLD). #125/#128/#129/#130 направлены в `future-workstreams/parking-base-20261031`, не в main. Issue #111 — owner/live-host gate.
+- **Единый канонический реестр:** `docs/MASTER_TASK_REGISTRY_RU.md`. В нём 280 открытых/частичных строк из шести исходных чек-листов: 223 unchecked + 57 partial, до дедупликации. Пять недостающих строк LAUNCH-217…LAUNCH-221 добавлены; исходные документы сохранены.
+- **Главный порядок исполнения:** 1) сохранить и проверить реестр/ориентиры; 2) продолжить Landing V1 только в ранее выбранном стеке HTML/CSS/JS + Jekyll и существующей интеграции FastAPI/Ollama. Не расширять стек, не включать future/research PR в main.
+- **Landing V1:** функциональный scope первой версии заморожен; допустимы bounded improvements: responsive/visual quality, accessibility, performance, SEO/link correctness, reliability, security и E2E. Не добавлять новые product capabilities.
+- **Agent Workforce:** PR #128 — отдельный research/HOLD; требование владельца — минимум пять независимых параллельных logical workers рядом с основной моделью, без жёсткого потолка 64 профессии. Не превращать logical worker count в inference concurrency на малом VPS.
+- **Voice:** PR #129 — отдельный research/HOLD.
+- **Deep Research:** PR #130 — отдельный research/HOLD.
+- Live VPS/Ollama, post-merge Pages deployment, native iPhone, real voice, production RAG, OAuth и sandbox acceptance остаются непроверенными owner/environment gates.
 
 ## Историческая контрольная точка — 2026-10-28
 
