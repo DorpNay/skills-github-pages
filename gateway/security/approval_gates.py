@@ -81,6 +81,8 @@ class ApprovalRegistry:
             record = self._records.pop(token_hash, None)
         if record is None or record.expires_at <= now or record.digest != expected:
             return False
-        if actor_id is not None and actor_id != record.actor_id:
+        # An approval ticket is bound to the authenticated human who issued it.
+        # Missing identity must fail closed exactly like an identity mismatch.
+        if not isinstance(actor_id, str) or not actor_id or len(actor_id) > 160:
             return False
-        return True
+        return secrets.compare_digest(actor_id, record.actor_id)
