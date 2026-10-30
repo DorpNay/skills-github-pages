@@ -4321,7 +4321,6 @@ permalink: /
       setProcessingMode($('researchStudioEffort').value);
       setSearchMode($('researchStudioSearchMode').value);
       setAgentMode($('researchStudioStructured').checked);
-      setSkillPreset('research');
       closeResearchStudio();
       $('userInput').focus({preventScroll:true});
       showToast(getUiLanguage()==='en'?'Research mode applied. Enter your task in the composer.':'Режим исследования включён. Введи задачу в основном поле.');
