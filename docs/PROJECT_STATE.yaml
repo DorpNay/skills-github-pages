@@ -461,3 +461,19 @@ exa_research_and_current_build_2026_10_30:
     freshness_run: 41014174686
     result: "All successful, including Chromium and published Pages smoke"
   remaining: "Full manual audit; RU/EN/TH hardware voice benchmarks; streaming voice; helper registry; durable orchestration; Knowledge-to-Skill; owner-host gates"
+
+
+whole_stack_integrity_audit_2026_10_30:
+  status: "baseline_recorded_audit_not_yet_started"
+  repository: "DorpNay/skills-github-pages"
+  base_main_sha: "fd4f0a105183feb23e0f4e4697446235de9ffe9a"
+  audit_branch: "chore/reconcile-architecture-and-helper-eval-20261030"
+  baseline_head_sha: "f6e67db5a7e39abc5f9351aae5ccadefc58e865e"
+  pr: 123
+  pr_state_at_baseline: "open_mergeable"
+  baseline_exact_head_ci: "6/6 workflow groups passed; evidence must be rechecked after any new commit"
+  open_issue: 111
+  stack_expansion: "forbidden; audit and improvements must remain inside accepted stack"
+  checklist: "docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md"
+  subagent_handoff: "brief prepared in audit document; no independent agent execution claimed"
+  deployment_boundary: "post-merge Pages deployment and live VPS/Ollama unverified"
