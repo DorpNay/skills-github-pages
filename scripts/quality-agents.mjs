@@ -25,7 +25,7 @@ const suites = {
       matches(/<\/html>\s*$/, 'Document must close its html element.');
     }],
     ['critical UI controls exist', () => {
-      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiMotion', 'cloudSettingsCard', 'cloudStatusDot', 'cloudStatus', 'cloudBaseUrl', 'cloudModel', 'cloudApiKey', 'cloudConnect', 'languageMenu', 'languageSummary', 'clockDigital', 'homeThemeToggle', 'brandWordmark', 'projectPanel', 'currentProjectSelect', 'projectMemoryToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
+      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'apiKeyShell', 'apiKeyStatus', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiLanguage', 'uiMotion', 'cloudSettingsCard', 'cloudStatusDot', 'cloudStatus', 'cloudBaseUrl', 'cloudBaseUrlError', 'cloudModel', 'cloudModelError', 'cloudApiKey', 'cloudApiKeyError', 'sidebarThemeToggle', 'clockDigital', 'homeThemeToggle', 'brandWordmark', 'projectPanel', 'projectSettingsModal', 'currentProjectSelect', 'projectMemoryToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'researchStudioModal', 'researchStudioSettingsSummary', 'researchStudioEffort', 'researchStudioSearchMode', 'researchStudioStructured', 'functionPanelModal', 'skillPresetSelect', 'agentModeControl', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
         matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
       }
     }],
@@ -41,14 +41,16 @@ const suites = {
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
       includes("alandi: { label: 'aLandi Self-hosted Gateway'", 'The aLandi private gateway must be a first-class provider.');
       includes("allowCrossProvider&&selectedProvider!=='alandi'", 'Selecting aLandi must never silently route private prompts to another provider even if global fallback is enabled.');
-      includes('<section id="cloudSettingsCard"', 'aLandi must have a dedicated first-party primary-route card.');
-      assert.equal((source.match(/data-action="select-alandi-primary"/g) || []).length, 0, 'The redundant separate primary-route action must not bypass the single provider selector.');
-      includes('<optgroup id="providerPrimaryGroup" label="aLandi Cloud · основной маршрут">', 'aLandi Cloud must have its own primary-route group.');
-      includes('<optgroup id="providerExternalGroup" label="Сторонние провайдеры">', 'Third-party providers must be grouped separately from aLandi Cloud.');
-      includes('<option value="alandi">aLandi Cloud · свой gateway</option>', 'The aLandi Cloud route must remain selectable in the shared route selector.');
-      assert.equal((source.match(/<option value="alandi">/g) || []).length, 1, 'The route selector must contain exactly one visible aLandi option in its own group.');
-      assert.equal((source.match(/<option value="alandi" hidden>/g) || []).length, 0, 'The aLandi route must not be hidden behind a separate route-switch action.');
+      includes('<section id="cloudSettingsCard"', 'aLandi must have a dedicated first-party server card.');
+      includes('<h3 id="cloudCardTitle"', 'The private server card must have its own heading.');
+      includes('<optgroup id="providerExternalGroup" label="Сторонние провайдеры">', 'The external provider picker must contain only third-party providers.');
+      assert.equal((source.match(/<option value="alandi"/g) || []).length, 0, 'The private aLandi route must not appear in the third-party provider picker.');
+      assert.equal((source.match(/<optgroup id="providerPrimaryGroup"/g) || []).length, 0, 'Do not place the private server in a third-party route group.');
+      assert.equal((source.match(/id="cloudConnect"/g) || []).length, 0, 'The private server must connect automatically, without a permanent manual-check button.');
       includes('function connectAlandiCloud()', 'The cloud UI must verify a real model response before showing connected.');
+      includes('function scheduleCloudAutoConnect()', 'Changes to private server settings must trigger a bounded automatic connection check.');
+      includes('function setCloudFieldError(id,message', 'Invalid server fields must show an inline field-specific error.');
+      includes("setCloudFieldConnection('connected')", 'The server fields must only turn green after the connection and health checks pass.');
       includes('Never show a green connection lamp for proxy text, HTML, or an unknown error body.', 'HTTP 200 with unrecognized text must not be considered a successful model probe.');
       includes("globalMemoryEnabled=safeGet(STORAGE.globalMemoryEnabled)==='true'", 'Global memory must be explicitly enabled, not added to every request by default.');
       includes("indexedDB.open('AI_Agent_DB_v87', 2)", 'Memory schema migration must create a separate shared store without deleting legacy private notes.');
