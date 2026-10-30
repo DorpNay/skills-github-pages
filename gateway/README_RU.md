@@ -4,7 +4,7 @@
 
 ## Возможности
 
-- GET /healthz, GET /v1/models, authenticated GET /v1/capabilities и POST /v1/chat/completions; JSON и SSE streaming.
+- GET /livez (liveness без upstream), GET /readyz (readiness Ollama) и совместимый GET /healthz (alias /readyz); GET /v1/models, authenticated GET /v1/capabilities и POST /v1/chat/completions; JSON и SSE streaming.
 - Bearer auth, allowlist модели, CORS allowlist, проверка messages, лимит тела по умолчанию 8 MiB и bounded concurrency; локальные ASR/TTS отклоняют конкурентную задачу HTTP 429, а не накапливают очередь.
 - Метаданные context_length в /v1/models; значение обязано совпадать с контекстом, реально настроенным для Ollama.
 - Prompts не пишутся в логи; upstream errors не раскрывают raw body.
@@ -34,7 +34,7 @@
     set -a; . ./.env; set +a
     PYTHONPATH=.. uvicorn app:app --host 127.0.0.1 --port 8000 --workers 1
 
-В другом терминале проверьте /healthz и POST /v1/chat/completions через curl. Никогда не коммитьте реальный .env.
+В другом терминале проверьте /livez (процесс), /readyz (Ollama) и POST /v1/chat/completions через curl. Старый /healthz остаётся alias readiness. Никогда не коммитьте реальный .env.
 
 ## Полный пакет прототипов и тестов
 
