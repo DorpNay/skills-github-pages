@@ -1,12 +1,12 @@
 # aLandi — объединённый backlog первого бесплатного релиза и полного стека
 
 **Срез:** 2026-10-30  
-**База main:** `e6404d510229fa64a7bb375995d76dcba55de623`  
-**Текущий UI-кандидат:** PR #121, `feat/chat-settings-orthogonal-controls-20261030` (проверять фактический HEAD перед каждым решением).  
+**База main:** `fd4f0a105183feb23e0f4e4697446235de9ffe9a`  
+**Текущий UI-релиз:** PR #121 merged at `f4d880f`; Gateway readiness PR #122 merged at `fd4f0a1`. Первый бесплатный лендинг V1 зафиксирован; новые функции в этот срез не добавлять.  
 **Единый release tracker для инфраструктуры:** [Issue #111](https://github.com/DorpNay/skills-github-pages/issues/111).  
 **Детальный UI DoD:** [V1_UI_FINALIZATION_RU.md](V1_UI_FINALIZATION_RU.md).
 
-Этот документ объединяет последние инженерные аудиты P0/P1/P2, Issue #111, основной пользовательский чек-лист, V1 UI finalization, предпусковой runbook и предложенный стек. Это рабочий реестр решений, а не утверждение, что все перечисленные функции уже реализованы или развёрнуты.
+Этот документ объединяет инженерные аудиты P0/P1/P2, Issue #111, пользовательский чек-лист, V1 UI finalization, предпусковой runbook и выбранный стек. После merge PR #121 действует freeze первой версии: допускаются только исправления, оптимизация, надёжность, безопасность, доступность и polish внутри уже выбранного стека. Новые продуктовые возможности остаются в отдельном будущем backlog и не входят в первый лендинг.
 
 ## 0. Контракт первого бесплатного релиза
 
@@ -34,7 +34,7 @@ Ollama — 127.0.0.1:11434 — одна активная модель
 ## 1. Объединённый список задач
 
 Статусы:
-- **В работе** — код/тесты уже находятся в PR #121 или текущем implementation slice.
+- **В работе** — ограниченный fix/polish slice внутри уже утверждённого стека; расширение состава V1 не допускается.
 - **Есть частично** — механизм уже присутствует, но требует проверки/согласования.
 - **Owner gate** — зависит от внешней инфраструктуры, credentials, физического устройства или решения владельца.
 - **Отложено** — намеренно не входит в первый бесплатный релиз.
@@ -43,12 +43,12 @@ Ollama — 127.0.0.1:11434 — одна активная модель
 
 | ID | Задача | Текущая база / решение | Готово, когда |
 |---|---|---|---|
-| P0-01 | Зафиксировать бесплатную границу продукта | **В работе в PR #121.** Лендинг отдельно от приложения; бесплатен статический UI, не inference. | Текст на лендинге, README и FAQ совпадает; нет обещания бесплатной модели/hosted endpoint. |
-| P0-02 | Завершить лендинг `/landing/` | **В работе в PR #121.** Добавлены структура, CTA, стек, readiness, roadmap и disclosures. | Jekyll build, E2E на 320/390/768/1024/1440, no horizontal overflow, canonical/description/links, reduced-motion и published Pages smoke проходят. |
-| P0-03 | Завершить основной браузерный клиент V1 | **В работе в PR #121.** Параметры запроса разделяются; Research Studio не меняет режимы; есть проектные и provider UI доработки. | Все 18 доменов V1 checklist закрыты или помечены ручным/owner gate; точный PR HEAD проходит CI. |
-| P0-04 | Убрать мелкие UX-регрессии | **В работе в PR #121.** Проверить Settings Close, кнопки Save/Close, provider state, модалки, клавиатуру, focus, scroll, длинные чаты, RU/EN и light/dark. | Нет дублирующих действий/селекторов; ошибки inline; клавиатурная навигация и mobile hit targets проверены. |
-| P0-05 | Привести README и точки входа к реальному V1 | **Частично исправлено в PR #121.** Удаляются устаревшие шаги с предзаполненным Gemini URL/model и старой кнопкой restore. | README, START_HERE, landing и UI не дают противоречивых инструкций; есть единый порядок запуска. |
-| P0-06 | Доказать FastAPI/Ollama health-контракт | **Есть частично.** Текущий `GET /healthz` уже вызывает Ollama `GET /api/tags` с timeout 2 s; это readiness, не чистая liveness. | Добавлены дешёвый `/livez` без upstream и `/readyz` с read-only check Ollama; старый `/healthz` остаётся совместимым alias readiness. Тесты покрывают 200/503/timeout и отсутствие секретов. |
+| P0-01 | Зафиксировать бесплатную границу продукта | **Merged — PR #121.** Лендинг отдельно от приложения; бесплатен статический UI, не inference. | После merge сохранять единый текст; не обещать бесплатную модель/hosted endpoint. |
+| P0-02 | Завершить лендинг `/landing/` | **Merged — PR #121.** Структура, CTA, стек, readiness, roadmap, disclosures и landing E2E находятся в main. Exact-head Jekyll/Chromium/published-site smoke прошёл; post-merge Pages deployment отдельно не подтверждён. | Следующий шаг — визуальная и нативная проверка опубликованной страницы, без расширения функционального объёма. |
+| P0-03 | Завершить основной браузерный клиент V1 | **Merged — PR #121.** Независимые параметры запроса, Research Studio без мутации настроек, проектные/provider UI и release disclosures в main. | Продолжать только исправления и polish; оставшиеся ручные/owner gates перечислены в V1 checklist и Issue #111. |
+| P0-04 | Убрать мелкие UX-регрессии | **Merged — PR #121; exact-head Quality/Chromium passed.** Исправлены дублирующие close actions и Research Studio probe accounting. | Остались визуальный screenshot-review, native iPhone Safari, VoiceOver, клавиатура/safe-area и ручная проверка длинных экранов. |
+| P0-05 | Привести README и точки входа к реальному V1 | **Merged — PR #121.** Устаревшие Gemini URL/model/reset инструкции удалены; кнопка восстановления Gemini не возвращается. Сам Gemini provider не объявляется устаревшим без отдельного решения. | Сохранять единый порядок запуска в README, START_HERE, landing и UI. |
+| P0-06 | Доказать FastAPI/Ollama health-контракт | **Merged — PR #122.** `/livez` проверяет только процесс; `/readyz` выполняет bounded read-only Ollama check; `/healthz` остаётся alias readiness. Gateway Tests и exact-head Quality/Chromium прошли. | На целевом VPS отдельно подтвердить health после установки и reboot; это owner gate, не CI-утверждение. |
 | P0-07 | Доказать API и сетевые ограничения | **Есть частично.** Bearer auth, CORS allowlist, allowed models, body cap, bounded concurrency, loopback runbook и deployment preflight существуют. | CI проверяет конфигурационный шаблон; локальный VPS acceptance подтверждает 401 без ключа, allowlisted model, completion, cache behavior и loopback listeners. |
 | P0-08 | Synthetic end-to-end canary | **Owner gate.** PR CI уже проверяет сборку, Chromium и опубликованный Pages. Живой Tunnel/Ollama отсутствует в доказательствах. | Отдельный opt-in live smoke выполняется только с предоставленными владельцем endpoint/secret и явным согласием; не отправляет приватные prompt и не пишет секреты в артефакты. |
 | P0-09 | Синхронизация project-state | **Есть частично.** `check_project_state_freshness.py` и ежедневный/manual workflow сверяют SHA и точную очередь PR/issues. | После merge обновлены snapshot, PROJECT_STATE, ORIENTER, FILE_ORIENTER и VOLLEY_LOG; freshness проходит на актуальном main. |
@@ -210,15 +210,15 @@ Ollama — 127.0.0.1:11434 — одна активная модель
 | Лендинг не обещает бесплатный inference, background work, active roadmap runtime или public multi-user SaaS | P0-01, P0-02 | Landing copy + build/E2E + post-deploy public URL smoke |
 | Voice/agent/sandbox/image features остаются выключенными/preview пока не доказан backend | P1-04, P1-06, P2-07 | Truthful UI copy and safe-off defaults; no feature promoted by docs alone |
 
-## 5. Итоговая рекомендованная последовательность
+## 5. Итоговая последовательность после merge
 
-1. Довести PR #121: UI, лендинг, README, E2E, RU/EN, mobile touch, no-overflow и reduced-motion.
-2. Пройти полный exact-head CI и merge только при green required gates; проверить post-merge Pages и опубликованные root/`landing/` URL.
-3. Добавить совместимые `/livez` + `/readyz` и тесты; сохранить `/healthz` как старый readiness alias.
-4. Согласовать README/START_HERE/gateway runbook и дополнить freshness/contract validation только deterministic checks.
-5. Подготовить owner checklist для main protections; проверить точные реальные workflow status names прежде чем требовать их в ruleset.
-6. Когда владелец предоставит VPS, провести preflight, deploy и реальный authenticated completion; закрыть соответствующие части Issue #111 только по evidence.
-7. Только после работающего текстового контура отдельно решать memory sync, RAG improvements, voice and sandbox по метрикам и безопасным gate.
+1. [x] PR #121 merged: первый бесплатный лендинг V1 и согласованный клиентский UX в main; exact-head Quality/Chromium/Jekyll/published-site smoke passed.
+2. [x] PR #122 merged: `/livez`, `/readyz`, совместимый `/healthz`; exact-head Gateway/Quality/Chromium/Graphify/Dead Code passed.
+3. [ ] Проверить post-merge Pages deployment и опубликованные root/`landing/` URL на фактическом merge commit.
+4. [ ] Завершить visual screenshot-review, native iPhone Safari, keyboard/safe-area, VoiceOver и touch checks.
+5. [ ] Закрыть только оставшиеся polish/security/reliability задачи внутри текущего стека; не добавлять новые продуктовые функции в первый лендинг.
+6. [ ] Owner gates issue #111: main ruleset, VPS/Tunnel/Ollama, provider credentials, hardware/model benchmark, RAG corpus, voice/device, sandbox и OAuth. Закрывать только после фактического evidence.
+7. [ ] Будущие функции (voice expansion, helper registry, durable multi-agent runtime, Knowledge-to-Skill) оставить в отдельном post-landing backlog; не считать блокером публикации статического лендинга V1.
 
 ## 6. Проверенные первичные ориентиры
 
@@ -233,9 +233,9 @@ Ollama — 127.0.0.1:11434 — одна активная модель
 ---
 ## 7. Дополнительные обязательные требования владельца — 2026-10-30
 
-Эти требования добавлены после исходного V1 backlog и имеют приоритет при планировании первого полноценного обновления после публикации лендинга. Они не считаются реализованными только потому, что существуют отдельные прототипы.
+Эти требования описывают будущую полноценную продуктовую вертикаль после публикации лендинга. Они **не входят в замороженный состав первого бесплатного лендинга V1** и не должны задерживать его публикацию. Возвращаться к ним можно отдельным согласованным этапом, без изменения текущего стека и только после benchmark/security acceptance. Они не считаются реализованными только потому, что существуют прототипы.
 
-### P0 — голос как обязательная часть первого полноценного релиза
+### Future post-landing requirements — voice (not part of the frozen landing V1)
 - [ ] **P0-13. Editable speech-to-text:** запись с микрофона, локальная транскрипция, редактирование распознанного текста до отправки, RU/EN/TH quality tests.
 - [ ] **P0-14. Conversational voice assistant:** полноценный естественный turn-taking, streaming transcript/response, VAD, barge-in, cancellation, echo cancellation, transcript alignment. Текущий half-duplex prototype — только основа, не завершённая функция.
 - [ ] **P0-15. Read selected text aloud:** выделение произвольного фрагмента ответа/сообщения и озвучивание только выделенного содержимого.
@@ -262,7 +262,7 @@ Ollama — 127.0.0.1:11434 — одна активная модель
 - «Голосовой помощник почти как человек» — цель качества, а не маркетинговый claim до прохождения acceptance.
 
 ### Правило планирования
-Сначала завершить и опубликовать честный статический лендинг и текущий клиентский UI. Первый функциональный update после публикации должен объединить эти обязательные вертикали с реальным backend/runtime и тестами; не загружать UI-кнопки, которые не имеют работающего end-to-end пути.
+Первый бесплатный лендинг V1 уже зафиксирован и не расширяется. Сначала довести до идеала взаимодействие, производительность, доступность, надёжность и безопасность внутри выбранного стека. Перечисленные ниже голосовые, агентные, knowledge и прочие вертикали — будущие отдельные этапы; не добавлять их кнопки или runtime в текущую первую версию.
 
 ## 8. Остаток landing/app polish из актуального main
 Синхронизирован документ [LANDING_UX_POLISH_BACKLOG_RU.md](LANDING_UX_POLISH_BACKLOG_RU.md). Его пункты также являются частью release checklist:

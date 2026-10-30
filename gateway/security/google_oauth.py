@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse, RedirectResponse
 
 logger = logging.getLogger("alandi.gateway.oauth")
 GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
-GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
+GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"  # nosec B105 -- fixed public endpoint URL, not a credential.
 GOOGLE_REVOKE_URL = "https://oauth2.googleapis.com/revoke"
 GOOGLE_SCOPES = ("https://www.googleapis.com/auth/drive.file",)
 

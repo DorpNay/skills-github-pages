@@ -87,7 +87,7 @@ class SpeculativeVoiceTransaction:
             if buffer is not None and not cleanup_registered:
                 try:
                     await self.tts.discard_buffer(buffer)
-                except Exception:
+                except Exception:  # nosec B110 -- best-effort cleanup must not mask the original synthesis error.
                     pass
             raise
 

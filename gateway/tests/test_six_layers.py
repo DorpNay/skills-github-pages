@@ -1,10 +1,8 @@
-import hashlib
 import json
 import sqlite3
 import time
 
 import pytest
-from cryptography.fernet import Fernet
 
 from gateway.kv_budget import analyze_runtime
 from gateway.memory.delta_sync import (

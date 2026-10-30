@@ -1,9 +1,9 @@
 # aLandi — трёхролевая проверка архитектуры, дебаг и план первого обновления
 
 **Дата:** 2026-10-30  
-**Ветка:** `feat/chat-settings-orthogonal-controls-20261030`  
-**PR:** #121  
-**Стартовая основа:** `main 2bda22229cba3576628f92c821bb6e1562d8abc5`  
+**Текущая база:** `main fd4f0a105183feb23e0f4e4697446235de9ffe9a`  
+**Слитые релизы:** PR #121 (первый бесплатный лендинг V1 и UI) и PR #122 (Gateway liveness/readiness).  
+**Текущий этап:** freeze V1, хронологическая сверка веток, восстановление проверочного инструментария и синхронизация документации.  
 **Назначение:** единый журнал дополнительных поручений пользователя. Отмечать каждый шаг только после фактического выполнения и указывать SHA/evidence.
 
 ## 0. Полный список поручений пользователя
@@ -20,9 +20,9 @@
 - [x] D1. Получить полный список файлов PR #121 и exact-head workflow evidence.
 - [x] D2. Изучить фактический провал Gateway CI и локализовать дефект.
 - [x] D3. Исправить найденную причину: добавить отсутствующий импорт `canonical_action_digest` в тест.
-- [x] D4. Повторно прогнать Gateway tests после исправления: Lite Gateway Tests run #483 passed. Полный Quality/Chromium exact-head gate остаётся незавершённым.
+- [x] D4. Gateway Tests на точном HEAD PR #121 и PR #122 прошли; Quality/Chromium/Jekyll/Security/Integrity/Context, Graphify, Provenance и Dead Code на PR-head завершились успешно. Post-merge Pages deployment отдельно не подтверждён.
 - [~] D5. Провести полный статический/графовый аудит UI, gateway, memory, RAG, voice, tools, workflows и dependencies. Graphify inspected: 1,109 nodes / 3,103 edges / 53 communities; no import cycles detected; full manual audit remains.
-- [~] D6. Исправить только воспроизводимые дефекты; каждый фикс покрыть регрессионным тестом. Исправлен тестовый импорт `canonical_action_digest` и подтверждён Gateway CI; дополнительно найден/исправлен orphan subprocess при ASR/TTS timeout или cancellation, добавлены регрессионные тесты, CI для нового functional SHA ещё не запущен.
+- [x] D6. Исправлены тестовый импорт `canonical_action_digest` и orphan subprocess при ASR/TTS timeout/cancellation; регрессионные тесты включены в PR #121 и прошли Gateway Tests на exact HEAD.
 - [~] D7. Составить verified dead-code/obsolete-file inventory. Удалены только три подтверждённо устаревших scratch-файла после поиска ссылок и обновления `IMPROVEMENT_SELECTION.md`: `temp/3`, `temp/4`, `temp/5`. Содержательные `temp/1` и `temp/2` оставлены как архивные источники. Vulture warning по Protocol parameter — false positive.
 - [ ] D8. Проверить security: SSRF/redirect, prompt injection, scopes, deletion, approval, tool sandbox, secrets, upload parsers, audio.
 - [ ] D9. Проверить runtime contracts, cancellation, timeouts, limits, retries, concurrency и resource bounds.
@@ -31,24 +31,24 @@
 - [x] P1. Зафиксировать пользовательский принцип: до первого лендинга — только необходимая подготовка; после него — оптимизация и доведение имеющейся системы.
 - [x] P2. Зафиксировать, что лендинг/продукт не должен рекламировать prototype как готовую функцию.
 - [x] P3. Добавить book/document/source → reusable agent skill направление в план.
-- [x] P4. Свести весь функциональный объём первого обновления в вертикальные, тестируемые deliverables — добавлены P0-13…P0-18 и P1-10…P1-17 в `docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`.
+- [x] P4. Свести будущие post-landing вертикали в отдельные тестируемые deliverables — P0-13…P0-18 и P1-10…P1-17 сохранены в `docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`, но явно исключены из замороженного состава первого лендинга V1.
 - [~] P5. Подготовить голосовой UX: запись/транскрипция и TTS одного сообщения уже есть в коде; диалог сейчас half-duplex; selection-to-speech, multi-message queue, streaming turn detection и реальный barge-in остаются незавершёнными.
 - [~] P6. Спроектировать small helper models, GPU-only/accelerated inference и routing без обязательной нагрузки CPU; сохранить CPU fallback только как осознанный режим. Подтверждены варианты Ollama GPU, llama.cpp offload и vLLM; требуется hardware benchmark.
 - [~] P7. Спроектировать bounded multi-agent / mass-agent orchestration: DAG, budgets, queue, cancellation, idempotency, permissions, traces, evals и safe-off. Сравнены OpenWOP v2 protocol, LangGraph interrupts/checkpointing and Temporal durable workflows; no runtime chosen.
 - [x] P8. Увязать agent-skill generation, RAG, source provenance, memory scopes и project notebook — целевой pipeline и security gates описаны; implementation remains pending.
-- [~] P9. Подготовить release sequence, acceptance criteria, rollback и owner gates для первого обновления — базовые gates записаны, exact-head and owner runtime gates remain.
-- [ ] P10. Проверить все лендинговые claims, CTA, статусы функций, доступность, mobile, SEO и опубликованный Pages.
+- [x] P9. Release sequence, acceptance criteria, rollback и owner gates записаны; PR #121/#122 прошли exact-head CI. Post-merge deployment, native iPhone и owner runtime gates остаются отдельно.
+- [~] P10. Лендинговые claims/CTA/SEO/структура проверены в PR #121; exact-head Chromium и published-site smoke прошли. Post-merge Pages deployment, финальный screenshot-review и native iPhone accessibility ещё не подтверждены.
 
 ## 1. Проверенное состояние на старте
 
-- PR #121 — единственный открытый PR; Issue #111 — владелец/infra/live-host release gate.
-- PR #121 основан на текущем main `2bda22229cba3576628f92c821bb6e1562d8abc5`; GitHub compare показывает 144 commits ahead, 0 behind. Это означает, что ранее сохранённая заметка «19 ahead / 2 behind» устарела.
-- Текущий HEAD PR #121: `b09c1365e9d5f434b69ebb60bb285c7574051172`.
-- В PR #121 затронуты 25 файлов: UI, landing, E2E, Gateway DAG/approval, quality agents, docs/state и workflow.
-- На exact HEAD: Project State Freshness, Provenance, Dead Code Audit и Graphify — success; Lite Gateway Tests — failure; Independent Quality Sentinels — in progress на момент чтения.
-- Подтверждённая причина Gateway failure: тест обращался к `canonical_action_digest`, но функция не импортирована в `gateway/tests/test_coder_packet.py`. Код функции существует в `gateway/security/approval_gates.py`; это ошибка тестового импорта, не дефект production helper.
-- Исправление отправлено в PR branch commit `f9d5afaae983675d2c616e3fbc70942840d314e5`: добавлен импорт `canonical_action_digest`. Повторный CI ещё не подтверждён.
-- Main и опубликованный Pages не означают, что private gateway/VPS/Tunnel/Ollama развернуты. Live voice, iPhone Safari, GPU/CPU benchmark и hardware quality остаются неподтверждёнными.
+- PR #121 merged at `f4d880f`; PR #122 merged at `fd4f0a1`. На checkpoint после merge PR queue пустая; Issue #111 — единственный открытый owner/infra/live-host release gate.
+- PR #121 был слит после exact-head CI на SHA `e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b`; merge commit `f4d880f9648989f4fe48ddd2284220b3606c3b86`.
+- PR #122 был создан из ветки Gateway readiness и слит на exact-head `94d871dbf76a5364ebb3c61d86cc763affa5eaa1`; merge commit `fd4f0a105183feb23e0f4e4697446235de9ffe9a`.
+- PR #121 содержал основной срез UI/landing/E2E/Gateway DAG/approval/docs/workflow; его exact-head CI завершился успешно (6 workflow groups).
+- На exact HEAD PR #121: Gateway, Quality (включая Jekyll/Chromium/published-site smoke), Freshness, Provenance, Graphify и Dead Code — success. PR #122: Gateway, Quality (включая Jekyll/Chromium/published-site smoke), Graphify и Dead Code — success.
+- Историческая причина Gateway failure была тестовым импортом `canonical_action_digest`; исправление вошло в PR #121 и прошло exact-head Gateway Tests.
+- Audio subprocess cancellation/timeout cleanup и regression tests также вошли в слитый PR #121; на exact-head Gateway Tests passed.
+- PR-head published-site smoke прошёл, но это не отдельное доказательство post-merge Pages deployment. Private Gateway/VPS/Tunnel/Ollama, live voice, iPhone Safari, GPU/CPU benchmark и hardware quality остаются неподтверждёнными.
 
 ## 2. Архитектурная оценка — подтверждённые границы
 
@@ -246,3 +246,44 @@ Fetch latest PR head after commit `f9d5afaae983675d2c616e3fbc70942840d314e5`, in
 - [x] P3/P8 — Knowledge-to-Skill linked to Agent Skills and book-to-skill v1.3.0; implementation/human review UI remain pending.
 - [ ] No speech model, voice framework, GPU scheduler, agent engine or document converter integrated in this research pass.
 - [ ] External skills/exercise-toolkit@ebf43bb remains pinned pending behavior review.
+
+## 10. Хронологическая сверка, freeze V1 и оставшиеся задачи — 2026-10-30
+
+### Подтверждённые merge milestones
+- [x] M1. PR #121 merged: `f4d880f9648989f4fe48ddd2284220b3606c3b86`; exact PR HEAD `e3c3017`; все шесть workflow groups успешны.
+- [x] M2. PR #122 merged: `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; exact PR HEAD `94d871d`; Gateway, Quality/Chromium/Jekyll/published-site smoke, Graphify и Dead Code успешны.
+- [x] M3. Open PR queue после этих merge — пустая; Issue #111 остаётся единственным открытым issue. Не закрывать его ради нулевого счётчика: там реальные owner-only gates (VPS, hardware, credentials, ruleset, corpus, voice, sandbox, OAuth).
+- [x] M4. Проверена историческая ветка `feat/agent-memory-knowledge-superstack`: 64 роли и memory/knowledge design уже присутствуют в main в `docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md`; это логические профили, не 64 параллельных процесса.
+- [x] M5. Проверена старая `feat/alandi-superlite-core`: `AGENTS.md` и provider E2E уже есть в main; не переносить повторно.
+- [~] M6. Сверены основные старые search/functions, landing, local audio/document, provider diagnostics и superstack ветки по именам/compare; текущие PR/документы показывают значительное перекрытие с более поздними merge. Полная файловая экспертиза каждой исторической ветки не проводилась; wholesale merge старых веток не нужен.
+- [x] M7. В `feat/advanced-settings-model-modes-uncensored-20261028` найден benchmark harness, который отсутствовал в main, несмотря на важность helper-model evaluation. Перенесён только bounded synthetic smoke + tests; отдельный `self-hosted/free-cloud` selector не переносить — он дублирует provider route state PR #119/#121.
+- [x] M8. Старые `project_create/project_read/project_update/diagram_create` workspace tools не входят в первый лендинг; оставить deferred до отдельного permission/scope/approval/security review. Uncensored 2B/4B checkpoint из старого runbook не выбран и не установлен.
+- [x] M9. Устранены повторяющиеся decision IDs: D-015 — local helper; D-016 — orchestration; D-017 — adaptive-minimalist workspace; D-018 — RRF; D-019 — orthogonal chat settings. Перекрёстные ссылки приведены к уникальным ID.
+- [x] M10. Exact-head CI PR #123 passed on `fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222`: Gateway Tests, Quality (Chromium/Jekyll/published-site smoke, Integrity/Security/Context), Project State Freshness, Graphify, Provenance and Dead Code. Merge only this verified head; no later code changes.
+- [ ] M11. После merge проверить post-merge Pages deployment и опубликованный `/landing/` и root app.
+- [ ] M12. Провести ручной visual/screenshot pass и native iPhone Safari/keyboard/safe-area/VoiceOver.
+- [ ] M13. На реальном хосте выполнить helper-model benchmark: точные model IDs/digests/licenses, одинаковые RU/EN/TH golden prompts, quantization/context/hardware, p50/p95, cold/warm latency, tokens/s, RAM/PSS и human-rated quality. Пока модель не выбрана и не включена.
+- [ ] M14. Продолжить системную матрицу UI ↔ API ↔ runtime ↔ persistence ↔ security ↔ CI/deploy; не объявлять sandbox, independent agents, live voice, OAuth или RAG production-ready без evidence.
+
+### Обязательное правило freeze первого лендинга
+После PR #121 не расширяем состав первой бесплатной версии. Разрешены только оптимизация, polish, исправления, безопасность, доступность, производительность, наблюдаемость и тесты **внутри выбранного стека**: HTML/CSS/JavaScript + Jekyll/GitHub Pages и существующий FastAPI/Ollama gateway. Новые функции и runtime-компоненты остаются в отдельном будущем backlog.
+
+### Малые модели и агентная оркестрация — текущая граница
+- В main уже есть ручной opt-in helper для candidate memory suggestions через операторский `ALANDI_HELPER_MODEL`; пустое значение отключает endpoint. Это не general-purpose subagent router.
+- Целевой дизайн: одна главная модель для планирования/сложного reasoning/синтеза; максимум одна optional helper модель для узкой классификации/extraction/summarization/rerank после RU/EN/TH benchmark.
+- Qwen3.5-0.8B и Granite-4.2-3B — только исследовательские кандидаты; не выбранные runtime dependencies. На 8-GB профиле default inference concurrency остаётся 1; не грузить несколько весов без измеримого выигрыша.
+- Роли — лёгкие профили/skills и typed contracts. Оркестрация — bounded DAG/state machine с budgets, deadlines, queue/backpressure, cancellation, idempotency, checkpoints, fail-closed policy, action-bound approval, independent verifier и durable journal. Никакой uncontrolled swarm.
+- Малые модели не получают право выдавать себе permissions, подтверждать side effects или заменять deterministic policy/verifier. Core path должен работать при выключенном helper.
+
+
+
+## Whole-stack integrity audit — 2026-10-30 (new task)
+- [x] W0. Re-read live PR #123, main base and issue #111; recorded exact starting state before audit work.
+- [x] W1. Added frozen-stack scope, end-to-end audit checklist and independent reviewer handoff brief in `docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md`.
+- [ ] W2. Reconcile accepted decisions against implementation, flags and runtime wiring.
+- [ ] W3. Trace all cross-module data/control flows and trust boundaries.
+- [ ] W4. Run additional independent quality/security/static-analysis tools and record exact outputs.
+- [ ] W5. Obtain independent subagent review if an actual subagent execution capability is available; otherwise record limitation and use a separately structured adversarial review.
+- [ ] W6. Triage findings against accepted architecture; reject stack expansion and speculative changes.
+- [ ] W7. Implement only evidence-backed, bounded fixes; test each slice and update all state docs.
+- [ ] W8. Re-run exact-head CI and verify final PR/issue/deployment status without overstating live readiness.

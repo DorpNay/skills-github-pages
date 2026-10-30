@@ -6,11 +6,10 @@ Run from any directory with:
 This does not call a live LLM, claim production accuracy, or benchmark host RSS. It checks
 fixtures and emits machine-readable metrics that CI can reproduce.
 """
+# ruff: noqa: E402 -- repository root is added to sys.path before local imports for standalone execution.
 from __future__ import annotations
 
 import json
-import os
-import statistics
 import sys
 import tempfile
 import time

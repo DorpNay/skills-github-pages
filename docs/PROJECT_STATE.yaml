@@ -2,15 +2,15 @@ project_state:
   version: 4
   reviewed_on: "2026-10-30"
   root_orienter:
-    status: "Main base is e6404d510229fa64a7bb375995d76dcba55de623 after documentation-only landing UX polish commit; PR #121 is the only open UI finalization PR. PR branch synced with main (200 ahead / 0 behind at SHA 07213c1406e8d451e7df5f796f2d4a8fd862e5ca). Gateway import fix #483 passed 150 tests on earlier code; audio subprocess cancellation fix (77b2691 + tests 363bb5c) still needs Gateway CI. Quality/Chromium and Graphify reruns were cancelled during branch updates. Live runtime remains unverified."
-    branch: "feat/chat-settings-orthogonal-controls-20261030"
-    base_main: "e6404d510229fa64a7bb375995d76dcba55de623"
+    status: "Main is fd4f0a105183feb23e0f4e4697446235de9ffe9a after PR #121 (free landing/client V1) and PR #122 (Gateway liveness/readiness) merged. PR #121 exact head e3c3017 passed all six workflow groups; PR #122 exact head 94d871d passed Gateway, Quality/Chromium, Jekyll, Security, Integrity, Context, Graphify and Dead Code. PR #123 exact head fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222 passed Gateway, Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code; it is the only active reconciliation PR and is excluded from its own freshness queue snapshot. Issue #111 remains the single owner/live-host gate. Post-merge Pages deployment and live VPS/Ollama remain unverified."
+    branch: "main"
+    base_main: "fd4f0a105183feb23e0f4e4697446235de9ffe9a"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
-    merged_changes: "PR #120 sidebar hierarchy/theme-language sync; #119 provider separation/project scope/composer preference; #118 chat import/export; #113 immutable Actions pins; #115 modal scrim/outside-tap; #114 empty-by-default prompt/context budget; #71 mobile composer; #84/#81/#83/#82 infrastructure foundations; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
-    exact_head_checks: "PR #120 merge commit reports Chromium, published Pages smoke, Jekyll, integrity, security, context and Graphify checks passed in its commit message; get_commit_combined_status returned no separate status entries for 2bda22229cba3576628f92c821bb6e1562d8abc5. PR #121 code head f9d5afaae983675d2c616e3fbc70942840d314e5: Gateway #483 passed (150 tests), Freshness #83, Provenance #554 and Dead Code #389 passed; Quality #916 and Graphify #262 cancelled during subsequent branch updates. Exact current branch SHA is documentation-only later than f9; no full exact-head Quality/Chromium green claim."
-    runtime_boundary: "GitHub Pages browser smoke verified; native iPhone, live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
-    next: "PR #121 branch now includes main e6404d5 and compares 200 ahead / 0 behind at 07213c1. Run Gateway tests on audio cancellation fix 363bb5c, then exact-current-head Quality/Chromium/Pages; connector cannot dispatch new workflow runs on current SHA. Continue remaining architecture/debug audit and owner hardware gates."
+    merged_changes: "PR #121 first free landing V1 and client UX; PR #122 Gateway liveness/readiness probes; #120 sidebar hierarchy/theme-language sync; #119 provider separation/project scope/composer preference; #118 chat import/export; #113 immutable Actions pins; #115 modal scrim/outside-tap; #114 empty-by-default prompt/context budget; #71 mobile composer; #84/#81/#83/#82 infrastructure foundations; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
+    exact_head_checks: "PR #121 head e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b: Dead Code Audit, Project State Freshness, Provenance, Lite Gateway Tests, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. PR #122 head 94d871dbf76a5364ebb3c61d86cc763affa5eaa1: Gateway Tests, Dead Code Audit, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. PR #123 head fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222: Gateway Tests, Dead Code Audit, Freshness, Provenance, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. Merge commits: #121 f4d880f9648989f4fe48ddd2284220b3606c3b86; #122 fd4f0a105183feb23e0f4e4697446235de9ffe9a. No independent post-merge Pages deployment result was available."
+    runtime_boundary: "PR-head published-site browser smoke verified; post-merge Pages deployment on the exact merge commit remains unverified. Native iPhone, live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
+    next: "Keep first landing V1 scope frozen. Continue only reliability, accessibility, performance, security, documentation and integration polish inside the selected HTML/CSS/JS + Jekyll and existing FastAPI/Ollama stack. New capabilities stay in the future backlog, outside the first landing."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -23,8 +23,8 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
-  last_volley: "V-2026-10-29-UX-POPOVER-002"
-  gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Current browser half-duplex voice dialogue prototype is under PR validation; it uses mocked ASR/TTS in CI, and hardware, model accuracy, latency and echo remain unverified."
+  last_volley: "V-2026-10-30-RECONCILIATION-PR123-001"
+  gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Browser half-duplex voice dialogue prototype is merged; CI uses mocked ASR/TTS, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; first read in new chats, then verify current main HEAD and open PRs"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
   source_of_truth:
@@ -44,9 +44,9 @@ project_state:
     gateway_vps: "not verified by this change; do not claim deployed"
     experimental_feature_flags: "false by default"
   current_ui_track:
-    branch: "feat/chat-settings-orthogonal-controls-20261030"
-    pull_request: 121
-    status: "PR #121 open; current scope is first free landing + root client UI finalization; PRs #71, #114, #115, #119, #120 remain merged foundations. Gateway #483 passed after import fix on earlier code; audio cancellation fix awaits Gateway CI; Quality/Chromium and full current-head gates remain unverified."
+    branch: "main"
+    merged_pr: 121
+    status: "PR #121 merged at f4d880f; first free landing V1 and root client UX are in main. PR #122 merged at fd4f0a1 with distinct process liveness/readiness probes. Exact-head CI passed on both PRs; post-merge Pages deployment and live runtime remain unverified."
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback; PR114 leaves the optional global system prompt empty by default and removes the obsolete Gemini reset"
     projects: "PR35 merged and Chromium E2E passed: collapsed project list with per-project chat children; top-level unassigned chats only; project memory scope project-only vs project-and-global; one-shot project context scoped by chat. Server graph bridge remains experimental and disabled by default."
@@ -125,7 +125,7 @@ improvements:
   AI-AGENT-001: {status: "logical_roles_not_process_swarm", artifact: "docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md", eval: "EV-AGENT-001"}
   AI-AGENT-002: {status: "limited_existing_routing", artifact: "gateway/tools/dag_engine.py", eval: "EV-AGENT-002"}
   AI-AGENT-003: {status: "bounded_dag_prototype", artifact: "gateway/tools/dag_engine.py", eval: "EV-AGENT-003"}
-  AI-AGENT-004: {status: "accepted_helper_model_design_not_runtime_wired", artifact: "DECISIONS.md; docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md", eval: "EV-AGENT-004"}
+  AI-AGENT-004: {status: "synthetic_benchmark_harness_gateway_ci_verified_no_target_model_benchmark_no_helper_dispatch", artifact: "gateway/evals/run_local_model_benchmark.py; gateway/tests/test_local_model_benchmark.py; docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md", eval: "EV-AGENT-004"}
   AI-AGENT-005: {status: "accepted_design_documented_runtime_not_implemented", artifact: "docs/AGENT_ORCHESTRATION_RESEARCH_RU.md; DECISIONS.md; docs/CODER_PACKET.md", eval: "EV-AGENT-005"}
   AI-IMAGE-001: {status: "roadmap_only_no_image_generation_runtime", artifact: "docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md; docs/V016_IMPLEMENTATION_CHECKLIST.md", eval: "EV-IMAGE-001"}
   AI-OPS-001: {status: "free_first_roadmap_no_billable_resources_provisioned", artifact: "DECISIONS.md; docs/USER_REQUEST_CHECKLIST.md", eval: "EV-OPS-001"}
@@ -274,48 +274,52 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-10-30"
-  verified_main: "e6404d510229fa64a7bb375995d76dcba55de623"
-  last_main_action: "fix(ui): align sidebar hierarchy and preferences; SHA 2bda22229cba3576628f92c821bb6e1562d8abc5"
-  last_functional_checkpoint: "2bda22229cba3576628f92c821bb6e1562d8abc5"
-  main_quality: "No separate combined status records returned for main SHA 2bda22229cba3576628f92c821bb6e1562d8abc5; PR #120 merge message reports checks, but current exact-head verification must be read from Actions."
-  main_graphify: "Graphify is a developer navigation artifact, not a runtime component; no separate run was returned for current main SHA."
+  verified_main: "fd4f0a105183feb23e0f4e4697446235de9ffe9a"
+  last_main_action: "feat(gateway): separate process liveness and upstream readiness probes; PR #122 merge fd4f0a105183feb23e0f4e4697446235de9ffe9a"
+  last_functional_checkpoint: "fd4f0a105183feb23e0f4e4697446235de9ffe9a"
+  main_quality: "PR #121 and #122 exact-head Quality workflows passed, including Chromium, Jekyll, published-site browser smoke, Context, Security and Integrity. Post-merge main push/deployment run IDs were not returned; do not invent them."
+  main_graphify: "PR #121 and #122 exact-head Graphify code-only workflows passed; Graphify remains developer tooling, not a runtime component."
   main_gateway: "Live VPS/gateway/provider connectivity remains unverified; no live deployment claim."
-  merged_prs: "120 sidebar hierarchy and synchronized preferences; 119 provider separation/project scope/composer preference; 118 chat import/export; 113 immutable Actions pins; 115 modal scrim; 114 empty-by-default prompt; 71 mobile composer; 84 CORS; 81 deployment preflight; 83 SQLite delta; 82 readiness audit; 106 RAG evaluator; 107 private/shared memory; 108 landing/runbook"
-  open_pull_requests: "No unrelated open PRs at the freshness checkpoint; PR #121 is the active PR being checked and is excluded from its own comparison"
+  merged_prs: "121 first free landing V1 and client UX; 122 Gateway liveness/readiness probes; 120 sidebar hierarchy/preferences; 119 provider separation/project scope/composer preference; 118 chat import/export; 113 immutable Actions pins; 115 modal scrim; 114 empty-by-default prompt; 71 mobile composer; 84 CORS; 81 deployment preflight; 83 SQLite delta; 82 readiness audit; 106 RAG evaluator; 107 private/shared memory; 108 landing/runbook"
+  open_pull_requests: "0 open PRs at checkpoint; the current state-refresh PR is excluded from its own comparison"
   open_issues: "Issue #111 only: consolidated owner/live-host release gates; research-only workstreams #88–#92 and #96–#104 closed after transferring unresolved actions"
   freshness_guard: "scripts/check_project_state_freshness.py; compares exact SHA and exact queue. A refresh commit must update ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG and snapshot; it no longer requires artificial edits to checker/tests/workflow."
   runtime_boundary: "GitHub Pages is a static client; live VPS/Tunnel/Ollama, actual model performance, voice/device, OAuth/Drive and target-host measurements remain unverified"
-  next: "Use docs/V1_UI_FINALIZATION_RU.md to close the first free-landing UI slice. Run exact-head Quality/Chromium/Jekyll/Pages/Graphify/provenance checks after state refresh. Issue #111 retains owner-only ruleset, live-host, hardware, RAG golden-set, voice/device, OAuth and sandbox gates."
+  next: "First landing V1 scope is frozen after PR #121. Improve only within the selected stack; use the future backlog for new capabilities. Issue #111 retains owner-only ruleset, live-host, hardware, RAG golden-set, voice/device, OAuth and sandbox gates."
 v1_ui_finalization:
-  status: "active; no merge/deployment claim until exact-head Quality/Chromium/Pages checks pass"
+  status: "merged in PR #121 at f4d880f; exact-head required workflows passed; post-merge Pages deployment not independently verified"
   register: "docs/V1_UI_FINALIZATION_RU.md"
-  active_pr: 121
-  branch: "feat/chat-settings-orthogonal-controls-20261030"
+  merged_pr: 121
+  branch: "main"
+  merge_commit: "f4d880f9648989f4fe48ddd2284220b3606c3b86"
+  exact_pr_head: "e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b"
   scope: "free static landing page plus existing browser client; not public multi-user SaaS or hosted inference"
   implemented_in_branch: "clarified free UI vs inference costs; roadmap section with reduced-motion ticker; agent/connector in-app roadmap cues; landing E2E; fixed duplicate Settings close action and integrity provider-group parser"
-  pending: "exact-head Quality/Chromium/Pages; inspect all failures; published Pages smoke after merge; native iPhone Safari/manual checks; owner-only issue #111"
+  pending: "post-merge Pages deployment smoke; native iPhone Safari/manual checks; owner-only issue #111"
   status_boundary: "ticker is decorative roadmap copy, not a background task indicator; independent agents, integrations, voice and document extraction remain gated/unverified"
 
 three_role_audit_2026_10_30:
   tracker: "docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md"
-  branch: "feat/chat-settings-orthogonal-controls-20261030"
-  main_base: "e6404d510229fa64a7bb375995d76dcba55de623"
-  pr_head_before_test_fix: "b09c1365e9d5f434b69ebb60bb285c7574051172"
-  latest_change: "f9d5afaae983675d2c616e3fbc70942840d314e5 — import canonical_action_digest in gateway test module"
+  status: "PR #121 and PR #122 merged; exact-head CI passed. Historical source branch is retained as an audit reference only."
+  main_base_at_start: "e6404d510229fa64a7bb375995d76dcba55de623"
+  current_main: "fd4f0a105183feb23e0f4e4697446235de9ffe9a"
+  merged:
+    pr_121: "f4d880f9648989f4fe48ddd2284220b3606c3b86; exact head e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b; six workflow groups passed"
+    pr_122: "fd4f0a105183feb23e0f4e4697446235de9ffe9a; exact head 94d871dbf76a5364ebb3c61d86cc763affa5eaa1; Gateway/Quality/Graphify/Dead Code passed"
   verified:
-    - "PR #121 changed-file inventory: 25 files"
-    - "Gateway CI failure localized to missing test import; production helper exists"
-    - "Project State Freshness passed on pre-fix head"
-    - "License/provenance passed on pre-fix head"
-    - "Dead Code Audit report-only passed on pre-fix head"
-    - "Graphify code-only pilot passed on pre-fix head"
+    - "PR #121 exact-head Quality/Chromium/Jekyll/published-site smoke, Gateway, Freshness, Provenance, Graphify and Dead Code passed"
+    - "PR #122 exact-head Gateway, Quality/Chromium/Jekyll/published-site smoke, Graphify and Dead Code passed"
+    - "Audio subprocess timeout/cancellation cleanup and regression tests are included in PR #121"
+    - "Gateway liveness/readiness routes are included in PR #122"
+    - "Legacy 64-role memory/knowledge design and AGENTS/provider E2E already exist in main"
+    - "Legacy provider mode selector is superseded; project workspace tools remain deferred"
   pending:
-    - "Post-fix exact-head CI and all required workflows"
-    - "Full cross-subsystem architecture/debug audit"
-    - "Voice target-device, GPU/CPU and model quality benchmarks"
-    - "Knowledge-to-Skill prototype and security review"
-    - "Dead-code candidate verification; no deletion authorized yet"
-  next: "Inspect post-fix exact-head CI, then audit request/provider, memory/RAG, tools/security, voice, documents and landing in dependency order. Update this tracker, ORIENTER, PROJECT_STATE and VOLLEY_LOG after every meaningful stage."
+    - "Post-merge Pages deployment and native iPhone Safari/accessibility"
+    - "Full manual cross-subsystem security/runtime matrix"
+    - "Target-host helper model, voice, GPU/CPU and memory/RAG benchmarks"
+    - "Owner-only release gates in issue #111"
+  next: "Freeze V1 scope; complete the current reconciliation PR, then polish and verify only within the selected stack."
+
 audit_update_2026_10_30:
   tracker: "docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md"
   architecture_graph:
@@ -457,3 +461,19 @@ exa_research_and_current_build_2026_10_30:
     freshness_run: 41014174686
     result: "All successful, including Chromium and published Pages smoke"
   remaining: "Full manual audit; RU/EN/TH hardware voice benchmarks; streaming voice; helper registry; durable orchestration; Knowledge-to-Skill; owner-host gates"
+
+
+whole_stack_integrity_audit_2026_10_30:
+  status: "baseline_recorded_audit_not_yet_started"
+  repository: "DorpNay/skills-github-pages"
+  base_main_sha: "fd4f0a105183feb23e0f4e4697446235de9ffe9a"
+  audit_branch: "chore/reconcile-architecture-and-helper-eval-20261030"
+  baseline_head_sha: "f6e67db5a7e39abc5f9351aae5ccadefc58e865e"
+  pr: 123
+  pr_state_at_baseline: "open_mergeable"
+  baseline_exact_head_ci: "6/6 workflow groups passed; evidence must be rechecked after any new commit"
+  open_issue: 111
+  stack_expansion: "forbidden; audit and improvements must remain inside accepted stack"
+  checklist: "docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md"
+  subagent_handoff: "brief prepared in audit document; no independent agent execution claimed"
+  deployment_boundary: "post-merge Pages deployment and live VPS/Ollama unverified"

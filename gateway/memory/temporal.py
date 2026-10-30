@@ -39,7 +39,8 @@ def validate_validity_window(valid_from: str | datetime | None,
 
 def is_valid_at(valid_from: str | None, valid_until: str | None, at: str | datetime) -> bool:
     moment = normalize_timestamp(at, field_name="at")
-    assert moment is not None
+    if moment is None:
+        raise TemporalError("at must be an ISO-8601 timestamp")
     point = datetime.fromisoformat(moment.replace("Z", "+00:00"))
     start = datetime.fromisoformat(valid_from.replace("Z", "+00:00")) if valid_from else None
     end = datetime.fromisoformat(valid_until.replace("Z", "+00:00")) if valid_until else None

@@ -1,7 +1,6 @@
 """Append-only-per-evidence SQLite ledger scoped to conversation/project/global records."""
 from __future__ import annotations
 
-import hashlib
 import json
 import os
 import sqlite3
@@ -12,7 +11,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
-from .citations import Citation, CitationError, CitationManager
+from .citations import CitationError, CitationManager
 
 
 class EvidenceLedgerError(ValueError):

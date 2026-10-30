@@ -1,6 +1,6 @@
 # aLandi — карта архитектуры и модулей
 
-**Срез:** `main` base = `e6404d510229fa64a7bb375995d76dcba55de623`; UI candidate PR #121 code head at audit = `f9d5afaae983675d2c616e3fbc70942840d314e5`.  
+**Срез:** main `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; PR #121 merged at `f4d880f9648989f4fe48ddd2284220b3606c3b86` (exact head `e3c3017`); PR #122 merged at `fd4f0a1` (exact head `94d871d`).  
 **Тип:** кураторская схема границ модулей по дереву репозитория и фактическим route/function declarations. Это **не** автоматически извлечённый call graph и не доказательство live deployment.
 
 ## 1. Системная схема
@@ -70,7 +70,7 @@ flowchart TD
 - Release: Quality Sentinels, Pages deployment/browser smoke, provenance gate. Проверять exact PR HEAD, затем post-merge main.
 - Для memory: project scope, candidate/confirmed, deletion propagation и recovery semantics.
 
-## 5. Graphify — следующий эксперимент, не runtime-интеграция
+## 5. Graphify — dev-only code navigation, не runtime-интеграция
 
 Источники: [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify), [quickstart](https://docs.graphify.com/quickstart), [pyproject.toml](https://github.com/Graphify-Labs/graphify/blob/v8/pyproject.toml).
 
@@ -109,9 +109,9 @@ flowchart TD
 - Artifact from Graphify workflow #262, commit `f9d5afaae983675d2c616e3fbc70942840d314e5`: 1,109 nodes, 3,103 edges, 53 communities; report detects no import cycles.
 - Main hubs: `create_app()` 66 edges; `showToast()` 51; `getUiLanguage()` 45; `safeGet()` 42; `Settings` 32; `LazyGraphRAG` 31; `authorize()` 31; `safeSet()` 29; `MemoryManager` 28; `client_for()` 28.
 - The centrality confirms integration hotspots, not defects. Keep current architecture; refactor only with a bounded contract-preserving change and regression coverage.
-- Graphify job was later cancelled by branch updates, but its artifact and report were uploaded and inspected. Do not mark the complete workflow green from this partial artifact alone.
+- PR #121 exact-head Graphify workflow completed successfully; PR #122 exact-head Graphify workflow also passed. The inspected artifact contains 1,109 nodes, 3,103 edges and 53 communities with no import cycles. Graphify remains a dev-only navigation artifact, not a runtime dependency.
 - Dead-code report #389 had one Vulture warning at `gateway/voice/speculative_transaction.py:39` for the `BufferedTTS.synthesize_prefix(max_duration_ms=...)` protocol parameter. It is part of the adapter contract and is a false positive; no file or code deletion is justified.
 
 
 ## Main synchronization — 2026-10-30
-Main advanced to documentation-only commit e6404d510229fa64a7bb375995d76dcba55de623, adding docs/LANDING_UX_POLISH_BACKLOG_RU.md. PR #121 includes this commit as its second parent through merge commit 2c1e6bd811546a87f0ac86bc5e550dd9a31aeb13. Last functional code SHA remains 363bb5c46c6a0fcad55bb5d243289e065ee6450a pending Gateway CI.
+PR #121 merged at f4d880f9648989f4fe48ddd2284220b3606c3b86 after exact-head Gateway/Quality/Chromium/Jekyll/Freshness/Provenance/Graphify/Dead Code passed. Audio subprocess cancellation cleanup is CI-verified on that PR head. PR #122 merged at fd4f0a105183feb23e0f4e4697446235de9ffe9a with /livez and /readyz; /healthz remains the readiness alias. Post-merge Pages deployment and live VPS/Ollama remain unverified.

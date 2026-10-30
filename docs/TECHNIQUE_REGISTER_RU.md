@@ -88,9 +88,16 @@
 - Each candidate is rendered via textContent and saved only by explicit user action after rechecking the active project and duplicates.
 - Status: merged in PR #69 at `4c9096999fbb3e1265150c420b136066c555285b`; exact-head Gateway/Quality/Chromium/published-site/provenance passed. Live helper model inference remains unverified; the endpoint stays disabled unless the operator configures an exact local Ollama tag.
 
+## Synthetic local-model smoke harness — engineering tool, not model selection (2026-10-30)
+
+- Recovered as `gateway/evals/run_local_model_benchmark.py` with tests in `gateway/tests/test_local_model_benchmark.py`.
+- Fixed RU/EN/TH prompts; request count, timeout and response size are bounded; API key is read only from `ALANDI_API_KEY`; redirects are refused to prevent forwarding a bearer token; plain HTTP is restricted to loopback.
+- Success means only a non-empty API response. This is not a correctness score, model-quality benchmark, RAM/PSS measurement or first-token benchmark. Gateway Tests passed on the exact PR #123 code head; target-host execution remains a separate gate.
+- No helper model is selected or wired by this tool. The main model remains responsible for planning, complex reasoning and synthesis; an optional small helper may only perform bounded tasks after shared RU/EN/TH evaluation and resource measurements.
+
 ## Reciprocal Rank Fusion for scoped RAG — merged baseline (2026-10-28)
 
 - PR #77 merged at `91557e4eab1b122341bed578cdf4775ff867007f`; combines FTS5/BM25 and lexical-concept graph candidate rankings using RRF with `k=60` and deterministic tie-breaks.
 - No schema/API/dependency change; source/page provenance and scope filtering remain intact; `ALANDI_RAG_ENABLED=false` stays the default.
 - The score is only for ordering, not confidence/probability. Automated tests passed on exact PR head; no production-quality improvement is claimed until a labelled >=50-query golden set compares Recall@5, MRR/nDCG, citation correctness, latency and peak RSS.
-- Full criteria: `docs/RAG_RRF_EVALUATION_RU.md`, `EVALS.md` EV-RAG-RRF-001, `DECISIONS.md` D-016.
+- Full criteria: `docs/RAG_RRF_EVALUATION_RU.md`, `EVALS.md` EV-RAG-RRF-001, `DECISIONS.md` D-018.

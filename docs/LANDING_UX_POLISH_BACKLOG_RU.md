@@ -1,7 +1,7 @@
 # aLandi — остаток оформления и UX-оптимизации сайта
 
 **Срез:** 2026-10-30  
-**Ветка:** `feat/chat-settings-orthogonal-controls-20261030`  
+**Текущая база:** main после merge PR #121 и #122.  
 **Назначение:** единый реестр незавершённого визуального/интерактивного polish после PR #121. Это продолжение `V1_UI_FINALIZATION_RU.md` и `LEGACY_UX_REQUEST_AUDIT_RU.md`, не замена им.
 
 Статусы: [x] выполнено и подтверждено; [~] частично / автоматическая проверка есть, ручной gate нет; [ ] не выполнено; [!] блокер. Закрывать пункт только с тестом, screenshot или owner evidence.
@@ -40,7 +40,7 @@
 - [ ] Длинные названия проектов/чатов, пустые списки, большое количество проектов/чатов, keyboard navigation и mobile scroll.
 
 ### Research / functions / agents
-- [~] PR #121: Research Studio использует настройки активного чата и не перезаписывает их; подтвердить все комбинации effort/search/profile/pipeline.
+- [x] PR #121 merged; exact-head Chromium/Quality passed for Research Studio active-chat settings and non-mutation. Ручная проверка текста, доступности и всех комбинаций остаётся отдельным polish gate.
 - [ ] Функциональное меню «Исследование / Агенты / Навыки / Коннекторы» должно показывать только реально зарегистрированные сущности, статусы и permissions. Не рисовать fake marketplace.
 - [ ] Развести семантику web search breadth, offline mode и multi-agent orchestration в copy и UI.
 - [ ] В roadmap/agent panels сохранять чёткое различие между blueprint, sequential pipeline и независимым agent runtime.
@@ -58,13 +58,13 @@
 3. **App visual consistency:** screenshot pass, typography/spacing/contrast, RU/EN, light/dark, empty/error/secondary states.
 4. **Interaction correctness:** popover edge placement, dialog sticky actions, Escape/focus/scroll lock, project/chat menus.
 5. **Mobile/accessibility:** Chromium matrix, then native iPhone Safari + VoiceOver owner gate.
-6. **Release verification:** exact current HEAD CI → merge only green → published Pages root + /landing smoke → update this file, V1 checklist, PROJECT_STATE, ORIENTER and VOLLEY_LOG.
+6. **Release verification:** PR #121 merged after exact-head CI; post-merge Pages root + /landing smoke remains pending because no independent deployment run was returned. Update this file, V1 checklist, PROJECT_STATE, ORIENTER and VOLLEY_LOG after the actual public URL is verified.
 
 ## 3. Реализованный первый polish patch
 - [x] Добавлен checkbox Pause control на каждый из трёх landing roadmap ticker.
 - [x] Pause toggles animation state using CSS only; no new JavaScript or runtime dependency.
 - [x] Added Playwright test for pause/resume and retained reduced-motion test.
-- [ ] Exact-head Chromium/Quality run for these changes.
+- [x] Exact-head Chromium/Quality passed on PR #121, including landing pause/resume and reduced-motion regression coverage.
 - [ ] Native keyboard/screen-reader confirmation.
 
 ## 4. Источники и технологические ограничения
@@ -78,4 +78,4 @@
 | Date | Change | Evidence |
 |---|---|---|
 | 2026-10-30 | Consolidated remaining visual/interaction tasks from legacy UX audit, V1 UI checklist and landing source. | `LEGACY_UX_REQUEST_AUDIT_RU.md`, `V1_UI_FINALIZATION_RU.md`, `landing/index.html`, `tests/e2e/landing.spec.mjs` |
-| 2026-10-30 | Added explicit pause controls to landing roadmap tickers and Playwright pause/resume test. | Commits `f42c42d`, `b213c8a`; CI pending |
+| 2026-10-30 | Added explicit pause controls to landing roadmap tickers and Playwright pause/resume test. | Commits `f42c42d`, `b213c8a`; PR #121 exact-head Chromium/Quality passed; native keyboard/screen-reader confirmation pending |

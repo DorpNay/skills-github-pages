@@ -2,7 +2,7 @@
 
 **Purpose:** one auditable checklist for the 8-section engineering fixation document and all four parts of the V-Final manifesto (sections 0–40), plus the current UI/provider work.  
 **Reviewed:** 2026-10-30  
-**Current baseline:** `main` @ `4bde19249b1ac05ccf55c2499a8ee08a27b9a198` after PR #118. PR #118 exact-head integrity/security/context, Jekyll, Chromium regression, published Pages smoke and Graphify checks passed before merge; live VPS/device/runtime remains unverified. Follow-up branch `fix/ui-request-closure-20261030` is awaiting CI.  
+**Current baseline:** `main` @ `fd4f0a105183feb23e0f4e4697446235de9ffe9a` after PR #121 (first free landing V1/client UX) and PR #122 (Gateway liveness/readiness). PR #121 exact-head Gateway/Quality/Chromium/Jekyll/Freshness/Provenance/Graphify/Dead Code passed; PR #122 exact-head Gateway/Quality/Chromium/Jekyll/Graphify/Dead Code passed. Post-merge Pages deployment, live VPS/device/runtime remain unverified. Current reconciliation PR #123 restores the local-model smoke harness and refreshes documentation.  
 **Rule:** a checked/audited requirement is not automatically a delivered feature. Statuses below refer to code and tests, not to a design proposal.
 
 ## Status key
@@ -183,7 +183,7 @@ The following items cover the initial fixation document plus manifesto sections 
 
 - [x] **AI-MEM-006 — Server graph API + browser bridge:** API remains feature-flagged and single-owner; browser can manually upload project-local facts as candidates, review/reject/delete them and list scoped nodes. PR #29 merged; PR-head and post-merge Quality/Chromium/provenance/Pages checks passed. Gateway activation remains a separate step.
 - [x] **AI-MEM-007 — Prompt retrieval gate:** server retrieval is scoped to the active project, confirmed-only, max 6 nodes / 1200 characters, and requires both per-chat project-memory toggles. Browser mock E2E passed on PR #29 head and merged main; live gateway behavior remains unverified.
-- [ ] **AI-AGENT-004 — Small helper model:** design only. Benchmark one 0.8B–2B class local model for bounded extraction/classification/summarization against a single-main-model baseline. No separate helper model is wired into runtime yet.
+- [~] **AI-AGENT-004 — Small helper model:** design plus synthetic RU/EN/TH response/latency smoke harness (`gateway/evals/run_local_model_benchmark.py`); Gateway Tests passed on PR #123 code head. Target-host quality/RAM/PSS/cold-warm benchmark and model selection remain pending. No general helper/subagent dispatch is wired into runtime.
 - [ ] **AI-IMAGE-001 — Image generation:** no working image-generation UI/runtime exists yet. Select local ComfyUI or explicit external provider, verify exact checkpoint/license/hash/VRAM and add request-to-image E2E before marking implemented.
 - [ ] **AI-OPS-001 — Free-first month:** no automatic paid resource provisioning. Use existing hardware and optional free-tier APIs with explicit quota/privacy caveats; paid hosting only after benchmark and owner decision.
 - [ ] **AI-MODEL-001 — Local-model autonomy:** no hidden application-level refusal filter is planned. Actual refusals remain checkpoint/provider-dependent; do not claim guaranteed zero refusals.
@@ -214,6 +214,6 @@ The following items cover the initial fixation document plus manifesto sections 
 
 ## Supplement — orthogonal chat settings, 2026-10-30
 
-- [~] Branch `feat/chat-settings-orthogonal-controls-20261030`: effort controls only execution budget; web-search scope controls only availability/result breadth; structured workflow and task profile are separate; Research Studio uses current chat settings without mutation; primary mobile controls use 44px hit areas.
+- [x] PR #121 merged at `f4d880f`: effort controls only execution budget; web-search scope controls only availability/result breadth; structured workflow and task profile are separate; Research Studio uses current chat settings without mutation; exact-head Chromium/Quality passed. Native iPhone/VoiceOver remains manual.
 - [ ] Exact-head tests must pass for Quick+Expanded, Thorough+Standard, Thorough+Off, RU/EN, per-chat persistence and Research Studio non-mutation before merge.
 - [ ] Native iPhone Safari and live gateway/provider behavior remain unverified.

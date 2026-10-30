@@ -227,7 +227,8 @@ const suites = {
         .filter((match) => !/\bsrc\s*=/i.test(match[1]));
       assert.ok(blocks.length > 0, 'No inline application script found.');
       blocks.forEach((block, index) => {
-        try { new Script(block[2], { filename: 'index.md:inline-script-' + index }); }
+        // nosemgrep: javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag -- vm.Script parses source only; it never inserts a DOM script element.
+        try { new Script(block[2], { filename: 'index.md:inline-script-' + index }); } // nosemgrep: javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag -- vm.Script parses source; it does not create a DOM script element.
         catch (error) { console.error(error.stack || String(error)); throw error; }
       });
     }],
@@ -267,6 +268,7 @@ const suites = {
       includes('async function performPublicKnowledgeSearch(source, query, signal', 'Specialized public APIs must be implemented in the browser.');
       includes('async function readPublicWebpage(rawUrl, signal', 'Public webpage text extraction must remain implemented.');
       includes('validatePublicHttpsUrl', 'Direct page reading must validate public HTTPS URLs.');
+      includes("host.includes(':')", 'Direct page reading must reject IPv6 literal addresses, including IPv4-mapped loopback forms.');
       includes("https://hn.algolia.com/api/v1/search", 'Hacker News search API must be available without a key.');
       includes("https://api.stackexchange.com/2.3/search/advanced", 'Stack Exchange search API must be available without a key.');
     }]

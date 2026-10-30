@@ -133,23 +133,6 @@
 - **Remaining evidence:** current-head CI, followed later by a target-host resource/file-descriptor soak and integration with real audio adapters.
 - **Rollback:** revert this helper change or leave voice callers disabled.
 
-## D-015 — Local helper for project-memory compression
-
-- **Статус:** Accepted for prototype; implementation branch awaiting exact-head CI.
-- **Решение:** разрешить только ручное предложение компактных фактов из памяти текущего проекта с операторски выбранной локальной Ollama-моделью. Браузер не задаёт имя модели, а helper не сохраняет кандидаты автоматически.
-- **Ограничения:** пустой ALANDI_HELPER_MODEL выключает маршрут; Bearer auth; input/output limits and structured JSON; common secret-like patterns filtered on both sides; same inference semaphore; keep_alive=0; no-store response; per-candidate explicit save; active project ID and duplicate recheck.
-- **Причина:** облегчает обслуживание проектной памяти без второго always-on агента и без скрытого изменения user data.
-- **Риски/rollback:** модель может предложить неточный факт; пользователь обязан проверить кандидаты. Откат — revert feature PR and leave ALANDI_HELPER_MODEL blank; no schema migration.
-
-## Global release rules
-
-- Feature flag выключен до прохождения eval и review.
-- Код и документация должны описывать текущий фактический уровень, не целевое обещание.
-- Не проводить destructive runtime changes автоматическим middleware.
-- Не публиковать API keys, OAuth secrets, refresh tokens или prompts в логах.
-- Любой live activation требует проверки на целевом VPS и отдельного rollback plan.
-
-
 ## D-013 — Browser-to-server project memory bridge is explicit and candidate-first
 
 - **Status:** Merged in PR #29 at `55248f81585c52d7cc7ba7cfc08158a291a761ca`; PR-head and post-merge Quality/Chromium/provenance/Pages checks passed. Live gateway activation remains pending.
@@ -171,7 +154,23 @@
 - **Upgrade gate:** compare free/local baseline and paid target on identical tasks: p50/p95, peak RAM, quality, quotas and expected monthly cost. Preserve the OpenAI-compatible gateway contract and explicit endpoint/model changes.
 
 
-## D-015 — Autonomous orchestration with policy-enforced capabilities
+## D-015 — Local helper for project-memory compression
+
+- **Статус:** Accepted for prototype; implementation branch awaiting exact-head CI.
+- **Решение:** разрешить только ручное предложение компактных фактов из памяти текущего проекта с операторски выбранной локальной Ollama-моделью. Браузер не задаёт имя модели, а helper не сохраняет кандидаты автоматически.
+- **Ограничения:** пустой ALANDI_HELPER_MODEL выключает маршрут; Bearer auth; input/output limits and structured JSON; common secret-like patterns filtered on both sides; same inference semaphore; keep_alive=0; no-store response; per-candidate explicit save; active project ID and duplicate recheck.
+- **Причина:** облегчает обслуживание проектной памяти без второго always-on агента и без скрытого изменения user data.
+- **Риски/rollback:** модель может предложить неточный факт; пользователь обязан проверить кандидаты. Откат — revert feature PR and leave ALANDI_HELPER_MODEL blank; no schema migration.
+
+## Global release rules
+
+- Feature flag выключен до прохождения eval и review.
+- Код и документация должны описывать текущий фактический уровень, не целевое обещание.
+- Не проводить destructive runtime changes автоматическим middleware.
+- Не публиковать API keys, OAuth secrets, refresh tokens или prompts в логах.
+- Любой live activation требует проверки на целевом VPS и отдельного rollback plan.
+
+## D-016 — Autonomous orchestration with policy-enforced capabilities
 
 - **Статус:** Accepted direction for implementation planning; runtime implementation and security verification deferred.
 - **Проблема:** bounded DAG/tool primitives and logical agent roles do not yet establish a durable, independently checked and permission-enforced multi-agent runtime.
@@ -183,7 +182,7 @@
 - **Rollout:** one bounded phase at a time, feature flags off by default, with golden-set evaluation and target-host resource measurements. No production-safety claim before sandbox validation.
 - **Links:** `gateway/tools/dag_engine.py`, `gateway/tools/validator.py`, `gateway/security/approval_gates.py`, `gateway/routing.py`, `observability/trace_context.py`, `docs/AGENT_ORCHESTRATION_RESEARCH_RU.md`.
 
-## D-016 — Adaptive-minimalist interface and private autonomous work partner
+## D-017 — Adaptive-minimalist interface and private autonomous work partner / Адаптивный минимализм и приватный автономный партнёр
 
 - **Status:** Accepted target architecture; implementation not implied.
 - **Interface:** begin calm and minimal, then build a sense of continuity and warmth through relevant context. Keep advanced tools discoverable and close to core workflows for users who need them, without unsolicited prompts or added complexity for basic use. Adaptation must remain predictable and user-controllable.
@@ -192,7 +191,7 @@
 - **Safety boundary:** fail closed on ambiguity, missing evidence or out-of-scope actions; isolate execution and protect secrets. Do not describe target capabilities as implemented until verified by tests and deployment evidence.
 - **Acceptance direction:** usability review for beginner/basic and advanced workflows; tests for access isolation and task continuity; PR evidence and rollback review; explicit approval gate for merging.
 
-## D-016 — Адаптивный минимализм и приватный автономный партнёр
+### Русская формулировка
 
 - **Статус:** принято как целевое направление; реализация не подразумевается.
 - **Интерфейс:** спокойный минималистичный старт; ощущение уюта и непрерывности формируется за счёт релевантного контекста. Расширенные инструменты легко обнаружимы и связаны с базовыми сценариями, но не навязываются пользователям базовых функций. Адаптация предсказуема и управляема пользователем.
@@ -201,7 +200,7 @@
 - **Контроль:** только владелец принимает финальное решение о слиянии в `main`. Успешные тесты не дают агенту права на merge.
 - **Приёмка:** проверить удобство базовых и расширенных сценариев, непрерывность контекста, изоляцию доступа, границы исполнения и обязательное подтверждение merge. До получения доказательств тестирования и развёртывания не считать функциональность реализованной.
 
-## D-016 — Fuse scoped RAG rankings with Reciprocal Rank Fusion
+## D-018 — Fuse scoped RAG rankings with Reciprocal Rank Fusion
 
 - **Status:** merged in PR #77 at `91557e4eab1b122341bed578cdf4775ff867007f`; exact-head Gateway and Quality/Chromium/published-site gates passed.
 - **Decision:** combine FTS5/BM25 and lexical-concept-graph candidate lists by rank positions, using RRF with `k=60`, stable SQL tie-breaks, and bounded input lists. Do not add raw BM25 and hand-scaled concept scores.
@@ -211,7 +210,7 @@
 - **Rollback:** revert PR #77; if an operational issue requires an immediate stop, leave RAG disabled. Do not add embeddings/reranking until the golden set shows a measurable benefit.
 - **Reference:** Cormack, Clarke & Büttcher, SIGIR 2009, https://cormack.uwaterloo.ca/cormacksigir09-rrf.pdf.
 
-## D-017 — Orthogonal chat settings and progressive disclosure
+## D-019 — Orthogonal chat settings and progressive disclosure
 
 - **Status:** Accepted for implementation in the 2026-10-30 chat-settings slice.
 - **Primary surface:** expose only work effort (Quick/Thorough) and web-search scope (Off/Standard/Expanded). Keep structured workflow, task profile and integrations in the advanced Functions menu.

@@ -47,10 +47,10 @@ def test_memory_graph_requires_provenance_and_isolates_scopes(tmp_path):
 def test_memory_graph_temporal_conflicts_supersedes_and_delete_propagation(tmp_path):
     manager = MemoryManager(tmp_path / "graph.sqlite3")
     manager.initialize()
-    old = manager.add_fact("The deadline is Friday.", scope="project", scope_id="alpha",
+    manager.add_fact("The deadline is Friday.", scope="project", scope_id="alpha",
         source_kind="message", source_id="m1", status="confirmed",
         valid_from="2026-01-01T00:00:00Z", valid_until="2026-12-01T00:00:00Z", node_id="old")
-    new = manager.add_fact("The deadline is Monday.", scope="project", scope_id="alpha",
+    manager.add_fact("The deadline is Monday.", scope="project", scope_id="alpha",
         source_kind="user_edit", source_id="edit-1", status="candidate", node_id="new")
     manager.relate("old", "new", scope="project", scope_id="alpha",
         relation_type="CONTRADICTS", evidence_source_kind="user_edit", evidence_source_id="edit-1")
@@ -60,9 +60,9 @@ def test_memory_graph_temporal_conflicts_supersedes_and_delete_propagation(tmp_p
         evidence_source_kind="user_edit", evidence_source_id="edit-2")
     assert manager.get_node("old", scope="project", scope_id="alpha").status == "superseded"
 
-    base = manager.add_fact("Root source", scope="project", scope_id="alpha",
+    manager.add_fact("Root source", scope="project", scope_id="alpha",
         source_kind="document", source_id="doc-1", node_id="root")
-    derived = manager.add_fact("Derived summary", scope="project", scope_id="alpha",
+    manager.add_fact("Derived summary", scope="project", scope_id="alpha",
         source_kind="tool_result", source_id="summary-1", node_id="derived")
     manager.relate("root", "derived", scope="project", scope_id="alpha",
         relation_type="DERIVED_FROM", evidence_source_kind="document", evidence_source_id="doc-1")

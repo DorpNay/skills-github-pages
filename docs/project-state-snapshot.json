@@ -3,31 +3,40 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-10-30",
   "checkpoint": {
-    "main_sha": "e6404d510229fa64a7bb375995d76dcba55de623",
-    "main_commit_subject": "docs: consolidate remaining landing and app UX polish",
+    "main_sha": "fd4f0a105183feb23e0f4e4697446235de9ffe9a",
+    "main_commit_subject": "feat(gateway): separate process liveness and upstream readiness probes",
     "main_commit_date": "2026-10-30",
-    "last_functional_checkpoint_sha": "2bda22229cba3576628f92c821bb6e1562d8abc5",
-    "last_functional_milestone": "PR #120: memory/project/chat sidebar hierarchy and synchronized theme/language preferences; main e6404d5 is documentation-only landing UX checklist",
+    "last_functional_checkpoint_sha": "fd4f0a105183feb23e0f4e4697446235de9ffe9a",
+    "last_functional_milestone": "PR #121 merged: first free static landing V1 and client UX. PR #122 merged: process-only /livez, bounded Ollama /readyz and backward-compatible /healthz.",
     "main_quality_run": null,
     "main_pages_deployment_run": null,
-    "functional_parent_gateway_run": 40637941350,
-    "functional_parent_quality_run": 40637941308,
-    "functional_parent_graphify_run": 40637941303,
-    "functional_parent_pages_run": 40637941951,
+    "functional_parent_gateway_run": null,
+    "functional_parent_quality_run": null,
+    "functional_parent_graphify_run": null,
+    "functional_parent_pages_run": null,
     "open_pull_requests": [],
     "open_issues": [
       111
+    ],
+    "merged_prs": [
+      {
+        "number": 121,
+        "merge_sha": "f4d880f9648989f4fe48ddd2284220b3606c3b86",
+        "head_sha": "e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b",
+        "checks": "6 workflow groups passed on exact PR head; Quality included Jekyll, Chromium and published-site smoke."
+      },
+      {
+        "number": 122,
+        "merge_sha": "fd4f0a105183feb23e0f4e4697446235de9ffe9a",
+        "head_sha": "94d871dbf76a5364ebb3c61d86cc763affa5eaa1",
+        "checks": "Gateway, Quality, Graphify and Dead Code passed on exact PR head; Quality included Jekyll, Chromium and published-site smoke."
+      }
     ]
   },
   "interpretation": {
-    "last_main_commit_is_documentation_only": true,
+    "last_main_commit_is_documentation_only": false,
     "live_vps_gateway_device_and_model_runtime_verified": false,
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
-    "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files",
-    "active_ui_pr": {
-      "number": 121,
-      "head_sha": "48874eab1cdce698b2dcfd681413d2cd45e27b38",
-      "exact_head_ci": "Current head 48874eab: Gateway 156 passed (one upstream Starlette/AnyIO deprecation warning); Quality incl. Chromium and published Pages smoke passed; Graphify, Dead Code, Provenance and Freshness passed. Direct Actions migrated to verified Node24 pins. External exercise-toolkit remains pinned pending behavior compatibility review."
-    }
+    "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   }
 }

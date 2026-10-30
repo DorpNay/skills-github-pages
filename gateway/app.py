@@ -16,7 +16,7 @@ import sqlite3
 import tempfile
 import time
 import zipfile
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET  # nosec B405 -- custom parser below rejects all DTD declarations.
 from contextlib import asynccontextmanager, closing
 from dataclasses import asdict, dataclass
 from functools import wraps
@@ -105,6 +105,16 @@ def validate_fixed_service_base_url(value: str, name: str) -> str:
     return value.rstrip("/")
 
 
+def validate_ollama_base_url(value: str) -> str:
+    """Keep the inference backend on the private loopback listener."""
+    base = validate_fixed_service_base_url(value, "OLLAMA_BASE_URL")
+    parsed = urlsplit(base)
+    if (parsed.scheme != "http" or parsed.hostname not in {"127.0.0.1", "localhost", "::1"}
+            or parsed.port != 11434 or parsed.path not in {"", "/"}):
+        raise ValueError("OLLAMA_BASE_URL must target the local loopback listener on port 11434")
+    return base
+
+
 @dataclass(frozen=True)
 class Settings:
     api_key: str
@@ -170,9 +180,8 @@ class Settings:
 
     @classmethod
     def from_env(cls) -> "Settings":
-        base = validate_fixed_service_base_url(
+        base = validate_ollama_base_url(
             os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").strip().rstrip("/"),
-            "OLLAMA_BASE_URL",
         )
         models = tuple(item.strip() for item in os.getenv("ALANDI_ALLOWED_MODELS", "qwen3.5:4b").split(",") if item.strip())
         if not models or len(set(models)) != len(models):
@@ -426,8 +435,8 @@ def _xml_from_archive(archive: zipfile.ZipFile, entries: dict[str, zipfile.ZipIn
             payload = stream.read(DOCUMENT_MAX_EXPANDED_BYTES + 1)
         if len(payload) > DOCUMENT_MAX_EXPANDED_BYTES:
             raise HTTPException(413, "Expanded XML part exceeds the permitted size")
-        parser = ET.XMLParser(target=_RejectDoctypeTreeBuilder())
-        return ET.fromstring(payload, parser=parser)
+        parser = ET.XMLParser(target=_RejectDoctypeTreeBuilder())  # nosec B314 -- custom target rejects every DOCTYPE.
+        return ET.fromstring(payload, parser=parser)  # nosec B314 -- parser above rejects DTD/entity declarations.
     except HTTPException:
         raise
     except (ET.ParseError, OSError, RuntimeError, ValueError):
@@ -533,7 +542,7 @@ def extract_local_document(filename: str, data: bytes, max_chars: int) -> tuple[
             text = "\n\n".join(parts)
         except HTTPException:
             raise
-        except Exception as exc:
+        except Exception:
             raise HTTPException(400, "PDF could not be parsed") from None
         parser = "local-pypdf"
     elif extension == ".docx":

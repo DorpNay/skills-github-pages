@@ -247,7 +247,7 @@
 ## Supplement — autonomous agent orchestration research (2026-10-28)
 
 - [x] Reviewed additional upstream open-source patterns for orchestration, durable workflows, policy-as-code, sandboxing, agent evaluations, memory, protocols and observability; recorded source links and limitations in `docs/AGENT_ORCHESTRATION_RESEARCH_RU.md`.
-- [x] Owner-approved design direction recorded in D-015 and AI-AGENT-005: explicit task state machine, least-capability executor, fail-closed policy gate, action-bound approval, independent verifier, durable journal/recovery, bounded retries and eval-gated helper model.
+- [x] Owner-approved design direction recorded in D-016 and AI-AGENT-005: explicit task state machine, least-capability executor, fail-closed policy gate, action-bound approval, independent verifier, durable journal/recovery, bounded retries and eval-gated helper model.
 - [ ] Reconcile current main and open PRs before code changes; audit actual runtime paths rather than relying on module names.
 - [ ] Implement task contract/state machine and tests in a bounded PR.
 - [ ] Select and verify a real sandbox before allowing arbitrary command/code execution.
@@ -279,10 +279,17 @@
 
 ## Supplement — orthogonal chat settings and Research Studio, 2026-10-30
 
-- [~] Branch `feat/chat-settings-orthogonal-controls-20261030`: separates work effort from web-search scope; clarifies the structured workflow and task-profile permissions; removes duplicated Research Studio selectors and makes Studio use active chat settings without mutating them; localizes the settings summary, removes the duplicate Research entry point and raises primary mobile hit areas to 44px.
-- [ ] Exact-head Chromium E2E must verify Quick+Expanded, Thorough+Standard, Thorough+Off, per-chat settings, RU/EN and Research Studio non-mutation before merge.
+- [x] PR #121 merged at `f4d880f`: separates work effort from web-search scope; clarifies the structured workflow and task-profile permissions; removes duplicated Research Studio selectors and makes Studio use active chat settings without mutating them; localizes the settings summary, removes the duplicate Research entry point and raises primary mobile hit areas to 44px.
+- [x] Exact-head Chromium/Quality on PR #121 passed the orthogonal-settings, per-chat, RU/EN and Research Studio non-mutation coverage.
 - [ ] Native iPhone Safari behavior and live gateway/provider execution remain separate manual/runtime gates.
 
+
+## Supplement — small-model evaluation and legacy branch reconciliation, 2026-10-30
+
+- [x] Recovered a bounded synthetic local-model smoke harness: `gateway/evals/run_local_model_benchmark.py` plus `gateway/tests/test_local_model_benchmark.py`. Gateway Tests passed on the exact PR #123 code head. It uses fixed RU/EN/TH prompts, bounded requests/time/response size, environment-only API key and refuses redirects; target-host evaluation remains pending.
+- [ ] Run a real target-host comparison with identical model artifact/digest/license, quantization, context, hardware and repetitions. Record RAM/PSS, cold/warm latency, p50/p95, tokens/s where available and human-rated RU/EN/TH task quality.
+- [ ] Keep the main model responsible for planning, complex reasoning and synthesis. Evaluate at most one optional helper for bounded extraction/classification/summarization; helper remains off by default and cannot authorize tools or approve side effects.
+- [x] Chronological branch audit: current provider separation supersedes the legacy `self-hosted/free-cloud` selector; legacy project tools are deferred pending current permission/scope/approval contracts; the 64-role architecture document already exists in main and describes logical roles, not separate model processes.
 
 ## Supplement — V1 landing and interface finalization, 2026-10-30
 
@@ -290,7 +297,7 @@
 - [x] Audited current ChatGPT/OpenAI UI patterns and official Apple, W3C, GOV.UK, NN/G and MDN accessibility/design guidance; recorded what is adopted and what is deliberately not copied in the V1 checklist.
 - [x] Landing copy now distinguishes a free static interface from inference/API/hosting cost; public hosted AI endpoint is not provided by GitHub Pages.
 - [x] Added staged roadmap disclosures; the "1nv3nt10n 1n PrOc3ss…" ticker is decorative, appears only for unfinished directions, is hidden from assistive technology and respects reduced-motion.
-- [~] PR #121: duplicate settings close action removed; integrity provider-group assertion no longer depends on fragile escaped regex; Research Studio E2E now excludes the expected provider connectivity probe from user-send count.
-- [~] Added landing and in-app roadmap E2E coverage. Exact-head Quality/Chromium/Pages workflows must pass before merge.
+- [x] PR #121 merged: duplicate settings close action removed; integrity provider-group assertion uses deterministic parsing; Research Studio E2E excludes the expected provider connectivity probe from user-send count.
+- [x] Landing and in-app roadmap E2E coverage passed on PR #121 exact head, including published-site browser smoke. Post-merge Pages deployment remains a separate check.
 - [ ] Native iPhone Safari, keyboard, safe-area, screen-reader and touch verification remain manual gates.
 - [ ] Issue #111 remains open for owner-only ruleset, VPS/hardware, live gateway/model, RAG corpus, voice/device and sandbox gates. CI alone cannot close it.

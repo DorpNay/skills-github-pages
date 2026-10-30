@@ -1,6 +1,8 @@
 # Аудит старого UX-запроса aLandi
 
-Дата сверки: 2026-10-27. База аудита — `main 4c9096999fbb3e1265150c420b136066c555285b`, текущие `index.md` и `tests/e2e/app.spec.mjs`, checklist и roadmap. PR #71 с исправлением composer отмечен как «в работе», а не как завершённый.
+Дата сверки: 2026-10-27.
+
+**Актуализация статусов на 2026-10-30:** этот документ сохраняет исторические наблюдения на дату аудита; статусы незавершённой ветки ниже superseded. PR #117–#121 уже merged, PR #121 завершил независимые настройки чата и Research Studio; PR #122 добавил Gateway liveness/readiness. Текущие критерии и оставшийся polish см. в `docs/V1_UI_FINALIZATION_RU.md` и `docs/LANDING_UX_POLISH_BACKLOG_RU.md`. База аудита — `main 4c9096999fbb3e1265150c420b136066c555285b`, текущие `index.md` и `tests/e2e/app.spec.mjs`, checklist и roadmap. PR #71 с исправлением composer отмечен как «в работе», а не как завершённый.
 
 **Статусы:** «Сделано» — есть в коде и подтверждено тестом/merge; «Частично» — основа есть, но UX-контракт неполный или реальное устройство не проверено; «В работе» — отдельный PR с проверками впереди; «Не сделано/не подтверждено» — нельзя заявлять готовым.
 
@@ -45,16 +47,16 @@
 | Статус | Наблюдение и действие |
 |---|---|
 | **Сделано частично — PR #115 merged** | Composer attachment/context/voice popovers теперь используют dimmed/light-blur scrim; основные settings/message viewer/chat action/research/functions/trace modal backdrops получили лёгкий blur с учётом reduced-transparency. Focus trap и полный accessibility review остаются отдельной задачей. |
-| **Не подтверждено** | Chat-row меню фиксировано под кнопкой и может выходить за край. Нужны up/down, left/right с учётом viewport и экранных краёв. |
+| **Сделано в коде — PR #117/#121** | Chat-row меню использует fixed panel, вычисляет left/top с учётом visualViewport, выбирает размещение above/below и пересчитывает позицию при scroll/resize. Native iPhone edge-swipe/keyboard проверяется отдельно. |
 | **Частично** | Проекты и чаты уже получают визуальные панели, а активный чат имеет рамку. Провести один визуальный проход по контрасту, разделителям и mobile hit areas после изменения структуры меню. |
 
 ## 6. Шапка, часы и закрепление настроек
 
 | Статус | Наблюдение и действие |
 |---|---|
-| **Частично** | Текущая шапка: меню → блок aLandi/часов/названия чата → язык → тема → статус Python → настройки. Это отличается от желаемого порядка; отдельная строка названия проекта над чатом не подтверждена. Требуется компактная переработка с проверкой RU/EN на 390 px. |
-| **Не подтверждено** | Бренд — интерактивная кнопка-пасхалка; часы содержат цифровое время и аналоговые стрелки. Удаление лишнего highlight и более спокойную неоновую разметку нужно проверить отдельно, сохранив keyboard-focus indication. |
-| **Не подтверждено** | Settings footer с закрытием/сохранением не подтверждён как sticky к нижней кромке при прокрутке модалки. Нужны sticky actions, короткий viewport и проверка конфликтов с клавиатурой. |
+| **Сделано — PR #117/#120/#121** | Фактический порядок в main: меню → название проекта/чата → цифровые+аналоговые часы → wordmark aLandi → тема → настройки. Python status находится в компактной mode toolbar; язык синхронизирован с sidebar/settings, а не занимает место в шапке. Screenshot/native 390 px review остаётся polish gate. |
+| **Частично** | Цифровые часы и аналоговые стрелки реализованы. Wordmark aLandi сейчас является статическим элементом, не кнопкой; если интерактивная пасхалка всё ещё нужна, это отдельный незакрытый UX-пункт. Спокойный highlight/neon и keyboard-focus требуют визуальной проверки. |
+| **Сделано в коде — PR #121** | Settings header с Save/X закреплён через `position:sticky; top`; `.settings-actions` закреплён снизу. Остаётся ручной тест короткого viewport, открытой мобильной клавиатуры и safe-area. |
 
 ## 7. Проекты, чаты, импорт/экспорт и статусы
 
@@ -79,13 +81,13 @@
 | Статус | Наблюдение и действие |
 |---|---|
 | **Сделано — PR #119/#120** | Настройки режима и контекста хранятся в объекте конкретного чата; новые чаты получают базовые значения, существующие чаты сохраняют собственные. PR #120 завершил иерархию боковой панели и статусные строки. |
-| **В работе — branch `feat/chat-settings-orthogonal-controls-20261030`** | Уточняется контракт независимости: объём работы управляет только бюджетом инструментов, веб-режим — только доступностью/шириной поиска, структурированный конвейер и профиль задачи — отдельные измерения. Research Studio перестаёт перезаписывать настройки чата и использует их сводку. Точные E2E-комбинации ожидают проверки. |
+| **Сделано — PR #121 merged** | Контракт независимости зафиксирован и реализован: объём работы управляет бюджетом инструментов, веб-режим — доступностью/шириной поиска, структурированный конвейер и профиль задачи — отдельные измерения. Research Studio использует настройки активного чата без мутации; exact-head Chromium/Quality passed. Ручные accessibility/native checks остаются в polish backlog. |
 
 ## 10. Приоритетный порядок
 
 1. **P0 — закрыто, PR #71 merged:** стабильный composer и mobile viewport; native iPhone verification остаётся отдельным ручным gate.
 2. **P1 — в основном закрыто, PR #115/#117/#120:** scrims и первый outside tap, viewport-safe chat menus, sidebar hierarchy, memory/project status и preference synchronization.
-3. **P1 — активный срез, branch `feat/chat-settings-orthogonal-controls-20261030`:** независимые настройки объёма работы и веб-поиска, точная семантика структурированного конвейера/профиля задачи, единый источник настроек для Research Studio.
+3. **Завершено — PR #121:** независимые настройки объёма работы и веб-поиска, точная семантика структурированного конвейера/профиля задачи, единый источник настроек для Research Studio. Следующий этап — только polish и native accessibility checks.
 4. **P2 — в основном закрыто, PR #114/#118/#119:** empty-by-default user prompt, удаление устаревшего Gemini reset, chat import/export, единый provider route selector, project-first actions и memory scope.
 5. **P2 — визуальная навигация закрыта по основным пунктам, PR #117/#119/#120:** header hierarchy, project label, composer placement, sidebar order, theme/language controls. Проверить оставшиеся микротексты и native focus.
 6. **P3 — остаётся:** native iOS Safari, keyboard/safe-area/edge-swipe, screen reader, live provider/gateway, voice transport, RAM/latency и внешние connector OAuth/sync.
@@ -98,7 +100,7 @@
 - **PR #71 — merged:** нижняя компоновка composer и `visualViewport` regression test. Не выдавать Chromium за нативный iOS-тест.
 - **PR #114 — merged at `25bfe66b5454e45fb5f6cef9dd86ae3c0ef1c5e5`:** пустой пользовательский системный prompt по умолчанию; удалена кнопка восстановления Gemini и dead handler; обновлён quality sentinel под opt-in prompt; добавлен 400-character headroom в расчёт бюджета истории для framing/provider overhead. Exact-head Quality/Chromium/Pages smoke passed on PR head `df3449db132393cdad1a93080d736bb973ae4bc2`.
 - **PR #115 — merged at `ed2c4c7ee3a67c7a0cf5b541c1ab6206609dd32c`:** scrim for composer popovers, modal backdrop blur, inert first outside tap for toolbar/language/chat-row menus. Exact-head Quality/Chromium/published-site smoke passed on PR head `d7f57d0abfba46a5764e6a1182bcc9a847f7a6ef`.
-- **Следующий bounded slice:** edge-aware chat-row/popover placement, header order/project label, calm brand/clock styling and sticky settings actions; provider/project export-import cleanup follows separately.
+- **Завершённые bounded slices:** PR #117 header/clock/chat-menu hierarchy; PR #119 provider routing/project settings/composer preference; PR #120 sidebar/memory status; PR #121 independent chat settings and Research Studio. Остаток — visual/mobile/accessibility polish, не новая функциональность.
 - **Остаётся не подтверждено:** реальный iPhone Safari/клавиатура/edge swipes; реальные провайдеры и self-hosted gateway; все обещания runtime, которых нет в live проверках.
 
 ## Пересверка 2026-10-30
@@ -107,5 +109,5 @@
 - **PR #118 merged:** chat-scoped import/export; import merges safely rather than replacing existing history.
 - **PR #119 merged:** composer position preference, unified provider route selection, project-first actions and scoped project memory settings.
 - **PR #120 merged at `2bda22229cba3576628f92c821bb6e1562d8abc5`:** dedicated memory section, live memory/project status, Research Studio placement and synchronized theme/language preferences.
-- **Current active slice:** `feat/chat-settings-orthogonal-controls-20261030` documents and implements independent chat settings. It removes duplicated Research Studio selectors, makes Studio use active-chat settings without mutation, and separates search-result breadth from tool execution budget. Exact-head E2E is still required before merge.
+- **Current status:** PR #121 merged at `f4d880f`; exact-head Gateway/Quality/Chromium/Jekyll/Freshness/Provenance/Graphify/Dead Code checks passed. PR #122 merged at `fd4f0a1` with `/livez` and `/readyz`; `/healthz` remains the readiness alias. Post-merge Pages deployment, native iPhone Safari, live VPS and real provider credentials remain unverified.
 - **Still not verified:** native iPhone Safari/keyboard/safe-area/touch/screen-reader behavior; live gateway and provider credentials; external connector OAuth/sync; independent agent processes; production voice transport and target-device performance.

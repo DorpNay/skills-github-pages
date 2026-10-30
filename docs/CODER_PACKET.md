@@ -151,7 +151,7 @@ The packet is the contract and roadmap, not proof all components exist. Always u
 
 ## 9. Autonomous orchestration — accepted engineering direction
 
-Read [docs/AGENT_ORCHESTRATION_RESEARCH_RU.md](AGENT_ORCHESTRATION_RESEARCH_RU.md) and D-015 before implementation. This is an accepted design direction, not evidence that the runtime already exists.
+Read [docs/AGENT_ORCHESTRATION_RESEARCH_RU.md](AGENT_ORCHESTRATION_RESEARCH_RU.md) and D-016 before implementation. This is an accepted design direction, not evidence that the runtime already exists.
 
 - Define a versioned task contract: task ID, goal, scope, inputs/evidence, acceptance criteria, allowed capabilities, risk tier, deadline and bounded resource/retry budgets.
 - Implement an explicit state machine: PROPOSED, VALIDATED, RUNNABLE, RUNNING, VERIFYING, SUCCEEDED plus AWAITING_APPROVAL, REJECTED, FAILED, CANCELLED, BUDGET_EXHAUSTED and NEEDS_HUMAN. Validate and audit every transition.
@@ -165,20 +165,9 @@ Read [docs/AGENT_ORCHESTRATION_RESEARCH_RU.md](AGENT_ORCHESTRATION_RESEARCH_RU.m
 - Start with deterministic routing and the existing gateway; evaluate one local helper model later. It may classify or review, but cannot authorize its own actions. Core operation must work with the helper disabled.
 - Update PROJECT_STATE.yaml, EVALS.md and the decision/evaluation record with exact commit, tests, target profile, false-positive/negative results and rollback. Do not mark implemented/verified until evidence exists.
 
-## Owner-approved product contract — D-016
+## Owner-approved product contract — D-017
 
-Read `DECISIONS.md` → **D-016 — Адаптивный минимализм и приватный автономный партнёр** before implementation.
-
-- Keep the default interface calm and minimal; build warmth through useful context continuity. Advanced tools should be easy to discover and connected to ordinary workflows, but never intrusive for basic users.
-- Keep adaptation predictable and user-controllable; do not unexpectedly disrupt familiar workflows.
-- Target a dedicated private chat with persistent task/context continuity. Implement and test technical access isolation; do not claim absolute privacy without a threat model and evidence.
-- Permit autonomous work only within explicit task scope and capabilities. Return a reviewable PR with rationale, changed areas, test results, unresolved risks and rollback steps.
-- The owner retains the final merge decision. Never merge into `main` merely because automated checks pass.
-- These are accepted design constraints, not evidence of existing runtime functionality. Update project state only when implementation and verification evidence exist.
-
-## Owner-approved product contract — D-016
-
-Read `DECISIONS.md` and D-016 before implementation.
+Read `DECISIONS.md` → **D-017 — Адаптивный минимализм и приватный автономный партнёр** before implementation.
 
 - Keep the default interface calm and minimal; build warmth through useful context continuity. Advanced tools should be easy to discover and connected to ordinary workflows, but never intrusive for basic users.
 - Keep adaptation predictable and user-controllable; do not unexpectedly disrupt familiar workflows.
