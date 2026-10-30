@@ -9,7 +9,7 @@ import pytest
 from gateway.memory.manager import MemoryGraphError, MemoryManager
 from gateway.rag.citations import CitationManager
 from gateway.rag.evidence_ledger import EvidenceLedger, EvidenceLedgerError
-from gateway.security.approval_gates import ApprovalError, ApprovalRegistry
+from gateway.security.approval_gates import ApprovalError, ApprovalRegistry, canonical_action_digest
 from gateway.security.ssrf_protection import SSRFRejected, validate_resolved_destination
 from gateway.tools.dag_engine import DAGError, RegisteredTool, ToolDAG, ToolNode
 from gateway.tools.validator import ToolContract, ToolValidationError, validate_arguments
