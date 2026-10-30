@@ -522,7 +522,7 @@ permalink: /
   </div>
 
   <header class="app-header px-3 py-2 border-b flex items-center shrink-0 gap-2">
-    <button type="button" data-action="toggle-sidebar" aria-label="Открыть меню" class="header-icon text-xl px-2 py-1 shrink-0">☰</button>
+    <button type="button" id="appSidebarToggle" data-action="toggle-sidebar" aria-label="Открыть меню" class="header-icon text-xl px-2 py-1 shrink-0">☰</button>
     <div class="header-chat-title min-w-0 flex-1">
       <span id="activeProjectTitle" class="active-project-title hidden"></span>
       <h1 id="activeChatTitle" class="font-semibold text-xs sm:text-sm truncate">Новый чат</h1>
@@ -1760,8 +1760,9 @@ permalink: /
       const opener=projectSettingsOpener;projectSettingsOpener=null;
       const sidebarOpen=!$('sidebar').classList.contains('-translate-x-full');
       const visibleOpener=opener&&document.contains(opener)&&(!opener.closest('#sidebar')||sidebarOpen)?opener:null;
-      const fallback=document.querySelector('header [data-action="toggle-sidebar"]');
-      requestAnimationFrame(()=>{(visibleOpener||fallback)?.focus({preventScroll:true});});
+      const fallback=$('appSidebarToggle');
+      const target=visibleOpener||fallback;
+      if(target&&!target.disabled&&target.getClientRects().length)target.focus({preventScroll:true});
     }
     function syncProjectEditorMode(){
       $('createProjectSubmit')?.classList.toggle('hidden',!creatingProject);
