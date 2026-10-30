@@ -474,7 +474,7 @@ permalink: /
           </div>
              <p class="text-[10px] text-gray-500">Выбери провайдера. Ключ и соединение проверяются автоматически.</p>
        <label for="providerPreset" data-i18n="providerLabel" class="sr-only">Сторонний API</label>
-       <select id="providerPreset" aria-label="Сторонний API-провайдер" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"><option value="" selected disabled>Сторонний API</option><optgroup id="providerExternalGroup" label="Сторонние провайдеры"><option value="kilo">Kilo</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai</option><option value="cloudflare">Cloudflare Workers AI</option><option value="openrouter">OpenRouter</option><option value="nvidia">NVIDIA NIM</option><option value="huggingface">Hugging Face</option><option value="custom">Свой OpenAI-совместимый API</option></optgroup></select>
+       <select id="providerPreset" aria-label="Сторонний API-провайдер" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"><option value="" selected disabled>Сторонний API</option><optgroup id="providerPrimaryGroup" label="aLandi Cloud · внутренний маршрут" hidden><option value="alandi">aLandi Cloud</option></optgroup><optgroup id="providerExternalGroup" label="Сторонние провайдеры"><option value="kilo">Kilo</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai</option><option value="cloudflare">Cloudflare Workers AI</option><option value="openrouter">OpenRouter</option><option value="nvidia">NVIDIA NIM</option><option value="huggingface">Hugging Face</option><option value="custom">Свой OpenAI-совместимый API</option></optgroup></select>
        <input type="search" id="modelSearch" aria-label="Поиск модели" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="Поиск модели">
        <select id="modelPreset" aria-label="Каталог моделей" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"></select>
 <div class="flex items-start justify-between gap-2">
@@ -500,8 +500,7 @@ permalink: /
       <div class="flex gap-2"><button type="button" data-action="test-connection" class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение и модель</button><button type="button" data-action="clear-provider-key" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
              <input type="text" id="modelName" aria-label="Модель" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="ID модели">
        <details id="searchToolsSettings" class="rounded-xl border border-gray-700"><summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">Инструменты и веб-поиск</summary><div class="px-3 pb-3 space-y-2"><div class="flex gap-2"><input type="password" id="tavilyKey" aria-label="Ключ Tavily" autocomplete="off" class="min-w-0 flex-1 p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="ключ Tavily"><button type="button" data-action="paste-tavily-key" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Вставить ключ Tavily">↓</button></div></div></details>
-       <div class="flex items-center justify-between gap-2"><label for="systemPromptInput" data-i18n="systemPromptLabel" class="block text-xs text-gray-400">Системный промпт</label><span class="text-[10px] text-gray-500">редактирование по кнопке</span></div>
-             <label for="systemPromptInput" data-i18n="systemPromptLabel" class="block text-xs text-gray-400">Системный промпт</label>
+       <label for="systemPromptInput" data-i18n="systemPromptLabel" class="block text-xs text-gray-400">Системный промпт</label>
        <div class="prompt-editor"><textarea id="systemPromptInput" rows="4" readonly class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y" placeholder="Свои правила для всех запросов"></textarea><button type="button" id="editSystemPrompt" data-action="edit-system-prompt" class="prompt-pencil" aria-pressed="false" aria-label="Редактировать системный промпт" title="Редактировать">✎</button></div><p id="promptEditHint" class="sr-only" aria-live="polite"></p>
        <label class="flex items-start gap-2 text-xs text-gray-300 mt-2"><input id="allowCrossProviderFallback" type="checkbox" class="mt-0.5 rounded bg-gray-800 border-gray-700"><span><strong>Разрешить резерв у другого провайдера</strong><span class="block text-[11px] leading-relaxed text-amber-200/80">По умолчанию выключено. При включении текст запроса и контекст могут передаваться другому сервису. Сначала система пробует модели выбранного провайдера.</span></span></label>
       <p class="text-[10px] leading-relaxed text-gray-500">Ключи хранятся в этом браузере. Резервный провайдер может получить текст запроса и контекст.</p>
@@ -2330,7 +2329,6 @@ permalink: /
       safeSet(STORAGE.provider,provider);
       $('cloudflareAccountGroup').classList.toggle('hidden',provider!=='cloudflare');
       $('pollinationsAuthGroup').classList.toggle('hidden',provider!=='pollinations');
-      const kiloNotice=$('kiloPrivacyWarning');if(kiloNotice)kiloNotice.classList.toggle('hidden',provider!=='kilo');
       $('apiKeyLabel').textContent=provider==='pollinations'?'Pollinations App Key · pk_… (OAuth client ID)':'API Key · ключ провайдера';
       $('apiKey').placeholder=provider==='pollinations'?'App Key · pk_…':'Ключ API';
       if(provider==='cloudflare'){
@@ -2343,16 +2341,12 @@ permalink: /
       } else if(initial&&!safeGet(STORAGE.baseUrl)) $('baseUrl').value=config.baseUrl;
       $('apiKey').value=safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'';
       const hints={
-        alandi:'Частный локальный gateway. Base URL — HTTPS-хост туннеля с окончанием /v1; Model — точный тег Ollama, например qwen3.5:4b. API Key — ALANDI_API_KEY из закрытого файла на VPS. Отключите межпровайдерный fallback, чтобы приватные запросы не отправлялись другим провайдерам.',
-        custom:'Введите Base URL, имя модели и ключ своего OpenAI-совместимого API. Совместимость и CORS зависят от поставщика.',
-        pollinations:'Pollinations: сюда вставляется App Key pk_… (не секретный sk_ токен). Зарегистрируйте точный Redirect URI в настройках App Key, затем нажмите «Подключить аккаунт»: OAuth PKCE хранит временный access token только в sessionStorage этой вкладки. Модели могут потреблять Pollen согласно бюджету.',
-        huggingface:'Hugging Face Inference Providers: нужен fine-grained token с разрешением “Make calls to Inference Providers”. Endpoint router.huggingface.co/v1; модели должны быть из каталога и поддерживать Chat Completions.',
-        cloudflare:'Cloudflare Workers AI: рекомендуемый вариант — создать стандартный Workers AI API Token на странице Workers AI → Use REST API. При ручной настройке токена укажите Account-level Workers AI Read и Workers AI Edit. Endpoint /ai/v1/chat/completions совместим с OpenAI; использование может тарифицироваться.',
-        groq:'Groq использует официальный OpenAI-совместимый endpoint. Устаревшие llama3-8b-8192 и mixtral-8x7b-32768 не предлагаются; вместо них показаны модели из текущего каталога.',
-        xai:'xAI · Grok — отдельный API-провайдер, не Groq. Endpoint https://api.x.ai/v1; ключ создаётся в xAI Console.',
-        nvidia:'NVIDIA NIM: доступность моделей и лимиты зависят от вашего NVIDIA API key и endpoint.',
-        openrouter:'OpenRouter маршрутизирует запросы к моделям своего каталога. openrouter/free выбирает доступную бесплатную модель; доступность и лимиты зависят от каталога и аккаунта.',
-        gemini:'Google AI Studio · Gemini: используйте API-ключ AI Studio и точный ID модели из официального каталога.'
+        custom:'Введите Base URL, модель и ключ API.',
+        pollinations:'Шаги: создайте App Key pk_… → добавьте точный Redirect URI → подключите аккаунт. Временный токен хранится только в этой вкладке.',
+        cloudflare:'Шаги: создайте Workers AI API Token с Workers AI Read/Edit → укажите Account ID. Использование может тарифицироваться.',
+        gemini:'Ключ AI Studio → выберите модель из каталога.',groq:'Ключ Groq → выберите модель из каталога.',xai:'Ключ xAI → выберите модель из каталога.',
+        nvidia:'Ключ NVIDIA NIM → выберите модель и endpoint.',openrouter:'Ключ OpenRouter → выберите модель из каталога.',huggingface:'Ключ Hugging Face → выберите модель из каталога.',
+        kilo:'',alandi:''
       };
       $('providerHint').textContent=hints[provider]||config.label+': ключи сохраняются отдельно в этом браузере. Межпровайдерный резерв выключен по умолчанию.';
       const docs=$('providerDocsLink');
@@ -2369,7 +2363,6 @@ permalink: /
       return normalized;
     }
     function initializeSettings() {
-      const kiloNotice=$('kiloPrivacyWarning');if(kiloNotice)kiloNotice.classList.toggle('hidden',currentProvider()!=='kilo');
       const savedTheme = safeGet('ai_ui_theme_v2') || 'dark';
       const savedMotion = safeGet('ai_ui_motion_v2') || 'auto';
       applyComposerPosition(safeGet(STORAGE.composerPosition) || 'bottom');
@@ -5046,6 +5039,8 @@ permalink: /
     $('modelSearch').addEventListener('input',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
     $('researchStudioModal').addEventListener('click', (event) => { if (event.target === $('researchStudioModal')) closeResearchStudio(); });
+    $('projectSettingsModal').addEventListener('click', (event) => { if (event.target === $('projectSettingsModal')) $('projectSettingsModal').classList.add('hidden'); });
+    $('projectSettingsModal').addEventListener('keydown', (event) => { if (event.key === 'Escape') { $('projectSettingsModal').classList.add('hidden'); $('projectPanel [data-action="open-project-create"]')?.focus(); } });
     $('modelPreset').addEventListener('change',()=>{const value=$('modelPreset').value;if(value!=='__custom__')$('modelName').value=value;safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
     $('modelName').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();scheduleProviderAutoConnect();});
     $('modelName').addEventListener('change',()=>populateModelPresets(currentProvider(),$('modelName').value));
