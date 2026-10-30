@@ -207,6 +207,14 @@ def test_approval_tickets_are_action_scoped_expiring_and_one_time():
     with pytest.raises(ApprovalError):
         registry.issue_after_human_confirmation(action="x", arguments={}, scope="global", actor_id="")
 
+    ticket3 = registry.issue_after_human_confirmation(action="read_sensitive", arguments={"record_id": "42"},
+        scope="project:alpha", actor_id="authenticated-user", ttl_seconds=30)
+    assert not registry.consume(ticket3, action="read_sensitive", arguments={"record_id": "42"},
+                                scope="project:alpha")
+    # Missing actor identity burns the token; it cannot later be replayed with a guessed owner.
+    assert not registry.consume(ticket3, action="read_sensitive", arguments={"record_id": "42"},
+                                scope="project:alpha", actor_id="authenticated-user")
+
 
 def test_json_schema_validator_enforces_types_limits_and_local_refs():
     schema = {"type": "object", "properties": {
@@ -260,6 +268,56 @@ async def test_tool_dag_runs_readonly_dependencies_and_requires_human_approval_f
     with pytest.raises(DAGError):
         dag._plan([ToolNode("cycle-a", "read", {"name": "a"}, ("cycle-b",)),
                    ToolNode("cycle-b", "read", {"name": "b"}, ("cycle-a",))])
+
+
+@pytest.mark.asyncio
+async def test_tool_dag_requires_explicit_approval_for_sensitive_read_and_actor_identity():
+    registry = ApprovalRegistry()
+    calls = []
+
+    async def read_sensitive(args, dependencies):
+        calls.append(args["record_id"])
+        return {"record_id": args["record_id"]}
+
+    tools = {
+        "read_sensitive": RegisteredTool(
+            ToolContract(
+                "read_sensitive",
+                {"type": "object", "properties": {"record_id": {"type": "string"}},
+                 "required": ["record_id"], "additionalProperties": False},
+                read_only=True,
+                requires_approval=True,
+            ),
+            read_sensitive,
+        )
+    }
+    dag = ToolDAG(tools)
+    nodes = [ToolNode("read-1", "read_sensitive", {"record_id": "42"})]
+    scope = "project:alpha"
+
+    with pytest.raises(DAGError, match="approval"):
+        await dag.execute(nodes, scope=scope, approval_registry=registry, actor_id="owner")
+    assert calls == []
+
+    missing_actor_ticket = registry.issue_after_human_confirmation(
+        action="read_sensitive", arguments={"record_id": "42"}, scope=scope, actor_id="owner"
+    )
+    with pytest.raises(DAGError, match="approval"):
+        await dag.execute(
+            nodes, scope=scope, approvals={"read-1": missing_actor_ticket},
+            approval_registry=registry,
+        )
+    assert calls == []
+
+    ticket = registry.issue_after_human_confirmation(
+        action="read_sensitive", arguments={"record_id": "42"}, scope=scope, actor_id="owner"
+    )
+    result = await dag.execute(
+        nodes, scope=scope, approvals={"read-1": ticket},
+        approval_registry=registry, actor_id="owner",
+    )
+    assert result["read-1"] == {"record_id": "42"}
+    assert calls == ["42"]
 
 
 def test_exact_citations_reject_changed_source_or_wrong_offsets(tmp_path):
