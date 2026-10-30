@@ -260,3 +260,10 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Node24 direct Action pins commit 48874eab: 13 workflow files updated; exact-head CI all green including Chromium and published Pages smoke.
 - External exercise toolkit remains pinned because newer upstream changes behavior; separate compatibility review required.
 - Remaining: full subsystem audit, hardware voice evaluation, realtime audio, helper registry, durable AgentRun contract and Knowledge-to-Skill prototype.
+
+
+## Полный аудит целостности стека — стартовый checkpoint 2026-10-30
+- Полный исходный snapshot, замороженная граница стека, checklist A1–D6 и handoff brief субагенту: `docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md`.
+- Проверенный исходный PR #123 HEAD: `f6e67db5a7e39abc5f9351aae5ccadefc58e865e`; base main: `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; open, mergeable=true. Предыдущая проверка exact-head: 6/6 workflow groups passed. После любого нового коммита эти результаты не переносятся автоматически.
+- Единственный открытый issue #111 — owner/live-host evidence. Не закрывать по CI.
+- Сначала снимок/ориентиры, затем системная карта, сквозные взаимодействия, качество/безопасность, независимый review и только потом минимальные исправления. Архитектуру не расширять.
