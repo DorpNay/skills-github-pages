@@ -1485,7 +1485,9 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         if filename != os.path.basename(filename) or any(ord(char) < 32 for char in filename):
             raise HTTPException(400, "filename must be a plain file name")
         data = await read_limited_body(request, config.document_extraction_max_bytes)
-        text, parser = extract_local_document(filename, data, config.document_extraction_max_chars)
+        text, parser = await asyncio.to_thread(
+            extract_local_document, filename, data, config.document_extraction_max_chars
+        )
         return JSONResponse({"filename": filename, "text": text, "parser": parser, "characters": len(text)},
                             headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"})
 

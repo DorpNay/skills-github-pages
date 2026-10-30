@@ -1,3 +1,4 @@
+import asyncio
 import io
 import zipfile
 
@@ -103,6 +104,26 @@ def test_extracts_pdf_text_and_rejects_invalid_or_encrypted_pdf():
     assert "PDF evidence" in response.json()["text"]
     assert response.json()["parser"] == "local-pypdf"
     assert invalid.status_code == 400
+
+
+def test_document_parser_runs_outside_event_loop_thread(monkeypatch):
+    import gateway.app as gateway_app
+
+    def parser(_filename, _data, _max_chars):
+        with pytest.raises(RuntimeError, match="no running event loop"):
+            asyncio.get_running_loop()
+        return "worker-thread extraction", "test-worker"
+
+    monkeypatch.setattr(gateway_app, "extract_local_document", parser)
+    with client(config(document_extraction_enabled=True)) as app:
+        response = app.post(
+            "/v1/documents/extract?filename=notes.txt",
+            content=b"document",
+            headers=AUTH,
+        )
+    assert response.status_code == 200, response.text
+    assert response.json()["text"] == "worker-thread extraction"
+    assert response.json()["parser"] == "test-worker"
 
 
 def test_extracts_docx_paragraphs_without_unzipping_to_disk():
