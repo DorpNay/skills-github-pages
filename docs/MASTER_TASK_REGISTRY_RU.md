@@ -726,7 +726,7 @@
 
 ## B. Новые задачи по указанию владельца (2026-10-31)
 
-- [~] **CONT-001**: Единый устойчивый протокол непрерывности: корневой ориентир, мастер-реестр, стабильные ID, обязательное обновление после этапов, восстановление по GitHub и файлам. **Progress:** ориентиры и lossless registry созданы в PR #127; последняя queue snapshot включает #128; exact-head freshness после последнего обновления ещё требуется.
+- [~] **CONT-001**: Единый устойчивый протокол непрерывности: корневой ориентир, мастер-реестр, стабильные ID, обязательное обновление после этапов, восстановление по GitHub и файлам. **Progress:** PR #127 содержит 544 открытые/частичные записи из 20 документов и двух branch-only checklist snapshots (470 unchecked + 74 partial); исходники не изменены. Exact-head Freshness/Quality/Provenance после последнего обновления ещё требуется.
 - [~] **AGENT-001**: Исследовать и спроектировать реальную параллельную multi-agent архитектуру: минимум 5 одновременно исполняемых независимых workers поверх главной модели; масштабирование выше 64 и до сотен/тысяч логических workers через очереди, leases, backpressure и распределённые workers. **Progress:** целевая архитектура и acceptance criterion 5+ workers описаны в PR #128; runtime implementation pending.
 - [~] **AGENT-002**: Сравнить Agensh (до 1,024 workers), Hive, DeerFlow, Open Multi-Agent, AgentTeams, OpenAI Agents SDK, Swarms, Octos и новые upstream; проверить первичные репозитории, бумаги, лицензии, adoption и ограничения. **Progress:** сравнены Agensh, Hive, DeerFlow, OMA, AgentTeams, Octos и ранее выбранные проекты; дальнейший source/license review pending.
 - [~] **AGENT-003**: Расширить профессию/skill/capability registry: 64 роли оставить как один seed-набор, но поддержать динамические профили, пользовательские профессии, composable skills и capability discovery без жёсткого потолка. **Progress:** зафиксировано: 64 роли — seed catalogue, без жёсткого потолка; dynamic profile implementation pending.
@@ -750,13 +750,12 @@
 
 ## C. Очерёдность выполнения
 
-1. **CONT-001** — закрепить постоянный протокол ориентирования и реестр.
-2. **AGENT-001…AGENT-005** — исследование, архитектура и reviewable design агентной платформы; runtime не внедрять до проверки и отдельного принятия Phase 1.
-3. **VERT-001…VERT-003** — архитектура конвертации и лицензии.
-4. **TOK-001…TOK-005** — закрыть finish_reason/incomplete handling, adaptive tool budgets, backend queues и lossless history.
-5. **DEP-001** — reconciliate #124/#126 без потери uv.lock или более безопасного pypdf pin.
-6. **DR-001…DR-003** — отдельный глубокий research workstream и каталог доказательств.
-6. Сопоставить дубликаты старых задач с текущей реализацией, PR, тестами и owner-only gates.
+1. **CONT-001 / REGISTRY-001** — завершить lossless миграцию всех найденных checklist sources в этот файл; проверить exact-head Freshness/Quality/Provenance и сохранить ориентиры. Merge — только после owner approval.
+2. **LANDING-TRACK-003 / LANDING-TRACK-004** — baseline, затем bounded Landing V1 improvements строго внутри принятого HTML/CSS/JS + Jekyll/GitHub Pages и существующего FastAPI/Ollama стека.
+3. **DEP-001** — согласовать PR #124/#126 без потери uv.lock или более безопасного pypdf pin; не merge без owner approval.
+4. **AGENT-001…AGENT-006, VOICE-001…VOICE-010, DR2-001…DR2-021** — отдельные reviewable research/design slices; не включать в обычную Landing V1 реализацию.
+5. **VERT-001…VERT-004 и TOK-001…TOK-005** — converter/output limits workstreams после независимого review и отдельного решения.
+6. **REGISTRY-002** — свести дубли/cross-links только после полной фиксации источников; ничего не удалять до reconciliation.
 
 ## D. Состояние репозитория на момент миграции (GitHub, 2026-10-31)
 
@@ -768,7 +767,9 @@
 
 ## E. Следующее действие
 
-Обновить корневой `ORIENTER.md`, чтобы он ссылался на этот реестр; синхронизировать подробный ориентир и machine-readable state/snapshot в continuity PR. Затем расширить исследование агентной платформы в PR #125; VERT/conversion и output-limit audit вести отдельными проверяемыми срезами.
+1. Проверить актуальные 544 source rows и exact-head CI PR #127; обновить ориентиры/state/log после финального прохода.
+2. Продолжить Landing V1 в отдельном bounded PR #131 и следующих slices; сначала закончить Chromium/Quality/Graphify gates, затем визуальный и native-device review.
+3. Сохранять PR #125/#128/#129/#130 как FUTURE/RESEARCH HOLD на отдельной holding base; не переносить их runtime scope в main.
 
 
 ## F. Новые workstreams владельца (2026-10-31)
@@ -779,8 +780,8 @@
 
 - [x] **LANDING-TRACK-001**: Зафиксировать направление постоянного поиска улучшений лендинга строго внутри согласованного стека. **Progress:** границы повторно сверены с `docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md` и `docs/TECHNIQUE_REGISTER_RU.md`.
 - [x] **LANDING-TRACK-002**: Создать отдельный bounded backlog улучшений Landing V1. **Artifact:** `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` в PR #129.
-- [ ] **LANDING-TRACK-003**: Снять baseline метрик опубликованного лендинга и выбрать первый минимальный improvement slice.
-- [ ] **LANDING-TRACK-004**: Вести цикл baseline → hypothesis → minimal patch → regression test → exact-head CI → state update на каждом рабочем заходе.
+- [~] **LANDING-TRACK-003**: Снять baseline метрик опубликованного лендинга и выбрать первый минимальный improvement slice. **Progress:** source baseline на PR #131: 26,139 символов HTML, 0 script tags, 0 external stylesheets/images/video/CSS URL assets; published LCP/INP/CLS и реальные network waterfalls пока не измерены.
+- [~] **LANDING-TRACK-004**: Вести цикл baseline → hypothesis → minimal patch → regression test → exact-head CI → state update на каждом рабочем заходе. **Progress:** первый slice PR #131 — skip link, tablet grid, forced-colors и Playwright regressions; Jekyll/Integrity/Security/Context/Graphify прошли, полный Quality/Chromium ещё завершается.
 
 ### F2. Future workstreams — отдельные PR, не для случайного merge
 
@@ -805,7 +806,7 @@
 
 ### F4. Исторический общий backlog
 
-- [x] **REGISTRY-001**: Найти прежний большой список незавершённых задач. **Result:** PR #127 / `docs/MASTER_TASK_REGISTRY_RU.md` — lossless migration of 276 open/partial rows from six historical sources; 219 unchecked + 57 partial before deduplication. Recounted against current main checklists on 2026-10-31; the historical user checklist contains 116 open/partial rows (82 unchecked + 34 partial).
+- [x] **REGISTRY-001**: Найти прежний большой список незавершённых задач. **Result:** PR #127 / `docs/MASTER_TASK_REGISTRY_RU.md` — lossless inventory of **544 open/partial rows** across 20 unique checklist documents plus two branch-only snapshots (470 unchecked + 74 partial), including main operational/privacy/voice/architecture lists and active PR #125/#126/#129/#130 task deltas. Duplicates intentionally preserved; no original source was modified.
 - [ ] **REGISTRY-002**: Свести дубли и cross-link исторические пункты с текущими кодом, PR, tests and owner gates. Ничего не удалять до reconciliation.
 
 
