@@ -781,7 +781,7 @@
 - [x] **LANDING-TRACK-001**: Зафиксировать направление постоянного поиска улучшений лендинга строго внутри согласованного стека. **Progress:** границы повторно сверены с `docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md` и `docs/TECHNIQUE_REGISTER_RU.md`.
 - [x] **LANDING-TRACK-002**: Создать отдельный bounded backlog улучшений Landing V1. **Artifact:** `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` в PR #129.
 - [~] **LANDING-TRACK-003**: Снять baseline метрик опубликованного лендинга и выбрать первый минимальный improvement slice. **Progress:** source baseline на PR #131: 26,139 символов HTML, 0 script tags, 0 external stylesheets/images/video/CSS URL assets; published LCP/INP/CLS и реальные network waterfalls пока не измерены.
-- [~] **LANDING-TRACK-004**: Вести цикл baseline → hypothesis → minimal patch → regression test → exact-head CI → state update на каждом рабочем заходе. **Progress:** первый slice PR #131 — skip link, tablet grid, forced-colors и Playwright regressions; Jekyll/Integrity/Security/Context/Graphify прошли, полный Quality/Chromium ещё завершается.
+- [~] **LANDING-TRACK-004**: Вести цикл baseline → hypothesis → minimal patch → regression test → exact-head CI → state update на каждом рабочем заходе. **Progress:** PR #131 exact HEAD `b75303070cc06bee993555b979bc0a942466fe51`: Quality run `41120598763` passed all 7 jobs (Chromium: 100 passed; one unrelated Cloudflare provider test was flaky on first attempt but passed on retry; Context/Integrity/Security/Static/Jekyll and published root Pages smoke passed). Graphify `41120598741` passed. Landing-specific post-merge smoke was skipped because PR is not merged; native iPhone Safari/VoiceOver remain unverified.
 
 ### F2. Future workstreams — отдельные PR, не для случайного merge
 
