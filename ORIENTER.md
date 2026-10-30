@@ -28,3 +28,12 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - The current PR is excluded from its own open-PR comparison; no other queue difference is ignored.
 - If the main SHA or queue changes, reconcile the snapshot, this file, the detailed orienter, `docs/PROJECT_STATE.yaml`, and `docs/VOLLEY_LOG.md` together. CI reports drift; it does not silently rewrite or commit state.
 - After every meaningful stage, record exact files/decisions, SHA/PR, tests actually run, risks, rollback, and next action. Never claim a green CI change is deployed on a live host.
+
+## Additional three-role audit — 2026-10-30
+
+- **Canonical tracker:** `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`. Read it after this short orienter; it contains the full user task checklist, per-step completion markers, verified findings, research decisions and next actions.
+- **Current PR HEAD at audit start:** `b09c1365e9d5f434b69ebb60bb285c7574051172`; main base `2bda22229cba3576628f92c821bb6e1562d8abc5`; compare reports 144 ahead / 0 behind.
+- **Confirmed failure fixed in branch:** Gateway CI failed because `gateway/tests/test_coder_packet.py` used `canonical_action_digest` without importing it. Added the missing import in commit `f9d5afaae983675d2c616e3fbc70942840d314e5`. Re-run status is pending.
+- **Exact-head evidence before fix:** Project State Freshness, Provenance, Dead Code Audit and Graphify passed; Lite Gateway Tests failed; Independent Quality Sentinels were still in progress. Do not mark all checks green until the post-fix SHA has completed every required workflow.
+- **Research decisions:** book-to-skill upstream `virgiliojr94/book-to-skill` (MIT tool; source-book copyright remains separate) is a strong pattern for internal Knowledge-to-Skill. Graphify remains dev-only. Keep whisper.cpp/Piper baseline; benchmark LiveKit/Pipecat only as optional realtime voice runtime. Benchmark llama.cpp GPU offload against current Ollama before any migration.
+- **Next:** inspect latest PR SHA and CI, then audit request/provider lifecycle, memory/RAG scopes, DAG/tools/security, voice, document extraction and landing. No file deletions until static + dynamic reference checks and rollback/CI roles are reviewed.
