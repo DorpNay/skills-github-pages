@@ -44,7 +44,7 @@ permalink: /
     @media (prefers-reduced-motion:reduce){.prompt-pencil[aria-pressed="true"]{animation:none}}
     .settings-header { position:sticky;top:-1rem;z-index:12;display:flex;align-items:center;justify-content:space-between;gap:.55rem;margin:-1rem -1rem .5rem;padding:.8rem 1rem;background:color-mix(in srgb,var(--ui-surface) 94%,transparent);border-bottom:1px solid var(--ui-border);backdrop-filter:blur(16px); }
     .settings-header-actions { display:flex;align-items:center;gap:.35rem; }
-    .settings-header-actions button { min-height:36px;padding:.45rem .65rem;border:1px solid var(--ui-border);border-radius:10px;font-size:11px;white-space:nowrap; }
+    .settings-header-actions button { display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:.45rem .65rem;border:1px solid var(--ui-border);border-radius:10px;font-size:11px;white-space:nowrap; }
     .settings-header-actions [data-action="save-settings"] { background:var(--ui-primary);color:#fff;border-color:transparent;font-weight:750; }
     .settings-header-actions [data-action="close-settings"] { background:var(--ui-surface-raised);color:var(--ui-text-muted); }
     .cloud-card input[data-state="connected"] { border-color:#35d39a!important;box-shadow:0 0 0 1px rgb(53 211 154 / 14%),0 0 13px rgb(53 211 154 / 8%); }
@@ -342,7 +342,7 @@ permalink: /
   <aside id="sidebar" aria-label="Проекты и чаты" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[88vw] bg-gray-950 border-r border-gray-800 -translate-x-full transition-transform duration-300 flex flex-col overflow-y-auto overscroll-contain">
     <div class="sticky top-0 z-20 bg-gray-950/95 backdrop-blur p-4 border-b border-gray-800 flex justify-between items-center">
       <h2 class="font-bold text-sm" data-i18n="sidebarTitle">💬 Диалоги и память</h2>
-      <button type="button" data-action="close-sidebar" aria-label="Закрыть меню" class="text-gray-400 hover:text-white text-lg p-1">✕</button>
+      <button type="button" data-action="close-sidebar" aria-label="Закрыть меню" class="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gray-800 text-gray-400 hover:text-white text-lg">✕</button>
     </div>
     
     <section id="memoryPanel" class="mx-3 my-2 rounded-xl border border-gray-800 p-2 space-y-2" aria-label="Настройки памяти">
@@ -397,7 +397,7 @@ permalink: /
     <section class="w-full max-w-xl max-h-[94dvh] overflow-y-auto overscroll-contain rounded-2xl border border-gray-700 bg-gray-950 p-3 sm:p-4 shadow-2xl">
       <header class="sticky top-0 z-10 -mx-3 -mt-3 mb-3 flex items-center justify-between gap-3 border-b border-gray-800 bg-gray-950/95 px-3 py-3 backdrop-blur sm:-mx-4 sm:-mt-4 sm:px-4">
         <h2 id="projectSettingsModalTitle" class="text-sm font-bold" data-i18n="manageProject">Настройки проекта</h2>
-        <button type="button" data-action="close-project-settings" aria-label="Закрыть настройки проекта" class="rounded-lg border border-gray-700 px-2.5 py-1.5 text-sm text-gray-300">✕</button>
+        <button type="button" data-action="close-project-settings" aria-label="Закрыть настройки проекта" class="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gray-700 text-sm text-gray-300">✕</button>
       </header>
           <details id="projectManagerDetails" open class="rounded-xl border border-gray-800">
             <summary class="hidden" aria-hidden="true">Настройки проекта</summary>
@@ -1752,6 +1752,17 @@ permalink: /
     }
     let selectedProjectForSettingsId=null;
     let creatingProject=false;
+    let projectSettingsOpener=null;
+    function closeProjectSettings(){
+      const modal=$('projectSettingsModal');
+      if(!modal||modal.classList.contains('hidden'))return;
+      modal.classList.add('hidden');
+      const opener=projectSettingsOpener;projectSettingsOpener=null;
+      const sidebarOpen=!$('sidebar').classList.contains('-translate-x-full');
+      const visibleOpener=opener&&document.contains(opener)&&(!opener.closest('#sidebar')||sidebarOpen)?opener:null;
+      const fallback=document.querySelector('header [data-action="toggle-sidebar"]');
+      requestAnimationFrame(()=>{(visibleOpener||fallback)?.focus({preventScroll:true});});
+    }
     function syncProjectEditorMode(){
       $('createProjectSubmit')?.classList.toggle('hidden',!creatingProject);
       $('saveProjectSubmit')?.classList.toggle('hidden',creatingProject);
@@ -4938,8 +4949,9 @@ permalink: /
           }
           case 'clear-request-context': selectedRequestProjectIds.clear();saveRequestContextForActiveChat();renderRequestProjectChoices();break;
           case 'remove-draft-attachment': pendingComposerAttachments=pendingComposerAttachments.filter(item=>item.id!==control.dataset.attachmentId);renderDraftAttachments();break;
-          case 'close-project-settings': $('projectSettingsModal').classList.add('hidden');break;
+          case 'close-project-settings': closeProjectSettings();break;
           case 'open-project-create': {
+            projectSettingsOpener=control;
             creatingProject=true;selectedProjectForSettingsId=null;$('projectManagerDetails').open=true;$('projectMemoryScopeSelect').value='project-only';renderProjectUI();$('projectSettingsModal').classList.remove('hidden');toggleSidebar(false);requestAnimationFrame(()=>$('projectNameInput').focus({preventScroll:true}));break;
           }
           case 'create-project': createProject();break;
@@ -4953,8 +4965,9 @@ permalink: /
             $('chatSection').querySelector('summary')?.focus();break;
           }
           case 'open-project-settings': {
+            projectSettingsOpener=control;
             creatingProject=false;selectedProjectForSettingsId=projects.some(project=>project.id===control.dataset.projectId)?control.dataset.projectId:null;
-            $('projectManagerDetails').open=true;renderProjectUI();$('projectSettingsModal').classList.remove('hidden');toggleSidebar(false);break;
+            $('projectManagerDetails').open=true;renderProjectUI();$('projectSettingsModal').classList.remove('hidden');toggleSidebar(false);requestAnimationFrame(()=>$('projectNameInput').focus({preventScroll:true}));break;
           }
           case 'detach-current-chat': moveCurrentChatToProject('');break;
           case 'delete-project': deleteCurrentProject();break;
@@ -5147,6 +5160,7 @@ permalink: /
       if (event.key === 'Escape') {
         if (!$('chatActionModal').classList.contains('hidden')) closeChatActionDialog();
         else if (!$('traceModal').classList.contains('hidden')) closeTrace();
+        else if (!$('projectSettingsModal').classList.contains('hidden')) closeProjectSettings();
         else if (!$('researchStudioModal').classList.contains('hidden')) closeResearchStudio();
         else if (!$('settingsModal').classList.contains('hidden')) toggleSettings(false);
         else if (!$('sidebar').classList.contains('-translate-x-full')) toggleSidebar(false);
