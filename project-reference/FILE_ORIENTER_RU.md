@@ -6,10 +6,11 @@
 
 - Проверенный main: `e78a73b25725bfa63370d9946887cbbacbf51b82` — PR #123 merged.
 - PR #123 merged at `e78a73b25725bfa63370d9946887cbbacbf51b82`; exact head `fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222`; 6/6 workflow groups passed.
-- Exact queue snapshot (current PR excluded only from its own freshness comparison): **open PRs (3): #124, #125, #126; open issues (1): #111**.
+- Exact queue snapshot (current PR excluded only from its own freshness comparison): **open PRs (4): #124, #125, #126, #128; open issues (1): #111**.
 - PR #124: dependency refresh and reproducible Python lock; exact head `d10afe2b5bc1cbe84b9396cbfcbe6a3d9ac881ff`; Gateway, Quality, Graphify, Provenance and Dead Code passed.
 - PR #125: separate agent-platform research/design Draft; exact head `7efaa06f0ba4c428501dff325746d916dba983cd`; Quality, Freshness and Provenance passed. Documentation only; no agent runtime adopted.
 - PR #126: code-currency/dependency audit Draft; exact head `21104af6733b6ea4eb04bdec6d409c4a2d347558`; all six workflow groups passed.
+- PR #128: deep agent workforce, VERT conversion and output-limit research; exact head `bec513ef9658ae193935ebd3268f04fa85d5f167`; documentation-only, no runtime adoption.
 - Issue #111 remains the owner/live-host release gate. Do not close it based on CI.
 - **Master task registry:** `docs/MASTER_TASK_REGISTRY_RU.md`. Initial lossless migration: 275 open/partial rows from six sources (218 unchecked, 57 partial), before deduplication. Original checklists remain untouched.
 - **Agent direction:** at least five genuinely parallel independent workers alongside the main model; no hard cap at 64 professions. Research dynamic profiles/skills, hierarchical and decentralized swarms, task queues, leases, durable state, backpressure and hundreds/thousands of logical workers. 64 profiles are one useful starter catalogue, not a ceiling.
