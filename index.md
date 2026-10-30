@@ -370,58 +370,7 @@ permalink: /
         </button>
         <div id="projectNavigationList" class="hidden pl-2 space-y-1" aria-label="Список проектов"></div>
       </div>
-      <details id="projectManagerDetails" class="rounded-xl border border-gray-800">
-        <summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">⚙ <span data-i18n="manageProject">Настройки проекта</span></summary>
-        <div class="p-2 space-y-2">
-          <label for="currentProjectSelect" class="block text-[11px] text-gray-400" data-i18n="currentProjectLabel">Проект текущего чата</label>
-          <p id="projectSettingsStatus" class="text-[10px] text-gray-500">Проект не выбран — создай его ниже.</p>
-          <select id="currentProjectSelect" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs"><option value="">Без проекта · личный чат</option></select>
-          <label for="projectMemoryScopeSelect" data-i18n="projectMemoryScopeLabel" class="block text-[11px] text-gray-400">Режим памяти проекта</label>
-          <select id="projectMemoryScopeSelect" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs">
-            <option value="project-only" data-i18n="projectMemoryScopeOnly">Память только внутри проекта</option>
-            <option value="project-and-global" data-i18n="projectMemoryScopeGlobal">Память проекта + общая память (если она разрешена)</option>
-          </select>
-          <label class="flex items-start gap-2 text-[11px] text-gray-400"><input id="projectMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="projectMemoryOptIn">Использовать память выбранного проекта в этом чате</span></label>
-          <p id="projectSummary" class="text-[10px] leading-relaxed text-gray-500">Чат не привязан к проекту.</p>
-                    <label for="projectNameInput" class="block text-[11px] text-gray-400" data-i18n="projectNameLabel">Название</label>
-          <input id="projectNameInput" type="text" maxlength="100" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Название проекта">
-          <label for="projectInstructionsInput" class="block text-[11px] text-gray-400" data-i18n="projectInstructionsLabel">Инструкции проекта</label>
-          <textarea id="projectInstructionsInput" rows="3" maxlength="6000" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs resize-y" placeholder="Цель, стиль, ограничения и критерии результата"></textarea>
-          <div class="grid grid-cols-2 gap-2">
-            <button id="createProjectSubmit" type="button" data-action="create-project" class="hidden bg-cyan-900/70 hover:bg-cyan-800 border border-cyan-800 rounded-lg py-2 text-xs" data-i18n="createProject">＋ Создать проект</button>
-            <button id="saveProjectSubmit" type="button" data-action="save-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="saveProject">Сохранить изменения</button>
-          </div>
 
-          <label for="projectMemoryInput" class="block text-[11px] text-gray-400" data-i18n="projectMemoryLabel">Добавить факт в память проекта</label>
-          <div class="flex gap-1"><input id="projectMemoryInput" type="text" maxlength="600" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Факт, решение или ограничение"><button type="button" data-action="add-project-memory" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Добавить факт">＋</button></div>
-          <div id="projectMemoryBox" class="max-h-24 overflow-y-auto text-[11px] text-gray-400 space-y-1"></div>
-          <details id="serverMemoryDetails" class="rounded-lg border border-cyan-900/60">
-            <summary class="cursor-pointer select-none px-2.5 py-2 text-xs font-semibold" data-i18n="serverMemoryTitle">Серверная память · эксперимент</summary>
-            <div class="p-2 space-y-2">
-              <p class="text-[10px] leading-relaxed text-gray-400" data-i18n="serverMemoryDescription">Отдельный граф на твоём aLandi gateway. Перенос только вручную; новые факты сначала становятся кандидатами. Нужен включённый ALANDI_MEMORY_GRAPH_ENABLED.</p>
-              <label class="flex items-start gap-2 text-[11px] leading-relaxed text-gray-400"><input id="serverProjectMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="serverMemoryOptIn">Разрешить подтверждённым фактам сервера попадать в контекст этого чата. Также включи память проекта выше.</span></label>
-              <div class="grid grid-cols-2 gap-2">
-                <button type="button" data-action="refresh-server-memory" class="rounded-lg border border-gray-700 bg-gray-800 px-2 py-2 text-[11px]" data-i18n="serverMemoryRefresh">Обновить список</button>
-                <button type="button" data-action="upload-server-memory" class="rounded-lg border border-cyan-800 bg-cyan-950/50 px-2 py-2 text-[11px]" data-i18n="serverMemoryUpload">Передать локальные факты</button>
-              </div>
-              <p class="text-[10px] leading-relaxed text-gray-500" data-i18n="helperMemoryDescription">Необязательная модель на настроенном aLandi gateway предложит компактные факты. Отправка только по кнопке; сохранение — только после выбора.</p>
-              <button type="button" data-action="suggest-helper-memory" class="w-full rounded-lg border border-violet-900/70 bg-violet-950/30 px-2 py-2 text-[11px]" data-i18n="helperMemorySuggest">Предложить компактные факты</button>
-              <p id="helperMemoryStatus" class="text-[10px] leading-relaxed text-gray-400" role="status" aria-live="polite" data-i18n="helperMemoryInitial">Помощник выключен, пока не настроен ALANDI_HELPER_MODEL.</p>
-              <div id="helperMemorySuggestionsBox" class="max-h-40 space-y-2 overflow-y-auto text-[11px] text-gray-300"></div>
-              <p id="serverMemoryStatus" class="text-[10px] leading-relaxed text-gray-400" role="status" aria-live="polite" data-i18n="serverMemoryInitial">Серверная память выключена. Выбери проект и нажми «Обновить список».</p>
-              <div id="serverMemoryBox" class="max-h-40 space-y-2 overflow-y-auto text-[11px] text-gray-300"></div>
-            </div>
-          </details>
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button" data-action="export-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="exportProject">Экспорт проекта</button>
-            <button type="button" data-action="import-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="importProject">Импорт проекта</button>
-          </div>
-          <input type="file" id="importProjectFile" class="hidden" accept="application/json,.json">
-          <button type="button" data-action="detach-current-chat" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="detachChat">Извлечь чат из проекта</button>
-          <button type="button" data-action="delete-project" class="w-full bg-red-950/50 hover:bg-red-900/60 border border-red-900/50 rounded-lg py-2 text-xs text-red-200" data-i18n="deleteProject">Удалить проект и его чаты</button>
-
-        </div>
-      </details>
     </section>
     <p id="projectStatusLine" class="mx-3 -mt-1 mb-1 px-2 text-[10px] leading-relaxed text-gray-500" role="status" aria-live="polite">Личный чат · без проекта</p>
     <details id="chatSection" open class="mx-3 my-2 rounded-xl border border-gray-800">
@@ -437,6 +386,67 @@ permalink: /
      <div id="chatRowMenuSidebarScrim" aria-hidden="true"></div>
     <input id="importFile" type="file" class="hidden" accept="application/json,.json">
   </aside>
+
+  <div id="projectSettingsModal" class="hidden fixed inset-0 z-[64] bg-black/80 p-3 sm:p-5 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="projectSettingsModalTitle">
+    <section class="w-full max-w-xl max-h-[94dvh] overflow-y-auto overscroll-contain rounded-2xl border border-gray-700 bg-gray-950 p-3 sm:p-4 shadow-2xl">
+      <header class="sticky top-0 z-10 -mx-3 -mt-3 mb-3 flex items-center justify-between gap-3 border-b border-gray-800 bg-gray-950/95 px-3 py-3 backdrop-blur sm:-mx-4 sm:-mt-4 sm:px-4">
+        <h2 id="projectSettingsModalTitle" class="text-sm font-bold" data-i18n="manageProject">Настройки проекта</h2>
+        <button type="button" data-action="close-project-settings" aria-label="Закрыть настройки проекта" class="rounded-lg border border-gray-700 px-2.5 py-1.5 text-sm text-gray-300">✕</button>
+      </header>
+          <details id="projectManagerDetails" open class="rounded-xl border border-gray-800">
+            <summary class="hidden" aria-hidden="true">Настройки проекта</summary>
+            <div class="p-2 space-y-2">
+              <label for="currentProjectSelect" class="block text-[11px] text-gray-400" data-i18n="currentProjectLabel">Проект текущего чата</label>
+              <p id="projectSettingsStatus" class="text-[10px] text-gray-500">Проект не выбран — создай его ниже.</p>
+              <select id="currentProjectSelect" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs"><option value="">Без проекта · личный чат</option></select>
+              <label for="projectMemoryScopeSelect" data-i18n="projectMemoryScopeLabel" class="block text-[11px] text-gray-400">Режим памяти проекта</label>
+              <select id="projectMemoryScopeSelect" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs">
+                <option value="project-only" data-i18n="projectMemoryScopeOnly">Память только внутри проекта</option>
+                <option value="project-and-global" data-i18n="projectMemoryScopeGlobal">Память проекта + общая память (если она разрешена)</option>
+              </select>
+              <label class="flex items-start gap-2 text-[11px] text-gray-400"><input id="projectMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="projectMemoryOptIn">Использовать память выбранного проекта в этом чате</span></label>
+              <p id="projectSummary" class="text-[10px] leading-relaxed text-gray-500">Чат не привязан к проекту.</p>
+                        <label for="projectNameInput" class="block text-[11px] text-gray-400" data-i18n="projectNameLabel">Название</label>
+              <input id="projectNameInput" type="text" maxlength="100" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Название проекта">
+              <label for="projectInstructionsInput" class="block text-[11px] text-gray-400" data-i18n="projectInstructionsLabel">Инструкции проекта</label>
+              <textarea id="projectInstructionsInput" rows="3" maxlength="6000" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs resize-y" placeholder="Цель, стиль, ограничения и критерии результата"></textarea>
+              <div class="grid grid-cols-2 gap-2">
+                <button id="createProjectSubmit" type="button" data-action="create-project" class="hidden bg-cyan-900/70 hover:bg-cyan-800 border border-cyan-800 rounded-lg py-2 text-xs" data-i18n="createProject">＋ Создать проект</button>
+                <button id="saveProjectSubmit" type="button" data-action="save-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="saveProject">Сохранить изменения</button>
+              </div>
+    
+              <label for="projectMemoryInput" class="block text-[11px] text-gray-400" data-i18n="projectMemoryLabel">Добавить факт в память проекта</label>
+              <div class="flex gap-1"><input id="projectMemoryInput" type="text" maxlength="600" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Факт, решение или ограничение"><button type="button" data-action="add-project-memory" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Добавить факт">＋</button></div>
+              <div id="projectMemoryBox" class="max-h-24 overflow-y-auto text-[11px] text-gray-400 space-y-1"></div>
+              <details id="serverMemoryDetails" class="rounded-lg border border-cyan-900/60">
+                <summary class="cursor-pointer select-none px-2.5 py-2 text-xs font-semibold" data-i18n="serverMemoryTitle">Серверная память · эксперимент</summary>
+                <div class="p-2 space-y-2">
+                  <p class="text-[10px] leading-relaxed text-gray-400" data-i18n="serverMemoryDescription">Отдельный граф на твоём aLandi gateway. Перенос только вручную; новые факты сначала становятся кандидатами. Нужен включённый ALANDI_MEMORY_GRAPH_ENABLED.</p>
+                  <label class="flex items-start gap-2 text-[11px] leading-relaxed text-gray-400"><input id="serverProjectMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="serverMemoryOptIn">Разрешить подтверждённым фактам сервера попадать в контекст этого чата. Также включи память проекта выше.</span></label>
+                  <div class="grid grid-cols-2 gap-2">
+                    <button type="button" data-action="refresh-server-memory" class="rounded-lg border border-gray-700 bg-gray-800 px-2 py-2 text-[11px]" data-i18n="serverMemoryRefresh">Обновить список</button>
+                    <button type="button" data-action="upload-server-memory" class="rounded-lg border border-cyan-800 bg-cyan-950/50 px-2 py-2 text-[11px]" data-i18n="serverMemoryUpload">Передать локальные факты</button>
+                  </div>
+                  <p class="text-[10px] leading-relaxed text-gray-500" data-i18n="helperMemoryDescription">Необязательная модель на настроенном aLandi gateway предложит компактные факты. Отправка только по кнопке; сохранение — только после выбора.</p>
+                  <button type="button" data-action="suggest-helper-memory" class="w-full rounded-lg border border-violet-900/70 bg-violet-950/30 px-2 py-2 text-[11px]" data-i18n="helperMemorySuggest">Предложить компактные факты</button>
+                  <p id="helperMemoryStatus" class="text-[10px] leading-relaxed text-gray-400" role="status" aria-live="polite" data-i18n="helperMemoryInitial">Помощник выключен, пока не настроен ALANDI_HELPER_MODEL.</p>
+                  <div id="helperMemorySuggestionsBox" class="max-h-40 space-y-2 overflow-y-auto text-[11px] text-gray-300"></div>
+                  <p id="serverMemoryStatus" class="text-[10px] leading-relaxed text-gray-400" role="status" aria-live="polite" data-i18n="serverMemoryInitial">Серверная память выключена. Выбери проект и нажми «Обновить список».</p>
+                  <div id="serverMemoryBox" class="max-h-40 space-y-2 overflow-y-auto text-[11px] text-gray-300"></div>
+                </div>
+              </details>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" data-action="export-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="exportProject">Экспорт проекта</button>
+                <button type="button" data-action="import-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="importProject">Импорт проекта</button>
+              </div>
+              <input type="file" id="importProjectFile" class="hidden" accept="application/json,.json">
+              <button type="button" data-action="detach-current-chat" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="detachChat">Извлечь чат из проекта</button>
+              <button type="button" data-action="delete-project" class="w-full bg-red-950/50 hover:bg-red-900/60 border border-red-900/50 rounded-lg py-2 text-xs text-red-200" data-i18n="deleteProject">Удалить проект и его чаты</button>
+    
+            </div>
+          </details>
+    </section>
+  </div>
   <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 hidden" aria-hidden="true"></div>
   <div id="chatRowMenuPageScrim" aria-hidden="true"></div>
 
@@ -4792,8 +4802,9 @@ permalink: /
           }
           case 'clear-request-context': selectedRequestProjectIds.clear();saveRequestContextForActiveChat();renderRequestProjectChoices();break;
           case 'remove-draft-attachment': pendingComposerAttachments=pendingComposerAttachments.filter(item=>item.id!==control.dataset.attachmentId);renderDraftAttachments();break;
+          case 'close-project-settings': $('projectSettingsModal').classList.add('hidden');break;
           case 'open-project-create': {
-            creatingProject=true;selectedProjectForSettingsId=null;$('projectManagerDetails').open=true;$('projectMemoryScopeSelect').value='project-only';renderProjectUI();$('projectNameInput').focus({preventScroll:true});break;
+            creatingProject=true;selectedProjectForSettingsId=null;$('projectManagerDetails').open=true;$('projectMemoryScopeSelect').value='project-only';renderProjectUI();$('projectSettingsModal').classList.remove('hidden');toggleSidebar(false);requestAnimationFrame(()=>$('projectNameInput').focus({preventScroll:true}));break;
           }
           case 'create-project': createProject();break;
           case 'save-project': saveProject();break;
@@ -4807,7 +4818,7 @@ permalink: /
           }
           case 'open-project-settings': {
             creatingProject=false;selectedProjectForSettingsId=projects.some(project=>project.id===control.dataset.projectId)?control.dataset.projectId:null;
-            $('projectManagerDetails').open=true;renderProjectUI();$('projectManagerDetails').scrollIntoView({block:'nearest',behavior:'smooth'});break;
+            $('projectManagerDetails').open=true;renderProjectUI();$('projectSettingsModal').classList.remove('hidden');toggleSidebar(false);break;
           }
           case 'detach-current-chat': moveCurrentChatToProject('');break;
           case 'delete-project': deleteCurrentProject();break;
