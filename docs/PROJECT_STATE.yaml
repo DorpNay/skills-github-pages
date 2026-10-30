@@ -2,15 +2,15 @@ project_state:
   version: 4
   reviewed_on: "2026-10-30"
   root_orienter:
-    status: "Main base is e6404d510229fa64a7bb375995d76dcba55de623 after documentation-only landing UX polish commit; PR #121 is the only open UI finalization PR. PR branch synced with main (200 ahead / 0 behind at SHA 07213c1406e8d451e7df5f796f2d4a8fd862e5ca). Gateway import fix #483 passed 150 tests on earlier code; audio subprocess cancellation fix (77b2691 + tests 363bb5c) still needs Gateway CI. Quality/Chromium and Graphify reruns were cancelled during branch updates. Live runtime remains unverified."
-    branch: "feat/chat-settings-orthogonal-controls-20261030"
-    base_main: "e6404d510229fa64a7bb375995d76dcba55de623"
+    status: "Main is fd4f0a105183feb23e0f4e4697446235de9ffe9a after PR #121 (free landing/client V1) and PR #122 (Gateway liveness/readiness) merged. PR #121 exact head e3c3017 passed all six workflow groups; PR #122 exact head 94d871d passed Gateway, Quality/Chromium, Jekyll, Security, Integrity, Context, Graphify and Dead Code. No open PRs at this checkpoint; Issue #111 remains the single owner/live-host gate. Post-merge Pages deployment and live VPS/Ollama remain unverified."
+    branch: "main"
+    base_main: "fd4f0a105183feb23e0f4e4697446235de9ffe9a"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
-    merged_changes: "PR #120 sidebar hierarchy/theme-language sync; #119 provider separation/project scope/composer preference; #118 chat import/export; #113 immutable Actions pins; #115 modal scrim/outside-tap; #114 empty-by-default prompt/context budget; #71 mobile composer; #84/#81/#83/#82 infrastructure foundations; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
-    exact_head_checks: "PR #120 merge commit reports Chromium, published Pages smoke, Jekyll, integrity, security, context and Graphify checks passed in its commit message; get_commit_combined_status returned no separate status entries for 2bda22229cba3576628f92c821bb6e1562d8abc5. PR #121 code head f9d5afaae983675d2c616e3fbc70942840d314e5: Gateway #483 passed (150 tests), Freshness #83, Provenance #554 and Dead Code #389 passed; Quality #916 and Graphify #262 cancelled during subsequent branch updates. Exact current branch SHA is documentation-only later than f9; no full exact-head Quality/Chromium green claim."
+    merged_changes: "PR #121 first free landing V1 and client UX; PR #122 Gateway liveness/readiness probes; #120 sidebar hierarchy/theme-language sync; #119 provider separation/project scope/composer preference; #118 chat import/export; #113 immutable Actions pins; #115 modal scrim/outside-tap; #114 empty-by-default prompt/context budget; #71 mobile composer; #84/#81/#83/#82 infrastructure foundations; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
+    exact_head_checks: "PR #121 head e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b: Dead Code Audit, Project State Freshness, Provenance, Lite Gateway Tests, Graphify and Quality Sentinels all completed successfully; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. PR #122 head 94d871dbf76a5364ebb3c61d86cc763affa5eaa1: Gateway Tests, Dead Code Audit, Graphify and Quality all succeeded; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. Merge commits: #121 f4d880f9648989f4fe48ddd2284220b3606c3b86; #122 fd4f0a105183feb23e0f4e4697446235de9ffe9a. No independent post-merge Pages deployment result was available."
     runtime_boundary: "GitHub Pages browser smoke verified; native iPhone, live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
-    next: "PR #121 branch now includes main e6404d5 and compares 200 ahead / 0 behind at 07213c1. Run Gateway tests on audio cancellation fix 363bb5c, then exact-current-head Quality/Chromium/Pages; connector cannot dispatch new workflow runs on current SHA. Continue remaining architecture/debug audit and owner hardware gates."
+    next: "Keep first landing V1 scope frozen. Continue only reliability, accessibility, performance, security, documentation and integration polish inside the selected HTML/CSS/JS + Jekyll and existing FastAPI/Ollama stack. New capabilities stay in the future backlog, outside the first landing."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -46,7 +46,7 @@ project_state:
   current_ui_track:
     branch: "feat/chat-settings-orthogonal-controls-20261030"
     pull_request: 121
-    status: "PR #121 open; current scope is first free landing + root client UI finalization; PRs #71, #114, #115, #119, #120 remain merged foundations. Gateway #483 passed after import fix on earlier code; audio cancellation fix awaits Gateway CI; Quality/Chromium and full current-head gates remain unverified."
+    status: "PR #121 merged at f4d880f; first free landing V1 and root client UX are in main. PR #122 merged at fd4f0a1 with distinct process liveness/readiness probes. Exact-head CI passed on both PRs; post-merge Pages deployment and live runtime remain unverified."
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback; PR114 leaves the optional global system prompt empty by default and removes the obsolete Gemini reset"
     projects: "PR35 merged and Chromium E2E passed: collapsed project list with per-project chat children; top-level unassigned chats only; project memory scope project-only vs project-and-global; one-shot project context scoped by chat. Server graph bridge remains experimental and disabled by default."
@@ -125,7 +125,7 @@ improvements:
   AI-AGENT-001: {status: "logical_roles_not_process_swarm", artifact: "docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md", eval: "EV-AGENT-001"}
   AI-AGENT-002: {status: "limited_existing_routing", artifact: "gateway/tools/dag_engine.py", eval: "EV-AGENT-002"}
   AI-AGENT-003: {status: "bounded_dag_prototype", artifact: "gateway/tools/dag_engine.py", eval: "EV-AGENT-003"}
-  AI-AGENT-004: {status: "accepted_helper_model_design_not_runtime_wired", artifact: "DECISIONS.md; docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md", eval: "EV-AGENT-004"}
+  AI-AGENT-004: {status: "synthetic_benchmark_harness_added_ci_pending_no_target_model_benchmark_no_helper_dispatch", artifact: "gateway/evals/run_local_model_benchmark.py; gateway/tests/test_local_model_benchmark.py; docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md", eval: "EV-AGENT-004"}
   AI-AGENT-005: {status: "accepted_design_documented_runtime_not_implemented", artifact: "docs/AGENT_ORCHESTRATION_RESEARCH_RU.md; DECISIONS.md; docs/CODER_PACKET.md", eval: "EV-AGENT-005"}
   AI-IMAGE-001: {status: "roadmap_only_no_image_generation_runtime", artifact: "docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md; docs/V016_IMPLEMENTATION_CHECKLIST.md", eval: "EV-IMAGE-001"}
   AI-OPS-001: {status: "free_first_roadmap_no_billable_resources_provisioned", artifact: "DECISIONS.md; docs/USER_REQUEST_CHECKLIST.md", eval: "EV-OPS-001"}
@@ -274,22 +274,22 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-10-30"
-  verified_main: "e6404d510229fa64a7bb375995d76dcba55de623"
-  last_main_action: "fix(ui): align sidebar hierarchy and preferences; SHA 2bda22229cba3576628f92c821bb6e1562d8abc5"
-  last_functional_checkpoint: "2bda22229cba3576628f92c821bb6e1562d8abc5"
-  main_quality: "No separate combined status records returned for main SHA 2bda22229cba3576628f92c821bb6e1562d8abc5; PR #120 merge message reports checks, but current exact-head verification must be read from Actions."
-  main_graphify: "Graphify is a developer navigation artifact, not a runtime component; no separate run was returned for current main SHA."
+  verified_main: "fd4f0a105183feb23e0f4e4697446235de9ffe9a"
+  last_main_action: "feat(gateway): separate process liveness and upstream readiness probes; PR #122 merge fd4f0a105183feb23e0f4e4697446235de9ffe9a"
+  last_functional_checkpoint: "fd4f0a105183feb23e0f4e4697446235de9ffe9a"
+  main_quality: "PR #121 and #122 exact-head Quality workflows passed, including Chromium, Jekyll, published-site browser smoke, Context, Security and Integrity. Post-merge main push/deployment run IDs were not returned; do not invent them."
+  main_graphify: "PR #121 and #122 exact-head Graphify code-only workflows passed; Graphify remains developer tooling, not a runtime component."
   main_gateway: "Live VPS/gateway/provider connectivity remains unverified; no live deployment claim."
-  merged_prs: "120 sidebar hierarchy and synchronized preferences; 119 provider separation/project scope/composer preference; 118 chat import/export; 113 immutable Actions pins; 115 modal scrim; 114 empty-by-default prompt; 71 mobile composer; 84 CORS; 81 deployment preflight; 83 SQLite delta; 82 readiness audit; 106 RAG evaluator; 107 private/shared memory; 108 landing/runbook"
-  open_pull_requests: "No unrelated open PRs at the freshness checkpoint; PR #121 is the active PR being checked and is excluded from its own comparison"
+  merged_prs: "121 first free landing V1 and client UX; 122 Gateway liveness/readiness probes; 120 sidebar hierarchy/preferences; 119 provider separation/project scope/composer preference; 118 chat import/export; 113 immutable Actions pins; 115 modal scrim; 114 empty-by-default prompt; 71 mobile composer; 84 CORS; 81 deployment preflight; 83 SQLite delta; 82 readiness audit; 106 RAG evaluator; 107 private/shared memory; 108 landing/runbook"
+  open_pull_requests: "0 open PRs at checkpoint; the current state-refresh PR is excluded from its own comparison"
   open_issues: "Issue #111 only: consolidated owner/live-host release gates; research-only workstreams #88–#92 and #96–#104 closed after transferring unresolved actions"
   freshness_guard: "scripts/check_project_state_freshness.py; compares exact SHA and exact queue. A refresh commit must update ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG and snapshot; it no longer requires artificial edits to checker/tests/workflow."
   runtime_boundary: "GitHub Pages is a static client; live VPS/Tunnel/Ollama, actual model performance, voice/device, OAuth/Drive and target-host measurements remain unverified"
-  next: "Use docs/V1_UI_FINALIZATION_RU.md to close the first free-landing UI slice. Run exact-head Quality/Chromium/Jekyll/Pages/Graphify/provenance checks after state refresh. Issue #111 retains owner-only ruleset, live-host, hardware, RAG golden-set, voice/device, OAuth and sandbox gates."
+  next: "First landing V1 scope is frozen after PR #121. Improve only within the selected stack; use the future backlog for new capabilities. Issue #111 retains owner-only ruleset, live-host, hardware, RAG golden-set, voice/device, OAuth and sandbox gates."
 v1_ui_finalization:
-  status: "active; no merge/deployment claim until exact-head Quality/Chromium/Pages checks pass"
+  status: "merged in PR #121 at f4d880f; exact-head required workflows passed; post-merge Pages deployment not independently verified"
   register: "docs/V1_UI_FINALIZATION_RU.md"
-  active_pr: 121
+  merged_pr: 121
   branch: "feat/chat-settings-orthogonal-controls-20261030"
   scope: "free static landing page plus existing browser client; not public multi-user SaaS or hosted inference"
   implemented_in_branch: "clarified free UI vs inference costs; roadmap section with reduced-motion ticker; agent/connector in-app roadmap cues; landing E2E; fixed duplicate Settings close action and integrity provider-group parser"
