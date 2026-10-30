@@ -189,3 +189,13 @@ Dead-code workflow is report-only; its findings are candidates, not deletion aut
 
 ## 8. Next action
 Fetch latest PR head after commit `f9d5afaae983675d2c616e3fbc70942840d314e5`, inspect newly triggered Gateway/Quality/Graphify/Provenance runs, fix any new confirmed failure, then continue subsystem audit in dependency order: request lifecycle → providers → memory/RAG → tools/DAG/security → voice → document ingestion → landing/release.
+
+## 8. Дополнительный UX polish — 2026-10-30
+- [x] U1. Перепроверить ранее записанные UX-пожелания по legacy audit, V1 UI checklist, PR #121 body, landing markup и E2E. Результат собран в `docs/LANDING_UX_POLISH_BACKLOG_RU.md`.
+- [x] U2. Найти фактический landing ticker: три roadmap item, открытие по details, CSS-only animation 22s, reduced-motion. Он уже существовал; не создавать второй ticker и не дублировать дизайн.
+- [x] U3. Закрыть обнаруженный accessibility gap ticker: WCAG 2.2 SC 2.2.2 требует pause/stop/hide для auto-moving content >5s. Добавлены visible checkbox pause controls для каждого ticker, без JS/runtime dependency (commit `f42c42d51eb624b4d2e9fe638ddebffc3b7ab8db`).
+- [x] U4. Добавить Playwright regression test pause/resume + assert zero scripts (commit `b213c8a5d50c93af675693986fe22c3bd4d5499d`).
+- [ ] U5. Прогнать exact-current-head Chromium/Quality and published Pages after merge.
+- [ ] U6. Реализовать оставшийся polish в больших вертикальных slices: visual consistency; popover/dialog keyboard/focus; mobile Safari; RU/EN/light-dark; screenshot review.
+
+**Новые UX источники:** MDN deprecated marquee; MDN prefers-reduced-motion; W3C WCAG 2.2 SC 2.2.2; MDN Popover API and CSS Anchor Positioning. Ссылки и rationale в `docs/LANDING_UX_POLISH_BACKLOG_RU.md`.
