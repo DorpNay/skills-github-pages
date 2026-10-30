@@ -92,7 +92,7 @@
 
 - Recovered as `gateway/evals/run_local_model_benchmark.py` with tests in `gateway/tests/test_local_model_benchmark.py`.
 - Fixed RU/EN/TH prompts; request count, timeout and response size are bounded; API key is read only from `ALANDI_API_KEY`; redirects are refused to prevent forwarding a bearer token; plain HTTP is restricted to loopback.
-- Success means only a non-empty API response. This is not a correctness score, model-quality benchmark, RAM/PSS measurement or first-token benchmark. Exact-head CI and target-host execution are separate gates.
+- Success means only a non-empty API response. This is not a correctness score, model-quality benchmark, RAM/PSS measurement or first-token benchmark. Gateway Tests passed on the exact PR #123 code head; target-host execution remains a separate gate.
 - No helper model is selected or wired by this tool. The main model remains responsible for planning, complex reasoning and synthesis; an optional small helper may only perform bounded tasks after shared RU/EN/TH evaluation and resource measurements.
 
 ## Reciprocal Rank Fusion for scoped RAG — merged baseline (2026-10-28)
