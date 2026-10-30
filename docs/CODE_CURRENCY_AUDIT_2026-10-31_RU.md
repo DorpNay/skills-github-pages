@@ -83,7 +83,26 @@
 
 На момент создания этого документа обновлённая ветка ещё ожидает exact-head CI. Никакой тест не объявляется успешным до результата workflow на конкретном HEAD. Live VPS/Cloudflare Tunnel/Ollama и native iPhone не проверяются CI и остаются отдельными owner gates.
 
-## 7. Upstream references
+## 7. Результат review статического анализа
+
+На exact code head `c4aa11be5be7b3d95f132f3a7662ce45cd9dca6e` CI собрал и был вручную просмотрен artifact `independent-static-analysis`:
+
+- Ruff: exit 0, findings отсутствуют.
+- Bandit: exit 1 из-за двух B608 medium-severity / low-confidence предупреждений: `gateway/memory/manager.py:271` и `gateway/rag/lazy_graph_rag.py:367`.
+- Semgrep: scanner завершился без внутренних ошибок; отчёт содержит те же два SQL raw-query findings плюс два предупреждения: canonical link в `landing/index.html` ошибочно распознан как внешняя subresource без SRI, а строка со статическим HTML-фрагментом `<script>` в `scripts/quality-agents.mjs` — как потенциальный XSS sink.
+- SQL review: динамически строятся только фиксированные SQL fragments и число `?` placeholders из ограниченного списка. Все значения пользователя (FTS query, concepts, scope, status, timestamps, limit) передаются отдельными bound parameters в `sqlite3.execute`. Интерполяции пользовательского текста в SQL statement нет. На текущем коде признаков SQL injection не найдено.
+- Canonical link не загружает ресурс и не является script/style subresource; SRI к нему неприменим. Script-tag finding относится к строковому assertion в статическом quality harness, а не к HTML insertion или runtime rendering.
+- Эти findings оставлены видимыми и advisory; правила не отключались, suppression не добавлялся. При изменении SQL-конструкции повторить review и тесты.
+
+Итог: blocking Ruff gate зелёный; Bandit/Semgrep завершились успешно как report-only scanners, но их четыре ручных disposition сохранены выше. Это не следует трактовать как «нулевые security findings».
+
+## 8. Проверка exact HEAD
+
+- На code head `c4aa11be5be7b3d95f132f3a7662ce45cd9dca6e` все шесть workflow groups завершились success: Gateway Tests, Quality Sentinels (включая Chromium), Project State Freshness, License/Artifact Provenance, Graphify и Dead Code.
+- В Quality Sentinels прошли все шесть jobs: Ruff/static analysis gate, Jekyll, Context, Integrity, Security и Real Chromium browser regression.
+- Последующий commit с этим уточнением отчёта является documentation-only; его exact-head CI запускается заново. До его завершения успешные результаты относятся к указанному выше code head.
+
+## 9. Upstream references
 
 - [FastAPI release notes](https://fastapi.tiangolo.com/release-notes/)
 - [Uvicorn release notes](https://uvicorn.dev/release-notes/)
