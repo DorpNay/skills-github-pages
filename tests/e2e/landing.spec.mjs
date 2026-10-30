@@ -78,6 +78,24 @@ test('landing roadmap tickers start only when a planned item is opened', async (
   expect(width.document).toBeLessThanOrEqual(width.viewport);
 });
 
+test('landing roadmap tickers can be paused and resumed without JavaScript', async ({ page }) => {
+  await page.goto(LANDING_PATH, { waitUntil: 'domcontentloaded' });
+  const item = page.locator('#roadmap details').first();
+  await item.locator('summary').click();
+
+  const ticker = item.locator('.innovation-track');
+  const pause = item.locator('input.innovation-toggle');
+  await expect(pause).toHaveAttribute('aria-label', 'Приостановить бегущую строку');
+  await expect(item.locator('label.innovation-toggle-label')).toHaveText('Пауза');
+  expect(await ticker.evaluate(element => getComputedStyle(element).animationPlayState)).toBe('running');
+
+  await pause.check();
+  expect(await ticker.evaluate(element => getComputedStyle(element).animationPlayState)).toBe('paused');
+  await pause.uncheck();
+  expect(await ticker.evaluate(element => getComputedStyle(element).animationPlayState)).toBe('running');
+  expect(await page.locator('script').count()).toBe(0);
+});
+
 test('roadmap ticker respects reduced motion and leaves its message readable', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(LANDING_PATH, { waitUntil: 'domcontentloaded' });
