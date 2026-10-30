@@ -83,6 +83,8 @@ test('Research Studio applies selected settings without sending or replacing the
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await configureCustomProvider(page);
+  // Saving the test provider performs one bounded model-connectivity probe; do not count it as a chat send.
+  modelCalls = 0;
   const draft = 'Compare three primary sources and identify conflicting evidence.';
   await page.locator('#userInput').fill(draft);
   await page.locator('[data-action="toggle-sidebar"]').click();
