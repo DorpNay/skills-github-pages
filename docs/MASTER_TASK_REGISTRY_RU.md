@@ -376,3 +376,41 @@
 ## E. Следующее действие
 
 Обновить корневой `ORIENTER.md`, чтобы он ссылался на этот реестр; синхронизировать подробный ориентир и machine-readable state/snapshot в continuity PR. Затем расширить исследование агентной платформы в PR #125; VERT/conversion и output-limit audit вести отдельными проверяемыми срезами.
+
+
+## F. Новые workstreams владельца (2026-10-31)
+
+**Правило приоритета:** текущая разработка — только Landing V1 внутри принятого стека. Исследовательские/будущие capability PR ведутся параллельно и не входят в обычный merge queue. Зелёный CI не является разрешением на merge или runtime adoption.
+
+### F1. Landing V1 — постоянное улучшение текущего стека
+
+- [x] **LANDING-TRACK-001**: Зафиксировать направление постоянного поиска улучшений лендинга строго внутри согласованного стека. **Progress:** границы повторно сверены с `docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md` и `docs/TECHNIQUE_REGISTER_RU.md`.
+- [x] **LANDING-TRACK-002**: Создать отдельный bounded backlog улучшений Landing V1. **Artifact:** `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` в PR #129.
+- [ ] **LANDING-TRACK-003**: Снять baseline метрик опубликованного лендинга и выбрать первый минимальный improvement slice.
+- [ ] **LANDING-TRACK-004**: Вести цикл baseline → hypothesis → minimal patch → regression test → exact-head CI → state update на каждом рабочем заходе.
+
+### F2. Future workstreams — отдельные PR, не для случайного merge
+
+- [x] **GOVERNANCE-001**: Ввести правила разделения LANDING / RESEARCH / FUTURE / SPIKE. **Artifact:** `docs/WORKSTREAM_GOVERNANCE_RU.md` в PR #129.
+- [x] **GOVERNANCE-002**: Зафиксировать naming, HOLD banners, Draft state and owner-approval merge gates.
+- [~] **GOVERNANCE-003**: Проставить маркировку на существующих agent/research PR. **Progress:** PR #125 переименован в [FUTURE — DO NOT MERGE] и остаётся Draft; PR #128 переименован в [RESEARCH — HOLD] и переведён в Draft; новый PR #129 создан как Draft. Остальные PR и label availability требуют отдельной проверки.
+- [ ] **GOVERNANCE-004**: Проверить repository rulesets/branch protection и только после согласования включить техническое enforcement.
+- [ ] **GOVERNANCE-005**: Синхронизировать ориентиры и этот реестр с PR #127 после подтверждённого merge.
+
+### F3. Voice 2.0 — research-only
+
+- [x] **VOICE-001**: Создать отдельную ветку `research/voice-assistant-transcription-20261031` от актуального main.
+- [x] **VOICE-002**: Сверить существующие voice implementation plan, Exa synthesis, multimodal stack, latency contract, language matrix, V-016 checklist and current implementation notes.
+- [x] **VOICE-003**: Зафиксировать последовательность источников: ранее найденные совместно → repository → owner-provided → independent primary sources.
+- [~] **VOICE-004**: Собрать provenance-реестр ранее найденных и предоставленных владельцем источников; точное происхождение части исторических ссылок ещё проверить.
+- [ ] **VOICE-005**: Провести независимый обзор актуальных ASR/STT, TTS, streaming, VAD/AEC, diarization, translation, transliteration, normalization and voice-agent systems.
+- [ ] **VOICE-006**: Проверить кодовые, model, voice, phonemizer and dataset licenses plus redistribution restrictions.
+- [ ] **VOICE-007**: Сверить текущий код/тесты с полным Voice 2.0 acceptance matrix.
+- [ ] **VOICE-008**: Подготовить воспроизводимый RU/EN/TH golden-set benchmark and privacy/consent protocol.
+- [ ] **VOICE-009**: Сравнить shortlist на одинаковых данных и target hardware; не менять whisper.cpp/Piper до измеримого выигрыша.
+- [ ] **VOICE-010**: Подготовить staged architecture/API plan for future implementation; любые runtime slices требуют отдельного owner approval.
+
+### F4. Исторический общий backlog
+
+- [x] **REGISTRY-001**: Найти прежний большой список незавершённых задач. **Result:** PR #127 / `docs/MASTER_TASK_REGISTRY_RU.md` — lossless migration of 275 open/partial rows from six historical sources; 218 unchecked + 57 partial before deduplication.
+- [ ] **REGISTRY-002**: Свести дубли и cross-link исторические пункты с текущими кодом, PR, tests and owner gates. Ничего не удалять до reconciliation.
