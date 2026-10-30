@@ -37,7 +37,8 @@
 | Workstream governance (PR #129) | 3 | 2 | 1 | `docs/WORKSTREAM_GOVERNANCE_RU.md` |
 | Deep Research 2.0 plan (PR #130) | 20 | 20 | 0 | `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` |
 | Deep Research 2.0 external research (PR #130) | 10 | 10 | 0 | `docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` |
-| **Итого по 20 документам + 1 branch delta** | **537** | **463** | **74** | |
+| PR #126 delta к USER_REQUEST_CHECKLIST | 7 | 7 | 0 | branch-only snapshot |
+| **Итого по 20 документам + 2 branch deltas** | **544** | **470** | **74** | |
 
 ## A. Перенесённые исторические задачи
 
@@ -709,6 +710,19 @@
 - [ ] **USER125-257** (строка 257; branch-only delta `docs/USER_REQUEST_CHECKLIST.md` @ `research/agent-platform-blueprint-20261030`): Run RU/EN/TH model quality and target-host RAM/latency bake-off before choosing helper models.
 - [ ] **USER125-258** (строка 258; branch-only delta `docs/USER_REQUEST_CHECKLIST.md` @ `research/agent-platform-blueprint-20261030`): Complete threat model and real sandbox/escape tests before enabling arbitrary code or shell tools.
 
+
+
+### USER126 — branch-only delta `docs/USER_REQUEST_CHECKLIST.md` @ `chore/dependency-currency-audit-20261031`
+
+Семь открытых строк, добавленных в PR #126 branch относительно main; пять из них повторяют acceptance items из PR #125, две добавляют owner/manual gates. Повторы сохраняются для provenance.
+
+- [ ] **USER126-254** (строка 254; branch-only delta `docs/USER_REQUEST_CHECKLIST.md` @ `chore/dependency-currency-audit-20261031`): Review the architecture and approve/adjust the Phase 1 contracts and registry before any runtime implementation.
+- [ ] **USER126-255** (строка 255; branch-only delta `docs/USER_REQUEST_CHECKLIST.md` @ `chore/dependency-currency-audit-20261031`): Implement a versioned AgentProfile/Profession/Skill/Capability/ModelPolicy contract in a separate bounded PR.
+- [ ] **USER126-256** (строка 256; branch-only delta `docs/USER_REQUEST_CHECKLIST.md` @ `chore/dependency-currency-audit-20261031`): Build durable AgentRun state, isolated subagent task packets, budget/cancellation and restart recovery in subsequent PRs.
+- [ ] **USER126-257** (строка 257; branch-only delta `docs/USER_REQUEST_CHECKLIST.md` @ `chore/dependency-currency-audit-20261031`): Run RU/EN/TH model quality and target-host RAM/latency bake-off before choosing helper models.
+- [ ] **USER126-258** (строка 258; branch-only delta `docs/USER_REQUEST_CHECKLIST.md` @ `chore/dependency-currency-audit-20261031`): Complete threat model and real sandbox/escape tests before enabling arbitrary code or shell tools.
+- [ ] **USER126-328** (строка 328; branch-only delta `docs/USER_REQUEST_CHECKLIST.md` @ `chore/dependency-currency-audit-20261031`): После cooldown повторно оценить pypdf 6.21.4, pytest 9.2.0, pytest-asyncio 1.4.1 и Graphify 0.9.97.
+- [ ] **USER126-329** (строка 329; branch-only delta `docs/USER_REQUEST_CHECKLIST.md` @ `chore/dependency-currency-audit-20261031`): Live Cloudflare Tunnel/Ollama, целевой VPS и native iPhone остаются owner/manual gates.
 
 ## B. Новые задачи по указанию владельца (2026-10-31)
 
