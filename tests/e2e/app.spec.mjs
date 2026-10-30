@@ -3,6 +3,22 @@ import { readFile } from 'node:fs/promises';
 
 const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
 
+async function openProjectSettingsForId(page, projectId) {
+  const sidebar = page.locator('#sidebar');
+  if (await sidebar.evaluate(element => element.classList.contains('-translate-x-full'))) {
+    await page.locator('[data-action="toggle-sidebar"]').click();
+  }
+  const navigation = page.locator('#projectNavigationList');
+  if (await navigation.evaluate(element => element.classList.contains('hidden'))) {
+    await page.locator('#projectNavToggle').click();
+  }
+  const group = page.locator('#projectNavigationList details[data-project-id="' + projectId + '"]');
+  if (!(await group.evaluate(element => element.open))) await group.locator(':scope > summary').click();
+  await group.locator('[data-action="open-project-settings"]').click();
+  await expect(page.locator('#projectSettingsModal')).toBeVisible();
+  await expect(page.locator('#currentProjectSelect')).toHaveValue(projectId);
+}
+
 async function chooseSearchMode(page, mode) {
   await page.locator('#searchModeSummary').click();
   await page.locator(`[data-action="select-search-mode"][data-search-mode="${mode}"]`).click();
@@ -1187,7 +1203,9 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('[data-action="chat-action-save"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(betaId);
   // Moving projects deliberately clears scoped memory consent; re-enable Beta explicitly.
+  await openProjectSettingsForId(page, betaId);
   await page.locator('#projectMemoryToggle').check();
+  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 
   await page.locator('[data-action="close-sidebar"]').click();
   await page.locator('[data-action="toggle-settings"]').first().click();
@@ -1245,7 +1263,14 @@ test('deleting a project removes its chats but preserves other projects and chat
   // remains in Disposable Project and must be deleted with that project.
   await page.locator('[data-action="new-chat"]').first().click();
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#currentProjectSelect').selectOption('');
+  // createNewChat() already creates an unassigned personal chat; the project selector
+  // belongs to the closed Project Settings modal and must not be used here.
+  const personalChatProjectId = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const current = localStorage.getItem('ai_current_chat_v87');
+    return chats.find(chat => chat.id === current)?.projectId || '';
+  });
+  expect(personalChatProjectId).toBe('');
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectNameInput').fill('Keep Project');
   await page.locator('[data-action="create-project"]').click();
@@ -1268,15 +1293,7 @@ test('deleting a project removes its chats but preserves other projects and chat
   await expect(page.locator('#projectSettingsStatus')).toContainText('Disposable Project');
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
   await disposableGroup.locator(`[data-action="switch-chat"][data-chat-id="${disposableChatId}"]`).click();
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  await expect(page.locator('#currentProjectSelect')).toHaveValue(disposableId);
-  if (await page.locator('#projectNavigationList').evaluate(element => element.classList.contains('hidden'))) {
-    await page.locator('#projectNavToggle').click();
-  }
-  if (!(await disposableGroup.evaluate(element => element.open))) {
-    await disposableGroup.locator(':scope > summary').click();
-  }
-  await disposableGroup.locator('[data-action="open-project-settings"]').click();
+  await openProjectSettingsForId(page, disposableId);
   await expect(page.locator('#projectSettingsStatus')).toContainText('Disposable Project');
 
   page.on('dialog', dialog => dialog.accept());
@@ -1635,7 +1652,7 @@ test('Thai public-knowledge search uses Thai Wikipedia and returns a matching so
       message.role === 'tool' && String(message.content).includes('https://th.wikipedia.org/wiki/')
     );
     expect(toolMessage).toBeTruthy();
-    const sourceLine = String(toolMessage.content).split(/\\r?\\n/).find(line => line.startsWith('URL: '));
+    const sourceLine = String(toolMessage.content).split(/\r?\n/).find(line => line.startsWith('URL: '));
     expect(sourceLine).toBeTruthy();
     const sourceUrl = new URL(sourceLine.slice(5));
     expect(sourceUrl.hostname).toBe('th.wikipedia.org');
@@ -1931,6 +1948,8 @@ test('server project memory bridge is manual and requires both chat opt-ins', as
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectNameInput').fill('Server bridge project');
   await page.locator('[data-action="create-project"]').click();
+  const serverMemoryProjectId = await page.locator('#currentProjectSelect').inputValue();
+  expect(serverMemoryProjectId).not.toBe('');
   await page.locator('#projectMemoryInput').fill('SERVER_MEMORY_SENTINEL is a local project fact.');
   await page.locator('[data-action="add-project-memory"]').click();
   await expect(page.locator('#projectMemoryBox')).toContainText('SERVER_MEMORY_SENTINEL');
@@ -1954,9 +1973,9 @@ test('server project memory bridge is manual and requires both chat opt-ins', as
   expect(capturedBodies[0].messages[0].content).not.toContain('SERVER_MEMORY_SENTINEL');
 
   // Project-memory opt-in alone must not invoke the server graph.
-  await page.locator('[data-action="toggle-sidebar"]').click();
+  await openProjectSettingsForId(page, serverMemoryProjectId);
   await page.locator('#projectMemoryToggle').check();
-  await page.locator('[data-action="close-sidebar"]').click();
+  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
   await page.locator('#userInput').fill('Use only local project memory.');
   await page.locator('#sendBtn').click();
   await expect.poll(() => capturedBodies.length).toBe(2);
@@ -1964,10 +1983,10 @@ test('server project memory bridge is manual and requires both chat opt-ins', as
   expect(capturedBodies[1].messages[0].content).toContain('SERVER_MEMORY_SENTINEL');
 
   // Server-memory opt-in alone must not retrieve server context or bypass project opt-in.
-  await page.locator('[data-action="toggle-sidebar"]').click();
+  await openProjectSettingsForId(page, serverMemoryProjectId);
   await page.locator('#projectMemoryToggle').uncheck();
   await page.locator('#serverProjectMemoryToggle').check();
-  await page.locator('[data-action="close-sidebar"]').click();
+  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
   await page.locator('#userInput').fill('Server memory is opted in but project memory is not.');
   await page.locator('#sendBtn').click();
   await expect.poll(() => capturedBodies.length).toBe(3);
@@ -1975,9 +1994,9 @@ test('server project memory bridge is manual and requires both chat opt-ins', as
   expect(capturedBodies[2].messages[0].content).not.toContain('SERVER_MEMORY_SENTINEL');
 
   // Only both opt-ins together allow retrieval of confirmed server facts.
-  await page.locator('[data-action="toggle-sidebar"]').click();
+  await openProjectSettingsForId(page, serverMemoryProjectId);
   await page.locator('#projectMemoryToggle').check();
-  await page.locator('[data-action="close-sidebar"]').click();
+  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
   await page.locator('#userInput').fill('Use the approved server project memory.');
   await page.locator('#sendBtn').click();
   await expect.poll(() => capturedBodies.length).toBe(4);
