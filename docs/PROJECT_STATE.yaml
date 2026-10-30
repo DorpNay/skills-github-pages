@@ -10,7 +10,7 @@ project_state:
     merged_changes: "PR #120 sidebar hierarchy/theme-language sync; #119 provider separation/project scope/composer preference; #118 chat import/export; #113 immutable Actions pins; #115 modal scrim/outside-tap; #114 empty-by-default prompt/context budget; #71 mobile composer; #84/#81/#83/#82 infrastructure foundations; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
     exact_head_checks: "PR #120 merge commit reports Chromium, published Pages smoke, Jekyll, integrity, security, context and Graphify checks passed in its commit message; get_commit_combined_status returned no separate status entries for 2bda22229cba3576628f92c821bb6e1562d8abc5. Current PR #121 exact-head run #40991938982 was pending at snapshot capture."
     runtime_boundary: "GitHub Pages browser smoke verified; native iPhone, live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
-    next: "Finalize PR #121 with exact-head Quality/Chromium/Pages checks; use docs/V1_UI_FINALIZATION_RU.md as the V1 UI release checklist. Issue #111 remains the owner/live-host release gate; do not merge/deploy claims without evidence."
+    next: "Finalize PR #121 with exact-head Quality/Chromium/Pages checks; use docs/FREE_LANDING_UI_FINALIZATION_RU.md as the first free landing UI release checklist. Issue #111 remains the owner/live-host release gate; do not merge/deploy claims without evidence."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
