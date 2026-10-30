@@ -64,10 +64,18 @@ test('large model context retains history beyond the old global caps', async ({ 
     body: JSON.stringify({ data: [{ id: 'large-window-model', context_length: 131072 }] })
   }));
   await page.route('https://api.example.test/v1/chat/completions', async route => {
-    sent = route.request().postDataJSON().messages;
+    const messages = route.request().postDataJSON().messages;
+    // Ignore the settings connectivity probe; only capture the actual user turn.
+    const isUserTurn = messages.some(message =>
+      message.role === 'user' && String(message.content || '').includes('LATEST_TURN')
+    );
+    if (isUserTurn) sent = messages;
     await route.fulfill({
       status: 200, contentType: 'application/json',
-      body: JSON.stringify({ model: 'large-window-model', choices: [{ message: { role: 'assistant', content: 'Large context retained.' } }] })
+      body: JSON.stringify({
+        model: 'large-window-model',
+        choices: [{ message: { role: 'assistant', content: isUserTurn ? 'Large context retained.' : 'OK' } }]
+      })
     });
   });
 
