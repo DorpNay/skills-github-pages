@@ -1632,9 +1632,14 @@ test('Thai public-knowledge search uses Thai Wikipedia and returns a matching so
       });
     }
     const toolMessage = body.messages.find(message =>
-      message.role === 'tool' && String(message.content).includes('https://th.wikipedia.org/wiki/ประเทศไทย')
+      message.role === 'tool' && String(message.content).includes('https://th.wikipedia.org/wiki/')
     );
     expect(toolMessage).toBeTruthy();
+    const sourceLine = String(toolMessage.content).split(/\\r?\\n/).find(line => line.startsWith('URL: '));
+    expect(sourceLine).toBeTruthy();
+    const sourceUrl = new URL(sourceLine.slice(5));
+    expect(sourceUrl.hostname).toBe('th.wikipedia.org');
+    expect(decodeURIComponent(sourceUrl.pathname)).toBe('/wiki/ประเทศไทย');
     return route.fulfill({
       status: 200, contentType: 'application/json',
       body: JSON.stringify({ model: 'thai-search-model', choices: [{ message: { role: 'assistant', content: 'Thai Wikipedia source confirmed.' } }] })
