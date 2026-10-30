@@ -183,7 +183,7 @@
 - **Rollout:** one bounded phase at a time, feature flags off by default, with golden-set evaluation and target-host resource measurements. No production-safety claim before sandbox validation.
 - **Links:** `gateway/tools/dag_engine.py`, `gateway/tools/validator.py`, `gateway/security/approval_gates.py`, `gateway/routing.py`, `observability/trace_context.py`, `docs/AGENT_ORCHESTRATION_RESEARCH_RU.md`.
 
-## D-017 — Adaptive-minimalist interface and private autonomous work partner
+## D-017 — Adaptive-minimalist interface and private autonomous work partner / Адаптивный минимализм и приватный автономный партнёр
 
 - **Status:** Accepted target architecture; implementation not implied.
 - **Interface:** begin calm and minimal, then build a sense of continuity and warmth through relevant context. Keep advanced tools discoverable and close to core workflows for users who need them, without unsolicited prompts or added complexity for basic use. Adaptation must remain predictable and user-controllable.
@@ -192,7 +192,7 @@
 - **Safety boundary:** fail closed on ambiguity, missing evidence or out-of-scope actions; isolate execution and protect secrets. Do not describe target capabilities as implemented until verified by tests and deployment evidence.
 - **Acceptance direction:** usability review for beginner/basic and advanced workflows; tests for access isolation and task continuity; PR evidence and rollback review; explicit approval gate for merging.
 
-## D-017 — Адаптивный минимализм и приватный автономный партнёр
+### Русская формулировка
 
 - **Статус:** принято как целевое направление; реализация не подразумевается.
 - **Интерфейс:** спокойный минималистичный старт; ощущение уюта и непрерывности формируется за счёт релевантного контекста. Расширенные инструменты легко обнаружимы и связаны с базовыми сценариями, но не навязываются пользователям базовых функций. Адаптация предсказуема и управляема пользователем.
