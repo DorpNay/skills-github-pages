@@ -93,6 +93,21 @@ title: aLandi — личная AI-среда с собственным gateway
     details { border-bottom: 1px solid var(--line); padding: 1rem 0; }
     summary { cursor: pointer; font-weight: 750; }
     details p { color: var(--muted); max-width: 850px; }
+    .roadmap-list { display:grid; gap:.75rem; }
+    .roadmap-item { border:1px solid var(--line); border-radius:1rem; padding:.9rem 1rem; background:rgba(16,29,45,.58); }
+    .roadmap-item summary { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+    .roadmap-state { flex:none; color:var(--amber); font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
+    .roadmap-item[open] { border-color:rgba(146,243,208,.35); }
+    .innovation-ticker { overflow:hidden; margin-top:.8rem; border:1px solid rgba(146,243,208,.25); border-radius:999px; color:var(--mint); background:rgba(146,243,208,.055); }
+    .innovation-track { display:inline-block; min-width:max-content; padding:.35rem 1rem; animation:innovation-marquee 22s linear infinite; animation-play-state:paused; }
+    .roadmap-item[open] .innovation-track { animation-play-state:running; }
+    @keyframes innovation-marquee { from { transform:translateX(100%); } to { transform:translateX(-100%); } }
+    .roadmap-disclaimer { color:var(--muted); font-size:.78rem; line-height:1.5; margin-top:.4rem; }
+    @media (prefers-reduced-motion:reduce) {
+      .innovation-track { animation:none!important; transform:none!important; white-space:normal; min-width:0; }
+      html { scroll-behavior:auto; }
+      .button:hover { transform:none; }
+    }
     .footer { padding: 2.5rem 0 3rem; color: var(--muted); font-size: .88rem; }
     .footer-links { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: .8rem; }
     .footer-links a { color: var(--blue); }
@@ -124,6 +139,7 @@ title: aLandi — личная AI-среда с собственным gateway
       <a href="#capabilities">Возможности</a>
       <a href="#stack">Стек</a>
       <a href="#readiness">Готовность</a>
+      <a href="#roadmap">Развитие</a>
       <a href="https://github.com/DorpNay/skills-github-pages/blob/main/docs/START_HERE_RU.md">Запуск</a>
     </nav>
   </header>
@@ -137,7 +153,7 @@ title: aLandi — личная AI-среда с собственным gateway
         <a class="button primary" href="https://dorpnay.github.io/skills-github-pages/">Открыть рабочую среду <span aria-hidden="true">↗</span></a>
         <a class="button secondary" href="https://github.com/DorpNay/skills-github-pages/blob/main/docs/START_HERE_RU.md">Пошаговый запуск</a>
       </div>
-      <p class="note">Важно: приложение опубликовано как статический GitHub Pages сайт. Частный gateway, VPS и локальная модель настраиваются отдельно; публичный hosted AI endpoint этим сайтом не предоставляется.</p>
+      <p class="note">Важно: сам интерфейс — бесплатная статическая страница GitHub Pages. Модельный inference, сторонние API и собственная инфраструктура в него не входят: их стоимость и условия определяются выбранным провайдером. Частный gateway, VPS и локальная модель настраиваются отдельно; публичный hosted AI endpoint этим сайтом не предоставляется.</p>
     </section>
 
     <section class="section" id="capabilities">
@@ -224,6 +240,36 @@ title: aLandi — личная AI-среда с собственным gateway
       </div>
     </section>
 
+    <section class="section" id="roadmap">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Что развивается дальше</h2>
+          <p class="muted">Открывай направление, чтобы увидеть его статус и критерии. Это план улучшений, а не обещание срока или уже работающая функция.</p>
+        </div>
+        <div class="roadmap-list">
+          <details class="roadmap-item">
+            <summary><span>Независимые роли и команда агентов</span><span class="roadmap-state">Исследование</span></summary>
+            <p>Сейчас интерфейс сохраняет blueprint ролей, а runtime выполняет четыре последовательных этапа на одной выбранной модели. Следующий этап — отдельные исполнители, ограниченные полномочия, независимая проверка, бюджет и воспроизводимый trace. Не включать это в V1 до реального orchestration runtime и adversarial-тестов.</p>
+            <div class="innovation-ticker"><span class="innovation-track" aria-hidden="true">1nv3nt10n 1n PrOc3ss… · независимое исполнение ролей · policy gate · проверяемый результат ·</span></div>
+            <p class="roadmap-disclaimer">Маркер декоративный и не сообщает о текущем выполнении фоновой задачи.</p>
+          </details>
+          <details class="roadmap-item">
+            <summary><span>Интеграции и контролируемый обмен данными</span><span class="roadmap-state">Планируется</span></summary>
+            <p>Новые источники будут подключаться только через явные разрешения, минимальные scopes, видимый маршрут данных и возможность отключения. До появления работающего адаптера карточка не должна изображать подключённый сервис.</p>
+            <div class="innovation-ticker"><span class="innovation-track" aria-hidden="true">1nv3nt10n 1n PrOc3ss… · разрешения · минимальные scopes · прозрачность передачи ·</span></div>
+            <p class="roadmap-disclaimer">Не означает, что внешние коннекторы или синхронизация уже доступны.</p>
+          </details>
+          <details class="roadmap-item">
+            <summary><span>Документы, голос и офлайн-возможности</span><span class="roadmap-state">Отдельный gate</span></summary>
+            <p>Извлечение документов, локальные ASR/TTS и расширенный offline path требуют подтверждённых артефактов, лицензий, реальных устройств и измерений памяти/задержки. В первом выпуске эти возможности остаются выключенными, пока не пройдут свои проверки.</p>
+            <div class="innovation-ticker"><span class="innovation-track" aria-hidden="true">1nv3nt10n 1n PrOc3ss… · локальная обработка · лицензии · реальные device tests ·</span></div>
+            <p class="roadmap-disclaimer">Без проверок интерфейс не должен показывать эти направления как готовые функции.</p>
+          </details>
+        </div>
+        <p class="note" style="margin-top:1rem">Полный живой список требований и проверок V1 ведётся в <a href="https://github.com/DorpNay/skills-github-pages/blob/main/docs/V1_UI_FINALIZATION_RU.md">реестре финализации UI</a>.</p>
+      </div>
+    </section>
+
     <section class="section">
       <div class="wrap">
         <div class="section-head">
@@ -255,6 +301,7 @@ title: aLandi — личная AI-среда с собственным gateway
     <div class="footer-links">
       <a href="https://dorpnay.github.io/skills-github-pages/">Открыть приложение</a>
       <a href="https://github.com/DorpNay/skills-github-pages/blob/main/docs/PRE_LAUNCH_STACK_RU.md">Стек и чек-лист запуска</a>
+      <a href="https://github.com/DorpNay/skills-github-pages/blob/main/docs/V1_UI_FINALIZATION_RU.md">Реестр финализации UI</a>
       <a href="https://github.com/DorpNay/skills-github-pages">Исходный код</a>
     </div>
   </footer>
