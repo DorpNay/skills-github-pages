@@ -1590,6 +1590,80 @@ test('web_search falls back to public sources when Tavily is not configured', as
 });
 
 
+test('Thai public-knowledge search uses Thai Wikipedia and returns a matching source URL', async ({ page }) => {
+  let modelCalls = 0;
+  let wikipediaRequest = null;
+  await page.route('https://api.example.test/v1/models', async route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ data: [{ id: 'thai-search-model' }] })
+  }));
+  await page.route('https://th.wikipedia.org/w/api.php**', async route => {
+    wikipediaRequest = new URL(route.request().url());
+    return route.fulfill({
+      status: 200,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      contentType: 'application/json',
+      body: JSON.stringify({ query: { search: [{
+        title: 'ประเทศไทย',
+        snippet: 'แหล่งข้อมูลสาธารณะภาษาไทยสำหรับตรวจสอบผลการค้นหา'
+      }] } })
+    });
+  });
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    const body = route.request().postDataJSON();
+    const lastMessage = body.messages?.at(-1)?.content;
+    if (lastMessage === 'Reply with exactly OK. No other words.') {
+      return route.fulfill({
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({ model: 'thai-search-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+      });
+    }
+    modelCalls++;
+    if (Array.isArray(body.tools) && body.tools.length) {
+      expect(body.tools.some(tool => tool.function?.name === 'public_knowledge_search')).toBe(true);
+      return route.fulfill({
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({ model: 'thai-search-model', choices: [{
+          message: { role: 'assistant', content: null, tool_calls: [{
+            id: 'thai-wikipedia-call', type: 'function',
+            function: { name: 'public_knowledge_search', arguments: JSON.stringify({ source: 'wikipedia', query: 'ประเทศไทย' }) }
+          }] }, finish_reason: 'tool_calls'
+        }] })
+      });
+    }
+    const toolMessage = body.messages.find(message =>
+      message.role === 'tool' && String(message.content).includes('https://th.wikipedia.org/wiki/ประเทศไทย')
+    );
+    expect(toolMessage).toBeTruthy();
+    return route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'thai-search-model', choices: [{ message: { role: 'assistant', content: 'Thai Wikipedia source confirmed.' } }] })
+    });
+  });
+
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('thai-search-model');
+  await page.locator('#apiKey').fill('e2e-thai-search-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+
+  await chooseSearchMode(page, 'normal');
+  await page.locator('#userInput').fill('ค้นหาข้อมูลเกี่ยวกับประเทศไทย');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Thai Wikipedia source confirmed.', { timeout: 20000 });
+
+  expect(modelCalls).toBe(2);
+  expect(wikipediaRequest?.hostname).toBe('th.wikipedia.org');
+  expect(wikipediaRequest?.searchParams.get('action')).toBe('query');
+  expect(wikipediaRequest?.searchParams.get('origin')).toBe('*');
+  expect(wikipediaRequest?.searchParams.get('srsearch')).toBe('ประเทศไทย');
+});
+
 test('aLandi cloud probe rejects HTTP 200 proxy text as proof of a model connection', async ({ page }) => {
   await page.route('https://cloud.example.test/v1/chat/completions', async route => route.fulfill({
     status: 200, contentType: 'text/plain; charset=utf-8',
