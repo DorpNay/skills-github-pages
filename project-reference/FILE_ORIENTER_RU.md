@@ -231,3 +231,8 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Read `docs/LANDING_UX_POLISH_BACKLOG_RU.md` for all remaining landing/app presentation work.
 - Landing ticker pause controls implemented in `f42c42d`; Playwright regression in `b213c8a`; exact-head CI pending. No JS/runtime dependency added.
 - Full tracker also linked from `docs/V1_UI_FINALIZATION_RU.md`; update PROJECT_STATE, VOLLEY_LOG and ORIENTER after each major slice.
+
+
+## Verified scratch cleanup — 2026-10-30
+- Removed `temp/3`, `temp/4`, `temp/5` after checking references and updating IMPROVEMENT_SELECTION.md. Retained `temp/1` and `temp/2` as historical research. No production source files removed.
+- Deletion commits and rationale: docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md and docs/PROJECT_STATE.yaml.
