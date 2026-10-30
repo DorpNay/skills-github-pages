@@ -4,15 +4,14 @@
 
 ## Текущая контрольная точка — 2026-10-30
 
-- Текущий main: e6404d510229fa64a7bb375995d76dcba55de623 (PR #120 — sidebar hierarchy, memory/project/chat navigation and synchronized theme/language preferences). В merge-коммите записано, что Chromium, published Pages smoke, Jekyll, integrity, security, context и Graphify прошли; отдельный combined-status запрос для SHA не вернул status entries, поэтому не приписывать этому SHA несуществующие run IDs.
-- Единственный открытый PR: #121, branch feat/chat-settings-orthogonal-controls-20261030. Изменения охватывают независимые work-effort/search параметры, Research Studio как mode-only окно, разделение private server/external providers, project settings modal, landing roadmap и V1 checklist.
-- В текущей ветке устранён дублирующий Settings close selector; integrity provider-group sentinel переведён на детерминированный string parsing; Research Studio E2E отделяет ожидаемый provider probe от отправки пользовательского запроса. Добавлены landing E2E, ticker tests и reduced-motion acceptance. Всё это пока **не merged**; повторный exact-head CI обязателен.
-- Проверка на commit 44ea54e обнаружила один stale copy assertion в integrity sentinel и stale project-state snapshot/orienters. Sentinel приведён к текущей короткой UI-формулировке; ориентиры и snapshot синхронизируются. Новый exact-head CI обязателен.
-- Exact queue markers (exclude only the PR currently being checked): open PRs (0): ; open issues (1): #111. Active PR under this check: #121.
-- Единственный открытый issue #111 — consolidated release-gates tracker. Он содержит owner-only gates: main ruleset/review policy, реальный VPS/Tunnel/Ollama, аппаратные и model benchmarks, voice/device, permissioned RAG corpus, sandbox и OAuth. Не закрывать только по зелёному CI или ради нулевой очереди.
-- Реестр V1 UI: docs/V1_UI_FINALIZATION_RU.md. История требований: docs/USER_REQUEST_CHECKLIST.md. Целевая архитектура и границы первого стека: docs/PRE_LAUNCH_STACK_RU.md и docs/ALANDI_MASTER_CONTEXT_RU.md.
-- Граница релиза: бесплатный статический GitHub Pages интерфейс не означает бесплатный inference или предоставленный hosted AI endpoint. Корневое приложение не заменять лендингом. Private gateway/Ollama и прочие runtime-зависимости не объявлять развёрнутыми без owner/live-host evidence.
-- Непроверено: нативный iPhone Safari/keyboard/touch/screen-reader, live VPS/Tunnel/Ollama, provider credentials, real model RAM/latency, voice/device, OAuth/Drive, production RAG golden set и main ruleset.
+- Текущий main: `fd4f0a105183feb23e0f4e4697446235de9ffe9a` — PR #121 и PR #122 merged.
+- PR #121 merged: `f4d880f9648989f4fe48ddd2284220b3606c3b86`, exact head `e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b`. Exact-head workflow groups passed: Gateway, Quality (Chromium/Jekyll/published-site smoke, Context/Security/Integrity), Freshness, Provenance, Graphify, Dead Code.
+- PR #122 merged: `fd4f0a105183feb23e0f4e4697446235de9ffe9a`, exact head `94d871dbf76a5364ebb3c61d86cc763affa5eaa1`. Gateway, Quality (Chromium/Jekyll/published-site smoke, Context/Security/Integrity), Graphify and Dead Code passed.
+- Очередь: **open PRs (0): ; open issues (1): #111**. Issue #111 — единственный owner/live-host gate; не закрывать без фактических VPS, hardware, credentials, ruleset, corpus, voice, sandbox и OAuth evidence.
+- Первый бесплатный лендинг V1 зафиксирован. После PR #121 **не добавлять новые продуктовые возможности и runtime-компоненты**. Разрешены только UX polish, надёжность, безопасность, доступность, производительность, тесты и документация внутри существующего HTML/CSS/JS + Jekyll/GitHub Pages и FastAPI/Ollama стека.
+- Основные источники: `docs/V1_UI_FINALIZATION_RU.md`, `docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`, `docs/LANDING_UX_POLISH_BACKLOG_RU.md`, `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`, `docs/PROJECT_STATE.yaml`.
+- Малые модели: в main есть ручной memory-helper opt-in через операторский `ALANDI_HELPER_MODEL`; general-purpose subagent routing не реализован. 64 роли — логические контракты, не отдельные процессы. Синтетический benchmark не заменяет human-rated и target-host evaluation.
+- Не подтверждено: post-merge Pages deployment на точном merge SHA; native iPhone Safari/VoiceOver; live VPS/Tunnel/Ollama и provider credentials; target-host model RAM/latency/quality; production voice, RAG golden set, OAuth/Drive и CLI sandbox.
 
 ## Историческая контрольная точка — 2026-10-28
 
