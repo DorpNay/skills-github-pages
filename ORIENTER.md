@@ -44,3 +44,12 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Dead-code report #389 contains one Vulture false positive: `BufferedTTS.synthesize_prefix(max_duration_ms)` is a protocol contract parameter. No deletions are authorized by this report.
 - Voice capability gap: current UI has editable local transcription, one-message Piper playback and a half-duplex voice loop; selection-to-speech, multi-message queue, real-time streaming and native AEC/barge-in remain to implement/verify. See the detailed audit tracker.
 - Current next: finish Quality/Chromium rerun; continue targeted module audit; update state after each verified stage.
+
+
+### Owner addendum — voice, helpers, GPU and multi-agent (2026-10-30)
+- Added P0 voice requirements P0-13…P0-18 and P1 helper/GPU/orchestration/Knowledge-to-Skill requirements P1-10…P1-17 in docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md.
+- Voice scope gap: editable local ASR, one-message Piper TTS and half-duplex dialogue exist; selected-text TTS, multi-message queue, true streaming turn-taking and native AEC/barge-in remain to implement/verify.
+- Moonshine Voice is strong for live streaming but currently listed STT locales do not include RU or TH; TTS includes RU, not TH. Keep Whisper for RU/TH; evaluate Moonshine only for supported locales with exact model license review.
+- Agent orchestration candidates: OpenWOP v2 protocol, LangGraph checkpoint/interrupt, Temporal durable workflows. OpenWOP is not production-proven; no runtime adopted.
+- Small helper candidates: Qwen3.5-0.8B for narrow low-risk classification/extraction; Granite-4.2-3B for tool-call experiments. Both require RU/EN/TH eval; no automatic model selection.
+- Next: continue module/security audit and complete Chromium checks; see detailed tracker.
