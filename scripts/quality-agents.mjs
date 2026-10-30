@@ -168,7 +168,7 @@ const suites = {
       includes('safeSet(providerKeyStorage(provider),enteredApiKey)', 'Only an explicitly entered provider key should overwrite its stored value.');
       includes("provider==='gemini'&&enteredApiKey?[safeSet(STORAGE.apiKey,enteredApiKey)]:[]", 'Saving settings must not erase the Gemini key when the password field is blank.');
       includes('Older builds wrote every provider\'s key into the legacy Gemini slot.', 'Legacy cross-provider key contamination must be migrated safely.');
-      includes('текст запроса и контекст могут быть отправлены другому провайдеру', 'Cross-provider fallback must disclose that request content can be sent to another provider.');
+      includes('текст запроса и контекст могут передаваться другому сервису', 'Cross-provider fallback must disclose that request content can be sent to another provider.');
       includes('ключ не сохранён для выбранного провайдера', 'Settings must explain why the API key field is blank after switching providers.');
       includes("const selectedProvider=safeGet(STORAGE.provider)||'alandi',allowCrossProvider=safeGet(STORAGE.crossProviderFallback)==='true'", 'Cross-provider fallback must be a user-controlled opt-in.');
       includes('function isGenericModelRefusal(value)', 'Generic model refusals must not be accepted as successful research stages.');
