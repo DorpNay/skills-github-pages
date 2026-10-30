@@ -9,6 +9,10 @@
 
 **Статус:** исходник лендинга и текущие правки V1 проверяются через PR #121. Считать новую версию опубликованной можно только после merge, успешного Pages deployment и проверки фактического URL.
 
+## Объединённый backlog первого бесплатного релиза
+
+Единый список P0/P1/P2, решений по стеку, release gates и owner-only зависимостей: [docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md](docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md).
+
 ## Финализация UI первой бесплатной версии
 
 Живой чек-лист требований, инженерные критерии, источники и журнал выполнения: [docs/V1_UI_FINALIZATION_RU.md](docs/V1_UI_FINALIZATION_RU.md). Он относится к статическому клиенту GitHub Pages и не подменяет roadmap gateway/runtime.
