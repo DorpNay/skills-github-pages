@@ -220,3 +220,9 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Moonshine Voice перспективен для streaming STT/agent loop, но listed STT languages currently exclude RU/TH; no replacement for Whisper until language-specific model and license checks.
 - OpenWOP v2, LangGraph and Temporal are orchestration research candidates; none is integrated. Existing ToolDAG remains a bounded prototype.
 - Не удалять файлы на основании одного Vulture report: единственное предупреждение оказалось false positive в Protocol signature.
+
+## Debugger fix — audio subprocess cancellation (2026-10-30)
+- Confirmed bug: ASR ffprobe/ffmpeg/whisper.cpp and Piper TTS child processes were killed on timeout but not on request cancellation.
+- Fixed by `await_local_process()` in gateway/app.py; regression tests added to gateway/tests/test_audio_concurrency.py. Commits: `77b2691` and `363bb5c`.
+- Equivalent local Python smoke: timeout and cancellation both killed/reaped the child (return code -9). This does not replace repository Gateway CI.
+- Existing Gateway #483 passed 150 tests before this new fix. Current code needs Gateway CI; the connected GitHub actions interface cannot dispatch a new workflow on the new commit.
