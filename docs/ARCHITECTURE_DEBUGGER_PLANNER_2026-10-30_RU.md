@@ -204,6 +204,16 @@ Dead-code workflow is report-only; its findings are candidates, not deletion aut
 - Multi-agent path: OpenWOP v2 provides an interesting protocol for durable suspend/resume, replay, event streaming, idempotency and human approval, but its project asks for first independent implementations; do not call it production-proven. LangGraph has graph checkpoints and interrupts; interrupts restart a node on resume, requiring idempotent side effects. Temporal is the mature durable workflow alternative but requires separate service/worker ops. Keep existing DAG prototype until a benchmarked runtime decision.
 - The user explicitly requires voice capabilities to be a first-release deliverable. The backlog now tracks P0-13…P0-18: editable STT, natural turn-taking, selected text TTS, full-message TTS, multi-message queue, and real-device RU/EN/TH acceptance. Current code does not meet the complete scope.
 
+
+
+### Updated multilingual voice research (2026-10-30)
+- [NVIDIA NeMo-Speech.cpp](https://github.com/NVIDIA/NeMo-Speech.cpp) is a promising C++ speech runtime. Its current repository documents streaming ASR, streaming TTS, and a full-duplex VoiceChat path. Its published benchmark reports 160 ms ASR chunks; these are upstream benchmarks on named hardware, not aLandi measurements.
+- [Nemotron 3.5 ASR Streaming 0.6B](https://huggingface.co/nvidia/nemotron-3.5-asr-streaming-0.6b) supports 40 language locales. Russian is listed in transcription-ready tier; Thai is in adaptation-ready tier and must be evaluated carefully. Sherpa's official docs describe the same streaming model integration and locale tiers.
+- [Qwen3-ASR-0.6B](https://github.com/QwenLM/Qwen3-ASR) via [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) lists both Russian and Thai; determine whether the exact backend supports the required streaming/partial transcript behavior before choosing.
+- [Parakeet RNNT 1.1B multilingual](https://build.nvidia.com/nvidia/parakeet-1_1b-rnnt-multilingual-asr/modelcard) supports Russian and Thai and is described as ready for commercial use, but it is larger and governed by NVIDIA Community Model License. Verify the exact terms and redistribution rights before packaging.
+- **Decision:** keep Whisper.cpp as current known baseline; run an offline benchmark matrix against Nemotron 3.5 0.6B and Qwen3-ASR 0.6B for RU/EN/TH. Do not replace Whisper based on language list alone. Streaming candidate must pass WER, endpointing, partial stability, TTFA, RTF, interruption/cancellation and target GPU memory tests.
+- **Important distinction:** NeMo-Speech.cpp upstream claims are not proof that its full-duplex voicechat can be integrated into the current FastAPI/vanilla JS app without a substantial media runtime. Prototype on a separate branch and retain the current endpoint fallback.
+
 ## 8. Next action
 Fetch latest PR head after commit `f9d5afaae983675d2c616e3fbc70942840d314e5`, inspect newly triggered Gateway/Quality/Graphify/Provenance runs, fix any new confirmed failure, then continue subsystem audit in dependency order: request lifecycle → providers → memory/RAG → tools/DAG/security → voice → document ingestion → landing/release.
 
