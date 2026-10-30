@@ -35,7 +35,7 @@ async function configureCustomProvider(page, modelName) {
   await page.locator('#modelName').fill(modelName);
   await page.locator('#apiKey').fill('e2e-settings-key');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
 }
 
 
@@ -116,7 +116,7 @@ test('theme stays in the header/sidebar and language lives in advanced settings'
   await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
   await page.locator('#legacyProviderSettings [data-action="toggle-theme-cycle"]').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
 
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#sidebarThemeToggle').click();
@@ -277,7 +277,7 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await page.locator('#providerPreset').selectOption('gemini');
   await page.locator('#modelPreset').selectOption('gemini-3.6-flash');
   await expect(page.locator('#modelName')).toHaveValue('gemini-3.6-flash');
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await chooseSearchMode(page, 'offline');
   await expect(page.locator('#searchModeSummary')).toContainText(/выкл\./i);
   await page.reload();
@@ -315,7 +315,7 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
   await page.locator('#providerPreset').selectOption('groq');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-groq-placeholder-not-a-real-key');
   await expect(page.locator('#tavilyKey')).toHaveValue('e2e-tavily-placeholder-not-a-real-key');
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
 
   await page.reload();
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
@@ -353,7 +353,7 @@ test('API authentication errors are shown without losing the original user promp
   await page.locator('#modelName').fill('e2e-test-model');
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
 
   await page.locator('#userInput').fill('E2E auth error preservation check');
   await page.locator('#sendBtn').click();
@@ -602,7 +602,7 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
   await page.locator('#modelName').fill('e2e-trace-model');
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await chooseSearchMode(page, 'offline');
   await setAgentMode(page, true);
   await page.locator('#userInput').fill('Deep research: исследуй и проверь процесс проверки фактов по источникам; составь доказательный отчёт с планом, сравнением и итоговой проверкой.');
@@ -654,7 +654,7 @@ test('multi-agent preference skips a greeting and shows the actual route', async
   await page.locator('#modelName').fill('e2e-model');
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await setAgentMode(page, true);
   await page.locator('#userInput').fill('Привет!');
   await page.locator('#sendBtn').click();
@@ -676,7 +676,7 @@ test('401 stops after the selected provider rejects credentials', async ({ page 
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await page.locator('#userInput').fill('Auth error test');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Запрос не выполнен.');
@@ -702,7 +702,7 @@ test('transient 503 retries only the same model and never fans out', async ({ pa
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await page.locator('#userInput').fill('Check transient server error handling');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('HTTP 503');
@@ -730,7 +730,7 @@ test('model-specific failure tries another model on the same provider first', as
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await page.locator('#userInput').fill('Check same-provider model fallback');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Fallback worked.');
@@ -778,7 +778,7 @@ test('dynamic chat catalog is used for bounded same-provider model fallback', as
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="refresh-model-catalog"]').click();
   await expect(page.locator('#modelPreset option[value="e2e-dynamic-fallback"]')).toHaveCount(1);
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await page.locator('#userInput').fill('Use the model catalog for fallback');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Dynamic fallback worked.');
@@ -855,7 +855,7 @@ test('Pollinations requests use the OAuth token, not the public App Key', async 
     sessionStorage.setItem('ai_pollinations_access_token_v1', 'sk_e2e_temporary_access_token');
     sessionStorage.setItem('ai_pollinations_access_expires_at_v1', String(Date.now() + 3600000));
   });
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await page.locator('#userInput').fill('Pollinations routing test');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Pollinations route worked.');
@@ -891,7 +891,7 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
   await expect(page.locator('#baseUrl')).toHaveValue('https://api.cloudflare.com/client/v4/accounts/' + cloudflareId + '/ai/v1');
   await page.locator('#apiKey').fill('not-a-real-cloudflare-token');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await page.locator('#userInput').fill('Cloudflare routing test');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Cloudflare route worked.');
@@ -910,7 +910,7 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
   await page.locator('#providerPreset').selectOption('huggingface');
   await page.locator('#apiKey').fill('not-a-real-huggingface-token');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await page.locator('#userInput').fill('Hugging Face routing test');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Hugging Face route worked.');
@@ -978,7 +978,7 @@ test('aLandi cloud status only turns green after a real model response, and core
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
   await expect(page.locator('#cloudStatus')).toContainText('Подключено');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_provider'))).toBe('alandi');
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await page.locator('#userInput').fill('Verify the primary chat uses my aLandi cloud.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('OK', { timeout: 15000 });
@@ -1133,7 +1133,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('#modelName').fill('e2e-project-model');
   await page.locator('#apiKey').fill('e2e-project-placeholder-key');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
 
   await page.locator('#userInput').fill('Check which project context is included.');
   await page.locator('#sendBtn').click();
@@ -1301,7 +1301,7 @@ test('Deep mode caps tool fan-out, suppresses repeated calls, and still returns 
   await page.locator('#modelName').fill('tool-budget-model');
   await page.locator('#apiKey').fill('e2e-tool-budget-key');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await page.locator('#modeDeep').click();
   await chooseSearchMode(page, 'normal');
   await page.locator('#userInput').fill('Read several public pages and summarize the useful evidence.');
@@ -1502,7 +1502,7 @@ test('web_search falls back to public sources when Tavily is not configured', as
   await page.locator('#modelName').fill('open-search-model');
   await page.locator('#apiKey').fill('e2e-open-search-key');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await chooseSearchMode(page, 'normal');
   await page.locator('#userInput').fill('Find evidence using the keyless open-search fallback.');
   await page.locator('#sendBtn').click();
@@ -1839,7 +1839,7 @@ test('Markdown fallback preserves tables and escapes HTML when renderer CDNs are
   await page.locator('#modelName').fill('e2e-markdown-model');
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await page.locator('#userInput').fill('Show the fallback formatting');
   await page.locator('#sendBtn').click();
 
@@ -1977,7 +1977,7 @@ test('request-only project context is sent once and does not change the active c
   await page.locator('#modelName').fill('context-e2e');
   await page.locator('#apiKey').fill('e2e-context-key');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue('project-alpha');
   await page.locator('#contextPickerButton').click();
   await page.locator('#requestProjectChecks input[data-request-project-id="project-beta"]').check();
@@ -2035,7 +2035,7 @@ test('image attachment is sent as multimodal content without persisting image by
   await page.locator('#modelName').fill('vision-e2e');
   await page.locator('#apiKey').fill('e2e-vision-key');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await page.locator('#attachTextButton').click();
   await page.locator('[data-action="choose-media"]').click();
   await page.locator('#mediaAttachmentInput').setInputFiles({name:'pixel.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADUlEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC','base64')});
@@ -2268,7 +2268,7 @@ test('mobile messages expose full text and retain a jump-to-latest control', asy
   await page.locator('#modelName').fill('message-viewer-model');
   await page.locator('#apiKey').fill('e2e-message-viewer-key');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
 
   const longAnswer = Array.from({ length: 70 }, (_, index) => 'MESSAGE_VIEWER_LINE_' + index).join('\\n');
   await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
