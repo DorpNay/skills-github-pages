@@ -398,7 +398,7 @@ Threat baseline: OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), о�
 - [x] Свести прошлый orchestration research и 64-role catalogue.
 - [x] Исследовать frameworks, standards, agent workforce systems, skills, memory, evals, sandbox и small models.
 - [x] Подготовить архитектурный blueprint, source catalog и model bake-off plan.
-- [ ] Runtime не менялся; новые возможности не объявлять реализованными.
+- [x] Runtime не менялся; новые возможности не объявлять реализованными.
 
 ### Phase 1 — contracts & registry (первый implementation PR)
 - [ ] Typed AgentProfile, Profession, SkillManifest, Capability, ModelPolicy, BudgetPolicy.
