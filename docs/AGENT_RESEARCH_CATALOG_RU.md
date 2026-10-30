@@ -1,6 +1,6 @@
 # aLandi — каталог исследований и источников по AI Agents
 
-**Дата среза:** 2026-10-30.  
+**Дата среза:** 2026-10-31 (добавлен аудит ранее сохранённых смежных источников).  
 **Назначение:** аннотированный каталог первичных спецификаций, upstream-проектов, исследовательских коллекций и ранее найденных источников-вдохновителей. Это не список зависимостей, которые нужно установить.  
 **Метод:** 80 targeted searches по семи workstream-группам; до 470 candidate result slots запрошено у поисковой системы (не число уникальных источников). Приоритет — официальные docs/specs, upstream README/release/model cards; marketing claims и vendor benchmarks помечаются как таковые.
 
@@ -97,6 +97,31 @@
 - [Awesome Agentic Patterns](https://agentic-patterns.com/) — filter patterns by orchestration, control, memory, learning, reliability, security, tools and collaboration.
 - [Awesome Harness Engineering](https://github.com/ai-boost/awesome-harness-engineering) — context, tool design, planning, permissions, evals, sandboxes and observability.
 - [Awesome Agents](https://github.com/kyrolabs/awesome-agents) — broad map of frameworks, products, research and tools.
+
+## 7.1 Ранее сохранённые смежные проекты и техники
+
+Эти ссылки были найдены в предыдущих аудитах aLandi. Они не все являются orchestration frameworks: часть закрывает узкие задачи вокруг agent harness, small-model action selection, browser tools, developer workflow, multimodal output или security testing. Сохранены здесь, чтобы решения «взять / отложить / отклонить» не потерялись.
+
+| Источник | Полезная идея для aLandi | Решение / ограничения |
+|---|---|---|
+| [Google Research Harness²](https://github.com/google-research/harness2) | Bounded loop: propose → probe → compose; проверять гипотезу маленьким экспериментом до большой реализации. | Заимствовать цикл инженерной проверки; не подключать research executor к production gateway и не давать ему unrestricted network/shell. |
+| [Everything Claude Code](https://github.com/affaan-m/ECC) | Curated coding-agent skills/rules, TDD, independent review, context compaction, verified learning. | Заимствовать TDD/review/compaction и eval-gated learning; не копировать provider-specific hooks/MCP/config целиком. |
+| [Jev Ultrafast](https://github.com/browser-use/jev-ultrafast) | Indexed action space: модель выбирает одну операцию и индексированную цель; маленькое observation вместо полного DOM/screenshot. | Отличная гипотеза для маленького browser/action worker. Upstream demo/benchmarks узкие и не доказывают универсальное качество; запускать только в изолированном browser worker. |
+| [Cactus Needle](https://github.com/cactus-compute/needle) | Ultra-small structured extraction, constrained tool selection, embeddings and speech-adjacent tooling. | Только отдельный bake-off; проектный Apache-2.0 не доказывает лицензию каждого веса/артефакта. Проверить telemetry opt-out, точный hash, RU/EN/TH и real-device latency. |
+| [CLI-Anything](https://github.com/HKUDS/CLI-Anything) | Agent-friendly CLI contracts: help, JSON output, stable exit codes, dry-run and E2E tests. | Применять к будущим admin/benchmark CLIs; не давать браузерному агенту произвольный shell. |
+| [Agent-Reach](https://github.com/Panniantong/Agent-Reach) | Capability adapters для платформ/источников, в том числе видео captions и структурированных social/web sources. | Не запускать общий installer и не копировать browser cookies. Добавлять только отдельный source adapter с SSRF, allowlist, per-account consent and secret isolation. |
+| [HyperFrames](https://github.com/heygen-com/hyperframes) | HTML/CSS/media → deterministic video; agent skills can produce structured scenes and rendered artifacts. | Отдельный optional media-renderer worker, не video-generation model и не orchestration runtime. Review code, skill and media asset licenses separately. |
+| [Coucou](https://github.com/Louis-CFM/coucou) | Agent-session monitor, mobile companion, approval notifications and human attention UX. | Заимствовать timeline/approval interaction; code license MIT per upstream, but name/character/sounds/assets have separate terms. |
+| [Impeccable](https://github.com/pbakaus/impeccable) | Provider-portable design skills, critique/audit vocabulary and reusable design workflow. | Взять inspect-first skill pattern; проверять конкретный version/license/assets before redistribution. |
+| [DBX](https://github.com/t8y2/dbx) | Database CLI/MCP surface and typed SQL-oriented workflows. | Inspiration for read-only database specialist; no direct DB access until scoped credentials, query policy and audit exist. |
+| [witr](https://github.com/pranshuparmar/witr) | Process/port/container causality in human-readable and machine-readable JSON. | Useful operator diagnostics adapter; read-only by default, no automatic process termination. Apache-2.0 declared upstream. |
+| [Open-Generative-AI](https://github.com/Anil-matcha/Open-Generative-AI) | Catalog/studio patterns for multimodal creative tools. | Separate future creative-tool vertical; not a general agent runtime and not a substitute for provider-specific generation APIs. |
+| [dsh-our-free-model](https://github.com/ebony-vinyl/dsh-our-free-model) | Model catalogue and fallback discovery patterns. | Do not send private prompts, documents or credentials to unknown free gateways; only study catalog refresh/error handling. |
+| [Pliny / L1B3RT4S](https://github.com/elder-plinius/L1B3RT4S) | Adversarial jailbreak and prompt-injection examples. | Negative security fixtures only; never copy jailbreak prompts into system instructions or active skills. |
+| [AirLLM](https://github.com/lyogavin/airllm) | Layer-wise offload as a memory/compute trade-off. | Not a magic CPU speedup; defer for 8-GB CPU VPS due I/O/latency cost. |
+| [RAG-Anything](https://github.com/HKUDS/RAG-Anything) | Structured multimodal ingestion with page/bbox/table/formula provenance. | Use as a document-worker reference; benchmark parsers separately and preserve evidence offsets. |
+
+Previously reviewed but deliberately not promoted as agent-runtime dependencies: [OpenMAIC](https://github.com/THU-MAIC/OpenMAIC) remains a future Teaching Cell reference (separate Node/PostgreSQL service); [Utopia OS](https://github.com/0xUrsanomics/utopia-os) is a small MIT-licensed architecture skeleton worth reading for memory/handoff/recovery, not proof of mature runtime; [Paperclip](https://github.com/paperclipai/paperclip), [RuFlo](https://github.com/ruvnet/ruflo), [PinchTab](https://github.com/pinchtab/pinchtab) and [NVIDIA OpenShell](https://github.com/NVIDIA/OpenShell) are already covered above. Reject mass-account/credential automation such as [Grok Register](https://github.com/AaronL725/grok-register); it is outside aLandi's legitimate agent capabilities.
 
 ## 8. Синтез: что реально следует взять
 
