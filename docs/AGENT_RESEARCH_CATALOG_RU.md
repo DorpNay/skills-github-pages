@@ -2,7 +2,7 @@
 
 **Дата среза:** 2026-10-30.  
 **Назначение:** аннотированный каталог первичных спецификаций, upstream-проектов, исследовательских коллекций и ранее найденных источников-вдохновителей. Это не список зависимостей, которые нужно установить.  
-**Метод:** 53 targeted searches по шести workstream-группам; до 355 candidate result slots запрошено у поисковой системы (не число уникальных источников). Приоритет — официальные docs/specs, upstream README/release/model cards; marketing claims и vendor benchmarks помечаются как таковые.
+**Метод:** 65 targeted searches по семи workstream-группам; до 395 candidate result slots запрошено у поисковой системы (не число уникальных источников). Приоритет — официальные docs/specs, upstream README/release/model cards; marketing claims и vendor benchmarks помечаются как таковые.
 
 ## 1. Ключевой вывод
 
