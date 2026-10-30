@@ -260,6 +260,7 @@ Router выбирает по capabilities, языку, input modality, tool-call
 
 - **MCP:** внешний/внутренний tool & resource adapter; серверы должны проходить allowlist, schema validation, auth review и supply-chain review.
 - **A2A:** только для реального взаимодействия с независимыми удалёнными агентами; Agent Card, task lifecycle, artifacts и authentication.
+- **OpenWOP v2:** ранее отмеченный экспериментальный wire protocol для durable multi-agent workflows; сохранить в сравнительном реестре, но не считать зрелым стандартом и не внедрять без conformance/security review.
 - **ACP:** потенциальный adapter к coding agents/IDE, не заменяет внутренний task bus.
 - **AG-UI:** возможный стандарт для событий frontend: agent lifecycle, tool events, subagent status, artifacts, interrupt/resume.
 - Внутренний task contract должен оставаться собственным и стабильным; не привязывать всё приложение к протоколу одного vendor.
