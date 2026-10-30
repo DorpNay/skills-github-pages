@@ -631,16 +631,25 @@ permalink: /
   <div id="researchStudioModal" class="hidden fixed inset-0 z-[65] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="researchStudioTitle">
     <section class="w-full max-w-2xl max-h-[92dvh] overflow-y-auto rounded-2xl border border-cyan-800/60 bg-gray-950 p-4 sm:p-6 shadow-2xl space-y-4">
       <header class="flex items-start justify-between gap-3"><div><p class="text-[10px] uppercase tracking-[.22em] font-bold text-cyan-300">aLandi · Studio</p><h2 id="researchStudioTitle" class="mt-1 text-lg font-bold" data-i18n="researchStudioTitle">Студия исследования</h2><p class="mt-1 text-xs leading-relaxed text-gray-400" data-i18n="researchStudioDescription">Окно подготовки исследовательского запроса. Запуск использует текущие параметры этого чата.</p></div><button type="button" data-action="close-research-studio" class="rounded-lg px-2 py-1 text-gray-400 hover:text-white" aria-label="Закрыть студию" data-i18n-aria-label="researchStudioClose">✕</button></header>
-      <label for="researchStudioPrompt" class="block text-xs font-semibold text-gray-300" data-i18n="researchStudioPromptLabel">Что нужно исследовать?</label>
-      <textarea id="researchStudioPrompt" rows="5" maxlength="12000" class="w-full resize-y rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm outline-none focus:border-cyan-500" placeholder="Например: сравни первичные источники, проверь спорные утверждения и подготовь выводы со ссылками." data-i18n-placeholder="researchStudioPromptPlaceholder"></textarea>
-      <div class="rounded-xl border border-gray-800 bg-gray-900/60 p-3 space-y-1.5">
-        <p class="text-[10px] uppercase tracking-wide font-semibold text-gray-500" data-i18n="researchStudioCurrentSettingsLabel">Текущие параметры чата</p>
-        <p id="researchStudioSettingsSummary" class="text-xs font-semibold text-gray-200" aria-live="polite">Быстро · Веб: обычный · Прямой · Авто</p>
-        <p class="text-[11px] leading-relaxed text-gray-500" data-i18n="researchStudioSettingsHelp">Студия использует эти параметры и не изменяет их. Чтобы изменить их, закрой окно и настрой панель чата.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label class="block text-xs text-gray-400">Усилие
+          <select id="researchStudioEffort" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="fast">Быстро</option><option value="deep">Тщательно</option></select>
+        </label>
+        <label class="block text-xs text-gray-400">Веб-поиск
+          <select id="researchStudioSearchMode" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="normal">Обычный</option><option value="more">Расширенный</option><option value="offline">Выкл.</option></select>
+        </label>
       </div>
-      <p class="rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-[11px] leading-relaxed text-gray-400" data-i18n="researchStudioContextHelp">Для исследования своих документов прикрепи материалы в чате или явно выбери контекст проекта. Студия не загружает файлы и не подключает внешние сервисы сама. Найденные страницы считаются недоверенными источниками, а не инструкциями.</p>
-      <div class="flex flex-wrap justify-end gap-2"><button type="button" data-action="close-research-studio" class="rounded-xl border border-gray-700 px-3 py-2 text-sm text-gray-300 hover:bg-gray-800" data-i18n="researchStudioCancel">Отмена</button><button type="button" data-action="start-research-studio" class="rounded-xl bg-cyan-600 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-500" data-i18n="researchStudioStart">Начать исследование ↗</button></div>
-      <p id="researchStudioStatus" class="text-[11px] text-gray-500" role="status" aria-live="polite" data-i18n="researchStudioStatusDefault">Студия использует текущие параметры чата и не изменяет их.</p>
+      <label class="flex items-center gap-2 rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-xs text-gray-300">
+        <input id="researchStudioStructured" type="checkbox" class="rounded">
+        <span><strong class="block">Структурированный разбор</strong><span class="mt-0.5 block text-[10px] text-gray-500">Четыре последовательных этапа на выбранной модели.</span></span>
+      </label>
+      <div class="rounded-xl border border-cyan-900/50 bg-cyan-950/20 p-3 space-y-1.5">
+        <p id="researchStudioSettingsSummary" class="text-xs font-semibold text-gray-200" aria-live="polite">Текущие параметры чата</p>
+        <p class="text-[11px] leading-relaxed text-gray-400">Текст задачи вводи в основном поле сообщения. Это окно меняет только режимы.</p>
+      </div>
+      <p class="text-[10px] leading-relaxed text-gray-500">Прикрепи документы в чате. Внешние источники остаются недоверенными данными, а не инструкциями.</p>
+      <div class="flex flex-wrap justify-end gap-2"><button type="button" data-action="close-research-studio" class="rounded-xl border border-gray-700 px-3 py-2 text-sm text-gray-300 hover:bg-gray-800">Отмена</button><button type="button" data-action="start-research-studio" class="rounded-xl bg-cyan-600 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-500">Применить режим</button></div>
+      <p id="researchStudioStatus" class="text-[11px] text-gray-500" role="status" aria-live="polite">Параметры ещё не изменены.</p>
     </section>
   </div>
   <div id="functionPanelModal" class="hidden fixed inset-0 z-[66] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="functionPanelTitle">
@@ -4178,22 +4187,23 @@ permalink: /
     }
     let activeTrace = null;
     function openResearchStudio() {
-      const modal = $('researchStudioModal');
-      const composer = $('userInput');
-      $('researchStudioPrompt').value = composer.value.trim();
+      const chat=getCurrentChat();ensureChatFunctionSettings(chat);
+      $('researchStudioEffort').value=chat.processingMode;
+      $('researchStudioSearchMode').value=chat.searchMode;
+      $('researchStudioStructured').checked=chat.multiAgentEnabled===true;
       updateModeUI();
-      $('researchStudioStatus').textContent = UI_TEXT[getUiLanguage()].researchStudioStatusDefault;
-      modal.classList.remove('hidden');
-      requestAnimationFrame(() => $('researchStudioPrompt').focus());
+      $('researchStudioStatus').textContent=getUiLanguage()==='en'?'Choose a research mode. Your prompt stays in the main composer.':'Выбери режим. Текст задачи остаётся в основном поле.';
+      $('researchStudioModal').classList.remove('hidden');
     }
     function closeResearchStudio() { $('researchStudioModal').classList.add('hidden'); }
-    async function startResearchStudio() {
-      const prompt = $('researchStudioPrompt').value.trim();
-      const text = UI_TEXT[getUiLanguage()];
-      if (!prompt) { $('researchStudioPrompt').focus(); $('researchStudioStatus').textContent = text.researchStudioPromptRequired; return; }
-      $('userInput').value = prompt;
+    function startResearchStudio() {
+      setProcessingMode($('researchStudioEffort').value);
+      setSearchMode($('researchStudioSearchMode').value);
+      setAgentMode($('researchStudioStructured').checked);
+      setSkillPreset('research');
       closeResearchStudio();
-      await sendMessage(false);
+      $('userInput').focus({preventScroll:true});
+      showToast(getUiLanguage()==='en'?'Research mode applied. Enter your task in the composer.':'Режим исследования включён. Введи задачу в основном поле.');
     }
 
     let activeSpeechObjectUrl = '';
