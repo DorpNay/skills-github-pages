@@ -405,3 +405,23 @@ landing_ux_polish_2026_10_30:
     native_keyboard_screen_reader: "unverified"
     published_pages_after_merge: "pending"
   next: "Complete exact-head CI, then implement remaining visual consistency, dialogs/popovers, mobile and accessibility work in bounded slices."
+
+
+landing_voice_scope_2026_10_30:
+  visible_capabilities:
+    - "editable speech transcription"
+    - "conversational voice with interruption"
+    - "read selected text aloud"
+    - "read a complete message aloud"
+    - "ordered playback queue for multiple selected messages"
+  copy_status: "added to landing capability card and roadmap; explicitly distinguishes existing ASR/Piper/half-duplex prototype from unfinished streaming, AEC, barge-in, multi-message queue and device acceptance"
+  e2e_status: "Playwright assertions added in tests/e2e/landing.spec.mjs; exact-head CI not yet run"
+  product_status: "first functional update requirement; not claimed as fully shipped"
+voice_asr_research_update:
+  baseline: "whisper.cpp; keep until measured replacement wins"
+  candidates:
+    - "Nemotron 3.5 ASR Streaming 0.6B via NeMo-Speech.cpp: Russian transcription-ready; Thai adaptation-ready; exact artifact/license and target GPU benchmark required"
+    - "Qwen3-ASR-0.6B via sherpa-onnx: Russian and Thai listed; streaming behavior and license to verify"
+    - "Parakeet RNNT 1.1B: Russian and Thai supported; larger model and NVIDIA Community Model License"
+    - "Moonshine Voice: not a RU/TH STT replacement based on currently listed language support"
+  decision: "no ASR model/runtime migration until RU/EN/TH golden-set WER, endpointing, latency, VRAM/RAM and license acceptance"
