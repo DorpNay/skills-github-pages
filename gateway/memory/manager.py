@@ -5,7 +5,6 @@ new facts default to candidate, each node requires provenance, and contradiction
 """
 from __future__ import annotations
 
-import hashlib
 import json
 import os
 import re

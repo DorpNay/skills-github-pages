@@ -1,7 +1,6 @@
 """Two-tier voice command routing; tier selection does not execute actions."""
 from __future__ import annotations
 
-import re
 import unicodedata
 from dataclasses import dataclass
 from typing import Literal

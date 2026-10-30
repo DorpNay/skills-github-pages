@@ -6,6 +6,8 @@ from scripts.check_project_state_freshness import (
     REQUIRED_REFRESH_PATHS,
     check_main_checkpoint,
     compare_queues,
+    validate_github_api_url,
+    github_get_json,
     validate_snapshot,
 )
 
@@ -27,6 +29,30 @@ def snapshot():
             "open_issues": [88, 90],
         },
     }
+
+
+class GithubApiUrlTests(unittest.TestCase):
+    def test_accepts_only_github_rest_repository_urls(self):
+        url = "https://api.github.com/repos/DorpNay/skills-github-pages/pulls?state=open&per_page=100"
+        self.assertEqual(validate_github_api_url(url), url)
+
+    def test_rejects_file_custom_http_and_untrusted_hosts(self):
+        for url in (
+            "file:///etc/passwd",
+            "http://api.github.com/repos/owner/repo",
+            "https://example.com/repos/owner/repo",
+            "https://api.github.com.evil.example/repos/owner/repo",
+            "https://user@api.github.com/repos/owner/repo",
+            "https://api.github.com:444/repos/owner/repo",
+            "https://api.github.com/admin",
+            "https://api.github.com/repos/../admin",
+        ):
+            with self.subTest(url=url), self.assertRaises(ValueError):
+                validate_github_api_url(url)
+
+    def test_json_fetch_rejects_file_scheme_before_network_access(self):
+        with self.assertRaises(ValueError):
+            github_get_json("file:///etc/passwd", None)
 
 
 class SnapshotSchemaTests(unittest.TestCase):

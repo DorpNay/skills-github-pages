@@ -9,8 +9,6 @@ fixtures and emits machine-readable metrics that CI can reproduce.
 from __future__ import annotations
 
 import json
-import os
-import statistics
 import sys
 import tempfile
 import time

@@ -9,6 +9,7 @@ import re
 from pathlib import Path
 from typing import Any, Iterable, Sequence
 from urllib.error import HTTPError, URLError
+from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -190,9 +191,27 @@ def _next_link(link_header: str | None) -> str | None:
     return None
 
 
+def validate_github_api_url(url: str) -> str:
+    """Allow only bounded HTTPS GitHub REST repository URLs; reject file/custom schemes."""
+    if not isinstance(url, str) or not url or len(url) > 2048:
+        raise ValueError("GitHub API URL must be non-empty and bounded")
+    try:
+        parsed = urlsplit(url)
+        port = parsed.port
+    except ValueError as exc:
+        raise ValueError("GitHub API URL is malformed") from exc
+    if (parsed.scheme != "https" or parsed.hostname != "api.github.com"
+            or parsed.username or parsed.password or port not in {None, 443}
+            or not parsed.path.startswith("/repos/") or parsed.fragment
+            or any(part in {".", ".."} for part in parsed.path.split("/"))):
+        raise ValueError("GitHub API URL must target an HTTPS /repos/ endpoint on api.github.com")
+    return url
+
+
 def github_get_all(url: str, token: str | None) -> list[dict[str, Any]]:
     results: list[dict[str, Any]] = []
     while url:
+        url = validate_github_api_url(url)
         request = Request(
             url,
             headers={
@@ -202,7 +221,9 @@ def github_get_all(url: str, token: str | None) -> list[dict[str, Any]]:
                 **({"Authorization": f"Bearer {token}"} if token else {}),
             },
         )
-        with urlopen(request, timeout=20) as response:
+        # nosemgrep: python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected
+        with urlopen(request, timeout=20) as response:  # nosec B310 -- URL is allowlisted to api.github.com HTTPS above
+            validate_github_api_url(response.geturl())
             page = json.load(response)
             next_url = _next_link(response.headers.get("Link"))
         if not isinstance(page, list):
@@ -213,6 +234,7 @@ def github_get_all(url: str, token: str | None) -> list[dict[str, Any]]:
 
 
 def github_get_json(url: str, token: str | None) -> Any:
+    url = validate_github_api_url(url)
     request = Request(
         url,
         headers={
@@ -222,7 +244,9 @@ def github_get_json(url: str, token: str | None) -> Any:
             **({"Authorization": f"Bearer {token}"} if token else {}),
         },
     )
-    with urlopen(request, timeout=20) as response:
+    # nosemgrep: python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected
+    with urlopen(request, timeout=20) as response:  # nosec B310 -- URL is allowlisted to api.github.com HTTPS above
+        validate_github_api_url(response.geturl())
         return json.load(response)
 
 

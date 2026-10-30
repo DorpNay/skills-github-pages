@@ -440,6 +440,28 @@ def test_settings_rejects_invalid_ollama_base_url_port(monkeypatch):
         raise AssertionError("Invalid Ollama port should fail during configuration")
 
 
+def test_settings_rejects_non_loopback_ollama_base_url(monkeypatch):
+    for value in (
+        "http://ollama.example:11434",
+        "https://127.0.0.1:11434",
+        "http://0.0.0.0:11434",
+        "http://127.0.0.1:11435",
+        "http://127.0.0.1:11434/extra",
+    ):
+        monkeypatch.setenv("OLLAMA_BASE_URL", value)
+        try:
+            Settings.from_env()
+        except ValueError as exc:
+            assert "loopback" in str(exc)
+        else:
+            raise AssertionError(f"Non-loopback Ollama URL accepted: {value}")
+
+
+def test_settings_accepts_local_loopback_ollama_base_url(monkeypatch):
+    monkeypatch.setenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
+    assert Settings.from_env().ollama_base_url == "http://127.0.0.1:11434"
+
+
 def test_validate_origin_canonicalizes_host_case_and_default_ports():
     assert validate_origin("HTTPS://DorpNay.GitHub.io:443/") == "https://dorpnay.github.io"
     assert validate_origin("http://LOCALHOST:80") == "http://localhost"

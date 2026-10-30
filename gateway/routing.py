@@ -6,7 +6,6 @@ classification remains injectable and must be evaluated before it can route acti
 """
 from __future__ import annotations
 
-import re
 import time
 import unicodedata
 from dataclasses import dataclass

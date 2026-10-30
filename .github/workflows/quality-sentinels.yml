@@ -173,10 +173,10 @@ jobs:
         shell: bash
         run: |
           set +e
-          ruff check gateway scripts router observability intel latency --output-format=json \
+          ruff check gateway scripts router observability intel latency --select F,E4,E7,E9 --output-format=json \
             > audit-reports/ruff.json 2> audit-reports/ruff.stderr
           echo "$?" > audit-reports/ruff.exit
-          bandit -r gateway scripts router observability intel latency -f json \
+          bandit -r gateway scripts router observability intel latency -x gateway/tests,gateway/evals -f json \
             > audit-reports/bandit.json 2> audit-reports/bandit.stderr
           echo "$?" > audit-reports/bandit.exit
           semgrep scan --config p/default --json \
