@@ -284,3 +284,13 @@ Ollama — 127.0.0.1:11434 — одна активная модель
 - ASR baseline остаётся whisper.cpp. Кандидаты для RU/EN/TH benchmark: NVIDIA NeMo-Speech.cpp + Nemotron 3.5 ASR Streaming 0.6B (RU transcription-ready, TH adaptation-ready), Qwen3-ASR-0.6B через sherpa-onnx (RU/TH указаны в языковом списке), и Parakeet RNNT 1.1B (RU/TH, но более крупный и NVIDIA Community Model License). Moonshine не является заменой для RU/TH, поскольку его текущий список STT языков их не включает.
 - NeMo-Speech.cpp upstream заявляет streaming ASR/TTS и full-duplex VoiceChat; benchmark 160 ms chunks относится к upstream hardware, не к aLandi. Любая интеграция должна быть отдельным prototype с измерением target device, language WER, TTFA, RTF, interruption, echo and VRAM.
 - GPU-only означает отсутствие CPU inference для модели, а не отсутствие CPU у gateway/OS/IO. Строгий GPU-only режим должен fail closed, если модель не помещается целиком в VRAM; частичный offload нельзя называть GPU-only.
+
+## Research update — 2026-10-30 (Exa)
+See docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md for sources and adoption decisions.
+- Nemotron 3.5 ASR 0.6B: RU transcription-ready; TH adaptation-ready; OpenMDW-1.1 model terms.
+- Typhoon ASR Streaming 115M: Thai-specific; CC-BY-4.0; separate NeMo/PyTorch path.
+- VibeVoice ASR 1.5B: RU among ten listed languages, no TH; MIT model card.
+- VoxCPM2 TTS: 30 languages including RU/TH; Apache-2.0; high-VRAM optional candidate.
+- NeMo-Speech.cpp: Apache-2.0 code, separate model licences; optional local ASR/TTS/realtime WebSocket runtime. VoiceChat 11B requires 80GB VRAM/CUDA; not default target.
+- MagpieTTS: NVIDIA Open Model License, 12 languages but excludes RU/TH.
+No candidate selected without identical RU/EN/TH audio, WER/latency/turn/echo metrics, target-device measurements, exact SHA and licence acceptance. whisper.cpp/Piper remain baseline.

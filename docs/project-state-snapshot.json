@@ -26,8 +26,8 @@
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files",
     "active_ui_pr": {
       "number": 121,
-      "head_sha": "26dcdf6acc77d388bdf5ec91bb9f64fe38fb1b1a",
-      "exact_head_ci": "PR #121 currently compares 217 ahead / 0 behind against main e6404d5 and GitHub reports mergeable=true/clean. Gateway #483 (150 tests) passed before the audio subprocess cancellation fix; new Gateway CI on 363bb5c is required. Quality/Chromium and Graphify runs on earlier heads were cancelled during branch updates. Landing voice scope and Playwright assertions were just updated; exact-current-head CI is not yet green/verified."
+      "head_sha": "48874eab1cdce698b2dcfd681413d2cd45e27b38",
+      "exact_head_ci": "Current head 48874eab: Gateway 156 passed (one upstream Starlette/AnyIO deprecation warning); Quality incl. Chromium and published Pages smoke passed; Graphify, Dead Code, Provenance and Freshness passed. Direct Actions migrated to verified Node24 pins. External exercise-toolkit remains pinned pending behavior compatibility review."
     }
   }
 }

@@ -233,3 +233,16 @@ Fetch latest PR head after commit `f9d5afaae983675d2c616e3fbc70942840d314e5`, in
 - Copy distinguishes existing local ASR/Piper/half-duplex prototype from unfinished streaming, echo cancellation, interruption, queue and target-device acceptance; it does not claim these are already available.
 - Updated landing Playwright assertions to require the voice scope and echo-cancellation acceptance text. Commits: a2df368, 1c3cd5d, 4abe657, da69c8e, af13b48.
 - Exact-head landing/Chromium test has not yet run on the current branch. The existing PR description still explicitly excludes realtime voice/AEC as ready; the new landing text presents them as first functional update scope, not as shipped functionality.
+
+## Exa research and verified architecture decisions — 2026-10-30
+- Synthesis: docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md; 45 targeted queries / up to 360 requested result slots.
+- [x] A4 — reviewed NeMo-Speech.cpp, Nemotron 3.5, Typhoon Thai ASR, VibeVoice, VoxCPM2, Magpie TTS, VoiceChat, Pipecat/LiveKit, voicebench, Agent Skills/book-to-skill, DBOS/Temporal/LangGraph and Node24 Actions.
+- [~] D5 — Graphify and targeted source audit cover current hotspots; full manual subsystem audit remains open.
+- [~] D8 — OOXML DTD/external-entity handling fixed and regression-tested in 051308c; broader SSRF, parser isolation and adversarial corpus remain open.
+- [x] D4/D6 — Gateway CI after XML hardening: 156 passed (one upstream Starlette/AnyIO deprecation warning).
+- [x] CI runtime — direct Action pins upgraded to Node24 in 48874eab; Gateway, Quality/Chromium/Pages smoke, Graphify, Dead Code, Provenance and Freshness passed.
+- [~] P5/P6 — candidates/constraints documented; target-device quality, helper registry and GPU-only admission tests remain open.
+- [~] P7/P9 — durable workflow options compared; no engine chosen. Current bounded DAG stays baseline.
+- [x] P3/P8 — Knowledge-to-Skill linked to Agent Skills and book-to-skill v1.3.0; implementation/human review UI remain pending.
+- [ ] No speech model, voice framework, GPU scheduler, agent engine or document converter integrated in this research pass.
+- [ ] External skills/exercise-toolkit@ebf43bb remains pinned pending behavior review.

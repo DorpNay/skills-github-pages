@@ -425,3 +425,35 @@ voice_asr_research_update:
     - "Parakeet RNNT 1.1B: Russian and Thai supported; larger model and NVIDIA Community Model License"
     - "Moonshine Voice: not a RU/TH STT replacement based on currently listed language support"
   decision: "no ASR model/runtime migration until RU/EN/TH golden-set WER, endpointing, latency, VRAM/RAM and license acceptance"
+
+exa_research_and_current_build_2026_10_30:
+  research_document: "docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md"
+  coverage: "45 targeted queries; up to 360 requested result slots; primary-source fetches; not exhaustive census"
+  decisions:
+    asr: "Keep whisper.cpp. Nemotron 3.5 0.6B is RU transcription-ready / TH adaptation-ready (OpenMDW-1.1); Typhoon 115M is Thai CC-BY-4.0; VibeVoice covers RU but not TH."
+    tts: "Keep Piper. VoxCPM2 2B supports RU/TH under Apache-2.0 but is VRAM-heavy; MagpieTTS excludes RU/TH."
+    realtime_voice: "NeMo-Speech.cpp is optional; VoiceChat 11B requires 80GB VRAM/CUDA x86_64."
+    orchestration: "No adoption; keep bounded ToolDAG; DBOS conditional on Postgres; Temporal for distributed long-running workflows."
+    knowledge_to_skill: "Agent Skills spec + book-to-skill v1.3.0 are design references; private human-reviewed converter not implemented."
+  security_fix:
+    commit: "051308c3a8ff95369ddd784503771f6387bc70d9"
+    changes:
+      - "Reject DTD/entity declarations in DOCX/XLSX XML"
+      - "Enforce actual expanded XML size"
+      - "Remove seven duplicate test definitions"
+      - "Add internal entity and external DTD regressions"
+    gateway_ci: "156 passed, 1 upstream Starlette/AnyIO warning"
+  node24_migration:
+    commit: "48874eab1cdce698b2dcfd681413d2cd45e27b38"
+    workflows_updated: 13
+    external_reusable: "skills/exercise-toolkit stays at ebf43bb pending behavior review"
+  exact_head_ci:
+    sha: "48874eab1cdce698b2dcfd681413d2cd45e27b38"
+    gateway_run: 41014174742
+    quality_run: 41014174703
+    graphify_run: 41014174760
+    dead_code_run: 41014174711
+    provenance_run: 41014174761
+    freshness_run: 41014174686
+    result: "All successful, including Chromium and published Pages smoke"
+  remaining: "Full manual audit; RU/EN/TH hardware voice benchmarks; streaming voice; helper registry; durable orchestration; Knowledge-to-Skill; owner-host gates"

@@ -254,3 +254,10 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Landing capability card and roadmap now enumerate editable STT, conversational voice/interruption, selected-text TTS, whole-message TTS and multi-message playback queue as first functional update requirements.
 - Existing ASR/Piper/half-duplex code is distinguished from unfinished streaming/AEC/barge-in/queue/device acceptance. Playwright assertions added; current exact-head CI pending.
 - ASR candidates Nemotron 3.5 Streaming 0.6B, Qwen3-ASR-0.6B and Parakeet RNNT 1.1B recorded in PROJECT_STATE and the three-role audit tracker. Whisper remains baseline until benchmark.
+
+## Exa research + exact-head CI checkpoint — 2026-10-30
+- Full synthesis: docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md.
+- Security fix 051308c: reject DTD/entity declarations in OOXML; remove seven shadowed tests; Gateway CI 156 passed (one upstream AnyIO warning).
+- Node24 direct Action pins commit 48874eab: 13 workflow files updated; exact-head CI all green including Chromium and published Pages smoke.
+- External exercise toolkit remains pinned because newer upstream changes behavior; separate compatibility review required.
+- Remaining: full subsystem audit, hardware voice evaluation, realtime audio, helper registry, durable AgentRun contract and Knowledge-to-Skill prototype.
