@@ -1388,8 +1388,10 @@ test('thorough processing keeps standard web-search breadth', async ({ page }) =
     }) });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.evaluate(() => localStorage.setItem('ai_tavily_key', 'e2e-tavily-key'));
   await configureCustomProvider(page, 'effort-search-model');
+  // saveSettings() persists the provider form and may overwrite localStorage; seed Tavily afterwards.
+  await page.evaluate(() => localStorage.setItem('ai_tavily_key', 'e2e-tavily-key'));
+  expect(await page.evaluate(() => localStorage.getItem('ai_tavily_key'))).toBe('e2e-tavily-key');
   await page.locator('#modeDeep').click();
   await chooseSearchMode(page, 'normal');
   await page.locator('#userInput').fill('Find evidence using standard web search carefully.');
