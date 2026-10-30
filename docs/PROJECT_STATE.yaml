@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-10-31"
   root_orienter:
-    status: "Main is e78a73b25725bfa63370d9946887cbbacbf51b82 after PR #123 merged. PR #123 exact head fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222 passed all six workflow groups; it added redirect-safe GitHub freshness checks and the bounded local-model smoke harness. PR #124 (reproducible Python lockfile and 3.12/3.13 matrix) remains open. PR #125 is a draft agent-platform research/design PR on research/agent-platform-blueprint-20261030; latest head 9e8afe6b600b580a80dcb3ac3004e06d50826d7d has Freshness and Provenance passed while Quality Sentinels are running. Issue #111 remains the owner/live-host gate. Post-merge Pages deployment and live VPS/Ollama remain unverified."
+    status: "Main is e78a73b25725bfa63370d9946887cbbacbf51b82 after PR #123 merged. PR #123 exact head fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222 passed all six workflow groups; it added redirect-safe GitHub freshness checks and the bounded local-model smoke harness. PR #124 (reproducible Python lockfile and 3.12/3.13 matrix) remains open. PR #125 is a draft agent-platform research/design PR on research/agent-platform-blueprint-20261030; current branch head fc363c856966d38adaeb9fe6f0e5a8f81c7cb7a8 (content/model review commit 9e8afe6b600b580a80dcb3ac3004e06d50826d7d); exact-head checks for the continuity-only head are pending. On 9e8afe6 Freshness and Provenance passed while Quality Sentinels were still running. Issue #111 remains the owner/live-host gate. Post-merge Pages deployment and live VPS/Ollama remain unverified."
     branch: "main"
     base_main: "e78a73b25725bfa63370d9946887cbbacbf51b82"
     open_prs_at_checkpoint: 1
