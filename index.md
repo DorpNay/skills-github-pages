@@ -464,7 +464,7 @@ permalink: /
           </div>
              <p class="text-[10px] text-gray-500">Выбери провайдера. Ключ и соединение проверяются автоматически.</p>
        <label for="providerPreset" data-i18n="providerLabel" class="sr-only">Сторонний API</label>
-       <select id="providerPreset" aria-label="Сторонний API-провайдер" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"><optgroup id="providerExternalGroup" label="Сторонние провайдеры"><option value="kilo">Kilo</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai</option><option value="cloudflare">Cloudflare Workers AI</option><option value="openrouter">OpenRouter</option><option value="nvidia">NVIDIA NIM</option><option value="huggingface">Hugging Face</option><option value="custom">Свой OpenAI-совместимый API</option></optgroup></select>
+       <select id="providerPreset" aria-label="Сторонний API-провайдер" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"><option value="" selected disabled>Сторонний API</option><optgroup id="providerExternalGroup" label="Сторонние провайдеры"><option value="kilo">Kilo</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai</option><option value="cloudflare">Cloudflare Workers AI</option><option value="openrouter">OpenRouter</option><option value="nvidia">NVIDIA NIM</option><option value="huggingface">Hugging Face</option><option value="custom">Свой OpenAI-совместимый API</option></optgroup></select>
        <input type="search" id="modelSearch" aria-label="Поиск модели" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="Поиск модели">
        <select id="modelPreset" aria-label="Каталог моделей" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"></select>
 <div class="flex items-start justify-between gap-2">
@@ -2746,7 +2746,7 @@ permalink: /
       if (!quiet) showToast('Каталоги провайдеров: ' + available + '/' + providers.length + ' актуальны; обновлено сейчас: ' + refreshed + '.');
       return { refreshed, available, skipped: providers.length - available, results };
     }
-    function updateApiKeyLamp(state,message){const shell=$('apiKeyShell'),status=$('apiKeyStatus');if(!shell||!status)return;shell.dataset.state=state;status.textContent=message;}
+    function updateApiKeyLamp(state,message){const shell=$('apiKeyShell'),status=$('apiKeyStatus');if(!shell||!status)return;shell.dataset.state=state;const failed=state==='error';status.textContent=failed?(getUiLanguage()==='en'?'Connection failed. Check provider details.':'Не удалось подключиться. Проверь данные провайдера.'):'';status.classList.toggle('hidden',!failed);}
     async function providerKeyFingerprint(value) {
       if(!value||!globalThis.crypto?.subtle)return '';
       try {
@@ -2782,7 +2782,7 @@ permalink: /
       const fingerprint=await providerKeyFingerprint(key);
       if(!marker?.ok||marker.baseUrl!==baseUrl||marker.model!==model||marker.keyFingerprint!==fingerprint){setCloudStatus('disconnected');return;}
       try{
-        const health=new URL(baseUrl);health.pathname=health.pathname.replace(/\\/v1\\/?$/,'').replace(/\\/$/,'')+'/healthz';health.search='';health.hash='';
+        const health=new URL(baseUrl);health.pathname=health.pathname.replace(/\/v1\/?$/,'').replace(/\/$/,'')+'/healthz';health.search='';health.hash='';
         const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);let response;
         try{response=await fetch(health.toString(),{method:'GET',headers:{Accept:'application/json'},cache:'no-store',signal:controller.signal});}finally{clearTimeout(timer);}
         if(response.ok){setCloudFieldConnection('connected');setCloudStatus('connected');}else setCloudStatus('disconnected');
@@ -3017,12 +3017,12 @@ permalink: /
     function scheduleProviderAutoConnect(){
       if(providerAutoConnectTimer)clearTimeout(providerAutoConnectTimer);
       providerAutoConnectTimer=setTimeout(async()=>{
-        providerAutoConnectTimer=null;
-        if(!currentProvider()||!$('apiKey').value.trim())return;
-        const provider=currentProvider();
-        try{await refreshModelCatalog({quiet:true,force:true,provider});}catch(_){}
+        providerAutoConnectTimer=null;const provider=currentProvider();
+        if(!provider||(!getProviderRequestKey(provider)&&provider!=='kilo'))return;
+        if(isTestingProviderConnection){scheduleProviderAutoConnect();return;}
+        if(provider!=='kilo'&&provider!=='pollinations'){try{await refreshModelCatalog({quiet:true,force:true,provider});}catch(_){}}
         await testProviderConnection();
-      },700);
+      },850);
     }
     function scheduleCloudAutoConnect(){
       if(cloudAutoConnectTimer)clearTimeout(cloudAutoConnectTimer);
@@ -4903,15 +4903,15 @@ permalink: /
         }
       } catch (error) { console.error('Ошибка действия интерфейса:', error); showToast(error.message || 'Не удалось выполнить действие.', 'error'); }
     });
-    $('providerPreset').addEventListener('change',()=>{applyProviderPreset($('providerPreset').value);safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();if(currentProvider()==='pollinations'||currentProvider()==='kilo'||getProviderRequestKey(currentProvider()))void refreshModelCatalog({quiet:true,force:false,provider:currentProvider()});});
+    $('providerPreset').addEventListener('change',()=>{const selected=$('providerPreset').value;if(!selected)return;applyProviderPreset(selected);safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();if(currentProvider()==='pollinations'||currentProvider()==='kilo'||getProviderRequestKey(currentProvider()))void refreshModelCatalog({quiet:true,force:false,provider:currentProvider()});scheduleProviderAutoConnect();});
     $('cloudflareAccountId').addEventListener('input',()=>{
       const id=$('cloudflareAccountId').value.trim();safeSet(STORAGE.cloudflareAccountId,id);
       if(currentProvider()==='cloudflare')$('baseUrl').value=getProviderBaseUrl('cloudflare');
       safeSet(providerModelCatalogStaleKey('cloudflare'),'true');
       safeSet('ai_provider_connection_cloudflare','');refreshApiKeyLamp();
     });
-    $('apiKey').addEventListener('input',(event)=>{if(currentProvider()!=='pollinations')safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();if(event.inputType==='insertFromPaste')scheduleProviderAutoConnect();});
-    $('baseUrl').addEventListener('input',()=>{safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
+    $('apiKey').addEventListener('input',()=>{if(currentProvider()!=='pollinations')safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();scheduleProviderAutoConnect();});
+    $('baseUrl').addEventListener('input',()=>{safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();scheduleProviderAutoConnect();});
     $('cloudBaseUrl').addEventListener('input',()=>{const value=$('cloudBaseUrl').value.trim();safeSet('ai_alandi_cloud_base_url',value);safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('cloudBaseUrl',validateCloudBaseUrl(value));setCloudStatus('disconnected');scheduleCloudAutoConnect();});
     $('cloudModel').addEventListener('input',()=>{safeSet('ai_alandi_cloud_model',$('cloudModel').value.trim());safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('cloudModel');setCloudStatus('disconnected');scheduleCloudAutoConnect();});
     $('cloudApiKey').addEventListener('input',()=>{safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('cloudApiKey');setCloudStatus('disconnected');scheduleCloudAutoConnect();});
@@ -4926,7 +4926,7 @@ permalink: /
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
     $('researchStudioModal').addEventListener('click', (event) => { if (event.target === $('researchStudioModal')) closeResearchStudio(); });
     $('modelPreset').addEventListener('change',()=>{const value=$('modelPreset').value;if(value!=='__custom__')$('modelName').value=value;safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
-    $('modelName').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
+    $('modelName').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();scheduleProviderAutoConnect();});
     $('modelName').addEventListener('change',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('modeFast').addEventListener('click', () => setProcessingMode('fast'));
     $('modeDeep').addEventListener('click', () => setProcessingMode('deep'));
