@@ -247,7 +247,7 @@
 ## Supplement — autonomous agent orchestration research (2026-10-28)
 
 - [x] Reviewed additional upstream open-source patterns for orchestration, durable workflows, policy-as-code, sandboxing, agent evaluations, memory, protocols and observability; recorded source links and limitations in `docs/AGENT_ORCHESTRATION_RESEARCH_RU.md`.
-- [x] Owner-approved design direction recorded in D-015 and AI-AGENT-005: explicit task state machine, least-capability executor, fail-closed policy gate, action-bound approval, independent verifier, durable journal/recovery, bounded retries and eval-gated helper model.
+- [x] Owner-approved design direction recorded in D-016 and AI-AGENT-005: explicit task state machine, least-capability executor, fail-closed policy gate, action-bound approval, independent verifier, durable journal/recovery, bounded retries and eval-gated helper model.
 - [ ] Reconcile current main and open PRs before code changes; audit actual runtime paths rather than relying on module names.
 - [ ] Implement task contract/state machine and tests in a bounded PR.
 - [ ] Select and verify a real sandbox before allowing arbitrary command/code execution.
