@@ -226,3 +226,8 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Fixed by `await_local_process()` in gateway/app.py; regression tests added to gateway/tests/test_audio_concurrency.py. Commits: `77b2691` and `363bb5c`.
 - Equivalent local Python smoke: timeout and cancellation both killed/reaped the child (return code -9). This does not replace repository Gateway CI.
 - Existing Gateway #483 passed 150 tests before this new fix. Current code needs Gateway CI; the connected GitHub actions interface cannot dispatch a new workflow on the new commit.
+
+### UX polish — latest checkpoint
+- Read `docs/LANDING_UX_POLISH_BACKLOG_RU.md` for all remaining landing/app presentation work.
+- Landing ticker pause controls implemented in `f42c42d`; Playwright regression in `b213c8a`; exact-head CI pending. No JS/runtime dependency added.
+- Full tracker also linked from `docs/V1_UI_FINALIZATION_RU.md`; update PROJECT_STATE, VOLLEY_LOG and ORIENTER after each major slice.
