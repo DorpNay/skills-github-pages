@@ -361,7 +361,7 @@
 ## D. Состояние репозитория на момент миграции (GitHub, 2026-10-31)
 
 - Базовый main: `e78a73b25725bfa63370d9946887cbbacbf51b82` (merge PR #123).
-- Открытые PR: #124 (dependency lock/matrix), #125 (agent-platform research/design, Draft), #126 (code-currency/dependency audit, Draft).
+- Открытые PR: #124 (dependency lock/matrix), #125 (initial agent-platform blueprint, Draft), #126 (code-currency/dependency audit, Draft), #128 (deep agent workforce / VERT / output limits research).
 - Открытый Issue: #111 (owner/live-host release gate).
 - Ни один PR не считается merged, пока GitHub не показывает merge commit в актуальном default branch.
 - При каждом рабочем заходе SHA и очередь перепроверяются в GitHub; этот снимок — историческая точка, не live truth.
