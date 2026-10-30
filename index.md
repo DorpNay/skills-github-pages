@@ -2270,7 +2270,7 @@ permalink: /
       $('pollinationsAuthGroup').classList.toggle('hidden',provider!=='pollinations');
       const kiloNotice=$('kiloPrivacyWarning');if(kiloNotice)kiloNotice.classList.toggle('hidden',provider!=='kilo');
       $('apiKeyLabel').textContent=provider==='pollinations'?'Pollinations App Key · pk_… (OAuth client ID)':'API Key · ключ провайдера';
-      $('apiKey').placeholder=provider==='pollinations'?'App Key с префиксом pk_…':'Вставьте ключ провайдера';
+      $('apiKey').placeholder=provider==='pollinations'?'App Key · pk_…':'Ключ API';
       if(provider==='cloudflare'){
         $('cloudflareAccountId').value=safeGet(STORAGE.cloudflareAccountId)||'';
         $('baseUrl').value=getProviderBaseUrl('cloudflare');
