@@ -2,20 +2,17 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-## Текущая контрольная точка — 2026-10-29
+## Текущая контрольная точка — 2026-10-30
 
-- Текущий main: `80597f61c000d691e95d67893edea60e75da1033` (PR #113 — immutable GitHub Actions pins). Quality Sentinels #40915070855, Pages #40915070655, Gateway #40915070886, provenance #40915070933 и Graphify #40915070939 прошли на exact main SHA.
-- PR #115 merged: composer popover scrim, modal backdrop blur, inert first outside tap for toolbar/language/chat-row menus; exact-head Quality/Chromium and published-site smoke passed. PR #114 merged: empty user prompt by default, Gemini reset removed, history serialization headroom added. PR #71 mobile composer fix remains native-device unverified.
-- PR #107 merged: private/shared browser memory scope, explicit promotion confirmation, local-only private context, privacy E2E.
-- PR #106 merged: offline RAG evaluator core; smoke fixture не является production golden set.
-- PRs #84/#81/#83/#82 merged: CORS canonicalization, deployment-template preflight, SQLite in-memory delta fix, readiness audit.
-- PRs #80/#85/#86/#87 closed as superseded/deferred after preserving the useful implementation in reconciled PRs #106/#107/#108; their remaining unique documentation is handled through this reconciliation.
-- PR #113, #114 and #115 merged; at this checkpoint open PRs: 0. Verify the live queue before acting.
-- Exact queue markers: open PRs (0): none; open issues (1): #111.
-- Only open issue: #111, the consolidated release-gates tracker. Research-only issues #88–#92 and #96–#104 are closed with explicit comments pointing to the retained implementation/live-host blockers.
-- Still unverified: native iPhone Safari/keyboard/touch, live VPS/Tunnel/Ollama, target-hardware RAM/latency, voice artifacts/device playback, OAuth/Drive credentials, real labelled RAG corpus, and main branch protection/rulesets.
-
-Этот документ содержит исторические записи ниже; их SHA, очередь и статусы не являются текущей истиной. Актуальный контрольный блок находится непосредственно после этого вводного абзаца и сверяется workflow `Project State Freshness`.
+- Текущий main: 2bda22229cba3576628f92c821bb6e1562d8abc5 (PR #120 — sidebar hierarchy, memory/project/chat navigation and synchronized theme/language preferences). В merge-коммите записано, что Chromium, published Pages smoke, Jekyll, integrity, security, context и Graphify прошли; отдельный combined-status запрос для SHA не вернул status entries, поэтому не приписывать этому SHA несуществующие run IDs.
+- Единственный открытый PR: #121, branch feat/chat-settings-orthogonal-controls-20261030. Изменения охватывают независимые work-effort/search параметры, Research Studio как mode-only окно, разделение private server/external providers, project settings modal, landing roadmap и V1 checklist.
+- В текущей ветке устранён дублирующий Settings close selector; integrity provider-group sentinel переведён на детерминированный string parsing; Research Studio E2E отделяет ожидаемый provider probe от отправки пользовательского запроса. Добавлены landing E2E, ticker tests и reduced-motion acceptance. Всё это пока **не merged**; повторный exact-head CI обязателен.
+- Последний известный exact-head Quality workflow #40991938982 был pending на предшествующем branch head; последующие commits двигают PR head. Использовать live checks PR #121, а не сохранять старый результат как финальный.
+- Exact queue markers: open PRs (1): #121; open issues (1): #111.
+- Единственный открытый issue #111 — consolidated release-gates tracker. Он содержит owner-only gates: main ruleset/review policy, реальный VPS/Tunnel/Ollama, аппаратные и model benchmarks, voice/device, permissioned RAG corpus, sandbox и OAuth. Не закрывать только по зелёному CI или ради нулевой очереди.
+- Реестр V1 UI: docs/V1_UI_FINALIZATION_RU.md. История требований: docs/USER_REQUEST_CHECKLIST.md. Целевая архитектура и границы первого стека: docs/PRE_LAUNCH_STACK_RU.md и docs/ALANDI_MASTER_CONTEXT_RU.md.
+- Граница релиза: бесплатный статический GitHub Pages интерфейс не означает бесплатный inference или предоставленный hosted AI endpoint. Корневое приложение не заменять лендингом. Private gateway/Ollama и прочие runtime-зависимости не объявлять развёрнутыми без owner/live-host evidence.
+- Непроверено: нативный iPhone Safari/keyboard/touch/screen-reader, live VPS/Tunnel/Ollama, provider credentials, real model RAM/latency, voice/device, OAuth/Drive, production RAG golden set и main ruleset.
 
 ## Историческая контрольная точка — 2026-10-28
 
@@ -33,7 +30,7 @@
 0. **Короткая точка входа:** корневой `ORIENTER.md`.
 1. **Текущий статус и флаги:** `docs/PROJECT_STATE.yaml`.
 2. **Архитектура и границы:** `docs/ALANDI_MASTER_CONTEXT_RU.md`.
-3. **Что пользователь просил и что осталось:** `docs/USER_REQUEST_CHECKLIST.md`.
+3. **Что пользователь просил и что осталось:** `docs/USER_REQUEST_CHECKLIST.md` и живой V1 release gate `docs/V1_UI_FINALIZATION_RU.md`.
 4. **Порядок внедрения:** `docs/IMPLEMENTATION_ROADMAP_RU.md`, `docs/CODER_PACKET.md`.
 5. **Решения / eval / цикл:** корневые `DECISIONS.md`, `EVALS.md`, `LOOP.md`, `INTEL.md`, `IMPROVEMENT_SELECTION.md`.
 6. **Поиск и исследования:** `docs/SEARCH_RESEARCH_FEATURE_EXTRACTION_RU.md`, `docs/OPEN_SOURCE_TRIAGE_RU.md`.
