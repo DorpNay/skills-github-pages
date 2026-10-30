@@ -32,7 +32,7 @@ test('V1 landing has accurate metadata, working CTAs and honest product boundari
   await expect(page.locator('#capabilities')).toContainText('транскрипция речи с редактированием');
   await expect(page.locator('#capabilities')).toContainText('чтение выделенного текста');
   await expect(page.locator('#capabilities')).toContainText('очереди выбранных сообщений');
-  await expect(page.locator('#roadmap')).toContainText('acoustic echo cancellation');
+  await expect(page.locator('#roadmap')).toContainText('эхоподавление');
   await expect(page.locator('#readiness')).toContainText('а не на открытый многопользовательский SaaS');
   await expect(page.locator('nav a[href="#roadmap"]')).toBeVisible();
   await expect(page.locator('footer')).toContainText('Реестр финализации UI');
