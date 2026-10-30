@@ -7,7 +7,7 @@
 - [Первый стек и предпусковой чек-лист](docs/PRE_LAUNCH_STACK_RU.md) — рекомендуемая конфигурация и пошаговые gates владельца перед VPS/Tunnel и закрытым пилотом.
 - [Карта потоков данных и вводные для Privacy Notice](docs/LAUNCH_PRIVACY_REVIEW_RU.md) — внутренний checklist перед публикацией политики; это ещё не готовый юридический документ.
 
-**Статус:** исходник лендинга и текущие правки V1 проверяются через PR #121. Считать новую версию опубликованной можно только после merge, успешного Pages deployment и проверки фактического URL.
+**Статус:** PR #121 merged at `f4d880f` (первый бесплатный лендинг V1 и клиентский UX), PR #122 merged at `fd4f0a1` (Gateway liveness/readiness). Exact-head CI обоих PR прошёл. Post-merge Pages deployment на точном merge commit отдельно не подтверждён; считать публикацию проверенной можно только после успешного Pages deployment и smoke фактического URL.
 
 ## Объединённый backlog первого бесплатного релиза
 
@@ -23,17 +23,17 @@
 
 ## Карта архитектуры
 
-Навигационная схема UI, gateway, памяти, RAG, инструментов, голоса и тестов: [docs/ALANDI_ARCHITECTURE_MAP_RU.md](docs/ALANDI_ARCHITECTURE_MAP_RU.md). Это кураторская карта модулей; автоматически построенный Graphify dependency graph пока не создан.
+Навигационная схема UI, gateway, памяти, RAG, инструментов, голоса и тестов: [docs/ALANDI_ARCHITECTURE_MAP_RU.md](docs/ALANDI_ARCHITECTURE_MAP_RU.md). Это кураторская карта модулей. Graphify code-only dependency graph строится в GitHub Actions как временный dev-artifact; последний проверенный срез — 1,109 nodes / 3,103 edges / 53 communities. Это навигация разработчика, не runtime-компонент.
 
 ## Шесть инженерных пластов и журнал решений
 
-Большой обзор решений, статусов реализации, ограничений и планов eval: [docs/SIX_LAYER_ENGINEERING_RU.md](docs/SIX_LAYER_ENGINEERING_RU.md). Формальные решения D-001–D-006: [DECISIONS.md](DECISIONS.md). Новые gateway-модули есть в коде, но их feature flags выключены по умолчанию; наличие кода не означает live-деплой.
+Большой обзор решений, статусов реализации, ограничений и планов eval: [docs/SIX_LAYER_ENGINEERING_RU.md](docs/SIX_LAYER_ENGINEERING_RU.md). Формальные архитектурные решения D-001–D-019: [DECISIONS.md](DECISIONS.md). Новые gateway-модули есть в коде, но их feature flags выключены по умолчанию; наличие кода не означает live-деплой.
 
 ## Полный инженерный пакет aLandi
 
 Единый пакет для кодера и агента @Поиск: [docs/CODER_PACKET.md](docs/CODER_PACKET.md). Статус каждого изменения: [docs/PROJECT_STATE.yaml](docs/PROJECT_STATE.yaml), eval-гейты: [EVALS.md](EVALS.md), цикл и откат: [LOOP.md](LOOP.md), источники и лицензии: [INTEL.md](INTEL.md), latency-контракт: [docs/LATENCY_CONTRACT.md](docs/LATENCY_CONTRACT.md), реестр улучшений: [docs/ACCEPTED_IMPROVEMENTS.md](docs/ACCEPTED_IMPROVEMENTS.md).
 
-Важная граница: PR #29 добавил и CI проверил ручной мост между локальной памятью проекта в браузере и feature-flagged authenticated memory graph API (`ALANDI_MEMORY_GRAPH_ENABLED=false` по умолчанию). Локальные факты отправляются только вручную как `candidate`; в prompt попадают только подтверждённые факты точного project scope и только при двух включённых per-chat toggles. Реальный gateway не настроен/не проверен, поэтому мост не активирован в живой системе. Voice, tool DAG и evidence ledger остаются прототипами/контрактами; native ONNX/Rust hotpath, AEC, запись микрофона и 8GB hardware benchmark не реализованы/не подтверждены. Не включайте экспериментальные функции на VPS по одному только факту merge.
+Важная граница: PR #29 добавил и CI проверил ручной мост между локальной памятью проекта в браузере и feature-flagged authenticated memory graph API (`ALANDI_MEMORY_GRAPH_ENABLED=false` по умолчанию). Локальные факты отправляются только вручную как `candidate`; в prompt вносятся только подтверждённые факты точного project scope и только при двух включённых per-chat toggles. Реальный gateway не настроен/не проверен, поэтому мост не активирован в живой системе. В main есть локальные whisper.cpp ASR, Piper TTS, UI записи/транскрипции и half-duplex voice prototype, но runtime остаётся выключенным без установленных и проверенных моделей/флагов; streaming, AEC, barge-in, multi-message queue и target-device quality остаются незавершёнными. Tool DAG и evidence ledger — прототипы/контракты; native ONNX/Rust hotpath и 8GB hardware benchmark не подтверждены. Не включайте экспериментальные функции на VPS по одному только факту merge.
 
 ## Главная инструкция: установка aLandi
 
