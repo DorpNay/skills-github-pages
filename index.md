@@ -462,59 +462,40 @@ permalink: /
             <label class="text-[11px] text-gray-400">Поле ввода<select id="composerPosition" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="bottom" data-i18n="composerBottom">Снизу</option><option value="top" data-i18n="composerTop">Сверху</option></select></label>
             <button type="button" data-action="toggle-theme-cycle" class="advanced-control self-end rounded border border-gray-700 bg-gray-900 text-left text-gray-300" aria-label="Сменить тему">☼ Тема</button>
           </div>
-      <div class="rounded-lg bg-gray-900 border border-gray-700 p-2.5 text-xs leading-relaxed text-gray-300 space-y-2" data-i18n-group="providerHelp">
-        <p><strong>Подключение:</strong> выбери сервис и проверь модель. Для каждого провайдера нужен свой ключ; пустое поле значит, что ключ не сохранён для выбранного провайдера.</p>
-        <p>Ключи провайдеров и Tavily хранятся отдельно в localStorage этого браузера. Профиль настроек не включает секреты. Не используй ключи на общих устройствах.</p>
-        <p>Резерв к другому провайдеру выключен по умолчанию. При включении текст запроса и контекст могут быть отправлены другому провайдеру. Веб-поиск работает с открытыми источниками; Tavily — дополнительный источник. Некоторые сервисы блокируют браузерные запросы из-за CORS; для них нужен защищённый серверный прокси.</p>
-      </div>
-      <label for="providerPreset" data-i18n="providerLabel" class="block text-xs text-gray-400">Провайдер API</label>
-      <select id="providerPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm">
-        <optgroup id="providerPrimaryGroup" label="aLandi Cloud · основной маршрут"><option value="alandi">aLandi Cloud · свой gateway</option></optgroup><optgroup id="providerExternalGroup" label="Сторонние провайдеры"><option value="kilo">Kilo AI · Auto Free</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq · быстрые модели</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai · модели через единый API</option><option value="cloudflare">Cloudflare Workers AI · свой аккаунт</option><option value="openrouter">OpenRouter · маршрутизатор моделей</option><option value="nvidia">NVIDIA NIM · endpoints</option><option value="huggingface">Hugging Face Inference Providers</option><option value="custom">Свой OpenAI-совместимый API</option></optgroup>
-      </select>
-      <label for="modelSearch" data-i18n="modelSearchLabel" class="block text-xs text-gray-400">Поиск по каталогу моделей</label>
-      <input type="search" id="modelSearch" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Фильтр по имени или ID модели">
-      <label for="modelPreset" data-i18n="modelPresetLabel" class="block text-xs text-gray-400">Быстрый выбор модели · список обновляется из API</label>
-      <select id="modelPreset" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm"></select>
-      <div class="flex items-start justify-between gap-2">
+             <p class="text-[10px] text-gray-500">Выбери провайдера. Ключ и соединение проверяются автоматически.</p>
+       <label for="providerPreset" data-i18n="providerLabel" class="sr-only">Сторонний API</label>
+       <select id="providerPreset" aria-label="Сторонний API-провайдер" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"><optgroup id="providerExternalGroup" label="Сторонние провайдеры"><option value="kilo">Kilo</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai</option><option value="cloudflare">Cloudflare Workers AI</option><option value="openrouter">OpenRouter</option><option value="nvidia">NVIDIA NIM</option><option value="huggingface">Hugging Face</option><option value="custom">Свой OpenAI-совместимый API</option></optgroup></select>
+       <input type="search" id="modelSearch" aria-label="Поиск модели" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="Поиск модели">
+       <select id="modelPreset" aria-label="Каталог моделей" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"></select>
+<div class="flex items-start justify-between gap-2">
         <p id="modelCatalogStatus" class="min-w-0 text-[11px] leading-relaxed text-gray-400" role="status" aria-live="polite">Показаны встроенные модели. Нажмите «Обновить каталог» для получения актуального списка.</p>
         <button type="button" data-action="refresh-model-catalog" id="refreshModelCatalog" title="Обновить каталоги всех настроенных провайдеров; полезно для межпровайдерного резерва" class="shrink-0 bg-gray-700 hover:bg-gray-600 border border-gray-600 px-2 py-1.5 rounded text-[11px] text-gray-200">Обновить все</button>
       </div>
-      <p id="providerHint" class="text-[11px] leading-relaxed text-gray-400">Выберите провайдера и модель. Ключи разных провайдеров сохраняются отдельно в этом браузере.</p>
-      <p id="kiloPrivacyWarning" data-i18n="kiloPrivacyNotice" class="hidden rounded-lg border border-amber-800/60 bg-amber-950/25 p-2 text-[11px] leading-relaxed text-amber-100">Kilo Auto Free — обычный альтернативный провайдер в общем списке API, не часть основного облака aLandi. Запросы могут обрабатываться сторонними моделями и использоваться для улучшения сервисов. Не отправляй конфиденциальные данные.</p>
+      <p id="providerHint" class="hidden" aria-live="polite"></p>
+      
       <a id="providerDocsLink" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-blue-300 underline underline-offset-2">Открыть страницу API-ключа</a> <a href="https://github.com/DorpNay/skills-github-pages/blob/main/PROVIDER_SETUP.md" target="_blank" rel="noopener noreferrer" class="inline-block text-xs text-cyan-300 underline underline-offset-2">Инструкция по подключению</a>
       <div id="cloudflareAccountGroup" class="hidden space-y-1.5">
         <label for="cloudflareAccountId" class="block text-xs text-gray-400">Cloudflare Account ID (32 hex-символа)</label>
         <input type="text" id="cloudflareAccountId" inputmode="text" autocomplete="off" spellcheck="false" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Ваш Account ID из Cloudflare Dashboard">
         <p class="text-[10px] leading-relaxed text-gray-500">Адрес соберётся автоматически. Нужен Workers AI Read token; Account ID не секрет.</p>
       </div>
-      <label for="baseUrl" data-i18n="baseUrlLabel" class="block text-xs text-gray-400">Base URL (без /chat/completions)</label>
-      <input type="url" id="baseUrl" autocomplete="url" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
-      <label for="apiKey" id="apiKeyLabel" class="block text-xs text-gray-400">API Key · ключ провайдера</label>
-      <div id="apiKeyShell" class="api-key-row" data-state="empty"><span class="key-lamp" aria-hidden="true"></span><input type="password" id="apiKey" autocomplete="off" aria-describedby="apiKeyStatus" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none" placeholder="Вставьте ключ провайдера"><button type="button" data-action="paste-provider-key" class="shrink-0 rounded-md border border-gray-700 px-2 py-1 text-[11px] text-gray-300" title="Вставить ключ из буфера обмена">Вставить</button></div>
-      <p id="apiKeyStatus" class="text-[11px] leading-relaxed text-gray-400" role="status" aria-live="polite">Серый — ключ не введён; янтарный — ключ задан, но не проверен; зелёный — последняя проверка прошла.</p>
-      <div id="pollinationsAuthGroup" class="hidden rounded-lg border border-cyan-900/60 bg-cyan-950/20 p-3 space-y-2">
+             <input type="url" id="baseUrl" aria-label="Base URL" autocomplete="url" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="Base URL · https://…/v1">
+       <label for="apiKey" id="apiKeyLabel" class="sr-only">API Key</label>
+       <div id="apiKeyShell" class="api-key-row" data-state="empty"><span class="key-lamp" aria-hidden="true"></span><input type="password" id="apiKey" autocomplete="off" aria-describedby="apiKeyStatus" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="Ключ API"><button type="button" data-action="paste-provider-key" class="shrink-0 rounded-md border border-gray-700 px-2 py-1 text-[11px] text-gray-300" title="Вставить ключ">↓</button></div><p id="apiKeyStatus" class="field-error hidden" role="status" aria-live="polite"></p>
+<div id="pollinationsAuthGroup" class="hidden rounded-lg border border-cyan-900/60 bg-cyan-950/20 p-3 space-y-2">
         <p class="text-[11px] leading-relaxed text-cyan-100/90">Используй App Key <code>pk_…</code> и OAuth PKCE. Временный <code>sk_…</code> хранится только в sessionStorage этой вкладки.</p>
         <button type="button" data-action="connect-pollinations" class="w-full bg-cyan-900/50 hover:bg-cyan-800/70 border border-cyan-700/50 py-2 rounded-lg text-xs text-cyan-100">Подключить аккаунт Pollinations · PKCE</button>
         <button type="button" data-action="disconnect-pollinations" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 py-1.5 rounded-lg text-[11px] text-gray-300">Завершить сессию Pollinations</button>
       </div>
       <div class="flex gap-2"><button type="button" data-action="test-connection" class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение и модель</button><button type="button" data-action="clear-provider-key" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
-      <label for="modelName" data-i18n="modelNameLabel" class="block text-xs text-gray-400">Модель</label>
-      <input type="text" id="modelName" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none">
-      <details id="searchToolsSettings" class="rounded-xl border border-gray-700">
-        <summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">Инструменты и веб-поиск</summary>
-        <div class="px-3 pb-3 space-y-2">
-          <p class="text-[11px] leading-relaxed text-gray-400">Веб-поиск уже поддерживает открытые источники. Tavily — дополнительный поисковый провайдер, а не обязательное условие поиска.</p>
-          <label for="tavilyKey" class="block text-xs text-gray-400">Tavily Search API Key · дополнительный</label>
-          <div class="flex gap-2"><input type="password" id="tavilyKey" autocomplete="off" class="min-w-0 flex-1 p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none"><button type="button" data-action="paste-tavily-key" class="rounded-lg border border-gray-700 px-3 text-xs">Вставить</button></div>
-        </div>
-      </details>
-      <div class="flex items-center justify-between gap-2"><label for="systemPromptInput" data-i18n="systemPromptLabel" class="block text-xs text-gray-400">Системный промпт</label><span class="text-[10px] text-gray-500">редактирование по кнопке</span></div>
-      <div class="prompt-editor"><textarea id="systemPromptInput" rows="4" readonly aria-describedby="promptEditHint" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y"></textarea><button type="button" id="editSystemPrompt" data-action="edit-system-prompt" class="prompt-pencil" aria-pressed="false" aria-label="Редактировать системный промпт" title="Разрешить редактирование">✎</button></div>
-      <p id="promptEditHint" class="text-[11px] text-gray-500">Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.</p>
-      <label class="flex items-start gap-2 text-xs text-gray-300 mt-2"><input id="allowCrossProviderFallback" type="checkbox" class="mt-0.5 rounded bg-gray-800 border-gray-700"><span><strong>Разрешить резерв у другого провайдера</strong><span class="block text-[11px] leading-relaxed text-amber-200/80">По умолчанию выключено. При включении текст запроса и контекст могут передаваться другому сервису. Сначала система пробует модели выбранного провайдера.</span></span></label>
-      <p class="text-[11px] leading-relaxed text-gray-400">Системные правила отправляются с каждым запросом. История ограничена ~24 000 символами; добавляются до 4 релевантных заметок (суммарно до 1 200 символов).</p>
-      <p class="text-[11px] leading-relaxed text-gray-400">Ключи хранятся в этом браузере. Межпровайдерный резерв может передать запрос и контекст другому сервису. Не сохраняй ключи на общих устройствах. При CORS-ограничениях нужен защищённый серверный прокси.</p>
-      <div class="grid grid-cols-2 gap-2">
+             <input type="text" id="modelName" aria-label="Модель" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="ID модели">
+       <details id="searchToolsSettings" class="rounded-xl border border-gray-700"><summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">Инструменты и веб-поиск</summary><div class="px-3 pb-3 space-y-2"><div class="flex gap-2"><input type="password" id="tavilyKey" aria-label="Ключ Tavily" autocomplete="off" class="min-w-0 flex-1 p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="ключ Tavily"><button type="button" data-action="paste-tavily-key" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Вставить ключ Tavily">↓</button></div></div></details>
+       <div class="flex items-center justify-between gap-2"><label for="systemPromptInput" data-i18n="systemPromptLabel" class="block text-xs text-gray-400">Системный промпт</label><span class="text-[10px] text-gray-500">редактирование по кнопке</span></div>
+             <label for="systemPromptInput" data-i18n="systemPromptLabel" class="block text-xs text-gray-400">Системный промпт</label>
+       <div class="prompt-editor"><textarea id="systemPromptInput" rows="4" readonly class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y" placeholder="Свои правила для всех запросов"></textarea><button type="button" id="editSystemPrompt" data-action="edit-system-prompt" class="prompt-pencil" aria-pressed="false" aria-label="Редактировать системный промпт" title="Редактировать">✎</button></div><p id="promptEditHint" class="sr-only" aria-live="polite"></p>
+       <label class="flex items-start gap-2 text-xs text-gray-300 mt-2"><input id="allowCrossProviderFallback" type="checkbox" class="mt-0.5 rounded bg-gray-800 border-gray-700"><span><strong>Разрешить резерв у другого провайдера</strong><span class="block text-[11px] leading-relaxed text-amber-200/80">По умолчанию выключено. При включении текст запроса и контекст могут передаваться другому сервису. Сначала система пробует модели выбранного провайдера.</span></span></label>
+      <p class="text-[10px] leading-relaxed text-gray-500">Ключи хранятся в этом браузере. Резервный провайдер может получить текст запроса и контекст.</p>
+       <div class="grid grid-cols-2 gap-2">
         <button type="button" data-action="export-settings-profile" class="bg-gray-700 hover:bg-gray-600 py-2 px-2 rounded text-xs text-gray-200">Скачать профиль настроек</button>
         <button type="button" data-action="import-settings-profile" class="bg-gray-700 hover:bg-gray-600 py-2 px-2 rounded text-xs text-gray-200">Импорт профиля</button>
       </div>
@@ -522,11 +503,7 @@ permalink: /
       <p class="text-[10px] leading-relaxed text-gray-500">Профиль переносит настройки, но намеренно не содержит API-ключи и токены. Импорт не меняет уже сохранённые секреты.</p>
         </div>
       </details>
-      <div class="settings-actions">
-        <button type="button" id="recoveryBackupButton" data-action="download-recovery-backup" class="hidden w-full bg-amber-800 hover:bg-amber-700 py-2 rounded text-xs text-amber-50">Скачать резервную копию истории</button>
-        <button type="button" data-action="save-settings" data-i18n="saveSettings" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded font-bold text-sm">Сохранить</button>
-        <button type="button" data-action="close-settings" data-i18n="closeSettings" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-xs text-gray-300">Закрыть</button>
-      </div>
+      <button type="button" id="recoveryBackupButton" data-action="download-recovery-backup" class="hidden w-full bg-amber-800 hover:bg-amber-700 py-2 rounded text-xs text-amber-50">Скачать резервную копию истории</button>
     </div>
   </div>
 
