@@ -22,7 +22,7 @@
 - [x] D3. Исправить найденную причину: добавить отсутствующий импорт `canonical_action_digest` в тест.
 - [x] D4. Повторно прогнать Gateway tests после исправления: Lite Gateway Tests run #483 passed. Полный Quality/Chromium exact-head gate остаётся незавершённым.
 - [~] D5. Провести полный статический/графовый аудит UI, gateway, memory, RAG, voice, tools, workflows и dependencies. Graphify inspected: 1,109 nodes / 3,103 edges / 53 communities; no import cycles detected; full manual audit remains.
-- [ ] D6. Исправить только воспроизводимые дефекты; каждый фикс покрыть регрессионным тестом.
+- [~] D6. Исправить только воспроизводимые дефекты; каждый фикс покрыть регрессионным тестом. Исправлен тестовый импорт `canonical_action_digest` и подтверждён Gateway CI; дополнительно найден/исправлен orphan subprocess при ASR/TTS timeout или cancellation, добавлены регрессионные тесты, CI для нового functional SHA ещё не запущен.
 - [~] D7. Составить verified dead-code/obsolete-file inventory; ничего не удалять без доказательства отсутствия ссылок, CI/операционных ролей и истории. Vulture сообщил только false-positive для параметра Protocol method; удаление не обосновано.
 - [ ] D8. Проверить security: SSRF/redirect, prompt injection, scopes, deletion, approval, tool sandbox, secrets, upload parsers, audio.
 - [ ] D9. Проверить runtime contracts, cancellation, timeouts, limits, retries, concurrency и resource bounds.
@@ -169,6 +169,14 @@ Dead-code workflow is report-only; its findings are candidates, not deletion aut
 | 10. Release plan and final acceptance | in progress | this document; update after each stage |
 
 
+
+
+
+### Confirmed debugger finding — subprocess cancellation leak (2026-10-30)
+- In ASR route, ffprobe, ffmpeg and whisper.cpp subprocesses were killed on timeout, but not when the request task was cancelled. TTS Piper subprocess had the same gap. A cancelled request/server shutdown could leave local child processes running after the request and temporary-directory cleanup.
+- Fixed in commit `77b2691f4a9cedfab280384667ece9ae92ba9bd3`: shared `await_local_process()` now kills and reaps the child on timeout or `asyncio.CancelledError`, then preserves the original exception. Applied to all four subprocess waits (ffprobe communicate, ffmpeg, whisper.cpp, Piper).
+- Added two tests in `gateway/tests/test_audio_concurrency.py`: cancellation cleanup and timeout cleanup. Equivalent local Python smoke executed both paths; both subprocess return codes were `-9` (killed/reaped). This smoke is not a substitute for running the repository test suite.
+- **Verification blocker:** current functional fix commit is `363bb5c46c6a0fcad55bb5d243289e065ee6450a`. GitHub app Contents updates did not trigger a new PR workflow run; available GitHub connector supports rerunning existing jobs but not workflow_dispatch/push with a user token. Existing Gateway #483 passed before this fix (on earlier code SHA). Run Gateway tests on the new SHA before merge.
 
 ## 9. Дополнительные выводы по моделям и оркестрации
 
