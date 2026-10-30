@@ -4,7 +4,7 @@
 
 ## Текущая контрольная точка — 2026-10-30
 
-- Текущий main: 2bda22229cba3576628f92c821bb6e1562d8abc5 (PR #120 — sidebar hierarchy, memory/project/chat navigation and synchronized theme/language preferences). В merge-коммите записано, что Chromium, published Pages smoke, Jekyll, integrity, security, context и Graphify прошли; отдельный combined-status запрос для SHA не вернул status entries, поэтому не приписывать этому SHA несуществующие run IDs.
+- Текущий main: e6404d510229fa64a7bb375995d76dcba55de623 (PR #120 — sidebar hierarchy, memory/project/chat navigation and synchronized theme/language preferences). В merge-коммите записано, что Chromium, published Pages smoke, Jekyll, integrity, security, context и Graphify прошли; отдельный combined-status запрос для SHA не вернул status entries, поэтому не приписывать этому SHA несуществующие run IDs.
 - Единственный открытый PR: #121, branch feat/chat-settings-orthogonal-controls-20261030. Изменения охватывают независимые work-effort/search параметры, Research Studio как mode-only окно, разделение private server/external providers, project settings modal, landing roadmap и V1 checklist.
 - В текущей ветке устранён дублирующий Settings close selector; integrity provider-group sentinel переведён на детерминированный string parsing; Research Studio E2E отделяет ожидаемый provider probe от отправки пользовательского запроса. Добавлены landing E2E, ticker tests и reduced-motion acceptance. Всё это пока **не merged**; повторный exact-head CI обязателен.
 - Проверка на commit 44ea54e обнаружила один stale copy assertion в integrity sentinel и stale project-state snapshot/orienters. Sentinel приведён к текущей короткой UI-формулировке; ориентиры и snapshot синхронизируются. Новый exact-head CI обязателен.
@@ -236,3 +236,9 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 ## Verified scratch cleanup — 2026-10-30
 - Removed `temp/3`, `temp/4`, `temp/5` after checking references and updating IMPROVEMENT_SELECTION.md. Retained `temp/1` and `temp/2` as historical research. No production source files removed.
 - Deletion commits and rationale: docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md and docs/PROJECT_STATE.yaml.
+
+
+## Синхронизация PR #121 с последним main — 2026-10-30
+- Main commit e6404d510229fa64a7bb375995d76dcba55de623 является documentation-only: добавлен docs/LANDING_UX_POLISH_BACKLOG_RU.md с оставшимися landing/app screenshot, accessibility, interaction and post-merge checks.
+- PR #121 синхронизирован двухродительским merge commit 2c1e6bd811546a87f0ac86bc5e550dd9a31aeb13; compare 194 ahead / 0 behind; GitHub reports mergeable=true, mergeable_state=unstable (CI gates incomplete).
+- Последний функциональный кодовый commit для audio cancellation fix: 363bb5c46c6a0fcad55bb5d243289e065ee6450a. Новый Gateway CI всё ещё требуется.
