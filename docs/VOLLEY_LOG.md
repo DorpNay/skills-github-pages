@@ -104,3 +104,7 @@ Updated landing/index.html to make voice a visible first-functional-update commi
 
 ### 2026-10-30 — Exa research, XML hardening and Node24 CI
 Reviewed 45 targeted Exa queries (up to 360 requested result slots) and fetched primary repositories/model cards. Added docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md. Decisions: keep whisper.cpp/Piper; measure NeMo-Speech.cpp, Nemotron 3.5 (RU-ready / TH adaptation-ready), Typhoon Thai ASR, VibeVoice (RU/no TH), VoxCPM2 (RU/TH TTS) and optional 80GB VoiceChat tier. No runtime adopted. Fixed OOXML DTD parsing and duplicate tests in 051308c; Gateway 156 passed. Updated direct Node24 Action pins in 48874eab. Exact-head Gateway, Quality/Chromium/Pages smoke, Graphify, Dead Code, Provenance and Freshness passed. External exercise-toolkit remains pinned pending semantic compatibility review.
+
+
+### 2026-10-30 — Whole-stack integrity audit baseline recorded
+Before beginning the audit, re-read live PR #123, current main base and issue #111. Recorded baseline: PR #123 open/mergeable, HEAD `f6e67db5a7e39abc5f9351aae5ccadefc58e865e`, base `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; prior exact-head CI 6/6 passed, subject to re-run after any new commit. Issue #111 remains open for owner/environment gates. Created `docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md` with frozen stack boundaries, initial full checklist and independent reviewer handoff brief. No source code changed in this stage. Post-merge Pages and live VPS/Ollama remain unverified.
