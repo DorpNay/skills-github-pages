@@ -1,7 +1,7 @@
 # aLandi — MASTER TASK REGISTRY
 
 **Created:** 2026-10-31  
-**Purpose:** единый инвентарь незавершённых работ из исторического запроса, V-016, backlog запуска/V1 и аудита целостности стека.  
+**Purpose:** единый канонический инвентарь всех незавершённых работ из исторического запроса, V-016, backlog запуска/V1 и аудита целостности стека. При продолжении работ сначала сверяться с этим файлом; исторические источники сохраняются как provenance.  
 **Rule:** исходные чек-листы остаются нетронутыми и сохраняют историческую роль. Этот реестр зеркалирует все открытые checkbox-пункты со стабильными ID; задачи нельзя молча удалять или объявлять выполненными.
 
 ## Статусы
@@ -16,15 +16,17 @@
 
 | Источник | Открытых записей | Ожидают | Частичные | Канонический источник |
 |---|---:|---:|---:|---|
-| Исторический пользовательский реестр | 116 | 82 | 34 | [`docs/USER_REQUEST_CHECKLIST.md`](../docs/USER_REQUEST_CHECKLIST.md) |
+| Исторический пользовательский реестр | 115 | 81 | 34 | [`docs/USER_REQUEST_CHECKLIST.md`](../docs/USER_REQUEST_CHECKLIST.md) |
 | GEN1 / CRAZE V-016 | 28 | 27 | 1 | [`docs/V016_IMPLEMENTATION_CHECKLIST.md`](../docs/V016_IMPLEMENTATION_CHECKLIST.md) |
-| Общий backlog первого запуска | 46 | 46 | 0 | [`docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`](../docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md) |
+| Общий backlog первого запуска | 51 | 51 | 0 | [`docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`](../docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md) |
 | Канонический чек-лист V1 UI | 39 | 21 | 18 | [`docs/V1_UI_FINALIZATION_RU.md`](../docs/V1_UI_FINALIZATION_RU.md) |
 | Полировка лендинга | 23 | 19 | 4 | [`docs/LANDING_UX_POLISH_BACKLOG_RU.md`](../docs/LANDING_UX_POLISH_BACKLOG_RU.md) |
 | Сквозной аудит целостности стека | 24 | 24 | 0 | [`docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md`](../docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md) |
-| **Итого до дедупликации** | **276** | **219** | **57** | |
+| **Итого до дедупликации** | **280** | **223** | **57** | |
 
 ## A. Перенесённые исторические задачи
+
+> **Канонический список незавершённых целей проекта.** Все пункты ниже имеют стабильный ID, исходный статус и ссылку на исходный документ/строку. Новые цели добавлять сюда до начала реализации; при завершении обновлять статус только по проверяемому evidence. Исходные чек-листы не удалять.
 
 ### UR — Исторический пользовательский реестр
 
@@ -204,6 +206,11 @@
 - [ ] **LAUNCH-131** (строка 131; Ручные/owner gates): Valid/invalid Bearer key, allowlisted model, completion, SSE, cache HIT/BYPASS, timeout and reboot tested.
 - [ ] **LAUNCH-132** (строка 132; Ручные/owner gates): No prompt, user file/media body, secret or private memory in logs/traces/artifacts by default.
 - [ ] **LAUNCH-133** (строка 133; Ручные/owner gates): Owner has confirmed whether the first deployment is personal/limited access; never imply public multi-user auth.
+- [ ] **LAUNCH-217** (строка 217; Порядок после PR #121/#122): Проверить post-merge Pages deployment и опубликованные root/`landing/` URL на фактическом merge commit.
+- [ ] **LAUNCH-218** (строка 218; Порядок после PR #121/#122): Завершить visual screenshot-review, native iPhone Safari, keyboard/safe-area, VoiceOver и touch checks.
+- [ ] **LAUNCH-219** (строка 219; Порядок после PR #121/#122): Закрыть только оставшиеся polish/security/reliability задачи внутри текущего стека; не добавлять новые продуктовые функции в первый лендинг.
+- [ ] **LAUNCH-220** (строка 220; Порядок после PR #121/#122): Owner gates issue #111: main ruleset, VPS/Tunnel/Ollama, provider credentials, hardware/model benchmark, RAG corpus, voice/device, sandbox и OAuth. Закрывать только после фактического evidence.
+- [ ] **LAUNCH-221** (строка 221; Порядок после PR #121/#122): Будущие функции (voice expansion, helper registry, durable multi-agent runtime, Knowledge-to-Skill) оставить в отдельном post-landing backlog; не считать блокером публикации статического лендинга V1.
 - [ ] **LAUNCH-239** (строка 239; Future post-landing requirements — voice (not part of the frozen landing V1)): **P0-13. Editable speech-to-text:** запись с микрофона, локальная транскрипция, редактирование распознанного текста до отправки, RU/EN/TH quality tests.
 - [ ] **LAUNCH-240** (строка 240; Future post-landing requirements — voice (not part of the frozen landing V1)): **P0-14. Conversational voice assistant:** полноценный естественный turn-taking, streaming transcript/response, VAD, barge-in, cancellation, echo cancellation, transcript alignment. Текущий half-duplex prototype — только основа, не завершённая функция.
 - [ ] **LAUNCH-241** (строка 241; Future post-landing requirements — voice (not part of the frozen landing V1)): **P0-15. Read selected text aloud:** выделение произвольного фрагмента ответа/сообщения и озвучивание только выделенного содержимого.
