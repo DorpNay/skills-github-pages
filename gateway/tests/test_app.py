@@ -343,6 +343,32 @@ def test_healthz_remains_a_compatible_alias_for_readyz():
     assert legacy.headers["cache-control"] == "no-store"
 
 
+def test_readyz_converts_upstream_timeout_to_503_without_secret():
+    def handler(request):
+        raise httpx.ReadTimeout("upstream timed out")
+
+    with client_for(handler=handler) as client:
+        response = client.get("/readyz")
+
+    assert response.status_code == 503
+    assert response.json()["status"] == "degraded"
+    assert response.json()["ollama"] == "unreachable"
+    assert API_KEY not in response.text
+
+
+def test_healthz_preserves_503_readiness_behavior_when_ollama_is_down():
+    def handler(request):
+        return httpx.Response(503)
+
+    with client_for(handler=handler) as client:
+        response = client.get("/healthz")
+
+    assert response.status_code == 503
+    assert response.json()["status"] == "degraded"
+    assert response.json()["ollama"] == "unreachable"
+    assert API_KEY not in response.text
+
+
 def test_models_require_auth_and_return_only_allowlisted_installed_model():
     with client_for() as client:
         assert client.get("/v1/models").status_code == 401
