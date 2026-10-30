@@ -23,7 +23,7 @@
 - [x] D4. Повторно прогнать Gateway tests после исправления: Lite Gateway Tests run #483 passed. Полный Quality/Chromium exact-head gate остаётся незавершённым.
 - [~] D5. Провести полный статический/графовый аудит UI, gateway, memory, RAG, voice, tools, workflows и dependencies. Graphify inspected: 1,109 nodes / 3,103 edges / 53 communities; no import cycles detected; full manual audit remains.
 - [~] D6. Исправить только воспроизводимые дефекты; каждый фикс покрыть регрессионным тестом. Исправлен тестовый импорт `canonical_action_digest` и подтверждён Gateway CI; дополнительно найден/исправлен orphan subprocess при ASR/TTS timeout или cancellation, добавлены регрессионные тесты, CI для нового functional SHA ещё не запущен.
-- [~] D7. Составить verified dead-code/obsolete-file inventory; ничего не удалять без доказательства отсутствия ссылок, CI/операционных ролей и истории. Vulture сообщил только false-positive для параметра Protocol method; удаление не обосновано.
+- [~] D7. Составить verified dead-code/obsolete-file inventory. Удалены только три подтверждённо устаревших scratch-файла после поиска ссылок и обновления `IMPROVEMENT_SELECTION.md`: `temp/3`, `temp/4`, `temp/5`. Содержательные `temp/1` и `temp/2` оставлены как архивные источники. Vulture warning по Protocol parameter — false positive.
 - [ ] D8. Проверить security: SSRF/redirect, prompt injection, scopes, deletion, approval, tool sandbox, secrets, upload parsers, audio.
 - [ ] D9. Проверить runtime contracts, cancellation, timeouts, limits, retries, concurrency и resource bounds.
 
@@ -177,6 +177,15 @@ Dead-code workflow is report-only; its findings are candidates, not deletion aut
 - Fixed in commit `77b2691f4a9cedfab280384667ece9ae92ba9bd3`: shared `await_local_process()` now kills and reaps the child on timeout or `asyncio.CancelledError`, then preserves the original exception. Applied to all four subprocess waits (ffprobe communicate, ffmpeg, whisper.cpp, Piper).
 - Added two tests in `gateway/tests/test_audio_concurrency.py`: cancellation cleanup and timeout cleanup. Equivalent local Python smoke executed both paths; both subprocess return codes were `-9` (killed/reaped). This smoke is not a substitute for running the repository test suite.
 - **Verification blocker:** current functional fix commit is `363bb5c46c6a0fcad55bb5d243289e065ee6450a`. GitHub app Contents updates did not trigger a new PR workflow run; available GitHub connector supports rerunning existing jobs but not workflow_dispatch/push with a user token. Existing Gateway #483 passed before this fix (on earlier code SHA). Run Gateway tests on the new SHA before merge.
+
+
+
+### Verified repository cleanup — 2026-10-30
+- Inspected all five files under `temp/`, searched repository references and reviewed `IMPROVEMENT_SELECTION.md` before deletion.
+- Deleted `temp/3` (obsolete conversation/planning scratch), `temp/4` (simulated multi-agent brainstorm with stale/unsupported claims), and `temp/5` (generic Jekyll portfolio plan unrelated to the aLandi SPA). Commits: `936f37b2d9c3542956a227a72c0d3d8069042231`, `81bfe30428fdf3b60ea775eb7668253e270aefad`, `893736069e24bc04cd984aa57699caff9780f91d`.
+- Updated `IMPROVEMENT_SELECTION.md` to explain the cleanup and retained source files.
+- Kept `temp/1` (76-point research) and `temp/2` (AI Mobile Agent improvement research) because they contain substantial historical research; no runtime imports or build dependencies reference them. Archive/migration can be considered after their remaining useful ideas are fully reconciled.
+- No production source file was deleted. Dead-code report's only Vulture warning remains a false positive.
 
 ## 9. Дополнительные выводы по моделям и оркестрации
 
