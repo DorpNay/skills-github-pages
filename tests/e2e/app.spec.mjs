@@ -975,9 +975,8 @@ test('aLandi cloud status only turns green after a real model response, and core
   await page.locator('#cloudModel').fill('qwen3.5:4b');
   await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
-  await page.locator('[data-action="connect-alandi-cloud"]').click();
-  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'connected');
-  await expect(page.locator('#cloudStatus')).toContainText('Облако подключено');
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
+  await expect(page.locator('#cloudStatus')).toContainText('Подключено');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_provider'))).toBe('alandi');
   await page.locator('[data-action="close-settings"]').click();
   await page.locator('#userInput').fill('Verify the primary chat uses my aLandi cloud.');
@@ -986,8 +985,7 @@ test('aLandi cloud status only turns green after a real model response, and core
   expect(cloudRequests).toHaveLength(2);
   expect(cloudRequests[1].messages.at(-1).content).toBe('Verify the primary chat uses my aLandi cloud.');
   expect(cloudRequests.every(request => request.model === 'qwen3.5:4b')).toBe(true);
-  await page.locator('#languageSummary').click();
-  await page.locator('#languageMenu [data-action="set-language"][data-language="en"]').click();
+  await selectLanguage(page, 'en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
   await page.locator('#homeThemeToggle').click();
@@ -1525,9 +1523,8 @@ test('aLandi cloud probe rejects HTTP 200 proxy text as proof of a model connect
   await page.locator('#cloudBaseUrl').fill('https://cloud.example.test/v1');
   await page.locator('#cloudModel').fill('qwen3.5:4b');
   await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
-  await page.locator('[data-action="connect-alandi-cloud"]').click();
-  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
-  await expect(page.locator('#cloudStatus')).toContainText('Не удалось подтвердить соединение');
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected', { timeout: 15000 });
+  await expect(page.locator('#cloudApiKeyError')).toContainText('Не удалось подтвердить соединение');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
 });
 
@@ -1568,9 +1565,8 @@ test('aLandi cloud remains disconnected when the model answers but gateway healt
   await page.locator('#cloudBaseUrl').fill('https://unhealthy-cloud.example.test/v1');
   await page.locator('#cloudModel').fill('qwen3.5:4b');
   await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
-  await page.locator('[data-action="connect-alandi-cloud"]').click();
-  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
-  await expect(page.locator('#cloudStatus')).toContainText('health-check gateway вернул HTTP 503');
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected', { timeout: 15000 });
+  await expect(page.locator('#cloudApiKeyError')).toContainText('Не удалось подтвердить соединение');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
 });
 
@@ -1627,13 +1623,12 @@ test('aLandi cloud probe cannot overwrite settings changed while its request is 
   await page.locator('#cloudBaseUrl').fill('https://race-cloud.example.test/v1');
   await page.locator('#cloudModel').fill('race-cloud-model');
   await page.locator('#cloudApiKey').fill('first-cloud-race-key');
-  await page.locator('[data-action="connect-alandi-cloud"]').click();
   await probeStarted;
-  await page.locator('#cloudApiKey').fill('second-cloud-race-key');
+  await page.locator('#cloudModel').fill('');
   releaseProbe();
-  await expect(page.locator('#cloudStatus')).toContainText('Настройки изменились во время проверки', { timeout: 15000 });
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
-  await expect(page.locator('#cloudApiKey')).toHaveValue('second-cloud-race-key');
+  await expect(page.locator('#cloudModel')).toHaveValue('');
+  await expect(page.locator('#cloudApiKey')).toHaveValue('first-cloud-race-key');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
 });
 
@@ -2433,8 +2428,7 @@ test('search presets and function settings fit one line, localize, and persist p
   await expect(page.locator('#functionPanelTitle')).toContainText('Профиль задачи');
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
 
-  await page.locator('#languageSummary').click();
-  await page.locator('#languageMenu [data-action="set-language"][data-language="en"]').click();
+  await selectLanguage(page, 'en');
   await expect(page.locator('#modeDeep')).toContainText('Thorough');
   await expect(page.locator('#modeToolbar [role="group"]')).toHaveAttribute('aria-label', 'Effort');
   await expect(page.locator('#functionsMenuSummary')).toContainText('Functions');
