@@ -100,6 +100,43 @@ test('sidebar order separates memory, projects, status, chats, and research', as
   await expect(page.locator('#projectStatusLine')).toContainText('Личный чат');
 });
 
+test('project settings closes on Escape and restores focus to a visible control', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await expect(page.locator('#projectSettingsModal')).toBeVisible();
+  await expect(page.locator('#projectNameInput')).toBeFocused();
+
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#projectSettingsModal')).toBeHidden();
+  await expect(page.locator('header [data-action="toggle-sidebar"]')).toBeFocused();
+});
+
+test('mobile sidebar and modal close controls meet the 44px touch target', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const sidebarClose = await page.locator('#sidebar [data-action="close-sidebar"]').boundingBox();
+  expect(sidebarClose?.width || 0).toBeGreaterThanOrEqual(44);
+  expect(sidebarClose?.height || 0).toBeGreaterThanOrEqual(44);
+  await page.locator('#sidebar [data-action="close-sidebar"]').click();
+
+  await page.locator('[data-action="toggle-settings"]').click();
+  const settingsClose = await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').boundingBox();
+  expect(settingsClose?.width || 0).toBeGreaterThanOrEqual(44);
+  expect(settingsClose?.height || 0).toBeGreaterThanOrEqual(44);
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  const projectClose = await page.locator('#projectSettingsModal [data-action="close-project-settings"]').boundingBox();
+  expect(projectClose?.width || 0).toBeGreaterThanOrEqual(44);
+  expect(projectClose?.height || 0).toBeGreaterThanOrEqual(44);
+  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
+});
+
 test('theme stays in the header/sidebar and language lives in advanced settings', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
