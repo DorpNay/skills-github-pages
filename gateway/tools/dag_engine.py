@@ -94,12 +94,13 @@ class ToolDAG:
             registered = self.tools[node.tool_name]
             contract = registered.contract
             args = validate_arguments(contract, node.arguments)
-            if not contract.read_only:
+            requires_approval = contract.requires_approval or not contract.read_only
+            if requires_approval:
                 token = tickets.get(node.id)
                 if approval_registry is None or not token or not approval_registry.consume(
                     token, action=node.tool_name, arguments=args, scope=scope, actor_id=actor_id
                 ):
-                    raise DAGError(f"side-effect tool node {node.id} lacks a valid one-time approval")
+                    raise DAGError(f"tool node {node.id} lacks a valid one-time approval for its authenticated actor")
             dependencies = {dep_id: results[dep_id] for dep_id in node.dependencies}
             async def invoke():
                 returned = registered.handler(args, dependencies)
