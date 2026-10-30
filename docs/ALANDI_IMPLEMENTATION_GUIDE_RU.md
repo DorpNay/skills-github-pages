@@ -273,11 +273,13 @@ journalctl -u alandi-gateway -n 80 --no-pager
 ### 5.1 Health и авторизация
 
 ~~~bash
-curl -i http://127.0.0.1:8000/healthz
+curl -i http://127.0.0.1:8000/livez
+curl -i http://127.0.0.1:8000/readyz
+curl -i http://127.0.0.1:8000/healthz   # совместимый alias /readyz
 curl -i http://127.0.0.1:8000/v1/models
 ~~~
 
-Health должен вернуть HTTP 200. Вызов /v1/models без токена обязан получить HTTP 401.
+`/livez` подтверждает только, что процесс FastAPI отвечает, и не обращается к Ollama. `/readyz` выполняет короткий read-only `GET /api/tags` к Ollama и возвращает 503, если upstream недоступен; старый `/healthz` оставлен alias readiness для обратной совместимости. Вызов `/v1/models` без токена обязан получить HTTP 401.
 
 Авторизованный каталог:
 
@@ -408,7 +410,8 @@ ollama ps
 ss -lntp | grep -E ':(8000|11434)[[:space:]]'
 journalctl -u alandi-gateway -n 60 --no-pager
 journalctl -u ollama -n 60 --no-pager
-curl -fsS http://127.0.0.1:8000/healthz
+curl -fsS http://127.0.0.1:8000/livez
+curl -fsS http://127.0.0.1:8000/readyz
 ~~~
 
 Перед обновлением проверь git status --short и текущую ветку:
@@ -462,7 +465,7 @@ PYTHONPATH=/opt/alandi/skills-github-pages /opt/alandi/venv/bin/uvicorn app:app 
 
 Для systemd unit укажи эквивалентный `Environment=PYTHONPATH=/opt/alandi/skills-github-pages` и проверяй статус до переключения трафика. Не копируй секреты в shell history или логи.
 
-После установленного релиза проверяй `/healthz`, `/v1/models` и один обычный чат с Bearer auth. Не устанавливай сразу native voice dependencies и не скачивай голосовые модели: manifest пока содержит кандидатов с `ship=false`, hashes не записаны. Никакие voice/OTel/CLI feature flags не включай без целевых eval и отдельного rollback.
+После установленного релиза проверяй `/livez`, `/readyz`, `/v1/models` и один обычный чат с Bearer auth; `/healthz` остаётся совместимым alias readiness. Не устанавливай сразу native voice dependencies и не скачивай голосовые модели: manifest пока содержит кандидатов с `ship=false`, hashes не записаны. Никакие voice/OTel/CLI feature flags не включай без целевых eval и отдельного rollback.
 
 ## 9.2. Опциональный API структурированной памяти
 
@@ -498,7 +501,7 @@ PYTHONPATH=/opt/alandi/skills-github-pages /opt/alandi/venv/bin/uvicorn app:app 
 
 ## 10.5. Связать проектную память браузера с gateway (опционально)
 
-1. В `/etc/alandi-gateway.env` включи `ALANDI_MEMORY_GRAPH_ENABLED=true`; оставь `ALANDI_GLOBAL_MEMORY_ENABLED=false`. Перезапусти службу и проверь `/healthz`.
+1. В `/etc/alandi-gateway.env` включи `ALANDI_MEMORY_GRAPH_ENABLED=true`; оставь `ALANDI_GLOBAL_MEMORY_ENABLED=false`. Перезапусти службу и проверь `/livez` и `/readyz`.
 2. CORS allowlist gateway должен содержать `https://dorpnay.github.io`. Не открывай Ollama и порт gateway напрямую в интернет.
 3. В настройках сайта подключи собственный gateway: Base URL с окончанием `/v1`, точный model ID и bearer key. Серверная память использует именно aLandi gateway/key, не ключ текущего стороннего провайдера.
 4. Боковое меню → нужный проект → «Серверная память» → «Обновить список». При 503 проверь feature flag и журнал службы; при CORS-ошибке — origin и URL.

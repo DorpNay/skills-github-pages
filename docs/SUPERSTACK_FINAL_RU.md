@@ -108,9 +108,11 @@ set -a; . /etc/alandi-gateway.env; set +a
 /opt/alandi/venv/bin/uvicorn app:app --host 127.0.0.1 --port 8000 --workers 1
 ~~~
 
-Во втором терминале проверьте:
+Во втором терминале проверьте: `/livez` подтверждает процесс без обращения к Ollama, `/readyz` проверяет доступность Ollama read-only запросом, `/healthz` сохранён как совместимый alias.
 ~~~bash
-curl -fsS http://127.0.0.1:8000/healthz
+curl -fsS http://127.0.0.1:8000/livez
+curl -fsS http://127.0.0.1:8000/readyz
+curl -fsS http://127.0.0.1:8000/healthz   # совместимый alias /readyz
 curl -fsS http://127.0.0.1:8000/v1/models -H "Authorization: Bearer $ALANDI_API_KEY"
 curl -fsS http://127.0.0.1:8000/v1/chat/completions \
   -H "Authorization: Bearer $ALANDI_API_KEY" \

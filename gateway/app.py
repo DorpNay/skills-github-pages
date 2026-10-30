@@ -881,16 +881,29 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                        allow_headers=["Authorization", "Content-Type", "Accept", "Cache-Control", "X-AI-Cache-Bypass", "X-AI-Trace-ID", "traceparent"],
                        expose_headers=["X-AI-Cache", "X-AI-Route", "X-AI-Trace-ID"], max_age=600)
 
-    @app.get("/healthz")
-    async def healthz(request: Request) -> JSONResponse:
+    @app.get("/livez")
+    async def livez() -> JSONResponse:
+        """Cheap process liveness probe; deliberately does not contact Ollama."""
+        return JSONResponse(content={"status": "ok"}, headers={"Cache-Control": "no-store"})
+
+    @app.get("/readyz")
+    async def readyz(request: Request) -> JSONResponse:
+        """Read-only upstream readiness probe with a short bounded timeout."""
         try:
             response = await request.app.state.client.get(f"{config.ollama_base_url}/api/tags", timeout=2.0)
             response.raise_for_status()
         except (httpx.HTTPError, asyncio.TimeoutError):
             return JSONResponse(status_code=503, content={"status": "degraded", "ollama": "unreachable",
-                                                          "auth_configured": len(config.api_key) >= 32})
+                                                          "auth_configured": len(config.api_key) >= 32},
+                                headers={"Cache-Control": "no-store"})
         return JSONResponse(content={"status": "ok", "ollama": "reachable",
-                                      "auth_configured": len(config.api_key) >= 32})
+                                      "auth_configured": len(config.api_key) >= 32},
+                            headers={"Cache-Control": "no-store"})
+
+    @app.get("/healthz")
+    async def healthz(request: Request) -> JSONResponse:
+        """Backward-compatible alias for the Ollama readiness probe."""
+        return await readyz(request)
 
     @app.get("/v1/capabilities")
     async def capabilities(authorization: str | None = Header(default=None)) -> JSONResponse:
