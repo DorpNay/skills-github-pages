@@ -365,7 +365,7 @@ class LazyGraphRAG:
             if query_concepts:
                 placeholders = ",".join("?" for _ in query_concepts)
                 # nosemgrep: python.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query
-                graph_rows = db.execute(f"""  # nosec B608 -- interpolated text is only a bounded '?' placeholder count.
+                graph_rows = db.execute(f"""
                     SELECT c.*, COUNT(DISTINCT ce.concept) AS shared_concepts
                     FROM rag_chunk_concepts ce
                     JOIN rag_chunks c ON c.chunk_key=ce.chunk_key
