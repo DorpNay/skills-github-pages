@@ -27,7 +27,7 @@
     "active_ui_pr": {
       "number": 121,
       "head_sha": "f9d5afaae983675d2c616e3fbc70942840d314e5",
-      "exact_head_ci": "Gateway Lite Tests #483 passed (150 tests); Freshness #83, Provenance #554 and Dead Code #389 passed. Quality #916 and Graphify #262 were cancelled during subsequent documentation branch updates. Current PR branch contains documentation-only commits after this code SHA; full exact-current-head Quality/Chromium is still pending."
+      "exact_head_ci": "Code SHA f9d5afaae983675d2c616e3fbc70942840d314e5: Gateway #483 passed (150 tests), Freshness #83, Provenance #554 and Dead Code #389 passed; Quality #916 attempt 2 has Integrity/Security/Context/Jekyll passed and Chromium still running. Later documentation-only commits are present on current PR head; no claim of complete current-head green."
     }
   }
 }
