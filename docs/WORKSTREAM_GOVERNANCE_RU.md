@@ -54,7 +54,7 @@ PR body должен содержать вверху:
 4. Перед интеграцией сверяются current stack, decisions, exact diff, dependency/licensing, security, data migration, rollback, tests and deployment gates.
 5. Любой PR, меняющий runtime, dependencies, flags, public endpoints, provider behavior, persisted data or deployment, требует explicit owner approval независимо от label/draft status.
 6. Никогда не закрывать исходный research PR/ветку до переноса и проверки нужных решений/артефактов.
-7. Не менять base branch на main как способ обойти изоляцию. Research PR может target main для удобства просмотра, но это не означает разрешение на merge; предпочтительно держать Draft и явный HOLD banner.
+7. Все Research/Future/Spike PR по умолчанию target отдельную holding branch `future-workstreams/parking-base-20261031`, а не `main`. Это физически отделяет merge этих PR от текущего продукта. Сам holding branch не должен автоматически сливаться в main; перенос решений выполняется только отдельными approved slices.
 8. CI success доказывает только покрытые CI свойства; он не доказывает live VPS, real-device voice, model quality или production readiness.
 
 ## 4. Labels / визуальная маркировка
@@ -83,7 +83,8 @@ Label — дополнительная визуальная подсказка, 
 
 - Landing V1: frozen feature scope; polish and reliability only within selected stack.
 - Agent Studio 2.0: PR #125 and PR #128 research lineage; future workstream, do not merge as runtime.
-- Voice 2.0: this branch; research-only baseline.
+- Voice 2.0: PR #129; research-only baseline.
+- PR #125/#128/#129 target `future-workstreams/parking-base-20261031`, not main. The holding branch was created from main SHA `e78a73b25725bfa63370d9946887cbbacbf51b82`.
 - Master task registry: PR #127 contains the initial lossless 275-row migration from six historical checklists; duplicate reconciliation is still pending. Do not treat this as closed.
 
 ## 7. Governance task ledger
