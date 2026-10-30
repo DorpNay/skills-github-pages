@@ -2,15 +2,15 @@ project_state:
   version: 4
   reviewed_on: "2026-10-30"
   root_orienter:
-    status: "Main base is 2bda22229cba3576628f92c821bb6e1562d8abc5 after PR #120; PR #121 is the only open UI finalization PR. Gateway test import defect fixed at f9d5afaae983675d2c616e3fbc70942840d314e5 and Lite Gateway Tests #483 passed (150 tests). Quality #916 cancelled before Chromium/published smoke completed; Graphify #262 cancelled after artifact generation. Live runtime remains unverified."
+    status: "Main base is e6404d510229fa64a7bb375995d76dcba55de623 after documentation-only landing UX polish commit; PR #121 is the only open UI finalization PR. Gateway test import defect fixed at f9d5afaae983675d2c616e3fbc70942840d314e5 and Lite Gateway Tests #483 passed (150 tests). Quality #916 cancelled before Chromium/published smoke completed; Graphify #262 cancelled after artifact generation. Live runtime remains unverified."
     branch: "feat/chat-settings-orthogonal-controls-20261030"
-    base_main: "2bda22229cba3576628f92c821bb6e1562d8abc5"
+    base_main: "e6404d510229fa64a7bb375995d76dcba55de623"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #120 sidebar hierarchy/theme-language sync; #119 provider separation/project scope/composer preference; #118 chat import/export; #113 immutable Actions pins; #115 modal scrim/outside-tap; #114 empty-by-default prompt/context budget; #71 mobile composer; #84/#81/#83/#82 infrastructure foundations; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
     exact_head_checks: "PR #120 merge commit reports Chromium, published Pages smoke, Jekyll, integrity, security, context and Graphify checks passed in its commit message; get_commit_combined_status returned no separate status entries for 2bda22229cba3576628f92c821bb6e1562d8abc5. PR #121 code head f9d5afaae983675d2c616e3fbc70942840d314e5: Gateway #483 passed (150 tests), Freshness #83, Provenance #554 and Dead Code #389 passed; Quality #916 and Graphify #262 cancelled during subsequent branch updates. Exact current branch SHA is documentation-only later than f9; no full exact-head Quality/Chromium green claim."
     runtime_boundary: "GitHub Pages browser smoke verified; native iPhone, live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
-    next: "Complete current-head Quality/Chromium/Pages checks, then continue the three-role audit in docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md. Issue #111 remains the owner/live-host release gate; do not merge/deploy claims without evidence."
+    next: "Main advanced by documentation-only commit e6404d5 (landing UX polish backlog). PR #121 branch was synced with a two-parent merge commit 2c1e6bd and now compares 194 ahead / 0 behind. Continue the three-role audit; current functional audio fix still needs Gateway CI and current-head Quality/Chromium/Pages remain unverified."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -274,7 +274,7 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-10-30"
-  verified_main: "2bda22229cba3576628f92c821bb6e1562d8abc5"
+  verified_main: "e6404d510229fa64a7bb375995d76dcba55de623"
   last_main_action: "fix(ui): align sidebar hierarchy and preferences; SHA 2bda22229cba3576628f92c821bb6e1562d8abc5"
   last_functional_checkpoint: "2bda22229cba3576628f92c821bb6e1562d8abc5"
   main_quality: "No separate combined status records returned for main SHA 2bda22229cba3576628f92c821bb6e1562d8abc5; PR #120 merge message reports checks, but current exact-head verification must be read from Actions."
@@ -299,7 +299,7 @@ v1_ui_finalization:
 three_role_audit_2026_10_30:
   tracker: "docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md"
   branch: "feat/chat-settings-orthogonal-controls-20261030"
-  main_base: "2bda22229cba3576628f92c821bb6e1562d8abc5"
+  main_base: "e6404d510229fa64a7bb375995d76dcba55de623"
   pr_head_before_test_fix: "b09c1365e9d5f434b69ebb60bb285c7574051172"
   latest_change: "f9d5afaae983675d2c616e3fbc70942840d314e5 — import canonical_action_digest in gateway test module"
   verified:
