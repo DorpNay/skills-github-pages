@@ -10,7 +10,7 @@ project_state:
     merged_changes: "PR #120 sidebar hierarchy/theme-language sync; #119 provider separation/project scope/composer preference; #118 chat import/export; #113 immutable Actions pins; #115 modal scrim/outside-tap; #114 empty-by-default prompt/context budget; #71 mobile composer; #84/#81/#83/#82 infrastructure foundations; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
     exact_head_checks: "PR #120 merge commit reports Chromium, published Pages smoke, Jekyll, integrity, security, context and Graphify checks passed in its commit message; get_commit_combined_status returned no separate status entries for 2bda22229cba3576628f92c821bb6e1562d8abc5. Current PR #121 exact-head run #40991938982 was pending at snapshot capture."
     runtime_boundary: "GitHub Pages browser smoke verified; native iPhone, live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
-    next: "Finalize PR #121 with exact-head Quality/Chromium/Pages checks; use docs/FREE_LANDING_UI_FINALIZATION_RU.md as the first free landing UI release checklist. Issue #111 remains the owner/live-host release gate; do not merge/deploy claims without evidence."
+    next: "Finalize PR #121 with exact-head Quality/Chromium/Pages checks; use docs/V1_UI_FINALIZATION_RU.md as the first free landing UI release checklist. Issue #111 remains the owner/live-host release gate; do not merge/deploy claims without evidence."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -44,9 +44,9 @@ project_state:
     gateway_vps: "not verified by this change; do not claim deployed"
     experimental_feature_flags: "false by default"
   current_ui_track:
-    branch: "main"
-    pull_request: 35
-    status: "PR33+34+35 merged; PR71 mobile composer merged; PR114 prompt/context budget merged; PR115 modal scrim/outside-click merged; PR113 Actions SHA pinning merged; main 80597f61 Quality/Pages/Gateway/provenance/Graphify passed"
+    branch: "feat/chat-settings-orthogonal-controls-20261030"
+    pull_request: 121
+    status: "PR #121 open; current scope is first free landing + root client UI finalization; PRs #71, #114, #115, #119, #120 remain merged foundations. Current exact-head CI is being rerun after test/documentation reconciliation."
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback; PR114 leaves the optional global system prompt empty by default and removes the obsolete Gemini reset"
     projects: "PR35 merged and Chromium E2E passed: collapsed project list with per-project chat children; top-level unassigned chats only; project memory scope project-only vs project-and-global; one-shot project context scoped by chat. Server graph bridge remains experimental and disabled by default."
