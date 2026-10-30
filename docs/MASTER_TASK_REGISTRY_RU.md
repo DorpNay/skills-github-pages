@@ -16,13 +16,13 @@
 
 | Источник | Открытых записей | Ожидают | Частичные | Канонический источник |
 |---|---:|---:|---:|---|
-| Исторический пользовательский реестр | 115 | 81 | 34 | [`docs/USER_REQUEST_CHECKLIST.md`](../docs/USER_REQUEST_CHECKLIST.md) |
+| Исторический пользовательский реестр | 116 | 82 | 34 | [`docs/USER_REQUEST_CHECKLIST.md`](../docs/USER_REQUEST_CHECKLIST.md) |
 | GEN1 / CRAZE V-016 | 28 | 27 | 1 | [`docs/V016_IMPLEMENTATION_CHECKLIST.md`](../docs/V016_IMPLEMENTATION_CHECKLIST.md) |
 | Общий backlog первого запуска | 46 | 46 | 0 | [`docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`](../docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md) |
 | Канонический чек-лист V1 UI | 39 | 21 | 18 | [`docs/V1_UI_FINALIZATION_RU.md`](../docs/V1_UI_FINALIZATION_RU.md) |
 | Полировка лендинга | 23 | 19 | 4 | [`docs/LANDING_UX_POLISH_BACKLOG_RU.md`](../docs/LANDING_UX_POLISH_BACKLOG_RU.md) |
 | Сквозной аудит целостности стека | 24 | 24 | 0 | [`docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md`](../docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md) |
-| **Итого до дедупликации** | **275** | **218** | **57** | |
+| **Итого до дедупликации** | **276** | **219** | **57** | |
 
 ## A. Перенесённые исторические задачи
 
@@ -412,7 +412,7 @@
 
 ### F4. Исторический общий backlog
 
-- [x] **REGISTRY-001**: Найти прежний большой список незавершённых задач. **Result:** PR #127 / `docs/MASTER_TASK_REGISTRY_RU.md` — lossless migration of 275 open/partial rows from six historical sources; 218 unchecked + 57 partial before deduplication.
+- [x] **REGISTRY-001**: Найти прежний большой список незавершённых задач. **Result:** PR #127 / `docs/MASTER_TASK_REGISTRY_RU.md` — lossless migration of 276 open/partial rows from six historical sources; 219 unchecked + 57 partial before deduplication. Recounted against current main checklists on 2026-10-31; the historical user checklist contains 116 open/partial rows (82 unchecked + 34 partial).
 - [ ] **REGISTRY-002**: Свести дубли и cross-link исторические пункты с текущими кодом, PR, tests and owner gates. Ничего не удалять до reconciliation.
 
 
@@ -435,3 +435,15 @@
 - [x] **GOVERNANCE-006**: Создать отдельную holding base branch `future-workstreams/parking-base-20261031` от main SHA `e78a73b25725bfa63370d9946887cbbacbf51b82`.
 - [x] **GOVERNANCE-007**: Перенаправить PR #125, #128 и #129 на holding branch; все три остаются Draft и помечены в заголовке/body как HOLD / DO NOT MERGE. Их merge не меняет main.
 - [ ] **GOVERNANCE-008**: Проверить GitHub rulesets/branch protection и запретить автоматический merge holding branch в main без explicit owner approval.
+
+
+### F7. Deep Research 2.0 — отдельный workstream
+
+- [x] **DR2-001A**: Создать самостоятельную ветку `research/deep-research-2.0-20261031` от holding base.
+- [x] **DR2-002A**: Создать PR #130 Draft / HOLD, отдельно от Agent Studio и Voice.
+- [x] **DR2-003A**: Зафиксировать baseline: `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` и `docs/DEEP_RESEARCH_2_CURRENT_STATE_AUDIT_RU.md`.
+- [~] **DR2-004A**: Проверить текущие research/RAG/memory/local source/media/coding foundations; line-by-line audit and independent research still pending.
+- [ ] **DR2-005A**: Выполнить 21 задачу DR2-001…DR2-021 из Deep Research 2.0 plan.
+- [ ] **DR2-006A**: После owner review подготовить отдельные минимальные implementation PR; не переносить будущие функции напрямую из holding branch.
+
+**PR #130:** `[RESEARCH — HOLD] Deep Research 2.0 — local knowledge, evidence and multimodal research`. Base: `future-workstreams/parking-base-20261031`. No runtime changes.
