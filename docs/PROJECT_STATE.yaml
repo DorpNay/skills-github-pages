@@ -296,3 +296,23 @@ v1_ui_finalization:
   pending: "exact-head Quality/Chromium/Pages; inspect all failures; published Pages smoke after merge; native iPhone Safari/manual checks; owner-only issue #111"
   status_boundary: "ticker is decorative roadmap copy, not a background task indicator; independent agents, integrations, voice and document extraction remain gated/unverified"
 
+three_role_audit_2026_10_30:
+  tracker: "docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md"
+  branch: "feat/chat-settings-orthogonal-controls-20261030"
+  main_base: "2bda22229cba3576628f92c821bb6e1562d8abc5"
+  pr_head_before_test_fix: "b09c1365e9d5f434b69ebb60bb285c7574051172"
+  latest_change: "f9d5afaae983675d2c616e3fbc70942840d314e5 — import canonical_action_digest in gateway test module"
+  verified:
+    - "PR #121 changed-file inventory: 25 files"
+    - "Gateway CI failure localized to missing test import; production helper exists"
+    - "Project State Freshness passed on pre-fix head"
+    - "License/provenance passed on pre-fix head"
+    - "Dead Code Audit report-only passed on pre-fix head"
+    - "Graphify code-only pilot passed on pre-fix head"
+  pending:
+    - "Post-fix exact-head CI and all required workflows"
+    - "Full cross-subsystem architecture/debug audit"
+    - "Voice target-device, GPU/CPU and model quality benchmarks"
+    - "Knowledge-to-Skill prototype and security review"
+    - "Dead-code candidate verification; no deletion authorized yet"
+  next: "Inspect post-fix exact-head CI, then audit request/provider, memory/RAG, tools/security, voice, documents and landing in dependency order. Update this tracker, ORIENTER, PROJECT_STATE and VOLLEY_LOG after every meaningful stage."
