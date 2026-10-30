@@ -277,3 +277,10 @@ Ollama — 127.0.0.1:11434 — одна активная модель
 - [ ] Functional menu отражает только реально зарегистрированные skills/agents/connectors and permissions.
 - [ ] Native iPhone Safari, VoiceOver, safe-area, keyboard, rotation and touch cancellation — owner gate.
 - [ ] Keep Native Popover API/CSS Anchor Positioning progressive enhancement only; preserve JS fallback.
+
+
+## 9. Дополнительные технические решения по голосу и Skill-формату
+- Текущие `skills/*.txt` — это prompt/instruction snippets, а не Agent Skills standard. Не менять их формат и не ломать текущий selector. Новый Knowledge-to-Skill каталог должен быть отдельным, например `agent_skills/<slug>/SKILL.md` с YAML frontmatter и optional `references/`, `scripts/`, `assets/`; загрузчик должен поддерживать progressive disclosure и project/private scopes.
+- ASR baseline остаётся whisper.cpp. Кандидаты для RU/EN/TH benchmark: NVIDIA NeMo-Speech.cpp + Nemotron 3.5 ASR Streaming 0.6B (RU transcription-ready, TH adaptation-ready), Qwen3-ASR-0.6B через sherpa-onnx (RU/TH указаны в языковом списке), и Parakeet RNNT 1.1B (RU/TH, но более крупный и NVIDIA Community Model License). Moonshine не является заменой для RU/TH, поскольку его текущий список STT языков их не включает.
+- NeMo-Speech.cpp upstream заявляет streaming ASR/TTS и full-duplex VoiceChat; benchmark 160 ms chunks относится к upstream hardware, не к aLandi. Любая интеграция должна быть отдельным prototype с измерением target device, language WER, TTFA, RTF, interruption, echo and VRAM.
+- GPU-only означает отсутствие CPU inference для модели, а не отсутствие CPU у gateway/OS/IO. Строгий GPU-only режим должен fail closed, если модель не помещается целиком в VRAM; частичный offload нельзя называть GPU-only.
