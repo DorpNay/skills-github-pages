@@ -92,3 +92,6 @@ Added P0 voice acceptance tasks for editable STT, streaming conversational dialo
 
 ### 2026-10-30 — ASR/TTS subprocess cancellation fix
 Confirmed defect: local ffprobe/ffmpeg/whisper.cpp and Piper child processes were terminated on timeout but not on request cancellation. Added shared cleanup helper `await_local_process()` in gateway/app.py and regression tests for timeout/cancellation in gateway/tests/test_audio_concurrency.py. Functional commits: 77b2691 and 363bb5c. Equivalent local subprocess smoke passed (both children killed/reaped, return code -9). Repository Gateway CI on the new code SHA is pending; prior Gateway #483 (150 tests) predates this fix. GitHub connector has no workflow_dispatch capability for a new run.
+
+### 2026-10-30 — Verified temporary-file cleanup
+Inspected temp/1 through temp/5 and searched repository references. Updated IMPROVEMENT_SELECTION.md, then removed temp/3 (obsolete conversation scratch), temp/4 (simulated brainstorming with stale claims), and temp/5 (generic Jekyll plan unrelated to aLandi). Kept temp/1 and temp/2 as historical research. No production code removed. See detailed tracker and project state for deletion commit SHAs.
