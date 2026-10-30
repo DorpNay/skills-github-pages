@@ -231,3 +231,35 @@ Ollama — 127.0.0.1:11434 — одна активная модель
 - Microsoft GraphRAG: https://microsoft.github.io/graphrag/query/overview/ — Global Search resource-intensive; не вводить GraphRAG как бесплатную замену простому FTS без eval.
 
 ---
+## 7. Дополнительные обязательные требования владельца — 2026-10-30
+
+Эти требования добавлены после исходного V1 backlog и имеют приоритет при планировании первого полноценного обновления после публикации лендинга. Они не считаются реализованными только потому, что существуют отдельные прототипы.
+
+### P0 — голос как обязательная часть первого полноценного релиза
+- [ ] **P0-13. Editable speech-to-text:** запись с микрофона, локальная транскрипция, редактирование распознанного текста до отправки, RU/EN/TH quality tests.
+- [ ] **P0-14. Conversational voice assistant:** полноценный естественный turn-taking, streaming transcript/response, VAD, barge-in, cancellation, echo cancellation, transcript alignment. Текущий half-duplex prototype — только основа, не завершённая функция.
+- [ ] **P0-15. Read selected text aloud:** выделение произвольного фрагмента ответа/сообщения и озвучивание только выделенного содержимого.
+- [ ] **P0-16. Read one whole message aloud:** стабильный TTS для целого сообщения, voice choice, mini-player, pause/resume/stop, cleanup and stale-request protection.
+- [ ] **P0-17. Read multiple selected messages aloud:** multi-select messages, ordered playback queue, pause/resume/skip/stop, cancellation and queue state; no parallel Piper jobs.
+- [ ] **P0-18. First-release voice acceptance:** реальные microphone/speaker tests на целевых устройствах; RU/EN/TH; word error rate, first transcript latency, first audio latency, interruption latency, echo, CPU/GPU/RAM, model license and SHA-256. Без этого не обещать «почти человеческий» realtime.
+
+### P1 — small helper models, GPU inference and agent orchestration
+- [ ] **P1-10. Helper model registry:** специализированные роли (classification, extraction, rerank, summary, memory candidate, skill synthesis), exact model ID/digest/license, capability, context/token budget, timeout, concurrency and eval.
+- [ ] **P1-11. GPU inference profile:** Ollama GPU vs llama.cpp server benchmark; GPU-only inference mode must fail closed if no compatible GPU is detected. CPU still runs OS/API/orchestration; the requirement is no mandatory CPU model inference, not zero CPU usage for the whole host.
+- [ ] **P1-12. High-throughput optional serving:** evaluate vLLM only on compatible accelerator hardware and when continuous batching/throughput materially helps. It is not the default 8-GB/single-model deployment.
+- [ ] **P1-13. Multi-agent runtime:** bounded DAG/fan-out, queue/backpressure, per-agent scope/permissions, deadline, budget, cancellation propagation, idempotency, checkpoints, traces, retries and eval harness. Current four-stage research pipeline is not a swarm.
+- [ ] **P1-14. Mass-agent load test:** establish safe concurrency, VRAM admission, memory residency/eviction, fairness, queue limits and degraded-mode behavior before increasing agent count.
+
+### P1 — internal notebook / Knowledge-to-Skill
+- [ ] **P1-15. Knowledge-to-Skill pipeline:** authorized books, PDFs, office documents, websites and repo sources → bounded extraction → chapters/sections → source/page provenance → skill generation → injection/license scan → human review → versioned private skill.
+- [ ] **P1-16. Skill lifecycle:** schema validation, scope isolation (personal/project), diff, versioning, rollback, deletion/retention and import/export.
+- [ ] **P1-17. Safe ingestion:** MIME sniffing, archive/path traversal defense, XXE/bomb limits, parser timeout, temp cleanup, invisible Unicode scan, prompt injection scan and no automatic external provider fallback.
+
+### Реальный текущий статус голосового контура
+- Уже есть: локальный ASR adapter на whisper.cpp; UI запись/отправка аудио; редактируемая транскрипция; локальный Piper TTS одного сообщения; mini-player; half-duplex voice conversation loop.
+- Пока отсутствует/не доказано: чтение выделенного текста; multi-message queue; true streaming speech turn-taking; native acoustic echo cancellation; actual acoustic barge-in; стабильное качество на целевых устройствах и RU/EN/TH.
+- Все server flags ASR/TTS остаются off by default; для использования нужны установленные бинарники/модели, проверенные licenses/hashes и owner-host acceptance.
+- «Голосовой помощник почти как человек» — цель качества, а не маркетинговый claim до прохождения acceptance.
+
+### Правило планирования
+Сначала завершить и опубликовать честный статический лендинг и текущий клиентский UI. Первый функциональный update после публикации должен объединить эти обязательные вертикали с реальным backend/runtime и тестами; не загружать UI-кнопки, которые не имеют работающего end-to-end пути.
