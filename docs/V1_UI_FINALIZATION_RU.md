@@ -95,7 +95,7 @@
 
 ### 9. Окна и закреплённые действия — [~]
 - [x] Основные settings/project/research/function окна имеют отдельные закрытия.
-- [!] В PR #121 обнаружены два data-action="close-settings" в header. Один должен остаться, иначе строгие browser locators неоднозначны. Исправление внесено, требуется повторный E2E.
+- [~] Дублирующий data-action="close-settings" в header удалён; exact-head Chromium должен подтвердить уникальность действия и отсутствие регрессии.
 - [~] Settings header уже содержит Save и X, но требование sticky при длинной прокрутке и открытой клавиатуре нужно проверить.
 - [ ] Проверить Escape, focus return, screen reader name, scroll lock и background interaction.
 
@@ -180,8 +180,8 @@
 - [x] Статусы voice/docs/self-hosted и multi-user boundaries не выдаются за готовые.
 - [~] Усилить copy: «бесплатный статический интерфейс» не означает «бесплатный inference», hosted AI endpoint не предоставляется.
 - [~] Добавить открываемый Roadmap с маркером 1nv3nt10n 1n PrOc3ss… только у направлений, которые ещё разрабатываются/планируются.
-- [ ] Добавить browser E2E на структуру, CTA, responsive 320/390px, no horizontal overflow, открытие Roadmap details и reduced-motion.
-- [ ] Проверить мета-теги, links, canonical URL, Jekyll output и published Pages path.
+- [~] Browser E2E на структуру/CTA, метаданные, отсутствие пустых ссылок, responsive 320/360/390/768/1024/1440px, Roadmap details и reduced-motion добавлены в PR #121; ожидается новый exact-head Chromium run.
+- [~] E2E проверяет lang/title/description/canonical/CTA/непустые ссылки; Jekyll build проходит в текущем CI; фактический published Pages path требует успешного exact-head smoke после merge.
 
 ## 3. Правила для индикатора 1nv3nt10n 1n PrOc3ss…
 
