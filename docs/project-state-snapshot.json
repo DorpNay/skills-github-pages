@@ -7,7 +7,7 @@
     "main_commit_subject": "docs: consolidate remaining landing and app UX polish",
     "main_commit_date": "2026-10-30",
     "last_functional_checkpoint_sha": "2bda22229cba3576628f92c821bb6e1562d8abc5",
-    "last_functional_milestone": "PR #120: memory/project/chat sidebar hierarchy, synchronized theme/language preferences; main e6404d5 is documentation-only landing UX checklist",
+    "last_functional_milestone": "PR #120: memory/project/chat sidebar hierarchy and synchronized theme/language preferences; main e6404d5 is documentation-only landing UX checklist",
     "main_quality_run": null,
     "main_pages_deployment_run": null,
     "functional_parent_gateway_run": 40637941350,
@@ -26,8 +26,8 @@
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files",
     "active_ui_pr": {
       "number": 121,
-      "head_sha": "a22e01e9d36d67e86b1bbf37b119dcc66cb9ada3",
-      "exact_head_ci": "Functional audio subprocess cancellation fix at 77b2691 and regression tests at 363bb5c. Equivalent local smoke passed, but no Gateway CI on that code SHA. Earlier Gateway #483 passed 150 tests before the cancellation fix. Previous Quality #916 attempts were cancelled during branch updates; exact-current-head Quality/Chromium/Pages are still pending. PR #121 includes main e6404d5 via merge commit 2c1e6bd; current head was 200 ahead / 0 behind before this snapshot update."
+      "head_sha": "26dcdf6acc77d388bdf5ec91bb9f64fe38fb1b1a",
+      "exact_head_ci": "PR #121 currently compares 217 ahead / 0 behind against main e6404d5 and GitHub reports mergeable=true/clean. Gateway #483 (150 tests) passed before the audio subprocess cancellation fix; new Gateway CI on 363bb5c is required. Quality/Chromium and Graphify runs on earlier heads were cancelled during branch updates. Landing voice scope and Playwright assertions were just updated; exact-current-head CI is not yet green/verified."
     }
   }
 }
