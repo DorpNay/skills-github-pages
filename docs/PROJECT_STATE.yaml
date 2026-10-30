@@ -387,3 +387,18 @@ audio_subprocess_cancellation_fix:
     - "test_local_audio_process_is_killed_and_reaped_on_timeout"
   local_equivalent_smoke: "Both subprocesses killed/reaped; return code -9. Not a repository pytest run."
   ci_status: "Gateway #483 passed 150 tests before this fix; new functional SHA requires Gateway CI. GitHub connector cannot dispatch a new workflow on the current SHA."
+landing_ux_polish_2026_10_30:
+  tracker: "docs/LANDING_UX_POLISH_BACKLOG_RU.md"
+  source_documents:
+    - "docs/LEGACY_UX_REQUEST_AUDIT_RU.md"
+    - "docs/V1_UI_FINALIZATION_RU.md"
+    - "docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md"
+  implementation:
+    landing_ticker_pause_controls: "implemented in f42c42d51eb624b4d2e9fe638ddebffc3b7ab8db"
+    landing_ticker_pause_resume_e2e: "added in b213c8a5d50c93af675693986fe22c3bd4d5499d"
+    runtime_dependency_added: false
+  verification:
+    exact_head_ci: "pending"
+    native_keyboard_screen_reader: "unverified"
+    published_pages_after_merge: "pending"
+  next: "Complete exact-head CI, then implement remaining visual consistency, dialogs/popovers, mobile and accessibility work in bounded slices."
