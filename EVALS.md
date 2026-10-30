@@ -31,7 +31,7 @@ The prior gateway baseline passed 37 tests and the deterministic six-layer smoke
 | EV-CODE-001 | Dead code | .github/workflows/dead-code-check.yml | Vulture report reviewed manually; no automatic source deletion | report only |
 | EV-CODE-002 | Serialization | gateway/evals/serialization_benchmark.py | semantic parity and median/p95 JSON serialization time for realistic payloads | benchmark file pending |
 | EV-CODE-003 | uv | pyproject.toml + reviewed uv.lock | uv sync --locked reproducible on CI and target host | lockfile pending registry access |
-| EV-CODE-004 | Dependency/API currency and event-loop responsiveness | docs/CODE_CURRENCY_AUDIT_2026-10-31_RU.md + Gateway/Quality CI | Upstream pins reviewed; seven-day cooldown respected; document parsing runs outside event loop; exact-head checks pass | PR #126 CI pending |
+| EV-CODE-004 | Dependency/API currency and event-loop responsiveness | docs/CODE_CURRENCY_AUDIT_2026-10-31_RU.md + Gateway/Quality CI | Upstream pins reviewed; seven-day cooldown respected; document parsing runs outside event loop; exact-head checks pass | six workflow groups passed on code head c4aa11be5be7b3d95f132f3a7662ce45cd9dca6e; final report update pending revalidation |
 | EV-OBS-001 | Trace context | gateway/tests/test_app.py | malformed incoming trace ID not echoed; response always has validated ID; context reset | CI pending |
 | EV-OBS-002 | OpenTelemetry | observability/otel_config.py | exporter off by default, no remote endpoint without explicit policy | optional follow-up |
 | EV-MEM-001 | Graph schema | gateway/tests/test_coder_packet.py | every node has provenance; sqlite foreign keys and permissions; scoped queries | CI pending |
