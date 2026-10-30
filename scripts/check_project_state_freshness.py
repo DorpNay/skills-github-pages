@@ -10,7 +10,17 @@ from pathlib import Path
 from typing import Any, Iterable, Sequence
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
-from urllib.request import Request, urlopen
+from urllib.request import HTTPRedirectHandler, Request, build_opener
+
+class RejectRedirectHandler(HTTPRedirectHandler):
+    """Never follow GitHub API redirects; validate each pagination URL explicitly."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+GITHUB_API_OPENER = build_opener(RejectRedirectHandler)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SNAPSHOT = ROOT / "docs/project-state-snapshot.json"
@@ -222,7 +232,7 @@ def github_get_all(url: str, token: str | None) -> list[dict[str, Any]]:
             },
         )
         # nosemgrep: python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected
-        with urlopen(request, timeout=20) as response:  # nosec B310 -- URL is allowlisted to api.github.com HTTPS above
+        with GITHUB_API_OPENER.open(request, timeout=20) as response:  # nosec B310 -- URL is allowlisted to api.github.com HTTPS above
             validate_github_api_url(response.geturl())
             page = json.load(response)
             next_url = _next_link(response.headers.get("Link"))

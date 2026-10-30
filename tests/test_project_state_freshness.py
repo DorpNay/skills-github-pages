@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import unittest
+from urllib.request import Request
 
 from scripts.check_project_state_freshness import (
+    RejectRedirectHandler,
     REQUIRED_REFRESH_PATHS,
     check_main_checkpoint,
     compare_queues,
@@ -32,6 +34,14 @@ def snapshot():
 
 
 class GithubApiUrlTests(unittest.TestCase):
+    def test_github_api_redirects_are_never_followed(self):
+        handler = RejectRedirectHandler()
+        request = Request("https://api.github.com/repos/owner/repo/commits/main")
+        redirected = handler.redirect_request(
+            request, None, 302, "Found", {}, "https://attacker.example/collect"
+        )
+        self.assertIsNone(redirected)
+
     def test_accepts_only_github_rest_repository_urls(self):
         url = "https://api.github.com/repos/DorpNay/skills-github-pages/pulls?state=open&per_page=100"
         self.assertEqual(validate_github_api_url(url), url)
