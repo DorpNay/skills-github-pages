@@ -2,16 +2,20 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-## Текущая контрольная точка — 2026-10-30
+## Текущая контрольная точка — 2026-10-31
 
-- Текущий main: `fd4f0a105183feb23e0f4e4697446235de9ffe9a` — PR #121 и PR #122 merged.
-- PR #121 merged: `f4d880f9648989f4fe48ddd2284220b3606c3b86`, exact head `e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b`. Exact-head workflow groups passed: Gateway, Quality (Chromium/Jekyll/published-site smoke, Context/Security/Integrity), Freshness, Provenance, Graphify, Dead Code.
-- PR #122 merged: `fd4f0a105183feb23e0f4e4697446235de9ffe9a`, exact head `94d871dbf76a5364ebb3c61d86cc763affa5eaa1`. Gateway, Quality (Chromium/Jekyll/published-site smoke, Context/Security/Integrity), Graphify and Dead Code passed.
-- Очередь для freshness-сравнения (текущий PR исключается): **open PRs (0): ; open issues (1): #111**. Активный PR #123 — reconciliation документации и helper benchmark; exact head `fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222` прошёл все шесть workflow groups, PR готов к merge. После merge очередь PR должна стать нулевой. Issue #111 — единственный owner/live-host gate; не закрывать без фактических VPS, hardware, credentials, ruleset, corpus, voice, sandbox и OAuth evidence.
-- Первый бесплатный лендинг V1 зафиксирован. После PR #121 **не добавлять новые продуктовые возможности и runtime-компоненты**. Разрешены только UX polish, надёжность, безопасность, доступность, производительность, тесты и документация внутри существующего HTML/CSS/JS + Jekyll/GitHub Pages и FastAPI/Ollama стека.
-- Основные источники: `docs/V1_UI_FINALIZATION_RU.md`, `docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`, `docs/LANDING_UX_POLISH_BACKLOG_RU.md`, `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`, `docs/PROJECT_STATE.yaml`.
-- Малые модели: в main есть ручной memory-helper opt-in через операторский `ALANDI_HELPER_MODEL`; general-purpose subagent routing не реализован. 64 роли — логические контракты, не отдельные процессы. Синтетический benchmark не заменяет human-rated и target-host evaluation.
-- Не подтверждено: post-merge Pages deployment на точном merge SHA; native iPhone Safari/VoiceOver; live VPS/Tunnel/Ollama и provider credentials; target-host model RAM/latency/quality; production voice, RAG golden set, OAuth/Drive и CLI sandbox.
+- Проверенный main: `e78a73b25725bfa63370d9946887cbbacbf51b82` — PR #123 merged.
+- PR #123 merged at `e78a73b25725bfa63370d9946887cbbacbf51b82`; exact head `fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222`; 6/6 workflow groups passed.
+- Exact queue snapshot (current PR excluded only from its own freshness comparison): **open PRs (3): #124, #125, #126; open issues (1): #111**.
+- PR #124: dependency refresh and reproducible Python lock; exact head `d10afe2b5bc1cbe84b9396cbfcbe6a3d9ac881ff`; Gateway, Quality, Graphify, Provenance and Dead Code passed.
+- PR #125: separate agent-platform research/design Draft; exact head `7efaa06f0ba4c428501dff325746d916dba983cd`; Quality, Freshness and Provenance passed. Documentation only; no agent runtime adopted.
+- PR #126: code-currency/dependency audit Draft; exact head `21104af6733b6ea4eb04bdec6d409c4a2d347558`; all six workflow groups passed.
+- Issue #111 remains the owner/live-host release gate. Do not close it based on CI.
+- **Master task registry:** `docs/MASTER_TASK_REGISTRY_RU.md`. Initial lossless migration: 275 open/partial rows from six sources (218 unchecked, 57 partial), before deduplication. Original checklists remain untouched.
+- **Agent direction:** at least five genuinely parallel independent workers alongside the main model; no hard cap at 64 professions. Research dynamic profiles/skills, hierarchical and decentralized swarms, task queues, leases, durable state, backpressure and hundreds/thousands of logical workers. 64 profiles are one useful starter catalogue, not a ceiling.
+- **VERT:** investigate conversion engine routing and WASM UX; do not wholesale embed AGPL/GPL implementation. Distinguish user-facing conversion from model-facing parsing/normalization.
+- **Output limits:** inspect real source paths. Known values include 16,384 fallback context-token estimate, 4 deep tool rounds, 3 tool calls per deep round, 8 calls per response and 8 per deep run; these are not an output-character cap, but may over-constrain orchestration. Document extraction separately has 8 MiB input and 80,000-character output defaults. No arbitrary answer truncation should be added.
+- Unverified owner/environment gates remain: live VPS/Tunnel/Ollama, provider credentials, target-host RAM/latency/quality, native iPhone, real voice runtime, production RAG, OAuth/Drive and sandbox isolation.
 
 ## Историческая контрольная точка — 2026-10-28
 
@@ -29,16 +33,17 @@
 0. **Короткая точка входа:** корневой `ORIENTER.md`.
 1. **Текущий статус и флаги:** `docs/PROJECT_STATE.yaml`.
 2. **Архитектура и границы:** `docs/ALANDI_MASTER_CONTEXT_RU.md`.
-3. **Что пользователь просил и что осталось:** `docs/USER_REQUEST_CHECKLIST.md` и живой V1 release gate `docs/V1_UI_FINALIZATION_RU.md`.
-4. **Порядок внедрения:** `docs/IMPLEMENTATION_ROADMAP_RU.md`, `docs/CODER_PACKET.md`.
-5. **Решения / eval / цикл:** корневые `DECISIONS.md`, `EVALS.md`, `LOOP.md`, `INTEL.md`, `IMPROVEMENT_SELECTION.md`.
-6. **Поиск и исследования:** `docs/SEARCH_RESEARCH_FEATURE_EXTRACTION_RU.md`, `docs/OPEN_SOURCE_TRIAGE_RU.md`.
-7. **Карта модулей:** `docs/ALANDI_ARCHITECTURE_MAP_RU.md` — кураторская схема, не автоматически извлечённый Graphify graph.
-8. **Лицензии и происхождение:** `infra/license/provenance_manifest.yaml`; не подключать runtime/model/voice без отдельной проверки лицензии и SHA-256.
-9. **Основной клиент:** `index.md` (большой единый HTML/JS файл). Перед правками найди точные функции/якоря, не делай широких замен без проверки единственности.
-10. **Backend/API:** `gateway/app.py`; тесты в `gateway/tests/`; зависимости в `gateway/requirements*.txt`.
-11. **Память:** `gateway/memory/{manager.py,schema.sql,delta_sync.py,scope.py,conflict.py,temporal.py}`; браузерное хранение и экспорт — `index.md` около `safeSet`, `downloadRecoveryBackup`, `exportChats`, `exportProjectBundle`.
-12. **Голос и вложения:** `gateway/voice/`, `gateway/tests/test_audio_*.py`, `tests/e2e/audio-transcription.spec.mjs`, `tests/e2e/document-attachments.spec.mjs`.
+3. **Единый список задач:** `docs/MASTER_TASK_REGISTRY_RU.md` — стабильные ID, все открытые/частичные задачи; исходники остаются без изменений.
+4. **Исторический запрос и V1 gate:** `docs/USER_REQUEST_CHECKLIST.md`, `docs/V016_IMPLEMENTATION_CHECKLIST.md`, `docs/V1_UI_FINALIZATION_RU.md`.
+5. **Порядок внедрения:** `docs/IMPLEMENTATION_ROADMAP_RU.md`, `docs/CODER_PACKET.md`.
+6. **Решения / eval / цикл:** корневые `DECISIONS.md`, `EVALS.md`, `LOOP.md`, `INTEL.md`, `IMPROVEMENT_SELECTION.md`.
+7. **Поиск и исследования:** `docs/SEARCH_RESEARCH_FEATURE_EXTRACTION_RU.md`, `docs/OPEN_SOURCE_TRIAGE_RU.md`.
+8. **Карта модулей:** `docs/ALANDI_ARCHITECTURE_MAP_RU.md` — кураторская схема, не автоматически извлечённый Graphify graph.
+9. **Лицензии и происхождение:** `infra/license/provenance_manifest.yaml`; не подключать runtime/model/voice без отдельной проверки лицензии и SHA-256.
+10. **Основной клиент:** `index.md` (большой единый HTML/JS файл). Перед правками найди точные функции/якоря, не делай широких замен без проверки единственности.
+11. **Backend/API:** `gateway/app.py`; тесты в `gateway/tests/`; зависимости в `gateway/requirements*.txt`.
+12. **Память:** `gateway/memory/{manager.py,schema.sql,delta_sync.py,scope.py,conflict.py,temporal.py}`; браузерное хранение и экспорт — `index.md` около `safeSet`, `downloadRecoveryBackup`, `exportChats`, `exportProjectBundle`.
+13. **Голос и вложения:** `gateway/voice/`, `gateway/tests/test_audio_*.py`, `tests/e2e/audio-transcription.spec.mjs`, `tests/e2e/document-attachments.spec.mjs`.
 13. **Реальные browser checks:** `tests/e2e/`, workflow Quality Sentinels; отдельная GitHub Pages публикация не означает, что VPS gateway обновлён.
 
 ## 2. Исторические milestones реализации (не current queue/status)
