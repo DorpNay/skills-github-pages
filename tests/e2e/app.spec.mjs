@@ -110,7 +110,7 @@ test('project settings closes on Escape and restores focus to a visible control'
 
   await page.keyboard.press('Escape');
   await expect(page.locator('#projectSettingsModal')).toBeHidden();
-  await expect(page.locator('header [data-action="toggle-sidebar"]')).toBeFocused();
+  await expect(page.locator('#appSidebarToggle')).toBeFocused();
 });
 
 test('mobile sidebar and modal close controls meet the 44px touch target', async ({ page }) => {
