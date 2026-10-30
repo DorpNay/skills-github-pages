@@ -173,7 +173,7 @@ test('composer position persists and aLandi is hidden from third-party provider 
   await expect(page.locator('#providerPrimaryGroup')).toBeHidden();
   await expect(page.locator('#providerExternalGroup')).not.toHaveAttribute('hidden', '');
   await expect.poll(() => page.locator('#providerPreset').evaluate(select => [...select.options].some(option => option.value === 'gemini'))).toBe(true);
-  await expect(page.locator('#providerPreset option[value="gemini"]')).toBeVisible();
+  await expect(page.locator('#providerPreset option[value="gemini"]')).toBeEnabled();
   await expect(page.locator('[data-action="select-alandi-primary"]')).toHaveCount(0);
 
   await page.locator('#composerPosition').selectOption('top');
@@ -1149,6 +1149,8 @@ test('project instructions, project memory, and project bundles stay scoped to t
   expect(JSON.stringify(alphaBundle)).not.toContain('apiKey');
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 
+  // Project settings close the sidebar. Reopen it before selecting a personal chat.
+  await page.locator('[data-action="toggle-sidebar"]').click();
   // A new chat from the top-level Chats section is personal unless created inside a project group.
   await page.locator('#sidebar [data-action="new-chat"]').click();
   await page.locator('[data-action="toggle-sidebar"]').click();
@@ -1237,6 +1239,8 @@ test('deleting a project removes its chats but preserves other projects and chat
   });
   expect(disposableChatId).not.toBe('');
 
+  // Project creation closes the sidebar; reopen it to detach the current chat.
+  await page.locator('[data-action="toggle-sidebar"]').click();
   // Detach the current chat before creating a separate project. The original chat
   // remains in Disposable Project and must be deleted with that project.
   await page.locator('[data-action="new-chat"]').first().click();
@@ -1862,7 +1866,8 @@ test('server project memory bridge is manual and requires both chat opt-ins', as
   await expect.poll(() => serverNodes[0]?.status).toBe('confirmed');
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 
-  await page.locator('[data-action="close-sidebar"]').click();
+  // Opening project settings already closes the sidebar.
+  await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
   await page.locator('#userInput').fill('Summarize this project.');
   await page.locator('#sendBtn').click();
   await expect.poll(() => capturedBodies.length).toBe(1);
