@@ -1,81 +1,81 @@
-# aLandi — реестр финальной UX-полировки лендинга и клиента
+# aLandi — остаток оформления и UX-оптимизации сайта
 
 **Срез:** 2026-10-30  
 **Ветка:** `feat/chat-settings-orthogonal-controls-20261030`  
-**PR:** [#121](https://github.com/DorpNay/skills-github-pages/pull/121)  
-**Назначение:** единый проверяемый список незавершённых работ по оформлению, адаптивности, доступности и интерактивным состояниям. Это backlog, не заявление о готовности функций.
+**Назначение:** единый реестр незавершённого визуального/интерактивного polish после PR #121. Это продолжение `V1_UI_FINALIZATION_RU.md` и `LEGACY_UX_REQUEST_AUDIT_RU.md`, не замена им.
 
-## Правила
-- Не добавлять новые библиотеки или UI-фреймворки без измеримой необходимости.
-- Не делать декоративные контролы для ещё не существующих функций.
-- Каждый UI-срез должен иметь регрессионный тест и проверку на exact HEAD.
-- Разделять автоматические Chromium проверки, опубликованный Pages smoke и ручную проверку реального устройства.
-- Не считать roadmap-текст обещанием фонового выполнения или доступности функции.
+Статусы: [x] выполнено и подтверждено; [~] частично / автоматическая проверка есть, ручной gate нет; [ ] не выполнено; [!] блокер. Закрывать пункт только с тестом, screenshot или owner evidence.
 
-## Уже реализовано в текущем HEAD
-- [x] Лендинг `/landing/` с SEO/OG/canonical metadata, CTA и явными границами бесплатного статического UI и внешнего inference.
-- [x] Три roadmap-карточки с ticker-анимацией только при раскрытии.
-- [x] Уважение `prefers-reduced-motion`.
-- [x] CSS-only checkbox pause/resume для бегущих строк; без дополнительного JavaScript.
-- [x] Playwright-сценарии на метаданные/CTA/границы продукта, отсутствие горизонтального overflow на 320/360/390/768/1024/1440 px, запуск ticker по раскрытию, pause/resume и reduced motion.
-- [x] Сохранение существующего HTML/CSS/JS + Jekyll без нового frontend framework.
+## 1. Найденные и сохранённые требования
 
-## Остаток работ — по крупным этапам
+### Landing / публичная страница
+- [x] Отдельный `/landing/`, hero, CTA, возможности, архитектура, readiness, FAQ, roadmap.
+- [x] Roadmap ticker `1nv3nt10n 1n PrOc3ss…` показывается только внутри раскрытого пункта; не выдаёт фоновые задачи за реально исполняемые.
+- [x] `prefers-reduced-motion` выключает движение и оставляет читаемый текст.
+- [x] **2026-10-30:** добавлены видимые pause controls для каждого из трёх ticker; checkbox управляет `animation-play-state` без JavaScript.
+- [ ] Screenshot review 320/360/390/768/1024/1440 px: hero balance, card rhythm, line lengths, section spacing, contrast, footer and CTA.
+- [ ] Проверить keyboard-only и screen reader чтение всех трёх раскрываемых roadmap пунктов и pause controls.
+- [ ] Проверить опубликованный Pages, а не только PR preview/Jekyll build; ссылки и canonical после merge.
+- [ ] Проверить светлую/тёмную тему? Landing сейчас намеренно самостоятельная тёмная публичная страница; не добавлять переключатель без требования и цельного дизайна.
 
-### Этап A — закрыть публичный лендинг
-- [ ] Получить exact-HEAD результат Chromium E2E, включая `tests/e2e/landing.spec.mjs`.
-- [ ] Проверить опубликованный Pages URL после merge/deploy отдельным smoke; PR CI не доказывает публикацию.
-- [ ] Сделать визуальный screenshot review на 320, 360, 390, 768, 1024 и 1440 px: hero, CTA, карточки, roadmap, footer, вертикальный ритм и отсутствие обрезания.
-- [ ] Проверить keyboard-only навигацию, видимый focus, названия элементов для screen reader и читаемость ticker без движения.
-- [ ] Перепроверить все внешние и внутренние ссылки, canonical/OG metadata и корректность текстов о доступности функций.
+### Корневое приложение — визуальная иерархия
+- [x] PR #117/#120: header hierarchy, project label, clock polish, sidebar grouping, memory/project statuses, synchronized theme/language.
+- [~] Общий screenshot review desktop/mobile после последнего PR #121.
+- [ ] Единый проход по typography, contrast, spacing, empty states, inline errors и secondary actions.
+- [ ] Полная RU/EN проверка микротекстов, подсказок, статусов, светлой темы модалок и пустых состояний.
+- [ ] Проверить pencil/edit state у system prompt и возврат в readonly.
+- [ ] Проверить touch targets (проектная цель 44×44 CSS px) и отсутствие конкурирующих controls.
 
-### Этап B — согласованность интерфейса приложения
-- [ ] Сверить типографику, интервалы, размеры контролов, границы/тени, контраст и иерархию заголовков между header, sidebar, chat, composer и settings.
-- [ ] Проверить light/dark и RU/EN: переполнение длинных переводов, переключение темы/языка и сохранение единого источника состояния.
-- [ ] Проверить empty/loading/error/disabled/success states для основных экранов и действий.
-- [ ] Проверить системный prompt: empty-by-default, read-only по умолчанию, понятный opt-in edit/save/cancel.
-- [ ] Проверить touch targets; целевой ориентир проекта — 44×44 CSS px для основных мобильных действий.
+### Popovers, menus, dialogs
+- [x] PR #117: chat-row menu placement viewport-safe; PR #115: scrim и inert first outside tap.
+- [~] Проверить все composer popovers у четырёх краёв viewport, короткую высоту, экранную клавиатуру и nested scroll.
+- [ ] Проверить Escape, focus trap/return, accessible names, scroll lock и background inert для всех modal/dialog.
+- [ ] Sticky Save/Close в Settings при длинном scroll и мобильной клавиатуре — проверить, исправить только при воспроизводимом дефекте.
+- [ ] Native Popover API / CSS Anchor Positioning рассматривать только как progressive enhancement после support matrix; сохранить существующий JS fallback. Не мигрировать ради моды.
 
-### Этап C — popovers, menus и dialogs
-- [ ] Проверить размещение у краёв viewport, короткие окна, mobile keyboard и прокрутку.
-- [ ] Проверить Escape, focus trap там, где нужен modal, возврат фокуса к триггеру, scroll lock и inert/background interaction.
-- [ ] Проверить outside tap: первый тап не должен случайно запускать underlying action.
-- [ ] Проверить sticky Save/Close и доступность действий на мобильной высоте.
-- [ ] Popover API и CSS Anchor Positioning рассматривать только как progressive enhancement с fallback; не внедрять ради новизны.
+### Sidebar, проекты, чаты
+- [x] PR #120: порядок памяти → проекты → чаты и компактные статусы.
+- [x] PR #118/#119: chat import/export и project-first actions.
+- [~] Проверить, что общий импорт/экспорт не дублируется в sidebar и project settings; chat actions остаются в chat menu, project bundle — в project settings.
+- [ ] Длинные названия проектов/чатов, пустые списки, большое количество проектов/чатов, keyboard navigation и mobile scroll.
 
-### Этап D — sidebar, projects и chats
-- [ ] Проверить длинные названия проектов/чатов, пустые и большие списки, переполнение и прокрутку.
-- [ ] Проверить keyboard navigation, touch targets, меню действий и подтверждения разрушительных действий.
-- [ ] Убедиться, что import/export не дублируются и работают в правильном chat/project scope.
+### Research / functions / agents
+- [~] PR #121: Research Studio использует настройки активного чата и не перезаписывает их; подтвердить все комбинации effort/search/profile/pipeline.
+- [ ] Функциональное меню «Исследование / Агенты / Навыки / Коннекторы» должно показывать только реально зарегистрированные сущности, статусы и permissions. Не рисовать fake marketplace.
+- [ ] Развести семантику web search breadth, offline mode и multi-agent orchestration в copy и UI.
+- [ ] В roadmap/agent panels сохранять чёткое различие между blueprint, sequential pipeline и независимым agent runtime.
 
-### Этап E — research, функции и агенты
-- [ ] В UI показывать только реально зарегистрированные функции, providers, connectors и permissions.
-- [ ] Ясно различать web search, offline/local execution, sequential pipeline, blueprint и independent agents.
-- [ ] Не называть roadmap ticker, прототип DAG или последовательность вызовов «командой независимых агентов».
-- [ ] Сверить подписи, disabled states и сообщения об ошибках с реальными capabilities API.
+### Мобильность и доступность
+- [~] Chromium responsive matrix 320/360/390/768/1024/1440 и no-overflow tests.
+- [ ] Native iPhone Safari: visual viewport, клавиатура, safe-area, edge swipe, touchcancel, rotation, scroll restoration.
+- [ ] VoiceOver: headings, dialogs, menus, status text, message actions, focus visibility.
+- [ ] Reduced motion: landing ticker, app ticker, transitions and scroll behavior; проверить пользовательскую настройку вместе с OS preference.
 
-### Этап F — mobile и accessibility acceptance
-- [ ] Пройти Chromium responsive matrix и keyboard tests.
-- [ ] Выполнить ручной тест на реальном iPhone Safari: safe-area, клавиатура, прокрутка, touch, edge gestures.
-- [ ] Проверить VoiceOver/screen reader, контраст, focus order и reduced motion.
-- [ ] Отдельно зафиксировать неподтверждённые устройства/браузеры; не экстраполировать Chromium на iOS.
+## 2. Порядок реализации большими шагами
 
-## Порядок исполнения
-1. Этап A — exact-head CI + visual review + опубликованный smoke.
-2. Этап B — единый bounded visual consistency pass с тестами.
-3. Этап C — исправление конкретных воспроизводимых проблем popover/dialog.
-4. Этап D — sidebar/project/chat edge cases.
-5. Этап E — проверка соответствия UI реальным capabilities.
-6. Этап F — native device/accessibility acceptance.
+1. **UX inventory + baseline (этот документ):** требования собраны; не переписывать уже закрытые PR #115–120.
+2. **Landing finish:** screenshot review, ticker pause/reduced-motion/keyboard, metadata/CTA/link validation, published Pages smoke.
+3. **App visual consistency:** screenshot pass, typography/spacing/contrast, RU/EN, light/dark, empty/error/secondary states.
+4. **Interaction correctness:** popover edge placement, dialog sticky actions, Escape/focus/scroll lock, project/chat menus.
+5. **Mobile/accessibility:** Chromium matrix, then native iPhone Safari + VoiceOver owner gate.
+6. **Release verification:** exact current HEAD CI → merge only green → published Pages root + /landing smoke → update this file, V1 checklist, PROJECT_STATE, ORIENTER and VOLLEY_LOG.
 
-Не начинать следующий крупный этап, пока предыдущий не имеет записанного результата и списка оставшихся ручных gates.
+## 3. Реализованный первый polish patch
+- [x] Добавлен checkbox Pause control на каждый из трёх landing roadmap ticker.
+- [x] Pause toggles animation state using CSS only; no new JavaScript or runtime dependency.
+- [x] Added Playwright test for pause/resume and retained reduced-motion test.
+- [ ] Exact-head Chromium/Quality run for these changes.
+- [ ] Native keyboard/screen-reader confirmation.
 
-## Текущий CI-срез
-- PR #121 HEAD: `78e19e8f1147e44004273e18c23a52f40cfb7f9d`.
-- Check runs на этом SHA: Graphify, Gateway contract/security, model/voice provenance и dead-code report завершились успешно.
-- Project State Freshness остаётся pending; Independent Quality Sentinels был in progress при последней проверке.
-- Combined commit status оставался pending. Следовательно, exact-head Quality/Chromium/Pages smoke ещё нельзя объявить полностью зелёными.
-- PR #121 открыт, не merged. Published Pages smoke и native iPhone проверки остаются отдельными gates.
+## 4. Источники и технологические ограничения
+- MDN `<marquee>`: deprecated; use CSS transforms/animations instead. https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/marquee
+- MDN `prefers-reduced-motion`: respect OS reduced-motion preference. https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion
+- W3C WCAG 2.2 SC 2.2.2: automatically moving content lasting over five seconds alongside other content needs pause/stop/hide. https://www.w3.org/TR/WCAG22/#pause-stop-hide
+- MDN Popover API (Baseline 2025) and anchor positioning: promising progressive enhancement for edge-aware popovers, but keep fallback for unsupported browser versions. https://developer.mozilla.org/en-US/docs/Web/API/Popover_API and https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Anchor_positioning
+- MDN CSS/JS accessibility practices: visible focus and restrained motion. https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/CSS_and_JavaScript
 
-## Журнал
-- 2026-10-30: восстановлен единый UX backlog после обнаружения отсутствующего файла, на который уже ссылались ориентиры. Составлен по существующим UI finalization/legacy audit docs и фактическому дереву кода/тестов.
+## 5. Change log
+| Date | Change | Evidence |
+|---|---|---|
+| 2026-10-30 | Consolidated remaining visual/interaction tasks from legacy UX audit, V1 UI checklist and landing source. | `LEGACY_UX_REQUEST_AUDIT_RU.md`, `V1_UI_FINALIZATION_RU.md`, `landing/index.html`, `tests/e2e/landing.spec.mjs` |
+| 2026-10-30 | Added explicit pause controls to landing roadmap tickers and Playwright pause/resume test. | Commits `f42c42d`, `b213c8a`; CI pending |
