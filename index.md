@@ -659,7 +659,24 @@ permalink: /
         <button type="button" data-action="close-function-panel" class="shrink-0 rounded-lg px-2 py-1 text-gray-400 hover:text-white" aria-label="Закрыть">✕</button>
       </header>
       <section id="agentFunctionSettings" class="hidden space-y-3">
-        <label class="flex items-start gap-2 rounded-xl border border-gray-800 p-3 text-sm"><input type="checkbox" id="agentModeControl" class="mt-1 rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span><strong class="block" data-i18n="agentModeOption">Использовать многоэтапное исследование для сложных задач</strong><span class="mt-1 block text-[11px] leading-relaxed text-gray-500" data-i18n="agentModeHelp">Это существующий конвейер планировщик → исследователь → критик → синтезатор, а не независимая команда агентов.</span></span></label>
+        <label class="flex items-start gap-2 rounded-xl border border-gray-800 p-3 text-sm"><input type="checkbox" id="agentModeControl" class="mt-1 rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span><strong class="block" data-i18n="agentModeOption">Использовать структурированный разбор</strong><span class="mt-1 block text-[11px] leading-relaxed text-gray-500" data-i18n="agentModeHelp">Четыре последовательных этапа на выбранной модели.</span></span></label>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="block text-xs text-gray-400">Размер команды · blueprint
+            <input id="agentTeamSize" type="range" min="1" max="50" step="1" value="4" class="mt-2 w-full"><span id="agentTeamSizeValue" class="text-[11px] font-semibold text-cyan-300">4 агента</span>
+          </label>
+          <label class="block text-xs text-gray-400">Сценарий
+            <select id="agentTeamScenario" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="general">Общий</option><option value="research">Исследование</option><option value="software">Разработка</option><option value="product">Продукт</option><option value="due-diligence">Due diligence</option><option value="custom">Свой вариант</option></select>
+          </label>
+          <label class="block text-xs text-gray-400 col-span-2">Роли
+            <select id="agentRolePreset" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="balanced">Сбалансированные</option><option value="research">Исследовательская команда</option><option value="software">Разработка ПО</option><option value="product">Продуктовая команда</option><option value="custom">Свой вариант</option></select>
+          </label>
+        </div>
+        <div id="agentCustomFields" class="hidden space-y-2 rounded-xl border border-gray-800 p-3">
+          <textarea id="agentTeamCustomScenario" maxlength="1000" rows="2" class="advanced-control w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Опиши сценарий команды"></textarea>
+          <textarea id="agentCustomRoles" maxlength="1500" rows="3" class="advanced-control w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Роли и обязанности, по одной на строку"></textarea>
+        </div>
+        <p class="rounded-lg border border-amber-900/50 bg-amber-950/20 p-2 text-[10px] leading-relaxed text-amber-100/80">Команда — сохраняемый blueprint. Runtime сейчас выполняет четыре фиксированных этапа на одной выбранной модели; создание 50 независимых агентов ещё не реализовано.</p>
+        <p id="agentConfigSummary" class="text-[10px] text-gray-500" aria-live="polite"></p>
       </section>
       <section id="skillFunctionSettings" class="hidden space-y-2">
         <label for="skillPresetSelect" class="block text-xs font-semibold" data-i18n="skillPresetLabel">Навык этого чата</label>
@@ -671,8 +688,24 @@ permalink: /
           <option value="data-analysis" data-i18n="skillDataAnalysis">Анализ данных</option>
           <option value="agent-systems" data-i18n="skillAgentSystems">Системы агентов</option>
           <option value="multimodal" data-i18n="skillMultimodal">Мультимодальные задачи</option>
+          <option value="custom">Свой вариант</option>
         </select>
-        <p class="text-[11px] leading-relaxed text-gray-500" data-i18n="skillPresetHelp">Выбор действует только в этом чате; новый чат начинает с автоматического выбора.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <label class="block text-[11px] text-gray-400">Задача по ответам
+            <select id="skillGoalSelect" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="planning">Планирование</option><option value="research">Исследование</option><option value="code-review">Код и ревью</option><option value="data-analysis">Анализ данных</option><option value="agent-systems">Системы агентов</option><option value="multimodal">Мультимодальные задачи</option><option value="custom">Свой вариант</option></select>
+          </label>
+          <label class="block text-[11px] text-gray-400">Формат результата
+            <select id="skillOutputSelect" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="summary">Краткое резюме</option><option value="checklist">Чек-лист</option><option value="steps">Пошагово</option><option value="table">Таблица</option><option value="report">Отчёт</option><option value="custom">Свой вариант</option></select>
+          </label>
+        </div>
+        <div id="skillCustomFields" class="hidden space-y-2 rounded-xl border border-cyan-900/50 bg-cyan-950/15 p-3">
+          <input id="customSkillName" maxlength="80" class="advanced-field w-full rounded-lg border border-gray-700 bg-gray-900" placeholder="Название своего навыка">
+          <textarea id="customSkillInstructions" rows="3" maxlength="3000" class="advanced-field w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Свои инструкции для задачи"></textarea>
+          <textarea id="customSkillOutput" rows="2" maxlength="500" class="advanced-field w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Свой формат результата (необязательно)"></textarea>
+        </div>
+        <button type="button" data-action="apply-skill-quiz" class="w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-2 text-xs font-semibold text-cyan-200">Подобрать навык</button>
+        <p id="skillConfigSummary" class="text-[10px] text-gray-500" aria-live="polite"></p>
+        <p class="text-[11px] leading-relaxed text-gray-500" data-i18n="skillPresetHelp">Профиль добавляет инструкции, но не открывает инструменты или данные.</p>
       </section>
       <section id="connectorFunctionStatus" class="hidden rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-sm leading-relaxed text-gray-300" data-i18n="functionConnectorsDescription">Показываем только реально подключённые источники. Внешние коннекторы пока не подключены; они не будут имитироваться переключателями.</section>
       <footer class="flex justify-end border-t border-gray-800 pt-3"><button type="button" data-action="close-function-panel" data-i18n="functionPanelClose" class="rounded-xl border border-gray-700 px-4 py-2 text-sm">Закрыть</button></footer>
@@ -896,7 +929,7 @@ permalink: /
       }
     }
     function createChat(title = 'Новый чат', messages = [], projectId = null) {
-      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false, serverProjectMemoryEnabled: false, privateMemoryUsed: false, processingMode: 'fast', searchMode: 'normal', multiAgentEnabled: false, skillPreset: 'auto' };
+      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false, serverProjectMemoryEnabled: false, privateMemoryUsed: false, processingMode: 'fast', searchMode: 'normal', multiAgentEnabled: false, skillPreset: 'auto', customSkillName:'', customSkillInstructions:'', customSkillOutput:'', skillGoal:'planning', skillOutputMode:'summary', agentTeamSize:4, agentTeamScenario:'general', agentTeamCustomScenario:'', agentRolePreset:'balanced', agentCustomRoles:'' };
     }
     function preserveUnreadableChats(rawText) {
       if (!rawText) return;
@@ -938,6 +971,16 @@ permalink: /
             projectMemoryEnabled: item.projectMemoryEnabled === true,
             serverProjectMemoryEnabled: item.serverProjectMemoryEnabled === true,
             privateMemoryUsed: item.privateMemoryUsed === true,
+            customSkillName: typeof item.customSkillName==='string'?item.customSkillName.slice(0,80):'',
+            customSkillInstructions: typeof item.customSkillInstructions==='string'?item.customSkillInstructions.slice(0,3000):'',
+            customSkillOutput: typeof item.customSkillOutput==='string'?item.customSkillOutput.slice(0,500):'',
+            skillGoal: ['planning','research','code-review','data-analysis','agent-systems','multimodal','custom'].includes(item.skillGoal)?item.skillGoal:'planning',
+            skillOutputMode: ['summary','checklist','steps','table','report','custom'].includes(item.skillOutputMode)?item.skillOutputMode:'summary',
+            agentTeamSize: Number.isInteger(item.agentTeamSize)?Math.max(1,Math.min(50,item.agentTeamSize)):4,
+            agentTeamScenario: ['general','research','software','product','due-diligence','custom'].includes(item.agentTeamScenario)?item.agentTeamScenario:'general',
+            agentTeamCustomScenario: typeof item.agentTeamCustomScenario==='string'?item.agentTeamCustomScenario.slice(0,1000):'',
+            agentRolePreset: ['balanced','research','software','product','custom'].includes(item.agentRolePreset)?item.agentRolePreset:'balanced',
+            agentCustomRoles: typeof item.agentCustomRoles==='string'?item.agentCustomRoles.slice(0,1500):'',
             messages: item.messages.filter((m) => m && ['user', 'assistant', 'tool'].includes(m.role)).map((m) => ({
               role: m.role,
               content: typeof m.content === 'string' ? m.content : '',
@@ -2370,7 +2413,9 @@ permalink: /
       void refreshConnectedModelCatalogs({ quiet: true, force: false, includeOtherProviders: safeGet(STORAGE.crossProviderFallback) === 'true' });
     }
     const VALID_SEARCH_MODES = new Set(['normal','more','offline']);
-    const VALID_SKILL_PRESETS = new Set(['auto','planning','research','code-review','data-analysis','agent-systems','multimodal']);
+    const VALID_SKILL_PRESETS = new Set(['auto','planning','research','code-review','data-analysis','agent-systems','multimodal','custom']);
+    const VALID_AGENT_SCENARIOS = new Set(['general','research','software','product','due-diligence','custom']);
+    const VALID_AGENT_ROLES = new Set(['balanced','research','software','product','custom']);
     function ensureChatFunctionSettings(chat) {
       if (!chat || typeof chat !== 'object') return false;
       let changed = false;
@@ -2378,6 +2423,17 @@ permalink: /
       if (!VALID_SEARCH_MODES.has(chat.searchMode)) { chat.searchMode = safeGet(STORAGE.offline) === 'true' || safeGet(STORAGE.search) === 'false' ? 'offline' : 'normal'; changed = true; }
       if (typeof chat.multiAgentEnabled !== 'boolean') { chat.multiAgentEnabled = safeGet(STORAGE.multiAgent) === 'true'; changed = true; }
       if (!VALID_SKILL_PRESETS.has(chat.skillPreset)) { chat.skillPreset = 'auto'; changed = true; }
+      if(typeof chat.customSkillName!=='string') {chat.customSkillName='';changed=true;}
+      if(typeof chat.customSkillInstructions!=='string') {chat.customSkillInstructions='';changed=true;}
+      if(typeof chat.customSkillOutput!=='string') {chat.customSkillOutput='';changed=true;}
+      if(!['planning','research','code-review','data-analysis','agent-systems','multimodal','custom'].includes(chat.skillGoal)){chat.skillGoal='planning';changed=true;}
+      if(!['summary','checklist','steps','table','report','custom'].includes(chat.skillOutputMode)){chat.skillOutputMode='summary';changed=true;}
+      if(!Number.isInteger(chat.agentTeamSize)){chat.agentTeamSize=4;changed=true;}else if(chat.agentTeamSize<1||chat.agentTeamSize>50){chat.agentTeamSize=Math.max(1,Math.min(50,chat.agentTeamSize));changed=true;}
+      if(!VALID_AGENT_SCENARIOS.has(chat.agentTeamScenario)){chat.agentTeamScenario='general';changed=true;}
+      if(typeof chat.agentTeamCustomScenario!=='string'){chat.agentTeamCustomScenario='';changed=true;}
+      if(!VALID_AGENT_ROLES.has(chat.agentRolePreset)){chat.agentRolePreset='balanced';changed=true;}
+      if(typeof chat.agentCustomRoles!=='string'){chat.agentCustomRoles='';changed=true;}
+      chat.customSkillName=chat.customSkillName.slice(0,80);chat.customSkillInstructions=chat.customSkillInstructions.slice(0,3000);chat.customSkillOutput=chat.customSkillOutput.slice(0,500);chat.agentTeamCustomScenario=chat.agentTeamCustomScenario.slice(0,1000);chat.agentCustomRoles=chat.agentCustomRoles.slice(0,1500);
       return changed;
     }
     function migrateLegacyChatFunctionSettings() {
@@ -3072,6 +3128,43 @@ permalink: /
       if (status) status.textContent = mode === 'offline' ? (getUiLanguage() === 'en' ? 'Web search off' : 'Веб-поиск выключен') : mode === 'more' ? (getUiLanguage() === 'en' ? 'Expanded web search' : 'Расширенный веб-поиск') : (getUiLanguage() === 'en' ? 'Standard web search' : 'Обычный веб-поиск');
     }
     function toggleOfflineMode(){setSearchMode(getCurrentChat()?.searchMode==='offline'?'normal':'offline');}
+    function renderSkillConfiguration(){
+      const chat=getCurrentChat();if(!chat)return;ensureChatFunctionSettings(chat);
+      if($('skillPresetSelect'))$('skillPresetSelect').value=chat.skillPreset;
+      if($('skillGoalSelect'))$('skillGoalSelect').value=chat.skillGoal;
+      if($('skillOutputSelect'))$('skillOutputSelect').value=chat.skillOutputMode;
+      if($('customSkillName'))$('customSkillName').value=chat.customSkillName;
+      if($('customSkillInstructions'))$('customSkillInstructions').value=chat.customSkillInstructions;
+      if($('customSkillOutput'))$('customSkillOutput').value=chat.customSkillOutput;
+      const show=chat.skillPreset==='custom'||chat.skillGoal==='custom'||chat.skillOutputMode==='custom';
+      $('skillCustomFields')?.classList.toggle('hidden',!show);
+      const summary=$('skillConfigSummary');if(summary)summary.textContent=chat.skillPreset==='custom'?(chat.customSkillName||'Свой навык · инструкции сохраняются в этом чате'):'Выбран профиль: '+chat.skillPreset+' · формат: '+chat.skillOutputMode;
+    }
+    function persistSkillConfiguration(){
+      const chat=getCurrentChat();if(!chat)return;ensureChatFunctionSettings(chat);
+      chat.customSkillName=$('customSkillName').value.slice(0,80);chat.customSkillInstructions=$('customSkillInstructions').value.slice(0,3000);chat.customSkillOutput=$('customSkillOutput').value.slice(0,500);
+      chat.skillGoal=$('skillGoalSelect').value;chat.skillOutputMode=$('skillOutputSelect').value;persistChats();renderSkillConfiguration();
+    }
+    function applySkillQuiz(){
+      const goal=$('skillGoalSelect').value;const chat=getCurrentChat();if(!chat)return;
+      chat.skillGoal=goal;chat.skillOutputMode=$('skillOutputSelect').value;chat.skillPreset=goal==='custom'?'custom':goal;
+      chat.customSkillName=$('customSkillName').value.slice(0,80);chat.customSkillInstructions=$('customSkillInstructions').value.slice(0,3000);chat.customSkillOutput=$('customSkillOutput').value.slice(0,500);
+      persistChats();renderSkillConfiguration();updateModeUI();showToast('Профиль навыка применён к этому чату.');
+    }
+    function renderAgentConfiguration(){
+      const chat=getCurrentChat();if(!chat)return;ensureChatFunctionSettings(chat);
+      $('agentTeamSize').value=String(chat.agentTeamSize);$('agentTeamSizeValue').textContent=chat.agentTeamSize+' '+(chat.agentTeamSize===1?'агент':'агентов');
+      $('agentTeamScenario').value=chat.agentTeamScenario;$('agentRolePreset').value=chat.agentRolePreset;
+      $('agentTeamCustomScenario').value=chat.agentTeamCustomScenario;$('agentCustomRoles').value=chat.agentCustomRoles;
+      $('agentCustomFields').classList.toggle('hidden',chat.agentTeamScenario!=='custom'&&chat.agentRolePreset!=='custom');
+      $('agentConfigSummary').textContent='Blueprint: '+chat.agentTeamSize+' · '+chat.agentTeamScenario+' · '+chat.agentRolePreset+' · runtime: 4 фиксированных этапа';
+    }
+    function persistAgentConfiguration(){
+      const chat=getCurrentChat();if(!chat)return;ensureChatFunctionSettings(chat);
+      chat.agentTeamSize=Math.max(1,Math.min(50,Number($('agentTeamSize').value)||1));chat.agentTeamScenario=$('agentTeamScenario').value;
+      chat.agentRolePreset=$('agentRolePreset').value;chat.agentTeamCustomScenario=$('agentTeamCustomScenario').value.slice(0,1000);chat.agentCustomRoles=$('agentCustomRoles').value.slice(0,1500);
+      persistChats();renderAgentConfiguration();
+    }
     function openFunctionPanel(kind) {
       $('functionsMenu').open = false;
       const views = {
@@ -3086,8 +3179,8 @@ permalink: /
       $('functionPanelTitle').textContent = text[view[1]];
       $('functionPanelDescription').textContent = text[view[2]];
       $(view[0]).classList.remove('hidden');
-      if (kind === 'agents') $('agentModeControl').checked = getCurrentChat().multiAgentEnabled === true;
-      if (kind === 'skills') $('skillPresetSelect').value = getCurrentChat().skillPreset || 'auto';
+      if (kind === 'agents') { $('agentModeControl').checked = getCurrentChat().multiAgentEnabled === true;renderAgentConfiguration(); }
+      if (kind === 'skills') renderSkillConfiguration();
       $('functionPanelModal').classList.remove('hidden');
     }
     function closeFunctionPanel() {
@@ -3408,7 +3501,7 @@ permalink: /
       return 'URL: ' + response.url + '\nИзвлечённый текст (обрезан до ' + cap + ' символов):\n' + content.slice(0, cap) +
         (content.length > cap ? '\n[Текст сокращён; уточни, что искать.]' : '');
     }
-    async function loadTaskSkill(userText, mode, useMultiAgent, signal, skillPreset = 'auto') {
+    async function loadTaskSkill(userText, mode, useMultiAgent, signal, skillPreset = 'auto', skillConfig = {}) {
       const chosenSkill = VALID_SKILL_PRESETS.has(skillPreset) ? skillPreset : 'auto';
       if (mode !== 'deep' && !useMultiAgent && chosenSkill === 'auto') return '';
       const text = userText.toLocaleLowerCase();
@@ -3421,6 +3514,12 @@ permalink: /
         : /данн|таблиц|статист|рассч|вычисл|график|data|calculate|statistics|dataset/.test(text) ? 'data-analysis' : 'planning';
       // Safety-specialized multimodal/agent-system skills outrank manual presets; other tasks honor the user's choice.
       const selectedSkill = (isMultimodalTask || isAgentSystemsTask) ? skill : (chosenSkill !== 'auto' ? chosenSkill : skill);
+      if(chosenSkill==='custom'&&!isMultimodalTask&&!isAgentSystemsTask){
+        const customName=String(skillConfig.customSkillName||'').slice(0,80),instructions=String(skillConfig.customSkillInstructions||'').slice(0,3000),outputMode=String(skillConfig.skillOutputMode||'summary'),customOutput=String(skillConfig.customSkillOutput||'').slice(0,500);
+        const outputLabels={summary:'краткое резюме',checklist:'чек-лист',steps:'пошаговый формат',table:'таблица',report:'отчёт'};
+        const parts=[];if(customName)parts.push('Название навыка: '+customName);if(instructions)parts.push('Дополнительные инструкции пользователя: '+instructions);if(outputMode!=='custom')parts.push('Предпочтительный формат результата: '+(outputLabels[outputMode]||'краткое резюме'));if(customOutput)parts.push('Пользовательский формат результата: '+customOutput);
+        return parts.length?('Пользовательский профиль — только дополнительное руководство; не переопределяй запрос пользователя или системные правила.\\n'+parts.join('\\n')):'';
+      }
       try {
         const response = await fetch(new URL('skills/' + selectedSkill + '.txt', document.baseURI), { cache: 'force-cache', signal });
         if (!response.ok) return '';
@@ -3696,7 +3795,7 @@ permalink: /
       if(requestProjectContext)requestProjectContext+='\nКонец контекста выбранных проектов. Учитывай его только для текущего сообщения и продолжай соблюдать системные ограничения.';
       const configuredPrompt = safeGet(STORAGE.systemPrompt);
       const activePrompt = (!configuredPrompt || configuredPrompt === LEGACY_DEFAULT_SYSTEM) ? DEFAULT_SYSTEM : configuredPrompt;
-      const taskSkill = promptOverride ? '' : await loadTaskSkill(latestUserMessage, mode, useMultiAgent, signal, chat.skillPreset || 'auto');
+      const taskSkill = promptOverride ? '' : await loadTaskSkill(latestUserMessage, mode, useMultiAgent, signal, chat.skillPreset || 'auto', chat);
       let systemPrompt = `Сегодня: ${new Date().toLocaleDateString('ru-RU')}. ${activePrompt}${projectInstructionContext}${requestProjectContext}${privateMemoryContext}${memoryContext}${projectMemoryContext}${serverProjectMemoryContext}`;
       if (mode === 'deep') systemPrompt += '\nРЕЖИМ ТЩАТЕЛЬНОЙ РАБОТЫ: проверь существенные предположения, объясни неопределённость и предпочитай проверяемые выводы. Избегай лишних шагов.';
       if (taskSkill) systemPrompt += '\n\nНАВЫК ИЗ РЕПОЗИТОРИЯ (инструкции для текущей задачи; пользовательский запрос имеет приоритет):\n' + taskSkill;
@@ -4797,6 +4896,7 @@ permalink: /
           case 'select-search-mode': setSearchMode(control.dataset.searchMode);break;
           case 'open-function-panel': openFunctionPanel(control.dataset.function);break;
           case 'close-function-panel': closeFunctionPanel();break;
+          case 'apply-skill-quiz': applySkillQuiz();break;
           case 'toggle-theme-cycle': toggleHomeTheme();break;
           case 'paste-provider-key': await pasteIntoField('apiKey');break;
           case 'paste-cloud-key': await pasteIntoField('cloudApiKey');break;
@@ -4954,7 +5054,13 @@ permalink: /
     $('toggleSearch').addEventListener('change', (event) => safeSet(STORAGE.search, String(event.target.checked)));
     $('toggleMultiAgent').addEventListener('change', (event) => safeSet(STORAGE.multiAgent, String(event.target.checked)));
     $('agentModeControl').addEventListener('change', event => setAgentMode(event.target.checked));
-    $('skillPresetSelect').addEventListener('change', event => setSkillPreset(event.target.value));
+    $('skillPresetSelect').addEventListener('change', event => {setSkillPreset(event.target.value);renderSkillConfiguration();});
+    $('skillGoalSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat){chat.skillGoal=$('skillGoalSelect').value;persistChats();renderSkillConfiguration();}});
+    $('skillOutputSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat){chat.skillOutputMode=$('skillOutputSelect').value;persistChats();renderSkillConfiguration();}});
+    ['customSkillName','customSkillInstructions','customSkillOutput'].forEach(id=>$(id).addEventListener('change',persistSkillConfiguration));
+    $('agentTeamSize').addEventListener('input',()=>{const chat=getCurrentChat();if(chat){chat.agentTeamSize=Math.max(1,Math.min(50,Number($('agentTeamSize').value)||1));$('agentTeamSizeValue').textContent=chat.agentTeamSize+' '+(chat.agentTeamSize===1?'агент':'агентов');persistChats();renderAgentConfiguration();}});
+    ['agentTeamScenario','agentRolePreset'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
+    ['agentTeamCustomScenario','agentCustomRoles'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
     $('sidebarOverlay').addEventListener('click', () => toggleSidebar(false));
     $('importFile').addEventListener('change', importChats);
     $('settingsProfileFile').addEventListener('change', importSettingsProfile);
