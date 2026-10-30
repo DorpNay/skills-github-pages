@@ -26,8 +26,8 @@
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files",
     "active_ui_pr": {
       "number": 121,
-      "head_sha": "f9d5afaae983675d2c616e3fbc70942840d314e5",
-      "exact_head_ci": "Code SHA f9d5afaae983675d2c616e3fbc70942840d314e5: Gateway #483 passed (150 tests), Freshness #83, Provenance #554 and Dead Code #389 passed; Quality #916 attempt 2 has Integrity/Security/Context/Jekyll passed and Chromium still running. Later documentation-only commits are present on current PR head; no claim of complete current-head green."
+      "head_sha": "363bb5c46c6a0fcad55bb5d243289e065ee6450a",
+      "exact_head_ci": "Audio subprocess cancellation cleanup added at 77b2691 and regression tests at 363bb5c. Equivalent local smoke killed/reaped child processes on timeout/cancellation. Gateway #483 (150 tests) predates this fix; new functional SHA still requires Gateway CI. Quality #916 attempt 2 on prior SHA has Integrity/Security/Context/Jekyll passed and Chromium in progress; current PR branch contains later docs-only checkpoints."
     }
   }
 }
