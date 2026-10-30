@@ -285,4 +285,14 @@ current_checkpoint:
   open_issues: "Issue #111 only: consolidated owner/live-host release gates; research-only workstreams #88–#92 and #96–#104 closed after transferring unresolved actions"
   freshness_guard: "scripts/check_project_state_freshness.py; compares exact SHA and exact queue. A refresh commit must update ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG and snapshot; it no longer requires artificial edits to checker/tests/workflow."
   runtime_boundary: "GitHub Pages is a static client; live VPS/Tunnel/Ollama, actual model performance, voice/device, OAuth/Drive and target-host measurements remain unverified"
-  next: "Use docs/V1_UI_FINALIZATION_RU.md to close the first free-landing UI slice. Run exact-head Quality/Chromium/Jekyll/Pages/Graphify/provenance checks after state refresh. Issue #111 retains owner-only ruleset, live-host, hardware, RAG golden-set, voice/device, OAuth and sandbox gates."\nv1_ui_finalization:\n  status: "active; no merge/deployment claim until exact-head Quality/Chromium/Pages checks pass"\n  register: "docs/V1_UI_FINALIZATION_RU.md"\n  active_pr: 121\n  branch: "feat/chat-settings-orthogonal-controls-20261030"\n  scope: "free static landing page plus existing browser client; not public multi-user SaaS or hosted inference"\n  implemented_in_branch: "clarified free UI vs inference costs; roadmap section with reduced-motion ticker; agent/connector in-app roadmap cues; landing E2E; fixed duplicate Settings close action and integrity provider-group parser"\n  pending: "exact-head Quality/Chromium/Pages; inspect all failures; published Pages smoke after merge; native iPhone Safari/manual checks; owner-only issue #111"\n  status_boundary: "ticker is decorative roadmap copy, not a background task indicator; independent agents, integrations, voice and document extraction remain gated/unverified"\n
+  next: "Use docs/V1_UI_FINALIZATION_RU.md to close the first free-landing UI slice. Run exact-head Quality/Chromium/Jekyll/Pages/Graphify/provenance checks after state refresh. Issue #111 retains owner-only ruleset, live-host, hardware, RAG golden-set, voice/device, OAuth and sandbox gates."
+v1_ui_finalization:
+  status: "active; no merge/deployment claim until exact-head Quality/Chromium/Pages checks pass"
+  register: "docs/V1_UI_FINALIZATION_RU.md"
+  active_pr: 121
+  branch: "feat/chat-settings-orthogonal-controls-20261030"
+  scope: "free static landing page plus existing browser client; not public multi-user SaaS or hosted inference"
+  implemented_in_branch: "clarified free UI vs inference costs; roadmap section with reduced-motion ticker; agent/connector in-app roadmap cues; landing E2E; fixed duplicate Settings close action and integrity provider-group parser"
+  pending: "exact-head Quality/Chromium/Pages; inspect all failures; published Pages smoke after merge; native iPhone Safari/manual checks; owner-only issue #111"
+  status_boundary: "ticker is decorative roadmap copy, not a background task indicator; independent agents, integrations, voice and document extraction remain gated/unverified"
+
