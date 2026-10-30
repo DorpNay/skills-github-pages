@@ -149,7 +149,7 @@ jobs:
 
 
   static-analysis:
-    name: Independent static analysis (report-only)
+    name: Independent static analysis (Ruff gate; Bandit/Semgrep advisory)
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -173,7 +173,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          ruff check gateway scripts router observability intel latency --select F,E4,E7,E9 --output-format=json \
+          ruff check gateway scripts router observability intel latency tests --select F,E4,E7,E9 --output-format=json \
             > audit-reports/ruff.json 2> audit-reports/ruff.stderr
           echo "$?" > audit-reports/ruff.exit
           bandit -r gateway scripts router observability intel latency -x gateway/tests,gateway/evals -f json \
@@ -246,8 +246,10 @@ jobs:
                   failed.append(f"{name}: missing exit record")
                   continue
               code = int(path.read_text().strip())
-              print(f"{name}: exit={code}; 1 is findings, >=2 is scanner/config/runtime error")
-              if code >= 2:
+              print(f"{name}: exit={code}; Ruff findings are blocking, Bandit/Semgrep findings are advisory")
+              if name == "ruff" and code != 0:
+                  failed.append(f"ruff: correctness lint findings (exit {code})")
+              elif name != "ruff" and code >= 2:
                   failed.append(f"{name}: scanner failed with {code}")
           if failed:
               print("\n".join(failed), file=sys.stderr)
