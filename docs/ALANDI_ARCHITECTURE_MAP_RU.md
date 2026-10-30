@@ -70,7 +70,7 @@ flowchart TD
 - Release: Quality Sentinels, Pages deployment/browser smoke, provenance gate. Проверять exact PR HEAD, затем post-merge main.
 - Для memory: project scope, candidate/confirmed, deletion propagation и recovery semantics.
 
-## 5. Graphify — следующий эксперимент, не runtime-интеграция
+## 5. Graphify — dev-only code navigation, не runtime-интеграция
 
 Источники: [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify), [quickstart](https://docs.graphify.com/quickstart), [pyproject.toml](https://github.com/Graphify-Labs/graphify/blob/v8/pyproject.toml).
 
