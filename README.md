@@ -43,7 +43,7 @@
 
 **План реализации всех подсистем по приоритетам и критериям готовности:** [docs/IMPLEMENTATION_ROADMAP_RU.md](docs/IMPLEMENTATION_ROADMAP_RU.md).
 
-Используй этот документ как основной runbook для развёртывания. Базовая схема — AI Mobile Agent → Cloudflare Tunnel → aLandi Lite Gateway → закрытая Ollama. Dify/Redis/векторная БД не являются обязательными установочными шагами; добавляй их только после подтверждения задачи и бюджета памяти.
+Используй этот документ как основной runbook для развёртывания. Базовая self-hosted схема aLandi — GitHub Pages → Cloudflare Tunnel → FastAPI Lite Gateway → закрытая Ollama. Dify/Redis/векторная БД не являются обязательными установочными шагами; добавляй их только после подтверждения задачи и бюджета памяти.
 
 
 Мобильный веб-интерфейс ИИ-ассистента, публикуемый через GitHub Pages.
@@ -142,7 +142,7 @@ node scripts/quality-agents.mjs context
 
 ## Точный серверный кэш и личный gateway
 
-На правильном репозитории реализуются L2 exact-response cache (SQLite), явный bypass для динамических/tool/stream запросов, статус X-AI-Cache и preset aLandi Self-hosted Gateway в UI. Подробно: [Gateway README](gateway/README_RU.md) и [полный runbook](docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md).
+В gateway уже реализован L2 exact-response cache (SQLite), явный bypass для dynamic/tool/stream запросов и диагностический заголовок X-AI-Cache; конфигурация и ограничения описаны в Подробно: [Gateway README](gateway/README_RU.md) и [полный runbook](docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md).
 
 
 
