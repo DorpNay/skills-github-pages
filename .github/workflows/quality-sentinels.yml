@@ -146,3 +146,71 @@ jobs:
     steps:
       - name: Confirm published-site Chromium smoke ran in the prerequisite browser job
         run: echo "Published GitHub Pages browser smoke passed in browser-e2e; browser runtime is installed only once."
+
+
+  static-analysis:
+    name: Independent static analysis (report-only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - name: Install pinned audit-only scanners
+        run: |
+          mkdir -p audit-reports
+          python -m pip install --disable-pip-version-check \
+            ruff==0.17.3 bandit==1.9.4 semgrep==1.183.0
+          {
+            ruff --version
+            bandit --version
+            semgrep --version
+          } > audit-reports/tool-versions.txt
+      - name: Run Ruff, Bandit and Semgrep Community Edition
+        shell: bash
+        run: |
+          set +e
+          ruff check gateway scripts router observability intel latency --output-format=json \
+            > audit-reports/ruff.json 2> audit-reports/ruff.stderr
+          echo "$?" > audit-reports/ruff.exit
+          bandit -r gateway scripts router observability intel latency -f json \
+            > audit-reports/bandit.json 2> audit-reports/bandit.stderr
+          echo "$?" > audit-reports/bandit.exit
+          semgrep scan --config p/default --json \
+            > audit-reports/semgrep.json 2> audit-reports/semgrep.stderr
+          echo "$?" > audit-reports/semgrep.exit
+          echo "Findings are report-only at this stage; scanner/runtime errors are checked separately."
+          exit 0
+      - name: Upload raw scanner evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: independent-static-analysis
+          path: audit-reports/
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Reject scanner execution errors, not findings
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+
+          failed = []
+          for name in ("ruff", "bandit", "semgrep"):
+              path = Path("audit-reports") / f"{name}.exit"
+              if not path.exists():
+                  failed.append(f"{name}: missing exit record")
+                  continue
+              code = int(path.read_text().strip())
+              print(f"{name}: exit={code}; 1 is findings, >=2 is scanner/config/runtime error")
+              if code >= 2:
+                  failed.append(f"{name}: scanner failed with {code}")
+          if failed:
+              print("\n".join(failed), file=sys.stderr)
+              raise SystemExit(1)
+          PY
