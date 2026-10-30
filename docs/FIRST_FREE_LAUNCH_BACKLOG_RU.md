@@ -148,6 +148,25 @@ Ollama — 127.0.0.1:11434 — одна активная модель
 
 Не запрашивать и не записывать в PR токены, API keys, Tunnel credentials, OAuth secrets или приватные host logs. Для live smoke владелец задаёт secret через GitHub Actions/среду и явно разрешает конкретный тест.
 
+## 4.1 Рекомендуемая конфигурация защиты main (owner-only)
+
+Настраивается только в GitHub **Settings → Rules → Rulesets** после просмотра уже действующих branch protection rules. В публичном репозитории GitHub Free rulesets и classic branch protection доступны, и они применяются совместно; не создавать дублирующие/конфликтующие правила вслепую.
+
+Рекомендуемый начальный профиль для `main`:
+
+- Enforcement: **Active**, target branch: `main`.
+- **Require a pull request before merging**; запретить прямые push обычным участникам.
+- **Require status checks**: сначала выбрать конкретные имена check runs после того, как они завершатся на реальном PR. Убедиться, что каждый обязательный check запускается на любом PR, либо иметь единый always-on gate; path-filtered workflow нельзя без проверки механики сделать обязательным для каждого PR.
+- **Block force pushes** и **Restrict deletions**.
+- **Require linear history** только при включённых squash/rebase merge methods.
+- **Require conversation resolution** для review-комментариев.
+- Не разрешать широкие bypass role. Для emergency bypass оставить только владельца и записывать причину.
+- Число approvals: если владелец — единственный reviewer, требование 1 approval заблокирует self-merge; начать с 0, но с обязательным PR и зелёными CI. При появлении второго trusted maintainer включить 1 approval и dismiss stale approvals. Не считать self-review независимым подтверждением.
+- **Require signed commits** пока не включать: сначала подтвердить, что локальные commits, GitHub/API-generated commits и все automation branches реально имеют verified signatures. GitHub может проверять все commits PR head при оценке merge; неподписанные commits способны блокировать squash merge, хотя финальный commit был бы подписан.
+- Secret scanning / push protection: открыть repository Security settings и включить те бесплатные функции, которые доступны этому public repo. Никогда не проводить проверку реальным секретом в публичном commit; тестировать локально фиктивным маркером.
+
+**Что проверить перед выбором обязательных checks:** текущий Quality workflow запускается на каждом PR и даёт Integrity, Security, Context, Jekyll и Chromium jobs. Gateway Tests, Project State Freshness и часть provenance/Graphify jobs имеют собственные path/условия запуска. Не требовать от ruleset job, который не создаётся на части PR — это способ случайно заблокировать все изменения документации или только UI. Сначала проверить реальный список checks на PR с frontend change, backend change и docs-only change.
+
 ## 5. Итоговая рекомендованная последовательность
 
 1. Довести PR #121: UI, лендинг, README, E2E, RU/EN, mobile touch, no-overflow и reduced-motion.
