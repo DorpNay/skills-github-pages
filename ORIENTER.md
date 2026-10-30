@@ -67,3 +67,8 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Improved accessibility: each ticker now has a visible CSS-only pause/resume checkbox, complying with WCAG 2.2 SC 2.2.2 pause requirement for prolonged auto-moving content. Landing E2E pause/resume test added.
 - Code commits: `f42c42d51eb624b4d2e9fe638ddebffc3b7ab8db` and `b213c8a5d50c93af675693986fe22c3bd4d5499d`; docs checkpoint follows. CI not yet verified for these new commits.
 - Next: exact-head Chromium/Quality run; then implement remaining UX backlog as bounded slices, beginning with visual consistency/screenshot review, followed by modal/popover focus and native mobile verification.
+
+
+### Verified scratch cleanup — 2026-10-30
+- Removed only `temp/3`, `temp/4`, `temp/5` after searching repository references and updating IMPROVEMENT_SELECTION.md. These were an obsolete planning conversation, simulated brainstorm with stale claims, and unrelated generic Jekyll portfolio plan.
+- Retained `temp/1` and `temp/2` as historical research sources; no production source file was removed. Detailed evidence and commit SHAs are in docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md and docs/PROJECT_STATE.yaml.
