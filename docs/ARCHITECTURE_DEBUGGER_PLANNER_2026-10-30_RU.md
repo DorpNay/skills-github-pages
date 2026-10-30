@@ -31,12 +31,12 @@
 - [x] P1. Зафиксировать пользовательский принцип: до первого лендинга — только необходимая подготовка; после него — оптимизация и доведение имеющейся системы.
 - [x] P2. Зафиксировать, что лендинг/продукт не должен рекламировать prototype как готовую функцию.
 - [x] P3. Добавить book/document/source → reusable agent skill направление в план.
-- [ ] P4. Свести весь функциональный объём первого обновления в вертикальные, тестируемые deliverables.
+- [x] P4. Свести весь функциональный объём первого обновления в вертикальные, тестируемые deliverables — добавлены P0-13…P0-18 и P1-10…P1-17 в `docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`.
 - [~] P5. Подготовить голосовой UX: запись/транскрипция и TTS одного сообщения уже есть в коде; диалог сейчас half-duplex; selection-to-speech, multi-message queue, streaming turn detection и реальный barge-in остаются незавершёнными.
 - [~] P6. Спроектировать small helper models, GPU-only/accelerated inference и routing без обязательной нагрузки CPU; сохранить CPU fallback только как осознанный режим. Подтверждены варианты Ollama GPU, llama.cpp offload и vLLM; требуется hardware benchmark.
-- [ ] P7. Спроектировать bounded multi-agent / mass-agent orchestration: DAG, budgets, queue, cancellation, idempotency, permissions, traces, evals и safe-off.
-- [ ] P8. Увязать agent-skill generation, RAG, source provenance, memory scopes и project notebook.
-- [ ] P9. Подготовить release sequence, acceptance criteria, rollback и owner gates для первого обновления.
+- [~] P7. Спроектировать bounded multi-agent / mass-agent orchestration: DAG, budgets, queue, cancellation, idempotency, permissions, traces, evals и safe-off. Сравнены OpenWOP v2 protocol, LangGraph interrupts/checkpointing and Temporal durable workflows; no runtime chosen.
+- [x] P8. Увязать agent-skill generation, RAG, source provenance, memory scopes и project notebook — целевой pipeline и security gates описаны; implementation remains pending.
+- [~] P9. Подготовить release sequence, acceptance criteria, rollback и owner gates для первого обновления — базовые gates записаны, exact-head and owner runtime gates remain.
 - [ ] P10. Проверить все лендинговые claims, CTA, статусы функций, доступность, mobile, SEO и опубликованный Pages.
 
 ## 1. Проверенное состояние на старте
@@ -82,8 +82,18 @@
 ### Graphify
 Текущий dev-only пилот уже встроен в CI и ранее проверен по 10 вопросам. Использовать для полного repo audit и архитектурного drift; не добавлять Graphify в production dependencies и не принимать generated graph за источник истины. Повторно смотреть на coverage/line mapping, а не только успешный exit code.
 
+### Multi-agent orchestration
+- [OpenWOP v2](https://github.com/openwop/openwop) is a promising wire protocol: durable suspend/resume, replay/fork, event streams, idempotency, HITL and interop. Its own README still asks for the first independent implementation; treat as protocol research/conformance target, not production-proven runtime.
+- [LangGraph interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts) provide graph checkpoint + human pause/resume; note interrupt restarts the node from its beginning, so side effects must be idempotent.
+- [Temporal](https://docs.temporal.io/workflows) is the stronger durable workflow engine option for long-running/high-volume orchestration, but brings a separate service/worker operational footprint.
+- **Decision:** keep aLandi's existing bounded DAG as a prototype; define a durable `AgentRun`/event contract first. Benchmark SQLite-backed single-owner queue vs Temporal before choosing a runtime. OpenWOP conformance may be an interoperability target later.
+
+### Small helper models
+- Candidates from October 2026 model cards: Qwen3.5-0.8B for narrow classification/extraction only; Granite-4.2-3B for tool-calling/agentic experiments (Apache-2.0, 128K native context, but vendor-tested language list does not include Russian or Thai). Do not select from leaderboard alone; use aLandi RU/EN/TH golden evals, exact quantization, GPU VRAM/RAM and latency. Qwen3.5-0.8B model card describes its intended use as prototyping/research, not as an autonomous action model.
+- Sources: [Qwen3.5-0.8B](https://huggingface.co/Qwen/Qwen3.5-0.8B), [Granite-4.2-3B](https://huggingface.co/ibm-granite/granite-4.2-3b).
+
 ### Voice
-- [Moonshine Voice](https://github.com/moonshine-ai/moonshine) — новый кандидат для streaming STT/TTS/voice agent; upstream заявляет on-device execution, MIT code and model licensing by artifact. Языковая матрица не покрывает очевидно все целевые RU/EN/TH сценарии; не заменять Whisper до подтверждения RU/TH STT и реального latency/device quality.
+- [Moonshine Voice](https://github.com/moonshine-ai/moonshine) — новый кандидат для streaming STT/TTS/voice agent; upstream заявляет on-device execution, streaming incremental recognition, AgentFlow/Dialog, MIT code. Current listed STT languages include EN/ES/ZH/JA/KO/VI/UK/AR but not RU or TH; TTS list includes RU but not TH. Non-English model licensing is model/version-specific (legacy Community License is non-commercial); inspect exact artifact license. Keep whisper.cpp for RU/TH and benchmark Moonshine only for supported locales.
 - whisper.cpp streaming/VAD пример существует, но upstream example — naive rolling-window microphone transcription; это не готовый full-duplex conversational runtime.
 - LiveKit Agents демонстрирует mature turn handling, interruptions, VAD/STT/TTS and preemptive generation, но добавляет media runtime, network/ops и зависимости.
 - llama.cpp server поддерживает CPU/GPU inference, continuous batching, OpenAI-compatible API, tools и experimental multimodal; GPU offload опционален и требует конкретной сборки/модели.
@@ -157,6 +167,17 @@ Dead-code workflow is report-only; its findings are candidates, not deletion aut
 | 8. Исправления найденных багов | pending | только reproducible defects |
 | 9. Dead-code review and cleanup | pending | no deletes before evidence |
 | 10. Release plan and final acceptance | in progress | this document; update after each stage |
+
+
+
+## 9. Дополнительные выводы по моделям и оркестрации
+
+- Agent Skills is an open standard: portable skill folder with `SKILL.md`, optional scripts/references/assets and progressive disclosure. Knowledge-to-Skill output should be validated against the official spec rather than inventing aLandi-only schema: https://github.com/agentskills/agentskills.
+- Book-to-skill v1.3.0 is an appropriate design reference; it has parser hardening and advisory injection scan. Keep it isolated and review dependencies and generated content before integration.
+- Small-model candidates: Qwen3.5-0.8B (narrow low-risk classify/extract only, card positions it for prototyping/research); Granite-4.2-3B (agent/tool calling, Apache-2.0, 128K native context, but language coverage listed by IBM does not confirm RU/TH). Neither is automatically selected.
+- GPU path: current Ollama can use supported NVIDIA/AMD/Vulkan backends; llama.cpp offers CPU/GPU offload, OpenAI-compatible API, parallel decoding and continuous batching; vLLM is a better candidate for a compatible GPU host needing throughput/quantization/continuous batching, not for the current small base stack.
+- Multi-agent path: OpenWOP v2 provides an interesting protocol for durable suspend/resume, replay, event streaming, idempotency and human approval, but its project asks for first independent implementations; do not call it production-proven. LangGraph has graph checkpoints and interrupts; interrupts restart a node on resume, requiring idempotent side effects. Temporal is the mature durable workflow alternative but requires separate service/worker ops. Keep existing DAG prototype until a benchmarked runtime decision.
+- The user explicitly requires voice capabilities to be a first-release deliverable. The backlog now tracks P0-13…P0-18: editable STT, natural turn-taking, selected text TTS, full-message TTS, multi-message queue, and real-device RU/EN/TH acceptance. Current code does not meet the complete scope.
 
 ## 8. Next action
 Fetch latest PR head after commit `f9d5afaae983675d2c616e3fbc70942840d314e5`, inspect newly triggered Gateway/Quality/Graphify/Provenance runs, fix any new confirmed failure, then continue subsystem audit in dependency order: request lifecycle → providers → memory/RAG → tools/DAG/security → voice → document ingestion → landing/release.
