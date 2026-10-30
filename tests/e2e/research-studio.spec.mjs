@@ -74,7 +74,10 @@ test('Research Studio applies selected settings without sending or replacing the
     status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'studio-settings-model' }] })
   }));
   await page.route('https://api.example.test/v1/chat/completions', async route => {
-    modelCalls++;
+    const body = route.request().postDataJSON();
+    const lastMessage = body.messages?.at(-1)?.content;
+    // The provider's explicit connectivity probe is not a user chat or a Research Studio run.
+    if (lastMessage !== 'Reply with exactly OK. No other words.') modelCalls++;
     return route.fulfill({
       status: 200, contentType: 'application/json',
       body: JSON.stringify({ model: 'studio-settings-model', choices: [{ message: { role: 'assistant', content: 'Unexpected request.' } }] })
@@ -83,8 +86,7 @@ test('Research Studio applies selected settings without sending or replacing the
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await configureCustomProvider(page);
-  // Saving the test provider performs one bounded model-connectivity probe; do not count it as a chat send.
-  modelCalls = 0;
+  // Only user requests count; provider connectivity probes are filtered in the route handler.
   const draft = 'Compare three primary sources and identify conflicting evidence.';
   await page.locator('#userInput').fill(draft);
   await page.locator('[data-action="toggle-sidebar"]').click();
