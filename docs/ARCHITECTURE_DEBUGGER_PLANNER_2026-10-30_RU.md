@@ -275,3 +275,15 @@ Fetch latest PR head after commit `f9d5afaae983675d2c616e3fbc70942840d314e5`, in
 - Роли — лёгкие профили/skills и typed contracts. Оркестрация — bounded DAG/state machine с budgets, deadlines, queue/backpressure, cancellation, idempotency, checkpoints, fail-closed policy, action-bound approval, independent verifier и durable journal. Никакой uncontrolled swarm.
 - Малые модели не получают право выдавать себе permissions, подтверждать side effects или заменять deterministic policy/verifier. Core path должен работать при выключенном helper.
 
+
+
+## Whole-stack integrity audit — 2026-10-30 (new task)
+- [x] W0. Re-read live PR #123, main base and issue #111; recorded exact starting state before audit work.
+- [x] W1. Added frozen-stack scope, end-to-end audit checklist and independent reviewer handoff brief in `docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md`.
+- [ ] W2. Reconcile accepted decisions against implementation, flags and runtime wiring.
+- [ ] W3. Trace all cross-module data/control flows and trust boundaries.
+- [ ] W4. Run additional independent quality/security/static-analysis tools and record exact outputs.
+- [ ] W5. Obtain independent subagent review if an actual subagent execution capability is available; otherwise record limitation and use a separately structured adversarial review.
+- [ ] W6. Triage findings against accepted architecture; reject stack expansion and speculative changes.
+- [ ] W7. Implement only evidence-backed, bounded fixes; test each slice and update all state docs.
+- [ ] W8. Re-run exact-head CI and verify final PR/issue/deployment status without overstating live readiness.
