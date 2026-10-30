@@ -286,7 +286,7 @@
 
 ## Supplement — small-model evaluation and legacy branch reconciliation, 2026-10-30
 
-- [~] Recovered a bounded synthetic local-model smoke harness into this reconciliation PR: `gateway/evals/run_local_model_benchmark.py` plus `gateway/tests/test_local_model_benchmark.py`. It uses fixed RU/EN/TH prompts, bounded requests/time/response size, environment-only API key and refuses redirects. Exact-head CI is pending.
+- [x] Recovered a bounded synthetic local-model smoke harness: `gateway/evals/run_local_model_benchmark.py` plus `gateway/tests/test_local_model_benchmark.py`. Gateway Tests passed on the exact PR #123 code head. It uses fixed RU/EN/TH prompts, bounded requests/time/response size, environment-only API key and refuses redirects; target-host evaluation remains pending.
 - [ ] Run a real target-host comparison with identical model artifact/digest/license, quantization, context, hardware and repetitions. Record RAM/PSS, cold/warm latency, p50/p95, tokens/s where available and human-rated RU/EN/TH task quality.
 - [ ] Keep the main model responsible for planning, complex reasoning and synthesis. Evaluate at most one optional helper for bounded extraction/classification/summarization; helper remains off by default and cannot authorize tools or approve side effects.
 - [x] Chronological branch audit: current provider separation supersedes the legacy `self-hosted/free-cloud` selector; legacy project tools are deferred pending current permission/scope/approval contracts; the 64-role architecture document already exists in main and describes logical roles, not separate model processes.
