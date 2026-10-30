@@ -111,3 +111,16 @@ Reviewed 45 targeted Exa queries (up to 360 requested result slots) and fetched 
 
 ### 2026-10-30 — Whole-stack integrity audit baseline recorded
 Before beginning the audit, re-read live PR #123, current main base and issue #111. Recorded baseline: PR #123 open/mergeable, HEAD `f6e67db5a7e39abc5f9351aae5ccadefc58e865e`, base `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; prior exact-head CI 6/6 passed, subject to re-run after any new commit. Issue #111 remains open for owner/environment gates. Created `docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md` with frozen stack boundaries, initial full checklist and independent reviewer handoff brief. No source code changed in this stage. Post-merge Pages and live VPS/Ollama remain unverified.
+
+
+### 2026-10-31 — Isolated future workstreams: Voice 2.0 and Deep Research 2.0
+
+Created separate research-only PRs on `future-workstreams/parking-base-20261031`, based on main `e78a73b25725bfa63370d9946887cbbacbf51b82`:
+- PR #129 — Voice 2.0: ASR/TTS/streaming/transliteration/normalization and voice-agent research.
+- PR #130 — Deep Research 2.0: web + local sources, evidence/citations, memory/knowledge, local-device source access, image/video and AI coding capability audit.
+- PR #128 title clarified as Agent Workforce 2.0 (swarms/orchestration/VERT/output audit), distinct from Deep Research 2.0.
+- PR #125 remains Agent Studio 2.0 blueprint.
+
+Corrected the six-source master checklist recount on PR #127: 276 open/partial rows (219 unchecked + 57 partial), including 116 open/partial in `docs/USER_REQUEST_CHECKLIST.md` (82 unchecked + 34 partial). The earlier 275/115 count was off by one and has been corrected in the registry and PR body. Duplicates remain intentionally preserved pending reconciliation.
+
+Deep Research 2.0 first independent-source pass reviewed Local Deep Research, Khoj, archived LangChain Open Deep Research, Letta, Graphiti, OpenViking, browser File System Access/OPFS, OpenHands Docker sandbox, Comfy API v2, Runway and Vertex AI Veo. All findings are research-only; no runtime/dependencies/models/deployment changed. PR #130 CI at the recorded check: 3 checks passed, 3 still in progress; PR #127 Freshness/Provenance checks in progress. No merge performed.
