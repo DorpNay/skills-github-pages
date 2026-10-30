@@ -5086,8 +5086,8 @@ permalink: /
     $('modelSearch').addEventListener('input',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
     $('researchStudioModal').addEventListener('click', (event) => { if (event.target === $('researchStudioModal')) closeResearchStudio(); });
-    $('projectSettingsModal').addEventListener('click', (event) => { if (event.target === $('projectSettingsModal')) $('projectSettingsModal').classList.add('hidden'); });
-    $('projectSettingsModal').addEventListener('keydown', (event) => { if (event.key === 'Escape') { $('projectSettingsModal').classList.add('hidden'); $('projectPanel [data-action="open-project-create"]')?.focus(); } });
+    $('projectSettingsModal').addEventListener('click', (event) => { if (event.target === $('projectSettingsModal')) closeProjectSettings(); });
+    // Escape is handled centrally so every modal shares the same close and focus-return path.
     $('modelPreset').addEventListener('change',()=>{const value=$('modelPreset').value;if(value!=='__custom__')$('modelName').value=value;safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
     $('modelName').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();scheduleProviderAutoConnect();});
     $('modelName').addEventListener('change',()=>populateModelPresets(currentProvider(),$('modelName').value));
