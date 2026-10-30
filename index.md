@@ -1199,13 +1199,10 @@ permalink: /
       ru:{
         settingsTitle:'⚙️ Настройки',sidebarTitle:'💬 Проекты и чаты',chatsTitle:'Чаты',newChat:'＋ Новый чат',clearChat:'🗑 Очистить чат',newPersonalChat:'＋ Новый личный чат',
         memoryLabel:'🧠 Долгосрочная память',memoryPlaceholder:'Факт, который нужно запомнить',exportChats:'Экспорт',importChats:'Импорт',
-        appearanceTitle:'Внешний вид',languageLabel:'Язык',languageRussian:'Русский',languageEnglish:'English',researchStudio:'Поиск и исследование',themeLabel:'Тема',motionLabel:'Анимации',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',providerGroupPrimary:'aLandi Cloud · основной маршрут',providerGroupExternal:'Сторонние провайдеры',cloudRouteChoiceHelp:'Выбери один маршрут в поле «Провайдер API»: aLandi Cloud или один сторонний провайдер.',cloudCardTitle:'Собственное облако aLandi',
-        cloudCardCopy:'Настрой собственный gateway. Маршрут выбирается отдельно в списке провайдеров; зелёный статус требует настоящего ответа модели.',
-        cloudBaseUrl:'Адрес твоего gateway',cloudModel:'Модель gateway',cloudApiKey:'Ключ доступа к твоему gateway',
-        cloudConnect:'Проверить и подключить',providerLabel:'Провайдер API',
+        appearanceTitle:'Внешний вид',languageLabel:'Язык',languageRussian:'Русский',languageEnglish:'English',researchStudio:'Поиск и исследование',themeLabel:'Тема',motionLabel:'Анимации',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',providerGroupPrimary:'aLandi Cloud · основной маршрут',providerGroupExternal:'Сторонние провайдеры',cloudRouteChoiceHelp:'Выбери один маршрут в поле «Провайдер API»: aLandi Cloud или один сторонний провайдер.',cloudCardTitle:'Мой сервер',cloudCardCopy:'',cloudBaseUrl:'URL моего сервера',cloudModel:'Модель моего сервера',cloudApiKey:'Ключ доступа к серверу',cloudConnect:'',providerLabel:'Сторонний API',
         modelSearchLabel:'Поиск по каталогу моделей',modelPresetLabel:'Быстрый выбор модели · список обновляется из API',
         baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',
-        legacySettings:'Сторонние API, ключи и расширенные настройки',composerPlaceholder:'Напиши сообщение...',
+        legacySettings:'Дополнительные настройки',composerPlaceholder:'Напиши сообщение...',
         modeLabel:'Объём:',modeGroupAria:'Объём работы',modeFast:'⚡ Быстро',modeDeep:'🔬 Тщательно',searchLabel:'🌐 Веб-поиск',
         modeFastShort:'Быстро',modeDeepShort:'Тщательно',modeFastHelp:'Быстро: в прямом режиме — 1 раунд и 1 вызов инструмента; в конвейере это лимит исследовательского этапа.',modeDeepHelp:'Тщательно: до 4 раундов, 3 вызовов за раунд и 8 за запуск; в конвейере лимит относится к исследовательскому этапу.',
         searchModeSummaryPrefix:'🌐 Веб',searchModeNormal:'Обычный',searchModeNormalShort:'Веб: обычный',searchModeNormalHelp:'Стандартный охват результатов и источников; не меняет бюджет обработки.',searchModeMore:'Расширенный',searchModeMoreShort:'Веб: расширенный',searchModeMoreHelp:'Больше результатов, источников и извлечённого текста на один поиск; не увеличивает число раундов.',searchModeOffline:'Выкл.',searchModeOfflineShort:'Веб: выкл.',searchModeOfflineHelp:'Веб-инструменты выключены; облачному API всё ещё может требоваться интернет.',
@@ -1222,13 +1219,10 @@ permalink: /
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Projects & chats',chatsTitle:'Chats',newChat:'＋ New chat',clearChat:'🗑 Clear chat',newPersonalChat:'＋ New personal chat',
         memoryLabel:'🧠 Long-term memory',memoryPlaceholder:'A fact to remember',exportChats:'Export',importChats:'Import',
-        appearanceTitle:'Appearance',languageLabel:'Language',languageRussian:'Russian',languageEnglish:'English',researchStudio:'Search & Research Studio',themeLabel:'Theme',motionLabel:'Motion',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',providerGroupPrimary:'aLandi Cloud · primary route',providerGroupExternal:'Third-party providers',cloudRouteChoiceHelp:'Choose one route in the API provider field: aLandi Cloud or one third-party provider.',cloudCardTitle:'Your aLandi cloud',
-        cloudCardCopy:'Configure your own gateway. Choose the active route separately in the provider list; green status requires a real model response.',
-        cloudBaseUrl:'Your gateway URL',cloudModel:'Gateway model',cloudApiKey:'Gateway access key',
-        cloudConnect:'Check & connect',providerLabel:'API provider',
+        appearanceTitle:'Appearance',languageLabel:'Language',languageRussian:'Russian',languageEnglish:'English',researchStudio:'Search & Research Studio',themeLabel:'Theme',motionLabel:'Motion',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',providerGroupPrimary:'aLandi Cloud · primary route',providerGroupExternal:'Third-party providers',cloudRouteChoiceHelp:'Choose one route in the API provider field: aLandi Cloud or one third-party provider.',cloudCardTitle:'My server',cloudCardCopy:'',cloudBaseUrl:'My server URL',cloudModel:'My server model',cloudApiKey:'Server access key',cloudConnect:'',providerLabel:'Third-party API',
         modelSearchLabel:'Search model catalog',modelPresetLabel:'Quick model pick · list loads from API',
         baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',
-        legacySettings:'Third-party APIs, keys & advanced settings',composerPlaceholder:'Write a message...',
+        legacySettings:'Additional settings',composerPlaceholder:'Write a message...',
         modeLabel:'Effort:',modeGroupAria:'Effort',modeFast:'⚡ Quick',modeDeep:'🔬 Thorough',searchLabel:'🌐 Web search',
         modeFastShort:'Quick',modeDeepShort:'Thorough',modeFastHelp:'Quick: one tool round and one tool call in direct mode; in the pipeline this limits the research stage.',modeDeepHelp:'Thorough: up to 4 rounds, 3 calls per round and 8 per run; in the pipeline this budget applies to the research stage.',
         searchModeSummaryPrefix:'🌐 Web',searchModeNormal:'Standard',searchModeNormalShort:'Web: standard',searchModeNormalHelp:'Standard result and source coverage; does not change the execution budget.',searchModeMore:'Expanded',searchModeMoreShort:'Web: expanded',searchModeMoreHelp:'More results, sources and extracted text per search; does not increase execution rounds.',searchModeOffline:'Off',searchModeOfflineShort:'Web: off',searchModeOfflineHelp:'Web tools are off; cloud APIs may still need internet.',
@@ -1253,7 +1247,7 @@ permalink: /
       document.querySelectorAll('[data-i18n]').forEach(node=>{const value=text[node.dataset.i18n];if(typeof value==='string')node.textContent=value;});
       document.querySelectorAll('[data-i18n-placeholder]').forEach(node=>{const value=text[node.dataset.i18nPlaceholder];if(typeof value==='string')node.placeholder=value;});
       document.querySelectorAll('[data-i18n-aria-label]').forEach(node=>{const value=text[node.dataset.i18nAriaLabel];if(typeof value==='string')node.setAttribute('aria-label',value);});
-      $('languageSummary').textContent=lang==='en'?'EN ▾':'RU ▾';
+      const languageSummary=$('languageSummary');if(languageSummary)languageSummary.textContent=lang==='en'?'EN ▾':'RU ▾';
       const sidebarLanguageSummary=$('languageSummarySidebar');if(sidebarLanguageSummary)sidebarLanguageSummary.textContent=lang==='en'?'EN ▾':'RU ▾';
       const languageSelect=$('uiLanguage');if(languageSelect)languageSelect.value=lang;
       $('sidebar')?.setAttribute('aria-label',lang==='en'?'Projects and chats':'Проекты и чаты');
@@ -1277,7 +1271,7 @@ permalink: /
     }
     function toggleHomeTheme(){
       const next=document.documentElement.dataset.theme==='light'?'dark':'light';
-      $('uiTheme').value=next;applyAppearance(next,$('uiMotion').value);safeSet('ai_ui_theme_v2',next);updateHomeThemeButton();
+      if($('uiTheme'))$('uiTheme').value=next;applyAppearance(next,$('uiMotion').value);safeSet('ai_ui_theme_v2',next);updateHomeThemeButton();
     }
     function updateClockFace(){
       const now=new Date(),hours=now.getHours(),minutes=now.getMinutes(),seconds=now.getSeconds();
@@ -2110,7 +2104,7 @@ permalink: /
     function toggleSettings(force) {
       const modal=$('settingsModal'),open=typeof force==='boolean'?force:modal.classList.contains('hidden');
       modal.classList.toggle('hidden',!open);
-      if(open){$('systemPromptInput').readOnly=true;$('editSystemPrompt').setAttribute('aria-pressed','false');$('editSystemPrompt').textContent='✎';$('promptEditHint').textContent='Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.';refreshApiKeyLamp();}
+      if(open){$('systemPromptInput').readOnly=true;$('editSystemPrompt').setAttribute('aria-pressed','false');$('editSystemPrompt').classList.remove('is-editing');$('editSystemPrompt').textContent='✎';$('promptEditHint').textContent='';refreshApiKeyLamp();}
     }
     function providerModelCatalogKey(provider) { return 'ai_provider_model_catalog_v1_' + provider; }
     function providerModelCatalogStaleKey(provider) { return 'ai_provider_model_catalog_stale_v1_' + provider; }
@@ -2338,13 +2332,13 @@ permalink: /
         safeSet(STORAGE.model, 'qwen3.5:4b');
       }
 
-      $('providerPreset').value=provider;
+      $('providerPreset').value=provider==='alandi'?'':provider;
       const storedBaseUrl=safeGet(STORAGE.baseUrl);
       $('baseUrl').value=storedBaseUrl||(provider==='alandi'||provider==='custom'||provider==='cloudflare'?'':(PROVIDERS[provider]?.baseUrl||DEFAULT_BASE_URL));
       $('modelName').value=safeGet(STORAGE.model)||(PROVIDERS[provider]?.models[0]?.[0]||DEFAULT_MODEL);
-      applyProviderPreset($('providerPreset').value,true);
+      applyProviderPreset(provider,true);
       $('modelName').value=safeGet(STORAGE.model)||$('modelName').value;
-      populateModelPresets($('providerPreset').value,$('modelName').value);
+      populateModelPresets(provider,$('modelName').value);
       $('tavilyKey').value = safeGet(STORAGE.tavilyKey) || '';
       const savedPrompt = safeGet(STORAGE.systemPrompt);
       $('systemPromptInput').value = (!savedPrompt || savedPrompt === LEGACY_DEFAULT_SYSTEM) ? DEFAULT_SYSTEM : savedPrompt;
@@ -2632,8 +2626,8 @@ permalink: /
       ].every(Boolean);
       if(!saved)return;
       if(!$('apiKey').value.trim()&&apiKey)$('apiKey').value=apiKey;
-      $('systemPromptInput').readOnly=true;$('editSystemPrompt').setAttribute('aria-pressed','false');$('editSystemPrompt').textContent='✎';
-      $('promptEditHint').textContent='Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.';
+      $('systemPromptInput').readOnly=true;$('editSystemPrompt').setAttribute('aria-pressed','false');$('editSystemPrompt').classList.remove('is-editing');$('editSystemPrompt').textContent='✎';
+      $('promptEditHint').textContent='';
       refreshApiKeyLamp();showToast('Настройки сохранены');
       if ($('allowCrossProviderFallback').checked) void refreshConnectedModelCatalogs({ quiet: true, force: false });
       else if (getProviderRequestKey(provider) || provider === 'pollinations') void refreshModelCatalog({ quiet: true, force: false, provider });
@@ -4791,7 +4785,7 @@ permalink: /
       }
       try {
         switch (action) {
-          case 'set-language': applyUiLanguage(control.dataset.language);$('languageMenu').open=false;if($('languageMenuSidebar'))$('languageMenuSidebar').open=false;break;
+          case 'set-language': applyUiLanguage(control.dataset.language);if($('languageMenu'))$('languageMenu').open=false;if($('languageMenuSidebar'))$('languageMenuSidebar').open=false;break;
           case 'select-search-mode': setSearchMode(control.dataset.searchMode);break;
           case 'open-function-panel': openFunctionPanel(control.dataset.function);break;
           case 'close-function-panel': closeFunctionPanel();break;
@@ -4899,7 +4893,7 @@ permalink: /
           case 'clear-provider-key': clearProviderKey(); break;
           case 'connect-pollinations': await beginPollinationsOAuth(); break;
           case 'disconnect-pollinations': clearPollinationsSession(); refreshApiKeyLamp(); showToast('Pollinations-сессия завершена для этой вкладки.'); break;
-          case 'edit-system-prompt': { const textarea=$('systemPromptInput'),button=$('editSystemPrompt'),editable=textarea.readOnly; textarea.readOnly=!editable;button.setAttribute('aria-pressed',String(editable));button.textContent=editable?'✓':'✎';button.title=editable?'Завершить редактирование; затем нажмите «Сохранить»':'Разрешить редактирование';$('promptEditHint').textContent=editable?'Редактирование включено. После изменений нажмите «Сохранить».':'Текст защищён от случайного изменения. Нажмите карандаш, чтобы редактировать.';if(editable)textarea.focus();break;}
+          case 'edit-system-prompt': { const textarea=$('systemPromptInput'),button=$('editSystemPrompt'),editable=textarea.readOnly;textarea.readOnly=!editable;button.setAttribute('aria-pressed',String(editable));button.textContent=editable?'✓':'✎';button.title=editable?'Завершить редактирование · сохранить':'Редактировать';button.classList.toggle('is-editing',editable);$('promptEditHint').textContent=editable?'Редактирование включено':'Редактирование выключено';if(editable)textarea.focus();break;}
           case 'toggle-offline': toggleOfflineMode(); break;
           case 'close-settings': toggleSettings(false); break;
           case 'save-settings': saveSettings(); break;
