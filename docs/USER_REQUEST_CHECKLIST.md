@@ -324,6 +324,6 @@
 - [x] Сохранён семидневный cooldown для новых релизов; не обновлялись зависимости, попадающие в окно стабилизации.
 - [x] В отдельной ветке обновлены выбранные runtime/dev/browser pins и синхронизирован provenance manifest.
 - [x] Синхронное извлечение документов вынесено из event loop через asyncio.to_thread; добавлен тест, подтверждающий выполнение parser вне event-loop thread.
-- [~] Exact-head Gateway, Chromium, Pages, Freshness, Provenance, Graphify и Dead Code CI ожидаются; до их завершения обновления не считаются подтверждёнными.
+- [x] На code head c4aa11be5be7b3d95f132f3a7662ce45cd9dca6e все шесть workflow groups прошли: Gateway, Quality/Chromium/Pages, Freshness, Provenance, Graphify и Dead Code. После финального уточнения отчёта exact-head CI запускается повторно.
 - [ ] После cooldown повторно оценить pypdf 6.21.4, pytest 9.2.0, pytest-asyncio 1.4.1 и Graphify 0.9.97.
 - [ ] Live Cloudflare Tunnel/Ollama, целевой VPS и native iPhone остаются owner/manual gates.
