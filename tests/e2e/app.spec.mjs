@@ -1253,9 +1253,10 @@ test('project instructions, project memory, and project bundles stay scoped to t
   expect(prompt).not.toContain('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
   expect(prompt).not.toContain('ALPHA_PROJECT_MEMORY_SENTINEL');
 
-  // Importing a bundle while Beta is selected must create a distinct Alpha copy, not merge into Beta.
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('[data-action="import-project"]').click();
+  // Import controls live inside the project settings dialog, not in the sidebar.
+  // Reopen the dialog with Beta selected before importing a separate Alpha bundle.
+  await openProjectSettingsForId(page, betaId);
+  await page.locator('#projectSettingsModal [data-action="import-project"]').click();
   await page.locator('#importProjectFile').setInputFiles(alphaPath);
   await expect(page.locator('#projectNameInput')).toHaveValue('Alpha Project (импорт)');
   const importedId = await page.locator('#currentProjectSelect').inputValue();
@@ -1319,6 +1320,8 @@ test('deleting a project removes its chats but preserves other projects and chat
   await disposableGroup.locator('[data-action="open-project-settings"]').click();
   await expect(page.locator('#projectSettingsStatus')).toContainText('Disposable Project');
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
+  // Closing project settings leaves the mobile sidebar closed; reopen it before selecting the chat.
+  await ensureSidebarOpen(page);
   await disposableGroup.locator(`[data-action="switch-chat"][data-chat-id="${disposableChatId}"]`).click();
   await openProjectSettingsForId(page, disposableId);
   await expect(page.locator('#projectSettingsStatus')).toContainText('Disposable Project');
