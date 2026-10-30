@@ -44,8 +44,8 @@ project_state:
     gateway_vps: "not verified by this change; do not claim deployed"
     experimental_feature_flags: "false by default"
   current_ui_track:
-    branch: "feat/chat-settings-orthogonal-controls-20261030"
-    pull_request: 121
+    branch: "main"
+    merged_pr: 121
     status: "PR #121 merged at f4d880f; first free landing V1 and root client UX are in main. PR #122 merged at fd4f0a1 with distinct process liveness/readiness probes. Exact-head CI passed on both PRs; post-merge Pages deployment and live runtime remain unverified."
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback; PR114 leaves the optional global system prompt empty by default and removes the obsolete Gemini reset"
@@ -290,32 +290,36 @@ v1_ui_finalization:
   status: "merged in PR #121 at f4d880f; exact-head required workflows passed; post-merge Pages deployment not independently verified"
   register: "docs/V1_UI_FINALIZATION_RU.md"
   merged_pr: 121
-  branch: "feat/chat-settings-orthogonal-controls-20261030"
+  branch: "main"
+  merge_commit: "f4d880f9648989f4fe48ddd2284220b3606c3b86"
+  exact_pr_head: "e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b"
   scope: "free static landing page plus existing browser client; not public multi-user SaaS or hosted inference"
   implemented_in_branch: "clarified free UI vs inference costs; roadmap section with reduced-motion ticker; agent/connector in-app roadmap cues; landing E2E; fixed duplicate Settings close action and integrity provider-group parser"
-  pending: "exact-head Quality/Chromium/Pages; inspect all failures; published Pages smoke after merge; native iPhone Safari/manual checks; owner-only issue #111"
+  pending: "post-merge Pages deployment smoke; native iPhone Safari/manual checks; owner-only issue #111"
   status_boundary: "ticker is decorative roadmap copy, not a background task indicator; independent agents, integrations, voice and document extraction remain gated/unverified"
 
 three_role_audit_2026_10_30:
   tracker: "docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md"
-  branch: "feat/chat-settings-orthogonal-controls-20261030"
-  main_base: "e6404d510229fa64a7bb375995d76dcba55de623"
-  pr_head_before_test_fix: "b09c1365e9d5f434b69ebb60bb285c7574051172"
-  latest_change: "f9d5afaae983675d2c616e3fbc70942840d314e5 — import canonical_action_digest in gateway test module"
+  status: "PR #121 and PR #122 merged; exact-head CI passed. Historical source branch is retained as an audit reference only."
+  main_base_at_start: "e6404d510229fa64a7bb375995d76dcba55de623"
+  current_main: "fd4f0a105183feb23e0f4e4697446235de9ffe9a"
+  merged:
+    pr_121: "f4d880f9648989f4fe48ddd2284220b3606c3b86; exact head e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b; six workflow groups passed"
+    pr_122: "fd4f0a105183feb23e0f4e4697446235de9ffe9a; exact head 94d871dbf76a5364ebb3c61d86cc763affa5eaa1; Gateway/Quality/Graphify/Dead Code passed"
   verified:
-    - "PR #121 changed-file inventory: 25 files"
-    - "Gateway CI failure localized to missing test import; production helper exists"
-    - "Project State Freshness passed on pre-fix head"
-    - "License/provenance passed on pre-fix head"
-    - "Dead Code Audit report-only passed on pre-fix head"
-    - "Graphify code-only pilot passed on pre-fix head"
+    - "PR #121 exact-head Quality/Chromium/Jekyll/published-site smoke, Gateway, Freshness, Provenance, Graphify and Dead Code passed"
+    - "PR #122 exact-head Gateway, Quality/Chromium/Jekyll/published-site smoke, Graphify and Dead Code passed"
+    - "Audio subprocess timeout/cancellation cleanup and regression tests are included in PR #121"
+    - "Gateway liveness/readiness routes are included in PR #122"
+    - "Legacy 64-role memory/knowledge design and AGENTS/provider E2E already exist in main"
+    - "Legacy provider mode selector is superseded; project workspace tools remain deferred"
   pending:
-    - "Post-fix exact-head CI and all required workflows"
-    - "Full cross-subsystem architecture/debug audit"
-    - "Voice target-device, GPU/CPU and model quality benchmarks"
-    - "Knowledge-to-Skill prototype and security review"
-    - "Dead-code candidate verification; no deletion authorized yet"
-  next: "Inspect post-fix exact-head CI, then audit request/provider, memory/RAG, tools/security, voice, documents and landing in dependency order. Update this tracker, ORIENTER, PROJECT_STATE and VOLLEY_LOG after every meaningful stage."
+    - "Post-merge Pages deployment and native iPhone Safari/accessibility"
+    - "Full manual cross-subsystem security/runtime matrix"
+    - "Target-host helper model, voice, GPU/CPU and memory/RAG benchmarks"
+    - "Owner-only release gates in issue #111"
+  next: "Freeze V1 scope; complete the current reconciliation PR, then polish and verify only within the selected stack."
+
 audit_update_2026_10_30:
   tracker: "docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md"
   architecture_graph:
