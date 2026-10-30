@@ -32,6 +32,10 @@ PR #121 зафиксировал первый бесплатный лендин�
 
 PR #122 добавил только эксплуатационную надёжность существующего Gateway: process liveness/readiness probes. Он не расширяет пользовательский стек лендинга.
 
+## 0.2 Подтверждённая шапка и закреплённые действия
+
+Фактический порядок DOM в main после PR #117/#120/#121: **меню → название проекта/чата → цифровые и аналоговые часы → wordmark aLandi → тема → настройки**. Python status перенесён в компактную mode toolbar; язык синхронизирован с sidebar/settings. Chat-row menu позиционируется с учётом visualViewport и scroll/resize. Settings header и нижние actions используют sticky positioning. Остаются screenshot review, проверка wordmark (сейчас статический, не интерактивный), короткий viewport, native keyboard/safe-area и VoiceOver.
+
 ## 1. Требования владельца — 18 контрольных направлений
 
 Статусы: **[x]** подтверждено кодом/тестом; **[~]** частично или ждёт exact-head/ручной проверки; **[ ]** не реализовано; **[!]** найден блокер/регрессия. Статусы ниже актуализированы после merge PR #121. Exact-head CI прошёл; post-merge Pages deployment, нативный iPhone и live Gateway остаются отдельными проверками.
@@ -101,8 +105,8 @@ PR #122 добавил только эксплуатационную надёж�
 
 ### 9. Окна и закреплённые действия — [~]
 - [x] Основные settings/project/research/function окна имеют отдельные закрытия.
-- [~] Дублирующий data-action="close-settings" в header удалён; exact-head Chromium должен подтвердить уникальность действия и отсутствие регрессии.
-- [~] Settings header уже содержит Save и X, но требование sticky при длинной прокрутке и открытой клавиатуре нужно проверить.
+- [x] Дублирующий data-action="close-settings" в header удалён; exact-head Chromium/Quality PR #121 passed.
+- [x] Settings header с Save/X и нижние actions закреплены через sticky positioning; exact-head Chromium/Quality PR #121 passed. Короткий viewport, открытая iPhone keyboard и safe-area остаются ручной проверкой.
 - [ ] Проверить Escape, focus return, screen reader name, scroll lock и background interaction.
 
 **Приёмка:** Save/Close доступны в любом положении; каждое действие имеет уникальный однозначный selector; модалка не теряет keyboard focus.
