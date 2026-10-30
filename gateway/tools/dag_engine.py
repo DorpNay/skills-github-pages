@@ -114,14 +114,25 @@ class ToolDAG:
             return await asyncio.wait_for(invoke(), timeout=self.per_tool_timeout_seconds)
 
         for level in levels:
-            readers = [node for node in level if self.tools[node.tool_name].contract.read_only]
-            mutators = [node for node in level if not self.tools[node.tool_name].contract.read_only]
+            # Only unguarded read-only operations are safe to fan out.
+            # Sensitive reads (requires_approval) and every mutation stay sequential,
+            # so approval failures remain explicit and cannot be hidden by gather().
+            readers = [
+                node for node in level
+                if self.tools[node.tool_name].contract.read_only
+                and not self.tools[node.tool_name].contract.requires_approval
+            ]
+            guarded = [
+                node for node in level
+                if not self.tools[node.tool_name].contract.read_only
+                or self.tools[node.tool_name].contract.requires_approval
+            ]
             if readers:
                 outputs = await asyncio.gather(*(run(node) for node in readers), return_exceptions=True)
                 failures = [output for output in outputs if isinstance(output, BaseException)]
                 if failures:
-                    raise DAGError("one or more read-only tool nodes failed") from failures[0]
+                    raise DAGError("one or more unguarded read-only tool nodes failed") from failures[0]
                 results.update({node.id: output for node, output in zip(readers, outputs)})
-            for node in mutators:
+            for node in guarded:
                 results[node.id] = await run(node)
         return results
