@@ -357,6 +357,39 @@ Threat baseline: OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), о�
 | Book-to-Skill / Anything-to-Skill | extraction, chapter structure, audit/eval/refresh, provenance | автоматическую публикацию без проверки |
 | Agent Skills / MCP / A2A | открытые форматы и interoperability | путать discovery metadata с permission enforcement |
 
+## 14.1 Полная карта возможностей агентной платформы
+
+Это карта направлений, которые можно постепенно включать в aLandi. Она не означает, что перечисленные возможности уже работают.
+
+| Направление | Возможности зрелой платформы | Состояние aLandi / следующий шаг |
+|---|---|---|
+| Agent workforce | Профессии, профили, команды, оргструктура, цели, отчётность, динамическое назначение исполнителей | Есть 64 логические роли; сделать versioned registry и team templates |
+| Subagents & swarms | Дочерние run, hierarchical delegation, bounded fan-out, supervisor, mesh/blackboard, debate/consensus, agent-to-agent messages | Нет общего dispatcher и durable AgentRun; начать с supervisor-worker и fan-out/fan-in |
+| Planning & reasoning | ReAct, plan-and-execute, task ledger, progress ledger, reflection, critic, verifier, replanning, stop/stall detection | Есть четыре последовательные стадии и bounded DAG; добавить typed task/progress ledgers и recovery |
+| Tools & integrations | Native tools, MCP servers, OpenAPI, databases, messaging, connectors, API actions, tool discovery and version pinning | Есть validator/DAG/approval primitives; унифицировать через capability-based Tool Gateway |
+| Digital workspace | Browser, computer use, files, terminal, code editor, isolated git worktrees, remote workspace, desktop automation | Browser/terminal automation не включать до sandbox и credential isolation; PinchTab/Browser Use/OpenHands — кандидаты |
+| Knowledge & skills | Agent Skills, skill discovery, book/document/repo-to-skill, skill chaining, skill testing, private/shared catalogs, versioning/rollback | Есть skill assets и Knowledge-to-Skill research; нужен provenance + injection scan + eval + human review |
+| Memory & context | Working, episodic, semantic, procedural and temporal memory; scoped shared board; compaction; retrieval; conflict resolution | Есть scoped memory/RAG primitives; shared team board и durable agent memory не реализованы |
+| Model intelligence | Capability routing, small specialist models, ensemble, fallback, model selection by language/modality/cost/quality, embeddings/reranking | Есть opt-in memory helper and benchmark harness; general router and target-host bake-off pending |
+| Multimodal | Vision, OCR, documents/tables, audio/ASR/TTS, live voice, video understanding, diagrams, multimodal artifacts | Частичные document/ASR/TTS prototypes; target device/runtime quality unverified |
+| Long-running work | Background tasks, schedules/cron, heartbeat, event triggers, watch/monitor, pause/resume, cancellation, notifications | Durable scheduler and trigger registry not implemented; add only after durable AgentRun and owner opt-in |
+| Learning & adaptation | Skill suggestions, trajectory review, error analysis, prompt/skill updates, SFT/LoRA/distillation/RL pipelines | No automatic self-modification. Candidate changes must pass offline eval, review, versioning and rollback |
+| Collaboration | Shared artifacts, evidence board, team discussion, external agent federation, human + agent task handoff | Internal typed artifact references first; A2A only for independent remote agents |
+| Governance & trust | Agent identity, tenant isolation, RBAC/capabilities, scoped credentials, approvals, budgets, audit, policy diffs, kill switch | D-016 direction and approval primitive exist; durable enforcement and sandbox tests are pending |
+| Observability & quality | Live run timeline, traces, token/cost budgets, quality scores, eval datasets, red-team, incident replay | Eval design exists; add run/task/tool traces with payload redaction |
+| Agent ecosystem | Versioned agent/skill marketplace, signed manifests, compatibility checks, install/uninstall/revoke, trust ratings | No marketplace. Start with private local registry; public sharing only after supply-chain gates |
+
+### Advanced capabilities — только после базовой надёжности
+
+- **Dynamic team formation:** оркестратор выбирает минимальную команду по роли/навыкам/бюджету; не создавать агентов без причины.
+- **Hierarchical swarms:** ограниченное дерево координатор → менеджер направления → исполнитель, с максимальной глубиной и fan-out.
+- **Peer review / consensus:** независимые оценки с разными evidence paths; consensus не должен заменять проверку фактов или человека для рискованных действий.
+- **Agent federation:** внешний агент получает ограниченное A2A task, а не credentials или память всей системы.
+- **Proactive agents:** heartbeat, календарь, мониторинг и события; пользователь должен видеть расписание, лимит, паузу и выключатель.
+- **Self-improving skills:** агент может предложить skill diff, но promotion происходит только после тестов, человеческого review и rollback-ready release.
+- **Model adaptation:** LoRA/SFT/distillation/RL и trajectory learning — отдельные offline ML pipelines с лицензиями и dataset governance; не online self-training на приватных разговорах.
+- **Agent simulation:** synthetic teams и adversarial scenarios для eval; не путать симуляцию с реальными пользователями/системами.
+
 ## 15. План реализации — отдельные малые PR после утверждения
 
 ### Phase 0 — завершено в этом исследовательском PR
