@@ -32,6 +32,24 @@ from fastapi.responses import JSONResponse, Response, StreamingResponse
 logger = logging.getLogger("alandi.gateway")
 
 
+async def await_local_process(process: asyncio.subprocess.Process, operation: Any,
+                              timeout_seconds: float) -> Any:
+    """Bound a local subprocess operation and always terminate/reap it on timeout or cancellation."""
+    try:
+        return await asyncio.wait_for(operation, timeout=timeout_seconds)
+    except (asyncio.TimeoutError, asyncio.CancelledError):
+        if process.returncode is None:
+            try:
+                process.kill()
+            except ProcessLookupError:
+                pass
+        try:
+            await asyncio.wait_for(asyncio.shield(process.wait()), timeout=2.0)
+        except (asyncio.TimeoutError, ProcessLookupError):
+            pass
+        raise
+
+
 def int_env(name: str, default: int, minimum: int = 1) -> int:
     try:
         value = int(os.getenv(name, str(default)))
@@ -1476,7 +1494,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                     stderr=asyncio.subprocess.DEVNULL,
                 )
                 try:
-                    probe_stdout, _ = await asyncio.wait_for(probe.communicate(), timeout=5)
+                    probe_stdout, _ = await await_local_process(probe, probe.communicate(), timeout_seconds=5)
                 except asyncio.TimeoutError:
                     probe.kill()
                     await probe.wait()
@@ -1497,7 +1515,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                     stderr=asyncio.subprocess.DEVNULL,
                 )
                 try:
-                    await asyncio.wait_for(converter.wait(), timeout=10)
+                    await await_local_process(converter, converter.wait(), timeout_seconds=10)
                 except asyncio.TimeoutError:
                     converter.kill()
                     await converter.wait()
@@ -1521,7 +1539,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                     stderr=asyncio.subprocess.DEVNULL,
                 )
                 try:
-                    await asyncio.wait_for(process.wait(), timeout=config.audio_transcription_timeout_seconds)
+                    await await_local_process(process, process.wait(), timeout_seconds=config.audio_transcription_timeout_seconds)
                 except asyncio.TimeoutError:
                     process.kill()
                     await process.wait()
@@ -1586,7 +1604,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                     stderr=asyncio.subprocess.DEVNULL,
                 )
                 try:
-                    await asyncio.wait_for(process.wait(), timeout=config.audio_speech_timeout_seconds)
+                    await await_local_process(process, process.wait(), timeout_seconds=config.audio_speech_timeout_seconds)
                 except asyncio.TimeoutError:
                     process.kill()
                     await process.wait()
