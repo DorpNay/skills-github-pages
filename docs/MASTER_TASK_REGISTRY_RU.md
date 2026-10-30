@@ -441,9 +441,9 @@
 
 - [x] **DR2-001A**: Создать самостоятельную ветку `research/deep-research-2.0-20261031` от holding base.
 - [x] **DR2-002A**: Создать PR #130 Draft / HOLD, отдельно от Agent Studio и Voice.
-- [x] **DR2-003A**: Зафиксировать baseline: `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` и `docs/DEEP_RESEARCH_2_CURRENT_STATE_AUDIT_RU.md`.
-- [~] **DR2-004A**: Проверить текущие research/RAG/memory/local source/media/coding foundations; line-by-line audit and independent research still pending.
-- [ ] **DR2-005A**: Выполнить 21 задачу DR2-001…DR2-021 из Deep Research 2.0 plan.
+- [x] **DR2-003A**: Зафиксировать baseline: `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` и `docs/DEEP_RESEARCH_2_CURRENT_STATE_AUDIT_RU.md`, `docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md`.
+- [~] **DR2-004A**: Проверить текущие research/RAG/memory/local source/media/coding foundations; line-by-line audit and independent research still pending. **Progress:** repository code search + first independent primary-source pass completed; see `docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md`.
+- [~] **DR2-005A**: Выполнить 21 задачу DR2-001…DR2-021 из Deep Research 2.0 plan. **Progress:** external source pass completed (Local Deep Research, Khoj, Letta, Graphiti, OpenViking, browser file APIs, OpenHands sandbox, Comfy API v2, Runway, Vertex AI Veo); target browser/device and benchmark checks remain pending.
 - [ ] **DR2-006A**: После owner review подготовить отдельные минимальные implementation PR; не переносить будущие функции напрямую из holding branch.
 
 **PR #130:** `[RESEARCH — HOLD] Deep Research 2.0 — local knowledge, evidence and multimodal research`. Base: `future-workstreams/parking-base-20261031`. No runtime changes.
