@@ -92,7 +92,7 @@ test('sidebar order separates memory, projects, status, chats, and research', as
   expect(positions.every(Number.isInteger)).toBe(true);
   expect(positions).toEqual([...positions].sort((a, b) => a - b));
   await expect(page.locator('#projectPanel')).toContainText('Проект');
-  await expect(page.locator('#projectPanel')).toContainText(/личный чат/i);
+  await expect(page.locator('#chatSection')).toContainText('Новый личный чат');
   await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте выкл.');
   await page.locator('#memoryToolsDetails > summary').click();
   await page.locator('#globalMemoryToggle').check();
@@ -133,7 +133,8 @@ test('composer position persists and aLandi is hidden from third-party provider 
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
   await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(1);
   await expect(page.locator('#providerPrimaryGroup')).toBeHidden();
-  await expect(page.locator('#providerExternalGroup')).toBeVisible();
+  await expect(page.locator('#providerExternalGroup')).not.toHaveAttribute('hidden', '');
+  await expect.poll(() => page.locator('#providerPreset').evaluate(select => [...select.options].some(option => option.value === 'gemini'))).toBe(true);
   await expect(page.locator('#providerPreset option[value="gemini"]')).toBeVisible();
   await expect(page.locator('[data-action="select-alandi-primary"]')).toHaveCount(0);
 
@@ -189,7 +190,7 @@ test('project quick actions open a real create form and persist the chosen memor
 test('language switch localizes provider controls without exposing the internal route', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await selectLanguage(page, 'en');
-  await expect(page.locator('#providerPrimaryGroup')).toHaveAttribute('label', 'aLandi Cloud · internal route');
+  await expect(page.locator('#providerPrimaryGroup')).toHaveAttribute('label', 'aLandi Cloud · primary route');
   await expect(page.locator('#providerExternalGroup')).toHaveAttribute('label', 'Third-party providers');
   await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(1);
   await expect(page.locator('#providerPrimaryGroup')).toBeHidden();
@@ -414,7 +415,7 @@ test('switching providers explains an empty API key field inline', async ({ page
   if (!(await page.locator('#legacyProviderSettings').evaluate(element => element.open))) {
     await page.locator('#legacyProviderSettings > summary').click();
   }
-  await expect(page.locator('#modelCatalogStatus')).toHaveText('Встроенный каталог моделей.');
+  await expect(page.locator('#modelCatalogStatus')).toHaveText('Встроенные модели · каталог не обновлён.');
   await expect(page.getByText('Выбери провайдера. Ключ и соединение проверяются автоматически.')).toHaveCount(0);
   await page.locator('#providerPreset').selectOption('custom');
   await expect(page.locator('#apiKey')).toHaveValue('');
@@ -702,7 +703,8 @@ test('401 stops after the selected provider rejects credentials', async ({ page 
 test('transient 503 retries only the same model and never fans out', async ({ page }) => {
   const attemptedModels = [];
   await page.route('https://api.groq.com/openai/v1/chat/completions', async route => {
-    attemptedModels.push(route.request().postDataJSON().model);
+    const payload = route.request().postDataJSON();
+    if (payload.messages?.at(-1)?.content === 'Check transient server error handling') attemptedModels.push(payload.model);
     await route.fulfill({
       status: 503,
       headers: { 'Retry-After': '0' },
@@ -935,23 +937,29 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
 test('Obsidian Studio and Clean Light preferences persist and respect motion controls', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
-  await page.locator('#uiTheme').selectOption('light');
-  await page.locator('#uiMotion').selectOption('off');
+  await page.locator('#homeThemeToggle').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_theme_v2'))).toBe('light');
+
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#uiMotion').selectOption('off');
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_motion_v2'))).toBe('off');
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
+
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
-  await page.locator('#uiTheme').selectOption('dark');
+  await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#uiMotion').selectOption('auto');
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'auto');
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+  await page.locator('#homeThemeToggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_theme_v2'))).toBe('dark');
 });
 
 
@@ -1002,9 +1010,9 @@ test('aLandi cloud status only turns green after a real model response, and core
   await selectLanguage(page, 'en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
-  await page.locator('#homeThemeToggle').click();
+  await page.locator('#legacyProviderSettings [data-action="toggle-theme-cycle"]').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await page.locator('#homeThemeToggle').click();
+  await page.locator('#legacyProviderSettings [data-action="toggle-theme-cycle"]').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 });
 
@@ -1101,6 +1109,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
   expect(alphaBundle.project.instructions).toContain('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
   expect(alphaBundle.project.memory.some(item => item.text === 'ALPHA_PROJECT_MEMORY_SENTINEL')).toBe(true);
   expect(JSON.stringify(alphaBundle)).not.toContain('apiKey');
+  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 
   // A new chat from the top-level Chats section is personal unless created inside a project group.
   await page.locator('#sidebar [data-action="new-chat"]').click();
@@ -1115,6 +1124,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('#projectMemoryToggle').check();
   const betaId = await page.locator('#currentProjectSelect').inputValue();
   expect(betaId).not.toBe(alphaId);
+  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 
   const sidebar=page.locator('#sidebar');
   if(await sidebar.evaluate(el=>el.classList.contains('-translate-x-full')))await page.locator('[data-action="toggle-sidebar"]').click();
@@ -1182,6 +1192,7 @@ test('deleting a project removes its chats but preserves other projects and chat
   await page.locator('[data-action="create-project"]').click();
   const disposableId = await page.locator('#currentProjectSelect').inputValue();
   expect(disposableId).not.toBe('');
+  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
   const disposableChatId = await page.evaluate(() => {
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
     return chats.find(chat => chat.projectId)?.id || '';
@@ -1198,6 +1209,7 @@ test('deleting a project removes its chats but preserves other projects and chat
   await page.locator('[data-action="create-project"]').click();
   const keepId = await page.locator('#currentProjectSelect').inputValue();
   expect(keepId).not.toBe(disposableId);
+  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
   const keepChatId = await page.evaluate((id) => {
     const chats=JSON.parse(localStorage.getItem('ai_chats_v87')||'[]');
     return chats.find(chat=>chat.projectId===id)?.id||'';
@@ -1761,7 +1773,14 @@ test('server project memory bridge is manual and requires both chat opt-ins', as
   });
   await page.route('https://gateway.example.test/v1/chat/completions', async route => {
     if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: corsHeaders });
-    capturedBodies.push(route.request().postDataJSON());
+    const body = route.request().postDataJSON();
+    const requestText = body.messages?.at(-1)?.content;
+    if ([
+      'Summarize this project.',
+      'Use only local project memory.',
+      'Server memory is opted in but project memory is not.',
+      'Use the approved server project memory.'
+    ].includes(requestText)) capturedBodies.push(body);
     return route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({
       model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'Bridge response.' }, finish_reason: 'stop' }]
     }) });
@@ -1794,6 +1813,7 @@ test('server project memory bridge is manual and requires both chat opt-ins', as
   await expect(page.locator('#serverMemoryBox')).toContainText(/Кандидат|Candidate/);
   await page.locator('[data-action="review-server-memory"][data-review-status="confirmed"]').click();
   await expect.poll(() => serverNodes[0]?.status).toBe('confirmed');
+  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 
   await page.locator('[data-action="close-sidebar"]').click();
   await page.locator('#userInput').fill('Summarize this project.');
@@ -2448,6 +2468,7 @@ test('search presets and function settings fit one line, localize, and persist p
   await expect(page.locator('#functionsMenuSummary')).toContainText('Functions');
   await expect(page.locator('#searchModeSummary')).toContainText('Web');
   await expect(page.locator('#modeHint')).toContainText('Quick · Web: standard · Direct · Auto');
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
 
   // The first tap outside an open toolbar menu must only close it.
   await page.locator('#functionsMenuSummary').click();
@@ -2459,7 +2480,7 @@ test('search presets and function settings fit one line, localize, and persist p
 
 test('planned agent and connector directions show a clearly non-runtime innovation cue', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('#functionPanelModal .roadmap-ticker')).toBeHidden();
+  await expect(page.locator('#functionPanelModal')).toBeHidden();
 
   await page.locator('#functionsMenuSummary').click();
   await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
