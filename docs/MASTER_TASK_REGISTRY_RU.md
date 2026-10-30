@@ -1,7 +1,7 @@
 # aLandi — MASTER TASK REGISTRY
 
 **Created:** 2026-10-31  
-**Purpose:** единый канонический инвентарь всех незавершённых работ из исторического запроса, V-016, backlog запуска/V1 и аудита целостности стека. При продолжении работ сначала сверяться с этим файлом; исторические источники сохраняются как provenance.  
+**Purpose:** единый канонический инвентарь всех явных открытых/частичных checkbox-задач из основных, operational, privacy, voice, architecture и research чек-листов проекта. При продолжении работ сначала сверяться с этим файлом; исторические источники сохраняются как provenance.  
 **Rule:** исходные чек-листы остаются нетронутыми и сохраняют историческую роль. Этот реестр зеркалирует все открытые checkbox-пункты со стабильными ID; задачи нельзя молча удалять или объявлять выполненными.
 
 ## Статусы
@@ -22,7 +22,14 @@
 | Канонический чек-лист V1 UI | 39 | 21 | 18 | [`docs/V1_UI_FINALIZATION_RU.md`](../docs/V1_UI_FINALIZATION_RU.md) |
 | Полировка лендинга | 23 | 19 | 4 | [`docs/LANDING_UX_POLISH_BACKLOG_RU.md`](../docs/LANDING_UX_POLISH_BACKLOG_RU.md) |
 | Сквозной аудит целостности стека | 24 | 24 | 0 | [`docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md`](../docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md) |
-| **Итого до дедупликации** | **280** | **223** | **57** | |
+| Запуск / start-here | 8 | 8 | 0 | `docs/START_HERE_RU.md` |
+| Privacy / legal review | 14 | 14 | 0 | `docs/LAUNCH_PRIVACY_REVIEW_RU.md` |
+| Pre-launch stack | 33 | 33 | 0 | `docs/PRE_LAUNCH_STACK_RU.md` |
+| Voice/document readiness audit | 42 | 39 | 3 | `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md` |
+| Chat settings information architecture | 9 | 9 | 0 | `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md` |
+| Implementation guide gates | 12 | 12 | 0 | `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md` |
+| Architecture debugger/planner | 38 | 27 | 11 | `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md` |
+| **Итого по 13 main-источникам** | **436** | **365** | **71** | |
 
 ## A. Перенесённые исторические задачи
 
@@ -337,6 +344,209 @@
 - [ ] **STACK-058** (строка 58; D. Независимый второй взгляд и решение): D4. Отобрать только улучшения с измеримой пользой и без расширения стека.
 - [ ] **STACK-059** (строка 59; D. Независимый второй взгляд и решение): D5. Внести минимальные обратимые исправления отдельными slices/PR.
 - [ ] **STACK-060** (строка 60; D. Независимый второй взгляд и решение): D6. Обновить ориентиры, project state, decision/eval records и volley log после каждого подтверждённого этапа.
+
+
+### A2. Дополнительные operational, privacy и specialist чек-листы (main)
+
+Эти документы содержат собственные явно незакрытые checkbox-строки. Они добавлены отдельно, даже если семантически повторяют задачи из шести основных реестров: дубли сохраняются до сверки.
+
+### START — `docs/START_HERE_RU.md`
+
+Источник: `docs/START_HERE_RU.md` на main; мигрированы все строки со статусом [ ]/[~].
+
+- [ ] **START-054** (строка 54; `docs/START_HERE_RU.md`): Pages deployment успешен, сайт открывается.
+- [ ] **START-055** (строка 55; `docs/START_HERE_RU.md`): VPS: Ollama и gateway активны.
+- [ ] **START-056** (строка 56; `docs/START_HERE_RU.md`): Gateway доступен только через Tunnel; публичные порты 8000/11434 закрыты.
+- [ ] **START-057** (строка 57; `docs/START_HERE_RU.md`): HTTPS hostname отвечает; неправильный API key получает 401.
+- [ ] **START-058** (строка 58; `docs/START_HERE_RU.md`): Из чата проходит реальный completion через gateway.
+- [ ] **START-059** (строка 59; `docs/START_HERE_RU.md`): Cache MISS → повтор HIT; bypass действительно обходит cache.
+- [ ] **START-060** (строка 60; `docs/START_HERE_RU.md`): После перезагрузки VPS gateway и Tunnel запускаются автоматически.
+- [ ] **START-061** (строка 61; `docs/START_HERE_RU.md`): Сохранены backup env/config и инструкции rollback (сам секрет — отдельно и защищённо).
+
+
+### PRIVACY — `docs/LAUNCH_PRIVACY_REVIEW_RU.md`
+
+Источник: `docs/LAUNCH_PRIVACY_REVIEW_RU.md` на main; мигрированы все строки со статусом [ ]/[~].
+
+- [ ] **PRIVACY-025** (строка 25; `docs/LAUNCH_PRIVACY_REVIEW_RU.md`): Оператор: физическое лицо или юридическое лицо, публичное имя/бренд и юридический адрес, если применимо.
+- [ ] **PRIVACY-026** (строка 26; `docs/LAUNCH_PRIVACY_REVIEW_RU.md`): Контакт для запросов на доступ/удаление и вопросов приватности (лучше отдельный адрес поддержки; не выдумывать адрес до его создания).
+- [ ] **PRIVACY-027** (строка 27; `docs/LAUNCH_PRIVACY_REVIEW_RU.md`): География оператора, хостинга, предполагаемых пользователей и целевые страны запуска.
+- [ ] **PRIVACY-028** (строка 28; `docs/LAUNCH_PRIVACY_REVIEW_RU.md`): Целевая аудитория и минимальный возраст, если применимо.
+- [ ] **PRIVACY-029** (строка 29; `docs/LAUNCH_PRIVACY_REVIEW_RU.md`): Будет ли это личный интерфейс одного владельца, ограниченная beta по приглашениям или публичный многопользовательский продукт.
+- [ ] **PRIVACY-030** (строка 30; `docs/LAUNCH_PRIVACY_REVIEW_RU.md`): Реальная схема входа и авторизации: сейчас отдельная multi-user auth система не подтверждена.
+- [ ] **PRIVACY-031** (строка 31; `docs/LAUNCH_PRIVACY_REVIEW_RU.md`): Точные домены, hosting providers, Tunnel mode/plan и фактически подключённые внешние AI/search providers.
+- [ ] **PRIVACY-032** (строка 32; `docs/LAUNCH_PRIVACY_REVIEW_RU.md`): Какие данные собираются: чаты, выбранный контекст, проекты/инструкции, вложения, provider settings, browser storage, server-side cache, diagnostic logs, billing/support messages.
+- [ ] **PRIVACY-033** (строка 33; `docs/LAUNCH_PRIVACY_REVIEW_RU.md`): Retention по каждой категории: browser data, server cache, logs, temporary files, backup copies. Если срок неизвестен, сначала измерить/проверить, а не угадывать.
+- [ ] **PRIVACY-034** (строка 34; `docs/LAUNCH_PRIVACY_REVIEW_RU.md`): Реальная политика удаления и экспорта: что удаляется сразу, что остаётся в резервных копиях и когда копии ротируются.
+- [ ] **PRIVACY-035** (строка 35; `docs/LAUNCH_PRIVACY_REVIEW_RU.md`): Фактическая обработка Cloudflare/GitHub Pages/VPS и внешнего провайдера: metadata/access logs, location/jurisdiction, applicable terms.
+- [ ] **PRIVACY-036** (строка 36; `docs/LAUNCH_PRIVACY_REVIEW_RU.md`): Используются ли analytics, cookies beyond essential browser storage, tracking pixels, telemetry или third-party frontend assets.
+- [ ] **PRIVACY-037** (строка 37; `docs/LAUNCH_PRIVACY_REVIEW_RU.md`): Как обрабатываются запросы об удалении, security incident, credential compromise и закрытии аккаунта, если появится account system.
+- [ ] **PRIVACY-038** (строка 38; `docs/LAUNCH_PRIVACY_REVIEW_RU.md`): Кто отвечает за support и стоимость вычислений; есть ли автоматические биллинговые ограничения/quotas.
+
+
+### PRELAUNCH — `docs/PRE_LAUNCH_STACK_RU.md`
+
+Источник: `docs/PRE_LAUNCH_STACK_RU.md` на main; мигрированы все строки со статусом [ ]/[~].
+
+- [ ] **PRELAUNCH-070** (строка 70; `docs/PRE_LAUNCH_STACK_RU.md`): Есть доступ к имеющемуся VPS либо подтверждена итоговая цена нового.
+- [ ] **PRELAUNCH-071** (строка 71; `docs/PRE_LAUNCH_STACK_RU.md`): ОС/архитектура совместимы с выбранным runbook.
+- [ ] **PRELAUNCH-072** (строка 72; `docs/PRE_LAUNCH_STACK_RU.md`): Достаточно RAM/диска после учёта уже работающих сервисов и модели.
+- [ ] **PRELAUNCH-073** (строка 73; `docs/PRE_LAUNCH_STACK_RU.md`): Известно, кто имеет SSH/root access и как восстановиться при неудачном обновлении.
+- [ ] **PRELAUNCH-074** (строка 74; `docs/PRE_LAUNCH_STACK_RU.md`): Домен, DNS и план ежемесячных затрат понятны.
+- [ ] **PRELAUNCH-075** (строка 75; `docs/PRE_LAUNCH_STACK_RU.md`): Никакие существующие сервисы не будут удалены/перенастроены без инвентаризации.
+- [ ] **PRELAUNCH-108** (строка 108; `docs/PRE_LAUNCH_STACK_RU.md`): /livez возвращает HTTP 200 без обращения к Ollama.
+- [ ] **PRELAUNCH-109** (строка 109; `docs/PRE_LAUNCH_STACK_RU.md`): /readyz возвращает HTTP 200 при доступной Ollama; `/healthz` — совместимый alias `/readyz`.
+- [ ] **PRELAUNCH-110** (строка 110; `docs/PRE_LAUNCH_STACK_RU.md`): Неавторизованный /v1/models возвращает HTTP 401.
+- [ ] **PRELAUNCH-111** (строка 111; `docs/PRE_LAUNCH_STACK_RU.md`): Авторизованный /v1/models показывает только разрешённую модель.
+- [ ] **PRELAUNCH-112** (строка 112; `docs/PRE_LAUNCH_STACK_RU.md`): Небольшой completion завершается и возвращает модельный ответ.
+- [ ] **PRELAUNCH-113** (строка 113; `docs/PRE_LAUNCH_STACK_RU.md`): Повтор exact-запроса даёт ожидаемый cache HIT, а cache bypass действительно работает.
+- [ ] **PRELAUNCH-114** (строка 114; `docs/PRE_LAUNCH_STACK_RU.md`): Порты 8000 и 11434 слушают только loopback.
+- [ ] **PRELAUNCH-115** (строка 115; `docs/PRE_LAUNCH_STACK_RU.md`): В логах нет API ключа, пользовательского prompt, приватного документа или сырого аудио.
+- [ ] **PRELAUNCH-116** (строка 116; `docs/PRE_LAUNCH_STACK_RU.md`): Права env/config соответствуют инструкции; service перезапускается без ручного shell state.
+- [ ] **PRELAUNCH-138** (строка 138; `docs/PRE_LAUNCH_STACK_RU.md`): Перезапусти gateway и Ollama, проверь health/capabilities после рестарта.
+- [ ] **PRELAUNCH-139** (строка 139; `docs/PRE_LAUNCH_STACK_RU.md`): Перезагрузи VPS в согласованное окно и подтверди автозапуск сервисов/Tunnel.
+- [ ] **PRELAUNCH-140** (строка 140; `docs/PRE_LAUNCH_STACK_RU.md`): Сделай backup конфигураций и необходимой SQLite data; секреты хранить отдельным защищённым способом.
+- [ ] **PRELAUNCH-141** (строка 141; `docs/PRE_LAUNCH_STACK_RU.md`): Проверь restore на безопасной копии, прежде чем считать backup рабочим.
+- [ ] **PRELAUNCH-142** (строка 142; `docs/PRE_LAUNCH_STACK_RU.md`): Подготовь rollback: отключить hostname/tunnel route; вернуть предыдущий env/config; восстановить known-good commit/service unit; проверить health. Не удалять данные, volumes и старые сервисы ради чистоты.
+- [ ] **PRELAUNCH-157** (строка 157; `docs/PRE_LAUNCH_STACK_RU.md`): Все выбранные PR проверены по актуальному HEAD и нужным required checks; после merge повторно проверены main Quality и Pages deployment.
+- [ ] **PRELAUNCH-158** (строка 158; `docs/PRE_LAUNCH_STACK_RU.md`): Лендинг не обещает работающий hosted endpoint, автоматическую синхронизацию, включённый voice/OCR или multi-user SaaS, если это не подтверждено.
+- [ ] **PRELAUNCH-159** (строка 159; `docs/PRE_LAUNCH_STACK_RU.md`): Проверены mobile layout, клавиатура/viewport, навигация, доступность клавиатурой и отсутствие внешних обязательных JS-зависимостей на лендинге.
+- [ ] **PRELAUNCH-160** (строка 160; `docs/PRE_LAUNCH_STACK_RU.md`): Все ссылки и инструкции ведут к актуальным путям; нет несуществующих contact/support обещаний.
+- [ ] **PRELAUNCH-163** (строка 163; `docs/PRE_LAUNCH_STACK_RU.md`): API работает за HTTPS Tunnel; origin ports закрыты; auth/CORS/allowlist/limits проверены.
+- [ ] **PRELAUNCH-164** (строка 164; `docs/PRE_LAUNCH_STACK_RU.md`): Модель не превышает заданный RAM/latency budget под тестом; restart and reboot проверены.
+- [ ] **PRELAUNCH-165** (строка 165; `docs/PRE_LAUNCH_STACK_RU.md`): Секреты не попали в git/history/logs/artifacts.
+- [ ] **PRELAUNCH-166** (строка 166; `docs/PRE_LAUNCH_STACK_RU.md`): Backup восстановлен в тестовой копии; rollback известен.
+- [ ] **PRELAUNCH-167** (строка 167; `docs/PRE_LAUNCH_STACK_RU.md`): Есть владелец расходов, мониторинг диска/RAM и расписание обновлений.
+- [ ] **PRELAUNCH-170** (строка 170; `docs/PRE_LAUNCH_STACK_RU.md`): Определён закрытый круг первых пользователей и путь обратной связи.
+- [ ] **PRELAUNCH-171** (строка 171; `docs/PRE_LAUNCH_STACK_RU.md`): На лендинге раскрыты ограничения и зависимость от пользовательского gateway.
+- [ ] **PRELAUNCH-172** (строка 172; `docs/PRE_LAUNCH_STACK_RU.md`): Подготовлены Terms/Privacy policy только под фактические data flows; не писать «данные никогда не покидают устройство», если может быть выбран внешний provider.
+- [ ] **PRELAUNCH-173** (строка 173; `docs/PRE_LAUNCH_STACK_RU.md`): Для открытого multi-user доступа отдельно спроектированы auth/session, tenant isolation, quotas, abuse controls, cost controls и retention/deletion. До этого не выдавать личный beta за публичный SaaS.
+
+
+### VOICEAUDIT — `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`
+
+Источник: `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md` на main; мигрированы все строки со статусом [ ]/[~].
+
+- [ ] **VOICEAUDIT-031** (строка 31; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): `GET /v1/capabilities` отражает только реально включённые функции.
+- [ ] **VOICEAUDIT-032** (строка 32; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Неавторизованные запросы получают 401; тело, длительность и время выполнения ограничены.
+- [ ] **VOICEAUDIT-033** (строка 33; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Конкурентные ASR/TTS задачи не копятся бесконечной очередью; корректно возвращается 429.
+- [ ] **VOICEAUDIT-034** (строка 34; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Временные аудиофайлы удаляются при успехе и ошибке; сырой звук не пишется в логи и долговременную память.
+- [ ] **VOICEAUDIT-035** (строка 35; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Проверены лицензии и SHA-256 бинарника/моделей/голоса; runtime пути задаются оператором, ничего не скачивается автоматически.
+- [ ] **VOICEAUDIT-038** (строка 38; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Установлены совместимые `whisper.cpp`, `ffprobe` и локальная ASR-модель.
+- [ ] **VOICEAUDIT-039** (строка 39; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): На целевом устройстве браузер действительно получает микрофонное разрешение, записывает поддерживаемый MIME/кодек и корректно останавливает треки.
+- [ ] **VOICEAUDIT-040** (строка 40; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Русская, английская и тайская короткие записи проходят через настоящий endpoint; ошибки формата/пустой записи объясняются пользователю.
+- [ ] **VOICEAUDIT-041** (строка 41; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Транскрипт вставляется в composer и остаётся редактируемым; автоматической отправки нет.
+- [ ] **VOICEAUDIT-042** (строка 42; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Измерены время до первой расшифровки, длительность аудио, пиковая RAM и точность на фиксированном небольшом тестовом наборе.
+- [ ] **VOICEAUDIT-045** (строка 45; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Установлены совместимые Piper runtime и voice model с проверенной лицензией.
+- [ ] **VOICEAUDIT-046** (строка 46; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Несколько ответов на русском/английском синтезируются в валидный WAV и воспроизводятся на целевом iPhone/браузере.
+- [ ] **VOICEAUDIT-047** (строка 47; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Stop отменяет запрос и воспроизведение; повторное нажатие не запускает дубликат.
+- [ ] **VOICEAUDIT-048** (строка 48; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Измерены latency, длительность генерации, размер WAV и RAM.
+- [ ] **VOICEAUDIT-049** (строка 49; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Синтез отключён при недоступном runtime, без имитации успешного ответа.
+- [~] **VOICEAUDIT-052** (строка 52; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Кодовый half-duplex цикл и mock E2E существуют (PR #60); реальная последовательность запись → ASR → редактируемый текст → запрос → TTS → воспроизведение → следующий ход на целевом устройстве не проверена.
+- [ ] **VOICEAUDIT-053** (строка 53; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Нет автоматической отправки до подтверждённого состояния, если режим явно не настроен на это.
+- [ ] **VOICEAUDIT-054** (строка 54; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Ошибка на любом этапе оставляет пользователя в восстанавливаемом состоянии; нет скрытой повторной записи или позднего воспроизведения.
+- [ ] **VOICEAUDIT-055** (строка 55; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Отдельно проверены iOS Safari, блокировка/разблокировка экрана, переключение аудиоустройства и прерывание звонком.
+- [ ] **VOICEAUDIT-056** (строка 56; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Только после измерений решить, нужен ли streaming/VAD/barge-in; не добавлять их как фиктивную настройку.
+- [ ] **VOICEAUDIT-061** (строка 61; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Проверить `ALANDI_DOCUMENT_EXTRACTION_ENABLED=false` по умолчанию; включать только на намеренно настроенном gateway.
+- [ ] **VOICEAUDIT-062** (строка 62; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Проверить реальные сигнатуры/MIME, расширения, пределы размера, страниц/листов, ZIP entries, коэффициента сжатия, времени и длины извлечённого текста.
+- [ ] **VOICEAUDIT-063** (строка 63; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Проверить повреждённые файлы, архивную бомбу, неверное расширение, пустой/сканированный PDF, превышение лимитов и cleanup временных данных.
+- [ ] **VOICEAUDIT-064** (строка 64; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Сохранить `no-store`; не отправлять документ в стороннего провайдера без явного выбора и применимых настроек согласия/приватности.
+- [ ] **VOICEAUDIT-067** (строка 67; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): На реальном gateway вложить по одному TXT, PDF с текстовым слоем, DOCX, XLSX, CSV и JSON.
+- [ ] **VOICEAUDIT-068** (строка 68; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Подтвердить, что извлечённое содержимое действительно включено в prompt активного провайдера, а не просто отображено в UI.
+- [ ] **VOICEAUDIT-069** (строка 69; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Проверить страницы/листы и происхождение источника; для таблиц не терять заголовки, порядок и значения ячеек.
+- [ ] **VOICEAUDIT-070** (строка 70; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Недоступный parser или превышение лимита блокирует отправку с понятной ошибкой, а не создаёт впечатление, что модель прочитала файл.
+- [ ] **VOICEAUDIT-071** (строка 71; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Проверить раздельные сценарии собственного и стороннего провайдера: документ не должен незаметно менять выбранный маршрут.
+- [ ] **VOICEAUDIT-074** (строка 74; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): OCR для сканированных PDF и изображений — отдельный локальный компонент, лицензия, лимиты и тесты.
+- [ ] **VOICEAUDIT-075** (строка 75; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Chunking с page/offset/source hash, preview и подтверждением перед индексацией.
+- [ ] **VOICEAUDIT-076** (строка 76; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Re-index/delete, удаление производных chunks вместе с источником, provenance и тесты scope isolation.
+- [ ] **VOICEAUDIT-077** (строка 77; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): XLSX: отдельно определить формулы, отображаемые значения, листы и лимиты.
+- [ ] **VOICEAUDIT-078** (строка 78; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Видео: выборка кадров не равна расшифровке звука; audio track, ASR и синхронизация требуют отдельного pipeline.
+- [ ] **VOICEAUDIT-079** (строка 79; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Google Drive OAuth/Picker/sync не обещать до завершения UI, encrypted token storage, revoke и проверки удаления индекса.
+- [~] **VOICEAUDIT-104** (строка 104; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): **Голосовое сообщение:** UI/code path реализован; пользователь может записать фрагмент, отредактировать расшифровку и отправить вручную. Реальный микрофон/модель на целевом устройстве ещё не проверены.
+- [~] **VOICEAUDIT-105** (строка 105; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): **Живой разговор (первый этап — half-duplex):** прототип цикла есть, но это не streaming/full-duplex. Проверить реальные ASR/TTS, задержку, отмену, echo и состояние UI на устройстве.
+- [ ] **VOICEAUDIT-106** (строка 106; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Переключение в живой режим не включается само собой; видимые Start/Stop и разрешение микрофона обязательны. Stop прекращает запись, ASR, запрос модели и воспроизведение настолько полно, насколько позволяют используемые API.
+- [ ] **VOICEAUDIT-108** (строка 108; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Для локального TTS показывать только голоса, чьи файлы и runtime действительно установлены и прошли проверку. Если доступен один голос, не рисовать второй фиктивный вариант.
+- [ ] **VOICEAUDIT-109** (строка 109; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Голос хранится как предпочтение выбранного режима/чата согласно принятой модели настроек; не передавать это предпочтение внешнему провайдеру, если синтез остаётся локальным.
+- [ ] **VOICEAUDIT-110** (строка 110; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): При смене языка выбирать совместимый установленный голос либо объяснять, что голос недоступен; не делать тихий fallback на внешний сервис.
+- [ ] **VOICEAUDIT-111** (строка 111; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`): Расшифровка и ответ видны текстом, если пользователь не включил отдельный режим аудио-only. Пользователь может исправить распознанный текст до отправки.
+
+
+### CHATSET — `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`
+
+Источник: `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md` на main; мигрированы все строки со статусом [ ]/[~].
+
+- [ ] **CHATSET-106** (строка 106; `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`): Расширенный веб-поиск не увеличивает число раундов/вызовов инструментов.
+- [ ] **CHATSET-107** (строка 107; `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`): Тщательный режим не расширяет число результатов веб-поиска сам по себе.
+- [ ] **CHATSET-108** (строка 108; `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`): Offline не предлагает веб-инструменты даже в тщательном/структурированном режиме.
+- [ ] **CHATSET-109** (строка 109; `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`): Смена профиля не включает веб-поиск и не включает структурированный конвейер.
+- [ ] **CHATSET-110** (строка 110; `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`): Структурированный разбор не называется «командой независимых агентов».
+- [ ] **CHATSET-111** (строка 111; `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`): Research Studio не меняет настройки чата и показывает их текущую сводку.
+- [ ] **CHATSET-112** (строка 112; `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`): Настройки сохраняются отдельно для каждого чата; импорт/экспорт не теряет значения.
+- [ ] **CHATSET-113** (строка 113; `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`): Русские и английские подписи и подсказки согласованы.
+- [ ] **CHATSET-114** (строка 114; `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`): На мобильном экране базовые контролы остаются читаемыми и доступны для касания.
+
+
+### GUIDE — `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`
+
+Источник: `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md` на main; мигрированы все строки со статусом [ ]/[~].
+
+- [ ] **GUIDE-544** (строка 544; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Реальная цена Vultr, промокредит и срок истечения проверены в кабинете.
+- [ ] **GUIDE-545** (строка 545; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Домен подключён к Cloudflare; старые DNS/туннели не сломаны.
+- [ ] **GUIDE-546** (строка 546; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Ollama и gateway работают как службы.
+- [ ] **GUIDE-547** (строка 547; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Ollama не доступна с публичного интерфейса; /v1/models без токена отказывает.
+- [ ] **GUIDE-548** (строка 548; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Из опубликованного сайта запрос проходит через aLandi.
+- [ ] **GUIDE-549** (строка 549; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Межпровайдерный fallback выключен для приватных запросов.
+- [ ] **GUIDE-550** (строка 550; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Прямой JSON-запрос даёт L2 MISS → HIT; bypass header работает.
+- [ ] **GUIDE-551** (строка 551; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Gateway tests, quality sentinels, Jekyll build и Chromium E2E прошли на текущем main SHA.
+- [ ] **GUIDE-552** (строка 552; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Experimental memory/RAG/OAuth/voice flags remain off until their own gates and rollback are reviewed.
+- [ ] **GUIDE-553** (строка 553; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Если graph API включался для теста, проверены Bearer auth, candidate-first review, scope isolation, cascade delete и double opt-in global scope.
+- [ ] **GUIDE-554** (строка 554; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Есть резервная копия env, команда отключения L2 и процедура отката.
+- [ ] **GUIDE-555** (строка 555; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Известно, как остановить/удалить платные ресурсы до истечения кредита.
+
+
+### ARCHDBG — `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`
+
+Источник: `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md` на main; мигрированы все строки со статусом [ ]/[~].
+
+- [ ] **ARCHDBG-016** (строка 16; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): A5. Выполнить системную матрицу совместимости: UI ↔ API ↔ runtime ↔ persistence ↔ security ↔ CI/deploy.
+- [ ] **ARCHDBG-017** (строка 17; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): A6. Внести только подтверждённые совместимые архитектурные исправления; не добавлять тяжёлые зависимости без измеримого выигрыша.
+- [~] **ARCHDBG-024** (строка 24; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): D5. Провести полный статический/графовый аудит UI, gateway, memory, RAG, voice, tools, workflows и dependencies. Graphify inspected: 1,109 nodes / 3,103 edges / 53 communities; no import cycles detected; full manual audit remains.
+- [~] **ARCHDBG-026** (строка 26; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): D7. Составить verified dead-code/obsolete-file inventory. Удалены только три подтверждённо устаревших scratch-файла после поиска ссылок и обновления `IMPROVEMENT_SELECTION.md`: `temp/3`, `temp/4`, `temp/5`. Содержательные `temp/1` и `temp/2` оставлены как архивные источники. Vulture warning по Protocol parameter — false positive.
+- [ ] **ARCHDBG-027** (строка 27; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): D8. Проверить security: SSRF/redirect, prompt injection, scopes, deletion, approval, tool sandbox, secrets, upload parsers, audio.
+- [ ] **ARCHDBG-028** (строка 28; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): D9. Проверить runtime contracts, cancellation, timeouts, limits, retries, concurrency и resource bounds.
+- [~] **ARCHDBG-035** (строка 35; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): P5. Подготовить голосовой UX: запись/транскрипция и TTS одного сообщения уже есть в коде; диалог сейчас half-duplex; selection-to-speech, multi-message queue, streaming turn detection и реальный barge-in остаются незавершёнными.
+- [~] **ARCHDBG-036** (строка 36; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): P6. Спроектировать small helper models, GPU-only/accelerated inference и routing без обязательной нагрузки CPU; сохранить CPU fallback только как осознанный режим. Подтверждены варианты Ollama GPU, llama.cpp offload и vLLM; требуется hardware benchmark.
+- [~] **ARCHDBG-037** (строка 37; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): P7. Спроектировать bounded multi-agent / mass-agent orchestration: DAG, budgets, queue, cancellation, idempotency, permissions, traces, evals и safe-off. Сравнены OpenWOP v2 protocol, LangGraph interrupts/checkpointing and Temporal durable workflows; no runtime chosen.
+- [~] **ARCHDBG-040** (строка 40; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): P10. Лендинговые claims/CTA/SEO/структура проверены в PR #121; exact-head Chromium и published-site smoke прошли. Post-merge Pages deployment, финальный screenshot-review и native iPhone accessibility ещё не подтверждены.
+- [ ] **ARCHDBG-129** (строка 129; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): Exact PR HEAD: Integrity, Security, Context, Jekyll, Chromium, Gateway, Provenance, Graphify and Dead-code report pass.
+- [ ] **ARCHDBG-130** (строка 130; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): Post-merge main: deployment workflow passes; public root app and /landing/ smoke verify the exact release.
+- [ ] **ARCHDBG-131** (строка 131; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): Voice: real microphone/speaker, target language set RU/EN/TH, transcription accuracy, first-audio latency, RTF, interruption latency, echo, cancellation, repeated playback, multi-selection ordering.
+- [ ] **ARCHDBG-132** (строка 132; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): Model: exact artifact/tag, quantization, license, checksum, device backend, VRAM/RAM/PSS, cold/warm TTFT, tokens/s, p95 and thermal stability.
+- [ ] **ARCHDBG-133** (строка 133; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): Agent: budget, permission, scope isolation, cancellation, timeout, idempotency, retry and adversarial prompt injection tests.
+- [ ] **ARCHDBG-134** (строка 134; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): Knowledge-to-skill: parser corpus, malicious documents, injection scanner, provenance/citation correctness, license handling and human approval.
+- [ ] **ARCHDBG-135** (строка 135; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): Security/privacy: no secrets in browser bundle/logs/cache/CI artifacts; explicit disclosure of provider routing and storage.
+- [ ] **ARCHDBG-136** (строка 136; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): Owner gates: actual VPS inventory, firewall/loopback, Cloudflare Tunnel, credentials, backup/restore, reboot, iPhone Safari and legal privacy text.
+- [ ] **ARCHDBG-225** (строка 225; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): U5. Прогнать exact-current-head Chromium/Quality and published Pages after merge.
+- [ ] **ARCHDBG-226** (строка 226; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): U6. Реализовать оставшийся polish в больших вертикальных slices: visual consistency; popover/dialog keyboard/focus; mobile Safari; RU/EN/light-dark; screenshot review.
+- [~] **ARCHDBG-240** (строка 240; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): D5 — Graphify and targeted source audit cover current hotspots; full manual subsystem audit remains open.
+- [~] **ARCHDBG-241** (строка 241; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): D8 — OOXML DTD/external-entity handling fixed and regression-tested in 051308c; broader SSRF, parser isolation and adversarial corpus remain open.
+- [~] **ARCHDBG-244** (строка 244; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): P5/P6 — candidates/constraints documented; target-device quality, helper registry and GPU-only admission tests remain open.
+- [~] **ARCHDBG-245** (строка 245; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): P7/P9 — durable workflow options compared; no engine chosen. Current bounded DAG stays baseline.
+- [ ] **ARCHDBG-247** (строка 247; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): No speech model, voice framework, GPU scheduler, agent engine or document converter integrated in this research pass.
+- [ ] **ARCHDBG-248** (строка 248; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): External skills/exercise-toolkit@ebf43bb remains pinned pending behavior review.
+- [~] **ARCHDBG-258** (строка 258; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): M6. Сверены основные старые search/functions, landing, local audio/document, provider diagnostics и superstack ветки по именам/compare; текущие PR/документы показывают значительное перекрытие с более поздними merge. Полная файловая экспертиза каждой исторической ветки не проводилась; wholesale merge старых веток не нужен.
+- [ ] **ARCHDBG-263** (строка 263; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): M11. После merge проверить post-merge Pages deployment и опубликованный `/landing/` и root app.
+- [ ] **ARCHDBG-264** (строка 264; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): M12. Провести ручной visual/screenshot pass и native iPhone Safari/keyboard/safe-area/VoiceOver.
+- [ ] **ARCHDBG-265** (строка 265; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): M13. На реальном хосте выполнить helper-model benchmark: точные model IDs/digests/licenses, одинаковые RU/EN/TH golden prompts, quantization/context/hardware, p50/p95, cold/warm latency, tokens/s, RAM/PSS и human-rated quality. Пока модель не выбрана и не включена.
+- [ ] **ARCHDBG-266** (строка 266; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): M14. Продолжить системную матрицу UI ↔ API ↔ runtime ↔ persistence ↔ security ↔ CI/deploy; не объявлять sandbox, independent agents, live voice, OAuth или RAG production-ready без evidence.
+- [ ] **ARCHDBG-283** (строка 283; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): W2. Reconcile accepted decisions against implementation, flags and runtime wiring.
+- [ ] **ARCHDBG-284** (строка 284; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): W3. Trace all cross-module data/control flows and trust boundaries.
+- [ ] **ARCHDBG-285** (строка 285; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): W4. Run additional independent quality/security/static-analysis tools and record exact outputs.
+- [ ] **ARCHDBG-286** (строка 286; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): W5. Obtain independent subagent review if an actual subagent execution capability is available; otherwise record limitation and use a separately structured adversarial review.
+- [ ] **ARCHDBG-287** (строка 287; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): W6. Triage findings against accepted architecture; reject stack expansion and speculative changes.
+- [ ] **ARCHDBG-288** (строка 288; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): W7. Implement only evidence-backed, bounded fixes; test each slice and update all state docs.
+- [ ] **ARCHDBG-289** (строка 289; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): W8. Re-run exact-head CI and verify final PR/issue/deployment status without overstating live readiness.
+
 
 ## B. Новые задачи по указанию владельца (2026-10-31)
 
