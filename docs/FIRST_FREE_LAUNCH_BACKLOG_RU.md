@@ -210,15 +210,15 @@ Ollama — 127.0.0.1:11434 — одна активная модель
 | Лендинг не обещает бесплатный inference, background work, active roadmap runtime или public multi-user SaaS | P0-01, P0-02 | Landing copy + build/E2E + post-deploy public URL smoke |
 | Voice/agent/sandbox/image features остаются выключенными/preview пока не доказан backend | P1-04, P1-06, P2-07 | Truthful UI copy and safe-off defaults; no feature promoted by docs alone |
 
-## 5. Итоговая рекомендованная последовательность
+## 5. Итоговая последовательность после merge
 
-1. Довести PR #121: UI, лендинг, README, E2E, RU/EN, mobile touch, no-overflow и reduced-motion.
-2. Пройти полный exact-head CI и merge только при green required gates; проверить post-merge Pages и опубликованные root/`landing/` URL.
-3. Добавить совместимые `/livez` + `/readyz` и тесты; сохранить `/healthz` как старый readiness alias.
-4. Согласовать README/START_HERE/gateway runbook и дополнить freshness/contract validation только deterministic checks.
-5. Подготовить owner checklist для main protections; проверить точные реальные workflow status names прежде чем требовать их в ruleset.
-6. Когда владелец предоставит VPS, провести preflight, deploy и реальный authenticated completion; закрыть соответствующие части Issue #111 только по evidence.
-7. Только после работающего текстового контура отдельно решать memory sync, RAG improvements, voice and sandbox по метрикам и безопасным gate.
+1. [x] PR #121 merged: первый бесплатный лендинг V1 и согласованный клиентский UX в main; exact-head Quality/Chromium/Jekyll/published-site smoke passed.
+2. [x] PR #122 merged: `/livez`, `/readyz`, совместимый `/healthz`; exact-head Gateway/Quality/Chromium/Graphify/Dead Code passed.
+3. [ ] Проверить post-merge Pages deployment и опубликованные root/`landing/` URL на фактическом merge commit.
+4. [ ] Завершить visual screenshot-review, native iPhone Safari, keyboard/safe-area, VoiceOver и touch checks.
+5. [ ] Закрыть только оставшиеся polish/security/reliability задачи внутри текущего стека; не добавлять новые продуктовые функции в первый лендинг.
+6. [ ] Owner gates issue #111: main ruleset, VPS/Tunnel/Ollama, provider credentials, hardware/model benchmark, RAG corpus, voice/device, sandbox и OAuth. Закрывать только после фактического evidence.
+7. [ ] Будущие функции (voice expansion, helper registry, durable multi-agent runtime, Knowledge-to-Skill) оставить в отдельном post-landing backlog; не считать блокером публикации статического лендинга V1.
 
 ## 6. Проверенные первичные ориентиры
 
@@ -233,9 +233,9 @@ Ollama — 127.0.0.1:11434 — одна активная модель
 ---
 ## 7. Дополнительные обязательные требования владельца — 2026-10-30
 
-Эти требования добавлены после исходного V1 backlog и имеют приоритет при планировании первого полноценного обновления после публикации лендинга. Они не считаются реализованными только потому, что существуют отдельные прототипы.
+Эти требования описывают будущую полноценную продуктовую вертикаль после публикации лендинга. Они **не входят в замороженный состав первого бесплатного лендинга V1** и не должны задерживать его публикацию. Возвращаться к ним можно отдельным согласованным этапом, без изменения текущего стека и только после benchmark/security acceptance. Они не считаются реализованными только потому, что существуют прототипы.
 
-### P0 — голос как обязательная часть первого полноценного релиза
+### Future post-landing requirements — voice (not part of the frozen landing V1)
 - [ ] **P0-13. Editable speech-to-text:** запись с микрофона, локальная транскрипция, редактирование распознанного текста до отправки, RU/EN/TH quality tests.
 - [ ] **P0-14. Conversational voice assistant:** полноценный естественный turn-taking, streaming transcript/response, VAD, barge-in, cancellation, echo cancellation, transcript alignment. Текущий half-duplex prototype — только основа, не завершённая функция.
 - [ ] **P0-15. Read selected text aloud:** выделение произвольного фрагмента ответа/сообщения и озвучивание только выделенного содержимого.
@@ -262,7 +262,7 @@ Ollama — 127.0.0.1:11434 — одна активная модель
 - «Голосовой помощник почти как человек» — цель качества, а не маркетинговый claim до прохождения acceptance.
 
 ### Правило планирования
-Сначала завершить и опубликовать честный статический лендинг и текущий клиентский UI. Первый функциональный update после публикации должен объединить эти обязательные вертикали с реальным backend/runtime и тестами; не загружать UI-кнопки, которые не имеют работающего end-to-end пути.
+Первый бесплатный лендинг V1 уже зафиксирован и не расширяется. Сначала довести до идеала взаимодействие, производительность, доступность, надёжность и безопасность внутри выбранного стека. Перечисленные ниже голосовые, агентные, knowledge и прочие вертикали — будущие отдельные этапы; не добавлять их кнопки или runtime в текущую первую версию.
 
 ## 8. Остаток landing/app polish из актуального main
 Синхронизирован документ [LANDING_UX_POLISH_BACKLOG_RU.md](LANDING_UX_POLISH_BACKLOG_RU.md). Его пункты также являются частью release checklist:
