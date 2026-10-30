@@ -226,3 +226,10 @@ Fetch latest PR head after commit `f9d5afaae983675d2c616e3fbc70942840d314e5`, in
 - [ ] U6. Реализовать оставшийся polish в больших вертикальных slices: visual consistency; popover/dialog keyboard/focus; mobile Safari; RU/EN/light-dark; screenshot review.
 
 **Новые UX источники:** MDN deprecated marquee; MDN prefers-reduced-motion; W3C WCAG 2.2 SC 2.2.2; MDN Popover API and CSS Anchor Positioning. Ссылки и rationale в `docs/LANDING_UX_POLISH_BACKLOG_RU.md`.
+
+
+### Landing voice requirements made explicit — 2026-10-30
+- Updated landing capability card and roadmap to enumerate editable speech transcription, conversational voice with interruption, selected-text TTS, whole-message TTS and sequential multi-message playback queue.
+- Copy distinguishes existing local ASR/Piper/half-duplex prototype from unfinished streaming, echo cancellation, interruption, queue and target-device acceptance; it does not claim these are already available.
+- Updated landing Playwright assertions to require the voice scope and echo-cancellation acceptance text. Commits: a2df368, 1c3cd5d, 4abe657, da69c8e, af13b48.
+- Exact-head landing/Chromium test has not yet run on the current branch. The existing PR description still explicitly excludes realtime voice/AEC as ready; the new landing text presents them as first functional update scope, not as shipped functionality.
