@@ -11,7 +11,7 @@
 
 ## Финализация UI первой бесплатной версии
 
-Живой чек-лист требований, инженерные критерии, источники и журнал выполнения: [docs/FREE_LANDING_UI_FINALIZATION_RU.md](docs/FREE_LANDING_UI_FINALIZATION_RU.md). Он относится к статическому клиенту GitHub Pages и не подменяет roadmap gateway/runtime.
+Живой чек-лист требований, инженерные критерии, источники и журнал выполнения: [docs/V1_UI_FINALIZATION_RU.md](docs/V1_UI_FINALIZATION_RU.md). Он относится к статическому клиенту GitHub Pages и не подменяет roadmap gateway/runtime.
 
 ## Мастер-контекст проекта
 
