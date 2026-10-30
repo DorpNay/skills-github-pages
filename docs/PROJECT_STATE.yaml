@@ -316,3 +316,40 @@ three_role_audit_2026_10_30:
     - "Knowledge-to-Skill prototype and security review"
     - "Dead-code candidate verification; no deletion authorized yet"
   next: "Inspect post-fix exact-head CI, then audit request/provider, memory/RAG, tools/security, voice, documents and landing in dependency order. Update this tracker, ORIENTER, PROJECT_STATE and VOLLEY_LOG after every meaningful stage."
+audit_update_2026_10_30:
+  tracker: "docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md"
+  architecture_graph:
+    artifact_id: 12956306584
+    source_sha: "f9d5afaae983675d2c616e3fbc70942840d314e5"
+    nodes: 1109
+    edges: 3103
+    communities: 53
+    detected_import_cycles: 0
+    workflow_state: "cancelled after artifact generation; artifact inspected, workflow not marked green"
+  dead_code:
+    artifact_id: 12956377148
+    source_sha: "f9d5afaae983675d2c616e3fbc70942840d314e5"
+    finding: "Vulture false positive: BufferedTTS.synthesize_prefix Protocol parameter max_duration_ms is part of adapter contract"
+    deletion_authorized: false
+  gateway_fix:
+    commit: "f9d5afaae983675d2c616e3fbc70942840d314e5"
+    workflow_run: 41007980098
+    run_number: 483
+    conclusion: "success"
+    tests: "150 passed; prior failure was missing test import only"
+  quality:
+    workflow_run: 41007980120
+    run_number: 916
+    conclusion: "cancelled"
+    note: "Integrity, Security, Context and Jekyll jobs passed; Chromium job cancelled during branch update; rerun requested"
+  voice_capability_gaps:
+    existing: "local ASR transcription with editable text; local Piper single-message TTS; half-duplex voice loop"
+    missing_or_unverified: "selected-text TTS; multi-message queue; true streaming turn-taking; native AEC and acoustic barge-in; target-device RU/EN/TH quality and latency"
+  research:
+    knowledge_to_skill: "virgiliojr94/book-to-skill; use as design reference, do not vendor blindly"
+    streaming_voice_candidate: "moonshine-ai/moonshine; verify RU/TH STT model coverage and exact model licenses before adoption"
+    gpu_runtime_candidates: "Ollama GPU, llama.cpp offload, vLLM for GPU-serving workloads; benchmark hardware before migration"
+  cleanup:
+    files_deleted: []
+    rationale: "No obsolete file has yet been proven unreachable across dynamic references, CI, deployment, rollback and docs."
+  next: "Complete exact-head Quality/Chromium rerun, then continue request/provider, memory/RAG, tools/security, voice and document subsystem audit."
