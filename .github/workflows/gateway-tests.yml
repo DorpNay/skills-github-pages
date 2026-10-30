@@ -71,3 +71,14 @@ jobs:
           path: uv.lock
           if-no-files-found: error
           retention-days: 7
+      - name: Emit exact lockfile content for repository bootstrap
+        if: always() && matrix.python-version == '3.13'
+        shell: bash
+        run: |
+          python - <<'PY'
+          import base64
+          from pathlib import Path
+          encoded = base64.b64encode(Path("uv.lock").read_bytes()).decode("ascii")
+          for index in range(0, len(encoded), 40000):
+              print(f"UV_LOCK_B64_{index // 40000:03d}={encoded[index:index + 40000]}")
+          PY
