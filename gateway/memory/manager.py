@@ -5,6 +5,7 @@ new facts default to candidate, each node requires provenance, and contradiction
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
@@ -212,7 +213,8 @@ class MemoryManager:
             at = normalize_timestamp(recorded_at, field_name="recorded_at")
             clauses.append("recorded_at <= ?")
             args.append(at)
-        sql = "SELECT * FROM memory_nodes WHERE " + " AND ".join(clauses) + " ORDER BY recorded_at DESC, id LIMIT ?"
+        # nosemgrep: python.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query
+        sql = "SELECT * FROM memory_nodes WHERE " + " AND ".join(clauses) + " ORDER BY recorded_at DESC, id LIMIT ?"  # nosec B608 -- SQL fragments are fixed; values are bound separately.
         args.append(limit)
         with closing(self._connect()) as db:
             rows = db.execute(sql, args).fetchall()
@@ -264,10 +266,11 @@ class MemoryManager:
             at = normalize_timestamp(recorded_at, field_name="recorded_at")
             clauses.append("n.recorded_at <= ?")
             args.append(at)
+        # nosemgrep: python.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query
         sql = ("SELECT n.* FROM fts_memory JOIN memory_nodes AS n "
                "ON n.rowid = fts_memory.rowid WHERE fts_memory MATCH ? AND "
                + " AND ".join(clauses)
-               + " ORDER BY bm25(fts_memory), n.recorded_at DESC, n.id LIMIT ?")
+               + " ORDER BY bm25(fts_memory), n.recorded_at DESC, n.id LIMIT ?")  # nosec B608 -- all user terms and filters are bound parameters.
         args.append(limit)
         with closing(self._connect()) as db:
             rows = db.execute(sql, args).fetchall()
@@ -386,7 +389,8 @@ class MemoryManager:
                 (node_id, ref.kind, ref.scope_id, ref.kind, ref.scope_id)).fetchall()
             identifiers = [row["id"] for row in rows if row["id"] != node_id] + [node_id]
             placeholders = ",".join("?" for _ in identifiers)
-            db.execute("DELETE FROM memory_nodes WHERE id IN (" + placeholders + ") AND scope=? AND scope_id=?",
+            # nosemgrep: python.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query
+            db.execute("DELETE FROM memory_nodes WHERE id IN (" + placeholders + ") AND scope=? AND scope_id=?",  # nosec B608 -- placeholders are generated as '?' only; values are bound.
                        (*identifiers, ref.kind, ref.scope_id))
             db.execute("""INSERT INTO memory_audit
                 (scope, scope_id, node_id, action, occurred_at, actor_kind, actor_id, reason_code)

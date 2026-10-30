@@ -16,7 +16,7 @@ import sqlite3
 import tempfile
 import time
 import zipfile
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET  # nosec B405 -- custom parser below rejects all DTD declarations.
 from contextlib import asynccontextmanager, closing
 from dataclasses import asdict, dataclass
 from functools import wraps
@@ -435,8 +435,8 @@ def _xml_from_archive(archive: zipfile.ZipFile, entries: dict[str, zipfile.ZipIn
             payload = stream.read(DOCUMENT_MAX_EXPANDED_BYTES + 1)
         if len(payload) > DOCUMENT_MAX_EXPANDED_BYTES:
             raise HTTPException(413, "Expanded XML part exceeds the permitted size")
-        parser = ET.XMLParser(target=_RejectDoctypeTreeBuilder())
-        return ET.fromstring(payload, parser=parser)
+        parser = ET.XMLParser(target=_RejectDoctypeTreeBuilder())  # nosec B314 -- custom target rejects every DOCTYPE.
+        return ET.fromstring(payload, parser=parser)  # nosec B314 -- parser above rejects DTD/entity declarations.
     except HTTPException:
         raise
     except (ET.ParseError, OSError, RuntimeError, ValueError):

@@ -179,7 +179,7 @@ jobs:
           bandit -r gateway scripts router observability intel latency -x gateway/tests,gateway/evals -f json \
             > audit-reports/bandit.json 2> audit-reports/bandit.stderr
           echo "$?" > audit-reports/bandit.exit
-          semgrep scan --config p/default --json \
+          semgrep scan --config p/default --json gateway scripts router observability intel latency \
             > audit-reports/semgrep.json 2> audit-reports/semgrep.stderr
           echo "$?" > audit-reports/semgrep.exit
           echo "Findings are report-only at this stage; scanner/runtime errors are checked separately."

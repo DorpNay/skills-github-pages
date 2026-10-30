@@ -5,6 +5,7 @@ Run from the repository root:
 The evaluator is offline and deterministic apart from measured wall-clock latency. It never
 calls a model or network. Latency and metrics on synthetic fixtures are not production claims.
 """
+# ruff: noqa: E402 -- repository root is added to sys.path before local imports for standalone execution.
 from __future__ import annotations
 
 import argparse
