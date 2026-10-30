@@ -73,7 +73,7 @@
 
 ## 6. Uncensored model / policy
 
-- USER_REQUEST_CHECKLIST includes an explicit requirement not to add a hidden refusal filter over the selected model (this must be confirmed against its exact current section and code before marking complete).
+- USER_REQUEST_CHECKLIST explicitly says: do not add a hidden refusal filter over the selected model; also do not promise that it will never refuse, because checkpoint behavior and external API rules are outside app control. This is an open checklist item, not proof of implementation.
 - ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md defines priority as safety/system → workspace policy → project instructions → user preferences → current message, and says user instructions do not disable safety or elevate tool permissions.
 - CODER_PACKET and tool approval contracts require fail-closed permissions, exact operation/scope/expiry approvals and no fake sandbox.
 - No single end-to-end policy matrix proving all providers/adapters behave consistently was found in this targeted search.
