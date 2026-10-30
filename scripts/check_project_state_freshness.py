@@ -255,7 +255,7 @@ def github_get_json(url: str, token: str | None) -> Any:
         },
     )
     # nosemgrep: python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected
-    with urlopen(request, timeout=20) as response:  # nosec B310 -- URL is allowlisted to api.github.com HTTPS above
+    with GITHUB_API_OPENER.open(request, timeout=20) as response:  # nosec B310 -- URL is allowlisted to api.github.com HTTPS above
         validate_github_api_url(response.geturl())
         return json.load(response)
 
