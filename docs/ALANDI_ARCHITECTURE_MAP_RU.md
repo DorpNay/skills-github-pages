@@ -1,6 +1,6 @@
 # aLandi — карта архитектуры и модулей
 
-**Срез:** `main` base = `2bda22229cba3576628f92c821bb6e1562d8abc5`; UI candidate PR #121 code head at audit = `f9d5afaae983675d2c616e3fbc70942840d314e5`.  
+**Срез:** `main` base = `e6404d510229fa64a7bb375995d76dcba55de623`; UI candidate PR #121 code head at audit = `f9d5afaae983675d2c616e3fbc70942840d314e5`.  
 **Тип:** кураторская схема границ модулей по дереву репозитория и фактическим route/function declarations. Это **не** автоматически извлечённый call graph и не доказательство live deployment.
 
 ## 1. Системная схема
@@ -110,3 +110,7 @@ flowchart TD
 - The centrality confirms integration hotspots, not defects. Keep current architecture; refactor only with a bounded contract-preserving change and regression coverage.
 - Graphify job was later cancelled by branch updates, but its artifact and report were uploaded and inspected. Do not mark the complete workflow green from this partial artifact alone.
 - Dead-code report #389 had one Vulture warning at `gateway/voice/speculative_transaction.py:39` for the `BufferedTTS.synthesize_prefix(max_duration_ms=...)` protocol parameter. It is part of the adapter contract and is a false positive; no file or code deletion is justified.
+
+
+## Main synchronization — 2026-10-30
+Main advanced to documentation-only commit e6404d510229fa64a7bb375995d76dcba55de623, adding docs/LANDING_UX_POLISH_BACKLOG_RU.md. PR #121 includes this commit as its second parent through merge commit 2c1e6bd811546a87f0ac86bc5e550dd9a31aeb13. Last functional code SHA remains 363bb5c46c6a0fcad55bb5d243289e065ee6450a pending Gateway CI.
