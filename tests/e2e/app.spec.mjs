@@ -408,6 +408,18 @@ test('provider connection loads filtered model catalog into selector and key del
   await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'empty');
 });
 
+test('switching providers explains an empty API key field inline', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(element => element.open))) {
+    await page.locator('#legacyProviderSettings > summary').click();
+  }
+  await page.locator('#providerPreset').selectOption('custom');
+  await expect(page.locator('#apiKey')).toHaveValue('');
+  await expect(page.locator('#apiKeyStatus')).toBeVisible();
+  await expect(page.locator('#apiKeyStatus')).toHaveText('Ключ не сохранён для выбранного провайдера.');
+});
+
 test('catalog remains usable when the saved model is missing from the live provider list', async ({ page }) => {
   await page.route('https://api.example.test/v1/models', route => route.fulfill({
     status: 200, contentType: 'application/json',
