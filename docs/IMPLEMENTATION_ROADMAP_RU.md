@@ -102,6 +102,12 @@ PR #53 merged opt-in local transcription for audio files attached from disk; no 
 - Every improvement gets baseline, hypothesis, golden/adversarial cases, rollback, resource budget and acceptance threshold.
 - Update EVALS + PROJECT_STATE + accepted improvements on every merge. Promote only if reproducible improvement and no regression in safety, latency, context, privacy or resource limits.
 
+## Current release checkpoint — 2026-10-30
+
+- PR #121 (first free landing V1/client UX) merged at `f4d880f`; PR #122 (Gateway liveness/readiness) merged at `fd4f0a1`.
+- Exact-head CI passed on both PRs, including Gateway, Quality/Chromium/Jekyll/published-site smoke, Graphify and provenance/dead-code gates.
+- The first landing V1 stack is frozen. Remaining work is visual/accessibility polish, post-merge Pages verification and owner-only runtime gates; new product capabilities remain post-landing backlog.
+
 ## Что владельцу делать после merge client UI
 
 1. Open [START_HERE_RU.md](START_HERE_RU.md).
@@ -114,7 +120,7 @@ PR #53 merged opt-in local transcription for audio files attached from disk; no 
 ## Mobile ergonomics — staged retarget of legacy PR #37
 
 - **First slice (PR #61 merged and CI-verified):** full-text viewer and copy controls for user/assistant messages, Clipboard API failure fallback, and a jump-to-latest control. Keeps the current document/audio attachments, storage safeguards and local voice prototype rather than replacing `index.md` with the stale legacy branch. Exact-head Quality/Chromium and provenance passed; native iOS Safari/real-device behavior remains unverified.
-- **Active bounded retargets:** PR #71 addresses composer placement and visual-viewport handling as a standalone current-main slice with a new-chat/mobile-resize E2E regression. Exact-head checks are pending and native iOS Safari remains unverified. **Still deferred:** compact mode/search/research toolbar, per-chat mode preferences, sidebar/popover layering and extended search-depth controls. The legacy PR #37 has reproducible Playwright failures involving hidden selectors, clipboard permissions, duplicate theme controls, language selector ambiguity and click interception; do not merge it wholesale.
+- **Merged current-main slices:** PR #71 delivered stable bottom composer and visual-viewport handling; PR #117–#121 completed header hierarchy, chat menus, provider routing, project/sidebar preferences, orthogonal per-chat settings and Research Studio. Exact-head Chromium/Quality passed for PR #121; native iOS Safari and remaining visual/accessibility polish stay manual. The legacy PR #37 remains superseded and must not be merged wholesale.
 - **Acceptance gate:** move one slice at a time onto current `main`, fix locators against the visible user interface rather than force-clicking hidden controls, pass current-head Chromium + published-site smoke, then close the legacy PR as superseded only after its unique accepted work has been migrated.
 
 
@@ -128,7 +134,7 @@ PR #53 merged opt-in local transcription for audio files attached from disk; no 
 
 ## Проверенный срез реализации — 2026-10-28
 
-- **PR #76 merged:** Graphify code-only navigation is now run on meaningful source/architecture changes and weekly. Current artifact: 965 nodes, 2706 edges, 59 files; useful for impact navigation, not runtime proof.
+- **PR #76 merged:** Graphify code-only navigation runs on meaningful source/architecture changes and weekly. Latest inspected artifact: 1,109 nodes, 3,103 edges, 53 communities; useful for impact navigation, not runtime proof.
 - **PR #72 merged:** compact search/functions menus, separate processing mode vs search depth, per-chat preferences, honest connector state and browser regression coverage. Exact-head Quality/Chromium/published-site smoke passed.
 - **PR #77 merged:** RRF combines FTS5/BM25 and lexical-concept-graph candidate ranks with deterministic ordering. Exact-head Gateway tests, Quality/Chromium/published-site smoke passed. RAG remains disabled by default; no production relevance improvement is claimed without a labelled >=50-query set.
 - **Post-merge gate:** code SHA `91557e4eab1b122341bed578cdf4775ff867007f` passed Gateway, Quality/Chromium, Graphify and Pages; subsequent docs-only main `337e38690af8f22a712c6442192c5ea62d354c3d` passed Quality and Pages. Re-run these gates for the next source change; live VPS/device gates remain separate.
