@@ -248,3 +248,9 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Project state and machine snapshot refreshed at commit a22e01e9d36d67e86b1bbf37b119dcc66cb9ada3; current main is e6404d510229fa64a7bb375995d76dcba55de623. The main commit is documentation-only.
 - PR #121 contains main via merge commit 2c1e6bd811546a87f0ac86bc5e550dd9a31aeb13. Last inspected compare was 200 ahead / 0 behind; query live before acting because each docs/code checkpoint advances the head.
 - Gateway CI is required for audio process cancellation fix 363bb5c; previous Gateway #483 passed before that fix. Current exact-head Quality/Chromium/Pages not green.
+
+
+## Landing voice scope — 2026-10-30
+- Landing capability card and roadmap now enumerate editable STT, conversational voice/interruption, selected-text TTS, whole-message TTS and multi-message playback queue as first functional update requirements.
+- Existing ASR/Piper/half-duplex code is distinguished from unfinished streaming/AEC/barge-in/queue/device acceptance. Playwright assertions added; current exact-head CI pending.
+- ASR candidates Nemotron 3.5 Streaming 0.6B, Qwen3-ASR-0.6B and Parakeet RNNT 1.1B recorded in PROJECT_STATE and the three-role audit tracker. Whisper remains baseline until benchmark.
