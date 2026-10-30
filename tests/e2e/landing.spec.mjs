@@ -4,13 +4,28 @@ const LANDING_PATH = process.env.LIVE_SITE_URL
   ? new URL('landing/', process.env.LIVE_SITE_URL.replace(/\/?$/, '/')).toString()
   : '/landing/';
 
-test('V1 landing distinguishes the free static UI from model inference and hosted services', async ({ page }) => {
+test('V1 landing has accurate metadata, working CTAs and honest product boundaries', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(LANDING_PATH, { waitUntil: 'domcontentloaded' });
 
-  await expect(page).toHaveTitle(/aLandi/);
+  await expect(page).toHaveTitle(/aLandi.*собственным gateway/i);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
+  await expect(page.locator('h1')).toHaveCount(1);
   await expect(page.locator('h1')).toContainText('Сохраняй контроль над средой');
-  await expect(page.getByRole('link', { name: /Открыть рабочую среду/ })).toHaveAttribute('href', 'https://dorpnay.github.io/skills-github-pages/');
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /бесплатная|AI-среда|gateway/i);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    'href',
+    'https://dorpnay.github.io/skills-github-pages/landing/'
+  );
+
+  await expect(page.getByRole('link', { name: /Открыть рабочую среду/ })).toHaveAttribute(
+    'href',
+    'https://dorpnay.github.io/skills-github-pages/'
+  );
+  await expect(page.getByRole('link', { name: /Пошаговый запуск/ })).toHaveAttribute(
+    'href',
+    /docs\/START_HERE_RU\.md$/
+  );
   await expect(page.locator('.hero .note')).toContainText('бесплатная статическая страница');
   await expect(page.locator('.hero .note')).toContainText('публичный hosted AI endpoint этим сайтом не предоставляется');
   await expect(page.locator('#stack')).toContainText('Это целевая схема развёртывания');
@@ -18,8 +33,27 @@ test('V1 landing distinguishes the free static UI from model inference and hoste
   await expect(page.locator('nav a[href="#roadmap"]')).toBeVisible();
   await expect(page.locator('footer')).toContainText('Реестр финализации UI');
 
-  const width = await page.evaluate(() => ({ viewport: innerWidth, document: document.documentElement.scrollWidth }));
-  expect(width.document).toBeLessThanOrEqual(width.viewport);
+  const metadata = await page.evaluate(() => ({
+    scripts: document.scripts.length,
+    emptyLinks: [...document.querySelectorAll('a')].filter(link => !link.getAttribute('href')?.trim()).length,
+    canonical: document.querySelector('link[rel="canonical"]')?.href
+  }));
+  expect(metadata.scripts).toBe(0);
+  expect(metadata.emptyLinks).toBe(0);
+  expect(metadata.canonical).toBe('https://dorpnay.github.io/skills-github-pages/landing/');
+});
+
+test('landing has no horizontal overflow at common mobile, tablet and desktop widths', async ({ page }) => {
+  await page.goto(LANDING_PATH, { waitUntil: 'domcontentloaded' });
+
+  for (const width of [320, 360, 390, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    const dimensions = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      document: document.documentElement.scrollWidth
+    }));
+    expect(dimensions.document, `horizontal overflow at ${width}px`).toBeLessThanOrEqual(dimensions.viewport);
+  }
 });
 
 test('landing roadmap tickers start only when a planned item is opened', async ({ page }) => {
