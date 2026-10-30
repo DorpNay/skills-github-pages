@@ -2,25 +2,27 @@
 
 This is the short entry point for an assistant or engineer. Use the detailed navigation index at `project-reference/FILE_ORIENTER_RU.md`, the machine-readable state at `docs/PROJECT_STATE.yaml`, and the chronological log at `docs/VOLLEY_LOG.md`.
 
-## Current working checkpoint — 2026-10-30
+## Current working checkpoint — 2026-10-31
 
-- **Current main SHA:** `fd4f0a105183feb23e0f4e4697446235de9ffe9a` — PR #121 (first free landing V1/client UX) and PR #122 (Gateway liveness/readiness) are merged.
-- **PR #121:** merged at `f4d880f9648989f4fe48ddd2284220b3606c3b86`; exact head `e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b`; all six workflow groups passed, including Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code.
-- **PR #122:** merged at `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; exact head `94d871dbf76a5364ebb3c61d86cc763affa5eaa1`; Gateway, Quality/Chromium/Jekyll/published-site smoke, Graphify and Dead Code passed.
-- **Open PR queue:** PR #123 is the only active reconciliation PR; exact head `fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222` passed all six workflow groups and is ready to merge. It is excluded from its own freshness snapshot. **Open issue queue:** issue #111 only; it remains open for owner-only/live-host gates and must not be closed just to reach zero.
-- **V1 freeze:** no new product capabilities or runtime components in the first landing. Improve only inside the selected HTML/CSS/JavaScript + Jekyll/GitHub Pages and existing FastAPI/Ollama stack: UX, polish, accessibility, reliability, performance, security, tests and documentation.
-- **Canonical UI checklist:** `docs/V1_UI_FINALIZATION_RU.md`; broader release and future backlog: `docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`; detailed remaining visual work: `docs/LANDING_UX_POLISH_BACKLOG_RU.md`.
-- **Agent/helper boundary:** 64 roles are logical profiles, not 64 processes. A manual opt-in memory helper exists behind operator-configured `ALANDI_HELPER_MODEL`; general helper dispatch/model selection is not implemented. Use the synthetic benchmark harness only as a transport/latency smoke, not quality proof.
-- **Not verified:** post-merge Pages deployment on the exact merge commit; native iPhone Safari/VoiceOver; live VPS/Tunnel/Ollama/provider credentials; target-host model RAM/latency/quality; real voice runtime; production RAG corpus; OAuth/Drive; arbitrary-code sandbox.
-- **Canonical detailed tracker:** `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`. It contains the chronology, legacy-branch triage, V1 freeze and per-step completion markers.
+- **Verified main SHA:** `e78a73b25725bfa63370d9946887cbbacbf51b82` — PR #123 merged. This is the last verified repository baseline in this checkpoint; re-read live GitHub before acting.
+- **PR #123:** merged at `e78a73b25725bfa63370d9946887cbbacbf51b82`; exact PR head `fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222`; six workflow groups passed on exact head (Gateway, Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code).
+- **Open PR queue at capture:** #124 dependency lock/Python matrix; #125 dedicated agent-platform research/design (Draft); #126 code currency/dependency audit (Draft). Exact-head workflow evidence: #124 `d10afe2b5bc1cbe84b9396cbfcbe6a3d9ac881ff` (Gateway, Quality, Graphify, Provenance, Dead Code passed); #125 `7efaa06f0ba4c428501dff325746d916dba983cd` (Quality, Freshness, Provenance passed); #126 `21104af6733b6ea4eb04bdec6d409c4a2d347558` (all six workflow groups passed). **Open issue:** #111 owner/live-host release gate.
+- **Master task registry:** `docs/MASTER_TASK_REGISTRY_RU.md` — lossless initial migration of 275 open/partial checklist rows from six historical sources, plus new owner-directed tasks. 218 are unchecked and 57 partial before deduplication; do not treat these as 275 unique requirements.
+- **Continuity protocol:** every new chat starts here, then detailed orienter, master registry, machine state and latest volley. Verify current main SHA, open PR/issue IDs and exact PR heads from GitHub. Keep all work as a numbered list with stable task IDs; mark complete only with evidence. Update all five freshness records together after a state-changing milestone.
+- **Agent platform:** PR #125 is a research/design draft, not a runtime implementation. Its 64 roles are logical profiles, not a cap and not 64 model processes. Owner now explicitly wants at least five concurrently running independent workers alongside the main model, with a design that can scale to hundreds/thousands of logical tasks/workers using queues, leases, backpressure and resource-aware scheduling.
+- **VERT/conversion:** research whether VERT's WASM/UI ideas or individual engines fit; do not copy its AGPL/GPL code or embed the UI without license review. Evaluate user-facing file conversion separately from model-facing document normalization.
+- **Output limits:** current UI contains fixed tool-loop caps and a fallback context estimate; these are orchestration/context controls, not proof that assistant output is artificially capped. Audit actual request payloads, provider behavior and truncation before changing anything. Do not cut model answers to fit aLandi display formats.
+- **Release boundary:** first free static V1 remains frozen for feature expansion; future agent/conversion/research work belongs in separately reviewed future-phase PRs. Live VPS/Ollama, target-host performance, native iPhone, real voice, production RAG, OAuth and sandbox acceptance remain separate owner/environment gates.
 
 ## First-read order
 
 1. **`project-reference/FILE_ORIENTER_RU.md`** — current checkpoint, repository map, last verified stage, blockers and next action.
-2. **`docs/PROJECT_STATE.yaml`** — feature/runtime status, flags, verification evidence and unresolved risks.
-3. **`docs/VOLLEY_LOG.md`** — chronological stage log; read the newest entry first.
-4. **Live GitHub main, PRs, Issues and exact-head checks** — stored SHAs and queue counts are snapshots, never live truth.
-5. Read only source, tests, architecture and operational docs relevant to the task. Use `docs/ALANDI_ARCHITECTURE_MAP_RU.md` for module boundaries and the implementation guide before VPS operations.
+2. **`docs/MASTER_TASK_REGISTRY_RU.md`** — lossless task inventory with stable IDs; reconcile duplicates only after mapping evidence.
+3. **`docs/PROJECT_STATE.yaml`** — feature/runtime status, flags, verification evidence and unresolved risks.
+4. **`docs/VOLLEY_LOG.md`** — chronological stage log; read the newest entry first.
+5. **Live GitHub main, PRs, Issues and exact-head checks** — stored SHAs and queue counts are snapshots, never live truth.
+6. Read only source, tests, architecture and operational docs relevant to the task. Use `docs/ALANDI_ARCHITECTURE_MAP_RU.md` for module boundaries and the implementation guide before VPS operations.
+
 
 ## Keeping orientation current
 
@@ -28,6 +30,8 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - The current PR is excluded from its own open-PR comparison; no other queue difference is ignored.
 - If the main SHA or queue changes, reconcile the snapshot, this file, the detailed orienter, `docs/PROJECT_STATE.yaml`, and `docs/VOLLEY_LOG.md` together. CI reports drift; it does not silently rewrite or commit state.
 - After every meaningful stage, record exact files/decisions, SHA/PR, tests actually run, risks, rollback, and next action. Never claim a green CI change is deployed on a live host.
+- Every task must have a stable ID in the master registry or a canonical source checklist. Report the task list first, then update each item as it is completed; retain partial/unverified status until evidence exists.
+- Never overwrite the historical source checklists during migration. Reconcile duplicate rows by linking IDs; preserve original source text and line provenance.
 
 ## Three-role audit — post-merge checkpoint
 
