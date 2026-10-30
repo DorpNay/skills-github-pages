@@ -3,7 +3,7 @@
 **Дата:** 2026-10-30  
 **Ветка:** `feat/chat-settings-orthogonal-controls-20261030`  
 **PR:** #121  
-**Основа:** `main 2bda22229cba3576628f92c821bb6e1562d8abc5`  
+**Стартовая основа:** `main 2bda22229cba3576628f92c821bb6e1562d8abc5`  
 **Назначение:** единый журнал дополнительных поручений пользователя. Отмечать каждый шаг только после фактического выполнения и указывать SHA/evidence.
 
 ## 0. Полный список поручений пользователя
@@ -186,6 +186,14 @@ Dead-code workflow is report-only; its findings are candidates, not deletion aut
 - Updated `IMPROVEMENT_SELECTION.md` to explain the cleanup and retained source files.
 - Kept `temp/1` (76-point research) and `temp/2` (AI Mobile Agent improvement research) because they contain substantial historical research; no runtime imports or build dependencies reference them. Archive/migration can be considered after their remaining useful ideas are fully reconciled.
 - No production source file was deleted. Dead-code report's only Vulture warning remains a false positive.
+
+
+
+### Main/PR synchronization and complete landing checklist — 2026-10-30
+- Main advanced by documentation-only commit `e6404d510229fa64a7bb375995d76dcba55de623`, adding `docs/LANDING_UX_POLISH_BACKLOG_RU.md` with remaining landing/app screenshots, responsive checks, pause controls, accessibility, popovers/dialogs, settings, menus and published Pages smoke.
+- PR #121 was synchronized using a two-parent merge commit `2c1e6bd811546a87f0ac86bc5e550dd9a31aeb13`; compare after sync: 194 ahead / 0 behind; GitHub reports mergeable=true, mergeable_state=unstable because required checks are incomplete.
+- Merged the latest landing polish checklist into `docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`; all screenshot, keyboard/screen-reader, mobile, popover, dialog, focus, long-list and published deployment checks are now represented in the consolidated release backlog.
+- Current main base is `e6404d510229fa64a7bb375995d76dcba55de623`; last functional audio fix remains `363bb5c46c6a0fcad55bb5d243289e065ee6450a`.
 
 ## 9. Дополнительные выводы по моделям и оркестрации
 
