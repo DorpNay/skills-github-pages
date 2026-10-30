@@ -119,7 +119,7 @@
 ### 12. Тема, язык, анимации — [~]
 - [x] Базовые theme/language state синхронизируются между header/sidebar/settings (PR #120/#121).
 - [x] Есть reduced-motion стили для существующих анимаций.
-- [~] Новый roadmap ticker останавливается при prefers-reduced-motion и при пользовательском motion=off/reduced.
+- [x] Landing roadmap ticker запускается только в раскрытом пункте и поддерживает явную паузу/возобновление; [x] prefers-reduced-motion оставляет читаемый статичный текст. App ticker и пользовательский motion=off/reduced требуют exact-head проверки.
 - [ ] Проверить полную RU/EN копию, светлую тему модалок, статусов, подсказок и Roadmap.
 
 **Приёмка:** нет конкурирующих источников темы/языка; пользовательское системное preference соблюдается; содержание понятно без анимации.
@@ -180,7 +180,7 @@
 - [x] Статусы voice/docs/self-hosted и multi-user boundaries не выдаются за готовые.
 - [~] Усилить copy: «бесплатный статический интерфейс» не означает «бесплатный inference», hosted AI endpoint не предоставляется.
 - [~] Добавить открываемый Roadmap с маркером 1nv3nt10n 1n PrOc3ss… только у направлений, которые ещё разрабатываются/планируются.
-- [~] Browser E2E на структуру/CTA, метаданные, отсутствие пустых ссылок, responsive 320/360/390/768/1024/1440px, Roadmap details и reduced-motion добавлены в PR #121; ожидается новый exact-head Chromium run.
+- [~] Browser E2E на структуру/CTA, метаданные, отсутствие пустых ссылок, responsive 320/360/390/768/1024/1440px, Roadmap details и reduced-motion есть; добавлен тест pause/resume ticker (commit b213c8a); ожидается exact-head Chromium run.
 - [~] E2E проверяет lang/title/description/canonical/CTA/непустые ссылки; Jekyll build проходит в текущем CI; фактический published Pages path требует успешного exact-head smoke после merge.
 
 ## 3. Правила для индикатора 1nv3nt10n 1n PrOc3ss…
@@ -193,6 +193,10 @@
 - При prefers-reduced-motion: reduce и пользовательском motion=off/reduced анимация выключается, остаётся неподвижная подпись.
 - Не использовать aria-live для бегущей строки и не обновлять её псевдо-процентами/фальшивыми фазами.
 - Готовые функции не маркировать этим текстом. Для настоящего выполнения использовать реальные состояния queued/running/succeeded/failed/cancelled с источником и временем обновления.
+
+## 3a. Остаток визуального polish после PR #121
+
+Подробный живой реестр: [LANDING_UX_POLISH_BACKLOG_RU.md](LANDING_UX_POLISH_BACKLOG_RU.md). В нём собраны landing screenshot review, typography/contrast/spacing, RU/EN/light-dark, menus/popovers/dialog focus and sticky actions, sidebar/project/chat states, Research/Functions menu truthfulness, native iPhone Safari и VoiceOver. Реализовывать по шесть больших этапов, не повторяя закрытые PR #115–120.
 
 ## 4. Исследование UI — два раунда
 
