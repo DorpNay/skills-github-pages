@@ -6,7 +6,6 @@ new facts default to candidate, each node requires provenance, and contradiction
 from __future__ import annotations
 
 import hashlib
-import hashlib
 import json
 import os
 import re
@@ -218,7 +217,7 @@ class MemoryManager:
         sql = "SELECT * FROM memory_nodes WHERE " + " AND ".join(clauses) + " ORDER BY recorded_at DESC, id LIMIT ?"  # nosec B608 -- SQL fragments are fixed; values are bound separately.
         args.append(limit)
         with closing(self._connect()) as db:
-            rows = db.execute(sql, args).fetchall()
+            rows = db.execute(sql, args).fetchall()  # nosec B608 -- SQL is fixed structure with bound values.  # nosemgrep: python.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query
         return [self._to_node(row) for row in rows]
 
     def search_nodes(self, query: str, *, scope: str, scope_id: str,

@@ -228,7 +228,7 @@ const suites = {
       assert.ok(blocks.length > 0, 'No inline application script found.');
       blocks.forEach((block, index) => {
         // nosemgrep: javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag -- vm.Script parses source only; it never inserts a DOM script element.
-        try { new Script(block[2], { filename: 'index.md:inline-script-' + index }); }
+        try { new Script(block[2], { filename: 'index.md:inline-script-' + index }); } // nosemgrep: javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag -- vm.Script parses source; it does not create a DOM script element.
         catch (error) { console.error(error.stack || String(error)); throw error; }
       });
     }],
