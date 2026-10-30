@@ -414,6 +414,8 @@ test('switching providers explains an empty API key field inline', async ({ page
   if (!(await page.locator('#legacyProviderSettings').evaluate(element => element.open))) {
     await page.locator('#legacyProviderSettings > summary').click();
   }
+  await expect(page.locator('#modelCatalogStatus')).toHaveText('Встроенный каталог моделей.');
+  await expect(page.getByText('Выбери провайдера. Ключ и соединение проверяются автоматически.')).toHaveCount(0);
   await page.locator('#providerPreset').selectOption('custom');
   await expect(page.locator('#apiKey')).toHaveValue('');
   await expect(page.locator('#apiKeyStatus')).toBeVisible();
