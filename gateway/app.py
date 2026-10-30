@@ -396,6 +396,9 @@ def _bounded_zip_entries(data: bytes) -> tuple[zipfile.ZipFile, dict[str, zipfil
         if entry.flag_bits & 0x1:
             archive.close()
             raise HTTPException(400, "Encrypted document archives are not supported")
+        if name in indexed:
+            archive.close()
+            raise HTTPException(400, "Document archive contains duplicate entry names")
         total += entry.file_size
         if total > DOCUMENT_MAX_EXPANDED_BYTES:
             archive.close()

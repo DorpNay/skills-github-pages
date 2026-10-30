@@ -204,3 +204,19 @@ def test_rejects_docx_doctype_and_entity_declarations(xml):
     with client(config(document_extraction_enabled=True)) as app:
         response = app.post("/v1/documents/extract?filename=hostile.docx", content=body, headers=AUTH)
     assert response.status_code == 400
+
+def test_rejects_duplicate_zip_entry_names():
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
+        archive.writestr("[Content_Types].xml", '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>')
+        archive.writestr("word/document.xml", "<document><safe/></document>")
+        archive.writestr("word/document.xml", "<!DOCTYPE document><document/>")
+
+    with client(config(document_extraction_enabled=True)) as app:
+        response = app.post(
+            "/v1/documents/extract?filename=duplicate.docx",
+            content=buffer.getvalue(),
+            headers=AUTH,
+        )
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Document archive contains duplicate entry names"
