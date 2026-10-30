@@ -2844,7 +2844,7 @@ permalink: /
       if (!quiet) showToast('Каталоги провайдеров: ' + available + '/' + providers.length + ' актуальны; обновлено сейчас: ' + refreshed + '.');
       return { refreshed, available, skipped: providers.length - available, results };
     }
-    function updateApiKeyLamp(state,message){const shell=$('apiKeyShell'),status=$('apiKeyStatus');if(!shell||!status)return;shell.dataset.state=state;const failed=state==='error';status.textContent=failed?(getUiLanguage()==='en'?'Connection failed. Check provider details.':'Не удалось подключиться. Проверь данные провайдера.'):'';status.classList.toggle('hidden',!failed);}
+    function updateApiKeyLamp(state,message){const shell=$('apiKeyShell'),status=$('apiKeyStatus');if(!shell||!status)return;shell.dataset.state=state;const showMessage=state==='error'||state==='empty';status.textContent=showMessage?(String(message||'').trim()||(getUiLanguage()==='en'?'Check the selected provider settings.':'Проверь настройки выбранного провайдера.')):'';status.classList.toggle('hidden',!showMessage);}
     async function providerKeyFingerprint(value) {
       if(!value||!globalThis.crypto?.subtle)return '';
       try {
@@ -2913,7 +2913,7 @@ permalink: /
         return;
       }
       if(provider==='pollinations'&&inputKey&&!getProviderRequestKey('pollinations')){updateApiKeyLamp('pending','App Key задан. Подключи Pollinations через OAuth PKCE; временный access token не сохраняется в localStorage.');return;}
-      if(!inputKey){updateApiKeyLamp('empty','Ключ не введён. Для aLandi Cloud настрой ключ в верхней карточке.');return;}
+      if(!inputKey){updateApiKeyLamp('empty',getUiLanguage()==='en'?'No key is saved for the selected provider.':'Ключ не сохранён для выбранного провайдера.');return;}
       const verificationKey=provider==='pollinations'?getProviderRequestKey(provider):inputKey;
       if(!verificationKey){updateApiKeyLamp('pending','Ключ задан, но сеанс провайдера ещё не подключён.');return;}
       let v=null;try{v=JSON.parse(safeGet('ai_provider_connection_'+provider)||'null');}catch(_){}
