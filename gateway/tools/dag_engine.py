@@ -94,12 +94,13 @@ class ToolDAG:
             registered = self.tools[node.tool_name]
             contract = registered.contract
             args = validate_arguments(contract, node.arguments)
-            if not contract.read_only:
+            requires_approval = contract.requires_approval or not contract.read_only
+            if requires_approval:
                 token = tickets.get(node.id)
                 if approval_registry is None or not token or not approval_registry.consume(
                     token, action=node.tool_name, arguments=args, scope=scope, actor_id=actor_id
                 ):
-                    raise DAGError(f"side-effect tool node {node.id} lacks a valid one-time approval")
+                    raise DAGError(f"tool node {node.id} lacks a valid one-time approval for its authenticated actor")
             dependencies = {dep_id: results[dep_id] for dep_id in node.dependencies}
             async def invoke():
                 returned = registered.handler(args, dependencies)
@@ -113,14 +114,25 @@ class ToolDAG:
             return await asyncio.wait_for(invoke(), timeout=self.per_tool_timeout_seconds)
 
         for level in levels:
-            readers = [node for node in level if self.tools[node.tool_name].contract.read_only]
-            mutators = [node for node in level if not self.tools[node.tool_name].contract.read_only]
+            # Only unguarded read-only operations are safe to fan out.
+            # Sensitive reads (requires_approval) and every mutation stay sequential,
+            # so approval failures remain explicit and cannot be hidden by gather().
+            readers = [
+                node for node in level
+                if self.tools[node.tool_name].contract.read_only
+                and not self.tools[node.tool_name].contract.requires_approval
+            ]
+            guarded = [
+                node for node in level
+                if not self.tools[node.tool_name].contract.read_only
+                or self.tools[node.tool_name].contract.requires_approval
+            ]
             if readers:
                 outputs = await asyncio.gather(*(run(node) for node in readers), return_exceptions=True)
                 failures = [output for output in outputs if isinstance(output, BaseException)]
                 if failures:
-                    raise DAGError("one or more read-only tool nodes failed") from failures[0]
+                    raise DAGError("one or more unguarded read-only tool nodes failed") from failures[0]
                 results.update({node.id: output for node, output in zip(readers, outputs)})
-            for node in mutators:
+            for node in guarded:
                 results[node.id] = await run(node)
         return results

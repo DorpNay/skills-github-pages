@@ -1,3 +1,5 @@
+import asyncio
+
 import httpx
 from fastapi.testclient import TestClient
 
@@ -127,3 +129,48 @@ def test_transcription_rejects_unavailable_local_runtime(tmp_path):
         response = app.post("/v1/audio/transcriptions", content=b"fake-audio",
                             headers={"Authorization": f"Bearer {API_KEY}", "Content-Type": "audio/webm"})
     assert response.status_code == 503
+
+
+def test_transcription_timeout_is_returned_after_one_process_kill(tmp_path, monkeypatch):
+    binary = make_executable(tmp_path / "whisper-cli")
+    ffprobe = make_executable(tmp_path / "ffprobe")
+    ffmpeg = make_executable(tmp_path / "ffmpeg")
+    model = tmp_path / "model.gguf"
+    model.write_bytes(b"model")
+
+    class TimeoutProcess:
+        def __init__(self):
+            self.returncode = None
+            self.kill_calls = 0
+
+        async def communicate(self):
+            raise asyncio.TimeoutError
+
+        async def wait(self):
+            if self.returncode is None:
+                raise asyncio.TimeoutError
+            return self.returncode
+
+        def kill(self):
+            self.kill_calls += 1
+            if self.returncode is not None:
+                raise ProcessLookupError("process already exited")
+            self.returncode = -9
+
+    child = TimeoutProcess()
+
+    async def fake_create_subprocess_exec(*args, **kwargs):
+        assert args[0] == ffprobe
+        return child
+
+    monkeypatch.setattr(gateway_app.asyncio, "create_subprocess_exec", fake_create_subprocess_exec)
+    settings = config(audio_transcription_enabled=True, audio_transcription_binary=binary,
+                      audio_transcription_model=str(model), audio_transcription_ffprobe_binary=ffprobe,
+                      audio_transcription_ffmpeg_binary=ffmpeg)
+    with client(settings, upstream_handler) as app:
+        response = app.post("/v1/audio/transcriptions", content=b"fake-audio",
+                            headers={"Authorization": f"Bearer {API_KEY}", "Content-Type": "audio/webm"})
+
+    assert response.status_code == 504, response.text
+    assert child.kill_calls == 1
+    assert child.returncode == -9

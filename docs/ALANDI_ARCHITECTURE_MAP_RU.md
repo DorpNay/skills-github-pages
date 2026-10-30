@@ -1,6 +1,6 @@
 # aLandi — карта архитектуры и модулей
 
-**Срез:** `main` = `3887b408988e0476251736a8e7a3e3374eb2ce58`.  
+**Срез:** `main` base = `e6404d510229fa64a7bb375995d76dcba55de623`; UI candidate PR #121 code head at audit = `f9d5afaae983675d2c616e3fbc70942840d314e5`.  
 **Тип:** кураторская схема границ модулей по дереву репозитория и фактическим route/function declarations. Это **не** автоматически извлечённый call graph и не доказательство live deployment.
 
 ## 1. Системная схема
@@ -102,3 +102,15 @@ flowchart TD
 - Workflow `.github/workflows/graphify-pilot.yml` запускается при изменении самого workflow на `main`, при PR с изменением workflow/ignore/architecture map и вручную через `workflow_dispatch`.
 - Разрешения: только `contents: read`; checkout не сохраняет credentials; semantic/model processing отключён.
 - Результат хранится как краткоживущий artifact, не коммитится. После выполнения нужно проверить отчёт и минимум 10 навигационных вопросов; один лишь зелёный exit code не доказывает полезность графа.
+
+## 7. Graphify inspection — PR #121 audit (2026-10-30)
+
+- Artifact from Graphify workflow #262, commit `f9d5afaae983675d2c616e3fbc70942840d314e5`: 1,109 nodes, 3,103 edges, 53 communities; report detects no import cycles.
+- Main hubs: `create_app()` 66 edges; `showToast()` 51; `getUiLanguage()` 45; `safeGet()` 42; `Settings` 32; `LazyGraphRAG` 31; `authorize()` 31; `safeSet()` 29; `MemoryManager` 28; `client_for()` 28.
+- The centrality confirms integration hotspots, not defects. Keep current architecture; refactor only with a bounded contract-preserving change and regression coverage.
+- Graphify job was later cancelled by branch updates, but its artifact and report were uploaded and inspected. Do not mark the complete workflow green from this partial artifact alone.
+- Dead-code report #389 had one Vulture warning at `gateway/voice/speculative_transaction.py:39` for the `BufferedTTS.synthesize_prefix(max_duration_ms=...)` protocol parameter. It is part of the adapter contract and is a false positive; no file or code deletion is justified.
+
+
+## Main synchronization — 2026-10-30
+Main advanced to documentation-only commit e6404d510229fa64a7bb375995d76dcba55de623, adding docs/LANDING_UX_POLISH_BACKLOG_RU.md. PR #121 includes this commit as its second parent through merge commit 2c1e6bd811546a87f0ac86bc5e550dd9a31aeb13. Last functional code SHA remains 363bb5c46c6a0fcad55bb5d243289e065ee6450a pending Gateway CI.

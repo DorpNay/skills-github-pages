@@ -22,6 +22,8 @@ def canonical_action_digest(action: str, arguments: dict, scope: str) -> str:
         raise ApprovalError("invalid action")
     if not isinstance(scope, str) or not scope or len(scope) > 160:
         raise ApprovalError("invalid scope")
+    if not isinstance(arguments, dict):
+        raise ApprovalError("action arguments must be a JSON object")
     try:
         body = json.dumps({"action": action, "arguments": arguments, "scope": scope},
                           ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False)
@@ -69,9 +71,10 @@ class ApprovalRegistry:
     def consume(self, token: str, *, action: str, arguments: dict, scope: str,
                 actor_id: str | None = None) -> bool:
         """Atomically consume matching ticket; any mismatch invalidates this attempt."""
-        if not isinstance(token, str) or not 32 <= len(token) <= 256:
+        if (not isinstance(token, str) or not 32 <= len(token) <= 256
+                or not token.isascii() or not all(char.isalnum() or char in "-_" for char in token)):
             return False
-        token_hash = hashlib.sha256(token.encode("ascii", errors="ignore")).hexdigest()
+        token_hash = hashlib.sha256(token.encode("ascii")).hexdigest()
         try:
             expected = canonical_action_digest(action, arguments, scope)
         except ApprovalError:
@@ -81,6 +84,8 @@ class ApprovalRegistry:
             record = self._records.pop(token_hash, None)
         if record is None or record.expires_at <= now or record.digest != expected:
             return False
-        if actor_id is not None and actor_id != record.actor_id:
+        # An approval ticket is bound to the authenticated human who issued it.
+        # Missing identity must fail closed exactly like an identity mismatch.
+        if not isinstance(actor_id, str) or not actor_id or len(actor_id) > 160:
             return False
-        return True
+        return secrets.compare_digest(actor_id.encode('utf-8'), record.actor_id.encode('utf-8'))

@@ -2,15 +2,17 @@
 
 This is the short entry point for an assistant or engineer. Use the detailed navigation index at `project-reference/FILE_ORIENTER_RU.md`, the machine-readable state at `docs/PROJECT_STATE.yaml`, and the chronological log at `docs/VOLLEY_LOG.md`.
 
-## Verified repository checkpoint — 2026-10-29
+## Current working checkpoint — 2026-10-30
 
-- **Current main SHA:** `80597f61c000d691e95d67893edea60e75da1033` — PR #113 pinned GitHub Actions to immutable SHAs; post-merge Quality Sentinels #40915070855 and Pages deployment #40915070655 succeeded on this exact SHA.
-- **Latest functional UI baseline:** `ed2c4c7ee3a67c7a0cf5b541c1ab6206609dd32c` — modal scrims and inert outside-tap behavior (PR #115). PR #114 added an empty-by-default user system prompt and context-budget headroom; PR #71 stabilized mobile composer docking.
-- **Merged and verified on exact PR heads:** #113 immutable GitHub Actions pins; #115 modal scrims/outside-tap UX; #114 prompt default/context budgeting; #71 mobile composer; #84 CORS canonicalization; #81 deployment preflight; #83 SQLite delta; #82 readiness audit; #106 RAG evaluator; #107 private/shared memory; #108 launch page/runbook.
-- **Latest main CI:** Quality Sentinels [#40915070855](https://github.com/DorpNay/skills-github-pages/actions/runs/40915070855), Pages deployment [#40915070655](https://github.com/DorpNay/skills-github-pages/actions/runs/40915070655), Gateway Tests [#40915070886](https://github.com/DorpNay/skills-github-pages/actions/runs/40915070886), provenance [#40915070933](https://github.com/DorpNay/skills-github-pages/actions/runs/40915070933) and Graphify [#40915070939](https://github.com/DorpNay/skills-github-pages/actions/runs/40915070939) succeeded on exact main SHA. This is not proof of a live VPS deployment.
-- **Open PR queue:** none at the state-refresh baseline; verify the live queue before acting.
-- **Open issue queue:** only #111 remains; it tracks owner/live-host release gates. Research-only issues #88–#92 and #96–#104 were closed after transferring unresolved actions to #111.
-- **Runtime boundary:** GitHub Pages browser smoke is verified; live VPS/gateway, Ollama model performance, voice artifacts/device playback, OAuth credentials and target-host measurements remain unverified.
+- **Current main SHA:** e6404d510229fa64a7bb375995d76dcba55de623 — PR #120 aligned sidebar hierarchy, project/memory navigation and synchronized theme/language preferences. Its merge commit reports Chromium, published Pages smoke, Jekyll, integrity, security, context and Graphify checks passed; a separate combined-status query returned no status entries for this merge SHA, so do not invent run IDs.
+- **Active UI branch:** feat/chat-settings-orthogonal-controls-20261030, tracked by the only open PR #121. Scope: orthogonal effort/search settings, Research Studio mode-only flow, separate private server card, project modal, mobile hit areas, free/static landing copy and staged future roadmap.
+- **Latest functional PR code head:** 6cbd915ee77dfafaba1de9867858b6633bed55fb. The current PR head may be newer because the checkpoint/orientation documents are being refreshed separately.
+- **Latest verification:** check-run set on commit 44ea54ef2118de2eda88e2fa615e8e05e4b8f8e9 found one integrity assertion that expected older fallback-copy wording; the UI copy itself states that request text/context may be sent to another service. The sentinel now checks the actual wording. Project State Freshness also failed because the orienter/snapshot files were stale. A fresh exact-head run is required; do not treat the previous run as green.
+- **Open PR queue:** PR #121 is the only active PR and is excluded from its own comparison. Exact marker: open PRs (0): .
+- **Open issue queue:** issue #111 only. Exact marker: open issues (1): #111. It remains the consolidated owner/live-host release gate; do not close it just to clear the queue.
+- **V1 UI source of truth:** docs/V1_UI_FINALIZATION_RU.md. The broader request history remains in docs/USER_REQUEST_CHECKLIST.md; whole-stack/deployment readiness remains in docs/PRE_LAUNCH_STACK_RU.md and issue #111.
+- **Product boundary:** free static GitHub Pages UI ≠ free hosted inference. No hosted model endpoint is supplied. The first gateway remains a personal/limited setup; live VPS/Tunnel/Ollama, credentials, hardware, native iPhone Safari, voice/device, OAuth and real RAG corpus are not verified.
+- **No deployment claim:** a PR branch or green CI does not imply the live landing/application or private gateway was deployed.
 
 ## First-read order
 
@@ -26,3 +28,68 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - The current PR is excluded from its own open-PR comparison; no other queue difference is ignored.
 - If the main SHA or queue changes, reconcile the snapshot, this file, the detailed orienter, `docs/PROJECT_STATE.yaml`, and `docs/VOLLEY_LOG.md` together. CI reports drift; it does not silently rewrite or commit state.
 - After every meaningful stage, record exact files/decisions, SHA/PR, tests actually run, risks, rollback, and next action. Never claim a green CI change is deployed on a live host.
+
+## Additional three-role audit — 2026-10-30
+
+- **Canonical tracker:** `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`. Read it after this short orienter; it contains the full user task checklist, per-step completion markers, verified findings, research decisions and next actions.
+- **PR #121 current head after syncing latest main:** `a22e01e9d36d67e86b1bbf37b119dcc66cb9ada3` (latest state/snapshot checkpoint; main-sync merge parent `2c1e6bd811546a87f0ac86bc5e550dd9a31aeb13`); main base `e6404d510229fa64a7bb375995d76dcba55de623`; compare before this checkpoint: 200 ahead / 0 behind.
+- **Confirmed failure fixed in branch:** Gateway CI failed because `gateway/tests/test_coder_packet.py` used `canonical_action_digest` without importing it. Added the missing import in commit `f9d5afaae983675d2c616e3fbc70942840d314e5`. Re-run status is pending.
+- **Exact-head evidence before fix:** Project State Freshness, Provenance, Dead Code Audit and Graphify passed; Lite Gateway Tests failed; Independent Quality Sentinels were still in progress. Do not mark all checks green until the post-fix SHA has completed every required workflow.
+- **Research decisions:** book-to-skill upstream `virgiliojr94/book-to-skill` (MIT tool; source-book copyright remains separate) is a strong pattern for internal Knowledge-to-Skill. Graphify remains dev-only. Keep whisper.cpp/Piper baseline; benchmark LiveKit/Pipecat only as optional realtime voice runtime. Benchmark llama.cpp GPU offload against current Ollama before any migration.
+- **Next:** inspect latest PR SHA and CI, then audit request/provider lifecycle, memory/RAG scopes, DAG/tools/security, voice, document extraction and landing. No file deletions until static + dynamic reference checks and rollback/CI roles are reviewed.
+
+### Audit update — 2026-10-30
+- Gateway test import fix is verified: Lite Gateway Tests run #483 passed after commit `f9d5afaae983675d2c616e3fbc70942840d314e5`.
+- Graphify artifact #12956306584 inspected: 1,109 nodes / 3,103 edges / 53 communities; no import cycles detected. The Graphify workflow itself was cancelled during later branch updates, so only the artifact inspection is recorded as done.
+- Dead-code report #389 contains one Vulture false positive: `BufferedTTS.synthesize_prefix(max_duration_ms)` is a protocol contract parameter. No deletions are authorized by this report.
+- Voice capability gap: current UI has editable local transcription, one-message Piper playback and a half-duplex voice loop; selection-to-speech, multi-message queue, real-time streaming and native AEC/barge-in remain to implement/verify. See the detailed audit tracker.
+- Current next: finish Quality/Chromium rerun; continue targeted module audit; update state after each verified stage.
+
+
+### Owner addendum — voice, helpers, GPU and multi-agent (2026-10-30)
+- Added P0 voice requirements P0-13…P0-18 and P1 helper/GPU/orchestration/Knowledge-to-Skill requirements P1-10…P1-17 in docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md.
+- Voice scope gap: editable local ASR, one-message Piper TTS and half-duplex dialogue exist; selected-text TTS, multi-message queue, true streaming turn-taking and native AEC/barge-in remain to implement/verify.
+- Moonshine Voice is strong for live streaming but currently listed STT locales do not include RU or TH; TTS includes RU, not TH. Keep Whisper for RU/TH; evaluate Moonshine only for supported locales with exact model license review.
+- Agent orchestration candidates: OpenWOP v2 protocol, LangGraph checkpoint/interrupt, Temporal durable workflows. OpenWOP is not production-proven; no runtime adopted.
+- Small helper candidates: Qwen3.5-0.8B for narrow low-risk classification/extraction; Granite-4.2-3B for tool-call experiments. Both require RU/EN/TH eval; no automatic model selection.
+- Next: continue module/security audit and complete Chromium checks; see detailed tracker.
+
+### Confirmed audio process cleanup fix — 2026-10-30
+- Debugger found that ASR ffprobe/ffmpeg/whisper.cpp and Piper TTS child processes were terminated on timeout but not on request cancellation.
+- Fixed with shared `await_local_process()` in gateway/app.py; cancellation/timeout now kills and reaps the child. Added regression tests in gateway/tests/test_audio_concurrency.py.
+- Functional code commits: `77b2691` (helper) and `363bb5c` (tests). Equivalent local subprocess smoke passed for both cancellation and timeout (child return codes -9). This is not the repository Gateway test run.
+- Gateway #483 passed 150 tests on the previous code SHA; the new subprocess fix still needs Gateway CI. GitHub connector can rerun existing jobs but cannot dispatch a new workflow on the current SHA. Do not claim this fix CI-verified.
+- Next: get Gateway tests running on `363bb5c`, then continue audio/document/security audit.
+
+### Landing/app UX polish continuation — 2026-10-30
+- Full remaining visual/interaction requirements consolidated in `docs/LANDING_UX_POLISH_BACKLOG_RU.md`; read it after `docs/V1_UI_FINALIZATION_RU.md`.
+- Found existing landing roadmap ticker (3 roadmap cards, CSS animation only on open, reduced-motion fallback); did not duplicate it.
+- Improved accessibility: each ticker now has a visible CSS-only pause/resume checkbox, complying with WCAG 2.2 SC 2.2.2 pause requirement for prolonged auto-moving content. Landing E2E pause/resume test added.
+- Code commits: `f42c42d51eb624b4d2e9fe638ddebffc3b7ab8db` and `b213c8a5d50c93af675693986fe22c3bd4d5499d`; docs checkpoint follows. CI not yet verified for these new commits.
+- Next: exact-head Chromium/Quality run; then implement remaining UX backlog as bounded slices, beginning with visual consistency/screenshot review, followed by modal/popover focus and native mobile verification.
+
+
+### Verified scratch cleanup — 2026-10-30
+- Removed only `temp/3`, `temp/4`, `temp/5` after searching repository references and updating IMPROVEMENT_SELECTION.md. These were an obsolete planning conversation, simulated brainstorm with stale claims, and unrelated generic Jekyll portfolio plan.
+- Retained `temp/1` and `temp/2` as historical research sources; no production source file was removed. Detailed evidence and commit SHAs are in docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md and docs/PROJECT_STATE.yaml.
+
+
+### Main synchronization — 2026-10-30
+- Main advanced by documentation-only commit `e6404d510229fa64a7bb375995d76dcba55de623`, adding `docs/LANDING_UX_POLISH_BACKLOG_RU.md` (remaining screenshot, accessibility, interaction and release checks).
+- Synced PR #121 with a two-parent merge commit `2c1e6bd811546a87f0ac86bc5e550dd9a31aeb13`; GitHub compare is 194 ahead / 0 behind and PR mergeable=true, mergeable_state=unstable (checks not complete).
+- Current main UI polish backlog must be included in the overall release plan; do not merge until exact-head CI and the required manual gates are satisfied.
+
+
+### Landing voice scope — 2026-10-30
+- Landing now explicitly lists editable speech transcription, conversational voice with interruption, selected-text TTS, whole-message TTS and sequential multi-message playback queue as first functional update scope.
+- Copy is careful: current local ASR/Piper/half-duplex prototype exists; streaming, AEC, barge-in, multi-message queue and device quality remain unfinished acceptance gates. No shipped claim.
+- Playwright assertions were added in tests/e2e/landing.spec.mjs; exact-head CI remains pending.
+- New ASR research: Nemotron 3.5 ASR Streaming 0.6B (RU production-ready tier, TH adaptation tier), Qwen3-ASR-0.6B (RU/TH listed), Parakeet RNNT 1.1B (RU/TH, NVIDIA Community Model License). Keep whisper.cpp baseline until golden-set benchmark and license review.
+
+### Exa research + verified build — 2026-10-30
+- Synthesis: docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md (45 searches, up to 360 result slots; primary sources fetched).
+- XML DTD/entity handling fixed; duplicate extraction tests removed; Gateway 156 passed (one upstream Starlette/AnyIO warning). Code 051308c.
+- Direct GitHub Actions migrated to immutable verified Node24 pins in 48874eab. Gateway, Chromium, published Pages smoke, Jekyll, Integrity, Security, Context, Graphify, Dead Code, Provenance and Freshness passed on exact SHA.
+- Voice candidates/limits: Nemotron 3.5 (RU-ready / TH adaptation; OpenMDW-1.1); Typhoon Thai (CC-BY-4.0); VibeVoice RU/no TH; VoxCPM2 RU/TH (Apache-2.0, VRAM-heavy); NeMo-Speech.cpp Apache-2.0 code; VoiceChat 11B requires 80GB VRAM/CUDA. No model/runtime adopted.
+- Pending: full manual audit, real target hardware RU/EN/TH evaluation, streaming voice, helper registry, durable orchestration, Knowledge-to-Skill and owner-host gates.
+- External exercise-toolkit remains pinned because newer upstream changes workflow behavior.

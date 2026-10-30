@@ -1,16 +1,16 @@
 project_state:
   version: 4
-  reviewed_on: "2026-10-29"
+  reviewed_on: "2026-10-30"
   root_orienter:
-    status: "Verified main 80597f61c000d691e95d67893edea60e75da1033 after PR #113 security CI merge; Quality, Pages, Gateway, provenance and Graphify checks passed; live runtime remains unverified"
-    branch: "docs/state-refresh-after-ui-merges-20261029"
-    base_main: "80597f61c000d691e95d67893edea60e75da1033"
+    status: "Main base is e6404d510229fa64a7bb375995d76dcba55de623 after documentation-only landing UX polish commit; PR #121 is the only open UI finalization PR. PR branch synced with main (200 ahead / 0 behind at SHA 07213c1406e8d451e7df5f796f2d4a8fd862e5ca). Gateway import fix #483 passed 150 tests on earlier code; audio subprocess cancellation fix (77b2691 + tests 363bb5c) still needs Gateway CI. Quality/Chromium and Graphify reruns were cancelled during branch updates. Live runtime remains unverified."
+    branch: "feat/chat-settings-orthogonal-controls-20261030"
+    base_main: "e6404d510229fa64a7bb375995d76dcba55de623"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
-    merged_changes: "PR #113 immutable Actions pins; #115 modal scrim/outside-tap UX; #114 empty-by-default user prompt/context budget; #71 mobile composer; #84 CORS; #81 deploy preflight; #83 SQLite delta; #82 readiness audit; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
-    exact_head_checks: "Main Quality #40915070855 success; Pages #40915070655 success; Gateway #40915070886 success; provenance #40915070933 success; Graphify #40915070939 success"
+    merged_changes: "PR #120 sidebar hierarchy/theme-language sync; #119 provider separation/project scope/composer preference; #118 chat import/export; #113 immutable Actions pins; #115 modal scrim/outside-tap; #114 empty-by-default prompt/context budget; #71 mobile composer; #84/#81/#83/#82 infrastructure foundations; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
+    exact_head_checks: "PR #120 merge commit reports Chromium, published Pages smoke, Jekyll, integrity, security, context and Graphify checks passed in its commit message; get_commit_combined_status returned no separate status entries for 2bda22229cba3576628f92c821bb6e1562d8abc5. PR #121 code head f9d5afaae983675d2c616e3fbc70942840d314e5: Gateway #483 passed (150 tests), Freshness #83, Provenance #554 and Dead Code #389 passed; Quality #916 and Graphify #262 cancelled during subsequent branch updates. Exact current branch SHA is documentation-only later than f9; no full exact-head Quality/Chromium green claim."
     runtime_boundary: "GitHub Pages browser smoke verified; native iPhone, live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
-    next: "Continue UX backlog in bounded PRs: edge-aware menu placement; header/project label/clock and sticky settings actions; provider/project export-import cleanup. Issue #111 remains owner/live-host release gate. No paid infrastructure or runtime claims without evidence."
+    next: "PR #121 branch now includes main e6404d5 and compares 200 ahead / 0 behind at 07213c1. Run Gateway tests on audio cancellation fix 363bb5c, then exact-current-head Quality/Chromium/Pages; connector cannot dispatch new workflow runs on current SHA. Continue remaining architecture/debug audit and owner hardware gates."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -44,9 +44,9 @@ project_state:
     gateway_vps: "not verified by this change; do not claim deployed"
     experimental_feature_flags: "false by default"
   current_ui_track:
-    branch: "main"
-    pull_request: 35
-    status: "PR33+34+35 merged; PR71 mobile composer merged; PR114 prompt/context budget merged; PR115 modal scrim/outside-click merged; PR113 Actions SHA pinning merged; main 80597f61 Quality/Pages/Gateway/provenance/Graphify passed"
+    branch: "feat/chat-settings-orthogonal-controls-20261030"
+    pull_request: 121
+    status: "PR #121 open; current scope is first free landing + root client UI finalization; PRs #71, #114, #115, #119, #120 remain merged foundations. Gateway #483 passed after import fix on earlier code; audio cancellation fix awaits Gateway CI; Quality/Chromium and full current-head gates remain unverified."
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback; PR114 leaves the optional global system prompt empty by default and removes the obsolete Gemini reset"
     projects: "PR35 merged and Chromium E2E passed: collapsed project list with per-project chat children; top-level unassigned chats only; project memory scope project-only vs project-and-global; one-shot project context scoped by chat. Server graph bridge remains experimental and disabled by default."
@@ -273,16 +273,187 @@ voice_selection:
   next: "verify post-merge main workflows on the exact current main SHA; owner validates exact installed artifacts, hashes/licenses and compatibility on private VPS; enable document extraction and ASR/TTS only one at a time after checks; test all three voice scenarios on target device"
 
 current_checkpoint:
-  date: "2026-10-29"
-  verified_main: "80597f61c000d691e95d67893edea60e75da1033"
-  last_main_action: "security(ci): pin GitHub Actions to immutable commit SHAs; SHA 80597f61c000d691e95d67893edea60e75da1033"
-  last_functional_checkpoint: "ed2c4c7ee3a67c7a0cf5b541c1ab6206609dd32c"
-  main_quality: "Quality Sentinels #40915070855 success on exact main SHA; includes Chromium and published-site smoke."
-  main_graphify: "Graphify #40915070939 success on exact main SHA; output remains a developer navigation artifact, not a runtime component."
-  main_gateway: "Lite Gateway Tests #40915070886 success on exact main SHA; live VPS/gateway/provider connectivity remains unverified."
-  merged_prs: "113 immutable GitHub Actions pins; 115 modal scrim and inert outside-tap UX; 114 empty-by-default user prompt and context-budget headroom; 71 mobile composer docking; 84 CORS; 81 deployment preflight; 83 SQLite delta; 82 readiness audit; 106 RAG evaluator; 107 private/shared memory; 108 landing/runbook"
-  open_pull_requests: "No open PRs at this checkpoint"
+  date: "2026-10-30"
+  verified_main: "e6404d510229fa64a7bb375995d76dcba55de623"
+  last_main_action: "fix(ui): align sidebar hierarchy and preferences; SHA 2bda22229cba3576628f92c821bb6e1562d8abc5"
+  last_functional_checkpoint: "2bda22229cba3576628f92c821bb6e1562d8abc5"
+  main_quality: "No separate combined status records returned for main SHA 2bda22229cba3576628f92c821bb6e1562d8abc5; PR #120 merge message reports checks, but current exact-head verification must be read from Actions."
+  main_graphify: "Graphify is a developer navigation artifact, not a runtime component; no separate run was returned for current main SHA."
+  main_gateway: "Live VPS/gateway/provider connectivity remains unverified; no live deployment claim."
+  merged_prs: "120 sidebar hierarchy and synchronized preferences; 119 provider separation/project scope/composer preference; 118 chat import/export; 113 immutable Actions pins; 115 modal scrim; 114 empty-by-default prompt; 71 mobile composer; 84 CORS; 81 deployment preflight; 83 SQLite delta; 82 readiness audit; 106 RAG evaluator; 107 private/shared memory; 108 landing/runbook"
+  open_pull_requests: "No unrelated open PRs at the freshness checkpoint; PR #121 is the active PR being checked and is excluded from its own comparison"
   open_issues: "Issue #111 only: consolidated owner/live-host release gates; research-only workstreams #88–#92 and #96–#104 closed after transferring unresolved actions"
   freshness_guard: "scripts/check_project_state_freshness.py; compares exact SHA and exact queue. A refresh commit must update ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG and snapshot; it no longer requires artificial edits to checker/tests/workflow."
-  runtime_boundary: "GitHub Pages browser smoke verified; live VPS/Tunnel/Ollama, actual model performance, voice/device, OAuth/Drive and target-host measurements remain unverified"
-  next: "Continue UX backlog with edge-aware popover/chat-menu placement, header/project label/clock and sticky settings actions, then provider/project export-import cleanup. Issue #111 retains owner-only ruleset, live-host, hardware, RAG golden-set, voice/device, OAuth and sandbox gates."
+  runtime_boundary: "GitHub Pages is a static client; live VPS/Tunnel/Ollama, actual model performance, voice/device, OAuth/Drive and target-host measurements remain unverified"
+  next: "Use docs/V1_UI_FINALIZATION_RU.md to close the first free-landing UI slice. Run exact-head Quality/Chromium/Jekyll/Pages/Graphify/provenance checks after state refresh. Issue #111 retains owner-only ruleset, live-host, hardware, RAG golden-set, voice/device, OAuth and sandbox gates."
+v1_ui_finalization:
+  status: "active; no merge/deployment claim until exact-head Quality/Chromium/Pages checks pass"
+  register: "docs/V1_UI_FINALIZATION_RU.md"
+  active_pr: 121
+  branch: "feat/chat-settings-orthogonal-controls-20261030"
+  scope: "free static landing page plus existing browser client; not public multi-user SaaS or hosted inference"
+  implemented_in_branch: "clarified free UI vs inference costs; roadmap section with reduced-motion ticker; agent/connector in-app roadmap cues; landing E2E; fixed duplicate Settings close action and integrity provider-group parser"
+  pending: "exact-head Quality/Chromium/Pages; inspect all failures; published Pages smoke after merge; native iPhone Safari/manual checks; owner-only issue #111"
+  status_boundary: "ticker is decorative roadmap copy, not a background task indicator; independent agents, integrations, voice and document extraction remain gated/unverified"
+
+three_role_audit_2026_10_30:
+  tracker: "docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md"
+  branch: "feat/chat-settings-orthogonal-controls-20261030"
+  main_base: "e6404d510229fa64a7bb375995d76dcba55de623"
+  pr_head_before_test_fix: "b09c1365e9d5f434b69ebb60bb285c7574051172"
+  latest_change: "f9d5afaae983675d2c616e3fbc70942840d314e5 — import canonical_action_digest in gateway test module"
+  verified:
+    - "PR #121 changed-file inventory: 25 files"
+    - "Gateway CI failure localized to missing test import; production helper exists"
+    - "Project State Freshness passed on pre-fix head"
+    - "License/provenance passed on pre-fix head"
+    - "Dead Code Audit report-only passed on pre-fix head"
+    - "Graphify code-only pilot passed on pre-fix head"
+  pending:
+    - "Post-fix exact-head CI and all required workflows"
+    - "Full cross-subsystem architecture/debug audit"
+    - "Voice target-device, GPU/CPU and model quality benchmarks"
+    - "Knowledge-to-Skill prototype and security review"
+    - "Dead-code candidate verification; no deletion authorized yet"
+  next: "Inspect post-fix exact-head CI, then audit request/provider, memory/RAG, tools/security, voice, documents and landing in dependency order. Update this tracker, ORIENTER, PROJECT_STATE and VOLLEY_LOG after every meaningful stage."
+audit_update_2026_10_30:
+  tracker: "docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md"
+  architecture_graph:
+    artifact_id: 12956306584
+    source_sha: "f9d5afaae983675d2c616e3fbc70942840d314e5"
+    nodes: 1109
+    edges: 3103
+    communities: 53
+    detected_import_cycles: 0
+    workflow_state: "cancelled after artifact generation; artifact inspected, workflow not marked green"
+  dead_code:
+    artifact_id: 12956377148
+    source_sha: "f9d5afaae983675d2c616e3fbc70942840d314e5"
+    finding: "Vulture false positive: BufferedTTS.synthesize_prefix Protocol parameter max_duration_ms is part of adapter contract"
+    deletion_authorized: false
+  gateway_fix:
+    commit: "f9d5afaae983675d2c616e3fbc70942840d314e5"
+    workflow_run: 41007980098
+    run_number: 483
+    conclusion: "success"
+    tests: "150 passed; prior failure was missing test import only"
+  quality:
+    workflow_run: 41007980120
+    run_number: 916
+    conclusion: "cancelled"
+    note: "Integrity, Security, Context and Jekyll jobs passed; Chromium job cancelled during branch update; rerun requested"
+  voice_capability_gaps:
+    existing: "local ASR transcription with editable text; local Piper single-message TTS; half-duplex voice loop"
+    missing_or_unverified: "selected-text TTS; multi-message queue; true streaming turn-taking; native AEC and acoustic barge-in; target-device RU/EN/TH quality and latency"
+  research:
+    knowledge_to_skill: "virgiliojr94/book-to-skill; use as design reference, do not vendor blindly"
+    streaming_voice_candidate: "moonshine-ai/moonshine; verify RU/TH STT model coverage and exact model licenses before adoption"
+    gpu_runtime_candidates: "Ollama GPU, llama.cpp offload, vLLM for GPU-serving workloads; benchmark hardware before migration"
+  cleanup:
+    files_deleted:
+    - "temp/3 — obsolete conversation/planning scratch; commit 936f37b2d9c3542956a227a72c0d3d8069042231"
+    - "temp/4 — simulated brainstorm with stale claims; commit 81bfe30428fdf3b60ea775eb7668253e270aefad"
+    - "temp/5 — unrelated generic Jekyll portfolio plan; commit 893736069e24bc04cd984aa57699caff9780f91d"
+    rationale: "Only temp/3–temp/5 were removed after repository reference search and updating IMPROVEMENT_SELECTION.md. temp/1 and temp/2 remain as substantial historical research; no production source was deleted."
+  next: "Complete exact-head Quality/Chromium rerun, then continue request/provider, memory/RAG, tools/security, voice and document subsystem audit."
+
+
+owner_addendum_2026_10_30:
+  backlog: "docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md"
+  required_first_release_voice:
+    - "editable local speech-to-text"
+    - "natural streaming conversational voice with turn detection and interruption"
+    - "read selected text aloud"
+    - "read one complete message aloud"
+    - "ordered queue for multiple selected messages"
+    - "real-device RU/EN/TH accuracy, latency, echo and resource acceptance"
+  helper_and_agent_scope:
+    - "role-based helper model registry with task-specific evaluations"
+    - "GPU inference profile; CPU remains for OS/API/orchestration"
+    - "optional high-throughput vLLM only on compatible GPU hardware"
+    - "bounded durable multi-agent execution with budgets, queue, cancellation, idempotency, scopes and traces"
+    - "private Knowledge-to-Skill conversion with provenance, license and prompt-injection review"
+  research_decisions:
+    - "Moonshine Voice is a streaming candidate but listed STT languages omit Russian and Thai; keep whisper.cpp for those languages"
+    - "OpenWOP v2, LangGraph and Temporal are protocol/runtime research only; no adoption"
+    - "Qwen3.5-0.8B and Granite-4.2-3B are eval candidates, not selected production helpers"
+  implementation_status: "requirements and acceptance criteria recorded; code implementation and target hardware tests pending"
+
+
+audio_subprocess_cancellation_fix:
+  implementation_commit: "77b2691f4a9cedfab280384667ece9ae92ba9bd3"
+  regression_tests_commit: "363bb5c46c6a0fcad55bb5d243289e065ee6450a"
+  finding: "ASR ffprobe/ffmpeg/whisper.cpp and Piper TTS subprocesses were not terminated/reaped when request tasks were cancelled; timeout path already killed them."
+  change: "Shared await_local_process helper now kills/reaps child on timeout and asyncio.CancelledError; applied to all local ASR/TTS subprocess waits."
+  tests_added:
+    - "test_local_audio_process_is_killed_and_reaped_on_request_cancellation"
+    - "test_local_audio_process_is_killed_and_reaped_on_timeout"
+  local_equivalent_smoke: "Both subprocesses killed/reaped; return code -9. Not a repository pytest run."
+  ci_status: "Gateway #483 passed 150 tests before this fix; new functional SHA requires Gateway CI. GitHub connector cannot dispatch a new workflow on the current SHA."
+landing_ux_polish_2026_10_30:
+  tracker: "docs/LANDING_UX_POLISH_BACKLOG_RU.md"
+  source_documents:
+    - "docs/LEGACY_UX_REQUEST_AUDIT_RU.md"
+    - "docs/V1_UI_FINALIZATION_RU.md"
+    - "docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md"
+  implementation:
+    landing_ticker_pause_controls: "implemented in f42c42d51eb624b4d2e9fe638ddebffc3b7ab8db"
+    landing_ticker_pause_resume_e2e: "added in b213c8a5d50c93af675693986fe22c3bd4d5499d"
+    runtime_dependency_added: false
+  verification:
+    exact_head_ci: "pending"
+    native_keyboard_screen_reader: "unverified"
+    published_pages_after_merge: "pending"
+  next: "Complete exact-head CI, then implement remaining visual consistency, dialogs/popovers, mobile and accessibility work in bounded slices."
+
+
+landing_voice_scope_2026_10_30:
+  visible_capabilities:
+    - "editable speech transcription"
+    - "conversational voice with interruption"
+    - "read selected text aloud"
+    - "read a complete message aloud"
+    - "ordered playback queue for multiple selected messages"
+  copy_status: "added to landing capability card and roadmap; explicitly distinguishes existing ASR/Piper/half-duplex prototype from unfinished streaming, AEC, barge-in, multi-message queue and device acceptance"
+  e2e_status: "Playwright assertions added in tests/e2e/landing.spec.mjs; exact-head CI not yet run"
+  product_status: "first functional update requirement; not claimed as fully shipped"
+voice_asr_research_update:
+  baseline: "whisper.cpp; keep until measured replacement wins"
+  candidates:
+    - "Nemotron 3.5 ASR Streaming 0.6B via NeMo-Speech.cpp: Russian transcription-ready; Thai adaptation-ready; exact artifact/license and target GPU benchmark required"
+    - "Qwen3-ASR-0.6B via sherpa-onnx: Russian and Thai listed; streaming behavior and license to verify"
+    - "Parakeet RNNT 1.1B: Russian and Thai supported; larger model and NVIDIA Community Model License"
+    - "Moonshine Voice: not a RU/TH STT replacement based on currently listed language support"
+  decision: "no ASR model/runtime migration until RU/EN/TH golden-set WER, endpointing, latency, VRAM/RAM and license acceptance"
+
+exa_research_and_current_build_2026_10_30:
+  research_document: "docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md"
+  coverage: "45 targeted queries; up to 360 requested result slots; primary-source fetches; not exhaustive census"
+  decisions:
+    asr: "Keep whisper.cpp. Nemotron 3.5 0.6B is RU transcription-ready / TH adaptation-ready (OpenMDW-1.1); Typhoon 115M is Thai CC-BY-4.0; VibeVoice covers RU but not TH."
+    tts: "Keep Piper. VoxCPM2 2B supports RU/TH under Apache-2.0 but is VRAM-heavy; MagpieTTS excludes RU/TH."
+    realtime_voice: "NeMo-Speech.cpp is optional; VoiceChat 11B requires 80GB VRAM/CUDA x86_64."
+    orchestration: "No adoption; keep bounded ToolDAG; DBOS conditional on Postgres; Temporal for distributed long-running workflows."
+    knowledge_to_skill: "Agent Skills spec + book-to-skill v1.3.0 are design references; private human-reviewed converter not implemented."
+  security_fix:
+    commit: "051308c3a8ff95369ddd784503771f6387bc70d9"
+    changes:
+      - "Reject DTD/entity declarations in DOCX/XLSX XML"
+      - "Enforce actual expanded XML size"
+      - "Remove seven duplicate test definitions"
+      - "Add internal entity and external DTD regressions"
+    gateway_ci: "156 passed, 1 upstream Starlette/AnyIO warning"
+  node24_migration:
+    commit: "48874eab1cdce698b2dcfd681413d2cd45e27b38"
+    workflows_updated: 13
+    external_reusable: "skills/exercise-toolkit stays at ebf43bb pending behavior review"
+  exact_head_ci:
+    sha: "48874eab1cdce698b2dcfd681413d2cd45e27b38"
+    gateway_run: 41014174742
+    quality_run: 41014174703
+    graphify_run: 41014174760
+    dead_code_run: 41014174711
+    provenance_run: 41014174761
+    freshness_run: 41014174686
+    result: "All successful, including Chromium and published Pages smoke"
+  remaining: "Full manual audit; RU/EN/TH hardware voice benchmarks; streaming voice; helper registry; durable orchestration; Knowledge-to-Skill; owner-host gates"

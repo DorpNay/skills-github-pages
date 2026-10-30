@@ -25,7 +25,7 @@ const suites = {
       matches(/<\/html>\s*$/, 'Document must close its html element.');
     }],
     ['critical UI controls exist', () => {
-      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiMotion', 'cloudSettingsCard', 'cloudStatusDot', 'cloudStatus', 'cloudBaseUrl', 'cloudModel', 'cloudApiKey', 'cloudConnect', 'languageMenu', 'languageSummary', 'clockDigital', 'homeThemeToggle', 'brandWordmark', 'projectPanel', 'currentProjectSelect', 'projectMemoryToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
+      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'apiKeyShell', 'apiKeyStatus', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiLanguage', 'uiMotion', 'cloudSettingsCard', 'cloudStatusDot', 'cloudStatus', 'cloudBaseUrl', 'cloudBaseUrlError', 'cloudModel', 'cloudModelError', 'cloudApiKey', 'cloudApiKeyError', 'sidebarThemeToggle', 'clockDigital', 'homeThemeToggle', 'brandWordmark', 'projectPanel', 'projectSettingsModal', 'currentProjectSelect', 'projectMemoryToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'researchStudioModal', 'researchStudioSettingsSummary', 'researchStudioEffort', 'researchStudioSearchMode', 'researchStudioStructured', 'functionPanelModal', 'skillPresetSelect', 'agentModeControl', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
         matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
       }
     }],
@@ -41,14 +41,28 @@ const suites = {
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
       includes("alandi: { label: 'aLandi Self-hosted Gateway'", 'The aLandi private gateway must be a first-class provider.');
       includes("allowCrossProvider&&selectedProvider!=='alandi'", 'Selecting aLandi must never silently route private prompts to another provider even if global fallback is enabled.');
-      includes('<section id="cloudSettingsCard"', 'aLandi must have a dedicated first-party primary-route card.');
-      assert.equal((source.match(/data-action="select-alandi-primary"/g) || []).length, 0, 'The redundant separate primary-route action must not bypass the single provider selector.');
-      includes('<optgroup id="providerPrimaryGroup" label="aLandi Cloud · основной маршрут">', 'aLandi Cloud must have its own primary-route group.');
-      includes('<optgroup id="providerExternalGroup" label="Сторонние провайдеры">', 'Third-party providers must be grouped separately from aLandi Cloud.');
-      includes('<option value="alandi">aLandi Cloud · свой gateway</option>', 'The aLandi Cloud route must remain selectable in the shared route selector.');
-      assert.equal((source.match(/<option value="alandi">/g) || []).length, 1, 'The route selector must contain exactly one visible aLandi option in its own group.');
-      assert.equal((source.match(/<option value="alandi" hidden>/g) || []).length, 0, 'The aLandi route must not be hidden behind a separate route-switch action.');
+      includes('<section id="cloudSettingsCard"', 'aLandi must have a dedicated first-party server card.');
+      includes('<h3 id="cloudCardTitle"', 'The private server card must have its own heading.');
+      includes('<optgroup id="providerExternalGroup" label="Сторонние провайдеры">', 'The external provider picker must contain only third-party providers.');
+      const pickerStart = source.indexOf('<select id="providerPreset"');
+      const pickerClose = source.indexOf('</select>', pickerStart);
+      const providerPicker = pickerStart >= 0 && pickerClose > pickerStart ? source.slice(pickerStart, pickerClose + '</select>'.length) : '';
+      const extractGroup = (id) => {
+        const start = providerPicker.indexOf('<optgroup id="' + id + '"');
+        const close = providerPicker.indexOf('</optgroup>', start);
+        return start >= 0 && close > start ? providerPicker.slice(start, close + '</optgroup>'.length) : '';
+      };
+      const internalRouteGroup = extractGroup('providerPrimaryGroup');
+      const externalRouteGroup = extractGroup('providerExternalGroup');
+      assert.ok(internalRouteGroup.includes(' hidden'), 'The private compatibility route must remain hidden from users.');
+      assert.equal(internalRouteGroup.split('<option value="alandi"').length - 1, 1, 'Keep exactly one hidden internal route for saved-chat migration and routing.');
+      assert.equal(externalRouteGroup.includes('<option value="alandi"'), false, 'The private aLandi route must not appear among third-party providers.');
+      assert.ok(externalRouteGroup.includes('<option value="gemini">') && externalRouteGroup.includes('<option value="custom">'), 'External providers must remain selectable.');
+      assert.equal((source.match(/id="cloudConnect"/g) || []).length, 0, 'The private server must connect automatically, without a permanent manual-check button.');
       includes('function connectAlandiCloud()', 'The cloud UI must verify a real model response before showing connected.');
+      includes('function scheduleCloudAutoConnect()', 'Changes to private server settings must trigger a bounded automatic connection check.');
+      includes('function setCloudFieldError(id,message', 'Invalid server fields must show an inline field-specific error.');
+      includes("setCloudFieldConnection('connected')", 'The server fields must only turn green after the connection and health checks pass.');
       includes('Never show a green connection lamp for proxy text, HTML, or an unknown error body.', 'HTTP 200 with unrecognized text must not be considered a successful model probe.');
       includes("globalMemoryEnabled=safeGet(STORAGE.globalMemoryEnabled)==='true'", 'Global memory must be explicitly enabled, not added to every request by default.');
       includes("indexedDB.open('AI_Agent_DB_v87', 2)", 'Memory schema migration must create a separate shared store without deleting legacy private notes.');
@@ -154,8 +168,8 @@ const suites = {
       includes('safeSet(providerKeyStorage(provider),enteredApiKey)', 'Only an explicitly entered provider key should overwrite its stored value.');
       includes("provider==='gemini'&&enteredApiKey?[safeSet(STORAGE.apiKey,enteredApiKey)]:[]", 'Saving settings must not erase the Gemini key when the password field is blank.');
       includes('Older builds wrote every provider\'s key into the legacy Gemini slot.', 'Legacy cross-provider key contamination must be migrated safely.');
-      includes('текст запроса и контекст могут быть отправлены другому провайдеру', 'Cross-provider fallback must disclose that request content can be sent to another provider.');
-      includes('ключ не сохранён для выбранного провайдера', 'Settings must explain why the API key field is blank after switching providers.');
+      includes('текст запроса и контекст могут передаваться другому сервису', 'Cross-provider fallback must disclose that request content can be sent to another provider.');
+      includes('Ключ не сохранён для выбранного провайдера.', 'Settings must explain why the API key field is blank after switching providers.');
       includes("const selectedProvider=safeGet(STORAGE.provider)||'alandi',allowCrossProvider=safeGet(STORAGE.crossProviderFallback)==='true'", 'Cross-provider fallback must be a user-controlled opt-in.');
       includes('function isGenericModelRefusal(value)', 'Generic model refusals must not be accepted as successful research stages.');
       includes('Конвейер остановлен', 'A refused multi-agent stage must stop clearly rather than repeat the refusal as a final answer.');
@@ -182,8 +196,21 @@ const suites = {
       includes('Профиль импортирован. Сохранённые API-ключи не изменены.', 'Profile import must make secret preservation explicit.');
       includes("location.hash.match(/^#trace=([^&]+)/)", 'Local trace deep links must be supported.');
       includes('Локальная ссылка работает в этом же браузере', 'Trace links must disclose their local-only scope.');
-      includes("const maxToolRounds = extendedToolBudget ? MAX_TOOL_ROUNDS : 1;", 'Fast and deep modes must have different tool budgets.');
-      includes("mode === 'fast' && index > 0 && !extendedSearch", 'Fast mode must cap tools unless the bounded search-more preset is selected.');
+      includes("const extendedToolBudget = mode === 'deep';", 'Only work effort may expand the tool execution budget.');
+      includes("const searchResultMode = extendedSearch ? 'deep' : 'fast';", 'Only web-search scope may expand result and extraction volume.');
+      includes("const maxToolRounds = extendedToolBudget ? MAX_TOOL_ROUNDS : 1;", 'Fast and thorough modes must have different tool budgets.');
+      includes("const maxToolCallsPerRound = extendedToolBudget ? MAX_TOOL_CALLS_PER_DEEP_ROUND : 1;", 'Only work effort may increase per-round tool calls.');
+      includes("const maxToolCallsPerRun = extendedToolBudget ? MAX_TOOL_CALLS_PER_DEEP_RUN : 1;", 'Only work effort may increase per-run tool calls.');
+      includes("performTavilySearch(args.query.trim().slice(0, 500), signal, searchResultMode)", 'Tavily result breadth must use the independent search scope.');
+      includes("performPublicKnowledgeSearch(args.source, args.query.trim().slice(0, 300), signal, searchResultMode)", 'Public search breadth must use the independent search scope.');
+      includes("readPublicWebpage(args.url.trim().slice(0, 1500), signal, searchResultMode)", 'Webpage extraction depth must use the independent search scope.');
+      assert.ok(!source.includes("const extendedToolBudget = mode === 'deep' || extendedSearch;"), 'Search scope must not increase execution budget.');
+      assert.ok(!source.includes("mode === 'fast' && index > 0 && !extendedSearch"), 'Fast-mode tool limits must not depend on search scope.');
+      assert.ok(!source.includes('id="researchStudioDepth"') && !source.includes('id="researchStudioWeb"'), 'Research Studio must not duplicate chat settings.');
+      assert.ok(!source.includes('data-function="research"'), 'Research Studio must have a single entry point.');
+      assert.ok(!source.includes("setProcessingMode(depth)") && !source.includes("setSearchMode(webEnabled ?"), 'Research Studio must not mutate active chat settings.');
+      includes("await runAssistant(workChat, signal, useSearch, false, mode, true,", 'The structured workflow must honor the selected effort budget in its research stage.');
+      includes("const studioSummary = $('researchStudioSettingsSummary');", 'Research Studio must show the active chat settings.');
       includes("if (mode !== 'deep' && !useMultiAgent && chosenSkill === 'auto') return '';", 'Automatic skills must not load in fast mode unless research is explicitly enabled.');
       includes("chosenSkill !== 'auto' ? chosenSkill", 'A manually selected skill must be usable in fast mode.');
       includes("new URL('skills/' + selectedSkill + '.txt', document.baseURI)", 'Task skills should load from repository assets only on demand.');

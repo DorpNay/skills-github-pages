@@ -32,6 +32,24 @@ from fastapi.responses import JSONResponse, Response, StreamingResponse
 logger = logging.getLogger("alandi.gateway")
 
 
+async def await_local_process(process: asyncio.subprocess.Process, operation: Any,
+                              timeout_seconds: float) -> Any:
+    """Bound a local subprocess operation and always terminate/reap it on timeout or cancellation."""
+    try:
+        return await asyncio.wait_for(operation, timeout=timeout_seconds)
+    except (asyncio.TimeoutError, asyncio.CancelledError):
+        if process.returncode is None:
+            try:
+                process.kill()
+            except ProcessLookupError:
+                pass
+        try:
+            await asyncio.wait_for(asyncio.shield(process.wait()), timeout=2.0)
+        except (asyncio.TimeoutError, ProcessLookupError):
+            pass
+        raise
+
+
 def int_env(name: str, default: int, minimum: int = 1) -> int:
     try:
         value = int(os.getenv(name, str(default)))
@@ -378,6 +396,9 @@ def _bounded_zip_entries(data: bytes) -> tuple[zipfile.ZipFile, dict[str, zipfil
         if entry.flag_bits & 0x1:
             archive.close()
             raise HTTPException(400, "Encrypted document archives are not supported")
+        if name in indexed:
+            archive.close()
+            raise HTTPException(400, "Document archive contains duplicate entry names")
         total += entry.file_size
         if total > DOCUMENT_MAX_EXPANDED_BYTES:
             archive.close()
@@ -389,15 +410,28 @@ def _bounded_zip_entries(data: bytes) -> tuple[zipfile.ZipFile, dict[str, zipfil
     return archive, indexed
 
 
+class _RejectDoctypeTreeBuilder(ET.TreeBuilder):
+    """Reject DTDs and entity declarations in untrusted OOXML parts."""
+
+    def doctype(self, name, pubid, system):
+        raise ValueError("DOCTYPE declarations are not supported")
+
+
 def _xml_from_archive(archive: zipfile.ZipFile, entries: dict[str, zipfile.ZipInfo], name: str) -> ET.Element:
     entry = entries.get(name)
     if entry is None or entry.file_size > DOCUMENT_MAX_EXPANDED_BYTES:
         raise HTTPException(400, "Document is missing a required XML part")
     try:
         with archive.open(entry) as stream:
-            return ET.fromstring(stream.read(DOCUMENT_MAX_EXPANDED_BYTES + 1))
+            payload = stream.read(DOCUMENT_MAX_EXPANDED_BYTES + 1)
+        if len(payload) > DOCUMENT_MAX_EXPANDED_BYTES:
+            raise HTTPException(413, "Expanded XML part exceeds the permitted size")
+        parser = ET.XMLParser(target=_RejectDoctypeTreeBuilder())
+        return ET.fromstring(payload, parser=parser)
+    except HTTPException:
+        raise
     except (ET.ParseError, OSError, RuntimeError, ValueError):
-        raise HTTPException(400, "Document XML is invalid") from None
+        raise HTTPException(400, "Document XML is invalid or uses a prohibited DTD") from None
 
 
 def _extract_docx(data: bytes) -> str:
@@ -1476,10 +1510,8 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                     stderr=asyncio.subprocess.DEVNULL,
                 )
                 try:
-                    probe_stdout, _ = await asyncio.wait_for(probe.communicate(), timeout=5)
+                    probe_stdout, _ = await await_local_process(probe, probe.communicate(), timeout_seconds=5)
                 except asyncio.TimeoutError:
-                    probe.kill()
-                    await probe.wait()
                     raise HTTPException(504, "Audio validation timed out") from None
                 if probe.returncode != 0 or len(probe_stdout) > 64:
                     raise HTTPException(400, "Audio container could not be validated")
@@ -1497,10 +1529,8 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                     stderr=asyncio.subprocess.DEVNULL,
                 )
                 try:
-                    await asyncio.wait_for(converter.wait(), timeout=10)
+                    await await_local_process(converter, converter.wait(), timeout_seconds=10)
                 except asyncio.TimeoutError:
-                    converter.kill()
-                    await converter.wait()
                     raise HTTPException(504, "Audio normalization timed out") from None
                 if converter.returncode != 0 or not os.path.isfile(normalized_path):
                     raise HTTPException(400, "Audio could not be normalized to PCM WAV")
@@ -1521,10 +1551,8 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                     stderr=asyncio.subprocess.DEVNULL,
                 )
                 try:
-                    await asyncio.wait_for(process.wait(), timeout=config.audio_transcription_timeout_seconds)
+                    await await_local_process(process, process.wait(), timeout_seconds=config.audio_transcription_timeout_seconds)
                 except asyncio.TimeoutError:
-                    process.kill()
-                    await process.wait()
                     raise HTTPException(504, "Local transcription timed out") from None
                 if process.returncode != 0:
                     raise HTTPException(502, "Local ASR process failed; check the local runtime configuration")
@@ -1586,10 +1614,8 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                     stderr=asyncio.subprocess.DEVNULL,
                 )
                 try:
-                    await asyncio.wait_for(process.wait(), timeout=config.audio_speech_timeout_seconds)
+                    await await_local_process(process, process.wait(), timeout_seconds=config.audio_speech_timeout_seconds)
                 except asyncio.TimeoutError:
-                    process.kill()
-                    await process.wait()
                     raise HTTPException(504, "Local speech synthesis timed out") from None
                 if process.returncode != 0:
                     raise HTTPException(502, "Local TTS process failed; check the local runtime configuration")

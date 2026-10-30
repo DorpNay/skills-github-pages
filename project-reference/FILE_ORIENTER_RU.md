@@ -2,20 +2,17 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-## Текущая контрольная точка — 2026-10-29
+## Текущая контрольная точка — 2026-10-30
 
-- Текущий main: `80597f61c000d691e95d67893edea60e75da1033` (PR #113 — immutable GitHub Actions pins). Quality Sentinels #40915070855, Pages #40915070655, Gateway #40915070886, provenance #40915070933 и Graphify #40915070939 прошли на exact main SHA.
-- PR #115 merged: composer popover scrim, modal backdrop blur, inert first outside tap for toolbar/language/chat-row menus; exact-head Quality/Chromium and published-site smoke passed. PR #114 merged: empty user prompt by default, Gemini reset removed, history serialization headroom added. PR #71 mobile composer fix remains native-device unverified.
-- PR #107 merged: private/shared browser memory scope, explicit promotion confirmation, local-only private context, privacy E2E.
-- PR #106 merged: offline RAG evaluator core; smoke fixture не является production golden set.
-- PRs #84/#81/#83/#82 merged: CORS canonicalization, deployment-template preflight, SQLite in-memory delta fix, readiness audit.
-- PRs #80/#85/#86/#87 closed as superseded/deferred after preserving the useful implementation in reconciled PRs #106/#107/#108; their remaining unique documentation is handled through this reconciliation.
-- PR #113, #114 and #115 merged; at this checkpoint open PRs: 0. Verify the live queue before acting.
-- Exact queue markers: open PRs (0): none; open issues (1): #111.
-- Only open issue: #111, the consolidated release-gates tracker. Research-only issues #88–#92 and #96–#104 are closed with explicit comments pointing to the retained implementation/live-host blockers.
-- Still unverified: native iPhone Safari/keyboard/touch, live VPS/Tunnel/Ollama, target-hardware RAM/latency, voice artifacts/device playback, OAuth/Drive credentials, real labelled RAG corpus, and main branch protection/rulesets.
-
-Этот документ содержит исторические записи ниже; их SHA, очередь и статусы не являются текущей истиной. Актуальный контрольный блок находится непосредственно после этого вводного абзаца и сверяется workflow `Project State Freshness`.
+- Текущий main: e6404d510229fa64a7bb375995d76dcba55de623 (PR #120 — sidebar hierarchy, memory/project/chat navigation and synchronized theme/language preferences). В merge-коммите записано, что Chromium, published Pages smoke, Jekyll, integrity, security, context и Graphify прошли; отдельный combined-status запрос для SHA не вернул status entries, поэтому не приписывать этому SHA несуществующие run IDs.
+- Единственный открытый PR: #121, branch feat/chat-settings-orthogonal-controls-20261030. Изменения охватывают независимые work-effort/search параметры, Research Studio как mode-only окно, разделение private server/external providers, project settings modal, landing roadmap и V1 checklist.
+- В текущей ветке устранён дублирующий Settings close selector; integrity provider-group sentinel переведён на детерминированный string parsing; Research Studio E2E отделяет ожидаемый provider probe от отправки пользовательского запроса. Добавлены landing E2E, ticker tests и reduced-motion acceptance. Всё это пока **не merged**; повторный exact-head CI обязателен.
+- Проверка на commit 44ea54e обнаружила один stale copy assertion в integrity sentinel и stale project-state snapshot/orienters. Sentinel приведён к текущей короткой UI-формулировке; ориентиры и snapshot синхронизируются. Новый exact-head CI обязателен.
+- Exact queue markers (exclude only the PR currently being checked): open PRs (0): ; open issues (1): #111. Active PR under this check: #121.
+- Единственный открытый issue #111 — consolidated release-gates tracker. Он содержит owner-only gates: main ruleset/review policy, реальный VPS/Tunnel/Ollama, аппаратные и model benchmarks, voice/device, permissioned RAG corpus, sandbox и OAuth. Не закрывать только по зелёному CI или ради нулевой очереди.
+- Реестр V1 UI: docs/V1_UI_FINALIZATION_RU.md. История требований: docs/USER_REQUEST_CHECKLIST.md. Целевая архитектура и границы первого стека: docs/PRE_LAUNCH_STACK_RU.md и docs/ALANDI_MASTER_CONTEXT_RU.md.
+- Граница релиза: бесплатный статический GitHub Pages интерфейс не означает бесплатный inference или предоставленный hosted AI endpoint. Корневое приложение не заменять лендингом. Private gateway/Ollama и прочие runtime-зависимости не объявлять развёрнутыми без owner/live-host evidence.
+- Непроверено: нативный iPhone Safari/keyboard/touch/screen-reader, live VPS/Tunnel/Ollama, provider credentials, real model RAM/latency, voice/device, OAuth/Drive, production RAG golden set и main ruleset.
 
 ## Историческая контрольная точка — 2026-10-28
 
@@ -33,7 +30,7 @@
 0. **Короткая точка входа:** корневой `ORIENTER.md`.
 1. **Текущий статус и флаги:** `docs/PROJECT_STATE.yaml`.
 2. **Архитектура и границы:** `docs/ALANDI_MASTER_CONTEXT_RU.md`.
-3. **Что пользователь просил и что осталось:** `docs/USER_REQUEST_CHECKLIST.md`.
+3. **Что пользователь просил и что осталось:** `docs/USER_REQUEST_CHECKLIST.md` и живой V1 release gate `docs/V1_UI_FINALIZATION_RU.md`.
 4. **Порядок внедрения:** `docs/IMPLEMENTATION_ROADMAP_RU.md`, `docs/CODER_PACKET.md`.
 5. **Решения / eval / цикл:** корневые `DECISIONS.md`, `EVALS.md`, `LOOP.md`, `INTEL.md`, `IMPROVEMENT_SELECTION.md`.
 6. **Поиск и исследования:** `docs/SEARCH_RESEARCH_FEATURE_EXTRACTION_RU.md`, `docs/OPEN_SOURCE_TRIAGE_RU.md`.
@@ -197,3 +194,70 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - PR #72: в E2E обнаружены два устаревших assertion (маршрут проверял `skill` вместо `selectedSkill`; текст «Коннекторы» проверялся с несовпадающим регистром). Оба исправлены на head `407a42ca16dfd69bee91620ae8deed098d229226`; повторный Chromium gate выполняется.
 - PR #70: не объединять текущую ветку вслепую — GitHub сообщает `mergeable=false`, exact-head CI не подтверждён. Перенести RRF как отдельный change на актуальный main, сохранить scope/provenance и прогнать RAG unit + synthetic eval.
 - PR #74 — черновик, основан на устаревшем base; сохранить полезный аудит готовности голоса/документов, но не мерджить старую ветку без повторного review.
+
+## Текущий дополнительный аудит — 2026-10-30
+
+- Основной трек: `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md` — полный список трёх ролей, выполненные шаги, findings, release plan и следующие действия.
+- PR #121 branch на момент последней сверки: `68c41ac64e81402c040314abb1a6778bfce521fc`; main base `2bda22229cba3576628f92c821bb6e1562d8abc5`; 154 commits ahead / 0 behind. Ветка PR #121 содержит также documentation-only checkpoints после functional fix.
+- Gateway import regression fix на code SHA `f9d5afaae983675d2c616e3fbc70942840d314e5` проверен: Lite Gateway Tests #483 success (150 passed).
+- Freshness #83, Provenance #554, Dead Code #389 passed на code SHA. Quality #916 отменён при обновлении ветки; Integrity, Security, Context и Jekyll jobs успели пройти, Chromium и published smoke не завершились. Graphify #262 отменён после генерации artifact; сам artifact просмотрен, но workflow не помечен green.
+- Graphify: 1,109 nodes / 3,103 edges / 53 communities; no import cycles detected. Dead-code report: один false-positive по параметру Protocol; файлов не удалять.
+- Голос: текущая реализация — editable ASR, single-message local Piper TTS и half-duplex voice loop. Selection-to-speech, multi-message queue, streaming turn-taking и native AEC/barge-in не реализованы/не доказаны.
+- Новые кандидаты: `virgiliojr94/book-to-skill` для Knowledge-to-Skill; `moonshine-ai/moonshine` для streaming voice (проверить RU/TH); llama.cpp/vLLM как GPU-serving benchmarks. Не добавлять без artifact/license/hardware eval.
+- Ни один VPS, Tunnel, GPU host или физическое устройство не проверялись; ни один файл не удалён.
+
+## Дополнительные требования владельца — 2026-10-30 (продолжение)
+- Голос теперь является P0 deliverable первого функционального релиза: editable ASR; естественный streaming dialogue; interruption/barge-in; TTS выделенного текста, целого сообщения и очереди выбранных сообщений; реальные RU/EN/TH device tests. См. P0-13…P0-18 в docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md.
+- Helper models/GPU/agent orchestration и Knowledge-to-Skill зарегистрированы как P1-10…P1-17 в том же backlog.
+- Moonshine Voice перспективен для streaming STT/agent loop, но listed STT languages currently exclude RU/TH; no replacement for Whisper until language-specific model and license checks.
+- OpenWOP v2, LangGraph and Temporal are orchestration research candidates; none is integrated. Existing ToolDAG remains a bounded prototype.
+- Не удалять файлы на основании одного Vulture report: единственное предупреждение оказалось false positive в Protocol signature.
+
+
+## Дополнительные требования владельца — 2026-10-30 (продолжение)
+- Голос является P0 deliverable первого функционального релиза: editable ASR; естественный streaming dialogue; interruption/barge-in; TTS выделенного текста, целого сообщения и очереди выбранных сообщений; реальные RU/EN/TH device tests. См. P0-13…P0-18 в docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md.
+- Helper models/GPU/agent orchestration и Knowledge-to-Skill зарегистрированы как P1-10…P1-17 в том же backlog.
+- Moonshine Voice перспективен для streaming STT/agent loop, но listed STT languages currently exclude RU/TH; no replacement for Whisper until language-specific model and license checks.
+- OpenWOP v2, LangGraph and Temporal are orchestration research candidates; none is integrated. Existing ToolDAG remains a bounded prototype.
+- Не удалять файлы на основании одного Vulture report: единственное предупреждение оказалось false positive в Protocol signature.
+
+## Debugger fix — audio subprocess cancellation (2026-10-30)
+- Confirmed bug: ASR ffprobe/ffmpeg/whisper.cpp and Piper TTS child processes were killed on timeout but not on request cancellation.
+- Fixed by `await_local_process()` in gateway/app.py; regression tests added to gateway/tests/test_audio_concurrency.py. Commits: `77b2691` and `363bb5c`.
+- Equivalent local Python smoke: timeout and cancellation both killed/reaped the child (return code -9). This does not replace repository Gateway CI.
+- Existing Gateway #483 passed 150 tests before this new fix. Current code needs Gateway CI; the connected GitHub actions interface cannot dispatch a new workflow on the new commit.
+
+### UX polish — latest checkpoint
+- Read `docs/LANDING_UX_POLISH_BACKLOG_RU.md` for all remaining landing/app presentation work.
+- Landing ticker pause controls implemented in `f42c42d`; Playwright regression in `b213c8a`; exact-head CI pending. No JS/runtime dependency added.
+- Full tracker also linked from `docs/V1_UI_FINALIZATION_RU.md`; update PROJECT_STATE, VOLLEY_LOG and ORIENTER after each major slice.
+
+
+## Verified scratch cleanup — 2026-10-30
+- Removed `temp/3`, `temp/4`, `temp/5` after checking references and updating IMPROVEMENT_SELECTION.md. Retained `temp/1` and `temp/2` as historical research. No production source files removed.
+- Deletion commits and rationale: docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md and docs/PROJECT_STATE.yaml.
+
+
+## Синхронизация PR #121 с последним main — 2026-10-30
+- Main commit e6404d510229fa64a7bb375995d76dcba55de623 является documentation-only: добавлен docs/LANDING_UX_POLISH_BACKLOG_RU.md с оставшимися landing/app screenshot, accessibility, interaction and post-merge checks.
+- PR #121 синхронизирован двухродительским merge commit 2c1e6bd811546a87f0ac86bc5e550dd9a31aeb13; compare 194 ahead / 0 behind; GitHub reports mergeable=true, mergeable_state=unstable (CI gates incomplete).
+- Последний функциональный кодовый commit для audio cancellation fix: 363bb5c46c6a0fcad55bb5d243289e065ee6450a. Новый Gateway CI всё ещё требуется.
+
+
+## Latest PR checkpoint — 2026-10-30
+- Project state and machine snapshot refreshed at commit a22e01e9d36d67e86b1bbf37b119dcc66cb9ada3; current main is e6404d510229fa64a7bb375995d76dcba55de623. The main commit is documentation-only.
+- PR #121 contains main via merge commit 2c1e6bd811546a87f0ac86bc5e550dd9a31aeb13. Last inspected compare was 200 ahead / 0 behind; query live before acting because each docs/code checkpoint advances the head.
+- Gateway CI is required for audio process cancellation fix 363bb5c; previous Gateway #483 passed before that fix. Current exact-head Quality/Chromium/Pages not green.
+
+
+## Landing voice scope — 2026-10-30
+- Landing capability card and roadmap now enumerate editable STT, conversational voice/interruption, selected-text TTS, whole-message TTS and multi-message playback queue as first functional update requirements.
+- Existing ASR/Piper/half-duplex code is distinguished from unfinished streaming/AEC/barge-in/queue/device acceptance. Playwright assertions added; current exact-head CI pending.
+- ASR candidates Nemotron 3.5 Streaming 0.6B, Qwen3-ASR-0.6B and Parakeet RNNT 1.1B recorded in PROJECT_STATE and the three-role audit tracker. Whisper remains baseline until benchmark.
+
+## Exa research + exact-head CI checkpoint — 2026-10-30
+- Full synthesis: docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md.
+- Security fix 051308c: reject DTD/entity declarations in OOXML; remove seven shadowed tests; Gateway CI 156 passed (one upstream AnyIO warning).
+- Node24 direct Action pins commit 48874eab: 13 workflow files updated; exact-head CI all green including Chromium and published Pages smoke.
+- External exercise toolkit remains pinned because newer upstream changes behavior; separate compatibility review required.
+- Remaining: full subsystem audit, hardware voice evaluation, realtime audio, helper registry, durable AgentRun contract and Knowledge-to-Skill prototype.

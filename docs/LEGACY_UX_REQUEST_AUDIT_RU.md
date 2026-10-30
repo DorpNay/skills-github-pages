@@ -78,17 +78,17 @@
 
 | Статус | Наблюдение и действие |
 |---|---|
-| **Не подтверждено** | Видимые режимы находятся в верхней панели; текущая фабрика `createChat()` сохраняет базовые поля чата и флаги памяти. Однозначный per-chat settings store с тестом сохранения для поиска/режима/агентов/offline в этом аудите не подтверждён. |
-| **Не подтверждено** | Нет E2E-контракта, что новый чат всегда сбрасывает research/agents и начинает в базовом «Быстро/Дольше», а старые чаты сохраняют свои значения при переключении. Сначала проследить реальный store, затем добавить независимость без второго конкурирующего settings store. |
+| **Сделано — PR #119/#120** | Настройки режима и контекста хранятся в объекте конкретного чата; новые чаты получают базовые значения, существующие чаты сохраняют собственные. PR #120 завершил иерархию боковой панели и статусные строки. |
+| **В работе — branch `feat/chat-settings-orthogonal-controls-20261030`** | Уточняется контракт независимости: объём работы управляет только бюджетом инструментов, веб-режим — только доступностью/шириной поиска, структурированный конвейер и профиль задачи — отдельные измерения. Research Studio перестаёт перезаписывать настройки чата и использует их сводку. Точные E2E-комбинации ожидают проверки. |
 
 ## 10. Приоритетный порядок
 
-1. **P0 — закрыто, PR #71 merged:** стабильный composer для нового чата и mobile viewport; native iPhone verification remains open.
-2. **P1 — меню и overlay:** затемнение модалок, focus/outside-click contract, умное позиционирование chat actions/popovers.
-3. **P1 — единая панель controls:** dropdown веб-поиска и функций, краткое описание комбинации, только реально доступные параметры.
-4. **P2 — provider/settings:** взаимное исключение маршрута, empty-by-default user prompt, проверка Gemini reset/Kilo notice, перенос export/import.
-5. **P2 — визуальная навигация:** порядок шапки, project label над чатом, спокойный бренд/часы, контуры списков, sticky settings footer.
-6. **P3 — устройство и runtime:** native iOS Safari, touchcancel голосового меню, screen reader, реальный provider/local model, RAM/latency.
+1. **P0 — закрыто, PR #71 merged:** стабильный composer и mobile viewport; native iPhone verification остаётся отдельным ручным gate.
+2. **P1 — в основном закрыто, PR #115/#117/#120:** scrims и первый outside tap, viewport-safe chat menus, sidebar hierarchy, memory/project status и preference synchronization.
+3. **P1 — активный срез, branch `feat/chat-settings-orthogonal-controls-20261030`:** независимые настройки объёма работы и веб-поиска, точная семантика структурированного конвейера/профиля задачи, единый источник настроек для Research Studio.
+4. **P2 — в основном закрыто, PR #114/#118/#119:** empty-by-default user prompt, удаление устаревшего Gemini reset, chat import/export, единый provider route selector, project-first actions и memory scope.
+5. **P2 — визуальная навигация закрыта по основным пунктам, PR #117/#119/#120:** header hierarchy, project label, composer placement, sidebar order, theme/language controls. Проверить оставшиеся микротексты и native focus.
+6. **P3 — остаётся:** native iOS Safari, keyboard/safe-area/edge-swipe, screen reader, live provider/gateway, voice transport, RAM/latency и внешние connector OAuth/sync.
 
 Не вливать legacy PR #37 целиком: ранее зафиксированы тестовые проблемы, а части PR #35/#61 уже реализованы и проверены. Переносить только небольшие current-main срезы с exact-head тестами.
 
@@ -100,3 +100,12 @@
 - **PR #115 — merged at `ed2c4c7ee3a67c7a0cf5b541c1ab6206609dd32c`:** scrim for composer popovers, modal backdrop blur, inert first outside tap for toolbar/language/chat-row menus. Exact-head Quality/Chromium/published-site smoke passed on PR head `d7f57d0abfba46a5764e6a1182bcc9a847f7a6ef`.
 - **Следующий bounded slice:** edge-aware chat-row/popover placement, header order/project label, calm brand/clock styling and sticky settings actions; provider/project export-import cleanup follows separately.
 - **Остаётся не подтверждено:** реальный iPhone Safari/клавиатура/edge swipes; реальные провайдеры и self-hosted gateway; все обещания runtime, которых нет в live проверках.
+
+## Пересверка 2026-10-30
+
+- **PR #117 merged:** viewport-safe chat menus, header hierarchy, project label and clock polish.
+- **PR #118 merged:** chat-scoped import/export; import merges safely rather than replacing existing history.
+- **PR #119 merged:** composer position preference, unified provider route selection, project-first actions and scoped project memory settings.
+- **PR #120 merged at `2bda22229cba3576628f92c821bb6e1562d8abc5`:** dedicated memory section, live memory/project status, Research Studio placement and synchronized theme/language preferences.
+- **Current active slice:** `feat/chat-settings-orthogonal-controls-20261030` documents and implements independent chat settings. It removes duplicated Research Studio selectors, makes Studio use active-chat settings without mutation, and separates search-result breadth from tool execution budget. Exact-head E2E is still required before merge.
+- **Still not verified:** native iPhone Safari/keyboard/safe-area/touch/screen-reader behavior; live gateway and provider credentials; external connector OAuth/sync; independent agent processes; production voice transport and target-device performance.

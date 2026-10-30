@@ -22,7 +22,7 @@ def read_yaml(path: Path, expected_type: type) -> Any:
     try:
         value = yaml.safe_load(path.read_text(encoding="utf-8"))
     except (OSError, yaml.YAMLError) as exc:
-        raise ValueError(f"{path.relative_to(ROOT)}: cannot parse YAML ({type(exc).__name__})") from exc
+        raise ValueError(f"{path.relative_to(ROOT)}: cannot parse YAML ({type(exc).__name__}): {exc}") from exc
     if not isinstance(value, expected_type):
         raise ValueError(f"{path.relative_to(ROOT)}: unexpected top-level YAML shape")
     return value

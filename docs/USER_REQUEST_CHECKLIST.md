@@ -1,5 +1,7 @@
 # aLandi — постоянный реестр запроса и Definition of Done
 
+> **Актуальная граница V1 UI:** требования к первой бесплатной статической версии лендинга и корневого браузерного клиента ведутся в [docs/V1_UI_FINALIZATION_RU.md](V1_UI_FINALIZATION_RU.md). Этот файл сохраняет более широкий исторический запрос и whole-stack Definition of Done; не использовать его устаревшие UI-статусы вместо V1-реестра.
+
 Этот файл — рабочая контрольная точка для пользовательского запроса от 2026-10-23 и инженерного манифеста GEN1 / CRAZE V-016. Он намеренно различает **код написан**, **CI прошёл**, **реальная инфраструктура доступна** и **производительность измерена**.
 
 Статусы: `[x]` подтверждено тестом/проверкой; `[~]` реализовано в текущей ветке, ожидает CI или проверки поведения; `[ ]` не реализовано либо не подтверждено. Нельзя переводить функцию в `[x]` лишь потому, что добавлена разметка или документ.
@@ -265,14 +267,30 @@
 ## Supplement — consolidated interface cleanup, 2026-10-30
 
 - [x] PR #118 merged at `4bde19249b1ac05ccf55c2499a8ee08a27b9a198`: chat export/import actions live in each chat menu; chat import merges rather than replaces existing history, deduplicates IDs, validates settings and bounds imported data. Project bundle import/export remains in project settings.
-- [~] Follow-up branch `fix/ui-request-closure-20261030`: adds a persisted top/bottom composer preference; separates the aLandi Cloud route from third-party providers in the single route selector; removes the redundant “use aLandi as primary route” action; removes connector hints from request-context selection; clarifies that the current “Agents” toggle enables the existing multi-stage research pipeline rather than an independent agent swarm; adds project-first quick actions and makes new-project memory scope selectable/persisted.
-- [ ] Await exact-head Chromium, security/integrity/context sentinels, Jekyll and published Pages smoke checks before merging the follow-up.
+- [x] PR #119 merged: persisted top/bottom composer preference; aLandi Cloud and third-party provider routes share one clear selector; redundant primary-route action and connector hints were removed; the staged research workflow is described truthfully; project-first quick actions and per-project memory scope are persisted.
 - [ ] Native iPhone Safari keyboard, safe-area, touch and accessibility checks remain manual gates. Chromium geometry assertions do not establish native iOS behavior.
 - [ ] Live aLandi gateway, third-party provider credentials, external connectors, independent agent teams and production voice transport are not verified by these UI changes.
 
 
 ## Supplement — sidebar hierarchy and preferences, 2026-10-30
 
-- [~] Branch `fix/sidebar-memory-order-20261030`: memory controls now have their own first sidebar section; project/chat navigation and compact status lines follow; Research Studio is below chats; theme/language controls are pinned at the sidebar bottom and language is also selectable in Settings.
-- [ ] Exact-head CI and published Pages smoke must pass before merging.
+- [x] PR #120 merged at `2bda22229cba3576628f92c821bb6e1562d8abc5`: memory controls have their own first sidebar section; project/chat navigation and status lines follow; Research Studio is below chats; theme/language controls are pinned at the sidebar bottom and language is synchronized with Settings.
 - [ ] Native iPhone Safari keyboard, safe-area, focus, touch and screen-reader behavior remain unverified. Live gateway, provider credentials, connector sync, independent agent teams and voice transport remain separate runtime/infrastructure gates.
+
+## Supplement — orthogonal chat settings and Research Studio, 2026-10-30
+
+- [~] Branch `feat/chat-settings-orthogonal-controls-20261030`: separates work effort from web-search scope; clarifies the structured workflow and task-profile permissions; removes duplicated Research Studio selectors and makes Studio use active chat settings without mutating them; localizes the settings summary, removes the duplicate Research entry point and raises primary mobile hit areas to 44px.
+- [ ] Exact-head Chromium E2E must verify Quick+Expanded, Thorough+Standard, Thorough+Off, per-chat settings, RU/EN and Research Studio non-mutation before merge.
+- [ ] Native iPhone Safari behavior and live gateway/provider execution remain separate manual/runtime gates.
+
+
+## Supplement — V1 landing and interface finalization, 2026-10-30
+
+- [x] Created the dedicated living release checklist: [V1_UI_FINALIZATION_RU.md](V1_UI_FINALIZATION_RU.md). It preserves the owner's 18 UI directions, adds landing-specific gates, states the V1/free-static-UI boundary and distinguishes implementation from verification.
+- [x] Audited current ChatGPT/OpenAI UI patterns and official Apple, W3C, GOV.UK, NN/G and MDN accessibility/design guidance; recorded what is adopted and what is deliberately not copied in the V1 checklist.
+- [x] Landing copy now distinguishes a free static interface from inference/API/hosting cost; public hosted AI endpoint is not provided by GitHub Pages.
+- [x] Added staged roadmap disclosures; the "1nv3nt10n 1n PrOc3ss…" ticker is decorative, appears only for unfinished directions, is hidden from assistive technology and respects reduced-motion.
+- [~] PR #121: duplicate settings close action removed; integrity provider-group assertion no longer depends on fragile escaped regex; Research Studio E2E now excludes the expected provider connectivity probe from user-send count.
+- [~] Added landing and in-app roadmap E2E coverage. Exact-head Quality/Chromium/Pages workflows must pass before merge.
+- [ ] Native iPhone Safari, keyboard, safe-area, screen-reader and touch verification remain manual gates.
+- [ ] Issue #111 remains open for owner-only ruleset, VPS/hardware, live gateway/model, RAG corpus, voice/device and sandbox gates. CI alone cannot close it.
