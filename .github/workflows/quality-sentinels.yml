@@ -23,7 +23,7 @@ jobs:
         run: node scripts/check-action-pinning.mjs
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 22
+          node-version: 24
       - name: Parse app JavaScript and check UI structure
         run: node scripts/quality-agents.mjs integrity
       - name: Syntax-check the secret-safe live provider probes
@@ -40,7 +40,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 22
+          node-version: 24
       - name: Check secret hygiene and unsafe rendering paths
         run: node scripts/quality-agents.mjs security
 
@@ -51,7 +51,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 22
+          node-version: 24
       - name: Check context and tool-call limits
         run: node scripts/quality-agents.mjs context
 
@@ -66,7 +66,7 @@ jobs:
           destination: ./_site
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 22
+          node-version: 24
       - name: Verify generated site artifact
         run: node scripts/quality-agents.mjs build
 
@@ -78,7 +78,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 22
+          node-version: 24
       - uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1
         with:
           source: ./
@@ -87,7 +87,7 @@ jobs:
         run: |
           # Avoid the known Ubuntu man-db trigger stall during Playwright --with-deps.
           sudo apt-get --yes remove --purge man-db
-          npm install --no-save --no-package-lock @playwright/test@1.56.1
+          npm install --no-save --no-package-lock @playwright/test@1.64.1
           npx playwright install --with-deps chromium
       - name: Exercise the built app in Chromium
         run: npx playwright test --grep-invert "live public site serves the app shell and basic chat controls"

@@ -160,6 +160,7 @@
 | **AI-AGENT-001** | logical_roles_not_process_swarm | docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md | EV-AGENT-001 |
 | **AI-AGENT-002** | limited_existing_routing | gateway/tools/dag_engine.py | EV-AGENT-002 |
 | **AI-AGENT-003** | bounded_dag_prototype | gateway/tools/dag_engine.py | EV-AGENT-003 |
+| **AI-AGENT-006** | research_blueprint_source_catalog_model_bakeoff_docs_only_runtime_unchanged | docs/AGENT_PLATFORM_BLUEPRINT_RU.md; docs/AGENT_RESEARCH_CATALOG_RU.md; docs/AGENT_MODEL_BAKEOFF_RU.md | EV-AGENT-006 |
 | **AI-LEARN-001** | governance_only_no_self_modification | LOOP.md | EV-LEARN-001 |
 | **AI-LEARN-002** | versioned_skill_rollback_deferred | LOOP.md | EV-LEARN-002 |
 
@@ -244,6 +245,18 @@
 - [ ] Run native iPhone Safari/keyboard/touch verification separately; passing Chromium viewport simulation is not proof of native behavior.
 
 
+## Supplement — expanded agent platform research (2026-10-30)
+
+- [x] Reconciled current main, open PR #124, issue #111, existing D-016, 64-role catalogue, four-stage multi-agent UI pipeline, ToolDAG, validator, approval primitive and helper-model benchmark status.
+- [x] Researched orchestration SDKs, agent workforce/control planes, subagent lifecycle, agentic patterns, skills, MCP/A2A/ACP/AG-UI, durable execution, memory, evaluation and sandbox options.
+- [x] Preserved earlier owner-supplied inspiration sources: Book-to-Skill, Anything-to-Skill, Agent Skills, Awesome Harness Engineering and Awesome Agentic Patterns.
+- [x] Created the architecture blueprint, annotated source catalog and small-model bake-off matrix in a dedicated branch; no runtime dependencies, code, models or feature flags changed.
+- [ ] Review the architecture and approve/adjust the Phase 1 contracts and registry before any runtime implementation.
+- [ ] Implement a versioned AgentProfile/Profession/Skill/Capability/ModelPolicy contract in a separate bounded PR.
+- [ ] Build durable AgentRun state, isolated subagent task packets, budget/cancellation and restart recovery in subsequent PRs.
+- [ ] Run RU/EN/TH model quality and target-host RAM/latency bake-off before choosing helper models.
+- [ ] Complete threat model and real sandbox/escape tests before enabling arbitrary code or shell tools.
+
 ## Supplement — autonomous agent orchestration research (2026-10-28)
 
 - [x] Reviewed additional upstream open-source patterns for orchestration, durable workflows, policy-as-code, sandboxing, agent evaluations, memory, protocols and observability; recorded source links and limitations in `docs/AGENT_ORCHESTRATION_RESEARCH_RU.md`.
@@ -301,3 +314,16 @@
 - [x] Landing and in-app roadmap E2E coverage passed on PR #121 exact head, including published-site browser smoke. Post-merge Pages deployment remains a separate check.
 - [ ] Native iPhone Safari, keyboard, safe-area, screen-reader and touch verification remain manual gates.
 - [ ] Issue #111 remains open for owner-only ruleset, VPS/hardware, live gateway/model, RAG corpus, voice/device and sandbox gates. CI alone cannot close it.
+
+
+## Supplement — code currency and dependency audit, 2026-10-31
+
+- [x] Просканированы 97 файлов с кодовыми/конфигурационными расширениями и отдельно 5 228 строк основного index.md; проверены runtime/dev pins, Actions SHA, browser runner, API markers и тесты.
+- [x] Точного применения техники/API v.2.0 не найдено. Единственный похожий marker v2.0.0 — версия SHA-pinned стороннего action в workflow.
+- [x] Проверены upstream release notes для FastAPI, Uvicorn, pypdf, HTTPX, cryptography, jsonschema, pytest, pytest-asyncio, PyYAML, Playwright, uv, Graphify и Actions.
+- [x] Сохранён семидневный cooldown для новых релизов; не обновлялись зависимости, попадающие в окно стабилизации.
+- [x] В отдельной ветке обновлены выбранные runtime/dev/browser pins и синхронизирован provenance manifest.
+- [x] Синхронное извлечение документов вынесено из event loop через asyncio.to_thread; добавлен тест, подтверждающий выполнение parser вне event-loop thread.
+- [~] Exact-head Gateway, Chromium, Pages, Freshness, Provenance, Graphify и Dead Code CI ожидаются; до их завершения обновления не считаются подтверждёнными.
+- [ ] После cooldown повторно оценить pypdf 6.21.4, pytest 9.2.0, pytest-asyncio 1.4.1 и Graphify 0.9.97.
+- [ ] Live Cloudflare Tunnel/Ollama, целевой VPS и native iPhone остаются owner/manual gates.
