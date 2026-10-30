@@ -194,3 +194,14 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - PR #72: в E2E обнаружены два устаревших assertion (маршрут проверял `skill` вместо `selectedSkill`; текст «Коннекторы» проверялся с несовпадающим регистром). Оба исправлены на head `407a42ca16dfd69bee91620ae8deed098d229226`; повторный Chromium gate выполняется.
 - PR #70: не объединять текущую ветку вслепую — GitHub сообщает `mergeable=false`, exact-head CI не подтверждён. Перенести RRF как отдельный change на актуальный main, сохранить scope/provenance и прогнать RAG unit + synthetic eval.
 - PR #74 — черновик, основан на устаревшем base; сохранить полезный аудит готовности голоса/документов, но не мерджить старую ветку без повторного review.
+
+## Текущий дополнительный аудит — 2026-10-30
+
+- Основной трек: `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md` — полный список трёх ролей, выполненные шаги, findings, release plan и следующие действия.
+- PR #121 branch на момент последней сверки: `68c41ac64e81402c040314abb1a6778bfce521fc`; main base `2bda22229cba3576628f92c821bb6e1562d8abc5`; 154 commits ahead / 0 behind. Ветка PR #121 содержит также documentation-only checkpoints после functional fix.
+- Gateway import regression fix на code SHA `f9d5afaae983675d2c616e3fbc70942840d314e5` проверен: Lite Gateway Tests #483 success (150 passed).
+- Freshness #83, Provenance #554, Dead Code #389 passed на code SHA. Quality #916 отменён при обновлении ветки; Integrity, Security, Context и Jekyll jobs успели пройти, Chromium и published smoke не завершились. Graphify #262 отменён после генерации artifact; сам artifact просмотрен, но workflow не помечен green.
+- Graphify: 1,109 nodes / 3,103 edges / 53 communities; no import cycles detected. Dead-code report: один false-positive по параметру Protocol; файлов не удалять.
+- Голос: текущая реализация — editable ASR, single-message local Piper TTS и half-duplex voice loop. Selection-to-speech, multi-message queue, streaming turn-taking и native AEC/barge-in не реализованы/не доказаны.
+- Новые кандидаты: `virgiliojr94/book-to-skill` для Knowledge-to-Skill; `moonshine-ai/moonshine` для streaming voice (проверить RU/TH); llama.cpp/vLLM как GPU-serving benchmarks. Не добавлять без artifact/license/hardware eval.
+- Ни один VPS, Tunnel, GPU host или физическое устройство не проверялись; ни один файл не удалён.
