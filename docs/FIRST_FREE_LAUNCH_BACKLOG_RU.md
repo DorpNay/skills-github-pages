@@ -167,6 +167,49 @@ Ollama — 127.0.0.1:11434 — одна активная модель
 
 **Что проверить перед выбором обязательных checks:** текущий Quality workflow запускается на каждом PR и даёт Integrity, Security, Context, Jekyll и Chromium jobs. Gateway Tests, Project State Freshness и часть provenance/Graphify jobs имеют собственные path/условия запуска. Не требовать от ruleset job, который не создаётся на части PR — это способ случайно заблокировать все изменения документации или только UI. Сначала проверить реальный список checks на PR с frontend change, backend change и docs-only change.
 
+## 4.2 Прослеживаемость исходных списков и мелких требований
+
+Объединение не заменяет и не удаляет исходные реестры. Таблица показывает, куда перенесён каждый класс требований; исходный документ остаётся детализацией и историей принятия решения.
+
+| Источник | Область/ID | Объединённые пункты | Что дополнительно проверять |
+|---|---|---|---|
+| `docs/V1_UI_FINALIZATION_RU.md` | Направления 1–4: общий UI, composer/mobile keyboard, маршруты, inline validation | P0-03, P0-04, P0-07, P2-05 | Ошибки URL/key/model/CORS/401/5xx; focus/scroll; нативная клавиатура и safe-area |
+| То же | 5–8: system prompt, provider instructions, tools/Tavily, gateway state | P0-05, P0-06, P0-07, P1-08 | Pencil/readonly, privacy copy, redaction, реальный model probe отдельно от mock |
+| То же | 9–13: modals, long scroll, advanced settings, theme/language/motion, catalog | P0-04, P0-05, P0-07, P2-05 | Escape/focus return, sticky actions, mobile hit targets, RU/EN, stale catalog/fingerprint |
+| То же | 14–17: projects, Research Studio/search, task profiles, agent blueprint | P0-03, P0-04, P1-01, P1-03, P2-07 | Project isolation/export/delete; независимость effort/search/profile; pipeline не выдавать за swarm |
+| То же | 18 + лендинг/release gates | P0-01, P0-02, P0-03, P0-08 | Desktop/mobile screenshots, canonical/CTA, Pages после merge, Safari owner gate |
+| `docs/USER_REQUEST_CHECKLIST.md` | A: governance, baseline, continuity | P0-09, P0-10, P0-11, P0-12 | Открытая очередь, exact SHA, branch rules, secret scanning |
+| То же | B: aLandi Cloud/provider/Tavily | P0-01, P0-07, P1-08 | Первичное disconnected состояние, один bounded probe, no silent fallback, отдельные credentials |
+| То же | C: branding/header/clock/theme/language/composer/files/voice preview | P0-03, P0-04, P2-05, P2-06 | 44px controls, RU/EN copy, touch keyboard, voice preview остаётся preview |
+| То же | D: chats/projects/private/shared memory/deletion | P1-01, P1-02 | Scope isolation, explicit promotion, export/import, derived records and backup deletion |
+| То же | E: routing/tools/search/errors/research/evals | P0-07, P1-03, P1-06, P1-08, P2-07 | Bounded tool rounds, cancellation, citation links, no private-prompt cross-provider forwarding |
+| То же | F: V-016 dependencies/audio/RAG/sandbox/hardware/license | P0-12, P1-02–P1-06, P2-06 | CUT/PAT не становятся runtime deps; hash/license/host benchmarks |
+| То же | G–H: merge/deploy/manifest/rejected work | P0-08–P0-12, P1-09 | PR-head ≠ merge ≠ live deploy; отклонённые/заблокированные items остаются в ledger |
+| То же | I + supplements 2026-10-24…30 | P0-03, P0-04, P1-01, P1-08, P2-05, P2-07 | Новые UI детали должны иметь regression test или честный manual gate |
+| `docs/V016_IMPLEMENTATION_CHECKLIST.md` | Original 81-item audit + UX-01…UX-27 | P0-03–P0-10, P1-01–P1-09, P2-01–P2-07 | UX-01/04/05/06/08/09/10 провайдеры; UX-15 documents; UX-16 voice preview; UX-17…27 projects/settings/search/agents — статус остаётся источником подробного DoD |
+| `docs/PRE_LAUNCH_STACK_RU.md` | Gateway → Tunnel → Ollama runbook and release checks | P0-06–P0-08, P0-11–P0-12, P2-06 | Inventory-before-install, loopback-only, firewall, rollback, backup restore, model digest/license and reboot test |
+| `docs/IMPLEMENTATION_ROADMAP_RU.md` | P1 attachment/voice/RAG/image/agents/memory/provider verticals | P1-01–P1-09, P2-06–P2-07 | Проектные этапы не становятся обещанием релиза до runtime evidence and benchmark |
+| Issue #111 | Main governance, supply chain, first deployment, live host, RAG corpus, voice/doc, sandbox, memory deletion, OAuth | P0-08–P0-12, P1-01–P1-09, P2-05–P2-06 | Каждая live/owner dependency закрывается только фактическим evidence в Issue #111 |
+
+### Мелкие требования, которые нельзя потерять между крупными задачами
+
+| Деталь | Где учитывается | Доказательство/остаток |
+|---|---|---|
+| Нет дублирующих action selectors и скрытых повторных кнопок Save/Close | P0-04 | Integrity + Chromium; повторно проверить exact-head |
+| Ошибка ключа/модели видна около поля; секрет не попадает в toast/log | P0-04, P0-07 | Mock E2E invalid key/model; проверить отсутствие secret в diagnostics |
+| Вставка ключа инициирует один ограниченный catalog refresh + model probe | P0-07, P1-08 | Playwright test paste-provider-key; live provider остаётся отдельным opt-in |
+| Встроенный provider option остаётся скрытым legacy option, не удаляется из migration HTML | P0-05, P0-07 | Проверять hidden optgroup и наличие внешних option; native option не считать видимым как обычный DOM-блок |
+| Settings/Project Settings закрываются через X и Escape; фокус возвращается на видимый control | P0-04 | Exact-head keyboard/focus E2E; ручной screen-reader review остаётся |
+| Закрывающий control sidebar доступен при длинной памяти и проектах | P0-04 | Sticky header и 44px target; проверить на узкой высоте экрана |
+| Search normal/more/offline не меняет effort; Fast/Thorough не меняет search scope | P0-03, P0-04 | Existing orthogonal-settings E2E; Thai locale отдельный regression |
+| Research Studio не очищает composer, не отправляет автоматически и не меняет skill preset | P0-03, P0-04, P2-07 | research-studio.spec.mjs: apply/close/Escape/no-send/current-chat settings |
+| Публичная выдача содержит URL источника и проверяемый origin/query; нет ссылки, выдуманной UI | P1-03 | Mock E2E for source contract; реальный CORS/provider availability не гарантируются |
+| RU/EN/TH locale и корректная URL локали Wikipedia | P0-03, P1-03 | RU/EN UI tests + Thai Wikipedia mocked E2E; Thai search source language doesn't prove all Thai web coverage |
+| Long chat/attachments/composer сохраняют draft и не расширяют document viewport | P0-04, P2-05 | 320/390 width + long-message + actual iPhone Safari manual gate |
+| Reduced-motion отключает marquee/ticker, текст остаётся читаемым | P0-02, P0-04 | Chromium emulate media; verify published Pages after merge |
+| Лендинг не обещает бесплатный inference, background work, active roadmap runtime или public multi-user SaaS | P0-01, P0-02 | Landing copy + build/E2E + post-deploy public URL smoke |
+| Voice/agent/sandbox/image features остаются выключенными/preview пока не доказан backend | P1-04, P1-06, P2-07 | Truthful UI copy and safe-off defaults; no feature promoted by docs alone |
+
 ## 5. Итоговая рекомендованная последовательность
 
 1. Довести PR #121: UI, лендинг, README, E2E, RU/EN, mobile touch, no-overflow и reduced-motion.
