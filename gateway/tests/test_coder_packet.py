@@ -215,6 +215,18 @@ def test_approval_tickets_are_action_scoped_expiring_and_one_time():
     assert not registry.consume(ticket3, action="read_sensitive", arguments={"record_id": "42"},
                                 scope="project:alpha", actor_id="authenticated-user")
 
+    unicode_actor = "оператор-เจ้าของ"
+    ticket4 = registry.issue_after_human_confirmation(
+        action="read_sensitive", arguments={"record_id": "43"}, scope="project:alpha",
+        actor_id=unicode_actor, ttl_seconds=30
+    )
+    assert registry.consume(ticket4, action="read_sensitive", arguments={"record_id": "43"},
+                            scope="project:alpha", actor_id=unicode_actor)
+    assert not registry.consume(ticket4 + "漢", action="read_sensitive", arguments={"record_id": "43"},
+                                scope="project:alpha", actor_id=unicode_actor)
+    with pytest.raises(ApprovalError, match="JSON object"):
+        canonical_action_digest("read_sensitive", ["not", "an", "object"], "project:alpha")
+
 
 def test_json_schema_validator_enforces_types_limits_and_local_refs():
     schema = {"type": "object", "properties": {
