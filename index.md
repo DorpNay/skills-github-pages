@@ -3468,7 +3468,7 @@ permalink: /
       if (!q) return 'Пустой поисковый запрос.';
       const limit = mode === 'deep' ? 5 : 3;
       showStatus('📚 Открытый источник: ' + source + ' · ' + q.slice(0, 70));
-      const wikiLanguage = /[\\u0E00-\\u0E7F]/u.test(q) ? 'th' : (/[а-яё]/i.test(q) ? 'ru' : 'en');
+      const wikiLanguage = /[\u0E00-\u0E7F]/u.test(q) ? 'th' : (/[а-яё]/i.test(q) ? 'ru' : 'en');
       let endpoint;
       if (source === 'wikipedia') {
         endpoint = 'https://' + wikiLanguage + '.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srlimit=' + limit + '&srsearch=' + encodeURIComponent(q);
