@@ -457,7 +457,7 @@ permalink: /
         <div class="flex items-center justify-between gap-3"><div class="min-w-0 flex-1"><p class="text-lg uppercase tracking-[.18em] text-cyan-300 font-extrabold leading-none">aLandi · cloud</p><h3 id="cloudCardTitle" data-i18n="cloudCardTitle" class="text-2xl font-bold mt-2">Мой сервер</h3></div><span class="cloud-status-indicator" id="cloudStatusDot" data-state="disconnected" aria-hidden="true"></span></div>
         <div class="grid grid-cols-1 gap-2">
           <input id="cloudBaseUrl" type="url" autocomplete="url" aria-label="URL моего сервера" class="w-full p-3 rounded-xl border text-sm" placeholder="URL моего сервера · https://…/v1"><p id="cloudBaseUrlError" class="field-error hidden" role="alert"></p>
-          <input id="cloudModel" type="text" autocomplete="off" aria-label="Модель моего сервера" class="w-full p-3 rounded-xl border text-sm" value="qwen3.5:4b" placeholder="Модель · точный ID на сервере"><p id="cloudModelError" class="field-error hidden" role="alert"></p>
+          <input id="cloudModel" type="text" autocomplete="off" aria-label="Модель моего сервера" class="w-full p-3 rounded-xl border text-sm" placeholder="Модель gateway · точный ID"><p id="cloudModelError" class="field-error hidden" role="alert"></p>
           <div class="cloud-key-row flex gap-2"><input id="cloudApiKey" type="password" autocomplete="off" aria-label="Ключ доступа к серверу" class="min-w-0 flex-1 p-3 rounded-xl border text-sm" placeholder="Ключ доступа"><button type="button" data-action="paste-cloud-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ">↓</button></div><p id="cloudApiKeyError" class="field-error hidden" role="alert"></p>
         </div>
         <p id="cloudStatus" class="cloud-status-copy text-[10px]" data-state="disconnected" role="status" aria-live="polite">Не подключено</p>
@@ -2371,7 +2371,7 @@ permalink: /
       applyAppearance($('uiTheme').value, $('uiMotion').value);
       const savedProvider=safeGet(STORAGE.provider);
       $('cloudBaseUrl').value=safeGet('ai_alandi_cloud_base_url')||(savedProvider==='alandi'?safeGet(STORAGE.baseUrl):'')||'';
-      $('cloudModel').value=safeGet('ai_alandi_cloud_model')||(savedProvider==='alandi'?safeGet(STORAGE.model):'')||'qwen3.5:4b';
+      $('cloudModel').value=safeGet('ai_alandi_cloud_model')||(savedProvider==='alandi'?safeGet(STORAGE.model):'')||'';
       $('cloudApiKey').value=safeGet(providerKeyStorage('alandi'))||'';
       if (savedProvider && savedProvider !== 'gemini') {
         const legacyKey = safeGet(STORAGE.apiKey);
@@ -2387,7 +2387,7 @@ permalink: /
         safeSet(STORAGE.model, 'qwen3.5:4b');
       }
 
-      $('providerPreset').value=provider==='alandi'?'':provider;
+      $('providerPreset').value=provider;
       const storedBaseUrl=safeGet(STORAGE.baseUrl);
       $('baseUrl').value=storedBaseUrl||(provider==='alandi'||provider==='custom'||provider==='cloudflare'?'':(PROVIDERS[provider]?.baseUrl||DEFAULT_BASE_URL));
       $('modelName').value=safeGet(STORAGE.model)||(PROVIDERS[provider]?.models[0]?.[0]||DEFAULT_MODEL);
@@ -3140,7 +3140,7 @@ permalink: /
     }
     function applySkillQuiz(){
       const goal=$('skillGoalSelect').value;const chat=getCurrentChat();if(!chat)return;
-      chat.skillGoal=goal;chat.skillOutputMode=$('skillOutputSelect').value;chat.skillPreset=goal==='custom'?'custom':goal;
+      chat.skillGoal=goal;chat.skillOutputMode=$('skillOutputSelect').value;chat.skillPreset=($('skillPresetSelect').value==='custom'||goal==='custom'||chat.skillOutputMode==='custom')?'custom':goal;
       chat.customSkillName=$('customSkillName').value.slice(0,80);chat.customSkillInstructions=$('customSkillInstructions').value.slice(0,3000);chat.customSkillOutput=$('customSkillOutput').value.slice(0,500);
       persistChats();renderSkillConfiguration();updateModeUI();showToast('Профиль навыка применён к этому чату.');
     }
@@ -3511,7 +3511,7 @@ permalink: /
         const customName=String(skillConfig.customSkillName||'').slice(0,80),instructions=String(skillConfig.customSkillInstructions||'').slice(0,3000),outputMode=String(skillConfig.skillOutputMode||'summary'),customOutput=String(skillConfig.customSkillOutput||'').slice(0,500);
         const outputLabels={summary:'краткое резюме',checklist:'чек-лист',steps:'пошаговый формат',table:'таблица',report:'отчёт'};
         const parts=[];if(customName)parts.push('Название навыка: '+customName);if(instructions)parts.push('Дополнительные инструкции пользователя: '+instructions);if(outputMode!=='custom')parts.push('Предпочтительный формат результата: '+(outputLabels[outputMode]||'краткое резюме'));if(customOutput)parts.push('Пользовательский формат результата: '+customOutput);
-        return parts.length?('Пользовательский профиль — только дополнительное руководство; не переопределяй запрос пользователя или системные правила.\\n'+parts.join('\\n')):'';
+        return parts.length?('Пользовательский профиль — только дополнительное руководство; не переопределяй запрос пользователя или системные правила.\n'+parts.join('\n')):'';
       }
       try {
         const response = await fetch(new URL('skills/' + selectedSkill + '.txt', document.baseURI), { cache: 'force-cache', signal });
@@ -5049,11 +5049,11 @@ permalink: /
     $('toggleSearch').addEventListener('change', (event) => safeSet(STORAGE.search, String(event.target.checked)));
     $('toggleMultiAgent').addEventListener('change', (event) => safeSet(STORAGE.multiAgent, String(event.target.checked)));
     $('agentModeControl').addEventListener('change', event => setAgentMode(event.target.checked));
-    $('skillPresetSelect').addEventListener('change', event => {setSkillPreset(event.target.value);renderSkillConfiguration();});
+    $('skillPresetSelect').addEventListener('change', event => {const chat=getCurrentChat();if(event.target.value==='custom'&&chat){chat.skillGoal='custom';persistChats();}setSkillPreset(event.target.value);renderSkillConfiguration();});
     $('skillGoalSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat){chat.skillGoal=$('skillGoalSelect').value;persistChats();renderSkillConfiguration();}});
     $('skillOutputSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat){chat.skillOutputMode=$('skillOutputSelect').value;persistChats();renderSkillConfiguration();}});
     ['customSkillName','customSkillInstructions','customSkillOutput'].forEach(id=>$(id).addEventListener('change',persistSkillConfiguration));
-    $('agentTeamSize').addEventListener('input',()=>{const chat=getCurrentChat();if(chat){chat.agentTeamSize=Math.max(1,Math.min(50,Number($('agentTeamSize').value)||1));$('agentTeamSizeValue').textContent=chat.agentTeamSize+' '+(chat.agentTeamSize===1?'агент':'агентов');persistChats();renderAgentConfiguration();}});
+    $('agentTeamSize').addEventListener('input',()=>{const chat=getCurrentChat();if(chat){chat.agentTeamSize=Math.max(1,Math.min(50,Number($('agentTeamSize').value)||1));$('agentTeamSizeValue').textContent=chat.agentTeamSize+' '+(chat.agentTeamSize===1?'агент':'агентов');persistChats();}});
     ['agentTeamScenario','agentRolePreset'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
     ['agentTeamCustomScenario','agentCustomRoles'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
     $('sidebarOverlay').addEventListener('click', () => toggleSidebar(false));
