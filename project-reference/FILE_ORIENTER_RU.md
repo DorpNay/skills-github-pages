@@ -242,3 +242,9 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Main commit e6404d510229fa64a7bb375995d76dcba55de623 является documentation-only: добавлен docs/LANDING_UX_POLISH_BACKLOG_RU.md с оставшимися landing/app screenshot, accessibility, interaction and post-merge checks.
 - PR #121 синхронизирован двухродительским merge commit 2c1e6bd811546a87f0ac86bc5e550dd9a31aeb13; compare 194 ahead / 0 behind; GitHub reports mergeable=true, mergeable_state=unstable (CI gates incomplete).
 - Последний функциональный кодовый commit для audio cancellation fix: 363bb5c46c6a0fcad55bb5d243289e065ee6450a. Новый Gateway CI всё ещё требуется.
+
+
+## Latest PR checkpoint — 2026-10-30
+- Project state and machine snapshot refreshed at commit a22e01e9d36d67e86b1bbf37b119dcc66cb9ada3; current main is e6404d510229fa64a7bb375995d76dcba55de623. The main commit is documentation-only.
+- PR #121 contains main via merge commit 2c1e6bd811546a87f0ac86bc5e550dd9a31aeb13. Last inspected compare was 200 ahead / 0 behind; query live before acting because each docs/code checkpoint advances the head.
+- Gateway CI is required for audio process cancellation fix 363bb5c; previous Gateway #483 passed before that fix. Current exact-head Quality/Chromium/Pages not green.
