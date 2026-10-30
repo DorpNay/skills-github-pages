@@ -4,7 +4,7 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 
 ## Current working checkpoint — 2026-10-30
 
-- **Current main SHA:** 2bda22229cba3576628f92c821bb6e1562d8abc5 — PR #120 aligned sidebar hierarchy, project/memory navigation and synchronized theme/language preferences. Its merge commit reports Chromium, published Pages smoke, Jekyll, integrity, security, context and Graphify checks passed; a separate combined-status query returned no status entries for this merge SHA, so do not invent run IDs.
+- **Current main SHA:** e6404d510229fa64a7bb375995d76dcba55de623 — PR #120 aligned sidebar hierarchy, project/memory navigation and synchronized theme/language preferences. Its merge commit reports Chromium, published Pages smoke, Jekyll, integrity, security, context and Graphify checks passed; a separate combined-status query returned no status entries for this merge SHA, so do not invent run IDs.
 - **Active UI branch:** feat/chat-settings-orthogonal-controls-20261030, tracked by the only open PR #121. Scope: orthogonal effort/search settings, Research Studio mode-only flow, separate private server card, project modal, mobile hit areas, free/static landing copy and staged future roadmap.
 - **Latest functional PR code head:** 6cbd915ee77dfafaba1de9867858b6633bed55fb. The current PR head may be newer because the checkpoint/orientation documents are being refreshed separately.
 - **Latest verification:** check-run set on commit 44ea54ef2118de2eda88e2fa615e8e05e4b8f8e9 found one integrity assertion that expected older fallback-copy wording; the UI copy itself states that request text/context may be sent to another service. The sentinel now checks the actual wording. Project State Freshness also failed because the orienter/snapshot files were stale. A fresh exact-head run is required; do not treat the previous run as green.
@@ -32,7 +32,7 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 ## Additional three-role audit — 2026-10-30
 
 - **Canonical tracker:** `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`. Read it after this short orienter; it contains the full user task checklist, per-step completion markers, verified findings, research decisions and next actions.
-- **Current PR HEAD at audit start:** `b09c1365e9d5f434b69ebb60bb285c7574051172`; main base `2bda22229cba3576628f92c821bb6e1562d8abc5`; compare reports 144 ahead / 0 behind.
+- **PR #121 current head after syncing latest main:** `2c1e6bd811546a87f0ac86bc5e550dd9a31aeb13` (merge commit); main base `e6404d510229fa64a7bb375995d76dcba55de623`; compare at sync: 194 ahead / 0 behind.
 - **Confirmed failure fixed in branch:** Gateway CI failed because `gateway/tests/test_coder_packet.py` used `canonical_action_digest` without importing it. Added the missing import in commit `f9d5afaae983675d2c616e3fbc70942840d314e5`. Re-run status is pending.
 - **Exact-head evidence before fix:** Project State Freshness, Provenance, Dead Code Audit and Graphify passed; Lite Gateway Tests failed; Independent Quality Sentinels were still in progress. Do not mark all checks green until the post-fix SHA has completed every required workflow.
 - **Research decisions:** book-to-skill upstream `virgiliojr94/book-to-skill` (MIT tool; source-book copyright remains separate) is a strong pattern for internal Knowledge-to-Skill. Graphify remains dev-only. Keep whisper.cpp/Piper baseline; benchmark LiveKit/Pipecat only as optional realtime voice runtime. Benchmark llama.cpp GPU offload against current Ollama before any migration.
@@ -72,3 +72,9 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 ### Verified scratch cleanup — 2026-10-30
 - Removed only `temp/3`, `temp/4`, `temp/5` after searching repository references and updating IMPROVEMENT_SELECTION.md. These were an obsolete planning conversation, simulated brainstorm with stale claims, and unrelated generic Jekyll portfolio plan.
 - Retained `temp/1` and `temp/2` as historical research sources; no production source file was removed. Detailed evidence and commit SHAs are in docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md and docs/PROJECT_STATE.yaml.
+
+
+### Main synchronization — 2026-10-30
+- Main advanced by documentation-only commit `e6404d510229fa64a7bb375995d76dcba55de623`, adding `docs/LANDING_UX_POLISH_BACKLOG_RU.md` (remaining screenshot, accessibility, interaction and release checks).
+- Synced PR #121 with a two-parent merge commit `2c1e6bd811546a87f0ac86bc5e550dd9a31aeb13`; GitHub compare is 194 ahead / 0 behind and PR mergeable=true, mergeable_state=unstable (checks not complete).
+- Current main UI polish backlog must be included in the overall release plan; do not merge until exact-head CI and the required manual gates are satisfied.
