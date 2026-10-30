@@ -20,10 +20,10 @@
 - [x] D1. Получить полный список файлов PR #121 и exact-head workflow evidence.
 - [x] D2. Изучить фактический провал Gateway CI и локализовать дефект.
 - [x] D3. Исправить найденную причину: добавить отсутствующий импорт `canonical_action_digest` в тест.
-- [ ] D4. Повторно прогнать Gateway tests и все exact-head quality gates после исправления.
-- [ ] D5. Провести полный статический/графовый аудит UI, gateway, memory, RAG, voice, tools, workflows и dependencies.
+- [x] D4. Повторно прогнать Gateway tests после исправления: Lite Gateway Tests run #483 passed. Полный Quality/Chromium exact-head gate остаётся незавершённым.
+- [~] D5. Провести полный статический/графовый аудит UI, gateway, memory, RAG, voice, tools, workflows и dependencies. Graphify inspected: 1,109 nodes / 3,103 edges / 53 communities; no import cycles detected; full manual audit remains.
 - [ ] D6. Исправить только воспроизводимые дефекты; каждый фикс покрыть регрессионным тестом.
-- [ ] D7. Составить verified dead-code/obsolete-file inventory; ничего не удалять без доказательства отсутствия ссылок, CI/операционных ролей и истории.
+- [~] D7. Составить verified dead-code/obsolete-file inventory; ничего не удалять без доказательства отсутствия ссылок, CI/операционных ролей и истории. Vulture сообщил только false-positive для параметра Protocol method; удаление не обосновано.
 - [ ] D8. Проверить security: SSRF/redirect, prompt injection, scopes, deletion, approval, tool sandbox, secrets, upload parsers, audio.
 - [ ] D9. Проверить runtime contracts, cancellation, timeouts, limits, retries, concurrency и resource bounds.
 
@@ -32,8 +32,8 @@
 - [x] P2. Зафиксировать, что лендинг/продукт не должен рекламировать prototype как готовую функцию.
 - [x] P3. Добавить book/document/source → reusable agent skill направление в план.
 - [ ] P4. Свести весь функциональный объём первого обновления в вертикальные, тестируемые deliverables.
-- [ ] P5. Подготовить голосовой UX: запись/транскрипция, голосовой диалог, interruption/barge-in, TTS одного сообщения, выделенного фрагмента и нескольких сообщений.
-- [ ] P6. Спроектировать small helper models, GPU-only/accelerated inference и routing без обязательной нагрузки CPU; сохранить CPU fallback только как осознанный режим.
+- [~] P5. Подготовить голосовой UX: запись/транскрипция и TTS одного сообщения уже есть в коде; диалог сейчас half-duplex; selection-to-speech, multi-message queue, streaming turn detection и реальный barge-in остаются незавершёнными.
+- [~] P6. Спроектировать small helper models, GPU-only/accelerated inference и routing без обязательной нагрузки CPU; сохранить CPU fallback только как осознанный режим. Подтверждены варианты Ollama GPU, llama.cpp offload и vLLM; требуется hardware benchmark.
 - [ ] P7. Спроектировать bounded multi-agent / mass-agent orchestration: DAG, budgets, queue, cancellation, idempotency, permissions, traces, evals и safe-off.
 - [ ] P8. Увязать agent-skill generation, RAG, source provenance, memory scopes и project notebook.
 - [ ] P9. Подготовить release sequence, acceptance criteria, rollback и owner gates для первого обновления.
@@ -83,6 +83,7 @@
 Текущий dev-only пилот уже встроен в CI и ранее проверен по 10 вопросам. Использовать для полного repo audit и архитектурного drift; не добавлять Graphify в production dependencies и не принимать generated graph за источник истины. Повторно смотреть на coverage/line mapping, а не только успешный exit code.
 
 ### Voice
+- [Moonshine Voice](https://github.com/moonshine-ai/moonshine) — новый кандидат для streaming STT/TTS/voice agent; upstream заявляет on-device execution, MIT code and model licensing by artifact. Языковая матрица не покрывает очевидно все целевые RU/EN/TH сценарии; не заменять Whisper до подтверждения RU/TH STT и реального latency/device quality.
 - whisper.cpp streaming/VAD пример существует, но upstream example — naive rolling-window microphone transcription; это не готовый full-duplex conversational runtime.
 - LiveKit Agents демонстрирует mature turn handling, interruptions, VAD/STT/TTS and preemptive generation, но добавляет media runtime, network/ops и зависимости.
 - llama.cpp server поддерживает CPU/GPU inference, continuous batching, OpenAI-compatible API, tools и experimental multimodal; GPU offload опционален и требует конкретной сборки/модели.
@@ -134,6 +135,11 @@
 
 Dead-code workflow is report-only; its findings are candidates, not deletion authorization. Graphify can expose call/import paths but cannot prove dynamic code unused. Prefer consolidating duplicate helpers and removing proven unreachable branches only after evidence.
 
+### Дополнительные результаты архитектурного/debug этапа
+- Graphify artifact run #262: 1,109 nodes, 3,103 edges, 53 communities, 0 detected import cycles. Core hubs: `create_app()` (66 edges), `showToast()` (51), `getUiLanguage()` (45), `safeGet()` (42), `Settings` (32). Это подтверждает концентрацию логики, но не является поводом для массового рефакторинга.
+- Dead-code artifact run #389: Vulture сообщил только `gateway/voice/speculative_transaction.py:39 max_duration_ms`. Это параметр Protocol method signature и используется в контракте реализации; false positive. Не удалять.
+- Голосовая проверка: gateway ASR поддерживает auto/ru/en/th и ограниченные аудиоформаты; UI имеет запись, редактируемую транскрипцию, локальный Piper TTS и half-duplex loop. Отсутствуют доказанные selection-to-speech, multi-message playback queue, real-time streaming STT and acoustic barge-in. Barge-in module сейчас только policy, native AEC отсутствует.
+
 ## 7. Хронология работ
 
 | Шаг | Статус | Evidence / результат |
@@ -143,8 +149,11 @@ Dead-code workflow is report-only; its findings are candidates, not deletion aut
 | 3. Проверены exact-head workflows | done | Gateway failed; Freshness/Provenance/Dead-code/Graphify passed; Quality in progress |
 | 4. Найдена причина Gateway failure | done | `NameError: canonical_action_digest is not defined` в test import |
 | 5. Исправлен тестовый импорт | done | commit `f9d5afaae983675d2c616e3fbc70942840d314e5` |
-| 6. Повторный exact-head CI | pending | следующий обязательный шаг |
-| 7. Полный графовый/статический аудит | pending | Graphify artifact + targeted source/tests |
+| 6. Повторный Gateway CI | done | Lite Gateway Tests run #483 passed после import fix |
+| 6a. Полный Quality/Chromium exact-head CI | pending | предыдущий run #916 отменён; rerun запрошен, требуется финальный evidence |
+| 6b. Graphify artifact inspection | done | 1,109 nodes / 3,103 edges / 53 communities; no import cycles |
+| 6c. Dead-code artifact review | done | один Vulture false positive; никаких удалений не подтверждено |
+| 7. Полный графовый/статический аудит | in progress | Graphify artifact + targeted source/tests; subsystem review continues |
 | 8. Исправления найденных багов | pending | только reproducible defects |
 | 9. Dead-code review and cleanup | pending | no deletes before evidence |
 | 10. Release plan and final acceptance | in progress | this document; update after each stage |
