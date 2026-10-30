@@ -4,6 +4,9 @@ on:
   push:
     paths:
       - "gateway/**"
+      - "gateway/requirements*.txt"
+      - "pyproject.toml"
+      - "uv.lock"
       - "intel/**"
       - "latency/**"
       - "router/**"
