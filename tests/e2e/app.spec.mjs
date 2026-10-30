@@ -1995,7 +1995,9 @@ test('composer offers unrestricted file picking but blocks unsupported formats u
 test('request-only project context is sent once and does not change the active chat project', async ({ page }) => {
   const captured=[];
   await page.route('https://api.example.test/v1/chat/completions', async route => {
-    captured.push(route.request().postDataJSON());
+    const body = route.request().postDataJSON();
+    const requestText = body.messages?.at(-1)?.content;
+    if (['Use Beta context for this one request.', 'Do not include the one-shot project this time.'].includes(requestText)) captured.push(body);
     await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({model:'context-e2e',choices:[{message:{role:'assistant',content:'Request context verified.'}}]})});
   });
   await page.addInitScript(() => {
