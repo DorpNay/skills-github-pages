@@ -407,15 +407,28 @@ def _bounded_zip_entries(data: bytes) -> tuple[zipfile.ZipFile, dict[str, zipfil
     return archive, indexed
 
 
+class _RejectDoctypeTreeBuilder(ET.TreeBuilder):
+    """Reject DTDs and entity declarations in untrusted OOXML parts."""
+
+    def doctype(self, name, pubid, system):
+        raise ValueError("DOCTYPE declarations are not supported")
+
+
 def _xml_from_archive(archive: zipfile.ZipFile, entries: dict[str, zipfile.ZipInfo], name: str) -> ET.Element:
     entry = entries.get(name)
     if entry is None or entry.file_size > DOCUMENT_MAX_EXPANDED_BYTES:
         raise HTTPException(400, "Document is missing a required XML part")
     try:
         with archive.open(entry) as stream:
-            return ET.fromstring(stream.read(DOCUMENT_MAX_EXPANDED_BYTES + 1))
+            payload = stream.read(DOCUMENT_MAX_EXPANDED_BYTES + 1)
+        if len(payload) > DOCUMENT_MAX_EXPANDED_BYTES:
+            raise HTTPException(413, "Expanded XML part exceeds the permitted size")
+        parser = ET.XMLParser(target=_RejectDoctypeTreeBuilder())
+        return ET.fromstring(payload, parser=parser)
+    except HTTPException:
+        raise
     except (ET.ParseError, OSError, RuntimeError, ValueError):
-        raise HTTPException(400, "Document XML is invalid") from None
+        raise HTTPException(400, "Document XML is invalid or uses a prohibited DTD") from None
 
 
 def _extract_docx(data: bytes) -> str:
