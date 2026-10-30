@@ -29,7 +29,15 @@
 | Chat settings information architecture | 9 | 9 | 0 | `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md` |
 | Implementation guide gates | 12 | 12 | 0 | `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md` |
 | Architecture debugger/planner | 38 | 27 | 11 | `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md` |
-| **Итого по 13 main-источникам** | **436** | **365** | **71** | |
+| Agent Platform blueprint (PR #125) | 29 | 29 | 0 | `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ research branch |
+| PR #125 delta к USER_REQUEST_CHECKLIST | 5 | 5 | 0 | branch-only snapshot |
+| Voice 2.0 research (PR #129) | 8 | 6 | 2 | `docs/VOICE_2_RESEARCH_RU.md` @ research branch |
+| Voice 2.0 external research (PR #129) | 8 | 8 | 0 | `docs/VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` |
+| Landing stack improvement backlog (PR #129) | 18 | 18 | 0 | `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` |
+| Workstream governance (PR #129) | 3 | 2 | 1 | `docs/WORKSTREAM_GOVERNANCE_RU.md` |
+| Deep Research 2.0 plan (PR #130) | 20 | 20 | 0 | `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` |
+| Deep Research 2.0 external research (PR #130) | 10 | 10 | 0 | `docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` |
+| **Итого по 20 документам + 1 branch delta** | **537** | **463** | **74** | |
 
 ## A. Перенесённые исторические задачи
 
@@ -546,6 +554,160 @@
 - [ ] **ARCHDBG-287** (строка 287; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): W6. Triage findings against accepted architecture; reject stack expansion and speculative changes.
 - [ ] **ARCHDBG-288** (строка 288; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): W7. Implement only evidence-backed, bounded fixes; test each slice and update all state docs.
 - [ ] **ARCHDBG-289** (строка 289; `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`): W8. Re-run exact-head CI and verify final PR/issue/deployment status without overstating live readiness.
+
+
+
+### A3. Чек-листы отдельных research/future PR (branch snapshots)
+
+Включены также явные checklist-строки из открытых Draft/HOLD PR, даже если их документы ещё не находятся в main. Это предотвращает потерю задач при закрытии/переносе веток. Эти PR остаются изолированными и не становятся разрешением на runtime adoption.
+
+### AGENTPLAT — `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`
+
+Источник: PR workstream branch; 29 открытых/частичных строк.
+
+- [ ] **AGENTPLAT-404** (строка 404; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Typed AgentProfile, Profession, SkillManifest, Capability, ModelPolicy, BudgetPolicy.
+- [ ] **AGENTPLAT-405** (строка 405; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Registry read-only API + versioned config; никакой динамической загрузки исполняемого кода.
+- [ ] **AGENTPLAT-406** (строка 406; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Перевести 64 роли в валидируемые профили, не создавая 64 процессов.
+- [ ] **AGENTPLAT-407** (строка 407; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): JSON Schema/Pydantic contract tests, license/provenance validation, deterministic registry selection.
+- [ ] **AGENTPLAT-410** (строка 410; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): SQLite schema + append-only events + snapshots + state machine.
+- [ ] **AGENTPLAT-411** (строка 411; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Cancellation, deadlines, budgets, idempotency, restart recovery.
+- [ ] **AGENTPLAT-412** (строка 412; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Failure injection tests на каждом transition.
+- [ ] **AGENTPLAT-413** (строка 413; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): UI timeline read-only; не показывать chain-of-thought.
+- [ ] **AGENTPLAT-416** (строка 416; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Supervisor → bounded specialist tasks.
+- [ ] **AGENTPLAT-417** (строка 417; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Isolated task packet/history; strict capability intersection.
+- [ ] **AGENTPLAT-418** (строка 418; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): fan-out/fan-in для read-only tasks; generation concurrency 1 на 8-GB VPS.
+- [ ] **AGENTPLAT-419** (строка 419; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): независимая проверка результата и корректная агрегация.
+- [ ] **AGENTPLAT-420** (строка 420; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): eval: delegation correctness, no context/permission leakage, cost and latency.
+- [ ] **AGENTPLAT-423** (строка 423; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Run model bake-off на целевом host и golden set.
+- [ ] **AGENTPLAT-424** (строка 424; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Capability-based routing, explicit provider/model allowlist, no silent fallback.
+- [ ] **AGENTPLAT-425** (строка 425; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Только один helper use case за раз; rollback и feature flag off by default.
+- [ ] **AGENTPLAT-426** (строка 426; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Не держать несколько checkpoints resident без измеренной причины.
+- [ ] **AGENTPLAT-429** (строка 429; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Agent Skills-compatible loader and registry.
+- [ ] **AGENTPLAT-430** (строка 430; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Source ingestion, provenance, license checks, injection scanner.
+- [ ] **AGENTPLAT-431** (строка 431; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): eval-generated test questions, human review, skill versioning/rollback.
+- [ ] **AGENTPLAT-432** (строка 432; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): No auto-execution of scripts and no permission inheritance from skill metadata.
+- [ ] **AGENTPLAT-435** (строка 435; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Capability-based tool authorization before each call.
+- [ ] **AGENTPLAT-436** (строка 436; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Scoped credential broker, audit, egress restrictions.
+- [ ] **AGENTPLAT-437** (строка 437; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): gVisor/Firecracker/OpenShell spike; choose only after threat model and host checks.
+- [ ] **AGENTPLAT-438** (строка 438; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Arbitrary code remains disabled until isolation/escape tests pass.
+- [ ] **AGENTPLAT-441** (строка 441; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Goals, org chart, task queue, heartbeats, budgets, pause/resume/terminate.
+- [ ] **AGENTPLAT-442** (строка 442; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): A2A for explicit external-agent connections; MCP for tools; AG-UI for UI events.
+- [ ] **AGENTPLAT-443** (строка 443; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Multi-tenant boundaries, adapter isolation, credential scopes and operator controls.
+- [ ] **AGENTPLAT-444** (строка 444; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` @ `research/agent-platform-blueprint-20261030`): Human opt-in for recurring work and clear stop controls.
+
+
+### VOICE2 — `docs/VOICE_2_RESEARCH_RU.md` @ `research/voice-assistant-transcription-20261031`
+
+Источник: PR workstream branch; 8 открытых/частичных строк.
+
+- [~] **VOICE2-106** (строка 106; `docs/VOICE_2_RESEARCH_RU.md` @ `research/voice-assistant-transcription-20261031`): VOICE-TRACK-003 — собрать ранее найденные/предоставленные владельцем источники и пометить provenance; часть исходных scratch/source URLs ещё требует сверки.
+- [~] **VOICE2-107** (строка 107; `docs/VOICE_2_RESEARCH_RU.md` @ `research/voice-assistant-transcription-20261031`): VOICE-TRACK-004 — провести независимый поиск по официальным upstream/papers/model cards/standards в категориях ASR, TTS, real-time audio, diarization, transliteration и multilingual normalization. **Progress:** первый проход выполнен по 6 поисковым направлениям (50 result slots до дедупликации); отдельный первичный-source отчёт создан в [VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md](VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md). Полный sweep и проверка оставшихся лицензий продолжаются.
+- [ ] **VOICE2-108** (строка 108; `docs/VOICE_2_RESEARCH_RU.md` @ `research/voice-assistant-transcription-20261031`): VOICE-TRACK-005 — проверить точные лицензии кода, весов, голосов, phonemizers, datasets и redistribution obligations.
+- [ ] **VOICE2-109** (строка 109; `docs/VOICE_2_RESEARCH_RU.md` @ `research/voice-assistant-transcription-20261031`): VOICE-TRACK-006 — сверить current code/tests and voice UI against every existing acceptance item; report precise implemented/partial/missing matrix.
+- [ ] **VOICE2-110** (строка 110; `docs/VOICE_2_RESEARCH_RU.md` @ `research/voice-assistant-transcription-20261031`): VOICE-TRACK-007 — составить воспроизводимый RU/EN/TH benchmark harness and golden-set governance.
+- [ ] **VOICE2-111** (строка 111; `docs/VOICE_2_RESEARCH_RU.md` @ `research/voice-assistant-transcription-20261031`): VOICE-TRACK-008 — сравнить 2–3 лучших кандидата на одинаковом наборе и target hardware; никаких model switches до measured win.
+- [ ] **VOICE2-112** (строка 112; `docs/VOICE_2_RESEARCH_RU.md` @ `research/voice-assistant-transcription-20261031`): VOICE-TRACK-009 — подготовить Voice 2.0 architecture/API contracts and phased implementation slices.
+- [ ] **VOICE2-113** (строка 113; `docs/VOICE_2_RESEARCH_RU.md` @ `research/voice-assistant-transcription-20261031`): VOICE-TRACK-010 — независимая security/privacy review и explicit owner approval перед runtime changes.
+
+
+### VOICE2EXT — `docs/VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/voice-assistant-transcription-20261031`
+
+Источник: PR workstream branch; 8 открытых/частичных строк.
+
+- [ ] **VOICE2EXT-080** (строка 80; `docs/VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/voice-assistant-transcription-20261031`): VOICE-EXT-001 — verify Qwen3-ASR exact model-card license and inference resource profile on target host.
+- [ ] **VOICE2EXT-081** (строка 81; `docs/VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/voice-assistant-transcription-20261031`): VOICE-EXT-002 — verify Typhoon 115M exact model/NeMo compatibility, artifact hashes, CC-BY attribution and resource needs.
+- [ ] **VOICE2EXT-082** (строка 82; `docs/VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/voice-assistant-transcription-20261031`): VOICE-EXT-003 — build Thai code-switch benchmark slice with Latin/Thai entity preservation and normalized-vs-raw transcripts.
+- [ ] **VOICE2EXT-083** (строка 83; `docs/VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/voice-assistant-transcription-20261031`): VOICE-EXT-004 — prototype offline comparison of ICU, PyThaiNLP RTGS/thai2rom/TLTK and uroman on consented RU/TH fixtures; do not add runtime dependency yet.
+- [ ] **VOICE2EXT-084** (строка 84; `docs/VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/voice-assistant-transcription-20261031`): VOICE-EXT-005 — verify uroman license and exact language-specific behavior before any redistribution.
+- [ ] **VOICE2EXT-085** (строка 85; `docs/VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/voice-assistant-transcription-20261031`): VOICE-EXT-006 — compare LiveKit vs Pipecat against the existing FastAPI/browser contracts and operational footprint, no migration.
+- [ ] **VOICE2EXT-086** (строка 86; `docs/VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/voice-assistant-transcription-20261031`): VOICE-EXT-007 — extend voice acceptance matrix to full-duplex interruptions, echo, Bluetooth, mobile lifecycle and speaker diarization.
+- [ ] **VOICE2EXT-087** (строка 87; `docs/VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/voice-assistant-transcription-20261031`): VOICE-EXT-008 — review audio/text retention, consent, user correction and privacy threat model.
+
+
+### LANDINGBK — `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`
+
+Источник: PR workstream branch; 18 открытых/частичных строк.
+
+- [ ] **LANDINGBK-033** (строка 33; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-001 — зафиксировать baseline размера HTML/CSS/JS, critical rendering, LCP/INP/CLS и загрузки ключевых assets на опубликованном сайте.
+- [ ] **LANDINGBK-034** (строка 34; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-002 — аудит доступности: keyboard-only, focus order, dialogs/popovers, screen-reader semantics, reduced motion, contrast and touch targets.
+- [ ] **LANDINGBK-035** (строка 35; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-003 — аудит responsive поведения и реального iPhone Safari: visual viewport, keyboard, safe areas, rotation and zoom.
+- [ ] **LANDINGBK-036** (строка 36; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-004 — аудит JS lifecycle: event listener cleanup, duplicate handlers, async race conditions, stale state, cancellation and memory leaks.
+- [ ] **LANDINGBK-037** (строка 37; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-005 — аудит resilience: offline/slow network, retry/backoff, timeout, abort, provider 4xx/5xx, malformed/partial responses and error recovery.
+- [ ] **LANDINGBK-038** (строка 38; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-006 — аудит client storage: migration, quota errors, import/export losslessness, corruption recovery, scoped deletion and backup/restore.
+- [ ] **LANDINGBK-039** (строка 39; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-007 — audit security/privacy in current boundaries: CSP/SRI, DOM injection, URL handling, secret exposure, logging, CORS/SSRF and data retention.
+- [ ] **LANDINGBK-040** (строка 40; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-008 — SEO/metadata/semantic HTML, canonical URL, social preview, sitemap/robots and crawl behavior without adding a framework.
+- [ ] **LANDINGBK-041** (строка 41; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-009 — deterministic Jekyll/Actions build, cache correctness, immutable action pins, lockfile and provenance.
+- [ ] **LANDINGBK-042** (строка 42; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-010 — reduce duplicated code/assets and dead paths only when exact reference and regression evidence prove safe removal.
+- [ ] **LANDINGBK-043** (строка 43; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-011 — inspect current CSS/JS payload and optimize critical path only if measured; preserve visual behavior.
+- [ ] **LANDINGBK-044** (строка 44; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-012 — expand Playwright coverage for critical user flows and failure states; avoid brittle/vacuous assertions.
+- [ ] **LANDINGBK-045** (строка 45; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-013 — verify browser compatibility and graceful degradation for current supported browsers.
+- [ ] **LANDINGBK-046** (строка 46; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-014 — audit i18n: RU/EN/TH labels, formatting, font fallback, transliteration of user-entered names only where required.
+- [ ] **LANDINGBK-047** (строка 47; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-015 — review dependency freshness and security advisories within the existing dependency policy; do not blindly upgrade.
+- [ ] **LANDINGBK-048** (строка 48; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-016 — inspect build/release observability and published Pages smoke; do not claim post-merge deploy from PR CI alone.
+- [ ] **LANDINGBK-049** (строка 49; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-017 — reconcile historical landing UX requests with current code and master registry; preserve original task IDs and evidence.
+- [ ] **LANDINGBK-050** (строка 50; `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md` @ `research/voice-assistant-transcription-20261031`): LANDING-018 — test graceful operation when optional gateway/voice/research capabilities are unavailable or disabled.
+
+
+### GOV — `docs/WORKSTREAM_GOVERNANCE_RU.md` @ `research/voice-assistant-transcription-20261031`
+
+Источник: PR workstream branch; 3 открытых/частичных строк.
+
+- [~] **GOV-094** (строка 94; `docs/WORKSTREAM_GOVERNANCE_RU.md` @ `research/voice-assistant-transcription-20261031`): GOV-003 — apply explicit titles/banners/labels to all existing future/research PRs after reviewing each PR and current labels.
+- [ ] **GOV-095** (строка 95; `docs/WORKSTREAM_GOVERNANCE_RU.md` @ `research/voice-assistant-transcription-20261031`): GOV-004 — add repository-side merge protection/automation only after checking existing rulesets and obtaining owner approval; labels alone are not a security boundary.
+- [ ] **GOV-096** (строка 96; `docs/WORKSTREAM_GOVERNANCE_RU.md` @ `research/voice-assistant-transcription-20261031`): GOV-005 — update master registry and orienters when PR #127 is revised/merged.
+
+
+### DR2PLAN — `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`
+
+Источник: PR workstream branch; 20 открытых/частичных строк.
+
+- [ ] **DR2PLAN-152** (строка 152; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-001 — восстановить ранее предоставленные владельцем research links и provenance.
+- [ ] **DR2PLAN-154** (строка 154; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-003 — проверить actual search/research UI и Gateway code; разделить implemented/planned.
+- [ ] **DR2PLAN-155** (строка 155; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-004 — аудит source ingestion, local storage, index and citation lineage.
+- [ ] **DR2PLAN-156** (строка 156; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-005 — проверить browser File System Access, OPFS and IndexedDB на целевых браузерах.
+- [ ] **DR2PLAN-157** (строка 157; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-006 — оценить local companion/desktop connectors and threat model.
+- [ ] **DR2PLAN-158** (строка 158; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-007 — сравнить notebook/research workspace проекты и source adapters по первоисточникам.
+- [ ] **DR2PLAN-159** (строка 159; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-008 — сравнить hybrid lexical/vector retrieval с SQLite FTS5 до добавления vector store.
+- [ ] **DR2PLAN-160** (строка 160; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-009 — определить claim/evidence schema and citation-validation golden set.
+- [ ] **DR2PLAN-161** (строка 161; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-010 — специфицировать resumable 12-stage Research run: deadline, cancellation, idempotency, bounded concurrency.
+- [ ] **DR2PLAN-162** (строка 162; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-011 — RU/EN/TH research golden set, source freshness and contradiction tests.
+- [ ] **DR2PLAN-163** (строка 163; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-012 — аудит memory recall, scope isolation, stale facts, conflicts, deletion and long-session capacity.
+- [ ] **DR2PLAN-164** (строка 164; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-013 — оценить local memory/index size and performance на target devices; определить практические пределы.
+- [ ] **DR2PLAN-165** (строка 165; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-014 — data-flow режимов local-only / mixed / remote-with-consent.
+- [ ] **DR2PLAN-166** (строка 166; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-015 — policy matrix: model refusals vs content policy vs platform security vs tool permissions.
+- [ ] **DR2PLAN-167** (строка 167; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-016 — false-positive/false-refusal and tool-authorization tests; no hidden adapter censorship.
+- [ ] **DR2PLAN-168** (строка 168; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-017 — image-generation candidates: ComfyUI/local GPU vs hosted APIs, licenses, cost, region, privacy.
+- [ ] **DR2PLAN-169** (строка 169; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-018 — video-generation candidates and async job APIs; не использовать retired endpoints.
+- [ ] **DR2PLAN-170** (строка 170; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-019 — AI coding assistants/agents and isolated coding sandboxes.
+- [ ] **DR2PLAN-171** (строка 171; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-020 — source inventory, decisions, risk register and staged implementation roadmap.
+- [ ] **DR2PLAN-172** (строка 172; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` @ `research/deep-research-2.0-20261031`): DR2-021 — подготовить отдельные минимальные implementation PR после owner review; никаких production dependencies в этом PR.
+
+
+### DR2EXT — `docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/deep-research-2.0-20261031`
+
+Источник: PR workstream branch; 10 открытых/частичных строк.
+
+- [ ] **DR2EXT-147** (строка 147; `docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/deep-research-2.0-20261031`): DR2-EXT-001 — pin Local Deep Research commit, verify full dependency/license and run architecture comparison.
+- [ ] **DR2EXT-148** (строка 148; `docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/deep-research-2.0-20261031`): DR2-EXT-002 — verify Khoj AGPL obligations and exact local deployment footprint.
+- [ ] **DR2EXT-149** (строка 149; `docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/deep-research-2.0-20261031`): DR2-EXT-003 — review Deep Research Web UI license/maintenance and reproduce evidence-follow-up flow.
+- [ ] **DR2EXT-150** (строка 150; `docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/deep-research-2.0-20261031`): DR2-EXT-004 — browser matrix for File System Access/IndexedDB/OPFS permission persistence, quota and file changes.
+- [ ] **DR2EXT-151** (строка 151; `docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/deep-research-2.0-20261031`): DR2-EXT-005 — prototype local folder companion threat model; no code until explicit approval.
+- [ ] **DR2EXT-152** (строка 152; `docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/deep-research-2.0-20261031`): DR2-EXT-006 — compare OpenHands Docker isolation with aLandi's required container/seccomp/Landlock policy and adversarial escape tests.
+- [ ] **DR2EXT-153** (строка 153; `docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/deep-research-2.0-20261031`): DR2-EXT-007 — compare Letta/Graphiti/OpenViking retrieval against current SQLite/FTS5 on the same labelled corpus.
+- [ ] **DR2EXT-154** (строка 154; `docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/deep-research-2.0-20261031`): DR2-EXT-008 — verify exact Comfy API deployment/auth/retention behavior and benchmark a local workflow on target GPU.
+- [ ] **DR2EXT-155** (строка 155; `docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/deep-research-2.0-20261031`): DR2-EXT-009 — verify Runway and Vertex AI availability, pricing, regional access and data retention from owner accounts.
+- [ ] **DR2EXT-156** (строка 156; `docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md` @ `research/deep-research-2.0-20261031`): DR2-EXT-010 — produce policy matrix and false-refusal/security separation tests.
+
+
+### USER125 — branch-only delta `docs/USER_REQUEST_CHECKLIST.md` @ `research/agent-platform-blueprint-20261030`
+
+Пять новых строк, присутствующих в PR #125 branch, но отсутствующих в main snapshot; сохранены отдельно, чтобы не потерять future-workstream acceptance.
+
+- [ ] **USER125-254** (строка 254; branch-only delta `docs/USER_REQUEST_CHECKLIST.md` @ `research/agent-platform-blueprint-20261030`): Review the architecture and approve/adjust the Phase 1 contracts and registry before any runtime implementation.
+- [ ] **USER125-255** (строка 255; branch-only delta `docs/USER_REQUEST_CHECKLIST.md` @ `research/agent-platform-blueprint-20261030`): Implement a versioned AgentProfile/Profession/Skill/Capability/ModelPolicy contract in a separate bounded PR.
+- [ ] **USER125-256** (строка 256; branch-only delta `docs/USER_REQUEST_CHECKLIST.md` @ `research/agent-platform-blueprint-20261030`): Build durable AgentRun state, isolated subagent task packets, budget/cancellation and restart recovery in subsequent PRs.
+- [ ] **USER125-257** (строка 257; branch-only delta `docs/USER_REQUEST_CHECKLIST.md` @ `research/agent-platform-blueprint-20261030`): Run RU/EN/TH model quality and target-host RAM/latency bake-off before choosing helper models.
+- [ ] **USER125-258** (строка 258; branch-only delta `docs/USER_REQUEST_CHECKLIST.md` @ `research/agent-platform-blueprint-20261030`): Complete threat model and real sandbox/escape tests before enabling arbitrary code or shell tools.
 
 
 ## B. Новые задачи по указанию владельца (2026-10-31)
