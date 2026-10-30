@@ -414,3 +414,17 @@
 
 - [x] **REGISTRY-001**: Найти прежний большой список незавершённых задач. **Result:** PR #127 / `docs/MASTER_TASK_REGISTRY_RU.md` — lossless migration of 275 open/partial rows from six historical sources; 218 unchecked + 57 partial before deduplication.
 - [ ] **REGISTRY-002**: Свести дубли и cross-link исторические пункты с текущими кодом, PR, tests and owner gates. Ничего не удалять до reconciliation.
+
+
+### F5. Voice 2.0 — независимый research pass (2026-10-31)
+
+- [~] **VOICE-EXT-001**: Проверить Qwen3-ASR exact model-card license, inference backend and target-host resource profile. **Progress:** repository code license Apache-2.0 confirmed; exact weights terms and vLLM streaming footprint pending.
+- [~] **VOICE-EXT-002**: Проверить Typhoon 115M exact model/NeMo compatibility, artifact hashes, CC-BY attribution and resource needs. **Progress:** model card reports CC-BY-4.0 weights, Apache-2.0 code, NeMo pinned runtime and H100 benchmark; target-host test pending.
+- [ ] **VOICE-EXT-003**: Build Thai code-switch benchmark slice with Latin/Thai entity preservation and raw-vs-normalized transcripts.
+- [ ] **VOICE-EXT-004**: Compare ICU, PyThaiNLP RTGS/thai2rom/TLTK and uroman on consented RU/TH fixtures; no runtime dependency yet.
+- [ ] **VOICE-EXT-005**: Verify uroman license and exact language-specific behavior before redistribution.
+- [ ] **VOICE-EXT-006**: Compare LiveKit vs Pipecat against current FastAPI/browser contracts and operational footprint; no migration.
+- [ ] **VOICE-EXT-007**: Extend voice acceptance matrix to full-duplex interruption, echo, Bluetooth, mobile lifecycle and diarization.
+- [ ] **VOICE-EXT-008**: Review audio/text retention, consent, user correction and privacy threat model.
+
+**Artifacts:** PR #129, branch `research/voice-assistant-transcription-20261031`; `docs/VOICE_2_RESEARCH_RU.md`, `docs/VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md`, `docs/WORKSTREAM_GOVERNANCE_RU.md`, `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md`. PR is Draft / HOLD; no runtime adoption.
