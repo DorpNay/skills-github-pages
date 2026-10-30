@@ -478,13 +478,12 @@ permalink: /
             <label class="text-[11px] text-gray-400">Поле ввода<select id="composerPosition" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="bottom" data-i18n="composerBottom">Снизу</option><option value="top" data-i18n="composerTop">Сверху</option></select></label>
             <button type="button" data-action="toggle-theme-cycle" class="advanced-control self-end rounded border border-gray-700 bg-gray-900 text-left text-gray-300" aria-label="Сменить тему">☼ Тема</button>
           </div>
-             <p class="text-[10px] text-gray-500">Выбери провайдера. Ключ и соединение проверяются автоматически.</p>
        <label for="providerPreset" data-i18n="providerLabel" class="sr-only">Сторонний API</label>
        <select id="providerPreset" aria-label="Сторонний API-провайдер" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"><option value="" selected disabled>Сторонний API</option><optgroup id="providerPrimaryGroup" label="aLandi Cloud · внутренний маршрут" hidden><option value="alandi">aLandi Cloud</option></optgroup><optgroup id="providerExternalGroup" label="Сторонние провайдеры"><option value="kilo">Kilo</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai</option><option value="cloudflare">Cloudflare Workers AI</option><option value="openrouter">OpenRouter</option><option value="nvidia">NVIDIA NIM</option><option value="huggingface">Hugging Face</option><option value="custom">Свой OpenAI-совместимый API</option></optgroup></select>
        <input type="search" id="modelSearch" aria-label="Поиск модели" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="Поиск модели">
        <select id="modelPreset" aria-label="Каталог моделей" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"></select>
 <div class="flex items-start justify-between gap-2">
-        <p id="modelCatalogStatus" class="min-w-0 text-[11px] leading-relaxed text-gray-400" role="status" aria-live="polite">Показаны встроенные модели. Нажмите «Обновить каталог» для получения актуального списка.</p>
+        <p id="modelCatalogStatus" class="min-w-0 text-[11px] leading-relaxed text-gray-400" role="status" aria-live="polite">Встроенный каталог моделей.</p>
         <button type="button" data-action="refresh-model-catalog" id="refreshModelCatalog" title="Обновить каталоги всех настроенных провайдеров; полезно для межпровайдерного резерва" class="shrink-0 bg-gray-700 hover:bg-gray-600 border border-gray-600 px-2 py-1.5 rounded text-[11px] text-gray-200">Обновить все</button>
       </div>
       <p id="providerHint" class="hidden" aria-live="polite"></p>
@@ -2293,7 +2292,7 @@ permalink: /
       if (!node) return;
       const catalog = readProviderModelCatalog(provider, true);
       if (!catalog) {
-        node.textContent = 'Пока показаны встроенные модели. Обновите каталог, чтобы загрузить модели провайдера.';
+        node.textContent = 'Встроенные модели · каталог не обновлён.';
         return;
       }
       const count = catalog.models.length;
@@ -2744,12 +2743,12 @@ permalink: /
         return { count: current.models.length, cached: true };
       }
       if (provider !== 'pollinations' && provider !== 'kilo' && !key) {
-        if (provider === currentProvider()) $('modelCatalogStatus').textContent = 'Введите ключ и сохраните настройки, затем обновите каталог.';
+        if (provider === currentProvider()) $('modelCatalogStatus').textContent = 'Нужен ключ выбранного провайдера для обновления каталога.';
         return { count: 0, error: 'missing-key' };
       }
       const endpoint = getModelCatalogEndpoint(provider, baseUrl);
       if (!endpoint) {
-        if (provider === currentProvider()) $('modelCatalogStatus').textContent = 'Для каталога этой конфигурации нужен корректный Base URL / Cloudflare Account ID.';
+        if (provider === currentProvider()) $('modelCatalogStatus').textContent = 'Проверь Base URL или Cloudflare Account ID.';
         return { count: 0, error: 'missing-endpoint' };
       }
       const manageButton = options.manageButton !== false;
