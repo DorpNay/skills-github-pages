@@ -26,8 +26,8 @@
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files",
     "active_ui_pr": {
       "number": 121,
-      "head_sha": "6cbd915ee77dfafaba1de9867858b6633bed55fb",
-      "exact_head_ci": "pending after privacy-copy sentinel correction and orientation/snapshot refresh; commit 44ea54e had one stale copy assertion and state freshness drift"
+      "head_sha": "f9d5afaae983675d2c616e3fbc70942840d314e5",
+      "exact_head_ci": "Gateway Lite Tests #483 passed (150 tests); Freshness #83, Provenance #554 and Dead Code #389 passed. Quality #916 and Graphify #262 were cancelled during subsequent documentation branch updates. Current PR branch contains documentation-only commits after this code SHA; full exact-current-head Quality/Chromium is still pending."
     }
   }
 }
