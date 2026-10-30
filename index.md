@@ -2347,7 +2347,7 @@ permalink: /
       $('toggleMultiAgent').checked = safeGet(STORAGE.multiAgent) === 'true';
       $('allowCrossProviderFallback').checked = safeGet(STORAGE.crossProviderFallback) === 'true';
       applyUiLanguage(safeGet('ai_ui_language_v1')||'ru');
-      updateOfflineUI(); updateModeUI(); refreshApiKeyLamp();void refreshCloudStatus();
+      updateOfflineUI(); updateModeUI(); refreshApiKeyLamp();void refreshCloudStatus();scheduleCloudAutoConnect();
       void refreshConnectedModelCatalogs({ quiet: true, force: false, includeOtherProviders: safeGet(STORAGE.crossProviderFallback) === 'true' });
     }
     const VALID_SEARCH_MODES = new Set(['normal','more','offline']);
@@ -2754,20 +2754,18 @@ permalink: /
         return Array.from(new Uint8Array(digest),byte=>byte.toString(16).padStart(2,'0')).join('');
       } catch(_) { return ''; }
     }
-    function setCloudStatus(state,message){
+    function setCloudFieldError(id,message=''){
+      const field=$(id),error=$(id+'Error');if(!field)return;const text=String(message||'');
+      field.dataset.state=text?'error':'';field.setAttribute('aria-invalid',String(Boolean(text)));
+      if(error){error.textContent=text;error.classList.toggle('hidden',!text);}
+    }
+    function validateCloudBaseUrl(value){if(!value)return '';try{const url=new URL(value);if(!['https:','http:'].includes(url.protocol))return 'Нужен HTTP(S) URL.';if(url.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(url.hostname))return 'Для удалённого сервера нужен HTTPS.';return '';}catch(_){return 'Проверь формат URL.';}}
+    function setCloudFieldConnection(state){['cloudBaseUrl','cloudModel','cloudApiKey'].forEach(id=>{const field=$(id);if(field&&field.dataset.state!=='error')field.dataset.state=state==='connected'?'connected':'';});}
+    function setCloudStatus(state,message=''){
       const dot=$('cloudStatusDot'),copy=$('cloudStatus');
-      if(dot)dot.dataset.state=state;
-      let text=message;
-      if(getUiLanguage()==='en'){
-        if(/адрес.*gateway ещё не задан|No cloud gateway URL/i.test(message))text='No connection: the cloud gateway URL is not configured.';
-        else if(/нужны модель и ключ|Заполни адрес gateway/i.test(message))text='Configuration needed: enter a gateway URL, model and key.';
-        else if(/Нет подтверждённого соединения/i.test(message))text='No confirmed connection. Run the connection check.';
-        else if(/Облако подключено|Облако отвечает/i.test(message))text='Cloud is connected: the model responded successfully.';
-        else if(/Gateway settings changed|Model changed|Key changed/i.test(message))text=message;
-        else if(/Не удалось|не удалось подтвердить/i.test(message))text='Connection not confirmed: '+message.slice(message.indexOf(':')+1).trim();
-        else if(/Ожидает настройки/i.test(message))text='Waiting for setup: gateway model and key are required.';
-      }
-      if(copy){copy.dataset.state=state;copy.textContent=(state==='connected'?'● ':state==='checking'?'◌ ':'● ')+text;}
+      if(dot){dot.dataset.state=state;dot.title=state==='connected'?'Подключено':state==='checking'?'Проверка':'Нет подключения';}
+      if(copy){copy.dataset.state=state;copy.textContent=state==='connected'?(getUiLanguage()==='en'?'Connected':'Подключено'):state==='checking'?(getUiLanguage()==='en'?'Checking…':'Проверка…'):(getUiLanguage()==='en'?'Disconnected':'Не подключено');}
+      if(state!=='connected')setCloudFieldConnection(state);
     }
     function getCloudSettings(){
       return {
@@ -2778,24 +2776,17 @@ permalink: /
     }
     async function refreshCloudStatus(){
       const {baseUrl,model,key}=getCloudSettings();
-      if(!baseUrl){setCloudStatus('disconnected','Нет соединения: адрес твоего облачного gateway ещё не задан.');return;}
-      if(!model||!key){setCloudStatus('disconnected','Ожидает настройки: нужны модель и ключ gateway.');return;}
+      if(!baseUrl||!model||!key){setCloudStatus('disconnected');return;}
+      const formatError=validateCloudBaseUrl(baseUrl);if(formatError){setCloudFieldError('cloudBaseUrl',formatError);setCloudStatus('disconnected');return;}
       let marker=null;try{marker=JSON.parse(safeGet('ai_alandi_cloud_connection_v1')||'null');}catch(_){}
       const fingerprint=await providerKeyFingerprint(key);
-      if(!marker?.ok||marker.baseUrl!==baseUrl||marker.model!==model||marker.keyFingerprint!==fingerprint){
-        setCloudStatus('disconnected','Нет подтверждённого соединения. Нажми «Проверить и подключить».');return;
-      }
+      if(!marker?.ok||marker.baseUrl!==baseUrl||marker.model!==model||marker.keyFingerprint!==fingerprint){setCloudStatus('disconnected');return;}
       try{
-        const health=new URL(baseUrl);
-        health.pathname=health.pathname.replace(/\/v1\/?$/,'').replace(/\/$/,'')+'/healthz';
-        health.search='';health.hash='';
-        const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);
-        let response;
-        try{response=await fetch(health.toString(),{method:'GET',headers:{Accept:'application/json'},cache:'no-store',signal:controller.signal});}
-        finally{clearTimeout(timer);}
-        if(response.ok)setCloudStatus('connected','Облако отвечает. Последняя проверка модели подтверждена.');
-        else setCloudStatus('disconnected','Модель ранее ответила, но health-check gateway вернул HTTP '+response.status+'.');
-      }catch(_){setCloudStatus('disconnected','Сейчас не удалось подтвердить связь с gateway. Проверь адрес, сеть и доступность сервиса.');}
+        const health=new URL(baseUrl);health.pathname=health.pathname.replace(/\\/v1\\/?$/,'').replace(/\\/$/,'')+'/healthz';health.search='';health.hash='';
+        const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);let response;
+        try{response=await fetch(health.toString(),{method:'GET',headers:{Accept:'application/json'},cache:'no-store',signal:controller.signal});}finally{clearTimeout(timer);}
+        if(response.ok){setCloudFieldConnection('connected');setCloudStatus('connected');}else setCloudStatus('disconnected');
+      }catch(_){setCloudStatus('disconnected');}
     }
     function isUsableProbeResponse(payload,rawText=''){
       if(payload&&payload.error)return false;
@@ -2955,14 +2946,13 @@ permalink: /
       if(isTestingProviderConnection)return;
       const {baseUrl,model,key}=getCloudSettings();
       const cloudSettingsStillCurrent=()=>{const current=getCloudSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
-      if(!baseUrl||!model||!key){setCloudStatus('disconnected','Заполни адрес gateway, модель и ключ.');showToast('Для подключения нужны адрес, модель и ключ gateway.','error');return;}
-      let parsed;try{parsed=new URL(baseUrl);}catch(_){setCloudStatus('disconnected','URL gateway некорректен.');showToast('Проверь Base URL.','error');return;}
-      if(parsed.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(parsed.hostname)){setCloudStatus('disconnected','Для удалённого сервиса нужен HTTPS.');showToast('Облачный gateway должен использовать HTTPS.','error');return;}
+      if(!baseUrl||!model||!key){setCloudStatus('disconnected');return;}
+      const formatError=validateCloudBaseUrl(baseUrl);if(formatError){setCloudFieldError('cloudBaseUrl',formatError);setCloudStatus('disconnected');return;}
+      setCloudFieldError('cloudBaseUrl');setCloudFieldError('cloudModel');setCloudFieldError('cloudApiKey');
       isTestingProviderConnection=true;
       const button=document.querySelector('[data-action="connect-alandi-cloud"]');
       if(button){button.disabled=true;button.textContent='Проверяю…';}
-      setCloudStatus('checking','Ожидаю настоящий ответ модели…');
-      updateApiKeyLamp('checking','Проверяю модель и health-check собственного gateway…');
+      setCloudStatus('checking');
       const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
       try{
         const response=await fetch(buildApiUrl(baseUrl),{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model,messages:[{role:'user',content:'Reply with exactly OK.'}],max_tokens:8,stream:false}),cache:'no-store',signal:controller.signal});
@@ -2995,9 +2985,8 @@ permalink: /
         const verified={ok:true,baseUrl,model,keyFingerprint:fingerprint,testedAt:new Date().toISOString()};
         safeSet('ai_alandi_cloud_connection_v1',JSON.stringify(verified));
         safeSet('ai_provider_connection_alandi',JSON.stringify(verified));
-        $('providerPreset').value='alandi';applyProviderPreset('alandi',true);$('baseUrl').value=baseUrl;$('modelName').value=model;$('apiKey').value=key;
-        setCloudStatus('connected','Облако подключено: модель действительно ответила.');
-        updateApiKeyLamp('connected','Зелёный — собственный gateway ответил на тестовый запрос.');
+        $('providerPreset').value='';applyProviderPreset('alandi',true);$('baseUrl').value=baseUrl;$('modelName').value=model;$('apiKey').value=key;
+        setCloudFieldConnection('connected');setCloudStatus('connected');
         showToast('aLandi Cloud подключён и проверен.');
       }catch(error){
         if(!cloudSettingsStillCurrent()){
@@ -3005,9 +2994,8 @@ permalink: /
           return;
         }
         safeSet('ai_alandi_cloud_connection_v1','');safeSet('ai_provider_connection_alandi','');
-        setCloudStatus('disconnected','Не удалось подтвердить соединение: '+String(error?.message||error).slice(0,190));
-        updateApiKeyLamp('disconnected','Соединение не подтверждено. Проверь модель и health-check gateway.');
-        showToast('Не удалось подключить aLandi Cloud.','error');
+        setCloudStatus('disconnected');
+        setCloudFieldError('cloudApiKey',getUiLanguage()==='en'?'Connection failed. Check server URL and key.':'Не удалось подтвердить соединение. Проверь URL сервера и ключ.');
       }finally{
         clearTimeout(timer);isTestingProviderConnection=false;
         if(button){button.disabled=false;button.textContent='Проверить и подключить';}
@@ -3022,7 +3010,7 @@ permalink: /
         field.value=text.trim();field.dispatchEvent(new Event('input',{bubbles:true}));
         field.focus();field.setSelectionRange?.(field.value.length,field.value.length);
         if(id==='apiKey')scheduleProviderAutoConnect();
-        else if(id==='cloudApiKey'){safeSet('ai_alandi_cloud_connection_v1','');setCloudStatus('disconnected','Ключ изменён. Нажми «Проверить и подключить».');scheduleCloudAutoConnect();}
+        else if(id==='cloudApiKey'){safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('cloudApiKey');setCloudStatus('disconnected');scheduleCloudAutoConnect();}
         showToast('Текст вставлен.');
       }catch(_){field.focus();showToast('Браузер не разрешил чтение буфера. Нажми Ctrl+V в поле.','error');}
     }
@@ -3038,7 +3026,7 @@ permalink: /
     }
     function scheduleCloudAutoConnect(){
       if(cloudAutoConnectTimer)clearTimeout(cloudAutoConnectTimer);
-      cloudAutoConnectTimer=setTimeout(()=>{cloudAutoConnectTimer=null;const cfg=getCloudSettings();if(cfg.baseUrl&&cfg.model&&cfg.key)void connectAlandiCloud();},700);
+      cloudAutoConnectTimer=setTimeout(()=>{cloudAutoConnectTimer=null;const cfg=getCloudSettings();if(!cfg.baseUrl||!cfg.model||!cfg.key){setCloudStatus('disconnected');return;}const error=validateCloudBaseUrl(cfg.baseUrl);if(error){setCloudFieldError('cloudBaseUrl',error);setCloudStatus('disconnected');return;}if(isTestingProviderConnection){scheduleCloudAutoConnect();return;}void connectAlandiCloud();},850);
     }
     function clearProviderKey(){
       const provider=currentProvider();safeSet(providerKeyStorage(provider),'');
@@ -4924,10 +4912,9 @@ permalink: /
     });
     $('apiKey').addEventListener('input',(event)=>{if(currentProvider()!=='pollinations')safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();if(event.inputType==='insertFromPaste')scheduleProviderAutoConnect();});
     $('baseUrl').addEventListener('input',()=>{safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
-    $('cloudBaseUrl').addEventListener('input',(event)=>{safeSet('ai_alandi_cloud_base_url',$('cloudBaseUrl').value.trim());safeSet('ai_alandi_cloud_connection_v1','');setCloudStatus('disconnected',$('cloudBaseUrl').value.trim()?'Gateway settings changed; run a fresh connection check.':'No cloud gateway URL configured.');if(event.inputType==='insertFromPaste')scheduleCloudAutoConnect();});
-    $('cloudModel').addEventListener('input',()=>{safeSet('ai_alandi_cloud_model',$('cloudModel').value.trim());safeSet('ai_alandi_cloud_connection_v1','');setCloudStatus('disconnected','Model changed; run a fresh connection check.');});
-    $('cloudApiKey').addEventListener('input',(event)=>{safeSet('ai_alandi_cloud_connection_v1','');setCloudStatus('disconnected','Key changed; run a fresh connection check.');if(event.inputType==='insertFromPaste')scheduleCloudAutoConnect();});
-    $('cloudApiKey').addEventListener('paste',()=>setTimeout(()=>{if($('cloudApiKey').value.trim())setCloudStatus('disconnected','Key pasted. Run the connection check to confirm it.');},0));
+    $('cloudBaseUrl').addEventListener('input',()=>{const value=$('cloudBaseUrl').value.trim();safeSet('ai_alandi_cloud_base_url',value);safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('cloudBaseUrl',validateCloudBaseUrl(value));setCloudStatus('disconnected');scheduleCloudAutoConnect();});
+    $('cloudModel').addEventListener('input',()=>{safeSet('ai_alandi_cloud_model',$('cloudModel').value.trim());safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('cloudModel');setCloudStatus('disconnected');scheduleCloudAutoConnect();});
+    $('cloudApiKey').addEventListener('input',()=>{safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('cloudApiKey');setCloudStatus('disconnected');scheduleCloudAutoConnect();});
     $('textAttachmentInput').addEventListener('change',handleTextAttachment);
     $('mediaAttachmentInput').addEventListener('change',handleMediaAttachment);
     document.addEventListener('pointerdown',event=>{
