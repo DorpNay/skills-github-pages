@@ -347,6 +347,10 @@ Threat baseline: OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), о�
 | CrewAI | профессии, tasks, hierarchical manager, Flows vs Crews | свободную автономную delegation по умолчанию |
 | smolagents | manager/managed worker, lightweight worker profiles | CodeAgent на host без sandbox |
 | AgentScope / CAMEL | message bus, team patterns, agent societies, simulation | неограниченный peer chat / millions-agent claims |
+| Magentic-One | separate task/progress ledgers, explicit worker assignment, stall detection and replanning | copying its entire tool surface or treating benchmark performance as production proof |
+| Browser Use / PinchTab | dedicated browser worker, DOM-first extraction, isolated profiles, loopback browser control plane | cloud browser by default or browser credentials shared across agent profiles |
+| Langfuse / OpenTelemetry | trace tree, tool/agent spans, token/cost/latency, scoring | external trace export with raw prompts/secrets |
+| MCP-Scan | scan tool descriptions, skills and MCP traffic for poisoning/rug-pull patterns | trusting a scanner as authorization or sending private tool metadata to hosted APIs without review |
 | Paperclip | org chart, goals, budgets, tasks, approvals, run ledger, human board | Node/React control plane как новый stack |
 | OpenClaw / Hermes | isolated sessions, subagents, skill allowlists, scheduling, adapters, memory | небезопасное доверие к одному shared gateway или автоматическое self-modification |
 | OpenHands | workspace adapters и изолированные execution environments | доступ к host filesystem |
