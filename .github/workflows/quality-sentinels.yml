@@ -213,7 +213,7 @@ jobs:
               Path(f"audit-reports/ui-inline-{index}.js").write_text(source, encoding="utf-8")
 
           landing = Path("landing/index.html").read_text(encoding="utf-8")
-          if landing.startswith("---\\n"):
+          if landing.startswith("---\n"):
               _, _, landing = landing.split("---\\n", 2)
           Path("audit-reports/landing-page.html").write_text(landing, encoding="utf-8")
           print(f"Extracted {len(extractor.scripts)} inline UI scripts and normalized the Jekyll landing page for SAST.")
