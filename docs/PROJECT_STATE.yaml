@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-10-30"
   root_orienter:
-    status: "Main is fd4f0a105183feb23e0f4e4697446235de9ffe9a after PR #121 (free landing/client V1) and PR #122 (Gateway liveness/readiness) merged. PR #121 exact head e3c3017 passed all six workflow groups; PR #122 exact head 94d871d passed Gateway, Quality/Chromium, Jekyll, Security, Integrity, Context, Graphify and Dead Code. No open PRs at this checkpoint; Issue #111 remains the single owner/live-host gate. Post-merge Pages deployment and live VPS/Ollama remain unverified."
+    status: "Main is fd4f0a105183feb23e0f4e4697446235de9ffe9a after PR #121 (free landing/client V1) and PR #122 (Gateway liveness/readiness) merged. PR #121 exact head e3c3017 passed all six workflow groups; PR #122 exact head 94d871d passed Gateway, Quality/Chromium, Jekyll, Security, Integrity, Context, Graphify and Dead Code. PR #123 is the active reconciliation PR and is excluded from its own freshness queue snapshot; no unrelated PRs are open. Issue #111 remains the single owner/live-host gate. Post-merge Pages deployment and live VPS/Ollama remain unverified."
     branch: "main"
     base_main: "fd4f0a105183feb23e0f4e4697446235de9ffe9a"
     open_prs_at_checkpoint: 0
