@@ -3,18 +3,20 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-10-30",
   "checkpoint": {
-    "main_sha": "fd4f0a105183feb23e0f4e4697446235de9ffe9a",
-    "main_commit_subject": "feat(gateway): separate process liveness and upstream readiness probes",
+    "main_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
+    "main_commit_subject": "Merge pull request #123 from DorpNay/chore/reconcile-architecture-and-helper-eval-20261030",
     "main_commit_date": "2026-10-30",
-    "last_functional_checkpoint_sha": "fd4f0a105183feb23e0f4e4697446235de9ffe9a",
-    "last_functional_milestone": "PR #121 merged: first free static landing V1 and client UX. PR #122 merged: process-only /livez, bounded Ollama /readyz and backward-compatible /healthz.",
+    "last_functional_checkpoint_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
+    "last_functional_milestone": "PR #123 merged: redirect-safe GitHub freshness checks and bounded local-model smoke harness; prior PR #121/#122 release milestones preserved.",
     "main_quality_run": null,
     "main_pages_deployment_run": null,
     "functional_parent_gateway_run": null,
     "functional_parent_quality_run": null,
     "functional_parent_graphify_run": null,
     "functional_parent_pages_run": null,
-    "open_pull_requests": [],
+    "open_pull_requests": [
+      124
+    ],
     "open_issues": [
       111
     ],
@@ -30,6 +32,12 @@
         "merge_sha": "fd4f0a105183feb23e0f4e4697446235de9ffe9a",
         "head_sha": "94d871dbf76a5364ebb3c61d86cc763affa5eaa1",
         "checks": "Gateway, Quality, Graphify and Dead Code passed on exact PR head; Quality included Jekyll, Chromium and published-site smoke."
+      },
+      {
+        "number": 123,
+        "merge_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
+        "head_sha": "fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222",
+        "checks": "Six workflow groups passed on exact PR head: Gateway Tests, Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code."
       }
     ]
   },
