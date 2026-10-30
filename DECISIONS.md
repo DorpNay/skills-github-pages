@@ -133,23 +133,6 @@
 - **Remaining evidence:** current-head CI, followed later by a target-host resource/file-descriptor soak and integration with real audio adapters.
 - **Rollback:** revert this helper change or leave voice callers disabled.
 
-## D-015 — Local helper for project-memory compression
-
-- **Статус:** Accepted for prototype; implementation branch awaiting exact-head CI.
-- **Решение:** разрешить только ручное предложение компактных фактов из памяти текущего проекта с операторски выбранной локальной Ollama-моделью. Браузер не задаёт имя модели, а helper не сохраняет кандидаты автоматически.
-- **Ограничения:** пустой ALANDI_HELPER_MODEL выключает маршрут; Bearer auth; input/output limits and structured JSON; common secret-like patterns filtered on both sides; same inference semaphore; keep_alive=0; no-store response; per-candidate explicit save; active project ID and duplicate recheck.
-- **Причина:** облегчает обслуживание проектной памяти без второго always-on агента и без скрытого изменения user data.
-- **Риски/rollback:** модель может предложить неточный факт; пользователь обязан проверить кандидаты. Откат — revert feature PR and leave ALANDI_HELPER_MODEL blank; no schema migration.
-
-## Global release rules
-
-- Feature flag выключен до прохождения eval и review.
-- Код и документация должны описывать текущий фактический уровень, не целевое обещание.
-- Не проводить destructive runtime changes автоматическим middleware.
-- Не публиковать API keys, OAuth secrets, refresh tokens или prompts в логах.
-- Любой live activation требует проверки на целевом VPS и отдельного rollback plan.
-
-
 ## D-013 — Browser-to-server project memory bridge is explicit and candidate-first
 
 - **Status:** Merged in PR #29 at `55248f81585c52d7cc7ba7cfc08158a291a761ca`; PR-head and post-merge Quality/Chromium/provenance/Pages checks passed. Live gateway activation remains pending.
@@ -170,6 +153,22 @@
 - **Image generation:** not a working feature in the current browser UI. Add only after a real local/provider backend, exact artifact/license, VRAM/runtime fit and end-to-end image-return test are selected.
 - **Upgrade gate:** compare free/local baseline and paid target on identical tasks: p50/p95, peak RAM, quality, quotas and expected monthly cost. Preserve the OpenAI-compatible gateway contract and explicit endpoint/model changes.
 
+
+## D-015 — Local helper for project-memory compression
+
+- **Статус:** Accepted for prototype; implementation branch awaiting exact-head CI.
+- **Решение:** разрешить только ручное предложение компактных фактов из памяти текущего проекта с операторски выбранной локальной Ollama-моделью. Браузер не задаёт имя модели, а helper не сохраняет кандидаты автоматически.
+- **Ограничения:** пустой ALANDI_HELPER_MODEL выключает маршрут; Bearer auth; input/output limits and structured JSON; common secret-like patterns filtered on both sides; same inference semaphore; keep_alive=0; no-store response; per-candidate explicit save; active project ID and duplicate recheck.
+- **Причина:** облегчает обслуживание проектной памяти без второго always-on агента и без скрытого изменения user data.
+- **Риски/rollback:** модель может предложить неточный факт; пользователь обязан проверить кандидаты. Откат — revert feature PR and leave ALANDI_HELPER_MODEL blank; no schema migration.
+
+## Global release rules
+
+- Feature flag выключен до прохождения eval и review.
+- Код и документация должны описывать текущий фактический уровень, не целевое обещание.
+- Не проводить destructive runtime changes автоматическим middleware.
+- Не публиковать API keys, OAuth secrets, refresh tokens или prompts в логах.
+- Любой live activation требует проверки на целевом VPS и отдельного rollback plan.
 
 ## D-016 — Autonomous orchestration with policy-enforced capabilities
 
