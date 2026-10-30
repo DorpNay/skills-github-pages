@@ -6,6 +6,7 @@ new facts default to candidate, each node requires provenance, and contradiction
 from __future__ import annotations
 
 import hashlib
+import hashlib
 import json
 import os
 import re
@@ -267,10 +268,11 @@ class MemoryManager:
             clauses.append("n.recorded_at <= ?")
             args.append(at)
         # nosemgrep: python.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query
-        sql = ("SELECT n.* FROM fts_memory JOIN memory_nodes AS n "
+        sql = (  # nosec B608 -- all user terms and filters are bound parameters.
+            "SELECT n.* FROM fts_memory JOIN memory_nodes AS n "
                "ON n.rowid = fts_memory.rowid WHERE fts_memory MATCH ? AND "
                + " AND ".join(clauses)
-               + " ORDER BY bm25(fts_memory), n.recorded_at DESC, n.id LIMIT ?")  # nosec B608 -- all user terms and filters are bound parameters.
+               + " ORDER BY bm25(fts_memory), n.recorded_at DESC, n.id LIMIT ?")
         args.append(limit)
         with closing(self._connect()) as db:
             rows = db.execute(sql, args).fetchall()
