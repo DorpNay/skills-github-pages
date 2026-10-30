@@ -31,7 +31,7 @@
 - [x] P1. Зафиксировать пользовательский принцип: до первого лендинга — только необходимая подготовка; после него — оптимизация и доведение имеющейся системы.
 - [x] P2. Зафиксировать, что лендинг/продукт не должен рекламировать prototype как готовую функцию.
 - [x] P3. Добавить book/document/source → reusable agent skill направление в план.
-- [x] P4. Свести весь функциональный объём первого обновления в вертикальные, тестируемые deliverables — добавлены P0-13…P0-18 и P1-10…P1-17 в `docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`.
+- [x] P4. Свести будущие post-landing вертикали в отдельные тестируемые deliverables — P0-13…P0-18 и P1-10…P1-17 сохранены в `docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`, но явно исключены из замороженного состава первого лендинга V1.
 - [~] P5. Подготовить голосовой UX: запись/транскрипция и TTS одного сообщения уже есть в коде; диалог сейчас half-duplex; selection-to-speech, multi-message queue, streaming turn detection и реальный barge-in остаются незавершёнными.
 - [~] P6. Спроектировать small helper models, GPU-only/accelerated inference и routing без обязательной нагрузки CPU; сохранить CPU fallback только как осознанный режим. Подтверждены варианты Ollama GPU, llama.cpp offload и vLLM; требуется hardware benchmark.
 - [~] P7. Спроектировать bounded multi-agent / mass-agent orchestration: DAG, budgets, queue, cancellation, idempotency, permissions, traces, evals и safe-off. Сравнены OpenWOP v2 protocol, LangGraph interrupts/checkpointing and Temporal durable workflows; no runtime chosen.
