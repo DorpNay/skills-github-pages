@@ -349,13 +349,20 @@
 - [~] **DR-002**: Собрать ранее выбранные источники из temp/1, temp/2, existing research catalogues and user-provided repositories; dedupe and classify by idea, implementation, evidence and adoption. **Progress:** повторно использованы temp/1, temp/2, OPEN_SOURCE_TRIAGE, TECHNIQUE_REGISTER и PR #125 research docs.
 - [~] **DR-003**: Подготовить обновляемый research catalogue и architecture decision matrix, не копируя сторонний код/лицензии и не превращая каждую найденную технологию в зависимость. **Progress:** три документа deep research созданы; расширение каталога и независимый review pending.
 
+- [ ] **DEP-001**: Согласовать пересекающиеся PR #124 и #126. #124 добавляет uv.lock и Python 3.12/3.13/3.14 matrix, обновляет pypdf до 6.21.4 с узким security cutoff; #126 повторяет dependency pins с pypdf 6.21.2 и меняет Node 22→24. Рекомендованный порядок: сначала принять #124 после exact-head checks, затем rebase/reconcile #126 на новый main и сохранить единый dependency/lockfile truth.
+- [ ] **AGENT-006**: Обновить PR #125 blueprint по результатам PR #128 и указанию владельца: 64 профессии — seed, не ceiling; минимум 5 параллельных workers рядом с main model; раздельные logical worker slots и backend-specific inference concurrency.
+- [ ] **TOK-004**: Реализовать сохранение finish_reason и явное состояние incomplete для length/provider interruption; provider-specific continuation semantics и regression tests.
+- [ ] **TOK-005**: Реализовать adaptive tool budgets и provider-specific inference pools/queues с main priority, backpressure и cancellation; acceptance — 5 параллельных workers + main request без cross-scope leakage.
+- [ ] **VERT-004**: Выполнить fixture benchmark current parser vs MarkItDown vs Docling; выбрать одну пользовательскую conversion family для pilot и проверить локальный engine/license/security.
+
 ## C. Очерёдность выполнения
 
 1. **CONT-001** — закрепить постоянный протокол ориентирования и реестр.
 2. **AGENT-001…AGENT-005** — исследование, архитектура и reviewable design агентной платформы; runtime не внедрять до проверки и отдельного принятия Phase 1.
 3. **VERT-001…VERT-003** — архитектура конвертации и лицензии.
-4. **TOK-001…TOK-003** — проверить реальные пути генерации, отличить output truncation от bounded tool orchestration и подготовить безопасные исправления.
-5. **DR-001…DR-003** — отдельный глубокий research workstream и каталог доказательств.
+4. **TOK-001…TOK-005** — закрыть finish_reason/incomplete handling, adaptive tool budgets, backend queues и lossless history.
+5. **DEP-001** — reconciliate #124/#126 без потери uv.lock или более безопасного pypdf pin.
+6. **DR-001…DR-003** — отдельный глубокий research workstream и каталог доказательств.
 6. Сопоставить дубликаты старых задач с текущей реализацией, PR, тестами и owner-only gates.
 
 ## D. Состояние репозитория на момент миграции (GitHub, 2026-10-31)
