@@ -60,3 +60,10 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Functional code commits: `77b2691` (helper) and `363bb5c` (tests). Equivalent local subprocess smoke passed for both cancellation and timeout (child return codes -9). This is not the repository Gateway test run.
 - Gateway #483 passed 150 tests on the previous code SHA; the new subprocess fix still needs Gateway CI. GitHub connector can rerun existing jobs but cannot dispatch a new workflow on the current SHA. Do not claim this fix CI-verified.
 - Next: get Gateway tests running on `363bb5c`, then continue audio/document/security audit.
+
+### Landing/app UX polish continuation — 2026-10-30
+- Full remaining visual/interaction requirements consolidated in `docs/LANDING_UX_POLISH_BACKLOG_RU.md`; read it after `docs/V1_UI_FINALIZATION_RU.md`.
+- Found existing landing roadmap ticker (3 roadmap cards, CSS animation only on open, reduced-motion fallback); did not duplicate it.
+- Improved accessibility: each ticker now has a visible CSS-only pause/resume checkbox, complying with WCAG 2.2 SC 2.2.2 pause requirement for prolonged auto-moving content. Landing E2E pause/resume test added.
+- Code commits: `f42c42d51eb624b4d2e9fe638ddebffc3b7ab8db` and `b213c8a5d50c93af675693986fe22c3bd4d5499d`; docs checkpoint follows. CI not yet verified for these new commits.
+- Next: exact-head Chromium/Quality run; then implement remaining UX backlog as bounded slices, beginning with visual consistency/screenshot review, followed by modal/popover focus and native mobile verification.
