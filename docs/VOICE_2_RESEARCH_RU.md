@@ -104,7 +104,7 @@ Use the definitions in `docs/LATENCY_CONTRACT.md`. Its proposed numeric targets 
 - [x] VOICE-TRACK-001 — создать изолированную research-ветку от main.
 - [x] VOICE-TRACK-002 — перечитать существующие voice plans, research synthesis, language matrix, latency contract and implementation checklist.
 - [~] VOICE-TRACK-003 — собрать ранее найденные/предоставленные владельцем источники и пометить provenance; часть исходных scratch/source URLs ещё требует сверки.
-- [ ] VOICE-TRACK-004 — провести независимый поиск по официальным upstream/papers/model cards/standards в категориях ASR, TTS, real-time audio, diarization, transliteration и multilingual normalization.
+- [~] VOICE-TRACK-004 — провести независимый поиск по официальным upstream/papers/model cards/standards в категориях ASR, TTS, real-time audio, diarization, transliteration и multilingual normalization. **Progress:** первый проход выполнен по 6 поисковым направлениям (50 result slots до дедупликации); отдельный первичный-source отчёт создан в [VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md](VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md). Полный sweep и проверка оставшихся лицензий продолжаются.
 - [ ] VOICE-TRACK-005 — проверить точные лицензии кода, весов, голосов, phonemizers, datasets и redistribution obligations.
 - [ ] VOICE-TRACK-006 — сверить current code/tests and voice UI against every existing acceptance item; report precise implemented/partial/missing matrix.
 - [ ] VOICE-TRACK-007 — составить воспроизводимый RU/EN/TH benchmark harness and golden-set governance.
