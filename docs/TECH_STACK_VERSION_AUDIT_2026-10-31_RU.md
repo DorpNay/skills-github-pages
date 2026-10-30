@@ -28,21 +28,24 @@
 |---|---:|---:|---|
 | FastAPI | 0.128.2 | 0.162.0 | Upstream release 2026-10-23 |
 | Uvicorn | 0.48.0 | 0.54.0 | Upstream release 2026-09-25 |
-| pypdf | 6.4.1 | 6.21.4 | Upstream release 2026-10-28; свежие security/robustness fixes |
-| pytest | 9.0.2 | 9.2.0 | Upstream release 2026-10-27 |
-| pytest-asyncio | 1.4.0 | 1.4.1 | Upstream release 2026-10-25 |
+| pypdf | 6.4.1 | 6.21.4 | Security release 2026-10-28; точечное исключение из 7-day cutoff до 2026-10-29 |
+| pytest | 9.0.2 | 9.1.1 | Последняя версия, проходящая общий 7-day cutoff |
+| pytest-asyncio | 1.4.0 | 1.4.0 | 1.4.1 опубликован 2026-10-25 и исключён общим 7-day cutoff |
 | Playwright | 1.56.1 | 1.64.1 | Текущий npm latest stable |
 | graphifyy | 0.9.96 | 0.9.97 | Upstream release 2026-10-27 |
 
-Python CI matrix расширен до 3.12 / 3.13 / 3.14, поскольку проект декларирует `requires-python >=3.12`, а актуальные выбранные пакеты публикуют поддержку Python 3.14. Реальная совместимость будет считаться подтверждённой только после прохождения всех трёх matrix legs.
+Python CI matrix расширен до 3.12 / 3.13 / 3.14, поскольку проект декларирует `requires-python >=3.12`, а выбранные пакеты публикуют поддержку Python 3.14. Реальная совместимость будет считаться подтверждённой только после прохождения всех трёх matrix legs.
 
-**Важная причина обновить pypdf:** Graphify 0.9.96 уже поднял собственный upstream floor до pypdf >=6.19.0 в security/dependency refresh; проект удерживал 6.4.1. Обновление до 6.21.4 закрывает этот version drift. Сведения об изменениях pypdf 6.21.3/6.21.4 приведены в upstream changelog.
+**Сохранён supply-chain cutoff:** общий `exclude-newer = "7 days"` остаётся включён. Единственное узкое исключение — `pypdf` до `2026-10-29T00:00:00Z`: PyPI upload 6.21.4 датирован 2026-10-28, а changelog 6.21.3/6.21.4 содержит защитные исправления PDF parsing (ограничение xref/page attributes, проверка EOF и исправление loop detection). Это пользовательский document-parser, поэтому security fix имеет приоритет над ожиданием полного семидневного окна. Исключение ограничено одним пакетом и одной датой; остальные зависимости продолжают соблюдать cutoff.
+
+**Важная причина обновить pypdf:** Graphify 0.9.96 поднял собственный upstream floor до pypdf >=6.19.0 в security/dependency refresh; проект удерживал 6.4.1. Обновление до 6.21.4 закрывает version drift и включает последующие parser-hardening fixes. Узкое исключение из общего cutoff документировано выше; PyPI указывает полную provenance для релиза 6.21.4.
 
 ## 3. Версии, которые оставлены
 
 Оставлены, поскольку на дату аудита текущая стабильная версия совпадает с pin либо новая версия является только prerelease:
 
 - HTTPX 0.28.1 — последняя stable; HTTPX 1.0.dev* — prerelease, не production replacement.
+- pytest-asyncio 1.4.0 — оставлен: 1.4.1 опубликован 2026-10-25, поэтому не проходит семидневный cutoff; патч не обходит freshness gate ради номера версии.
 - cryptography 50.0.2 — текущий release на PyPI.
 - jsonschema 4.26.0 — последний release в upstream release list.
 - PyYAML 6.0.3 — текущий upstream release.
@@ -74,8 +77,8 @@ Node 22 остаётся поддерживаемой maintenance-LTS линие
 - FastAPI 0.162.0: https://fastapi.tiangolo.com/release-notes/
 - Uvicorn PyPI: https://pypi.org/project/uvicorn/
 - pypdf 6.21.4 and security changelog: https://pypi.org/project/pypdf/ and https://pypdf.readthedocs.io/en/stable/meta/CHANGELOG.html
-- pytest 9.2.0: https://pypi.org/project/pytest/
-- pytest-asyncio 1.4.1: https://pypi.org/project/pytest-asyncio/
+- pytest 9.1.1: https://pypi.org/project/pytest/
+- pytest-asyncio 1.4.1 (excluded by the seven-day cutoff): https://pypi.org/project/pytest-asyncio/
 - Playwright 1.64.1: https://www.npmjs.com/package/@playwright/test
 - Graphify 0.9.97: https://pypi.org/project/graphifyy/
 - cryptography 50.0.2: https://pypi.org/project/cryptography/
@@ -85,3 +88,4 @@ Node 22 остаётся поддерживаемой maintenance-LTS линие
 - Bandit 1.9.4: https://pypi.org/project/bandit/
 - Semgrep 1.183.0: https://pypi.org/project/semgrep/
 - uv 0.13.6: https://pypi.org/project/uv/
+- uv per-package freshness policy: https://docs.astral.sh/uv/reference/settings/

@@ -14,8 +14,8 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-  "pytest==9.2.0",
-  "pytest-asyncio==1.4.1",
+  "pytest==9.1.1",
+  "pytest-asyncio==1.4.0",
   "PyYAML==6.0.3",
   "vulture==2.16",
 ]
@@ -23,6 +23,7 @@ dev = [
 [tool.uv]
 package = false
 exclude-newer = "7 days"
+exclude-newer-package = { pypdf = "2026-10-29T00:00:00Z" }
 
 [tool.pytest.ini_options]
 testpaths = ["gateway/tests"]
