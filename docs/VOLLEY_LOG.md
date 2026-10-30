@@ -89,3 +89,6 @@
 
 ### 2026-10-30 — Voice and agent release requirements
 Added P0 voice acceptance tasks for editable STT, streaming conversational dialogue, selection TTS, full-message TTS, multi-message queue and real RU/EN/TH device tests. Added P1 tasks for helper model registry, GPU profiles, bounded multi-agent execution, load tests and Knowledge-to-Skill lifecycle. Reviewed Agent Skills, Qwen3.5-0.8B, Granite-4.2-3B, OpenWOP v2, LangGraph and Temporal. Moonshine Voice is promising for streaming but its currently listed STT languages omit RU/TH; no model/runtime was adopted. Continue subsystem audit and Chromium checks. No files deleted.
+
+### 2026-10-30 — ASR/TTS subprocess cancellation fix
+Confirmed defect: local ffprobe/ffmpeg/whisper.cpp and Piper child processes were terminated on timeout but not on request cancellation. Added shared cleanup helper `await_local_process()` in gateway/app.py and regression tests for timeout/cancellation in gateway/tests/test_audio_concurrency.py. Functional commits: 77b2691 and 363bb5c. Equivalent local subprocess smoke passed (both children killed/reaped, return code -9). Repository Gateway CI on the new code SHA is pending; prior Gateway #483 (150 tests) predates this fix. GitHub connector has no workflow_dispatch capability for a new run.
