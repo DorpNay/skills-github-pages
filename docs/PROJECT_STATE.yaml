@@ -350,8 +350,11 @@ audit_update_2026_10_30:
     streaming_voice_candidate: "moonshine-ai/moonshine; verify RU/TH STT model coverage and exact model licenses before adoption"
     gpu_runtime_candidates: "Ollama GPU, llama.cpp offload, vLLM for GPU-serving workloads; benchmark hardware before migration"
   cleanup:
-    files_deleted: []
-    rationale: "No obsolete file has yet been proven unreachable across dynamic references, CI, deployment, rollback and docs."
+    files_deleted:
+    - "temp/3 — obsolete conversation/planning scratch; commit 936f37b2d9c3542956a227a72c0d3d8069042231"
+    - "temp/4 — simulated brainstorm with stale claims; commit 81bfe30428fdf3b60ea775eb7668253e270aefad"
+    - "temp/5 — unrelated generic Jekyll portfolio plan; commit 893736069e24bc04cd984aa57699caff9780f91d"
+    rationale: "Only temp/3–temp/5 were removed after repository reference search and updating IMPROVEMENT_SELECTION.md. temp/1 and temp/2 remain as substantial historical research; no production source was deleted."
   next: "Complete exact-head Quality/Chromium rerun, then continue request/provider, memory/RAG, tools/security, voice and document subsystem audit."
 
 
