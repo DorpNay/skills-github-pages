@@ -428,3 +428,10 @@
 - [ ] **VOICE-EXT-008**: Review audio/text retention, consent, user correction and privacy threat model.
 
 **Artifacts:** PR #129, branch `research/voice-assistant-transcription-20261031`; `docs/VOICE_2_RESEARCH_RU.md`, `docs/VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md`, `docs/WORKSTREAM_GOVERNANCE_RU.md`, `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md`. PR is Draft / HOLD; no runtime adoption.
+
+
+### F6. Физическая изоляция future/research PR
+
+- [x] **GOVERNANCE-006**: Создать отдельную holding base branch `future-workstreams/parking-base-20261031` от main SHA `e78a73b25725bfa63370d9946887cbbacbf51b82`.
+- [x] **GOVERNANCE-007**: Перенаправить PR #125, #128 и #129 на holding branch; все три остаются Draft и помечены в заголовке/body как HOLD / DO NOT MERGE. Их merge не меняет main.
+- [ ] **GOVERNANCE-008**: Проверить GitHub rulesets/branch protection и запретить автоматический merge holding branch в main без explicit owner approval.
