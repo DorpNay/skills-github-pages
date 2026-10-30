@@ -340,7 +340,7 @@ permalink: /
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
   <aside id="sidebar" aria-label="Проекты и чаты" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[88vw] bg-gray-950 border-r border-gray-800 -translate-x-full transition-transform duration-300 flex flex-col overflow-y-auto overscroll-contain">
-    <div class="p-4 border-b border-gray-800 flex justify-between items-center">
+    <div class="sticky top-0 z-20 bg-gray-950/95 backdrop-blur p-4 border-b border-gray-800 flex justify-between items-center">
       <h2 class="font-bold text-sm" data-i18n="sidebarTitle">💬 Диалоги и память</h2>
       <button type="button" data-action="close-sidebar" aria-label="Закрыть меню" class="text-gray-400 hover:text-white text-lg p-1">✕</button>
     </div>
@@ -3115,9 +3115,14 @@ permalink: /
       if(providerAutoConnectTimer)clearTimeout(providerAutoConnectTimer);
       providerAutoConnectTimer=setTimeout(async()=>{
         providerAutoConnectTimer=null;const provider=currentProvider();
-        if(!provider||(!getProviderRequestKey(provider)&&provider!=='kilo'))return;
+        // A freshly pasted key is intentionally not persisted until its connection probe succeeds.
+        // Read the active field for ordinary providers so paste/input can trigger the first probe.
+        const requestKey=provider==='pollinations'
+          ? getProviderRequestKey(provider)
+          : (($('apiKey')?.value||'').trim()||getProviderRequestKey(provider));
+        if(!provider||(!requestKey&&provider!=='kilo'))return;
         if(isTestingProviderConnection){scheduleProviderAutoConnect();return;}
-        if(provider!=='kilo'&&provider!=='pollinations'){try{await refreshModelCatalog({quiet:true,force:true,provider});}catch(_){}}
+        if(provider!=='kilo'&&provider!=='pollinations'){try{await refreshModelCatalog({quiet:true,force:true,provider,key:requestKey});}catch(_){}}
         await testProviderConnection();
       },850);
     }
