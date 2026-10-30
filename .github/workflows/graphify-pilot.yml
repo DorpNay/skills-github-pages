@@ -59,7 +59,7 @@ jobs:
       - name: Install pinned Graphify CLI
         run: |
           python -m pip install --upgrade pip
-          python -m pip install "graphifyy[sql]==0.9.96"
+          python -m pip install "graphifyy[sql]==0.9.97"
           graphify --version
       - name: Create a tracked-files-only staging copy
         env:
