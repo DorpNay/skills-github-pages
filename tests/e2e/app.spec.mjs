@@ -1229,9 +1229,17 @@ test('deleting a project removes its chats but preserves other projects and chat
   await disposableGroup.locator(`[data-action="switch-chat"][data-chat-id="${disposableChatId}"]`).click();
   await page.locator('[data-action="toggle-sidebar"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(disposableId);
+  if (await page.locator('#projectNavigationList').evaluate(element => element.classList.contains('hidden'))) {
+    await page.locator('#projectNavToggle').click();
+  }
+  if (!(await disposableGroup.evaluate(element => element.open))) {
+    await disposableGroup.locator(':scope > summary').click();
+  }
+  await disposableGroup.locator('[data-action="open-project-settings"]').click();
+  await expect(page.locator('#projectSettingsStatus')).toContainText('Disposable Project');
 
   page.on('dialog', dialog => dialog.accept());
-  await page.locator('[data-action="delete-project"]').click();
+  await page.locator('#projectSettingsModal [data-action="delete-project"]').click();
   await expect(page.locator('#currentProjectSelect')).not.toHaveValue(disposableId);
   const storedProjects = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]'));
   expect(storedProjects.some(project => project.id === disposableId)).toBe(false);
