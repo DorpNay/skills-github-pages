@@ -1299,6 +1299,27 @@ permalink: /
       }
     };
     function getUiLanguage(){return safeGet('ai_ui_language_v1')==='en'?'en':'ru';}
+    function applyFunctionPanelLanguage(lang){
+      const en=lang==='en';
+      const setOptions=(selector,values)=>{const select=$(selector);if(select)Array.from(select.options).forEach((option,index)=>{if(values[index])option.textContent=values[index];});};
+      setOptions('skillGoalSelect',en?['Planning','Research','Code review','Data analysis','Agent systems','Multimodal tasks','Custom option']:['Планирование','Исследование','Код и ревью','Анализ данных','Системы агентов','Мультимодальные задачи','Свой вариант']);
+      setOptions('skillOutputSelect',en?['Summary','Checklist','Step by step','Table','Report','Custom option']:['Краткое резюме','Чек-лист','Пошагово','Таблица','Отчёт','Свой вариант']);
+      setOptions('agentTeamScenario',en?['General','Research','Software','Product','Due diligence','Custom option']:['Общий','Исследование','Разработка','Продукт','Due diligence','Свой вариант']);
+      setOptions('agentRolePreset',en?['Balanced','Research team','Software team','Product team','Custom option']:['Сбалансированные','Исследовательская команда','Разработка ПО','Продуктовая команда','Свой вариант']);
+      setOptions('uiLanguage',en?['Русский','English']:['Русский','English']);
+      setOptions('uiMotion',en?['Auto','Reduce motion','Off']:['Авто','Уменьшить','Выкл.']);
+      setOptions('composerPosition',en?['Bottom','Top']:['Снизу','Сверху']);
+      const fieldTexts={customSkillName:en?'Custom skill name':'Название своего навыка',customSkillInstructions:en?'Instructions for this task':'Свои инструкции для задачи',customSkillOutput:en?'Custom output format (optional)':'Свой формат результата (необязательно)',agentTeamCustomScenario:en?'Describe the team scenario':'Опиши сценарий команды',agentCustomRoles:en?'Roles and responsibilities, one per line':'Роли и обязанности, по одной на строку',cloudBaseUrl:en?'My server URL · https://…/v1':'URL моего сервера · https://…/v1',cloudModel:en?'Gateway model · exact model ID':'Модель gateway · точный ID',cloudApiKey:en?'Access key':'Ключ доступа',tavilyKey:en?'Tavily key':'ключ Tavily'};
+      Object.entries(fieldTexts).forEach(([id,value])=>{const field=$(id);if(field)field.placeholder=value;});
+      const labels={skillGoalSelect:en?'Task type':'Тип задачи',skillOutputSelect:en?'Output format':'Формат результата',agentTeamSize:en?'Team size · blueprint':'Размер команды · blueprint',agentTeamScenario:en?'Scenario':'Сценарий',agentRolePreset:en?'Roles':'Роли',uiLanguage:en?'Language':'Язык',uiMotion:en?'Motion':'Анимация',composerPosition:en?'Composer':'Поле ввода'};
+      Object.entries(labels).forEach(([id,value])=>{const field=$(id),label=field?.closest('label');if(label?.firstChild?.nodeType===Node.TEXT_NODE)label.firstChild.textContent=value+' ';});
+      const quizButton=document.querySelector('[data-action="apply-skill-quiz"]');if(quizButton)quizButton.textContent=en?'Apply skill profile':'Подобрать навык';
+      const skillFields=$('skillCustomFields');if(skillFields)skillFields.setAttribute('aria-label',en?'Custom skill settings':'Настройки своего навыка');
+      const size=$('agentTeamSizeValue');if(size){const value=Number($('agentTeamSize')?.value||4);size.textContent=value+' '+(en?(value===1?'agent':'agents'):(value===1?'агент':'агентов'));}
+      const researchLabels=document.querySelectorAll('#researchStudioModal label.block');if(researchLabels[0]?.firstChild)researchLabels[0].firstChild.textContent=(en?'Effort':'Усилие')+' ';if(researchLabels[1]?.firstChild)researchLabels[1].firstChild.textContent=(en?'Web search':'Веб-поиск')+' ';
+      const structured=$('researchStudioStructured')?.closest('label');if(structured){const strong=structured.querySelector('strong'),help=structured.querySelector('span span');if(strong)strong.textContent=en?'Structured analysis':'Структурированный разбор';if(help)help.textContent=en?'Four sequential stages using the selected model.':'Четыре последовательных этапа на выбранной модели.';}
+      const mainSkill=$('skillPresetSelect')?.querySelector('option[value="custom"]');if(mainSkill)mainSkill.textContent=en?'Custom option':'Свой вариант';
+    }
     function applyUiLanguage(language){
       const lang=language==='en'?'en':'ru';safeSet('ai_ui_language_v1',lang);document.documentElement.lang=lang;
       const text=UI_TEXT[lang];
@@ -1308,6 +1329,7 @@ permalink: /
       document.querySelectorAll('[data-i18n]').forEach(node=>{const value=text[node.dataset.i18n];if(typeof value==='string')node.textContent=value;});
       document.querySelectorAll('[data-i18n-placeholder]').forEach(node=>{const value=text[node.dataset.i18nPlaceholder];if(typeof value==='string')node.placeholder=value;});
       document.querySelectorAll('[data-i18n-aria-label]').forEach(node=>{const value=text[node.dataset.i18nAriaLabel];if(typeof value==='string')node.setAttribute('aria-label',value);});
+      applyFunctionPanelLanguage(lang);
       const languageSummary=$('languageSummary');if(languageSummary)languageSummary.textContent=lang==='en'?'EN ▾':'RU ▾';
       const sidebarLanguageSummary=$('languageSummarySidebar');if(sidebarLanguageSummary)sidebarLanguageSummary.textContent=lang==='en'?'EN ▾':'RU ▾';
       const languageSelect=$('uiLanguage');if(languageSelect)languageSelect.value=lang;
@@ -3131,7 +3153,7 @@ permalink: /
       if($('customSkillOutput'))$('customSkillOutput').value=chat.customSkillOutput;
       const show=chat.skillPreset==='custom'||chat.skillGoal==='custom'||chat.skillOutputMode==='custom';
       $('skillCustomFields')?.classList.toggle('hidden',!show);
-      const summary=$('skillConfigSummary');if(summary)summary.textContent=chat.skillPreset==='custom'?(chat.customSkillName||'Свой навык · инструкции сохраняются в этом чате'):'Выбран профиль: '+chat.skillPreset+' · формат: '+chat.skillOutputMode;
+      const summary=$('skillConfigSummary');if(summary)summary.textContent=getUiLanguage()==='en'?(chat.skillPreset==='custom'?(chat.customSkillName||'Custom skill · saved in this chat'):'Profile: '+chat.skillPreset+' · output: '+chat.skillOutputMode):(chat.skillPreset==='custom'?(chat.customSkillName||'Свой навык · инструкции в этом чате'):'Профиль: '+chat.skillPreset+' · формат: '+chat.skillOutputMode);
     }
     function persistSkillConfiguration(){
       const chat=getCurrentChat();if(!chat)return;ensureChatFunctionSettings(chat);
@@ -3146,11 +3168,11 @@ permalink: /
     }
     function renderAgentConfiguration(){
       const chat=getCurrentChat();if(!chat)return;ensureChatFunctionSettings(chat);
-      $('agentTeamSize').value=String(chat.agentTeamSize);$('agentTeamSizeValue').textContent=chat.agentTeamSize+' '+(chat.agentTeamSize===1?'агент':'агентов');
+      $('agentTeamSize').value=String(chat.agentTeamSize);$('agentTeamSizeValue').textContent=chat.agentTeamSize+' '+(getUiLanguage()==='en'?(chat.agentTeamSize===1?'agent':'agents'):(chat.agentTeamSize===1?'агент':'агентов'));
       $('agentTeamScenario').value=chat.agentTeamScenario;$('agentRolePreset').value=chat.agentRolePreset;
       $('agentTeamCustomScenario').value=chat.agentTeamCustomScenario;$('agentCustomRoles').value=chat.agentCustomRoles;
       $('agentCustomFields').classList.toggle('hidden',chat.agentTeamScenario!=='custom'&&chat.agentRolePreset!=='custom');
-      $('agentConfigSummary').textContent='Blueprint: '+chat.agentTeamSize+' · '+chat.agentTeamScenario+' · '+chat.agentRolePreset+' · runtime: 4 фиксированных этапа';
+      $('agentConfigSummary').textContent=getUiLanguage()==='en'?'Blueprint: '+chat.agentTeamSize+' · '+chat.agentTeamScenario+' · '+chat.agentRolePreset+' · runtime: 4 fixed stages':'Blueprint: '+chat.agentTeamSize+' · '+chat.agentTeamScenario+' · '+chat.agentRolePreset+' · runtime: 4 фиксированных этапа';
     }
     function persistAgentConfiguration(){
       const chat=getCurrentChat();if(!chat)return;ensureChatFunctionSettings(chat);
@@ -5053,7 +5075,7 @@ permalink: /
     $('skillGoalSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat){chat.skillGoal=$('skillGoalSelect').value;persistChats();renderSkillConfiguration();}});
     $('skillOutputSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat){chat.skillOutputMode=$('skillOutputSelect').value;persistChats();renderSkillConfiguration();}});
     ['customSkillName','customSkillInstructions','customSkillOutput'].forEach(id=>$(id).addEventListener('change',persistSkillConfiguration));
-    $('agentTeamSize').addEventListener('input',()=>{const chat=getCurrentChat();if(chat){chat.agentTeamSize=Math.max(1,Math.min(50,Number($('agentTeamSize').value)||1));$('agentTeamSizeValue').textContent=chat.agentTeamSize+' '+(chat.agentTeamSize===1?'агент':'агентов');persistChats();}});
+    $('agentTeamSize').addEventListener('input',()=>{const chat=getCurrentChat();if(chat){chat.agentTeamSize=Math.max(1,Math.min(50,Number($('agentTeamSize').value)||1));$('agentTeamSizeValue').textContent=chat.agentTeamSize+' '+(getUiLanguage()==='en'?(chat.agentTeamSize===1?'agent':'agents'):(chat.agentTeamSize===1?'агент':'агентов'));persistChats();}});
     ['agentTeamScenario','agentRolePreset'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
     ['agentTeamCustomScenario','agentCustomRoles'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
     $('sidebarOverlay').addEventListener('click', () => toggleSidebar(false));
