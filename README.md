@@ -142,7 +142,7 @@ node scripts/quality-agents.mjs context
 
 ## Точный серверный кэш и личный gateway
 
-В gateway уже реализован L2 exact-response cache (SQLite), явный bypass для dynamic/tool/stream запросов и диагностический заголовок X-AI-Cache; конфигурация и ограничения описаны в Подробно: [Gateway README](gateway/README_RU.md) и [полный runbook](docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md).
+В gateway уже реализован L2 exact-response cache (SQLite), явный bypass для dynamic/tool/stream запросов и диагностический заголовок X-AI-Cache. Подробности: [Gateway README](gateway/README_RU.md) и [полный runbook](docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md).
 
 
 
