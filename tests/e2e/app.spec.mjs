@@ -21,6 +21,11 @@ async function setSkillPreset(page, preset) {
   await page.locator('#skillPresetSelect').selectOption(preset);
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
 }
+async function selectLanguage(page, language) {
+  if (await page.locator('#settingsModal').evaluate(element => element.classList.contains('hidden'))) await page.locator('[data-action="toggle-settings"]').click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(element => element.open))) await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#uiLanguage').selectOption(language);
+}
 
 async function configureCustomProvider(page, modelName) {
   await page.locator('[data-action="toggle-settings"]').click();
@@ -95,42 +100,41 @@ test('sidebar order separates memory, projects, status, chats, and research', as
   await expect(page.locator('#projectStatusLine')).toContainText('Личный чат');
 });
 
-test('theme and language controls stay synchronized in settings and sidebar', async ({ page }) => {
+test('theme stays in the header/sidebar and language lives in advanced settings', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await expect(page.locator('#sidebarThemeToggle')).toContainText('Тема: тёмная');
+  await expect(page.locator('#sidebarThemeToggle')).toBeVisible();
   await page.locator('#sidebarThemeToggle').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(page.locator('#uiTheme')).toHaveValue('light');
+  await expect(page.locator('#languageMenu')).toHaveCount(0);
+  await expect(page.locator('#languageMenuSidebar')).toHaveCount(0);
 
   await page.locator('[data-action="close-sidebar"]').click();
-  await page.locator('[data-action="toggle-settings"]').click();
-  await expect(page.locator('#uiLanguage')).toHaveValue('ru');
-  await page.locator('#uiLanguage').selectOption('en');
+  await selectLanguage(page, 'en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-  await expect(page.locator('#languageSummary')).toContainText('EN');
-  await expect(page.locator('#languageSummarySidebar')).toContainText('EN');
+  await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
+  await page.locator('#legacyProviderSettings [data-action="toggle-theme-cycle"]').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.locator('[data-action="close-settings"]').click();
 
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#languageMenuSidebar > summary').click();
-  await page.locator('#languageMenuSidebar [data-action="set-language"][data-language="ru"]').click();
+  await page.locator('#sidebarThemeToggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await selectLanguage(page, 'ru');
   await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
   await expect(page.locator('#uiLanguage')).toHaveValue('ru');
-  await page.locator('#sidebarThemeToggle').click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await expect(page.locator('#uiTheme')).toHaveValue('dark');
 });
 
-test('composer position persists and provider selection separates aLandi Cloud from external routes', async ({ page }) => {
+test('composer position persists and aLandi is hidden from third-party provider selection', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
   await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
   await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(1);
-  await expect(page.locator('#providerPreset option[value="alandi"]')).not.toHaveAttribute('hidden');
-  await expect(page.locator('#providerPreset optgroup').first()).toHaveAttribute('label', 'aLandi Cloud · основной маршрут');
-  await expect(page.locator('#providerPreset optgroup').nth(1)).toHaveAttribute('label', 'Сторонние провайдеры');
+  await expect(page.locator('#providerPrimaryGroup')).toBeHidden();
+  await expect(page.locator('#providerExternalGroup')).toBeVisible();
+  await expect(page.locator('#providerPreset option[value="gemini"]')).toBeVisible();
   await expect(page.locator('[data-action="select-alandi-primary"]')).toHaveCount(0);
 
   await page.locator('#composerPosition').selectOption('top');
@@ -140,10 +144,11 @@ test('composer position persists and provider selection separates aLandi Cloud f
   expect(topComposer.y).toBeLessThan(topMessages.y);
   await page.locator('[data-action="save-settings"]').click();
   await page.reload();
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#composerPosition')).toHaveValue('top');
   await expect(page.locator('body')).toHaveClass(/composer-at-top/);
 
-  await page.locator('[data-action="toggle-settings"]').click();
   await page.locator('#composerPosition').selectOption('bottom');
   await page.locator('[data-action="save-settings"]').click();
   await expect(page.locator('body')).not.toHaveClass(/composer-at-top/);
@@ -151,6 +156,8 @@ test('composer position persists and provider selection separates aLandi Cloud f
   const bottomMessages = await page.locator('#chatBox').boundingBox();
   expect(bottomMessages.y).toBeLessThan(bottomComposer.y);
   await page.reload();
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
 });
 
@@ -159,6 +166,7 @@ test('project quick actions open a real create form and persist the chosen memor
   await page.locator('[data-action="toggle-sidebar"]').click();
   await expect(page.locator('#projectPanel > div').first()).toContainText('Создать проект');
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await expect(page.locator('#projectSettingsModal')).toBeVisible();
   await expect(page.locator('#projectManagerDetails')).toHaveAttribute('open', '');
   await expect(page.locator('#projectNameInput')).toHaveValue('');
   await expect(page.locator('#projectMemoryScopeSelect')).toBeEnabled();
@@ -178,20 +186,16 @@ test('project quick actions open a real create form and persist the chosen memor
   await expect(page.locator('#createProjectSubmit')).toBeHidden();
 });
 
-test('language switch updates provider group labels without deleting options', async ({ page }) => {
+test('language switch localizes provider controls without exposing the internal route', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.locator('#languageSummary').click();
-  await page.locator('#languageMenu [data-action="set-language"][data-language="en"]').click();
-  await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
-  await expect(page.locator('#providerPrimaryGroup')).toHaveAttribute('label', 'aLandi Cloud · primary route');
+  await selectLanguage(page, 'en');
+  await expect(page.locator('#providerPrimaryGroup')).toHaveAttribute('label', 'aLandi Cloud · internal route');
   await expect(page.locator('#providerExternalGroup')).toHaveAttribute('label', 'Third-party providers');
   await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(1);
+  await expect(page.locator('#providerPrimaryGroup')).toBeHidden();
   await expect(page.locator('#providerPreset option[value="gemini"]')).toHaveCount(1);
   await expect(page.locator('#providerPreset option[value="custom"]')).toHaveCount(1);
-  await page.locator('[data-action="close-settings"]').click();
-  await page.locator('#languageSummary').click();
-  await page.locator('#languageMenu [data-action="set-language"][data-language="ru"]').click();
+  await selectLanguage(page, 'ru');
 });
 
 test('request context stays project-only and agent label describes the real pipeline', async ({ page }) => {
@@ -388,7 +392,8 @@ test('provider connection loads filtered model catalog into selector and key del
   await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'pending');
   await page.locator('[data-action="test-connection"]').click();
   await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected');
-  await expect(page.locator('#apiKeyStatus')).toContainText('успешно ответила');
+  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected');
+  await expect(page.locator('#apiKeyStatus')).toBeHidden();
   await expect(page.locator('#modelCatalogStatus')).toContainText('2 текстовых моделей');
   await expect(page.locator('#modelPreset option[value="e2e-dynamic-model"]')).toHaveCount(1);
   await expect(page.locator('#modelPreset option[value="e2e-text-embedding"]')).toHaveCount(0);
@@ -1012,7 +1017,8 @@ test('Kilo Auto Free is an ordinary provider, loads the no-key catalog, and rout
   await expect(page.locator('#cloudSettingsCard')).not.toContainText('Kilo Auto Free');
   await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('kilo');
-  await expect(page.locator('#kiloPrivacyWarning')).toBeVisible();
+  await expect(page.locator('#kiloPrivacyWarning')).toHaveCount(0);
+  await expect(page.locator('#providerHint')).toBeHidden();
   await expect(page.locator('#modelPreset option[value="minimaxai/minimax-m2.7:free"]')).toHaveCount(1, { timeout: 10000 });
   await expect(page.locator('[data-action="use-kilo-free"]')).toHaveCount(0);
   await expect(page.locator('#apiKey')).toHaveValue('');
