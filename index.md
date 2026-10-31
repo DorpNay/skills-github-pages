@@ -404,6 +404,20 @@ permalink: /
     .message-viewer-content pre,.message-viewer-content table{max-width:100%;overflow:auto}
     .message-viewer-content .plain-message{white-space:pre-wrap;overflow-wrap:anywhere;user-select:text;-webkit-user-select:text}
     .jump-to-latest{position:fixed;z-index:35;right:14px;bottom:max(calc(env(safe-area-inset-bottom) + 6.5rem),6.5rem);min-width:42px;min-height:42px;border-radius:14px;border:1px solid color-mix(in srgb,var(--ui-tiffany) 42%,var(--ui-border));background:var(--ui-surface-raised);color:var(--ui-tiffany);font-size:24px;box-shadow:0 5px 22px rgb(0 0 0 / 24%)}
+    /* Final V2 presentation overrides are intentionally centralized after legacy component rules. */
+    .brand-wordmark { font-family:ui-rounded,"Arial Rounded MT Bold",system-ui,sans-serif;font-weight:900;letter-spacing:-.075em;transform:rotate(-2deg) skewX(-3deg);text-shadow:1px 1px 0 color-mix(in srgb,var(--ui-tiffany) 20%,transparent); }
+    .header-chat-title { padding:5px 9px;border:1px solid var(--ui-border);border-radius:12px;background:color-mix(in srgb,var(--ui-surface-raised) 78%,transparent); }
+    .clock-face { width:58px;height:58px; }
+    #modeFast,#modeDeep { min-height:28px;padding-block:4px;line-height:1.1; }
+    #searchStatus { width:100%;display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;padding-inline:8px; }
+    #statusText { color:var(--ui-text-muted);background:none;animation:none;font-weight:550; }
+    #thinkingTime { margin-left:0!important;color:var(--ui-text-muted); }
+    .message-viewer-content { font-size:calc(1rem * var(--ui-content-scale));color:color-mix(in srgb,var(--ui-text) calc(100% * var(--ui-content-contrast)),var(--ui-text-muted)); }
+    html[data-theme="light"] .message-viewer-content { color:color-mix(in srgb,#10212b calc(100% * var(--ui-content-contrast)),#526775); }
+    .header-icon,.message-actions button { -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation; }
+    .project-nav-row > .header-icon { width:44px;height:44px; }
+    @media (max-width:420px) { .clock-face { width:54px;height:54px; } .header-chat-title { padding:4px 6px; } }
+    @media (max-width:360px) { .clock-face { width:42px;height:42px; } }
   </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
