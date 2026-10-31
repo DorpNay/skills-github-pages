@@ -32,7 +32,7 @@ async function openProjectSettingsForId(page, projectId) {
   }
   const group = page.locator('#projectNavigationList details[data-project-id="' + projectId + '"]');
   if (!(await group.evaluate(element => element.open))) await group.locator(':scope > summary').click();
-  await group.locator('[data-action="open-project-settings"]').click();
+  await page.locator('#projectNavigationList .project-nav-row[data-project-id="' + projectId + '"] [data-action="open-project-settings"]').click();
   await expect(page.locator('#projectSettingsModal')).toBeVisible();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(projectId);
 }
@@ -119,18 +119,50 @@ test('sidebar order separates memory, projects, status, chats, and research', as
     sidebar.querySelector('#memoryPanel'),
     sidebar.querySelector('#projectPanel'),
     sidebar.querySelector('#projectStatusLine'),
-    sidebar.querySelector('#chatSection'),
-    sidebar.querySelector('[data-action="open-research-studio"]')?.parentElement
+    sidebar.querySelector('#chatSection')
   ].map(el => Array.prototype.indexOf.call(sidebar.children, el)));
   expect(positions.every(Number.isInteger)).toBe(true);
   expect(positions).toEqual([...positions].sort((a, b) => a - b));
   await expect(page.locator('#projectPanel')).toContainText('Проект');
+  await expect(page.locator('#sidebar [data-action="open-research-studio"]')).toHaveCount(0);
+  await expect(page.locator('#functionsMenu [data-action="open-research-studio"]')).toHaveCount(1);
   await expect(page.locator('#chatSection')).toContainText('Новый личный чат');
   await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте выкл.');
   await page.locator('#memoryToolsDetails > summary').click();
   await page.locator('#globalMemoryToggle').check();
   await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте вкл.');
   await expect(page.locator('#projectStatusLine')).toContainText('Личный чат');
+});
+
+test('project rows filter the Chats list and create chats in the selected project', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await page.locator('#projectNameInput').fill('Filtered project');
+  await page.locator('[data-action="create-project"]').click();
+  const projectId = await page.locator('#currentProjectSelect').inputValue();
+  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
+
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  if (await page.locator('#projectNavigationList').evaluate(el => el.classList.contains('hidden'))) {
+    await page.locator('#projectNavToggle').click();
+  }
+  const row = page.locator('#projectNavigationList .project-nav-row[data-project-id="' + projectId + '"]');
+  const gear = row.locator('[data-action="open-project-settings"]');
+  const gearBox = await gear.boundingBox();
+  expect(gearBox?.width || 0).toBeGreaterThanOrEqual(44);
+  expect(gearBox?.height || 0).toBeGreaterThanOrEqual(44);
+  await row.locator('[data-action="select-project"]').click();
+  await expect(page.locator('#chatSectionTitle')).toContainText('Filtered project');
+  await expect(page.locator('#chatListNewButton')).toContainText('в проекте');
+
+  await page.locator('#chatListNewButton').click();
+  await expect(page.locator('#currentProjectSelect')).toHaveValue(projectId);
+  await expect(page.locator('#chatSectionTitle')).toContainText('Filtered project');
+  await page.locator('#chatListBack').click();
+  await expect(page.locator('#chatSectionTitle')).toContainText('Без проекта');
+  await page.locator('#chatListNewButton').click();
+  await expect(page.locator('#currentProjectSelect')).toHaveValue('');
 });
 
 test('project settings closes on Escape and restores focus to a visible control', async ({ page }) => {
