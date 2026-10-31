@@ -89,10 +89,10 @@
 ### Latest checkpoint
 
 - PR #131 branch: feat/landing-v1-accessibility-responsive-20261031.
-- Exact head after this checkpoint: b12038e8ee58aba77191daa29de4a232536179f2.
-- Compared with current main: 44 commits ahead, 4 behind; merge base e78a73b25725bfa63370d9946887cbbacbf51b82.
+- Exact head after this checkpoint: dfaeee97692fd65384ddc070b2b09d99875c5877.
+- Compared with current main: 49 commits ahead, 4 behind; merge base e78a73b25725bfa63370d9946887cbbacbf51b82.
 - Exact-head combined status and PR workflow-run queries returned no entries. This is not a passing CI result; browser tests have not been executed in this session.
-- Latest source changes: removed stale experimental-memory action dispatch; collapsed private/shared memory explanations; enforced exclusive Cloud settings behavior; added E2E assertions for these interactions and a real text-scale effect.
+- Latest source changes: removed stale experimental-memory action dispatch; collapsed private/shared memory explanations; enforced exclusive Cloud settings behavior; added E2E assertions for these interactions and a real text-scale effect. Subsequent branch commits also refined control geometry/typography and removed obsolete provider/sidebar labels; see PR commit history.
 - No merge, deployment, framework migration or dependency addition performed.
 
 ## Decision log
