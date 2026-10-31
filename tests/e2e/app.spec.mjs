@@ -2525,7 +2525,7 @@ test('mobile messages expose full text and retain a jump-to-latest control', asy
   const viewTarget = await viewAction.boundingBox();
   expect(viewTarget?.width || 0).toBeGreaterThanOrEqual(44);
   expect(viewTarget?.height || 0).toBeGreaterThanOrEqual(44);
-  await expect(viewAction).toHaveAttribute('aria-label', /Открыть полный текст сообщения|Open readable message view/);
+  await expect(viewAction).toHaveAttribute('aria-label', /Открыть сообщение целиком|Open full message/);
   await viewAction.click();
   await expect(page.locator('#messageViewerModal')).toBeVisible();
   await expect(page.locator('#messageViewerContent')).toContainText('MESSAGE_VIEWER_LINE_69');
