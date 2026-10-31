@@ -132,3 +132,12 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 ### 2026-10-31 — latest PR #131 head reconciliation
 - Latest verified branch head before this checkpoint: 5289c2d17f1cd9d69ff1857c82942798367e1a62; 60 commits ahead / 4 behind main; merge base e78a73b25725bfa63370d9946887cbbacbf51b82.
 - Exact-head combined status and workflow-run queries returned no entries; Chromium/E2E remains unexecuted. PR body and V2 implementation ledger refreshed. No merge/deploy.
+
+### 2026-10-31 — PR #131 project creation and chat-membership correction
+- Re-read owner requirement 8.1 and confirmed a real violation: `createProject()` reassigned the active chat to the new project, while project creation and full settings shared one modal.
+- Added a dedicated project-creation dialog with basic name/instructions; full project settings remain reachable only through the selected project's gear.
+- Removed automatic current-chat reassignment and chat-history writes from project creation. Project navigation can be filtered to the new project; the user explicitly creates a project chat using that project's “New chat” action.
+- Updated Playwright cases/helpers for project creation, focus/Escape, touch targets, project-scoped memory/context, import/export and deletion.
+- Commits: code `5a49d8db6f05f2c328067d1da6fdb188ee7830ca`; E2E updates `fcbd9ec2f88a883c7e509facc7238374ebb2e73a`, `2c5dfcf391c81d4d9d578b7daee9b6a4cebde88b`, `f1035eed19355404aa9c7c1a0dcd1ca401113337`.
+- Exact-head workflow-run and combined-status lookups returned no entries; tests were not executed and are not marked passed. Current compare: 67 ahead / 4 behind main, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`.
+- No merge/deploy. Next: exact-head Quality/Chromium if workflow execution becomes available; then continue remaining 8.1 accordion/memory hierarchy and other V2 gaps.
