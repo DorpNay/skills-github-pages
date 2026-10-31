@@ -122,3 +122,9 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Latest verified branch head: dfaeee97692fd65384ddc070b2b09d99875c5877. Compare main: 49 ahead / 4 behind; merge base e78a73b25725bfa63370d9946887cbbacbf51b82.
 - The branch contains follow-up control-geometry/typography normalization and obsolete provider/sidebar label cleanup after the earlier b120 checkpoint.
 - Exact-head status/workflow-run lookups remain empty. Do not claim CI/E2E passed. No merge or deploy.
+
+
+### 2026-10-31 — Readability preview/reset slice
+- Added a live preview that follows the selected text scale and contrast in light/dark themes, plus a one-action reset to defaults.
+- Added E2E assertions for preview scaling and reset persistence. Not executed yet; no passing test result claimed.
+- Current code/test head: 934f5f30189f8615ece8be64474da272809a53e4; 55 ahead / 4 behind main. Exact-head CI queries returned no entries.
