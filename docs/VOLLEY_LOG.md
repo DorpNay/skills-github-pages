@@ -171,3 +171,8 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Expanded viewer keeps accessible copy/speech icon actions. Status/toast states use semantic colors; high-contrast text applies to secondary/disabled/link/error/status states in both themes.
 - E2E scenarios added for Back, modal lifecycle, handoff, viewer controls, semantic status and contrast. Exact-head CI/Chromium has no result; tests remain unexecuted.
 - Next: exact-head Quality/Chromium, then native mobile/VoiceOver acceptance.
+
+### 2026-10-31 — browser Forward support in Landing V2
+- Project-filter and modal history entries now restore on browser Forward as well as close/restore on Back.
+- Added E2E assertions for project-filter and modal Forward paths. Exact-head browser execution remains pending.
+- PR #131 remains open; no merge/deploy.
