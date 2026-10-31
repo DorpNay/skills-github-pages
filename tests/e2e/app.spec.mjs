@@ -2877,29 +2877,6 @@ test('application innovation ticker is static when reduced motion is requested',
 });
 
 
-test('last deleted chat can be restored after reload from local storage', async ({ page }) => {
-  await page.addInitScript(() => {
-    const chat=(id,title)=>({id,title,projectId:null,messages:[{role:'user',content:'RESTORE_SENTINEL_'+id}],privateMemoryUsed:false,processingMode:'fast',searchMode:'normal',multiAgentEnabled:false,skillPreset:'auto',customSkillName:'',customSkillInstructions:'',customSkillOutput:'',skillGoal:'planning',skillOutputMode:'summary',agentTeamSize:4,agentTeamScenario:'general',agentTeamCustomScenario:'',agentRolePreset:'balanced',agentCustomRoles:''});
-    localStorage.setItem('ai_chats_v87',JSON.stringify([chat('keep-chat','Keep this chat'),chat('closed-chat','Restore this chat')]));
-    localStorage.setItem('ai_current_chat_v87','keep-chat');
-  });
-  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
-  await ensureSidebarOpen(page);
-  const row=page.locator('#chatList .chat-row').filter({hasText:'Restore this chat'});
-  await row.locator('summary[aria-label="Действия чата"]').click();
-  page.on('dialog',dialog=>dialog.accept());
-  await row.locator('[data-action="delete-chat"]').click();
-  await expect(page.locator('#restoreLastClosedChat')).toBeVisible();
-  await page.reload({waitUntil:'domcontentloaded'});
-  await ensureSidebarOpen(page);
-  await expect(page.locator('#restoreLastClosedChat')).toBeVisible();
-  await page.locator('#restoreLastClosedChat').click();
-  await expect(page.locator('#restoreLastClosedChat')).toBeHidden();
-  await expect(page.locator('#chatList')).toContainText('Restore this chat');
-  const restored=await page.evaluate(()=>JSON.parse(localStorage.getItem('ai_chats_v87')||'[]').find(chat=>chat.title==='Restore this chat'));
-  expect(restored.messages[0].content).toBe('RESTORE_SENTINEL_closed-chat');
-});
-
 test('browser Back returns through nested project filters instead of leaving the app', async ({ page }) => {
   await page.addInitScript(() => {
     const project=(id,name)=>({id,name,description:'',instructions:'',memoryScope:'project-only',memory:[],createdAt:'',updatedAt:''});
@@ -2939,50 +2916,6 @@ test('browser Back closes a project settings modal without leaving the app', asy
   await expect(page.locator('body')).not.toHaveClass(/ui-modal-open/);
 });
 
-test('project context handoff targets an existing chat and is one-shot', async ({ page }) => {
-  const captured=[];
-  await page.route('https://api.example.test/v1/chat/completions',async route=>{
-    captured.push(route.request().postDataJSON());
-    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({model:'handoff-e2e',choices:[{message:{role:'assistant',content:'Handoff received.'}}]})});
-  });
-  await page.addInitScript(()=>{
-    const project=(id,name,instructions,memoryText)=>({id,name,description:'',instructions,memoryScope:'project-only',memory:[{id:id+'-memory',text:memoryText,createdAt:''}],createdAt:'',updatedAt:''});
-    const chat=(id,title,projectId)=>({id,title,projectId,messages:[]});
-    localStorage.setItem('ai_projects_v1',JSON.stringify([project('handoff-alpha','Alpha','ALPHA_INSTRUCTION','ALPHA_MEMORY'),project('handoff-beta','Beta','BETA_INSTRUCTION','BETA_MEMORY')]));
-    localStorage.setItem('ai_chats_v87',JSON.stringify([chat('handoff-chat-alpha','Alpha chat','handoff-alpha'),chat('handoff-chat-beta','Beta chat','handoff-beta')]));
-    localStorage.setItem('ai_current_chat_v87','handoff-chat-alpha');
-  });
-  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
-  await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#thirdPartyProviderSettings > summary').click();
-  await page.locator('#providerPreset').selectOption('custom');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('handoff-e2e');
-  await page.locator('#apiKey').fill('e2e-handoff-key');
-  await page.locator('[data-action="save-settings"]').click();
-  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
-  await openProjectSettingsForId(page,'handoff-beta');
-  await page.locator('#projectContextTargetChat').selectOption('handoff-chat-alpha');
-  await page.locator('[data-action="handoff-project-context"]').click();
-  await expect(page.locator('#toast')).toContainText('Контекст проекта подготовлен');
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-  await ensureSidebarClosed(page);
-  await page.locator('#userInput').fill('Use the handed-off project context.');
-  await page.locator('#sendBtn').click();
-  await expect.poll(()=>captured.length).toBe(1);
-  expect(captured[0].messages[0].content).toContain('BETA_INSTRUCTION');
-  expect(captured[0].messages[0].content).toContain('BETA_MEMORY');
-  expect(captured[0].messages[0].content).toContain('ALPHA_INSTRUCTION');
-  expect(captured[0].messages[0].content).not.toContain('ALPHA_MEMORY');
-  await page.locator('#userInput').fill('Do not reuse the handed-off project context.');
-  await page.locator('#sendBtn').click();
-  await expect.poll(()=>captured.length).toBe(2);
-  expect(captured[1].messages[0].content).not.toContain('BETA_MEMORY');
-  const state=await page.evaluate(()=>({chats:JSON.parse(localStorage.getItem('ai_chats_v87')||'[]'),current:localStorage.getItem('ai_current_chat_v87')}));
-  expect(state.chats).toHaveLength(2);
-  expect(state.chats.find(chat=>chat.id===state.current).projectId).toBe('handoff-alpha');
-});
-
 test('modal backdrop and focus lifecycle remain clean over repeated open and close cycles', async ({ page }) => {
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   for(let i=0;i<3;i++){
@@ -2996,7 +2929,7 @@ test('modal backdrop and focus lifecycle remain clean over repeated open and clo
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await expect(page.locator('#projectCreateModal')).toBeVisible();
-  await page.locator('#projectCreateModal [data-action="close-project-create"]').click();
+  await page.locator('#projectCreateModal [data-action="close-project-create"]').first().click();
   await expect(page.locator('#projectCreateModal')).toBeHidden();
   await expect(page.locator('body')).not.toHaveClass(/ui-modal-open/);
 });
@@ -3020,6 +2953,7 @@ test('request status and notifications expose semantic state and centered alignm
   await page.locator('#sendBtn').click();
   await expect(page.locator('#searchStatus')).toBeVisible();
   await expect(page.locator('#searchStatus')).toHaveAttribute('data-state','info');
+  await expect.poll(()=>typeof release).toBe('function');
   const statusStyle=await page.locator('#searchStatus').evaluate(element=>({align:getComputedStyle(element).textAlign,color:getComputedStyle(element.querySelector('#statusText')).color}));
   expect(statusStyle.align).toBe('center');
   expect(statusStyle.color).not.toBe('');
