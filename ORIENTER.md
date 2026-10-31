@@ -5,13 +5,13 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 ## Current working checkpoint — 2026-10-31
 
 - **Current main SHA:** `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; main remains the stable Landing V1.0 baseline.
-- **PR #131 — aLandi Landing UI v2.0:** open, unmerged; branch `feat/landing-v1-accessibility-responsive-20261031`; latest confirmed head `4c5c583d08d242308b9019417cb0c90bcaf264d3`. It is the sole branch for subsequent Landing V2 interface work. Do not merge or deploy without explicit owner approval.
+- **PR #131 — aLandi Landing UI v2.0:** open, unmerged; branch `feat/landing-v1-accessibility-responsive-20261031`; latest UI code commit `4c5c583d08d242308b9019417cb0c90bcaf264d3`; later commits in this checkpoint only refresh continuity docs. It is the sole branch for subsequent Landing V2 interface work. Do not merge or deploy without explicit owner approval.
 - **PR #127 — continuity/master task registry:** open, unmerged; central registry `docs/MASTER_TASK_REGISTRY_RU.md` consolidates 276 open/partial items across six source registers; duplicates remain until reconciliation.
 - **Research tracks:** PR #128 Agent Workforce 2.0, #129 Voice 2.0 and #130 Deep Research 2.0 remain isolated Draft/HOLD workstreams on `future-workstreams/parking-base-20261031`; do not merge into main. PR #125 Agent Studio blueprint and #124/#126 dependency overlap require reconciliation before further action.
 - **V1 freeze:** no new product capabilities or runtime components in the stable landing. Improve only inside the approved HTML/CSS/JavaScript + Jekyll/GitHub Pages and existing FastAPI gateway stack.
 - **Canonical UI checklist:** `docs/V1_UI_FINALIZATION_RU.md`; priority Landing V2 requirements are sections 8.1–8.17. Implementation status and evidence are tracked separately in `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
 - **Not verified:** exact-head Chromium/Playwright CI for PR #131, native iPhone Safari/VoiceOver, live VPS/Tunnel/Ollama/provider credentials, target-host model quality/RAM/latency, real voice runtime, production RAG corpus, OAuth/Drive and arbitrary-code sandbox.
-- **Latest PR #131 checkpoint:** 72 commits ahead / 4 behind current main; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Exact-head workflow-run and combined-status queries returned no entries. Do not report tests as passing.
+- **At the latest PR #131 UI code commit:** 72 commits ahead / 4 behind current main; later commits only refresh continuity docs; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Exact-head workflow-run and combined-status queries returned no entries. Do not report tests as passing.
 
 
 ## First-read order
