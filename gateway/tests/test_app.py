@@ -184,6 +184,12 @@ def test_helper_model_rejects_all_secret_like_facts_without_inference():
     assert calls == 0
 
 
+def test_retired_server_memory_graph_http_api_is_not_exposed():
+    with client_for(settings()) as client:
+        assert client.get("/v1/memory/graph/nodes").status_code == 404
+        assert client.post("/v1/memory/graph/search", json={"query": "private note"}).status_code == 404
+
+
 def test_health_has_no_secret():
     with client_for() as client:
         response = client.get("/healthz")
