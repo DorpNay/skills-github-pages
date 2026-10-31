@@ -455,7 +455,7 @@ permalink: /
      html[data-text-contrast="high"] .field-error,html[data-text-contrast="high"] [role="alert"] { color:var(--ui-danger)!important; }
      html[data-text-contrast="high"] .cloud-status-copy[data-state="connected"] { color:var(--ui-success)!important; }
      html[data-text-contrast="high"] .cloud-status-copy[data-state="checking"] { color:var(--ui-warning)!important; }
-     body.ui-modal-open { overscroll-behavior:none; }
+     body.ui-modal-open { overflow:hidden;overscroll-behavior:none; }
 </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
@@ -961,14 +961,25 @@ permalink: /
       }catch(error){console.warn('Не удалось добавить переход интерфейса в историю браузера:',error);return false;}
     }
     function openUiModal(id){
-      if(!$(id)||$(id).classList.contains('hidden'))return;
+      const modal=$(id);if(!modal||modal.classList.contains('hidden'))return;
       if(!uiNavigationStack.some(entry=>entry.kind==='modal'&&entry.id===id))pushUiNavigation({kind:'modal',id});
       syncModalEnvironment();
+      requestAnimationFrame(()=>{
+        if(modal.classList.contains('hidden'))return;
+        const focusable=modal.querySelector('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])');
+        if(focusable&&!modal.contains(document.activeElement))focusable.focus({preventScroll:true});
+      });
     }
     function requestUiNavigationBack(kind,id){
       if(applyingUiNavigationPop)return false;
       const top=uiNavigationStack[uiNavigationStack.length-1];
       if(!top||top.kind!==kind||(id&&top.id!==id))return false;
+      uiNavigationStack.pop();
+      applyingUiNavigationPop=true;
+      try{
+        if(top.kind==='modal')closeUiModalDirect(top.id);
+        else if(top.kind==='project-filter'){activeChatProjectId=top.previousProjectId||null;renderChatList();}
+      }finally{applyingUiNavigationPop=false;syncModalEnvironment();}
       history.back();return true;
     }
     function requestUiModalBack(id){return requestUiNavigationBack('modal',id);}
@@ -5437,8 +5448,18 @@ permalink: /
     $('chatActionForm').addEventListener('submit',event=>{event.preventDefault();saveChatActionDialog();});
     $('chatActionModal').addEventListener('click',event=>{if(event.target===$('chatActionModal'))closeChatActionDialog();});
     document.addEventListener('keydown', (event) => {
+      if(event.key==='Tab'&&uiNavigationStack[uiNavigationStack.length-1]?.kind==='modal'){
+        const modal=$(uiNavigationStack[uiNavigationStack.length-1].id);
+        const focusable=[...modal.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(node=>node.getClientRects().length&&!node.closest('.hidden'));
+        if(focusable.length){
+          const first=focusable[0],last=focusable[focusable.length-1];
+          if(event.shiftKey&&(document.activeElement===first||!modal.contains(document.activeElement))){event.preventDefault();last.focus();}
+          else if(!event.shiftKey&&(document.activeElement===last||!modal.contains(document.activeElement))){event.preventDefault();first.focus();}
+        }
+      }
       if (event.key === 'Escape') {
-        if (uiNavigationStack[uiNavigationStack.length-1]?.kind==='modal'){history.back();return;}
+        const top=uiNavigationStack[uiNavigationStack.length-1];
+        if(top?.kind){requestUiNavigationBack(top.kind,top.id);return;}
         if (!$('chatActionModal').classList.contains('hidden')) closeChatActionDialog();
         else if (!$('messageViewerModal').classList.contains('hidden')) closeMessageViewer();
         else if (!$('traceModal').classList.contains('hidden')) closeTrace();
