@@ -142,3 +142,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Commits: code `5a49d8db6f05f2c328067d1da6fdb188ee7830ca`; E2E updates `fcbd9ec2f88a883c7e509facc7238374ebb2e73a`, `2c5dfcf391c81d4d9d578b7daee9b6a4cebde88b`, `4c5c583d08d242308b9019417cb0c90bcaf264d3`.
 - JavaScript syntax parsing passed for the inline app script and Playwright test module. Exact-head workflow-run and combined-status lookups returned no entries; Playwright tests were not executed and are not marked passed. Current compare: 72 ahead / 4 behind main, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`.
 - No merge/deploy. Next: exact-head Quality/Chromium if workflow execution becomes available; then continue remaining 8.1 accordion/memory hierarchy and other V2 gaps.
+
+
+### 2026-10-31 — memory hierarchy and sidebar accordion state in PR #131
+- Aligned memory section order with owner requirement 8.1: shared memory first, personal memory second, personal-memory request-context opt-in at the bottom; fixed Russian grammar in the shared-memory help summary.
+- Added E2E assertions for this DOM order and for sidebar close/reopen: only memory settings/help collapse, while project navigation, “Без проекта” and Chats preserve their open/closed state.
+- Code commit `a541932307c764e56f81b795b940785839128338`; test commit `64cfa3abfd1750751951cf1715502e7ca3409ce4`. Syntax parsing passed; no browser test run/status exists for this head.
+- No merge/deploy; continue remaining Landing V2 requirements in PR #131.
