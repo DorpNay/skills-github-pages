@@ -59,14 +59,14 @@
 - [~] Текущий чат можно привязать/отвязать от проекта; проектная принадлежность видна в интерфейсе.
 - [~] Есть экспорт/импорт project bundle с чатом, инструкциями и памятью; проверить схему, duplicate IDs, limits, malicious content.
 - [~] Global memory и project memory имеют отдельные явные toggles; default выключен; подтвердить, что global facts не утекут в другой project scope.
-- [~] Server memory graph API and opt-in browser bridge are implemented and CI-verified. Browser projects remain local-first; only a manual upload sends facts as server-side candidates, and only confirmed facts in the exact project scope can be retrieved when both per-chat toggles are enabled. Multi-device project sync and live gateway activation remain unverified.
+- [x] Retired 2026-10-31 under requirement 8.12 / PR #131: server-memory graph HTTP API, browser bridge and per-chat server-memory opt-in removed. Browser project facts remain local. Internal MemoryManager remains for Graphify only; conversation delta sync, RAG and local helper remain independent. Existing SQLite files were not deleted.
 - [ ] Реализовать authenticated API/индексацию project sources только после согласованного backend contract; не имитировать работающий индекс на пустой заглушке.
-- [ ] Добавить/проверить тест cross-project leak на серверной памяти, RAG, evidence, cache и deletion — где соответствующие слои существуют.
+- [ ] Проверить cross-project isolation для RAG, evidence, cache и deletion — HTTP API серверной памяти удалён; внутренний Graphify MemoryManager покрыт отдельными scoped-тестами.
 - [~] RAG source deletion is scope-checked and removes chunk/concept/FTS rows; SQLite `secure_delete` plus version-gated FTS5 `secure-delete` regression tests passed on PR #24 HEAD and post-merge main. This still does **not** erase evidence-ledger copies, WAL/journals, backups or browser-local source copies; system-wide crypto-erasure remains open.
 - [ ] Проверить экспорт, исправление и удаление пользовательских фактов и связанные derived records.
 - [ ] Реализовать удаление/криптостирание по всем реальным слоям; не обещать SLA ≤60 секунд без измерения.
 - [x] Scoped memory FTS5 `search_nodes()` is merged and passed Gateway/provenance/full quality/Chromium/Pages PR-head checks. The index is scope-filtered; terms are bounded/literal; confirmed-only is default; deletes propagate and legacy index is backfilled. PR #27 adds opt-in authenticated routes, but the static UI still uses browser-local memory.
-- [x] PR #27 merged with Gateway, provenance and full Quality/Chromium/published Pages CI green on HEAD `e961a67d…`. Memory graph API remains feature-flagged, single-owner and not wired to browser UI.
+- [x] PR #27 исторически добавил graph API; этот HTTP API удалён по требованию 8.12 в PR #131. MemoryManager остаётся только внутренним Graphify/code-evidence инструментом; публичного gateway endpoint нет.
 - [ ] Протестировать valid_from, valid_until, recorded_at, конфликты, supersede и scoped recursive delete в gateway memory prototypes.
 - [ ] Полноценный viewer источников/индекса, citation lineage и cross-device project memory остаются задачами последующих фаз.
 
@@ -143,7 +143,7 @@
 | **AI-MEM-003** | scoped_manager_prototype | gateway/memory/scope.py | EV-MEM-003 |
 | **AI-MEM-004** | explicit_conflicts_no_auto_winner | gateway/memory/conflict.py | EV-MEM-004 |
 | **AI-MEM-005** | scoped_fts5_memory_search_prototype_merged_not_ui_wired | gateway/memory/manager.py; gateway/memory/schema.sql | EV-MEM-005 |
-| **AI-MEM-006** | authenticated_single_owner_graph_api_and_manual_candidate_first_browser_bridge_ci_passed_live_activation_pending | gateway/app.py; gateway/memory/manager.py; index.md; tests/e2e/app.spec.mjs | EV-MEM-006 |
+| **AI-MEM-006** | retired_server_memory_graph_http_api_and_browser_bridge_owner_request_8_12 | gateway/app.py routes removed; MemoryManager retained for Graphify only | retired 2026-10-31 |
 | **AI-RAG-001** | fts5_lexical_graph_not_full_lazygraphrag | gateway/rag/lazy_graph_rag.py | EV-RAG-001 |
 | **AI-RAG-002** | conditional_not_installed | gateway/rag/rag_anything.py | EV-RAG-002 |
 | **AI-RAG-003** | citation_hash_offset_primitives | gateway/rag/citations.py | EV-RAG-003 |
@@ -195,10 +195,10 @@
 
 ## I. Следующие продуктовые вертикали
 
-- [x] Связать браузерные проекты с серверным memory graph без автоматической миграции: ручная передача локальных фактов как candidate, ручное подтверждение/отклонение/удаление, scope по ID проекта. PR #29 merged; PR-head and post-merge Chromium/Quality checks passed.
-- [x] Добавить per-chat opt-in серверной памяти; retrieval только confirmed и только при одновременно включённой памяти проекта и серверной памяти. Chromium mock E2E passed on PR #29 head and merged main.
+- [x] Исторически реализовано в PR #29, затем полностью выведено из продукта 2026-10-31 по требованию 8.12 / PR #131: browser-to-server project memory bridge and graph HTTP routes removed. Local project facts remain local.
+- [x] Исторический per-chat opt-in server-memory toggle/retrieval removed under requirement 8.12 / PR #131; no server-memory control or retrieval path remains in the browser client.
 - [x] PR #29 head checks passed: Quality/Chromium, provenance and published Pages smoke. Post-merge main Quality/Chromium, provenance and Pages deployment passed at `55248f81585c52d7cc7ba7cfc08158a291a761ca`; gateway contract/security tests passed on unchanged base `e424d353418cad62981eb269b4082d2925592708`.
-- [ ] На целевом gateway включить ALANDI_MEMORY_GRAPH_ENABLED=true только после резервной копии и smoke-test; ALANDI_GLOBAL_MEMORY_ENABLED оставить false.
+- [x] Удалить ALANDI_MEMORY_GRAPH_ENABLED / ALANDI_GLOBAL_MEMORY_ENABLED и соответствующие HTTP routes. Существующие SQLite graph files не удалять; MemoryManager оставить только для Graphify.
 - [ ] Первый месяц не создавать платные ресурсы автоматически: GitHub Pages + уже имеющееся железо + Ollama локально; free-tier API считать квотируемым и внешним, не гарантированно бесплатным.
 - [ ] Оценить одну маленькую helper-модель для классификации, извлечения фактов, кратких сводок и чернового ранжирования. Главная модель остаётся для планирования, сложного reasoning и синтеза. Сравнить качество, latency и RAM перед включением.
 - [ ] Добавить генерацию изображений отдельным модулем после выбора реального backend (локальный ComfyUI/API или явно выбранный внешний провайдер), проверки точной модели/лицензии/VRAM и mock E2E.
