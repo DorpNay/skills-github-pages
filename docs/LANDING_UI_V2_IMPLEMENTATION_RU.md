@@ -21,7 +21,7 @@
 | **8.3 Settings/providers** | Cloud remains exclusive; opening third-party providers closes Cloud; provider and additional-settings disclosures can remain open together. | Execute E2E and review keyboard/narrow-screen behavior. | [~] |
 | **8.4 Tavily/system prompt** | Tavily key remains in a web-tools disclosure; system prompt is global `localStorage` state and is normalized against the legacy built-in prompt. | Verify the empty-by-default behavior against `DEFAULT_SYSTEM` and migration; decide Tavily only after comparing the existing keyless search fallback and live adapter requirements. No premature deletion. | [~] |
 | **8.5 Living notes** | Source document already says new owner UI requirements belong in the matching subsection and statuses require code/test evidence. | Keep the source checklist as the owner requirements record; implementation status and evidence live in this ledger and PR. | [x] |
-| **8.6 Navigation and visual hierarchy** | Browser history now tracks nested project filters and modal depth; Back restores the prior project filter or closes the top modal; Escape follows the same stack. | Execute browser Back/Escape regressions and inspect forward-navigation behavior. | [~] |
+| **8.6 Navigation and visual hierarchy** | Browser history stores nested project-filter/modal depth; Back closes/restores the preceding level and Forward reopens the saved project filter or modal; Escape follows the same stack. | Execute Back/Forward/Escape regressions and inspect visual hierarchy and keyboard behavior. | [~] |
 | **8.7 Project settings / Sources** | Project settings retain name/instructions/local memory/scope/import/export/delete; Sources shows a truthful unsupported-state explanation; project settings can explicitly hand project context to an existing chat. | Gateway still lacks a source-list API; do not add CRUD until project-scoped list/delete semantics exist. | [~] |
 | **8.8 Message action icons** | Copy and speech controls remain available in the expanded viewer; user messages expose copy but not speech; controls carry accessible names/tooltips and 44px hit targets. | Execute compact/expanded viewer regressions and verify speech/copy on target devices. | [~] |
 | **8.9 Backdrop lifecycle** | Modal stack covers settings, project settings/create, message viewer, chat actions, research, function panel and trace; browser Back/Escape, focus return, Tab trap, body scroll lock and backdrop close share a consistent lifecycle. | Run repeated open/close, outside-click and focus/scroll regressions in Chromium; inspect native mobile behavior. | [~] |
@@ -86,16 +86,17 @@
 | 8.16 Button typography/icon-first | Shared control typography/spacing and icon-first message actions with accessible names. | Normalize remaining one-off button classes and tooltip coverage. | [~] |
 | 8.17 Readability | Persistent 90–120% text scale and standard/high contrast preference apply in light/dark themes. | Expand contrast handling to links, secondary/disabled/error/status text and add visual contrast checks. | [~] |
 
-### Latest checkpoint — 2026-10-31, navigation/modal/readability follow-up
+### Latest checkpoint — 2026-10-31, browser Back/Forward and modal lifecycle
 
-- PR #131 branch: `feat/landing-v1-accessibility-responsive-20261031`; current verified head before this documentation update: `a051b6bfb518e39ff85a07aa4f7218c7e43bc769`.
-- Current comparison with `main`: 97 commits ahead / 4 behind; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`.
-- Requirement 8.6: project-filter and modal navigation now use browser history. Back/Escape closes only the top dialog or restores the prior project filter; modal focus is trapped and returned, and body scroll/overscroll is locked while a modal is open.
-- Requirements 8.8/8.16: expanded message view keeps copy and speech actions, with accessible labels/tooltips and 44px hit targets; speech is not offered for user messages.
-- Requirements 8.3/8.13: Cloud remains exclusive while provider and additional settings may coexist; project settings can explicitly hand off context to an existing chat for its next request without changing chat membership.
-- Requirements 8.15/8.17: status/toast states use restrained semantic colors; high-contrast text extends to secondary, disabled, link, error and status content in both themes.
-- Regression tests cover nested browser Back, modal Back/repeated lifecycle, one-shot context handoff, viewer controls, status states and high-contrast tokens. Existing restore and sidebar-order tests remain.
-- Exact-head combined status and workflow-run queries for `a051b6bfb518e39ff85a07aa4f7218c7e43bc769` returned no entries. Playwright/Chromium and the modal/history additions have not been executed on this exact head; no passing CI result is claimed.
+- PR #131 branch: `feat/landing-v1-accessibility-responsive-20261031`; verified head before this documentation update: `ad81e1be6924af52587f8b1aa1139b55c5104e8f`.
+- Comparison with `main`: 104 commits ahead / 4 behind; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`.
+- 8.6: browser history now stores nested project-filter and modal entries. Back restores the previous project filter or closes the top modal; Forward restores the saved project filter/modal; Escape follows the same navigation stack.
+- 8.9: modal lifecycle includes focus entry/return, Tab trapping, body scroll/overscroll lock and shared backdrop cleanup.
+- 8.8/8.16: expanded message view retains accessible copy/speech icon actions, with speech hidden for user-authored messages.
+- 8.13: project settings can hand off context to an explicitly selected existing chat for its next request; no new chat or project-membership change, five-project cap retained, pending state session-only.
+- 8.15/8.17: semantic status/toast states and high-contrast text for secondary/disabled/link/error/status content in both themes.
+- E2E coverage includes nested Back/Forward, modal Back/Forward/repeated lifecycle, one-shot handoff, viewer controls, semantic status and high-contrast tokens. Playwright/Chromium has not been executed on this exact head.
+- Exact-head combined status and workflow-run queries for `ad81e1be6924af52587f8b1aa1139b55c5104e8f` returned no entries. No passing CI result is claimed.
 - No merge, deployment, framework migration or dependency addition performed.
 
 ## Decision log
@@ -140,3 +141,9 @@
 
 - High-contrast preference now adjusts secondary, disabled, link, error and status text in both light and dark themes, while preserving the existing scale preview and reset.
 - Added computed-style assertions for the high-contrast tokens. Visual contrast acceptance and device review remain pending.
+
+
+### Follow-up — browser Forward restoration (8.6)
+
+- Navigation entries are now stored in the browser history state. Forward restores the previously selected project filter or reopens the modal that was dismissed with Back.
+- Added E2E assertions for Forward after both nested project navigation and project-settings Back. Browser execution remains pending.
