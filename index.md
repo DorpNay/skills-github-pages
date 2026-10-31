@@ -2194,10 +2194,13 @@ permalink: /
       sidebar.classList.toggle('-translate-x-full', !open);
       overlay.classList.toggle('hidden', !open);
     }
+    let settingsOpener=null;
     function toggleSettings(force) {
-      const modal=$('settingsModal'),open=typeof force==='boolean'?force:modal.classList.contains('hidden');
+      const modal=$('settingsModal'),wasHidden=modal.classList.contains('hidden'),open=typeof force==='boolean'?force:wasHidden;
+      if(open&&wasHidden)settingsOpener=document.activeElement;
       modal.classList.toggle('hidden',!open);
       if(open){$('systemPromptInput').readOnly=true;$('editSystemPrompt').setAttribute('aria-pressed','false');$('editSystemPrompt').classList.remove('is-editing');$('editSystemPrompt').textContent='✎';$('promptEditHint').textContent='';refreshApiKeyLamp();}
+      else if(!open){const opener=settingsOpener;settingsOpener=null;if(opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled)opener.focus({preventScroll:true});}
     }
     function providerModelCatalogKey(provider) { return 'ai_provider_model_catalog_v1_' + provider; }
     function providerModelCatalogStaleKey(provider) { return 'ai_provider_model_catalog_stale_v1_' + provider; }
@@ -4231,11 +4234,14 @@ permalink: /
       const next = chats.filter((chat) => chat.id !== id);
       updateState(next, currentChatId === id ? next[0].id : currentChatId);
     }
+    let chatActionOpener=null;
     function closeChatActionDialog() {
       const modal=$('chatActionModal');modal.classList.add('hidden');modal.removeAttribute('data-chat-id');modal.removeAttribute('data-mode');
+      const opener=chatActionOpener;chatActionOpener=null;if(opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled)opener.focus({preventScroll:true});
     }
     function openChatActionDialog(mode,id) {
       const chat=chats.find(item=>item.id===id);if(!chat)return;
+      chatActionOpener=document.activeElement;
       const english=getUiLanguage()==='en',modal=$('chatActionModal'),name=$('chatActionName'),select=$('chatActionProject');
       modal.dataset.chatId=id;modal.dataset.mode=mode;
       if(mode==='rename') {
@@ -4247,7 +4253,7 @@ permalink: /
         if(!projects.length){showToast(english?'Create a project first.':'Сначала создай проект.','error');return;}
         $('chatActionTitle').textContent=english?'Move chat to project':'Переместить чат в проект';
         $('chatActionFieldLabel').textContent=english?'Project':'Проект';
-        $('chatActionHelp').textContent=english?'Choose a project or personal chat. Project memory toggles will be reset.':'Выбери проект или личный чат. Переключатели памяти проекта будут сброшены.';
+        $('chatActionHelp').textContent=english?'Choose a project or personal chat. Project context is never attached automatically.':'Выбери проект или личный чат. Контекст проекта автоматически не подключается.';
         name.classList.add('hidden');select.classList.remove('hidden');select.replaceChildren();
         const personal=document.createElement('option');personal.value='';personal.textContent=english?'Personal chat (no project)':'Личный чат (без проекта)';select.appendChild(personal);
         projects.forEach(project=>{const option=document.createElement('option');option.value=project.id;option.textContent=project.name;select.appendChild(option);});
@@ -4332,7 +4338,9 @@ permalink: /
       if (!ok) throw new Error('Браузер не разрешил копирование.');
     }
     let activeTrace = null;
+    let researchStudioOpener=null;
     function openResearchStudio() {
+      researchStudioOpener=document.activeElement;
       const chat=getCurrentChat();ensureChatFunctionSettings(chat);
       $('researchStudioEffort').value=chat.processingMode;
       $('researchStudioSearchMode').value=chat.searchMode;
@@ -4341,7 +4349,10 @@ permalink: /
       $('researchStudioStatus').textContent=getUiLanguage()==='en'?'Choose a research mode. Your prompt stays in the main composer.':'Выбери режим. Текст задачи остаётся в основном поле.';
       $('researchStudioModal').classList.remove('hidden');
     }
-    function closeResearchStudio() { $('researchStudioModal').classList.add('hidden'); }
+    function closeResearchStudio() {
+      $('researchStudioModal').classList.add('hidden');
+      const opener=researchStudioOpener;researchStudioOpener=null;if(opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled)opener.focus({preventScroll:true});
+    }
     function startResearchStudio() {
       setProcessingMode($('researchStudioEffort').value);
       setSearchMode($('researchStudioSearchMode').value);
@@ -4744,8 +4755,10 @@ permalink: /
       if (activeSpeechObjectUrl) URL.revokeObjectURL(activeSpeechObjectUrl);
     });
 
+    let traceOpener=null;
     function showTrace(trace) {
       if (!trace || typeof trace !== 'object') throw new Error('Журнал исследования не найден.');
+      traceOpener=document.activeElement;
       activeTrace = trace; const host = $('traceContent'); host.replaceChildren();
       const appendTraceSection = (title, value) => {
         const section=document.createElement('section'); section.className='border border-gray-800 rounded-xl p-3';
@@ -4805,7 +4818,10 @@ permalink: /
       host.appendChild(evidenceSection);
       $('traceModal').classList.remove('hidden');
     }
-    function closeTrace() { $('traceModal').classList.add('hidden'); }
+    function closeTrace() {
+      $('traceModal').classList.add('hidden');
+      const opener=traceOpener;traceOpener=null;if(opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled)opener.focus({preventScroll:true});
+    }
     function downloadTrace() {
       if (!activeTrace) return;
       const run=activeTrace.run||{},routes=Array.isArray(activeTrace.routes)?activeTrace.routes:[],attempts=Array.isArray(activeTrace.attempts)?activeTrace.attempts:[];
@@ -5099,6 +5115,7 @@ permalink: /
     });
     $('providerPreset').addEventListener('change',()=>{safeSet('ai_alandi_cloud_connection_v1','');if(currentProvider()==='alandi'){const url=$('baseUrl').value.trim();if(url)$('cloudBaseUrl').value=url;}});
     $('modelSearch').addEventListener('input',()=>populateModelPresets(currentProvider(),$('modelName').value));
+    $('settingsModal').addEventListener('click',event=>{if(event.target===$('settingsModal'))toggleSettings(false);});
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
     $('researchStudioModal').addEventListener('click', (event) => { if (event.target === $('researchStudioModal')) closeResearchStudio(); });
     $('projectSettingsModal').addEventListener('click', (event) => { if (event.target === $('projectSettingsModal')) closeProjectSettings(); });
