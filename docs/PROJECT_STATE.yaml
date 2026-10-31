@@ -477,3 +477,40 @@ whole_stack_integrity_audit_2026_10_30:
   checklist: "docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md"
   subagent_handoff: "brief prepared in audit document; no independent agent execution claimed"
   deployment_boundary: "post-merge Pages deployment and live VPS/Ollama unverified"
+
+landing_ui_v2_pr131_2026_10_31:
+  pr: 131
+  branch: "feat/landing-v1-accessibility-responsive-20261031"
+  latest_documented_head: "c8848ea6f86c1f2b3d8fe76afc6a6ad01249f4b1"
+  comparison_to_main:
+    ahead: 101
+    behind: 4
+    merge_base: "e78a73b25725bfa63370d9946887cbbacbf51b82"
+  implementation:
+    project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
+    memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
+    project_context_handoff: "Explicit existing-chat target; next request only; no new chat or project membership mutation; five-project cap; pending state is session-only."
+    navigation: "Browser Back/Escape tracks nested project filters and modal depth."
+    modal_lifecycle: "Focus entry/return, Tab trap, body scroll/overscroll lock, backdrop cleanup and repeated open/close paths."
+    message_actions: "Expanded viewer keeps accessible copy/speech actions; speech hidden for user-authored messages."
+    status_and_readability: "Semantic status/toast states and high-contrast text tokens across light/dark themes."
+    sources: "Truthful unsupported-state remains; no mock project-source CRUD."
+  code_commits:
+    navigation_handoff: "f99327c74f168573e0d1faf9b7c97a66dcf6e27f"
+    handoff_selector_fix: "c3855c28317c5b481d59b463e4d4cb985d992dcd"
+    modal_back_lifecycle: "c24c596ca8b7e4c9f9a8725f2bdcaa3e46e53aaf"
+  test_commits:
+    navigation_handoff_status_viewer: "1bf9acf5a6cd1652be393ed801efe5c76cd86aa9"
+    one_shot_handoff: "ccb76ea689ddb0ad6ef8d580dee06148aab6f94f"
+    modal_lifecycle_wait: "24004fe48e506a7d1a7e03b1538f3faed209381b"
+    deduplicate_regressions: "1917e8efad138bd9b7dd59a42c0322d61b12bf4e"
+  verification:
+    exact_head_combined_status: "empty"
+    exact_head_workflow_runs: "empty"
+    playwright_chromium: "not executed; do not claim passing"
+    native_mobile_voiceover: "not executed"
+  safety:
+    merge: "requires explicit owner approval"
+    deploy: "requires explicit owner approval"
+    main: "V1 baseline remains untouched"
+  next: "Run exact-head Quality/Chromium if workflow execution is available; fix failures; complete native iPhone Safari/VoiceOver/long-press review."
