@@ -104,3 +104,9 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Latest verified PR #131 branch head: dfaeee97692fd65384ddc070b2b09d99875c5877; 49 ahead / 4 behind main; merge base e78a73b25725bfa63370d9946887cbbacbf51b82.
 - PR body and V2 implementation ledger refreshed to show partial implementation, remaining work and absence of exact-head CI/E2E results.
 - Continue in PR #131 only. No merge/deployment without explicit owner approval; main remains V1.
+
+
+### Landing UI V2.0 — readability refinement 2026-10-31
+- Text readability settings now include a live preview affected by the selected scale/contrast and a reset-to-default action. E2E coverage added for both; tests remain unexecuted pending CI/runtime access.
+- Current code/test head at checkpoint: 934f5f30189f8615ece8be64474da272809a53e4; 55 ahead / 4 behind main.
+- PR #131 remains isolated and unmerged; main stays V1.
