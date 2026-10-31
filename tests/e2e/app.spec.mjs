@@ -518,7 +518,9 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
   await page.locator('#additionalSettings > summary').click();
   await page.locator('#searchToolsSettings > summary').click();
   await expect(page.locator('#tavilyKey')).toHaveValue('e2e-tavily-placeholder-not-a-real-key');
-});test('chat creation persists after reload without calling a model', async ({ page }) => {
+});
+
+test('chat creation persists after reload without calling a model', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
   const chats = page.locator('#chatList button[data-action="switch-chat"]');
@@ -694,7 +696,9 @@ test('settings profile exports portable preferences but never API secrets', asyn
   expect(json).not.toContain('e2e-private-search-secret-value');
   expect(json).not.toContain('ai_api_key_');
   expect(json).not.toContain('apiKey');
-});test('settings profile import restores preferences while preserving existing provider and search keys', async ({ page }) => {
+});
+
+test('settings profile import restores preferences while preserving existing provider and search keys', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   await page.locator('#thirdPartyProviderSettings > summary').click();
@@ -737,7 +741,9 @@ test('settings profile exports portable preferences but never API secrets', asyn
   await page.locator('[data-action="toggle-settings"]').click();
   await expect(page.locator('#apiKey')).toHaveValue('e2e-preserved-provider-secret');
   await expect(page.locator('#tavilyKey')).toHaveValue('e2e-preserved-tavily-secret');
-});test('research trace supports a structured JSON download', async ({ page }) => {
+});
+
+test('research trace supports a structured JSON download', async ({ page }) => {
   const trace = {
     schemaVersion: 2, id: 'e2e-json-trace', createdAt: '2026-10-15T00:00:00.000Z',
     provider: 'Groq', model: 'openai/gpt-oss-120b',
