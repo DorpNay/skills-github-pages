@@ -135,3 +135,11 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Found and corrected a malformed `querySelector` for the handoff button that otherwise left the button disabled and could break `renderProjectUI()`.
 - Added E2E coverage for handing off to a non-current chat, unchanged current chat/count/membership, and one-shot context consumption. Syntax parsing passed; browser E2E and exact-head CI remain unexecuted.
 - UI fix commit `c3855c28317c5b481d59b463e4d4cb985d992dcd`; E2E commits `ccb76ea689ddb0ad6ef8d580dee06148aab6f94f` and `24004fe48e506a7d1a7e03b1538f3faed209381b`.
+
+### Landing UI V2.0 — navigation, modal and readability follow-up (2026-10-31)
+- PR #131 remains the sole V2 UI workstream; V1 in main is untouched. No merge or deployment.
+- Implemented browser Back/Escape navigation for nested project filters and modal dialogs; modal focus trapping/return and scroll lock now share one lifecycle.
+- Project settings can explicitly hand off context to an existing chat for its next request. The handoff does not create a chat or change project membership; it remains session-only until sent.
+- Expanded message view keeps copy/speech actions with accessible names; speech is hidden for user messages. Status/toast states are semantic and restrained; high-contrast text covers secondary, disabled, link, error and status content in both themes.
+- Added Playwright coverage for Back navigation, modal repetition, handoff, message viewer controls, status states and contrast tokens. Exact-head Chromium/CI has not run; do not claim these tests passed.
+- Next: obtain exact-head Quality/Chromium results, fix any regressions, then complete native iPhone Safari/VoiceOver/long-press review.
