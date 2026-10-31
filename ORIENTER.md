@@ -5,13 +5,13 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 ## Current working checkpoint — 2026-10-31
 
 - **Current main SHA:** `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; main remains the stable Landing V1.0 baseline.
-- **PR #131 — aLandi Landing UI v2.0:** open, unmerged; branch `feat/landing-v1-accessibility-responsive-20261031`; latest confirmed head `f1035eed19355404aa9c7c1a0dcd1ca401113337`. It is the sole branch for subsequent Landing V2 interface work. Do not merge or deploy without explicit owner approval.
+- **PR #131 — aLandi Landing UI v2.0:** open, unmerged; branch `feat/landing-v1-accessibility-responsive-20261031`; latest confirmed head `4c5c583d08d242308b9019417cb0c90bcaf264d3`. It is the sole branch for subsequent Landing V2 interface work. Do not merge or deploy without explicit owner approval.
 - **PR #127 — continuity/master task registry:** open, unmerged; central registry `docs/MASTER_TASK_REGISTRY_RU.md` consolidates 276 open/partial items across six source registers; duplicates remain until reconciliation.
 - **Research tracks:** PR #128 Agent Workforce 2.0, #129 Voice 2.0 and #130 Deep Research 2.0 remain isolated Draft/HOLD workstreams on `future-workstreams/parking-base-20261031`; do not merge into main. PR #125 Agent Studio blueprint and #124/#126 dependency overlap require reconciliation before further action.
 - **V1 freeze:** no new product capabilities or runtime components in the stable landing. Improve only inside the approved HTML/CSS/JavaScript + Jekyll/GitHub Pages and existing FastAPI gateway stack.
 - **Canonical UI checklist:** `docs/V1_UI_FINALIZATION_RU.md`; priority Landing V2 requirements are sections 8.1–8.17. Implementation status and evidence are tracked separately in `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
 - **Not verified:** exact-head Chromium/Playwright CI for PR #131, native iPhone Safari/VoiceOver, live VPS/Tunnel/Ollama/provider credentials, target-host model quality/RAM/latency, real voice runtime, production RAG corpus, OAuth/Drive and arbitrary-code sandbox.
-- **Latest PR #131 checkpoint:** 67 commits ahead / 4 behind current main; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Exact-head workflow-run and combined-status queries returned no entries. Do not report tests as passing.
+- **Latest PR #131 checkpoint:** 72 commits ahead / 4 behind current main; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Exact-head workflow-run and combined-status queries returned no entries. Do not report tests as passing.
 
 
 ## First-read order
@@ -117,6 +117,7 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 
 ### Landing UI V2.0 — explicit project creation correction (2026-10-31)
 - PR #131 now separates project creation from full project settings; full settings remain behind the per-project gear.
-- Creating a project no longer reassigns the currently open chat or rewrites chat history. A project chat is created only through the explicit project-row action.
-- Latest confirmed head: `f1035eed19355404aa9c7c1a0dcd1ca401113337`; 67 ahead / 4 behind main. Exact-head CI/status queries empty; Playwright remains unexecuted.
+- Creating a project no longer reassigns the currently open chat or rewrites chat history. The active chat-list filter remains anchored to the current chat; a project chat is created only through the explicit project-row action.
+- Project-create back control uses a 44×44px hit area and icon-first label.
+- Latest confirmed head: `4c5c583d08d242308b9019417cb0c90bcaf264d3`; 72 ahead / 4 behind main. Exact-head CI/status queries empty; Playwright remains unexecuted.
 - Continue in PR #131 only; no merge or deployment.
