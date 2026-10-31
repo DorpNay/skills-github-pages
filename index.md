@@ -5029,11 +5029,6 @@ permalink: /
           case 'delete-project': deleteCurrentProject();break;
           case 'add-project-memory': addProjectMemory();break;
           case 'delete-project-memory': deleteProjectMemory(control.dataset.memoryId);break;
-          case 'suggest-helper-memory': await suggestProjectMemoryWithHelper();break;
-           case 'refresh-server-memory': await loadServerProjectMemory();break;
-           case 'upload-server-memory': await uploadLocalProjectMemory();break;
-           case 'review-server-memory': await reviewServerProjectMemory(control.dataset.memoryNodeId,control.dataset.reviewStatus);break;
-           case 'delete-server-memory': await deleteServerProjectMemory(control.dataset.memoryNodeId,control.dataset.memorySourceId);break;
            case 'export-project': exportProjectBundle();break;
           case 'import-project': $('importProjectFile').click();break;
           case 'voice-chat-preview': await startVoiceConversation(); break;
