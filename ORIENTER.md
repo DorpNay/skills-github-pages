@@ -143,3 +143,8 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Expanded message view keeps copy/speech actions with accessible names; speech is hidden for user messages. Status/toast states are semantic and restrained; high-contrast text covers secondary, disabled, link, error and status content in both themes.
 - Added Playwright coverage for Back navigation, modal repetition, handoff, message viewer controls, status states and contrast tokens. Exact-head Chromium/CI has not run; do not claim these tests passed.
 - Next: obtain exact-head Quality/Chromium results, fix any regressions, then complete native iPhone Safari/VoiceOver/long-press review.
+
+### Landing UI V2.0 — browser Forward restoration (2026-10-31)
+- Browser history now stores nested project-filter and modal entries. Back closes/restores the previous level; Forward reopens the saved filter/modal; Escape uses the same stack.
+- Added Playwright assertions for Forward after project-filter and project-settings Back. E2E/Chromium has not been run on the exact head.
+- Keep PR #131 open and unmerged. Next: exact-head Quality/Chromium and native iPhone Safari/VoiceOver review.
