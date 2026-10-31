@@ -28,7 +28,7 @@
 | **8.10 Control sizing system** | Radius and motion tokens exist; control heights/paddings still mix CSS and utility classes. | Add a small shared token scale for compact/regular/icon controls and touch targets; use semantic variants, not one geometry for every control. | [~] |
 | **8.11 Theme/language group** | Theme icon is in the header; language selector is buried in Additional settings. | Put equally compact theme and language controls together in the header; preserve the 44px touch hit area on small screens and current language persistence. | [~] |
 | **8.12 Remove “Серверная память (Эксперимент)”** | Project settings contain `serverMemoryDetails`, server graph opt-in/upload/list controls and helper-memory suggestion controls; chat state has `serverProjectMemoryEnabled`. | Remove the deprecated product UI and its client-side entry points/state. Preserve ordinary local/private/shared memory. Do not delete unrelated backend code or the normal local memory graph without evidence it belongs exclusively to this feature. Update legacy imports safely and remove stale UI wording. | [~] |
-| **8.13 Explicit project context handoff** | A per-chat `projectMemoryEnabled` checkbox controls project-memory injection; a separate one-shot composer project-context picker exists. | Remove the per-chat checkbox and automatic project-memory injection. Use the existing one-shot project-context mechanism as the first safe path; add project→existing-chat handoff only if it can be implemented without moving chats, creating chats or silently persisting context. | [~] |
+| **8.13 Explicit project context handoff** | Per-chat project-memory toggle and implicit project-memory injection are removed. Project settings now list existing chats and queue selected project context for the chosen chat's next request, without creating a chat or changing project membership; the composer one-shot picker remains. | Execute the E2E scenario for a non-current target chat, verify one-shot consumption/no cross-chat leakage, and decide whether pending handoff should survive reload (currently session-only). | [~] |
 | **8.14 Touch selection** | Only the unavailable voice control explicitly disables selection; message content is explicitly selectable. | Add targeted `user-select` / `-webkit-user-select` / `touch-action` to controls and gesture surfaces; keep message text and inputs selectable; test long-press and swipes. | [~] |
 | **8.15 Status/progress** | Status uses a gradient animated text treatment and spinner; toast/status roles exist. | Center status rows, use semantic muted state colors, retain truthful progress and reduced-motion behavior; no fabricated progress. | [~] |
 | **8.16 Button typography/icon-first** | Button text sizes and paddings vary across utility classes and local CSS. | Normalize type/spacing/alignment through tokens and component variants; use icon-first only where meaning is unambiguous and always provide accessible labels. | [~] |
@@ -68,7 +68,7 @@
 
 | Requirement | Verified in branch source | Remaining gap | Status |
 |---|---|---|---|
-| 8.1 Sidebar/memory/projects/chats | Memory panel above projects; project list and chat list hierarchy; Research Studio moved to Functions; per-project gear; project-filtered chat list, back-to-unassigned, project-specific new chat; horizontal swipe-close; memory help text now collapsed by default. | Review accordion persistence, restore-last-closed-chat behavior, spacing and keyboard navigation. | [~] |
+| 8.1 Sidebar/memory/projects/chats | Shared memory before personal memory; private-context opt-in last; sidebar closes only memory disclosures; project/chat accordion state retained; create dialog separate; existing chat membership preserved; last-closed-chat restore from local storage. | Execute accordion/restore E2E and review spacing/keyboard navigation. | [~] |
 | 8.2 Typography/header | Wordmark and chat title have dedicated styling; theme/language grouped; compact clock breakpoints and header controls. | Final responsive/visual iteration and font-system review. | [~] |
 | 8.3 Settings/providers | Cloud, third-party providers and additional settings are separate disclosures. Cloud closes peer groups; peer groups cannot open while Cloud is open. | Execute E2E; review keyboard and narrow-screen behavior. | [~] |
 | 8.4 Tavily/system prompt | Global prompt defaults to empty; Tavily remains under web-tools settings with a documented decision note. | Complete current search-path audit before any removal or change. | [~] |
@@ -80,7 +80,7 @@
 | 8.10 Control sizing | Shared radius, control-height, gap, font and icon tokens; advanced fields, summaries, menus, composer tools and chat-create control consume shared rules. | Apply consistently to remaining controls; run viewport tests. | [~] |
 | 8.11 Theme/language | Header controls are grouped, persistent and tested for 44px hit targets. | Narrow viewport and keyboard review. | [~] |
 | 8.12 Experimental server memory | Removed feature UI, per-chat/server opt-in, automatic project-memory retrieval and stale delegated action cases. Ordinary local/private/shared memory and project-local facts remain. | Audit gateway/backend route ownership and legacy migration references before deleting backend code. | [~] |
-| 8.13 Project context | Removed per-chat project-memory toggle and implicit project-memory injection. Existing one-shot request-context picker remains explicit. | Project-settings → existing-chat handoff is not implemented; do not add a fake action. | [~] |
+| 8.13 Project context | Project settings expose an existing-chat selector and explicit handoff action. Context is queued for the selected chat's next request, with a five-project cap; chat membership/current chat remain unchanged and no new chat is created. | Run E2E for a non-current target chat and one-shot consumption; pending handoff is currently in-memory/session-only and is lost on reload before sending. | [~] |
 | 8.14 Touch selection | Targeted user-select, -webkit-user-select, touch-action; message text remains selectable; sidebar swipe distinguishes horizontal close from vertical scroll. | Native iOS Safari/long-press testing still required. | [~] |
 | 8.15 Status | Status row is centered and uses neutral, non-gradient text rather than decorative sheen. | Add semantic information/success/warning/error states without fabricated progress; verify reduced motion. | [~] |
 | 8.16 Button typography/icon-first | Shared control typography/spacing and icon-first message actions with accessible names. | Normalize remaining one-off button classes and tooltip coverage. | [~] |
@@ -89,8 +89,8 @@
 ### Latest checkpoint — 2026-10-31, explicit project creation flow
 
 - PR #131 branch: `feat/landing-v1-accessibility-responsive-20261031`.
-- Latest UI code commit: `a541932307c764e56f81b795b940785839128338`; E2E update commit: `64cfa3abfd1750751951cf1715502e7ca3409ce4`; subsequent commits in this checkpoint only refresh continuity documentation.
-- At the UI code commit, comparison with current `main` was 79 commits ahead / 4 behind; subsequent commits only updated continuity documentation. Merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`.
+- Latest UI code commit: `c3855c28317c5b481d59b463e4d4cb985d992dcd`; E2E update commits: `ccb76ea689ddb0ad6ef8d580dee06148aab6f94f` and `24004fe48e506a7d1a7e03b1538f3faed209381b`; subsequent commits in this checkpoint only refresh continuity documentation.
+- At the UI code commit, comparison with current `main` was 92 commits ahead / 4 behind; subsequent commits only updated continuity documentation. Merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`.
 - Requirement 8.1 correction: project creation now uses its own dialog; full settings remain available from the project's gear. Creating a project no longer mutates the current chat's `projectId` or chat history. The user explicitly creates a project chat from that project's navigation row.
 - Regression coverage updated for current-chat preservation, project-filtered chat creation, project-scoped memory/context, project import/export and project deletion.
 - JavaScript syntax parsing passed for the inline app script and Playwright test module. Exact-head combined status and PR workflow-run queries for `4c5c583d08d242308b9019417cb0c90bcaf264d3` returned no entries. Playwright/Chromium tests have not been executed in this session; this is not a passing CI result.
@@ -113,3 +113,10 @@
 
 - Added a Playwright scenario that deletes a chat, reloads the application and restores the chat from local storage. The existing restore implementation is now covered for the reload path.
 - Test commit: `2bfc6c080abeef00ed2566e54e0b847f40c11e2d`. Syntax parsing passed; E2E execution remains pending.
+
+
+### Follow-up — project context handoff (8.13)
+
+- Project settings now allow explicit selection of an existing target chat and queue the selected project's context for its next request. The handoff does not change the active chat, create a chat or mutate `projectId`; the request-context cap remains five projects.
+- Fixed the handoff button selector typo in `renderProjectUI()` and added a non-current-chat one-shot E2E scenario. Pending context is currently session-only and does not survive a page reload before the next send.
+- Syntax parsing passed; Playwright execution remains pending.
