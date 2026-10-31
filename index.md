@@ -955,8 +955,8 @@ permalink: /
     const uiModalIds=['settingsModal','projectSettingsModal','projectCreateModal','messageViewerModal','chatActionModal','researchStudioModal','functionPanelModal','traceModal'];
     function pushUiNavigation(entry){
       try{
-        const depth=uiNavigationStack.length+1;
-        history.pushState({...((history.state&&typeof history.state==='object')?history.state:{}),__alandiUiDepth:depth},'',location.href);
+        const nextStack=[...uiNavigationStack,entry],depth=nextStack.length;
+        history.pushState({...((history.state&&typeof history.state==='object')?history.state:{}),__alandiUiDepth:depth,__alandiUiStack:nextStack},'',location.href);
         uiNavigationStack.push(entry);return true;
       }catch(error){console.warn('Не удалось добавить переход интерфейса в историю браузера:',error);return false;}
     }
@@ -991,13 +991,25 @@ permalink: /
     }
     window.addEventListener('popstate',event=>{
       const targetDepth=Math.max(0,Number(event.state?.__alandiUiDepth)||0);
-      if(targetDepth>=uiNavigationStack.length)return;
-      const removed=uiNavigationStack.splice(targetDepth).reverse();
+      if(targetDepth===uiNavigationStack.length)return;
       applyingUiNavigationPop=true;
       try{
-        for(const entry of removed){
-          if(entry.kind==='modal')closeUiModalDirect(entry.id);
-          else if(entry.kind==='project-filter'){activeChatProjectId=entry.previousProjectId||null;renderChatList();$('chatSection').querySelector('summary')?.focus();}
+        if(targetDepth<uiNavigationStack.length){
+          const removed=uiNavigationStack.splice(targetDepth).reverse();
+          for(const entry of removed){
+            if(entry.kind==='modal')closeUiModalDirect(entry.id);
+            else if(entry.kind==='project-filter'){activeChatProjectId=entry.previousProjectId||null;renderChatList();$('chatSection').querySelector('summary')?.focus();}
+          }
+        }else{
+          const stored=Array.isArray(event.state?.__alandiUiStack)?event.state.__alandiUiStack:[];
+          for(const entry of stored.slice(uiNavigationStack.length,targetDepth)){
+            uiNavigationStack.push(entry);
+            if(entry.kind==='project-filter'){activeChatProjectId=entry.projectId||null;renderChatList();}
+            else if(entry.kind==='modal'){
+              $(entry.id)?.classList.remove('hidden');syncModalEnvironment();
+              requestAnimationFrame(()=>{const modal=$(entry.id);if(!modal||modal.classList.contains('hidden'))return;const focusable=modal.querySelector('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])');focusable?.focus({preventScroll:true});});
+            }
+          }
         }
       }finally{applyingUiNavigationPop=false;syncModalEnvironment();}
     });
@@ -5229,14 +5241,14 @@ permalink: /
             $('projectNavToggle').setAttribute('aria-expanded',String(open));$('projectNavChevron').textContent=open?'⌃':'⌄';break;
           }
           case 'projectless-nav': {
-            if(activeChatProjectId!==null)pushUiNavigation({kind:'project-filter',previousProjectId:activeChatProjectId});
+            if(activeChatProjectId!==null)pushUiNavigation({kind:'project-filter',previousProjectId:activeChatProjectId,projectId:null});
             activeChatProjectId=null;renderChatList();$('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});
             $('chatSection').querySelector('summary')?.focus();break;
           }
           case 'restore-last-closed-chat': restoreLastClosedChat();break;
           case 'select-project': {
             const id=control.dataset.projectId;if(!projects.some(project=>project.id===id))break;
-            if(activeChatProjectId!==id)pushUiNavigation({kind:'project-filter',previousProjectId:activeChatProjectId});
+            if(activeChatProjectId!==id)pushUiNavigation({kind:'project-filter',previousProjectId:activeChatProjectId,projectId:id});
             activeChatProjectId=id;renderChatList();$('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});break;
           }
           case 'chat-list-back': {
@@ -5482,7 +5494,7 @@ permalink: /
     window.addEventListener('resize', syncComposerViewport, { passive: true });
 
     async function init() {
-      try{history.replaceState({...((history.state&&typeof history.state==='object')?history.state:{}),__alandiUiDepth:0},'',location.href);}catch(_){}
+      try{history.replaceState({...((history.state&&typeof history.state==='object')?history.state:{}),__alandiUiDepth:0,__alandiUiStack:[]},'',location.href);}catch(_){}
       syncModalEnvironment();
       const pollinationsAuthMessage=await finishPollinationsOAuth();
       migrateLegacyChatFunctionSettings();
