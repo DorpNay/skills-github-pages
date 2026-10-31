@@ -161,6 +161,23 @@ test('sidebar order separates memory, projects, status, chats, and research', as
   await page.locator('#globalMemoryToggle').check();
   await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте вкл.');
   await expect(page.locator('#projectStatusLine')).toContainText('Личный чат');
+  const memoryOrder = await page.locator('#memoryToolsDetails > div').evaluate(root => [
+    root.querySelector('#sharedMemoryTitle')?.closest('section'),
+    root.querySelector('#privateMemoryTitle')?.closest('section'),
+    root.querySelector('#privateMemoryContextToggle')?.closest('label')
+  ].map(element => Array.prototype.indexOf.call(root.children, element)));
+  expect(memoryOrder).toEqual([0, 1, 2]);
+  await page.locator('#projectNavToggle').click();
+  await page.locator('#projectlessGroup > summary').click();
+  await page.locator('#chatSection > summary').click();
+  await page.locator('#sidebar [data-action="close-sidebar"]').click();
+  await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await expect(page.locator('#memoryToolsDetails')).not.toHaveAttribute('open', '');
+  await expect(page.locator('#projectNavigationList')).not.toHaveClass(/hidden/);
+  await expect(page.locator('#projectlessGroup')).toHaveAttribute('open', '');
+  await expect(page.locator('#chatSection')).not.toHaveAttribute('open', '');
+  await page.locator('#chatSection > summary').click();
 });
 
 test('project rows filter the Chats list without moving the current chat and create chats in the selected project', async ({ page }) => {
