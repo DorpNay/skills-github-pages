@@ -88,15 +88,15 @@
 
 ### Latest checkpoint — 2026-10-31, browser Back/Forward and modal lifecycle
 
-- PR #131 branch: `feat/landing-v1-accessibility-responsive-20261031`; verified head before this documentation update: `ad81e1be6924af52587f8b1aa1139b55c5104e8f`.
-- Comparison with `main`: 104 commits ahead / 4 behind; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`.
-- 8.6: browser history now stores nested project-filter and modal entries. Back restores the previous project filter or closes the top modal; Forward restores the saved project filter/modal; Escape follows the same navigation stack.
+- PR #131 branch: `feat/landing-v1-accessibility-responsive-20261031`; verified code/test head: `60fb9838d9080fad8420d9bfd97c78faf233b039`.
+- Comparison with `main`: 110 commits ahead / 4 behind; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`.
+- 8.6: browser history now stores nested project-filter and modal entries. Back restores the previous project filter or closes the top modal; Forward restores the saved project filter/modal (including chat-action target/mode); Escape follows the same navigation stack.
 - 8.9: modal lifecycle includes focus entry/return, Tab trapping, body scroll/overscroll lock and shared backdrop cleanup.
 - 8.8/8.16: expanded message view retains accessible copy/speech icon actions, with speech hidden for user-authored messages.
 - 8.13: project settings can hand off context to an explicitly selected existing chat for its next request; no new chat or project-membership change, five-project cap retained, pending state session-only.
 - 8.15/8.17: semantic status/toast states and high-contrast text for secondary/disabled/link/error/status content in both themes.
-- E2E coverage includes nested Back/Forward, modal Back/Forward/repeated lifecycle, one-shot handoff, viewer controls, semantic status and high-contrast tokens. Playwright/Chromium has not been executed on this exact head.
-- Exact-head combined status and workflow-run queries for `ad81e1be6924af52587f8b1aa1139b55c5104e8f` returned no entries. No passing CI result is claimed.
+- E2E coverage includes nested Back/Forward, modal Back/Forward/repeated lifecycle, chat-action modal Forward restoration, one-shot handoff, viewer controls, semantic status and high-contrast tokens. Playwright/Chromium has not been executed on this exact head.
+- Exact-head combined status and workflow-run queries for `60fb9838d9080fad8420d9bfd97c78faf233b039` returned no entries. No passing CI result is claimed.
 - No merge, deployment, framework migration or dependency addition performed.
 
 ## Decision log
@@ -147,3 +147,9 @@
 
 - Navigation entries are now stored in the browser history state. Forward restores the previously selected project filter or reopens the modal that was dismissed with Back.
 - Added E2E assertions for Forward after both nested project navigation and project-settings Back. Browser execution remains pending.
+
+
+### Follow-up — chat-action modal Forward restoration (8.6, 8.9)
+
+- Browser history entries for chat-action dialogs now retain the target chat and action mode. Forward reconstructs the dialog against the existing chat instead of reopening an empty shell.
+- Added an E2E scenario for Back → Forward → Back on a project-assignment dialog. Exact-head Chromium remains pending.
