@@ -116,3 +116,9 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Removed five stale delegated action cases for retired experimental server/helper-memory UI. Independent local/private/shared/project-local memory remains.
 - Project Sources remains explicitly unavailable because the gateway lacks a source-list API; no mock CRUD controls.
 - Exact-head combined status and workflow-run lookups returned no entries. No E2E/CI result is claimed; execute focused Chromium and full Quality/Freshness/Provenance/Graphify checks next.
+
+### 2026-10-31 — exact branch checkpoint refresh
+- PR #131 remains open and isolated for aLandi Landing UI v2.0; V1 remains in main. PR body now reflects partial implementation and unexecuted verification.
+- Latest verified branch head: dfaeee97692fd65384ddc070b2b09d99875c5877. Compare main: 49 ahead / 4 behind; merge base e78a73b25725bfa63370d9946887cbbacbf51b82.
+- The branch contains follow-up control-geometry/typography normalization and obsolete provider/sidebar label cleanup after the earlier b120 checkpoint.
+- Exact-head status/workflow-run lookups remain empty. Do not claim CI/E2E passed. No merge or deploy.
