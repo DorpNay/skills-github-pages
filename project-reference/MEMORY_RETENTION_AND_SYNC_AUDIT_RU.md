@@ -10,7 +10,7 @@
 
 - `index.md`: `safeSet` для localStorage, recovery backup, экспорт чатов и проектов, IndexedDB для части данных.
 - `gateway/memory/delta_sync.py`: версионированные ограниченные JSON Patch-дельты для состояния разговора, checksum и обнаружение конфликтов; не покрывает автоматически profile/project/global scopes.
-- `gateway/memory/manager.py` + `schema.sql`: SQLite memory graph с scope, provenance, временными полями, статусами candidate/confirmed/disputed/superseded/rejected и FTS5.
+- `gateway/memory/manager.py` + `schema.sql`: scoped SQLite graph с provenance, временными полями и FTS5. После PR #131 он не exposed через gateway HTTP и retained only for internal Graphify/code-evidence workflows; не является пользовательской памятью.
 - Gateway endpoints выключены feature flags по умолчанию. OAuth/Google Drive groundwork не означает настроенный Drive Picker или рабочий двусторонний sync.
 - Точные лимиты браузерной квоты зависят от браузера/устройства; фиксированный размер нельзя гарантировать для всех.
 
