@@ -57,13 +57,13 @@ async function setSkillPreset(page, preset) {
 }
 async function selectLanguage(page, language) {
   if (await page.locator('#settingsModal').evaluate(element => element.classList.contains('hidden'))) await page.locator('[data-action="toggle-settings"]').click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(element => element.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#additionalSettings').evaluate(element => element.open))) await page.locator('#additionalSettings > summary').click();
   await page.locator('#uiLanguage').selectOption(language);
 }
 
 async function configureCustomProvider(page, modelName) {
   await page.locator('[data-action="toggle-settings"]').click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(element => element.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(element => element.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill(modelName);
@@ -208,7 +208,7 @@ test('theme and language are a compact accessible header group', async ({ page }
   await expect(page.locator('#homeThemeToggle')).toBeVisible();
   await expect(page.locator('#languageMenu')).toBeVisible();
   await expect(page.locator('#sidebarThemeToggle')).toHaveCount(0);
-  await expect(page.locator('#legacyProviderSettings [data-action="toggle-theme-cycle"]')).toHaveCount(0);
+  await expect(page.locator('#additionalSettings [data-action="toggle-theme-cycle"]')).toHaveCount(0);
 
   const themeTarget = await page.locator('#homeThemeToggle').boundingBox();
   const languageTarget = await page.locator('#languageMenu > summary').boundingBox();
@@ -238,7 +238,7 @@ test('theme and language are a compact accessible header group', async ({ page }
 test('text readability preferences persist and apply in both themes', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#additionalSettings > summary').click();
   await expect(page.locator('#readabilitySettings')).toBeVisible();
   await page.locator('#uiTextScale').evaluate(element => {
     element.value = '115';
@@ -275,7 +275,7 @@ test('interactive controls avoid selection while message content remains selecta
 test('composer position persists and aLandi is hidden from third-party provider selection', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#additionalSettings > summary').click();
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
   await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(1);
   await expect(page.locator('#providerPrimaryGroup')).toBeHidden();
@@ -292,7 +292,7 @@ test('composer position persists and aLandi is hidden from third-party provider 
   await page.locator('[data-action="save-settings"]').click();
   await page.reload();
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#additionalSettings > summary').click();
   await expect(page.locator('#composerPosition')).toHaveValue('top');
   await expect(page.locator('body')).toHaveClass(/composer-at-top/);
 
@@ -304,7 +304,7 @@ test('composer position persists and aLandi is hidden from third-party provider 
   expect(bottomMessages.y).toBeLessThan(bottomComposer.y);
   await page.reload();
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
 });
 
@@ -336,10 +336,9 @@ test('project quick actions open a real create form and persist the chosen memor
 test('language switch localizes provider controls without exposing the internal route', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await selectLanguage(page, 'en');
-  await expect(page.locator('#providerPrimaryGroup')).toHaveAttribute('label', 'aLandi Cloud · primary route');
   await expect(page.locator('#providerExternalGroup')).toHaveAttribute('label', 'Third-party providers');
-  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(1);
-  await expect(page.locator('#providerPrimaryGroup')).toBeHidden();
+  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
+  await expect(page.locator('#cloudSettingsGroup')).toBeVisible();
   await expect(page.locator('#providerPreset option[value="gemini"]')).toHaveCount(1);
   await expect(page.locator('#providerPreset option[value="custom"]')).toHaveCount(1);
   await selectLanguage(page, 'ru');
@@ -410,8 +409,8 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await expect(page.locator('#toggleMultiAgent')).not.toBeChecked();
 
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  await expect(page.locator('#thirdPartyProviderSettings')).not.toHaveAttribute('open');
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await expect(page.locator('#settingsModal')).toBeVisible();
   await expect(page.locator('#providerPreset')).toHaveValue('alandi');
   await expect(page.locator('#apiKey')).toHaveAttribute('type', 'password');
@@ -441,7 +440,7 @@ test('published app boots and core controls are interactive', async ({ page }) =
 test('provider keys, Tavily key, and model settings remain isolated across switching and reload', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
 
   await page.locator('#providerPreset').selectOption('groq');
@@ -466,7 +465,7 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
 
   await page.reload();
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await expect(page.locator('#providerPreset')).toHaveValue('groq');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-groq-placeholder-not-a-real-key');
   await expect(page.locator('#tavilyKey')).toHaveValue('e2e-tavily-placeholder-not-a-real-key');
@@ -494,7 +493,7 @@ test('API authentication errors are shown without losing the original user promp
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-test-model');
@@ -530,7 +529,7 @@ test('provider connection loads filtered model catalog into selector and key del
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-model');
@@ -558,8 +557,8 @@ test('provider connection loads filtered model catalog into selector and key del
 test('switching providers explains an empty API key field inline', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(element => element.open))) {
-    await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(element => element.open))) {
+    await page.locator('#thirdPartyProviderSettings > summary').click();
   }
   await expect(page.locator('#modelCatalogStatus')).toHaveText('Встроенные модели · каталог не обновлён.');
   await expect(page.getByText('Выбери провайдера. Ключ и соединение проверяются автоматически.')).toHaveCount(0);
@@ -579,7 +578,7 @@ test('catalog remains usable when the saved model is missing from the live provi
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('retired-saved-model');
@@ -607,7 +606,7 @@ test('refresh all catalogs updates other configured providers for cross-provider
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => localStorage.setItem('ai_api_key_openrouter', 'e2e-openrouter-catalog-key'));
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('e2e-groq-catalog-key');
   await page.locator('[data-action="save-settings"]').click();
@@ -626,7 +625,7 @@ test('refresh all catalogs updates other configured providers for cross-provider
 test('settings profile exports portable preferences but never API secrets', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#modelName').fill('openai/gpt-oss-120b');
@@ -654,7 +653,7 @@ test('settings profile exports portable preferences but never API secrets', asyn
 test('settings profile import restores preferences while preserving existing provider and search keys', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -765,7 +764,7 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-trace-model');
@@ -817,7 +816,7 @@ test('multi-agent preference skips a greeting and shows the actual route', async
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-model');
@@ -841,7 +840,7 @@ test('401 stops after the selected provider rejects credentials', async ({ page 
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
@@ -868,7 +867,7 @@ test('transient 503 retries only the same model and never fans out', async ({ pa
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
@@ -896,7 +895,7 @@ test('model-specific failure tries another model on the same provider first', as
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
@@ -907,7 +906,7 @@ test('model-specific failure tries another model on the same provider first', as
   await expect(page.locator('#chatBox')).toContainText('Groq · qwen/qwen3.8-27b');
   await expect.poll(() => attemptedModels.length).toBe(2);
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await expect(page.locator('#providerPreset')).toHaveValue('groq');
   await expect(page.locator('#modelName')).toHaveValue('qwen/qwen3.8-27b');
   await expect(page.locator('#modelPreset')).toHaveValue('qwen/qwen3.8-27b');
@@ -940,7 +939,7 @@ test('dynamic chat catalog is used for bounded same-provider model fallback', as
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-primary-model');
@@ -970,7 +969,7 @@ test('Pollinations catalog discovers text models and aliases without sending a t
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('pollinations');
   await expect(page.locator('#modelPreset option[value="publisher/available-text-model"]')).toHaveCount(1);
   await expect(page.locator('#modelPreset option[value="old-text-model"]')).toHaveCount(1);
@@ -1017,7 +1016,7 @@ test('Pollinations requests use the OAuth token, not the public App Key', async 
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('pollinations');
   await page.locator('#apiKey').fill('pk_e2e-public-app-key');
   await page.locator('[data-action="save-settings"]').click();
@@ -1055,7 +1054,7 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('cloudflare');
   await page.locator('#cloudflareAccountId').fill(cloudflareId);
   await expect(page.locator('#baseUrl')).toHaveValue('https://api.cloudflare.com/client/v4/accounts/' + cloudflareId + '/ai/v1');
@@ -1076,7 +1075,7 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
     });
   });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('huggingface');
   await page.locator('#apiKey').fill('not-a-real-huggingface-token');
   await page.locator('[data-action="save-settings"]').click();
@@ -1096,7 +1095,7 @@ test('Obsidian Studio and Clean Light preferences persist and respect motion con
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_theme_v2'))).toBe('light');
 
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#additionalSettings > summary').click();
   await page.locator('#uiMotion').selectOption('off');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_motion_v2'))).toBe('off');
@@ -1107,7 +1106,7 @@ test('Obsidian Studio and Clean Light preferences persist and respect motion con
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
 
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#additionalSettings > summary').click();
   await page.locator('#uiMotion').selectOption('auto');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'auto');
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
@@ -1145,7 +1144,7 @@ test('aLandi cloud status only turns green after a real model response, and core
   await expect(page.locator('#clockDigital')).toHaveText(/^\d{2}:\d{2}$/);
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
   await page.locator('[data-action="toggle-settings"]').click();
-  await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
+  await expect(page.locator('#thirdPartyProviderSettings')).not.toHaveAttribute('open');
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
   await page.locator('#cloudBaseUrl').fill('https://cloud.example.test/v1');
   await page.locator('#cloudModel').fill('qwen3.5:4b');
@@ -1164,9 +1163,9 @@ test('aLandi cloud status only turns green after a real model response, and core
   await selectLanguage(page, 'en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
-  await page.locator('#legacyProviderSettings [data-action="toggle-theme-cycle"]').click();
+  await page.locator('#homeThemeToggle').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await page.locator('#legacyProviderSettings [data-action="toggle-theme-cycle"]').click();
+  await page.locator('#homeThemeToggle').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 });
 
@@ -1189,7 +1188,7 @@ test('Kilo Auto Free is an ordinary provider, loads the no-key catalog, and rout
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
   await expect(page.locator('#cloudSettingsCard')).not.toContainText('Kilo Auto Free');
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('kilo');
   await expect(page.locator('#kiloPrivacyWarning')).toHaveCount(0);
   await expect(page.locator('#providerHint')).toBeHidden();
@@ -1216,7 +1215,7 @@ test('pasting a provider key starts one bounded model-catalog and connection che
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-paste-model');
@@ -1307,7 +1306,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
 
   await ensureSidebarClosed(page);
   await page.locator('[data-action="toggle-settings"]').first().click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-project-model');
@@ -1443,7 +1442,7 @@ test('xAI accepts structured text response envelopes and authenticates with the 
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('xai');
   await page.locator('#apiKey').fill('e2e-xai-placeholder-key');
   await page.locator('#modelName').fill('grok-4.7');
@@ -1509,7 +1508,7 @@ test('Deep mode caps tool fan-out, suppresses repeated calls, and still returns 
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('tool-budget-model');
@@ -1710,7 +1709,7 @@ test('web_search falls back to public sources when Tavily is not configured', as
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('open-search-model');
@@ -1785,7 +1784,7 @@ test('Thai public-knowledge search uses Thai Wikipedia and returns a matching so
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('thai-search-model');
@@ -1880,7 +1879,7 @@ test('provider probe cannot mark changed credentials connected after an in-fligh
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('race-model');
@@ -1926,42 +1925,27 @@ test('aLandi cloud probe cannot overwrite settings changed while its request is 
 });
 
 
-test('legacy aLandi provider probe does not overwrite changed primary cloud settings', async ({ page }) => {
-  let beginProbe, releaseProbe;
-  const probeStarted = new Promise(resolve => { beginProbe = resolve; });
-  const probeGate = new Promise(resolve => { releaseProbe = resolve; });
-  await page.route('https://legacy-alandi.example.test/v1/chat/completions', async route => {
-    beginProbe();
-    await probeGate;
-    await route.fulfill({
-      status: 200, contentType: 'application/json',
-      body: JSON.stringify({ model: 'legacy-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
-    });
-  });
+test('settings keep Cloud, third-party providers and additional options in exclusive groups', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://legacy-alandi.example.test/v1');
-  await page.locator('#modelName').fill('legacy-model');
-  await page.locator('#apiKey').fill('legacy-probe-key');
-  await page.locator('#cloudBaseUrl').fill('https://cloud-initial.example.test/v1');
-  await page.locator('#cloudModel').fill('cloud-initial-model');
-  await page.locator('#cloudApiKey').fill('cloud-initial-key');
-  await page.locator('[data-action="test-connection"]').click();
-  await probeStarted;
-  await page.locator('#cloudBaseUrl').fill('https://cloud-updated.example.test/v1');
-  await page.locator('#cloudModel').fill('cloud-updated-model');
-  await page.locator('#cloudApiKey').fill('cloud-updated-key');
-  releaseProbe();
-  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
-  await expect(page.locator('#cloudBaseUrl')).toHaveValue('https://cloud-updated.example.test/v1');
-  await expect(page.locator('#cloudModel')).toHaveValue('cloud-updated-model');
-  await expect(page.locator('#cloudApiKey')).toHaveValue('cloud-updated-key');
-  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
-  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
+  const cloud = page.locator('#cloudSettingsGroup');
+  const providers = page.locator('#thirdPartyProviderSettings');
+  const additional = page.locator('#additionalSettings');
+  await expect(cloud).toHaveAttribute('open', '');
+  await expect(providers).not.toHaveAttribute('open');
+  await expect(additional).not.toHaveAttribute('open');
+  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
+  await expect(page.locator('#cloudSettingsCard')).not.toContainText('Kilo');
+  await providers.locator(':scope > summary').click();
+  await expect(providers).toHaveAttribute('open', '');
+  await expect(cloud).not.toHaveAttribute('open');
+  await additional.locator(':scope > summary').click();
+  await expect(additional).toHaveAttribute('open', '');
+  await expect(providers).not.toHaveAttribute('open');
+  await cloud.locator(':scope > summary').click();
+  await expect(cloud).toHaveAttribute('open', '');
+  await expect(additional).not.toHaveAttribute('open');
 });
-
 
 test('deprecated server-memory controls are absent and project facts remain local', async ({ page }) => {
   const graphRequests = [];
@@ -2051,7 +2035,7 @@ test('Markdown fallback preserves tables and escapes HTML when renderer CDNs are
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('e2e-markdown-model');
@@ -2191,7 +2175,7 @@ test('request-only project context is sent once and does not change the active c
   });
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('context-e2e');
@@ -2249,7 +2233,7 @@ test('image attachment is sent as multimodal content without persisting image by
   });
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('vision-e2e');
@@ -2480,8 +2464,8 @@ test('mobile messages expose full text and retain a jump-to-latest control', asy
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
-    await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#thirdPartyProviderSettings > summary').click();
   }
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
