@@ -108,3 +108,11 @@ Reviewed 45 targeted Exa queries (up to 360 requested result slots) and fetched 
 
 ### 2026-10-30 — Whole-stack integrity audit baseline recorded
 Before beginning the audit, re-read live PR #123, current main base and issue #111. Recorded baseline: PR #123 open/mergeable, HEAD `f6e67db5a7e39abc5f9351aae5ccadefc58e865e`, base `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; prior exact-head CI 6/6 passed, subject to re-run after any new commit. Issue #111 remains open for owner/environment gates. Created `docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md` with frozen stack boundaries, initial full checklist and independent reviewer handoff brief. No source code changed in this stage. Post-merge Pages and live VPS/Ollama remain unverified.
+
+### 2026-10-31 — Landing UI v2.0 continuation checkpoint
+- PR #131 remains the isolated V2 UI workstream; V1 in main remains untouched. No merge/deploy performed.
+- Branch feat/landing-v1-accessibility-responsive-20261031, verified code/test head before continuity-doc commits: b12038e8ee58aba77191daa29de4a232536179f2; 44 commits ahead / 4 behind current main; merge base e78a73b25725bfa63370d9946887cbbacbf51b82.
+- Added exclusive aLandi Cloud settings behavior; collapsed private/shared memory explanations; added E2E assertions for disclosure behavior and actual text scaling.
+- Removed five stale delegated action cases for retired experimental server/helper-memory UI. Independent local/private/shared/project-local memory remains.
+- Project Sources remains explicitly unavailable because the gateway lacks a source-list API; no mock CRUD controls.
+- Exact-head combined status and workflow-run lookups returned no entries. No E2E/CI result is claimed; execute focused Chromium and full Quality/Freshness/Provenance/Graphify checks next.
