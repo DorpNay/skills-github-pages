@@ -202,6 +202,43 @@ test('theme and language are a compact accessible header group', async ({ page }
   await expect(page.locator('#uiLanguage')).toHaveValue('ru');
 });
 
+test('text readability preferences persist and apply in both themes', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await expect(page.locator('#readabilitySettings')).toBeVisible();
+  await page.locator('#uiTextScale').evaluate(element => {
+    element.value = '115';
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await page.locator('#uiTextContrast').selectOption('high');
+  await expect(page.locator('#uiTextScaleValue')).toHaveText('115%');
+  await expect(page.locator('html')).toHaveAttribute('data-text-contrast', 'high');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_text_scale_v1'))).toBe('115');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_text_contrast_v1'))).toBe('high');
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+
+  await page.locator('#homeThemeToggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('html')).toHaveAttribute('data-text-contrast', 'high');
+  await expect.poll(() => page.locator('#chatBox').evaluate(element => getComputedStyle(element).fontSize)).not.toBe('');
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('html')).toHaveAttribute('data-text-contrast', 'high');
+  await expect(page.locator('#uiTextScaleValue')).toHaveText('115%');
+});
+
+test('interactive controls avoid selection while message content remains selectable', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const values = await page.evaluate(() => ({
+    button: getComputedStyle(document.querySelector('#sendBtn')).userSelect,
+    touch: getComputedStyle(document.querySelector('#sendBtn')).touchAction,
+    message: getComputedStyle(document.querySelector('#chatBox')).userSelect
+  }));
+  expect(values.button).toBe('none');
+  expect(values.touch).toBe('manipulation');
+  expect(values.message).toBe('text');
+});
+
 test('composer position persists and aLandi is hidden from third-party provider selection', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
