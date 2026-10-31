@@ -416,6 +416,12 @@ permalink: /
     html[data-theme="light"] .message-viewer-content { color:color-mix(in srgb,#10212b calc(100% * var(--ui-content-contrast)),#526775); }
     .header-icon,.message-actions button { -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation; }
     .project-nav-row > .header-icon { width:44px;height:44px; }
+    .advanced-control,.advanced-field { min-height:var(--ui-control-standard);font-size:var(--ui-control-font);line-height:1.25; }
+    .settings-subpanel > summary { display:flex;align-items:center;min-height:44px; }
+    .settings-header-actions button { min-height:36px;padding:8px 12px;font-size:var(--ui-control-font);line-height:1.2; }
+    .toolbar-menu-option { min-height:36px;padding:8px 10px;font-size:var(--ui-control-font);line-height:1.2; }
+    .composer-tool { min-width:40px;min-height:40px;display:inline-flex;align-items:center;justify-content:center; }
+    #chatListNewButton { min-height:40px; }
     @media (max-width:420px) { .clock-face { width:54px;height:54px; } .header-chat-title { padding:4px 6px; } }
     @media (max-width:360px) { .clock-face { width:42px;height:42px; } }
   </style>
