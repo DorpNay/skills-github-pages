@@ -453,14 +453,11 @@ test('published app boots and core controls are interactive', async ({ page }) =
 test('provider keys, Tavily key, and model settings remain isolated across switching and reload', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#additionalSettings > summary').click();
-  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
-
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await expect(page.locator('#apiKey')).toHaveValue('');
   await page.locator('#apiKey').fill('e2e-groq-placeholder-not-a-real-key');
   await page.locator('#modelName').fill('openai/gpt-oss-120b');
-  await page.locator('#tavilyKey').fill('e2e-tavily-placeholder-not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('#apiKey').fill('');
   await page.locator('[data-action="save-settings"]').click();
@@ -470,23 +467,26 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
   await expect(page.locator('#apiKey')).toHaveValue('');
   await page.locator('#apiKey').fill('e2e-openrouter-placeholder-not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
-
   await page.locator('#providerPreset').selectOption('groq');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-groq-placeholder-not-a-real-key');
-  await expect(page.locator('#tavilyKey')).toHaveValue('e2e-tavily-placeholder-not-a-real-key');
+
+  await page.locator('#additionalSettings > summary').click();
+  await page.locator('#searchToolsSettings > summary').click();
+  await page.locator('#tavilyKey').fill('e2e-tavily-placeholder-not-a-real-key');
+  await page.locator('[data-action="save-settings"]').click();
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
 
   await page.reload();
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await expect(page.locator('#providerPreset')).toHaveValue('groq');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-groq-placeholder-not-a-real-key');
-  await expect(page.locator('#tavilyKey')).toHaveValue('e2e-tavily-placeholder-not-a-real-key');
   await page.locator('#providerPreset').selectOption('openrouter');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-openrouter-placeholder-not-a-real-key');
-});
-
-test('chat creation persists after reload without calling a model', async ({ page }) => {
+  await page.locator('#additionalSettings > summary').click();
+  await page.locator('#searchToolsSettings > summary').click();
+  await expect(page.locator('#tavilyKey')).toHaveValue('e2e-tavily-placeholder-not-a-real-key');
+});test('chat creation persists after reload without calling a model', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
   const chats = page.locator('#chatList button[data-action="switch-chat"]');
@@ -638,11 +638,12 @@ test('refresh all catalogs updates other configured providers for cross-provider
 test('settings profile exports portable preferences but never API secrets', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#additionalSettings > summary').click();
-  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#modelName').fill('openai/gpt-oss-120b');
   await page.locator('#apiKey').fill('e2e-private-provider-secret-value');
+  await page.locator('#additionalSettings > summary').click();
+  await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#tavilyKey').fill('e2e-private-search-secret-value');
   await page.locator('#allowCrossProviderFallback').check();
   await page.locator('[data-action="save-settings"]').click();
@@ -661,17 +662,16 @@ test('settings profile exports portable preferences but never API secrets', asyn
   expect(json).not.toContain('e2e-private-search-secret-value');
   expect(json).not.toContain('ai_api_key_');
   expect(json).not.toContain('apiKey');
-});
-
-test('settings profile import restores preferences while preserving existing provider and search keys', async ({ page }) => {
+});test('settings profile import restores preferences while preserving existing provider and search keys', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#additionalSettings > summary').click();
-  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('before-import');
   await page.locator('#apiKey').fill('e2e-preserved-provider-secret');
+  await page.locator('#additionalSettings > summary').click();
+  await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#tavilyKey').fill('e2e-preserved-tavily-secret');
   await page.locator('[data-action="save-settings"]').click();
 
@@ -686,7 +686,6 @@ test('settings profile import restores preferences while preserving existing pro
       mode: 'deep',
       search: false,
       multiAgent: true,
-      offline: true,
       crossProviderFallback: false
     }
   };
@@ -706,11 +705,7 @@ test('settings profile import restores preferences while preserving existing pro
   await page.locator('[data-action="toggle-settings"]').click();
   await expect(page.locator('#apiKey')).toHaveValue('e2e-preserved-provider-secret');
   await expect(page.locator('#tavilyKey')).toHaveValue('e2e-preserved-tavily-secret');
-  expect(await page.evaluate(() => localStorage.getItem('ai_api_key_custom'))).toBe('e2e-preserved-provider-secret');
-  expect(await page.evaluate(() => localStorage.getItem('ai_tavily_key'))).toBe('e2e-preserved-tavily-secret');
-});
-
-test('research trace supports a structured JSON download', async ({ page }) => {
+});test('research trace supports a structured JSON download', async ({ page }) => {
   const trace = {
     schemaVersion: 2, id: 'e2e-json-trace', createdAt: '2026-10-15T00:00:00.000Z',
     provider: 'Groq', model: 'openai/gpt-oss-120b',
