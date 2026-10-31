@@ -21,6 +21,23 @@ async function ensureSidebarClosed(page) {
   await expect(sidebar).toHaveClass(/-translate-x-full/);
 }
 
+async function createProjectFromUi(page, name, instructions = '') {
+  const sidebar = page.locator('#sidebar');
+  if (await sidebar.evaluate(element => element.classList.contains('-translate-x-full'))) {
+    await page.locator('[data-action="toggle-sidebar"]').click();
+  }
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await expect(page.locator('#projectCreateModal')).toBeVisible();
+  await page.locator('#projectCreateNameInput').fill(name);
+  if (instructions) await page.locator('#projectCreateInstructionsInput').fill(instructions);
+  await page.locator('#projectCreateModal [data-action="create-project"]').click();
+  await expect(page.locator('#projectCreateModal')).toBeHidden();
+  return page.evaluate(projectName => {
+    const projects = JSON.parse(localStorage.getItem('ai_projects_v1') || '[]');
+    return projects.find(project => project.name === projectName)?.id || '';
+  }, name);
+}
+
 async function openProjectSettingsForId(page, projectId) {
   const sidebar = page.locator('#sidebar');
   if (await sidebar.evaluate(element => element.classList.contains('-translate-x-full'))) {
@@ -34,7 +51,8 @@ async function openProjectSettingsForId(page, projectId) {
   if (!(await group.evaluate(element => element.open))) await group.locator(':scope > summary').click();
   await page.locator('#projectNavigationList .project-nav-row[data-project-id="' + projectId + '"] [data-action="open-project-settings"]').click();
   await expect(page.locator('#projectSettingsModal')).toBeVisible();
-  await expect(page.locator('#currentProjectSelect')).toHaveValue(projectId);
+  const projectName = await page.evaluate(id => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]').find(project => project.id === id)?.name || '', projectId);
+  await expect(page.locator('#projectNameInput')).toHaveValue(projectName);
 }
 
 async function chooseSearchMode(page, mode) {
@@ -145,19 +163,18 @@ test('sidebar order separates memory, projects, status, chats, and research', as
   await expect(page.locator('#projectStatusLine')).toContainText('Личный чат');
 });
 
-test('project rows filter the Chats list and create chats in the selected project', async ({ page }) => {
+test('project rows filter the Chats list without moving the current chat and create chats in the selected project', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#projectPanel [data-action="open-project-create"]').click();
-  await page.locator('#projectNameInput').fill('Filtered project');
-  await page.locator('[data-action="create-project"]').click();
-  const projectId = await page.locator('#currentProjectSelect').inputValue();
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  if (await page.locator('#projectNavigationList').evaluate(el => el.classList.contains('hidden'))) {
-    await page.locator('#projectNavToggle').click();
-  }
+  const projectId = await createProjectFromUi(page, 'Filtered project');
+  expect(projectId).not.toBe('');
+  await expect(page.locator('#currentProjectSelect')).toHaveValue('');
+  const originalChatProject = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const currentId = localStorage.getItem('ai_current_chat_v87');
+    return chats.find(chat => chat.id === currentId)?.projectId || '';
+  });
+  expect(originalChatProject).toBe('');
   const row = page.locator('#projectNavigationList .project-nav-row[data-project-id="' + projectId + '"]');
   const gear = row.locator('[data-action="open-project-settings"]');
   const gearBox = await gear.boundingBox();
@@ -168,30 +185,31 @@ test('project rows filter the Chats list and create chats in the selected projec
   await row.locator('[data-action="select-project"]').click();
   await expect(page.locator('#chatSectionTitle')).toContainText('Filtered project');
   await expect(page.locator('#chatListNewButton')).toContainText('в проекте');
-
   await page.locator('#chatListNewButton').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(projectId);
-  await expect(page.locator('#chatSectionTitle')).toContainText('Filtered project');
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#chatListBack').click();
   await expect(page.locator('#chatSectionTitle')).toContainText('Без проекта');
   await page.locator('#chatListNewButton').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue('');
 });
-
-test('project settings closes on Escape and restores focus to a visible control', async ({ page }) => {
+test('project creation and project settings close on Escape with focus restoration', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#projectPanel [data-action="open-project-create"]').click();
-  await expect(page.locator('#projectSettingsModal')).toBeVisible();
-  await expect(page.locator('#projectNameInput')).toBeFocused();
-
+  const createOpener = page.locator('#projectPanel [data-action="open-project-create"]');
+  await createOpener.click();
+  await expect(page.locator('#projectCreateModal')).toBeVisible();
+  await expect(page.locator('#projectCreateNameInput')).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#projectCreateModal')).toBeHidden();
+  await expect(createOpener).toBeFocused();
+  const projectId = await createProjectFromUi(page, 'Focus project');
+  await openProjectSettingsForId(page, projectId);
   await page.keyboard.press('Escape');
   await expect(page.locator('#projectSettingsModal')).toBeHidden();
   await expect(page.locator('#appSidebarToggle')).toBeFocused();
 });
-
 test('mobile sidebar closes on a deliberate horizontal swipe but not vertical scrolling', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
