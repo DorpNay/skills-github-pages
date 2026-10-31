@@ -5,13 +5,13 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 ## Current working checkpoint — 2026-10-31
 
 - **Current main SHA:** `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; main remains the stable Landing V1.0 baseline.
-- **PR #131 — aLandi Landing UI v2.0:** open, unmerged; branch `feat/landing-v1-accessibility-responsive-20261031`; latest UI code commit `4c5c583d08d242308b9019417cb0c90bcaf264d3`; later commits in this checkpoint only refresh continuity docs. It is the sole branch for subsequent Landing V2 interface work. Do not merge or deploy without explicit owner approval.
+- **PR #131 — aLandi Landing UI v2.0:** open, unmerged; branch `feat/landing-v1-accessibility-responsive-20261031`; latest UI code commit `a541932307c764e56f81b795b940785839128338`; E2E update commit `64cfa3abfd1750751951cf1715502e7ca3409ce4`; later commits in this checkpoint only refresh continuity docs. It is the sole branch for subsequent Landing V2 interface work. Do not merge or deploy without explicit owner approval.
 - **PR #127 — continuity/master task registry:** open, unmerged; central registry `docs/MASTER_TASK_REGISTRY_RU.md` consolidates 276 open/partial items across six source registers; duplicates remain until reconciliation.
 - **Research tracks:** PR #128 Agent Workforce 2.0, #129 Voice 2.0 and #130 Deep Research 2.0 remain isolated Draft/HOLD workstreams on `future-workstreams/parking-base-20261031`; do not merge into main. PR #125 Agent Studio blueprint and #124/#126 dependency overlap require reconciliation before further action.
 - **V1 freeze:** no new product capabilities or runtime components in the stable landing. Improve only inside the approved HTML/CSS/JavaScript + Jekyll/GitHub Pages and existing FastAPI gateway stack.
 - **Canonical UI checklist:** `docs/V1_UI_FINALIZATION_RU.md`; priority Landing V2 requirements are sections 8.1–8.17. Implementation status and evidence are tracked separately in `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
 - **Not verified:** exact-head Chromium/Playwright CI for PR #131, native iPhone Safari/VoiceOver, live VPS/Tunnel/Ollama/provider credentials, target-host model quality/RAM/latency, real voice runtime, production RAG corpus, OAuth/Drive and arbitrary-code sandbox.
-- **At the latest PR #131 UI code commit:** 72 commits ahead / 4 behind current main; later commits only refresh continuity docs; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Exact-head workflow-run and combined-status queries returned no entries. Do not report tests as passing.
+- **At the latest PR #131 UI code commit:** 79 commits ahead / 4 behind current main; later commits only refresh continuity docs; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Exact-head workflow-run and combined-status queries returned no entries. Do not report tests as passing.
 
 
 ## First-read order
@@ -121,3 +121,10 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Project-create back control uses a 44×44px hit area and icon-first label.
 - Latest confirmed head: `4c5c583d08d242308b9019417cb0c90bcaf264d3`; 72 ahead / 4 behind main. Exact-head CI/status queries empty; Playwright remains unexecuted.
 - Continue in PR #131 only; no merge or deployment.
+
+
+### Landing UI V2.0 — memory hierarchy and accordion persistence (2026-10-31)
+- Reordered memory settings to show shared-memory records first, personal-memory records second, and the private-memory context opt-in checkbox last. Corrected the Russian shared-memory help label.
+- Sidebar close continues to collapse only the memory settings/help disclosures; added E2E assertions that the project list, “Без проекта” group and Chats disclosure retain their state.
+- UI code commit `a541932307c764e56f81b795b940785839128338`; E2E update commit `64cfa3abfd1750751951cf1715502e7ca3409ce4`.
+- JavaScript syntax parsing passed; Playwright/Chromium has not been executed and no passing CI result is claimed.
