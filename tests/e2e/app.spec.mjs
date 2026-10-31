@@ -2895,6 +2895,10 @@ test('browser Back returns through nested project filters instead of leaving the
   await expect(page.locator('#chatSectionTitle')).toContainText('Navigation Beta');
   await page.goBack();
   await expect(page.locator('#chatSectionTitle')).toContainText('Navigation Alpha');
+  await page.goForward();
+  await expect(page.locator('#chatSectionTitle')).toContainText('Navigation Beta');
+  await page.goBack();
+  await expect(page.locator('#chatSectionTitle')).toContainText('Navigation Alpha');
   await page.goBack();
   await expect(page.locator('#chatSectionTitle')).toContainText('Без проекта');
   await expect(page.locator('#userInput')).toBeVisible();
@@ -2913,6 +2917,12 @@ test('browser Back closes a project settings modal without leaving the app', asy
   await page.goBack();
   await expect(page.locator('#projectSettingsModal')).toBeHidden();
   await expect(page.locator('#userInput')).toBeVisible();
+  await expect(page.locator('body')).not.toHaveClass(/ui-modal-open/);
+  await page.goForward();
+  await expect(page.locator('#projectSettingsModal')).toBeVisible();
+  await expect(page.locator('body')).toHaveClass(/ui-modal-open/);
+  await page.goBack();
+  await expect(page.locator('#projectSettingsModal')).toBeHidden();
   await expect(page.locator('body')).not.toHaveClass(/ui-modal-open/);
 });
 
