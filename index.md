@@ -960,9 +960,9 @@ permalink: /
         uiNavigationStack.push(entry);return true;
       }catch(error){console.warn('Не удалось добавить переход интерфейса в историю браузера:',error);return false;}
     }
-    function openUiModal(id){
+    function openUiModal(id,meta={}){
       const modal=$(id);if(!modal||modal.classList.contains('hidden'))return;
-      if(!uiNavigationStack.some(entry=>entry.kind==='modal'&&entry.id===id))pushUiNavigation({kind:'modal',id});
+      if(!uiNavigationStack.some(entry=>entry.kind==='modal'&&entry.id===id))pushUiNavigation({kind:'modal',id,...meta});
       syncModalEnvironment();
       requestAnimationFrame(()=>{
         if(modal.classList.contains('hidden'))return;
@@ -1006,6 +1006,7 @@ permalink: /
             uiNavigationStack.push(entry);
             if(entry.kind==='project-filter'){activeChatProjectId=entry.projectId||null;renderChatList();}
             else if(entry.kind==='modal'){
+              if(entry.id==='chatActionModal'){openChatActionDialog(entry.mode,entry.chatId,true);continue;}
               $(entry.id)?.classList.remove('hidden');syncModalEnvironment();
               requestAnimationFrame(()=>{const modal=$(entry.id);if(!modal||modal.classList.contains('hidden'))return;const focusable=modal.querySelector('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])');focusable?.focus({preventScroll:true});});
             }
@@ -4478,7 +4479,7 @@ permalink: /
       const target=opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled?opener:(fallback&&fallback.getClientRects().length?fallback:$('appSidebarToggle'));
       target?.focus({preventScroll:true});
     }
-    function openChatActionDialog(mode,id) {
+    function openChatActionDialog(mode,id,fromHistory=false) {
       const chat=chats.find(item=>item.id===id);if(!chat)return;
       chatActionOpener=document.activeElement;
       const english=getUiLanguage()==='en',modal=$('chatActionModal'),name=$('chatActionName'),select=$('chatActionProject');
@@ -4498,7 +4499,9 @@ permalink: /
         projects.forEach(project=>{const option=document.createElement('option');option.value=project.id;option.textContent=project.name;select.appendChild(option);});
         select.value=chat.projectId||'';
       }
-      modal.classList.remove('hidden');openUiModal('chatActionModal');requestAnimationFrame(()=>mode==='rename'?name.focus():select.focus());
+      modal.classList.remove('hidden');
+      if(fromHistory)syncModalEnvironment();else openUiModal('chatActionModal',{mode,chatId:id});
+      requestAnimationFrame(()=>mode==='rename'?name.focus():select.focus());
     }
     function saveChatActionDialog() {
       const modal=$('chatActionModal'),chat=chats.find(item=>item.id===modal.dataset.chatId),mode=modal.dataset.mode,english=getUiLanguage()==='en';
