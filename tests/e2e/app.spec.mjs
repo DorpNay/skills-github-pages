@@ -331,6 +331,19 @@ test('text readability preferences persist and apply in both themes', async ({ p
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(page.locator('html')).toHaveAttribute('data-text-contrast', 'high');
   await expect(page.locator('#uiTextScaleValue')).toHaveText('115%');
+  const previewFontSize = await page.locator('#readabilityPreview').evaluate(element => parseFloat(getComputedStyle(element).fontSize));
+  expect(previewFontSize).toBeGreaterThan(12);
+
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#additionalSettings > summary').click();
+  await page.locator('[data-action="reset-readability"]').click();
+  await expect(page.locator('#uiTextScaleValue')).toHaveText('100%');
+  await expect(page.locator('html')).toHaveAttribute('data-text-contrast', 'normal');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_text_scale_v1'))).toBe('100');
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('html')).toHaveAttribute('data-text-contrast', 'normal');
+  await expect(page.locator('#uiTextScaleValue')).toHaveText('100%');
 });
 
 test('interactive controls avoid selection while message content remains selectable', async ({ page }) => {
