@@ -2123,7 +2123,7 @@ test('chat menu export is scoped and chat import merges without replacing histor
 test('sidebar separates projects from personal chats and keeps navigation collapsible', async ({ page }) => {
   await page.addInitScript(() => {
     const project = (id, name) => ({ id, name, description: '', instructions: '', memoryScope: 'project-only', memory: [], createdAt: '', updatedAt: '' });
-    const chat = (id, title, projectId) => ({ id, title, projectId, projectMemoryEnabled: false, serverProjectMemoryEnabled: false, messages: [] });
+    const chat = (id, title, projectId) => ({ id, title, projectId, messages: [] });
     localStorage.setItem('ai_projects_v1', JSON.stringify([project('project-alpha','Alpha project'), project('project-beta','Beta project')]));
     localStorage.setItem('ai_chats_v87', JSON.stringify([chat('chat-personal','Personal chat',null),chat('chat-alpha','Alpha project chat','project-alpha'),chat('chat-beta','Beta project chat','project-beta')]));
     localStorage.setItem('ai_current_chat_v87','chat-alpha');
@@ -2181,7 +2181,7 @@ test('request-only project context is sent once and does not change the active c
   });
   await page.addInitScript(() => {
     const project=(id,name,instructions)=>({id,name,description:'',instructions,memoryScope:'project-only',memory:[{id:id+'-memory',text:name+' memory sentinel',createdAt:''}],createdAt:'',updatedAt:''});
-    const chat=(id,title,projectId)=>({id,title,projectId,projectMemoryEnabled:true,serverProjectMemoryEnabled:false,messages:[]});
+    const chat=(id,title,projectId)=>({id,title,projectId,messages:[]});
     localStorage.setItem('ai_projects_v1',JSON.stringify([project('project-alpha','Alpha project','ALPHA_ONLY_INSTRUCTION'),project('project-beta','Beta project','BETA_ONE_SHOT_INSTRUCTION')]));
     localStorage.setItem('ai_chats_v87',JSON.stringify([chat('chat-alpha','Alpha chat','project-alpha'),chat('chat-beta','Beta chat','project-beta')]));
     localStorage.setItem('ai_current_chat_v87','chat-alpha');
