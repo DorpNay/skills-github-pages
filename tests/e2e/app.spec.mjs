@@ -159,6 +159,7 @@ test('project rows filter the Chats list and create chats in the selected projec
   await page.locator('#chatListNewButton').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(projectId);
   await expect(page.locator('#chatSectionTitle')).toContainText('Filtered project');
+  await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#chatListBack').click();
   await expect(page.locator('#chatSectionTitle')).toContainText('Без проекта');
   await page.locator('#chatListNewButton').click();
