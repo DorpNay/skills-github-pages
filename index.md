@@ -458,6 +458,12 @@ permalink: /
         </div>
       </details>
     </section>
+    <details id="projectlessGroup" class="mx-3 my-2 rounded-xl border border-gray-800 projectless-group">
+      <summary class="flex items-center gap-2 rounded-xl px-3 py-2.5 text-xs font-semibold cursor-pointer select-none">
+        <span aria-hidden="true">○</span><span data-i18n="noProjectNav">Без проекта</span><span id="projectlessChatCount" class="ml-auto text-[10px] text-gray-500">0</span>
+      </summary>
+      <div class="px-2 pb-2"><button type="button" data-action="projectless-nav" class="w-full rounded-lg border border-gray-700 px-2 py-2 text-left text-[10px] text-gray-300" data-i18n="showUnassignedChats">Показать личные чаты</button></div>
+    </details>
     <section id="projectPanel" class="px-3 py-2 border-t border-gray-800 space-y-2" aria-label="Проекты и настройки проекта">
       <div class="mb-2">
         <button type="button" data-action="open-project-create" data-i18n="createProject" class="w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-2 text-left text-xs font-semibold">＋ Создать проект</button>
@@ -466,20 +472,18 @@ permalink: /
         <button id="projectNavToggle" type="button" data-action="toggle-project-navigation" aria-expanded="false" aria-controls="projectNavigationList" class="w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold project-nav-heading">
           <span>▣ <span data-i18n="projectsTitle">Проекты</span></span><span id="projectNavChevron" aria-hidden="true">⌄</span>
         </button>
-        <button id="projectlessNavButton" type="button" data-action="projectless-nav" class="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-xs project-nav-unassigned" aria-label="Показать чаты без проекта">
-          <span aria-hidden="true">○</span><span data-i18n="noProjectNav">Без проекта</span><span id="projectlessChatCount" class="ml-auto text-[10px] text-gray-500">0</span>
-        </button>
         <div id="projectNavigationList" class="hidden pl-2 space-y-1" aria-label="Список проектов"></div>
       </div>
 
     </section>
     <p id="projectStatusLine" class="mx-3 -mt-1 mb-1 px-2 text-[10px] leading-relaxed text-gray-500" role="status" aria-live="polite">Личный чат · без проекта</p>
     <button id="chatListBack" type="button" data-action="chat-list-back" class="hidden mx-3 mt-2 w-[calc(100%-1.5rem)] rounded-lg border border-gray-700 px-3 py-2 text-left text-xs text-gray-300" aria-label="Вернуться ко всем чатам">← Все чаты</button>
+    <button id="chatListNewButton" type="button" data-action="new-chat" data-i18n="newPersonalChat" class="mx-3 mt-2 w-[calc(100%-1.5rem)] rounded-lg border border-blue-500/25 bg-blue-600/10 hover:bg-blue-600/20 py-2.5 text-xs font-semibold text-blue-200">＋ Новый личный чат</button>
+    <button id="restoreLastClosedChat" type="button" data-action="restore-last-closed-chat" class="hidden mx-3 mt-1 w-[calc(100%-1.5rem)] rounded-lg border border-gray-700 px-3 py-2 text-left text-[10px] text-gray-300">↶ Восстановить последний закрытый чат</button>
     <details id="chatSection" open class="mx-3 my-2 rounded-xl border border-gray-800">
       <summary class="chat-section-summary flex items-center justify-between gap-2 px-3 py-2.5 text-sm font-semibold cursor-pointer select-none" aria-controls="chatList">
         <span>💬 <span id="chatSectionTitle" data-i18n="chatsTitle">Чаты</span></span><span id="chatSectionCount" class="text-[10px] text-gray-500">0</span>
       </summary>
-      <div class="px-2 pt-2"><button id="chatListNewButton" type="button" data-action="new-chat" data-i18n="newPersonalChat" class="w-full rounded-lg border border-blue-500/25 bg-blue-600/10 hover:bg-blue-600/20 py-2 text-xs font-semibold text-blue-200">＋ Новый личный чат</button></div>
       <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
     </details>
 
@@ -493,7 +497,7 @@ permalink: /
     <section class="w-full max-w-xl max-h-[94dvh] overflow-y-auto overscroll-contain rounded-2xl border border-gray-700 bg-gray-950 p-3 sm:p-4 shadow-2xl">
       <header class="sticky top-0 z-10 -mx-3 -mt-3 mb-3 flex items-center justify-between gap-3 border-b border-gray-800 bg-gray-950/95 px-3 py-3 backdrop-blur sm:-mx-4 sm:-mt-4 sm:px-4">
         <h2 id="projectSettingsModalTitle" class="text-sm font-bold" data-i18n="manageProject">Настройки проекта</h2>
-        <button type="button" data-action="close-project-settings" aria-label="Закрыть настройки проекта" class="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gray-700 text-sm text-gray-300">✕</button>
+        <button type="button" data-action="close-project-settings" aria-label="Назад к меню проектов" class="rounded-xl border border-gray-700 px-3 py-2 text-xs text-gray-300">← Назад</button>
       </header>
           <details id="projectManagerDetails" open class="rounded-xl border border-gray-800">
             <summary class="hidden" aria-hidden="true">Настройки проекта</summary>
@@ -540,7 +544,7 @@ permalink: /
     <section class="w-full max-w-lg rounded-2xl border border-gray-700 bg-gray-950 p-4 shadow-2xl">
       <header class="mb-3 flex items-center justify-between gap-3 border-b border-gray-800 pb-3">
         <h2 id="projectCreateModalTitle" class="text-sm font-bold" data-i18n="projectCreateTitle">Создать проект</h2>
-        <button type="button" data-action="close-project-create" aria-label="Закрыть создание проекта" class="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gray-700 text-sm text-gray-300">✕</button>
+        <button type="button" data-action="close-project-create" aria-label="Назад к меню проектов" class="rounded-xl border border-gray-700 px-3 py-2 text-xs text-gray-300">← Назад</button>
       </header>
       <p class="mb-3 text-xs leading-relaxed text-gray-400" data-i18n="projectCreateHelp">Создание проекта не перемещает текущий чат. Новый чат можно отдельно создать из строки проекта.</p>
       <div class="space-y-2">
@@ -877,7 +881,7 @@ permalink: /
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
       tavilyKey: 'ai_tavily_key', systemPrompt: 'ai_system_prompt', composerPosition: 'ai_composer_position_v1',
-      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', searchMode: 'ai_web_search_preset_v1', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider', cloudflareAccountId: 'ai_cloudflare_account_id', projects: 'ai_projects_v1', globalMemoryEnabled: 'ai_global_memory_enabled_v1', privateMemoryEnabled: 'ai_private_memory_enabled_v1'
+      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', searchMode: 'ai_web_search_preset_v1', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider', cloudflareAccountId: 'ai_cloudflare_account_id', projects: 'ai_projects_v1', globalMemoryEnabled: 'ai_global_memory_enabled_v1', privateMemoryEnabled: 'ai_private_memory_enabled_v1', lastClosedChat: 'ai_last_closed_chat_v1'
     };
     const LEGACY_DEFAULT_SYSTEM = 'Ты автономный ИИ-ассистент. Отвечай ясно, проверяй предположения и выдавай структурированные отчёты. Если включён веб-поиск, используй его для актуальной информации.';
     // Keep the user-editable global system prompt empty unless the user supplies instructions.
@@ -2013,7 +2017,8 @@ permalink: /
       if(!name){input.focus();showToast(getUiLanguage()==='en'?'Enter a project name first.':'Сначала введи название проекта.','error');return;}
       if(projects.length>=200){showToast('Достигнут предел локальных проектов (200).','error');return;}
       const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectCreateInstructionsInput').value.trim().slice(0,6000),memoryScope:'project-only',memory:[],createdAt:now,updatedAt:now};
-      projects.unshift(project);selectedProjectForSettingsId=project.id;activeChatProjectId=project.id;persistProjects();
+      const currentProjectId=getCurrentChat()?.projectId||null;
+      projects.unshift(project);selectedProjectForSettingsId=project.id;activeChatProjectId=currentProjectId;persistProjects();
       renderProjectUI();renderChatList();
       const navigation=$('projectNavigationList');
       navigation?.classList.remove('hidden');
@@ -2139,7 +2144,7 @@ permalink: /
       list.replaceChildren();
       const unassigned=chats.filter(chat=>!chat.projectId);
       $('projectlessChatCount').textContent=String(unassigned.length);
-      $('projectlessNavButton').classList.toggle('is-active',!activeChatProjectId);
+      $('projectlessGroup').classList.toggle('is-active',!activeChatProjectId);
       const english=getUiLanguage()==='en';
       for(const project of projects) {
         const row=document.createElement('div');row.className='project-nav-row flex items-center gap-1';row.dataset.projectId=project.id;
@@ -2178,6 +2183,9 @@ permalink: /
       $('chatListBack').textContent=english?'← All chats':'← Все чаты';
       $('chatListNewButton').textContent=activeProject?(english?'＋ New chat in project':'＋ Новый чат в проекте'):(english?'＋ New personal chat':'＋ Новый личный чат');
       $('chatListNewButton').setAttribute('aria-label',$('chatListNewButton').textContent);
+      const restoreButton=$('restoreLastClosedChat'),lastClosed=getLastClosedChat();
+      restoreButton.classList.toggle('hidden',!lastClosed);
+      if(lastClosed)restoreButton.textContent=(english?'↶ Restore: ':'↶ Восстановить: ')+String(lastClosed.chat.title||'Chat').slice(0,48);
       list.dataset.emptyLabel=activeProject?(english?'No chats in this project yet.':'В этом проекте пока нет чатов.'):(english?'No personal chats yet.':'Нет личных чатов без проекта');
       list.classList.toggle('is-empty',count===0);
       visibleChats.forEach(chat=>list.appendChild(createChatRow(chat,false)));
@@ -2246,6 +2254,7 @@ permalink: /
     function toggleSidebar(force) {
       const sidebar = $('sidebar'); const overlay = $('sidebarOverlay');
       const open = typeof force === 'boolean' ? force : sidebar.classList.contains('-translate-x-full');
+      if(!open){$('memoryToolsDetails').open=false;$('privateMemoryHelp').open=false;$('sharedMemoryHelp').open=false;}
       sidebar.classList.toggle('-translate-x-full', !open);
       overlay.classList.toggle('hidden', !open);
     }
@@ -4298,8 +4307,24 @@ permalink: /
       activeChatProjectId=target.projectId||null;
       updateState(null, id); toggleSidebar(false);
     }
+    function getLastClosedChat() {
+      try {
+        const value=JSON.parse(safeGet(STORAGE.lastClosedChat)||'null');
+        if(!value?.chat?.id||!Array.isArray(value.chat.messages)||Date.now()-Number(value.closedAt||0)>7*24*60*60*1000)return null;
+        return value;
+      } catch (_) { return null; }
+    }
+    function restoreLastClosedChat() {
+      const value=getLastClosedChat();if(!value)return;
+      if(chats.some(chat=>chat.id===value.chat.id)){safeSet(STORAGE.lastClosedChat,'');renderChatList();return;}
+      const restored={...value.chat,projectId:projects.some(project=>project.id===value.chat.projectId)?value.chat.projectId:null};
+      chats.unshift(restored);safeSet(STORAGE.lastClosedChat,'');activeChatProjectId=restored.projectId||null;
+      updateState(null,restored.id);showToast(getUiLanguage()==='en'?'Last closed chat restored.':'Последний закрытый чат восстановлен.');
+    }
     function deleteChat(id) {
       if (chats.length <= 1) { alert('Нельзя удалить единственный чат.'); return; }
+      const deleted=chats.find(chat=>chat.id===id);if(!deleted)return;
+      safeSet(STORAGE.lastClosedChat,JSON.stringify({chat:deleted,closedAt:Date.now()}));
       if (activeChatId === id) stopGeneration();
       const next = chats.filter((chat) => chat.id !== id);
       updateState(next, currentChatId === id ? next[0].id : currentChatId);
@@ -5073,6 +5098,7 @@ permalink: /
             activeChatProjectId=null;renderChatList();$('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});
             $('chatSection').querySelector('summary')?.focus();break;
           }
+          case 'restore-last-closed-chat': restoreLastClosedChat();break;
           case 'select-project': {
             const id=control.dataset.projectId;if(!projects.some(project=>project.id===id))break;
             activeChatProjectId=id;renderChatList();$('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});break;
@@ -5083,7 +5109,7 @@ permalink: /
           case 'open-project-settings': {
             projectSettingsOpener=control;
             selectedProjectForSettingsId=projects.some(project=>project.id===control.dataset.projectId)?control.dataset.projectId:null;
-            $('projectManagerDetails').open=true;renderProjectUI();$('projectSettingsModal').classList.remove('hidden');toggleSidebar(false);requestAnimationFrame(()=>$('projectNameInput').focus({preventScroll:true}));break;
+            $('projectManagerDetails').open=true;renderProjectUI();$('projectSettingsModal').classList.remove('hidden');requestAnimationFrame(()=>$('projectNameInput').focus({preventScroll:true}));break;
           }
           case 'detach-current-chat': moveCurrentChatToProject('');break;
           case 'delete-project': deleteCurrentProject();break;
