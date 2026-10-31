@@ -55,6 +55,11 @@ async function setSkillPreset(page, preset) {
   await page.locator('#skillPresetSelect').selectOption(preset);
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
 }
+async function toggleHeaderTheme(page) {
+  await page.locator('#languageMenu > summary').click();
+  await page.locator('#headerThemeMenuToggle').click();
+}
+
 async function selectLanguage(page, language) {
   if (await page.locator('#settingsModal').evaluate(element => element.classList.contains('hidden'))) await page.locator('[data-action="toggle-settings"]').click();
   if (!(await page.locator('#additionalSettings').evaluate(element => element.open))) await page.locator('#additionalSettings > summary').click();
@@ -252,19 +257,17 @@ test('mobile sidebar and modal close controls meet the 44px touch target', async
 
 test('theme and language are a compact accessible header group', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('#homeThemeToggle')).toBeVisible();
+  await expect(page.locator('#homeThemeToggle')).toHaveCount(0);
   await expect(page.locator('#languageMenu')).toBeVisible();
   await expect(page.locator('#sidebarThemeToggle')).toHaveCount(0);
   await expect(page.locator('#additionalSettings [data-action="toggle-theme-cycle"]')).toHaveCount(0);
+  await expect(page.locator('#headerThemeMenuToggle')).toBeHidden();
 
-  const themeTarget = await page.locator('#homeThemeToggle').boundingBox();
-  const languageTarget = await page.locator('#languageMenu > summary').boundingBox();
-  expect(themeTarget?.width || 0).toBeGreaterThanOrEqual(44);
-  expect(themeTarget?.height || 0).toBeGreaterThanOrEqual(44);
-  expect(languageTarget?.width || 0).toBeGreaterThanOrEqual(44);
-  expect(languageTarget?.height || 0).toBeGreaterThanOrEqual(44);
+  const preferencesTarget = await page.locator('#languageMenu > summary').boundingBox();
+  expect(preferencesTarget?.width || 0).toBeGreaterThanOrEqual(44);
+  expect(preferencesTarget?.height || 0).toBeGreaterThanOrEqual(44);
 
-  await page.locator('#homeThemeToggle').click();
+  await toggleHeaderTheme(page);
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(page.locator('#uiTheme')).toHaveValue('light');
 
@@ -274,7 +277,7 @@ test('theme and language are a compact accessible header group', async ({ page }
   await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
   await expect(page.locator('#languageMenu [data-language="en"]')).toHaveAttribute('aria-pressed', 'true');
 
-  await page.locator('#homeThemeToggle').click();
+  await toggleHeaderTheme(page);
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.locator('#languageMenu > summary').click();
   await page.locator('#languageMenu [data-language="ru"]').click();
@@ -323,7 +326,7 @@ test('text readability preferences persist and apply in both themes', async ({ p
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_text_contrast_v1'))).toBe('high');
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
 
-  await page.locator('#homeThemeToggle').click();
+  await toggleHeaderTheme(page);
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(page.locator('html')).toHaveAttribute('data-text-contrast', 'high');
   const scaledFontSize = await page.locator('#chatBox').evaluate(element => parseFloat(getComputedStyle(element).fontSize));
@@ -1181,7 +1184,7 @@ test('Cloudflare endpoint is built from Account ID and HF uses the Inference Pro
 test('Obsidian Studio and Clean Light preferences persist and respect motion controls', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await page.locator('#homeThemeToggle').click();
+  await toggleHeaderTheme(page);
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_theme_v2'))).toBe('light');
 
@@ -1201,7 +1204,7 @@ test('Obsidian Studio and Clean Light preferences persist and respect motion con
   await page.locator('#uiMotion').selectOption('auto');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'auto');
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
-  await page.locator('#homeThemeToggle').click();
+  await toggleHeaderTheme(page);
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_theme_v2'))).toBe('dark');
 });
@@ -1254,9 +1257,9 @@ test('aLandi cloud status only turns green after a real model response, and core
   await selectLanguage(page, 'en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
-  await page.locator('#homeThemeToggle').click();
+  await toggleHeaderTheme(page);
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await page.locator('#homeThemeToggle').click();
+  await toggleHeaderTheme(page);
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 });
 
