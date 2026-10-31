@@ -155,3 +155,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - The local last-closed-chat restore path already existed; added a Playwright scenario that deletes a chat, reloads the app and restores that chat from local storage without creating a new one.
 - Test commit: `2bfc6c080abeef00ed2566e54e0b847f40c11e2d`. JavaScript syntax parsing passed; browser E2E was not executed and is not marked passed.
 - PR #131 remains open and unmerged; no deployment.
+
+
+### 2026-10-31 — project-to-existing-chat context handoff in PR #131
+- Implemented a project-settings action to choose an existing chat and queue project context for that chat's next request. The action preserves the current chat and all project memberships; it does not create a chat. It reuses the per-chat request-context queue and five-project limit.
+- Audited the newly added path and fixed a malformed `querySelector` for the handoff button; without the closing attribute quote, `renderProjectUI()` could throw and the handoff control would remain disabled.
+- Added E2E coverage for handing off to a non-current chat, unchanged current chat/chat count/project membership, and one-shot context consumption after the next successful request.
+- UI fix commit `c3855c28317c5b481d59b463e4d4cb985d992dcd`; E2E commits `ccb76ea689ddb0ad6ef8d580dee06148aab6f94f` and `24004fe48e506a7d1a7e03b1538f3faed209381b`.
+- JavaScript syntax parsing passed. Playwright/Chromium and exact-head CI were not executed; no passing result is claimed. No merge/deploy.
