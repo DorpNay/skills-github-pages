@@ -2065,6 +2065,7 @@ permalink: /
     }
     function renderProjectNavigation() {
       const list=$('projectNavigationList');if(!list)return;
+      const expanded=new Set([...list.querySelectorAll('details.project-nav-item[open]')].map(item=>item.dataset.projectId));
       list.replaceChildren();
       const unassigned=chats.filter(chat=>!chat.projectId);
       $('projectlessChatCount').textContent=String(unassigned.length);
@@ -2072,7 +2073,7 @@ permalink: /
       const english=getUiLanguage()==='en';
       for(const project of projects) {
         const row=document.createElement('div');row.className='project-nav-row flex items-center gap-1';row.dataset.projectId=project.id;
-        const group=document.createElement('details');group.className='project-nav-item min-w-0 flex-1';group.dataset.projectId=project.id;
+        const group=document.createElement('details');group.className='project-nav-item min-w-0 flex-1';group.dataset.projectId=project.id;group.open=expanded.has(project.id);
         const summary=document.createElement('summary');
         const caret=document.createElement('span');caret.className='project-nav-caret';caret.textContent='›';caret.setAttribute('aria-hidden','true');
         const title=document.createElement('span');title.className='min-w-0 flex-1 truncate';title.textContent=project.name;
