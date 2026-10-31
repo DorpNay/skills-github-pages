@@ -5007,7 +5007,6 @@ permalink: /
           case 'add-project-memory': addProjectMemory();break;
           case 'delete-project-memory': deleteProjectMemory(control.dataset.memoryId);break;
           case 'suggest-helper-memory': await suggestProjectMemoryWithHelper();break;
-          case 'add-helper-memory-suggestion': addHelperMemorySuggestion(Number(control.dataset.suggestionIndex));break;
            case 'refresh-server-memory': await loadServerProjectMemory();break;
            case 'upload-server-memory': await uploadLocalProjectMemory();break;
            case 'review-server-memory': await reviewServerProjectMemory(control.dataset.memoryNodeId,control.dataset.reviewStatus);break;
