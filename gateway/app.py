@@ -18,7 +18,7 @@ import time
 import zipfile
 import xml.etree.ElementTree as ET  # nosec B405 -- custom parser below rejects all DTD declarations.
 from contextlib import asynccontextmanager, closing
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from functools import wraps
 from typing import Any, AsyncIterator, Mapping
 from urllib.parse import urlsplit
@@ -139,9 +139,6 @@ class Settings:
     memory_sync_enabled: bool = False
     memory_path: str = "/var/lib/alandi-gateway/memory.sqlite3"
     memory_max_state_bytes: int = 512_000
-    memory_graph_enabled: bool = False
-    memory_graph_path: str = "/var/lib/alandi-gateway/memory-graph.sqlite3"
-    global_memory_enabled: bool = False
     rag_enabled: bool = False
     rag_path: str = "/var/lib/alandi-gateway/rag.sqlite3"
     rag_max_chunk_chars: int = 20_000
@@ -296,9 +293,6 @@ class Settings:
             memory_sync_enabled=bool_env("ALANDI_MEMORY_SYNC_ENABLED", False),
             memory_path=os.getenv("ALANDI_MEMORY_PATH", "/var/lib/alandi-gateway/memory.sqlite3").strip() or "/var/lib/alandi-gateway/memory.sqlite3",
             memory_max_state_bytes=int_env("ALANDI_MEMORY_MAX_STATE_BYTES", 512_000, 1024),
-            memory_graph_enabled=bool_env("ALANDI_MEMORY_GRAPH_ENABLED", False),
-            memory_graph_path=os.getenv("ALANDI_MEMORY_GRAPH_PATH", "/var/lib/alandi-gateway/memory-graph.sqlite3").strip() or "/var/lib/alandi-gateway/memory-graph.sqlite3",
-            global_memory_enabled=bool_env("ALANDI_GLOBAL_MEMORY_ENABLED", False),
             rag_enabled=bool_env("ALANDI_RAG_ENABLED", False),
             rag_path=os.getenv("ALANDI_RAG_PATH", "/var/lib/alandi-gateway/rag.sqlite3").strip() or "/var/lib/alandi-gateway/rag.sqlite3",
             rag_max_chunk_chars=int_env("ALANDI_RAG_MAX_CHUNK_CHARS", 20_000, 100),
@@ -835,7 +829,6 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         app.state.client = httpx.AsyncClient(timeout=timeout, transport=transport)
         app.state.semaphore = asyncio.Semaphore(config.max_inflight_requests)
         app.state.delta_store = None
-        app.state.memory_graph_store = None
         app.state.rag_store = None
         app.state.oauth_vault = None
         if config.oauth_enabled:
@@ -854,13 +847,6 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 config.memory_path, max_state_bytes=config.memory_max_state_bytes
             )
             app.state.delta_store.initialize()
-        if config.memory_graph_enabled:
-            try:
-                from .memory.manager import MemoryManager
-            except ImportError:  # supports "uvicorn app:app" from the gateway directory
-                from memory.manager import MemoryManager
-            app.state.memory_graph_store = MemoryManager(config.memory_graph_path)
-            app.state.memory_graph_store.initialize()
         if config.rag_enabled:
             try:
                 from .rag.lazy_graph_rag import LazyGraphRAG
@@ -1039,199 +1025,6 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             logger.warning("Memory delta write failed")
             raise HTTPException(503, "Conversation memory store is unavailable") from None
         return JSONResponse(result, headers={"Cache-Control": "no-store"})
-
-    def memory_graph_store_or_503(request: Request):
-        store = request.app.state.memory_graph_store
-        if store is None:
-            raise HTTPException(503, "Structured memory graph is disabled")
-        return store
-
-    def validate_memory_graph_scope(store, scope: object, scope_id: object, global_opt_in: object = False):
-        if type(global_opt_in) is not bool:
-            raise HTTPException(400, "global_opt_in must be a boolean")
-        try:
-            ref = store._scope(scope, scope_id)
-        except ValueError as exc:
-            raise HTTPException(400, str(exc)) from None
-        if ref.kind == "global":
-            if not config.global_memory_enabled or global_opt_in is not True:
-                raise HTTPException(403, "Global memory requires ALANDI_GLOBAL_MEMORY_ENABLED and explicit global_opt_in=true")
-        elif global_opt_in is True:
-            raise HTTPException(400, "global_opt_in is only valid for global scope")
-        return ref
-
-    async def read_memory_graph_payload(request: Request) -> dict[str, Any]:
-        body = await read_limited_body(request, min(config.max_body_bytes, 64 * 1024))
-        try:
-            payload = json.loads(body)
-        except (json.JSONDecodeError, UnicodeDecodeError):
-            raise HTTPException(400, "Request body must be valid UTF-8 JSON") from None
-        if not isinstance(payload, dict):
-            raise HTTPException(400, "Request body must be a JSON object")
-        return payload
-
-    @app.get("/v1/memory/graph/nodes")
-    async def memory_graph_list_nodes(request: Request, scope: str, scope_id: str,
-                                      statuses: str = "confirmed", limit: int = 100,
-                                      node_type: str | None = None, valid_at: str | None = None,
-                                      recorded_at: str | None = None, global_opt_in: bool = False,
-                                      authorization: str | None = Header(default=None)) -> JSONResponse:
-        authorize(config, authorization)
-        store = memory_graph_store_or_503(request)
-        ref = validate_memory_graph_scope(store, scope, scope_id, global_opt_in)
-        if not isinstance(statuses, str) or len(statuses) > 180:
-            raise HTTPException(400, "statuses must be a bounded comma-separated list")
-        selected_statuses = () if statuses == "all" else tuple(part.strip() for part in statuses.split(",") if part.strip())
-        if statuses != "all" and (not selected_statuses or len(selected_statuses) > 5):
-            raise HTTPException(400, "statuses must name 1 to 5 statuses or 'all'")
-        try:
-            nodes = store.list_nodes(scope=ref.kind, scope_id=ref.scope_id, statuses=selected_statuses,
-                                     node_type=node_type, limit=limit, valid_at=valid_at, recorded_at=recorded_at)
-        except (ValueError, TypeError) as exc:
-            raise HTTPException(400, str(exc)) from None
-        except sqlite3.Error:
-            logger.warning("Memory graph list failed")
-            raise HTTPException(503, "Memory graph is unavailable") from None
-        return JSONResponse({"scope": ref.kind, "scope_id": ref.scope_id,
-                             "nodes": [asdict(node) for node in nodes], "count": len(nodes)},
-                            headers={"Cache-Control": "no-store"})
-
-    @app.post("/v1/memory/graph/nodes")
-    async def memory_graph_add_node(request: Request,
-                                    authorization: str | None = Header(default=None)) -> JSONResponse:
-        authorize(config, authorization)
-        store = memory_graph_store_or_503(request)
-        payload = await read_memory_graph_payload(request)
-        required = {"content", "scope", "scope_id", "source_kind", "source_id"}
-        allowed = required | {"node_type", "confidence", "sensitivity", "valid_from", "valid_until",
-                             "source_uri", "source_text", "metadata", "global_opt_in"}
-        if required - set(payload) or set(payload) - allowed:
-            raise HTTPException(400, "Expected content, scope, scope_id, source_kind and source_id; unknown fields are rejected")
-        ref = validate_memory_graph_scope(store, payload["scope"], payload["scope_id"],
-                                         payload.get("global_opt_in", False))
-        try:
-            # New external facts always start as candidates; only the review endpoint can confirm/reject.
-            node = store.add_fact(payload["content"], scope=ref.kind, scope_id=ref.scope_id,
-                                  source_kind=payload["source_kind"], source_id=payload["source_id"],
-                                  node_type=payload.get("node_type", "FACT"),
-                                  confidence=payload.get("confidence", 0.5),
-                                  sensitivity=payload.get("sensitivity", "normal"),
-                                  valid_from=payload.get("valid_from"), valid_until=payload.get("valid_until"),
-                                  source_uri=payload.get("source_uri"), source_text=payload.get("source_text"),
-                                  metadata=payload.get("metadata"))
-        except (ValueError, TypeError) as exc:
-            raise HTTPException(400, str(exc)) from None
-        except sqlite3.Error:
-            logger.warning("Memory graph node create failed")
-            raise HTTPException(503, "Memory graph is unavailable") from None
-        return JSONResponse({"node": asdict(node)}, status_code=201, headers={"Cache-Control": "no-store"})
-
-    @app.post("/v1/memory/graph/search")
-    async def memory_graph_search(request: Request,
-                                  authorization: str | None = Header(default=None)) -> JSONResponse:
-        authorize(config, authorization)
-        store = memory_graph_store_or_503(request)
-        payload = await read_memory_graph_payload(request)
-        allowed = {"query", "scope", "scope_id", "statuses", "node_type", "limit",
-                   "valid_at", "recorded_at", "global_opt_in"}
-        if not {"query", "scope", "scope_id"}.issubset(payload) or set(payload) - allowed:
-            raise HTTPException(400, "Expected query, scope, scope_id and only documented optional fields")
-        ref = validate_memory_graph_scope(store, payload["scope"], payload["scope_id"],
-                                         payload.get("global_opt_in", False))
-        statuses = payload.get("statuses", ["confirmed"])
-        if not isinstance(statuses, list) or not 1 <= len(statuses) <= 5 or any(not isinstance(s, str) for s in statuses):
-            raise HTTPException(400, "statuses must be a list of 1 to 5 status strings")
-        node_type = payload.get("node_type")
-        if node_type is not None and (not isinstance(node_type, str) or len(node_type) > 48):
-            raise HTTPException(400, "node_type must be a string of at most 48 characters")
-        try:
-            nodes = store.search_nodes(payload["query"], scope=ref.kind, scope_id=ref.scope_id,
-                                       statuses=tuple(statuses), node_type=node_type,
-                                       limit=payload.get("limit", 10), valid_at=payload.get("valid_at"),
-                                       recorded_at=payload.get("recorded_at"))
-        except (ValueError, TypeError) as exc:
-            raise HTTPException(400, str(exc)) from None
-        except sqlite3.Error:
-            logger.warning("Memory graph search failed")
-            raise HTTPException(503, "Memory graph is unavailable") from None
-        return JSONResponse({"scope": ref.kind, "scope_id": ref.scope_id,
-                             "nodes": [asdict(node) for node in nodes], "count": len(nodes)},
-                            headers={"Cache-Control": "no-store"})
-
-    @app.post("/v1/memory/graph/nodes/{node_id}/review")
-    async def memory_graph_review_node(node_id: str, request: Request,
-                                       authorization: str | None = Header(default=None)) -> JSONResponse:
-        authorize(config, authorization)
-        store = memory_graph_store_or_503(request)
-        payload = await read_memory_graph_payload(request)
-        required = {"scope", "scope_id", "status", "reason_code"}
-        allowed = required | {"global_opt_in"}
-        if required - set(payload) or set(payload) - allowed:
-            raise HTTPException(400, "Expected scope, scope_id, status and reason_code only")
-        ref = validate_memory_graph_scope(store, payload["scope"], payload["scope_id"],
-                                         payload.get("global_opt_in", False))
-        try:
-            node = store.review_node(node_id, scope=ref.kind, scope_id=ref.scope_id,
-                                    status=payload["status"], reason_code=payload["reason_code"])
-        except (ValueError, TypeError) as exc:
-            raise HTTPException(400, str(exc)) from None
-        except sqlite3.Error:
-            logger.warning("Memory graph review failed")
-            raise HTTPException(503, "Memory graph is unavailable") from None
-        return JSONResponse({"node": asdict(node)}, headers={"Cache-Control": "no-store"})
-
-    @app.post("/v1/memory/graph/relations")
-    async def memory_graph_relate(request: Request,
-                                  authorization: str | None = Header(default=None)) -> JSONResponse:
-        authorize(config, authorization)
-        store = memory_graph_store_or_503(request)
-        payload = await read_memory_graph_payload(request)
-        required = {"scope", "scope_id", "relation_type", "evidence_source_kind", "evidence_source_id"}
-        allowed = required | {"source_id", "target_id", "old_node_id", "new_node_id", "confidence", "global_opt_in"}
-        if required - set(payload) or set(payload) - allowed:
-            raise HTTPException(400, "Expected scope, scope_id, relation_type and relation provenance; unknown fields are rejected")
-        ref = validate_memory_graph_scope(store, payload["scope"], payload["scope_id"],
-                                         payload.get("global_opt_in", False))
-        relation_type = payload["relation_type"]
-        try:
-            if relation_type == "SUPERSEDES":
-                if not {"old_node_id", "new_node_id"}.issubset(payload) or {"source_id", "target_id"} & set(payload):
-                    raise HTTPException(400, "SUPERSEDES requires old_node_id and new_node_id")
-                store.supersede(payload["old_node_id"], payload["new_node_id"], scope=ref.kind, scope_id=ref.scope_id,
-                                evidence_source_kind=payload["evidence_source_kind"],
-                                evidence_source_id=payload["evidence_source_id"])
-            else:
-                if not {"source_id", "target_id"}.issubset(payload) or {"old_node_id", "new_node_id"} & set(payload):
-                    raise HTTPException(400, "This relation requires source_id and target_id")
-                store.relate(payload["source_id"], payload["target_id"], scope=ref.kind, scope_id=ref.scope_id,
-                             relation_type=relation_type, evidence_source_kind=payload["evidence_source_kind"],
-                             evidence_source_id=payload["evidence_source_id"], confidence=payload.get("confidence", 1.0))
-        except HTTPException:
-            raise
-        except (ValueError, TypeError) as exc:
-            raise HTTPException(400, str(exc)) from None
-        except sqlite3.Error:
-            logger.warning("Memory graph relation create failed")
-            raise HTTPException(503, "Memory graph is unavailable") from None
-        return JSONResponse({"status": "relation_created"}, headers={"Cache-Control": "no-store"})
-
-    @app.delete("/v1/memory/graph/nodes/{node_id}")
-    async def memory_graph_delete_node(node_id: str, request: Request, scope: str, scope_id: str,
-                                       global_opt_in: bool = False,
-                                       authorization: str | None = Header(default=None)) -> JSONResponse:
-        authorize(config, authorization)
-        store = memory_graph_store_or_503(request)
-        ref = validate_memory_graph_scope(store, scope, scope_id, global_opt_in)
-        try:
-            deleted = store.delete_with_propagation(node_id, scope=ref.kind, scope_id=ref.scope_id)
-        except (ValueError, TypeError) as exc:
-            raise HTTPException(400, str(exc)) from None
-        except sqlite3.Error:
-            logger.warning("Memory graph delete failed")
-            raise HTTPException(503, "Memory graph is unavailable") from None
-        if not deleted:
-            raise HTTPException(404, "Memory node not found in the requested scope")
-        return JSONResponse({"deleted_node_ids": deleted}, headers={"Cache-Control": "no-store"})
 
     @app.post("/v1/helpers/project-memory-suggestions")
     async def helper_project_memory_suggestions(
