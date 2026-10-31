@@ -5,13 +5,13 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 ## Current working checkpoint — 2026-10-31
 
 - **Current main SHA:** `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; main remains the stable Landing V1.0 baseline.
-- **PR #131 — aLandi Landing UI v2.0:** open, unmerged; branch `feat/landing-v1-accessibility-responsive-20261031`; latest UI code commit `a541932307c764e56f81b795b940785839128338`; E2E update commits `64cfa3abfd1750751951cf1715502e7ca3409ce4` and `2bfc6c080abeef00ed2566e54e0b847f40c11e2d`; the latter adds reload-safe last-closed-chat restoration coverage. Later commits in this checkpoint only refresh continuity docs. It is the sole branch for subsequent Landing V2 interface work. Do not merge or deploy without explicit owner approval.
+- **PR #131 — aLandi Landing UI v2.0:** open, unmerged; branch `feat/landing-v1-accessibility-responsive-20261031`; latest UI code commits `a541932307c764e56f81b795b940785839128338` (memory hierarchy) and `c3855c28317c5b481d59b463e4d4cb985d992dcd` (project-context handoff selector fix). E2E update commits include `2bfc6c080abeef00ed2566e54e0b847f40c11e2d`, `ccb76ea689ddb0ad6ef8d580dee06148aab6f94f` and `24004fe48e506a7d1a7e03b1538f3faed209381b`. Later commits in this checkpoint only refresh continuity docs. It is the sole branch for subsequent Landing V2 interface work. Do not merge or deploy without explicit owner approval.
 - **PR #127 — continuity/master task registry:** open, unmerged; central registry `docs/MASTER_TASK_REGISTRY_RU.md` consolidates 276 open/partial items across six source registers; duplicates remain until reconciliation.
 - **Research tracks:** PR #128 Agent Workforce 2.0, #129 Voice 2.0 and #130 Deep Research 2.0 remain isolated Draft/HOLD workstreams on `future-workstreams/parking-base-20261031`; do not merge into main. PR #125 Agent Studio blueprint and #124/#126 dependency overlap require reconciliation before further action.
 - **V1 freeze:** no new product capabilities or runtime components in the stable landing. Improve only inside the approved HTML/CSS/JavaScript + Jekyll/GitHub Pages and existing FastAPI gateway stack.
 - **Canonical UI checklist:** `docs/V1_UI_FINALIZATION_RU.md`; priority Landing V2 requirements are sections 8.1–8.17. Implementation status and evidence are tracked separately in `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
 - **Not verified:** exact-head Chromium/Playwright CI for PR #131, native iPhone Safari/VoiceOver, live VPS/Tunnel/Ollama/provider credentials, target-host model quality/RAM/latency, real voice runtime, production RAG corpus, OAuth/Drive and arbitrary-code sandbox.
-- **At the latest PR #131 UI code commit:** 79 commits ahead / 4 behind current main; later commits only refresh continuity docs; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Exact-head workflow-run and combined-status queries returned no entries. Do not report tests as passing.
+- **At the latest PR #131 UI code commit:** 92 commits ahead / 4 behind current main; later commits only refresh continuity docs; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Exact-head workflow-run and combined-status queries returned no entries. Do not report tests as passing.
 
 
 ## First-read order
@@ -128,3 +128,10 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Sidebar close continues to collapse only the memory settings/help disclosures; added E2E assertions that the project list, “Без проекта” group and Chats disclosure retain their state.
 - UI code commit `a541932307c764e56f81b795b940785839128338`; E2E update commit `64cfa3abfd1750751951cf1715502e7ca3409ce4`.
 - JavaScript syntax parsing passed; Playwright/Chromium has not been executed and no passing CI result is claimed.
+
+
+### Landing UI V2.0 — project-to-chat context handoff (2026-10-31)
+- Added a project-settings action that lists existing chats and queues the selected project's context for the chosen chat's next request. It does not create a chat or alter chat/project membership; it respects the five-project request-context cap and consumes the handoff on successful send.
+- Found and corrected a malformed `querySelector` for the handoff button that otherwise left the button disabled and could break `renderProjectUI()`.
+- Added E2E coverage for handing off to a non-current chat, unchanged current chat/count/membership, and one-shot context consumption. Syntax parsing passed; browser E2E and exact-head CI remain unexecuted.
+- UI fix commit `c3855c28317c5b481d59b463e4d4cb985d992dcd`; E2E commits `ccb76ea689ddb0ad6ef8d580dee06148aab6f94f` and `24004fe48e506a7d1a7e03b1538f3faed209381b`.
