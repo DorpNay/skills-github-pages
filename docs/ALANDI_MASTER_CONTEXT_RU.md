@@ -105,7 +105,7 @@ Exact-response cache должен учитывать нормализованн�
 - Последний подтверждённый main после PR #66: 1faf60164b9a0f82eb5e0c56b143ba90499be4a5; post-merge Quality, Pages и provenance прошли на точных SHA.
 - PR #66 добавил кураторскую карту docs/ALANDI_ARCHITECTURE_MAP_RU.md и безопасные exclusions для Graphify. Graphify code-only graph теперь строится в GitHub Actions как временный artifact-only dev-инструмент; последний проверенный срез — 1,109 nodes / 3,103 edges / 53 communities, без import cycles. Это не runtime-компонент и не замена ручной архитектурной проверки; локальный container checkout не требуется.
 - Ветка feat/local-helper-memory-suggestions-current-main-20261027 содержит новую вертикаль ручных suggestions для проектной памяти: операторский локальный helper model, ограниченные факты, фильтрация секретов, JSON schema, общий inference semaphore и явное сохранение только после клика. На момент записи это feature branch; exact-head CI ещё не подтверждён.
-- Не путать: browser local project memory, server memory graph и helper suggestions — три разных слоя. Helper не включает server memory graph, не меняет prompt автоматически и не подтверждает качество модели на VPS.
+- Не путать три разных слоя: browser-local project memory, local helper suggestions и внутренний Graphify/code-evidence graph. Server-memory browser bridge, per-chat toggle и gateway /v1/memory/graph/* API retired 2026-10-31 по требованию 8.12 / PR #131. Helper не включает серверную память, не меняет prompt автоматически и не подтверждает качество модели на VPS. Conversation delta sync и RAG остаются отдельными механизмами.
 
 ## Одобренные техники и происхождение
 
