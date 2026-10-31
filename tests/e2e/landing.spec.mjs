@@ -115,3 +115,43 @@ test('roadmap ticker respects reduced motion and leaves its message readable', a
   expect(await ticker.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
   await expect(item.locator('.roadmap-disclaimer')).toContainText('Не означает');
 });
+
+test('landing provides a visible keyboard skip link to the main content', async ({ page }) => {
+  await page.goto(LANDING_PATH, { waitUntil: 'domcontentloaded' });
+
+  const skipLink = page.getByRole('link', { name: 'Перейти к содержимому' });
+  await expect(skipLink).toBeAttached();
+  await page.keyboard.press('Tab');
+  await expect(skipLink).toBeFocused();
+
+  const top = await skipLink.evaluate(element => element.getBoundingClientRect().top);
+  expect(top).toBeGreaterThanOrEqual(0);
+
+  await page.keyboard.press('Enter');
+  await expect(page.locator('main')).toBeFocused();
+  await expect(page.locator('main')).toHaveAttribute('id', 'main-content');
+});
+
+test('landing capability cards use balanced tablet and mobile columns', async ({ page }) => {
+  await page.goto(LANDING_PATH, { waitUntil: 'domcontentloaded' });
+  const grid = page.locator('#capabilities .grid');
+
+  for (const [width, expectedColumns] of [[390, 1], [768, 2], [1024, 3]]) {
+    await page.setViewportSize({ width, height: 844 });
+    const columns = await grid.evaluate(element => getComputedStyle(element).gridTemplateColumns.split(' ').length);
+    expect(columns, `unexpected capability grid at ${width}px`).toBe(expectedColumns);
+  }
+});
+
+test('landing gradient heading remains readable in forced-colors mode', async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active' });
+  await page.goto(LANDING_PATH, { waitUntil: 'domcontentloaded' });
+
+  const styles = await page.locator('.gradient').evaluate(element => {
+    const computed = getComputedStyle(element);
+    return { backgroundImage: computed.backgroundImage, textFillColor: computed.webkitTextFillColor };
+  });
+  expect(styles.backgroundImage).toBe('none');
+  expect(styles.textFillColor).not.toBe('rgba(0, 0, 0, 0)');
+  await expect(page.getByRole('group', { name: /Поток запроса/ })).toBeAttached();
+});

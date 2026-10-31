@@ -47,6 +47,21 @@ title: aLandi — личная AI-среда с собственным gateway
       text-rendering: optimizeLegibility;
     }
     a { color: inherit; }
+    .skip-link {
+      position: fixed;
+      z-index: 1000;
+      inset: .75rem auto auto .75rem;
+      transform: translateY(calc(-100% - 1rem));
+      padding: .75rem 1rem;
+      border: 2px solid var(--bg);
+      border-radius: .7rem;
+      color: #07131a;
+      background: var(--mint);
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .skip-link:focus { transform: translateY(0); }
+    main:focus-visible { outline: 3px solid var(--mint); outline-offset: -3px; }
     a:focus-visible, summary:focus-visible { outline: 3px solid var(--mint); outline-offset: 4px; border-radius: .3rem; }
     .wrap { width: min(1120px, calc(100% - 2rem)); margin-inline: auto; }
     .nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.35rem 0; }
@@ -110,6 +125,26 @@ title: aLandi — личная AI-среда с собственным gateway
     .innovation-toggle:checked + .innovation-toggle-label { color:var(--mint); }
     @keyframes innovation-marquee { from { transform:translateX(100%); } to { transform:translateX(-100%); } }
     .roadmap-disclaimer { color:var(--muted); font-size:.78rem; line-height:1.5; margin-top:.4rem; }
+    @media (forced-colors: active) {
+      .gradient {
+        color: CanvasText;
+        background: none;
+        -webkit-text-fill-color: CanvasText;
+      }
+      .button.primary {
+        color: ButtonText;
+        background: ButtonFace;
+        border: 1px solid ButtonText;
+      }
+      .brand-mark {
+        color: CanvasText;
+        background: Canvas;
+        border: 1px solid CanvasText;
+        box-shadow: none;
+      }
+      .dot { background: CanvasText; box-shadow: none; }
+      .innovation-toggle-label { border-color: ButtonText; }
+    }
     @media (prefers-reduced-motion:reduce) {
       .innovation-track { animation:none!important; transform:none!important; white-space:normal; min-width:0; }
       html { scroll-behavior:auto; }
@@ -119,14 +154,15 @@ title: aLandi — личная AI-среда с собственным gateway
     .footer-links { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: .8rem; }
     .footer-links a { color: var(--blue); }
     @media (max-width: 800px) {
-      .grid { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .architecture { grid-template-columns: 1fr; }
       .arrow { justify-self: center; transform: rotate(90deg); }
       .stack-row { grid-template-columns: 1fr; gap: .25rem; }
       .nav { align-items: flex-start; }
       .nav-links { justify-content: flex-end; gap: .7rem; }
     }
-    @media (max-width: 520px) {
+    @media (max-width: 560px) {
+      .grid { grid-template-columns: 1fr; }
       .wrap { width: min(100% - 1.1rem, 1120px); }
       .nav { flex-direction: column; }
       .nav-links { justify-content: flex-start; }
@@ -136,6 +172,7 @@ title: aLandi — личная AI-среда с собственным gateway
   </style>
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Перейти к содержимому</a>
   <header class="wrap nav">
     <a class="brand" href="https://dorpnay.github.io/skills-github-pages/" aria-label="aLandi — к приложению">
       <span class="brand-mark" aria-hidden="true">a</span>
@@ -150,7 +187,7 @@ title: aLandi — личная AI-среда с собственным gateway
     </nav>
   </header>
 
-  <main>
+  <main id="main-content" tabindex="-1">
     <section class="wrap hero">
       <span class="eyebrow"><span class="dot" aria-hidden="true"></span> Личная AI-среда · self-hosted setup</span>
       <h1>Работай с ИИ.<br><span class="gradient">Сохраняй контроль над средой.</span></h1>
@@ -209,7 +246,7 @@ title: aLandi — личная AI-среда с собственным gateway
           <h2>Прозрачная архитектура первого контура</h2>
           <p class="muted">Это целевая схема развёртывания, а не заявление, что сервер уже создан или подключён.</p>
         </div>
-        <div class="architecture" aria-label="Поток запроса: браузер, HTTPS tunnel, FastAPI gateway, локальная модель Ollama">
+        <div class="architecture" role="group" aria-label="Поток запроса: браузер, HTTPS tunnel, FastAPI gateway, локальная модель Ollama">
           <div class="node"><strong>Браузер</strong><span>GitHub Pages · UI</span></div>
           <div class="arrow" aria-hidden="true">→</div>
           <div class="node"><strong>HTTPS Tunnel</strong><span>Cloudflare · публичный hostname</span></div>
