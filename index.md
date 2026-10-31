@@ -120,7 +120,74 @@ permalink: /
     #sidebar, header, #searchStatus, footer { background:var(--ui-surface)!important; border-color:var(--ui-border)!important; }
     #settingsModal > .settings-surface { background:var(--ui-surface)!important; border-color:var(--ui-border)!important; }
     body,button,input,textarea,select { font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Roboto,Arial,sans-serif; }
-    :root { --ui-radius-sm:10px; --ui-radius-md:14px; --ui-radius-lg:20px; }
+    :root {
+      --ui-radius-sm:10px; --ui-radius-md:14px; --ui-radius-lg:20px;
+      --ui-control-compact:32px; --ui-control-standard:40px; --ui-control-touch:44px;
+      --ui-control-gap:8px; --ui-control-font:12px; --ui-control-icon:18px;
+      --ui-content-scale:1; --ui-content-contrast:1;
+    }
+    button, [role="button"], summary {
+      -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
+      touch-action:manipulation;
+    }
+    input, textarea, select, [contenteditable="true"], .assistant-content, .message-viewer-content {
+      -webkit-user-select:text; user-select:text;
+    }
+    button:focus-visible, summary:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline:2px solid var(--ui-tiffany); outline-offset:2px;
+    }
+    .header-icon {
+      display:inline-flex; align-items:center; justify-content:center;
+      min-width:var(--ui-control-touch); min-height:var(--ui-control-touch);
+      padding:.35rem; border:1px solid var(--ui-border); border-radius:var(--ui-radius-sm);
+      font-size:var(--ui-control-icon); line-height:1;
+    }
+    .header-preferences { display:flex; align-items:center; gap:4px; flex:0 0 auto; }
+    .header-chat-title {
+      padding:5px 9px; border:1px solid var(--ui-border); border-radius:12px;
+      background:color-mix(in srgb,var(--ui-surface-raised) 78%,transparent);
+    }
+    .brand-wordmark {
+      font-family:ui-rounded,"Arial Rounded MT Bold",system-ui,sans-serif;
+      font-weight:900; letter-spacing:-.075em; transform:rotate(-2deg) skewX(-3deg);
+      text-shadow:1px 1px 0 color-mix(in srgb,var(--ui-tiffany) 20%,transparent);
+    }
+    .clock-face { width:58px; height:58px; }
+    #searchStatus { justify-content:center; text-align:center; color:var(--ui-text-muted); }
+    #statusText { color:var(--ui-text); background:none; -webkit-background-clip:initial; background-clip:initial; animation:none; }
+    #thinkingTime { color:var(--ui-text-muted); margin-left:0; }
+    #chatBox, .assistant-content, .message-viewer-content { font-size:calc(1em * var(--ui-content-scale)); }
+    .assistant-content, .message-viewer-content { color:color-mix(in srgb,var(--ui-text) calc(100% * var(--ui-content-contrast)),var(--ui-text-muted)); }
+    html[data-theme="light"] .assistant-content, html[data-theme="light"] .message-viewer-content {
+      color:color-mix(in srgb,#10212b calc(100% * var(--ui-content-contrast)),#526775);
+    }
+    .message-actions { display:flex; align-items:center; gap:var(--ui-control-gap); margin-top:4px; }
+    .message-actions button {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:var(--ui-control-touch); min-width:var(--ui-control-touch);
+      height:var(--ui-control-touch); min-height:var(--ui-control-touch);
+      padding:0; border:1px solid var(--ui-border); border-radius:var(--ui-radius-sm);
+      color:var(--ui-text-muted); background:var(--ui-surface-raised); font-size:var(--ui-control-icon);
+    }
+    .message-actions button:hover { color:var(--ui-tiffany); border-color:var(--ui-tiffany); background:var(--ui-tiffany-soft); }
+    .language-menu { position:relative; }
+    .language-menu summary { list-style:none; cursor:pointer; }
+    .language-menu summary::-webkit-details-marker { display:none; }
+    .language-menu-panel {
+      position:absolute; right:0; top:calc(100% + 7px); z-index:90; min-width:132px;
+      padding:5px; border:1px solid var(--ui-border); border-radius:12px;
+      background:var(--ui-surface); box-shadow:0 12px 32px rgb(0 0 0 / 28%);
+    }
+    .language-menu-panel button {
+      display:block; width:100%; min-height:36px; padding:8px 10px;
+      border-radius:8px; text-align:left; font-size:var(--ui-control-font);
+    }
+    .language-menu-panel button[aria-pressed="true"] { color:var(--ui-tiffany); background:var(--ui-tiffany-soft); }
+    @media (max-width:420px) {
+      .header-chat-title { padding:4px 6px; }
+      .clock-face { width:54px; height:54px; }
+      .brand-wordmark { font-size:1rem; }
+    }
     button,input,textarea,select { border-radius:var(--ui-radius-sm); }
     .settings-surface { border-radius:22px!important; }
     .settings-subpanel { background:color-mix(in srgb,var(--ui-surface-raised) 86%,transparent); overflow:hidden; }
@@ -329,7 +396,7 @@ permalink: /
       #sendBtn,#stopBtn { padding:.7rem .8rem!important; }
     }
       .message-actions{display:flex;align-items:center;gap:6px;margin-top:1px;min-height:28px;opacity:.9}
-    .message-actions button{min-width:32px;min-height:30px;padding:4px 8px;border:1px solid var(--ui-border);border-radius:9px;color:var(--ui-text-muted);background:var(--ui-surface-raised);font-size:13px}
+    .message-actions button{min-width:var(--ui-control-touch);min-height:var(--ui-control-touch);width:var(--ui-control-touch);height:var(--ui-control-touch);padding:0;border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm);color:var(--ui-text-muted);background:var(--ui-surface-raised);font-size:var(--ui-control-icon)}
     .message-actions button:hover{color:var(--ui-tiffany);border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft)}
     .message-viewer-surface{background:var(--ui-surface);border:1px solid var(--ui-border);box-shadow:0 24px 80px rgb(0 0 0 / 50%);color:var(--ui-text)}
     .message-viewer-content{min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain;user-select:text;-webkit-user-select:text;overflow-wrap:anywhere;white-space:normal;padding:8px 4px 16px;line-height:1.65;font-size:14px;color:var(--ui-text)}
@@ -388,7 +455,7 @@ permalink: /
     </details>
     <div class="px-3 py-2 border-b border-gray-800"><button type="button" data-action="open-research-studio" class="w-full flex items-center gap-2 rounded-xl border border-cyan-800/70 bg-cyan-950/30 hover:bg-cyan-900/40 px-3 py-2.5 text-left text-xs font-semibold text-cyan-100"><span aria-hidden="true">⌕</span><span data-i18n="researchStudio">Search &amp; Research Studio</span><span class="ml-auto text-[10px] text-cyan-300/80">↗</span></button></div>
 
-    <div id="sidebarPreferences" class="sticky bottom-0 mt-auto border-t border-gray-800 bg-gray-950/95 backdrop-blur px-3 py-2"><button id="sidebarThemeToggle" type="button" data-action="toggle-theme-cycle" class="rounded-lg border border-gray-700 px-2 py-1.5 text-[11px] text-left" aria-label="Сменить тему">☼ Тема</button></div>
+    
      <div id="chatRowMenuSidebarScrim" aria-hidden="true"></div>
     <input id="importFile" type="file" class="hidden" accept="application/json,.json">
   </aside>
@@ -473,7 +540,7 @@ permalink: /
         <div class="p-3 space-y-3">
           <input type="hidden" id="uiTheme" value="dark">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 border-b border-gray-800 pb-3">
-            <label class="text-[11px] text-gray-400">Язык<select id="uiLanguage" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="ru">Русский</option><option value="en">English</option></select></label>
+            <select id="uiLanguage" class="hidden" aria-hidden="true" tabindex="-1"><option value="ru">Русский</option><option value="en">English</option></select>
             <label class="text-[11px] text-gray-400">Анимация<select id="uiMotion" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="auto">Авто</option><option value="reduced">Уменьшить</option><option value="off">Выкл.</option></select></label>
             <label class="text-[11px] text-gray-400">Поле ввода<select id="composerPosition" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="bottom" data-i18n="composerBottom">Снизу</option><option value="top" data-i18n="composerTop">Сверху</option></select></label>
             <button type="button" data-action="toggle-theme-cycle" class="advanced-control self-end rounded border border-gray-700 bg-gray-900 text-left text-gray-300" aria-label="Сменить тему">☼ Тема</button>
@@ -532,7 +599,17 @@ permalink: /
       <span id="clockAccessible" class="sr-only" aria-live="off">Местное время</span>
     </div>
     <span id="brandWordmark" class="brand-wordmark font-bold text-lg tracking-tight shrink-0">aLandi</span>
-    <div class="flex items-center gap-1.5 shrink-0"><button type="button" data-action="toggle-theme-cycle" id="homeThemeToggle" aria-label="Сменить тему" title="Сменить тему" class="header-icon px-2 py-1.5">☼</button><button type="button" data-action="toggle-settings" aria-label="Настройки" class="header-icon px-2.5 py-1.5 rounded-xl">⚙️</button></div>
+    <div class="header-preferences" role="group" aria-label="Настройки отображения">
+      <button type="button" data-action="toggle-theme-cycle" id="homeThemeToggle" aria-label="Сменить тему" title="Сменить тему" class="header-icon">☼</button>
+      <details id="languageMenu" class="language-menu">
+        <summary id="languageSummary" class="header-icon" aria-label="Выбрать язык" title="Выбрать язык">RU</summary>
+        <div class="language-menu-panel">
+          <button type="button" data-action="set-language" data-language="ru" aria-pressed="true">Русский</button>
+          <button type="button" data-action="set-language" data-language="en" aria-pressed="false">English</button>
+        </div>
+      </details>
+      <button type="button" data-action="toggle-settings" aria-label="Настройки" class="header-icon">⚙</button>
+    </div>
   </header>
 
   <div id="modeToolbar" class="bg-gray-950 px-3 py-2 border-b border-gray-800 shrink-0 space-y-1.5">
@@ -569,7 +646,7 @@ permalink: /
 
   <main id="chatBox" class="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-sm" aria-live="polite" aria-label="Сообщения чата"></main>
   <div id="searchStatus" class="hidden px-4 py-2 bg-gray-800/80 border-t border-gray-700 text-xs text-blue-300 flex items-center gap-2 shrink-0" role="status" aria-live="polite">
-    <span class="animate-spin" aria-hidden="true">⏳</span><span id="statusText">Выполняется запрос...</span><span class="status-thinking-dots" aria-hidden="true"><span></span><span></span><span></span></span><span id="thinkingTime" class="ml-auto text-[10px]">Прошло 00:00</span>
+    <span class="animate-spin" aria-hidden="true">⏳</span><span id="statusText">Выполняется запрос...</span><span class="status-thinking-dots" aria-hidden="true"><span></span><span></span><span></span></span><span id="thinkingTime" class="text-[10px]">Прошло 00:00</span>
   </div>
   <footer id="composerFooter" class="px-3 py-2 bg-gray-800/95 border-t border-gray-700 shrink-0 safe-bottom">
     <div id="draftAttachments" class="hidden flex flex-wrap gap-1.5 pb-2" aria-label="Вложения черновика"></div>
@@ -1344,6 +1421,7 @@ permalink: /
       $('memoryPanel')?.setAttribute('aria-label',lang==='en'?'Memory settings':'Настройки памяти');
       $('projectPanel')?.setAttribute('aria-label',lang==='en'?'Projects and project settings':'Проекты и настройки проекта');
       document.querySelectorAll('[data-action="set-language"]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.language===lang)));
+      const languageMenu=$('languageMenu');if(languageMenu)languageMenu.setAttribute('aria-label',lang==='en'?'Choose language':'Выбрать язык');
       // The aLandi wordmark is intentionally decorative, not a clickable control.
       const themeButton=$('homeThemeToggle');if(themeButton){themeButton.title=lang==='en'?'Switch theme':'Сменить тему';themeButton.setAttribute('aria-label',themeButton.title);}
       document.querySelectorAll('[data-action="toggle-settings"]').forEach(button=>button.setAttribute('aria-label',lang==='en'?'Settings':'Настройки'));
@@ -1356,8 +1434,7 @@ permalink: /
       const english=getUiLanguage()==='en';
       const button=$('homeThemeToggle');
       if(button){button.textContent=light?'☾':'☼';button.title=english?'Switch theme':'Сменить тему';button.setAttribute('aria-label',button.title);}
-      const sidebarButton=$('sidebarThemeToggle');
-      if(sidebarButton){sidebarButton.textContent=light?(english?'☾ Theme: light':'☾ Тема: светлая'):(english?'☼ Theme: dark':'☼ Тема: тёмная');sidebarButton.title=english?'Switch theme':'Сменить тему';sidebarButton.setAttribute('aria-label',sidebarButton.title);}
+
     }
     function toggleHomeTheme(){
       const next=document.documentElement.dataset.theme==='light'?'dark':'light';
@@ -1616,6 +1693,7 @@ permalink: /
       ).filter(Boolean).join('\n');
       return '';
     }
+    let messageViewerOpener = null;
     function showMessageViewer(role, text) {
       if (!['user', 'assistant'].includes(role) || typeof text !== 'string') return;
       const en = getUiLanguage() === 'en';
@@ -1629,8 +1707,21 @@ permalink: /
         plain.textContent = text;
         target.appendChild(plain);
       } else target.innerHTML = safeMarkdown(text);
+      messageViewerOpener = document.activeElement;
       $('messageViewerModal').classList.remove('hidden');
       requestAnimationFrame(() => target.focus({ preventScroll: true }));
+    }
+    function closeMessageViewer() {
+      const modal = $('messageViewerModal');
+      if (!modal || modal.classList.contains('hidden')) return;
+      modal.classList.add('hidden');
+      const opener = messageViewerOpener;
+      messageViewerOpener = null;
+      if (opener && document.contains(opener) && opener.getClientRects().length && !opener.disabled) {
+        opener.focus({ preventScroll: true });
+      } else {
+        $('userInput')?.focus({ preventScroll: true });
+      }
     }
     function updateJumpToLatest() {
       const box = $('chatBox'), button = $('jumpToLatest');
@@ -1672,19 +1763,22 @@ permalink: /
         const copy = document.createElement('button');
         copy.type = 'button'; copy.dataset.action = 'copy-message'; copy.dataset.messageText = messageActionText;
         copy.className = 'text-xs text-gray-400 hover:text-gray-100 px-1.5 py-1 rounded-md';
-        copy.textContent = getUiLanguage() === 'en' ? 'Copy' : 'Копировать';
+        copy.textContent = '⧉';
+        copy.title = getUiLanguage() === 'en' ? 'Copy message' : 'Скопировать сообщение';
         copy.setAttribute('aria-label', getUiLanguage() === 'en' ? 'Copy message' : 'Скопировать сообщение');
         const view = document.createElement('button');
         view.type = 'button'; view.dataset.action = 'view-message'; view.dataset.messageRole = message.role; view.dataset.messageText = messageActionText;
         view.className = 'text-xs text-gray-400 hover:text-gray-100 px-1.5 py-1 rounded-md';
-        view.textContent = getUiLanguage() === 'en' ? 'Read full message' : 'Открыть целиком';
+        view.textContent = '↗';
+        view.title = getUiLanguage() === 'en' ? 'Open full message' : 'Открыть сообщение целиком';
         view.setAttribute('aria-label', getUiLanguage() === 'en' ? 'Open readable message view' : 'Открыть полный текст сообщения');
         actions.append(copy, view);
         if (!isUser) {
           const speak = document.createElement('button');
           speak.type = 'button'; speak.dataset.action = 'speak-message'; speak.dataset.messageText = messageActionText;
           speak.className = 'text-xs text-cyan-300 hover:text-cyan-100 px-1.5 py-1 rounded-md';
-          speak.textContent = getUiLanguage() === 'en' ? '🔊 Read aloud' : '🔊 Озвучить';
+          speak.textContent = '◖))';
+          speak.title = getUiLanguage() === 'en' ? 'Read aloud with local speech' : 'Озвучить локальной моделью';
           speak.title = getUiLanguage() === 'en' ? 'Generate speech with your configured local TTS model' : 'Создать речь локальной TTS-моделью на твоём gateway';
           actions.appendChild(speak);
         }
@@ -4986,7 +5080,7 @@ permalink: /
           case 'voice-message-preview': await startVoiceMessageRecording(); break;
           case 'copy-message': await copyText(control.dataset.messageText || ''); showToast(getUiLanguage()==='en'?'Message copied.':'Сообщение скопировано.'); break;
           case 'view-message': showMessageViewer(control.dataset.messageRole, control.dataset.messageText || ''); break;
-          case 'close-message-viewer': $('messageViewerModal').classList.add('hidden'); break;
+          case 'close-message-viewer': closeMessageViewer(); break;
           case 'jump-to-latest': $('chatBox').scrollTo({top:$('chatBox').scrollHeight,behavior:document.documentElement.dataset.motion==='off'?'auto':'smooth'}); requestAnimationFrame(updateJumpToLatest); break;
           case 'speak-message': await playAssistantMessage(control.dataset.messageText || ''); break;
           case 'stop-speech': if(voiceConversationActive)stopVoiceConversation();else stopAssistantSpeech(); break;
@@ -5160,6 +5254,7 @@ permalink: /
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
         if (!$('chatActionModal').classList.contains('hidden')) closeChatActionDialog();
+        else if (!$('messageViewerModal').classList.contains('hidden')) closeMessageViewer();
         else if (!$('traceModal').classList.contains('hidden')) closeTrace();
         else if (!$('projectSettingsModal').classList.contains('hidden')) closeProjectSettings();
         else if (!$('researchStudioModal').classList.contains('hidden')) closeResearchStudio();
@@ -5188,7 +5283,7 @@ permalink: /
       syncCurrentChatFunctionSettings();
       $('chatBox').addEventListener('scroll', updateJumpToLatest, { passive: true });
       $('messageViewerModal').addEventListener('click', event => {
-        if (event.target === $('messageViewerModal')) $('messageViewerModal').classList.add('hidden');
+        if (event.target === $('messageViewerModal')) closeMessageViewer();
       });
       updateClockFace();if(clockTimer)clearInterval(clockTimer);clockTimer=setInterval(updateClockFace,1000);
       if(pollinationsAuthMessage) showToast(pollinationsAuthMessage,pollinationsAuthMessage.startsWith('Pollinations подключён')?'success':'error');
