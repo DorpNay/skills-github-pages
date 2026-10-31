@@ -1468,7 +1468,7 @@ permalink: /
       document.querySelectorAll('[data-action="set-language"]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.language===lang)));
       const languageMenu=$('languageMenu');if(languageMenu)languageMenu.setAttribute('aria-label',lang==='en'?'Choose language':'Выбрать язык');
       // The aLandi wordmark is intentionally decorative, not a clickable control.
-      const themeButton=$('homeThemeToggle');if(themeButton){themeButton.title=lang==='en'?'Switch theme':'Сменить тему';themeButton.setAttribute('aria-label',themeButton.title);}
+
       document.querySelectorAll('[data-action="toggle-settings"]').forEach(button=>button.setAttribute('aria-label',lang==='en'?'Settings':'Настройки'));
       const attach=$('attachTextButton');if(attach){attach.title=lang==='en'?'Attach photo, video or any file format':'Добавить фото, видео или файл любого формата';attach.setAttribute('aria-label',attach.title);}
       const voice=$('voiceUnavailableButton');if(voice){voice.title=lang==='en'?'Press and hold for voice modes':'Удерживай, чтобы открыть режимы голоса';voice.setAttribute('aria-label',voice.title);}
