@@ -156,7 +156,7 @@ permalink: /
     #searchStatus { justify-content:center; text-align:center; color:var(--ui-text-muted); }
     #statusText { color:var(--ui-text); background:none; -webkit-background-clip:initial; background-clip:initial; animation:none; }
     #thinkingTime { color:var(--ui-text-muted); margin-left:0; }
-    #chatBox, .assistant-content, .message-viewer-content { font-size:calc(1em * var(--ui-content-scale)); }
+    #chatBox, .message-viewer-content { font-size:calc(1rem * var(--ui-content-scale)); }
     #chatBox, .chat-bubble, .assistant-content, .message-viewer-content { -webkit-user-select:text; user-select:text; }
     .assistant-content, .message-viewer-content { color:color-mix(in srgb,var(--ui-text) calc(100% * var(--ui-content-contrast)),var(--ui-text-muted)); }
     html[data-theme="light"] .assistant-content, html[data-theme="light"] .message-viewer-content {
