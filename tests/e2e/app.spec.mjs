@@ -2980,3 +2980,32 @@ test('request status and notifications expose semantic state and centered alignm
   await expect(page.locator('#toast')).toHaveAttribute('data-state','error');
 });
 
+
+test('browser Forward restores a chat-action dialog with its original target', async ({ page }) => {
+  await page.addInitScript(()=>{
+    const project={id:'action-project',name:'Action project',description:'',instructions:'',memoryScope:'project-only',memory:[],createdAt:'',updatedAt:''};
+    const chat={id:'action-chat',title:'Action chat',projectId:'action-project',messages:[]};
+    localStorage.setItem('ai_projects_v1',JSON.stringify([project]));
+    localStorage.setItem('ai_chats_v87',JSON.stringify([chat]));
+    localStorage.setItem('ai_current_chat_v87','action-chat');
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await ensureSidebarOpen(page);
+  if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
+  const group=page.locator('#projectNavigationList details[data-project-id="action-project"]');
+  if(!(await group.evaluate(el=>el.open)))await group.locator(':scope > summary').click();
+  const row=group.locator('.chat-row').filter({hasText:'Action chat'});
+  await row.locator('summary[aria-label="Действия чата"]').click();
+  await row.locator('[data-action="chat-project"]').click();
+  await expect(page.locator('#chatActionModal')).toBeVisible();
+  await expect(page.locator('#chatActionModal')).toHaveAttribute('data-chat-id','action-chat');
+  await page.goBack();
+  await expect(page.locator('#chatActionModal')).toBeHidden();
+  await page.goForward();
+  await expect(page.locator('#chatActionModal')).toBeVisible();
+  await expect(page.locator('#chatActionModal')).toHaveAttribute('data-chat-id','action-chat');
+  await expect(page.locator('#chatActionModal')).toHaveAttribute('data-mode','project');
+  await page.goBack();
+  await expect(page.locator('#chatActionModal')).toBeHidden();
+});
+
