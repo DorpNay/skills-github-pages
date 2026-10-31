@@ -179,6 +179,18 @@ test('project settings closes on Escape and restores focus to a visible control'
   await expect(page.locator('#appSidebarToggle')).toBeFocused();
 });
 
+test('settings backdrop closes cleanly and restores focus across repeated cycles', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const opener = page.locator('[data-action="toggle-settings"]').first();
+  for (let cycle = 0; cycle < 3; cycle++) {
+    await opener.click();
+    await expect(page.locator('#settingsModal')).toBeVisible();
+    await page.locator('#settingsModal').click({ position: { x: 4, y: 4 } });
+    await expect(page.locator('#settingsModal')).toBeHidden();
+    await expect(opener).toBeFocused();
+  }
+});
+
 test('mobile sidebar and modal close controls meet the 44px touch target', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
