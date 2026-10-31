@@ -544,7 +544,7 @@ permalink: /
     <section class="w-full max-w-lg rounded-2xl border border-gray-700 bg-gray-950 p-4 shadow-2xl">
       <header class="mb-3 flex items-center justify-between gap-3 border-b border-gray-800 pb-3">
         <h2 id="projectCreateModalTitle" class="text-sm font-bold" data-i18n="projectCreateTitle">Создать проект</h2>
-        <button type="button" data-action="close-project-create" aria-label="Назад к меню проектов" class="rounded-xl border border-gray-700 px-3 py-2 text-xs text-gray-300">← Назад</button>
+        <button type="button" data-action="close-project-create" aria-label="Назад к меню проектов" class="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gray-700 text-sm text-gray-300">←</button>
       </header>
       <p class="mb-3 text-xs leading-relaxed text-gray-400" data-i18n="projectCreateHelp">Создание проекта не перемещает текущий чат. Новый чат можно отдельно создать из строки проекта.</p>
       <div class="space-y-2">
