@@ -113,16 +113,12 @@
 - **Rollback:** revert query/triggers in a reviewed migration; preserve canonical memory nodes.
 - **Links:** `gateway/memory/manager.py`, `gateway/memory/schema.sql`, `gateway/tests/test_coder_packet.py`, EV-MEM-005.
 
-## D-011 — Authenticated opt-in API for the structured memory graph
+## D-011 — Authenticated opt-in API for the structured memory graph (superseded)
 
-- **Status:** Accepted for single-owner gateway prototype; disabled by default and not yet wired to the static-site project memory UI.
-- **Problem:** the graph and FTS5 search had no authenticated API surface, so only direct module users could create, review, search or delete facts.
-- **Decision:** expose bounded Bearer-authenticated routes for candidate creation, scope-filtered listing/search, explicit relation creation, owner review and recursive deletion. Reject unknown JSON keys, use no-store responses, and bound request bodies.
-- **Truth/lifecycle rule:** API-created facts always start as `candidate`; only the explicit review route may set `confirmed` or `rejected`, with an audit code. Superseded/rejected nodes are immutable through review.
-- **Privacy boundary:** `ALANDI_MEMORY_GRAPH_ENABLED=false` by default. Global memory is behind a second server flag and a per-request `global_opt_in=true`. The service remains a single-owner personal gateway, not a multi-tenant permission system; do not reuse one bearer key across users.
-- **Rollback:** keep the graph flag off or revert the route/config change. The existing conversation-delta and RAG stores remain separate databases and contracts.
-- **Acceptance:** tests prove disabled-by-default behaviour, Bearer auth, candidate-first lifecycle, confirmed-only default search, scope isolation, relation/delete propagation and global double opt-in.
-- **Links:** `gateway/app.py`, `gateway/memory/manager.py`, `gateway/tests/test_app.py`, EV-MEM-006.
+- **Status:** Superseded 2026-10-31 by owner requirement 8.12 / PR #131. Gateway /v1/memory/graph/* HTTP routes, Settings fields and ALANDI_MEMORY_GRAPH_ENABLED / ALANDI_GLOBAL_MEMORY_ENABLED flags have been removed.
+- **Retained boundary:** gateway/memory/manager.py, schema and scope/temporal/conflict helpers remain for the internal Graphify/code-evidence workflow only; they are not exposed as a user-facing memory API. Conversation delta sync (/v1/memory/state, /v1/memory/delta), RAG and the local project-memory helper are independent and remain.
+- **Data safety:** no graph SQLite file or stored data is deleted; no migration/drop is performed.
+- **Historical evidence:** the former API's candidate-first, scope and review tests describe the retired implementation and are not current product acceptance.
 
 ## D-012 — cPocket cleanup is bounded and failure-resilient
 
@@ -133,16 +129,14 @@
 - **Remaining evidence:** current-head CI, followed later by a target-host resource/file-descriptor soak and integration with real audio adapters.
 - **Rollback:** revert this helper change or leave voice callers disabled.
 
-## D-013 — Browser-to-server project memory bridge is explicit and candidate-first
+## D-013 — Browser-to-server project memory bridge (superseded)
 
-- **Status:** Merged in PR #29 at `55248f81585c52d7cc7ba7cfc08158a291a761ca`; PR-head and post-merge Quality/Chromium/provenance/Pages checks passed. Live gateway activation remains pending.
-- **Decision:** browser-local project facts remain local until the owner clicks “Send local facts”. Upload creates server-side candidate nodes; UI can list, confirm/reject and delete them. No automatic migration or global-memory write occurs.
-- **Retrieval gate:** server search runs only when the current chat has both project memory and server project memory opted in. Query scope is exactly `scope=project, scope_id=currentProject.id`; only `confirmed` nodes enter the prompt. Retrieval is capped at six facts and 1200 total characters; manual uploads are bounded to 100 new candidates per click, query up to 100 recent server nodes (the API limit), and keep a bounded local source-ID ledger for idempotency across batches. A failed lookup degrades to local-only context and is shown in the UI.
-- **Activation:** the browser uses the configured aLandi gateway URL ending in `/v1` and the aLandi bearer key. Gateway requires `ALANDI_MEMORY_GRAPH_ENABLED=true`; keep `ALANDI_GLOBAL_MEMORY_ENABLED=false`. CORS must allow the Pages origin. This is still a single-owner gateway, not multi-user ACL.
-- **Deletion:** deleting a browser project does not silently delete server facts. Delete server facts explicitly in the memory panel before deleting the local project if they are no longer needed.
-- **Acceptance:** Chromium mock proves no auto-upload, candidate-first upload, review, no context inclusion when either toggle is off, and scoped retrieval with both on. Live gateway proof is separate.
-- **Rollback:** turn off the per-chat server-memory toggle or revert the UI bridge; leave the graph flag off if not needed.
-- **Links:** `index.md`, `gateway/app.py`, `gateway/memory/manager.py`, EV-MEM-007.
+- **Status:** Retired 2026-10-31 by owner requirement 8.12 / PR #131.
+- Browser-local project facts remain local. The manual upload/review/delete/retrieval bridge and per-chat server-memory opt-in are no longer part of the product.
+- The /v1/memory/graph/* HTTP routes and graph-specific gateway flags are removed. No server graph endpoint is exposed to the static client.
+- MemoryManager and its SQLite schema are retained only for Graphify's internal code/evidence workflow. Existing SQLite files are not deleted.
+- Local/private/shared/project-local memory, conversation delta sync, RAG and the local project-memory helper are separate mechanisms and remain unaffected.
+- **Historical evidence:** PR #29 checks document the former bridge; they do not establish a current feature or gateway deployment.
 
 ## D-014 — Free-first stack and local model autonomy
 
