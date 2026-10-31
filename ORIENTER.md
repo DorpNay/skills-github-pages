@@ -110,3 +110,7 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Text readability settings now include a live preview affected by the selected scale/contrast and a reset-to-default action. E2E coverage added for both; tests remain unexecuted pending CI/runtime access.
 - Current code/test head at checkpoint: 934f5f30189f8615ece8be64474da272809a53e4; 55 ahead / 4 behind main.
 - PR #131 remains isolated and unmerged; main stays V1.
+
+### Landing UI V2.0 — latest head reconciliation 2026-10-31
+- PR #131 branch head at checkpoint: 5289c2d17f1cd9d69ff1857c82942798367e1a62; 60 ahead / 4 behind main.
+- Exact-head status/workflow-run queries empty; no E2E success claimed. PR body, V2 ledger and Volley log reconciled. Continue only in PR #131; no merge.
