@@ -436,8 +436,8 @@ permalink: /
      .toolbar-menu-option,.composer-tool,#chatListNewButton,#restoreLastClosedChat { min-height:44px; }
      .composer-tool { min-width:44px; }
      .message-actions button { min-width:44px;min-height:44px; }
-     .roadmap-ticker { text-align:center; }
-     .roadmap-ticker-track { display:block;min-width:100%;text-align:center; }
+     .roadmap-ticker { text-align:center;color:var(--ui-text-muted); }
+     .roadmap-ticker-track { text-align:center; }
      #searchStatus[data-state="neutral"] #statusText { color:var(--ui-text-muted); }
      #searchStatus[data-state="info"] #statusText { color:var(--ui-info); }
      #searchStatus[data-state="success"] #statusText { color:var(--ui-success); }
@@ -974,12 +974,6 @@ permalink: /
       if(applyingUiNavigationPop)return false;
       const top=uiNavigationStack[uiNavigationStack.length-1];
       if(!top||top.kind!==kind||(id&&top.id!==id))return false;
-      uiNavigationStack.pop();
-      applyingUiNavigationPop=true;
-      try{
-        if(top.kind==='modal')closeUiModalDirect(top.id);
-        else if(top.kind==='project-filter'){activeChatProjectId=top.previousProjectId||null;renderChatList();}
-      }finally{applyingUiNavigationPop=false;syncModalEnvironment();}
       history.back();return true;
     }
     function requestUiModalBack(id){return requestUiNavigationBack('modal',id);}
@@ -1003,7 +997,7 @@ permalink: /
       try{
         for(const entry of removed){
           if(entry.kind==='modal')closeUiModalDirect(entry.id);
-          else if(entry.kind==='project-filter'){activeChatProjectId=entry.previousProjectId||null;renderChatList();}
+          else if(entry.kind==='project-filter'){activeChatProjectId=entry.previousProjectId||null;renderChatList();$('chatSection').querySelector('summary')?.focus();}
         }
       }finally{applyingUiNavigationPop=false;syncModalEnvironment();}
     });
@@ -4582,17 +4576,19 @@ permalink: /
       $('researchStudioStatus').textContent=getUiLanguage()==='en'?'Choose a research mode. Your prompt stays in the main composer.':'Выбери режим. Текст задачи остаётся в основном поле.';
       $('researchStudioModal').classList.remove('hidden');openUiModal('researchStudioModal');
     }
+    let researchStudioReturnToComposer=false;
     function closeResearchStudio() {
       if(requestUiModalBack('researchStudioModal'))return;
       $('researchStudioModal').classList.add('hidden');syncModalEnvironment();
       const opener=researchStudioOpener;researchStudioOpener=null;
-      const target=opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled?opener:$('functionsMenuSummary');
-      target?.focus({preventScroll:true});
+      const target=researchStudioReturnToComposer?$('userInput'):(opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled?opener:$('functionsMenuSummary'));
+      researchStudioReturnToComposer=false;target?.focus({preventScroll:true});
     }
     function startResearchStudio() {
       setProcessingMode($('researchStudioEffort').value);
       setSearchMode($('researchStudioSearchMode').value);
       setAgentMode($('researchStudioStructured').checked);
+      researchStudioReturnToComposer=true;
       closeResearchStudio();
       $('userInput').focus({preventScroll:true});
       showToast(getUiLanguage()==='en'?'Research mode applied. Enter your task in the composer.':'Режим исследования включён. Введи задачу в основном поле.');
