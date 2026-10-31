@@ -91,3 +91,11 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Issue #111 остаётся единственным owner/environment gate. Post-merge Pages и live VPS/Ollama не подтверждены.
 - Стек заморожен: HTML/CSS/vanilla JS + Jekyll/GitHub Pages + существующий FastAPI/Python/Ollama + SQLite/FTS5 + существующие ToolDAG/voice/document adapters и GitHub Actions. Никаких новых runtime компонентов.
 - Ведём чек-лист по каждому подтверждённому шагу; не объявлять независимый subagent review состоявшимся, пока отдельный агент реально не выполнит работу.
+
+### Landing UI V2.0 — continuation 2026-10-31
+- Sole V2 UI workstream: PR #131, branch feat/landing-v1-accessibility-responsive-20261031. Keep PR unmerged until owner explicitly requests; V1 remains in main.
+- Latest confirmed code/test checkpoint before continuity-doc commits: b12038e8ee58aba77191daa29de4a232536179f2.
+- Implemented slices include project-filtered chat navigation, memory-panel refinements, explicit project-context behavior, Cloud/provider/additional-settings grouping, shared control tokens, theme/language controls, touch ergonomics and user-adjustable readability.
+- Removed stale client dispatch for the retired experimental server-memory feature; do not delete backend routes until ownership/dependency audit proves they are exclusive to that feature.
+- Project Sources currently displays a truthful unavailable-state explanation because gateway does not expose a source-list API. No fake controls.
+- E2E assertions were added/updated, but no CI run/status is present for the latest exact head. Do not report tests as passing. Next: inspect exact-head PR checks/workflows, run Chromium + Quality and update this checkpoint.
