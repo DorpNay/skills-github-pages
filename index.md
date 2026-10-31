@@ -4275,8 +4275,11 @@ permalink: /
     }
     let chatActionOpener=null;
     function closeChatActionDialog() {
-      const modal=$('chatActionModal');modal.classList.add('hidden');modal.removeAttribute('data-chat-id');modal.removeAttribute('data-mode');
-      const opener=chatActionOpener;chatActionOpener=null;if(opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled)opener.focus({preventScroll:true});
+      const modal=$('chatActionModal'),chatId=modal.dataset.chatId;modal.classList.add('hidden');modal.removeAttribute('data-chat-id');modal.removeAttribute('data-mode');
+      const opener=chatActionOpener;chatActionOpener=null;
+      const fallback=chatId?document.querySelector('[data-action="switch-chat"][data-chat-id="'+CSS.escape(chatId)+'"]'):null;
+      const target=opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled?opener:(fallback&&fallback.getClientRects().length?fallback:$('appSidebarToggle'));
+      target?.focus({preventScroll:true});
     }
     function openChatActionDialog(mode,id) {
       const chat=chats.find(item=>item.id===id);if(!chat)return;
@@ -4390,7 +4393,9 @@ permalink: /
     }
     function closeResearchStudio() {
       $('researchStudioModal').classList.add('hidden');
-      const opener=researchStudioOpener;researchStudioOpener=null;if(opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled)opener.focus({preventScroll:true});
+      const opener=researchStudioOpener;researchStudioOpener=null;
+      const target=opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled?opener:$('functionsMenuSummary');
+      target?.focus({preventScroll:true});
     }
     function startResearchStudio() {
       setProcessingMode($('researchStudioEffort').value);
