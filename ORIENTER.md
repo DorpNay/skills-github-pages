@@ -99,3 +99,8 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Removed stale client dispatch for the retired experimental server-memory feature; do not delete backend routes until ownership/dependency audit proves they are exclusive to that feature.
 - Project Sources currently displays a truthful unavailable-state explanation because gateway does not expose a source-list API. No fake controls.
 - E2E assertions were added/updated, but no CI run/status is present for the latest exact head. Do not report tests as passing. Next: inspect exact-head PR checks/workflows, run Chromium + Quality and update this checkpoint.
+
+### Landing UI V2.0 — exact checkpoint refresh 2026-10-31
+- Latest verified PR #131 branch head: dfaeee97692fd65384ddc070b2b09d99875c5877; 49 ahead / 4 behind main; merge base e78a73b25725bfa63370d9946887cbbacbf51b82.
+- PR body and V2 implementation ledger refreshed to show partial implementation, remaining work and absence of exact-head CI/E2E results.
+- Continue in PR #131 only. No merge/deployment without explicit owner approval; main remains V1.
