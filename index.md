@@ -1433,7 +1433,7 @@ permalink: /
       document.querySelectorAll('[data-action="toggle-settings"]').forEach(button=>button.setAttribute('aria-label',lang==='en'?'Settings':'Настройки'));
       const attach=$('attachTextButton');if(attach){attach.title=lang==='en'?'Attach photo, video or any file format':'Добавить фото, видео или файл любого формата';attach.setAttribute('aria-label',attach.title);}
       const voice=$('voiceUnavailableButton');if(voice){voice.title=lang==='en'?'Press and hold for voice modes':'Удерживай, чтобы открыть режимы голоса';voice.setAttribute('aria-label',voice.title);}
-      updateOfflineUI();updateModeUI();updateHomeThemeButton();renderProjectUI({preserveDraft:true});updateMemoryStatusLine();
+      updateOfflineUI();updateModeUI();updateHomeThemeButton();renderChatList();updateMemoryStatusLine();
     }
     function updateHomeThemeButton(){
       const light=document.documentElement.dataset.theme==='light';
@@ -5214,6 +5214,7 @@ permalink: /
       await initDB();
       await renderMemory();
       await renderSharedMemory();
+      activeChatProjectId=getCurrentChat()?.projectId||null;
       updateState(null, currentChatId);
       scheduleStorageHealthCheck();
       // Pyodide loads only when the user explicitly runs a Python code block.
