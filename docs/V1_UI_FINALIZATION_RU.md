@@ -273,6 +273,10 @@ PR #122 добавил только эксплуатационную надёж�
 
 Этот раздел дополняет живой UI-чек-лист требованиями, продиктованными владельцем. Это backlog требований, а не подтверждение реализации. Перед изменениями сверять каждый пункт с текущим кодом и существующими пунктами выше; уже реализованное не дублировать и не ломать.
 
+## 8. Поправки владельца от 2026-10-31 — приоритет V2.0
+
+> **Приоритетный пакет для лендинга версии 2.0.** Все требования подразделов **8.1–8.17** ниже зафиксированы/уточнены владельцем **31 октября 2026 года**. Это актуальные поправки и приоритетные изменения, которые необходимо учесть при проектировании и реализации лендинга aLandi V2.0. Они **не считаются выполненными** и не должны незаметно переноситься в замороженный состав V1. Перед реализацией сверять их с кодом и архитектурой; сохранять действующие ограничения безопасности и согласованный стек, если владелец отдельно не утвердит иное.
+
 ### 8.1 Левое меню, память, проекты и чаты
 
 - Удалить из левого выдвижного меню кнопку «Поиск исследований».
@@ -468,5 +472,6 @@ PR #122 добавил только эксплуатационную надёж�
 ## 11. Change log
 
 | Date | Change | Evidence |
+| 2026-10-31 | Marked owner corrections in sections 8.1–8.17 as a dated, priority backlog for landing V2.0; explicitly kept them separate from V1 implementation status/freeze. | Owner instruction in current conversation; document re-read before update. |
 |---|---|---|
 | 2026-10-31 | Consolidated the remaining owner-dictated UI notes: message action icons, backdrop lifecycle, unified control sizing, compact theme/language controls, removal of experimental server memory, explicit project-context transfer, touch text-selection behavior, centered/color-coded status tickers, icon-first button typography and user-adjustable text readability. Added the agreed third-party provider shortlist and BYOK/model auto-detection requirements, including V1/funding/security boundaries. | Confirmed in the current conversation; requirements only, implementation status not inferred. |
