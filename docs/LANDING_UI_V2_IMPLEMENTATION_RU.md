@@ -54,14 +54,46 @@
 
 - [x] Rename PR #131 and reserve it as the sole V2 UI workstream; keep V1 in main.
 - [~] Complete source-code and gateway-contract audit for 8.1–8.17.
-- [ ] Implement foundation: shared UI tokens, modal lifecycle, accessible icon controls and touch ergonomics.
-- [ ] Implement sidebar/projects/chats and memory UX.
-- [ ] Implement settings/provider IA and header typography/theme/language.
-- [ ] Remove deprecated server-memory UI and replace implicit project-memory opt-in with explicit one-shot context.
-- [ ] Resolve project Sources contract or document a verified blocker; no mock UI.
-- [ ] Implement status, button and text-readability system.
-- [ ] Update superseded E2E tests and add complete V2 regression matrix.
-- [ ] Exact-head CI and manual device review; PR remains unmerged.
+- [~] Implement shared UI tokens, selected modal/focus paths, accessible message actions and touch ergonomics.
+- [~] Implement sidebar/projects/chats and memory UX, including project-filtered chats and explicit request context.
+- [~] Implement header theme/language controls and Cloud/provider/additional-settings grouping.
+- [~] Remove deprecated server-memory UI and client dispatch entry points; preserve independent local/private/shared/project-local memory.
+- [~] Resolve project Sources contract: show an explicit unsupported-state explanation; do not present fake source-management actions.
+- [~] Implement initial status, button and text-readability system.
+- [~] Update superseded E2E tests and add focused V2 regression coverage.
+- [ ] Execute focused Chromium tests and exact-head CI; PR remains unmerged.
+- [ ] Manual device review (iPhone Safari, VoiceOver, long-press, safe-area and virtual keyboard).
+
+## Current implementation state — 2026-10-31
+
+| Requirement | Verified in branch source | Remaining gap | Status |
+|---|---|---|---|
+| 8.1 Sidebar/memory/projects/chats | Memory panel above projects; project list and chat list hierarchy; Research Studio moved to Functions; per-project gear; project-filtered chat list, back-to-unassigned, project-specific new chat; horizontal swipe-close; memory help text now collapsed by default. | Review accordion persistence, restore-last-closed-chat behavior, spacing and keyboard navigation. | [~] |
+| 8.2 Typography/header | Wordmark and chat title have dedicated styling; theme/language grouped; compact clock breakpoints and header controls. | Final responsive/visual iteration and font-system review. | [~] |
+| 8.3 Settings/providers | Cloud, third-party providers and additional settings are separate disclosures. Cloud closes peer groups; peer groups cannot open while Cloud is open. | Execute E2E; review keyboard and narrow-screen behavior. | [~] |
+| 8.4 Tavily/system prompt | Global prompt defaults to empty; Tavily remains under web-tools settings with a documented decision note. | Complete current search-path audit before any removal or change. | [~] |
+| 8.5 Living notes | Owner checklist remains source of requirements; this ledger tracks implementation separately. | Keep statuses evidence-based. | [x] |
+| 8.6 Navigation | Project filtering, back-to-unassigned and per-project settings are present. | Browser history/back behavior across nested panels remains incomplete. | [~] |
+| 8.7 Project sources | Project settings show a clear unsupported-state explanation: gateway can index/delete/search scoped documents but has no source-list API; chat attachments are not misrepresented as saved project sources. | Implement CRUD only after a real project-scoped source-list contract exists. | [~] |
+| 8.8 Message actions | Message actions use accessible labels and touch-sized controls; viewer close path has focus-return assertions. | Finish icon consistency/tooltips and verify every compact/expanded action. | [~] |
+| 8.9 Backdrop lifecycle | Settings backdrop and project/message modal keyboard/focus paths have targeted E2E assertions. | Audit every dialog, scroll lock, backdrop transition and repeated open/close cycle. | [~] |
+| 8.10 Control sizing | Shared radius, control-height, gap, font and icon tokens; advanced fields, summaries, menus, composer tools and chat-create control consume shared rules. | Apply consistently to remaining controls; run viewport tests. | [~] |
+| 8.11 Theme/language | Header controls are grouped, persistent and tested for 44px hit targets. | Narrow viewport and keyboard review. | [~] |
+| 8.12 Experimental server memory | Removed feature UI, per-chat/server opt-in, automatic project-memory retrieval and stale delegated action cases. Ordinary local/private/shared memory and project-local facts remain. | Audit gateway/backend route ownership and legacy migration references before deleting backend code. | [~] |
+| 8.13 Project context | Removed per-chat project-memory toggle and implicit project-memory injection. Existing one-shot request-context picker remains explicit. | Project-settings → existing-chat handoff is not implemented; do not add a fake action. | [~] |
+| 8.14 Touch selection | Targeted user-select, -webkit-user-select, touch-action; message text remains selectable; sidebar swipe distinguishes horizontal close from vertical scroll. | Native iOS Safari/long-press testing still required. | [~] |
+| 8.15 Status | Status row is centered and uses neutral, non-gradient text rather than decorative sheen. | Add semantic information/success/warning/error states without fabricated progress; verify reduced motion. | [~] |
+| 8.16 Button typography/icon-first | Shared control typography/spacing and icon-first message actions with accessible names. | Normalize remaining one-off button classes and tooltip coverage. | [~] |
+| 8.17 Readability | Persistent 90–120% text scale and standard/high contrast preference apply in light/dark themes. | Expand contrast handling to links, secondary/disabled/error/status text and add visual contrast checks. | [~] |
+
+### Latest checkpoint
+
+- PR #131 branch: feat/landing-v1-accessibility-responsive-20261031.
+- Exact head after this checkpoint: b12038e8ee58aba77191daa29de4a232536179f2.
+- Compared with current main: 44 commits ahead, 4 behind; merge base e78a73b25725bfa63370d9946887cbbacbf51b82.
+- Exact-head combined status and PR workflow-run queries returned no entries. This is not a passing CI result; browser tests have not been executed in this session.
+- Latest source changes: removed stale experimental-memory action dispatch; collapsed private/shared memory explanations; enforced exclusive Cloud settings behavior; added E2E assertions for these interactions and a real text-scale effect.
+- No merge, deployment, framework migration or dependency addition performed.
 
 ## Decision log
 
