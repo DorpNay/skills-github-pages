@@ -326,29 +326,22 @@ test('theme and language are a compact accessible header group', async ({ page }
   await expect(page.locator('#uiLanguage')).toHaveValue('ru');
 });
 
-test('aLandi Cloud settings are exclusive with provider and additional settings', async ({ page }) => {
-  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+test('aLandi Cloud is exclusive while provider and additional settings can remain open together', async ({ page }) => {
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   await page.locator('[data-action="toggle-settings"]').click();
-  const cloud = page.locator('#cloudSettingsGroup');
-  const providers = page.locator('#thirdPartyProviderSettings');
-  const additional = page.locator('#additionalSettings');
-
+  const cloud=page.locator('#cloudSettingsGroup'),providers=page.locator('#thirdPartyProviderSettings'),additional=page.locator('#additionalSettings');
   await cloud.locator(':scope > summary').click();
-  await expect(cloud).toHaveAttribute('open', '');
-  await expect(providers).not.toHaveAttribute('open', '');
-  await expect(additional).not.toHaveAttribute('open', '');
-
+  await expect(cloud).toHaveAttribute('open','');
   await providers.locator(':scope > summary').click();
-  await expect(cloud).toHaveAttribute('open', '');
-  await expect(providers).not.toHaveAttribute('open', '');
-
-  await cloud.locator(':scope > summary').click();
-  await providers.locator(':scope > summary').click();
-  await expect(providers).toHaveAttribute('open', '');
-  await expect(cloud).not.toHaveAttribute('open', '');
+  await expect(cloud).not.toHaveAttribute('open','');
+  await expect(providers).toHaveAttribute('open','');
   await additional.locator(':scope > summary').click();
-  await expect(additional).toHaveAttribute('open', '');
-  await expect(cloud).not.toHaveAttribute('open', '');
+  await expect(providers).toHaveAttribute('open','');
+  await expect(additional).toHaveAttribute('open','');
+  await cloud.locator(':scope > summary').click();
+  await expect(cloud).toHaveAttribute('open','');
+  await expect(providers).not.toHaveAttribute('open','');
+  await expect(additional).not.toHaveAttribute('open','');
 });
 
 test('text readability preferences persist and apply in both themes', async ({ page }) => {
@@ -360,8 +353,17 @@ test('text readability preferences persist and apply in both themes', async ({ p
     element.value = '115';
     element.dispatchEvent(new Event('input', { bubbles: true }));
   });
+  const normalMuted=await page.locator('#memoryStatusLine').evaluate(element=>getComputedStyle(element).color);
   await page.locator('#uiTextContrast').selectOption('high');
   await expect(page.locator('#uiTextScaleValue')).toHaveText('115%');
+  const highDark=await page.evaluate(()=>({
+    muted:getComputedStyle(document.querySelector('#memoryStatusLine')).color,
+    disabled:getComputedStyle(document.querySelector('#projectMemoryScopeSelect')).color,
+    info:getComputedStyle(document.documentElement).getPropertyValue('--ui-info').trim()
+  }));
+  expect(highDark.muted).not.toBe(normalMuted);
+  expect(highDark.disabled).not.toBe('');
+  expect(highDark.info).not.toBe('');
   await expect(page.locator('html')).toHaveAttribute('data-text-contrast', 'high');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_text_scale_v1'))).toBe('115');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_text_contrast_v1'))).toBe('high');
@@ -370,6 +372,12 @@ test('text readability preferences persist and apply in both themes', async ({ p
   await toggleHeaderTheme(page);
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(page.locator('html')).toHaveAttribute('data-text-contrast', 'high');
+  const highLight=await page.evaluate(()=>({
+    muted:getComputedStyle(document.querySelector('#memoryStatusLine')).color,
+    info:getComputedStyle(document.documentElement).getPropertyValue('--ui-info').trim()
+  }));
+  expect(highLight.muted).not.toBe('');
+  expect(highLight.info).toBe('#174ea6');
   const scaledFontSize = await page.locator('#chatBox').evaluate(element => parseFloat(getComputedStyle(element).fontSize));
   expect(scaledFontSize).toBeGreaterThan(16);
   await page.reload({ waitUntil: 'domcontentloaded' });
@@ -2588,12 +2596,21 @@ test('mobile messages expose full text and retain a jump-to-latest control', asy
   await viewAction.click();
   await expect(page.locator('#messageViewerModal')).toBeVisible();
   await expect(page.locator('#messageViewerContent')).toContainText('MESSAGE_VIEWER_LINE_69');
+  await expect(page.locator('#messageViewerCopy')).toBeVisible();
+  await expect(page.locator('#messageViewerSpeak')).toBeVisible();
+  await expect(page.locator('#messageViewerCopy')).toHaveAttribute('aria-label',/Copy message|Скопировать сообщение/);
+  await expect(page.locator('#messageViewerSpeak')).toHaveAttribute('aria-label',/Generate speech|Создать речь/);
+  const viewerActionBoxes=await page.locator('#messageViewerModal .message-actions button').evaluateAll(nodes=>nodes.map(node=>{const rect=node.getBoundingClientRect();return {width:rect.width,height:rect.height};}));
+  expect(viewerActionBoxes.length).toBe(2);
+  expect(viewerActionBoxes.every(box=>box.width>=44&&box.height>=44)).toBe(true);
   await page.keyboard.press('Escape');
   await expect(page.locator('#messageViewerModal')).toBeHidden();
   await expect(viewAction).toBeFocused();
 
   await page.locator('#chatBox [data-action="view-message"]').first().click();
   await expect(page.locator('#messageViewerContent')).toContainText('Show a full message.');
+  await expect(page.locator('#messageViewerCopy')).toBeVisible();
+  await expect(page.locator('#messageViewerSpeak')).toBeHidden();
   await page.locator('#messageViewerModal [data-action="close-message-viewer"]').click();
 
   await page.locator('#chatBox [data-action="copy-message"]').last().click();
@@ -2786,3 +2803,164 @@ test('application innovation ticker is static when reduced motion is requested',
   expect(await ticker.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
   await expect(page.locator('#agentFunctionSettings .roadmap-note')).toBeVisible();
 });
+
+
+test('last deleted chat can be restored after reload from local storage', async ({ page }) => {
+  await page.addInitScript(() => {
+    const chat=(id,title)=>({id,title,projectId:null,messages:[{role:'user',content:'RESTORE_SENTINEL_'+id}],privateMemoryUsed:false,processingMode:'fast',searchMode:'normal',multiAgentEnabled:false,skillPreset:'auto',customSkillName:'',customSkillInstructions:'',customSkillOutput:'',skillGoal:'planning',skillOutputMode:'summary',agentTeamSize:4,agentTeamScenario:'general',agentTeamCustomScenario:'',agentRolePreset:'balanced',agentCustomRoles:''});
+    localStorage.setItem('ai_chats_v87',JSON.stringify([chat('keep-chat','Keep this chat'),chat('closed-chat','Restore this chat')]));
+    localStorage.setItem('ai_current_chat_v87','keep-chat');
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await ensureSidebarOpen(page);
+  const row=page.locator('#chatList .chat-row').filter({hasText:'Restore this chat'});
+  await row.locator('summary[aria-label="Действия чата"]').click();
+  page.on('dialog',dialog=>dialog.accept());
+  await row.locator('[data-action="delete-chat"]').click();
+  await expect(page.locator('#restoreLastClosedChat')).toBeVisible();
+  await page.reload({waitUntil:'domcontentloaded'});
+  await ensureSidebarOpen(page);
+  await expect(page.locator('#restoreLastClosedChat')).toBeVisible();
+  await page.locator('#restoreLastClosedChat').click();
+  await expect(page.locator('#restoreLastClosedChat')).toBeHidden();
+  await expect(page.locator('#chatList')).toContainText('Restore this chat');
+  const restored=await page.evaluate(()=>JSON.parse(localStorage.getItem('ai_chats_v87')||'[]').find(chat=>chat.title==='Restore this chat'));
+  expect(restored.messages[0].content).toBe('RESTORE_SENTINEL_closed-chat');
+});
+
+test('browser Back returns through nested project filters instead of leaving the app', async ({ page }) => {
+  await page.addInitScript(() => {
+    const project=(id,name)=>({id,name,description:'',instructions:'',memoryScope:'project-only',memory:[],createdAt:'',updatedAt:''});
+    localStorage.setItem('ai_projects_v1',JSON.stringify([project('nav-alpha','Navigation Alpha'),project('nav-beta','Navigation Beta')]));
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await ensureSidebarOpen(page);
+  if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
+  const alpha=page.locator('#projectNavigationList .project-nav-row[data-project-id="nav-alpha"]');
+  const beta=page.locator('#projectNavigationList .project-nav-row[data-project-id="nav-beta"]');
+  if(!(await alpha.locator('details.project-nav-item').evaluate(el=>el.open)))await alpha.locator('details.project-nav-item > summary').click();
+  await alpha.locator('[data-action="select-project"]').click();
+  await expect(page.locator('#chatSectionTitle')).toContainText('Navigation Alpha');
+  if(!(await beta.locator('details.project-nav-item').evaluate(el=>el.open)))await beta.locator('details.project-nav-item > summary').click();
+  await beta.locator('[data-action="select-project"]').click();
+  await expect(page.locator('#chatSectionTitle')).toContainText('Navigation Beta');
+  await page.goBack();
+  await expect(page.locator('#chatSectionTitle')).toContainText('Navigation Alpha');
+  await page.goBack();
+  await expect(page.locator('#chatSectionTitle')).toContainText('Без проекта');
+  await expect(page.locator('#userInput')).toBeVisible();
+});
+
+test('browser Back closes a project settings modal without leaving the app', async ({ page }) => {
+  await page.addInitScript(()=>localStorage.setItem('ai_projects_v1',JSON.stringify([{id:'back-project',name:'Back project',description:'',instructions:'',memoryScope:'project-only',memory:[],createdAt:'',updatedAt:''}])));
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await ensureSidebarOpen(page);
+  if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
+  const row=page.locator('#projectNavigationList .project-nav-row[data-project-id="back-project"]');
+  if(!(await row.locator('details.project-nav-item').evaluate(el=>el.open)))await row.locator('details.project-nav-item > summary').click();
+  await row.locator('[data-action="open-project-settings"]').click();
+  await expect(page.locator('#projectSettingsModal')).toBeVisible();
+  await expect(page.locator('body')).toHaveClass(/ui-modal-open/);
+  await page.goBack();
+  await expect(page.locator('#projectSettingsModal')).toBeHidden();
+  await expect(page.locator('#userInput')).toBeVisible();
+  await expect(page.locator('body')).not.toHaveClass(/ui-modal-open/);
+});
+
+test('project context handoff targets an existing chat and is one-shot', async ({ page }) => {
+  const captured=[];
+  await page.route('https://api.example.test/v1/chat/completions',async route=>{
+    captured.push(route.request().postDataJSON());
+    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({model:'handoff-e2e',choices:[{message:{role:'assistant',content:'Handoff received.'}}]})});
+  });
+  await page.addInitScript(()=>{
+    const project=(id,name,instructions,memoryText)=>({id,name,description:'',instructions,memoryScope:'project-only',memory:[{id:id+'-memory',text:memoryText,createdAt:''}],createdAt:'',updatedAt:''});
+    const chat=(id,title,projectId)=>({id,title,projectId,messages:[]});
+    localStorage.setItem('ai_projects_v1',JSON.stringify([project('handoff-alpha','Alpha','ALPHA_INSTRUCTION','ALPHA_MEMORY'),project('handoff-beta','Beta','BETA_INSTRUCTION','BETA_MEMORY')]));
+    localStorage.setItem('ai_chats_v87',JSON.stringify([chat('handoff-chat-alpha','Alpha chat','handoff-alpha'),chat('handoff-chat-beta','Beta chat','handoff-beta')]));
+    localStorage.setItem('ai_current_chat_v87','handoff-chat-alpha');
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('handoff-e2e');
+  await page.locator('#apiKey').fill('e2e-handoff-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+  await openProjectSettingsForId(page,'handoff-beta');
+  await page.locator('#projectContextTargetChat').selectOption('handoff-chat-alpha');
+  await page.locator('[data-action="handoff-project-context"]').click();
+  await expect(page.locator('#toast')).toContainText('Контекст проекта подготовлен');
+  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
+  await ensureSidebarClosed(page);
+  await page.locator('#userInput').fill('Use the handed-off project context.');
+  await page.locator('#sendBtn').click();
+  await expect.poll(()=>captured.length).toBe(1);
+  expect(captured[0].messages[0].content).toContain('BETA_INSTRUCTION');
+  expect(captured[0].messages[0].content).toContain('BETA_MEMORY');
+  expect(captured[0].messages[0].content).toContain('ALPHA_INSTRUCTION');
+  expect(captured[0].messages[0].content).not.toContain('ALPHA_MEMORY');
+  await page.locator('#userInput').fill('Do not reuse the handed-off project context.');
+  await page.locator('#sendBtn').click();
+  await expect.poll(()=>captured.length).toBe(2);
+  expect(captured[1].messages[0].content).not.toContain('BETA_MEMORY');
+  const state=await page.evaluate(()=>({chats:JSON.parse(localStorage.getItem('ai_chats_v87')||'[]'),current:localStorage.getItem('ai_current_chat_v87')}));
+  expect(state.chats).toHaveLength(2);
+  expect(state.chats.find(chat=>chat.id===state.current).projectId).toBe('handoff-alpha');
+});
+
+test('modal backdrop and focus lifecycle remain clean over repeated open and close cycles', async ({ page }) => {
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  for(let i=0;i<3;i++){
+    await page.locator('[data-action="toggle-settings"]').click();
+    await expect(page.locator('#settingsModal')).toBeVisible();
+    await expect(page.locator('body')).toHaveClass(/ui-modal-open/);
+    await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+    await expect(page.locator('#settingsModal')).toBeHidden();
+    await expect(page.locator('body')).not.toHaveClass(/ui-modal-open/);
+  }
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await expect(page.locator('#projectCreateModal')).toBeVisible();
+  await page.locator('#projectCreateModal [data-action="close-project-create"]').click();
+  await expect(page.locator('#projectCreateModal')).toBeHidden();
+  await expect(page.locator('body')).not.toHaveClass(/ui-modal-open/);
+});
+
+test('request status and notifications expose semantic state and centered alignment', async ({ page }) => {
+  let release;
+  await page.route('https://api.example.test/v1/chat/completions',async route=>{
+    await new Promise(resolve=>{release=resolve;});
+    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({model:'status-e2e',choices:[{message:{role:'assistant',content:'Status complete.'}}]})});
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('status-e2e');
+  await page.locator('#apiKey').fill('e2e-status-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('Show a semantic request status.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#searchStatus')).toBeVisible();
+  await expect(page.locator('#searchStatus')).toHaveAttribute('data-state','info');
+  const statusStyle=await page.locator('#searchStatus').evaluate(element=>({align:getComputedStyle(element).textAlign,color:getComputedStyle(element.querySelector('#statusText')).color}));
+  expect(statusStyle.align).toBe('center');
+  expect(statusStyle.color).not.toBe('');
+  release();
+  await expect(page.locator('#chatBox')).toContainText('Status complete.');
+  await ensureSidebarOpen(page);
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await page.locator('#projectCreateNameInput').fill('Semantic status project');
+  await page.locator('[data-action="create-project"]').click();
+  await expect(page.locator('#toast')).toHaveAttribute('data-state','success');
+  await ensureSidebarOpen(page);
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await page.locator('[data-action="create-project"]').click();
+  await expect(page.locator('#toast')).toHaveAttribute('data-state','error');
+});
+
