@@ -179,6 +179,33 @@ test('project settings closes on Escape and restores focus to a visible control'
   await expect(page.locator('#appSidebarToggle')).toBeFocused();
 });
 
+test('mobile sidebar closes on a deliberate horizontal swipe but not vertical scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await expect(page.locator('#sidebar')).not.toHaveClass(/-translate-x-full/);
+  await page.locator('#sidebar').evaluate(sidebar => {
+    const dispatch = (type, property, point) => {
+      const event = new Event(type, { bubbles: true });
+      Object.defineProperty(event, property, { value: [point] });
+      sidebar.dispatchEvent(event);
+    };
+    dispatch('touchstart', 'touches', { clientX: 250, clientY: 220 });
+    dispatch('touchend', 'changedTouches', { clientX: 248, clientY: 340 });
+  });
+  await expect(page.locator('#sidebar')).not.toHaveClass(/-translate-x-full/);
+  await page.locator('#sidebar').evaluate(sidebar => {
+    const dispatch = (type, property, point) => {
+      const event = new Event(type, { bubbles: true });
+      Object.defineProperty(event, property, { value: [point] });
+      sidebar.dispatchEvent(event);
+    };
+    dispatch('touchstart', 'touches', { clientX: 250, clientY: 220 });
+    dispatch('touchend', 'changedTouches', { clientX: 130, clientY: 228 });
+  });
+  await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
+});
+
 test('settings backdrop closes cleanly and restores focus across repeated cycles', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const opener = page.locator('[data-action="toggle-settings"]').first();
@@ -328,6 +355,9 @@ test('project quick actions open a real create form and persist the chosen memor
   await expect(page.locator('#projectManagerDetails')).toHaveAttribute('open', '');
   await expect(page.locator('#projectNameInput')).toHaveValue('');
   await expect(page.locator('#projectMemoryScopeSelect')).toBeEnabled();
+  await expect(page.locator('#projectSourcesSection')).toBeVisible();
+  await expect(page.locator('#projectSourcesSection')).toContainText('API списка источников');
+  await expect(page.locator('#projectSourcesSection button')).toHaveCount(0);
   await expect(page.locator('#createProjectSubmit')).toBeVisible();
   await expect(page.locator('#saveProjectSubmit')).toBeHidden();
 
