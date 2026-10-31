@@ -1517,6 +1517,7 @@ test('project context handoff queues exactly one request for an existing chat wi
   expect(afterHandoff.chats.every(chat => chat.projectId === '')).toBe(true);
 
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
+  await expect(page.locator('#projectSettingsModal')).toBeHidden();
   await page.locator('[data-action="toggle-sidebar"]').click();
   const targetRow = page.locator('#chatList .chat-row').filter({ has: page.locator('[data-action="switch-chat"][data-chat-id="' + targetChatId + '"]') });
   await targetRow.locator('[data-action="switch-chat"]').click();
