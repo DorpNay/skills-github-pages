@@ -481,16 +481,17 @@ whole_stack_integrity_audit_2026_10_30:
 landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
-  latest_documented_head: "c8848ea6f86c1f2b3d8fe76afc6a6ad01249f4b1"
+  latest_code_test_head: "ad81e1be6924af52587f8b1aa1139b55c5104e8f"
+  latest_documented_head_at_checkpoint: "9f339cd5d73a56476d4935aa42a8673c57f439cb"
   comparison_to_main:
-    ahead: 101
+    ahead: 107
     behind: 4
     merge_base: "e78a73b25725bfa63370d9946887cbbacbf51b82"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
     memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
     project_context_handoff: "Explicit existing-chat target; next request only; no new chat or project membership mutation; five-project cap; pending state is session-only."
-    navigation: "Browser Back/Escape tracks nested project filters and modal depth."
+    navigation: "Browser Back/Forward/Escape tracks nested project filters and modal depth; Forward restores saved project filters and dialogs."
     modal_lifecycle: "Focus entry/return, Tab trap, body scroll/overscroll lock, backdrop cleanup and repeated open/close paths."
     message_actions: "Expanded viewer keeps accessible copy/speech actions; speech hidden for user-authored messages."
     status_and_readability: "Semantic status/toast states and high-contrast text tokens across light/dark themes."
@@ -513,4 +514,4 @@ landing_ui_v2_pr131_2026_10_31:
     merge: "requires explicit owner approval"
     deploy: "requires explicit owner approval"
     main: "V1 baseline remains untouched"
-  next: "Run exact-head Quality/Chromium if workflow execution is available; fix failures; complete native iPhone Safari/VoiceOver/long-press review."
+  next: "Run exact-head Quality/Chromium if workflow execution is available; fix failures; complete native iPhone Safari/VoiceOver/long-press review. Browser Forward E2E is added but unexecuted."
