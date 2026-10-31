@@ -511,10 +511,10 @@ permalink: /
               <input id="projectNameInput" type="text" maxlength="100" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Название проекта">
               <label for="projectInstructionsInput" class="block text-[11px] text-gray-400" data-i18n="projectInstructionsLabel">Инструкции проекта</label>
               <textarea id="projectInstructionsInput" rows="3" maxlength="6000" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs resize-y" placeholder="Цель, стиль, ограничения и критерии результата"></textarea>
-              <div class="grid grid-cols-2 gap-2">
-                <button id="createProjectSubmit" type="button" data-action="create-project" class="hidden bg-cyan-900/70 hover:bg-cyan-800 border border-cyan-800 rounded-lg py-2 text-xs" data-i18n="createProject">＋ Создать проект</button>
+              
+                
                 <button id="saveProjectSubmit" type="button" data-action="save-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="saveProject">Сохранить изменения</button>
-              </div>
+              
     
               <label for="projectMemoryInput" class="block text-[11px] text-gray-400" data-i18n="projectMemoryLabel">Добавить факт в память проекта</label>
               <div class="flex gap-1"><input id="projectMemoryInput" type="text" maxlength="600" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Факт, решение или ограничение"><button type="button" data-action="add-project-memory" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Добавить факт">＋</button></div>
@@ -534,6 +534,25 @@ permalink: /
     
             </div>
           </details>
+    </section>
+  </div>
+  <div id="projectCreateModal" class="hidden fixed inset-0 z-[65] bg-black/80 p-3 sm:p-5 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="projectCreateModalTitle">
+    <section class="w-full max-w-lg rounded-2xl border border-gray-700 bg-gray-950 p-4 shadow-2xl">
+      <header class="mb-3 flex items-center justify-between gap-3 border-b border-gray-800 pb-3">
+        <h2 id="projectCreateModalTitle" class="text-sm font-bold" data-i18n="projectCreateTitle">Создать проект</h2>
+        <button type="button" data-action="close-project-create" aria-label="Закрыть создание проекта" class="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gray-700 text-sm text-gray-300">✕</button>
+      </header>
+      <p class="mb-3 text-xs leading-relaxed text-gray-400" data-i18n="projectCreateHelp">Создание проекта не перемещает текущий чат. Новый чат можно отдельно создать из строки проекта.</p>
+      <div class="space-y-2">
+        <label for="projectCreateNameInput" class="block text-[11px] text-gray-400" data-i18n="projectCreateNameLabel">Название проекта</label>
+        <input id="projectCreateNameInput" type="text" maxlength="100" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm" placeholder="Название проекта">
+        <label for="projectCreateInstructionsInput" class="block text-[11px] text-gray-400" data-i18n="projectCreateInstructionsLabel">Краткие инструкции (необязательно)</label>
+        <textarea id="projectCreateInstructionsInput" rows="3" maxlength="6000" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm resize-y" placeholder="Цель, стиль, ограничения и критерии результата"></textarea>
+      </div>
+      <footer class="mt-4 flex justify-end gap-2">
+        <button type="button" data-action="close-project-create" class="rounded-lg border border-gray-700 px-4 py-2 text-xs text-gray-300" data-i18n="cancel">Отмена</button>
+        <button type="button" data-action="create-project" class="rounded-lg border border-cyan-700 bg-cyan-900/70 px-4 py-2 text-xs font-semibold text-cyan-100" data-i18n="createProject">＋ Создать проект</button>
+      </footer>
     </section>
   </div>
   <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 hidden" aria-hidden="true"></div>
@@ -1422,7 +1441,7 @@ permalink: /
         functionAgentsTitle:'Structured workflow',functionAgentsDescription:'For suitable complex tasks, aLandi uses four stages: planning, research, critique and synthesis. All stages use the selected model; Quick/Thorough controls the tool budget in the research stage. This is not an independent team of agents.',agentModeOption:'Allow structured workflow for complex tasks',agentModeHelp:'Planner → researcher → critic → synthesizer. All stages use the selected model; Quick/Thorough limits tools in the research stage. The pipeline runs only for suitable complex requests; no separate model team is created.',
         functionSkillsTitle:'Task profile',functionSkillsDescription:'A profile adds task-specific instructions for this chat. It does not enable tools, web search or additional permissions.',skillPresetLabel:'Task profile for this chat',skillAuto:'Auto (thorough/structured)',skillPlanning:'Planning',skillResearch:'Research',skillCodeReview:'Code and review',skillDataAnalysis:'Data analysis',skillAgentSystems:'Agent systems',skillMultimodal:'Multimodal tasks',skillPresetHelp:'Auto selects a profile for Thorough or structured requests; quick direct answers stay lean. A manual profile changes instructions only, not tools or data access. This choice applies to this chat; new chats start with Auto.',
         functionConnectorsTitle:'Integrations',functionConnectorsDescription:'Only real connected integrations are listed. No external sources are connected yet; there are no placeholder switches.',
-        researchStudioTitle:'Research Studio',researchStudioDescription:'A workspace for preparing a research request. Running it uses this chat’s current settings.',researchStudioPromptLabel:'What should be researched?',researchStudioPromptPlaceholder:'For example: compare primary sources, verify disputed claims and prepare cited conclusions.',researchStudioCurrentSettingsLabel:'Current chat settings',researchStudioSettingsHelp:'The Studio uses these settings without changing them. Close this window and use the chat controls to change them.',researchStudioContextHelp:'To research your own documents, attach them in the chat or explicitly select project context. The Studio does not upload files or connect external services by itself. Retrieved pages are untrusted sources, not instructions.',researchStudioCancel:'Cancel',researchStudioStart:'Start research ↗',researchStudioClose:'Close Studio',researchStudioStatusDefault:'The Studio uses the current chat settings and does not change them.',researchStudioPromptRequired:'Enter a research question or task first.',
+        projectCreateTitle:'Create project',projectCreateHelp:'Creating a project does not move the current chat. You can create a new chat separately from the project row.',projectCreateNameLabel:'Project name',projectCreateInstructionsLabel:'Short instructions (optional)',cancel:'Cancel',researchStudioTitle:'Research Studio',researchStudioDescription:'A workspace for preparing a research request. Running it uses this chat’s current settings.',researchStudioPromptLabel:'What should be researched?',researchStudioPromptPlaceholder:'For example: compare primary sources, verify disputed claims and prepare cited conclusions.',researchStudioCurrentSettingsLabel:'Current chat settings',researchStudioSettingsHelp:'The Studio uses these settings without changing them. Close this window and use the chat controls to change them.',researchStudioContextHelp:'To research your own documents, attach them in the chat or explicitly select project context. The Studio does not upload files or connect external services by itself. Retrieved pages are untrusted sources, not instructions.',researchStudioCancel:'Cancel',researchStudioStart:'Start research ↗',researchStudioClose:'Close Studio',researchStudioStatusDefault:'The Studio uses the current chat settings and does not change them.',researchStudioPromptRequired:'Enter a research question or task first.',
         kiloPrivacyNotice:'Kilo Auto Free is an ordinary alternative provider in the API list, not part of the primary aLandi cloud. Requests go to Kilo and its selected models, which may log prompts or use them to improve services. Do not send confidential data. No silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',saveSettings:'Save settings',closeSettings:'Close',
         privateMemoryHelpSummary:'About private memory',sharedMemoryHelpSummary:'About shared memory',readabilityTitle:'Text readability',readabilityReset:'Reset',readabilityScaleLabel:'Text size',readabilityContrastLabel:'Text contrast',readabilityContrastNormal:'Standard',readabilityContrastHigh:'Higher',readabilityPreview:'Preview text — this is how messages will look.',memoryPanelTitle:'Memory settings',memoryPanelSummary:'Private and shared memory',privateMemoryTitle:'Private memory',privateMemoryHelp:'Stored locally in this browser’s IndexedDB. Notes are not sent with requests by default; you can opt in below.',sharedMemoryTitle:'Shared memory',sharedMemoryHelp:'Shared facts may be sent to an external provider only with separate consent and when the project memory scope allows it.',privateMemoryContextLabel:'Allow private-memory notes to be included in request context.',globalMemoryOptIn:'Allow relevant shared-memory notes to be included in prompts.',noProjectNav:'No project',projectMemoryScopeLabel:'Project memory scope',projectMemoryScopeOnly:'Memory inside this project only',projectMemoryScopeGlobal:'Project memory + shared memory (when enabled)',attachMediaTitle:'Photo or video',attachMediaHelp:'Images or sampled frames from a video',attachAnyFileTitle:'Any file format',attachAnyFileHelp:'Native multi-file picker; parsing depends on file type.',requestContextTitle:'Context for this request',requestContextHelp:'Selected projects apply only to the next send. The active chat and its project do not change.',clearRequestContext:'Clear selection',skillsAutoHint:'Skills: automatically selected for the task; a manual catalog is not connected yet.',requestContextLimitHint:'Context is limited to five projects and a shared size budget.',projectsTitle:'▣ Projects',currentProjectLabel:'Project for this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'＋ Create project',saveProject:'Save changes',projectSourcesTitle:'Project sources',projectSourcesUnavailable:'Source management is not connected yet: the gateway can ingest, delete and retrieve documents by scope, but it has no source-list API. Chat attachments are not treated as saved project sources.',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats'
       }
@@ -1894,8 +1913,16 @@ permalink: /
     }
     let selectedProjectForSettingsId=null;
     let activeChatProjectId=null;
-    let creatingProject=false;
     let projectSettingsOpener=null;
+    let projectCreateOpener=null;
+    function closeProjectCreate(){
+      const modal=$('projectCreateModal');
+      if(!modal||modal.classList.contains('hidden'))return;
+      modal.classList.add('hidden');
+      const opener=projectCreateOpener;projectCreateOpener=null;
+      const target=opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled?opener:$('appSidebarToggle');
+      target?.focus({preventScroll:true});
+    }
     function closeProjectSettings(){
       const modal=$('projectSettingsModal');
       if(!modal||modal.classList.contains('hidden'))return;
@@ -1906,10 +1933,6 @@ permalink: /
       const fallback=$('appSidebarToggle');
       const target=visibleOpener||fallback;
       if(target&&!target.disabled&&target.getClientRects().length)target.focus({preventScroll:true});
-    }
-    function syncProjectEditorMode(){
-      $('createProjectSubmit')?.classList.toggle('hidden',!creatingProject);
-      $('saveProjectSubmit')?.classList.toggle('hidden',creatingProject);
     }
     function getProjectForChat(chat){
       if(arguments.length===0) return projects.find(project=>project.id===selectedProjectForSettingsId)||null;
@@ -1947,17 +1970,17 @@ permalink: /
       const active=document.activeElement;
       const preserveDraft=options.preserveDraft===true&&[ $('projectNameInput'),$('projectInstructionsInput') ].includes(active);
       const chat=getCurrentChat(),project=getProjectForChat(chat);
-      if(!creatingProject&&(!selectedProjectForSettingsId||!projects.some(item=>item.id===selectedProjectForSettingsId)))selectedProjectForSettingsId=project?.id||null;
-      const settingsProject=creatingProject?null:(projects.find(item=>item.id===selectedProjectForSettingsId)||null);
+      if(!selectedProjectForSettingsId||!projects.some(item=>item.id===selectedProjectForSettingsId))selectedProjectForSettingsId=project?.id||null;
+      const settingsProject=projects.find(item=>item.id===selectedProjectForSettingsId)||null;
       const selected=chat?.projectId&&project?project.id:'';
       select.replaceChildren();
       const none=document.createElement('option');none.value='';none.textContent=getUiLanguage()==='en'?'No project · personal chat':'Без проекта · личный чат';select.appendChild(none);
       for(const item of projects){const option=document.createElement('option');option.value=item.id;option.textContent=item.name;select.appendChild(option);}
       select.value=selected;
       $('projectMemoryScopeSelect').value=settingsProject?.memoryScope==='project-and-global'?'project-and-global':'project-only';
-      $('projectSettingsStatus').textContent=creatingProject?(getUiLanguage()==='en'?'Creating a new project. Choose its memory scope before creating.':'Создание проекта. Выбери область памяти перед созданием.'):settingsProject?(getUiLanguage()==='en'?'Editing project: ':'Настраивается проект: ')+settingsProject.name:(getUiLanguage()==='en'?'No project selected — create one below.':'Проект не выбран — создай его ниже.');
-      $('projectMemoryScopeSelect').disabled=!settingsProject&&!creatingProject;
-      syncProjectEditorMode();
+      $('projectSettingsStatus').textContent=settingsProject?(getUiLanguage()==='en'?'Editing project: ':'Настраивается проект: ')+settingsProject.name:(getUiLanguage()==='en'?'Select a project from the list.':'Выбери проект в списке.');
+      $('projectMemoryScopeSelect').disabled=!settingsProject;
+
       $('projectSummary').textContent=project
         ? (getUiLanguage()==='en'?project.name+' · '+chats.filter(c=>c.projectId===project.id).length+' chats · '+project.memory.length+' memory items':project.name+' · чатов: '+chats.filter(c=>c.projectId===project.id).length+' · фактов памяти: '+project.memory.length)
         : (getUiLanguage()==='en'?'This chat is not linked to a project.':'Чат не привязан к проекту.');
@@ -1965,7 +1988,7 @@ permalink: /
       if(projectStatus)projectStatus.textContent=project
         ? (getUiLanguage()==='en'?project.name+' · '+chats.filter(c=>c.projectId===project.id).length+' chats · memory: '+(project.memoryScope==='project-and-global'?'project + global':'project only'):project.name+' · чатов: '+chats.filter(c=>c.projectId===project.id).length+' · память: '+(project.memoryScope==='project-and-global'?'проект + общая':'только проект'))
         : (getUiLanguage()==='en'?'Personal chat · no project':'Личный чат · без проекта');
-      if(!preserveDraft){$('projectNameInput').value=creatingProject?'':(settingsProject?.name||'');$('projectInstructionsInput').value=creatingProject?'':(settingsProject?.instructions||'');}
+      if(!preserveDraft){$('projectNameInput').value=settingsProject?.name||'';$('projectInstructionsInput').value=settingsProject?.instructions||'';}
       const memBox=$('projectMemoryBox');memBox.replaceChildren();
       if(!settingsProject||!settingsProject.memory.length){
         const empty=document.createElement('p');empty.textContent=settingsProject?(getUiLanguage()==='en'?'No project memories yet.':'Пока нет фактов проектной памяти.'):(getUiLanguage()==='en'?'Select or create a project first.':'Сначала выбери или создай проект.');memBox.appendChild(empty);
@@ -1986,17 +2009,22 @@ permalink: /
       renderRequestProjectChoices();
     }
     function createProject(){
-      const input=$('projectNameInput'),name=input.value.trim().slice(0,100);
+      const input=$('projectCreateNameInput'),name=input.value.trim().slice(0,100);
       if(!name){input.focus();showToast(getUiLanguage()==='en'?'Enter a project name first.':'Сначала введи название проекта.','error');return;}
       if(projects.length>=200){showToast('Достигнут предел локальных проектов (200).','error');return;}
-      const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectInstructionsInput').value.trim().slice(0,6000),memoryScope:$('projectMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only',memory:[],createdAt:now,updatedAt:now};
-      creatingProject=false;projects.unshift(project);selectedProjectForSettingsId=project.id;activeChatProjectId=project.id;persistProjects();
-      const chat=getCurrentChat();chat.projectId=project.id;
-      persistChats();renderProjectUI();renderChatList();
+      const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectCreateInstructionsInput').value.trim().slice(0,6000),memoryScope:'project-only',memory:[],createdAt:now,updatedAt:now};
+      projects.unshift(project);selectedProjectForSettingsId=project.id;activeChatProjectId=project.id;persistProjects();
+      renderProjectUI();renderChatList();
+      const navigation=$('projectNavigationList');
+      navigation?.classList.remove('hidden');
+      $('projectNavToggle')?.setAttribute('aria-expanded','true');
+      $('projectNavChevron').textContent='⌃';
+      const group=[...($('projectNavigationList')?.querySelectorAll('details.project-nav-item')||[])].find(item=>item.dataset.projectId===project.id);
+      if(group)group.open=true;
+      closeProjectCreate();
       showToast((getUiLanguage()==='en'?'Project created: ':'Создан проект: ')+name);
     }
     function saveProject(){
-      if(creatingProject){createProject();return;}
       const project=getProjectForChat();
       if(!project){showToast(getUiLanguage()==='en'?'Select a project in the Projects list or create one.':'Выбери проект в списке или создай новый.','error');return;}
       const name=$('projectNameInput').value.trim().slice(0,100);
@@ -5027,9 +5055,14 @@ permalink: /
           case 'remove-draft-attachment': pendingComposerAttachments=pendingComposerAttachments.filter(item=>item.id!==control.dataset.attachmentId);renderDraftAttachments();break;
           case 'close-project-settings': closeProjectSettings();break;
           case 'open-project-create': {
-            projectSettingsOpener=control;
-            creatingProject=true;selectedProjectForSettingsId=null;$('projectManagerDetails').open=true;$('projectMemoryScopeSelect').value='project-only';renderProjectUI();$('projectSettingsModal').classList.remove('hidden');toggleSidebar(false);requestAnimationFrame(()=>$('projectNameInput').focus({preventScroll:true}));break;
+            projectCreateOpener=control;
+            $('projectCreateNameInput').value='';
+            $('projectCreateInstructionsInput').value='';
+            $('projectCreateModal').classList.remove('hidden');
+            requestAnimationFrame(()=>$('projectCreateNameInput').focus({preventScroll:true}));
+            break;
           }
+          case 'close-project-create': closeProjectCreate();break;
           case 'create-project': createProject();break;
           case 'save-project': saveProject();break;
           case 'toggle-project-navigation': {
@@ -5049,7 +5082,7 @@ permalink: /
           }
           case 'open-project-settings': {
             projectSettingsOpener=control;
-            creatingProject=false;selectedProjectForSettingsId=projects.some(project=>project.id===control.dataset.projectId)?control.dataset.projectId:null;
+            selectedProjectForSettingsId=projects.some(project=>project.id===control.dataset.projectId)?control.dataset.projectId:null;
             $('projectManagerDetails').open=true;renderProjectUI();$('projectSettingsModal').classList.remove('hidden');toggleSidebar(false);requestAnimationFrame(()=>$('projectNameInput').focus({preventScroll:true}));break;
           }
           case 'detach-current-chat': moveCurrentChatToProject('');break;
@@ -5165,6 +5198,7 @@ permalink: /
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
     $('researchStudioModal').addEventListener('click', (event) => { if (event.target === $('researchStudioModal')) closeResearchStudio(); });
     $('projectSettingsModal').addEventListener('click', (event) => { if (event.target === $('projectSettingsModal')) closeProjectSettings(); });
+    $('projectCreateModal').addEventListener('click', (event) => { if (event.target === $('projectCreateModal')) closeProjectCreate(); });
     // Escape is handled centrally so every modal shares the same close and focus-return path.
     $('modelPreset').addEventListener('change',()=>{const value=$('modelPreset').value;if(value!=='__custom__')$('modelName').value=value;safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
     $('modelName').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();scheduleProviderAutoConnect();});
@@ -5198,7 +5232,7 @@ permalink: /
     $('settingsProfileFile').addEventListener('change', importSettingsProfile);
     $('importProjectFile').addEventListener('change',importProjectBundle);
     $('currentProjectSelect').addEventListener('change',event=>moveCurrentChatToProject(event.target.value));
-    $('projectMemoryScopeSelect').addEventListener('change',event=>{if(creatingProject)return;const project=getProjectForChat();if(!project){event.target.value='project-only';return;}project.memoryScope=event.target.value==='project-and-global'?'project-and-global':'project-only';project.updatedAt=new Date().toISOString();persistProjects();showToast(project.memoryScope==='project-and-global'?'Для проекта разрешена общая память (если общий доступ включён).':'Общая память выключена для этого проекта.');});
+    $('projectMemoryScopeSelect').addEventListener('change',event=>{const project=getProjectForChat();if(!project){event.target.value='project-only';return;}project.memoryScope=event.target.value==='project-and-global'?'project-and-global':'project-only';project.updatedAt=new Date().toISOString();persistProjects();showToast(project.memoryScope==='project-and-global'?'Для проекта разрешена общая память (если общий доступ включён).':'Общая память выключена для этого проекта.');});
      $('globalMemoryToggle').addEventListener('change',event=>{safeSet(STORAGE.globalMemoryEnabled,String(event.target.checked));updateMemoryStatusLine();showToast(event.target.checked?(getUiLanguage()==='en'?'Global memory enabled.':'Глобальная память включена.'):(getUiLanguage()==='en'?'Global memory disabled.':'Глобальная память отключена.'));});
     $('privateMemoryContextToggle').addEventListener('change',event=>{safeSet(STORAGE.privateMemoryEnabled,String(event.target.checked));updateMemoryStatusLine();showToast(event.target.checked?(getUiLanguage()==='en'?'Private memory context enabled.':'Использование личной памяти в запросах разрешено.'):(getUiLanguage()==='en'?'Private memory context disabled.':'Использование личной памяти в запросах выключено.'));});
     $('projectMemoryInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();document.querySelector('[data-action="add-project-memory"]').click();}});
@@ -5251,6 +5285,7 @@ permalink: /
         if (!$('chatActionModal').classList.contains('hidden')) closeChatActionDialog();
         else if (!$('messageViewerModal').classList.contains('hidden')) closeMessageViewer();
         else if (!$('traceModal').classList.contains('hidden')) closeTrace();
+        else if (!$('projectCreateModal').classList.contains('hidden')) closeProjectCreate();
         else if (!$('projectSettingsModal').classList.contains('hidden')) closeProjectSettings();
         else if (!$('researchStudioModal').classList.contains('hidden')) closeResearchStudio();
         else if (!$('functionPanelModal').classList.contains('hidden')) closeFunctionPanel();
