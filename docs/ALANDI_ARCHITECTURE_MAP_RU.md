@@ -39,7 +39,7 @@ flowchart TD
 | Клиент | `index.md` | Большой статический HTML/JS; история и настройки в браузере. Browser API keys не являются server-side vault. |
 | Gateway | `gateway/app.py`, `gateway/README_RU.md` | FastAPI: health/capabilities/models/chat, admin, memory, RAG, search, documents, audio. VPS не подтверждён live. |
 | Routing | `gateway/routing.py` | Детерминированная allowlist-политика; общий helper-model cascade не считать включённым. |
-| Memory graph | `gateway/memory/manager.py`, `scope.py`, `conflict.py`, `temporal.py` | SQLite, scope, provenance, статусы фактов; API opt-in. Это граф памяти продукта, не граф исходного кода. |
+| Internal Graphify graph | `gateway/memory/manager.py`, `scope.py`, `conflict.py`, `temporal.py` | Scoped SQLite graph/provenance retained for Graphify/code-evidence workflows only; not user memory and not exposed through gateway HTTP. |
 | Delta sync | `gateway/memory/delta_sync.py` | Versioned patch/revision conflict; не автоматическая синхронизация всех browser records. |
 | Retrieval/RAG | `gateway/rag/lazy_graph_rag.py` | SQLite FTS5 + lexical concepts; baseline, не dense vector RAG и не полный LazyGraphRAG. |
 | Evidence | `gateway/rag/evidence_ledger.py`, `citations.py` | Source URI, offsets/hash и scope должны сохранять проверяемую связь с источником. |
@@ -56,7 +56,7 @@ flowchart TD
 - `GET /v1/capabilities`, `GET /v1/models`
 - `GET /admin/cache/stats`, `GET /admin/runtime`
 - `GET/DELETE /v1/memory/state/{conversation_id}`, `POST /v1/memory/delta`
-- `GET/POST /v1/memory/graph/nodes`, `POST /v1/memory/graph/search`, `POST /v1/memory/graph/relations`, review/delete routes
+- The former `/v1/memory/graph/*` routes were removed by PR #131; only the internal Graphify MemoryManager remains.
 - `POST /v1/rag/ingest`, `POST /v1/rag/retrieve`, `DELETE /v1/rag/documents/{document_id}`
 - `GET /v1/search/web`, `POST /v1/documents/extract`
 - `POST /v1/audio/transcriptions`, `POST /v1/audio/speech`, `POST /v1/chat/completions`
