@@ -16,23 +16,23 @@
 
 | Requirement | Observed implementation | Gap / implementation direction | Status |
 |---|---|---|---|
-| **8.1 Sidebar, memory, projects, chats** | Memory panel above projects; status line above its title; shared-memory block first, personal-memory block second, private-context opt-in last; explanations collapsed by default; closing sidebar collapses only memory disclosures; projectless/project-filtered chat lists; per-project gear/new-chat; Research Studio in Functions; swipe-close; separate project-create dialog; current chat membership preserved; last-closed-chat restore from local storage. | Execute the new accordion/restore regressions in Chromium; refine spacing and keyboard navigation. | [~] |
-| **8.2 Typography/header/main surface** | Header has a wordmark, chat title, theme control, clock and mode controls. | Wordmark is a restrained gradient, clock is 54px, type stack is generic system UI; requested distinct wordmark, tighter vertical controls and independent chat-title treatment need visual iteration. | [~] |
-| **8.3 Settings/providers** | aLandi Cloud is a separate card; external providers and most other settings are inside one `legacyProviderSettings` disclosure. | Split into three mutually exclusive groups: Cloud, third-party providers, additional settings; Cloud must never appear as a third-party provider. Preserve current provider key isolation and connection state. | [~] |
+| **8.1 Sidebar, memory, projects, chats** | Memory status precedes the title; shared facts → personal facts → private-context opt-in; explanations collapsed; sidebar close preserves project/chat disclosure state; project-filtered chats, explicit project chat creation, per-project gear, separate create dialog, unchanged current-chat membership and local last-closed-chat restore. | Execute accordion/restore regressions in Chromium; refine spacing, keyboard navigation and real-device behavior. | [~] |
+| **8.2 Typography/header/main surface** | Dedicated wordmark/chat-title styling, shared system font stack, compact theme/language group, clock and mode controls; mobile control targets use consistent touch sizing. | Visual review across breakpoints and final clock/header proportion check remain. | [~] |
+| **8.3 Settings/providers** | Cloud remains exclusive; opening third-party providers closes Cloud; provider and additional-settings disclosures can remain open together. | Execute E2E and review keyboard/narrow-screen behavior. | [~] |
 | **8.4 Tavily/system prompt** | Tavily key remains in a web-tools disclosure; system prompt is global `localStorage` state and is normalized against the legacy built-in prompt. | Verify the empty-by-default behavior against `DEFAULT_SYSTEM` and migration; decide Tavily only after comparing the existing keyless search fallback and live adapter requirements. No premature deletion. | [~] |
 | **8.5 Living notes** | Source document already says new owner UI requirements belong in the matching subsection and statuses require code/test evidence. | Keep the source checklist as the owner requirements record; implementation status and evidence live in this ledger and PR. | [x] |
-| **8.6 Navigation and visual hierarchy** | Project groups, project settings modal, nested settings and central Escape handling exist. | Audit navigation history/back behavior and all nested settings; standardize headings, group spacing and panel hierarchy without duplicate controls. | [~] |
-| **8.7 Project settings / Sources** | Project settings store name, instructions, local project memory, scope, import/export and deletion. | No explicit project-source CRUD/index contract was found in the targeted gateway audit; existing document upload is not proof of project-source management. Do not show fake source actions. Inspect document/RAG APIs and storage ownership; add a read-only “Источники” view only if backed by real project-scoped records, otherwise record a blocker. | [~] |
-| **8.8 Message action icons** | Copy, view and speech actions are created as text buttons; the expanded viewer has separate controls. | Replace ambiguous text with compact, consistent icon buttons, accessible names/tooltips and adequate touch targets; keep copy/speech in expanded view. | [~] |
-| **8.9 Backdrop lifecycle** | Multiple modals use independent close handlers; some close on backdrop, message viewer directly toggles `.hidden`; Escape central handler does not cover every viewer. | Establish one safe close path per modal, close backdrop atomically, restore focus, unlock scroll and test rapid/repeated open-close, Escape, outside click and transitions. | [~] |
-| **8.10 Control sizing system** | Radius and motion tokens exist; control heights/paddings still mix CSS and utility classes. | Add a small shared token scale for compact/regular/icon controls and touch targets; use semantic variants, not one geometry for every control. | [~] |
-| **8.11 Theme/language group** | Theme icon is in the header; language selector is buried in Additional settings. | Put equally compact theme and language controls together in the header; preserve the 44px touch hit area on small screens and current language persistence. | [~] |
-| **8.12 Remove “Серверная память (Эксперимент)”** | Project settings contain `serverMemoryDetails`, server graph opt-in/upload/list controls and helper-memory suggestion controls; chat state has `serverProjectMemoryEnabled`. | Remove the deprecated product UI and its client-side entry points/state. Preserve ordinary local/private/shared memory. Do not delete unrelated backend code or the normal local memory graph without evidence it belongs exclusively to this feature. Update legacy imports safely and remove stale UI wording. | [~] |
-| **8.13 Explicit project context handoff** | Per-chat project-memory toggle and implicit project-memory injection are removed. Project settings now list existing chats and queue selected project context for the chosen chat's next request, without creating a chat or changing project membership; the composer one-shot picker remains. | Execute the E2E scenario for a non-current target chat, verify one-shot consumption/no cross-chat leakage, and decide whether pending handoff should survive reload (currently session-only). | [~] |
-| **8.14 Touch selection** | Only the unavailable voice control explicitly disables selection; message content is explicitly selectable. | Add targeted `user-select` / `-webkit-user-select` / `touch-action` to controls and gesture surfaces; keep message text and inputs selectable; test long-press and swipes. | [~] |
-| **8.15 Status/progress** | Status uses a gradient animated text treatment and spinner; toast/status roles exist. | Center status rows, use semantic muted state colors, retain truthful progress and reduced-motion behavior; no fabricated progress. | [~] |
-| **8.16 Button typography/icon-first** | Button text sizes and paddings vary across utility classes and local CSS. | Normalize type/spacing/alignment through tokens and component variants; use icon-first only where meaning is unambiguous and always provide accessible labels. | [~] |
-| **8.17 Adjustable text readability** | Dark/light palettes are fixed CSS variables; no user-adjustable readability controls exist. | Add bounded, understandable text readability controls (not arbitrary theme recoloring), persist locally, apply to both themes, validate text-state contrast and provide reset/default behavior. | [~] |
+| **8.6 Navigation and visual hierarchy** | Browser history now tracks nested project filters and modal depth; Back restores the prior project filter or closes the top modal; Escape follows the same stack. | Execute browser Back/Escape regressions and inspect forward-navigation behavior. | [~] |
+| **8.7 Project settings / Sources** | Project settings retain name/instructions/local memory/scope/import/export/delete; Sources shows a truthful unsupported-state explanation; project settings can explicitly hand project context to an existing chat. | Gateway still lacks a source-list API; do not add CRUD until project-scoped list/delete semantics exist. | [~] |
+| **8.8 Message action icons** | Copy and speech controls remain available in the expanded viewer; user messages expose copy but not speech; controls carry accessible names/tooltips and 44px hit targets. | Execute compact/expanded viewer regressions and verify speech/copy on target devices. | [~] |
+| **8.9 Backdrop lifecycle** | Modal stack covers settings, project settings/create, message viewer, chat actions, research, function panel and trace; browser Back/Escape, focus return, Tab trap, body scroll lock and backdrop close share a consistent lifecycle. | Run repeated open/close, outside-click and focus/scroll regressions in Chromium; inspect native mobile behavior. | [~] |
+| **8.10 Control sizing system** | Shared control sizing and typography rules normalize compact controls, menu options, composer tools, header actions, chat creation and icon buttons while retaining 44px touch targets. | Run viewport snapshots and finish remaining one-off controls. | [~] |
+| **8.11 Theme/language group** | Theme and language controls are grouped in the header, persistent and sized for touch/keyboard use. | Narrow viewport and keyboard review. | [~] |
+| **8.12 Remove “Серверная память (Эксперимент)”** | Deprecated feature UI, per-chat/server opt-in and stale client dispatch paths are absent; independent local/private/shared/project-local memory remains. | Audit gateway/backend route ownership and legacy migration references before deleting backend code. | [~] |
+| **8.13 Explicit project context handoff** | Project settings list existing chats and queue the selected project's context for the chosen chat's next request; no new chat or project-membership change; five-project cap and one-shot consumption retained. Pending handoff is session-only until sent. | Execute non-current-chat/no-cross-chat/one-shot E2E and decide whether pending handoff should survive reload. | [~] |
+| **8.14 Touch selection** | Targeted user-select/-webkit-user-select/touch-action rules keep controls from selecting the whole interface while message text and inputs remain selectable; horizontal sidebar swipe is separated from vertical scrolling. | Native iOS Safari long-press, VoiceOver and gesture tests remain. | [~] |
+| **8.15 Status/progress** | Status and toast elements expose neutral/info/success/warning/error data states with restrained semantic colors; status text and ticker are centered; no synthetic progress added. | Execute status/reduced-motion checks and review contrast in both themes. | [~] |
+| **8.16 Button typography/icon-first** | Shared font/line-height/spacing rules; expanded-view copy/speech actions are icon-first with accessible labels and tooltips; ambiguous actions retain text. | Normalize remaining one-off buttons and verify tooltips/target sizes across all panels. | [~] |
+| **8.17 Adjustable text readability** | Persistent text scale and standard/high-contrast preference have a live preview/reset and apply to light/dark themes; high contrast also raises secondary/disabled/link/error/status text. | Run contrast checks for all states and confirm readability on actual devices. | [~] |
 
 ## Acceptance and test plan
 
@@ -86,14 +86,16 @@
 | 8.16 Button typography/icon-first | Shared control typography/spacing and icon-first message actions with accessible names. | Normalize remaining one-off button classes and tooltip coverage. | [~] |
 | 8.17 Readability | Persistent 90–120% text scale and standard/high contrast preference apply in light/dark themes. | Expand contrast handling to links, secondary/disabled/error/status text and add visual contrast checks. | [~] |
 
-### Latest checkpoint — 2026-10-31, explicit project creation flow
+### Latest checkpoint — 2026-10-31, navigation/modal/readability follow-up
 
-- PR #131 branch: `feat/landing-v1-accessibility-responsive-20261031`.
-- Latest UI code commit: `c3855c28317c5b481d59b463e4d4cb985d992dcd`; E2E update commits: `ccb76ea689ddb0ad6ef8d580dee06148aab6f94f` and `24004fe48e506a7d1a7e03b1538f3faed209381b`; subsequent commits in this checkpoint only refresh continuity documentation.
-- At the UI code commit, comparison with current `main` was 92 commits ahead / 4 behind; subsequent commits only updated continuity documentation. Merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`.
-- Requirement 8.1 correction: project creation now uses its own dialog; full settings remain available from the project's gear. Creating a project no longer mutates the current chat's `projectId` or chat history. The user explicitly creates a project chat from that project's navigation row.
-- Regression coverage updated for current-chat preservation, project-filtered chat creation, project-scoped memory/context, project import/export and project deletion.
-- JavaScript syntax parsing passed for the inline app script and Playwright test module. Exact-head combined status and PR workflow-run queries for `4c5c583d08d242308b9019417cb0c90bcaf264d3` returned no entries. Playwright/Chromium tests have not been executed in this session; this is not a passing CI result.
+- PR #131 branch: `feat/landing-v1-accessibility-responsive-20261031`; current verified head before this documentation update: `a051b6bfb518e39ff85a07aa4f7218c7e43bc769`.
+- Current comparison with `main`: 97 commits ahead / 4 behind; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`.
+- Requirement 8.6: project-filter and modal navigation now use browser history. Back/Escape closes only the top dialog or restores the prior project filter; modal focus is trapped and returned, and body scroll/overscroll is locked while a modal is open.
+- Requirements 8.8/8.16: expanded message view keeps copy and speech actions, with accessible labels/tooltips and 44px hit targets; speech is not offered for user messages.
+- Requirements 8.3/8.13: Cloud remains exclusive while provider and additional settings may coexist; project settings can explicitly hand off context to an existing chat for its next request without changing chat membership.
+- Requirements 8.15/8.17: status/toast states use restrained semantic colors; high-contrast text extends to secondary, disabled, link, error and status content in both themes.
+- Regression tests cover nested browser Back, modal Back/repeated lifecycle, one-shot context handoff, viewer controls, status states and high-contrast tokens. Existing restore and sidebar-order tests remain.
+- Exact-head combined status and workflow-run queries for `a051b6bfb518e39ff85a07aa4f7218c7e43bc769` returned no entries. Playwright/Chromium and the modal/history additions have not been executed on this exact head; no passing CI result is claimed.
 - No merge, deployment, framework migration or dependency addition performed.
 
 ## Decision log
@@ -120,3 +122,21 @@
 - Project settings now allow explicit selection of an existing target chat and queue the selected project's context for its next request. The handoff does not change the active chat, create a chat or mutate `projectId`; the request-context cap remains five projects.
 - Fixed the handoff button selector typo in `renderProjectUI()` and added a non-current-chat one-shot E2E scenario. Pending context is currently session-only and does not survive a page reload before the next send.
 - Syntax parsing passed; Playwright execution remains pending.
+
+
+### Follow-up — browser navigation and modal lifecycle (8.6, 8.9)
+
+- Browser history records project-filter depth and every top-level modal. Browser Back and Escape close the top modal or restore the preceding project filter without navigating away from the app.
+- Modal lifecycle now includes focus entry/return, Tab trapping, body scroll lock and shared cleanup for settings, project, viewer, chat-action, research, function and trace dialogs.
+- Added E2E scenarios for nested project Back, project-settings Back and repeated settings/create-dialog open-close. Exact-head Chromium remains pending.
+
+### Follow-up — expanded message actions and semantic status (8.8, 8.15, 8.16)
+
+- Expanded message view now retains copy and speech controls; speech is hidden for user-authored messages. Icon controls have accessible names/tooltips and touch-sized targets.
+- Status and toast elements expose neutral/information/success/warning/error states with restrained theme-aware colors; ticker/status alignment is centered.
+- Added viewer and status E2E assertions. Browser execution remains pending.
+
+### Follow-up — adjustable text contrast (8.17)
+
+- High-contrast preference now adjusts secondary, disabled, link, error and status text in both light and dark themes, while preserving the existing scale preview and reset.
+- Added computed-style assertions for the high-contrast tokens. Visual contrast acceptance and device review remain pending.
