@@ -426,7 +426,37 @@ permalink: /
     #chatListNewButton { min-height:40px; }
     @media (max-width:420px) { .clock-face { width:54px;height:54px; } .header-chat-title { padding:4px 6px; } }
     @media (max-width:360px) { .clock-face { width:42px;height:42px; } }
-  </style>
+  
+     :root { --ui-info:#8db8ff; --ui-warning:#d6ae65; }
+     html[data-theme="light"] { --ui-info:#2458a6; --ui-warning:#815600; }
+     body,button,input,textarea,select { font-family:"Avenir Next","Segoe UI Variable",Inter,"SF Pro Text",system-ui,-apple-system,BlinkMacSystemFont,"Noto Sans",Roboto,Arial,sans-serif; }
+     .brand-wordmark { font-family:"Avenir Next","Segoe UI Variable",ui-rounded,system-ui,sans-serif; font-weight:950; letter-spacing:-.085em; }
+     #activeChatTitle { font-weight:700; letter-spacing:-.015em; }
+     button { line-height:1.2; }
+     .toolbar-menu-option,.composer-tool,#chatListNewButton,#restoreLastClosedChat { min-height:44px; }
+     .composer-tool { min-width:44px; }
+     .message-actions button { min-width:44px;min-height:44px; }
+     .roadmap-ticker { text-align:center; }
+     .roadmap-ticker-track { display:block;min-width:100%;text-align:center; }
+     #searchStatus[data-state="neutral"] #statusText { color:var(--ui-text-muted); }
+     #searchStatus[data-state="info"] #statusText { color:var(--ui-info); }
+     #searchStatus[data-state="success"] #statusText { color:var(--ui-success); }
+     #searchStatus[data-state="warning"] #statusText { color:var(--ui-warning); }
+     #searchStatus[data-state="error"] #statusText { color:var(--ui-danger); }
+     .toast[data-state="info"] { border-color:color-mix(in srgb,var(--ui-info) 55%,var(--ui-border));color:var(--ui-info); }
+     .toast[data-state="warning"] { border-color:color-mix(in srgb,var(--ui-warning) 55%,var(--ui-border));color:var(--ui-warning); }
+     .toast[data-state="success"] { border-color:color-mix(in srgb,var(--ui-success) 55%,var(--ui-border));color:var(--ui-success); }
+     .toast[data-state="error"] { border-color:color-mix(in srgb,var(--ui-danger) 60%,var(--ui-border));color:var(--ui-danger); }
+     html[data-text-contrast="high"] { --ui-text-muted:#d0dce6; --ui-disabled-text:#aebdca; --ui-info:#a9caff; --ui-warning:#f2c77c; --ui-success:#72e3bb; --ui-danger:#ff969d; }
+     html[data-theme="light"][data-text-contrast="high"] { --ui-text-muted:#344e5e; --ui-disabled-text:#5b7280; --ui-info:#174ea6; --ui-warning:#805400; --ui-success:#006b5e; --ui-danger:#a51f32; }
+     html[data-text-contrast="high"] .text-gray-400,html[data-text-contrast="high"] .text-gray-500,html[data-text-contrast="high"] .text-gray-600,html[data-text-contrast="high"] #memoryStatusLine,html[data-text-contrast="high"] #projectStatusLine { color:var(--ui-text-muted)!important; }
+     html[data-text-contrast="high"] button:disabled,html[data-text-contrast="high"] input:disabled,html[data-text-contrast="high"] select:disabled,html[data-text-contrast="high"] textarea:disabled { color:var(--ui-disabled-text)!important;opacity:.9; }
+     html[data-text-contrast="high"] .assistant-content a,html[data-text-contrast="high"] .message-viewer-content a { color:var(--ui-info)!important; }
+     html[data-text-contrast="high"] .field-error,html[data-text-contrast="high"] [role="alert"] { color:var(--ui-danger)!important; }
+     html[data-text-contrast="high"] .cloud-status-copy[data-state="connected"] { color:var(--ui-success)!important; }
+     html[data-text-contrast="high"] .cloud-status-copy[data-state="checking"] { color:var(--ui-warning)!important; }
+     body.ui-modal-open { overscroll-behavior:none; }
+</style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
   <aside id="sidebar" aria-label="Проекты и чаты" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[88vw] bg-gray-950 border-r border-gray-800 -translate-x-full transition-transform duration-300 flex flex-col overflow-y-auto overscroll-contain">
@@ -526,6 +556,13 @@ permalink: /
               <section id="projectSourcesSection" class="rounded-xl border border-gray-800 p-3 space-y-1.5" aria-labelledby="projectSourcesTitle">
                 <h3 id="projectSourcesTitle" class="text-xs font-semibold" data-i18n="projectSourcesTitle">Источники проекта</h3>
                 <p class="text-[10px] leading-relaxed text-gray-400" data-i18n="projectSourcesUnavailable">Управление источниками пока не подключено: gateway умеет индексировать, удалять и искать документы в рамках scope, но не предоставляет API списка источников. Вложения чата не считаются сохранёнными источниками проекта.</p>
+              </section>
+              <section id="projectContextHandoff" class="rounded-xl border border-gray-800 p-3 space-y-2" aria-labelledby="projectContextHandoffTitle">
+                <h3 id="projectContextHandoffTitle" class="text-xs font-semibold">Передать контекст в чат</h3>
+                <p id="projectContextHandoffHelp" class="text-[10px] leading-relaxed text-gray-400">Выбери существующий чат. Контекст этого проекта будет добавлен только к следующему запросу; чат не перемещается и новый чат не создаётся.</p>
+                <label for="projectContextTargetChat" class="block text-[10px] text-gray-400">Существующий чат</label>
+                <select id="projectContextTargetChat" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs"></select>
+                <button type="button" data-action="handoff-project-context" class="w-full rounded-lg border border-cyan-800 bg-cyan-950/30 px-3 py-2 text-xs text-cyan-100" disabled>Передать для следующего запроса</button>
               </section>
               
               <div class="grid grid-cols-2 gap-2">
@@ -762,6 +799,10 @@ permalink: /
       <header class="flex items-center gap-3 border-b border-gray-700 pb-3 mb-3 shrink-0">
         <button type="button" data-action="close-message-viewer" class="rounded-xl border px-3 py-2 text-xl" aria-label="Вернуться в чат" title="Вернуться в чат">←</button>
         <div class="min-w-0"><h2 id="messageViewerTitle" class="font-semibold text-base">Сообщение</h2><p id="messageViewerRole" class="text-xs text-gray-400"></p></div>
+        <div class="message-actions ml-auto mt-0">
+          <button id="messageViewerCopy" type="button" data-action="copy-message" aria-label="Скопировать сообщение" title="Скопировать сообщение">⧉</button>
+          <button id="messageViewerSpeak" type="button" data-action="speak-message" aria-label="Озвучить сообщение" title="Озвучить сообщение">◖))</button>
+        </div>
       </header>
       <div id="messageViewerContent" class="message-viewer-content" tabindex="0" aria-label="Полный текст сообщения"></div>
     </section>
@@ -909,6 +950,52 @@ permalink: /
     const MAX_RESEARCH_EVIDENCE = 40;
     const CACHE_TTL_MS = 15 * 60 * 1000;
     const $ = (id) => document.getElementById(id);
+    const uiNavigationStack=[];
+    let applyingUiNavigationPop=false;
+    const uiModalIds=['settingsModal','projectSettingsModal','projectCreateModal','messageViewerModal','chatActionModal','researchStudioModal','functionPanelModal','traceModal'];
+    function pushUiNavigation(entry){
+      try{
+        const depth=uiNavigationStack.length+1;
+        history.pushState({...((history.state&&typeof history.state==='object')?history.state:{}),__alandiUiDepth:depth},'',location.href);
+        uiNavigationStack.push(entry);return true;
+      }catch(error){console.warn('Не удалось добавить переход интерфейса в историю браузера:',error);return false;}
+    }
+    function openUiModal(id){
+      if(!$(id)||$(id).classList.contains('hidden'))return;
+      if(!uiNavigationStack.some(entry=>entry.kind==='modal'&&entry.id===id))pushUiNavigation({kind:'modal',id});
+      syncModalEnvironment();
+    }
+    function requestUiNavigationBack(kind,id){
+      if(applyingUiNavigationPop)return false;
+      const top=uiNavigationStack[uiNavigationStack.length-1];
+      if(!top||top.kind!==kind||(id&&top.id!==id))return false;
+      history.back();return true;
+    }
+    function requestUiModalBack(id){return requestUiNavigationBack('modal',id);}
+    function syncModalEnvironment(){
+      const open=uiModalIds.some(id=>$(id)&&!$(id).classList.contains('hidden'));
+      document.body.classList.toggle('ui-modal-open',open);
+    }
+    function closeUiModalDirect(id){
+      const closers={
+        settingsModal:()=>toggleSettings(false),projectSettingsModal:closeProjectSettings,projectCreateModal:closeProjectCreate,
+        messageViewerModal:closeMessageViewer,chatActionModal:closeChatActionDialog,researchStudioModal:closeResearchStudio,
+        functionPanelModal:closeFunctionPanel,traceModal:closeTrace
+      };
+      closers[id]?.();
+    }
+    window.addEventListener('popstate',event=>{
+      const targetDepth=Math.max(0,Number(event.state?.__alandiUiDepth)||0);
+      if(targetDepth>=uiNavigationStack.length)return;
+      const removed=uiNavigationStack.splice(targetDepth).reverse();
+      applyingUiNavigationPop=true;
+      try{
+        for(const entry of removed){
+          if(entry.kind==='modal')closeUiModalDirect(entry.id);
+          else if(entry.kind==='project-filter'){activeChatProjectId=entry.previousProjectId||null;renderChatList();}
+        }
+      }finally{applyingUiNavigationPop=false;syncModalEnvironment();}
+    });
 
     let chatRecoveryWarning = false;
     let chatRecoveryBackupKey = '';
@@ -1060,7 +1147,9 @@ permalink: /
       const node = $('toast');
       if (!node) return;
       node.textContent = String(message || '');
-      node.classList.toggle('toast-error', kind === 'error');
+      const state=['info','warning','success','error'].includes(kind)?kind:'success';
+      node.dataset.state=state;
+      node.classList.toggle('toast-error', state === 'error');
       node.classList.remove('hidden', 'toast-visible');
       if (toastTimer) clearTimeout(toastTimer);
       if (toastHideTimer) clearTimeout(toastHideTimer);
@@ -1776,13 +1865,17 @@ permalink: /
         target.appendChild(plain);
       } else target.innerHTML = safeMarkdown(text);
       messageViewerOpener = document.activeElement;
-      $('messageViewerModal').classList.remove('hidden');
+      const copy=$('messageViewerCopy'),speak=$('messageViewerSpeak');
+      copy.dataset.messageText=text;copy.title=en?'Copy message':'Скопировать сообщение';copy.setAttribute('aria-label',copy.title);
+      speak.dataset.messageText=text;speak.title=en?'Generate speech with your configured local TTS model':'Создать речь локальной TTS-моделью на твоём gateway';speak.setAttribute('aria-label',speak.title);speak.classList.toggle('hidden',role!=='assistant');
+      $('messageViewerModal').classList.remove('hidden');openUiModal('messageViewerModal');
       requestAnimationFrame(() => target.focus({ preventScroll: true }));
     }
     function closeMessageViewer() {
+      if(requestUiModalBack('messageViewerModal'))return;
       const modal = $('messageViewerModal');
       if (!modal || modal.classList.contains('hidden')) return;
-      modal.classList.add('hidden');
+      modal.classList.add('hidden');syncModalEnvironment();
       const opener = messageViewerOpener;
       messageViewerOpener = null;
       if (opener && document.contains(opener) && opener.getClientRects().length && !opener.disabled) {
@@ -1920,17 +2013,19 @@ permalink: /
     let projectSettingsOpener=null;
     let projectCreateOpener=null;
     function closeProjectCreate(){
+      if(requestUiModalBack('projectCreateModal'))return;
       const modal=$('projectCreateModal');
       if(!modal||modal.classList.contains('hidden'))return;
-      modal.classList.add('hidden');
+      modal.classList.add('hidden');syncModalEnvironment();
       const opener=projectCreateOpener;projectCreateOpener=null;
       const target=opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled?opener:$('appSidebarToggle');
       target?.focus({preventScroll:true});
     }
     function closeProjectSettings(){
+      if(requestUiModalBack('projectSettingsModal'))return;
       const modal=$('projectSettingsModal');
       if(!modal||modal.classList.contains('hidden'))return;
-      modal.classList.add('hidden');
+      modal.classList.add('hidden');syncModalEnvironment();
       const opener=projectSettingsOpener;projectSettingsOpener=null;
       const sidebarOpen=!$('sidebar').classList.contains('-translate-x-full');
       const visibleOpener=opener&&document.contains(opener)&&(!opener.closest('#sidebar')||sidebarOpen)?opener:null;
@@ -2009,6 +2104,17 @@ permalink: /
       updateMemoryStatusLine();
       $('projectMemoryInput').disabled=!settingsProject;
       document.querySelector('[data-action="add-project-memory"]')?.toggleAttribute('disabled',!settingsProject);
+      const handoffSelect=$('projectContextTargetChat'),handoffButton=document.querySelector('[data-action="handoff-project-context]');
+      if(handoffSelect){
+        const previous=handoffSelect.value;handoffSelect.replaceChildren();
+        const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent=getUiLanguage()==='en'?'Choose an existing chat':'Выбери существующий чат';handoffSelect.appendChild(placeholder);
+        chats.forEach(item=>{const option=document.createElement('option');option.value=item.id;option.textContent=(item.title||'Новый чат')+(item.projectId?' · '+(projects.find(project=>project.id===item.projectId)?.name||'проект'):' · '+(getUiLanguage()==='en'?'personal':'без проекта'));handoffSelect.appendChild(option);});
+        handoffSelect.value=chats.some(item=>item.id===previous)?previous:'';
+        handoffSelect.disabled=!settingsProject||!chats.length;
+      }
+      if(handoffButton)handoffButton.disabled=!settingsProject||!chats.length;
+      const handoffHelp=$('projectContextHandoffHelp');
+      if(handoffHelp)handoffHelp.textContent=getUiLanguage()==='en'?'Choose an existing chat. This project will be included only in that chat’s next request; chat membership is unchanged and no chat is created.':'Выбери существующий чат. Контекст проекта попадёт только в следующий запрос этого чата; принадлежность чата не изменится, новый чат не создаётся.';
       renderProjectNavigation();
       renderRequestProjectChoices();
     }
@@ -2045,6 +2151,21 @@ permalink: /
       chat.projectId=target?.id||null;selectedProjectForSettingsId=target?.id||null;activeChatProjectId=target?.id||null;
       persistChats();renderProjectUI();renderChatList();
       showToast(target?(getUiLanguage()==='en'?'Chat moved to ':'Чат добавлен в проект: ')+target.name:(getUiLanguage()==='en'?'Chat removed from its project.':'Чат извлечён из проекта.'));
+    }
+    function handoffProjectContextToChat(){
+      const project=projects.find(item=>item.id===selectedProjectForSettingsId),chatId=$('projectContextTargetChat')?.value;
+      const target=chats.find(item=>item.id===chatId);
+      if(!project||!target){showToast(getUiLanguage()==='en'?'Choose a project and an existing chat first.':'Сначала выбери проект и существующий чат.','error');return;}
+      if(chatId===currentChatId)syncComposerStateForCurrentChat();
+      const selected=new Set(chatId===currentChatId?[...selectedRequestProjectIds]:requestProjectContextByChat.get(chatId)||[]);
+      selected.add(project.id);
+      if(selected.size>5){showToast(getUiLanguage()==='en'?'A request can include up to five projects.':'В один запрос можно передать не более пяти проектов.','warning');return;}
+      requestProjectContextByChat.set(chatId,[...selected]);
+      if(chatId===currentChatId){
+        selectedRequestProjectIds.clear();selected.forEach(id=>selectedRequestProjectIds.add(id));
+        saveRequestContextForActiveChat();renderRequestProjectChoices();
+      }
+      showToast(getUiLanguage()==='en'?'Project context queued for the next request in the selected chat.':'Контекст проекта подготовлен для следующего запроса выбранного чата. Чат не перемещён.');
     }
     function addProjectMemory(){
       const project=getProjectForChat(),input=$('projectMemoryInput'),text=input.value.trim().slice(0,600);
@@ -2262,7 +2383,10 @@ permalink: /
     function toggleSettings(force) {
       const modal=$('settingsModal'),wasHidden=modal.classList.contains('hidden'),open=typeof force==='boolean'?force:wasHidden;
       if(open&&wasHidden)settingsOpener=document.activeElement;
+      if(!open&&!wasHidden&&requestUiModalBack('settingsModal'))return;
       modal.classList.toggle('hidden',!open);
+      if(open&&wasHidden)openUiModal('settingsModal');
+      if(!open)syncModalEnvironment();
       if(open){$('systemPromptInput').readOnly=true;$('editSystemPrompt').setAttribute('aria-pressed','false');$('editSystemPrompt').classList.remove('is-editing');$('editSystemPrompt').textContent='✎';$('promptEditHint').textContent='';refreshApiKeyLamp();}
       else if(!open){const opener=settingsOpener;settingsOpener=null;if(opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled)opener.focus({preventScroll:true});}
     }
@@ -2772,11 +2896,8 @@ permalink: /
     const cloudSettingsGroup=$('cloudSettingsGroup');
     const peerSettingsGroups=[$('thirdPartyProviderSettings'),$('additionalSettings')];
     peerSettingsGroups.forEach(group=>{
-      group.querySelector(':scope > summary')?.addEventListener('click',event=>{
-        if(cloudSettingsGroup?.open&&!group.open){
-          event.preventDefault();
-          showToast(getUiLanguage()==='en'?'Close aLandi Cloud settings before opening another section.':'Сначала закройте настройки aLandi Cloud.');
-        }
+      group.querySelector(':scope > summary')?.addEventListener('click',()=>{
+        if(cloudSettingsGroup?.open&&!group.open)cloudSettingsGroup.open=false;
       });
       group.addEventListener('toggle',()=>{if(group.open&&cloudSettingsGroup?.open)cloudSettingsGroup.open=false;});
     });
@@ -3313,10 +3434,11 @@ permalink: /
       $(view[0]).classList.remove('hidden');
       if (kind === 'agents') { $('agentModeControl').checked = getCurrentChat().multiAgentEnabled === true;renderAgentConfiguration(); }
       if (kind === 'skills') renderSkillConfiguration();
-      $('functionPanelModal').classList.remove('hidden');
+      $('functionPanelModal').classList.remove('hidden');openUiModal('functionPanelModal');
     }
     function closeFunctionPanel() {
-      $('functionPanelModal').classList.add('hidden');
+      if(requestUiModalBack('functionPanelModal'))return;
+      $('functionPanelModal').classList.add('hidden');syncModalEnvironment();
       $('functionsMenuSummary')?.focus();
     }
     document.addEventListener('click', (event) => {
@@ -3418,8 +3540,8 @@ permalink: /
     function formatElapsed(ms){const n=Math.max(0,Math.floor(ms/1000));return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}
     function getRunEstimateMs(){if(!activeRunTelemetry)return null;const key=[activeRunTelemetry.provider,activeRunTelemetry.model,activeRunTelemetry.workflow].join('|');try{const all=JSON.parse(safeGet('ai_request_timing_v1')||'{}'),values=(Array.isArray(all[key])?all[key].slice(-7):[]).filter(Number.isFinite).sort((a,b)=>a-b);return values.length?values[Math.floor(values.length/2)]:null;}catch(_){return null;}}
     function updateStatusTimer(){if(!activeRunStartedAt||$('searchStatus').classList.contains('hidden'))return;const elapsed=Date.now()-activeRunStartedAt,estimate=getRunEstimateMs();$('thinkingTime').textContent=estimate?'Прошло '+formatElapsed(elapsed)+' · ориентир '+formatElapsed(Math.max(elapsed,estimate)):'Прошло '+formatElapsed(elapsed)+' · собираю оценку';}
-    function showStatus(message){$('statusText').textContent=message;$('searchStatus').classList.add('motion-accent','motion-active');$('searchStatus').classList.remove('hidden');$('searchStatus').querySelector('.status-thinking-dots')?.classList.add('is-active');if(!statusTimerId&&activeRunStartedAt)statusTimerId=setInterval(updateStatusTimer,1000);updateStatusTimer();}
-    function hideStatus(){$('searchStatus').classList.remove('motion-active');$('searchStatus').querySelector('.status-thinking-dots')?.classList.remove('is-active');$('searchStatus').classList.add('hidden');if(!isGenerating&&statusTimerId){clearInterval(statusTimerId);statusTimerId=null;}}
+    function showStatus(message,state='info'){const safeState=['neutral','info','success','warning','error'].includes(state)?state:'info';$('searchStatus').dataset.state=safeState;$('statusText').textContent=message;$('searchStatus').classList.add('motion-accent','motion-active');$('searchStatus').classList.remove('hidden');$('searchStatus').querySelector('.status-thinking-dots')?.classList.add('is-active');if(!statusTimerId&&activeRunStartedAt)statusTimerId=setInterval(updateStatusTimer,1000);updateStatusTimer();}
+    function hideStatus(){delete $('searchStatus').dataset.state;$('searchStatus').classList.remove('motion-active');$('searchStatus').querySelector('.status-thinking-dots')?.classList.remove('is-active');$('searchStatus').classList.add('hidden');if(!isGenerating&&statusTimerId){clearInterval(statusTimerId);statusTimerId=null;}}
     function saveRunDuration(){if(!activeRunTelemetry||!activeRunStartedAt)return;const key=[activeRunTelemetry.provider,activeRunTelemetry.model,activeRunTelemetry.workflow].join('|'),elapsed=Date.now()-activeRunStartedAt;try{const all=JSON.parse(safeGet('ai_request_timing_v1')||'{}'),values=Array.isArray(all[key])?all[key]:[];values.push(elapsed);all[key]=values.slice(-8);safeSet('ai_request_timing_v1',JSON.stringify(all));}catch(_){} }
     function abortError() { return new DOMException('Запрос отменён', 'AbortError'); }
     function throwIfAborted(signal) { if (signal.aborted) throw abortError(); }
@@ -4331,7 +4453,9 @@ permalink: /
     }
     let chatActionOpener=null;
     function closeChatActionDialog() {
+      if(requestUiModalBack('chatActionModal'))return;
       const modal=$('chatActionModal'),chatId=modal.dataset.chatId;modal.classList.add('hidden');modal.removeAttribute('data-chat-id');modal.removeAttribute('data-mode');
+      syncModalEnvironment();
       const opener=chatActionOpener;chatActionOpener=null;
       const fallback=chatId?document.querySelector('[data-action="switch-chat"][data-chat-id="'+CSS.escape(chatId)+'"]'):null;
       const target=opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled?opener:(fallback&&fallback.getClientRects().length?fallback:$('appSidebarToggle'));
@@ -4357,7 +4481,7 @@ permalink: /
         projects.forEach(project=>{const option=document.createElement('option');option.value=project.id;option.textContent=project.name;select.appendChild(option);});
         select.value=chat.projectId||'';
       }
-      modal.classList.remove('hidden');requestAnimationFrame(()=>mode==='rename'?name.focus():select.focus());
+      modal.classList.remove('hidden');openUiModal('chatActionModal');requestAnimationFrame(()=>mode==='rename'?name.focus():select.focus());
     }
     function saveChatActionDialog() {
       const modal=$('chatActionModal'),chat=chats.find(item=>item.id===modal.dataset.chatId),mode=modal.dataset.mode,english=getUiLanguage()==='en';
@@ -4445,10 +4569,11 @@ permalink: /
       $('researchStudioStructured').checked=chat.multiAgentEnabled===true;
       updateModeUI();
       $('researchStudioStatus').textContent=getUiLanguage()==='en'?'Choose a research mode. Your prompt stays in the main composer.':'Выбери режим. Текст задачи остаётся в основном поле.';
-      $('researchStudioModal').classList.remove('hidden');
+      $('researchStudioModal').classList.remove('hidden');openUiModal('researchStudioModal');
     }
     function closeResearchStudio() {
-      $('researchStudioModal').classList.add('hidden');
+      if(requestUiModalBack('researchStudioModal'))return;
+      $('researchStudioModal').classList.add('hidden');syncModalEnvironment();
       const opener=researchStudioOpener;researchStudioOpener=null;
       const target=opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled?opener:$('functionsMenuSummary');
       target?.focus({preventScroll:true});
@@ -4916,10 +5041,11 @@ permalink: /
       if (shownSources) evidenceSection.appendChild(sourceList);
       else { const empty = document.createElement('p'); empty.className = 'text-gray-400 text-xs'; empty.textContent = 'В этом запуске не удалось сохранить распознанные HTTPS-ссылки из результатов инструментов.'; evidenceSection.appendChild(empty); }
       host.appendChild(evidenceSection);
-      $('traceModal').classList.remove('hidden');
+      $('traceModal').classList.remove('hidden');openUiModal('traceModal');
     }
     function closeTrace() {
-      $('traceModal').classList.add('hidden');
+      if(requestUiModalBack('traceModal'))return;
+      $('traceModal').classList.add('hidden');syncModalEnvironment();
       const opener=traceOpener;traceOpener=null;if(opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled)opener.focus({preventScroll:true});
     }
     function downloadTrace() {
@@ -5079,11 +5205,12 @@ permalink: /
           case 'clear-request-context': selectedRequestProjectIds.clear();saveRequestContextForActiveChat();renderRequestProjectChoices();break;
           case 'remove-draft-attachment': pendingComposerAttachments=pendingComposerAttachments.filter(item=>item.id!==control.dataset.attachmentId);renderDraftAttachments();break;
           case 'close-project-settings': closeProjectSettings();break;
+          case 'handoff-project-context': handoffProjectContextToChat();break;
           case 'open-project-create': {
             projectCreateOpener=control;
             $('projectCreateNameInput').value='';
             $('projectCreateInstructionsInput').value='';
-            $('projectCreateModal').classList.remove('hidden');
+            $('projectCreateModal').classList.remove('hidden');openUiModal('projectCreateModal');
             requestAnimationFrame(()=>$('projectCreateNameInput').focus({preventScroll:true}));
             break;
           }
@@ -5095,21 +5222,24 @@ permalink: /
             $('projectNavToggle').setAttribute('aria-expanded',String(open));$('projectNavChevron').textContent=open?'⌃':'⌄';break;
           }
           case 'projectless-nav': {
+            if(activeChatProjectId!==null)pushUiNavigation({kind:'project-filter',previousProjectId:activeChatProjectId});
             activeChatProjectId=null;renderChatList();$('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});
             $('chatSection').querySelector('summary')?.focus();break;
           }
           case 'restore-last-closed-chat': restoreLastClosedChat();break;
           case 'select-project': {
             const id=control.dataset.projectId;if(!projects.some(project=>project.id===id))break;
+            if(activeChatProjectId!==id)pushUiNavigation({kind:'project-filter',previousProjectId:activeChatProjectId});
             activeChatProjectId=id;renderChatList();$('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});break;
           }
           case 'chat-list-back': {
-            activeChatProjectId=null;renderChatList();$('chatSection').querySelector('summary')?.focus();break;
+            if(!requestUiNavigationBack('project-filter')){activeChatProjectId=null;renderChatList();}
+            $('chatSection').querySelector('summary')?.focus();break;
           }
           case 'open-project-settings': {
             projectSettingsOpener=control;
             selectedProjectForSettingsId=projects.some(project=>project.id===control.dataset.projectId)?control.dataset.projectId:null;
-            $('projectManagerDetails').open=true;renderProjectUI();$('projectSettingsModal').classList.remove('hidden');requestAnimationFrame(()=>$('projectNameInput').focus({preventScroll:true}));break;
+            $('projectManagerDetails').open=true;renderProjectUI();$('projectSettingsModal').classList.remove('hidden');openUiModal('projectSettingsModal');requestAnimationFrame(()=>$('projectNameInput').focus({preventScroll:true}));break;
           }
           case 'detach-current-chat': moveCurrentChatToProject('');break;
           case 'delete-project': deleteCurrentProject();break;
@@ -5308,6 +5438,7 @@ permalink: /
     $('chatActionModal').addEventListener('click',event=>{if(event.target===$('chatActionModal'))closeChatActionDialog();});
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
+        if (uiNavigationStack[uiNavigationStack.length-1]?.kind==='modal'){history.back();return;}
         if (!$('chatActionModal').classList.contains('hidden')) closeChatActionDialog();
         else if (!$('messageViewerModal').classList.contains('hidden')) closeMessageViewer();
         else if (!$('traceModal').classList.contains('hidden')) closeTrace();
@@ -5333,15 +5464,9 @@ permalink: /
     window.visualViewport?.addEventListener('resize', syncComposerViewport, { passive: true });
     window.addEventListener('resize', syncComposerViewport, { passive: true });
 
-    function initializeSettingsAccordions() {
-      const groups=['cloudSettingsGroup','thirdPartyProviderSettings','additionalSettings'].map(id=>$(id)).filter(Boolean);
-      groups.forEach(group=>group.addEventListener('toggle',()=>{
-        if(!group.open)return;
-        groups.forEach(other=>{if(other!==group&&other.open)other.open=false;});
-      }));
-    }
     async function init() {
-      initializeSettingsAccordions();
+      try{history.replaceState({...((history.state&&typeof history.state==='object')?history.state:{}),__alandiUiDepth:0},'',location.href);}catch(_){}
+      syncModalEnvironment();
       const pollinationsAuthMessage=await finishPollinationsOAuth();
       migrateLegacyChatFunctionSettings();
       initializeSettings();
