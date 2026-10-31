@@ -2183,6 +2183,27 @@ test('chat menu export is scoped and chat import merges without replacing histor
   await expect(page.locator('#userInput')).toHaveValue('Keep this existing chat');
 });
 
+test('last closed chat can be restored from local storage after reload', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#chatListNewButton').click();
+  const deletedChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
+  expect(deletedChatId).not.toBe('');
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const row = page.locator('#chatList .chat-row').filter({ has: page.locator('[data-action="switch-chat"][data-chat-id="' + deletedChatId + '"]') });
+  await row.locator('summary[aria-label="Действия чата"]').click();
+  page.on('dialog', dialog => dialog.accept());
+  await row.locator('[data-action="delete-chat"]').click();
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').length)).toBe(1);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await expect(page.locator('#restoreLastClosedChat')).toBeVisible();
+  await page.locator('#restoreLastClosedChat').click();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_current_chat_v87'))).toBe(deletedChatId);
+  await expect.poll(() => page.evaluate(id => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').some(chat => chat.id === id), deletedChatId)).toBe(true);
+  await expect(page.locator('#restoreLastClosedChat')).toBeHidden();
+});
+
 test('sidebar separates projects from personal chats and keeps navigation collapsible', async ({ page }) => {
   await page.addInitScript(() => {
     const project = (id, name) => ({ id, name, description: '', instructions: '', memoryScope: 'project-only', memory: [], createdAt: '', updatedAt: '' });
