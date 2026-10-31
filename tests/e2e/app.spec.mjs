@@ -129,6 +129,12 @@ test('sidebar order separates memory, projects, status, chats, and research', as
   await expect(page.locator('#chatSection')).toContainText('Новый личный чат');
   await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте выкл.');
   await page.locator('#memoryToolsDetails > summary').click();
+  await expect(page.locator('#privateMemoryHelp')).not.toHaveAttribute('open', '');
+  await expect(page.locator('#sharedMemoryHelp')).not.toHaveAttribute('open', '');
+  await page.locator('#privateMemoryHelp > summary').click();
+  await expect(page.locator('#privateMemoryHelp p')).toBeVisible();
+  await page.locator('#sharedMemoryHelp > summary').click();
+  await expect(page.locator('#sharedMemoryHelp p')).toBeVisible();
   await page.locator('#globalMemoryToggle').check();
   await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте вкл.');
   await expect(page.locator('#projectStatusLine')).toContainText('Личный чат');
@@ -276,6 +282,31 @@ test('theme and language are a compact accessible header group', async ({ page }
   await expect(page.locator('#uiLanguage')).toHaveValue('ru');
 });
 
+test('aLandi Cloud settings are exclusive with provider and additional settings', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  const cloud = page.locator('#cloudSettingsGroup');
+  const providers = page.locator('#thirdPartyProviderSettings');
+  const additional = page.locator('#additionalSettings');
+
+  await cloud.locator(':scope > summary').click();
+  await expect(cloud).toHaveAttribute('open', '');
+  await expect(providers).not.toHaveAttribute('open', '');
+  await expect(additional).not.toHaveAttribute('open', '');
+
+  await providers.locator(':scope > summary').click();
+  await expect(cloud).toHaveAttribute('open', '');
+  await expect(providers).not.toHaveAttribute('open', '');
+
+  await cloud.locator(':scope > summary').click();
+  await providers.locator(':scope > summary').click();
+  await expect(providers).toHaveAttribute('open', '');
+  await expect(cloud).not.toHaveAttribute('open', '');
+  await additional.locator(':scope > summary').click();
+  await expect(additional).toHaveAttribute('open', '');
+  await expect(cloud).not.toHaveAttribute('open', '');
+});
+
 test('text readability preferences persist and apply in both themes', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
@@ -295,7 +326,8 @@ test('text readability preferences persist and apply in both themes', async ({ p
   await page.locator('#homeThemeToggle').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(page.locator('html')).toHaveAttribute('data-text-contrast', 'high');
-  await expect.poll(() => page.locator('#chatBox').evaluate(element => getComputedStyle(element).fontSize)).not.toBe('');
+  const scaledFontSize = await page.locator('#chatBox').evaluate(element => parseFloat(getComputedStyle(element).fontSize));
+  expect(scaledFontSize).toBeGreaterThan(16);
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(page.locator('html')).toHaveAttribute('data-text-contrast', 'high');
   await expect(page.locator('#uiTextScaleValue')).toHaveText('115%');
