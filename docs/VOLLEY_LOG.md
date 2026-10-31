@@ -163,3 +163,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Added E2E coverage for handing off to a non-current chat, unchanged current chat/chat count/project membership, and one-shot context consumption after the next successful request.
 - UI fix commit `c3855c28317c5b481d59b463e4d4cb985d992dcd`; E2E commits `ccb76ea689ddb0ad6ef8d580dee06148aab6f94f` and `24004fe48e506a7d1a7e03b1538f3faed209381b`.
 - JavaScript syntax parsing passed. Playwright/Chromium and exact-head CI were not executed; no passing result is claimed. No merge/deploy.
+
+### 2026-10-31 — Landing UI V2 navigation/modal/readability follow-up
+- PR #131 only; main/V1 untouched; no merge/deploy.
+- Browser Back now tracks project-filter and modal depth; Escape uses the same stack. Dialogs share focus return/trap and scroll-lock cleanup.
+- Added explicit project → existing chat context handoff (next request only; no chat creation or project reassignment); corrected handoff selector and covered one-shot consumption.
+- Expanded viewer keeps accessible copy/speech icon actions. Status/toast states use semantic colors; high-contrast text applies to secondary/disabled/link/error/status states in both themes.
+- E2E scenarios added for Back, modal lifecycle, handoff, viewer controls, semantic status and contrast. Exact-head CI/Chromium has no result; tests remain unexecuted.
+- Next: exact-head Quality/Chromium, then native mobile/VoiceOver acceptance.
