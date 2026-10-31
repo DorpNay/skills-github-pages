@@ -304,7 +304,7 @@ test('composer position persists and aLandi is hidden from third-party provider 
   expect(bottomMessages.y).toBeLessThan(bottomComposer.y);
   await page.reload();
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#thirdPartyProviderSettings > summary').click();
+  await page.locator('#additionalSettings > summary').click();
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
 });
 
@@ -412,10 +412,11 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await expect(page.locator('#thirdPartyProviderSettings')).not.toHaveAttribute('open');
   if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
   await expect(page.locator('#settingsModal')).toBeVisible();
-  await expect(page.locator('#providerPreset')).toHaveValue('alandi');
+  await expect(page.locator('#providerPreset')).toHaveValue('');
   await expect(page.locator('#apiKey')).toHaveAttribute('type', 'password');
   await expect(page.locator('#baseUrl')).not.toBeFocused();
   await expect(page.locator('#systemPromptInput')).toHaveAttribute('readonly', '');
+  await page.locator('#additionalSettings > summary').click();
   await page.locator('#editSystemPrompt').click();
   await expect(page.locator('#systemPromptInput')).not.toHaveAttribute('readonly', '');
   await page.locator('#editSystemPrompt').click();
@@ -440,7 +441,7 @@ test('published app boots and core controls are interactive', async ({ page }) =
 test('provider keys, Tavily key, and model settings remain isolated across switching and reload', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#additionalSettings > summary').click();
   if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
 
   await page.locator('#providerPreset').selectOption('groq');
@@ -625,7 +626,7 @@ test('refresh all catalogs updates other configured providers for cross-provider
 test('settings profile exports portable preferences but never API secrets', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#additionalSettings > summary').click();
   if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#modelName').fill('openai/gpt-oss-120b');
@@ -653,7 +654,7 @@ test('settings profile exports portable preferences but never API secrets', asyn
 test('settings profile import restores preferences while preserving existing provider and search keys', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#thirdPartyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) await page.locator('#additionalSettings > summary').click();
   if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
