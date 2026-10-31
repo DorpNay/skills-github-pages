@@ -2,17 +2,17 @@
 
 This is the short entry point for an assistant or engineer. Use the detailed navigation index at `project-reference/FILE_ORIENTER_RU.md`, the machine-readable state at `docs/PROJECT_STATE.yaml`, and the chronological log at `docs/VOLLEY_LOG.md`.
 
-## Current working checkpoint — 2026-10-30
+## Current working checkpoint — 2026-10-31
 
-- **Current main SHA:** `fd4f0a105183feb23e0f4e4697446235de9ffe9a` — PR #121 (first free landing V1/client UX) and PR #122 (Gateway liveness/readiness) are merged.
-- **PR #121:** merged at `f4d880f9648989f4fe48ddd2284220b3606c3b86`; exact head `e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b`; all six workflow groups passed, including Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code.
-- **PR #122:** merged at `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; exact head `94d871dbf76a5364ebb3c61d86cc763affa5eaa1`; Gateway, Quality/Chromium/Jekyll/published-site smoke, Graphify and Dead Code passed.
-- **Open PR queue:** PR #123 is the only active reconciliation PR; exact head `fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222` passed all six workflow groups and is ready to merge. It is excluded from its own freshness snapshot. **Open issue queue:** issue #111 only; it remains open for owner-only/live-host gates and must not be closed just to reach zero.
-- **V1 freeze:** no new product capabilities or runtime components in the first landing. Improve only inside the selected HTML/CSS/JavaScript + Jekyll/GitHub Pages and existing FastAPI/Ollama stack: UX, polish, accessibility, reliability, performance, security, tests and documentation.
-- **Canonical UI checklist:** `docs/V1_UI_FINALIZATION_RU.md`; broader release and future backlog: `docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`; detailed remaining visual work: `docs/LANDING_UX_POLISH_BACKLOG_RU.md`.
-- **Agent/helper boundary:** 64 roles are logical profiles, not 64 processes. A manual opt-in memory helper exists behind operator-configured `ALANDI_HELPER_MODEL`; general helper dispatch/model selection is not implemented. Use the synthetic benchmark harness only as a transport/latency smoke, not quality proof.
-- **Not verified:** post-merge Pages deployment on the exact merge commit; native iPhone Safari/VoiceOver; live VPS/Tunnel/Ollama/provider credentials; target-host model RAM/latency/quality; real voice runtime; production RAG corpus; OAuth/Drive; arbitrary-code sandbox.
-- **Canonical detailed tracker:** `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`. It contains the chronology, legacy-branch triage, V1 freeze and per-step completion markers.
+- **Current main SHA:** `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; main remains the stable Landing V1.0 baseline.
+- **PR #131 — aLandi Landing UI v2.0:** open, unmerged; branch `feat/landing-v1-accessibility-responsive-20261031`; latest confirmed head `f1035eed19355404aa9c7c1a0dcd1ca401113337`. It is the sole branch for subsequent Landing V2 interface work. Do not merge or deploy without explicit owner approval.
+- **PR #127 — continuity/master task registry:** open, unmerged; central registry `docs/MASTER_TASK_REGISTRY_RU.md` consolidates 276 open/partial items across six source registers; duplicates remain until reconciliation.
+- **Research tracks:** PR #128 Agent Workforce 2.0, #129 Voice 2.0 and #130 Deep Research 2.0 remain isolated Draft/HOLD workstreams on `future-workstreams/parking-base-20261031`; do not merge into main. PR #125 Agent Studio blueprint and #124/#126 dependency overlap require reconciliation before further action.
+- **V1 freeze:** no new product capabilities or runtime components in the stable landing. Improve only inside the approved HTML/CSS/JavaScript + Jekyll/GitHub Pages and existing FastAPI gateway stack.
+- **Canonical UI checklist:** `docs/V1_UI_FINALIZATION_RU.md`; priority Landing V2 requirements are sections 8.1–8.17. Implementation status and evidence are tracked separately in `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
+- **Not verified:** exact-head Chromium/Playwright CI for PR #131, native iPhone Safari/VoiceOver, live VPS/Tunnel/Ollama/provider credentials, target-host model quality/RAM/latency, real voice runtime, production RAG corpus, OAuth/Drive and arbitrary-code sandbox.
+- **Latest PR #131 checkpoint:** 67 commits ahead / 4 behind current main; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Exact-head workflow-run and combined-status queries returned no entries. Do not report tests as passing.
+
 
 ## First-read order
 
@@ -114,3 +114,9 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 ### Landing UI V2.0 — latest head reconciliation 2026-10-31
 - PR #131 branch head at checkpoint: 5289c2d17f1cd9d69ff1857c82942798367e1a62; 60 ahead / 4 behind main.
 - Exact-head status/workflow-run queries empty; no E2E success claimed. PR body, V2 ledger and Volley log reconciled. Continue only in PR #131; no merge.
+
+### Landing UI V2.0 — explicit project creation correction (2026-10-31)
+- PR #131 now separates project creation from full project settings; full settings remain behind the per-project gear.
+- Creating a project no longer reassigns the currently open chat or rewrites chat history. A project chat is created only through the explicit project-row action.
+- Latest confirmed head: `f1035eed19355404aa9c7c1a0dcd1ca401113337`; 67 ahead / 4 behind main. Exact-head CI/status queries empty; Playwright remains unexecuted.
+- Continue in PR #131 only; no merge or deployment.
