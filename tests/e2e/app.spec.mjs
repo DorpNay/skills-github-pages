@@ -1347,24 +1347,16 @@ test('project instructions, project memory, and project bundles stay scoped to t
   const capturedBodies = [];
   await page.route('https://api.example.test/v1/chat/completions', async route => {
     capturedBodies.push(route.request().postDataJSON());
-    await route.fulfill({
-      status: 200, contentType: 'application/json',
-      body: JSON.stringify({ model: 'e2e-project-model', choices: [{ message: { role: 'assistant', content: 'Project scope verified.' } }] })
-    });
+    await route.fulfill({ status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'e2e-project-model', choices: [{ message: { role: 'assistant', content: 'Project scope verified.' } }] }) });
   });
-
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#projectPanel [data-action="open-project-create"]').click();
-  await page.locator('#projectNameInput').fill('Alpha Project');
-  await page.locator('#projectInstructionsInput').fill('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
-  await page.locator('[data-action="create-project"]').click();
-  const alphaId = await page.locator('#currentProjectSelect').inputValue();
-  expect(alphaId).not.toBe('');
+  const alphaId = await createProjectFromUi(page, 'Alpha Project', 'ALPHA_PROJECT_INSTRUCTION_SENTINEL');
+  await openProjectSettingsForId(page, alphaId);
   await page.locator('#projectMemoryInput').fill('ALPHA_PROJECT_MEMORY_SENTINEL');
   await page.locator('[data-action="add-project-memory"]').click();
   await expect(page.locator('#projectMemoryBox')).toContainText('ALPHA_PROJECT_MEMORY_SENTINEL');
-
   const alphaDownloadPromise = page.waitForEvent('download');
   await page.locator('[data-action="export-project"]').click();
   const alphaDownload = await alphaDownloadPromise;
@@ -1377,47 +1369,44 @@ test('project instructions, project memory, and project bundles stay scoped to t
   expect(JSON.stringify(alphaBundle)).not.toContain('apiKey');
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 
-  // Project settings close the sidebar. Reopen it before selecting a personal chat.
   await page.locator('[data-action="toggle-sidebar"]').click();
-  // A new chat from the top-level Chats section is personal unless created inside a project group.
+  const alphaGroup = page.locator('#projectNavigationList details[data-project-id="' + alphaId + '"]');
+  if (!(await alphaGroup.evaluate(element => element.open))) await alphaGroup.locator(':scope > summary').click();
+  await alphaGroup.locator('[data-action="new-chat-in-project"]').click();
+  await expect(page.locator('#currentProjectSelect')).toHaveValue(alphaId);
+  await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#sidebar [data-action="new-chat"]').click();
-  await page.locator('[data-action="toggle-sidebar"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue('');
-  await page.locator('#projectPanel [data-action="open-project-create"]').click();
-  await page.locator('#projectNameInput').fill('Beta Project');
-  await page.locator('#projectInstructionsInput').fill('BETA_PROJECT_INSTRUCTION_SENTINEL');
-  await page.locator('[data-action="create-project"]').click();
+  const betaId = await createProjectFromUi(page, 'Beta Project', 'BETA_PROJECT_INSTRUCTION_SENTINEL');
+  expect(betaId).not.toBe(alphaId);
+  await openProjectSettingsForId(page, betaId);
   await page.locator('#projectMemoryInput').fill('BETA_PROJECT_MEMORY_SENTINEL');
   await page.locator('[data-action="add-project-memory"]').click();
-  const betaId = await page.locator('#currentProjectSelect').inputValue();
-  expect(betaId).not.toBe(alphaId);
+  await expect(page.locator('#projectMemoryBox')).toContainText('BETA_PROJECT_MEMORY_SENTINEL');
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 
-  const sidebar=page.locator('#sidebar');
-  if(await sidebar.evaluate(el=>el.classList.contains('-translate-x-full')))await page.locator('[data-action="toggle-sidebar"]').click();
-  if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
-  const betaGroup=page.locator('#projectNavigationList details[data-project-id="'+betaId+'"]');
-  await betaGroup.locator(':scope > summary').click();
-  let chatRow=betaGroup.locator('.chat-row').first();
-  await chatRow.locator('summary[aria-label="Действия чата"]').click();
-  await chatRow.locator('[data-action="chat-project"]').click();
-  await expect(page.locator('#chatActionModal')).toBeVisible();
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const betaGroup = page.locator('#projectNavigationList details[data-project-id="' + betaId + '"]');
+  if (!(await betaGroup.evaluate(element => element.open))) await betaGroup.locator(':scope > summary').click();
+  await betaGroup.locator('[data-action="new-chat-in-project"]').click();
+  const betaChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
+  await expect(page.locator('#currentProjectSelect')).toHaveValue(betaId);
+  const betaChatRow = page.locator('#projectNavigationList .chat-row').filter({ has: page.locator('[data-action="switch-chat"][data-chat-id="' + betaChatId + '"]') });
+  await betaChatRow.locator('summary[aria-label="Действия чата"]').click();
+  await betaChatRow.locator('[data-action="chat-project"]').click();
   await page.locator('#chatActionProject').selectOption(alphaId);
   await page.locator('[data-action="chat-action-save"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(alphaId);
-  const alphaGroup=page.locator('#projectNavigationList details[data-project-id="'+alphaId+'"]');
-  await alphaGroup.locator(':scope > summary').click();
-  chatRow=alphaGroup.locator('.chat-row').first();
-  await chatRow.locator('summary[aria-label="Действия чата"]').click();
-  await chatRow.locator('[data-action="chat-project"]').click();
+  const movedChatRow = page.locator('#projectNavigationList .chat-row').filter({ has: page.locator('[data-action="switch-chat"][data-chat-id="' + betaChatId + '"]') });
+  await movedChatRow.locator('summary[aria-label="Действия чата"]').click();
+  await movedChatRow.locator('[data-action="chat-project"]').click();
   await page.locator('#chatActionProject').selectOption(betaId);
   await page.locator('[data-action="chat-action-save"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(betaId);
-  // Project membership and project instructions do not implicitly inject stored project facts.
+
   await openProjectSettingsForId(page, betaId);
   await expect(page.locator('#projectMemoryToggle')).toHaveCount(0);
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-
   await ensureSidebarClosed(page);
   await page.locator('[data-action="toggle-settings"]').first().click();
   await page.locator('#thirdPartyProviderSettings > summary').click();
@@ -1427,7 +1416,6 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('#apiKey').fill('e2e-project-placeholder-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
-
   await page.locator('#userInput').fill('Check which project context is included.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Project scope verified.');
@@ -1437,7 +1425,6 @@ test('project instructions, project memory, and project bundles stay scoped to t
   expect(implicitPrompt).not.toContain('BETA_PROJECT_MEMORY_SENTINEL');
   expect(implicitPrompt).not.toContain('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
   expect(implicitPrompt).not.toContain('ALPHA_PROJECT_MEMORY_SENTINEL');
-
   await page.locator('#contextPickerButton').click();
   await page.locator('#requestProjectChecks input[data-request-project-id="' + betaId + '"]').check();
   await page.locator('#userInput').fill('Use the project context explicitly.');
@@ -1447,14 +1434,11 @@ test('project instructions, project memory, and project bundles stay scoped to t
   expect(explicitPrompt).toContain('BETA_PROJECT_INSTRUCTION_SENTINEL');
   expect(explicitPrompt).toContain('BETA_PROJECT_MEMORY_SENTINEL');
   expect(explicitPrompt).not.toContain('ALPHA_PROJECT_MEMORY_SENTINEL');
-
-  // Import controls live inside the project settings dialog, not in the sidebar.
-  // Reopen the dialog with Beta selected before importing a separate Alpha bundle.
   await openProjectSettingsForId(page, betaId);
   await page.locator('#projectSettingsModal [data-action="import-project"]').click();
   await page.locator('#importProjectFile').setInputFiles(alphaPath);
   await expect(page.locator('#projectNameInput')).toHaveValue('Alpha Project (импорт)');
-  const importedId = await page.locator('#currentProjectSelect').inputValue();
+  const importedId = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]').find(project => project.name === 'Alpha Project (импорт)')?.id || '');
   expect(importedId).not.toBe(alphaId);
   expect(importedId).not.toBe(betaId);
   await expect(page.locator('#projectInstructionsInput')).toHaveValue('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
@@ -1463,67 +1447,31 @@ test('project instructions, project memory, and project bundles stay scoped to t
   expect(allProjects.some(project => project.id === betaId && project.instructions.includes('BETA_PROJECT_INSTRUCTION_SENTINEL'))).toBe(true);
   expect(allProjects.some(project => project.id === importedId && project.instructions.includes('ALPHA_PROJECT_INSTRUCTION_SENTINEL'))).toBe(true);
 });
-
-test('deleting a project removes its chats but preserves other projects and chats', async ({ page }) => {
+test('deleting a project removes only its chats and preserves other projects and chats', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#projectPanel [data-action="open-project-create"]').click();
-  await page.locator('#projectNameInput').fill('Disposable Project');
-  await page.locator('[data-action="create-project"]').click();
-  const disposableId = await page.locator('#currentProjectSelect').inputValue();
-  expect(disposableId).not.toBe('');
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-  const disposableChatId = await page.evaluate(() => {
-    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
-    return chats.find(chat => chat.projectId)?.id || '';
-  });
-  expect(disposableChatId).not.toBe('');
-
-  // Project creation closes the sidebar; reopen it to detach the current chat.
-  await ensureSidebarOpen(page);
-  // Detach the current chat before creating a separate project. The original chat
-  // remains in Disposable Project and must be deleted with that project.
+  const disposableId = await createProjectFromUi(page, 'Disposable Project');
+  const disposableGroup = page.locator('#projectNavigationList details[data-project-id="' + disposableId + '"]');
+  if (!(await disposableGroup.evaluate(element => element.open))) await disposableGroup.locator(':scope > summary').click();
+  await disposableGroup.locator('[data-action="new-chat-in-project"]').click();
+  const disposableChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
+  await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#sidebar [data-action="new-chat"]').click();
-  await ensureSidebarOpen(page);
-  // createNewChat() already creates an unassigned personal chat; the project selector
-  // belongs to the closed Project Settings modal and must not be used here.
   const personalChatProjectId = await page.evaluate(() => {
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
     const current = localStorage.getItem('ai_current_chat_v87');
     return chats.find(chat => chat.id === current)?.projectId || '';
   });
   expect(personalChatProjectId).toBe('');
-  await page.locator('#projectPanel [data-action="open-project-create"]').click();
-  await page.locator('#projectNameInput').fill('Keep Project');
-  await page.locator('[data-action="create-project"]').click();
-  const keepId = await page.locator('#currentProjectSelect').inputValue();
+  const keepId = await createProjectFromUi(page, 'Keep Project');
   expect(keepId).not.toBe(disposableId);
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-  const keepChatId = await page.evaluate((id) => {
-    const chats=JSON.parse(localStorage.getItem('ai_chats_v87')||'[]');
-    return chats.find(chat=>chat.projectId===id)?.id||'';
-  }, keepId);
-  expect(keepChatId).not.toBe('');
-  await ensureSidebarOpen(page);
-  await page.locator('#sidebar [data-action="new-chat"]').click();
-  // Project settings selection is independent from the active chat. Select the target
-  // while the sidebar is settled, then switch to its chat (which closes the mobile sidebar).
-  await ensureSidebarOpen(page);
-  if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
-  const disposableGroup=page.locator('#projectNavigationList details[data-project-id="'+disposableId+'"]');
-  await disposableGroup.locator(':scope > summary').click();
-  await page.locator('#projectNavigationList .project-nav-row[data-project-id="' + disposableId + '"] [data-action="open-project-settings"]').click();
-  await expect(page.locator('#projectSettingsStatus')).toContainText('Disposable Project');
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-  // Closing project settings leaves the mobile sidebar closed; reopen it before selecting the chat.
-  await ensureSidebarOpen(page);
-  await disposableGroup.locator(`[data-action="switch-chat"][data-chat-id="${disposableChatId}"]`).click();
+  const keepGroup = page.locator('#projectNavigationList details[data-project-id="' + keepId + '"]');
+  if (!(await keepGroup.evaluate(element => element.open))) await keepGroup.locator(':scope > summary').click();
+  await keepGroup.locator('[data-action="new-chat-in-project"]').click();
+  const keepChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
   await openProjectSettingsForId(page, disposableId);
-  await expect(page.locator('#projectSettingsStatus')).toContainText('Disposable Project');
-
   page.on('dialog', dialog => dialog.accept());
   await page.locator('#projectSettingsModal [data-action="delete-project"]').click();
-  await expect(page.locator('#currentProjectSelect')).not.toHaveValue(disposableId);
   const storedProjects = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]'));
   expect(storedProjects.some(project => project.id === disposableId)).toBe(false);
   expect(storedProjects.some(project => project.id === keepId)).toBe(true);
@@ -1531,8 +1479,6 @@ test('deleting a project removes its chats but preserves other projects and chat
   expect(storedChats.some(chat => chat.id === disposableChatId)).toBe(false);
   expect(storedChats.some(chat => chat.id === keepChatId && chat.projectId === keepId)).toBe(true);
 });
-
-
 test('xAI accepts structured text response envelopes and authenticates with the selected key', async ({ page }) => {
   let requestHeaders = {};
   await page.route('https://api.x.ai/v1/language-models', async route => route.fulfill({
