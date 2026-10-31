@@ -16,7 +16,7 @@
 
 | Requirement | Observed implementation | Gap / implementation direction | Status |
 |---|---|---|---|
-| **8.1 Sidebar, memory, projects, chats** | Memory panel above projects; status line above its title; shared-memory block first, personal-memory block second, private-context opt-in last; explanations collapsed by default; closing sidebar collapses only memory disclosures; projectless and project-filtered chat lists; per-project gear/new-chat; Research Studio in Functions; horizontal swipe-close; separate project-create dialog; current chat membership preserved. | Verify accordion state and last-closed-chat restore in browser; refine spacing and keyboard navigation. | [~] |
+| **8.1 Sidebar, memory, projects, chats** | Memory panel above projects; status line above its title; shared-memory block first, personal-memory block second, private-context opt-in last; explanations collapsed by default; closing sidebar collapses only memory disclosures; projectless/project-filtered chat lists; per-project gear/new-chat; Research Studio in Functions; swipe-close; separate project-create dialog; current chat membership preserved; last-closed-chat restore from local storage. | Execute the new accordion/restore regressions in Chromium; refine spacing and keyboard navigation. | [~] |
 | **8.2 Typography/header/main surface** | Header has a wordmark, chat title, theme control, clock and mode controls. | Wordmark is a restrained gradient, clock is 54px, type stack is generic system UI; requested distinct wordmark, tighter vertical controls and independent chat-title treatment need visual iteration. | [~] |
 | **8.3 Settings/providers** | aLandi Cloud is a separate card; external providers and most other settings are inside one `legacyProviderSettings` disclosure. | Split into three mutually exclusive groups: Cloud, third-party providers, additional settings; Cloud must never appear as a third-party provider. Preserve current provider key isolation and connection state. | [~] |
 | **8.4 Tavily/system prompt** | Tavily key remains in a web-tools disclosure; system prompt is global `localStorage` state and is normalized against the legacy built-in prompt. | Verify the empty-by-default behavior against `DEFAULT_SYSTEM` and migration; decide Tavily only after comparing the existing keyless search fallback and live adapter requirements. No premature deletion. | [~] |
@@ -107,3 +107,9 @@
 
 - Requirement 8.1 memory layout now follows shared → personal → personal-context opt-in. Sidebar close collapses only memory disclosures; project/chat accordion state is retained.
 - E2E assertions cover memory block order and preservation of project navigation, projectless and Chats state. Syntax parsing passed; actual Playwright execution remains pending.
+
+
+### Follow-up — last-closed-chat restore coverage
+
+- Added a Playwright scenario that deletes a chat, reloads the application and restores the chat from local storage. The existing restore implementation is now covered for the reload path.
+- Test commit: `2bfc6c080abeef00ed2566e54e0b847f40c11e2d`. Syntax parsing passed; E2E execution remains pending.
