@@ -55,7 +55,7 @@
 - Open PRs at index creation: #52 document attachment integration (branch `feat/document-attachment-ui-v3`), #37 mobile chat ergonomics, #36 project-memory scope regression tests. Check live PR status before assuming any remain open.
 - Local whisper.cpp ASR and Piper TTS + mini-player are code-level features, **not enabled/deployed by default**. Verify models, binary paths, flags, and target hardware before saying audio works on the user's server.
 - Search & Research Studio exists; SearXNG adapter is optional/configured-server-only, not an independently deployed search cluster.
-- Memory graph and delta-sync API are experimental/flagged off. Browser/local memory, gateway graph memory, and external storage are not one magically synchronized store.
+- Browser/local memory and conversation delta sync are separate stores. The former server-memory graph HTTP API and browser bridge were removed in PR #131; the MemoryManager module/schema remain internal to Graphify/code-evidence only. No project memory is synced to gateway.
 
 ## 3. Folder taxonomy
 
@@ -66,7 +66,7 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 ## 4. Memory: known architecture boundary
 
 - Browser chat history is stored through `localStorage`; application notes also use IndexedDB. Browser quota/eviction and clearing site data can cause loss. A localStorage fallback/backup is not a separate durable backup medium.
-- The gateway has two distinct opt-in concepts: versioned conversation delta sync (`ALANDI_MEMORY_SYNC_ENABLED=false`) and scoped memory graph (`ALANDI_MEMORY_GRAPH_ENABLED=false`). They have different schemas and are not a completed automatic sync pipeline.
+- The gateway retains one opt-in conversation delta-sync API (`ALANDI_MEMORY_SYNC_ENABLED=false`). The scoped memory graph HTTP API and ALANDI_MEMORY_GRAPH_ENABLED / ALANDI_GLOBAL_MEMORY_ENABLED settings were removed in PR #131. Internal MemoryManager remains for Graphify only; it is not a gateway product API.
 - Graph facts require source provenance, scope and status; newly uploaded facts are candidates, not automatically trusted facts. Prompt use is opt-in and should remain scope-restricted.
 - OAuth vault/Google OAuth routes exist as groundwork; real credentials, Drive Picker/UI, file import and sync are not configured. Do not promise Google Drive synchronization.
 - Do not store raw long audio, recordings or full files in the compact “memory” graph. Preserve original conversation/attachment as an immutable source, then store a short, source-linked summary/transcript plus hash and offsets. Never overwrite the only source with a summary.
