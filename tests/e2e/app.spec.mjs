@@ -152,6 +152,8 @@ test('project rows filter the Chats list and create chats in the selected projec
   const gearBox = await gear.boundingBox();
   expect(gearBox?.width || 0).toBeGreaterThanOrEqual(44);
   expect(gearBox?.height || 0).toBeGreaterThanOrEqual(44);
+  const projectGroup = row.locator('details.project-nav-item');
+  if (!(await projectGroup.evaluate(element => element.open))) await projectGroup.locator(':scope > summary').click();
   await row.locator('[data-action="select-project"]').click();
   await expect(page.locator('#chatSectionTitle')).toContainText('Filtered project');
   await expect(page.locator('#chatListNewButton')).toContainText('в проекте');
