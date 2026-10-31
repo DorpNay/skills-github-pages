@@ -1472,6 +1472,77 @@ test('project instructions, project memory, and project bundles stay scoped to t
   expect(allProjects.some(project => project.id === betaId && project.instructions.includes('BETA_PROJECT_INSTRUCTION_SENTINEL'))).toBe(true);
   expect(allProjects.some(project => project.id === importedId && project.instructions.includes('ALPHA_PROJECT_INSTRUCTION_SENTINEL'))).toBe(true);
 });
+test('project context handoff queues exactly one request for an existing chat without moving it', async ({ page }) => {
+  const capturedBodies = [];
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    capturedBodies.push(route.request().postDataJSON());
+    await route.fulfill({ status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'e2e-handoff-model', choices: [{ message: { role: 'assistant', content: 'Handoff context verified.' } }] }) });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await ensureSidebarClosed(page);
+  await page.locator('[data-action="toggle-settings"]').first().click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('e2e-handoff-model');
+  await page.locator('#apiKey').fill('e2e-handoff-placeholder-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+
+  const targetChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#chatListNewButton').click();
+  const originalCurrentChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
+  expect(originalCurrentChatId).not.toBe(targetChatId);
+
+  const projectId = await createProjectFromUi(page, 'Handoff project', 'HANDOFF_PROJECT_INSTRUCTION_SENTINEL');
+  await openProjectSettingsForId(page, projectId);
+  await page.locator('#projectMemoryInput').fill('HANDOFF_PROJECT_MEMORY_SENTINEL');
+  await page.locator('[data-action="add-project-memory"]').click();
+  await expect(page.locator('#projectMemoryBox')).toContainText('HANDOFF_PROJECT_MEMORY_SENTINEL');
+  const target = page.locator('#projectContextTargetChat');
+  await expect(target.locator('option[value="' + targetChatId + '"]')).toHaveCount(1);
+  await target.selectOption(targetChatId);
+  const handoff = page.locator('#projectSettingsModal [data-action="handoff-project-context"]');
+  await expect(handoff).toBeEnabled();
+  await handoff.click();
+
+  const afterHandoff = await page.evaluate(() => ({
+    current: localStorage.getItem('ai_current_chat_v87'),
+    chats: JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').map(chat => ({ id: chat.id, projectId: chat.projectId || '' }))
+  }));
+  expect(afterHandoff.current).toBe(originalCurrentChatId);
+  expect(afterHandoff.chats).toHaveLength(2);
+  expect(afterHandoff.chats.every(chat => chat.projectId === '')).toBe(true);
+
+  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const targetRow = page.locator('#chatList .chat-row').filter({ has: page.locator('[data-action="switch-chat"][data-chat-id="' + targetChatId + '"]') });
+  await targetRow.locator('[data-action="switch-chat"]').click();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_current_chat_v87'))).toBe(targetChatId);
+  await expect(page.locator('#currentProjectSelect')).toHaveValue('');
+
+  await page.locator('#userInput').fill('Use the handed-off project context once.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Handoff context verified.');
+  await expect.poll(() => capturedBodies.length).toBe(1);
+  expect(capturedBodies[0].messages[0].content).toContain('HANDOFF_PROJECT_INSTRUCTION_SENTINEL');
+  expect(capturedBodies[0].messages[0].content).toContain('HANDOFF_PROJECT_MEMORY_SENTINEL');
+
+  await page.locator('#userInput').fill('Check that the handoff was consumed.');
+  await page.locator('#sendBtn').click();
+  await expect.poll(() => capturedBodies.length).toBe(2);
+  expect(capturedBodies[1].messages[0].content).not.toContain('HANDOFF_PROJECT_INSTRUCTION_SENTINEL');
+  expect(capturedBodies[1].messages[0].content).not.toContain('HANDOFF_PROJECT_MEMORY_SENTINEL');
+  const finalState = await page.evaluate(() => ({
+    current: localStorage.getItem('ai_current_chat_v87'),
+    chats: JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').length
+  }));
+  expect(finalState.current).toBe(targetChatId);
+  expect(finalState.chats).toBe(2);
+});
+
 test('deleting a project removes only its chats and preserves other projects and chats', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
