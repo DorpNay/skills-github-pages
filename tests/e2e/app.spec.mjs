@@ -267,6 +267,12 @@ test('mobile sidebar and modal close controls meet the 44px touch target', async
 
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  const createClose = await page.locator('#projectCreateModal [data-action="close-project-create"]').boundingBox();
+  expect(createClose?.width || 0).toBeGreaterThanOrEqual(44);
+  expect(createClose?.height || 0).toBeGreaterThanOrEqual(44);
+  await page.locator('#projectCreateModal [data-action="close-project-create"]').click();
+  const projectId = await createProjectFromUi(page, 'Touch target project');
+  await openProjectSettingsForId(page, projectId);
   const projectClose = await page.locator('#projectSettingsModal [data-action="close-project-settings"]').boundingBox();
   expect(projectClose?.width || 0).toBeGreaterThanOrEqual(44);
   expect(projectClose?.height || 0).toBeGreaterThanOrEqual(44);
@@ -414,34 +420,30 @@ test('composer position persists and aLandi is hidden from third-party provider 
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
 });
 
-test('project quick actions open a real create form and persist the chosen memory scope', async ({ page }) => {
+test('project creation is separate from full settings and project sources expose no fake controls', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
   await expect(page.locator('#projectPanel > div').first()).toContainText('Создать проект');
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
-  await expect(page.locator('#projectSettingsModal')).toBeVisible();
+  await expect(page.locator('#projectCreateModal')).toBeVisible();
+  await expect(page.locator('#projectSettingsModal')).toBeHidden();
+  await page.locator('#projectCreateNameInput').fill('Shared scope project');
+  await page.locator('#projectCreateInstructionsInput').fill('A scoped project instruction');
+  await page.locator('#projectCreateModal [data-action="create-project"]').click();
+  await expect(page.locator('#projectCreateModal')).toBeHidden();
+  await expect(page.locator('#projectSettingsModal')).toBeHidden();
+  await expect(page.locator('#currentProjectSelect')).toHaveValue('');
+  const projectId = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]').find(project => project.name === 'Shared scope project')?.id || '');
+  await openProjectSettingsForId(page, projectId);
   await expect(page.locator('#projectManagerDetails')).toHaveAttribute('open', '');
-  await expect(page.locator('#projectNameInput')).toHaveValue('');
   await expect(page.locator('#projectMemoryScopeSelect')).toBeEnabled();
   await expect(page.locator('#projectSourcesSection')).toBeVisible();
   await expect(page.locator('#projectSourcesSection')).toContainText('API списка источников');
   await expect(page.locator('#projectSourcesSection button')).toHaveCount(0);
-  await expect(page.locator('#createProjectSubmit')).toBeVisible();
-  await expect(page.locator('#saveProjectSubmit')).toBeHidden();
-
-  await page.locator('#projectNameInput').fill('Shared scope project');
-  await page.locator('#projectInstructionsInput').fill('A scoped project instruction');
   await page.locator('#projectMemoryScopeSelect').selectOption('project-and-global');
-  await page.locator('#createProjectSubmit').click();
-  await expect(page.locator('#projectSettingsStatus')).toContainText('Shared scope project');
-  await expect.poll(() => page.evaluate(() => {
-    const projects = JSON.parse(localStorage.getItem('ai_projects_v1') || '[]');
-    return projects.find(project => project.name === 'Shared scope project')?.memoryScope;
-  })).toBe('project-and-global');
-  await expect(page.locator('#saveProjectSubmit')).toBeVisible();
-  await expect(page.locator('#createProjectSubmit')).toBeHidden();
+  await page.locator('#projectSettingsModal [data-action="save-project"]').click();
+  await expect.poll(() => page.evaluate(id => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]').find(project => project.id === id)?.memoryScope, projectId)).toBe('project-and-global');
 });
-
 test('language switch localizes provider controls without exposing the internal route', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await selectLanguage(page, 'en');
@@ -2081,9 +2083,8 @@ test('deprecated server-memory controls are absent and project facts remain loca
   });
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#projectPanel [data-action="open-project-create"]').click();
-  await page.locator('#projectNameInput').fill('Local-only project');
-  await page.locator('[data-action="create-project"]').click();
+  const localProjectId = await createProjectFromUi(page, 'Local-only project');
+  await openProjectSettingsForId(page, localProjectId);
   await page.locator('#projectMemoryInput').fill('LOCAL_PROJECT_MEMORY_SENTINEL');
   await page.locator('[data-action="add-project-memory"]').click();
   await expect(page.locator('#projectMemoryBox')).toContainText('LOCAL_PROJECT_MEMORY_SENTINEL');
