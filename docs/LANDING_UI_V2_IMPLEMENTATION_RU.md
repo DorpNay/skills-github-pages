@@ -89,8 +89,8 @@
 ### Latest checkpoint — 2026-10-31, explicit project creation flow
 
 - PR #131 branch: `feat/landing-v1-accessibility-responsive-20261031`.
-- Latest confirmed branch head: `4c5c583d08d242308b9019417cb0c90bcaf264d3`.
-- Compared with current `main`: 72 commits ahead, 4 behind; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`.
+- Latest UI code commit: `4c5c583d08d242308b9019417cb0c90bcaf264d3`; subsequent commits in this checkpoint only refresh continuity documentation.
+- At the UI code commit, comparison with current `main` was 72 commits ahead / 4 behind; subsequent commits only updated continuity documentation. Merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`.
 - Requirement 8.1 correction: project creation now uses its own dialog; full settings remain available from the project's gear. Creating a project no longer mutates the current chat's `projectId` or chat history. The user explicitly creates a project chat from that project's navigation row.
 - Regression coverage updated for current-chat preservation, project-filtered chat creation, project-scoped memory/context, project import/export and project deletion.
 - JavaScript syntax parsing passed for the inline app script and Playwright test module. Exact-head combined status and PR workflow-run queries for `4c5c583d08d242308b9019417cb0c90bcaf264d3` returned no entries. Playwright/Chromium tests have not been executed in this session; this is not a passing CI result.
