@@ -437,9 +437,8 @@ permalink: /
       </details>
     </section>
     <section id="projectPanel" class="px-3 py-2 border-t border-gray-800 space-y-2" aria-label="Проекты и настройки проекта">
-      <div class="grid grid-cols-2 gap-2 mb-2">
-        <button type="button" data-action="open-project-create" data-i18n="createProject" class="rounded-lg border border-cyan-800 bg-cyan-950/40 px-2 py-2 text-left text-xs font-semibold">＋ Создать проект</button>
-        <button type="button" data-action="open-project-settings" data-i18n="projectSettingsAction" class="rounded-lg border border-gray-700 px-2 py-2 text-left text-xs">⚙ Настройки проекта</button>
+      <div class="mb-2">
+        <button type="button" data-action="open-project-create" data-i18n="createProject" class="w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-2 text-left text-xs font-semibold">＋ Создать проект</button>
       </div>
       <div id="projectNavigation" class="space-y-1.5">
         <button id="projectNavToggle" type="button" data-action="toggle-project-navigation" aria-expanded="false" aria-controls="projectNavigationList" class="w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold project-nav-heading">
@@ -453,14 +452,15 @@ permalink: /
 
     </section>
     <p id="projectStatusLine" class="mx-3 -mt-1 mb-1 px-2 text-[10px] leading-relaxed text-gray-500" role="status" aria-live="polite">Личный чат · без проекта</p>
+    <button id="chatListBack" type="button" data-action="chat-list-back" class="hidden mx-3 mt-2 w-[calc(100%-1.5rem)] rounded-lg border border-gray-700 px-3 py-2 text-left text-xs text-gray-300" aria-label="Вернуться ко всем чатам">← Все чаты</button>
     <details id="chatSection" open class="mx-3 my-2 rounded-xl border border-gray-800">
       <summary class="chat-section-summary flex items-center justify-between gap-2 px-3 py-2.5 text-sm font-semibold cursor-pointer select-none" aria-controls="chatList">
-        <span>💬 <span data-i18n="chatsTitle">Чаты</span></span><span id="chatSectionCount" class="text-[10px] text-gray-500">0</span>
+        <span>💬 <span id="chatSectionTitle" data-i18n="chatsTitle">Чаты</span></span><span id="chatSectionCount" class="text-[10px] text-gray-500">0</span>
       </summary>
-      <div class="px-2 pt-2"><button type="button" data-action="new-chat" data-i18n="newPersonalChat" class="w-full rounded-lg border border-blue-500/25 bg-blue-600/10 hover:bg-blue-600/20 py-2 text-xs font-semibold text-blue-200">＋ Новый личный чат</button></div>
+      <div class="px-2 pt-2"><button id="chatListNewButton" type="button" data-action="new-chat" data-i18n="newPersonalChat" class="w-full rounded-lg border border-blue-500/25 bg-blue-600/10 hover:bg-blue-600/20 py-2 text-xs font-semibold text-blue-200">＋ Новый личный чат</button></div>
       <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
     </details>
-    <div class="px-3 py-2 border-b border-gray-800"><button type="button" data-action="open-research-studio" class="w-full flex items-center gap-2 rounded-xl border border-cyan-800/70 bg-cyan-950/30 hover:bg-cyan-900/40 px-3 py-2.5 text-left text-xs font-semibold text-cyan-100"><span aria-hidden="true">⌕</span><span data-i18n="researchStudio">Search &amp; Research Studio</span><span class="ml-auto text-[10px] text-cyan-300/80">↗</span></button></div>
+
 
     
      <div id="chatRowMenuSidebarScrim" aria-hidden="true"></div>
@@ -642,6 +642,7 @@ permalink: /
           <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option" data-i18n="functionAgents">🧭 Структурированный разбор</button>
           <button type="button" data-action="open-function-panel" data-function="skills" class="toolbar-menu-option" data-i18n="functionSkills">🧩 Профиль задачи</button>
           <button type="button" data-action="open-function-panel" data-function="connectors" class="toolbar-menu-option" data-i18n="functionConnectors">🔌 Интеграции</button>
+          <button type="button" data-action="open-research-studio" class="toolbar-menu-option" data-i18n="functionResearchStudio">⌕ Студия исследования</button>
         </div>
       </details>
     </div>
@@ -1357,7 +1358,7 @@ permalink: /
         searchModeSummaryPrefix:'🌐 Веб',searchModeNormal:'Обычный',searchModeNormalShort:'Веб: обычный',searchModeNormalHelp:'Стандартный охват результатов и источников; не меняет бюджет обработки.',searchModeMore:'Расширенный',searchModeMoreShort:'Веб: расширенный',searchModeMoreHelp:'Больше результатов, источников и извлечённого текста на один поиск; не увеличивает число раундов.',searchModeOffline:'Выкл.',searchModeOfflineShort:'Веб: выкл.',searchModeOfflineHelp:'Веб-инструменты выключены; облачному API всё ещё может требоваться интернет.',
         workflowDirectShort:'Прямой',workflowStructuredShort:'Конвейер',workflowDirectHelp:'Прямой способ выполнения: модель использует доступные инструменты в пределах выбранного бюджета.',workflowStructuredHelp:'Для подходящих сложных запросов запускает планировщик → исследователь → критик → синтезатор на выбранной модели. Быстро/Тщательно задаёт бюджет инструментов внутри исследовательского этапа.',
         skillAutoShort:'Авто',skillPlanningShort:'План',skillResearchShort:'Исслед.',skillCodeReviewShort:'Код',skillDataAnalysisShort:'Данные',skillAgentSystemsShort:'Агентные',skillMultimodalShort:'Мультимод.',taskProfileHelp:'Профиль меняет только инструкции и не включает инструменты или доступ к данным.',
-        functionsMenuLabel:'Функции ▾',functionAgents:'🧭 Структурированный разбор',functionSkills:'🧩 Профиль задачи',functionConnectors:'🔌 Интеграции',functionPanelClose:'Закрыть',
+        functionsMenuLabel:'Функции ▾',functionAgents:'🧭 Структурированный разбор',functionSkills:'🧩 Профиль задачи',functionConnectors:'🔌 Интеграции',functionResearchStudio:'⌕ Студия исследования',functionPanelClose:'Закрыть',
         functionAgentsTitle:'Структурированный разбор',functionAgentsDescription:'Для подходящих сложных задач aLandi использует четыре этапа: планирование, исследование, критика и синтез. Все этапы работают на выбранной модели; режим Быстро/Тщательно задаёт бюджет инструментов в исследовательском этапе. Это не независимая команда агентов.',agentModeOption:'Разрешить структурированный разбор сложных задач',agentModeHelp:'Планировщик → исследователь → критик → синтезатор. Все этапы используют выбранную модель; Быстро/Тщательно ограничивает инструменты в исследовательском этапе. Конвейер запускается только для подходящих сложных запросов; отдельная команда моделей не создаётся.',
         functionSkillsTitle:'Профиль задачи',functionSkillsDescription:'Профиль добавляет специализированные инструкции для этого чата. Он не включает инструменты, веб-поиск или дополнительные разрешения.',skillPresetLabel:'Профиль этого чата',skillAuto:'Авто (тщательно/структурно)',skillPlanning:'Планирование',skillResearch:'Исследование',skillCodeReview:'Код и ревью',skillDataAnalysis:'Анализ данных',skillAgentSystems:'Системы агентов',skillMultimodal:'Мультимодальные задачи',skillPresetHelp:'Авто подбирает профиль в тщательном или структурированном разборе; быстрые прямые ответы остаются лёгкими. Ручной профиль меняет только инструкции, не включает инструменты или доступ к данным. Выбор действует в этом чате; новый чат начинает с Авто.',
         functionConnectorsTitle:'Интеграции',functionConnectorsDescription:'Показываем только реально подключённые интеграции. Сейчас внешние источники не подключены; переключателей-заглушек нет.',
@@ -1377,7 +1378,7 @@ permalink: /
         searchModeSummaryPrefix:'🌐 Web',searchModeNormal:'Standard',searchModeNormalShort:'Web: standard',searchModeNormalHelp:'Standard result and source coverage; does not change the execution budget.',searchModeMore:'Expanded',searchModeMoreShort:'Web: expanded',searchModeMoreHelp:'More results, sources and extracted text per search; does not increase execution rounds.',searchModeOffline:'Off',searchModeOfflineShort:'Web: off',searchModeOfflineHelp:'Web tools are off; cloud APIs may still need internet.',
         workflowDirectShort:'Direct',workflowStructuredShort:'Pipeline',workflowDirectHelp:'Direct execution: the model can still use available tools within the selected effort budget.',workflowStructuredHelp:'Eligible complex requests use the planner → researcher → critic → synthesizer pipeline on the selected model. Quick/Thorough controls the tool budget within the research stage.',
         skillAutoShort:'Auto',skillPlanningShort:'Plan',skillResearchShort:'Research',skillCodeReviewShort:'Code',skillDataAnalysisShort:'Data',skillAgentSystemsShort:'Agents',skillMultimodalShort:'Multimodal',taskProfileHelp:'A task profile changes instructions only; it does not enable tools or data access.',
-        functionsMenuLabel:'Functions ▾',functionAgents:'🧭 Structured workflow',functionSkills:'🧩 Task profile',functionConnectors:'🔌 Integrations',functionPanelClose:'Close',
+        functionsMenuLabel:'Functions ▾',functionAgents:'🧭 Structured workflow',functionSkills:'🧩 Task profile',functionConnectors:'🔌 Integrations',functionResearchStudio:'⌕ Research Studio',functionPanelClose:'Close',
         functionAgentsTitle:'Structured workflow',functionAgentsDescription:'For suitable complex tasks, aLandi uses four stages: planning, research, critique and synthesis. All stages use the selected model; Quick/Thorough controls the tool budget in the research stage. This is not an independent team of agents.',agentModeOption:'Allow structured workflow for complex tasks',agentModeHelp:'Planner → researcher → critic → synthesizer. All stages use the selected model; Quick/Thorough limits tools in the research stage. The pipeline runs only for suitable complex requests; no separate model team is created.',
         functionSkillsTitle:'Task profile',functionSkillsDescription:'A profile adds task-specific instructions for this chat. It does not enable tools, web search or additional permissions.',skillPresetLabel:'Task profile for this chat',skillAuto:'Auto (thorough/structured)',skillPlanning:'Planning',skillResearch:'Research',skillCodeReview:'Code and review',skillDataAnalysis:'Data analysis',skillAgentSystems:'Agent systems',skillMultimodal:'Multimodal tasks',skillPresetHelp:'Auto selects a profile for Thorough or structured requests; quick direct answers stay lean. A manual profile changes instructions only, not tools or data access. This choice applies to this chat; new chats start with Auto.',
         functionConnectorsTitle:'Integrations',functionConnectorsDescription:'Only real connected integrations are listed. No external sources are connected yet; there are no placeholder switches.',
@@ -1850,6 +1851,7 @@ permalink: /
       if(!safeSet(STORAGE.projects,JSON.stringify(projects)))showToast('Проекты не удалось сохранить в локальном хранилище. Экспортируй важные данные.','error');
     }
     let selectedProjectForSettingsId=null;
+    let activeChatProjectId=null;
     let creatingProject=false;
     let projectSettingsOpener=null;
     function closeProjectSettings(){
@@ -1946,7 +1948,7 @@ permalink: /
       if(!name){input.focus();showToast(getUiLanguage()==='en'?'Enter a project name first.':'Сначала введи название проекта.','error');return;}
       if(projects.length>=200){showToast('Достигнут предел локальных проектов (200).','error');return;}
       const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectInstructionsInput').value.trim().slice(0,6000),memoryScope:$('projectMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only',memory:[],createdAt:now,updatedAt:now};
-      creatingProject=false;projects.unshift(project);selectedProjectForSettingsId=project.id;persistProjects();
+      creatingProject=false;projects.unshift(project);selectedProjectForSettingsId=project.id;activeChatProjectId=project.id;persistProjects();
       const chat=getCurrentChat();chat.projectId=project.id;
       persistChats();renderProjectUI();renderChatList();
       showToast((getUiLanguage()==='en'?'Project created: ':'Создан проект: ')+name);
@@ -1965,7 +1967,7 @@ permalink: /
       const chat=getCurrentChat(),target=projectId?projects.find(project=>project.id===projectId):null;
       if(projectId&&!target){showToast('Проект не найден.','error');renderProjectUI();return;}
       if(chat.projectId===(target?.id||null))return;
-      chat.projectId=target?.id||null;selectedProjectForSettingsId=target?.id||null;
+      chat.projectId=target?.id||null;selectedProjectForSettingsId=target?.id||null;activeChatProjectId=target?.id||null;
       persistChats();renderProjectUI();renderChatList();
       showToast(target?(getUiLanguage()==='en'?'Chat moved to ':'Чат добавлен в проект: ')+target.name:(getUiLanguage()==='en'?'Chat removed from its project.':'Чат извлечён из проекта.'));
     }
@@ -1988,7 +1990,7 @@ permalink: /
       if(!confirm(msg))return;
       chats=chats.filter(chat=>chat.projectId!==project.id);if(!chats.length)chats=[createChat()];
       if(!chats.some(chat=>chat.id===currentChatId))currentChatId=chats[0].id;
-      projects=projects.filter(item=>item.id!==project.id);persistProjects();updateState(null,currentChatId);renderProjectUI();
+      projects=projects.filter(item=>item.id!==project.id);if(activeChatProjectId===project.id)activeChatProjectId=null;persistProjects();updateState(null,currentChatId);renderProjectUI();
       showToast(getUiLanguage()==='en'?'Project and its chats deleted.':'Проект и его чаты удалены.');
     }
     function exportProjectBundle(){
@@ -2020,7 +2022,7 @@ permalink: /
         }
         const memory=Array.isArray(bundle.project.memory)?bundle.project.memory.filter(v=>v&&typeof v.text==='string').slice(0,500).map(v=>({id:projectIdNew(),text:v.text.slice(0,600),createdAt:String(v.createdAt||now)})):[];
         const target={id:projectIdNew(),name:importedName,description:typeof bundle.project.description==='string'?bundle.project.description.slice(0,1000):'',instructions:typeof bundle.project.instructions==='string'?bundle.project.instructions.slice(0,6000):'',memoryScope:bundle.project.memoryScope==='project-and-global'?'project-and-global':'project-only',memory,createdAt:now,updatedAt:now};
-        projects.unshift(target);selectedProjectForSettingsId=target.id;
+        projects.unshift(target);selectedProjectForSettingsId=target.id;activeChatProjectId=target.id;
         const seen=new Set(chats.map(chat=>chat.id));
         for(const chat of importedChats){if(seen.has(chat.id))chat.id=projectIdNew();seen.add(chat.id);chat.projectId=target.id;chats.unshift(chat);}
         persistProjects();updateState(chats,chats[0]?.id||currentChatId);renderProjectUI();$('projectManagerDetails').open=true;
@@ -2063,18 +2065,16 @@ permalink: /
     }
     function renderProjectNavigation() {
       const list=$('projectNavigationList');if(!list)return;
-      const expanded=new Set([...list.querySelectorAll('details.project-nav-item[open]')].map(item=>item.dataset.projectId));
       list.replaceChildren();
       const unassigned=chats.filter(chat=>!chat.projectId);
       $('projectlessChatCount').textContent=String(unassigned.length);
-      $('chatSectionCount').textContent=String(unassigned.length);
-      const current=getCurrentChat();
-      $('projectlessNavButton').classList.toggle('is-active',!current?.projectId);
+      $('projectlessNavButton').classList.toggle('is-active',!activeChatProjectId);
       const english=getUiLanguage()==='en';
       for(const project of projects) {
-        const group=document.createElement('details');group.className='project-nav-item';group.dataset.projectId=project.id;group.open=expanded.has(project.id);
+        const row=document.createElement('div');row.className='project-nav-row flex items-center gap-1';row.dataset.projectId=project.id;
+        const group=document.createElement('details');group.className='project-nav-item min-w-0 flex-1';group.dataset.projectId=project.id;
         const summary=document.createElement('summary');
-        const caret=document.createElement('span');caret.className='project-nav-caret';caret.textContent=group.open?'⌄':'›';caret.setAttribute('aria-hidden','true');
+        const caret=document.createElement('span');caret.className='project-nav-caret';caret.textContent='›';caret.setAttribute('aria-hidden','true');
         const title=document.createElement('span');title.className='min-w-0 flex-1 truncate';title.textContent=project.name;
         const count=document.createElement('span');count.className='text-[10px] text-gray-500';count.textContent=String(chats.filter(chat=>chat.projectId===project.id).length);
         summary.append(caret,title,count);group.appendChild(summary);
@@ -2083,16 +2083,33 @@ permalink: /
         const assigned=chats.filter(chat=>chat.projectId===project.id);
         if(!assigned.length){const empty=document.createElement('p');empty.className='px-2 py-2 text-[10px] text-gray-500';empty.textContent=english?'No chats in this project yet.':'В проекте пока нет чатов.';children.appendChild(empty);}
         assigned.forEach(chat=>children.appendChild(createChatRow(chat,true)));
-        const toolbar=document.createElement('div');toolbar.className='flex gap-1 px-1 pt-1';const addChat=document.createElement('button');addChat.type='button';addChat.dataset.action='new-chat-in-project';addChat.dataset.projectId=project.id;addChat.className='flex-1 rounded-lg border border-cyan-900/50 px-2 py-1.5 text-[10px] text-cyan-200 hover:bg-cyan-950/40';addChat.textContent=english?'＋ New chat':'＋ Новый чат';const settings=document.createElement('button');settings.type='button';settings.dataset.action='open-project-settings';settings.dataset.projectId=project.id;settings.className='rounded-lg px-2 py-1.5 text-[10px] text-gray-500 hover:text-cyan-300';settings.textContent=english?'⚙ Settings':'⚙ Настройки';toolbar.append(addChat,settings);children.appendChild(toolbar);
-        group.appendChild(children);list.appendChild(group);
+        const toolbar=document.createElement('div');toolbar.className='flex gap-1 px-1 pt-1';
+        const showChats=document.createElement('button');showChats.type='button';showChats.dataset.action='select-project';showChats.dataset.projectId=project.id;showChats.className='flex-1 rounded-lg border border-gray-700 px-2 py-1.5 text-[10px] text-gray-300 hover:bg-white/5';showChats.textContent=english?'Show chats':'Показать чаты';
+        const addChat=document.createElement('button');addChat.type='button';addChat.dataset.action='new-chat-in-project';addChat.dataset.projectId=project.id;addChat.className='rounded-lg border border-cyan-900/50 px-2 py-1.5 text-[10px] text-cyan-200 hover:bg-cyan-950/40';addChat.textContent=english?'＋ New':'＋ Чат';
+        toolbar.append(showChats,addChat);children.appendChild(toolbar);
+        group.appendChild(children);
+        const settings=document.createElement('button');settings.type='button';settings.dataset.action='open-project-settings';settings.dataset.projectId=project.id;settings.className='header-icon shrink-0';settings.textContent='⚙';settings.title=english?'Project settings':'Настройки проекта';settings.setAttribute('aria-label',settings.title);
+        row.append(group,settings);list.appendChild(row);
       }
       if(!projects.length){const empty=document.createElement('p');empty.className='px-2 py-2 text-[11px] text-gray-500';empty.textContent=english?'No projects yet.':'Проектов пока нет.';list.appendChild(empty);}
     }
     function renderChatList() {
       renderProjectUI({preserveDraft:true});
       const list=$('chatList');list.replaceChildren();
-      const personalChats=chats.filter(chat=>!chat.projectId);list.dataset.emptyLabel=getUiLanguage()==='en'?'No personal chats yet.':'Нет личных чатов без проекта';list.classList.toggle('is-empty',personalChats.length===0);
-      personalChats.forEach(chat=>list.appendChild(createChatRow(chat,false)));
+      const english=getUiLanguage()==='en';
+      const activeProject=activeChatProjectId?projects.find(project=>project.id===activeChatProjectId):null;
+      if(activeChatProjectId&&!activeProject)activeChatProjectId=null;
+      const visibleChats=activeChatProjectId?chats.filter(chat=>chat.projectId===activeChatProjectId):chats.filter(chat=>!chat.projectId);
+      const count=visibleChats.length;
+      $('chatSectionCount').textContent=String(count);
+      $('chatSectionTitle').textContent=activeProject?(english?'Chats · '+activeProject.name:'Чаты · '+activeProject.name):(english?'Chats · No project':'Чаты · Без проекта');
+      $('chatListBack').classList.toggle('hidden',!activeChatProjectId);
+      $('chatListBack').textContent=english?'← All chats':'← Все чаты';
+      $('chatListNewButton').textContent=activeProject?(english?'＋ New chat in project':'＋ Новый чат в проекте'):(english?'＋ New personal chat':'＋ Новый личный чат');
+      $('chatListNewButton').setAttribute('aria-label',$('chatListNewButton').textContent);
+      list.dataset.emptyLabel=activeProject?(english?'No chats in this project yet.':'В этом проекте пока нет чатов.'):(english?'No personal chats yet.':'Нет личных чатов без проекта');
+      list.classList.toggle('is-empty',count===0);
+      visibleChats.forEach(chat=>list.appendChild(createChatRow(chat,false)));
     }
     function updateMemoryStatusLine(){
       const line=$('memoryStatusLine');if(!line)return;
@@ -4162,12 +4179,14 @@ permalink: /
       sendMessage(true);
     }
     function createNewChat() {
+      activeChatProjectId=null;
       const chat=createChat('Новый личный чат',[],null);
       updateState([chat,...chats],chat.id);
       toggleSidebar(false);
     }
     function createNewChatInProject(projectId) {
       const project=projects.find(item=>item.id===projectId);if(!project){showToast('Проект больше не существует.','error');return;}
+      activeChatProjectId=project.id;
       const chat=createChat('Новый чат · '+project.name,[],project.id);
       updateState([chat,...chats],chat.id);toggleSidebar(false);
     }
@@ -4186,7 +4205,8 @@ permalink: /
       updateState([...chats]); toggleSidebar(false);
     }
     function switchChat(id) {
-      if (!chats.some((chat) => chat.id === id)) return;
+      const target=chats.find(chat=>chat.id===id);if(!target)return;
+      activeChatProjectId=target.projectId||null;
       updateState(null, id); toggleSidebar(false);
     }
     function deleteChat(id) {
@@ -4934,8 +4954,15 @@ permalink: /
             $('projectNavToggle').setAttribute('aria-expanded',String(open));$('projectNavChevron').textContent=open?'⌃':'⌄';break;
           }
           case 'projectless-nav': {
-            $('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});
+            activeChatProjectId=null;renderChatList();$('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});
             $('chatSection').querySelector('summary')?.focus();break;
+          }
+          case 'select-project': {
+            const id=control.dataset.projectId;if(!projects.some(project=>project.id===id))break;
+            activeChatProjectId=id;renderChatList();$('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});break;
+          }
+          case 'chat-list-back': {
+            activeChatProjectId=null;renderChatList();$('chatSection').querySelector('summary')?.focus();break;
           }
           case 'open-project-settings': {
             projectSettingsOpener=control;
@@ -4970,7 +4997,7 @@ permalink: /
           case 'start-research-studio': await startResearchStudio(); break;
           case 'toggle-sidebar': toggleSidebar(); break;
           case 'close-sidebar': toggleSidebar(false); break;
-          case 'new-chat': if(voiceConversationActive)stopVoiceConversation(false);createNewChat(); break;
+          case 'new-chat': if(voiceConversationActive)stopVoiceConversation(false);if(activeChatProjectId)createNewChatInProject(activeChatProjectId);else createNewChat(); break;
           case 'new-chat-in-project': createNewChatInProject(control.dataset.projectId);break;
           case 'chat-clear': control.closest('.chat-row-menu')?.removeAttribute('open');clearChatById(control.dataset.chatId);break;
           case 'clear-chat': clearCurrentChat(); break;
