@@ -645,10 +645,11 @@ permalink: /
     </div>
     <span id="brandWordmark" class="brand-wordmark font-bold text-lg tracking-tight shrink-0">aLandi</span>
     <div class="header-preferences" role="group" aria-label="Настройки отображения">
-      <button type="button" data-action="toggle-theme-cycle" id="homeThemeToggle" aria-label="Сменить тему" title="Сменить тему" class="header-icon">☼</button>
       <details id="languageMenu" class="language-menu">
-        <summary id="languageSummary" class="header-icon" aria-label="Выбрать язык" title="Выбрать язык">RU</summary>
+        <summary id="languageSummary" class="header-icon" aria-label="Тема и язык" title="Тема и язык">☼ RU</summary>
         <div class="language-menu-panel">
+          <button type="button" id="headerThemeMenuToggle" data-action="toggle-theme-cycle" aria-label="Сменить тему" title="Сменить тему">☼ Тема: тёмная</button>
+          <div class="my-1 border-t border-gray-700"></div>
           <button type="button" data-action="set-language" data-language="ru" aria-pressed="true">Русский</button>
           <button type="button" data-action="set-language" data-language="en" aria-pressed="false">English</button>
         </div>
@@ -1458,7 +1459,7 @@ permalink: /
       document.querySelectorAll('[data-i18n-placeholder]').forEach(node=>{const value=text[node.dataset.i18nPlaceholder];if(typeof value==='string')node.placeholder=value;});
       document.querySelectorAll('[data-i18n-aria-label]').forEach(node=>{const value=text[node.dataset.i18nAriaLabel];if(typeof value==='string')node.setAttribute('aria-label',value);});
       applyFunctionPanelLanguage(lang);
-      const languageSummary=$('languageSummary');if(languageSummary)languageSummary.textContent=lang==='en'?'EN ▾':'RU ▾';
+      updateHomeThemeButton();
       const sidebarLanguageSummary=$('languageSummarySidebar');if(sidebarLanguageSummary)sidebarLanguageSummary.textContent=lang==='en'?'EN ▾':'RU ▾';
       const languageSelect=$('uiLanguage');if(languageSelect)languageSelect.value=lang;
       $('sidebar')?.setAttribute('aria-label',lang==='en'?'Projects and chats':'Проекты и чаты');
@@ -1476,9 +1477,9 @@ permalink: /
     function updateHomeThemeButton(){
       const light=document.documentElement.dataset.theme==='light';
       const english=getUiLanguage()==='en';
-      const button=$('homeThemeToggle');
-      if(button){button.textContent=light?'☾':'☼';button.title=english?'Switch theme':'Сменить тему';button.setAttribute('aria-label',button.title);}
-
+      const button=$('headerThemeMenuToggle'),summary=$('languageSummary');
+      if(button){button.textContent=light?(english?'☼ Theme: light':'☼ Тема: светлая'):(english?'☾ Theme: dark':'☾ Тема: тёмная');button.title=english?'Switch theme':'Сменить тему';button.setAttribute('aria-label',button.title);}
+      if(summary){summary.textContent=(light?'☾ ':'☼ ')+(english?'EN':'RU');summary.title=english?'Theme and language':'Тема и язык';summary.setAttribute('aria-label',summary.title);}
     }
     function toggleHomeTheme(){
       const next=document.documentElement.dataset.theme==='light'?'dark':'light';
@@ -5005,7 +5006,7 @@ permalink: /
           case 'open-function-panel': openFunctionPanel(control.dataset.function);break;
           case 'close-function-panel': closeFunctionPanel();break;
           case 'apply-skill-quiz': applySkillQuiz();break;
-          case 'toggle-theme-cycle': toggleHomeTheme();break;
+          case 'toggle-theme-cycle': toggleHomeTheme();if($('languageMenu'))$('languageMenu').open=false;break;
           case 'reset-readability': {
             $('uiTextScale').value='100';$('uiTextContrast').value='normal';saveReadabilityPreferences();
             showToast(getUiLanguage()==='en'?'Text readability reset to defaults.':'Настройки читаемости сброшены к значениям по умолчанию.');break;
