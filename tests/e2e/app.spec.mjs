@@ -120,8 +120,7 @@ test('sidebar order separates memory, projects, status, chats, and research', as
     sidebar.querySelector('#projectPanel'),
     sidebar.querySelector('#projectStatusLine'),
     sidebar.querySelector('#chatSection'),
-    sidebar.querySelector('[data-action="open-research-studio"]')?.parentElement,
-    sidebar.querySelector('#sidebarPreferences')
+    sidebar.querySelector('[data-action="open-research-studio"]')?.parentElement
   ].map(el => Array.prototype.indexOf.call(sidebar.children, el)));
   expect(positions.every(Number.isInteger)).toBe(true);
   expect(positions).toEqual([...positions].sort((a, b) => a - b));
@@ -171,29 +170,34 @@ test('mobile sidebar and modal close controls meet the 44px touch target', async
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 });
 
-test('theme stays in the header/sidebar and language lives in advanced settings', async ({ page }) => {
+test('theme and language are a compact accessible header group', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  await expect(page.locator('#sidebarThemeToggle')).toBeVisible();
-  await page.locator('#sidebarThemeToggle').click();
+  await expect(page.locator('#homeThemeToggle')).toBeVisible();
+  await expect(page.locator('#languageMenu')).toBeVisible();
+  await expect(page.locator('#sidebarThemeToggle')).toHaveCount(0);
+  await expect(page.locator('#legacyProviderSettings [data-action="toggle-theme-cycle"]')).toHaveCount(0);
+
+  const themeTarget = await page.locator('#homeThemeToggle').boundingBox();
+  const languageTarget = await page.locator('#languageMenu > summary').boundingBox();
+  expect(themeTarget?.width || 0).toBeGreaterThanOrEqual(44);
+  expect(themeTarget?.height || 0).toBeGreaterThanOrEqual(44);
+  expect(languageTarget?.width || 0).toBeGreaterThanOrEqual(44);
+  expect(languageTarget?.height || 0).toBeGreaterThanOrEqual(44);
+
+  await page.locator('#homeThemeToggle').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(page.locator('#uiTheme')).toHaveValue('light');
-  await expect(page.locator('#languageMenu')).toHaveCount(0);
-  await expect(page.locator('#languageMenuSidebar')).toHaveCount(0);
 
-  await page.locator('[data-action="close-sidebar"]').click();
-  await selectLanguage(page, 'en');
+  await page.locator('#languageMenu > summary').click();
+  await page.locator('#languageMenu [data-language="en"]').click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
-  await page.locator('#legacyProviderSettings [data-action="toggle-theme-cycle"]').click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+  await expect(page.locator('#languageMenu [data-language="en"]')).toHaveAttribute('aria-pressed', 'true');
 
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#sidebarThemeToggle').click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await page.locator('#sidebar [data-action="close-sidebar"]').click();
-  await selectLanguage(page, 'ru');
+  await page.locator('#homeThemeToggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page.locator('#languageMenu > summary').click();
+  await page.locator('#languageMenu [data-language="ru"]').click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
   await expect(page.locator('#uiLanguage')).toHaveValue('ru');
 });
@@ -2506,11 +2510,17 @@ test('mobile messages expose full text and retain a jump-to-latest control', asy
   await expect(page.locator('#chatBox [data-action="copy-message"]')).toHaveCount(2);
   await expect(page.locator('#chatBox [data-action="view-message"]')).toHaveCount(2);
 
-  await page.locator('#chatBox [data-action="view-message"]').last().click();
+  const viewAction = page.locator('#chatBox [data-action="view-message"]').last();
+  const viewTarget = await viewAction.boundingBox();
+  expect(viewTarget?.width || 0).toBeGreaterThanOrEqual(44);
+  expect(viewTarget?.height || 0).toBeGreaterThanOrEqual(44);
+  await expect(viewAction).toHaveAttribute('aria-label', /Открыть полный текст сообщения|Open readable message view/);
+  await viewAction.click();
   await expect(page.locator('#messageViewerModal')).toBeVisible();
   await expect(page.locator('#messageViewerContent')).toContainText('MESSAGE_VIEWER_LINE_69');
-  await page.locator('#messageViewerModal [data-action="close-message-viewer"]').click();
+  await page.keyboard.press('Escape');
   await expect(page.locator('#messageViewerModal')).toBeHidden();
+  await expect(viewAction).toBeFocused();
 
   await page.locator('#chatBox [data-action="view-message"]').first().click();
   await expect(page.locator('#messageViewerContent')).toContainText('Show a full message.');
