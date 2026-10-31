@@ -149,3 +149,9 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Added E2E assertions for this DOM order and for sidebar close/reopen: only memory settings/help collapse, while project navigation, “Без проекта” and Chats preserve their open/closed state.
 - Code commit `a541932307c764e56f81b795b940785839128338`; test commit `64cfa3abfd1750751951cf1715502e7ca3409ce4`. Syntax parsing passed; no browser test run/status exists for this head.
 - No merge/deploy; continue remaining Landing V2 requirements in PR #131.
+
+
+### 2026-10-31 — last-closed-chat restoration regression in PR #131
+- The local last-closed-chat restore path already existed; added a Playwright scenario that deletes a chat, reloads the app and restores that chat from local storage without creating a new one.
+- Test commit: `2bfc6c080abeef00ed2566e54e0b847f40c11e2d`. JavaScript syntax parsing passed; browser E2E was not executed and is not marked passed.
+- PR #131 remains open and unmerged; no deployment.
