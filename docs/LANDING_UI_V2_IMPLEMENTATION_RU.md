@@ -16,7 +16,7 @@
 
 | Requirement | Observed implementation | Gap / implementation direction | Status |
 |---|---|---|---|
-| **8.1 Sidebar, memory, projects, chats** | Memory panel is already above projects; memory details and projects list are collapsed by default; “Без проекта” exists; chats are project-grouped; per-project “new chat” exists. | Memory status is below the details instead of above the block; memory content order differs from requested order; a global “Настройки проекта” action duplicates per-project settings; project-row settings are text-heavy; no clear back-to-general-chat action; Research Studio still occupies a sidebar button; add swipe-close without breaking scroll/selection. | [~] |
+| **8.1 Sidebar, memory, projects, chats** | Memory panel above projects; projectless and project-filtered chat lists; per-project gear and new-chat action; Research Studio moved to Functions; horizontal swipe-close; creation dialog is separate from full project settings; creating a project preserves the current chat's project association and history. | Continue memory content ordering/status hierarchy, accordion-state checks, restore-last-closed-chat behavior, spacing and keyboard navigation. | [~] |
 | **8.2 Typography/header/main surface** | Header has a wordmark, chat title, theme control, clock and mode controls. | Wordmark is a restrained gradient, clock is 54px, type stack is generic system UI; requested distinct wordmark, tighter vertical controls and independent chat-title treatment need visual iteration. | [~] |
 | **8.3 Settings/providers** | aLandi Cloud is a separate card; external providers and most other settings are inside one `legacyProviderSettings` disclosure. | Split into three mutually exclusive groups: Cloud, third-party providers, additional settings; Cloud must never appear as a third-party provider. Preserve current provider key isolation and connection state. | [~] |
 | **8.4 Tavily/system prompt** | Tavily key remains in a web-tools disclosure; system prompt is global `localStorage` state and is normalized against the legacy built-in prompt. | Verify the empty-by-default behavior against `DEFAULT_SYSTEM` and migration; decide Tavily only after comparing the existing keyless search fallback and live adapter requirements. No premature deletion. | [~] |
@@ -86,13 +86,14 @@
 | 8.16 Button typography/icon-first | Shared control typography/spacing and icon-first message actions with accessible names. | Normalize remaining one-off button classes and tooltip coverage. | [~] |
 | 8.17 Readability | Persistent 90–120% text scale and standard/high contrast preference apply in light/dark themes. | Expand contrast handling to links, secondary/disabled/error/status text and add visual contrast checks. | [~] |
 
-### Latest checkpoint
+### Latest checkpoint — 2026-10-31, explicit project creation flow
 
-- PR #131 branch: feat/landing-v1-accessibility-responsive-20261031.
-- Exact branch head after this checkpoint: 5289c2d17f1cd9d69ff1857c82942798367e1a62.
-- Compared with current main: 60 commits ahead, 4 behind; merge base e78a73b25725bfa63370d9946887cbbacbf51b82.
-- Exact-head combined status and PR workflow-run queries returned no entries. This is not a passing CI result; browser tests have not been executed in this session.
-- Latest source changes: removed stale experimental-memory action dispatch; collapsed private/shared memory explanations; enforced exclusive Cloud settings behavior; added E2E assertions for these interactions, a live readability preview, and reset persistence. Subsequent branch commits also refined control geometry/typography and removed obsolete provider/sidebar labels; see PR commit history.
+- PR #131 branch: `feat/landing-v1-accessibility-responsive-20261031`.
+- Latest confirmed branch head: `f1035eed19355404aa9c7c1a0dcd1ca401113337`.
+- Compared with current `main`: 67 commits ahead, 4 behind; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`.
+- Requirement 8.1 correction: project creation now uses its own dialog; full settings remain available from the project's gear. Creating a project no longer mutates the current chat's `projectId` or chat history. The user explicitly creates a project chat from that project's navigation row.
+- Regression coverage updated for current-chat preservation, project-filtered chat creation, project-scoped memory/context, project import/export and project deletion.
+- Exact-head combined status and PR workflow-run queries for `f1035eed19355404aa9c7c1a0dcd1ca401113337` returned no entries. Playwright/Chromium tests have not been executed in this session; this is not a passing CI result.
 - No merge, deployment, framework migration or dependency addition performed.
 
 ## Decision log
