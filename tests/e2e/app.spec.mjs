@@ -277,8 +277,7 @@ test('composer position persists and aLandi is hidden from third-party provider 
   await page.locator('[data-action="toggle-settings"]').click();
   await page.locator('#additionalSettings > summary').click();
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
-  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(1);
-  await expect(page.locator('#providerPrimaryGroup')).toBeHidden();
+  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
   await expect(page.locator('#providerExternalGroup')).not.toHaveAttribute('hidden', '');
   await expect.poll(() => page.locator('#providerPreset').evaluate(select => [...select.options].some(option => option.value === 'gemini'))).toBe(true);
   await expect(page.locator('#providerPreset option[value="gemini"]')).toBeEnabled();
@@ -421,6 +420,7 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await expect(page.locator('#systemPromptInput')).not.toHaveAttribute('readonly', '');
   await page.locator('#editSystemPrompt').click();
   await expect(page.locator('#systemPromptInput')).toHaveAttribute('readonly', '');
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('gemini');
   await page.locator('#modelPreset').selectOption('gemini-3.6-flash');
   await expect(page.locator('#modelName')).toHaveValue('gemini-3.6-flash');
