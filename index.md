@@ -592,8 +592,9 @@ permalink: /
             </label>
             <p id="readabilityPreview" class="rounded-lg border border-gray-800 bg-gray-900/50 p-2 text-xs leading-relaxed" data-i18n="readabilityPreview">Пример текста — так будут выглядеть сообщения.</p>
           </section>
-       <details id="searchToolsSettings" class="rounded-xl border border-gray-700"><summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">Инструменты и веб-поиск</summary><div class="px-3 pb-3 space-y-2"><div class="flex gap-2"><input type="password" id="tavilyKey" aria-label="Ключ Tavily" autocomplete="off" class="min-w-0 flex-1 p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="ключ Tavily"><button type="button" data-action="paste-tavily-key" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Вставить ключ Tavily">↓</button></div></div></details>
+       <details id="searchToolsSettings" class="rounded-xl border border-gray-700"><summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">Инструменты и веб-поиск</summary><div class="px-3 pb-3 space-y-2"><p class="text-[10px] leading-relaxed text-gray-400" data-i18n="tavilyDecisionNote">Решение о подключении Tavily ещё не принято. Сначала оцениваем текущий поиск и его качество; ключ можно оставить пустым.</p><div class="flex gap-2"><input type="password" id="tavilyKey" aria-label="Ключ Tavily" autocomplete="off" class="min-w-0 flex-1 p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="ключ Tavily"><button type="button" data-action="paste-tavily-key" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Вставить ключ Tavily">↓</button></div></div></details>
        <label for="systemPromptInput" data-i18n="systemPromptLabel" class="block text-xs text-gray-400">Системный промпт</label>
+       <p class="text-[10px] leading-relaxed text-gray-400" data-i18n="systemPromptEmptyNote">Глобальный системный промпт пуст по умолчанию. Добавляй общие инструкции только если они действительно нужны.</p>
        <div class="prompt-editor"><textarea id="systemPromptInput" rows="4" readonly class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y" placeholder="Свои правила для всех запросов"></textarea><button type="button" id="editSystemPrompt" data-action="edit-system-prompt" class="prompt-pencil" aria-pressed="false" aria-label="Редактировать системный промпт" title="Редактировать">✎</button></div><p id="promptEditHint" class="sr-only" aria-live="polite"></p>
        <label class="flex items-start gap-2 text-xs text-gray-300 mt-2"><input id="allowCrossProviderFallback" type="checkbox" class="mt-0.5 rounded bg-gray-800 border-gray-700"><span><strong>Разрешить резерв у другого провайдера</strong><span class="block text-[11px] leading-relaxed text-amber-200/80">По умолчанию выключено. При включении текст запроса и контекст могут передаваться другому сервису. Сначала система пробует модели выбранного провайдера.</span></span></label>
       <p class="text-[10px] leading-relaxed text-gray-500">Ключи хранятся в этом браузере. Резервный провайдер может получить текст запроса и контекст.</p>
@@ -1366,7 +1367,7 @@ permalink: /
         memoryLabel:'🧠 Долгосрочная память',memoryPlaceholder:'Факт, который нужно запомнить',exportChats:'Экспорт',importChats:'Импорт',
         appearanceTitle:'Внешний вид',languageLabel:'Язык',languageRussian:'Русский',languageEnglish:'English',researchStudio:'Поиск и исследование',themeLabel:'Тема',motionLabel:'Анимации',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',cloudGroupTitle:'☁ aLandi Cloud',thirdPartySettingsTitle:'Сторонние провайдеры',providerGroupPrimary:'aLandi Cloud · основной маршрут',providerGroupExternal:'Сторонние провайдеры',cloudRouteChoiceHelp:'Выбери один маршрут в поле «Провайдер API»: aLandi Cloud или один сторонний провайдер.',cloudCardTitle:'Мой сервер',cloudCardCopy:'',cloudBaseUrl:'URL моего сервера',cloudModel:'Модель моего сервера',cloudApiKey:'Ключ доступа к серверу',cloudConnect:'',providerLabel:'Сторонний API',
         modelSearchLabel:'Поиск по каталогу моделей',modelPresetLabel:'Быстрый выбор модели · список обновляется из API',
-        baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',
+        baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',systemPromptEmptyNote:'Глобальный системный промпт пуст по умолчанию. Добавляй общие инструкции только если они действительно нужны.',tavilyDecisionNote:'Решение о подключении Tavily ещё не принято. Сначала оцениваем текущий поиск и его качество; ключ можно оставить пустым.',
         legacySettings:'Дополнительные настройки',composerPlaceholder:'Напиши сообщение...',
         modeLabel:'Объём:',modeGroupAria:'Объём работы',modeFast:'⚡ Быстро',modeDeep:'🔬 Тщательно',searchLabel:'🌐 Веб-поиск',
         modeFastShort:'Быстро',modeDeepShort:'Тщательно',modeFastHelp:'Быстро: в прямом режиме — 1 раунд и 1 вызов инструмента; в конвейере это лимит исследовательского этапа.',modeDeepHelp:'Тщательно: до 4 раундов, 3 вызовов за раунд и 8 за запуск; в конвейере лимит относится к исследовательскому этапу.',
@@ -1386,7 +1387,7 @@ permalink: /
         memoryLabel:'🧠 Long-term memory',memoryPlaceholder:'A fact to remember',exportChats:'Export',importChats:'Import',
         appearanceTitle:'Appearance',languageLabel:'Language',languageRussian:'Russian',languageEnglish:'English',researchStudio:'Search & Research Studio',themeLabel:'Theme',motionLabel:'Motion',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',cloudGroupTitle:'☁ aLandi Cloud',thirdPartySettingsTitle:'Third-party providers',providerGroupPrimary:'aLandi Cloud · primary route',providerGroupExternal:'Third-party providers',cloudRouteChoiceHelp:'Choose one route in the API provider field: aLandi Cloud or one third-party provider.',cloudCardTitle:'My server',cloudCardCopy:'',cloudBaseUrl:'My server URL',cloudModel:'My server model',cloudApiKey:'Server access key',cloudConnect:'',providerLabel:'Third-party API',
         modelSearchLabel:'Search model catalog',modelPresetLabel:'Quick model pick · list loads from API',
-        baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',
+        baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',systemPromptEmptyNote:'The global system prompt is empty by default. Add shared instructions only when they are genuinely needed.',tavilyDecisionNote:'The Tavily decision is still open. We are evaluating the current search path and result quality first; the key can remain empty.',
         legacySettings:'Additional settings',composerPlaceholder:'Write a message...',
         modeLabel:'Effort:',modeGroupAria:'Effort',modeFast:'⚡ Quick',modeDeep:'🔬 Thorough',searchLabel:'🌐 Web search',
         modeFastShort:'Quick',modeDeepShort:'Thorough',modeFastHelp:'Quick: one tool round and one tool call in direct mode; in the pipeline this limits the research stage.',modeDeepHelp:'Thorough: up to 4 rounds, 3 calls per round and 8 per run; in the pipeline this budget applies to the research stage.',
@@ -5136,6 +5137,18 @@ permalink: /
     ['agentTeamScenario','agentRolePreset'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
     ['agentTeamCustomScenario','agentCustomRoles'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
     $('sidebarOverlay').addEventListener('click', () => toggleSidebar(false));
+    let sidebarTouchStart=null;
+    $('sidebar').addEventListener('touchstart',event=>{
+      if(event.touches.length!==1){sidebarTouchStart=null;return;}
+      const touch=event.touches[0];sidebarTouchStart={x:touch.clientX,y:touch.clientY};
+    },{passive:true});
+    $('sidebar').addEventListener('touchend',event=>{
+      if(!sidebarTouchStart||event.changedTouches.length!==1){sidebarTouchStart=null;return;}
+      const touch=event.changedTouches[0],dx=touch.clientX-sidebarTouchStart.x,dy=touch.clientY-sidebarTouchStart.y;
+      sidebarTouchStart=null;
+      if(dx<=-72&&Math.abs(dx)>Math.abs(dy)*1.35)toggleSidebar(false);
+    },{passive:true});
+    $('sidebar').addEventListener('touchcancel',()=>{sidebarTouchStart=null;},{passive:true});
     $('importFile').addEventListener('change', importChats);
     $('settingsProfileFile').addEventListener('change', importSettingsProfile);
     $('importProjectFile').addEventListener('change',importProjectBundle);
