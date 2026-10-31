@@ -1230,9 +1230,9 @@ test('pasting a provider key starts one bounded model-catalog and connection che
 
 
 test('project instructions, project memory, and project bundles stay scoped to the current project', async ({ page }) => {
-  let capturedBody = null;
+  const capturedBodies = [];
   await page.route('https://api.example.test/v1/chat/completions', async route => {
-    capturedBody = route.request().postDataJSON();
+    capturedBodies.push(route.request().postDataJSON());
     await route.fulfill({
       status: 200, contentType: 'application/json',
       body: JSON.stringify({ model: 'e2e-project-model', choices: [{ message: { role: 'assistant', content: 'Project scope verified.' } }] })
@@ -1250,7 +1250,6 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('#projectMemoryInput').fill('ALPHA_PROJECT_MEMORY_SENTINEL');
   await page.locator('[data-action="add-project-memory"]').click();
   await expect(page.locator('#projectMemoryBox')).toContainText('ALPHA_PROJECT_MEMORY_SENTINEL');
-  await page.locator('#projectMemoryToggle').check();
 
   const alphaDownloadPromise = page.waitForEvent('download');
   await page.locator('[data-action="export-project"]').click();
@@ -1276,7 +1275,6 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('[data-action="create-project"]').click();
   await page.locator('#projectMemoryInput').fill('BETA_PROJECT_MEMORY_SENTINEL');
   await page.locator('[data-action="add-project-memory"]').click();
-  await page.locator('#projectMemoryToggle').check();
   const betaId = await page.locator('#currentProjectSelect').inputValue();
   expect(betaId).not.toBe(alphaId);
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
@@ -1301,9 +1299,9 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('#chatActionProject').selectOption(betaId);
   await page.locator('[data-action="chat-action-save"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(betaId);
-  // Moving projects deliberately clears scoped memory consent; re-enable Beta explicitly.
+  // Project membership and project instructions do not implicitly inject stored project facts.
   await openProjectSettingsForId(page, betaId);
-  await page.locator('#projectMemoryToggle').check();
+  await expect(page.locator('#projectMemoryToggle')).toHaveCount(0);
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 
   await ensureSidebarClosed(page);
@@ -1319,12 +1317,22 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('#userInput').fill('Check which project context is included.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Project scope verified.');
-  expect(capturedBody).not.toBeNull();
-  const prompt = capturedBody.messages[0].content;
-  expect(prompt).toContain('BETA_PROJECT_INSTRUCTION_SENTINEL');
-  expect(prompt).toContain('BETA_PROJECT_MEMORY_SENTINEL');
-  expect(prompt).not.toContain('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
-  expect(prompt).not.toContain('ALPHA_PROJECT_MEMORY_SENTINEL');
+  await expect.poll(() => capturedBodies.length).toBe(1);
+  const implicitPrompt = capturedBodies[0].messages[0].content;
+  expect(implicitPrompt).toContain('BETA_PROJECT_INSTRUCTION_SENTINEL');
+  expect(implicitPrompt).not.toContain('BETA_PROJECT_MEMORY_SENTINEL');
+  expect(implicitPrompt).not.toContain('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
+  expect(implicitPrompt).not.toContain('ALPHA_PROJECT_MEMORY_SENTINEL');
+
+  await page.locator('#contextPickerButton').click();
+  await page.locator('#requestProjectChecks input[data-request-project-id="' + betaId + '"]').check();
+  await page.locator('#userInput').fill('Use the project context explicitly.');
+  await page.locator('#sendBtn').click();
+  await expect.poll(() => capturedBodies.length).toBe(2);
+  const explicitPrompt = capturedBodies[1].messages[0].content;
+  expect(explicitPrompt).toContain('BETA_PROJECT_INSTRUCTION_SENTINEL');
+  expect(explicitPrompt).toContain('BETA_PROJECT_MEMORY_SENTINEL');
+  expect(explicitPrompt).not.toContain('ALPHA_PROJECT_MEMORY_SENTINEL');
 
   // Import controls live inside the project settings dialog, not in the sidebar.
   // Reopen the dialog with Beta selected before importing a separate Alpha bundle.
@@ -1390,7 +1398,7 @@ test('deleting a project removes its chats but preserves other projects and chat
   if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
   const disposableGroup=page.locator('#projectNavigationList details[data-project-id="'+disposableId+'"]');
   await disposableGroup.locator(':scope > summary').click();
-  await disposableGroup.locator('[data-action="open-project-settings"]').click();
+  await page.locator('#projectNavigationList .project-nav-row[data-project-id="' + disposableId + '"] [data-action="open-project-settings"]').click();
   await expect(page.locator('#projectSettingsStatus')).toContainText('Disposable Project');
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
   // Closing project settings leaves the mobile sidebar closed; reopen it before selecting the chat.
@@ -1954,15 +1962,16 @@ test('legacy aLandi provider probe does not overwrite changed primary cloud sett
 });
 
 
-test('local helper suggests compact project-memory facts without saving them automatically', async ({ page }) => {
-  const helperRequests = [];
+test('deprecated server-memory controls are absent and project facts remain local', async ({ page }) => {
+  const graphRequests = [];
   const corsHeaders = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Content-Type': 'application/json' };
+  await page.route('https://gateway.example.test/v1/memory/graph/**', async route => {
+    graphRequests.push({ method: route.request().method(), url: route.request().url() });
+    return route.fulfill({ status: 404, headers: corsHeaders, body: JSON.stringify({ detail: 'No client route expected' }) });
+  });
   await page.route('https://gateway.example.test/v1/helpers/project-memory-suggestions', async route => {
-    if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: corsHeaders });
-    helperRequests.push(route.request().postDataJSON());
-    return route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({
-      model: 'qwen3.5:0.8b', source_fact_count: 1, candidates: ['Project work must be verified with tests.'], count: 1
-    }) });
+    graphRequests.push({ method: route.request().method(), url: route.request().url() });
+    return route.fulfill({ status: 404, headers: corsHeaders, body: JSON.stringify({ detail: 'No client route expected' }) });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
@@ -1976,75 +1985,32 @@ test('local helper suggests compact project-memory facts without saving them aut
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
-  await page.locator('#projectNameInput').fill('Helper suggestion project');
+  await page.locator('#projectNameInput').fill('Local-only project');
   await page.locator('[data-action="create-project"]').click();
-  await page.locator('#projectMemoryInput').fill('Keep the main model for synthesis and use small helpers for bounded extraction.');
+  await page.locator('#projectMemoryInput').fill('LOCAL_PROJECT_MEMORY_SENTINEL');
   await page.locator('[data-action="add-project-memory"]').click();
-  await page.locator('#serverMemoryDetails > summary').click();
-  await page.locator('[data-action="suggest-helper-memory"]').click();
-  await expect.poll(() => helperRequests.length).toBe(1);
-  expect(helperRequests[0].facts).toEqual(['Keep the main model for synthesis and use small helpers for bounded extraction.']);
-  await expect(page.locator('#helperMemorySuggestionsBox')).toContainText('Project work must be verified with tests.');
-  await expect(page.locator('#projectMemoryBox')).not.toContainText('Project work must be verified with tests.');
-  await page.locator('[data-action="add-helper-memory-suggestion"]').click();
-  await expect(page.locator('#projectMemoryBox')).toContainText('Project work must be verified with tests.');
-  expect(helperRequests).toHaveLength(1);
+  await expect(page.locator('#projectMemoryBox')).toContainText('LOCAL_PROJECT_MEMORY_SENTINEL');
+  await expect(page.locator('#serverMemoryDetails')).toHaveCount(0);
+  await expect(page.locator('#serverProjectMemoryToggle')).toHaveCount(0);
+  await expect(page.locator('#helperMemorySuggestionsBox')).toHaveCount(0);
+  await expect(page.locator('#projectMemoryToggle')).toHaveCount(0);
+  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]'));
+  expect(stored.some(project => project.name === 'Local-only project' && project.memory.some(item => item.text === 'LOCAL_PROJECT_MEMORY_SENTINEL'))).toBe(true);
+  expect(graphRequests).toHaveLength(0);
 });
 
-test('server project memory bridge is manual and requires both chat opt-ins', async ({ page }) => {
-  const serverNodes = [];
-  const capturedBodies = [];
-  let searchCalls = 0;
-  const corsHeaders = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Content-Type': 'application/json' };
-
-  await page.route('https://gateway.example.test/v1/memory/graph/**', async route => {
-    const request = route.request();
-    const url = new URL(request.url());
-    const method = request.method();
-    const scopeId = url.searchParams.get('scope_id');
-    if (method === 'OPTIONS') return route.fulfill({ status: 204, headers: corsHeaders });
-    if (url.pathname.endsWith('/nodes') && method === 'GET') {
-      return route.fulfill({ status: 200, headers: corsHeaders,
-        body: JSON.stringify({ nodes: serverNodes.filter(node => node.scope_id === scopeId), count: serverNodes.length }) });
-    }
-    if (url.pathname.endsWith('/nodes') && method === 'POST') {
-      const body = request.postDataJSON();
-      const node = { id: 'server-node-' + (serverNodes.length + 1), status: 'candidate', ...body };
-      serverNodes.push(node);
-      return route.fulfill({ status: 201, headers: corsHeaders, body: JSON.stringify({ node }) });
-    }
-    if (url.pathname.endsWith('/search') && method === 'POST') {
-      searchCalls++;
-      const body = request.postDataJSON();
-      const nodes = serverNodes.filter(node => node.scope === body.scope && node.scope_id === body.scope_id &&
-        node.status === 'confirmed' && node.content.includes('SERVER_MEMORY_SENTINEL'));
-      return route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({ nodes, count: nodes.length }) });
-    }
-    if (url.pathname.endsWith('/review') && method === 'POST') {
-      const id = url.pathname.split('/').slice(-2)[0];
-      const body = request.postDataJSON();
-      const node = serverNodes.find(item => item.id === id);
-      if (node) node.status = body.status;
-      return route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({ node }) });
-    }
-    return route.fulfill({ status: 404, headers: corsHeaders, body: JSON.stringify({ detail: 'Unmocked graph route' }) });
-  });
+test('private memory is local by default and enters context only after explicit opt-in', async ({ page }) => {
+  const prompts = [];
   await page.route('https://gateway.example.test/v1/chat/completions', async route => {
-    if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: corsHeaders });
-    const body = route.request().postDataJSON();
-    const requestText = body.messages?.at(-1)?.content;
-    if ([
-      'Summarize this project.',
-      'Use only local project memory.',
-      'Server memory is opted in but project memory is not.',
-      'Use the approved server project memory.'
-    ].includes(requestText)) capturedBodies.push(body);
-    return route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({
-      model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'Bridge response.' }, finish_reason: 'stop' }]
-    }) });
+    prompts.push(route.request().postDataJSON());
+    return route.fulfill({ status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'Private memory check.' }, finish_reason: 'stop' }] }) });
   });
-
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#memoryInput').fill('PRIVATE_MEMORY_SENTINEL');
+  await page.locator('[data-action="save-memory"]').click();
+  await expect(page.locator('#memoryBox')).toContainText('PRIVATE_MEMORY_SENTINEL');
+  await expect(page.locator('#privateMemoryContextToggle')).not.toBeChecked();
   await page.evaluate(() => {
     localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
     localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
@@ -2055,64 +2021,20 @@ test('server project memory bridge is manual and requires both chat opt-ins', as
   });
   await page.reload({ waitUntil: 'domcontentloaded' });
   await chooseSearchMode(page, 'offline');
+  await page.locator('#userInput').fill('What private facts are available?');
+  await page.locator('#sendBtn').click();
+  await expect.poll(() => prompts.length).toBe(1);
+  expect(prompts[0].messages[0].content).not.toContain('PRIVATE_MEMORY_SENTINEL');
+
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#projectPanel [data-action="open-project-create"]').click();
-  await page.locator('#projectNameInput').fill('Server bridge project');
-  await page.locator('[data-action="create-project"]').click();
-  const serverMemoryProjectId = await page.locator('#currentProjectSelect').inputValue();
-  expect(serverMemoryProjectId).not.toBe('');
-  await page.locator('#projectMemoryInput').fill('SERVER_MEMORY_SENTINEL is a local project fact.');
-  await page.locator('[data-action="add-project-memory"]').click();
-  await expect(page.locator('#projectMemoryBox')).toContainText('SERVER_MEMORY_SENTINEL');
-  await expect(page.locator('#serverProjectMemoryToggle')).not.toBeChecked();
-  expect(serverNodes).toHaveLength(0); // Local facts are never uploaded automatically.
-
-  await page.locator('#serverMemoryDetails > summary').click();
-  await page.locator('[data-action="upload-server-memory"]').click();
-  await expect.poll(() => serverNodes.length).toBe(1);
-  await expect(page.locator('#serverMemoryBox')).toContainText(/Кандидат|Candidate/);
-  await page.locator('[data-action="review-server-memory"][data-review-status="confirmed"]').click();
-  await expect.poll(() => serverNodes[0]?.status).toBe('confirmed');
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-
-  // Opening project settings already closes the sidebar.
-  await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
-  await page.locator('#userInput').fill('Summarize this project.');
+  await page.locator('#memoryToolsDetails > summary').click();
+  await page.locator('#privateMemoryContextToggle').check();
+  await page.locator('#sidebar [data-action="close-sidebar"]').click();
+  await page.locator('#userInput').fill('Use my explicitly enabled private notes.');
   await page.locator('#sendBtn').click();
-  await expect.poll(() => capturedBodies.length).toBe(1);
-  expect(searchCalls).toBe(0);
-  expect(capturedBodies[0].messages[0].content).not.toContain('SERVER_MEMORY_SENTINEL');
-
-  // Project-memory opt-in alone must not invoke the server graph.
-  await openProjectSettingsForId(page, serverMemoryProjectId);
-  await page.locator('#projectMemoryToggle').check();
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-  await page.locator('#userInput').fill('Use only local project memory.');
-  await page.locator('#sendBtn').click();
-  await expect.poll(() => capturedBodies.length).toBe(2);
-  expect(searchCalls).toBe(0);
-  expect(capturedBodies[1].messages[0].content).toContain('SERVER_MEMORY_SENTINEL');
-
-  // Server-memory opt-in alone must not retrieve server context or bypass project opt-in.
-  await openProjectSettingsForId(page, serverMemoryProjectId);
-  await page.locator('#projectMemoryToggle').uncheck();
-  await page.locator('#serverProjectMemoryToggle').check();
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-  await page.locator('#userInput').fill('Server memory is opted in but project memory is not.');
-  await page.locator('#sendBtn').click();
-  await expect.poll(() => capturedBodies.length).toBe(3);
-  expect(searchCalls).toBe(0);
-  expect(capturedBodies[2].messages[0].content).not.toContain('SERVER_MEMORY_SENTINEL');
-
-  // Only both opt-ins together allow retrieval of confirmed server facts.
-  await openProjectSettingsForId(page, serverMemoryProjectId);
-  await page.locator('#projectMemoryToggle').check();
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-  await page.locator('#userInput').fill('Use the approved server project memory.');
-  await page.locator('#sendBtn').click();
-  await expect.poll(() => capturedBodies.length).toBe(4);
-  expect(searchCalls).toBe(1);
-  expect(capturedBodies[3].messages[0].content).toContain('SERVER_MEMORY_SENTINEL');
+  await expect.poll(() => prompts.length).toBe(2);
+  expect(prompts[1].messages[0].content).toContain('PRIVATE_MEMORY_SENTINEL');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_private_memory_enabled_v1'))).toBe('true');
 });
 
 test('Markdown fallback preserves tables and escapes HTML when renderer CDNs are unavailable', async ({ page }) => {
@@ -2416,7 +2338,7 @@ test('project memory scope edits the selected project, not the active chat proje
 
   const betaGroup = page.locator('#projectNavigationList details[data-project-id="project-beta"]');
   await betaGroup.locator(':scope > summary').click();
-  await betaGroup.locator('[data-action="open-project-settings"]').click();
+  await page.locator('#projectNavigationList .project-nav-row[data-project-id="project-beta"] [data-action="open-project-settings"]').click();
   await expect(page.locator('#projectSettingsStatus')).toContainText('Beta project');
   await expect(page.locator('#currentProjectSelect')).toHaveValue('project-alpha');
 
@@ -2436,7 +2358,7 @@ test('project memory scope edits the selected project, not the active chat proje
   }
   const reloadedBeta = page.locator('#projectNavigationList details[data-project-id="project-beta"]');
   await reloadedBeta.locator(':scope > summary').click();
-  await reloadedBeta.locator('[data-action="open-project-settings"]').click();
+  await page.locator('#projectNavigationList .project-nav-row[data-project-id="project-beta"] [data-action="open-project-settings"]').click();
   await expect(page.locator('#projectSettingsStatus')).toContainText('Beta project');
   await expect(page.locator('#projectMemoryScopeSelect')).toHaveValue('project-and-global');
   await expect(page.locator('#currentProjectSelect')).toHaveValue('project-alpha');
