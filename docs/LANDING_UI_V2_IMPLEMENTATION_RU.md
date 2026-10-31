@@ -16,7 +16,7 @@
 
 | Requirement | Observed implementation | Gap / implementation direction | Status |
 |---|---|---|---|
-| **8.1 Sidebar, memory, projects, chats** | Memory panel above projects; projectless and project-filtered chat lists; per-project gear and new-chat action; Research Studio moved to Functions; horizontal swipe-close; creation dialog is separate from full project settings; creating a project preserves the current chat's project association and history. | Continue memory content ordering/status hierarchy, accordion-state checks, restore-last-closed-chat behavior, spacing and keyboard navigation. | [~] |
+| **8.1 Sidebar, memory, projects, chats** | Memory panel above projects; status line above its title; shared-memory block first, personal-memory block second, private-context opt-in last; explanations collapsed by default; closing sidebar collapses only memory disclosures; projectless and project-filtered chat lists; per-project gear/new-chat; Research Studio in Functions; horizontal swipe-close; separate project-create dialog; current chat membership preserved. | Verify accordion state and last-closed-chat restore in browser; refine spacing and keyboard navigation. | [~] |
 | **8.2 Typography/header/main surface** | Header has a wordmark, chat title, theme control, clock and mode controls. | Wordmark is a restrained gradient, clock is 54px, type stack is generic system UI; requested distinct wordmark, tighter vertical controls and independent chat-title treatment need visual iteration. | [~] |
 | **8.3 Settings/providers** | aLandi Cloud is a separate card; external providers and most other settings are inside one `legacyProviderSettings` disclosure. | Split into three mutually exclusive groups: Cloud, third-party providers, additional settings; Cloud must never appear as a third-party provider. Preserve current provider key isolation and connection state. | [~] |
 | **8.4 Tavily/system prompt** | Tavily key remains in a web-tools disclosure; system prompt is global `localStorage` state and is normalized against the legacy built-in prompt. | Verify the empty-by-default behavior against `DEFAULT_SYSTEM` and migration; decide Tavily only after comparing the existing keyless search fallback and live adapter requirements. No premature deletion. | [~] |
@@ -89,8 +89,8 @@
 ### Latest checkpoint — 2026-10-31, explicit project creation flow
 
 - PR #131 branch: `feat/landing-v1-accessibility-responsive-20261031`.
-- Latest UI code commit: `4c5c583d08d242308b9019417cb0c90bcaf264d3`; subsequent commits in this checkpoint only refresh continuity documentation.
-- At the UI code commit, comparison with current `main` was 72 commits ahead / 4 behind; subsequent commits only updated continuity documentation. Merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`.
+- Latest UI code commit: `a541932307c764e56f81b795b940785839128338`; E2E update commit: `64cfa3abfd1750751951cf1715502e7ca3409ce4`; subsequent commits in this checkpoint only refresh continuity documentation.
+- At the UI code commit, comparison with current `main` was 79 commits ahead / 4 behind; subsequent commits only updated continuity documentation. Merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`.
 - Requirement 8.1 correction: project creation now uses its own dialog; full settings remain available from the project's gear. Creating a project no longer mutates the current chat's `projectId` or chat history. The user explicitly creates a project chat from that project's navigation row.
 - Regression coverage updated for current-chat preservation, project-filtered chat creation, project-scoped memory/context, project import/export and project deletion.
 - JavaScript syntax parsing passed for the inline app script and Playwright test module. Exact-head combined status and PR workflow-run queries for `4c5c583d08d242308b9019417cb0c90bcaf264d3` returned no entries. Playwright/Chromium tests have not been executed in this session; this is not a passing CI result.
@@ -101,3 +101,9 @@
 - 2026-10-31: V1 is the stable main baseline. PR #131 is renamed **aLandi Landing UI v2.0** and reserved for ongoing V2 interface work. The owner sections 8.1–8.17 are priority requirements, not presumed completed.
 - 2026-10-31: Project sources are not to be represented by placeholder controls. First establish whether existing document/RAG storage has project ownership and supported list/delete semantics.
 - 2026-10-31: Removal of the experimental server-memory UI must not delete ordinary local/private/shared memory.
+
+
+### Follow-up — memory hierarchy and sidebar accordion state
+
+- Requirement 8.1 memory layout now follows shared → personal → personal-context opt-in. Sidebar close collapses only memory disclosures; project/chat accordion state is retained.
+- E2E assertions cover memory block order and preservation of project navigation, projectless and Chats state. Syntax parsing passed; actual Playwright execution remains pending.
