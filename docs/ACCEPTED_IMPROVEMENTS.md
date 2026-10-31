@@ -25,7 +25,7 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 | AI-MEM-003 | Scope isolation | gateway/memory/scope.py | Prototype; no public graph API |
 | AI-MEM-004 | Conflict/supersede | gateway/memory/conflict.py | Explicit relations; no automatic winner selection |
 | AI-MEM-005 | Scoped FTS5 memory retrieval | gateway/memory/manager.py + gateway/tests/test_coder_packet.py | Prototype only; exact-scope filters, confirmed-only defaults, bounded terms and indexed deletion |
-| AI-MEM-006 | Authenticated structured-memory graph API | gateway/app.py + gateway/tests/test_app.py + index.md + tests/e2e/app.spec.mjs | Feature-flagged authenticated single-owner endpoints plus CI-verified manual candidate-first browser bridge; global scope has two opt-ins; live gateway activation pending |
+| AI-MEM-006 | Authenticated structured-memory graph API | gateway/app.py + gateway/tests/test_app.py | **Retired by owner request 8.12 / PR #131** — /v1/memory/graph/* routes and graph-specific flags removed; internal MemoryManager retained for Graphify only |
 | AI-RAG-001 | Low-cost graph-assisted RAG | gateway/rag/lazy_graph_rag.py | FTS5+lexical baseline, not full LazyGraphRAG |
 | AI-RAG-002 | RAG-Anything multimodal | Future gateway/rag/rag_anything.py | Conditional; not installed |
 | AI-RAG-003 | Exact citations | gateway/rag/citations.py | Offset/hash validation; parser offsets pending |
@@ -38,11 +38,11 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 | AI-TOOLS-005 | Approval gates | gateway/security/approval_gates.py | One-time scoped ticket; no approval UI/endpoint |
 | AI-LICENSE-001 | Model provenance CI gate | infra/license/provenance_manifest.yaml | Proposed gate; no audio model shipped |
 | AI-UI-001 | Projects + scoped project memory UI | index.md + tests/e2e/app.spec.mjs | **Partial prototype** — browser-local CRUD, instructions, chat attach/detach, scoped memory opt-in and JSON bundle import/export; Chromium E2E passed; source indexing/backend sync deferred |
-| AI-UI-002 | Authenticated memory/source viewer | index.md + gateway/app.py + tests/e2e/app.spec.mjs | Manual opt-in bridge integrated; candidate-first upload, exact project scope and confirmed-only prompt retrieval covered by Chromium mock E2E; live gateway activation pending |
+| AI-UI-002 | Authenticated memory/source viewer | index.md + gateway/app.py + tests/e2e/app.spec.mjs | **Retired by owner request 8.12 / PR #131** — browser-to-server memory bridge and related controls removed; Sources remains an honest unsupported state until a separate contract exists |
 | AI-UI-003 | Home UX, bilingual controls, clock/theme and adaptive composer | index.md | **Partial** — Chromium E2E passed for core controls; voice menu remains preview-only; full translation/accessibility/mobile matrix still pending |
 | AI-PROVIDER-001 | Cloud-first settings and provider recovery | index.md + tests/e2e/app.spec.mjs | **Frontend implementation** — real completion probe, stale-state invalidation, single-flight probe, paste-triggered model catalog check and bounded same-provider model fallback; PR #21 full Chromium E2E passed |
 | AI-PROVIDER-002 | Explicit live provider smoke consent | .github/workflows/provider-smoke-all.yml + scripts/provider-smoke-all.mjs | Live smoke requires explicit confirmation (default false), supports per-provider model overrides, and is not considered a live account test until manually dispatched with consent; PR #25 quality/provenance CI passed |
-| AI-PROJECT-001 | Project CRUD, scope isolation and project bundle I/O | index.md + tests/e2e/app.spec.mjs | **Frontend implementation** — browser-local CRUD plus manual opt-in bridge to scoped server memory; no automatic migration; live gateway and multi-device sync unverified |
+| AI-PROJECT-001 | Project CRUD, scope isolation and project bundle I/O | index.md + tests/e2e/app.spec.mjs | **Browser-local implementation** — project CRUD, instructions, local memory and bundle I/O remain; server memory bridge is retired and cross-device project sync is not implemented |
 | AI-STATE-001b | Deterministic source-state fingerprint | scripts/manifest_state.py + gateway/tests/test_v016_foundation.py | **Prototype implemented** — sorted path/content hashes; index.md included; not a signature |
 | AI-INTEL-001 | Artifact provenance triad | scripts/check_intel_triad.py + intel/RECON.yaml | **Offline gate prototype** — rejects placeholders; no live URL/license/hash verification |
 | AI-LATENCY-001 | Tier0/Tier1 latency budget | latency/budget_v2.yaml | **Target only** — allocations and 15% margin documented; no target-hardware benchmark |
@@ -59,14 +59,13 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 4. Each implementation updates PROJECT_STATE.yaml, EVALS.md, LOOP.md, DECISIONS.md and the relevant report.
 
 
-## AI-MEM-007 — Opt-in browser-to-server project memory bridge
+## AI-MEM-007 — Browser-to-server project memory bridge (retired)
 
-- **Status:** merged in PR #29 at `55248f81585c52d7cc7ba7cfc08158a291a761ca`; PR-head and post-merge Quality/Chromium/provenance/Pages checks passed. Gateway tests passed on unchanged base e424d353; live gateway activation remains unverified.
-- **Scope:** manual upload of local project facts as candidates; review candidates; inspect/delete server nodes; retrieve only confirmed nodes under the active project ID.
-- **Activation:** gateway flag `ALANDI_MEMORY_GRAPH_ENABLED=true`, Pages origin in CORS, configured aLandi gateway URL/key. Global memory stays off.
-- **Prompt inclusion:** both project-memory and server-project-memory toggles must be on for the current chat. Retrieval is bounded to six facts and degrades to local-only context if the graph API is unavailable.
-- **Not included:** automatic migration, global/profile memory, live gateway verification, multi-user ACL, or server cleanup on local project deletion.
-
+- **Status:** Retired 2026-10-31 by owner request 8.12 / PR #131.
+- **Removal:** the browser bridge UI, per-chat server-memory toggle, /v1/memory/graph/* gateway routes and graph-specific environment flags are removed.
+- **Preserved:** browser-local project memory, personal/shared memory, conversation delta sync, RAG and the local project-memory helper remain separate. The internal MemoryManager/schema is retained for Graphify only.
+- **Data:** existing graph SQLite files are not deleted or migrated by this code change.
+- **Historical evidence:** PR #29's CI results describe the former implementation, not a current feature or live gateway activation.
 
 ## AI-AGENT-005 — Policy-enforced autonomous orchestration
 
