@@ -2314,8 +2314,7 @@ test('project memory scope edits the selected project, not the active chat proje
       memory: [], createdAt: '', updatedAt: ''
     });
     const chat = (id, title, projectId) => ({
-      id, title, projectId, projectMemoryEnabled: false,
-      serverProjectMemoryEnabled: false, messages: []
+      id, title, projectId, messages: []
     });
     localStorage.setItem('ai_projects_v1', JSON.stringify([
       project('project-alpha', 'Alpha project'),
@@ -2369,8 +2368,7 @@ test('clear history preserves the chat and other project data', async ({ page })
       memory: [], createdAt: '', updatedAt: ''
     });
     const chat = (id, title, projectId, sentinel) => ({
-      id, title, projectId, projectMemoryEnabled: false,
-      serverProjectMemoryEnabled: false,
+      id, title, projectId,
       messages: [{ role: 'user', content: sentinel }]
     });
     localStorage.setItem('ai_projects_v1', JSON.stringify([
@@ -2420,8 +2418,7 @@ test('clearing a non-active project chat preserves the active chat and both proj
       memory: [], createdAt: '', updatedAt: ''
     });
     const chat = (id, title, projectId, sentinel) => ({
-      id, title, projectId, projectMemoryEnabled: false,
-      serverProjectMemoryEnabled: false,
+      id, title, projectId,
       messages: [{ role: 'user', content: sentinel }]
     });
     localStorage.setItem('ai_projects_v1', JSON.stringify([
