@@ -306,3 +306,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Updated Playwright to run isolated tests fully parallel with three CI workers and both GitHub/list reporters; increased Chromium job timeout to 20 minutes; diagnostics upload now runs after cancellation as well. No app behavior or assertions were weakened.
 - Commits: `6bba3e8ef49102e2b45464fb1b63595afb682a5a` (job timeout), `d0d38d840470e690aebf2c6a322d0518f54dd6a4` (parallel Playwright), `14d9dc9789dfc958d99685d36a7649ada8ce5120` (diagnostics).
 - Exact-head rerun on `14d9dc9789dfc958d99685d36a7649ada8ce5120` is still required; the previous Chromium result is CANCELLED, not PASS. Gateway run #640 remains valid for unchanged gateway source. PR #131 remains open/unmerged; no merge or deployment.
+
+### 2026-11-01 — PR #131: shared navigation touch targets (8.10)
+
+- Source audit found undersized 30–36px controls in chat-row action menus, language-menu options and settings header actions; project disclosures, toolbar summaries and memory actions also lacked a shared touch minimum.
+- Added a final CSS normalization using the existing `--ui-control-touch` token (44px), preserving the controls and their actions.
+- Extended the mobile Playwright regression to create a chat and measure the chat-row menu target, then open the language menu and measure an option. Existing sidebar/settings/project modal checks remain.
+- Commits: `6e75dbf368b71ccd1660873d5cd0f9870cf58119`, `441d5da57b80399228c0a520d7a867ae3fc5371b`, `2d25b12f100b246a929fc6921dfb44971f7d50e3`. Test execution remains pending; 8.10 is not marked complete until exact-head Chromium passes.
