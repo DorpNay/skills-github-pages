@@ -80,12 +80,12 @@ ui_v2_track:
     P2: "Long-list/message/scroll/popover stress; capability menu truthfulness; Tavily/keyless-search audit; provider/gateway mock error and secret-redaction checks."
   verification:
     exact_head_ci: "Manual run #41285658893 is on older SHA d822cb6, not current head. Its Context/Integrity failures were traced to stale sentinel expectations and corrected in 1b30cae/5d01a7d. Exact-head rerun not yet visible; do not claim green CI."
-    playwright_chromium: "No exact-head Chromium run for PR #131 current head 5bfc48ada9ccecf5df2beb160bae7042d2481ac6. Run #1126 is stale evidence only (101 passed / 18 failed); provider/audio/PDF fixtures, duplicate close selector, Research Studio interactions, narrow header and contrast regressions were corrected after that run. app.js syntax parse passed; extracted CSS brace counts balanced; browser behavior remains unverified."
+    playwright_chromium: "No exact-head Chromium run for PR #131 branch head aab8e2c73fbf7b08f063b1ff4f7854d63fd0fbe0; #1126 is stale evidence only (101 passed / 18 failed). Current corrective source/test changes are committed; browser behavior remains unverified."
     native_mobile_voiceover: "Not executed."
     wcag_contrast_ratios: "Not measured; computed-style assertions are not conformance evidence."
     live_gateway_provider: "Not verified; live smoke requires explicit owner approval."
   current_main_sha: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
-  branch_divergence: "GitHub compare main...feat/landing-v1-accessibility-responsive-20261031: ahead_by=415, behind_by=4, merge_base=e78a73b25725bfa63370d9946887cbbacbf51b82. Main's four post-base commits touch only docs/V1_UI_FINALIZATION_RU.md (210 additions, 6 deletions), which overlaps the PR's unified 8.0 + 8.1–8.17 consolidation. No code-file conflict identified. Do not rebase/merge without owner approval."
+  branch_divergence: "GitHub compare main...feat/landing-v1-accessibility-responsive-20261031: ahead_by=420, behind_by=4, merge_base=e78a73b25725bfa63370d9946887cbbacbf51b82. Main's four post-base commits touch only docs/V1_UI_FINALIZATION_RU.md (210 additions, 6 deletions), overlapping the PR's unified 8.0 + 8.1–8.17 consolidation. No code-file conflict identified. Do not rebase/merge without owner approval."
   current_work_head: "901b9c343dbddd2453605b03ec77fd5e893c608c"
   current_work_summary: "aLandi aServi terminology and DOM/CSS contracts updated; browser runtime extracted to assets/js/app.js and loaded with defer + relative_url; a one-time localStorage migration copies previous endpoint settings into the new aServi key namespace while retaining old values; inherited pre-8 UI backlog made explicit. Cloudflare and generic cloud-infrastructure wording remain distinct concepts. Full tests intentionally deferred until source pass is complete."
   current_work_validation: "V8 parse-only syntax check passed for extracted assets/js/app.js; source-level DOM/E2E selector audit found no mismatches. Script was not executed. Jekyll build, focused Chromium, full Quality/Freshness/Provenance/Graphify/Dead Code not run yet. Do not claim runtime extraction or rename browser-verified."
@@ -558,10 +558,10 @@ landing_ui_v2_pr131_2026_10_31:
     theme_aware_status_colors: "bca8fa892e95bd35db812382afdadbba41813265"
     base_token_contrast: "4bd40770fd3446e5280e719644394882c9148daeb"
   verification:
-    exact_head: "5bfc48ada9ccecf5df2beb160bae7042d2481ac6 (PR #131 branch head; code/test checkpoint d65102ed5a9ba3c30586d8a52efbd5603a009e23; later commits documentation-only; Quality pending)"
-    exact_head_workflow_runs: "Quality #1126 on prior SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL 101 passed / 18 failed; artifact 13077583320. Current PR branch head 5bfc48ada9ccecf5df2beb160bae7042d2481ac6 has no exact-head Quality/Chromium run visible. Latest observed Provenance Gate pass predates this head."
+    exact_head: "aab8e2c73fbf7b08f063b1ff4f7854d63fd0fbe0 (last checked PR #131 branch head before this state refresh; UI code/test checkpoint d65102ed5a9ba3c30586d8a52efbd5603a009e23; Quality pending)"
+    exact_head_workflow_runs: "Quality #1126 on prior SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL 101 passed / 18 failed; artifact 13077583320. No exact-head Quality/Chromium run visible for PR branch head aab8e2c73fbf7b08f063b1ff4f7854d63fd0fbe0; latest Provenance Gate pass predates this head."
     gateway_pytest: "not executed in this environment"
-    playwright_chromium: "No exact-head Chromium run for PR #131 current head 5bfc48ada9ccecf5df2beb160bae7042d2481ac6. Last observed Quality #1126 on prior SHA 7cdf35d failed 101 passed / 18 failed. Corrective code/test changes are present; browser behavior remains unverified."
+    playwright_chromium: "No exact-head Chromium run for PR #131 branch head aab8e2c73fbf7b08f063b1ff4f7854d63fd0fbe0; #1126 is stale evidence only (101 passed / 18 failed). Current corrective source/test changes are committed; browser behavior remains unverified."
     native_mobile_voiceover: "not executed"
     wcag_contrast_ratios: "Base CSS token contrast is measured by a new E2E calculation against solid theme surfaces (>=4.5:1); actual component/gradient/focus/non-text contrast remains unmeasured and requires manual audit."
   safety:
