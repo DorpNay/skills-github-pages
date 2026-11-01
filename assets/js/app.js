@@ -83,27 +83,6 @@
           &&!node.closest('.hidden,[inert],[aria-hidden="true"]')&&(!closedDetails||isClosedDetailsSummary);
       });
     }
-    uiModalIds.forEach(id=>{
-      const modal=$(id);
-      if(!modal||modal.dataset.focusCycleBound==='true')return;
-      modal.dataset.focusCycleBound='true';
-      modal.addEventListener('keydown',event=>{
-        if(event.key!=='Tab'||getTopmostUiModal()!==modal)return;
-        const focusable=getModalFocusableElements(modal);
-        if(!focusable.length){
-          event.preventDefault();event.stopImmediatePropagation();
-          if(!modal.hasAttribute('tabindex'))modal.setAttribute('tabindex','-1');
-          modal.focus({preventScroll:true});
-          return;
-        }
-        const first=focusable[0],last=focusable[focusable.length-1];
-        if(event.shiftKey&&(document.activeElement===first||!modal.contains(document.activeElement))){
-          event.preventDefault();event.stopImmediatePropagation();last.focus({preventScroll:true});
-        }else if(!event.shiftKey&&(document.activeElement===last||!modal.contains(document.activeElement))){
-          event.preventDefault();event.stopImmediatePropagation();first.focus({preventScroll:true});
-        }
-      },true);
-    });
     function closeUiModalDirect(id){
       const closers={
         settingsModal:()=>toggleSettings(false),projectSettingsModal:closeProjectSettings,projectCreateModal:closeProjectCreate,
@@ -4719,38 +4698,19 @@
       (focusable.at(-1)||modal).focus({preventScroll:true});
       event.stopImmediatePropagation();
     }, true);
-    document.addEventListener('keydown', event => {
-      if(event.key!=='Tab')return;
-      const activeModal=uiModalIds.map(id=>$(id)).find(modal=>modal&&modal.contains(document.activeElement)&&!modal.classList.contains('hidden')&&modal.getClientRects().length);
-      const modal=activeModal||getTopmostUiModal();
-      if(!modal)return;
-      const focusable=getModalFocusableElements(modal);
-      if(!focusable.length){
-        event.preventDefault();event.stopImmediatePropagation();
-        if(!modal.hasAttribute('tabindex'))modal.setAttribute('tabindex','-1');
-        modal.focus({preventScroll:true});
-        return;
-      }
-      const first=focusable[0],last=focusable[focusable.length-1];
-      if(event.shiftKey&&(document.activeElement===first||!modal.contains(document.activeElement))){
-        event.preventDefault();event.stopImmediatePropagation();last.focus({preventScroll:true});
-      }else if(!event.shiftKey&&(document.activeElement===last||!modal.contains(document.activeElement))){
-        event.preventDefault();event.stopImmediatePropagation();first.focus({preventScroll:true});
-      }
-    }, true);
     document.addEventListener('keydown', (event) => {
       if(event.key==='Tab'){
         const modal=getTopmostUiModal();
         if(modal){
           const focusable=getModalFocusableElements(modal);
           if(!focusable.length){
-            event.preventDefault();
+            event.preventDefault();event.stopImmediatePropagation();
             if(!modal.hasAttribute('tabindex'))modal.setAttribute('tabindex','-1');
             modal.focus({preventScroll:true});
           }else{
-            const first=focusable[0],last=focusable[focusable.length-1],activeIndex=focusable.indexOf(document.activeElement);
-            if(event.shiftKey&&(document.activeElement===first||activeIndex===-1)){event.preventDefault();event.stopImmediatePropagation();last.focus({preventScroll:true});}
-            else if(!event.shiftKey&&(document.activeElement===last||activeIndex===-1)){event.preventDefault();event.stopImmediatePropagation();first.focus({preventScroll:true});}
+            const activeIndex=focusable.indexOf(document.activeElement);
+            if(event.shiftKey&&(activeIndex===0||activeIndex===-1)){event.preventDefault();event.stopImmediatePropagation();focusable.at(-1).focus({preventScroll:true});}
+            else if(!event.shiftKey&&(activeIndex===focusable.length-1||activeIndex===-1)){event.preventDefault();event.stopImmediatePropagation();focusable[0].focus({preventScroll:true});}
           }
         }
       }
