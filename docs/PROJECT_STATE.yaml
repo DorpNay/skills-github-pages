@@ -168,17 +168,17 @@ improvements:
   AI-LEARN-002: {status: "versioned_skill_rollback_deferred", artifact: "LOOP.md", eval: "EV-LEARN-002"}
 
 
-  owner_proposals:
-    source: "docs/V1_UI_FINALIZATION_RU.md section 8.18-8.27; proposals, not mandatory release requirements"
-    audit: "Compared against PR #131 source on 2026-11-02. Existing modal/history stack, toast/status, last-closed-chat recovery, project memory scope, contextual chat/project/message actions, local chat persistence and attachment flow were reused as baseline; no duplicate systems planned."
-    priority: "First close 8.1-8.17 and inherited UI gates; then unify interaction/operation states and draft recovery; next title search/pinning/sorting; later bounded Undo, file registry/API, desktop inspector and scenario entry points."
-    dependencies: "Project Sources CRUD requires a real scoped source-list API. Persistent local-file access requires explicit browser file handle permission and progressive enhancement. Exactly-once provider requests require upstream idempotency support."
+owner_proposals:
+  source: "docs/V1_UI_FINALIZATION_RU.md section 8.18-8.27; proposals, not mandatory release requirements"
+  audit: "Compared against PR #131 source on 2026-11-02. Existing modal/history stack, toast/status, last-closed-chat recovery, project memory scope, contextual chat/project/message actions, local chat persistence and attachment flow were reused as baseline; no duplicate systems planned."
+  priority: "First close 8.1-8.17 and inherited UI gates; then unify interaction/operation states and draft recovery; next title search/pinning/sorting; later bounded Undo, file registry/API, desktop inspector and scenario entry points."
+  dependencies: "Project Sources CRUD requires a real scoped source-list API. Persistent local-file access requires explicit browser file handle permission and progressive enhancement. Exactly-once provider requests require upstream idempotency support."
 
-  repository_identity_cleanup:
-    status: "audit_only_no_files_deleted_no_repo_rename"
-    legacy_exercise_workflows: ".github/workflows/0-start-exercise.yml, 1-step.yml, 2-step.yml, 3-step.yml reference skills/exercise-toolkit and skills/action-*; .github/steps/1-step.md-4-step.md are associated exercise instructions; temp/1 and temp/2 are historical research notes with template references and require content reconciliation before archive/removal. First workflow listens to push on main and includes contents: write plus downstream creation/replacement of _config.yml and index.md."
-    safety_gate: "Repository is_template flag and actual workflow run history were not available. Verify before removal; do not delete aLandi skills/*.txt or active Pages/Jekyll/Quality/Security/Graphify/deploy workflows."
-    rename_gate: "Defer repository rename until stable custom domain is configured. GitHub documents that project Pages URLs are not redirected on repository rename; update baseurl, canonical/OG, OAuth redirect, absolute links and published-site smoke together."
+repository_identity_cleanup:
+  status: "audit_only_no_files_deleted_no_repo_rename"
+  legacy_exercise_workflows: ".github/workflows/0-start-exercise.yml, 1-step.yml, 2-step.yml, 3-step.yml reference skills/exercise-toolkit and skills/action-*; .github/steps/1-step.md-4-step.md are associated exercise instructions; temp/1 and temp/2 are historical research notes with template references and require content reconciliation before archive/removal. First workflow listens to push on main and includes contents: write plus downstream creation/replacement of _config.yml and index.md."
+  safety_gate: "Repository is_template flag and actual workflow run history were not available. Verify before removal; do not delete aLandi skills/*.txt or active Pages/Jekyll/Quality/Security/Graphify/deploy workflows."
+  rename_gate: "Defer repository rename until stable custom domain is configured. GitHub documents that project Pages URLs are not redirected on repository rename; update baseurl, canonical/OG, OAuth redirect, absolute links and published-site smoke together."
 
 rejected_improvements:
   - id: AI-CUT-001
