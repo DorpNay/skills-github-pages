@@ -214,3 +214,32 @@
 - Решение: disposable dev environment, pinned version, `graphify extract . --code-only --timing`, `graphify cluster-only . --no-label`, `graphify export html`, `graphify query`; проверка exclusions, ресурсные замеры и сравнение на реальных навигационных вопросах. Не ставить в gateway и не использовать hosted Cloud для пользовательских данных.
 - Исполнение **BLOCKED**: локальный `git clone` завершился DNS-ошибкой `Could not resolve host: github.com`; CLI не установлен и граф не создан.
 - Промежуточный артефакт `docs/ALANDI_ARCHITECTURE_MAP_RU.md` — кураторская схема, не подмена AST graph.
+
+
+## Рекомендации владельца: повторная проверка upstream — 2026-11-02
+
+### Подтверждённые источники
+
+- [Hermes Agent](https://github.com/NousResearch/hermes-agent/releases), v0.22.2 (Threshold v0.22.0): изучены release notes и официальный security guide. Ценные идеи: опасные команды требуют подтверждения; unattended/cron по умолчанию deny; отдельная file-write safety, container isolation, MCP credential filtering, prompt-injection scan, cross-session isolation и allowlisted working directories. **Решение:** security pattern reference only; не переносить полный autonomous runtime.
+- [Everything Claude Code / ECC](https://github.com/affaan-m/ECC), v2.2.3: README/AGENTS описывают 71 agents, 314 skills, TDD, review, hooks, context controls и AgentShield; MIT. **Решение:** применять только TDD/fresh-context review/security scan/evidence-backed learning. Не устанавливать весь комплект и не давать hook-ам широкие filesystem/GitHub permissions.
+- [screenshot-to-code](https://github.com/abi/screenshot-to-code): MIT; React/Vite + FastAPI, screenshot/video-to-code, optional Chromium preview. **Решение:** использовать screenshots как визуальную спецификацию и сравнивать фактический browser output; не доверять generated markup без accessibility/security review.
+- [scroll-craft](https://github.com/nateherkai/scroll-craft): MIT skill для immersive scroll websites; browser checks включают dead scroll, composited contrast и decode/fallback. **Решение:** только для проверки scroll states/contrast; сложные scroll-driven animations не переносить автоматически.
+- [ThinkRail](https://github.com/JetBrains/thinkrail): JetBrains incubator, Apache-2.0; pi host, isolated worktrees, living specs, typed host/UI protocol, MCP approval and PR/CI workflow. **Решение:** заимствовать worktree isolation, durable specs и typed contracts как design patterns; не добавлять второй orchestrator.
+- [DeepTutor](https://github.com/HKUDS/DeepTutor): Apache-2.0; v1.7.1 release 2026-11-01; learning workspace с tutoring/research/mastery, inspectable memory, citations и recoverable sessions. **Решение:** оставить отдельным продуктовым reference для будущего learning сценария; не внедрять его web stack в текущий клиент.
+- [Hallmark](https://github.com/nutlope/hallmark): MIT design skill; preflight, реальные assets/tokens, hero-first, browser lint на восьми ширинах и fresh-context review. **Решение:** использовать audit-first и screenshot review, не делать полный redesign.
+- [qybaihe/bla](https://github.com/qybaihe/bla): MIT defensive anti-reverse-engineering tool. Его подход включает canaries/decoys и resource exhaustion, а upstream ограничивает использование собственными/разрешёнными artifacts и требует runtime-equivalence verification. **Решение:** не запускать на aLandi или сторонних binaries; не применять deception/anti-analysis к нашему продукту. Только threat-model reference.
+- [Qwenputer](https://github.com/divagr18/qwenputer): экспериментальный RISC-V/CHIP-8 computer compiled into Qwen3.5 model layers; code MIT, model weights Apache-2.0 по README. **Решение:** research only; это не computer-use agent и не внешний sandbox/tool runtime. Ресурсный профиль не соответствует текущему 8-GB VPS.
+- [Orbit / Orbit Agents](https://github.com/constellation-works/orbit) и [mukiwu/orbit-agents](https://github.com/mukiwu/orbit-agents): два разных проекта под похожим именем. Первый — MIT local-first coding task runner с isolated worktrees, file locks, approval gates и audit log; второй — MIT scheduler desktop agents. **Решение:** предпочтителен первый как process reference, но exact owner intent требует URL.
+ 
+### Не разрешённые неоднозначности
+
+- agent.sys не удалось однозначно связать с отдельным upstream. ECC — подтверждённый проект affaan-m/ECC, но не доказательство отдельного agent.sys.
+- Orbit AI Agents не уникальный project identifier. До уточнения не устанавливать и не добавлять dependency.
+- Названия, которые не разрешены по canonical URL, не считаются проверенными upstream.
+
+### Практический shortlist для текущего PR #131
+
+1. **Verification workflow:** ECC TDD + fresh-context review; Hermes deny-by-default approvals; Orbit isolated worktrees/locks/audit as process concepts.
+2. **Landing/UI review:** screenshot-to-code as visual-spec method; Hallmark preflight + hero-first + 8-width browser lint; scroll-craft composited contrast/dead-scroll checks.
+3. **No runtime adoption:** DeepTutor, Qwenputer, Hermes desktop/gateway, BLA and Orbit task runtime remain external references, not dependencies.
+4. **Project constraints:** preserve static HTML/CSS/JS + Jekyll + FastAPI; no framework/runtime migration, no new service and no global agent hooks without measured need and owner approval.
