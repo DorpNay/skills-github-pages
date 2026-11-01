@@ -117,4 +117,8 @@
 - Полный ancestry/reference аудит и owner-side security settings review остаются открытыми.
 
 Официальные ориентиры: [GitHub repository best practices](https://docs.github.com/en/repositories/creating-and-managing-repositories/best-practices-for-repositories), [protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches), [security quickstart](https://docs.github.com/en/code-security/getting-started/quickstart-for-securing-your-repository), [CODEOWNERS](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners).
-\n\n## 10. Follow-up — Graphify extracted UI source coverage\n\nPR #131 now extends the Graphify Code-Only Pilot path filters to `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html` for pull requests and main pushes. This closes a coverage gap created when the app runtime and styles were externalized. The resulting Graphify run/artifact is still pending confirmation. No branch deletion or repository settings change was performed.\n
+
+
+## 10. Follow-up — Graphify extracted UI source coverage
+
+PR #131 now extends the Graphify Code-Only Pilot path filters to `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html` for pull requests and main pushes. This closes a coverage gap created when the app runtime and styles were externalized. The resulting Graphify run/artifact is still pending confirmation. No branch deletion or repository settings change was performed.
