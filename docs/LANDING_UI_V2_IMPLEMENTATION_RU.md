@@ -1,6 +1,6 @@
 # aLandi Landing UI v2.0 — implementation ledger
 
-**Owner priority source:** `docs/V1_UI_FINALIZATION_RU.md`, sections 8.1–8.17, dated 2026-10-31.  
+**Owner priority source:** docs/V1_UI_FINALIZATION_RU.md, unified section 8.0; mandatory owner scope 8.1–8.17 plus optional proposals 8.18–8.27 (2026-11-02).  
 **Implementation PR:** [#131 — aLandi Landing UI v2.0](https://github.com/DorpNay/skills-github-pages/pull/131).  
 **Baseline:** V1 remains in `main`. All V2 interface work stays on PR #131; do not merge or deploy until the owner explicitly requests it.
 
@@ -499,3 +499,66 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - Added a Playwright E2E contract using page.emulateMedia({ forcedColors: 'active' }) to verify the media mode and a visible 2px keyboard focus outline.
 - The API is supported by the project's pinned Playwright 1.56.1 (forcedColors emulation has been available since Playwright 1.15). This test has been added but not executed yet.
 - This complements the app's existing user-selectable high-contrast text preference; it does not claim native Windows assistive-technology acceptance.
+
+
+## Product proposal audit — 2026-11-02
+
+**Scope:** owner proposals 8.18–8.27 were compared with the current PR #131 source. They remain candidate improvements, not mandatory requirements. This is a source inspection, not a browser verification. The latest known runtime/source checkpoint remains 9aa74853478a6a680cdd36ab0f84c851721405a4; current PR branch head is later because of documentation/workflow commits.
+
+| Proposal | Existing mechanism found in source | Actual gap / conflict to avoid | Recommendation |
+|---|---|---|---|
+| Unified interaction lifecycle | uiNavigationStack + History API; modal ids and individual closers; popstate restores project filters/modals; shared body scroll lock; topmost modal selection and focus handling. | Close paths and per-modal cleanup remain distributed. A second router/history stack would conflict with the existing one. | Consolidate behind the current manager in a bounded refactor; test outside-click, rapid cycles, focus return and scroll restoration before changing markup. |
+| Notifications / operation states | One global toast node with replace-in-place display and fixed 2.4s timeout; separate searchStatus for active generation with elapsed time; aServi has its own probe state. | Toasts are not keyed to async operation IDs, errors also auto-dismiss, there is no queue or shared lifecycle. Multiple status surfaces can contradict each other. | Extend existing toast/status APIs with operation IDs and real pending/success/failure/cancel states; retain inline field errors and do not add another notification library. |
+| Undo | Last deleted chat is saved locally and can be restored for 7 days. | Project deletion cascades to its chats and is explicitly irreversible; rename/move/settings have no general undo. A second chat restore feature would duplicate current behavior. | Add a small bounded command history only for local reversible operations. Do not promise undo for external provider calls. |
+| Chat/project organization | Separate projectless/project chats; project filtering and back-to-all; project gear; chat menu with rename/clone/export/move/clear/delete. First user message sets initial title once; manual rename exists. Project memory is stored on project and has project-only/project-and-global scope. | No title search, pinning or user-defined folders were found. Avoid auto-renaming after manual rename and avoid a second memory store. | Start with local title search, pinning and stable sort. Defer folders until the flat collection model proves insufficient. |
+| Adaptive workspace | Responsive single chat surface; mobile sidebar drawer; modal panels for project/settings/research. | No docked project/source inspector or multi-model comparison surface was found. | Use one DOM and CSS Grid with one optional desktop inspector as the first slice. Tablet gets a switchable panel; phone remains sequential. Model comparison requires explicit cost/privacy/concurrency design. |
+| Files and sources | Composer stores pending File objects and data URLs in in-memory state; supports images/video frames/audio/docs and local-gateway extraction; chat/project export exists. Project Sources explicitly explains missing source-list API. Research trace can retain source URLs and metadata. | No persistent unified file library, reusable project-source list or first-class generated-file registry was found. A local OS path cannot be treated as a durable browser permission. | Define file metadata and provenance first. Separate origin from processing state. Keep Project Sources CRUD blocked until a real scoped source-list API exists. File System Access API is progressive enhancement only. |
+| Contextual actions | Chat-row action menu, project gear, message copy/speech/view actions; provider/model selection and search are present. | File/model contextual action surfaces are incomplete. Global settings should not become a second object-action menu. | Extend existing object menus only when the action is real and supported. Keep primary actions visible and rare/destructive actions under ⋯. |
+| Offline recovery | Chats/current chat persist to localStorage; corrupt history is backed up before replacement; storage failure is surfaced; last closed chat restore exists. isGenerating/isPreparingDocumentAttachments guard duplicate generation; retry is explicit. | Composer text is not persisted as a durable per-chat draft; attachment state is held in memory; current offlineToggle describes web-search mode, not network reachability. No provider-wide idempotency contract was found. | Add per-chat draft recovery and IndexedDB-backed blobs; add true online/offline status; never auto-resend. Explain uncertain remote acceptance on timeout. Add idempotency only where gateway/provider contract supports it. |
+| Accessibility / one hand | 44px targets on several primary controls; reduced-motion CSS and user setting; readability scale/contrast; modal keyboard/history handling; sidebar swipe and touch-selection rules. | Full VoiceOver/iPhone Safari/Forced Colors and all-component hit-area/contrast review remain open. | Treat as a continuous acceptance gate, not a final cosmetic pass. Keep gestures local and cancel-safe; one-handed placement is lower priority. |
+| Scenario-first UX | Thorough/deep research and nested Research Studio; project settings, explicit context handoff, composer attachment flow. | No dedicated end-to-end scenario entry points for research/file/project work were found. | Build around existing composer and contextual surfaces; avoid a new dashboard or wizard. Research Studio remains nested under deep research. |
+
+### Important implementation facts
+
+- showToast() writes to one shared node and uses a fixed timeout; it is not yet an operation lifecycle manager.
+- showStatus() is tied to generation timing, but the toast system is separate. The new design must unify their semantics without hiding the useful elapsed-generation status.
+- deleteChat() already stores the deleted chat in the last-closed-chat recovery slot; this is a useful Undo foundation, not a complete history.
+- deleteCurrentProject() deletes its project chats after confirmation. It currently has no transactional restore.
+- sendMessage() exits while generation/document preparation is active; this prevents local double invocation. It does not establish exactly-once delivery after an ambiguous network timeout to arbitrary third-party providers.
+- Chat history is stored in localStorage. Draft text is not saved as a recoverable per-chat draft in the inspected runtime; pending attachment state is in memory.
+- updateOfflineUI() describes the web-search mode. It is not a reliable online/offline connectivity indicator.
+- Project Sources CRUD remains unsupported because the gateway lacks a scoped source-list API. Existing attachment handling must not be represented as persistent project sources.
+- Existing source code keeps ai_alandi_cloud_* storage keys for compatibility. Repository/product branding cleanup must not rename persisted keys or break saved provider state.
+
+### Repository identity audit
+
+The repository still contains four GitHub Skills exercise workflows: .github/workflows/0-start-exercise.yml, 1-step.yml, 2-step.yml, 3-step.yml. They reference skills/exercise-toolkit and skills/action-*. The first workflow listens to pushes on main, has contents: write, and its dependent job creates/replaces _config.yml and index.md if the exercise workflow proceeds. The repository template flag and actual run history were not available in this audit, so the workflows were not removed. Verify both before cleanup.
+
+Keep the actual aLandi task-profile files under skills/*.txt; they are not the GitHub Skills exercise scaffold. Preserve the Jekyll/Pages publishing mechanism and current Quality/Security/Graphify/deploy automation.
+
+GitHub's repository rename guidance explicitly says project Pages URLs are not redirected by a rename. Therefore a rename to aLandi/alandi must wait for a stable custom domain and a migration checklist covering Jekyll baseurl, canonical/OG URLs, absolute links, OAuth redirect URIs, Pages publishing and published-site smoke.
+
+### Open-source patterns reviewed — no dependencies added
+
+- [KittyGiraudel/a11y-dialog](https://github.com/KittyGiraudel/a11y-dialog) — MIT, small framework-agnostic dialog helper; useful for focus/ARIA/close behavior. Reference only: current modal manager already exists and should be improved rather than replaced blindly.
+- [nathancahill/split](https://github.com/nathancahill/split) — MIT, zero-dependency split-view sizing utilities; candidate only if the desktop inspector slice is approved and CSS Grid alone is insufficient.
+- [agrinko/js-undo-manager](https://github.com/agrinko/js-undo-manager) — MIT, no-dependency command/transaction pattern; design reference, not a package recommendation without a current maintenance and integration review.
+- [vscarpenter/scratchpad](https://github.com/vscarpenter/scratchpad) — useful local-first patterns for IndexedDB drafts, recovery and trash; repository license was not verified in this pass, so do not copy/vendor its code.
+- [kea0811/headless-toast](https://github.com/kea0811/headless-toast) — useful state-store pattern for stable IDs, loading-to-success replacement, pause-on-focus and ARIA roles; its React-oriented API is not a reason to add React to aLandi.
+- [MDN IndexedDB API](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) — browser-native storage for structured data and Blob/File objects; suitable for larger drafts/attachments than localStorage.
+- [MDN File System API](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API) — explicit picker/permission/handle model; secure-context and browser-support constraints mean this is an optional enhancement, not universal file-path access.
+- [GitHub — Renaming a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository) — project Pages URLs are not automatically redirected; custom domain is recommended before rename.
+
+**Dependency decision:** no external UI package was installed or vendored. First implement the smallest compatible patterns with the existing HTML/CSS/JavaScript stack. A library may be adopted only after license, maintenance, browser support, bundle impact and integration tests are checked.
+
+### Recommended execution order
+
+1. Close current 8.1–8.17 and inherited UI acceptance gaps; do not let optional features delay correctness of existing flows.
+2. Implement one interaction contract and operation-state notifications (8.18–8.19).
+3. Add draft recovery and connectivity/retry clarity (8.25), then focused long-chat performance work based on measurements.
+4. Add chat title search, pinning and stable sorting (8.21); then extend contextual actions (8.24).
+5. Add bounded Undo for the safest local operations (8.20).
+6. Design file registry/provenance and obtain a real source-list API before file-library CRUD (8.23).
+7. Prototype a single optional desktop inspector; only then evaluate multi-model comparison (8.22).
+8. Refine scenario entry points without a new dashboard (8.27). Keep accessibility and real-device review continuous (8.26).
+
