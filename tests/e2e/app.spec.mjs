@@ -593,6 +593,52 @@ test('high-contrast preference updates every important text state in both themes
   expect(highLight.cloudWarning).not.toBe(highDark.cloudWarning);
 });
 
+test('readability color tokens meet AA contrast against both theme surfaces', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const measure = theme => page.evaluate(selectedTheme => {
+    const root = document.documentElement;
+    root.dataset.theme = selectedTheme;
+    root.dataset.textContrast = 'high';
+    const css = getComputedStyle(root);
+    const rgb = value => {
+      const hex = value.trim();
+      if (hex.startsWith('#')) {
+        const raw = hex.slice(1);
+        const full = raw.length === 3 ? raw.split('').map(char => char + char).join('') : raw;
+        return [0, 2, 4].map(index => parseInt(full.slice(index, index + 2), 16));
+      }
+      const parts = hex.match(/[\d.]+/g);
+      return parts ? parts.slice(0, 3).map(Number) : [0, 0, 0];
+    };
+    const luminance = color => {
+      const channels = rgb(color).map(value => value / 255).map(value =>
+        value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
+      );
+      return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+    };
+    const background = luminance(css.getPropertyValue('--ui-surface'));
+    const colors = {
+      primary: css.getPropertyValue('--ui-text'),
+      secondary: css.getPropertyValue('--ui-text-muted'),
+      disabled: css.getPropertyValue('--ui-disabled-text'),
+      info: css.getPropertyValue('--ui-info'),
+      success: css.getPropertyValue('--ui-success'),
+      warning: css.getPropertyValue('--ui-warning'),
+      error: css.getPropertyValue('--ui-danger')
+    };
+    return Object.fromEntries(Object.entries(colors).map(([name, color]) => {
+      const foreground = luminance(color);
+      return [name, +((Math.max(foreground, background) + 0.05) / (Math.min(foreground, background) + 0.05)).toFixed(2)];
+    }));
+  }, theme);
+  for (const theme of ['dark', 'light']) {
+    const ratios = await measure(theme);
+    for (const [name, value] of Object.entries(ratios)) {
+      expect(value, theme + ' ' + name + ' token contrast').toBeGreaterThanOrEqual(4.5);
+    }
+  }
+});
+
 test('interactive controls avoid selection while editable fields and message text remain selectable', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const values = await page.evaluate(() => {
