@@ -764,6 +764,8 @@ test('project creation is separate from full settings and project sources expose
   await expect(page.locator('#projectMemoryScopeSelect')).toBeEnabled();
   await expect(page.locator('#projectSourcesSection')).toBeVisible();
   await expect(page.locator('#projectSourcesSection')).toContainText('API списка источников');
+  await expect(page.locator('#projectSourcesSection .roadmap-ticker')).toBeVisible();
+  await expect(page.locator('#projectSourcesSection .roadmap-note')).toContainText('никаких действий с источниками не имитируется');
   await expect(page.locator('#projectSourcesSection button')).toHaveCount(0);
   await page.locator('#projectMemoryScopeSelect').selectOption('project-and-global');
   await page.locator('#projectSettingsModal [data-action="save-project"]').click();
