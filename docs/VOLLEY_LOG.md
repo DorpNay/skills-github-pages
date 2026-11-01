@@ -138,3 +138,14 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - This entry preserves the required prior report marker `V-2026-10-29-RESEARCH-APPLY-001`; no historical entries were removed.
 - Next: verify this snapshot refresh through the PR #132 Freshness workflow. The PR #131 branch requires its own current-main/queue reconciliation before exact-head CI can be relied upon.
 
+
+
+### 2026-11-01 — verified backup CI and refreshed Landing V2 navigation
+
+- Corrected the earlier partial status for backup PR #132: Quality run #1114 completed successfully, including Jekyll, Integrity, Security, Context, Ruff/static analysis and Chromium. Browser logs show **98 passed**; published GitHub Pages smoke shows **1 passed**.
+- Project State Freshness #258 passed 16 deterministic unit tests and the live exact-queue check: main `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`, 8 open PRs excluding #132, issue #111. Provenance #798 passed.
+- These checks ran on the documentation-only backup branch based on main/V1. They do not validate Landing V2 source in PR #131.
+- PR #131 current head: `d822cb623b2a72642921654a04e6c9d988091834`; live compare: 203 ahead / 4 behind main, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`, GitHub mergeable=false. Four main-side commits touch only the canonical UI checklist. No synchronization/rebase/merge was performed.
+- Added an explicit active-PR/workstream navigation map to `ORIENTER.md` and `project-reference/FILE_ORIENTER_RU.md`; refreshed machine-readable `ui_v2_track` state. Existing navigation and freshness tools were sufficient; no new helper script or directory reorganization was justified.
+- PR #131 exact-head Quality/Chromium remains pending: its latest head has no visible PR-triggered workflow run in the available Actions lookup. Gateway run #640 remains applicable to unchanged Gateway files.
+- Owner policy unchanged: no merge, close, retarget, force-update, branch synchronization or deployment of #131/#132 without explicit owner command.
