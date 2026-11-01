@@ -527,3 +527,12 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Found legacy GitHub Skills exercise workflows 0-start-exercise.yml and 1-step.yml–3-step.yml. They were not removed: repository is_template status and actual run history were not available. Do not delete aLandi skills/*.txt or the actual Pages/Jekyll/Quality/Security/Graphify/deploy mechanisms.
 - Repository rename is deferred until a stable custom domain is selected. GitHub documents that project Pages URLs are not redirected by repository rename; baseurl, canonical/OG, OAuth redirects, absolute links and published-site smoke would need a coordinated migration.
 - Updated the canonical UI checklist, implementation ledger, concise polish mirror, PROJECT_STATE.yaml, ALANDI_MASTER_CONTEXT_RU.md and ORIENTER.md on PR #131. No code/runtime files changed in this proposal-audit slice; no rebase, merge, deletion or deployment performed.
+
+
+### 2026-11-02 — accessible notification queue (PR #131)
+
+- Extended the existing toast, without adding a dependency or parallel notification manager: FIFO queue, active/queued duplicate suppression, differentiated durations, pause on hover/focus/hidden tab, and polite/status vs assertive/alert ARIA semantics.
+- Made the toast focusable and pointer-interactive while keeping it non-modal and without moving focus automatically.
+- Added Playwright assertions for sequential success → error notifications and urgency semantics. Tests have not been executed in this environment; no pass is claimed.
+- This is a partial presentation/accessibility slice of optional 8.19. Durable operation states/IDs, pending-to-result replacement, persistent errors and inline recovery actions remain open.
+- Source checkpoint: `fed3137bae2355629a976515719f498940ad8601`. No merge, rebase, deployment or cleanup action.
