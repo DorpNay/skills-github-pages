@@ -88,3 +88,32 @@
 - [GitHub — Managing and standardizing pull requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reference/managing-and-standardizing-pull-requests)
 
 **Текущий статус:** регламент подготовлен; полный branch/file/security-settings cleanup ещё не выполнялся. Наличие доступа к GitHub API не означает, что все настройки репозитория доступны через интеграцию.
+
+
+## 9. Первичная инвентаризация — 2026-11-02
+
+**Снимок:** default branch `main` `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; PR #131 HEAD `5b9aa7abcc70fc1fa6f3c0fba402e025cb44c772`. Это read-only инвентаризация, не полный аудит ancestry каждой ветки.
+
+### Подтверждённые факты
+- GitHub API вернул **126 веток** (100 + 26 на двух страницах) и **9 открытых PR** (#124–#132).
+- **117 веток** не являются head открытого PR. Это очередь для классификации, а не список на удаление: PR/issue-контекст, ancestry, уникальные коммиты и ссылки ещё не проверены для каждой ветки.
+- `delete_branch_on_merge=false`; repository rulesets API вернул пустой список.
+- Classic branch protection для `main` проверить не удалось: интеграция получила 403 `Resource not accessible by integration`. Наличие/отсутствие классической защиты неизвестно.
+- В root, `.github/` и `docs/` не найдены `CODEOWNERS` и `SECURITY.md`; в стандартных местах не найдена Dependabot config. Это не доказывает, что account-level security alerts выключены.
+- PR #131 открыт, не объединён; GitHub сообщает `mergeable_state=dirty`. Rebase/sync не выполнялись.
+- На точном PR #131 HEAD нет Quality/Chromium run или commit status. Provenance run `41336870473` прошёл на этом SHA. Quality #1126 — старый SHA `7cdf35d581d9d6bca39256e67a0b0db6083e486c`, Chromium 101 passed / 18 failed; результат не относится к текущему HEAD.
+- PR #132 — отдельная открытая draft-документация; её проверки не являются доказательством качества V2-кода PR #131.
+
+### Дальнейшие действия
+1. **P0:** проверить все 117 веток вне открытых PR по дате последнего commit, связанным PR/issues, compare/ancestry, уникальным коммитам и ссылкам в workflows/docs/runtime. Только затем выделять подтверждённые кандидаты на удаление.
+2. **P1:** владелец проверяет Settings → Rules → Rulesets и Branches → branch protection для `main`; не вводить невыполнимое обязательное число approvals.
+3. **P1:** владелец проверяет secret scanning/push protection, Dependabot alerts/security updates, dependency graph/review и CodeQL. Отдельно решить, нужны ли `SECURITY.md`, `CODEOWNERS` и Dependabot config.
+4. **P2:** после классификации обсудить автоматическое удаление веток после merge; сохранять SHA и recovery path.
+
+### Граница выполненных действий
+- Не удалялись ветки, файлы, PR, Actions artifacts или workflow runs.
+- Не менялись rulesets, branch protection, Actions permissions или security settings.
+- Не выполнялись merge, rebase, force-push, закрытие PR или deployment.
+- Полный ancestry/reference аудит и owner-side security settings review остаются открытыми.
+
+Официальные ориентиры: [GitHub repository best practices](https://docs.github.com/en/repositories/creating-and-managing-repositories/best-practices-for-repositories), [protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches), [security quickstart](https://docs.github.com/en/code-security/getting-started/quickstart-for-securing-your-repository), [CODEOWNERS](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners).
