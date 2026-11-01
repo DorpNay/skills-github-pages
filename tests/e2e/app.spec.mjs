@@ -415,7 +415,7 @@ test('aLandi Cloud is exclusive while provider and additional settings can remai
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   await page.locator('[data-action="toggle-settings"]').click();
   const cloud=page.locator('#cloudSettingsGroup'),providers=page.locator('#thirdPartyProviderSettings'),additional=page.locator('#additionalSettings');
-  await cloud.locator(':scope > summary').click();
+  if (!(await cloud.evaluate(element => element.open))) await cloud.locator(':scope > summary').click();
   await expect(cloud).toHaveAttribute('open','');
   await providers.locator(':scope > summary').click();
   await expect(cloud).not.toHaveAttribute('open','');
