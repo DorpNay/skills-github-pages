@@ -65,7 +65,7 @@ ui_v2_track:
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   status: "open_unmerged_owner_hold"
   latest_documentation_head: "read live PR #131 head; documentation-only commits may advance it"
-  latest_code_test_head: "8f68c2cc4b4b01a1917e32f75f7d5016517d41c3"
+  latest_code_test_head: "14d9dc9789dfc958d99685d36a7649ada8ce5120"
   latest_quality_harness_head: "d94d842608c07aa8def4b5fdc89ed95b80524034"
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0 and requirements 8.1-8.17"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
@@ -80,7 +80,7 @@ ui_v2_track:
     P2: "Long-list/message/scroll/popover stress; capability menu truthfulness; Tavily/keyless-search audit; provider/gateway mock error and secret-redaction checks."
   verification:
     exact_head_ci: "Manual run #41285658893 is on older SHA d822cb6, not current head. Its Context/Integrity failures were traced to stale sentinel expectations and corrected in 1b30cae/5d01a7d. Exact-head rerun not yet visible; do not claim green CI."
-    playwright_chromium: "Manual run #41285658893 Chromium job was in_progress at last check; no result yet."
+    playwright_chromium: "118 tests started on b6a3db77; job cancelled by 15-minute timeout before summary; CI updated to 3 workers, parallel tests, GitHub+list reporters, 20-minute job timeout and always-upload diagnostics; rerun pending"
     native_mobile_voiceover: "Not executed."
     wcag_contrast_ratios: "Not measured; computed-style assertions are not conformance evidence."
     live_gateway_provider: "Not verified; live smoke requires explicit owner approval."
@@ -512,7 +512,7 @@ landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   latest_code_test_head: "9ff326d40ac0567c1c62c293cb396bcd9c4eba82"
-  latest_documented_head: "07b2368f5b1672116fdb3f435cf18a4a4aa87b40"
+  latest_documented_head: "1ff9e96dee59c536b5ccf9496e17761e1c8449e8"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
     memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
@@ -537,8 +537,8 @@ landing_ui_v2_pr131_2026_10_31:
     message_action_consistency: "a6ce9eed87d6c239b9f5ea394ab04359939479e2"
     high_contrast_text_states: "787c9aaf6026559da31daf51d82f884abdc78c1d"
   verification:
-    exact_head: "07b2368f5b1672116fdb3f435cf18a4a4aa87b40"
-    exact_head_workflow_runs: "not yet queried"
+    exact_head: "b6a3db77fb9bbf8375f8b9d9010365a0e9010158 (Quality run #41287868283; predates CI-only updates)"
+    exact_head_workflow_runs: "run #41287868283 on b6a3db77: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium CANCELLED at 15-minute job timeout; new run required on 14d9dc9789dfc958d99685d36a7649ada8ce5120"
     gateway_pytest: "not executed in this environment"
     playwright_chromium: "not executed; no passing result claimed"
     native_mobile_voiceover: "not executed"
@@ -547,4 +547,4 @@ landing_ui_v2_pr131_2026_10_31:
     merge: "requires explicit owner approval"
     deploy: "requires explicit owner approval"
     main: "V1 baseline remains untouched"
-  next: "Continue source/test audit of requirements 8.1–8.11; close remaining verification gaps and run exact-head CI when available. Keep native mobile and screenshot review as manual gates."
+  next: "Obtain exact-head Quality run on 14d9dc9789dfc958d99685d36a7649ada8ce5120; inspect per-test Chromium results and diagnostics, then continue 8.1–8.11 source/test audit and P1 device/accessibility acceptance. PR remains open/unmerged; no deployment."
