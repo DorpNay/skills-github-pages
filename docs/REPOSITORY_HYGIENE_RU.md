@@ -92,7 +92,7 @@
 
 ## 9. Первичная инвентаризация — 2026-11-02
 
-**Снимок:** default branch `main` `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; PR #131 HEAD `5b9aa7abcc70fc1fa6f3c0fba402e025cb44c772`. Это read-only инвентаризация, не полный аудит ancestry каждой ветки.
+**Снимок:** default branch `main` `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; PR #131 HEAD на момент аудита `d28c2f01ac8d6b3a6867f358b7d7131dc6062e7f`. Read-only инвентаризация; полный ancestry-аудит каждой ветки ещё не выполнен.
 
 ### Подтверждённые факты
 - GitHub API вернул **126 веток** (100 + 26 на двух страницах) и **9 открытых PR** (#124–#132).
@@ -101,12 +101,12 @@
 - Classic branch protection для `main` проверить не удалось: интеграция получила 403 `Resource not accessible by integration`. Наличие/отсутствие классической защиты неизвестно.
 - В root, `.github/` и `docs/` не найдены `CODEOWNERS` и `SECURITY.md`; в стандартных местах не найдена Dependabot config. Это не доказывает, что account-level security alerts выключены.
 - PR #131 открыт, не объединён; GitHub сообщает `mergeable_state=dirty`. Rebase/sync не выполнялись.
-- На точном PR #131 HEAD нет Quality/Chromium run или commit status. Provenance run `41336870473` прошёл на этом SHA. Quality #1126 — старый SHA `7cdf35d581d9d6bca39256e67a0b0db6083e486c`, Chromium 101 passed / 18 failed; результат не относится к текущему HEAD.
-- PR #132 — отдельная открытая draft-документация; её проверки не являются доказательством качества V2-кода PR #131.
+- На точном PR #131 HEAD нет Quality/Chromium run или commit status. Provenance run `41336870473` прошёл на SHA `5b9aa7abcc70fc1fa6f3c0fba402e025cb44c772`; это предшествующий head, не текущий. Quality #1126 — старый SHA `7cdf35d581d9d6bca39256e67a0b0db6083e486c`, Chromium 101 passed / 18 failed; результат не относится к текущему HEAD.
+- PR #132 остаётся отдельной открытой draft-документацией; её проверки не являются доказательством качества V2-кода PR #131.
 
 ### Дальнейшие действия
 1. **P0:** проверить все 117 веток вне открытых PR по дате последнего commit, связанным PR/issues, compare/ancestry, уникальным коммитам и ссылкам в workflows/docs/runtime. Только затем выделять подтверждённые кандидаты на удаление.
-2. **P1:** владелец проверяет Settings → Rules → Rulesets и Branches → branch protection для `main`; не вводить невыполнимое обязательное число approvals.
+2. **P1:** владелец проверяет Settings → Rules → Rulesets и Branches → branch protection для `main`; не вводить невыполнимые обязательные approvals.
 3. **P1:** владелец проверяет secret scanning/push protection, Dependabot alerts/security updates, dependency graph/review и CodeQL. Отдельно решить, нужны ли `SECURITY.md`, `CODEOWNERS` и Dependabot config.
 4. **P2:** после классификации обсудить автоматическое удаление веток после merge; сохранять SHA и recovery path.
 
@@ -119,9 +119,11 @@
 Официальные ориентиры: [GitHub repository best practices](https://docs.github.com/en/repositories/creating-and-managing-repositories/best-practices-for-repositories), [protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches), [security quickstart](https://docs.github.com/en/code-security/getting-started/quickstart-for-securing-your-repository), [CODEOWNERS](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners).
 
 
-## 10. Follow-up — Graphify extracted UI source coverage
+## 10. Graphify source-coverage follow-up
 
-PR #131 now extends the Graphify Code-Only Pilot path filters to `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html` for pull requests and main pushes. This closes a coverage gap created when the app runtime and styles were externalized. The resulting Graphify run/artifact is still pending confirmation. No branch deletion or repository settings change was performed.
+During the 2026-11-02 continuation, a concrete CI hygiene gap was found: after the browser runtime/styles moved from `index.md` into static assets, the Graphify Code-Only Pilot path filters did not include those extracted files. The workflow now watches `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html` on PR and main-push events.
+
+This is a narrow, reversible CI configuration correction. The Graphify workflow/artifact has not yet been confirmed on the new head. No branch cleanup, repository settings mutation, history rewrite, merge or deployment was performed.
 
 
 ## 11. Подробный snapshot инвентаризации — 2026-11-02
@@ -158,3 +160,9 @@ PR #131 now extends the Graphify Code-Only Pilot path filters to `assets/js/**/*
 - Настройки branch protection/rulesets, secret scanning, push protection, Dependabot alerts/security updates и CodeQL нельзя прочитать через доступные действия интеграции. Их состояние **не подтверждено**; нужен ручной просмотр Settings → Rules/Branches и Security & analysis.
 
 **Итог:** найдено пять доказуемых branch cleanup candidates, но удаление не выполнено из-за отсутствия branch-delete action. Все ветки с уникальными коммитами и все закрытые unmerged PR workstreams сохранены.
+
+## 12. Security policy follow-up
+
+The 2026-11-02 branch inventory found no SECURITY.md on main. A responsible vulnerability-reporting policy has since been added as SECURITY.md in PR #131 and mirrored in PR #132. It directs reports to GitHub private vulnerability reporting when enabled, otherwise to the repository owner, prohibits public disclosure of secrets/user data, and does not promise an unsupported response-time SLA.
+
+This file is present only on the feature/documentation branches until their owner-approved merge. It does not establish that private vulnerability reporting, secret scanning, push protection, CodeQL or branch protection are enabled. Those settings still require owner-side verification.
