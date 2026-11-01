@@ -639,7 +639,7 @@ permalink: /
         <div class="grid grid-cols-1 gap-2">
           <input id="aserviBaseUrl" type="url" autocomplete="url" aria-label="URL моего сервера" aria-describedby="aserviBaseUrlError" class="w-full p-3 rounded-xl border text-sm" placeholder="URL моего сервера · https://…/v1"><p id="aserviBaseUrlError" class="field-error hidden" role="alert"></p>
           <input id="aserviModel" type="text" autocomplete="off" aria-label="Модель моего сервера" aria-describedby="aserviModelError" class="w-full p-3 rounded-xl border text-sm" placeholder="Модель gateway · точный ID"><p id="aserviModelError" class="field-error hidden" role="alert"></p>
-          <div class="aservi-key-row flex gap-2"><input id="aserviApiKey" type="password" autocomplete="off" aria-label="Ключ доступа к серверу" aria-describedby="aserviApiKeyError" class="min-w-0 flex-1 p-3 rounded-xl border text-sm" placeholder="Ключ доступа"><button type="button" data-action="paste-cloud-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ">↓</button></div><p id="aserviApiKeyError" class="field-error hidden" role="alert"></p>
+          <div class="aservi-key-row flex gap-2"><input id="aserviApiKey" type="password" autocomplete="off" aria-label="Ключ доступа к серверу" aria-describedby="aserviApiKeyError" class="min-w-0 flex-1 p-3 rounded-xl border text-sm" placeholder="Ключ доступа"><button type="button" data-action="paste-aservi-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ">↓</button></div><p id="aserviApiKeyError" class="field-error hidden" role="alert"></p>
         </div>
         <p id="aserviStatus" class="aservi-status-copy text-[10px]" data-state="disconnected" role="status" aria-live="polite">Не подключено</p>
       </section>
