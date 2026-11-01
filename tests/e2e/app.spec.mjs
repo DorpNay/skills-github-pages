@@ -1892,7 +1892,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
   expect(implicitPrompt).not.toContain('ALPHA_PROJECT_MEMORY_SENTINEL');
   await page.locator('#contextPickerButton').click();
   await page.locator('#requestProjectChecks input[data-request-project-id="' + betaId + '"]').check();
-  await page.locator('#contextPickerButton').click();
+  await page.locator('#composerPopoverScrim').click({ position: { x: 8, y: 8 } });
   await page.locator('#userInput').fill('Use the project context explicitly.');
   await page.locator('#sendBtn').click();
   await expect.poll(() => capturedBodies.length).toBe(2);
