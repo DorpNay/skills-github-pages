@@ -94,3 +94,10 @@
 - MDN VisualViewport: https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport
 - MDN pointercancel: https://developer.mozilla.org/en-US/docs/Web/API/Element/pointercancel_event
 - MDN touch-action: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/touch-action
+
+
+## Future UI visibility and research hierarchy — 2026-11-01
+
+- Keep planned product sections and their windows visible so the information architecture can be built and reviewed before every runtime capability ships.
+- Use one consistent moving ticker/status treatment in areas under active development. Do not represent a placeholder as a completed integration or successful action; disable unavailable mutations or explain their status.
+- Research Studio is a subfeature of deep research, entered from the Thorough/deep-research controls. It is not a standalone navigation destination or Functions-menu item.
