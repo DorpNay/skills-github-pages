@@ -84,6 +84,7 @@
 - **Touch/gesture lifecycle:** браузер может отправить `pointercancel`, когда начинает сам обрабатывать pan/zoom/scroll. Любой собственный swipe должен очищать состояние на `pointercancel`/`touchcancel`; `touch-action` задавать локально на зоне жеста, не глобально и не через blanket `none`.
 - **Селекторы и фикстуры:** мок aServi должен соответствовать реальному контракту: first-party settings card + model completion probe + `/healthz`. Не выбирать aServi через список сторонних API и не считать HTTP 200 без валидного completion подтверждением соединения.
 - **Runner stall:** существующий workaround с Ubuntu `man-db` оставлен только в шаге установки browser dependencies; он не подменяет тесты и не отключает проверки.
+- **HTML/CSS payload:** оба крупных inline `<style>` блока вынесены в cacheable `assets/css/app.css` и `assets/css/landing.css` (48.1 KB и 10.4 KB). HTML уменьшился с 109.3 до 61.3 KB для приложения и с 26.1 до 15.8 KB для лендинга; CSS declarations сохранены без минификации и перестановки каскада. E2E/Quality теперь проверяют ссылки на stylesheet. Tailwind CDN оставлен: его удаление требует отдельного build-time CSS pipeline и полного utility-class inventory, что не оправдано без замера и approval.
 
 Источники:
 - Playwright CI: https://playwright.dev/docs/ci
