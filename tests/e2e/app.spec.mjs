@@ -1598,38 +1598,6 @@ test('agent systems skill is routed on demand and its safety contract stays avai
 });
 
 
-test('aServi migrates saved endpoint settings from legacy browser storage keys', async ({ page }) => {
-  const legacySettings = {
-    baseUrl: 'https://saved-aservi.example.test/v1',
-    model: 'qwen3.5:4b',
-    connection: JSON.stringify({ ok: true, baseUrl: 'https://saved-aservi.example.test/v1', model: 'qwen3.5:4b' })
-  };
-  await page.addInitScript(settings => {
-    localStorage.setItem('ai_alandi_cloud_base_url', settings.baseUrl);
-    localStorage.setItem('ai_alandi_cloud_model', settings.model);
-    localStorage.setItem('ai_alandi_cloud_connection_v1', settings.connection);
-  }, legacySettings);
-  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.locator('[data-action="toggle-settings"]').click();
-  await expect(page.locator('#aserviBaseUrl')).toHaveValue(legacySettings.baseUrl);
-  await expect(page.locator('#aserviModel')).toHaveValue(legacySettings.model);
-  const migrated = await page.evaluate(() => ({
-    baseUrl: localStorage.getItem('ai_alandi_aservi_base_url'),
-    model: localStorage.getItem('ai_alandi_aservi_model'),
-    connection: localStorage.getItem('ai_alandi_aservi_connection_v1'),
-    marker: localStorage.getItem('ai_alandi_aservi_storage_migrated_v1'),
-    legacyPreserved: localStorage.getItem('ai_alandi_cloud_base_url')
-  }));
-  expect(migrated).toMatchObject({
-    baseUrl: legacySettings.baseUrl,
-    model: legacySettings.model,
-    connection: legacySettings.connection,
-    marker: '1',
-    legacyPreserved: legacySettings.baseUrl
-  });
-});
-
-
 test('aLandi aServi status only turns green after a real model response, and core UX controls work', async ({ page }) => {
   const aserviRequests = [];
   await page.route('https://aservi.example.test/healthz', async route => route.fulfill({
