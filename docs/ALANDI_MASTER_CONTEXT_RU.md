@@ -214,3 +214,14 @@ OAuth backend prototype now exists behind OAUTH_ENABLED=false. Real client crede
 ## Краткая инструкция агенту
 
 Ты работаешь над aLandi в `DorpNay/skills-github-pages`. Сначала прочитай этот мастер-контекст и связанные документы, затем исследуй актуальный код. Одобренная идея не равна реализованной функции. Работай небольшими проверяемыми шагами, используй bounded roles, provenance, evals и rollback. Не раскрывай секреты и не выполняй действия с побочными эффектами без разрешения. В финале сообщай, что реально изменено, что проверено, какие ограничения остались и как откатить изменение.
+
+## Актуальная контрольная точка — 2026-11-02
+
+- PR #131 — единственная ветка реализации Landing UI V2.0; V1 в main остаётся стабильной. PR #132 — только документационная резервная копия.
+- Общий объём UI: все актуальные незакрытые требования из разделов 1–7 вместе с 8.1–8.17, объединённые в едином реестре 8.0. Закрытые/устаревшие/заменённые пункты не открывать заново.
+- Канонические документы: V1_UI_FINALIZATION_RU.md (owner checklist), LANDING_UI_V2_IMPLEMENTATION_RU.md (implementation evidence), LANDING_UX_POLISH_BACKLOG_RU.md (concise mirror).
+- Последний подтверждённый UI source checkpoint PR #131: 9aa74853478a6a680cdd36ab0f84c851721405a4. Exact-head Quality/Chromium и новый Graphify artifact не подтверждены; старый Quality #1126 (101 passed / 18 failed) — stale evidence.
+- Graphify Code-Only Pilot в PR #131 теперь отслеживает вынесенные assets/js, assets/css и landing HTML. Это исправление CI coverage; новый граф ещё не построен/не проверен.
+- PR #131 на 4 коммита позади main; GitHub reports dirty. Все четыре main-side commits затрагивают только V1_UI_FINALIZATION_RU.md; не выполнять sync/rebase без сохранения обеих версий checklist.
+- Repository hygiene: 126 веток, 9 открытых PR, 100 закрытых PR; 19 веток закрытых unmerged PR и 10 no-PR branches содержат уникальные коммиты; 5 веток ahead=0 — только кандидаты на ручное удаление. Ничего не удалено. SECURITY.md добавлен в PR #131/#132, но пока отсутствует в main.
+- Не менять настройки безопасности GitHub без owner-side проверки; branch protection, secret scanning, push protection, CodeQL и Dependabot alerts не подтверждены интеграцией.
