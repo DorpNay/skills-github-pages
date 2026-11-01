@@ -108,3 +108,13 @@ Reviewed 45 targeted Exa queries (up to 360 requested result slots) and fetched 
 
 ### 2026-10-30 — Whole-stack integrity audit baseline recorded
 Before beginning the audit, re-read live PR #123, current main base and issue #111. Recorded baseline: PR #123 open/mergeable, HEAD `f6e67db5a7e39abc5f9351aae5ccadefc58e865e`, base `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; prior exact-head CI 6/6 passed, subject to re-run after any new commit. Issue #111 remains open for owner/environment gates. Created `docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md` with frozen stack boundaries, initial full checklist and independent reviewer handoff brief. No source code changed in this stage. Post-merge Pages and live VPS/Ollama remain unverified.
+
+
+### 2026-11-01 — Landing V2 continuity backup outside PR #131
+
+- Added a separate documentation-only continuity branch from current main: `docs/landing-v2-continuity-backup-20261101`. It is isolated from the V2 implementation branch and does not alter main or PR #131.
+- Recorded PR #131 as open/unmerged and owner-controlled; V1 remains the stable main baseline. No merge, close or deployment was performed.
+- Recorded verified Gateway evidence: Actions run #640 passed compileall, manifest/INTEL, Gateway pytest, deploy preflight and six-layer offline evaluation on `6f7fde485b2b13aecc50523b20785e0ac615d2ad`; no `gateway/**` changes exist after that tested commit through the PR head checkpoint.
+- Exact-head Quality/Chromium and published-site checks are not currently visible from the available Actions status lookup. Native iPhone Safari/VoiceOver, WCAG contrast measurement and manual visual acceptance remain pending.
+- PR #131 is 197 ahead / 4 behind main and reports `mergeable=false`; no blind sync/force update. Inspect the four main-side commits before any synchronization.
+- Backup pointers are in `ORIENTER.md` and `docs/PROJECT_STATE.yaml` on this continuity branch. This record is a safety copy, not evidence that V2 has shipped.
