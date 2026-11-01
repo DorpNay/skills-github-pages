@@ -104,3 +104,13 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Issue #111 остаётся единственным owner/environment gate. Post-merge Pages и live VPS/Ollama не подтверждены.
 - Стек заморожен: HTML/CSS/vanilla JS + Jekyll/GitHub Pages + существующий FastAPI/Python/Ollama + SQLite/FTS5 + существующие ToolDAG/voice/document adapters и GitHub Actions. Никаких новых runtime компонентов.
 - Ведём чек-лист по каждому подтверждённому шагу; не объявлять независимый subagent review состоявшимся, пока отдельный агент реально не выполнит работу.
+
+
+### PR #131 continuity refresh — 2026-11-02
+
+- Live PR #131 head: `5b9aa7abcc70fc1fa6f3c0fba402e025cb44c772`; branch `feat/landing-v1-accessibility-responsive-20261031`; compare `main...branch`: 476 ahead / 4 behind, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Four main-side commits overlap only the shared UI finalization checklist; no automatic sync/rebase was performed.
+- Latest UI code/test checkpoint: `b6b4cd612e288f0ad2c0e23419a562b06b491ef5`. Root app title and Jekyll metadata now consistently identify aLandi; the app advertises both dark and light color schemes. Deterministic sentinel/E2E assertions were added.
+- V8 syntax parsing passed for app.js, the E2E module and Quality Sentinel (module imports/shebang adapted); CSS brace balance is zero. No Quality/Chromium run exists on the current PR #131 head; previous Chromium #1126 remains stale (101 passed / 18 failed).
+- aLandi aServi is the current UI/product terminology. Legacy `ai_alandi_cloud_*` localStorage keys remain solely for compatibility; Cloudflare remains a separate infrastructure/provider brand; aLandi aCloudi is reserved for a future information-storage product.
+- Repository hygiene is queued for the next major-slice boundary. Branch/file cleanup requires PR/issue/ancestry/reference review first; no deletion, force update, merge, rebase or deployment has occurred.
+- PR #132 remains a draft documentation-only safety copy. Its checks do not validate V2 application code in PR #131.
