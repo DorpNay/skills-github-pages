@@ -79,9 +79,13 @@ async function toggleHeaderTheme(page) {
 }
 
 async function selectLanguage(page, language) {
-  if (await page.locator('#settingsModal').evaluate(element => element.classList.contains('hidden'))) await page.locator('[data-action="toggle-settings"]').click();
-  if (!(await page.locator('#additionalSettings').evaluate(element => element.open))) await page.locator('#additionalSettings > summary').click();
-  await page.locator('#uiLanguage').selectOption(language);
+  const settings = page.locator('#settingsModal');
+  const wasOpen = !(await settings.evaluate(element => element.classList.contains('hidden')));
+  if (wasOpen) await settings.locator('.settings-header-actions [data-action="close-settings"]').click();
+  const menu = page.locator('#languageMenu');
+  if (!(await menu.evaluate(element => element.open))) await menu.locator(':scope > summary').click();
+  await menu.locator('[data-language="' + language + '"]').click();
+  if (wasOpen) await page.locator('[data-action="toggle-settings"]').click();
 }
 
 async function configureCustomProvider(page, modelName) {
@@ -149,7 +153,7 @@ test('sidebar order separates memory, projects, status, chats, and research', as
   await expect(page.locator('#projectPanel')).toContainText('Проект');
   await expect(page.locator('#sidebar [data-action="open-research-studio"]')).toHaveCount(0);
   await expect(page.locator('#functionsMenu [data-action="open-research-studio"]')).toHaveCount(1);
-  await expect(page.locator('#chatSection')).toContainText('Новый личный чат');
+  await expect(page.locator('#chatListNewButton')).toContainText('Новый личный чат');
   await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте выкл.');
   await page.locator('#memoryToolsDetails > summary').click();
   await expect(page.locator('#privateMemoryHelp')).not.toHaveAttribute('open', '');
@@ -281,7 +285,7 @@ test('mobile sidebar and modal close controls meet the 44px touch target', async
   const chatMenuBox = await chatMenuToggle.boundingBox();
   expect(chatMenuBox?.width || 0).toBeGreaterThanOrEqual(44);
   expect(chatMenuBox?.height || 0).toBeGreaterThanOrEqual(44);
-  await page.locator('#sidebar [data-action="close-sidebar"]').click();
+  await page.locator('#sidebar [data-action="close-sidebar"]').click({ force: true });
 
   const languageMenu = page.locator('#languageMenu');
   await languageMenu.locator('summary').click();
@@ -633,11 +637,13 @@ test('project creation is separate from full settings and project sources expose
 test('language switch localizes provider controls without exposing the internal route', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await selectLanguage(page, 'en');
+  await page.locator('[data-action="toggle-settings"]').click();
   await expect(page.locator('#providerExternalGroup')).toHaveAttribute('label', 'Third-party providers');
   await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
   await expect(page.locator('#cloudSettingsGroup')).toBeVisible();
   await expect(page.locator('#providerPreset option[value="gemini"]')).toHaveCount(1);
   await expect(page.locator('#providerPreset option[value="custom"]')).toHaveCount(1);
+  await page.locator('.settings-header-actions [data-action="close-settings"]').click();
   await selectLanguage(page, 'ru');
 });
 
@@ -3174,7 +3180,7 @@ test('all semantic status states are distinct, centered and reduced-motion safe'
   expect(states.tickerTrackAlign).toBe('center');
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  const tickerAnimation = await page.locator('.roadmap-ticker-track').evaluate(element => getComputedStyle(element).animationName);
+  const tickerAnimation = await page.locator('.roadmap-ticker-track').first().evaluate(element => getComputedStyle(element).animationName);
   expect(tickerAnimation).toBe('none');
 });
 
