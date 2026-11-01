@@ -278,3 +278,13 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Live compare: `main` is `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; PR branch is 188 ahead / 4 behind; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. GitHub reports `mergeable=false`.
 - The four main-side commits since the merge base change only `docs/V1_UI_FINALIZATION_RU.md`. Compared main and PR copies: the PR version contains the current main additions plus the V2 reconciliation; no other main-side source delta was found.
 - No branch synchronization, PR merge or deployment was performed. Keep the reported mergeability issue as a separate pre-merge gate and re-check after the remaining P0/P1 work.
+
+
+### 2026-11-01 — PR #131: P0 browser workflow and branch-divergence audit
+
+- Inspected `.github/workflows/quality-sentinels.yml`, `playwright.config.mjs` and `tests/e2e/landing.spec.mjs`.
+- Confirmed PR Quality's Chromium command runs the Jekyll-built branch locally; with no `LIVE_SITE_URL`, the Playwright config serves `_site` on localhost, so the 8 landing tests are included in PR browser E2E. The separate published-site smoke checks the currently deployed site, not the V2 branch.
+- Gateway run #640 is a verified pass; no Gateway files changed since the tested commit. Gateway P0 sub-gate is closed; browser/Quality P0 remains open.
+- Current PR #131 is 197 ahead / 4 behind main, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`, GitHub mergeable=false. The four main-side commits touch only the canonical UI checklist; the PR branch contains the substantive new requirement lines but changes the section structure. No blind branch sync/rebase/merge.
+- Exact-head Quality/Chromium status remains unavailable from the current Actions lookup. Workflow config alone is not evidence of a run or pass.
+- Updated implementation ledger. Next: obtain and inspect an actual Quality Sentinels browser job on the PR head; then fix only confirmed failures.
