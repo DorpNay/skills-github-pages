@@ -1,7 +1,6 @@
     :root { color-scheme: dark; --ink: #e8eefc; --panel: #101827; --line: #273349; }
     html, body { height: 100%; }
-    body { background: radial-gradient(ellipse at 12% 0%, rgb(37 66 108 / 24%), transparent 36%), radial-gradient(ellipse at 95% 70%, rgb(26 85 74 / 12%), transparent 32%), linear-gradient(150deg, #080d17, #101827 55%, #0a1220); }
-    #settingsModal > .settings-surface { background: rgb(13 20 33 / 96%); border-color: rgb(96 165 250 / 24%); box-shadow: 0 24px 80px rgb(0 0 0 / 45%), 0 0 28px rgb(96 165 250 / 6%); backdrop-filter: blur(18px); }
+    #settingsModal > .settings-surface { box-shadow: 0 24px 80px rgb(0 0 0 / 45%), 0 0 28px rgb(96 165 250 / 6%); backdrop-filter: blur(18px); }
     #settingsModal label { letter-spacing: .015em; }
     #settingsModal input, #settingsModal textarea, #settingsModal select { background: rgb(6 12 22 / 82%); border-color: #344158; }
     #settingsModal input:focus, #settingsModal textarea:focus, #settingsModal select:focus { border-color: #7dd3fc; box-shadow: 0 0 0 1px rgb(125 211 252 / 18%), 0 0 18px rgb(96 165 250 / 11%); }
@@ -41,9 +40,8 @@
     #thinkingTime { color: #a5b4fc; font-variant-numeric: tabular-nums; white-space: nowrap; }
     #statusText { color: transparent; background: linear-gradient(100deg, #bfdbfe 5%, #c4b5fd 42%, #6ee7b7 70%, #bfdbfe 95%); background-size: 220% 100%; background-clip: text; -webkit-background-clip: text; animation: status-sheen 4.5s ease-in-out infinite; }
     @keyframes status-sheen { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100dvh; min-height: 0; overflow: hidden; }
+    body { height: 100dvh; min-height: 0; overflow: hidden; }
     button, input, textarea { font: inherit; }
-    button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; }
     .safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 1rem); }
     body.composer-at-top #composerFooter { order: 1; padding-top: max(env(safe-area-inset-top), .5rem); padding-bottom: .5rem; }
     body.composer-at-top #chatBox { order: 2; }
