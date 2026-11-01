@@ -439,3 +439,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Documentation commits: `de8cbc047d7e9b39923e02bb950918358340884c` (8.2 checklist), `749aac0e6566478ad453696409fa3ab6edd6f149` (implementation record), `ec7625c98a36f1d54a190da695391244e5eecdd3` (project state).
 - V8 syntax parsing passed for app.js, the E2E module and Quality Sentinel after adapting module-only imports/shebang for the parser. CSS brace balance is zero; exact metadata assertions are present. Playwright/Chromium and the Quality workflow have not been run on this checkpoint.
 - PR #131 was 476 ahead / 4 behind main, with four base-side commits touching the shared UI checklist only. No synchronization, merge, deletion or deployment was performed.
+
+
+### 2026-11-02 — Repository hygiene runbook
+
+- Added docs/REPOSITORY_HYGIENE_RU.md with evidence thresholds for branch/file deletion, PR and docs reconciliation, Actions/dependency review, GitHub security settings and rollback records.
+- Grounded the checklist in official GitHub repository best practices, protected branches, CODEOWNERS, security quickstart and PR standardization guidance.
+- This is a procedure only. Full branch/file/security-settings cleanup is intentionally deferred until the next major-slice boundary; no deletion or history rewrite was performed.
