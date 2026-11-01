@@ -41,8 +41,8 @@ test('Research Studio is a settings-only mode panel and keeps the task in the ma
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const draft = 'Compare official sources about browser security and cite the evidence.';
   await page.locator('#userInput').fill(draft);
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('#functionsMenu [data-action="open-research-studio"]').click();
+  await expect(page.locator('#functionsMenu [data-action="open-research-studio"]')).toHaveCount(0);
+  await page.locator('#deepResearchStudioButton').click();
 
   const studio = page.getByRole('dialog', { name: 'Студия исследования' });
   await expect(studio).toBeVisible();
@@ -89,8 +89,8 @@ test('Research Studio applies selected settings without sending or replacing the
   // Only user requests count; provider connectivity probes are filtered in the route handler.
   const draft = 'Compare three primary sources and identify conflicting evidence.';
   await page.locator('#userInput').fill(draft);
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('#functionsMenu [data-action="open-research-studio"]').click();
+  await expect(page.locator('#functionsMenu [data-action="open-research-studio"]')).toHaveCount(0);
+  await page.locator('#deepResearchStudioButton').click();
 
   const studio = page.getByRole('dialog', { name: 'Студия исследования' });
   await expect(studio).toBeVisible();
