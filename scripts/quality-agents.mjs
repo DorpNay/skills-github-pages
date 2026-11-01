@@ -15,7 +15,9 @@ const sourcePath = resolve(root, 'index.md');
 const source = readFileSync(sourcePath, 'utf8');
 const appPath = resolve(root, 'assets/js/app.js');
 const appSource = readFileSync(appPath, 'utf8');
-const combinedSource = source + '\n' + appSource;
+const appCss = readFileSync(resolve(root, 'assets/css/app.css'), 'utf8');
+const landingCss = readFileSync(resolve(root, 'assets/css/landing.css'), 'utf8');
+const combinedSource = [source, appSource, appCss, landingCss].join('\n');
 const fail = (message) => { throw new Error(message); };
 // Keep HTML-structure checks on index.md; runtime checks span the split app asset.
 const includes = (needle, message) => assert.ok(combinedSource.includes(needle), message);
