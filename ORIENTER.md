@@ -171,3 +171,14 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - UI source/test checkpoint: `d65102ed5a9ba3c30586d8a52efbd5603a009e23`; documentation-only follow-up through branch head `24e22d780c4a8311d5ea28ed96bbd78302e25414`.
 - Latest compare at that checkpoint: 430 commits ahead / 4 behind main; the only main-side changed file is the shared `docs/V1_UI_FINALIZATION_RU.md`. No code-file conflict identified; no merge/rebase performed.
 - Exact-head Quality/Chromium remains pending; last observed Chromium result is stale run #1126 (101 passed, 18 failed). No passing browser run is claimed.
+
+
+### Current continuation checkpoint — 2026-11-02
+
+- PR #131 remains the sole Landing V2 implementation branch, open and unmerged. Live PR head at this checkpoint: `ec7625c98a36f1d54a190da695391244e5eecdd3`; compare against `main`: 476 ahead / 4 behind, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Four base-side commits overlap only the shared UI finalization checklist; do not rebase, merge, or overwrite that document automatically.
+- App identity cleanup: root Jekyll title and browser title now say `aLandi — личная AI-среда`; the app has a concise description and declares both `dark light` color schemes. Quality Sentinel and E2E assertions are added; browser execution is still pending.
+- Code/test checkpoint: `b6b4cd612e288f0ad2c0e23419a562b06b491ef5`. V8 syntax parsing passed for `assets/js/app.js`, `tests/e2e/app.spec.mjs`, and `scripts/quality-agents.mjs` (imports/shebang adapted for the parser); CSS brace balance is zero. These are source checks, not a Playwright/Quality run.
+- Current PR head has no pull-request workflow runs visible. Last observed Chromium run #1126 is stale evidence (101 passed / 18 failed) on an older SHA. Do not treat it as current.
+- The aServi rename remains consistent in active V2 UI/docs. Only the legacy `ai_alandi_cloud_*` localStorage keys remain, intentionally, for backwards compatibility. Cloudflare is unchanged; `aLandi aCloudi` remains reserved for a separate future storage product.
+- Repository hygiene is scheduled for the next major-slice boundary: inventory branches against open/closed PRs and ancestry, review stale workflows/artifacts/dependencies/docs and repository security settings, then propose only evidence-backed cleanup. No branch/file deletion, rebase, force-push, merge or deployment has been performed.
+- Next: finish the source/documentation reconciliation, refresh the parallel documentation safety copy in PR #132, then run exact-head Quality/Chromium and diagnose only confirmed failures. Native iOS Safari/VoiceOver and full component-level WCAG review remain manual gates.
