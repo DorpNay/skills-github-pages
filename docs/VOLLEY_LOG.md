@@ -362,3 +362,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Extended the readability regression to confirm Cloud checking color changes between dark and light themes.
 - Re-ran source syntax parsing against GitHub-fetched current source: index.md inline JavaScript, app.spec.mjs, audio-transcription.spec.mjs, document-attachments.spec.mjs, alandi-provider.spec.mjs, research-studio.spec.mjs and playwright.config.mjs all parsed successfully. This is a syntax check only; no browser execution.
 - Current code/test head: bca8fa892e95bd35db812382afdadbba41813265. Latest docs checkpoints: V1 checklist b1afbf0e3420b27c19fc7ee2447dd838204908fa; compact backlog dc785967bc8d07877d9697f588f5a589404a7706; implementation ledger 8da576774c8cf948aa403111e34461396999e57d. Exact-head Quality remains intentionally pending until the integrated UI pass is complete.
+
+
+### 2026-11-01 — PR #131: token-level contrast calculation
+
+- Added a deterministic E2E contrast calculator for actual CSS custom-property values against each theme's solid surface. Primary, secondary, disabled, info, success, warning and error tokens are checked in both dark and light themes at the 4.5:1 threshold.
+- Calculated current base token ratios: dark surface #0f1b2b — primary 15.93:1, secondary 8.26:1, success 9.02:1, warning 10.92:1, error 6.59:1; light surface #ffffff — primary 15.48:1, secondary 5.91:1, success 4.90:1, warning 6.59:1, error 5.26:1. Disabled/info tokens are included in E2E. These are token-vs-surface measurements only, not the full WCAG audit.
+- Added default light/dark semantic info/warning tokens and changed Cloud checking text to use the theme-aware warning token.
+- Current code/test head: 95b50bc699a1eb2c98a677829cc228e4b60b7b5b. Syntax parsing passed for index.md inline JS, app.spec.mjs and playwright.config.mjs. Browser tests and actual component-level WCAG review remain unrun.
