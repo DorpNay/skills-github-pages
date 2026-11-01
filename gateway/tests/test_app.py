@@ -290,6 +290,7 @@ def test_models_require_auth_and_return_only_allowlisted_installed_model():
         assert client.get("/v1/models").status_code == 401
         response = client.get("/v1/models", headers={"Authorization": f"Bearer {API_KEY}"})
     assert response.status_code == 200
+    assert response.headers["cache-control"] == "no-store"
     assert [x["id"] for x in response.json()["data"]] == [MODEL]
     assert response.json()["data"][0]["context_length"] == 4096
 
@@ -415,7 +416,9 @@ def test_cors_allows_only_configured_origin():
         bad = client.options("/v1/chat/completions", headers={"Origin": "https://evil.example",
           "Access-Control-Request-Method": "POST", "Access-Control-Request-Headers": "authorization,content-type"})
     assert good.headers.get("access-control-allow-origin") == "https://dorpnay.github.io"
+    assert good.headers.get("access-control-allow-credentials") == "true"
     assert "access-control-allow-origin" not in bad.headers
+    assert "access-control-allow-credentials" not in bad.headers
 
 
 def test_short_secret_disables_protected_routes():
