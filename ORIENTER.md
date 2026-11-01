@@ -190,3 +190,10 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - CODEOWNERS, SECURITY.md и Dependabot config не найдены в стандартных местах; фактические security alerts/settings не проверены.
 - На PR #131 HEAD на момент аудита Provenance #41336870473 прошёл; exact-head Quality/Chromium отсутствует. Quality #1126 (101 passed / 18 failed) относится к старому SHA.
 - Подробности и безопасный план: `docs/REPOSITORY_HYGIENE_RU.md`. Удалений, изменений настроек, merge/rebase/force-push или deployment не выполнялось.
+
+
+### CSS source cleanup — 2026-11-02
+
+- Removed 504 bytes of CSS declarations that were overridden by later theme-token rules; effective font, focus, theme surface, settings shadow and backdrop behavior are preserved.
+- CSS brace balance is zero. No browser visual verification is claimed; include this change in the next exact-head Quality/Chromium run.
+
