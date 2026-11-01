@@ -515,7 +515,8 @@ landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   latest_code_test_head: "b6b4cd612e288f0ad2c0e23419a562b06b491ef5"
-  latest_documented_head: "5cc311d1bb2e238fcb8f146beaeaec2db41968bb"
+  branch_comparison: "476 ahead / 4 behind main; merge base e78a73b25725bfa63370d9946887cbbacbf51b82; four main-side commits overlap the shared UI checklist only."
+  latest_documented_head: "dc56c16e42c0b8bb218e4763333bb633864b731e (latest journal commit before this state refresh)"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
     memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
@@ -559,6 +560,7 @@ landing_ui_v2_pr131_2026_10_31:
     theme_aware_status_colors: "bca8fa892e95bd35db812382afdadbba41813265"
     base_token_contrast: "4bd40770fd3446e5280e719644394882c9148daeb"
   verification:
+    source_syntax: "V8 syntax parse passed for assets/js/app.js, tests/e2e/app.spec.mjs and scripts/quality-agents.mjs (module imports/shebang adapted for parser); app.css brace balance is zero; metadata assertions are present. This is not an executed test suite."
     exact_head: "b6b4cd612e288f0ad2c0e23419a562b06b491ef5 (latest code/test checkpoint after aLandi page metadata contract; documentation commits may advance PR HEAD; exact-head Quality/Chromium pending)"
     exact_head_workflow_runs: "Quality #1126 on prior SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL 101 passed / 18 failed; artifact 13077583320. No exact-head Quality/Chromium run visible for source/test checkpoint b6b4cd612e288f0ad2c0e23419a562b06b491ef5; latest observed Provenance Gate pass predates current UI changes."
     gateway_pytest: "not executed in this environment"
@@ -569,7 +571,7 @@ landing_ui_v2_pr131_2026_10_31:
     merge: "requires explicit owner approval"
     deploy: "requires explicit owner approval"
     main: "V1 baseline remains untouched"
-  next: "Finish the integrated UI source/test audit, then obtain Independent Quality Sentinels/Chromium on exact PR #131 branch head latest PR #131 head; do not rerun #1126 and treat it as current. Native iPhone Safari, VoiceOver and measured WCAG remain manual. PR #131 stays open/unmerged; no deployment or destructive cleanup."
+  next: "Finish the integrated UI/documentation source audit, refresh the parallel continuity documentation in PR #132, then obtain Independent Quality Sentinels/Chromium on the exact current PR #131 head; do not treat #1126 as current evidence. Perform the planned repository hygiene audit at the next major-slice boundary; delete nothing without dependency/PR/ancestry evidence. Native iPhone Safari, VoiceOver and full component-level WCAG remain manual. PR #131 stays open/unmerged; no deployment."
 
 # Landing UI V2.0 — naming continuation
 landing_v2_aservi:
