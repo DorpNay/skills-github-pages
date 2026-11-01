@@ -124,7 +124,7 @@
 PR #131 now extends the Graphify Code-Only Pilot path filters to `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html` for pull requests and main pushes. This closes a coverage gap created when the app runtime and styles were externalized. The resulting Graphify run/artifact is still pending confirmation. No branch deletion or repository settings change was performed.
 
 
-## 9. Snapshot инвентаризации — 2026-11-02
+## 11. Подробный snapshot инвентаризации — 2026-11-02
 
 **Проверенная база:** main SHA 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. В GitHub branch listing получено 126 веток (100 в первой странице + 26 во второй); открытых PR — 9 (#124–132), закрытых PR — 100. Для всех 100 закрытых PR получены metadata с head branch и merged flag.
 
