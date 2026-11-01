@@ -459,3 +459,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Live PR #131 head before this state refresh: f35e766eb72ff650852f508460f6e339230e123a. Compare against main is 486 ahead / 4 behind; merge base e78a73b25725bfa63370d9946887cbbacbf51b82.
 - The independent continuity branch PR #132 now also carries the V2 implementation ledger, the aServi terminology corrections and the repository hygiene runbook. It remains a draft docs-only PR and is not test evidence for V2 source.
 - No branch synchronization, rebase, merge, deletion or deployment was performed.
+
+
+### 2026-11-02 — Repository hygiene: read-only inventory
+- GitHub API inventory: 126 branch refs, 9 open PRs (#124–#132); 117 refs are not heads of open PRs and remain unclassified, not deletion candidates.
+- `delete_branch_on_merge=false`; repository rulesets API returned an empty list. Classic `main` protection could not be read (integration 403), so state is unknown.
+- No standard `CODEOWNERS`, `SECURITY.md` or Dependabot config files found; account-level security settings remain unverified.
+- PR #131 exact-head Quality/Chromium not found. Provenance #41336870473 passed on the audit snapshot; Quality #1126 (101 passed / 18 failed) is stale.
+- No branch/file/artifact deletion, settings change, merge, rebase, force-push or deployment. Full per-branch ancestry/reference review and owner-side settings review remain open. See `docs/REPOSITORY_HYGIENE_RU.md`.
