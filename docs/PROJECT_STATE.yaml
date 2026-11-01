@@ -10,7 +10,7 @@ project_state:
     merged_changes: "PR #121 first free landing V1 and client UX; PR #122 Gateway liveness/readiness probes; #120 sidebar hierarchy/theme-language sync; #119 provider separation/project scope/composer preference; #118 chat import/export; #113 immutable Actions pins; #115 modal scrim/outside-tap; #114 empty-by-default prompt/context budget; #71 mobile composer; #84/#81/#83/#82 infrastructure foundations; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
     exact_head_checks: "PR #121 head e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b: Dead Code Audit, Project State Freshness, Provenance, Lite Gateway Tests, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. PR #122 head 94d871dbf76a5364ebb3c61d86cc763affa5eaa1: Gateway Tests, Dead Code Audit, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. PR #123 head fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222: Gateway Tests, Dead Code Audit, Freshness, Provenance, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. Merge commits: #121 f4d880f9648989f4fe48ddd2284220b3606c3b86; #122 fd4f0a105183feb23e0f4e4697446235de9ffe9a. No independent post-merge Pages deployment result was available."
     runtime_boundary: "PR-head published-site browser smoke verified; post-merge Pages deployment on the exact merge commit remains unverified. Native iPhone, live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
-    next: "Run Independent Quality Sentinels on current code/test HEAD 929ebcf20db87eca949c6f5a386c16e75f2856a1; inspect exact-head Chromium results and diagnostics, fix only confirmed remaining defects, then continue 8.1–8.17 manual acceptance. PR is open/unmerged; investigate GitHub mergeable_state=dirty separately. No deployment."
+    next: "Finish remaining source-level UI audit, then obtain Independent Quality Sentinels/Chromium on exact PR #131 head 901b9c343dbddd2453605b03ec77fd5e893c608c; do not rerun #1126 and treat it as current. Native iPhone Safari, VoiceOver and measured WCAG remain manual. PR #131 stays open/unmerged; no deployment or destructive cleanup."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -80,7 +80,7 @@ ui_v2_track:
     P2: "Long-list/message/scroll/popover stress; capability menu truthfulness; Tavily/keyless-search audit; provider/gateway mock error and secret-redaction checks."
   verification:
     exact_head_ci: "Manual run #41285658893 is on older SHA d822cb6, not current head. Its Context/Integrity failures were traced to stale sentinel expectations and corrected in 1b30cae/5d01a7d. Exact-head rerun not yet visible; do not claim green CI."
-    playwright_chromium: "Run #1126 completed on 7cdf35d; 101 passed, 18 failed. Jekyll/Security/Static Analysis/Context/Integrity passed; Chromium failed and published-site smoke skipped; diagnostics artifact 13077583320. Corrective batch updates aLandi aServi test setup, 320px header, disabled high-contrast specificity, Research Studio close/history, sidebar/memory/modal test assumptions. Exact-head rerun pending on 929ebcf; CI retains 2 workers and 25m job timeout."
+    playwright_chromium: "No exact-head Chromium run for 901b9c343dbddd2453605b03ec77fd5e893c608c. Run #1126 is stale evidence only (101 passed / 18 failed). Provider/audio/PDF fixtures, duplicate close selector, Research Studio interactions, narrow header and contrast regressions were corrected after that run. app.js syntax parse passed; extracted CSS brace counts balanced; browser behavior remains unverified."
     native_mobile_voiceover: "Not executed."
     wcag_contrast_ratios: "Not measured; computed-style assertions are not conformance evidence."
     live_gateway_provider: "Not verified; live smoke requires explicit owner approval."
@@ -558,8 +558,8 @@ landing_ui_v2_pr131_2026_10_31:
     theme_aware_status_colors: "bca8fa892e95bd35db812382afdadbba41813265"
     base_token_contrast: "4bd40770fd3446e5280e719644394882c9148daeb"
   verification:
-    exact_head: "7cdf35d581d9d6bca39256e67a0b0db6083e486c (Quality run #1126 / 41291438804; predates current corrective batch)"
-    exact_head_workflow_runs: "Quality #1126 on 7cdf35d: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL with 101 passed, 18 failed; diagnostics artifact 13077583320; published-site smoke skipped. Current code/test head 847f1bee has not been run by Quality."
+    exact_head: "901b9c343dbddd2453605b03ec77fd5e893c608c (aServi naming, external CSS, ordered defer; exact-head Quality pending)"
+    exact_head_workflow_runs: "Quality #1126 on prior SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL 101 passed / 18 failed; artifact 13077583320. Current PR code/test head 901b9c343dbddd2453605b03ec77fd5e893c608c has no exact-head Quality/Chromium run visible. Latest observed Provenance Gate pass predates this head."
     gateway_pytest: "not executed in this environment"
     playwright_chromium: "Quality #1126 on prior SHA 7cdf35d failed at 101 passed / 18 failed; current code/test head 95b50bc6 has not yet been executed by Quality. Syntax parsing passed for index.md inline JS, changed E2E modules and Playwright config; no browser pass claimed."
     native_mobile_voiceover: "not executed"
@@ -573,5 +573,5 @@ landing_ui_v2_pr131_2026_10_31:
 # Landing UI V2.0 — naming continuation
 landing_v2_aservi:
   branch: "feat/landing-v1-accessibility-responsive-20261031"
-  status: "Primary server route renamed to aLandi aServi in UI, DOM action identifiers, JavaScript handlers and E2E/static checks. Legacy ai_alandi_cloud_* localStorage keys intentionally retained for backwards compatibility; Cloudflare is not renamed. Exact-head browser checks pending."
+  status: "Primary server route renamed to aLandi aServi in UI, DOM actions, JavaScript handlers, E2E and Quality contracts. App and landing CSS extracted to cacheable assets; Marked/DOMPurify ordered with defer. Legacy ai_alandi_cloud_* localStorage keys retained for backwards compatibility; Cloudflare unchanged. Exact-head browser checks pending."
   future_storage_name: "aLandi aCloudi reserved for a separate information-storage product; not implemented."
