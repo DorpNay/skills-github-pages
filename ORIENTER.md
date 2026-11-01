@@ -14,17 +14,16 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Continue with P0 exact-head Quality/Chromium evidence, then manual P1 acceptance. All completion claims must be tied to current code and test evidence.
 - A separate draft documentation safety PR #132 (`docs/landing-v2-continuity-backup-20261101`) preserves this checkpoint outside PR #131; it is not merged.
 
-## Current working checkpoint — 2026-10-30
+## Current working checkpoint — 2026-11-01
 
-- **Current main SHA:** `fd4f0a105183feb23e0f4e4697446235de9ffe9a` — PR #121 (first free landing V1/client UX) and PR #122 (Gateway liveness/readiness) are merged.
-- **PR #121:** merged at `f4d880f9648989f4fe48ddd2284220b3606c3b86`; exact head `e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b`; all six workflow groups passed, including Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code.
-- **PR #122:** merged at `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; exact head `94d871dbf76a5364ebb3c61d86cc763affa5eaa1`; Gateway, Quality/Chromium/Jekyll/published-site smoke, Graphify and Dead Code passed.
-- **Open PR queue:** PR #123 is the only active reconciliation PR; exact head `fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222` passed all six workflow groups and is ready to merge. It is excluded from its own freshness snapshot. **Open issue queue:** issue #111 only; it remains open for owner-only/live-host gates and must not be closed just to reach zero.
-- **V1 freeze:** no new product capabilities or runtime components in the first landing. Improve only inside the selected HTML/CSS/JavaScript + Jekyll/GitHub Pages and existing FastAPI/Ollama stack: UX, polish, accessibility, reliability, performance, security, tests and documentation.
-- **Canonical UI checklist:** `docs/V1_UI_FINALIZATION_RU.md`; broader release and future backlog: `docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`; detailed remaining visual work: `docs/LANDING_UX_POLISH_BACKLOG_RU.md`.
-- **Agent/helper boundary:** 64 roles are logical profiles, not 64 processes. A manual opt-in memory helper exists behind operator-configured `ALANDI_HELPER_MODEL`; general helper dispatch/model selection is not implemented. Use the synthetic benchmark harness only as a transport/latency smoke, not quality proof.
-- **Not verified:** post-merge Pages deployment on the exact merge commit; native iPhone Safari/VoiceOver; live VPS/Tunnel/Ollama/provider credentials; target-host model RAM/latency/quality; real voice runtime; production RAG corpus; OAuth/Drive; arbitrary-code sandbox.
-- **Canonical detailed tracker:** `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`. It contains the chronology, legacy-branch triage, V1 freeze and per-step completion markers.
+- **Current main SHA:** `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1` — documentation-only commit marking owner requirements 8.1–8.17 as V2.0 priorities. Last functional main checkpoint remains `fd4f0a105183feb23e0f4e4697446235de9ffe9a`. V1 remains the stable main baseline; V2 implementation is not merged.
+- **Open PR queue:** #124, #125, #126, #127, #128, #129, #130, #131. This snapshot is for draft backup PR #132 and excludes only #132 from its own comparison. PR #131 is Landing V2 implementation, open/unmerged and owner-controlled; PR #132 is a documentation-only continuity backup, draft/open/unmerged.
+- **Open issues:** #111 only; it remains the consolidated owner/live-host release gate.
+- **PR #131:** branch `feat/landing-v1-accessibility-responsive-20261031`; V2 requirements 8.1–8.17; current implementation ledger and consolidated UI backlog are on that branch. Do not merge, close, retarget, force-update or deploy without the owner's explicit command.
+- **Gateway evidence for PR #131:** Actions run #640 passed compileall, manifest/INTEL, `pytest gateway/tests`, deploy preflight and six-layer offline evaluation on `6f7fde485b2b13aecc50523b20785e0ac615d2ad`; no `gateway/**` changes followed through the audited PR head. Exact-head Quality/Chromium remains unverified.
+- **PR #131 branch health:** 199 commits ahead / 4 behind main at the latest audit; GitHub reports `mergeable=false`. Four main-side commits modify only `docs/V1_UI_FINALIZATION_RU.md`; compare content before any synchronization. No sync/rebase/merge has been performed.
+- **Manual gates still open:** native iPhone Safari/VoiceOver, measured WCAG contrast ratios, visual screenshot review, and live VPS/Tunnel/Ollama/provider verification.
+- **Freshness snapshot:** `docs/project-state-snapshot.json` records main `0a1f764f...`, open PRs #124–#131, and open issue #111. This draft PR #132 is excluded from its own PR queue comparison.
 
 ## First-read order
 
