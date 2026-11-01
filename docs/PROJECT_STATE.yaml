@@ -64,8 +64,8 @@ ui_v2_track:
   pull_request: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   status: "open_unmerged_owner_hold"
-  latest_documentation_head: "c1c021a7a25e09e1afa22d826c3dbfc32a637354; before this state refresh"
-  latest_code_test_head: "6dcd78485eaf6542190265b9a3a3d30491677dd4; aServi stable storage contract and provider-separation E2E contract updated; not browser-verified"
+  latest_documentation_head: "4f4e187f6bb560ca3e928ab7a9f3c1e2e9c34ec4"
+  latest_code_test_head: "69ff6ad8b574fdcd05e9c292db2a6f02448996aa; Research Studio entry-point contract and cancelled sidebar swipe regression updated; not browser-verified"
   latest_quality_harness_head: "d94d842608c07aa8def4b5fdc89ed95b80524034; harness not changed in this pass"
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0 and requirements 8.1-8.17"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
@@ -85,10 +85,10 @@ ui_v2_track:
     wcag_contrast_ratios: "Not measured; computed-style assertions are not conformance evidence."
     live_gateway_provider: "Not verified; live smoke requires explicit owner approval."
   current_main_sha: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
-  branch_divergence: "GitHub compare main...feat/landing-v1-accessibility-responsive-20261031 at c87bc1c49a900c2249c44a5c5e697f2b0267bd84: ahead_by=430, behind_by=4, merge_base=e78a73b25725bfa63370d9946887cbbacbf51b82. Main's four post-base commits touch only docs/V1_UI_FINALIZATION_RU.md (210 additions, 6 deletions), overlapping the PR's unified 8.0 + 8.1–8.17 consolidation. No code-file conflict identified. Do not rebase/merge without owner approval."
-  current_work_head: "c1c021a7a25e09e1afa22d826c3dbfc32a637354"
-  current_work_summary: "aLandi aServi terminology and DOM/CSS contracts updated; browser runtime and app/landing CSS extracted to cacheable assets; Marked/DOMPurify use ordered defer; legacy ai_alandi_cloud_* localStorage keys intentionally retained behind aServi code identifiers for saved-setting compatibility; inherited pre-8 UI backlog made explicit. Cloudflare and generic cloud-infrastructure wording remain distinct concepts. Full tests intentionally deferred until source pass is complete."
-  current_work_validation: "V8 parse-only syntax check passed for extracted assets/js/app.js; source-level DOM/E2E selector audit found no mismatches. App/landing CSS brace balance checked; browser behavior not executed. Jekyll build, focused Chromium, full Quality/Freshness/Provenance/Graphify/Dead Code not run yet. Do not claim runtime extraction or rename browser-verified."
+  branch_divergence: "GitHub compare main...feat/landing-v1-accessibility-responsive-20261031 at c87bc1c49a900c2249c44a5c5e697f2b0267bd84: ahead_by=468, behind_by=4, merge_base=e78a73b25725bfa63370d9946887cbbacbf51b82. Main's four post-base commits touch only docs/V1_UI_FINALIZATION_RU.md (210 additions, 6 deletions), overlapping the PR's unified 8.0 + 8.1–8.17 consolidation. No code-file conflict identified. Do not rebase/merge without owner approval."
+  current_work_head: "4f4e187f6bb560ca3e928ab7a9f3c1e2e9c34ec4"
+  current_work_summary: "aLandi aServi terminology and DOM/CSS contracts updated; browser runtime and app/landing CSS extracted to cacheable assets; Marked/DOMPurify use ordered defer; legacy ai_alandi_cloud_* localStorage keys intentionally retained behind aServi code identifiers for saved-setting compatibility; inherited pre-8 UI backlog made explicit. Research Studio E2E now matches its deep-research-only entry point; sidebar swipe regression covers cancelled touch gestures. Cloudflare and generic cloud-infrastructure wording remain distinct concepts. Full tests intentionally deferred until source pass is complete."
+  current_work_validation: "Prior V8 parse-only syntax check passed for extracted assets/js/app.js; current test edits were reviewed against index.md and swipe handlers but have not yet been syntax-parsed or executed. App/landing CSS brace balance checked; browser behavior not executed. Jekyll build, focused Chromium, full Quality/Freshness/Provenance/Graphify/Dead Code not run yet. Do not claim runtime extraction or rename browser-verified."
   merge_deployment: "Do not merge or deploy without explicit owner approval."
 
 current_v016_track:
