@@ -29,7 +29,7 @@
 | **8.11 Theme/language group** | Theme and language controls are grouped in the header, persistent and sized for touch/keyboard use. | Narrow viewport and keyboard review. | [~] |
 | **8.12 Remove “Серверная память (Эксперимент)”** | Browser UI/client dispatch, per-chat opt-in and `/v1/memory/graph/*` routes/flags removed; local/private/shared/project-local memory, conversation delta sync and RAG remain. Internal `MemoryManager` is Graphify-only; existing SQLite data is untouched. | Execute exact-head Gateway + Chromium regressions; confirm no legacy UI or client calls. | [~] |
 | **8.13 Explicit project context handoff** | Project settings list existing chats and queue the selected project's context for the chosen chat's next request; no new chat or project-membership change; five-project cap and one-shot consumption retained. Pending handoff is session-only until sent. | Execute non-current-chat/no-cross-chat/one-shot E2E and decide whether pending handoff should survive reload. | [~] |
-| **8.14 Touch selection** | Targeted user-select/-webkit-user-select/touch-action rules keep controls from selecting the whole interface while message text and inputs remain selectable; horizontal sidebar swipe is separated from vertical scrolling. | Native iOS Safari long-press, VoiceOver and gesture tests remain. | [~] |
+| **8.14 Touch selection** | Targeted user-select/-webkit-user-select/touch-action rules keep controls from selecting the whole interface while message text, expanded viewer content and editable fields remain selectable; horizontal sidebar swipe is separated from vertical scrolling. | Chromium regression now checks buttons, disclosures, input fields, assistant text and expanded viewer selection styles; native iOS Safari long-press, VoiceOver and gesture tests remain. | [~] |
 | **8.15 Status/progress** | Status and toast elements expose neutral/info/success/warning/error data states with restrained semantic colors; status text and ticker are centered; no synthetic progress added. | Execute status/reduced-motion checks and review contrast in both themes. | [~] |
 | **8.16 Button typography/icon-first** | Shared font/line-height/spacing rules; expanded-view copy/speech actions are icon-first with accessible labels and tooltips; ambiguous actions retain text. | Normalize remaining one-off buttons and verify tooltips/target sizes across all panels. | [~] |
 | **8.17 Adjustable text readability** | Persistent text scale and standard/high-contrast preference have a live preview/reset and apply to light/dark themes; high contrast also raises secondary/disabled/link/error/status text. | Run contrast checks for all states and confirm readability on actual devices. | [~] |
@@ -154,3 +154,11 @@
 
 - Browser history entries for chat-action dialogs now retain the target chat and action mode. Forward reconstructs the dialog against the existing chat instead of reopening an empty shell.
 - Added an E2E scenario for Back → Forward → Back on a project-assignment dialog. Exact-head Chromium remains pending.
+
+
+### Follow-up — touch selection regression (8.14, 2026-11-01)
+
+- Expanded the Playwright computed-style regression beyond the send button: it now checks button/disclosure non-selection and manipulation touch action, while input, assistant message text and expanded message viewer remain selectable (including the WebKit-prefixed property).
+- Test commit: `64a1a811bd5531d8095245d649829fd838486821`. This is source-level coverage only; Chromium and native iOS Safari/VoiceOver have not been executed.
+- 8.13 source audit confirms explicit project-to-existing-chat handoff, no automatic project injection based on membership, unchanged chat membership/current chat, five-project cap, and one-shot consumption after successful send. Pending handoff is deliberately session-only; persistence across reload is not required by owner section 8.13 and is not being added without a product decision.
+- PR #131 remains open and unmerged; no deployment.
