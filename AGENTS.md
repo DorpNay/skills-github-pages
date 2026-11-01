@@ -42,3 +42,6 @@ Before any aLandi task:
 - Graphify is a dev-only navigation tool, not a runtime dependency. The pinned code-only workflow runs on relevant source/architecture changes and weekly. Latest main run `40637941303` built 988 nodes / 2780 edges across 60 source files (224 inline UI JS nodes, 14 SQL schema nodes, 23 RAG-module nodes); ten focused queries returned neighborhoods. Inspect the artifact/report and record coverage/limits on each use: some results truncate at the 700-token budget, nine Playwright E2E files yielded no symbols, and community labels are generic. Artifacts expire after seven days and are not committed.
 - Do not commit generated graph artifacts or add runtime dependencies unless measured benefit is clear.
 - GitIngest = text snapshot; GitMCP = MCP access to a specific upstream; GitReverse = synthetic repository prompt. These are not interchangeable.
+
+
+- Graphify path coverage includes extracted UI assets: `.github/workflows/graphify-pilot.yml` watches `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html` for PR and main-push events. Verify the artifact manifest includes the current app runtime and styles before using its graph for architecture conclusions; an untriggered or partial graph is not current evidence.
