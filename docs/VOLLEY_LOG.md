@@ -118,3 +118,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Exact-head Quality/Chromium and published-site checks are not currently visible from the available Actions status lookup. Native iPhone Safari/VoiceOver, WCAG contrast measurement and manual visual acceptance remain pending.
 - PR #131 is 197 ahead / 4 behind main and reports `mergeable=false`; no blind sync/force update. Inspect the four main-side commits before any synchronization.
 - Backup pointers are in `ORIENTER.md` and `docs/PROJECT_STATE.yaml` on this continuity branch. This record is a safety copy, not evidence that V2 has shipped.
+
+
+### 2026-11-01 — continuity backup refreshed after P0 audit
+
+- Updated the separate continuity branch with PR #131 head `7958ad24b987819a568a7755dfd243f740c0e240`, current divergence (199 ahead / 4 behind main) and the separate draft safety PR #132.
+- Gateway run #640 remains the only confirmed automated pass for this stage. Current-head Quality/Chromium and combined status still return no visible entries; no browser pass is claimed.
+- PR #131 remains open/unmerged; PR #132 is draft/open/unmerged. Neither has been merged. No deployment performed.
