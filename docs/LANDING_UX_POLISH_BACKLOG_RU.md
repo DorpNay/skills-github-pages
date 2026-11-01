@@ -10,6 +10,7 @@
 ## P0 — автоматическая проверка точного HEAD
 
 - [ ] Запустить focused Playwright/Chromium regressions для 8.1–8.17 и исправить подтверждённые падения.
+- [ ] Установить, почему exact-head GitHub Actions runs/statuses не видны, хотя Quality Sentinels запускается на pull_request, а Gateway Tests — на PR с изменениями gateway/**; получить реальные результаты.
 - [ ] Запустить полный Quality (Gateway, Security, Integrity, Context, Jekyll, Chromium), Freshness, Provenance, Graphify и Dead Code, если workflows доступны.
 - [ ] Проверить тесты удаления experimental server-memory graph bridge и secret-redaction; тестовый код добавлен, но ещё не выполнялся.
 - [ ] Подтвердить, что E2E охватывает sidebar/chat restore, responsive header, settings disclosures, Back/Forward/Escape, modal lifecycle, message actions, explicit project handoff, touch selection, status/reduced-motion и readability.
