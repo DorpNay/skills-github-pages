@@ -478,17 +478,24 @@ test('sidebar closes on a horizontal touch swipe without consuming vertical scro
   await page.locator('#projectNavToggle').click();
   await expect(page.locator('#projectNavigationList')).toBeVisible();
 
-  const dispatchSwipe = (start, end) => page.locator('#sidebar').evaluate((sidebar, points) => {
+  const dispatchSwipe = (start, end, cancelled = false) => page.locator('#sidebar').evaluate((sidebar, points) => {
     const dispatch = (type, point, property) => {
       const event = new Event(type, { bubbles: true, cancelable: true });
       Object.defineProperty(event, property, { value: [{ clientX: point.x, clientY: point.y }] });
       sidebar.dispatchEvent(event);
     };
     dispatch('touchstart', points.start, 'touches');
-    dispatch('touchend', points.end, 'changedTouches');
-  }, { start, end });
+    if (points.cancelled) {
+      dispatch('touchcancel', points.end, 'changedTouches');
+      dispatch('touchend', points.end, 'changedTouches');
+    } else {
+      dispatch('touchend', points.end, 'changedTouches');
+    }
+  }, { start, end, cancelled });
 
   await dispatchSwipe({ x: 300, y: 420 }, { x: 285, y: 510 });
+  await expect(page.locator('#sidebar')).not.toHaveClass(/-translate-x-full/);
+  await dispatchSwipe({ x: 300, y: 420 }, { x: 190, y: 425 }, true);
   await expect(page.locator('#sidebar')).not.toHaveClass(/-translate-x-full/);
   await dispatchSwipe({ x: 300, y: 420 }, { x: 190, y: 425 });
   await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
