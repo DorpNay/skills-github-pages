@@ -159,3 +159,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - These are main/V1 + documentation-backup checks only. They do not test Landing V2 code in PR #131.
 - PR #131 remains open/unmerged at `d822cb623b2a72642921654a04e6c9d988091834`, 203 ahead / 4 behind main, mergeable=false. Its exact-head Quality/Chromium run remains unavailable.
 - The machine-readable project state now separates prior Quality success from current Freshness/Provenance success and pending Quality. No source code, directory layout, or branch history was rewritten.
+
+
+### Correction — Quality run #1118 cancelled before execution (2026-11-01)
+
+- Rechecked run #1118 for backup head `2d9f875398da5f4caa8703fc630db9fa0f2e6cb9`: GitHub reports `cancelled`; the run exposed no jobs, so no Chromium or Quality result exists for that head.
+- The cancellation occurred after subsequent documentation-only commits advanced the backup branch. The latest backup branch head is now recorded in PR #132 metadata; no exact-head Quality result is claimed.
+- Freshness #262 and Provenance #804 remain successful on `2d9f875...`. Earlier Quality #1114 remains successful on `67adda8...` with 98 Chromium tests and one published-site smoke, but it is not current-head evidence.
+- PR #131 exact-head Quality/Chromium remains unverified. Do not transfer backup-branch CI evidence to V2.
