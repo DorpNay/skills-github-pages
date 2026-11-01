@@ -314,8 +314,10 @@
       renderNextToast();
     }
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) pauseToast();
-      else resumeToast();
+      if (document.hidden) { pauseToast(); return; }
+      const node = $('toast');
+      if (node && (node.matches(':hover') || node.contains(document.activeElement))) return;
+      resumeToast();
     });
     document.addEventListener('DOMContentLoaded', () => {
       const node = $('toast');
