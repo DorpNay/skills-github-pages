@@ -2,6 +2,8 @@
 (() => {
     'use strict';
 
+    const ASERVI_STORAGE = Object.freeze({ baseUrl: 'ai_alandi_aservi_base_url', model: 'ai_alandi_aservi_model', connection: 'ai_alandi_aservi_connection_v1', migration: 'ai_alandi_aservi_storage_migrated_v1' });
+    const LEGACY_ASERVI_STORAGE = Object.freeze({ baseUrl: ASERVI_STORAGE.baseUrl, model: ASERVI_STORAGE.model, connection: ASERVI_STORAGE.connection });
     const STORAGE = {
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
@@ -272,6 +274,19 @@
         return false;
       }
     }
+    function migrateAServiStorage() {
+      if (safeGet(ASERVI_STORAGE.migration) === '1') return;
+      let complete = true;
+      for (const key of ['baseUrl', 'model', 'connection']) {
+        const target = ASERVI_STORAGE[key];
+        const legacy = LEGACY_ASERVI_STORAGE[key];
+        if (safeGet(target) !== null) continue;
+        const value = safeGet(legacy);
+        if (value !== null && !safeSet(target, value)) complete = false;
+      }
+      if (complete) safeSet(ASERVI_STORAGE.migration, '1');
+    }
+    migrateAServiStorage();
     function createChat(title = 'Новый чат', messages = [], projectId = null) {
       return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, privateMemoryUsed: false, processingMode: 'fast', searchMode: 'normal', multiAgentEnabled: false, skillPreset: 'auto', customSkillName:'', customSkillInstructions:'', customSkillOutput:'', skillGoal:'planning', skillOutputMode:'summary', agentTeamSize:4, agentTeamScenario:'general', agentTeamCustomScenario:'', agentRolePreset:'balanced', agentCustomRoles:'' };
     }
@@ -1734,8 +1749,8 @@
       applyAppearance($('uiTheme').value, $('uiMotion').value);
       applyReadabilityPreferences(safeGet('ai_ui_text_scale_v1')||'100',safeGet('ai_ui_text_contrast_v1')||'normal');
       const savedProvider=safeGet(STORAGE.provider);
-      $('aserviBaseUrl').value=safeGet('ai_alandi_cloud_base_url')||(savedProvider==='alandi'?safeGet(STORAGE.baseUrl):'')||'';
-      $('aserviModel').value=safeGet('ai_alandi_cloud_model')||(savedProvider==='alandi'?safeGet(STORAGE.model):'')||'';
+      $('aserviBaseUrl').value=safeGet(ASERVI_STORAGE.baseUrl)||(savedProvider==='alandi'?safeGet(STORAGE.baseUrl):'')||'';
+      $('aserviModel').value=safeGet(ASERVI_STORAGE.model)||(savedProvider==='alandi'?safeGet(STORAGE.model):'')||'';
       $('aserviApiKey').value=safeGet(providerKeyStorage('alandi'))||'';
       if (savedProvider && savedProvider !== 'gemini') {
         const legacyKey = safeGet(STORAGE.apiKey);
@@ -2243,7 +2258,7 @@
       const settingsStillCurrent=()=>{const current=getAServiSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
       if(!baseUrl||!model||!key){setAServiStatus('disconnected');return;}
       const formatError=validateAServiBaseUrl(baseUrl);if(formatError){setAServiFieldError('aserviBaseUrl',formatError);setAServiStatus('disconnected');return;}
-      let marker=null;try{marker=JSON.parse(safeGet('ai_alandi_cloud_connection_v1')||'null');}catch(_){}
+      let marker=null;try{marker=JSON.parse(safeGet(ASERVI_STORAGE.connection)||'null');}catch(_){}
       const fingerprint=await providerKeyFingerprint(key);
       if(!settingsStillCurrent())return;
       if(!marker?.ok||marker.baseUrl!==baseUrl||marker.model!==model||marker.keyFingerprint!==fingerprint){setAServiStatus('disconnected');return;}
@@ -2383,8 +2398,8 @@
         if(key){safeSet(providerKeyStorage(provider),key);if(provider==='gemini')safeSet(STORAGE.apiKey,key);}
         safeSet('ai_provider_connection_'+provider,JSON.stringify({ok:true,baseUrl,model:result.candidateModel,keyFingerprint:fingerprint,requestedModel:model,testedAt:new Date().toISOString()}));
         if(provider==='alandi'&&key&&isPrimaryAServiSettingsCurrent()){
-          safeSet('ai_alandi_cloud_base_url',baseUrl);safeSet('ai_alandi_cloud_model',result.candidateModel);
-          safeSet('ai_alandi_cloud_connection_v1',JSON.stringify({ok:true,baseUrl,model:result.candidateModel,keyFingerprint:fingerprint,testedAt:new Date().toISOString()}));
+          safeSet(ASERVI_STORAGE.baseUrl,baseUrl);safeSet(ASERVI_STORAGE.model,result.candidateModel);
+          safeSet(ASERVI_STORAGE.connection,JSON.stringify({ok:true,baseUrl,model:result.candidateModel,keyFingerprint:fingerprint,testedAt:new Date().toISOString()}));
           if($('aserviBaseUrl')){$('aserviBaseUrl').value=baseUrl;$('aserviModel').value=result.candidateModel;$('aserviApiKey').value=key;}
           // A model probe alone is not the full aservi-card health check; never show green before refreshAServiStatus validates /healthz.
           setAServiStatus('checking',aserviText('modelHealth'));
@@ -2400,7 +2415,7 @@
           return;
         }
         safeSet('ai_provider_connection_'+provider,'');
-        if(provider==='alandi'&&isPrimaryAServiSettingsCurrent())safeSet('ai_alandi_cloud_connection_v1','');
+        if(provider==='alandi'&&isPrimaryAServiSettingsCurrent())safeSet(ASERVI_STORAGE.connection,'');
         updateApiKeyLamp('error','Проверка не удалась: '+String(error?.message||error).slice(0,220));
         showToast('Проверка не удалась: сеть, CORS или формат ответа.','error');
       }finally{
@@ -2451,11 +2466,11 @@
           setAServiStatus('disconnected',aserviText('settingsChanged'));
           return;
         }
-        safeSet('ai_alandi_cloud_base_url',baseUrl);
-        safeSet('ai_alandi_cloud_model',model);safeSet(providerKeyStorage('alandi'),key);
+        safeSet(ASERVI_STORAGE.baseUrl,baseUrl);
+        safeSet(ASERVI_STORAGE.model,model);safeSet(providerKeyStorage('alandi'),key);
         safeSet(STORAGE.provider,'alandi');safeSet(STORAGE.baseUrl,baseUrl);safeSet(STORAGE.model,model);
         const verified={ok:true,baseUrl,model,keyFingerprint:fingerprint,testedAt:new Date().toISOString()};
-        safeSet('ai_alandi_cloud_connection_v1',JSON.stringify(verified));
+        safeSet(ASERVI_STORAGE.connection,JSON.stringify(verified));
         safeSet('ai_provider_connection_alandi',JSON.stringify(verified));
         $('providerPreset').value='';applyProviderPreset('alandi',true);$('baseUrl').value=baseUrl;$('modelName').value=model;$('apiKey').value=key;
         setAServiFieldConnection('connected');setAServiStatus('connected');
@@ -2465,7 +2480,7 @@
           setAServiStatus('disconnected','Настройки изменились во время проверки. Результат не сохранён.');
           return;
         }
-        safeSet('ai_alandi_cloud_connection_v1','');safeSet('ai_provider_connection_alandi','');
+        safeSet(ASERVI_STORAGE.connection,'');safeSet('ai_provider_connection_alandi','');
         setAServiStatus('disconnected');
         setAServiFieldError('aserviApiKey',aserviText('connectionFailed'));
       }finally{
@@ -2482,7 +2497,7 @@
         field.value=text.trim();field.dispatchEvent(new Event('input',{bubbles:true}));
         field.focus();field.setSelectionRange?.(field.value.length,field.value.length);
         if(id==='apiKey')scheduleProviderAutoConnect();
-        else if(id==='aserviApiKey'){safeSet('ai_alandi_cloud_connection_v1','');setAServiFieldError('aserviApiKey');setAServiStatus('disconnected');scheduleAServiAutoConnect();}
+        else if(id==='aserviApiKey'){safeSet(ASERVI_STORAGE.connection,'');setAServiFieldError('aserviApiKey');setAServiStatus('disconnected');scheduleAServiAutoConnect();}
         showToast('Текст вставлен.');
       }catch(_){field.focus();showToast('Браузер не разрешил чтение буфера. Нажми Ctrl+V в поле.','error');}
     }
@@ -4494,16 +4509,16 @@
     });
     $('apiKey').addEventListener('input',()=>{if(currentProvider()!=='pollinations')safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();scheduleProviderAutoConnect();});
     $('baseUrl').addEventListener('input',()=>{safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();scheduleProviderAutoConnect();});
-    $('aserviBaseUrl').addEventListener('input',()=>{const value=$('aserviBaseUrl').value.trim();safeSet('ai_alandi_cloud_base_url',value);safeSet('ai_alandi_cloud_connection_v1','');setAServiFieldError('aserviBaseUrl',validateAServiBaseUrl(value));setAServiStatus('disconnected');scheduleAServiAutoConnect();});
-    $('aserviModel').addEventListener('input',()=>{safeSet('ai_alandi_cloud_model',$('aserviModel').value.trim());safeSet('ai_alandi_cloud_connection_v1','');setAServiFieldError('aserviModel');setAServiStatus('disconnected');scheduleAServiAutoConnect();});
-    $('aserviApiKey').addEventListener('input',()=>{safeSet('ai_alandi_cloud_connection_v1','');setAServiFieldError('aserviApiKey');setAServiStatus('disconnected');scheduleAServiAutoConnect();});
+    $('aserviBaseUrl').addEventListener('input',()=>{const value=$('aserviBaseUrl').value.trim();safeSet(ASERVI_STORAGE.baseUrl,value);safeSet(ASERVI_STORAGE.connection,'');setAServiFieldError('aserviBaseUrl',validateAServiBaseUrl(value));setAServiStatus('disconnected');scheduleAServiAutoConnect();});
+    $('aserviModel').addEventListener('input',()=>{safeSet(ASERVI_STORAGE.model,$('aserviModel').value.trim());safeSet(ASERVI_STORAGE.connection,'');setAServiFieldError('aserviModel');setAServiStatus('disconnected');scheduleAServiAutoConnect();});
+    $('aserviApiKey').addEventListener('input',()=>{safeSet(ASERVI_STORAGE.connection,'');setAServiFieldError('aserviApiKey');setAServiStatus('disconnected');scheduleAServiAutoConnect();});
     $('textAttachmentInput').addEventListener('change',handleTextAttachment);
     $('mediaAttachmentInput').addEventListener('change',handleMediaAttachment);
     document.addEventListener('pointerdown',event=>{
       if(!$('attachmentMenu').classList.contains('hidden')&&!$('attachmentMenu').contains(event.target)&&!$('attachTextButton').contains(event.target))closeComposerPopovers();
       if(!$('requestContextMenu').classList.contains('hidden')&&!$('requestContextMenu').contains(event.target)&&!$('contextPickerButton').contains(event.target))closeComposerPopovers();
     });
-    $('providerPreset').addEventListener('change',()=>{safeSet('ai_alandi_cloud_connection_v1','');if(currentProvider()==='alandi'){const url=$('baseUrl').value.trim();if(url)$('aserviBaseUrl').value=url;}});
+    $('providerPreset').addEventListener('change',()=>{safeSet(ASERVI_STORAGE.connection,'');if(currentProvider()==='alandi'){const url=$('baseUrl').value.trim();if(url)$('aserviBaseUrl').value=url;}});
     $('modelSearch').addEventListener('input',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('settingsModal').addEventListener('click',event=>{if(event.target===$('settingsModal'))toggleSettings(false);});
     $('functionPanelModal').addEventListener('click',event=>{if(event.target===$('functionPanelModal'))closeFunctionPanel();});
