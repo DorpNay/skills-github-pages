@@ -47,7 +47,7 @@ project_state:
     branch: "main"
     merged_pr: 121
     status: "PR #121 merged at f4d880f; first free landing V1 and root client UX are in main. PR #122 merged at fd4f0a1 with distinct process liveness/readiness probes. Exact-head CI passed on both PRs; post-merge Pages deployment and live runtime remain unverified."
-    primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
+    primary_aservi: "aServi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback; PR114 leaves the optional global system prompt empty by default and removes the obsolete Gemini reset"
     projects: "PR35 merged and Chromium E2E passed: collapsed project list with per-project chat children; top-level unassigned chats only; project memory scope project-only vs project-and-global; one-shot project context scoped by chat. Server graph bridge remains experimental and disabled by default."
     voice_ui: "PR44 merged at 9145b5f; gateway/security/context/integrity/Jekyll/Chromium/live-site checks passed; local whisper.cpp ASR, Piper TTS and message mini-player are implemented but disabled by default; target device/model quality and VPS setup remain unverified"
