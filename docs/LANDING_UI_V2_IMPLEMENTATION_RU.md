@@ -342,3 +342,13 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - Updated `updateHomeThemeButton()` to localize accessible names/tooltips and expose the current theme with `aria-pressed`; theme switching remains immediate and persistent, language selection remains in the existing menu.
 - Updated the shared theme-toggle helper and added E2E coverage for equal geometry, accessible names, narrow 320px overflow, theme switching, and language selection. A prior compact-group test now checks both controls separately.
 - Code/test commits: `9433cca`, `6b7236e`, `669b808`, `652c3b4`. Browser execution remains pending; 8.11 is not marked complete until exact-head Quality/Chromium passes.
+
+
+### Chromium run #1126 diagnosis and corrective batch — 2026-11-01
+
+- Exact-head Quality run #1126 (`41291438804`) on `7cdf35d581d9d6bca39256e67a0b0db6083e486c`: Jekyll, Security, Static Analysis, Context and Integrity PASS. Chromium completed with 101 passed and 18 failed; diagnostics artifact ID `13077583320`. Published-site smoke was skipped after local Chromium failed.
+- Confirmed contract drift in the remaining local-gateway tests: aLandi is configured in the separate Cloud card, not the third-party provider preset. The aLandi provider, audio and PDF fixtures now configure Cloud fields, answer the exact connectivity probe, and return a successful `/healthz` response before the user-path assertion.
+- Corrected E2E assumptions: project settings leave the sidebar open; private memory controls require expanding `#memoryToolsDetails`; the project-create modal has two close actions; header language selection does not open the settings modal. Research Studio checkbox coverage now clicks its visible label.
+- Source corrections: narrow 320px header uses reduced horizontal padding and compact wordmark; disabled text in the chat fixture receives the high-contrast token despite the chat container's ID-level styles; Research Studio close hides immediately and then cleans its matching browser-history entry.
+- Corrective code/test commits include `53c384a`, `54e90c3`, `a793f5d`, `8302b8f`, `ecc5118`, `c9c1df9`, `929ebcf`, `6845b8a`, `e64cfad`. Current code/test head: `929ebcf20db87eca949c6f5a386c16e75f2856a1`; exact-head rerun is required before closing 8.11 or declaring the suite green.
+- Remaining manual gates unchanged: native iPhone Safari/VoiceOver, multi-breakpoint screenshot review, and measured WCAG contrast ratios. PR remains open/unmerged; no deployment.
