@@ -1,10 +1,10 @@
 project_state:
   version: 4
-  reviewed_on: "2026-11-01"
+  reviewed_on: "2026-11-02"
   root_orienter:
     status: "Main is fd4f0a105183feb23e0f4e4697446235de9ffe9a after PR #121 (free landing/client V1) and PR #122 (Gateway liveness/readiness) merged. PR #121 exact head e3c3017 passed all six workflow groups; PR #122 exact head 94d871d passed Gateway, Quality/Chromium, Jekyll, Security, Integrity, Context, Graphify and Dead Code. PR #123 exact head fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222 passed Gateway, Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code; it is the only active reconciliation PR and is excluded from its own freshness queue snapshot. Issue #111 remains the single owner/live-host gate. Post-merge Pages deployment and live VPS/Ollama remain unverified."
     branch: "main"
-    base_main: "fd4f0a105183feb23e0f4e4697446235de9ffe9a"
+    base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #121 first free landing V1 and client UX; PR #122 Gateway liveness/readiness probes; #120 sidebar hierarchy/theme-language sync; #119 provider separation/project scope/composer preference; #118 chat import/export; #113 immutable Actions pins; #115 modal scrim/outside-tap; #114 empty-by-default prompt/context budget; #71 mobile composer; #84/#81/#83/#82 infrastructure foundations; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
@@ -27,7 +27,7 @@ project_state:
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Browser half-duplex voice dialogue prototype is merged; CI uses mocked ASR/TTS, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; first read in new chats, then verify current main HEAD and open PRs"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
-  source_of_truth:
+  source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0; mandatory requirements 8.1-8.17 and optional owner proposals 8.18-8.27"
     - "docs/PROJECT_STATE.yaml"
     - "EVALS.md"
     - "DECISIONS.md"
@@ -64,10 +64,10 @@ ui_v2_track:
   pull_request: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   status: "open_unmerged_owner_hold"
-  latest_documentation_head: "4f4e187f6bb560ca3e928ab7a9f3c1e2e9c34ec4"
-  latest_code_test_head: "69ff6ad8b574fdcd05e9c292db2a6f02448996aa; Research Studio entry-point contract and cancelled sidebar swipe regression updated; not browser-verified"
-  latest_quality_harness_head: "d94d842608c07aa8def4b5fdc89ed95b80524034; harness not changed in this pass"
-  source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0 and requirements 8.1-8.17"
+  latest_documentation_head: "See live PR #131 metadata; documentation refresh commits advance this branch."
+  latest_code_test_head: "9aa74853478a6a680cdd36ab0f84c851721405a4; latest runtime/source checkpoint before documentation-only proposal audit; not browser-verified"
+  latest_quality_harness_head: "No exact-head CI run/status exists for PR #131 head 531046c38b18df31cc6f88491417cfef3ae8630d; current Quality result remains unverified."
+  source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0; mandatory requirements 8.1-8.17 and optional owner proposals 8.18-8.27"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
   polish_register: "docs/LANDING_UX_POLISH_BACKLOG_RU.md (mirrors the consolidated residual list; not a separate backlog)"
   reconciliation:
@@ -75,17 +75,17 @@ ui_v2_track:
     completed_or_not_active: "8.12 server-memory graph UI/API bridge removed; local/private/shared/project memory, delta sync and RAG retained. 8.13 explicit handoff to an existing chat implemented; pending handoff is session-only by design."
     blocked: "Project Sources CRUD is not exposed because the gateway has no source-list API; keep truthful unsupported state."
   remaining_priority:
-    P0: "Gateway Tests run #640 passed on 6f7fde4; gateway/** is unchanged. Manual Quality Sentinels run #41285658893 was dispatched on older head d822cb6: Security, Jekyll and static analysis passed; Context/Integrity failed because quality-agent assertions had drifted from the current memory UX. Assertions were corrected in 1b30cae and 5d01a7d; an exact-head rerun is still required. Chromium in the manual run was still in progress at last check."
+    P0: "Gateway Tests run #640 passed on 6f7fde4; gateway/** is unchanged. No workflow runs or status checks are attached to PR #131 head 531046c38b18df31cc6f88491417cfef3ae8630d. Prior Quality #1126 is stale (101 passed / 18 failed on 7cdf35d); do not use it as current evidence."
     P1: "Native iPhone Safari/VoiceOver, screenshot review at 320/360/390/768/1024/1440px, RU/EN and light/dark review, measured WCAG contrast ratios."
     P2: "Long-list/message/scroll/popover stress; capability menu truthfulness; Tavily/keyless-search audit; provider/gateway mock error and secret-redaction checks."
   verification:
-    exact_head_ci: "Manual run #41285658893 is on older SHA d822cb6, not current head. Its Context/Integrity failures were traced to stale sentinel expectations and corrected in 1b30cae/5d01a7d. Exact-head rerun not yet visible; do not claim green CI."
-    playwright_chromium: "No exact-head Chromium run for the current PR #131 source/test checkpoint c87bc1c49a900c2249c44a5c5e697f2b0267bd84; #1126 is stale evidence only (101 passed / 18 failed). Browser behavior remains unverified."
+    exact_head_ci: "No workflow runs/status checks for the verified PR #131 head 531046c38b18df31cc6f88491417cfef3ae8630d. Earlier Quality #1126 (101 passed / 18 failed) is stale. No current green CI claim."
+    playwright_chromium: "No exact-head Chromium run for current PR #131 head 531046c38b18df31cc6f88491417cfef3ae8630d; #1126 is stale evidence only (101 passed / 18 failed). Browser behavior remains unverified."
     native_mobile_voiceover: "Not executed."
     wcag_contrast_ratios: "Not measured; computed-style assertions are not conformance evidence."
     live_gateway_provider: "Not verified; live smoke requires explicit owner approval."
   current_main_sha: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
-  branch_divergence: "GitHub compare main...feat/landing-v1-accessibility-responsive-20261031 at c87bc1c49a900c2249c44a5c5e697f2b0267bd84: ahead_by=468, behind_by=4, merge_base=e78a73b25725bfa63370d9946887cbbacbf51b82. Main's four post-base commits touch only docs/V1_UI_FINALIZATION_RU.md (210 additions, 6 deletions), overlapping the PR's unified 8.0 + 8.1–8.17 consolidation. No code-file conflict identified. Do not rebase/merge without owner approval."
+  branch_divergence: "GitHub compare main...feat/landing-v1-accessibility-responsive-20261031 at 531046c38b18df31cc6f88491417cfef3ae8630d: diverged, ahead_by=537, behind_by=4, merge_base=e78a73b25725bfa63370d9946887cbbacbf51b82. The four main-side commits touch only docs/V1_UI_FINALIZATION_RU.md. Preserve both versions and do not rebase/sync without owner approval."
   current_work_head: "4f4e187f6bb560ca3e928ab7a9f3c1e2e9c34ec4"
   current_work_summary: "aLandi aServi terminology and DOM/CSS contracts updated; browser title, description and dark/light theme metadata aligned with aLandi; overridden CSS declarations removed; browser runtime and app/landing CSS extracted to cacheable assets; Marked/DOMPurify use ordered defer; legacy ai_alandi_cloud_* localStorage keys intentionally retained behind aServi code identifiers for saved-setting compatibility; inherited pre-8 UI backlog made explicit. Research Studio E2E now matches its deep-research-only entry point; sidebar swipe regression covers cancelled touch gestures. Cloudflare and generic cloud-infrastructure wording remain distinct concepts. Full tests intentionally deferred until source pass is complete."
   current_work_validation: "Prior V8 parse-only syntax check passed for extracted assets/js/app.js; current test edits were reviewed against index.md and swipe handlers but have not yet been syntax-parsed or executed. App/landing CSS brace balance checked; browser behavior not executed. Jekyll build, focused Chromium, full Quality/Freshness/Provenance/Graphify/Dead Code not run yet. Do not claim runtime extraction or rename browser-verified."
@@ -165,6 +165,19 @@ improvements:
   AI-MODEL-001: {status: "no_hidden_refusal_filter_policy_only_no_zero_refusal_guarantee", artifact: "DECISIONS.md", eval: "EV-MODEL-001"}
   AI-LEARN-001: {status: "governance_only_no_self_modification", artifact: "LOOP.md", eval: "EV-LEARN-001"}
   AI-LEARN-002: {status: "versioned_skill_rollback_deferred", artifact: "LOOP.md", eval: "EV-LEARN-002"}
+
+
+  owner_proposals:
+    source: "docs/V1_UI_FINALIZATION_RU.md section 8.18-8.27; proposals, not mandatory release requirements"
+    audit: "Compared against PR #131 source on 2026-11-02. Existing modal/history stack, toast/status, last-closed-chat recovery, project memory scope, contextual chat/project/message actions, local chat persistence and attachment flow were reused as baseline; no duplicate systems planned."
+    priority: "First close 8.1-8.17 and inherited UI gates; then unify interaction/operation states and draft recovery; next title search/pinning/sorting; later bounded Undo, file registry/API, desktop inspector and scenario entry points."
+    dependencies: "Project Sources CRUD requires a real scoped source-list API. Persistent local-file access requires explicit browser file handle permission and progressive enhancement. Exactly-once provider requests require upstream idempotency support."
+
+  repository_identity_cleanup:
+    status: "audit_only_no_files_deleted_no_repo_rename"
+    legacy_exercise_workflows: ".github/workflows/0-start-exercise.yml, 1-step.yml, 2-step.yml, 3-step.yml reference skills/exercise-toolkit and skills/action-*; first workflow listens to push on main and includes contents: write plus downstream creation/replacement of _config.yml and index.md."
+    safety_gate: "Repository is_template flag and actual workflow run history were not available. Verify before removal; do not delete aLandi skills/*.txt or active Pages/Jekyll/Quality/Security/Graphify/deploy workflows."
+    rename_gate: "Defer repository rename until stable custom domain is configured. GitHub documents that project Pages URLs are not redirected on repository rename; update baseurl, canonical/OG, OAuth redirect, absolute links and published-site smoke together."
 
 rejected_improvements:
   - id: AI-CUT-001
@@ -438,7 +451,7 @@ landing_ux_polish_2026_10_30:
     landing_ticker_pause_resume_e2e: "added in b213c8a5d50c93af675693986fe22c3bd4d5499d"
     runtime_dependency_added: false
   verification:
-    exact_head_ci: "pending"
+    exact_head_ci: "No workflow runs/status checks for the verified PR #131 head 531046c38b18df31cc6f88491417cfef3ae8630d. Earlier Quality #1126 (101 passed / 18 failed) is stale. No current green CI claim."
     native_keyboard_screen_reader: "unverified"
     published_pages_after_merge: "pending"
   next: "Complete exact-head CI, then implement remaining visual consistency, dialogs/popovers, mobile and accessibility work in bounded slices."
@@ -514,7 +527,7 @@ whole_stack_integrity_audit_2026_10_30:
 landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
-  latest_code_test_head: "502e71841e2a1a769db84439e557597c22b62a16"
+  latest_code_test_head: "9aa74853478a6a680cdd36ab0f84c851721405a4; latest runtime/source checkpoint before documentation-only proposal audit; not browser-verified"
   branch_comparison: "524 ahead / 4 behind main; merge base e78a73b25725bfa63370d9946887cbbacbf51b82; four main-side commits overlap the shared UI checklist only."
   repository_hygiene_runbook: "docs/REPOSITORY_HYGIENE_RU.md; prepared from official GitHub repository/security/branch-protection/CODEOWNERS guidance; actual branch/file/settings cleanup is deferred to the next major-slice boundary."
   repository_hygiene_snapshot: "2026-11-02: 126 branches; 9 open PRs; 100 closed PRs inspected; 19 closed-unmerged PR branches all contain unique commits; five behind-only no-PR branch candidates recorded; no deletions due missing branch-delete action; no unused files proven; security settings remain owner-manual."
@@ -567,7 +580,7 @@ landing_ui_v2_pr131_2026_10_31:
     exact_head: "502e71841e2a1a769db84439e557597c22b62a16 (latest source/test checkpoint adds Windows Forced Colors support and an unexecuted Playwright regression; exact-head Quality/Chromium pending)"
     exact_head_workflow_runs: "Quality #1126 on prior SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL 101 passed / 18 failed; artifact 13077583320. No exact-head Quality/Chromium run visible for source/test checkpoint 502e71841e2a1a769db84439e557597c22b62a16; latest observed Provenance Gate pass predates current UI changes."
     gateway_pytest: "not executed in this environment"
-    playwright_chromium: "No exact-head Chromium run for PR #131 source/test checkpoint 502e71841e2a1a769db84439e557597c22b62a16; #1126 is stale evidence only (101 passed / 18 failed). Current corrective source/test changes, metadata assertions, CSS cleanup and Windows Forced Colors regression are committed; browser behavior remains unverified."
+    playwright_chromium: "No exact-head Chromium run for current PR #131 head 531046c38b18df31cc6f88491417cfef3ae8630d; #1126 is stale evidence only (101 passed / 18 failed). Browser behavior remains unverified."
     native_mobile_voiceover: "not executed"
     wcag_contrast_ratios: "Base CSS token contrast is measured by a new E2E calculation against solid theme surfaces (>=4.5:1); actual component/gradient/focus/non-text contrast remains unmeasured and requires manual audit."
   safety:
