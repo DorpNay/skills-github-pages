@@ -166,3 +166,28 @@ This is a narrow, reversible CI configuration correction. The Graphify workflow/
 The 2026-11-02 branch inventory found no SECURITY.md on main. A responsible vulnerability-reporting policy has since been added as SECURITY.md in PR #131 and mirrored in PR #132. It directs reports to GitHub private vulnerability reporting when enabled, otherwise to the repository owner, prohibits public disclosure of secrets/user data, and does not promise an unsupported response-time SLA.
 
 This file is present only on the feature/documentation branches until their owner-approved merge. It does not establish that private vulnerability reporting, secret scanning, push protection, CodeQL or branch protection are enabled. Those settings still require owner-side verification.
+
+
+## 13. GitHub Skills exercise scaffolding and repository identity — 2026-11-02
+
+### Confirmed remnants
+
+- .github/workflows/0-start-exercise.yml, 1-step.yml, 2-step.yml, 3-step.yml still reference skills/exercise-toolkit and skills/action-*.
+- 0-start-exercise.yml listens to push on main, grants contents: write, and its dependent job creates/replaces _config.yml and index.md if the exercise path proceeds.
+- .github/steps/1-step.md–4-step.md are associated GitHub Pages exercise instructions.
+- temp/1 and temp/2 are large historical research notes with references to the original GitHub Skills template. Reconcile unique useful content with current canonical docs before archiving/removing.
+- Issue #1 is already documented as a closed historical exercise, not a product defect.
+
+### Safe cleanup sequence
+
+1. Verify the repository's is_template flag and inspect run history for the four exercise workflows. The current integration did not expose the template flag or repository-wide workflow history.
+2. If the exercise scaffold is no longer needed, remove the four exercise workflows and their .github/steps instructions together in a dedicated change. Do not delete them until the trigger/condition behavior is confirmed.
+3. Review temp/1 and temp/2 for unique references, decisions or source links. Archive only if they contain useful historical material; otherwise remove after preserving needed facts in canonical docs.
+4. Keep skills/*.txt: these are aLandi task profiles, not the GitHub Skills exercise toolkit.
+5. Preserve the actual GitHub Pages/Jekyll publishing configuration and Quality, Security, Graphify and deployment automation. Determine the real publishing source before removing any workflow.
+
+### Repository rename gate
+
+GitHub's repository-renaming guidance says project Pages URLs are not automatically redirected. Rename to aLandi/alandi only after a stable custom domain is configured and a migration checklist covers baseurl, canonical/OG metadata, absolute links, OAuth redirect URIs, Actions/reusable-workflow references, local clone remotes and published-site smoke.
+
+No files, workflows, settings, branches or repository names were deleted or changed in this audit.
