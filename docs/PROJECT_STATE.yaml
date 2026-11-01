@@ -10,7 +10,7 @@ project_state:
     merged_changes: "PR #121 first free landing V1 and client UX; PR #122 Gateway liveness/readiness probes; #120 sidebar hierarchy/theme-language sync; #119 provider separation/project scope/composer preference; #118 chat import/export; #113 immutable Actions pins; #115 modal scrim/outside-tap; #114 empty-by-default prompt/context budget; #71 mobile composer; #84/#81/#83/#82 infrastructure foundations; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
     exact_head_checks: "PR #121 head e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b: Dead Code Audit, Project State Freshness, Provenance, Lite Gateway Tests, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. PR #122 head 94d871dbf76a5364ebb3c61d86cc763affa5eaa1: Gateway Tests, Dead Code Audit, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. PR #123 head fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222: Gateway Tests, Dead Code Audit, Freshness, Provenance, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. Merge commits: #121 f4d880f9648989f4fe48ddd2284220b3606c3b86; #122 fd4f0a105183feb23e0f4e4697446235de9ffe9a. No independent post-merge Pages deployment result was available."
     runtime_boundary: "PR-head published-site browser smoke verified; post-merge Pages deployment on the exact merge commit remains unverified. Native iPhone, live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
-    next: "Keep first landing V1 scope frozen. Continue only reliability, accessibility, performance, security, documentation and integration polish inside the selected HTML/CSS/JS + Jekyll and existing FastAPI/Ollama stack. New capabilities stay in the future backlog, outside the first landing."
+    next: "Run Independent Quality Sentinels on b42797ca0e09576519bc82710f993a0d4a4823bb; inspect new Chromium report and diagnostics, fix only confirmed remaining defects, then continue 8.1–8.17 manual acceptance. PR is open/unmerged and GitHub reports mergeable_state=dirty; investigate conflicts separately. No deployment."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -65,7 +65,7 @@ ui_v2_track:
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   status: "open_unmerged_owner_hold"
   latest_documentation_head: "read live PR #131 head; documentation-only commits may advance it"
-  latest_code_test_head: "2d25b12f100b246a929fc6921dfb44971f7d50e3"
+  latest_code_test_head: "b42797ca0e09576519bc82710f993a0d4a4823bb"
   latest_quality_harness_head: "d94d842608c07aa8def4b5fdc89ed95b80524034"
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0 and requirements 8.1-8.17"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
@@ -80,7 +80,7 @@ ui_v2_track:
     P2: "Long-list/message/scroll/popover stress; capability menu truthfulness; Tavily/keyless-search audit; provider/gateway mock error and secret-redaction checks."
   verification:
     exact_head_ci: "Manual run #41285658893 is on older SHA d822cb6, not current head. Its Context/Integrity failures were traced to stale sentinel expectations and corrected in 1b30cae/5d01a7d. Exact-head rerun not yet visible; do not claim green CI."
-    playwright_chromium: "118 tests started on b6a3db77; job cancelled by 15-minute timeout before summary; CI updated to 3 workers, parallel tests, GitHub+list reporters, 20-minute job timeout and always-upload diagnostics; rerun pending"
+    playwright_chromium: "Run #1125 completed in 11m; 78 passed, 38 failed, 2 flaky. Stale selectors/fixtures corrected; 54px narrow clock and hidden user-message TTS action fixed. Rerun pending on b42797c with 2 workers and 25m job timeout."
     native_mobile_voiceover: "Not executed."
     wcag_contrast_ratios: "Not measured; computed-style assertions are not conformance evidence."
     live_gateway_provider: "Not verified; live smoke requires explicit owner approval."
@@ -512,7 +512,7 @@ landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   latest_code_test_head: "9ff326d40ac0567c1c62c293cb396bcd9c4eba82"
-  latest_documented_head: "324a54e8bc1396458f435632ff44ff3cd2fc5721"
+  latest_documented_head: "709f8888a3f41704574b4138937c0c2dab23167e"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
     memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
@@ -538,8 +538,8 @@ landing_ui_v2_pr131_2026_10_31:
     message_action_consistency: "a6ce9eed87d6c239b9f5ea394ab04359939479e2"
     high_contrast_text_states: "787c9aaf6026559da31daf51d82f884abdc78c1d"
   verification:
-    exact_head: "b6a3db77fb9bbf8375f8b9d9010365a0e9010158 (Quality run #41287868283; predates CI-only updates)"
-    exact_head_workflow_runs: "run #41287868283 on b6a3db77: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium CANCELLED at 15-minute job timeout; new run required on 14d9dc9789dfc958d99685d36a7649ada8ce5120"
+    exact_head: "e0e0f80e678e6b418690ba9f33b808a29fe22fef (Quality run #1125 / 41289724442; predates corrective batch)"
+    exact_head_workflow_runs: "Quality #1125 on e0e0f80: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL with 78 passed, 38 failed, 2 flaky; diagnostics artifact 13077550536; Provenance #817 on same SHA PASS; no Quality run yet on b42797c"
     gateway_pytest: "not executed in this environment"
     playwright_chromium: "not executed; no passing result claimed"
     native_mobile_voiceover: "not executed"
