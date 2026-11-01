@@ -351,7 +351,7 @@ permalink: /
     <div class="mb-2 flex items-center justify-between gap-3"><p id="ttsMiniPlayerStatus" class="text-xs text-gray-300">Локальное озвучивание</p><button type="button" data-action="stop-speech" class="rounded-md border border-gray-700 px-2 py-1 text-xs">Стоп</button></div><label id="ttsVoiceChoiceWrap" class="hidden mb-2 block text-xs text-gray-300">Голос ответа<select id="ttsVoiceSelect" class="mt-1 w-full rounded-lg border border-gray-700 bg-gray-900 px-2 py-2 text-sm" aria-label="Голос локального озвучивания"></select></label>
     <audio id="ttsAudioPlayer" class="w-full" controls preload="none"></audio>
   </div>
-  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite" aria-atomic="true" tabindex="0"></div>
   <button id="jumpToLatest" type="button" data-action="jump-to-latest" class="jump-to-latest hidden" aria-label="Перейти к последнему сообщению" title="В конец чата">↓</button>
   <div id="composerPopoverScrim" class="hidden fixed inset-0 z-40 bg-black/45 backdrop-blur-[2px]" aria-hidden="true"></div>
   <div id="messageViewerModal" class="hidden fixed inset-0 z-[86] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="messageViewerTitle">
