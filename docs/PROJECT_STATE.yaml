@@ -74,7 +74,7 @@ ui_v2_track:
     completed_or_not_active: "8.12 server-memory graph UI/API bridge removed; local/private/shared/project memory, delta sync and RAG retained. 8.13 explicit handoff to an existing chat implemented; pending handoff is session-only by design."
     blocked: "Project Sources CRUD is not exposed because the gateway has no source-list API; keep truthful unsupported state."
   remaining_priority:
-    P0: "Execute exact-head Gateway tests, focused Playwright/Chromium, Quality, Freshness, Provenance, Graphify and Dead Code; tests currently unexecuted. PR workflow triggers exist in YAML but no run/status entries are visible; obtain actual Actions results through the normal PR workflow."
+    P0: "Gateway Tests run #640 passed on 6f7fde4; gateway/** is unchanged through the current PR head. Remaining: focused Playwright/Chromium, Quality, Freshness, Graphify and Dead Code. Latest head has a successful License/Provenance run; no current-head browser/Quality run is visible."
     P1: "Native iPhone Safari/VoiceOver, screenshot review at 320/360/390/768/1024/1440px, RU/EN and light/dark review, measured WCAG contrast ratios."
     P2: "Long-list/message/scroll/popover stress; capability menu truthfulness; Tavily/keyless-search audit; provider/gateway mock error and secret-redaction checks."
   verification:
