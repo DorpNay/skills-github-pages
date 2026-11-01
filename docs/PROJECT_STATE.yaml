@@ -87,7 +87,7 @@ ui_v2_track:
   current_main_sha: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
   branch_divergence: "GitHub compare main...feat/landing-v1-accessibility-responsive-20261031 at c87bc1c49a900c2249c44a5c5e697f2b0267bd84: ahead_by=468, behind_by=4, merge_base=e78a73b25725bfa63370d9946887cbbacbf51b82. Main's four post-base commits touch only docs/V1_UI_FINALIZATION_RU.md (210 additions, 6 deletions), overlapping the PR's unified 8.0 + 8.1–8.17 consolidation. No code-file conflict identified. Do not rebase/merge without owner approval."
   current_work_head: "4f4e187f6bb560ca3e928ab7a9f3c1e2e9c34ec4"
-  current_work_summary: "aLandi aServi terminology and DOM/CSS contracts updated; browser runtime and app/landing CSS extracted to cacheable assets; Marked/DOMPurify use ordered defer; legacy ai_alandi_cloud_* localStorage keys intentionally retained behind aServi code identifiers for saved-setting compatibility; inherited pre-8 UI backlog made explicit. Research Studio E2E now matches its deep-research-only entry point; sidebar swipe regression covers cancelled touch gestures. Cloudflare and generic cloud-infrastructure wording remain distinct concepts. Full tests intentionally deferred until source pass is complete."
+  current_work_summary: "aLandi aServi terminology and DOM/CSS contracts updated; browser title, description and dark/light theme metadata aligned with aLandi; browser runtime and app/landing CSS extracted to cacheable assets; Marked/DOMPurify use ordered defer; legacy ai_alandi_cloud_* localStorage keys intentionally retained behind aServi code identifiers for saved-setting compatibility; inherited pre-8 UI backlog made explicit. Research Studio E2E now matches its deep-research-only entry point; sidebar swipe regression covers cancelled touch gestures. Cloudflare and generic cloud-infrastructure wording remain distinct concepts. Full tests intentionally deferred until source pass is complete."
   current_work_validation: "Prior V8 parse-only syntax check passed for extracted assets/js/app.js; current test edits were reviewed against index.md and swipe handlers but have not yet been syntax-parsed or executed. App/landing CSS brace balance checked; browser behavior not executed. Jekyll build, focused Chromium, full Quality/Freshness/Provenance/Graphify/Dead Code not run yet. Do not claim runtime extraction or rename browser-verified."
   merge_deployment: "Do not merge or deploy without explicit owner approval."
 
@@ -514,13 +514,14 @@ whole_stack_integrity_audit_2026_10_30:
 landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
-  latest_code_test_head: "929ebcf20db87eca949c6f5a386c16e75f2856a1"
+  latest_code_test_head: "b6b4cd612e288f0ad2c0e23419a562b06b491ef5"
   latest_documented_head: "5cc311d1bb2e238fcb8f146beaeaec2db41968bb"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
     memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
     sidebar_swipe: "Requirement 8.1: horizontal left swipe closes the sidebar; vertical scroll is not intercepted; project/chat disclosure state is preserved. Playwright regression added."
     header_responsive: "Requirement 8.2: dedicated chat-title surface, expressive wordmark, clock, compact mode controls; Playwright layout checks at 320/360/390/768/1024/1440px added."
+    page_metadata: "Requirement 8.2 follow-up: Jekyll/browser title, description and dark+light color-scheme metadata now consistently identify aLandi; Quality Sentinel and E2E assertions added, not yet executed."
     settings_provider_groups: "Requirement 8.3: aServi is exclusive; third-party and additional settings may remain open together; existing E2E covers transitions."
     project_sources: "Requirement 8.7: project Sources section states gateway lacks source-list API; no fictitious CRUD controls; existing E2E verifies unsupported state."
     server_memory_retirement: "Requirement 8.12: browser bridge/UI and /v1/memory/graph/* routes plus graph-specific flags removed; internal MemoryManager retained only for Graphify; SQLite data untouched; local/private/shared/project memory, delta sync, RAG and local helper remain."
@@ -558,10 +559,10 @@ landing_ui_v2_pr131_2026_10_31:
     theme_aware_status_colors: "bca8fa892e95bd35db812382afdadbba41813265"
     base_token_contrast: "4bd40770fd3446e5280e719644394882c9148daeb"
   verification:
-    exact_head: "c87bc1c49a900c2249c44a5c5e697f2b0267bd84 (latest source/test checkpoint; documentation commits may advance PR HEAD; exact-head Quality/Chromium pending)"
-    exact_head_workflow_runs: "Quality #1126 on prior SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL 101 passed / 18 failed; artifact 13077583320. No exact-head Quality/Chromium run visible for source/test checkpoint c87bc1c49a900c2249c44a5c5e697f2b0267bd84; latest observed Provenance Gate pass predates current UI changes."
+    exact_head: "b6b4cd612e288f0ad2c0e23419a562b06b491ef5 (latest code/test checkpoint after aLandi page metadata contract; documentation commits may advance PR HEAD; exact-head Quality/Chromium pending)"
+    exact_head_workflow_runs: "Quality #1126 on prior SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL 101 passed / 18 failed; artifact 13077583320. No exact-head Quality/Chromium run visible for source/test checkpoint b6b4cd612e288f0ad2c0e23419a562b06b491ef5; latest observed Provenance Gate pass predates current UI changes."
     gateway_pytest: "not executed in this environment"
-    playwright_chromium: "No exact-head Chromium run for PR #131 branch head c87bc1c49a900c2249c44a5c5e697f2b0267bd84; #1126 is stale evidence only (101 passed / 18 failed). Current corrective source/test changes are committed; browser behavior remains unverified."
+    playwright_chromium: "No exact-head Chromium run for PR #131 code/test checkpoint b6b4cd612e288f0ad2c0e23419a562b06b491ef5; #1126 is stale evidence only (101 passed / 18 failed). Current corrective source/test changes and metadata assertions are committed; browser behavior remains unverified."
     native_mobile_voiceover: "not executed"
     wcag_contrast_ratios: "Base CSS token contrast is measured by a new E2E calculation against solid theme surfaces (>=4.5:1); actual component/gradient/focus/non-text contrast remains unmeasured and requires manual audit."
   safety:
