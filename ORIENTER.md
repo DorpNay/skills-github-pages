@@ -114,3 +114,11 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - aLandi aServi is the current UI/product terminology. Legacy `ai_alandi_cloud_*` localStorage keys remain solely for compatibility; Cloudflare remains a separate infrastructure/provider brand; aLandi aCloudi is reserved for a future information-storage product.
 - Repository hygiene is queued for the next major-slice boundary and documented in docs/REPOSITORY_HYGIENE_RU.md. Branch/file cleanup requires PR/issue/ancestry/reference review first; no deletion, force update, merge, rebase or deployment has occurred.
 - PR #132 remains a draft documentation-only safety copy. Its checks do not validate V2 application code in PR #131.
+
+
+### GitHub repository hygiene — первичная инвентаризация 2026-11-02
+- API перечислил 126 веток и 9 открытых PR (#124–#132); 117 веток вне head открытых PR требуют индивидуальной проверки PR/issue/ancestry/reference. Ни одна ветка не удалялась.
+- Rulesets: 0; classic protection `main` не удалось проверить (403), поэтому статус неизвестен. Автоудаление веток после merge выключено.
+- CODEOWNERS, SECURITY.md и Dependabot config не найдены в стандартных местах; фактические security alerts/settings не проверены.
+- На PR #131 HEAD на момент аудита Provenance #41336870473 прошёл; exact-head Quality/Chromium отсутствует. Quality #1126 (101 passed / 18 failed) относится к старому SHA.
+- Подробности и безопасный план: `docs/REPOSITORY_HYGIENE_RU.md`. Удалений, изменений настроек, merge/rebase/force-push или deployment не выполнялось.
