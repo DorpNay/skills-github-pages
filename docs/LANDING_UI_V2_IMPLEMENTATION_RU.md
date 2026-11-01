@@ -47,7 +47,7 @@ High-contrast disabled/info tokens are included in the automated calculation. Th
 
 ## Cross-cutting inherited UI work (requirements before section 8)
 
-The pre-8 checklist is not a second backlog. Its remaining items are folded into the owner-priority requirements above:
+The original V1 document contains 18 inherited control directions before section 8 (not merely seven numbered lines). Their exact titles, current [x]/[~] statuses, remaining acceptance and links into 8.1–8.17 are enumerated in the matrix in docs/V1_UI_FINALIZATION_RU.md. The summary below is a grouping, not a replacement checklist. The pre-8 checklist is not a second backlog.
 
 | Inherited requirement | Remaining outcome | Linked V2 items |
 |---|---|---|
