@@ -7,6 +7,8 @@
 
 > **Source of truth.** Этот документ — живой release checklist пользовательского UI V1. Статус отмечается только по коду, exact-head тестам и фактическим проверкам. Планируемое не называется реализованным; CI не доказывает работу реального gateway, модели или iPhone Safari.
 
+> **Актуальность очереди:** старые пункты разделов 1–7 сохранены для истории V1. Их незакрытые отметки не следует автоматически считать задачами V2: актуальная объединённая очередь — раздел 8.0, а реализационные статусы 8.1–8.17 — docs/LANDING_UI_V2_IMPLEMENTATION_RU.md.
+
 ## 0. Продуктовая граница и правила V1
 
 Первая публичная версия — бесплатный статический веб-интерфейс GitHub Pages для личного/ограниченного сценария. Пользователь может открыть лендинг и клиент без оплаты хостинга inference от aLandi. Но статический сайт **не предоставляет включённый hosted AI endpoint**: при использовании внешнего API пользователь выбирает провайдера и несёт его условия/квоты/стоимость; self-hosted вариант требует собственный gateway и инфраструктуру. Бесплатность UI не равна бесплатной генерации.
@@ -147,9 +149,10 @@ PR #122 добавил только эксплуатационную надёж�
 
 **Приёмка:** настройки проекта не занимают постоянно sidebar; данные соседних проектов и личных чатов не смешиваются.
 
-### 15. Search & Research Studio — [~]
-- [x] Studio вынесена в отдельное окно; основная задача остаётся в composer.
-- [~] PR #121 удалил дублирующие prompt/depth/web selectors и показывает текущие настройки чата. Исправлена проверка E2E, которая считала первичную provider connectivity probe отправкой пользовательского сообщения; exact-head run ещё требуется.
+### 15. Глубокие исследования — Research Studio — [~]
+- [x] Research Studio — вспомогательное окно внутри блока «Тщательно»/глубокого исследования; самостоятельного пункта в меню «Функции» или боковой панели нет.
+- [x] Окно показывает текущие настройки чата; основной запрос остаётся в composer. Открытие/закрытие не запускает запрос и не меняет параметры.
+- [~] E2E проверяет открытие из блока глубокого исследования, сохранение draft, RU/EN, Escape и отсутствие автоматической отправки; требуется exact-head Chromium.
 - [ ] Проверить на 390×844, клавиатуре, RU/EN, Escape, сохранение draft и отсутствие автоматической отправки.
 - [ ] Исследовательский pipeline остаётся четырёхэтапным на одной модели; UI не называть независимой swarm-командой.
 
@@ -201,9 +204,9 @@ PR #122 добавил только эксплуатационную надёж�
 - Не использовать aria-live для бегущей строки и не обновлять её псевдо-процентами/фальшивыми фазами.
 - Готовые функции не маркировать этим текстом. Для настоящего выполнения использовать реальные состояния queued/running/succeeded/failed/cancelled с источником и временем обновления.
 
-## 3a. Остаток визуального polish после PR #121
+## 3a. Статус polish после PR #121 и перехода на V2
 
-Подробный живой реестр: [LANDING_UX_POLISH_BACKLOG_RU.md](LANDING_UX_POLISH_BACKLOG_RU.md). В нём собраны landing screenshot review, typography/contrast/spacing, RU/EN/light-dark, menus/popovers/dialog focus and sticky actions, sidebar/project/chat states, Research/Functions menu truthfulness, native iPhone Safari и VoiceOver. Реализовывать по шесть больших этапов, не повторяя закрытые PR #115–120.
+Старый отдельный перечень polish пересобран: его пункты сверены с PR #131 и требованиями 8.1–8.17. Дублирующие задачи больше не ведутся параллельно. Актуальный остаток находится в разделе **8.0 «Единый список незавершённых UI-задач»** и в подробном implementation ledger [LANDING_UI_V2_IMPLEMENTATION_RU.md](LANDING_UI_V2_IMPLEMENTATION_RU.md). Файл [LANDING_UX_POLISH_BACKLOG_RU.md](LANDING_UX_POLISH_BACKLOG_RU.md) оставлен как совместимый краткий реестр тех же остаточных проверок, а не как второй независимый план.
 
 ## 4. Исследование UI — два раунда
 
@@ -269,11 +272,77 @@ PR #122 добавил только эксплуатационную надёж�
 | 2026-10-30 | Expanded two-round research with current ChatGPT search/projects/pinning patterns, Apple compact-view modality, VisualViewport/mobile keyboard, WCAG sizing, CORS and OWASP storage threat model. | Official OpenAI, Apple, W3C, MDN, OWASP, GOV.UK and GitHub sources linked in sections 4/6; recommendations filtered through V1 static/autonomy boundary. |
 
 
-## 8. Дополнительные заметки владельца по интерфейсу (2026-10-31)
+## 8. Требования владельца по интерфейсу и актуальный backlog (2026-10-31)
 
 Этот раздел дополняет живой UI-чек-лист требованиями, продиктованными владельцем. Это backlog требований, а не подтверждение реализации. Перед изменениями сверять каждый пункт с текущим кодом и существующими пунктами выше; уже реализованное не дублировать и не ломать.
 
-## 8. Поправки владельца от 2026-10-31 — приоритет V2.0
+## 8.0. Единый список незавершённых UI-задач (сверка 2026-11-02)
+
+Этот список заменяет разрозненные «остатки» в разделах 1–7 и старом polish backlog. Разделы 1–7 сохраняются как история требований и базовый V1 release checklist, но их старые отметки [~]/[ ] **не являются отдельной очередью работ PR #131**. Если задача ниже совпадает с 8.1–8.17, она учитывается здесь один раз; подробная привязка к коду и тестам — в implementation ledger.
+
+### P0 — обязательная автоматическая проверка PR #131
+
+- [~] Exact-head Quality run #1126 / run ID `41291438804` checked SHA `7cdf35d581d9d6bca39256e67a0b0db6083e486c`: Jekyll, Security, Static Analysis, Context and Integrity — PASS; Chromium — FAIL after completing the suite (not a timeout). Summary: 101 passed, 18 failed; diagnostics artifact `playwright-diagnostics` uploaded (ID `13077583320`). Published-site steps were skipped because local Chromium failed. This run predates the corrective batch below.
+- [x] Runtime issue corrected: the earlier serialized suite timed out at 15 minutes. CI uses 1 worker, 30-minute Playwright global timeout and 35-minute job timeout, GitHub + list reporters, and always uploads browser diagnostics. Changes include `b59ac0f` and `7060ba6`; this does not mark E2E as passed.
+- [~] Run #1126 analysis and correction batch: remaining local-gateway tests still configured aLandi through the third-party preset, although it now lives under `aLandi aServi → Мой сервер`; those fixtures now use the aServi contract and exercise the connectivity probe plus `/healthz`. Corrected the duplicate project-close locator, sidebar state assumptions, collapsed private-memory disclosure, and a stale settings-close after header language selection. Source fixes: 320px header padding/wordmark compression, stronger disabled-text high-contrast override, and immediate Research Studio close while keeping browser-history cleanup. Label-based checkbox interaction now exercises the visible control. Changes await exact-head CI.
+- [ ] Latest UI source checkpoint: `9aa74853478a6a680cdd36ab0f84c851721405a4`; latest PR #131 branch head at the 2026-11-02 continuity update: `c8facdac2eebc7d2217b807f1b7e314ae3abf2dd` (subsequent change is Graphify workflow path coverage). The source slice includes the aServi storage-key compatibility comment; exact-head Quality/Chromium is still pending. Do not mark the browser assertions passed from source inspection alone.
+- [ ] Close remaining E2E and manual acceptance 8.1–8.17 plus inherited UI work: sidebar/chat restore, header breakpoints, settings disclosure, modal Back/Forward/focus, message actions, project handoff, touch selection, status/reduced-motion, readability, provider/catalog failures, Research Studio/skills truthfulness, native mobile and measured WCAG contrast.
+- [x] Gateway security/contract suite: run #640 on `6f7fde485b2b13aecc50523b20785e0ac615d2ad` passed compileall, manifest/INTEL checks, `pytest gateway/tests`, deploy preflight and six-layer offline evaluation. No `gateway/**` changes exist between that tested commit and current PR source; Gateway sub-gate remains valid.
+
+### P1 — ручная UX/accessibility приёмка
+
+- [ ] Сделать screenshot review приложения и лендинга на 320/360/390/768/1024/1440 px: шапка, sidebar, composer, пустые состояния, длинные названия, карточки, отступы, типографика и контраст.
+- [ ] На реальном iPhone Safari проверить virtual keyboard/VisualViewport, safe-area, ориентацию, edge-swipe, long-press, touchcancel, вложенный scroll и восстановление позиции.
+- [ ] Провести VoiceOver/keyboard-only проход: порядок заголовков, доступные имена и tooltips, видимый/неперекрытый focus, Tab/Escape/Back/Forward, возврат фокуса и modal background isolation.
+- [ ] Проверить RU/EN copy и светлую/тёмную темы для модалок, меню, статусов, ошибок, подсказок и пустых состояний.
+- [ ] Провести фактический WCAG contrast-ratio audit для primary/secondary/disabled/link/error/status в обеих темах. Добавлен автоматический расчёт базовых CSS-токенов против однотонных theme surfaces (все измеренные значения ≥4.5:1), но это не проверяет градиенты, реальные карточки, focus/hover, мелкий текст и non-text contrast. Полная визуальная/ручная приёмка остаётся обязательной.
+
+### P2 — оставшиеся проверки поведения и честности UI
+
+- [ ] Проверить длинные списки проектов/чатов, длинные имена и сообщения, пустые состояния, вложенные scroll-контейнеры и popover у всех краёв viewport/при открытой клавиатуре.
+- [ ] Завершить аудит меню функций «Исследование / Агенты / Навыки / Коннекторы»: показывать только реально зарегистрированные сущности, реальные статусы и permissions; чётко отличать web-search breadth, offline и последовательный research pipeline от независимых агентов.
+- [ ] Повторно проверить глобальный пустой system prompt и миграцию legacy значения; решение по Tavily принимать только после аудита keyless search fallback и реального adapter contract.
+- [ ] Проверить provider/gateway error states, invalid URL/model, CORS, timeout, 401/5xx и redaction на mock/contract tests. Live provider/gateway smoke — отдельный opt-in gate владельца, без платных запросов по умолчанию.
+
+### P1 — Унаследованные UI-задачи из разделов 1–7 (сверка и объединение)
+
+Старые отметки ниже не создают параллельный backlog: это остаточные требования V1, которые включены в соответствующие workstreams 8.1–8.17.
+
+| № до 8 | Статус в исходном списке | Остаточная задача простыми словами | Включено в |
+|---|---|---|---|
+| **1. Общий UI/UX** | [~] | Довести типографику, контраст, интервалы, пустые/ошибочные состояния и вторичные действия; затем проверить реальные скриншоты. | 8.2, 8.6, 8.10, 8.15–8.17 |
+| **2. Composer и мобильная клавиатура** | [~] | Проверить верхнее/нижнее положение поля ввода, клавиатуру, VisualViewport, safe-area, длинный текст и сохранение позиции чтения. | 8.2, 8.6, 8.9, 8.14 |
+| **3. Маршруты aLandi и сторонних API** | [~] | Проверить старые сохранённые настройки, RU/EN и то, что приватный маршрут aLandi не уходит к стороннему провайдеру. | 8.3, 8.11 |
+| **4. Подписи, placeholder и inline validation** | [~] | Довести ошибки URL/модели/ключа, CORS, 401/5xx и скрытие секретов; показывать ошибку у конкретного поля. | 8.3, 8.9, 8.10 |
+| **5. System prompt и случайное редактирование** | [x] | Основная функция решена: пустое значение по умолчанию и явное редактирование. Осталась финальная проверка заметности, клавиатуры и возврата в readonly. | 8.4, 8.10, 8.16, 8.17 |
+| **6. Инструкции сторонних провайдеров** | [~] | Убрать повторения, оставить честные privacy-предупреждения и сверить ссылки/endpoint с upstream. | 8.3, 8.6 |
+| **7. Tools и Tavily** | [~] | Проверить реальную проверку ключа, вставку/сохранение/удаление, неверный ключ, публичный fallback и privacy copy. | 8.4, 8.6, 8.15 |
+| **8. Статус собственного gateway** | [~] | Проверить реальный model probe + /healthz, timeout, CORS и гонки при смене URL/модели/ключа. | 8.3, 8.9 |
+| **9. Окна и закреплённые действия** | [~] | Довести Escape, возврат фокуса, screen-reader labels, scroll lock и фоновые клики при открытой модалке. | 8.6, 8.9, 8.10 |
+| **10. Скроллинг и длинные чаты** | [~] | Проверить потоковую генерацию, вложенные области прокрутки, длинные сообщения/вложения и iOS scroll restoration. | 8.1, 8.2, 8.6, 8.14 |
+| **11. Дополнительные настройки** | [x] | Основная группировка решена; осталось найти дублирующие или устаревшие переключатели. | 8.3, 8.6, 8.10 |
+| **12. Тема, язык, анимации** | [~] | Проверить весь RU/EN текст, светлые/тёмные модалки, статусы, подсказки и reduced-motion. | 8.2, 8.11, 8.15, 8.17 |
+| **13. Каталог моделей и provider state** | [~] | Проверить сохранение модели, пустой/ошибочный каталог, устаревший fingerprint, отказ авторизации и смену провайдера. | 8.3, 8.4 |
+| **14. Project settings** | [~] | Довести создание/редактирование/закрытие, сохранение параметров и изоляцию данных разных проектов. | 8.1, 8.6, 8.7, 8.13 |
+| **15. Search и Research Studio** | [~] | Проверить мобильный экран, клавиатуру, RU/EN, Escape, сохранение черновика и отсутствие самовольной отправки. | 8.6, 8.15 |
+| **16. Task profiles / skills** | [~] | Проверить quiz, пользовательский профиль, формат ответа и сохранение между чатами; не выдавать профиль за runtime-пакет. | 8.6, 8.15, 8.16 |
+| **17. Agents / team blueprint** | [~] | Честно отделять четырёхэтапный pipeline на одной модели от независимой команды агентов; blueprint не должен обещать несуществующий runtime. | 8.6, 8.15, 8.16 |
+| **18. Финальный release gate** | [~] | Exact-head CI, проверка опубликованного сайта после merge, iPhone Safari и owner-only инфраструктурные проверки. Это gate, не UI-функция. | P0/P1 gates |
+
+**Уже взято в работу в рамках текущего прохода:** двуязычная inline-валидация aLandi aServi и доступная связь поля с ошибкой; локализация cloud controls и system-prompt edit action; keyboard/edit/read-only E2E; защита от устаревшего ответа /healthz; сохранение позиции чтения чата при mobile viewport resize; снижение Chromium runner contention и тяжёлой записи диагностик.
+
+### Не является незавершённой UI-задачей
+
+- Project Sources: gateway пока не предоставляет source-list API. Оставить честное unsupported-state; CRUD не добавлять до появления реального scoped API.
+- 8.12: устаревший server-memory graph HTTP bridge/UI удалён; обычная local/private/shared/project memory, delta sync и RAG сохранены. Осталась только автоматическая проверка на exact HEAD.
+- 8.13: handoff контекста выполняется только по явному выбору существующего чата; чат не создаётся и не перемещается. Pending handoff session-only — это принятое ограничение, а не незакрытая задача на persistence.
+- Новые провайдеры, connector marketplace, cloud sync, OAuth и новые runtime-возможности из раздела 9 не входят в текущую UI-реализацию PR #131 без отдельного решения владельца.
+
+### Приоритетные требования 8.1–8.17 от 2026-10-31 — V2.0
+
+
+**Реализация V2.0:** требования 8.1–8.17 ведутся отдельно в [docs/LANDING_UI_V2_IMPLEMENTATION_RU.md](LANDING_UI_V2_IMPLEMENTATION_RU.md) и PR [#131 — aLandi Landing UI v2.0](https://github.com/DorpNay/skills-github-pages/pull/131). V1 в `main` остаётся стабильной; PR #131 не сливать и не публиковать до отдельного разрешения владельца. Статусы исходных требований не менять без подтверждённого кода и тестов.
+
 
 > **Приоритетный пакет для лендинга версии 2.0.** Все требования подразделов **8.1–8.17** ниже зафиксированы/уточнены владельцем **31 октября 2026 года**. Это актуальные поправки и приоритетные изменения, которые необходимо учесть при проектировании и реализации лендинга aLandi V2.0. Они **не считаются выполненными** и не должны незаметно переноситься в замороженный состав V1. Перед реализацией сверять их с кодом и архитектурой; сохранять действующие ограничения безопасности и согласованный стек, если владелец отдельно не утвердит иное.
 
@@ -337,7 +406,7 @@ PR #122 добавил только эксплуатационную надёж�
 
 - В настройках каждого проекта предусмотреть самостоятельный раздел «Источники»: проект может иметь собственные источники информации, относящиеся к его контексту.
 - Раздел должен быть понятным местом для просмотра и дальнейшего управления источниками проекта. Конкретные поддерживаемые типы источников, операции и состояния определить после аудита текущего кода и существующих механизмов.
-- До аудита не обещать неподдерживаемые типы источников и не добавлять фиктивные элементы управления. Не дублировать существующие механизмы хранения, загрузки или подключения.
+- До аудита не обещать неподдерживаемые типы источников и не добавлять фиктивные действия. Сам раздел «Источники» и его окно/структура остаются видимыми заранее; для незавершённой части показывать единый ticker «В разработке». Не дублировать существующие механизмы хранения, загрузки или подключения.
 - Разместить раздел в общей структуре настроек проекта так, чтобы он был логически связан с остальными настройками, но оставался самостоятельным и легко обнаруживаемым.
 
 
@@ -393,7 +462,7 @@ PR #122 добавил только эксплуатационную надёж�
 - Если соответствующий механизм реально существует, предусмотреть в настройках проекта отдельное действие наподобие «Передать контекст в чат»: показать существующие чаты и дать пользователю выбрать целевой.
 - Не создавать новый чат автоматически и не менять принадлежность выбранного чата к проекту при передаче контекста.
 - Передавать контекст только после явного действия пользователя.
-- Если механизм пока не реализован, сначала проверить архитектуру; не показывать фиктивный переключатель или действие.
+- Если отдельная возможность ещё не реализована, не скрывать её будущий раздел или окно: заранее выстраивать структуру и настройки, а в незавершённой области показывать единый ticker «В разработке». При этом нельзя имитировать успешное выполнение, отправку или изменение данных; недоступные действия явно блокируются либо объясняются через ticker.
 
 ### 8.14 Предотвращение случайного выделения интерфейса на touch-устройствах
 
@@ -427,6 +496,7 @@ PR #122 добавил только эксплуатационную надёж�
 - Дать пользователю возможность самостоятельно настроить соответствующие параметры, если стандартные значения ему не подходят.
 - Не перегружать настройки: названия, диапазоны и результат изменения должны быть понятными; изменения должны корректно работать в обеих темах.
 - Проверять контраст и состояния текста (обычный, вторичный, disabled, ссылки, ошибки, статусы), а не только основной цвет.
+- В системном режиме Windows Forced Colors сохранять заметный клавиатурный фокус и различимые границы интерактивных элементов; не полагаться только на собственную настройку high contrast.
 
 ## 9. Дополнительные требования владельца к сторонним провайдерам (2026-10-31)
 
@@ -473,10 +543,16 @@ PR #122 добавил только эксплуатационную надёж�
 ## 11. Change log
 
 | Date | Change | Evidence |
-| 2026-10-31 | Marked owner corrections in sections 8.1–8.17 as a dated, priority backlog for landing V2.0; explicitly kept them separate from V1 implementation status/freeze. | Owner instruction in current conversation; document re-read before update. |
 |---|---|---|
+| 2026-11-01 | Reconciled legacy sections 1–7 against PR #131 and requirements 8.1–8.17; added one P0/P1/P2 open-task list in section 8.0 and retired duplicate polish tracking. | Current PR #131 source, V2 implementation ledger and explicit owner checklist; exact-head tests remain pending. |
+| 2026-10-31 | Marked owner corrections in sections 8.1–8.17 as a dated, priority backlog for landing V2.0; explicitly kept them separate from V1 implementation status/freeze. | Owner instruction in current conversation; document re-read before update. |
 | 2026-10-31 | Consolidated the remaining owner-dictated UI notes: message action icons, backdrop lifecycle, unified control sizing, compact theme/language controls, removal of experimental server memory, explicit project-context transfer, touch text-selection behavior, centered/color-coded status tickers, icon-first button typography and user-adjustable text readability. Added the agreed third-party provider shortlist and BYOK/model auto-detection requirements, including V1/funding/security boundaries. | Confirmed in the current conversation; requirements only, implementation status not inferred. |
-### 2026-11-02 — Integrated UI scope mirror
 
-- The active UI scope includes all still-applicable unfinished requirements inherited from sections 1–7 together with owner requirements 8.1–8.17. Section 8.0 is the single active residual queue; completed, obsolete and superseded items are not reopened as parallel work.
-- This PR #132 copy is a continuity backup. The active implementation and canonical current status remain in PR #131; do not infer new completion statuses from this mirror.
+
+### Integrated UI scope and Graphify source coverage — 2026-11-02
+
+- Execution scope remains unified: active inherited UI requirements from sections 1–7 are mapped into section 8.0 workstreams and requirements 8.1–8.17; obsolete, completed or superseded items are not reopened as a second backlog.
+- Section 8.0 remains the canonical open-work register. The polish backlog is a concise mirror; implementation evidence belongs in `LANDING_UI_V2_IMPLEMENTATION_RU.md`.
+- Latest UI source checkpoint: `9aa74853478a6a680cdd36ab0f84c851721405a4`; latest PR #131 branch head at this documentation update: `c8facdac2eebc7d2217b807f1b7e314ae3abf2dd` (the intervening commits are documentation/workflow changes). Exact-head Quality/Chromium remains unverified.
+- Graphify Code-Only Pilot path filters now include `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html`, so the extracted client runtime and stylesheet are included in future graph refreshes. The new run/artifact has not yet been observed; no graph-analysis pass is claimed.
+- PR #131 remains open/unmerged. No rebase, merge or deployment was performed.
