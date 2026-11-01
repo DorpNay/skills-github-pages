@@ -253,3 +253,12 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Confirmed Tavily remains optional with a pending decision note; global user system prompt defaults to empty and legacy default text is normalized to empty.
 - No source-level contradiction found in the inspected surfaces. Tavily/keyless-search decision and provider/runtime error tests remain open. This was a source review only, not browser/live-provider verification.
 - Updated LANDING_UI_V2_IMPLEMENTATION_RU.md. Exact-head workflow/status queries remain empty; no test pass is claimed.
+
+
+### 2026-11-01 — PR #131: P0 verification source inventory
+
+- Inspected current branch workflow definitions: Quality Sentinels triggers on every PR and includes integrity/security/context, Jekyll, Chromium E2E, published-site smoke and static analysis; Gateway Tests triggers on PRs touching gateway/** and includes compileall, manifest/INTEL checks, pytest, deploy preflight and offline eval.
+- Source inventory: 90 Playwright declarations in tests/e2e/app.spec.mjs, 8 in tests/e2e/landing.spec.mjs, 36 pytest test functions in gateway/tests/test_app.py.
+- Confirmed gateway/app.py contains no graph-memory HTTP route/flag references. Tests include health-probe secret checks, invalid Bearer token non-echo and upstream error-body redaction.
+- Current branch head before this log entry: 6a597ded2f872669c70654c9a9db1b65429c8147. Exact-head workflow-run and combined-status queries returned zero entries. Workflow YAML indicates PR triggers are configured; no run result is visible, so no test pass is claimed.
+- Execution blocker: this session can inspect/update repository files but cannot dispatch Actions and cannot clone from GitHub due unavailable outbound network. The next concrete step is to obtain real Gateway/Quality runs through the normal PR workflow. Do not substitute source inspection for execution.
