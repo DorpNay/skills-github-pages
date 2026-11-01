@@ -63,12 +63,19 @@ The original V1 document contains 18 inherited control directions before section
 
 ### Work completed in this cross-cutting pass (not yet browser-verified)
 
-- Cloud URL validation now has RU/EN messages, required URL/model/key errors, aria-invalid and aria-describedby linkage; Cloud field labels, paste action and connect button are localized. Theme-aware semantic info/warning tokens were added, and the checking state uses the warning token in both themes.
-- Cloud health refresh now checks that URL/model/key still match after asynchronous fingerprint and /healthz work, so an old response cannot restore a green state after credentials change.
+- Cloud URL validation now has RU/EN messages, required URL/model/key errors, aria-invalid and aria-describedby linkage; aServi field labels, paste action and connect button are localized. Theme-aware semantic info/warning tokens were added, and the checking state uses the warning token in both themes.
+- aServi health refresh now checks that URL/model/key still match after asynchronous fingerprint and /healthz work, so an old response cannot restore a green state after credentials change.
 - The global system-prompt edit pencil now localizes its title/accessibility name and edit-state announcement; E2E covers keyboard focus and the return to read-only.
 - Mobile viewport resize now captures whether the chat was near the bottom before layout changes: users reading older messages keep their position, while users at the latest message stay anchored. E2E coverage was added.
-- Playwright CI diagnostics changed to trace on first retry, screenshot on failure and no video. CI uses one worker and a 30-minute Playwright global timeout inside a 35-minute Actions job, allowing the test runner to finish and flush reports. The high-contrast E2E also verifies that the Cloud checking-state color follows the selected theme.
+- Playwright CI diagnostics changed to trace on first retry, screenshot on failure and no video. CI uses one worker and a 30-minute Playwright global timeout inside a 35-minute Actions job, allowing the test runner to finish and flush reports. The high-contrast E2E also verifies that the aServi checking-state color follows the selected theme.
 - The browser package remains pinned at @playwright/test 1.56.1 for the current stabilization baseline. Upgrade is deliberately separated from UI debugging: issue #38489 documents a 1.57 Chrome-for-Testing memory spike report, while issue #41562 documents a distinct 1.61.1/Chromium 149 view-transition stability regression fixed in later upstream builds. Neither is proven to be the cause of aLandi's failures; avoid changing browser and application variables simultaneously.
+
+## aLandi aServi naming and HTML runtime optimization — 2026-11-01
+
+- Renamed the first-party self-hosted endpoint surface from **aLandi Cloud** to **aLandi aServi** in UI labels, RU/EN copy, status messages, DOM IDs, CSS classes and related E2E selectors. Cloudflare remains a separate infrastructure/provider name and was not renamed.
+- Extracted the 359 KB inline application runtime into assets/js/app.js, loaded through Jekyll relative_url with defer. This keeps the existing vanilla JS/Jekyll stack and runtime logic intact while reducing index.md from about 469 KB to about 109 KB and allowing browsers/CDNs to cache the runtime independently. No build tool or dependency was added.
+- Deliberately did not minify maintained source or mechanically merge repeated CSS selectors: the stylesheet is one cascade with intentional later overrides, and blind consolidation risks changing specificity/order. CSS consolidation should be measured and done as bounded selector groups after browser review.
+- No branch or source file was deleted: no ownership/usage proof established an orphan. Existing legacy selectors/storage keys are retained only where migration/compatibility requires them.
 
 ## Chromium / Playwright reliability findings (research snapshot 2026-11-01)
 
@@ -90,7 +97,7 @@ Primary references:
 1. Keep all existing V1 regression tests unless a test asserts behavior explicitly superseded by owner requirements 8.1–8.17; replace those assertions with the new acceptance contract rather than simply deleting coverage.
 2. Add Playwright coverage for:
    - sidebar order, accordion defaults/state retention, projectless/project chat filtering, project gear actions, back-to-general navigation and swipe-close;
-   - mutually exclusive settings sections and Cloud/provider separation;
+   - mutually exclusive settings sections and aServi/provider separation;
    - global empty system prompt migration and no implicit project-memory injection;
    - project-source UI only when a real scoped source contract exists;
    - icon actions in compact and expanded message views;
@@ -107,7 +114,7 @@ Primary references:
 - [~] Complete source-code and gateway-contract audit for 8.1–8.17.
 - [~] Implement shared UI tokens, selected modal/focus paths, accessible message actions and touch ergonomics.
 - [~] Implement sidebar/projects/chats and memory UX, including project-filtered chats and explicit request context.
-- [~] Implement header theme/language controls and Cloud/provider/additional-settings grouping.
+- [~] Implement header theme/language controls and aServi/provider/additional-settings grouping.
 - [x] Remove deprecated server-memory UI/client dispatch and graph HTTP API/flags; preserve independent local/private/shared/project-local memory, conversation delta sync and RAG. Existing graph SQLite files are not deleted.
 - [~] Execute exact-head Gateway and Chromium regressions for the removal and local-memory preservation.
 - [~] Resolve project Sources contract: show an explicit unsupported-state explanation; do not present fake source-management actions.
@@ -239,7 +246,7 @@ Primary references:
 
 - Added a Playwright regression at mobile viewport size: vertical touch movement must not close the sidebar; a leftward horizontal swipe beyond the close threshold must close it; reopening must preserve the expanded project navigation list.
 - Test commit: `d388a02445ddc1ebccbaec58fd8515b8d0b9adfa`. The event-level regression is added but has not been executed in Chromium or on a physical touch device.
-- Requirements 8.3 and 8.7 already have focused source/E2E coverage: Cloud/provider disclosure exclusivity and truthful project-source unsupported state (no fake CRUD controls). Do not duplicate these implementations.
+- Requirements 8.3 and 8.7 already have focused source/E2E coverage: aServi/provider disclosure exclusivity and truthful project-source unsupported state (no fake CRUD controls). Do not duplicate these implementations.
 
 
 ### Follow-up — responsive header acceptance (8.2, 2026-11-01)
@@ -379,12 +386,12 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 ### Chromium run #1125 diagnosis and correction batch — 2026-11-01
 
 - Exact-head Quality run #1125 (`41289724442`) on `e0e0f80e678e6b418690ba9f33b808a29fe22fef`: Jekyll, Security, Static Analysis, Context and Integrity PASS. Chromium completed in 11 minutes and reported 78 passed, 38 failed, 2 flaky. Diagnostics were uploaded as artifact `playwright-diagnostics` (artifact ID `13077550536`). The published-site smoke steps were skipped because local Chromium failed.
-- Confirmed stale E2E contracts corrected: provider settings are `#thirdPartyProviderSettings` (not retired `#legacyProviderSettings`); Research Studio is opened from `#functionsMenu` (not the sidebar); language changes use the visible header language menu (the backing `#uiLanguage` select is intentionally hidden); the Cloud group is open by default; the Research menu has four options; the new-chat action is outside `#chatSection`.
+- Confirmed stale E2E contracts corrected: provider settings are `#thirdPartyProviderSettings` (not retired `#legacyProviderSettings`); Research Studio is opened from `#functionsMenu` (not the sidebar); language changes use the visible header language menu (the backing `#uiLanguage` select is intentionally hidden); the aServi group is open by default; the Research menu has four options; the new-chat action is outside `#chatSection`.
 - Provider connectivity checks send `Reply with exactly OK. No other words.` before a real chat. Test fixtures for multi-agent, 401, model fallback and web-search budgets now distinguish this probe from user requests so call counts assert the intended behavior.
 - Confirmed source fixes: preserve a 54px clock face at <=360px instead of shrinking to 42px; ensure `.message-actions button.hidden` is actually hidden so the message-viewer speech action is absent for user messages.
 - Additional test/CI corrections: project chat navigation now returns to the personal-chat scope before creating a personal chat; the status fixture answers connectivity probes immediately and only blocks the actual user request; the semantic ticker assertion uses the first matching track; CI now uses 2 workers and a 25-minute Chromium job timeout to reduce resource contention while retaining the full suite.
 - Code/test commits in this correction batch include `003f2f3`, `7ff1e28`, `6fea65d`, `dfde158`, `6aca858`, `ffd5d7c`, `174747f`, `4f3e387`, `984de39`, `b91988d`, `2735e31`, `cbb6282`, `b59ac0f`, `7060ba6`, `b42797c`. These changes have not yet been exercised by a new Quality run.
-- Remaining failures to verify after rerun: high-contrast disabled text state; Cloud/provider/additional disclosure transitions; project/chat scope and handoff flows; message viewer actions; same-provider model fallback and 401 request count; new 44px touch targets. Native iPhone Safari, VoiceOver and measured WCAG contrast remain manual gates.
+- Remaining failures to verify after rerun: high-contrast disabled text state; aServi/provider/additional disclosure transitions; project/chat scope and handoff flows; message viewer actions; same-provider model fallback and 401 request count; new 44px touch targets. Native iPhone Safari, VoiceOver and measured WCAG contrast remain manual gates.
 - PR #131 is still open and unmerged. GitHub currently reports `mergeable_state=dirty`; treat this as a merge-conflict blocker to investigate separately before any merge. No deployment was performed.
 
 ### 8.11 compact, separate theme and language controls — 2026-11-01
@@ -398,7 +405,7 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 ### Chromium run #1126 diagnosis and corrective batch — 2026-11-01
 
 - Exact-head Quality run #1126 (`41291438804`) on `7cdf35d581d9d6bca39256e67a0b0db6083e486c`: Jekyll, Security, Static Analysis, Context and Integrity PASS. Chromium completed with 101 passed and 18 failed; diagnostics artifact ID `13077583320`. Published-site smoke was skipped after local Chromium failed.
-- Confirmed contract drift in the remaining local-gateway tests: aLandi is configured in the separate Cloud card, not the third-party provider preset. The aLandi provider, audio and PDF fixtures now configure Cloud fields, answer the exact connectivity probe, and return a successful `/healthz` response before the user-path assertion.
+- Confirmed contract drift in the remaining local-gateway tests: aLandi is configured in the separate aServi card, not the third-party provider preset. The aLandi provider, audio and PDF fixtures now configure aServi fields, answer the exact connectivity probe, and return a successful `/healthz` response before the user-path assertion.
 - Corrected E2E assumptions: project settings leave the sidebar open; private memory controls require expanding `#memoryToolsDetails`; the project-create modal has two close actions; header language selection does not open the settings modal. Research Studio checkbox coverage now clicks its visible label.
 - Source corrections: narrow 320px header uses reduced horizontal padding and compact wordmark; disabled text in the chat fixture receives the high-contrast token despite the chat container's ID-level styles; Research Studio close hides immediately and then cleans its matching browser-history entry.
 - Corrective code/test commits include `53c384a`, `54e90c3`, `a793f5d`, `8302b8f`, `ecc5118`, `c9c1df9`, `929ebcf`, `6845b8a`, `e64cfad`. Current code/test head: `929ebcf20db87eca949c6f5a386c16e75f2856a1`; exact-head rerun is required before closing 8.11 or declaring the suite green.
