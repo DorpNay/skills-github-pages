@@ -191,3 +191,28 @@ This file is present only on the feature/documentation branches until their owne
 GitHub's repository-renaming guidance says project Pages URLs are not automatically redirected. Rename to aLandi/alandi only after a stable custom domain is configured and a migration checklist covers baseurl, canonical/OG metadata, absolute links, OAuth redirect URIs, Actions/reusable-workflow references, local clone remotes and published-site smoke.
 
 No files, workflows, settings, branches or repository names were deleted or changed in this audit.
+
+
+## 10. Продолжение аудита — 2026-11-02, PR #131
+
+### Проверка CI и публикации
+- Текущий PR #131 HEAD на момент аудита: 9a23d58313da6379cb112b617daedeaa6d38f605.
+- Quality #1234 (run 41363212486) завершился success за 105 секунд: 4/4 Chrome shards, 128/128 E2E passed; preflight, static analysis, Integrity, Security, Context и Jekyll passed.
+- Published-site smoke в этом PR run был skipped; это не проверка preview и не подтверждение новой публикации.
+- Quality #1233 на предыдущем SHA завершился failure из-за невидимого #uiTextContrast в одном тесте. Следующий exact-head run #1234 прошёл без изменения исходников. Наблюдать за нестабильностью; не считать доказанным дефектом production UI.
+- Ускорение относительно #1197 пока не заявляется: baseline 1863s закончился timeout и не завершил сопоставимый набор тестов.
+
+### V2 preview и граница V1
+- В репозитории обнаружен один Pages-проект и один опубликованный адрес. Развёртывание PR artifact в этот Pages target заменит опубликованную V1 версию, поэтому такой способ запрещён.
+- Отдельный GitHub Pages URL требует второго Pages site/repository либо отдельного хостинг-проекта. Preview пока не развёрнут; V1 не затронута.
+- Перед публичным preview: отдельный target, минимальные Pages permissions, PR-only deployment, immutable artifact, защита от fork PR secrets, retention/cleanup и smoke test. Не давать preview workflow права на production Pages target.
+
+### Ветки и файлы
+- Снимок branch API показывает 126 refs; 117 не являются head открытого PR. Это не эквивалентно 117 бесхозным веткам.
+- В подключённом GitHub toolset нет операции удаления branch/ref. Ничего не удалено. Пять ранее выявленных behind-only кандидатов требуют повторной проверки открытых PR/issues, commit ancestry, уникальных изменений и ссылок до удаления через GitHub UI/API владельцем.
+- Уникальные коммиты, закрытые unmerged PR и future-workstream ветки сохранять. Файлов-кандидатов на удаление с доказанной ненужностью пока нет.
+
+### Результат
+- Документация состояния обновлена в ORIENTER.md, docs/PROJECT_STATE.yaml и docs/VOLLEY_LOG.md.
+- Никаких branch/file deletions, merges, rebases или production deployments не выполнялось.
+- Следующий этап: отдельный preview target; подробный upstream triage 60 owner-provided repositories; повторная branch ancestry audit; продолжение UI acceptance scope.
