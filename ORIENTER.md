@@ -2,16 +2,15 @@
 
 This is the short entry point for an assistant or engineer. Use the detailed navigation index at `project-reference/FILE_ORIENTER_RU.md`, the machine-readable state at `docs/PROJECT_STATE.yaml`, and the chronological log at `docs/VOLLEY_LOG.md`.
 
-## Current working checkpoint — 2026-10-31
+## Current working checkpoint — 2026-11-01
 
-- **Current main SHA:** `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; main remains the stable Landing V1.0 baseline.
-- **PR #131 — aLandi Landing UI v2.0:** open, unmerged; branch `feat/landing-v1-accessibility-responsive-20261031`; latest UI code commits `a541932307c764e56f81b795b940785839128338` (memory hierarchy) and `c3855c28317c5b481d59b463e4d4cb985d992dcd` (project-context handoff selector fix). E2E update commits include `2bfc6c080abeef00ed2566e54e0b847f40c11e2d`, `ccb76ea689ddb0ad6ef8d580dee06148aab6f94f` and `24004fe48e506a7d1a7e03b1538f3faed209381b`. Later commits in this checkpoint only refresh continuity docs. It is the sole branch for subsequent Landing V2 interface work. Do not merge or deploy without explicit owner approval.
-- **PR #127 — continuity/master task registry:** open, unmerged; central registry `docs/MASTER_TASK_REGISTRY_RU.md` consolidates 276 open/partial items across six source registers; duplicates remain until reconciliation.
-- **Research tracks:** PR #128 Agent Workforce 2.0, #129 Voice 2.0 and #130 Deep Research 2.0 remain isolated Draft/HOLD workstreams on `future-workstreams/parking-base-20261031`; do not merge into main. PR #125 Agent Studio blueprint and #124/#126 dependency overlap require reconciliation before further action.
-- **V1 freeze:** no new product capabilities or runtime components in the stable landing. Improve only inside the approved HTML/CSS/JavaScript + Jekyll/GitHub Pages and existing FastAPI gateway stack.
-- **Canonical UI checklist:** `docs/V1_UI_FINALIZATION_RU.md`; priority Landing V2 requirements are sections 8.1–8.17. Implementation status and evidence are tracked separately in `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
-- **Not verified:** exact-head Chromium/Playwright CI for PR #131, native iPhone Safari/VoiceOver, live VPS/Tunnel/Ollama/provider credentials, target-host model quality/RAM/latency, real voice runtime, production RAG corpus, OAuth/Drive and arbitrary-code sandbox.
-- **At the latest PR #131 UI code commit:** 92 commits ahead / 4 behind current main; later commits only refresh continuity docs; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Exact-head workflow-run and combined-status queries returned no entries. Do not report tests as passing.
+- **Main baseline:** `main` remains the stable Landing V1.0 baseline. PR #131 targets main and is the only V2 UI workstream.
+- **PR #131 — aLandi Landing UI v2.0:** open, unmerged; branch `feat/landing-v1-accessibility-responsive-20261031`; latest confirmed PR head after documentation reconciliation: `d6c01c645dc69db28f5593a3dbc153cb02c6a488`. Latest UI code/test head remains `8f68c2cc4b4b01a1917e32f75f7d5016517d41c3`; subsequent commits are documentation reconciliation only.
+- **Canonical UI queue:** `docs/V1_UI_FINALIZATION_RU.md` section 8.0 is the single consolidated outstanding UI list; owner requirements remain 8.1–8.17. `docs/LANDING_UX_POLISH_BACKLOG_RU.md` mirrors only the same residual tasks. Implementation evidence/status is in `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
+- **Legacy checklist reconciliation:** pre-8.1 items are retained as historical V1 evidence, not a parallel active backlog. Duplicates/superseded items are mapped to 8.1–8.17 or removed from the current queue. Project Sources CRUD remains blocked by the missing gateway source-list API; 8.13 session-only handoff is intentional.
+- **Current priority:** P0 exact-head Gateway + Playwright/Chromium + Quality/Freshness/Provenance/Graphify/Dead Code; P1 native iPhone Safari/VoiceOver, screenshots, RU/EN + light/dark review and WCAG contrast ratios; P2 long-list/scroll/popover stress and capability-label truthfulness.
+- **Verification boundary:** no exact-head CI/Chromium result is available; tests are present as source but unexecuted. Native iPhone Safari/VoiceOver, actual WCAG ratios, live VPS/Tunnel/Ollama/provider credentials, target-host model quality/RAM/latency, real voice runtime, production RAG corpus, OAuth/Drive and arbitrary-code sandbox remain unverified. Do not claim tests as passing.
+- **Merge policy:** keep PR #131 open; no merge or deployment without explicit owner approval.
 
 
 ## First-read order
