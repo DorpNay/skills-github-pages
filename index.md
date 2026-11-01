@@ -192,6 +192,11 @@ permalink: /
       .clock-face { width:54px; height:54px; }
       .brand-wordmark { font-size:1rem; }
     }
+    @media (max-width:360px) {
+      .app-header { padding-left:4px!important; padding-right:4px!important; gap:4px!important; }
+      .header-chat-title { padding:3px 4px; }
+      .brand-wordmark { font-size:.875rem; letter-spacing:-.09em; }
+    }
     button,input,textarea,select { border-radius:var(--ui-radius-sm); }
     .settings-surface { border-radius:22px!important; }
     .settings-subpanel { background:color-mix(in srgb,var(--ui-surface-raised) 86%,transparent); overflow:hidden; }
@@ -452,6 +457,7 @@ permalink: /
      html[data-theme="light"][data-text-contrast="high"] { --ui-text-muted:#344e5e; --ui-disabled-text:#5b7280; --ui-info:#174ea6; --ui-warning:#805400; --ui-success:#006b5e; --ui-danger:#a51f32; }
      html[data-text-contrast="high"] .text-gray-400,html[data-text-contrast="high"] .text-gray-500,html[data-text-contrast="high"] .text-gray-600,html[data-text-contrast="high"] #memoryStatusLine,html[data-text-contrast="high"] #projectStatusLine { color:var(--ui-text-muted)!important; }
      html[data-text-contrast="high"] button:disabled,html[data-text-contrast="high"] input:disabled,html[data-text-contrast="high"] select:disabled,html[data-text-contrast="high"] textarea:disabled { color:var(--ui-disabled-text)!important;opacity:.9; }
+     html[data-text-contrast="high"] #chatBox button:disabled { color:var(--ui-disabled-text)!important; }
      html[data-text-contrast="high"] .assistant-content a,html[data-text-contrast="high"] .message-viewer-content a { color:var(--ui-info)!important; }
      html[data-text-contrast="high"] .field-error,html[data-text-contrast="high"] [role="alert"] { color:var(--ui-danger)!important; }
      html[data-text-contrast="high"] .cloud-status-copy[data-state="connected"] { color:var(--ui-success)!important; }
@@ -4624,11 +4630,14 @@ permalink: /
     }
     let researchStudioReturnToComposer=false;
     function closeResearchStudio() {
-      if(requestUiModalBack('researchStudioModal'))return;
-      $('researchStudioModal').classList.add('hidden');syncModalEnvironment();
+      const modal=$('researchStudioModal');
+      if(!modal||modal.classList.contains('hidden'))return;
+      const shouldPop=!applyingUiNavigationPop&&uiNavigationStack.at(-1)?.kind==='modal'&&uiNavigationStack.at(-1)?.id==='researchStudioModal';
+      modal.classList.add('hidden');syncModalEnvironment();
       const opener=researchStudioOpener;researchStudioOpener=null;
       const target=researchStudioReturnToComposer?$('userInput'):(opener&&document.contains(opener)&&opener.getClientRects().length&&!opener.disabled?opener:$('functionsMenuSummary'));
       researchStudioReturnToComposer=false;target?.focus({preventScroll:true});
+      if(shouldPop)history.back();
     }
     function startResearchStudio() {
       setProcessingMode($('researchStudioEffort').value);
