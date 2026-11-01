@@ -454,7 +454,8 @@ def test_upstream_errors_do_not_leak_raw_body_or_configured_secrets():
 
     assert response.status_code == 502
     assert response.json() == {
-        "error": {"message": "Local model backend rejected the request.", "type": "upstream_error"}
+        "error": {"message": "Local model backend returned HTTP 500; inspect service logs.",
+                  "type": "upstream_error"}
     }
     for secret in (API_KEY, oauth_secret, "internal path"):
         assert secret not in response.text
