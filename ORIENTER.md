@@ -219,3 +219,10 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Graphify Code-Only Pilot now watches extracted app JS/CSS and landing HTML. Its run/artifact is not yet confirmed; do not use stale graph metrics as current architecture evidence.
 - PR #131 remains open/unmerged and reports dirty/diverged against main. Do not rebase or merge until the four base-side commits and conflicts are inspected. No deployment.
 - Next: continue a bounded cross-cutting UI source pass, update all continuity documents in PR #131 and the PR #132 backup, then obtain exact-head Quality/Chromium and Graphify evidence.
+
+
+### Repository hygiene inventory — 2026-11-02
+- Inventory snapshot: 126 branches; 9 open PRs (#124–132); 100 closed PRs inspected. All 19 closed-but-unmerged PR branches reviewed have ahead > 0 and are preserved.
+- Five no-PR branches are confirmed behind-only with no exact-name code/PR references: feat/alandi-helper-model-routing; feat/rag-rrf-engineering-audit-rebased-20261027; fix/provider-model-catalogs-v2; fix/pyodide-setup; fix/theme-persistence-e2e-isolation. They are recorded as deletion candidates in docs/REPOSITORY_HYGIENE_RU.md.
+- future-workstreams/parking-base-20261031 is intentionally reserved and retained. Other no-PR branches with ahead > 0 are retained for separate triage.
+- No branch/file deletion performed: GitHub integration has no branch-delete action; no confirmed unused file was found. SECURITY.md added in both PR branches; main still lacks it until merge. CODEOWNERS deferred pending an independent reviewer; Dependabot config deferred while PR #124 adds uv.lock. Repo security settings are not readable through current integration and remain owner-manual checks.
