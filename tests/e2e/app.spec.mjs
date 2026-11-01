@@ -172,7 +172,8 @@ test('sidebar order separates memory, projects, status, chats, and research', as
   expect(positions).toEqual([...positions].sort((a, b) => a - b));
   await expect(page.locator('#projectPanel')).toContainText('Проект');
   await expect(page.locator('#sidebar [data-action="open-research-studio"]')).toHaveCount(0);
-  await expect(page.locator('#functionsMenu [data-action="open-research-studio"]')).toHaveCount(1);
+  await expect(page.locator('#functionsMenu [data-action="open-research-studio"]')).toHaveCount(0);
+  await expect(page.locator('#deepResearchStudioButton[data-action="open-research-studio"]')).toHaveCount(1);
   await expect(page.locator('#chatListNewButton')).toContainText('Новый личный чат');
   await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте выкл.');
   await page.locator('#memoryToolsDetails > summary').click();
