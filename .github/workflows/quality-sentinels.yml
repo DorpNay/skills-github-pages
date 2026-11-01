@@ -14,7 +14,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  quality-harness-preflight:
+    name: Quality harness syntax preflight
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Parse deterministic quality harness without executing it
+        run: node --check scripts/quality-agents.mjs
+
   integrity-sentinel:
+    needs: [quality-harness-preflight]
     name: Integrity sentinel (HTML / JavaScript)
     runs-on: ubuntu-latest
     steps:
@@ -34,6 +46,7 @@ jobs:
         run: bash -n scripts/diagnose_model_runtime.sh
 
   security-sentinel:
+    needs: [quality-harness-preflight]
     name: Security sentinel (keys / rendering / tools)
     runs-on: ubuntu-latest
     steps:
@@ -45,6 +58,7 @@ jobs:
         run: node scripts/quality-agents.mjs security
 
   context-sentinel:
+    needs: [quality-harness-preflight]
     name: Context sentinel (budgets / memory / tool loop)
     runs-on: ubuntu-latest
     steps:
@@ -56,6 +70,7 @@ jobs:
         run: node scripts/quality-agents.mjs context
 
   pages-build:
+    needs: [quality-harness-preflight]
     name: Jekyll build sentinel
     runs-on: ubuntu-latest
     steps:
