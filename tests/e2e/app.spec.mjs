@@ -1956,6 +1956,10 @@ test('project context handoff queues exactly one request for an existing chat wi
   const handoff = page.locator('#projectSettingsModal [data-action="handoff-project-context"]');
   await expect(handoff).toBeEnabled();
   await handoff.click();
+  await expect.poll(() => page.evaluate(() => {
+    const pending = JSON.parse(sessionStorage.getItem('ai_request_project_context_v1') || '[]');
+    return pending.some(([chatId, ids]) => chatId === '${targetChatId}' && ids.includes('${projectId}'));
+  })).toBe(true);
 
   const afterHandoff = await page.evaluate(() => ({
     current: localStorage.getItem('ai_current_chat_v87'),
@@ -1985,6 +1989,7 @@ test('project context handoff queues exactly one request for an existing chat wi
   await expect.poll(() => capturedBodies.length).toBe(2);
   expect(capturedBodies[1].messages[0].content).not.toContain('HANDOFF_PROJECT_INSTRUCTION_SENTINEL');
   expect(capturedBodies[1].messages[0].content).not.toContain('HANDOFF_PROJECT_MEMORY_SENTINEL');
+  await expect.poll(() => page.evaluate(() => sessionStorage.getItem('ai_request_project_context_v1'))).toBeNull();
   const finalState = await page.evaluate(() => ({
     current: localStorage.getItem('ai_current_chat_v87'),
     chats: JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').length
