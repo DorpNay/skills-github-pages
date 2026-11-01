@@ -4,14 +4,15 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 
 ## Landing V2 continuity checkpoint — 2026-11-01
 
-- **PR #131** (`feat/landing-v1-accessibility-responsive-20261031`) is the active Landing V2 implementation branch; current head at this checkpoint: `70e6b98d77f5860de01e2252f90be126d761e2b3`. PR remains open and unmerged.
+- **PR #131** (`feat/landing-v1-accessibility-responsive-20261031`) is the active Landing V2 implementation branch; current head at this checkpoint: `7958ad24b987819a568a7755dfd243f740c0e240`. PR remains open and unmerged.
 - V1 on `main` remains the stable baseline. V2 source changes and implementation statuses are not part of main until the owner explicitly authorizes merging PR #131.
 - Owner control: do not merge, close, or deploy PR #131 without the owner's explicit command.
 - Canonical V2 requirements: `docs/V1_UI_FINALIZATION_RU.md`, sections 8.1–8.17. Branch implementation ledger: `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`; unified remaining queue: section 8.0 on the PR branch.
 - Verified: Gateway Actions run #640 passed compileall, manifest/INTEL, `pytest gateway/tests`, deploy preflight and six-layer offline evaluation on `6f7fde485b2b13aecc50523b20785e0ac615d2ad`. No `gateway/**` files changed after that tested commit through PR #131 head.
 - Not verified: exact-head Quality/Chromium and published-site checks are not visible through the available Actions status lookup; native iPhone Safari/VoiceOver, real WCAG contrast measurements and manual visual acceptance remain open.
-- PR #131 is 197 commits ahead / 4 behind current main at this checkpoint; GitHub reports `mergeable=false`. Do not force-update or merge the branch blindly. Inspect/reconcile the four main-side commits before any branch synchronization or pre-merge preparation.
+- PR #131 is 199 commits ahead / 4 behind current main at this checkpoint; GitHub reports `mergeable=false`. Do not force-update or merge the branch blindly. Inspect/reconcile the four main-side commits before any branch synchronization or pre-merge preparation.
 - Continue with P0 exact-head Quality/Chromium evidence, then manual P1 acceptance. All completion claims must be tied to current code and test evidence.
+- A separate draft documentation safety PR #132 (`docs/landing-v2-continuity-backup-20261101`) preserves this checkpoint outside PR #131; it is not merged.
 
 ## Current working checkpoint — 2026-10-30
 
