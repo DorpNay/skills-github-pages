@@ -309,3 +309,10 @@
 - [x] Mark work-in-progress areas with a consistent moving development ticker; do not hide the whole section just because its runtime is pending.
 - [x] Do not fake successful operations or mutate real data from unfinished controls; unavailable actions must be explicitly inactive or explain their development status.
 - [x] Research Studio is a helper inside deep research/Thorough controls, not a standalone sidebar or Functions-menu destination; its composer/settings behavior remains intact.
+
+
+### 2026-11-02 — integrated Landing V2 UI scope
+
+- All still-applicable unfinished UI requests inherited from sections 1–7 are consolidated into the unified section 8.0 workstreams; they are executed together with owner requirements 8.1–8.17, not as a parallel legacy backlog.
+- Canonical status/evidence documents: `docs/V1_UI_FINALIZATION_RU.md`, `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`, and the concise mirror `docs/LANDING_UX_POLISH_BACKLOG_RU.md`.
+- Completed, obsolete or superseded requests remain documented but are not reopened. Exact-head browser tests and native-device acceptance remain separate proof gates.
