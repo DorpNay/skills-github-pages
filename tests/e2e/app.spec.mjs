@@ -74,8 +74,7 @@ async function setSkillPreset(page, preset) {
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
 }
 async function toggleHeaderTheme(page) {
-  await page.locator('#languageMenu > summary').click();
-  await page.locator('#headerThemeMenuToggle').click();
+  await page.locator('#headerThemeToggle').click();
 }
 
 async function selectLanguage(page, language) {
