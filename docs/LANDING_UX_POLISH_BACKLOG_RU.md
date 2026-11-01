@@ -51,7 +51,7 @@
 - [ ] Длинные списки/имена проектов и чатов, длинные сообщения, пустые состояния, вложенный scroll и popover у краёв viewport/при клавиатуре.
 - [ ] Меню «Исследование / Агенты / Навыки / Коннекторы»: только реально зарегистрированные сущности, статусы и permissions; отделить web-search breadth, offline и sequential pipeline от independent agent runtime.
 - [ ] Перепроверить empty-by-default global system prompt и legacy migration; решение по Tavily — только после аудита keyless search fallback и реального adapter contract.
-- [ ] Mock/contract-проверки provider/gateway ошибок: invalid URL/model, CORS, timeout, 401/5xx, secret redaction. Cloud now validates required fields and remote HTTPS, links errors accessibly, and ignores stale health responses; broader provider/catalog failure matrix remains. Live smoke — только с явным согласием владельца.
+- [ ] Mock/contract-проверки provider/gateway ошибок: invalid URL/model, CORS, timeout, 401/5xx, secret redaction. aServi now validates required fields and remote HTTPS, links errors accessibly, and ignores stale health responses; broader provider/catalog failure matrix remains. Live smoke — только с явным согласием владельца.
 
 ## Не включать в UI backlog
 
