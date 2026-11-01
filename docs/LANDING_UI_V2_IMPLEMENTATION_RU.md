@@ -67,7 +67,7 @@ The modal keyboard trap now selects the actually topmost visible dialog by compu
 
 ### Runtime source-of-truth
 
-The active Jekyll app shell, markup and CSS are in index.md; browser runtime logic is extracted to assets/js/app.js (refactor commit 9e5cf6465c8be4908ada83f1806bcd82a8907149). Runtime IDs/actions use the aServi naming family (aserviBaseUrl, aserviModel, aserviApiKey, paste-aservi-key, aserviStatus); E2E must target those current controls and not superseded selector contracts. Keep HTML/CSS edits in index.md and application logic in assets/js/app.js.
+The active Jekyll app shell, markup and CSS are in index.md; browser runtime logic is extracted to assets/js/app.js (refactor commit 9e5cf6465c8be4908ada83f1806bcd82a8907149). Runtime IDs/actions use the aServi naming family (aserviBaseUrl, aserviModel, aserviApiKey, paste-aservi-key, aserviStatus); E2E must target those current controls and not superseded selector contracts. Keep HTML structure in index.md, application CSS in assets/css/app.css, public landing CSS in assets/css/landing.css, and browser runtime logic in assets/js/app.js.
 
 ### Work completed in this cross-cutting pass (not yet browser-verified)
 
