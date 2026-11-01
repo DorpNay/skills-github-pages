@@ -354,3 +354,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Commits in this pass: 6728797, 9d3cab6, f374798, 2194b0a, ea62903, ed8b255, 35b7ea1, db61b95, e7db377, 539b1a7, 847f1bee; documentation commits include 76e3336, 787e395, 624554c.
 - Syntax checks run through GitHub-fetched source: inline index.md JavaScript and changed E2E modules parsed successfully before the final stale-health test was added; final syntax pass remains to be done. No Chromium or manual-device pass is claimed.
 - Next: finish remaining UI coherence/source audit, then run focused/full Chromium on exact current HEAD 847f1bee5ab7c12d960195891dac5a2e5af7201d; native iPhone Safari, VoiceOver and measured WCAG ratios remain manual. PR stays open/unmerged/undeployed.
+
+
+### 2026-11-01 — PR #131: theme-aware status colors and final source syntax pass
+
+- Added theme-specific info/warning color tokens: dark and light themes now use separate readable warning colors; Cloud checking status consumes the semantic token instead of hard-coded amber.
+- Extended the readability regression to confirm Cloud checking color changes between dark and light themes.
+- Re-ran source syntax parsing against GitHub-fetched current source: index.md inline JavaScript, app.spec.mjs, audio-transcription.spec.mjs, document-attachments.spec.mjs, alandi-provider.spec.mjs, research-studio.spec.mjs and playwright.config.mjs all parsed successfully. This is a syntax check only; no browser execution.
+- Current code/test head: bca8fa892e95bd35db812382afdadbba41813265. Latest docs checkpoints: V1 checklist b1afbf0e3420b27c19fc7ee2447dd838204908fa; compact backlog dc785967bc8d07877d9697f588f5a589404a7706; implementation ledger 8da576774c8cf948aa403111e34461396999e57d. Exact-head Quality remains intentionally pending until the integrated UI pass is complete.
