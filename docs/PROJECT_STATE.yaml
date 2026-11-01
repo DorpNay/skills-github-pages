@@ -481,21 +481,21 @@ whole_stack_integrity_audit_2026_10_30:
 landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
-  latest_code_test_head: "60fb9838d9080fad8420d9bfd97c78faf233b039"
-  latest_documented_head_at_checkpoint: "d29fd3a7bbdda9a37c4ab9f75fd0d1b75788281e"
+  latest_code_test_head: "6f7fde485b2b13aecc50523b20785e0ac615d2ad"
+  latest_documented_head_at_checkpoint: "279d18778d30c51f244092b645d3f59f2c7ccd24"
   comparison_to_main:
-    ahead: 111
+    ahead: 135
     behind: 4
     merge_base: "e78a73b25725bfa63370d9946887cbbacbf51b82"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
-    memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
+    memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained.\n    server_memory_retirement: "Requirement 8.12: browser bridge/UI and /v1/memory/graph/* routes plus graph-specific flags removed; internal MemoryManager retained only for Graphify; SQLite data untouched; local/private/shared/project memory, delta sync, RAG and local helper remain."
     project_context_handoff: "Explicit existing-chat target; next request only; no new chat or project membership mutation; five-project cap; pending state is session-only."
     navigation: "Browser Back/Forward/Escape tracks nested project filters and modal depth; Forward restores saved project filters, project settings and chat-action dialogs."
     modal_lifecycle: "Focus entry/return, Tab trap, body scroll/overscroll lock, backdrop cleanup, repeated open/close and chat-action state restoration."
     message_actions: "Expanded viewer keeps accessible copy/speech actions; speech hidden for user-authored messages."
     status_and_readability: "Semantic status/toast states and high-contrast text tokens across light/dark themes."
-    sources: "Truthful unsupported-state remains; no mock project-source CRUD."
+    sources: "Truthful unsupported-state remains; no mock project-source CRUD."\n    gateway_security_tests: "Added secret non-disclosure coverage for /livez, /readyz, /healthz, invalid Bearer values and sanitized upstream errors; source not executed."
   code_commits:
     navigation_handoff: "f99327c74f168573e0d1faf9b7c97a66dcf6e27f"
     handoff_selector_fix: "c3855c28317c5b481d59b463e4d4cb985d992dcd"
@@ -506,12 +506,12 @@ landing_ui_v2_pr131_2026_10_31:
     modal_lifecycle_wait: "24004fe48e506a7d1a7e03b1538f3faed209381b"
     deduplicate_regressions: "1917e8efad138bd9b7dd59a42c0322d61b12bf4e"
   verification:
-    exact_head_combined_status: "empty"
-    exact_head_workflow_runs: "empty"
-    playwright_chromium: "not executed; do not claim passing"
+    exact_head_combined_status: "empty (head 279d18778d30c51f244092b645d3f59f2c7ccd24)"
+    exact_head_workflow_runs: "empty (head 279d18778d30c51f244092b645d3f59f2c7ccd24)"
+    gateway_pytest: "not executed in this environment; exact-head CI unavailable"\n    playwright_chromium: "not executed; do not claim passing"
     native_mobile_voiceover: "not executed"
   safety:
     merge: "requires explicit owner approval"
     deploy: "requires explicit owner approval"
     main: "V1 baseline remains untouched"
-  next: "Run exact-head Quality/Chromium if workflow execution is available; fix failures; complete native iPhone Safari/VoiceOver/long-press review. Browser Back/Forward E2E, including chat-action restoration, is added but unexecuted."
+  next: "Run exact-head Gateway pytest and Quality/Chromium if workflow execution becomes available; fix failures; complete native iPhone Safari/VoiceOver/long-press review. Secret non-disclosure and requirement 8.12 regressions are added but unexecuted."
