@@ -116,3 +116,9 @@
 ### Дополнительные предложения владельца для aLandi V2.0 — 2026-11-02
 
 Предложения 8.18–8.27 добавлены в единый реестр docs/V1_UI_FINALIZATION_RU.md как необязательные кандидаты, а не release blockers. Их сопоставление с существующим кодом, конфликты, исследованные open-source patterns и рекомендуемый порядок реализации находятся в docs/LANDING_UI_V2_IMPLEMENTATION_RU.md. Этот mirror не создаёт второй очереди и не меняет приоритет текущих 8.1–8.17.
+
+### 8.19 notification slice — 2026-11-02
+
+- The existing toast was extended with a FIFO queue, duplicate suppression, urgency-based durations, hover/focus/hidden-tab pause and polite/assertive ARIA semantics.
+- Playwright assertions were added for sequential success/error announcements; they have not yet been executed on the current branch head. This is partial 8.19 work, not completion of the durable operation-state contract.
+- Detailed scope and remaining work: `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
