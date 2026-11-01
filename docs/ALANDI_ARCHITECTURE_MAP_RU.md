@@ -115,3 +115,8 @@ flowchart TD
 
 ## Main synchronization — 2026-10-30
 PR #121 merged at f4d880f9648989f4fe48ddd2284220b3606c3b86 after exact-head Gateway/Quality/Chromium/Jekyll/Freshness/Provenance/Graphify/Dead Code passed. Audio subprocess cancellation cleanup is CI-verified on that PR head. PR #122 merged at fd4f0a105183feb23e0f4e4697446235de9ffe9a with /livez and /readyz; /healthz remains the readiness alias. Post-merge Pages deployment and live VPS/Ollama remain unverified.
+## PR #131 UI asset split and Graphify coverage — 2026-11-02
+
+- The app shell is `index.md`; browser runtime is `assets/js/app.js`; app styles are `assets/css/app.css`; public landing markup is `landing/index.html`; landing styles are `assets/css/landing.css`.
+- PR #131 updates Graphify Code-Only Pilot path filters to include `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html` for PR and main-push events. The next artifact must confirm these files are represented before graph metrics are treated as current.
+- Static HTML/CSS/JavaScript + Jekyll remains the architecture; no framework/build migration is implied.
