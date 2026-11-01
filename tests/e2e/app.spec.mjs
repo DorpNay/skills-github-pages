@@ -2301,6 +2301,37 @@ test('aLandi cloud remains disconnected when the model answers but gateway healt
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
 });
 
+test('stale Cloud health response cannot reconnect settings changed while it is in flight', async ({ page }) => {
+  const key = 'e2e-cloud-stale-health-key';
+  await page.addInitScript(async accessKey => {
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(accessKey));
+    const fingerprint = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://race-cloud.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_model', 'initial-model');
+    localStorage.setItem('ai_api_key_alandi', accessKey);
+    localStorage.setItem('ai_alandi_cloud_connection_v1', JSON.stringify({
+      ok: true, baseUrl: 'https://race-cloud.example.test/v1', model: 'initial-model',
+      keyFingerprint: fingerprint, testedAt: new Date().toISOString()
+    }));
+  }, key);
+
+  let beginHealth, releaseHealth;
+  const healthStarted = new Promise(resolve => { beginHealth = resolve; });
+  const healthGate = new Promise(resolve => { releaseHealth = resolve; });
+  await page.route('https://race-cloud.example.test/healthz', async route => {
+    beginHealth();
+    await healthGate;
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' }) });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await healthStarted;
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#cloudModel').fill('updated-model');
+  releaseHealth();
+  await expect(page.locator('#cloudStatusDot')).not.toHaveAttribute('data-state', 'connected');
+  await expect(page.locator('#cloudModel')).not.toHaveAttribute('data-state', 'connected');
+});
+
 test('provider probe cannot mark changed credentials connected after an in-flight response', async ({ page }) => {
   let beginProbe, releaseProbe;
   const probeStarted = new Promise(resolve => { beginProbe = resolve; });
