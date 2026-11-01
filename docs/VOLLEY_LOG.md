@@ -262,3 +262,12 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Confirmed gateway/app.py contains no graph-memory HTTP route/flag references. Tests include health-probe secret checks, invalid Bearer token non-echo and upstream error-body redaction.
 - Current branch head before this log entry: 6a597ded2f872669c70654c9a9db1b65429c8147. Exact-head workflow-run and combined-status queries returned zero entries. Workflow YAML indicates PR triggers are configured; no run result is visible, so no test pass is claimed.
 - Execution blocker: this session can inspect/update repository files but cannot dispatch Actions and cannot clone from GitHub due unavailable outbound network. The next concrete step is to obtain real Gateway/Quality runs through the normal PR workflow. Do not substitute source inspection for execution.
+
+
+### 2026-11-01 — PR #131: Gateway verification evidence recovered
+
+- Queried the raw GitHub Actions run collection after the convenience workflow lookup returned an empty list.
+- Found Gateway Tests run #640 (ID 41280622385) on commit 6f7fde485b2b13aecc50523b20785e0ac615d2ad. All steps succeeded: dependency install, compileall, manifest/INTEL checks, pytest gateway/tests, deploy preflight and six-layer offline evaluation.
+- Compared that tested commit to current PR HEAD 579666d45964f56a4e68e3997293a288d7fd1553: the intervening 57 commits change docs, index.md and Playwright tests only; there are no gateway/** changes. Gateway code and tests therefore match the successfully tested state.
+- This closes the Gateway contract/security test gate for the current source. It does not close the latest UI/Chromium/Quality gate. The current exact HEAD has a successful License/Artifact Provenance push run; no current-head Quality/Chromium run is visible.
+- Corrected the P0 status in V1_UI_FINALIZATION_RU.md, LANDING_UX_POLISH_BACKLOG_RU.md, LANDING_UI_V2_IMPLEMENTATION_RU.md, ORIENTER.md and PROJECT_STATE.yaml. No merge/deployment performed.
