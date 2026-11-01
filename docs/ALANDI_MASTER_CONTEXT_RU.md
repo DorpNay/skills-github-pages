@@ -100,7 +100,7 @@ Exact-response cache должен учитывать нормализованн�
 
 Каждая задача получает цель, разрешённые инструменты, max steps, deadline, budget, cancellation и проверяемый критерий остановки.
 
-## Актуальная контрольная точка — 2026-10-27
+## Историческая контрольная точка — 2026-10-27
 
 - Последний подтверждённый main после PR #66: 1faf60164b9a0f82eb5e0c56b143ba90499be4a5; post-merge Quality, Pages и provenance прошли на точных SHA.
 - PR #66 добавил кураторскую карту docs/ALANDI_ARCHITECTURE_MAP_RU.md и безопасные exclusions для Graphify. Graphify code-only graph теперь строится в GitHub Actions как временный artifact-only dev-инструмент; последний проверенный срез — 1,109 nodes / 3,103 edges / 53 communities, без import cycles. Это не runtime-компонент и не замена ручной архитектурной проверки; локальный container checkout не требуется.
