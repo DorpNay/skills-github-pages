@@ -22,7 +22,7 @@ export default defineConfig({
     video: 'off'
   },
   ...(process.env.LIVE_SITE_URL ? {} : { webServer: {
-    command: 'test -e _site/skills-github-pages || ln -s . _site/skills-github-pages || exit 1; python3 -m http.server 4173 --bind 127.0.0.1 --directory _site',
+    command: 'set -eu; site_root="$(mktemp -d)"; for item in _site/*; do [ -e "$item" ] || continue; ln -s "$PWD/$item" "$site_root/$(basename "$item")"; done; [ -e "$site_root/skills-github-pages" ] || ln -s "$PWD/_site" "$site_root/skills-github-pages"; python3 -m http.server 4173 --bind 127.0.0.1 --directory "$site_root"',
     url: 'http://127.0.0.1:4173/',
     reuseExistingServer: !process.env.CI,
     timeout: 10000

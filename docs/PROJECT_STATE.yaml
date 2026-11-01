@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-02"
   root_orienter:
-    status: "Main remains the stable V1 baseline at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 remains open/unmerged on feat/landing-v1-accessibility-responsive-20261031; baseline HEAD before this CI correction was e75e608bb1b9f588ccc26f575602113037f44039. Quality run #41352153636 (#1197, push event) completed failed after 31m03s because Chromium hit its 30m global timeout. Logs prove the local Pages baseurl mismatch: Jekyll asset URLs use /skills-github-pages while the local server exposed _site at /, causing CSS/JS 404s. Non-Chromium Quality jobs and Lite Gateway Tests #642 passed on the same SHA. Do not interpret browser failures as product regressions until the local baseurl harness is fixed and rerun. No merge or deployment is authorized."
+    status: "Main remains the stable V1 baseline at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 remains open/unmerged on feat/landing-v1-accessibility-responsive-20261031. Baseline HEAD e75e608bb1b9f588ccc26f575602113037f44039 exposed a local Pages baseurl mismatch and Quality #1197 timed out at 30m. First CI correction commit 414ce3c6a25062740cf33d5bcd807a061e422697 introduced four-way Chromium sharding and an asset-loading regression, but Quality #1198 failed before tests because the initial symlink attempt wrote inside read-only _site. The correction now serves the site through a writable temporary overlay; all four shards did start concurrently. Non-Chromium Quality jobs and Provenance passed. No merge or deployment is authorized."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 0
@@ -10,7 +10,7 @@ project_state:
     merged_changes: "PR #121 first free landing V1 and client UX; PR #122 Gateway liveness/readiness probes; #120 sidebar hierarchy/theme-language sync; #119 provider separation/project scope/composer preference; #118 chat import/export; #113 immutable Actions pins; #115 modal scrim/outside-tap; #114 empty-by-default prompt/context budget; #71 mobile composer; #84/#81/#83/#82 infrastructure foundations; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
     exact_head_checks: "PR #121 head e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b: Dead Code Audit, Project State Freshness, Provenance, Lite Gateway Tests, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. PR #122 head 94d871dbf76a5364ebb3c61d86cc763affa5eaa1: Gateway Tests, Dead Code Audit, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. PR #123 head fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222: Gateway Tests, Dead Code Audit, Freshness, Provenance, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. Merge commits: #121 f4d880f9648989f4fe48ddd2284220b3606c3b86; #122 fd4f0a105183feb23e0f4e4697446235de9ffe9a. No independent post-merge Pages deployment result was available."
     runtime_boundary: "PR-head published-site browser smoke verified; post-merge Pages deployment on the exact merge commit remains unverified. Native iPhone, live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
-    next: "The CI correction is committed on PR #131; push automatically triggers Quality and Gateway workflows. Verify the new run using the full Actions runs collection (all event types), not the PR-only fetch_commit_workflow_runs helper. Confirm four Chromium shards pass, compare wall-clock with baseline run #1197 (31m03s total; Chromium test step 30m01s), and require at least 3x improvement before declaring the target met. Continue inherited UI + mandatory 8.1-8.17 and native iPhone Safari/VoiceOver/WCAG gates. Keep PR #131 open/unmerged; no deployment, rebase or destructive cleanup."
+    next: "The temporary-root baseurl correction is committed on PR #131; push automatically triggers Quality and Gateway workflows. Verify the new run using the full Actions runs collection (all event types), not the PR-only fetch_commit_workflow_runs helper. Confirm the asset regression executes, all four Chromium shards pass, compare wall-clock with baseline run #1197 (31m03s total; Chromium test step 30m01s), and require at least 3x improvement before declaring the target met. Continue inherited UI + mandatory 8.1-8.17 and native iPhone Safari/VoiceOver/WCAG gates. Keep PR #131 open/unmerged; no deployment, rebase or destructive cleanup."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -23,7 +23,7 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
-  last_volley: "V-2026-11-02-CHROMIUM-CI-BASELINE-AND-OPTIMIZATION-005"
+  last_volley: "V-2026-11-02-CHROMIUM-CI-TEMP-OVERLAY-006"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Browser half-duplex voice dialogue prototype is merged; CI uses mocked ASR/TTS, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; first read in new chats, then verify current main HEAD and open PRs"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
@@ -636,8 +636,8 @@ ui_scope_reconciliation_2026_11_02:
   notification_slice_8_19: "FIFO toast queue; active/queued duplicate suppression; urgency-based durations; pause on hover/focus/hidden tab; polite/status and assertive/alert semantics; Playwright assertions added but not executed"
   notification_slice_scope: "Partial presentation/accessibility work only; durable operation states/IDs, pending-to-result updates, persistent unacknowledged errors and inline recovery actions remain open"
   graphify_path_coverage: "PR and main-push filters now include assets/js/**/*.js, assets/css/**/*.css and landing/**/*.html; exact-head graph artifact not yet confirmed"
-  quality_chromium: "Quality #1197 / run 41352153636 checked exact baseline SHA e75e608bb1b9f588ccc26f575602113037f44039; all non-Chromium Quality jobs passed, Chromium hit 30m global timeout with repeated 404s for Pages-prefixed CSS/JS because the local server did not map baseurl; 43 failed, 83 not run, 1 passed, 2 suite-level timeout errors. Harness failure; not valid product-regression evidence. One explicit asset-loading regression was added; four-way sharding and the local baseurl mapping are in this CI correction. Exact-head rerun pending"
-  next: "Push commits automatically trigger Quality; do not request manual workflow_dispatch. Monitor all event types via the repository Actions runs list because the commit-run helper returns PR events only. Fix the local Pages baseurl harness, run four Chromium shards with one worker each, then benchmark; continue inherited UI + mandatory 8.1-8.17 before optional 8.18-8.27"
+  quality_chromium: "Quality #1197 baseline run 41352153636 hit 30m global timeout after local baseurl CSS/JS 404s. First sharded run #1198 / 41355064390 started four runners concurrently, but all failed before tests because _site is read-only and the first symlink attempt returned Permission denied. Static analysis, preflight, Integrity, Security, Context, Jekyll and Provenance passed. New fix serves the Pages baseurl through a writable temporary document root; exact-head browser rerun pending"
+  next: "Push commits automatically trigger Quality; do not request manual workflow_dispatch. Monitor all event types via the repository Actions runs list because the commit-run helper returns PR events only. Verify the writable temporary Pages overlay and four Chromium shards, then benchmark; continue inherited UI + mandatory 8.1-8.17 before optional 8.18-8.27"
 
 
 responsible_disclosure_policy:
@@ -690,7 +690,7 @@ quality_ci_optimization_2026_11_02:
     missing_paths:
       - "/skills-github-pages/assets/css/app.css"
       - "/skills-github-pages/assets/js/app.js"
-    fix: "Map _site/skills-github-pages to _site in the local Playwright server; assert both assets return HTTP 200"
+    fix: "Create a writable temporary document root with symlinks to _site top-level entries and a /skills-github-pages symlink to _site; do not write into the Jekyll artifact; assert both assets return HTTP 200"
   optimization:
     browser: "Keep real Playwright Chromium 1.56.1"
     sharding: "Four GitHub-hosted runner shards; --shard=1/4 through --shard=4/4; one worker per runner; fail-fast=false"
@@ -703,5 +703,19 @@ quality_ci_optimization_2026_11_02:
     minimum_speedup: "3x"
     baseline_seconds: 1863
     target_max_seconds: 621
-    status: "pending exact-head benchmark"
-  next: "Verify the correction commit and exact-head Quality run; inspect every shard and artifact; do not claim 3x until measured. Then resume the canonical UI queue and @Поиск protocol."
+    status: "pending exact-head browser rerun; first overlay attempt failed on read-only _site, temporary-root correction now committed"
+  first_sharded_run:
+    id: 41355064390
+    run_number: 1198
+    head_sha: "414ce3c6a25062740cf33d5bcd807a061e422697"
+    event: "push"
+    conclusion: "failure"
+    duration_seconds: 60
+    shards_started: 4
+    shards_failed_before_tests: 4
+    failure: "webServer could not create symlink inside read-only _site (Permission denied)"
+    tests_executed: 0
+    non_chromium_quality_jobs: "success"
+    provenance_run_id: 41355064350
+    provenance_conclusion: "success"
+  next: "Verify the writable temporary overlay on the new exact-head Quality run; inspect the asset regression, all four shards and artifacts; do not claim 3x until measured. Then resume the canonical UI queue and @Поиск protocol."

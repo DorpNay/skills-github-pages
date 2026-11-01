@@ -665,3 +665,11 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Baseline Quality wall-clock: 1863s. A 3x speedup requires a comparable exact-head run in at most 621s.
 - The new run must pass all four Chromium shards and the remaining Quality jobs. Do not claim the speed target until measured. If the benchmark is slower than 621s, continue with evidence-based optimization; do not replace Chromium with a DOM simulator.
 
+
+
+### Follow-up: read-only Jekyll artifact — 2026-11-02
+
+- First sharded run #1198 confirmed four concurrent runners but failed before test execution: the Jekyll build output _site is not writable by the runner, so creating the baseurl symlink inside it fails with Permission denied.
+- Corrected the server mapping to use a writable mktemp document root. Root-level entries from _site are symlinked into that root; /skills-github-pages points to the original _site. The built artifact and production baseurl remain untouched.
+- The new exact-head run must verify that the webServer starts, the asset regression returns HTTP 200 for both CSS and JS, and all four shards execute. No speedup is claimed yet.
+

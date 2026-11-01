@@ -613,3 +613,14 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Benchmark target: baseline 1863s total Quality duration; at least 3x faster means no more than 621s for the comparable new run. This is a target, not a result; verify exact-head run and every shard before claiming it.
 - Continue mandatory inherited UI scope + 8.1–8.17, then optional 8.18–8.27 in the canonical ledger; preserve the @Поиск protocol in `docs/ALANDI_MASTER_CONTEXT_RU.md`. No merge/deploy or destructive repository changes.
 
+
+
+## V-2026-11-02-CHROMIUM-CI-TEMP-OVERLAY-006
+
+- Follow-up to V-2026-11-02-CHROMIUM-CI-BASELINE-AND-OPTIMIZATION-005. First CI correction commit 414ce3c6a25062740cf33d5bcd807a061e422697 successfully triggered Quality #1198 automatically on push; no manual dispatch was needed.
+- Quality #1198 / run 41355064390 started four Chromium shards concurrently, confirming the matrix fan-out. All four shards failed before executing tests: Playwright webServer attempted to create _site/skills-github-pages, but Jekyll's _site directory is not writable by the runner (Permission denied). The asset regression did not execute; no E2E result or performance benchmark is claimed.
+- Other Quality jobs passed: harness preflight, static analysis, Integrity, Security, Context and Jekyll. Provenance run 41355064350 passed on the same commit.
+- Reproduced the correct mapping locally with a read-only _site: create a writable mktemp document root, symlink each top-level _site/* entry into it, then symlink skills-github-pages to the original _site. Verified root HTML, /landing/, baseurl CSS and JS are served. No writes to the build artifact are required.
+- Corrected Playwright webServer.command to use that writable temporary overlay. This follow-up changes only the server harness and continuity state; production baseurl, Chromium, Playwright version and sharding policy remain unchanged.
+- Next exact-head Quality run must prove the server starts on all four shards, the explicit CSS/JS HTTP 200 regression passes, and the full browser suite runs. Continue measuring against the 1863s baseline; target <=621s. Do not claim success before the run completes.
+
