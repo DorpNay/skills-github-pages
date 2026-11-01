@@ -555,6 +555,7 @@ test('high-contrast preference updates every important text state in both themes
     disabled.textContent = 'Contrast disabled fixture';
     document.querySelector('#chatBox').appendChild(disabled);
     document.querySelector('#searchStatus').dataset.state = 'error';
+    document.querySelector('#cloudStatus').dataset.state = 'checking';
   });
   const readStates = () => page.evaluate(() => ({
     normal: getComputedStyle(document.querySelector('#chatBox')).color,
@@ -562,7 +563,8 @@ test('high-contrast preference updates every important text state in both themes
     disabled: getComputedStyle(document.querySelector('#chatBox button:disabled')).color,
     link: getComputedStyle(document.querySelector('#chatBox .assistant-content a')).color,
     error: getComputedStyle(document.querySelector('#chatBox [role="alert"]')).color,
-    status: getComputedStyle(document.querySelector('#statusText')).color
+    status: getComputedStyle(document.querySelector('#statusText')).color,
+    cloudWarning: getComputedStyle(document.querySelector('#cloudStatus')).color
   }));
   await page.locator('[data-action="toggle-settings"]').click();
   await page.locator('#additionalSettings > summary').click();
@@ -588,6 +590,7 @@ test('high-contrast preference updates every important text state in both themes
     expect(highLight[key]).not.toBe('');
   }
   expect(highLight.normal).toBe(normalLight.normal);
+  expect(highLight.cloudWarning).not.toBe(highDark.cloudWarning);
 });
 
 test('interactive controls avoid selection while editable fields and message text remain selectable', async ({ page }) => {
