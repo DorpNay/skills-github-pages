@@ -199,7 +199,7 @@
         });
         persistRequestProjectContextByChat();
       } catch (error) {
-        sessionStorage.removeItem(REQUEST_PROJECT_CONTEXT_SESSION_KEY);
+        try { sessionStorage.removeItem(REQUEST_PROJECT_CONTEXT_SESSION_KEY); } catch (_) {}
         console.warn('Отложенный контекст проекта повреждён и был сброшен:', error);
       }
     }
