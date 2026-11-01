@@ -300,12 +300,15 @@ test('mobile sidebar and modal close controls meet the 44px touch target', async
   expect(sidebarClose?.height || 0).toBeGreaterThanOrEqual(44);
 
   await page.locator('#chatListNewButton').click();
+  await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
+  await page.locator('[data-action="toggle-sidebar"]').click();
   const chatMenuToggle = page.locator('#chatList .chat-row-menu summary').first();
   await expect(chatMenuToggle).toBeVisible();
   const chatMenuBox = await chatMenuToggle.boundingBox();
   expect(chatMenuBox?.width || 0).toBeGreaterThanOrEqual(44);
   expect(chatMenuBox?.height || 0).toBeGreaterThanOrEqual(44);
-  await page.locator('#sidebar [data-action="close-sidebar"]').click({ force: true });
+  await page.locator('#sidebar [data-action="close-sidebar"]').click();
+  await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
 
   const languageMenu = page.locator('#languageMenu');
   await languageMenu.locator('summary').click();
