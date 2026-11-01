@@ -576,6 +576,6 @@ landing_v2_aservi:
   status: "Primary server route renamed to aLandi aServi in UI, DOM actions, JavaScript handlers, E2E and Quality contracts. App and landing CSS extracted to cacheable assets; Marked/DOMPurify ordered with defer. Research Studio is now nested under the Thorough/deep-research controls, not a standalone Functions/sidebar entry. Planned sections/windows remain visible with a shared development ticker; unfinished actions must not claim success or mutate data. Legacy ai_alandi_cloud_* localStorage keys retained for backwards compatibility; Cloudflare unchanged. Exact-head browser checks pending."
   research_studio_hierarchy: "Single entry point #deepResearchStudioButton under the deep-research controls; not a standalone navigation destination. E2E opens from this entry and checks no Functions-menu duplicate."
   roadmap_visibility: "Future sections/windows stay visible for information architecture; development ticker marks unfinished areas; no fake successful actions."
-  source_checkpoint: "c87bc1c49a900c2249c44a5c5e697f2b0267bd84 (latest UI source/test checkpoint; subsequent documentation commits may advance PR HEAD)."
-  documentation_checkpoint: "22f0178fe23e6650ba7232d73abdcbe47df389cc (latest UI backlog/finalization documentation update)."
+  source_checkpoint: "38f2061006342b6c1841e3ceed700895624977a6 (latest UI source change; latest related E2E source checkpoint c87bc1c49a900c2249c44a5c5e697f2b0267bd84)."
+  documentation_checkpoint: "34e728d5d1c4b3a1589a779b5c53626344f18682 (latest research settings architecture documentation update)."
   future_storage_name: "aLandi aCloudi reserved for a separate information-storage product; not implemented."
