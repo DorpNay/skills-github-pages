@@ -65,7 +65,7 @@ ui_v2_track:
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   status: "open_unmerged_owner_hold"
   latest_documentation_head: "25d94639a13f1a83dea49795137d6d1d1fa4c4ad; latest checkpoint commit may advance this reference"
-  latest_code_test_head: "95b50bc699a1eb2c98a677829cc228e4b60b7b5b"
+  latest_code_test_head: "2231691fab0a56a39ce6e1edb571fee6d131607b"
   latest_quality_harness_head: "d94d842608c07aa8def4b5fdc89ed95b80524034"
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0 and requirements 8.1-8.17"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
@@ -512,7 +512,7 @@ landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   latest_code_test_head: "929ebcf20db87eca949c6f5a386c16e75f2856a1"
-  latest_documented_head: "1aba5cc9b7dd8260b725ce3cccbfc44c684257ba"
+  latest_documented_head: "7d14dc28ac62c0655a3a11580e8f179a58ff0d54"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
     memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
@@ -536,6 +536,7 @@ landing_ui_v2_pr131_2026_10_31:
     mobile_scroll_preservation: "VisualViewport resize preserves older-message reading position and keeps bottom anchored only if user was near bottom; E2E added."
     chromium_ci_hardening: "One CI worker, 30-minute Playwright globalTimeout, 35-minute Actions timeout, trace on first retry, screenshot only on failure, video disabled; pinned Playwright 1.56.1 held stable pending separate controlled upgrade."
     theme_aware_status_colors: "Default dark/light info and warning tokens added; Cloud checking state uses semantic warning token; E2E verifies theme switch changes its color."
+    test_hygiene: "Audited E2E specs now contain zero force:true, waitForTimeout or networkidle usage. Removed a forced click on a hidden sidebar close control after new-chat action; test now reopens and uses a normal click."
     base_token_contrast: "E2E computes WCAG contrast from CSS tokens against solid theme surfaces; current primary/secondary/success/warning/error values are all >=4.5:1. Full component/background/focus/non-text audit remains manual."
   test_commits:
     sidebar_swipe: "d388a02445ddc1ebccbaec58fd8515b8d0b9adfa"
