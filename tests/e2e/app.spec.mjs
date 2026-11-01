@@ -2225,6 +2225,10 @@ test('Cloud URL validation follows the selected language and is announced with i
   await page.evaluate(() => localStorage.setItem('ai_ui_language_v1', 'ru'));
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('[data-action="connect-alandi-cloud"]').click();
+  await expect(page.locator('#cloudBaseUrlError')).toHaveText('Укажи URL сервера.');
+  await expect(page.locator('#cloudModelError')).toHaveText('Укажи ID модели.');
+  await expect(page.locator('#cloudApiKeyError')).toHaveText('Укажи ключ доступа.');
   await page.locator('#cloudBaseUrl').fill('http://remote.example.test/v1');
   await page.locator('#cloudModel').fill('qwen3.5:4b');
   await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
