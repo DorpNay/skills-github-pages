@@ -476,3 +476,7 @@ PR #122 добавил только эксплуатационную надёж�
 | 2026-10-31 | Marked owner corrections in sections 8.1–8.17 as a dated, priority backlog for landing V2.0; explicitly kept them separate from V1 implementation status/freeze. | Owner instruction in current conversation; document re-read before update. |
 |---|---|---|
 | 2026-10-31 | Consolidated the remaining owner-dictated UI notes: message action icons, backdrop lifecycle, unified control sizing, compact theme/language controls, removal of experimental server memory, explicit project-context transfer, touch text-selection behavior, centered/color-coded status tickers, icon-first button typography and user-adjustable text readability. Added the agreed third-party provider shortlist and BYOK/model auto-detection requirements, including V1/funding/security boundaries. | Confirmed in the current conversation; requirements only, implementation status not inferred. |
+### 2026-11-02 — Integrated UI scope mirror
+
+- The active UI scope includes all still-applicable unfinished requirements inherited from sections 1–7 together with owner requirements 8.1–8.17. Section 8.0 is the single active residual queue; completed, obsolete and superseded items are not reopened as parallel work.
+- This PR #132 copy is a continuity backup. The active implementation and canonical current status remain in PR #131; do not infer new completion statuses from this mirror.
