@@ -631,7 +631,7 @@ ui_scope_reconciliation_2026_11_02:
   polish_register: "docs/LANDING_UX_POLISH_BACKLOG_RU.md is a concise mirror, not an independent backlog"
   implementation_evidence: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
   latest_ui_source_checkpoint: "fed3137bae2355629a976515719f498940ad8601"
-  latest_pr131_head_after_notification_slice: "b023ddcfb65b85874c0bcfb2a7dd8638fce18592"
+  live_pr131_head: "Always read from current PR metadata; documentation commits may advance HEAD"
   notification_slice_8_19: "FIFO toast queue; active/queued duplicate suppression; urgency-based durations; pause on hover/focus/hidden tab; polite/status and assertive/alert semantics; Playwright assertions added but not executed"
   notification_slice_scope: "Partial presentation/accessibility work only; durable operation states/IDs, pending-to-result updates, persistent unacknowledged errors and inline recovery actions remain open"
   graphify_path_coverage: "PR and main-push filters now include assets/js/**/*.js, assets/css/**/*.css and landing/**/*.html; exact-head graph artifact not yet confirmed"
