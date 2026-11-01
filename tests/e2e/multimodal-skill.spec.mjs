@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test('deep multimodal prompts load specialist skill and preserve the v10 UI', async ({ page }) => {
+test('deep multimodal prompts load specialist skill and preserve the aLandi UI', async ({ page }) => {
   let receivedSystem = '';
   await page.route('https://api.example.test/v1/chat/completions', async route => {
     const payload = route.request().postDataJSON();
@@ -43,6 +43,6 @@ test('deep multimodal prompts load specialist skill and preserve the v10 UI', as
 
   await expect(page.locator('#chatBox')).toContainText('контролируемого benchmark', { timeout: 15000 });
   expect(receivedSystem).toContain('Qwen3-ASR-0.6B');
-  expect(receivedSystem).toContain('Current UI has no finished image/PDF upload or microphone capture');
+  expect(receivedSystem).toContain('The UI supports document/audio attachments and browser microphone capture.');
   expect(receivedSystem).toContain('LightOnOCR-3-4B');
 });

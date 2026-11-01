@@ -2,6 +2,18 @@
 
 **Срез первоисточников: 21 октября 2026 г.** Это инженерная оценка для нашего проекта, а не универсальный рейтинг моделей. Все benchmark-цифры ниже — заявления авторов; датасеты, устройства и процедуры отличаются, поэтому они не дают прямого общего рейтинга.
 
+## Актуальный статус реализации — 2026-11-02
+
+Этот раздел уточняет и заменяет более ранние утверждения ниже о том, что UI/gateway ещё не имеют media endpoints. Состояние сверено с `index.md`, `assets/js/app.js`, `gateway/app.py`, `gateway/README_RU.md`, `docs/IMPLEMENTATION_ROADMAP_RU.md`, `docs/VOICE_IMPLEMENTATION_PLAN_RU.md` и E2E/contract tests.
+
+- **Документы:** UI принимает PDF/DOCX/XLSX/TXT/Markdown/CSV/JSON. Приложение проверяет `GET /v1/capabilities` и передаёт файл только явно настроенному aLandi gateway при включённом `documents.extraction`. Gateway разбирает локально, ограничивает размер/структуру/вывод и не сохраняет файл. Сканированные PDF без текстового слоя не распознаются: OCR runtime отсутствует.
+- **Аудио и голос:** браузер использует MediaRecorder; ASR идёт через авторизованный `POST /v1/audio/transcriptions` и локальный whisper.cpp, TTS — через `POST /v1/audio/speech` и локальный Piper. Есть редактируемая транскрипция и half-duplex путь ASR → выбранный chat gateway → TTS. Это не continuous hands-free/VAD/interrupt experience.
+- **Feature flags:** `ALANDI_DOCUMENT_EXTRACTION_ENABLED`, `ALANDI_AUDIO_TRANSCRIPTION_ENABLED` и `ALANDI_AUDIO_SPEECH_ENABLED` выключены по умолчанию. Нужны заранее установленные совместимые локальные parser/CLI/model/voice assets; ничего не скачивается автоматически. `GET /v1/capabilities` сообщает только доступные возможности.
+- **Границы доказательств:** gateway contract tests и Playwright E2E используют mock subprocess/HTTP/MediaRecorder. Они подтверждают контракты и UI-потоки, но не качество настоящих весов, real-time CPU, live VPS, микрофон конкретного телефона или лицензии конкретных моделей/голосов.
+- **Vision:** наличие файлового вложения не означает локальный OCR/vision runtime. Для изображений поддержка зависит от выбранного chat provider/model; общего локального image/video understanding и OCR сканированных PDF в текущем gateway нет.
+- **Вывод для модельного выбора:** Qwen3-ASR-0.6B, GLM-OCR, PaddleOCR-VL и другие кандидаты остаются отдельным benchmark backlog. Не заменять whisper.cpp/Piper и не включать новые модели автоматически без golden RU/EN/TH набора, target-host профиля, проверки лицензий, RAM/latency и privacy route.
+
+
 ## Решение
 
 Не скачивать и не запускать все модели на одном сервере. Текущий продукт — статический сайт GitHub Pages AI Mobile Agent v10.0, skills по требованию и небольшой FastAPI gateway к частной Ollama. Плановый VPS имеет 8 GB RAM, а gateway ограничивает параллелизм. В текущих UI и gateway нет готовых media upload/ASR/OCR endpoints или TTS.

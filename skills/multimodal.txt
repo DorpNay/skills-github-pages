@@ -3,8 +3,10 @@ MULTIMODAL MODEL SELECTION — aLandi task skill
 Use in Deep / Multi-agent research for OCR, PDFs, document understanding, ASR, audio, voice UI and multimodal RAG.
 
 ARCHITECTURE REALITY
-- Current site is static GitHub Pages AI Mobile Agent v10.0 with on-demand task skills and an aLandi Lite FastAPI/Ollama text gateway.
-- Current UI has no finished image/PDF upload or microphone capture. Gateway has no dedicated media endpoints. Do not claim OCR, transcription or TTS already works.
+- Current product is a static Jekyll/GitHub Pages aLandi UI; browser logic lives in the existing HTML, `assets/js/app.js` and `assets/css/app.css`. No Next.js/React runtime is required for this landing PR.
+- The UI supports document/audio attachments and browser microphone capture. PDF/DOCX/XLSX/TXT/MD/CSV/JSON extraction uses the configured aLandi gateway only when `documents.extraction` is enabled; scanned-PDF OCR is not included.
+- The gateway implements authenticated `/v1/audio/transcriptions` (local whisper.cpp), `/v1/audio/speech` (local Piper), `/v1/documents/extract` and `/v1/capabilities`. ASR, TTS and document extraction are disabled by default and require operator-installed local runtimes; mocked E2E/contract tests do not prove live model quality or VPS readiness.
+- Voice UI supports explicit recording/half-duplex ASR → selected chat gateway → TTS, not continuous hands-free conversation. Image/video provider support depends on the selected model; no general local vision/video inference or scanned-document OCR runtime is shipped. Do not claim these optional features are enabled on an arbitrary deployment.
 - VPS budget is 8 GB RAM; gateway concurrency is bounded. Do not keep several multi-GB model workers resident.
 
 DEFAULT CANDIDATES
