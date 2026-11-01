@@ -138,6 +138,27 @@ test('global system prompt is empty by default and obsolete Gemini reset is abse
   await expect(page.locator('[data-action="restore-defaults"]')).toHaveCount(0);
 });
 
+test('global system prompt edit control is localized, keyboard-friendly, and returns to read-only', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('ai_ui_language_v1', 'en'));
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  const prompt = page.locator('#systemPromptInput');
+  const edit = page.locator('#editSystemPrompt');
+  await expect(prompt).toHaveAttribute('readonly', '');
+  await expect(edit).toHaveAttribute('aria-label', 'Edit system prompt');
+  await edit.focus();
+  await expect(edit).toBeFocused();
+  await edit.click();
+  await expect(prompt).not.toHaveAttribute('readonly', '');
+  await expect(prompt).toBeFocused();
+  await expect(edit).toHaveAttribute('aria-pressed', 'true');
+  await expect(edit).toHaveAttribute('aria-label', 'Finish editing system prompt');
+  await edit.click();
+  await expect(prompt).toHaveAttribute('readonly', '');
+  await expect(edit).toHaveAttribute('aria-pressed', 'false');
+  await expect(edit).toHaveAttribute('aria-label', 'Edit system prompt');
+});
+
 test('sidebar order separates memory, projects, status, chats, and research', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
