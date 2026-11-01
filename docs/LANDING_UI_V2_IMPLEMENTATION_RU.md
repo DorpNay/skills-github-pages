@@ -587,6 +587,18 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 
 
 
+
+## 8.19 follow-up — persistent, acknowledged error notifications (2026-11-02)
+
+- Extended the existing FIFO toast queue; no second notification manager or dependency was introduced.
+- Error notifications now remain visible until explicit acknowledgement instead of expiring after seven seconds. This prevents an actionable failure from disappearing while the user is reading, switching tabs or completing another task.
+- Persistent errors expose a dedicated keyboard-accessible dismiss button with a localized accessible name. The existing alert/assertive semantics remain; ordinary success/info/warning notifications retain their timed durations and pause-on-hover/focus/hidden-tab behavior.
+- The existing toast queue, duplicate suppression and single live-region node are preserved. Dismissal uses the existing transition/queue lifecycle, so the next queued notification is rendered normally.
+- Added Playwright assertions for the persistent state, localized dismiss control and explicit dismissal.
+- **Status:** source and regression assertions committed; exact-head Quality/Chromium execution is pending. No browser test pass is claimed yet. This closes the persistent-error acknowledgement slice only; durable operation IDs/states, pending-to-result replacement and inline recovery actions remain open.
+- Files: `assets/js/app.js`, `assets/css/app.css`, `tests/e2e/app.spec.mjs`.
+- Commits: `7bc7cea` (runtime), `2ef819a` (styles), `91be4fd` (E2E).
+
 ## Quality harness repair and owner-recommended reference audit — 2026-11-02
 
 ### Exact-head workflow triage
