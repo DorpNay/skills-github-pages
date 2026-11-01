@@ -398,6 +398,61 @@ test('text readability preferences persist and apply in both themes', async ({ p
   await expect(page.locator('#uiTextScaleValue')).toHaveText('100%');
 });
 
+test('high-contrast preference updates every important text state in both themes', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    const content = document.createElement('div');
+    content.className = 'assistant-content';
+    const link = document.createElement('a');
+    link.href = '#';
+    link.textContent = 'Contrast link fixture';
+    content.appendChild(link);
+    document.querySelector('#chatBox').appendChild(content);
+    const error = document.createElement('p');
+    error.className = 'field-error';
+    error.setAttribute('role', 'alert');
+    error.textContent = 'Contrast error fixture';
+    document.querySelector('#chatBox').appendChild(error);
+    const disabled = document.createElement('button');
+    disabled.disabled = true;
+    disabled.textContent = 'Contrast disabled fixture';
+    document.querySelector('#chatBox').appendChild(disabled);
+    document.querySelector('#searchStatus').dataset.state = 'error';
+  });
+  const readStates = () => page.evaluate(() => ({
+    normal: getComputedStyle(document.querySelector('#chatBox')).color,
+    secondary: getComputedStyle(document.querySelector('#memoryStatusLine')).color,
+    disabled: getComputedStyle(document.querySelector('#chatBox button:disabled')).color,
+    link: getComputedStyle(document.querySelector('#chatBox .assistant-content a')).color,
+    error: getComputedStyle(document.querySelector('#chatBox [role="alert"]')).color,
+    status: getComputedStyle(document.querySelector('#statusText')).color
+  }));
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#additionalSettings > summary').click();
+  const normalDark = await readStates();
+  await page.locator('#uiTextContrast').selectOption('high');
+  const highDark = await readStates();
+  for (const key of ['secondary','disabled','link','error','status']) {
+    expect(highDark[key], key + ' must change in dark theme').not.toBe(normalDark[key]);
+    expect(highDark[key]).not.toBe('');
+  }
+  expect(highDark.normal).toBe(normalDark.normal);
+
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+  await toggleHeaderTheme(page);
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#additionalSettings > summary').click();
+  const highLight = await readStates();
+  await page.locator('#uiTextContrast').selectOption('normal');
+  const normalLight = await readStates();
+  for (const key of ['secondary','disabled','link','error','status']) {
+    expect(highLight[key], key + ' must change in light theme').not.toBe(normalLight[key]);
+    expect(highLight[key]).not.toBe('');
+  }
+  expect(highLight.normal).toBe(normalLight.normal);
+});
+
 test('interactive controls avoid selection while editable fields and message text remain selectable', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const values = await page.evaluate(() => {
