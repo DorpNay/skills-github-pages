@@ -7,6 +7,8 @@
 
 > **Source of truth.** Этот документ — живой release checklist пользовательского UI V1. Статус отмечается только по коду, exact-head тестам и фактическим проверкам. Планируемое не называется реализованным; CI не доказывает работу реального gateway, модели или iPhone Safari.
 
+> **Актуальность очереди:** старые пункты разделов 1–7 сохранены для истории V1. Их незакрытые отметки не следует автоматически считать задачами V2: актуальная объединённая очередь — раздел 8.0, а реализационные статусы 8.1–8.17 — docs/LANDING_UI_V2_IMPLEMENTATION_RU.md.
+
 ## 0. Продуктовая граница и правила V1
 
 Первая публичная версия — бесплатный статический веб-интерфейс GitHub Pages для личного/ограниченного сценария. Пользователь может открыть лендинг и клиент без оплаты хостинга inference от aLandi. Но статический сайт **не предоставляет включённый hosted AI endpoint**: при использовании внешнего API пользователь выбирает провайдера и несёт его условия/квоты/стоимость; self-hosted вариант требует собственный gateway и инфраструктуру. Бесплатность UI не равна бесплатной генерации.
@@ -201,9 +203,9 @@ PR #122 добавил только эксплуатационную надёж�
 - Не использовать aria-live для бегущей строки и не обновлять её псевдо-процентами/фальшивыми фазами.
 - Готовые функции не маркировать этим текстом. Для настоящего выполнения использовать реальные состояния queued/running/succeeded/failed/cancelled с источником и временем обновления.
 
-## 3a. Остаток визуального polish после PR #121
+## 3a. Статус polish после PR #121 и перехода на V2
 
-Подробный живой реестр: [LANDING_UX_POLISH_BACKLOG_RU.md](LANDING_UX_POLISH_BACKLOG_RU.md). В нём собраны landing screenshot review, typography/contrast/spacing, RU/EN/light-dark, menus/popovers/dialog focus and sticky actions, sidebar/project/chat states, Research/Functions menu truthfulness, native iPhone Safari и VoiceOver. Реализовывать по шесть больших этапов, не повторяя закрытые PR #115–120.
+Старый отдельный перечень polish пересобран: его пункты сверены с PR #131 и требованиями 8.1–8.17. Дублирующие задачи больше не ведутся параллельно. Актуальный остаток находится в разделе **8.0 «Единый список незавершённых UI-задач»** и в подробном implementation ledger [LANDING_UI_V2_IMPLEMENTATION_RU.md](LANDING_UI_V2_IMPLEMENTATION_RU.md). Файл [LANDING_UX_POLISH_BACKLOG_RU.md](LANDING_UX_POLISH_BACKLOG_RU.md) оставлен как совместимый краткий реестр тех же остаточных проверок, а не как второй независимый план.
 
 ## 4. Исследование UI — два раунда
 
@@ -272,6 +274,39 @@ PR #122 добавил только эксплуатационную надёж�
 ## 8. Дополнительные заметки владельца по интерфейсу (2026-10-31)
 
 Этот раздел дополняет живой UI-чек-лист требованиями, продиктованными владельцем. Это backlog требований, а не подтверждение реализации. Перед изменениями сверять каждый пункт с текущим кодом и существующими пунктами выше; уже реализованное не дублировать и не ломать.
+
+## 8.0. Единый список незавершённых UI-задач (сверка 2026-11-01)
+
+Этот список заменяет разрозненные «остатки» в разделах 1–7 и старом polish backlog. Разделы 1–7 сохраняются как история требований и базовый V1 release checklist, но их старые отметки [~]/[ ] **не являются отдельной очередью работ PR #131**. Если задача ниже совпадает с 8.1–8.17, она учитывается здесь один раз; подробная привязка к коду и тестам — в implementation ledger.
+
+### P0 — обязательная автоматическая проверка PR #131
+
+- [ ] Запустить на точном HEAD PR #131 focused Playwright/Chromium regressions и полный Quality: Gateway tests, Security, Integrity, Context, Jekyll, Chromium; затем Freshness, Provenance, Graphify и Dead Code, если эти workflows доступны.
+- [ ] Разобрать реальные падения и исправить только подтверждённые дефекты; не удалять/ослаблять assertions ради зелёного CI.
+- [ ] Отдельно закрыть оставшиеся E2E сценарии 8.1–8.17: sidebar/chat restore, header breakpoints, settings disclosure, modal Back/Forward/focus, message actions, project handoff, touch selection, status/reduced-motion и text readability.
+- [ ] Проверить gateway secret-redaction и удаление server-memory graph bridge; подтвердить сохранность local/private/shared/project memory и RAG. Добавленные тесты пока не запускались.
+
+### P1 — ручная UX/accessibility приёмка
+
+- [ ] Сделать screenshot review приложения и лендинга на 320/360/390/768/1024/1440 px: шапка, sidebar, composer, пустые состояния, длинные названия, карточки, отступы, типографика и контраст.
+- [ ] На реальном iPhone Safari проверить virtual keyboard/VisualViewport, safe-area, ориентацию, edge-swipe, long-press, touchcancel, вложенный scroll и восстановление позиции.
+- [ ] Провести VoiceOver/keyboard-only проход: порядок заголовков, доступные имена и tooltips, видимый/неперекрытый focus, Tab/Escape/Back/Forward, возврат фокуса и modal background isolation.
+- [ ] Проверить RU/EN copy и светлую/тёмную темы для модалок, меню, статусов, ошибок, подсказок и пустых состояний.
+- [ ] Провести фактический WCAG contrast-ratio audit для primary/secondary/disabled/link/error/status в обеих темах. Наличие переключателя high-contrast и computed-style тестов не является доказательством соответствия WCAG.
+
+### P2 — оставшиеся проверки поведения и честности UI
+
+- [ ] Проверить длинные списки проектов/чатов, длинные имена и сообщения, пустые состояния, вложенные scroll-контейнеры и popover у всех краёв viewport/при открытой клавиатуре.
+- [ ] Завершить аудит меню функций «Исследование / Агенты / Навыки / Коннекторы»: показывать только реально зарегистрированные сущности, реальные статусы и permissions; чётко отличать web-search breadth, offline и последовательный research pipeline от независимых агентов.
+- [ ] Повторно проверить глобальный пустой system prompt и миграцию legacy значения; решение по Tavily принимать только после аудита keyless search fallback и реального adapter contract.
+- [ ] Проверить provider/gateway error states, invalid URL/model, CORS, timeout, 401/5xx и redaction на mock/contract tests. Live provider/gateway smoke — отдельный opt-in gate владельца, без платных запросов по умолчанию.
+
+### Не является незавершённой UI-задачей
+
+- Project Sources: gateway пока не предоставляет source-list API. Оставить честное unsupported-state; CRUD не добавлять до появления реального scoped API.
+- 8.12: устаревший server-memory graph HTTP bridge/UI удалён; обычная local/private/shared/project memory, delta sync и RAG сохранены. Осталась только автоматическая проверка на exact HEAD.
+- 8.13: handoff контекста выполняется только по явному выбору существующего чата; чат не создаётся и не перемещается. Pending handoff session-only — это принятое ограничение, а не незакрытая задача на persistence.
+- Новые провайдеры, connector marketplace, cloud sync, OAuth и новые runtime-возможности из раздела 9 не входят в текущую UI-реализацию PR #131 без отдельного решения владельца.
 
 ## 8. Поправки владельца от 2026-10-31 — приоритет V2.0
 
