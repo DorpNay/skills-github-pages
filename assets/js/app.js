@@ -67,6 +67,10 @@
       const open=uiModalIds.some(id=>$(id)&&!$(id).classList.contains('hidden'));
       document.body.classList.toggle('ui-modal-open',open);
     }
+    function getTopmostUiModal(){
+      return uiModalIds.map(id=>$(id)).filter(modal=>modal&&!modal.classList.contains('hidden')&&modal.getClientRects().length)
+        .sort((a,b)=>(Number.parseInt(getComputedStyle(a).zIndex,10)||0)-(Number.parseInt(getComputedStyle(b).zIndex,10)||0)).at(-1)||null;
+    }
     function closeUiModalDirect(id){
       const closers={
         settingsModal:()=>toggleSettings(false),projectSettingsModal:closeProjectSettings,projectCreateModal:closeProjectCreate,
@@ -4609,8 +4613,7 @@
     $('chatActionModal').addEventListener('click',event=>{if(event.target===$('chatActionModal'))closeChatActionDialog();});
     document.addEventListener('keydown', (event) => {
       if(event.key==='Tab'){
-        const modalId=[...uiModalIds].reverse().find(id=>$(id)&&!$(id).classList.contains('hidden'));
-        const modal=modalId?$(modalId):null;
+        const modal=getTopmostUiModal();
         if(modal){
           const focusable=[...modal.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(node=>
             node.getClientRects().length&&getComputedStyle(node).visibility!=='hidden'&&!node.closest('.hidden,[inert],[aria-hidden="true"]')
