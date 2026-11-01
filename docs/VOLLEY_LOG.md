@@ -415,3 +415,6 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Updated active runtime code so the aServi connection button uses the selected language while checking and after completion; stale-settings status text is localized in both stale branches.
 - Parsed the actual assets/js/app.js and all 11 E2E modules plus playwright.config.mjs after the final changes; all syntax checks passed. No forced clicks, fixed sleeps or networkidle waits in any of the 11 E2E files.
 - Current code/test head: 4bd40770fd3446e5280e719644394882c9148dae. No Chromium/browser run is claimed.
+
+
+| V-2026-11-01-ASERVI-HTML-CSS-001 | 2026-11-01 | Rename primary server route to aLandi aServi; retain legacy storage keys; externalize app/landing CSS; order renderer/sanitizer scripts with defer; align E2E and Quality assertions; document Chromium mobile edge cases | PR #131 current source checkpoint `901b9c343dbddd2453605b03ec77fd5e893c608c`; app.js syntax parse passed, extracted CSS brace counts balanced; exact-head Quality/Chromium pending | Do not migrate/delete legacy localStorage keys without explicit migration; Cloudflare is not renamed; no merge/deploy |
