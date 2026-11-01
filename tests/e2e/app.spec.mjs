@@ -487,17 +487,17 @@ test('sidebar closes on a horizontal touch swipe without consuming vertical scro
 test('aLandi aServi is exclusive while provider and additional settings can remain open together', async ({ page }) => {
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   await page.locator('[data-action="toggle-settings"]').click();
-  const cloud=page.locator('#aserviSettingsGroup'),providers=page.locator('#thirdPartyProviderSettings'),additional=page.locator('#additionalSettings');
-  if (!(await cloud.evaluate(element => element.open))) await cloud.locator(':scope > summary').click();
-  await expect(cloud).toHaveAttribute('open','');
+  const aservi=page.locator('#aserviSettingsGroup'),providers=page.locator('#thirdPartyProviderSettings'),additional=page.locator('#additionalSettings');
+  if (!(await aservi.evaluate(element => element.open))) await aservi.locator(':scope > summary').click();
+  await expect(aservi).toHaveAttribute('open','');
   await providers.locator(':scope > summary').click();
-  await expect(cloud).not.toHaveAttribute('open','');
+  await expect(aservi).not.toHaveAttribute('open','');
   await expect(providers).toHaveAttribute('open','');
   await additional.locator(':scope > summary').click();
   await expect(providers).toHaveAttribute('open','');
   await expect(additional).toHaveAttribute('open','');
-  await cloud.locator(':scope > summary').click();
-  await expect(cloud).toHaveAttribute('open','');
+  await aservi.locator(':scope > summary').click();
+  await expect(aservi).toHaveAttribute('open','');
   await expect(providers).not.toHaveAttribute('open','');
   await expect(additional).not.toHaveAttribute('open','');
 });
@@ -771,7 +771,7 @@ test('language switch localizes provider controls without exposing the internal 
   await expect(page.locator('#editSystemPrompt')).toHaveAttribute('aria-label', 'Edit system prompt');
   await expect(page.locator('[data-action="connect-aservi"]')).toHaveText('Verify and connect');
   await expect(page.locator('[data-action="connect-aservi"]')).toHaveCount(1);
-  await expect(page.locator('[data-action="connect-alandi-cloud"], [data-action="paste-cloud-key"]')).toHaveCount(0);
+  await expect(page.locator('[data-action="connect-alandi-aservi"], [data-action="paste-aservi-key"]')).toHaveCount(0);
   await expect(page.locator('#providerPreset option[value="gemini"]')).toHaveCount(1);
   await expect(page.locator('#providerPreset option[value="custom"]')).toHaveCount(1);
   await page.locator('.settings-header-actions [data-action="close-settings"]').click();
@@ -1618,10 +1618,10 @@ test('aServi migrates saved endpoint settings from legacy browser storage keys',
 
 test('aLandi aServi status only turns green after a real model response, and core UX controls work', async ({ page }) => {
   const aserviRequests = [];
-  await page.route('https://cloud.example.test/healthz', async route => route.fulfill({
+  await page.route('https://aservi.example.test/healthz', async route => route.fulfill({
     status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' })
   }));
-  await page.route('https://cloud.example.test/v1/chat/completions', async route => {
+  await page.route('https://aservi.example.test/v1/chat/completions', async route => {
     aserviRequests.push(route.request().postDataJSON());
     return route.fulfill({
       status: 200, contentType: 'application/json',
@@ -1634,7 +1634,7 @@ test('aLandi aServi status only turns green after a real model response, and cor
   await page.locator('[data-action="toggle-settings"]').click();
   await expect(page.locator('#thirdPartyProviderSettings')).not.toHaveAttribute('open');
   await expect(page.locator('#aserviStatusDot')).toHaveAttribute('data-state', 'disconnected');
-  await page.locator('#aserviBaseUrl').fill('https://cloud.example.test/v1');
+  await page.locator('#aserviBaseUrl').fill('https://aservi.example.test/v1');
   await page.locator('#aserviModel').fill('qwen3.5:4b');
   await page.locator('#aserviApiKey').fill('e2e-cloud-placeholder-key');
   await expect(page.locator('#aserviStatusDot')).toHaveAttribute('data-state', 'disconnected');
@@ -2349,13 +2349,13 @@ test('aServi URL validation follows the selected language and is announced with 
 });
 
 test('aLandi aServi probe rejects HTTP 200 proxy text as proof of a model connection', async ({ page }) => {
-  await page.route('https://cloud.example.test/v1/chat/completions', async route => route.fulfill({
+  await page.route('https://aservi.example.test/v1/chat/completions', async route => route.fulfill({
     status: 200, contentType: 'text/plain; charset=utf-8',
     body: 'upstream unavailable: invalid route'
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#aserviBaseUrl').fill('https://cloud.example.test/v1');
+  await page.locator('#aserviBaseUrl').fill('https://aservi.example.test/v1');
   await page.locator('#aserviModel').fill('qwen3.5:4b');
   await page.locator('#aserviApiKey').fill('e2e-cloud-placeholder-key');
   await expect(page.locator('#aserviStatusDot')).toHaveAttribute('data-state', 'disconnected', { timeout: 15000 });
@@ -2388,16 +2388,16 @@ test('voice mode menu closes after selecting voice dialogue and keeps gateway se
 
 
 test('aLandi aServi remains disconnected when the model answers but gateway health check fails', async ({ page }) => {
-  await page.route('https://unhealthy-cloud.example.test/healthz', async route => route.fulfill({
+  await page.route('https://unhealthy-aservi.example.test/healthz', async route => route.fulfill({
     status: 503, contentType: 'application/json', body: JSON.stringify({ status: 'unavailable' })
   }));
-  await page.route('https://unhealthy-cloud.example.test/v1/chat/completions', async route => route.fulfill({
+  await page.route('https://unhealthy-aservi.example.test/v1/chat/completions', async route => route.fulfill({
     status: 200, contentType: 'application/json',
     body: JSON.stringify({ model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#aserviBaseUrl').fill('https://unhealthy-cloud.example.test/v1');
+  await page.locator('#aserviBaseUrl').fill('https://unhealthy-aservi.example.test/v1');
   await page.locator('#aserviModel').fill('qwen3.5:4b');
   await page.locator('#aserviApiKey').fill('e2e-cloud-placeholder-key');
   await expect(page.locator('#aserviStatusDot')).toHaveAttribute('data-state', 'disconnected', { timeout: 15000 });
@@ -2410,11 +2410,11 @@ test('stale aServi health response cannot reconnect settings changed while it is
   await page.addInitScript(async accessKey => {
     const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(accessKey));
     const fingerprint = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
-    localStorage.setItem('ai_alandi_cloud_base_url', 'https://race-cloud.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://race-aservi.example.test/v1');
     localStorage.setItem('ai_alandi_cloud_model', 'initial-model');
     localStorage.setItem('ai_api_key_alandi', accessKey);
     localStorage.setItem('ai_alandi_cloud_connection_v1', JSON.stringify({
-      ok: true, baseUrl: 'https://race-cloud.example.test/v1', model: 'initial-model',
+      ok: true, baseUrl: 'https://race-aservi.example.test/v1', model: 'initial-model',
       keyFingerprint: fingerprint, testedAt: new Date().toISOString()
     }));
   }, key);
@@ -2422,7 +2422,7 @@ test('stale aServi health response cannot reconnect settings changed while it is
   let beginHealth, releaseHealth;
   const healthStarted = new Promise(resolve => { beginHealth = resolve; });
   const healthGate = new Promise(resolve => { releaseHealth = resolve; });
-  await page.route('https://race-cloud.example.test/healthz', async route => {
+  await page.route('https://race-aservi.example.test/healthz', async route => {
     beginHealth();
     await healthGate;
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' }) });
@@ -2473,7 +2473,7 @@ test('aLandi aServi probe cannot overwrite settings changed while its request is
   let beginProbe, releaseProbe;
   const probeStarted = new Promise(resolve => { beginProbe = resolve; });
   const probeGate = new Promise(resolve => { releaseProbe = resolve; });
-  await page.route('https://race-cloud.example.test/v1/chat/completions', async route => {
+  await page.route('https://race-aservi.example.test/v1/chat/completions', async route => {
     beginProbe();
     await probeGate;
     await route.fulfill({
@@ -2481,12 +2481,12 @@ test('aLandi aServi probe cannot overwrite settings changed while its request is
       body: JSON.stringify({ model: 'race-cloud-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
     });
   });
-  await page.route('https://race-cloud.example.test/healthz', route => route.fulfill({
+  await page.route('https://race-aservi.example.test/healthz', route => route.fulfill({
     status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' })
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#aserviBaseUrl').fill('https://race-cloud.example.test/v1');
+  await page.locator('#aserviBaseUrl').fill('https://race-aservi.example.test/v1');
   await page.locator('#aserviModel').fill('race-cloud-model');
   await page.locator('#aserviApiKey').fill('first-cloud-race-key');
   await probeStarted;
@@ -2505,19 +2505,19 @@ test('settings keep aServi, third-party providers and additional options in excl
   const cloud = page.locator('#aserviSettingsGroup');
   const providers = page.locator('#thirdPartyProviderSettings');
   const additional = page.locator('#additionalSettings');
-  await expect(cloud).toHaveAttribute('open', '');
+  await expect(aservi).toHaveAttribute('open', '');
   await expect(providers).not.toHaveAttribute('open');
   await expect(additional).not.toHaveAttribute('open');
   await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
   await expect(page.locator('#aserviSettingsCard')).not.toContainText('Kilo');
   await providers.locator(':scope > summary').click();
   await expect(providers).toHaveAttribute('open', '');
-  await expect(cloud).not.toHaveAttribute('open');
+  await expect(aservi).not.toHaveAttribute('open');
   await additional.locator(':scope > summary').click();
   await expect(additional).toHaveAttribute('open', '');
   await expect(providers).toHaveAttribute('open', '');
-  await cloud.locator(':scope > summary').click();
-  await expect(cloud).toHaveAttribute('open', '');
+  await aservi.locator(':scope > summary').click();
+  await expect(aservi).toHaveAttribute('open', '');
   await expect(additional).not.toHaveAttribute('open');
 });
 
