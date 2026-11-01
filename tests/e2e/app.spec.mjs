@@ -1996,6 +1996,23 @@ test('project context handoff queues exactly one request for an existing chat wi
   }));
   expect(finalState.current).toBe(targetChatId);
   expect(finalState.chats).toBe(2);
+
+  // Also restore a handoff when the selected target chat itself is active during reload.
+  await openProjectSettingsForId(page, projectId);
+  await page.locator('#projectContextTargetChat').selectOption(targetChatId);
+  await page.locator('#projectSettingsModal [data-action="handoff-project-context"]').click();
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#userInput').fill('Use context after reloading the selected chat.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Handoff context verified.');
+  await expect.poll(() => capturedBodies.length).toBe(3);
+  expect(capturedBodies[2].messages[0].content).toContain('HANDOFF_PROJECT_INSTRUCTION_SENTINEL');
+  expect(capturedBodies[2].messages[0].content).toContain('HANDOFF_PROJECT_MEMORY_SENTINEL');
+  await page.locator('#userInput').fill('Confirm the reloaded handoff is one-shot.');
+  await page.locator('#sendBtn').click();
+  await expect.poll(() => capturedBodies.length).toBe(4);
+  expect(capturedBodies[3].messages[0].content).not.toContain('HANDOFF_PROJECT_INSTRUCTION_SENTINEL');
+  expect(capturedBodies[3].messages[0].content).not.toContain('HANDOFF_PROJECT_MEMORY_SENTINEL');
 });
 
 test('deleting a project removes only its chats and preserves other projects and chats', async ({ page }) => {
