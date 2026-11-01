@@ -149,3 +149,13 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Added an explicit active-PR/workstream navigation map to `ORIENTER.md` and `project-reference/FILE_ORIENTER_RU.md`; refreshed machine-readable `ui_v2_track` state. Existing navigation and freshness tools were sufficient; no new helper script or directory reorganization was justified.
 - PR #131 exact-head Quality/Chromium remains pending: its latest head has no visible PR-triggered workflow run in the available Actions lookup. Gateway run #640 remains applicable to unchanged Gateway files.
 - Owner policy unchanged: no merge, close, retarget, force-update, branch synchronization or deployment of #131/#132 without explicit owner command.
+
+
+### 2026-11-01 — latest exact backup-branch verification
+
+- On backup PR #132 tested head `2d9f875398da5f4caa8703fc630db9fa0f2e6cb9`, Project State Freshness run **#262** passed: 16 deterministic unit tests and live queue check `main 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1, 8 open PRs, 1 open issue`.
+- License and Artifact Provenance run **#804** passed on the same tested head.
+- Independent Quality Sentinels run **#1118** was pending when checked; it had not yet exposed jobs. The previous Quality run **#1114** passed on earlier backup head `67adda8ba36f2aca7d219bfaf89089921a380ce7`: Chromium **98 passed**, published-site smoke **1 passed**.
+- These are main/V1 + documentation-backup checks only. They do not test Landing V2 code in PR #131.
+- PR #131 remains open/unmerged at `d822cb623b2a72642921654a04e6c9d988091834`, 203 ahead / 4 behind main, mergeable=false. Its exact-head Quality/Chromium run remains unavailable.
+- The machine-readable project state now separates prior Quality success from current Freshness/Provenance success and pending Quality. No source code, directory layout, or branch history was rewritten.
