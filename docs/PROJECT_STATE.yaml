@@ -601,3 +601,15 @@ github_repository_hygiene_2026_11_02:
   prior_quality_1126: "stale SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c; 101 passed / 18 failed"
   cleanup_performed: false
   next: "Classify 117 branch refs by PR/issue, ancestry, unique commits and references; owner verifies branch protection/security settings. No deletion or history rewrite without evidence and explicit approval."
+
+
+ui_scope_reconciliation_2026_11_02:
+  canonical_owner_backlog: "docs/V1_UI_FINALIZATION_RU.md section 8.0 plus owner requirements 8.1-8.17"
+  inherited_ui_scope: "Applicable unresolved requirements from sections 1-7 are integrated into section 8.0 workstreams; completed, obsolete and superseded items are not reopened as parallel tasks"
+  polish_register: "docs/LANDING_UX_POLISH_BACKLOG_RU.md is a concise mirror, not an independent backlog"
+  implementation_evidence: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
+  latest_ui_source_checkpoint: "9aa74853478a6a680cdd36ab0f84c851721405a4"
+  latest_pr131_head_after_graphify_path_update: "c8facdac2eebc7d2217b807f1b7e314ae3abf2dd"
+  graphify_path_coverage: "PR and main-push filters now include assets/js/**/*.js, assets/css/**/*.css and landing/**/*.html; exact-head graph artifact not yet confirmed"
+  quality_chromium: "Exact-head Quality/Chromium not confirmed; source-level assertions are not test passes"
+  next: "Continue integrated inherited UI + 8.1-8.17 implementation; run Graphify and exact-head Quality/Chromium after the next bounded source slice"
