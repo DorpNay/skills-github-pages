@@ -693,3 +693,11 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Corrected the server mapping to use a writable mktemp document root. Root-level entries from _site are symlinked into that root; /skills-github-pages points to the original _site. The built artifact and production baseurl remain untouched.
 - The new exact-head run must verify that the webServer starts, the asset regression returns HTTP 200 for both CSS and JS, and all four shards execute. No speedup is claimed yet.
 
+## Exact-head verification update — 2026-11-02 (Quality #1241)
+
+- PR #131 exact HEAD: `7c3b99a2c8473d8bb120132c49549fff189dbf4c`; PR remains open and unmerged.
+- Quality run #1241 (`41363967095`, push event on that exact SHA) completed successfully. Four real Chrome shards completed successfully (32 tests per shard; 128/128), and preflight, static analysis, Integrity, Security, Context and Jekyll jobs passed. Published Pages smoke was skipped by workflow conditions; no deployment/preview claim follows.
+- **8.14 touch selection:** current CSS applies `user-select:none`, `-webkit-user-select:none`, `-webkit-touch-callout:none` and `touch-action:manipulation` to interactive controls, while inputs and message content explicitly remain text-selectable. E2E checks computed styles for controls, disclosures, composer input, message content and expanded viewer. Desktop Chromium evidence is green; native iPhone Safari long-press remains a manual acceptance gate.
+- **8.15 status presentation:** the E2E suite exercises five semantic status states, four toast states, centering and reduced-motion behavior; this coverage passed in #1241. Full composited contrast review across real surfaces and native devices remains open.
+- **8.19 persistent errors:** the existing FIFO toast now exposes an error with `role=alert`, assertive live-region semantics, `data-persistent=true` and a localized explicit dismiss action. The E2E test asserts visibility, semantics and acknowledgement; it passed as part of #1241. This verifies persistent presentation/acknowledgement only, not durable operation IDs, pending-to-result updates or inline recovery actions.
+- No product runtime code, dependency, workflow or deployment was changed in this evidence-only update.
