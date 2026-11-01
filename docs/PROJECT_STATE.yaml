@@ -516,6 +516,7 @@ landing_ui_v2_pr131_2026_10_31:
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   latest_code_test_head: "b6b4cd612e288f0ad2c0e23419a562b06b491ef5"
   branch_comparison: "476 ahead / 4 behind main; merge base e78a73b25725bfa63370d9946887cbbacbf51b82; four main-side commits overlap the shared UI checklist only."
+  repository_hygiene_runbook: "docs/REPOSITORY_HYGIENE_RU.md; prepared from official GitHub repository/security/branch-protection/CODEOWNERS guidance; actual branch/file/settings cleanup is deferred to the next major-slice boundary."
   latest_documented_head: "dc56c16e42c0b8bb218e4763333bb633864b731e (latest journal commit before this state refresh)"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
