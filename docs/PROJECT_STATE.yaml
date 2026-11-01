@@ -577,5 +577,5 @@ landing_v2_aservi:
   research_studio_hierarchy: "Single entry point #deepResearchStudioButton under the deep-research controls; not a standalone navigation destination. E2E opens from this entry and checks no Functions-menu duplicate."
   roadmap_visibility: "Future sections/windows stay visible for information architecture; development ticker marks unfinished areas; no fake successful actions."
   source_checkpoint: "38f2061006342b6c1841e3ceed700895624977a6 (latest UI source change; latest related E2E source checkpoint c87bc1c49a900c2249c44a5c5e697f2b0267bd84)."
-  documentation_checkpoint: "34e728d5d1c4b3a1589a779b5c53626344f18682 (latest research settings architecture documentation update)."
+  documentation_checkpoint: "b8bb8c907ce001b684564d9842a214ee16bf810b (latest V1 UI finalization policy update); research settings architecture checkpoint 34e728d5d1c4b3a1589a779b5c53626344f18682."
   future_storage_name: "aLandi aCloudi reserved for a separate information-storage product; not implemented."
