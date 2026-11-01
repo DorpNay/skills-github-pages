@@ -124,3 +124,39 @@
 During the 2026-11-02 continuation, a concrete CI hygiene gap was found: after the browser runtime/styles moved from `index.md` into static assets, the Graphify Code-Only Pilot path filters did not include those extracted files. The workflow now watches `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html` on PR and main-push events.
 
 This is a narrow, reversible CI configuration correction. The Graphify workflow/artifact has not yet been confirmed on the new head. No branch cleanup, repository settings mutation, history rewrite, merge or deployment was performed.
+
+
+## 9. Snapshot инвентаризации — 2026-11-02
+
+**Проверенная база:** main SHA 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. В GitHub branch listing получено 126 веток (100 в первой странице + 26 во второй); открытых PR — 9 (#124–132), закрытых PR — 100. Для всех 100 закрытых PR получены metadata с head branch и merged flag.
+
+### Ветки, которые сохраняем
+
+- Все 19 закрытых, но не merged PR имеют уникальные коммиты относительно main (ahead > 0); их ветки не удалять. Среди них есть отдельные голосовые, document-attachment, RAG, security и UX workstreams. Нужен отдельный review, прежде чем переносить или закрывать эту работу.
+- Все 10 веток без связанного PR, у которых compare показывает ahead > 0, содержат уникальные коммиты; оставить для отдельной triage.
+- future-workstreams/parking-base-20261031 намеренно обозначена как парковочная база. Хотя она behind-only, сохранить.
+
+### Подтверждённые кандидаты на удаление веток
+
+Для каждой ветки ниже GitHub compare к main показал ahead = 0 (текущая ветка полностью позади main), а поиск кода и PR по точному имени не нашёл ссылок:
+
+| Branch | Compare main | Решение |
+|---|---:|---|
+| feat/alandi-helper-model-routing | 0 ahead / 165 behind | Candidate — удалить после ручного подтверждения владельцем |
+| feat/rag-rrf-engineering-audit-rebased-20261027 | 0 / 111 | Candidate — удалить после ручного подтверждения владельцем |
+| fix/provider-model-catalogs-v2 | 0 / 182 | Candidate — удалить после ручного подтверждения владельцем |
+| fix/pyodide-setup | 0 / 270 | Candidate — удалить после ручного подтверждения владельцем |
+| fix/theme-persistence-e2e-isolation | 0 / 178 | Candidate — удалить после ручного подтверждения владельцем |
+
+Удаление не выполнено: доступная GitHub-интеграция не предоставляет операцию удаления branch ref. Удалить эти пять веток можно через GitHub UI после последней проверки их отсутствия в открытых PR/issues и сохранения commit SHA. Не удалять остальные ветки по одному лишь возрасту.
+
+### Файлы и настройки
+
+- Подтверждённых бесхозных файлов не найдено; файлы не удалялись.
+- В main на snapshot не найдены SECURITY.md, CODEOWNERS и .github/dependabot.yml. SECURITY.md добавлен в PR #131 и PR #132, но ещё не в main.
+- CODEOWNERS пока не добавлен: сначала нужно подтвердить реальный независимый reviewer; self-review requirement может блокировать PR единственного автора.
+- Dependabot config отложен до завершения PR #124: он добавляет uv.lock и обновляет Python dependency contract; не стоит создавать конкурирующий dependency-update поток до фиксации этого контракта.
+- Проверены workflow quality-sentinels.yml и gateway-tests.yml: они ограничивают GITHUB_TOKEN permissions до contents: read и используют immutable SHA-pinned Actions. Quality workflow запускает scripts/check-action-pinning.mjs.
+- Настройки branch protection/rulesets, secret scanning, push protection, Dependabot alerts/security updates и CodeQL нельзя прочитать через доступные действия интеграции. Их состояние **не подтверждено**; нужен ручной просмотр Settings → Rules/Branches и Security & analysis.
+
+**Итог:** найдено пять доказуемых branch cleanup candidates, но удаление не выполнено из-за отсутствия branch-delete action. Все ветки с уникальными коммитами и все закрытые unmerged PR workstreams сохранены.
