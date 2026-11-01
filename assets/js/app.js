@@ -24,7 +24,7 @@
       openrouter: { label: 'OpenRouter', docsUrl: 'https://openrouter.ai/settings/keys', baseUrl: 'https://openrouter.ai/api/v1', models: [['openrouter/free','Автовыбор бесплатной модели'], ['deepseek/deepseek-r1:free','DeepSeek R1 · free (если доступна)']] },
       nvidia: { label: 'NVIDIA NIM', docsUrl: 'https://build.nvidia.com/settings', baseUrl: 'https://integrate.api.nvidia.com/v1', models: [['z-ai/glm-5.3','GLM-5.3 · reasoning/coding'], ['openai/gpt-oss-20b','GPT-OSS 20B · reasoning']] },
       huggingface: { label: 'Hugging Face Inference Providers', docsUrl: 'https://huggingface.co/settings/tokens', baseUrl: 'https://router.huggingface.co/v1', models: [['openai/gpt-oss-120b:fastest','GPT-OSS 120B · fastest'], ['deepseek-ai/DeepSeek-R1:fastest','DeepSeek R1 · fastest'], ['openai/gpt-oss-120b:cheapest','GPT-OSS 120B · cheapest']] },
-      alandi: { label: 'aLandi Self-hosted Gateway', docsUrl: 'https://github.com/DorpNay/skills-github-pages/blob/main/docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md', baseUrl: '', models: [['qwen3.5:4b','Qwen3.5 4B · локальный сервер']] },
+      alandi: { label: 'aLandi aServi · Self-hosted Gateway', docsUrl: 'https://github.com/DorpNay/skills-github-pages/blob/main/docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md', baseUrl: '', models: [['qwen3.5:4b','Qwen3.5 4B · локальный сервер']] },
       kilo: { label: 'Kilo AI Gateway · Auto Free', docsUrl: 'https://kilo.ai/docs/gateway', baseUrl: 'https://api.kilo.ai/api/gateway', models: [['kilo-auto/free','Kilo Auto Free · dynamic routing']] },
       custom: { label: 'Свой API', baseUrl: '', docsUrl: '', models: [['custom','Ввести имя модели вручную']] }
     };
