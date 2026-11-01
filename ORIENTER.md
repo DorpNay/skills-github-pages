@@ -148,3 +148,10 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Browser history now stores nested project-filter and modal entries. Back closes/restores the previous level; Forward reopens the saved filter/modal; Escape uses the same stack.
 - Added Playwright assertions for Forward after project-filter and project-settings Back. E2E/Chromium has not been run on the exact head.
 - Keep PR #131 open and unmerged. Next: exact-head Quality/Chromium and native iPhone Safari/VoiceOver review.
+
+
+### Landing UI V2.0 — aServi terminology checkpoint (2026-11-01)
+- Renamed primary self-hosted server route action identifiers and JavaScript handlers to aServi terminology; updated app markup, Playwright selectors and static Quality Sentinels assertions.
+- Updated the settings group/card label to `aLandi aServi`; Cloudflare remains unchanged as a separate provider/infrastructure brand.
+- Preserved legacy `ai_alandi_cloud_*` localStorage keys deliberately for existing installations; they are compatibility identifiers, not user-facing product names.
+- No merge/deployment. Verify exact-head Quality/Chromium after the source batch.
