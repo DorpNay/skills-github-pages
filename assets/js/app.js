@@ -52,7 +52,7 @@
       syncModalEnvironment();
       requestAnimationFrame(()=>{
         if(modal.classList.contains('hidden'))return;
-        const focusable=modal.querySelector('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])');
+        const focusable=getModalFocusableElements(modal)[0];
         if(focusable&&!modal.contains(document.activeElement))focusable.focus({preventScroll:true});
       });
     }
@@ -70,6 +70,12 @@
     function getTopmostUiModal(){
       return uiModalIds.map(id=>$(id)).filter(modal=>modal&&!modal.classList.contains('hidden')&&modal.getClientRects().length)
         .sort((a,b)=>(Number.parseInt(getComputedStyle(a).zIndex,10)||0)-(Number.parseInt(getComputedStyle(b).zIndex,10)||0)).at(-1)||null;
+    }
+    const MODAL_FOCUSABLE_SELECTOR='button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])';
+    function getModalFocusableElements(modal){
+      return [...modal.querySelectorAll(MODAL_FOCUSABLE_SELECTOR)].filter(node=>
+        node.getClientRects().length&&getComputedStyle(node).visibility!=='hidden'&&!node.closest('.hidden,[inert],[aria-hidden="true"]')&&node.getAttribute('aria-disabled')!=='true'
+      );
     }
     function closeUiModalDirect(id){
       const closers={
@@ -98,7 +104,7 @@
             else if(entry.kind==='modal'){
               if(entry.id==='chatActionModal'){openChatActionDialog(entry.mode,entry.chatId,true);continue;}
               $(entry.id)?.classList.remove('hidden');syncModalEnvironment();
-              requestAnimationFrame(()=>{const modal=$(entry.id);if(!modal||modal.classList.contains('hidden'))return;const focusable=modal.querySelector('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])');focusable?.focus({preventScroll:true});});
+              requestAnimationFrame(()=>{const modal=$(entry.id);if(!modal||modal.classList.contains('hidden'))return;const focusable=getModalFocusableElements(modal)[0];focusable?.focus({preventScroll:true});});
             }
           }
         }
@@ -4502,7 +4508,7 @@
           case 'start-research-studio': await startResearchStudio(); break;
           case 'toggle-sidebar': toggleSidebar(); break;
           case 'close-sidebar': toggleSidebar(false); break;
-          case 'new-chat': if(voiceConversationActive)stopVoiceConversation(false);if(activeChatProjectId)createNewChatInProject(activeChatProjectId);else createNewChat(); break;
+          case 'new-chat': if(voiceConversationActive)stopVoiceConversation(false);createNewChat(); break;
           case 'new-chat-in-project': createNewChatInProject(control.dataset.projectId);break;
           case 'chat-clear': control.closest('.chat-row-menu')?.removeAttribute('open');clearChatById(control.dataset.chatId);break;
           case 'clear-chat': clearCurrentChat(); break;
@@ -4679,17 +4685,15 @@
       if(event.key==='Tab'){
         const modal=getTopmostUiModal();
         if(modal){
-          const focusable=[...modal.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(node=>
-            node.getClientRects().length&&getComputedStyle(node).visibility!=='hidden'&&!node.closest('.hidden,[inert],[aria-hidden="true"]')
-          );
+          const focusable=getModalFocusableElements(modal);
           if(!focusable.length){
             event.preventDefault();
             if(!modal.hasAttribute('tabindex'))modal.setAttribute('tabindex','-1');
             modal.focus({preventScroll:true});
           }else{
-            const first=focusable[0],last=focusable[focusable.length-1];
-            if(event.shiftKey&&(document.activeElement===first||!modal.contains(document.activeElement))){event.preventDefault();last.focus({preventScroll:true});}
-            else if(!event.shiftKey&&(document.activeElement===last||!modal.contains(document.activeElement))){event.preventDefault();first.focus({preventScroll:true});}
+            const first=focusable[0],last=focusable[focusable.length-1],activeIndex=focusable.indexOf(document.activeElement);
+            if(event.shiftKey&&(document.activeElement===first||activeIndex===-1)){event.preventDefault();last.focus({preventScroll:true});}
+            else if(!event.shiftKey&&(document.activeElement===last||activeIndex===-1)){event.preventDefault();first.focus({preventScroll:true});}
           }
         }
       }
@@ -4706,7 +4710,7 @@
         else if (!$('settingsModal').classList.contains('hidden')) toggleSettings(false);
         else if (!$('sidebar').classList.contains('-translate-x-full')) toggleSidebar(false);
       }
-    });
+    }, true);
     const syncComposerViewport = () => {
       // Preserve the user's reading position. If they were already at the end,
       // keep the latest message anchored when the mobile keyboard changes height.

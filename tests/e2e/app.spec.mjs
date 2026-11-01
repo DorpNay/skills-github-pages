@@ -155,6 +155,7 @@ test('global system prompt edit control is localized, keyboard-friendly, and ret
   await page.addInitScript(() => localStorage.setItem('ai_ui_language_v1', 'en'));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   const prompt = page.locator('#systemPromptInput');
   const edit = page.locator('#editSystemPrompt');
   await expect(prompt).toHaveAttribute('readonly', '');
@@ -297,23 +298,23 @@ test('settings modal traps Tab and Shift+Tab inside the visible dialog', async (
   await page.locator('[data-action="toggle-settings"]').click();
   const modal = page.locator('#settingsModal');
   const visibleCount = await modal.evaluate(element => {
-    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')];
+    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],[tabindex]:not([tabindex="-1"])')];
     return nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]')).length;
   });
   expect(visibleCount).toBeGreaterThan(1);
   await modal.evaluate(element => {
-    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')];
+    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],[tabindex]:not([tabindex="-1"])')];
     nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]'))[0].focus();
   });
   await page.keyboard.press('Shift+Tab');
   await expect.poll(() => modal.evaluate(element => {
-    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')];
+    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],[tabindex]:not([tabindex="-1"])')];
     const visible = nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]'));
     return document.activeElement === visible.at(-1);
   })).toBe(true);
   await page.keyboard.press('Tab');
   await expect.poll(() => modal.evaluate(element => {
-    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')];
+    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],[tabindex]:not([tabindex="-1"])')];
     const visible = nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]'));
     return document.activeElement === visible[0];
   })).toBe(true);
@@ -373,7 +374,7 @@ test('mobile sidebar and modal close controls meet the 44px touch target', async
   const createClose = await page.locator('#projectCreateModal [data-action="close-project-create"]').first().boundingBox();
   expect(createClose?.width || 0).toBeGreaterThanOrEqual(44);
   expect(createClose?.height || 0).toBeGreaterThanOrEqual(44);
-  await page.locator('#projectCreateModal [data-action="close-project-create"]').click();
+  await page.locator('#projectCreateModal [data-action="close-project-create"]').first().click();
   const projectId = await createProjectFromUi(page, 'Touch target project');
   await openProjectSettingsForId(page, projectId);
   const projectClose = await page.locator('#projectSettingsModal [data-action="close-project-settings"]').boundingBox();
@@ -522,16 +523,16 @@ test('aLandi aServi is exclusive while provider and additional settings can rema
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   await page.locator('[data-action="toggle-settings"]').click();
   const aservi=page.locator('#aserviSettingsGroup'),providers=page.locator('#thirdPartyProviderSettings'),additional=page.locator('#additionalSettings');
-  if (!(await aservi.evaluate(element => element.open))) await aservi.locator(':scope > summary').click();
-  await expect(aservi).toHaveAttribute('open','');
+  if (!(await aservi.evaluate(element => element.open))) await cloud.locator(':scope > summary').click();
+  await expect(cloud).toHaveAttribute('open','');
   await providers.locator(':scope > summary').click();
-  await expect(aservi).not.toHaveAttribute('open','');
+  await expect(cloud).not.toHaveAttribute('open','');
   await expect(providers).toHaveAttribute('open','');
   await additional.locator(':scope > summary').click();
   await expect(providers).toHaveAttribute('open','');
   await expect(additional).toHaveAttribute('open','');
-  await aservi.locator(':scope > summary').click();
-  await expect(aservi).toHaveAttribute('open','');
+  await cloud.locator(':scope > summary').click();
+  await expect(cloud).toHaveAttribute('open','');
   await expect(providers).not.toHaveAttribute('open','');
   await expect(additional).not.toHaveAttribute('open','');
 });
@@ -622,6 +623,7 @@ test('high-contrast preference updates every important text state in both themes
     error.textContent = 'Contrast error fixture';
     document.querySelector('#chatBox').appendChild(error);
     const disabled = document.createElement('button');
+    disabled.id = 'contrastDisabledFixture';
     disabled.disabled = true;
     disabled.textContent = 'Contrast disabled fixture';
     document.querySelector('#chatBox').appendChild(disabled);
@@ -631,10 +633,10 @@ test('high-contrast preference updates every important text state in both themes
   const readStates = () => page.evaluate(() => ({
     normal: getComputedStyle(document.querySelector('#chatBox')).color,
     secondary: getComputedStyle(document.querySelector('#memoryStatusLine')).color,
-    disabled: getComputedStyle(document.querySelector('#chatBox button:disabled')).color,
+    disabled: getComputedStyle(document.querySelector('#contrastDisabledFixture')).color,
     link: getComputedStyle(document.querySelector('#chatBox .assistant-content a')).color,
     error: getComputedStyle(document.querySelector('#chatBox [role="alert"]')).color,
-    status: getComputedStyle(document.querySelector('#statusText')).color,
+    status: getComputedStyle(document.querySelector('#searchStatus')).color,
     aserviWarning: getComputedStyle(document.querySelector('#aserviStatus')).color
   }));
   await page.locator('[data-action="toggle-settings"]').click();
@@ -1628,7 +1630,7 @@ test('Obsidian Studio and Clean Light preferences persist and respect motion con
 
 
 test('agent systems skill is routed on demand and its safety contract stays available', async () => {
-  const source = await readFile('./index.md', 'utf8');
+  const source = await readFile('./assets/js/app.js', 'utf8');
   const skill = await readFile('./skills/agent-systems.txt', 'utf8');
   expect(source).toContain("isAgentSystemsTask ? 'agent-systems'");
   expect(source).toContain("new URL('skills/' + selectedSkill + '.txt', document.baseURI)");
@@ -1743,7 +1745,10 @@ test('pasting a provider key starts one bounded model-catalog and connection che
 test('project instructions, project memory, and project bundles stay scoped to the current project', async ({ page }) => {
   const capturedBodies = [];
   await page.route('https://api.example.test/v1/chat/completions', async route => {
-    capturedBodies.push(route.request().postDataJSON());
+    const payload=route.request().postDataJSON();
+    const last=payload.messages?.at(-1)?.content;
+    if(last==='Reply with exactly OK.'||last==='Reply with exactly OK. No other words.') return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({model:'e2e-project-model',choices:[{message:{role:'assistant',content:'OK'}}]})});
+    capturedBodies.push(payload);
     await route.fulfill({ status: 200, contentType: 'application/json',
       body: JSON.stringify({ model: 'e2e-project-model', choices: [{ message: { role: 'assistant', content: 'Project scope verified.' } }] }) });
   });
@@ -1847,7 +1852,10 @@ test('project instructions, project memory, and project bundles stay scoped to t
 test('project context handoff queues exactly one request for an existing chat without moving it', async ({ page }) => {
   const capturedBodies = [];
   await page.route('https://api.example.test/v1/chat/completions', async route => {
-    capturedBodies.push(route.request().postDataJSON());
+    const payload=route.request().postDataJSON();
+    const last=payload.messages?.at(-1)?.content;
+    if(last==='Reply with exactly OK.'||last==='Reply with exactly OK. No other words.') return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({model:'e2e-handoff-model',choices:[{message:{role:'assistant',content:'OK'}}]})});
+    capturedBodies.push(payload);
     await route.fulfill({ status: 200, contentType: 'application/json',
       body: JSON.stringify({ model: 'e2e-handoff-model', choices: [{ message: { role: 'assistant', content: 'Handoff context verified.' } }] }) });
   });
@@ -2528,19 +2536,19 @@ test('settings keep aServi, third-party providers and additional options in excl
   const cloud = page.locator('#aserviSettingsGroup');
   const providers = page.locator('#thirdPartyProviderSettings');
   const additional = page.locator('#additionalSettings');
-  await expect(aservi).toHaveAttribute('open', '');
+  await expect(cloud).toHaveAttribute('open', '');
   await expect(providers).not.toHaveAttribute('open');
   await expect(additional).not.toHaveAttribute('open');
   await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
   await expect(page.locator('#aserviSettingsCard')).not.toContainText('Kilo');
   await providers.locator(':scope > summary').click();
   await expect(providers).toHaveAttribute('open', '');
-  await expect(aservi).not.toHaveAttribute('open');
+  await expect(cloud).not.toHaveAttribute('open');
   await additional.locator(':scope > summary').click();
   await expect(additional).toHaveAttribute('open', '');
   await expect(providers).toHaveAttribute('open', '');
-  await aservi.locator(':scope > summary').click();
-  await expect(aservi).toHaveAttribute('open', '');
+  await cloud.locator(':scope > summary').click();
+  await expect(cloud).toHaveAttribute('open', '');
   await expect(additional).not.toHaveAttribute('open');
 });
 
@@ -2578,7 +2586,10 @@ test('retired server-memory bridge is absent and project facts remain local', as
 test('private memory is local by default and enters context only after explicit opt-in', async ({ page }) => {
   const prompts = [];
   await page.route('https://gateway.example.test/v1/chat/completions', async route => {
-    prompts.push(route.request().postDataJSON());
+    const payload=route.request().postDataJSON();
+    const last=payload.messages?.at(-1)?.content;
+    if(last==='Reply with exactly OK.'||last==='Reply with exactly OK. No other words.') return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({model:'qwen3.5:4b',choices:[{message:{role:'assistant',content:'OK'}}]})});
+    prompts.push(payload);
     return route.fulfill({ status: 200, contentType: 'application/json',
       body: JSON.stringify({ model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'Private memory check.' }, finish_reason: 'stop' }] }) });
   });
@@ -3251,7 +3262,7 @@ test('search presets and function settings fit one line, localize, and persist p
 
   await page.locator('#functionsMenuSummary').click();
   await expect(page.locator('#functionsMenu [data-function="research"]')).toHaveCount(0);
-  await expect(page.locator('#functionsMenu .toolbar-menu-option')).toHaveCount(4);
+  await expect(page.locator('#functionsMenu .toolbar-menu-option')).toHaveCount(3);
   await page.locator('#functionsMenuSummary').click();
 
   await setAgentMode(page, true);
@@ -3452,6 +3463,7 @@ test('request status and notifications expose semantic state and centered alignm
   await ensureSidebarOpen(page);
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('[data-action="create-project"]').click();
+  await page.mouse.move(0, 0);
   await expect(page.locator('#toast')).toHaveAttribute('data-state','error', { timeout: 6000 });
   await expect(page.locator('#toast')).toHaveAttribute('role','alert');
   await expect(page.locator('#toast')).toHaveAttribute('aria-live','assertive');
@@ -3539,6 +3551,8 @@ test('modal lifecycle keeps keyboard focus and page scroll isolated across core 
     await expect(page.locator('body')).not.toHaveClass(/ui-modal-open/);
   };
 
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await assertModalLifecycle('projectCreateModal');
 

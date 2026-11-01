@@ -171,6 +171,7 @@ permalink: /
           <input id="aserviModel" type="text" autocomplete="off" aria-label="Модель моего сервера" aria-describedby="aserviModelError" class="w-full p-3 rounded-xl border text-sm" placeholder="Модель gateway · точный ID"><p id="aserviModelError" class="field-error hidden" role="alert"></p>
           <div class="aservi-key-row flex gap-2"><input id="aserviApiKey" type="password" autocomplete="off" aria-label="Ключ доступа к серверу" aria-describedby="aserviApiKeyError" class="min-w-0 flex-1 p-3 rounded-xl border text-sm" placeholder="Ключ доступа"><button type="button" data-action="paste-aservi-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ">↓</button></div><p id="aserviApiKeyError" class="field-error hidden" role="alert"></p>
         </div>
+        <button type="button" data-action="connect-aservi" aria-controls="aserviStatus" class="w-full min-h-[44px] rounded-xl border border-cyan-700 bg-cyan-950/60 px-3 py-2 text-sm font-semibold text-cyan-100 hover:bg-cyan-900">Проверить и подключить</button>
         <p id="aserviStatus" class="aservi-status-copy text-[10px]" data-state="disconnected" role="status" aria-live="polite">Не подключено</p>
       </section>
         </div>
