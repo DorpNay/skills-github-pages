@@ -326,6 +326,46 @@ test('theme and language are a compact accessible header group', async ({ page }
   await expect(page.locator('#uiLanguage')).toHaveValue('ru');
 });
 
+test('header hierarchy and compact mode controls remain responsive from 320px upward', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const widths = [320, 360, 390, 768, 1024, 1440];
+  for (const width of widths) {
+    await page.setViewportSize({ width, height: 844 });
+    const metrics = await page.evaluate(() => {
+      const header = document.querySelector('.app-header');
+      const title = document.querySelector('.header-chat-title');
+      const clock = document.querySelector('#aLandiClock .clock-face');
+      const wordmark = document.querySelector('#brandWordmark');
+      const fast = document.querySelector('#modeFast');
+      const deep = document.querySelector('#modeDeep');
+      const rect = element => {
+        const box = element.getBoundingClientRect();
+        return { width: box.width, height: box.height };
+      };
+      return {
+        header: { clientWidth: header.clientWidth, scrollWidth: header.scrollWidth },
+        title: rect(title),
+        titleBorder: getComputedStyle(title).borderTopWidth,
+        titleRadius: getComputedStyle(title).borderTopLeftRadius,
+        clock: rect(clock),
+        wordmarkTransform: getComputedStyle(wordmark).transform,
+        wordmarkWeight: getComputedStyle(wordmark).fontWeight,
+        fast: rect(fast),
+        deep: rect(deep)
+      };
+    });
+    expect(metrics.header.scrollWidth, 'header overflow at ' + width + 'px').toBeLessThanOrEqual(metrics.header.clientWidth + 1);
+    expect(metrics.title.width).toBeGreaterThan(0);
+    expect(metrics.titleBorder).not.toBe('0px');
+    expect(metrics.titleRadius).not.toBe('0px');
+    expect(metrics.clock.width).toBeGreaterThanOrEqual(54);
+    expect(metrics.wordmarkTransform).not.toBe('none');
+    expect(Number(metrics.wordmarkWeight)).toBeGreaterThanOrEqual(800);
+    expect(metrics.fast.height).toBeLessThanOrEqual(34);
+    expect(metrics.deep.height).toBeLessThanOrEqual(34);
+  }
+});
+
 test('sidebar closes on a horizontal touch swipe without consuming vertical scrolling', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
