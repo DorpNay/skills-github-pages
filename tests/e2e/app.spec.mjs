@@ -307,7 +307,15 @@ test('settings modal traps Tab and Shift+Tab inside the visible dialog', async (
     const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])')];
     nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]'))[0].focus();
   });
+  console.log('MODAL_FOCUS_DIAGNOSTICS', JSON.stringify(await page.evaluate(() => {
+    const ids=['settingsModal','projectSettingsModal','projectCreateModal','messageViewerModal','chatActionModal','researchStudioModal','functionPanelModal','traceModal'];
+    const selector='button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])';
+    const active=ids.map(id=>document.getElementById(id)).filter(m=>m&&!m.classList.contains('hidden')&&getComputedStyle(m).display!=='none'&&getComputedStyle(m).visibility!=='hidden'&&m.getClientRects().length).sort((a,b)=>(parseInt(getComputedStyle(a).zIndex,10)||0)-(parseInt(getComputedStyle(b).zIndex,10)||0)).at(-1);
+    const describe=m=>({id:m.id,display:getComputedStyle(m).display,visibility:getComputedStyle(m).visibility,opacity:getComputedStyle(m).opacity,z:getComputedStyle(m).zIndex,focusables:[...m.querySelectorAll(selector)].filter(n=>n.getClientRects().length&&getComputedStyle(n).visibility!=='hidden'&&!n.closest('.hidden,[inert],[aria-hidden="true"]')).map(n=>n.id||n.tagName+':'+(n.getAttribute('aria-label')||n.textContent.trim().slice(0,24)))});
+    return {activeElement:document.activeElement.id||document.activeElement.tagName,activeModal:active?.id,modals:ids.map(id=>document.getElementById(id)).filter(Boolean).map(describe)};
+  })));
   await page.keyboard.press('Shift+Tab');
+  console.log('MODAL_FOCUS_AFTER_SHIFT_TAB', JSON.stringify(await page.evaluate(() => ({active:document.activeElement.id||document.activeElement.tagName,aria:document.activeElement.getAttribute('aria-label'),text:document.activeElement.textContent?.trim().slice(0,40)}))));
   await expect.poll(() => modal.evaluate(element => {
     const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])')];
     const visible = nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]'));
@@ -653,6 +661,13 @@ test('high-contrast preference updates every important text state in both themes
   await page.locator('#uiTextContrast').selectOption('high');
   await expect(page.locator('html')).toHaveAttribute('data-text-contrast','high');
   const highDark = await readStates();
+  console.log('HIGH_CONTRAST_DIAGNOSTICS', JSON.stringify(await page.evaluate(() => {
+    const button=document.querySelector('#contrastDisabledFixture');
+    const rules=[];
+    for(const sheet of document.styleSheets){try{for(const rule of sheet.cssRules){if(rule.selectorText?.includes('chatBox button'))rules.push(rule.cssText);}}catch{}}
+    const style=getComputedStyle(button);
+    return {htmlContrast:document.documentElement.getAttribute('data-text-contrast'),disabled:button.disabled,hasAttribute:button.hasAttribute('disabled'),matchesDisabled:button.matches(':disabled'),matchesAttribute:button.matches('[disabled]'),matchesHighContrast:button.matches('html[data-text-contrast="high"] #chatBox button[disabled]'),color:style.color,textFill:style.webkitTextFillColor,matchingRules:rules};
+  })));
   for (const key of ['secondary','disabled','link','error','status']) {
     expect(highDark[key], key + ' must change in dark theme').not.toBe(normalDark[key]);
     expect(highDark[key]).not.toBe('');
@@ -1861,6 +1876,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
   expect(implicitPrompt).not.toContain('ALPHA_PROJECT_MEMORY_SENTINEL');
   await page.locator('#contextPickerButton').click();
   await page.locator('#requestProjectChecks input[data-request-project-id="' + betaId + '"]').check();
+  await page.locator('#contextPickerButton').click();
   await page.locator('#userInput').fill('Use the project context explicitly.');
   await page.locator('#sendBtn').click();
   await expect.poll(() => capturedBodies.length).toBe(2);
