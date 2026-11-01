@@ -119,14 +119,14 @@
 Официальные ориентиры: [GitHub repository best practices](https://docs.github.com/en/repositories/creating-and-managing-repositories/best-practices-for-repositories), [protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches), [security quickstart](https://docs.github.com/en/code-security/getting-started/quickstart-for-securing-your-repository), [CODEOWNERS](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners).
 
 
-## 10. Follow-up — extracted UI source coverage
+## 10. Graphify source-coverage follow-up
 
 During the 2026-11-02 continuation, a concrete CI hygiene gap was found: after the browser runtime/styles moved from `index.md` into static assets, the Graphify Code-Only Pilot path filters did not include those extracted files. The workflow now watches `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html` on PR and main-push events.
 
 This is a narrow, reversible CI configuration correction. The Graphify workflow/artifact has not yet been confirmed on the new head. No branch cleanup, repository settings mutation, history rewrite, merge or deployment was performed.
 
 
-## 9. Snapshot инвентаризации — 2026-11-02
+## 11. Подробный snapshot инвентаризации — 2026-11-02
 
 **Проверенная база:** main SHA 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. В GitHub branch listing получено 126 веток (100 в первой странице + 26 во второй); открытых PR — 9 (#124–132), закрытых PR — 100. Для всех 100 закрытых PR получены metadata с head branch и merged flag.
 
@@ -161,7 +161,7 @@ This is a narrow, reversible CI configuration correction. The Graphify workflow/
 
 **Итог:** найдено пять доказуемых branch cleanup candidates, но удаление не выполнено из-за отсутствия branch-delete action. Все ветки с уникальными коммитами и все закрытые unmerged PR workstreams сохранены.
 
-## 11. Security policy follow-up
+## 12. Security policy follow-up
 
 The 2026-11-02 branch inventory found no SECURITY.md on main. A responsible vulnerability-reporting policy has since been added as SECURITY.md in PR #131 and mirrored in PR #132. It directs reports to GitHub private vulnerability reporting when enabled, otherwise to the repository owner, prohibits public disclosure of secrets/user data, and does not promise an unsupported response-time SLA.
 
