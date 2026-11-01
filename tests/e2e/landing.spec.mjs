@@ -10,6 +10,7 @@ test('V1 landing has accurate metadata, working CTAs and honest product boundari
 
   await expect(page).toHaveTitle(/aLandi.*собственным gateway/i);
   await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
+  await expect(page.locator('link[rel="stylesheet"][href*="assets/css/landing.css"]')).toHaveCount(1);
   await expect(page.locator('h1')).toHaveCount(1);
   await expect(page.locator('h1')).toContainText('Сохраняй контроль над средой');
   await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /бесплатная|AI-среда|gateway/i);
