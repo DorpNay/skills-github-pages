@@ -489,3 +489,12 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 
 - Added a source comment above ASERVI_STORAGE clarifying that ai_alandi_cloud_* names remain intentionally for persisted-setting compatibility, not as product terminology.
 - No key rename, migration or deletion was performed. Source commit: 9aa74853478a6a680cdd36ab0f84c851721405a4.
+
+
+### 2026-11-02 — integrated UI scope and Graphify path coverage
+
+- Reconfirmed that the work includes applicable unfinished UI requirements from sections 1–7 together with 8.1–8.17; section 8.0 is the sole active residual queue, and the polish register is only a mirror.
+- Latest UI source checkpoint: `9aa74853478a6a680cdd36ab0f84c851721405a4`; Graphify workflow path-filter commit: `c8facdac2eebc7d2217b807f1b7e314ae3abf2dd`.
+- Fixed Graphify Code-Only Pilot path coverage for extracted `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html` in PR and main-push filters.
+- No Graphify run/artifact has yet been confirmed for this change. No Quality/Chromium pass, merge, rebase or deployment is claimed.
+- PR #131 remains dirty/diverged against main; inspect the four base-side commits before synchronization.
