@@ -1,6 +1,6 @@
 # aLandi — остаток UI/UX polish (единый реестр)
 
-**Сверка:** 2026-11-01  
+**Сверка:** 2026-11-02  
 **Рабочая ветка:** PR #131 — aLandi Landing UI v2.0.  
 **Основной список владельца:** V1_UI_FINALIZATION_RU.md, раздел 8.0 и требования 8.1–8.17.  
 **Технические статусы и evidence:** LANDING_UI_V2_IMPLEMENTATION_RU.md.
@@ -31,7 +31,7 @@
 
 ## P0 — автоматическая проверка точного HEAD
 
-- [ ] После завершения UI source pass запустить focused Playwright/Chromium regressions для 8.1–8.17 и исправить подтверждённые падения. Текущий code/test HEAD: 4bd40770fd3446e5280e719644394882c9148dae; exact-head Quality ещё не запускался.
+- [ ] После завершения UI source pass запустить focused Playwright/Chromium regressions для 8.1–8.17 и исправить подтверждённые падения. Последний UI source checkpoint: `9aa74853478a6a680cdd36ab0f84c851721405a4`; после него exact-head Quality/Chromium не подтверждён.
 - [ ] Установить, почему exact-head GitHub Actions runs/statuses не видны, хотя Quality Sentinels запускается на pull_request, а Gateway Tests — на PR с изменениями gateway/**; получить реальные результаты.
 - [ ] Запустить полный Quality (Gateway, Security, Integrity, Context, Jekyll, Chromium), Freshness, Provenance, Graphify и Dead Code, если workflows доступны.
 - [x] Gateway tests passed in Actions run #640 on `6f7fde4` (compileall, manifest/INTEL, pytest, deploy preflight, six-layer eval); no `gateway/**` changes since that tested commit. Browser/Quality verification remains open.
@@ -103,3 +103,11 @@
 - Research Studio is a subfeature of deep research, entered from the Thorough/deep-research controls. It is not a standalone navigation destination or Functions-menu item.
 
 - Project source management is a concrete example of the rule: keep the section visible, explain the missing source-list API, show the shared ticker, and expose no fake mutation controls.
+
+
+### Integrated backlog checkpoint — 2026-11-02
+
+- This file remains a concise mirror of the canonical section 8.0 queue; it does not create independent tasks. Active inherited requirements from sections 1–7 are included in the same workstreams as 8.1–8.17.
+- Latest UI source checkpoint: `9aa74853478a6a680cdd36ab0f84c851721405a4`; PR #131 branch head after the Graphify path-filter change: `c8facdac2eebc7d2217b807f1b7e314ae3abf2dd`.
+- Graphify path filters now include extracted JS/CSS and landing HTML. The run/artifact is pending confirmation.
+- Exact-head Quality/Chromium, screenshot review, native iPhone Safari, VoiceOver and full component-level WCAG review remain open. Do not infer completion from added test source.
