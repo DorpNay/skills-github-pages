@@ -65,7 +65,7 @@ ui_v2_track:
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   status: "open_unmerged_owner_hold"
   latest_documentation_head: "read live PR #131 head; documentation-only commits may advance it"
-  latest_code_test_head: "14d9dc9789dfc958d99685d36a7649ada8ce5120"
+  latest_code_test_head: "2d25b12f100b246a929fc6921dfb44971f7d50e3"
   latest_quality_harness_head: "d94d842608c07aa8def4b5fdc89ed95b80524034"
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0 and requirements 8.1-8.17"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
@@ -512,7 +512,7 @@ landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   latest_code_test_head: "9ff326d40ac0567c1c62c293cb396bcd9c4eba82"
-  latest_documented_head: "bc5d3c8cf3e2d622127e1f54eae5bc098a46765b"
+  latest_documented_head: "a31bbcfd7598e2287d96d2f6cbdc915e5a5a9022"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
     memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
@@ -522,6 +522,7 @@ landing_ui_v2_pr131_2026_10_31:
     project_sources: "Requirement 8.7: project Sources section states gateway lacks source-list API; no fictitious CRUD controls; existing E2E verifies unsupported state."
     server_memory_retirement: "Requirement 8.12: browser bridge/UI and /v1/memory/graph/* routes plus graph-specific flags removed; internal MemoryManager retained only for Graphify; SQLite data untouched; local/private/shared/project memory, delta sync, RAG and local helper remain."
     project_context_handoff: "Requirement 8.13: explicit existing-chat target; next successful request only; no automatic injection from project membership; no new chat or project membership mutation; five-project cap; pending state is session-only."
+    touch_target_normalization: "Requirement 8.10: chat-row menu summaries, language menu options, settings actions, project disclosures, toolbar summaries and memory actions now use the shared 44px touch token; targeted E2E coverage added, pending execution."
     touch_selection: "Requirement 8.14: controls/disclosures use targeted non-selection and manipulation touch action; input, assistant text and expanded viewer remain selectable; E2E computed-style coverage expanded."
     status_and_motion: "Requirement 8.15: semantic status/toast states, centered status/ticker, no synthetic progress; E2E covers five status colors, toast styling and prefers-reduced-motion marquee suppression."
     message_action_consistency: "Requirement 8.16: icon-first copy/view/speech actions use matching title and aria-label; E2E checks accessible labels/tooltips and 44px hit targets."
@@ -547,4 +548,4 @@ landing_ui_v2_pr131_2026_10_31:
     merge: "requires explicit owner approval"
     deploy: "requires explicit owner approval"
     main: "V1 baseline remains untouched"
-  next: "Obtain exact-head Quality run on 14d9dc9789dfc958d99685d36a7649ada8ce5120; inspect per-test Chromium results and diagnostics, then continue 8.1–8.11 source/test audit and P1 device/accessibility acceptance. PR remains open/unmerged; no deployment."
+  next: "Obtain exact-head Quality run on latest code/test head 2d25b12f100b246a929fc6921dfb44971f7d50e3; inspect Chromium results and diagnostics, then continue the 8.1–8.11 source/test audit and P1 device/accessibility acceptance. PR remains open/unmerged; no deployment."
