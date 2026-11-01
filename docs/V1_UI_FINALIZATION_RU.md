@@ -285,7 +285,7 @@ PR #122 добавил только эксплуатационную надёж�
 - [ ] Разобраться, почему для текущего PR HEAD не видны запуски GitHub Actions: в ветке есть pull_request triggers для Quality Sentinels и Gateway Tests (изменён gateway/**), но API не возвращает ни workflow runs, ни combined statuses. Получить реальные exact-head результаты через штатный PR workflow.
 - [ ] Разобрать реальные падения и исправить только подтверждённые дефекты; не удалять/ослаблять assertions ради зелёного CI.
 - [ ] Отдельно закрыть оставшиеся E2E сценарии 8.1–8.17: sidebar/chat restore, header breakpoints, settings disclosure, modal Back/Forward/focus, message actions, project handoff, touch selection, status/reduced-motion и text readability.
-- [ ] Проверить gateway secret-redaction и удаление server-memory graph bridge; подтвердить сохранность local/private/shared/project memory и RAG. Добавленные тесты пока не запускались.
+- [x] Gateway security/contract suite: run #640 on `6f7fde485b2b13aecc50523b20785e0ac615d2ad` passed compileall, manifest/INTEL checks, `pytest gateway/tests`, deploy preflight and six-layer offline evaluation. No `gateway/**` changes exist between that tested commit and current PR HEAD `579666d45964f56a4e68e3997293a288d7fd1553`; this verifies the current Gateway code. The exact latest PR HEAD still needs browser/Quality checks.
 
 ### P1 — ручная UX/accessibility приёмка
 
