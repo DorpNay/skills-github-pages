@@ -318,3 +318,9 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - Added a final shared CSS sizing rule using `--ui-control-touch` for those controls. Existing layout and action behavior are preserved; no new controls or runtime features were added.
 - Extended the mobile Playwright touch-target regression to create a chat and measure its row-menu summary, and to open the language menu and measure an option. Existing sidebar/settings/project modal target checks remain.
 - Code/test commits: `6e75dbf368b71ccd1660873d5cd0f9870cf58119`, `441d5da57b80399228c0a520d7a867ae3fc5371b`, `2d25b12f100b246a929fc6921dfb44971f7d50e3`. Browser execution is pending; the prior Chromium run was cancelled before its final report. Re-run the full suite on the latest branch head before marking 8.10 complete.
+
+### Current code/test head after 8.10 touch-target work — 2026-11-01
+
+- Latest UI/test commit: `2d25b12f100b246a929fc6921dfb44971f7d50e3`; documentation and continuity updates follow it.
+- The only Quality run on the branch remains #41287868283 on older SHA `b6a3db77fb9bbf8375f8b9d9010365a0e9010158`, where Chromium was cancelled by the 15-minute job timeout. Later pushes have produced Provenance runs, but no Quality run on the current code/test head is visible.
+- Request an `Independent Quality Sentinels` workflow-dispatch run on the current branch head. Do not mark the new 8.10 assertions or the full Chromium suite passed until that run completes.
