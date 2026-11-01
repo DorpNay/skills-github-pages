@@ -311,3 +311,10 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - The suite was serialized by `fullyParallel: false` and `workers: 1`, which made the 15-minute job budget inadequate. Updated `playwright.config.mjs`: independent tests run fully parallel with 3 CI workers and both GitHub/list reporters. Each test receives its own Playwright context and the app test setup clears browser storage; no shared mutable browser context is used.
 - Updated the Chromium job timeout to 20 minutes and changed diagnostics upload to `always()` so traces/results can be retained after interruption. Commits: `6bba3e8`, `d0d38d8`, `14d9dc9`.
 - These are test-infrastructure corrections only. The current branch head is `14d9dc9789dfc958d99685d36a7649ada8ce5120`; a new exact-head Quality/Chromium run is still required. Native iPhone Safari, VoiceOver and measured WCAG contrast remain manual gates.
+
+### 8.10 shared touch-target normalization — 2026-11-01
+
+- Source audit found several compact controls below the project's 44px touch target: chat-row action summaries (36px, and 30px in project chat rows), language-menu options (36px), settings header actions (36px override), project disclosures and toolbar summaries without a shared minimum, and memory-item action buttons.
+- Added a final shared CSS sizing rule using `--ui-control-touch` for those controls. Existing layout and action behavior are preserved; no new controls or runtime features were added.
+- Extended the mobile Playwright touch-target regression to create a chat and measure its row-menu summary, and to open the language menu and measure an option. Existing sidebar/settings/project modal target checks remain.
+- Code/test commits: `6e75dbf368b71ccd1660873d5cd0f9870cf58119`, `441d5da57b80399228c0a520d7a867ae3fc5371b`, `2d25b12f100b246a929fc6921dfb44971f7d50e3`. Browser execution is pending; the prior Chromium run was cancelled before its final report. Re-run the full suite on the latest branch head before marking 8.10 complete.
