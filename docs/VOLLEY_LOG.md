@@ -182,3 +182,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Added docs/REPOSITORY_HYGIENE_RU.md to the documentation safety branch as well as PR #131, so the procedure is not confined to the implementation PR.
 - The runbook follows GitHub official guidance and requires evidence before branch/file cleanup; the actual audit remains queued for the next major-slice boundary.
 - No branch or file deletion, force update, merge, rebase or deployment was performed.
+
+
+### 2026-11-02 — aServi terminology sweep in the continuity docs
+
+- Updated the main UI finalization checklist, owner request checklist, V-016 implementation ledger, chat settings architecture and first-free-launch backlog to use aLandi aServi for the first-party server route.
+- Replaced stale historical first-party card wording in the engineering log. Generic cloud infrastructure/Cloudflare wording and legacy ai_alandi_cloud_* persistence keys remain intentionally unchanged.
+- Confirmed the active V2 documentation branch already uses aServi consistently; this sweep brings the independent main-targeting documentation backup into alignment.
