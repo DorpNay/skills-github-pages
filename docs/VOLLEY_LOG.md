@@ -392,3 +392,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Enumerated all 11 files in tests/e2e and parsed each module from the current branch source; all 11 passed JavaScript syntax parsing.
 - Across all 11 E2E files, found zero force:true clicks, zero waitForTimeout sleeps and zero networkidle waits.
 - Also parsed index.md inline JavaScript and playwright.config.mjs successfully. This is source/syntax validation only; Playwright itself has not run on current HEAD.
+
+
+### 2026-11-01 — aServi terminology pass
+- Updated primary self-hosted route UI/action naming to aLandi aServi; renamed handler/action identifiers and aligned Playwright + Quality Sentinels expectations.
+- Preserved legacy localStorage keys `ai_alandi_cloud_*` to avoid breaking configured installations. These are internal compatibility keys, not visible naming.
+- `aLandi aCloudi` is reserved for a possible future information-storage product; no storage feature is implied or created.
+- Chromium/Quality verification of the new exact head is pending.
