@@ -108,7 +108,7 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 
 ### PR #131 continuity refresh — 2026-11-02
 
-- Live PR #131 head: `5b9aa7abcc70fc1fa6f3c0fba402e025cb44c772`; branch `feat/landing-v1-accessibility-responsive-20261031`; compare `main...branch`: 476 ahead / 4 behind, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Four main-side commits overlap only the shared UI finalization checklist; no automatic sync/rebase was performed.
+- Live PR #131 head: `73f9a25e5913ba5c3985a75fe99510cff8ad115a`; branch `feat/landing-v1-accessibility-responsive-20261031`; compare `main...branch`: 476 ahead / 4 behind, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Four main-side commits overlap only the shared UI finalization checklist; no automatic sync/rebase was performed.
 - Latest UI code/test checkpoint: `b6b4cd612e288f0ad2c0e23419a562b06b491ef5`. Root app title and Jekyll metadata now consistently identify aLandi; the app advertises both dark and light color schemes. Deterministic sentinel/E2E assertions were added.
 - V8 syntax parsing passed for app.js, the E2E module and Quality Sentinel (module imports/shebang adapted); CSS brace balance is zero. No Quality/Chromium run exists on the current PR #131 head; previous Chromium #1126 remains stale (101 passed / 18 failed).
 - aLandi aServi is the current UI/product terminology. Legacy `ai_alandi_cloud_*` localStorage keys remain solely for compatibility; Cloudflare remains a separate infrastructure/provider brand; aLandi aCloudi is reserved for a future information-storage product.
