@@ -2,6 +2,7 @@
 (() => {
     'use strict';
 
+    // Keep the legacy keys: they are persisted compatibility identifiers, not product/UI names.
     const ASERVI_STORAGE = Object.freeze({ baseUrl: 'ai_alandi_cloud_base_url', model: 'ai_alandi_cloud_model', connection: 'ai_alandi_cloud_connection_v1' });
     const STORAGE = {
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
