@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-02"
   root_orienter:
-    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 is open/unmerged on feat/landing-v1-accessibility-responsive-20261031; live head after modal focus-trap consolidation is 8f15b8d4aadf4e7e30bce510a6478cc4aaffc345. CI uses runner-provided Google Chrome via Playwright channel=chrome; local runs retain Playwright Chromium. Quality #1222 (run 41362048873, prior SHA 7e2429ef) had two E2E failures: duplicated modal Tab traps and context-picker scrim intercepting the opener. Source fix consolidates modal cycling to one delegated Tab handler; exact-head CI for 8f15b8d has not yet returned. No pass/speedup is claimed; no production deployment is authorized. A separate PR preview host is not configured."
+    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 remains open/unmerged on feat/landing-v1-accessibility-responsive-20261031; current head 3abdcfe78a4c0d4543c773a0330d4b1f280db75b. CI uses runner-provided Google Chrome via Playwright channel=chrome, while local runs keep Playwright Chromium. Quality #1222 (41362048873) exposed two browser-test defects and a computed-style accessor mismatch. Commits 8f15b8d and 3abdcfe address the modal focus loop and test accessor. Quality #1226 (41362514260) is in progress on code-bearing SHA a28327ef; #1228 is queued. No passing browser result or measured speedup is claimed. Production deployment is not authorized; PR preview hosting is not configured."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 0
