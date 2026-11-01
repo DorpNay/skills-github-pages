@@ -303,6 +303,27 @@ PR #122 добавил только эксплуатационную надёж�
 - [ ] Повторно проверить глобальный пустой system prompt и миграцию legacy значения; решение по Tavily принимать только после аудита keyless search fallback и реального adapter contract.
 - [ ] Проверить provider/gateway error states, invalid URL/model, CORS, timeout, 401/5xx и redaction на mock/contract tests. Live provider/gateway smoke — отдельный opt-in gate владельца, без платных запросов по умолчанию.
 
+### P1 — Унаследованные UI-задачи из разделов 1–7 (сверка и объединение)
+
+Старые отметки ниже не создают параллельный backlog: это остаточные требования V1, которые включены в соответствующие workstreams 8.1–8.17.
+
+| Источник до раздела 8 | Что ещё требуется довести | Объединённый workstream |
+|---|---|---|
+| **1. Общий UI/UX** | Финальный проход по типографике, контрасту, spacing, пустым состояниям, ошибкам и вторичным действиям; визуальные desktop/mobile screenshots. | 8.2, 8.6, 8.10, 8.15, 8.16, 8.17 |
+| **2. Composer / мобильная клавиатура** | Проверить top/bottom composer, VisualViewport, safe-area, длинный ввод, вложенный scroll и сохранение позиции чтения при изменении viewport. | 8.2, 8.6, 8.9, 8.14 |
+| **3. Маршруты провайдеров** | Подтвердить миграцию сохранённого маршрута, скрытый legacy alandi, RU/EN подписи и отсутствие cross-provider утечки. | 8.3, 8.11 |
+| **4. Поля и inline validation** | Единый язык placeholder/help/error; invalid URL/model, пустой ключ, CORS, 401/5xx и redaction. Ошибка должна быть у конкретного поля и связана с ним для screen reader. | 8.3, 8.9, 8.10 |
+| **5. Глобальный system prompt** | Сохранить пустое значение по умолчанию и legacy migration; визуально и клавиатурой проверить edit pencil, доступное имя, переход в edit и возврат в readonly. | 8.4, 8.10, 8.16, 8.17 |
+| **6. Инструкции провайдеров** | Удалить повторы, оставить короткие privacy notices и перепроверить upstream links / endpoint instructions; не выдумывать model IDs. | 8.3, 8.6 |
+| **7. Tools / Tavily** | Проверить paste/save/delete, неверный ключ, фактическую проверку adapter, keyless fallback и privacy copy. Не удалять Tavily до подтверждения реального контракта собственного поиска. | 8.4, 8.6, 8.15 |
+| **8. Gateway status (предшествующий release checklist)** | Проверить stale-response race, model completion + /healthz, timeout, CORS и очистку статуса после изменения credentials. | 8.3, 8.9 |
+| **9–10. Окна, скроллинг и длинные чаты** | Escape/Back/Forward, focus return, scroll lock, background isolation, длинные сообщения/вложения, nested scroll и popovers у краёв viewport. | 8.1, 8.6, 8.9, 8.14 |
+| **11–12. Дополнительные настройки, тема и язык** | Найти дубли/устаревшие controls; закончить RU/EN copy и light/dark states для модалок, статусов, подсказок и Roadmap. | 8.3, 8.6, 8.10, 8.11, 8.15, 8.17 |
+| **13–17. Каталог моделей, проекты, Research Studio, skills и agents** | Подтвердить persistence/provider switching/catalog failure; project modal lifecycle; Research Studio draft/keyboard/Escape/no auto-send; skills quiz/profile persistence; честно показывать pipeline/blueprint без обещания независимой swarm-команды. | 8.1, 8.3, 8.6, 8.7, 8.13, 8.15, 8.16 |
+| **18. Release gate** | Exact-head CI, post-merge Pages и owner-only live/device checks. Это release gate, а не самостоятельная UI-функция. | P0/P1 gates |
+
+**Уже взято в работу в рамках текущего прохода:** двуязычная inline-валидация aLandi Cloud и доступная связь поля с ошибкой; локализация cloud controls и system-prompt edit action; keyboard/edit/read-only E2E; защита от устаревшего ответа /healthz; сохранение позиции чтения чата при mobile viewport resize; снижение Chromium runner contention и тяжёлой записи диагностик.
+
 ### Не является незавершённой UI-задачей
 
 - Project Sources: gateway пока не предоставляет source-list API. Оставить честное unsupported-state; CRUD не добавлять до появления реального scoped API.
