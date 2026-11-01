@@ -257,3 +257,13 @@ Not active UI work: project-source CRUD without a gateway list contract; persist
 - Confirmed `gateway/app.py` contains no graph-memory HTTP route/flag references. Gateway regression source includes health-probe secret checks, invalid Bearer token non-echo, and upstream error-body redaction.
 - Exact current PR head after the change-log correction: 1ea321ddcd8e81379d572565636b6d0ee1424772. GitHub workflow-run and combined-status lookups return zero entries for this head. The workflow YAML is configured to trigger on PRs, but no run result is currently visible; do not infer pass/fail or treat source inventory as execution.
 - Execution blocker: this environment has GitHub read/write repository operations but no workflow-dispatch action and no outbound network for a local clone. Therefore Gateway pytest, Playwright/Chromium and Quality jobs cannot be executed from this session. Continue by obtaining an actual GitHub Actions run through the repository's normal PR workflow; do not replace execution with syntax/source inspection.
+
+
+### Gateway verification evidence update — 2026-11-01
+
+The earlier note that Gateway tests were unexecuted is superseded by the subsequent exact workflow inspection:
+
+- GitHub Actions run **#640** (`Lite Gateway Tests`, run ID `41280622385`) completed successfully on commit `6f7fde485b2b13aecc50523b20785e0ac615d2ad`.
+- Every step passed: dependency install, Python compileall, manifest/INTEL validation, `pytest gateway/tests`, deployment preflight and six-layer offline evaluation.
+- A compare from that tested commit through the current PR documentation head `579666d45964f56a4e68e3997293a288d7fd1553` shows **no changes under gateway/**. Therefore the current Gateway source and Gateway test files are identical to the successfully tested state.
+- This is valid evidence for the current Gateway code, although the workflow did not run on the latest documentation-only HEAD. It does not verify current Playwright/Chromium or full Quality behavior.
