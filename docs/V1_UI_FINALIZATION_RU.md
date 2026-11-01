@@ -294,7 +294,7 @@ PR #122 добавил только эксплуатационную надёж�
 - [ ] На реальном iPhone Safari проверить virtual keyboard/VisualViewport, safe-area, ориентацию, edge-swipe, long-press, touchcancel, вложенный scroll и восстановление позиции.
 - [ ] Провести VoiceOver/keyboard-only проход: порядок заголовков, доступные имена и tooltips, видимый/неперекрытый focus, Tab/Escape/Back/Forward, возврат фокуса и modal background isolation.
 - [ ] Проверить RU/EN copy и светлую/тёмную темы для модалок, меню, статусов, ошибок, подсказок и пустых состояний.
-- [ ] Провести фактический WCAG contrast-ratio audit для primary/secondary/disabled/link/error/status в обеих темах. Наличие переключателя high-contrast и computed-style тестов не является доказательством соответствия WCAG.
+- [ ] Провести фактический WCAG contrast-ratio audit для primary/secondary/disabled/link/error/status в обеих темах. Добавлен автоматический расчёт базовых CSS-токенов против однотонных theme surfaces (все измеренные значения ≥4.5:1), но это не проверяет градиенты, реальные карточки, focus/hover, мелкий текст и non-text contrast. Полная визуальная/ручная приёмка остаётся обязательной.
 
 ### P2 — оставшиеся проверки поведения и честности UI
 
