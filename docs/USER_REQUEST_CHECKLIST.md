@@ -15,7 +15,7 @@
 - [ ] Обновить сведения о реальном состоянии системы: код, контракт, эксперимент, развёрнутая служба, измеренная метрика.
 
 ## B. Первичное облако aLandi и API-провайдеры
-- [x] Зафиксировано продуктовое правило: aLandi Cloud — единственный главный облачный блок; Kilo остаётся обычным альтернативным провайдером в общем списке, без отдельной главной кнопки.
+- [x] Зафиксировано продуктовое правило: aLandi aServi — единственный главный блок собственного сервера; Kilo остаётся обычным альтернативным провайдером в общем списке, без отдельной главной кнопки.
 - [x] Собственное облако aLandi — единственная кнопка/главная карточка в верхней части настроек; Kilo и остальные альтернативы расположены только в общем списке сторонних провайдеров.
 - [~] Начальный статус облака — красный/неподтверждённый; зелёный возможен лишь после реального модельного ответа и успешной `/healthz`-проверки при следующем запуске. Живой пользовательский gateway ещё не сконфигурирован.
 - [~] Хранить адрес, модель и ключ aLandi отдельно; не считать наличие ключа доказательством связи.
@@ -267,7 +267,7 @@
 ## Supplement — consolidated interface cleanup, 2026-10-30
 
 - [x] PR #118 merged at `4bde19249b1ac05ccf55c2499a8ee08a27b9a198`: chat export/import actions live in each chat menu; chat import merges rather than replaces existing history, deduplicates IDs, validates settings and bounds imported data. Project bundle import/export remains in project settings.
-- [x] PR #119 merged: persisted top/bottom composer preference; aLandi Cloud and third-party provider routes share one clear selector; redundant primary-route action and connector hints were removed; the staged research workflow is described truthfully; project-first quick actions and per-project memory scope are persisted.
+- [x] PR #119 merged: persisted top/bottom composer preference; aLandi aServi and third-party provider routes share one clear selector; redundant primary-route action and connector hints were removed; the staged research workflow is described truthfully; project-first quick actions and per-project memory scope are persisted.
 - [ ] Native iPhone Safari keyboard, safe-area, touch and accessibility checks remain manual gates. Chromium geometry assertions do not establish native iOS behavior.
 - [ ] Live aLandi gateway, third-party provider credentials, external connectors, independent agent teams and production voice transport are not verified by these UI changes.
 
