@@ -480,3 +480,9 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - Added an inline source comment above ASERVI_STORAGE explaining that the ai_alandi_cloud_* localStorage names are intentionally retained persistence identifiers, not current product/UI labels.
 - This prevents a future cleanup from silently renaming keys and disconnecting existing saved server settings. No migration or storage mutation was performed.
 
+### 2026-11-02 — PR #132 continuity mirror refresh
+
+- Latest UI source checkpoint in PR #131: `9aa74853478a6a680cdd36ab0f84c851721405a4`; latest PR #131 head after documentation and Graphify workflow path updates: `782d5d35691d66cc2bcfb48473329463886b48e8`.
+- Owner scope is integrated: applicable inherited UI work from sections 1–7 plus 8.1–8.17, with section 8.0 as the only active residual queue. The polish file is a mirror, not a second backlog.
+- Graphify Code-Only Pilot path filters in PR #131 now include extracted JS/CSS and landing HTML. Exact-head Graphify artifact and Quality/Chromium remain unverified.
+- This branch remains a documentation-only continuity backup; it does not replace PR #131 source or test evidence.
