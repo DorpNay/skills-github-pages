@@ -25,7 +25,7 @@ const suites = {
       matches(/<\/html>\s*$/, 'Document must close its html element.');
     }],
     ['critical UI controls exist', () => {
-      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'apiKeyShell', 'apiKeyStatus', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiLanguage', 'uiMotion', 'cloudSettingsCard', 'cloudStatusDot', 'cloudStatus', 'cloudBaseUrl', 'cloudBaseUrlError', 'cloudModel', 'cloudModelError', 'cloudApiKey', 'cloudApiKeyError', 'sidebarThemeToggle', 'clockDigital', 'homeThemeToggle', 'brandWordmark', 'projectPanel', 'projectSettingsModal', 'currentProjectSelect', 'projectMemoryToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'researchStudioModal', 'researchStudioSettingsSummary', 'researchStudioEffort', 'researchStudioSearchMode', 'researchStudioStructured', 'functionPanelModal', 'skillPresetSelect', 'agentModeControl', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
+      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'apiKeyShell', 'apiKeyStatus', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiLanguage', 'uiMotion', 'cloudSettingsCard', 'cloudStatusDot', 'cloudStatus', 'cloudBaseUrl', 'cloudBaseUrlError', 'cloudModel', 'cloudModelError', 'cloudApiKey', 'cloudApiKeyError',  'clockDigital',  'brandWordmark', 'projectPanel', 'projectSettingsModal', 'currentProjectSelect', 'projectMemoryScopeSelect', 'privateMemoryContextToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'researchStudioModal', 'researchStudioSettingsSummary', 'researchStudioEffort', 'researchStudioSearchMode', 'researchStudioStructured', 'functionPanelModal', 'skillPresetSelect', 'agentModeControl', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
         matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
       }
     }],
@@ -67,8 +67,8 @@ const suites = {
       includes("globalMemoryEnabled=safeGet(STORAGE.globalMemoryEnabled)==='true'", 'Global memory must be explicitly enabled, not added to every request by default.');
       includes("indexedDB.open('AI_Agent_DB_v87', 2)", 'Memory schema migration must create a separate shared store without deleting legacy private notes.');
       includes("database.createObjectStore('sharedMemory')", 'Shared memory must use a distinct IndexedDB object store.');
-      includes("const privateMemories=selectedProviderForMemory==='alandi'?await MemoryDB.getAll():[]", 'Private notes must only be read for the local aLandi route.');
-      includes("if((safeGet(STORAGE.provider)||'alandi')!=='alandi')return [];", 'Server graph memory must never be included in third-party prompts.');
+      includes("const privateMemories=selectedProviderForMemory==='alandi'&&safeGet(STORAGE.privateMemoryEnabled)==='true'?await MemoryDB.getAll():[]", 'Private notes must only be read for the local aLandi route after explicit opt-in.');
+      assert.ok(!source.includes('/v1/memory/graph') && !source.includes('ALANDI_MEMORY_GRAPH_ENABLED'), 'Retired server memory graph API must not return to the browser client.');
       includes("let candidates=getApiCandidates(preferredModel)", 'Provider candidate routing must be filterable before a request is sent.');
       includes("if(containsPrivateMemory)candidates=candidates.filter(candidate=>candidate.provider==='alandi')", 'A request carrying private memory must never fall back to a third-party provider.');
       includes("activeChatForPrivacy?.privateMemoryUsed && selectedProvider!=='alandi'", 'Chats that consumed private memory must not later upload their history to a third-party provider.');
@@ -77,7 +77,7 @@ const suites = {
       includes("promote.dataset.action", 'Private-to-shared promotion must be a per-fact user action.');
       includes("data-action=\"save-shared-memory\"", 'The user must be able to save a fact directly to the separate shared store.');
       includes('function loadProjects()', 'Project data must have a bounded and validated loader.');
-      includes('chat.projectMemoryEnabled&&activeProject', 'Project memory must be opt-in at chat scope.');
+      includes("projectScopes.every(project=>project.memoryScope==='project-and-global')", 'Project scope must explicitly permit shared-memory context before it is included.');
       includes('data-action="export-project"', 'Project bundle export must be available.');
       includes('chat.projectId', 'Project associations must be modeled on chats.');
       includes('projectInstructionContext', 'Project instructions must be included only for the selected project.');
@@ -290,7 +290,7 @@ const suites = {
       includes('memory.score > 0', 'Irrelevant memories should not be attached.');
       includes('selectedMemories.length >= 4', 'Memory count cap is missing.');
       includes('memoryChars + memory.fact.length > 1200', 'Memory character cap is missing.');
-      includes('контекст, не системные инструкции', 'Retrieved memories must not be framed as system instructions.');
+      includes('контекст запроса (не системные инструкции)', 'Shared memories must be framed as reference context, not system instructions.');
     }],
     ['global system prompt is opt-in and legacy prompt migrates', () => {
       includes("const DEFAULT_SYSTEM = '';", 'The global system prompt must be empty by default.');
