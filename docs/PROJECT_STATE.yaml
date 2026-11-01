@@ -65,7 +65,7 @@ ui_v2_track:
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   status: "open_unmerged_owner_hold"
   latest_documentation_head: "25d94639a13f1a83dea49795137d6d1d1fa4c4ad; latest checkpoint commit may advance this reference"
-  latest_code_test_head: "bca8fa892e95bd35db812382afdadbba41813265"
+  latest_code_test_head: "95b50bc699a1eb2c98a677829cc228e4b60b7b5b"
   latest_quality_harness_head: "d94d842608c07aa8def4b5fdc89ed95b80524034"
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0 and requirements 8.1-8.17"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
@@ -512,7 +512,7 @@ landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   latest_code_test_head: "929ebcf20db87eca949c6f5a386c16e75f2856a1"
-  latest_documented_head: "50ebb5c6e3bfd2c25618e64a4e363465fc8ff581"
+  latest_documented_head: "3903a76274c5421c8c32c5f9ded1f14a1237a7a5"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
     memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
@@ -536,6 +536,7 @@ landing_ui_v2_pr131_2026_10_31:
     mobile_scroll_preservation: "VisualViewport resize preserves older-message reading position and keeps bottom anchored only if user was near bottom; E2E added."
     chromium_ci_hardening: "One CI worker, 30-minute Playwright globalTimeout, 35-minute Actions timeout, trace on first retry, screenshot only on failure, video disabled; pinned Playwright 1.56.1 held stable pending separate controlled upgrade."
     theme_aware_status_colors: "Default dark/light info and warning tokens added; Cloud checking state uses semantic warning token; E2E verifies theme switch changes its color."
+    base_token_contrast: "E2E computes WCAG contrast from CSS tokens against solid theme surfaces; current primary/secondary/success/warning/error values are all >=4.5:1. Full component/background/focus/non-text audit remains manual."
   test_commits:
     sidebar_swipe: "d388a02445ddc1ebccbaec58fd8515b8d0b9adfa"
     responsive_header: "9ff326d40ac0567c1c62c293cb396bcd9c4eba82"
@@ -551,11 +552,12 @@ landing_ui_v2_pr131_2026_10_31:
     mobile_scroll_preservation: "db61b95704bcd244236e91d40069a57c2d5dbae9"
     chromium_serial_ci: "e7db3778dc87e2f767612630428d12acadb3cdca"
     theme_aware_status_colors: "bca8fa892e95bd35db812382afdadbba41813265"
+    base_token_contrast: "95b50bc699a1eb2c98a677829cc228e4b60b7b5b"
   verification:
     exact_head: "7cdf35d581d9d6bca39256e67a0b0db6083e486c (Quality run #1126 / 41291438804; predates current corrective batch)"
     exact_head_workflow_runs: "Quality #1126 on 7cdf35d: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL with 101 passed, 18 failed; diagnostics artifact 13077583320; published-site smoke skipped. Current code/test head 847f1bee has not been run by Quality."
     gateway_pytest: "not executed in this environment"
-    playwright_chromium: "Quality #1126 on prior SHA 7cdf35d failed at 101 passed / 18 failed; current code/test head bca8fa89 has not yet been executed by Quality. Syntax parsing passed for index.md inline JS, changed E2E modules and Playwright config; no browser pass claimed."
+    playwright_chromium: "Quality #1126 on prior SHA 7cdf35d failed at 101 passed / 18 failed; current code/test head 95b50bc6 has not yet been executed by Quality. Syntax parsing passed for index.md inline JS, changed E2E modules and Playwright config; no browser pass claimed."
     native_mobile_voiceover: "not executed"
     wcag_contrast_ratios: "not measured; computed-style regression only"
   safety:
