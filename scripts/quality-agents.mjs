@@ -13,8 +13,12 @@ import { dirname, resolve } from 'node:path';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sourcePath = resolve(root, 'index.md');
 const source = readFileSync(sourcePath, 'utf8');
+const appPath = resolve(root, 'assets/js/app.js');
+const appSource = readFileSync(appPath, 'utf8');
+const combinedSource = source + '\n' + appSource;
 const fail = (message) => { throw new Error(message); };
-const includes = (needle, message) => assert.ok(source.includes(needle), message);
+// Keep HTML-structure checks on index.md; runtime checks span the split app asset.
+const includes = (needle, message) => assert.ok(combinedSource.includes(needle), message);
 const matches = (pattern, message) => assert.match(source, pattern, message);
 const suites = {
   integrity: [
@@ -43,7 +47,7 @@ const suites = {
       includes('const evidenceSection = document.createElement', 'Research evidence must be rendered with DOM nodes rather than HTML strings.');
       includes('const MAX_RESEARCH_EVIDENCE = 40;', 'Research evidence must have a deterministic size cap.');
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
-      includes("alandi: { label: 'aLandi Self-hosted Gateway'", 'The aLandi private gateway must be a first-class provider.');
+      includes("alandi: { label: 'aLandi aServi · Self-hosted Gateway'", 'The aLandi private gateway must be a first-class provider.');
       includes("allowCrossProvider&&selectedProvider!=='alandi'", 'Selecting aLandi must never silently route private prompts to another provider even if global fallback is enabled.');
       includes('<script id="markedRuntime" defer', 'Marked and DOMPurify must load in document order before the deferred app runtime.');
       includes('<link rel="stylesheet" href="{{ \'/assets/css/app.css\' | relative_url }}">', 'App styles must be a cacheable external asset.');
@@ -231,26 +235,22 @@ const suites = {
         assert.ok(existsSync(resolve(root, 'skills/' + skill + '.txt')), 'Missing on-demand skill: ' + skill);
       }
     }],
-    ['inline JavaScript parses without executing', () => {
-      const blocks = [...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
-        .filter((match) => !/\bsrc\s*=/i.test(match[1]));
-      assert.ok(blocks.length > 0, 'No inline application script found.');
-      blocks.forEach((block, index) => {
-        // nosemgrep: javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag -- vm.Script parses source only; it never inserts a DOM script element.
-        try { new Script(block[2], { filename: 'index.md:inline-script-' + index }); } // nosemgrep: javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag -- vm.Script parses source; it does not create a DOM script element.
-        catch (error) { console.error(error.stack || String(error)); throw error; }
-      });
+    ['external application JavaScript parses without executing', () => {
+      includes('<script defer src="{{ \'/assets/js/app.js\' | relative_url }}"></script>', 'The HTML shell must load the external application runtime.');
+      // vm.Script parses the application source only; it never executes browser code.
+      try { new Script(appSource, { filename: 'assets/js/app.js' }); }
+      catch (error) { console.error(error.stack || String(error)); throw error; }
     }],
     ['markdown rendering has an explicit sanitizer', () => {
-      includes('DOMPurify.sanitize', 'DOMPurify sanitization is required.');
-      matches(/innerHTML\s*=\s*safeMarkdown\(/, 'Rendered assistant HTML must pass through safeMarkdown.');
+      assert.ok(appSource.includes('DOMPurify.sanitize'), 'DOMPurify sanitization is required in the external runtime.');
+      assert.match(appSource, /innerHTML\\s*=\\s*safeMarkdown\\(/, 'Rendered assistant HTML must pass through safeMarkdown.');
     }]
   ],
   security: [
     ['no obvious API keys committed in source', () => {
-      assert.doesNotMatch(source, /AIza[0-9A-Za-z_-]{30,}/, 'Possible Google API key found in source.');
-      assert.doesNotMatch(source, /\bsk-[A-Za-z0-9]{24,}/, 'Possible secret API key found in source.');
-      assert.doesNotMatch(source, /\btvly-[A-Za-z0-9_-]{20,}/, 'Possible Tavily key found in source.');
+      assert.doesNotMatch(combinedSource, /AIza[0-9A-Za-z_-]{30,}/, 'Possible Google API key found in source.');
+      assert.doesNotMatch(combinedSource, /\bsk-[A-Za-z0-9]{24,}/, 'Possible secret API key found in source.');
+      assert.doesNotMatch(combinedSource, /\btvly-[A-Za-z0-9_-]{20,}/, 'Possible Tavily key found in source.');
     }],
     ['API credentials are user-configured, not hard-coded', () => {
       includes("apiKey: 'ai_api_key'", 'API key storage slot is missing.');
@@ -266,8 +266,8 @@ const suites = {
       assert.ok(assignments.every((value) => value.startsWith('safeMarkdown(')), 'Found an innerHTML assignment that bypasses safeMarkdown: ' + assignments.join(' | '));
     }],
     ['no dynamic code evaluation primitives', () => {
-      assert.doesNotMatch(source, /\beval\s*\(/, 'eval() is not allowed in the application shell.');
-      assert.doesNotMatch(source, /\bnew\s+Function\s*\(/, 'new Function() is not allowed in the application shell.');
+      assert.doesNotMatch(combinedSource, /\beval\s*\(/, 'eval() is not allowed in the application shell.');
+      assert.doesNotMatch(combinedSource, /\bnew\s+Function\s*\(/, 'new Function() is not allowed in the application shell.');
     }],
     ['web search tool input is schema-bounded', () => {
       includes("additionalProperties: false", 'Tool schema must reject unexpected fields.');
@@ -286,9 +286,9 @@ const suites = {
     ['history and tool loops have hard bounds', () => {
       includes('const MAX_TOOL_ROUNDS = 4;', 'Tool-call round limit changed unexpectedly.');
       includes('const FALLBACK_CONTEXT_TOKENS = 16384;', 'Fallback context budget for providers without metadata is missing.');
-      assert.ok(!source.includes('const MAX_CONTEXT_MESSAGES = 24;'), 'Do not reintroduce the arbitrary message-count cap.');
-      assert.ok(!source.includes('const MAX_CONTEXT_CHARS = 24000;'), 'Do not reintroduce the arbitrary global character cap.');
-      assert.ok(!source.includes('count + turn.length > MAX_CONTEXT_MESSAGES'), 'History must not be capped by a fixed message count.');
+      assert.ok(!combinedSource.includes('const MAX_CONTEXT_MESSAGES = 24;'), 'Do not reintroduce the arbitrary message-count cap.');
+      assert.ok(!combinedSource.includes('const MAX_CONTEXT_CHARS = 24000;'), 'Do not reintroduce the arbitrary global character cap.');
+      assert.ok(!combinedSource.includes('count + turn.length > MAX_CONTEXT_MESSAGES'), 'History must not be capped by a fixed message count.');
       includes('function getHistoryCharBudget(systemPromptChars = 0, provider = currentProvider()', 'History budget must use catalogued context-window metadata for the attempted provider/model.');
       includes('buildHistory(historyMessages,systemChars,candidate.provider,candidate.model)', 'Every fallback candidate must apply its own context budget.');
       includes('charCount + turnChars > charBudget', 'History trimming must use the active model-aware soft budget.');
