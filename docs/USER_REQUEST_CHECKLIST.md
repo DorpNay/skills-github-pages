@@ -301,3 +301,11 @@
 - [x] Landing and in-app roadmap E2E coverage passed on PR #121 exact head, including published-site browser smoke. Post-merge Pages deployment remains a separate check.
 - [ ] Native iPhone Safari, keyboard, safe-area, screen-reader and touch verification remain manual gates.
 - [ ] Issue #111 remains open for owner-only ruleset, VPS/hardware, live gateway/model, RAG corpus, voice/device and sandbox gates. CI alone cannot close it.
+
+
+### 2026-11-01 — future UI visibility and Research Studio hierarchy
+
+- [x] Keep future product sections and their windows visible so the overall information architecture can be designed before every runtime capability is complete.
+- [x] Mark work-in-progress areas with a consistent moving development ticker; do not hide the whole section just because its runtime is pending.
+- [x] Do not fake successful operations or mutate real data from unfinished controls; unavailable actions must be explicitly inactive or explain their development status.
+- [x] Research Studio is a helper inside deep research/Thorough controls, not a standalone sidebar or Functions-menu destination; its composer/settings behavior remains intact.
