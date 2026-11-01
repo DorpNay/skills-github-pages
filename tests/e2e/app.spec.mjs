@@ -319,11 +319,14 @@ test('theme and language are a compact accessible header group', async ({ page }
   await expect(page.locator('#languageMenu')).toBeVisible();
   await expect(page.locator('#sidebarThemeToggle')).toHaveCount(0);
   await expect(page.locator('#additionalSettings [data-action="toggle-theme-cycle"]')).toHaveCount(0);
-  await expect(page.locator('#headerThemeMenuToggle')).toBeHidden();
+  await expect(page.locator('#headerThemeToggle')).toBeVisible();
 
+  const themeTarget = await page.locator('#headerThemeToggle').boundingBox();
   const preferencesTarget = await page.locator('#languageMenu > summary').boundingBox();
-  expect(preferencesTarget?.width || 0).toBeGreaterThanOrEqual(44);
-  expect(preferencesTarget?.height || 0).toBeGreaterThanOrEqual(44);
+  expect(themeTarget?.width || 0).toBeGreaterThanOrEqual(44);
+  expect(themeTarget?.height || 0).toBeGreaterThanOrEqual(44);
+  expect(preferencesTarget?.width).toBe(themeTarget?.width);
+  expect(preferencesTarget?.height).toBe(themeTarget?.height);
 
   await toggleHeaderTheme(page);
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
