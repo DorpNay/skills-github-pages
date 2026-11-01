@@ -532,7 +532,7 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 
 ### Repository identity audit
 
-The repository still contains four GitHub Skills exercise workflows: .github/workflows/0-start-exercise.yml, 1-step.yml, 2-step.yml, 3-step.yml. They reference skills/exercise-toolkit and skills/action-*. The first workflow listens to pushes on main, has contents: write, and its dependent job creates/replaces _config.yml and index.md if the exercise workflow proceeds. The repository template flag and actual run history were not available in this audit, so the workflows were not removed. Verify both before cleanup.
+The repository still contains four GitHub Skills exercise workflows: .github/workflows/0-start-exercise.yml, 1-step.yml, 2-step.yml, 3-step.yml. They reference skills/exercise-toolkit and skills/action-*. The first workflow listens to pushes on main, has contents: write, and its dependent job creates/replaces _config.yml and index.md if the exercise workflow proceeds. The repository template flag and actual run history were not available in this audit, so the workflows were not removed. Verify both before cleanup. The associated .github/steps/1-step.md–4-step.md are exercise instructions; temp/1 and temp/2 are historical research notes with some GitHub Skills template references and must be reconciled/archived before any deletion. Issue #1 is already documented as a closed historical exercise.
 
 Keep the actual aLandi task-profile files under skills/*.txt; they are not the GitHub Skills exercise scaffold. Preserve the Jekyll/Pages publishing mechanism and current Quality/Security/Graphify/deploy automation.
 
