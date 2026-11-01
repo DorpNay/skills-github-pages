@@ -752,6 +752,8 @@ test('language switch localizes provider controls without exposing the internal 
   await expect(page.locator('#systemPromptInput')).toHaveAttribute('placeholder', 'Your shared instructions (optional)');
   await expect(page.locator('#editSystemPrompt')).toHaveAttribute('aria-label', 'Edit system prompt');
   await expect(page.locator('[data-action="connect-aservi"]')).toHaveText('Verify and connect');
+  await expect(page.locator('[data-action="connect-aservi"]')).toHaveCount(1);
+  await expect(page.locator('[data-action="connect-alandi-cloud"], [data-action="paste-cloud-key"]')).toHaveCount(0);
   await expect(page.locator('#providerPreset option[value="gemini"]')).toHaveCount(1);
   await expect(page.locator('#providerPreset option[value="custom"]')).toHaveCount(1);
   await page.locator('.settings-header-actions [data-action="close-settings"]').click();
