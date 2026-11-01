@@ -13,9 +13,10 @@ export default defineConfig({
     baseURL: (process.env.LIVE_SITE_URL ? process.env.LIVE_SITE_URL.replace(/\/?$/, '/') : 'http://127.0.0.1:4173'),
     browserName: 'chromium',
     headless: true,
-    trace: 'retain-on-failure',
+    // Keep detailed traces for the first retry only; recording every failed attempt is expensive.
+    trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure'
+    video: 'off'
   },
   ...(process.env.LIVE_SITE_URL ? {} : { webServer: {
     command: 'python3 -m http.server 4173 --bind 127.0.0.1 --directory _site',
