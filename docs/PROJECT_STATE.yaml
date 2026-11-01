@@ -719,3 +719,57 @@ quality_ci_optimization_2026_11_02:
     provenance_run_id: 41355064350
     provenance_conclusion: "success"
   next: "Verify the writable temporary overlay on the new exact-head Quality run; inspect the asset regression, all four shards and artifacts; do not claim 3x until measured. Then resume the canonical UI queue and @Поиск protocol."
+
+
+# Exact-head continuation — 2026-11-02
+quality_ci_2026_11_02:
+  pr: 131
+  branch: "feat/landing-v1-accessibility-responsive-20261031"
+  head: "9a23d58313da6379cb112b617daedeaa6d38f605"
+  run_id: "41363212486"
+  run_number: 1234
+  event: "push"
+  conclusion: "success"
+  duration_seconds: 105
+  chromium:
+    shards: 4
+    tests_per_shard: 32
+    passed: 128
+    failed: 0
+    browser: "runner-provided stable Google Chrome via Playwright 1.56.1 channel=chrome"
+  sentinels:
+    preflight: "success"
+    static_analysis: "success"
+    integrity: "success"
+    security: "success"
+    context: "success"
+    jekyll: "success"
+  published_site_smoke: "skipped by workflow conditions; no Pages deployment or preview was verified"
+  comparison:
+    baseline_run: "41352153636"
+    baseline_seconds: 1863
+    baseline_status: "timed out; incomplete test coverage, not an apples-to-apples benchmark"
+    speedup_claim: "not established"
+  prior_flake:
+    run_id: "41362928984"
+    run_number: 1233
+    failing_test: "tests/e2e/app.spec.mjs high-contrast preference; #uiTextContrast was hidden at selectOption"
+    interpretation: "next exact-head run passed without source change; retain as flaky-test signal"
+  next: "Continue UI scope and monitor high-contrast regression; establish comparable completed baseline before reporting speedup."
+
+landing_v2_preview_2026_11_02:
+  status: "not deployed"
+  constraint: "The repository has a single GitHub Pages site; a PR deployment to its Pages target would replace the V1 publication."
+  safe_path: "A separate GitHub Pages address needs a second Pages site/repository or separately configured host."
+  owner_intent: "Owner explicitly requested a separate V2 preview address; do not alter the V1 Pages target."
+  next: "Prepare a deterministic preview artifact/workflow and provision a separate Pages target before public deployment."
+
+repository_hygiene_2026_11_02_continuation:
+  pr131_head: "9a23d58313da6379cb112b617daedeaa6d38f605"
+  branch_inventory: "126 refs snapshot; branch cleanup candidates require fresh PR/issue/ancestry checks"
+  deletion: "none; connected GitHub actions do not expose a branch-delete operation"
+  safety: "preserve unmerged unique work; no file or branch deletion in this pass"
+
+owner_sources_60_2026_11_02:
+  status: "triaged in docs/OPEN_SOURCE_TRIAGE_RU.md; reference-only, no dependency or runtime imported"
+  next: "Inspect selected upstream implementations for concrete UI/runtime patterns and verify current licenses, maintenance, security and integration fit."
