@@ -63,11 +63,11 @@ The original V1 document contains 18 inherited control directions before section
 
 ### Runtime source-of-truth
 
-The active Jekyll app shell, markup and CSS are in index.md; browser runtime logic is extracted to assets/js/app.js (refactor commit 9e5cf6465c8be4908ada83f1806bcd82a8907149). Runtime IDs/actions use the aServi naming family (aserviBaseUrl, aserviModel, aserviApiKey, connect-aservi, aserviStatus); E2E must target those current controls and not superseded selector contracts. Keep HTML/CSS edits in index.md and application logic in assets/js/app.js.
+The active Jekyll app shell, markup and CSS are in index.md; browser runtime logic is extracted to assets/js/app.js (refactor commit 9e5cf6465c8be4908ada83f1806bcd82a8907149). Runtime IDs/actions use the aServi naming family (aserviBaseUrl, aserviModel, aserviApiKey, paste-aservi-key, aserviStatus); E2E must target those current controls and not superseded selector contracts. Keep HTML/CSS edits in index.md and application logic in assets/js/app.js.
 
 ### Work completed in this cross-cutting pass (not yet browser-verified)
 
-- aServi URL validation now has RU/EN messages, required URL/model/key errors, aria-invalid and aria-describedby linkage; aServi field labels, paste action and connect button are localized. Theme-aware semantic info/warning tokens were added, and the checking state uses the warning token in both themes.
+- aServi URL validation now has RU/EN messages, required URL/model/key errors, aria-invalid and aria-describedby linkage; aServi field labels, paste action and connection status are localized. Theme-aware semantic info/warning tokens were added, and the checking state uses the warning token in both themes.
 - aServi health refresh now checks that URL/model/key still match after asynchronous fingerprint and /healthz work, so an old response cannot restore a green state after credentials change.
 - The global system-prompt edit pencil now localizes its title/accessibility name and edit-state announcement; E2E covers keyboard focus and the return to read-only.
 - Mobile viewport resize now captures whether the chat was near the bottom before layout changes: users reading older messages keep their position, while users at the latest message stay anchored. E2E coverage was added.
