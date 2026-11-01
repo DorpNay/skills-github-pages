@@ -70,3 +70,26 @@
 - PR #121: Research Studio settings semantics, first free landing V1 and client UX.
 
 Не восстанавливать старые задачи из LEGACY_UX_REQUEST_AUDIT_RU.md или прежних версий этого backlog как активные, если они уже закрыты перечисленными PR или заменены требованиями 8.1–8.17.
+
+
+## Chromium, Playwright и мобильные browser edge cases — исследование 2026-11-01
+
+Проверены официальные рекомендации Playwright/Chrome и спецификации браузерных touch/viewport API. Применяемые решения:
+
+- **CI concurrency:** Playwright рекомендует один worker в CI ради воспроизводимости; текущий `playwright.config.mjs` уже использует `workers: process.env.CI ? 1 : undefined`. Не возвращать 2 workers только ради ускорения без замеров.
+- **Диагностика падений:** сохранять trace на первой повторной попытке, screenshots только при ошибке, video выключено. Trace Viewer позволяет просмотреть последовательность действий, DOM snapshots, network и console; не включать trace для каждого теста, это увеличивает нагрузку.
+- **Retries не заменяют исправление:** flaky/pass-on-retry учитывать отдельно; детерминированные падения исправлять по trace и первопричине, а не увеличивать число повторов до зелёного статуса.
+- **Headless Chromium:** современный Chrome Headless использует тот же browser implementation, что и headful Chrome. Это надёжный регрессионный движок, но он не доказывает работу реальной iOS-клавиатуры, safe-area, VoiceOver, hardware gestures или конкретного WebKit.
+- **VisualViewport:** мобильная экранная клавиатура может менять visual viewport без изменения layout viewport. При адаптации composer/dialogs учитывать `visualViewport.resize` и `visualViewport.scroll`, а не только `window.innerHeight`; проверять закрытие клавиатуры и возврат фокуса.
+- **Touch/gesture lifecycle:** браузер может отправить `pointercancel`, когда начинает сам обрабатывать pan/zoom/scroll. Любой собственный swipe должен очищать состояние на `pointercancel`/`touchcancel`; `touch-action` задавать локально на зоне жеста, не глобально и не через blanket `none`.
+- **Селекторы и фикстуры:** мок aServi должен соответствовать реальному контракту: first-party settings card + model completion probe + `/healthz`. Не выбирать aServi через список сторонних API и не считать HTTP 200 без валидного completion подтверждением соединения.
+- **Runner stall:** существующий workaround с Ubuntu `man-db` оставлен только в шаге установки browser dependencies; он не подменяет тесты и не отключает проверки.
+
+Источники:
+- Playwright CI: https://playwright.dev/docs/ci
+- Playwright retries: https://playwright.dev/docs/test-retries
+- Playwright trace viewer: https://playwright.dev/docs/trace-viewer-intro
+- Chrome Headless automation: https://developer.chrome.com/docs/automation-and-testing
+- MDN VisualViewport: https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport
+- MDN pointercancel: https://developer.mozilla.org/en-US/docs/Web/API/Element/pointercancel_event
+- MDN touch-action: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/touch-action
