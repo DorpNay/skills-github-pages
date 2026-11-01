@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-02"
   root_orienter:
-    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 is open/unmerged on feat/landing-v1-accessibility-responsive-20261031. Code commit c5f79b46d09b71fbf06ccc4da137707ac5709e40 switches CI from downloading Playwright Chromium plus apt dependencies to runner-provided Google Chrome via Playwright channel=chrome; local runs retain Playwright Chromium. Quality #1218 / run 41360990867 is queued on this exact code HEAD. No speedup/pass is claimed; no production deployment is authorized. A separate PR preview host is not configured."
+    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 is open/unmerged on feat/landing-v1-accessibility-responsive-20261031; live head after modal focus-trap consolidation is 8f15b8d4aadf4e7e30bce510a6478cc4aaffc345. CI uses runner-provided Google Chrome via Playwright channel=chrome; local runs retain Playwright Chromium. Quality #1222 (run 41362048873, prior SHA 7e2429ef) had two E2E failures: duplicated modal Tab traps and context-picker scrim intercepting the opener. Source fix consolidates modal cycling to one delegated Tab handler; exact-head CI for 8f15b8d has not yet returned. No pass/speedup is claimed; no production deployment is authorized. A separate PR preview host is not configured."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 0
