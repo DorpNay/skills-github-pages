@@ -223,3 +223,8 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 
 - Refreshed docs/LANDING_UI_V2_IMPLEMENTATION_RU.md from PR #131 so the backup ledger includes the 504-byte overridden-CSS cleanup and exact verification boundary.
 - Updated backup project state and orienter to code/source checkpoint 9679ed4d7974849f3fd02dcf8465384c8c59a9df. CSS brace balance is zero; no Chromium/visual test is claimed.
+
+
+### 2026-11-02 — Mirror aServi compatibility note
+- Refreshed the V2 implementation ledger and state to code checkpoint 9aa74853478a6a680cdd36ab0f84c851721405a4, which documents the intentionally retained legacy storage keys.
+- No storage key migration or deletion was performed; no browser tests are claimed.
