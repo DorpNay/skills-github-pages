@@ -175,8 +175,11 @@
           .filter(([chatId]) => chats.some(chat => chat.id === chatId))
           .map(([chatId, ids]) => [chatId, ids.filter(id => projects.some(project => project.id === id)).slice(0, 5)])
           .filter(([, ids]) => ids.length);
-        if (pending.length) sessionStorage.setItem(REQUEST_PROJECT_CONTEXT_SESSION_KEY, JSON.stringify(pending));
-        else sessionStorage.removeItem(REQUEST_PROJECT_CONTEXT_SESSION_KEY);
+        if (pending.length) {
+          if (!safeSessionSet(REQUEST_PROJECT_CONTEXT_SESSION_KEY, JSON.stringify(pending))) {
+            console.warn('sessionStorage недоступен: отложенный контекст проекта не переживёт перезагрузку.');
+          }
+        } else safeSessionRemove(REQUEST_PROJECT_CONTEXT_SESSION_KEY);
       } catch (error) {
         console.warn('Не удалось сохранить одноразовый контекст проекта в текущей сессии:', error);
       }
@@ -186,7 +189,7 @@
       if (requestProjectContextRestored) return;
       requestProjectContextRestored = true;
       try {
-        const raw = sessionStorage.getItem(REQUEST_PROJECT_CONTEXT_SESSION_KEY);
+        const raw = safeSessionGet(REQUEST_PROJECT_CONTEXT_SESSION_KEY);
         if (!raw) return;
         const pending = JSON.parse(raw);
         if (!Array.isArray(pending)) throw new Error('Invalid pending project context');
@@ -199,7 +202,7 @@
         });
         persistRequestProjectContextByChat();
       } catch (error) {
-        try { sessionStorage.removeItem(REQUEST_PROJECT_CONTEXT_SESSION_KEY); } catch (_) {}
+        safeSessionRemove(REQUEST_PROJECT_CONTEXT_SESSION_KEY);
         console.warn('Отложенный контекст проекта повреждён и был сброшен:', error);
       }
     }
