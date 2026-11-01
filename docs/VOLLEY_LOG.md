@@ -558,3 +558,13 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Current branch HEAD before this documentation commit: `515b3f62271027e69acc2d76f4ef40289fa9cfb8`; fixes are committed after the old run started and remain unverified until a new exact-head run. No test pass is claimed.
 - Next: dispatch Independent Quality Sentinels on the current exact HEAD; inspect the old Chromium result separately; continue only on new confirmed failures. PR #131 remains open/unmerged; no deployment or destructive actions.
 
+
+
+## V-2026-11-02-QUALITY-REPAIR-AND-REFERENCE-AUDIT-001
+
+- Rechecked live PR #131 and exact branch state. PR remains open/unmerged; current HEAD after this documentation batch is recorded in the file orienter; branch is 584 ahead / 4 behind main and GitHub reports mergeable=false. No rebase, merge or deployment.
+- Inspected user-started Quality #1193 (ID 41349570822), which checked old SHA 5c45de5e728cb280ef9524ac1c45ee500f210138. Static analysis passed; Integrity/Security/Context/Jekyll failed because scripts/quality-agents.mjs contained an invalid over-escaped regex literal; Chromium remained in progress. No result from #1193 is treated as current-head evidence.
+- Fixed sanitizer assertion regex in commit 37996b80300272f2d0e62f87e653f0840390f12a. Fixed PROJECT_STATE YAML indentation and improvement-map boundaries in commits bf9c21ebfc892139b543dc42d8bf41385490f1b0 and 84948798d4fdcce1257dbaaddae0c4b39a754ffe. Provenance workflow #960 passed on SHA 84948798d4fdcce1257dbaaddae0c4b39a754ffe.
+- The current HEAD has no Quality run. A new manual workflow_dispatch on the current branch is required; the connector's later commits have not produced a new Quality run. No exact-head Quality/Chromium pass is claimed.
+- Reviewed the owner-recommended upstream projects and recorded decisions in docs/TECHNIQUE_REGISTER_RU.md and docs/OPEN_SOURCE_TRIAGE_RU.md. Selected patterns only; no dependencies or runtimes added. agent.sys and the intended Orbit AI Agents project remain ambiguous.
+- Next: dispatch Quality on the current exact HEAD, inspect all jobs/artifacts, then continue 8.1–8.17 and inherited UI acceptance. Native iPhone Safari/VoiceOver/WCAG remain manual gates.

@@ -1,12 +1,15 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
-## Актуальная контрольная точка — 2026-11-02, PR #131 Quality triage
+## Актуальная контрольная точка — 2026-11-02, PR #131 exact-head Quality repair
 
-- PR #131 открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; текущий проверенный HEAD на момент этой записи: `515b3f62271027e69acc2d76f4ef40289fa9cfb8`.
-- Main: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; compare: diverged, 578 ahead / 4 behind, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub сообщает `mergeable=false`. Синхронизацию веток не выполнял.
-- Последний runtime source checkpoint: `fed3137bae2355629a976515719f498940ad8601`. Текущая коррекция затрагивает только quality harness/workflow: `scripts/quality-agents.mjs` и `.github/workflows/quality-sentinels.yml`.
-- Quality run #1192 (run ID `41348586700`) запущен на старом SHA `777fdcab442c9b8ebd8483e7bca7d776a022a260`. Integrity/Security/Context/Build и Static Analysis завершились ошибкой; Chromium остаётся in progress. Эти результаты нельзя считать проверкой текущего HEAD.
-- Триаж: sentinel-скрипты всё ещё искали runtime в старом монолитном `index.md`; приложение теперь в `assets/js/app.js`, CSS вынесен отдельно. Проверки перенастроены на split layout. Semgrep не сканировал код из-за unmatched `audit-reports/ui-inline-*.js`; workflow теперь использует `nullglob` и включает внешний app.js. Ruff прошёл на старом SHA; Bandit выдал два low-confidence B608 advisory. Повторный прогон исправленного harness пока не подтверждён.
-- Следующий шаг: запустить Independent Quality Sentinels на exact current HEAD; отдельно дождаться результата старого Chromium run #1192. Затем исправлять только новые подтверждённые дефекты. Native iPhone Safari/VoiceOver и измеренный WCAG остаются ручными acceptance gates. PR открыт; merge/deploy не выполнять.
+- PR #131 открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; live HEAD: `3d231587e727496e60cc652be43e43343c5e0e81`.
+- Main: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; compare: diverged, 584 ahead / 4 behind, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub сообщает `mergeable=false`. Rebase/sync не выполнялся.
+- Latest product runtime source checkpoint remains `fed3137bae2355629a976515719f498940ad8601`; the recent changes are limited to quality harness, state metadata and research documentation.
+- User-started Quality run #1193 (ID `41349570822`) checked old SHA `5c45de5e728cb280ef9524ac1c45ee500f210138`: static-analysis passed; Integrity, Security, Context and Jekyll sentinels failed because the sanitizer assertion regex in `scripts/quality-agents.mjs` was malformed; Chromium remains in progress. This is not a result for current HEAD.
+- Fixed the regex in `37996b80300272f2d0e62f87e653f0840390f12a`. Repaired PROJECT_STATE YAML nesting in `bf9c21ebfc892139b543dc42d8bf41385490f1b0` and its improvement mapping boundaries in `84948798d4fdcce1257dbaaddae0c4b39a754ffe`. Provenance run #960 passed on `84948798d4fdcce1257dbaaddae0c4b39a754ffe`.
+- No Quality run exists for current HEAD `3d231587e727496e60cc652be43e43343c5e0e81`. A new manual workflow_dispatch is required on branch `feat/landing-v1-accessibility-responsive-20261031`; connector commits did not produce a new Quality run. No exact-head Quality/Chromium pass is claimed.
+- Open-source research is recorded in `docs/TECHNIQUE_REGISTER_RU.md` and `docs/OPEN_SOURCE_TRIAGE_RU.md`. Selected patterns only; no dependencies/runtime installed. `agent.sys` and the exact intended `Orbit AI Agents` remain ambiguous.
+- Next: manually dispatch Quality Sentinels on current HEAD, inspect the complete run/artifacts, then continue mandatory UI workstreams 8.1–8.17 and inherited acceptance. Native iPhone Safari/VoiceOver and measured WCAG remain manual gates. No merge, rebase, deployment or destructive cleanup.
+
 
 > Исторические разделы ниже сохраняют контекст; live refs и результаты перепроверять перед каждым действием.
 

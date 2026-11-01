@@ -585,3 +585,21 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Ruff passed on old SHA `777fdcab442c9b8ebd8483e7bca7d776a022a260`. Bandit reported two low-confidence B608 medium-severity advisory findings: placeholder-only dynamic SQL clauses in `gateway/memory/manager.py` and bounded placeholder-count construction in `gateway/rag/lazy_graph_rag.py`; all user values remain bound parameters. No SQL change was justified.
 - Old run #1192 Chromium remains in progress; it is not evidence for the newer HEAD. Current branch HEAD at time of this note: `515b3f62271027e69acc2d76f4ef40289fa9cfb8`; exact-head Quality/Chromium rerun is pending. No merge, rebase, deployment or destructive cleanup.
 
+
+
+## Quality harness repair and owner-recommended reference audit — 2026-11-02
+
+### Exact-head workflow triage
+
+- User-started Quality run #1193 (ID 41349570822) was dispatched on SHA 5c45de5e728cb280ef9524ac1c45ee500f210138, not the later PR HEAD. Static analysis passed; Integrity, Security, Context and Jekyll sentinels failed at module parse time because the sanitizer assertion regex was over-escaped and invalid. Chromium was still in progress when inspected.
+- Corrected the assertion to match whitespace and safeMarkdown call syntax in commit 37996b80300272f2d0e62f87e653f0840390f12a. This strengthens the intended assertion; it does not relax sanitizer checks.
+- The first PROJECT_STATE YAML indentation correction exposed a second schema issue: owner_proposals and repository_identity_cleanup had been nested inside improvements, whose values must each carry a status. Commit 84948798d4fdcce1257dbaaddae0c4b39a754ffe restores them as sibling mappings. Provenance run #960 passed on that SHA.
+- Current branch HEAD after the research/documentation batch is recorded in ORIENTER.md and project-reference/FILE_ORIENTER_RU.md. No Quality run exists for that current HEAD; no exact-head Quality/Chromium pass is claimed. Manually dispatch the workflow on the branch and inspect the full run before treating these fixes as verified.
+
+### External references
+
+- Evaluated Hermes Agent v0.22.2, ECC 2.2.3, screenshot-to-code, scroll-craft, ThinkRail, DeepTutor v1.7.1, Hallmark v2, qybaihe/bla, Qwenputer and Orbit candidates.
+- Decisions and source links are in docs/TECHNIQUE_REGISTER_RU.md and docs/OPEN_SOURCE_TRIAGE_RU.md. Adopt only process patterns: TDD/fresh-context review, deny-by-default approvals, isolated worktrees, screenshot-based review, browser contrast/scroll QA and inspectable evidence.
+- No package, service, model or runtime was installed. BLA anti-analysis/decoy behavior is explicitly excluded. Qwenputer is not a computer-use agent. agent.sys and the intended Orbit AI Agents project remain ambiguous.
+- Product architecture remains static HTML/CSS/JavaScript + Jekyll/GitHub Pages + existing FastAPI gateway. No framework migration or new dependency.
+
