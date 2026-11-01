@@ -697,7 +697,7 @@
       document.querySelectorAll('[data-i18n-aria-label]').forEach(node=>{const value=text[node.dataset.i18nAriaLabel];if(typeof value==='string')node.setAttribute('aria-label',value);});
       applyFunctionPanelLanguage(lang);
       updateHomeThemeButton();
-      const aserviConnectButton=document.querySelector('[data-action="connect-alandi-cloud"]');if(aserviConnectButton)aserviConnectButton.textContent=aserviConnectButton.disabled?aserviText('checkingButton'):aserviText('connectButton');
+      const aserviConnectButton=document.querySelector('[data-action="connect-aservi"]');if(aserviConnectButton)aserviConnectButton.textContent=aserviConnectButton.disabled?aserviText('checkingButton'):aserviText('connectButton');
       const promptButton=$('editSystemPrompt'),promptInput=$('systemPromptInput');
       if(promptButton&&promptInput){const editing=!promptInput.readOnly;const label=lang==='en'?(editing?'Finish editing system prompt':'Edit system prompt'):(editing?'Завершить редактирование системного промпта':'Редактировать системный промпт');promptButton.title=label;promptButton.setAttribute('aria-label',label);promptButton.textContent=editing?'✓':'✎';if($('promptEditHint'))$('promptEditHint').textContent=editing?(lang==='en'?'Editing enabled':'Редактирование включено'):(lang==='en'?'Editing disabled':'Редактирование выключено');}
       const sidebarLanguageSummary=$('languageSummarySidebar');if(sidebarLanguageSummary)sidebarLanguageSummary.textContent=lang==='en'?'EN ▾':'RU ▾';
@@ -712,7 +712,7 @@
       document.querySelectorAll('[data-action="toggle-settings"]').forEach(button=>button.setAttribute('aria-label',lang==='en'?'Settings':'Настройки'));
       const aserviLabels={aserviBaseUrl:lang==='en'?'My server URL':'URL моего сервера',aserviModel:lang==='en'?'Gateway model':'Модель моего сервера',aserviApiKey:lang==='en'?'Server access key':'Ключ доступа к серверу'};
       Object.entries(aserviLabels).forEach(([id,label])=>$(id)?.setAttribute('aria-label',label));
-      const pasteCloudKey=document.querySelector('[data-action="paste-cloud-key"]');if(pasteCloudKey){pasteCloudKey.title=lang==='en'?'Paste access key':'Вставить ключ';pasteCloudKey.setAttribute('aria-label',pasteCloudKey.title);}
+      const pasteAServiKey=document.querySelector('[data-action="paste-aservi-key"]');if(pasteAServiKey){pasteAServiKey.title=lang==='en'?'Paste access key':'Вставить ключ';pasteAServiKey.setAttribute('aria-label',pasteAServiKey.title);}
       const attach=$('attachTextButton');if(attach){attach.title=lang==='en'?'Attach photo, video or any file format':'Добавить фото, видео или файл любого формата';attach.setAttribute('aria-label',attach.title);}
       const voice=$('voiceUnavailableButton');if(voice){voice.title=lang==='en'?'Press and hold for voice modes':'Удерживай, чтобы открыть режимы голоса';voice.setAttribute('aria-label',voice.title);}
       updateOfflineUI();updateModeUI();updateHomeThemeButton();renderChatList();updateMemoryStatusLine();
@@ -1766,7 +1766,7 @@
       $('toggleMultiAgent').checked = safeGet(STORAGE.multiAgent) === 'true';
       $('allowCrossProviderFallback').checked = safeGet(STORAGE.crossProviderFallback) === 'true';
       applyUiLanguage(safeGet('ai_ui_language_v1')||'ru');
-      updateOfflineUI(); updateModeUI(); refreshApiKeyLamp();void refreshCloudStatus();scheduleCloudAutoConnect();
+      updateOfflineUI(); updateModeUI(); refreshApiKeyLamp();void refreshAServiStatus();scheduleAServiAutoConnect();
       void refreshConnectedModelCatalogs({ quiet: true, force: false, includeOtherProviders: safeGet(STORAGE.crossProviderFallback) === 'true' });
     }
     const VALID_SEARCH_MODES = new Set(['normal','more','offline']);
@@ -2032,7 +2032,7 @@
       applyAppearance($('uiTheme').value, $('uiMotion').value);
       safeSet('ai_ui_motion_v2', $('uiMotion').value);
     });
-    // Cloud is an exclusive settings group. Other groups cannot open until it is closed.
+    // aServi is an exclusive settings group. Other groups cannot open until it is closed.
     const aserviSettingsGroup=$('aserviSettingsGroup');
     const peerSettingsGroups=[$('thirdPartyProviderSettings'),$('additionalSettings')];
     peerSettingsGroups.forEach(group=>{
@@ -2217,43 +2217,43 @@
         return Array.from(new Uint8Array(digest),byte=>byte.toString(16).padStart(2,'0')).join('');
       } catch(_) { return ''; }
     }
-    function setCloudFieldError(id,message=''){
+    function setAServiFieldError(id,message=''){
       const field=$(id),error=$(id+'Error');if(!field)return;const text=String(message||'');
       field.dataset.state=text?'error':'';field.setAttribute('aria-invalid',String(Boolean(text)));
       if(error){error.textContent=text;error.classList.toggle('hidden',!text);}
     }
-    function validateCloudBaseUrl(value){if(!value)return '';try{const url=new URL(value);if(!['https:','http:'].includes(url.protocol))return aserviText('urlProtocol');if(url.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(url.hostname))return aserviText('urlHttps');return '';}catch(_){return aserviText('urlFormat');}}
-    function setCloudFieldConnection(state){['aserviBaseUrl','aserviModel','aserviApiKey'].forEach(id=>{const field=$(id);if(field&&field.dataset.state!=='error')field.dataset.state=state==='connected'?'connected':'';});}
-    function setCloudStatus(state,message=''){
+    function validateAServiBaseUrl(value){if(!value)return '';try{const url=new URL(value);if(!['https:','http:'].includes(url.protocol))return aserviText('urlProtocol');if(url.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(url.hostname))return aserviText('urlHttps');return '';}catch(_){return aserviText('urlFormat');}}
+    function setAServiFieldConnection(state){['aserviBaseUrl','aserviModel','aserviApiKey'].forEach(id=>{const field=$(id);if(field&&field.dataset.state!=='error')field.dataset.state=state==='connected'?'connected':'';});}
+    function setAServiStatus(state,message=''){
       const dot=$('aserviStatusDot'),copy=$('aserviStatus');
       const label=state==='connected'?aserviText('connected'):state==='checking'?aserviText('checking'):aserviText('disconnected');
       if(dot){dot.dataset.state=state;dot.title=label;}
       if(copy){copy.dataset.state=state;copy.textContent=message||label;}
-      if(state!=='connected')setCloudFieldConnection(state);
+      if(state!=='connected')setAServiFieldConnection(state);
     }
-    function getCloudSettings(){
+    function getAServiSettings(){
       return {
         baseUrl:String($('aserviBaseUrl')?.value||'').trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),
         model:String($('aserviModel')?.value||'').trim(),
         key:String($('aserviApiKey')?.value||'').trim()
       };
     }
-    async function refreshCloudStatus(){
-      const {baseUrl,model,key}=getCloudSettings();
-      const settingsStillCurrent=()=>{const current=getCloudSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
-      if(!baseUrl||!model||!key){setCloudStatus('disconnected');return;}
-      const formatError=validateCloudBaseUrl(baseUrl);if(formatError){setCloudFieldError('aserviBaseUrl',formatError);setCloudStatus('disconnected');return;}
+    async function refreshAServiStatus(){
+      const {baseUrl,model,key}=getAServiSettings();
+      const settingsStillCurrent=()=>{const current=getAServiSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
+      if(!baseUrl||!model||!key){setAServiStatus('disconnected');return;}
+      const formatError=validateAServiBaseUrl(baseUrl);if(formatError){setAServiFieldError('aserviBaseUrl',formatError);setAServiStatus('disconnected');return;}
       let marker=null;try{marker=JSON.parse(safeGet('ai_alandi_cloud_connection_v1')||'null');}catch(_){}
       const fingerprint=await providerKeyFingerprint(key);
       if(!settingsStillCurrent())return;
-      if(!marker?.ok||marker.baseUrl!==baseUrl||marker.model!==model||marker.keyFingerprint!==fingerprint){setCloudStatus('disconnected');return;}
+      if(!marker?.ok||marker.baseUrl!==baseUrl||marker.model!==model||marker.keyFingerprint!==fingerprint){setAServiStatus('disconnected');return;}
       try{
         const health=new URL(baseUrl);health.pathname=health.pathname.replace(/\/v1\/?$/,'').replace(/\/$/,'')+'/healthz';health.search='';health.hash='';
         const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);let response;
         try{response=await fetch(health.toString(),{method:'GET',headers:{Accept:'application/json'},cache:'no-store',signal:controller.signal});}finally{clearTimeout(timer);}
         if(!settingsStillCurrent())return;
-        if(response.ok){setCloudFieldConnection('connected');setCloudStatus('connected');}else setCloudStatus('disconnected');
-      }catch(_){if(settingsStillCurrent())setCloudStatus('disconnected');}
+        if(response.ok){setAServiFieldConnection('connected');setAServiStatus('connected');}else setAServiStatus('disconnected');
+      }catch(_){if(settingsStillCurrent())setAServiStatus('disconnected');}
     }
     function isUsableProbeResponse(payload,rawText=''){
       if(payload&&payload.error)return false;
@@ -2297,13 +2297,13 @@
       if(isTestingProviderConnection)return;
       const provider=currentProvider(),baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),key=provider==='kilo'?'':(provider==='pollinations'?getProviderRequestKey(provider):($('apiKey').value.trim()||getProviderRequestKey(provider))),model=$('modelName').value.trim();
       const initialKeyInput=$('apiKey').value.trim();
-      const initialCloudSettings=provider==='alandi'?getCloudSettings():null;
-      const isPrimaryCloudSettingsCurrent=()=>{
-        if(!initialCloudSettings)return false;
-        const current=getCloudSettings();
-        return current.baseUrl===initialCloudSettings.baseUrl
-          &&current.model===initialCloudSettings.model
-          &&current.key===initialCloudSettings.key;
+      const initialAServiSettings=provider==='alandi'?getAServiSettings():null;
+      const isPrimaryAServiSettingsCurrent=()=>{
+        if(!initialAServiSettings)return false;
+        const current=getAServiSettings();
+        return current.baseUrl===initialAServiSettings.baseUrl
+          &&current.model===initialAServiSettings.model
+          &&current.key===initialAServiSettings.key;
       };
       const isProviderProbeContextCurrent=()=>{
         const liveEffectiveKey=provider==='kilo'?'':(provider==='pollinations'?getProviderRequestKey(provider):($('apiKey').value.trim()||getProviderRequestKey(provider)));
@@ -2357,7 +2357,7 @@
         if(!result){
           if(!isProviderProbeContextCurrent()){
             await refreshApiKeyLamp();
-            if(provider==='alandi')void refreshCloudStatus();
+            if(provider==='alandi')void refreshAServiStatus();
             return;
           }
 
@@ -2367,7 +2367,7 @@
         }
         if(!isProviderProbeContextCurrent()){
           await refreshApiKeyLamp();
-          if(provider==='alandi')void refreshCloudStatus();
+          if(provider==='alandi')void refreshAServiStatus();
           showToast('Настройки изменились во время проверки. Результат не сохранён; запусти проверку ещё раз.','error');
           return;
         }
@@ -2375,19 +2375,19 @@
         // Web Crypto is asynchronous too: re-check the full selection before persisting success.
         if(!isProviderProbeContextCurrent()){
           await refreshApiKeyLamp();
-          if(provider==='alandi')void refreshCloudStatus();
+          if(provider==='alandi')void refreshAServiStatus();
           showToast('Настройки изменились во время проверки. Результат не сохранён; запусти проверку ещё раз.','error');
           return;
         }
         $('modelName').value=result.candidateModel;safeSet(STORAGE.model,result.candidateModel);safeSet(STORAGE.provider,provider);safeSet(STORAGE.baseUrl,baseUrl);
         if(key){safeSet(providerKeyStorage(provider),key);if(provider==='gemini')safeSet(STORAGE.apiKey,key);}
         safeSet('ai_provider_connection_'+provider,JSON.stringify({ok:true,baseUrl,model:result.candidateModel,keyFingerprint:fingerprint,requestedModel:model,testedAt:new Date().toISOString()}));
-        if(provider==='alandi'&&key&&isPrimaryCloudSettingsCurrent()){
+        if(provider==='alandi'&&key&&isPrimaryAServiSettingsCurrent()){
           safeSet('ai_alandi_cloud_base_url',baseUrl);safeSet('ai_alandi_cloud_model',result.candidateModel);
           safeSet('ai_alandi_cloud_connection_v1',JSON.stringify({ok:true,baseUrl,model:result.candidateModel,keyFingerprint:fingerprint,testedAt:new Date().toISOString()}));
           if($('aserviBaseUrl')){$('aserviBaseUrl').value=baseUrl;$('aserviModel').value=result.candidateModel;$('aserviApiKey').value=key;}
-          // A model probe alone is not the full aservi-card health check; never show green before refreshCloudStatus validates /healthz.
-          setCloudStatus('checking',aserviText('modelHealth'));
+          // A model probe alone is not the full aservi-card health check; never show green before refreshAServiStatus validates /healthz.
+          setAServiStatus('checking',aserviText('modelHealth'));
         }
         if(result.candidateModel!==model)populateModelPresets(provider,result.candidateModel);
         updateApiKeyLamp('connected','Зелёный — модель '+result.candidateModel+' успешно ответила; соединение подтверждено.');
@@ -2396,35 +2396,35 @@
       }catch(error){
         if(!isProviderProbeContextCurrent()){
           await refreshApiKeyLamp();
-          if(provider==='alandi')void refreshCloudStatus();
+          if(provider==='alandi')void refreshAServiStatus();
           return;
         }
         safeSet('ai_provider_connection_'+provider,'');
-        if(provider==='alandi'&&isPrimaryCloudSettingsCurrent())safeSet('ai_alandi_cloud_connection_v1','');
+        if(provider==='alandi'&&isPrimaryAServiSettingsCurrent())safeSet('ai_alandi_cloud_connection_v1','');
         updateApiKeyLamp('error','Проверка не удалась: '+String(error?.message||error).slice(0,220));
         showToast('Проверка не удалась: сеть, CORS или формат ответа.','error');
       }finally{
         isTestingProviderConnection=false;
         if(button){button.disabled=false;button.textContent='Проверить соединение и модель';}
-        hideStatus();if(provider==='alandi')void refreshCloudStatus();
+        hideStatus();if(provider==='alandi')void refreshAServiStatus();
       }
     }
-    async function connectAlandiCloud(){
+    async function connectAServi(){
       if(isTestingProviderConnection)return;
-      const {baseUrl,model,key}=getCloudSettings();
-      const aserviSettingsStillCurrent=()=>{const current=getCloudSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
+      const {baseUrl,model,key}=getAServiSettings();
+      const aserviSettingsStillCurrent=()=>{const current=getAServiSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
       if(!baseUrl||!model||!key){
-        setCloudFieldError('aserviBaseUrl',baseUrl?'':aserviText('urlRequired'));
-        setCloudFieldError('aserviModel',model?'':aserviText('modelRequired'));
-        setCloudFieldError('aserviApiKey',key?'':aserviText('keyRequired'));
-        setCloudStatus('disconnected');return;
+        setAServiFieldError('aserviBaseUrl',baseUrl?'':aserviText('urlRequired'));
+        setAServiFieldError('aserviModel',model?'':aserviText('modelRequired'));
+        setAServiFieldError('aserviApiKey',key?'':aserviText('keyRequired'));
+        setAServiStatus('disconnected');return;
       }
-      const formatError=validateCloudBaseUrl(baseUrl);if(formatError){setCloudFieldError('aserviBaseUrl',formatError);setCloudStatus('disconnected');return;}
-      setCloudFieldError('aserviBaseUrl');setCloudFieldError('aserviModel');setCloudFieldError('aserviApiKey');
+      const formatError=validateAServiBaseUrl(baseUrl);if(formatError){setAServiFieldError('aserviBaseUrl',formatError);setAServiStatus('disconnected');return;}
+      setAServiFieldError('aserviBaseUrl');setAServiFieldError('aserviModel');setAServiFieldError('aserviApiKey');
       isTestingProviderConnection=true;
-      const button=document.querySelector('[data-action="connect-alandi-cloud"]');
+      const button=document.querySelector('[data-action="connect-aservi"]');
       if(button){button.disabled=true;button.textContent='Проверяю…';}
-      setCloudStatus('checking');
+      setAServiStatus('checking');
       const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
       try{
         const response=await fetch(buildApiUrl(baseUrl),{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model,messages:[{role:'user',content:'Reply with exactly OK.'}],max_tokens:8,stream:false}),cache:'no-store',signal:controller.signal});
@@ -2434,7 +2434,7 @@
           throw new Error('HTTP '+response.status+(detail?': '+detail:''));
         }
         if(!aserviSettingsStillCurrent()){
-          setCloudStatus('disconnected',aserviText('settingsChanged'));
+          setAServiStatus('disconnected',aserviText('settingsChanged'));
           return;
         }
         const healthUrl=new URL(baseUrl);
@@ -2448,7 +2448,7 @@
         const fingerprint=await providerKeyFingerprint(key);
         if(!fingerprint)throw new Error(aserviText('fingerprintFailed'));
         if(!aserviSettingsStillCurrent()){
-          setCloudStatus('disconnected','Настройки изменились во время проверки. Результат не сохранён.');
+          setAServiStatus('disconnected','Настройки изменились во время проверки. Результат не сохранён.');
           return;
         }
         safeSet('ai_alandi_cloud_base_url',baseUrl);
@@ -2458,16 +2458,16 @@
         safeSet('ai_alandi_cloud_connection_v1',JSON.stringify(verified));
         safeSet('ai_provider_connection_alandi',JSON.stringify(verified));
         $('providerPreset').value='';applyProviderPreset('alandi',true);$('baseUrl').value=baseUrl;$('modelName').value=model;$('apiKey').value=key;
-        setCloudFieldConnection('connected');setCloudStatus('connected');
+        setAServiFieldConnection('connected');setAServiStatus('connected');
         showToast(aserviText('connectedToast'));
       }catch(error){
         if(!aserviSettingsStillCurrent()){
-          setCloudStatus('disconnected','Настройки изменились во время проверки. Результат не сохранён.');
+          setAServiStatus('disconnected','Настройки изменились во время проверки. Результат не сохранён.');
           return;
         }
         safeSet('ai_alandi_cloud_connection_v1','');safeSet('ai_provider_connection_alandi','');
-        setCloudStatus('disconnected');
-        setCloudFieldError('aserviApiKey',aserviText('connectionFailed'));
+        setAServiStatus('disconnected');
+        setAServiFieldError('aserviApiKey',aserviText('connectionFailed'));
       }finally{
         clearTimeout(timer);isTestingProviderConnection=false;
         if(button){button.disabled=false;button.textContent=aserviText('connectButton');}
@@ -2482,7 +2482,7 @@
         field.value=text.trim();field.dispatchEvent(new Event('input',{bubbles:true}));
         field.focus();field.setSelectionRange?.(field.value.length,field.value.length);
         if(id==='apiKey')scheduleProviderAutoConnect();
-        else if(id==='aserviApiKey'){safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('aserviApiKey');setCloudStatus('disconnected');scheduleCloudAutoConnect();}
+        else if(id==='aserviApiKey'){safeSet('ai_alandi_cloud_connection_v1','');setAServiFieldError('aserviApiKey');setAServiStatus('disconnected');scheduleAServiAutoConnect();}
         showToast('Текст вставлен.');
       }catch(_){field.focus();showToast('Браузер не разрешил чтение буфера. Нажми Ctrl+V в поле.','error');}
     }
@@ -2501,9 +2501,9 @@
         await testProviderConnection();
       },850);
     }
-    function scheduleCloudAutoConnect(){
+    function scheduleAServiAutoConnect(){
       if(aserviAutoConnectTimer)clearTimeout(aserviAutoConnectTimer);
-      aserviAutoConnectTimer=setTimeout(()=>{aserviAutoConnectTimer=null;const cfg=getCloudSettings();if(!cfg.baseUrl||!cfg.model||!cfg.key){setCloudStatus('disconnected');return;}const error=validateCloudBaseUrl(cfg.baseUrl);if(error){setCloudFieldError('aserviBaseUrl',error);setCloudStatus('disconnected');return;}if(isTestingProviderConnection){scheduleCloudAutoConnect();return;}void connectAlandiCloud();},850);
+      aserviAutoConnectTimer=setTimeout(()=>{aserviAutoConnectTimer=null;const cfg=getAServiSettings();if(!cfg.baseUrl||!cfg.model||!cfg.key){setAServiStatus('disconnected');return;}const error=validateAServiBaseUrl(cfg.baseUrl);if(error){setAServiFieldError('aserviBaseUrl',error);setAServiStatus('disconnected');return;}if(isTestingProviderConnection){scheduleAServiAutoConnect();return;}void connectAServi();},850);
     }
     function clearProviderKey(){
       const provider=currentProvider();safeSet(providerKeyStorage(provider),'');
@@ -4347,9 +4347,9 @@
             showToast(getUiLanguage()==='en'?'Text readability reset to defaults.':'Настройки читаемости сброшены к значениям по умолчанию.');break;
           }
           case 'paste-provider-key': await pasteIntoField('apiKey');break;
-          case 'paste-cloud-key': await pasteIntoField('aserviApiKey');break;
+          case 'paste-aservi-key': await pasteIntoField('aserviApiKey');break;
           case 'paste-tavily-key': await pasteIntoField('tavilyKey');break;
-          case 'connect-alandi-cloud': await connectAlandiCloud();break;
+          case 'connect-aservi': await connectAServi();break;
           case 'attach-text-file': {
             const menu=$('attachmentMenu'),open=menu.classList.contains('hidden');hideVoiceMenu();closeComposerPopovers();if(open){menu.classList.remove('hidden');$('attachTextButton').setAttribute('aria-expanded','true');syncComposerPopoverScrim();}break;
           }
@@ -4494,9 +4494,9 @@
     });
     $('apiKey').addEventListener('input',()=>{if(currentProvider()!=='pollinations')safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();scheduleProviderAutoConnect();});
     $('baseUrl').addEventListener('input',()=>{safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();scheduleProviderAutoConnect();});
-    $('aserviBaseUrl').addEventListener('input',()=>{const value=$('aserviBaseUrl').value.trim();safeSet('ai_alandi_cloud_base_url',value);safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('aserviBaseUrl',validateCloudBaseUrl(value));setCloudStatus('disconnected');scheduleCloudAutoConnect();});
-    $('aserviModel').addEventListener('input',()=>{safeSet('ai_alandi_cloud_model',$('aserviModel').value.trim());safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('aserviModel');setCloudStatus('disconnected');scheduleCloudAutoConnect();});
-    $('aserviApiKey').addEventListener('input',()=>{safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('aserviApiKey');setCloudStatus('disconnected');scheduleCloudAutoConnect();});
+    $('aserviBaseUrl').addEventListener('input',()=>{const value=$('aserviBaseUrl').value.trim();safeSet('ai_alandi_cloud_base_url',value);safeSet('ai_alandi_cloud_connection_v1','');setAServiFieldError('aserviBaseUrl',validateAServiBaseUrl(value));setAServiStatus('disconnected');scheduleAServiAutoConnect();});
+    $('aserviModel').addEventListener('input',()=>{safeSet('ai_alandi_cloud_model',$('aserviModel').value.trim());safeSet('ai_alandi_cloud_connection_v1','');setAServiFieldError('aserviModel');setAServiStatus('disconnected');scheduleAServiAutoConnect();});
+    $('aserviApiKey').addEventListener('input',()=>{safeSet('ai_alandi_cloud_connection_v1','');setAServiFieldError('aserviApiKey');setAServiStatus('disconnected');scheduleAServiAutoConnect();});
     $('textAttachmentInput').addEventListener('change',handleTextAttachment);
     $('mediaAttachmentInput').addEventListener('change',handleMediaAttachment);
     document.addEventListener('pointerdown',event=>{
