@@ -1,12 +1,12 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 ## Актуальная контрольная точка — 2026-11-02, PR #131 exact-head Quality repair
 
-- PR #131 открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; live HEAD: `3d231587e727496e60cc652be43e43343c5e0e81`.
-- Main: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; compare: diverged, 584 ahead / 4 behind, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub сообщает `mergeable=false`. Rebase/sync не выполнялся.
-- Latest product runtime source checkpoint remains `fed3137bae2355629a976515719f498940ad8601`; the recent changes are limited to quality harness, state metadata and research documentation.
+- PR #131 открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; live HEAD: `9fc0948fee9d26390545748287475b3cc597d6da`.
+- Main: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; compare: diverged, 587 ahead / 4 behind, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub сообщает `mergeable=false`. Rebase/sync не выполнялся.
+- Latest product runtime source checkpoint remains `fed3137bae2355629a976515719f498940ad8601`; recent changes are limited to quality harness, state metadata and research documentation.
 - User-started Quality run #1193 (ID `41349570822`) checked old SHA `5c45de5e728cb280ef9524ac1c45ee500f210138`: static-analysis passed; Integrity, Security, Context and Jekyll sentinels failed because the sanitizer assertion regex in `scripts/quality-agents.mjs` was malformed; Chromium remains in progress. This is not a result for current HEAD.
-- Fixed the regex in `37996b80300272f2d0e62f87e653f0840390f12a`. Repaired PROJECT_STATE YAML nesting in `bf9c21ebfc892139b543dc42d8bf41385490f1b0` and its improvement mapping boundaries in `84948798d4fdcce1257dbaaddae0c4b39a754ffe`. Provenance run #960 passed on `84948798d4fdcce1257dbaaddae0c4b39a754ffe`.
-- No Quality run exists for current HEAD `3d231587e727496e60cc652be43e43343c5e0e81`. A new manual workflow_dispatch is required on branch `feat/landing-v1-accessibility-responsive-20261031`; connector commits did not produce a new Quality run. No exact-head Quality/Chromium pass is claimed.
+- Fixed the regex in `37996b80300272f2d0e62f87e653f0840390f12a`. Repaired PROJECT_STATE YAML nesting in `bf9c21ebfc892139b543dc42d8bf41385490f1b0` and its improvement mapping boundaries in `84948798d4fdcce1257dbaaddae0c4b39a754ffe`. Provenance #962 passed on state SHA `21a8317d36c7ca4c66f04d5ada56553b3db75094`.
+- No Quality run exists for current HEAD `9fc0948fee9d26390545748287475b3cc597d6da`. A new manual workflow_dispatch is required on branch `feat/landing-v1-accessibility-responsive-20261031`; connector commits did not produce a new Quality run. No exact-head Quality/Chromium pass is claimed.
 - Open-source research is recorded in `docs/TECHNIQUE_REGISTER_RU.md` and `docs/OPEN_SOURCE_TRIAGE_RU.md`. Selected patterns only; no dependencies/runtime installed. `agent.sys` and the exact intended `Orbit AI Agents` remain ambiguous.
 - Next: manually dispatch Quality Sentinels on current HEAD, inspect the complete run/artifacts, then continue mandatory UI workstreams 8.1–8.17 and inherited acceptance. Native iPhone Safari/VoiceOver and measured WCAG remain manual gates. No merge, rebase, deployment or destructive cleanup.
 

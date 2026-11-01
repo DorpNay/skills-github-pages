@@ -568,3 +568,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - The current HEAD has no Quality run. A new manual workflow_dispatch on the current branch is required; the connector's later commits have not produced a new Quality run. No exact-head Quality/Chromium pass is claimed.
 - Reviewed the owner-recommended upstream projects and recorded decisions in docs/TECHNIQUE_REGISTER_RU.md and docs/OPEN_SOURCE_TRIAGE_RU.md. Selected patterns only; no dependencies or runtimes added. agent.sys and the intended Orbit AI Agents project remain ambiguous.
 - Next: dispatch Quality on the current exact HEAD, inspect all jobs/artifacts, then continue 8.1–8.17 and inherited UI acceptance. Native iPhone Safari/VoiceOver/WCAG remain manual gates.
+
+
+## V-2026-11-02-STATE-PROVENANCE-002
+
+- Revalidated the repaired machine-readable state after adding the owner-reference research record. Provenance run #962 (ID 41350587354) passed on SHA 21a8317d36c7ca4c66f04d5ada56553b3db75094.
+- Current PR #131 HEAD after the subsequent orienter/ledger update is recorded in ORIENTER.md and project-reference/FILE_ORIENTER_RU.md. Provenance #962 validates the immediately preceding state checkpoint; later changes are documentation-only and do not alter the state YAML.
+- Quality #1193 remains tied to older SHA 5c45de5e728cb280ef9524ac1c45ee500f210138; no exact-current-HEAD Quality run exists. Do not infer a pass from provenance.
+- Next: manual Quality dispatch on the latest branch HEAD; then continue 8.1–8.17 UI and manual device/accessibility acceptance.
