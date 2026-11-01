@@ -16,7 +16,7 @@
 
 | Requirement | Observed implementation | Gap / implementation direction | Status |
 |---|---|---|---|
-| **8.1 Sidebar, memory, projects, chats** | Memory status precedes the title; shared facts → personal facts → private-context opt-in; explanations collapsed; sidebar close preserves project/chat disclosure state; project-filtered chats, explicit project chat creation, per-project gear, separate create dialog, unchanged current-chat membership and local last-closed-chat restore. | Execute accordion/restore regressions in Chromium; refine spacing, keyboard navigation and real-device behavior. | [~] |
+| **8.1 Sidebar, memory, projects, chats** | Memory status precedes the title; shared facts → personal facts → private-context opt-in; explanations collapsed; sidebar close preserves project/chat disclosure state; project-filtered chats, explicit project chat creation, per-project gear, separate create dialog, unchanged current-chat membership and local last-closed-chat restore. | Added Playwright coverage that horizontal touch swipe closes the sidebar while vertical movement does not; verifies project disclosure remains open after close/reopen. Existing accordion/restore regression and real-device checks remain. | [~] |
 | **8.2 Typography/header/main surface** | Dedicated wordmark/chat-title styling, shared system font stack, compact theme/language group, clock and mode controls; mobile control targets use consistent touch sizing. | Visual review across breakpoints and final clock/header proportion check remain. | [~] |
 | **8.3 Settings/providers** | Cloud remains exclusive; opening third-party providers closes Cloud; provider and additional-settings disclosures can remain open together. | Execute E2E and review keyboard/narrow-screen behavior. | [~] |
 | **8.4 Tavily/system prompt** | Tavily key remains in a web-tools disclosure; system prompt is global `localStorage` state and is normalized against the legacy built-in prompt. | Verify the empty-by-default behavior against `DEFAULT_SYSTEM` and migration; decide Tavily only after comparing the existing keyless search fallback and live adapter requirements. No premature deletion. | [~] |
@@ -182,3 +182,10 @@
 
 - Added a focused Playwright scenario for normal, secondary, disabled, link, error and status text. It checks that high contrast changes the five secondary semantic states in both dark and light themes while leaving primary message text unchanged.
 - Test commit: `787c9aaf6026559da31daf51d82f884abdc78c1d`. This adds browser assertions only; Playwright has not been run and no contrast ratio or WCAG conformance is claimed.
+
+
+### Follow-up — sidebar swipe acceptance (8.1, 2026-11-01)
+
+- Added a Playwright regression at mobile viewport size: vertical touch movement must not close the sidebar; a leftward horizontal swipe beyond the close threshold must close it; reopening must preserve the expanded project navigation list.
+- Test commit: `d388a02445ddc1ebccbaec58fd8515b8d0b9adfa`. The event-level regression is added but has not been executed in Chromium or on a physical touch device.
+- Requirements 8.3 and 8.7 already have focused source/E2E coverage: Cloud/provider disclosure exclusivity and truthful project-source unsupported state (no fake CRUD controls). Do not duplicate these implementations.
