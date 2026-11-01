@@ -42,6 +42,8 @@ const suites = {
       includes("alandi: { label: 'aLandi Self-hosted Gateway'", 'The aLandi private gateway must be a first-class provider.');
       includes("allowCrossProvider&&selectedProvider!=='alandi'", 'Selecting aLandi must never silently route private prompts to another provider even if global fallback is enabled.');
       includes('<script id="markedRuntime" defer', 'Marked and DOMPurify must load in document order before the deferred app runtime.');
+      includes('<link rel="stylesheet" href="{{ \'/assets/css/app.css\' | relative_url }}">', 'App styles must be a cacheable external asset.');
+      assert.equal((source.match(/<style\\b/gi) || []).length, 0, 'The app page must not carry a large inline style block.');
       includes('<script defer src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js"', 'DOMPurify must load before the deferred app runtime.');
       includes('<section id="aserviSettingsCard"', 'aLandi aServi must have a dedicated first-party server card.');
       includes('<h3 id="aserviCardTitle"', 'The aServi server card must have its own heading.');
