@@ -12,7 +12,7 @@
 - [ ] Запустить focused Playwright/Chromium regressions для 8.1–8.17 и исправить подтверждённые падения.
 - [ ] Установить, почему exact-head GitHub Actions runs/statuses не видны, хотя Quality Sentinels запускается на pull_request, а Gateway Tests — на PR с изменениями gateway/**; получить реальные результаты.
 - [ ] Запустить полный Quality (Gateway, Security, Integrity, Context, Jekyll, Chromium), Freshness, Provenance, Graphify и Dead Code, если workflows доступны.
-- [ ] Проверить тесты удаления experimental server-memory graph bridge и secret-redaction; тестовый код добавлен, но ещё не выполнялся.
+- [x] Gateway tests passed in Actions run #640 on `6f7fde4` (compileall, manifest/INTEL, pytest, deploy preflight, six-layer eval); no `gateway/**` changes since that tested commit. Browser/Quality verification remains open.
 - [ ] Подтвердить, что E2E охватывает sidebar/chat restore, responsive header, settings disclosures, Back/Forward/Escape, modal lifecycle, message actions, explicit project handoff, touch selection, status/reduced-motion и readability.
 
 ## P1 — визуальная и ручная доступность
