@@ -1,13 +1,17 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
-## Актуальная контрольная точка — 2026-11-02, Playwright runner Chrome
+## Актуальная контрольная точка — 2026-11-02, Quality #1234 green
 
-- PR #131 открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; latest code checkpoint `c5f79b46d09b71fbf06ccc4da137707ac5709e40`. Main remains `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; base is four commits ahead and the shared checklist conflict remains unresolved. No rebase/sync.
-- CI runtime optimization: Playwright 1.56.1 continues using the Chromium engine but selects runner-provided stable Google Chrome with `channel: 'chrome'`; removed the per-run browser download and `apt-get --with-deps`. Local runs retain Playwright's default Chromium.
-- Quality #1218 / run `41360990867` was queued on exact code SHA `c5f79b46d09b71fbf06ccc4da137707ac5709e40`. Verify all four shards, full test execution and final wall-clock before claiming pass or speedup. Baseline Quality #1197 is 1863s; 3x target is <=621s.
-- Quality still runs automatically on branch `push` and `pull_request`; do not ask the owner to dispatch manually. Monitor `/actions/runs?branch=...` so push-triggered runs are included.
-- The writable temporary Pages document-root mapping is retained. The new browser setup verifies `google-chrome --version` before launching the test suite; no actual browser result has been claimed yet.
-- Published URL `https://dorpnay.github.io/skills-github-pages/` is the main-site publication, not a PR preview. No separate preview host/workflow is configured; production Pages remains untouched.
-- Continue mandatory UI 8.1–8.17, inherited responsive/accessibility requirements, native iPhone Safari/VoiceOver/WCAG gates. Keep PR #131 open; no merge, rebase or production deployment.
+- PR #131 открыт, не объединён; branch feat/landing-v1-accessibility-responsive-20261031; code HEAD на момент проверки 9a23d58313da6379cb112b617daedeaa6d38f605. Main остаётся V1 baseline. Не выполнять merge, rebase или main synchronization без отдельного разрешения.
+- Quality #1234 / run 41363212486: exact-head push run завершился success за 105s. Четыре real Chrome shards прошли по 32 теста каждый: 128 passed, 0 failed. Preflight, static analysis, Integrity, Security, Context и Jekyll — success. Published-site smoke — skipped; публикация/preview не проверялись.
+- Quality #1233 выявил transient high-contrast E2E failure: #uiTextContrast был hidden на selectOption. На следующем exact-head run #1234 тест прошёл без source change; наблюдать за flakiness.
+- CI использует Playwright 1.56.1 и runner-provided stable Google Chrome через channel=chrome; локально остаётся Playwright Chromium. Нет apt-get browser dependencies и скачивания браузера в CI.
+- Baseline Quality #1197 = 1863s, но это timeout с неполным прогоном. Нельзя объявлять speedup до сопоставимого completed baseline и одинакового набора тестов.
+- V2 preview: один GitHub Pages target в этом repository. PR deployment в него заменит V1; ничего не публиковать туда. Отдельный Pages URL требует второго Pages site/repository или отдельного host. Preview пока не развёрнут.
+- Hygiene: branch inventory snapshot = 126 refs; не-head открытого PR не означает orphan. Delete-ref action отсутствует; ветки/файлы не удалялись. Сохранять уникальные commits и закрытые unmerged workstreams.
+- 60 owner-provided source repositories зафиксированы в docs/OPEN_SOURCE_TRIAGE_RU.md; это reference-only, никаких framework/runtime/model/dependencies не импортировано.
+- Canonical backlog: docs/V1_UI_FINALIZATION_RU.md section 8.0; mandatory 8.1–8.17 остаются release scope. Implementation evidence: docs/LANDING_UI_V2_IMPLEMENTATION_RU.md. Полный CI и проектный контекст — ORIENTER.md и docs/PROJECT_STATE.yaml.
+- Обновлены checkpoints: ORIENTER.md, docs/PROJECT_STATE.yaml, docs/VOLLEY_LOG.md, docs/REPOSITORY_HYGIENE_RU.md. Последующие изменения state сверять с live PR metadata, не копировать исторические SHAs.
+- Next: продолжать bounded UI slices, upstream research и branch ancestry audit; подготовить отдельный preview target и workflow без доступа к production Pages. Native iPhone Safari, VoiceOver, full component-level WCAG и live runtime остаются отдельными gates.
 
 > Исторические разделы ниже сохраняют контекст; live refs и результаты перепроверять перед каждым действием.
 
