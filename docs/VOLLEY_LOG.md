@@ -370,3 +370,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Calculated current base token ratios: dark surface #0f1b2b — primary 15.93:1, secondary 8.26:1, success 9.02:1, warning 10.92:1, error 6.59:1; light surface #ffffff — primary 15.48:1, secondary 5.91:1, success 4.90:1, warning 6.59:1, error 5.26:1. Disabled/info tokens are included in E2E. These are token-vs-surface measurements only, not the full WCAG audit.
 - Added default light/dark semantic info/warning tokens and changed Cloud checking text to use the theme-aware warning token.
 - Current code/test head: 95b50bc699a1eb2c98a677829cc228e4b60b7b5b. Syntax parsing passed for index.md inline JS, app.spec.mjs and playwright.config.mjs. Browser tests and actual component-level WCAG review remain unrun.
+
+
+### 2026-11-01 — PR #131: inherited checklist made explicit
+
+- Clarified that the original pre-8 section contains 18 control directions, not only seven headings. Expanded the matrix in docs/V1_UI_FINALIZATION_RU.md to list all 18, preserve their original [x]/[~] status, summarize remaining acceptance and map each into 8.1–8.17 or release gates.
+- Confirmed the workstreams already taken into the current code pass: #2 mobile composer/VisualViewport, #3 provider-route localization, #4 field validation/accessibility, #5 prompt edit/focus, #8 gateway stale-response handling, #10 chat scroll preservation, #12 theme-aware status color, and #18 release/Chromium reliability strategy. Other inherited items remain explicitly mapped rather than silently marked complete.
+- Latest code/test head remains 95b50bc699a1eb2c98a677829cc228e4b60b7b5b; latest UI checklist doc commit 162ee62b8ff2e34e20ca161bf66dc37f761b15ad; implementation ledger 8b0639f10c7b0f2e154039c961ac850e5cff79ea. Exact-head browser verification intentionally deferred until the integrated UI pass is complete.
