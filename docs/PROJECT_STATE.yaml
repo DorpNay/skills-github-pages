@@ -515,7 +515,7 @@ landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   latest_code_test_head: "929ebcf20db87eca949c6f5a386c16e75f2856a1"
-  latest_documented_head: "e2d23a910a11f7b40973cf1df6c324acb10e7946"
+  latest_documented_head: "0cf29930c1bbf0cd66e8b44e3941e02ad71ed487"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
     memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
@@ -551,24 +551,24 @@ landing_ui_v2_pr131_2026_10_31:
     message_action_consistency: "a6ce9eed87d6c239b9f5ea394ab04359939479e2"
     high_contrast_text_states: "787c9aaf6026559da31daf51d82f884abdc78c1d"
     aservi_bilingual_validation: "643d16d5e8ac9c0ed147a66d6f80a0dbc52189d3"
-    aservi_stale_health_guard: "847f1bee5ab7c12d960195891dac5a2e5af7201d"
+    aservi_stale_health_guard: "4bd40770fd3446e5280e719644394882c9148dae"
     prompt_edit_accessibility: "e899436014d30ab1b9cbc9fad7a6088a4c8337e7"
     mobile_scroll_preservation: "db61b95704bcd244236e91d40069a57c2d5dbae9"
     chromium_serial_ci: "e7db3778dc87e2f767612630428d12acadb3cdca"
     theme_aware_status_colors: "bca8fa892e95bd35db812382afdadbba41813265"
-    base_token_contrast: "95b50bc699a1eb2c98a677829cc228e4b60b7b5b"
+    base_token_contrast: "4bd40770fd3446e5280e719644394882c9148daeb"
   verification:
     exact_head: "7cdf35d581d9d6bca39256e67a0b0db6083e486c (Quality run #1126 / 41291438804; predates current corrective batch)"
     exact_head_workflow_runs: "Quality #1126 on 7cdf35d: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL with 101 passed, 18 failed; diagnostics artifact 13077583320; published-site smoke skipped. Current code/test head 847f1bee has not been run by Quality."
     gateway_pytest: "not executed in this environment"
     playwright_chromium: "Quality #1126 on prior SHA 7cdf35d failed at 101 passed / 18 failed; current code/test head 95b50bc6 has not yet been executed by Quality. Syntax parsing passed for index.md inline JS, changed E2E modules and Playwright config; no browser pass claimed."
     native_mobile_voiceover: "not executed"
-    wcag_contrast_ratios: "not measured; computed-style regression only"
+    wcag_contrast_ratios: "Base CSS token contrast is measured by a new E2E calculation against solid theme surfaces (>=4.5:1); actual component/gradient/focus/non-text contrast remains unmeasured and requires manual audit."
   safety:
     merge: "requires explicit owner approval"
     deploy: "requires explicit owner approval"
     main: "V1 baseline remains untouched"
-  next: "Continue the integrated UI source/test audit before the final check cycle. When the UI pass is complete, run focused Chromium and exact-head Quality on code/test HEAD 847f1bee5ab7c12d960195891dac5a2e5af7201d (latest docs checkpoint 19ef87b3ec3b7801447b4f662ef1aa80a011541c); inspect results and diagnostics. Native iPhone Safari, VoiceOver and measured WCAG remain manual. PR API most recently returned mergeable=null / mergeable_state=unknown during recalculation; recheck before any future merge decision. No merge or deployment."
+  next: "Continue the integrated UI source/test audit before the final check cycle. When the UI pass is complete, run focused Chromium and exact-head Quality on code/test HEAD 4bd40770fd3446e5280e719644394882c9148dae (latest docs checkpoint 19ef87b3ec3b7801447b4f662ef1aa80a011541c); inspect results and diagnostics. Native iPhone Safari, VoiceOver and measured WCAG remain manual. PR API most recently returned mergeable=null / mergeable_state=unknown during recalculation; recheck before any future merge decision. No merge or deployment."
 
 # Landing UI V2.0 — naming continuation
 landing_v2_aservi:
