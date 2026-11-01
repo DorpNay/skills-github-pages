@@ -74,7 +74,7 @@
     const MODAL_FOCUSABLE_SELECTOR='button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])';
     function getModalFocusableElements(modal){
       return [...modal.querySelectorAll(MODAL_FOCUSABLE_SELECTOR)].filter(node=>
-        node.getClientRects().length&&getComputedStyle(node).visibility!=='hidden'&&!node.closest('.hidden,[inert],[aria-hidden="true"]')&&node.getAttribute('aria-disabled')!=='true'
+        node.getClientRects().length&&getComputedStyle(node).visibility!=='hidden'&&!node.closest('.hidden,[inert],[aria-hidden="true"]')
       );
     }
     function closeUiModalDirect(id){
@@ -4508,7 +4508,7 @@
           case 'start-research-studio': await startResearchStudio(); break;
           case 'toggle-sidebar': toggleSidebar(); break;
           case 'close-sidebar': toggleSidebar(false); break;
-          case 'new-chat': if(voiceConversationActive)stopVoiceConversation(false);createNewChat(); break;
+          case 'new-chat': if(voiceConversationActive)stopVoiceConversation(false);if(activeChatProjectId)createNewChatInProject(activeChatProjectId);else createNewChat(); break;
           case 'new-chat-in-project': createNewChatInProject(control.dataset.projectId);break;
           case 'chat-clear': control.closest('.chat-row-menu')?.removeAttribute('open');clearChatById(control.dataset.chatId);break;
           case 'clear-chat': clearCurrentChat(); break;
@@ -4692,8 +4692,8 @@
             modal.focus({preventScroll:true});
           }else{
             const first=focusable[0],last=focusable[focusable.length-1],activeIndex=focusable.indexOf(document.activeElement);
-            if(event.shiftKey&&(document.activeElement===first||activeIndex===-1)){event.preventDefault();last.focus({preventScroll:true});}
-            else if(!event.shiftKey&&(document.activeElement===last||activeIndex===-1)){event.preventDefault();first.focus({preventScroll:true});}
+            if(event.shiftKey&&(document.activeElement===first||activeIndex===-1)){event.preventDefault();event.stopImmediatePropagation();last.focus({preventScroll:true});}
+            else if(!event.shiftKey&&(document.activeElement===last||activeIndex===-1)){event.preventDefault();event.stopImmediatePropagation();first.focus({preventScroll:true});}
           }
         }
       }

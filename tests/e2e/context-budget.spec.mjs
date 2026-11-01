@@ -18,7 +18,10 @@ test('known model context window bounds retained conversation history', async ({
     body: JSON.stringify({ data: [{ id: 'small-window-model', context_length: 4096 }] })
   }));
   await page.route('https://api.example.test/v1/chat/completions', async route => {
-    sent = route.request().postDataJSON().messages;
+    const payload=route.request().postDataJSON();
+    const last=payload.messages?.at(-1)?.content;
+    if(last==='Reply with exactly OK.'||last==='Reply with exactly OK. No other words.') return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({model:'small-window-model',choices:[{message:{role:'assistant',content:'OK'}}]})});
+    sent = payload.messages;
     await route.fulfill({
       status: 200, contentType: 'application/json',
       body: JSON.stringify({ model: 'small-window-model', choices: [{ message: { role: 'assistant', content: 'Context trimming verified.' } }] })

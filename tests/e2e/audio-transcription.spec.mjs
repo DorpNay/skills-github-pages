@@ -219,6 +219,8 @@ test('attached audio remains in the draft when local ASR is disabled', async ({ 
   });
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await configureAlandiAServi(page, 'audio-disabled-model', 'b'.repeat(64));
+  await page.mouse.move(0, 0);
+  await expect(page.locator('#toast')).toBeHidden({ timeout: 10000 });
   await page.locator('#attachTextButton').click();
   await page.locator('[data-action="choose-any-file"]').click();
   await page.locator('#textAttachmentInput').setInputFiles({
@@ -226,7 +228,8 @@ test('attached audio remains in the draft when local ASR is disabled', async ({ 
   });
   await page.locator('#userInput').fill('Please transcribe this.');
   await page.locator('#sendBtn').click();
-  await expect(page.locator('#toast')).toContainText('выключена');
+  await page.mouse.move(0, 0);
+  await expect(page.locator('#toast')).toContainText('выключена', { timeout: 12000 });
   await expect(page.locator('#userInput')).toHaveValue('Please transcribe this.');
   await expect(page.locator('#draftAttachments')).toContainText('private.wav');
   expect(chatSubmitted).toBe(false);

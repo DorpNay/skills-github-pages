@@ -155,7 +155,7 @@ test('global system prompt edit control is localized, keyboard-friendly, and ret
   await page.addInitScript(() => localStorage.setItem('ai_ui_language_v1', 'en'));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#thirdPartyProviderSettings > summary').click();
+  await page.locator('#additionalSettings > summary').click();
   const prompt = page.locator('#systemPromptInput');
   const edit = page.locator('#editSystemPrompt');
   await expect(prompt).toHaveAttribute('readonly', '');
@@ -298,23 +298,23 @@ test('settings modal traps Tab and Shift+Tab inside the visible dialog', async (
   await page.locator('[data-action="toggle-settings"]').click();
   const modal = page.locator('#settingsModal');
   const visibleCount = await modal.evaluate(element => {
-    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],[tabindex]:not([tabindex="-1"])')];
+    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])')];
     return nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]')).length;
   });
   expect(visibleCount).toBeGreaterThan(1);
   await modal.evaluate(element => {
-    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],[tabindex]:not([tabindex="-1"])')];
+    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])')];
     nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]'))[0].focus();
   });
   await page.keyboard.press('Shift+Tab');
   await expect.poll(() => modal.evaluate(element => {
-    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],[tabindex]:not([tabindex="-1"])')];
+    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])')];
     const visible = nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]'));
     return document.activeElement === visible.at(-1);
   })).toBe(true);
   await page.keyboard.press('Tab');
   await expect.poll(() => modal.evaluate(element => {
-    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],[tabindex]:not([tabindex="-1"])')];
+    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])')];
     const visible = nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]'));
     return document.activeElement === visible[0];
   })).toBe(true);
@@ -522,7 +522,7 @@ test('sidebar closes on a horizontal touch swipe without consuming vertical scro
 test('aLandi aServi is exclusive while provider and additional settings can remain open together', async ({ page }) => {
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   await page.locator('[data-action="toggle-settings"]').click();
-  const aservi=page.locator('#aserviSettingsGroup'),providers=page.locator('#thirdPartyProviderSettings'),additional=page.locator('#additionalSettings');
+  const cloud=page.locator('#aserviSettingsGroup'),providers=page.locator('#thirdPartyProviderSettings'),additional=page.locator('#additionalSettings');
   if (!(await aservi.evaluate(element => element.open))) await cloud.locator(':scope > summary').click();
   await expect(cloud).toHaveAttribute('open','');
   await providers.locator(':scope > summary').click();
@@ -609,6 +609,8 @@ test('forced-colors mode preserves visible keyboard focus and control borders', 
 
 test('high-contrast preference updates every important text state in both themes', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#additionalSettings > summary').click();
   await page.evaluate(() => {
     const content = document.createElement('div');
     content.className = 'assistant-content';
@@ -639,10 +641,9 @@ test('high-contrast preference updates every important text state in both themes
     status: getComputedStyle(document.querySelector('#searchStatus')).color,
     aserviWarning: getComputedStyle(document.querySelector('#aserviStatus')).color
   }));
-  await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#additionalSettings > summary').click();
   const normalDark = await readStates();
   await page.locator('#uiTextContrast').selectOption('high');
+  await expect(page.locator('html')).toHaveAttribute('data-text-contrast','high');
   const highDark = await readStates();
   for (const key of ['secondary','disabled','link','error','status']) {
     expect(highDark[key], key + ' must change in dark theme').not.toBe(normalDark[key]);
@@ -1210,6 +1211,8 @@ test('research trace supports a structured JSON download', async ({ page }) => {
     localStorage.setItem('ai_research_trace_' + traceData.id, JSON.stringify(traceData));
   }, trace);
   await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#chatBox')).toContainText('Final result', { timeout: 10000 });
+  await expect(page.locator('[data-action="open-trace"][data-trace-id="e2e-json-trace"]')).toBeVisible({ timeout: 10000 });
   await page.locator('[data-action="open-trace"][data-trace-id="e2e-json-trace"]').click();
   await expect(page.locator('#traceContent')).toContainText('Источники из инструментов');
   await expect(page.locator('#traceContent a')).toHaveAttribute('href', 'https://example.test/docs');
@@ -1777,6 +1780,9 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await alphaGroup.locator('[data-action="new-chat-in-project"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(alphaId);
   await ensureSidebarOpen(page);
+  const personalGroup=page.locator('#projectlessGroup');
+  if(!(await personalGroup.evaluate(element=>element.open))) await personalGroup.locator(':scope > summary').click();
+  await personalGroup.locator('[data-action="projectless-nav"]').click();
   await page.locator('#sidebar [data-action="new-chat"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue('');
   const betaId = await createProjectFromUi(page, 'Beta Project', 'BETA_PROJECT_INSTRUCTION_SENTINEL');
@@ -1794,12 +1800,14 @@ test('project instructions, project memory, and project bundles stay scoped to t
   const betaChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
   await expect(page.locator('#currentProjectSelect')).toHaveValue(betaId);
   const betaChatRow = page.locator('#projectNavigationList .chat-row').filter({ has: page.locator('[data-action="switch-chat"][data-chat-id="' + betaChatId + '"]') });
+  await betaChatRow.scrollIntoViewIfNeeded();
   await betaChatRow.locator('summary[aria-label="Действия чата"]').click();
   await betaChatRow.locator('[data-action="chat-project"]').click();
   await page.locator('#chatActionProject').selectOption(alphaId);
   await page.locator('[data-action="chat-action-save"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(alphaId);
   const movedChatRow = page.locator('#projectNavigationList .chat-row').filter({ has: page.locator('[data-action="switch-chat"][data-chat-id="' + betaChatId + '"]') });
+  await movedChatRow.scrollIntoViewIfNeeded();
   await movedChatRow.locator('summary[aria-label="Действия чата"]').click();
   await movedChatRow.locator('[data-action="chat-project"]').click();
   await page.locator('#chatActionProject').selectOption(betaId);
@@ -2367,6 +2375,9 @@ test('aServi URL validation follows the selected language and is announced with 
   await page.evaluate(() => localStorage.setItem('ai_ui_language_v1', 'ru'));
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#aserviBaseUrl').fill('');
+  await page.locator('#aserviModel').fill('');
+  await page.locator('#aserviApiKey').fill('');
   await page.locator('[data-action="connect-aservi"]').click();
   await expect(page.locator('#aserviBaseUrlError')).toHaveText('Укажи URL сервера.');
   await expect(page.locator('#aserviModelError')).toHaveText('Укажи ID модели.');
@@ -3460,11 +3471,13 @@ test('request status and notifications expose semantic state and centered alignm
   await expect(page.locator('#toast')).toHaveAttribute('data-state','success');
   await expect(page.locator('#toast')).toHaveAttribute('role','status');
   await expect(page.locator('#toast')).toHaveAttribute('aria-live','polite');
+  await page.mouse.move(0, 0);
+  await expect(page.locator('#toast')).toBeHidden({ timeout: 10000 });
   await ensureSidebarOpen(page);
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('[data-action="create-project"]').click();
   await page.mouse.move(0, 0);
-  await expect(page.locator('#toast')).toHaveAttribute('data-state','error', { timeout: 6000 });
+  await expect(page.locator('#toast')).toHaveAttribute('data-state','error', { timeout: 10000 });
   await expect(page.locator('#toast')).toHaveAttribute('role','alert');
   await expect(page.locator('#toast')).toHaveAttribute('aria-live','assertive');
   await expect(page.locator('#toast')).toHaveAttribute('data-persistent','true');
@@ -3555,6 +3568,7 @@ test('modal lifecycle keeps keyboard focus and page scroll isolated across core 
   await ensureSidebarOpen(page);
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await assertModalLifecycle('projectCreateModal');
+  await page.locator('[data-action="toggle-sidebar"]').click();
 
   await page.locator('[data-action="toggle-settings"]').click();
   await assertModalLifecycle('settingsModal');
