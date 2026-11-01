@@ -598,3 +598,18 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Latest code/test/workflow HEAD before this docs-only checkpoint: `e98347708eb02de48913bb4d90eca7b39f9e6473`; compare 592 ahead / 4 behind main; PR #131 remains open/unmerged and mergeable=false.
 - Next: manually dispatch Quality on the latest branch HEAD; review screenshot attachments from the new responsive visual test; continue 8.1–8.17 and native accessibility/device gates.
 
+
+
+## V-2026-11-02-CHROMIUM-CI-BASELINE-AND-OPTIMIZATION-005
+
+- Revalidated PR #131 and branch `feat/landing-v1-accessibility-responsive-20261031`. Exact baseline HEAD: `e75e608bb1b9f588ccc26f575602113037f44039`; PR remains open/unmerged, GitHub mergeable=false. Main is `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; compare at baseline: 600 ahead / 4 behind, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. No rebase, merge or deployment.
+- Quality #1197 (run 41352153636) was automatically triggered by `push` on the exact baseline SHA. It completed failure at 2026-11-01T21:59:09Z after 1863 seconds. All non-Chromium jobs passed; Lite Gateway Tests #642 passed on the same SHA.
+- Chromium job duration was 1847s. The Playwright step ran from 21:29:04Z to 21:59:05Z and hit the configured 1800s global timeout. Jekyll build took 7s; pinned Playwright/Chromium installation took 23s.
+- The log proves a harness path defect: `_config.yml` sets `baseurl: /skills-github-pages`, while the local Python server exposed `_site/` only at `/`. Browser requests for `/skills-github-pages/assets/css/app.css` and `/skills-github-pages/assets/js/app.js` returned 404. The suite reported 43 failed, 83 not run, 1 passed and two suite-level timeout errors. Do not classify these as product regressions before rerunning with the corrected harness.
+- Confirmed 132 E2E test definitions, 99 in `app.spec.mjs`; no `test.describe.serial`, `test.serial`, `.only` or `.skip` markers were found. The config already has `fullyParallel: true`, but CI forced one worker.
+- CI correction adds one explicit asset-loading regression (133 expected test definitions, 100 in app.spec.mjs): both Pages-prefixed CSS and JS must return HTTP 200.
+- CI correction maps the local Pages baseurl through a symlink in the Playwright webServer command; splits local browser E2E into four independent Playwright shards with one worker per GitHub-hosted runner; keeps published-site checks in shard 1; and uploads uniquely named diagnostics per shard.
+- Workflow process correction: Quality already auto-triggers on push and pull_request. Run #1197 is direct proof of the push trigger. The previous manual-dispatch recommendation came from using a helper that filters to PR-triggered runs only. Monitor the full Actions runs collection by branch. Set Quality concurrency `cancel-in-progress: false` so a new push does not cancel an active run; the latest pending run is retained.
+- Benchmark target: baseline 1863s total Quality duration; at least 3x faster means no more than 621s for the comparable new run. This is a target, not a result; verify exact-head run and every shard before claiming it.
+- Continue mandatory inherited UI scope + 8.1–8.17, then optional 8.18–8.27 in the canonical ledger; preserve the @Поиск protocol in `docs/ALANDI_MASTER_CONTEXT_RU.md`. No merge/deploy or destructive repository changes.
+

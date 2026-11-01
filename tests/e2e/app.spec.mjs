@@ -131,6 +131,19 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
+test('local Pages baseurl serves the app stylesheet and JavaScript', async ({ page }) => {
+  const cssResponse = page.waitForResponse(response =>
+    new URL(response.url()).pathname.endsWith('/skills-github-pages/assets/css/app.css')
+  );
+  const jsResponse = page.waitForResponse(response =>
+    new URL(response.url()).pathname.endsWith('/skills-github-pages/assets/js/app.js')
+  );
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const [css, js] = await Promise.all([cssResponse, jsResponse]);
+  expect(css.status()).toBe(200);
+  expect(js.status()).toBe(200);
+});
+
 test('global system prompt is empty by default and obsolete Gemini reset is absent', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();

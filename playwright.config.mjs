@@ -6,7 +6,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  // A single CI worker removes browser-process contention on GitHub-hosted runners.
+  // One worker per shard keeps each runner predictable; the workflow matrix provides parallelism.
   workers: process.env.CI ? 1 : undefined,
   // Stop the suite before the Actions job timeout so reporters and artifacts can flush.
   globalTimeout: process.env.CI ? 30 * 60 * 1000 : undefined,
@@ -22,7 +22,7 @@ export default defineConfig({
     video: 'off'
   },
   ...(process.env.LIVE_SITE_URL ? {} : { webServer: {
-    command: 'python3 -m http.server 4173 --bind 127.0.0.1 --directory _site',
+    command: 'test -e _site/skills-github-pages || ln -s . _site/skills-github-pages || exit 1; python3 -m http.server 4173 --bind 127.0.0.1 --directory _site',
     url: 'http://127.0.0.1:4173/',
     reuseExistingServer: !process.env.CI,
     timeout: 10000

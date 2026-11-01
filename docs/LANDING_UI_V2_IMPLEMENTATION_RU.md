@@ -640,3 +640,28 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Those four jobs now depend on the shared syntax preflight; a parser failure is surfaced once rather than repeated as four apparent independent failures. Chromium E2E and static analysis remain independent.
 - This workflow topology change is authored but not yet exercised by an exact-head run. Quality #41351093423 still targets older SHA `11ffc0bbbe01a068490ca32dd1ea4029517a3120`.
 
+
+
+## Chromium CI performance and local Pages harness — 2026-11-02
+
+### Verified baseline
+
+- Exact baseline PR #131 HEAD: `e75e608bb1b9f588ccc26f575602113037f44039`.
+- Quality #1197 / run `41352153636` was push-triggered and completed failed after 1863s. The Chromium job took 1847s; its Playwright step reached the 1800s global timeout. Jekyll build took 7s and pinned browser runtime installation took 23s.
+- 132 test definitions; 99 reside in `tests/e2e/app.spec.mjs`. The suite has no serial groups, `.only` or `.skip`; `fullyParallel: true` was already enabled, but CI used one worker.
+- Browser logs show the local server returned 404 for the CSS and JS assets under `/skills-github-pages/assets/...`. Jekyll config sets `baseurl: /skills-github-pages`, but the local Python server exposed `_site/` only at `/`. The resulting 43 failures / 83 not run / 1 pass and suite timeouts are not accepted as product regression evidence.
+
+### Bounded correction
+
+- Keep the real Chromium engine and pinned Playwright 1.56.1.
+- Map `_site/skills-github-pages` to `_site` in the local Playwright webServer command; do not change production `baseurl`.
+- Add an E2E regression requiring both `app.css` and `app.js` to return HTTP 200 through the configured Pages prefix.
+- Run four Playwright shards on four independent GitHub-hosted runners, one worker per runner, `fail-fast: false`. Run live published-site checks once in shard 1 and upload uniquely named diagnostics per shard.
+- Set Quality concurrency to `cancel-in-progress: false`: an active run completes and the newest pending push remains queued.
+- Push and pull_request already trigger Quality automatically. No manual workflow dispatch is required; the commit-run helper filters PR events, so monitor the full Actions runs collection for the branch.
+
+### Performance acceptance
+
+- Baseline Quality wall-clock: 1863s. A 3x speedup requires a comparable exact-head run in at most 621s.
+- The new run must pass all four Chromium shards and the remaining Quality jobs. Do not claim the speed target until measured. If the benchmark is slower than 621s, continue with evidence-based optimization; do not replace Chromium with a DOM simulator.
+
