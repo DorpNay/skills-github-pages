@@ -242,3 +242,14 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Documentation updates do not constitute test execution. Exact-head Gateway/Chromium/CI, native iPhone/VoiceOver and WCAG contrast-ratio checks remain unexecuted. No passing test or merge/deployment is claimed.
 - Latest known code/test head before documentation-only commits: 8f68c2cc4b4b01a1917e32f75f7d5016517d41c3. Latest documentation commit at this entry: pending.
 - Next action: execute exact-head verification (Gateway + focused Playwright/Chromium + full Quality/Freshness/Provenance/Graphify/Dead Code where available); fix only confirmed failures, then continue manual acceptance.
+
+
+### 2026-11-01 — PR #131: source audit of search and capability labels
+
+- Re-read index.md settings/search/function-panel markup and RU/EN copy.
+- Confirmed standard vs expanded web search is distinct from execution budget; offline disables web tools but does not claim cloud inference is local.
+- Confirmed agent mode is described as a four-stage sequential workflow on one selected model; the 1–50 team configuration is explicitly a saved blueprint, not independent agents.
+- Confirmed the connector panel reports no external integrations connected and has no placeholder switches.
+- Confirmed Tavily remains optional with a pending decision note; global user system prompt defaults to empty and legacy default text is normalized to empty.
+- No source-level contradiction found in the inspected surfaces. Tavily/keyless-search decision and provider/runtime error tests remain open. This was a source review only, not browser/live-provider verification.
+- Updated LANDING_UI_V2_IMPLEMENTATION_RU.md. Exact-head workflow/status queries remain empty; no test pass is claimed.
