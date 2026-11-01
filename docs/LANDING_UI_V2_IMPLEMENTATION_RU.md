@@ -230,3 +230,11 @@ Not active UI work: project-source CRUD without a gateway list contract; persist
 - Requirement 8.12 graph bridge/UI removal and gateway secret-redaction regressions are implemented in source; their tests are not executed.
 - Requirements 8.1–8.17 have implementation and/or focused regression source, but exact-head Playwright/Chromium and full CI results are absent. Native iPhone/VoiceOver and WCAG ratio checks remain manual.
 - Do not claim CI/E2E pass, merge or deploy. Continue from P0 exact-head verification, then resolve confirmed failures before more UI scope.
+
+
+### Documentation reconciliation follow-up — 2026-11-01
+
+- Canonical owner queue is section 8.0 in V1_UI_FINALIZATION_RU.md; the older pre-8.1 checklist is historical V1 context, not a parallel active queue.
+- The concise polish register, project state, orienter, Volley log and PR body now point to the same residual work.
+- Latest code/test head remains 8f68c2cc4b4b01a1917e32f75f7d5016517d41c3; subsequent commits are documentation-only. Latest known PR head at this checkpoint: 5b8293910a2c120557725ae9f44dd6f2900d7a2f.
+- P0 exact-head verification remains the next action; workflow/status queries returned no entries. No test pass, merge or deployment is claimed.
