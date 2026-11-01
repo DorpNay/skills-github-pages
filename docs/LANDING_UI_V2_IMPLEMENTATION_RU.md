@@ -17,7 +17,7 @@
 | Requirement | Observed implementation | Gap / implementation direction | Status |
 |---|---|---|---|
 | **8.1 Sidebar, memory, projects, chats** | Memory status precedes the title; shared facts → personal facts → private-context opt-in; explanations collapsed; sidebar close preserves project/chat disclosure state; project-filtered chats, explicit project chat creation, per-project gear, separate create dialog, unchanged current-chat membership and local last-closed-chat restore. | Added Playwright coverage that horizontal touch swipe closes the sidebar while vertical movement does not; verifies project disclosure remains open after close/reopen. Existing accordion/restore regression and real-device checks remain. | [~] |
-| **8.2 Typography/header/main surface** | Dedicated wordmark/chat-title styling, shared system font stack, compact theme/language group, clock and mode controls; mobile control targets use consistent touch sizing. | Visual review across breakpoints and final clock/header proportion check remain. | [~] |
+| **8.2 Typography/header/main surface** | Dedicated wordmark/chat-title styling, shared system font stack, compact theme/language group, clock and mode controls; mobile control targets use consistent touch sizing. | Added responsive Playwright checks at 320/360/390/768/1024/1440px for header overflow, distinct chat-title treatment, clock presence, wordmark styling and compact Fast/Thorough controls; actual browser execution and visual review remain. | [~] |
 | **8.3 Settings/providers** | Cloud remains exclusive; opening third-party providers closes Cloud; provider and additional-settings disclosures can remain open together. | Execute E2E and review keyboard/narrow-screen behavior. | [~] |
 | **8.4 Tavily/system prompt** | Tavily key remains in a web-tools disclosure; system prompt is global `localStorage` state and is normalized against the legacy built-in prompt. | Verify the empty-by-default behavior against `DEFAULT_SYSTEM` and migration; decide Tavily only after comparing the existing keyless search fallback and live adapter requirements. No premature deletion. | [~] |
 | **8.5 Living notes** | Source document already says new owner UI requirements belong in the matching subsection and statuses require code/test evidence. | Keep the source checklist as the owner requirements record; implementation status and evidence live in this ledger and PR. | [x] |
@@ -189,3 +189,9 @@
 - Added a Playwright regression at mobile viewport size: vertical touch movement must not close the sidebar; a leftward horizontal swipe beyond the close threshold must close it; reopening must preserve the expanded project navigation list.
 - Test commit: `d388a02445ddc1ebccbaec58fd8515b8d0b9adfa`. The event-level regression is added but has not been executed in Chromium or on a physical touch device.
 - Requirements 8.3 and 8.7 already have focused source/E2E coverage: Cloud/provider disclosure exclusivity and truthful project-source unsupported state (no fake CRUD controls). Do not duplicate these implementations.
+
+
+### Follow-up — responsive header acceptance (8.2, 2026-11-01)
+
+- Added a Playwright layout regression across 320, 360, 390, 768, 1024 and 1440 CSS px. It checks that the header does not horizontally overflow, the active chat title remains a distinct bordered surface, the clock remains present, the wordmark retains its expressive treatment, and Fast/Thorough controls stay compact.
+- Test commit: `9ff326d40ac0567c1c62c293cb396bcd9c4eba82`. The test is added but not executed; it is not a substitute for screenshot review on real devices.
