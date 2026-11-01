@@ -4,15 +4,17 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 
 ## Landing V2 continuity checkpoint — 2026-11-01
 
-- **PR #131** (`feat/landing-v1-accessibility-responsive-20261031`) is the active Landing V2 implementation branch; current head at this checkpoint: `7958ad24b987819a568a7755dfd243f740c0e240`. PR remains open and unmerged.
+- **PR #131** (`feat/landing-v1-accessibility-responsive-20261031`) is the active Landing V2 implementation branch; latest head: `d822cb623b2a72642921654a04e6c9d988091834`. PR remains open and unmerged.
 - V1 on `main` remains the stable baseline. V2 source changes and implementation statuses are not part of main until the owner explicitly authorizes merging PR #131.
-- Owner control: do not merge, close, or deploy PR #131 without the owner's explicit command.
-- Canonical V2 requirements: `docs/V1_UI_FINALIZATION_RU.md`, sections 8.1–8.17. Branch implementation ledger: `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`; unified remaining queue: section 8.0 on the PR branch.
-- Verified: Gateway Actions run #640 passed compileall, manifest/INTEL, `pytest gateway/tests`, deploy preflight and six-layer offline evaluation on `6f7fde485b2b13aecc50523b20785e0ac615d2ad`. No `gateway/**` files changed after that tested commit through PR #131 head.
-- Not verified: exact-head Quality/Chromium and published-site checks are not visible through the available Actions status lookup; native iPhone Safari/VoiceOver, real WCAG contrast measurements and manual visual acceptance remain open.
-- PR #131 is 199 commits ahead / 4 behind current main at this checkpoint; GitHub reports `mergeable=false`. Do not force-update or merge the branch blindly. Inspect/reconcile the four main-side commits before any branch synchronization or pre-merge preparation.
-- Continue with P0 exact-head Quality/Chromium evidence, then manual P1 acceptance. All completion claims must be tied to current code and test evidence.
-- A separate draft documentation safety PR #132 (`docs/landing-v2-continuity-backup-20261101`) preserves this checkpoint outside PR #131; it is not merged.
+- Owner control: do not merge, close, retarget, force-update, synchronize with main, or deploy PR #131 without the owner's explicit command.
+- Canonical V2 requirements: `docs/V1_UI_FINALIZATION_RU.md`, sections 8.1–8.17. Unified remaining queue: section 8.0. Implementation/evidence ledger: `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md` on PR #131.
+- **Verified for unchanged Gateway code:** Actions run #640 passed compileall, manifest/INTEL, `pytest gateway/tests`, deploy preflight and six-layer offline evaluation on `6f7fde485b2b13aecc50523b20785e0ac615d2ad`; no `gateway/**` files changed after that tested commit through the current PR head.
+- **Verified only for main/V1 on backup PR #132:** Quality run #1114 passed all jobs; Chromium log reports 98 passed and published-site smoke 1 passed. Freshness #258 passed 16 deterministic tests and exact queue check (main `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`, 8 PRs excluding #132, issue #111). Provenance #798 passed. These runs do **not** validate Landing V2 code in PR #131.
+- **Still pending for PR #131:** an actual exact-head Quality/Chromium result and its own published-site smoke status. The current SHA lookup returns no PR-triggered runs for its latest head; a documentation commit was added to request normal PR CI, but no run is visible yet.
+- Live compare: PR #131 is **203 commits ahead / 4 behind** `main`, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub reports `mergeable=false`. The four main-side commits touch the canonical UI checklist. No branch sync/rebase/merge has been performed.
+- Other open workstreams: #130 Deep Research, #129 Voice, #128 Agent Workforce, and #125 Agent Studio are research/HOLD branches based on `future-workstreams/parking-base-20261031`; #127 is the continuity/master registry; #126 dependency audit (draft); #124 Python/dependency lock. Keep these isolated; do not merge holding branches wholesale into main.
+- Separate draft PR #132 (`docs/landing-v2-continuity-backup-20261101`) stores this continuity state outside the implementation branch. It is documentation-only, open and unmerged.
+- Next: obtain exact PR #131 Quality/Chromium evidence without synchronizing its branch to main; then inspect only confirmed failures. Manual iPhone Safari/VoiceOver, measured WCAG contrast and visual acceptance remain P1.
 
 ## Current working checkpoint — 2026-11-01
 
