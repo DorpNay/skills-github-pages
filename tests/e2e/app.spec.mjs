@@ -278,6 +278,24 @@ test('mobile sidebar closes on a deliberate horizontal swipe but not vertical sc
   await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
 });
 
+test('settings modal traps Tab and Shift+Tab inside the visible dialog', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  const modal = page.locator('#settingsModal');
+  const focusable = modal.locator('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])');
+  const count = await focusable.count();
+  expect(count).toBeGreaterThan(1);
+  await focusable.first().focus();
+  await page.keyboard.press('Shift+Tab');
+  await expect(focusable.last()).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(focusable.first()).toBeFocused();
+
+  await page.locator('#headerThemeToggle').focus();
+  await page.keyboard.press('Tab');
+  await expect(focusable.first()).toBeFocused();
+});
+
 test('settings backdrop closes cleanly and restores focus across repeated cycles', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const opener = page.locator('[data-action="toggle-settings"]').first();
