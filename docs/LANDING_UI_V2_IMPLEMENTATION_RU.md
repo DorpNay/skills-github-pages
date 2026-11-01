@@ -32,7 +32,7 @@
 | **8.14 Touch selection** | Targeted user-select/-webkit-user-select/touch-action rules keep controls from selecting the whole interface while message text, expanded viewer content and editable fields remain selectable; horizontal sidebar swipe is separated from vertical scrolling. | Chromium regression now checks buttons, disclosures, input fields, assistant text and expanded viewer selection styles; native iOS Safari long-press, VoiceOver and gesture tests remain. | [~] |
 | **8.15 Status/progress** | Status and toast elements expose neutral/info/success/warning/error data states with restrained semantic colors; status text and ticker are centered; no synthetic progress added. | Playwright coverage now checks all five status colors, toast semantic styling, centered alignment and marquee suppression under `prefers-reduced-motion`; browser execution and theme contrast review remain. | [~] |
 | **8.16 Button typography/icon-first** | Shared control typography/spacing and 44px message-action targets; copy/view/speech actions are icon-first. Inline message-action labels/tooltips now use one consistent value for both `title` and `aria-label`. | Added E2E assertions for all inline and expanded-view message actions: matching accessible name/tooltip and 44px hit targets. Remaining one-off controls and full panel review remain. | [~] |
-| **8.17 Adjustable text readability** | Persistent text scale and standard/high-contrast preference have a live preview/reset and apply to light/dark themes; high contrast also raises secondary/disabled/link/error/status text. | Run contrast checks for all states and confirm readability on actual devices. | [~] |
+| **8.17 Adjustable text readability** | Persistent text scale and standard/high-contrast preference apply in light/dark themes; high contrast adjusts secondary, disabled, link, error and status text. | Added Playwright coverage comparing normal/high-contrast colors for secondary, disabled, links, errors and status in both themes while confirming primary text remains stable; actual WCAG ratio review and browser execution remain. | [~] |
 
 ## Acceptance and test plan
 
@@ -176,3 +176,9 @@
 - Fixed inconsistent duplicate `aria-label` assignments on inline message actions. Copy, open-full-message and local-speech controls now each set one label and use the same value for the tooltip and accessible name.
 - Extended the message-viewer Playwright scenario to verify all inline and expanded-view action labels/tooltips match and all inline message-action targets are at least 44×44px.
 - Code commit: `f1b7792dd6c38af08cf4e3f8979660890a3bea0a`; test commit: `a6ce9eed87d6c239b9f5ea394ab04359939479e2`. Browser execution remains pending.
+
+
+### Follow-up — high-contrast text-state regression (8.17, 2026-11-01)
+
+- Added a focused Playwright scenario for normal, secondary, disabled, link, error and status text. It checks that high contrast changes the five secondary semantic states in both dark and light themes while leaving primary message text unchanged.
+- Test commit: `787c9aaf6026559da31daf51d82f884abdc78c1d`. This adds browser assertions only; Playwright has not been run and no contrast ratio or WCAG conformance is claimed.
