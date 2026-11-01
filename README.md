@@ -23,7 +23,7 @@
 
 ## Карта архитектуры
 
-Навигационная схема UI, gateway, памяти, RAG, инструментов, голоса и тестов: [docs/ALANDI_ARCHITECTURE_MAP_RU.md](docs/ALANDI_ARCHITECTURE_MAP_RU.md). Это кураторская карта модулей. Graphify code-only dependency graph строится в GitHub Actions как временный dev-artifact; последний проверенный срез — 1,109 nodes / 3,103 edges / 53 communities. Это навигация разработчика, не runtime-компонент.
+Навигационная схема UI, gateway, памяти, RAG, инструментов, голоса и тестов: [docs/ALANDI_ARCHITECTURE_MAP_RU.md](docs/ALANDI_ARCHITECTURE_MAP_RU.md). Это кураторская карта модулей. Graphify code-only dependency graph строится в GitHub Actions как временный dev-artifact. Последний проверенный граф (1,109 nodes / 3,103 edges / 53 communities) — исторический срез до выноса browser runtime/styles в отдельные assets; текущий Graphify workflow теперь отслеживает assets/js/**, assets/css/** и landing/**, но новый артефакт ещё не подтверждён. Это навигация разработчика, не runtime-компонент.
 
 ## Шесть инженерных пластов и журнал решений
 
@@ -137,7 +137,7 @@ node scripts/quality-agents.mjs context
 - Реестр OCR/ASR моделей с языками, лицензиями, ресурсами и benchmark gate: [docs/MULTIMODAL_MODEL_STACK_RU.md](docs/MULTIMODAL_MODEL_STACK_RU.md).
 - Решения по AirLLM, Open-Generative-AI, dsh-our-free-model, CLI-Anything, RAG-Anything, Pliny/L1B3RT4S, taste-skill и AI Engineering from Scratch: [docs/TECHNIQUE_REGISTER_RU.md](docs/TECHNIQUE_REGISTER_RU.md).
 
-В режимах «Глубоко» и «Умное исследование» OCR/ASR/PDF/audio prompts выбирают дополнительный локальный skill только по необходимости. Он не означает, что загрузка файлов, microphone capture, TTS или media API уже реализованы. Новый runtime требует отдельной проверки приватности, лицензии, памяти и тестов. Существующий UI v10.0 и оформление сохраняются.
+В режимах «Глубоко» и «Умное исследование» OCR/ASR/PDF/audio prompts выбирают дополнительный локальный skill только по необходимости. Он не означает, что загрузка файлов, microphone capture, TTS или media API уже реализованы. Новый runtime требует отдельной проверки приватности, лицензии, памяти и тестов. Существующий браузерный клиент aLandi и его согласованный визуальный язык сохраняются.
 
 
 ## Точный серверный кэш и личный gateway
@@ -152,3 +152,10 @@ node scripts/quality-agents.mjs context
 - [Аудит новых open-source проектов и решение по каждому](docs/TECHNOLOGY_AUDIT_2026-10-21_RU.md)
 
 Это архитектурные документы и on-demand skill; они не означают, что отдельные агенты, Google Drive OAuth или media workers уже развернуты.
+
+## Landing UI V2.0 — единый объём работ
+
+Вся дальнейшая работа над браузерным интерфейсом ведётся в [PR #131](https://github.com/DorpNay/skills-github-pages/pull/131). Канонический backlog — раздел 8.0 файла [V1_UI_FINALIZATION_RU.md](docs/V1_UI_FINALIZATION_RU.md): в него сведены все ещё актуальные незакрытые UI-требования из разделов 1–7 вместе с приоритетными требованиями 8.1–8.17. Старые выполненные, устаревшие и заменённые пункты не создают параллельную очередь. [LANDING_UX_POLISH_BACKLOG_RU.md](docs/LANDING_UX_POLISH_BACKLOG_RU.md) — только краткая копия; технические изменения и evidence ведутся в [LANDING_UI_V2_IMPLEMENTATION_RU.md](docs/LANDING_UI_V2_IMPLEMENTATION_RU.md).
+
+PR #131 остаётся открытым и не объединённым. Проверки Chromium/Quality на точном HEAD и ручная приёмка на реальном устройстве — отдельные gates; добавленный тестовый код сам по себе не является результатом теста. Не выполнять merge или deployment без явного разрешения владельца.
+
