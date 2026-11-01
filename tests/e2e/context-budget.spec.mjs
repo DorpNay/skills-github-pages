@@ -36,7 +36,7 @@ test('known model context window bounds retained conversation history', async ({
   }, messages);
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('small-window-model');
@@ -90,7 +90,7 @@ test('large model context retains history beyond the old global caps', async ({ 
   }, messages);
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('large-window-model');
