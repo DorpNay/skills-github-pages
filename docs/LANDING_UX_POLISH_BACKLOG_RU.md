@@ -79,3 +79,7 @@
 |---|---|---|
 | 2026-10-30 | Consolidated remaining visual/interaction tasks from legacy UX audit, V1 UI checklist and landing source. | `LEGACY_UX_REQUEST_AUDIT_RU.md`, `V1_UI_FINALIZATION_RU.md`, `landing/index.html`, `tests/e2e/landing.spec.mjs` |
 | 2026-10-30 | Added explicit pause controls to landing roadmap tickers and Playwright pause/resume test. | Commits `f42c42d`, `b213c8a`; PR #121 exact-head Chromium/Quality passed; native keyboard/screen-reader confirmation pending |
+### 2026-11-02 — Continuity mirror
+
+- Keep this as a concise mirror of canonical section 8.0, including applicable inherited requirements from sections 1–7 and 8.1–8.17. Do not create a parallel backlog.
+- Latest source checkpoint in PR #131: `9aa74853478a6a680cdd36ab0f84c851721405a4`; latest PR #131 head: `782d5d35691d66cc2bcfb48473329463886b48e8`. Exact-head Quality/Chromium and Graphify evidence remain pending.
