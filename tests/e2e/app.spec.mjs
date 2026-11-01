@@ -3434,10 +3434,14 @@ test('request status and notifications expose semantic state and centered alignm
   await page.locator('#projectCreateNameInput').fill('Semantic status project');
   await page.locator('[data-action="create-project"]').click();
   await expect(page.locator('#toast')).toHaveAttribute('data-state','success');
+  await expect(page.locator('#toast')).toHaveAttribute('role','status');
+  await expect(page.locator('#toast')).toHaveAttribute('aria-live','polite');
   await ensureSidebarOpen(page);
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('[data-action="create-project"]').click();
-  await expect(page.locator('#toast')).toHaveAttribute('data-state','error');
+  await expect(page.locator('#toast')).toHaveAttribute('data-state','error', { timeout: 6000 });
+  await expect(page.locator('#toast')).toHaveAttribute('role','alert');
+  await expect(page.locator('#toast')).toHaveAttribute('aria-live','assertive');
 });
 
 
