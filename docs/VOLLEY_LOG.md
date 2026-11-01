@@ -505,3 +505,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Five no-PR branches are confirmed behind-only with no exact-name code/PR references: feat/alandi-helper-model-routing; feat/rag-rrf-engineering-audit-rebased-20261027; fix/provider-model-catalogs-v2; fix/pyodide-setup; fix/theme-persistence-e2e-isolation. They are recorded as deletion candidates in docs/REPOSITORY_HYGIENE_RU.md.
 - future-workstreams/parking-base-20261031 is intentionally reserved and retained. Other no-PR branches with ahead > 0 are retained for separate triage.
 - No branch/file deletion performed: GitHub integration has no branch-delete action; no confirmed unused file was found. SECURITY.md added in both PR branches; main still lacks it until merge. CODEOWNERS deferred pending an independent reviewer; Dependabot config deferred while PR #124 adds uv.lock. Repo security settings are not readable through current integration and remain owner-manual checks.
+
+
+### 2026-11-02 — Windows Forced Colors support
+
+- Added CSS system-color treatment for forced-colors mode and a Playwright E2E check for visible keyboard focus.
+- Updated owner requirement 8.17 and the V2 implementation ledger. Playwright 1.56.1 supports forcedColors emulation; the new test is committed but not run.
+- Source/test checkpoint: 502e71841e2a1a769db84439e557597c22b62a16. No browser pass is claimed.
