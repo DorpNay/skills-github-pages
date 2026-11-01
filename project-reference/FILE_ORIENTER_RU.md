@@ -269,3 +269,10 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Проверенный исходный PR #123 HEAD: `f6e67db5a7e39abc5f9351aae5ccadefc58e865e`; base main: `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; open, mergeable=true. Предыдущая проверка exact-head: 6/6 workflow groups passed. После любого нового коммита эти результаты не переносятся автоматически.
 - Единственный открытый issue #111 — owner/live-host evidence. Не закрывать по CI.
 - Сначала снимок/ориентиры, затем системная карта, сквозные взаимодействия, качество/безопасность, независимый review и только потом минимальные исправления. Архитектуру не расширять.
+
+
+### 2026-11-02 — Repository hygiene inventory
+- 126 branch refs; 9 open PRs (#124–#132); 117 refs outside open PR heads await PR/issue/ancestry/reference review.
+- Rulesets API returned 0; classic `main` protection is unknown (integration 403); delete-branch-on-merge is disabled.
+- No standard CODEOWNERS, SECURITY.md or Dependabot config files found; security settings remain unverified.
+- No cleanup or settings changes performed. Evidence and safe next steps: `docs/REPOSITORY_HYGIENE_RU.md`.
