@@ -446,7 +446,16 @@
      html[data-text-contrast="high"] .text-gray-400,html[data-text-contrast="high"] .text-gray-500,html[data-text-contrast="high"] .text-gray-600,html[data-text-contrast="high"] #memoryStatusLine,html[data-text-contrast="high"] #projectStatusLine { color:var(--ui-text-muted)!important; }
      html[data-text-contrast="high"] button:disabled,html[data-text-contrast="high"] input:disabled,html[data-text-contrast="high"] select:disabled,html[data-text-contrast="high"] textarea:disabled { color:var(--ui-disabled-text)!important;opacity:.9; }
      html[data-text-contrast="high"] #chatBox button:disabled { color:var(--ui-disabled-text)!important; }
-     html[data-text-contrast="high"] .assistant-content a,html[data-text-contrast="high"] .message-viewer-content a { color:var(--ui-info)!important; }
+     html[data-theme="dark"][data-text-contrast="high"] #chatBox .assistant-content a,
+html[data-theme="dark"][data-text-contrast="high"] #messageViewerModal .message-viewer-content a {
+  color:#a9caff!important;
+  -webkit-text-fill-color:#a9caff!important;
+}
+html[data-theme="light"][data-text-contrast="high"] #chatBox .assistant-content a,
+html[data-theme="light"][data-text-contrast="high"] #messageViewerModal .message-viewer-content a {
+  color:#174ea6!important;
+  -webkit-text-fill-color:#174ea6!important;
+}
      html[data-text-contrast="high"] .field-error,html[data-text-contrast="high"] [role="alert"] { color:var(--ui-danger)!important; }
      html[data-text-contrast="high"] .aservi-status-copy[data-state="connected"] { color:var(--ui-success)!important; }
      html[data-text-contrast="high"] .aservi-status-copy[data-state="checking"] { color:var(--ui-warning)!important; }

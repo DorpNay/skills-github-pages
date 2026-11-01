@@ -77,10 +77,15 @@
     const MODAL_FOCUSABLE_SELECTOR='button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])';
     function getModalFocusableElements(modal){
       return [...modal.querySelectorAll(MODAL_FOCUSABLE_SELECTOR)].filter(node=>{
-        const closedDetails=node.closest('details:not([open])');
-        const isClosedDetailsSummary=closedDetails&&node===closedDetails.querySelector(':scope > summary');
-        return node.getClientRects().length&&getComputedStyle(node).visibility!=='hidden'
-          &&!node.closest('.hidden,[inert],[aria-hidden="true"]')&&(!closedDetails||isClosedDetailsSummary);
+        if(!node.getClientRects().length||getComputedStyle(node).visibility==='hidden'||node.closest('.hidden,[inert],[aria-hidden="true"]'))return false;
+        let closedDetails=null;
+        for(let ancestor=node.parentElement;ancestor&&ancestor!==modal;ancestor=ancestor.parentElement){
+          if(ancestor.tagName==='DETAILS'&&!ancestor.open){
+            if(closedDetails)return false;
+            closedDetails=ancestor;
+          }
+        }
+        return !closedDetails||node===closedDetails.querySelector(':scope > summary');
       });
     }
     function closeUiModalDirect(id){
