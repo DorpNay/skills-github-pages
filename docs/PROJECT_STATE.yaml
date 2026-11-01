@@ -80,7 +80,7 @@ ui_v2_track:
     P2: "Long-list/message/scroll/popover stress; capability menu truthfulness; Tavily/keyless-search audit; provider/gateway mock error and secret-redaction checks."
   verification:
     exact_head_ci: "Manual run #41285658893 is on older SHA d822cb6, not current head. Its Context/Integrity failures were traced to stale sentinel expectations and corrected in 1b30cae/5d01a7d. Exact-head rerun not yet visible; do not claim green CI."
-    playwright_chromium: "Run #1126 completed on 7cdf35d; 101 passed, 18 failed. Jekyll/Security/Static Analysis/Context/Integrity passed; Chromium failed and published-site smoke skipped; diagnostics artifact 13077583320. Corrective batch updates aLandi Cloud test setup, 320px header, disabled high-contrast specificity, Research Studio close/history, sidebar/memory/modal test assumptions. Exact-head rerun pending on 929ebcf; CI retains 2 workers and 25m job timeout."
+    playwright_chromium: "Run #1126 completed on 7cdf35d; 101 passed, 18 failed. Jekyll/Security/Static Analysis/Context/Integrity passed; Chromium failed and published-site smoke skipped; diagnostics artifact 13077583320. Corrective batch updates aLandi aServi test setup, 320px header, disabled high-contrast specificity, Research Studio close/history, sidebar/memory/modal test assumptions. Exact-head rerun pending on 929ebcf; CI retains 2 workers and 25m job timeout."
     native_mobile_voiceover: "Not executed."
     wcag_contrast_ratios: "Not measured; computed-style assertions are not conformance evidence."
     live_gateway_provider: "Not verified; live smoke requires explicit owner approval."
