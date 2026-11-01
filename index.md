@@ -1642,6 +1642,8 @@ permalink: /
       applyFunctionPanelLanguage(lang);
       updateHomeThemeButton();
       const cloudConnectButton=document.querySelector('[data-action="connect-alandi-cloud"]');if(cloudConnectButton)cloudConnectButton.textContent=cloudConnectButton.disabled?cloudText('checkingButton'):cloudText('connectButton');
+      const promptButton=$('editSystemPrompt'),promptInput=$('systemPromptInput');
+      if(promptButton&&promptInput){const editing=!promptInput.readOnly;const label=lang==='en'?(editing?'Finish editing system prompt':'Edit system prompt'):(editing?'Завершить редактирование системного промпта':'Редактировать системный промпт');promptButton.title=label;promptButton.setAttribute('aria-label',label);promptButton.textContent=editing?'✓':'✎';if($('promptEditHint'))$('promptEditHint').textContent=editing?(lang==='en'?'Editing enabled':'Редактирование включено'):(lang==='en'?'Editing disabled':'Редактирование выключено');}
       const sidebarLanguageSummary=$('languageSummarySidebar');if(sidebarLanguageSummary)sidebarLanguageSummary.textContent=lang==='en'?'EN ▾':'RU ▾';
       const languageSelect=$('uiLanguage');if(languageSelect)languageSelect.value=lang;
       $('sidebar')?.setAttribute('aria-label',lang==='en'?'Projects and chats':'Проекты и чаты');
@@ -5394,7 +5396,7 @@ permalink: /
           case 'clear-provider-key': clearProviderKey(); break;
           case 'connect-pollinations': await beginPollinationsOAuth(); break;
           case 'disconnect-pollinations': clearPollinationsSession(); refreshApiKeyLamp(); showToast('Pollinations-сессия завершена для этой вкладки.'); break;
-          case 'edit-system-prompt': { const textarea=$('systemPromptInput'),button=$('editSystemPrompt'),editable=textarea.readOnly;textarea.readOnly=!editable;button.setAttribute('aria-pressed',String(editable));button.textContent=editable?'✓':'✎';button.title=editable?'Завершить редактирование · сохранить':'Редактировать';button.classList.toggle('is-editing',editable);$('promptEditHint').textContent=editable?'Редактирование включено':'Редактирование выключено';if(editable)textarea.focus();break;}
+          case 'edit-system-prompt': { const textarea=$('systemPromptInput'),button=$('editSystemPrompt'),editable=textarea.readOnly,en=getUiLanguage()==='en';textarea.readOnly=!editable;button.setAttribute('aria-pressed',String(editable));button.textContent=editable?'✓':'✎';const label=en?(editable?'Finish editing system prompt':'Edit system prompt'):(editable?'Завершить редактирование системного промпта':'Редактировать системный промпт');button.title=label;button.setAttribute('aria-label',label);button.classList.toggle('is-editing',editable);$('promptEditHint').textContent=editable?(en?'Editing enabled':'Редактирование включено'):(en?'Editing disabled':'Редактирование выключено');if(editable)textarea.focus();break;}
           case 'toggle-offline': toggleOfflineMode(); break;
           case 'close-settings': toggleSettings(false); break;
           case 'save-settings': saveSettings(); break;
