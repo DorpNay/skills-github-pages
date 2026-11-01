@@ -117,3 +117,10 @@
 - Полный ancestry/reference аудит и owner-side security settings review остаются открытыми.
 
 Официальные ориентиры: [GitHub repository best practices](https://docs.github.com/en/repositories/creating-and-managing-repositories/best-practices-for-repositories), [protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches), [security quickstart](https://docs.github.com/en/code-security/getting-started/quickstart-for-securing-your-repository), [CODEOWNERS](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners).
+
+
+## 10. Follow-up — extracted UI source coverage
+
+During the 2026-11-02 continuation, a concrete CI hygiene gap was found: after the browser runtime/styles moved from `index.md` into static assets, the Graphify Code-Only Pilot path filters did not include those extracted files. The workflow now watches `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html` on PR and main-push events.
+
+This is a narrow, reversible CI configuration correction. The Graphify workflow/artifact has not yet been confirmed on the new head. No branch cleanup, repository settings mutation, history rewrite, merge or deployment was performed.
