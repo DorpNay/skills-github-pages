@@ -22,7 +22,7 @@
 - [ ] Native iPhone Safari: virtual keyboard/VisualViewport, safe-area, orientation, edge swipe, long-press, touchcancel, nested scroll and scroll restoration.
 - [ ] VoiceOver/keyboard-only: heading order, accessible names/tooltips, visible/unobscured focus, Tab/Escape/Back/Forward, focus return and modal isolation.
 - [ ] Полная RU/EN проверка, light/dark для modal/menu/status/error/help/empty states. Cloud validation, Cloud field names, paste/connect actions and system-prompt editing now have targeted RU/EN coverage; full surface review remains.
-- [ ] Измерить реальные WCAG contrast ratios для primary/secondary/disabled/link/error/status в обеих темах. Computed-style assertions не равны WCAG audit.
+- [ ] Завершить WCAG contrast audit для реальных компонентов primary/secondary/disabled/link/error/status в обеих темах. Базовые CSS tokens против solid theme surfaces уже автоматически рассчитываются и проходят ≥4.5:1; градиенты, фактические поверхности, focus/hover, мелкий текст и non-text contrast требуют отдельной проверки.
 
 ## P2 — поведенческие проверки и достоверность интерфейса
 
