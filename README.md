@@ -23,7 +23,7 @@
 
 ## Карта архитектуры
 
-Навигационная схема UI, gateway, памяти, RAG, инструментов, голоса и тестов: [docs/ALANDI_ARCHITECTURE_MAP_RU.md](docs/ALANDI_ARCHITECTURE_MAP_RU.md). Это кураторская карта модулей. Graphify code-only dependency graph строится в GitHub Actions как временный dev-artifact; последний проверенный срез — 1,109 nodes / 3,103 edges / 53 communities. Это навигация разработчика, не runtime-компонент.
+Навигационная схема UI, gateway, памяти, RAG, инструментов, голоса и тестов: [docs/ALANDI_ARCHITECTURE_MAP_RU.md](docs/ALANDI_ARCHITECTURE_MAP_RU.md). Это кураторская карта модулей. Graphify code-only dependency graph строится в GitHub Actions как временный dev-artifact. Последний проверенный срез — исторический до выноса app runtime/styles в assets; PR #131 обновляет path filters для assets/js, assets/css и landing HTML, новый граф ещё не подтверждён. Это навигация разработчика, не runtime-компонент.
 
 ## Шесть инженерных пластов и журнал решений
 
@@ -152,3 +152,9 @@ node scripts/quality-agents.mjs context
 - [Аудит новых open-source проектов и решение по каждому](docs/TECHNOLOGY_AUDIT_2026-10-21_RU.md)
 
 Это архитектурные документы и on-demand skill; они не означают, что отдельные агенты, Google Drive OAuth или media workers уже развернуты.
+
+## Landing UI V2.0 — единый объём работ
+
+Актуальные незакрытые UI-требования из разделов 1–7 объединены с требованиями 8.1–8.17 в едином реестре раздела 8.0 документа V1_UI_FINALIZATION_RU.md. Старые закрытые, устаревшие и заменённые задачи не создают параллельную очередь. LANDING_UX_POLISH_BACKLOG_RU.md — краткий mirror; LANDING_UI_V2_IMPLEMENTATION_RU.md — технический журнал.
+
+Реализация ведётся в PR #131. Этот PR #132 — только документационная резервная копия и не является доказательством реализации или прохождения тестов. PR #131 не сливать и не развёртывать без отдельного разрешения владельца.
