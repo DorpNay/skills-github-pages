@@ -207,3 +207,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Expanded E2E assertions for all inline and expanded-view message actions: labels match tooltips and inline action hit targets remain at least 44×44px.
 - Code commit: `f1b7792dd6c38af08cf4e3f8979660890a3bea0a`; test commit: `a6ce9eed87d6c239b9f5ea394ab04359939479e2`; ledger update: `280f2c94aa34787d86f793ca17ef32a2bdb61184`. Playwright remains unexecuted; no pass is claimed.
 - Next: audit 8.17 contrast controls and verify the full set of text states in both themes. PR #131 stays open; no merge/deploy.
+
+
+### 2026-11-01 — PR #131: requirement 8.17 high-contrast text-state coverage
+- Audited the current readability controls: persistent 90–120% text scale, standard/high contrast choice, live preview/reset, and theme-aware tokens for secondary, disabled, links, errors and statuses are already implemented.
+- Added a Playwright scenario that compares normal/high-contrast computed colors for secondary, disabled, link, error and status text in both dark and light themes, while checking that primary message text remains unchanged.
+- Test commit: `787c9aaf6026559da31daf51d82f884abdc78c1d`; ledger update: `daa31d62893fb71c1147cac2e76d902ed458a3a2`. Browser execution and actual WCAG contrast-ratio audit remain pending; no conformance claim is made.
+- Next: exact-head CI/browser execution when available, then close remaining 8.1–8.11 verification gaps and perform the full acceptance sweep. PR #131 remains open/unmerged; no deployment.
