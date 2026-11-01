@@ -5561,14 +5561,18 @@ permalink: /
       }
     });
     const syncComposerViewport = () => {
-      // Resize events can arrive in different orders when a focused textarea and
-      // the visual viewport change together. Defer one frame so measurements use
-      // the browser's settled viewport, and listen to both resize event sources.
+      // Preserve the user's reading position. If they were already at the end,
+      // keep the latest message anchored when the mobile keyboard changes height.
+      const chatBox=$('chatBox');
+      const wasNearBottom=!chatBox||chatBox.scrollHeight-chatBox.scrollTop-chatBox.clientHeight<180;
+      // Resize events can arrive in different orders when the visual viewport and
+      // focused textarea change together; measure after the browser settles.
       window.requestAnimationFrame(() => {
         const viewportHeight = Math.max(240, Math.round(window.visualViewport?.height || window.innerHeight));
         document.body.style.height = `${viewportHeight}px`;
         autoResizeTextarea($('userInput'));
-        scrollToBottom(false);
+        if(wasNearBottom)scrollToBottom(true);
+        else updateJumpToLatest();
       });
     };
     window.visualViewport?.addEventListener('resize', syncComposerViewport, { passive: true });
