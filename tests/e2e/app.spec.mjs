@@ -3506,6 +3506,35 @@ test('browser Forward restores a chat-action dialog with its original target', a
   await expect(page.locator('#chatActionModal')).toBeHidden();
 });
 
+test('modal lifecycle keeps keyboard focus and page scroll isolated across core dialogs', async ({ page }) => {
+  const assertModalLifecycle = async (modalId) => {
+    const modal = page.locator('#' + modalId);
+    await expect(modal).toBeVisible();
+    await expect(page.locator('body')).toHaveClass(/ui-modal-open/);
+
+    await page.keyboard.press('Tab');
+    await expect.poll(() => modal.evaluate(element => element.contains(document.activeElement)))
+      .toBe(true);
+
+    await page.keyboard.press('Escape');
+    await expect(modal).toBeHidden();
+    await expect(page.locator('body')).not.toHaveClass(/ui-modal-open/);
+  };
+
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await assertModalLifecycle('projectCreateModal');
+
+  await page.locator('[data-action="toggle-settings"]').click();
+  await assertModalLifecycle('settingsModal');
+
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  await assertModalLifecycle('functionPanelModal');
+
+  await page.locator('#deepResearchStudioButton').click();
+  await assertModalLifecycle('researchStudioModal');
+});
+
 test('responsive visual review captures viewport and navigation evidence', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#chatBox')).toBeVisible();
