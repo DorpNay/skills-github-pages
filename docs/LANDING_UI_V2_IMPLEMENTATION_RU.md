@@ -52,11 +52,11 @@ The pre-8 checklist is not a second backlog. Its remaining items are folded into
 
 ### Work completed in this cross-cutting pass (not yet browser-verified)
 
-- Cloud URL validation now has RU/EN messages, required URL/model/key errors, aria-invalid and aria-describedby linkage; Cloud field labels, paste action and connect button are localized.
+- Cloud URL validation now has RU/EN messages, required URL/model/key errors, aria-invalid and aria-describedby linkage; Cloud field labels, paste action and connect button are localized. Theme-aware semantic info/warning tokens were added, and the checking state uses the warning token in both themes.
 - Cloud health refresh now checks that URL/model/key still match after asynchronous fingerprint and /healthz work, so an old response cannot restore a green state after credentials change.
 - The global system-prompt edit pencil now localizes its title/accessibility name and edit-state announcement; E2E covers keyboard focus and the return to read-only.
 - Mobile viewport resize now captures whether the chat was near the bottom before layout changes: users reading older messages keep their position, while users at the latest message stay anchored. E2E coverage was added.
-- Playwright CI diagnostics changed to trace on first retry, screenshot on failure and no video. CI uses one worker and a 30-minute Playwright global timeout inside a 35-minute Actions job, allowing the test runner to finish and flush reports.
+- Playwright CI diagnostics changed to trace on first retry, screenshot on failure and no video. CI uses one worker and a 30-minute Playwright global timeout inside a 35-minute Actions job, allowing the test runner to finish and flush reports. The high-contrast E2E also verifies that the Cloud checking-state color follows the selected theme.
 - The browser package remains pinned at @playwright/test 1.56.1 for the current stabilization baseline. Upgrade is deliberately separated from UI debugging: issue #38489 documents a 1.57 Chrome-for-Testing memory spike report, while issue #41562 documents a distinct 1.61.1/Chromium 149 view-transition stability regression fixed in later upstream builds. Neither is proven to be the cause of aLandi's failures; avoid changing browser and application variables simultaneously.
 
 ## Chromium / Playwright reliability findings (research snapshot 2026-11-01)
