@@ -199,3 +199,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Added a focused Playwright regression for all five distinct status colors, toast state styling, centered alignment and disabling the roadmap marquee under `prefers-reduced-motion`.
 - Test commit: `9a6cbe71e3c433bd20b1d0fbddfbd799834019d5`; implementation ledger updated. Test source has NOT been executed; no Chromium pass is claimed.
 - Next: continue 8.16 consistency audit, then 8.17 readability contrast coverage. PR #131 remains open/unmerged; no deployment.
+
+
+### 2026-11-01 — PR #131: requirement 8.16 message action consistency
+- Audited the inline message-action renderer and found duplicate `aria-label` writes with conflicting copy/view wording, plus the speech control's tooltip being overwritten without updating its accessible name.
+- Corrected the renderer so each icon-first copy/view/speech action has one concise label shared by `title` and `aria-label`.
+- Expanded E2E assertions for all inline and expanded-view message actions: labels match tooltips and inline action hit targets remain at least 44×44px.
+- Code commit: `f1b7792dd6c38af08cf4e3f8979660890a3bea0a`; test commit: `a6ce9eed87d6c239b9f5ea394ab04359939479e2`; ledger update: `280f2c94aa34787d86f793ca17ef32a2bdb61184`. Playwright remains unexecuted; no pass is claimed.
+- Next: audit 8.17 contrast controls and verify the full set of text states in both themes. PR #131 stays open; no merge/deploy.
