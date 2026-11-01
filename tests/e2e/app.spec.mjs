@@ -2189,6 +2189,29 @@ test('Thai public-knowledge search uses Thai Wikipedia and returns a matching so
   expect(wikipediaRequest?.searchParams.get('srsearch')).toBe('ประเทศไทย');
 });
 
+test('Cloud URL validation follows the selected language and is announced with its field', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('ai_ui_language_v1', 'en'));
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#cloudBaseUrl').fill('http://remote.example.test/v1');
+  await page.locator('#cloudModel').fill('qwen3.5:4b');
+  await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
+  await page.locator('[data-action="connect-alandi-cloud"]').click();
+  await expect(page.locator('#cloudBaseUrlError')).toHaveText('Remote servers must use HTTPS.');
+  await expect(page.locator('#cloudBaseUrl')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#cloudBaseUrl')).toHaveAttribute('aria-describedby', 'cloudBaseUrlError');
+
+  await page.evaluate(() => localStorage.setItem('ai_ui_language_v1', 'ru'));
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#cloudBaseUrl').fill('http://remote.example.test/v1');
+  await page.locator('#cloudModel').fill('qwen3.5:4b');
+  await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
+  await page.locator('[data-action="connect-alandi-cloud"]').click();
+  await expect(page.locator('#cloudBaseUrlError')).toHaveText('Для удалённого сервера нужен HTTPS.');
+  await expect(page.locator('[data-action="connect-alandi-cloud"]')).toHaveText('Проверить и подключить');
+});
+
 test('aLandi cloud probe rejects HTTP 200 proxy text as proof of a model connection', async ({ page }) => {
   await page.route('https://cloud.example.test/v1/chat/completions', async route => route.fulfill({
     status: 200, contentType: 'text/plain; charset=utf-8',
