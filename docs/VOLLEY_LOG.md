@@ -184,4 +184,4 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Tightened the E2E retirement regression so it tests only the removed graph bridge and does not conflate the independent local helper route.
 - Added gateway regressions: /livez, /readyz and /healthz must not expose API/OAuth secrets; invalid bearer tokens are not echoed; upstream error bodies containing synthetic API/OAuth secrets are replaced by the gateway's bounded error response.
 - Test source updated; NOT EXECUTED. Exact-head GitHub workflow-run and combined-status queries returned no entries. No CI/Playwright pass is claimed.
-- Current branch head at this note: pending final commit. PR #131 remains open/unmerged; no deployment.
+- The exact current head, compare-to-main counts and verification boundary are maintained in `docs/PROJECT_STATE.yaml` and the PR #131 checkpoint. PR #131 remains open/unmerged; no deployment.
