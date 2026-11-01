@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Deterministic quality sentinels for the static AI Mobile Agent.
+ * Deterministic quality sentinels for the static aLandi browser client.
  * No LLM, API key, runtime dependency, network access, or user-device work.
  * Inspired by deterministic-before-LLM and evidence-first review practices.
  */
@@ -22,6 +22,10 @@ const suites = {
       matches(/^---\s*\n[\s\S]*?layout:\s*null[\s\S]*?---\s*\n/, 'Expected layout: null front matter.');
       matches(/<html\s+lang="ru">/i, 'Russian document language is missing.');
       matches(/<meta\s+name="viewport"[^>]*>/i, 'Mobile viewport metadata is missing.');
+      includes('title: aLandi — личная AI-среда', 'Jekyll page title must use the current aLandi product identity.');
+      includes('<title>aLandi — личная AI-среда</title>', 'Browser document title must use the current aLandi product identity.');
+      includes('<meta name="description" content="aLandi — личная AI-среда для чатов, проектов и работы с контекстом.">', 'The app page must expose a concise product description.');
+      includes('<meta name="color-scheme" content="dark light">', 'Browser-native controls must be informed that both themes are supported.');
       matches(/<\/html>\s*$/, 'Document must close its html element.');
     }],
     ['critical UI controls exist', () => {
