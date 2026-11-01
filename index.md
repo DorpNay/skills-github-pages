@@ -1943,25 +1943,25 @@ permalink: /
         copy.type = 'button'; copy.dataset.action = 'copy-message'; copy.dataset.messageText = messageActionText;
         copy.className = 'text-xs text-gray-400 hover:text-gray-100 px-1.5 py-1 rounded-md';
         copy.textContent = '⧉';
-        copy.title = getUiLanguage() === 'en' ? 'Copy message' : 'Скопировать сообщение';
-        copy.setAttribute('aria-label',copy.title);
-        copy.setAttribute('aria-label', getUiLanguage() === 'en' ? 'Copy message' : 'Скопировать сообщение');
+        const copyLabel = getUiLanguage() === 'en' ? 'Copy message' : 'Скопировать сообщение';
+        copy.title = copyLabel;
+        copy.setAttribute('aria-label', copyLabel);
         const view = document.createElement('button');
         view.type = 'button'; view.dataset.action = 'view-message'; view.dataset.messageRole = message.role; view.dataset.messageText = messageActionText;
         view.className = 'text-xs text-gray-400 hover:text-gray-100 px-1.5 py-1 rounded-md';
         view.textContent = '↗';
-        view.title = getUiLanguage() === 'en' ? 'Open full message' : 'Открыть сообщение целиком';
-        view.setAttribute('aria-label',view.title);
-        view.setAttribute('aria-label', getUiLanguage() === 'en' ? 'Open readable message view' : 'Открыть полный текст сообщения');
+        const viewLabel = getUiLanguage() === 'en' ? 'Open full message' : 'Открыть сообщение целиком';
+        view.title = viewLabel;
+        view.setAttribute('aria-label', viewLabel);
         actions.append(copy, view);
         if (!isUser) {
           const speak = document.createElement('button');
           speak.type = 'button'; speak.dataset.action = 'speak-message'; speak.dataset.messageText = messageActionText;
           speak.className = 'text-xs text-cyan-300 hover:text-cyan-100 px-1.5 py-1 rounded-md';
           speak.textContent = '◖))';
-          speak.title = getUiLanguage() === 'en' ? 'Read aloud with local speech' : 'Озвучить локальной моделью';
-          speak.setAttribute('aria-label',speak.title);
-          speak.title = getUiLanguage() === 'en' ? 'Generate speech with your configured local TTS model' : 'Создать речь локальной TTS-моделью на твоём gateway';
+          const speakLabel = getUiLanguage() === 'en' ? 'Read aloud with local speech' : 'Озвучить локальной моделью';
+          speak.title = speakLabel;
+          speak.setAttribute('aria-label', speakLabel);
           actions.appendChild(speak);
         }
         row.appendChild(actions);
