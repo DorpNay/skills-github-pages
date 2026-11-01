@@ -1113,6 +1113,12 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
 test('multi-agent preference skips a greeting and shows the actual route', async ({ page }) => {
   let calls = 0;
   await page.route('https://api.example.test/v1/chat/completions', async route => {
+    const payload = route.request().postDataJSON();
+    const isProbe = payload.messages?.at(-1)?.content === 'Reply with exactly OK. No other words.';
+    if (isProbe) {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ model: 'e2e-actual-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] }) });
+      return;
+    }
     calls++;
     await route.fulfill({
       status: 200, contentType: 'application/json',
@@ -1140,6 +1146,11 @@ test('multi-agent preference skips a greeting and shows the actual route', async
 test('401 stops after the selected provider rejects credentials', async ({ page }) => {
   let calls = 0;
   await page.route('https://api.groq.com/openai/v1/chat/completions', async route => {
+    const payload = route.request().postDataJSON();
+    if (payload.messages?.at(-1)?.content === 'Reply with exactly OK. No other words.') {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ model: payload.model, choices: [{ message: { role: 'assistant', content: 'OK' } }] }) });
+      return;
+    }
     calls++;
     await route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: { message: 'invalid credential' } }) });
   });
@@ -1188,6 +1199,10 @@ test('model-specific failure tries another model on the same provider first', as
   const attemptedModels = [];
   await page.route('https://api.groq.com/openai/v1/chat/completions', async route => {
     const payload = route.request().postDataJSON();
+    if (payload.messages?.at(-1)?.content === 'Reply with exactly OK. No other words.') {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ model: payload.model, choices: [{ message: { role: 'assistant', content: 'OK' } }] }) });
+      return;
+    }
     attemptedModels.push(payload.model);
     if (attemptedModels.length === 1) {
       await route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ error: { message: 'model not found' } }) });
@@ -1231,7 +1246,12 @@ test('dynamic chat catalog is used for bounded same-provider model fallback', as
     ] })
   }));
   await page.route('https://api.example.test/v1/chat/completions', async route => {
-    const model = route.request().postDataJSON().model;
+    const payload = route.request().postDataJSON();
+    const model = payload.model;
+    if (payload.messages?.at(-1)?.content === 'Reply with exactly OK. No other words.') {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ model, choices: [{ message: { role: 'assistant', content: 'OK' } }] }) });
+      return;
+    }
     attemptedModels.push(model);
     if (model === 'e2e-primary-model') {
       await route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ error: { message: 'model not found' } }) });
