@@ -512,7 +512,7 @@ landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   latest_code_test_head: "929ebcf20db87eca949c6f5a386c16e75f2856a1"
-  latest_documented_head: "7d14dc28ac62c0655a3a11580e8f179a58ff0d54"
+  latest_documented_head: "45f4be8bfe083d4c816361ff151e3deaac783e17"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
     memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
@@ -536,7 +536,7 @@ landing_ui_v2_pr131_2026_10_31:
     mobile_scroll_preservation: "VisualViewport resize preserves older-message reading position and keeps bottom anchored only if user was near bottom; E2E added."
     chromium_ci_hardening: "One CI worker, 30-minute Playwright globalTimeout, 35-minute Actions timeout, trace on first retry, screenshot only on failure, video disabled; pinned Playwright 1.56.1 held stable pending separate controlled upgrade."
     theme_aware_status_colors: "Default dark/light info and warning tokens added; Cloud checking state uses semantic warning token; E2E verifies theme switch changes its color."
-    test_hygiene: "Audited E2E specs now contain zero force:true, waitForTimeout or networkidle usage. Removed a forced click on a hidden sidebar close control after new-chat action; test now reopens and uses a normal click."
+    test_hygiene: "All 11 tests/e2e files syntax-parse; zero force:true, waitForTimeout or networkidle usage. Removed a forced click on a hidden sidebar close control after new-chat action; test now reopens and uses a normal click. index.md inline JS and playwright.config.mjs also syntax-parse."
     base_token_contrast: "E2E computes WCAG contrast from CSS tokens against solid theme surfaces; current primary/secondary/success/warning/error values are all >=4.5:1. Full component/background/focus/non-text audit remains manual."
   test_commits:
     sidebar_swipe: "d388a02445ddc1ebccbaec58fd8515b8d0b9adfa"
