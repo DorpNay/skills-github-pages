@@ -87,7 +87,7 @@ ui_v2_track:
   current_main_sha: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
   branch_divergence: "GitHub compare main...feat/landing-v1-accessibility-responsive-20261031 at c87bc1c49a900c2249c44a5c5e697f2b0267bd84: ahead_by=468, behind_by=4, merge_base=e78a73b25725bfa63370d9946887cbbacbf51b82. Main's four post-base commits touch only docs/V1_UI_FINALIZATION_RU.md (210 additions, 6 deletions), overlapping the PR's unified 8.0 + 8.1–8.17 consolidation. No code-file conflict identified. Do not rebase/merge without owner approval."
   current_work_head: "4f4e187f6bb560ca3e928ab7a9f3c1e2e9c34ec4"
-  current_work_summary: "aLandi aServi terminology and DOM/CSS contracts updated; browser title, description and dark/light theme metadata aligned with aLandi; browser runtime and app/landing CSS extracted to cacheable assets; Marked/DOMPurify use ordered defer; legacy ai_alandi_cloud_* localStorage keys intentionally retained behind aServi code identifiers for saved-setting compatibility; inherited pre-8 UI backlog made explicit. Research Studio E2E now matches its deep-research-only entry point; sidebar swipe regression covers cancelled touch gestures. Cloudflare and generic cloud-infrastructure wording remain distinct concepts. Full tests intentionally deferred until source pass is complete."
+  current_work_summary: "aLandi aServi terminology and DOM/CSS contracts updated; browser title, description and dark/light theme metadata aligned with aLandi; overridden CSS declarations removed; browser runtime and app/landing CSS extracted to cacheable assets; Marked/DOMPurify use ordered defer; legacy ai_alandi_cloud_* localStorage keys intentionally retained behind aServi code identifiers for saved-setting compatibility; inherited pre-8 UI backlog made explicit. Research Studio E2E now matches its deep-research-only entry point; sidebar swipe regression covers cancelled touch gestures. Cloudflare and generic cloud-infrastructure wording remain distinct concepts. Full tests intentionally deferred until source pass is complete."
   current_work_validation: "Prior V8 parse-only syntax check passed for extracted assets/js/app.js; current test edits were reviewed against index.md and swipe handlers but have not yet been syntax-parsed or executed. App/landing CSS brace balance checked; browser behavior not executed. Jekyll build, focused Chromium, full Quality/Freshness/Provenance/Graphify/Dead Code not run yet. Do not claim runtime extraction or rename browser-verified."
   merge_deployment: "Do not merge or deploy without explicit owner approval."
 
@@ -514,7 +514,7 @@ whole_stack_integrity_audit_2026_10_30:
 landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
-  latest_code_test_head: "b6b4cd612e288f0ad2c0e23419a562b06b491ef5"
+  latest_code_test_head: "9679ed4d7974849f3fd02dcf8465384c8c59a9df"
   branch_comparison: "486 ahead / 4 behind main; merge base e78a73b25725bfa63370d9946887cbbacbf51b82; four main-side commits overlap the shared UI checklist only."
   repository_hygiene_runbook: "docs/REPOSITORY_HYGIENE_RU.md; prepared from official GitHub repository/security/branch-protection/CODEOWNERS guidance; actual branch/file/settings cleanup is deferred to the next major-slice boundary."
   latest_documented_head: "f35e766eb72ff650852f508460f6e339230e123a (latest PR131 docs checkpoint before this state refresh)"
@@ -562,10 +562,10 @@ landing_ui_v2_pr131_2026_10_31:
     base_token_contrast: "4bd40770fd3446e5280e719644394882c9148daeb"
   verification:
     source_syntax: "V8 syntax parse passed for assets/js/app.js, tests/e2e/app.spec.mjs and scripts/quality-agents.mjs (module imports/shebang adapted for parser); app.css brace balance is zero; metadata assertions are present. This is not an executed test suite."
-    exact_head: "b6b4cd612e288f0ad2c0e23419a562b06b491ef5 (latest code/test checkpoint after aLandi page metadata contract; documentation commits may advance PR HEAD; exact-head Quality/Chromium pending)"
-    exact_head_workflow_runs: "Quality #1126 on prior SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL 101 passed / 18 failed; artifact 13077583320. No exact-head Quality/Chromium run visible for source/test checkpoint b6b4cd612e288f0ad2c0e23419a562b06b491ef5; latest observed Provenance Gate pass predates current UI changes."
+    exact_head: "9679ed4d7974849f3fd02dcf8465384c8c59a9df (latest source checkpoint including CSS cascade cleanup; documentation commits may advance PR HEAD; exact-head Quality/Chromium pending)"
+    exact_head_workflow_runs: "Quality #1126 on prior SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL 101 passed / 18 failed; artifact 13077583320. No exact-head Quality/Chromium run visible for source checkpoint 9679ed4d7974849f3fd02dcf8465384c8c59a9df; latest observed Provenance Gate pass predates current UI changes."
     gateway_pytest: "not executed in this environment"
-    playwright_chromium: "No exact-head Chromium run for PR #131 code/test checkpoint b6b4cd612e288f0ad2c0e23419a562b06b491ef5; #1126 is stale evidence only (101 passed / 18 failed). Current corrective source/test changes and metadata assertions are committed; browser behavior remains unverified."
+    playwright_chromium: "No exact-head Chromium run for PR #131 source checkpoint 9679ed4d7974849f3fd02dcf8465384c8c59a9df; #1126 is stale evidence only (101 passed / 18 failed). Current corrective source/test changes, metadata assertions and CSS cleanup are committed; browser behavior remains unverified."
     native_mobile_voiceover: "not executed"
     wcag_contrast_ratios: "Base CSS token contrast is measured by a new E2E calculation against solid theme surfaces (>=4.5:1); actual component/gradient/focus/non-text contrast remains unmeasured and requires manual audit."
   safety:
