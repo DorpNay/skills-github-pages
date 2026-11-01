@@ -1,5 +1,26 @@
 import { test, expect } from '@playwright/test';
 
+async function configureAlandiCloud(page, model, key) {
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  await page.locator('#cloudBaseUrl').fill('https://api.example.test/v1');
+  await page.locator('#cloudModel').fill(model);
+  await page.locator('#cloudApiKey').fill(key);
+  await page.route('https://api.example.test/healthz', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    const body = route.request().postDataJSON();
+    if (body.messages?.at(-1)?.content === 'Reply with exactly OK.') {
+      return route.fulfill({ status: 200, contentType: 'application/json',
+        body: JSON.stringify({ model, choices: [{ message: { role: 'assistant', content: 'OK' }, finish_reason: 'stop' }] }) });
+    }
+    return route.fallback();
+  });
+  await expect(page.locator('#cloudStatus')).toHaveText('Подключено', { timeout: 15000 });
+  await page.locator('[data-action="close-settings"]').click();
+}
+
+
 async function chooseSearchMode(page, mode) {
   await page.locator('#searchModeSummary').click();
   await page.locator(`[data-action="select-search-mode"][data-search-mode="${mode}"]`).click();
@@ -45,7 +66,7 @@ test('PDF attachment is extracted only by the configured aLandi gateway before m
   });
 
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  await configureAlandiCloud(page, 'e2e-local-model', 'd'.repeat(64);
+  await configureAlandiCloud(page, 'e2e-local-model', 'd'.repeat(64));
   await chooseSearchMode(page, 'offline');
 
   await page.locator('[data-action="attach-text-file"]').click();
