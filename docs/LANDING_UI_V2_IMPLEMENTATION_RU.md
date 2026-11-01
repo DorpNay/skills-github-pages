@@ -34,6 +34,45 @@
 | **8.16 Button typography/icon-first** | Shared control typography/spacing and 44px message-action targets; copy/view/speech actions are icon-first. Inline message-action labels/tooltips now use one consistent value for both `title` and `aria-label`. | Added E2E assertions for all inline and expanded-view message actions: matching accessible name/tooltip and 44px hit targets. Remaining one-off controls and full panel review remain. | [~] |
 | **8.17 Adjustable text readability** | Persistent text scale and standard/high-contrast preference apply in light/dark themes; high contrast adjusts secondary, disabled, link, error and status text. | Added Playwright coverage comparing normal/high-contrast colors for secondary, disabled, links, errors and status in both themes while confirming primary text remains stable; actual WCAG ratio review and browser execution remain. | [~] |
 
+## Cross-cutting inherited UI work (requirements before section 8)
+
+The pre-8 checklist is not a second backlog. Its remaining items are folded into the owner-priority requirements above:
+
+| Inherited requirement | Remaining outcome | Linked V2 items |
+|---|---|---|
+| Overall visual polish | Responsive screenshot review, typography, contrast, spacing, empty/error states and secondary controls. | 8.2, 8.6, 8.10, 8.15–8.17 |
+| Composer/mobile keyboard | VisualViewport, safe-area, top/bottom composer, long input, nested scroll and scroll-position retention. | 8.2, 8.6, 8.9, 8.14 |
+| Provider routes and catalog | Legacy route migration, RU/EN labels, model catalog persistence/failure, auth errors and no cross-provider leakage. | 8.3, 8.11 |
+| Inline validation and gateway status | Required fields, URL/model errors, CORS/401/5xx, redaction, model completion + /healthz, stale-response handling. | 8.3, 8.9, 8.17 |
+| Global prompt editing | Empty default + legacy migration, keyboard-visible edit affordance, accessible name and readonly restoration. | 8.4, 8.10, 8.16, 8.17 |
+| Provider instructions and Tavily | Remove duplicate copy, verify upstream links/privacy notes, test key lifecycle and keyless fallback before any removal decision. | 8.3, 8.4 |
+| Modal, scroll and secondary controls | Escape/Back/Forward, focus return, scroll lock, long chats/attachments, nested scroll and stale controls. | 8.1, 8.6, 8.9, 8.10 |
+| RU/EN and theme completeness | Dialogs, statuses, errors, tooltips, Roadmap, empty states and both themes. | 8.11, 8.15, 8.17 |
+| Research/skills/agents honesty | Preserve draft and chat settings, test mobile/Escape/no-auto-send; don't label a four-stage single-model pipeline as independent agents. | 8.6, 8.15, 8.16 |
+
+### Work completed in this cross-cutting pass (not yet browser-verified)
+
+- Cloud URL validation now has RU/EN messages, required URL/model/key errors, aria-invalid and aria-describedby linkage; Cloud field labels, paste action and connect button are localized.
+- Cloud health refresh now checks that URL/model/key still match after asynchronous fingerprint and /healthz work, so an old response cannot restore a green state after credentials change.
+- The global system-prompt edit pencil now localizes its title/accessibility name and edit-state announcement; E2E covers keyboard focus and the return to read-only.
+- Mobile viewport resize now captures whether the chat was near the bottom before layout changes: users reading older messages keep their position, while users at the latest message stay anchored. E2E coverage was added.
+- Playwright CI diagnostics changed to trace on first retry, screenshot on failure and no video. CI uses one worker and a 30-minute Playwright global timeout inside a 35-minute Actions job, allowing the test runner to finish and flush reports.
+- The browser package remains pinned at @playwright/test 1.56.1 for the current stabilization baseline. Upgrade is deliberately separated from UI debugging: issue #38489 documents a 1.57 Chrome-for-Testing memory spike report, while issue #41562 documents a distinct 1.61.1/Chromium 149 view-transition stability regression fixed in later upstream builds. Neither is proven to be the cause of aLandi's failures; avoid changing browser and application variables simultaneously.
+
+## Chromium / Playwright reliability findings (research snapshot 2026-11-01)
+
+1. **Worker contention is a real CI variable.** Playwright's current CI guide recommends one worker on constrained CI runners; parallel workers are an opt-in for powerful self-hosted systems. aLandi previously used two workers after a three-worker run timed out. This pass switches the hosted CI suite to one worker, sets a 30-minute runner-level global timeout and leaves five extra minutes at the Actions job level for teardown/report upload. If runtime proves too long, shard independent suites across separate jobs rather than immediately increasing workers.
+2. **Retries are diagnostics, not a cure.** Keep one CI retry to classify intermittent failures, but do not treat a retry pass as a clean pass. A test that passes only on retry remains flaky and must be investigated.
+3. **Capture actionable evidence, not maximum artifacts.** Trace on first retry is the Playwright-recommended CI pattern; video is disabled and screenshots remain only-on-failure. The trace is the primary source for DOM snapshots, actionability checks, network and console state.
+4. **Do not synchronize with sleeps or forced clicks.** Prefer role/label/user-visible locators and web-first assertions. locator.click() already waits for unique resolution, visibility, stability, event reception and enabled state. A timeout should be diagnosed as an unmet actionability condition, not bypassed with force:true unless the test explicitly targets a gesture/overlay behavior.
+5. **Treat browser-version regressions separately from app regressions.** Public issue #41562 describes locator.click() hanging in the stability check with Chromium 149 and active MPA View Transitions; it was reproduced on Playwright 1.61.1 and fixed on later tip-of-tree. aLandi does not currently declare MPA View Transitions, so this is a cautionary example, not an attribution. Public issue #38489 reports high memory use with Playwright 1.57 Chrome for Testing under parallel execution; this reinforces the choice to keep a pinned baseline until UI behavior is stable.
+6. **Keep test state independent.** Every test must own its local/session storage, network mocks and project/chat fixtures. No test should rely on a preceding test, ordering within a file, external provider uptime or a real credential.
+7. **Pin and report the browser runtime.** Keep Playwright and its browser install version aligned; record Playwright/Chromium versions in CI diagnostics before a future controlled upgrade. Never silently bump only the npm package while reusing a mismatched browser binary.
+
+Primary references:
+- Playwright [Best Practices](https://playwright.dev/docs/best-practices), [CI](https://playwright.dev/docs/ci), [Isolation](https://playwright.dev/docs/browser-contexts), [Retries](https://playwright.dev/docs/test-retries), [Trace Viewer](https://playwright.dev/docs/trace-viewer-intro), [Auto-waiting](https://playwright.dev/docs/actionability), [Timeouts](https://playwright.dev/docs/test-timeouts).
+- Upstream reports: [microsoft/playwright#41562](https://github.com/microsoft/playwright/issues/41562) (Chromium 149 view-transition stability check); [#38489](https://github.com/microsoft/playwright/issues/38489) (reported 1.57 memory pressure under parallel execution); [#28705](https://github.com/microsoft/playwright/issues/28705) (CI-only Chromium flakiness report).
+
 ## Acceptance and test plan
 
 1. Keep all existing V1 regression tests unless a test asserts behavior explicitly superseded by owner requirements 8.1–8.17; replace those assertions with the new acceptance contract rather than simply deleting coverage.
