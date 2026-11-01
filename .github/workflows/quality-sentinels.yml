@@ -218,7 +218,9 @@ jobs:
           Path("audit-reports/landing-page.html").write_text(landing, encoding="utf-8")
           print(f"Extracted {len(extractor.scripts)} inline UI scripts and normalized the Jekyll landing page for SAST.")
           PY
-          semgrep scan --config p/default --json gateway scripts router observability intel latency gateway/tests tests audit-reports/ui-inline-*.js audit-reports/landing-page.html \
+          shopt -s nullglob
+          scan_targets=(gateway scripts router observability intel latency gateway/tests tests assets/js/app.js audit-reports/landing-page.html audit-reports/ui-inline-*.js)
+          semgrep scan --config p/default --json "${scan_targets[@]}" \
             > audit-reports/semgrep.json 2> audit-reports/semgrep.stderr
           echo "$?" > audit-reports/semgrep.exit
           echo "Findings are report-only at this stage; scanner/runtime errors are checked separately."
