@@ -271,3 +271,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Compared that tested commit to current PR HEAD 579666d45964f56a4e68e3997293a288d7fd1553: the intervening 57 commits change docs, index.md and Playwright tests only; there are no gateway/** changes. Gateway code and tests therefore match the successfully tested state.
 - This closes the Gateway contract/security test gate for the current source. It does not close the latest UI/Chromium/Quality gate. The current exact HEAD has a successful License/Artifact Provenance push run; no current-head Quality/Chromium run is visible.
 - Corrected the P0 status in V1_UI_FINALIZATION_RU.md, LANDING_UX_POLISH_BACKLOG_RU.md, LANDING_UI_V2_IMPLEMENTATION_RU.md, ORIENTER.md and PROJECT_STATE.yaml. No merge/deployment performed.
+
+
+### 2026-11-01 — PR #131: record main-branch divergence without syncing or merging
+
+- Live compare: `main` is `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; PR branch is 188 ahead / 4 behind; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. GitHub reports `mergeable=false`.
+- The four main-side commits since the merge base change only `docs/V1_UI_FINALIZATION_RU.md`. Compared main and PR copies: the PR version contains the current main additions plus the V2 reconciliation; no other main-side source delta was found.
+- No branch synchronization, PR merge or deployment was performed. Keep the reported mergeability issue as a separate pre-merge gate and re-check after the remaining P0/P1 work.
