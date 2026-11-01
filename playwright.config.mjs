@@ -2,11 +2,12 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/e2e',
-  fullyParallel: false,
+  // Each test gets a fresh Playwright browser context; parallel execution is isolated.
+  fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  reporter: process.env.CI ? 'github' : 'list',
+  workers: process.env.CI ? 3 : undefined,
+  reporter: process.env.CI ? [['github'], ['list']] : 'list',
   timeout: 30000,
   use: {
     baseURL: (process.env.LIVE_SITE_URL ? process.env.LIVE_SITE_URL.replace(/\/?$/, '/') : 'http://127.0.0.1:4173'),
