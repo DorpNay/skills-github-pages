@@ -512,7 +512,7 @@ landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   latest_code_test_head: "929ebcf20db87eca949c6f5a386c16e75f2856a1"
-  latest_documented_head: "7d24e459cdc5d0ed54c8463e6a61cfd87ca253bc"
+  latest_documented_head: "1aba5cc9b7dd8260b725ce3cccbfc44c684257ba"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
     memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
@@ -529,7 +529,7 @@ landing_ui_v2_pr131_2026_10_31:
     message_action_consistency: "Requirement 8.16: icon-first copy/view/speech actions use matching title and aria-label; E2E checks accessible labels/tooltips and 44px hit targets."
     readability: "Requirement 8.17: persistent 90–120% text scale and standard/high contrast apply in light/dark themes; E2E checks secondary, disabled, link, error and status colors in both themes while primary text remains stable."
     gateway_security_tests: "Added secret non-disclosure coverage for /livez, /readyz, /healthz, invalid Bearer values and sanitized upstream errors; source not executed."
-    inherited_ui_work: "Pre-8 UI backlog consolidated into 8.1–8.17: visual polish, mobile composer/VisualViewport, provider migration/validation, global prompt editing, privacy/provider instructions, Tavily fallback, gateway stale status, modal/focus/scroll, RU/EN and light/dark, catalog/project/research/skills/agents truthfulness."
+    inherited_ui_work: "All 18 original control directions before section 8 are enumerated with [x]/[~] statuses in docs/V1_UI_FINALIZATION_RU.md and mapped into 8.1–8.17/release gates. Current pass includes #2 mobile composer/VisualViewport, #3 provider localization, #4 field validation/accessibility, #5 prompt edit/focus, #8 gateway stale response, #10 chat scroll, #12 theme-aware status colors and #18 Chromium/release strategy."
     cloud_validation_and_locale: "RU/EN required URL/model/key validation, remote HTTPS rule, aria-invalid/aria-describedby, localized labels/paste/connect action and system prompt placeholder."
     cloud_stale_health_guard: "refreshCloudStatus rechecks current URL/model/key after async fingerprint and /healthz; deterministic in-flight health E2E added."
     prompt_edit_accessibility: "System prompt edit control localizes title/aria-label/live hint; E2E covers keyboard focus, edit and return to readonly."
