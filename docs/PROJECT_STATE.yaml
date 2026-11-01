@@ -565,3 +565,10 @@ ui_scope_reconciliation_2026_11_02:
   graphify_artifact: "pending exact-head confirmation"
   quality_chromium: "pending exact-head confirmation"
   next: "Continue integrated UI implementation; preserve PR #131 as source of truth and refresh this backup after each major documentation milestone"
+
+
+responsible_disclosure_policy:
+  file: "SECURITY.md"
+  status: "Added to PR #131 and mirrored in PR #132; not yet in main"
+  private_reporting: "GitHub private vulnerability reporting availability not verified"
+  security_settings: "Secret scanning, push protection, CodeQL and branch protection require owner-side verification"
