@@ -4608,13 +4608,22 @@
     $('chatActionForm').addEventListener('submit',event=>{event.preventDefault();saveChatActionDialog();});
     $('chatActionModal').addEventListener('click',event=>{if(event.target===$('chatActionModal'))closeChatActionDialog();});
     document.addEventListener('keydown', (event) => {
-      if(event.key==='Tab'&&uiNavigationStack[uiNavigationStack.length-1]?.kind==='modal'){
-        const modal=$(uiNavigationStack[uiNavigationStack.length-1].id);
-        const focusable=[...modal.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(node=>node.getClientRects().length&&!node.closest('.hidden'));
-        if(focusable.length){
-          const first=focusable[0],last=focusable[focusable.length-1];
-          if(event.shiftKey&&(document.activeElement===first||!modal.contains(document.activeElement))){event.preventDefault();last.focus();}
-          else if(!event.shiftKey&&(document.activeElement===last||!modal.contains(document.activeElement))){event.preventDefault();first.focus();}
+      if(event.key==='Tab'){
+        const modalId=[...uiModalIds].reverse().find(id=>$(id)&&!$(id).classList.contains('hidden'));
+        const modal=modalId?$(modalId):null;
+        if(modal){
+          const focusable=[...modal.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(node=>
+            node.getClientRects().length&&getComputedStyle(node).visibility!=='hidden'&&!node.closest('.hidden,[inert],[aria-hidden="true"]')
+          );
+          if(!focusable.length){
+            event.preventDefault();
+            if(!modal.hasAttribute('tabindex'))modal.setAttribute('tabindex','-1');
+            modal.focus({preventScroll:true});
+          }else{
+            const first=focusable[0],last=focusable[focusable.length-1];
+            if(event.shiftKey&&(document.activeElement===first||!modal.contains(document.activeElement))){event.preventDefault();last.focus({preventScroll:true});}
+            else if(!event.shiftKey&&(document.activeElement===last||!modal.contains(document.activeElement))){event.preventDefault();first.focus({preventScroll:true});}
+          }
         }
       }
       if (event.key === 'Escape') {
