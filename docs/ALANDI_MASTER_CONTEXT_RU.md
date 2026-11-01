@@ -246,3 +246,9 @@ OAuth backend prototype now exists behind OAUTH_ENABLED=false. Real client crede
 - SECURITY.md добавлен в PR #131/#132, но ещё не находится в main. CODEOWNERS и Dependabot config не добавлялись без подтверждённого независимого reviewer и завершения текущего dependency-lock workstream. Account-level security settings и classic branch protection остаются непроверенными через интеграцию.
 - Никакие ветки, файлы, Actions artifacts или настройки репозитория не удалялись и не менялись; PR не сливался, deployment не выполнялся.
 
+
+
+### Notification queue — 2026-11-02
+
+- PR #131 HEAD `fed3137bae2355629a976515719f498940ad8601`: existing toast extended with FIFO queue, duplicate suppression, urgency-based duration, hover/focus/hidden-tab pause and polite/assertive ARIA semantics.
+- Focused Playwright assertions were added but not run. No exact-head workflow run or status was returned. This is partial 8.19 work; durable operation state/IDs and persistent error recovery remain open.
