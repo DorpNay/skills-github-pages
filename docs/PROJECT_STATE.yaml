@@ -484,7 +484,7 @@ landing_ui_v2_pr131_2026_10_31:
   latest_code_test_head: "caabc526b9ffaaee31a312f2251aaffe5bea52e5"
   latest_documented_head_at_checkpoint: "f2572144b227560d2da4850d969f7ddd923be558"
   comparison_to_main:
-    ahead: 139
+    ahead: 138
     behind: 4
     merge_base: "e78a73b25725bfa63370d9946887cbbacbf51b82"
   implementation:
@@ -510,8 +510,8 @@ landing_ui_v2_pr131_2026_10_31:
     server_memory_retirement_e2e: "caabc526b9ffaaee31a312f2251aaffe5bea52e5"
     gateway_secret_non_disclosure: "6f7fde485b2b13aecc50523b20785e0ac615d2ad"
   verification:
-    exact_head_combined_status: "empty (head f2572144b227560d2da4850d969f7ddd923be558)"
-    exact_head_workflow_runs: "empty (head f2572144b227560d2da4850d969f7ddd923be558)"
+    exact_head_combined_status: "empty (head 4464b3f593f6b555dfd6dfc60e7d6d6d356ea1e3)"
+    exact_head_workflow_runs: "empty (head 4464b3f593f6b555dfd6dfc60e7d6d6d356ea1e3)
     gateway_pytest: "not executed in this environment; exact-head CI unavailable"
     playwright_chromium: "not executed; do not claim passing"
     native_mobile_voiceover: "not executed"
