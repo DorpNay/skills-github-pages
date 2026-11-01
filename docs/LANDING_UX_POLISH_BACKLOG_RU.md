@@ -9,18 +9,19 @@
 
 ## P0 — автоматическая проверка точного HEAD
 
-- [ ] Запустить focused Playwright/Chromium regressions для 8.1–8.17 и исправить подтверждённые падения.
+- [ ] После завершения UI source pass запустить focused Playwright/Chromium regressions для 8.1–8.17 и исправить подтверждённые падения. Текущий code/test HEAD: 847f1bee5ab7c12d960195891dac5a2e5af7201d; exact-head Quality ещё не запускался.
 - [ ] Установить, почему exact-head GitHub Actions runs/statuses не видны, хотя Quality Sentinels запускается на pull_request, а Gateway Tests — на PR с изменениями gateway/**; получить реальные результаты.
 - [ ] Запустить полный Quality (Gateway, Security, Integrity, Context, Jekyll, Chromium), Freshness, Provenance, Graphify и Dead Code, если workflows доступны.
 - [x] Gateway tests passed in Actions run #640 on `6f7fde4` (compileall, manifest/INTEL, pytest, deploy preflight, six-layer eval); no `gateway/**` changes since that tested commit. Browser/Quality verification remains open.
-- [ ] Подтвердить, что E2E охватывает sidebar/chat restore, responsive header, settings disclosures, Back/Forward/Escape, modal lifecycle, message actions, explicit project handoff, touch selection, status/reduced-motion и readability.
+- [ ] Подтвердить, что E2E охватывает sidebar/chat restore, responsive header, settings disclosures, Back/Forward/Escape, modal lifecycle, message actions, explicit project handoff, touch selection, status/reduced-motion, readability, bilingual field validation, stale Cloud health responses, prompt editing and mobile scroll retention.
+- [x] Chromium reliability hardening applied: one CI worker, 30-minute Playwright global timeout within 35-minute job timeout, trace on first retry, screenshot on failure, video disabled. Playwright 1.56.1 remains pinned to keep the browser baseline fixed until UI stabilization; findings are documented in LANDING_UI_V2_IMPLEMENTATION_RU.md.
 
 ## P1 — визуальная и ручная доступность
 
 - [ ] Screenshot review на 320/360/390/768/1024/1440 px: header, sidebar, composer, dialogs, empty states, long labels, spacing, typography and contrast.
 - [ ] Native iPhone Safari: virtual keyboard/VisualViewport, safe-area, orientation, edge swipe, long-press, touchcancel, nested scroll and scroll restoration.
 - [ ] VoiceOver/keyboard-only: heading order, accessible names/tooltips, visible/unobscured focus, Tab/Escape/Back/Forward, focus return and modal isolation.
-- [ ] Полная RU/EN проверка, light/dark для modal/menu/status/error/help/empty states.
+- [ ] Полная RU/EN проверка, light/dark для modal/menu/status/error/help/empty states. Cloud validation, Cloud field names, paste/connect actions and system-prompt editing now have targeted RU/EN coverage; full surface review remains.
 - [ ] Измерить реальные WCAG contrast ratios для primary/secondary/disabled/link/error/status в обеих темах. Computed-style assertions не равны WCAG audit.
 
 ## P2 — поведенческие проверки и достоверность интерфейса
@@ -28,7 +29,7 @@
 - [ ] Длинные списки/имена проектов и чатов, длинные сообщения, пустые состояния, вложенный scroll и popover у краёв viewport/при клавиатуре.
 - [ ] Меню «Исследование / Агенты / Навыки / Коннекторы»: только реально зарегистрированные сущности, статусы и permissions; отделить web-search breadth, offline и sequential pipeline от independent agent runtime.
 - [ ] Перепроверить empty-by-default global system prompt и legacy migration; решение по Tavily — только после аудита keyless search fallback и реального adapter contract.
-- [ ] Mock/contract-проверки provider/gateway ошибок: invalid URL/model, CORS, timeout, 401/5xx, secret redaction. Live smoke — только с явным согласием владельца.
+- [ ] Mock/contract-проверки provider/gateway ошибок: invalid URL/model, CORS, timeout, 401/5xx, secret redaction. Cloud now validates required fields and remote HTTPS, links errors accessibly, and ignores stale health responses; broader provider/catalog failure matrix remains. Live smoke — только с явным согласием владельца.
 
 ## Не включать в UI backlog
 
