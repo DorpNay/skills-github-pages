@@ -250,23 +250,83 @@
         clearPollinationsSession(); return 'Не удалось обменять OAuth-код Pollinations: ошибка сети/CORS.';
       }
     }
-    let toastTimer = null, toastHideTimer = null;
+    const toastQueue = [];
+    const toastLifecycle = { active: null, timer: null, hideTimer: null, remaining: 0, startedAt: 0, paused: false };
+    function clearToastTimer() {
+      if (toastLifecycle.timer) clearTimeout(toastLifecycle.timer);
+      toastLifecycle.timer = null;
+    }
+    function pauseToast() {
+      if (!toastLifecycle.active || toastLifecycle.paused) return;
+      toastLifecycle.remaining = Math.max(0, toastLifecycle.remaining - (Date.now() - toastLifecycle.startedAt));
+      clearToastTimer();
+      toastLifecycle.paused = true;
+    }
+    function resumeToast() {
+      if (!toastLifecycle.active || !toastLifecycle.paused || document.hidden) return;
+      toastLifecycle.paused = false;
+      toastLifecycle.startedAt = Date.now();
+      toastLifecycle.timer = setTimeout(dismissToast, toastLifecycle.remaining);
+    }
+    function dismissToast() {
+      const node = $('toast');
+      if (!node || !toastLifecycle.active) return;
+      clearToastTimer();
+      toastLifecycle.paused = false;
+      node.classList.remove('toast-visible');
+      if (toastLifecycle.hideTimer) clearTimeout(toastLifecycle.hideTimer);
+      toastLifecycle.hideTimer = setTimeout(() => {
+        node.classList.add('hidden');
+        toastLifecycle.active = null;
+        toastLifecycle.remaining = 0;
+        toastLifecycle.hideTimer = null;
+        renderNextToast();
+      }, 180);
+    }
+    function renderNextToast() {
+      const node = $('toast');
+      if (!node || toastLifecycle.active || !toastQueue.length) return;
+      const item = toastQueue.shift();
+      toastLifecycle.active = item;
+      toastLifecycle.remaining = item.duration;
+      toastLifecycle.paused = false;
+      node.textContent = item.message;
+      node.dataset.state = item.state;
+      node.classList.toggle('toast-error', item.state === 'error');
+      node.setAttribute('role', item.state === 'error' ? 'alert' : 'status');
+      node.setAttribute('aria-live', item.state === 'error' ? 'assertive' : 'polite');
+      node.classList.remove('hidden', 'toast-visible');
+      requestAnimationFrame(() => {
+        if (toastLifecycle.active === item) node.classList.add('toast-visible');
+      });
+      toastLifecycle.startedAt = Date.now();
+      if (!document.hidden) toastLifecycle.timer = setTimeout(dismissToast, toastLifecycle.remaining);
+      else toastLifecycle.paused = true;
+    }
     function showToast(message, kind = 'success') {
+      const text = String(message || '').trim();
+      if (!text) return;
+      const state = ['info', 'warning', 'success', 'error'].includes(kind) ? kind : 'success';
+      const duplicate = item => item && item.message === text && item.state === state;
+      if (duplicate(toastLifecycle.active) || toastQueue.some(duplicate)) return;
+      const duration = state === 'error' ? 7000 : state === 'warning' ? 5500 : 3200;
+      toastQueue.push({ message: text, state, duration });
+      renderNextToast();
+    }
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) pauseToast();
+      else resumeToast();
+    });
+    document.addEventListener('DOMContentLoaded', () => {
       const node = $('toast');
       if (!node) return;
-      node.textContent = String(message || '');
-      const state=['info','warning','success','error'].includes(kind)?kind:'success';
-      node.dataset.state=state;
-      node.classList.toggle('toast-error', state === 'error');
-      node.classList.remove('hidden', 'toast-visible');
-      if (toastTimer) clearTimeout(toastTimer);
-      if (toastHideTimer) clearTimeout(toastHideTimer);
-      requestAnimationFrame(() => node.classList.add('toast-visible'));
-      toastTimer = setTimeout(() => {
-        node.classList.remove('toast-visible');
-        toastHideTimer = setTimeout(() => node.classList.add('hidden'), 180);
-      }, 2400);
-    }
+      node.addEventListener('pointerenter', pauseToast);
+      node.addEventListener('pointerleave', resumeToast);
+      node.addEventListener('focusin', pauseToast);
+      node.addEventListener('focusout', event => {
+        if (!node.contains(event.relatedTarget)) resumeToast();
+      });
+    }, { once: true });
     function safeSet(key, value) {
       try { localStorage.setItem(key, value); return true; }
       catch (error) {
