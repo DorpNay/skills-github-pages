@@ -124,8 +124,8 @@ test('Research Studio closes on Escape without applying a mode or starting a req
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const draft = 'Do not submit this draft.';
   await page.locator('#userInput').fill(draft);
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('#functionsMenu [data-action="open-research-studio"]').click();
+  await expect(page.locator('#functionsMenu [data-action="open-research-studio"]')).toHaveCount(0);
+  await page.locator('#deepResearchStudioButton').click();
   const studio = page.getByRole('dialog', { name: 'Студия исследования' });
   await expect(studio).toBeVisible();
 
