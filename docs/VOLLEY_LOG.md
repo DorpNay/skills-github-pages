@@ -175,3 +175,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Recorded the app-title/Jekyll metadata and dual-theme color-scheme improvement, plus the V8 syntax-only verification boundary. No Chromium/Quality success is claimed.
 - Reaffirmed aServi naming, legacy storage-key compatibility and the no-delete/no-rebase/no-merge/no-deploy boundaries.
 - PR #132 remains draft, documentation-only and unmerged; its checks must not be represented as V2 code evidence.
+
+
+### 2026-11-02 — Repository hygiene runbook mirrored to continuity branch
+
+- Added docs/REPOSITORY_HYGIENE_RU.md to the documentation safety branch as well as PR #131, so the procedure is not confined to the implementation PR.
+- The runbook follows GitHub official guidance and requires evidence before branch/file cleanup; the actual audit remains queued for the next major-slice boundary.
+- No branch or file deletion, force update, merge, rebase or deployment was performed.
