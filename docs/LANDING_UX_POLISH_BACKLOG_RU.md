@@ -9,7 +9,7 @@
 
 ## P0 — автоматическая проверка точного HEAD
 
-- [ ] После завершения UI source pass запустить focused Playwright/Chromium regressions для 8.1–8.17 и исправить подтверждённые падения. Текущий code/test HEAD: 847f1bee5ab7c12d960195891dac5a2e5af7201d; exact-head Quality ещё не запускался.
+- [ ] После завершения UI source pass запустить focused Playwright/Chromium regressions для 8.1–8.17 и исправить подтверждённые падения. Текущий code/test HEAD: bca8fa892e95bd35db812382afdadbba41813265; exact-head Quality ещё не запускался.
 - [ ] Установить, почему exact-head GitHub Actions runs/statuses не видны, хотя Quality Sentinels запускается на pull_request, а Gateway Tests — на PR с изменениями gateway/**; получить реальные результаты.
 - [ ] Запустить полный Quality (Gateway, Security, Integrity, Context, Jekyll, Chromium), Freshness, Provenance, Graphify и Dead Code, если workflows доступны.
 - [x] Gateway tests passed in Actions run #640 on `6f7fde4` (compileall, manifest/INTEL, pytest, deploy preflight, six-layer eval); no `gateway/**` changes since that tested commit. Browser/Quality verification remains open.
