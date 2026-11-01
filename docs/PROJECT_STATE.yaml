@@ -66,7 +66,7 @@ ui_v2_track:
   status: "open_unmerged_owner_hold"
   latest_documentation_head: "read live PR #131 head; documentation-only commits may advance it"
   latest_code_test_head: "8f68c2cc4b4b01a1917e32f75f7d5016517d41c3"
-  latest_quality_harness_head: "5d01a7da02207665ce480a68eba99ce7efbc08a9"
+  latest_quality_harness_head: "d94d842608c07aa8def4b5fdc89ed95b80524034"
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0 and requirements 8.1-8.17"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
   polish_register: "docs/LANDING_UX_POLISH_BACKLOG_RU.md (mirrors the consolidated residual list; not a separate backlog)"
