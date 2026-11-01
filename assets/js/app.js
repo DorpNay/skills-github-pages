@@ -165,7 +165,44 @@
     let processingMode = 'fast';
     const selectedRequestProjectIds = new Set();
     const requestProjectContextByChat = new Map();
+    const REQUEST_PROJECT_CONTEXT_SESSION_KEY = 'ai_request_project_context_v1';
+    let requestProjectContextRestored = false;
     let requestContextOwnerChatId = null;
+
+    function persistRequestProjectContextByChat() {
+      try {
+        const pending = [...requestProjectContextByChat.entries()]
+          .filter(([chatId]) => chats.some(chat => chat.id === chatId))
+          .map(([chatId, ids]) => [chatId, ids.filter(id => projects.some(project => project.id === id)).slice(0, 5)])
+          .filter(([, ids]) => ids.length);
+        if (pending.length) sessionStorage.setItem(REQUEST_PROJECT_CONTEXT_SESSION_KEY, JSON.stringify(pending));
+        else sessionStorage.removeItem(REQUEST_PROJECT_CONTEXT_SESSION_KEY);
+      } catch (error) {
+        console.warn('Не удалось сохранить одноразовый контекст проекта в текущей сессии:', error);
+      }
+    }
+
+    function restoreRequestProjectContextByChat() {
+      if (requestProjectContextRestored) return;
+      requestProjectContextRestored = true;
+      try {
+        const raw = sessionStorage.getItem(REQUEST_PROJECT_CONTEXT_SESSION_KEY);
+        if (!raw) return;
+        const pending = JSON.parse(raw);
+        if (!Array.isArray(pending)) throw new Error('Invalid pending project context');
+        pending.forEach(entry => {
+          if (!Array.isArray(entry) || typeof entry[0] !== 'string' || !Array.isArray(entry[1])) return;
+          const [chatId, ids] = entry;
+          if (!chats.some(chat => chat.id === chatId)) return;
+          const valid = [...new Set(ids.filter(id => typeof id === 'string' && projects.some(project => project.id === id)))].slice(0, 5);
+          if (valid.length) requestProjectContextByChat.set(chatId, valid);
+        });
+        persistRequestProjectContextByChat();
+      } catch (error) {
+        sessionStorage.removeItem(REQUEST_PROJECT_CONTEXT_SESSION_KEY);
+        console.warn('Отложенный контекст проекта повреждён и был сброшен:', error);
+      }
+    }
     let pendingComposerAttachments = [];
     const composerAttachmentsByChat = new Map();
     let composerStateOwnerChatId = null;
@@ -1279,11 +1316,13 @@
     }
     function projectIdNew(){return globalThis.crypto?.randomUUID?.()||('p-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10));}
     function syncComposerStateForCurrentChat() {
+      restoreRequestProjectContextByChat();
       const activeId=currentChatId;
       if(requestContextOwnerChatId===null)requestContextOwnerChatId=activeId;
       else if(requestContextOwnerChatId!==activeId) {
         if(selectedRequestProjectIds.size)requestProjectContextByChat.set(requestContextOwnerChatId,[...selectedRequestProjectIds]);
         else requestProjectContextByChat.delete(requestContextOwnerChatId);
+        persistRequestProjectContextByChat();
         requestContextOwnerChatId=activeId;
         selectedRequestProjectIds.clear();
         for(const id of requestProjectContextByChat.get(activeId)||[])if(projects.some(project=>project.id===id))selectedRequestProjectIds.add(id);
@@ -1302,6 +1341,7 @@
       const valid=[...selectedRequestProjectIds].filter(id=>projects.some(project=>project.id===id)).slice(0,5);
       if(valid.length)requestProjectContextByChat.set(requestContextOwnerChatId,valid);
       else requestProjectContextByChat.delete(requestContextOwnerChatId);
+      persistRequestProjectContextByChat();
     }
     function renderProjectUI(options={}) {
       syncComposerStateForCurrentChat();
@@ -1401,6 +1441,7 @@
       selected.add(project.id);
       if(selected.size>5){showToast(getUiLanguage()==='en'?'A request can include up to five projects.':'В один запрос можно передать не более пяти проектов.','warning');return;}
       requestProjectContextByChat.set(chatId,[...selected]);
+      persistRequestProjectContextByChat();
       if(chatId===currentChatId){
         selectedRequestProjectIds.clear();selected.forEach(id=>selectedRequestProjectIds.add(id));
         saveRequestContextForActiveChat();renderRequestProjectChoices();
@@ -3580,7 +3621,7 @@
         chat.messages.push({ role: 'user', content: userContent });
         input.value = ''; autoResizeTextarea(input);
       }
-      selectedRequestProjectIds.clear();requestProjectContextByChat.delete(chat.id);pendingComposerAttachments=[];composerAttachmentsByChat.delete(chat.id);renderDraftAttachments();renderRequestProjectChoices();closeComposerPopovers();
+      selectedRequestProjectIds.clear();requestProjectContextByChat.delete(chat.id);persistRequestProjectContextByChat();pendingComposerAttachments=[];composerAttachmentsByChat.delete(chat.id);renderDraftAttachments();renderRequestProjectChoices();closeComposerPopovers();
       updateState([...chats]);
       isGenerating = true;
       activeChatId = chat.id;
@@ -3598,7 +3639,7 @@
         syncSettingsToActualRoute(lastSuccessfulRoute);
         saveRunDuration();
       } catch (error) {
-        if(requestProjectIds.length)requestProjectContextByChat.set(chat.id,requestProjectIds.slice());
+        if(requestProjectIds.length){requestProjectContextByChat.set(chat.id,requestProjectIds.slice());persistRequestProjectContextByChat();}
         if(chosenAttachments.length)composerAttachmentsByChat.set(chat.id,chosenAttachments.slice());
         if((requestProjectIds.length||chosenAttachments.length)&&currentChatId===chat.id&&requestContextOwnerChatId===chat.id&&composerStateOwnerChatId===chat.id){
           selectedRequestProjectIds.clear();requestProjectIds.forEach(id=>selectedRequestProjectIds.add(id));
