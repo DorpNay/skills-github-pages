@@ -693,6 +693,13 @@ test('language switch localizes provider controls without exposing the internal 
   await expect(page.locator('#providerExternalGroup')).toHaveAttribute('label', 'Third-party providers');
   await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
   await expect(page.locator('#cloudSettingsGroup')).toBeVisible();
+  await expect(page.locator('#cloudBaseUrl')).toHaveAttribute('aria-label', 'My server URL');
+  await expect(page.locator('#cloudModel')).toHaveAttribute('aria-label', 'Gateway model');
+  await expect(page.locator('#cloudApiKey')).toHaveAttribute('aria-label', 'Server access key');
+  await expect(page.locator('[data-action="paste-cloud-key"]')).toHaveAttribute('aria-label', 'Paste access key');
+  await expect(page.locator('#systemPromptInput')).toHaveAttribute('placeholder', 'Your shared instructions (optional)');
+  await expect(page.locator('#editSystemPrompt')).toHaveAttribute('aria-label', 'Edit system prompt');
+  await expect(page.locator('[data-action="connect-alandi-cloud"]')).toHaveText('Verify and connect');
   await expect(page.locator('#providerPreset option[value="gemini"]')).toHaveCount(1);
   await expect(page.locator('#providerPreset option[value="custom"]')).toHaveCount(1);
   await page.locator('.settings-header-actions [data-action="close-settings"]').click();
