@@ -330,3 +330,12 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Updated the shared theme helper and added a 320px E2E test for equal control geometry, accessible names, no horizontal overflow, theme toggling and language selection.
 - Commits: `9433ccad9767bf3b648c1d5d7c293fc283740447`, `6b7236ea1c0a7ce092073a0fbbd870a9b88cb1a7`, `669b808e23775b116f9e7ac6261b5a1431effcf1`, `652c3b47858c34c184146c03ec6044b103703cdb`.
 - Latest code/test head: `652c3b47858c34c184146c03ec6044b103703cdb`; the last Quality run #1125 predates these corrections. Exact-head rerun remains required; 8.11 is not marked complete until Chromium passes.
+
+
+### 2026-11-01 — PR #131: Chromium #1126 diagnosis and corrective batch
+
+- User-dispatched Quality run #1126 (`41291438804`) checked exact SHA `7cdf35d581d9d6bca39256e67a0b0db6083e486c`. Jekyll, Security, Static Analysis, Context and Integrity passed; Chromium failed after 101 passed and 18 failed. Diagnostics artifact ID `13077583320`; published-site smoke was skipped.
+- Root cause confirmed in three local-gateway test files: they still selected aLandi from the third-party provider list, while the live UI configures it in the Cloud card. Fixtures now set Cloud URL/model/key, answer the exact model probe and provide `/healthz` success. PDF and audio tests retain their original user-path assertions.
+- Other verified corrections: narrow header compression at 320px, disabled text high-contrast specificity, Research Studio close/history handling, visible-label checkbox interaction, project/sidebar state assumptions, collapsed private-memory disclosure, duplicate modal close selector and stale settings close after language selection.
+- Commits: `53c384a`, `54e90c3`, `a793f5d`, `8302b8f`, `ecc5118`, `c9c1df9`, `929ebcf`, `6845b8a`, `e64cfad`. Latest code/test head: `929ebcf20db87eca949c6f5a386c16e75f2856a1`. All changes remain unverified by a subsequent Quality run; do not infer a pass.
+- PR #131 remains open/unmerged and undeployed. Mergeability/dirty state is a separate blocker; native mobile and measured WCAG checks remain manual gates.
