@@ -284,6 +284,9 @@ permalink: /
         <button type="button" id="modeDeep" data-i18n="modeDeep" aria-pressed="false" class="flex-1 min-w-0 rounded-md px-2 py-1 text-gray-300">🔬 Тщательно</button>
       </div>
     </div>
+    <div class="flex justify-end">
+      <button id="deepResearchStudioButton" type="button" data-action="open-research-studio" data-i18n="deepResearchStudioButton" class="rounded-lg px-2 py-1 text-[11px] text-cyan-300 hover:bg-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400">⌕ Настроить исследование</button>
+    </div>
     <div class="flex items-center gap-2 text-xs">
       <details id="searchModeMenu" class="toolbar-menu flex-1 min-w-0">
         <summary id="searchModeSummary" class="toolbar-menu-summary">🌐 Веб: обычный ▾</summary>
@@ -299,7 +302,6 @@ permalink: /
           <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option" data-i18n="functionAgents">🧭 Структурированный разбор</button>
           <button type="button" data-action="open-function-panel" data-function="skills" class="toolbar-menu-option" data-i18n="functionSkills">🧩 Профиль задачи</button>
           <button type="button" data-action="open-function-panel" data-function="connectors" class="toolbar-menu-option" data-i18n="functionConnectors">🔌 Интеграции</button>
-          <button type="button" data-action="open-research-studio" class="toolbar-menu-option" data-i18n="functionResearchStudio">⌕ Студия исследования</button>
         </div>
       </details>
     </div>
