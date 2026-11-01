@@ -335,3 +335,10 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - Code/test commits in this correction batch include `003f2f3`, `7ff1e28`, `6fea65d`, `dfde158`, `6aca858`, `ffd5d7c`, `174747f`, `4f3e387`, `984de39`, `b91988d`, `2735e31`, `cbb6282`, `b59ac0f`, `7060ba6`, `b42797c`. These changes have not yet been exercised by a new Quality run.
 - Remaining failures to verify after rerun: high-contrast disabled text state; Cloud/provider/additional disclosure transitions; project/chat scope and handoff flows; message viewer actions; same-provider model fallback and 401 request count; new 44px touch targets. Native iPhone Safari, VoiceOver and measured WCAG contrast remain manual gates.
 - PR #131 is still open and unmerged. GitHub currently reports `mergeable_state=dirty`; treat this as a merge-conflict blocker to investigate separately before any merge. No deployment was performed.
+
+### 8.11 compact, separate theme and language controls — 2026-11-01
+
+- Replaced the combined `☼ RU` dropdown with two adjacent controls: a compact icon-only theme toggle and a language selector showing the current locale. Both reuse the existing `.header-icon` design token, preserving equal 44px touch targets; language menu now contains language choices only.
+- Updated `updateHomeThemeButton()` to localize accessible names/tooltips and expose the current theme with `aria-pressed`; theme switching remains immediate and persistent, language selection remains in the existing menu.
+- Updated the shared theme-toggle helper and added E2E coverage for equal geometry, accessible names, narrow 320px overflow, theme switching, and language selection. A prior compact-group test now checks both controls separately.
+- Code/test commits: `9433cca`, `6b7236e`, `669b808`, `652c3b4`. Browser execution remains pending; 8.11 is not marked complete until exact-head Quality/Chromium passes.
