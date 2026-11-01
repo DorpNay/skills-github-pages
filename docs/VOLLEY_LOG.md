@@ -192,3 +192,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Expanded the 8.14 Playwright regression to cover non-selectable buttons/disclosures and touch-action, while editable input, assistant message text and expanded message content remain selectable. The test checks both standard and WebKit-prefixed selection properties.
 - Test commit: `64a1a811bd5531d8095245d649829fd838486821`; ledger update: pending next documentation commit. Source has been inspected, but Playwright/Chromium and native iOS Safari/VoiceOver have NOT been executed. No test pass is claimed.
 - Continue with remaining 8.14 device-specific gesture checks only when a real device/browser is available, then proceed to 8.15 status/reduced-motion regression. PR #131 stays open; no merge/deploy.
+
+
+### 2026-11-01 — PR #131: requirement 8.15 status and reduced-motion coverage
+- Inspected the existing status/toast state mapping and motion rules. The app already has neutral/info/success/warning/error status colors, semantic toast colors, centered status/ticker layout, elapsed-time reporting without fabricated progress, and reduced-motion overrides.
+- Added a focused Playwright regression for all five distinct status colors, toast state styling, centered alignment and disabling the roadmap marquee under `prefers-reduced-motion`.
+- Test commit: `9a6cbe71e3c433bd20b1d0fbddfbd799834019d5`; implementation ledger updated. Test source has NOT been executed; no Chromium pass is claimed.
+- Next: continue 8.16 consistency audit, then 8.17 readability contrast coverage. PR #131 remains open/unmerged; no deployment.
