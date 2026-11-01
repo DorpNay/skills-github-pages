@@ -158,7 +158,7 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 
 
 ### Landing UI V2.0 continuation — 2026-11-01
-- Active work remains PR #131 on `feat/landing-v1-accessibility-responsive-20261031`; code/test checkpoint before this documentation update: `901b9c343dbddd2453605b03ec77fd5e893c608c`.
+- Active work remains PR #131 on `feat/landing-v1-accessibility-responsive-20261031`; latest code/test checkpoint: `d65102ed5a9ba3c30586d8a52efbd5603a009e23`; latest branch head before this checkpoint update: `baee92526def09756dd294d28a6675092c5bccf4` (subsequent commits are documentation-only).
 - aLandi Cloud route naming was replaced with aLandi aServi across the UI, DOM actions, JS handlers, tests and active docs. Legacy `ai_alandi_cloud_*` localStorage keys are intentionally retained as compatibility keys. `aLandi aCloudi` is only a future storage name; Cloudflare remains unchanged.
 - Extracted 48.1 KB app CSS and 10.4 KB landing CSS to cacheable assets; app HTML reduced 109.3→61.3 KB, landing HTML 26.1→15.8 KB. Marked and DOMPurify now load in ordered `defer` before app.js.
 - Prior Quality #1126 (SHA `7cdf35d`) remains the last observed Chromium failure (101 pass/18 fail); corrected fixtures and selectors are committed but exact-head rerun is not available through current tool actions. Latest observed provenance pass predates current head.
