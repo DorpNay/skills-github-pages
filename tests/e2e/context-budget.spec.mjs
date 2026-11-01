@@ -88,11 +88,13 @@ test('large model context retains history beyond the old global caps', async ({ 
     { role: 'user', content: 'OLD_TURN_' + i + ' ' + 'x'.repeat(700) },
     { role: 'assistant', content: 'OLD_REPLY_' + i + ' ' + 'y'.repeat(200) }
   ]).flat();
-  await page.evaluate(items => {
+  await page.goto('about:blank');
+  await page.addInitScript(items => {
     localStorage.setItem('ai_chats_v87', JSON.stringify([{ id: 'large-budget-chat', title: 'Large budget', messages: items }]));
     localStorage.setItem('ai_current_chat_v87', 'large-budget-chat');
   }, messages);
-  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_chats_v87') || '')).toContain('OLD_TURN_0');
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');

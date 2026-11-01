@@ -1767,7 +1767,12 @@ test('project instructions, project memory, and project bundles stay scoped to t
   const alphaId = await createProjectFromUi(page, 'Alpha Project', 'ALPHA_PROJECT_INSTRUCTION_SENTINEL');
   await openProjectSettingsForId(page, alphaId);
   await page.locator('#projectMemoryInput').fill('ALPHA_PROJECT_MEMORY_SENTINEL');
+  await expect(page.locator('#projectMemoryInput')).toHaveValue('ALPHA_PROJECT_MEMORY_SENTINEL');
   await page.locator('[data-action="add-project-memory"]').click();
+  await expect.poll(() => page.evaluate(projectId => {
+    const project=JSON.parse(localStorage.getItem('ai_projects_v1')||'[]').find(item=>item.id===projectId);
+    return Boolean(project?.memory?.some(item=>item.text==='ALPHA_PROJECT_MEMORY_SENTINEL'));
+  }, alphaId)).toBe(true);
   await expect(page.locator('#projectMemoryBox')).toContainText('ALPHA_PROJECT_MEMORY_SENTINEL');
   const alphaDownloadPromise = page.waitForEvent('download');
   await page.locator('[data-action="export-project"]').click();
@@ -1796,7 +1801,12 @@ test('project instructions, project memory, and project bundles stay scoped to t
   expect(betaId).not.toBe(alphaId);
   await openProjectSettingsForId(page, betaId);
   await page.locator('#projectMemoryInput').fill('BETA_PROJECT_MEMORY_SENTINEL');
+  await expect(page.locator('#projectMemoryInput')).toHaveValue('BETA_PROJECT_MEMORY_SENTINEL');
   await page.locator('[data-action="add-project-memory"]').click();
+  await expect.poll(() => page.evaluate(projectId => {
+    const project=JSON.parse(localStorage.getItem('ai_projects_v1')||'[]').find(item=>item.id===projectId);
+    return Boolean(project?.memory?.some(item=>item.text==='BETA_PROJECT_MEMORY_SENTINEL'));
+  }, betaId)).toBe(true);
   await expect(page.locator('#projectMemoryBox')).toContainText('BETA_PROJECT_MEMORY_SENTINEL');
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 
@@ -3580,6 +3590,7 @@ test('modal lifecycle keeps keyboard focus and page scroll isolated across core 
   await ensureSidebarOpen(page);
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await assertModalLifecycle('projectCreateModal');
+  await page.locator('#sidebar [data-action="close-sidebar"]').click();
 
   await page.locator('[data-action="toggle-settings"]').click();
   await assertModalLifecycle('settingsModal');

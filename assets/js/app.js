@@ -77,6 +77,27 @@
         node.getClientRects().length&&getComputedStyle(node).visibility!=='hidden'&&!node.closest('.hidden,[inert],[aria-hidden="true"]')
       );
     }
+    uiModalIds.forEach(id=>{
+      const modal=$(id);
+      if(!modal||modal.dataset.focusCycleBound==='true')return;
+      modal.dataset.focusCycleBound='true';
+      modal.addEventListener('keydown',event=>{
+        if(event.key!=='Tab'||getTopmostUiModal()!==modal)return;
+        const focusable=getModalFocusableElements(modal);
+        if(!focusable.length){
+          event.preventDefault();event.stopImmediatePropagation();
+          if(!modal.hasAttribute('tabindex'))modal.setAttribute('tabindex','-1');
+          modal.focus({preventScroll:true});
+          return;
+        }
+        const first=focusable[0],last=focusable[focusable.length-1];
+        if(event.shiftKey&&(document.activeElement===first||!modal.contains(document.activeElement))){
+          event.preventDefault();event.stopImmediatePropagation();last.focus({preventScroll:true});
+        }else if(!event.shiftKey&&(document.activeElement===last||!modal.contains(document.activeElement))){
+          event.preventDefault();event.stopImmediatePropagation();first.focus({preventScroll:true});
+        }
+      },true);
+    });
     function closeUiModalDirect(id){
       const closers={
         settingsModal:()=>toggleSettings(false),projectSettingsModal:closeProjectSettings,projectCreateModal:closeProjectCreate,
@@ -1397,10 +1418,14 @@
       showToast(getUiLanguage()==='en'?'Project context queued for the next request in the selected chat.':'Контекст проекта подготовлен для следующего запроса выбранного чата. Чат не перемещён.');
     }
     function addProjectMemory(){
-      const project=getProjectForChat(),input=$('projectMemoryInput'),text=input.value.trim().slice(0,600);
+      const input=$('projectMemoryInput'),text=input.value.trim().slice(0,600);
+      const project=projects.find(item=>item.id===selectedProjectForSettingsId)
+        ||getProjectForChat(getCurrentChat());
       if(!project){showToast(getUiLanguage()==='en'?'Choose a project first.':'Сначала выбери проект.','error');return;}
       if(!text){input.focus();return;}
+      if(!Array.isArray(project.memory))project.memory=[];
       if(project.memory.length>=500){showToast('Достигнут предел памяти проекта (500 записей).','error');return;}
+      selectedProjectForSettingsId=project.id;
       project.memory.push({id:projectIdNew(),text,createdAt:new Date().toISOString()});project.updatedAt=new Date().toISOString();
       input.value='';persistProjects();renderProjectUI();
     }
