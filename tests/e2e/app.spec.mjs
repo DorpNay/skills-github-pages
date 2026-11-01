@@ -2104,14 +2104,10 @@ test('settings keep Cloud, third-party providers and additional options in exclu
   await expect(additional).not.toHaveAttribute('open');
 });
 
-test('deprecated server-memory controls are absent and project facts remain local', async ({ page }) => {
+test('retired server-memory bridge is absent and project facts remain local', async ({ page }) => {
   const graphRequests = [];
   const corsHeaders = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Content-Type': 'application/json' };
   await page.route('https://gateway.example.test/v1/memory/graph/**', async route => {
-    graphRequests.push({ method: route.request().method(), url: route.request().url() });
-    return route.fulfill({ status: 404, headers: corsHeaders, body: JSON.stringify({ detail: 'No client route expected' }) });
-  });
-  await page.route('https://gateway.example.test/v1/helpers/project-memory-suggestions', async route => {
     graphRequests.push({ method: route.request().method(), url: route.request().url() });
     return route.fulfill({ status: 404, headers: corsHeaders, body: JSON.stringify({ detail: 'No client route expected' }) });
   });
@@ -2133,7 +2129,6 @@ test('deprecated server-memory controls are absent and project facts remain loca
   await expect(page.locator('#projectMemoryBox')).toContainText('LOCAL_PROJECT_MEMORY_SENTINEL');
   await expect(page.locator('#serverMemoryDetails')).toHaveCount(0);
   await expect(page.locator('#serverProjectMemoryToggle')).toHaveCount(0);
-  await expect(page.locator('#helperMemorySuggestionsBox')).toHaveCount(0);
   await expect(page.locator('#projectMemoryToggle')).toHaveCount(0);
   const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]'));
   expect(stored.some(project => project.name === 'Local-only project' && project.memory.some(item => item.text === 'LOCAL_PROJECT_MEMORY_SENTINEL'))).toBe(true);
