@@ -695,7 +695,11 @@ test('high-contrast preference updates every important text state in both themes
   await toggleHeaderTheme(page);
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#additionalSettings > summary').click();
+  const additionalSettings = page.locator('#additionalSettings');
+  if (!(await additionalSettings.evaluate(element => element.open))) {
+    await page.locator('#additionalSettings > summary').click();
+  }
+  await expect(page.locator('#uiTextContrast')).toBeVisible();
   const highLight = await readStates();
   await page.locator('#uiTextContrast').selectOption('normal');
   const normalLight = await readStates();
