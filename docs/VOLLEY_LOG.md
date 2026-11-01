@@ -429,3 +429,13 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 
 
 | V-2026-11-01-PR131-DIVERGENCE-001 | 2026-11-01 | Recheck PR #131 against live main after owner documentation updates | Compare reports 415 ahead / 4 behind, merge base `e78a73b`; main-side delta is only `docs/V1_UI_FINALIZATION_RU.md` (210 additions, 6 deletions), overlapping the PR's unified 8.0/8.1–8.17 requirements ledger; no source-code file conflict identified | Do not rebase, merge or discard either version of the shared checklist without explicit owner approval |
+
+
+### 2026-11-02 — PR #131: app identity metadata and source checkpoint
+
+- Updated `index.md` Jekyll/browser title from the stale `AI Mobile Agent v10.0` to `aLandi — личная AI-среда`; added the app description and changed the color-scheme hint to `dark light` to match the existing selectable themes.
+- Updated `_config.yml` site title/description to aLandi. Added deterministic Quality Sentinel and Playwright assertions for title, description and theme metadata.
+- Code/test commits: `66e265ff73f90ebdc35a2c5ed67aaa3c618bcc94` (app HTML metadata), `7823b63a8259d42707930268e3b0b2de49cea363` (Jekyll metadata), `111830500aeeee79e3cc74412533210cb3361cba` (Quality contract), `b6b4cd612e288f0ad2c0e23419a562b06b491ef5` (E2E contract).
+- Documentation commits: `de8cbc047d7e9b39923e02bb950918358340884c` (8.2 checklist), `749aac0e6566478ad453696409fa3ab6edd6f149` (implementation record), `ec7625c98a36f1d54a190da695391244e5eecdd3` (project state).
+- V8 syntax parsing passed for app.js, the E2E module and Quality Sentinel after adapting module-only imports/shebang for the parser. CSS brace balance is zero; exact metadata assertions are present. Playwright/Chromium and the Quality workflow have not been run on this checkpoint.
+- PR #131 was 476 ahead / 4 behind main, with four base-side commits touching the shared UI checklist only. No synchronization, merge, deletion or deployment was performed.
