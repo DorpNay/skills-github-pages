@@ -128,3 +128,7 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Latest source checkpoint: 9679ed4d7974849f3fd02dcf8465384c8c59a9df. Removed 504 bytes of overridden legacy CSS declarations; effective theme/font/focus styles remain defined by the active token layer.
 - CSS brace balance is zero; no browser visual test has been executed on this change. Exact-head Quality/Chromium remains pending.
 - The V2 implementation ledger in this backup branch has been refreshed from PR #131.
+
+
+### aServi storage compatibility note — 2026-11-02
+- The latest source adds an inline comment explaining that ai_alandi_cloud_* keys remain solely as persisted-setting compatibility identifiers. Do not rename them without a migration plan.
