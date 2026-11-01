@@ -96,7 +96,8 @@ test('Research Studio applies selected settings without sending or replacing the
   await expect(studio).toBeVisible();
   await page.locator('#researchStudioEffort').selectOption('deep');
   await page.locator('#researchStudioSearchMode').selectOption('normal');
-  await page.locator('#researchStudioStructured').check();
+  await page.locator('#researchStudioStructured').locator('xpath=..').click();
+  await expect(page.locator('#researchStudioStructured')).toBeChecked();
   await page.locator('#researchStudioModal [data-action="start-research-studio"]').click();
 
   await expect(studio).toBeHidden();
