@@ -417,7 +417,7 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Current code/test head: 4bd40770fd3446e5280e719644394882c9148dae. No Chromium/browser run is claimed.
 
 
-| V-2026-11-01-ASERVI-HTML-CSS-001 | 2026-11-01 | Rename primary server route to aLandi aServi; retain legacy storage keys; externalize app/landing CSS; order renderer/sanitizer scripts with defer; align E2E and Quality assertions; document Chromium mobile edge cases | PR #131 code/test checkpoint `d65102ed5a9ba3c30586d8a52efbd5603a009e23` (branch head before documentation reconciliation `baee92526def09756dd294d28a6675092c5bccf4`); app.js syntax parse passed, extracted CSS brace counts balanced; exact-head Quality/Chromium pending | Do not migrate/delete legacy localStorage keys without explicit migration; Cloudflare is not renamed; no merge/deploy |
+| V-2026-11-01-ASERVI-HTML-CSS-001 | 2026-11-01 | Rename primary server route to aLandi aServi; retain legacy storage keys; externalize app/landing CSS; order renderer/sanitizer scripts with defer; align E2E and Quality assertions; document Chromium mobile edge cases | PR #131 code/test checkpoint `d65102ed5a9ba3c30586d8a52efbd5603a009e23` (branch head before state reconciliation `5bfc48ada9ccecf5df2beb160bae7042d2481ac6`); app.js syntax parse passed, extracted CSS brace counts balanced; exact-head Quality/Chromium pending | Do not migrate/delete legacy localStorage keys without explicit migration; Cloudflare is not renamed; no merge/deploy |
 
 
 ### 2026-11-01 — PR #131: modal focus containment hardening (8.6 / 8.9)
@@ -426,3 +426,6 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Added getTopmostUiModal(), which chooses the visible modal with the highest computed z-index. The Tab handler now filters disabled, hidden, inert, aria-hidden and visibility-hidden descendants; wraps Tab/Shift+Tab; and focuses the dialog itself if it contains no usable controls.
 - Added an E2E for both wrap directions and for focus entering the modal from an outside control. Refined the test to consider only rendered focusable elements, not descendants of collapsed disclosures.
 - Latest code commit: 5f4d3fb4a9b96eb85ddef98758e2301abea78ae0; latest modal E2E commit: baee92526def09756dd294d28a6675092c5bccf4. Syntax check passed after this change; browser verification remains deferred.
+
+
+| V-2026-11-01-PR131-DIVERGENCE-001 | 2026-11-01 | Recheck PR #131 against live main after owner documentation updates | Compare reports 415 ahead / 4 behind, merge base `e78a73b`; main-side delta is only `docs/V1_UI_FINALIZATION_RU.md` (210 additions, 6 deletions), overlapping the PR's unified 8.0/8.1–8.17 requirements ledger; no source-code file conflict identified | Do not rebase, merge or discard either version of the shared checklist without explicit owner approval |
