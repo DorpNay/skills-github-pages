@@ -728,11 +728,10 @@ permalink: /
     </div>
     <span id="brandWordmark" class="brand-wordmark font-bold text-lg tracking-tight shrink-0">aLandi</span>
     <div class="header-preferences" role="group" aria-label="Настройки отображения">
+      <button type="button" id="headerThemeToggle" data-action="toggle-theme-cycle" class="header-icon" aria-label="Сменить тему" title="Сменить тему">☾</button>
       <details id="languageMenu" class="language-menu">
-        <summary id="languageSummary" class="header-icon" aria-label="Тема и язык" title="Тема и язык">☼ RU</summary>
+        <summary id="languageSummary" class="header-icon" aria-label="Выбрать язык" title="Выбрать язык">RU</summary>
         <div class="language-menu-panel">
-          <button type="button" id="headerThemeMenuToggle" data-action="toggle-theme-cycle" aria-label="Сменить тему" title="Сменить тему">☼ Тема: тёмная</button>
-          <div class="my-1 border-t border-gray-700"></div>
           <button type="button" data-action="set-language" data-language="ru" aria-pressed="true">Русский</button>
           <button type="button" data-action="set-language" data-language="en" aria-pressed="false">English</button>
         </div>
@@ -1630,9 +1629,18 @@ permalink: /
     function updateHomeThemeButton(){
       const light=document.documentElement.dataset.theme==='light';
       const english=getUiLanguage()==='en';
-      const button=$('headerThemeMenuToggle'),summary=$('languageSummary');
-      if(button){button.textContent=light?(english?'☼ Theme: light':'☼ Тема: светлая'):(english?'☾ Theme: dark':'☾ Тема: тёмная');button.title=english?'Switch theme':'Сменить тему';button.setAttribute('aria-label',button.title);}
-      if(summary){summary.textContent=(light?'☾ ':'☼ ')+(english?'EN':'RU');summary.title=english?'Theme and language':'Тема и язык';summary.setAttribute('aria-label',summary.title);}
+      const button=$('headerThemeToggle'),summary=$('languageSummary');
+      if(button){
+        button.textContent=light?'☾':'☼';
+        button.title=english?(light?'Switch to dark theme':'Switch to light theme'):(light?'Включить тёмную тему':'Включить светлую тему');
+        button.setAttribute('aria-label',button.title);
+        button.setAttribute('aria-pressed',String(light));
+      }
+      if(summary){
+        summary.textContent=english?'EN':'RU';
+        summary.title=english?'Choose language':'Выбрать язык';
+        summary.setAttribute('aria-label',summary.title);
+      }
     }
     function toggleHomeTheme(){
       const next=document.documentElement.dataset.theme==='light'?'dark':'light';
