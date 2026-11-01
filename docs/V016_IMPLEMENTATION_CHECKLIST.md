@@ -217,3 +217,10 @@ The following items cover the initial fixation document plus manifesto sections 
 - [x] PR #121 merged at `f4d880f`: effort controls only execution budget; web-search scope controls only availability/result breadth; structured workflow and task profile are separate; Research Studio uses current chat settings without mutation; exact-head Chromium/Quality passed. Native iPhone/VoiceOver remains manual.
 - [ ] Exact-head tests must pass for Quick+Expanded, Thorough+Standard, Thorough+Off, RU/EN, per-chat persistence and Research Studio non-mutation before merge.
 - [ ] Native iPhone Safari and live gateway/provider behavior remain unverified.
+
+
+### Research Studio placement superseded — 2026-11-01
+
+- PR #120 historically placed Research Studio below chats in the sidebar; that placement is no longer the desired product architecture.
+- Current direction: Research Studio is a subfeature of deep research, entered from the Thorough/deep-research controls. It is not a standalone sidebar or Functions-menu destination.
+- PR #131 moves the entry point and updates E2E/Quality contracts; exact-head Chromium verification is still required.
