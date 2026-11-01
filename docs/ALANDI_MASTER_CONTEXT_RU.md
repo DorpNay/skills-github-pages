@@ -214,3 +214,23 @@ OAuth backend prototype now exists behind OAUTH_ENABLED=false. Real client crede
 ## Краткая инструкция агенту
 
 Ты работаешь над aLandi в `DorpNay/skills-github-pages`. Сначала прочитай этот мастер-контекст и связанные документы, затем исследуй актуальный код. Одобренная идея не равна реализованной функции. Работай небольшими проверяемыми шагами, используй bounded roles, provenance, evals и rollback. Не раскрывай секреты и не выполняй действия с побочными эффектами без разрешения. В финале сообщай, что реально изменено, что проверено, какие ограничения остались и как откатить изменение.
+
+## Актуальная контрольная точка — 2026-11-02
+
+### Landing UI V2.0
+
+- PR #131 — единственная активная ветка реализации V2 UI; PR остаётся открытым и не объединённым. V1 в main сохраняется как стабильная база.
+- Объём UI не ограничивается требованиями 8.1–8.17: все актуальные незакрытые требования из разделов 1–7 объединены с 8.1–8.17 в едином реестре раздела 8.0 docs/V1_UI_FINALIZATION_RU.md. Старые закрытые, неактуальные и заменённые пункты не открывать заново.
+- docs/LANDING_UX_POLISH_BACKLOG_RU.md — краткий mirror, а не отдельный backlog. docs/LANDING_UI_V2_IMPLEMENTATION_RU.md — технический журнал изменений и evidence.
+- Latest UI source checkpoint: 9aa74853478a6a680cdd36ab0f84c851721405a4; последующие PR HEAD коммиты продвигают документацию и CI-гигиену. На точном текущем HEAD нет подтверждённого Quality/Chromium результата. Предыдущий Quality #1126 (101 passed / 18 failed) относится к старому SHA и не доказывает состояние текущего кода.
+- Клиент остаётся статическим HTML/CSS/JavaScript + Jekyll/GitHub Pages. Browser runtime/styles вынесены в assets/js/app.js, assets/css/app.css и assets/css/landing.css; framework/build migration не выполнялась.
+- Graphify Code-Only Pilot обновлён так, чтобы отслеживать вынесенные assets/js/**/*.js, assets/css/**/*.css и landing/**/*.html. Новый exact-head граф/артефакт ещё не подтверждён; исторические метрики Graphify не выдавать за актуальный граф текущей ветки.
+- PR #131 расходится с main на четыре коммита; все четыре main-side изменения затрагивают только docs/V1_UI_FINALIZATION_RU.md. GitHub сообщает mergeable_state=dirty. Не выполнять rebase/sync без отдельного анализа и сохранения обеих версий единого UI checklist.
+
+### GitHub repository hygiene
+
+- Подготовлен docs/REPOSITORY_HYGIENE_RU.md на основе официальных рекомендаций GitHub. Снимок: 126 веток, 9 открытых PR, 100 закрытых PR.
+- 19 веток закрытых, но не объединённых PR и 10 не связанных с PR веток содержат уникальные коммиты; их сохраняем. Пять веток с ahead=0 — только кандидаты на удаление после ручного подтверждения владельцем. Удаление не выполнялось: текущая GitHub-интеграция не предоставляет branch-delete action.
+- SECURITY.md добавлен в PR #131/#132, но ещё не находится в main. CODEOWNERS и Dependabot config не добавлялись без подтверждённого независимого reviewer и завершения текущего dependency-lock workstream. Account-level security settings и classic branch protection остаются непроверенными через интеграцию.
+- Никакие ветки, файлы, Actions artifacts или настройки репозитория не удалялись и не менялись; PR не сливался, deployment не выполнялся.
+
