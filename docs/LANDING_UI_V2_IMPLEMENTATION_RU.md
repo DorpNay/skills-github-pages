@@ -31,7 +31,7 @@
 | **8.13 Explicit project context handoff** | Project settings list existing chats and queue the selected project's context for the chosen chat's next request; no new chat or project-membership change; five-project cap and one-shot consumption retained. Pending handoff is session-only until sent. | Execute non-current-chat/no-cross-chat/one-shot E2E and decide whether pending handoff should survive reload. | [~] |
 | **8.14 Touch selection** | Targeted user-select/-webkit-user-select/touch-action rules keep controls from selecting the whole interface while message text, expanded viewer content and editable fields remain selectable; horizontal sidebar swipe is separated from vertical scrolling. | Chromium regression now checks buttons, disclosures, input fields, assistant text and expanded viewer selection styles; native iOS Safari long-press, VoiceOver and gesture tests remain. | [~] |
 | **8.15 Status/progress** | Status and toast elements expose neutral/info/success/warning/error data states with restrained semantic colors; status text and ticker are centered; no synthetic progress added. | Playwright coverage now checks all five status colors, toast semantic styling, centered alignment and marquee suppression under `prefers-reduced-motion`; browser execution and theme contrast review remain. | [~] |
-| **8.16 Button typography/icon-first** | Shared font/line-height/spacing rules; expanded-view copy/speech actions are icon-first with accessible labels and tooltips; ambiguous actions retain text. | Normalize remaining one-off buttons and verify tooltips/target sizes across all panels. | [~] |
+| **8.16 Button typography/icon-first** | Shared control typography/spacing and 44px message-action targets; copy/view/speech actions are icon-first. Inline message-action labels/tooltips now use one consistent value for both `title` and `aria-label`. | Added E2E assertions for all inline and expanded-view message actions: matching accessible name/tooltip and 44px hit targets. Remaining one-off controls and full panel review remain. | [~] |
 | **8.17 Adjustable text readability** | Persistent text scale and standard/high-contrast preference have a live preview/reset and apply to light/dark themes; high contrast also raises secondary/disabled/link/error/status text. | Run contrast checks for all states and confirm readability on actual devices. | [~] |
 
 ## Acceptance and test plan
@@ -169,3 +169,10 @@
 - Added a focused Playwright scenario checking that all five status states resolve to distinct text colors, toast semantic states have visible color/border styling, status and roadmap ticker are centered, and the roadmap marquee is disabled when the browser requests reduced motion.
 - Test commit: `9a6cbe71e3c433bd20b1d0fbddfbd799834019d5`. This is regression source only; Chromium has not been executed and no pass is claimed.
 - Existing implementation already avoids synthetic progress; status timer reports elapsed time and a historical estimate only when available.
+
+
+### Follow-up — icon-first message action consistency (8.16, 2026-11-01)
+
+- Fixed inconsistent duplicate `aria-label` assignments on inline message actions. Copy, open-full-message and local-speech controls now each set one label and use the same value for the tooltip and accessible name.
+- Extended the message-viewer Playwright scenario to verify all inline and expanded-view action labels/tooltips match and all inline message-action targets are at least 44×44px.
+- Code commit: `f1b7792dd6c38af08cf4e3f8979660890a3bea0a`; test commit: `a6ce9eed87d6c239b9f5ea394ab04359939479e2`. Browser execution remains pending.
