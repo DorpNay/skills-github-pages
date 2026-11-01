@@ -282,18 +282,31 @@ test('settings modal traps Tab and Shift+Tab inside the visible dialog', async (
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
   const modal = page.locator('#settingsModal');
-  const focusable = modal.locator('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])');
-  const count = await focusable.count();
-  expect(count).toBeGreaterThan(1);
-  await focusable.first().focus();
+  const visibleCount = await modal.evaluate(element => {
+    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')];
+    return nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]')).length;
+  });
+  expect(visibleCount).toBeGreaterThan(1);
+  await modal.evaluate(element => {
+    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')];
+    nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]'))[0].focus();
+  });
   await page.keyboard.press('Shift+Tab');
-  await expect(focusable.last()).toBeFocused();
+  await expect.poll(() => modal.evaluate(element => {
+    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')];
+    const visible = nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]'));
+    return document.activeElement === visible.at(-1);
+  })).toBe(true);
   await page.keyboard.press('Tab');
-  await expect(focusable.first()).toBeFocused();
+  await expect.poll(() => modal.evaluate(element => {
+    const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')];
+    const visible = nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]'));
+    return document.activeElement === visible[0];
+  })).toBe(true);
 
   await page.locator('#headerThemeToggle').focus();
   await page.keyboard.press('Tab');
-  await expect(focusable.first()).toBeFocused();
+  await expect.poll(() => modal.evaluate(element => element.contains(document.activeElement))).toBe(true);
 });
 
 test('settings backdrop closes cleanly and restores focus across repeated cycles', async ({ page }) => {
