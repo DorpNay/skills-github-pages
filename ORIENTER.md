@@ -182,3 +182,11 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - The aServi rename remains consistent in active V2 UI/docs. Only the legacy `ai_alandi_cloud_*` localStorage keys remain, intentionally, for backwards compatibility. Cloudflare is unchanged; `aLandi aCloudi` remains reserved for a separate future storage product.
 - Repository hygiene is scheduled for the next major-slice boundary and governed by [docs/REPOSITORY_HYGIENE_RU.md](docs/REPOSITORY_HYGIENE_RU.md): inventory branches against open/closed PRs and ancestry, review workflows/artifacts/dependencies/docs and repository security settings, then perform only evidence-backed cleanup. No branch/file deletion, rebase, force-push, merge or deployment has been performed.
 - Next: finish the source/documentation reconciliation, refresh the parallel documentation safety copy in PR #132, then run exact-head Quality/Chromium and diagnose only confirmed failures. Native iOS Safari/VoiceOver and full component-level WCAG review remain manual gates.
+
+
+### GitHub repository hygiene — первичная инвентаризация 2026-11-02
+- API перечислил 126 веток и 9 открытых PR (#124–#132); 117 веток вне head открытых PR требуют индивидуальной проверки PR/issue/ancestry/reference. Ни одна ветка не удалялась.
+- Rulesets: 0; classic protection `main` не удалось проверить (403), поэтому статус неизвестен. Автоудаление веток после merge выключено.
+- CODEOWNERS, SECURITY.md и Dependabot config не найдены в стандартных местах; фактические security alerts/settings не проверены.
+- На PR #131 HEAD на момент аудита Provenance #41336870473 прошёл; exact-head Quality/Chromium отсутствует. Quality #1126 (101 passed / 18 failed) относится к старому SHA.
+- Подробности и безопасный план: `docs/REPOSITORY_HYGIENE_RU.md`. Удалений, изменений настроек, merge/rebase/force-push или deployment не выполнялось.
