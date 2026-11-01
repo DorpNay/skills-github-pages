@@ -211,7 +211,7 @@ const suites = {
       assert.ok(!source.includes("mode === 'fast' && index > 0 && !extendedSearch"), 'Fast-mode tool limits must not depend on search scope.');
       assert.ok(!source.includes('id="researchStudioDepth"') && !source.includes('id="researchStudioWeb"'), 'Research Studio must not duplicate chat settings.');
       assert.ok(!source.includes('data-function="research"'), 'Research Studio must not become an independent function category.');
-      includes('id="deepResearchStudioButton" data-action="open-research-studio"', 'Research Studio must be nested in the deep-research controls.');
+      includes('id="deepResearchStudioButton" type="button" data-action="open-research-studio"', 'Research Studio must be nested in the deep-research controls.');
       assert.ok(!source.includes('id="functionsMenu"') || !source.includes('data-action="open-research-studio" class="toolbar-menu-option"'), 'Research Studio must not appear as a top-level Functions menu item.');
       assert.ok(!source.includes("setProcessingMode(depth)") && !source.includes("setSearchMode(webEnabled ?"), 'Research Studio must not mutate active chat settings.');
       includes("await runAssistant(workChat, signal, useSearch, false, mode, true,", 'The structured workflow must honor the selected effort budget in its research stage.');
