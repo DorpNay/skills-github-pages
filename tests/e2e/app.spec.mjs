@@ -748,10 +748,10 @@ test('language switch localizes provider controls without exposing the internal 
   await expect(page.locator('#aserviBaseUrl')).toHaveAttribute('aria-label', 'My server URL');
   await expect(page.locator('#aserviModel')).toHaveAttribute('aria-label', 'Gateway model');
   await expect(page.locator('#aserviApiKey')).toHaveAttribute('aria-label', 'Server access key');
-  await expect(page.locator('[data-action="paste-cloud-key"]')).toHaveAttribute('aria-label', 'Paste access key');
+  await expect(page.locator('[data-action="paste-aservi-key"]')).toHaveAttribute('aria-label', 'Paste access key');
   await expect(page.locator('#systemPromptInput')).toHaveAttribute('placeholder', 'Your shared instructions (optional)');
   await expect(page.locator('#editSystemPrompt')).toHaveAttribute('aria-label', 'Edit system prompt');
-  await expect(page.locator('[data-action="connect-alandi-cloud"]')).toHaveText('Verify and connect');
+  await expect(page.locator('[data-action="connect-aservi"]')).toHaveText('Verify and connect');
   await expect(page.locator('#providerPreset option[value="gemini"]')).toHaveCount(1);
   await expect(page.locator('#providerPreset option[value="custom"]')).toHaveCount(1);
   await page.locator('.settings-header-actions [data-action="close-settings"]').click();
@@ -2276,7 +2276,7 @@ test('Cloud URL validation follows the selected language and is announced with i
   await page.locator('#aserviBaseUrl').fill('http://remote.example.test/v1');
   await page.locator('#aserviModel').fill('qwen3.5:4b');
   await page.locator('#aserviApiKey').fill('e2e-cloud-placeholder-key');
-  await page.locator('[data-action="connect-alandi-cloud"]').click();
+  await page.locator('[data-action="connect-aservi"]').click();
   await expect(page.locator('#aserviBaseUrlError')).toHaveText('Remote servers must use HTTPS.');
   await expect(page.locator('#aserviBaseUrl')).toHaveAttribute('aria-invalid', 'true');
   await expect(page.locator('#aserviBaseUrl')).toHaveAttribute('aria-describedby', 'aserviBaseUrlError');
@@ -2284,16 +2284,16 @@ test('Cloud URL validation follows the selected language and is announced with i
   await page.evaluate(() => localStorage.setItem('ai_ui_language_v1', 'ru'));
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('[data-action="connect-alandi-cloud"]').click();
+  await page.locator('[data-action="connect-aservi"]').click();
   await expect(page.locator('#aserviBaseUrlError')).toHaveText('Укажи URL сервера.');
   await expect(page.locator('#aserviModelError')).toHaveText('Укажи ID модели.');
   await expect(page.locator('#aserviApiKeyError')).toHaveText('Укажи ключ доступа.');
   await page.locator('#aserviBaseUrl').fill('http://remote.example.test/v1');
   await page.locator('#aserviModel').fill('qwen3.5:4b');
   await page.locator('#aserviApiKey').fill('e2e-cloud-placeholder-key');
-  await page.locator('[data-action="connect-alandi-cloud"]').click();
+  await page.locator('[data-action="connect-aservi"]').click();
   await expect(page.locator('#aserviBaseUrlError')).toHaveText('Для удалённого сервера нужен HTTPS.');
-  await expect(page.locator('[data-action="connect-alandi-cloud"]')).toHaveText('Проверить и подключить');
+  await expect(page.locator('[data-action="connect-aservi"]')).toHaveText('Проверить и подключить');
 });
 
 test('aLandi aServi probe rejects HTTP 200 proxy text as proof of a model connection', async ({ page }) => {
