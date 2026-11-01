@@ -3506,3 +3506,40 @@ test('browser Forward restores a chat-action dialog with its original target', a
   await expect(page.locator('#chatActionModal')).toBeHidden();
 });
 
+test('responsive visual review captures viewport and navigation evidence', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#chatBox')).toBeVisible();
+  await expect(page.locator('#userInput')).toBeVisible();
+
+  // These screenshots are review evidence, not pixel-perfect visual-regression baselines.
+  // Keep viewport changes and browser state identical so reviewers can compare releases.
+  for (const width of [320, 360, 390, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    const dimensions = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      document: document.documentElement.scrollWidth
+    }));
+    expect(dimensions.document, `horizontal overflow in visual review at ${width}px`)
+      .toBeLessThanOrEqual(dimensions.viewport);
+
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    await test.info().attach(`landing-v2-app-${width}px`, {
+      body: await page.screenshot({ animations: 'disabled' }),
+      contentType: 'image/png'
+    });
+  }
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await ensureSidebarOpen(page);
+  await test.info().attach('landing-v2-mobile-sidebar-open', {
+    body: await page.screenshot({ animations: 'disabled' }),
+    contentType: 'image/png'
+  });
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await ensureSidebarOpen(page);
+  await test.info().attach('landing-v2-desktop-sidebar-open', {
+    body: await page.screenshot({ animations: 'disabled' }),
+    contentType: 'image/png'
+  });
+});
