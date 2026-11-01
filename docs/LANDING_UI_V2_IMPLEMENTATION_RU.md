@@ -267,3 +267,12 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - Every step passed: dependency install, Python compileall, manifest/INTEL validation, `pytest gateway/tests`, deployment preflight and six-layer offline evaluation.
 - A compare from that tested commit through the current PR documentation head `579666d45964f56a4e68e3997293a288d7fd1553` shows **no changes under gateway/**. Therefore the current Gateway source and Gateway test files are identical to the successfully tested state.
 - This is valid evidence for the current Gateway code, although the workflow did not run on the latest documentation-only HEAD. It does not verify current Playwright/Chromium or full Quality behavior.
+
+
+### P0 browser-workflow audit and branch safety — 2026-11-01
+
+- Inspected `.github/workflows/quality-sentinels.yml`, `playwright.config.mjs` and `tests/e2e/landing.spec.mjs`.
+- Confirmed the PR browser job builds the branch with Jekyll and runs `npx playwright test --grep-invert "live public site serves the app shell and basic chat controls"`. Without `LIVE_SITE_URL`, Playwright serves the built `_site` locally at `http://127.0.0.1:4173`; therefore the 8 landing tests are included against the PR build, not only after deployment. The separate live-site smoke tests the published V1 site and is not evidence that V2 has been deployed.
+- Gateway run #640 is a verified pass and remains applicable to current Gateway code because no `gateway/**` files changed after the tested commit. This closes the Gateway P0 sub-gate; it does not close Quality/Chromium.
+- Current PR #131 compare against main: 197 commits ahead / 4 behind; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub reports `mergeable=false`. Main-side changes are confined to `docs/V1_UI_FINALIZATION_RU.md`; line-level content comparison shows the PR branch already contains the substantive new main-side requirement lines, while replacing the older polish wording and adding section 8.0. Still, do not merge/rebase/sync automatically: inspect the four main-side commits and preserve both histories before any pre-merge operation.
+- Exact PR-head Quality/Chromium run and combined status remain unavailable through the current Actions lookup. The workflow YAML has a PR trigger; no pass is inferred from configuration. The next verification is to obtain an actual Quality Sentinels run on the current PR head and inspect the browser job result/logs.
