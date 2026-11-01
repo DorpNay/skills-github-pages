@@ -222,3 +222,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Test commit: `d388a02445ddc1ebccbaec58fd8515b8d0b9adfa`; implementation ledger update: `59e30ad32d0389f785955feb03ee8516b8368a41`. Test is source-only until Chromium and native touch execution are available.
 - Requirements 8.3 and 8.7 already have source/E2E coverage for Cloud-vs-peer disclosure rules and the truthful unsupported project-source state; no fake source CRUD or duplicate accordion logic added.
 - Next: audit and close the remaining 8.1–8.11 test gaps; prioritize chat restoration/accordion persistence and 8.2 header typography/responsive layout. PR #131 remains open/unmerged; no deployment.
+
+
+### 2026-11-01 — PR #131: requirement 8.2 responsive header coverage
+- Audited the header implementation: chat title is a bordered standalone surface; wordmark has a rounded heavy display treatment; clock remains in the header; Fast/Thorough controls have compact 28px minimum height; the shared system font stack is applied consistently.
+- Added a Playwright layout regression at 320/360/390/768/1024/1440px for header horizontal overflow, title treatment, clock presence, wordmark styling and compact mode controls.
+- Test commit: `9ff326d40ac0567c1c62c293cb396bcd9c4eba82`; implementation ledger update: `1293af834c8b765828e45c2f6cf0af3fbedcb530`. Test remains unexecuted; screenshot review and native mobile rendering remain pending.
+- Next: continue the 8.1–8.11 gap audit. Existing coverage already exercises 8.3 Cloud/provider group transitions, 8.6 browser Back/Forward and 8.7 truthful Sources unsupported-state.
