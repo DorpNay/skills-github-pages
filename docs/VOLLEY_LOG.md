@@ -185,3 +185,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Added gateway regressions: /livez, /readyz and /healthz must not expose API/OAuth secrets; invalid bearer tokens are not echoed; upstream error bodies containing synthetic API/OAuth secrets are replaced by the gateway's bounded error response.
 - Test source updated; NOT EXECUTED. Exact-head GitHub workflow-run and combined-status queries returned no entries. No CI/Playwright pass is claimed.
 - The exact current head, compare-to-main counts and verification boundary are maintained in `docs/PROJECT_STATE.yaml` and the PR #131 checkpoint. PR #131 remains open/unmerged; no deployment.
+
+
+### 2026-11-01 — PR #131: 8.13 handoff audit and 8.14 touch-selection regression
+- Re-audited 8.13 against the owner checklist and current implementation: project context is queued only after an explicit action against an existing chat; project membership and active chat remain unchanged; the next successful request consumes the handoff; request context remains capped at five projects. Pending handoff is intentionally session-only. Reload persistence is not specified by 8.13, so no new persistence layer was introduced.
+- Expanded the 8.14 Playwright regression to cover non-selectable buttons/disclosures and touch-action, while editable input, assistant message text and expanded message content remain selectable. The test checks both standard and WebKit-prefixed selection properties.
+- Test commit: `64a1a811bd5531d8095245d649829fd838486821`; ledger update: pending next documentation commit. Source has been inspected, but Playwright/Chromium and native iOS Safari/VoiceOver have NOT been executed. No test pass is claimed.
+- Continue with remaining 8.14 device-specific gesture checks only when a real device/browser is available, then proceed to 8.15 status/reduced-motion regression. PR #131 stays open; no merge/deploy.
