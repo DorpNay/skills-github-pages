@@ -3001,6 +3001,39 @@ test('request status and notifications expose semantic state and centered alignm
 });
 
 
+test('all semantic status states are distinct, centered and reduced-motion safe', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const states = await page.evaluate(() => {
+    const status = document.querySelector('#searchStatus');
+    const statusText = status.querySelector('#statusText');
+    const toast = document.querySelector('#toast');
+    const statusColors = ['neutral','info','success','warning','error'].map(state => {
+      status.dataset.state = state;
+      return getComputedStyle(statusText).color;
+    });
+    const toastColors = ['info','success','warning','error'].map(state => {
+      toast.dataset.state = state;
+      return { color: getComputedStyle(toast).color, border: getComputedStyle(toast).borderTopColor };
+    });
+    return {
+      statusColors,
+      toastColors,
+      statusAlign: getComputedStyle(status).textAlign,
+      tickerAlign: getComputedStyle(document.querySelector('.roadmap-ticker')).textAlign,
+      tickerTrackAlign: getComputedStyle(document.querySelector('.roadmap-ticker-track')).textAlign
+    };
+  });
+  expect(new Set(states.statusColors).size).toBe(5);
+  expect(states.toastColors.every(item => item.color && item.border)).toBe(true);
+  expect(states.statusAlign).toBe('center');
+  expect(states.tickerAlign).toBe('center');
+  expect(states.tickerTrackAlign).toBe('center');
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const tickerAnimation = await page.locator('.roadmap-ticker-track').evaluate(element => getComputedStyle(element).animationName);
+  expect(tickerAnimation).toBe('none');
+});
+
 test('browser Forward restores a chat-action dialog with its original target', async ({ page }) => {
   await page.addInitScript(()=>{
     const project={id:'action-project',name:'Action project',description:'',instructions:'',memoryScope:'project-only',memory:[],createdAt:'',updatedAt:''};
