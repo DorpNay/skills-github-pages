@@ -2,8 +2,7 @@
 (() => {
     'use strict';
 
-    const ASERVI_STORAGE = Object.freeze({ baseUrl: 'ai_alandi_aservi_base_url', model: 'ai_alandi_aservi_model', connection: 'ai_alandi_aservi_connection_v1', migration: 'ai_alandi_aservi_storage_migrated_v1' });
-    const LEGACY_ASERVI_STORAGE = Object.freeze({ baseUrl: 'ai_alandi_cloud_base_url', model: 'ai_alandi_cloud_model', connection: 'ai_alandi_cloud_connection_v1' });
+    const ASERVI_STORAGE = Object.freeze({ baseUrl: 'ai_alandi_cloud_base_url', model: 'ai_alandi_cloud_model', connection: 'ai_alandi_cloud_connection_v1' });
     const STORAGE = {
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
@@ -278,19 +277,6 @@
         return false;
       }
     }
-    function migrateAServiStorage() {
-      if (safeGet(ASERVI_STORAGE.migration) === '1') return;
-      let complete = true;
-      for (const key of ['baseUrl', 'model', 'connection']) {
-        const target = ASERVI_STORAGE[key];
-        const legacy = LEGACY_ASERVI_STORAGE[key];
-        if (safeGet(target) !== null) continue;
-        const value = safeGet(legacy);
-        if (value !== null && !safeSet(target, value)) complete = false;
-      }
-      if (complete) safeSet(ASERVI_STORAGE.migration, '1');
-    }
-    migrateAServiStorage();
     function createChat(title = 'Новый чат', messages = [], projectId = null) {
       return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, privateMemoryUsed: false, processingMode: 'fast', searchMode: 'normal', multiAgentEnabled: false, skillPreset: 'auto', customSkillName:'', customSkillInstructions:'', customSkillOutput:'', skillGoal:'planning', skillOutputMode:'summary', agentTeamSize:4, agentTeamScenario:'general', agentTeamCustomScenario:'', agentRolePreset:'balanced', agentCustomRoles:'' };
     }
