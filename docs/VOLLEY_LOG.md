@@ -209,3 +209,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - PR #131 current HEAD: d28c2f01ac8d6b3a6867f358b7d7131dc6062e7f; 489 ahead / 4 behind main; merge base e78a73b25725bfa63370d9946887cbbacbf51b82.
 - PR #132 current backup head before this log update: b568cd7face6117c9bcd6dcf3db03cf944d0638e. It remains a draft documentation-only PR.
 - The full implementation ledger and hygiene runbook are mirrored. No V2 code test pass is inferred from this documentation branch.
+
+
+### 2026-11-02 — Repository hygiene: read-only inventory
+- GitHub API inventory: 126 branch refs, 9 open PRs (#124–#132); 117 refs are not heads of open PRs and remain unclassified, not deletion candidates.
+- `delete_branch_on_merge=false`; repository rulesets API returned an empty list. Classic `main` protection could not be read (integration 403), so state is unknown.
+- No standard `CODEOWNERS`, `SECURITY.md` or Dependabot config files found; account-level security settings remain unverified.
+- PR #131 exact-head Quality/Chromium not found. Provenance #41336870473 passed on the audit snapshot; Quality #1126 (101 passed / 18 failed) is stale.
+- No branch/file/artifact deletion, settings change, merge, rebase, force-push or deployment. Full per-branch ancestry/reference review and owner-side settings review remain open. See `docs/REPOSITORY_HYGIENE_RU.md`.
