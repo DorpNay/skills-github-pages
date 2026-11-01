@@ -4713,6 +4713,25 @@
       (focusable.at(-1)||modal).focus({preventScroll:true});
       event.stopImmediatePropagation();
     }, true);
+    document.addEventListener('keydown', event => {
+      if(event.key!=='Tab')return;
+      const activeModal=uiModalIds.map(id=>$(id)).find(modal=>modal&&modal.contains(document.activeElement)&&!modal.classList.contains('hidden')&&modal.getClientRects().length);
+      const modal=activeModal||getTopmostUiModal();
+      if(!modal)return;
+      const focusable=getModalFocusableElements(modal);
+      if(!focusable.length){
+        event.preventDefault();event.stopImmediatePropagation();
+        if(!modal.hasAttribute('tabindex'))modal.setAttribute('tabindex','-1');
+        modal.focus({preventScroll:true});
+        return;
+      }
+      const first=focusable[0],last=focusable[focusable.length-1];
+      if(event.shiftKey&&(document.activeElement===first||!modal.contains(document.activeElement))){
+        event.preventDefault();event.stopImmediatePropagation();last.focus({preventScroll:true});
+      }else if(!event.shiftKey&&(document.activeElement===last||!modal.contains(document.activeElement))){
+        event.preventDefault();event.stopImmediatePropagation();first.focus({preventScroll:true});
+      }
+    }, true);
     document.addEventListener('keydown', (event) => {
       if(event.key==='Tab'){
         const modal=getTopmostUiModal();

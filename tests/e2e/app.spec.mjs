@@ -1814,6 +1814,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
   const betaGroup = page.locator('#projectNavigationList details[data-project-id="' + betaId + '"]');
   if (!(await betaGroup.evaluate(element => element.open))) await betaGroup.locator(':scope > summary').click();
   await betaGroup.locator('[data-action="new-chat-in-project"]').click();
+  await ensureSidebarOpen(page);
   const betaChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
   await expect(page.locator('#currentProjectSelect')).toHaveValue(betaId);
   const betaChatRow = page.locator('#projectNavigationList .chat-row').filter({ has: page.locator('[data-action="switch-chat"][data-chat-id="' + betaChatId + '"]') });
@@ -1823,6 +1824,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('#chatActionProject').selectOption(alphaId);
   await page.locator('[data-action="chat-action-save"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(alphaId);
+  await ensureSidebarOpen(page);
   const movedChatRow = page.locator('#projectNavigationList .chat-row').filter({ has: page.locator('[data-action="switch-chat"][data-chat-id="' + betaChatId + '"]') });
   await movedChatRow.scrollIntoViewIfNeeded();
   await movedChatRow.locator('.chat-row-menu > summary').click();
