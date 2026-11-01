@@ -476,3 +476,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - CSS brace balance is zero. No Chromium/visual test has run on this source change; exact-head Quality remains pending.
 - Source commit: 9679ed4d7974849f3fd02dcf8465384c8c59a9df.
 
+
+
+### 2026-11-02 — PR #131 source/docs snapshot refresh
+
+- Live branch HEAD at this checkpoint: 77fdee629c2ef47e35fdd2d39d39070c89de53b6; compare 499 ahead / 4 behind main; merge base e78a73b25725bfa63370d9946887cbbacbf51b82.
+- Latest code/source checkpoint remains 9679ed4d7974849f3fd02dcf8465384c8c59a9df. No Quality/Chromium run is visible for this or later docs-only heads.
+- PR #132 now contains the mirrored implementation ledger, aServi terminology updates and repository hygiene runbook; it remains a draft documentation-only backup.
