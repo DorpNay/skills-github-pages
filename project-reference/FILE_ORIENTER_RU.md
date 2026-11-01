@@ -1,13 +1,13 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
-## Актуальная контрольная точка — 2026-11-02, persistent error acknowledgement
+## Актуальная контрольная точка — 2026-11-02, Playwright runner Chrome
 
-- PR #131 открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; latest documentation HEAD at this checkpoint: `71878573b60907f91fe5b1ba36f33841871e545f`. Main remains `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; base is four commits ahead of the PR branch and mergeable=false/dirty due to the shared canonical checklist. No rebase/sync.
-- Quality #1197 / run `41352153636` timed out after 31m03s because local Pages asset paths returned 404 under the configured baseurl. Quality #1198 / run `41355064390` started four shards but all failed before tests because the first symlink attempt wrote inside read-only `_site`.
-- The corrected local webServer now uses a writable temporary document root, symlinks root-level `_site/*` entries into it, and maps `/skills-github-pages` to the unchanged build output. Real Chromium and Playwright 1.56.1 remain pinned; four independent runners, one worker each, fail-fast=false. The asset regression requires both app CSS and JS to return HTTP 200.
-- Quality auto-runs on branch push and pull_request. Do not ask the owner to dispatch manually. The PR-only commit-run helper does not show push-triggered runs; inspect `/actions/runs?branch=...` for all events.
-- Notification milestone: commits `7bc7cea` (persistent errors in existing FIFO queue), `2ef819a` (dismiss-control styling), `91be4fd` (Playwright assertions). Errors no longer expire automatically; they remain alert/assertive until the user activates a localized keyboard-accessible dismiss button. Transient notices keep their timed lifecycle. Ledger and state docs updated.
-- Quality #1202 / run `41357794101` was pending at source/test SHA `91be4fd77c0263ab81549c47c95030dc3e078031` during the last live check. Documentation commits followed; verify the newest push-triggered run on the latest HEAD `71878573b60907f91fe5b1ba36f33841871e545f`. No browser pass is claimed.
-- Baseline Quality wall-clock is 1863s; a 3x target is at most 621s. Measure only after the full four-shard suite executes and passes. Continue inherited UI + mandatory 8.1–8.17; native iPhone Safari/VoiceOver/WCAG remain separate manual gates. No merge, deployment or destructive cleanup.
+- PR #131 открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; latest code checkpoint `c5f79b46d09b71fbf06ccc4da137707ac5709e40`. Main remains `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; base is four commits ahead and the shared checklist conflict remains unresolved. No rebase/sync.
+- CI runtime optimization: Playwright 1.56.1 continues using the Chromium engine but selects runner-provided stable Google Chrome with `channel: 'chrome'`; removed the per-run browser download and `apt-get --with-deps`. Local runs retain Playwright's default Chromium.
+- Quality #1218 / run `41360990867` was queued on exact code SHA `c5f79b46d09b71fbf06ccc4da137707ac5709e40`. Verify all four shards, full test execution and final wall-clock before claiming pass or speedup. Baseline Quality #1197 is 1863s; 3x target is <=621s.
+- Quality still runs automatically on branch `push` and `pull_request`; do not ask the owner to dispatch manually. Monitor `/actions/runs?branch=...` so push-triggered runs are included.
+- The writable temporary Pages document-root mapping is retained. The new browser setup verifies `google-chrome --version` before launching the test suite; no actual browser result has been claimed yet.
+- Published URL `https://dorpnay.github.io/skills-github-pages/` is the main-site publication, not a PR preview. No separate preview host/workflow is configured; production Pages remains untouched.
+- Continue mandatory UI 8.1–8.17, inherited responsive/accessibility requirements, native iPhone Safari/VoiceOver/WCAG gates. Keep PR #131 open; no merge, rebase or production deployment.
 
 > Исторические разделы ниже сохраняют контекст; live refs и результаты перепроверять перед каждым действием.
 

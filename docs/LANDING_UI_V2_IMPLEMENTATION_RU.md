@@ -12,6 +12,14 @@
 - Never render a control for a capability that does not exist. For project sources, first establish a real source contract and only then expose supported operations.
 - V1 files in main are the stable baseline. This PR may retain its earlier `/landing/` accessibility changes, but its main product scope is the root browser client `/`.
 
+## CI browser runtime optimization — 2026-11-02
+
+- Commit `c5f79b46d09b71fbf06ccc4da137707ac5709e40` keeps the Playwright 1.56.1 test API and Chromium engine but selects the runner-provided stable Google Chrome in CI via `channel: 'chrome'`.
+- Removed the per-run `npx playwright install --with-deps chromium` download and the `apt-get` workaround for its dependency installation. CI now verifies `google-chrome` exists and prints its version; local development keeps Playwright's default Chromium.
+- Rationale: GitHub-hosted Ubuntu runner images already include Google Chrome. This avoids a redundant browser download and system-package installation without dropping real browser coverage.
+- Quality #1218 / run `41360990867` was queued on the exact code commit. No test execution, pass, or speedup is claimed until that run completes and its wall-clock is compared with baseline #1197 (1863s).
+- The public Pages URL remains the main-site publication; no separate PR preview host/workflow exists. Production Pages is not changed by this CI-only patch.
+
 ## Audit snapshot — current main / PR #131 baseline
 
 | Requirement | Observed implementation | Gap / implementation direction | Status |

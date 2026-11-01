@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-02"
   root_orienter:
-    status: "Main remains the stable V1 baseline at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 remains open/unmerged on feat/landing-v1-accessibility-responsive-20261031. Baseline HEAD e75e608bb1b9f588ccc26f575602113037f44039 exposed a local Pages baseurl mismatch and Quality #1197 timed out at 30m. First CI correction commit 414ce3c6a25062740cf33d5bcd807a061e422697 introduced four-way Chromium sharding and an asset-loading regression, but Quality #1198 failed before tests because the initial symlink attempt wrote inside read-only _site. The correction now serves the site through a writable temporary overlay; all four shards did start concurrently. Non-Chromium Quality jobs and Provenance passed. No merge or deployment is authorized."
+    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 is open/unmerged on feat/landing-v1-accessibility-responsive-20261031. Code commit c5f79b46d09b71fbf06ccc4da137707ac5709e40 switches CI from downloading Playwright Chromium plus apt dependencies to runner-provided Google Chrome via Playwright channel=chrome; local runs retain Playwright Chromium. Quality #1218 / run 41360990867 is queued on this exact code HEAD. No speedup/pass is claimed; no production deployment is authorized. A separate PR preview host is not configured."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 0
@@ -10,7 +10,7 @@ project_state:
     merged_changes: "PR #121 first free landing V1 and client UX; PR #122 Gateway liveness/readiness probes; #120 sidebar hierarchy/theme-language sync; #119 provider separation/project scope/composer preference; #118 chat import/export; #113 immutable Actions pins; #115 modal scrim/outside-tap; #114 empty-by-default prompt/context budget; #71 mobile composer; #84/#81/#83/#82 infrastructure foundations; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
     exact_head_checks: "PR #121 head e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b: Dead Code Audit, Project State Freshness, Provenance, Lite Gateway Tests, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. PR #122 head 94d871dbf76a5364ebb3c61d86cc763affa5eaa1: Gateway Tests, Dead Code Audit, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. PR #123 head fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222: Gateway Tests, Dead Code Audit, Freshness, Provenance, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. Merge commits: #121 f4d880f9648989f4fe48ddd2284220b3606c3b86; #122 fd4f0a105183feb23e0f4e4697446235de9ffe9a. No independent post-merge Pages deployment result was available."
     runtime_boundary: "PR-head published-site browser smoke verified; post-merge Pages deployment on the exact merge commit remains unverified. Native iPhone, live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
-    next: "The temporary-root baseurl correction is committed on PR #131; push automatically triggers Quality and Gateway workflows. Verify the new run using the full Actions runs collection (all event types), not the PR-only fetch_commit_workflow_runs helper. Confirm the asset regression executes, all four Chromium shards pass, compare wall-clock with baseline run #1197 (31m03s total; Chromium test step 30m01s), and require at least 3x improvement before declaring the target met. Continue inherited UI + mandatory 8.1-8.17 and native iPhone Safari/VoiceOver/WCAG gates. Keep PR #131 open/unmerged; no deployment, rebase or destructive cleanup."
+    next: "Verify Quality #1218 on exact code HEAD c5f79b46d09b71fbf06ccc4da137707ac5709e40: confirm four shards use preinstalled Chrome, all tests execute and pass, and compare total wall-clock with baseline Quality #1197 (1863s). Keep automatic push/PR triggers; do not ask the owner to dispatch. Continue mandatory UI 8.1–8.17 and native iPhone Safari/VoiceOver/WCAG gates. Keep PR #131 open; no merge or production deployment. Separate PR preview hosting remains unconfigured."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -41,7 +41,7 @@ project_state:
   repository: "https://github.com/DorpNay/skills-github-pages"
   public_client: "https://dorpnay.github.io/skills-github-pages/"
   deployment:
-    pages: "published; unrelated to gateway deployment"
+    pages: "main site published; no separate PR preview host/workflow configured; do not route PR builds to production Pages"
     gateway_vps: "not verified by this change; do not claim deployed"
     experimental_feature_flags: "false by default"
   current_ui_track:
@@ -65,9 +65,9 @@ ui_v2_track:
   pull_request: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   status: "open_unmerged_owner_hold"
-  latest_documentation_head: "30dd703e5064773e884321136d8626fcacfbdb2a; verify live PR #131 metadata before acting."
-  latest_code_test_head: "91be4fd77c0263ab81549c47c95030dc3e078031; persistent error notifications and dismiss control added; latest docs-only HEAD is 10cabf31a7c0e78887727393bc43cf5d6fcaa4ca."
-  latest_quality_harness_head: "Writable temporary Pages document-root correction is committed. Quality #1200 / run 41357771478 is still in progress on runtime SHA 7bc7ceacaefe9946dd8e2285a133f14178712d46; later commits queue run #1207 on documentation HEAD da26e785aa591bcd9625f461f1946467f52d7be6. Verify the newest run before claiming exact-head results."
+  latest_documentation_head: "c5f79b46d09b71fbf06ccc4da137707ac5709e40 (code checkpoint; docs sync follows)."
+  latest_code_test_head: "c5f79b46d09b71fbf06ccc4da137707ac5709e40; CI browser runtime now launches runner-provided Chrome with Playwright 1.56.1. Exact-head run #1218 queued; no test pass claimed."
+  latest_quality_harness_head: "Writable temporary Pages document-root correction retained. Quality #1218 / run 41360990867 queued on code SHA c5f79b46d09b71fbf06ccc4da137707ac5709e40 after replacing Playwright browser download and apt dependencies with runner-provided Google Chrome; verify exact-head results and elapsed time before claiming performance."
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0; mandatory requirements 8.1-8.17 and optional owner proposals 8.18-8.27"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
   polish_register: "docs/LANDING_UX_POLISH_BACKLOG_RU.md (mirrors the consolidated residual list; not a separate backlog)"
