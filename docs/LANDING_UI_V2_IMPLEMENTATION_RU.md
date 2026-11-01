@@ -562,3 +562,15 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 7. Prototype a single optional desktop inspector; only then evaluate multi-model comparison (8.22).
 8. Refine scenario entry points without a new dashboard (8.27). Keep accessibility and real-device review continuous (8.26).
 
+### 8.19 implementation slice — accessible notification queue (2026-11-02)
+
+- Extended the existing `showToast()` mechanism; no third notification subsystem or dependency was added.
+- Toast messages now enter a FIFO queue. Identical message/state pairs are deduplicated while active or queued, preventing rapid repeated events from silently replacing one another.
+- Success/info, warning and error messages use differentiated visible durations (3.2s / 5.5s / 7s). The timer pauses while the toast is hovered, focused or the document is hidden; it resumes only when the user can see/interact with the page again.
+- The existing toast remains non-modal and does not move focus. It is now keyboard-focusable so keyboard users can pause its timeout; CSS permits pointer interaction.
+- Live-region semantics switch by urgency: ordinary notifications use `role=status` / `aria-live=polite`; errors use `role=alert` / `aria-live=assertive`. The live region is atomic.
+- Focused Playwright assertions were added to the existing semantic-status scenario, including the FIFO transition from a success message to a subsequent error and the corresponding ARIA semantics.
+- **Scope boundary:** this is only the notification presentation sub-slice of optional 8.19. It does not yet implement durable operation records/states, stable operation IDs, pending-to-result replacement, persistent unacknowledged errors, inline recovery actions or keyboard/composer-aware placement. Do not mark 8.19 complete.
+- **Verification:** source changes and test assertions are committed; browser tests have not been executed in this environment. Exact-head workflow/status lookup returned no PR workflow runs and no commit statuses for the current source checkpoint. No test pass is claimed.
+- Source files: `assets/js/app.js`, `assets/css/app.css`, `index.md`, `tests/e2e/app.spec.mjs`.
+- Current source checkpoint at time of this note: `fed3137bae2355629a976515719f498940ad8601`.
