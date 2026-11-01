@@ -46,6 +46,7 @@ The prior gateway baseline passed 37 tests and the deterministic six-layer smoke
 | EV-TOOLS-001 | Read-only DAG | gateway/tests/test_coder_packet.py | cycles fail; read-only work bounded; mutation requires ticket | CI pending |
 | EV-SEC-001 | SSRF | gateway/tests/test_coder_packet.py | private/loopback/link-local/metadata IP and mixed DNS answer set rejected | CI pending |
 | EV-SEC-002 | Approval gates | gateway/tests/test_coder_packet.py | action/scope/actor/expiry bound; single use; mismatch fails closed | CI pending |
+| EV-SEC-003 | Gateway secret non-disclosure | gateway/tests/test_app.py | health/readiness/liveness responses omit API and OAuth secrets; invalid bearer values are not echoed; upstream error bodies are replaced by bounded sanitized errors | added in PR #131; exact-head Gateway CI pending |
 | EV-LICENSE-001 | License governance | scripts/check_license_manifest.py | shipped artifact has SPDX/license source and 64-char hash; blocked/unverified never ships | CI pending |
 | EV-STATE-001 | Source-state fingerprint | scripts/manifest_state.py + gateway/tests/test_v016_foundation.py | deterministic sorted SHA-256; main index.md included; secret/generated paths excluded | PR #21 CI passed; not a signature |
 | EV-INTEL-001 | Provenance triad | scripts/check_intel_triad.py + intel/RECON.yaml | accepted rows require explicit HTTPS source/claim URLs, exact-artifact license field and non-placeholder metadata | CI passed; offline completeness only, no live license/URL verification |
