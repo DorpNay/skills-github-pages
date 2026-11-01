@@ -481,42 +481,36 @@ whole_stack_integrity_audit_2026_10_30:
 landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
-  latest_code_test_head: "caabc526b9ffaaee31a312f2251aaffe5bea52e5"
-  latest_documented_head_at_checkpoint: "f2572144b227560d2da4850d969f7ddd923be558"
+  latest_code_test_head: "64a1a811bd5531d8095245d649829fd838486821"
+  latest_documented_head: "f824d2eb65cfff3dbe59fc3a40f5c00812b1bceb"
   comparison_to_main:
-    ahead: 138
+    ahead: 143
     behind: 4
     merge_base: "e78a73b25725bfa63370d9946887cbbacbf51b82"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
     memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
     server_memory_retirement: "Requirement 8.12: browser bridge/UI and /v1/memory/graph/* routes plus graph-specific flags removed; internal MemoryManager retained only for Graphify; SQLite data untouched; local/private/shared/project memory, delta sync, RAG and local helper remain."
-    project_context_handoff: "Explicit existing-chat target; next request only; no new chat or project membership mutation; five-project cap; pending state is session-only."
+    project_context_handoff: "Requirement 8.13: explicit existing-chat target; next successful request only; no automatic injection from project membership; no new chat or project membership mutation; five-project cap; pending state is session-only."
+    touch_selection: "Requirement 8.14: controls/disclosures use targeted non-selection and manipulation touch action; input, assistant text and expanded viewer remain selectable; E2E computed-style coverage expanded."
     navigation: "Browser Back/Forward/Escape tracks nested project filters and modal depth; Forward restores saved project filters, project settings and chat-action dialogs."
     modal_lifecycle: "Focus entry/return, Tab trap, body scroll/overscroll lock, backdrop cleanup, repeated open/close and chat-action state restoration."
     message_actions: "Expanded viewer keeps accessible copy/speech actions; speech hidden for user-authored messages."
     status_and_readability: "Semantic status/toast states and high-contrast text tokens across light/dark themes."
     sources: "Truthful unsupported-state remains; no mock project-source CRUD."
     gateway_security_tests: "Added secret non-disclosure coverage for /livez, /readyz, /healthz, invalid Bearer values and sanitized upstream errors; source not executed."
-  code_commits:
-    navigation_handoff: "f99327c74f168573e0d1faf9b7c97a66dcf6e27f"
-    handoff_selector_fix: "c3855c28317c5b481d59b463e4d4cb985d992dcd"
-    modal_back_lifecycle: "c24c596ca8b7e4c9f9a8725f2bdcaa3e46e53aaf"
   test_commits:
-    navigation_handoff_status_viewer: "1bf9acf5a6cd1652be393ed801efe5c76cd86aa9"
-    one_shot_handoff: "ccb76ea689ddb0ad6ef8d580dee06148aab6f94f"
-    modal_lifecycle_wait: "24004fe48e506a7d1a7e03b1538f3faed209381b"
-    deduplicate_regressions: "1917e8efad138bd9b7dd59a42c0322d61b12bf4e"
     server_memory_retirement_e2e: "caabc526b9ffaaee31a312f2251aaffe5bea52e5"
     gateway_secret_non_disclosure: "6f7fde485b2b13aecc50523b20785e0ac615d2ad"
+    touch_selection_regression: "64a1a811bd5531d8095245d649829fd838486821"
   verification:
-    exact_head_combined_status: "empty (head 4464b3f593f6b555dfd6dfc60e7d6d6d356ea1e3)"
-    exact_head_workflow_runs: "empty (head 4464b3f593f6b555dfd6dfc60e7d6d6d356ea1e3)
-    gateway_pytest: "not executed in this environment; exact-head CI unavailable"
-    playwright_chromium: "not executed; do not claim passing"
+    exact_head: "f824d2eb65cfff3dbe59fc3a40f5c00812b1bceb"
+    exact_head_workflow_runs: "empty"
+    gateway_pytest: "not executed in this environment"
+    playwright_chromium: "not executed; no passing result claimed"
     native_mobile_voiceover: "not executed"
   safety:
     merge: "requires explicit owner approval"
     deploy: "requires explicit owner approval"
     main: "V1 baseline remains untouched"
-  next: "Run exact-head Gateway pytest and Quality/Chromium if workflow execution becomes available; fix failures; complete native iPhone Safari/VoiceOver/long-press review. Secret non-disclosure and requirement 8.12 regressions are added but unexecuted."
+  next: "Continue 8.15 status/reduced-motion coverage; execute Gateway and Chromium suites when workflow execution becomes available; retain native iPhone Safari/VoiceOver/long-press as manual gates."
