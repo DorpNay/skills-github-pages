@@ -322,3 +322,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - CI changed to two workers and a 25-minute Chromium job timeout to reduce browser resource contention while retaining the complete suite and diagnostics. Changes are recorded in the implementation ledger.
 - Current code/test head after corrections: `b42797ca0e09576519bc82710f993a0d4a4823bb`. No Quality run has verified this head yet. Remaining areas to verify include contrast state, settings disclosure transitions, project/chat handoff, provider fallback/401, message viewer and 44px touch targets.
 - PR #131 remains open/unmerged; GitHub reports `mergeable_state=dirty`, which must be investigated before merge. No merge or deployment performed.
+
+### 2026-11-01 — PR #131: compact separate theme/language controls (8.11)
+
+- Replaced the combined theme+language dropdown summary with two separate adjacent header controls: icon-only theme toggle and language selector. Both use the existing `.header-icon` style and have matching 44px hit areas; the language menu contains only language options.
+- `updateHomeThemeButton()` now updates the theme icon, localized accessible label/title and `aria-pressed`; language selector displays `RU`/`EN` and retains the existing menu behavior.
+- Updated the shared theme helper and added a 320px E2E test for equal control geometry, accessible names, no horizontal overflow, theme toggling and language selection.
+- Commits: `9433ccad9767bf3b648c1d5d7c293fc283740447`, `6b7236ea1c0a7ce092073a0fbbd870a9b88cb1a7`, `669b808e23775b116f9e7ac6261b5a1431effcf1`, `652c3b47858c34c184146c03ec6044b103703cdb`.
+- Latest code/test head: `652c3b47858c34c184146c03ec6044b103703cdb`; the last Quality run #1125 predates these corrections. Exact-head rerun remains required; 8.11 is not marked complete until Chromium passes.
