@@ -1321,8 +1321,11 @@
     function syncComposerStateForCurrentChat() {
       restoreRequestProjectContextByChat();
       const activeId=currentChatId;
-      if(requestContextOwnerChatId===null)requestContextOwnerChatId=activeId;
-      else if(requestContextOwnerChatId!==activeId) {
+      if(requestContextOwnerChatId===null) {
+        requestContextOwnerChatId=activeId;
+        selectedRequestProjectIds.clear();
+        for(const id of requestProjectContextByChat.get(activeId)||[])if(projects.some(project=>project.id===id))selectedRequestProjectIds.add(id);
+      } else if(requestContextOwnerChatId!==activeId) {
         if(selectedRequestProjectIds.size)requestProjectContextByChat.set(requestContextOwnerChatId,[...selectedRequestProjectIds]);
         else requestProjectContextByChat.delete(requestContextOwnerChatId);
         persistRequestProjectContextByChat();
