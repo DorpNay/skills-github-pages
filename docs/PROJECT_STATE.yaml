@@ -481,12 +481,13 @@ whole_stack_integrity_audit_2026_10_30:
 landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
-  latest_code_test_head: "d388a02445ddc1ebccbaec58fd8515b8d0b9adfa"
-  latest_documented_head: "522e93fbb3c8c11644ad1e0361a359202ff4fe16"
+  latest_code_test_head: "9ff326d40ac0567c1c62c293cb396bcd9c4eba82"
+  latest_documented_head: "07b2368f5b1672116fdb3f435cf18a4a4aa87b40"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
     memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
-    sidebar_swipe: "Requirement 8.1: horizontal left swipe closes the sidebar; vertical scroll is not intercepted; project/chat disclosure state is preserved. Added Playwright regression."
+    sidebar_swipe: "Requirement 8.1: horizontal left swipe closes the sidebar; vertical scroll is not intercepted; project/chat disclosure state is preserved. Playwright regression added."
+    header_responsive: "Requirement 8.2: dedicated chat-title surface, expressive wordmark, clock, compact mode controls; Playwright layout checks at 320/360/390/768/1024/1440px added."
     settings_provider_groups: "Requirement 8.3: Cloud is exclusive; third-party and additional settings may remain open together; existing E2E covers transitions."
     project_sources: "Requirement 8.7: project Sources section states gateway lacks source-list API; no fictitious CRUD controls; existing E2E verifies unsupported state."
     server_memory_retirement: "Requirement 8.12: browser bridge/UI and /v1/memory/graph/* routes plus graph-specific flags removed; internal MemoryManager retained only for Graphify; SQLite data untouched; local/private/shared/project memory, delta sync, RAG and local helper remain."
@@ -498,6 +499,7 @@ landing_ui_v2_pr131_2026_10_31:
     gateway_security_tests: "Added secret non-disclosure coverage for /livez, /readyz, /healthz, invalid Bearer values and sanitized upstream errors; source not executed."
   test_commits:
     sidebar_swipe: "d388a02445ddc1ebccbaec58fd8515b8d0b9adfa"
+    responsive_header: "9ff326d40ac0567c1c62c293cb396bcd9c4eba82"
     server_memory_retirement_e2e: "caabc526b9ffaaee31a312f2251aaffe5bea52e5"
     gateway_secret_non_disclosure: "6f7fde485b2b13aecc50523b20785e0ac615d2ad"
     touch_selection_regression: "64a1a811bd5531d8095245d649829fd838486821"
@@ -505,7 +507,7 @@ landing_ui_v2_pr131_2026_10_31:
     message_action_consistency: "a6ce9eed87d6c239b9f5ea394ab04359939479e2"
     high_contrast_text_states: "787c9aaf6026559da31daf51d82f884abdc78c1d"
   verification:
-    exact_head: "522e93fbb3c8c11644ad1e0361a359202ff4fe16"
+    exact_head: "07b2368f5b1672116fdb3f435cf18a4a4aa87b40"
     exact_head_workflow_runs: "not yet queried"
     gateway_pytest: "not executed in this environment"
     playwright_chromium: "not executed; no passing result claimed"
@@ -515,4 +517,4 @@ landing_ui_v2_pr131_2026_10_31:
     merge: "requires explicit owner approval"
     deploy: "requires explicit owner approval"
     main: "V1 baseline remains untouched"
-  next: "Continue source/test audit of requirements 8.1–8.11, prioritizing 8.1 accordion/restore and 8.2 header typography/responsive layout; run exact-head CI when available."
+  next: "Continue source/test audit of requirements 8.1–8.11; close remaining verification gaps and run exact-head CI when available. Keep native mobile and screenshot review as manual gates."
