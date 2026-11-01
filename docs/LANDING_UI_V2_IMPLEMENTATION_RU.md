@@ -447,3 +447,12 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - Source research: Playwright recommends one CI worker for reproducibility, a bounded global timeout, and traces on the first retry rather than tracing every test. Modern Chrome Headless shares the browser implementation with headful Chrome. VisualViewport and touch/pointer cancellation remain distinct mobile behaviors; Chromium does not replace native iOS Safari/VoiceOver acceptance.
 - Official references: https://playwright.dev/docs/ci ; https://playwright.dev/docs/best-practices ; https://playwright.dev/docs/trace-viewer-intro ; https://developer.chrome.com/docs/automation-and-testing/headless/ ; https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport ; https://developer.mozilla.org/en-US/docs/Web/API/Element/pointercancel_event ; https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/touch-action
 - Validation boundary: the test source was updated and reviewed against the current markup/handler. No Playwright/Chromium run has been executed on this new head; this is not a test pass. Native iPhone Safari remains unverified.
+
+
+### App identity and native theme metadata — 2026-11-02
+
+- Replaced the stale root-app title `AI Mobile Agent v10.0` with `aLandi — личная AI-среда` in Jekyll front matter and the browser document title.
+- Aligned the site-wide Jekyll title/description with aLandi and added a concise app description for browser/search metadata.
+- Changed the app's `color-scheme` hint to `dark light`, matching the existing user-selectable light/dark themes instead of advertising dark-only controls.
+- Added deterministic Quality Sentinel and Playwright assertions for the page title, description and color-scheme metadata. These assertions are committed but not yet executed in Chromium.
+- No JavaScript runtime behavior, provider routing, stored data, dependencies or deployment settings were changed.
