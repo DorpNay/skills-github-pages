@@ -139,3 +139,10 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Latest PR #131 source checkpoint: `9aa74853478a6a680cdd36ab0f84c851721405a4`; latest PR #131 head: `782d5d35691d66cc2bcfb48473329463886b48e8`.
 - Graphify path filters in PR #131 now include extracted app JS/CSS and landing HTML; exact-head artifact not yet confirmed.
 - PR #132 remains a documentation-only backup and must not be treated as code/test evidence.
+
+
+### Repository hygiene inventory — 2026-11-02
+- Inventory snapshot: 126 branches; 9 open PRs (#124–132); 100 closed PRs inspected. All 19 closed-but-unmerged PR branches reviewed have ahead > 0 and are preserved.
+- Five no-PR branches are confirmed behind-only with no exact-name code/PR references: feat/alandi-helper-model-routing; feat/rag-rrf-engineering-audit-rebased-20261027; fix/provider-model-catalogs-v2; fix/pyodide-setup; fix/theme-persistence-e2e-isolation. They are recorded as deletion candidates in docs/REPOSITORY_HYGIENE_RU.md.
+- future-workstreams/parking-base-20261031 is intentionally reserved and retained. Other no-PR branches with ahead > 0 are retained for separate triage.
+- No branch/file deletion performed: GitHub integration has no branch-delete action; no confirmed unused file was found. SECURITY.md added in both PR branches; main still lacks it until merge. CODEOWNERS deferred pending an independent reviewer; Dependabot config deferred while PR #124 adds uv.lock. Repo security settings are not readable through current integration and remain owner-manual checks.
