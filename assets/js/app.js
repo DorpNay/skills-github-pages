@@ -76,9 +76,12 @@
     }
     const MODAL_FOCUSABLE_SELECTOR='button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])';
     function getModalFocusableElements(modal){
-      return [...modal.querySelectorAll(MODAL_FOCUSABLE_SELECTOR)].filter(node=>
-        node.getClientRects().length&&getComputedStyle(node).visibility!=='hidden'&&!node.closest('.hidden,[inert],[aria-hidden="true"]')
-      );
+      return [...modal.querySelectorAll(MODAL_FOCUSABLE_SELECTOR)].filter(node=>{
+        const closedDetails=node.closest('details:not([open])');
+        const isClosedDetailsSummary=closedDetails&&node===closedDetails.querySelector(':scope > summary');
+        return node.getClientRects().length&&getComputedStyle(node).visibility!=='hidden'
+          &&!node.closest('.hidden,[inert],[aria-hidden="true"]')&&(!closedDetails||isClosedDetailsSummary);
+      });
     }
     uiModalIds.forEach(id=>{
       const modal=$(id);

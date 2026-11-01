@@ -298,33 +298,56 @@ test('settings modal traps Tab and Shift+Tab inside the visible dialog', async (
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
   const modal = page.locator('#settingsModal');
+  const visibleFocusableSelector = 'button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])';
+  const getVisibleFocusables = element => {
+    const nodes = [...element.querySelectorAll(visibleFocusableSelector)];
+    return nodes.filter(node => {
+      const closedDetails = node.closest('details:not([open])');
+      const isClosedDetailsSummary = closedDetails && node === closedDetails.querySelector(':scope > summary');
+      return node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden'
+        && !node.closest('.hidden,[inert],[aria-hidden="true"]') && (!closedDetails || isClosedDetailsSummary);
+    });
+  };
   const visibleCount = await modal.evaluate(element => {
     const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])')];
-    return nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]')).length;
+    return nodes.filter(node => {
+      const closedDetails = node.closest('details:not([open])');
+      const isClosedDetailsSummary = closedDetails && node === closedDetails.querySelector(':scope > summary');
+      return node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden'
+        && !node.closest('.hidden,[inert],[aria-hidden="true"]') && (!closedDetails || isClosedDetailsSummary);
+    }).length;
   });
   expect(visibleCount).toBeGreaterThan(1);
   await modal.evaluate(element => {
     const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])')];
-    nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]'))[0].focus();
+    const visible = nodes.filter(node => {
+      const closedDetails = node.closest('details:not([open])');
+      const isClosedDetailsSummary = closedDetails && node === closedDetails.querySelector(':scope > summary');
+      return node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden'
+        && !node.closest('.hidden,[inert],[aria-hidden="true"]') && (!closedDetails || isClosedDetailsSummary);
+    });
+    visible[0].focus();
   });
-  console.log('MODAL_FOCUS_DIAGNOSTICS', JSON.stringify(await page.evaluate(() => {
-    const ids=['settingsModal','projectSettingsModal','projectCreateModal','messageViewerModal','chatActionModal','researchStudioModal','functionPanelModal','traceModal'];
-    const selector='button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])';
-    const active=ids.map(id=>document.getElementById(id)).filter(m=>m&&!m.classList.contains('hidden')&&getComputedStyle(m).display!=='none'&&getComputedStyle(m).visibility!=='hidden'&&m.getClientRects().length).sort((a,b)=>(parseInt(getComputedStyle(a).zIndex,10)||0)-(parseInt(getComputedStyle(b).zIndex,10)||0)).at(-1);
-    const describe=m=>({id:m.id,display:getComputedStyle(m).display,visibility:getComputedStyle(m).visibility,opacity:getComputedStyle(m).opacity,z:getComputedStyle(m).zIndex,focusables:[...m.querySelectorAll(selector)].filter(n=>n.getClientRects().length&&getComputedStyle(n).visibility!=='hidden'&&!n.closest('.hidden,[inert],[aria-hidden="true"]')).map(n=>n.id||n.tagName+':'+(n.getAttribute('aria-label')||n.textContent.trim().slice(0,24)))});
-    return {activeElement:document.activeElement.id||document.activeElement.tagName,activeModal:active?.id,modals:ids.map(id=>document.getElementById(id)).filter(Boolean).map(describe)};
-  })));
   await page.keyboard.press('Shift+Tab');
-  console.log('MODAL_FOCUS_AFTER_SHIFT_TAB', JSON.stringify(await page.evaluate(() => ({active:document.activeElement.id||document.activeElement.tagName,aria:document.activeElement.getAttribute('aria-label'),text:document.activeElement.textContent?.trim().slice(0,40)}))));
   await expect.poll(() => modal.evaluate(element => {
     const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])')];
-    const visible = nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]'));
+    const visible = nodes.filter(node => {
+      const closedDetails = node.closest('details:not([open])');
+      const isClosedDetailsSummary = closedDetails && node === closedDetails.querySelector(':scope > summary');
+      return node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden'
+        && !node.closest('.hidden,[inert],[aria-hidden="true"]') && (!closedDetails || isClosedDetailsSummary);
+    });
     return document.activeElement === visible.at(-1);
   })).toBe(true);
   await page.keyboard.press('Tab');
   await expect.poll(() => modal.evaluate(element => {
     const nodes = [...element.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])')];
-    const visible = nodes.filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden' && !node.closest('.hidden,[inert],[aria-hidden="true"]'));
+    const visible = nodes.filter(node => {
+      const closedDetails = node.closest('details:not([open])');
+      const isClosedDetailsSummary = closedDetails && node === closedDetails.querySelector(':scope > summary');
+      return node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden'
+        && !node.closest('.hidden,[inert],[aria-hidden="true"]') && (!closedDetails || isClosedDetailsSummary);
+    });
     return document.activeElement === visible[0];
   })).toBe(true);
 
@@ -649,7 +672,7 @@ test('high-contrast preference updates every important text state in both themes
   const readStates = () => page.evaluate(() => ({
     normal: getComputedStyle(document.querySelector('#chatBox')).color,
     secondary: getComputedStyle(document.querySelector('#memoryStatusLine')).color,
-    disabled: getComputedStyle(document.querySelector('#contrastDisabledFixture')).color,
+    disabled: getComputedStyle(document.querySelector('#contrastDisabledFixture')).getPropertyValue('-webkit-text-fill-color') || getComputedStyle(document.querySelector('#contrastDisabledFixture')).color,
     link: getComputedStyle(document.querySelector('#chatBox .assistant-content a')).color,
     error: getComputedStyle(document.querySelector('#chatBox [role="alert"]')).color,
     status: getComputedStyle(document.querySelector('#searchStatus')).color,
@@ -661,13 +684,6 @@ test('high-contrast preference updates every important text state in both themes
   await page.locator('#uiTextContrast').selectOption('high');
   await expect(page.locator('html')).toHaveAttribute('data-text-contrast','high');
   const highDark = await readStates();
-  console.log('HIGH_CONTRAST_DIAGNOSTICS', JSON.stringify(await page.evaluate(() => {
-    const button=document.querySelector('#contrastDisabledFixture');
-    const rules=[];
-    for(const sheet of document.styleSheets){try{for(const rule of sheet.cssRules){if(rule.selectorText?.includes('chatBox button'))rules.push(rule.cssText);}}catch{}}
-    const style=getComputedStyle(button);
-    return {htmlContrast:document.documentElement.getAttribute('data-text-contrast'),disabled:button.disabled,hasAttribute:button.hasAttribute('disabled'),matchesDisabled:button.matches(':disabled'),matchesAttribute:button.matches('[disabled]'),matchesHighContrast:button.matches('html[data-text-contrast="high"] #chatBox button[disabled]'),color:style.color,textFill:style.webkitTextFillColor,matchingRules:rules};
-  })));
   for (const key of ['secondary','disabled','link','error','status']) {
     expect(highDark[key], key + ' must change in dark theme').not.toBe(normalDark[key]);
     expect(highDark[key]).not.toBe('');
