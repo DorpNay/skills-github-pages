@@ -11,6 +11,33 @@ project_state:
     exact_head_checks: "PR #121 head e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b: Dead Code Audit, Project State Freshness, Provenance, Lite Gateway Tests, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. PR #122 head 94d871dbf76a5364ebb3c61d86cc763affa5eaa1: Gateway Tests, Dead Code Audit, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. PR #123 head fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222: Gateway Tests, Dead Code Audit, Freshness, Provenance, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. Merge commits: #121 f4d880f9648989f4fe48ddd2284220b3606c3b86; #122 fd4f0a105183feb23e0f4e4697446235de9ffe9a. No independent post-merge Pages deployment result was available."
     runtime_boundary: "PR-head published-site browser smoke verified; post-merge Pages deployment on the exact merge commit remains unverified. Native iPhone, live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
     next: "Keep first landing V1 scope frozen. Continue only reliability, accessibility, performance, security, documentation and integration polish inside the selected HTML/CSS/JS + Jekyll and existing FastAPI/Ollama stack. New capabilities stay in the future backlog, outside the first landing."
+
+  ui_v2_track:
+    pull_request: 131
+    branch: "feat/landing-v1-accessibility-responsive-20261031"
+    head_at_checkpoint: "70e6b98d77f5860de01e2252f90be126d761e2b3"
+    status: "open_unmerged_owner_controlled"
+    stable_main_contains_v2: false
+    requirements: "docs/V1_UI_FINALIZATION_RU.md sections 8.1-8.17"
+    implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md on PR #131 branch"
+    remaining_queue: "section 8.0 in docs/V1_UI_FINALIZATION_RU.md on PR #131 branch"
+    verified:
+      gateway_actions_run: 640
+      tested_commit: "6f7fde485b2b13aecc50523b20785e0ac615d2ad"
+      result: "compileall, manifest/INTEL, gateway pytest, deploy preflight and six-layer offline evaluation passed; no gateway/** changes since tested commit"
+    pending:
+      - "Exact-head Quality and Playwright/Chromium result"
+      - "Published-site smoke result"
+      - "Native iPhone Safari and VoiceOver"
+      - "Measured WCAG contrast ratios"
+      - "Manual visual and localization/theme acceptance"
+    branch_health:
+      ahead_of_main: 197
+      behind_main: 4
+      mergeable: false
+      action: "Do not force-update; inspect and reconcile main-side commits before branch synchronization"
+    merge_deploy_policy: "Never merge, close or deploy PR #131 without explicit owner command"
+
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
