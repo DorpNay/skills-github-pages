@@ -316,3 +316,17 @@
 - All still-applicable unfinished UI requests inherited from sections 1–7 are consolidated into the unified section 8.0 workstreams; they are executed together with owner requirements 8.1–8.17, not as a parallel legacy backlog.
 - Canonical status/evidence documents: `docs/V1_UI_FINALIZATION_RU.md`, `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`, and the concise mirror `docs/LANDING_UX_POLISH_BACKLOG_RU.md`.
 - Completed, obsolete or superseded requests remain documented but are not reopened. Exact-head browser tests and native-device acceptance remain separate proof gates.
+
+
+## Engineering continuation — 2026-11-02 (PR #131)
+
+- [x] Exact-head Quality #1234 on code SHA 9a23d58313da6379cb112b617daedeaa6d38f605: 4/4 Chrome shards, 128/128 E2E tests passed; Jekyll, Integrity, Security, Context, preflight and static analysis passed.
+- [x] CI browser setup uses runner-provided stable Google Chrome with Playwright 1.56.1; no per-run Chromium download or apt browser dependency installation.
+- [x] Refreshed root ORIENTER, detailed FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG and REPOSITORY_HYGIENE with exact evidence and explicit deployment boundaries.
+- [x] Triaged the owner-provided 60-repository shortlist and completed a focused 32-result upstream research pass. Selected findings and license evidence are in OPEN_SOURCE_TRIAGE_RU.md; no runtime, framework, dependency or model imported.
+- [x] Rechecked five old branch candidates: zero commits ahead of main, 111–270 commits behind, and no open PR or issue references found by search.
+- [ ] Delete the five stale refs: technically behind-only candidates, but the connected GitHub integration has no delete-ref operation. Owner can delete them in GitHub after final review; no deletion performed.
+- [ ] Publish a separate V2 GitHub Pages preview. This repository has a single Pages target; deploying PR content there would replace V1. A second Pages site/repository or separately configured host is required. No preview deployed.
+- [ ] Continue mandatory UI 8.1–8.17 and inherited acceptance gates; passing CI does not close native iPhone Safari, VoiceOver, full WCAG contrast or manual visual review.
+- [ ] Establish an apples-to-apples CI performance baseline: Quality #1197 timed out at 1863s with incomplete coverage, so no speedup ratio is claimed from the 105s #1234 run.
+
