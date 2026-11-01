@@ -195,3 +195,38 @@
 
 - Added a Playwright layout regression across 320, 360, 390, 768, 1024 and 1440 CSS px. It checks that the header does not horizontally overflow, the active chat title remains a distinct bordered surface, the clock remains present, the wordmark retains its expressive treatment, and Fast/Thorough controls stay compact.
 - Test commit: `9ff326d40ac0567c1c62c293cb396bcd9c4eba82`. The test is added but not executed; it is not a substitute for screenshot review on real devices.
+
+
+## Legacy checklist reconciliation — 2026-11-01
+
+The older open items from sections 1–7 of V1_UI_FINALIZATION_RU.md and the previous LANDING_UX_POLISH_BACKLOG_RU.md were compared with the current PR #131 source and owner requirements 8.1–8.17. The older audit tables above are historical snapshots; where they disagree with this reconciliation, this section and the latest checkpoint below are authoritative.
+
+| Legacy area | Current disposition | Active follow-up |
+|---|---|---|
+| Composer position, responsive layout and header controls | Implemented in earlier PRs and refined in 8.1/8.2. Do not restore old duplicate composer/header tasks. | Execute responsive E2E; native keyboard/safe-area review. |
+| Provider routing and Cloud/third-party separation | Implemented and refined under 8.3; no Cloud entry in third-party picker. | Execute disclosure tests; verify error/redaction paths and live status only with owner-approved credentials. |
+| Global system prompt | Empty-by-default and global, not chat-scoped. | Recheck legacy migration and no-default regression; no duplicate implementation. |
+| Tavily/web search | Tavily remains under web-tools settings; keyless fallback and adapter capability must be audited before any removal. | Contract-test fallback/error states; do not remove by assumption. |
+| Dialogs, popovers, focus and backdrop | Shared modal lifecycle and browser Back/Forward/Escape are implemented under 8.6/8.9. | Run repeated-cycle/focus/scroll regressions and native screen-reader review. |
+| Sidebar/projects/chats/import-export | Earlier navigation/import-export slices are retained; current hierarchy is 8.1. | Run accordion/restore/swipe E2E; long-list and native gesture review. |
+| Research Studio, agents, skills and connectors | Existing Research Studio uses active-chat settings; no independent agent swarm or fake marketplace is claimed. | Audit capability labels, registered entities and permissions; verify no mode conflation. |
+| Landing page visual polish and ticker | Landing structure, pause controls and reduced-motion behavior exist. | Screenshot, keyboard/screen-reader and published Pages review. |
+| Project Sources | No source-list API exists in the gateway. | Keep unsupported-state; no CRUD until a real scoped API is available. |
+
+### Unified remaining work — current priority
+
+1. **P0 — execute exact-head checks:** focused Playwright/Chromium for 8.1–8.17; Gateway tests including secret redaction and graph-bridge retirement; then full Quality, Freshness, Provenance, Graphify and Dead Code where available. Tests currently exist as source but have not been executed on the current head.
+2. **P1 — device/accessibility acceptance:** native iPhone Safari keyboard/VisualViewport/safe-area/touch/rotation; VoiceOver and keyboard-only; real WCAG contrast-ratio audit in both themes.
+3. **P1 — visual acceptance:** screenshots at 320/360/390/768/1024/1440 px; review header, sidebar, composer, dialogs, long labels, empty/error states, typography and spacing; complete RU/EN and light/dark review.
+4. **P2 — interaction stress:** long project/chat lists and messages, nested scrolling, popover edge placement, rapid modal cycles and focus restoration.
+5. **P2 — truthful feature surfaces:** verify Research/Agents/Skills/Connectors labels and permissions; distinguish web-search breadth, offline and sequential pipeline from independent agent runtime; finish Tavily/keyless fallback decision and provider/gateway mock error states.
+
+Not active UI work: project-source CRUD without a gateway list contract; persistence of the 8.13 pending handoff across reload (not required); adding providers/connectors/OAuth/cloud sync or runtime capabilities without owner approval.
+
+### Current checkpoint — 2026-11-01, after checklist reconciliation
+
+- PR #131 branch: feat/landing-v1-accessibility-responsive-20261031; PR remains open and unmerged; V1 in main is unchanged.
+- Current known code/test head before these documentation-only reconciliation commits: 8f68c2cc4b4b01a1917e32f75f7d5016517d41c3.
+- Requirement 8.12 graph bridge/UI removal and gateway secret-redaction regressions are implemented in source; their tests are not executed.
+- Requirements 8.1–8.17 have implementation and/or focused regression source, but exact-head Playwright/Chromium and full CI results are absent. Native iPhone/VoiceOver and WCAG ratio checks remain manual.
+- Do not claim CI/E2E pass, merge or deploy. Continue from P0 exact-head verification, then resolve confirmed failures before more UI scope.
