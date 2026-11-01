@@ -52,12 +52,11 @@ const suites = {
         const close = providerPicker.indexOf('</optgroup>', start);
         return start >= 0 && close > start ? providerPicker.slice(start, close + '</optgroup>'.length) : '';
       };
-      const internalRouteGroup = extractGroup('providerPrimaryGroup');
       const externalRouteGroup = extractGroup('providerExternalGroup');
-      assert.ok(internalRouteGroup.includes(' hidden'), 'The private compatibility route must remain hidden from users.');
-      assert.equal(internalRouteGroup.split('<option value="alandi"').length - 1, 1, 'Keep exactly one hidden internal route for saved-chat migration and routing.');
-      assert.equal(externalRouteGroup.includes('<option value="alandi"'), false, 'The private aLandi route must not appear among third-party providers.');
+      assert.ok(externalRouteGroup, 'The third-party provider picker must have its own explicit group.');
+      assert.equal(externalRouteGroup.includes('<option value="alandi"'), false, 'The private aLandi route must stay in its dedicated first-party card, not the third-party picker.');
       assert.ok(externalRouteGroup.includes('<option value="gemini">') && externalRouteGroup.includes('<option value="custom">'), 'External providers must remain selectable.');
+      includes("const value = $('providerPreset')?.value || safeGet(STORAGE.provider) || 'alandi';", 'An empty third-party picker must preserve the separately selected first-party aLandi route.');
       assert.equal((source.match(/id="cloudConnect"/g) || []).length, 0, 'The private server must connect automatically, without a permanent manual-check button.');
       includes('function connectAlandiCloud()', 'The cloud UI must verify a real model response before showing connected.');
       includes('function scheduleCloudAutoConnect()', 'Changes to private server settings must trigger a bounded automatic connection check.');
