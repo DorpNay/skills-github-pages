@@ -217,3 +217,9 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - No standard `CODEOWNERS`, `SECURITY.md` or Dependabot config files found; account-level security settings remain unverified.
 - PR #131 exact-head Quality/Chromium not found. Provenance #41336870473 passed on the audit snapshot; Quality #1126 (101 passed / 18 failed) is stale.
 - No branch/file/artifact deletion, settings change, merge, rebase, force-push or deployment. Full per-branch ancestry/reference review and owner-side settings review remain open. See `docs/REPOSITORY_HYGIENE_RU.md`.
+
+
+### 2026-11-02 — Mirror CSS cleanup checkpoint
+
+- Refreshed docs/LANDING_UI_V2_IMPLEMENTATION_RU.md from PR #131 so the backup ledger includes the 504-byte overridden-CSS cleanup and exact verification boundary.
+- Updated backup project state and orienter to code/source checkpoint 9679ed4d7974849f3fd02dcf8465384c8c59a9df. CSS brace balance is zero; no Chromium/visual test is claimed.
