@@ -313,3 +313,12 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Added a final CSS normalization using the existing `--ui-control-touch` token (44px), preserving the controls and their actions.
 - Extended the mobile Playwright regression to create a chat and measure the chat-row menu target, then open the language menu and measure an option. Existing sidebar/settings/project modal checks remain.
 - Commits: `6e75dbf368b71ccd1660873d5cd0f9870cf58119`, `441d5da57b80399228c0a520d7a867ae3fc5371b`, `2d25b12f100b246a929fc6921dfb44971f7d50e3`. Test execution remains pending; 8.10 is not marked complete until exact-head Chromium passes.
+
+### 2026-11-01 — PR #131: Chromium #1125 diagnosis and corrective batch
+
+- User-dispatched Quality run #1125 (`41289724442`) completed on exact SHA `e0e0f80e678e6b418690ba9f33b808a29fe22fef`. Jekyll, Security, Static Analysis, Context and Integrity passed. Chromium finished in 11 minutes with 78 passed, 38 failed and 2 flaky; browser diagnostics uploaded as artifact ID `13077550536`. Published-site smoke steps were skipped because local Chromium failed.
+- Root cause groups include stale selectors for retired `#legacyProviderSettings`, Research Studio's moved entry point, and hidden native language controls; tests also counted the provider connectivity probe as a user request. Corrected these E2E contracts and fixtures without removing app assertions.
+- Source fixes: narrow-screen clock remains 54px instead of collapsing to 42px; message-viewer speech action is now hidden for user messages despite `.message-actions` layout styling. Additional test corrections cover default-open Cloud settings, project/personal chat navigation, connectivity probe handling in status and web-search tests, and ticker locator strictness.
+- CI changed to two workers and a 25-minute Chromium job timeout to reduce browser resource contention while retaining the complete suite and diagnostics. Changes are recorded in the implementation ledger.
+- Current code/test head after corrections: `b42797ca0e09576519bc82710f993a0d4a4823bb`. No Quality run has verified this head yet. Remaining areas to verify include contrast state, settings disclosure transitions, project/chat handoff, provider fallback/401, message viewer and 44px touch targets.
+- PR #131 remains open/unmerged; GitHub reports `mergeable_state=dirty`, which must be investigated before merge. No merge or deployment performed.
