@@ -833,6 +833,7 @@ test('published app boots and core controls are interactive', async ({ page }) =
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('link[rel="stylesheet"][href*="assets/css/app.css"]')).toHaveCount(1);
   await expect(page).toHaveTitle(/AI Mobile Agent/);
   await expect(page.locator('#chatBox')).toBeVisible();
   await expect(page.locator('#userInput')).toBeEditable();
