@@ -1,8 +1,20 @@
 # aLandi — мастер-контекст проекта
 
-Редакция: 2026-10-21. Документ для разработчиков и ИИ-агентов, включая роль @Поиск.
+Редакция: 2026-11-02. Документ для разработчиков и ИИ-агентов, включая роль @Поиск.
 
 > Важно: одобрение идеи не означает, что она уже реализована. Проверяйте код, тесты, CI и live-поведение прежде, чем утверждать обратное.
+
+
+## Актуальная контрольная точка — 2026-11-02
+
+- Основной продуктовый UI V2.0 разрабатывается в PR #131: https://github.com/DorpNay/skills-github-pages/pull/131. Рабочая ветка: feat/landing-v1-accessibility-responsive-20261031. Не объединять и не публиковать без отдельного разрешения владельца.
+- Проверенный PR-head до текущего документационного обновления: 531046c38b18df31cc6f88491417cfef3ae8630d. Runtime/source checkpoint: 9aa74853478a6a680cdd36ab0f84c851721405a4. Последующие изменения этой контрольной точки — документация/репозиторная координация.
+- Текущий main на момент сверки: 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 diverged: 537 commits ahead, 4 behind, merge base e78a73b25725bfa63370d9946887cbbacbf51b82. Четыре коммита main затрагивают только docs/V1_UI_FINALIZATION_RU.md; не выполнять rebase/sync без сохранения обеих версий.
+- На exact PR-head 531046... workflow runs и status checks не найдены. Quality #1126 (101 passed / 18 failed на более раннем SHA) — устаревшее свидетельство. Chromium, native iPhone Safari, VoiceOver и полный WCAG audit не считаются пройденными.
+- Единый UI scope: активные унаследованные задачи до раздела 8 плюс обязательные 8.1–8.17 находятся в разделе 8.0 docs/V1_UI_FINALIZATION_RU.md. Новые предложения владельца 8.18–8.27 там же отмечены как optional candidates, не release blockers. Техническая сверка и источники — docs/LANDING_UI_V2_IMPLEMENTATION_RU.md.
+- В исходнике уже есть modal/history stack, toast/status, last-closed-chat recovery, project memory scope, contextual chat/project/message actions, local chat persistence и attachment processing. Новые улучшения должны развивать эти механизмы, а не создавать дубли.
+- Repository identity cleanup — отдельный workstream. Legacy GitHub Skills exercise workflows обнаружены; удаление не выполнялось до проверки repository template flag и run history. Каталог skills/*.txt — действующие task profiles aLandi и сохраняется. Rename repo отложен до custom domain: GitHub не перенаправляет project Pages URL при rename.
+
 
 ## Источник истины
 
