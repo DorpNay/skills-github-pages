@@ -480,3 +480,14 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - Added an inline source comment above ASERVI_STORAGE explaining that the ai_alandi_cloud_* localStorage names are intentionally retained persistence identifiers, not current product/UI labels.
 - This prevents a future cleanup from silently renaming keys and disconnecting existing saved server settings. No migration or storage mutation was performed.
 
+
+
+### Integrated UI and Graphify checkpoint — 2026-11-02
+
+- Reconfirmed owner scope: finish the remaining applicable requirements inherited from sections 1–7 together with 8.1–8.17. Section 8.0 is the single open-work register; old V1 statuses remain historical and must not create a parallel queue.
+- The existing polish register is a concise mirror, not an independent source of tasks. Detailed implementation/test evidence remains here; owner requirements remain in `V1_UI_FINALIZATION_RU.md`.
+- Latest UI source checkpoint: `9aa74853478a6a680cdd36ab0f84c851721405a4`. Latest PR #131 branch head after the Graphify workflow change: `c8facdac2eebc7d2217b807f1b7e314ae3abf2dd`. The new workflow commit changes only path filters; it does not change app runtime behavior.
+- Found and fixed a Graphify coverage gap: the code-only pilot now watches `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html` in both PR and main-push path filters. This is important because the app runtime and landing/app CSS are externalized from the original Markdown/HTML sources.
+- Graphify has not yet been confirmed on this new head; inspect the run and artifact before recording graph metrics or architecture findings.
+- Exact-head Quality/Chromium is still pending. No browser pass, merge or deployment is claimed.
+- The next implementation pass must remain cross-cutting: sidebar/chat restoration, responsive header/composer, provider and settings state, modal/browser history/focus, message actions, explicit project handoff, touch behavior, semantic status/reduced motion, readable theme states, and truthful Research/Agents/Skills/Connectors surfaces.
