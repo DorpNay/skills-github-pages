@@ -418,3 +418,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 
 
 | V-2026-11-01-ASERVI-HTML-CSS-001 | 2026-11-01 | Rename primary server route to aLandi aServi; retain legacy storage keys; externalize app/landing CSS; order renderer/sanitizer scripts with defer; align E2E and Quality assertions; document Chromium mobile edge cases | PR #131 code/test checkpoint `d65102ed5a9ba3c30586d8a52efbd5603a009e23` (branch head before documentation reconciliation `baee92526def09756dd294d28a6675092c5bccf4`); app.js syntax parse passed, extracted CSS brace counts balanced; exact-head Quality/Chromium pending | Do not migrate/delete legacy localStorage keys without explicit migration; Cloudflare is not renamed; no merge/deploy |
+
+
+### 2026-11-01 — PR #131: modal focus containment hardening (8.6 / 8.9)
+
+- Existing modal lifecycle already handled Escape/Back/Forward, body scroll lock, initial focus and per-modal focus return, but Tab containment selected the last entry in a fixed modal list rather than the dialog actually on top.
+- Added getTopmostUiModal(), which chooses the visible modal with the highest computed z-index. The Tab handler now filters disabled, hidden, inert, aria-hidden and visibility-hidden descendants; wraps Tab/Shift+Tab; and focuses the dialog itself if it contains no usable controls.
+- Added an E2E for both wrap directions and for focus entering the modal from an outside control. Refined the test to consider only rendered focusable elements, not descendants of collapsed disclosures.
+- Latest code commit: 5f4d3fb4a9b96eb85ddef98758e2301abea78ae0; latest modal E2E commit: baee92526def09756dd294d28a6675092c5bccf4. Syntax check passed after this change; browser verification remains deferred.
