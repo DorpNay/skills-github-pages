@@ -456,6 +456,28 @@ permalink: /
      html[data-text-contrast="high"] .cloud-status-copy[data-state="connected"] { color:var(--ui-success)!important; }
      html[data-text-contrast="high"] .cloud-status-copy[data-state="checking"] { color:var(--ui-warning)!important; }
      body.ui-modal-open { overflow:hidden;overscroll-behavior:none; }
+
+    /* Shared touch sizing for compact navigation and disclosure controls. */
+    .settings-header-actions button,
+    .language-menu-panel button,
+    .chat-row-menu-panel button,
+    .project-nav-item > summary,
+    .toolbar-menu > summary {
+      min-height:var(--ui-control-touch);
+    }
+    .chat-row-menu summary,
+    #projectNavigationList .chat-row .chat-row-menu summary {
+      width:var(--ui-control-touch);
+      min-width:var(--ui-control-touch);
+      height:var(--ui-control-touch);
+      min-height:var(--ui-control-touch);
+      padding:0;
+    }
+    .memory-item button {
+      min-width:var(--ui-control-touch);
+      min-height:var(--ui-control-touch);
+    }
+
 </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
