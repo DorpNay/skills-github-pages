@@ -204,3 +204,8 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Latest code/source checkpoint: 9679ed4d7974849f3fd02dcf8465384c8c59a9df. The CSS cascade cleanup removed 504 bytes of overridden declarations; metadata and test contracts remain as previously recorded.
 - Exact-head Quality/Chromium workflow lookup returns no runs. Browser behavior is still unverified; do not treat old #1126 output as current.
 - The independent PR #132 backup now carries the implementation ledger, aServi terminology reconciliation and repository-hygiene runbook.
+
+
+### aServi compatibility guard — 2026-11-02
+- The source now documents why ASERVI_STORAGE intentionally retains ai_alandi_cloud_* keys. They are persistence contracts, not UI naming; do not rename them without a migration plan.
+
