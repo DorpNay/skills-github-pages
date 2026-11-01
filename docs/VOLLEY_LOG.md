@@ -288,3 +288,13 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Current PR #131 is 197 ahead / 4 behind main, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`, GitHub mergeable=false. The four main-side commits touch only the canonical UI checklist; the PR branch contains the substantive new requirement lines but changes the section structure. No blind branch sync/rebase/merge.
 - Exact-head Quality/Chromium status remains unavailable from the current Actions lookup. Workflow config alone is not evidence of a run or pass.
 - Updated implementation ledger. Next: obtain and inspect an actual Quality Sentinels browser job on the PR head; then fix only confirmed failures.
+
+
+### 2026-11-01 — PR #131: diagnose and repair Quality Sentinel drift
+
+- Inspected owner-dispatched Quality Sentinels run #41285658893 on SHA `d822cb623b2a72642921654a04e6c9d988091834`.
+- Security, Jekyll build and independent static analysis passed. Context and Integrity failed because the sentinel script still expected renamed UI IDs, the removed server-memory graph bridge, the former project-memory toggle, and outdated memory-context wording. Chromium was still running at the last status check.
+- Updated `scripts/quality-agents.mjs` in commits `1b30cae806469fa5ef1cf8325a41094c54d042a2` and `5d01a7da02207665ce480a68eba99ce7efbc08a9`. The checks now assert the real project-scope selector, explicit local-memory opt-in, shared-memory scope gate and current prompt wording; they also ensure the retired graph API stays absent. No product guard or application behavior was relaxed.
+- Source-level cross-check: all 189 literal sentinel `includes(...)` expectations now match the branch `index.md`; all required current UI IDs are present. This does not substitute for executing the workflow.
+- Exact-head rerun remains pending. PR #131 stays open/unmerged; no merge or deployment.
+- Next: rerun Quality Sentinels on the current PR head, inspect Chromium and all sentinels, then proceed to native iPhone/VoiceOver, screenshots and measured WCAG review.
