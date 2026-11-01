@@ -326,10 +326,10 @@ const suites = {
       const html = readFileSync(built, 'utf8');
       assert.match(html, /<html\s+lang="ru">/i, 'Built page is missing the expected document.');
       assert.match(html, /id="chatBox"/, 'Built page is missing the chat UI.');
-      assert.match(html, /assets\\/js\\/app\\.js/, 'Built page must reference the external application runtime.');
+      assert.match(html, /assets\/js\/app\.js/, 'Built page must reference the external application runtime.');
       const builtApp = resolve(root, '_site/assets/js/app.js');
       assert.ok(existsSync(builtApp), 'Jekyll build must publish the external application runtime.');
-      assert.match(readFileSync(builtApp, 'utf8'), /DOMPurify\\.sanitize/, 'Built application runtime is missing the sanitization path.');
+      assert.match(readFileSync(builtApp, 'utf8'), /DOMPurify\.sanitize/, 'Built application runtime is missing the sanitization path.');
       assert.ok(existsSync(resolve(root, '_site/skills/research.txt')), 'Built site must publish the on-demand research skill.');
       assert.ok(existsSync(resolve(root, '_site/skills/multimodal.txt')), 'Built site must publish the on-demand multimodal skill.');
     }]
