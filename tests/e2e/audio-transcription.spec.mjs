@@ -2,9 +2,9 @@ import { test, expect } from '@playwright/test';
 
 async function configureAlandiCloud(page, model, key) {
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await page.locator('#cloudBaseUrl').fill('https://api.example.test/v1');
-  await page.locator('#cloudModel').fill(model);
-  await page.locator('#cloudApiKey').fill(key);
+  await page.locator('#aserviBaseUrl').fill('https://api.example.test/v1');
+  await page.locator('#aserviModel').fill(model);
+  await page.locator('#aserviApiKey').fill(key);
   await page.route('https://api.example.test/healthz', route => route.fulfill({
     status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' })
   }));
@@ -16,7 +16,7 @@ async function configureAlandiCloud(page, model, key) {
     }
     return route.fallback();
   });
-  await expect(page.locator('#cloudStatus')).toHaveText('Подключено', { timeout: 15000 });
+  await expect(page.locator('#aserviStatus')).toHaveText('Подключено', { timeout: 15000 });
   await page.locator('[data-action="close-settings"]').click();
 }
 
