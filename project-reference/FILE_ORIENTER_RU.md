@@ -1,4 +1,15 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
+## Актуальная контрольная точка — 2026-11-02, PR #131 Quality triage
+
+- PR #131 открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; текущий проверенный HEAD на момент этой записи: `515b3f62271027e69acc2d76f4ef40289fa9cfb8`.
+- Main: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; compare: diverged, 578 ahead / 4 behind, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub сообщает `mergeable=false`. Синхронизацию веток не выполнял.
+- Последний runtime source checkpoint: `fed3137bae2355629a976515719f498940ad8601`. Текущая коррекция затрагивает только quality harness/workflow: `scripts/quality-agents.mjs` и `.github/workflows/quality-sentinels.yml`.
+- Quality run #1192 (run ID `41348586700`) запущен на старом SHA `777fdcab442c9b8ebd8483e7bca7d776a022a260`. Integrity/Security/Context/Build и Static Analysis завершились ошибкой; Chromium остаётся in progress. Эти результаты нельзя считать проверкой текущего HEAD.
+- Триаж: sentinel-скрипты всё ещё искали runtime в старом монолитном `index.md`; приложение теперь в `assets/js/app.js`, CSS вынесен отдельно. Проверки перенастроены на split layout. Semgrep не сканировал код из-за unmatched `audit-reports/ui-inline-*.js`; workflow теперь использует `nullglob` и включает внешний app.js. Ruff прошёл на старом SHA; Bandit выдал два low-confidence B608 advisory. Повторный прогон исправленного harness пока не подтверждён.
+- Следующий шаг: запустить Independent Quality Sentinels на exact current HEAD; отдельно дождаться результата старого Chromium run #1192. Затем исправлять только новые подтверждённые дефекты. Native iPhone Safari/VoiceOver и измеренный WCAG остаются ручными acceptance gates. PR открыт; merge/deploy не выполнять.
+
+> Исторические разделы ниже сохраняют контекст; live refs и результаты перепроверять перед каждым действием.
+
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 

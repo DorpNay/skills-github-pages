@@ -574,3 +574,14 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - **Verification:** source changes and test assertions are committed; browser tests have not been executed in this environment. Exact-head workflow/status lookup returned no PR workflow runs and no commit statuses for the current source checkpoint. No test pass is claimed.
 - Source files: `assets/js/app.js`, `assets/css/app.css`, `index.md`, `tests/e2e/app.spec.mjs`.
 - Current source checkpoint at time of this note: `fed3137bae2355629a976515719f498940ad8601`.
+
+
+### 2026-11-02 — Quality harness triage after split runtime extraction
+
+- Investigated Independent Quality Sentinels run #1192 (ID `41348586700`) on old PR SHA `777fdcab442c9b8ebd8483e7bca7d776a022a260`.
+- Integrity, Security, Context and Jekyll Build sentinels still searched the pre-extraction monolithic `index.md` for runtime code. The product runtime had already moved to `assets/js/app.js`; styles are in `assets/css/app.css` and `assets/css/landing.css`. Updated `scripts/quality-agents.mjs` to inspect the split assets, parse external JS without executing it, and verify sanitizer presence in the built runtime asset.
+- The old Semgrep invocation passed `audit-reports/ui-inline-*.js` even when extraction produced zero inline scripts. Semgrep returned exit 2 with `Invalid scanning root`. Updated `.github/workflows/quality-sentinels.yml` to use Bash `nullglob`, a target array, and include `assets/js/app.js` in SAST.
+- Static inspection confirms the positive source assertions now resolve against the intended HTML/JS/CSS assets. The repaired script/workflow have not yet run on the current HEAD.
+- Ruff passed on old SHA `777fdcab442c9b8ebd8483e7bca7d776a022a260`. Bandit reported two low-confidence B608 medium-severity advisory findings: placeholder-only dynamic SQL clauses in `gateway/memory/manager.py` and bounded placeholder-count construction in `gateway/rag/lazy_graph_rag.py`; all user values remain bound parameters. No SQL change was justified.
+- Old run #1192 Chromium remains in progress; it is not evidence for the newer HEAD. Current branch HEAD at time of this note: `515b3f62271027e69acc2d76f4ef40289fa9cfb8`; exact-head Quality/Chromium rerun is pending. No merge, rebase, deployment or destructive cleanup.
+

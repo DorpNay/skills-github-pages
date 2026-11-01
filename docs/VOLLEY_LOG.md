@@ -547,3 +547,14 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - No workflow runs or commit statuses were attached to checked PR HEAD `a061ba5dc29f058e270005d287b43160fce50ee0`. The Quality workflow supports `pull_request` and `workflow_dispatch`, but this environment exposes no workflow-dispatch action and no local repository checkout for running Playwright. No test pass is claimed.
 - Updated `ORIENTER.md` and `docs/PROJECT_STATE.yaml` to correct the source/test checkpoint and verification boundary. Next: obtain exact-head Quality/Chromium; then proceed to native-device/accessibility acceptance. Gateway run #640 remains evidence only for its tested Gateway SHA.
 
+
+
+### 2026-11-02 — Quality failure triage and harness repair (PR #131)
+
+- Rechecked live PR #131 and exact Quality run #1192 (ID `41348586700`), which was dispatched on old SHA `777fdcab442c9b8ebd8483e7bca7d776a022a260`.
+- Integrity/Security/Context/Build failures traced to stale assumptions that runtime code remained inline in `index.md`. Updated `scripts/quality-agents.mjs` to read the external application JS and CSS assets, syntax-parse `assets/js/app.js` without executing it, and verify the sanitizer in the built asset.
+- Semgrep exit 2 traced to an unmatched `audit-reports/ui-inline-*.js` path after extraction found zero inline scripts. Updated the workflow to use `nullglob` and include the external runtime in the scan target list.
+- Ruff exit 0 on the old SHA. Bandit findings: two low-confidence B608 advisory matches in parameterized SQL construction; no code change made. Semgrep's old run did not scan due invalid root. Chromium job on old SHA remains in progress.
+- Current branch HEAD before this documentation commit: `515b3f62271027e69acc2d76f4ef40289fa9cfb8`; fixes are committed after the old run started and remain unverified until a new exact-head run. No test pass is claimed.
+- Next: dispatch Independent Quality Sentinels on the current exact HEAD; inspect the old Chromium result separately; continue only on new confirmed failures. PR #131 remains open/unmerged; no deployment or destructive actions.
+
