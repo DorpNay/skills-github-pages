@@ -238,3 +238,13 @@ Not active UI work: project-source CRUD without a gateway list contract; persist
 - The concise polish register, project state, orienter, Volley log and PR body now point to the same residual work.
 - Latest code/test head remains 8f68c2cc4b4b01a1917e32f75f7d5016517d41c3; subsequent commits are documentation-only. The latest documentation head is intentionally read from live PR #131 metadata because documentation-only commits may advance it.
 - P0 exact-head verification remains the next action; workflow/status queries returned no entries. No test pass, merge or deployment is claimed.
+
+
+### Source audit follow-up — 8.4 and capability-menu truthfulness (2026-11-01)
+
+- Re-read the current PR branch index.md around settings, search-mode controls, function panels, localization strings and prompt migration.
+- Confirmed the search menu distinguishes standard coverage, expanded result/source coverage and offline web-tools; the copy explicitly says expanded search does not change execution budget and offline does not make a cloud API local.
+- Confirmed the function panel describes the agent mode as four sequential stages on the selected model; the 1–50 role/team setting is explicitly a saved blueprint, not 50 independent agents. The connector panel says no external integrations are connected and exposes no placeholder switches. RU and EN descriptions are present.
+- Confirmed Tavily remains optional with an explicit pending decision note, while the global user prompt is empty by default and the legacy built-in prompt is normalized to empty. No duplicate prompt implementation or premature Tavily removal is needed.
+- No source-level contradiction was found in these inspected surfaces. The Tavily/keyless-search decision and runtime/provider error tests remain open; this source review is not browser or live-provider verification.
+- Relevant source: index.md (searchToolsSettings, searchModeMenu, functionsMenu, functionPanelModal, DEFAULT_SYSTEM and legacy prompt normalization).
