@@ -481,10 +481,10 @@ whole_stack_integrity_audit_2026_10_30:
 landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
-  latest_code_test_head: "6f7fde485b2b13aecc50523b20785e0ac615d2ad"
-  latest_documented_head_at_checkpoint: "279d18778d30c51f244092b645d3f59f2c7ccd24"
+  latest_code_test_head: "caabc526b9ffaaee31a312f2251aaffe5bea52e5"
+  latest_documented_head_at_checkpoint: "f2572144b227560d2da4850d969f7ddd923be558"
   comparison_to_main:
-    ahead: 135
+    ahead: 139
     behind: 4
     merge_base: "e78a73b25725bfa63370d9946887cbbacbf51b82"
   implementation:
@@ -507,9 +507,11 @@ landing_ui_v2_pr131_2026_10_31:
     one_shot_handoff: "ccb76ea689ddb0ad6ef8d580dee06148aab6f94f"
     modal_lifecycle_wait: "24004fe48e506a7d1a7e03b1538f3faed209381b"
     deduplicate_regressions: "1917e8efad138bd9b7dd59a42c0322d61b12bf4e"
+    server_memory_retirement_e2e: "caabc526b9ffaaee31a312f2251aaffe5bea52e5"
+    gateway_secret_non_disclosure: "6f7fde485b2b13aecc50523b20785e0ac615d2ad"
   verification:
-    exact_head_combined_status: "empty (head 279d18778d30c51f244092b645d3f59f2c7ccd24)"
-    exact_head_workflow_runs: "empty (head 279d18778d30c51f244092b645d3f59f2c7ccd24)"
+    exact_head_combined_status: "empty (head f2572144b227560d2da4850d969f7ddd923be558)"
+    exact_head_workflow_runs: "empty (head f2572144b227560d2da4850d969f7ddd923be558)"
     gateway_pytest: "not executed in this environment; exact-head CI unavailable"
     playwright_chromium: "not executed; do not claim passing"
     native_mobile_voiceover: "not executed"
