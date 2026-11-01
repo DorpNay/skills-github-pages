@@ -481,10 +481,10 @@ whole_stack_integrity_audit_2026_10_30:
 landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
-  latest_code_test_head: "9a6cbe71e3c433bd20b1d0fbddfbd799834019d5"
-  latest_documented_head: "dd6f81355f7f7dca05b91d72a31d3f51c6ff9373"
+  latest_code_test_head: "787c9aaf6026559da31daf51d82f884abdc78c1d"
+  latest_documented_head: "6f568c16cabd524e82cdbf1e0fd503faa103f134"
   comparison_to_main:
-    ahead: 147
+    ahead: 155
     behind: 4
     merge_base: "e78a73b25725bfa63370d9946887cbbacbf51b82"
   implementation:
@@ -494,10 +494,10 @@ landing_ui_v2_pr131_2026_10_31:
     project_context_handoff: "Requirement 8.13: explicit existing-chat target; next successful request only; no automatic injection from project membership; no new chat or project membership mutation; five-project cap; pending state is session-only."
     touch_selection: "Requirement 8.14: controls/disclosures use targeted non-selection and manipulation touch action; input, assistant text and expanded viewer remain selectable; E2E computed-style coverage expanded."
     status_and_motion: "Requirement 8.15: semantic status/toast states, centered status/ticker, no synthetic progress; E2E covers five status colors, toast styling and prefers-reduced-motion marquee suppression."
+    message_action_consistency: "Requirement 8.16: icon-first copy/view/speech actions use matching title and aria-label; E2E checks accessible labels/tooltips and 44px hit targets."
+    readability: "Requirement 8.17: persistent 90–120% text scale and standard/high contrast apply in light/dark themes; E2E checks secondary, disabled, link, error and status colors in both themes while primary text remains stable."
     navigation: "Browser Back/Forward/Escape tracks nested project filters and modal depth; Forward restores saved project filters, project settings and chat-action dialogs."
     modal_lifecycle: "Focus entry/return, Tab trap, body scroll/overscroll lock, backdrop cleanup, repeated open/close and chat-action state restoration."
-    message_actions: "Expanded viewer keeps accessible copy/speech actions; speech hidden for user-authored messages."
-    readability: "Persistent text scale and standard/high contrast apply in light/dark themes; contrast E2E coverage remains incomplete."
     sources: "Truthful unsupported-state remains; no mock project-source CRUD."
     gateway_security_tests: "Added secret non-disclosure coverage for /livez, /readyz, /healthz, invalid Bearer values and sanitized upstream errors; source not executed."
   test_commits:
@@ -505,14 +505,17 @@ landing_ui_v2_pr131_2026_10_31:
     gateway_secret_non_disclosure: "6f7fde485b2b13aecc50523b20785e0ac615d2ad"
     touch_selection_regression: "64a1a811bd5531d8095245d649829fd838486821"
     status_reduced_motion_regression: "9a6cbe71e3c433bd20b1d0fbddfbd799834019d5"
+    message_action_consistency: "a6ce9eed87d6c239b9f5ea394ab04359939479e2"
+    high_contrast_text_states: "787c9aaf6026559da31daf51d82f884abdc78c1d"
   verification:
-    exact_head: "dd6f81355f7f7dca05b91d72a31d3f51c6ff9373"
+    exact_head: "6f568c16cabd524e82cdbf1e0fd503faa103f134"
     exact_head_workflow_runs: "empty"
     gateway_pytest: "not executed in this environment"
     playwright_chromium: "not executed; no passing result claimed"
     native_mobile_voiceover: "not executed"
+    wcag_contrast_ratios: "not measured; computed-style regression only"
   safety:
     merge: "requires explicit owner approval"
     deploy: "requires explicit owner approval"
     main: "V1 baseline remains untouched"
-  next: "Continue 8.16 consistency audit and 8.17 readability/contrast coverage; execute Gateway and Chromium suites when workflow execution becomes available; retain native iPhone Safari/VoiceOver/long-press as manual gates."
+  next: "Run exact-head Gateway and Chromium suites when workflow execution becomes available; then close remaining 8.1–8.11 verification gaps and perform the full acceptance sweep. Keep native iPhone Safari/VoiceOver/long-press as manual gates."
