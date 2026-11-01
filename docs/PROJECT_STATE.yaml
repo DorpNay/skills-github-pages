@@ -65,9 +65,9 @@ ui_v2_track:
   pull_request: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   status: "open_unmerged_owner_hold"
-  latest_documentation_head: "10cabf31a7c0e78887727393bc43cf5d6fcaa4ca; verify live PR #131 metadata before acting."
+  latest_documentation_head: "30dd703e5064773e884321136d8626fcacfbdb2a; verify live PR #131 metadata before acting."
   latest_code_test_head: "91be4fd77c0263ab81549c47c95030dc3e078031; persistent error notifications and dismiss control added; latest docs-only HEAD is 10cabf31a7c0e78887727393bc43cf5d6fcaa4ca."
-  latest_quality_harness_head: "Writable temporary Pages document-root correction is committed; Quality #1202 / run 41357794101 was pending on source/test HEAD 91be4fd77c0263ab81549c47c95030dc3e078031. Documentation commits after that SHA may queue a newer push run."
+  latest_quality_harness_head: "Writable temporary Pages document-root correction is committed. Quality #1200 / run 41357771478 is still in progress on runtime SHA 7bc7ceacaefe9946dd8e2285a133f14178712d46; later commits queue run #1207 on documentation HEAD da26e785aa591bcd9625f461f1946467f52d7be6. Verify the newest run before claiming exact-head results."
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0; mandatory requirements 8.1-8.17 and optional owner proposals 8.18-8.27"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
   polish_register: "docs/LANDING_UX_POLISH_BACKLOG_RU.md (mirrors the consolidated residual list; not a separate backlog)"
@@ -170,8 +170,8 @@ improvements:
 
 owner_proposals:
   source: "docs/V1_UI_FINALIZATION_RU.md section 8.18-8.27; proposals, not mandatory release requirements"
-  audit: "Compared against PR #131 source on 2026-11-02. Existing modal/history stack, toast/status, last-closed-chat recovery, project memory scope, contextual chat/project/message actions, local chat persistence and attachment flow were reused as baseline; no duplicate systems planned."
-  priority: "First close 8.1-8.17 and inherited UI gates; then unify interaction/operation states and draft recovery; next title search/pinning/sorting; later bounded Undo, file registry/API, desktop inspector and scenario entry points."
+  audit: "Compared against PR #131 source on 2026-11-02. Existing modal/history stack, toast/status, last-closed-chat recovery, project memory scope, contextual chat/project/message actions, local chat persistence and attachment flow were reused as baseline. Owner-provided 60-repository shortlist was triaged in docs/OPEN_SOURCE_TRIAGE_RU.md: UI/runtime projects are references only; no framework, model, router, agent runtime or dependency was adopted."
+  priority: "P0: inherited UI + mandatory 8.1-8.17 and exact-head Chromium/Quality. P1: finish interaction lifecycle 8.18 and operation IDs/states/recovery 8.19; then IndexedDB draft recovery/explicit network retry 8.25 and local title search/pinning/sorting 8.21. P2: bounded Undo 8.20, file registry only after scoped source API 8.23, adaptive inspector 8.22 and scenario entry points. Qwen/SLM/inference/agent stacks remain separate target-host research, not PR #131."
   dependencies: "Project Sources CRUD requires a real scoped source-list API. Persistent local-file access requires explicit browser file handle permission and progressive enhancement. Exactly-once provider requests require upstream idempotency support."
 
 repository_identity_cleanup:
