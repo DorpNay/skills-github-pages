@@ -179,7 +179,7 @@ Ollama — 127.0.0.1:11434 — одна активная модель
 | То же | 14–17: projects, Research Studio/search, task profiles, agent blueprint | P0-03, P0-04, P1-01, P1-03, P2-07 | Project isolation/export/delete; независимость effort/search/profile; pipeline не выдавать за swarm |
 | То же | 18 + лендинг/release gates | P0-01, P0-02, P0-03, P0-08 | Desktop/mobile screenshots, canonical/CTA, Pages после merge, Safari owner gate |
 | `docs/USER_REQUEST_CHECKLIST.md` | A: governance, baseline, continuity | P0-09, P0-10, P0-11, P0-12 | Открытая очередь, exact SHA, branch rules, secret scanning |
-| То же | B: aLandi Cloud/provider/Tavily | P0-01, P0-07, P1-08 | Первичное disconnected состояние, один bounded probe, no silent fallback, отдельные credentials |
+| То же | B: aLandi aServi/provider/Tavily | P0-01, P0-07, P1-08 | Первичное disconnected состояние, один bounded probe, no silent fallback, отдельные credentials |
 | То же | C: branding/header/clock/theme/language/composer/files/voice preview | P0-03, P0-04, P2-05, P2-06 | 44px controls, RU/EN copy, touch keyboard, voice preview остаётся preview |
 | То же | D: chats/projects/private/shared memory/deletion | P1-01, P1-02 | Scope isolation, explicit promotion, export/import, derived records and backup deletion |
 | То же | E: routing/tools/search/errors/research/evals | P0-07, P1-03, P1-06, P1-08, P2-07 | Bounded tool rounds, cancellation, citation links, no private-prompt cross-provider forwarding |
