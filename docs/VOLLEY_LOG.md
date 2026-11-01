@@ -189,3 +189,9 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Updated the main UI finalization checklist, owner request checklist, V-016 implementation ledger, chat settings architecture and first-free-launch backlog to use aLandi aServi for the first-party server route.
 - Replaced stale historical first-party card wording in the engineering log. Generic cloud infrastructure/Cloudflare wording and legacy ai_alandi_cloud_* persistence keys remain intentionally unchanged.
 - Confirmed the active V2 documentation branch already uses aServi consistently; this sweep brings the independent main-targeting documentation backup into alignment.
+
+
+### 2026-11-02 — PR #131 compare refresh in backup
+
+- Live compare is now 483 ahead / 4 behind main, merge base e78a73b25725bfa63370d9946887cbbacbf51b82. The four main-side commits still overlap only the shared UI checklist.
+- Updated the continuity copy after the aServi terminology sweep and repository-hygiene runbook addition. PR #132 remains a draft documentation-only backup; no history sync/merge was performed.
