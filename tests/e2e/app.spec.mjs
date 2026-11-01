@@ -3455,6 +3455,11 @@ test('request status and notifications expose semantic state and centered alignm
   await expect(page.locator('#toast')).toHaveAttribute('data-state','error', { timeout: 6000 });
   await expect(page.locator('#toast')).toHaveAttribute('role','alert');
   await expect(page.locator('#toast')).toHaveAttribute('aria-live','assertive');
+  await expect(page.locator('#toast')).toHaveAttribute('data-persistent','true');
+  const dismiss = page.getByRole('button', { name: 'Закрыть уведомление' });
+  await expect(dismiss).toBeVisible();
+  await dismiss.click();
+  await expect(page.locator('#toast')).toBeHidden();
 });
 
 
