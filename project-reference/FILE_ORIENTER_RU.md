@@ -1,14 +1,15 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
-## Актуальная контрольная точка — 2026-11-02, PR #131 exact-head Quality repair
+## Актуальная контрольная точка — 2026-11-02, PR #131 harness + visual evidence
 
-- PR #131 открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; live HEAD: `9fc0948fee9d26390545748287475b3cc597d6da`.
-- Main: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; compare: diverged, 587 ahead / 4 behind, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub сообщает `mergeable=false`. Rebase/sync не выполнялся.
-- Latest product runtime source checkpoint remains `fed3137bae2355629a976515719f498940ad8601`; recent changes are limited to quality harness, state metadata and research documentation.
-- User-started Quality run #1193 (ID `41349570822`) checked old SHA `5c45de5e728cb280ef9524ac1c45ee500f210138`: static-analysis passed; Integrity, Security, Context and Jekyll sentinels failed because the sanitizer assertion regex in `scripts/quality-agents.mjs` was malformed; Chromium remains in progress. This is not a result for current HEAD.
-- Fixed the regex in `37996b80300272f2d0e62f87e653f0840390f12a`. Repaired PROJECT_STATE YAML nesting in `bf9c21ebfc892139b543dc42d8bf41385490f1b0` and its improvement mapping boundaries in `84948798d4fdcce1257dbaaddae0c4b39a754ffe`. Provenance #962 passed on state SHA `21a8317d36c7ca4c66f04d5ada56553b3db75094`.
-- No Quality run exists for current HEAD `9fc0948fee9d26390545748287475b3cc597d6da`. A new manual workflow_dispatch is required on branch `feat/landing-v1-accessibility-responsive-20261031`; connector commits did not produce a new Quality run. No exact-head Quality/Chromium pass is claimed.
-- Open-source research is recorded in `docs/TECHNIQUE_REGISTER_RU.md` and `docs/OPEN_SOURCE_TRIAGE_RU.md`. Selected patterns only; no dependencies/runtime installed. `agent.sys` and the exact intended `Orbit AI Agents` remain ambiguous.
-- Next: manually dispatch Quality Sentinels on current HEAD, inspect the complete run/artifacts, then continue mandatory UI workstreams 8.1–8.17 and inherited acceptance. Native iPhone Safari/VoiceOver and measured WCAG remain manual gates. No merge, rebase, deployment or destructive cleanup.
+- PR #131 открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; latest code/test HEAD before this documentation-only checkpoint: `3e6af80aecda329a6f63d5196d67d3c6abc23ec1`.
+- Main: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; compare: diverged, 590 ahead / 4 behind, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub сообщает `mergeable=false`. Rebase/sync не выполнялся.
+- Latest product runtime source checkpoint remains `fed3137bae2355629a976515719f498940ad8601`; the recent code changes are test/harness-only.
+- Added Playwright visual evidence test in `2869ff3c5edcdc366a22d56972a903f47a14dcb6`: no-overflow checks and screenshots attached for 320/360/390/768/1024/1440 px plus mobile/desktop sidebar-open states. Screenshots are review evidence, not pixel baselines. Not yet executed on the latest HEAD.
+- Quality run #41351093423 checked older SHA `11ffc0bbbe01a068490ca32dd1ea4029517a3120`. Integrity, Security, Context and Jekyll failed because two over-escaped regex literals in the build sentinel made the entire module fail to parse. Corrected in `3e6af80aecda329a6f63d5196d67d3c6abc23ec1`; static analysis and Chromium were still in progress on the old SHA at last inspection. No exact-current-HEAD Quality pass is claimed.
+- Provenance #963 passed on `9fc0948fee9d26390545748287475b3cc597d6da`; it checks project metadata/provenance, not product runtime or browser behavior.
+- Harness research: `google-research/harness2` current main was last updated 2026-10-14 (3 commits; no semver release). Adopt bounded Propose–Probe–Compose evidence records, but not model-driven self-modifying CI. ECC v2.2.3, Hermes v0.22.5, Hallmark v2 and scroll-craft 0.3.0 are reviewed in `docs/TECHNIQUE_REGISTER_RU.md`.
+- `Orbit AI Agents` resolved to `mukiwu/orbit-agents` (desktop cron scheduler); `constellation-works/orbit` is a separate local-first coding-agent task runner. `agent.sys` remains unresolved. No third-party runtime/dependency installed.
+- Next: manually dispatch Quality Sentinels on the latest branch HEAD after this documentation checkpoint; inspect the complete run and screenshot artifacts. Then continue mandatory UI workstreams 8.1–8.17 and inherited acceptance. Native iPhone Safari/VoiceOver and measured WCAG remain manual gates. No merge, rebase, deployment or destructive cleanup.
 
 
 > Исторические разделы ниже сохраняют контекст; live refs и результаты перепроверять перед каждым действием.

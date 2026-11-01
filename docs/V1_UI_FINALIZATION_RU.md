@@ -289,6 +289,8 @@ PR #122 добавил только эксплуатационную надёж�
 - [ ] Close remaining E2E and manual acceptance 8.1–8.17 plus inherited UI work: sidebar/chat restore, header breakpoints, settings disclosure, modal Back/Forward/focus, message actions, project handoff, touch selection, status/reduced-motion, readability, provider/catalog failures, Research Studio/skills truthfulness, native mobile and measured WCAG contrast.
 - [x] Gateway security/contract suite: run #640 on `6f7fde485b2b13aecc50523b20785e0ac615d2ad` passed compileall, manifest/INTEL checks, `pytest gateway/tests`, deploy preflight and six-layer offline evaluation. No `gateway/**` changes exist between that tested commit and current PR source; Gateway sub-gate remains valid.
 
+- [~] Quality run #41351093423 checked older SHA `11ffc0bbbe01a068490ca32dd1ea4029517a3120`: Integrity/Security/Context/Jekyll failed because two over-escaped regex literals in `scripts/quality-agents.mjs` made the module fail to parse. Corrected in `3e6af80aecda329a6f63d5196d67d3c6abc23ec1`; static analysis and Chromium were still in progress on that older SHA at last inspection. Added responsive screenshot attachments in `2869ff3c5edcdc366a22d56972a903f47a14dcb6` (six widths + two sidebar states); authored but not yet executed on current HEAD. Manual exact-head Quality rerun remains mandatory.
+
 ### P1 — ручная UX/accessibility приёмка
 
 - [ ] Сделать screenshot review приложения и лендинга на 320/360/390/768/1024/1440 px: шапка, sidebar, composer, пустые состояния, длинные названия, карточки, отступы, типографика и контраст.

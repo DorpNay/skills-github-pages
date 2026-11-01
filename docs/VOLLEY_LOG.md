@@ -576,3 +576,15 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Current PR #131 HEAD after the subsequent orienter/ledger update is recorded in ORIENTER.md and project-reference/FILE_ORIENTER_RU.md. Provenance #962 validates the immediately preceding state checkpoint; later changes are documentation-only and do not alter the state YAML.
 - Quality #1193 remains tied to older SHA 5c45de5e728cb280ef9524ac1c45ee500f210138; no exact-current-HEAD Quality run exists. Do not infer a pass from provenance.
 - Next: manual Quality dispatch on the latest branch HEAD; then continue 8.1–8.17 UI and manual device/accessibility acceptance.
+
+
+## V-2026-11-02-HARNESS-RESEARCH-AND-VISUAL-EVIDENCE-003
+
+- Rechecked live PR #131: branch `feat/landing-v1-accessibility-responsive-20261031`, latest code/test HEAD before this docs-only checkpoint `3e6af80aecda329a6f63d5196d67d3c6abc23ec1`, compare 590 ahead / 4 behind main, mergeable=false. No merge/rebase/deploy.
+- Quality run #41351093423 checked older SHA `11ffc0bbbe01a068490ca32dd1ea4029517a3120`. Logs show Integrity, Security, Context and Jekyll failed at module parse because `scripts/quality-agents.mjs` still contained over-escaped regex literals at build sentinel lines 329 and 332. Corrected both patterns in `3e6af80aecda329a6f63d5196d67d3c6abc23ec1`. Static analysis and Chromium were still running on the old SHA at last inspection; this is not an exact-head result.
+- Added test-only visual evidence in `2869ff3c5edcdc366a22d56972a903f47a14dcb6`: Playwright checks document overflow at 320/360/390/768/1024/1440 px and attaches screenshots for those viewports plus mobile/desktop sidebar-open states. These are manual review artifacts, not pixel baselines; the test has not yet been executed on latest HEAD.
+- Studied primary-source versions: Harness² current main (last commit 2026-10-14, three commits, no semver release); ECC v2.2.3; Hermes v0.22.5 (Threshold v0.22.0); Hallmark v2; scroll-craft 0.3.0; screenshot-to-code; ThinkRail; DeepTutor v1.7.0 (container latest 1.7.1); BLA; Qwenputer; and both Orbit repositories.
+- Harness²'s Propose–Probe–Compose is adapted as a bounded engineering method: state hypothesis, capture baseline, probe one change under same conditions, compare evidence, keep/revert, and record a transferable lesson only when supported. Model-based judging never replaces deterministic assertions. Harness² benchmark executor is not run in production; its README warns executor network access is unrestricted and Codex sandbox disabled by default.
+- Orbit names clarified: `mukiwu/orbit-agents` is a local desktop cron scheduler (Electron/React/SQLite/node-cron); `constellation-works/orbit` is a separate local-first coding-agent task runtime with sandboxed worktrees, locks, approval and audit log. `agent.sys` remains unresolved.
+- No framework, runtime, model or dependency installed. Next: manual Quality dispatch on latest HEAD; review screenshot attachments; continue mandatory 8.1–8.17 UI acceptance and native device gates.
+

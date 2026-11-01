@@ -612,3 +612,23 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Quality #1193 is still associated with old SHA `5c45de5e728cb280ef9524ac1c45ee500f210138`; current HEAD has no Quality run. The next gate is a manual workflow_dispatch on the latest branch HEAD.
 - No product runtime code was changed in this research/repair slice. No dependencies, agent runtimes or services were installed.
 
+
+
+## Harness research and visual evidence update — 2026-11-02
+
+### Current implementation checkpoint
+
+- Latest code/test HEAD before this documentation-only checkpoint: `3e6af80aecda329a6f63d5196d67d3c6abc23ec1`; PR #131 remains open/unmerged, compare 590 ahead / 4 behind main, GitHub mergeable=false.
+- New test `2869ff3c5edcdc366a22d56972a903f47a14dcb6` in `tests/e2e/app.spec.mjs` checks no horizontal overflow at 320/360/390/768/1024/1440 px and attaches screenshots for each viewport plus mobile and desktop sidebar-open states. The screenshots are review evidence, not pixel-perfect regression baselines. Test authored, not yet executed on the latest HEAD.
+- Quality #41351093423 checked older SHA `11ffc0bbbe01a068490ca32dd1ea4029517a3120`. Integrity, Security, Context and Jekyll failed at module parse because two build sentinel regex literals were over-escaped. Both were corrected in `3e6af80aecda329a6f63d5196d67d3c6abc23ec1`. Chromium and static analysis were still in progress on the old SHA at last inspection; no exact-head Quality pass is claimed.
+- Product runtime files were not changed in this slice; no new dependency or framework added.
+
+### Harness² and upstream techniques
+
+- Current `google-research/harness2` main was last updated 2026-10-14 (three commits; no semver release). Its eight editable agent-harness components and bounded Propose–Probe–Compose cycle are documented in the technique register.
+- Apply the cycle to UI work: record hypothesis and baseline, probe one bounded change on the same deterministic fixtures/viewports, compare actual test/browser evidence, keep or revert, then record the transferable lesson. Do not use an LLM judge as a replacement for Playwright assertions or accessibility checks.
+- Hallmark v2 contributes preflight, preserved wiring checks and eight-width browser review; screenshot-to-code contributes screenshot-as-visual-spec; scroll-craft contributes real scroll-state and composited-contrast inspection; ThinkRail contributes isolated worktrees and approval-aware tools.
+- Hermes v0.22.5 and ECC v2.2.3 are process/security references, not dependencies. Harness²'s benchmark executor is not suitable for production use: README documents unrestricted executor network access and disabled Codex sandbox by default.
+- `mukiwu/orbit-agents` is a desktop cron scheduler; `constellation-works/orbit` is a distinct coding-agent task runtime. Neither is needed for the current UI scope. `agent.sys` remains unresolved.
+- Continue 8.1–8.17 as the release queue; optional 8.18–8.27 remain proposals. Visual screenshots support review but do not close iPhone Safari, VoiceOver or WCAG manual gates.
+

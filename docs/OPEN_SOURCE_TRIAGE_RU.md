@@ -243,3 +243,22 @@
 2. **Landing/UI review:** screenshot-to-code as visual-spec method; Hallmark preflight + hero-first + 8-width browser lint; scroll-craft composited contrast/dead-scroll checks.
 3. **No runtime adoption:** DeepTutor, Qwenputer, Hermes desktop/gateway, BLA and Orbit task runtime remain external references, not dependencies.
 4. **Project constraints:** preserve static HTML/CSS/JS + Jekyll + FastAPI; no framework/runtime migration, no new service and no global agent hooks without measured need and owner approval.
+
+
+## Версионная и идентификационная перепроверка — 2026-11-02
+
+- **Harness²** — исследовательский recursive harness, не обычный browser test framework. Current main последний раз обновлялся 2026-10-14; три коммита, semver release не обнаружен. Его Propose–Probe–Compose цикл принят как bounded engineering method; benchmark executor не запускать в production из-за unrestricted network и отключённой Codex sandbox по умолчанию.
+- **Hermes Agent**: актуальная проверенная стабильная версия v0.22.5 от 2026-10-22; v0.22.0 — Threshold release от 2026-10-13. Для aLandi релевантны consent, session boundaries, deny-by-default, plugin provenance; runtime не устанавливать.
+- **ECC**: последняя проверенная release v2.2.3 от 2026-10-01. Практическая ценность — TDD/review discipline и проверка опубликованного artifact после release; в текущий продукт не добавлять.
+- **Hallmark v2**: floor gates (contrast/focus/reduced motion/no invented facts/mobile layout), preflight, hero-first, eight-width browser review, before/kept wiring checks. Заимствовать визуальный audit, не его дизайн-систему.
+- **scroll-craft 0.3.0**: реальный browser walkthrough scroll positions, dead-scroll, composited contrast per line и video fallback. Применять только где эти состояния реально существуют.
+- **screenshot-to-code**: AI screenshot/video-to-code service с React/Vite/FastAPI и API-key requirements. Не внедрять; использовать screenshots как visual spec и evidence.
+- **DeepTutor**: GitHub release v1.7.0 (2026-10-28), при этом container registry уже показывает 1.7.1. Модульные installation profiles и inspectable learning state — только будущий learning-scenario reference.
+- **Orbit names:** `mukiwu/orbit-agents` — local desktop scheduler (Electron, React, SQLite, node-cron; cron schedule, run-now, logs/status, notifications). `constellation-works/orbit` — другой проект: local-first coding-agent task runtime с sandboxed worktrees, file locks, approvals, task IDs и audit log. Оба MIT; в текущем Landing 2.0 ни один не нужен.
+- **Qwenputer** — экспериментальный RISC-V CPU внутри Qwen3.5 model layers, не tool plugin, sandbox или computer-use agent. **BLA** — defensive reverse-engineering countermeasure с canaries/decoys/resource exhaustion; не применять к aLandi из-за конфликта с прозрачностью и reproducibility.
+- `agent.sys` остаётся неоднозначным названием без canonical URL. Не угадывать.
+
+### Решение для текущего PR #131
+
+Переносим только: bounded baseline/probe/compare/evidence loop; visual screenshot attachments; preservation of existing links/fields/handlers; isolated worktree and approval concepts. Не переносим новые runtimes, design framework, task scheduler, model checkpoints или anti-analysis obfuscation.
+

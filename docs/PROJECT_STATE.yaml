@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-02"
   root_orienter:
-    status: "Main remains the stable V1 baseline at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 remains open/unmerged on feat/landing-v1-accessibility-responsive-20261031; live HEAD at this state checkpoint is 21a8317d36c7ca4c66f04d5ada56553b3db75094. Quality #1193 checked older SHA 5c45de5e728cb280ef9524ac1c45ee500f210138 and failed four sentinels because of a malformed sanitizer-regex literal; static analysis passed and Chromium remains in progress. The regex and PROJECT_STATE YAML metadata have been corrected. Provenance #960 passed on 84948798d4fdcce1257dbaaddae0c4b39a754ffe. No Quality run exists for current HEAD. No merge or deployment is authorized."
+    status: "Main remains the stable V1 baseline at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 remains open/unmerged on feat/landing-v1-accessibility-responsive-20261031; latest code/test HEAD before this documentation-only checkpoint is 3e6af80aecda329a6f63d5196d67d3c6abc23ec1. Quality run #41351093423 checked older SHA 11ffc0bbbe01a068490ca32dd1ea4029517a3120; Integrity/Security/Context/Jekyll failed at parse time because of two over-escaped build regex literals. Corrected in 3e6af80aecda329a6f63d5196d67d3c6abc23ec1; static analysis and Chromium were still in progress on the older SHA. Playwright visual evidence test was added in 2869ff3c5edcdc366a22d56972a903f47a14dcb6, but is not yet executed on latest HEAD. Provenance #963 passed on 9fc0948fee9d26390545748287475b3cc597d6da and validates metadata only. No exact-head Quality pass is claimed. No merge or deployment is authorized."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 0
@@ -10,7 +10,7 @@ project_state:
     merged_changes: "PR #121 first free landing V1 and client UX; PR #122 Gateway liveness/readiness probes; #120 sidebar hierarchy/theme-language sync; #119 provider separation/project scope/composer preference; #118 chat import/export; #113 immutable Actions pins; #115 modal scrim/outside-tap; #114 empty-by-default prompt/context budget; #71 mobile composer; #84/#81/#83/#82 infrastructure foundations; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
     exact_head_checks: "PR #121 head e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b: Dead Code Audit, Project State Freshness, Provenance, Lite Gateway Tests, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. PR #122 head 94d871dbf76a5364ebb3c61d86cc763affa5eaa1: Gateway Tests, Dead Code Audit, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. PR #123 head fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222: Gateway Tests, Dead Code Audit, Freshness, Provenance, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. Merge commits: #121 f4d880f9648989f4fe48ddd2284220b3606c3b86; #122 fd4f0a105183feb23e0f4e4697446235de9ffe9a. No independent post-merge Pages deployment result was available."
     runtime_boundary: "PR-head published-site browser smoke verified; post-merge Pages deployment on the exact merge commit remains unverified. Native iPhone, live VPS/Tunnel/Ollama, voice/device, OAuth and target-hardware benchmarks unverified"
-    next: "Manually dispatch Independent Quality Sentinels on current exact PR #131 HEAD 21a8317d36c7ca4c66f04d5ada56553b3db75094; the existing run #1193 checks only older SHA 5c45de5e728cb280ef9524ac1c45ee500f210138. Inspect Chromium and artifacts, then resolve only confirmed current-head failures. Continue mandatory UI workstreams 8.1-8.17 and manual native iPhone Safari/VoiceOver/WCAG gates. PR #131 remains open/unmerged; no deployment, rebase or destructive cleanup."
+    next: "Manually dispatch Independent Quality Sentinels on latest PR #131 branch HEAD after this documentation checkpoint. The existing Quality #41351093423 checks only older SHA 11ffc0bbbe01a068490ca32dd1ea4029517a3120; inspect Chromium/static-analysis completion and new visual-review attachments, then resolve only confirmed latest-head failures. Continue mandatory UI workstreams 8.1-8.17 and manual native iPhone Safari/VoiceOver/WCAG gates. PR #131 remains open/unmerged; no deployment, rebase or destructive cleanup."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -648,10 +648,11 @@ responsible_disclosure_policy:
 
 
 owner_recommended_research_2026_11_02:
-  status: "reviewed_primary_sources_documented_no_runtime_or_dependency_adopted"
+  status: "primary_sources_rechecked; selected visual-evidence technique implemented as Playwright test; no third-party runtime or dependency installed"
   technique_register: "docs/TECHNIQUE_REGISTER_RU.md"
   source_triage: "docs/OPEN_SOURCE_TRIAGE_RU.md"
-  verified_candidates: "Hermes Agent v0.22.2; affaan-m/ECC 2.2.3; abi/screenshot-to-code; nateherkai/scroll-craft; JetBrains/thinkrail; HKUDS/DeepTutor v1.7.1; nutlope/hallmark v2; qybaihe/bla; divagr18/qwenputer; constellation-works/orbit; mukiwu/orbit-agents"
-  unresolved_names: "agent.sys; exact intended Orbit AI Agents project"
-  decision: "Borrow workflow, approval, isolation, visual QA and evidence patterns only; preserve static HTML/CSS/JS + Jekyll + FastAPI and owner approval gates"
-  validation_scope: "The provenance workflow validates YAML syntax and project metadata only; it does not verify product runtime behavior"
+  harness2: "google-research/harness2 main last updated 2026-10-14; 3 commits; no semver release; adapt bounded Propose-Probe-Compose evidence records only"
+  verified_candidates: "Hermes Agent v0.22.5; affaan-m/ECC v2.2.3; abi/screenshot-to-code; nateherkai/scroll-craft 0.3.0; JetBrains/thinkrail; HKUDS/DeepTutor v1.7.0 (container latest 1.7.1); nutlope/hallmark v2; qybaihe/bla; divagr18/qwenputer; constellation-works/orbit; mukiwu/orbit-agents"
+  unresolved_names: "agent.sys"
+  decision: "Adopt test-evidence screenshots, visual review, isolated-worktree and approval patterns; preserve static HTML/CSS/JS + Jekyll + FastAPI and owner approval gates; do not import agent runtimes or self-modifying CI"
+  validation_scope: "Provenance validates YAML and project metadata only; Quality/Chromium must run on exact latest HEAD; visual screenshots are review evidence, not pixel-perfect baselines"

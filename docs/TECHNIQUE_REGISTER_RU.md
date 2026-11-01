@@ -126,3 +126,41 @@
 - Самые применимые сейчас техники: exact-head test gates, fresh-context review, on-demand skills/tools, isolated worktrees, approval-aware side effects, screenshot-based visual comparison и browser-based accessibility/contrast checks.
 - Эти техники усиливают существующий процесс, но не оправдывают миграцию на React/Next.js, новый agent runtime, второй orchestration layer или новые server dependencies.
 - Следующий кодовый slice остаётся заблокирован P0 exact-head Quality/Chromium на текущем PR HEAD; исследовательские находки не должны отвлекать от исправления и закрытия текущих UI acceptance gates.
+
+
+## Повторная проверка версий и применимость к Landing 2.0 — 2026-11-02
+
+### Harness²: уточнение статуса и безопасный перенос
+
+[Google Research Harness²](https://github.com/google-research/harness2) — отдельный исследовательский framework recursive agent harnessing, а не тестовый runner для веб-сайта. На момент проверки main обновлялся 2026-10-14; в GitHub видно три коммита, semver release/tag не обнаружен. README описывает восемь editable components: system prompt, guardrails, memory, tool guidance, subagents, skills, scripts и plugins.
+
+Цикл Propose–Probe–Compose:
+
+1. Зафиксировать гипотезу и baseline execution.
+2. Предложить одно invariant-изменение и, если нужно, одно domain-specific изменение.
+3. Выполнить probes на той же задаче и при сопоставимых model/environment settings.
+4. Сравнить траекторию, deliverable и diff; принять только подтверждённые изменения либо оставить baseline.
+5. Сохранить evidence record и переносить в будущие итерации только уроки, подтверждённые сравнением.
+
+**Ограничения:** paper прямо указывает на stochasticity/shared model bias и то, что execution contrast не доказывает correctness. README предупреждает, что executor network access unrestricted, а Codex запускается с sandbox disabled; для benchmark evaluation нужно ограничить сеть. Полный Harness² runtime/benchmark на VPS или в production CI не запускать.
+
+**Решение для aLandi:** использовать только bounded engineering loop. Для каждого UI patch — hypothesis → deterministic baseline → one small probe → exact Playwright/CI evidence → keep/revert → evidence-backed note. LLM review может быть дополнительным мнением, но не заменяет assertions, security gates, WCAG measurement или human visual review.
+
+### Обновлённые upstream versions
+
+| Проект | Проверенная версия/состояние | Практический вывод |
+|---|---|---|
+| [Hermes Agent](https://github.com/NousResearch/hermes-agent/releases) | v0.22.5, 2026-10-22; Threshold v0.22.0 от 2026-10-13 | Runtime и delegated/plugin surfaces продолжают быстро меняться. Заимствовать consent, session isolation, deny-by-default и plugin boundaries; не ставить runtime. |
+| [Everything Claude Code](https://github.com/affaan-m/ECC/releases) | v2.2.3, 2026-10-01 | Релиз фокусируется на naming и надежности публикации; линейка 2.2 добавляет harness targets, supply-chain hardening и release artifact checks. Заимствовать pinned artifacts/checksum/release verification и fresh-context review. |
+| [Hallmark](https://github.com/nutlope/hallmark) | v2.0.0 | Preflight, floor/reflex/finish gates, hero-first, eight-width browser lint, preservation of links/fields/handlers on redesign. Для aLandi: не терять wiring и сохранять визуальные доказательства. |
+| [scroll-craft](https://github.com/nateherkai/scroll-craft) | v0.3.0 | Реальные scroll-state walkthroughs, composited per-line contrast, dead-scroll и media fallback checks. Применять только к фактическим scroll/animation surfaces. |
+| [DeepTutor](https://github.com/HKUDS/DeepTutor) | v1.7.0 GitHub release (2026-10-28); container registry уже показывает 1.7.1 | Модульная установка и learning workspace интересны как отдельный продуктовый reference; не импортировать стек в текущий клиент. |
+| [Orbit Agents](https://github.com/mukiwu/orbit-agents) | README указывает desktop scheduler, Electron/React/SQLite/node-cron | Это локальный cron scheduler, а не task worktree orchestrator. Полезен для будущего explicit scheduled work, но не нужен Landing 2.0. |
+| [Orbit](https://github.com/constellation-works/orbit) | Отдельный local-first coding-agent task runtime | Durable task records, sandboxed worktrees, file locks, gated delivery и audit log — процессные reference patterns; не добавлять второй orchestrator. |
+
+### Что уже перенесено в проект
+
+- В `tests/e2e/app.spec.mjs` добавлен визуальный evidence test: шесть viewport widths + mobile/desktop sidebar-open screenshots как Playwright attachments (commit `2869ff3c5edcdc366a22d56972a903f47a14dcb6`). Это не pixel-diff baseline и не замена ручного review.
+- В `scripts/quality-agents.mjs` исправлены два over-escaped regex в Jekyll build sentinel (commit `3e6af80aecda329a6f63d5196d67d3c6abc23ec1`). Ошибка была найдена в старом Quality run #41351093423 на SHA `11ffc0bbbe01a068490ca32dd1ea4029517a3120`; exact-head rerun обязателен.
+- Не добавлены зависимости, agent runtimes, hosted services, frontend frameworks или production automation.
+
