@@ -86,8 +86,8 @@ ui_v2_track:
     live_gateway_provider: "Not verified; live smoke requires explicit owner approval."
   current_main_sha: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
   branch_divergence: "GitHub compare e78a73b25725bfa63370d9946887cbbacbf51b82...07bc39859e997589053fd78911e7923470e8a6d4 reports ahead_by=275, behind_by=0, merge_base=base. PR API still reports mergeable=false / dirty; this conflicts with the compare result and is not yet explained. Do not merge; recheck mergeability and inspect PR checks separately."
-  current_work_head: "5bab1d2741fc2349fd648c9eb17ddc8d7d8e27a8"
-  current_work_summary: "aLandi aServi terminology and DOM/CSS contracts updated; browser runtime extracted to assets/js/app.js and loaded with defer + relative_url; inherited pre-8 UI backlog made explicit. Full tests intentionally deferred until source pass is complete."
+  current_work_head: "156934b9150259a41a5544bb049be091754bb425"
+  current_work_summary: "aLandi aServi terminology and DOM/CSS contracts updated; browser runtime extracted to assets/js/app.js and loaded with defer + relative_url; inherited pre-8 UI backlog made explicit. Legacy ai_alandi_cloud_* storage key remains for saved-setting compatibility; Cloudflare and generic cloud-infrastructure wording are distinct concepts. Full tests intentionally deferred until source pass is complete."
   current_work_validation: "Not run yet: JavaScript syntax check, Jekyll build, focused Chromium, full Quality/Freshness/Provenance/Graphify/Dead Code. Do not claim runtime extraction or rename browser-verified."
   merge_deployment: "Do not merge or deploy without explicit owner approval."
 
@@ -152,7 +152,7 @@ improvements:
   AI-UI-002: {status: "local_project_memory_plus_manual_server_graph_bridge_opt_in_per_chat_e2e_ci_passed_live_gateway_unverified", artifact: "index.md; gateway/app.py; tests/e2e/app.spec.mjs", eval: "EV-UI-003"}
   AI-UI-003: {status: "partial_bilingual_theme_clock_composer_voice_preview_e2e_passed", artifact: "index.md", eval: "EV-UI-004"}
   AI-UI-004: {status: "safe_structured_markdown_fallback_merged_pr32_all_six_quality_jobs_passed", artifact: "index.md; tests/e2e/app.spec.mjs", eval: "EV-UI-005"}
-  AI-PROVIDER-001: {status: "cloud_first_provider_recovery_e2e_passed_gateway_unconfigured", artifact: "index.md", eval: "EV-PROVIDER-UI-001"}
+  AI-PROVIDER-001: {status: "aservi_first_provider_recovery_e2e_passed_gateway_unconfigured", artifact: "index.md", eval: "EV-PROVIDER-UI-001"}
   AI-PROVIDER-002: {status: "live_smoke_explicit_consent_guard_ci_passed_not_dispatched", artifact: ".github/workflows/provider-smoke-all.yml; scripts/provider-smoke-all.mjs", eval: "EV-PROVIDER-001"}
   AI-PROJECT-001: {status: "browser_local_crud_and_manual_server_bridge_e2e_ci_passed_live_gateway_unverified", artifact: "index.md; tests/e2e/app.spec.mjs", eval: "EV-PROJECT-001"}
   AI-AGENT-001: {status: "logical_roles_not_process_swarm", artifact: "docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md", eval: "EV-AGENT-001"}
@@ -533,12 +533,12 @@ landing_ui_v2_pr131_2026_10_31:
     readability: "Requirement 8.17: persistent 90–120% text scale and standard/high contrast apply in light/dark themes; E2E checks secondary, disabled, link, error and status colors in both themes while primary text remains stable."
     gateway_security_tests: "Added secret non-disclosure coverage for /livez, /readyz, /healthz, invalid Bearer values and sanitized upstream errors; source not executed."
     inherited_ui_work: "All 18 original control directions before section 8 are enumerated with [x]/[~] statuses in docs/V1_UI_FINALIZATION_RU.md and mapped into 8.1–8.17/release gates. Current pass includes #2 mobile composer/VisualViewport, #3 provider localization, #4 field validation/accessibility, #5 prompt edit/focus, #8 gateway stale response, #10 chat scroll, #12 theme-aware status colors and #18 Chromium/release strategy."
-    cloud_validation_and_locale: "RU/EN required URL/model/key validation, remote HTTPS rule, aria-invalid/aria-describedby, localized labels/paste/connect action and system prompt placeholder."
-    cloud_stale_health_guard: "refreshCloudStatus rechecks current URL/model/key after async fingerprint and /healthz; deterministic in-flight health E2E added."
+    aservi_validation_and_locale: "RU/EN required URL/model/key validation, remote HTTPS rule, aria-invalid/aria-describedby, localized labels/paste/connect action and system prompt placeholder."
+    aservi_stale_health_guard: "refreshAServiStatus rechecks current URL/model/key after async fingerprint and /healthz; deterministic in-flight health E2E added."
     prompt_edit_accessibility: "System prompt edit control localizes title/aria-label/live hint; E2E covers keyboard focus, edit and return to readonly."
     mobile_scroll_preservation: "VisualViewport resize preserves older-message reading position and keeps bottom anchored only if user was near bottom; E2E added."
     chromium_ci_hardening: "One CI worker, 30-minute Playwright globalTimeout, 35-minute Actions timeout, trace on first retry, screenshot only on failure, video disabled; pinned Playwright 1.56.1 held stable pending separate controlled upgrade."
-    theme_aware_status_colors: "Default dark/light info and warning tokens added; Cloud checking state uses semantic warning token; E2E verifies theme switch changes its color."
+    theme_aware_status_colors: "Default dark/light info and warning tokens added; aServi checking state uses semantic warning token; E2E verifies theme switch changes its color."
     test_hygiene: "All 11 tests/e2e files syntax-parse; zero force:true, waitForTimeout or networkidle usage. Removed a forced click on a hidden sidebar close control after new-chat action; test now reopens and uses a normal click. index.md inline JS and playwright.config.mjs also syntax-parse."
     base_token_contrast: "E2E computes WCAG contrast from CSS tokens against solid theme surfaces; current primary/secondary/success/warning/error values are all >=4.5:1. Full component/background/focus/non-text audit remains manual."
   test_commits:
@@ -550,8 +550,8 @@ landing_ui_v2_pr131_2026_10_31:
     status_reduced_motion_regression: "9a6cbe71e3c433bd20b1d0fbddfbd799834019d5"
     message_action_consistency: "a6ce9eed87d6c239b9f5ea394ab04359939479e2"
     high_contrast_text_states: "787c9aaf6026559da31daf51d82f884abdc78c1d"
-    cloud_bilingual_validation: "643d16d5e8ac9c0ed147a66d6f80a0dbc52189d3"
-    cloud_stale_health_guard: "847f1bee5ab7c12d960195891dac5a2e5af7201d"
+    aservi_bilingual_validation: "643d16d5e8ac9c0ed147a66d6f80a0dbc52189d3"
+    aservi_stale_health_guard: "847f1bee5ab7c12d960195891dac5a2e5af7201d"
     prompt_edit_accessibility: "e899436014d30ab1b9cbc9fad7a6088a4c8337e7"
     mobile_scroll_preservation: "db61b95704bcd244236e91d40069a57c2d5dbae9"
     chromium_serial_ci: "e7db3778dc87e2f767612630428d12acadb3cdca"
