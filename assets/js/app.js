@@ -257,13 +257,13 @@
       toastLifecycle.timer = null;
     }
     function pauseToast() {
-      if (!toastLifecycle.active || toastLifecycle.paused) return;
+      if (!toastLifecycle.active || toastLifecycle.active.persistent || toastLifecycle.paused) return;
       toastLifecycle.remaining = Math.max(0, toastLifecycle.remaining - (Date.now() - toastLifecycle.startedAt));
       clearToastTimer();
       toastLifecycle.paused = true;
     }
     function resumeToast() {
-      if (!toastLifecycle.active || !toastLifecycle.paused || document.hidden) return;
+      if (!toastLifecycle.active || toastLifecycle.active.persistent || !toastLifecycle.paused || document.hidden) return;
       toastLifecycle.paused = false;
       toastLifecycle.startedAt = Date.now();
       toastLifecycle.timer = setTimeout(dismissToast, toastLifecycle.remaining);
@@ -290,8 +290,21 @@
       toastLifecycle.active = item;
       toastLifecycle.remaining = item.duration;
       toastLifecycle.paused = false;
-      node.textContent = item.message;
+      const message = document.createElement('span');
+      message.className = 'toast-message';
+      message.textContent = item.message;
+      node.replaceChildren(message);
+      if (item.persistent) {
+        const close = document.createElement('button');
+        close.type = 'button';
+        close.className = 'toast-dismiss';
+        close.setAttribute('aria-label', getUiLanguage() === 'en' ? 'Dismiss notification' : 'Закрыть уведомление');
+        close.textContent = '×';
+        close.addEventListener('click', dismissToast, { once: true });
+        node.appendChild(close);
+      }
       node.dataset.state = item.state;
+      node.dataset.persistent = item.persistent ? 'true' : 'false';
       node.classList.toggle('toast-error', item.state === 'error');
       node.setAttribute('role', item.state === 'error' ? 'alert' : 'status');
       node.setAttribute('aria-live', item.state === 'error' ? 'assertive' : 'polite');
@@ -300,8 +313,8 @@
         if (toastLifecycle.active === item) node.classList.add('toast-visible');
       });
       toastLifecycle.startedAt = Date.now();
-      if (!document.hidden) toastLifecycle.timer = setTimeout(dismissToast, toastLifecycle.remaining);
-      else toastLifecycle.paused = true;
+      if (!item.persistent && !document.hidden) toastLifecycle.timer = setTimeout(dismissToast, toastLifecycle.remaining);
+      else if (!item.persistent) toastLifecycle.paused = true;
     }
     function showToast(message, kind = 'success') {
       const text = String(message || '').trim();
@@ -309,8 +322,10 @@
       const state = ['info', 'warning', 'success', 'error'].includes(kind) ? kind : 'success';
       const duplicate = item => item && item.message === text && item.state === state;
       if (duplicate(toastLifecycle.active) || toastQueue.some(duplicate)) return;
-      const duration = state === 'error' ? 7000 : state === 'warning' ? 5500 : 3200;
-      toastQueue.push({ message: text, state, duration });
+      // Errors remain visible until explicitly acknowledged; transient feedback may expire.
+      const persistent = state === 'error';
+      const duration = persistent ? 0 : state === 'warning' ? 5500 : 3200;
+      toastQueue.push({ message: text, state, duration, persistent });
       renderNextToast();
     }
     document.addEventListener('visibilitychange', () => {
