@@ -517,6 +517,7 @@ landing_ui_v2_pr131_2026_10_31:
   latest_code_test_head: "9aa74853478a6a680cdd36ab0f84c851721405a4"
   branch_comparison: "499 ahead / 4 behind main; merge base e78a73b25725bfa63370d9946887cbbacbf51b82; four main-side commits overlap the shared UI checklist only."
   repository_hygiene_runbook: "docs/REPOSITORY_HYGIENE_RU.md; prepared from official GitHub repository/security/branch-protection/CODEOWNERS guidance; actual branch/file/settings cleanup is deferred to the next major-slice boundary."
+  repository_hygiene_snapshot: "2026-11-02: 126 branches; 9 open PRs; 100 closed PRs inspected; 19 closed-unmerged PR branches all contain unique commits; five behind-only no-PR branch candidates recorded; no deletions due missing branch-delete action; no unused files proven; security settings remain owner-manual."
   latest_documented_head: "f35e766eb72ff650852f508460f6e339230e123a (latest PR131 docs checkpoint before this state refresh)"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
