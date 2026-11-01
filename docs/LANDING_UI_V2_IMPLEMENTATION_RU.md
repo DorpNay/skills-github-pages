@@ -430,3 +430,10 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - Externalized the 48.1 KB app stylesheet and 10.4 KB public landing stylesheet into cacheable `assets/css/app.css` and `assets/css/landing.css`. This reduced `index.md` from 109.3 KB to 61.3 KB and `landing/index.html` from 26.1 KB to 15.8 KB without changing CSS rules.
 - Changed Marked and DOMPurify script loading from `async` to ordered `defer`, ensuring both utilities execute in document order before the deferred application runtime. The app runtime remains external in `assets/js/app.js`; no inline executable JavaScript, framework, dependency or new build step was introduced.
 - Static assertions were updated, but this is not a substitute for exact-head Chromium. Browser verification remains pending.
+
+
+### Research Studio placement clarification — 2026-11-01
+
+- Research Studio is not a standalone product area, sidebar item or top-level Functions entry. Its single entry point is nested directly under the effort/deep-research controls (`#deepResearchStudioButton`).
+- The window remains a helper for configuring the active chat's research settings; it preserves the composer draft and does not start a request on open/close. The existing E2E suite follows this entry point.
+- Roadmap visibility is intentional: planned sections/windows remain visible and can be configured ahead of runtime delivery. Under-development areas use the shared ticker; unavailable actions must not pretend to succeed or mutate user data.
