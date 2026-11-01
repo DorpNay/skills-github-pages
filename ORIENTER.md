@@ -158,9 +158,11 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 
 
 ### Landing UI V2.0 continuation — 2026-11-01
-- Active work remains PR #131 on `feat/landing-v1-accessibility-responsive-20261031`; latest code/test checkpoint: `d65102ed5a9ba3c30586d8a52efbd5603a009e23`; latest branch head before this checkpoint update: `baee92526def09756dd294d28a6675092c5bccf4` (subsequent commits are documentation-only).
+- Active work remains PR #131 on `feat/landing-v1-accessibility-responsive-20261031`; latest code/test checkpoint: `d65102ed5a9ba3c30586d8a52efbd5603a009e23`; latest PR branch head before this state update: `5bfc48ada9ccecf5df2beb160bae7042d2481ac6` (subsequent commits are documentation-only).
 - aLandi Cloud route naming was replaced with aLandi aServi across the UI, DOM actions, JS handlers, tests and active docs. Legacy `ai_alandi_cloud_*` localStorage keys are intentionally retained as compatibility keys. `aLandi aCloudi` is only a future storage name; Cloudflare remains unchanged.
 - Extracted 48.1 KB app CSS and 10.4 KB landing CSS to cacheable assets; app HTML reduced 109.3→61.3 KB, landing HTML 26.1→15.8 KB. Marked and DOMPurify now load in ordered `defer` before app.js.
 - Prior Quality #1126 (SHA `7cdf35d`) remains the last observed Chromium failure (101 pass/18 fail); corrected fixtures and selectors are committed but exact-head rerun is not available through current tool actions. Latest observed provenance pass predates current head.
 - No branch/file cleanup performed: PR #132 is an active continuity backup and PRs #125–130 include explicit future/hold workstreams. No merge, rebase, force-push or deployment.
 - Next: finish source audit and arrange exact-head Quality/Chromium; inspect current diagnostics before marking 8.1–8.17 complete. Native iOS Safari/VoiceOver and measured WCAG remain manual.
+
+- Current main comparison: PR branch is 415 commits ahead / 4 behind (merge base `e78a73b`); all four main-side commits touch only `docs/V1_UI_FINALIZATION_RU.md`, overlapping the V2 unified backlog edits. No code-file conflict was identified. Keep the PR open; do not rebase or merge without owner approval.
