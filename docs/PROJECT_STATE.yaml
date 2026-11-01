@@ -512,7 +512,7 @@ landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   latest_code_test_head: "9ff326d40ac0567c1c62c293cb396bcd9c4eba82"
-  latest_documented_head: "1ff9e96dee59c536b5ccf9496e17761e1c8449e8"
+  latest_documented_head: "bc5d3c8cf3e2d622127e1f54eae5bc098a46765b"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
     memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
