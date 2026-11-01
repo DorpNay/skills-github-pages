@@ -569,3 +569,9 @@ landing_ui_v2_pr131_2026_10_31:
     deploy: "requires explicit owner approval"
     main: "V1 baseline remains untouched"
   next: "Continue the integrated UI source/test audit before the final check cycle. When the UI pass is complete, run focused Chromium and exact-head Quality on code/test HEAD 847f1bee5ab7c12d960195891dac5a2e5af7201d (latest docs checkpoint 19ef87b3ec3b7801447b4f662ef1aa80a011541c); inspect results and diagnostics. Native iPhone Safari, VoiceOver and measured WCAG remain manual. PR API most recently returned mergeable=null / mergeable_state=unknown during recalculation; recheck before any future merge decision. No merge or deployment."
+
+# Landing UI V2.0 — naming continuation
+landing_v2_aservi:
+  branch: "feat/landing-v1-accessibility-responsive-20261031"
+  status: "Primary server route renamed to aLandi aServi in UI, DOM action identifiers, JavaScript handlers and E2E/static checks. Legacy ai_alandi_cloud_* localStorage keys intentionally retained for backwards compatibility; Cloudflare is not renamed. Exact-head browser checks pending."
+  future_storage_name: "aLandi aCloudi reserved for a separate information-storage product; not implemented."
