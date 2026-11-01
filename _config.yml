@@ -1,9 +1,0 @@
-theme: minima
-title: aLandi
-description: Личная AI-среда aLandi для чатов, проектов и работы с контекстом
-author: DorpNay
-url: "https://DorpNay.github.io"
-baseurl: "/skills-github-pages"
-plugins:
-  - jekyll-feed
-  - jekyll-seo-tag
