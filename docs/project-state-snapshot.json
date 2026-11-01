@@ -1,20 +1,29 @@
 {
   "schema_version": 1,
   "repository": "DorpNay/skills-github-pages",
-  "captured_at": "2026-10-30",
+  "captured_at": "2026-11-01",
   "checkpoint": {
-    "main_sha": "fd4f0a105183feb23e0f4e4697446235de9ffe9a",
-    "main_commit_subject": "feat(gateway): separate process liveness and upstream readiness probes",
-    "main_commit_date": "2026-10-30",
+    "main_sha": "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1",
+    "main_commit_subject": "docs: mark owner UI corrections as V2.0 priorities",
+    "main_commit_date": "2026-10-31",
     "last_functional_checkpoint_sha": "fd4f0a105183feb23e0f4e4697446235de9ffe9a",
-    "last_functional_milestone": "PR #121 merged: first free static landing V1 and client UX. PR #122 merged: process-only /livez, bounded Ollama /readyz and backward-compatible /healthz.",
+    "last_functional_milestone": "PR #121 merged: first free static landing V1 and client UX. PR #122 merged: process-only /livez, bounded Ollama /readyz and backward-compatible /healthz. Latest main commit is documentation-only and records owner V2.0 requirements; no V2 implementation is in main.",
     "main_quality_run": null,
     "main_pages_deployment_run": null,
     "functional_parent_gateway_run": null,
     "functional_parent_quality_run": null,
     "functional_parent_graphify_run": null,
     "functional_parent_pages_run": null,
-    "open_pull_requests": [],
+    "open_pull_requests": [
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131
+    ],
     "open_issues": [
       111
     ],
@@ -34,7 +43,7 @@
     ]
   },
   "interpretation": {
-    "last_main_commit_is_documentation_only": false,
+    "last_main_commit_is_documentation_only": true,
     "live_vps_gateway_device_and_model_runtime_verified": false,
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
