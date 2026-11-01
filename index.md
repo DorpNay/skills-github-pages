@@ -12,8 +12,8 @@ permalink: /
   <meta name="color-scheme" content="dark">
   <title>AI Mobile Agent v10.0</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script id="markedRuntime" async src="https://cdn.jsdelivr.net/npm/marked@18.0.14/marked.min.js"></script>
-  <script async src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js"></script>
+  <script id="markedRuntime" defer src="https://cdn.jsdelivr.net/npm/marked@18.0.14/marked.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js"></script>
   <style>
     :root { color-scheme: dark; --ink: #e8eefc; --panel: #101827; --line: #273349; }
     html, body { height: 100%; }
