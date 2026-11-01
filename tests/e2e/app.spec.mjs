@@ -10,6 +10,7 @@ async function ensureSidebarOpen(page) {
     await page.locator('[data-action="toggle-sidebar"]').click();
   }
   await expect(sidebar).not.toHaveClass(/-translate-x-full/);
+  await expect(sidebar).toBeInViewport();
 }
 
 async function ensureSidebarClosed(page) {
@@ -1818,16 +1819,20 @@ test('project instructions, project memory, and project bundles stay scoped to t
   const betaChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
   await expect(page.locator('#currentProjectSelect')).toHaveValue(betaId);
   const betaChatRow = page.locator('#projectNavigationList .chat-row').filter({ has: page.locator('[data-action="switch-chat"][data-chat-id="' + betaChatId + '"]') });
-  await betaChatRow.scrollIntoViewIfNeeded();
-  await betaChatRow.locator('.chat-row-menu > summary').click();
+  const betaChatMenu = betaChatRow.locator('.chat-row-menu > summary');
+  await betaChatMenu.evaluate(element => element.scrollIntoView({ block: 'center', inline: 'nearest' }));
+  await expect(betaChatMenu).toBeInViewport();
+  await betaChatMenu.click();
   await betaChatRow.locator('[data-action="chat-project"]').click();
   await page.locator('#chatActionProject').selectOption(alphaId);
   await page.locator('[data-action="chat-action-save"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(alphaId);
   await ensureSidebarOpen(page);
   const movedChatRow = page.locator('#projectNavigationList .chat-row').filter({ has: page.locator('[data-action="switch-chat"][data-chat-id="' + betaChatId + '"]') });
-  await movedChatRow.scrollIntoViewIfNeeded();
-  await movedChatRow.locator('.chat-row-menu > summary').click();
+  const movedChatMenu = movedChatRow.locator('.chat-row-menu > summary');
+  await movedChatMenu.evaluate(element => element.scrollIntoView({ block: 'center', inline: 'nearest' }));
+  await expect(movedChatMenu).toBeInViewport();
+  await movedChatMenu.click();
   await movedChatRow.locator('[data-action="chat-project"]').click();
   await page.locator('#chatActionProject').selectOption(betaId);
   await page.locator('[data-action="chat-action-save"]').click();

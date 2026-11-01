@@ -68,8 +68,11 @@
       document.body.classList.toggle('ui-modal-open',open);
     }
     function getTopmostUiModal(){
-      return uiModalIds.map(id=>$(id)).filter(modal=>modal&&!modal.classList.contains('hidden')&&modal.getClientRects().length)
-        .sort((a,b)=>(Number.parseInt(getComputedStyle(a).zIndex,10)||0)-(Number.parseInt(getComputedStyle(b).zIndex,10)||0)).at(-1)||null;
+      return uiModalIds.map(id=>$(id)).filter(modal=>{
+        if(!modal||modal.classList.contains('hidden')||modal.getAttribute('aria-hidden')==='true')return false;
+        const style=getComputedStyle(modal);
+        return style.display!=='none'&&style.visibility!=='hidden'&&modal.getClientRects().length>0;
+      }).sort((a,b)=>(Number.parseInt(getComputedStyle(a).zIndex,10)||0)-(Number.parseInt(getComputedStyle(b).zIndex,10)||0)).at(-1)||null;
     }
     const MODAL_FOCUSABLE_SELECTOR='button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable="true"],audio[controls],video[controls],[tabindex]:not([tabindex="-1"])';
     function getModalFocusableElements(modal){

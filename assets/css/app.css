@@ -498,4 +498,8 @@
 
 /* Keep compact brand hierarchy and disabled-control contrast explicit over utility classes. */
 #brandWordmark { font-weight:900!important; }
-html[data-text-contrast="high"] body #chatBox button:disabled:disabled { color:#aebdca!important; }
+html[data-text-contrast="high"] #chatBox button[disabled],
+html[data-text-contrast="high"] #chatBox button:disabled {
+  color:var(--ui-disabled-text)!important;
+  -webkit-text-fill-color:var(--ui-disabled-text)!important;
+}
