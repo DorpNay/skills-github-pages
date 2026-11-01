@@ -512,3 +512,14 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Added CSS system-color treatment for forced-colors mode and a Playwright E2E check for visible keyboard focus.
 - Updated owner requirement 8.17 and the V2 implementation ledger. Playwright 1.56.1 supports forcedColors emulation; the new test is committed but not run.
 - Source/test checkpoint: 502e71841e2a1a769db84439e557597c22b62a16. No browser pass is claimed.
+
+
+### 2026-11-02 — owner proposal crosswalk and repository identity audit (PR #131)
+
+- Reoriented from live PR #131 metadata: pre-documentation HEAD 531046c38b18df31cc6f88491417cfef3ae8630d; current main 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1; compare 537 ahead / 4 behind, merge base e78a73b25725bfa63370d9946887cbbacbf51b82.
+- No workflow runs or status checks were returned for that exact PR head. Quality #1126 (101 passed / 18 failed on older SHA) remains stale. No test pass is claimed.
+- Compared owner proposals against current app.js/index.md/app.css: modal/history stack, status/toast, last-closed-chat recovery, project memory scope, contextual chat/project/message actions, local chat persistence and attachment processing already exist. Optional proposals 8.18–8.27 now extend the canonical section 8.0 without creating a second backlog.
+- Added technical crosswalk and open-source references to docs/LANDING_UI_V2_IMPLEMENTATION_RU.md. No package was installed or vendored; references are patterns only pending any future license/maintenance/integration review.
+- Found legacy GitHub Skills exercise workflows 0-start-exercise.yml and 1-step.yml–3-step.yml. They were not removed: repository is_template status and actual run history were not available. Do not delete aLandi skills/*.txt or the actual Pages/Jekyll/Quality/Security/Graphify/deploy mechanisms.
+- Repository rename is deferred until a stable custom domain is selected. GitHub documents that project Pages URLs are not redirected by repository rename; baseurl, canonical/OG, OAuth redirects, absolute links and published-site smoke would need a coordinated migration.
+- Updated the canonical UI checklist, implementation ledger, concise polish mirror, PROJECT_STATE.yaml, ALANDI_MASTER_CONTEXT_RU.md and ORIENTER.md on PR #131. No code/runtime files changed in this proposal-audit slice; no rebase, merge, deletion or deployment performed.
