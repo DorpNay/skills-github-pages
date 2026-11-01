@@ -64,9 +64,9 @@ ui_v2_track:
   pull_request: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   status: "open_unmerged_owner_hold"
-  latest_documentation_head: "25d94639a13f1a83dea49795137d6d1d1fa4c4ad; latest checkpoint commit may advance this reference"
-  latest_code_test_head: "2231691fab0a56a39ce6e1edb571fee6d131607b"
-  latest_quality_harness_head: "d94d842608c07aa8def4b5fdc89ed95b80524034"
+  latest_documentation_head: "5bab1d2741fc2349fd648c9eb17ddc8d7d8e27a8; documentation checkpoint after aServi rename/backlog reconciliation"
+  latest_code_test_head: "4b0972a5caac6d148a0a938747c6c609be06fa1e; runtime extracted and aServi UI/DOM contracts renamed; not yet browser-verified"
+  latest_quality_harness_head: "d94d842608c07aa8def4b5fdc89ed95b80524034; harness not changed in this pass"
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0 and requirements 8.1-8.17"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
   polish_register: "docs/LANDING_UX_POLISH_BACKLOG_RU.md (mirrors the consolidated residual list; not a separate backlog)"
@@ -86,6 +86,9 @@ ui_v2_track:
     live_gateway_provider: "Not verified; live smoke requires explicit owner approval."
   current_main_sha: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
   branch_divergence: "GitHub compare e78a73b25725bfa63370d9946887cbbacbf51b82...07bc39859e997589053fd78911e7923470e8a6d4 reports ahead_by=275, behind_by=0, merge_base=base. PR API still reports mergeable=false / dirty; this conflicts with the compare result and is not yet explained. Do not merge; recheck mergeability and inspect PR checks separately."
+  current_work_head: "5bab1d2741fc2349fd648c9eb17ddc8d7d8e27a8"
+  current_work_summary: "aLandi aServi terminology and DOM/CSS contracts updated; browser runtime extracted to assets/js/app.js and loaded with defer + relative_url; inherited pre-8 UI backlog made explicit. Full tests intentionally deferred until source pass is complete."
+  current_work_validation: "Not run yet: JavaScript syntax check, Jekyll build, focused Chromium, full Quality/Freshness/Provenance/Graphify/Dead Code. Do not claim runtime extraction or rename browser-verified."
   merge_deployment: "Do not merge or deploy without explicit owner approval."
 
 current_v016_track:
@@ -518,7 +521,7 @@ landing_ui_v2_pr131_2026_10_31:
     memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
     sidebar_swipe: "Requirement 8.1: horizontal left swipe closes the sidebar; vertical scroll is not intercepted; project/chat disclosure state is preserved. Playwright regression added."
     header_responsive: "Requirement 8.2: dedicated chat-title surface, expressive wordmark, clock, compact mode controls; Playwright layout checks at 320/360/390/768/1024/1440px added."
-    settings_provider_groups: "Requirement 8.3: Cloud is exclusive; third-party and additional settings may remain open together; existing E2E covers transitions."
+    settings_provider_groups: "Requirement 8.3: aServi is exclusive; third-party and additional settings may remain open together; existing E2E covers transitions."
     project_sources: "Requirement 8.7: project Sources section states gateway lacks source-list API; no fictitious CRUD controls; existing E2E verifies unsupported state."
     server_memory_retirement: "Requirement 8.12: browser bridge/UI and /v1/memory/graph/* routes plus graph-specific flags removed; internal MemoryManager retained only for Graphify; SQLite data untouched; local/private/shared/project memory, delta sync, RAG and local helper remain."
     project_context_handoff: "Requirement 8.13: explicit existing-chat target; next successful request only; no automatic injection from project membership; no new chat or project membership mutation; five-project cap; pending state is session-only."
