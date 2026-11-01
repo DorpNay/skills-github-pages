@@ -80,7 +80,7 @@ ui_v2_track:
     P2: "Long-list/message/scroll/popover stress; capability menu truthfulness; Tavily/keyless-search audit; provider/gateway mock error and secret-redaction checks."
   verification:
     exact_head_ci: "Manual run #41285658893 is on older SHA d822cb6, not current head. Its Context/Integrity failures were traced to stale sentinel expectations and corrected in 1b30cae/5d01a7d. Exact-head rerun not yet visible; do not claim green CI."
-    playwright_chromium: "No exact-head Chromium run for the current PR #131 source/test checkpoint c26639705f24633fddbaa7810c16105e0f167078; #1126 is stale evidence only (101 passed / 18 failed). Browser behavior remains unverified."
+    playwright_chromium: "No exact-head Chromium run for the current PR #131 source/test checkpoint c87bc1c49a900c2249c44a5c5e697f2b0267bd84; #1126 is stale evidence only (101 passed / 18 failed). Browser behavior remains unverified."
     native_mobile_voiceover: "Not executed."
     wcag_contrast_ratios: "Not measured; computed-style assertions are not conformance evidence."
     live_gateway_provider: "Not verified; live smoke requires explicit owner approval."
