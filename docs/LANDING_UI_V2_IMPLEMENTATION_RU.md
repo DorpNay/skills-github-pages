@@ -293,3 +293,14 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - These runs validate main/V1 plus the documentation backup only. They are **not** evidence for Landing V2 code in PR #131 and must not close its browser gate.
 - PR #131's current head `5a5b6636bd5878c597e1d25926b58a43771836ab` has no Actions runs exposed by the current exact-SHA lookup. Gateway run #640 remains applicable to its unchanged `gateway/**` tree.
 - Next bounded step: create a documentation-only PR-head checkpoint to request the normal `pull_request` Quality workflow for PR #131; then inspect the exact run, Chromium test count/log and all required sentinels. No main→feature sync, rebase, merge or deployment is authorized/performed.
+
+
+### P0 Quality Sentinel diagnosis — 2026-11-01
+
+- Inspected the owner-dispatched run [#41285658893](https://github.com/DorpNay/skills-github-pages/actions/runs/41285658893), which executed on older PR SHA `d822cb623b2a72642921654a04e6c9d988091834`, not the latest branch head.
+- Confirmed passing jobs: Security sentinel, Jekyll build sentinel and independent static analysis (Ruff gate; Bandit/Semgrep advisory). The Chromium job remained in progress at the last status read.
+- Context and Integrity failed because `scripts/quality-agents.mjs` still asserted removed/renamed UI controls and the retired server-memory graph bridge, and expected old memory-context wording. These were test-harness drift, not evidence of a regression in the current UI/memory implementation.
+- Corrected the sentinel expectations: current project memory-scope selector and private-memory opt-in; explicit shared-memory scope gating; absence of the retired graph HTTP bridge; current shared/private context wording; current required UI element IDs. No application code or security guard was weakened.
+- Harness commits: `1b30cae806469fa5ef1cf8325a41094c54d042a2` and `5d01a7da02207665ce480a68eba99ce7efbc08a9`. Static source audit against the latest app source confirms all 189 literal `includes(...)` expectations in the quality sentinel are present, and all current required UI IDs exist. This is a source-level cross-check, not an executed CI result.
+- Exact-head Quality/Chromium rerun is still required; the current head at this checkpoint is `5d01a7da02207665ce480a68eba99ce7efbc08a9`. Freshness, Provenance, Graphify and Dead Code gates remain to be checked where available. PR #131 stays open/unmerged; no deployment.
+- Next: run Independent Quality Sentinels on the latest PR head, inspect all job conclusions and Chromium output, then continue P1 device/accessibility acceptance.
