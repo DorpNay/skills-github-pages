@@ -2,7 +2,9 @@ name: Independent Quality Sentinels
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - feat/landing-v1-accessibility-responsive-20261031
   pull_request:
   workflow_dispatch:
 
