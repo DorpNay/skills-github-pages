@@ -111,3 +111,8 @@
 - Latest UI source checkpoint: `9aa74853478a6a680cdd36ab0f84c851721405a4`; PR #131 branch head after the Graphify path-filter change: `c8facdac2eebc7d2217b807f1b7e314ae3abf2dd`.
 - Graphify path filters now include extracted JS/CSS and landing HTML. The run/artifact is pending confirmation.
 - Exact-head Quality/Chromium, screenshot review, native iPhone Safari, VoiceOver and full component-level WCAG review remain open. Do not infer completion from added test source.
+
+
+### Дополнительные предложения владельца для aLandi V2.0 — 2026-11-02
+
+Предложения 8.18–8.27 добавлены в единый реестр docs/V1_UI_FINALIZATION_RU.md как необязательные кандидаты, а не release blockers. Их сопоставление с существующим кодом, конфликты, исследованные open-source patterns и рекомендуемый порядок реализации находятся в docs/LANDING_UI_V2_IMPLEMENTATION_RU.md. Этот mirror не создаёт второй очереди и не меняет приоритет текущих 8.1–8.17.
