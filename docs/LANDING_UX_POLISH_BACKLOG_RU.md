@@ -101,3 +101,5 @@
 - Keep planned product sections and their windows visible so the information architecture can be built and reviewed before every runtime capability ships.
 - Use one consistent moving ticker/status treatment in areas under active development. Do not represent a placeholder as a completed integration or successful action; disable unavailable mutations or explain their status.
 - Research Studio is a subfeature of deep research, entered from the Thorough/deep-research controls. It is not a standalone navigation destination or Functions-menu item.
+
+- Project source management is a concrete example of the rule: keep the section visible, explain the missing source-list API, show the shared ticker, and expose no fake mutation controls.
