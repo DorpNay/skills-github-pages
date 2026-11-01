@@ -1739,7 +1739,8 @@ test('deleting a project removes only its chats and preserves other projects and
   await disposableGroup.locator('[data-action="new-chat-in-project"]').click();
   const disposableChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#sidebar [data-action="new-chat"]').click();
+  await page.locator('#chatListBack').click();
+  await page.locator('#chatListNewButton').click();
   const personalChatProjectId = await page.evaluate(() => {
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
     const current = localStorage.getItem('ai_current_chat_v87');
@@ -1876,6 +1877,9 @@ test('expanded web search does not expand the quick execution budget', async ({ 
   let tavilyMaxResults = 0;
   await page.route('https://api.example.test/v1/chat/completions', async route => {
     const body = route.request().postDataJSON();
+    if (body.messages?.at(-1)?.content === 'Reply with exactly OK. No other words.') {
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ model: 'effort-search-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] }) });
+    }
     modelCalls++;
     toolAvailability.push(Array.isArray(body.tools) && body.tools.length > 0);
     if (modelCalls === 1) {
@@ -1921,6 +1925,9 @@ test('thorough processing keeps standard web-search breadth', async ({ page }) =
   let tavilyMaxResults = 0;
   await page.route('https://api.example.test/v1/chat/completions', async route => {
     const body = route.request().postDataJSON();
+    if (body.messages?.at(-1)?.content === 'Reply with exactly OK. No other words.') {
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ model: 'effort-search-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] }) });
+    }
     modelCalls++;
     toolAvailability.push(Array.isArray(body.tools) && body.tools.length > 0);
     if (modelCalls === 1) {
@@ -2032,8 +2039,11 @@ test('web_search falls back to public sources when Tavily is not configured', as
       body: JSON.stringify({ hits: [{ title: 'Fallback source result', url: 'https://news.example.test/fallback', points: 3, created_at: '2026-10-01T00:00:00Z', story_text: 'A fallback fixture result.' }] }) });
   });
   await page.route('https://api.example.test/v1/chat/completions', async route => {
-    modelCalls++;
     const body = route.request().postDataJSON();
+    if (body.messages?.at(-1)?.content === 'Reply with exactly OK. No other words.') {
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ model: 'open-search-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] }) });
+    }
+    modelCalls++;
     if (Array.isArray(body.tools) && body.tools.length) {
       const webSearchTool = body.tools.find(tool => tool.function?.name === 'web_search');
       expect(webSearchTool).toBeTruthy();
@@ -2329,6 +2339,7 @@ test('private memory is local by default and enters context only after explicit 
       body: JSON.stringify({ model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'Private memory check.' }, finish_reason: 'stop' }] }) });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#memoryInput').fill('PRIVATE_MEMORY_SENTINEL');
   await page.locator('[data-action="save-memory"]').click();
   await expect(page.locator('#memoryBox')).toContainText('PRIVATE_MEMORY_SENTINEL');
@@ -2475,6 +2486,7 @@ test('sidebar separates projects from personal chats and keeps navigation collap
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#chatListBack').click();
   await expect(page.locator('#projectNavToggle')).toHaveAttribute('aria-expanded','false');
   await expect(page.locator('#projectNavigationList')).toBeHidden();
   await expect(page.locator('#chatSection')).toHaveAttribute('open','');
