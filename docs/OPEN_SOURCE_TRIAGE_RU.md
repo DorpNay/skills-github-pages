@@ -295,3 +295,48 @@ This is a relevance triage against the live PR #131 architecture, not an endorse
 - No Dify/n8n/agent swarm, no extra inference gateway, no model weights, no automatic SLM router and no ensemble.
 - No provider fallback that crosses an isolation boundary, no unreviewed bulk import of AI tool catalogs.
 - Revisit a candidate only when a concrete acceptance gap, measured bottleneck and compatible integration contract are identified. Before importing code, verify the exact upstream revision, license, maintenance/security posture, transitive dependencies, browser support and rollback path.
+
+## Проверка выбранных upstream — 2026-11-02, второй проход
+
+**Метод:** 4 целевых поисковых workstream × 8 результатов = 32 просмотренных результата до дедупликации. Приоритет — canonical GitHub README/LICENSE, официальная документация и собственные страницы проектов. Это выборочная проверка наиболее релевантных кандидатов из 60, а не аудит всех 60 репозиториев. SHA ниже относятся к прочитанным файлам, не к зафиксированным зависимостям.
+
+### 1. Directory / discovery UX
+
+- [coolchange-ai/toolso-ai-open](https://github.com/coolchange-ai/toolso-ai-open), README blob 96b1c1d68e7ea38482e47fc97931fca6a3c395e6: Apache-2.0; Next.js 16, React 19, TypeScript, PostgreSQL/Drizzle, Better Auth, Cloudflare R2, admin review, multilingual content. Важная идея — разделять submission, automated enrichment и human approval; не переносить его full-stack auth/database.
+- [MkThingsHQ/mkdirs](https://github.com/MkThingsHQ/mkdirs): Apache-2.0; Next.js/React, Sanity CMS, Auth.js, Stripe, Resend, user submissions and curated directory. Полезны taxonomy (categories/collections/tags) и moderation states; CMS, платежи и backend не нужны статическому лендингу.
+- [Toolso.AI editorial methodology](https://toolso.ai/blog/how-we-evaluate-ai-tools): полезная схема evidence labels — researched vs hands-on; trace each material claim to its source/date; pricing, rights/privacy and availability must be qualified; withdraw ratings when evidence expires. Это опубликованная методология самого каталога, не подтверждение качества конкретных листингов.
+- [Toolso.AI about](https://toolso.ai/about): заявлены dual taxonomy (scenario + technology), daily availability monitoring, editorial approval and explicit promoted-content labels. Для будущего каталога aLandi принять принцип прозрачного provenance/status; не копировать каталожную базу без лицензии/актуальности.
+- **Решение:** визуальные паттерны taxonomy/filter chips/card density можно исследовать отдельно. Никаких Next.js/React/DB/Auth/CMS/payment dependencies в PR #131.
+
+### 2. Multi-provider chat UX
+
+- [Open WebUI](https://github.com/open-webui/open-webui): официальный README подтверждает multi-provider / local model workspace, но в этой выборке не завершена отдельная проверка полной license/security/deployment matrix. Рассматривать как UX reference, не как license-cleared dependency.
+- LibreChat не удалось надёжно разрешить через переданный namespace в GitHub Contents API; не фиксировать выводы по одноимённому проекту без canonical URL.
+- Текущий upstream lobehub/lobehub позиционирует себя как agent operations/team scheduling product, а не считать его автоматически прежним LobeChat UI. Не смешивать продукты с похожим брендом.
+- **Решение:** извлекать только provider identity, model catalog clarity, conversation organization, attachment provenance и responsive workspace patterns. Не переносить auth, plugin execution, backend, database или provider fallback logic. Существующие provider isolation и browser-local scopes остаются главнее.
+
+### 3. Inference engines
+
+- [vLLM](https://github.com/vllm-project/vllm): LICENSE blob 261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64 — Apache-2.0. Это отдельный high-throughput serving runtime, а не frontend dependency.
+- [SGLang](https://github.com/sgl-project/sglang): LICENSE blob 9c422689c8f5c317c7c65153b1209349ec57007e — Apache-2.0. Сопоставлять с vLLM на одном model/checkpoint, hardware, quantization, concurrency and prompt corpus.
+- [llama.cpp](https://github.com/ggml-org/llama.cpp): LICENSE blob e7dca554bcb802f98408383a864404e3aa4eacca — MIT. CPU/Metal/CUDA deployment profile и GGUF workflow — отдельный критерий от GPU server throughput.
+- **Решение:** ни один engine не выбран и не внедрён. Для проекта нужен отдельный target-host benchmark на реальном железе; сравнивать TTFT, TPOT, P50/P95 latency, throughput, peak RAM/VRAM, cold start, context length, concurrent requests, RU/EN/TH quality, operational cost и recovery. Не переносить claims из README в performance decisions.
+
+### 4. Quantization / serving / SLM routing
+
+- [GPTQModel](https://github.com/ModelCloud/GPTQModel): LICENSE blob 375b95f6e9e72ce847b494bb9e4021526be2d2f3 — Apache-2.0. README описывает GPTQ/AWQ support и широкую hardware/kernel matrix, но совместимость проверять для конкретного checkpoint, architecture, Transformers/runtime versions и evaluation set.
+- [llm-compressor](https://github.com/vllm-project/llm-compressor): LICENSE blob 261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64 — Apache-2.0; supports weight/activation/KV-cache quantization and compressed-tensors output for vLLM. Candidate для controlled benchmark, не для импорта в UI repository.
+- [AutoAWQ](https://github.com/casper-hansen/AutoAWQ): upstream прямо объявляет проект deprecated/unmaintained. Не выбирать для новых работ; проверять GPTQModel или llm-compressor и точную compatibility matrix. AWQ algorithm не равен AutoAWQ package.
+- [BentoML](https://github.com/bentoml/BentoML): LICENSE blob 231bcb00f2e3fc427b6e701bc421da36c597a0f9 — Apache-2.0. Это general-purpose Python model serving/deployment layer (API packaging, Docker, batching, parallelism, Kubernetes), а не лёгкий SLM router. Не добавлять второй serving layer без измеренной проблемы.
+- [SLM front-door routing study](https://ar5iv.labs.arxiv.org/html/2604.02367): Exa выдача описывает harmonized 60-case benchmark и synthetic-traffic experiment; в ней ни одна tested arm не достигает заранее установленного combined threshold 0.85 accuracy + P95 ≤2s. Вывод ограничен конкретным taxonomy, моделями, hardware и synthetic traffic; нельзя переносить цифры на aLandi. Low-cost classification ещё не доказывает downstream task quality или безопасную маршрутизацию приватного контекста.
+- **Решение:** AutoAWQ исключить; GPTQModel/llm-compressor оставить в benchmark shortlist; BentoML — только если понадобится упаковать отдельный inference service; автоматическую маршрутизацию не включать до golden RU/EN/TH eval, confidence calibration, abstain/fallback policy, provider isolation, audit traces и доказанного quality/cost win.
+
+### Обязательные критерии следующего исследования
+
+1. Pin exact upstream commit/release; не опираться только на README.
+2. Проверить LICENSE, model-weight license отдельно от code license, security advisories, recent maintenance, dependency footprint and supported Python/CUDA/ROCm/Metal versions.
+3. Для runtime-кандидата зафиксировать hardware, model SHA, quantization recipe, corpus, prompt set, concurrency and resource limits.
+4. Для UI-pattern candidate подтвердить конкретные selectors/states and keyboard/mobile behavior в browser; не копировать screenshots без реализации/лицензии assets.
+5. Любое внедрение — отдельный scoped PR, feature flag, tests, rollback and provenance record.
+
+**Итог второго прохода:** полезные паттерны найдены; runtime adoption = 0; package additions = 0; model downloads = 0. Следующий шаг — отдельно разобрать SGLang/vLLM benchmark protocols, local quantization constraints и неразрешённые owner-provided repository names.
