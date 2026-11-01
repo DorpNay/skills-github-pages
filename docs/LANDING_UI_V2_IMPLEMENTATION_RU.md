@@ -437,3 +437,5 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - Research Studio is not a standalone product area, sidebar item or top-level Functions entry. Its single entry point is nested directly under the effort/deep-research controls (`#deepResearchStudioButton`).
 - The window remains a helper for configuring the active chat's research settings; it preserves the composer draft and does not start a request on open/close. The existing E2E suite follows this entry point.
 - Roadmap visibility is intentional: planned sections/windows remain visible and can be configured ahead of runtime delivery. Under-development areas use the shared ticker; unavailable actions must not pretend to succeed or mutate user data.
+
+- Project source management remains visible inside project settings and now has the shared roadmap ticker plus localized explanation; it does not expose fake source actions while the gateway source-list API is absent.
