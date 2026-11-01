@@ -290,7 +290,7 @@ const suites = {
       includes('memory.score > 0', 'Irrelevant memories should not be attached.');
       includes('selectedMemories.length >= 4', 'Memory count cap is missing.');
       includes('memoryChars + memory.fact.length > 1200', 'Memory character cap is missing.');
-      includes('контекст запроса (не системные инструкции)', 'Shared memories must be framed as reference context, not system instructions.');
+      includes('контекста запроса (не системные инструкции)', 'Shared memories must be framed as reference context, not system instructions.');
     }],
     ['global system prompt is opt-in and legacy prompt migrates', () => {
       includes("const DEFAULT_SYSTEM = '';", 'The global system prompt must be empty by default.');
