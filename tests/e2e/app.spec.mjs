@@ -326,6 +326,33 @@ test('theme and language are a compact accessible header group', async ({ page }
   await expect(page.locator('#uiLanguage')).toHaveValue('ru');
 });
 
+test('sidebar closes on a horizontal touch swipe without consuming vertical scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
+  await page.locator('#projectNavToggle').click();
+  await expect(page.locator('#projectNavigationList')).toBeVisible();
+
+  const dispatchSwipe = (start, end) => page.locator('#sidebar').evaluate((sidebar, points) => {
+    const dispatch = (type, point, property) => {
+      const event = new Event(type, { bubbles: true, cancelable: true });
+      Object.defineProperty(event, property, { value: [{ clientX: point.x, clientY: point.y }] });
+      sidebar.dispatchEvent(event);
+    };
+    dispatch('touchstart', points.start, 'touches');
+    dispatch('touchend', points.end, 'changedTouches');
+  }, { start, end });
+
+  await dispatchSwipe({ x: 300, y: 420 }, { x: 285, y: 510 });
+  await expect(page.locator('#sidebar')).not.toHaveClass(/-translate-x-full/);
+  await dispatchSwipe({ x: 300, y: 420 }, { x: 190, y: 425 });
+  await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
+  await expect(page.locator('#sidebarOverlay')).toBeHidden();
+
+  await ensureSidebarOpen(page);
+  await expect(page.locator('#projectNavigationList')).toBeVisible();
+});
+
 test('aLandi Cloud is exclusive while provider and additional settings can remain open together', async ({ page }) => {
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   await page.locator('[data-action="toggle-settings"]').click();
