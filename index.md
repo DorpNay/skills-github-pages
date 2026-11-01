@@ -1,6 +1,6 @@
 ---
 layout: null
-title: AI Mobile Agent v10.0
+title: aLandi — личная AI-среда
 permalink: /
 ---
 
@@ -9,8 +9,9 @@ permalink: /
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0a1220">
-  <meta name="color-scheme" content="dark">
-  <title>AI Mobile Agent v10.0</title>
+  <meta name="description" content="aLandi — личная AI-среда для чатов, проектов и работы с контекстом.">
+  <meta name="color-scheme" content="dark light">
+  <title>aLandi — личная AI-среда</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script id="markedRuntime" defer src="https://cdn.jsdelivr.net/npm/marked@18.0.14/marked.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js"></script>
