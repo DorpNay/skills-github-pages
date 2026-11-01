@@ -2679,6 +2679,12 @@ test('mobile messages expose full text and retain a jump-to-latest control', asy
   await expect(page.locator('#chatBox')).toContainText('MESSAGE_VIEWER_LINE_69', { timeout: 15000 });
   await expect(page.locator('#chatBox [data-action="copy-message"]')).toHaveCount(2);
   await expect(page.locator('#chatBox [data-action="view-message"]')).toHaveCount(2);
+  const inlineActionMeta = await page.locator('#chatBox .message-actions button').evaluateAll(nodes => nodes.map(node => {
+    const rect = node.getBoundingClientRect();
+    return { title: node.title, label: node.getAttribute('aria-label'), width: rect.width, height: rect.height };
+  }));
+  expect(inlineActionMeta.length).toBe(5);
+  expect(inlineActionMeta.every(item => item.title && item.title === item.label && item.width >= 44 && item.height >= 44)).toBe(true);
 
   const viewAction = page.locator('#chatBox [data-action="view-message"]').last();
   const viewTarget = await viewAction.boundingBox();
@@ -2692,6 +2698,8 @@ test('mobile messages expose full text and retain a jump-to-latest control', asy
   await expect(page.locator('#messageViewerSpeak')).toBeVisible();
   await expect(page.locator('#messageViewerCopy')).toHaveAttribute('aria-label',/Copy message|Скопировать сообщение/);
   await expect(page.locator('#messageViewerSpeak')).toHaveAttribute('aria-label',/Generate speech|Создать речь/);
+  const viewerActionLabels = await page.locator('#messageViewerModal .message-actions button').evaluateAll(nodes => nodes.map(node => ({ title: node.title, label: node.getAttribute('aria-label') })));
+  expect(viewerActionLabels.every(item => item.title && item.title === item.label)).toBe(true);
   const viewerActionBoxes=await page.locator('#messageViewerModal .message-actions button').evaluateAll(nodes=>nodes.map(node=>{const rect=node.getBoundingClientRect();return {width:rect.width,height:rect.height};}));
   expect(viewerActionBoxes.length).toBe(2);
   expect(viewerActionBoxes.every(box=>box.width>=44&&box.height>=44)).toBe(true);
