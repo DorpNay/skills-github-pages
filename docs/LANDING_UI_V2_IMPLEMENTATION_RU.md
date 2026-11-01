@@ -248,3 +248,12 @@ Not active UI work: project-source CRUD without a gateway list contract; persist
 - Confirmed Tavily remains optional with an explicit pending decision note, while the global user prompt is empty by default and the legacy built-in prompt is normalized to empty. No duplicate prompt implementation or premature Tavily removal is needed.
 - No source-level contradiction was found in these inspected surfaces. The Tavily/keyless-search decision and runtime/provider error tests remain open; this source review is not browser or live-provider verification.
 - Relevant source: index.md (searchToolsSettings, searchModeMenu, functionsMenu, functionPanelModal, DEFAULT_SYSTEM and legacy prompt normalization).
+
+
+### P0 source inventory — exact-head verification preparation (2026-11-01)
+
+- Inspected the current branch workflow definitions. `.github/workflows/quality-sentinels.yml` runs on every pull request and contains integrity, security, context, Jekyll build, Chromium browser E2E, published-site smoke and static-analysis jobs. `.github/workflows/gateway-tests.yml` runs on pull requests that change `gateway/**` (this PR does) and defines compileall, manifest/INTEL checks, `pytest gateway/tests`, deploy-preflight and offline six-layer evaluation.
+- Source inventory on the branch: `tests/e2e/app.spec.mjs` contains 90 Playwright test declarations; `tests/e2e/landing.spec.mjs` contains 8; `gateway/tests/test_app.py` contains 36 pytest test functions.
+- Confirmed `gateway/app.py` contains no graph-memory HTTP route/flag references. Gateway regression source includes health-probe secret checks, invalid Bearer token non-echo, and upstream error-body redaction.
+- Exact current PR head after the change-log correction: 1ea321ddcd8e81379d572565636b6d0ee1424772. GitHub workflow-run and combined-status lookups return zero entries for this head. The workflow YAML is configured to trigger on PRs, but no run result is currently visible; do not infer pass/fail or treat source inventory as execution.
+- Execution blocker: this environment has GitHub read/write repository operations but no workflow-dispatch action and no outbound network for a local clone. Therefore Gateway pytest, Playwright/Chromium and Quality jobs cannot be executed from this session. Continue by obtaining an actual GitHub Actions run through the repository's normal PR workflow; do not replace execution with syntax/source inspection.
