@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-async function configureAlandiCloud(page, model, key) {
+async function configureAlandiAServi(page, model, key) {
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   await page.locator('#aserviBaseUrl').fill('https://api.example.test/v1');
   await page.locator('#aserviModel').fill(model);
@@ -66,7 +66,7 @@ test('PDF attachment is extracted only by the configured aLandi gateway before m
   });
 
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  await configureAlandiCloud(page, 'e2e-local-model', 'd'.repeat(64));
+  await configureAlandiAServi(page, 'e2e-local-model', 'd'.repeat(64));
   await chooseSearchMode(page, 'offline');
 
   await page.locator('[data-action="attach-text-file"]').click();
