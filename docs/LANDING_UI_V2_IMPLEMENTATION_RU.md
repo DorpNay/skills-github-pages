@@ -236,5 +236,5 @@ Not active UI work: project-source CRUD without a gateway list contract; persist
 
 - Canonical owner queue is section 8.0 in V1_UI_FINALIZATION_RU.md; the older pre-8.1 checklist is historical V1 context, not a parallel active queue.
 - The concise polish register, project state, orienter, Volley log and PR body now point to the same residual work.
-- Latest code/test head remains 8f68c2cc4b4b01a1917e32f75f7d5016517d41c3; subsequent commits are documentation-only. Latest known PR head at this checkpoint: 5b8293910a2c120557725ae9f44dd6f2900d7a2f.
+- Latest code/test head remains 8f68c2cc4b4b01a1917e32f75f7d5016517d41c3; subsequent commits are documentation-only. The latest documentation head is intentionally read from live PR #131 metadata because documentation-only commits may advance it.
 - P0 exact-head verification remains the next action; workflow/status queries returned no entries. No test pass, merge or deployment is claimed.
