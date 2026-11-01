@@ -282,6 +282,7 @@ PR #122 добавил только эксплуатационную надёж�
 ### P0 — обязательная автоматическая проверка PR #131
 
 - [ ] Запустить на точном HEAD PR #131 focused Playwright/Chromium regressions и полный Quality: Gateway tests, Security, Integrity, Context, Jekyll, Chromium; затем Freshness, Provenance, Graphify и Dead Code, если эти workflows доступны.
+- [ ] Разобраться, почему для текущего PR HEAD не видны запуски GitHub Actions: в ветке есть pull_request triggers для Quality Sentinels и Gateway Tests (изменён gateway/**), но API не возвращает ни workflow runs, ни combined statuses. Получить реальные exact-head результаты через штатный PR workflow.
 - [ ] Разобрать реальные падения и исправить только подтверждённые дефекты; не удалять/ослаблять assertions ради зелёного CI.
 - [ ] Отдельно закрыть оставшиеся E2E сценарии 8.1–8.17: sidebar/chat restore, header breakpoints, settings disclosure, modal Back/Forward/focus, message actions, project handoff, touch selection, status/reduced-motion и text readability.
 - [ ] Проверить gateway secret-redaction и удаление server-memory graph bridge; подтвердить сохранность local/private/shared/project memory и RAG. Добавленные тесты пока не запускались.
