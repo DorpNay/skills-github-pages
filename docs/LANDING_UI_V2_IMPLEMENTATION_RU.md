@@ -73,7 +73,7 @@ The original V1 document contains 18 inherited control directions before section
 ## aLandi aServi naming and HTML runtime optimization — 2026-11-01
 
 - Renamed the first-party self-hosted endpoint surface to **aLandi aServi** in UI labels, RU/EN copy, status messages, DOM IDs, CSS classes and related E2E selectors. Cloudflare remains a separate infrastructure/provider name and was not renamed.
-- Extracted the 359 KB inline application runtime into assets/js/app.js, loaded through Jekyll relative_url with defer. This keeps the existing vanilla JS/Jekyll stack and runtime logic intact while reducing index.md from about 469 KB to about 109 KB and allowing browsers/CDNs to cache the runtime independently. No build tool or dependency was added.
+- Extracted the 359 KB inline application runtime into assets/js/app.js, loaded through Jekyll relative_url with defer. This keeps the existing vanilla JS/Jekyll stack and runtime logic intact while reducing index.md from about 469 KB to about 109 KB (about 77% smaller) and allowing browsers/CDNs to cache the runtime independently. No build tool or dependency was added. A V8 parse-only syntax check passed for the extracted script; it was not executed in a browser.
 - Deliberately did not minify maintained source or mechanically merge repeated CSS selectors: the stylesheet is one cascade with intentional later overrides, and blind consolidation risks changing specificity/order. CSS consolidation should be measured and done as bounded selector groups after browser review.
 - No branch or source file was deleted: no ownership/usage proof established an orphan. Existing legacy selectors/storage keys are retained only where migration/compatibility requires them.
 
