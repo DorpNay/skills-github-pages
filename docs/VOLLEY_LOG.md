@@ -234,3 +234,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Refreshed the backup branch to reflect the integrated UI scope (inherited sections 1–7 + 8.1–8.17, single active queue in 8.0).
 - Recorded PR #131 source checkpoint `9aa74853478a6a680cdd36ab0f84c851721405a4`, head `782d5d35691d66cc2bcfb48473329463886b48e8`, and Graphify path-filter update `c8facdac2eebc7d2217b807f1b7e314ae3abf2dd`.
 - Graphify and Quality/Chromium exact-head evidence remain pending; no tests are claimed by this documentation mirror.
+
+
+### Repository hygiene inventory — 2026-11-02
+- Inventory snapshot: 126 branches; 9 open PRs (#124–132); 100 closed PRs inspected. All 19 closed-but-unmerged PR branches reviewed have ahead > 0 and are preserved.
+- Five no-PR branches are confirmed behind-only with no exact-name code/PR references: feat/alandi-helper-model-routing; feat/rag-rrf-engineering-audit-rebased-20261027; fix/provider-model-catalogs-v2; fix/pyodide-setup; fix/theme-persistence-e2e-isolation. They are recorded as deletion candidates in docs/REPOSITORY_HYGIENE_RU.md.
+- future-workstreams/parking-base-20261031 is intentionally reserved and retained. Other no-PR branches with ahead > 0 are retained for separate triage.
+- No branch/file deletion performed: GitHub integration has no branch-delete action; no confirmed unused file was found. SECURITY.md added in both PR branches; main still lacks it until merge. CODEOWNERS deferred pending an independent reviewer; Dependabot config deferred while PR #124 adds uv.lock. Repo security settings are not readable through current integration and remain owner-manual checks.
