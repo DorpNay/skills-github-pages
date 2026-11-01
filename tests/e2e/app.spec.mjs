@@ -343,6 +343,35 @@ test('theme and language are a compact accessible header group', async ({ page }
   await expect(page.locator('#uiLanguage')).toHaveValue('ru');
 });
 
+test('header theme and language controls are separate, equally sized, and accessible', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 720 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const theme = page.locator('#headerThemeToggle');
+  const language = page.locator('#languageSummary');
+  const [themeBox, languageBox] = await Promise.all([theme.boundingBox(), language.boundingBox()]);
+  expect(themeBox).not.toBeNull();
+  expect(languageBox).not.toBeNull();
+  expect(themeBox.width).toBeGreaterThanOrEqual(44);
+  expect(themeBox.height).toBeGreaterThanOrEqual(44);
+  expect(languageBox.width).toBe(themeBox.width);
+  expect(languageBox.height).toBe(themeBox.height);
+  await expect(theme).toHaveAttribute('aria-label', /theme|тему/i);
+  await expect(language).toHaveAttribute('aria-label', /language|язык/i);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+
+  await theme.click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await language.click();
+  await expect(page.locator('#languageMenu')).toHaveAttribute('open', '');
+  await expect(page.locator('#languageMenu [data-action="set-language"]')).toHaveCount(2);
+  await page.locator('#languageMenu [data-language="en"]').click();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(language).toHaveText('EN');
+  await expect(theme).toHaveAttribute('aria-label', 'Switch to dark theme');
+  await theme.click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+});
+
 test('header hierarchy and compact mode controls remain responsive from 320px upward', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const widths = [320, 360, 390, 768, 1024, 1440];
