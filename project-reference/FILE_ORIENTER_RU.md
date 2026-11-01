@@ -2,16 +2,16 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-## Текущая контрольная точка — 2026-10-30
+## Текущая контрольная точка — 2026-11-01
 
-- Текущий main: `fd4f0a105183feb23e0f4e4697446235de9ffe9a` — PR #121 и PR #122 merged.
-- PR #121 merged: `f4d880f9648989f4fe48ddd2284220b3606c3b86`, exact head `e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b`. Exact-head workflow groups passed: Gateway, Quality (Chromium/Jekyll/published-site smoke, Context/Security/Integrity), Freshness, Provenance, Graphify, Dead Code.
-- PR #122 merged: `fd4f0a105183feb23e0f4e4697446235de9ffe9a`, exact head `94d871dbf76a5364ebb3c61d86cc763affa5eaa1`. Gateway, Quality (Chromium/Jekyll/published-site smoke, Context/Security/Integrity), Graphify and Dead Code passed.
-- Очередь для freshness-сравнения (текущий PR исключается): **open PRs (0): ; open issues (1): #111**. Активный PR #123 — reconciliation документации и helper benchmark; exact head `fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222` прошёл все шесть workflow groups, PR готов к merge. После merge очередь PR должна стать нулевой. Issue #111 — единственный owner/live-host gate; не закрывать без фактических VPS, hardware, credentials, ruleset, corpus, voice, sandbox и OAuth evidence.
-- Первый бесплатный лендинг V1 зафиксирован. После PR #121 **не добавлять новые продуктовые возможности и runtime-компоненты**. Разрешены только UX polish, надёжность, безопасность, доступность, производительность, тесты и документация внутри существующего HTML/CSS/JS + Jekyll/GitHub Pages и FastAPI/Ollama стека.
-- Основные источники: `docs/V1_UI_FINALIZATION_RU.md`, `docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`, `docs/LANDING_UX_POLISH_BACKLOG_RU.md`, `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`, `docs/PROJECT_STATE.yaml`.
-- Малые модели: в main есть ручной memory-helper opt-in через операторский `ALANDI_HELPER_MODEL`; general-purpose subagent routing не реализован. 64 роли — логические контракты, не отдельные процессы. Синтетический benchmark не заменяет human-rated и target-host evaluation.
-- Не подтверждено: post-merge Pages deployment на точном merge SHA; native iPhone Safari/VoiceOver; live VPS/Tunnel/Ollama и provider credentials; target-host model RAM/latency/quality; production voice, RAG golden set, OAuth/Drive и CLI sandbox.
+- Текущий main: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; последний функциональный checkpoint — `fd4f0a105183feb23e0f4e4697446235de9ffe9a`. Последний main-коммит только документирует требования V2.0; реализация V2 остаётся вне main.
+- Очередь для freshness-сравнения (текущий PR исключается): **open PRs (8): #124, #125, #126, #127, #128, #129, #130, #131; open issues (1): #111**. Этот snapshot обновляется в draft PR #132, поэтому #132 исключается только из собственного сравнения.
+- PR #131 — реализация Landing V2.0, открыт и не слит; ветка `feat/landing-v1-accessibility-responsive-20261031`. Не сливать, не закрывать, не ретаргетить и не публиковать без явной команды владельца.
+- PR #132 — отдельная документационная копия continuity, draft/open/unmerged; в ней обновляются ориентир, machine-readable state, snapshot и журнал. Это не отметка о выпуске V2.
+- Gateway для PR #131: Actions run #640 прошёл compileall, manifest/INTEL, `pytest gateway/tests`, deploy preflight и six-layer offline evaluation на `6f7fde485b2b13aecc50523b20785e0ac615d2ad`; `gateway/**` не менялся после проверенного коммита. Exact-head Quality/Chromium пока не подтверждён.
+- Ветка PR #131: 199 commits ahead / 4 behind main; GitHub сообщает `mergeable=false`. Четыре main-side коммита затронули только `docs/V1_UI_FINALIZATION_RU.md`; содержимое сверено, но branch sync/rebase/merge не выполнялся.
+- Не проверено вручную: native iPhone Safari/VoiceOver, реальные WCAG contrast ratios, screenshot review, live VPS/Tunnel/Ollama/provider credentials и target-host model quality/RAM/latency.
+- Не объявлять тесты пройденными по одному наличию workflow YAML. Точные статусы брать из GitHub Actions для соответствующего SHA; опубликованный V1 smoke не доказывает публикацию V2.
 
 ## Историческая контрольная точка — 2026-10-28
 
