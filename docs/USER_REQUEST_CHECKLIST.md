@@ -301,4 +301,9 @@
 - [x] Landing and in-app roadmap E2E coverage passed on PR #121 exact head, including published-site browser smoke. Post-merge Pages deployment remains a separate check.
 - [ ] Native iPhone Safari, keyboard, safe-area, screen-reader and touch verification remain manual gates.
 - [ ] Issue #111 remains open for owner-only ruleset, VPS/hardware, live gateway/model, RAG corpus, voice/device and sandbox gates. CI alone cannot close it.
-\n\n### 2026-11-02 — Landing V2 UI continuity\n- Applicable unfinished UI requests inherited from sections 1–7 are executed together with requirements 8.1–8.17 and tracked once in section 8.0.\n- The PR #132 branch is a documentation continuity copy; PR #131 remains the implementation source of truth.\n- Added test source is not a test pass; exact-head browser and manual-device acceptance remain separate gates.\n
+
+
+### 2026-11-02 — Landing V2 UI continuity
+- Applicable unfinished UI requests inherited from sections 1–7 are executed together with requirements 8.1–8.17 and tracked once in section 8.0.
+- The PR #132 branch is a documentation continuity copy; PR #131 remains the implementation source of truth.
+- Added test source is not a test pass; exact-head browser and manual-device acceptance remain separate gates.
