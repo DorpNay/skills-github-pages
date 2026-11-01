@@ -262,3 +262,36 @@
 
 Переносим только: bounded baseline/probe/compare/evidence loop; visual screenshot attachments; preservation of existing links/fields/handlers; isolated worktree and approval concepts. Не переносим новые runtimes, design framework, task scheduler, model checkpoints или anti-analysis obfuscation.
 
+
+## Owner-provided shortlist: 60 repositories for aLandi Landing V2.0 — 2026-11-02
+
+This is a relevance triage against the live PR #131 architecture, not an endorsement or a license/security audit of every upstream. The supplied repositories are research references; no source code, model weights, package, workflow runner or service is imported by this pass.
+
+### Priority decisions
+
+| Group | Relevant references | Decision for PR #131 |
+|---|---|---|
+| Directory UI patterns | `coolchange-ai/toolso-ai-open`, `MkThingsHQ/mkdirs`, `nolly-studio/cult-directory-template`, `AbdulBasit313/nextjs-directory-site-starter`, `ArshdeepGrover/ai-tools-manager` | Visual/IA reference only. The active product is a static Jekyll landing + browser client, not a Next.js directory. Do not introduce React/Next/Supabase or a second catalog runtime. |
+| Multi-model chat UX | `LibreChat`, `LobeChat`, `HuggingFace/chat-ui`, `Open WebUI`, `AnythingLLM` | Study interaction patterns selectively (provider clarity, conversation organization, attachment provenance, responsive panels). Do not copy their server/auth/plugin architecture into the browser client. Provider isolation and existing local-first contracts take precedence. |
+| Workflow / generative UI | `Dify`, `n8n`, `OpenIntelligentUI`, `full-stack-ai-agent-template`, `Chatwoot` | No runtime adoption in the landing PR. They solve workflow orchestration, embedded generative UI or support operations; none is a prerequisite for completing the current UI acceptance contract. |
+| Catalog/data lists | `awesome-llm-apps`, `awesome-llm-services`, `Awesome-AITools`, `awesome-ai-tools`, `every-chatgpt-gui` | Discovery inputs only. Any future catalog needs provenance, deduplication, freshness, moderation and license metadata; do not bulk-import an unreviewed list into production UI. |
+| Inference engines | `vllm`, `sglang`, `llama.cpp`, `KTransformers`, `FastChat` | Outside PR #131. Consider only in a separate target-host benchmark against the existing Ollama path, with exact model, hardware, RAM, throughput, latency, quality and operational-cost evidence. No inference backend is selected here. |
+| Quantization | `AutoAWQ`, `GPTQModel`, `gptq-gguf-toolkit`, `llm-awq`, `llm-compressor`, `ReQAT`, `Awesome-LLM-Quantization` | Research/benchmark only. Quantization is checkpoint-, architecture- and hardware-dependent; no weights or quantization recipe should be chosen from repository popularity alone. |
+| Multi-agent frameworks | `AgentScope`, `AutoGen`, `CrewAI`, `MetaGPT`, `LightAgent`, `EvoAgentX`, `Qwen Code`, `MobileAgent` | No adoption in this UI PR. Existing staged research is not an independent multi-agent runtime. Any later agent execution needs bounded DAGs, explicit tool permissions, budgets, audit traces, cancellation and reproducible evals. |
+| SLM routing / ensembles | `awesome-llm-routing-cascading`, `BentoML`, `plexor-slm-frontdoor-rct`, `awesome-local-llm`, `SLMs-Survey`, `grove`, `Awesome-LLM-Ensemble` | No automatic router or ensemble added. First establish RU/EN/TH evaluation, privacy/provider-isolation policy, routing observability and a measured quality/cost win. Do not let an SLM silently reroute private prompts across providers. |
+| MLOps / long-horizon agents | `HuggingFace Optimum`, `SGLang benchmarks`, `Awesome-Long-Horizon-Agents` | Dev-only reference. Reuse benchmark discipline and plan/execute/verify patterns where measurable; do not add MLOps runtime to GitHub Pages. |
+
+### Implementation order derived from this triage
+
+1. **P0 — correctness and acceptance:** finish inherited UI + mandatory 8.1–8.17; get the writable Pages test server and all four real Chromium shards green on an exact HEAD. Keep native iPhone Safari, VoiceOver and WCAG contrast as independent gates.
+2. **P1 — interaction reliability:** complete the existing modal/history contract (8.18) and operation lifecycle (8.19) using the current UI stack. The new persistent-error acknowledgement slice is partial 8.19, not completion.
+3. **P1 — recovery and organization:** draft recovery with IndexedDB and explicit network retry (8.25), then local title search/pinning/sorting (8.21). Preserve chat/project scopes and never auto-resend.
+4. **P2 — reversible local actions:** bounded Undo (8.20); file registry only after a real scoped source API (8.23); optional adaptive inspector after responsive constraints are measured (8.22).
+5. **Separate backend workstream:** evaluate Qwen/SLM, vLLM/SGLang/llama.cpp, quantization and agent orchestration only on a specified target host and golden RU/EN/TH workload. They do not belong in the static landing UI PR.
+
+### Explicit non-adoption
+
+- No Next.js/React/Supabase migration, no new frontend framework, no new UI package.
+- No Dify/n8n/agent swarm, no extra inference gateway, no model weights, no automatic SLM router and no ensemble.
+- No provider fallback that crosses an isolation boundary, no unreviewed bulk import of AI tool catalogs.
+- Revisit a candidate only when a concrete acceptance gap, measured bottleneck and compatible integration contract are identified. Before importing code, verify the exact upstream revision, license, maintenance/security posture, transitive dependencies, browser support and rollback path.
