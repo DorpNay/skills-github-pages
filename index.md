@@ -165,6 +165,7 @@ permalink: /
       color:color-mix(in srgb,#10212b calc(100% * var(--ui-content-contrast)),#526775);
     }
     .message-actions { display:flex; align-items:center; gap:var(--ui-control-gap); margin-top:4px; }
+    .message-actions button.hidden { display:none!important; }
     .message-actions button {
       display:inline-flex; align-items:center; justify-content:center;
       width:var(--ui-control-touch); min-width:var(--ui-control-touch);
