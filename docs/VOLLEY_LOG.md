@@ -214,3 +214,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Added a Playwright scenario that compares normal/high-contrast computed colors for secondary, disabled, link, error and status text in both dark and light themes, while checking that primary message text remains unchanged.
 - Test commit: `787c9aaf6026559da31daf51d82f884abdc78c1d`; ledger update: `daa31d62893fb71c1147cac2e76d902ed458a3a2`. Browser execution and actual WCAG contrast-ratio audit remain pending; no conformance claim is made.
 - Next: exact-head CI/browser execution when available, then close remaining 8.1–8.11 verification gaps and perform the full acceptance sweep. PR #131 remains open/unmerged; no deployment.
+
+
+### 2026-11-01 — PR #131: requirement 8.1 sidebar swipe acceptance
+- Audited the existing sidebar touch handler: it closes only on a predominantly horizontal left swipe (minimum 72px); vertical movement is intentionally ignored. Closing collapses memory disclosures while preserving project/chat navigation state.
+- Added a mobile-viewport Playwright regression: vertical swipe leaves the sidebar open, horizontal left swipe closes it, and reopening preserves the expanded project list.
+- Test commit: `d388a02445ddc1ebccbaec58fd8515b8d0b9adfa`; implementation ledger update: `59e30ad32d0389f785955feb03ee8516b8368a41`. Test is source-only until Chromium and native touch execution are available.
+- Requirements 8.3 and 8.7 already have source/E2E coverage for Cloud-vs-peer disclosure rules and the truthful unsupported project-source state; no fake source CRUD or duplicate accordion logic added.
+- Next: audit and close the remaining 8.1–8.11 test gaps; prioritize chat restoration/accordion persistence and 8.2 header typography/responsive layout. PR #131 remains open/unmerged; no deployment.
