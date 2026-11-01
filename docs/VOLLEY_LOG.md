@@ -176,3 +176,12 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Project-filter and modal history entries now restore on browser Forward as well as close/restore on Back.
 - Added E2E assertions for project-filter and modal Forward paths. Exact-head browser execution remains pending.
 - PR #131 remains open; no merge/deploy.
+
+
+### 2026-11-01 — PR #131 continuation: requirement 8.12 audit and gateway secret-leak regressions
+- Reconstructed the exact PR #131 branch head before editing; V1/main remains untouched and PR stays open.
+- Completed the 8.12 backend ownership audit: removed server-memory graph HTTP routes and graph-specific env flags in this branch; retained MemoryManager/schema only for Graphify/code-evidence, without deleting SQLite data. Conversation delta sync, RAG, browser-local personal/shared/project memory and the independent local helper remain separate.
+- Tightened the E2E retirement regression so it tests only the removed graph bridge and does not conflate the independent local helper route.
+- Added gateway regressions: /livez, /readyz and /healthz must not expose API/OAuth secrets; invalid bearer tokens are not echoed; upstream error bodies containing synthetic API/OAuth secrets are replaced by the gateway's bounded error response.
+- Test source updated; NOT EXECUTED. Exact-head GitHub workflow-run and combined-status queries returned no entries. No CI/Playwright pass is claimed.
+- Current branch head at this note: pending final commit. PR #131 remains open/unmerged; no deployment.
