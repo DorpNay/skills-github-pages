@@ -155,3 +155,12 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Updated the settings group/card label to `aLandi aServi`; Cloudflare remains unchanged as a separate provider/infrastructure brand.
 - Preserved legacy `ai_alandi_cloud_*` localStorage keys deliberately for existing installations; they are compatibility identifiers, not user-facing product names.
 - No merge/deployment. Verify exact-head Quality/Chromium after the source batch.
+
+
+### Landing UI V2.0 continuation — 2026-11-01
+- Active work remains PR #131 on `feat/landing-v1-accessibility-responsive-20261031`; code/test checkpoint before this documentation update: `901b9c343dbddd2453605b03ec77fd5e893c608c`.
+- aLandi Cloud route naming was replaced with aLandi aServi across the UI, DOM actions, JS handlers, tests and active docs. Legacy `ai_alandi_cloud_*` localStorage keys are intentionally retained as compatibility keys. `aLandi aCloudi` is only a future storage name; Cloudflare remains unchanged.
+- Extracted 48.1 KB app CSS and 10.4 KB landing CSS to cacheable assets; app HTML reduced 109.3→61.3 KB, landing HTML 26.1→15.8 KB. Marked and DOMPurify now load in ordered `defer` before app.js.
+- Prior Quality #1126 (SHA `7cdf35d`) remains the last observed Chromium failure (101 pass/18 fail); corrected fixtures and selectors are committed but exact-head rerun is not available through current tool actions. Latest observed provenance pass predates current head.
+- No branch/file cleanup performed: PR #132 is an active continuity backup and PRs #125–130 include explicit future/hold workstreams. No merge, rebase, force-push or deployment.
+- Next: finish source audit and arrange exact-head Quality/Chromium; inspect current diagnostics before marking 8.1–8.17 complete. Native iOS Safari/VoiceOver and measured WCAG remain manual.
