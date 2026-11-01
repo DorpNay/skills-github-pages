@@ -3,7 +3,7 @@
     'use strict';
 
     const ASERVI_STORAGE = Object.freeze({ baseUrl: 'ai_alandi_aservi_base_url', model: 'ai_alandi_aservi_model', connection: 'ai_alandi_aservi_connection_v1', migration: 'ai_alandi_aservi_storage_migrated_v1' });
-    const LEGACY_ASERVI_STORAGE = Object.freeze({ baseUrl: ASERVI_STORAGE.baseUrl, model: ASERVI_STORAGE.model, connection: ASERVI_STORAGE.connection });
+    const LEGACY_ASERVI_STORAGE = Object.freeze({ baseUrl: 'ai_alandi_cloud_base_url', model: 'ai_alandi_cloud_model', connection: 'ai_alandi_cloud_connection_v1' });
     const STORAGE = {
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
