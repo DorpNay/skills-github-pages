@@ -190,12 +190,30 @@ def test_retired_server_memory_graph_http_api_is_not_exposed():
         assert client.post("/v1/memory/graph/search", json={"query": "private note"}).status_code == 404
 
 
-def test_health_has_no_secret():
-    with client_for() as client:
-        response = client.get("/healthz")
-    assert response.status_code == 200
-    assert response.json() == {"status": "ok", "ollama": "reachable", "auth_configured": True}
-    assert API_KEY not in response.text
+def test_health_probes_never_expose_configured_secrets():
+    oauth_encryption_secret = "oauth-encryption-secret-marker-123"
+    google_client_secret = "google-client-secret-marker-456"
+    config = settings(
+        oauth_encryption_key=oauth_encryption_secret,
+        google_oauth_client_secret=google_client_secret,
+    )
+    with client_for(config) as client:
+        live = client.get("/livez")
+        ready = client.get("/readyz")
+        legacy = client.get("/healthz")
+
+    assert live.status_code == 200
+    assert live.json() == {"status": "ok"}
+    assert ready.status_code == legacy.status_code == 200
+    assert ready.json() == legacy.json() == {
+        "status": "ok", "ollama": "reachable", "auth_configured": True
+    }
+    for response in (live, ready, legacy):
+        assert response.headers["cache-control"] == "no-store"
+        for secret in (API_KEY, oauth_encryption_secret, google_client_secret):
+            assert secret not in response.text
+        assert "api_key" not in response.text.lower()
+        assert "client_secret" not in response.text.lower()
 
 
 def test_livez_is_process_only_and_does_not_probe_ollama():
@@ -405,13 +423,41 @@ def test_short_secret_disables_protected_routes():
         assert client.get("/v1/models").status_code == 503
 
 
-def test_upstream_errors_do_not_leak_raw_body():
-    def handler(request): return httpx.Response(500, json={"debug": "internal path and secrets"})
-    with client_for(handler=handler) as client:
+def test_invalid_bearer_token_is_never_echoed_in_api_error():
+    submitted_secret = "client-submitted-secret-marker-987654321"
+    with client_for() as client:
+        response = client.get(
+            "/v1/models",
+            headers={"Authorization": f"Bearer {submitted_secret}"},
+        )
+
+    assert response.status_code == 401
+    assert response.headers["www-authenticate"] == "Bearer"
+    assert submitted_secret not in response.text
+    assert API_KEY not in response.text
+
+
+def test_upstream_errors_do_not_leak_raw_body_or_configured_secrets():
+    oauth_secret = "google-client-secret-marker-789"
+
+    def handler(request):
+        return httpx.Response(500, json={
+            "debug": "internal path",
+            "api_key": API_KEY,
+            "client_secret": oauth_secret,
+        })
+
+    config = settings(google_oauth_client_secret=oauth_secret)
+    with client_for(config=config, handler=handler) as client:
         response = client.post("/v1/chat/completions", headers={"Authorization": f"Bearer {API_KEY}"},
           json={"model": MODEL, "messages": [{"role": "user", "content": "hi"}]})
+
     assert response.status_code == 502
-    assert "internal path" not in response.text
+    assert response.json() == {
+        "error": {"message": "Local model backend rejected the request.", "type": "upstream_error"}
+    }
+    for secret in (API_KEY, oauth_secret, "internal path"):
+        assert secret not in response.text
 
 
 def test_exact_cache_miss_then_hit_and_stats_require_auth():
