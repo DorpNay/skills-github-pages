@@ -15,6 +15,8 @@ export default defineConfig({
   use: {
     baseURL: (process.env.LIVE_SITE_URL ? process.env.LIVE_SITE_URL.replace(/\/?$/, '/') : 'http://127.0.0.1:4173'),
     browserName: 'chromium',
+    // CI uses the preinstalled stable Google Chrome; local runs use Playwright's default Chromium.
+    channel: process.env.CI ? 'chrome' : undefined,
     headless: true,
     // Keep detailed traces for the first retry only; recording every failed attempt is expensive.
     trace: 'on-first-retry',
