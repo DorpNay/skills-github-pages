@@ -622,3 +622,10 @@ ui_scope_reconciliation_2026_11_02:
   graphify_path_coverage: "PR and main-push filters now include assets/js/**/*.js, assets/css/**/*.css and landing/**/*.html; exact-head graph artifact not yet confirmed"
   quality_chromium: "Exact-head Quality/Chromium not confirmed; source-level assertions are not test passes"
   next: "Continue integrated inherited UI + 8.1-8.17 implementation; run Graphify and exact-head Quality/Chromium after the next bounded source slice"
+
+
+responsible_disclosure_policy:
+  file: "SECURITY.md"
+  status: "Added to PR #131 and mirrored in PR #132; not yet in main"
+  private_reporting: "GitHub private vulnerability reporting availability not verified"
+  security_settings: "Secret scanning, push protection, CodeQL and branch protection require owner-side verification"
