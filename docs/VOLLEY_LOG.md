@@ -298,3 +298,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Source-level cross-check: all literal sentinel `includes(...)` expectations now match the branch `index.md`; all required current UI IDs are present. This does not substitute for executing the workflow.
 - Exact-head rerun remains pending. PR #131 stays open/unmerged; no merge or deployment.
 - Next: rerun Quality Sentinels on the current PR head, inspect Chromium and all sentinels, then proceed to native iPhone/VoiceOver, screenshots and measured WCAG review.
+
+### 2026-11-01 — PR #131: Chromium timeout diagnosis and CI runtime correction
+
+- Inspected Quality run #41287868283 on exact SHA `b6a3db77fb9bbf8375f8b9d9010365a0e9010158`. Jekyll, Security, Static Analysis, Context and Integrity passed. Chromium was cancelled at the configured 15-minute job timeout; Playwright had started 118 tests but did not emit its final report. The progress stream shows failures/timeouts, but the interrupted log does not preserve their names.
+- Root cause of the incomplete run: 118 tests were serialized (`fullyParallel: false`, one CI worker) under a 15-minute job limit.
+- Updated Playwright to run isolated tests fully parallel with three CI workers and both GitHub/list reporters; increased Chromium job timeout to 20 minutes; diagnostics upload now runs after cancellation as well. No app behavior or assertions were weakened.
+- Commits: `6bba3e8ef49102e2b45464fb1b63595afb682a5a` (job timeout), `d0d38d840470e690aebf2c6a322d0518f54dd6a4` (parallel Playwright), `14d9dc9789dfc958d99685d36a7649ada8ce5120` (diagnostics).
+- Exact-head rerun on `14d9dc9789dfc958d99685d36a7649ada8ce5120` is still required; the previous Chromium result is CANCELLED, not PASS. Gateway run #640 remains valid for unchanged gateway source. PR #131 remains open/unmerged; no merge or deployment.
