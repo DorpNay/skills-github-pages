@@ -197,3 +197,10 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Removed 504 bytes of CSS declarations that were overridden by later theme-token rules; effective font, focus, theme surface, settings shadow and backdrop behavior are preserved.
 - CSS brace balance is zero. No browser visual verification is claimed; include this change in the next exact-head Quality/Chromium run.
 
+
+
+### Latest PR #131 source/docs snapshot — 2026-11-02
+- PR #131 HEAD at this checkpoint: 77fdee629c2ef47e35fdd2d39d39070c89de53b6; compare to main: 499 ahead / 4 behind; merge base e78a73b25725bfa63370d9946887cbbacbf51b82.
+- Latest code/source checkpoint: 9679ed4d7974849f3fd02dcf8465384c8c59a9df. The CSS cascade cleanup removed 504 bytes of overridden declarations; metadata and test contracts remain as previously recorded.
+- Exact-head Quality/Chromium workflow lookup returns no runs. Browser behavior is still unverified; do not treat old #1126 output as current.
+- The independent PR #132 backup now carries the implementation ledger, aServi terminology reconciliation and repository-hygiene runbook.
