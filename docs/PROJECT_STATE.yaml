@@ -549,4 +549,4 @@ landing_ui_v2_pr131_2026_10_31:
     merge: "requires explicit owner approval"
     deploy: "requires explicit owner approval"
     main: "V1 baseline remains untouched"
-  next: "Obtain exact-head Quality run on current code/test head 929ebcf20db87eca949c6f5a386c16e75f2856a1 (run workflow on latest branch head 07bc398); inspect Chromium results and diagnostics, then continue the 8.1–8.17 source/test and P1 device/accessibility acceptance. Recheck the unexplained PR dirty/mergeable API state separately. No merge or deployment."
+  next: "Obtain exact-head Quality run on the latest branch head (current code/test head 929ebcf20db87eca949c6f5a386c16e75f2856a1; latest docs checkpoint b24fd47957896db03424a4588235f3e4bd317f74); inspect Chromium results and diagnostics, then continue the 8.1–8.17 source/test and P1 device/accessibility acceptance. Recheck the unexplained PR dirty/mergeable API state separately. No merge or deployment."
