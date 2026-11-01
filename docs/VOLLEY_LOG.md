@@ -536,3 +536,14 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Added Playwright assertions for sequential success → error notifications and urgency semantics. Tests have not been executed in this environment; no pass is claimed.
 - This is a partial presentation/accessibility slice of optional 8.19. Durable operation states/IDs, pending-to-result replacement, persistent errors and inline recovery actions remain open.
 - Source checkpoint: `fed3137bae2355629a976515719f498940ad8601`. No merge, rebase, deployment or cleanup action.
+
+
+### 2026-11-02 — reorientation after project-instructions update
+
+- Re-read live PR #131 metadata and canonical project documents before continuing.
+- PR #131 remains open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`. Latest checked HEAD before this log update: `8ed4ec0e754a0a60950a5df3d33d0d194696a2f5`.
+- Live compare before the documentation refresh: main `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; diverged, 571 ahead / 4 behind; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub reports `mergeable=false`. No synchronization/rebase/merge/deployment.
+- Latest source/test checkpoint is `fed3137bae2355629a976515719f498940ad8601`; accessible toast FIFO queue and sequential success/error Playwright assertions are present. Static source inspection only; browser tests were not executed. Optional 8.19 remains partial.
+- No workflow runs or commit statuses were attached to checked PR HEAD `a061ba5dc29f058e270005d287b43160fce50ee0`. The Quality workflow supports `pull_request` and `workflow_dispatch`, but this environment exposes no workflow-dispatch action and no local repository checkout for running Playwright. No test pass is claimed.
+- Updated `ORIENTER.md` and `docs/PROJECT_STATE.yaml` to correct the source/test checkpoint and verification boundary. Next: obtain exact-head Quality/Chromium; then proceed to native-device/accessibility acceptance. Gateway run #640 remains evidence only for its tested Gateway SHA.
+
