@@ -857,7 +857,9 @@ test('published app boots and core controls are interactive', async ({ page }) =
   page.on('pageerror', error => pageErrors.push(error.message));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('link[rel="stylesheet"][href*="assets/css/app.css"]')).toHaveCount(1);
-  await expect(page).toHaveTitle(/AI Mobile Agent/);
+  await expect(page).toHaveTitle(/aLandi/);
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', 'aLandi — личная AI-среда для чатов, проектов и работы с контекстом.');
+  await expect(page.locator('meta[name="color-scheme"]')).toHaveAttribute('content', 'dark light');
   await expect(page.locator('#chatBox')).toBeVisible();
   await expect(page.locator('#userInput')).toBeEditable();
   await expect(page.locator('#searchModeSummary')).toBeVisible();
