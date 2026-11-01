@@ -45,16 +45,7 @@ test('PDF attachment is extracted only by the configured aLandi gateway before m
   });
 
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) {
-    await page.locator('#thirdPartyProviderSettings > summary').click();
-  }
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('e2e-local-model');
-  await page.locator('#apiKey').fill('d'.repeat(64));
-  await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await configureAlandiCloud(page, 'e2e-local-model', 'd'.repeat(64);
   await chooseSearchMode(page, 'offline');
 
   await page.locator('[data-action="attach-text-file"]').click();
