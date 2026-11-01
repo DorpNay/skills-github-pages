@@ -467,3 +467,12 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - No standard `CODEOWNERS`, `SECURITY.md` or Dependabot config files found; account-level security settings remain unverified.
 - PR #131 exact-head Quality/Chromium not found. Provenance #41336870473 passed on the audit snapshot; Quality #1126 (101 passed / 18 failed) is stale.
 - No branch/file/artifact deletion, settings change, merge, rebase, force-push or deployment. Full per-branch ancestry/reference review and owner-side settings review remain open. See `docs/REPOSITORY_HYGIENE_RU.md`.
+
+
+### 2026-11-02 — PR #131 CSS cascade cleanup
+
+- Removed 504 bytes of CSS rules that were overridden later by the active theme-token layer: legacy body gradient, duplicate body font stack, earlier focus outline, and settings-surface background/border values.
+- Effective system font, focus-visible theme token, theme background, settings shadow and backdrop remain controlled by the later active declarations.
+- CSS brace balance is zero. No Chromium/visual test has run on this source change; exact-head Quality remains pending.
+- Source commit: 9679ed4d7974849f3fd02dcf8465384c8c59a9df.
+
