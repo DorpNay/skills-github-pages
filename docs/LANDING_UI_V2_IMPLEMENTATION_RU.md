@@ -285,3 +285,11 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - Gateway P0 sub-gate is closed by Actions run #640. Browser/Quality exact-head evidence remains unavailable; the workflow definition is not a test result.
 - Separate continuity backup is staged as draft PR #132, changing only `ORIENTER.md`, `docs/PROJECT_STATE.yaml` and `docs/VOLLEY_LOG.md` outside PR #131. It is not merged.
 - Owner rule: no merge, close, retarget, force update or deployment of either PR without explicit owner instruction.
+
+
+### CI separation and current verification — 2026-11-01
+
+- Separate safety PR #132 has completed its own checks on its own documentation-only branch: Quality run #1114 passed all jobs, including Jekyll, Integrity, Security, Context, Ruff/static analysis, and Chromium; browser log reports **98 passed** against the main/V1 tree. Published GitHub Pages smoke also passed (**1 passed**). Freshness #258 passed the 16 deterministic unit tests and exact live queue check (main `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`, 8 open PRs excluding #132, issue #111); Provenance #798 passed.
+- These runs validate main/V1 plus the documentation backup only. They are **not** evidence for Landing V2 code in PR #131 and must not close its browser gate.
+- PR #131's current head `5a5b6636bd5878c597e1d25926b58a43771836ab` has no Actions runs exposed by the current exact-SHA lookup. Gateway run #640 remains applicable to its unchanged `gateway/**` tree.
+- Next bounded step: create a documentation-only PR-head checkpoint to request the normal `pull_request` Quality workflow for PR #131; then inspect the exact run, Chromium test count/log and all required sentinels. No main→feature sync, rebase, merge or deployment is authorized/performed.
