@@ -245,7 +245,7 @@ const suites = {
     }],
     ['markdown rendering has an explicit sanitizer', () => {
       assert.ok(appSource.includes('DOMPurify.sanitize'), 'DOMPurify sanitization is required in the external runtime.');
-      assert.match(appSource, /innerHTML\\s*=\\s*safeMarkdown\\(/, 'Rendered assistant HTML must pass through safeMarkdown.');
+      assert.match(appSource, /innerHTML\s*=\s*safeMarkdown\(/, 'Rendered assistant HTML must pass through safeMarkdown.');
     }]
   ],
   security: [
