@@ -61,6 +61,10 @@ The original V1 document contains 18 inherited control directions before section
 | RU/EN and theme completeness | Dialogs, statuses, errors, tooltips, Roadmap, empty states and both themes. | 8.11, 8.15, 8.17 |
 | Research/skills/agents honesty | Preserve draft and chat settings, test mobile/Escape/no-auto-send; don't label a four-stage single-model pipeline as independent agents. | 8.6, 8.15, 8.16 |
 
+### Runtime source-of-truth
+
+The active Jekyll app shell, markup and CSS are in index.md; browser runtime logic is extracted to assets/js/app.js (refactor commit 9e5cf6465c8be4908ada83f1806bcd82a8907149). Runtime IDs/actions use the aServi naming family (aserviBaseUrl, aserviModel, aserviApiKey, connect-aservi, aserviStatus); E2E must target those actual controls, not legacy cloudBaseUrl/cloudStatus names. Keep HTML/CSS edits in index.md and application logic in assets/js/app.js.
+
 ### Work completed in this cross-cutting pass (not yet browser-verified)
 
 - aServi URL validation now has RU/EN messages, required URL/model/key errors, aria-invalid and aria-describedby linkage; aServi field labels, paste action and connect button are localized. Theme-aware semantic info/warning tokens were added, and the checking state uses the warning token in both themes.
