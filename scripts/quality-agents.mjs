@@ -25,7 +25,7 @@ const suites = {
       matches(/<\/html>\s*$/, 'Document must close its html element.');
     }],
     ['critical UI controls exist', () => {
-      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'apiKeyShell', 'apiKeyStatus', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiLanguage', 'uiMotion', 'aserviSettingsCard', 'aserviStatusDot', 'aserviStatus', 'aserviBaseUrl', 'aserviBaseUrlError', 'aserviModel', 'aserviModelError', 'aserviApiKey', 'aserviApiKeyError',  'clockDigital',  'brandWordmark', 'projectPanel', 'projectSettingsModal', 'currentProjectSelect', 'projectMemoryScopeSelect', 'privateMemoryContextToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'researchStudioModal', 'researchStudioSettingsSummary', 'researchStudioEffort', 'researchStudioSearchMode', 'researchStudioStructured', 'functionPanelModal', 'skillPresetSelect', 'agentModeControl', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
+      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'apiKeyShell', 'apiKeyStatus', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiLanguage', 'uiMotion', 'aserviSettingsCard', 'aserviCardTitle', 'aserviStatusDot', 'aserviStatus', 'aserviBaseUrl', 'aserviBaseUrlError', 'aserviModel', 'aserviModelError', 'aserviApiKey', 'aserviApiKeyError',  'clockDigital',  'brandWordmark', 'projectPanel', 'projectSettingsModal', 'currentProjectSelect', 'projectMemoryScopeSelect', 'privateMemoryContextToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'researchStudioModal', 'researchStudioSettingsSummary', 'researchStudioEffort', 'researchStudioSearchMode', 'researchStudioStructured', 'functionPanelModal', 'skillPresetSelect', 'agentModeControl', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
         matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
       }
     }],
@@ -41,8 +41,10 @@ const suites = {
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
       includes("alandi: { label: 'aLandi Self-hosted Gateway'", 'The aLandi private gateway must be a first-class provider.');
       includes("allowCrossProvider&&selectedProvider!=='alandi'", 'Selecting aLandi must never silently route private prompts to another provider even if global fallback is enabled.');
-      includes('<section id="aserviSettingsCard"', 'aLandi must have a dedicated first-party server card.');
-      includes('<h3 id="aserviCardTitle"', 'The private server card must have its own heading.');
+      includes('<script id="markedRuntime" defer', 'Marked and DOMPurify must load in document order before the deferred app runtime.');
+      includes('<script defer src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js"', 'DOMPurify must load before the deferred app runtime.');
+      includes('<section id="aserviSettingsCard"', 'aLandi aServi must have a dedicated first-party server card.');
+      includes('<h3 id="aserviCardTitle"', 'The aServi server card must have its own heading.');
       includes('<optgroup id="providerExternalGroup" label="Сторонние провайдеры">', 'The external provider picker must contain only third-party providers.');
       const pickerStart = source.indexOf('<select id="providerPreset"');
       const pickerClose = source.indexOf('</select>', pickerStart);
@@ -137,7 +139,7 @@ const suites = {
       includes('function getApiCandidates(requestedModel)', 'Provider failover must discover only configured credentials.');
       includes("if(!key && provider!=='kilo') continue;", 'Only the explicitly selected Kilo Free route may omit an API key.');
       includes('function connectAServi()', 'The aServi status must be verified with a real completion.');
-      includes('id="aserviStatusDot" data-state="disconnected"', 'Cloud connection must begin unconfirmed.');
+      includes('id="aserviStatusDot" data-state="disconnected"', 'aServi connection must begin unconfirmed.');
       includes('if(error.modelUnavailable)', 'Only a model-specific provider failure may trigger same-provider model selection.');
       includes('function applyUiLanguage(language)', 'The main UI must support a persisted language choice.');
       includes('function updateClockFace()', 'The branded local clock must use real local time.');
