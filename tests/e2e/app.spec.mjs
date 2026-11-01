@@ -466,10 +466,10 @@ test('sidebar closes on a horizontal touch swipe without consuming vertical scro
   await expect(page.locator('#projectNavigationList')).toBeVisible();
 });
 
-test('aLandi Cloud is exclusive while provider and additional settings can remain open together', async ({ page }) => {
+test('aLandi aServi is exclusive while provider and additional settings can remain open together', async ({ page }) => {
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   await page.locator('[data-action="toggle-settings"]').click();
-  const cloud=page.locator('#cloudSettingsGroup'),providers=page.locator('#thirdPartyProviderSettings'),additional=page.locator('#additionalSettings');
+  const cloud=page.locator('#aserviSettingsGroup'),providers=page.locator('#thirdPartyProviderSettings'),additional=page.locator('#additionalSettings');
   if (!(await cloud.evaluate(element => element.open))) await cloud.locator(':scope > summary').click();
   await expect(cloud).toHaveAttribute('open','');
   await providers.locator(':scope > summary').click();
@@ -558,7 +558,7 @@ test('high-contrast preference updates every important text state in both themes
     disabled.textContent = 'Contrast disabled fixture';
     document.querySelector('#chatBox').appendChild(disabled);
     document.querySelector('#searchStatus').dataset.state = 'error';
-    document.querySelector('#cloudStatus').dataset.state = 'checking';
+    document.querySelector('#aserviStatus').dataset.state = 'checking';
   });
   const readStates = () => page.evaluate(() => ({
     normal: getComputedStyle(document.querySelector('#chatBox')).color,
@@ -567,7 +567,7 @@ test('high-contrast preference updates every important text state in both themes
     link: getComputedStyle(document.querySelector('#chatBox .assistant-content a')).color,
     error: getComputedStyle(document.querySelector('#chatBox [role="alert"]')).color,
     status: getComputedStyle(document.querySelector('#statusText')).color,
-    cloudWarning: getComputedStyle(document.querySelector('#cloudStatus')).color
+    cloudWarning: getComputedStyle(document.querySelector('#aserviStatus')).color
   }));
   await page.locator('[data-action="toggle-settings"]').click();
   await page.locator('#additionalSettings > summary').click();
@@ -744,10 +744,10 @@ test('language switch localizes provider controls without exposing the internal 
   await page.locator('[data-action="toggle-settings"]').click();
   await expect(page.locator('#providerExternalGroup')).toHaveAttribute('label', 'Third-party providers');
   await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
-  await expect(page.locator('#cloudSettingsGroup')).toBeVisible();
-  await expect(page.locator('#cloudBaseUrl')).toHaveAttribute('aria-label', 'My server URL');
-  await expect(page.locator('#cloudModel')).toHaveAttribute('aria-label', 'Gateway model');
-  await expect(page.locator('#cloudApiKey')).toHaveAttribute('aria-label', 'Server access key');
+  await expect(page.locator('#aserviSettingsGroup')).toBeVisible();
+  await expect(page.locator('#aserviBaseUrl')).toHaveAttribute('aria-label', 'My server URL');
+  await expect(page.locator('#aserviModel')).toHaveAttribute('aria-label', 'Gateway model');
+  await expect(page.locator('#aserviApiKey')).toHaveAttribute('aria-label', 'Server access key');
   await expect(page.locator('[data-action="paste-cloud-key"]')).toHaveAttribute('aria-label', 'Paste access key');
   await expect(page.locator('#systemPromptInput')).toHaveAttribute('placeholder', 'Your shared instructions (optional)');
   await expect(page.locator('#editSystemPrompt')).toHaveAttribute('aria-label', 'Edit system prompt');
@@ -1564,7 +1564,7 @@ test('agent systems skill is routed on demand and its safety contract stays avai
 });
 
 
-test('aLandi cloud status only turns green after a real model response, and core UX controls work', async ({ page }) => {
+test('aLandi aServi status only turns green after a real model response, and core UX controls work', async ({ page }) => {
   const cloudRequests = [];
   await page.route('https://cloud.example.test/healthz', async route => route.fulfill({
     status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' })
@@ -1578,23 +1578,23 @@ test('aLandi cloud status only turns green after a real model response, and core
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#clockDigital')).toHaveText(/^\d{2}:\d{2}$/);
-  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await expect(page.locator('#aserviStatusDot')).toHaveAttribute('data-state', 'disconnected');
   await page.locator('[data-action="toggle-settings"]').click();
   await expect(page.locator('#thirdPartyProviderSettings')).not.toHaveAttribute('open');
-  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
-  await page.locator('#cloudBaseUrl').fill('https://cloud.example.test/v1');
-  await page.locator('#cloudModel').fill('qwen3.5:4b');
-  await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
-  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
-  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
-  await expect(page.locator('#cloudStatus')).toContainText('Подключено');
+  await expect(page.locator('#aserviStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await page.locator('#aserviBaseUrl').fill('https://cloud.example.test/v1');
+  await page.locator('#aserviModel').fill('qwen3.5:4b');
+  await page.locator('#aserviApiKey').fill('e2e-cloud-placeholder-key');
+  await expect(page.locator('#aserviStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await expect(page.locator('#aserviStatusDot')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
+  await expect(page.locator('#aserviStatus')).toContainText('Подключено');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_provider'))).toBe('alandi');
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
-  await page.locator('#userInput').fill('Verify the primary chat uses my aLandi cloud.');
+  await page.locator('#userInput').fill('Verify the primary chat uses my aLandi aServi.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('OK', { timeout: 15000 });
   expect(cloudRequests).toHaveLength(2);
-  expect(cloudRequests[1].messages.at(-1).content).toBe('Verify the primary chat uses my aLandi cloud.');
+  expect(cloudRequests[1].messages.at(-1).content).toBe('Verify the primary chat uses my aLandi aServi.');
   expect(cloudRequests.every(request => request.model === 'qwen3.5:4b')).toBe(true);
   await selectLanguage(page, 'en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
@@ -1623,7 +1623,7 @@ test('Kilo Auto Free is an ordinary provider, loads the no-key catalog, and rout
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await expect(page.locator('#cloudSettingsCard')).not.toContainText('Kilo Auto Free');
+  await expect(page.locator('#aserviSettingsCard')).not.toContainText('Kilo Auto Free');
   await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('kilo');
   await expect(page.locator('#kiloPrivacyWarning')).toHaveCount(0);
@@ -2273,41 +2273,41 @@ test('Cloud URL validation follows the selected language and is announced with i
   await page.addInitScript(() => localStorage.setItem('ai_ui_language_v1', 'en'));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#cloudBaseUrl').fill('http://remote.example.test/v1');
-  await page.locator('#cloudModel').fill('qwen3.5:4b');
-  await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
+  await page.locator('#aserviBaseUrl').fill('http://remote.example.test/v1');
+  await page.locator('#aserviModel').fill('qwen3.5:4b');
+  await page.locator('#aserviApiKey').fill('e2e-cloud-placeholder-key');
   await page.locator('[data-action="connect-alandi-cloud"]').click();
-  await expect(page.locator('#cloudBaseUrlError')).toHaveText('Remote servers must use HTTPS.');
-  await expect(page.locator('#cloudBaseUrl')).toHaveAttribute('aria-invalid', 'true');
-  await expect(page.locator('#cloudBaseUrl')).toHaveAttribute('aria-describedby', 'cloudBaseUrlError');
+  await expect(page.locator('#aserviBaseUrlError')).toHaveText('Remote servers must use HTTPS.');
+  await expect(page.locator('#aserviBaseUrl')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#aserviBaseUrl')).toHaveAttribute('aria-describedby', 'aserviBaseUrlError');
 
   await page.evaluate(() => localStorage.setItem('ai_ui_language_v1', 'ru'));
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
   await page.locator('[data-action="connect-alandi-cloud"]').click();
-  await expect(page.locator('#cloudBaseUrlError')).toHaveText('Укажи URL сервера.');
-  await expect(page.locator('#cloudModelError')).toHaveText('Укажи ID модели.');
-  await expect(page.locator('#cloudApiKeyError')).toHaveText('Укажи ключ доступа.');
-  await page.locator('#cloudBaseUrl').fill('http://remote.example.test/v1');
-  await page.locator('#cloudModel').fill('qwen3.5:4b');
-  await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
+  await expect(page.locator('#aserviBaseUrlError')).toHaveText('Укажи URL сервера.');
+  await expect(page.locator('#aserviModelError')).toHaveText('Укажи ID модели.');
+  await expect(page.locator('#aserviApiKeyError')).toHaveText('Укажи ключ доступа.');
+  await page.locator('#aserviBaseUrl').fill('http://remote.example.test/v1');
+  await page.locator('#aserviModel').fill('qwen3.5:4b');
+  await page.locator('#aserviApiKey').fill('e2e-cloud-placeholder-key');
   await page.locator('[data-action="connect-alandi-cloud"]').click();
-  await expect(page.locator('#cloudBaseUrlError')).toHaveText('Для удалённого сервера нужен HTTPS.');
+  await expect(page.locator('#aserviBaseUrlError')).toHaveText('Для удалённого сервера нужен HTTPS.');
   await expect(page.locator('[data-action="connect-alandi-cloud"]')).toHaveText('Проверить и подключить');
 });
 
-test('aLandi cloud probe rejects HTTP 200 proxy text as proof of a model connection', async ({ page }) => {
+test('aLandi aServi probe rejects HTTP 200 proxy text as proof of a model connection', async ({ page }) => {
   await page.route('https://cloud.example.test/v1/chat/completions', async route => route.fulfill({
     status: 200, contentType: 'text/plain; charset=utf-8',
     body: 'upstream unavailable: invalid route'
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#cloudBaseUrl').fill('https://cloud.example.test/v1');
-  await page.locator('#cloudModel').fill('qwen3.5:4b');
-  await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
-  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected', { timeout: 15000 });
-  await expect(page.locator('#cloudApiKeyError')).toContainText('Не удалось подтвердить соединение');
+  await page.locator('#aserviBaseUrl').fill('https://cloud.example.test/v1');
+  await page.locator('#aserviModel').fill('qwen3.5:4b');
+  await page.locator('#aserviApiKey').fill('e2e-cloud-placeholder-key');
+  await expect(page.locator('#aserviStatusDot')).toHaveAttribute('data-state', 'disconnected', { timeout: 15000 });
+  await expect(page.locator('#aserviApiKeyError')).toContainText('Не удалось подтвердить соединение');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
 });
 
@@ -2335,7 +2335,7 @@ test('voice mode menu closes after selecting voice dialogue and keeps gateway se
 });
 
 
-test('aLandi cloud remains disconnected when the model answers but gateway health check fails', async ({ page }) => {
+test('aLandi aServi remains disconnected when the model answers but gateway health check fails', async ({ page }) => {
   await page.route('https://unhealthy-cloud.example.test/healthz', async route => route.fulfill({
     status: 503, contentType: 'application/json', body: JSON.stringify({ status: 'unavailable' })
   }));
@@ -2345,11 +2345,11 @@ test('aLandi cloud remains disconnected when the model answers but gateway healt
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#cloudBaseUrl').fill('https://unhealthy-cloud.example.test/v1');
-  await page.locator('#cloudModel').fill('qwen3.5:4b');
-  await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
-  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected', { timeout: 15000 });
-  await expect(page.locator('#cloudApiKeyError')).toContainText('Не удалось подтвердить соединение');
+  await page.locator('#aserviBaseUrl').fill('https://unhealthy-cloud.example.test/v1');
+  await page.locator('#aserviModel').fill('qwen3.5:4b');
+  await page.locator('#aserviApiKey').fill('e2e-cloud-placeholder-key');
+  await expect(page.locator('#aserviStatusDot')).toHaveAttribute('data-state', 'disconnected', { timeout: 15000 });
+  await expect(page.locator('#aserviApiKeyError')).toContainText('Не удалось подтвердить соединение');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
 });
 
@@ -2378,10 +2378,10 @@ test('stale Cloud health response cannot reconnect settings changed while it is 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await healthStarted;
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#cloudModel').fill('updated-model');
+  await page.locator('#aserviModel').fill('updated-model');
   releaseHealth();
-  await expect(page.locator('#cloudStatusDot')).not.toHaveAttribute('data-state', 'connected');
-  await expect(page.locator('#cloudModel')).not.toHaveAttribute('data-state', 'connected');
+  await expect(page.locator('#aserviStatusDot')).not.toHaveAttribute('data-state', 'connected');
+  await expect(page.locator('#aserviModel')).not.toHaveAttribute('data-state', 'connected');
 });
 
 test('provider probe cannot mark changed credentials connected after an in-flight response', async ({ page }) => {
@@ -2417,7 +2417,7 @@ test('provider probe cannot mark changed credentials connected after an in-fligh
 });
 
 
-test('aLandi cloud probe cannot overwrite settings changed while its request is in flight', async ({ page }) => {
+test('aLandi aServi probe cannot overwrite settings changed while its request is in flight', async ({ page }) => {
   let beginProbe, releaseProbe;
   const probeStarted = new Promise(resolve => { beginProbe = resolve; });
   const probeGate = new Promise(resolve => { releaseProbe = resolve; });
@@ -2434,15 +2434,15 @@ test('aLandi cloud probe cannot overwrite settings changed while its request is 
   }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#cloudBaseUrl').fill('https://race-cloud.example.test/v1');
-  await page.locator('#cloudModel').fill('race-cloud-model');
-  await page.locator('#cloudApiKey').fill('first-cloud-race-key');
+  await page.locator('#aserviBaseUrl').fill('https://race-cloud.example.test/v1');
+  await page.locator('#aserviModel').fill('race-cloud-model');
+  await page.locator('#aserviApiKey').fill('first-cloud-race-key');
   await probeStarted;
-  await page.locator('#cloudModel').fill('');
+  await page.locator('#aserviModel').fill('');
   releaseProbe();
-  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
-  await expect(page.locator('#cloudModel')).toHaveValue('');
-  await expect(page.locator('#cloudApiKey')).toHaveValue('first-cloud-race-key');
+  await expect(page.locator('#aserviStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await expect(page.locator('#aserviModel')).toHaveValue('');
+  await expect(page.locator('#aserviApiKey')).toHaveValue('first-cloud-race-key');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
 });
 
@@ -2450,14 +2450,14 @@ test('aLandi cloud probe cannot overwrite settings changed while its request is 
 test('settings keep Cloud, third-party providers and additional options in exclusive groups', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  const cloud = page.locator('#cloudSettingsGroup');
+  const cloud = page.locator('#aserviSettingsGroup');
   const providers = page.locator('#thirdPartyProviderSettings');
   const additional = page.locator('#additionalSettings');
   await expect(cloud).toHaveAttribute('open', '');
   await expect(providers).not.toHaveAttribute('open');
   await expect(additional).not.toHaveAttribute('open');
   await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
-  await expect(page.locator('#cloudSettingsCard')).not.toContainText('Kilo');
+  await expect(page.locator('#aserviSettingsCard')).not.toContainText('Kilo');
   await providers.locator(':scope > summary').click();
   await expect(providers).toHaveAttribute('open', '');
   await expect(cloud).not.toHaveAttribute('open');
