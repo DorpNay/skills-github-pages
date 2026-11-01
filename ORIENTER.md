@@ -219,10 +219,10 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 
 - Owner scope is the integrated UI queue: applicable unfinished requirements from sections 1–7 plus 8.1–8.17, tracked once in section 8.0. Old V1 checkboxes are historical; completed/obsolete items must not be reopened.
 - Canonical requirements: `docs/V1_UI_FINALIZATION_RU.md`; concise mirror: `docs/LANDING_UX_POLISH_BACKLOG_RU.md`; technical evidence: `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
-- Latest UI source checkpoint: `9aa74853478a6a680cdd36ab0f84c851721405a4`; latest PR #131 head after Graphify path-filter update: `c8facdac2eebc7d2217b807f1b7e314ae3abf2dd`.
+- Latest UI source checkpoint and PR #131 head: `fed3137bae2355629a976515719f498940ad8601` (accessible notification queue slice).
 - Graphify Code-Only Pilot now watches extracted app JS/CSS and landing HTML. Its run/artifact is not yet confirmed; do not use stale graph metrics as current architecture evidence.
 - PR #131 remains open/unmerged and reports dirty/diverged against main. Do not rebase or merge until the four base-side commits and conflicts are inspected. No deployment.
-- Next: continue a bounded cross-cutting UI source pass, update all continuity documents in PR #131 and the PR #132 backup, then obtain exact-head Quality/Chromium and Graphify evidence.
+- Next: execute focused Playwright and exact-head Quality/Chromium for the notification slice; continue inherited UI + 8.1–8.17 acceptance, then implement durable operation states/IDs. PR #131 only; no PR #132 edits.
 
 
 ### Repository hygiene inventory — 2026-11-02
@@ -230,3 +230,10 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - Five no-PR branches are confirmed behind-only with no exact-name code/PR references: feat/alandi-helper-model-routing; feat/rag-rrf-engineering-audit-rebased-20261027; fix/provider-model-catalogs-v2; fix/pyodide-setup; fix/theme-persistence-e2e-isolation. They are recorded as deletion candidates in docs/REPOSITORY_HYGIENE_RU.md.
 - future-workstreams/parking-base-20261031 is intentionally reserved and retained. Other no-PR branches with ahead > 0 are retained for separate triage.
 - No branch/file deletion performed: GitHub integration has no branch-delete action; no confirmed unused file was found. SECURITY.md added in both PR branches; main still lacks it until merge. CODEOWNERS deferred pending an independent reviewer; Dependabot config deferred while PR #124 adds uv.lock. Repo security settings are not readable through current integration and remain owner-manual checks.
+
+
+### Notification queue implementation — 2026-11-02
+- PR #131 HEAD: `fed3137bae2355629a976515719f498940ad8601`.
+- Extended the existing toast with FIFO queueing, duplicate suppression, urgency-based durations, pause on hover/focus/hidden tab, and status/alert live-region semantics. Added Playwright assertions for sequential success/error notifications.
+- This is a partial 8.19 presentation/accessibility slice; durable operation state/IDs, pending-to-result updates, persistent errors and inline recovery actions remain unimplemented.
+- Exact-head workflow/status lookup returned no PR workflow runs or commit statuses. Browser tests were not executed; no pass is claimed.
