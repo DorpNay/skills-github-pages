@@ -2423,7 +2423,7 @@
       setAServiFieldError('aserviBaseUrl');setAServiFieldError('aserviModel');setAServiFieldError('aserviApiKey');
       isTestingProviderConnection=true;
       const button=document.querySelector('[data-action="connect-aservi"]');
-      if(button){button.disabled=true;button.textContent='Проверяю…';}
+      if(button){button.disabled=true;button.textContent=aserviText('checkingButton');}
       setAServiStatus('checking');
       const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
       try{
@@ -2448,7 +2448,7 @@
         const fingerprint=await providerKeyFingerprint(key);
         if(!fingerprint)throw new Error(aserviText('fingerprintFailed'));
         if(!aserviSettingsStillCurrent()){
-          setAServiStatus('disconnected','Настройки изменились во время проверки. Результат не сохранён.');
+          setAServiStatus('disconnected',aserviText('settingsChanged'));
           return;
         }
         safeSet('ai_alandi_cloud_base_url',baseUrl);
