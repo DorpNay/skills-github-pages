@@ -36,7 +36,7 @@ flowchart TD
 
 | Контур | Точки входа | Что важно |
 |---|---|---|
-| Клиент | `index.md` | Большой статический HTML/JS; история и настройки в браузере. Browser API keys не являются server-side vault. |
+| Клиент | `index.md`, `assets/js/app.js`, `assets/css/app.css` | Jekyll shell + отдельный cacheable browser runtime/styles; история и настройки в браузере. Browser API keys не являются server-side vault. |
 | Gateway | `gateway/app.py`, `gateway/README_RU.md` | FastAPI: health/capabilities/models/chat, admin, memory, RAG, search, documents, audio. VPS не подтверждён live. |
 | Routing | `gateway/routing.py` | Детерминированная allowlist-политика; общий helper-model cascade не считать включённым. |
 | Internal Graphify graph | `gateway/memory/manager.py`, `scope.py`, `conflict.py`, `temporal.py` | Scoped SQLite graph/provenance retained for Graphify/code-evidence workflows only; not user memory and not exposed through gateway HTTP. |
@@ -47,7 +47,7 @@ flowchart TD
 | SSRF | `gateway/security/ssrf_protection.py` | Helper destination validation; важно корректно вызывать после DNS resolution и перепроверять redirect chain. |
 | Documents | `gateway/app.py`, `gateway/tests/test_document_extraction.py` | Ограниченное извлечение; не обещать универсальную поддержку форматов. |
 | Voice | `gateway/voice/`, `gateway/tests/test_audio_*.py`, `tests/e2e/audio-transcription.spec.mjs` | ASR/TTS adapters и UI есть в коде, но нужны бинарники/модели/flags; качество и latency на целевом устройстве не измерены. |
-| Research UI | `index.md`, `tests/e2e/research-*.spec.mjs` | Глубокое исследование и вложенное окно Research Studio; внешний поиск зависит от CORS, лимитов и настроенного адаптера. |
+| Research UI | `assets/js/app.js`, `index.md`, `tests/e2e/research-*.spec.mjs` | Глубокое исследование и вложенное окно Research Studio; внешний поиск зависит от CORS, лимитов и настроенного адаптера. |
 | Quality | `.github/workflows/`, `scripts/check_project_metadata.py`, `scripts/check_license_manifest.py` | Проверки относятся к точному SHA; зелёный CI не подтверждает runtime на VPS. |
 
 ## 3. Маршруты gateway, проверенные в `gateway/app.py`
@@ -115,3 +115,22 @@ flowchart TD
 
 ## Main synchronization — 2026-10-30
 PR #121 merged at f4d880f9648989f4fe48ddd2284220b3606c3b86 after exact-head Gateway/Quality/Chromium/Jekyll/Freshness/Provenance/Graphify/Dead Code passed. Audio subprocess cancellation cleanup is CI-verified on that PR head. PR #122 merged at fd4f0a105183feb23e0f4e4697446235de9ffe9a with /livez and /readyz; /healthz remains the readiness alias. Post-merge Pages deployment and live VPS/Ollama remain unverified.
+
+
+## 8. PR #131 UI source layout — 2026-11-02
+
+The browser client has been split into cacheable static assets without introducing a frontend build system:
+
+| Surface | Source of truth | Responsibility |
+|---|---|---|
+| App document/shell | `index.md` | Jekyll front matter, document metadata, app shell, runtime script/style references and small inline bootstrap only. |
+| App runtime | `assets/js/app.js` | Browser application behavior, state, interactions, provider routing and UI event handlers. |
+| App styles | `assets/css/app.css` | Shared app layout, controls, modal, theme and responsive styling. |
+| Public landing | `landing/index.html` | Separate `/landing/` information page and semantic content. |
+| Landing styles | `assets/css/landing.css` | Landing-only responsive and visual styles. |
+
+This map is a source-navigation aid, not a generated call graph or proof of browser behavior. Preserve the static HTML/CSS/JavaScript + Jekyll/GitHub Pages architecture; do not add a frontend framework or build step without a measured reason.
+
+### Graphify coverage correction
+
+The code-only Graphify pilot previously watched `index.md` and backend/test paths but omitted the newly externalized `assets/js`, `assets/css` and `landing` source. PR #131 now adds `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html` to both pull-request and main-push path filters. The next exact-head run must confirm that `assets/js/app.js` and the relevant CSS files appear in the graph manifest/coverage report. Until that artifact exists, do not claim refreshed node/edge metrics.
