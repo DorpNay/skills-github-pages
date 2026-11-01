@@ -491,3 +491,11 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - Graphify has not yet been confirmed on this new head; inspect the run and artifact before recording graph metrics or architecture findings.
 - Exact-head Quality/Chromium is still pending. No browser pass, merge or deployment is claimed.
 - The next implementation pass must remain cross-cutting: sidebar/chat restoration, responsive header/composer, provider and settings state, modal/browser history/focus, message actions, explicit project handoff, touch behavior, semantic status/reduced motion, readable theme states, and truthful Research/Agents/Skills/Connectors surfaces.
+
+
+### Windows Forced Colors accessibility — 2026-11-02
+
+- Added a forced-colors media override: keyboard focus uses the system Highlight color, interactive controls use ButtonText borders, invalid controls use Mark, and status dots retain a CanvasText outline.
+- Added a Playwright E2E contract using page.emulateMedia({ forcedColors: 'active' }) to verify the media mode and a visible 2px keyboard focus outline.
+- The API is supported by the project's pinned Playwright 1.56.1 (forcedColors emulation has been available since Playwright 1.15). This test has been added but not executed yet.
+- This complements the app's existing user-selectable high-contrast text preference; it does not claim native Windows assistive-technology acceptance.
