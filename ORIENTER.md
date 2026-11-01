@@ -132,3 +132,4 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 
 ### aServi storage compatibility note — 2026-11-02
 - The latest source adds an inline comment explaining that ai_alandi_cloud_* keys remain solely as persisted-setting compatibility identifiers. Do not rename them without a migration plan.
+\n\n### 2026-11-02 — PR #132 continuity mirror\n- The UI scope is integrated: applicable unfinished requirements from sections 1–7 plus 8.1–8.17, tracked once in section 8.0.\n- Latest PR #131 source checkpoint: `9aa74853478a6a680cdd36ab0f84c851721405a4`; latest PR #131 head: `782d5d35691d66cc2bcfb48473329463886b48e8`.\n- Graphify path filters in PR #131 now include extracted app JS/CSS and landing HTML; exact-head artifact not yet confirmed.\n- PR #132 remains a documentation-only backup and must not be treated as code/test evidence.\n
