@@ -583,3 +583,21 @@ landing_v2_aservi:
   source_checkpoint: "38f2061006342b6c1841e3ceed700895624977a6 (latest UI source change; latest related E2E source checkpoint c87bc1c49a900c2249c44a5c5e697f2b0267bd84)."
   documentation_checkpoint: "b8bb8c907ce001b684564d9842a214ee16bf810b (latest V1 UI finalization policy update); research settings architecture checkpoint 34e728d5d1c4b3a1589a779b5c53626344f18682."
   future_storage_name: "aLandi aCloudi reserved for a separate information-storage product; not implemented."
+
+
+github_repository_hygiene_2026_11_02:
+  main_sha: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
+  pr131_head_at_audit: "5b9aa7abcc70fc1fa6f3c0fba402e025cb44c772"
+  branch_refs: 126
+  open_prs: [124, 125, 126, 127, 128, 129, 130, 131, 132]
+  branches_not_open_pr_heads: 117
+  delete_branch_on_merge: false
+  repository_rulesets: 0
+  classic_main_protection: "unknown; integration returned 403"
+  codeowners_security_policy_dependabot_files: "not found in standard paths"
+  account_security_settings: "not verified"
+  exact_head_provenance: "run 41336870473 passed on 5b9aa7a; not current after later documentation commits"
+  exact_head_quality_chromium: "not found"
+  prior_quality_1126: "stale SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c; 101 passed / 18 failed"
+  cleanup_performed: false
+  next: "Classify 117 branch refs by PR/issue, ancestry, unique commits and references; owner verifies branch protection/security settings. No deletion or history rewrite without evidence and explicit approval."
