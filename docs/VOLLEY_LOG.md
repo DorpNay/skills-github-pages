@@ -417,7 +417,7 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Current code/test head: 4bd40770fd3446e5280e719644394882c9148dae. No Chromium/browser run is claimed.
 
 
-| V-2026-11-01-ASERVI-HTML-CSS-001 | 2026-11-01 | Rename primary server route to aLandi aServi; retain legacy storage keys; externalize app/landing CSS; order renderer/sanitizer scripts with defer; align E2E and Quality assertions; document Chromium mobile edge cases | PR #131 code/test checkpoint `d65102ed5a9ba3c30586d8a52efbd5603a009e23` (branch head before state reconciliation `5bfc48ada9ccecf5df2beb160bae7042d2481ac6`); app.js syntax parse passed, extracted CSS brace counts balanced; exact-head Quality/Chromium pending | Do not migrate/delete legacy localStorage keys without explicit migration; Cloudflare is not renamed; no merge/deploy |
+| V-2026-11-01-ASERVI-HTML-CSS-001 | 2026-11-01 | Rename primary server route to aLandi aServi; retain legacy storage keys; externalize app/landing CSS; order renderer/sanitizer scripts with defer; align E2E and Quality assertions; document Chromium mobile edge cases | PR #131 code/test checkpoint `6dcd78485eaf6542190265b9a3a3d30491677dd4` (stable aServi storage contract and provider-separation E2E); branch head before documentation refresh `75c029080a889d659cb2e3da8dd6ce6bbe49b61c`; app.js + 11 E2E modules syntax-parse, CSS brace counts balanced; exact-head Quality/Chromium pending | Do not migrate/delete legacy localStorage keys without explicit migration; Cloudflare is not renamed; no merge/deploy |
 
 
 ### 2026-11-01 — PR #131: modal focus containment hardening (8.6 / 8.9)
