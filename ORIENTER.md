@@ -209,3 +209,13 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 ### aServi compatibility guard — 2026-11-02
 - The source now documents why ASERVI_STORAGE intentionally retains ai_alandi_cloud_* keys. They are persistence contracts, not UI naming; do not rename them without a migration plan.
 
+
+
+### UI scope and Graphify continuation — 2026-11-02
+
+- Owner scope is the integrated UI queue: applicable unfinished requirements from sections 1–7 plus 8.1–8.17, tracked once in section 8.0. Old V1 checkboxes are historical; completed/obsolete items must not be reopened.
+- Canonical requirements: `docs/V1_UI_FINALIZATION_RU.md`; concise mirror: `docs/LANDING_UX_POLISH_BACKLOG_RU.md`; technical evidence: `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
+- Latest UI source checkpoint: `9aa74853478a6a680cdd36ab0f84c851721405a4`; latest PR #131 head after Graphify path-filter update: `c8facdac2eebc7d2217b807f1b7e314ae3abf2dd`.
+- Graphify Code-Only Pilot now watches extracted app JS/CSS and landing HTML. Its run/artifact is not yet confirmed; do not use stale graph metrics as current architecture evidence.
+- PR #131 remains open/unmerged and reports dirty/diverged against main. Do not rebase or merge until the four base-side commits and conflicts are inspected. No deployment.
+- Next: continue a bounded cross-cutting UI source pass, update all continuity documents in PR #131 and the PR #132 backup, then obtain exact-head Quality/Chromium and Graphify evidence.
