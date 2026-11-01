@@ -577,6 +577,22 @@ test('text readability preferences persist and apply in both themes', async ({ p
   await expect(page.locator('#uiTextScaleValue')).toHaveText('100%');
 });
 
+test('forced-colors mode preserves visible keyboard focus and control borders', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.emulateMedia({ forcedColors: 'active' });
+  await expect.poll(() => page.evaluate(() => matchMedia('(forced-colors: active)').matches)).toBe(true);
+  await page.keyboard.press('Tab');
+  const focused = page.locator(':focus-visible').first();
+  await expect(focused).toBeVisible();
+  const focusStyle = await focused.evaluate(element => {
+    const style = getComputedStyle(element);
+    return { outlineStyle: style.outlineStyle, outlineWidth: parseFloat(style.outlineWidth), outlineColor: style.outlineColor };
+  });
+  expect(focusStyle.outlineStyle).toBe('solid');
+  expect(focusStyle.outlineWidth).toBeGreaterThanOrEqual(2);
+  expect(focusStyle.outlineColor).not.toBe('transparent');
+});
+
 test('high-contrast preference updates every important text state in both themes', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
