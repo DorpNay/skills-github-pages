@@ -407,3 +407,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Localized the in-flight aServi connect button and stale-settings status message in assets/js/app.js. Existing RU/EN field errors, stale health guard, prompt edit labels and mobile viewport scroll preservation were confirmed in the active runtime source.
 - Correction to earlier syntax note: index.md has no inline application script, so the meaningful JavaScript parse target is assets/js/app.js. Re-parsed assets/js/app.js, all 11 E2E specs and playwright.config.mjs successfully. All 11 E2E files remain free of force:true, waitForTimeout and networkidle.
 - Latest code/test head: 4bd40770fd3446e5280e719644394882c9148dae. No Chromium run yet.
+
+
+### 2026-11-01 — PR #131: active runtime validation and localized connection state
+
+- Confirmed source architecture from the current branch: index.md is the shell/CSS and assets/js/app.js is the loaded runtime. The active controls are aServi-named; tests correctly use aserviBaseUrl/aserviModel/aserviApiKey/connect-aservi/aserviStatus.
+- Updated active runtime code so the aServi connection button uses the selected language while checking and after completion; stale-settings status text is localized in both stale branches.
+- Parsed the actual assets/js/app.js and all 11 E2E modules plus playwright.config.mjs after the final changes; all syntax checks passed. No forced clicks, fixed sleeps or networkidle waits in any of the 11 E2E files.
+- Current code/test head: 4bd40770fd3446e5280e719644394882c9148dae. No Chromium/browser run is claimed.
