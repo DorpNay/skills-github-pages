@@ -4,14 +4,16 @@
 
 ## Текущая контрольная точка — 2026-11-01
 
-- Текущий main: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; последний функциональный checkpoint — `fd4f0a105183feb23e0f4e4697446235de9ffe9a`. Последний main-коммит только документирует требования V2.0; реализация V2 остаётся вне main.
-- Очередь для freshness-сравнения (текущий PR исключается): **open PRs (8): #124, #125, #126, #127, #128, #129, #130, #131; open issues (1): #111**. Этот snapshot обновляется в draft PR #132, поэтому #132 исключается только из собственного сравнения.
-- PR #131 — реализация Landing V2.0, открыт и не слит; ветка `feat/landing-v1-accessibility-responsive-20261031`. Не сливать, не закрывать, не ретаргетить и не публиковать без явной команды владельца.
-- PR #132 — отдельная документационная копия continuity, draft/open/unmerged; в ней обновляются ориентир, machine-readable state, snapshot и журнал. Это не отметка о выпуске V2.
-- Gateway для PR #131: Actions run #640 прошёл compileall, manifest/INTEL, `pytest gateway/tests`, deploy preflight и six-layer offline evaluation на `6f7fde485b2b13aecc50523b20785e0ac615d2ad`; `gateway/**` не менялся после проверенного коммита. Exact-head Quality/Chromium пока не подтверждён.
-- Ветка PR #131: 199 commits ahead / 4 behind main; GitHub сообщает `mergeable=false`. Четыре main-side коммита затронули только `docs/V1_UI_FINALIZATION_RU.md`; содержимое сверено, но branch sync/rebase/merge не выполнялся.
+- Текущий main: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; последний функциональный checkpoint — `fd4f0a105183feb23e0f4e4697446235de9ffe9a`. Последний main-коммит документирует требования V2.0; V2 implementation не входит в main.
+- Очередь для Freshness (проверяемый PR исключается): **open PRs (8): #124, #125, #126, #127, #128, #129, #130, #131; open issues (1): #111**. Для PR #132 из очереди исключается только #132.
+- **PR #131 — Landing V2.0:** `feat/landing-v1-accessibility-responsive-20261031`, head `d822cb623b2a72642921654a04e6c9d988091834`, open/unmerged. Требования: `docs/V1_UI_FINALIZATION_RU.md` §§8.1–8.17; общий backlog: §8.0; статусы/доказательства: `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
+- **P0 Gateway sub-gate:** Actions run #640 passed compileall, manifest/INTEL, `pytest gateway/tests`, deploy preflight and six-layer offline evaluation on `6f7fde485b2b13aecc50523b20785e0ac615d2ad`; `gateway/**` has not changed since that tested commit.
+- **Backup CI only (PR #132, main/V1 tree):** Quality #1114 passed all jobs; Chromium log: 98 passed; published-site smoke: 1 passed. Freshness #258 passed 16 deterministic tests and exact live queue check; Provenance #798 passed. This is not PR #131 V2 browser evidence.
+- **P0 browser gate for #131 remains open:** no exact-head Quality/Chromium run is currently visible for latest head. A docs-only checkpoint was pushed to request normal PR CI; check Actions again before claiming a pass.
+- Live compare: #131 is **203 ahead / 4 behind main**, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`, GitHub `mergeable=false`. Four main-side commits touch only `docs/V1_UI_FINALIZATION_RU.md`; no branch synchronization/rebase/merge has been performed.
+- **Active PR map:** #131 Landing V2 (implementation, owner-controlled); #132 continuity backup (docs-only draft); #130 Deep Research, #129 Voice, #128 Agent Workforce, #125 Agent Studio (research/HOLD on `future-workstreams/parking-base-20261031`); #127 master registry; #126 dependency audit (draft); #124 Python/dependency lock. Do not merge future-workstream holding branches wholesale into main.
 - Не проверено вручную: native iPhone Safari/VoiceOver, реальные WCAG contrast ratios, screenshot review, live VPS/Tunnel/Ollama/provider credentials и target-host model quality/RAM/latency.
-- Не объявлять тесты пройденными по одному наличию workflow YAML. Точные статусы брать из GitHub Actions для соответствующего SHA; опубликованный V1 smoke не доказывает публикацию V2.
+- Owner gate: не merge/close/retarget/force-update/sync/deploy PR #131 или #132 без явной команды владельца.
 
 ## Историческая контрольная точка — 2026-10-28
 
