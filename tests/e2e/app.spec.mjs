@@ -672,7 +672,7 @@ test('high-contrast preference updates every important text state in both themes
   const readStates = () => page.evaluate(() => ({
     normal: getComputedStyle(document.querySelector('#chatBox')).color,
     secondary: getComputedStyle(document.querySelector('#memoryStatusLine')).color,
-    disabled: getComputedStyle(document.querySelector('#contrastDisabledFixture')).getPropertyValue('-webkit-text-fill-color') || getComputedStyle(document.querySelector('#contrastDisabledFixture')).color,
+    disabled: (() => { const style=getComputedStyle(document.querySelector('#contrastDisabledFixture')); return style.webkitTextFillColor || style.getPropertyValue('-webkit-text-fill-color') || style.color; })(),
     link: getComputedStyle(document.querySelector('#chatBox .assistant-content a')).color,
     error: getComputedStyle(document.querySelector('#chatBox [role="alert"]')).color,
     status: getComputedStyle(document.querySelector('#searchStatus')).color,
