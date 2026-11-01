@@ -399,3 +399,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Preserved legacy localStorage keys `ai_alandi_cloud_*` to avoid breaking configured installations. These are internal compatibility keys, not visible naming.
 - `aLandi aCloudi` is reserved for a possible future information-storage product; no storage feature is implied or created.
 - Chromium/Quality verification of the new exact head is pending.
+
+
+### 2026-11-01 — PR #131: runtime source-of-truth audit
+
+- Confirmed the active source split: index.md contains the Jekyll app shell/markup/CSS and loads assets/js/app.js; runtime logic is in assets/js/app.js after refactor commit 9e5cf6465c8be4908ada83f1806bcd82a8907149. Actual server controls use aserviBaseUrl/aserviModel/aserviApiKey/connect-aservi/aserviStatus; legacy cloudBaseUrl selectors must not be introduced.
+- Localized the in-flight aServi connect button and stale-settings status message in assets/js/app.js. Existing RU/EN field errors, stale health guard, prompt edit labels and mobile viewport scroll preservation were confirmed in the active runtime source.
+- Correction to earlier syntax note: index.md has no inline application script, so the meaningful JavaScript parse target is assets/js/app.js. Re-parsed assets/js/app.js, all 11 E2E specs and playwright.config.mjs successfully. All 11 E2E files remain free of force:true, waitForTimeout and networkidle.
+- Latest code/test head: 4bd40770fd3446e5280e719644394882c9148dae. No Chromium run yet.
