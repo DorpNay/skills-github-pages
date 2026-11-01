@@ -473,3 +473,10 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - Kept the effective system UI font stack, Tiffany focus-visible tokens, theme-driven surface colors, settings shadow and backdrop blur unchanged.
 - Static CSS brace balance remains zero. This is a cascade/source cleanup; no browser visual regression run has been executed yet.
 
+
+
+### aServi persistence compatibility note — 2026-11-02
+
+- Added an inline source comment above ASERVI_STORAGE explaining that the ai_alandi_cloud_* localStorage names are intentionally retained persistence identifiers, not current product/UI labels.
+- This prevents a future cleanup from silently renaming keys and disconnecting existing saved server settings. No migration or storage mutation was performed.
+
