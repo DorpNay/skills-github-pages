@@ -398,16 +398,41 @@ test('text readability preferences persist and apply in both themes', async ({ p
   await expect(page.locator('#uiTextScaleValue')).toHaveText('100%');
 });
 
-test('interactive controls avoid selection while message content remains selectable', async ({ page }) => {
+test('interactive controls avoid selection while editable fields and message text remain selectable', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  const values = await page.evaluate(() => ({
-    button: getComputedStyle(document.querySelector('#sendBtn')).userSelect,
-    touch: getComputedStyle(document.querySelector('#sendBtn')).touchAction,
-    message: getComputedStyle(document.querySelector('#chatBox')).userSelect
-  }));
-  expect(values.button).toBe('none');
-  expect(values.touch).toBe('manipulation');
-  expect(values.message).toBe('text');
+  const values = await page.evaluate(() => {
+    const message = document.createElement('div');
+    message.className = 'assistant-content';
+    message.textContent = 'Selectable assistant message fixture';
+    document.querySelector('#chatBox').appendChild(message);
+    const viewer = document.createElement('div');
+    viewer.className = 'message-viewer-content';
+    viewer.textContent = 'Selectable expanded message fixture';
+    document.body.appendChild(viewer);
+    const style = selector => {
+      const element = document.querySelector(selector);
+      const computed = getComputedStyle(element);
+      return { userSelect: computed.userSelect, webkitUserSelect: computed.webkitUserSelect, touchAction: computed.touchAction };
+    };
+    return {
+      button: style('#sendBtn'),
+      disclosure: style('#projectNavToggle'),
+      input: style('#userInput'),
+      message: style('#chatBox .assistant-content'),
+      viewer: style('.message-viewer-content')
+    };
+  });
+  expect(values.button.userSelect).toBe('none');
+  expect(values.button.webkitUserSelect).toBe('none');
+  expect(values.button.touchAction).toBe('manipulation');
+  expect(values.disclosure.userSelect).toBe('none');
+  expect(values.disclosure.touchAction).toBe('manipulation');
+  expect(values.input.userSelect).toBe('text');
+  expect(values.input.webkitUserSelect).toBe('text');
+  expect(values.message.userSelect).toBe('text');
+  expect(values.message.webkitUserSelect).toBe('text');
+  expect(values.viewer.userSelect).toBe('text');
+  expect(values.viewer.webkitUserSelect).toBe('text');
 });
 
 test('composer position persists and aLandi is hidden from third-party provider selection', async ({ page }) => {
