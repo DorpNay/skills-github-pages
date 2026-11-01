@@ -515,10 +515,10 @@ landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   latest_code_test_head: "9aa74853478a6a680cdd36ab0f84c851721405a4"
-  branch_comparison: "499 ahead / 4 behind main; merge base e78a73b25725bfa63370d9946887cbbacbf51b82; four main-side commits overlap the shared UI checklist only."
+  branch_comparison: "524 ahead / 4 behind main; merge base e78a73b25725bfa63370d9946887cbbacbf51b82; four main-side commits overlap the shared UI checklist only."
   repository_hygiene_runbook: "docs/REPOSITORY_HYGIENE_RU.md; prepared from official GitHub repository/security/branch-protection/CODEOWNERS guidance; actual branch/file/settings cleanup is deferred to the next major-slice boundary."
   repository_hygiene_snapshot: "2026-11-02: 126 branches; 9 open PRs; 100 closed PRs inspected; 19 closed-unmerged PR branches all contain unique commits; five behind-only no-PR branch candidates recorded; no deletions due missing branch-delete action; no unused files proven; security settings remain owner-manual."
-  latest_documented_head: "f35e766eb72ff650852f508460f6e339230e123a (latest PR131 docs checkpoint before this state refresh)"
+  latest_documented_head: "95a895bf74d19cf3ccba41e0d608095dc8495c53 (latest PR131 docs checkpoint before this state refresh)"
   implementation:
     project_creation: "Dedicated creation dialog; existing current chat is not reassigned; project chats are created explicitly."
     memory_hierarchy: "Shared facts, personal facts, private-context opt-in; explanations collapsed; sidebar state retained."
@@ -588,20 +588,27 @@ landing_v2_aservi:
 
 github_repository_hygiene_2026_11_02:
   main_sha: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
-  pr131_head_at_audit: "5b9aa7abcc70fc1fa6f3c0fba402e025cb44c772"
+  pr131_head_at_audit: "95a895bf74d19cf3ccba41e0d608095dc8495c53 (docs checkpoint; latest code/source checkpoint 9aa74853478a6a680cdd36ab0f84c851721405a4)"
   branch_refs: 126
   open_prs: [124, 125, 126, 127, 128, 129, 130, 131, 132]
   branches_not_open_pr_heads: 117
+  closed_prs_inspected: 100
+  closed_unmerged_pr_branches: "19; all 19 compare ahead > 0 and are preserved"
+  unassociated_branch_refs: 16
+  no_pr_branch_classification: "5 behind-only candidates, 10 with ahead > 0 retained for triage, 1 future-workstreams parking branch retained"
   delete_branch_on_merge: false
   repository_rulesets: 0
   classic_main_protection: "unknown; integration returned 403"
-  codeowners_security_policy_dependabot_files: "not found in standard paths"
+  codeowners_security_policy_dependabot_files: "CODEOWNERS and .github/dependabot.yml absent on main; SECURITY.md absent on main but added to PR #131 and PR #132"
   account_security_settings: "not verified"
   exact_head_provenance: "run 41336870473 passed on 5b9aa7a; not current after later documentation commits"
   exact_head_quality_chromium: "not found"
   prior_quality_1126: "stale SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c; 101 passed / 18 failed"
+  branch_cleanup_candidates: ["feat/alandi-helper-model-routing","feat/rag-rrf-engineering-audit-rebased-20261027","fix/provider-model-catalogs-v2","fix/pyodide-setup","fix/theme-persistence-e2e-isolation"]
+  branch_delete_action_available: false
+  file_cleanup_candidates: "none proven"
   cleanup_performed: false
-  next: "Classify 117 branch refs by PR/issue, ancestry, unique commits and references; owner verifies branch protection/security settings. No deletion or history rewrite without evidence and explicit approval."
+  next: "Owner may delete the five behind-only no-PR branch candidates through GitHub UI after a final open-PR/issue check; connector has no branch-delete action. Manually inspect branch protection/rulesets, secret scanning, push protection, Dependabot alerts and code scanning. Revisit Dependabot config after PR #124 lockfile work. No file deletion candidate proven."
 
 
 ui_scope_reconciliation_2026_11_02:
