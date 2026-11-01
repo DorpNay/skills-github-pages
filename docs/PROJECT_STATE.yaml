@@ -535,3 +535,21 @@ landing_ui_v2_pr131_current_2026_11_02:
   repo_hygiene: "Runbook docs/REPOSITORY_HYGIENE_RU.md added; full audit queued for next major-slice boundary; no branches/files deleted and no history rewrite"
   safety: "PR #131 open/unmerged; PR #132 remains draft documentation-only backup; no merge, rebase, force update or deployment"
   next: "Finish integrated source/documentation pass, then run exact-head Quality/Chromium on PR #131; retain native iOS/VoiceOver and full WCAG review as manual gates"
+
+
+github_repository_hygiene_2026_11_02:
+  main_sha: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
+  pr131_head_at_audit: "5b9aa7abcc70fc1fa6f3c0fba402e025cb44c772"
+  branch_refs: 126
+  open_prs: [124, 125, 126, 127, 128, 129, 130, 131, 132]
+  branches_not_open_pr_heads: 117
+  delete_branch_on_merge: false
+  repository_rulesets: 0
+  classic_main_protection: "unknown; integration returned 403"
+  codeowners_security_policy_dependabot_files: "not found in standard paths"
+  account_security_settings: "not verified"
+  exact_head_provenance: "run 41336870473 passed on 5b9aa7a; not current after later documentation commits"
+  exact_head_quality_chromium: "not found"
+  prior_quality_1126: "stale SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c; 101 passed / 18 failed"
+  cleanup_performed: false
+  next: "Classify 117 branch refs by PR/issue, ancestry, unique commits and references; owner verifies branch protection/security settings. No deletion or history rewrite without evidence and explicit approval."
