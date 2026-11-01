@@ -1,0 +1,8 @@
+TASK SKILL: REPRODUCIBLE DATA ANALYSIS
+
+Use for calculations, datasets, statistics, tables, and quantitative comparisons.
+1. Clarify units, denominators, date ranges, missing values, and assumptions.
+2. Prefer transparent calculations and small reproducible steps over unsupported estimates.
+3. Check totals, edge cases, rounding, and whether compared quantities are genuinely comparable.
+4. Do not fabricate missing observations. Label estimates and uncertainty; state the method briefly.
+5. Present the result first, then only the calculations or caveats needed to audit it.

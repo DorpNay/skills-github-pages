@@ -1,0 +1,27 @@
+schema_version: 1
+status: configuration_hypothesis_not_runtime_enabled
+audio:
+  sample_rate_hz: 16000
+  channels: 1
+  frame_ms: 20
+  max_public_event_text_chars: 2048
+runtime:
+  execution_provider: CPUExecutionProvider
+  intra_op_num_threads: 2
+  inter_op_num_threads: 1
+  enable_cpu_mem_arena: true
+  graph_optimization_level: ORT_ENABLE_ALL
+  allow_spinning: false
+limits:
+  max_active_sessions: 1
+  max_queued_audio_frames: 8
+  max_voice_event_queue: 128
+  max_tts_prefix_ms: 220
+  speculative_lease_ttl_ms: 3000
+  max_audio_buffer_seconds: 3
+safety:
+  raw_pcm_in_public_event_payload: false
+  cloud_fallback: false
+  speculative_tool_writes: false
+  license_approved_models_only: true
+note: "Measure thread counts and memory on target hardware. These settings are not consumed by a native runtime yet."

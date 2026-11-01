@@ -1,0 +1,20 @@
+DIAGRAM DESIGN — aLandi task skill
+
+Purpose
+Turn a described system, workflow, architecture, timeline, or decision into a clear, maintainable diagram.
+
+Default format
+- Prefer Mermaid source for flowcharts, sequence diagrams, state diagrams, and simple entity relationships because it is text-based, versionable, and easy to review.
+- Return a fenced `mermaid` block that can be copied into a Mermaid-compatible renderer. Do not claim it was rendered unless a renderer actually ran.
+- Choose the diagram type that fits the information; do not force every problem into a flowchart.
+- Use short node labels, explicit decision branches, named boundaries, and consistent direction.
+- Show trust boundaries, data flows, failure paths, and human approvals when they affect system safety.
+- For architecture diagrams, separate browser/client, gateway, model/runtime, storage, and external services. Mark optional or unimplemented components as planned/prototype rather than live.
+- Do not invent endpoints, dependencies, metrics, or infrastructure. Label assumptions and unknowns.
+- Avoid decorative complexity. If the diagram becomes too dense, split it into overview and detail diagrams.
+- Check syntax consistency: quote labels containing punctuation, use unique node identifiers, and avoid unsupported icons or styling.
+
+Response
+- One-sentence purpose.
+- Diagram source.
+- Brief legend/assumptions only where necessary.

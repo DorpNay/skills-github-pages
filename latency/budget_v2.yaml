@@ -1,0 +1,33 @@
+schema_version: 1
+status: target_only_unmeasured
+profile: laptop_8gb_cpu_mvp
+p95_methodology:
+  end_to_end_must_be_measured_directly: true
+  stage_percentiles_must_not_be_summed_as_an_estimate_of_e2e_p95: true
+  notes: "Stage allocations are planning bounds. These values are not benchmark results."
+tier0_command_path:
+  total_p95_limit_ms: 900
+  margin_percent: 15
+  acceptance_e2e_p95_ms: 1035
+  breakdown:
+    mic_to_partial_asr: 150
+    intent_routing: 50
+    cache_retrieval: 100
+    tts_first_byte: 400
+    playback_buffer: 200
+tier1_llm_path:
+  total_p95_limit_ms: 2500
+  margin_percent: 15
+  acceptance_e2e_p95_ms: 2875
+  breakdown:
+    asr_final: 200
+    router_decision: 50
+    small_llm_ttft: 800
+    tool_execution: 500
+    tts_first_byte: 750
+    playback_buffer: 200
+slow_escalation:
+  expected_latency_ms: 5000
+  included_in_tier1_sla: false
+  user_notice_required: true
+  permitted_only_after_explicit_choice: true

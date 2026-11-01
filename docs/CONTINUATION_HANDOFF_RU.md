@@ -1,0 +1,50 @@
+# aLandi — передача эстафеты следующему чату
+
+Обновлять этот файл после каждого существенного этапа. Следующий чат обязан сначала перечитать этот файл, docs/PROJECT_STATE.yaml и актуальные PR/CI, а не считать прошлую переписку источником истины.
+
+## Рабочие правила
+- Общаться с владельцем по-русски; быть кратким, точным и опираться на факты.
+- Перед изменением файлов проверить актуальную ветку, HEAD, diff, связанные документы и тесты.
+- Не сливать PR без прямого разрешения владельца. Не менять VPS, DNS, firewall, Cloudflare Tunnel, systemd, модели/драйверы и не скачивать модели без явного разрешения.
+- Не выдавать зелёный CI за подтверждение реального сервера/микрофона/производительности. Не утверждать, что deployment прошёл, пока нет доказательства.
+- Перед фиксом CI читать логи failed job и исправлять первопричину; не ослаблять проверки только ради зелёного статуса.
+- Сохранять работу пользователя и делать минимальные обратимые изменения.
+- После каждого изменения проверять workflow runs на точный SHA PR head. После обновления HEAD предыдущие CI результаты не засчитываются новому SHA.
+- Важные неизвестные фиксировать как неизвестные, не придумывать факты.
+
+## Цель продукта и первый контур
+Сначала закрытый/личный пилот, а не публичный multi-user SaaS. Текущий клиент — статический HTML/CSS/JS на GitHub Pages. Первый кандидат для сервера: FastAPI gateway под отдельным Linux user и systemd, Ollama только на loopback, одна модель qwen3.5:4b с context 4096/concurrency 1 после измерения, Cloudflare Tunnel к 127.0.0.1:8000, секреты только в защищённом серверном env-файле. Это рекомендация, не подтверждение существующего VPS. Не удалять и не переустанавливать имеющиеся сервисы без read-only инвентаризации и backup.
+Документы/голос/новые memory flows включать по одному, только после отдельных license/security/integration/performance acceptance tests. Shared browser memory не означает межустройственную синхронизацию. Не заявлять «данные всегда остаются на устройстве», zero logs, end-to-end encryption или multi-user SaaS без доказательств.
+
+## PR #87 — лендинг и предпусковой пакет
+- PR: https://github.com/DorpNay/skills-github-pages/pull/87
+- Ветка: feat/launch-landing-stack-20261028
+- Файлы: landing/index.html, docs/PRE_LAUNCH_STACK_RU.md, docs/LAUNCH_PRIVACY_REVIEW_RU.md, tests/e2e/landing.spec.mjs, README.md.
+- Страница отдельная и не заменяет существующее приложение на корневом URL. Не считать опубликованной до разрешённого merge и успешного Pages deployment.
+- Исторический неуспешный HEAD `2ce3681acc0c355e778b7d729456b80ca7efb747`: Quality run `40717768512` завершился failure. Прочитан job log `122920373641`: landing E2E падал на CTA `href`, потому что локальный static server отдавал литеральный `{{ site.baseurl }}/`. Тот же run показал нестабильный существующий mobile composer assertion (`bottom=440`, viewport `844`); 66 тестов прошли, один упал и один был flaky.
+- На HEAD `2418f8561403ba4b5b0e23200863d0446834e5cb` удалён дублирующий front matter в `landing/index.html`; CTA и canonical/og:url используют явные `https://dorpnay.github.io/skills-github-pages/...` URLs. Quality `40748851166` и Graphify `40748851249` прошли на этом точном SHA.
+- HEAD `e53845625509cf229f5c4e2701fb9abeba65af8c` Quality `40749758828` failed: 67 Chromium tests passed; the existing mobile composer viewport test failed twice after viewport restore 440→844 (`window.innerHeight=844`, footer bottom=440). Diagnostics artifact `12844080254` retained the screenshot, trace and DOM snapshot.
+- HEAD `b75626a4d4b3921dca4e967c5d980f431e96c6ae` passed Quality `40750885222` and Graphify `40750885355`, including built-app Chromium and published-site browser smoke.
+- Exact HEAD `60c6587b4da0c04edccad0378c94beef5ba197c3` also passed Quality `40751536736` and Graphify `40751536775`. It restores the final lower docking-bound assertion after polling; all six Quality jobs passed, including the published-site smoke. This is the last verified code/test checkpoint.
+- This documentation-only follow-up records model artifact provenance and the verified checkpoint. Its new HEAD must still pass exact-head Quality/Chromium, published-site smoke and Graphify before the PR can be considered green. Do not carry prior SHA results forward.
+- Context7 and official docs were cross-checked for Jekyll front matter and Playwright behavior. Browser E2E does not replace manual target-device verification.
+- Merge/deploy not performed; PR #87 remains draft.
+
+## Следующие конкретные действия
+1. Перед изменением сверить текущий HEAD PR #87 и его exact-SHA workflow runs.
+2. Сверить PR #78 и #80–#87 по актуальным HEAD/checks. На проверенном срезе: #78 `0a32ec471548da1d4a7d053439ac66b9326182ec`; #80 `e1a0ac9662fb1c81a9e3a1bc828db0594da7ae4a`; #81 `18e573333105a19e50c3b363ce36df11a38cdf52`; #82 `7e6429c68de9bcd430cfa6337dbca2c872cfa101`; #83 `9aad4c0525d48e9ea1b6060d512ef433d55ef431`; #84 `426743b3e6a8771d9dd5910076b4d3ea5621f957`; #85 `bd33425c836bb5f8e2c72c28b05ff86ccdfc417b`; #86 `6785bb03f6975e9d60ccc8eba56b6ca207860b97`; `#87` — получать актуальный HEAD только из live PR metadata; на документальном checkpoint выше exact-head CI был green до обновления handoff..
+3. Сверить и обновить checkpoint в `docs/PROJECT_STATE.yaml` и `docs/VOLLEY_LOG.md` на ветке PR #78, включая exact-head checks лендинга. У PR #78 есть пересечения с другими docs, его рассматривать последним; перед любым merge повторно сравнить с актуальным main.
+4. Оставить PR #87 draft, пока не завершены review copy/privacy и не определены owner-side gates. Не заявлять публичную доступность `/landing/` до разрешённого merge и Pages deployment.
+5. VPS inventory, домен/бюджет, live gateway/model, retention/legal contact и target-device checks остаются неизвестными. Не менять инфраструктуру без явного разрешения.
+6. После любого существенного изменения записать новый HEAD и повторно проверить его CI; не переносить старые статусы на новый SHA.
+ 
+## Неизвестно / требует владельца
+- Есть ли VPS, какой ОС/архитектуры, какие services/Tunnel уже используются.
+- Подтверждённый месячный бюджет и домен/DNS.
+- Реальные latency модели, peak RAM, качество RU/TH, reboot/backup/restore.
+- Лицензии и device tests для конкретных голосовых артефактов.
+- Юрисдикция/контакты оператора/retention/analytics для окончательной privacy policy.
+- Не выполнять эти действия вместо владельца и не просить присылать секреты в чат.
+
+## Как начинать следующий чат
+Попросить инструменты проверить актуальный репозиторий/PRs, прочитать этот handoff и docs/PROJECT_STATE.yaml, затем выполнить только следующий проверяемый шаг. Не полагаться на перечисленные SHA, пока они не сверены с GitHub сейчас.

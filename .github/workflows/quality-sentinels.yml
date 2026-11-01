@@ -105,11 +105,12 @@ jobs:
         with:
           source: ./
           destination: ./_site
-      - name: Install pinned Playwright and verify runner-provided Chrome
+      - name: Install pinned browser test runtime
         run: |
+          # Avoid the known Ubuntu man-db trigger stall during Playwright --with-deps.
+          sudo apt-get --yes remove --purge man-db
           npm install --no-save --no-package-lock @playwright/test@1.56.1
-          command -v google-chrome
-          google-chrome --version
+          npx playwright install --with-deps chromium
       - name: Exercise the built app in Chromium
         run: npx playwright test --shard=${{ matrix.shard }}/4 --grep-invert "live public site serves the app shell and basic chat controls"
       - name: Wait for the published site to respond
