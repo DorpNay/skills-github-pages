@@ -47,7 +47,7 @@ flowchart TD
 | SSRF | `gateway/security/ssrf_protection.py` | Helper destination validation; важно корректно вызывать после DNS resolution и перепроверять redirect chain. |
 | Documents | `gateway/app.py`, `gateway/tests/test_document_extraction.py` | Ограниченное извлечение; не обещать универсальную поддержку форматов. |
 | Voice | `gateway/voice/`, `gateway/tests/test_audio_*.py`, `tests/e2e/audio-transcription.spec.mjs` | ASR/TTS adapters и UI есть в коде, но нужны бинарники/модели/flags; качество и latency на целевом устройстве не измерены. |
-| Research UI | `index.md`, `tests/e2e/research-*.spec.mjs` | Search & Research Studio; внешний поиск зависит от CORS, лимитов и настроенного адаптера. |
+| Research UI | `index.md`, `tests/e2e/research-*.spec.mjs` | Глубокое исследование и вложенное окно Research Studio; внешний поиск зависит от CORS, лимитов и настроенного адаптера. |
 | Quality | `.github/workflows/`, `scripts/check_project_metadata.py`, `scripts/check_license_manifest.py` | Проверки относятся к точному SHA; зелёный CI не подтверждает runtime на VPS. |
 
 ## 3. Маршруты gateway, проверенные в `gateway/app.py`
