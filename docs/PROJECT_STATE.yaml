@@ -65,7 +65,7 @@ ui_v2_track:
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   status: "open_unmerged_owner_hold"
   latest_documentation_head: "5bab1d2741fc2349fd648c9eb17ddc8d7d8e27a8; documentation checkpoint after aServi rename/backlog reconciliation"
-  latest_code_test_head: "d2b2fcf96e08d852e78bededd7beec3d33568790; aServi stable storage contract and provider-separation E2E contract updated; not yet browser-verified"
+  latest_code_test_head: "6dcd78485eaf6542190265b9a3a3d30491677dd4; aServi stable storage contract and provider-separation E2E contract updated; not yet browser-verified"
   latest_quality_harness_head: "d94d842608c07aa8def4b5fdc89ed95b80524034; harness not changed in this pass"
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0 and requirements 8.1-8.17"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
@@ -87,7 +87,7 @@ ui_v2_track:
   current_main_sha: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
   branch_divergence: "GitHub compare main...feat/landing-v1-accessibility-responsive-20261031 at f503cbf22688e5df6cd68d6c6b211bc82b4edab2: ahead_by=427, behind_by=4, merge_base=e78a73b25725bfa63370d9946887cbbacbf51b82. Main's four post-base commits touch only docs/V1_UI_FINALIZATION_RU.md (210 additions, 6 deletions), overlapping the PR's unified 8.0 + 8.1–8.17 consolidation. No code-file conflict identified. Do not rebase/merge without owner approval."
   current_work_head: "901b9c343dbddd2453605b03ec77fd5e893c608c"
-  current_work_summary: "aLandi aServi terminology and DOM/CSS contracts updated; browser runtime and app/landing CSS extracted to cacheable assets; legacy ai_alandi_cloud_* localStorage keys intentionally retained behind aServi code identifiers for saved-setting compatibility; inherited pre-8 UI backlog made explicit. Cloudflare and generic cloud-infrastructure wording remain distinct concepts. Full tests intentionally deferred until source pass is complete."
+  current_work_summary: "aLandi aServi terminology and DOM/CSS contracts updated; browser runtime and app/landing CSS extracted to cacheable assets; Marked/DOMPurify use ordered defer; legacy ai_alandi_cloud_* localStorage keys intentionally retained behind aServi code identifiers for saved-setting compatibility; inherited pre-8 UI backlog made explicit. Cloudflare and generic cloud-infrastructure wording remain distinct concepts. Full tests intentionally deferred until source pass is complete."
   current_work_validation: "V8 parse-only syntax check passed for extracted assets/js/app.js; source-level DOM/E2E selector audit found no mismatches. App/landing CSS brace balance checked; browser behavior not executed. Jekyll build, focused Chromium, full Quality/Freshness/Provenance/Graphify/Dead Code not run yet. Do not claim runtime extraction or rename browser-verified."
   merge_deployment: "Do not merge or deploy without explicit owner approval."
 
