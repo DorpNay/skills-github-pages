@@ -524,7 +524,7 @@ whole_stack_integrity_audit_2026_10_30:
 landing_ui_v2_pr131_current_2026_11_02:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
-  latest_pr_head: "5b9aa7abcc70fc1fa6f3c0fba402e025cb44c772"
+  latest_pr_head: "73f9a25e5913ba5c3985a75fe99510cff8ad115a"
   latest_code_test_head: "b6b4cd612e288f0ad2c0e23419a562b06b491ef5"
   compare_main: "476 ahead / 4 behind; merge base e78a73b25725bfa63370d9946887cbbacbf51b82; four main-side commits overlap the shared UI checklist only"
   app_metadata: "Jekyll/browser title and description aligned with aLandi; color-scheme metadata declares dark and light; deterministic Quality/E2E assertions added"
