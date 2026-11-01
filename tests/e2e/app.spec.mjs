@@ -274,7 +274,19 @@ test('mobile sidebar and modal close controls meet the 44px touch target', async
   const sidebarClose = await page.locator('#sidebar [data-action="close-sidebar"]').boundingBox();
   expect(sidebarClose?.width || 0).toBeGreaterThanOrEqual(44);
   expect(sidebarClose?.height || 0).toBeGreaterThanOrEqual(44);
+
+  const chatMenuToggle = page.locator('#chatList .chat-row-menu summary').first();
+  const chatMenuBox = await chatMenuToggle.boundingBox();
+  expect(chatMenuBox?.width || 0).toBeGreaterThanOrEqual(44);
+  expect(chatMenuBox?.height || 0).toBeGreaterThanOrEqual(44);
   await page.locator('#sidebar [data-action="close-sidebar"]').click();
+
+  const languageMenu = page.locator('#languageMenu');
+  await languageMenu.locator('summary').click();
+  const languageOption = await languageMenu.locator('[data-language="en"]').boundingBox();
+  expect(languageOption?.width || 0).toBeGreaterThanOrEqual(44);
+  expect(languageOption?.height || 0).toBeGreaterThanOrEqual(44);
+  await languageMenu.locator('summary').click();
 
   await page.locator('[data-action="toggle-settings"]').click();
   const settingsClose = await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').boundingBox();
