@@ -446,3 +446,9 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Added docs/REPOSITORY_HYGIENE_RU.md with evidence thresholds for branch/file deletion, PR and docs reconciliation, Actions/dependency review, GitHub security settings and rollback records.
 - Grounded the checklist in official GitHub repository best practices, protected branches, CODEOWNERS, security quickstart and PR standardization guidance.
 - This is a procedure only. Full branch/file/security-settings cleanup is intentionally deferred until the next major-slice boundary; no deletion or history rewrite was performed.
+
+
+### 2026-11-02 — PR #131 compare correction
+
+- Rechecked live GitHub compare after the repository-hygiene and documentation commits: PR #131 is 483 commits ahead / 4 behind main; merge base remains e78a73b25725bfa63370d9946887cbbacbf51b82.
+- The four main-side commits still affect only docs/V1_UI_FINALIZATION_RU.md, which overlaps the branch's consolidated owner checklist. No code-file conflict was identified; no automatic rebase or merge was performed.
