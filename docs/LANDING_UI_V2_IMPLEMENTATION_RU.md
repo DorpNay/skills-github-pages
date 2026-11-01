@@ -465,3 +465,11 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - Standard CODEOWNERS, SECURITY.md and Dependabot config files were not found; account-level security settings unverified.
 - Provenance passed on the audit snapshot; exact-head Quality/Chromium absent. Previous Quality #1126 (101 passed / 18 failed) is stale.
 - No deletion, settings mutation, rebase, force-push, merge or deployment. See `docs/REPOSITORY_HYGIENE_RU.md`.
+
+
+### CSS cascade cleanup — 2026-11-02
+
+- Removed 504 bytes of legacy CSS declarations that were unconditionally overridden later in the same stylesheet: the old body gradient, duplicate body font-family, the earlier focus outline rule and settings-surface background/border declarations superseded by theme tokens.
+- Kept the effective system UI font stack, Tiffany focus-visible tokens, theme-driven surface colors, settings shadow and backdrop blur unchanged.
+- Static CSS brace balance remains zero. This is a cascade/source cleanup; no browser visual regression run has been executed yet.
+
