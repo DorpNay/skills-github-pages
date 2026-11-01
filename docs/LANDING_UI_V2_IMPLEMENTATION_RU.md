@@ -61,6 +61,10 @@ The original V1 document contains 18 inherited control directions before section
 | RU/EN and theme completeness | Dialogs, statuses, errors, tooltips, Roadmap, empty states and both themes. | 8.11, 8.15, 8.17 |
 | Research/skills/agents honesty | Preserve draft and chat settings, test mobile/Escape/no-auto-send; don't label a four-stage single-model pipeline as independent agents. | 8.6, 8.15, 8.16 |
 
+### 8.6 / 8.9 — modal keyboard containment
+
+The modal keyboard trap now selects the actually topmost visible dialog by computed z-index instead of relying on a fixed modal array order. It filters disabled, hidden, inert, aria-hidden and visibility-hidden controls; Tab/Shift+Tab wrap between the first and last usable controls, and a dialog with no focusable descendants receives programmatic focus. A dedicated E2E verifies both wrap directions and recovery when focus starts outside the dialog. This complements the existing Escape/Back/Forward, backdrop and focus-return paths; screen-reader/native-device validation remains outstanding.
+
 ### Runtime source-of-truth
 
 The active Jekyll app shell, markup and CSS are in index.md; browser runtime logic is extracted to assets/js/app.js (refactor commit 9e5cf6465c8be4908ada83f1806bcd82a8907149). Runtime IDs/actions use the aServi naming family (aserviBaseUrl, aserviModel, aserviApiKey, paste-aservi-key, aserviStatus); E2E must target those current controls and not superseded selector contracts. Keep HTML/CSS edits in index.md and application logic in assets/js/app.js.
