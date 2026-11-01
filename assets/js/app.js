@@ -4681,6 +4681,13 @@
     });
     $('chatActionForm').addEventListener('submit',event=>{event.preventDefault();saveChatActionDialog();});
     $('chatActionModal').addEventListener('click',event=>{if(event.target===$('chatActionModal'))closeChatActionDialog();});
+    document.addEventListener('focusin', (event) => {
+      const modal=getTopmostUiModal();
+      if(!modal||modal.contains(event.target))return;
+      const focusable=getModalFocusableElements(modal);
+      (focusable.at(-1)||modal).focus({preventScroll:true});
+      event.stopImmediatePropagation();
+    }, true);
     document.addEventListener('keydown', (event) => {
       if(event.key==='Tab'){
         const modal=getTopmostUiModal();

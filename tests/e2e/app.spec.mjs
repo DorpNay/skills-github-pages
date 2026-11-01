@@ -480,8 +480,13 @@ test('header hierarchy and compact mode controls remain responsive from 320px up
     expect(metrics.clock.width).toBeGreaterThanOrEqual(54);
     expect(metrics.wordmarkTransform).not.toBe('none');
     expect(Number(metrics.wordmarkWeight)).toBeGreaterThanOrEqual(800);
-    expect(metrics.fast.height).toBeLessThanOrEqual(34);
-    expect(metrics.deep.height).toBeLessThanOrEqual(34);
+    if (width <= 640) {
+      expect(metrics.fast.height).toBeGreaterThanOrEqual(44);
+      expect(metrics.deep.height).toBeGreaterThanOrEqual(44);
+    } else {
+      expect(metrics.fast.height).toBeLessThanOrEqual(34);
+      expect(metrics.deep.height).toBeLessThanOrEqual(34);
+    }
   }
 });
 
@@ -523,7 +528,7 @@ test('aLandi aServi is exclusive while provider and additional settings can rema
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   await page.locator('[data-action="toggle-settings"]').click();
   const cloud=page.locator('#aserviSettingsGroup'),providers=page.locator('#thirdPartyProviderSettings'),additional=page.locator('#additionalSettings');
-  if (!(await aservi.evaluate(element => element.open))) await cloud.locator(':scope > summary').click();
+  if (!(await cloud.evaluate(element => element.open))) await cloud.locator(':scope > summary').click();
   await expect(cloud).toHaveAttribute('open','');
   await providers.locator(':scope > summary').click();
   await expect(cloud).not.toHaveAttribute('open','');
@@ -641,6 +646,8 @@ test('high-contrast preference updates every important text state in both themes
     status: getComputedStyle(document.querySelector('#searchStatus')).color,
     aserviWarning: getComputedStyle(document.querySelector('#aserviStatus')).color
   }));
+  await page.locator('#uiTextContrast').selectOption('normal');
+  await expect(page.locator('html')).toHaveAttribute('data-text-contrast','normal');
   const normalDark = await readStates();
   await page.locator('#uiTextContrast').selectOption('high');
   await expect(page.locator('html')).toHaveAttribute('data-text-contrast','high');
@@ -1202,7 +1209,7 @@ test('research trace supports a structured JSON download', async ({ page }) => {
     routes: [{ provider: 'groq', model: 'openai/gpt-oss-120b', stage: 'answer' }]
   };
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.evaluate((traceData) => {
+  await page.addInitScript((traceData) => {
     localStorage.setItem('ai_chats_v87', JSON.stringify([{
       id: 'e2e-trace-chat', title: 'Trace test',
       messages: [{ role: 'assistant', content: traceData.finalText, researchTrace: { id: traceData.id } }]
@@ -1801,14 +1808,14 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await expect(page.locator('#currentProjectSelect')).toHaveValue(betaId);
   const betaChatRow = page.locator('#projectNavigationList .chat-row').filter({ has: page.locator('[data-action="switch-chat"][data-chat-id="' + betaChatId + '"]') });
   await betaChatRow.scrollIntoViewIfNeeded();
-  await betaChatRow.locator('summary[aria-label="Действия чата"]').click();
+  await betaChatRow.locator('.chat-row-menu > summary').click();
   await betaChatRow.locator('[data-action="chat-project"]').click();
   await page.locator('#chatActionProject').selectOption(alphaId);
   await page.locator('[data-action="chat-action-save"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(alphaId);
   const movedChatRow = page.locator('#projectNavigationList .chat-row').filter({ has: page.locator('[data-action="switch-chat"][data-chat-id="' + betaChatId + '"]') });
   await movedChatRow.scrollIntoViewIfNeeded();
-  await movedChatRow.locator('summary[aria-label="Действия чата"]').click();
+  await movedChatRow.locator('.chat-row-menu > summary').click();
   await movedChatRow.locator('[data-action="chat-project"]').click();
   await page.locator('#chatActionProject').selectOption(betaId);
   await page.locator('[data-action="chat-action-save"]').click();
@@ -2372,7 +2379,7 @@ test('aServi URL validation follows the selected language and is announced with 
   await expect(page.locator('#aserviBaseUrl')).toHaveAttribute('aria-invalid', 'true');
   await expect(page.locator('#aserviBaseUrl')).toHaveAttribute('aria-describedby', 'aserviBaseUrlError');
 
-  await page.evaluate(() => localStorage.setItem('ai_ui_language_v1', 'ru'));
+  await page.addInitScript(() => localStorage.setItem('ai_ui_language_v1', 'ru'));
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
   await page.locator('#aserviBaseUrl').fill('');
@@ -2584,7 +2591,12 @@ test('retired server-memory bridge is absent and project facts remain local', as
   const localProjectId = await createProjectFromUi(page, 'Local-only project');
   await openProjectSettingsForId(page, localProjectId);
   await page.locator('#projectMemoryInput').fill('LOCAL_PROJECT_MEMORY_SENTINEL');
+  await expect(page.locator('#projectMemoryInput')).toHaveValue('LOCAL_PROJECT_MEMORY_SENTINEL');
   await page.locator('[data-action="add-project-memory"]').click();
+  await expect.poll(() => page.evaluate(projectId => {
+    const project=JSON.parse(localStorage.getItem('ai_projects_v1')||'[]').find(item=>item.id===projectId);
+    return Boolean(project?.memory?.some(item=>item.text==='LOCAL_PROJECT_MEMORY_SENTINEL'));
+  }, localProjectId)).toBe(true);
   await expect(page.locator('#projectMemoryBox')).toContainText('LOCAL_PROJECT_MEMORY_SENTINEL');
   await expect(page.locator('#serverMemoryDetails')).toHaveCount(0);
   await expect(page.locator('#serverProjectMemoryToggle')).toHaveCount(0);
@@ -2676,7 +2688,7 @@ test('chat row actions are grouped in the right-side menu and rename/clone work'
   const row = page.locator('#chatList .chat-row').first();
   await expect(row.locator('details.chat-row-menu')).toBeVisible();
   await expect(row.locator('button[data-action="delete-chat"]')).toBeHidden();
-  await row.locator('summary[aria-label="Действия чата"]').click();
+  await row.locator('.chat-row-menu > summary').click();
   await expect(row.locator('.chat-row-menu-panel button')).toHaveCount(7);
 
   await row.locator('[data-action="chat-rename"]').click();
@@ -2685,7 +2697,7 @@ test('chat row actions are grouped in the right-side menu and rename/clone work'
   await page.locator('[data-action="chat-action-save"]').click();
   await expect(row.locator('button[data-action="switch-chat"]')).toHaveText('Renamed from menu');
 
-  await row.locator('summary[aria-label="Действия чата"]').click();
+  await row.locator('.chat-row-menu > summary').click();
   await row.locator('[data-action="chat-clone"]').click();
   await expect(page.locator('#chatList .chat-row')).toHaveCount(2);
   await expect(page.locator('#chatList button[data-action="switch-chat"]').first()).toContainText('Renamed from menu — копия');
@@ -2697,7 +2709,7 @@ test('chat menu export is scoped and chat import merges without replacing histor
   await page.locator('#userInput').fill('Keep this existing chat');
   await page.locator('[data-action="toggle-sidebar"]').click();
   const row = page.locator('#chatList .chat-row').first();
-  await row.locator('summary[aria-label="Действия чата"]').click();
+  await row.locator('.chat-row-menu > summary').click();
 
   const downloadPromise = page.waitForEvent('download');
   await row.locator('[data-action="export-chat"]').click();
@@ -2731,7 +2743,7 @@ test('last closed chat can be restored from local storage after reload', async (
   expect(deletedChatId).not.toBe('');
   await page.locator('[data-action="toggle-sidebar"]').click();
   const row = page.locator('#chatList .chat-row').filter({ has: page.locator('[data-action="switch-chat"][data-chat-id="' + deletedChatId + '"]') });
-  await row.locator('summary[aria-label="Действия чата"]').click();
+  await row.locator('.chat-row-menu > summary').click();
   page.on('dialog', dialog => dialog.accept());
   await row.locator('[data-action="delete-chat"]').click();
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').length)).toBe(1);
@@ -3016,7 +3028,7 @@ test('clear history preserves the chat and other project data', async ({ page })
   const alphaGroup = page.locator('#projectNavigationList details[data-project-id="project-alpha"]');
   await alphaGroup.locator(':scope > summary').click();
   const alphaRow = alphaGroup.locator('.chat-row').filter({ hasText: 'Alpha chat' });
-  await alphaRow.locator('summary[aria-label="Действия чата"]').click();
+  await alphaRow.locator('.chat-row-menu > summary').click();
 
   page.on('dialog', dialog => dialog.accept());
   await alphaRow.locator('[data-action="chat-clear"][data-chat-id="chat-alpha"]').click();
@@ -3066,7 +3078,7 @@ test('clearing a non-active project chat preserves the active chat and both proj
   const betaGroup = page.locator('#projectNavigationList details[data-project-id="project-beta"]');
   await betaGroup.locator(':scope > summary').click();
   const betaRow = betaGroup.locator('.chat-row').filter({ hasText: 'Beta chat' });
-  await betaRow.locator('summary[aria-label="Действия чата"]').click();
+  await betaRow.locator('.chat-row-menu > summary').click();
 
   page.on('dialog', dialog => dialog.accept());
   await betaRow.locator('[data-action="chat-clear"][data-chat-id="chat-beta"]').click();
@@ -3535,7 +3547,7 @@ test('browser Forward restores a chat-action dialog with its original target', a
   const group=page.locator('#projectNavigationList details[data-project-id="action-project"]');
   if(!(await group.evaluate(el=>el.open)))await group.locator(':scope > summary').click();
   const row=group.locator('.chat-row').filter({hasText:'Action chat'});
-  await row.locator('summary[aria-label="Действия чата"]').click();
+  await row.locator('.chat-row-menu > summary').click();
   await row.locator('[data-action="chat-project"]').click();
   await expect(page.locator('#chatActionModal')).toBeVisible();
   await expect(page.locator('#chatActionModal')).toHaveAttribute('data-chat-id','action-chat');
@@ -3568,7 +3580,6 @@ test('modal lifecycle keeps keyboard focus and page scroll isolated across core 
   await ensureSidebarOpen(page);
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await assertModalLifecycle('projectCreateModal');
-  await page.locator('[data-action="toggle-sidebar"]').click();
 
   await page.locator('[data-action="toggle-settings"]').click();
   await assertModalLifecycle('settingsModal');

@@ -33,11 +33,12 @@ test('known model context window bounds retained conversation history', async ({
     { role: 'user', content: 'OLD_TURN_' + i + ' ' + 'x'.repeat(650) },
     { role: 'assistant', content: 'OLD_REPLY_' + i + ' ' + 'y'.repeat(200) }
   ]).flat();
-  await page.evaluate(items => {
+  await page.addInitScript(items => {
     localStorage.setItem('ai_chats_v87', JSON.stringify([{ id: 'budget-chat', title: 'Budget', messages: items }]));
     localStorage.setItem('ai_current_chat_v87', 'budget-chat');
   }, messages);
   await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#chatBox')).toContainText('OLD_TURN_7', { timeout: 10000 });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
