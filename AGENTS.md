@@ -2,12 +2,13 @@
 
 ## Source of truth
 - Work in DorpNay/skills-github-pages unless a task explicitly names another repo.
-- The product is the existing static AI Mobile Agent. Preserve its existing state/history/research/tool contracts.
+- The product is the existing static aLandi browser client (historically referred to as AI Mobile Agent). Preserve its existing state/history/research/tool contracts.
 - Follow docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md for VPS operations. The previous Dify-first note is not an install checklist for the base deployment.
 
 ## Architecture and budget
-- Base path: GitHub Pages UI → HTTPS Cloudflare Tunnel → FastAPI aLandi gateway → private Ollama.
+- Base path: GitHub Pages UI → HTTPS Cloudflare Tunnel → FastAPI gateway → private Ollama; the first-party server route in the UI is named aLandi aServi.
 - Keep gateway and Ollama on loopback for a new host; never publish port 11434. On a host with existing Docker/Dify clients, inspect the established network before changing bind.
+- Use aLandi aServi for the first-party server route in UI, DOM actions, docs and tests. Do not reintroduce the old product label aLandi Cloud. Preserve legacy ai_alandi_cloud_* localStorage keys as compatibility identifiers unless an explicit migration is designed; aLandi aCloudi is reserved for a future information-storage product. Cloudflare remains the infrastructure/provider name.
 - Start with one model and concurrency=1 on the 8-GB VPS. Dify, Redis/Valkey, vector databases and secondary workers are optional modules gated by a measured need.
 - L0 browser cache, L1 inference prefix/KV reuse and L2 exact response cache are distinct. Do not claim that one is another.
 
