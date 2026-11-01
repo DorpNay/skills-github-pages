@@ -47,12 +47,12 @@ permalink: /
     .settings-header-actions button { display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:.45rem .65rem;border:1px solid var(--ui-border);border-radius:10px;font-size:11px;white-space:nowrap; }
     .settings-header-actions [data-action="save-settings"] { background:var(--ui-primary);color:#fff;border-color:transparent;font-weight:750; }
     .settings-header-actions [data-action="close-settings"] { background:var(--ui-surface-raised);color:var(--ui-text-muted); }
-    .cloud-card input[data-state="connected"] { border-color:#35d39a!important;box-shadow:0 0 0 1px rgb(53 211 154 / 14%),0 0 13px rgb(53 211 154 / 8%); }
-    .cloud-card input[data-state="error"] { border-color:#ff737a!important;box-shadow:0 0 0 1px rgb(255 115 122 / 14%); }
+    .aservi-card input[data-state="connected"] { border-color:#35d39a!important;box-shadow:0 0 0 1px rgb(53 211 154 / 14%),0 0 13px rgb(53 211 154 / 8%); }
+    .aservi-card input[data-state="error"] { border-color:#ff737a!important;box-shadow:0 0 0 1px rgb(255 115 122 / 14%); }
     .field-error { margin-top:-.35rem;font-size:10px;line-height:1.25;color:var(--ui-danger); }
     .advanced-field,.advanced-control { font-size:11px!important;padding:.42rem .55rem!important;min-height:30px; }
-    #cloudStatus { margin:0;font-size:10px;line-height:1.2; }
-    #cloudStatusDot { margin-top:0; }
+    #aserviStatus { margin:0;font-size:10px;line-height:1.2; }
+    #aserviStatusDot { margin-top:0; }
     .message-model-meta { color: #93a4bd; font-size: .67rem; line-height: 1.3; padding: .15rem .25rem; opacity: .9; }
     .message-model-meta::before { content: "●"; display: inline-block; margin-right: .4rem; color: #4ade80; font-size: .58rem; text-shadow: 0 0 8px rgb(74 222 128 / 45%); }
     #thinkingTime { color: #a5b4fc; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -202,16 +202,16 @@ permalink: /
     .settings-subpanel { background:color-mix(in srgb,var(--ui-surface-raised) 86%,transparent); overflow:hidden; }
     .settings-subpanel > summary::marker,#searchToolsSettings > summary::marker { color:var(--ui-tiffany); }
     .settings-subpanel[open] > summary,#searchToolsSettings[open] > summary { border-bottom:1px solid var(--ui-border); background:var(--ui-tiffany-soft); }
-    .cloud-card { background:radial-gradient(ellipse at 95% 0%,rgba(104,232,208,.13),transparent 48%),linear-gradient(140deg,var(--ui-surface-raised),var(--ui-surface)); border-color:rgba(104,232,208,.34)!important; box-shadow:0 18px 45px rgba(0,0,0,.14),inset 0 1px rgba(255,255,255,.04); }
-    .cloud-card input { background:var(--ui-bg)!important;color:var(--ui-text)!important;border-color:var(--ui-border)!important; }
-    .cloud-status-indicator { width:12px;height:12px;flex:0 0 12px;margin-top:7px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 5px rgba(239,68,68,.12),0 0 16px rgba(239,68,68,.45); }
-    .cloud-status-indicator[data-state="connected"] { background:#22c55e;box-shadow:0 0 0 5px rgba(34,197,94,.12),0 0 18px rgba(34,197,94,.65); }
-    .cloud-status-indicator[data-state="checking"] { background:#f59e0b;box-shadow:0 0 0 5px rgba(245,158,11,.12),0 0 18px rgba(245,158,11,.45); }
-    .cloud-status-copy { color:var(--ui-danger); }
-    .cloud-status-copy[data-state="connected"] { color:var(--ui-success); }
-    .cloud-status-copy[data-state="checking"] { color:var(--ui-warning); }
-    .cloud-key-row button,.composer-tool,.header-icon { border-color:var(--ui-border);background:var(--ui-surface-raised);color:var(--ui-text); }
-    .cloud-key-row button:hover,.composer-tool:hover:not(:disabled),.header-icon:hover { border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
+    .aservi-card { background:radial-gradient(ellipse at 95% 0%,rgba(104,232,208,.13),transparent 48%),linear-gradient(140deg,var(--ui-surface-raised),var(--ui-surface)); border-color:rgba(104,232,208,.34)!important; box-shadow:0 18px 45px rgba(0,0,0,.14),inset 0 1px rgba(255,255,255,.04); }
+    .aservi-card input { background:var(--ui-bg)!important;color:var(--ui-text)!important;border-color:var(--ui-border)!important; }
+    .aservi-status-indicator { width:12px;height:12px;flex:0 0 12px;margin-top:7px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 5px rgba(239,68,68,.12),0 0 16px rgba(239,68,68,.45); }
+    .aservi-status-indicator[data-state="connected"] { background:#22c55e;box-shadow:0 0 0 5px rgba(34,197,94,.12),0 0 18px rgba(34,197,94,.65); }
+    .aservi-status-indicator[data-state="checking"] { background:#f59e0b;box-shadow:0 0 0 5px rgba(245,158,11,.12),0 0 18px rgba(245,158,11,.45); }
+    .aservi-status-copy { color:var(--ui-danger); }
+    .aservi-status-copy[data-state="connected"] { color:var(--ui-success); }
+    .aservi-status-copy[data-state="checking"] { color:var(--ui-warning); }
+    .aservi-key-row button,.composer-tool,.header-icon { border-color:var(--ui-border);background:var(--ui-surface-raised);color:var(--ui-text); }
+    .aservi-key-row button:hover,.composer-tool:hover:not(:disabled),.header-icon:hover { border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
     .app-header { background:var(--ui-surface)!important;border-color:var(--ui-border)!important; }
     .brand-wordmark { display:inline-block;background:linear-gradient(120deg,var(--ui-text),var(--ui-tiffany-bright));color:transparent;background-clip:text;-webkit-background-clip:text;white-space:nowrap;user-select:none; }
     .header-chat-title { flex:1;min-width:0;max-width:none;line-height:1.2; }
@@ -460,8 +460,8 @@ permalink: /
      html[data-text-contrast="high"] #chatBox button:disabled { color:var(--ui-disabled-text)!important; }
      html[data-text-contrast="high"] .assistant-content a,html[data-text-contrast="high"] .message-viewer-content a { color:var(--ui-info)!important; }
      html[data-text-contrast="high"] .field-error,html[data-text-contrast="high"] [role="alert"] { color:var(--ui-danger)!important; }
-     html[data-text-contrast="high"] .cloud-status-copy[data-state="connected"] { color:var(--ui-success)!important; }
-     html[data-text-contrast="high"] .cloud-status-copy[data-state="checking"] { color:var(--ui-warning)!important; }
+     html[data-text-contrast="high"] .aservi-status-copy[data-state="connected"] { color:var(--ui-success)!important; }
+     html[data-text-contrast="high"] .aservi-status-copy[data-state="checking"] { color:var(--ui-warning)!important; }
      body.ui-modal-open { overflow:hidden;overscroll-behavior:none; }
 
     /* Shared touch sizing for compact navigation and disclosure controls. */
@@ -631,17 +631,17 @@ permalink: /
   <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 p-2 sm:p-4 z-50 overflow-y-auto overscroll-contain" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="settings-surface bg-gray-800 p-3 sm:p-4 rounded-xl max-w-2xl mx-auto w-full border border-gray-700 space-y-3 my-auto max-h-[94dvh] overflow-y-auto overscroll-contain">
       <header class="settings-header"><h2 id="settingsTitle" class="text-base font-bold" data-i18n="settingsTitle">⚙️ Настройки</h2><div class="settings-header-actions"><button type="button" data-action="save-settings" data-i18n="saveSettings">Сохранить</button><button type="button" data-action="close-settings" data-i18n-aria-label="closeSettings" aria-label="Закрыть" title="Закрыть">✕</button></div></header>
-      <details id="cloudSettingsGroup" open class="settings-subpanel rounded-xl border border-gray-700">
-        <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none" data-i18n="cloudGroupTitle">☁ aLandi Cloud</summary>
+      <details id="aserviSettingsGroup" open class="settings-subpanel rounded-xl border border-gray-700">
+        <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none" data-i18n="aserviGroupTitle">☁ aLandi aServi</summary>
         <div class="p-3">
-<section id="cloudSettingsCard" class="cloud-card rounded-2xl border p-4 space-y-3" aria-labelledby="cloudCardTitle">
-        <div class="flex items-center justify-between gap-3"><div class="min-w-0 flex-1"><p class="text-lg uppercase tracking-[.18em] text-cyan-300 font-extrabold leading-none">aLandi · cloud</p><h3 id="cloudCardTitle" data-i18n="cloudCardTitle" class="text-2xl font-bold mt-2">Мой сервер</h3></div><span class="cloud-status-indicator" id="cloudStatusDot" data-state="disconnected" aria-hidden="true"></span></div>
+<section id="aserviSettingsCard" class="aservi-card rounded-2xl border p-4 space-y-3" aria-labelledby="aserviCardTitle">
+        <div class="flex items-center justify-between gap-3"><div class="min-w-0 flex-1"><p class="text-lg uppercase tracking-[.18em] text-cyan-300 font-extrabold leading-none">aLandi · cloud</p><h3 id="aserviCardTitle" data-i18n="aserviCardTitle" class="text-2xl font-bold mt-2">Мой сервер</h3></div><span class="aservi-status-indicator" id="aserviStatusDot" data-state="disconnected" aria-hidden="true"></span></div>
         <div class="grid grid-cols-1 gap-2">
-          <input id="cloudBaseUrl" type="url" autocomplete="url" aria-label="URL моего сервера" aria-describedby="cloudBaseUrlError" class="w-full p-3 rounded-xl border text-sm" placeholder="URL моего сервера · https://…/v1"><p id="cloudBaseUrlError" class="field-error hidden" role="alert"></p>
-          <input id="cloudModel" type="text" autocomplete="off" aria-label="Модель моего сервера" aria-describedby="cloudModelError" class="w-full p-3 rounded-xl border text-sm" placeholder="Модель gateway · точный ID"><p id="cloudModelError" class="field-error hidden" role="alert"></p>
-          <div class="cloud-key-row flex gap-2"><input id="cloudApiKey" type="password" autocomplete="off" aria-label="Ключ доступа к серверу" aria-describedby="cloudApiKeyError" class="min-w-0 flex-1 p-3 rounded-xl border text-sm" placeholder="Ключ доступа"><button type="button" data-action="paste-cloud-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ">↓</button></div><p id="cloudApiKeyError" class="field-error hidden" role="alert"></p>
+          <input id="aserviBaseUrl" type="url" autocomplete="url" aria-label="URL моего сервера" aria-describedby="aserviBaseUrlError" class="w-full p-3 rounded-xl border text-sm" placeholder="URL моего сервера · https://…/v1"><p id="aserviBaseUrlError" class="field-error hidden" role="alert"></p>
+          <input id="aserviModel" type="text" autocomplete="off" aria-label="Модель моего сервера" aria-describedby="aserviModelError" class="w-full p-3 rounded-xl border text-sm" placeholder="Модель gateway · точный ID"><p id="aserviModelError" class="field-error hidden" role="alert"></p>
+          <div class="aservi-key-row flex gap-2"><input id="aserviApiKey" type="password" autocomplete="off" aria-label="Ключ доступа к серверу" aria-describedby="aserviApiKeyError" class="min-w-0 flex-1 p-3 rounded-xl border text-sm" placeholder="Ключ доступа"><button type="button" data-action="paste-cloud-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ">↓</button></div><p id="aserviApiKeyError" class="field-error hidden" role="alert"></p>
         </div>
-        <p id="cloudStatus" class="cloud-status-copy text-[10px]" data-state="disconnected" role="status" aria-live="polite">Не подключено</p>
+        <p id="aserviStatus" class="aservi-status-copy text-[10px]" data-state="disconnected" role="status" aria-live="polite">Не подключено</p>
       </section>
         </div>
       </details>
@@ -1058,7 +1058,7 @@ permalink: /
     let isPreparingDocumentAttachments = false;
     let isTestingProviderConnection = false;
     let providerAutoConnectTimer = null;
-    let cloudAutoConnectTimer = null;
+    let aserviAutoConnectTimer = null;
     let clockTimer = null;
     let storageWarningShown = false;
     let storageHealthWarningLevel = 0;
@@ -1547,7 +1547,7 @@ permalink: /
       ru:{
         settingsTitle:'⚙️ Настройки',sidebarTitle:'💬 Проекты и чаты',chatsTitle:'Чаты',newChat:'＋ Новый чат',clearChat:'🗑 Очистить чат',newPersonalChat:'＋ Новый личный чат',
         memoryLabel:'🧠 Долгосрочная память',memoryPlaceholder:'Факт, который нужно запомнить',exportChats:'Экспорт',importChats:'Импорт',
-        appearanceTitle:'Внешний вид',languageLabel:'Язык',languageRussian:'Русский',languageEnglish:'English',themeLabel:'Тема',motionLabel:'Анимации',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',cloudGroupTitle:'☁ aLandi Cloud',thirdPartySettingsTitle:'Сторонние провайдеры',providerGroupExternal:'Сторонние провайдеры',cloudCardTitle:'Мой сервер',cloudCardCopy:'',cloudBaseUrl:'URL моего сервера',cloudModel:'Модель моего сервера',cloudApiKey:'Ключ доступа к серверу',cloudConnect:'',providerLabel:'Сторонний API',
+        appearanceTitle:'Внешний вид',languageLabel:'Язык',languageRussian:'Русский',languageEnglish:'English',themeLabel:'Тема',motionLabel:'Анимации',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',aserviGroupTitle:'☁ aLandi aServi',thirdPartySettingsTitle:'Сторонние провайдеры',providerGroupExternal:'Сторонние провайдеры',aserviCardTitle:'Мой сервер',aserviCardCopy:'',aserviBaseUrl:'URL моего сервера',aserviModel:'Модель моего сервера',aserviApiKey:'Ключ доступа к серверу',aserviConnect:'',providerLabel:'Сторонний API',
         modelSearchLabel:'Поиск по каталогу моделей',modelPresetLabel:'Быстрый выбор модели · список обновляется из API',
         baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',systemPromptEmptyNote:'Глобальный системный промпт пуст по умолчанию. Добавляй общие инструкции только если они действительно нужны.',tavilyDecisionNote:'Решение о подключении Tavily ещё не принято. Сначала оцениваем текущий поиск и его качество; ключ можно оставить пустым.',
         legacySettings:'Дополнительные настройки',composerPlaceholder:'Напиши сообщение...',
@@ -1567,7 +1567,7 @@ permalink: /
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Projects & chats',chatsTitle:'Chats',newChat:'＋ New chat',clearChat:'🗑 Clear chat',newPersonalChat:'＋ New personal chat',
         memoryLabel:'🧠 Long-term memory',memoryPlaceholder:'A fact to remember',exportChats:'Export',importChats:'Import',
-        appearanceTitle:'Appearance',languageLabel:'Language',languageRussian:'Russian',languageEnglish:'English',themeLabel:'Theme',motionLabel:'Motion',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',cloudGroupTitle:'☁ aLandi Cloud',thirdPartySettingsTitle:'Third-party providers',providerGroupExternal:'Third-party providers',cloudCardTitle:'My server',cloudCardCopy:'',cloudBaseUrl:'My server URL',cloudModel:'My server model',cloudApiKey:'Server access key',cloudConnect:'',providerLabel:'Third-party API',
+        appearanceTitle:'Appearance',languageLabel:'Language',languageRussian:'Russian',languageEnglish:'English',themeLabel:'Theme',motionLabel:'Motion',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',aserviGroupTitle:'☁ aLandi aServi',thirdPartySettingsTitle:'Third-party providers',providerGroupExternal:'Third-party providers',aserviCardTitle:'My server',aserviCardCopy:'',aserviBaseUrl:'My server URL',aserviModel:'My server model',aserviApiKey:'Server access key',aserviConnect:'',providerLabel:'Third-party API',
         modelSearchLabel:'Search model catalog',modelPresetLabel:'Quick model pick · list loads from API',
         baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',systemPromptEmptyNote:'The global system prompt is empty by default. Add shared instructions only when they are genuinely needed.',tavilyDecisionNote:'The Tavily decision is still open. We are evaluating the current search path and result quality first; the key can remain empty.',
         legacySettings:'Additional settings',composerPlaceholder:'Write a message...',
@@ -1581,11 +1581,11 @@ permalink: /
         functionSkillsTitle:'Task profile',functionSkillsDescription:'A profile adds task-specific instructions for this chat. It does not enable tools, web search or additional permissions.',skillPresetLabel:'Task profile for this chat',skillAuto:'Auto (thorough/structured)',skillPlanning:'Planning',skillResearch:'Research',skillCodeReview:'Code and review',skillDataAnalysis:'Data analysis',skillAgentSystems:'Agent systems',skillMultimodal:'Multimodal tasks',skillPresetHelp:'Auto selects a profile for Thorough or structured requests; quick direct answers stay lean. A manual profile changes instructions only, not tools or data access. This choice applies to this chat; new chats start with Auto.',
         functionConnectorsTitle:'Integrations',functionConnectorsDescription:'Only real connected integrations are listed. No external sources are connected yet; there are no placeholder switches.',
         projectCreateTitle:'Create project',projectCreateHelp:'Creating a project does not move the current chat. You can create a new chat separately from the project row.',projectCreateNameLabel:'Project name',projectCreateInstructionsLabel:'Short instructions (optional)',cancel:'Cancel',researchStudioTitle:'Research Studio',researchStudioDescription:'A workspace for preparing a research request. Running it uses this chat’s current settings.',researchStudioPromptLabel:'What should be researched?',researchStudioPromptPlaceholder:'For example: compare primary sources, verify disputed claims and prepare cited conclusions.',researchStudioCurrentSettingsLabel:'Current chat settings',researchStudioSettingsHelp:'The Studio uses these settings without changing them. Close this window and use the chat controls to change them.',researchStudioContextHelp:'To research your own documents, attach them in the chat or explicitly select project context. The Studio does not upload files or connect external services by itself. Retrieved pages are untrusted sources, not instructions.',researchStudioCancel:'Cancel',researchStudioStart:'Start research ↗',researchStudioClose:'Close Studio',researchStudioStatusDefault:'The Studio uses the current chat settings and does not change them.',researchStudioPromptRequired:'Enter a research question or task first.',
-        kiloPrivacyNotice:'Kilo Auto Free is an ordinary alternative provider in the API list, not part of the primary aLandi cloud. Requests go to Kilo and its selected models, which may log prompts or use them to improve services. Do not send confidential data. No silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',saveSettings:'Save settings',closeSettings:'Close',
+        kiloPrivacyNotice:'Kilo Auto Free is an ordinary alternative provider in the API list, not part of the primary aLandi aServi. Requests go to Kilo and its selected models, which may log prompts or use them to improve services. Do not send confidential data. No silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',saveSettings:'Save settings',closeSettings:'Close',
         privateMemoryHelpSummary:'About private memory',sharedMemoryHelpSummary:'About shared memory',readabilityTitle:'Text readability',readabilityReset:'Reset',readabilityScaleLabel:'Text size',readabilityContrastLabel:'Text contrast',readabilityContrastNormal:'Standard',readabilityContrastHigh:'Higher',readabilityPreview:'Preview text — this is how messages will look.',memoryPanelTitle:'Memory settings',memoryPanelSummary:'Private and shared memory',privateMemoryTitle:'Private memory',privateMemoryHelp:'Stored locally in this browser’s IndexedDB. Notes are not sent with requests by default; you can opt in below.',sharedMemoryTitle:'Shared memory',sharedMemoryHelp:'Shared facts may be sent to an external provider only with separate consent and when the project memory scope allows it.',privateMemoryContextLabel:'Allow private-memory notes to be included in request context.',globalMemoryOptIn:'Allow relevant shared-memory notes to be included in prompts.',noProjectNav:'No project',projectMemoryScopeLabel:'Project memory scope',projectMemoryScopeOnly:'Memory inside this project only',projectMemoryScopeGlobal:'Project memory + shared memory (when enabled)',attachMediaTitle:'Photo or video',attachMediaHelp:'Images or sampled frames from a video',attachAnyFileTitle:'Any file format',attachAnyFileHelp:'Native multi-file picker; parsing depends on file type.',requestContextTitle:'Context for this request',requestContextHelp:'Selected projects apply only to the next send. The active chat and its project do not change.',clearRequestContext:'Clear selection',skillsAutoHint:'Skills: automatically selected for the task; a manual catalog is not connected yet.',requestContextLimitHint:'Context is limited to five projects and a shared size budget.',projectsTitle:'▣ Projects',currentProjectLabel:'Project for this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'＋ Create project',saveProject:'Save changes',projectContextHandoffTitle:'Hand off context to a chat',projectContextHandoffLabel:'Existing chat',projectContextHandoffButton:'Queue for next request',projectSourcesTitle:'Project sources',projectSourcesUnavailable:'Source management is not connected yet: the gateway can ingest, delete and retrieve documents by scope, but it has no source-list API. Chat attachments are not treated as saved project sources.',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats'
       }
     };
-    const CLOUD_TEXT={
+    const ASERVI_TEXT={
       ru:{
         urlProtocol:'Нужен HTTP или HTTPS URL.',urlHttps:'Для удалённого сервера нужен HTTPS.',urlFormat:'Проверь формат URL.',urlRequired:'Укажи URL сервера.',modelRequired:'Укажи ID модели.',keyRequired:'Укажи ключ доступа.',
         connected:'Подключено',checking:'Проверка…',disconnected:'Не подключено',connectButton:'Проверить и подключить',checkingButton:'Проверяю…',
@@ -1594,7 +1594,7 @@ permalink: /
         connectionFailed:'Не удалось подтвердить соединение. Проверь URL сервера и ключ.',
         healthFailed:'Модель ответила, но health-check gateway вернул HTTP ',
         fingerprintFailed:'Не удалось вычислить контрольный отпечаток ключа в этом браузере.',
-        connectedToast:'aLandi Cloud подключён и проверен.'
+        connectedToast:'aLandi aServi подключён и проверен.'
       },
       en:{
         urlProtocol:'Enter an HTTP or HTTPS URL.',urlHttps:'Remote servers must use HTTPS.',urlFormat:'Check the URL format.',urlRequired:'Enter the server URL.',modelRequired:'Enter a model ID.',keyRequired:'Enter the access key.',
@@ -1604,10 +1604,10 @@ permalink: /
         connectionFailed:'Could not verify the connection. Check the server URL and access key.',
         healthFailed:'The model replied, but the gateway health check returned HTTP ',
         fingerprintFailed:'Could not calculate a key fingerprint in this browser.',
-        connectedToast:'aLandi Cloud is connected and verified.'
+        connectedToast:'aLandi aServi is connected and verified.'
       }
     };
-    function cloudText(key){const language=getUiLanguage();return CLOUD_TEXT[language]?.[key]||CLOUD_TEXT.ru[key]||key;}
+    function aserviText(key){const language=getUiLanguage();return ASERVI_TEXT[language]?.[key]||ASERVI_TEXT.ru[key]||key;}
     function getUiLanguage(){return safeGet('ai_ui_language_v1')==='en'?'en':'ru';}
     function applyFunctionPanelLanguage(lang){
       const en=lang==='en';
@@ -1620,7 +1620,7 @@ permalink: /
       setOptions('uiMotion',en?['Auto','Reduce motion','Off']:['Авто','Уменьшить','Выкл.']);
       setOptions('uiTextContrast',en?['Standard','Higher']:['Стандартный','Повышенный']);
       setOptions('composerPosition',en?['Bottom','Top']:['Снизу','Сверху']);
-      const fieldTexts={customSkillName:en?'Custom skill name':'Название своего навыка',customSkillInstructions:en?'Instructions for this task':'Свои инструкции для задачи',customSkillOutput:en?'Custom output format (optional)':'Свой формат результата (необязательно)',agentTeamCustomScenario:en?'Describe the team scenario':'Опиши сценарий команды',agentCustomRoles:en?'Roles and responsibilities, one per line':'Роли и обязанности, по одной на строку',cloudBaseUrl:en?'My server URL · https://…/v1':'URL моего сервера · https://…/v1',cloudModel:en?'Gateway model · exact model ID':'Модель gateway · точный ID',cloudApiKey:en?'Access key':'Ключ доступа',tavilyKey:en?'Tavily key':'ключ Tavily',systemPromptInput:en?'Your shared instructions (optional)':'Свои правила для всех запросов'};
+      const fieldTexts={customSkillName:en?'Custom skill name':'Название своего навыка',customSkillInstructions:en?'Instructions for this task':'Свои инструкции для задачи',customSkillOutput:en?'Custom output format (optional)':'Свой формат результата (необязательно)',agentTeamCustomScenario:en?'Describe the team scenario':'Опиши сценарий команды',agentCustomRoles:en?'Roles and responsibilities, one per line':'Роли и обязанности, по одной на строку',aserviBaseUrl:en?'My server URL · https://…/v1':'URL моего сервера · https://…/v1',aserviModel:en?'Gateway model · exact model ID':'Модель gateway · точный ID',aserviApiKey:en?'Access key':'Ключ доступа',tavilyKey:en?'Tavily key':'ключ Tavily',systemPromptInput:en?'Your shared instructions (optional)':'Свои правила для всех запросов'};
       Object.entries(fieldTexts).forEach(([id,value])=>{const field=$(id);if(field)field.placeholder=value;});
       const labels={skillGoalSelect:en?'Task type':'Тип задачи',skillOutputSelect:en?'Output format':'Формат результата',agentTeamSize:en?'Team size · blueprint':'Размер команды · blueprint',agentTeamScenario:en?'Scenario':'Сценарий',agentRolePreset:en?'Roles':'Роли',uiLanguage:en?'Language':'Язык',uiMotion:en?'Motion':'Анимация',composerPosition:en?'Composer':'Поле ввода'};
       Object.entries(labels).forEach(([id,value])=>{const field=$(id),label=field?.closest('label');if(label?.firstChild?.nodeType===Node.TEXT_NODE)label.firstChild.textContent=value+' ';});
@@ -1641,7 +1641,7 @@ permalink: /
       document.querySelectorAll('[data-i18n-aria-label]').forEach(node=>{const value=text[node.dataset.i18nAriaLabel];if(typeof value==='string')node.setAttribute('aria-label',value);});
       applyFunctionPanelLanguage(lang);
       updateHomeThemeButton();
-      const cloudConnectButton=document.querySelector('[data-action="connect-alandi-cloud"]');if(cloudConnectButton)cloudConnectButton.textContent=cloudConnectButton.disabled?cloudText('checkingButton'):cloudText('connectButton');
+      const aserviConnectButton=document.querySelector('[data-action="connect-alandi-cloud"]');if(aserviConnectButton)aserviConnectButton.textContent=aserviConnectButton.disabled?aserviText('checkingButton'):aserviText('connectButton');
       const promptButton=$('editSystemPrompt'),promptInput=$('systemPromptInput');
       if(promptButton&&promptInput){const editing=!promptInput.readOnly;const label=lang==='en'?(editing?'Finish editing system prompt':'Edit system prompt'):(editing?'Завершить редактирование системного промпта':'Редактировать системный промпт');promptButton.title=label;promptButton.setAttribute('aria-label',label);promptButton.textContent=editing?'✓':'✎';if($('promptEditHint'))$('promptEditHint').textContent=editing?(lang==='en'?'Editing enabled':'Редактирование включено'):(lang==='en'?'Editing disabled':'Редактирование выключено');}
       const sidebarLanguageSummary=$('languageSummarySidebar');if(sidebarLanguageSummary)sidebarLanguageSummary.textContent=lang==='en'?'EN ▾':'RU ▾';
@@ -1654,8 +1654,8 @@ permalink: /
       // The aLandi wordmark is intentionally decorative, not a clickable control.
 
       document.querySelectorAll('[data-action="toggle-settings"]').forEach(button=>button.setAttribute('aria-label',lang==='en'?'Settings':'Настройки'));
-      const cloudLabels={cloudBaseUrl:lang==='en'?'My server URL':'URL моего сервера',cloudModel:lang==='en'?'Gateway model':'Модель моего сервера',cloudApiKey:lang==='en'?'Server access key':'Ключ доступа к серверу'};
-      Object.entries(cloudLabels).forEach(([id,label])=>$(id)?.setAttribute('aria-label',label));
+      const aserviLabels={aserviBaseUrl:lang==='en'?'My server URL':'URL моего сервера',aserviModel:lang==='en'?'Gateway model':'Модель моего сервера',aserviApiKey:lang==='en'?'Server access key':'Ключ доступа к серверу'};
+      Object.entries(aserviLabels).forEach(([id,label])=>$(id)?.setAttribute('aria-label',label));
       const pasteCloudKey=document.querySelector('[data-action="paste-cloud-key"]');if(pasteCloudKey){pasteCloudKey.title=lang==='en'?'Paste access key':'Вставить ключ';pasteCloudKey.setAttribute('aria-label',pasteCloudKey.title);}
       const attach=$('attachTextButton');if(attach){attach.title=lang==='en'?'Attach photo, video or any file format':'Добавить фото, видео или файл любого формата';attach.setAttribute('aria-label',attach.title);}
       const voice=$('voiceUnavailableButton');if(voice){voice.title=lang==='en'?'Press and hold for voice modes':'Удерживай, чтобы открыть режимы голоса';voice.setAttribute('aria-label',voice.title);}
@@ -2061,7 +2061,7 @@ permalink: /
       if (!chat.messages.length) {
         const welcome = document.createElement('div');
         welcome.className = 'text-center text-gray-500 mt-10';
-        welcome.textContent = getUiLanguage()==='en' ? 'Welcome. Connect aLandi Cloud or choose an API provider in settings.' : 'Привет! Подключи aLandi Cloud или выбери провайдера в настройках.';
+        welcome.textContent = getUiLanguage()==='en' ? 'Welcome. Connect aLandi aServi or choose an API provider in settings.' : 'Привет! Подключи aLandi aServi или выбери провайдера в настройках.';
         box.appendChild(welcome);
         updateJumpToLatest();
         return;
@@ -2678,9 +2678,9 @@ permalink: /
       applyAppearance($('uiTheme').value, $('uiMotion').value);
       applyReadabilityPreferences(safeGet('ai_ui_text_scale_v1')||'100',safeGet('ai_ui_text_contrast_v1')||'normal');
       const savedProvider=safeGet(STORAGE.provider);
-      $('cloudBaseUrl').value=safeGet('ai_alandi_cloud_base_url')||(savedProvider==='alandi'?safeGet(STORAGE.baseUrl):'')||'';
-      $('cloudModel').value=safeGet('ai_alandi_cloud_model')||(savedProvider==='alandi'?safeGet(STORAGE.model):'')||'';
-      $('cloudApiKey').value=safeGet(providerKeyStorage('alandi'))||'';
+      $('aserviBaseUrl').value=safeGet('ai_alandi_cloud_base_url')||(savedProvider==='alandi'?safeGet(STORAGE.baseUrl):'')||'';
+      $('aserviModel').value=safeGet('ai_alandi_cloud_model')||(savedProvider==='alandi'?safeGet(STORAGE.model):'')||'';
+      $('aserviApiKey').value=safeGet(providerKeyStorage('alandi'))||'';
       if (savedProvider && savedProvider !== 'gemini') {
         const legacyKey = safeGet(STORAGE.apiKey);
         const selectedProviderKey = safeGet(providerKeyStorage(savedProvider));
@@ -2977,16 +2977,16 @@ permalink: /
       safeSet('ai_ui_motion_v2', $('uiMotion').value);
     });
     // Cloud is an exclusive settings group. Other groups cannot open until it is closed.
-    const cloudSettingsGroup=$('cloudSettingsGroup');
+    const aserviSettingsGroup=$('aserviSettingsGroup');
     const peerSettingsGroups=[$('thirdPartyProviderSettings'),$('additionalSettings')];
     peerSettingsGroups.forEach(group=>{
       group.querySelector(':scope > summary')?.addEventListener('click',()=>{
-        if(cloudSettingsGroup?.open&&!group.open)cloudSettingsGroup.open=false;
+        if(aserviSettingsGroup?.open&&!group.open)aserviSettingsGroup.open=false;
       });
-      group.addEventListener('toggle',()=>{if(group.open&&cloudSettingsGroup?.open)cloudSettingsGroup.open=false;});
+      group.addEventListener('toggle',()=>{if(group.open&&aserviSettingsGroup?.open)aserviSettingsGroup.open=false;});
     });
-    cloudSettingsGroup?.addEventListener('toggle',()=>{
-      if(cloudSettingsGroup.open)peerSettingsGroups.forEach(group=>{if(group)group.open=false;});
+    aserviSettingsGroup?.addEventListener('toggle',()=>{
+      if(aserviSettingsGroup.open)peerSettingsGroups.forEach(group=>{if(group)group.open=false;});
     });
     $('uiTextScale').addEventListener('input',saveReadabilityPreferences);
     $('uiTextContrast').addEventListener('change',saveReadabilityPreferences);
@@ -3166,27 +3166,27 @@ permalink: /
       field.dataset.state=text?'error':'';field.setAttribute('aria-invalid',String(Boolean(text)));
       if(error){error.textContent=text;error.classList.toggle('hidden',!text);}
     }
-    function validateCloudBaseUrl(value){if(!value)return '';try{const url=new URL(value);if(!['https:','http:'].includes(url.protocol))return cloudText('urlProtocol');if(url.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(url.hostname))return cloudText('urlHttps');return '';}catch(_){return cloudText('urlFormat');}}
-    function setCloudFieldConnection(state){['cloudBaseUrl','cloudModel','cloudApiKey'].forEach(id=>{const field=$(id);if(field&&field.dataset.state!=='error')field.dataset.state=state==='connected'?'connected':'';});}
+    function validateCloudBaseUrl(value){if(!value)return '';try{const url=new URL(value);if(!['https:','http:'].includes(url.protocol))return aserviText('urlProtocol');if(url.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(url.hostname))return aserviText('urlHttps');return '';}catch(_){return aserviText('urlFormat');}}
+    function setCloudFieldConnection(state){['aserviBaseUrl','aserviModel','aserviApiKey'].forEach(id=>{const field=$(id);if(field&&field.dataset.state!=='error')field.dataset.state=state==='connected'?'connected':'';});}
     function setCloudStatus(state,message=''){
-      const dot=$('cloudStatusDot'),copy=$('cloudStatus');
-      const label=state==='connected'?cloudText('connected'):state==='checking'?cloudText('checking'):cloudText('disconnected');
+      const dot=$('aserviStatusDot'),copy=$('aserviStatus');
+      const label=state==='connected'?aserviText('connected'):state==='checking'?aserviText('checking'):aserviText('disconnected');
       if(dot){dot.dataset.state=state;dot.title=label;}
       if(copy){copy.dataset.state=state;copy.textContent=message||label;}
       if(state!=='connected')setCloudFieldConnection(state);
     }
     function getCloudSettings(){
       return {
-        baseUrl:String($('cloudBaseUrl')?.value||'').trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),
-        model:String($('cloudModel')?.value||'').trim(),
-        key:String($('cloudApiKey')?.value||'').trim()
+        baseUrl:String($('aserviBaseUrl')?.value||'').trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),
+        model:String($('aserviModel')?.value||'').trim(),
+        key:String($('aserviApiKey')?.value||'').trim()
       };
     }
     async function refreshCloudStatus(){
       const {baseUrl,model,key}=getCloudSettings();
       const settingsStillCurrent=()=>{const current=getCloudSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
       if(!baseUrl||!model||!key){setCloudStatus('disconnected');return;}
-      const formatError=validateCloudBaseUrl(baseUrl);if(formatError){setCloudFieldError('cloudBaseUrl',formatError);setCloudStatus('disconnected');return;}
+      const formatError=validateCloudBaseUrl(baseUrl);if(formatError){setCloudFieldError('aserviBaseUrl',formatError);setCloudStatus('disconnected');return;}
       let marker=null;try{marker=JSON.parse(safeGet('ai_alandi_cloud_connection_v1')||'null');}catch(_){}
       const fingerprint=await providerKeyFingerprint(key);
       if(!settingsStillCurrent())return;
@@ -3266,7 +3266,7 @@ permalink: /
       if(parsed.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(parsed.hostname)){updateApiKeyLamp('error','Для удалённого API нужен HTTPS.');return;}
       isTestingProviderConnection=true;
       const button=document.querySelector('[data-action="test-connection"]');
-      if(button){button.disabled=true;button.textContent=cloudText('checkingButton');}
+      if(button){button.disabled=true;button.textContent=aserviText('checkingButton');}
       updateApiKeyLamp('pending','Проверяю модель. Повторю попытку только если API явно сообщил, что ID модели недоступен.');
       showStatus('Проверяю подключение…');
       let result=null,lastError=null;
@@ -3329,9 +3329,9 @@ permalink: /
         if(provider==='alandi'&&key&&isPrimaryCloudSettingsCurrent()){
           safeSet('ai_alandi_cloud_base_url',baseUrl);safeSet('ai_alandi_cloud_model',result.candidateModel);
           safeSet('ai_alandi_cloud_connection_v1',JSON.stringify({ok:true,baseUrl,model:result.candidateModel,keyFingerprint:fingerprint,testedAt:new Date().toISOString()}));
-          if($('cloudBaseUrl')){$('cloudBaseUrl').value=baseUrl;$('cloudModel').value=result.candidateModel;$('cloudApiKey').value=key;}
-          // A model probe alone is not the full cloud-card health check; never show green before refreshCloudStatus validates /healthz.
-          setCloudStatus('checking',cloudText('modelHealth'));
+          if($('aserviBaseUrl')){$('aserviBaseUrl').value=baseUrl;$('aserviModel').value=result.candidateModel;$('aserviApiKey').value=key;}
+          // A model probe alone is not the full aservi-card health check; never show green before refreshCloudStatus validates /healthz.
+          setCloudStatus('checking',aserviText('modelHealth'));
         }
         if(result.candidateModel!==model)populateModelPresets(provider,result.candidateModel);
         updateApiKeyLamp('connected','Зелёный — модель '+result.candidateModel+' успешно ответила; соединение подтверждено.');
@@ -3356,15 +3356,15 @@ permalink: /
     async function connectAlandiCloud(){
       if(isTestingProviderConnection)return;
       const {baseUrl,model,key}=getCloudSettings();
-      const cloudSettingsStillCurrent=()=>{const current=getCloudSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
+      const aserviSettingsStillCurrent=()=>{const current=getCloudSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
       if(!baseUrl||!model||!key){
-        setCloudFieldError('cloudBaseUrl',baseUrl?'':cloudText('urlRequired'));
-        setCloudFieldError('cloudModel',model?'':cloudText('modelRequired'));
-        setCloudFieldError('cloudApiKey',key?'':cloudText('keyRequired'));
+        setCloudFieldError('aserviBaseUrl',baseUrl?'':aserviText('urlRequired'));
+        setCloudFieldError('aserviModel',model?'':aserviText('modelRequired'));
+        setCloudFieldError('aserviApiKey',key?'':aserviText('keyRequired'));
         setCloudStatus('disconnected');return;
       }
-      const formatError=validateCloudBaseUrl(baseUrl);if(formatError){setCloudFieldError('cloudBaseUrl',formatError);setCloudStatus('disconnected');return;}
-      setCloudFieldError('cloudBaseUrl');setCloudFieldError('cloudModel');setCloudFieldError('cloudApiKey');
+      const formatError=validateCloudBaseUrl(baseUrl);if(formatError){setCloudFieldError('aserviBaseUrl',formatError);setCloudStatus('disconnected');return;}
+      setCloudFieldError('aserviBaseUrl');setCloudFieldError('aserviModel');setCloudFieldError('aserviApiKey');
       isTestingProviderConnection=true;
       const button=document.querySelector('[data-action="connect-alandi-cloud"]');
       if(button){button.disabled=true;button.textContent='Проверяю…';}
@@ -3377,8 +3377,8 @@ permalink: /
           const detail=String(payload?.error?.message||payload?.message||raw||'ответ не распознан').slice(0,180).replaceAll(key,'[скрытый ключ]');
           throw new Error('HTTP '+response.status+(detail?': '+detail:''));
         }
-        if(!cloudSettingsStillCurrent()){
-          setCloudStatus('disconnected',cloudText('settingsChanged'));
+        if(!aserviSettingsStillCurrent()){
+          setCloudStatus('disconnected',aserviText('settingsChanged'));
           return;
         }
         const healthUrl=new URL(baseUrl);
@@ -3388,10 +3388,10 @@ permalink: /
         let health;
         try{health=await fetch(healthUrl.toString(),{method:'GET',headers:{Accept:'application/json'},cache:'no-store',signal:healthController.signal});}
         finally{clearTimeout(healthTimer);}
-        if(!health.ok)throw new Error(cloudText('healthFailed')+health.status+'.');
+        if(!health.ok)throw new Error(aserviText('healthFailed')+health.status+'.');
         const fingerprint=await providerKeyFingerprint(key);
-        if(!fingerprint)throw new Error(cloudText('fingerprintFailed'));
-        if(!cloudSettingsStillCurrent()){
+        if(!fingerprint)throw new Error(aserviText('fingerprintFailed'));
+        if(!aserviSettingsStillCurrent()){
           setCloudStatus('disconnected','Настройки изменились во время проверки. Результат не сохранён.');
           return;
         }
@@ -3403,18 +3403,18 @@ permalink: /
         safeSet('ai_provider_connection_alandi',JSON.stringify(verified));
         $('providerPreset').value='';applyProviderPreset('alandi',true);$('baseUrl').value=baseUrl;$('modelName').value=model;$('apiKey').value=key;
         setCloudFieldConnection('connected');setCloudStatus('connected');
-        showToast(cloudText('connectedToast'));
+        showToast(aserviText('connectedToast'));
       }catch(error){
-        if(!cloudSettingsStillCurrent()){
+        if(!aserviSettingsStillCurrent()){
           setCloudStatus('disconnected','Настройки изменились во время проверки. Результат не сохранён.');
           return;
         }
         safeSet('ai_alandi_cloud_connection_v1','');safeSet('ai_provider_connection_alandi','');
         setCloudStatus('disconnected');
-        setCloudFieldError('cloudApiKey',cloudText('connectionFailed'));
+        setCloudFieldError('aserviApiKey',aserviText('connectionFailed'));
       }finally{
         clearTimeout(timer);isTestingProviderConnection=false;
-        if(button){button.disabled=false;button.textContent=cloudText('connectButton');}
+        if(button){button.disabled=false;button.textContent=aserviText('connectButton');}
       }
     }
     async function pasteIntoField(id){
@@ -3426,7 +3426,7 @@ permalink: /
         field.value=text.trim();field.dispatchEvent(new Event('input',{bubbles:true}));
         field.focus();field.setSelectionRange?.(field.value.length,field.value.length);
         if(id==='apiKey')scheduleProviderAutoConnect();
-        else if(id==='cloudApiKey'){safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('cloudApiKey');setCloudStatus('disconnected');scheduleCloudAutoConnect();}
+        else if(id==='aserviApiKey'){safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('aserviApiKey');setCloudStatus('disconnected');scheduleCloudAutoConnect();}
         showToast('Текст вставлен.');
       }catch(_){field.focus();showToast('Браузер не разрешил чтение буфера. Нажми Ctrl+V в поле.','error');}
     }
@@ -3446,8 +3446,8 @@ permalink: /
       },850);
     }
     function scheduleCloudAutoConnect(){
-      if(cloudAutoConnectTimer)clearTimeout(cloudAutoConnectTimer);
-      cloudAutoConnectTimer=setTimeout(()=>{cloudAutoConnectTimer=null;const cfg=getCloudSettings();if(!cfg.baseUrl||!cfg.model||!cfg.key){setCloudStatus('disconnected');return;}const error=validateCloudBaseUrl(cfg.baseUrl);if(error){setCloudFieldError('cloudBaseUrl',error);setCloudStatus('disconnected');return;}if(isTestingProviderConnection){scheduleCloudAutoConnect();return;}void connectAlandiCloud();},850);
+      if(aserviAutoConnectTimer)clearTimeout(aserviAutoConnectTimer);
+      aserviAutoConnectTimer=setTimeout(()=>{aserviAutoConnectTimer=null;const cfg=getCloudSettings();if(!cfg.baseUrl||!cfg.model||!cfg.key){setCloudStatus('disconnected');return;}const error=validateCloudBaseUrl(cfg.baseUrl);if(error){setCloudFieldError('aserviBaseUrl',error);setCloudStatus('disconnected');return;}if(isTestingProviderConnection){scheduleCloudAutoConnect();return;}void connectAlandiCloud();},850);
     }
     function clearProviderKey(){
       const provider=currentProvider();safeSet(providerKeyStorage(provider),'');
@@ -5291,7 +5291,7 @@ permalink: /
             showToast(getUiLanguage()==='en'?'Text readability reset to defaults.':'Настройки читаемости сброшены к значениям по умолчанию.');break;
           }
           case 'paste-provider-key': await pasteIntoField('apiKey');break;
-          case 'paste-cloud-key': await pasteIntoField('cloudApiKey');break;
+          case 'paste-cloud-key': await pasteIntoField('aserviApiKey');break;
           case 'paste-tavily-key': await pasteIntoField('tavilyKey');break;
           case 'connect-alandi-cloud': await connectAlandiCloud();break;
           case 'attach-text-file': {
@@ -5438,16 +5438,16 @@ permalink: /
     });
     $('apiKey').addEventListener('input',()=>{if(currentProvider()!=='pollinations')safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();scheduleProviderAutoConnect();});
     $('baseUrl').addEventListener('input',()=>{safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();scheduleProviderAutoConnect();});
-    $('cloudBaseUrl').addEventListener('input',()=>{const value=$('cloudBaseUrl').value.trim();safeSet('ai_alandi_cloud_base_url',value);safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('cloudBaseUrl',validateCloudBaseUrl(value));setCloudStatus('disconnected');scheduleCloudAutoConnect();});
-    $('cloudModel').addEventListener('input',()=>{safeSet('ai_alandi_cloud_model',$('cloudModel').value.trim());safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('cloudModel');setCloudStatus('disconnected');scheduleCloudAutoConnect();});
-    $('cloudApiKey').addEventListener('input',()=>{safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('cloudApiKey');setCloudStatus('disconnected');scheduleCloudAutoConnect();});
+    $('aserviBaseUrl').addEventListener('input',()=>{const value=$('aserviBaseUrl').value.trim();safeSet('ai_alandi_cloud_base_url',value);safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('aserviBaseUrl',validateCloudBaseUrl(value));setCloudStatus('disconnected');scheduleCloudAutoConnect();});
+    $('aserviModel').addEventListener('input',()=>{safeSet('ai_alandi_cloud_model',$('aserviModel').value.trim());safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('aserviModel');setCloudStatus('disconnected');scheduleCloudAutoConnect();});
+    $('aserviApiKey').addEventListener('input',()=>{safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('aserviApiKey');setCloudStatus('disconnected');scheduleCloudAutoConnect();});
     $('textAttachmentInput').addEventListener('change',handleTextAttachment);
     $('mediaAttachmentInput').addEventListener('change',handleMediaAttachment);
     document.addEventListener('pointerdown',event=>{
       if(!$('attachmentMenu').classList.contains('hidden')&&!$('attachmentMenu').contains(event.target)&&!$('attachTextButton').contains(event.target))closeComposerPopovers();
       if(!$('requestContextMenu').classList.contains('hidden')&&!$('requestContextMenu').contains(event.target)&&!$('contextPickerButton').contains(event.target))closeComposerPopovers();
     });
-    $('providerPreset').addEventListener('change',()=>{safeSet('ai_alandi_cloud_connection_v1','');if(currentProvider()==='alandi'){const url=$('baseUrl').value.trim();if(url)$('cloudBaseUrl').value=url;}});
+    $('providerPreset').addEventListener('change',()=>{safeSet('ai_alandi_cloud_connection_v1','');if(currentProvider()==='alandi'){const url=$('baseUrl').value.trim();if(url)$('aserviBaseUrl').value=url;}});
     $('modelSearch').addEventListener('input',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('settingsModal').addEventListener('click',event=>{if(event.target===$('settingsModal'))toggleSettings(false);});
     $('functionPanelModal').addEventListener('click',event=>{if(event.target===$('functionPanelModal'))closeFunctionPanel();});
