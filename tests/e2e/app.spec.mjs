@@ -567,7 +567,7 @@ test('high-contrast preference updates every important text state in both themes
     link: getComputedStyle(document.querySelector('#chatBox .assistant-content a')).color,
     error: getComputedStyle(document.querySelector('#chatBox [role="alert"]')).color,
     status: getComputedStyle(document.querySelector('#statusText')).color,
-    cloudWarning: getComputedStyle(document.querySelector('#aserviStatus')).color
+    aserviWarning: getComputedStyle(document.querySelector('#aserviStatus')).color
   }));
   await page.locator('[data-action="toggle-settings"]').click();
   await page.locator('#additionalSettings > summary').click();
@@ -593,7 +593,7 @@ test('high-contrast preference updates every important text state in both themes
     expect(highLight[key]).not.toBe('');
   }
   expect(highLight.normal).toBe(normalLight.normal);
-  expect(highLight.cloudWarning).not.toBe(highDark.cloudWarning);
+  expect(highLight.aserviWarning).not.toBe(highDark.aserviWarning);
 });
 
 test('readability color tokens meet AA contrast against both theme surfaces', async ({ page }) => {
@@ -1567,12 +1567,12 @@ test('agent systems skill is routed on demand and its safety contract stays avai
 
 
 test('aLandi aServi status only turns green after a real model response, and core UX controls work', async ({ page }) => {
-  const cloudRequests = [];
+  const aserviRequests = [];
   await page.route('https://cloud.example.test/healthz', async route => route.fulfill({
     status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' })
   }));
   await page.route('https://cloud.example.test/v1/chat/completions', async route => {
-    cloudRequests.push(route.request().postDataJSON());
+    aserviRequests.push(route.request().postDataJSON());
     return route.fulfill({
       status: 200, contentType: 'application/json',
       body: JSON.stringify({ model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
@@ -1595,9 +1595,9 @@ test('aLandi aServi status only turns green after a real model response, and cor
   await page.locator('#userInput').fill('Verify the primary chat uses my aLandi aServi.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('OK', { timeout: 15000 });
-  expect(cloudRequests).toHaveLength(2);
-  expect(cloudRequests[1].messages.at(-1).content).toBe('Verify the primary chat uses my aLandi aServi.');
-  expect(cloudRequests.every(request => request.model === 'qwen3.5:4b')).toBe(true);
+  expect(aserviRequests).toHaveLength(2);
+  expect(aserviRequests[1].messages.at(-1).content).toBe('Verify the primary chat uses my aLandi aServi.');
+  expect(aserviRequests.every(request => request.model === 'qwen3.5:4b')).toBe(true);
   await selectLanguage(page, 'en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
@@ -2271,7 +2271,7 @@ test('Thai public-knowledge search uses Thai Wikipedia and returns a matching so
   expect(wikipediaRequest?.searchParams.get('srsearch')).toBe('ประเทศไทย');
 });
 
-test('Cloud URL validation follows the selected language and is announced with its field', async ({ page }) => {
+test('aServi URL validation follows the selected language and is announced with its field', async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('ai_ui_language_v1', 'en'));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
@@ -2355,7 +2355,7 @@ test('aLandi aServi remains disconnected when the model answers but gateway heal
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
 });
 
-test('stale Cloud health response cannot reconnect settings changed while it is in flight', async ({ page }) => {
+test('stale aServi health response cannot reconnect settings changed while it is in flight', async ({ page }) => {
   const key = 'e2e-cloud-stale-health-key';
   await page.addInitScript(async accessKey => {
     const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(accessKey));
@@ -2449,7 +2449,7 @@ test('aLandi aServi probe cannot overwrite settings changed while its request is
 });
 
 
-test('settings keep Cloud, third-party providers and additional options in exclusive groups', async ({ page }) => {
+test('settings keep aServi, third-party providers and additional options in exclusive groups', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
   const cloud = page.locator('#aserviSettingsGroup');
