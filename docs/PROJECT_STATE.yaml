@@ -531,6 +531,6 @@ landing_ui_v2_pr131_current_2026_11_02:
   source_validation: "V8 syntax parse passed for app.js, tests/e2e/app.spec.mjs and scripts/quality-agents.mjs after adapting imports/shebang; CSS brace balance 0"
   browser_validation: "No exact-head Quality/Chromium run; previous Chromium #1126 is stale evidence (101 passed / 18 failed)"
   terminology: "aLandi aServi is current UI naming; ai_alandi_cloud_* storage keys retained only for backwards compatibility; Cloudflare unchanged; aLandi aCloudi reserved for future storage"
-  repo_hygiene: "Queued for next major-slice boundary; no branches/files deleted and no history rewrite"
+  repo_hygiene: "Runbook docs/REPOSITORY_HYGIENE_RU.md added; full audit queued for next major-slice boundary; no branches/files deleted and no history rewrite"
   safety: "PR #131 open/unmerged; PR #132 remains draft documentation-only backup; no merge, rebase, force update or deployment"
   next: "Finish integrated source/documentation pass, then run exact-head Quality/Chromium on PR #131; retain native iOS/VoiceOver and full WCAG review as manual gates"
