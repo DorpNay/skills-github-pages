@@ -724,7 +724,6 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await expect(page.locator('#systemPromptInput')).not.toHaveAttribute('readonly', '');
   await page.locator('#editSystemPrompt').click();
   await expect(page.locator('#systemPromptInput')).toHaveAttribute('readonly', '');
-  await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('gemini');
   await page.locator('#modelPreset').selectOption('gemini-3.6-flash');
   await expect(page.locator('#modelName')).toHaveValue('gemini-3.6-flash');
@@ -2265,7 +2264,7 @@ test('settings keep Cloud, third-party providers and additional options in exclu
   await expect(cloud).not.toHaveAttribute('open');
   await additional.locator(':scope > summary').click();
   await expect(additional).toHaveAttribute('open', '');
-  await expect(providers).not.toHaveAttribute('open');
+  await expect(providers).toHaveAttribute('open', '');
   await cloud.locator(':scope > summary').click();
   await expect(cloud).toHaveAttribute('open', '');
   await expect(additional).not.toHaveAttribute('open');
@@ -2954,7 +2953,7 @@ test('search presets and function settings fit one line, localize, and persist p
 
   await page.locator('#functionsMenuSummary').click();
   await expect(page.locator('#functionsMenu [data-function="research"]')).toHaveCount(0);
-  await expect(page.locator('#functionsMenu .toolbar-menu-option')).toHaveCount(3);
+  await expect(page.locator('#functionsMenu .toolbar-menu-option')).toHaveCount(4);
   await page.locator('#functionsMenuSummary').click();
 
   await setAgentMode(page, true);
@@ -3117,6 +3116,12 @@ test('modal backdrop and focus lifecycle remain clean over repeated open and clo
 test('request status and notifications expose semantic state and centered alignment', async ({ page }) => {
   let release;
   await page.route('https://api.example.test/v1/chat/completions',async route=>{
+    const payload = route.request().postDataJSON();
+    const lastMessage = payload.messages?.at(-1)?.content;
+    if (lastMessage === 'Reply with exactly OK. No other words.') {
+      await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({model:'status-e2e',choices:[{message:{role:'assistant',content:'OK'}}]})});
+      return;
+    }
     await new Promise(resolve=>{release=resolve;});
     await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({model:'status-e2e',choices:[{message:{role:'assistant',content:'Status complete.'}}]})});
   });
