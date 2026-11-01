@@ -276,3 +276,12 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - Gateway run #640 is a verified pass and remains applicable to current Gateway code because no `gateway/**` files changed after the tested commit. This closes the Gateway P0 sub-gate; it does not close Quality/Chromium.
 - Current PR #131 compare against main: 197 commits ahead / 4 behind; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub reports `mergeable=false`. Main-side changes are confined to `docs/V1_UI_FINALIZATION_RU.md`; line-level content comparison shows the PR branch already contains the substantive new main-side requirement lines, while replacing the older polish wording and adding section 8.0. Still, do not merge/rebase/sync automatically: inspect the four main-side commits and preserve both histories before any pre-merge operation.
 - Exact PR-head Quality/Chromium run and combined status remain unavailable through the current Actions lookup. The workflow YAML has a PR trigger; no pass is inferred from configuration. The next verification is to obtain an actual Quality Sentinels run on the current PR head and inspect the browser job result/logs.
+
+
+### Current PR checkpoint — 2026-11-01
+
+- PR #131 remains open and unmerged. Live branch compare: 199 commits ahead / 4 behind `main`; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub currently reports `mergeable=false`.
+- The four main-side commits modify only `docs/V1_UI_FINALIZATION_RU.md`. A line-level comparison confirms the PR branch contains the substantive current main-side requirement lines plus its consolidated section 8.0; however, no branch sync/rebase/merge has been performed.
+- Gateway P0 sub-gate is closed by Actions run #640. Browser/Quality exact-head evidence remains unavailable; the workflow definition is not a test result.
+- Separate continuity backup is staged as draft PR #132, changing only `ORIENTER.md`, `docs/PROJECT_STATE.yaml` and `docs/VOLLEY_LOG.md` outside PR #131. It is not merged.
+- Owner rule: no merge, close, retarget, force update or deployment of either PR without explicit owner instruction.
