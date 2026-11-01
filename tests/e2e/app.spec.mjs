@@ -3032,6 +3032,26 @@ test('mobile composer stays visible at the bottom in new chats across viewport r
 
   await page.setViewportSize({ width: 390, height: 844 });
   await assertDocked();
+
+  const chatBox = page.locator('#chatBox');
+  await chatBox.evaluate(element => {
+    element.replaceChildren(...Array.from({ length: 36 }, (_, index) => {
+      const row = document.createElement('div');
+      row.textContent = 'Scroll preservation fixture ' + index + ' · ' + 'content '.repeat(18);
+      row.style.minHeight = '48px';
+      return row;
+    }));
+    element.scrollTop = 0;
+    element.dispatchEvent(new Event('scroll'));
+  });
+  await page.setViewportSize({ width: 390, height: 440 });
+  await expect.poll(() => chatBox.evaluate(element => element.scrollTop)).toBeLessThan(5);
+  await chatBox.evaluate(element => {
+    element.scrollTop = element.scrollHeight;
+    element.dispatchEvent(new Event('scroll'));
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect.poll(() => chatBox.evaluate(element => element.scrollHeight - element.scrollTop - element.clientHeight)).toBeLessThan(8);
 });
 
 test('search presets and function settings fit one line, localize, and persist per chat', async ({ page }) => {
