@@ -456,3 +456,20 @@ The earlier note that Gateway tests were unexecuted is superseded by the subsequ
 - Changed the app's `color-scheme` hint to `dark light`, matching the existing user-selectable light/dark themes instead of advertising dark-only controls.
 - Added deterministic Quality Sentinel and Playwright assertions for the page title, description and color-scheme metadata. These assertions are committed but not yet executed in Chromium.
 - No JavaScript runtime behavior, provider routing, stored data, dependencies or deployment settings were changed.
+
+
+### GitHub repository hygiene checkpoint — 2026-11-02
+- Read-only inventory at the major-slice boundary: main `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; PR #131 was `5b9aa7abcc70fc1fa6f3c0fba402e025cb44c772` at the inventory snapshot.
+- 126 branch refs and 9 open PRs; 117 refs are not open-PR heads and require individual PR/issue/ancestry/reference review before cleanup.
+- Rulesets endpoint returned 0; classic main protection unknown (integration 403); delete-branch-on-merge disabled.
+- Standard CODEOWNERS, SECURITY.md and Dependabot config files were not found; account-level security settings unverified.
+- Provenance passed on the audit snapshot; exact-head Quality/Chromium absent. Previous Quality #1126 (101 passed / 18 failed) is stale.
+- No deletion, settings mutation, rebase, force-push, merge or deployment. See `docs/REPOSITORY_HYGIENE_RU.md`.
+
+
+### CSS cascade cleanup — 2026-11-02
+
+- Removed 504 bytes of legacy CSS declarations that were unconditionally overridden later in the same stylesheet: the old body gradient, duplicate body font-family, the earlier focus outline rule and settings-surface background/border declarations superseded by theme tokens.
+- Kept the effective system UI font stack, Tiffany focus-visible tokens, theme-driven surface colors, settings shadow and backdrop blur unchanged.
+- Static CSS brace balance remains zero. This is a cascade/source cleanup; no browser visual regression run has been executed yet.
+
