@@ -27,7 +27,7 @@
 | **8.9 Backdrop lifecycle** | Modal stack covers settings, project settings/create, message viewer, chat actions, research, function panel and trace; browser Back/Escape, focus return, Tab trap, body scroll lock and backdrop close share a consistent lifecycle. | Run repeated open/close, outside-click and focus/scroll regressions in Chromium; inspect native mobile behavior. | [~] |
 | **8.10 Control sizing system** | Shared control sizing and typography rules normalize compact controls, menu options, composer tools, header actions, chat creation and icon buttons while retaining 44px touch targets. | Run viewport snapshots and finish remaining one-off controls. | [~] |
 | **8.11 Theme/language group** | Theme and language controls are grouped in the header, persistent and sized for touch/keyboard use. | Narrow viewport and keyboard review. | [~] |
-| **8.12 Remove “Серверная память (Эксперимент)”** | Deprecated feature UI, per-chat/server opt-in and stale client dispatch paths are absent; independent local/private/shared/project-local memory remains. | Audit gateway/backend route ownership and legacy migration references before deleting backend code. | [~] |
+| **8.12 Remove “Серверная память (Эксперимент)”** | Browser UI/client dispatch, per-chat opt-in and `/v1/memory/graph/*` routes/flags removed; local/private/shared/project-local memory, conversation delta sync and RAG remain. Internal `MemoryManager` is Graphify-only; existing SQLite data is untouched. | Execute exact-head Gateway + Chromium regressions; confirm no legacy UI or client calls. | [~] |
 | **8.13 Explicit project context handoff** | Project settings list existing chats and queue the selected project's context for the chosen chat's next request; no new chat or project-membership change; five-project cap and one-shot consumption retained. Pending handoff is session-only until sent. | Execute non-current-chat/no-cross-chat/one-shot E2E and decide whether pending handoff should survive reload. | [~] |
 | **8.14 Touch selection** | Targeted user-select/-webkit-user-select/touch-action rules keep controls from selecting the whole interface while message text and inputs remain selectable; horizontal sidebar swipe is separated from vertical scrolling. | Native iOS Safari long-press, VoiceOver and gesture tests remain. | [~] |
 | **8.15 Status/progress** | Status and toast elements expose neutral/info/success/warning/error data states with restrained semantic colors; status text and ticker are centered; no synthetic progress added. | Execute status/reduced-motion checks and review contrast in both themes. | [~] |
@@ -57,7 +57,8 @@
 - [~] Implement shared UI tokens, selected modal/focus paths, accessible message actions and touch ergonomics.
 - [~] Implement sidebar/projects/chats and memory UX, including project-filtered chats and explicit request context.
 - [~] Implement header theme/language controls and Cloud/provider/additional-settings grouping.
-- [~] Remove deprecated server-memory UI and client dispatch entry points; preserve independent local/private/shared/project-local memory.
+- [x] Remove deprecated server-memory UI/client dispatch and graph HTTP API/flags; preserve independent local/private/shared/project-local memory, conversation delta sync and RAG. Existing graph SQLite files are not deleted.
+- [~] Execute exact-head Gateway and Chromium regressions for the removal and local-memory preservation.
 - [~] Resolve project Sources contract: show an explicit unsupported-state explanation; do not present fake source-management actions.
 - [~] Implement initial status, button and text-readability system.
 - [~] Update superseded E2E tests and add focused V2 regression coverage.
