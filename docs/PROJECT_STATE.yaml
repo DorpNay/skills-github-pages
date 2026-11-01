@@ -514,7 +514,7 @@ whole_stack_integrity_audit_2026_10_30:
 landing_ui_v2_pr131_2026_10_31:
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
-  latest_code_test_head: "9aa74853478a6a680cdd36ab0f84c851721405a4"
+  latest_code_test_head: "502e71841e2a1a769db84439e557597c22b62a16"
   branch_comparison: "524 ahead / 4 behind main; merge base e78a73b25725bfa63370d9946887cbbacbf51b82; four main-side commits overlap the shared UI checklist only."
   repository_hygiene_runbook: "docs/REPOSITORY_HYGIENE_RU.md; prepared from official GitHub repository/security/branch-protection/CODEOWNERS guidance; actual branch/file/settings cleanup is deferred to the next major-slice boundary."
   repository_hygiene_snapshot: "2026-11-02: 126 branches; 9 open PRs; 100 closed PRs inspected; 19 closed-unmerged PR branches all contain unique commits; five behind-only no-PR branch candidates recorded; no deletions due missing branch-delete action; no unused files proven; security settings remain owner-manual."
@@ -545,6 +545,7 @@ landing_ui_v2_pr131_2026_10_31:
     theme_aware_status_colors: "Default dark/light info and warning tokens added; aServi checking state uses semantic warning token; E2E verifies theme switch changes its color."
     test_hygiene: "All 11 tests/e2e files syntax-parse; zero force:true, waitForTimeout or networkidle usage. Removed a forced click on a hidden sidebar close control after new-chat action; test now reopens and uses a normal click. assets/js/app.js and playwright.config.mjs also syntax-parse; index.md is HTML/CSS shell with no inline app JS."
     base_token_contrast: "E2E computes WCAG contrast from CSS tokens against solid theme surfaces; current primary/secondary/success/warning/error values are all >=4.5:1. Full component/background/focus/non-text audit remains manual."
+    forced_colors: "Windows forced-colors media override added for keyboard focus and control borders; Playwright E2E emulates forcedColors active. Test added, not executed."
   test_commits:
     sidebar_swipe: "d388a02445ddc1ebccbaec58fd8515b8d0b9adfa"
     responsive_header: "9ff326d40ac0567c1c62c293cb396bcd9c4eba82"
@@ -563,10 +564,10 @@ landing_ui_v2_pr131_2026_10_31:
     base_token_contrast: "4bd40770fd3446e5280e719644394882c9148daeb"
   verification:
     source_syntax: "V8 syntax parse passed for assets/js/app.js, tests/e2e/app.spec.mjs and scripts/quality-agents.mjs (module imports/shebang adapted for parser); app.css brace balance is zero; metadata assertions are present. This is not an executed test suite."
-    exact_head: "9aa74853478a6a680cdd36ab0f84c851721405a4 (latest source checkpoint including CSS cascade cleanup and explicit legacy aServi storage-key compatibility comment; exact-head Quality/Chromium pending)"
-    exact_head_workflow_runs: "Quality #1126 on prior SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL 101 passed / 18 failed; artifact 13077583320. No exact-head Quality/Chromium run visible for source checkpoint 9aa74853478a6a680cdd36ab0f84c851721405a4; latest observed Provenance Gate pass predates current UI changes."
+    exact_head: "502e71841e2a1a769db84439e557597c22b62a16 (latest source/test checkpoint adds Windows Forced Colors support and an unexecuted Playwright regression; exact-head Quality/Chromium pending)"
+    exact_head_workflow_runs: "Quality #1126 on prior SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL 101 passed / 18 failed; artifact 13077583320. No exact-head Quality/Chromium run visible for source/test checkpoint 502e71841e2a1a769db84439e557597c22b62a16; latest observed Provenance Gate pass predates current UI changes."
     gateway_pytest: "not executed in this environment"
-    playwright_chromium: "No exact-head Chromium run for PR #131 source checkpoint 9aa74853478a6a680cdd36ab0f84c851721405a4; #1126 is stale evidence only (101 passed / 18 failed). Current corrective source/test changes, metadata assertions and CSS cleanup are committed; browser behavior remains unverified."
+    playwright_chromium: "No exact-head Chromium run for PR #131 source/test checkpoint 502e71841e2a1a769db84439e557597c22b62a16; #1126 is stale evidence only (101 passed / 18 failed). Current corrective source/test changes, metadata assertions, CSS cleanup and Windows Forced Colors regression are committed; browser behavior remains unverified."
     native_mobile_voiceover: "not executed"
     wcag_contrast_ratios: "Base CSS token contrast is measured by a new E2E calculation against solid theme surfaces (>=4.5:1); actual component/gradient/focus/non-text contrast remains unmeasured and requires manual audit."
   safety:
