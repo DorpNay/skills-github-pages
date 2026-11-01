@@ -175,7 +175,7 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 
 ### Current continuation checkpoint — 2026-11-02
 
-- PR #131 remains the sole Landing V2 implementation branch, open and unmerged. Live PR head at this checkpoint: `ec7625c98a36f1d54a190da695391244e5eecdd3`; compare against `main`: 476 ahead / 4 behind, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Four base-side commits overlap only the shared UI finalization checklist; do not rebase, merge, or overwrite that document automatically.
+- PR #131 remains the sole Landing V2 implementation branch, open and unmerged. Live PR head at this checkpoint: `ec7625c98a36f1d54a190da695391244e5eecdd3`; compare against `main`: 483 ahead / 4 behind, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Four base-side commits overlap only the shared UI finalization checklist; do not rebase, merge, or overwrite that document automatically.
 - App identity cleanup: root Jekyll title and browser title now say `aLandi — личная AI-среда`; the app has a concise description and declares both `dark light` color schemes. Quality Sentinel and E2E assertions are added; browser execution is still pending.
 - Code/test checkpoint: `b6b4cd612e288f0ad2c0e23419a562b06b491ef5`. V8 syntax parsing passed for `assets/js/app.js`, `tests/e2e/app.spec.mjs`, and `scripts/quality-agents.mjs` (imports/shebang adapted for the parser); CSS brace balance is zero. These are source checks, not a Playwright/Quality run.
 - Current PR head has no pull-request workflow runs visible. Last observed Chromium run #1126 is stale evidence (101 passed / 18 failed) on an older SHA. Do not treat it as current.
