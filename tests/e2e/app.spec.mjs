@@ -1956,10 +1956,10 @@ test('project context handoff queues exactly one request for an existing chat wi
   const handoff = page.locator('#projectSettingsModal [data-action="handoff-project-context"]');
   await expect(handoff).toBeEnabled();
   await handoff.click();
-  await expect.poll(() => page.evaluate(() => {
+  await expect.poll(() => page.evaluate(({ targetChatId, projectId }) => {
     const pending = JSON.parse(sessionStorage.getItem('ai_request_project_context_v1') || '[]');
-    return pending.some(([chatId, ids]) => chatId === '${targetChatId}' && ids.includes('${projectId}'));
-  })).toBe(true);
+    return pending.some(([chatId, ids]) => chatId === targetChatId && ids.includes(projectId));
+  }, { targetChatId, projectId })).toBe(true);
 
   const afterHandoff = await page.evaluate(() => ({
     current: localStorage.getItem('ai_current_chat_v87'),
