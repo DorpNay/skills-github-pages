@@ -79,7 +79,7 @@ const suites = {
       includes("indexedDB.open('AI_Agent_DB_v87', 2)", 'Memory schema migration must create a separate shared store without deleting legacy private notes.');
       includes("database.createObjectStore('sharedMemory')", 'Shared memory must use a distinct IndexedDB object store.');
       includes("const privateMemories=selectedProviderForMemory==='alandi'&&safeGet(STORAGE.privateMemoryEnabled)==='true'?await MemoryDB.getAll():[]", 'Private notes must only be read for the local aLandi route after explicit opt-in.');
-      assert.ok(!source.includes('/v1/memory/graph') && !source.includes('ALANDI_MEMORY_GRAPH_ENABLED'), 'Retired server memory graph API must not return to the browser client.');
+      assert.ok(!combinedSource.includes('/v1/memory/graph') && !combinedSource.includes('ALANDI_MEMORY_GRAPH_ENABLED'), 'Retired server memory graph API must not return to the browser client.');
       includes("let candidates=getApiCandidates(preferredModel)", 'Provider candidate routing must be filterable before a request is sent.');
       includes("if(containsPrivateMemory)candidates=candidates.filter(candidate=>candidate.provider==='alandi')", 'A request carrying private memory must never fall back to a third-party provider.');
       includes("activeChatForPrivacy?.privateMemoryUsed && selectedProvider!=='alandi'", 'Chats that consumed private memory must not later upload their history to a third-party provider.');
@@ -126,8 +126,8 @@ const suites = {
       includes("token: 'ai_pollinations_access_token_v1'", 'Pollinations access token storage must be session-scoped.');
       includes("https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1", 'Cloudflare endpoint must include the validated account ID.');
       includes("nvidia: { label: 'NVIDIA NIM'", 'NVIDIA NIM should be included as an active alternative.');
-      assert.ok(!source.includes('cerebras: {') && !source.includes('value="cerebras"'), 'Cerebras must remain removed per product decision.');
-      assert.ok(!source.includes('value="github">GitHub Models'), 'Retired GitHub Models must not be offered as a provider.');
+      assert.ok(!combinedSource.includes('cerebras: {') && !combinedSource.includes('value="cerebras"'), 'Cerebras must remain removed per product decision.');
+      assert.ok(!combinedSource.includes('value="github">GitHub Models'), 'Retired GitHub Models must not be offered as a provider.');
       const allSmokeWorkflow = readFileSync(resolve(root, '.github/workflows/provider-smoke-all.yml'), 'utf8');
       const allSmokeRunner = readFileSync(resolve(root, 'scripts/provider-smoke-all.mjs'), 'utf8');
       assert.ok(allSmokeRunner.includes("config.id === 'pollinations' && /^pk_/i.test(secret)"), 'Pollinations browser App Keys must not be used as server smoke credentials.');
@@ -145,7 +145,7 @@ const suites = {
       includes('function exportSettingsProfile()', 'Portable settings profile export must remain available.');
       includes('async function importSettingsProfile(event)', 'Portable settings profile import must remain available.');
       includes('function downloadTraceJson()', 'Research trace JSON export must remain available.');
-      assert.ok(!source.includes("safeGet(STORAGE.model) === 'gemini-3.8-flash'"), 'A valid Gemini 3.8 model must not be downgraded on load.');
+      assert.ok(!combinedSource.includes("safeGet(STORAGE.model) === 'gemini-3.8-flash'"), 'A valid Gemini 3.8 model must not be downgraded on load.');
       includes('function getApiCandidates(requestedModel)', 'Provider failover must discover only configured credentials.');
       includes("if(!key && provider!=='kilo') continue;", 'Only the explicitly selected Kilo Free route may omit an API key.');
       includes('function connectAServi()', 'The aServi status must be verified with a real completion.');
@@ -215,19 +215,19 @@ const suites = {
       includes("performTavilySearch(args.query.trim().slice(0, 500), signal, searchResultMode)", 'Tavily result breadth must use the independent search scope.');
       includes("performPublicKnowledgeSearch(args.source, args.query.trim().slice(0, 300), signal, searchResultMode)", 'Public search breadth must use the independent search scope.');
       includes("readPublicWebpage(args.url.trim().slice(0, 1500), signal, searchResultMode)", 'Webpage extraction depth must use the independent search scope.');
-      assert.ok(!source.includes("const extendedToolBudget = mode === 'deep' || extendedSearch;"), 'Search scope must not increase execution budget.');
-      assert.ok(!source.includes("mode === 'fast' && index > 0 && !extendedSearch"), 'Fast-mode tool limits must not depend on search scope.');
-      assert.ok(!source.includes('id="researchStudioDepth"') && !source.includes('id="researchStudioWeb"'), 'Research Studio must not duplicate chat settings.');
-      assert.ok(!source.includes('data-function="research"'), 'Research Studio must not become an independent function category.');
+      assert.ok(!combinedSource.includes("const extendedToolBudget = mode === 'deep' || extendedSearch;"), 'Search scope must not increase execution budget.');
+      assert.ok(!combinedSource.includes("mode === 'fast' && index > 0 && !extendedSearch"), 'Fast-mode tool limits must not depend on search scope.');
+      assert.ok(!combinedSource.includes('id="researchStudioDepth"') && !combinedSource.includes('id="researchStudioWeb"'), 'Research Studio must not duplicate chat settings.');
+      assert.ok(!combinedSource.includes('data-function="research"'), 'Research Studio must not become an independent function category.');
       includes('id="deepResearchStudioButton" type="button" data-action="open-research-studio"', 'Research Studio must be nested in the deep-research controls.');
-      assert.ok(!source.includes('id="functionsMenu"') || !source.includes('data-action="open-research-studio" class="toolbar-menu-option"'), 'Research Studio must not appear as a top-level Functions menu item.');
-      assert.ok(!source.includes("setProcessingMode(depth)") && !source.includes("setSearchMode(webEnabled ?"), 'Research Studio must not mutate active chat settings.');
+      assert.ok(!combinedSource.includes('id="functionsMenu"') || !combinedSource.includes('data-action="open-research-studio" class="toolbar-menu-option"'), 'Research Studio must not appear as a top-level Functions menu item.');
+      assert.ok(!combinedSource.includes("setProcessingMode(depth)") && !combinedSource.includes("setSearchMode(webEnabled ?"), 'Research Studio must not mutate active chat settings.');
       includes("await runAssistant(workChat, signal, useSearch, false, mode, true,", 'The structured workflow must honor the selected effort budget in its research stage.');
       includes("const studioSummary = $('researchStudioSettingsSummary');", 'Research Studio must show the active chat settings.');
       includes("if (mode !== 'deep' && !useMultiAgent && chosenSkill === 'auto') return '';", 'Automatic skills must not load in fast mode unless research is explicitly enabled.');
       includes("chosenSkill !== 'auto' ? chosenSkill", 'A manually selected skill must be usable in fast mode.');
       includes("new URL('skills/' + selectedSkill + '.txt', document.baseURI)", 'Task skills should load from repository assets only on demand.');
-      assert.ok(!source.includes('<script src="https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js"'), 'Pyodide must not load on initial page render.');
+      assert.ok(!combinedSource.includes('<script src="https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js"'), 'Pyodide must not load on initial page render.');
       includes("script.src = 'https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js'", 'Pyodide should load only when requested.');
       includes("const isMultimodalTask = /", 'Multimodal task classifier must be explicit and reviewable.');
       includes("const skill = isMultimodalTask ? 'multimodal'", 'Multimodal prompts must select the specialist skill before generic research.');
@@ -261,7 +261,7 @@ const suites = {
     ['untrusted output is not inserted as raw HTML', () => {
       includes("bubble.textContent = message.content || ''", 'User message should use textContent.');
       includes('DOMPurify.sanitize', 'DOMPurify sanitizer must remain enabled.');
-      const assignments = [...source.matchAll(/\.innerHTML\s*=\s*([^;\n]+)/g)].map((m) => m[1].trim());
+      const assignments = [...appSource.matchAll(/\.innerHTML\s*=\s*([^;\n]+)/g)].map((m) => m[1].trim());
       assert.ok(assignments.length > 0, 'Expected the one sanitized markdown rendering assignment.');
       assert.ok(assignments.every((value) => value.startsWith('safeMarkdown(')), 'Found an innerHTML assignment that bypasses safeMarkdown: ' + assignments.join(' | '));
     }],
