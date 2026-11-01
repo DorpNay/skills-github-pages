@@ -80,7 +80,7 @@ ui_v2_track:
     P2: "Long-list/message/scroll/popover stress; capability menu truthfulness; Tavily/keyless-search audit; provider/gateway mock error and secret-redaction checks."
   verification:
     exact_head_ci: "Manual run #41285658893 is on older SHA d822cb6, not current head. Its Context/Integrity failures were traced to stale sentinel expectations and corrected in 1b30cae/5d01a7d. Exact-head rerun not yet visible; do not claim green CI."
-    playwright_chromium: "No exact-head Chromium run for PR #131 branch head 24e22d780c4a8311d5ea28ed96bbd78302e25414; #1126 is stale evidence only (101 passed / 18 failed). Current corrective source/test changes are committed; browser behavior remains unverified."
+    playwright_chromium: "No exact-head Chromium run for the current PR #131 source/test checkpoint c26639705f24633fddbaa7810c16105e0f167078; #1126 is stale evidence only (101 passed / 18 failed). Browser behavior remains unverified."
     native_mobile_voiceover: "Not executed."
     wcag_contrast_ratios: "Not measured; computed-style assertions are not conformance evidence."
     live_gateway_provider: "Not verified; live smoke requires explicit owner approval."
@@ -558,8 +558,8 @@ landing_ui_v2_pr131_2026_10_31:
     theme_aware_status_colors: "bca8fa892e95bd35db812382afdadbba41813265"
     base_token_contrast: "4bd40770fd3446e5280e719644394882c9148daeb"
   verification:
-    exact_head: "24e22d780c4a8311d5ea28ed96bbd78302e25414 (last checked PR #131 branch head before this state-only update; UI code/test checkpoint d65102ed5a9ba3c30586d8a52efbd5603a009e23; Quality pending)"
-    exact_head_workflow_runs: "Quality #1126 on prior SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL 101 passed / 18 failed; artifact 13077583320. No exact-head Quality/Chromium run visible for PR branch head 24e22d780c4a8311d5ea28ed96bbd78302e25414; latest observed Provenance Gate pass predates this head."
+    exact_head: "c26639705f24633fddbaa7810c16105e0f167078 (latest source/test checkpoint; documentation commits may advance PR HEAD; exact-head Quality/Chromium pending)"
+    exact_head_workflow_runs: "Quality #1126 on prior SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL 101 passed / 18 failed; artifact 13077583320. No exact-head Quality/Chromium run visible for source/test checkpoint c26639705f24633fddbaa7810c16105e0f167078; latest observed Provenance Gate pass predates current UI changes."
     gateway_pytest: "not executed in this environment"
     playwright_chromium: "No exact-head Chromium run for PR #131 branch head 24e22d780c4a8311d5ea28ed96bbd78302e25414; #1126 is stale evidence only (101 passed / 18 failed). Current corrective source/test changes are committed; browser behavior remains unverified."
     native_mobile_voiceover: "not executed"
