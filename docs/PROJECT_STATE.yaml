@@ -1,6 +1,6 @@
 project_state:
   version: 4
-  reviewed_on: "2026-10-30"
+  reviewed_on: "2026-11-01"
   root_orienter:
     status: "Main is fd4f0a105183feb23e0f4e4697446235de9ffe9a after PR #121 (free landing/client V1) and PR #122 (Gateway liveness/readiness) merged. PR #121 exact head e3c3017 passed all six workflow groups; PR #122 exact head 94d871d passed Gateway, Quality/Chromium, Jekyll, Security, Integrity, Context, Graphify and Dead Code. PR #123 exact head fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222 passed Gateway, Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code; it is the only active reconciliation PR and is excluded from its own freshness queue snapshot. Issue #111 remains the single owner/live-host gate. Post-merge Pages deployment and live VPS/Ollama remain unverified."
     branch: "main"
@@ -57,6 +57,33 @@ project_state:
     google_oauth_credentials_configured: false
     voice_runtime_live: false
     hardware_benchmark_8gb: "not run; no reference host in CI"
+
+
+ui_v2_track:
+  repository: "DorpNay/skills-github-pages"
+  pull_request: 131
+  branch: "feat/landing-v1-accessibility-responsive-20261031"
+  status: "open_unmerged_owner_hold"
+  latest_documentation_head: "d6c01c645dc69db28f5593a3dbc153cb02c6a488"
+  latest_code_test_head: "8f68c2cc4b4b01a1917e32f75f7d5016517d41c3"
+  source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0 and requirements 8.1-8.17"
+  implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
+  polish_register: "docs/LANDING_UX_POLISH_BACKLOG_RU.md (mirrors the consolidated residual list; not a separate backlog)"
+  reconciliation:
+    legacy_sections: "Sections 1-7 retained as historical V1 baseline; unresolved items deduplicated and mapped to the active 8.0 queue."
+    completed_or_not_active: "8.12 server-memory graph UI/API bridge removed; local/private/shared/project memory, delta sync and RAG retained. 8.13 explicit handoff to an existing chat implemented; pending handoff is session-only by design."
+    blocked: "Project Sources CRUD is not exposed because the gateway has no source-list API; keep truthful unsupported state."
+  remaining_priority:
+    P0: "Execute exact-head Gateway tests, focused Playwright/Chromium, Quality, Freshness, Provenance, Graphify and Dead Code; tests currently unexecuted."
+    P1: "Native iPhone Safari/VoiceOver, screenshot review at 320/360/390/768/1024/1440px, RU/EN and light/dark review, measured WCAG contrast ratios."
+    P2: "Long-list/message/scroll/popover stress; capability menu truthfulness; Tavily/keyless-search audit; provider/gateway mock error and secret-redaction checks."
+  verification:
+    exact_head_ci: "No workflow/status result available for current PR head; do not claim green CI."
+    playwright_chromium: "Test source added; not executed."
+    native_mobile_voiceover: "Not executed."
+    wcag_contrast_ratios: "Not measured; computed-style assertions are not conformance evidence."
+    live_gateway_provider: "Not verified; live smoke requires explicit owner approval."
+  merge_deployment: "Do not merge or deploy without explicit owner approval."
 
 current_v016_track:
   source_state_hash: "CI-passed prototype; includes index.md; fingerprint is not a signature or safety proof"
