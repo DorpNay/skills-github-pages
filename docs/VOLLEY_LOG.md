@@ -588,3 +588,13 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Orbit names clarified: `mukiwu/orbit-agents` is a local desktop cron scheduler (Electron/React/SQLite/node-cron); `constellation-works/orbit` is a separate local-first coding-agent task runtime with sandboxed worktrees, locks, approval and audit log. `agent.sys` remains unresolved.
 - No framework, runtime, model or dependency installed. Next: manual Quality dispatch on latest HEAD; review screenshot attachments; continue mandatory 8.1–8.17 UI acceptance and native device gates.
 
+
+
+## V-2026-11-02-QUALITY-PREFLIGHT-004
+
+- Added shared `quality-harness-preflight` job in `e98347708eb02de48913bb4d90eca7b39f9e6473`, running `node --check scripts/quality-agents.mjs` before Integrity, Security, Context and Jekyll build sentinels. Those four jobs now depend on the preflight, so a parser failure is reported once and does not masquerade as four independent product failures. Browser E2E and independent static analysis remain independent.
+- The two over-escaped build regexes were corrected in `3e6af80aecda329a6f63d5196d67d3c6abc23ec1`. The old Quality run #41351093423 still checks SHA `11ffc0bbbe01a068490ca32dd1ea4029517a3120`; it is not evidence for the current branch head. Static analysis passed, Chromium was still in progress; no exact-head Quality run exists.
+- Provenance run #41351462840 passed on documentation checkpoint `62df30f1f4fe4e24a10bbba46e9a0f7db0d394f5`. It validates state metadata, not the product UI.
+- Latest code/test/workflow HEAD before this docs-only checkpoint: `e98347708eb02de48913bb4d90eca7b39f9e6473`; compare 592 ahead / 4 behind main; PR #131 remains open/unmerged and mergeable=false.
+- Next: manually dispatch Quality on the latest branch HEAD; review screenshot attachments from the new responsive visual test; continue 8.1–8.17 and native accessibility/device gates.
+

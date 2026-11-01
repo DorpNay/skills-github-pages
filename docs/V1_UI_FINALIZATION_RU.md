@@ -291,6 +291,8 @@ PR #122 добавил только эксплуатационную надёж�
 
 - [~] Quality run #41351093423 checked older SHA `11ffc0bbbe01a068490ca32dd1ea4029517a3120`: Integrity/Security/Context/Jekyll failed because two over-escaped regex literals in `scripts/quality-agents.mjs` made the module fail to parse. Corrected in `3e6af80aecda329a6f63d5196d67d3c6abc23ec1`; static analysis and Chromium were still in progress on that older SHA at last inspection. Added responsive screenshot attachments in `2869ff3c5edcdc366a22d56972a903f47a14dcb6` (six widths + two sidebar states); authored but not yet executed on current HEAD. Manual exact-head Quality rerun remains mandatory.
 
+- [~] Quality harness follow-up: corrected the two build regex literals in `3e6af80aecda329a6f63d5196d67d3c6abc23ec1`; added a shared `quality-harness-preflight` (`node --check scripts/quality-agents.mjs`) in `e98347708eb02de48913bb4d90eca7b39f9e6473`, gating Integrity/Security/Context/Jekyll. This reduces duplicated parser failures but remains unverified until an exact-head Quality dispatch. Browser E2E/static analysis remain independent.
+
 ### P1 — ручная UX/accessibility приёмка
 
 - [ ] Сделать screenshot review приложения и лендинга на 320/360/390/768/1024/1440 px: шапка, sidebar, composer, пустые состояния, длинные названия, карточки, отступы, типографика и контраст.

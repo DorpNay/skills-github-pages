@@ -632,3 +632,11 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - `mukiwu/orbit-agents` is a desktop cron scheduler; `constellation-works/orbit` is a distinct coding-agent task runtime. Neither is needed for the current UI scope. `agent.sys` remains unresolved.
 - Continue 8.1–8.17 as the release queue; optional 8.18–8.27 remain proposals. Visual screenshots support review but do not close iPhone Safari, VoiceOver or WCAG manual gates.
 
+
+
+### Quality harness preflight
+
+- Added `quality-harness-preflight` to `.github/workflows/quality-sentinels.yml` in `e98347708eb02de48913bb4d90eca7b39f9e6473`. It runs `node --check scripts/quality-agents.mjs` before Integrity, Security, Context and Jekyll build sentinels.
+- Those four jobs now depend on the shared syntax preflight; a parser failure is surfaced once rather than repeated as four apparent independent failures. Chromium E2E and static analysis remain independent.
+- This workflow topology change is authored but not yet exercised by an exact-head run. Quality #41351093423 still targets older SHA `11ffc0bbbe01a068490ca32dd1ea4029517a3120`.
+
