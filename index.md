@@ -1587,7 +1587,7 @@ permalink: /
     };
     const CLOUD_TEXT={
       ru:{
-        urlProtocol:'Нужен HTTP или HTTPS URL.',urlHttps:'Для удалённого сервера нужен HTTPS.',urlFormat:'Проверь формат URL.',
+        urlProtocol:'Нужен HTTP или HTTPS URL.',urlHttps:'Для удалённого сервера нужен HTTPS.',urlFormat:'Проверь формат URL.',urlRequired:'Укажи URL сервера.',modelRequired:'Укажи ID модели.',keyRequired:'Укажи ключ доступа.',
         connected:'Подключено',checking:'Проверка…',disconnected:'Не подключено',connectButton:'Проверить и подключить',checkingButton:'Проверяю…',
         settingsChanged:'Настройки изменились во время проверки. Результат не сохранён.',
         modelHealth:'Модель ответила. Проверяю health-check gateway…',
@@ -1597,7 +1597,7 @@ permalink: /
         connectedToast:'aLandi Cloud подключён и проверен.'
       },
       en:{
-        urlProtocol:'Enter an HTTP or HTTPS URL.',urlHttps:'Remote servers must use HTTPS.',urlFormat:'Check the URL format.',
+        urlProtocol:'Enter an HTTP or HTTPS URL.',urlHttps:'Remote servers must use HTTPS.',urlFormat:'Check the URL format.',urlRequired:'Enter the server URL.',modelRequired:'Enter a model ID.',keyRequired:'Enter the access key.',
         connected:'Connected',checking:'Checking…',disconnected:'Not connected',connectButton:'Verify and connect',checkingButton:'Checking…',
         settingsChanged:'Settings changed during verification. The result was not saved.',
         modelHealth:'The model replied. Checking the gateway health endpoint…',
@@ -3181,17 +3181,20 @@ permalink: /
     }
     async function refreshCloudStatus(){
       const {baseUrl,model,key}=getCloudSettings();
+      const settingsStillCurrent=()=>{const current=getCloudSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
       if(!baseUrl||!model||!key){setCloudStatus('disconnected');return;}
       const formatError=validateCloudBaseUrl(baseUrl);if(formatError){setCloudFieldError('cloudBaseUrl',formatError);setCloudStatus('disconnected');return;}
       let marker=null;try{marker=JSON.parse(safeGet('ai_alandi_cloud_connection_v1')||'null');}catch(_){}
       const fingerprint=await providerKeyFingerprint(key);
+      if(!settingsStillCurrent())return;
       if(!marker?.ok||marker.baseUrl!==baseUrl||marker.model!==model||marker.keyFingerprint!==fingerprint){setCloudStatus('disconnected');return;}
       try{
         const health=new URL(baseUrl);health.pathname=health.pathname.replace(/\/v1\/?$/,'').replace(/\/$/,'')+'/healthz';health.search='';health.hash='';
         const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);let response;
         try{response=await fetch(health.toString(),{method:'GET',headers:{Accept:'application/json'},cache:'no-store',signal:controller.signal});}finally{clearTimeout(timer);}
+        if(!settingsStillCurrent())return;
         if(response.ok){setCloudFieldConnection('connected');setCloudStatus('connected');}else setCloudStatus('disconnected');
-      }catch(_){setCloudStatus('disconnected');}
+      }catch(_){if(settingsStillCurrent())setCloudStatus('disconnected');}
     }
     function isUsableProbeResponse(payload,rawText=''){
       if(payload&&payload.error)return false;
@@ -3351,7 +3354,12 @@ permalink: /
       if(isTestingProviderConnection)return;
       const {baseUrl,model,key}=getCloudSettings();
       const cloudSettingsStillCurrent=()=>{const current=getCloudSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
-      if(!baseUrl||!model||!key){setCloudStatus('disconnected');return;}
+      if(!baseUrl||!model||!key){
+        setCloudFieldError('cloudBaseUrl',baseUrl?'':cloudText('urlRequired'));
+        setCloudFieldError('cloudModel',model?'':cloudText('modelRequired'));
+        setCloudFieldError('cloudApiKey',key?'':cloudText('keyRequired'));
+        setCloudStatus('disconnected');return;
+      }
       const formatError=validateCloudBaseUrl(baseUrl);if(formatError){setCloudFieldError('cloudBaseUrl',formatError);setCloudStatus('disconnected');return;}
       setCloudFieldError('cloudBaseUrl');setCloudFieldError('cloudModel');setCloudFieldError('cloudApiKey');
       isTestingProviderConnection=true;
