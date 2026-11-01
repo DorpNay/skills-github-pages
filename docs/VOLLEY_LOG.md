@@ -385,3 +385,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Root cause: the test created a new chat, and the product correctly closed the sidebar. The test then force-clicked the now-hidden close button. Corrected the sequence to assert the sidebar closes after New Chat, reopen it, and use an ordinary click to close it.
 - Current audited E2E set has zero force:true, waitForTimeout and networkidle usages. This is a test-contract correction, not an application bug.
 - Current code/test head: 2231691fab0a56a39ce6e1edb571fee6d131607b. Syntax parse after this test edit remains pending; no Chromium execution claimed.
+
+
+### 2026-11-01 — PR #131: complete E2E source hygiene/syntax audit
+
+- Enumerated all 11 files in tests/e2e and parsed each module from the current branch source; all 11 passed JavaScript syntax parsing.
+- Across all 11 E2E files, found zero force:true clicks, zero waitForTimeout sleeps and zero networkidle waits.
+- Also parsed index.md inline JavaScript and playwright.config.mjs successfully. This is source/syntax validation only; Playwright itself has not run on current HEAD.
