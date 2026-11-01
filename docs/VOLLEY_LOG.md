@@ -377,3 +377,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Clarified that the original pre-8 section contains 18 control directions, not only seven headings. Expanded the matrix in docs/V1_UI_FINALIZATION_RU.md to list all 18, preserve their original [x]/[~] status, summarize remaining acceptance and map each into 8.1–8.17 or release gates.
 - Confirmed the workstreams already taken into the current code pass: #2 mobile composer/VisualViewport, #3 provider-route localization, #4 field validation/accessibility, #5 prompt edit/focus, #8 gateway stale-response handling, #10 chat scroll preservation, #12 theme-aware status color, and #18 release/Chromium reliability strategy. Other inherited items remain explicitly mapped rather than silently marked complete.
 - Latest code/test head remains 95b50bc699a1eb2c98a677829cc228e4b60b7b5b; latest UI checklist doc commit 162ee62b8ff2e34e20ca161bf66dc37f761b15ad; implementation ledger 8b0639f10c7b0f2e154039c961ac850e5cff79ea. Exact-head browser verification intentionally deferred until the integrated UI pass is complete.
+
+
+### 2026-11-01 — PR #131: remove forced interaction from mobile touch-target test
+
+- Audited all active E2E specs for fixed sleeps, networkidle waits and forced clicks. Found one forced click in the mobile touch-target test.
+- Root cause: the test created a new chat, and the product correctly closed the sidebar. The test then force-clicked the now-hidden close button. Corrected the sequence to assert the sidebar closes after New Chat, reopen it, and use an ordinary click to close it.
+- Current audited E2E set has zero force:true, waitForTimeout and networkidle usages. This is a test-contract correction, not an application bug.
+- Current code/test head: 2231691fab0a56a39ce6e1edb571fee6d131607b. Syntax parse after this test edit remains pending; no Chromium execution claimed.
