@@ -301,7 +301,7 @@ test('mobile sidebar and modal close controls meet the 44px touch target', async
 
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
-  const createClose = await page.locator('#projectCreateModal [data-action="close-project-create"]').boundingBox();
+  const createClose = await page.locator('#projectCreateModal [data-action="close-project-create"]').first().boundingBox();
   expect(createClose?.width || 0).toBeGreaterThanOrEqual(44);
   expect(createClose?.height || 0).toBeGreaterThanOrEqual(44);
   await page.locator('#projectCreateModal [data-action="close-project-create"]').click();
@@ -1611,12 +1611,12 @@ test('project instructions, project memory, and project bundles stay scoped to t
   expect(JSON.stringify(alphaBundle)).not.toContain('apiKey');
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 
-  await page.locator('[data-action="toggle-sidebar"]').click();
+  await ensureSidebarOpen(page);
   const alphaGroup = page.locator('#projectNavigationList details[data-project-id="' + alphaId + '"]');
   if (!(await alphaGroup.evaluate(element => element.open))) await alphaGroup.locator(':scope > summary').click();
   await alphaGroup.locator('[data-action="new-chat-in-project"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(alphaId);
-  await page.locator('[data-action="toggle-sidebar"]').click();
+  await ensureSidebarOpen(page);
   await page.locator('#sidebar [data-action="new-chat"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue('');
   const betaId = await createProjectFromUi(page, 'Beta Project', 'BETA_PROJECT_INSTRUCTION_SENTINEL');
@@ -1627,7 +1627,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await expect(page.locator('#projectMemoryBox')).toContainText('BETA_PROJECT_MEMORY_SENTINEL');
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 
-  await page.locator('[data-action="toggle-sidebar"]').click();
+  await ensureSidebarOpen(page);
   const betaGroup = page.locator('#projectNavigationList details[data-project-id="' + betaId + '"]');
   if (!(await betaGroup.evaluate(element => element.open))) await betaGroup.locator(':scope > summary').click();
   await betaGroup.locator('[data-action="new-chat-in-project"]').click();
@@ -1735,7 +1735,7 @@ test('project context handoff queues exactly one request for an existing chat wi
 
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
   await expect(page.locator('#projectSettingsModal')).toBeHidden();
-  await page.locator('[data-action="toggle-sidebar"]').click();
+  await ensureSidebarOpen(page);
   const targetRow = page.locator('#chatList .chat-row').filter({ has: page.locator('[data-action="switch-chat"][data-chat-id="' + targetChatId + '"]') });
   await targetRow.locator('[data-action="switch-chat"]').click();
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_current_chat_v87'))).toBe(targetChatId);
@@ -2371,6 +2371,8 @@ test('private memory is local by default and enters context only after explicit 
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
+  const memoryTools = page.locator('#memoryToolsDetails');
+  if (!(await memoryTools.evaluate(element => element.open))) await memoryTools.locator(':scope > summary').click();
   await page.locator('#memoryInput').fill('PRIVATE_MEMORY_SENTINEL');
   await page.locator('[data-action="save-memory"]').click();
   await expect(page.locator('#memoryBox')).toContainText('PRIVATE_MEMORY_SENTINEL');
