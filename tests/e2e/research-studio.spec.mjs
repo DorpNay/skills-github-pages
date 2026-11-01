@@ -4,8 +4,8 @@ const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
 
 async function configureCustomProvider(page) {
   await page.locator('[data-action="toggle-settings"]').click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(element => element.open))) {
-    await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(element => element.open))) {
+    await page.locator('#thirdPartyProviderSettings > summary').click();
   }
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -41,8 +41,8 @@ test('Research Studio is a settings-only mode panel and keeps the task in the ma
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const draft = 'Compare official sources about browser security and cite the evidence.';
   await page.locator('#userInput').fill(draft);
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#sidebar [data-action="open-research-studio"]').click();
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('#functionsMenu [data-action="open-research-studio"]').click();
 
   const studio = page.getByRole('dialog', { name: 'Студия исследования' });
   await expect(studio).toBeVisible();
@@ -89,8 +89,8 @@ test('Research Studio applies selected settings without sending or replacing the
   // Only user requests count; provider connectivity probes are filtered in the route handler.
   const draft = 'Compare three primary sources and identify conflicting evidence.';
   await page.locator('#userInput').fill(draft);
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#sidebar [data-action="open-research-studio"]').click();
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('#functionsMenu [data-action="open-research-studio"]').click();
 
   const studio = page.getByRole('dialog', { name: 'Студия исследования' });
   await expect(studio).toBeVisible();
@@ -123,8 +123,8 @@ test('Research Studio closes on Escape without applying a mode or starting a req
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const draft = 'Do not submit this draft.';
   await page.locator('#userInput').fill(draft);
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#sidebar [data-action="open-research-studio"]').click();
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('#functionsMenu [data-action="open-research-studio"]').click();
   const studio = page.getByRole('dialog', { name: 'Студия исследования' });
   await expect(studio).toBeVisible();
 
