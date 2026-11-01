@@ -160,3 +160,9 @@ This is a narrow, reversible CI configuration correction. The Graphify workflow/
 - Настройки branch protection/rulesets, secret scanning, push protection, Dependabot alerts/security updates и CodeQL нельзя прочитать через доступные действия интеграции. Их состояние **не подтверждено**; нужен ручной просмотр Settings → Rules/Branches и Security & analysis.
 
 **Итог:** найдено пять доказуемых branch cleanup candidates, но удаление не выполнено из-за отсутствия branch-delete action. Все ветки с уникальными коммитами и все закрытые unmerged PR workstreams сохранены.
+
+## 11. Security policy follow-up
+
+The 2026-11-02 branch inventory found no SECURITY.md on main. A responsible vulnerability-reporting policy has since been added as SECURITY.md in PR #131 and mirrored in PR #132. It directs reports to GitHub private vulnerability reporting when enabled, otherwise to the repository owner, prohibits public disclosure of secrets/user data, and does not promise an unsupported response-time SLA.
+
+This file is present only on the feature/documentation branches until their owner-approved merge. It does not establish that private vulnerability reporting, secret scanning, push protection, CodeQL or branch protection are enabled. Those settings still require owner-side verification.
