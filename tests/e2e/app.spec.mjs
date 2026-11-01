@@ -3061,7 +3061,7 @@ test('search presets and function settings fit one line, localize, and persist p
   await expect(page.locator('#functionsMenuSummary')).toContainText('Functions');
   await expect(page.locator('#searchModeSummary')).toContainText('Web');
   await expect(page.locator('#modeHint')).toContainText('Quick · Web: standard · Direct · Auto');
-  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+  // Language selection is a standalone header control; the settings dialog is not open here.
 
   // The first tap outside an open toolbar menu must only close it.
   await page.locator('#functionsMenuSummary').click();
