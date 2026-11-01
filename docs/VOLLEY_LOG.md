@@ -125,3 +125,16 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Updated the separate continuity branch with PR #131 head `7958ad24b987819a568a7755dfd243f740c0e240`, current divergence (199 ahead / 4 behind main) and the separate draft safety PR #132.
 - Gateway run #640 remains the only confirmed automated pass for this stage. Current-head Quality/Chromium and combined status still return no visible entries; no browser pass is claimed.
 - PR #131 remains open/unmerged; PR #132 is draft/open/unmerged. Neither has been merged. No deployment performed.
+
+
+### V-2026-11-01-FRESHNESS-REFRESH-001 — refresh main checkpoint and exact queues
+
+- Main verified SHA: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; subject `docs: mark owner UI corrections as V2.0 priorities`; documentation-only. Last functional checkpoint remains `fd4f0a105183feb23e0f4e4697446235de9ffe9a`.
+- Exact open PR snapshot for this draft PR #132 (excluding only #132): #124, #125, #126, #127, #128, #129, #130, #131. Exact open issue snapshot: #111.
+- Updated `docs/project-state-snapshot.json`, `ORIENTER.md`, `project-reference/FILE_ORIENTER_RU.md`, `docs/PROJECT_STATE.yaml` and this log together, as required by `scripts/check_project_state_freshness.py`.
+- PR #131 remains the V2 implementation branch, open/unmerged and owner-controlled. PR #132 remains a draft documentation safety copy; neither was merged.
+- Gateway run #640 passed on `6f7fde485b2b13aecc50523b20785e0ac615d2ad`; no Gateway files changed after that test. Exact-head Quality/Chromium remains unverified.
+- PR #131 branch divergence at audit: 199 ahead / 4 behind main; GitHub reports mergeable=false. No branch synchronization or merge performed.
+- This entry preserves the required prior report marker `V-2026-10-29-RESEARCH-APPLY-001`; no historical entries were removed.
+- Next: verify this snapshot refresh through the PR #132 Freshness workflow. The PR #131 branch requires its own current-main/queue reconciliation before exact-head CI can be relied upon.
+
