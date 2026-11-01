@@ -14,7 +14,7 @@ test.beforeEach(async ({ page }) => {
 
 test('aLandi private gateway route works, stays local, and exposes cache status', async ({ page }) => {
   const chatPayloads = [];
-  const cloudChatRequests = [];
+  const aserviChatRequests = [];
   await page.route('https://alandi.example.test/**', async route => {
     const request = route.request();
     const origin = request.headers().origin || 'https://dorpnay.github.io';
@@ -54,10 +54,10 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
     return route.fulfill({ status: 404, headers: corsHeaders, contentType: 'application/json', body: '{}' });
   });
   await page.route('https://generativelanguage.googleapis.com/**', async route => {
-    if (/\/chat\/completions|\/responses|:generateContent|:streamGenerateContent/.test(route.request().url())) cloudChatRequests.push(route.request().url());
+    if (/\/chat\/completions|\/responses|:generateContent|:streamGenerateContent/.test(route.request().url())) aserviChatRequests.push(route.request().url());
     return route.fulfill({
       status: 503, contentType: 'application/json',
-      body: JSON.stringify({ error: { message: 'Cloud fallback must not be used in this test.' } })
+      body: JSON.stringify({ error: { message: 'aServi fallback must not be used in this test.' } })
     });
   });
 
@@ -82,5 +82,5 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
   expect(chatPayloads).toHaveLength(1);
   expect(chatPayloads[0].model).toBe('qwen3.5:4b');
   expect(chatPayloads[0].temperature).toBe(0);
-  expect(cloudChatRequests).toEqual([]);
+  expect(aserviChatRequests).toEqual([]);
 });
