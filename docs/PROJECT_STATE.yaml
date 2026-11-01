@@ -15,7 +15,7 @@ project_state:
   ui_v2_track:
     pull_request: 131
     branch: "feat/landing-v1-accessibility-responsive-20261031"
-    head_at_checkpoint: "7958ad24b987819a568a7755dfd243f740c0e240"
+    head_at_checkpoint: "d822cb623b2a72642921654a04e6c9d988091834"
     status: "open_unmerged_owner_controlled"
     stable_main_contains_v2: false
     requirements: "docs/V1_UI_FINALIZATION_RU.md sections 8.1-8.17"
@@ -32,11 +32,19 @@ project_state:
       - "Measured WCAG contrast ratios"
       - "Manual visual and localization/theme acceptance"
     branch_health:
-      ahead_of_main: 199
+      ahead_of_main: 203
       behind_main: 4
       mergeable: false
       backup_pr: 132
       backup_pr_status: "draft_open_unmerged"
+      backup_ci:
+        quality_run: 1114
+        chromium: "98 passed on main/V1 backup branch; not V2 evidence"
+        published_site_smoke: "1 passed on main/V1 backup branch; not V2 deployment"
+        freshness_run: 258
+        freshness_unit_tests: 16
+        provenance_run: 798
+        result: "all three workflow groups passed on PR #132 head"
       action: "Do not force-update; inspect and reconcile main-side commits before branch synchronization"
     merge_deploy_policy: "Never merge, close or deploy PR #131 without explicit owner command"
 
