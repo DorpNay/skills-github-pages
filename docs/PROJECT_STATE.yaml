@@ -40,7 +40,7 @@ project_state:
       backup_ci:
         latest_shared_tested_head: "2d9f875398da5f4caa8703fc630db9fa0f2e6cb9"
         quality_run: 1118
-        quality_status: "pending"
+        quality_status: "cancelled_before_jobs_started; no Chromium result"
         previous_quality_run: 1114
         previous_quality_tested_head: "67adda8ba36f2aca7d219bfaf89089921a380ce7"
         previous_chromium: "98 passed on main/V1 backup branch; not V2 evidence"
@@ -49,7 +49,7 @@ project_state:
         freshness_status: "passed; 16 deterministic tests and exact live queue"
         provenance_run: 804
         provenance_status: "passed"
-        result: "Freshness and Provenance passed on latest_shared_tested_head; Quality run 1118 is pending. All backup checks validate main/V1 plus docs only, never PR #131 V2 code."
+        result: "Freshness and Provenance passed on latest_shared_tested_head; Quality run 1118 was cancelled before jobs started after a newer docs-only commit. No current-head Chromium result. Backup checks validate main/V1 plus docs only, never PR #131 V2 code."
       action: "Do not force-update; inspect and reconcile main-side commits before branch synchronization"
     merge_deploy_policy: "Never merge, close or deploy PR #131 without explicit owner command"
 
