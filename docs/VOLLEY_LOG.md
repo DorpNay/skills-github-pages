@@ -229,3 +229,16 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Added a Playwright layout regression at 320/360/390/768/1024/1440px for header horizontal overflow, title treatment, clock presence, wordmark styling and compact mode controls.
 - Test commit: `9ff326d40ac0567c1c62c293cb396bcd9c4eba82`; implementation ledger update: `1293af834c8b765828e45c2f6cf0af3fbedcb530`. Test remains unexecuted; screenshot review and native mobile rendering remain pending.
 - Next: continue the 8.1–8.11 gap audit. Existing coverage already exercises 8.3 Cloud/provider group transitions, 8.6 browser Back/Forward and 8.7 truthful Sources unsupported-state.
+
+
+### 2026-11-01 — PR #131: reconcile legacy UI checklist with current V2 work
+
+- Compared pre-8.1 sections 1–7 and the previous visual-polish backlog against the current PR #131 source, the 8.1–8.17 owner requirements and the latest implementation ledger.
+- Reclassified old [~]/[ ] items in sections 1–7 as historical V1 baseline rather than a second active queue; mapped still-relevant gaps into one consolidated section 8.0.
+- Consolidated the remaining work into P0 exact-head Gateway/Playwright/Quality checks; P1 native iPhone/VoiceOver, screenshot, localization/theme and measured contrast acceptance; P2 long-content/scroll/popover stress, truthful capability labels, Tavily/keyless-search audit and provider/gateway error contracts.
+- Removed stale duplicate backlog language: LANDING_UX_POLISH_BACKLOG_RU.md now mirrors section 8.0 and the V2 implementation ledger rather than acting as an independent plan.
+- Explicitly marked Project Sources CRUD as blocked by the missing gateway source-list API; 8.12 graph bridge/UI removal is implemented pending tests; 8.13 session-only handoff is intentional, not a persistence gap.
+- Updated V1_UI_FINALIZATION_RU.md, LANDING_UX_POLISH_BACKLOG_RU.md, LANDING_UI_V2_IMPLEMENTATION_RU.md, ORIENTER.md and docs/PROJECT_STATE.yaml. PR #131 remains open/unmerged.
+- Documentation updates do not constitute test execution. Exact-head Gateway/Chromium/CI, native iPhone/VoiceOver and WCAG contrast-ratio checks remain unexecuted. No passing test or merge/deployment is claimed.
+- Latest known code/test head before documentation-only commits: 8f68c2cc4b4b01a1917e32f75f7d5016517d41c3. Latest documentation commit at this entry: pending.
+- Next action: execute exact-head verification (Gateway + focused Playwright/Chromium + full Quality/Freshness/Provenance/Graphify/Dead Code where available); fix only confirmed failures, then continue manual acceptance.
