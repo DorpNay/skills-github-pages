@@ -233,7 +233,7 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 
 
 ### Notification queue implementation — 2026-11-02
-- PR #131 latest HEAD: `b023ddcfb65b85874c0bcfb2a7dd8638fce18592`; source checkpoint: `fed3137bae2355629a976515719f498940ad8601`.
+- Latest PR #131 HEAD must be read from live PR metadata; source checkpoint for the notification slice: `fed3137bae2355629a976515719f498940ad8601`.
 - Extended the existing toast with FIFO queueing, duplicate suppression, urgency-based durations, pause on hover/focus/hidden tab, and status/alert live-region semantics. Added Playwright assertions for sequential success/error notifications.
 - This is a partial 8.19 presentation/accessibility slice; durable operation state/IDs, pending-to-result updates, persistent errors and inline recovery actions remain unimplemented.
 - Exact-head workflow/status lookup returned no PR workflow runs or commit statuses. Browser tests were not executed; no pass is claimed.
