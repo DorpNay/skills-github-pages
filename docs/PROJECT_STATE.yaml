@@ -66,7 +66,7 @@ ui_v2_track:
   status: "open_unmerged_owner_hold"
   latest_documentation_head: "See live PR #131 metadata; documentation refresh commits advance this branch."
   latest_code_test_head: "9aa74853478a6a680cdd36ab0f84c851721405a4; latest runtime/source checkpoint before documentation-only proposal audit; not browser-verified"
-  latest_quality_harness_head: "No exact-head CI run/status exists for PR #131 head 531046c38b18df31cc6f88491417cfef3ae8630d; current Quality result remains unverified."
+  latest_quality_harness_head: "No workflow runs/status checks on audited PR #131 source head 531046c38b18df31cc6f88491417cfef3ae8630d or last checked docs-only head f8a7a85c19c196c6f72b53dc6d67dc050ff10d58; current Quality remains unverified."
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0; mandatory requirements 8.1-8.17 and optional owner proposals 8.18-8.27"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
   polish_register: "docs/LANDING_UX_POLISH_BACKLOG_RU.md (mirrors the consolidated residual list; not a separate backlog)"
@@ -79,13 +79,13 @@ ui_v2_track:
     P1: "Native iPhone Safari/VoiceOver, screenshot review at 320/360/390/768/1024/1440px, RU/EN and light/dark review, measured WCAG contrast ratios."
     P2: "Long-list/message/scroll/popover stress; capability menu truthfulness; Tavily/keyless-search audit; provider/gateway mock error and secret-redaction checks."
   verification:
-    exact_head_ci: "No workflow runs/status checks for the verified PR #131 head 531046c38b18df31cc6f88491417cfef3ae8630d. Earlier Quality #1126 (101 passed / 18 failed) is stale. No current green CI claim."
-    playwright_chromium: "No exact-head Chromium run for current PR #131 head 531046c38b18df31cc6f88491417cfef3ae8630d; #1126 is stale evidence only (101 passed / 18 failed). Browser behavior remains unverified."
+    exact_head_ci: "No workflow runs/status checks for audited PR #131 source head 531046c38b18df31cc6f88491417cfef3ae8630d or last checked docs-only head f8a7a85c19c196c6f72b53dc6d67dc050ff10d58. Earlier Quality #1126 (101 passed / 18 failed) is stale. No current green CI claim."
+    playwright_chromium: "No exact-head Chromium run for audited PR #131 source head 531046c38b18df31cc6f88491417cfef3ae8630d; subsequent documentation-only heads have no reported workflow run. #1126 is stale evidence only (101 passed / 18 failed). Browser behavior remains unverified."
     native_mobile_voiceover: "Not executed."
     wcag_contrast_ratios: "Not measured; computed-style assertions are not conformance evidence."
     live_gateway_provider: "Not verified; live smoke requires explicit owner approval."
   current_main_sha: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
-  branch_divergence: "GitHub compare main...feat/landing-v1-accessibility-responsive-20261031 at 531046c38b18df31cc6f88491417cfef3ae8630d: diverged, ahead_by=537, behind_by=4, merge_base=e78a73b25725bfa63370d9946887cbbacbf51b82. The four main-side commits touch only docs/V1_UI_FINALIZATION_RU.md. Preserve both versions and do not rebase/sync without owner approval."
+  branch_divergence: "GitHub compare main...feat/landing-v1-accessibility-responsive-20261031 at last live check: diverged, ahead_by=545, behind_by=4, merge_base=e78a73b25725bfa63370d9946887cbbacbf51b82; main=0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. Four main-side commits touch only docs/V1_UI_FINALIZATION_RU.md. Preserve both versions; no rebase/sync without owner approval."
   current_work_head: "4f4e187f6bb560ca3e928ab7a9f3c1e2e9c34ec4"
   current_work_summary: "aLandi aServi terminology and DOM/CSS contracts updated; browser title, description and dark/light theme metadata aligned with aLandi; overridden CSS declarations removed; browser runtime and app/landing CSS extracted to cacheable assets; Marked/DOMPurify use ordered defer; legacy ai_alandi_cloud_* localStorage keys intentionally retained behind aServi code identifiers for saved-setting compatibility; inherited pre-8 UI backlog made explicit. Research Studio E2E now matches its deep-research-only entry point; sidebar swipe regression covers cancelled touch gestures. Cloudflare and generic cloud-infrastructure wording remain distinct concepts. Full tests intentionally deferred until source pass is complete."
   current_work_validation: "Prior V8 parse-only syntax check passed for extracted assets/js/app.js; current test edits were reviewed against index.md and swipe handlers but have not yet been syntax-parsed or executed. App/landing CSS brace balance checked; browser behavior not executed. Jekyll build, focused Chromium, full Quality/Freshness/Provenance/Graphify/Dead Code not run yet. Do not claim runtime extraction or rename browser-verified."
@@ -175,7 +175,7 @@ improvements:
 
   repository_identity_cleanup:
     status: "audit_only_no_files_deleted_no_repo_rename"
-    legacy_exercise_workflows: ".github/workflows/0-start-exercise.yml, 1-step.yml, 2-step.yml, 3-step.yml reference skills/exercise-toolkit and skills/action-*; first workflow listens to push on main and includes contents: write plus downstream creation/replacement of _config.yml and index.md."
+    legacy_exercise_workflows: ".github/workflows/0-start-exercise.yml, 1-step.yml, 2-step.yml, 3-step.yml reference skills/exercise-toolkit and skills/action-*; .github/steps/1-step.md-4-step.md are associated exercise instructions; temp/1 and temp/2 are historical research notes with template references and require content reconciliation before archive/removal. First workflow listens to push on main and includes contents: write plus downstream creation/replacement of _config.yml and index.md."
     safety_gate: "Repository is_template flag and actual workflow run history were not available. Verify before removal; do not delete aLandi skills/*.txt or active Pages/Jekyll/Quality/Security/Graphify/deploy workflows."
     rename_gate: "Defer repository rename until stable custom domain is configured. GitHub documents that project Pages URLs are not redirected on repository rename; update baseurl, canonical/OG, OAuth redirect, absolute links and published-site smoke together."
 
@@ -451,7 +451,7 @@ landing_ux_polish_2026_10_30:
     landing_ticker_pause_resume_e2e: "added in b213c8a5d50c93af675693986fe22c3bd4d5499d"
     runtime_dependency_added: false
   verification:
-    exact_head_ci: "No workflow runs/status checks for the verified PR #131 head 531046c38b18df31cc6f88491417cfef3ae8630d. Earlier Quality #1126 (101 passed / 18 failed) is stale. No current green CI claim."
+    exact_head_ci: "No workflow runs/status checks for audited PR #131 source head 531046c38b18df31cc6f88491417cfef3ae8630d or last checked docs-only head f8a7a85c19c196c6f72b53dc6d67dc050ff10d58. Earlier Quality #1126 (101 passed / 18 failed) is stale. No current green CI claim."
     native_keyboard_screen_reader: "unverified"
     published_pages_after_merge: "pending"
   next: "Complete exact-head CI, then implement remaining visual consistency, dialogs/popovers, mobile and accessibility work in bounded slices."
@@ -580,7 +580,7 @@ landing_ui_v2_pr131_2026_10_31:
     exact_head: "502e71841e2a1a769db84439e557597c22b62a16 (latest source/test checkpoint adds Windows Forced Colors support and an unexecuted Playwright regression; exact-head Quality/Chromium pending)"
     exact_head_workflow_runs: "Quality #1126 on prior SHA 7cdf35d581d9d6bca39256e67a0b0db6083e486c: Jekyll/Security/Static Analysis/Context/Integrity PASS; Chromium FAIL 101 passed / 18 failed; artifact 13077583320. No exact-head Quality/Chromium run visible for source/test checkpoint 502e71841e2a1a769db84439e557597c22b62a16; latest observed Provenance Gate pass predates current UI changes."
     gateway_pytest: "not executed in this environment"
-    playwright_chromium: "No exact-head Chromium run for current PR #131 head 531046c38b18df31cc6f88491417cfef3ae8630d; #1126 is stale evidence only (101 passed / 18 failed). Browser behavior remains unverified."
+    playwright_chromium: "No exact-head Chromium run for audited PR #131 source head 531046c38b18df31cc6f88491417cfef3ae8630d; subsequent documentation-only heads have no reported workflow run. #1126 is stale evidence only (101 passed / 18 failed). Browser behavior remains unverified."
     native_mobile_voiceover: "not executed"
     wcag_contrast_ratios: "Base CSS token contrast is measured by a new E2E calculation against solid theme surfaces (>=4.5:1); actual component/gradient/focus/non-text contrast remains unmeasured and requires manual audit."
   safety:
