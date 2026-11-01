@@ -34,6 +34,17 @@
 | **8.16 Button typography/icon-first** | Shared control typography/spacing and 44px message-action targets; copy/view/speech actions are icon-first. Inline message-action labels/tooltips now use one consistent value for both `title` and `aria-label`. | Added E2E assertions for all inline and expanded-view message actions: matching accessible name/tooltip and 44px hit targets. Remaining one-off controls and full panel review remain. | [~] |
 | **8.17 Adjustable text readability** | Persistent text scale and standard/high-contrast preference apply in light/dark themes; high contrast adjusts secondary, disabled, link, error and status text. | Added Playwright coverage comparing normal/high-contrast colors for secondary, disabled, links, errors and status in both themes while confirming primary text remains stable; actual WCAG ratio review and browser execution remain. | [~] |
 
+### 8.17 — preliminary base-token contrast calculation
+
+A deterministic E2E check now calculates WCAG relative luminance/contrast from the actual CSS custom properties against the solid theme surface, in standard/high-contrast mode. Current base-token calculations (rounded to 2 decimals):
+
+| Theme surface | Primary | Secondary | Success | Warning | Error |
+|---|---:|---:|---:|---:|---:|
+| Dark #0f1b2b | 15.93:1 | 8.26:1 | 9.02:1 | 10.92:1 | 6.59:1 |
+| Light #ffffff | 15.48:1 | 5.91:1 | 4.90:1 | 6.59:1 | 5.26:1 |
+
+High-contrast disabled/info tokens are included in the automated calculation. These are **base-token vs base-surface values**, not a complete WCAG audit: actual cards, gradient/translucent surfaces, small text, hover/focus states, disabled controls and non-text contrast still require inspection and native-device review.
+
 ## Cross-cutting inherited UI work (requirements before section 8)
 
 The pre-8 checklist is not a second backlog. Its remaining items are folded into the owner-priority requirements above:
