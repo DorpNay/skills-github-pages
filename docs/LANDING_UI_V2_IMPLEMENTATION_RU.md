@@ -30,7 +30,7 @@
 | **8.12 Remove “Серверная память (Эксперимент)”** | Browser UI/client dispatch, per-chat opt-in and `/v1/memory/graph/*` routes/flags removed; local/private/shared/project-local memory, conversation delta sync and RAG remain. Internal `MemoryManager` is Graphify-only; existing SQLite data is untouched. | Execute exact-head Gateway + Chromium regressions; confirm no legacy UI or client calls. | [~] |
 | **8.13 Explicit project context handoff** | Project settings list existing chats and queue the selected project's context for the chosen chat's next request; no new chat or project-membership change; five-project cap and one-shot consumption retained. Pending handoff is session-only until sent. | Execute non-current-chat/no-cross-chat/one-shot E2E and decide whether pending handoff should survive reload. | [~] |
 | **8.14 Touch selection** | Targeted user-select/-webkit-user-select/touch-action rules keep controls from selecting the whole interface while message text, expanded viewer content and editable fields remain selectable; horizontal sidebar swipe is separated from vertical scrolling. | Chromium regression now checks buttons, disclosures, input fields, assistant text and expanded viewer selection styles; native iOS Safari long-press, VoiceOver and gesture tests remain. | [~] |
-| **8.15 Status/progress** | Status and toast elements expose neutral/info/success/warning/error data states with restrained semantic colors; status text and ticker are centered; no synthetic progress added. | Execute status/reduced-motion checks and review contrast in both themes. | [~] |
+| **8.15 Status/progress** | Status and toast elements expose neutral/info/success/warning/error data states with restrained semantic colors; status text and ticker are centered; no synthetic progress added. | Playwright coverage now checks all five status colors, toast semantic styling, centered alignment and marquee suppression under `prefers-reduced-motion`; browser execution and theme contrast review remain. | [~] |
 | **8.16 Button typography/icon-first** | Shared font/line-height/spacing rules; expanded-view copy/speech actions are icon-first with accessible labels and tooltips; ambiguous actions retain text. | Normalize remaining one-off buttons and verify tooltips/target sizes across all panels. | [~] |
 | **8.17 Adjustable text readability** | Persistent text scale and standard/high-contrast preference have a live preview/reset and apply to light/dark themes; high contrast also raises secondary/disabled/link/error/status text. | Run contrast checks for all states and confirm readability on actual devices. | [~] |
 
@@ -162,3 +162,10 @@
 - Test commit: `64a1a811bd5531d8095245d649829fd838486821`. This is source-level coverage only; Chromium and native iOS Safari/VoiceOver have not been executed.
 - 8.13 source audit confirms explicit project-to-existing-chat handoff, no automatic project injection based on membership, unchanged chat membership/current chat, five-project cap, and one-shot consumption after successful send. Pending handoff is deliberately session-only; persistence across reload is not required by owner section 8.13 and is not being added without a product decision.
 - PR #131 remains open and unmerged; no deployment.
+
+
+### Follow-up — semantic status and reduced motion regression (8.15, 2026-11-01)
+
+- Added a focused Playwright scenario checking that all five status states resolve to distinct text colors, toast semantic states have visible color/border styling, status and roadmap ticker are centered, and the roadmap marquee is disabled when the browser requests reduced motion.
+- Test commit: `9a6cbe71e3c433bd20b1d0fbddfbd799834019d5`. This is regression source only; Chromium has not been executed and no pass is claimed.
+- Existing implementation already avoids synthetic progress; status timer reports elapsed time and a historical estimate only when available.
