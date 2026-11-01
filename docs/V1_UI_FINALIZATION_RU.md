@@ -271,7 +271,7 @@ PR #122 добавил только эксплуатационную надёж�
 | 2026-10-30 | Expanded two-round research with current ChatGPT search/projects/pinning patterns, Apple compact-view modality, VisualViewport/mobile keyboard, WCAG sizing, CORS and OWASP storage threat model. | Official OpenAI, Apple, W3C, MDN, OWASP, GOV.UK and GitHub sources linked in sections 4/6; recommendations filtered through V1 static/autonomy boundary. |
 
 
-## 8. Дополнительные заметки владельца по интерфейсу (2026-10-31)
+## 8. Требования владельца по интерфейсу и актуальный backlog (2026-10-31)
 
 Этот раздел дополняет живой UI-чек-лист требованиями, продиктованными владельцем. Это backlog требований, а не подтверждение реализации. Перед изменениями сверять каждый пункт с текущим кодом и существующими пунктами выше; уже реализованное не дублировать и не ломать.
 
@@ -308,7 +308,7 @@ PR #122 добавил только эксплуатационную надёж�
 - 8.13: handoff контекста выполняется только по явному выбору существующего чата; чат не создаётся и не перемещается. Pending handoff session-only — это принятое ограничение, а не незакрытая задача на persistence.
 - Новые провайдеры, connector marketplace, cloud sync, OAuth и новые runtime-возможности из раздела 9 не входят в текущую UI-реализацию PR #131 без отдельного решения владельца.
 
-## 8. Поправки владельца от 2026-10-31 — приоритет V2.0
+### Приоритетные требования 8.1–8.17 от 2026-10-31 — V2.0
 
 
 **Реализация V2.0:** требования 8.1–8.17 ведутся отдельно в [docs/LANDING_UI_V2_IMPLEMENTATION_RU.md](LANDING_UI_V2_IMPLEMENTATION_RU.md) и PR [#131 — aLandi Landing UI v2.0](https://github.com/DorpNay/skills-github-pages/pull/131). V1 в `main` остаётся стабильной; PR #131 не сливать и не публиковать до отдельного разрешения владельца. Статусы исходных требований не менять без подтверждённого кода и тестов.
