@@ -38,13 +38,14 @@ project_state:
       backup_pr: 132
       backup_pr_status: "draft_open_unmerged"
       backup_ci:
+        tested_head: "67adda8ba36f2aca7d219bfaf89089921a380ce7"
         quality_run: 1114
         chromium: "98 passed on main/V1 backup branch; not V2 evidence"
         published_site_smoke: "1 passed on main/V1 backup branch; not V2 deployment"
         freshness_run: 258
         freshness_unit_tests: 16
         provenance_run: 798
-        result: "all three workflow groups passed on PR #132 head"
+        result: "all three workflow groups passed on tested_head; later continuity-document edits are docs-only and have no exact-head rerun"
       action: "Do not force-update; inspect and reconcile main-side commits before branch synchronization"
     merge_deploy_policy: "Never merge, close or deploy PR #131 without explicit owner command"
 
