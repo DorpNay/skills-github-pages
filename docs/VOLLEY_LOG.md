@@ -669,3 +669,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Extended Playwright regression: vertical movement does not close the sidebar; touchcancel and pointercancel cancel pending close; a later deliberate horizontal swipe closes it; project disclosure state remains open.
 - Source commit: `050f25ef41942b2f522607cc117d15af2b373043`; test commit: `0a76e63df790977cd6ed0540233528e3102a7d9a`.
 - Test authored, not yet executed on the latest documentation HEAD. Native iPhone Safari and VoiceOver remain manual gates. No merge, rebase, main change or deployment.
+
+## V-2026-11-02-CHAT-SEARCH-AUDIT-001
+
+- Audited optional proposal 8.21 against current runtime and Playwright suite. Local sidebar search already matches project names and chat titles only; message bodies are not indexed. Results are grouped, use existing IDs/actions, and cap each group at eight visible results.
+- Existing E2E covers project/chat name search and explicitly guards against message-body indexing. The owner checklist now records the name-search slice as implemented/covered.
+- Remaining 8.21 scope: chat pinning, persisted sort preference, and stable ordering while the user is reading. 8.21 remains partial; no new behavior was added in this audit.
+- Source evidence: `assets/js/app.js` `renderSidebarSearchResults()`; E2E test near line 262. This is source/test inspection, not a new browser run.
