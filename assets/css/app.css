@@ -638,3 +638,8 @@ html[data-text-contrast="high"] #chatBox button:disabled {
 .function-config-group-title { color: var(--ui-text-muted, #94a3b8); font-size: .68rem; font-weight: 750; letter-spacing: .075em; line-height: 1.4; text-transform: uppercase; }
 .function-config-group label { min-width: 0; line-height: 1.45; }
 .function-config-group input, .function-config-group select, .function-config-group textarea { max-width: 100%; }
+
+
+/* Browser connectivity hint: this reports navigator.onLine only, not API health. */
+.network-status { margin:0 0 .4rem; padding:.3rem .5rem; border:1px solid color-mix(in srgb,var(--ui-warning) 48%,var(--ui-border)); border-radius:.55rem; color:var(--ui-warning); font-size:10px; line-height:1.35; }
+@media (forced-colors:active) { .network-status { border-color:CanvasText; color:CanvasText; } }
