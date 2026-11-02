@@ -899,3 +899,12 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - After a successful or rejected Undo action, focus now returns to the affected chat row when it is visible; otherwise it falls back to the composer. This avoids leaving keyboard focus on a toast action that is about to be removed.
 - Added a keyboard regression that activates rename Undo with Enter, verifies the exact previous title is restored, and checks focus returns to the same chat row.
 - Source commit: `ccecba116a05f5e848805ad378edeffda1b0dd7a`; E2E: `45275d5ad854ccfdd73f3b24231c197eeac38c82`. V8 syntax parsing passed; Chromium execution remains pending.
+
+
+## Quality Integrity repair — restore advanced theme selector (2026-11-02)
+
+- Quality #1431 identified a real source/UI contract mismatch: `scripts/quality-agents.mjs` requires `#uiTheme`, and application initialization plus theme persistence still reads and listens to that control, but the advanced-settings markup no longer contained it.
+- Restored the theme selector inside the existing “Appearance and comfort” disclosure, with RU/EN option labels. The existing header theme toggle remains the quick action and stays synchronized with the selector through the established `applyAppearance()` path.
+- Added Playwright coverage for selector presence, visible localized options, theme persistence and synchronization after using the header toggle.
+- Markup commit: `6a690ddf5dc6a792f929a4a1ae349df6b9d12042`; translation commit: `df5e1bd2de1fa924eb97da2958adafc32da1e38f`; E2E: `74de58706b28d55f405c238b916651c26281098d`. V8 syntax parsing passed; exact-head Quality/Chromium pending.
+- This fixes the observed `Missing required UI element #uiTheme` Integrity failure. Do not claim the gate passed until a new run on a head containing this repair completes.
