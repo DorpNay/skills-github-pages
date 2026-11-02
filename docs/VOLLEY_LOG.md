@@ -725,3 +725,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 
 - Continued mandatory UI 8.3. Extended the existing aServi/provider/additional-settings exclusivity regression to 390px, checking 44px disclosure summaries, Enter/Space keyboard toggling, intended simultaneous-open behavior for provider + additional settings, and no horizontal overflow.
 - No provider runtime, credentials, routing or persistence changed. E2E commit `f9ffad34ad067db4b3ce944f1811f4e8621a73e9`; authored only, exact-head execution pending.
+
+
+## V-2026-11-02-NESTED-NAVIGATION-AUDIT-001
+
+- Continued mandatory UI 8.6 by reviewing the shared `pushUiNavigation` / `popstate` stack and current Playwright regressions.
+- Existing coverage verifies Back through nested project filters without leaving the app, Back/Forward restoration of project settings and chat-action dialogs (including the original target), and Escape focus restoration for project creation/settings.
+- No source change was justified by the audit. Remaining 8.6 acceptance is visual review of heading/list hierarchy and native/physical-device keyboard behavior. Inspection only; no browser test pass claimed.
