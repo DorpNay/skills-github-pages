@@ -576,7 +576,7 @@ permalink: /
         <button type="button" data-action="close-roadmap-details" class="shrink-0 rounded-lg px-2 py-1 text-gray-400 hover:text-white" aria-label="Закрыть" data-i18n-aria-label="roadmapDetailsClose">✕</button>
       </header>
       <p id="roadmapDetailsDescription" class="text-sm leading-relaxed text-gray-300"></p>
-      <p class="rounded-lg border border-gray-800 bg-gray-900/70 p-3 text-[11px] leading-relaxed text-gray-400" data-i18n="roadmapDetailsBoundary">Это описание планируемой возможности. Окно не запускает операцию, не меняет настройки и не выдаёт разрешения.</p>
+      <p id="roadmapDetailsBoundary" class="rounded-lg border border-gray-800 bg-gray-900/70 p-3 text-[11px] leading-relaxed text-gray-400" data-i18n="roadmapDetailsBoundary">Это описание планируемой возможности. Окно не запускает операцию, не меняет настройки и не выдаёт разрешения.</p>
       <footer class="flex justify-end border-t border-gray-800 pt-3"><button type="button" data-action="close-roadmap-details" class="rounded-xl border border-gray-700 px-4 py-2 text-sm" data-i18n="roadmapDetailsClose">Закрыть</button></footer>
     </section>
   </div>
