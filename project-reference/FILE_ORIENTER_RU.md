@@ -1,14 +1,15 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
-## Текущая контрольная точка — 2026-11-03, Landing UI 2.0 + Graphify selector triage
+## Текущая контрольная точка — 2026-11-03, локальная библиотека Team Blueprint
 
 - Main V1: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; не менять.
-- PR #131 открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; live HEAD перед этой docs-записью `ea0457ec38931e7a0a1cff788970d1ac4a292acc`; source/test HEAD `8f4a0a532639586f557c85156ede41810d4cc79b`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Compare с main: diverged, 940 ahead / 4 behind. Четыре main-side commits меняют только общий `docs/V1_UI_FINALIZATION_RU.md`; rebase/sync запрещены без разрешения.
-- PR comments/reviews/threads: 0. Текущий pre-update HEAD `ea0457e`: 0 workflow runs и 0 commit statuses. На предыдущем docs HEAD `d4ceaf8`: Quality #41416369361 passed, 4/4 Chromium shards / 147 tests + required sentinels; Graphify #41416369353 и provenance #41416369253 passed. Published-site smoke skipped.
-- Graphify UI bridge: 3,198 nodes / 8,559 edges / 61 groups. Selector triage завершён: 351 DOM/no-static-CSS и 43 CSS/no-static-DOM — статические name-join diagnostics, не дефекты. Из 43 CSS-кандидатов 36 имеют markup/JS references (часть создаётся динамически); семь без literal reference оставлены только как cleanup candidates. Ничего не удалялось.
-- Source/test code не менялся после `8f4a0a5` в трёх последующих docs-only commits до `ea0457e`. No tests were run by the triage itself.
-- Screenshot evidence: 320/360/390/768/1024/1440 px + desktop/mobile sidebar-open. Native iPhone Safari, VisualViewport/safe-area, VoiceOver, keyboard-only focus и full component-level WCAG остаются manual gates.
-- **Next:** продолжить обязательные требования 8.1–8.17 на основе browser/device evidence; следующий приоритет — native iPhone/VoiceOver/keyboard/WCAG acceptance, затем одна ограниченная source correction. Project Sources CRUD не открывать без реального scoped source-list API.
+- PR #131 открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; code/test HEAD `765138e74e141aaf1471c6351193d98dda8a0df8`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Compare с main: diverged, 952 ahead / 4 behind. Четыре main-side commits меняют только общий `docs/V1_UI_FINALIZATION_RU.md`; rebase/sync запрещены без разрешения.
+- PR comments/reviews/threads: 0. На exact HEAD `765138e` нет workflow runs и commit statuses; Playwright/Quality NOT RUN.
+- Добавлена local-only Team Blueprint library: до 20 именованных снимков состава команды; save/apply/delete; RU/EN; 44px mobile targets. Применение меняет только blueprint fields текущего чата. Не запускает агентов, не включает structured workflow, не выдаёт permissions и не создаёт AgentRuns.
+- E2E suite: 120 тестов; новый lifecycle regression authored, NOT RUN. Static V8 parse app.js/spec PASS; CSS braces balanced; duplicate HTML IDs absent; all new RU/EN keys present.
+- Graphify UI bridge и selector triage сохранены в implementation ledger. Семь CSS candidates без literal references не удалялись.
+- Native iPhone Safari, VisualViewport/safe-area, VoiceOver, keyboard focus и full component-level WCAG остаются manual gates.
+- **Next:** получить exact-head Quality/Chromium для `765138e`; затем продолжить 8.1–8.17 manual acceptance и bounded 8.28/8.19 improvements. Project Sources CRUD не открывать без настоящего scoped source-list API.
 
 ## Навигация и владение записями
 
