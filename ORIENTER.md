@@ -237,3 +237,11 @@
 - Added Playwright coverage for offline/online transitions, no automatic request replay and synchronous tab-hide draft flush. V8 syntax checks and CSS brace balance passed; tests have not yet run in Chromium.
 - Exact-head Quality #1405 / run `41390877580` is pending; Graphify #437 / run `41390877512` is queued. No passing browser/Quality claim.
 - No main synchronization, rebase, merge, deployment, dependency or backend changes. Attachment persistence and native iPhone Safari/VoiceOver remain open gates.
+
+
+### Live Landing V2 continuation — bounded Undo (2026-11-02)
+
+- PR #131 remains the authorized branch. Source/test checkpoint for the current 8.20 slice: `ba709ac95c8896581133dfcce02234281f75fd90`.
+- Implemented a bounded Undo action for moving a chat between project and personal scope using the existing toast. It restores only when the chat is unchanged since the move and the original project still exists; newer state is never overwritten.
+- Added Playwright regression and a 44px accessible action target. V8 syntax and CSS brace checks passed; browser execution remains pending.
+- This is not yet persistent Undo history and does not cover rename, project deletion/cascade or settings. No new dependency, backend, merge, rebase, main sync or deployment.
