@@ -195,8 +195,8 @@ jobs:
           EOF
             echo
             echo "### UI selector navigation"
-            graphify query "assets/css/app.css::#projectNavToggle" --budget 1000
-            graphify query "index.md::#projectNavToggle" --budget 1000
+            graphify query "assets/css/app.css::#projectNavToggle" --depth 1 --budget 1000
+            graphify query "index.md::#projectNavToggle" --depth 1 --budget 1000
             echo
             echo "### Private-memory provider boundary (targeted query)"
             graphify query "requestChatCompletion getApiCandidates" --context call --budget 2600

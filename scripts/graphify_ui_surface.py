@@ -198,6 +198,7 @@ def collect_dom(root: Path):
 
 
 JS_PATTERNS = (
+    (re.compile(r"(?<![\w$])\$\s*\(\s*(['\"])([^'\"]+)\1"), "id"),
     (re.compile(r"\bgetElementById\s*\(\s*(['\"])([^'\"]+)\1"), "id"),
     (re.compile(r"\b(?:querySelector|querySelectorAll|matches|closest)\s*\(\s*(['\"])([^'\"]+)\1"), "selector"),
     (re.compile(r"\bgetElementsByClassName\s*\(\s*(['\"])([^'\"]+)\1"), "class"),
@@ -354,6 +355,9 @@ def enrich_graph(root: Path, graph_path: Path) -> dict:
         "new_graph_nodes": len(nodes),
         "new_graph_edges": len(links),
         "matched_css_dom_selectors": len(set(css_by_selector) & set(dom_by_selector)),
+        "matched_js_css_references": sum(1 for item in js if item["selector"] in css_by_selector),
+        "dom_selectors_without_css_count": len(set(dom_by_selector) - set(css_by_selector)),
+        "css_selectors_without_dom_count": len(set(css_by_selector) - set(dom_by_selector)),
         "selectors_without_css": sorted(set(dom_by_selector) - set(css_by_selector))[:40],
         "css_selectors_without_dom": sorted(set(css_by_selector) - set(dom_by_selector))[:40],
     }
