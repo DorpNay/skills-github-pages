@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-02"
   root_orienter:
-    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 open/unmerged; latest docs HEAD a610c5dcd111d2dce5ecc9db03a61a583359f674; latest source/test commit d70b8a31cc8a81cafeea64f8fbb332e53b0c5af2; base SHA e78a73b25725bfa63370d9946887cbbacbf51b82; mergeable=false, main four commits ahead of PR base. Agent capability sections grouped into three native RU/EN disclosures with 44px keyboard/touch summaries. Playwright assertions authored for category grouping, touch, keyboard and nested ticker pause; not run. No exact-head workflow returned. No merge/rebase/deploy."
+    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 open/unmerged; latest source/test commit d70b8a31cc8a81cafeea64f8fbb332e53b0c5af2; orientation/state/log checkpoint bb7974ce7be5cc05f2ef68ab9073225a44758ea2; base SHA e78a73b25725bfa63370d9946887cbbacbf51b82; mergeable=false, main four commits ahead of PR base. Agent capability sections grouped into three native RU/EN disclosures with 44px keyboard/touch summaries. Playwright assertions authored for category grouping, touch, keyboard and nested ticker pause; not run. No exact-head workflow returned. No merge/rebase/deploy."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 8
