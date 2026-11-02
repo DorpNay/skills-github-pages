@@ -947,3 +947,13 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Source commit: `478de2144433ffeda18fd60f63a03c336802ab1b`; i18n commit: `63de572e354ff9380a4c35448d48abaa5805838b`; initial test commit: `d3a44807d9c9eb0dade5a3e0bf80065fa5ebfd45`; follow-up test correction: `baf6a96705a15466384ab2c9f1efce977e83d087`. The stylesheet pause selector was corrected to use the containing label's `:has()` state for all three roadmap pause controls; the language assertion now changes locale only after closing the modal.
 - Exact-head workflow lookup for source/test HEAD `baf6a96705a15466384ab2c9f1efce977e83d087` returned no runs. Playwright test is authored, not executed; no pass is claimed.
 - No Skill registry, import endpoint, package loader, script runtime, permission API, dependency, backend route, merge, rebase, main sync or deployment.
+
+## Exact-head verification and sidebar icon recovery — 2026-11-02
+
+- Updated Playwright helpers to open actual nested Settings categories (appearance/context/profile/search tools) and Agent capability disclosure before interacting with descendants. Sidebar ordering now checks semantic document order rather than requiring a specific direct-child DOM shape.
+- Reduced-motion test asserts the ticker animation is disabled (`animation-name: none`) and the pause control remains checked; it does not require a paused play-state for an animation that does not exist.
+- Visual review found missing-glyph squares in Projects/create/new-chat controls. Replaced the project glyph with an aria-hidden inline SVG folder; plus marks are ASCII and hidden from accessible names; RU/EN translations no longer reintroduce legacy glyphs; dynamic project-chat label updates the inner label rather than replacing icon markup.
+- Added Playwright accessible-name assertions for Projects, Create project and New personal chat, plus a regression assertion against the legacy square glyph.
+- Exact code/test HEAD: `1ec4a1d338975934a9cbefa3f3a262ad97ee118f`. Quality #41411404686: all four Chromium shards passed, 147 tests; syntax, Ruff/static analysis, Jekyll, Integrity, Security and Context passed. Published-site smoke skipped. No flaky tests in this final run.
+- Graphify #41411404736: 1,209 nodes / 3,322 edges / 60 communities; code-only manifest covers JavaScript/Python code, not HTML/CSS. Use direct source and screenshot/DOM evidence for visual layout.
+- Screenshots reviewed: 320/360/390/768/1024/1440 px and desktop/mobile sidebar-open. No horizontal overflow observed in these Chromium captures. Real iPhone Safari, VoiceOver, keyboard focus and full component-level WCAG remain unverified.

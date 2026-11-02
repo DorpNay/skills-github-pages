@@ -131,6 +131,10 @@ The browser client has been split into cacheable static assets without introduci
 
 This map is a source-navigation aid, not a generated call graph or proof of browser behavior. Preserve the static HTML/CSS/JavaScript + Jekyll/GitHub Pages architecture; do not add a frontend framework or build step without a measured reason.
 
-### Graphify coverage correction
+### Graphify coverage — verified PR #131 artifact (2026-11-02)
 
-The code-only Graphify pilot previously watched `index.md` and backend/test paths but omitted the newly externalized `assets/js`, `assets/css` and `landing` source. PR #131 now adds `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html` to both pull-request and main-push path filters. The next exact-head run must confirm that `assets/js/app.js` and the relevant CSS files appear in the graph manifest/coverage report. Until that artifact exists, do not claim refreshed node/edge metrics.
+- Workflow path filters watch `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html`, but this only triggers the workflow; it does **not** mean the code-only parser extracts those file types.
+- Graphify 0.9.96 run #41411404736 on exact code/test HEAD `1ec4a1d338975934a9cbefa3f3a262ad97ee118f` passed: 1,209 nodes, 3,322 edges, 60 communities; zero model calls. Manifest contains 76 code files, including `assets/js/app.js`, gateway code and 11 E2E specs.
+- The manifest does not contain `index.md`, `assets/css/**` or `landing/**/*.html`. Six code files yielded no symbols; 271 edges are inferred; query output may truncate around 700 tokens; community labels remain generic. Artifact retention is seven days.
+- **Use Graphify for code relationships only.** For app shell, semantic HTML, CSS, responsive layout and public landing visuals, inspect source directly and use DOM/Playwright screenshots. Never infer CSS/HTML coverage from path filters or a green Graphify run.
+

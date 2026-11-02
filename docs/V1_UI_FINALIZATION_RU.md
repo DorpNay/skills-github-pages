@@ -284,6 +284,7 @@ PR #122 добавил только эксплуатационную надёж�
 ### P0 — обязательная автоматическая проверка PR #131
 
 - [x] Exact-head Quality #1252 / run `41365833770` проверил documentation HEAD `63f429ccf16fe7648519ebb3ecc02b9f8949ad53` (кодовой HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`): все четыре real Chrome shards — PASS; preflight, static analysis, Integrity, Security, Context и Jekyll — PASS. Published-site smoke skipped; это не deployment/live-preview evidence.
+- [x] Новый exact-head Quality #41411404686 на code/test HEAD `1ec4a1d338975934a9cbefa3f3a262ad97ee118f`: 4/4 Chromium shards, 147 tests PASS; syntax, Ruff/static analysis, Jekyll, Integrity, Security и Context PASS. Published-site smoke skipped; это не deployment/live-preview evidence.
 - [x] Exact code-head Quality #1250 / run `41364775725` на `f3151472e285c7d31d46809f52337202eb15e6b3` прошёл после расширения E2E для 8.13: reload с неактивным target chat и reload, когда target chat уже активен; one-shot handoff проверен.
 - [x] Provenance #976 / run `41365833791` на documentation HEAD `63f429ccf16fe7648519ebb3ecc02b9f8949ad53` завершился success.
 - [x] Direct workflow references: 13 workflow-файлов, 33 внешних `uses:` references; все 33 закреплены полными 40-character commit SHA на `main` и PR branch.
@@ -295,7 +296,7 @@ PR #122 добавил только эксплуатационную надёж�
 
 ### P1 — ручная UX/accessibility приёмка
 
-- [ ] Сделать screenshot review приложения и лендинга на 320/360/390/768/1024/1440 px: шапка, sidebar, composer, пустые состояния, длинные названия, карточки, отступы, типографика и контраст.
+- [~] Chromium screenshot review приложения выполнен на 320/360/390/768/1024/1440 px и с открытым sidebar (desktop/mobile); найденные квадратные glyphs в проектной навигации исправлены. Отдельный публичный /landing screenshot pass, светлая тема, контраст реальных компонентов и ручной iPhone review остаются открыты.
 - [ ] На реальном iPhone Safari проверить virtual keyboard/VisualViewport, safe-area, ориентацию, edge-swipe, long-press, touchcancel, вложенный scroll и восстановление позиции.
 - [ ] Провести VoiceOver/keyboard-only проход: порядок заголовков, доступные имена и tooltips, видимый/неперекрытый focus, Tab/Escape/Back/Forward, возврат фокуса и modal background isolation.
 - [ ] Проверить RU/EN copy и светлую/тёмную темы для модалок, меню, статусов, ошибок, подсказок и пустых состояний.
@@ -627,7 +628,7 @@ PR #122 добавил только эксплуатационную надёж�
 - Существующие tickers должны оставаться disclosure, не progress bars; сохранять pause, reduced-motion, ARIA alternative и ясную подпись «не активный runtime».
 - Поддерживать отдельную матрицу RU/EN, keyboard, screen reader, touch, 320/360/390/768/1024/1440px и реальные пустые/ошибочные состояния.
 
-**Текущая evidence boundary:** Playwright assertions для четырёх групп меню, RU/EN labels, agent config groups, tickers, reduced-motion и pause найдены в `tests/e2e/app.spec.mjs`. В этой сессии они не запускались; current-head Quality не подтверждён. См. `docs/AGENT_FUNCTIONS_MENU_INFORMATION_ARCHITECTURE_RU.md` для подробной source map и gaps.
+**Текущая evidence boundary:** Quality #41411404686 на exact code/test HEAD `1ec4a1d338975934a9cbefa3f3a262ad97ee118f` прошёл 4/4 Chromium shards (147 tests). Покрыты RU/EN labels, nested disclosures, reduced motion, pause, touch targets, keyboard activation, scope и accessible names. Это не доказывает наличие runtime import/loader, shared registry, AgentRun API, native iPhone/VoiceOver или live deployment. См. `docs/AGENT_FUNCTIONS_MENU_INFORMATION_ARCHITECTURE_RU.md` для source map и runtime gaps.
 
 **Приёмка:** не более одного entry point на действие; blueprint не запускает worker; статус выводится из реального runtime; отсутствуют фиктивные кнопки, дублирующие настройки и ложный progress.
 

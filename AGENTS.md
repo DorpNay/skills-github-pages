@@ -49,4 +49,4 @@ Before any aLandi task:
 - GitIngest = text snapshot; GitMCP = MCP access to a specific upstream; GitReverse = synthetic repository prompt. These are not interchangeable.
 
 
-- Graphify path coverage includes extracted UI assets: `.github/workflows/graphify-pilot.yml` watches `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html` for PR and main-push events. Verify the artifact manifest includes the current app runtime and styles before using its graph for architecture conclusions; an untriggered or partial graph is not current evidence.
+- Graphify workflow path filters watch `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html`, but trigger coverage is not parser coverage. The 2026-11-02 PR #131 code-only artifact (#41411404736) included `assets/js/app.js`, gateway code and 11 E2E specs, but omitted `index.md`, CSS and landing HTML; six code files yielded no symbols. Inspect HTML/CSS directly and use Chromium screenshots/DOM tests for visual conclusions. Check each artifact manifest; Graphify is a dev-only navigation hint, not state or proof.

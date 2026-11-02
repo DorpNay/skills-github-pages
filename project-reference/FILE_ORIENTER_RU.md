@@ -1,17 +1,23 @@
-## Актуальная контрольная точка — 2026-11-02, Skills panel
-
-- Verified main SHA: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; main остаётся стабильной V1.
-- PR #131 открыт и не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; source/test checkpoint `baf6a96705a15466384ab2c9f1efce977e83d087`; base SHA `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub сообщает mergeable=false. Не выполнять merge/rebase/sync/deploy.
-- Skills panel: работающий task profile явно ограничен текущим чатом; настройки цели/формата сгруппированы; будущая общая Skill package library находится в отдельном collapsed disclosure с lifecycle и security boundary.
-- RU/EN, native keyboard disclosure, 44px summary и ticker pause покрыты новым Playwright regression. Тест добавлен, но не запускался; exact-head workflow для source/test HEAD не вернул runs.
-- Runtime import, shared registry, package loader, script execution и permission API не реализованы. Никаких backend/dependency/runtime изменений.
-- Следующий шаг: продолжить следующий ограниченный UI slice по единому разделу 8.0 checklist; main/V1 не трогать.
-
-
-
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
-## Актуальная контрольная точка — 2026-11-02, Landing V2 taxonomy slice
+## Текущая контрольная точка — 2026-11-02, Landing UI 2.0
+
+- Main V1: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; не менять.
+- PR #131: открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; проверенный code/test HEAD `1ec4a1d338975934a9cbefa3f3a262ad97ee118f`; base `e78a73b25725bfa63370d9946887cbbacbf51b82`; mergeable=false; rebase/sync/deploy не выполнять.
+- Quality #41411404686 на HEAD `1ec4a1d`: 4/4 Chromium shards, 147 passed; все обязательные sentinels прошли; опубликованный сайт не проверялся (smoke skipped).
+- Graphify #41411404736: 1,209 nodes / 3,322 edges / 60 communities. Code-only manifest: 76 code files; includes app.js, gateway and 11 E2E specs; excludes index.md, CSS and landing HTML; 6 files yielded no symbols. Artifact expires; graph is navigation only.
+- Screenshot evidence: app 320/360/390/768/1024/1440 px and sidebar open on desktop/mobile. Found and fixed square fallback glyphs: project folder is inline SVG; plus signs and dynamic chat labels are accessible and RU/EN-safe.
+- Manual gates remain: real iPhone Safari, VoiceOver, keyboard focus, complete WCAG component contrast, and separate public landing-page review.
+- Next bounded action: select the next unfinished 8.1–8.17 requirement from the owner checklist after reviewing the latest evidence. Project Sources CRUD remains blocked until a real scoped source-list API exists.
+
+## Навигация и владение записями
+
+См. `ORIENTER.md` → **Record ownership**. Здесь хранится подробная карта файлов и одна текущая контрольная точка; старые checkpoints ниже — только история. При расхождении live GitHub и сохранённых SHA всегда доверять live GitHub.
+
+## Исторические контрольные точки
+
+
+## Историческая контрольная точка — 2026-11-02, Landing V2 taxonomy slice
 
 - PR #131 открыт, не объединён; ветка `feat/landing-v1-accessibility-responsive-20261031`; docs checkpoint `5e7faea91bb3b88384b75f68f6f5ac8ae313b3d8`, source/test HEAD `79790a018234b0f141f7ee902430165f6471a920`. Main остаётся V1; merge/rebase/sync/deploy не выполнялись.
 - Additional Settings regrouped into three purpose disclosures. Function menu groups task workflow and connections. Structured-workflow configuration is divided into execution mode and blueprint parameters. RU/EN labels and E2E tests added.
@@ -19,7 +25,7 @@
 - V2 live preview not configured: Pages target serves main V1; Vercel connected context/project search returned no available team/project. No new repo or deployment without owner approval.
 - Next: verify Quality/Chromium, fix regressions, gather real screenshots and continue native iPhone/VoiceOver/WCAG review.
 
-## Актуальная контрольная точка — 2026-11-02, Quality #1252 green
+## Историческая контрольная точка — 2026-11-02, Quality #1252 green
 
 - PR #131 открыт и не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; code HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`; documentation HEAD `63f429ccf16fe7648519ebb3ecc02b9f8949ad53`. Сравнение: 653 commits ahead / 4 behind main; rebase/main synchronization без разрешения запрещены.
 - Quality #1250 на code HEAD прошёл после расширения E2E для 8.13. Quality #1252 / run `41365833770` на docs HEAD прошёл: 4/4 Chrome shards и все sentinels зелёные. Provenance #976 / run `41365833791` также success.
@@ -32,7 +38,7 @@
 - Не удалять branches/files, не merge/rebase/deploy. Следующий шаг — продолжать UI scope 8.1–8.17 в PR #131 и не ждать CI без параллельной работы.
 
 
-## Актуальная контрольная точка — 2026-11-02, Quality #1251 green
+## Историческая контрольная точка — 2026-11-02, Quality #1251 green
 
 - PR #131 открыт и не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; code HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`; documentation HEAD `61f1ae1dbac08da6c0a873bc5b72926cecb83bee`. Сравнение: 653 commits ahead / 4 behind main; rebase/main synchronization без разрешения запрещены.
 - Quality #1250 / run `41364775725` на code HEAD прошёл после расширения E2E для 8.13. Quality #1251 / run `41365456706` на docs HEAD прошёл: 4/4 Chrome shards и все sentinels зелёные. Provenance #975 / run `41365456760` также success.
@@ -45,7 +51,7 @@
 - Не удалять branches/files, не merge/rebase/deploy. Следующий шаг — продолжать UI scope 8.1–8.17 в PR #131 и не ждать CI без параллельной работы.
 
 
-## Актуальная контрольная точка — 2026-11-02, Quality #1250 green
+## Историческая контрольная точка — 2026-11-02, Quality #1250 green
 
 - PR #131 открыт и не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; exact HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`. Main остаётся V1 baseline. Сравнение: 653 commits ahead / 4 behind main; не выполнять rebase/main synchronization без разрешения.
 - Quality #1250 / run `41364775725`: exact-head push run завершился success за 207s. Все четыре real Chrome shards passed; preflight, static analysis, Integrity, Security, Context и Jekyll — success. Published-site smoke skipped; публикация/preview не проверялись.
@@ -57,7 +63,7 @@
 - Не удалять branches/files, не merge/rebase/deploy. Текущий следующий шаг — продолжать UI scope 8.1–8.17 в PR #131 и не ждать CI без параллельной работы.
 
 
-## Актуальная контрольная точка — 2026-11-02, Quality #1234 green
+## Историческая контрольная точка — 2026-11-02, Quality #1234 green
 
 - PR #131 открыт, не объединён; branch feat/landing-v1-accessibility-responsive-20261031; code HEAD на момент проверки 9a23d58313da6379cb112b617daedeaa6d38f605. Main остаётся V1 baseline. Не выполнять merge, rebase или main synchronization без отдельного разрешения.
 - Quality #1234 / run 41363212486: exact-head push run завершился success за 105s. Четыре real Chrome shards прошли по 32 теста каждый: 128 passed, 0 failed. Preflight, static analysis, Integrity, Security, Context и Jekyll — success. Published-site smoke — skipped; публикация/preview не проверялись.
