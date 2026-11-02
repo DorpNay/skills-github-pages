@@ -28,7 +28,12 @@
 - No git reset --hard; do not overwrite unknown user changes.
 
 
-## OLEDUE handoff trigger (2026-11-02)\n\n- When the owner sends the single word `oledue`, read root `OLEDUE.md` first and execute its handoff protocol before asking questions or summarizing history. It is the compact entrypoint for resuming the active owner-authorized task.\n- Keep the first response work-oriented: verify live repository state, recover the exact stopping point, and continue a bounded safe slice. Avoid progress-only turns and repeated context requests.\n\n## Fast entry point / first-read protocol (2026-10-27)
+## OLEDUE handoff trigger (2026-11-02)
+
+- When the owner sends the single word `oledue`, read root `OLEDUE.md` first and execute its handoff protocol before asking questions or summarizing history. It is the compact entrypoint for resuming the active owner-authorized task.
+- Keep the first response work-oriented: verify live repository state, recover the exact stopping point, and continue a bounded safe slice. Avoid progress-only turns and repeated context requests.
+
+## Fast entry point / first-read protocol (2026-10-27)
 
 Before any aLandi task:
 1. Read root `ORIENTER.md` first for the short entry path, then `project-reference/FILE_ORIENTER_RU.md` for the detailed canonical navigation index.
