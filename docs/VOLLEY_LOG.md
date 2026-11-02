@@ -697,3 +697,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Commits: CSS `a71dd925f5152387f559d8673ea83dbc219fd14f`; tests `5d8b3adff61450917203909d835766d152316246`, `1bb8780d5e3223c0cb11e01039350c074e5f6587`, `179adfb6e51f04b57fc538aa927f22272d13d8ab`.
 - Test authored, not executed. Latest live PR head at this checkpoint: `179adfb6e51f04b57fc538aa927f22272d13d8ab`; workflow runs and commit statuses were empty. PR remains open, 706 ahead / 4 behind main, mergeable=false.
 - No main sync, rebase, merge, deployment or dependency change.
+
+
+## V-2026-11-02-MODAL-BACKDROP-CLEANUP-001
+
+- Continued mandatory UI 8.9 after auditing the shared `openUiModal` / `syncModalEnvironment` path and existing modal lifecycle tests.
+- No runtime change was warranted by static inspection. Added a Playwright regression for backdrop dismissal of settings, project creation, function panel and Research Studio.
+- After each close the regression asserts no visible dialog, removal of `body.ui-modal-open`, and immediate sidebar clickability/open-close behavior to catch a leftover overlay that blocks interaction.
+- E2E commit: `b0b18ea65393471600c8c3804163d0dca2fb75a3`. Authored only; exact-head browser execution remains pending. No dependency, backend, merge, rebase or deployment.
