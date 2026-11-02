@@ -150,7 +150,7 @@
     html[data-theme="light"] .assistant-content, html[data-theme="light"] .message-viewer-content {
       color:color-mix(in srgb,#10212b calc(100% * var(--ui-content-contrast)),#526775);
     }
-    .message-actions { display:flex; align-items:center; gap:var(--ui-control-gap); margin-top:4px; }
+    .message-actions { display:flex; align-items:center; gap:6px; margin-top:1px; min-height:44px; opacity:.9; }
     .message-actions button.hidden { display:none!important; }
     .message-actions button {
       display:inline-flex; align-items:center; justify-content:center;
@@ -392,9 +392,6 @@
       #inputArea { gap:.4rem!important; }
       #sendBtn,#stopBtn { padding:.7rem .8rem!important; }
     }
-      .message-actions{display:flex;align-items:center;gap:6px;margin-top:1px;min-height:28px;opacity:.9}
-    .message-actions button{min-width:var(--ui-control-touch);min-height:var(--ui-control-touch);width:var(--ui-control-touch);height:var(--ui-control-touch);padding:0;border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm);color:var(--ui-text-muted);background:var(--ui-surface-raised);font-size:var(--ui-control-icon)}
-    .message-actions button:hover{color:var(--ui-tiffany);border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft)}
     .message-viewer-surface{background:var(--ui-surface);border:1px solid var(--ui-border);box-shadow:0 24px 80px rgb(0 0 0 / 50%);color:var(--ui-text)}
     .message-viewer-content{min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain;user-select:text;-webkit-user-select:text;overflow-wrap:anywhere;white-space:normal;padding:8px 4px 16px;line-height:1.65;font-size:14px;color:var(--ui-text)}
     .message-viewer-content pre,.message-viewer-content table{max-width:100%;overflow:auto}
@@ -414,10 +411,10 @@
     .project-nav-row > .header-icon { width:44px;height:44px; }
     .advanced-control,.advanced-field { min-height:var(--ui-control-standard);font-size:var(--ui-control-font);line-height:1.25; }
     .settings-subpanel > summary { display:flex;align-items:center;min-height:44px; }
-    .settings-header-actions button { min-height:36px;padding:8px 12px;font-size:var(--ui-control-font);line-height:1.2; }
-    .toolbar-menu-option { min-height:36px;padding:8px 10px;font-size:var(--ui-control-font);line-height:1.2; }
-    .composer-tool { min-width:40px;min-height:40px;display:inline-flex;align-items:center;justify-content:center; }
-    #chatListNewButton { min-height:40px; }
+    .settings-header-actions button { min-height:var(--ui-control-standard);padding:8px 12px;font-size:var(--ui-control-font);line-height:1.2; }
+    .toolbar-menu-option,.language-menu-panel button { min-height:var(--ui-control-standard);padding:8px 10px;font-size:var(--ui-control-font);line-height:1.2; }
+    .composer-tool { min-width:var(--ui-control-standard);min-height:var(--ui-control-standard);display:inline-flex;align-items:center;justify-content:center; }
+    #chatListNewButton,#restoreLastClosedChat { min-height:var(--ui-control-standard); }
     @media (max-width:420px) { .clock-face { width:54px;height:54px; } .header-chat-title { padding:4px 6px; } }
     @media (max-width:360px) { .clock-face { width:54px;height:54px; } }
   
@@ -427,9 +424,12 @@
      .brand-wordmark { font-family:"Avenir Next","Segoe UI Variable",ui-rounded,system-ui,sans-serif; font-weight:950; letter-spacing:-.085em; }
      #activeChatTitle { font-weight:700; letter-spacing:-.015em; }
      button { line-height:1.2; }
-     .toolbar-menu-option,.composer-tool,#chatListNewButton,#restoreLastClosedChat { min-height:44px; }
-     .composer-tool { min-width:44px; }
-     .message-actions button { min-width:44px;min-height:44px; }
+     .message-actions button { min-width:var(--ui-control-touch);min-height:var(--ui-control-touch); }
+     @media (max-width:639px) {
+       .settings-header-actions button,.toolbar-menu-option,.language-menu-panel button { min-height:var(--ui-control-touch); }
+       .composer-tool { min-width:var(--ui-control-touch);min-height:var(--ui-control-touch); }
+       #chatListNewButton,#restoreLastClosedChat { min-height:var(--ui-control-touch); }
+     }
      .roadmap-ticker { text-align:center;color:var(--ui-text-muted); }
      .roadmap-ticker-track { text-align:center; }
      #searchStatus[data-state="neutral"] #statusText { color:var(--ui-text-muted); }
