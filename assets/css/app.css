@@ -545,3 +545,52 @@ html[data-text-contrast="high"] #chatBox button:disabled {
   .header-preferences { gap:0!important; }
   .header-chat-title { padding:2px 4px!important; }
 }
+
+/* Sidebar v2 hierarchy: compact memory, projects, and expanded chats cards. */
+#memoryPanel { border-color:var(--ui-border);background:color-mix(in srgb,var(--ui-surface) 72%,transparent); }
+#memoryPanel > summary { list-style:none; }
+#memoryPanel > summary::-webkit-details-marker { display:none; }
+#memoryPanel .memory-summary-indicator { width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:var(--ui-text-muted);box-shadow:0 0 0 2px color-mix(in srgb,var(--ui-text-muted) 18%,transparent); }
+#memoryPanel[open] .memory-summary-indicator { background:#34d399;box-shadow:0 0 0 2px rgb(52 211 153 / 18%); }
+.memory-status-line { display:flex;flex-wrap:wrap;gap:4px 8px;padding:2px 4px;color:var(--ui-text-muted);font-size:10px;line-height:1.25; }
+.sidebar-card { border-color:var(--ui-border);background:color-mix(in srgb,var(--ui-surface) 76%,transparent); }
+.sidebar-card > summary { list-style:none; }
+.sidebar-card > summary::-webkit-details-marker { display:none; }
+#projectNavToggle { min-height:38px; }
+#projectPanel .sidebar-create-project,#chatSection .sidebar-create-chat { min-height:42px;font-size:13px;font-weight:750;letter-spacing:.005em; }
+#projectPanel .sidebar-create-project { color:#cffafe;text-shadow:0 1px 1px rgb(0 0 0 / 22%); }
+#chatSection .sidebar-create-chat { color:#eff6ff;text-shadow:0 1px 1px rgb(0 0 0 / 22%); }
+#projectStatusLine { display:inline-flex;align-items:center;white-space:nowrap;border-radius:999px;padding:2px 6px;font-size:9px;line-height:1.2;font-weight:700;color:#67e8f9;background:rgb(8 145 178 / 14%); }
+#chatSection: not([open]) #projectStatusLine { display:none; }
+#chatSection[open] > .chat-section-summary { border-bottom:1px solid var(--ui-border);margin-bottom:5px; }
+#chatList { min-height:0;max-height:min(38vh,420px); }
+#chatList.is-empty::after { padding:8px 6px;font-size:11px; }
+#projectNavigationList { max-height:min(30vh,280px); }
+#sidebar .project-nav-item > summary { min-height:38px;font-size:12px;font-weight:600; }
+#sidebar button { font-family:inherit;letter-spacing:.005em; }
+#sidebar .project-nav-heading { font-size:14px;font-weight:750; }
+#composerFooter { padding-bottom:max(12px,env(safe-area-inset-bottom))!important; }
+@media (max-width:640px) {
+  #sidebar { width:min(20rem,88vw);padding-bottom:max(8px,env(safe-area-inset-bottom)); }
+  #sidebarSearchPanel { margin-top:8px; }
+  #memoryPanel { margin-top:6px;margin-bottom:4px;padding:4px 8px; }
+  #memoryPanel > summary { min-height:34px; }
+  #projectPanel,#chatSection { margin-top:5px;margin-bottom:5px;padding:7px; }
+  #projectPanel .sidebar-create-project,#chatSection .sidebar-create-chat { min-height:40px;padding-block:8px;font-size:13px; }
+  #chatSection > .chat-section-summary { min-height:38px;padding:6px 8px; }
+  #chatList { max-height:min(34dvh,300px); }
+  #projectNavigationList { max-height:min(24dvh,220px); }
+  #composerFooter { padding-left:12px!important;padding-right:12px!important; }
+}
+@media (max-width:360px) {
+  #sidebar { width:min(18.5rem,88vw); }
+  #memoryPanel,#projectPanel,#chatSection { border-radius:12px; }
+  #sidebar .sidebar-card { padding:6px; }
+  #sidebar .sidebar-create-project,#sidebar .sidebar-create-chat { font-size:12px;min-height:38px; }
+}
+/* The dial intentionally overhangs the header instead of shrinking into it. */
+.app-header { position:relative;z-index:30; }
+# aLandiClock { position:relative;z-index:2; }
+#aLandiClock .clock-face { width:62px;height:62px;transform:translateY(5px);box-shadow:0 5px 18px rgb(0 0 0 / 24%); }
+@media (max-width:640px) { #aLandiClock .clock-face { width:58px;height:58px;transform:translateY(6px); } }
+@media (max-width:360px) { #aLandiClock .clock-face { width:58px;height:58px;transform:translateY(6px); } }
