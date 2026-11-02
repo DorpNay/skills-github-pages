@@ -2,16 +2,17 @@
 
 > **Handoff trigger:** when the owner sends `oledue`, start with root `OLEDUE.md`. It defines the short, repository-backed resume protocol; verify all live SHAs and checks before acting.
 
-## Current working checkpoint — 2026-11-03, local Team Blueprint library
+## Current working checkpoint — 2026-11-03, read-only roadmap detail windows
 
 - Source of truth: `DorpNay/skills-github-pages`; `main` remains stable V1 at `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`.
-- PR #131 remains open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`. Last code/test HEAD: `765138e74e141aaf1471c6351193d98dda8a0df8`; subsequent commits are documentation-only. Resolve live branch HEAD and compare with main at every resume; last measured at code/test HEAD: diverged, 952 ahead / 4 behind; base/merge-base: `e78a73b25725bfa63370d9946887cbbacbf51b82`. Four main-side commits modify only the shared `docs/V1_UI_FINALIZATION_RU.md`; no rebase or synchronization.
-- PR conversation comments: 0; submitted reviews: 0; inline review threads: 0. Exact code/test HEAD `765138e` has zero workflow runs and zero commit statuses; new browser/Quality pass is not claimed. Resolve the live docs HEAD/checks separately on resume.
-- Added a local-only Team Blueprint library inside the existing Agent panel: up to 20 named snapshots; save/apply/delete; RU/EN; 44px mobile targets. Data contains only the team plan, not chat IDs/messages/credentials. Applying changes only the current chat blueprint fields; it does not enable the structured workflow, launch agents, grant permissions or create AgentRuns.
-- Playwright suite contains 120 tests; new lifecycle regression is authored but NOT RUN. Static V8 syntax checks passed for app.js and E2E spec; CSS brace balance, unique DOM IDs and RU/EN translation-key checks passed.
-- Previous Graphify UI surface bridge and selector triage remain documented in `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`; unmatched selector diagnostics are candidates, not defect counts. Seven unreferenced CSS names were not removed.
+- PR #131 remains open/unmerged/mergeable=false on `feat/landing-v1-accessibility-responsive-20261031`. Code/test HEAD: `dc82acb95c850d7821e071e16a8ab11524a459c2`; subsequent commits are documentation-only. Resolve live branch HEAD and compare with main at every resume; compare at code/test HEAD: diverged, 972 ahead / 4 behind; base/merge-base: `e78a73b25725bfa63370d9946887cbbacbf51b82`. Four main-side commits modify only the shared `docs/V1_UI_FINALIZATION_RU.md`; no rebase or synchronization.
+- PR conversation comments/reviews/inline threads: 0 at the last live check. Exact code/test HEAD `dc82acb` has zero workflow runs and zero commit statuses; browser/Quality pass is not claimed.
+- Added 15 read-only Details entry points and one accessible modal across Functions, Agent/Skills, Team Blueprint, Project Sources and Integrations. Added Agent Profiles and Tasks & History roadmap slots; no profile registry, AgentRun API, workers, queue or runtime actions.
+- Team Blueprint remains a local-only saved plan and is labelled Blueprint only. Planned capabilities are In development; the detail window explains scope and limits and never starts an operation or grants permissions.
+- App/landing ticker prefix is `1ИV3ИT10И`; existing pause and reduced-motion behavior remains. App E2E spec contains 121 tests and landing spec 8; all are authored, NOT RUN. Static V8 syntax, CSS brace balance, unique IDs and RU/EN key checks passed.
+- Graphify UI surface bridge and selector triage remain documented in `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`; unmatched selector diagnostics are candidates, not defect counts.
 - No merge, deploy, rebase, main sync or destructive cleanup. Main remains stable V1.
-- **Next:** obtain exact-head Quality/Chromium evidence for `765138e`; then continue mandatory 8.1–8.17 manual UX/accessibility gates and bounded 8.28/8.19 work only where real data/handlers exist. Project Sources CRUD remains blocked until a real scoped source-list API exists.
+- **Next:** inspect why API-created commits return no Actions runs without using manual workflow_dispatch; obtain exact-head Quality/Chromium through the normal authorized push path. Then continue 8.1–8.17 manual UX/accessibility gates and bounded 8.28/8.19 work only where backed by real data/handlers. Project Sources CRUD remains blocked until a real scoped source-list API exists.
 
 ## Record ownership
 
