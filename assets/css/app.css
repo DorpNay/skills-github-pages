@@ -105,7 +105,6 @@
     body { background:var(--ui-bg)!important; color:var(--ui-text)!important; }
     #sidebar, header, #searchStatus, footer { background:var(--ui-surface)!important; border-color:var(--ui-border)!important; }
     #settingsModal > .settings-surface { background:var(--ui-surface)!important; border-color:var(--ui-border)!important; }
-    body,button,input,textarea,select { font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Roboto,Arial,sans-serif; }
     :root {
       --ui-radius-sm:10px; --ui-radius-md:14px; --ui-radius-lg:20px;
       --ui-control-compact:32px; --ui-control-standard:40px; --ui-control-touch:44px;
