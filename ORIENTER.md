@@ -3,6 +3,7 @@
 ## Current working checkpoint — 2026-11-02, Skills panel
 
 - Source of truth: `DorpNay/skills-github-pages`; main remains stable V1 at verified commit `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`.
+- OLEDUE handoff quality: `AGENTS.md` contains a correctly formatted trigger section; `OLEDUE.md` now requires a compact checkpoint covering goal/acceptance, done/in-flight/blocked, exact repository state, files/commits, checks, decisions/constraints and one next action. See the newest OLEDUE entry in `docs/VOLLEY_LOG.md`.
 - PR #131 remains open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`; current source/test checkpoint `baf6a96705a15466384ab2c9f1efce977e83d087`. PR base SHA remains `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub reports mergeable=false. No merge, rebase, synchronization or deployment.
 - Skills panel now separates the working chat-scoped task profile from the future shared Skill package library. Added RU/EN scope/lifecycle copy, native collapsed disclosure, 44px target, permission boundary and roadmap ticker pause coverage.
 - Playwright regression authored for panel scope, lifecycle, keyboard, touch target, pause and EN labels. Corrected the nested-label pause selector using CSS `:has()` for Functions, Agents and Skills. Exact-head workflow lookup returned no runs; tests are not executed and no pass is claimed.
