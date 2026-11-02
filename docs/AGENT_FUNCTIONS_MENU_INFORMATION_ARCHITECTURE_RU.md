@@ -171,3 +171,13 @@ File System Access API не одинаково доступен во всех б
 ### Follow-up source change after initial audit
 
 The latest menu slice moves the existing Research Studio entry out of the compact Functions menu (it remains available from Thorough mode), adds a roadmap-only **Deep Research 2.0** card under Research & Sources, and separates Research from Create/Transform roadmap cards into distinct containers. E2E assertions were updated to verify the 2-container / 1+4 card structure and that no fake Research Studio action remains in the menu. These assertions are authored but not executed in this session.
+
+
+### Skills panel progressive disclosure — 2026-11-02
+
+- The working chat-scoped task profile is now the primary configuration group, with its scope called out as “available · this chat only”.
+- Goal and output format are explicitly labelled; the existing custom instructions and apply handler remain attached to the current chat.
+- The shared Skill package library is a separate collapsed native disclosure. It documents the planned source → extraction → provenance/license → draft → tests → security review → manual approval → version lifecycle.
+- Import does not imply filesystem, network, memory, shell or external-action permissions. Script execution remains unavailable until a separate runtime and permission model exist.
+- RU/EN strings, 44px disclosure target, keyboard activation and nested ticker pause are covered by a new Playwright test. The test is authored, not executed; exact-head CI is not available yet.
+- No API, runtime, dependency, shared registry, package import or script execution was added.
