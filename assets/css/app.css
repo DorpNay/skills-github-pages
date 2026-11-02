@@ -625,3 +625,9 @@ html[data-text-contrast="high"] #chatBox button:disabled {
 @media (prefers-reduced-motion: reduce) {
   .settings-category-summary::after { transition: none; }
 }
+
+
+/* Function menu taxonomy: short labels separate task tools from external connections. */
+.toolbar-menu-group-label { margin: .15rem .55rem .25rem; padding: .35rem .25rem .15rem; border-bottom: 1px solid var(--ui-border, #334155); color: var(--ui-muted, #94a3b8); font-size: .62rem; font-weight: 750; letter-spacing: .09em; line-height: 1.35; text-transform: uppercase; }
+.toolbar-menu-group-label:not(:first-child) { margin-top: .45rem; }
+.toolbar-menu-panel .toolbar-menu-option { border-radius: .6rem; }
