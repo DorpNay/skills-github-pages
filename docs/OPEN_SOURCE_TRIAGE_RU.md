@@ -340,3 +340,32 @@ This is a relevance triage against the live PR #131 architecture, not an endorse
 5. Любое внедрение — отдельный scoped PR, feature flag, tests, rollback and provenance record.
 
 **Итог второго прохода:** полезные паттерны найдены; runtime adoption = 0; package additions = 0; model downloads = 0. Следующий шаг — отдельно разобрать SGLang/vLLM benchmark protocols, local quantization constraints и неразрешённые owner-provided repository names.
+
+## Upstream follow-up — serving, SLM routing and agent runtimes (2026-11-02)
+
+### Serving engines and Qwen3-Next
+
+- [vLLM V1 guide](https://docs.vllm.ai/en/latest/usage/v1_guide/) documents a reworked unified scheduler/KV-cache manager, chunked prefill by default where possible, prefix caching and broad model/hardware support. The separate [quantization matrix](https://docs.vllm.ai/en/stable/features/quantization/) makes clear that a format name is not a hardware guarantee: AWQ/GPTQ/FP8/INT4/quantized KV support varies by GPU generation and backend.
+- [SGLang Qwen3-Next guide](https://github.com/sgl-project/sglang/blob/main/docs/basic_usage/qwen3.md) explicitly supports Qwen3-Next-80B-A3B-Instruct and Thinking. Its documented launch example targets **4×H100/H200**. Qwen3-Next-80B-A3B is an 80B-total-parameter MoE with 3B active parameters; it is not a small front-door SLM. The SGLang guide also describes MambaRadixCache tradeoffs: `no_buffer` disables overlap scheduling for compatibility, while `extra_buffer` uses two additional Mamba spaces per request to enable overlap/speculative decoding.
+- Decision: SGLang + Qwen3-Next is a valid high-end downstream inference candidate where the GPU budget exists, not a lightweight local router for an unknown/single-GPU host. Hardware must be measured before any adoption. No Qwen3-Next weights were downloaded.
+
+### LightAgent and API pool
+
+- [LightAgent](https://github.com/wanxingai/LightAgent) v0.11.0 is an Apache-2.0 agent framework, not a model server or a thin router. It adds opt-in durable LightDAG execution, SQLite-backed run state, leases/fencing, verification gates and approval/security-context controls. Its [provider guide](https://github.com/wanxingai/LightAgent/blob/main/docs/model_providers.md) explicitly demonstrates vLLM, llama.cpp and Ollama OpenAI-compatible endpoints; no explicit SGLang + Qwen3-Next integration recipe was found. A compatible SGLang endpoint may fit the generic OpenAI-style client contract, but that exact combination remains unvalidated.
+- [llm-apipool](https://github.com/GFardad/llm-apipool) is MIT-licensed and provides a 40+ provider/key-pool proxy with round-robin key rotation, rate-limit cooldown and automatic fallback tiers. Those defaults conflict with aLandi's explicit provider/privacy isolation and the rule against silent cross-provider fallback. Do not adopt as a gateway; its key-pool/routing pattern is reference-only.
+- [BentoVLLM](https://github.com/bentoml/BentoVLLM) is an Apache-2.0 example of packaging vLLM behind BentoML's service layer. The sample 8B path recommends at least 16GB VRAM and adds a second serving/deployment layer. BentoML remains useful only if a measured need appears for model packaging, custom service lifecycle or deployment orchestration; it is not required in front of the existing FastAPI gateway.
+
+### Re-evaluation of the Plexor SLM-routing study
+
+- [Repository](https://github.com/micoverde/plexor-slm-frontdoor-rct), [v2 experiment protocol](https://github.com/micoverde/plexor-slm-frontdoor-rct/blob/main/docs/EXPERIMENT_PROTOCOL.md), [pilot significance JSON](https://raw.githubusercontent.com/micoverde/plexor-slm-frontdoor-rct/main/data/pilot_benchmark/significance_report.json), [pilot environment manifest](https://raw.githubusercontent.com/micoverde/plexor-slm-frontdoor-rct/main/data/pilot_benchmark/environment_manifest.json), and [paper source](https://github.com/micoverde/plexor-slm-frontdoor-rct/blob/main/paper/main.tex) were cross-read.
+- The repository README still describes the earlier 60-case Phi-3.5-mini vs Qwen2.5-1.5B pilot (accuracy 0.517 vs 0.200). Its pilot environment manifest leaves hardware, CUDA, driver, Torch, Transformers, MLflow and git SHA as `unknown`, so the README's “hardware-controlled” description is not independently reproducible from that manifest.
+- The v2 protocol states a planned N=400/arm RCT and marks Study 2 pending; the paper abstract says the same 60 unique prompts are repeated and effective accuracy sample size is 60 per arm, with Qwen2.5-3B at 0.783, DeepSeek-V3 at 0.830 but P95 2,295 ms. Neither reaches the pre-registered joint viability threshold of accuracy ≥0.85 and P95 ≤2,000 ms. Treat the paper's results as author-reported synthetic/offline evidence, not an independent production RCT or transferable aLandi benchmark.
+- Decision: no automatic SLM front-door routing until aLandi has its own locked RU/EN/TH corpus, repeated/paired evaluation, calibrated confidence, abstain path, provider-isolation tests, measured end-to-end quality and latency, and reproducible hardware/runtime manifests.
+
+### Quantization and runtime compatibility
+
+- [GPTQModel](https://github.com/modelcloud/gptqmodel) currently declares Apache-2.0 in its raw LICENSE. Its integration matrix lists vLLM and SGLang, but SGLang loading is narrower than the headline suggests: GPTQ formats `GPTQ`, `GPTQ_V2`, `MARLIN`, and AWQ formats `GEMM`/ `MARLIN` are documented. Do not infer every GPTQModel quantization method/format works on every runtime.
+- [LLM Compressor algorithm guide](https://docs.vllm.ai/projects/llm-compressor/en/latest/steps/choosing-algo/) distinguishes RTN, GPTQ/AWQ, SmoothQuant, REAP, SparseGPT and FP8 KV-cache quantization. [SGLang quantization docs](https://docs.sglang.ai/advanced_features/quantization.html) recommend offline pre-quantized weights for GPTQ/AWQ and require post-quantization quality validation. The [vLLM compatibility table](https://docs.vllm.ai/en/stable/features/quantization/) is hardware-specific. GPTQModel and LLM Compressor code are Apache-2.0; model-weight licenses remain separate.
+- AutoAWQ remains excluded from new work. AWQ is an algorithm; AutoAWQ is a separate package and must not be conflated with maintained integrations.
+
+**Conclusion:** the stack combinations remain architectural hypotheses, not a ready-to-deploy bundle. Keep the aLandi static UI → existing FastAPI gateway → selected inference runtime boundary. No package, agent runtime, router, quantization tool, model or deployment was added by this research.

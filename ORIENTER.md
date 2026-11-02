@@ -1,15 +1,16 @@
-## Current working checkpoint — 2026-11-02, Quality #1234 green
+## Current working checkpoint — 2026-11-02, Quality #1250 green
 
-- **Main:** V1 baseline; PR #131 remains open/unmerged. No merge, rebase, main synchronization or production deployment.
-- **PR #131:** branch feat/landing-v1-accessibility-responsive-20261031; exact HEAD 9a23d58313da6379cb112b617daedeaa6d38f605. GitHub currently reports the PR as open; mergeability is not assumed.
-- **Quality #1234:** run 41363212486, push event on the exact HEAD above, completed success in 105 seconds (23:40:01–23:41:46 UTC). All four real Chrome shards passed, 32 tests each (128/128); Jekyll, Integrity, Security, Context, preflight and static analysis passed. Published-site smoke was skipped by workflow conditions; this is not a deployment or live-preview check.
-- **Earlier Quality #1233:** one shard failed because the high-contrast E2E test could not interact with hidden #uiTextContrast; the next exact-head run #1234 passed all shards without a source change. Treat #1233 as a transient/flaky test signal to monitor, not a proven production defect.
-- **Chrome CI:** Playwright 1.56.1 uses runner-provided stable Google Chrome (channel: chrome); local runs keep Playwright Chromium. No apt browser install/download in the CI path. #1234 completed in 105s; old baseline #1197 took 1863s but timed out and did not complete comparable test coverage, so no defensible speedup ratio is claimed yet.
-- **V2 preview:** the current repository has one GitHub Pages site. A PR-specific deployment to that same Pages target would replace the V1 publication; do not do that. A genuinely separate GitHub Pages address requires a second Pages site/repository (or a separately configured hosting project). No preview deployment has been made. Continue by preparing a reproducible preview artifact/workflow and resolving the separate Pages target without touching V1.
-- **Repository hygiene:** branch inventory is not deletion authorization. Only behind-only/no-PR candidates may be reviewed after fresh PR/issue/ancestry checks; no branch deletion is available through the connected GitHub actions, and no branch was deleted. Preserve all unique/unmerged branches.
-- **Research:** the 60 owner-provided repositories are recorded in docs/OPEN_SOURCE_TRIAGE_RU.md as reference-only. No third-party runtime/framework/model or package imported. Next research pass: inspect exact upstream implementation patterns for directory UI, multi-model chat UX, SGLang/vLLM/llama.cpp, and routing/quantization; capture license, maintenance, security, and integration boundaries before any adoption.
-- **Canonical UI queue:** docs/V1_UI_FINALIZATION_RU.md section 8.0; mandatory 8.1–8.17 remain the release scope. Implementation evidence: docs/LANDING_UI_V2_IMPLEMENTATION_RU.md. Do not promote optional 8.18–8.27 into blockers.
-- **Next:** continue bounded implementation slices, keep checking exact-head Quality, implement safe PR preview delivery once separate Pages target is available, reconcile state docs, and continue evidence-based repository hygiene. No merge/deployment without explicit owner approval.
+- **Main:** stable V1 baseline. PR #131 remains open/unmerged; no merge, rebase, main synchronization or production deployment.
+- **PR #131:** branch `feat/landing-v1-accessibility-responsive-20261031`; exact HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`. Current comparison: 653 commits ahead and 4 behind `main`; GitHub reports mergeable=false. Preserve the four base-side commits; do not rebase or synchronize without explicit owner approval.
+- **Quality #1250:** run `41364775725`, exact-head push run, completed success in 207 seconds. All four real Chrome shards passed; preflight, static analysis, Integrity, Security, Context and Jekyll passed. Published-site smoke was skipped by workflow conditions; no deployment or preview is verified.
+- **8.13 project-context handoff:** pending target chat/project IDs are persisted in tab-scoped `sessionStorage`, restored after reload for both active and inactive target chats, and consumed once. E2E verifies no chat creation/reassignment and no context on the second request. Only IDs are stored; project content and credentials are not.
+- **Automation:** Quality is triggered automatically by push/pull_request. No manual workflow dispatch or owner command is required.
+- **V2 preview:** owner paused the second-repository path. Do not create a second repository, alter the existing Pages target or deploy anything until owner changes that instruction.
+- **Repository hygiene:** branch deletion remains unavailable through connected GitHub actions; no branches/files were deleted. Preserve unique/unmerged work.
+- **Research:** updated upstream findings are in `docs/OPEN_SOURCE_TRIAGE_RU.md`. SGLang supports Qwen3-Next-80B-A3B but official guide targets 4×H100/H200; it is not a small front-door SLM. LightAgent is an agent runtime, llm-apipool has automatic cross-provider fallback, and BentoML adds a serving layer; none was adopted.
+- **Canonical UI queue:** `docs/V1_UI_FINALIZATION_RU.md` section 8.0; mandatory 8.1–8.17 remain the release scope. Implementation evidence: `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`. Native iPhone Safari, VoiceOver, full composited contrast and visual screenshot review remain open.
+- **Next:** continue bounded implementation within PR #131 while CI runs; update the existing canonical state after each significant milestone. No merge/deployment.
+
 
 ## First-read order
 

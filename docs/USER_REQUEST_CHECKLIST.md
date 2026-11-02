@@ -330,3 +330,17 @@
 - [ ] Continue mandatory UI 8.1–8.17 and inherited acceptance gates; passing CI does not close native iPhone Safari, VoiceOver, full WCAG contrast or manual visual review.
 - [ ] Establish an apples-to-apples CI performance baseline: Quality #1197 timed out at 1863s with incomplete coverage, so no speedup ratio is claimed from the 105s #1234 run.
 
+## Engineering continuation — 2026-11-02 (project-context handoff)
+
+- [x] Implemented tab-scoped pending project-context persistence using guarded `sessionStorage`; only target chat/project IDs are stored.
+- [x] Restored pending context after reload for both a different target chat and the currently active target chat.
+- [x] Kept handoff explicit and one-shot: no new chat, no project reassignment, no automatic project-memory injection based on chat membership; a successful request consumes the handoff.
+- [x] Added Playwright assertions for reload, active/inactive target, exact context inclusion, one-shot consumption and unchanged chat/project ownership.
+- [x] Exact-head Quality #1250 / run `41364775725` on `f3151472e285c7d31d46809f52337202eb15e6b3`: all four real Chrome shards and all Quality sentinels passed. Published Pages smoke skipped by workflow conditions.
+- [x] Quality is push-triggered automatically; no manual workflow dispatch or owner-run command was needed.
+- [x] Extended upstream triage with current primary-source checks for SGLang/Qwen3-Next, LightAgent, llm-apipool, BentoML, GPTQModel, LLM Compressor and the Plexor routing study. No package/model/runtime adopted.
+- [ ] Native iPhone Safari/VoiceOver/physical-device acceptance remains open.
+- [ ] Full composited contrast review and screenshot review remain open.
+- [ ] Establish comparable CI performance baseline; #1197 was a timeout with incomplete coverage, so no speedup ratio is claimed from the 207s #1250 run.
+- [ ] PR #131 remains 4 commits behind main; do not synchronize/rebase until owner authorizes and the four base-side commits are reviewed. No merge or deployment.
+

@@ -339,7 +339,7 @@ PR #122 добавил только эксплуатационную надёж�
 
 - Project Sources: gateway пока не предоставляет source-list API. Оставить честное unsupported-state; CRUD не добавлять до появления реального scoped API.
 - 8.12: устаревший server-memory graph HTTP bridge/UI удалён; обычная local/private/shared/project memory, delta sync и RAG сохранены. Осталась только автоматическая проверка на exact HEAD.
-- 8.13: handoff контекста выполняется только по явному выбору существующего чата; чат не создаётся и не перемещается. Pending handoff session-only — это принятое ограничение, а не незакрытая задача на persistence.
+- 8.13: handoff контекста выполняется только по явному выбору существующего чата; чат не создаётся и не перемещается. Pending handoff хранится в `sessionStorage` текущей вкладки (только ID чата и проектов), переживает reload, валидируется по существующим чатам/проектам и потребляется ровно одним запросом. Это не project membership и не автоматическая инъекция памяти.
 - Новые провайдеры, connector marketplace, cloud sync, OAuth и новые runtime-возможности из раздела 9 не входят в текущую UI-реализацию PR #131 без отдельного решения владельца.
 
 ### Приоритетные требования 8.1–8.17 от 2026-10-31 — V2.0
@@ -677,3 +677,6 @@ PR #122 добавил только эксплуатационную надёж�
 - Latest UI source checkpoint: `9aa74853478a6a680cdd36ab0f84c851721405a4`; latest PR #131 branch head at this documentation update: `c8facdac2eebc7d2217b807f1b7e314ae3abf2dd` (the intervening commits are documentation/workflow changes). Exact-head Quality/Chromium remains unverified.
 - Graphify Code-Only Pilot path filters now include `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html`, so the extracted client runtime and stylesheet are included in future graph refreshes. The new run/artifact has not yet been observed; no graph-analysis pass is claimed.
 - PR #131 remains open/unmerged. No rebase, merge or deployment was performed.
+
+
+| 2026-11-02 | 8.13: queued context handoff now survives tab reload without changing chat/project ownership; one-shot behavior is covered by exact-head Playwright/Quality #1250. | PR #131 HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`; run `41364775725`; native iOS Safari remains a separate manual gate. |

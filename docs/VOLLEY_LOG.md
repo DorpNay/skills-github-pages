@@ -626,3 +626,14 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Corrected Playwright webServer.command to use that writable temporary overlay. This follow-up changes only the server harness and continuity state; production baseurl, Chromium, Playwright version and sharding policy remain unchanged.
 - Next exact-head Quality run must prove the server starts on all four shards, the explicit CSS/JS HTTP 200 regression passes, and the full browser suite runs. Continue measuring against the 1863s baseline; target <=621s. Do not claim success before the run completes.
 
+## V-2026-11-02-PROJECT-CONTEXT-HANDOFF-RELOAD-013
+
+- Implemented 8.13 queued project-context persistence in `sessionStorage`, storing only target chat/project IDs. Restore validates IDs against the current chat/project sets; active-target and inactive-target reload paths are covered.
+- Successful request consumes the pending context; failed request restores the one-shot context for retry. No chat is created, moved or assigned to a project. No automatic project-memory injection based on project membership.
+- E2E was extended to reload before sending in both target-chat states and assert that instructions/memory are included in the first request only.
+- Quality #1250 / run `41364775725` on exact HEAD `f3151472e285c7d31d46809f52337202eb15e6b3` passed: all four real Chrome shards, preflight, static analysis, Integrity, Security, Context and Jekyll. Published Pages smoke was skipped; no deployment/preview was tested.
+- Automatic push workflow triggered the run; no manual workflow dispatch was requested or required.
+- No new dependency, model, runtime, provider or backend route was added. Native iPhone Safari/VoiceOver remain open.
+- PR #131 remains open/unmerged and 4 commits behind main. No merge, rebase, main synchronization, deletion or deployment.
+- Upstream research update: SGLang Qwen3-Next official guide requires 4×H100/H200; LightAgent is an agent framework with generic OpenAI-compatible provider support; llm-apipool's automatic cross-provider fallback conflicts with aLandi provider isolation; the Plexor RCT artifacts contain conflicting study snapshots and incomplete pilot hardware metadata. No candidate adopted.
+

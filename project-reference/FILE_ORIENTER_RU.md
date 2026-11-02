@@ -1,4 +1,16 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
+## Актуальная контрольная точка — 2026-11-02, Quality #1250 green
+
+- PR #131 открыт и не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; exact HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`. Main остаётся V1 baseline. Сравнение: 653 commits ahead / 4 behind main; не выполнять rebase/main synchronization без разрешения.
+- Quality #1250 / run `41364775725`: exact-head push run завершился success за 207s. Все четыре real Chrome shards passed; preflight, static analysis, Integrity, Security, Context и Jekyll — success. Published-site smoke skipped; публикация/preview не проверялись.
+- 8.13: queued project-context handoff сохраняется в tab-scoped sessionStorage как ID чата и проектов; восстанавливается после reload и для активного, и для другого target chat; после первого успешного запроса потребляется. Playwright проверяет отсутствие нового чата, смены project membership и повторной инъекции контекста.
+- CI автоматически запускается от push/pull_request; workflow вручную запускать не требуется.
+- Второй репозиторий по просьбе владельца пока не создавать. Единственный Pages target V1 не трогать; deployment не выполнялся.
+- Обновлён upstream triage: SGLang/Qwen3-Next (4×H100/H200, 80B total/3B active — не SLM), LightAgent, llm-apipool (cross-provider fallback не подходит), BentoML, GPTQModel, LLM Compressor и Plexor RCT. Ничего не установлено и не загружено.
+- Native iPhone Safari, VoiceOver, full composited WCAG contrast и визуальный screenshot review остаются отдельными gates.
+- Не удалять branches/files, не merge/rebase/deploy. Текущий следующий шаг — продолжать UI scope 8.1–8.17 в PR #131 и не ждать CI без параллельной работы.
+
+
 ## Актуальная контрольная точка — 2026-11-02, Quality #1234 green
 
 - PR #131 открыт, не объединён; branch feat/landing-v1-accessibility-responsive-20261031; code HEAD на момент проверки 9a23d58313da6379cb112b617daedeaa6d38f605. Main остаётся V1 baseline. Не выполнять merge, rebase или main synchronization без отдельного разрешения.

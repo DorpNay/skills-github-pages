@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-02"
   root_orienter:
-    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 remains open/unmerged on feat/landing-v1-accessibility-responsive-20261031; current head 3abdcfe78a4c0d4543c773a0330d4b1f280db75b. CI uses runner-provided Google Chrome via Playwright channel=chrome, while local runs keep Playwright Chromium. Quality #1222 (41362048873) exposed two browser-test defects and a computed-style accessor mismatch. Commits 8f15b8d and 3abdcfe address the modal focus loop and test accessor. Quality #1226 (41362514260) is in progress on code-bearing SHA a28327ef; #1228 is queued. No passing browser result or measured speedup is claimed. Production deployment is not authorized; PR preview hosting is not configured."
+    status: "Main remains stable V1. PR #131 is open/unmerged on feat/landing-v1-accessibility-responsive-20261031 at exact HEAD f3151472e285c7d31d46809f52337202eb15e6b3. Quality #1250 (run 41364775725) passed on that exact SHA: four real Chrome shards plus preflight, static analysis, Integrity, Security, Context and Jekyll. Published-site smoke was skipped; no deployment or preview is verified. PR is 653 commits ahead and 4 behind main; do not rebase, merge or synchronize without owner approval. Project-context handoff 8.13 now persists one-shot IDs in tab sessionStorage and has active/inactive-target reload E2E coverage. No second Pages repository created; owner paused that path. No runtime dependency or model added."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 0
@@ -765,11 +765,33 @@ landing_v2_preview_2026_11_02:
   next: "Prepare a deterministic preview artifact/workflow and provision a separate Pages target before public deployment."
 
 repository_hygiene_2026_11_02_continuation:
-  pr131_head: "9a23d58313da6379cb112b617daedeaa6d38f605"
+  pr131_head: "f3151472e285c7d31d46809f52337202eb15e6b3"
   branch_inventory: "126 refs snapshot; branch cleanup candidates require fresh PR/issue/ancestry checks"
   deletion: "none; connected GitHub actions do not expose a branch-delete operation"
   safety: "preserve unmerged unique work; no file or branch deletion in this pass"
 
 owner_sources_60_2026_11_02:
   status: "triaged in docs/OPEN_SOURCE_TRIAGE_RU.md; reference-only, no dependency or runtime imported"
-  next: "Inspect selected upstream implementations for concrete UI/runtime patterns and verify current licenses, maintenance, security and integration fit."
+  next: "Continue exact upstream validation of remaining owner-provided candidates; do not add a runtime/model without hardware, quality, privacy and license evidence."
+
+project_context_handoff_2026_11_02:
+  pr: 131
+  head: "f3151472e285c7d31d46809f52337202eb15e6b3"
+  quality_run: "41364775725"
+  quality_result: "success"
+  chromium_shards: "4/4 passed"
+  sentinels: "preflight, static analysis, integrity, security, context and Jekyll all passed"
+  published_site_smoke: "skipped; no deployment or preview verified"
+  persistence: "tab-scoped sessionStorage stores target chat/project IDs only; reload restore validates IDs; one successful request consumes the handoff"
+  e2e: "covers reload with inactive target chat and reload with target chat already active; verifies one-shot context and unchanged chat/project ownership"
+  manual_gates: "native iPhone Safari, VoiceOver and physical-device touch behavior remain open"
+  dependencies_added: 0
+  owner_boundary: "No second repository; owner asked to pause that path. No merge, rebase, main synchronization or deployment."
+
+upstream_research_followup_2026_11_02:
+  status: "primary-source follow-up recorded in docs/OPEN_SOURCE_TRIAGE_RU.md"
+  qwen3_next_sglang: "supported; official guide specifies 4xH100/H200 for Qwen3-Next-80B-A3B; 80B total / 3B active is not a small front-door SLM"
+  lightagent: "Apache-2.0 agent framework; documented OpenAI-compatible integrations include vLLM and llama.cpp; no explicit SGLang/Qwen3-Next recipe verified"
+  llm_apipool: "MIT proxy with cross-provider fallback and key rotation; conflicts with aLandi's provider isolation; not adopted"
+  plexor_rct: "research-only; repository README, v2 protocol, pilot JSON and paper have mismatched study snapshots and incomplete pilot hardware metadata"
+  adoption: "no runtime, package, model download or deployment"
