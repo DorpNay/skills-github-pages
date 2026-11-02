@@ -127,6 +127,7 @@
     let chatStorageCorruptNotBackedUp = false;
     let db = null;
     let chats = loadChats();
+    let chatActivityMarkers = new Map(chats.map(chat => [chat.id, getChatActivityMarker(chat)]));
     let pinnedChatIds = loadPinnedChatIds();
     let chatSortPreference = loadChatSortPreference();
     let projects = loadProjects();
@@ -542,6 +543,12 @@
         console.warn('История чатов не читается; исходные данные сохранены для восстановления:', error);
         return [createChat()];
       }
+    }
+    function getChatActivityMarker(chat) {
+      const messages=Array.isArray(chat.messages)?chat.messages:[];
+      const last=messages[messages.length-1];
+      const content=typeof last?.content==='string'?last.content.slice(0,120):'';
+      return [messages.length,last?.role||'',content,last?.error===true?'error':''].join('\\u0000');
     }
     function loadPinnedChatIds() {
       try {
@@ -1814,8 +1821,12 @@
       if (nextCurrentId && chats.some((chat) => chat.id === nextCurrentId)) currentChatId = nextCurrentId;
       if (!chats.some((chat) => chat.id === currentChatId)) currentChatId = chats[0].id;
       if (Array.isArray(nextChats)) {
-        const activeChat=chats.find(chat=>chat.id===currentChatId);
-        if(activeChat)activeChat.updatedAt=new Date().toISOString();
+        for(const chat of chats){
+          const marker=getChatActivityMarker(chat);
+          if(!chatActivityMarkers.has(chat.id)||chatActivityMarkers.get(chat.id)!==marker)chat.updatedAt=new Date().toISOString();
+          chatActivityMarkers.set(chat.id,marker);
+        }
+        for(const chatId of chatActivityMarkers.keys())if(!chats.some(chat=>chat.id===chatId))chatActivityMarkers.delete(chatId);
       }
       if(currentChatId!==previousCurrentChatId||activeChatSortSnapshotId!==currentChatId){
         const activeChat=chats.find(chat=>chat.id===currentChatId);
