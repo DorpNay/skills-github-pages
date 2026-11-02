@@ -412,6 +412,62 @@
         return false;
       }
     }
+
+    // Text-only composer drafts are stored per chat. Attachments stay in memory and are
+    // deliberately excluded: persisting File objects/data URLs needs a separate quota and
+    // lifecycle design. Drafts are never sent automatically.
+    const CHAT_DRAFTS_STORAGE_KEY = 'ai_chat_drafts_v1';
+    const MAX_CHAT_DRAFTS = 100;
+    const MAX_CHAT_DRAFT_LENGTH = 20000;
+    let chatDrafts = loadChatDrafts();
+    let chatDraftSaveTimer = null;
+    function loadChatDrafts() {
+      try {
+        const raw = safeGet(CHAT_DRAFTS_STORAGE_KEY);
+        if (!raw) return Object.create(null);
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return Object.create(null);
+        return Object.fromEntries(Object.entries(parsed)
+          .filter(([chatId, value]) => chats.some(chat => chat.id === chatId) && typeof value === 'string' && value.length > 0)
+          .slice(-MAX_CHAT_DRAFTS)
+          .map(([chatId, value]) => [chatId, value.slice(0, MAX_CHAT_DRAFT_LENGTH)]));
+      } catch (error) {
+        console.warn('Черновики чатов не удалось прочитать; история чатов не затронута:', error);
+        return Object.create(null);
+      }
+    }
+    function persistChatDrafts() {
+      const valid = Object.entries(chatDrafts)
+        .filter(([chatId]) => chats.some(chat => chat.id === chatId))
+        .slice(-MAX_CHAT_DRAFTS);
+      chatDrafts = Object.fromEntries(valid);
+      safeSet(CHAT_DRAFTS_STORAGE_KEY, JSON.stringify(chatDrafts));
+    }
+    function saveChatDraft(chatId = currentChatId, value = $('userInput')?.value || '', immediate = false) {
+      if (!chats.some(chat => chat.id === chatId)) return;
+      const text = String(value).slice(0, MAX_CHAT_DRAFT_LENGTH);
+      if (text) chatDrafts[chatId] = text;
+      else delete chatDrafts[chatId];
+      if (chatDraftSaveTimer) clearTimeout(chatDraftSaveTimer);
+      chatDraftSaveTimer = null;
+      if (immediate) persistChatDrafts();
+      else chatDraftSaveTimer = setTimeout(() => {
+        chatDraftSaveTimer = null;
+        persistChatDrafts();
+      }, 250);
+    }
+    function clearChatDraft(chatId = currentChatId) {
+      if (chatDraftSaveTimer) clearTimeout(chatDraftSaveTimer);
+      chatDraftSaveTimer = null;
+      delete chatDrafts[chatId];
+      persistChatDrafts();
+    }
+    function restoreChatDraft(chatId = currentChatId) {
+      const input = $('userInput');
+      if (!input) return;
+      input.value = chatDrafts[chatId] || '';
+      autoResizeTextarea(input);
+    }
     function createChat(title = 'Новый чат', messages = [], projectId = null) {
       return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, privateMemoryUsed: false, processingMode: 'fast', searchMode: 'normal', multiAgentEnabled: false, skillPreset: 'auto', customSkillName:'', customSkillInstructions:'', customSkillOutput:'', skillGoal:'planning', skillOutputMode:'summary', agentTeamSize:4, agentTeamScenario:'general', agentTeamCustomScenario:'', agentRolePreset:'balanced', agentCustomRoles:'' };
     }
@@ -1333,11 +1389,16 @@
         selectedRequestProjectIds.clear();
         for(const id of requestProjectContextByChat.get(activeId)||[])if(projects.some(project=>project.id===id))selectedRequestProjectIds.add(id);
       }
-      if(composerStateOwnerChatId===null)composerStateOwnerChatId=activeId;
-      else if(composerStateOwnerChatId!==activeId) {
+      if(composerStateOwnerChatId===null) {
+        composerStateOwnerChatId=activeId;
+        restoreChatDraft(activeId);
+      } else if(composerStateOwnerChatId!==activeId) {
+        if(chats.some(chat=>chat.id===composerStateOwnerChatId))saveChatDraft(composerStateOwnerChatId,$('userInput')?.value||'',true);
+        else { delete chatDrafts[composerStateOwnerChatId]; persistChatDrafts(); }
         if(pendingComposerAttachments.length)composerAttachmentsByChat.set(composerStateOwnerChatId,pendingComposerAttachments);
         else composerAttachmentsByChat.delete(composerStateOwnerChatId);
         composerStateOwnerChatId=activeId;
+        restoreChatDraft(activeId);
         pendingComposerAttachments=(composerAttachmentsByChat.get(activeId)||[]).slice();
         renderDraftAttachments();
       }
@@ -3573,7 +3634,7 @@
           await MemoryDB.add(privateCommand[1].trim());
           activeChatForPrivacy.privateMemoryUsed=true;
           activeChatForPrivacy.messages.push({role:'user',content:'[Команда сохранения в личную память; содержимое не дублируется в истории чата.]'},{role:'assistant',content:'Сохранил указанный факт в личную память локальной модели. Он не добавлен в общую память.'});
-          input.value=''; updateState([...chats]); return;
+          input.value=''; clearChatDraft(sourceChatId); autoResizeTextarea(input); updateState([...chats]); return;
         }
         if(sharedCommand) {
           if(!confirm('Сохранить этот факт в ОБЩУЮ память? При включённом использовании общей памяти он может передаваться сторонним провайдерам.')) return;
@@ -3660,7 +3721,7 @@
           chat.title = titleText.slice(0, 38) + (titleText.length > 38 ? '…' : '');
         }
         chat.messages.push({ role: 'user', content: userContent });
-        input.value = ''; autoResizeTextarea(input);
+        input.value = ''; clearChatDraft(chat.id); autoResizeTextarea(input);
       }
       selectedRequestProjectIds.clear();requestProjectContextByChat.delete(chat.id);persistRequestProjectContextByChat();pendingComposerAttachments=[];composerAttachmentsByChat.delete(chat.id);renderDraftAttachments();renderRequestProjectChoices();closeComposerPopovers();
       updateState([...chats]);
@@ -4740,7 +4801,11 @@
      $('globalMemoryToggle').addEventListener('change',event=>{safeSet(STORAGE.globalMemoryEnabled,String(event.target.checked));updateMemoryStatusLine();showToast(event.target.checked?(getUiLanguage()==='en'?'Global memory enabled.':'Глобальная память включена.'):(getUiLanguage()==='en'?'Global memory disabled.':'Глобальная память отключена.'));});
     $('privateMemoryContextToggle').addEventListener('change',event=>{safeSet(STORAGE.privateMemoryEnabled,String(event.target.checked));updateMemoryStatusLine();showToast(event.target.checked?(getUiLanguage()==='en'?'Private memory context enabled.':'Использование личной памяти в запросах разрешено.'):(getUiLanguage()==='en'?'Private memory context disabled.':'Использование личной памяти в запросах выключено.'));});
     $('projectMemoryInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();document.querySelector('[data-action="add-project-memory"]').click();}});
-    $('userInput').addEventListener('input', () => autoResizeTextarea($('userInput')));
+    $('userInput').addEventListener('input', () => {
+      autoResizeTextarea($('userInput'));
+      saveChatDraft(currentChatId, $('userInput').value);
+    });
+    window.addEventListener('pagehide', () => saveChatDraft(currentChatId, $('userInput')?.value || '', true));
     let voiceHoldTimer=null,voiceHoldOpened=false;
     const showVoiceMenu=()=>{closeComposerPopovers();$('voiceMenu').classList.remove('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','true');syncComposerPopoverScrim();};
     const hideVoiceMenu=()=>{$('voiceMenu').classList.add('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','false');syncComposerPopoverScrim();};
