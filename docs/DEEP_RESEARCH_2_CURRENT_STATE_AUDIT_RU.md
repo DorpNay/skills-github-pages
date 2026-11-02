@@ -107,3 +107,14 @@
 7. Implement no production change from this research branch; prepare future minimal PR proposals only.
 
 **Conclusion:** foundations exist, but Deep Research 2.0, persistent local source connectors, full memory reliability, image/video generation and safe autonomous coding are not complete product capabilities today.
+
+
+## 2026-11-02 — Local-source and conversion boundary
+
+- Chat file picker is available, and selected attachments can be processed through the existing bounded document path. This is not a persistent source library or permissioned folder connector.
+- Project source listing/CRUD is still not exposed by the gateway. Existing RAG ingest/retrieve/delete routes do not provide a user-facing source registry or complete lineage viewer.
+- Browser File System Access requires explicit user interaction and permission; persisted handles require permission revalidation. A remembered display path alone cannot grant access.
+- OPFS is origin-private storage for derived cache/index files, not a user-visible folder. It is quota-bound and cleared with site data.
+- Cross-device sync and continuous folder watching require a separate companion or explicit sync path; neither is implemented.
+- Universal conversion, screenshot-to-code, Knowledge-to-Skill, image generation and video generation are not complete user-facing flows.
+- Detailed target design and task IDs LSV-001…LSV-014: `docs/LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md`.
