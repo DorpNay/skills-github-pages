@@ -4149,3 +4149,52 @@ test('Escape dismisses the topmost transient menu before the sidebar and restore
   await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
   await expect(page.locator('[data-action="toggle-sidebar"]')).toBeFocused();
 });
+
+
+test('browser connectivity status is distinct from offline search and never retries a draft', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__testNetworkOnline = true;
+    Object.defineProperty(Navigator.prototype, 'onLine', {
+      configurable: true,
+      get: () => window.__testNetworkOnline
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  const status = page.locator('#networkStatus');
+  const composer = page.locator('#userInput');
+  await expect(status).toBeHidden();
+  await composer.fill('Keep this offline draft');
+  await expect.poll(() => page.evaluate(() => {
+    const drafts = JSON.parse(localStorage.getItem('ai_chat_drafts_v1') || '{}');
+    const currentId = localStorage.getItem('ai_current_chat_v87');
+    return drafts[currentId] || '';
+  })).toBe('Keep this offline draft');
+
+  const messageCount = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const currentId = localStorage.getItem('ai_current_chat_v87');
+    return chats.find(chat => chat.id === currentId)?.messages.length ?? -1;
+  });
+
+  await page.evaluate(() => {
+    window.__testNetworkOnline = false;
+    window.dispatchEvent(new Event('offline'));
+  });
+  await expect(status).toBeVisible();
+  await expect(status).toContainText(/Браузер сообщает|browser reports/i);
+  await expect(status).toContainText(/не повторяются автоматически|not retried automatically/i);
+
+  await page.evaluate(() => {
+    window.__testNetworkOnline = true;
+    window.dispatchEvent(new Event('online'));
+  });
+  await expect(status).toBeHidden();
+  await expect(composer).toHaveValue('Keep this offline draft');
+  const messageCountAfterReconnect = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const currentId = localStorage.getItem('ai_current_chat_v87');
+    return chats.find(chat => chat.id === currentId)?.messages.length ?? -1;
+  });
+  expect(messageCountAfterReconnect).toBe(messageCount);
+});
