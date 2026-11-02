@@ -10,6 +10,22 @@
 - No shared Skill registry, import endpoint, package loader, script runtime, permission API, dependency or backend route was added. Next: continue the next bounded Landing 2.0 UI slice after reviewing remaining owner checklist requirements; preserve the V1/main boundary.
 
 
+## Record ownership
+
+| Record | Responsibility | Not its responsibility |
+|---|---|---|
+| OLEDUE.md | Resume trigger and protocol | Live project state |
+| ORIENTER.md | Project map and authority order | Detailed history |
+| FILE_ORIENTER_RU.md | File map and one current checkpoint | Implementation evidence |
+| PROJECT_STATE.yaml | Structured status snapshot | Live GitHub truth |
+| VOLLEY_LOG.md | Chronological evidence | Second backlog |
+| V1_UI_FINALIZATION_RU.md | Requirements and acceptance | Proof of implementation |
+| LANDING_UI_V2_IMPLEMENTATION_RU.md | Implementation/test evidence | Duplicate requirements |
+| ALANDI_ARCHITECTURE_MAP_RU.md | Human-curated module boundaries | Generated call graph |
+| Graphify | Temporary code-navigation hint | State, memory, CSS/HTML map or proof |
+
+Owner authority wins. Live GitHub PR/branch/HEAD/base/checks override stored SHAs. The owner checklist defines acceptance; source/tests define implementation; exact-HEAD CI defines verification. PROJECT_STATE is a snapshot, VOLLEY is history, and Graphify only suggests where to inspect. If any document or graph disagrees with source/tests, verify the source and update the relevant canonical record.
+
 ## Historical checkpoint — 2026-11-02, Landing V2 capability menu (superseded)
 
 - Source of truth: GitHub repository DorpNay/skills-github-pages. Main remains the stable V1 publication.
