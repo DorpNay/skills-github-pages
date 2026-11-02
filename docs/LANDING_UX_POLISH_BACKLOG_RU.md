@@ -158,3 +158,9 @@
 
 - Undo actions now return keyboard focus to the affected visible chat row or composer fallback.
 - Added Enter-key E2E coverage for rename Undo, exact title restoration and focus return. Test authored; browser execution pending.
+
+
+### Quality Integrity repair — theme selector — 2026-11-02
+
+- Restored the missing `#uiTheme` selector in advanced appearance settings; app initialization and theme persistence depended on it. Added RU/EN option labels and a Playwright regression for persistence and header-toggle synchronization.
+- Quality #1431's exact finding was `Missing required UI element #uiTheme`; this repair is implemented but still awaits a new exact-head pass.
