@@ -4305,3 +4305,29 @@ test('chat deletion offers immediate undo through the existing recovery slot', a
     return chats.some(chat => chat.id === id);
   }, deletedChatId)).toBe(true);
 });
+
+
+test('chat rename offers bounded undo and restores the exact previous title', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
+  const chatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
+  const row = page.locator('#chatList .chat-row').filter({
+    has: page.locator('[data-action="switch-chat"][data-chat-id="' + chatId + '"]')
+  });
+  const switchButton = row.locator('[data-action="switch-chat"]');
+  const previousTitle = (await switchButton.textContent())?.trim() || '';
+  await row.locator('.chat-row-menu > summary').click();
+  await row.locator('[data-action="chat-rename"]').click();
+  await page.locator('#chatActionName').fill('Undo rename title');
+  await page.locator('[data-action="chat-action-save"]').click();
+  await expect(switchButton).toHaveText('Undo rename title');
+
+  const undo = page.locator('#toast .toast-action');
+  await expect(undo).toHaveText('Отменить');
+  await undo.click();
+  await expect(switchButton).toHaveText(previousTitle);
+  await expect.poll(() => page.evaluate(id => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    return chats.find(chat => chat.id === id)?.title || '';
+  }, chatId)).toBe(previousTitle);
+});
