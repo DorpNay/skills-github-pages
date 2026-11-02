@@ -3268,6 +3268,41 @@ test('clearing a non-active project chat preserves the active chat and both proj
   expect(persisted.projects.map(project => project.id).sort()).toEqual(['project-alpha', 'project-beta']);
 });
 
+test('shared control sizing uses standard desktop and touch-sized mobile variants', async ({ page }) => {
+  const measureHeights = async selector => page.locator(selector).evaluateAll(nodes =>
+    nodes.filter(node => node.getClientRects().length).map(node => node.getBoundingClientRect().height)
+  );
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#settingsModal')).toBeVisible();
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#searchModeSummary').click();
+  await page.locator('#languageSummary').click();
+
+  const desktopTargets = [
+    ['#settingsModal .settings-header-actions button', 40],
+    ['#chatListNewButton', 40],
+    ['#searchModeMenu .toolbar-menu-option', 40],
+    ['#languageMenu .language-menu-panel button', 40],
+    ['#inputArea .composer-tool', 40]
+  ];
+  for (const [selector, minimum] of desktopTargets) {
+    const heights = await measureHeights(selector);
+    expect(heights.length, selector + ' should expose visible controls').toBeGreaterThan(0);
+    expect(heights.every(height => height >= minimum), selector + ' should use the standard control size').toBe(true);
+  }
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  const mobileTargets = desktopTargets.map(([selector]) => selector);
+  for (const selector of mobileTargets) {
+    await expect.poll(async () => (await measureHeights(selector)).length).toBeGreaterThan(0);
+    const heights = await measureHeights(selector);
+    expect(heights.every(height => height >= 44), selector + ' should retain a 44px touch target').toBe(true);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+});
+
 test('mobile messages expose full text and retain a jump-to-latest control', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.addInitScript(() => {
