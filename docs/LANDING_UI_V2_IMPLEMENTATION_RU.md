@@ -934,4 +934,4 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Categories are collapsed by default, use native `details/summary`, have a 44px minimum summary target and visible focus style, and have RU/EN labels.
 - Preserved the two real configuration groups and the explicit single-model/four-stage runtime boundary. No worker, model registry, skill package loader, permission API or other runtime capability was added.
 - Updated the roadmap pause CSS selector for the nested disclosure structure.
-- Added Playwright assertions for category count/order, touch target and Enter/Space behavior. Tests are authored but not executed on the current HEAD.
+- Added Playwright assertions for category count/order, touch target, Enter/Space behavior and nested ticker pause. Tests are authored but not executed on the current HEAD.
