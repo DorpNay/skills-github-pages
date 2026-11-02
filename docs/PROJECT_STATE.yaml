@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-02"
   root_orienter:
-    status: "Main remains stable V1. PR #131 is open/unmerged on feat/landing-v1-accessibility-responsive-20261031. Latest code-bearing HEAD f3151472e285c7d31d46809f52337202eb15e6b3 passed Quality #1250; documentation HEAD 63f429ccf16fe7648519ebb3ecc02b9f8949ad53 passed Quality #1252 and Provenance #976. Four Chrome shards and all Quality sentinels passed; Pages smoke skipped. Branch is 653 ahead / 4 behind main; no rebase, merge or synchronization without owner approval. 8.13 one-shot handoff passes active/inactive-target reload E2E. Owner paused the second-repository path. Direct workflow refs are 33/33 SHA-pinned; nested action tags inside the pinned exercise-toolkit reusable workflows remain an open supply-chain follow-up. No runtime dependency or model added."
+    status: "Main remains stable V1. PR #131 remains open/unmerged on feat/landing-v1-accessibility-responsive-20261031. Per-chat text draft recovery is partially implemented in optional proposal 8.25; source commit a2db7904d1a18609f467829c4339ccd52dfa8883 and E2E commit 2257010cef98c3afcf093eb73728a8b90d2c869f. Test authored; exact-head CI pending. Drafts are local, text-only, bounded to 100 chats and 20,000 characters each; no attachment persistence or auto-send. No merge, rebase, deployment, dependency or backend route change."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 0
@@ -820,3 +820,14 @@ latest_verification_2026_11_02:
   direct_action_refs: "33/33 full SHA pins across 13 workflows on main and PR branch"
   transitive_action_refs: "nested mutable tags remain inside pinned skills/exercise-toolkit reusable workflows; follow-up required"
   owner_preview_instruction: "second repository paused; do not create or deploy"
+
+landing_v2_draft_recovery_2026_11_02:
+  status: "partial implementation; optional proposal 8.25"
+  branch: "feat/landing-v1-accessibility-responsive-20261031"
+  source_commit: "a2db7904d1a18609f467829c4339ccd52dfa8883"
+  e2e_commit: "2257010cef98c3afcf093eb73728a8b90d2c869f"
+  storage: "ai_chat_drafts_v1; local text-only drafts keyed by existing chat ID; max 100 chats and 20000 characters per draft"
+  behavior: "switching chats saves/restores isolated drafts; debounce plus pagehide persistence; explicit submission clears draft; reload never auto-sends"
+  excluded: "attachments/File objects/data URLs; durable offline attachment recovery; automatic request retry"
+  verification: "Playwright regression authored but not yet executed on current HEAD; exact-head Quality workflow pending"
+  safety: "no new dependency, backend route, provider integration, deployment or change to chat-history schema"
