@@ -28,7 +28,7 @@ class GraphifyUiSurfaceTests(unittest.TestCase):
             )
             (root / "assets/js/app.js").write_text(
                 "function renderPanel() { document.querySelector('.panel'); }\n"
-                "document.getElementById('chatPane');\n",
+                "document.getElementById('chatPane');\nelement.classList.add('active');\n",
                 encoding="utf-8",
             )
             graph_path = root / "graph.json"

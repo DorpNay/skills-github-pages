@@ -194,10 +194,10 @@ def collect_dom(root: Path):
 
 
 JS_PATTERNS = (
-    re.compile(r"\bgetElementById\s*\(\s*(['\"])([^'\"]+)\1"),
-    re.compile(r"\b(?:querySelector|querySelectorAll|matches|closest)\s*\(\s*(['\"])([^'\"]+)\1"),
-    re.compile(r"\bgetElementsByClassName\s*\(\s*(['\"])([^'\"]+)\1"),
-    re.compile(r"\bclassList\s*\.\s*(?:add|remove|toggle|contains)\s*\(\s*(['\"])([^'\"]+)\1"),
+    (re.compile(r"\bgetElementById\s*\(\s*(['\"])([^'\"]+)\1"), "id"),
+    (re.compile(r"\b(?:querySelector|querySelectorAll|matches|closest)\s*\(\s*(['\"])([^'\"]+)\1"), "selector"),
+    (re.compile(r"\bgetElementsByClassName\s*\(\s*(['\"])([^'\"]+)\1"), "class"),
+    (re.compile(r"\bclassList\s*\.\s*(?:add|remove|toggle|contains)\s*\(\s*(['\"])([^'\"]+)\1"), "class"),
 )
 SIMPLE_SELECTOR = re.compile(r"(?<![\\\w-])([.#])([-_a-zA-Z0-9]+)")
 
@@ -223,12 +223,20 @@ def collect_js(root: Path, graph_nodes: list[dict]):
             continue
         seen_paths.add(relative)
         source = read_text(path)
-        for pattern in JS_PATTERNS:
+        for pattern, selector_kind in JS_PATTERNS:
             for match in pattern.finditer(source):
                 literal = match.group(2)
                 line = source.count("\n", 0, match.start()) + 1
-                for selector_match in SIMPLE_SELECTOR.finditer(literal):
-                    selector = selector_match.group(1) + selector_match.group(2)
+                if selector_kind == "id":
+                    selectors = [f"#{literal}"]
+                elif selector_kind == "class":
+                    selectors = [f".{item}" for item in literal.split() if re.fullmatch(r"[-_a-zA-Z0-9]+", item)]
+                else:
+                    selectors = [
+                        item.group(1) + item.group(2)
+                        for item in SIMPLE_SELECTOR.finditer(literal)
+                    ]
+                for selector in selectors:
                     owner = None
                     preceding = [item for item in function_nodes.get(relative, []) if item[0] <= line]
                     if preceding:
@@ -259,6 +267,11 @@ def enrich_graph(root: Path, graph_path: Path) -> dict:
     js = collect_js(root, nodes)
 
     file_nodes: dict[str, str] = {}
+    for existing in nodes:
+        source_file = existing.get("source_file")
+        if source_file and existing.get("label") == Path(source_file).name and not existing.get("_callable"):
+            file_nodes.setdefault(source_file, existing["id"])
+
     def ensure_file(path: str) -> str:
         if path not in file_nodes:
             file_nodes[path] = add_node(nodes, known_nodes, make_file_node(path))
