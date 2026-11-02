@@ -50,6 +50,21 @@ For Landing UI 2.0, use:
 - Preserve the approved stack and existing contracts. No framework migration, new dependency, runtime, endpoint, provider, or paid service without evidence and required approval.
 - Never expose secrets, private data, or hidden chain-of-thought.
 
+## Continuation checkpoint contract
+
+Before a context switch or at the end of a meaningful stage, keep the latest existing `docs/VOLLEY_LOG.md` checkpoint actionable. It must state:
+
+- **GOAL / ACCEPTANCE** — the owner outcome and the concrete completion condition;
+- **DONE** — verified changes, not merely intended work;
+- **IN FLIGHT / BLOCKED** — unfinished work and the exact blocker, if any;
+- **WHERE** — repository, branch, PR, exact HEAD and base SHA;
+- **FILES / COMMITS** — relevant paths and commit references;
+- **CHECKS** — exact commands, outcomes and tested SHA; mark authored-but-unrun checks as `NOT RUN`;
+- **DECISIONS / CONSTRAINTS** — owner decisions, scope boundaries and material risks;
+- **NEXT** — one bounded action that can be started immediately.
+
+Reuse the existing log/checkpoint; do not create a parallel handoff file. Store evidence and concise outcomes, never transcripts, private reasoning, secrets or raw user prompts. If the recorded HEAD differs from live GitHub, treat the checkpoint as stale and reconstruct from current repository evidence.
+
 ## Record and response
 
 After each meaningful stage, update existing canonical records only when materially needed; do not create duplicate backlogs or status systems. Keep the newest continuation checkpoint concise and actionable.
