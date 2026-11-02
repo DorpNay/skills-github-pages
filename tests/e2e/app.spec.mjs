@@ -4584,6 +4584,8 @@ test('team blueprints can be saved, applied, restored and deleted without launch
   await restoredLibrary.locator(':scope > summary').click();
   await expect(page.locator('#agentBlueprintSelect option')).toHaveCount(2);
   await expect(page.locator('#agentBlueprintSelect option').nth(1)).toHaveText('Research + software');
+  await page.locator('#agentBlueprintSelect').selectOption({ index: 1 });
+  await expect(page.locator('#agentBlueprintDelete')).toBeEnabled();
 
   page.once('dialog', dialog => dialog.accept());
   await page.locator('#agentBlueprintDelete').click();
