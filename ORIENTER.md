@@ -3,9 +3,9 @@
 ## Current working checkpoint — 2026-11-02, Skills panel
 
 - Source of truth: `DorpNay/skills-github-pages`; main remains stable V1 at verified commit `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`.
-- PR #131 remains open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`; current source/test checkpoint `d3a44807d9c9eb0dade5a3e0bf80065fa5ebfd45`. PR base SHA remains `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub reports mergeable=false. No merge, rebase, synchronization or deployment.
+- PR #131 remains open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`; current source/test checkpoint `baf6a96705a15466384ab2c9f1efce977e83d087`. PR base SHA remains `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub reports mergeable=false. No merge, rebase, synchronization or deployment.
 - Skills panel now separates the working chat-scoped task profile from the future shared Skill package library. Added RU/EN scope/lifecycle copy, native collapsed disclosure, 44px target, permission boundary and roadmap ticker pause coverage.
-- Playwright regression authored for panel scope, lifecycle, keyboard, touch target, pause and EN labels. Exact-head workflow lookup returned no runs; tests are not executed and no pass is claimed.
+- Playwright regression authored for panel scope, lifecycle, keyboard, touch target, pause and EN labels. Corrected the nested-label pause selector using CSS `:has()` for Functions, Agents and Skills. Exact-head workflow lookup returned no runs; tests are not executed and no pass is claimed.
 - No shared Skill registry, import endpoint, package loader, script runtime, permission API, dependency or backend route was added. Next: continue the next bounded Landing 2.0 UI slice after reviewing remaining owner checklist requirements; preserve the V1/main boundary.
 
 
