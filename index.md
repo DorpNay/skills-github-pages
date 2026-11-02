@@ -226,6 +226,7 @@ permalink: /
             <div class="settings-category-content space-y-3">
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 border-b border-gray-800 pb-3">
             <select id="uiLanguage" class="hidden" aria-hidden="true" tabindex="-1"><option value="ru">Русский</option><option value="en">English</option></select>
+            <label class="text-[11px] text-gray-400"><span data-i18n="themeLabel">Тема</span><select id="uiTheme" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="dark" data-i18n="themeDark">Тёмная</option><option value="light" data-i18n="themeLight">Светлая</option></select></label>
             <label class="text-[11px] text-gray-400">Анимация<select id="uiMotion" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="auto">Авто</option><option value="reduced">Уменьшить</option><option value="off">Выкл.</option></select></label>
             <label class="text-[11px] text-gray-400">Поле ввода<select id="composerPosition" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="bottom" data-i18n="composerBottom">Снизу</option><option value="top" data-i18n="composerTop">Сверху</option></select></label>
             
