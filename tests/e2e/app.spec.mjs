@@ -3759,6 +3759,8 @@ test('mobile composer stays visible at the bottom in new chats across viewport r
 
   await page.setViewportSize({ width: 390, height: 844 });
   await assertDocked();
+  // Let the viewport handler's follow-up scroll RAF finish before replacing the chat fixture.
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
 
   const chatBox = page.locator('#chatBox');
   await chatBox.evaluate(element => {
