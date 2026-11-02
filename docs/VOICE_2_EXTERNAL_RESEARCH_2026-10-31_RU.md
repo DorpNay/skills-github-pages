@@ -99,3 +99,12 @@ A full-duplex model is not equivalent to a cascaded pipeline with VAD. Acceptanc
 - NemotronLabs VoiceChat: https://huggingface.co/nvidia/NVIDIA-NemotronLabs-VoiceChat-11B ; https://arxiv.org/pdf/2609.21967.pdf
 
 **Caveat:** exact license status for Qwen model weights and uroman remains open; this report confirms only the Qwen repository code Apache-2.0 and PyThaiNLP project Apache-2.0. No model was downloaded or executed; no aLandi benchmark was run.
+
+
+## 2026-11-02 — Realtime voice architecture sources
+
+- [LiveKit Agent speech/audio](https://docs.livekit.io/agents/multimodality/audio/) documents STT→LLM→TTS and realtime-model paths, speech handles and interruption control.
+- [LiveKit turn handling](https://docs.livekit.io/agents/logic/turns/) separates VAD, semantic turn detection, endpointing, manual turn control and interruption handling.
+- [Pipecat documentation](https://docs.pipecat.ai/) describes an open-source Python framework for real-time voice/multimodal pipelines, web/mobile client SDKs and self-hosted or managed deployment.
+- [Local audio generation and Media Skills](LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md) evaluates non-speech sound generation separately from ASR/TTS, including Agent Audio and the distinct model-weight licensing requirements for Stable Audio 3 Medium and T5Gemma components.
+- These are architectural references only. Do not add LiveKit/Pipecat or an audio-generation model to the existing runtime without contract comparison, target-device measurements, language golden set and owner approval.
