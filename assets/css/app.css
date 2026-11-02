@@ -643,3 +643,7 @@ html[data-text-contrast="high"] #chatBox button:disabled {
 /* Browser connectivity hint: this reports navigator.onLine only, not API health. */
 .network-status { margin:0 0 .4rem; padding:.3rem .5rem; border:1px solid color-mix(in srgb,var(--ui-warning) 48%,var(--ui-border)); border-radius:.55rem; color:var(--ui-warning); font-size:10px; line-height:1.35; }
 @media (forced-colors:active) { .network-status { border-color:CanvasText; color:CanvasText; } }
+
+.toast-action { display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;min-width:4.25rem;min-height:44px;padding:.35rem .65rem;border:1px solid color-mix(in srgb,var(--ui-primary) 65%,var(--ui-border));border-radius:.6rem;background:color-mix(in srgb,var(--ui-primary) 16%,transparent);color:var(--ui-text);font-size:.72rem;font-weight:750;white-space:nowrap;cursor:pointer; }
+.toast-action:focus-visible { outline:2px solid var(--ui-primary);outline-offset:2px; }
+@media (forced-colors:active) { .toast-action { border-color:ButtonText;color:ButtonText; } }
