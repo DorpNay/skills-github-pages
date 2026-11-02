@@ -944,6 +944,6 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - The future Skill package library is a separate collapsed native disclosure. It exposes the planned lifecycle and security boundary without fake import/create/run controls.
 - RU/EN translations were added for the new labels and lifecycle copy. Native disclosure semantics preserve keyboard interaction; the existing shared ticker pause mechanism is reused.
 - Added Playwright coverage for scope labels, disclosure collapsed/open behavior, 44px summary target, lifecycle/safety copy, absence of fake buttons, ticker pause and EN localization.
-- Source commit: `478de2144433ffeda18fd60f63a03c336802ab1b`; i18n commit: `63de572e354ff9380a4c35448d48abaa5805838b`; test commit: `d3a44807d9c9eb0dade5a3e0bf80065fa5ebfd45`.
-- Exact-head workflow lookup for source/test HEAD `d3a44807d9c9eb0dade5a3e0bf80065fa5ebfd45` returned no runs. Playwright test is authored, not executed; no pass is claimed.
+- Source commit: `478de2144433ffeda18fd60f63a03c336802ab1b`; i18n commit: `63de572e354ff9380a4c35448d48abaa5805838b`; initial test commit: `d3a44807d9c9eb0dade5a3e0bf80065fa5ebfd45`; follow-up test correction: `baf6a96705a15466384ab2c9f1efce977e83d087`. The stylesheet pause selector was corrected to use the containing label's `:has()` state for all three roadmap pause controls; the language assertion now changes locale only after closing the modal.
+- Exact-head workflow lookup for source/test HEAD `baf6a96705a15466384ab2c9f1efce977e83d087` returned no runs. Playwright test is authored, not executed; no pass is claimed.
 - No Skill registry, import endpoint, package loader, script runtime, permission API, dependency, backend route, merge, rebase, main sync or deployment.
