@@ -751,5 +751,17 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 
 - Verified the existing sidebar search indexes project names and chat titles only; it does not inspect message bodies. Results are separated into Projects/Chats, use textContent for labels, expose real project/chat IDs as action targets, and cap each group at eight visible matches with an explicit overflow note.
 - Playwright regression `sidebar search finds project and chat names locally without indexing message contents` is present in the current suite.
-- This closes only the name-search slice of 8.21. Pinning, persistent sort preference, and stable ordering while the user is reading remain unimplemented and must be designed separately; do not mark 8.21 complete.
+- At the time of this audit, only the name-search slice was implemented. The subsequent bounded implementation below adds pinning and persistent date-based sorting; 8.21 remains partial until exact-head browser verification and the remaining acceptance gates are complete.
 - Evidence: `assets/js/app.js` `renderSidebarSearchResults()`; `tests/e2e/app.spec.mjs` test beginning near line 262 on the audited HEAD.
+
+
+### 8.21 implementation slice — persistent pinning and date sorting (2026-11-02)
+
+- Added a separate local pinned-chat ID store (ai_pinned_chats_v1) and persistent sort preference (ai_chat_sort_v1). Pinning is an overlay on the existing chat/project model; it does not reassign chats or duplicate chat data.
+- Chat rows expose Pin / Unpin in the existing contextual menu. Pinned chats appear before unpinned chats in the personal list, project lists and search results.
+- Added two newest-first sort modes: last activity and creation date. Equal timestamps retain the prior source-array order as a stable tie-breaker.
+- New chats receive createdAt / updatedAt; legacy chat records get order-preserving fallback timestamps at load; imported project chats receive validated timestamps. Activity metadata changes when the message sequence changes, not for unrelated sidebar/settings rerenders.
+- The active chat's activity sort timestamp is held at its current position until the user switches chats. Explicitly changing the sort mode resets that snapshot; pin/unpin remains an intentional user-triggered reorder.
+- Added Playwright regression for pin persistence, both sort modes, ordering and reload restoration. The test is authored but has not executed on the exact HEAD.
+- Source commits: 9520ab6c4de7a47ac9be1b5525727346e6ea4c4d, 94cd406a4c5c36cec6a676fa9670e8d62bc739fc, 2b58b98e88b0746c6d523e753ebb662d23605600, dc3762b436d2bdc54d6607bc65d09529602a1687; markup commit: ffb5c026e9d87d2e69d8654b9716872d505a2107; regression commit: 1a5872e67f188b8e04613273f57d1b0d34b53f4a.
+- Exact-head workflow-run lookup and combined status currently return no records. No browser test pass is claimed.
