@@ -708,3 +708,6 @@ PR #122 добавил только эксплуатационную надёж�
 - A first bounded slice is implemented on PR #131: text-only composer drafts are stored locally per existing chat, restored after reload and isolated when switching chats. Explicit submission clears the draft; reload never auto-sends it. Storage retains up to 100 chat entries without silently truncating text; browser quota errors use the existing warning path.
 - Attachments are not persisted. This is partial implementation of optional proposal 8.25, not completion of offline/attachment recovery or a release blocker.
 - Playwright regression was added; exact-head execution is pending. Evidence and storage limits: `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
+
+
+**Menu follow-up 2026-11-02:** the Research group now owns a single Deep Research 2.0 roadmap card; Create/Transform owns the four local-file/converter/Knowledge-to-Skill/media cards in its own container. Research Studio remains in the Thorough mode path, not a duplicate toolbar entry. Playwright now asserts this exact grouping; execution remains pending.
