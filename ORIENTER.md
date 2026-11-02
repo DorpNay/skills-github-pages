@@ -228,3 +228,12 @@
 - Extended the existing toast with FIFO queueing, duplicate suppression, urgency-based durations, pause on hover/focus/hidden tab, and status/alert live-region semantics. Added Playwright assertions for sequential success/error notifications.
 - This is a partial 8.19 presentation/accessibility slice; durable operation state/IDs, pending-to-result updates, persistent errors and inline recovery actions remain unimplemented.
 - Exact-head workflow/status lookup returned no PR workflow runs or commit statuses. Browser tests were not executed; no pass is claimed.
+
+
+### Live Landing V2 continuation — 2026-11-02
+
+- PR #131 remains the sole authorized implementation branch; live source/test checkpoint for the latest 8.25 slice is `6489f5a9b6d2d3e8c68b2bad993f7b85a4521cbd`. The branch remains open/unmerged and mergeable=false.
+- Added browser connectivity feedback in the composer based only on `navigator.onLine`; the UI explicitly disclaims API health and never retries automatically. Per-chat text drafts also flush on hidden-tab `visibilitychange` and existing `pagehide`.
+- Added Playwright coverage for offline/online transitions, no automatic request replay and synchronous tab-hide draft flush. V8 syntax checks and CSS brace balance passed; tests have not yet run in Chromium.
+- Exact-head Quality #1405 / run `41390877580` is pending; Graphify #437 / run `41390877512` is queued. No passing browser/Quality claim.
+- No main synchronization, rebase, merge, deployment, dependency or backend changes. Attachment persistence and native iPhone Safari/VoiceOver remain open gates.
