@@ -445,7 +445,7 @@
     function saveChatDraft(chatId = currentChatId, value = $('userInput')?.value || '', immediate = false) {
       if (!chats.some(chat => chat.id === chatId)) return;
       const text = String(value);
-      if (text) chatDrafts[chatId] = text;
+      if (text) { delete chatDrafts[chatId]; chatDrafts[chatId] = text; }
       else delete chatDrafts[chatId];
       if (chatDraftSaveTimer) clearTimeout(chatDraftSaveTimer);
       chatDraftSaveTimer = null;
