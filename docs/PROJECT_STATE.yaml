@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-02"
   root_orienter:
-    status: "Main remains stable V1. PR #131 remains open/unmerged on feat/landing-v1-accessibility-responsive-20261031. Per-chat text draft recovery is partially implemented in optional proposal 8.25; source commit a2db7904d1a18609f467829c4339ccd52dfa8883 and E2E commit 2257010cef98c3afcf093eb73728a8b90d2c869f. Test authored; exact-head CI pending. Drafts are local, text-only, bounded to 100 chats and 20,000 characters each; no attachment persistence or auto-send. No merge, rebase, deployment, dependency or backend route change."
+    status: "Main remains stable V1. PR #131 remains open/unmerged on feat/landing-v1-accessibility-responsive-20261031. Per-chat text draft recovery is partially implemented in optional proposal 8.25; source commit a2db7904d1a18609f467829c4339ccd52dfa8883 and E2E commit 2257010cef98c3afcf093eb73728a8b90d2c869f. Test authored; exact-head CI pending. Drafts are local, text-only, bounded to 100 chat entries without silent text truncation; no attachment persistence or auto-send. No merge, rebase, deployment, dependency or backend route change."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 0
@@ -822,7 +822,7 @@ latest_verification_2026_11_02:
   owner_preview_instruction: "second repository paused; do not create or deploy"
 
 landing_v2_draft_recovery_2026_11_02:
-  status: "partial implementation; optional proposal 8.25"
+  status: "partial implementation; optional proposal 8.25; 8.1/8.26 sidebar gesture cancellation hardening added"
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   source_commit: "7d447c34e37c20f75fc3c1da5f163ece93a2b04a"
   e2e_commit: "2257010cef98c3afcf093eb73728a8b90d2c869f"
@@ -831,3 +831,11 @@ landing_v2_draft_recovery_2026_11_02:
   excluded: "attachments/File objects/data URLs; durable offline attachment recovery; automatic request retry"
   verification: "Playwright regression authored but not yet executed on current HEAD; exact-head Quality workflow pending"
   safety: "no new dependency, backend route, provider integration, deployment or change to chat-history schema"
+
+landing_v2_sidebar_gesture_2026_11_02:
+  status: "implemented in source and Playwright regression; exact-head CI pending"
+  requirement: "8.1 and 8.26"
+  source_commit: "050f25ef41942b2f522607cc117d15af2b373043"
+  test_commit: "0a76e63df790977cd6ed0540233528e3102a7d9a"
+  behavior: "sidebar gesture origin is cleared on touchcancel and pointercancel; vertical scroll does not close; deliberate horizontal swipe closes"
+  manual_gate: "native iPhone Safari gesture arbitration and VoiceOver remain unverified"
