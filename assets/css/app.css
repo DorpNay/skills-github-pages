@@ -259,7 +259,7 @@
       .app-header .header-icon { min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center; }
       #modeToolbar [role="group"] > button,#modeToolbar .toolbar-menu > summary,#modeToolbar .toolbar-menu-option { min-height:44px; }
       #modeToolbar .toolbar-menu > summary { display:flex;align-items:center; }
-      #inputArea .composer-tool,#inputArea #sendBtn,#inputArea #stopBtn { min-width:44px;min-height:44px;display:grid;place-items:center; }
+      #inputArea .composer-tool,#inputArea #sendBtn,#inputArea #stopBtn:not(.hidden) { min-width:44px;min-height:44px;display:grid;place-items:center; }
       #inputArea #userInput { min-height:44px; }
       #researchStudioModal [data-action="close-research-studio"],#researchStudioModal [data-action="start-research-studio"] { min-height:44px; }
       #researchStudioModal header [data-action="close-research-studio"] { min-width:44px; }
@@ -401,7 +401,7 @@
     .header-chat-title { padding:5px 9px;border:1px solid var(--ui-border);border-radius:12px;background:color-mix(in srgb,var(--ui-surface-raised) 78%,transparent); }
     .clock-face { width:58px;height:58px; }
     #modeFast,#modeDeep { min-height:28px;padding-block:4px;line-height:1.1; }
-    #searchStatus { width:100%;display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;padding-inline:8px; }
+    #searchStatus:not(.hidden) { width:100%;display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;padding-inline:8px; }
     #statusText { color:var(--ui-text-muted);background:none;animation:none;font-weight:550; }
     #thinkingTime { margin-left:0!important;color:var(--ui-text-muted); }
     .message-viewer-content { font-size:calc(1rem * var(--ui-content-scale));color:color-mix(in srgb,var(--ui-text) calc(100% * var(--ui-content-contrast)),var(--ui-text-muted)); }
