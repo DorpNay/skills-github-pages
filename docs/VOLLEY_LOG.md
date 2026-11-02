@@ -676,3 +676,13 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Existing E2E covers project/chat name search and explicitly guards against message-body indexing. The owner checklist now records the name-search slice as implemented/covered.
 - Remaining 8.21 scope: chat pinning, persisted sort preference, and stable ordering while the user is reading. 8.21 remains partial; no new behavior was added in this audit.
 - Source evidence: `assets/js/app.js` `renderSidebarSearchResults()`; E2E test near line 262. This is source/test inspection, not a new browser run.
+
+
+## V-2026-11-02-CHAT-PINNING-DATE-SORT-001
+
+- Continued optional UI proposal 8.21 on PR #131. Added local per-chat pinning using a separate ID-only preference store; pinning does not alter project ownership or chat history.
+- Added persistent sort preference for newest last activity or newest creation date. Stable ties preserve existing collection order. The active chat's activity timestamp is held until switching chats, preventing it from jumping while the user is reading.
+- Added created/updated metadata for new chats, deterministic legacy timestamp fallback and timestamp preservation for imported project chats. Message-sequence changes update activity; unrelated rerenders do not.
+- Added Playwright regression for pin/unpin, both sort modes, persistent preferences and reload restoration. Authored only; exact-head browser execution remains pending.
+- Commits: source 9520ab6, 94cd406, 2b58b98, dc3762b; markup ffb5c02; E2E 1a5872e. Current exact HEAD at implementation stage: dc3762b436d2bdc54d6607bc65d09529602a1687.
+- No new dependency, backend route or runtime. No merge, rebase, main synchronization or deployment.
