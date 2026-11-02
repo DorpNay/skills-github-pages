@@ -4494,6 +4494,10 @@ test('team blueprints can be saved, applied, restored and deleted without launch
   await library.locator(':scope > summary').click();
   const select = panel.locator('#agentBlueprintSelect');
   await expect(select).toBeVisible();
+  const selectBox = await select.boundingBox();
+  expect(selectBox?.height || 0, 'blueprint select must be a 44px touch target').toBeGreaterThanOrEqual(44);
+  const saveBox = await panel.locator('#agentBlueprintSave').boundingBox();
+  expect(saveBox?.height || 0, 'blueprint save must be a 44px touch target').toBeGreaterThanOrEqual(44);
   await expect(panel.locator('#agentBlueprintApply')).toBeDisabled();
   await expect(panel.locator('#agentBlueprintDelete')).toBeDisabled();
 
