@@ -669,6 +669,36 @@ test('sidebar closes on a horizontal touch swipe without consuming vertical scro
   await expect(page.locator('#projectNavigationList')).toBeVisible();
 });
 
+test('advanced settings are grouped by purpose with keyboard-friendly disclosures', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  const advanced = page.locator('#additionalSettings');
+  if (!(await advanced.evaluate(element => element.open))) await advanced.locator(':scope > summary').click();
+
+  const categories = advanced.locator('.settings-category');
+  await expect(categories).toHaveCount(3);
+  await expect(advanced.locator('[data-settings-category="appearance"] > summary')).toContainText('Внешний вид и удобство');
+  await expect(advanced.locator('[data-settings-category="context"] > summary')).toContainText('Поиск и инструкции');
+  await expect(advanced.locator('[data-settings-category="profile"] > summary')).toContainText('Профиль и резервные копии');
+  for (const category of await categories.all()) {
+    await expect(category).not.toHaveAttribute('open', '');
+    const summary = category.locator(':scope > summary');
+    const box = await summary.boundingBox();
+    expect(box?.height || 0, 'settings category summary must be a touch target').toBeGreaterThanOrEqual(44);
+    await summary.focus();
+    await page.keyboard.press('Enter');
+    await expect(category).toHaveAttribute('open', '');
+    await page.keyboard.press('Space');
+    await expect(category).not.toHaveAttribute('open', '');
+  }
+
+  await expect(advanced.locator('[data-settings-category="appearance"] #readabilitySettings')).toHaveCount(1);
+  await expect(advanced.locator('[data-settings-category="context"] #systemPromptInput')).toHaveCount(1);
+  await expect(advanced.locator('[data-settings-category="profile"] [data-action="export-settings-profile"]')).toHaveCount(1);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'settings should not overflow horizontally on mobile').toBeTruthy();
+});
+
 test('aLandi aServi is exclusive while provider and additional settings can remain open together', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
