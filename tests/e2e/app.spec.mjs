@@ -4324,8 +4324,10 @@ test('chat rename offers bounded undo and restores the exact previous title', as
 
   const undo = page.locator('#toast .toast-action');
   await expect(undo).toHaveText('Отменить');
-  await undo.click();
+  await undo.focus();
+  await undo.press('Enter');
   await expect(switchButton).toHaveText(previousTitle);
+  await expect.poll(() => page.evaluate(() => document.activeElement?.dataset?.chatId || '')).toBe(chatId);
   await expect.poll(() => page.evaluate(id => {
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
     return chats.find(chat => chat.id === id)?.title || '';
