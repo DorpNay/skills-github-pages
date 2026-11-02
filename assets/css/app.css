@@ -542,4 +542,6 @@ html[data-text-contrast="high"] #chatBox button:disabled {
 }
 @media (max-width:360px) {
   .app-header { gap:0!important;padding-inline:4px!important; }
+  .header-preferences { gap:0!important; }
+  .header-chat-title { padding:2px 4px!important; }
 }
