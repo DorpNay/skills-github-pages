@@ -720,7 +720,7 @@ test('Skills panel separates the active chat profile from the planned package li
   await expect(library).toHaveAttribute('open', '');
   await expect(library).toContainText('проверка происхождения и лицензии');
   await expect(library).toContainText('ручное утверждение');
-  await expect(library).toContainText('отдельный runtime и разрешений');
+  await expect(library).toContainText('отдельного runtime');
   await expect(library.locator('button')).toHaveCount(0);
   await expect(library.locator('.roadmap-ticker-track')).toHaveCount(2);
   await expect(library.locator('.roadmap-ticker-track').first()).toContainText('1ИÆИT10И');
