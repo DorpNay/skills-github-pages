@@ -297,6 +297,37 @@ test('sidebar search finds project and chat names locally without indexing messa
   await expect(search).toHaveValue('');
 });
 
+test('chat pinning and sort preference persist with stable ordering', async ({ page }) => {
+  await page.addInitScript(() => {
+    const chat=(id,title)=>({id,title,projectId:null,messages:[]});
+    localStorage.setItem('ai_chats_v87',JSON.stringify([
+      chat('sort-zeta','Zeta notes'),
+      chat('sort-alpha','Alpha plan'),
+      chat('sort-middle','Middle research')
+    ]));
+    localStorage.setItem('ai_current_chat_v87','sort-alpha');
+    localStorage.setItem('ai_pinned_chats_v1',JSON.stringify(['sort-zeta','sort-middle']));
+    localStorage.setItem('ai_chat_sort_v1','title');
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const chatIds=()=>page.locator('#chatList [data-action="switch-chat"]').evaluateAll(nodes=>nodes.map(node=>node.dataset.chatId));
+  await expect.poll(chatIds).toEqual(['sort-middle','sort-zeta','sort-alpha']);
+  const sort=page.locator('#chatSortSelect');
+  await expect(sort).toHaveValue('title');
+  await sort.selectOption('current');
+  await expect.poll(chatIds).toEqual(['sort-zeta','sort-middle','sort-alpha']);
+  await page.locator('#chatList [data-action="switch-chat"][data-chat-id="sort-alpha"]').locator('..').locator('.chat-row-menu summary').click();
+  await page.locator('#chatList [data-action="chat-toggle-pin"][data-chat-id="sort-alpha"]').click();
+  await expect.poll(chatIds).toEqual(['sort-zeta','sort-alpha','sort-middle']);
+  await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('ai_pinned_chats_v1')||'[]'))).toContain('sort-alpha');
+  await page.reload({waitUntil:'domcontentloaded'});
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await expect(page.locator('#chatSortSelect')).toHaveValue('current');
+  await expect.poll(chatIds).toEqual(['sort-zeta','sort-alpha','sort-middle']);
+  await expect(page.locator('#chatList [data-chat-id="sort-alpha"]').first()).toHaveAttribute('aria-label',/Закреплённый чат/);
+});
+
 test('project creation and project settings close on Escape with focus restoration', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
