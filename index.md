@@ -470,6 +470,24 @@ permalink: /
           </label>
         </div>
         </section>
+        <details id="agentBlueprintLibrary" class="agent-settings-category">
+          <summary data-i18n="agentBlueprintLibraryTitle">Сохранённые черновики команд</summary>
+          <section class="agent-future-section space-y-2">
+            <p data-i18n="agentBlueprintLibraryHelp">Сохраняй повторно используемые планы состава команды в этом браузере. Это не запускает агентов и не синхронизируется между устройствами.</p>
+            <label class="block text-xs font-semibold" for="agentBlueprintSelect" data-i18n="agentBlueprintSelectLabel">Мои черновики</label>
+            <select id="agentBlueprintSelect" class="advanced-control w-full rounded-lg border border-gray-700 bg-gray-900">
+              <option value="" data-i18n="agentBlueprintSelectPlaceholder">Выбери черновик</option>
+            </select>
+            <div class="agent-blueprint-actions">
+              <button type="button" id="agentBlueprintApply" class="agent-blueprint-action" data-i18n="agentBlueprintApply" disabled>Применить к этому чату</button>
+              <button type="button" id="agentBlueprintDelete" class="agent-blueprint-action" data-i18n="agentBlueprintDelete" disabled>Удалить выбранный</button>
+            </div>
+            <label class="block text-xs font-semibold" for="agentBlueprintName" data-i18n="agentBlueprintNameLabel">Название нового черновика</label>
+            <input id="agentBlueprintName" type="text" maxlength="60" autocomplete="off" class="agent-blueprint-name advanced-control rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-xs" data-i18n-placeholder="agentBlueprintNamePlaceholder" placeholder="Например, Исследование продукта">
+            <button type="button" id="agentBlueprintSave" class="agent-blueprint-action w-full" data-i18n="agentBlueprintSave">Сохранить текущий черновик</button>
+            <p class="text-[10px] leading-relaxed text-gray-500" data-i18n="agentBlueprintStorageNote">До 20 шаблонов хранятся только в локальном браузере; экспорт и облачная синхронизация не включены.</p>
+          </section>
+        </details>
         <div id="agentCustomFields" class="hidden space-y-2 rounded-xl border border-gray-800 p-3">
           <textarea id="agentTeamCustomScenario" maxlength="1000" rows="2" class="advanced-control w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Опиши сценарий команды"></textarea>
           <textarea id="agentCustomRoles" maxlength="1500" rows="3" class="advanced-control w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Роли и обязанности, по одной на строку"></textarea>
