@@ -843,3 +843,14 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Graphify Code-Only run `41389386456` succeeded on exact code/test HEAD `79790a018234b0f141f7ee902430165f6471a920`. Quality run `41389386442` was pending with zero jobs listed at time of update; Chromium/Quality passes are not claimed. Prior Quality #1359 success is a separate earlier checkpoint, not evidence for this change.
 - Preview: only the main GitHub Pages target exists and it serves V1; no V2 preview host is configured. Vercel deployment context returned zero teams and project search returned zero projects. Do not overwrite Pages V1 or create another repository without owner approval.
 - Next: wait for exact-head Quality/Chromium; inspect failures and fix; then screenshot review and request explicit owner authorization for a separate preview host/repository if required.
+
+
+## Browser connectivity and tab-suspension recovery — 2026-11-02 (8.25)
+
+- Added a compact, accessible RU/EN composer status when the browser reports `navigator.onLine === false`. The copy explicitly distinguishes browser connectivity from gateway/provider health and from the offline web-search preference.
+- On the browser `online` event, the warning is cleared and the user is told to retry manually; no request is queued, replayed or automatically resubmitted.
+- Text-only per-chat drafts now flush synchronously on `visibilitychange` when the document becomes hidden, in addition to the existing `pagehide` flush and 250ms input debounce.
+- Added Playwright regressions for offline → online transitions, preservation of the draft and unchanged chat message count, plus synchronous draft persistence on tab hide.
+- Source commits: `63d5ae45b5e1d2dda5fb1b4fb1c7b00dd3b107c9`, `fd8685d5eb26645ee8163bd91354aa193b66e7c9`; markup `59d15702b750fdffc620be96a5e2f3ebd229b780`; CSS `74292526951d41980014141b274c44b7b1940def`; E2E commits `7bb2313fb55834d6748f71cb1baf3a581e8ff195`, `6489f5a9b6d2d3e8c68b2bad993f7b85a4521cbd`.
+- V8 syntax parsing passed for the changed application and E2E source; CSS brace balance passed. These are source-level checks only. Quality #1405 (`41390877580`) is pending and Graphify #437 (`41390877512`) is queued on exact HEAD `6489f5a9b6d2d3e8c68b2bad993f7b85a4521cbd`; browser execution is not yet confirmed.
+- No new dependency, backend route, provider integration, automatic retry, merge or deployment. Attachment/File-object persistence remains a separate IndexedDB/privacy/quota design gate.
