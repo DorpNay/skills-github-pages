@@ -1489,9 +1489,11 @@
         ? (getUiLanguage()==='en'?project.name+' · '+chats.filter(c=>c.projectId===project.id).length+' chats · '+project.memory.length+' memory items':project.name+' · чатов: '+chats.filter(c=>c.projectId===project.id).length+' · фактов памяти: '+project.memory.length)
         : (getUiLanguage()==='en'?'This chat is not linked to a project.':'Чат не привязан к проекту.');
       const projectStatus=$('projectStatusLine');
-      if(projectStatus)projectStatus.textContent=project
-        ? (getUiLanguage()==='en'?project.name+' · '+chats.filter(c=>c.projectId===project.id).length+' chats · memory: '+(project.memoryScope==='project-and-global'?'project + global':'project only'):project.name+' · чатов: '+chats.filter(c=>c.projectId===project.id).length+' · память: '+(project.memoryScope==='project-and-global'?'проект + общая':'только проект'))
-        : (getUiLanguage()==='en'?'Personal chat · no project':'Личный чат · без проекта');
+      if(projectStatus) {
+        projectStatus.textContent=project?(getUiLanguage()==='en'?'Project':'Проект'):(getUiLanguage()==='en'?'Personal':'Личный');
+        projectStatus.dataset.state=project?'project':'personal';
+        projectStatus.title=project?project.name:(getUiLanguage()==='en'?'This chat is not assigned to a project':'Чат не привязан к проекту');
+      }
       if(!preserveDraft){$('projectNameInput').value=settingsProject?.name||'';$('projectInstructionsInput').value=settingsProject?.instructions||'';}
       const memBox=$('projectMemoryBox');memBox.replaceChildren();
       if(!settingsProject||!settingsProject.memory.length){
@@ -1763,13 +1765,19 @@
     }
     function updateMemoryStatusLine(){
       const line=$('memoryStatusLine');if(!line)return;
-      const personalCount=$('memoryBox')?.querySelectorAll('.memory-item').length||0;
-      const sharedCount=$('sharedMemoryBox')?.querySelectorAll('.memory-item').length||0;
       const globalEnabled=$('globalMemoryToggle')?.checked===true;
       const privateEnabled=$('privateMemoryContextToggle')?.checked===true;
-      line.textContent=getUiLanguage()==='en'
-        ? `Memory · personal ${personalCount} · shared ${sharedCount} · shared context ${globalEnabled?'on':'off'} · private context ${privateEnabled?'on':'off'}`
-        : `Память · личных ${personalCount} · общих ${sharedCount} · общая в контексте ${globalEnabled?'вкл.':'выкл.'} · личная в контексте ${privateEnabled?'вкл.':'выкл.'}`;
+      const english=getUiLanguage()==='en';
+      line.replaceChildren();
+      const appendStatus=(label,enabled)=>{
+        const item=document.createElement('span');
+        item.className='memory-status-chip '+(enabled?'is-enabled':'is-disabled');
+        item.textContent=label+' '+(enabled?(english?'On':'Вкл.'):(english?'Off':'Выкл.'));
+        item.setAttribute('aria-label',label+' '+(enabled?(english?'enabled':'включена'):(english?'disabled':'выключена')));
+        line.appendChild(item);
+      };
+      appendStatus(english?'Personal':'Личная',privateEnabled);
+      appendStatus(english?'Shared':'Общая',globalEnabled);
     }
     async function renderMemory() {
       const box = $('memoryBox');
