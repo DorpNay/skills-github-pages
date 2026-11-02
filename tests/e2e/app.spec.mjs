@@ -319,12 +319,12 @@ test('chat pinning and activity/creation sort preferences persist with stable or
   await expect.poll(chatIds).toEqual(['sort-zeta','sort-middle','sort-alpha']);
   await page.locator('#chatList [data-action="switch-chat"][data-chat-id="sort-alpha"]').locator('..').locator('.chat-row-menu summary').click();
   await page.locator('#chatList [data-action="chat-toggle-pin"][data-chat-id="sort-alpha"]').click();
-  await expect.poll(chatIds).toEqual(['sort-zeta','sort-alpha','sort-middle']);
+  await expect.poll(chatIds).toEqual(['sort-zeta','sort-middle','sort-alpha']);
   await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('ai_pinned_chats_v1')||'[]'))).toContain('sort-alpha');
   await page.reload({waitUntil:'domcontentloaded'});
   await page.locator('[data-action="toggle-sidebar"]').click();
   await expect(page.locator('#chatSortSelect')).toHaveValue('activity');
-  await expect.poll(chatIds).toEqual(['sort-zeta','sort-alpha','sort-middle']);
+  await expect.poll(chatIds).toEqual(['sort-zeta','sort-middle','sort-alpha']);
   await expect(page.locator('#chatList [data-chat-id="sort-alpha"]').first()).toHaveAttribute('aria-label',/Закреплённый чат/);
 });
 
@@ -2868,7 +2868,7 @@ test('chat row actions are grouped in the right-side menu and rename/clone work'
   await expect(row.locator('details.chat-row-menu')).toBeVisible();
   await expect(row.locator('button[data-action="delete-chat"]')).toBeHidden();
   await row.locator('.chat-row-menu > summary').click();
-  await expect(row.locator('.chat-row-menu-panel button')).toHaveCount(7);
+  await expect(row.locator('.chat-row-menu-panel button')).toHaveCount(8);
 
   await row.locator('[data-action="chat-rename"]').click();
   await expect(page.locator('#chatActionModal')).toBeVisible();
@@ -2885,6 +2885,7 @@ test('chat row actions are grouped in the right-side menu and rename/clone work'
 
 test('chat menu export is scoped and chat import merges without replacing history', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const originalChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
   await page.locator('#userInput').fill('Keep this existing chat');
   await page.locator('[data-action="toggle-sidebar"]').click();
   const row = page.locator('#chatList .chat-row').first();
@@ -2911,6 +2912,10 @@ test('chat menu export is scoped and chat import merges without replacing histor
   await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(2);
   await expect(page.locator('#chatList')).toContainText('Imported chat');
   await expect(page.locator('#chatBox')).toContainText('Imported content');
+  await expect(page.locator('#userInput')).toHaveValue('');
+  await expect.poll(() => page.evaluate(id => JSON.parse(localStorage.getItem('ai_chat_drafts_v1') || '{}')[id], originalChatId)).toBe('Keep this existing chat');
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#chatList [data-action="switch-chat"][data-chat-id="' + originalChatId + '"]').click();
   await expect(page.locator('#userInput')).toHaveValue('Keep this existing chat');
 });
 
@@ -3293,7 +3298,7 @@ test('shared control sizing uses standard desktop and touch-sized mobile variant
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
   await assertMinimum('#chatListNewButton', 40, 'new-chat action should use the standard desktop size');
-  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#sidebar [data-action="close-sidebar"]').click();
   await assertMinimum('#inputArea .composer-tool', 40, 'composer tools should use the standard desktop size');
 
   await page.locator('#searchModeSummary').click();
@@ -3340,6 +3345,8 @@ test('icon-first controls keep an accessible name across header, sidebar and mes
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await ensureSidebarOpen(page);
+  const projectPanel = page.locator('#projectPanel');
+  if (!(await projectPanel.evaluate(element => element.open))) await projectPanel.locator(':scope > summary').click();
   const projectGroup = page.locator('#projectNavigationList details[data-project-id="icon-project"]');
   await expect(projectGroup).toBeVisible();
   if (!(await projectGroup.evaluate(element => element.open))) await projectGroup.locator(':scope > summary').click();
