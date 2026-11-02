@@ -887,3 +887,17 @@ landing_v2_connectivity_status_2026_11_02:
   graphify_run: "41390877512 (#437, queued)"
   limitations: "navigator.onLine is a browser hint, not API health; attachments remain non-persistent; native iOS/VoiceOver/manual review remains open"
   safety: "no new dependency, backend route, provider integration, merge, rebase, main sync or deployment"
+
+
+landing_v2_bounded_undo_2026_11_02:
+  status: "partial implementation; exact-head Quality/Chromium pending"
+  pr: 131
+  source_test_head: "ba709ac95c8896581133dfcce02234281f75fd90"
+  requirement: "8.20"
+  action: "undo one chat move between project and personal scope through the existing toast action"
+  safety: "undo applies only if chat still exists, assignment is unchanged since move, and original project still exists; conflicts do not overwrite newer state"
+  lifetime: "bounded by the 6.5s toast action lifetime; existing hover/focus/hidden-tab pause applies; not persisted across reload"
+  e2e: "Playwright regression authored; not yet executed"
+  source_checks: "V8 syntax parsing passed; CSS brace balance passed"
+  limitations: "does not cover chat rename, project deletion/cascade, settings or persistent command history"
+  safety_boundary: "no dependency, merge, rebase, main sync or deployment"
