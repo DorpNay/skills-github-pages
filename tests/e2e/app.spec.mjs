@@ -679,8 +679,9 @@ test('function menu separates task workflow from integrations in both languages'
   await expect(menu.locator('.toolbar-menu-group-label').nth(2)).toContainText('Создание и преобразование');
   await expect(menu.locator('.toolbar-menu-group-label').nth(3)).toContainText('Подключения');
   await expect(menu.locator('[data-action="open-function-panel"]')).toHaveCount(3);
-  await expect(menu.locator('[data-action="open-research-studio"]')).toHaveCount(1);
-  await expect(menu.locator('.function-roadmap-item')).toHaveCount(4);
+  await expect(menu.locator('[data-action="open-research-studio"]')).toHaveCount(0);
+  await expect(menu.locator('.function-roadmap-item')).toHaveCount(5);
+  await expect(menu.locator('.function-roadmap-item').first()).toContainText('Глубокое исследование 2.0');
   await expect(menu.locator('.function-roadmap-item .roadmap-ticker-track').first()).toContainText('1ИÆИT10И');
   await expect(menu.locator('.function-roadmap-item button')).toHaveCount(0);
   await selectLanguage(page, 'en');
