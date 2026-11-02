@@ -719,3 +719,9 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Continued mandatory UI 8.2 alongside the 8.9/8.10/8.16 slices. Removed the obsolete early body/form-control font declaration; the existing final Avenir Next / platform fallback stack remains canonical.
 - Extended the responsive header regression to compare computed font-family for body, buttons, inputs, textarea and select at 320/360/390/768/1024/1440px.
 - CSS commit `a3613f7246823d96d8b544234a1da1e53447679a`; E2E commit `4720695d6c4f9860f1d2d5983f7b605ba3cd14c6`. Authored only; exact-head browser execution and screenshot review remain pending.
+
+
+## V-2026-11-02-PROVIDER-DISCLOSURE-MOBILE-001
+
+- Continued mandatory UI 8.3. Extended the existing aServi/provider/additional-settings exclusivity regression to 390px, checking 44px disclosure summaries, Enter/Space keyboard toggling, intended simultaneous-open behavior for provider + additional settings, and no horizontal overflow.
+- No provider runtime, credentials, routing or persistence changed. E2E commit `f9ffad34ad067db4b3ce944f1811f4e8621a73e9`; authored only, exact-head execution pending.
