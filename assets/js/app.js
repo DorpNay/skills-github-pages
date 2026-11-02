@@ -1585,6 +1585,11 @@
       persistProjects();renderProjectUI();renderChatList();
       showToast(getUiLanguage()==='en'?'Project instructions saved.':'Инструкции проекта сохранены.');
     }
+    function focusChatRowOrComposer(chatId) {
+      const rowButton=chatId?document.querySelector('[data-action="switch-chat"][data-chat-id="'+CSS.escape(chatId)+'"]'):null;
+      const target=rowButton&&rowButton.getClientRects().length?rowButton:$('userInput');
+      target?.focus({preventScroll:true});
+    }
     function moveChatToProjectWithUndo(chatId, nextProjectId, refresh) {
       const chat = chats.find(item => item.id === chatId);
       if (!chat) return false;
@@ -1611,19 +1616,23 @@
             const current = chats.find(item => item.id === chatId);
             if (!current) {
               showToast(english ? 'Chat no longer exists; the move was not undone.' : 'Чат больше не существует; перемещение не отменено.', 'warning');
+              focusChatRowOrComposer(chatId);
               return;
             }
             if (current.projectId !== nextId) {
               showToast(english ? 'Chat changed again; the previous move was not restored.' : 'Чат уже изменён; предыдущее перемещение не восстановлено.', 'warning');
+              focusChatRowOrComposer(chatId);
               return;
             }
             if (previousProjectId && !projects.some(project => project.id === previousProjectId)) {
               showToast(english ? 'The original project no longer exists.' : 'Исходный проект больше не существует.', 'error');
+              focusChatRowOrComposer(chatId);
               return;
             }
             current.projectId = previousProjectId;
             persistChats();
             refresh?.(previousProjectId);
+            focusChatRowOrComposer(chatId);
             showToast(english ? 'Chat move undone.' : 'Перемещение чата отменено.');
           }
         }
@@ -4029,6 +4038,7 @@
         return;
       }
       restoreLastClosedChat();
+      focusChatRowOrComposer(chatId);
     }
     function deleteChat(id) {
       if (chats.length <= 1) { alert('Нельзя удалить единственный чат.'); return; }
@@ -4098,9 +4108,10 @@
           duration:6500,
           onClick:()=>{
             const current=chats.find(item=>item.id===chat.id);
-            if(!current){showToast(english?'Chat no longer exists; rename was not undone.':'Чат больше не существует; переименование не отменено.','warning');return;}
-            if(current.title!==next){showToast(english?'Chat title changed again; the previous title was not restored.':'Название чата уже изменено; прежнее название не восстановлено.','warning');return;}
+            if(!current){showToast(english?'Chat no longer exists; rename was not undone.':'Чат больше не существует; переименование не отменено.','warning');focusChatRowOrComposer(chat.id);return;}
+            if(current.title!==next){showToast(english?'Chat title changed again; the previous title was not restored.':'Название чата уже изменено; прежнее название не восстановлено.','warning');focusChatRowOrComposer(chat.id);return;}
             current.title=previousTitle;persistChats();renderChatList();renderActiveChat();
+            focusChatRowOrComposer(chat.id);
             showToast(english?'Chat rename undone.':'Переименование чата отменено.');
           }
         });
