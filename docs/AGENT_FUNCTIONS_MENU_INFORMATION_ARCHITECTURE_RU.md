@@ -23,7 +23,7 @@
 - Groups start collapsed to keep the configuration panel scannable; each summary has a 44px minimum touch target and visible keyboard focus. Native disclosure semantics provide keyboard interaction without custom JS state.
 - Added RU/EN labels. The roadmap pause selector now targets tickers nested inside the disclosure groups.
 - The two real configuration groups (execution mode and team blueprint) remain separate and unchanged. No runtime capability or permission was added.
-- Playwright coverage now checks group count/order, RU labels, 44px summary hit targets and Enter/Space open/close behavior. Execution on current HEAD is pending.
+- Playwright coverage now checks group count/order, RU labels, 44px summary hit targets, Enter/Space open/close behavior and that the pause checkbox pauses a ticker nested inside an opened disclosure. Execution on current HEAD is pending.
 
 ### Existing regression coverage (tests authored, not a claim of current execution)
 
