@@ -719,3 +719,12 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Independent workflow inventory: 13 workflow files and 33 external GitHub Action/reusable-workflow references on both `main` and PR #131 branch; all 33 use full 40-character commit SHAs. No mutable tag reference was found.
 - The 8.13 code/test acceptance result remains Quality #1250 on `f3151472e285c7d31d46809f52337202eb15e6b3`; #1251 verifies that the synchronized documentation and provenance state remain green.
 - This documentation-only update does not change runtime code, CI behavior, dependencies or deployment.
+
+## Latest documentation-head verification and transitive workflow review — 2026-11-02
+
+- Quality #1252 / run `41365833770` passed on documentation HEAD `63f429ccf16fe7648519ebb3ecc02b9f8949ad53`; code-bearing HEAD remains `f3151472e285c7d31d46809f52337202eb15e6b3`. Four Chrome shards and all non-browser Quality sentinels passed. Published Pages smoke skipped.
+- Provenance #976 / run `41365833791` passed on the same SHA.
+- Direct repository workflow audit remains 33/33 external refs pinned to full SHAs across 13 files on both `main` and PR branch.
+- Residual supply-chain finding: the pinned reusable workflows in `skills/exercise-toolkit` contain nested mutable action tags (`checkout@v6`, `github-script@v9`, `add-and-commit@v10`, `action-text-variables@v4`). Pinning the reusable workflow does not pin those nested action refs. This is recorded as a separate supply-chain follow-up; no changes made outside PR #131.
+- Exercise workflow permissions were reviewed: write scopes are used for issue comments/closure, workflow enable/disable and README updates. The exercise-toolkit reusable workflows' nested action pinning remains the unresolved part.
+- No runtime code, dependencies, providers, models or deployments changed in this documentation update.

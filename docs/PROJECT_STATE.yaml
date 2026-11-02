@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-02"
   root_orienter:
-    status: "Main remains stable V1. PR #131 is open/unmerged on feat/landing-v1-accessibility-responsive-20261031. Last code-bearing HEAD f3151472e285c7d31d46809f52337202eb15e6b3 passed Quality #1250; documentation HEAD 61f1ae1dbac08da6c0a873bc5b72926cecb83bee passed Quality #1251 and Provenance #975. All four Chrome shards and all Quality sentinels passed; Pages smoke skipped. Branch comparison is 653 ahead / 4 behind main; no rebase, merge or main synchronization without owner approval. 8.13 handoff persists one-shot chat/project IDs in tab sessionStorage and passes active/inactive target reload E2E. Owner paused the second-repository path. No runtime dependency or model added."
+    status: "Main remains stable V1. PR #131 is open/unmerged on feat/landing-v1-accessibility-responsive-20261031. Latest code-bearing HEAD f3151472e285c7d31d46809f52337202eb15e6b3 passed Quality #1250; documentation HEAD 63f429ccf16fe7648519ebb3ecc02b9f8949ad53 passed Quality #1252 and Provenance #976. Four Chrome shards and all Quality sentinels passed; Pages smoke skipped. Branch is 653 ahead / 4 behind main; no rebase, merge or synchronization without owner approval. 8.13 one-shot handoff passes active/inactive-target reload E2E. Owner paused the second-repository path. Direct workflow refs are 33/33 SHA-pinned; nested action tags inside the pinned exercise-toolkit reusable workflows remain an open supply-chain follow-up. No runtime dependency or model added."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 0
@@ -806,5 +806,17 @@ supply_chain_workflow_audit_2026_11_02:
   workflow_files: 13
   main_unpinned: 0
   pr131_unpinned: 0
-  method: "Parsed every uses: reference in .github/workflows/*.yml on main and PR #131 branch; all external action and reusable workflow refs are 40-character commit SHAs."
-  limitation: "This verifies workflow reference pinning, not the live GitHub branch ruleset or repository settings."
+  method: "Parsed every uses: reference in .github/workflows/*.yml on main and PR #131 branch; all direct external refs are 40-character commit SHAs."
+  transitive_risk: "Pinned skills/exercise-toolkit reusable workflows contain nested mutable action tags: checkout@v6, github-script@v9, add-and-commit@v10 and action-text-variables@v4."
+  limitation: "Direct repository refs are pinned; transitive nested refs in the external reusable workflow are not. Live branch ruleset and repository settings remain unverified."
+
+latest_verification_2026_11_02:
+  pr131_code_head: "f3151472e285c7d31d46809f52337202eb15e6b3"
+  pr131_documentation_head: "63f429ccf16fe7648519ebb3ecc02b9f8949ad53"
+  quality_run: "41365833770"
+  quality_result: "success"
+  provenance_run: "41365833791"
+  provenance_result: "success"
+  direct_action_refs: "33/33 full SHA pins across 13 workflows on main and PR branch"
+  transitive_action_refs: "nested mutable tags remain inside pinned skills/exercise-toolkit reusable workflows; follow-up required"
+  owner_preview_instruction: "second repository paused; do not create or deploy"

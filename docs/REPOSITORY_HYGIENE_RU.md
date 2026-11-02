@@ -223,3 +223,10 @@ No files, workflows, settings, branches or repository names were deleted or chan
 - Inventory: 13 workflow files, 33 external `uses:` references (actions and reusable workflows).
 - Result: 33/33 pinned to full 40-character commit SHAs; zero mutable tag references on either ref.
 - This verifies workflow reference pinning only. GitHub Rulesets, required reviewers/status checks, force-push protection and repository security settings still require live owner/admin inspection.
+
+## Transitive reusable-workflow pinning — 2026-11-02
+
+- Direct workflow references on main and PR #131: 33/33 pinned to full commit SHAs across 13 files.
+- Pinned reusable workflows from `skills/exercise-toolkit` were inspected at exact ref `ebf43bb96882683e03e667184c6445ed4c8074e6`. Their nested calls still use mutable tags: `actions/checkout@v4`, `actions/github-script@v7`, `EndBug/add-and-commit@v9`, `skills/action-text-variables@v2`. Upstream default branch has moved to newer tags (checkout@v6, github-script@v9, add-and-commit@v10, action-text-variables@v4), still mutable.
+- The parent reusable workflow is SHA-pinned, but this does not pin nested action refs. Full transitive supply-chain pinning is therefore **not complete**. Keep as a separate scoped issue/PR; no external repo or main workflow changed in PR #131.
+- Permission review: write scopes in exercise workflows support README commits, issue comments/closure and workflow enable/disable. Other eight repository workflows are read-only. This does not verify live repository rulesets or admin settings.

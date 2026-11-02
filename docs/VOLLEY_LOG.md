@@ -647,3 +647,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Owner explicitly paused the separate Pages repository. No second repository was created; no V1 Pages change, merge, rebase, branch deletion or deployment.
 - Continue mandatory UI 8.1–8.17 and native/manual gates. The 207s Quality #1250 runtime is recorded, but no speedup ratio is claimed against the incomplete 1863s timeout baseline.
 
+## V-2026-11-02-TRANSITIVE-ACTION-PIN-AUDIT-015
+
+- Quality #1252 / run `41365833770` passed on documentation HEAD `63f429ccf16fe7648519ebb3ecc02b9f8949ad53`; Provenance #976 / run `41365833791` also passed.
+- Direct repository workflow refs: 33/33 full SHA pins across 13 files on main and PR #131 branch.
+- Transitive review found mutable tags inside the SHA-pinned `skills/exercise-toolkit` reusable workflows: checkout@v6, github-script@v9, add-and-commit@v10 and action-text-variables@v4. A pinned reusable workflow does not freeze the tag references it invokes.
+- No external workflow or main branch was modified; this requires a separately scoped supply-chain change. Live branch ruleset remains owner/admin verification.
+- No second Pages repository, merge, rebase, branch deletion or deployment.
+

@@ -282,10 +282,11 @@ PR #122 добавил только эксплуатационную надёж�
 
 ### P0 — обязательная автоматическая проверка PR #131
 
-- [x] Exact-head Quality #1251 / run `41365456706` проверил documentation HEAD `61f1ae1dbac08da6c0a873bc5b72926cecb83bee` (кодовой HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`): все четыре real Chrome shards — PASS; preflight, static analysis, Integrity, Security, Context и Jekyll — PASS. Published-site smoke skipped by workflow conditions; это не deployment/live-preview evidence.
-- [x] Предыдущий exact code-head Quality #1250 / run `41364775725` на `f3151472e285c7d31d46809f52337202eb15e6b3` прошёл после расширения E2E для 8.13: reload с неактивным target chat и reload, когда target chat уже активен; one-shot handoff проверен.
-- [x] Provenance #975 / run `41365456760` на documentation HEAD `61f1ae1dbac08da6c0a873bc5b72926cecb83bee` завершился success.
-- [x] Workflow supply-chain audit: 13 workflow-файлов, 33 внешних `uses:` references; все 33 закреплены полными 40-character commit SHA. Проверено и на PR branch, и на `main`; unpinned references = 0.
+- [x] Exact-head Quality #1252 / run `41365833770` проверил documentation HEAD `63f429ccf16fe7648519ebb3ecc02b9f8949ad53` (кодовой HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`): все четыре real Chrome shards — PASS; preflight, static analysis, Integrity, Security, Context и Jekyll — PASS. Published-site smoke skipped; это не deployment/live-preview evidence.
+- [x] Exact code-head Quality #1250 / run `41364775725` на `f3151472e285c7d31d46809f52337202eb15e6b3` прошёл после расширения E2E для 8.13: reload с неактивным target chat и reload, когда target chat уже активен; one-shot handoff проверен.
+- [x] Provenance #976 / run `41365833791` на documentation HEAD `63f429ccf16fe7648519ebb3ecc02b9f8949ad53` завершился success.
+- [x] Direct workflow references: 13 workflow-файлов, 33 внешних `uses:` references; все 33 закреплены полными 40-character commit SHA на `main` и PR branch.
+- [~] **Transitive action pinning остаётся открытым:** pinned reusable workflows из `skills/exercise-toolkit` внутри себя вызывают mutable tags (`actions/checkout@v6`, `actions/github-script@v9`, `EndBug/add-and-commit@v10`, `skills/action-text-variables@v4`). Сам reusable workflow закреплён SHA, но вложенные action refs нет; нужен отдельный scope/PR либо upstream fix.
 - [x] Quality автоматически запускается на push и pull_request. Owner не должен вручную запускать workflow или выполнять локальные CI-команды.
 - [x] 8.13: pending context хранится в tab-scoped `sessionStorage` (только chat/project IDs), восстанавливается после reload для active/inactive target, consumes once; чат не создаётся и не меняет project membership.
 - [~] Остаточные автоматические UI assertions 8.1–8.17 продолжают выполняться в PR #131; зелёный CI не закрывает ручные native-device и visual gates.

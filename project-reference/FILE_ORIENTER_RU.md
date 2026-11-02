@@ -1,4 +1,17 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
+## Актуальная контрольная точка — 2026-11-02, Quality #1252 green
+
+- PR #131 открыт и не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; code HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`; documentation HEAD `63f429ccf16fe7648519ebb3ecc02b9f8949ad53`. Сравнение: 653 commits ahead / 4 behind main; rebase/main synchronization без разрешения запрещены.
+- Quality #1250 на code HEAD прошёл после расширения E2E для 8.13. Quality #1252 / run `41365833770` на docs HEAD прошёл: 4/4 Chrome shards и все sentinels зелёные. Provenance #976 / run `41365833791` также success.
+- 8.13: queued project-context handoff сохраняется в tab-scoped sessionStorage как chat/project IDs; восстанавливается после reload для активного и другого target chat; после первого успешного запроса потребляется. E2E проверяет отсутствие нового чата, смены project membership и повторной инъекции.
+- Supply chain: 13 workflow files и 33 direct refs; 33/33 закреплены полными 40-character SHAs на main и PR branch. Однако вложенные action refs внутри pinned `skills/exercise-toolkit` reusable workflows остаются mutable tags; это отдельный открытый follow-up. Live branch ruleset не проверен.
+- CI автоматически запускается от push/pull_request; workflow вручную запускать не требуется.
+- Второй репозиторий по просьбе владельца пока не создавать. Единственный Pages target V1 не трогать; deployment не выполнялся.
+- Upstream triage: SGLang/Qwen3-Next (4×H100/H200; 80B total/3B active — не SLM), LightAgent, llm-apipool (cross-provider fallback не подходит), BentoML, GPTQModel, LLM Compressor и Plexor RCT. Ничего не установлено и не загружено.
+- Native iPhone Safari, VoiceOver, full composited WCAG contrast и screenshot review остаются отдельными gates.
+- Не удалять branches/files, не merge/rebase/deploy. Следующий шаг — продолжать UI scope 8.1–8.17 в PR #131 и не ждать CI без параллельной работы.
+
+
 ## Актуальная контрольная точка — 2026-11-02, Quality #1251 green
 
 - PR #131 открыт и не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; code HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`; documentation HEAD `61f1ae1dbac08da6c0a873bc5b72926cecb83bee`. Сравнение: 653 commits ahead / 4 behind main; rebase/main synchronization без разрешения запрещены.

@@ -352,3 +352,10 @@
 - [x] Updated canonical UI P0 evidence and removed the obsolete claim that 8.13 handoff is only in-memory.
 - [x] Recorded that the second Pages repository is paused by owner instruction; no repository was created and V1 Pages was not touched.
 - [ ] Live branch ruleset and repository security settings remain owner/environment evidence; do not infer from workflow YAML.
+
+## Supply-chain follow-up — 2026-11-02
+
+- [x] Direct GitHub workflow references audited: 33/33 full-SHA pins across 13 files on both main and PR #131 branch.
+- [x] Quality #1252 / run `41365833770` and Provenance #976 / run `41365833791` passed on documentation HEAD `63f429ccf16fe7648519ebb3ecc02b9f8949ad53`.
+- [ ] Transitive action refs inside the SHA-pinned `skills/exercise-toolkit` reusable workflows still use mutable tags (checkout@v6, github-script@v9, add-and-commit@v10, action-text-variables@v4). Keep as a separate supply-chain task; do not claim the full transitive chain is SHA-pinned.
+- [ ] Live branch ruleset/reviewer/required-check settings require owner/admin inspection.
