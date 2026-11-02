@@ -669,6 +669,20 @@ test('sidebar closes on a horizontal touch swipe without consuming vertical scro
   await expect(page.locator('#projectNavigationList')).toBeVisible();
 });
 
+test('function menu separates task workflow from integrations in both languages', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const menu = page.locator('#functionsMenu');
+  await menu.locator(':scope > summary').click();
+  await expect(menu.locator('.toolbar-menu-group-label')).toHaveCount(2);
+  await expect(menu.locator('.toolbar-menu-group-label').nth(0)).toContainText('Работа с задачей');
+  await expect(menu.locator('.toolbar-menu-group-label').nth(1)).toContainText('Подключения');
+  await expect(menu.locator('[data-action="open-function-panel"]')).toHaveCount(3);
+  await selectLanguage(page, 'en');
+  await menu.locator(':scope > summary').click();
+  await expect(menu.locator('.toolbar-menu-group-label').nth(0)).toContainText('Task workflow');
+  await expect(menu.locator('.toolbar-menu-group-label').nth(1)).toContainText('Connections');
+});
+
 test('advanced settings are grouped by purpose with keyboard-friendly disclosures', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
