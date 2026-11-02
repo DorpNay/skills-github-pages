@@ -781,7 +781,7 @@ test('high-contrast preference updates every important text state in both themes
     disabled: (() => { const style=getComputedStyle(document.querySelector('#contrastDisabledFixture')); return style.webkitTextFillColor || style.getPropertyValue('-webkit-text-fill-color') || style.color; })(),
     link: (() => { const style=getComputedStyle(document.querySelector('#chatBox .assistant-content a')); return style.webkitTextFillColor || style.getPropertyValue('-webkit-text-fill-color') || style.color; })(),
     error: getComputedStyle(document.querySelector('#chatBox [role="alert"]')).color,
-    status: getComputedStyle(document.querySelector('#searchStatus')).color,
+    status: getComputedStyle(document.querySelector('#statusText')).color,
     aserviWarning: getComputedStyle(document.querySelector('#aserviStatus')).color
   }));
   await page.locator('#uiTextContrast').selectOption('normal');
@@ -816,50 +816,108 @@ test('high-contrast preference updates every important text state in both themes
   expect(highLight.aserviWarning).not.toBe(highDark.aserviWarning);
 });
 
-test('readability color tokens meet AA contrast against both theme surfaces', async ({ page }) => {
+test('readability tokens and actual status surfaces meet AA in both themes', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  const measure = theme => page.evaluate(selectedTheme => {
+  await page.evaluate(() => {
+    const metadata = document.createElement('div');
+    metadata.id = 'contrastMetadataFixture';
+    metadata.className = 'message-model-meta';
+    metadata.textContent = 'Model metadata';
+    document.body.appendChild(metadata);
+    const row = document.createElement('div');
+    row.className = 'memory-item';
+    const action = document.createElement('button');
+    action.id = 'contrastMemoryActionFixture';
+    action.type = 'button';
+    action.textContent = '×';
+    row.appendChild(action);
+    document.body.appendChild(row);
+  });
+  const measure = (theme, contrastMode) => page.evaluate(({ selectedTheme, selectedContrast }) => {
     const root = document.documentElement;
     root.dataset.theme = selectedTheme;
-    root.dataset.textContrast = 'high';
+    root.dataset.textContrast = selectedContrast;
     const css = getComputedStyle(root);
     const rgb = value => {
-      const hex = value.trim();
-      if (hex.startsWith('#')) {
-        const raw = hex.slice(1);
+      const color = value.trim();
+      if (color.startsWith('#')) {
+        const raw = color.slice(1);
         const full = raw.length === 3 ? raw.split('').map(char => char + char).join('') : raw;
         return [0, 2, 4].map(index => parseInt(full.slice(index, index + 2), 16));
       }
-      const parts = hex.match(/[\d.]+/g);
+      const parts = color.match(/[\d.]+/g);
       return parts ? parts.slice(0, 3).map(Number) : [0, 0, 0];
     };
+    const rgbString = value => 'rgb(' + rgb(value).map(channel => Math.round(channel)).join(', ') + ')';
     const luminance = color => {
       const channels = rgb(color).map(value => value / 255).map(value =>
         value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
       );
       return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
     };
-    const background = luminance(css.getPropertyValue('--ui-surface'));
+    const contrast = (foreground, background) => {
+      const a = luminance(foreground), b = luminance(background);
+      return +((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)).toFixed(2);
+    };
+    const surface = css.getPropertyValue('--ui-surface').trim();
+    const raisedSurface = css.getPropertyValue('--ui-surface-raised').trim();
     const colors = {
       primary: css.getPropertyValue('--ui-text'),
       secondary: css.getPropertyValue('--ui-text-muted'),
-      disabled: css.getPropertyValue('--ui-disabled-text'),
       info: css.getPropertyValue('--ui-info'),
       success: css.getPropertyValue('--ui-success'),
       warning: css.getPropertyValue('--ui-warning'),
       error: css.getPropertyValue('--ui-danger')
     };
-    return Object.fromEntries(Object.entries(colors).map(([name, color]) => {
-      const foreground = luminance(color);
-      return [name, +((Math.max(foreground, background) + 0.05) / (Math.min(foreground, background) + 0.05)).toFixed(2)];
-    }));
-  }, theme);
+    if (selectedContrast === 'high') colors.disabled = css.getPropertyValue('--ui-disabled-text');
+    const surfaceRatios = Object.fromEntries(Object.entries(colors).map(([name, color]) => [name, contrast(color, surface)]));
+    const toastTokens = { info: '--ui-info', warning: '--ui-warning', success: '--ui-success', error: '--ui-danger' };
+    const toast = document.querySelector('#toast');
+    const toastRatios = {};
+    const toastMatches = {};
+    for (const [state, token] of Object.entries(toastTokens)) {
+      toast.dataset.state = state;
+      const actual = getComputedStyle(toast).color;
+      toastRatios[state] = contrast(actual, raisedSurface);
+      toastMatches[state] = actual === rgbString(css.getPropertyValue(token));
+    }
+    const metadata = document.querySelector('#contrastMetadataFixture');
+    const memoryAction = document.querySelector('#contrastMemoryActionFixture');
+    const actualStyles = {
+      metadata: getComputedStyle(metadata).color === rgbString(css.getPropertyValue('--ui-text-muted')),
+      metadataDot: getComputedStyle(metadata, '::before').color === rgbString(css.getPropertyValue('--ui-success')),
+      memoryAction: getComputedStyle(memoryAction).color === rgbString(css.getPropertyValue('--ui-text-muted')),
+      toastBackground: getComputedStyle(toast).backgroundColor === rgbString(raisedSurface),
+      toastStates: toastMatches
+    };
+    return { surfaceRatios, toastRatios, actualStyles };
+  }, { selectedTheme: theme, selectedContrast: contrastMode });
   for (const theme of ['dark', 'light']) {
-    const ratios = await measure(theme);
-    for (const [name, value] of Object.entries(ratios)) {
-      expect(value, theme + ' ' + name + ' token contrast').toBeGreaterThanOrEqual(4.5);
+    for (const contrastMode of ['normal', 'high']) {
+      const result = await measure(theme, contrastMode);
+      for (const [name, value] of Object.entries(result.surfaceRatios)) {
+        expect(value, theme + ' ' + contrastMode + ' ' + name + ' surface contrast').toBeGreaterThanOrEqual(4.5);
+      }
+      for (const [name, value] of Object.entries(result.toastRatios)) {
+        expect(value, theme + ' ' + contrastMode + ' toast ' + name + ' contrast').toBeGreaterThanOrEqual(4.5);
+      }
+      for (const [name, value] of Object.entries(result.actualStyles)) {
+        if (name === 'toastStates') {
+          for (const [state, matches] of Object.entries(value)) expect(matches, theme + ' ' + contrastMode + ' toast ' + state + ' uses semantic token').toBe(true);
+        } else {
+          expect(value, theme + ' ' + contrastMode + ' ' + name + ' uses theme-aware token').toBe(true);
+        }
+      }
     }
   }
+  await page.locator('#contrastMemoryActionFixture').hover();
+  const memoryHoverUsesDanger = await page.evaluate(() => {
+    const css = getComputedStyle(document.documentElement);
+    const raw = css.getPropertyValue('--ui-danger').trim().slice(1);
+    const expected = [0, 2, 4].map(index => parseInt(raw.slice(index, index + 2), 16));
+    return getComputedStyle(document.querySelector('#contrastMemoryActionFixture')).color === 'rgb(' + expected.join(', ') + ')';
+  });
+  expect(memoryHoverUsesDanger).toBe(true);
 });
 
 test('interactive controls avoid selection while editable fields and message text remain selectable', async ({ page }) => {

@@ -35,8 +35,8 @@
     .advanced-field,.advanced-control { font-size:11px!important;padding:.42rem .55rem!important;min-height:30px; }
     #aserviStatus { margin:0;font-size:10px;line-height:1.2; }
     #aserviStatusDot { margin-top:0; }
-    .message-model-meta { color: #93a4bd; font-size: .67rem; line-height: 1.3; padding: .15rem .25rem; opacity: .9; }
-    .message-model-meta::before { content: "●"; display: inline-block; margin-right: .4rem; color: #4ade80; font-size: .58rem; text-shadow: 0 0 8px rgb(74 222 128 / 45%); }
+    .message-model-meta { color:var(--ui-text-muted);font-size:.67rem;line-height:1.3;padding:.15rem .25rem;opacity:.9; }
+    .message-model-meta::before { content:"●";display:inline-block;margin-right:.4rem;color:var(--ui-success);font-size:.58rem;text-shadow:0 0 8px color-mix(in srgb,var(--ui-success) 45%,transparent); }
     #thinkingTime { color: #a5b4fc; font-variant-numeric: tabular-nums; white-space: nowrap; }
     #statusText { color: transparent; background: linear-gradient(100deg, #bfdbfe 5%, #c4b5fd 42%, #6ee7b7 70%, #bfdbfe 95%); background-size: 220% 100%; background-clip: text; -webkit-background-clip: text; animation: status-sheen 4.5s ease-in-out infinite; }
     @keyframes status-sheen { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
@@ -71,18 +71,18 @@
     .chat-bubble { min-width: 0; overflow-wrap: anywhere; }
     .memory-item { display: flex; gap: .45rem; align-items: flex-start; padding: .3rem 0; }
     .memory-item span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
-    .memory-item button { color: #9ca3af; padding: 0 .2rem; }
-    .memory-item button:hover { color: #f87171; }
+    .memory-item button { color:var(--ui-text-muted);padding:0 .2rem; }
+    .memory-item button:hover { color:var(--ui-danger); }
     #settingsModal, #sidebar { overscroll-behavior: contain; }
     button, a, input, textarea, select { transition: background-color .14s ease, border-color .14s ease, box-shadow .14s ease, color .14s ease; }
     button:hover:not(:disabled) { filter: brightness(1.06); }
     input:focus, textarea:focus, select:focus { border-color: #60a5fa; box-shadow: 0 0 0 2px rgb(96 165 250 / 12%); }
-    .toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 5.4rem); z-index: 100; display: flex; align-items: center; justify-content: center; gap: .65rem; max-width: min(92vw, 30rem); padding: .65rem .75rem .65rem .9rem; border: 1px solid rgb(96 165 250 / 40%); border-radius: .8rem; background: rgb(15 23 42 / 96%); color: #e5efff; font-size: .8rem; line-height: 1.35; text-align: center; box-shadow: 0 8px 28px rgb(0 0 0 / 25%); opacity: 0; transform: translate(-50%, .5rem); pointer-events: auto; transition: opacity .16s ease, transform .16s ease; backdrop-filter: blur(8px); }
+    .toast { position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 5.4rem);z-index:100;display:flex;align-items:center;justify-content:center;gap:.65rem;max-width:min(92vw,30rem);padding:.65rem .75rem .65rem .9rem;border:1px solid var(--ui-border);border-radius:.8rem;background:var(--ui-surface-raised);color:var(--ui-text);font-size:.8rem;line-height:1.35;text-align:center;box-shadow:0 8px 28px rgb(0 0 0 / 25%);opacity:0;transform:translate(-50%,.5rem);pointer-events:auto;transition:opacity .16s ease,transform .16s ease;backdrop-filter:blur(8px); }
     .toast-message { min-width: 0; }
     .toast-dismiss { display: inline-flex; flex: 0 0 2rem; align-items: center; justify-content: center; width: 2rem; min-height: 2rem; border: 1px solid currentColor; border-radius: .55rem; background: transparent; color: inherit; font-size: 1.25rem; line-height: 1; cursor: pointer; }
     .toast-dismiss:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
     .toast.toast-visible { opacity: 1; transform: translate(-50%, 0); }
-    .toast.toast-error { border-color: rgb(248 113 113 / 55%); color: #fecaca; }
+    .toast.toast-error { border-color:color-mix(in srgb,var(--ui-danger) 55%,var(--ui-border));color:var(--ui-danger); }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
 
     /* aLandi AI — Obsidian Studio / Clean Light + restrained Tiffany Motion. */
