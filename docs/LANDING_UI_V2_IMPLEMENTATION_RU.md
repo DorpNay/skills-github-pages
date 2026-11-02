@@ -988,3 +988,15 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Exact code/test HEAD: 765138e74e141aaf1471c6351193d98dda8a0df8. GitHub returned no workflow runs and no commit statuses for this exact SHA; the new Playwright test and full Quality workflow are NOT RUN / NOT VERIFIED. Earlier Quality #41411404686 on 1ec4a1d is not evidence for this change.
 - No new dependency, backend/API, shared registry, Skill package loader, Agent Profile registry, AgentRun API, runtime permission or execution capability. No merge, rebase, main sync or deployment.
 - NEXT: obtain exact-head Quality/Chromium evidence for 765138e; then continue the 8.28 capability-status and 8.19 operation-state work only where real handlers/data exist. Native iPhone Safari, VoiceOver and full component WCAG remain manual gates.
+
+## Roadmap detail windows and Agent capability slots — 2026-11-03
+
+- Added 15 read-only “Details / Подробнее” entry points across five Functions roadmap cards, seven Agent/Skills roadmap sections, the local Team Blueprint library, Project Sources and Integrations.
+- All entry points open one shared accessible modal. It derives title/description from the existing localized section, displays status, supports Escape/backdrop/close, uses the existing modal navigation stack/focus trap and restores focus to the opener.
+- Status mapping supports Available, Blueprint only, In development and Unavailable in this environment. The current UI marks planned cards In development and the saved local Team Blueprint library Blueprint only. The other states are not assigned without verified backing runtime state.
+- Added separate roadmap-only Agent Profiles and Tasks & History sections. They are explanatory navigation surfaces only: no Agent Profile registry, durable AgentRun API, queue, worker, run ID, permissions, execution or artifacts were implemented.
+- Standardized active app and landing ticker prefix to `1ИV3ИT10И`; existing pause and reduced-motion support retained.
+- App E2E spec: 121 tests; landing E2E spec: 8 tests. Static V8 parsing passed for app.js and both E2E specs (imports removed for parser-only compilation); CSS brace balance passed; HTML IDs are unique; required RU/EN keys are present; no legacy ticker prefix remains in active UI files.
+- Exact code/test HEAD: `dc82acb95c850d7821e071e16a8ab11524a459c2`. GitHub returned zero workflow runs and zero commit statuses for that SHA. Browser/Playwright/Quality NOT RUN; no pass is claimed.
+- No dependency, backend/API, runtime, permissions, merge, rebase, main synchronization or deployment. Native iPhone Safari, VoiceOver, keyboard-only visual review and full component WCAG remain open.
+- NEXT: inspect why exact-head Actions runs are absent for API-created commits without manually dispatching workflows; then obtain normal exact-head Quality/Chromium evidence and continue the next bounded UI acceptance slice.
