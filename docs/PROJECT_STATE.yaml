@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-02"
   root_orienter:
-    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 open/unmerged; latest source/test commit d70b8a31cc8a81cafeea64f8fbb332e53b0c5af2; orientation/state/log checkpoint bb7974ce7be5cc05f2ef68ab9073225a44758ea2; base SHA e78a73b25725bfa63370d9946887cbbacbf51b82; mergeable=false, main four commits ahead of PR base. Agent capability sections grouped into three native RU/EN disclosures with 44px keyboard/touch summaries. Playwright assertions authored for category grouping, touch, keyboard and nested ticker pause; not run. No exact-head workflow returned. No merge/rebase/deploy."
+    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 open/unmerged; latest source/test commit d3a44807d9c9eb0dade5a3e0bf80065fa5ebfd45; base SHA e78a73b25725bfa63370d9946887cbbacbf51b82; mergeable=false. Skills panel separates the available chat-scoped task profile from the future shared Skill package library; RU/EN lifecycle and permission boundary added. Playwright regression authored, not executed; no exact-head workflow returned. No merge/rebase/sync/deploy."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 8
@@ -959,3 +959,17 @@ landing_v2_theme_selector_integrity_fix_2026_11_02:
   e2e: "theme selector presence, labels, local persistence and header-toggle synchronization authored; not yet executed"
   source_checks: "V8 syntax parsing passed"
   next: "verify Quality/Chromium on a head containing the repair"
+
+
+landing_v2_skills_panel_2026_11_02:
+  status: "UI implemented; exact-head Quality/Chromium pending"
+  pr: 131
+  branch: "feat/landing-v1-accessibility-responsive-20261031"
+  source_test_head: "d3a44807d9c9eb0dade5a3e0bf80065fa5ebfd45"
+  behavior: "separates the available chat-scoped task profile from the future shared Skill package library; groups goal/output controls; documents planned package lifecycle and permission boundary"
+  localization: "RU/EN labels and lifecycle copy"
+  accessibility: "native details/summary, 44px disclosure target, keyboard activation, existing ticker pause control"
+  e2e: "scope, disclosure, lifecycle, no-fake-controls, ticker pause and EN assertions authored; not executed"
+  runtime_boundary: "no shared registry, import endpoint, package loader, script runtime, permission API, dependency or backend route"
+  exact_head_ci: "workflow lookup returned no runs; no Quality/Chromium pass claimed"
+  next: "continue the next bounded Landing 2.0 UI slice after checklist review"
