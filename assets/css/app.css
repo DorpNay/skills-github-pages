@@ -538,7 +538,7 @@ html[data-text-contrast="high"] #chatBox button:disabled {
 /* Preserve 44px touch targets; reclaim redundant wordmark space on narrow screens. */
 @media (max-width:420px) {
   .app-header { gap:4px!important; }
-  #brandWordmark { display:none!important; }
+  #brandWordmark { visibility:hidden!important;width:0!important;margin:0!important;overflow:hidden!important;flex:0 0 0!important; }
 }
 @media (max-width:360px) {
   .app-header { gap:0!important;padding-inline:4px!important; }
