@@ -95,7 +95,7 @@ ui_v2_track:
     live_gateway_provider: "Not verified; live smoke requires explicit owner approval."
   current_main_sha: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
   branch_divergence: "Last measured at code/test HEAD 765138e74e141aaf1471c6351193d98dda8a0df8: diverged, 952 ahead / 4 behind main; merge_base=e78a73b25725bfa63370d9946887cbbacbf51b82. Docs-only commits follow; resolve live branch compare at each resume. Four main-side commits modify only docs/V1_UI_FINALIZATION_RU.md. No rebase/sync without owner approval."
-  current_work_head: "65dad97efa107985aa87c55a1d9ed811baf126a2"
+  current_work_head: "765138e74e141aaf1471c6351193d98dda8a0df8"
   current_work_summary: "Added a local-only Team Blueprint library inside the existing Agent panel: save/apply/delete up to 20 bounded named snapshots; RU/EN and 44px mobile controls. Applying changes only current-chat blueprint fields; no runtime, AgentRun, permissions or cloud sync. Previous Graphify selector triage remains recorded."
   current_work_validation: "V8 parser PASS for app.js and E2E spec; CSS brace balance PASS; no duplicate HTML IDs; all new RU/EN translation keys present; 120 E2E tests authored. GitHub returned zero workflow runs/statuses for exact code/test HEAD 765138e, so Playwright/Quality NOT RUN. Native iPhone Safari, VoiceOver, keyboard focus and full component WCAG remain unverified."
   control_sizing:
