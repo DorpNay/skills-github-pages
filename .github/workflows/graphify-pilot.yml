@@ -17,7 +17,9 @@ on:
       - "tests/**/*.mjs"
       - "skills/**/*.txt"
   push:
-    branches: [main]
+    branches:
+      - main
+      - feat/landing-v1-accessibility-responsive-20261031
     paths:
       - ".github/workflows/graphify-pilot.yml"
       - ".graphifyignore"

@@ -532,3 +532,17 @@ html[data-text-contrast="high"] #chatBox button:disabled {
   #inputArea #voiceUnavailableButton { grid-column:3;grid-row:2; }
   #inputArea #sendBtn,#inputArea #stopBtn { grid-column:4;grid-row:2; }
 }
+
+/* Keep the chat title legible on narrow screens without removing its accessible clock label. */
+@media (max-width:420px) {
+  .app-header .clock-face { display:none!important; }
+}
+@media (max-width:360px) {
+  .app-header .header-icon {
+    width:36px!important;
+    height:36px!important;
+    min-width:36px!important;
+    min-height:36px!important;
+    padding:6px!important;
+  }
+}

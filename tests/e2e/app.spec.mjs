@@ -3987,6 +3987,13 @@ test('responsive visual review captures viewport and navigation evidence', async
       }));
       expect(composer.display, `mobile composer layout at ${width}px`).toBe('grid');
       expect(composer.inputWidth, `mobile message field width at ${width}px`).toBeGreaterThanOrEqual(180);
+
+      const header = await page.locator('.app-header').evaluate(element => ({
+        titleWidth: Math.round(element.querySelector('#activeChatTitle').getBoundingClientRect().width),
+        clockDisplay: getComputedStyle(element.querySelector('.clock-face')).display
+      }));
+      expect(header.titleWidth, `chat title width at ${width}px`).toBeGreaterThanOrEqual(70);
+      expect(header.clockDisplay, `decorative clock visibility at ${width}px`).toBe('none');
     }
 
     await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
