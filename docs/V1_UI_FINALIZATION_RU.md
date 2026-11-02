@@ -264,6 +264,7 @@ PR #122 добавил только эксплуатационную надёж�
 ## 7. Change log
 
 | Date | Change | Evidence |
+| 2026-11-02 | Added optional 8.28 capability-catalogue/agent-and-skill management proposal after auditing the existing Functions menu, Agent/Skills panels, tickers and Playwright assertions; existing implementation is not duplicated. | PR #131 source (`index.md`, `assets/js/app.js`, `assets/css/app.css`, `tests/e2e/app.spec.mjs`); assertions located but not executed on the current HEAD. |
 |---|---|---|
 | 2026-10-30 | Created V1-specific living checklist, distinct from whole-stack roadmap. | Current main/PR/issue inspection; first stack runbook and master principles. |
 | 2026-10-30 | PR #121 test blockers recorded; duplicate settings close action, integrity parser, Research Studio E2E probe count fixed in branch. | Actions run #40989456177 logs; changes must be re-verified on new exact head. |
@@ -278,7 +279,7 @@ PR #122 добавил только эксплуатационную надёж�
 
 ## 8.0. Единый список незавершённых UI-задач (сверка 2026-11-02)
 
-Этот список заменяет разрозненные «остатки» в разделах 1–7 и старом polish backlog. Разделы 1–7 сохраняются как история требований и базовый V1 release checklist, но их старые отметки [~]/[ ] **не являются отдельной очередью работ PR #131**. Если задача ниже совпадает с 8.1–8.17, она учитывается здесь один раз; подробная привязка к коду и тестам — в implementation ledger. Дополнительные предложения владельца 8.18–8.27 приведены после 8.17 отдельно: это кандидаты на развитие V2.0, а не обязательные требования и не release blockers.
+Этот список заменяет разрозненные «остатки» в разделах 1–7 и старом polish backlog. Разделы 1–7 сохраняются как история требований и базовый V1 release checklist, но их старые отметки [~]/[ ] **не являются отдельной очередью работ PR #131**. Если задача ниже совпадает с 8.1–8.17, она учитывается здесь один раз; подробная привязка к коду и тестам — в implementation ledger. Дополнительные предложения владельца 8.18–8.28 приведены после 8.17 отдельно: это кандидаты на развитие V2.0, а не обязательные требования и не release blockers.
 
 ### P0 — обязательная автоматическая проверка PR #131
 
@@ -502,7 +503,7 @@ PR #122 добавил только эксплуатационную надёж�
 - В системном режиме Windows Forced Colors сохранять заметный клавиатурный фокус и различимые границы интерактивных элементов; не полагаться только на собственную настройку high contrast.
 
 
-### 8.18–8.27. Дополнительные предложения владельца для aLandi V2.0
+### 8.18–8.28. Дополнительные предложения владельца для aLandi V2.0
 
 **Статус: PRODUCT PROPOSALS / CANDIDATES, не обязательные требования и не release blockers.** Зафиксированы 2026-11-02 по предложению владельца. Их нужно реализовывать выборочно, после сверки с существующими механизмами. Порядок ниже — рекомендуемая последовательность, а не обещание включить всё в один релиз. Не создавать второй backlog: это продолжение единого реестра 8.0.
 
@@ -611,6 +612,23 @@ PR #122 добавил только эксплуатационную надёж�
 - Для проектного сценария держать чаты, инструкции, память и источники в одном контексте, сохраняя текущие scope boundaries.
 - Использовать короткие contextual entry points и progressive disclosure; не создавать отдельный dashboard, wizard или постоянную панель для каждой функции.
 - **Приёмка:** пользователь понимает следующий шаг без изучения структуры настроек; основной экран остаётся компактным.
+
+#### 8.28. Каталог возможностей и управление агентами/навыками — P1/P2
+
+**Аудит текущего кода PR #131 (2026-11-02):** основа меню уже реализована. В `index.md` есть четыре группы Functions: работа с задачей, исследование и источники, создание и преобразование, подключения. Agent panel содержит режим выполнения, черновик команды, сценарии, роли, 64 логические профессии, оркестрацию, модели/ресурсы и capability disclosures. Skills panel содержит chat-scoped task profiles и пользовательские инструкции. Roadmap tickers уже покрывают локальные файлы, конвертеры, Knowledge-to-Skill/Agent и аудио/изображения/видео. Не создавать повторные пункты меню и не дублировать controls.
+
+- Сохранить существующие четыре группы как компактный верхний уровень; будущие разделы Agents, Skills, Research, Files & Sources, Media & Converters, Models & Runtimes, Tasks & History раскрывать вложенно и только по мере появления реальных сценариев.
+- Разделять сущности: Profession/Role — шаблон специализации; Agent Profile — конфигурация; Team Blueprint — план состава; Skill — версионируемый пакет процедур; AgentRun — реальный запуск с task/run ID и durable state. Размер blueprint не является числом запущенных процессов.
+- В Agent panel постепенно добавить выбор конкретного role/profile, закреплённые Skill versions, model policy, data scope, tool permissions, budgets, approval policy и outputs. Отображать только те controls, у которых есть backing data/API и проверка.
+- Для каждой возможности использовать единый статус: Available (реальный handler + tests), Blueprint only (можно сохранить проект), In development (ticker `1ИÆИT10И` и понятное ограничение), Unavailable in this environment (не хватает runtime/model/permission/resource).
+- В Skills panel разделить текущий task profile (инструкции для чата) и будущую библиотеку Skill packages (import/create, provenance, license, security review, evals, versions, rollback). Не выдавать task profile за полноценный Skill loader.
+- Добавлять Tasks & History только после появления durable AgentRun API; показывать run ID, queued/running/waiting approval/verifying/succeeded/failed/cancelled, реальные артефакты и recovery actions. Не показывать chain-of-thought.
+- Существующие tickers должны оставаться disclosure, не progress bars; сохранять pause, reduced-motion, ARIA alternative и ясную подпись «не активный runtime».
+- Поддерживать отдельную матрицу RU/EN, keyboard, screen reader, touch, 320/360/390/768/1024/1440px и реальные пустые/ошибочные состояния.
+
+**Текущая evidence boundary:** Playwright assertions для четырёх групп меню, RU/EN labels, agent config groups, tickers, reduced-motion и pause найдены в `tests/e2e/app.spec.mjs`. В этой сессии они не запускались; current-head Quality не подтверждён. См. `docs/AGENT_FUNCTIONS_MENU_INFORMATION_ARCHITECTURE_RU.md` для подробной source map и gaps.
+
+**Приёмка:** не более одного entry point на действие; blueprint не запускает worker; статус выводится из реального runtime; отсутствуют фиктивные кнопки, дублирующие настройки и ложный progress.
 
 #### Вне UI backlog: R-01. Идентичность репозитория и остатки GitHub Skills exercise
 
