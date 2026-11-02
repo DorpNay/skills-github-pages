@@ -913,8 +913,16 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 ## Functions menu / Agent and Skills source audit — 2026-11-02
 
 - Audited `index.md`, `assets/js/app.js`, `assets/css/app.css` and `tests/e2e/app.spec.mjs` before proposing more menu work.
-- Existing Functions menu has four groups and working entry points for structured workflow, task profile and Research Studio, plus an integrations status view.
-- Existing roadmap disclosures already cover local files/folders, converters/extraction, Knowledge-to-Skill/Agent and audio/image/video. Existing agent panel already includes execution mode, team blueprint, use cases, 64 logical roles, orchestration modes, model/resource notes and capability boundaries. Existing Skills panel is a chat-scoped task profile, not a reusable Skill package loader.
-- Existing Playwright tests assert the four menu groups and bilingual labels, agent configuration grouping, future tickers, non-runtime disclosure, reduced-motion and pause. These tests were located in source but not executed in this session.
+- Existing Functions menu has four groups and working entry points for structured workflow, task profile and integrations status. Research Studio remains available from Thorough mode; the menu now shows a roadmap-only Deep Research 2.0 item under Research & Sources.
+- Existing roadmap disclosures cover Deep Research 2.0, local files/folders, converters/extraction, Knowledge-to-Skill/Agent and audio/image/video. Existing agent panel already includes execution mode, team blueprint, use cases, 64 logical roles, orchestration modes, model/resource notes and capability boundaries. Existing Skills panel is a chat-scoped task profile, not a reusable Skill package loader.
+- Existing Playwright tests assert the four menu groups and bilingual labels, agent configuration grouping, future tickers, non-runtime disclosure, reduced-motion and pause. The latest test additionally asserts two distinct roadmap containers (Research: 1 card; Create/Transform: 4 cards) and no Research Studio action in the compact menu. These tests were not executed in this session.
 - Added optional canonical checklist item 8.28 to clarify remaining gaps: registry/lifecycle for Agent Profiles and Skills, explicit capability status, task/run history only after durable AgentRun API, and no duplicate menu controls.
-- No UI source, runtime, dependency or feature flag changed in this documentation-only audit. Current PR #131 head requires fresh exact-head CI; native iPhone/VoiceOver and screenshot review remain separate gates.
+- A minimal UI markup correction now keeps the Research and Create/Transform group labels outside their own card grids; a Playwright regression was added. No runtime, dependency or feature flag changed. Current PR #131 head requires fresh exact-head CI; native iPhone/VoiceOver and screenshot review remain separate gates.
+
+
+## Follow-up menu markup correction — 2026-11-02
+
+- Split the Research roadmap and Create/Transform roadmap into separate sibling containers so the group label is not rendered inside the preceding card grid.
+- The pause checkbox remains a preceding sibling of both containers, so the existing CSS sibling selector pauses both groups.
+- Added Playwright assertions for two containers, one Deep Research 2.0 card in the first, four conversion/media cards in the second, and the absence of a fake Research Studio menu action.
+- Not executed locally in this session; exact-head GitHub Quality result is pending.
