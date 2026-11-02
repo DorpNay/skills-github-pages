@@ -4273,3 +4273,32 @@ test('chat-row project move can be undone without changing chat identity', async
   expect(restored).toBe(sourceId);
   expect(await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'))).toBe(chatId);
 });
+
+
+test('chat deletion offers immediate undo through the existing recovery slot', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#chatListNewButton').click();
+  const deletedChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
+
+  await ensureSidebarOpen(page);
+  const row = page.locator('#chatList .chat-row').filter({
+    has: page.locator('[data-action="switch-chat"][data-chat-id="' + deletedChatId + '"]')
+  });
+  await row.locator('.chat-row-menu > summary').click();
+  page.on('dialog', dialog => dialog.accept());
+  await row.locator('[data-action="delete-chat"]').click();
+  await expect.poll(() => page.evaluate(id => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    return chats.some(chat => chat.id === id);
+  }, deletedChatId)).toBe(false);
+
+  const undo = page.locator('#toast .toast-action');
+  await expect(undo).toHaveText('Отменить');
+  await undo.click();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_current_chat_v87'))).toBe(deletedChatId);
+  await expect.poll(() => page.evaluate(id => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    return chats.some(chat => chat.id === id);
+  }, deletedChatId)).toBe(true);
+});
