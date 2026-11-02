@@ -60,9 +60,9 @@ permalink: /
     <section id="projectPanel" class="sidebar-card mx-3 my-1.5 rounded-xl border border-gray-800 p-2" aria-label="Проекты">
       <div id="projectNavigation" class="space-y-1.5">
         <button id="projectNavToggle" type="button" data-action="toggle-project-navigation" aria-expanded="false" aria-controls="projectNavigationList" class="w-full flex items-center justify-between gap-2 rounded-lg px-2 py-2 text-sm font-semibold project-nav-heading">
-          <span>▣ <span data-i18n="projectsTitle">Проекты</span></span><span id="projectNavChevron" aria-hidden="true">⌄</span>
+          <span class="flex items-center gap-2"><svg aria-hidden="true" class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5h7l2 2H21v8.5H3z"/><path d="M3 7.5V6a1.5 1.5 0 0 1 1.5-1.5H9l2 3"/></svg><span data-i18n="projectsTitle">Проекты</span></span><span id="projectNavChevron" aria-hidden="true">⌄</span>
         </button>
-        <button type="button" data-action="open-project-create" data-i18n="createProject" class="sidebar-create-project w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-2 text-sm font-semibold">＋ Создать проект</button>
+        <button type="button" data-action="open-project-create" class="sidebar-create-project w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-2 text-sm font-semibold"><span aria-hidden="true" class="mr-1">+</span><span data-i18n="createProject">Создать проект</span></button>
         <div id="projectNavigationList" class="hidden pl-1 space-y-1" aria-label="Список проектов"></div>
       </div>
       <details id="projectlessGroup" class="mt-1 rounded-lg border border-gray-800 projectless-group">
@@ -77,7 +77,7 @@ permalink: /
         <span>💬 <span id="chatSectionTitle" data-i18n="chatsTitle">Чаты</span></span>
         <span class="flex items-center gap-1.5"><span id="projectStatusLine" class="sidebar-inline-status" role="status" aria-live="polite">Личный</span><span id="chatSectionCount" class="text-[10px] text-gray-500">0</span></span>
       </summary>
-      <button id="chatListNewButton" type="button" data-action="new-chat" data-i18n="newPersonalChat" class="sidebar-create-chat mt-1 w-full rounded-lg border border-blue-500/30 bg-blue-600/15 hover:bg-blue-600/25 py-2.5 text-sm font-semibold text-blue-100">＋ Новый личный чат</button>
+      <button id="chatListNewButton" type="button" data-action="new-chat" class="sidebar-create-chat mt-1 w-full rounded-lg border border-blue-500/30 bg-blue-600/15 hover:bg-blue-600/25 py-2.5 text-sm font-semibold text-blue-100"><span aria-hidden="true" class="mr-1">+</span><span data-i18n="newPersonalChat">Новый личный чат</span></button>
       <button id="chatListBack" type="button" data-action="chat-list-back" class="hidden mt-1 w-full rounded-lg border border-gray-700 px-3 py-2 text-left text-xs text-gray-300" aria-label="Вернуться ко всем чатам">← Все чаты</button>
       <button id="restoreLastClosedChat" type="button" data-action="restore-last-closed-chat" class="hidden mt-1 w-full rounded-lg border border-gray-700 px-3 py-2 text-left text-xs text-gray-300">↶ Восстановить последний закрытый чат</button>
       <div class="my-1 flex items-center justify-between gap-2 px-1">

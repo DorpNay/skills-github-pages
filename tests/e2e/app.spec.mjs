@@ -211,6 +211,10 @@ test('sidebar uses compact memory, collapsed projects, and expanded chats cards'
   await expect(page.locator('#projectPanel')).toBeVisible();
   await expect(page.locator('#projectNavigationList')).toHaveClass(/hidden/);
   await expect(page.locator('#projectPanel [data-action="open-project-create"]')).toBeVisible();
+  await expect(page.locator('#projectNavToggle svg[aria-hidden="true"]')).toHaveCount(1);
+  await expect(page.locator('#projectNavToggle')).toHaveAccessibleName('Проекты');
+  await expect(page.locator('#projectPanel [data-action="open-project-create"]')).toHaveAccessibleName('Создать проект');
+  await expect(page.locator('#chatListNewButton')).toHaveAccessibleName('Новый личный чат');
   await expect(page.locator('#chatSection')).toHaveAttribute('open', '');
   await expect(page.locator('#chatSection [data-action="new-chat"]')).toBeVisible();
   await expect(page.locator('#chatList')).toBeVisible();
