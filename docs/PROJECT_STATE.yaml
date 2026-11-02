@@ -824,9 +824,9 @@ latest_verification_2026_11_02:
 landing_v2_draft_recovery_2026_11_02:
   status: "partial implementation; optional proposal 8.25"
   branch: "feat/landing-v1-accessibility-responsive-20261031"
-  source_commit: "a2db7904d1a18609f467829c4339ccd52dfa8883"
+  source_commit: "7d447c34e37c20f75fc3c1da5f163ece93a2b04a"
   e2e_commit: "2257010cef98c3afcf093eb73728a8b90d2c869f"
-  storage: "ai_chat_drafts_v1; local text-only drafts keyed by existing chat ID; max 100 chats and 20000 characters per draft"
+  storage: "ai_chat_drafts_v1; local text-only drafts keyed by existing chat ID; max 100 chat entries; no silent text truncation; browser quota failures are surfaced"
   behavior: "switching chats saves/restores isolated drafts; debounce plus pagehide persistence; explicit submission clears draft; reload never auto-sends"
   excluded: "attachments/File objects/data URLs; durable offline attachment recovery; automatic request retry"
   verification: "Playwright regression authored but not yet executed on current HEAD; exact-head Quality workflow pending"
