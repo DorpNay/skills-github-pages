@@ -4213,3 +4213,27 @@ test('composer draft is synchronously flushed when the tab becomes hidden', asyn
   });
   expect(persistedImmediately).toBe('Persist before tab suspension');
 });
+
+
+test('chat project move offers a bounded undo action', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const projectId = await createProjectFromUi(page, 'Undo target project');
+  await page.locator('#currentProjectSelect').selectOption(projectId);
+  await expect(page.locator('#currentProjectSelect')).toHaveValue(projectId);
+
+  const toast = page.locator('#toast');
+  await expect(toast).toContainText('Чат добавлен в проект: Undo target project');
+  const undo = toast.locator('.toast-action');
+  await expect(undo).toHaveText('Отменить');
+  await expect(undo).toHaveCSS('min-height', '44px');
+  await undo.click();
+
+  await expect(page.locator('#currentProjectSelect')).toHaveValue('');
+  await expect.poll(() => page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const currentId = localStorage.getItem('ai_current_chat_v87');
+    return chats.find(chat => chat.id === currentId)?.projectId || '';
+  })).toBe('');
+  await expect(page.locator('#toast')).toContainText('Перемещение чата отменено');
+});
