@@ -1,14 +1,14 @@
 ## Current working checkpoint — 2026-11-02, per-chat draft recovery implemented
 
 - **Main:** stable V1 baseline. PR #131 remains the sole V2 implementation branch and remains open/unmerged. No merge, rebase, main synchronization or production deployment.
-- **PR #131:** `feat/landing-v1-accessibility-responsive-20261031`; current HEAD is obtained from live PR metadata. Latest observed compare before this documentation batch: 673 ahead / 4 behind `main`, mergeable=false. Preserve the four base-side commits; no rebase/sync without owner approval.
+- **PR #131:** `feat/landing-v1-accessibility-responsive-20261031`; current HEAD is obtained from live PR metadata. Latest observed compare before this checkpoint refresh: 680 ahead / 4 behind `main`, mergeable=false. Preserve the four base-side commits; no rebase/sync without owner approval.
 - **Mandatory UI 8.1–8.17:** remains the release workstream; inherited pre-section-8 items are mapped once into these requirements in the owner checklist. Do not treat older sections 1–7 as a parallel backlog. Native iPhone Safari, VoiceOver and full WCAG component audit remain open manual gates.
 - **New proposals 8.18–8.27:** separate optional V2.0 workstream; 8.19 has a bounded accessible-notification slice, 8.25 has per-chat text-draft recovery, and 8.1/8.26 sidebar gesture cancellation is now explicit in both source and Playwright coverage.
 - **Landing V2.0:** optional proposal 8.25 has a first bounded slice: local text-only drafts keyed by existing chat ID, per-chat isolation, reload restoration, explicit-submit clearing and no auto-send. Limit: 100 chat entries; text is not silently truncated, and browser quota failures are surfaced. Attachments remain in memory and are not persisted.
 - **Verification:** Playwright regressions authored for two-chat isolation/reload/no auto-send and sidebar touchcancel/pointercancel. Exact-head workflow-run lookup and combined commit status returned no records for the observed PR HEAD; no test pass is claimed. Quality is configured for automatic push/pull_request triggers; inspect the run when it becomes visible.
 - **Existing gates:** Quality #1250 passed on code HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`; Quality #1252 and Provenance #976 passed on documentation HEAD `63f429ccf16fe7648519ebb3ecc02b9f8949ad53`. Those results predate this draft change and do not verify it.
 - **Architecture:** static HTML/CSS/vanilla JS + Jekyll/GitHub Pages and existing FastAPI gateway only. No new runtime/dependency/route/provider. Preserve local-first data, project/chat isolation, secret redaction and explicit consent.
-- **Next:** verify final exact-head Quality/Chromium; fix only confirmed failures; then continue remaining mandatory UI scope 8.1–8.17 and manual screenshot/iPhone Safari/VoiceOver/WCAG gates. Continue useful bounded work while CI runs; no merge/deploy.
+- **Next:** exact-head Quality/Chromium must verify both new regression slices; current workflow/status lookup returned no records, so no pass is claimed. Continue remaining mandatory UI 8.1–8.17 with code/test evidence, then the new proposal batch 8.18–8.27; keep screenshot/iPhone Safari/VoiceOver/WCAG gates visible. No merge/deploy.
 
 
 ## First-read order
