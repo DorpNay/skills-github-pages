@@ -3335,7 +3335,7 @@ test('icon-first controls keep an accessible name across header, sidebar and mes
   const unnamedIconButtons = await page.locator('button:visible').evaluateAll(nodes => nodes
     .filter(node => {
       const text = (node.textContent || '').trim();
-      const symbolOnly = !text || /^[\\p{Extended_Pictographic}\\p{S}\\p{P}\\s]+$/u.test(text);
+      const symbolOnly = !text || /^[\p{Extended_Pictographic}\p{S}\p{P}\s]+$/u.test(text);
       return symbolOnly && !node.getAttribute('aria-label') && !node.getAttribute('aria-labelledby') && !node.title;
     })
     .map(node => ({ action: node.dataset.action || '', text: (node.textContent || '').trim() }));
