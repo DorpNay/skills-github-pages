@@ -2,18 +2,17 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md`, затем этот ориентир, `docs/MASTER_TASK_REGISTRY_RU.md`, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче.
 
-## Текущая контрольная точка — 2026-10-31
+## Текущая контрольная точка — 2026-11-02
 
-- Проверенный main: `e78a73b25725bfa63370d9946887cbbacbf51b82` — PR #123 merged; перепроверен через GitHub.
-- PR #127 — единый реестр и continuity; ветка `docs/continuity-master-registry-20261031`, target main. Текущие изменения реестра/ориентиров входят в этот PR; exact-head CI требуется после обновления.
-- Очередь без самого PR #127: #124 dependency refresh; #125 Agent Studio 2.0 (Draft/FUTURE — DO NOT MERGE); #126 code-currency audit; #128 Agent Workforce 2.0 (Draft/RESEARCH — HOLD); #129 Voice 2.0 (Draft/RESEARCH — HOLD); #130 Deep Research 2.0 (Draft/RESEARCH — HOLD); #131 Landing V1 accessibility/responsive polish (ready for review; Quality 7/7 + Graphify passed). PR #131 exact HEAD `b75303070cc06bee993555b979bc0a942466fe51`: Quality `41120598763` 7/7 passed; Graphify `41120598741` passed. Landing post-merge smoke/native iPhone/VoiceOver remain pending. Exact snapshot marker: open PRs (7): #124, #125, #126, #128, #129, #130, #131; open issues (1): #111. #125/#128/#129/#130 направлены в `future-workstreams/parking-base-20261031`, не в main. Issue #111 — owner/live-host gate.
-- **Единый канонический реестр:** `docs/MASTER_TASK_REGISTRY_RU.md`. В нём **544 открытых/частичных строк** из 20 уникальных документов и двух branch-only snapshots: 470 unchecked + 74 partial, до дедупликации. Включены operational/privacy/voice/architecture чек-листы и открытые research/future PR; исходные документы не изменены.
-- **Главный порядок исполнения:** 1) сохранить и проверить реестр/ориентиры; 2) продолжить Landing V1 только в ранее выбранном стеке HTML/CSS/JS + Jekyll и существующей интеграции FastAPI/Ollama. Не расширять стек, не включать future/research PR в main.
-- **Landing V1:** функциональный scope первой версии заморожен; допустимы bounded improvements: responsive/visual quality, accessibility, performance, SEO/link correctness, reliability, security и E2E. Не добавлять новые product capabilities.
-- **Agent Workforce:** PR #128 — отдельный research/HOLD; требование владельца — минимум пять независимых параллельных logical workers рядом с основной моделью, без жёсткого потолка 64 профессии. Не превращать logical worker count в inference concurrency на малом VPS.
-- **Voice:** PR #129 — отдельный research/HOLD.
-- **Deep Research:** PR #130 — отдельный research/HOLD.
-- Live VPS/Ollama, post-merge Pages deployment, native iPhone, real voice, production RAG, OAuth и sandbox acceptance остаются непроверенными owner/environment gates.
+- Live main SHA: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; commit subject: “docs: mark owner UI corrections as V2.0 priorities”. Compare against previous functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`: exactly four commits, all modifying only `docs/V1_UI_FINALIZATION_RU.md`. Last functional checkpoint remains PR #123.
+- PR #127 — this continuity/master-registry PR, branch `docs/continuity-master-registry-20261031`, target main. New task delta: `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md`; parent lossless inventory remains `docs/MASTER_TASK_REGISTRY_RU.md`.
+- Exact open PR queue excluding PR #127: #124, #125, #126, #128, #129, #130, #131, #132. Open issue #111 remains the only owner/live-host gate.
+- PR #131 current HEAD `0e327dfc1681a496e12666d31502957f861dd7f2`, target main; 4 commits behind and GitHub reports mergeable=false because the four main-side commits modify the shared `docs/V1_UI_FINALIZATION_RU.md`. No rebase, merge or deployment performed.
+- PR #131 source audit: function menu already has four groups; agent panel already has execution mode, team blueprint, use cases, 64 logical roles, orchestration modes, model/resource and capability disclosures; Skills panel has chat-scoped task profiles and future library tickers. `1ИÆИT10И` roadmap items already cover local files, converters, Knowledge-to-Skill/Agent and media. Existing E2E assertions are authored; no current-head execution claim.
+- PR #131 supporting UX audit: `docs/AGENT_FUNCTIONS_MENU_INFORMATION_ARCHITECTURE_RU.md`. Continue from existing implementation; do not duplicate menu controls or represent blueprint as runtime.
+- Future research PRs remain isolated on `future-workstreams/parking-base-20261031`: #125 Agent Studio, #128 Agent Workforce, #129 Voice, #130 Deep Research. All remain Draft/HOLD.
+- New task IDs are grouped by workstream in the addendum: MENU; SF/AB/AW/VERT; AUDIO-GEN; LSV/CONV/VIDEO/ARCHIVE. These are plans, not implementation evidence.
+- Verification: PR #127 Freshness run `41394232537` failed before this refresh because main had advanced from e78a73b to 0a1f764f and PR #132 was newly open. Provenance passed on the earlier head; Quality was still running. Exact-head checks must be re-read after this refresh. No model download, local device file access, new dependency, runtime change or deployment occurred.
 
 ## Историческая контрольная точка — 2026-10-28
 
