@@ -1599,7 +1599,10 @@
       anchor.href=url;anchor.download='alandi-project-'+project.name.toLowerCase().replace(/[^a-z0-9а-яё_-]+/gi,'-').slice(0,48)+'.json';document.body.appendChild(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
     }
     function sanitizeImportedProjectChat(chat,projectId){
-      return {id:String(chat.id||projectIdNew()).slice(0,128),title:typeof chat.title==='string'?chat.title.slice(0,160):'Импортированный чат',projectId,
+      const importedAt=new Date().toISOString();
+      const createdAt=typeof chat.createdAt==='string'&&Number.isFinite(Date.parse(chat.createdAt))?chat.createdAt:importedAt;
+      const updatedAt=typeof chat.updatedAt==='string'&&Number.isFinite(Date.parse(chat.updatedAt))?chat.updatedAt:createdAt;
+      return {id:String(chat.id||projectIdNew()).slice(0,128),title:typeof chat.title==='string'?chat.title.slice(0,160):'Импортированный чат',projectId,createdAt,updatedAt,
         messages:Array.isArray(chat.messages)?chat.messages.filter(m=>m&&['user','assistant','tool'].includes(m.role)).slice(0,10000).map(m=>({role:m.role,content:typeof m.content==='string'?m.content.slice(0,30000):'',...(typeof m.tool_call_id==='string'?{tool_call_id:m.tool_call_id.slice(0,200)}:{}),...(Array.isArray(m.tool_calls)?{tool_calls:m.tool_calls}:{}),...(m.error?{error:true}:{})})):[]};
     }
     async function importProjectBundle(event){
