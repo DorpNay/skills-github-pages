@@ -1,6 +1,15 @@
 # aLandi — project orientation
 
-## Current working checkpoint — 2026-11-02, Landing V2 capability menu
+## Current working checkpoint — 2026-11-02, Skills panel
+
+- Source of truth: `DorpNay/skills-github-pages`; main remains stable V1 at verified commit `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`.
+- PR #131 remains open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`; current source/test checkpoint `d3a44807d9c9eb0dade5a3e0bf80065fa5ebfd45`. PR base SHA remains `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub reports mergeable=false. No merge, rebase, synchronization or deployment.
+- Skills panel now separates the working chat-scoped task profile from the future shared Skill package library. Added RU/EN scope/lifecycle copy, native collapsed disclosure, 44px target, permission boundary and roadmap ticker pause coverage.
+- Playwright regression authored for panel scope, lifecycle, keyboard, touch target, pause and EN labels. Exact-head workflow lookup returned no runs; tests are not executed and no pass is claimed.
+- No shared Skill registry, import endpoint, package loader, script runtime, permission API, dependency or backend route was added. Next: continue the next bounded Landing 2.0 UI slice after reviewing remaining owner checklist requirements; preserve the V1/main boundary.
+
+
+## Historical checkpoint — 2026-11-02, Landing V2 capability menu (superseded)
 
 - Source of truth: GitHub repository DorpNay/skills-github-pages. Main remains the stable V1 publication.
 - Live main: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1` (documentation-only commit `docs: mark owner UI corrections as V2.0 priorities`, 2026-10-31). PR #131 is open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`, latest source/test commit `d70b8a31cc8a81cafeea64f8fbb332e53b0c5af2`; orientation/state/log refresh committed through checkpoint `bb7974ce7be5cc05f2ef68ab9073225a44758ea2`, base SHA `e78a73b25725bfa63370d9946887cbbacbf51b82`. GitHub reports mergeable=false; main is four commits ahead of the PR base and the shared V1 checklist has diverged. No merge, rebase, force-push or deployment.
