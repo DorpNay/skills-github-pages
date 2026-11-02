@@ -680,8 +680,12 @@ test('function menu separates task workflow from integrations in both languages'
   await expect(menu.locator('.toolbar-menu-group-label').nth(3)).toContainText('Подключения');
   await expect(menu.locator('[data-action="open-function-panel"]')).toHaveCount(3);
   await expect(menu.locator('[data-action="open-research-studio"]')).toHaveCount(0);
+  await expect(menu.locator('.function-roadmap-items')).toHaveCount(2);
+  await expect(menu.locator('.function-roadmap-items').nth(0).locator('.function-roadmap-item')).toHaveCount(1);
+  await expect(menu.locator('.function-roadmap-items').nth(0).locator('.function-roadmap-item').first()).toContainText('Глубокое исследование 2.0');
+  await expect(menu.locator('.toolbar-menu-group-label').nth(2).locator('xpath=following-sibling::*[1]')).toHaveClass(/function-roadmap-items/);
+  await expect(menu.locator('.function-roadmap-items').nth(1).locator('.function-roadmap-item')).toHaveCount(4);
   await expect(menu.locator('.function-roadmap-item')).toHaveCount(5);
-  await expect(menu.locator('.function-roadmap-item').first()).toContainText('Глубокое исследование 2.0');
   await expect(menu.locator('.function-roadmap-item .roadmap-ticker-track').first()).toContainText('1ИÆИT10И');
   await expect(menu.locator('.function-roadmap-item button')).toHaveCount(0);
   await selectLanguage(page, 'en');
