@@ -854,3 +854,13 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Source commits: `63d5ae45b5e1d2dda5fb1b4fb1c7b00dd3b107c9`, `fd8685d5eb26645ee8163bd91354aa193b66e7c9`; markup `59d15702b750fdffc620be96a5e2f3ebd229b780`; CSS `74292526951d41980014141b274c44b7b1940def`; E2E commits `7bb2313fb55834d6748f71cb1baf3a581e8ff195`, `6489f5a9b6d2d3e8c68b2bad993f7b85a4521cbd`.
 - V8 syntax parsing passed for the changed application and E2E source; CSS brace balance passed. These are source-level checks only. Quality #1405 (`41390877580`) is pending and Graphify #437 (`41390877512`) is queued on exact HEAD `6489f5a9b6d2d3e8c68b2bad993f7b85a4521cbd`; browser execution is not yet confirmed.
 - No new dependency, backend route, provider integration, automatic retry, merge or deployment. Attachment/File-object persistence remains a separate IndexedDB/privacy/quota design gate.
+
+
+## Bounded Undo for chat project moves — 2026-11-02 (8.20)
+
+- Extended the existing toast queue with an optional, accessible action button; no parallel notification system was introduced. Action toasts have a bounded 6.5s lifetime (with the existing hover/focus/hidden-tab pause behavior) and a 44px minimum action target.
+- Added one reversible local command: moving a chat between a project and the personal scope. Undo restores the previous `projectId` only if the chat still exists, its project assignment has not changed again, and the original project still exists. Conflicts are reported instead of overwriting newer user changes.
+- Wired the same undo helper to both the current-chat project selector and the existing chat-row move dialog.
+- Added Playwright coverage for moving the current chat to a project and undoing it through the toast action, including the touch target.
+- Source commit: `065451fe3501b0b2a90b6cd93e4161f1dd541849`; CSS: `31b816dd045ee1e6ad2d73caf5b160bd06ad58de`; E2E: `ba709ac95c8896581133dfcce02234281f75fd90`. V8 syntax parsing and CSS brace balance passed; Chromium execution remains pending.
+- Scope limitation: this is a one-action, in-memory undo window, not a persistent command history. Chat deletion still uses its existing last-closed-chat recovery; rename, project deletion/cascade and settings undo remain open. No new dependency or storage schema.
