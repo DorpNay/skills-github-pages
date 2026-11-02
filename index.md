@@ -438,8 +438,13 @@ permalink: /
         <button type="button" data-action="close-function-panel" class="shrink-0 rounded-lg px-2 py-1 text-gray-400 hover:text-white" aria-label="Закрыть">✕</button>
       </header>
       <section id="agentFunctionSettings" class="hidden space-y-3">
-        <label class="flex items-start gap-2 rounded-xl border border-gray-800 p-3 text-sm"><input type="checkbox" id="agentModeControl" class="mt-1 rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span><strong class="block" data-i18n="agentModeOption">Использовать структурированный разбор</strong><span class="mt-1 block text-[11px] leading-relaxed text-gray-500" data-i18n="agentModeHelp">Четыре последовательных этапа на выбранной модели.</span></span></label>
-        <div class="grid grid-cols-2 gap-3">
+        <section class="function-config-group rounded-xl border border-gray-800 p-3 space-y-3" aria-labelledby="agentModeGroupTitle">
+          <h3 id="agentModeGroupTitle" class="function-config-group-title" data-i18n="agentModeGroupTitle">Режим выполнения</h3>
+          <label class="flex items-start gap-2 rounded-xl border border-gray-800 p-3 text-sm"><input type="checkbox" id="agentModeControl" class="mt-1 rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span><strong class="block" data-i18n="agentModeOption">Использовать структурированный разбор</strong><span class="mt-1 block text-[11px] leading-relaxed text-gray-500" data-i18n="agentModeHelp">Четыре последовательных этапа на выбранной модели.</span></span></label>
+        </section>
+        <section class="function-config-group rounded-xl border border-gray-800 p-3 space-y-3" aria-labelledby="agentBlueprintGroupTitle">
+          <h3 id="agentBlueprintGroupTitle" class="function-config-group-title" data-i18n="agentBlueprintGroupTitle">Параметры команды</h3>
+          <div class="grid grid-cols-2 gap-3">
           <label class="block text-xs text-gray-400">Размер команды · blueprint
             <input id="agentTeamSize" type="range" min="1" max="50" step="1" value="4" class="mt-2 w-full"><span id="agentTeamSizeValue" class="text-[11px] font-semibold text-cyan-300">4 агента</span>
           </label>
@@ -450,6 +455,7 @@ permalink: /
             <select id="agentRolePreset" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="balanced">Сбалансированные</option><option value="research">Исследовательская команда</option><option value="software">Разработка ПО</option><option value="product">Продуктовая команда</option><option value="custom">Свой вариант</option></select>
           </label>
         </div>
+        </section>
         <div id="agentCustomFields" class="hidden space-y-2 rounded-xl border border-gray-800 p-3">
           <textarea id="agentTeamCustomScenario" maxlength="1000" rows="2" class="advanced-control w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Опиши сценарий команды"></textarea>
           <textarea id="agentCustomRoles" maxlength="1500" rows="3" class="advanced-control w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Роли и обязанности, по одной на строку"></textarea>
