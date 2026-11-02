@@ -14,7 +14,9 @@ on:
       - "gateway/**/*.py"
       - "gateway/**/*.sql"
       - "scripts/**/*.mjs"
+      - "scripts/**/*.py"
       - "tests/**/*.mjs"
+      - "tests/test_graphify_ui_surface.py"
       - "skills/**/*.txt"
   push:
     branches:
@@ -31,7 +33,9 @@ on:
       - "gateway/**/*.py"
       - "gateway/**/*.sql"
       - "scripts/**/*.mjs"
+      - "scripts/**/*.py"
       - "tests/**/*.mjs"
+      - "tests/test_graphify_ui_surface.py"
       - "skills/**/*.txt"
   # A periodic drift check catches dependency changes and coverage drift even
   # when no qualifying source change has triggered the workflow recently.
@@ -67,8 +71,10 @@ jobs:
       - name: Install pinned Graphify CLI
         run: |
           python -m pip install --upgrade pip
-          python -m pip install "graphifyy[sql]==0.9.96"
+          python -m pip install "graphifyy[sql]==0.9.96" "tinycss2==1.4.0"
           graphify --version
+          python -c "import tinycss2; print(f'tinycss2 {tinycss2.__version__}')"
+          PYTHONPATH=scripts python -m unittest discover -s tests -p 'test_graphify_ui_surface.py' -v
       - name: Create a tracked-files-only staging copy
         env:
           STAGING: ${{ runner.temp }}/alandirepo
@@ -157,6 +163,9 @@ jobs:
             echo "### Extract"
             graphify extract . --code-only --no-gitignore --timing
             echo
+            echo "### Deterministic CSS / DOM / JavaScript surface bridge"
+            python scripts/graphify_ui_surface.py --root . --graph graphify-out/graph.json | tee "${{ runner.temp }}/graphify-ui-surface-summary.json"
+            echo
             echo "### Cluster"
             graphify cluster-only . --no-label
             echo
@@ -181,6 +190,9 @@ jobs:
           Document extraction|extract_document
           Evidence provenance|EvidenceLedger CitationManager
           EOF
+            echo
+            echo "### UI selector navigation"
+            graphify query "chatPane panel CSS DOM selector" --budget 1200
             echo
             echo "### Private-memory provider boundary (targeted query)"
             graphify query "requestChatCompletion getApiCandidates" --context call --budget 2600
@@ -223,5 +235,6 @@ jobs:
             ${{ runner.temp }}/alandirepo/graphify-out/graph.html
             ${{ runner.temp }}/alandirepo/graphify-out/manifest.json
             ${{ runner.temp }}/graphify-pilot-summary.txt
+            ${{ runner.temp }}/graphify-ui-surface-summary.json
           if-no-files-found: warn
           retention-days: 7
