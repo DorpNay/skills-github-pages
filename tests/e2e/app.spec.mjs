@@ -581,9 +581,12 @@ test('header hierarchy and compact mode controls remain responsive from 320px up
         wordmarkTransform: getComputedStyle(wordmark).transform,
         wordmarkWeight: getComputedStyle(wordmark).fontWeight,
         fast: rect(fast),
-        deep: rect(deep)
+        deep: rect(deep),
+        fontFamilies: [document.body, document.querySelector('button'), document.querySelector('input'), document.querySelector('textarea'), document.querySelector('select')]
+          .map(element => getComputedStyle(element).fontFamily)
       };
     });
+    expect(new Set(metrics.fontFamilies).size, 'body and form controls should share one font stack').toBe(1);
     expect(metrics.header.scrollWidth, 'header overflow at ' + width + 'px').toBeLessThanOrEqual(metrics.header.clientWidth + 1);
     expect(metrics.title.width).toBeGreaterThan(0);
     expect(metrics.titleBorder).not.toBe('0px');
