@@ -859,3 +859,7 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 
 | V-2026-11-02-ORIENTATION-REFRESH-003 | 2026-11-02 | Reconcile the final orientation pointers after the Agent panel pause regression | Corrected ORIENTER, FILE_ORIENTER and PROJECT_STATE to reference source/test commit d70b8a3 and the preceding docs checkpoint bb7974c; prior a610c5d docs pointer is superseded. | Documentation-only. No runtime changes; PR #131 exact-head workflow remains unavailable. | Next: verify current PR head/CI and preserve main V1 boundary. |
 
+
+
+| V-2026-11-02-SKILLS-PANEL-IA-001 | 2026-11-02 | Separate the active chat task profile from the future Skill package library | Reorganized the existing Skills panel into a working chat-scoped profile group and a collapsed roadmap disclosure for the shared package library. Added RU/EN scope/lifecycle/safety copy, provenance/license → draft → tests → security review → approval → version flow, and explicit no-implicit-permissions boundary. Source commits: 478de214 (markup), 63de572 (i18n), d3a4480 (E2E). | Playwright coverage authored for panel scope, 44px disclosure, keyboard open, lifecycle copy, no fake buttons, ticker pause and EN labels. Not executed. Exact-head workflow lookup returned no runs for d3a44807d9c9eb0dade5a3e0bf80065fa5ebfd45. No runtime/dependency/backend changes; PR #131 remains open and mergeable=false. | Next: continue the next bounded Landing 2.0 UI slice; verify exact-head CI when available. |
+
