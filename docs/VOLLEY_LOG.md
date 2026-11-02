@@ -655,3 +655,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - No external workflow or main branch was modified; this requires a separately scoped supply-chain change. Live branch ruleset remains owner/admin verification.
 - No second Pages repository, merge, rebase, branch deletion or deployment.
 
+## V-2026-11-02-PER-CHAT-DRAFT-RECOVERY-001
+
+- Implemented the first bounded slice of optional proposal 8.25 on PR #131: text-only drafts are stored locally by existing chat ID and restored independently when switching chats or reloading.
+- Storage is bounded to 100 chat drafts and 20,000 characters per draft. Drafts are debounced and flushed on pagehide. Explicit submission clears the draft; reload never auto-sends. Attachments are intentionally excluded.
+- Source commit: `a2db7904d1a18609f467829c4339ccd52dfa8883`; Playwright regression commit: `2257010cef98c3afcf093eb73728a8b90d2c869f`.
+- Test covers isolation across two chats, reload restoration and no implicit message submission. It is authored, not yet executed on this exact HEAD.
+- No new dependency/backend route/provider, no main synchronization, merge or deployment. Await automatic exact-head Quality/Chromium and inspect any failures before further scope.
