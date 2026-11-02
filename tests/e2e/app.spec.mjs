@@ -833,6 +833,7 @@ test('readability tokens and actual status surfaces meet AA in both themes', asy
     row.appendChild(action);
     document.body.appendChild(row);
   });
+  await page.mouse.move(0, 0);
   const measure = (theme, contrastMode) => page.evaluate(({ selectedTheme, selectedContrast }) => {
     const root = document.documentElement;
     root.dataset.theme = selectedTheme;
