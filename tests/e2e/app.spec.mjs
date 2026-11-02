@@ -710,6 +710,21 @@ test('structured workflow panel groups its configuration into clear sections', a
   await expect(groups.nth(1).locator('#agentTeamScenario')).toHaveCount(1);
   await expect(groups.nth(1).locator('#agentRolePreset')).toHaveCount(1);
   await expect(panel.locator('.agent-future-section')).toHaveCount(5);
+  const capabilityGroups = panel.locator('.agent-settings-category');
+  await expect(capabilityGroups).toHaveCount(3);
+  await expect(capabilityGroups.nth(0).locator(':scope > summary')).toContainText('Применение и роли');
+  await expect(capabilityGroups.nth(1).locator(':scope > summary')).toContainText('Оркестрация, модели и ресурсы');
+  await expect(capabilityGroups.nth(2).locator(':scope > summary')).toContainText('Инструменты и разрешения');
+  for (const group of await capabilityGroups.all()) {
+    const summary = group.locator(':scope > summary');
+    const box = await summary.boundingBox();
+    expect(box?.height || 0, 'agent category summary must be a 44px touch target').toBeGreaterThanOrEqual(44);
+    await summary.focus();
+    await page.keyboard.press('Enter');
+    await expect(group).toHaveAttribute('open', '');
+    await page.keyboard.press('Space');
+    await expect(group).not.toHaveAttribute('open', '');
+  }
   await expect(panel.locator('.agent-future-section').nth(0)).toContainText('Способы применения');
   await expect(panel.locator('.agent-future-section').nth(1)).toContainText('64 логические профессии');
   await expect(panel.locator('.agent-future-section').nth(2)).toContainText('fan-out/fan-in');
