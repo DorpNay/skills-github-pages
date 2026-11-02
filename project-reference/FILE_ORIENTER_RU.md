@@ -6,6 +6,7 @@
 
 - Live main SHA: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; четыре commits после функционального checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82` меняют только `docs/V1_UI_FINALIZATION_RU.md`.
 - Exact open PR queue excluding #125: #124/#126/#127/#128/#129/#130/#131/#132. Open issue #111.
+- Exact snapshot marker: open PRs (8): #124, #126, #127, #128, #129, #130, #131, #132. Exact snapshot marker: open issues (1): #111.
 - PR #125 remains Draft/FUTURE — DO NOT MERGE; branch `research/agent-platform-blueprint-20261030`, target `future-workstreams/parking-base-20261031`. New Skill Factory/Agent Builder spec is `docs/AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md`; research-only.
 - PR #131 remains the only Landing V2 implementation branch; it already contains menu groups, agent configuration and roadmap tickers. No new runtime capabilities are implied by these research documents.
 - Exact-head state refresh commits updated snapshot, PROJECT_STATE, ORIENTER, FILE_ORIENTER and VOLLEY_LOG. Freshness/Quality/Provenance must be verified on the final branch head; previous failure was caused by stale main SHA and queue, not a code test.
