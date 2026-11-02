@@ -678,7 +678,7 @@ test('function menu separates task workflow from integrations in both languages'
   await expect(menu.locator('.toolbar-menu-group-label').nth(1)).toContainText('Подключения');
   await expect(menu.locator('[data-action="open-function-panel"]')).toHaveCount(3);
   await selectLanguage(page, 'en');
-  await menu.locator(':scope > summary').click();
+  if (!(await menu.evaluate(element => element.open))) await menu.locator(':scope > summary').click();
   await expect(menu.locator('.toolbar-menu-group-label').nth(0)).toContainText('Task workflow');
   await expect(menu.locator('.toolbar-menu-group-label').nth(1)).toContainText('Connections');
 });
