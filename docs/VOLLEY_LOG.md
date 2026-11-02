@@ -705,3 +705,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - No runtime change was warranted by static inspection. Added a Playwright regression for backdrop dismissal of settings, project creation, function panel and Research Studio.
 - After each close the regression asserts no visible dialog, removal of `body.ui-modal-open`, and immediate sidebar clickability/open-close behavior to catch a leftover overlay that blocks interaction.
 - E2E commit: `b0b18ea65393471600c8c3804163d0dca2fb75a3`. Authored only; exact-head browser execution remains pending. No dependency, backend, merge, rebase or deployment.
+
+
+## V-2026-11-02-ICON-FIRST-ACCESSIBLE-NAMES-001
+
+- Continued mandatory UI 8.16. Audited 82 static buttons in `index.md` plus dynamically created message, project, memory and attachment actions. No symbol-only action without an accessible name or tooltip was found in the reviewed surfaces.
+- Added Playwright regression that seeds a project and user/assistant messages, opens the sidebar and checks visible symbol-only/empty buttons for `aria-label`, `aria-labelledby` or `title`; also asserts the five inline message actions are present.
+- E2E commits: `a3a46682365c0688aa00ee136e8b9003e13c22bb`, `09dd9ebadde220d9e98ee844246d38ea5aabdb72`. Test authored only; exact-head execution pending. No product runtime change or dependency.
