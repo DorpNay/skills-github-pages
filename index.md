@@ -221,8 +221,10 @@ permalink: /
       <details id="additionalSettings" class="settings-subpanel rounded-xl border border-gray-700">
         <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none" data-i18n="legacySettings">Дополнительные настройки</summary>
         <div class="p-3 space-y-3">
-<input type="hidden" id="uiTheme" value="dark">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 border-b border-gray-800 pb-3">
+          <details class="settings-category settings-category-appearance rounded-xl border border-gray-700" data-settings-category="appearance">
+            <summary class="settings-category-summary" data-i18n="advancedAppearanceCategory">Внешний вид и удобство</summary>
+            <div class="settings-category-content space-y-3">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 border-b border-gray-800 pb-3">
             <select id="uiLanguage" class="hidden" aria-hidden="true" tabindex="-1"><option value="ru">Русский</option><option value="en">English</option></select>
             <label class="text-[11px] text-gray-400">Анимация<select id="uiMotion" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="auto">Авто</option><option value="reduced">Уменьшить</option><option value="off">Выкл.</option></select></label>
             <label class="text-[11px] text-gray-400">Поле ввода<select id="composerPosition" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="bottom" data-i18n="composerBottom">Снизу</option><option value="top" data-i18n="composerTop">Сверху</option></select></label>
@@ -245,18 +247,30 @@ permalink: /
             <p id="readabilityPreview" class="rounded-lg border border-gray-800 bg-gray-900/50 p-2 text-xs leading-relaxed" data-i18n="readabilityPreview">Пример текста — так будут выглядеть сообщения.</p>
             <button type="button" data-action="reset-readability" class="rounded-lg border border-gray-700 px-2 py-1 text-[10px] text-gray-400 hover:text-gray-200" data-i18n="readabilityReset">Сбросить</button>
           </section>
-       <details id="searchToolsSettings" class="rounded-xl border border-gray-700"><summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">Инструменты и веб-поиск</summary><div class="px-3 pb-3 space-y-2"><p class="text-[10px] leading-relaxed text-gray-400" data-i18n="tavilyDecisionNote">Решение о подключении Tavily ещё не принято. Сначала оцениваем текущий поиск и его качество; ключ можно оставить пустым.</p><div class="flex gap-2"><input type="password" id="tavilyKey" aria-label="Ключ Tavily" autocomplete="off" class="min-w-0 flex-1 p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="ключ Tavily"><button type="button" data-action="paste-tavily-key" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Вставить ключ Tavily">↓</button></div></div></details>
+            </div>
+          </details>
+          <details class="settings-category settings-category-context rounded-xl border border-gray-700" data-settings-category="context">
+            <summary class="settings-category-summary" data-i18n="advancedContextCategory">Поиск и инструкции</summary>
+            <div class="settings-category-content space-y-3">
+<details id="searchToolsSettings" class="rounded-xl border border-gray-700"><summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">Инструменты и веб-поиск</summary><div class="px-3 pb-3 space-y-2"><p class="text-[10px] leading-relaxed text-gray-400" data-i18n="tavilyDecisionNote">Решение о подключении Tavily ещё не принято. Сначала оцениваем текущий поиск и его качество; ключ можно оставить пустым.</p><div class="flex gap-2"><input type="password" id="tavilyKey" aria-label="Ключ Tavily" autocomplete="off" class="min-w-0 flex-1 p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="ключ Tavily"><button type="button" data-action="paste-tavily-key" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Вставить ключ Tavily">↓</button></div></div></details>
        <label for="systemPromptInput" data-i18n="systemPromptLabel" class="block text-xs text-gray-400">Системный промпт</label>
        <p class="text-[10px] leading-relaxed text-gray-400" data-i18n="systemPromptEmptyNote">Глобальный системный промпт пуст по умолчанию. Добавляй общие инструкции только если они действительно нужны.</p>
        <div class="prompt-editor"><textarea id="systemPromptInput" rows="4" readonly class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y" placeholder="Свои правила для всех запросов"></textarea><button type="button" id="editSystemPrompt" data-action="edit-system-prompt" class="prompt-pencil" aria-pressed="false" aria-label="Редактировать системный промпт" title="Редактировать">✎</button></div><p id="promptEditHint" class="sr-only" aria-live="polite"></p>
        <label class="flex items-start gap-2 text-xs text-gray-300 mt-2"><input id="allowCrossProviderFallback" type="checkbox" class="mt-0.5 rounded bg-gray-800 border-gray-700"><span><strong>Разрешить резерв у другого провайдера</strong><span class="block text-[11px] leading-relaxed text-amber-200/80">По умолчанию выключено. При включении текст запроса и контекст могут передаваться другому сервису. Сначала система пробует модели выбранного провайдера.</span></span></label>
       <p class="text-[10px] leading-relaxed text-gray-500">Ключи хранятся в этом браузере. Резервный провайдер может получить текст запроса и контекст.</p>
-       <div class="grid grid-cols-2 gap-2">
+            </div>
+          </details>
+          <details class="settings-category settings-category-profile rounded-xl border border-gray-700" data-settings-category="profile">
+            <summary class="settings-category-summary" data-i18n="advancedProfileCategory">Профиль и резервные копии</summary>
+            <div class="settings-category-content space-y-3">
+<div class="grid grid-cols-2 gap-2">
         <button type="button" data-action="export-settings-profile" class="bg-gray-700 hover:bg-gray-600 py-2 px-2 rounded text-xs text-gray-200">Скачать профиль настроек</button>
         <button type="button" data-action="import-settings-profile" class="bg-gray-700 hover:bg-gray-600 py-2 px-2 rounded text-xs text-gray-200">Импорт профиля</button>
       </div>
       <input type="file" id="settingsProfileFile" class="hidden" accept="application/json,.json">
       <p class="text-[10px] leading-relaxed text-gray-500">Профиль переносит настройки, но намеренно не содержит API-ключи и токены. Импорт не меняет уже сохранённые секреты.</p>
+            </div>
+          </details>
         </div>
       </details>
       <button type="button" id="recoveryBackupButton" data-action="download-recovery-backup" class="hidden w-full bg-amber-800 hover:bg-amber-700 py-2 rounded text-xs text-amber-50">Скачать резервную копию истории</button>
