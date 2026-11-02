@@ -171,7 +171,15 @@ improvements:
 owner_proposals:
   source: "docs/V1_UI_FINALIZATION_RU.md section 8.18-8.27; proposals, not mandatory release requirements"
   audit: "Compared against PR #131 source on 2026-11-02. Existing modal/history stack, toast/status, last-closed-chat recovery, project memory scope, contextual chat/project/message actions, local chat persistence and attachment flow were reused as baseline. Owner-provided 60-repository shortlist was triaged in docs/OPEN_SOURCE_TRIAGE_RU.md: UI/runtime projects are references only; no framework, model, router, agent runtime or dependency was adopted."
-  priority: "P0: inherited UI + mandatory 8.1-8.17 and exact-head Chromium/Quality. P1: finish interaction lifecycle 8.18 and operation IDs/states/recovery 8.19; then IndexedDB draft recovery/explicit network retry 8.25 and local title search/pinning/sorting 8.21. P2: bounded Undo 8.20, file registry only after scoped source API 8.23, adaptive inspector 8.22 and scenario entry points. Qwen/SLM/inference/agent stacks remain separate target-host research, not PR #131."
+  priority: "P0: inherited UI + mandatory 8.1-8.17 and exact-head Chromium/Quality. P1: finish interaction lifecycle 8.18 and operation IDs/states/recovery 8.19; then IndexedDB draft recovery/explicit network retry 8.25 and remaining 8.21 verification/follow-ups. P2: bounded Undo 8.20, file registry only after scoped source API 8.23, adaptive inspector 8.22 and scenario entry points. Qwen/SLM/inference/agent stacks remain separate target-host research, not PR #131."
+  chat_organization:
+    status: "partial_source_and_playwright_authored_exact_head_ci_pending"
+    search: "Local sidebar search matches project names and chat titles only; message bodies are not indexed; each result group is capped at eight."
+    pinning: "Per-chat pinned IDs persist separately in ai_pinned_chats_v1; pinned chats are ordered before unpinned chats without changing project ownership."
+    sorting: "Persistent ai_chat_sort_v1 preference supports newest activity or newest creation date; stable original-order fallback resolves ties."
+    active_chat_stability: "Activity sort timestamp for the active chat is held until switching chats, preventing message updates from moving the current row while the user is reading."
+    migration: "New chats receive createdAt/updatedAt; legacy chats get deterministic order-preserving fallback timestamps; imported project chats receive valid timestamps."
+    evidence: "assets/js/app.js; index.md; tests/e2e/app.spec.mjs chat pinning and activity/creation sort regression. Exact-head browser execution pending."
   dependencies: "Project Sources CRUD requires a real scoped source-list API. Persistent local-file access requires explicit browser file handle permission and progressive enhancement. Exactly-once provider requests require upstream idempotency support."
 
 repository_identity_cleanup:
