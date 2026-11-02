@@ -4020,15 +4020,34 @@
       chats.unshift(restored);safeSet(STORAGE.lastClosedChat,'');activeChatProjectId=restored.projectId||null;
       updateState(null,restored.id);showToast(getUiLanguage()==='en'?'Last closed chat restored.':'Последний закрытый чат восстановлен.');
     }
+    function restoreDeletedChatIfCurrent(chatId) {
+      const value = getLastClosedChat();
+      if (!value || value.chat.id !== chatId) {
+        showToast(getUiLanguage() === 'en'
+          ? 'Undo expired because a newer chat recovery replaced it.'
+          : 'Отмена устарела: слот восстановления уже занят другим чатом.', 'warning');
+        return;
+      }
+      restoreLastClosedChat();
+    }
     function deleteChat(id) {
       if (chats.length <= 1) { alert('Нельзя удалить единственный чат.'); return; }
       const deleted=chats.find(chat=>chat.id===id);if(!deleted)return;
-      safeSet(STORAGE.lastClosedChat,JSON.stringify({chat:deleted,closedAt:Date.now()}));
+      const recoverySaved=safeSet(STORAGE.lastClosedChat,JSON.stringify({chat:deleted,closedAt:Date.now()}));
       if (activeChatId === id) stopGeneration();
       const next = chats.filter((chat) => chat.id !== id);
       pinnedChatIds = pinnedChatIds.filter(chatId => chatId !== id);
       safeSet(STORAGE.pinnedChats, JSON.stringify(pinnedChatIds));
       updateState(next, currentChatId === id ? next[0].id : currentChatId);
+      if(recoverySaved) {
+        const english=getUiLanguage()==='en';
+        showToast(english?'Chat deleted.':'Чат удалён.', 'success', {
+          key:'chat-delete:'+id,
+          label:english?'Undo':'Отменить',
+          duration:6500,
+          onClick:()=>restoreDeletedChatIfCurrent(id)
+        });
+      }
     }
     let chatActionOpener=null;
     function closeChatActionDialog() {
