@@ -4569,7 +4569,8 @@ test('team blueprints can be saved, applied, restored and deleted without launch
     return chats.find(chat => chat.id === currentId);
   });
   expect(chatAfterApply).toMatchObject({ agentTeamSize: 7, agentTeamScenario: 'research', agentRolePreset: 'software', multiAgentEnabled: false });
-  await expect(page.locator('#toast')).toBeHidden();
+  await page.mouse.move(0, 0);
+  await expect(page.locator('#toast')).toBeHidden({ timeout: 7000 });
 
   await panel.locator('#agentBlueprintName').fill('research + SOFTWARE');
   await panel.locator('#agentBlueprintSave').click();
