@@ -122,3 +122,10 @@
 - The existing toast was extended with a FIFO queue, duplicate suppression, urgency-based durations, hover/focus/hidden-tab pause and polite/assertive ARIA semantics.
 - Playwright assertions were added for sequential success/error announcements; they have not yet been executed on the current branch head. This is partial 8.19 work, not completion of the durable operation-state contract.
 - Detailed scope and remaining work: `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
+
+
+### 8.20 bounded Undo slice — 2026-11-02
+
+- The existing toast now supports an optional action button; one reversible action is implemented for moving a chat between project and personal scope.
+- Undo validates that the chat has not changed again and the original project still exists; otherwise it reports a conflict without overwriting current data. The action is bounded by the toast lifetime and is not persistent across reload.
+- Playwright coverage is authored, not yet executed. Detailed evidence and remaining scope: `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
