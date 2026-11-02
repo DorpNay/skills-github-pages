@@ -273,9 +273,9 @@ voice_selection:
   next: "verify post-merge main workflows on the exact current main SHA; owner validates exact installed artifacts, hashes/licenses and compatibility on private VPS; enable document extraction and ASR/TTS only one at a time after checks; test all three voice scenarios on target device"
 
 current_checkpoint:
-  date: "2026-10-31"
-  verified_main: "e78a73b25725bfa63370d9946887cbbacbf51b82"
-  last_main_action: "Merge PR #123: redirect-safe freshness checks and bounded local-model benchmark; e78a73b25725bfa63370d9946887cbbacbf51b82"
+  date: "2026-11-02"
+  verified_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
+  last_main_action: "Four documentation-only commits on docs/V1_UI_FINALIZATION_RU.md after PR #123; current main 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
   last_functional_checkpoint: "e78a73b25725bfa63370d9946887cbbacbf51b82"
   main_quality: "PR #123 exact-head Quality/Chromium/Jekyll/published-site smoke passed. PR #124/#125/#126 exact-head Quality workflows passed on their recorded heads; current main post-merge Pages deployment remains unverified. No run IDs are inferred."
   main_graphify: "PR #123, #124 and #126 exact-head Graphify passed; PR #125 has no Graphify requirement. Graphify remains developer tooling, not a runtime component."
