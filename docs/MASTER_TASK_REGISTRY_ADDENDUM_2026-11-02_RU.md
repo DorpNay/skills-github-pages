@@ -86,3 +86,20 @@
 - PR #130 — Deep Research / local source vault and conversion; Draft/HOLD.
 
 **Status:** new owner requirements indexed; no runtime implementation or model download is implied.
+
+
+## F. Chromium and responsive follow-up — PR #131
+
+Quality #1490 passed Integrity, Jekyll, Security, Context and static analysis on source/test parent dfe88836, but two Chromium shards failed. The following corrections are committed on PR #131 HEAD 4afd4f4; Quality #1501 is pending and has not yet verified them.
+
+- [~] **E2E-UI-001** — project settings test now opens the actual project settings modal before using the current-chat project selector.
+- [~] **E2E-UI-002** — chat-row move/Undo test seeds two projects and one chat, avoiding unrelated queued creation toasts; asserts restored project and stable chat ID.
+- [~] **E2E-UI-003** — memory tests now open the outer Memory disclosure before interacting with nested Memory tools; privacy opt-in assertions remain unchanged.
+- [~] **MENU-010** — update roadmap test to five cards, including Deep Research 2.0; require Research Studio to remain outside Functions and inside Thorough controls.
+- [~] **A11Y-UI-001** — scope ticker locators to the first intended ticker where multiple cards exist; retain reduced-motion and explicit pause checks.
+- [~] **MOBILE-001** — restore 44px new-chat target on mobile despite later sidebar overrides.
+- [~] **MOBILE-002** — remove extra 12px composer-footer padding on short mobile viewports while preserving the device safe-area inset.
+- [~] **MOBILE-003** — reduce clock shell to 56px at <=360px to recover header title width without forcing horizontal overflow.
+- [ ] **MOBILE-004** — review actual Chromium screenshots at 320/360/390/768/1024/1440px and manually verify iPhone Safari/VoiceOver.
+
+Evidence status: test source changes are committed; JavaScript/Playwright syntax parsing passed; CSS geometry corrections are committed. No browser result on 4afd4f4 is available yet. Do not mark any [~] item complete until Quality #1501 (or later exact-head run) confirms it.
