@@ -965,11 +965,11 @@ landing_v2_skills_panel_2026_11_02:
   status: "UI implemented; exact-head Quality/Chromium pending"
   pr: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
-  source_test_head: "d3a44807d9c9eb0dade5a3e0bf80065fa5ebfd45"
+  source_test_head: "baf6a96705a15466384ab2c9f1efce977e83d087"
   behavior: "separates the available chat-scoped task profile from the future shared Skill package library; groups goal/output controls; documents planned package lifecycle and permission boundary"
   localization: "RU/EN labels and lifecycle copy"
   accessibility: "native details/summary, 44px disclosure target, keyboard activation, existing ticker pause control"
   e2e: "scope, disclosure, lifecycle, no-fake-controls, ticker pause and EN assertions authored; not executed"
   runtime_boundary: "no shared registry, import endpoint, package loader, script runtime, permission API, dependency or backend route"
-  exact_head_ci: "workflow lookup returned no runs; no Quality/Chromium pass claimed"
+  exact_head_ci: "workflow lookup returned no runs for baf6a96705a15466384ab2c9f1efce977e83d087; no Quality/Chromium pass claimed"
   next: "continue the next bounded Landing 2.0 UI slice after checklist review"
