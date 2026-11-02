@@ -3350,7 +3350,7 @@ test('icon-first controls keep an accessible name across header, sidebar and mes
       const symbolOnly = !text || /^[\p{Extended_Pictographic}\p{S}\p{P}\s]+$/u.test(text);
       return symbolOnly && !node.getAttribute('aria-label') && !node.getAttribute('aria-labelledby') && !node.title;
     })
-    .map(node => ({ action: node.dataset.action || '', text: (node.textContent || '').trim() }));
+    .map(node => ({ action: node.dataset.action || '', text: (node.textContent || '').trim() })));
   expect(unnamedIconButtons).toEqual([]);
   await expect(page.locator('#chatBox .message-actions button')).toHaveCount(5);
 });
