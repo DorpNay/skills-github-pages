@@ -1836,12 +1836,23 @@
       if ($('modeFast')) syncCurrentChatFunctionSettings();
       persistChats(); renderChatList(); renderActiveChat(); renderProjectUI({preserveDraft:true});
     }
-    function toggleSidebar(force) {
+    let sidebarOpener=null;
+    function toggleSidebar(force,options={}) {
       const sidebar = $('sidebar'); const overlay = $('sidebarOverlay');
-      const open = typeof force === 'boolean' ? force : sidebar.classList.contains('-translate-x-full');
-      if(!open){$('memoryToolsDetails').open=false;$('privateMemoryHelp').open=false;$('sharedMemoryHelp').open=false;}
+      const wasOpen=!sidebar.classList.contains('-translate-x-full');
+      const open = typeof force === 'boolean' ? force : !wasOpen;
+      if(open&&!wasOpen)sidebarOpener=document.activeElement;
+      if(!open&&wasOpen){$('memoryToolsDetails').open=false;$('privateMemoryHelp').open=false;$('sharedMemoryHelp').open=false;}
       sidebar.classList.toggle('-translate-x-full', !open);
       overlay.classList.toggle('hidden', !open);
+      if(!open&&wasOpen){
+        const opener=sidebarOpener;sidebarOpener=null;
+        if(options.restoreFocus){
+          const candidates=[opener,$('[data-action="toggle-sidebar"]'),$('userInput')];
+          const target=candidates.find(node=>node&&document.contains(node)&&node.getClientRects().length&&!node.disabled);
+          target?.focus({preventScroll:true});
+        }
+      }
     }
     let settingsOpener=null;
     function toggleSettings(force) {
@@ -4751,7 +4762,7 @@
           case 'close-research-studio': closeResearchStudio(); break;
           case 'start-research-studio': await startResearchStudio(); break;
           case 'toggle-sidebar': toggleSidebar(); break;
-          case 'close-sidebar': toggleSidebar(false); break;
+          case 'close-sidebar': toggleSidebar(false,{restoreFocus:true}); break;
           case 'new-chat': if(voiceConversationActive)stopVoiceConversation(false);if(activeChatProjectId)createNewChatInProject(activeChatProjectId);else createNewChat(); break;
           case 'new-chat-in-project': createNewChatInProject(control.dataset.projectId);break;
           case 'chat-toggle-pin': control.closest('.chat-row-menu')?.removeAttribute('open');toggleChatPinned(control.dataset.chatId);break;
@@ -4875,7 +4886,7 @@
     $('agentTeamSize').addEventListener('input',()=>{const chat=getCurrentChat();if(chat){chat.agentTeamSize=Math.max(1,Math.min(50,Number($('agentTeamSize').value)||1));$('agentTeamSizeValue').textContent=chat.agentTeamSize+' '+(getUiLanguage()==='en'?(chat.agentTeamSize===1?'agent':'agents'):(chat.agentTeamSize===1?'агент':'агентов'));persistChats();}});
     ['agentTeamScenario','agentRolePreset'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
     ['agentTeamCustomScenario','agentCustomRoles'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
-    $('sidebarOverlay').addEventListener('click', () => toggleSidebar(false));
+    $('sidebarOverlay').addEventListener('click', () => toggleSidebar(false,{restoreFocus:true}));
     let sidebarTouchStart=null;
     $('sidebar').addEventListener('touchstart',event=>{
       if(event.touches.length!==1){sidebarTouchStart=null;return;}
@@ -4885,7 +4896,7 @@
       if(!sidebarTouchStart||event.changedTouches.length!==1){sidebarTouchStart=null;return;}
       const touch=event.changedTouches[0],dx=touch.clientX-sidebarTouchStart.x,dy=touch.clientY-sidebarTouchStart.y;
       sidebarTouchStart=null;
-      if(dx<=-72&&Math.abs(dx)>Math.abs(dy)*1.35)toggleSidebar(false);
+      if(dx<=-72&&Math.abs(dx)>Math.abs(dy)*1.35)toggleSidebar(false,{restoreFocus:true});
     },{passive:true});
     $('sidebar').addEventListener('touchcancel',()=>{sidebarTouchStart=null;},{passive:true});
     $('sidebar').addEventListener('pointercancel',()=>{sidebarTouchStart=null;},{passive:true});
@@ -4905,6 +4916,31 @@
     let voiceHoldTimer=null,voiceHoldOpened=false;
     const showVoiceMenu=()=>{closeComposerPopovers();$('voiceMenu').classList.remove('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','true');syncComposerPopoverScrim();};
     const hideVoiceMenu=()=>{$('voiceMenu').classList.add('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','false');syncComposerPopoverScrim();};
+    function closeTopmostTransientSurface(){
+      const surfaces=[];
+      const add=(element,trigger,close)=>{
+        if(!element||!element.getClientRects().length)return;
+        const style=getComputedStyle(element);
+        if(style.display==='none'||style.visibility==='hidden')return;
+        const parsed=Number.parseInt(style.zIndex,10);
+        surfaces.push({element,trigger,close,zIndex:Number.isFinite(parsed)?parsed:0,order:surfaces.length});
+      };
+      add($('attachmentMenu'),$('attachTextButton'),closeComposerPopovers);
+      add($('requestContextMenu'),$('contextPickerButton'),closeComposerPopovers);
+      add($('voiceMenu'),$('voiceUnavailableButton'),hideVoiceMenu);
+      document.querySelectorAll('#searchModeMenu[open],#functionsMenu[open],#languageMenu[open],.chat-row-menu[open]').forEach(menu=>{
+        const panel=menu.querySelector('.toolbar-menu-panel,.language-menu-panel,.chat-row-menu-panel');
+        add(panel,menu.querySelector(':scope > summary'),()=>{menu.open=false;});
+      });
+      surfaces.sort((a,b)=>a.zIndex-b.zIndex||a.order-b.order);
+      const top=surfaces[surfaces.length-1];
+      if(!top)return false;
+      top.close();
+      if(top.trigger&&document.contains(top.trigger)&&top.trigger.getClientRects().length&&!top.trigger.disabled){
+        top.trigger.focus({preventScroll:true});
+      }
+      return true;
+    }
     $('composerPopoverScrim').addEventListener('click',event=>{
       event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
       closeComposerPopovers();hideVoiceMenu();
@@ -4970,7 +5006,9 @@
       }
       if (event.key === 'Escape') {
         const top=uiNavigationStack[uiNavigationStack.length-1];
-        if(top?.kind){requestUiNavigationBack(top.kind,top.id);return;}
+        if(top?.kind==='modal'){event.preventDefault();requestUiNavigationBack(top.kind,top.id);return;}
+        if(closeTopmostTransientSurface()){event.preventDefault();return;}
+        if(top?.kind){event.preventDefault();requestUiNavigationBack(top.kind,top.id);return;}
         if (!$('chatActionModal').classList.contains('hidden')) closeChatActionDialog();
         else if (!$('messageViewerModal').classList.contains('hidden')) closeMessageViewer();
         else if (!$('traceModal').classList.contains('hidden')) closeTrace();
@@ -4979,7 +5017,7 @@
         else if (!$('researchStudioModal').classList.contains('hidden')) closeResearchStudio();
         else if (!$('functionPanelModal').classList.contains('hidden')) closeFunctionPanel();
         else if (!$('settingsModal').classList.contains('hidden')) toggleSettings(false);
-        else if (!$('sidebar').classList.contains('-translate-x-full')) toggleSidebar(false);
+        else if (!$('sidebar').classList.contains('-translate-x-full')) toggleSidebar(false,{restoreFocus:true});
       }
     }, true);
     const syncComposerViewport = () => {

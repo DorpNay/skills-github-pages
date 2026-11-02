@@ -4017,3 +4017,30 @@ test('composer text drafts stay isolated per chat and restore after reload', asy
   expect(state.drafts[firstChatId]).toBe('Draft belonging to the first chat');
   expect(state.drafts[secondChatId]).toBe('Draft belonging to the second chat');
 });
+
+
+test('Escape dismisses the topmost transient menu before the sidebar and restores focus', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  await page.locator('#attachTextButton').click();
+  await expect(page.locator('#attachmentMenu')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#attachmentMenu')).toBeHidden();
+  await expect(page.locator('#composerPopoverScrim')).toBeHidden();
+  await expect(page.locator('#attachTextButton')).toBeFocused();
+
+  await ensureSidebarOpen(page);
+  const menu = page.locator('#sidebar .chat-row-menu').first();
+  const summary = menu.locator(':scope > summary');
+  await summary.click();
+  await expect(menu).toHaveAttribute('open', '');
+  await page.keyboard.press('Escape');
+  await expect(menu).not.toHaveAttribute('open', '');
+  await expect(summary).toBeFocused();
+  await expect(page.locator('#sidebar')).not.toHaveClass(/-translate-x-full/);
+
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
+  await expect(page.locator('[data-action="toggle-sidebar"]')).toBeFocused();
+});
