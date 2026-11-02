@@ -3281,6 +3281,7 @@ test('shared control sizing uses standard desktop and touch-sized mobile variant
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
   await assertMinimum('#chatListNewButton', 40, 'new-chat action should use the standard desktop size');
+  await page.locator('[data-action="toggle-sidebar"]').click();
   await assertMinimum('#inputArea .composer-tool', 40, 'composer tools should use the standard desktop size');
 
   await page.locator('#searchModeSummary').click();
@@ -3296,8 +3297,10 @@ test('shared control sizing uses standard desktop and touch-sized mobile variant
 
   await page.setViewportSize({ width: 390, height: 844 });
   await assertMinimum('#settingsModal .settings-header-actions button', 44, 'settings actions should retain 44px mobile targets');
-  await page.locator('#settingsModal [data-action="close-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+  await page.locator('[data-action="toggle-sidebar"]').click();
   await assertMinimum('#chatListNewButton', 44, 'new-chat action should retain a 44px mobile target');
+  await page.locator('[data-action="toggle-sidebar"]').click();
   await assertMinimum('#inputArea .composer-tool', 44, 'composer tools should retain 44px mobile targets');
 
   await page.locator('#searchModeSummary').click();
