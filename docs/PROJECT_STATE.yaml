@@ -65,9 +65,9 @@ ui_v2_track:
   pull_request: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   status: "open_unmerged_owner_hold"
-  latest_documentation_head: "179adfb6e51f04b57fc538aa927f22272d13d8ab (source/test checkpoint; this documentation synchronization will create a newer docs HEAD)."
-  latest_code_test_head: "179adfb6e51f04b57fc538aa927f22272d13d8ab; includes 8.21 pinning/date sorting and 8.10 desktop/touch sizing CSS plus focused Playwright regressions. Exact-head workflow/status lookup currently returns no records; no test pass claimed."
-  latest_quality_harness_head: "Writable temporary Pages document-root correction and runner-provided Chrome harness retained. No PR-triggered Quality run or combined commit status is currently returned for HEAD 179adfb6e51f04b57fc538aa927f22272d13d8ab; verify after the next push-triggered run. Do not claim test execution or performance."
+  latest_documentation_head: "b0b18ea65393471600c8c3804163d0dca2fb75a3 (latest source/test checkpoint before this documentation synchronization)."
+  latest_code_test_head: "b0b18ea65393471600c8c3804163d0dca2fb75a3; includes 8.21 pinning/date sorting, 8.10 desktop/touch sizing, and 8.9 multi-dialog backdrop dismissal regression. Tests authored; exact-head browser execution pending."
+  latest_quality_harness_head: "Writable temporary Pages document-root correction and runner-provided Chrome harness retained. The workflow-run connector returns only PR-triggered runs; the combined commit status lookup returned no contexts for the previous source/test HEAD. Check the Actions run surface for the push-triggered Quality run before claiming results."
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0; mandatory requirements 8.1-8.17 and optional owner proposals 8.18-8.27"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
   polish_register: "docs/LANDING_UX_POLISH_BACKLOG_RU.md (mirrors the consolidated residual list; not a separate backlog)"
@@ -76,25 +76,29 @@ ui_v2_track:
     completed_or_not_active: "8.12 server-memory graph UI/API bridge removed; local/private/shared/project memory, delta sync and RAG retained. 8.13 explicit handoff to an existing chat implemented; pending handoff is session-only by design."
     blocked: "Project Sources CRUD is not exposed because the gateway has no source-list API; keep truthful unsupported state."
   remaining_priority:
-    P0: "Run exact-head Quality/Chromium for the latest 8.10 and 8.21 regressions plus prior 8.25 draft and 8.1/8.26 gesture coverage. At the live check on HEAD 179adfb6e51f04b57fc538aa927f22272d13d8ab, PR workflow-run and combined-status lookups returned no records. Do not claim pass; compare performance only after all four Chromium shards execute."
+    P0: "Run exact-head Quality/Chromium for 8.9 backdrop dismissal, 8.10 desktop/touch sizing, 8.21 pinning/date sorting, plus 8.25 draft and 8.1/8.26 gesture regressions. Use the Actions run/check surface because the workflow-run connector filters to PR-triggered runs while Quality also triggers on push. No exact-head pass claimed; compare performance only after all four Chromium shards execute."
     P1: "Native iPhone Safari/VoiceOver, screenshot review at 320/360/390/768/1024/1440px, RU/EN and light/dark review, measured WCAG contrast ratios."
     P2: "Long-list/message/scroll/popover stress; capability menu truthfulness; Tavily/keyless-search audit; provider/gateway mock error and secret-redaction checks."
   verification:
-    exact_head_ci: "HEAD 179adfb6e51f04b57fc538aa927f22272d13d8ab: fetch_commit_workflow_runs returned []; combined commit statuses returned []. PR #131 remains open and diverged 706 ahead / 4 behind main. No green CI claim."
-    playwright_chromium: "No exact-head Chromium pass yet for the current feature set. Earlier harness blockers (#1197 baseurl asset 404; #1198 read-only _site symlink) were addressed by the writable temp-root correction. Current 8.10, 8.21, 8.25 and sidebar gesture regressions are authored; current exact-head run is not visible."
+    exact_head_ci: "Latest source/test checkpoint b0b18ea65393471600c8c3804163d0dca2fb75a3. The workflow-run connector exposes only pull_request-triggered runs; combined status had no contexts on the prior source/test HEAD. Query the push-triggered run through Actions before claiming a result."
+    playwright_chromium: "No exact-head Chromium pass yet for the current feature set. Earlier harness blockers (#1197 baseurl asset 404; #1198 read-only _site symlink) were addressed by the writable temp-root correction. Current 8.9, 8.10, 8.21, 8.25 and sidebar gesture regressions are authored; use the Actions run surface to find push-triggered execution."
     native_mobile_voiceover: "Not executed."
     wcag_contrast_ratios: "Not measured; computed-style assertions are not conformance evidence."
     live_gateway_provider: "Not verified; live smoke requires explicit owner approval."
   current_main_sha: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
   branch_divergence: "GitHub compare main...feat/landing-v1-accessibility-responsive-20261031 at HEAD 179adfb6e51f04b57fc538aa927f22272d13d8ab: diverged, ahead_by=706, behind_by=4, merge_base=e78a73b25725bfa63370d9946887cbbacbf51b82; main=0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. Four main-side commits touch only docs/V1_UI_FINALIZATION_RU.md. Preserve both versions; no rebase/sync without owner approval."
-  current_work_head: "179adfb6e51f04b57fc538aa927f22272d13d8ab"
-  current_work_summary: "Extended 8.10 control sizing using existing 32/40/44px tokens: standard desktop controls are 40px, touch viewport controls 44px; removed duplicate message-action CSS. Added focused Playwright regression across settings, chat creation, toolbar/language options and composer controls. No new dependency or runtime."
-  current_work_validation: "CSS commit a71dd925; E2E commits 5d8b3ad, 1bb8780 and 179adfb6. Source/test committed; exact-head workflow-run and combined-status lookups returned no records. Browser assertions not executed and no test pass claimed."
+  current_work_head: "b0b18ea65393471600c8c3804163d0dca2fb75a3"
+  current_work_summary: "Continued 8.9 and 8.10 together: added multi-dialog backdrop dismissal regression; consolidated existing 32/40/44px control sizing with 40px desktop and 44px touch targets; removed duplicate message-action CSS. No new dependency or runtime."
+  current_work_validation: "CSS commit a71dd925; sizing E2E commits 5d8b3ad, 1bb8780, 179adfb6; backdrop E2E commit b0b18ea. Source/tests committed. No exact-head browser execution claimed; the workflow-run connector filters to pull_request events and combined status was empty on the preceding head."
   control_sizing:
     requirement: "8.10; reuse existing 32px compact / 40px standard / 44px touch tokens."
     desktop: "Settings header actions, toolbar/language menu options, composer tools and chat creation use at least the standard 40px token."
     touch: "The same controls upgrade to 44px at max-width 639px; header icons and message actions remain 44px."
     regression: "tests/e2e/app.spec.mjs — shared control sizing uses standard desktop and touch-sized mobile variants; authored, exact-head execution pending."
+  modal_backdrop:
+    requirement: "8.9; no residual overlay, body scroll lock or click interception after dismissal."
+    coverage: "Backdrop dismissal regression covers settings, project creation, function panel and Research Studio; checks no visible dialog, no ui-modal-open class and immediate sidebar interactivity."
+    verification: "Authored on b0b18ea; exact-head browser execution and native mobile review pending."
   merge_deployment: "Do not merge or deploy without explicit owner approval."
 
 current_v016_track:
