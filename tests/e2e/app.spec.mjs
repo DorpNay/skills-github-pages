@@ -4237,3 +4237,39 @@ test('chat project move offers a bounded undo action', async ({ page }) => {
   })).toBe('');
   await expect(page.locator('#toast')).toContainText('Перемещение чата отменено');
 });
+
+
+test('chat-row project move can be undone without changing chat identity', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const sourceId = await createProjectFromUi(page, 'Undo row source');
+  const targetId = await createProjectFromUi(page, 'Undo row target');
+
+  await ensureSidebarOpen(page);
+  const sourceGroup = page.locator('#projectNavigationList details[data-project-id="' + sourceId + '"]');
+  if (!(await sourceGroup.evaluate(element => element.open))) await sourceGroup.locator(':scope > summary').click();
+  await sourceGroup.locator('[data-action="new-chat-in-project"]').click();
+  const chatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
+  expect(chatId).not.toBe('');
+
+  await ensureSidebarOpen(page);
+  const chatRow = page.locator('#projectNavigationList .chat-row').filter({
+    has: page.locator('[data-action="switch-chat"][data-chat-id="' + chatId + '"]')
+  });
+  await chatRow.locator('.chat-row-menu > summary').click();
+  await chatRow.locator('[data-action="chat-project"]').click();
+  await page.locator('#chatActionProject').selectOption(targetId);
+  await page.locator('[data-action="chat-action-save"]').click();
+  await expect(page.locator('#currentProjectSelect')).toHaveValue(targetId);
+
+  const undo = page.locator('#toast .toast-action');
+  await expect(undo).toHaveText('Отменить');
+  await undo.click();
+  await expect(page.locator('#currentProjectSelect')).toHaveValue(sourceId);
+  const restored = await page.evaluate(id => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    return chats.find(chat => chat.id === id)?.projectId || '';
+  }, chatId);
+  expect(restored).toBe(sourceId);
+  expect(await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'))).toBe(chatId);
+});
