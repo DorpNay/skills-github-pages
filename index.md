@@ -29,68 +29,66 @@ permalink: /
       <div id="sidebarSearchResults" class="hidden max-h-[38vh] overflow-y-auto rounded-xl border border-gray-800 bg-gray-900/80 p-2 space-y-2" aria-label="Результаты поиска" aria-live="polite"></div>
     </section>
     
-    <section id="memoryPanel" class="mx-3 my-2 rounded-xl border border-gray-800 p-2 space-y-2" aria-label="Настройки памяти">
-      <p id="memoryStatusLine" class="px-2 text-[9px] leading-tight text-gray-500" role="status" aria-live="polite">Память · личных 0 · общих 0 · общая в контексте выкл. · личная в контексте выкл.</p>
-      <h3 class="px-2 text-[11px] font-semibold text-gray-300" data-i18n="memoryPanelTitle">Настройки памяти</h3>
-      <details id="memoryToolsDetails" class="rounded-xl border border-gray-800">
-        <summary class="cursor-pointer select-none px-3 py-2 text-xs font-semibold" data-i18n="memoryPanelSummary">Личная и общая память</summary>
-        <div class="p-2 space-y-3">
-          <section class="space-y-2" aria-labelledby="sharedMemoryTitle">
-            <h4 id="sharedMemoryTitle" class="text-xs font-semibold text-amber-200" data-i18n="sharedMemoryTitle">Общая память</h4>
-            <details id="sharedMemoryHelp" class="memory-help text-[10px] text-gray-500"><summary class="cursor-pointer select-none py-1" data-i18n="sharedMemoryHelpSummary">Об общей памяти</summary><p class="pl-2 pb-1 leading-relaxed text-gray-400" data-i18n="sharedMemoryHelp">Общие факты могут попасть внешнему провайдеру только при отдельном разрешении и если это допускает область памяти проекта.</p></details>
-            <div class="flex gap-1"><input id="sharedMemoryInput" type="text" maxlength="500" placeholder="Факт для общей памяти" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-shared-memory" class="bg-amber-800 hover:bg-amber-700 px-2 rounded text-xs" aria-label="Сохранить в общую память">＋</button></div>
-            <div id="sharedMemoryBox" class="bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет общих заметок.</div>
-            <label class="flex items-start gap-2 text-[10px] leading-relaxed text-gray-400"><input id="globalMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="globalMemoryOptIn">Разрешить подходящим заметкам общей памяти попадать в контекст запросов.</span></label>
-          </section>
-          <section class="space-y-2 border-t border-gray-800 pt-3" aria-labelledby="privateMemoryTitle">
-            <h4 id="privateMemoryTitle" class="text-xs font-semibold text-emerald-200" data-i18n="privateMemoryTitle">Личная память</h4>
-            <details id="privateMemoryHelp" class="memory-help text-[10px] text-gray-500"><summary class="cursor-pointer select-none py-1" data-i18n="privateMemoryHelpSummary">О личной памяти</summary><p class="pl-2 pb-1 leading-relaxed text-gray-400" data-i18n="privateMemoryHelp">Хранится локально в IndexedDB этого браузера. По умолчанию заметки не передаются в запросы; разрешение можно включить ниже.</p></details>
-            <div class="flex gap-1"><input id="memoryInput" type="text" maxlength="500" placeholder="Личный факт для локальной модели" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-memory" class="bg-blue-700 hover:bg-blue-600 px-2 rounded text-xs" aria-label="Сохранить в личную память">＋</button></div>
-            <div id="memoryBox" class="bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет личных заметок.</div>
-          </section>
-          <label class="flex items-start gap-2 border-t border-gray-800 pt-3 text-[10px] leading-relaxed text-gray-300"><input id="privateMemoryContextToggle" type="checkbox" class="mt-0.5"><span data-i18n="privateMemoryContextLabel">Разрешить использовать заметки личной памяти в контексте запросов.</span></label>
-        </div>
-      </details>
-    </section>
-    <details id="projectlessGroup" class="mx-3 my-2 rounded-xl border border-gray-800 projectless-group">
-      <summary class="flex items-center gap-2 rounded-xl px-3 py-2.5 text-xs font-semibold cursor-pointer select-none">
-        <span aria-hidden="true">○</span><span data-i18n="noProjectNav">Без проекта</span><span id="projectlessChatCount" class="ml-auto text-[10px] text-gray-500">0</span>
+    <details id="memoryPanel" class="mx-3 mt-2 mb-1 rounded-lg border border-gray-800 px-2 py-1.5" aria-label="Настройки памяти">
+      <summary class="flex min-h-9 items-center justify-between gap-2 cursor-pointer select-none list-none">
+        <span class="text-xs font-semibold text-gray-200" data-i18n="memoryPanelTitle">⚙ Настройки памяти</span>
+        <span class="memory-summary-indicator" aria-hidden="true"></span>
       </summary>
-      <div class="px-2 pb-2"><button type="button" data-action="projectless-nav" class="w-full rounded-lg border border-gray-700 px-2 py-2 text-left text-[10px] text-gray-300" data-i18n="showUnassignedChats">Показать личные чаты</button></div>
-    </details>
-    <section id="projectPanel" class="px-3 py-2 border-t border-gray-800 space-y-2" aria-label="Проекты и настройки проекта">
-      <div class="mb-2">
-        <button type="button" data-action="open-project-create" data-i18n="createProject" class="w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-2 text-left text-xs font-semibold">＋ Создать проект</button>
+      <div class="mt-1 space-y-2">
+        <p id="memoryStatusLine" class="memory-status-line" role="status" aria-live="polite">Личная память выкл. · Общая память выкл.</p>
+        <details id="memoryToolsDetails" class="rounded-lg border border-gray-800">
+          <summary class="cursor-pointer select-none px-3 py-2 text-xs font-semibold" data-i18n="memoryPanelSummary">Личная и общая память</summary>
+          <div class="p-2 space-y-3">
+            <section class="space-y-2" aria-labelledby="sharedMemoryTitle">
+              <h4 id="sharedMemoryTitle" class="text-xs font-semibold text-amber-200" data-i18n="sharedMemoryTitle">Общая память</h4>
+              <details id="sharedMemoryHelp" class="memory-help text-[10px] text-gray-500"><summary class="cursor-pointer select-none py-1" data-i18n="sharedMemoryHelpSummary">Об общей памяти</summary><p class="pl-2 pb-1 leading-relaxed text-gray-400" data-i18n="sharedMemoryHelp">Общие факты могут попасть внешнему провайдеру только при отдельном разрешении и если это допускает область памяти проекта.</p></details>
+              <div class="flex gap-1"><input id="sharedMemoryInput" type="text" maxlength="500" placeholder="Факт для общей памяти" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-shared-memory" class="bg-amber-800 hover:bg-amber-700 px-2 rounded text-xs" aria-label="Сохранить в общую память">＋</button></div>
+              <div id="sharedMemoryBox" class="bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет общих заметок.</div>
+              <label class="flex items-start gap-2 text-[10px] leading-relaxed text-gray-400"><input id="globalMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="globalMemoryOptIn">Разрешить подходящим заметкам общей памяти попадать в контекст запросов.</span></label>
+            </section>
+            <section class="space-y-2 border-t border-gray-800 pt-3" aria-labelledby="privateMemoryTitle">
+              <h4 id="privateMemoryTitle" class="text-xs font-semibold text-emerald-200" data-i18n="privateMemoryTitle">Личная память</h4>
+              <details id="privateMemoryHelp" class="memory-help text-[10px] text-gray-500"><summary class="cursor-pointer select-none py-1" data-i18n="privateMemoryHelpSummary">О личной памяти</summary><p class="pl-2 pb-1 leading-relaxed text-gray-400" data-i18n="privateMemoryHelp">Хранится локально в IndexedDB этого браузера. По умолчанию заметки не передаются в запросы; разрешение можно включить ниже.</p></details>
+              <div class="flex gap-1"><input id="memoryInput" type="text" maxlength="500" placeholder="Личный факт для локальной модели" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-memory" class="bg-blue-700 hover:bg-blue-600 px-2 rounded text-xs" aria-label="Сохранить в личную память">＋</button></div>
+              <div id="memoryBox" class="bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет личных заметок.</div>
+            </section>
+            <label class="flex items-start gap-2 border-t border-gray-800 pt-3 text-[10px] leading-relaxed text-gray-300"><input id="privateMemoryContextToggle" type="checkbox" class="mt-0.5"><span data-i18n="privateMemoryContextLabel">Разрешить использовать заметки личной памяти в контексте запросов.</span></label>
+          </div>
+        </details>
       </div>
+    </details>
+    <section id="projectPanel" class="sidebar-card mx-3 my-1.5 rounded-xl border border-gray-800 p-2" aria-label="Проекты">
       <div id="projectNavigation" class="space-y-1.5">
-        <button id="projectNavToggle" type="button" data-action="toggle-project-navigation" aria-expanded="false" aria-controls="projectNavigationList" class="w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold project-nav-heading">
+        <button id="projectNavToggle" type="button" data-action="toggle-project-navigation" aria-expanded="false" aria-controls="projectNavigationList" class="w-full flex items-center justify-between gap-2 rounded-lg px-2 py-2 text-sm font-semibold project-nav-heading">
           <span>▣ <span data-i18n="projectsTitle">Проекты</span></span><span id="projectNavChevron" aria-hidden="true">⌄</span>
         </button>
-        <div id="projectNavigationList" class="hidden pl-2 space-y-1" aria-label="Список проектов"></div>
+        <button type="button" data-action="open-project-create" data-i18n="createProject" class="sidebar-create-project w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-2 text-sm font-semibold">＋ Создать проект</button>
+        <div id="projectNavigationList" class="hidden pl-1 space-y-1" aria-label="Список проектов"></div>
       </div>
-
+      <details id="projectlessGroup" class="mt-1 rounded-lg border border-gray-800 projectless-group">
+        <summary class="flex items-center gap-2 rounded-lg px-2 py-2 text-xs cursor-pointer select-none">
+          <span aria-hidden="true">○</span><span data-i18n="noProjectNav">Без проекта</span><span id="projectlessChatCount" class="ml-auto text-[10px] text-gray-500">0</span>
+        </summary>
+        <div class="px-2 pb-2"><button type="button" data-action="projectless-nav" class="w-full rounded-lg border border-gray-700 px-2 py-2 text-left text-xs text-gray-300" data-i18n="showUnassignedChats">Показать личные чаты</button></div>
+      </details>
     </section>
-    <p id="projectStatusLine" class="mx-3 -mt-1 mb-1 px-2 text-[10px] leading-relaxed text-gray-500" role="status" aria-live="polite">Личный чат · без проекта</p>
-    <button id="chatListBack" type="button" data-action="chat-list-back" class="hidden mx-3 mt-2 w-[calc(100%-1.5rem)] rounded-lg border border-gray-700 px-3 py-2 text-left text-xs text-gray-300" aria-label="Вернуться ко всем чатам">← Все чаты</button>
-    <button id="chatListNewButton" type="button" data-action="new-chat" data-i18n="newPersonalChat" class="mx-3 mt-2 w-[calc(100%-1.5rem)] rounded-lg border border-blue-500/25 bg-blue-600/10 hover:bg-blue-600/20 py-2.5 text-xs font-semibold text-blue-200">＋ Новый личный чат</button>
-    <button id="restoreLastClosedChat" type="button" data-action="restore-last-closed-chat" class="hidden mx-3 mt-1 w-[calc(100%-1.5rem)] rounded-lg border border-gray-700 px-3 py-2 text-left text-[10px] text-gray-300">↶ Восстановить последний закрытый чат</button>
-    <div class="mx-3 mt-2 flex items-center justify-between gap-2">
-      <label for="chatSortSelect" class="text-[10px] text-gray-500">Порядок чатов</label>
-      <select id="chatSortSelect" class="min-h-9 max-w-[58%] rounded-lg border border-gray-700 bg-gray-900 px-2 py-1 text-[11px] text-gray-300" aria-label="Порядок чатов">
-        <option value="activity">Последняя активность</option>
-        <option value="created">Дата создания</option>
-      </select>
-    </div>
-    <details id="chatSection" open class="mx-3 my-2 rounded-xl border border-gray-800">
-      <summary class="chat-section-summary flex items-center justify-between gap-2 px-3 py-2.5 text-sm font-semibold cursor-pointer select-none" aria-controls="chatList">
-        <span>💬 <span id="chatSectionTitle" data-i18n="chatsTitle">Чаты</span></span><span id="chatSectionCount" class="text-[10px] text-gray-500">0</span>
+    <details id="chatSection" open class="sidebar-card mx-3 my-1.5 rounded-xl border border-gray-800 p-2">
+      <summary class="chat-section-summary flex items-center justify-between gap-2 rounded-lg px-2 py-2 text-sm font-semibold cursor-pointer select-none" aria-controls="chatList">
+        <span>💬 <span id="chatSectionTitle" data-i18n="chatsTitle">Чаты</span></span>
+        <span class="flex items-center gap-1.5"><span id="projectStatusLine" class="sidebar-inline-status" role="status" aria-live="polite">Личный</span><span id="chatSectionCount" class="text-[10px] text-gray-500">0</span></span>
       </summary>
-      <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
+      <button id="chatListNewButton" type="button" data-action="new-chat" data-i18n="newPersonalChat" class="sidebar-create-chat mt-1 w-full rounded-lg border border-blue-500/30 bg-blue-600/15 hover:bg-blue-600/25 py-2.5 text-sm font-semibold text-blue-100">＋ Новый личный чат</button>
+      <button id="chatListBack" type="button" data-action="chat-list-back" class="hidden mt-1 w-full rounded-lg border border-gray-700 px-3 py-2 text-left text-xs text-gray-300" aria-label="Вернуться ко всем чатам">← Все чаты</button>
+      <button id="restoreLastClosedChat" type="button" data-action="restore-last-closed-chat" class="hidden mt-1 w-full rounded-lg border border-gray-700 px-3 py-2 text-left text-xs text-gray-300">↶ Восстановить последний закрытый чат</button>
+      <div class="my-1 flex items-center justify-between gap-2 px-1">
+        <label for="chatSortSelect" class="text-[10px] text-gray-500">Порядок</label>
+        <select id="chatSortSelect" class="min-h-8 max-w-[65%] rounded-lg border border-gray-700 bg-gray-900 px-2 py-1 text-[11px] text-gray-300" aria-label="Порядок чатов">
+          <option value="activity">Последняя активность</option><option value="created">Дата создания</option>
+        </select>
+      </div>
+      <div id="chatList" class="overflow-y-auto p-1 space-y-1.5 text-sm" aria-label="Список чатов"></div>
     </details>
-
-
-    
-     <div id="chatRowMenuSidebarScrim" aria-hidden="true"></div>
+    <div id="chatRowMenuSidebarScrim" aria-hidden="true"></div>
     <input id="importFile" type="file" class="hidden" accept="application/json,.json">
   </aside>
 
