@@ -4,6 +4,8 @@
 **Purpose:** единый канонический инвентарь всех явных открытых/частичных checkbox-задач из основных, operational, privacy, voice, architecture и research чек-листов проекта. При продолжении работ сначала сверяться с этим файлом; исторические источники сохраняются как provenance.  
 **Rule:** исходные чек-листы остаются нетронутыми и сохраняют историческую роль. Этот реестр зеркалирует все открытые checkbox-пункты со стабильными ID; задачи нельзя молча удалять или объявлять выполненными.
 
+**Owner addendum (2026-11-02):** новые capability/menu/local-source/converter/Skill Factory/agent/SLM/voice/media задачи ведутся append-only в [MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md](MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md); исходный lossless inventory не переписывается.
+
 ## Статусы
 
 - `[ ]` ожидает выполнения или доказательства.
