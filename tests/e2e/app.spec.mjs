@@ -297,25 +297,25 @@ test('sidebar search finds project and chat names locally without indexing messa
   await expect(search).toHaveValue('');
 });
 
-test('chat pinning and sort preference persist with stable ordering', async ({ page }) => {
+test('chat pinning and activity/creation sort preferences persist with stable ordering', async ({ page }) => {
   await page.addInitScript(() => {
-    const chat=(id,title)=>({id,title,projectId:null,messages:[]});
+    const chat=(id,title,createdAt,updatedAt)=>({id,title,projectId:null,messages:[],createdAt,updatedAt});
     localStorage.setItem('ai_chats_v87',JSON.stringify([
-      chat('sort-zeta','Zeta notes'),
-      chat('sort-alpha','Alpha plan'),
-      chat('sort-middle','Middle research')
+      chat('sort-zeta','Zeta notes','2026-01-01T00:00:00.000Z','2026-01-03T00:00:00.000Z'),
+      chat('sort-alpha','Alpha plan','2026-01-03T00:00:00.000Z','2026-01-01T00:00:00.000Z'),
+      chat('sort-middle','Middle research','2026-01-02T00:00:00.000Z','2026-01-02T00:00:00.000Z')
     ]));
     localStorage.setItem('ai_current_chat_v87','sort-alpha');
     localStorage.setItem('ai_pinned_chats_v1',JSON.stringify(['sort-zeta','sort-middle']));
-    localStorage.setItem('ai_chat_sort_v1','title');
+    localStorage.setItem('ai_chat_sort_v1','created');
   });
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   await page.locator('[data-action="toggle-sidebar"]').click();
   const chatIds=()=>page.locator('#chatList [data-action="switch-chat"]').evaluateAll(nodes=>nodes.map(node=>node.dataset.chatId));
   await expect.poll(chatIds).toEqual(['sort-middle','sort-zeta','sort-alpha']);
   const sort=page.locator('#chatSortSelect');
-  await expect(sort).toHaveValue('title');
-  await sort.selectOption('current');
+  await expect(sort).toHaveValue('created');
+  await sort.selectOption('activity');
   await expect.poll(chatIds).toEqual(['sort-zeta','sort-middle','sort-alpha']);
   await page.locator('#chatList [data-action="switch-chat"][data-chat-id="sort-alpha"]').locator('..').locator('.chat-row-menu summary').click();
   await page.locator('#chatList [data-action="chat-toggle-pin"][data-chat-id="sort-alpha"]').click();
@@ -323,7 +323,7 @@ test('chat pinning and sort preference persist with stable ordering', async ({ p
   await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('ai_pinned_chats_v1')||'[]'))).toContain('sort-alpha');
   await page.reload({waitUntil:'domcontentloaded'});
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await expect(page.locator('#chatSortSelect')).toHaveValue('current');
+  await expect(page.locator('#chatSortSelect')).toHaveValue('activity');
   await expect.poll(chatIds).toEqual(['sort-zeta','sort-alpha','sort-middle']);
   await expect(page.locator('#chatList [data-chat-id="sort-alpha"]').first()).toHaveAttribute('aria-label',/Закреплённый чат/);
 });
