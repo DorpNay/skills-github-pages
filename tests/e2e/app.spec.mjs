@@ -596,6 +596,19 @@ test('sidebar closes on a horizontal touch swipe without consuming vertical scro
   await expect(page.locator('#sidebar')).not.toHaveClass(/-translate-x-full/);
   await dispatchSwipe({ x: 300, y: 420 }, { x: 190, y: 425 }, true);
   await expect(page.locator('#sidebar')).not.toHaveClass(/-translate-x-full/);
+  await page.locator('#sidebar').evaluate(sidebar => {
+    const dispatch = (type, property, point) => {
+      const event = new Event(type, { bubbles: true, cancelable: true });
+      if (property) Object.defineProperty(event, property, { value: [point] });
+      sidebar.dispatchEvent(event);
+    };
+    const start = { clientX: 300, clientY: 420 };
+    const end = { clientX: 190, clientY: 425 };
+    dispatch('touchstart', 'touches', start);
+    dispatch('pointercancel');
+    dispatch('touchend', 'changedTouches', end);
+  });
+  await expect(page.locator('#sidebar')).not.toHaveClass(/-translate-x-full/);
   await dispatchSwipe({ x: 300, y: 420 }, { x: 190, y: 425 });
   await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
   await expect(page.locator('#sidebarOverlay')).toBeHidden();
