@@ -746,3 +746,10 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Playwright regression covers vertical scrolling (must remain open), touch cancellation (must remain open), pointer cancellation (must remain open), and a subsequent deliberate horizontal swipe (must close). Project disclosure remains open after close/reopen.
 - Source commit: `050f25ef41942b2f522607cc117d15af2b373043`; regression commit: `0a76e63df790977cd6ed0540233528e3102a7d9a`.
 - This is authored coverage only until exact-head Chromium CI runs. Native iPhone Safari gesture arbitration remains a manual gate.
+
+### 8.21 — local name-only sidebar search audit (2026-11-02)
+
+- Verified the existing sidebar search indexes project names and chat titles only; it does not inspect message bodies. Results are separated into Projects/Chats, use textContent for labels, expose real project/chat IDs as action targets, and cap each group at eight visible matches with an explicit overflow note.
+- Playwright regression `sidebar search finds project and chat names locally without indexing message contents` is present in the current suite.
+- This closes only the name-search slice of 8.21. Pinning, persistent sort preference, and stable ordering while the user is reading remain unimplemented and must be designed separately; do not mark 8.21 complete.
+- Evidence: `assets/js/app.js` `renderSidebarSearchResults()`; `tests/e2e/app.spec.mjs` test beginning near line 262 on the audited HEAD.
