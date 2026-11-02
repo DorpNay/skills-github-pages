@@ -826,6 +826,7 @@ test('readability tokens and actual status surfaces meet AA in both themes', asy
     document.body.appendChild(metadata);
     const row = document.createElement('div');
     row.className = 'memory-item';
+    row.style.cssText = 'position:fixed;top:0;left:0;z-index:10000';
     const action = document.createElement('button');
     action.id = 'contrastMemoryActionFixture';
     action.type = 'button';
@@ -833,7 +834,7 @@ test('readability tokens and actual status surfaces meet AA in both themes', asy
     row.appendChild(action);
     document.body.appendChild(row);
   });
-  await page.mouse.move(0, 0);
+  await page.mouse.move(1279, 719);
   const measure = (theme, contrastMode) => page.evaluate(({ selectedTheme, selectedContrast }) => {
     const root = document.documentElement;
     root.dataset.theme = selectedTheme;
