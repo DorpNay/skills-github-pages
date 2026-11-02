@@ -10,7 +10,7 @@ project_state:
     technique_record: "docs/TECHNIQUE_REGISTER_RU.md#cross-session-coding-agent-handoff--source-validated-pattern-2026-11-02"
     maturity: "SOURCE-VALIDATED; bounded pilot applied; repeated-resumption benefit not yet measured"
   root_orienter:
-    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 open/unmerged; last verified code/test HEAD 1ec4a1d338975934a9cbefa3f3a262ad97ee118f; base SHA e78a73b25725bfa63370d9946887cbbacbf51b82; mergeable=false. Quality #41411404686 passed 4/4 Chromium shards (147 tests) plus all required sentinels; published-site smoke skipped. Graphify #41411404736 passed (1209 nodes / 3322 edges / 60 communities) with documented HTML/CSS coverage limits. Six-viewport and sidebar screenshot evidence reviewed; project navigation tofu glyphs fixed. Native iPhone/VoiceOver/WCAG remain manual. No merge/rebase/sync/deploy."
+    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 open/unmerged; source/test HEAD 8f4a0a532639586f557c85156ede41810d4cc79b; base SHA e78a73b25725bfa63370d9946887cbbacbf51b82; mergeable=false. Quality #41415052330 passed on preceding bridge HEAD 331318b8cbe5f4911372e5013ae0e0dd4b882a9b: 4/4 Chromium shards (147 tests), syntax, Ruff/static analysis, Jekyll, Integrity, Security and Context; published-site smoke skipped. Graphify #41415488412 passed on 8f4a0a5: 3198 nodes / 8559 edges / 61 groups, including deterministic CSS/DOM/JS surface links. Native iPhone/VoiceOver/WCAG remain manual. No merge/rebase/sync/deploy."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 8
@@ -31,7 +31,7 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
-  last_volley: "V-2026-11-02-NAVIGATION-OWNERSHIP-AND-UI-ICON-001"
+  last_volley: "V-2026-11-02-GRAPHIFY-UI-SURFACE-BRIDGE-001"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Browser half-duplex voice dialogue prototype is merged; CI uses mocked ASR/TTS, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; first read in new chats, then verify current main HEAD and open PRs"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
@@ -313,13 +313,26 @@ graphify_pilot_workflow:
   license_note: "PyPI release v0.9.96 says Apache-2.0; default-branch pyproject metadata appears stale/different (0.1.14/MIT); source provenance discrepancy recorded"
   runtime_dependency: false
   latest_pr131_run:
-    run_id: 41411404736
-    head: "1ec4a1d338975934a9cbefa3f3a262ad97ee118f"
+    run_id: 41415488412
+    head: "8f4a0a532639586f557c85156ede41810d4cc79b"
     graphify: "0.9.96; code-only; semantic/model calls disabled"
-    graph: "1209 nodes; 3322 edges; 60 communities"
-    manifest: "76 code files; includes assets/js/app.js, gateway and 11 E2E specs; excludes index.md, assets/css/** and landing/**/*.html"
-    limitations: "6 code files yielded no symbols; 700-token query truncation; generic community names; artifact retention 7 days"
-  rollback: "remove workflow file and revert documentation-only references; no product/runtime behavior changes"
+    graph: "3198 nodes; 8559 edges; 61 groups (60 AST communities + UI Surface)"
+    ast_baseline: "1209 nodes; 3322 edges; 60 communities; 76 code files"
+    ui_surface: "776 CSS occurrences / 732 unique nodes; 536 DOM nodes; 780 JS reference occurrences / 717 unique nodes; 184 CSS/DOM name matches; 306 JS/CSS matches"
+    manifest: "77 source files with nodes after bridge; artifact-only, seven-day retention"
+    limitations: "351 DOM selector names lack static CSS-name match and 43 CSS names lack static DOM-name match; dynamic DOM/conditional CSS possible; inferred links are not browser proof"
+  rollback: "remove scripts/graphify_ui_surface.py, its unit test and the bridge workflow steps/dependency; no product/runtime behavior changes"
+
+graphify_ui_surface_bridge:
+  status: "IMPLEMENTED; CI-VERIFIED; artifact-only"
+  file: "scripts/graphify_ui_surface.py"
+  test: "tests/test_graphify_ui_surface.py"
+  parser: "tinycss2==1.4.0 installed only in Graphify CI; HTMLParser from Python standard library"
+  evidence: "CSS/DOM/JS source extraction marked EXTRACTED; cross-file selector-name matches marked INFERRED"
+  constraints: "no HTML runtime, backend, VPS, model calls, persistent graph store or new server dependency; artifacts retained 7 days"
+  upstream_review: "Astria reviewed, not adopted; independent graph/schema and CSS extractor requires runtime validation"
+  exact_graphify_run: "41415488412 on 8f4a0a532639586f557c85156ede41810d4cc79b; 3198 nodes / 8559 edges / 61 groups"
+  next: "review unmatched selector diagnostics against dynamic DOM/CSS sources; keep visual behavior acceptance grounded in Playwright/DOM/screenshots"
 
 
 local_helper_memory_suggestions:
@@ -678,11 +691,11 @@ ui_scope_reconciliation_2026_11_02:
   inherited_ui_scope: "Applicable unresolved requirements from sections 1-7 are integrated into section 8.0 workstreams; completed, obsolete and superseded items are not reopened as parallel tasks"
   polish_register: "docs/LANDING_UX_POLISH_BACKLOG_RU.md is a concise mirror, not an independent backlog"
   implementation_evidence: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
-  latest_ui_source_checkpoint: "fed3137bae2355629a976515719f498940ad8601"
+  latest_ui_source_checkpoint: "8f4a0a532639586f557c85156ede41810d4cc79b"
   live_pr131_head: "Always read from current PR metadata; documentation commits may advance HEAD"
   notification_slice_8_19: "FIFO toast queue; active/queued duplicate suppression; urgency-based durations; pause on hover/focus/hidden tab; polite/status and assertive/alert semantics; Playwright assertions added but not executed"
   notification_slice_scope: "Partial presentation/accessibility work only; durable operation states/IDs, pending-to-result updates, persistent unacknowledged errors and inline recovery actions remain open"
-  graphify_path_coverage: "PR and main-push filters now include assets/js/**/*.js, assets/css/**/*.css and landing/**/*.html; exact-head graph artifact not yet confirmed"
+  graphify_path_coverage: "PR #131 Graphify artifact verified on 8f4a0a5: JS/Python AST plus deterministic CSS/DOM/JS selector bridge; 3198 nodes / 8559 edges / 77 source files; HTML semantics and computed browser styles remain outside graph proof"
   quality_chromium: "Quality #1197 baseline run 41352153636 hit 30m global timeout after local baseurl CSS/JS 404s. First sharded run #1198 / 41355064390 started four runners concurrently, but all failed before tests because _site is read-only and the first symlink attempt returned Permission denied. Static analysis, preflight, Integrity, Security, Context, Jekyll and Provenance passed. New fix serves the Pages baseurl through a writable temporary document root; exact-head browser rerun pending"
   next: "Push commits automatically trigger Quality; do not request manual workflow_dispatch. Monitor all event types via the repository Actions runs list because the commit-run helper returns PR events only. Verify the writable temporary Pages overlay and four Chromium shards, then benchmark; continue inherited UI + mandatory 8.1-8.17 before optional 8.18-8.27"
 

@@ -1,13 +1,15 @@
 # aLandi — project orientation\n\n> **Handoff trigger:** when the owner sends `oledue`, start with root `OLEDUE.md`. It defines the short, repository-backed resume protocol; verify all live SHAs and checks before acting.
 
-## Current working checkpoint — 2026-11-02, Skills panel
+## Current working checkpoint — 2026-11-02, Graphify UI surface bridge
 
-- Source of truth: `DorpNay/skills-github-pages`; main remains stable V1 at verified commit `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`.
-- OLEDUE handoff quality: `AGENTS.md` contains a correctly formatted trigger section; `OLEDUE.md` now requires a compact checkpoint covering goal/acceptance, done/in-flight/blocked, exact repository state, files/commits, checks, decisions/constraints and one next action. See the newest OLEDUE entry in `docs/VOLLEY_LOG.md`.
-- PR #131 remains open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`; current source/test checkpoint `baf6a96705a15466384ab2c9f1efce977e83d087`. PR base SHA remains `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub reports mergeable=false. No merge, rebase, synchronization or deployment.
-- Skills panel now separates the working chat-scoped task profile from the future shared Skill package library. Added RU/EN scope/lifecycle copy, native collapsed disclosure, 44px target, permission boundary and roadmap ticker pause coverage.
-- Playwright regression authored for panel scope, lifecycle, keyboard, touch target, pause and EN labels. Corrected the nested-label pause selector using CSS `:has()` for Functions, Agents and Skills. Exact-head workflow lookup returned no runs; tests are not executed and no pass is claimed.
-- No shared Skill registry, import endpoint, package loader, script runtime, permission API, dependency or backend route was added. Next: continue the next bounded Landing 2.0 UI slice after reviewing remaining owner checklist requirements; preserve the V1/main boundary.
+- Source of truth: `DorpNay/skills-github-pages`; main remains stable V1 at `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`.
+- PR #131 remains open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`; latest source/test HEAD `8f4a0a532639586f557c85156ede41810d4cc79b`, base `e78a73b25725bfa63370d9946887cbbacbf51b82`, mergeable=false. No merge, rebase, main sync or deployment.
+- OLEDUE remains the handoff trigger; ORIENTER is the record map, FILE_ORIENTER the current checkpoint, PROJECT_STATE the structured snapshot, VOLLEY the chronological evidence. Live GitHub overrides all stored SHAs.
+- Graphify #41415488412 passed on the source/test HEAD: 3,198 nodes / 8,559 edges / 61 groups, 77 source files. Deterministic CI-only bridge now maps CSS selectors, DOM ids/classes and JavaScript references into the disposable graph. No model calls or server/runtime dependency.
+- UI surface evidence: 776 CSS selector occurrences / 732 unique nodes; 536 DOM selector nodes; 780 JS reference occurrences / 717 unique nodes; 184 CSS↔DOM name matches and 306 JS→CSS matches. Cross-file selector matches remain INFERRED, not browser-computed-style proof.
+- Quality #41415052330 passed on preceding bridge HEAD `331318b8cbe5f4911372e5013ae0e0dd4b882a9b`: 4/4 Chromium shards, 147 passed; syntax, Ruff/static analysis, Jekyll, Integrity, Security and Context passed; published-site smoke skipped. Latest metrics correction is limited to bridge/test reporting; exact-head Quality after this checkpoint remains to be checked.
+- Astria was reviewed but not adopted: separate graph/schema, not a drop-in Graphify plugin. See `docs/TECHNIQUE_REGISTER_RU.md`.
+- Next: finish exact-head CI after the documentation checkpoint, then review unmatched selector diagnostics without treating them as automatic defects; continue mandatory Landing 2.0 UI acceptance and native iPhone/VoiceOver/WCAG checks.
 
 
 ## Record ownership
@@ -22,7 +24,7 @@
 | V1_UI_FINALIZATION_RU.md | Requirements and acceptance | Proof of implementation |
 | LANDING_UI_V2_IMPLEMENTATION_RU.md | Implementation/test evidence | Duplicate requirements |
 | ALANDI_ARCHITECTURE_MAP_RU.md | Human-curated module boundaries | Generated call graph |
-| Graphify | Temporary code-navigation hint | State, memory, CSS/HTML map or proof |
+| Graphify | Disposable code graph plus deterministic CSS/DOM/JS selector navigation | State, memory, runtime behavior or proof of computed browser styles |
 
 Owner authority wins. Live GitHub PR/branch/HEAD/base/checks override stored SHAs. The owner checklist defines acceptance; source/tests define implementation; exact-HEAD CI defines verification. PROJECT_STATE is a snapshot, VOLLEY is history, and Graphify only suggests where to inspect. If any document or graph disagrees with source/tests, verify the source and update the relevant canonical record.
 

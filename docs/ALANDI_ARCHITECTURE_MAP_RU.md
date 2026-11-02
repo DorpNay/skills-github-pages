@@ -131,10 +131,12 @@ The browser client has been split into cacheable static assets without introduci
 
 This map is a source-navigation aid, not a generated call graph or proof of browser behavior. Preserve the static HTML/CSS/JavaScript + Jekyll/GitHub Pages architecture; do not add a frontend framework or build step without a measured reason.
 
-### Graphify coverage — verified PR #131 artifact (2026-11-02)
+### Graphify coverage — code graph plus deterministic UI surface bridge (verified PR #131 artifact, 2026-11-02)
 
-- Workflow path filters watch `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html`, but this only triggers the workflow; it does **not** mean the code-only parser extracts those file types.
-- Graphify 0.9.96 run #41411404736 on exact code/test HEAD `1ec4a1d338975934a9cbefa3f3a262ad97ee118f` passed: 1,209 nodes, 3,322 edges, 60 communities; zero model calls. Manifest contains 76 code files, including `assets/js/app.js`, gateway code and 11 E2E specs.
-- The manifest does not contain `index.md`, `assets/css/**` or `landing/**/*.html`. Six code files yielded no symbols; 271 edges are inferred; query output may truncate around 700 tokens; community labels remain generic. Artifact retention is seven days.
-- **Use Graphify for code relationships only.** For app shell, semantic HTML, CSS, responsive layout and public landing visuals, inspect source directly and use DOM/Playwright screenshots. Never infer CSS/HTML coverage from path filters or a green Graphify run.
+- Graphify 0.9.96 remains the code-relationship engine: run #41415488412 on source/test HEAD `8f4a0a532639586f557c85156ede41810d4cc79b` passed with 1,209 AST nodes / 3,322 AST edges / 60 AST communities before UI augmentation; zero model calls. The manifest contains 76 code files.
+- `scripts/graphify_ui_surface.py` runs after Graphify clustering and before HTML export. It deterministically parses CSS via CI-only `tinycss2==1.4.0`, HTML/Markdown markup via Python `HTMLParser`, and selected JS selector APIs; it appends evidence-labelled UI nodes/edges to the same disposable `graph.json`. The bridge and its test are removed from staging before Graphify AST extraction, so the graph does not index its own implementation.
+- Final artifact: 3,198 nodes / 8,559 edges / 61 community groups (60 Graphify AST communities + one `UI Surface` group), 77 source files. UI bridge records 776 CSS selector occurrences (732 unique nodes), 536 DOM selector nodes and 780 JS selector-reference occurrences (717 unique nodes); 184 CSS/DOM selector-name matches and 306 JS→CSS references.
+- 351 DOM selector names have no static CSS-name match and 43 CSS selector names have no static DOM-name match. These are diagnostics, not defects by themselves: markup can be dynamic and CSS can be conditional, utility-driven or scoped. Relationships `may_style`, `targets` and function ownership are marked `INFERRED`; they do not prove browser-computed style/runtime behavior. Direct source, DOM and Playwright screenshot evidence remain mandatory for visual acceptance.
+- Focused unit tests run in the Graphify workflow. The Graphify graph remains artifact-only with seven-day retention; no runtime dependency, model call, new service, server load or persistent graph store was introduced.
+- Related upstream Astria was reviewed but not adopted: independent graph/schema, not a Graphify plugin; CSS extraction configuration needs a separate runtime validation. See `docs/TECHNIQUE_REGISTER_RU.md`.
 

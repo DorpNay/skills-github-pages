@@ -957,3 +957,12 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Exact code/test HEAD: `1ec4a1d338975934a9cbefa3f3a262ad97ee118f`. Quality #41411404686: all four Chromium shards passed, 147 tests; syntax, Ruff/static analysis, Jekyll, Integrity, Security and Context passed. Published-site smoke skipped. No flaky tests in this final run.
 - Graphify #41411404736: 1,209 nodes / 3,322 edges / 60 communities; code-only manifest covers JavaScript/Python code, not HTML/CSS. Use direct source and screenshot/DOM evidence for visual layout.
 - Screenshots reviewed: 320/360/390/768/1024/1440 px and desktop/mobile sidebar-open. No horizontal overflow observed in these Chromium captures. Real iPhone Safari, VoiceOver, keyboard focus and full component-level WCAG remain unverified.
+
+ 
+## Graphify UI surface bridge — 2026-11-02
+
+- Closed the Graphify coverage gap without changing the frontend: added `scripts/graphify_ui_surface.py` plus `tests/test_graphify_ui_surface.py`. The CI-only bridge adds CSS selectors, DOM ids/classes and JavaScript selector references to the disposable Graphify graph.
+- Exact source/test HEAD: `8f4a0a532639586f557c85156ede41810d4cc79b`. Graphify run #41415488412 passed: 3,198 nodes, 8,559 edges, 61 groups; 77 source files; no model calls. UI coverage: 776 CSS selector occurrences / 732 unique nodes, 536 DOM selector nodes, 780 JS reference occurrences / 717 unique nodes, 184 CSS↔DOM name matches and 306 JS→CSS matches.
+- 351 DOM selector names without static CSS-name matches and 43 CSS names without static DOM-name matches are diagnostic candidates only; dynamic rendering and conditional/scoped CSS can explain them. Edges preserve `EXTRACTED` vs `INFERRED` provenance.
+- Quality #41415052330 passed on the immediately preceding source/test HEAD `331318b8cbe5f4911372e5013ae0e0dd4b882a9b`: Chromium 4/4, 147 passed; syntax, Ruff/static analysis, Jekyll, Integrity, Security and Context passed; published-site smoke skipped. Latest bridge metrics correction is on `8f4a0a5`; recheck Quality after the docs checkpoint.
+- Astria was evaluated but not installed or adopted. The bridge adds only a CI-time parser dependency; no browser runtime, backend, VPS service, model call or persistent graph store changed.
