@@ -3,8 +3,8 @@
 ## Текущая контрольная точка — 2026-11-03, локальная библиотека Team Blueprint
 
 - Main V1: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; не менять.
-- PR #131 открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; code/test HEAD `765138e74e141aaf1471c6351193d98dda8a0df8`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Compare с main: diverged, 952 ahead / 4 behind. Четыре main-side commits меняют только общий `docs/V1_UI_FINALIZATION_RU.md`; rebase/sync запрещены без разрешения.
-- PR comments/reviews/threads: 0. На exact HEAD `765138e` нет workflow runs и commit statuses; Playwright/Quality NOT RUN.
+- PR #131 открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; live branch HEAD `65dad97efa107985aa87c55a1d9ed811baf126a2`; code/test HEAD `765138e74e141aaf1471c6351193d98dda8a0df8`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Compare с main: diverged, 959 ahead / 4 behind. Четыре main-side commits меняют только общий `docs/V1_UI_FINALIZATION_RU.md`; rebase/sync запрещены без разрешения.
+- PR comments/reviews/threads: 0. На code/test HEAD `765138e` и docs HEAD `65dad97` нет workflow runs и commit statuses; Playwright/Quality NOT RUN.
 - Добавлена local-only Team Blueprint library: до 20 именованных снимков состава команды; save/apply/delete; RU/EN; 44px mobile targets. Применение меняет только blueprint fields текущего чата. Не запускает агентов, не включает structured workflow, не выдаёт permissions и не создаёт AgentRuns.
 - E2E suite: 120 тестов; новый lifecycle regression authored, NOT RUN. Static V8 parse app.js/spec PASS; CSS braces balanced; duplicate HTML IDs absent; all new RU/EN keys present.
 - Graphify UI bridge и selector triage сохранены в implementation ledger. Семь CSS candidates без literal references не удалялись.
