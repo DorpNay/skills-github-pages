@@ -259,3 +259,10 @@
 - Source/test HEAD: `6f2863094434cd75c8794c348117cc8ea597f271`.
 - Added immediate Undo for chat deletion using the existing last-closed-chat recovery slot. The action validates the slot's chat ID and expires safely if a newer deletion replaced it. Existing seven-day reload recovery remains intact.
 - Added E2E coverage; V8 syntax parsing passed, Chromium execution pending. No new storage key, dependency, backend, merge, rebase or deployment.
+
+
+### Live Landing V2 continuation — chat-rename Undo (2026-11-02)
+
+- Source/test HEAD: `f7e74f41b608cded7030d1185c9b747b3190e78a`.
+- Added bounded Undo for chat rename, guarded against overwriting a later rename. 8.20 now covers chat move, delete and rename with local inverse checks.
+- Playwright regression authored; V8 syntax parsing passed; Chromium execution pending. Project cascade/settings and persistent command history remain out of scope.

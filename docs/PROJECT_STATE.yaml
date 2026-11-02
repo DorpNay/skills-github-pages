@@ -926,3 +926,15 @@ landing_v2_chat_delete_undo_2026_11_02:
   persistence: "reuses existing seven-day last-closed chat recovery; no new storage key or command history"
   e2e: "delete → Undo regression authored; not yet executed; existing reload restore regression retained"
   source_checks: "V8 syntax parsing passed"
+
+
+landing_v2_chat_rename_undo_2026_11_02:
+  status: "implemented; exact-head Quality/Chromium pending"
+  pr: 131
+  source_test_head: "f7e74f41b608cded7030d1185c9b747b3190e78a"
+  requirement: "8.20"
+  behavior: "chat rename exposes bounded toast Undo that restores the exact previous title"
+  safety: "undo applies only if chat still exists and current title still equals the value written by the original rename; later rename is never overwritten"
+  e2e: "rename → Undo regression authored; not yet executed"
+  source_checks: "V8 syntax parsing passed"
+  limitations: "project deletion/cascade, settings and persistent command history remain excluded"

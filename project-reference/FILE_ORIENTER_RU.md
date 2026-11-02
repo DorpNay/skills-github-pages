@@ -363,3 +363,10 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Latest source/test checkpoint: `6f2863094434cd75c8794c348117cc8ea597f271`.
 - Chat deletion now offers immediate Undo through the existing last-closed-chat recovery slot, but only if that snapshot was saved and still belongs to the same chat. A newer deletion safely expires the older action.
 - Added Playwright regression; existing seven-day reload recovery remains unchanged. V8 syntax check passed; Chromium run pending.
+
+
+## Landing V2 — chat-rename Undo (2026-11-02)
+
+- Latest source/test checkpoint: `f7e74f41b608cded7030d1185c9b747b3190e78a`.
+- Chat-title rename now has bounded Undo; the prior title is restored only if no later rename has changed it. Added Playwright regression for both UI and persisted state.
+- Syntax parsing passed; Chromium execution pending. Undo scope remains local chat move/delete/rename, not project cascade or settings.

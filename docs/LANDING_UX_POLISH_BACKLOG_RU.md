@@ -146,3 +146,9 @@
 
 - Chat deletion now offers an immediate Undo action using the existing last-closed-chat recovery slot. It restores only the matching chat; a newer deletion expires the older action safely.
 - Existing seven-day restore after reload remains intact. E2E coverage is authored but not yet executed.
+
+
+### 8.20 chat-rename Undo — 2026-11-02
+
+- Chat-title rename now has a bounded Undo action. It restores the exact previous title only if the chat has not been renamed again; newer state is preserved.
+- E2E coverage is authored for UI and persisted title restoration. Project deletion/cascade and settings Undo remain out of scope.

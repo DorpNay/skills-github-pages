@@ -827,3 +827,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Undo checks that the slot still belongs to the same deleted chat. If a newer deletion replaced it, the older action expires without restoring the wrong chat. The existing seven-day reload recovery button remains unchanged.
 - Added Playwright coverage for delete → Undo and restoration of the same current chat ID. Syntax parsing passed; browser execution remains pending.
 - Source/test commits: `3f85837ab31005c3b722f76e13f9d78570aef1da`, `6f2863094434cd75c8794c348117cc8ea597f271`. No new storage schema, dependency, backend, merge or deployment.
+
+
+## V-2026-11-02-CHAT-RENAME-UNDO-001
+
+- Added bounded Undo for chat-title rename through the existing toast action. It restores the exact prior title only if the chat still exists and the title has not changed again.
+- A repeated rename is a no-op; a later conflicting rename is never overwritten. No new storage or command-history schema.
+- Added Playwright regression for rendered and persisted title restoration. Source/test commits: `fb5ece37b2fed96635a260d41c9103d1f356c4d5`, `f7e74f41b608cded7030d1185c9b747b3190e78a`. Syntax parsing passed; Chromium execution pending.
+- Bounded Undo scope now covers chat move, delete and rename only. Project cascade/settings remain excluded; no dependency, backend, merge or deployment.
