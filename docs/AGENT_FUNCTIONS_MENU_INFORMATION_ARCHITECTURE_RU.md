@@ -3,6 +3,39 @@
 **Дата:** 2026-11-02  
 **Контекст:** PR #131, Landing UI V2.0. Это UX-контракт и будущая карта управления, а не утверждение, что перечисленные runtime-функции уже реализованы.
 
+## 0. Аудит фактического UI на PR #131 HEAD 853a377
+
+Проверены `index.md`, `assets/js/app.js`, `assets/css/app.css` и существующие Playwright specs. Значительная часть запрошенной структуры уже реализована; её нужно развивать, а не дублировать.
+
+### Уже присутствует в коде
+
+- Меню Functions разделено на четыре группы: работа с задачей, исследование и источники, создание и преобразование, подключения.
+- Реальные пункты: structured workflow, task profile, Research Studio и integrations status.
+- Roadmap items с `1ИÆИT10И`: локальные файлы/папки, конвертеры/извлечение, Knowledge-to-Skill/Agent, аудио/изображения/видео.
+- Agent panel: execution mode, team blueprint (size/scenario/role preset), custom scenario/roles, use cases, 64 logical professions, orchestration modes, models/resources, permissions/capabilities.
+- Skills panel: chat-scoped task profiles, custom instructions, quiz selection and roadmap for shared versioned library/import/validation.
+- Для current pipeline явно сказано, что четыре этапа выполняются одной выбранной моделью; независимые agent processes не запускаются.
+- Есть pause controls, reduced-motion handling, bilingual labels and non-runtime disclaimers.
+
+### Existing regression coverage (tests authored, not a claim of current execution)
+
+`tests/e2e/app.spec.mjs` already contains coverage for:
+- four function-menu groups and RU/EN labels;
+- two agent configuration groups and five future sections;
+- ticker presence and non-runtime messaging;
+- reduced-motion and pause behavior.
+
+### Gaps to continue
+
+1. Расширить каталог из blueprint в управляемый registry: роли/профессии, agent profiles, Skill versions, model policy and capability scopes.
+2. Не путать team blueprint slider with actual team concurrency; label must remain explicit until durable workers exist.
+3. Отделить task profile from reusable/importable Skill package library.
+4. Разложить будущие пункты на nested categories without turning the compact toolbar into a long flat menu.
+5. Добавить explicit status taxonomy and data/provenance/permission details where they become backed by real handlers.
+6. File System Access, persistent source vault, universal converters, Knowledge-to-Skill and media generation remain roadmap-only.
+7. Run current exact-head Playwright/Quality and visual/mobile/assistive-technology acceptance before claiming pass.
+
+
 ## 1. Принцип представления возможностей
 
 Каждая функция в меню обязана иметь явный статус:
