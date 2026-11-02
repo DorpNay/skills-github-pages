@@ -1,5 +1,14 @@
 import { test, expect } from '@playwright/test';
-import { readFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { dirname } from 'node:path';
+
+async function attachVisualReviewScreenshot(page, testInfo, name) {
+  const screenshot = await page.screenshot({ animations: 'disabled' });
+  const outputPath = testInfo.outputPath('visual-review', `${name}.png`);
+  await mkdir(dirname(outputPath), { recursive: true });
+  await writeFile(outputPath, screenshot);
+  await testInfo.attach(name, { body: screenshot, contentType: 'image/png' });
+}
 
 const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
 
@@ -3669,7 +3678,7 @@ test('modal lifecycle keeps keyboard focus and page scroll isolated across core 
   await assertModalLifecycle('researchStudioModal');
 });
 
-test('responsive visual review captures viewport and navigation evidence', async ({ page }) => {
+test('responsive visual review captures viewport and navigation evidence', async ({ page }, testInfo) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#chatBox')).toBeVisible();
   await expect(page.locator('#userInput')).toBeVisible();
@@ -3686,23 +3695,14 @@ test('responsive visual review captures viewport and navigation evidence', async
       .toBeLessThanOrEqual(dimensions.viewport);
 
     await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-    await test.info().attach(`landing-v2-app-${width}px`, {
-      body: await page.screenshot({ animations: 'disabled' }),
-      contentType: 'image/png'
-    });
+    await attachVisualReviewScreenshot(page, testInfo, `landing-v2-app-${width}px`);
   }
 
   await page.setViewportSize({ width: 390, height: 844 });
   await ensureSidebarOpen(page);
-  await test.info().attach('landing-v2-mobile-sidebar-open', {
-    body: await page.screenshot({ animations: 'disabled' }),
-    contentType: 'image/png'
-  });
+  await attachVisualReviewScreenshot(page, testInfo, 'landing-v2-mobile-sidebar-open');
 
   await page.setViewportSize({ width: 1440, height: 900 });
   await ensureSidebarOpen(page);
-  await test.info().attach('landing-v2-desktop-sidebar-open', {
-    body: await page.screenshot({ animations: 'disabled' }),
-    contentType: 'image/png'
-  });
+  await attachVisualReviewScreenshot(page, testInfo, 'landing-v2-desktop-sidebar-open');
 });
