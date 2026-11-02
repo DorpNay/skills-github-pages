@@ -58,7 +58,10 @@ class GraphifyUiSurfaceTests(unittest.TestCase):
             labels = [node.get("label") for node in graph["nodes"]]
             relations = [edge["relation"] for edge in graph["links"]]
 
-            self.assertGreaterEqual(result["css_selector_nodes"], 3)
+            self.assertGreaterEqual(result["css_selector_records"], 3)
+            self.assertGreaterEqual(result["css_selector_nodes"], 2)
+            self.assertGreaterEqual(result["dom_selector_nodes"], 2)
+            self.assertGreaterEqual(result["js_selector_reference_nodes"], 2)
             self.assertIn("#chatPane", labels)
             self.assertIn(".panel", labels)
             self.assertIn("may_style", relations)

@@ -23,11 +23,6 @@ def stable_id(kind: str, *parts: object) -> str:
     return f"ui_surface_{kind}_{hashlib.sha256(raw).hexdigest()[:20]}"
 
 
-def line_of(path: Path, offset: int) -> int:
-    # Offsets are only used for JS matches; CSS/HTML parsers provide line data.
-    return 1
-
-
 def selector_tokens(tokens: Iterable[object]) -> set[str]:
     """Extract simple class/id selectors from tinycss2 component-value tokens."""
     result: set[str] = set()
@@ -348,10 +343,16 @@ def enrich_graph(root: Path, graph_path: Path) -> dict:
             ))
 
     graph_path.write_text(json.dumps(graph, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    css_node_count = sum(len(set(ids)) for ids in css_by_selector.values())
+    dom_node_count = sum(len(set(ids)) for ids in dom_by_selector.values())
+    js_node_count = len(set(js_selector_ids))
     return {
-        "css_selector_nodes": len(css),
-        "dom_selector_nodes": len(dom),
-        "js_selector_references": len(js),
+        "css_selector_records": len(css),
+        "css_selector_nodes": css_node_count,
+        "dom_selector_records": len(dom),
+        "dom_selector_nodes": dom_node_count,
+        "js_selector_reference_records": len(js),
+        "js_selector_reference_nodes": js_node_count,
         "new_graph_nodes": len(nodes),
         "new_graph_edges": len(links),
         "matched_css_dom_selectors": len(set(css_by_selector) & set(dom_by_selector)),
