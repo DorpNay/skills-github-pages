@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "repository": "DorpNay/skills-github-pages",
-  "captured_at": "2026-11-02",
+  "captured_at": "2026-11-03",
   "checkpoint": {
     "main_sha": "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1",
     "main_commit_subject": "docs: mark owner UI corrections as V2.0 priorities",
@@ -44,10 +44,10 @@
     "active_v2_workstream": {
       "pr": 131,
       "branch": "feat/landing-v1-accessibility-responsive-20261031",
-      "source_test_head": "baf6a96705a15466384ab2c9f1efce977e83d087",
+      "source_test_head": "dc82acb95c850d7821e071e16a8ab11524a459c2",
       "status": "open_unmerged_mergeable_false",
-      "latest_slice": "Skills panel separates the working chat-scoped task profile from the future shared Skill package library",
-      "verification": "Playwright regression authored but not executed; CSS :has() selector now pauses tickers from nested checkbox labels; no workflow run returned for exact source/test HEAD",
+      "latest_slice": "Read-only roadmap detail windows across Functions, Agent/Skills, Team Blueprint, Project Sources and Integrations; Agent Profiles and Tasks & History roadmap slots",
+      "verification": "Static V8 syntax, CSS brace, unique-ID and RU/EN checks passed; 121 app and 8 landing E2E tests authored; zero workflow runs and zero commit statuses for exact code/test HEAD dc82acb95c850d7821e071e16a8ab11524a459c2; browser/Quality NOT RUN",
       "runtime_changes": false,
       "merge_or_deploy": false
     }
