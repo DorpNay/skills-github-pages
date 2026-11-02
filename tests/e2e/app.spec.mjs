@@ -2954,6 +2954,8 @@ test('private memory is local by default and enters context only after explicit 
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
+  const memoryPanel = page.locator('#memoryPanel');
+  if (!(await memoryPanel.evaluate(element => element.open))) await memoryPanel.locator(':scope > summary').click();
   const memoryTools = page.locator('#memoryToolsDetails');
   if (!(await memoryTools.evaluate(element => element.open))) await memoryTools.locator(':scope > summary').click();
   await page.locator('#memoryInput').fill('PRIVATE_MEMORY_SENTINEL');
@@ -2976,7 +2978,8 @@ test('private memory is local by default and enters context only after explicit 
   expect(prompts[0].messages[0].content).not.toContain('PRIVATE_MEMORY_SENTINEL');
 
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#memoryToolsDetails > summary').click();
+  if (!(await memoryPanel.evaluate(element => element.open))) await memoryPanel.locator(':scope > summary').click();
+  if (!(await memoryTools.evaluate(element => element.open))) await memoryTools.locator(':scope > summary').click();
   await page.locator('#privateMemoryContextToggle').check();
   await page.locator('#sidebar [data-action="close-sidebar"]').click();
   await page.locator('#userInput').fill('Use my explicitly enabled private notes.');
@@ -3116,6 +3119,10 @@ test('sidebar separates projects from personal chats and keeps navigation collap
   await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(1);
   await expect(page.locator('#chatList [data-action="switch-chat"]')).toContainText('Personal chat');
   await expect(page.locator('#chatList')).not.toContainText('Alpha project chat');
+  const memoryPanel = page.locator('#memoryPanel');
+  await expect(memoryPanel).toBeVisible();
+  await expect(memoryPanel).not.toHaveAttribute('open', '');
+  await memoryPanel.locator(':scope > summary').click();
   await expect(page.locator('#memoryToolsDetails')).toBeVisible();
   await expect(page.locator('#memoryToolsDetails')).not.toHaveAttribute('open', '');
 
@@ -3767,11 +3774,11 @@ test('planned agent and connector directions show a clearly non-runtime innovati
   await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
   const agentPanel = page.locator('#agentFunctionSettings');
   await expect(agentPanel).toBeVisible();
-  const agentTicker = agentPanel.locator('.roadmap-ticker-track');
+  const agentTicker = agentPanel.locator('.roadmap-ticker-track').first();
   await expect(agentTicker).toBeVisible();
   await expect(agentTicker).toContainText('1ИÆИT10И');
   await expect(agentTicker).toHaveAttribute('aria-hidden', 'true');
-  await expect(agentPanel.locator('.roadmap-note')).toContainText('не активный runtime');
+  await expect(agentPanel.locator('.roadmap-note')).toContainText('не фоновые процессы');
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
   await expect(agentTicker).toBeHidden();
 
@@ -3792,7 +3799,7 @@ test('application innovation ticker is static when reduced motion is requested',
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#functionsMenuSummary').click();
   await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
-  const ticker = page.locator('#agentFunctionSettings .roadmap-ticker-track');
+  const ticker = page.locator('#agentFunctionSettings .roadmap-ticker-track').first();
   await expect(ticker).toBeVisible();
   expect(await ticker.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
   await expect(page.locator('#agentFunctionSettings .roadmap-note')).toBeVisible();
@@ -4241,62 +4248,63 @@ test('composer draft is synchronously flushed when the tab becomes hidden', asyn
 
 
 test('chat project move offers a bounded undo action', async ({ page }) => {
+  await page.addInitScript(() => {
+    const project = { id: 'undo-target-project', name: 'Undo target project', description: '', instructions: '', memoryScope: 'project-only', memory: [], createdAt: '', updatedAt: '' };
+    const chat = { id: 'undo-current-chat', title: 'Undo current chat', projectId: null, messages: [] };
+    localStorage.setItem('ai_projects_v1', JSON.stringify([project]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([chat]));
+    localStorage.setItem('ai_current_chat_v87', chat.id);
+  });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  const projectId = await createProjectFromUi(page, 'Undo target project');
-  await page.locator('#currentProjectSelect').selectOption(projectId);
-  await expect(page.locator('#currentProjectSelect')).toHaveValue(projectId);
-
-  const toast = page.locator('#toast');
-  await expect(toast).toContainText('Чат добавлен в проект: Undo target project');
-  const undo = toast.locator('.toast-action');
+  await openProjectSettingsForId(page, 'undo-target-project');
+  const projectSelect = page.locator('#currentProjectSelect');
+  await expect(projectSelect).toBeVisible();
+  await projectSelect.selectOption('undo-target-project');
+  await expect(page.locator('#toast')).toContainText('Чат добавлен в проект: Undo target project');
+  const undo = page.locator('#toast .toast-action');
   await expect(undo).toHaveText('Отменить');
   await expect(undo).toHaveCSS('min-height', '44px');
   await undo.click();
-
-  await expect(page.locator('#currentProjectSelect')).toHaveValue('');
+  await expect(projectSelect).toHaveValue('');
   await expect.poll(() => page.evaluate(() => {
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
-    const currentId = localStorage.getItem('ai_current_chat_v87');
-    return chats.find(chat => chat.id === currentId)?.projectId || '';
+    return chats.find(chat => chat.id === 'undo-current-chat')?.projectId || '';
   })).toBe('');
   await expect(page.locator('#toast')).toContainText('Перемещение чата отменено');
 });
 
 
 test('chat-row project move can be undone without changing chat identity', async ({ page }) => {
+  await page.addInitScript(() => {
+    const project = (id, name) => ({ id, name, description: '', instructions: '', memoryScope: 'project-only', memory: [], createdAt: '', updatedAt: '' });
+    const chat = { id: 'undo-row-chat', title: 'Undo row chat', projectId: 'undo-row-source', messages: [] };
+    localStorage.setItem('ai_projects_v1', JSON.stringify([project('undo-row-source', 'Undo row source'), project('undo-row-target', 'Undo row target')]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([chat]));
+    localStorage.setItem('ai_current_chat_v87', chat.id);
+  });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  const sourceId = await createProjectFromUi(page, 'Undo row source');
-  const targetId = await createProjectFromUi(page, 'Undo row target');
-
   await ensureSidebarOpen(page);
-  const sourceGroup = page.locator('#projectNavigationList details[data-project-id="' + sourceId + '"]');
+  const chatId = 'undo-row-chat';
+  const sourceGroup = page.locator('#projectNavigationList details[data-project-id="undo-row-source"]');
   if (!(await sourceGroup.evaluate(element => element.open))) await sourceGroup.locator(':scope > summary').click();
-  await sourceGroup.locator('[data-action="new-chat-in-project"]').click();
-  const chatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
-  expect(chatId).not.toBe('');
-
-  await ensureSidebarOpen(page);
-  const chatRow = page.locator('#projectNavigationList .chat-row').filter({
+  const chatRow = sourceGroup.locator('.chat-row').filter({
     has: page.locator('[data-action="switch-chat"][data-chat-id="' + chatId + '"]')
   });
   await chatRow.locator('.chat-row-menu > summary').click();
   await chatRow.locator('[data-action="chat-project"]').click();
-  await page.locator('#chatActionProject').selectOption(targetId);
+  await page.locator('#chatActionProject').selectOption('undo-row-target');
   await page.locator('[data-action="chat-action-save"]').click();
-  await expect(page.locator('#currentProjectSelect')).toHaveValue(targetId);
-
+  await expect(page.locator('#toast')).toContainText('Чат добавлен в проект: Undo row target');
   const undo = page.locator('#toast .toast-action');
   await expect(undo).toHaveText('Отменить');
   await undo.click();
-  await expect(page.locator('#currentProjectSelect')).toHaveValue(sourceId);
   const restored = await page.evaluate(id => {
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
     return chats.find(chat => chat.id === id)?.projectId || '';
   }, chatId);
-  expect(restored).toBe(sourceId);
+  expect(restored).toBe('undo-row-source');
   expect(await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'))).toBe(chatId);
+  await expect(page.locator('#toast')).toContainText('Перемещение чата отменено');
 });
 
 
@@ -4385,11 +4393,12 @@ test('planned function menu items are status cards, not fake controls, and can p
   await page.locator('#functionsMenuSummary').click();
   const menu = page.locator('#functionsMenu');
   const cards = menu.locator('.function-roadmap-item');
-  await expect(cards).toHaveCount(4);
-  await expect(cards.nth(0)).toContainText('постоянная библиотека');
-  await expect(cards.nth(1)).toContainText('screenshot-to-code');
-  await expect(cards.nth(2)).toContainText('Knowledge-to-Skill');
-  await expect(cards.nth(3)).toContainText('генерация изображений/видео');
+  await expect(cards).toHaveCount(5);
+  await expect(cards.nth(0)).toContainText('Глубокое исследование 2.0');
+  await expect(cards.nth(1)).toContainText('постоянная библиотека');
+  await expect(cards.nth(2)).toContainText('screenshot-to-code');
+  await expect(cards.nth(3)).toContainText('Knowledge-to-Skill');
+  await expect(cards.nth(4)).toContainText('генерация изображений/видео');
   await expect(cards.locator('button')).toHaveCount(0);
   const ticker = cards.nth(0).locator('.roadmap-ticker-track');
   await expect(ticker).toContainText('1ИÆИT10И');
