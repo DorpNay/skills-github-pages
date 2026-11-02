@@ -1,9 +1,9 @@
 # aLandi — информационная архитектура меню функций и агентов
 
-**Дата:** 2026-11-02  
+**Дата:** 2026-11-03  
 **Контекст:** PR #131, Landing UI V2.0. Это UX-контракт и будущая карта управления, а не утверждение, что перечисленные runtime-функции уже реализованы.
 
-## 0. Аудит фактического UI на PR #131 HEAD 853a377
+## 0. Аудит фактического UI на PR #131 code/test HEAD dc82acb
 
 Проверены `index.md`, `assets/js/app.js`, `assets/css/app.css` и существующие Playwright specs. Значительная часть запрошенной структуры уже реализована; её нужно развивать, а не дублировать.
 
@@ -11,17 +11,17 @@
 
 - Меню Functions разделено на четыре группы: работа с задачей, исследование и источники, создание и преобразование, подключения.
 - Реальные пункты: structured workflow, task profile и integrations status. Research Studio запускается из блока Thorough; в меню «Исследование и источники» теперь показан roadmap-only пункт «Глубокое исследование 2.0».
-- Roadmap items с `1ИÆИT10И`: Deep Research 2.0, локальные файлы/папки, конвертеры/извлечение, Knowledge-to-Skill/Agent, аудио/изображения/видео. Research и Create/Transform items размещены в двух отдельных контейнерах под соответствующими group labels.
-- Agent panel: execution mode, team blueprint (size/scenario/role preset), custom scenario/roles, use cases, 64 logical professions, orchestration modes, models/resources, permissions/capabilities. Future capability sections are grouped into three native disclosures (use cases/roles; orchestration/models/resources; tools/permissions), collapsed by default with 44px keyboard/touch summaries and RU/EN labels.
-- Skills panel: chat-scoped task profiles, custom instructions, quiz selection and roadmap for shared versioned library/import/validation.
+- Roadmap items с `1ИV3ИT10И`: Deep Research 2.0, локальные файлы/папки, конвертеры/извлечение, Knowledge-to-Skill/Agent, аудио/изображения/видео. Все пять карточек открывают read-only Details modal; Research и Create/Transform остаются в двух отдельных контейнерах.
+- Agent panel: execution mode, team blueprint (size/scenario/role preset), custom scenario/roles, use cases, Agent Profiles roadmap slot, 64 logical professions, orchestration modes, models/resources, permissions/capabilities and Tasks & History roadmap slot. Seven roadmap sections are grouped into four native disclosures (use cases/roles; orchestration/models/resources; tools/permissions; tasks/history), collapsed by default with 44px keyboard/touch summaries and RU/EN labels.
+- Skills panel: chat-scoped task profiles, custom instructions, quiz selection and roadmap for shared versioned library/import/validation; the library has a read-only Details action.
 - Для current pipeline явно сказано, что четыре этапа выполняются одной выбранной моделью; независимые agent processes не запускаются.
 - Есть pause controls, reduced-motion handling, bilingual labels and non-runtime disclaimers.
 
 ### Agent panel progressive disclosure update — 2026-11-02
 
-- Wrapped the five existing capability sections into three native `details/summary` groups: use cases and roles; orchestration, models and resources; tools and permissions.
+- Grouped seven roadmap sections into four native `details/summary` groups: use cases/roles; orchestration/models/resources; tools/permissions; tasks/history. Agent Profiles and Tasks & History are description-only slots.
 - Groups start collapsed to keep the configuration panel scannable; each summary has a 44px minimum touch target and visible keyboard focus. Native disclosure semantics provide keyboard interaction without custom JS state.
-- Added RU/EN labels. The roadmap pause selector now targets tickers nested inside the disclosure groups.
+- Added RU/EN labels. The roadmap pause selector targets tickers nested inside the disclosure groups. A shared read-only Details modal is integrated with the modal navigation stack, Escape/backdrop close, focus trap/restore, ARIA labels and RU/EN copy.
 - The two real configuration groups (execution mode and team blueprint) remain separate and unchanged. No runtime capability or permission was added.
 - Playwright coverage now checks group count/order, RU labels, 44px summary hit targets, Enter/Space open/close behavior and that the pause checkbox pauses a ticker nested inside an opened disclosure. Execution on current HEAD is pending.
 
@@ -29,7 +29,7 @@
 
 `tests/e2e/app.spec.mjs` already contains coverage for:
 - four function-menu groups and RU/EN labels;
-- two agent configuration groups and five future sections;
+- two real agent configuration groups; seven roadmap sections across four disclosures; saved Team Blueprint library remains a separate blueprint-only disclosure;
 - ticker presence and non-runtime messaging;
 - reduced-motion and pause behavior.
 
@@ -50,7 +50,7 @@
 
 - **Доступно** — есть реальный handler/runtime, разрешение, понятный результат и regression coverage.
 - **Настраивается** — можно сохранить blueprint/профиль/шаблон, но выполнение ещё не подключено.
-- **В разработке** — интерфейс показывает описание, ограничения и ticker `1ИÆИT10И`; никаких фиктивных кнопок запуска.
+- **В разработке** — интерфейс показывает описание, ограничения и ticker `1ИV3ИT10И`; никаких фиктивных кнопок запуска.
 - **Недоступно в этой среде** — функция существует, но не хватает модели, разрешения, локального runtime или аппаратного ресурса.
 
 Ticker — декоративно-информационная индикация незавершённой функции, не progress indicator. Должен иметь текстовую альтернативу, уважать `prefers-reduced-motion`, не мешать screen reader и не быть единственным способом сообщить статус.
@@ -177,7 +177,7 @@ The latest menu slice moves the existing Research Studio entry out of the compac
 
 - The working chat-scoped task profile is now the primary configuration group, with its scope called out as “available · this chat only”.
 - Goal and output format are explicitly labelled; the existing custom instructions and apply handler remain attached to the current chat.
-- The shared Skill package library is a separate collapsed native disclosure. It documents the planned source → extraction → provenance/license → draft → tests → security review → manual approval → version lifecycle.
+- The shared Skill package library is a separate collapsed native disclosure with a read-only Details action. It documents the planned source → extraction → provenance/license → draft → tests → security review → manual approval → version lifecycle.
 - Import does not imply filesystem, network, memory, shell or external-action permissions. Script execution remains unavailable until a separate runtime and permission model exist.
 - RU/EN strings, 44px disclosure target, keyboard activation and nested ticker pause are covered by a new Playwright test. The test is authored, not executed; exact-head CI is not available yet.
 - No API, runtime, dependency, shared registry, package import or script execution was added.
@@ -186,3 +186,15 @@ The latest menu slice moves the existing Research Studio entry out of the compac
 ### Roadmap pause selector correction — 2026-11-02
 
 The checkbox inputs are nested inside their visible labels. The previous CSS input-sibling selectors could not reach the following ticker containers. The selectors for Functions, Agents and Skills now use the containing `.roadmap-pause-control:has(input:checked)` label, matching the actual DOM. A Skills regression checks the computed paused animation state. Exact-head browser execution remains pending.
+
+
+### Read-only roadmap detail windows — 2026-11-03
+
+- Added 15 “Details / Подробнее” entry points across the five Functions roadmap cards, seven Agent/Skills roadmap sections, saved Team Blueprint library, Project Sources and Integrations.
+- All entry points use one shared accessible modal. It reads the localized title/description from the existing section, displays a status, supports Escape/backdrop/close, participates in the existing browser modal history/focus trap and restores focus to the invoking control.
+- Status mapping supports Available, Blueprint only, In development and Unavailable in this environment. Current markup assigns only In development to roadmap cards and Blueprint only to the local Team Blueprint collection; no status is inferred from a ticker alone.
+- Added Agent Profiles and Tasks & History as collapsed roadmap-only sections. No profile registry, durable AgentRun API, queue, worker, execution, permission or artifact API was added.
+- Normalized visible app and marketing-page ticker prefix to `1ИV3ИT10И`; existing pause and reduced-motion behavior remains in place.
+- App E2E spec contains 121 tests; landing E2E spec contains 8. Assertions are authored, not executed. Static V8 parsing, CSS brace balance, unique HTML IDs and RU/EN translation-key checks passed.
+- Exact code/test HEAD: `dc82acb95c850d7821e071e16a8ab11524a459c2`. GitHub returned zero workflow runs and zero commit statuses; no browser/Quality pass is claimed.
+- No runtime, API, dependency, permission or deployment changes. PR #131 remains open/unmerged and mergeable=false due the shared V1 checklist conflict; no rebase/synchronization/merge/deployment.
