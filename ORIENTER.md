@@ -1,4 +1,4 @@
-# aLandi — project orientation
+# aLandi — project orientation\n\n> **Handoff trigger:** when the owner sends `oledue`, start with root `OLEDUE.md`. It defines the short, repository-backed resume protocol; verify all live SHAs and checks before acting.
 
 ## Current working checkpoint — 2026-11-02, Skills panel
 
