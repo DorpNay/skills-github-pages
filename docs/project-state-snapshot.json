@@ -44,10 +44,10 @@
     "active_v2_workstream": {
       "pr": 131,
       "branch": "feat/landing-v1-accessibility-responsive-20261031",
-      "source_test_head": "d3a44807d9c9eb0dade5a3e0bf80065fa5ebfd45",
+      "source_test_head": "baf6a96705a15466384ab2c9f1efce977e83d087",
       "status": "open_unmerged_mergeable_false",
       "latest_slice": "Skills panel separates the working chat-scoped task profile from the future shared Skill package library",
-      "verification": "Playwright regression authored but not executed; no workflow run returned for exact source/test HEAD",
+      "verification": "Playwright regression authored but not executed; CSS :has() selector now pauses tickers from nested checkbox labels; no workflow run returned for exact source/test HEAD",
       "runtime_changes": false,
       "merge_or_deploy": false
     }
