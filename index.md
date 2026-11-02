@@ -495,41 +495,51 @@ permalink: /
         <p class="roadmap-note" data-i18n="agentRoadmapNote">Бегущие строки обозначают проектируемые возможности, а не фоновые процессы. Уменьшение движения системы отключает анимацию.</p>
         <p id="agentConfigSummary" class="text-[10px] text-gray-500" aria-live="polite"></p>
       </section>
-      <section id="skillFunctionSettings" class="hidden space-y-2">
-        <label for="skillPresetSelect" class="block text-xs font-semibold" data-i18n="skillPresetLabel">Навык этого чата</label>
-        <select id="skillPresetSelect" class="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm">
-          <option value="auto" data-i18n="skillAuto">Автоматически по задаче</option>
-          <option value="planning" data-i18n="skillPlanning">Планирование</option>
-          <option value="research" data-i18n="skillResearch">Исследование</option>
-          <option value="code-review" data-i18n="skillCodeReview">Код и ревью</option>
-          <option value="data-analysis" data-i18n="skillDataAnalysis">Анализ данных</option>
-          <option value="agent-systems" data-i18n="skillAgentSystems">Системы агентов</option>
-          <option value="multimodal" data-i18n="skillMultimodal">Мультимодальные задачи</option>
-          <option value="custom">Свой вариант</option>
-        </select>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <label class="block text-[11px] text-gray-400">Задача по ответам
-            <select id="skillGoalSelect" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="planning">Планирование</option><option value="research">Исследование</option><option value="code-review">Код и ревью</option><option value="data-analysis">Анализ данных</option><option value="agent-systems">Системы агентов</option><option value="multimodal">Мультимодальные задачи</option><option value="custom">Свой вариант</option></select>
-          </label>
-          <label class="block text-[11px] text-gray-400">Формат результата
-            <select id="skillOutputSelect" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="summary">Краткое резюме</option><option value="checklist">Чек-лист</option><option value="steps">Пошагово</option><option value="table">Таблица</option><option value="report">Отчёт</option><option value="custom">Свой вариант</option></select>
-          </label>
-        </div>
-        <div id="skillCustomFields" class="hidden space-y-2 rounded-xl border border-cyan-900/50 bg-cyan-950/15 p-3">
-          <input id="customSkillName" maxlength="80" class="advanced-field w-full rounded-lg border border-gray-700 bg-gray-900" placeholder="Название своего навыка">
-          <textarea id="customSkillInstructions" rows="3" maxlength="3000" class="advanced-field w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Свои инструкции для задачи"></textarea>
-          <textarea id="customSkillOutput" rows="2" maxlength="500" class="advanced-field w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Свой формат результата (необязательно)"></textarea>
-        </div>
-        <button type="button" data-action="apply-skill-quiz" class="w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-2 text-xs font-semibold text-cyan-200">Подобрать навык</button>
-        <p id="skillConfigSummary" class="text-[10px] text-gray-500" aria-live="polite"></p>
-        <p class="text-[11px] leading-relaxed text-gray-500" data-i18n="skillPresetHelp">Профиль добавляет инструкции, но не открывает инструменты или данные.</p>
-        <section class="agent-future-section space-y-2">
-          <h3 data-i18n="skillLibraryTitle">Библиотека навыков</h3>
-          <p data-i18n="skillLibraryText">Сейчас профиль и пользовательские инструкции хранятся в настройках чата. Общая версионируемая библиотека навыков и запуск их скриптов не подключены.</p>
-          <label class="roadmap-pause-control"><input id="skillRoadmapPause" type="checkbox"><span data-i18n="functionRoadmapPause">Остановить бегущие строки</span></label>
-          <div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИÆИT10И · Импорт, проверка, версии, сравнение и откат навыков</span></div>
-          <div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИÆИT10И · Книга / документ / сайт / репозиторий → Skill или Agent</span></div>
+      <section id="skillFunctionSettings" class="hidden space-y-3">
+        <section class="function-config-group rounded-xl border border-gray-800 p-3 space-y-3" aria-labelledby="skillTaskProfileTitle">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 id="skillTaskProfileTitle" class="function-config-group-title" data-i18n="skillTaskProfileTitle">Профиль текущего чата</h3>
+            <span class="rounded-full border border-emerald-800/70 bg-emerald-950/30 px-2 py-1 text-[10px] font-semibold text-emerald-200" data-i18n="skillScopeBadge">Работает · только этот чат</span>
+          </div>
+          <label for="skillPresetSelect" class="block text-xs font-semibold" data-i18n="skillPresetLabel">Профиль задачи</label>
+          <select id="skillPresetSelect" class="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm">
+            <option value="auto" data-i18n="skillAuto">Автоматически по задаче</option>
+            <option value="planning" data-i18n="skillPlanning">Планирование</option>
+            <option value="research" data-i18n="skillResearch">Исследование</option>
+            <option value="code-review" data-i18n="skillCodeReview">Код и ревью</option>
+            <option value="data-analysis" data-i18n="skillDataAnalysis">Анализ данных</option>
+            <option value="agent-systems" data-i18n="skillAgentSystems">Системы агентов</option>
+            <option value="multimodal" data-i18n="skillMultimodal">Мультимодальные задачи</option>
+            <option value="custom">Свой вариант</option>
+          </select>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <label class="block text-[11px] text-gray-400"><span data-i18n="skillGoalLabel">Задача по ответам</span>
+              <select id="skillGoalSelect" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="planning">Планирование</option><option value="research">Исследование</option><option value="code-review">Код и ревью</option><option value="data-analysis">Анализ данных</option><option value="agent-systems">Системы агентов</option><option value="multimodal">Мультимодальные задачи</option><option value="custom">Свой вариант</option></select>
+            </label>
+            <label class="block text-[11px] text-gray-400"><span data-i18n="skillOutputLabel">Формат результата</span>
+              <select id="skillOutputSelect" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="summary">Краткое резюме</option><option value="checklist">Чек-лист</option><option value="steps">Пошагово</option><option value="table">Таблица</option><option value="report">Отчёт</option><option value="custom">Свой вариант</option></select>
+            </label>
+          </div>
+          <div id="skillCustomFields" class="hidden space-y-2 rounded-xl border border-cyan-900/50 bg-cyan-950/15 p-3">
+            <input id="customSkillName" maxlength="80" class="advanced-field w-full rounded-lg border border-gray-700 bg-gray-900" placeholder="Название своего навыка">
+            <textarea id="customSkillInstructions" rows="3" maxlength="3000" class="advanced-field w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Свои инструкции для задачи"></textarea>
+            <textarea id="customSkillOutput" rows="2" maxlength="500" class="advanced-field w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Свой формат результата (необязательно)"></textarea>
+          </div>
+          <button type="button" data-action="apply-skill-quiz" class="w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-2 text-xs font-semibold text-cyan-200">Подобрать навык</button>
+          <p id="skillConfigSummary" class="text-[10px] text-gray-500" aria-live="polite"></p>
+          <p class="text-[11px] leading-relaxed text-gray-500" data-i18n="skillPresetHelp">Профиль добавляет инструкции, но не открывает инструменты или данные.</p>
         </section>
+        <details id="skillLibraryDisclosure" class="agent-settings-category">
+          <summary data-i18n="skillLibraryTitle">Библиотека навыков · планируется</summary>
+          <section class="agent-future-section space-y-2">
+            <p data-i18n="skillLibraryText">Общая библиотека Skill packages пока не подключена. Текущий профиль хранится в настройках чата; импортированные пакеты не запускаются.</p>
+            <p class="font-semibold text-gray-300" data-i18n="skillLibraryWorkflow">Будущий процесс: источник → извлечение → проверка происхождения и лицензии → черновик → тесты → проверка безопасности → ручное утверждение → версия.</p>
+            <p data-i18n="skillLibrarySafety">Импорт не будет автоматически давать доступ к файлам, сети, памяти, shell или внешним действиям. Запуск скриптов требует отдельного runtime и разрешений.</p>
+            <label class="roadmap-pause-control"><input id="skillRoadmapPause" type="checkbox"><span data-i18n="functionRoadmapPause">Остановить бегущие строки</span></label>
+            <div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИÆИT10И · Каталог, импорт, проверка, версии, сравнение и откат Skill packages</span></div>
+            <div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИÆИT10И · Книга / документ / сайт / репозиторий → Skill или Agent blueprint</span></div>
+          </section>
+        </details>
       </section>
       <section id="connectorFunctionStatus" class="hidden rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-sm leading-relaxed text-gray-300"><p data-i18n="functionConnectorsDescription">Показываем только реально подключённые источники. Внешние коннекторы пока не подключены; они не будут имитироваться переключателями.</p><div class="roadmap-ticker mt-3" aria-label="Планируемое улучшение"><span class="roadmap-ticker-track" aria-hidden="true">1ИÆИT10И · Интеграции с контролируемыми разрешениями</span></div><p class="roadmap-note">Подключение источников появится только после проверки прав, границ данных и реального соединения. Анимация декоративная и не означает, что сервис уже выполняет работу.</p></section>
       <footer class="flex justify-end border-t border-gray-800 pt-3"><button type="button" data-action="close-function-panel" data-i18n="functionPanelClose" class="rounded-xl border border-gray-700 px-4 py-2 text-sm">Закрыть</button></footer>
