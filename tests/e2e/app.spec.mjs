@@ -652,21 +652,30 @@ test('sidebar closes on a horizontal touch swipe without consuming vertical scro
 });
 
 test('aLandi aServi is exclusive while provider and additional settings can remain open together', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   await page.locator('[data-action="toggle-settings"]').click();
   const cloud=page.locator('#aserviSettingsGroup'),providers=page.locator('#thirdPartyProviderSettings'),additional=page.locator('#additionalSettings');
+  for (const selector of ['#aserviSettingsGroup > summary','#thirdPartyProviderSettings > summary','#additionalSettings > summary']) {
+    const box=await page.locator(selector).boundingBox();
+    expect(box?.height||0,selector+' should retain a 44px mobile hit target').toBeGreaterThanOrEqual(44);
+  }
   if (!(await cloud.evaluate(element => element.open))) await cloud.locator(':scope > summary').click();
   await expect(cloud).toHaveAttribute('open','');
-  await providers.locator(':scope > summary').click();
+  await providers.locator(':scope > summary').focus();
+  await page.keyboard.press('Enter');
   await expect(cloud).not.toHaveAttribute('open','');
   await expect(providers).toHaveAttribute('open','');
-  await additional.locator(':scope > summary').click();
+  await additional.locator(':scope > summary').focus();
+  await page.keyboard.press('Space');
   await expect(providers).toHaveAttribute('open','');
   await expect(additional).toHaveAttribute('open','');
-  await cloud.locator(':scope > summary').click();
+  await cloud.locator(':scope > summary').focus();
+  await page.keyboard.press('Space');
   await expect(cloud).toHaveAttribute('open','');
   await expect(providers).not.toHaveAttribute('open','');
   await expect(additional).not.toHaveAttribute('open','');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
 
 test('text readability preferences persist and apply in both themes', async ({ page }) => {
