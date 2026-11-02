@@ -833,3 +833,13 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - 8.17's computed-style failure was a test-timing issue: the fixture button's normal 140ms CSS color transition meant the assertion sampled the old intermediate value. The test fixture now sets `transition:none`; production UI transitions and color tokens are unchanged.
 - The chat export/import draft regression read `ai_current_chat_v87` before asynchronous app initialization persisted it. The test now waits for the current-chat key before capturing the ID; no production draft-storage code changed. The exact-head run passed the corrected test without retries.
 - This is automated Chromium evidence only. Native iPhone Safari, VoiceOver and complete component-level WCAG review remain open; no merge or deployment occurred.
+
+## Advanced settings and function-menu taxonomy — 2026-11-02
+
+- Code checkpoint before this ledger-only update: `79790a018234b0f141f7ee902430165f6471a920`; PR #131 remains open/unmerged, main remains stable V1. No deployment.
+- Additional Settings now groups existing controls into three closed-by-default, purpose-labeled disclosures: appearance/comfort, search/instructions, and profile/backups. Existing element IDs, settings storage, secret handling, profile import/export actions and current provider/search behavior are preserved.
+- Function menu now separates task workflow from integrations with compact group labels. Structured-workflow panel separates the mode toggle from blueprint team configuration; no new agent runtime or permissions were introduced.
+- Added RU/EN translations and Playwright coverage for advanced-settings hierarchy, mobile touch target/overflow, keyboard toggling, function-menu taxonomy/localization, and structured-workflow configuration grouping.
+- Graphify Code-Only run `41389386456` succeeded on exact code/test HEAD `79790a018234b0f141f7ee902430165f6471a920`. Quality run `41389386442` was pending with zero jobs listed at time of update; Chromium/Quality passes are not claimed. Prior Quality #1359 success is a separate earlier checkpoint, not evidence for this change.
+- Preview: only the main GitHub Pages target exists and it serves V1; no V2 preview host is configured. Vercel deployment context returned zero teams and project search returned zero projects. Do not overwrite Pages V1 or create another repository without owner approval.
+- Next: wait for exact-head Quality/Chromium; inspect failures and fix; then screenshot review and request explicit owner authorization for a separate preview host/repository if required.
