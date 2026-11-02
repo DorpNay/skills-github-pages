@@ -164,3 +164,34 @@
 - В `scripts/quality-agents.mjs` исправлены два over-escaped regex в Jekyll build sentinel (commit `3e6af80aecda329a6f63d5196d67d3c6abc23ec1`). Ошибка была найдена в старом Quality run #41351093423 на SHA `11ffc0bbbe01a068490ca32dd1ea4029517a3120`; exact-head rerun обязателен.
 - Не добавлены зависимости, agent runtimes, hosted services, frontend frameworks или production automation.
 
+
+
+## Cross-session coding-agent handoff — source-validated pattern (2026-11-02)
+
+**Maturity:** SOURCE-VALIDATED; applied as a bounded repository-documentation pilot. Not yet PROVEN across repeated aLandi chat resumptions.
+
+### Primary-source findings
+
+- [OpenAI Codex compaction prompt](https://github.com/openai/codex/blob/main/codex-rs/prompts/templates/compact/prompt.md) defines a compact handoff around current progress/key decisions, context/constraints/preferences, remaining work and critical references.
+- [OpenAI Codex AGENTS.md loader](https://github.com/openai/codex/blob/main/codex-rs/core/src/agents_md.rs) discovers project instructions from the repository root down to the working directory and keeps project scope bounded; nested instructions are assembled in path order.
+- [OpenHands conversation persistence](https://docs.openhands.dev/sdk/guides/convo-persistence) restores a conversation by stable ID and persistence directory; persisted state includes event history, agent configuration, execution state, tool outputs, workspace context and activated skills. This is runtime persistence, not a Markdown handoff.
+- [Claude Code hooks](https://code.claude.com/docs/en/hooks) expose lifecycle events such as `SessionStart` and `PreCompact`, enabling automatic capture/restore when the host supports those hooks. ChatGPT Projects do not thereby gain those hooks.
+- [cc-memory](https://github.com/skymanbp/cc-memory) describes a forced-read progress handoff and reconcile-on-write rather than blind append-only memory. Its SQLite/hooks/MCP architecture is not required for a repository-backed ChatGPT workflow.
+
+### Decision applied to aLandi
+
+Keep the portable, repository-backed design rather than importing another agent runtime:
+
+1. `OLEDUE.md` is the stable trigger/entrypoint and live-state verification protocol.
+2. `docs/VOLLEY_LOG.md` remains the chronological evidence trail; reuse its latest actionable checkpoint rather than creating a second handoff database.
+3. `ORIENTER.md` and `docs/PROJECT_STATE.yaml` remain concise navigation/state projections, not substitutes for live GitHub reads.
+4. A useful checkpoint explicitly records goal/acceptance, done, in-flight/blocked, exact repo/branch/PR/HEAD/base, relevant files/commits, exact checks and tested SHA, decisions/constraints, and one next action.
+5. A checkpoint whose recorded HEAD differs from live GitHub is stale; reconstruct from the current PR, commits, diff, tests and CI before acting.
+
+### Limits and evaluation
+
+- No transcripts, private reasoning, secrets or raw user prompts are persisted.
+- No hook system, SQLite store, background worker, runtime dependency or new service is introduced.
+- The current pilot has not yet demonstrated fewer repeated reads or faster first-useful-change across multiple chats.
+- Review after three real `oledue` resumptions: note repeated context requests, stale checkpoint corrections, duplicate work, first-turn useful output and missed constraints. Promote beyond SOURCE-VALIDATED only if evidence shows a repeatable improvement.
+
