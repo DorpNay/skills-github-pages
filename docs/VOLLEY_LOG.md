@@ -793,3 +793,12 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Quality #1398 / run `41389870537` pending; jobs not yet listed. No Quality/Chromium pass claimed. Graphify #431 / run `41389386456` passed on the exact source/test checkpoint.
 - This update is documentation-only; main V1 and PR merge/deploy state unchanged.
 
+
+
+## V-2026-11-02-BROWSER-CONNECTIVITY-AND-DRAFT-FLUSH-001
+
+- Implemented the 8.25 browser-connectivity slice on PR #131: an accessible RU/EN composer warning reflects only `navigator.onLine === false`, is independent of offline search mode, and explicitly does not claim API health.
+- The `online` event clears the warning and offers a manual retry; no request is replayed automatically. Per-chat text drafts now flush synchronously on hidden-tab `visibilitychange` as well as `pagehide`.
+- Added Playwright coverage for offline/online transitions, preserved draft and unchanged chat history, plus immediate draft flush on tab hide. Tests are authored, not yet executed.
+- Source/test HEAD: `6489f5a9b6d2d3e8c68b2bad993f7b85a4521cbd`. V8 syntax checks and CSS brace balance passed. Quality #1405 / run `41390877580` is pending; Graphify #437 / run `41390877512` is queued. No browser pass claimed.
+- PR #131 remains open/unmerged and mergeable=false. No main sync, rebase, merge, deployment, dependency or backend change. Attachments remain outside draft persistence pending IndexedDB/privacy/quota design.
