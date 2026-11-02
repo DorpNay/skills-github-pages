@@ -683,6 +683,22 @@ test('function menu separates task workflow from integrations in both languages'
   await expect(menu.locator('.toolbar-menu-group-label').nth(1)).toContainText('Connections');
 });
 
+test('structured workflow panel groups its configuration into clear sections', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  const panel = page.locator('#agentFunctionSettings');
+  const groups = panel.locator('.function-config-group');
+  await expect(groups).toHaveCount(2);
+  await expect(groups.nth(0).locator('h3')).toContainText('Режим выполнения');
+  await expect(groups.nth(1).locator('h3')).toContainText('Параметры команды');
+  await expect(groups.nth(0).locator('#agentModeControl')).toHaveCount(1);
+  await expect(groups.nth(1).locator('#agentTeamSize')).toHaveCount(1);
+  await expect(groups.nth(1).locator('#agentTeamScenario')).toHaveCount(1);
+  await expect(groups.nth(1).locator('#agentRolePreset')).toHaveCount(1);
+  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
+});
+
 test('advanced settings are grouped by purpose with keyboard-friendly disclosures', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
