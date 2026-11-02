@@ -1,4 +1,13 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
+
+## Актуальная контрольная точка — 2026-11-02, Landing V2 taxonomy slice
+
+- PR #131 открыт, не объединён; ветка `feat/landing-v1-accessibility-responsive-20261031`; docs HEAD `2d8d697e759cec860e092c4ca6fa657fb6998568`, source/test HEAD `79790a018234b0f141f7ee902430165f6471a920`. Main остаётся V1; merge/rebase/sync/deploy не выполнялись.
+- Additional Settings regrouped into three purpose disclosures. Function menu groups task workflow and connections. Structured-workflow configuration is divided into execution mode and blueprint parameters. RU/EN labels and E2E tests added.
+- Graphify run `41389386456` passed on exact source/test HEAD. Quality #1396 / run `41389559807` pending, zero jobs listed at last check; no Chromium pass claim. Previous Quality #1359 result applies only to its prior checkpoint.
+- V2 live preview not configured: Pages target serves main V1; Vercel connected context/project search returned no available team/project. No new repo or deployment without owner approval.
+- Next: verify Quality/Chromium, fix regressions, gather real screenshots and continue native iPhone/VoiceOver/WCAG review.
+
 ## Актуальная контрольная точка — 2026-11-02, Quality #1252 green
 
 - PR #131 открыт и не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; code HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`; documentation HEAD `63f429ccf16fe7648519ebb3ecc02b9f8949ad53`. Сравнение: 653 commits ahead / 4 behind main; rebase/main synchronization без разрешения запрещены.

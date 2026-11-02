@@ -767,3 +767,13 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Automated contrast results: all tested base tokens and toast foregrounds against solid surfaces in dark/light and standard/high modes meet 4.5:1; minimum measured ratio 4.71:1 (light standard success toast). Full component-level WCAG, iPhone Safari and VoiceOver remain manual gates.
 - Harness² and Hermes Agent v0.22.0–v0.22.5 remain research/security references only; no dependency, runtime, provider route or model was adopted. The owner-provided 60 repositories have been categorized and selectively reviewed, not all deeply audited.
 - No merge, rebase, main synchronization or deployment.
+
+## V-2026-11-02-LANDING-V2-SETTINGS-TAXONOMY-001
+
+- Source/test checkpoint `79790a018234b0f141f7ee902430165f6471a920`; docs checkpoint `2d8d697e759cec860e092c4ca6fa657fb6998568`; PR #131 open/unmerged; main V1 untouched.
+- Grouped Additional Settings into Appearance/comfort, Search/instructions, and Profile/backups. Added task/connections group labels to Functions menu and execution-mode/blueprint group labels to the structured workflow panel. RU/EN translations included.
+- Added E2E assertions for category count/order, closed state, 44px touch target, keyboard toggling, mobile overflow, function-menu RU/EN taxonomy and structured panel grouping.
+- Graphify run `41389386456` passed on source/test HEAD. Quality #1396 / run `41389559807` pending, no jobs listed; no exact-head Chromium pass claimed.
+- Preview is blocked by current host boundary: main Pages target serves V1; Vercel has no accessible team/project. Preserve V1; separate preview target/repository requires owner authorization.
+- Next: exact-head Quality/Chromium, then screenshot review and isolated preview approval.
+
