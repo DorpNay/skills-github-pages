@@ -132,6 +132,8 @@
     let projects = loadProjects();
     let currentChatId = safeGet(STORAGE.current) || chats[0].id;
     if (!chats.some((chat) => chat.id === currentChatId)) currentChatId = chats[0].id;
+    let activeChatSortSnapshotId = currentChatId;
+    let activeChatSortTimestamp = chats.find(chat => chat.id === currentChatId)?.updatedAt || chats.find(chat => chat.id === currentChatId)?.createdAt || '';
     let pyodideInstance = null;
     let activeController = null;
     let activeChatId = null;
@@ -470,7 +472,8 @@
       autoResizeTextarea(input);
     }
     function createChat(title = 'Новый чат', messages = [], projectId = null) {
-      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, privateMemoryUsed: false, processingMode: 'fast', searchMode: 'normal', multiAgentEnabled: false, skillPreset: 'auto', customSkillName:'', customSkillInstructions:'', customSkillOutput:'', skillGoal:'planning', skillOutputMode:'summary', agentTeamSize:4, agentTeamScenario:'general', agentTeamCustomScenario:'', agentRolePreset:'balanced', agentCustomRoles:'' };
+      const now = new Date().toISOString();
+      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, createdAt: now, updatedAt: now, privateMemoryUsed: false, processingMode: 'fast', searchMode: 'normal', multiAgentEnabled: false, skillPreset: 'auto', customSkillName:'', customSkillInstructions:'', customSkillOutput:'', skillGoal:'planning', skillOutputMode:'summary', agentTeamSize:4, agentTeamScenario:'general', agentTeamCustomScenario:'', agentRolePreset:'balanced', agentCustomRoles:'' };
     }
     function preserveUnreadableChats(rawText) {
       if (!rawText) return;
@@ -505,11 +508,13 @@
           return [createChat()];
         }
         const valid = raw.filter((item) => item && typeof item === 'object' && typeof item.id === 'string' && Array.isArray(item.messages))
-          .map((item) => ({
+          .map((item,index) => ({
             id: item.id.slice(0, 128),
             title: typeof item.title === 'string' ? item.title.slice(0, 160) : 'Новый чат',
             projectId: typeof item.projectId === 'string' ? item.projectId.slice(0, 128) : null,
-                        privateMemoryUsed: item.privateMemoryUsed === true,
+            createdAt: typeof item.createdAt === 'string' && Number.isFinite(Date.parse(item.createdAt)) ? item.createdAt : new Date(Date.now() - index * 1000).toISOString(),
+            updatedAt: typeof item.updatedAt === 'string' && Number.isFinite(Date.parse(item.updatedAt)) ? item.updatedAt : (typeof item.createdAt === 'string' && Number.isFinite(Date.parse(item.createdAt)) ? item.createdAt : new Date(Date.now() - index * 1000).toISOString()),
+            privateMemoryUsed: item.privateMemoryUsed === true,
             customSkillName: typeof item.customSkillName==='string'?item.customSkillName.slice(0,80):'',
             customSkillInstructions: typeof item.customSkillInstructions==='string'?item.customSkillInstructions.slice(0,3000):'',
             customSkillOutput: typeof item.customSkillOutput==='string'?item.customSkillOutput.slice(0,500):'',
@@ -547,20 +552,23 @@
       } catch (_) { return []; }
     }
     function loadChatSortPreference() {
-      return safeGet(STORAGE.chatSort) === 'title' ? 'title' : 'current';
+      return safeGet(STORAGE.chatSort) === 'created' ? 'created' : 'activity';
+    }
+    function getChatSortTimestamp(chat) {
+      const value = chatSortPreference === 'created'
+        ? chat.createdAt
+        : (chat.id === activeChatSortSnapshotId ? activeChatSortTimestamp : chat.updatedAt || chat.createdAt);
+      const timestamp = Date.parse(value || '');
+      return Number.isFinite(timestamp) ? timestamp : 0;
     }
     function getSortedChats(items) {
       const originalPositions = new Map(items.map((chat, index) => [chat.id, index]));
       const pinned = new Set(pinnedChatIds);
-      const language = getUiLanguage();
       return [...items].sort((a, b) => {
         const pinOrder = Number(pinned.has(b.id)) - Number(pinned.has(a.id));
         if (pinOrder) return pinOrder;
-        if (chatSortPreference === 'title') {
-          const titleOrder = String(a.title || '').localeCompare(String(b.title || ''), language, { sensitivity: 'base', numeric: true });
-          if (titleOrder) return titleOrder;
-        }
-        return originalPositions.get(a.id) - originalPositions.get(b.id);
+        const timeOrder = getChatSortTimestamp(b) - getChatSortTimestamp(a);
+        return timeOrder || originalPositions.get(a.id) - originalPositions.get(b.id);
       });
     }
     function toggleChatPinned(chatId) {
@@ -930,8 +938,8 @@
       applyFunctionPanelLanguage(lang);
       const chatSortSelect=$('chatSortSelect');
       if(chatSortSelect){
-        chatSortSelect.querySelector('option[value="current"]').textContent=lang==='en'?'Current order':'Как сейчас';
-        chatSortSelect.querySelector('option[value="title"]').textContent=lang==='en'?'Name A–Z':'По названию';
+        chatSortSelect.querySelector('option[value="activity"]').textContent=lang==='en'?'Last activity':'Последняя активность';
+        chatSortSelect.querySelector('option[value="created"]').textContent=lang==='en'?'Date created':'Дата создания';
         chatSortSelect.setAttribute('aria-label',lang==='en'?'Chat order':'Порядок чатов');
         chatSortSelect.value=chatSortPreference;
       }
@@ -1796,11 +1804,21 @@
       showToast('Выбранный факт добавлен в общую память. Личная копия сохранена.');
     }
     function updateState(nextChats = null, nextCurrentId = null) {
+      const previousCurrentChatId=currentChatId;
       if (Array.isArray(nextChats)) {
         chats = nextChats.length ? nextChats : [createChat()];
       }
       if (nextCurrentId && chats.some((chat) => chat.id === nextCurrentId)) currentChatId = nextCurrentId;
       if (!chats.some((chat) => chat.id === currentChatId)) currentChatId = chats[0].id;
+      if (Array.isArray(nextChats)) {
+        const activeChat=chats.find(chat=>chat.id===currentChatId);
+        if(activeChat)activeChat.updatedAt=new Date().toISOString();
+      }
+      if(currentChatId!==previousCurrentChatId||activeChatSortSnapshotId!==currentChatId){
+        const activeChat=chats.find(chat=>chat.id===currentChatId);
+        activeChatSortSnapshotId=currentChatId;
+        activeChatSortTimestamp=activeChat?.updatedAt||activeChat?.createdAt||'';
+      }
       if ($('modeFast')) syncCurrentChatFunctionSettings();
       persistChats(); renderChatList(); renderActiveChat(); renderProjectUI({preserveDraft:true});
     }
@@ -4804,9 +4822,12 @@
     $('modelSearch').addEventListener('input',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('sidebarSearchInput').addEventListener('input',renderSidebarSearchResults);
     $('chatSortSelect')?.addEventListener('change',event=>{
-      const next=event.target.value==='title'?'title':'current';
+      const next=event.target.value==='created'?'created':'activity';
       if(next===chatSortPreference)return;
       chatSortPreference=next;
+      const activeChat=chats.find(chat=>chat.id===currentChatId);
+      activeChatSortSnapshotId=currentChatId;
+      activeChatSortTimestamp=activeChat?.updatedAt||activeChat?.createdAt||'';
       if(safeSet(STORAGE.chatSort,chatSortPreference))showToast(getUiLanguage()==='en'?'Chat order saved.':'Порядок чатов сохранён.');
       renderChatList();
     });
