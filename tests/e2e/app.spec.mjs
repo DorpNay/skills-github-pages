@@ -731,6 +731,10 @@ test('structured workflow panel groups its configuration into clear sections', a
   await expect(panel.locator('.agent-future-section').nth(3)).toContainText('RU/EN/TH');
   await expect(panel.locator('.agent-future-section').nth(4)).toContainText('capabilities');
   await expect(panel.locator('#agentRoadmapPause')).toBeVisible();
+  await capabilityGroups.nth(0).locator(':scope > summary').click();
+  await panel.locator('#agentRoadmapPause').check();
+  await expect(capabilityGroups.nth(0).locator('.roadmap-ticker-track').first()).toHaveCSS('animation-play-state', 'paused');
+  await panel.locator('#agentRoadmapPause').uncheck();
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
 });
 
