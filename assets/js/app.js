@@ -912,6 +912,25 @@
     };
     function aserviText(key){const language=getUiLanguage();return ASERVI_TEXT[language]?.[key]||ASERVI_TEXT.ru[key]||key;}
     function getUiLanguage(){return safeGet('ai_ui_language_v1')==='en'?'en':'ru';}
+    function syncNetworkStatus(){
+      const node=$('networkStatus');
+      if(!node)return;
+      const offline=navigator.onLine===false;
+      node.classList.toggle('hidden',!offline);
+      node.textContent=offline
+        ?(getUiLanguage()==='en'
+          ?'The browser reports no network connection. Requests are not retried automatically; API availability is not verified.'
+          :'Браузер сообщает, что сеть недоступна. Запросы не повторяются автоматически; доступность API не проверяется.')
+        :'';
+    }
+    window.addEventListener('offline',syncNetworkStatus);
+    window.addEventListener('online',()=>{
+      const wasOffline=$('networkStatus')&&!$('networkStatus').classList.contains('hidden');
+      syncNetworkStatus();
+      if(wasOffline)showToast(getUiLanguage()==='en'
+        ?'The browser reports that network connectivity returned. Retry manually; API availability is not verified.'
+        :'Браузер сообщает о восстановлении сети. Повтори запрос вручную; доступность API не проверена.','info');
+    });
     function applyFunctionPanelLanguage(lang){
       const en=lang==='en';
       const setOptions=(selector,values)=>{const select=$(selector);if(select)Array.from(select.options).forEach((option,index)=>{if(values[index])option.textContent=values[index];});};
@@ -943,6 +962,7 @@
       document.querySelectorAll('[data-i18n-placeholder]').forEach(node=>{const value=text[node.dataset.i18nPlaceholder];if(typeof value==='string')node.placeholder=value;});
       document.querySelectorAll('[data-i18n-aria-label]').forEach(node=>{const value=text[node.dataset.i18nAriaLabel];if(typeof value==='string')node.setAttribute('aria-label',value);});
       applyFunctionPanelLanguage(lang);
+      syncNetworkStatus();
       const chatSortSelect=$('chatSortSelect');
       if(chatSortSelect){
         chatSortSelect.querySelector('option[value="activity"]').textContent=lang==='en'?'Last activity':'Последняя активность';
