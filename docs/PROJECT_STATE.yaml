@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-02"
   root_orienter:
-    status: "Main remains stable V1. PR #131 remains open/unmerged on feat/landing-v1-accessibility-responsive-20261031. Live HEAD a201bea11c68ff85f527ea0c0aa5a4bc8820a061; compare main: 767 ahead / 4 behind, diverged. Harness² and Hermes Agent v0.22.0–v0.22.5 research is documented in OPEN_SOURCE_TRIAGE and VOLLEY_LOG; the 60-repository list is categorized and selectively reviewed, not deeply audited in full. Quality #1359 passed 134/134 Chromium tests on source/test checkpoint 12803232; follow-up Quality #1364 / run 41382021317 passed all jobs and all four Chromium shards on exact HEAD a201bea. No merge/rebase/deploy."
+    status: "Main remains stable V1. PR #131 open/unmerged on feat/landing-v1-accessibility-responsive-20261031. Latest docs HEAD 89a13b1347ade8fd7199da87fd41dc033290bfa8; source/test HEAD 79790a018234b0f141f7ee902430165f6471a920. PR mergeable=false; four main-side checklist commits remain unsynchronized. Advanced Settings and function-menu taxonomy changes are documented in the implementation ledger. Graphify run 41389386456 passed on source/test HEAD; Quality #1397 / run 41389783481 is pending and no exact-head Chromium pass is claimed. No merge/rebase/deploy."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 0
@@ -65,9 +65,9 @@ ui_v2_track:
   pull_request: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   status: "open_unmerged_owner_hold"
-  latest_documentation_head: "PR #131 docs checkpoint before this state refresh: 2d8d697e759cec860e092c4ca6fa657fb6998568; source/test HEAD remains 79790a018234b0f141f7ee902430165f6471a920. Main V1 stays untouched; PR open/unmerged, mergeable=false."
+  latest_documentation_head: "PR #131 docs HEAD 89a13b1347ade8fd7199da87fd41dc033290bfa8; source/test HEAD remains 79790a018234b0f141f7ee902430165f6471a920. Main V1 stays untouched; PR open/unmerged, mergeable=false."
   latest_code_test_head: "79790a018234b0f141f7ee902430165f6471a920: Additional Settings purpose-based groups; function menu taxonomy; structured-workflow settings group labels; RU/EN translations; Playwright coverage for settings disclosures, touch-targets, keyboard, mobile overflow and function grouping. Existing IDs/storage and runtime boundaries preserved."
-  latest_quality_harness_head: "Quality #1396 / run 41389559807 was pending with zero jobs listed when last checked for documentation HEAD 2d8d697e759cec860e092c4ca6fa657fb6998568; exact-head Chromium/Quality is not yet verified. Graphify Code-Only run 41389386456 passed on exact source/test HEAD 79790a018234b0f141f7ee902430165f6471a920. Quality #1359 (134 tests on source/test checkpoint 12803232) remains earlier historical evidence only. Native iPhone/VoiceOver and live provider behavior remain unverified."
+  latest_quality_harness_head: "Quality #1397 / run 41389783481 is pending for documentation HEAD 89a13b1347ade8fd7199da87fd41dc033290bfa8; exact-head Chromium/Quality is not yet verified. Graphify Code-Only run 41389386456 passed on exact source/test HEAD 79790a018234b0f141f7ee902430165f6471a920. Quality #1359 (134 tests on source/test checkpoint 12803232) remains earlier historical evidence only. Native iPhone/VoiceOver and live provider behavior remain unverified."
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0; mandatory requirements 8.1-8.17 and optional owner proposals 8.18-8.27"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
   polish_register: "docs/LANDING_UX_POLISH_BACKLOG_RU.md (mirrors the consolidated residual list; not a separate backlog)"
@@ -87,9 +87,9 @@ ui_v2_track:
     live_gateway_provider: "Not verified; live smoke requires explicit owner approval."
   current_main_sha: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
   branch_divergence: "Live PR #131 compare at HEAD a201bea11c68ff85f527ea0c0aa5a4bc8820a061: diverged, 767 ahead / 4 behind main; merge_base=e78a73b25725bfa63370d9946887cbbacbf51b82. Four main-side commits touch docs/V1_UI_FINALIZATION_RU.md. Preserve both versions; no rebase/sync without owner approval."
-  current_work_head: "2d8d697e759cec860e092c4ca6fa657fb6998568"
-  current_work_summary: "Advanced settings IA grouped by purpose; function menu separated into task workflow and integrations; structured-workflow controls grouped by execution mode and blueprint parameters. RU/EN labels and focused E2E tests added. Graphify passed exact source/test HEAD 79790a01; Quality #1396 on docs HEAD 2d8d697e was pending with zero jobs. No merge/deploy."
-  current_work_validation: "No exact-head Quality/Chromium pass yet for the advanced-settings/function taxonomy slice. Graphify Code-Only run 41389386456 passed on source/test HEAD 79790a018234b0f141f7ee902430165f6471a920. Quality #1396 run 41389559807 was pending with no jobs listed on documentation HEAD 2d8d697e759cec860e092c4ca6fa657fb6998568. Native iPhone Safari, VoiceOver, live provider and full component WCAG checks remain unverified."
+  current_work_head: "89a13b1347ade8fd7199da87fd41dc033290bfa8"
+  current_work_summary: "Advanced settings IA grouped by purpose; function menu separated into task workflow and integrations; structured-workflow controls grouped by execution mode and blueprint parameters. RU/EN labels and focused E2E tests added. Graphify passed exact source/test HEAD 79790a01; Quality #1397 on docs HEAD 89a13b13 is pending. No merge/deploy."
+  current_work_validation: "No exact-head Quality/Chromium pass yet for the advanced-settings/function taxonomy slice. Graphify Code-Only run 41389386456 passed on source/test HEAD 79790a018234b0f141f7ee902430165f6471a920. Quality #1397 run 41389783481 is pending on documentation HEAD 89a13b1347ade8fd7199da87fd41dc033290bfa8. Native iPhone Safari, VoiceOver, live provider and full component WCAG checks remain unverified."
   control_sizing:
     requirement: "8.10; reuse existing 32px compact / 40px standard / 44px touch tokens."
     desktop: "Settings header actions, toolbar/language menu options, composer tools and chat creation use at least the standard 40px token."

@@ -777,3 +777,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Preview is blocked by current host boundary: main Pages target serves V1; Vercel has no accessible team/project. Preserve V1; separate preview target/repository requires owner authorization.
 - Next: exact-head Quality/Chromium, then screenshot review and isolated preview approval.
 
+
+
+### V-2026-11-02-LANDING-V2-STATE-REFRESH-002
+
+- Documentation checkpoint advanced to `89a13b1347ade8fd7199da87fd41dc033290bfa8`; source/test checkpoint remains `79790a018234b0f141f7ee902430165f6471a920`.
+- Quality #1397 / run `41389783481` is pending for this docs HEAD; no Quality/Chromium pass is claimed. Graphify run `41389386456` succeeded on the exact source/test checkpoint.
+- Main V1 remains unchanged; PR #131 open/unmerged, mergeable=false. Preview host remains unavailable without separate owner-approved hosting.
+
