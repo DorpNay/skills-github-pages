@@ -10,8 +10,8 @@
 ### Уже присутствует в коде
 
 - Меню Functions разделено на четыре группы: работа с задачей, исследование и источники, создание и преобразование, подключения.
-- Реальные пункты: structured workflow, task profile, Research Studio и integrations status.
-- Roadmap items с `1ИÆИT10И`: локальные файлы/папки, конвертеры/извлечение, Knowledge-to-Skill/Agent, аудио/изображения/видео.
+- Реальные пункты: structured workflow, task profile и integrations status. Research Studio запускается из блока Thorough; в меню «Исследование и источники» теперь показан roadmap-only пункт «Глубокое исследование 2.0».
+- Roadmap items с `1ИÆИT10И`: Deep Research 2.0, локальные файлы/папки, конвертеры/извлечение, Knowledge-to-Skill/Agent, аудио/изображения/видео. Research и Create/Transform items размещены в двух отдельных контейнерах под соответствующими group labels.
 - Agent panel: execution mode, team blueprint (size/scenario/role preset), custom scenario/roles, use cases, 64 logical professions, orchestration modes, models/resources, permissions/capabilities.
 - Skills panel: chat-scoped task profiles, custom instructions, quiz selection and roadmap for shared versioned library/import/validation.
 - Для current pipeline явно сказано, что четыре этапа выполняются одной выбранной моделью; независимые agent processes не запускаются.
@@ -158,3 +158,8 @@ File System Access API не одинаково доступен во всех б
 - [screenshot-to-code](https://github.com/abi/screenshot-to-code) — референс screenshot/design-to-code, не готовая часть aLandi.
 
 **Статус:** proposal/UX contract. Не доказывает наличие runtime-функций и не разрешает добавлять новые зависимости.
+
+
+### Follow-up source change after initial audit
+
+The latest menu slice moves the existing Research Studio entry out of the compact Functions menu (it remains available from Thorough mode), adds a roadmap-only **Deep Research 2.0** card under Research & Sources, and separates Research from Create/Transform roadmap cards into distinct containers. E2E assertions were updated to verify the 2-container / 1+4 card structure and that no fake Research Studio action remains in the menu. These assertions are authored but not executed in this session.
