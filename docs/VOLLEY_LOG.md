@@ -802,3 +802,12 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Added Playwright coverage for offline/online transitions, preserved draft and unchanged chat history, plus immediate draft flush on tab hide. Tests are authored, not yet executed.
 - Source/test HEAD: `6489f5a9b6d2d3e8c68b2bad993f7b85a4521cbd`. V8 syntax checks and CSS brace balance passed. Quality #1405 / run `41390877580` is pending; Graphify #437 / run `41390877512` is queued. No browser pass claimed.
 - PR #131 remains open/unmerged and mergeable=false. No main sync, rebase, merge, deployment, dependency or backend change. Attachments remain outside draft persistence pending IndexedDB/privacy/quota design.
+
+
+## V-2026-11-02-BOUNDED-CHAT-MOVE-UNDO-001
+
+- Added a bounded Undo action to the existing toast for moving a chat between project and personal scope (8.20). The toast action is keyboard-accessible and has a 44px minimum target.
+- Undo restores the previous project only if the chat still exists, has not been moved again, and the original project still exists; it does not overwrite a newer change. Both the current-chat project selector and chat-row move dialog use the shared helper.
+- Playwright regression authored for the current-chat move → Undo path. V8 syntax and CSS brace checks passed; test not yet executed.
+- Source/CSS/test commits: `065451fe3501b0b2a90b6cd93e4161f1dd541849`, `31b816dd045ee1e6ad2d73caf5b160bd06ad58de`, `ba709ac95c8896581133dfcce02234281f75fd90`. Exact-head Quality is pending/cancelled by later pushes; fresh exact-head run required.
+- This is a one-action in-memory slice, not persistent Undo history. No dependency, backend, merge, rebase, main sync or deployment.
