@@ -1,3 +1,15 @@
+## Актуальная контрольная точка — 2026-11-02, Agent panel progressive disclosure
+
+- Live main: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; это documentation-only commit, V1 остаётся стабильной опубликованной базой.
+- PR #131 открыт, не объединён; ветка `feat/landing-v1-accessibility-responsive-20261031`; exact current HEAD `d144dc69f8bd34da1359e38c6021ec07b162407f`; PR base SHA `e78a73b25725bfa63370d9946887cbbacbf51b82`. GitHub reports mergeable=false; main ahead of PR base by four commits/shared V1 checklist divergence. Не выполнять merge/rebase/sync/deploy без разрешения.
+- Текущий PR #131 slice: пять будущих capability sections Agent panel сгруппированы в три нативных details/summary категории: применение и роли; оркестрация, модели и ресурсы; инструменты и разрешения. По умолчанию свёрнуты; summaries минимум 44px, keyboard Enter/Space, видимый focus, RU/EN. Две реальные группы настроек (execution mode и team blueprint) сохранены.
+- CSS pause selector обновлён для вложенных ticker. Runtime boundary неизменен: четыре последовательных этапа на одной модели; independent workers, Skill registry и permission API не добавлялись.
+- Playwright assertions добавлены для трёх категорий, порядка, 44px target и keyboard open/close. Тесты не запускались в этой сессии.
+- Для exact HEAD `d144dc69f8bd34da1359e38c6021ec07b162407f` workflow run не возвращён; Quality/Chromium не подтверждён. Native iPhone/VoiceOver и визуальная проверка остаются отдельными gates.
+- PR #127 current HEAD `d4c961e89cfc33df1629a2e0658ed702b490abf2`: Project State Freshness, Provenance и Independent Quality Sentinels passed. PR #125 три workflow groups passed на `e1fda50c71284c7882a202b52dcdcf92006de6ed`.
+- Очередь на live snapshot: открытые PR кроме #131 — #124, #125, #126, #127, #128, #129, #130, #132 (8); открытая issue — #111. PR #125/#128/#129/#130 — Draft/HOLD research; PR #132 — continuity backup.
+- Следующий шаг: дождаться exact-head CI после последнего commit; затем продолжить ручные UI gates и следующий небольшой V2 UI slice. Не трогать main publication.
+
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
 ## Актуальная контрольная точка — 2026-11-02, Landing V2 taxonomy slice
