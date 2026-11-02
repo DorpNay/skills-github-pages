@@ -74,6 +74,13 @@ permalink: /
     <button id="chatListBack" type="button" data-action="chat-list-back" class="hidden mx-3 mt-2 w-[calc(100%-1.5rem)] rounded-lg border border-gray-700 px-3 py-2 text-left text-xs text-gray-300" aria-label="Вернуться ко всем чатам">← Все чаты</button>
     <button id="chatListNewButton" type="button" data-action="new-chat" data-i18n="newPersonalChat" class="mx-3 mt-2 w-[calc(100%-1.5rem)] rounded-lg border border-blue-500/25 bg-blue-600/10 hover:bg-blue-600/20 py-2.5 text-xs font-semibold text-blue-200">＋ Новый личный чат</button>
     <button id="restoreLastClosedChat" type="button" data-action="restore-last-closed-chat" class="hidden mx-3 mt-1 w-[calc(100%-1.5rem)] rounded-lg border border-gray-700 px-3 py-2 text-left text-[10px] text-gray-300">↶ Восстановить последний закрытый чат</button>
+    <div class="mx-3 mt-2 flex items-center justify-between gap-2">
+      <label for="chatSortSelect" class="text-[10px] text-gray-500">Порядок чатов</label>
+      <select id="chatSortSelect" class="min-h-9 max-w-[58%] rounded-lg border border-gray-700 bg-gray-900 px-2 py-1 text-[11px] text-gray-300" aria-label="Порядок чатов">
+        <option value="current">Как сейчас</option>
+        <option value="title">По названию</option>
+      </select>
+    </div>
     <details id="chatSection" open class="mx-3 my-2 rounded-xl border border-gray-800">
       <summary class="chat-section-summary flex items-center justify-between gap-2 px-3 py-2.5 text-sm font-semibold cursor-pointer select-none" aria-controls="chatList">
         <span>💬 <span id="chatSectionTitle" data-i18n="chatsTitle">Чаты</span></span><span id="chatSectionCount" class="text-[10px] text-gray-500">0</span>
