@@ -830,6 +830,7 @@ test('readability tokens and actual status surfaces meet AA in both themes', asy
     const action = document.createElement('button');
     action.id = 'contrastMemoryActionFixture';
     action.type = 'button';
+    action.style.transition = 'none';
     action.textContent = '×';
     row.appendChild(action);
     document.body.appendChild(row);
@@ -888,8 +889,7 @@ test('readability tokens and actual status surfaces meet AA in both themes', asy
     const actualStyles = {
       metadata: getComputedStyle(metadata).color === rgbString(css.getPropertyValue('--ui-text-muted')),
       metadataDot: getComputedStyle(metadata, '::before').color === rgbString(css.getPropertyValue('--ui-success')),
-      memoryAction: getComputedStyle(memoryAction).color,
-      memoryActionExpected: rgbString(css.getPropertyValue('--ui-text-muted')),
+      memoryAction: getComputedStyle(memoryAction).color === rgbString(css.getPropertyValue('--ui-text-muted')),
       toastBackground: getComputedStyle(toast).backgroundColor === rgbString(raisedSurface),
       toastStates: toastMatches
     };
@@ -907,9 +907,7 @@ test('readability tokens and actual status surfaces meet AA in both themes', asy
       for (const [name, value] of Object.entries(result.actualStyles)) {
         if (name === 'toastStates') {
           for (const [state, matches] of Object.entries(value)) expect(matches, theme + ' ' + contrastMode + ' toast ' + state + ' uses semantic token').toBe(true);
-        } else if (name === 'memoryAction') {
-          expect(value, theme + ' ' + contrastMode + ' memory action actual color; expected ' + result.actualStyles.memoryActionExpected).toBe(result.actualStyles.memoryActionExpected);
-        } else if (name !== 'memoryActionExpected') {
+        } else {
           expect(value, theme + ' ' + contrastMode + ' ' + name + ' uses theme-aware token').toBe(true);
         }
       }
