@@ -3772,6 +3772,41 @@ test('browser Forward restores a chat-action dialog with its original target', a
   await expect(page.locator('#chatActionModal')).toBeHidden();
 });
 
+test('modal backdrop dismissal leaves no click-blocking layer across core dialogs', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const assertBackdropCleared = async modal => {
+    await expect(page.locator(modal)).toBeHidden();
+    await expect(page.locator('body')).not.toHaveClass(/ui-modal-open/);
+    await expect.poll(() => page.locator('[role="dialog"]:visible').count()).toBe(0);
+    const sidebar = page.locator('#sidebar');
+    if (!(await sidebar.evaluate(element => element.classList.contains('-translate-x-full')))) {
+      await page.locator('#sidebar [data-action="close-sidebar"]').click();
+    }
+    await page.locator('[data-action="toggle-sidebar"]').click();
+    await expect(sidebar).not.toHaveClass(/-translate-x-full/);
+    await page.locator('#sidebar [data-action="close-sidebar"]').click();
+    await expect(sidebar).toHaveClass(/-translate-x-full/);
+  };
+
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#settingsModal').click({ position: { x: 4, y: 4 } });
+  await assertBackdropCleared('#settingsModal');
+
+  await ensureSidebarOpen(page);
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await page.locator('#projectCreateModal').click({ position: { x: 4, y: 4 } });
+  await assertBackdropCleared('#projectCreateModal');
+
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  await page.locator('#functionPanelModal').click({ position: { x: 4, y: 4 } });
+  await assertBackdropCleared('#functionPanelModal');
+
+  await page.locator('#deepResearchStudioButton').click();
+  await page.locator('#researchStudioModal').click({ position: { x: 4, y: 4 } });
+  await assertBackdropCleared('#researchStudioModal');
+});
+
 test('modal lifecycle keeps keyboard focus and page scroll isolated across core dialogs', async ({ page }) => {
   const assertModalLifecycle = async (modalId) => {
     const modal = page.locator('#' + modalId);
