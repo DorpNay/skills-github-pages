@@ -713,12 +713,13 @@ test('function menu separates task workflow from integrations in both languages'
   await expect(menu.locator('.toolbar-menu-group-label').nth(2).locator('xpath=following-sibling::*[1]')).toHaveClass(/function-roadmap-items/);
   await expect(menu.locator('.function-roadmap-items').nth(1).locator('.function-roadmap-item')).toHaveCount(4);
   await expect(menu.locator('.function-roadmap-item')).toHaveCount(5);
-  await expect(menu.locator('.function-roadmap-item .roadmap-ticker-track').first()).toContainText('1ИÆИT10И');
-  await expect(menu.locator('.function-roadmap-item button')).toHaveCount(0);
+  await expect(menu.locator('.function-roadmap-item .roadmap-ticker-track').first()).toContainText('1ИV3ИT10И');
+  await expect(menu.locator('.function-roadmap-item button[data-action="open-roadmap-details"]')).toHaveCount(5);
   await selectLanguage(page, 'en');
   if (!(await menu.evaluate(element => element.open))) await menu.locator(':scope > summary').click();
   await expect(menu.locator('.toolbar-menu-group-label').nth(0)).toContainText('Task workflow');
   await expect(menu.locator('.toolbar-menu-group-label').nth(1)).toContainText('Research and sources');
+  await expect(cards.nth(0).locator('[data-action="open-roadmap-details"]')).toHaveText('Details');
   await expect(menu.locator('.toolbar-menu-group-label').nth(2)).toContainText('Create and transform');
   await expect(menu.locator('.toolbar-menu-group-label').nth(3)).toContainText('Connections');
 });
@@ -748,9 +749,15 @@ test('Skills panel separates the active chat profile from the planned package li
   await expect(library).toContainText('проверка происхождения и лицензии');
   await expect(library).toContainText('ручное утверждение');
   await expect(library).toContainText('отдельного runtime');
-  await expect(library.locator('button')).toHaveCount(0);
+  await expect(library.locator('button[data-action="open-roadmap-details"]')).toHaveCount(1);
   await expect(library.locator('.roadmap-ticker-track')).toHaveCount(2);
-  await expect(library.locator('.roadmap-ticker-track').first()).toContainText('1ИÆИT10И');
+  await expect(library.locator('.roadmap-ticker-track').first()).toContainText('1ИV3ИT10И');
+  await library.locator('[data-action="open-roadmap-details"]').click();
+  await expect(page.locator('#roadmapDetailsModal')).toBeVisible();
+  await expect(page.locator('#roadmapDetailsTitle')).toHaveText('Библиотека навыков · планируется');
+  await expect(page.locator('#roadmapDetailsStatus')).toHaveText('В разработке');
+  await page.locator('#roadmapDetailsModal [data-action="close-roadmap-details"]').first().click();
+  await expect(page.locator('#roadmapDetailsModal')).toBeHidden();
 
   await panel.locator('#skillRoadmapPause').check();
   await expect(library.locator('.roadmap-ticker-track').first()).toHaveCSS('animation-play-state', 'paused');
@@ -780,11 +787,14 @@ test('structured workflow panel groups its configuration into clear sections', a
   await expect(groups.nth(1).locator('#agentTeamScenario')).toHaveCount(1);
   await expect(groups.nth(1).locator('#agentRolePreset')).toHaveCount(1);
   await expect(panel.locator('.agent-future-section')).toHaveCount(5);
-  const capabilityGroups = panel.locator('.agent-settings-category');
-  await expect(capabilityGroups).toHaveCount(3);
+  const futureSections = panel.locator('.agent-future-groups .agent-future-section');
+  await expect(futureSections).toHaveCount(7);
+  const capabilityGroups = panel.locator('.agent-future-groups > details.agent-settings-category');
+  await expect(capabilityGroups).toHaveCount(4);
   await expect(capabilityGroups.nth(0).locator(':scope > summary')).toContainText('Применение и роли');
   await expect(capabilityGroups.nth(1).locator(':scope > summary')).toContainText('Оркестрация, модели и ресурсы');
   await expect(capabilityGroups.nth(2).locator(':scope > summary')).toContainText('Инструменты и разрешения');
+  await expect(capabilityGroups.nth(3).locator(':scope > summary')).toContainText('Задачи и история');
   for (const group of await capabilityGroups.all()) {
     const summary = group.locator(':scope > summary');
     const box = await summary.boundingBox();
@@ -795,11 +805,13 @@ test('structured workflow panel groups its configuration into clear sections', a
     await page.keyboard.press('Space');
     await expect(group).not.toHaveAttribute('open', '');
   }
-  await expect(panel.locator('.agent-future-section').nth(0)).toContainText('Способы применения');
-  await expect(panel.locator('.agent-future-section').nth(1)).toContainText('64 логические профессии');
-  await expect(panel.locator('.agent-future-section').nth(2)).toContainText('fan-out/fan-in');
-  await expect(panel.locator('.agent-future-section').nth(3)).toContainText('RU/EN/TH');
-  await expect(panel.locator('.agent-future-section').nth(4)).toContainText('capabilities');
+  await expect(futureSections.nth(0)).toContainText('Способы применения');
+  await expect(futureSections.nth(1)).toContainText('Мои агенты и профили');
+  await expect(futureSections.nth(2)).toContainText('64 логические профессии');
+  await expect(futureSections.nth(3)).toContainText('fan-out/fan-in');
+  await expect(futureSections.nth(4)).toContainText('RU/EN/TH');
+  await expect(futureSections.nth(5)).toContainText('capabilities');
+  await expect(futureSections.nth(6)).toContainText('durable AgentRun API');
   await expect(panel.locator('#agentRoadmapPause')).toBeVisible();
   await capabilityGroups.nth(0).locator(':scope > summary').click();
   await panel.locator('#agentRoadmapPause').check();
@@ -1199,7 +1211,11 @@ test('project creation is separate from full settings and project sources expose
   await expect(page.locator('#projectSourcesSection')).toContainText('API списка источников');
   await expect(page.locator('#projectSourcesSection .roadmap-ticker')).toBeVisible();
   await expect(page.locator('#projectSourcesSection .roadmap-note')).toContainText('никаких действий с источниками не имитируется');
-  await expect(page.locator('#projectSourcesSection button')).toHaveCount(0);
+  await expect(page.locator('#projectSourcesSection button[data-action="open-roadmap-details"]')).toHaveCount(1);
+  await page.locator('#projectSourcesSection [data-action="open-roadmap-details"]').click();
+  await expect(page.locator('#roadmapDetailsTitle')).toHaveText('Источники проекта');
+  await expect(page.locator('#roadmapDetailsStatus')).toHaveText('В разработке');
+  await page.locator('#roadmapDetailsModal [data-action="close-roadmap-details"]').first().click();
   await page.locator('#projectMemoryScopeSelect').selectOption('project-and-global');
   await page.locator('#projectSettingsModal [data-action="save-project"]').click();
   await expect.poll(() => page.evaluate(id => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]').find(project => project.id === id)?.memoryScope, projectId)).toBe('project-and-global');
@@ -3864,7 +3880,7 @@ test('planned agent and connector directions show a clearly non-runtime innovati
   await openDisclosure(page, '#agentFunctionSettings .agent-future-groups > details:first-child');
   const agentTicker = agentPanel.locator('.roadmap-ticker-track').first();
   await expect(agentTicker).toBeVisible();
-  await expect(agentTicker).toContainText('1ИÆИT10И');
+  await expect(agentTicker).toContainText('1ИV3ИT10И');
   await expect(agentTicker).toHaveAttribute('aria-hidden', 'true');
   await expect(agentPanel.locator('.roadmap-note')).toContainText('не фоновые процессы');
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
@@ -3876,7 +3892,11 @@ test('planned agent and connector directions show a clearly non-runtime innovati
   await expect(connectorPanel).toBeVisible();
   const connectorTicker = connectorPanel.locator('.roadmap-ticker-track');
   await expect(connectorTicker).toBeVisible();
-  await expect(connectorTicker).toContainText('1ИÆИT10И');
+  await expect(connectorTicker).toContainText('1ИV3ИT10И');
+  await connectorPanel.locator('[data-action="open-roadmap-details"]').click();
+  await expect(page.locator('#roadmapDetailsTitle')).toHaveText('Интеграции');
+  await expect(page.locator('#roadmapDetailsStatus')).toHaveText('В разработке');
+  await page.locator('#roadmapDetailsModal [data-action="close-roadmap-details"]').first().click();
   await expect(connectorPanel.locator('.roadmap-note')).toContainText('не означает, что сервис уже выполняет работу');
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
   await expect(connectorTicker).toBeHidden();
@@ -4500,6 +4520,10 @@ test('team blueprints can be saved, applied, restored and deleted without launch
   expect(saveBox?.height || 0, 'blueprint save must be a 44px touch target').toBeGreaterThanOrEqual(44);
   await expect(panel.locator('#agentBlueprintApply')).toBeDisabled();
   await expect(panel.locator('#agentBlueprintDelete')).toBeDisabled();
+  await library.locator('[data-action="open-roadmap-details"]').click();
+  await expect(page.locator('#roadmapDetailsTitle')).toHaveText('Сохранённые черновики команд');
+  await expect(page.locator('#roadmapDetailsStatus')).toHaveText('Только схема');
+  await page.locator('#roadmapDetailsModal [data-action="close-roadmap-details"]').first().click();
 
   await panel.locator('#agentTeamSize').evaluate(element => {
     element.value = '7';
@@ -4566,7 +4590,7 @@ test('team blueprints can be saved, applied, restored and deleted without launch
   expect(finalChat).toMatchObject({ agentTeamSize: 7, agentTeamScenario: 'research', agentRolePreset: 'software', multiAgentEnabled: false });
 });
 
-test('planned function menu items are status cards, not fake controls, and can pause motion', async ({ page }) => {
+test('planned function menu items open truthful detail windows and can pause motion', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#functionsMenuSummary').click();
   const menu = page.locator('#functionsMenu');
@@ -4577,9 +4601,16 @@ test('planned function menu items are status cards, not fake controls, and can p
   await expect(cards.nth(2)).toContainText('screenshot-to-code');
   await expect(cards.nth(3)).toContainText('Knowledge-to-Skill');
   await expect(cards.nth(4)).toContainText('генерация изображений/видео');
-  await expect(cards.locator('button')).toHaveCount(0);
+  await expect(cards.locator('button[data-action="open-roadmap-details"]')).toHaveCount(5);
+  await cards.nth(0).locator('[data-action="open-roadmap-details"]').click();
+  await expect(page.locator('#roadmapDetailsModal')).toBeVisible();
+  await expect(page.locator('#roadmapDetailsTitle')).toHaveText('Глубокое исследование 2.0');
+  await expect(page.locator('#roadmapDetailsStatus')).toHaveText('В разработке');
+  await expect(page.locator('#roadmapDetailsBoundary')).toContainText('не запускает операцию');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#roadmapDetailsModal')).toBeHidden();
   const ticker = cards.nth(0).locator('.roadmap-ticker-track');
-  await expect(ticker).toContainText('1ИÆИT10И');
+  await expect(ticker).toContainText('1ИV3ИT10И');
   await page.locator('#functionsRoadmapPause').check();
   expect(await ticker.evaluate(element => getComputedStyle(element).animationPlayState)).toBe('paused');
   await selectLanguage(page, 'en');
