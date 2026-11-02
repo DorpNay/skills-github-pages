@@ -186,3 +186,12 @@ Worker pools, professions, swarms, durable AgentRun and tool execution прин�
 - docs/PROJECT_STATE.yaml
 
 **Status:** research baseline only. No runtime, dependencies, model weights, credentials, endpoints or deployment changed.
+
+
+## 11. Local Source Vault and conversion track — 2026-11-02
+
+The detailed product and security design is maintained in [LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md](LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md). Its LSV-001…LSV-014 tasks are the canonical checklist for local file access, source registry, parser adapters, screenshot-to-code, video, Knowledge-to-Skill and artifact preservation. Do not duplicate those rows here.
+
+The core user flow distinguishes **Reference only** (remember a location/URL, no file access), **Attach for this task** (request-scoped attachment) and **Import to local knowledge** (explicit local copy/index with quota, provenance and deletion controls). A typed path is not a browser permission. File System Access handles require permission revalidation; OPFS is origin-private and quota-bound. Persistent folder watching or unrestricted filesystem paths require a separate local companion and owner approval.
+
+Conversion is a pipeline of typed adapters, bounded parsing, normalized blocks and source-to-derived lineage. Screenshot-to-code is a draft-generation workflow, not recovery of original source. Generated skills/agents and code remain untrusted drafts until license, injection, schema, eval and human-review gates pass.
