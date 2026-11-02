@@ -156,3 +156,18 @@ A local model's lack of refusal training cannot grant it filesystem, network, se
 - [ ] DR2-EXT-010 — produce policy matrix and false-refusal/security separation tests.
 
 **No production adoption:** all findings are research candidates. No code, dependencies, models or deployment changed.
+
+
+## 2026-11-02 — Primary-source follow-up: browser files, skills, protocols and media jobs
+
+- [File System Access API draft](https://wicg.github.io/file-system-access/): WICG Community Group draft, not a W3C Standard. It enables explicit user-picked files/directories and stores handles for later access subject to permission state.
+- [MDN OPFS](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system): origin-private storage, secure-context requirement, quota limits and deletion when site data is cleared. Suitable for derived local cache/index, not a visible user folder or backup.
+- [Agent Skills specification](https://agentskills.io/specification): required `SKILL.md` with YAML frontmatter; optional scripts/references/assets. Validate the schema and treat skill content as untrusted; experimental allowed-tools metadata is not authorization.
+- [MCP](https://modelcontextprotocol.io/specification), [A2A 1.0.0](https://a2a-protocol.org/latest/specification/) and [AG-UI 1.0](https://docs.ag-ui.com/spec/1.0) solve different layers: tool/context access, independent agent task exchange and user-facing typed event streams.
+- [Comfy API v2](https://docs.comfy.org/api-reference/v2/overview): versioned workflow API with asset upload, job submission, polling/cancellation and output retrieval; its design describes resumable job state and content-addressed assets. This is a lifecycle reference, not proof that ComfyUI is installed or selected.
+- [Docling supported formats](https://docling-project.github.io/docling/usage/supported_formats/): format support depends on documented backends/extras; do not claim universal parsing.
+- [MarkItDown](https://github.com/microsoft/markitdown): lightweight document-to-Markdown candidate; not a full layout/OCR engine.
+- [LiveKit audio](https://docs.livekit.io/agents/multimodality/audio/) and [turn handling](https://docs.livekit.io/agents/logic/turns/): explicit speech handles, interruptions, VAD/turn detection and user barge-in are first-class runtime concerns. [Pipecat](https://docs.pipecat.ai/) is a separate open-source Python voice/multimodal pipeline with client SDKs; compare against existing FastAPI/browser contracts before considering any runtime.
+- [screenshot-to-code](https://github.com/abi/screenshot-to-code): MIT source; current local path uses React/Vite, FastAPI and model-provider keys. Treat as isolated design reference, not a frontend dependency.
+
+Full design and tasks: `docs/LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md`. No models, packages or services were installed or downloaded.
