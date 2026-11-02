@@ -732,3 +732,12 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Continued mandatory UI 8.6 by reviewing the shared `pushUiNavigation` / `popstate` stack and current Playwright regressions.
 - Existing coverage verifies Back through nested project filters without leaving the app, Back/Forward restoration of project settings and chat-action dialogs (including the original target), and Escape focus restoration for project creation/settings.
 - No source change was justified by the audit. Remaining 8.6 acceptance is visual review of heading/list hierarchy and native/physical-device keyboard behavior. Inspection only; no browser test pass claimed.
+
+## V-2026-11-02-HARNESS2-HERMES-RESEARCH-001
+
+- Clarified the two requested upstreams as Google Research Harness² and NousResearch Hermes Agent v0.22.x.
+- Read Harness² README, experiment guide, setup guide and pyproject at upstream main; verified Apache-2.0, Python 3.12+, eight harness components, Propose–Probe–Compose recursion, reproducibility controls and unsafe-by-default executor assumptions (unrestricted network; Codex sandbox disabled; partial environment scrubbing).
+- Read Hermes v0.22.0 release notes, v0.22.5 tagged README/release notes and official security guide. Latest checked tag is v0.22.5 (bf0203a794a07aac3ff764972ab9087baa4e4f4e), not v0.22.0. Extracted fail-closed approvals, write safety, container isolation, MCP env filtering, redaction, injection scanning and session isolation as design references.
+- Decision: no new runtime/dependency/provider route. Harness² is a possible isolated development-evaluation method; Hermes is a security/orchestration reference only. No benchmark execution or model-backed run was performed.
+- Detailed decisions recorded in docs/OPEN_SOURCE_TRIAGE_RU.md. This is not a completed audit of all 60 listed repositories.
+
