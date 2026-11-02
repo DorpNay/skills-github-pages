@@ -4198,3 +4198,18 @@ test('browser connectivity status is distinct from offline search and never retr
   });
   expect(messageCountAfterReconnect).toBe(messageCount);
 });
+
+
+test('composer draft is synchronously flushed when the tab becomes hidden', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#userInput').fill('Persist before tab suspension');
+
+  const persistedImmediately = await page.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { configurable: true, value: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+    const drafts = JSON.parse(localStorage.getItem('ai_chat_drafts_v1') || '{}');
+    const currentId = localStorage.getItem('ai_current_chat_v87');
+    return drafts[currentId] || '';
+  });
+  expect(persistedImmediately).toBe('Persist before tab suspension');
+});
