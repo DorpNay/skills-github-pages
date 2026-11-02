@@ -3958,6 +3958,17 @@ test('responsive visual review captures viewport and navigation evidence', async
   await expect(page.locator('#chatBox')).toBeVisible();
   await expect(page.locator('#userInput')).toBeVisible();
 
+  const status = page.locator('#searchStatus');
+  const stop = page.locator('#stopBtn');
+  await expect(status).toBeHidden();
+  await expect(stop).toBeHidden();
+  await status.evaluate(element => element.classList.remove('hidden'));
+  await expect(status).toBeVisible();
+  await status.evaluate(element => element.classList.add('hidden'));
+  await stop.evaluate(element => element.classList.remove('hidden'));
+  await expect(stop).toBeVisible();
+  await stop.evaluate(element => element.classList.add('hidden'));
+
   // These screenshots are review evidence, not pixel-perfect visual-regression baselines.
   // Keep viewport changes and browser state identical so reviewers can compare releases.
   for (const width of [320, 360, 390, 768, 1024, 1440]) {
