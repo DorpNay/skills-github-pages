@@ -299,6 +299,8 @@ test('sidebar search finds project and chat names locally without indexing messa
 
 test('chat pinning and activity/creation sort preferences persist with stable ordering', async ({ page }) => {
   await page.addInitScript(() => {
+    if (sessionStorage.getItem('sort-fixture-seeded') === '1') return;
+    sessionStorage.setItem('sort-fixture-seeded', '1');
     const chat=(id,title,createdAt,updatedAt)=>({id,title,projectId:null,messages:[],createdAt,updatedAt});
     localStorage.setItem('ai_chats_v87',JSON.stringify([
       chat('sort-zeta','Zeta notes','2026-01-01T00:00:00.000Z','2026-01-03T00:00:00.000Z'),
