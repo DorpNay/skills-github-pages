@@ -475,7 +475,7 @@ permalink: /
           <section class="agent-future-section space-y-2">
             <p data-i18n="agentBlueprintLibraryHelp">Сохраняй повторно используемые планы состава команды в этом браузере. Это не запускает агентов и не синхронизируется между устройствами.</p>
             <label class="block text-xs font-semibold" for="agentBlueprintSelect" data-i18n="agentBlueprintSelectLabel">Мои черновики</label>
-            <select id="agentBlueprintSelect" class="advanced-control w-full rounded-lg border border-gray-700 bg-gray-900">
+            <select id="agentBlueprintSelect" class="agent-blueprint-select advanced-control w-full rounded-lg border border-gray-700 bg-gray-900">
               <option value="" data-i18n="agentBlueprintSelectPlaceholder">Выбери черновик</option>
             </select>
             <div class="agent-blueprint-actions">
