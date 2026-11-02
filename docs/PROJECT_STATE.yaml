@@ -110,6 +110,10 @@ ui_v2_track:
   provider_settings:
     requirement: "8.3; aServi is exclusive, while third-party provider and additional settings may remain open together."
     regression: "At 390px, checks 44px disclosure summaries, Enter/Space toggling, exclusivity and no horizontal overflow; authored on f9ffad3, exact-head execution pending."
+  navigation_history:
+    requirement: "8.6; nested Back/Forward navigation must return to the immediately previous project filter or dialog."
+    existing_coverage: "Back through nested project filters; Back/Forward project settings and chat-action dialogs; Escape focus restoration for project creation/settings."
+    remaining: "Screenshot review of heading/list grouping and physical-device/browser keyboard behavior; exact-head execution pending."
   merge_deployment: "Do not merge or deploy without explicit owner approval."
 
 current_v016_track:
