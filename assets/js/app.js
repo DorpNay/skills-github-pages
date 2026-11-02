@@ -4089,7 +4089,22 @@
       if(mode==='rename') {
         const next=$('chatActionName').value.trim().slice(0,120);
         if(!next){showToast(english?'Chat name cannot be empty.':'Название не может быть пустым.','error');$('chatActionName').focus();return;}
-        chat.title=next;persistChats();renderChatList();renderActiveChat();closeChatActionDialog();return;
+        const previousTitle=String(chat.title||'');
+        if(next===previousTitle){closeChatActionDialog();return;}
+        chat.title=next;persistChats();renderChatList();renderActiveChat();closeChatActionDialog();
+        showToast(english?'Chat renamed.':'Чат переименован.','success',{
+          key:'chat-rename:'+chat.id+':'+next,
+          label:english?'Undo':'Отменить',
+          duration:6500,
+          onClick:()=>{
+            const current=chats.find(item=>item.id===chat.id);
+            if(!current){showToast(english?'Chat no longer exists; rename was not undone.':'Чат больше не существует; переименование не отменено.','warning');return;}
+            if(current.title!==next){showToast(english?'Chat title changed again; the previous title was not restored.':'Название чата уже изменено; прежнее название не восстановлено.','warning');return;}
+            current.title=previousTitle;persistChats();renderChatList();renderActiveChat();
+            showToast(english?'Chat rename undone.':'Переименование чата отменено.');
+          }
+        });
+        return;
       }
       const projectId=$('chatActionProject').value||null;
       if(projectId&&!projects.some(project=>project.id===projectId)){showToast(english?'Project no longer exists.':'Проект больше не существует.','error');return;}
