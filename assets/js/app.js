@@ -2366,7 +2366,9 @@
       group.addEventListener('toggle',()=>{if(group.open&&aserviSettingsGroup?.open)aserviSettingsGroup.open=false;});
     });
     aserviSettingsGroup?.querySelector(':scope > summary')?.addEventListener('click',()=>{
-      if(!aserviSettingsGroup.open)peerSettingsGroups.forEach(group=>{if(group)group.open=false;});
+      // Close peers on every native/keyboard activation; the summary click may run
+      // on either side of the browser's asynchronous details toggle event.
+      peerSettingsGroups.forEach(group=>{if(group)group.open=false;});
     });
     aserviSettingsGroup?.addEventListener('toggle',()=>{
       if(aserviSettingsGroup.open)peerSettingsGroups.forEach(group=>{if(group)group.open=false;});
