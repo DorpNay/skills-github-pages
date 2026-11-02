@@ -101,3 +101,18 @@
 - No schema/API/dependency change; source/page provenance and scope filtering remain intact; `ALANDI_RAG_ENABLED=false` stays the default.
 - The score is only for ordering, not confidence/probability. Automated tests passed on exact PR head; no production-quality improvement is claimed until a labelled >=50-query golden set compares Recall@5, MRR/nDCG, citation correctness, latency and peak RSS.
 - Full criteria: `docs/RAG_RRF_EVALUATION_RU.md`, `EVALS.md` EV-RAG-RRF-001, `DECISIONS.md` D-018.
+
+
+## Практики ориентирования и проектирования возможностей — 2026-11-02
+
+1. **90-секундное восстановление контекста:** live main SHA и open PR queue → HEAD/base активного PR → последний Quality run и job logs → ORIENTER → FILE_ORIENTER → PROJECT_STATE → последняя запись VOLLEY_LOG → только релевантные source/tests. Сохранённые SHA — контрольные точки, не live truth.
+2. **Проверка до редактирования:** один источник правды для каждого состояния; сначала проверь существующий handler, storage key, API и E2E. Не создавай второе меню/настройку/хранилище, пока не доказан пробел.
+3. **Propose → Probe → Compose:** формулируй одну гипотезу, зафиксируй baseline, сделай ограниченный probe, сравни результат, затем сохрани только проверенную дельту. Не превращай удачный probe в заявление о production readiness.
+4. **Capability status contract:** Available = handler + runtime + permission + test; Partial = ограниченный реальный путь; Blueprint-only = сохранённая конфигурация без запуска; Planned = 1ИÆИT10И и отсутствие фиктивной кнопки; Unavailable = отсутствует модель/разрешение/ресурс.
+5. **Local source lineage:** Reference only / Attach for this task / Import to local knowledge — разные действия. Храни handle, а не обещание читать произвольный path; связывай source hash, extraction, chunks, citations и artifacts.
+6. **Typed converter pipeline:** signature/MIME sniff → resource limits → isolated adapter → typed blocks → page/time/region provenance → validation. Screenshot-to-code — черновик, не восстановление исходного проекта.
+7. **Knowledge-to-Skill:** extraction → provenance/license → injection scan → schema → eval cases → human approval → immutable version/diff/rollback. Imported scripts остаются inert; Skill не выдаёт permissions.
+8. **Durable agent work:** typed task packet, state machine, deadline/budgets, idempotency, checkpoints, cancellation, approval and audit. Logical worker count не равен количеству одновременно загруженных моделей.
+9. **SLM bake-off:** одна узкая роль за раз; RU/EN/TH golden set; exact model digest/license; schema validity, quality, TTFT/p50/p95, RAM/PSS/VRAM and concurrency. Helper remains off until a measured win.
+10. **Media job lifecycle:** explicit local/hosted choice, job ID, poll/cancel/retrieve, artifact checksum, expiry and export. Separate ASR/TTS, non-speech audio, image/video generation and FFmpeg post-processing.
+
