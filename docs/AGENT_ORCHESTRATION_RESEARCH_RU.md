@@ -3,6 +3,8 @@
 **Дата обзора:** 2026-10-28  
 **Статус:** исследовательская записка и инженерное предложение; это не свидетельство реализации.
 
+> **Обновление 2026-10-30:** расширенный синтез вынесен в [Agent Platform Blueprint](AGENT_PLATFORM_BLUEPRINT_RU.md), [аннотированный каталог источников](AGENT_RESEARCH_CATALOG_RU.md) и [матрицу small-model bake-off](AGENT_MODEL_BAKEOFF_RU.md). Эти документы не выбирают framework dependency и не меняют runtime. LangGraph и другие системы остаются кандидатами для сравнительного прототипа; D-016 и текущий V1 freeze имеют приоритет.
+
 ## Вывод
 
 Рекомендуется собственный небольшой orchestration runtime поверх текущего gateway, а не немедленная замена всего стека одним агентным фреймворком. Наиболее полезные идеи: durable execution и восстановление (Restate/Temporal/Hatchet/DBOS), явные графы и checkpoints (LangGraph), декларативная авторизация (OPA/Cedar), настоящая изоляция (gVisor/Firecracker), adversarial evals (promptfoo/garak/Inspect), трассировка (OpenTelemetry), роли и явные flows (CrewAI/Microsoft Agent Framework), временной граф памяти (Graphiti) и протоколы взаимодействия (MCP/A2A).

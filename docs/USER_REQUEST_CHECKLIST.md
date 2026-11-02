@@ -160,6 +160,7 @@
 | **AI-AGENT-001** | logical_roles_not_process_swarm | docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md | EV-AGENT-001 |
 | **AI-AGENT-002** | limited_existing_routing | gateway/tools/dag_engine.py | EV-AGENT-002 |
 | **AI-AGENT-003** | bounded_dag_prototype | gateway/tools/dag_engine.py | EV-AGENT-003 |
+| **AI-AGENT-006** | research_blueprint_source_catalog_model_bakeoff_docs_only_runtime_unchanged | docs/AGENT_PLATFORM_BLUEPRINT_RU.md; docs/AGENT_RESEARCH_CATALOG_RU.md; docs/AGENT_MODEL_BAKEOFF_RU.md | EV-AGENT-006 |
 | **AI-LEARN-001** | governance_only_no_self_modification | LOOP.md | EV-LEARN-001 |
 | **AI-LEARN-002** | versioned_skill_rollback_deferred | LOOP.md | EV-LEARN-002 |
 
@@ -243,6 +244,18 @@
 - [~] Next bounded slice: edge-aware chat-row/popover placement and compact header order/project label/clock polish. Keep these separate from provider/project export-import cleanup and per-chat settings audit.
 - [ ] Run native iPhone Safari/keyboard/touch verification separately; passing Chromium viewport simulation is not proof of native behavior.
 
+
+## Supplement — expanded agent platform research (2026-10-30)
+
+- [x] Reconciled current main, open PR #124, issue #111, existing D-016, 64-role catalogue, four-stage multi-agent UI pipeline, ToolDAG, validator, approval primitive and helper-model benchmark status.
+- [x] Researched orchestration SDKs, agent workforce/control planes, subagent lifecycle, agentic patterns, skills, MCP/A2A/ACP/AG-UI, durable execution, memory, evaluation and sandbox options.
+- [x] Preserved earlier owner-supplied inspiration sources: Book-to-Skill, Anything-to-Skill, Agent Skills, Awesome Harness Engineering and Awesome Agentic Patterns.
+- [x] Created the architecture blueprint, annotated source catalog and small-model bake-off matrix in a dedicated branch; no runtime dependencies, code, models or feature flags changed.
+- [ ] Review the architecture and approve/adjust the Phase 1 contracts and registry before any runtime implementation.
+- [ ] Implement a versioned AgentProfile/Profession/Skill/Capability/ModelPolicy contract in a separate bounded PR.
+- [ ] Build durable AgentRun state, isolated subagent task packets, budget/cancellation and restart recovery in subsequent PRs.
+- [ ] Run RU/EN/TH model quality and target-host RAM/latency bake-off before choosing helper models.
+- [ ] Complete threat model and real sandbox/escape tests before enabling arbitrary code or shell tools.
 
 ## Supplement — autonomous agent orchestration research (2026-10-28)
 

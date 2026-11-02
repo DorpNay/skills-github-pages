@@ -181,6 +181,7 @@
 - **Acceptance:** unknown tools denied; policy/approval errors fail closed; changed arguments invalidate approval; no blind retry of non-idempotent side effects; crash/restart recovery tested; verifier requires evidence; injection tests cover user input, retrieved content and tool outputs; helper model can be disabled without breaking core path.
 - **Rollout:** one bounded phase at a time, feature flags off by default, with golden-set evaluation and target-host resource measurements. No production-safety claim before sandbox validation.
 - **Links:** `gateway/tools/dag_engine.py`, `gateway/tools/validator.py`, `gateway/security/approval_gates.py`, `gateway/routing.py`, `observability/trace_context.py`, `docs/AGENT_ORCHESTRATION_RESEARCH_RU.md`.
+- **Expanded agent-platform research:** `docs/AGENT_PLATFORM_BLUEPRINT_RU.md`, `docs/AGENT_RESEARCH_CATALOG_RU.md`, `docs/AGENT_MODEL_BAKEOFF_RU.md`. This is an architecture/research extension, not a runtime framework adoption or feature-completion claim.
 
 ## D-017 — Adaptive-minimalist interface and private autonomous work partner / Адаптивный минимализм и приватный автономный партнёр
 
