@@ -739,3 +739,10 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Added Playwright coverage for two chats, per-chat isolation, reload restoration and the absence of implicit message submission. The test is authored but has not yet executed on this HEAD.
 - Source/test commits: `a2db7904d1a18609f467829c4339ccd52dfa8883`, `2257010cef98c3afcf093eb73728a8b90d2c869f`; follow-up fixes `9b190d1ebb521cc8f30c8fe13c15c224b89facca`, `7d447c34e37c20f75fc3c1da5f163ece93a2b04a`. No browser pass is claimed; await the automatically triggered exact-head Quality workflow.
 - No new dependency, backend endpoint, provider route or deployment.
+
+### 8.1 / 8.26 — cancellable sidebar swipe (2026-11-02)
+
+- The sidebar's horizontal close gesture now clears its pending touch origin on both `touchcancel` and `pointercancel`. This keeps a cancelled system/browser gesture from being misinterpreted as a later intentional close.
+- Playwright regression covers vertical scrolling (must remain open), touch cancellation (must remain open), pointer cancellation (must remain open), and a subsequent deliberate horizontal swipe (must close). Project disclosure remains open after close/reopen.
+- Source commit: `050f25ef41942b2f522607cc117d15af2b373043`; regression commit: `0a76e63df790977cd6ed0540233528e3102a7d9a`.
+- This is authored coverage only until exact-head Chromium CI runs. Native iPhone Safari gesture arbitration remains a manual gate.
