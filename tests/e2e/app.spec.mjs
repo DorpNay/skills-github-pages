@@ -696,6 +696,46 @@ test('function menu separates task workflow from integrations in both languages'
   await expect(menu.locator('.toolbar-menu-group-label').nth(3)).toContainText('Connections');
 });
 
+test('Skills panel separates the active chat profile from the planned package library', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
+
+  const panel = page.locator('#skillFunctionSettings');
+  await expect(panel).toBeVisible();
+  await expect(panel.locator('#skillTaskProfileTitle')).toContainText('Профиль текущего чата');
+  await expect(panel.locator('[data-i18n="skillScopeBadge"]')).toContainText('Работает · только этот чат');
+  await expect(panel.locator('#skillPresetSelect')).toBeVisible();
+  await expect(panel.locator('#skillGoalSelect')).toBeVisible();
+  await expect(panel.locator('#skillOutputSelect')).toBeVisible();
+
+  const library = panel.locator('#skillLibraryDisclosure');
+  await expect(library).not.toHaveAttribute('open', '');
+  const summary = library.locator(':scope > summary');
+  const summaryBox = await summary.boundingBox();
+  expect(summaryBox?.height || 0, 'skill library disclosure must be a 44px touch target').toBeGreaterThanOrEqual(44);
+  await summary.focus();
+  await page.keyboard.press('Enter');
+  await expect(library).toHaveAttribute('open', '');
+  await expect(library).toContainText('проверка происхождения и лицензии');
+  await expect(library).toContainText('ручное утверждение');
+  await expect(library).toContainText('отдельный runtime и разрешений');
+  await expect(library.locator('button')).toHaveCount(0);
+  await expect(library.locator('.roadmap-ticker-track')).toHaveCount(2);
+  await expect(library.locator('.roadmap-ticker-track').first()).toContainText('1ИÆИT10И');
+
+  await panel.locator('#skillRoadmapPause').check();
+  await expect(library.locator('.roadmap-ticker-track').first()).toHaveCSS('animation-play-state', 'paused');
+  await panel.locator('#skillRoadmapPause').uncheck();
+
+  await selectLanguage(page, 'en');
+  await expect(panel.locator('#skillTaskProfileTitle')).toContainText('Current chat profile');
+  await expect(panel.locator('[data-i18n="skillScopeBadge"]')).toContainText('Available · this chat only');
+  await expect(summary).toContainText('Skill library · planned');
+  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
+});
+
 test('structured workflow panel groups its configuration into clear sections', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#functionsMenuSummary').click();
