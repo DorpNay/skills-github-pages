@@ -883,3 +883,14 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Reviewed screenshots at 320/360/390/768/1024/1440 px and desktop/mobile sidebar-open. Fixed square fallback glyphs with inline SVG, aria-hidden ASCII plus marks, localized labels and a dynamic chat-label update that preserves markup.
 - No runtime/dependency/backend/API changes; no merge, rebase, main sync or deployment. Native iPhone Safari, VoiceOver and full WCAG remain open.
 - NEXT: continue the next bounded owner requirement from checklist 8.1–8.17; select it from remaining manual evidence rather than creating a parallel backlog.
+
+
+## V-2026-11-03-ROADMAP-DETAIL-WINDOWS-001 — Read-only capability navigation
+
+- **FACT / IMPLEMENTED:** PR #131 now has 15 “Подробнее / Details” entry points across five Functions roadmap cards, seven Agent/Skills roadmap sections, the local Team Blueprint library, Project Sources and Integrations. All open one shared accessible, read-only modal with a localized title, description and status.
+- **FACT / IMPLEMENTED:** Agent Profiles and Tasks & History now have explicit collapsed roadmap sections. They do not create profiles, queues, AgentRuns, workers, run IDs, artifacts or permissions. Team Blueprint is explicitly marked Blueprint only.
+- **FACT / IMPLEMENTED:** active app and marketing landing tickers use the exact prefix `1ИV3ИT10И`; existing pause and reduced-motion behavior is preserved.
+- **CHECKS:** static V8 syntax checks passed for app.js and both E2E specs (after stripping imports for parser-only compilation); CSS brace balance passed; HTML IDs unique; required RU/EN translation keys present; 15 detail buttons found. App spec has 121 tests and landing spec 8. Browser/Playwright/Quality were not run.
+- **WHERE:** PR #131, branch `feat/landing-v1-accessibility-responsive-20261031`, code/test HEAD `dc82acb95c850d7821e071e16a8ab11524a459c2`; main remains `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; compare at this code/test HEAD: 972 ahead / 4 behind; base/merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR is open, unmerged and mergeable=false due the shared V1 checklist conflict.
+- **OPEN:** GitHub returned zero workflow runs and zero commit statuses for exact code/test HEAD. Native iPhone Safari, VoiceOver, keyboard-only review and full component WCAG remain open. No runtime/API/dependency/permission/deployment change.
+- **NEXT:** inspect workflow triggers/event behavior for API-created commits; do not use manual workflow_dispatch. Then obtain exact-head Quality/Chromium via the normal authorized push path and continue bounded UI acceptance.
