@@ -1,15 +1,16 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
-## Текущая контрольная точка — 2026-11-03, локальная библиотека Team Blueprint
+## Текущая контрольная точка — 2026-11-03, read-only roadmap detail windows
 
 - Main V1: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; не менять.
-- PR #131 открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; last code/test HEAD `765138e74e141aaf1471c6351193d98dda8a0df8`; subsequent commits are documentation-only. Resolve live branch HEAD and compare at each resume; last measured at code/test HEAD: diverged, 952 ahead / 4 behind; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Четыре main-side commits меняют только общий `docs/V1_UI_FINALIZATION_RU.md`; rebase/sync запрещены без разрешения.
-- PR comments/reviews/threads: 0. На code/test HEAD `765138e` нет workflow runs и commit statuses; Playwright/Quality NOT RUN. Live docs HEAD и checks нужно разрешить из GitHub при следующем продолжении.
-- Добавлена local-only Team Blueprint library: до 20 именованных снимков состава команды; save/apply/delete; RU/EN; 44px mobile targets. Применение меняет только blueprint fields текущего чата. Не запускает агентов, не включает structured workflow, не выдаёт permissions и не создаёт AgentRuns.
-- E2E suite: 120 тестов; новый lifecycle regression authored, NOT RUN. Static V8 parse app.js/spec PASS; CSS braces balanced; duplicate HTML IDs absent; all new RU/EN keys present.
+- PR #131 открыт, не объединён, mergeable=false; branch `feat/landing-v1-accessibility-responsive-20261031`; code/test HEAD `dc82acb95c850d7821e071e16a8ab11524a459c2`; subsequent commits are documentation-only. Resolve live branch HEAD and compare at each resume; compare at code/test HEAD: diverged, 972 ahead / 4 behind; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Четыре main-side commits меняют только общий `docs/V1_UI_FINALIZATION_RU.md`; rebase/sync запрещены без разрешения.
+- На последнем live check PR comments/reviews/threads: 0. На code/test HEAD `dc82acb` нет workflow runs и commit statuses; Playwright/Quality NOT RUN.
+- Добавлено 15 read-only Details actions и одно доступное окно для Functions, Agent/Skills, Team Blueprint, Project Sources и Integrations. Agent Profiles и Tasks & History видны как roadmap-only sections; реестр профилей, AgentRun API, queue, workers и runtime не реализованы.
+- Team Blueprint — локальный сохранённый план со статусом Blueprint only; планируемые функции — In development. Ни одна кнопка Details не запускает операцию, не меняет настройки и не выдаёт permissions.
+- Ticker app/landing: `1ИV3ИT10И`; pause/reduced-motion сохранены. App E2E: 121 тест; landing E2E: 8; authored, NOT RUN. Static V8 parse app.js/specs PASS; CSS braces balanced; duplicate HTML IDs absent; required RU/EN keys present.
 - Graphify UI bridge и selector triage сохранены в implementation ledger. Семь CSS candidates без literal references не удалялись.
 - Native iPhone Safari, VisualViewport/safe-area, VoiceOver, keyboard focus и full component-level WCAG остаются manual gates.
-- **Next:** получить exact-head Quality/Chromium для `765138e`; затем продолжить 8.1–8.17 manual acceptance и bounded 8.28/8.19 improvements. Project Sources CRUD не открывать без настоящего scoped source-list API.
+- **Next:** проверить, почему API-created commits не возвращают Actions runs, не используя manual workflow_dispatch; затем получить exact-head Quality/Chromium обычным авторизованным push-путём. После этого продолжить 8.1–8.17 manual acceptance и bounded 8.28/8.19. Project Sources CRUD не открывать без настоящего scoped source-list API.
 
 ## Навигация и владение записями
 
