@@ -19,7 +19,7 @@
 - [~] MENU-004 — текущий agent panel уже показывает mode, team blueprint, use cases, 64 roles, orchestration, models/resources and capabilities; добавить Skill binding, data scope, budgets, approvals and outputs по мере появления реальных handlers.
 - [~] MENU-005 — сейчас доступны direct response и sequential four-stage workflow; остальные режимы оставить roadmap-only до независимого runtime.
 - [~] MENU-006 — текущие chat profile/team blueprint controls существуют; расширенные model/skill/data/permission/resource/history controls требуют реальных backing APIs.
-- [x] MENU-007 — `1ИÆИT10И` tickers, pause controls, reduced-motion CSS and non-runtime notes already exist; E2E assertions are authored, exact-head execution pending.
+- [~] MENU-007 — `1ИÆИT10И` tickers, pause controls, reduced-motion CSS and non-runtime notes exist; E2E assertions are authored, but exact-head execution is pending.
 - [ ] MENU-008 — завершить mobile/keyboard/VoiceOver and duplicate-control review; RU/EN menu labels and initial Playwright assertions already exist.
 - [x] MENU-009 — supporting UX contract создан; он включает source audit and remaining gaps. Canonical UI checklist sync remains a separate bounded docs step.
 
