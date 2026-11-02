@@ -252,3 +252,10 @@
 - Source/test HEAD: `f35f542070a261ddfe075d2cc0ee7281c0fdbe8b`.
 - Bounded Undo for chat project moves now has authored E2E coverage through both the current-chat selector and chat-row context menu. The tests verify restoration of the prior project assignment without changing chat identity.
 - Syntax checks passed; Chromium execution is pending. No new dependency, backend, merge, rebase, main sync or deployment.
+
+
+### Live Landing V2 continuation — chat-delete Undo (2026-11-02)
+
+- Source/test HEAD: `6f2863094434cd75c8794c348117cc8ea597f271`.
+- Added immediate Undo for chat deletion using the existing last-closed-chat recovery slot. The action validates the slot's chat ID and expires safely if a newer deletion replaced it. Existing seven-day reload recovery remains intact.
+- Added E2E coverage; V8 syntax parsing passed, Chromium execution pending. No new storage key, dependency, backend, merge, rebase or deployment.

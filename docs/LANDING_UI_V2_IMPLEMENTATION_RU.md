@@ -871,3 +871,13 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Added a second Playwright scenario for the chat-row context-menu move path. Together with the existing current-chat project-selector test, both entry points now have explicit Undo coverage.
 - The regression verifies that Undo restores the original project assignment and preserves the same chat ID/current-chat identity.
 - Test commit: `f35f542070a261ddfe075d2cc0ee7281c0fdbe8b`. V8 syntax parsing passed; browser execution remains pending. No runtime behavior changed in this test-only extension.
+
+
+## Bounded Undo — chat deletion (2026-11-02, 8.20)
+
+- Reused the existing `ai_last_closed_chat_v1` recovery slot; no second snapshot store or command-history schema was introduced.
+- When the recovery snapshot is successfully persisted, chat deletion now exposes an Undo action in the existing toast. The action restores only if the recovery slot still contains the same deleted chat; if a newer deletion replaced the slot, Undo reports expiry and does not restore the wrong chat.
+- Existing sidebar “Restore last closed chat” remains available across reloads for up to seven days. The toast action is immediate and bounded by its visible lifetime.
+- Added Playwright regression for delete → Undo, verifying the same chat ID is restored as current. Existing reload-recovery test remains unchanged.
+- Source commit: `3f85837ab31005c3b722f76e13f9d78570aef1da`; E2E: `6f2863094434cd75c8794c348117cc8ea597f271`. V8 syntax parsing passed; Chromium execution remains pending.
+- The bounded Undo scope now covers chat move and chat delete only. Project cascade, rename and settings are still excluded; no automatic rollback of external effects.

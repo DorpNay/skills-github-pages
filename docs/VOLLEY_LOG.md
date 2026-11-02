@@ -819,3 +819,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - The test verifies the same chat ID remains active and the original project assignment is restored after Undo.
 - Test commit: `f35f542070a261ddfe075d2cc0ee7281c0fdbe8b`; V8 syntax parsing passed. Both browser tests remain authored but unexecuted pending a fresh exact-head Quality/Chromium run.
 - No runtime code, dependency, storage schema, backend, merge or deployment change in this test-only extension.
+
+
+## V-2026-11-02-CHAT-DELETE-UNDO-001
+
+- Extended 8.20 using the existing last-closed-chat recovery slot: when its snapshot is saved, deleting a chat offers an immediate Undo action in the existing toast.
+- Undo checks that the slot still belongs to the same deleted chat. If a newer deletion replaced it, the older action expires without restoring the wrong chat. The existing seven-day reload recovery button remains unchanged.
+- Added Playwright coverage for delete → Undo and restoration of the same current chat ID. Syntax parsing passed; browser execution remains pending.
+- Source/test commits: `3f85837ab31005c3b722f76e13f9d78570aef1da`, `6f2863094434cd75c8794c348117cc8ea597f271`. No new storage schema, dependency, backend, merge or deployment.

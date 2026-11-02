@@ -140,3 +140,9 @@
 
 - Undo for chat project moves is covered through the current-chat project selector and chat-row context menu. It restores only if the chat has not changed again and the original project still exists.
 - Both E2E tests are authored but not yet executed. This is a bounded in-memory action, not persistent command history.
+
+
+### 8.20 chat-delete Undo — 2026-11-02
+
+- Chat deletion now offers an immediate Undo action using the existing last-closed-chat recovery slot. It restores only the matching chat; a newer deletion expires the older action safely.
+- Existing seven-day restore after reload remains intact. E2E coverage is authored but not yet executed.

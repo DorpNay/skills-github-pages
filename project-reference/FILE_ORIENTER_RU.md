@@ -356,3 +356,10 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Latest source/test checkpoint: `f35f542070a261ddfe075d2cc0ee7281c0fdbe8b`.
 - Undo for chat project moves is now covered through both the current-chat project selector and the chat-row context menu. The test confirms the original project assignment and chat identity are restored.
 - V8 syntax check passed; Chromium tests remain authored, not executed. Exact-head Quality must be checked after the final documentation push.
+
+
+## Landing V2 — chat-delete Undo (2026-11-02)
+
+- Latest source/test checkpoint: `6f2863094434cd75c8794c348117cc8ea597f271`.
+- Chat deletion now offers immediate Undo through the existing last-closed-chat recovery slot, but only if that snapshot was saved and still belongs to the same chat. A newer deletion safely expires the older action.
+- Added Playwright regression; existing seven-day reload recovery remains unchanged. V8 syntax check passed; Chromium run pending.

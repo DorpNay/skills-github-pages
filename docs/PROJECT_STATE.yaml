@@ -914,3 +914,15 @@ landing_v2_bounded_undo_2026_11_02:
   e2e: "current-chat project selector and chat-row context-menu move paths covered by authored tests; not executed yet"
   source_checks: "V8 syntax parsing passed; CSS brace balance passed"
   limitations: "does not cover chat rename, project deletion/cascade, settings or persistent command history"
+
+
+landing_v2_chat_delete_undo_2026_11_02:
+  status: "implemented; exact-head Quality/Chromium pending"
+  pr: 131
+  source_test_head: "6f2863094434cd75c8794c348117cc8ea597f271"
+  requirement: "8.20"
+  behavior: "chat delete exposes a bounded toast Undo only when the existing last-closed snapshot was saved"
+  safety: "undo restores only if ai_last_closed_chat_v1 still points to the same deleted chat; newer delete replaces the slot and expires the older action"
+  persistence: "reuses existing seven-day last-closed chat recovery; no new storage key or command history"
+  e2e: "delete → Undo regression authored; not yet executed; existing reload restore regression retained"
+  source_checks: "V8 syntax parsing passed"
