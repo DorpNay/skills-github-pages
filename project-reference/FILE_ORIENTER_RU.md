@@ -341,3 +341,11 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - E2E tests cover offline → online without automatic request replay and immediate draft persistence on tab hide. Source syntax and CSS brace checks passed; browser tests are authored but not yet executed.
 - Exact-head Quality #1405 (`41390877580`) pending; Graphify #437 (`41390877512`) queued. No exact-head browser pass is claimed.
 - PR #131 remains open/unmerged, mergeable=false. Main, production Pages and PR #132 are untouched; no rebase, merge or deployment. Attachments remain intentionally non-persistent.
+
+
+## Landing V2 — Undo slice (2026-11-02)
+
+- Source/test checkpoint: `ba709ac95c8896581133dfcce02234281f75fd90` on PR #131.
+- Added bounded Undo for a chat's project move through the existing toast. The inverse operation validates the chat's current assignment and the original project's existence before restoring; conflicts never overwrite later user changes.
+- Added an accessible 44px toast action and Playwright regression. V8 syntax and CSS brace checks passed; Chromium test remains unexecuted.
+- This does not yet provide persistent command history or Undo for rename/project deletion/settings. Exact-head Quality still needs a fresh completed run.
