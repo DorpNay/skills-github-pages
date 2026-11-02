@@ -2,16 +2,16 @@
 
 > **Handoff trigger:** when the owner sends `oledue`, start with root `OLEDUE.md`. It defines the short, repository-backed resume protocol; verify all live SHAs and checks before acting.
 
-## Current working checkpoint — 2026-11-03, Graphify selector triage
+## Current working checkpoint — 2026-11-03, local Team Blueprint library
 
 - Source of truth: `DorpNay/skills-github-pages`; `main` remains stable V1 at `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`.
-- PR #131 remains open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`. Live branch HEAD before this documentation record: `ea0457ec38931e7a0a1cff788970d1ac4a292acc`; source/test HEAD: `8f4a0a532639586f557c85156ede41810d4cc79b`; base/merge-base: `e78a73b25725bfa63370d9946887cbbacbf51b82`. Compare with main: diverged, 940 ahead / 4 behind. Four main-side commits modify only the shared `docs/V1_UI_FINALIZATION_RU.md`; no rebase or synchronization.
-- PR conversation comments: 0; submitted reviews: 0; inline review threads: 0. Current pre-update HEAD `ea0457e` had zero workflow runs and zero commit statuses. Prior docs HEAD `d4ceaf84e945ddee0401ec615416ebaba5361c98`: Quality #41416369361 passed 4/4 Chromium shards (147 tests) and required sentinels; Graphify #41416369353 and provenance #41416369253 passed. Published-site smoke skipped.
-- Graphify UI bridge source/test checkpoint `8f4a0a5`: 3,198 nodes / 8,559 edges / 61 groups. Selector triage: 351 DOM/no-static-CSS and 43 CSS/no-static-DOM are static name-join diagnostics, not defect counts. Of 43 CSS candidates, 36 have literal markup/JS references (often dynamically generated); seven have no literal reference and remain cleanup candidates only. No selectors removed.
-- The Graphify artifact is artifact-only; selector relationships marked INFERRED do not prove computed browser styles or runtime behavior. See `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md` for the source cross-check and limits.
-- No merge, deploy, rebase, main sync or destructive cleanup. Main remains the stable V1 publication.
-- **Next:** continue mandatory owner checklist 8.1–8.17 using browser/device evidence. Prioritize real iPhone Safari/VisualViewport/safe-area, VoiceOver, keyboard focus and full component-level WCAG; then select one bounded correction. Project Sources CRUD remains blocked until a real scoped source-list API exists.
-
+- PR #131 remains open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`. Code/test HEAD: `765138e74e141aaf1471c6351193d98dda8a0df8`; base/merge-base: `e78a73b25725bfa63370d9946887cbbacbf51b82`; compare with main: diverged, 952 ahead / 4 behind. Four main-side commits modify only the shared `docs/V1_UI_FINALIZATION_RU.md`; no rebase or synchronization.
+- PR conversation comments: 0; submitted reviews: 0; inline review threads: 0. Exact code/test HEAD `765138e` has zero workflow runs and zero commit statuses; no browser/Quality pass is claimed.
+- Added a local-only Team Blueprint library inside the existing Agent panel: up to 20 named snapshots; save/apply/delete; RU/EN; 44px mobile targets. Data contains only the team plan, not chat IDs/messages/credentials. Applying changes only the current chat blueprint fields; it does not enable the structured workflow, launch agents, grant permissions or create AgentRuns.
+- Playwright suite contains 120 tests; new lifecycle regression is authored but NOT RUN. Static V8 syntax checks passed for app.js and E2E spec; CSS brace balance, unique DOM IDs and RU/EN translation-key checks passed.
+- Previous Graphify UI surface bridge and selector triage remain documented in `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`; unmatched selector diagnostics are candidates, not defect counts. Seven unreferenced CSS names were not removed.
+- No merge, deploy, rebase, main sync or destructive cleanup. Main remains stable V1.
+- **Next:** obtain exact-head Quality/Chromium evidence for `765138e`; then continue mandatory 8.1–8.17 manual UX/accessibility gates and bounded 8.28/8.19 work only where real data/handlers exist. Project Sources CRUD remains blocked until a real scoped source-list API exists.
 
 ## Record ownership
 
