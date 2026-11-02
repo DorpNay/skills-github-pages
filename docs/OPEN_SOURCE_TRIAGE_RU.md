@@ -214,3 +214,23 @@
 - Решение: disposable dev environment, pinned version, `graphify extract . --code-only --timing`, `graphify cluster-only . --no-label`, `graphify export html`, `graphify query`; проверка exclusions, ресурсные замеры и сравнение на реальных навигационных вопросах. Не ставить в gateway и не использовать hosted Cloud для пользовательских данных.
 - Исполнение **BLOCKED**: локальный `git clone` завершился DNS-ошибкой `Could not resolve host: github.com`; CLI не установлен и граф не создан.
 - Промежуточный артефакт `docs/ALANDI_ARCHITECTURE_MAP_RU.md` — кураторская схема, не подмена AST graph.
+
+
+## Дополнение: локальные источники, Skill Factory и мультимедиа — 2026-11-02
+
+| Кандидат / спецификация | Что подтверждено | Решение для aLandi |
+|---|---|---|
+| File System Access API + OPFS | WICG draft для явного выбора файлов/папок; OPFS — origin-private storage с quota и clear-site-data boundary. | Browser picker/handle spike; permission revalidation; OPFS только для производного cache/index. Не считать произвольный путь разрешением. |
+| Agent Skills specification | SKILL.md + YAML frontmatter; опциональные scripts/references/assets; progressive disclosure. | Новый loader отдельно от skills/*.txt; schema validation; scripts inert; metadata не grant permissions. |
+| MCP / A2A 1.0 / AG-UI 1.0 | Tool/context protocol; independent agent task exchange; typed user-facing event stream — три разных уровня. | Не внедрять все протоколы сразу; выбирать по реальному boundary. |
+| MarkItDown | Лёгкий document-to-Markdown adapter. | Benchmark как простой extractor; не обещать OCR/layout fidelity. |
+| Docling | Layout-aware parsing; coverage зависит от documented formats/backends/extras. | Benchmark на реальных RU/EN/TH fixtures; code and model licenses проверять отдельно. |
+| screenshot-to-code | MIT source; текущий self-host путь использует React/Vite, FastAPI и model-provider keys. | Изолированный reference/spike; не тащить его frontend stack в статический клиент. Генерированный код — untrusted draft. |
+| ComfyUI API v2 | Workflow API с upload, submit, poll, cancel и output retrieval. | Reference для media job lifecycle; runtime не установлен. GPL-3.0 app code и model-weight licenses оценивать отдельно. |
+| Agent Audio | Early-preview локальный sound-generation skill/MCP server; README указывает значительный RAM/disk footprint и отдельные terms для весов. | Non-speech audio candidate; никаких автоматических загрузок. Проверить weight licenses, target hardware, latency и listening quality. |
+| LiveKit Agents / Pipecat | Realtime voice pipelines с turn-taking/interruption и web/mobile transports. | Архитектурные reference; сравнить с текущим FastAPI/browser contract до миграции. |
+| VERT / vertd | AGPL-3.0 / GPL-3.0 strong copyleft. | Не копировать и не хостить без отдельного legal approval; сначала permissive alternatives. |
+
+Все строки — research candidates, не dependency allowlist. Перед загрузкой артефакта зафиксировать canonical upstream, exact commit/release, checksum, code license, weight/dataset license, size, runtime needs and preservation reason. Не добавлять бинарные веса или исполняемые скрипты в PR #131.
+
+Подробные контракты и задачи: PR #125 AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md; PR #128 AGENT_WORKER_CAPABILITY_AND_SKILL_SAFETY_RU.md; PR #129 LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md; PR #130 LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md.
