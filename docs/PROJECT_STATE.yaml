@@ -948,3 +948,14 @@ landing_v2_undo_focus_2026_11_02:
   behavior: "after Undo, focus returns to the affected visible chat row or falls back to composer"
   e2e: "rename Undo activated by Enter; asserts restored title and focus returns to same chat ID; not yet executed"
   source_checks: "V8 syntax parsing passed"
+
+
+landing_v2_theme_selector_integrity_fix_2026_11_02:
+  status: "implemented; exact-head Quality/Chromium pending"
+  pr: 131
+  source_test_head: "74de58706b28d55f405c238b916651c26281098d"
+  failure_source: "Quality #1431 Integrity: Missing required UI element #uiTheme"
+  fix: "restored #uiTheme selector in advanced appearance disclosure; added RU/EN labels; header toggle remains synchronized"
+  e2e: "theme selector presence, labels, local persistence and header-toggle synchronization authored; not yet executed"
+  source_checks: "V8 syntax parsing passed"
+  next: "verify Quality/Chromium on a head containing the repair"
