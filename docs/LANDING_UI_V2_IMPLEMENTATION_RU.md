@@ -26,7 +26,7 @@
 |---|---|---|---|
 | **8.1 Sidebar, memory, projects, chats** | Memory status precedes the title; shared facts → personal facts → private-context opt-in; explanations collapsed; sidebar close preserves project/chat disclosure state; project-filtered chats, explicit project chat creation, per-project gear, separate create dialog, unchanged current-chat membership and local last-closed-chat restore. | Added Playwright coverage that horizontal touch swipe closes the sidebar while vertical movement does not; verifies project disclosure remains open after close/reopen. Existing accordion/restore regression and real-device checks remain. | [~] |
 | **8.2 Typography/header/main surface** | Dedicated wordmark/chat-title styling, one shared system font stack for body/form controls, compact theme/language group, clock and mode controls. | Removed an obsolete earlier font-family declaration so the final shared stack is canonical; extended responsive Playwright coverage at 320/360/390/768/1024/1440px to assert body/buttons/inputs/textarea/select use the same computed stack. Visual review and exact-head execution remain. | [~] |
-| **8.3 Settings/providers** | aServi remains exclusive; opening third-party providers closes aServi; provider and additional-settings disclosures can remain open together. | Execute E2E and review keyboard/narrow-screen behavior. | [~] |
+| **8.3 Settings/providers** | aServi remains exclusive; third-party provider and additional-settings disclosures can remain open together. | Extended the existing exclusivity regression to 390px, checks all three disclosure summaries have 44px hit areas, opens/closes them with Enter/Space and asserts no horizontal overflow. Exact-head execution and real-device keyboard review remain. | [~] |
 | **8.4 Tavily/system prompt** | Tavily key remains in a web-tools disclosure; system prompt is global `localStorage` state and is normalized against the legacy built-in prompt. | Verify the empty-by-default behavior against `DEFAULT_SYSTEM` and migration; decide Tavily only after comparing the existing keyless search fallback and live adapter requirements. No premature deletion. | [~] |
 | **8.5 Living notes** | Source document already says new owner UI requirements belong in the matching subsection and statuses require code/test evidence. | Keep the source checklist as the owner requirements record; implementation status and evidence live in this ledger and PR. | [x] |
 | **8.6 Navigation and visual hierarchy** | Browser history stores nested project-filter/modal depth; Back closes/restores the preceding level and Forward reopens the saved project filter or modal; Escape follows the same stack. | Execute Back/Forward/Escape regressions and inspect visual hierarchy and keyboard behavior. | [~] |
@@ -800,3 +800,10 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Extended the existing 320/360/390/768/1024/1440px header regression to assert computed font-family equality for body, button, input, textarea and select at every viewport.
 - CSS commit: `a3613f7246823d96d8b544234a1da1e53447679a`; E2E commit: `4720695d6c4f9860f1d2d5983f7b605ba3cd14c6`.
 - This is a bounded consistency cleanup, not a full typography or screenshot acceptance. Test authored; exact-head execution and visual review remain pending.
+
+
+### 8.3 implementation slice — mobile disclosure and keyboard interaction (2026-11-02)
+
+- Kept the existing aServi exclusivity rule and the intentional ability to keep third-party provider settings and additional settings open together; no provider state or persistence behavior changed.
+- Extended the existing Playwright regression at 390px to verify 44px summary hit areas, native Enter/Space keyboard toggling, exclusivity transitions and no horizontal overflow.
+- E2E commit: `f9ffad34ad067db4b3ce944f1811f4e8621a73e9`. Authored only; exact-head browser execution and physical-device keyboard review remain pending.
