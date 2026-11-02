@@ -1,16 +1,12 @@
-## Current working checkpoint — 2026-11-02, Quality #1252 + Provenance #976 green
+## Current working checkpoint — 2026-11-02, per-chat draft recovery implemented
 
-- **Main:** stable V1 baseline. PR #131 remains open/unmerged; no merge, rebase, main synchronization or production deployment.
-- **PR #131:** branch `feat/landing-v1-accessibility-responsive-20261031`; code-bearing HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`; latest documentation HEAD `63f429ccf16fe7648519ebb3ecc02b9f8949ad53`. Comparison: 653 commits ahead and 4 behind `main`; mergeable=false. Preserve the four base-side commits; no rebase/sync without owner approval.
-- **Quality #1250:** exact code-head run `41364775725` passed after 8.13 active/inactive-target reload coverage.
-- **Quality #1252:** run `41365833770` on documentation HEAD `63f429ccf16fe7648519ebb3ecc02b9f8949ad53` passed: all four real Chrome shards, preflight, static analysis, Integrity, Security, Context and Jekyll. **Provenance #976** / run `41365833791` also passed. Published-site smoke was skipped; no preview/deployment is verified.
-- **8.13 project-context handoff:** pending target chat/project IDs persist in tab-scoped `sessionStorage`, restore after reload for active/inactive target chats, and are consumed once. E2E verifies no chat creation/reassignment and no context on the second request.
-- **Supply chain:** 33/33 direct workflow refs across 13 files are full-SHA pinned on main and PR branch. Residual: the pinned `skills/exercise-toolkit` reusable workflows internally reference mutable tags (`checkout@v6`, `github-script@v9`, `add-and-commit@v10`, `action-text-variables@v4`); keep this as a separate follow-up. Live branch ruleset remains unverified.
-- **Automation:** Quality is push/pull_request-triggered automatically; no manual workflow dispatch or owner-run command is required.
-- **V2 preview:** owner paused the second-repository path. Do not create a second repository, alter the existing Pages target or deploy anything until the owner changes that instruction.
-- **Research:** current findings are in `docs/OPEN_SOURCE_TRIAGE_RU.md`. SGLang supports Qwen3-Next-80B-A3B but its guide targets 4×H100/H200; it is not a small front-door SLM. LightAgent is an agent runtime, llm-apipool has automatic cross-provider fallback, and BentoML adds a serving layer; none was adopted.
-- **Canonical UI queue:** `docs/V1_UI_FINALIZATION_RU.md` section 8.0; mandatory 8.1–8.17 remain release scope. Native iPhone Safari, VoiceOver, full composited contrast and visual screenshot review remain open.
-- **Next:** continue bounded implementation within PR #131 while CI runs; do not wait idly. Update canonical state after significant milestones. No merge/deployment.
+- **Main:** stable V1 baseline. PR #131 remains the sole V2 implementation branch and remains open/unmerged. No merge, rebase, main synchronization or production deployment.
+- **PR #131:** `feat/landing-v1-accessibility-responsive-20261031`; latest code commit `a2db7904d1a18609f467829c4339ccd52dfa8883`, E2E commit `2257010cef98c3afcf093eb73728a8b90d2c869f`; documentation updates are being committed on the same branch. Do not rely on older ahead/behind counts; query live metadata before any branch coordination.
+- **Landing V2.0:** optional proposal 8.25 has a first bounded slice: local text-only drafts keyed by existing chat ID, per-chat isolation, reload restoration, explicit-submit clearing and no auto-send. Limit: 100 chats × 20,000 characters; attachments remain in memory and are not persisted.
+- **Verification:** Playwright regression authored for two-chat isolation/reload/no auto-send. It has not yet executed on the final documentation HEAD. Wait for the automatic push/pull_request Quality workflow and inspect exact-head Chromium results; do not claim a pass yet.
+- **Existing gates:** Quality #1250 passed on code HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`; Quality #1252 and Provenance #976 passed on documentation HEAD `63f429ccf16fe7648519ebb3ecc02b9f8949ad53`. Those results predate this draft change and do not verify it.
+- **Architecture:** static HTML/CSS/vanilla JS + Jekyll/GitHub Pages and existing FastAPI gateway only. No new runtime/dependency/route/provider. Preserve local-first data, project/chat isolation, secret redaction and explicit consent.
+- **Next:** verify final exact-head Quality/Chromium; fix only confirmed failures; then continue remaining mandatory UI scope 8.1–8.17 and manual screenshot/iPhone Safari/VoiceOver/WCAG gates. Continue useful bounded work while CI runs; no merge/deploy.
 
 
 ## First-read order
