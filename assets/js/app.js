@@ -7,7 +7,7 @@
     const STORAGE = {
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
-      tavilyKey: 'ai_tavily_key', systemPrompt: 'ai_system_prompt', composerPosition: 'ai_composer_position_v1',
+      tavilyKey: 'ai_tavily_key', systemPrompt: 'ai_system_prompt', composerPosition: 'ai_composer_position_v1', pinnedChats: 'ai_pinned_chats_v1', chatSort: 'ai_chat_sort_v1',
       mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', searchMode: 'ai_web_search_preset_v1', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider', cloudflareAccountId: 'ai_cloudflare_account_id', projects: 'ai_projects_v1', globalMemoryEnabled: 'ai_global_memory_enabled_v1', privateMemoryEnabled: 'ai_private_memory_enabled_v1', lastClosedChat: 'ai_last_closed_chat_v1'
     };
     const LEGACY_DEFAULT_SYSTEM = 'Ты автономный ИИ-ассистент. Отвечай ясно, проверяй предположения и выдавай структурированные отчёты. Если включён веб-поиск, используй его для актуальной информации.';
@@ -127,6 +127,8 @@
     let chatStorageCorruptNotBackedUp = false;
     let db = null;
     let chats = loadChats();
+    let pinnedChatIds = loadPinnedChatIds();
+    let chatSortPreference = loadChatSortPreference();
     let projects = loadProjects();
     let currentChatId = safeGet(STORAGE.current) || chats[0].id;
     if (!chats.some((chat) => chat.id === currentChatId)) currentChatId = chats[0].id;
@@ -536,6 +538,41 @@
         return [createChat()];
       }
     }
+    function loadPinnedChatIds() {
+      try {
+        const value = JSON.parse(safeGet(STORAGE.pinnedChats) || '[]');
+        return Array.isArray(value)
+          ? [...new Set(value.filter(id => typeof id === 'string' && id.length > 0 && id.length <= 128))].slice(0, 1000)
+          : [];
+      } catch (_) { return []; }
+    }
+    function loadChatSortPreference() {
+      return safeGet(STORAGE.chatSort) === 'title' ? 'title' : 'current';
+    }
+    function getSortedChats(items) {
+      const originalPositions = new Map(items.map((chat, index) => [chat.id, index]));
+      const pinned = new Set(pinnedChatIds);
+      const language = getUiLanguage();
+      return [...items].sort((a, b) => {
+        const pinOrder = Number(pinned.has(b.id)) - Number(pinned.has(a.id));
+        if (pinOrder) return pinOrder;
+        if (chatSortPreference === 'title') {
+          const titleOrder = String(a.title || '').localeCompare(String(b.title || ''), language, { sensitivity: 'base', numeric: true });
+          if (titleOrder) return titleOrder;
+        }
+        return originalPositions.get(a.id) - originalPositions.get(b.id);
+      });
+    }
+    function toggleChatPinned(chatId) {
+      if (!chats.some(chat => chat.id === chatId)) return;
+      const isPinned = pinnedChatIds.includes(chatId);
+      pinnedChatIds = isPinned ? pinnedChatIds.filter(id => id !== chatId) : [...pinnedChatIds, chatId].slice(-1000);
+      const saved = safeSet(STORAGE.pinnedChats, JSON.stringify(pinnedChatIds));
+      renderChatList();
+      if (saved) showToast(getUiLanguage() === 'en'
+        ? (isPinned ? 'Chat unpinned.' : 'Chat pinned.')
+        : (isPinned ? 'Чат откреплён.' : 'Чат закреплён.'));
+    }
     function persistChats() {
       if (chatStorageCorruptNotBackedUp) {
         showToast('Повреждённая история не была перезаписана: не удалось создать резервную копию. Освободите место в браузере и перезагрузите страницу.', 'error');
@@ -891,6 +928,13 @@
       document.querySelectorAll('[data-i18n-placeholder]').forEach(node=>{const value=text[node.dataset.i18nPlaceholder];if(typeof value==='string')node.placeholder=value;});
       document.querySelectorAll('[data-i18n-aria-label]').forEach(node=>{const value=text[node.dataset.i18nAriaLabel];if(typeof value==='string')node.setAttribute('aria-label',value);});
       applyFunctionPanelLanguage(lang);
+      const chatSortSelect=$('chatSortSelect');
+      if(chatSortSelect){
+        chatSortSelect.querySelector('option[value="current"]').textContent=lang==='en'?'Current order':'Как сейчас';
+        chatSortSelect.querySelector('option[value="title"]').textContent=lang==='en'?'Name A–Z':'По названию';
+        chatSortSelect.setAttribute('aria-label',lang==='en'?'Chat order':'Порядок чатов');
+        chatSortSelect.value=chatSortPreference;
+      }
       updateHomeThemeButton();
       const aserviConnectButton=document.querySelector('[data-action="connect-aservi"]');if(aserviConnectButton)aserviConnectButton.textContent=aserviConnectButton.disabled?aserviText('checkingButton'):aserviText('connectButton');
       const promptButton=$('editSystemPrompt'),promptInput=$('systemPromptInput');
@@ -1579,12 +1623,14 @@
     function createChatRow(chat,compact=false) {
       const active=chat.id===currentChatId,item=document.createElement('div');
       item.className=`chat-row ${compact?'chat-row-compact':''} p-2 rounded-xl flex items-center gap-1.5 group transition-colors ${active?'bg-blue-600/15 border border-blue-500/35 text-white':'hover:bg-white/5 border border-transparent text-gray-300'}`;
-      const open=document.createElement('button');open.type='button';open.dataset.action='switch-chat';open.dataset.chatId=chat.id;open.className='text-left truncate font-medium text-sm flex-1 min-w-0 rounded-lg px-1.5 py-2';open.textContent=chat.title||'Новый чат';
+      const isPinned=pinnedChatIds.includes(chat.id);
+      const open=document.createElement('button');open.type='button';open.dataset.action='switch-chat';open.dataset.chatId=chat.id;open.className='text-left truncate font-medium text-sm flex-1 min-w-0 rounded-lg px-1.5 py-2';open.textContent=(isPinned?'📌 ':'')+(chat.title||'Новый чат');open.setAttribute('aria-label',(isPinned?(getUiLanguage()==='en'?'Pinned chat: ':'Закреплённый чат: '):'')+(chat.title||'Новый чат'));
+      if(isPinned)item.dataset.pinned='true';
       const menu=document.createElement('details');menu.className='chat-row-menu shrink-0';
       const summary=document.createElement('summary');summary.textContent='⋯';summary.setAttribute('aria-label',getUiLanguage()==='en'?'Chat actions':'Действия чата');summary.title=summary.getAttribute('aria-label');
       const panel=document.createElement('div');panel.className='chat-row-menu-panel';
       const project=chat.projectId?projects.find(item=>item.id===chat.projectId):null,english=getUiLanguage()==='en';
-      const actions=[['chat-rename',english?'Rename':'Переименовать'],['chat-clone',english?'Clone':'Клонировать'],['export-chat',english?'Export chat':'Экспортировать чат'],['import-chats',english?'Import chats…':'Импортировать чаты…'],['chat-project',project?(english?'Move / detach from project':'Переместить / извлечь из проекта'):(english?'Add to project':'Добавить в проект')],['chat-clear',english?'Clear history':'Очистить историю'],['delete-chat',english?'Delete chat':'Удалить чат']];
+      const actions=[['chat-toggle-pin',isPinned?(english?'Unpin chat':'Открепить чат'):(english?'Pin chat':'Закрепить чат')],['chat-rename',english?'Rename':'Переименовать'],['chat-clone',english?'Clone':'Клонировать'],['export-chat',english?'Export chat':'Экспортировать чат'],['import-chats',english?'Import chats…':'Импортировать чаты…'],['chat-project',project?(english?'Move / detach from project':'Переместить / извлечь из проекта'):(english?'Add to project':'Добавить в проект')],['chat-clear',english?'Clear history':'Очистить историю'],['delete-chat',english?'Delete chat':'Удалить чат']];
       actions.forEach(([action,label])=>{const button=document.createElement('button');button.type='button';button.dataset.action=action;button.dataset.chatId=chat.id;button.textContent=label;if(action==='delete-chat')button.className='danger';panel.appendChild(button);});
       menu.append(summary,panel);
       const positionMenu=()=>{
@@ -1628,7 +1674,7 @@
         summary.append(caret,title,count);group.appendChild(summary);
         group.addEventListener('toggle',()=>{caret.textContent=group.open?'⌄':'›';});
         const children=document.createElement('div');children.className='project-nav-chats';
-        const assigned=chats.filter(chat=>chat.projectId===project.id);
+        const assigned=getSortedChats(chats.filter(chat=>chat.projectId===project.id));
         if(!assigned.length){const empty=document.createElement('p');empty.className='px-2 py-2 text-[10px] text-gray-500';empty.textContent=english?'No chats in this project yet.':'В проекте пока нет чатов.';children.appendChild(empty);}
         assigned.forEach(chat=>children.appendChild(createChatRow(chat,true)));
         const toolbar=document.createElement('div');toolbar.className='flex gap-1 px-1 pt-1';
@@ -1655,7 +1701,7 @@
       results.classList.remove('hidden');
       const english=getUiLanguage()==='en';
       const projectMatches=projects.filter(project=>String(project.name||'').toLocaleLowerCase(getUiLanguage()).includes(query));
-      const chatMatches=chats.filter(chat=>String(chat.title||'').toLocaleLowerCase(getUiLanguage()).includes(query));
+      const chatMatches=getSortedChats(chats.filter(chat=>String(chat.title||'').toLocaleLowerCase(getUiLanguage()).includes(query)));
       const appendGroup=(label,items,kind)=>{
         if(!items.length)return;
         const heading=document.createElement('p');heading.className='px-2 pt-1 text-[10px] font-semibold uppercase tracking-wide text-gray-500';heading.textContent=label;results.appendChild(heading);
@@ -1664,7 +1710,7 @@
           button.dataset.action=kind==='project'?'select-project':'switch-chat';
           if(kind==='project')button.dataset.projectId=item.id;else button.dataset.chatId=item.id;
           button.className='flex w-full min-h-11 items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs text-gray-200 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400';
-          const marker=document.createElement('span');marker.className='shrink-0 text-gray-500';marker.textContent=kind==='project'?'▣':'💬';
+          const marker=document.createElement('span');marker.className='shrink-0 text-gray-500';marker.textContent=kind==='project'?'▣':(pinnedChatIds.includes(item.id)?'📌':'💬');
           const title=document.createElement('span');title.className='min-w-0 flex-1 truncate';title.textContent=item.name||item.title|| (english?'Untitled':'Без названия');
           const meta=document.createElement('span');meta.className='shrink-0 text-[9px] text-gray-500';meta.textContent=kind==='project'?(english?'Project':'Проект'):(english?'Chat':'Чат');
           button.append(marker,title,meta);results.appendChild(button);
@@ -1681,7 +1727,7 @@
       const english=getUiLanguage()==='en';
       const activeProject=activeChatProjectId?projects.find(project=>project.id===activeChatProjectId):null;
       if(activeChatProjectId&&!activeProject)activeChatProjectId=null;
-      const visibleChats=activeChatProjectId?chats.filter(chat=>chat.projectId===activeChatProjectId):chats.filter(chat=>!chat.projectId);
+      const visibleChats=getSortedChats(activeChatProjectId?chats.filter(chat=>chat.projectId===activeChatProjectId):chats.filter(chat=>!chat.projectId));
       const count=visibleChats.length;
       $('chatSectionCount').textContent=String(count);
       $('chatSectionTitle').textContent=activeProject?(english?'Chats · '+activeProject.name:'Чаты · '+activeProject.name):(english?'Chats · No project':'Чаты · Без проекта');
@@ -3845,6 +3891,8 @@
       safeSet(STORAGE.lastClosedChat,JSON.stringify({chat:deleted,closedAt:Date.now()}));
       if (activeChatId === id) stopGeneration();
       const next = chats.filter((chat) => chat.id !== id);
+      pinnedChatIds = pinnedChatIds.filter(chatId => chatId !== id);
+      safeSet(STORAGE.pinnedChats, JSON.stringify(pinnedChatIds));
       updateState(next, currentChatId === id ? next[0].id : currentChatId);
     }
     let chatActionOpener=null;
@@ -4669,6 +4717,7 @@
           case 'close-sidebar': toggleSidebar(false); break;
           case 'new-chat': if(voiceConversationActive)stopVoiceConversation(false);if(activeChatProjectId)createNewChatInProject(activeChatProjectId);else createNewChat(); break;
           case 'new-chat-in-project': createNewChatInProject(control.dataset.projectId);break;
+          case 'chat-toggle-pin': control.closest('.chat-row-menu')?.removeAttribute('open');toggleChatPinned(control.dataset.chatId);break;
           case 'chat-clear': control.closest('.chat-row-menu')?.removeAttribute('open');clearChatById(control.dataset.chatId);break;
           case 'clear-chat': clearCurrentChat(); break;
           case 'switch-chat': if(voiceConversationActive)stopVoiceConversation(false);switchChat(control.dataset.chatId); break;
@@ -4754,6 +4803,13 @@
     $('providerPreset').addEventListener('change',()=>{safeSet(ASERVI_STORAGE.connection,'');if(currentProvider()==='alandi'){const url=$('baseUrl').value.trim();if(url)$('aserviBaseUrl').value=url;}});
     $('modelSearch').addEventListener('input',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('sidebarSearchInput').addEventListener('input',renderSidebarSearchResults);
+    $('chatSortSelect')?.addEventListener('change',event=>{
+      const next=event.target.value==='title'?'title':'current';
+      if(next===chatSortPreference)return;
+      chatSortPreference=next;
+      if(safeSet(STORAGE.chatSort,chatSortPreference))showToast(getUiLanguage()==='en'?'Chat order saved.':'Порядок чатов сохранён.');
+      renderChatList();
+    });
     $('sidebarSearchInput').addEventListener('keydown',event=>{
       if(event.key==='Escape'&&$('sidebarSearchInput').value){event.preventDefault();clearSidebarSearch();}
     });
