@@ -686,3 +686,14 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Added Playwright regression for pin/unpin, both sort modes, persistent preferences and reload restoration. Authored only; exact-head browser execution remains pending.
 - Commits: source 9520ab6, 94cd406, 2b58b98, dc3762b; markup ffb5c02; E2E 1a5872e. Current exact HEAD at implementation stage: dc3762b436d2bdc54d6607bc65d09529602a1687.
 - No new dependency, backend route or runtime. No merge, rebase, main synchronization or deployment.
+
+
+## V-2026-11-02-CONTROL-SIZING-CONSOLIDATION-001
+
+- Continued mandatory UI 8.10 on PR #131 after a targeted cascade audit of `assets/css/app.css`.
+- Reused existing 32px compact / 40px standard / 44px touch tokens. Desktop settings actions, toolbar and language menu options, composer tools and chat creation use the 40px standard token; at max-width 639px those controls upgrade to 44px. Header icons and message-action icons remain 44px.
+- Removed duplicate late message-action declarations and reconciled the action-row minimum height with its 44px controls. No new token system or dependency.
+- Added Playwright coverage at 1024px and 390px for settings actions, new-chat action, search/language options and composer tools, plus horizontal overflow.
+- Commits: CSS `a71dd925f5152387f559d8673ea83dbc219fd14f`; tests `5d8b3adff61450917203909d835766d152316246`, `1bb8780d5e3223c0cb11e01039350c074e5f6587`, `179adfb6e51f04b57fc538aa927f22272d13d8ab`.
+- Test authored, not executed. Latest live PR head at this checkpoint: `179adfb6e51f04b57fc538aa927f22272d13d8ab`; workflow runs and commit statuses were empty. PR remains open, 706 ahead / 4 behind main, mergeable=false.
+- No main sync, rebase, merge, deployment or dependency change.
