@@ -12,10 +12,18 @@
 - Меню Functions разделено на четыре группы: работа с задачей, исследование и источники, создание и преобразование, подключения.
 - Реальные пункты: structured workflow, task profile и integrations status. Research Studio запускается из блока Thorough; в меню «Исследование и источники» теперь показан roadmap-only пункт «Глубокое исследование 2.0».
 - Roadmap items с `1ИÆИT10И`: Deep Research 2.0, локальные файлы/папки, конвертеры/извлечение, Knowledge-to-Skill/Agent, аудио/изображения/видео. Research и Create/Transform items размещены в двух отдельных контейнерах под соответствующими group labels.
-- Agent panel: execution mode, team blueprint (size/scenario/role preset), custom scenario/roles, use cases, 64 logical professions, orchestration modes, models/resources, permissions/capabilities.
+- Agent panel: execution mode, team blueprint (size/scenario/role preset), custom scenario/roles, use cases, 64 logical professions, orchestration modes, models/resources, permissions/capabilities. Future capability sections are grouped into three native disclosures (use cases/roles; orchestration/models/resources; tools/permissions), collapsed by default with 44px keyboard/touch summaries and RU/EN labels.
 - Skills panel: chat-scoped task profiles, custom instructions, quiz selection and roadmap for shared versioned library/import/validation.
 - Для current pipeline явно сказано, что четыре этапа выполняются одной выбранной моделью; независимые agent processes не запускаются.
 - Есть pause controls, reduced-motion handling, bilingual labels and non-runtime disclaimers.
+
+### Agent panel progressive disclosure update — 2026-11-02
+
+- Wrapped the five existing capability sections into three native `details/summary` groups: use cases and roles; orchestration, models and resources; tools and permissions.
+- Groups start collapsed to keep the configuration panel scannable; each summary has a 44px minimum touch target and visible keyboard focus. Native disclosure semantics provide keyboard interaction without custom JS state.
+- Added RU/EN labels. The roadmap pause selector now targets tickers nested inside the disclosure groups.
+- The two real configuration groups (execution mode and team blueprint) remain separate and unchanged. No runtime capability or permission was added.
+- Playwright coverage now checks group count/order, RU labels, 44px summary hit targets and Enter/Space open/close behavior. Execution on current HEAD is pending.
 
 ### Existing regression coverage (tests authored, not a claim of current execution)
 
