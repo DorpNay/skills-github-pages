@@ -344,6 +344,7 @@ permalink: /
   </div>
   <footer id="composerFooter" class="px-3 py-2 bg-gray-800/95 border-t border-gray-700 shrink-0 safe-bottom">
     <div id="draftAttachments" class="hidden flex flex-wrap gap-1.5 pb-2" aria-label="Вложения черновика"></div>
+    <p id="networkStatus" class="network-status hidden" role="status" aria-live="polite" aria-atomic="true"></p>
     <div class="flex gap-2 items-end" id="inputArea">
       <button id="contextPickerButton" type="button" data-action="toggle-request-context" aria-label="Выбрать контекст для следующего запроса" aria-expanded="false" title="Контекст этого запроса: выбрать проекты" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5 relative">◎<span id="requestContextCount" class="hidden absolute -top-1 -right-1 min-w-4 h-4 rounded-full bg-cyan-400 text-slate-950 text-[9px] font-bold items-center justify-center px-1">0</span></button>
       <button type="button" data-action="attach-text-file" id="attachTextButton" aria-label="Добавить вложение" title="Выбрать фото, видео или файл любого формата" aria-expanded="false" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">＋</button>
