@@ -728,3 +728,14 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Residual supply-chain finding: the pinned reusable workflows in `skills/exercise-toolkit` contain nested mutable action tags (`checkout@v6`, `github-script@v9`, `add-and-commit@v10`, `action-text-variables@v4`). Pinning the reusable workflow does not pin those nested action refs. This is recorded as a separate supply-chain follow-up; no changes made outside PR #131.
 - Exercise workflow permissions were reviewed: write scopes are used for issue comments/closure, workflow enable/disable and README updates. The exercise-toolkit reusable workflows' nested action pinning remains the unresolved part.
 - No runtime code, dependencies, providers, models or deployments changed in this documentation update.
+
+## Per-chat text draft recovery — 2026-11-02 (optional proposal 8.25)
+
+- Added local, text-only composer draft persistence keyed by existing chat ID in `ai_chat_drafts_v1`; the existing chat-history schema and storage key are unchanged.
+- Switching chats saves the outgoing draft and restores only the destination chat's draft. The active draft is persisted after a short input debounce and synchronously on `pagehide`; a reload restores the active chat's draft.
+- Draft storage is bounded to 100 chat entries and 20,000 characters per draft. Empty drafts are removed. Invalid stored data is ignored without modifying chat history; existing guarded storage writes surface quota/permission failures through the existing warning path.
+- A draft is cleared when the user explicitly submits it into the chat history, or completes a local memory-save command. Validation/preparation failures that occur before submission leave the text in the composer. Requests are never auto-resubmitted after reload.
+- File attachments are intentionally not persisted: File objects, data URLs and extracted document/audio state remain in memory. Persistent attachment recovery requires a separate IndexedDB quota, lifecycle and privacy design.
+- Added Playwright coverage for two chats, per-chat isolation, reload restoration and the absence of implicit message submission. The test is authored but has not yet executed on this HEAD.
+- Source/test commits: `a2db7904d1a18609f467829c4339ccd52dfa8883`, `2257010cef98c3afcf093eb73728a8b90d2c869f`. No browser pass is claimed; await the automatically triggered exact-head Quality workflow.
+- No new dependency, backend endpoint, provider route or deployment.
