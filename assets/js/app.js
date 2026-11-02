@@ -816,9 +816,9 @@
       setOptions('uiMotion',en?['Auto','Reduce motion','Off']:['Авто','Уменьшить','Выкл.']);
       setOptions('uiTextContrast',en?['Standard','Higher']:['Стандартный','Повышенный']);
       setOptions('composerPosition',en?['Bottom','Top']:['Снизу','Сверху']);
-      const fieldTexts={customSkillName:en?'Custom skill name':'Название своего навыка',customSkillInstructions:en?'Instructions for this task':'Свои инструкции для задачи',customSkillOutput:en?'Custom output format (optional)':'Свой формат результата (необязательно)',agentTeamCustomScenario:en?'Describe the team scenario':'Опиши сценарий команды',agentCustomRoles:en?'Roles and responsibilities, one per line':'Роли и обязанности, по одной на строку',aserviBaseUrl:en?'My server URL · https://…/v1':'URL моего сервера · https://…/v1',aserviModel:en?'Gateway model · exact model ID':'Модель gateway · точный ID',aserviApiKey:en?'Access key':'Ключ доступа',tavilyKey:en?'Tavily key':'ключ Tavily',systemPromptInput:en?'Your shared instructions (optional)':'Свои правила для всех запросов'};
+      const fieldTexts={sidebarSearchInput:en?'Search chats and projects…':'Поиск чатов и проектов…',customSkillName:en?'Custom skill name':'Название своего навыка',customSkillInstructions:en?'Instructions for this task':'Свои инструкции для задачи',customSkillOutput:en?'Custom output format (optional)':'Свой формат результата (необязательно)',agentTeamCustomScenario:en?'Describe the team scenario':'Опиши сценарий команды',agentCustomRoles:en?'Roles and responsibilities, one per line':'Роли и обязанности, по одной на строку',aserviBaseUrl:en?'My server URL · https://…/v1':'URL моего сервера · https://…/v1',aserviModel:en?'Gateway model · exact model ID':'Модель gateway · точный ID',aserviApiKey:en?'Access key':'Ключ доступа',tavilyKey:en?'Tavily key':'ключ Tavily',systemPromptInput:en?'Your shared instructions (optional)':'Свои правила для всех запросов'};
       Object.entries(fieldTexts).forEach(([id,value])=>{const field=$(id);if(field)field.placeholder=value;});
-      const labels={skillGoalSelect:en?'Task type':'Тип задачи',skillOutputSelect:en?'Output format':'Формат результата',agentTeamSize:en?'Team size · blueprint':'Размер команды · blueprint',agentTeamScenario:en?'Scenario':'Сценарий',agentRolePreset:en?'Roles':'Роли',uiLanguage:en?'Language':'Язык',uiMotion:en?'Motion':'Анимация',composerPosition:en?'Composer':'Поле ввода'};
+      $('sidebarSearchInput')?.setAttribute('aria-label',en?'Search chats and projects':'Поиск чатов и проектов');const labels={skillGoalSelect:en?'Task type':'Тип задачи',skillOutputSelect:en?'Output format':'Формат результата',agentTeamSize:en?'Team size · blueprint':'Размер команды · blueprint',agentTeamScenario:en?'Scenario':'Сценарий',agentRolePreset:en?'Roles':'Роли',uiLanguage:en?'Language':'Язык',uiMotion:en?'Motion':'Анимация',composerPosition:en?'Composer':'Поле ввода'};
       Object.entries(labels).forEach(([id,value])=>{const field=$(id),label=field?.closest('label');if(label?.firstChild?.nodeType===Node.TEXT_NODE)label.firstChild.textContent=value+' ';});
       const quizButton=document.querySelector('[data-action="apply-skill-quiz"]');if(quizButton)quizButton.textContent=en?'Apply skill profile':'Подобрать навык';
       const skillFields=$('skillCustomFields');if(skillFields)skillFields.setAttribute('aria-label',en?'Custom skill settings':'Настройки своего навыка');
@@ -1581,6 +1581,40 @@
       }
       if(!projects.length){const empty=document.createElement('p');empty.className='px-2 py-2 text-[11px] text-gray-500';empty.textContent=english?'No projects yet.':'Проектов пока нет.';list.appendChild(empty);}
     }
+    function clearSidebarSearch() {
+      const input=$('sidebarSearchInput'),results=$('sidebarSearchResults');
+      if(input)input.value='';
+      if(results){results.replaceChildren();results.classList.add('hidden');}
+    }
+    function renderSidebarSearchResults() {
+      const input=$('sidebarSearchInput'),results=$('sidebarSearchResults');
+      if(!input||!results)return;
+      const query=input.value.trim().toLocaleLowerCase(getUiLanguage());
+      results.replaceChildren();
+      if(!query){results.classList.add('hidden');return;}
+      results.classList.remove('hidden');
+      const english=getUiLanguage()==='en';
+      const projectMatches=projects.filter(project=>String(project.name||'').toLocaleLowerCase(getUiLanguage()).includes(query));
+      const chatMatches=chats.filter(chat=>String(chat.title||'').toLocaleLowerCase(getUiLanguage()).includes(query));
+      const appendGroup=(label,items,kind)=>{
+        if(!items.length)return;
+        const heading=document.createElement('p');heading.className='px-2 pt-1 text-[10px] font-semibold uppercase tracking-wide text-gray-500';heading.textContent=label;results.appendChild(heading);
+        items.slice(0,8).forEach(item=>{
+          const button=document.createElement('button');button.type='button';
+          button.dataset.action=kind==='project'?'select-project':'switch-chat';
+          if(kind==='project')button.dataset.projectId=item.id;else button.dataset.chatId=item.id;
+          button.className='flex w-full min-h-11 items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs text-gray-200 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400';
+          const marker=document.createElement('span');marker.className='shrink-0 text-gray-500';marker.textContent=kind==='project'?'▣':'💬';
+          const title=document.createElement('span');title.className='min-w-0 flex-1 truncate';title.textContent=item.name||item.title|| (english?'Untitled':'Без названия');
+          const meta=document.createElement('span');meta.className='shrink-0 text-[9px] text-gray-500';meta.textContent=kind==='project'?(english?'Project':'Проект'):(english?'Chat':'Чат');
+          button.append(marker,title,meta);results.appendChild(button);
+        });
+        if(items.length>8){const more=document.createElement('p');more.className='px-2 text-[10px] text-gray-500';more.textContent=english?'Showing first 8 matches':'Показаны первые 8 совпадений';results.appendChild(more);}
+      };
+      appendGroup(english?'Projects':'Проекты',projectMatches,'project');
+      appendGroup(english?'Chats':'Чаты',chatMatches,'chat');
+      if(!projectMatches.length&&!chatMatches.length){const empty=document.createElement('p');empty.className='px-2 py-3 text-xs text-gray-500';empty.textContent=english?'No matching project or chat names.':'Совпадений по названиям проектов и чатов нет.';results.appendChild(empty);}
+    }
     function renderChatList() {
       renderProjectUI({preserveDraft:true});
       const list=$('chatList');list.replaceChildren();
@@ -1601,6 +1635,7 @@
       list.dataset.emptyLabel=activeProject?(english?'No chats in this project yet.':'В этом проекте пока нет чатов.'):(english?'No personal chats yet.':'Нет личных чатов без проекта');
       list.classList.toggle('is-empty',count===0);
       visibleChats.forEach(chat=>list.appendChild(createChatRow(chat,false)));
+      renderSidebarSearchResults();
     }
     function updateMemoryStatusLine(){
       const line=$('memoryStatusLine');if(!line)return;
@@ -3726,6 +3761,7 @@
     }
     function switchChat(id) {
       const target=chats.find(chat=>chat.id===id);if(!target)return;
+      clearSidebarSearch();
       activeChatProjectId=target.projectId||null;
       updateState(null, id); toggleSidebar(false);
     }
@@ -4536,6 +4572,7 @@
           case 'restore-last-closed-chat': restoreLastClosedChat();break;
           case 'select-project': {
             const id=control.dataset.projectId;if(!projects.some(project=>project.id===id))break;
+            clearSidebarSearch();
             if(activeChatProjectId!==id)pushUiNavigation({kind:'project-filter',previousProjectId:activeChatProjectId,projectId:id});
             activeChatProjectId=id;renderChatList();$('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});break;
           }
@@ -4656,6 +4693,10 @@
     });
     $('providerPreset').addEventListener('change',()=>{safeSet(ASERVI_STORAGE.connection,'');if(currentProvider()==='alandi'){const url=$('baseUrl').value.trim();if(url)$('aserviBaseUrl').value=url;}});
     $('modelSearch').addEventListener('input',()=>populateModelPresets(currentProvider(),$('modelName').value));
+    $('sidebarSearchInput').addEventListener('input',renderSidebarSearchResults);
+    $('sidebarSearchInput').addEventListener('keydown',event=>{
+      if(event.key==='Escape'&&$('sidebarSearchInput').value){event.preventDefault();clearSidebarSearch();}
+    });
     $('settingsModal').addEventListener('click',event=>{if(event.target===$('settingsModal'))toggleSettings(false);});
     $('functionPanelModal').addEventListener('click',event=>{if(event.target===$('functionPanelModal'))closeFunctionPanel();});
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });

@@ -259,6 +259,44 @@ test('project rows filter the Chats list without moving the current chat and cre
   await page.locator('#chatListNewButton').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue('');
 });
+test('sidebar search finds project and chat names locally without indexing message contents', async ({ page }) => {
+  await page.addInitScript(() => {
+    const project=(id,name)=>({id,name,description:'',instructions:'',memoryScope:'project-only',memory:[],createdAt:'',updatedAt:''});
+    const chat=(id,title,projectId,messages=[])=>({id,title,projectId,messages});
+    localStorage.setItem('ai_projects_v1',JSON.stringify([project('search-alpha','Alpha Research'),project('search-beta','Beta Studio')]));
+    localStorage.setItem('ai_chats_v87',JSON.stringify([
+      chat('search-chat-alpha','Alpha notes','search-alpha',[{role:'user',content:'PRIVATE_BODY_SENTINEL'}]),
+      chat('search-chat-beta','Beta launch plan','search-beta')
+    ]));
+    localStorage.setItem('ai_current_chat_v87','search-chat-alpha');
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const search=page.locator('#sidebarSearchInput');
+  await expect(search).toBeVisible();
+  await search.fill('beta');
+  const results=page.locator('#sidebarSearchResults');
+  await expect(results).toBeVisible();
+  await expect(results).toContainText('Beta Studio');
+  await expect(results).toContainText('Beta launch plan');
+  await expect(results).not.toContainText('Alpha Research');
+  await expect(results).not.toContainText('Alpha notes');
+  await results.locator('[data-action="switch-chat"][data-chat-id="search-chat-beta"]').click();
+  await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
+  await expect.poll(()=>page.evaluate(()=>localStorage.getItem('ai_current_chat_v87'))).toBe('search-chat-beta');
+  await expect.poll(()=>page.evaluate(()=>localStorage.getItem('ai_ui_language_v1'))).toBeTruthy();
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await search.fill('Alpha Research');
+  await expect(results).toContainText('Alpha Research');
+  await results.locator('[data-action="select-project"][data-project-id="search-alpha"]').click();
+  await expect(page.locator('#chatSectionTitle')).toContainText('Alpha Research');
+  await search.fill('PRIVATE_BODY_SENTINEL');
+  await expect(results).toContainText('Совпадений по названиям проектов и чатов нет.');
+  await page.keyboard.press('Escape');
+  await expect(results).toBeHidden();
+  await expect(search).toHaveValue('');
+});
+
 test('project creation and project settings close on Escape with focus restoration', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });

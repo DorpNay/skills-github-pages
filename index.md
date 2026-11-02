@@ -23,6 +23,11 @@ permalink: /
       <h2 class="font-bold text-sm" data-i18n="sidebarTitle">💬 Диалоги и память</h2>
       <button type="button" data-action="close-sidebar" aria-label="Закрыть меню" class="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gray-800 text-gray-400 hover:text-white text-lg">✕</button>
     </div>
+    <section id="sidebarSearchPanel" class="mx-3 mt-3 space-y-2" aria-label="Поиск по названиям чатов и проектов">
+      <label class="sr-only" for="sidebarSearchInput">Поиск чатов и проектов</label>
+      <input id="sidebarSearchInput" type="search" autocomplete="off" spellcheck="false" aria-label="Поиск чатов и проектов" placeholder="Поиск чатов и проектов…" class="w-full rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-100 placeholder:text-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400">
+      <div id="sidebarSearchResults" class="hidden max-h-[38vh] overflow-y-auto rounded-xl border border-gray-800 bg-gray-900/80 p-2 space-y-2" aria-label="Результаты поиска" aria-live="polite"></div>
+    </section>
     
     <section id="memoryPanel" class="mx-3 my-2 rounded-xl border border-gray-800 p-2 space-y-2" aria-label="Настройки памяти">
       <p id="memoryStatusLine" class="px-2 text-[9px] leading-tight text-gray-500" role="status" aria-live="polite">Память · личных 0 · общих 0 · общая в контексте выкл. · личная в контексте выкл.</p>
