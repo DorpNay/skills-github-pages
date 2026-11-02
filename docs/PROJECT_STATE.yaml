@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-02"
   root_orienter:
-    status: "Main remains stable V1. PR #131 remains open/unmerged on feat/landing-v1-accessibility-responsive-20261031. Per-chat text draft recovery is partially implemented in optional proposal 8.25; source commit a2db7904d1a18609f467829c4339ccd52dfa8883 and E2E commit 2257010cef98c3afcf093eb73728a8b90d2c869f. Test authored; exact-head CI pending. Drafts are local, text-only, bounded to 100 chat entries without silent text truncation; no attachment persistence or auto-send. No merge, rebase, deployment, dependency or backend route change."
+    status: "Main remains stable V1. PR #131 remains open/unmerged on feat/landing-v1-accessibility-responsive-20261031. Landing V2.0 remains scoped to mandatory UI 8.1–8.17 plus separate optional proposals 8.18–8.27. Per-chat text draft recovery (8.25) and cancellable sidebar swipe (8.1/8.26) have source and Playwright changes; exact-head CI for these changes is not yet visible. Drafts are local, text-only, bounded to 100 chat entries without silent truncation; attachments are not persisted and no request is auto-sent. Main, merge/rebase and deployment remain untouched."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 0
