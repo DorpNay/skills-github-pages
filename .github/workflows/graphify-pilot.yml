@@ -82,6 +82,9 @@ jobs:
           set -euo pipefail
           mkdir -p "$STAGING"
           git archive "$GITHUB_SHA" | tar -x -C "$STAGING"
+          # The bridge is executed from the checkout after Graphify's AST pass;
+          # keep its implementation and unit test out of the code graph itself.
+          rm -f "$STAGING/scripts/graphify_ui_surface.py" "$STAGING/tests/test_graphify_ui_surface.py"
           # Defense in depth: never feed credentials, local databases, model weights,
           # user uploads, or generated/dependency directories to the graph builder.
           find "$STAGING" -type f \( \
@@ -167,7 +170,7 @@ jobs:
             graphify cluster-only . --no-label
             echo
             echo "### Deterministic CSS / DOM / JavaScript surface bridge"
-            python scripts/graphify_ui_surface.py --root . --graph graphify-out/graph.json | tee "${{ runner.temp }}/graphify-ui-surface-summary.json"
+            python "$GITHUB_WORKSPACE/scripts/graphify_ui_surface.py" --root . --graph graphify-out/graph.json | tee "${{ runner.temp }}/graphify-ui-surface-summary.json"
             echo
             echo "### HTML export"
             graphify export html
@@ -192,7 +195,7 @@ jobs:
           EOF
             echo
             echo "### UI selector navigation"
-            graphify query "chatPane panel CSS DOM selector" --budget 1200
+            graphify query "projectNavToggle" --budget 1000
             echo
             echo "### Private-memory provider boundary (targeted query)"
             graphify query "requestChatCompletion getApiCandidates" --context call --budget 2600
