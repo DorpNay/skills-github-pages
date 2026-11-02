@@ -377,3 +377,9 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Latest source/test checkpoint: `45275d5ad854ccfdd73f3b24231c197eeac38c82`.
 - Undo now returns keyboard focus to the affected visible chat row, with composer fallback. Added an Enter-key Playwright regression for rename Undo and focus restoration.
 - V8 syntax parsing passed; Chromium execution remains pending.
+
+
+## Landing V2 — Quality Integrity repair (2026-11-02)
+
+- Quality #1431 identified the missing `#uiTheme` control; `app.js` still required it during settings initialization. Restored it in the existing advanced appearance disclosure and added RU/EN option labels.
+- Added Playwright coverage for theme selection, persistence and synchronization with the header toggle. Source/test HEAD: `74de58706b28d55f405c238b916651c26281098d`; syntax check passed; exact-head Quality pending.
