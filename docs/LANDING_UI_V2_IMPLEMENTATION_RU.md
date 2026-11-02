@@ -935,3 +935,15 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Preserved the two real configuration groups and the explicit single-model/four-stage runtime boundary. No worker, model registry, skill package loader, permission API or other runtime capability was added.
 - Updated the roadmap pause CSS selector for the nested disclosure structure.
 - Added Playwright assertions for category count/order, touch target, Enter/Space behavior and nested ticker pause. Tests are authored but not executed on the current HEAD.
+
+
+## Skills panel — chat profile and package library separation (2026-11-02)
+
+- Reworked the existing Skills panel without adding a second Functions menu entry or duplicating Settings controls.
+- The available part is explicitly scoped to the current chat: task profile, goal, output format and optional custom instructions. Existing chat persistence and apply behavior are retained.
+- The future Skill package library is a separate collapsed native disclosure. It exposes the planned lifecycle and security boundary without fake import/create/run controls.
+- RU/EN translations were added for the new labels and lifecycle copy. Native disclosure semantics preserve keyboard interaction; the existing shared ticker pause mechanism is reused.
+- Added Playwright coverage for scope labels, disclosure collapsed/open behavior, 44px summary target, lifecycle/safety copy, absence of fake buttons, ticker pause and EN localization.
+- Source commit: `478de2144433ffeda18fd60f63a03c336802ab1b`; i18n commit: `63de572e354ff9380a4c35448d48abaa5805838b`; test commit: `d3a44807d9c9eb0dade5a3e0bf80065fa5ebfd45`.
+- Exact-head workflow lookup for source/test HEAD `d3a44807d9c9eb0dade5a3e0bf80065fa5ebfd45` returned no runs. Playwright test is authored, not executed; no pass is claimed.
+- No Skill registry, import endpoint, package loader, script runtime, permission API, dependency, backend route, merge, rebase, main sync or deployment.
