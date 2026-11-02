@@ -4792,6 +4792,7 @@
       if(dx<=-72&&Math.abs(dx)>Math.abs(dy)*1.35)toggleSidebar(false);
     },{passive:true});
     $('sidebar').addEventListener('touchcancel',()=>{sidebarTouchStart=null;},{passive:true});
+    $('sidebar').addEventListener('pointercancel',()=>{sidebarTouchStart=null;},{passive:true});
     $('importFile').addEventListener('change', importChats);
     $('settingsProfileFile').addEventListener('change', importSettingsProfile);
     $('importProjectFile').addEventListener('change',importProjectBundle);
