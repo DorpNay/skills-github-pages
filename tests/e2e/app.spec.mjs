@@ -3272,34 +3272,40 @@ test('shared control sizing uses standard desktop and touch-sized mobile variant
   const measureHeights = async selector => page.locator(selector).evaluateAll(nodes =>
     nodes.filter(node => node.getClientRects().length).map(node => node.getBoundingClientRect().height)
   );
-  await page.setViewportSize({ width: 1024, height: 768 });
-  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.locator('[data-action="toggle-settings"]').click();
-  await expect(page.locator('#settingsModal')).toBeVisible();
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#searchModeSummary').click();
-  await page.locator('#languageSummary').click();
-
-  const desktopTargets = [
-    ['#settingsModal .settings-header-actions button', 40],
-    ['#chatListNewButton', 40],
-    ['#searchModeMenu .toolbar-menu-option', 40],
-    ['#languageMenu .language-menu-panel button', 40],
-    ['#inputArea .composer-tool', 40]
-  ];
-  for (const [selector, minimum] of desktopTargets) {
+  const assertMinimum = async (selector, minimum, description) => {
     const heights = await measureHeights(selector);
     expect(heights.length, selector + ' should expose visible controls').toBeGreaterThan(0);
-    expect(heights.every(height => height >= minimum), selector + ' should use the standard control size').toBe(true);
-  }
+    expect(heights.every(height => height >= minimum), description).toBe(true);
+  };
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await assertMinimum('#chatListNewButton', 40, 'new-chat action should use the standard desktop size');
+  await assertMinimum('#inputArea .composer-tool', 40, 'composer tools should use the standard desktop size');
+
+  await page.locator('#searchModeSummary').click();
+  await assertMinimum('#searchModeMenu .toolbar-menu-option', 40, 'search options should use the standard desktop size');
+  await page.locator('#searchModeSummary').click();
+  await page.locator('#languageSummary').click();
+  await assertMinimum('#languageMenu .language-menu-panel button', 40, 'language options should use the standard desktop size');
+  await page.locator('#languageSummary').click();
+
+  await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#settingsModal')).toBeVisible();
+  await assertMinimum('#settingsModal .settings-header-actions button', 40, 'settings actions should use the standard desktop size');
 
   await page.setViewportSize({ width: 390, height: 844 });
-  const mobileTargets = desktopTargets.map(([selector]) => selector);
-  for (const selector of mobileTargets) {
-    await expect.poll(async () => (await measureHeights(selector)).length).toBeGreaterThan(0);
-    const heights = await measureHeights(selector);
-    expect(heights.every(height => height >= 44), selector + ' should retain a 44px touch target').toBe(true);
-  }
+  await assertMinimum('#settingsModal .settings-header-actions button', 44, 'settings actions should retain 44px mobile targets');
+  await page.locator('#settingsModal [data-action="close-settings"]').click();
+  await assertMinimum('#chatListNewButton', 44, 'new-chat action should retain a 44px mobile target');
+  await assertMinimum('#inputArea .composer-tool', 44, 'composer tools should retain 44px mobile targets');
+
+  await page.locator('#searchModeSummary').click();
+  await assertMinimum('#searchModeMenu .toolbar-menu-option', 44, 'search options should retain 44px mobile targets');
+  await page.locator('#searchModeSummary').click();
+  await page.locator('#languageSummary').click();
+  await assertMinimum('#languageMenu .language-menu-panel button', 44, 'language options should retain 44px mobile targets');
+  await page.locator('#languageSummary').click();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
 
