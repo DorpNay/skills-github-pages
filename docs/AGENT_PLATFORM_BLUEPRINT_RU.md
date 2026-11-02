@@ -469,3 +469,35 @@ Threat baseline: OWASP Top 10 for Agentic Applications 2026 (ASI01–ASI10), о�
 ## 18. Итог
 
 Для aLandi наиболее сильная комбинация — не 10 framework dependencies, а **собственный bounded control plane + стандартные skill/tool/agent protocols + компактные specialist models по результатам benchmark + durable task state + strict security policy**. Это позволит вырасти от четырёх стадий одного model pipeline к настоящим субагентам и временным командам, не ломая V1 и не превращая 8-GB VPS в неуправляемую ферму моделей.
+
+
+## 19. User-facing Agent Studio information architecture — 2026-11-02
+
+The UI should mirror the actual architecture and expose only truthful controls. Recommended navigation:
+
+| UI section | User question answered | Contract |
+|---|---|---|
+| Overview / use cases | What can I delegate? | Use-case cards map to verified capabilities, not marketing claims. |
+| Professions and roles | Who does what? | Searchable role registry with mission, inputs, outputs, tools, model policy, evaluation and status. 64 roles are a starting catalogue, not a process count or hard cap. |
+| Execution mode | How will work run? | Direct; current sequential pipeline; future independent subagents; future bounded parallel teams; future durable/event-driven tasks. |
+| Team blueprint | What team do I want? | Scenario, role mix, dependencies, deliverable schema and budget; clearly marked “blueprint only” until a real runtime exists. |
+| Model policy | Which model does each role use? | Main model, optional helper specialist, exact allowlist, license/digest, language eval and resource profile. No silent provider/model fallback. |
+| Tools and permissions | What may each role access? | Capability allowlist, scope, read/write mode, approval threshold, egress and audit. Skill metadata cannot grant permissions. |
+| Run controls | What is happening now? | Durable run ID, state, deadline, queue, approvals, pause/resume/cancel, retry eligibility and recovery checkpoint. |
+| Deliverables | What did the team produce? | Typed artifacts, source lineage, verification, export and retention. Do not expose chain-of-thought. |
+
+### Current vs future display contract
+
+- Current browser implementation: one selected model can perform a four-stage sequential planner → researcher → critic → synthesizer workflow for suitable complex requests.
+- Current team size/scenario/role controls are a per-chat blueprint, not worker provisioning.
+- Future true subagents require independent task packets and isolated scopes; the UI must not display them as “running” until a real worker has been scheduled and acknowledged.
+- Every planned capability uses the visible `1ИÆИT10И` roadmap cue; no disabled-looking control may imply that a service is already connected.
+- RU/EN labels, keyboard navigation, reduced-motion handling, pause controls and mobile overflow are part of the component contract, not post-release decoration.
+
+### Role catalogue grouping
+
+Group role profiles by work domain rather than a flat 64-row wall: orchestration; research and evidence; software engineering and QA; data/analysis; knowledge and memory; skills; multimodal/audio/video; operations/security. Each role should have a short user-facing description plus an expandable technical contract. Keep internal instructions and detailed schemas in progressive-disclosure references.
+
+### Protocol boundary
+
+Use MCP for tool/data access, A2A for independent agent-to-agent task exchange, and AG-UI for typed UI event streams. They solve different layers; protocol adoption is conditional on a concrete integration boundary and must not introduce a second orchestration runtime.

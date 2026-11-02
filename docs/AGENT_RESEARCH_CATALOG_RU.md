@@ -150,3 +150,14 @@ Previously reviewed but deliberately not promoted as agent-runtime dependencies:
 ## 10. Source hierarchy
 
 When claims conflict, use this order: normative protocol/specification → official docs for exact version → upstream code/release/security advisories → original paper/benchmark methodology → independent analysis → community list/marketing page. Keep source date and exact commit/tag with any future implementation decision.
+
+
+## 2026-11-02 — Agent interoperability and skill trust references
+
+Primary specifications rechecked:
+- [Agent Skills specification](https://agentskills.io/specification): skill directory with required `SKILL.md`, YAML frontmatter, name/description constraints, optional references/scripts/assets and progressive disclosure. Experimental `allowed-tools` metadata is not a security boundary.
+- [MCP specification](https://modelcontextprotocol.io/specification): application-to-tool/context integration.
+- [A2A 1.0.0 specification](https://a2a-protocol.org/latest/specification/): discovery, task lifecycle, streaming, cancellation and collaboration between independent agent systems.
+- [AG-UI 1.0 specification](https://docs.ag-ui.com/spec/1.0): typed ordered event stream for user-facing agent progress and state.
+
+Decision: keep the existing `skills/*.txt` prompt profiles unchanged. A future Agent Skills loader uses a separate directory and schema validator. Imported skills remain untrusted content; scripts are inert until a separately authorized execution capability is granted. The skill itself never grants tools, filesystem access, network access or secrets.

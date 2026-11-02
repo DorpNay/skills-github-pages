@@ -119,3 +119,19 @@ A candidate is accepted only if all are true:
 - feature flag is off by default until owner approves live activation.
 
 **Updated test order (not production selection):** (1) Qwen3.5-4B vs 2B as the main compact tool-use bake-off; promote 4B only if measured peak RSS/PSS leaves safe headroom on the actual host; (2) MiniCPM5-2B as an independent architecture comparison; (3) Qwen3.5-0.8B for tiny classification/extraction only; (4) Phi-4-mini-instruct for RU/TH specialist tasks; (5) Granite 4.2-3B and SmolLM3-3B as comparison controls with language caveats; (6) FunctionGemma-270M and Cactus Needle as task-specific ultra-small action/extraction experiments. Gemma 4 E2B is a multimodal workstation candidate, not the default 8-GB VPS choice because total weights are 5.1B parameters. Vendor scores are shortlist signals only; no production winner until same-hardware RU/EN/TH eval and memory measurements pass.
+
+
+## 2026-11-02 — Task-based small-model evaluation contract
+
+Do not select helper models by parameter count or leaderboard rank. Evaluate one narrow role at a time against a golden set with identical prompts, schemas, context and hardware.
+
+| Role | Required measurements |
+|---|---|
+| Classification / routing | macro-F1, confusion matrix, calibration, false escalation |
+| Structured extraction | field-level precision/recall, JSON/schema validity, provenance retention |
+| Reranking | Recall@k, MRR/nDCG, citation/source correctness |
+| Summarization | factual consistency, omission rate, source attribution, human rating |
+| Memory candidate generation | false-positive rate, duplicate/conflict detection, scope leakage |
+| Skill synthesis | executable instruction validity, injection resistance, held-out task success |
+
+Record exact model ID, immutable digest, code and weight licenses, quantization, context length, runtime version, prompt/schema version, RU/EN/TH scores, p50/p95 latency, TTFT, RAM/PSS, VRAM, cold load, concurrency and failure rate. No helper is promoted until it improves one role without degrading the main model or exhausting the target device. Keep only one optional helper resident unless measurements justify otherwise.
