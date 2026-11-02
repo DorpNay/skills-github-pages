@@ -3980,6 +3980,15 @@ test('responsive visual review captures viewport and navigation evidence', async
     expect(dimensions.document, `horizontal overflow in visual review at ${width}px`)
       .toBeLessThanOrEqual(dimensions.viewport);
 
+    if (width <= 420) {
+      const composer = await page.locator('#inputArea').evaluate(element => ({
+        display: getComputedStyle(element).display,
+        inputWidth: Math.round(element.querySelector('#userInput').getBoundingClientRect().width)
+      }));
+      expect(composer.display, `mobile composer layout at ${width}px`).toBe('grid');
+      expect(composer.inputWidth, `mobile message field width at ${width}px`).toBeGreaterThanOrEqual(180);
+    }
+
     await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
     await attachVisualReviewScreenshot(page, testInfo, `landing-v2-app-${width}px`);
   }
