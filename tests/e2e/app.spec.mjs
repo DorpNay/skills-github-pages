@@ -673,14 +673,22 @@ test('function menu separates task workflow from integrations in both languages'
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const menu = page.locator('#functionsMenu');
   await menu.locator(':scope > summary').click();
-  await expect(menu.locator('.toolbar-menu-group-label')).toHaveCount(2);
+  await expect(menu.locator('.toolbar-menu-group-label')).toHaveCount(4);
   await expect(menu.locator('.toolbar-menu-group-label').nth(0)).toContainText('Работа с задачей');
-  await expect(menu.locator('.toolbar-menu-group-label').nth(1)).toContainText('Подключения');
+  await expect(menu.locator('.toolbar-menu-group-label').nth(1)).toContainText('Исследование и источники');
+  await expect(menu.locator('.toolbar-menu-group-label').nth(2)).toContainText('Создание и преобразование');
+  await expect(menu.locator('.toolbar-menu-group-label').nth(3)).toContainText('Подключения');
   await expect(menu.locator('[data-action="open-function-panel"]')).toHaveCount(3);
+  await expect(menu.locator('[data-action="open-research-studio"]')).toHaveCount(1);
+  await expect(menu.locator('.function-roadmap-item')).toHaveCount(4);
+  await expect(menu.locator('.function-roadmap-item .roadmap-ticker-track').first()).toContainText('1ИÆИT10И');
+  await expect(menu.locator('.function-roadmap-item button')).toHaveCount(0);
   await selectLanguage(page, 'en');
   if (!(await menu.evaluate(element => element.open))) await menu.locator(':scope > summary').click();
   await expect(menu.locator('.toolbar-menu-group-label').nth(0)).toContainText('Task workflow');
-  await expect(menu.locator('.toolbar-menu-group-label').nth(1)).toContainText('Connections');
+  await expect(menu.locator('.toolbar-menu-group-label').nth(1)).toContainText('Research and sources');
+  await expect(menu.locator('.toolbar-menu-group-label').nth(2)).toContainText('Create and transform');
+  await expect(menu.locator('.toolbar-menu-group-label').nth(3)).toContainText('Connections');
 });
 
 test('structured workflow panel groups its configuration into clear sections', async ({ page }) => {
@@ -691,11 +699,18 @@ test('structured workflow panel groups its configuration into clear sections', a
   const groups = panel.locator('.function-config-group');
   await expect(groups).toHaveCount(2);
   await expect(groups.nth(0).locator('h3')).toContainText('Режим выполнения');
-  await expect(groups.nth(1).locator('h3')).toContainText('Параметры команды');
+  await expect(groups.nth(1).locator('h3')).toContainText('Черновик команды');
   await expect(groups.nth(0).locator('#agentModeControl')).toHaveCount(1);
   await expect(groups.nth(1).locator('#agentTeamSize')).toHaveCount(1);
   await expect(groups.nth(1).locator('#agentTeamScenario')).toHaveCount(1);
   await expect(groups.nth(1).locator('#agentRolePreset')).toHaveCount(1);
+  await expect(panel.locator('.agent-future-section')).toHaveCount(5);
+  await expect(panel.locator('.agent-future-section').nth(0)).toContainText('Способы применения');
+  await expect(panel.locator('.agent-future-section').nth(1)).toContainText('64 логические профессии');
+  await expect(panel.locator('.agent-future-section').nth(2)).toContainText('fan-out/fan-in');
+  await expect(panel.locator('.agent-future-section').nth(3)).toContainText('RU/EN/TH');
+  await expect(panel.locator('.agent-future-section').nth(4)).toContainText('capabilities');
+  await expect(panel.locator('#agentRoadmapPause')).toBeVisible();
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
 });
 
@@ -3749,7 +3764,7 @@ test('planned agent and connector directions show a clearly non-runtime innovati
   await expect(agentPanel).toBeVisible();
   const agentTicker = agentPanel.locator('.roadmap-ticker-track');
   await expect(agentTicker).toBeVisible();
-  await expect(agentTicker).toContainText('1nv3nt10n 1n PrOc3ss');
+  await expect(agentTicker).toContainText('1ИÆИT10И');
   await expect(agentTicker).toHaveAttribute('aria-hidden', 'true');
   await expect(agentPanel.locator('.roadmap-note')).toContainText('не активный runtime');
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
@@ -3761,7 +3776,7 @@ test('planned agent and connector directions show a clearly non-runtime innovati
   await expect(connectorPanel).toBeVisible();
   const connectorTicker = connectorPanel.locator('.roadmap-ticker-track');
   await expect(connectorTicker).toBeVisible();
-  await expect(connectorTicker).toContainText('1nv3nt10n 1n PrOc3ss');
+  await expect(connectorTicker).toContainText('1ИÆИT10И');
   await expect(connectorPanel.locator('.roadmap-note')).toContainText('не означает, что сервис уже выполняет работу');
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
   await expect(connectorTicker).toBeHidden();
@@ -3776,6 +3791,8 @@ test('application innovation ticker is static when reduced motion is requested',
   await expect(ticker).toBeVisible();
   expect(await ticker.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
   await expect(page.locator('#agentFunctionSettings .roadmap-note')).toBeVisible();
+  await page.locator('#agentRoadmapPause').check();
+  expect(await ticker.evaluate(element => getComputedStyle(element).animationPlayState)).toBe('paused');
 });
 
 
@@ -4356,4 +4373,23 @@ test('advanced appearance theme selector is present, translated, and synchronize
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.locator('[data-action="toggle-settings"]').first().click();
   await expect(theme).toHaveValue('dark');
+});
+
+test('planned function menu items are status cards, not fake controls, and can pause motion', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  const menu = page.locator('#functionsMenu');
+  const cards = menu.locator('.function-roadmap-item');
+  await expect(cards).toHaveCount(4);
+  await expect(cards.nth(0)).toContainText('постоянная библиотека');
+  await expect(cards.nth(1)).toContainText('screenshot-to-code');
+  await expect(cards.nth(2)).toContainText('Knowledge-to-Skill');
+  await expect(cards.nth(3)).toContainText('генерация изображений/видео');
+  await expect(cards.locator('button')).toHaveCount(0);
+  const ticker = cards.nth(0).locator('.roadmap-ticker-track');
+  await expect(ticker).toContainText('1ИÆИT10И');
+  await page.locator('#functionsRoadmapPause').check();
+  expect(await ticker.evaluate(element => getComputedStyle(element).animationPlayState)).toBe('paused');
+  await selectLanguage(page, 'en');
+  await expect(menu.locator('.toolbar-menu-group-label').nth(1)).toContainText('Research and sources');
 });

@@ -325,10 +325,20 @@ permalink: /
       </details>
       <details id="functionsMenu" class="toolbar-menu flex-1 min-w-0">
         <summary id="functionsMenuSummary" class="toolbar-menu-summary" data-i18n="functionsMenuLabel">Функции ▾</summary>
-        <div class="toolbar-menu-panel toolbar-menu-panel-right">
+        <div class="toolbar-menu-panel toolbar-menu-panel-right function-menu-content">
           <p class="toolbar-menu-group-label" data-i18n="functionMenuWorkGroup">Работа с задачей</p>
-          <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option" data-i18n="functionAgents">🧭 Структурированный разбор</button>
-          <button type="button" data-action="open-function-panel" data-function="skills" class="toolbar-menu-option" data-i18n="functionSkills">🧩 Профиль задачи</button>
+          <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option" data-i18n="functionAgents">🧭 Агенты и структурированный разбор</button>
+          <button type="button" data-action="open-function-panel" data-function="skills" class="toolbar-menu-option" data-i18n="functionSkills">🧩 Профиль и навыки</button>
+          <p class="toolbar-menu-group-label" data-i18n="functionMenuResearchGroup">Исследование и источники</p>
+          <button type="button" data-action="open-research-studio" class="toolbar-menu-option" data-i18n="functionResearchStudio">🔎 Студия исследования</button>
+          <p class="toolbar-menu-group-label" data-i18n="functionMenuCreateGroup">Создание и преобразование</p>
+          <label class="roadmap-pause-control"><input id="functionsRoadmapPause" type="checkbox"><span data-i18n="functionRoadmapPause">Остановить бегущие строки</span></label>
+          <div class="function-roadmap-items">
+            <div class="function-roadmap-item"><strong data-i18n="functionMenuLocalFiles">Локальные файлы и папки</strong><div class="roadmap-ticker" aria-label="Планируемая функция"><span class="roadmap-ticker-track" aria-hidden="true">1ИÆИT10И · Каталог локальных источников и папок</span></div><p class="roadmap-note" data-i18n="functionMenuLocalFilesNote">Выбор файла в чате уже доступен; постоянная библиотека, разрешённые папки и повторная индексация ещё проектируются.</p></div>
+            <div class="function-roadmap-item"><strong data-i18n="functionMenuConverters">Конвертеры и извлечение</strong><div class="roadmap-ticker" aria-label="Планируемая функция"><span class="roadmap-ticker-track" aria-hidden="true">1ИÆИT10И · Страницы, изображения, PDF и медиа → структурированные данные</span></div><p class="roadmap-note" data-i18n="functionMenuConvertersNote">Часть извлечения документов существует; универсальная конвертация, OCR, screenshot-to-code и VERT-подобные профили не подключены.</p></div>
+            <div class="function-roadmap-item"><strong data-i18n="functionMenuKnowledgeSkill">Знания → навык или агент</strong><div class="roadmap-ticker" aria-label="Планируемая функция"><span class="roadmap-ticker-track" aria-hidden="true">1ИÆИT10И · Knowledge-to-Skill / Knowledge-to-Agent</span></div><p class="roadmap-note" data-i18n="functionMenuKnowledgeSkillNote">Будущий конвейер с происхождением источников, лицензией, проверкой инъекций, человеческим подтверждением и версиями.</p></div>
+            <div class="function-roadmap-item"><strong data-i18n="functionMenuMedia">Аудио, изображения и видео</strong><div class="roadmap-ticker" aria-label="Планируемая функция"><span class="roadmap-ticker-track" aria-hidden="true">1ИÆИT10И · Генерация, монтаж и мультимодальные конвейеры</span></div><p class="roadmap-note" data-i18n="functionMenuMediaNote">Локальная транскрипция и озвучивание частично существуют; генерация изображений/видео и полноценный потоковый голос не включены.</p></div>
+          </div>
           <p class="toolbar-menu-group-label" data-i18n="functionMenuConnectionsGroup">Подключения</p>
           <button type="button" data-action="open-function-panel" data-function="connectors" class="toolbar-menu-option" data-i18n="functionConnectors">🔌 Интеграции</button>
         </div>
@@ -445,7 +455,7 @@ permalink: /
           <label class="flex items-start gap-2 rounded-xl border border-gray-800 p-3 text-sm"><input type="checkbox" id="agentModeControl" class="mt-1 rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span><strong class="block" data-i18n="agentModeOption">Использовать структурированный разбор</strong><span class="mt-1 block text-[11px] leading-relaxed text-gray-500" data-i18n="agentModeHelp">Четыре последовательных этапа на выбранной модели.</span></span></label>
         </section>
         <section class="function-config-group rounded-xl border border-gray-800 p-3 space-y-3" aria-labelledby="agentBlueprintGroupTitle">
-          <h3 id="agentBlueprintGroupTitle" class="function-config-group-title" data-i18n="agentBlueprintGroupTitle">Параметры команды</h3>
+          <h3 id="agentBlueprintGroupTitle" class="function-config-group-title" data-i18n="agentBlueprintGroupTitle">Черновик команды</h3>
           <div class="grid grid-cols-2 gap-3">
           <label class="block text-xs text-gray-400">Размер команды · blueprint
             <input id="agentTeamSize" type="range" min="1" max="50" step="1" value="4" class="mt-2 w-full"><span id="agentTeamSizeValue" class="text-[11px] font-semibold text-cyan-300">4 агента</span>
@@ -462,9 +472,14 @@ permalink: /
           <textarea id="agentTeamCustomScenario" maxlength="1000" rows="2" class="advanced-control w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Опиши сценарий команды"></textarea>
           <textarea id="agentCustomRoles" maxlength="1500" rows="3" class="advanced-control w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Роли и обязанности, по одной на строку"></textarea>
         </div>
-        <p class="rounded-lg border border-amber-900/50 bg-amber-950/20 p-2 text-[10px] leading-relaxed text-amber-100/80">Команда — сохраняемый blueprint. Runtime сейчас выполняет четыре фиксированных этапа на одной выбранной модели; создание 50 независимых агентов ещё не реализовано.</p>
-        <div class="roadmap-ticker mt-2" aria-label="Планируемое улучшение"><span class="roadmap-ticker-track" aria-hidden="true">1nv3nt10n 1n PrOc3ss… · Независимое исполнение ролей — в дорожной карте</span></div>
-        <p class="roadmap-note">Это планируемое направление, а не активный runtime или индикатор фоновой работы.</p>
+        <p class="rounded-lg border border-amber-900/50 bg-amber-950/20 p-2 text-[10px] leading-relaxed text-amber-100/80" data-i18n="agentRuntimeBoundary">Параметры ниже сохраняют черновик команды для этого чата. Runtime сейчас выполняет четыре фиксированных этапа на одной выбранной модели; независимые процессы агентов не запускаются.</p>
+        <label class="roadmap-pause-control"><input id="agentRoadmapPause" type="checkbox"><span data-i18n="functionRoadmapPause">Остановить бегущие строки</span></label>
+        <section class="agent-future-section space-y-2"><h3 data-i18n="agentUseCasesTitle">Способы применения</h3><p data-i18n="agentUseCasesText">Текущий конвейер подходит для сложного исследования, проверки источников, планирования разработки и критики решения. Это последовательные роли одной модели, а не параллельные исполнители.</p></section>
+        <section class="agent-future-section space-y-2"><h3 data-i18n="agentRolesTitle">Профессии и каталог ролей</h3><p data-i18n="agentRolesText">В проектной карте описаны 64 логические профессии и роли. Это каталог проектирования, не 64 работающих агента и не ограничение будущего числа ролей.</p><div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИÆИT10И · Реестр профессий, специализаций и контрактов ролей</span></div></section>
+        <section class="agent-future-section space-y-2"><h3 data-i18n="agentOrchestrationTitle">Режимы оркестрации</h3><ul class="agent-capability-list"><li data-i18n="agentOrchestrationCurrent">Доступно: прямой ответ и последовательный четырёхэтапный разбор.</li><li data-i18n="agentOrchestrationFuture">В проектировании: независимые субагенты, параллельные команды, fan-out/fan-in и долговременные задания с восстановлением.</li></ul><div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИÆИT10И · Параллельные workers, очередь, checkpoints и отмена</span></div></section>
+        <section class="agent-future-section space-y-2"><h3 data-i18n="agentModelsTitle">Модели и ресурсы</h3><p data-i18n="agentModelsText">Будущий реестр малых моделей: классификация, извлечение, reranking, краткое резюме, memory candidates и синтез навыков. Выбор — только по проверенному ID, лицензии, digest и результатам RU/EN/TH eval.</p><div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИÆИT10И · SLM registry, benchmark, VRAM/RAM и latency budgets</span></div></section>
+        <section class="agent-future-section space-y-2"><h3 data-i18n="agentPermissionsTitle">Инструменты и разрешения</h3><p data-i18n="agentPermissionsText">Каждая будущая роль получает только явно выданные capabilities: файлы, сеть, память, shell и внешние действия не наследуются от названия роли или навыка.</p><div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИÆИT10И · Capability scopes, approval gates и audit trail</span></div></section>
+        <p class="roadmap-note" data-i18n="agentRoadmapNote">Бегущие строки обозначают проектируемые возможности, а не фоновые процессы. Уменьшение движения системы отключает анимацию.</p>
         <p id="agentConfigSummary" class="text-[10px] text-gray-500" aria-live="polite"></p>
       </section>
       <section id="skillFunctionSettings" class="hidden space-y-2">
@@ -495,8 +510,15 @@ permalink: /
         <button type="button" data-action="apply-skill-quiz" class="w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-2 text-xs font-semibold text-cyan-200">Подобрать навык</button>
         <p id="skillConfigSummary" class="text-[10px] text-gray-500" aria-live="polite"></p>
         <p class="text-[11px] leading-relaxed text-gray-500" data-i18n="skillPresetHelp">Профиль добавляет инструкции, но не открывает инструменты или данные.</p>
+        <section class="agent-future-section space-y-2">
+          <h3 data-i18n="skillLibraryTitle">Библиотека навыков</h3>
+          <p data-i18n="skillLibraryText">Сейчас профиль и пользовательские инструкции хранятся в настройках чата. Общая версионируемая библиотека навыков и запуск их скриптов не подключены.</p>
+          <label class="roadmap-pause-control"><input id="skillRoadmapPause" type="checkbox"><span data-i18n="functionRoadmapPause">Остановить бегущие строки</span></label>
+          <div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИÆИT10И · Импорт, проверка, версии, сравнение и откат навыков</span></div>
+          <div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИÆИT10И · Книга / документ / сайт / репозиторий → Skill или Agent</span></div>
+        </section>
       </section>
-      <section id="connectorFunctionStatus" class="hidden rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-sm leading-relaxed text-gray-300"><p data-i18n="functionConnectorsDescription">Показываем только реально подключённые источники. Внешние коннекторы пока не подключены; они не будут имитироваться переключателями.</p><div class="roadmap-ticker mt-3" aria-label="Планируемое улучшение"><span class="roadmap-ticker-track" aria-hidden="true">1nv3nt10n 1n PrOc3ss… · Интеграции с контролируемыми разрешениями — в дорожной карте</span></div><p class="roadmap-note">Подключение источников появится только после проверки прав, границ данных и реального соединения. Анимация декоративная и не означает, что сервис уже выполняет работу.</p></section>
+      <section id="connectorFunctionStatus" class="hidden rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-sm leading-relaxed text-gray-300"><p data-i18n="functionConnectorsDescription">Показываем только реально подключённые источники. Внешние коннекторы пока не подключены; они не будут имитироваться переключателями.</p><div class="roadmap-ticker mt-3" aria-label="Планируемое улучшение"><span class="roadmap-ticker-track" aria-hidden="true">1ИÆИT10И · Интеграции с контролируемыми разрешениями</span></div><p class="roadmap-note">Подключение источников появится только после проверки прав, границ данных и реального соединения. Анимация декоративная и не означает, что сервис уже выполняет работу.</p></section>
       <footer class="flex justify-end border-t border-gray-800 pt-3"><button type="button" data-action="close-function-panel" data-i18n="functionPanelClose" class="rounded-xl border border-gray-700 px-4 py-2 text-sm">Закрыть</button></footer>
     </section>
   </div>
