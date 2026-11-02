@@ -712,3 +712,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Continued mandatory UI 8.16. Audited 82 static buttons in `index.md` plus dynamically created message, project, memory and attachment actions. No symbol-only action without an accessible name or tooltip was found in the reviewed surfaces.
 - Added Playwright regression that seeds a project and user/assistant messages, opens the sidebar and checks visible symbol-only/empty buttons for `aria-label`, `aria-labelledby` or `title`; also asserts the five inline message actions are present.
 - E2E commits: `a3a46682365c0688aa00ee136e8b9003e13c22bb`, `09dd9ebadde220d9e98ee844246d38ea5aabdb72`. Test authored only; exact-head execution pending. No product runtime change or dependency.
+
+
+## V-2026-11-02-SHARED-TYPOGRAPHY-STACK-001
+
+- Continued mandatory UI 8.2 alongside the 8.9/8.10/8.16 slices. Removed the obsolete early body/form-control font declaration; the existing final Avenir Next / platform fallback stack remains canonical.
+- Extended the responsive header regression to compare computed font-family for body, buttons, inputs, textarea and select at 320/360/390/768/1024/1440px.
+- CSS commit `a3613f7246823d96d8b544234a1da1e53447679a`; E2E commit `4720695d6c4f9860f1d2d5983f7b605ba3cd14c6`. Authored only; exact-head browser execution and screenshot review remain pending.
