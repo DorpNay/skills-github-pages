@@ -35,6 +35,14 @@
 
 **Artifacts:** PR #125 `AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md`; PR #128 `AGENT_WORKER_CAPABILITY_AND_SKILL_SAFETY_RU.md`.
 
+## C. Компактные модели / SLM — PR #125
+
+- [x] SLM-001 — определить task-based bake-off вместо рейтинга по числу параметров; роли: classification/routing, structured extraction, reranking, summarization, memory candidate generation, Skill synthesis. **Artifact:** `docs/AGENT_MODEL_BAKEOFF_RU.md`, раздел “2026-11-02 — Task-based small-model evaluation contract”.
+- [ ] SLM-002 — подготовить одинаковый RU/EN/TH golden set и схемы для каждого узкого сценария.
+- [ ] SLM-003 — измерить cold load, RAM/PSS, VRAM, TTFT, p50/p95, tokens/sec, concurrency and cancellation на целевом хосте.
+- [ ] SLM-004 — зафиксировать immutable model digest, quantization, tokenizer/template, runtime, code/weights/dataset licenses.
+- [ ] SLM-005 — сравнить с main-only baseline и включать не более одного helper model за раз; default remains off until owner approval.
+
 ## C. Voice и audio generation — PR #129
 
 - [ ] AUDIO-GEN-001…009 — исследовать Agent Audio; проверить модельные terms, hardware, WAV quality, latency, integration and security.
