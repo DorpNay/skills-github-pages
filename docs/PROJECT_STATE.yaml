@@ -65,8 +65,8 @@ ui_v2_track:
   pull_request: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   status: "open_unmerged_owner_hold"
-  latest_documentation_head: "b0b18ea65393471600c8c3804163d0dca2fb75a3 (latest source/test checkpoint before this documentation synchronization)."
-  latest_code_test_head: "b0b18ea65393471600c8c3804163d0dca2fb75a3; includes 8.21 pinning/date sorting, 8.10 desktop/touch sizing, and 8.9 multi-dialog backdrop dismissal regression. Tests authored; exact-head browser execution pending."
+  latest_documentation_head: "09dd9ebadde220d9e98ee844246d38ea5aabdb72 (latest source/test checkpoint before this documentation synchronization)."
+  latest_code_test_head: "09dd9ebadde220d9e98ee844246d38ea5aabdb72; includes 8.21 pinning/date sorting, 8.10 desktop/touch sizing, 8.9 multi-dialog backdrop dismissal and 8.16 icon-only accessible-name regressions. Tests authored; exact-head browser execution pending."
   latest_quality_harness_head: "Writable temporary Pages document-root correction and runner-provided Chrome harness retained. The workflow-run connector returns only PR-triggered runs; the combined commit status lookup returned no contexts for the previous source/test HEAD. Check the Actions run surface for the push-triggered Quality run before claiming results."
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0; mandatory requirements 8.1-8.17 and optional owner proposals 8.18-8.27"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
@@ -76,7 +76,7 @@ ui_v2_track:
     completed_or_not_active: "8.12 server-memory graph UI/API bridge removed; local/private/shared/project memory, delta sync and RAG retained. 8.13 explicit handoff to an existing chat implemented; pending handoff is session-only by design."
     blocked: "Project Sources CRUD is not exposed because the gateway has no source-list API; keep truthful unsupported state."
   remaining_priority:
-    P0: "Run exact-head Quality/Chromium for 8.9 backdrop dismissal, 8.10 desktop/touch sizing, 8.21 pinning/date sorting, plus 8.25 draft and 8.1/8.26 gesture regressions. Use the Actions run/check surface because the workflow-run connector filters to PR-triggered runs while Quality also triggers on push. No exact-head pass claimed; compare performance only after all four Chromium shards execute."
+    P0: "Run exact-head Quality/Chromium for 8.9 backdrop dismissal, 8.10 desktop/touch sizing, 8.16 icon-only accessible names, 8.21 pinning/date sorting, plus 8.25 draft and 8.1/8.26 gesture regressions. Use the Actions run/check surface because the workflow-run connector filters to PR-triggered runs while Quality also triggers on push. No exact-head pass claimed; compare performance only after all four Chromium shards execute."
     P1: "Native iPhone Safari/VoiceOver, screenshot review at 320/360/390/768/1024/1440px, RU/EN and light/dark review, measured WCAG contrast ratios."
     P2: "Long-list/message/scroll/popover stress; capability menu truthfulness; Tavily/keyless-search audit; provider/gateway mock error and secret-redaction checks."
   verification:
@@ -99,6 +99,10 @@ ui_v2_track:
     requirement: "8.9; no residual overlay, body scroll lock or click interception after dismissal."
     coverage: "Backdrop dismissal regression covers settings, project creation, function panel and Research Studio; checks no visible dialog, no ui-modal-open class and immediate sidebar interactivity."
     verification: "Authored on b0b18ea; exact-head browser execution and native mobile review pending."
+  icon_first:
+    requirement: "8.16; prefer clear icons for unambiguous actions and retain accessible names/tooltips."
+    audit: "82 static root-page buttons and dynamically created message/project/memory/attachment controls inspected; no unlabeled symbol-only action found in the reviewed surfaces."
+    regression: "tests/e2e/app.spec.mjs — icon-first controls keep an accessible name across header, sidebar and messages; authored on 09dd9eb, exact-head execution pending."
   merge_deployment: "Do not merge or deploy without explicit owner approval."
 
 current_v016_track:
