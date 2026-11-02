@@ -1,14 +1,14 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
-## Текущая контрольная точка — 2026-11-02, Landing UI 2.0 + Graphify UI surface
+## Текущая контрольная точка — 2026-11-03, Landing UI 2.0 + Graphify selector triage
 
 - Main V1: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; не менять.
-- PR #131: открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; source/test HEAD `8f4a0a532639586f557c85156ede41810d4cc79b`; base `e78a73b25725bfa63370d9946887cbbacbf51b82`; mergeable=false; rebase/sync/deploy не выполнять.
-- Quality #41416369361 passed on exact docs HEAD: 4/4 Chromium shards, 147 passed; static analysis, Jekyll, Integrity, Security and Context passed; published-site smoke skipped. Graphify #41416369353 and provenance #41416369253 passed on the same docs HEAD.
-- Graphify #41415488412 passed on `8f4a0a5`: 3,198 nodes / 8,559 edges / 61 groups; 77 source files. UI bridge: 776 CSS selector occurrences / 732 unique nodes, 536 DOM selector nodes, 780 JS reference occurrences / 717 unique nodes; 184 CSS/DOM matches and 306 JS/CSS matches. Artifact-only, seven-day retention.
-- Selector-name matches are partly INFERRED and do not prove computed browser styles; 351 DOM names without static CSS match and 43 CSS names without static DOM match are review diagnostics, not automatic bugs.
-- Screenshot evidence remains 320/360/390/768/1024/1440 px and desktop/mobile sidebar open; real iPhone Safari, VoiceOver, keyboard focus and full WCAG component review remain manual.
-- Next: finish exact-head checks after docs commit, inspect unmatched selector candidates, then continue unfinished owner checklist 8.1–8.17. Project Sources CRUD remains blocked until a real scoped source-list API exists.
+- PR #131 открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; live HEAD перед этой docs-записью `ea0457ec38931e7a0a1cff788970d1ac4a292acc`; source/test HEAD `8f4a0a532639586f557c85156ede41810d4cc79b`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Compare с main: diverged, 940 ahead / 4 behind. Четыре main-side commits меняют только общий `docs/V1_UI_FINALIZATION_RU.md`; rebase/sync запрещены без разрешения.
+- PR comments/reviews/threads: 0. Текущий pre-update HEAD `ea0457e`: 0 workflow runs и 0 commit statuses. На предыдущем docs HEAD `d4ceaf8`: Quality #41416369361 passed, 4/4 Chromium shards / 147 tests + required sentinels; Graphify #41416369353 и provenance #41416369253 passed. Published-site smoke skipped.
+- Graphify UI bridge: 3,198 nodes / 8,559 edges / 61 groups. Selector triage завершён: 351 DOM/no-static-CSS и 43 CSS/no-static-DOM — статические name-join diagnostics, не дефекты. Из 43 CSS-кандидатов 36 имеют markup/JS references (часть создаётся динамически); семь без literal reference оставлены только как cleanup candidates. Ничего не удалялось.
+- Source/test code не менялся после `8f4a0a5` в трёх последующих docs-only commits до `ea0457e`. No tests were run by the triage itself.
+- Screenshot evidence: 320/360/390/768/1024/1440 px + desktop/mobile sidebar-open. Native iPhone Safari, VisualViewport/safe-area, VoiceOver, keyboard-only focus и full component-level WCAG остаются manual gates.
+- **Next:** продолжить обязательные требования 8.1–8.17 на основе browser/device evidence; следующий приоритет — native iPhone/VoiceOver/keyboard/WCAG acceptance, затем одна ограниченная source correction. Project Sources CRUD не открывать без реального scoped source-list API.
 
 ## Навигация и владение записями
 
