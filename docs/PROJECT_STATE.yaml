@@ -65,8 +65,8 @@ ui_v2_track:
   pull_request: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   status: "open_unmerged_owner_hold"
-  latest_documentation_head: "4720695d6c4f9860f1d2d5983f7b605ba3cd14c6 (latest source/test checkpoint before this documentation synchronization)."
-  latest_code_test_head: "4720695d6c4f9860f1d2d5983f7b605ba3cd14c6; includes 8.2 shared font stack regression plus 8.9 backdrop, 8.10 control sizing, 8.16 icon-only accessible names and 8.21 chat organization. Tests authored; exact-head browser execution pending."
+  latest_documentation_head: "f9ffad34ad067db4b3ce944f1811f4e8621a73e9 (latest source/test checkpoint before this documentation synchronization)."
+  latest_code_test_head: "f9ffad34ad067db4b3ce944f1811f4e8621a73e9; adds 8.3 mobile provider disclosure/keyboard regression to the 8.2, 8.9, 8.10, 8.16 and 8.21 slices. Tests authored; exact-head browser execution pending."
   latest_quality_harness_head: "Writable temporary Pages document-root correction and runner-provided Chrome harness retained. The workflow-run connector returns only PR-triggered runs; the combined commit status lookup returned no contexts for the previous source/test HEAD. Check the Actions run surface for the push-triggered Quality run before claiming results."
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0; mandatory requirements 8.1-8.17 and optional owner proposals 8.18-8.27"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
@@ -76,7 +76,7 @@ ui_v2_track:
     completed_or_not_active: "8.12 server-memory graph UI/API bridge removed; local/private/shared/project memory, delta sync and RAG retained. 8.13 explicit handoff to an existing chat implemented; pending handoff is session-only by design."
     blocked: "Project Sources CRUD is not exposed because the gateway has no source-list API; keep truthful unsupported state."
   remaining_priority:
-    P0: "Run exact-head Quality/Chromium for 8.2 shared typography, 8.9 backdrop dismissal, 8.10 desktop/touch sizing, 8.16 icon-only accessible names, 8.21 pinning/date sorting, plus 8.25 draft and 8.1/8.26 gesture regressions. Use the Actions run/check surface because the workflow-run connector filters to PR-triggered runs while Quality also triggers on push. No exact-head pass claimed; compare performance only after all four Chromium shards execute."
+    P0: "Run exact-head Quality/Chromium for 8.2 shared typography, 8.3 mobile disclosure/keyboard behavior, 8.9 backdrop dismissal, 8.10 desktop/touch sizing, 8.16 icon-only accessible names, 8.21 pinning/date sorting, plus 8.25 draft and 8.1/8.26 gesture regressions. Use the Actions run/check surface because the workflow-run connector filters to PR-triggered runs while Quality also triggers on push. No exact-head pass claimed; compare performance only after all four Chromium shards execute."
     P1: "Native iPhone Safari/VoiceOver, screenshot review at 320/360/390/768/1024/1440px, RU/EN and light/dark review, measured WCAG contrast ratios."
     P2: "Long-list/message/scroll/popover stress; capability menu truthfulness; Tavily/keyless-search audit; provider/gateway mock error and secret-redaction checks."
   verification:
@@ -107,6 +107,9 @@ ui_v2_track:
     requirement: "8.2; one shared font stack for body and form controls, with distinct wordmark/chat-title display styles."
     change: "Removed an obsolete early font-family override; retained one final platform-fallback stack for body/buttons/inputs/textarea/select."
     regression: "Existing responsive header test now asserts computed font-family equality at 320/360/390/768/1024/1440px; authored on 4720695, exact-head execution pending."
+  provider_settings:
+    requirement: "8.3; aServi is exclusive, while third-party provider and additional settings may remain open together."
+    regression: "At 390px, checks 44px disclosure summaries, Enter/Space toggling, exclusivity and no horizontal overflow; authored on f9ffad3, exact-head execution pending."
   merge_deployment: "Do not merge or deploy without explicit owner approval."
 
 current_v016_track:
