@@ -367,9 +367,9 @@
     .function-roadmap-item .roadmap-ticker-track { padding:3px .75rem; font-size:10px; }
     .roadmap-pause-control { display:flex; align-items:center; gap:.4rem; width:fit-content; margin:.35rem 0; color:var(--ui-text-muted); font-size:10px; cursor:pointer; }
     .roadmap-pause-control input { width:14px; height:14px; accent-color:var(--ui-tiffany); }
-    #functionsRoadmapPause:checked ~ .function-roadmap-items .roadmap-ticker-track,
-    #agentRoadmapPause:checked ~ .agent-future-groups .roadmap-ticker-track,
-    #skillRoadmapPause:checked ~ .roadmap-ticker .roadmap-ticker-track { animation-play-state:paused; }
+    .roadmap-pause-control:has(#functionsRoadmapPause:checked) ~ .function-roadmap-items .roadmap-ticker-track,
+    .roadmap-pause-control:has(#agentRoadmapPause:checked) ~ .agent-future-groups .roadmap-ticker-track,
+    .roadmap-pause-control:has(#skillRoadmapPause:checked) ~ .roadmap-ticker .roadmap-ticker-track { animation-play-state:paused; }
     .agent-settings-category { border:1px solid var(--ui-border); border-radius:.75rem; background:var(--ui-surface); overflow:hidden; }
     .agent-settings-category > summary { display:flex; align-items:center; min-height:44px; padding:.65rem .8rem; color:var(--ui-text); font-size:11px; font-weight:700; cursor:pointer; list-style:none; }
     .agent-settings-category > summary::-webkit-details-marker { display:none; }
