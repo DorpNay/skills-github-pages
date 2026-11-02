@@ -856,3 +856,6 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 
 | V-2026-11-02-AGENT-PANEL-PAUSE-COVERAGE-002 | 2026-11-02 | Extend Agent panel regression assertions to cover nested ticker pause | Added a Playwright assertion that opens the use-cases/roles disclosure, checks the Agent roadmap pause control and expects the nested ticker animation-play-state to be paused. Source/test commit: d70b8a31cc8a81cafeea64f8fbb332e53b0c5af2. Updated agent information architecture and implementation ledger; orientation/state refreshed. | Authored only; not executed. PR #131 latest docs HEAD at time of update a610c5dcd111d2dce5ecc9db03a61a583359f674; no workflow run returned. | Next: inspect exact-head Quality when available; if it fails, use the failing shard/log and make a minimal correction. |
 
+
+| V-2026-11-02-ORIENTATION-REFRESH-003 | 2026-11-02 | Reconcile the final orientation pointers after the Agent panel pause regression | Corrected ORIENTER, FILE_ORIENTER and PROJECT_STATE to reference source/test commit d70b8a3 and the preceding docs checkpoint bb7974c; prior a610c5d docs pointer is superseded. | Documentation-only. No runtime changes; PR #131 exact-head workflow remains unavailable. | Next: verify current PR head/CI and preserve main V1 boundary. |
+
