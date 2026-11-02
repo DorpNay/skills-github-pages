@@ -667,7 +667,8 @@ html[data-text-contrast="high"] #chatBox button:disabled {
 .agent-blueprint-action:focus-visible { outline:2px solid var(--ui-primary);outline-offset:2px; }
 .agent-blueprint-action:disabled { opacity:.45;cursor:not-allowed; }
 .agent-blueprint-name { min-height:40px;width:100%; }
-@media (max-width:639px) { .agent-blueprint-action,.agent-blueprint-name { min-height:44px; } }
+.agent-blueprint-select { min-height:40px;width:100%; }
+@media (max-width:639px) { .agent-blueprint-action,.agent-blueprint-name,.agent-blueprint-select { min-height:44px; } }
 
 
 /* Browser connectivity hint: this reports navigator.onLine only, not API health. */
