@@ -332,3 +332,12 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Проверенный исходный PR #123 HEAD: `f6e67db5a7e39abc5f9351aae5ccadefc58e865e`; base main: `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; open, mergeable=true. Предыдущая проверка exact-head: 6/6 workflow groups passed. После любого нового коммита эти результаты не переносятся автоматически.
 - Единственный открытый issue #111 — owner/live-host evidence. Не закрывать по CI.
 - Сначала снимок/ориентиры, затем системная карта, сквозные взаимодействия, качество/безопасность, независимый review и только потом минимальные исправления. Архитектуру не расширять.
+
+
+## Landing V2 — live continuation checkpoint (2026-11-02)
+
+- Canonical scope remains PR #131 only, branch `feat/landing-v1-accessibility-responsive-20261031`; live source/test checkpoint for the 8.25 connectivity slice: `6489f5a9b6d2d3e8c68b2bad993f7b85a4521cbd`.
+- Added an accessible RU/EN composer warning for the browser's offline signal, explicitly not API health; reconnect asks for manual retry only. Drafts now flush on hidden-tab `visibilitychange` and `pagehide`.
+- E2E tests cover offline → online without automatic request replay and immediate draft persistence on tab hide. Source syntax and CSS brace checks passed; browser tests are authored but not yet executed.
+- Exact-head Quality #1405 (`41390877580`) pending; Graphify #437 (`41390877512`) queued. No exact-head browser pass is claimed.
+- PR #131 remains open/unmerged, mergeable=false. Main, production Pages and PR #132 are untouched; no rebase, merge or deployment. Attachments remain intentionally non-persistent.
