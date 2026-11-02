@@ -719,7 +719,6 @@ test('function menu separates task workflow from integrations in both languages'
   if (!(await menu.evaluate(element => element.open))) await menu.locator(':scope > summary').click();
   await expect(menu.locator('.toolbar-menu-group-label').nth(0)).toContainText('Task workflow');
   await expect(menu.locator('.toolbar-menu-group-label').nth(1)).toContainText('Research and sources');
-  await expect(cards.nth(0).locator('[data-action="open-roadmap-details"]')).toHaveText('Details');
   await expect(menu.locator('.toolbar-menu-group-label').nth(2)).toContainText('Create and transform');
   await expect(menu.locator('.toolbar-menu-group-label').nth(3)).toContainText('Connections');
 });
@@ -786,7 +785,7 @@ test('structured workflow panel groups its configuration into clear sections', a
   await expect(groups.nth(1).locator('#agentTeamSize')).toHaveCount(1);
   await expect(groups.nth(1).locator('#agentTeamScenario')).toHaveCount(1);
   await expect(groups.nth(1).locator('#agentRolePreset')).toHaveCount(1);
-  await expect(panel.locator('.agent-future-section')).toHaveCount(5);
+  await expect(panel.locator('.agent-future-section')).toHaveCount(8);
   const futureSections = panel.locator('.agent-future-groups .agent-future-section');
   await expect(futureSections).toHaveCount(7);
   const capabilityGroups = panel.locator('.agent-future-groups > details.agent-settings-category');
@@ -814,6 +813,11 @@ test('structured workflow panel groups its configuration into clear sections', a
   await expect(futureSections.nth(6)).toContainText('durable AgentRun API');
   await expect(panel.locator('#agentRoadmapPause')).toBeVisible();
   await capabilityGroups.nth(0).locator(':scope > summary').click();
+  await futureSections.nth(1).locator('[data-action="open-roadmap-details"]').click();
+  await expect(page.locator('#roadmapDetailsTitle')).toHaveText('Мои агенты и профили');
+  await expect(page.locator('#roadmapDetailsStatus')).toHaveText('В разработке');
+  await page.locator('#roadmapDetailsModal [data-action="close-roadmap-details"]').first().click();
+  await expect(page.locator('#roadmapDetailsModal')).toBeHidden();
   await panel.locator('#agentRoadmapPause').check();
   await expect(capabilityGroups.nth(0).locator('.roadmap-ticker-track').first()).toHaveCSS('animation-play-state', 'paused');
   await panel.locator('#agentRoadmapPause').uncheck();
@@ -4524,6 +4528,7 @@ test('team blueprints can be saved, applied, restored and deleted without launch
   await expect(page.locator('#roadmapDetailsTitle')).toHaveText('Сохранённые черновики команд');
   await expect(page.locator('#roadmapDetailsStatus')).toHaveText('Только схема');
   await page.locator('#roadmapDetailsModal [data-action="close-roadmap-details"]').first().click();
+  await expect(page.locator('#roadmapDetailsModal')).toBeHidden();
 
   await panel.locator('#agentTeamSize').evaluate(element => {
     element.value = '7';
@@ -4615,4 +4620,5 @@ test('planned function menu items open truthful detail windows and can pause mot
   expect(await ticker.evaluate(element => getComputedStyle(element).animationPlayState)).toBe('paused');
   await selectLanguage(page, 'en');
   await expect(menu.locator('.toolbar-menu-group-label').nth(1)).toContainText('Research and sources');
+  await expect(cards.nth(0).locator('[data-action="open-roadmap-details"]')).toHaveText('Details');
 });
