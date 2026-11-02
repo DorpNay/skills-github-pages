@@ -637,3 +637,13 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - PR #131 remains open/unmerged and 4 commits behind main. No merge, rebase, main synchronization, deletion or deployment.
 - Upstream research update: SGLang Qwen3-Next official guide requires 4×H100/H200; LightAgent is an agent framework with generic OpenAI-compatible provider support; llm-apipool's automatic cross-provider fallback conflicts with aLandi provider isolation; the Plexor RCT artifacts contain conflicting study snapshots and incomplete pilot hardware metadata. No candidate adopted.
 
+## V-2026-11-02-QUALITY-1251-AND-SUPPLY-CHAIN-014
+
+- Quality #1251 / run `41365456706` passed on documentation HEAD `61f1ae1dbac08da6c0a873bc5b72926cecb83bee`; all four real Chrome shards and preflight/static analysis/Integrity/Security/Context/Jekyll passed. Published-site smoke was skipped by workflow conditions.
+- Provenance #975 / run `41365456760` passed on the same SHA.
+- Quality #1250 / run `41364775725` passed on code-bearing HEAD `f3151472e285c7d31d46809f52337202eb15e6b3` after adding active-target reload coverage for project-context handoff 8.13.
+- Audited 13 workflow files and 33 external Action/reusable-workflow references on both main and PR #131 branch. All 33 use full 40-character commit SHAs; no unpinned references were found. Live branch ruleset status remains unverified.
+- Corrected the canonical UI P0 queue and state docs; retired the stale “8.13 is in-memory only” statement.
+- Owner explicitly paused the separate Pages repository. No second repository was created; no V1 Pages change, merge, rebase, branch deletion or deployment.
+- Continue mandatory UI 8.1–8.17 and native/manual gates. The 207s Quality #1250 runtime is recorded, but no speedup ratio is claimed against the incomplete 1863s timeout baseline.
+

@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-02"
   root_orienter:
-    status: "Main remains stable V1. PR #131 is open/unmerged on feat/landing-v1-accessibility-responsive-20261031 at exact HEAD f3151472e285c7d31d46809f52337202eb15e6b3. Quality #1250 (run 41364775725) passed on that exact SHA: four real Chrome shards plus preflight, static analysis, Integrity, Security, Context and Jekyll. Published-site smoke was skipped; no deployment or preview is verified. PR is 653 commits ahead and 4 behind main; do not rebase, merge or synchronize without owner approval. Project-context handoff 8.13 now persists one-shot IDs in tab sessionStorage and has active/inactive-target reload E2E coverage. No second Pages repository created; owner paused that path. No runtime dependency or model added."
+    status: "Main remains stable V1. PR #131 is open/unmerged on feat/landing-v1-accessibility-responsive-20261031. Last code-bearing HEAD f3151472e285c7d31d46809f52337202eb15e6b3 passed Quality #1250; documentation HEAD 61f1ae1dbac08da6c0a873bc5b72926cecb83bee passed Quality #1251 and Provenance #975. All four Chrome shards and all Quality sentinels passed; Pages smoke skipped. Branch comparison is 653 ahead / 4 behind main; no rebase, merge or main synchronization without owner approval. 8.13 handoff persists one-shot chat/project IDs in tab sessionStorage and passes active/inactive target reload E2E. Owner paused the second-repository path. No runtime dependency or model added."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 0
@@ -758,14 +758,15 @@ quality_ci_2026_11_02:
   next: "Continue UI scope and monitor high-contrast regression; establish comparable completed baseline before reporting speedup."
 
 landing_v2_preview_2026_11_02:
-  status: "not deployed"
+  status: "paused by owner; not deployed"
   constraint: "The repository has a single GitHub Pages site; a PR deployment to its Pages target would replace the V1 publication."
-  safe_path: "A separate GitHub Pages address needs a second Pages site/repository or separately configured host."
-  owner_intent: "Owner explicitly requested a separate V2 preview address; do not alter the V1 Pages target."
-  next: "Prepare a deterministic preview artifact/workflow and provision a separate Pages target before public deployment."
+  safe_path: "A separate Pages site/repository or separately configured host would be required if the owner resumes this request."
+  owner_intent: "Owner explicitly said not to create the second repository yet; do not create it or alter the V1 Pages target."
+  next: "Continue other authorized PR #131 tasks; revisit separate preview only after a new owner instruction."
 
 repository_hygiene_2026_11_02_continuation:
-  pr131_head: "f3151472e285c7d31d46809f52337202eb15e6b3"
+  pr131_head: "61f1ae1dbac08da6c0a873bc5b72926cecb83bee"
+  last_code_head: "f3151472e285c7d31d46809f52337202eb15e6b3"
   branch_inventory: "126 refs snapshot; branch cleanup candidates require fresh PR/issue/ancestry checks"
   deletion: "none; connected GitHub actions do not expose a branch-delete operation"
   safety: "preserve unmerged unique work; no file or branch deletion in this pass"
@@ -777,6 +778,10 @@ owner_sources_60_2026_11_02:
 project_context_handoff_2026_11_02:
   pr: 131
   head: "f3151472e285c7d31d46809f52337202eb15e6b3"
+  documentation_head: "61f1ae1dbac08da6c0a873bc5b72926cecb83bee"
+  latest_quality_head: "61f1ae1dbac08da6c0a873bc5b72926cecb83bee"
+  latest_quality_run: "41365456706"
+  provenance_run: "41365456760"
   quality_run: "41364775725"
   quality_result: "success"
   chromium_shards: "4/4 passed"
@@ -795,3 +800,11 @@ upstream_research_followup_2026_11_02:
   llm_apipool: "MIT proxy with cross-provider fallback and key rotation; conflicts with aLandi's provider isolation; not adopted"
   plexor_rct: "research-only; repository README, v2 protocol, pilot JSON and paper have mismatched study snapshots and incomplete pilot hardware metadata"
   adoption: "no runtime, package, model download or deployment"
+
+supply_chain_workflow_audit_2026_11_02:
+  refs: 33
+  workflow_files: 13
+  main_unpinned: 0
+  pr131_unpinned: 0
+  method: "Parsed every uses: reference in .github/workflows/*.yml on main and PR #131 branch; all external action and reusable workflow refs are 40-character commit SHAs."
+  limitation: "This verifies workflow reference pinning, not the live GitHub branch ruleset or repository settings."

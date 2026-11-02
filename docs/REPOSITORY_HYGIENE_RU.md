@@ -216,3 +216,10 @@ No files, workflows, settings, branches or repository names were deleted or chan
 - Документация состояния обновлена в ORIENTER.md, docs/PROJECT_STATE.yaml и docs/VOLLEY_LOG.md.
 - Никаких branch/file deletions, merges, rebases или production deployments не выполнялось.
 - Следующий этап: отдельный preview target; подробный upstream triage 60 owner-provided repositories; повторная branch ancestry audit; продолжение UI acceptance scope.
+
+## Workflow supply-chain audit — 2026-11-02
+
+- Audited `.github/workflows/*.yml` on both `main` and PR #131 branch.
+- Inventory: 13 workflow files, 33 external `uses:` references (actions and reusable workflows).
+- Result: 33/33 pinned to full 40-character commit SHAs; zero mutable tag references on either ref.
+- This verifies workflow reference pinning only. GitHub Rulesets, required reviewers/status checks, force-push protection and repository security settings still require live owner/admin inspection.

@@ -1,15 +1,16 @@
-## Current working checkpoint — 2026-11-02, Quality #1250 green
+## Current working checkpoint — 2026-11-02, Quality #1251 + Provenance #975 green
 
 - **Main:** stable V1 baseline. PR #131 remains open/unmerged; no merge, rebase, main synchronization or production deployment.
-- **PR #131:** branch `feat/landing-v1-accessibility-responsive-20261031`; exact HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`. Current comparison: 653 commits ahead and 4 behind `main`; GitHub reports mergeable=false. Preserve the four base-side commits; do not rebase or synchronize without explicit owner approval.
-- **Quality #1250:** run `41364775725`, exact-head push run, completed success in 207 seconds. All four real Chrome shards passed; preflight, static analysis, Integrity, Security, Context and Jekyll passed. Published-site smoke was skipped by workflow conditions; no deployment or preview is verified.
-- **8.13 project-context handoff:** pending target chat/project IDs are persisted in tab-scoped `sessionStorage`, restored after reload for both active and inactive target chats, and consumed once. E2E verifies no chat creation/reassignment and no context on the second request. Only IDs are stored; project content and credentials are not.
-- **Automation:** Quality is triggered automatically by push/pull_request. No manual workflow dispatch or owner command is required.
-- **V2 preview:** owner paused the second-repository path. Do not create a second repository, alter the existing Pages target or deploy anything until owner changes that instruction.
-- **Repository hygiene:** branch deletion remains unavailable through connected GitHub actions; no branches/files were deleted. Preserve unique/unmerged work.
-- **Research:** updated upstream findings are in `docs/OPEN_SOURCE_TRIAGE_RU.md`. SGLang supports Qwen3-Next-80B-A3B but official guide targets 4×H100/H200; it is not a small front-door SLM. LightAgent is an agent runtime, llm-apipool has automatic cross-provider fallback, and BentoML adds a serving layer; none was adopted.
-- **Canonical UI queue:** `docs/V1_UI_FINALIZATION_RU.md` section 8.0; mandatory 8.1–8.17 remain the release scope. Implementation evidence: `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`. Native iPhone Safari, VoiceOver, full composited contrast and visual screenshot review remain open.
-- **Next:** continue bounded implementation within PR #131 while CI runs; update the existing canonical state after each significant milestone. No merge/deployment.
+- **PR #131:** branch `feat/landing-v1-accessibility-responsive-20261031`; last code-bearing HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`; documentation HEAD `61f1ae1dbac08da6c0a873bc5b72926cecb83bee`. Comparison: 653 commits ahead and 4 behind `main`; mergeable=false. Preserve the four base-side commits; do not rebase/synchronize without explicit owner approval.
+- **Quality #1250:** run `41364775725` on exact code HEAD `f3151472e285c7d31d46809f52337202eb15e6b3` passed: all four real Chrome shards and all non-browser Quality checks. This is the acceptance run for 8.13 active/inactive-target reload behavior.
+- **Quality #1251:** run `41365456706` on documentation HEAD `61f1ae1dbac08da6c0a873bc5b72926cecb83bee` passed: all four Chrome shards, preflight, static analysis, Integrity, Security, Context and Jekyll. **Provenance #975** / run `41365456760` also passed on this SHA. Published-site smoke was skipped; no preview/deployment is verified.
+- **8.13 project-context handoff:** pending target chat/project IDs persist in tab-scoped `sessionStorage`, restore after reload for both active/inactive target chats, and are consumed once. E2E verifies no chat creation/reassignment and no context on the second request. Project content and credentials are not stored in sessionStorage.
+- **Supply chain:** 13 workflow files and 33 external action/reusable-workflow references audited on both `main` and PR branch; 33/33 pinned to full 40-character SHAs. This does not prove the live branch ruleset is enabled.
+- **Automation:** Quality is push/pull_request-triggered automatically. No manual workflow dispatch or owner-run command is required.
+- **V2 preview:** owner paused the second-repository path. Do not create a second repository, alter the existing Pages target or deploy anything until the owner changes that instruction.
+- **Research:** current findings are in `docs/OPEN_SOURCE_TRIAGE_RU.md`. SGLang supports Qwen3-Next-80B-A3B but its guide targets 4×H100/H200; it is not a small front-door SLM. LightAgent is an agent runtime, llm-apipool has automatic cross-provider fallback, and BentoML adds a serving layer; none was adopted.
+- **Canonical UI queue:** `docs/V1_UI_FINALIZATION_RU.md` section 8.0; mandatory 8.1–8.17 remain release scope. Native iPhone Safari, VoiceOver, full composited contrast and visual screenshot review remain open.
+- **Next:** continue bounded implementation within PR #131 while CI runs; do not wait idly. Update canonical state after significant milestones. No merge/deployment.
 
 
 ## First-read order

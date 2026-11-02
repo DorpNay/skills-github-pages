@@ -344,3 +344,11 @@
 - [ ] Establish comparable CI performance baseline; #1197 was a timeout with incomplete coverage, so no speedup ratio is claimed from the 207s #1250 run.
 - [ ] PR #131 remains 4 commits behind main; do not synchronize/rebase until owner authorizes and the four base-side commits are reviewed. No merge or deployment.
 
+## Engineering continuation — 2026-11-02 (Quality #1251 / supply chain)
+
+- [x] Quality #1251 / run `41365456706` passed on documentation HEAD `61f1ae1dbac08da6c0a873bc5b72926cecb83bee`; all four Chrome shards and all Quality sentinels passed.
+- [x] Project State Provenance #975 / run `41365456760` passed on the same SHA.
+- [x] Audited 13 workflow files on both `main` and PR #131 branch: 33/33 external Action/reusable-workflow references are pinned to full 40-character SHAs; zero mutable refs found.
+- [x] Updated canonical UI P0 evidence and removed the obsolete claim that 8.13 handoff is only in-memory.
+- [x] Recorded that the second Pages repository is paused by owner instruction; no repository was created and V1 Pages was not touched.
+- [ ] Live branch ruleset and repository security settings remain owner/environment evidence; do not infer from workflow YAML.

@@ -711,3 +711,11 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Quality #1250 / run `41364775725` on exact HEAD `f3151472e285c7d31d46809f52337202eb15e6b3` completed successfully. All four real Chrome shards passed; preflight, static analysis, Integrity, Security, Context and Jekyll passed. Published Pages smoke was skipped by workflow conditions; no preview or deployment is claimed.
 - Intermediate exact-head Quality #1248 (`41364562814`) and #1249 (`41364772027`) also passed on earlier revisions. #1250 is the acceptance result for the final active-chat reload coverage.
 - Native iPhone Safari, VoiceOver and real-device long-press remain separate manual acceptance gates. No runtime dependency or new service was added.
+
+## Documentation/supply-chain verification — 2026-11-02
+
+- Quality #1251 / run `41365456706` passed on documentation-only HEAD `61f1ae1dbac08da6c0a873bc5b72926cecb83bee`; code-bearing HEAD remains `f3151472e285c7d31d46809f52337202eb15e6b3`. Four Chrome shards and all non-browser Quality sentinels passed. Published-site smoke skipped.
+- Project State Provenance #975 / run `41365456760` passed on the same documentation HEAD.
+- Independent workflow inventory: 13 workflow files and 33 external GitHub Action/reusable-workflow references on both `main` and PR #131 branch; all 33 use full 40-character commit SHAs. No mutable tag reference was found.
+- The 8.13 code/test acceptance result remains Quality #1250 on `f3151472e285c7d31d46809f52337202eb15e6b3`; #1251 verifies that the synchronized documentation and provenance state remain green.
+- This documentation-only update does not change runtime code, CI behavior, dependencies or deployment.
