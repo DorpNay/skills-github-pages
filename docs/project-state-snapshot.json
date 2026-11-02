@@ -40,7 +40,17 @@
         "head_sha": "94d871dbf76a5364ebb3c61d86cc763affa5eaa1",
         "checks": "Gateway, Quality, Graphify and Dead Code passed on exact PR head; Quality included Jekyll, Chromium and published-site smoke."
       }
-    ]
+    ],
+    "active_v2_workstream": {
+      "pr": 131,
+      "branch": "feat/landing-v1-accessibility-responsive-20261031",
+      "source_test_head": "d3a44807d9c9eb0dade5a3e0bf80065fa5ebfd45",
+      "status": "open_unmerged_mergeable_false",
+      "latest_slice": "Skills panel separates the working chat-scoped task profile from the future shared Skill package library",
+      "verification": "Playwright regression authored but not executed; no workflow run returned for exact source/test HEAD",
+      "runtime_changes": false,
+      "merge_or_deploy": false
+    }
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": true,
