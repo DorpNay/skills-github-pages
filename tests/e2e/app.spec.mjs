@@ -3744,3 +3744,39 @@ test('responsive visual review captures viewport and navigation evidence', async
   await ensureSidebarOpen(page);
   await attachVisualReviewScreenshot(page, testInfo, 'landing-v2-desktop-sidebar-open');
 });
+
+
+test('composer text drafts stay isolated per chat and restore after reload', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
+
+  const firstChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
+  await page.locator('#userInput').fill('Draft belonging to the first chat');
+  await expect.poll(() => page.evaluate(id => JSON.parse(localStorage.getItem('ai_chat_drafts_v1') || '{}')[id], firstChatId))
+    .toBe('Draft belonging to the first chat');
+
+  await page.locator('#sidebar [data-action="new-chat"]').click();
+  const secondChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
+  expect(secondChatId).not.toBe(firstChatId);
+  await expect(page.locator('#userInput')).toHaveValue('');
+
+  await page.locator('#userInput').fill('Draft belonging to the second chat');
+  await expect.poll(() => page.evaluate(id => JSON.parse(localStorage.getItem('ai_chat_drafts_v1') || '{}')[id], secondChatId))
+    .toBe('Draft belonging to the second chat');
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#userInput')).toHaveValue('Draft belonging to the second chat');
+  await ensureSidebarOpen(page);
+  await page.locator('#chatList [data-action="switch-chat"][data-chat-id="' + firstChatId + '"]').click();
+  await expect(page.locator('#userInput')).toHaveValue('Draft belonging to the first chat');
+
+  const state = await page.evaluate(() => ({
+    current: localStorage.getItem('ai_current_chat_v87'),
+    chats: JSON.parse(localStorage.getItem('ai_chats_v87') || '[]'),
+    drafts: JSON.parse(localStorage.getItem('ai_chat_drafts_v1') || '{}')
+  }));
+  expect(state.current).toBe(firstChatId);
+  expect(state.chats.every(chat => !chat.messages.some(message => message.role === 'user'))).toBe(true);
+  expect(state.drafts[firstChatId]).toBe('Draft belonging to the first chat');
+  expect(state.drafts[secondChatId]).toBe('Draft belonging to the second chat');
+});
