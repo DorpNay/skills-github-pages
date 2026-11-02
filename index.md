@@ -77,8 +77,8 @@ permalink: /
     <div class="mx-3 mt-2 flex items-center justify-between gap-2">
       <label for="chatSortSelect" class="text-[10px] text-gray-500">Порядок чатов</label>
       <select id="chatSortSelect" class="min-h-9 max-w-[58%] rounded-lg border border-gray-700 bg-gray-900 px-2 py-1 text-[11px] text-gray-300" aria-label="Порядок чатов">
-        <option value="current">Как сейчас</option>
-        <option value="title">По названию</option>
+        <option value="activity">Последняя активность</option>
+        <option value="created">Дата создания</option>
       </select>
     </div>
     <details id="chatSection" open class="mx-3 my-2 rounded-xl border border-gray-800">
