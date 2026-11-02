@@ -1,7 +1,7 @@
 ## Актуальная контрольная точка — 2026-11-02, Skills panel
 
 - Verified main SHA: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; main остаётся стабильной V1.
-- PR #131 открыт и не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; source/test checkpoint `d3a44807d9c9eb0dade5a3e0bf80065fa5ebfd45`; base SHA `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub сообщает mergeable=false. Не выполнять merge/rebase/sync/deploy.
+- PR #131 открыт и не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; source/test checkpoint `baf6a96705a15466384ab2c9f1efce977e83d087`; base SHA `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub сообщает mergeable=false. Не выполнять merge/rebase/sync/deploy.
 - Skills panel: работающий task profile явно ограничен текущим чатом; настройки цели/формата сгруппированы; будущая общая Skill package library находится в отдельном collapsed disclosure с lifecycle и security boundary.
 - RU/EN, native keyboard disclosure, 44px summary и ticker pause покрыты новым Playwright regression. Тест добавлен, но не запускался; exact-head workflow для source/test HEAD не вернул runs.
 - Runtime import, shared registry, package loader, script execution и permission API не реализованы. Никаких backend/dependency/runtime изменений.
