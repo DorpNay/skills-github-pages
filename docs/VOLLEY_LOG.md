@@ -756,3 +756,14 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Latest exact-head Quality #41380618355 on 8a48ff5: static analysis, Jekyll, integrity/context/security sentinels and Chromium shards 1, 2 and 4 pass; shard 3 reports 32 passed / 1 failed. The remaining failure is the chat export/import regression expecting a per-chat draft in localStorage at app.spec.mjs:2951; observed undefined after 5 seconds. Published-site smoke skipped. Overall run remains failure; do not claim green.
 - Next action: inspect composer input event and saveChatDraft debounce/flush semantics around the failing assertion. Preserve the test contract; establish whether source behavior or test setup is wrong before editing.
 - Reconfirmed Harness² and Hermes Agent review is recorded in OPEN_SOURCE_TRIAGE_RU.md; no runtime/dependency adopted and the 60-repository list is not claimed as fully audited.
+
+
+## V-2026-11-02-QUALITY-1359-UI-8.17-DRAFT-INIT-001
+
+- Live PR #131 checkpoint before the documentation sync: HEAD 12803232a5b4afc67a3ab4d87f04bff3eeb38e3e; PR open/unmerged; compare main 762 ahead / 4 behind, diverged.
+- Quality run #1359 / Actions run 41381374196 passed on that exact HEAD. Four real-Chromium shards passed 34 + 34 + 33 + 33 = 134 tests, with no flaky retries. Syntax preflight, independent static analysis, Jekyll, Integrity, Context and Security sentinels passed.
+- 8.17 test diagnosis: the test-only memory action button had the production 140ms color transition; the computed-style assertion sampled the old intermediate color. Set transition:none on the fixture only. Production CSS/tokens were not changed by this fix.
+- Chat export/import draft test diagnosis: it read ai_current_chat_v87 before asynchronous app initialization had persisted the key. The test now waits for the key before capturing the ID; no production draft-storage code changed. The corrected test passed in #1359.
+- Automated contrast results: all tested base tokens and toast foregrounds against solid surfaces in dark/light and standard/high modes meet 4.5:1; minimum measured ratio 4.71:1 (light standard success toast). Full component-level WCAG, iPhone Safari and VoiceOver remain manual gates.
+- Harness² and Hermes Agent v0.22.0–v0.22.5 remain research/security references only; no dependency, runtime, provider route or model was adopted. The owner-provided 60 repositories have been categorized and selectively reviewed, not all deeply audited.
+- No merge, rebase, main synchronization or deployment.
