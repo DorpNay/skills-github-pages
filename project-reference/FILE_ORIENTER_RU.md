@@ -2,9 +2,9 @@
 
 ## Актуальная контрольная точка — 2026-11-02, Landing V2 taxonomy slice
 
-- PR #131 открыт, не объединён; ветка `feat/landing-v1-accessibility-responsive-20261031`; docs HEAD `89a13b1347ade8fd7199da87fd41dc033290bfa8`, source/test HEAD `79790a018234b0f141f7ee902430165f6471a920`. Main остаётся V1; merge/rebase/sync/deploy не выполнялись.
+- PR #131 открыт, не объединён; ветка `feat/landing-v1-accessibility-responsive-20261031`; docs checkpoint `5e7faea91bb3b88384b75f68f6f5ac8ae313b3d8`, source/test HEAD `79790a018234b0f141f7ee902430165f6471a920`. Main остаётся V1; merge/rebase/sync/deploy не выполнялись.
 - Additional Settings regrouped into three purpose disclosures. Function menu groups task workflow and connections. Structured-workflow configuration is divided into execution mode and blueprint parameters. RU/EN labels and E2E tests added.
-- Graphify run `41389386456` passed on exact source/test HEAD. Quality #1397 / run `41389783481` pending, jobs not yet available; no Chromium pass claim. Previous Quality #1359 result applies only to its prior checkpoint.
+- Graphify run `41389386456` passed on exact source/test HEAD. Quality #1398 / run `41389870537` pending, jobs not yet available; no Chromium pass claim. Previous Quality #1359 result applies only to its prior checkpoint.
 - V2 live preview not configured: Pages target serves main V1; Vercel connected context/project search returned no available team/project. No new repo or deployment without owner approval.
 - Next: verify Quality/Chromium, fix regressions, gather real screenshots and continue native iPhone/VoiceOver/WCAG review.
 
