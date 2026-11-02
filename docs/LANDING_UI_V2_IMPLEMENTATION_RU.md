@@ -926,3 +926,12 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - The pause checkbox remains a preceding sibling of both containers, so the existing CSS sibling selector pauses both groups.
 - Added Playwright assertions for two containers, one Deep Research 2.0 card in the first, four conversion/media cards in the second, and the absence of a fake Research Studio menu action.
 - Not executed locally in this session; exact-head GitHub Quality result is pending.
+
+
+## Agent panel progressive disclosure — 2026-11-02
+
+- In PR #131, grouped the five existing future capability sections into three native collapsible categories: use cases/roles; orchestration/models/resources; tools/permissions.
+- Categories are collapsed by default, use native `details/summary`, have a 44px minimum summary target and visible focus style, and have RU/EN labels.
+- Preserved the two real configuration groups and the explicit single-model/four-stage runtime boundary. No worker, model registry, skill package loader, permission API or other runtime capability was added.
+- Updated the roadmap pause CSS selector for the nested disclosure structure.
+- Added Playwright assertions for category count/order, touch target and Enter/Space behavior. Tests are authored but not executed on the current HEAD.
