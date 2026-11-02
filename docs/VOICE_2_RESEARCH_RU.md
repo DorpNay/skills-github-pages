@@ -120,3 +120,32 @@ Use the definitions in `docs/LATENCY_CONTRACT.md`. Its proposed numeric targets 
 - Не менять лендинг и его UX ради демонстрации ещё не реализованной Voice 2.0.
 - Не выдавать результаты авторских benchmarks за результаты aLandi.
 - Не хранить аудио/транскрипты в обычной памяти, логах или публичных fixtures.
+
+
+## 8. Voice UI capability map and audio-generation boundary — 2026-11-02
+
+### Separate user intents
+- **Speak to aLandi:** microphone capture → transcription/turn detection → editable transcript or conversation input.
+- **Voice message:** record one clip → local ASR → edit transcript → explicit send.
+- **Read this message:** TTS for one assistant message, with voice selection and mini-player.
+- **Read selected text:** speak only the user's current selection.
+- **Read a queue:** user selects multiple messages; ordered serial playback with pause/resume/skip/stop and cancellation.
+- **Live conversation:** streaming ASR/LLM/TTS, turn detection, barge-in, echo control and mobile lifecycle. Not equivalent to the current half-duplex prototype.
+- **Generate sound:** sound effects, ambience, music and speech synthesis are different task types with different models, licenses, content rights, cost and export formats. Ordinary TTS is not general audio generation.
+
+### Runtime state and controls
+Expose truthful states: idle, permission-required, recording, transcribing, transcript-review, sending, speaking, interrupted, paused, queued, completed, failed, cancelled. Keep a stable operation ID and abort signal across capture, ASR, generation and playback. A stale result must not overwrite a newer clip or continue playback after Stop.
+
+### Data and consent
+Local ASR/TTS and remote speech APIs must be explicit routes. Before remote audio upload, disclose provider, audio/text data sent, retention/processing terms and request scope. Keep raw audio retention separate from transcript retention; default to minimum retention. Never log raw PCM or private transcripts by default.
+
+### Task ledger extension
+- [ ] **VOICE-011** — map every visible voice/audio control to a real handler, feature flag, runtime and test; label current/partial/planned states.
+- [ ] **VOICE-012** — implement selected-text TTS with selection boundaries, safe HTML stripping and cancellation.
+- [ ] **VOICE-013** — implement multi-message serial TTS queue with pause/resume/skip/stop and stale-request protection.
+- [ ] **VOICE-014** — benchmark true streaming turn-taking, VAD/endpointing, barge-in, echo/AEC and mobile audio lifecycle.
+- [ ] **VOICE-015** — research sound-effects/ambience/music generation as a separate adapter family; verify model and output licenses, consent, cost and export.
+- [ ] **VOICE-016** — define audio job artifacts: duration, codec, sample rate, source/model, checksum, retention and user export.
+- [ ] **VOICE-017** — compare LiveKit and Pipecat against current browser/FastAPI interfaces and target hardware; no migration until measured.
+- [ ] **VOICE-018** — add RU/EN/TH golden tests for code-switching, names, numbers, punctuation and noisy mobile recordings.
+- [ ] **AUDIO-GEN-001…009** — use the detailed task ledger in `LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md`; no download or runtime activation without owner approval.
