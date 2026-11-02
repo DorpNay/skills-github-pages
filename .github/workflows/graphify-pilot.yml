@@ -94,15 +94,18 @@ jobs:
           # Graphify's generic YAML/TOML parser creates config-key nodes rather than useful
           # call relationships; keep those contracts in the curated architecture map instead.
           find "$STAGING" -type f \( -name '*.yaml' -o -name '*.yml' -o -name '*.toml' \) -delete
-          # index.md is the primary client and contains one large inline JavaScript block.
-          # Extract executable inline JS while preserving every source newline so line numbers
-          # map directly back to the original index.md.
+          # The primary client may be inline (legacy) or external (assets/js/app.js).
+          # Preserve inline source line mappings when present; otherwise Graphify parses
+          # the tracked external JavaScript file directly from the staging copy.
           python - <<'PY'
           from pathlib import Path
           import os
           import re
 
-          source_path = Path(os.environ["STAGING"]) / "index.md"
+          staging = Path(os.environ["STAGING"])
+          source_path = staging / "index.md"
+          if not source_path.is_file():
+              raise SystemExit("Refusing to graph without the primary index.md source")
           source = source_path.read_text(encoding="utf-8")
           masked = ["\n" if char == "\n" else "\r" if char == "\r" else " " for char in source]
           extracted = 0
@@ -118,11 +121,18 @@ jobs:
                   continue
               masked[start:end] = source[start:end]
               extracted += len(body.strip())
-          if extracted < 1000:
-              raise SystemExit(f"Refusing to graph an empty or unexpected inline script ({extracted} chars)")
-          target = Path(os.environ["STAGING"]) / "index-inline.js"
-          target.write_text("".join(masked), encoding="utf-8")
-          print(f"Extracted {extracted} inline JavaScript characters to {target}; source line numbers preserved from index.md")
+          if extracted >= 1000:
+              target = staging / "index-inline.js"
+              target.write_text("".join(masked), encoding="utf-8")
+              print(f"Extracted {extracted} inline JavaScript characters to {target}; source line numbers preserved from index.md")
+          else:
+              external_app = staging / "assets" / "js" / "app.js"
+              if not external_app.is_file() or external_app.stat().st_size < 1000:
+                  raise SystemExit(
+                      f"Refusing to graph: only {extracted} inline JavaScript characters "
+                      "and no substantial assets/js/app.js source were found"
+                  )
+              print(f"No substantial inline script; Graphify will parse external client source {external_app}")
           PY
           test -f "$STAGING/.graphifyignore"
           printf 'Tracked files in source commit: '
