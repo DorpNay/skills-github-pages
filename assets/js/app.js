@@ -418,7 +418,6 @@
     // lifecycle design. Drafts are never sent automatically.
     const CHAT_DRAFTS_STORAGE_KEY = 'ai_chat_drafts_v1';
     const MAX_CHAT_DRAFTS = 100;
-    const MAX_CHAT_DRAFT_LENGTH = 20000;
     let chatDrafts = loadChatDrafts();
     let chatDraftSaveTimer = null;
     function loadChatDrafts() {
@@ -430,7 +429,7 @@
         return Object.fromEntries(Object.entries(parsed)
           .filter(([chatId, value]) => chats.some(chat => chat.id === chatId) && typeof value === 'string' && value.length > 0)
           .slice(-MAX_CHAT_DRAFTS)
-          .map(([chatId, value]) => [chatId, value.slice(0, MAX_CHAT_DRAFT_LENGTH)]));
+          .map(([chatId, value]) => [chatId, value]));
       } catch (error) {
         console.warn('Черновики чатов не удалось прочитать; история чатов не затронута:', error);
         return Object.create(null);
@@ -445,7 +444,7 @@
     }
     function saveChatDraft(chatId = currentChatId, value = $('userInput')?.value || '', immediate = false) {
       if (!chats.some(chat => chat.id === chatId)) return;
-      const text = String(value).slice(0, MAX_CHAT_DRAFT_LENGTH);
+      const text = String(value);
       if (text) chatDrafts[chatId] = text;
       else delete chatDrafts[chatId];
       if (chatDraftSaveTimer) clearTimeout(chatDraftSaveTimer);
