@@ -2887,9 +2887,10 @@ test('chat row actions are grouped in the right-side menu and rename/clone work'
 
 test('chat menu export is scoped and chat import merges without replacing history', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const originalChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
   await page.locator('#userInput').fill('Keep this existing chat');
+  await expect.poll(() => page.evaluate(id => JSON.parse(localStorage.getItem('ai_chat_drafts_v1') || '{}')[id], originalChatId)).toBe('Keep this existing chat');
   await page.locator('[data-action="toggle-sidebar"]').click();
-  const originalChatId = await page.locator('#chatList [data-action="switch-chat"]').first().getAttribute('data-chat-id');
   const row = page.locator('#chatList .chat-row').first();
   await row.locator('.chat-row-menu > summary').click();
 
