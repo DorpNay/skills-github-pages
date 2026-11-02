@@ -42,14 +42,14 @@ permalink: /
             <section class="space-y-2" aria-labelledby="sharedMemoryTitle">
               <h4 id="sharedMemoryTitle" class="text-xs font-semibold text-amber-200" data-i18n="sharedMemoryTitle">Общая память</h4>
               <details id="sharedMemoryHelp" class="memory-help text-[10px] text-gray-500"><summary class="cursor-pointer select-none py-1" data-i18n="sharedMemoryHelpSummary">Об общей памяти</summary><p class="pl-2 pb-1 leading-relaxed text-gray-400" data-i18n="sharedMemoryHelp">Общие факты могут попасть внешнему провайдеру только при отдельном разрешении и если это допускает область памяти проекта.</p></details>
-              <div class="flex gap-1"><input id="sharedMemoryInput" type="text" maxlength="500" placeholder="Факт для общей памяти" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-shared-memory" class="bg-amber-800 hover:bg-amber-700 px-2 rounded text-xs" aria-label="Сохранить в общую память">＋</button></div>
+              <div class="flex gap-1"><input id="sharedMemoryInput" type="text" maxlength="500" placeholder="Факт для общей памяти" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-shared-memory" class="bg-amber-800 hover:bg-amber-700 px-2 rounded text-xs" aria-label="Сохранить в общую память">+</button></div>
               <div id="sharedMemoryBox" class="bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет общих заметок.</div>
               <label class="flex items-start gap-2 text-[10px] leading-relaxed text-gray-400"><input id="globalMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="globalMemoryOptIn">Разрешить подходящим заметкам общей памяти попадать в контекст запросов.</span></label>
             </section>
             <section class="space-y-2 border-t border-gray-800 pt-3" aria-labelledby="privateMemoryTitle">
               <h4 id="privateMemoryTitle" class="text-xs font-semibold text-emerald-200" data-i18n="privateMemoryTitle">Личная память</h4>
               <details id="privateMemoryHelp" class="memory-help text-[10px] text-gray-500"><summary class="cursor-pointer select-none py-1" data-i18n="privateMemoryHelpSummary">О личной памяти</summary><p class="pl-2 pb-1 leading-relaxed text-gray-400" data-i18n="privateMemoryHelp">Хранится локально в IndexedDB этого браузера. По умолчанию заметки не передаются в запросы; разрешение можно включить ниже.</p></details>
-              <div class="flex gap-1"><input id="memoryInput" type="text" maxlength="500" placeholder="Личный факт для локальной модели" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-memory" class="bg-blue-700 hover:bg-blue-600 px-2 rounded text-xs" aria-label="Сохранить в личную память">＋</button></div>
+              <div class="flex gap-1"><input id="memoryInput" type="text" maxlength="500" placeholder="Личный факт для локальной модели" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-memory" class="bg-blue-700 hover:bg-blue-600 px-2 rounded text-xs" aria-label="Сохранить в личную память">+</button></div>
               <div id="memoryBox" class="bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет личных заметок.</div>
             </section>
             <label class="flex items-start gap-2 border-t border-gray-800 pt-3 text-[10px] leading-relaxed text-gray-300"><input id="privateMemoryContextToggle" type="checkbox" class="mt-0.5"><span data-i18n="privateMemoryContextLabel">Разрешить использовать заметки личной памяти в контексте запросов.</span></label>
@@ -120,7 +120,7 @@ permalink: /
               
     
               <label for="projectMemoryInput" class="block text-[11px] text-gray-400" data-i18n="projectMemoryLabel">Добавить факт в память проекта</label>
-              <div class="flex gap-1"><input id="projectMemoryInput" type="text" maxlength="600" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Факт, решение или ограничение"><button type="button" data-action="add-project-memory" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Добавить факт">＋</button></div>
+              <div class="flex gap-1"><input id="projectMemoryInput" type="text" maxlength="600" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Факт, решение или ограничение"><button type="button" data-action="add-project-memory" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Добавить факт">+</button></div>
               <div id="projectMemoryBox" class="max-h-24 overflow-y-auto text-[11px] text-gray-400 space-y-1"></div>
               <section id="projectSourcesSection" class="rounded-xl border border-gray-800 p-3 space-y-1.5" aria-labelledby="projectSourcesTitle">
                 <h3 id="projectSourcesTitle" class="text-xs font-semibold" data-i18n="projectSourcesTitle">Источники проекта</h3>
@@ -161,7 +161,7 @@ permalink: /
       </div>
       <footer class="mt-4 flex justify-end gap-2">
         <button type="button" data-action="close-project-create" class="rounded-lg border border-gray-700 px-4 py-2 text-xs text-gray-300" data-i18n="cancel">Отмена</button>
-        <button type="button" data-action="create-project" class="rounded-lg border border-cyan-700 bg-cyan-900/70 px-4 py-2 text-xs font-semibold text-cyan-100" data-i18n="createProject">＋ Создать проект</button>
+        <button type="button" data-action="create-project" class="rounded-lg border border-cyan-700 bg-cyan-900/70 px-4 py-2 text-xs font-semibold text-cyan-100"><span aria-hidden="true" class="mr-1">+</span><span data-i18n="createProject">Создать проект</span></button>
       </footer>
     </section>
   </div>
@@ -360,7 +360,7 @@ permalink: /
     <p id="networkStatus" class="network-status hidden" role="status" aria-live="polite" aria-atomic="true"></p>
     <div class="flex gap-2 items-end" id="inputArea">
       <button id="contextPickerButton" type="button" data-action="toggle-request-context" aria-label="Выбрать контекст для следующего запроса" aria-expanded="false" title="Контекст этого запроса: выбрать проекты" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5 relative">◎<span id="requestContextCount" class="hidden absolute -top-1 -right-1 min-w-4 h-4 rounded-full bg-cyan-400 text-slate-950 text-[9px] font-bold items-center justify-center px-1">0</span></button>
-      <button type="button" data-action="attach-text-file" id="attachTextButton" aria-label="Добавить вложение" title="Выбрать фото, видео или файл любого формата" aria-expanded="false" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">＋</button>
+      <button type="button" data-action="attach-text-file" id="attachTextButton" aria-label="Добавить вложение" title="Выбрать фото, видео или файл любого формата" aria-expanded="false" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">+</button>
       <input type="file" id="mediaAttachmentInput" class="hidden" accept="image/*,video/*" multiple>
       <input type="file" id="textAttachmentInput" class="hidden" multiple>
       <textarea id="userInput" rows="1" maxlength="30000" placeholder="Напиши сообщение..." aria-label="Сообщение" data-i18n-placeholder="composerPlaceholder" class="flex-1 min-w-0 bg-gray-900 border border-gray-700 px-3 py-2.5 rounded-xl text-base outline-none resize-none max-h-32"></textarea>
