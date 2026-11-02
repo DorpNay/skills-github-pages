@@ -511,3 +511,24 @@ html[data-text-contrast="high"] #chatBox button:disabled {
   color:var(--ui-disabled-text)!important;
   -webkit-text-fill-color:var(--ui-disabled-text)!important;
 }
+
+/* Mobile composer: keep the message field full-width above the action row. */
+@media (max-width:420px) {
+  #inputArea {
+    display:grid!important;
+    grid-template-columns:repeat(4,44px);
+    justify-content:space-between;
+    align-items:end;
+    gap:8px!important;
+  }
+  #inputArea #userInput {
+    grid-column:1/-1;
+    grid-row:1;
+    width:100%;
+    min-width:0;
+  }
+  #inputArea #contextPickerButton { grid-column:1;grid-row:2; }
+  #inputArea #attachTextButton { grid-column:2;grid-row:2; }
+  #inputArea #voiceUnavailableButton { grid-column:3;grid-row:2; }
+  #inputArea #sendBtn,#inputArea #stopBtn { grid-column:4;grid-row:2; }
+}
