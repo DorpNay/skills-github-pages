@@ -908,3 +908,13 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Added Playwright coverage for selector presence, visible localized options, theme persistence and synchronization after using the header toggle.
 - Markup commit: `6a690ddf5dc6a792f929a4a1ae349df6b9d12042`; translation commit: `df5e1bd2de1fa924eb97da2958adafc32da1e38f`; E2E: `74de58706b28d55f405c238b916651c26281098d`. V8 syntax parsing passed; exact-head Quality/Chromium pending.
 - This fixes the observed `Missing required UI element #uiTheme` Integrity failure. Do not claim the gate passed until a new run on a head containing this repair completes.
+
+
+## Functions menu / Agent and Skills source audit — 2026-11-02
+
+- Audited `index.md`, `assets/js/app.js`, `assets/css/app.css` and `tests/e2e/app.spec.mjs` before proposing more menu work.
+- Existing Functions menu has four groups and working entry points for structured workflow, task profile and Research Studio, plus an integrations status view.
+- Existing roadmap disclosures already cover local files/folders, converters/extraction, Knowledge-to-Skill/Agent and audio/image/video. Existing agent panel already includes execution mode, team blueprint, use cases, 64 logical roles, orchestration modes, model/resource notes and capability boundaries. Existing Skills panel is a chat-scoped task profile, not a reusable Skill package loader.
+- Existing Playwright tests assert the four menu groups and bilingual labels, agent configuration grouping, future tickers, non-runtime disclosure, reduced-motion and pause. These tests were located in source but not executed in this session.
+- Added optional canonical checklist item 8.28 to clarify remaining gaps: registry/lifecycle for Agent Profiles and Skills, explicit capability status, task/run history only after durable AgentRun API, and no duplicate menu controls.
+- No UI source, runtime, dependency or feature flag changed in this documentation-only audit. Current PR #131 head requires fresh exact-head CI; native iPhone/VoiceOver and screenshot review remain separate gates.
