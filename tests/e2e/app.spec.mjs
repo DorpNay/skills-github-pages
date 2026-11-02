@@ -729,10 +729,13 @@ test('Skills panel separates the active chat profile from the planned package li
   await expect(library.locator('.roadmap-ticker-track').first()).toHaveCSS('animation-play-state', 'paused');
   await panel.locator('#skillRoadmapPause').uncheck();
 
+  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
   await selectLanguage(page, 'en');
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
   await expect(panel.locator('#skillTaskProfileTitle')).toContainText('Current chat profile');
   await expect(panel.locator('[data-i18n="skillScopeBadge"]')).toContainText('Available · this chat only');
-  await expect(summary).toContainText('Skill library · planned');
+  await expect(panel.locator('#skillLibraryDisclosure > summary')).toContainText('Skill library · planned');
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
 });
 
