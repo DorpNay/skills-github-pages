@@ -2,7 +2,16 @@
 
 This is the short entry point for an assistant or engineer. Use the detailed navigation index at `project-reference/FILE_ORIENTER_RU.md`, the machine-readable state at `docs/PROJECT_STATE.yaml`, and the chronological log at `docs/VOLLEY_LOG.md`.
 
-## Current working checkpoint — 2026-10-31
+## Current working checkpoint — 2026-11-02
+
+- **Current main SHA:** `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; four commits after functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82` modify only `docs/V1_UI_FINALIZATION_RU.md`.
+- **Open PR queue** excluding this PR #125: #124, #126, #127, #128, #129, #130, #131, #132. Open issue #111 remains the owner/live-host gate.
+- **PR #125** remains Draft / FUTURE — DO NOT MERGE, targeting `future-workstreams/parking-base-20261031`, not main. Skill Factory and Agent Builder supplement added in `docs/AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md`; no runtime, model download or dependencies added.
+- PR #131 remains the only Landing UI V2.0 implementation branch; its Functions menu and agent/skill roadmap controls were audited separately. Do not merge future PRs or synchronize branches without owner approval.
+- Snapshot, PROJECT_STATE, orienters and VOLLEY_LOG refreshed against main `0a1f764f`; exact-head Freshness/Quality/Provenance must be checked again. No CI pass is inferred from the refresh.
+- Last functional checkpoint remains PR #123; post-merge Pages deployment, live VPS/Ollama and target hardware remain unverified.
+
+## Historical checkpoint — 2026-10-31
 
 - **Current main SHA:** `e78a73b25725bfa63370d9946887cbbacbf51b82` — PR #123 merged; its exact head added redirect-safe GitHub freshness checks and the bounded local-model smoke harness.
 - **PR #121:** merged at `f4d880f9648989f4fe48ddd2284220b3606c3b86`; exact head `e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b`; all six workflow groups passed, including Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code.
