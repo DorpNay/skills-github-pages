@@ -10,7 +10,7 @@ project_state:
     technique_record: "docs/TECHNIQUE_REGISTER_RU.md#cross-session-coding-agent-handoff--source-validated-pattern-2026-11-02"
     maturity: "SOURCE-VALIDATED; bounded pilot applied; repeated-resumption benefit not yet measured"
   root_orienter:
-    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 open/unmerged; source/test HEAD 8f4a0a532639586f557c85156ede41810d4cc79b; base SHA e78a73b25725bfa63370d9946887cbbacbf51b82; mergeable=false. Quality #41415052330 passed on preceding bridge HEAD 331318b8cbe5f4911372e5013ae0e0dd4b882a9b: 4/4 Chromium shards (147 tests), syntax, Ruff/static analysis, Jekyll, Integrity, Security and Context; published-site smoke skipped. Graphify #41415488412 passed on 8f4a0a5: 3198 nodes / 8559 edges / 61 groups, including deterministic CSS/DOM/JS surface links. Native iPhone/VoiceOver/WCAG remain manual. No merge/rebase/sync/deploy."
+    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 open/unmerged; docs HEAD 7214672eac324a8afc75cf983d37d44f2807e3a4; source/test HEAD 8f4a0a532639586f557c85156ede41810d4cc79b; base SHA e78a73b25725bfa63370d9946887cbbacbf51b82; mergeable=false; main compare: 938 ahead / 4 behind, diverged. Quality #41415788458 passed 4/4 Chromium shards (147 tests), syntax, Ruff/static analysis, Jekyll, Integrity, Security and Context; published-site smoke skipped. Graphify #41415788526 and provenance #41415788503 passed on docs HEAD. Graphify: 3198 nodes / 8559 edges / 61 groups, including deterministic CSS/DOM/JS surface links. Native iPhone/VoiceOver/WCAG remain manual. No merge/rebase/sync/deploy."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 8
@@ -313,8 +313,8 @@ graphify_pilot_workflow:
   license_note: "PyPI release v0.9.96 says Apache-2.0; default-branch pyproject metadata appears stale/different (0.1.14/MIT); source provenance discrepancy recorded"
   runtime_dependency: false
   latest_pr131_run:
-    run_id: 41415488412
-    head: "8f4a0a532639586f557c85156ede41810d4cc79b"
+    run_id: 41415788526
+    head: "7214672eac324a8afc75cf983d37d44f2807e3a4"
     graphify: "0.9.96; code-only; semantic/model calls disabled"
     graph: "3198 nodes; 8559 edges; 61 groups (60 AST communities + UI Surface)"
     ast_baseline: "1209 nodes; 3322 edges; 60 communities; 76 code files"
@@ -331,7 +331,7 @@ graphify_ui_surface_bridge:
   evidence: "CSS/DOM/JS source extraction marked EXTRACTED; cross-file selector-name matches marked INFERRED"
   constraints: "no HTML runtime, backend, VPS, model calls, persistent graph store or new server dependency; artifacts retained 7 days"
   upstream_review: "Astria reviewed, not adopted; independent graph/schema and CSS extractor requires runtime validation"
-  exact_graphify_run: "41415488412 on 8f4a0a532639586f557c85156ede41810d4cc79b; 3198 nodes / 8559 edges / 61 groups"
+  exact_graphify_run: "41415788526 on docs HEAD 7214672eac324a8afc75cf983d37d44f2807e3a4; 3198 nodes / 8559 edges / 61 groups; Quality 41415788458 and provenance 41415788503 also passed on that docs HEAD"
   next: "review unmatched selector diagnostics against dynamic DOM/CSS sources; keep visual behavior acceptance grounded in Playwright/DOM/screenshots"
 
 
