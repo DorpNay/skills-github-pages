@@ -87,6 +87,24 @@ async function toggleHeaderTheme(page) {
   await page.locator('#headerThemeToggle').click();
 }
 
+async function openDisclosure(page, selector) {
+  const disclosure = page.locator(selector);
+  if (!(await disclosure.evaluate(element => element.open))) {
+    await disclosure.locator(':scope > summary').click();
+  }
+  await expect(disclosure).toHaveAttribute('open', '');
+}
+
+async function openSettingsCategory(page, category) {
+  await openDisclosure(page, '#additionalSettings');
+  await openDisclosure(page, '#additionalSettings details[data-settings-category="' + category + '"]');
+}
+
+async function openSearchToolsSettings(page) {
+  await openSettingsCategory(page, 'context');
+  await openDisclosure(page, '#searchToolsSettings');
+}
+
 async function selectLanguage(page, language) {
   const settings = page.locator('#settingsModal');
   const wasOpen = !(await settings.evaluate(element => element.classList.contains('hidden')));
@@ -165,7 +183,7 @@ test('global system prompt edit control is localized, keyboard-friendly, and ret
   await page.addInitScript(() => localStorage.setItem('ai_ui_language_v1', 'en'));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#additionalSettings > summary').click();
+  await openSettingsCategory(page, 'context');
   const prompt = page.locator('#systemPromptInput');
   const edit = page.locator('#editSystemPrompt');
   await expect(prompt).toHaveAttribute('readonly', '');
@@ -201,13 +219,17 @@ test('sidebar uses compact memory, collapsed projects, and expanded chats cards'
   await expect(page.locator('#functionsMenu [data-action="open-research-studio"]')).toHaveCount(0);
   await expect(page.locator('#deepResearchStudioButton[data-action="open-research-studio"]')).toHaveCount(1);
 
-  const createPositions = await sidebar.evaluate(root => ({
-    project: Array.prototype.indexOf.call(root.querySelector('#projectPanel').children, root.querySelector('[data-action="open-project-create"]')),
-    chats: Array.prototype.indexOf.call(root.querySelector('#chatSection').children, root.querySelector('[data-action="new-chat"]')),
-    chatList: Array.prototype.indexOf.call(root.querySelector('#chatSection').children, root.querySelector('#chatList'))
-  }));
-  expect(createPositions.project).toBeGreaterThanOrEqual(0);
-  expect(createPositions.chats).toBeLessThan(createPositions.chatList);
+  const createPositions = await sidebar.evaluate(root => {
+    const projectCreate = root.querySelector('#projectPanel [data-action="open-project-create"]');
+    const newChat = root.querySelector('#chatSection [data-action="new-chat"]');
+    const chatList = root.querySelector('#chatSection #chatList');
+    return {
+      projectCreateVisible: Boolean(projectCreate),
+      newChatBeforeList: Boolean(newChat && chatList && (newChat.compareDocumentPosition(chatList) & Node.DOCUMENT_POSITION_FOLLOWING))
+    };
+  });
+  expect(createPositions.projectCreateVisible).toBe(true);
+  expect(createPositions.newChatBeforeList).toBe(true);
 
   await page.locator('#memoryPanel > summary').click();
   await expect(page.locator('#memoryStatusLine')).toBeVisible();
@@ -841,7 +863,7 @@ test('aLandi aServi is exclusive while provider and additional settings can rema
 test('text readability preferences persist and apply in both themes', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#additionalSettings > summary').click();
+  await openSettingsCategory(page, 'appearance');
   await expect(page.locator('#readabilitySettings')).toBeVisible();
   await page.locator('#uiTextScale').evaluate(element => {
     element.value = '115';
@@ -881,7 +903,7 @@ test('text readability preferences persist and apply in both themes', async ({ p
   expect(previewFontSize).toBeGreaterThan(12);
 
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#additionalSettings > summary').click();
+  await openSettingsCategory(page, 'appearance');
   await page.locator('[data-action="reset-readability"]').click();
   await expect(page.locator('#uiTextScaleValue')).toHaveText('100%');
   await expect(page.locator('html')).toHaveAttribute('data-text-contrast', 'normal');
@@ -911,7 +933,7 @@ test('forced-colors mode preserves visible keyboard focus and control borders', 
 test('high-contrast preference updates every important text state in both themes', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#additionalSettings > summary').click();
+  await openSettingsCategory(page, 'appearance');
   await page.evaluate(() => {
     const content = document.createElement('div');
     content.className = 'assistant-content';
@@ -960,7 +982,7 @@ test('high-contrast preference updates every important text state in both themes
   await page.locator('[data-action="toggle-settings"]').click();
   const additionalSettings = page.locator('#additionalSettings');
   if (!(await additionalSettings.evaluate(element => element.open))) {
-    await page.locator('#additionalSettings > summary').click();
+    await openSettingsCategory(page, 'appearance');
   }
   await expect(page.locator('#uiTextContrast')).toBeVisible();
   const highLight = await readStates();
@@ -1119,7 +1141,7 @@ test('interactive controls avoid selection while editable fields and message tex
 test('composer position persists and aLandi is hidden from third-party provider selection', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#additionalSettings > summary').click();
+  await openSettingsCategory(page, 'appearance');
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
   await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
   await expect(page.locator('#providerExternalGroup')).not.toHaveAttribute('hidden', '');
@@ -1135,7 +1157,7 @@ test('composer position persists and aLandi is hidden from third-party provider 
   await page.locator('[data-action="save-settings"]').click();
   await page.reload();
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#additionalSettings > summary').click();
+  await openSettingsCategory(page, 'appearance');
   await expect(page.locator('#composerPosition')).toHaveValue('top');
   await expect(page.locator('body')).toHaveClass(/composer-at-top/);
 
@@ -1147,7 +1169,7 @@ test('composer position persists and aLandi is hidden from third-party provider 
   expect(bottomMessages.y).toBeLessThan(bottomComposer.y);
   await page.reload();
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#additionalSettings > summary').click();
+  await openSettingsCategory(page, 'appearance');
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
 });
 
@@ -1274,7 +1296,7 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await expect(page.locator('#apiKey')).toHaveAttribute('type', 'password');
   await expect(page.locator('#baseUrl')).not.toBeFocused();
   await expect(page.locator('#systemPromptInput')).toHaveAttribute('readonly', '');
-  await page.locator('#additionalSettings > summary').click();
+  await openSettingsCategory(page, 'context');
   await page.locator('#editSystemPrompt').click();
   await expect(page.locator('#systemPromptInput')).not.toHaveAttribute('readonly', '');
   await page.locator('#editSystemPrompt').click();
@@ -1316,8 +1338,7 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
   await page.locator('#providerPreset').selectOption('groq');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-groq-placeholder-not-a-real-key');
 
-  await page.locator('#additionalSettings > summary').click();
-  await page.locator('#searchToolsSettings > summary').click();
+  await openSearchToolsSettings(page);
   await page.locator('#tavilyKey').fill('e2e-tavily-placeholder-not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
@@ -1329,8 +1350,7 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
   await expect(page.locator('#apiKey')).toHaveValue('e2e-groq-placeholder-not-a-real-key');
   await page.locator('#providerPreset').selectOption('openrouter');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-openrouter-placeholder-not-a-real-key');
-  await page.locator('#additionalSettings > summary').click();
-  await page.locator('#searchToolsSettings > summary').click();
+  await openSearchToolsSettings(page);
   await expect(page.locator('#tavilyKey')).toHaveValue('e2e-tavily-placeholder-not-a-real-key');
 });
 
@@ -1490,11 +1510,11 @@ test('settings profile exports portable preferences but never API secrets', asyn
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#modelName').fill('openai/gpt-oss-120b');
   await page.locator('#apiKey').fill('e2e-private-provider-secret-value');
-  await page.locator('#additionalSettings > summary').click();
-  await page.locator('#searchToolsSettings > summary').click();
+  await openSearchToolsSettings(page);
   await page.locator('#tavilyKey').fill('e2e-private-search-secret-value');
   await page.locator('#allowCrossProviderFallback').check();
   await page.locator('[data-action="save-settings"]').click();
+  await openSettingsCategory(page, 'profile');
 
   const downloadPromise = page.waitForEvent('download');
   await page.locator('[data-action="export-settings-profile"]').click();
@@ -1520,10 +1540,10 @@ test('settings profile import restores preferences while preserving existing pro
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('before-import');
   await page.locator('#apiKey').fill('e2e-preserved-provider-secret');
-  await page.locator('#additionalSettings > summary').click();
-  await page.locator('#searchToolsSettings > summary').click();
+  await openSearchToolsSettings(page);
   await page.locator('#tavilyKey').fill('e2e-preserved-tavily-secret');
   await page.locator('[data-action="save-settings"]').click();
+  await openSettingsCategory(page, 'profile');
 
   const profile = {
     format: 'ai-mobile-agent-settings',
@@ -1977,7 +1997,7 @@ test('Obsidian Studio and Clean Light preferences persist and respect motion con
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_theme_v2'))).toBe('light');
 
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await page.locator('#additionalSettings > summary').click();
+  await openSettingsCategory(page, 'appearance');
   await page.locator('#uiMotion').selectOption('off');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_motion_v2'))).toBe('off');
@@ -1988,7 +2008,7 @@ test('Obsidian Studio and Clean Light preferences persist and respect motion con
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
 
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await page.locator('#additionalSettings > summary').click();
+  await openSettingsCategory(page, 'appearance');
   await page.locator('#uiMotion').selectOption('auto');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'auto');
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
@@ -3836,6 +3856,7 @@ test('planned agent and connector directions show a clearly non-runtime innovati
   await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
   const agentPanel = page.locator('#agentFunctionSettings');
   await expect(agentPanel).toBeVisible();
+  await openDisclosure(page, '#agentFunctionSettings .agent-future-groups > details:first-child');
   const agentTicker = agentPanel.locator('.roadmap-ticker-track').first();
   await expect(agentTicker).toBeVisible();
   await expect(agentTicker).toContainText('1ИÆИT10И');
@@ -3861,6 +3882,7 @@ test('application innovation ticker is static when reduced motion is requested',
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#functionsMenuSummary').click();
   await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  await openDisclosure(page, '#agentFunctionSettings .agent-future-groups > details:first-child');
   const ticker = page.locator('#agentFunctionSettings .roadmap-ticker-track').first();
   await expect(ticker).toBeVisible();
   expect(await ticker.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
@@ -4346,6 +4368,10 @@ test('chat-row project move can be undone without changing chat identity', async
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await ensureSidebarOpen(page);
+  const navigation = page.locator('#projectNavigationList');
+  if (await navigation.evaluate(element => element.classList.contains('hidden'))) {
+    await page.locator('#projectNavToggle').click();
+  }
   const chatId = 'undo-row-chat';
   const sourceGroup = page.locator('#projectNavigationList details[data-project-id="undo-row-source"]');
   if (!(await sourceGroup.evaluate(element => element.open))) await sourceGroup.locator(':scope > summary').click();
