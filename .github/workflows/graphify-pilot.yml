@@ -200,8 +200,9 @@ jobs:
           print("Top source files by node count:")
           for path, count in collections.Counter(node.get("source_file") for node in nodes if node.get("source_file")).most_common(12):
               print(f"  {count:4d}  {path}")
-          if not any(node.get("source_file") == "index-inline.js" for node in nodes):
-              raise SystemExit("Graphify did not include the extracted inline JavaScript from index.md")
+          client_sources = {"index-inline.js", "assets/js/app.js"}
+          if not any(node.get("source_file") in client_sources for node in nodes):
+              raise SystemExit("Graphify did not include either the legacy inline or external client JavaScript")
           PY
             echo
             echo "### Generated artifacts"
