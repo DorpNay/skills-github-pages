@@ -842,3 +842,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Added explicit focus restoration for Undo actions: after the inverse operation, focus returns to the affected visible chat row or falls back to the composer.
 - Added Playwright coverage that activates rename Undo with Enter and verifies both the previous title and the same chat row receives focus.
 - Source/test commits: `ccecba116a05f5e848805ad378edeffda1b0dd7a`, `45275d5ad854ccfdd73f3b24231c197eeac38c82`. Syntax parsing passed; browser execution pending.
+
+
+## V-2026-11-02-THEME-SELECTOR-INTEGRITY-REPAIR-001
+
+- Quality #1431 Integrity failed because `#uiTheme` was missing from advanced settings while `app.js` still required it during initialization and persistence.
+- Restored the selector in the existing appearance disclosure with RU/EN option labels; the header theme toggle remains synchronized through the existing `applyAppearance()` path.
+- Added Playwright coverage for presence, labels, persistence and header-toggle synchronization. Source/test checkpoint: `74de58706b28d55f405c238b916651c26281098d`. V8 syntax parsing passed; browser execution pending.
+- No dependency, backend, merge, rebase, main sync or deployment.
