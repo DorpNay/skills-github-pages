@@ -4163,6 +4163,8 @@ test('browser connectivity status is distinct from offline search and never retr
 
   const status = page.locator('#networkStatus');
   const composer = page.locator('#userInput');
+  await chooseSearchMode(page, 'offline');
+  await expect(page.locator('#offlineToggle')).toHaveText('Веб-поиск выключен');
   await expect(status).toBeHidden();
   await composer.fill('Keep this offline draft');
   await expect.poll(() => page.evaluate(() => {
@@ -4190,6 +4192,7 @@ test('browser connectivity status is distinct from offline search and never retr
     window.dispatchEvent(new Event('online'));
   });
   await expect(status).toBeHidden();
+  await expect(page.locator('#toast')).toContainText(/Повтори запрос вручную|Retry manually/i);
   await expect(composer).toHaveValue('Keep this offline draft');
   const messageCountAfterReconnect = await page.evaluate(() => {
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
