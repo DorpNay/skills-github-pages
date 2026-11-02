@@ -77,7 +77,7 @@ test('landing roadmap tickers start only when a planned item is opened', async (
   await first.locator('summary').click();
   await expect(first).toHaveAttribute('open', '');
   await expect(firstTicker).toBeVisible();
-  await expect(firstTicker).toContainText('1nv3nt10n 1n PrOc3ss');
+  await expect(firstTicker).toContainText('1ИV3ИT10И');
   expect(await firstTicker.evaluate(element => getComputedStyle(element).animationName)).toBe('innovation-marquee');
   await expect(first).toContainText('не сообщает о текущем выполнении фоновой задачи');
 
