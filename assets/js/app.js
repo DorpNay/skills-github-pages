@@ -4940,6 +4940,7 @@
       autoResizeTextarea($('userInput'));
       saveChatDraft(currentChatId, $('userInput').value);
     });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) saveChatDraft(currentChatId, $('userInput')?.value || '', true); });
     window.addEventListener('pagehide', () => saveChatDraft(currentChatId, $('userInput')?.value || '', true));
     let voiceHoldTimer=null,voiceHoldOpened=false;
     const showVoiceMenu=()=>{closeComposerPopovers();$('voiceMenu').classList.remove('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','true');syncComposerPopoverScrim();};
