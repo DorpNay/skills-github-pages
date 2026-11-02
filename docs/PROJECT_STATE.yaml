@@ -65,9 +65,9 @@ ui_v2_track:
   pull_request: 131
   branch: "feat/landing-v1-accessibility-responsive-20261031"
   status: "open_unmerged_owner_hold"
-  latest_documentation_head: "Quality/triage documentation synchronized through the current PR checkpoint; exact HEAD recorded in ORIENTER.md."
+  latest_documentation_head: "Pre-orientation documentation checkpoint 2d323e24c57ef4af95fce3cd3ec5a27c3ebab1d3; ORIENTER.md is refreshed immediately after this state checkpoint."
   latest_code_test_head: "f9ffad34ad067db4b3ce944f1811f4e8621a73e9; adds 8.3 mobile provider disclosure/keyboard regression to the 8.2, 8.9, 8.10, 8.16 and 8.21 slices. Tests authored; exact-head browser execution pending."
-  latest_quality_harness_head: "Push-triggered Quality #1334 on e5258a6 failed: Jekyll and Chrome setup passed, all four Chromium shards failed at the first Playwright step; root cause unavailable in current job metadata. New push-triggered run on 59e30a6 pending. Inspect Actions logs/diagnostics before changing workflow or tests."
+  latest_quality_harness_head: "Push-triggered Quality #1334 on e5258a6 failed: Jekyll and Chrome setup passed, all four Chromium shards failed at the first Playwright step; root cause unavailable in current job metadata. Later runs on 59e30a6 and 90ab0c1 were cancelled by newer pushes. Current push-triggered run(s) on 2d323e2 are pending/queued. Inspect Actions logs/diagnostics before changing workflow or tests."
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0; mandatory requirements 8.1-8.17 and optional owner proposals 8.18-8.27"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
   polish_register: "docs/LANDING_UX_POLISH_BACKLOG_RU.md (mirrors the consolidated residual list; not a separate backlog)"
@@ -86,8 +86,8 @@ ui_v2_track:
     wcag_contrast_ratios: "Not measured; computed-style assertions are not conformance evidence."
     live_gateway_provider: "Not verified; live smoke requires explicit owner approval."
   current_main_sha: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
-  branch_divergence: "Latest verified PR #131 compare before this documentation checkpoint: diverged, 740 ahead / 4 behind main, merge_base=e78a73b25725bfa63370d9946887cbbacbf51b82; main=0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. Four main-side commits touch only docs/V1_UI_FINALIZATION_RU.md. Preserve both versions; no rebase/sync without owner approval."
-  current_work_head: "Current documentation checkpoint is recorded in ORIENTER.md; latest verified PR HEAD before this state update was 59e30a604e30158040f469318771f6ed39328e5d."
+  branch_divergence: "Latest verified PR #131 compare at pre-orientation checkpoint 2d323e2: diverged, 742 ahead / 4 behind main, merge_base=e78a73b25725bfa63370d9946887cbbacbf51b82; main=0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. Four main-side commits touch only docs/V1_UI_FINALIZATION_RU.md. Preserve both versions; no rebase/sync without owner approval."
+  current_work_head: "Current documentation checkpoint is recorded in ORIENTER.md; latest verified PR HEAD before this state update was 2d323e24c57ef4af95fce3cd3ec5a27c3ebab1d3."
   current_work_summary: "Focused upstream review of Google Research Harness² and Hermes Agent v0.22.0–v0.22.5 documented in OPEN_SOURCE_TRIAGE; no runtime/dependency adopted. Also identified push-triggered Quality #1334 failure on e5258a6 and queued exact-next-head verification. Existing UI source/test work remains on PR #131."
   current_work_validation: "Control CSS commit a71dd925; typography CSS commit a3613f7; E2E commits 5d8b3ad, 1bb8780, 179adfb6, b0b18ea, a3a4668, 09dd9eb and 4720695. Tests authored only; exact-head browser execution remains pending. The workflow-run connector filters to pull_request events."
   control_sizing:
