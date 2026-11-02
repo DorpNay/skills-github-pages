@@ -273,3 +273,9 @@
 - Source/test HEAD: `45275d5ad854ccfdd73f3b24231c197eeac38c82`.
 - Undo actions now restore keyboard focus to the affected visible chat row (or composer fallback), rather than leaving focus on the toast button that disappears. The E2E regression activates rename Undo with Enter and checks title + focus.
 - Syntax parsing passed; browser execution pending. No merge, rebase, main sync or deployment.
+
+
+### Live Landing V2 continuation — theme selector Integrity repair (2026-11-02)
+
+- Quality #1431 failed Integrity because the required `#uiTheme` element was missing from advanced settings while `app.js` still depended on it. Restored the selector with RU/EN labels and added persistence/synchronization E2E coverage.
+- Source/test HEAD: `74de58706b28d55f405c238b916651c26281098d`. Syntax parsing passed; exact-head Quality/Chromium must confirm the repair. No merge or deployment.
