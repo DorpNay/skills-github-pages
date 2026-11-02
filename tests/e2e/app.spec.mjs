@@ -183,23 +183,36 @@ test('global system prompt edit control is localized, keyboard-friendly, and ret
   await expect(edit).toHaveAttribute('aria-label', 'Edit system prompt');
 });
 
-test('sidebar order separates memory, projects, status, chats, and research', async ({ page }) => {
+test('sidebar uses compact memory, collapsed projects, and expanded chats cards', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
-  const positions = await page.locator('#sidebar').evaluate(sidebar => [
-    sidebar.querySelector('#memoryPanel'),
-    sidebar.querySelector('#projectPanel'),
-    sidebar.querySelector('#projectStatusLine'),
-    sidebar.querySelector('#chatSection')
-  ].map(el => Array.prototype.indexOf.call(sidebar.children, el)));
-  expect(positions.every(Number.isInteger)).toBe(true);
-  expect(positions).toEqual([...positions].sort((a, b) => a - b));
-  await expect(page.locator('#projectPanel')).toContainText('Проект');
+
+  const sidebar = page.locator('#sidebar');
+  await expect(page.locator('#memoryPanel')).not.toHaveAttribute('open', '');
+  await expect(page.locator('#memoryStatusLine')).toBeHidden();
+  await expect(page.locator('#projectPanel')).toBeVisible();
+  await expect(page.locator('#projectNavigationList')).toHaveClass(/hidden/);
+  await expect(page.locator('#projectPanel [data-action="open-project-create"]')).toBeVisible();
+  await expect(page.locator('#chatSection')).toHaveAttribute('open', '');
+  await expect(page.locator('#chatSection [data-action="new-chat"]')).toBeVisible();
+  await expect(page.locator('#chatList')).toBeVisible();
+  await expect(page.locator('#projectStatusLine')).toContainText('Личный');
   await expect(page.locator('#sidebar [data-action="open-research-studio"]')).toHaveCount(0);
   await expect(page.locator('#functionsMenu [data-action="open-research-studio"]')).toHaveCount(0);
   await expect(page.locator('#deepResearchStudioButton[data-action="open-research-studio"]')).toHaveCount(1);
-  await expect(page.locator('#chatListNewButton')).toContainText('Новый личный чат');
-  await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте выкл.');
+
+  const createPositions = await sidebar.evaluate(root => ({
+    project: Array.prototype.indexOf.call(root.querySelector('#projectPanel').children, root.querySelector('[data-action="open-project-create"]')),
+    chats: Array.prototype.indexOf.call(root.querySelector('#chatSection').children, root.querySelector('[data-action="new-chat"]')),
+    chatList: Array.prototype.indexOf.call(root.querySelector('#chatSection').children, root.querySelector('#chatList'))
+  }));
+  expect(createPositions.project).toBeGreaterThanOrEqual(0);
+  expect(createPositions.chats).toBeLessThan(createPositions.chatList);
+
+  await page.locator('#memoryPanel > summary').click();
+  await expect(page.locator('#memoryStatusLine')).toBeVisible();
+  await expect(page.locator('#memoryStatusLine')).toContainText('Личная');
+  await expect(page.locator('#memoryStatusLine')).toContainText('Общая');
   await page.locator('#memoryToolsDetails > summary').click();
   await expect(page.locator('#privateMemoryHelp')).not.toHaveAttribute('open', '');
   await expect(page.locator('#sharedMemoryHelp')).not.toHaveAttribute('open', '');
@@ -208,27 +221,30 @@ test('sidebar order separates memory, projects, status, chats, and research', as
   await page.locator('#sharedMemoryHelp > summary').click();
   await expect(page.locator('#sharedMemoryHelp p')).toBeVisible();
   await page.locator('#globalMemoryToggle').check();
-  await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте вкл.');
-  await expect(page.locator('#projectStatusLine')).toContainText('Личный чат');
+  await expect(page.locator('#memoryStatusLine')).toContainText('Общая Вкл.');
+  await expect(page.locator('#projectStatusLine')).toContainText('Личный');
+
   const memoryOrder = await page.locator('#memoryToolsDetails > div').evaluate(root => [
     root.querySelector('#sharedMemoryTitle')?.closest('section'),
     root.querySelector('#privateMemoryTitle')?.closest('section'),
     root.querySelector('#privateMemoryContextToggle')?.closest('label')
   ].map(element => Array.prototype.indexOf.call(root.children, element)));
   expect(memoryOrder).toEqual([0, 1, 2]);
+
   await page.locator('#projectNavToggle').click();
-  await page.locator('#projectlessGroup > summary').click();
+  await expect(page.locator('#projectNavigationList')).not.toHaveClass(/hidden/);
   await page.locator('#chatSection > summary').click();
+  await expect(page.locator('#chatList')).toBeHidden();
+  await expect(page.locator('#projectStatusLine')).toBeHidden();
   await page.locator('#sidebar [data-action="close-sidebar"]').click();
   await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await expect(page.locator('#memoryToolsDetails')).not.toHaveAttribute('open', '');
+  await expect(page.locator('#memoryPanel')).toHaveAttribute('open', '');
   await expect(page.locator('#projectNavigationList')).not.toHaveClass(/hidden/);
-  await expect(page.locator('#projectlessGroup')).toHaveAttribute('open', '');
   await expect(page.locator('#chatSection')).not.toHaveAttribute('open', '');
   await page.locator('#chatSection > summary').click();
+  await expect(page.locator('#projectStatusLine')).toBeVisible();
 });
-
 test('project rows filter the Chats list without moving the current chat and create chats in the selected project', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
