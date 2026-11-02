@@ -200,3 +200,42 @@ Agent Supervisor + Policy Gate
 ## 10. Итоговая рекомендация
 
 Сделать aLandi не «чатом с 64 персонажами», а **multi-agent operating layer**: main model + минимум пять параллельных workers + dynamic task queue + durable run state + extensible professions/skills + provider-specific inference pools + independent verification. На малом VPS логические workers масштабируются независимо от локальных inference slots; для реальной параллельной генерации использовать разрешённые remote pools или измеренный local serving runtime. Это даёт путь к тысячам логических задач без тысячи постоянно работающих процессов.
+
+
+## 2026-11-02 — Agent capability catalogue and UI contract
+
+### User-facing taxonomy
+
+The Functions → Agents panel should be a capability catalogue, not a list of pretend-running agents. It must distinguish three states on every row:
+
+1. **Available now** — implemented, wired to a real handler, permissioned and covered by tests.
+2. **Blueprint only** — editable/saved design data that does not start execution.
+3. **In design** — roadmap item with no action control; show the aLandi `1ИÆИT10И` ticker and a plain-language limitation.
+
+Recommended sections, in this order:
+
+- **Use cases:** research/source verification; software planning/review; data analysis; product/due diligence; document and knowledge processing.
+- **Execution modes:** direct single-model response; current sequential four-stage workflow; future bounded fan-out/fan-in; future hierarchical delegation; future event-driven/durable tasks.
+- **Professions and roles:** the existing 64-role seed catalogue grouped into orchestration, research/evidence, engineering/QA, knowledge/skills, multimodal processing and operations. Sixty-four is not a hard cap and does not mean 64 running processes.
+- **Team blueprint:** scenario, role mix, task goal, output contract and budget. Values currently stored in chat settings are configuration notes only.
+- **Models and resources:** main model, optional helper role, exact model ID/digest/license, context/output limits, RAM/VRAM, concurrency and measured language coverage.
+- **Tools and permissions:** explicit read/write/network/memory/execute scopes, approval policy and audit trail. Role or skill names never grant capabilities.
+- **Run controls and outputs:** queue, progress, pause/resume/cancel, approvals, artifact list, errors, retry and final verification. Never expose hidden chain-of-thought.
+
+### Agent task packet and lifecycle
+
+Every independently scheduled worker should receive a typed packet with: run/task/parent IDs; objective; bounded input references; allowed capabilities; model policy; deadline; token/tool/output budgets; expected schema; cancellation signal; idempotency key; and evaluation contract. It must not inherit the whole chat history or unrestricted project access by default.
+
+Suggested durable states: `queued → planning → ready → running → waiting_approval / paused → verifying → succeeded | failed | cancelled | timed_out`. Persist append-only events and periodic snapshots. Recovery must resume from a verified checkpoint, not replay non-idempotent side effects.
+
+### Concurrency rule
+
+Keep logical worker concurrency separate from inference concurrency. The owner requirement for at least five independent workers alongside the main model must be met by independent task execution and state; it does not authorize loading five model checkpoints into an 8-GB host. Use bounded queues, main-request priority, backpressure, fairness and an explicit inference semaphore. GPU-only profiles fail closed when a compatible GPU or VRAM budget is unavailable.
+
+### Skills boundary
+
+Use the Agent Skills directory format as a separate future loader; preserve the existing `skills/*.txt` prompt-profile contract. A skill may describe procedures and suggest tools but must never grant filesystem/network/shell permissions or auto-execute scripts. Import requires provenance, license, injection scan, schema validation, generated eval questions and human approval. See the official [Agent Skills specification](https://agentskills.io/specification).
+
+### Interoperability
+
+Keep protocol layers distinct: [MCP](https://modelcontextprotocol.io/specification) exposes tools/context; [A2A 1.0.0](https://a2a-protocol.org/latest/specification/) coordinates independent agents and long-running tasks; [AG-UI 1.0](https://docs.ag-ui.com/spec/1.0) streams typed user-facing events. Do not implement all three at once or adopt a second orchestration runtime before a measured contract need.

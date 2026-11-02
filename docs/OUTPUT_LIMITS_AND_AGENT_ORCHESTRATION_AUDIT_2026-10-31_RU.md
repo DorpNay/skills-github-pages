@@ -194,3 +194,17 @@ Frontend сейчас не проверяет и не сохраняет `choice
 - [Gateway tests](https://github.com/DorpNay/skills-github-pages/blob/main/gateway/tests/test_app.py)
 - [Document extraction tests](https://github.com/DorpNay/skills-github-pages/blob/main/gateway/tests/test_document_extraction.py)
 - [Attachment E2E tests](https://github.com/DorpNay/skills-github-pages/blob/main/tests/e2e/document-attachments.spec.mjs)
+
+
+## 2026-11-02 — Output lifecycle and artifact contract
+
+A UI output menu should distinguish message text from generated artifacts. Each artifact needs: artifact ID, media type, byte size, source/run ID, content hash, creation time, storage location, retention, preview capability and export action. The interface must not show a download button until an artifact actually exists.
+
+For long outputs, use explicit states and controls:
+- streaming/in progress; complete; incomplete due to token limit; interrupted by provider; cancelled; failed; awaiting verification;
+- preserve provider finish reason and partial output metadata;
+- offer continue/retry only when the provider contract makes the action safe;
+- never silently truncate, duplicate a side effect or claim that a partial artifact is complete;
+- show user-facing progress/events, tool invocation/result summaries and verification status, not private reasoning.
+
+For converters and media generators, long-running jobs need durable job IDs, pollable state, cancellation, idempotent submission, retry-safe output retrieval, expiry and explicit storage quotas. The [Comfy API v2](https://docs.comfy.org/api-reference/v2/overview) is a useful reference for durable/pollable/cancelable workflow jobs and content-addressed assets, but is not adopted as a runtime dependency.

@@ -182,3 +182,43 @@ The model selects a supported conversion intent; server-side code chooses only a
 - [Pandoc](https://github.com/jgm/pandoc)
 - [LibreOffice](https://www.libreoffice.org/)
 - [FFmpeg](https://ffmpeg.org/)
+
+
+## 2026-11-02 — Conversion adapter registry and VERT decision
+
+### Normalized conversion pipeline
+
+Treat conversion as a set of typed adapters, not one universal "convert everything" switch:
+
+1. Detect format using extension **and** byte-level MIME/signature checks.
+2. Enforce size, page, duration, decompression and wall-clock budgets before parsing.
+3. Run the selected parser in an isolated, non-networked worker/process with bounded memory and temp storage.
+4. Normalize into a typed document representation: text blocks, headings, tables, formulas, image references, page numbers, bounding boxes, timestamps, source metadata and warnings.
+5. Preserve source hash and stable chunk IDs so citations point back to the original page/region/time.
+6. Offer explicit output profiles: readable Markdown, structured JSON, searchable text, extracted assets, subtitles/transcript, or code draft.
+7. Validate output and expose parser warnings/unsupported regions; never claim lossless conversion without a round-trip test.
+
+### Candidate adapters — reference only
+
+| Tool | Best-fit role | Integration caveat |
+|---|---|---|
+| [MarkItDown](https://github.com/microsoft/markitdown) | Lightweight office/web content → Markdown | Useful first benchmark; not a universal layout/OCR engine. |
+| [Docling](https://github.com/docling-project/docling) | Layout-aware documents, tables, figures, OCR and structured representation | Larger dependency/model footprint; benchmark on actual target hardware and exact format extras. |
+| [Unstructured](https://github.com/Unstructured-IO/unstructured) | Partitioning heterogeneous documents and chunking | Deployment and parser dependency surface can be substantial. |
+| [Pandoc](https://github.com/jgm/pandoc) | Markup/document format conversion | Not OCR or visual-layout understanding. |
+| LibreOffice headless | Office format rendering/conversion | Run isolated with profile/temp limits; do not expose arbitrary macro execution. |
+| FFmpeg | Audio/video demux, sampling, transcode and metadata | Strict codec, duration, stream-count and resource limits required. |
+
+Docling's official [supported-formats matrix](https://docling-project.github.io/docling/usage/supported_formats/) is the authoritative source for its current format coverage; do not infer support from file extensions alone.
+
+### Screenshot and webpage reverse engineering
+
+Separate two inputs:
+- **Visual screenshot/mockup → code draft:** [screenshot-to-code](https://github.com/abi/screenshot-to-code) is MIT, but its current self-host path uses a React/Vite frontend, FastAPI backend and model-provider keys. Use as a design reference or isolated spike, not as a dependency in the static app.
+- **Live webpage → code/source map:** use an explicit browser capture of DOM, computed styles, asset URLs and responsive states, then map nodes to screenshots. A screenshot alone cannot recover semantic intent, original component boundaries or source assets.
+
+All generated code must be reviewed for semantics, accessibility, responsive layout, asset provenance, external requests and unsafe scripts before preview or export.
+
+### VERT
+
+[VERT](https://github.com/VERT-sh/VERT) is AGPL-3.0 and [vertd](https://github.com/VERT-sh/vertd) is GPL-3.0. Treat these as strong copyleft deployment decisions, not neutral drop-in utilities. Benchmark permissive alternatives first; if VERT is still selected, require a separate legal/license review, process boundary and explicit owner approval. No VERT code or service is adopted by this research PR.
