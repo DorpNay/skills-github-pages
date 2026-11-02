@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-02"
   root_orienter:
-    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 open/unmerged; latest source/test commit d3a44807d9c9eb0dade5a3e0bf80065fa5ebfd45; base SHA e78a73b25725bfa63370d9946887cbbacbf51b82; mergeable=false. Skills panel separates the available chat-scoped task profile from the future shared Skill package library; RU/EN lifecycle and permission boundary added. Playwright regression authored, not executed; no exact-head workflow returned. No merge/rebase/sync/deploy."
+    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 open/unmerged; latest source/test commit baf6a96705a15466384ab2c9f1efce977e83d087; base SHA e78a73b25725bfa63370d9946887cbbacbf51b82; mergeable=false. Skills panel separates the available chat-scoped task profile from the future shared Skill package library; RU/EN lifecycle and permission boundary added. Playwright regression authored, not executed; CSS :has() fixes nested-label ticker pause; no exact-head workflow returned. No merge/rebase/sync/deploy."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 8
