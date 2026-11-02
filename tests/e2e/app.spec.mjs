@@ -3345,8 +3345,9 @@ test('icon-first controls keep an accessible name across header, sidebar and mes
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await ensureSidebarOpen(page);
-  const projectPanel = page.locator('#projectPanel');
-  if (!(await projectPanel.evaluate(element => element.open))) await projectPanel.locator(':scope > summary').click();
+  const projectNavigation = page.locator('#projectNavigationList');
+  if (!(await projectNavigation.isVisible())) await page.locator('#projectNavToggle').click();
+  await expect(projectNavigation).toBeVisible();
   const projectGroup = page.locator('#projectNavigationList details[data-project-id="icon-project"]');
   await expect(projectGroup).toBeVisible();
   if (!(await projectGroup.evaluate(element => element.open))) await projectGroup.locator(':scope > summary').click();
