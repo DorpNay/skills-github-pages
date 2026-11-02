@@ -129,3 +129,14 @@
 - The existing toast now supports an optional action button; one reversible action is implemented for moving a chat between project and personal scope.
 - Undo validates that the chat has not changed again and the original project still exists; otherwise it reports a conflict without overwriting current data. The action is bounded by the toast lifetime and is not persistent across reload.
 - Playwright coverage is authored, not yet executed. Detailed evidence and remaining scope: `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
+
+
+### 8.25 browser connectivity and draft flush — 2026-11-02
+
+- Composer now reports the browser's offline signal separately from offline search; reconnect asks for a manual retry and never resends a request. Drafts flush on hidden-tab `visibilitychange` and `pagehide`.
+- E2E coverage is authored for offline → online/no automatic retry and immediate draft flush. Not yet executed in Chromium.
+
+### 8.20 bounded Undo — both entry points — 2026-11-02
+
+- Undo for chat project moves is covered through the current-chat project selector and chat-row context menu. It restores only if the chat has not changed again and the original project still exists.
+- Both E2E tests are authored but not yet executed. This is a bounded in-memory action, not persistent command history.

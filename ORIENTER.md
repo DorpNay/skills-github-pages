@@ -245,3 +245,10 @@
 - Implemented a bounded Undo action for moving a chat between project and personal scope using the existing toast. It restores only when the chat is unchanged since the move and the original project still exists; newer state is never overwritten.
 - Added Playwright regression and a 44px accessible action target. V8 syntax and CSS brace checks passed; browser execution remains pending.
 - This is not yet persistent Undo history and does not cover rename, project deletion/cascade or settings. No new dependency, backend, merge, rebase, main sync or deployment.
+
+
+### Live Landing V2 continuation — Undo test coverage (2026-11-02)
+
+- Source/test HEAD: `f35f542070a261ddfe075d2cc0ee7281c0fdbe8b`.
+- Bounded Undo for chat project moves now has authored E2E coverage through both the current-chat selector and chat-row context menu. The tests verify restoration of the prior project assignment without changing chat identity.
+- Syntax checks passed; Chromium execution is pending. No new dependency, backend, merge, rebase, main sync or deployment.

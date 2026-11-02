@@ -901,3 +901,16 @@ landing_v2_bounded_undo_2026_11_02:
   source_checks: "V8 syntax parsing passed; CSS brace balance passed"
   limitations: "does not cover chat rename, project deletion/cascade, settings or persistent command history"
   safety_boundary: "no dependency, merge, rebase, main sync or deployment"
+
+
+landing_v2_bounded_undo_2026_11_02:
+  status: "partial implementation; both UI entry points covered by authored Playwright tests"
+  pr: 131
+  source_test_head: "f35f542070a261ddfe075d2cc0ee7281c0fdbe8b"
+  requirement: "8.20"
+  action: "undo one chat move between project and personal scope through the existing toast action"
+  safety: "undo applies only if chat still exists, assignment is unchanged since move, and original project still exists"
+  lifetime: "bounded by toast lifetime; in-memory only; not persisted across reload"
+  e2e: "current-chat project selector and chat-row context-menu move paths covered by authored tests; not executed yet"
+  source_checks: "V8 syntax parsing passed; CSS brace balance passed"
+  limitations: "does not cover chat rename, project deletion/cascade, settings or persistent command history"

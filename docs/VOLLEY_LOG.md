@@ -811,3 +811,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Playwright regression authored for the current-chat move → Undo path. V8 syntax and CSS brace checks passed; test not yet executed.
 - Source/CSS/test commits: `065451fe3501b0b2a90b6cd93e4161f1dd541849`, `31b816dd045ee1e6ad2d73caf5b160bd06ad58de`, `ba709ac95c8896581133dfcce02234281f75fd90`. Exact-head Quality is pending/cancelled by later pushes; fresh exact-head run required.
 - This is a one-action in-memory slice, not persistent Undo history. No dependency, backend, merge, rebase, main sync or deployment.
+
+
+## V-2026-11-02-CHAT-MOVE-UNDO-ENTRYPOINT-COVERAGE-001
+
+- Added a focused Playwright scenario for the chat-row context-menu move path, complementing the current-chat project-selector Undo regression.
+- The test verifies the same chat ID remains active and the original project assignment is restored after Undo.
+- Test commit: `f35f542070a261ddfe075d2cc0ee7281c0fdbe8b`; V8 syntax parsing passed. Both browser tests remain authored but unexecuted pending a fresh exact-head Quality/Chromium run.
+- No runtime code, dependency, storage schema, backend, merge or deployment change in this test-only extension.

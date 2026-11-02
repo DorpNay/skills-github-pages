@@ -349,3 +349,10 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Added bounded Undo for a chat's project move through the existing toast. The inverse operation validates the chat's current assignment and the original project's existence before restoring; conflicts never overwrite later user changes.
 - Added an accessible 44px toast action and Playwright regression. V8 syntax and CSS brace checks passed; Chromium test remains unexecuted.
 - This does not yet provide persistent command history or Undo for rename/project deletion/settings. Exact-head Quality still needs a fresh completed run.
+
+
+## Landing V2 — Undo entry-point coverage (2026-11-02)
+
+- Latest source/test checkpoint: `f35f542070a261ddfe075d2cc0ee7281c0fdbe8b`.
+- Undo for chat project moves is now covered through both the current-chat project selector and the chat-row context menu. The test confirms the original project assignment and chat identity are restored.
+- V8 syntax check passed; Chromium tests remain authored, not executed. Exact-head Quality must be checked after the final documentation push.

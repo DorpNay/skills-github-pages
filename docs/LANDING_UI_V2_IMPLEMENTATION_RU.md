@@ -864,3 +864,10 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Added Playwright coverage for moving the current chat to a project and undoing it through the toast action, including the touch target.
 - Source commit: `065451fe3501b0b2a90b6cd93e4161f1dd541849`; CSS: `31b816dd045ee1e6ad2d73caf5b160bd06ad58de`; E2E: `ba709ac95c8896581133dfcce02234281f75fd90`. V8 syntax parsing and CSS brace balance passed; Chromium execution remains pending.
 - Scope limitation: this is a one-action, in-memory undo window, not a persistent command history. Chat deletion still uses its existing last-closed-chat recovery; rename, project deletion/cascade and settings undo remain open. No new dependency or storage schema.
+
+
+## Bounded Undo — regression coverage for both entry points (2026-11-02)
+
+- Added a second Playwright scenario for the chat-row context-menu move path. Together with the existing current-chat project-selector test, both entry points now have explicit Undo coverage.
+- The regression verifies that Undo restores the original project assignment and preserves the same chat ID/current-chat identity.
+- Test commit: `f35f542070a261ddfe075d2cc0ee7281c0fdbe8b`. V8 syntax parsing passed; browser execution remains pending. No runtime behavior changed in this test-only extension.
