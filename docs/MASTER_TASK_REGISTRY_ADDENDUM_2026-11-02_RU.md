@@ -13,15 +13,15 @@
 
 ## A. Functions / Agents menu — PR #131
 
-- [ ] MENU-001 — провести инвентаризацию существующих реальных функций и сопоставить каждую с handler, permission, data scope и тестом.
-- [ ] MENU-002 — согласовать меню: Agents, Skills, Research, Files & Sources, Media & Converters, Models & Runtimes, Tasks & History.
-- [ ] MENU-003 — определить состояния Available / Blueprint only / In development / Unavailable; не показывать фиктивные start controls.
-- [ ] MENU-004 — унифицировать карточку агента: profession, skills, model, data scope, tools, mode, budgets, approvals, outputs.
-- [ ] MENU-005 — разнести режимы Ask / Plan / Research / Execute / Verify / Batch; показывать только реально подключённые режимы.
-- [ ] MENU-006 — добавить доступные настройки профиля, модели, навыков, разрешений, данных, ресурсов и истории.
-- [ ] MENU-007 — ticker `1ИÆИT10И` для roadmap-only capabilities с reduced-motion и screen-reader альтернативой.
-- [ ] MENU-008 — проверить mobile/keyboard/VoiceOver/RU-EN и отсутствие дублирующих controls.
-- [ ] MENU-009 — сохранить UX contract в `docs/AGENT_FUNCTIONS_MENU_INFORMATION_ARCHITECTURE_RU.md`; синхронизировать canonical UI checklist при следующем bounded docs update.
+- [~] MENU-001 — инвентаризация первично выполнена по `index.md`, `assets/js/app.js`, `assets/css/app.css` и E2E; полную матрицу handler/permission/data scope/evidence завершить.
+- [~] MENU-002 — базовая иерархия уже существует как 4 группы (task workflow, research/sources, create/transform, connections); расширить вложенные категории Agents/Skills/Files/Media/Models/Tasks без дублирования.
+- [~] MENU-003 — текущие roadmap items уже показывают non-runtime ticker и пояснение; формализовать единый status model для всех карточек.
+- [~] MENU-004 — текущий agent panel уже показывает mode, team blueprint, use cases, 64 roles, orchestration, models/resources and capabilities; добавить Skill binding, data scope, budgets, approvals and outputs по мере появления реальных handlers.
+- [~] MENU-005 — сейчас доступны direct response и sequential four-stage workflow; остальные режимы оставить roadmap-only до независимого runtime.
+- [~] MENU-006 — текущие chat profile/team blueprint controls существуют; расширенные model/skill/data/permission/resource/history controls требуют реальных backing APIs.
+- [x] MENU-007 — `1ИÆИT10И` tickers, pause controls, reduced-motion CSS and non-runtime notes already exist; E2E assertions are authored, exact-head execution pending.
+- [ ] MENU-008 — завершить mobile/keyboard/VoiceOver and duplicate-control review; RU/EN menu labels and initial Playwright assertions already exist.
+- [x] MENU-009 — supporting UX contract создан; он включает source audit and remaining gaps. Canonical UI checklist sync remains a separate bounded docs step.
 
 ## B. Skill Factory и Agent Builder — PR #125 / PR #128
 
