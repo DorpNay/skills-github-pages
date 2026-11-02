@@ -163,11 +163,11 @@ jobs:
             echo "### Extract"
             graphify extract . --code-only --no-gitignore --timing
             echo
-            echo "### Deterministic CSS / DOM / JavaScript surface bridge"
-            python scripts/graphify_ui_surface.py --root . --graph graphify-out/graph.json | tee "${{ runner.temp }}/graphify-ui-surface-summary.json"
-            echo
             echo "### Cluster"
             graphify cluster-only . --no-label
+            echo
+            echo "### Deterministic CSS / DOM / JavaScript surface bridge"
+            python scripts/graphify_ui_surface.py --root . --graph graphify-out/graph.json | tee "${{ runner.temp }}/graphify-ui-surface-summary.json"
             echo
             echo "### HTML export"
             graphify export html

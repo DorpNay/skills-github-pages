@@ -113,7 +113,7 @@ def add_edge(links: list[dict], known: set[tuple], edge: dict) -> None:
         known.add(key)
 
 
-def make_file_node(path: str) -> dict:
+def make_file_node(path: str, community: int) -> dict:
     name = Path(path).name
     return {
         "id": stable_id("file", path),
@@ -124,10 +124,12 @@ def make_file_node(path: str) -> dict:
         "source_file": path,
         "source_location": "L1",
         "ui_kind": "source_file",
+        "community": community,
+        "community_name": "UI Surface",
     }
 
 
-def make_selector_node(kind: str, selector: str, path: str, line: int, **extra) -> dict:
+def make_selector_node(kind: str, selector: str, path: str, line: int, community: int, **extra) -> dict:
     return {
         "id": stable_id(kind, path, line, selector),
         "label": selector,
@@ -138,6 +140,8 @@ def make_selector_node(kind: str, selector: str, path: str, line: int, **extra) 
         "source_location": f"L{line}",
         "ui_kind": kind,
         "ui_selector": selector,
+        "community": community,
+        "community_name": "UI Surface",
         **extra,
     }
 
@@ -261,6 +265,10 @@ def enrich_graph(root: Path, graph_path: Path) -> dict:
          edge.get("source_file"), edge.get("source_location"))
         for edge in links
     }
+    ui_community = max(
+        (int(node.get("community", -1)) for node in nodes if isinstance(node.get("community"), int)),
+        default=-1,
+    ) + 1
 
     css = collect_css(root)
     dom = collect_dom(root)
@@ -274,7 +282,7 @@ def enrich_graph(root: Path, graph_path: Path) -> dict:
 
     def ensure_file(path: str) -> str:
         if path not in file_nodes:
-            file_nodes[path] = add_node(nodes, known_nodes, make_file_node(path))
+            file_nodes[path] = add_node(nodes, known_nodes, make_file_node(path, ui_community))
         return file_nodes[path]
 
     css_by_selector: dict[str, list[str]] = defaultdict(list)
@@ -283,7 +291,7 @@ def enrich_graph(root: Path, graph_path: Path) -> dict:
     for record in css:
         file_id = ensure_file(record["path"])
         node = make_selector_node(
-            "css_selector", record["selector"], record["path"], record["line"],
+            "css_selector", record["selector"], record["path"], record["line"], ui_community,
             selector_text=record["selector_text"],
         )
         node_id = add_node(nodes, known_nodes, node)
@@ -295,7 +303,7 @@ def enrich_graph(root: Path, graph_path: Path) -> dict:
     for record in dom:
         file_id = ensure_file(record["path"])
         node_id = add_node(nodes, known_nodes, make_selector_node(
-            "dom_selector", record["selector"], record["path"], record["line"]
+            "dom_selector", record["selector"], record["path"], record["line"], ui_community
         ))
         dom_by_selector[record["selector"]].append(node_id)
         add_edge(links, known_edges, make_edge(
@@ -315,7 +323,7 @@ def enrich_graph(root: Path, graph_path: Path) -> dict:
     for record in js:
         file_id = ensure_file(record["path"])
         ref_id = add_node(nodes, known_nodes, make_selector_node(
-            "js_selector_reference", record["selector"], record["path"], record["line"],
+            "js_selector_reference", record["selector"], record["path"], record["line"], ui_community,
             expression=record["expression"],
         ))
         js_selector_ids.append(ref_id)
