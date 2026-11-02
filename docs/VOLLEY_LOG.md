@@ -748,3 +748,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Static analysis, Jekyll build and runner-provided Chrome/Playwright installation passed. All four real-Chromium shards failed at the first “Exercise the built app in Chromium” step; published-site smoke was skipped. The run-level conclusion is failure.
 - The accessible job metadata does not expose the Playwright stderr/log body, so the root cause is not yet established. Do not infer whether this is a test regression, discovery/configuration issue or webServer startup problem.
 - A fresh push-triggered Quality run was queued on research-doc checkpoint 59e30a604e30158040f469318771f6ed39328e5d; pending at time of this entry. No pass claimed.
+
+## V-2026-11-02-ORIENTER-RECONCILIATION-002
+
+- Reconciled the top-level orientation and canonical state against live PR #131 metadata. Current branch HEAD: 8a48ff50c930de4ebe054176b28428b9505017fe; PR open/unmerged; compare main 757 ahead / 4 behind, diverged.
+- Corrected the Quality #1334 narrative: the initial four-shard failure on e5258a6 was caused by a missing closing parenthesis in the 8.16 icon-name test; commit 76ef2aa fixes it. The fixed icon-name test passes in the latest run.
+- Latest exact-head Quality #41380618355 on 8a48ff5: static analysis, Jekyll, integrity/context/security sentinels and Chromium shards 1, 2 and 4 pass; shard 3 reports 32 passed / 1 failed. The remaining failure is the chat export/import regression expecting a per-chat draft in localStorage at app.spec.mjs:2951; observed undefined after 5 seconds. Published-site smoke skipped. Overall run remains failure; do not claim green.
+- Next action: inspect composer input event and saveChatDraft debounce/flush semantics around the failing assertion. Preserve the test contract; establish whether source behavior or test setup is wrong before editing.
+- Reconfirmed Harness² and Hermes Agent review is recorded in OPEN_SOURCE_TRIAGE_RU.md; no runtime/dependency adopted and the 60-repository list is not claimed as fully audited.
