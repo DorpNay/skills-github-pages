@@ -3990,10 +3990,12 @@ test('responsive visual review captures viewport and navigation evidence', async
 
       const header = await page.locator('.app-header').evaluate(element => ({
         titleWidth: Math.round(element.querySelector('#activeChatTitle').getBoundingClientRect().width),
-        clockDisplay: getComputedStyle(element.querySelector('.clock-face')).display
+        clockWidth: Math.round(element.querySelector('.clock-face').getBoundingClientRect().width),
+        wordmarkDisplay: getComputedStyle(element.querySelector('#brandWordmark')).display
       }));
       expect(header.titleWidth, `chat title width at ${width}px`).toBeGreaterThanOrEqual(70);
-      expect(header.clockDisplay, `decorative clock visibility at ${width}px`).toBe('none');
+      expect(header.clockWidth, `brand clock width at ${width}px`).toBeGreaterThanOrEqual(54);
+      expect(header.wordmarkDisplay, `compact wordmark at ${width}px`).toBe('none');
     }
 
     await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));

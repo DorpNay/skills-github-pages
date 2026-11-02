@@ -535,16 +535,11 @@ html[data-text-contrast="high"] #chatBox button:disabled {
   #inputArea #sendBtn,#inputArea #stopBtn { grid-column:4;grid-row:2; }
 }
 
-/* Keep the chat title legible on narrow screens without removing its accessible clock label. */
+/* Preserve 44px touch targets; reclaim redundant wordmark space on narrow screens. */
 @media (max-width:420px) {
-  .app-header .clock-face { display:none!important; }
+  .app-header { gap:4px!important; }
+  #brandWordmark { display:none!important; }
 }
 @media (max-width:360px) {
-  .app-header .header-icon {
-    width:36px!important;
-    height:36px!important;
-    min-width:36px!important;
-    min-height:36px!important;
-    padding:6px!important;
-  }
+  .app-header { gap:0!important;padding-inline:4px!important; }
 }
