@@ -4,7 +4,7 @@
 
 - Main V1: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; не менять.
 - PR #131: открыт, не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; source/test HEAD `8f4a0a532639586f557c85156ede41810d4cc79b`; base `e78a73b25725bfa63370d9946887cbbacbf51b82`; mergeable=false; rebase/sync/deploy не выполнять.
-- Quality #41415788458 passed on exact docs HEAD: 4/4 Chromium shards, 147 passed; static analysis, Jekyll, Integrity, Security and Context passed; published-site smoke skipped. Graphify #41415788526 and provenance #41415788503 passed on the same docs HEAD.
+- Quality #41416369361 passed on exact docs HEAD: 4/4 Chromium shards, 147 passed; static analysis, Jekyll, Integrity, Security and Context passed; published-site smoke skipped. Graphify #41416369353 and provenance #41416369253 passed on the same docs HEAD.
 - Graphify #41415488412 passed on `8f4a0a5`: 3,198 nodes / 8,559 edges / 61 groups; 77 source files. UI bridge: 776 CSS selector occurrences / 732 unique nodes, 536 DOM selector nodes, 780 JS reference occurrences / 717 unique nodes; 184 CSS/DOM matches and 306 JS/CSS matches. Artifact-only, seven-day retention.
 - Selector-name matches are partly INFERRED and do not prove computed browser styles; 351 DOM names without static CSS match and 43 CSS names without static DOM match are review diagnostics, not automatic bugs.
 - Screenshot evidence remains 320/360/390/768/1024/1440 px and desktop/mobile sidebar open; real iPhone Safari, VoiceOver, keyboard focus and full WCAG component review remain manual.

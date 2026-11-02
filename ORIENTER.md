@@ -3,11 +3,11 @@
 ## Current working checkpoint — 2026-11-02, Graphify UI surface bridge
 
 - Source of truth: `DorpNay/skills-github-pages`; main remains stable V1 at `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`.
-- PR #131 remains open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`; docs HEAD `7214672eac324a8afc75cf983d37d44f2807e3a4`, source/test HEAD `8f4a0a532639586f557c85156ede41810d4cc79b`, base `e78a73b25725bfa63370d9946887cbbacbf51b82`, mergeable=false; main compare is 938 ahead / 4 behind. No merge, rebase, main sync or deployment.
+- PR #131 remains open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`; docs HEAD `d4ceaf84e945ddee0401ec615416ebaba5361c98`, source/test HEAD `8f4a0a532639586f557c85156ede41810d4cc79b`, base `e78a73b25725bfa63370d9946887cbbacbf51b82`, mergeable=false; main compare is 938 ahead / 4 behind. No merge, rebase, main sync or deployment.
 - OLEDUE remains the handoff trigger; ORIENTER is the record map, FILE_ORIENTER the current checkpoint, PROJECT_STATE the structured snapshot, VOLLEY the chronological evidence. Live GitHub overrides all stored SHAs.
 - Graphify #41415488412 passed on the source/test HEAD: 3,198 nodes / 8,559 edges / 61 groups, 77 source files. Deterministic CI-only bridge now maps CSS selectors, DOM ids/classes and JavaScript references into the disposable graph. No model calls or server/runtime dependency.
 - UI surface evidence: 776 CSS selector occurrences / 732 unique nodes; 536 DOM selector nodes; 780 JS reference occurrences / 717 unique nodes; 184 CSS↔DOM name matches and 306 JS→CSS matches. Cross-file selector matches remain INFERRED, not browser-computed-style proof.
-- Quality #41415788458 passed on exact docs HEAD: 4/4 Chromium shards, 147 passed; syntax, Ruff/static analysis, Jekyll, Integrity, Security and Context passed; published-site smoke skipped. Graphify #41415788526 and provenance #41415788503 also passed on the same docs HEAD.
+- Quality #41416369361 passed on exact docs HEAD: 4/4 Chromium shards, 147 passed; syntax, Ruff/static analysis, Jekyll, Integrity, Security and Context passed; published-site smoke skipped. Graphify #41416369353 and provenance #41416369253 also passed on the same docs HEAD.
 - Astria was reviewed but not adopted: separate graph/schema, not a drop-in Graphify plugin. See `docs/TECHNIQUE_REGISTER_RU.md`.
 - Next: finish exact-head CI after the documentation checkpoint, then review unmatched selector diagnostics without treating them as automatic defects; continue mandatory Landing 2.0 UI acceptance and native iPhone/VoiceOver/WCAG checks.
 
