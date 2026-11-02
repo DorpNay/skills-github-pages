@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-03"
   handoff_protocol:
-    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 open/unmerged on feat/landing-v1-accessibility-responsive-20261031; code/test HEAD 765138e74e141aaf1471c6351193d98dda8a0df8; base/merge-base e78a73b25725bfa63370d9946887cbbacbf51b82; compare main diverged, 952 ahead / 4 behind. Local Team Blueprint library implemented; static checks pass, exact-head Quality/Chromium has no workflow run/status yet. No merge/rebase/sync/deploy."
+    status: "IMPLEMENTED; repository-backed OLEDUE trigger with live-state verification and compact continuation checkpoint"
     entrypoint: "OLEDUE.md"
     trigger: "oledue"
     checkpoint_fields: "goal/acceptance; done; in-flight/blocked; exact repo/branch/PR/HEAD/base; files/commits; exact checks and tested SHA; decisions/constraints; one next action"
@@ -10,7 +10,7 @@ project_state:
     technique_record: "docs/TECHNIQUE_REGISTER_RU.md#cross-session-coding-agent-handoff--source-validated-pattern-2026-11-02"
     maturity: "SOURCE-VALIDATED; bounded pilot applied; repeated-resumption benefit not yet measured"
   root_orienter:
-    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 open/unmerged on feat/landing-v1-accessibility-responsive-20261031; live branch HEAD before this docs record ea0457ec38931e7a0a1cff788970d1ac4a292acc; source/test HEAD 8f4a0a532639586f557c85156ede41810d4cc79b; base e78a73b25725bfa63370d9946887cbbacbf51b82; compare main: diverged, 940 ahead / 4 behind. Current HEAD had zero workflow runs and zero commit statuses. Prior docs HEAD d4ceaf84e945ddee0401ec615416ebaba5361c98: Quality #41416369361 passed 4/4 Chromium shards (147 tests) and required sentinels; Graphify #41416369353 and provenance #41416369253 passed; published-site smoke skipped. Selector triage completed; native iPhone/VoiceOver/WCAG remain manual. No merge/rebase/sync/deploy."
+    status: "Main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 open/unmerged on feat/landing-v1-accessibility-responsive-20261031; code/test HEAD 765138e74e141aaf1471c6351193d98dda8a0df8; base/merge-base e78a73b25725bfa63370d9946887cbbacbf51b82; compare main diverged, 952 ahead / 4 behind. Local Team Blueprint library implemented; static checks pass, exact-head Quality/Chromium has no workflow run/status yet. No merge/rebase/sync/deploy."
     branch: "main"
     base_main: "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1"
     open_prs_at_checkpoint: 8
