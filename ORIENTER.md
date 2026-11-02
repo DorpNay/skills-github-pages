@@ -1,15 +1,16 @@
-# aLandi — project orientation\n\n> **Handoff trigger:** when the owner sends `oledue`, start with root `OLEDUE.md`. It defines the short, repository-backed resume protocol; verify all live SHAs and checks before acting.
+# aLandi — project orientation
 
-## Current working checkpoint — 2026-11-02, Graphify UI surface bridge
+> **Handoff trigger:** when the owner sends `oledue`, start with root `OLEDUE.md`. It defines the short, repository-backed resume protocol; verify all live SHAs and checks before acting.
 
-- Source of truth: `DorpNay/skills-github-pages`; main remains stable V1 at `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`.
-- PR #131 remains open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`; docs HEAD `d4ceaf84e945ddee0401ec615416ebaba5361c98`, source/test HEAD `8f4a0a532639586f557c85156ede41810d4cc79b`, base `e78a73b25725bfa63370d9946887cbbacbf51b82`, mergeable=false; main compare is 938 ahead / 4 behind. No merge, rebase, main sync or deployment.
-- OLEDUE remains the handoff trigger; ORIENTER is the record map, FILE_ORIENTER the current checkpoint, PROJECT_STATE the structured snapshot, VOLLEY the chronological evidence. Live GitHub overrides all stored SHAs.
-- Graphify #41415488412 passed on the source/test HEAD: 3,198 nodes / 8,559 edges / 61 groups, 77 source files. Deterministic CI-only bridge now maps CSS selectors, DOM ids/classes and JavaScript references into the disposable graph. No model calls or server/runtime dependency.
-- UI surface evidence: 776 CSS selector occurrences / 732 unique nodes; 536 DOM selector nodes; 780 JS reference occurrences / 717 unique nodes; 184 CSS↔DOM name matches and 306 JS→CSS matches. Cross-file selector matches remain INFERRED, not browser-computed-style proof.
-- Quality #41416369361 passed on exact docs HEAD: 4/4 Chromium shards, 147 passed; syntax, Ruff/static analysis, Jekyll, Integrity, Security and Context passed; published-site smoke skipped. Graphify #41416369353 and provenance #41416369253 also passed on the same docs HEAD.
-- Astria was reviewed but not adopted: separate graph/schema, not a drop-in Graphify plugin. See `docs/TECHNIQUE_REGISTER_RU.md`.
-- Next: finish exact-head CI after the documentation checkpoint, then review unmatched selector diagnostics without treating them as automatic defects; continue mandatory Landing 2.0 UI acceptance and native iPhone/VoiceOver/WCAG checks.
+## Current working checkpoint — 2026-11-03, Graphify selector triage
+
+- Source of truth: `DorpNay/skills-github-pages`; `main` remains stable V1 at `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`.
+- PR #131 remains open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`. Live branch HEAD before this documentation record: `ea0457ec38931e7a0a1cff788970d1ac4a292acc`; source/test HEAD: `8f4a0a532639586f557c85156ede41810d4cc79b`; base/merge-base: `e78a73b25725bfa63370d9946887cbbacbf51b82`. Compare with main: diverged, 940 ahead / 4 behind. Four main-side commits modify only the shared `docs/V1_UI_FINALIZATION_RU.md`; no rebase or synchronization.
+- PR conversation comments: 0; submitted reviews: 0; inline review threads: 0. Current pre-update HEAD `ea0457e` had zero workflow runs and zero commit statuses. Prior docs HEAD `d4ceaf84e945ddee0401ec615416ebaba5361c98`: Quality #41416369361 passed 4/4 Chromium shards (147 tests) and required sentinels; Graphify #41416369353 and provenance #41416369253 passed. Published-site smoke skipped.
+- Graphify UI bridge source/test checkpoint `8f4a0a5`: 3,198 nodes / 8,559 edges / 61 groups. Selector triage: 351 DOM/no-static-CSS and 43 CSS/no-static-DOM are static name-join diagnostics, not defect counts. Of 43 CSS candidates, 36 have literal markup/JS references (often dynamically generated); seven have no literal reference and remain cleanup candidates only. No selectors removed.
+- The Graphify artifact is artifact-only; selector relationships marked INFERRED do not prove computed browser styles or runtime behavior. See `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md` for the source cross-check and limits.
+- No merge, deploy, rebase, main sync or destructive cleanup. Main remains the stable V1 publication.
+- **Next:** continue mandatory owner checklist 8.1–8.17 using browser/device evidence. Prioritize real iPhone Safari/VisualViewport/safe-area, VoiceOver, keyboard focus and full component-level WCAG; then select one bounded correction. Project Sources CRUD remains blocked until a real scoped source-list API exists.
 
 
 ## Record ownership
