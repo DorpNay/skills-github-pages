@@ -662,3 +662,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - Source commits: `a2db7904d1a18609f467829c4339ccd52dfa8883`, `9b190d1ebb521cc8f30c8fe13c15c224b89facca`, `7d447c34e37c20f75fc3c1da5f163ece93a2b04a`; Playwright regression commit: `2257010cef98c3afcf093eb73728a8b90d2c869f`.
 - Test covers isolation across two chats, reload restoration and no implicit message submission. It is authored, not yet executed on this exact HEAD.
 - No new dependency/backend route/provider, no main synchronization, merge or deployment. Await automatic exact-head Quality/Chromium and inspect any failures before further scope.
+
+## V-2026-11-02-SIDEBAR-GESTURE-CANCELLATION-001
+
+- Added a `pointercancel` reset beside the existing `touchcancel` reset for the local sidebar close gesture (8.1/8.26). No document-wide edge swipe or global gesture interception was introduced.
+- Extended Playwright regression: vertical movement does not close the sidebar; touchcancel and pointercancel cancel pending close; a later deliberate horizontal swipe closes it; project disclosure state remains open.
+- Source commit: `050f25ef41942b2f522607cc117d15af2b373043`; test commit: `0a76e63df790977cd6ed0540233528e3102a7d9a`.
+- Test authored, not yet executed on the latest documentation HEAD. Native iPhone Safari and VoiceOver remain manual gates. No merge, rebase, main change or deployment.
