@@ -325,8 +325,10 @@ permalink: /
       <details id="functionsMenu" class="toolbar-menu flex-1 min-w-0">
         <summary id="functionsMenuSummary" class="toolbar-menu-summary" data-i18n="functionsMenuLabel">Функции ▾</summary>
         <div class="toolbar-menu-panel toolbar-menu-panel-right">
+          <p class="toolbar-menu-group-label" data-i18n="functionMenuWorkGroup">Работа с задачей</p>
           <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option" data-i18n="functionAgents">🧭 Структурированный разбор</button>
           <button type="button" data-action="open-function-panel" data-function="skills" class="toolbar-menu-option" data-i18n="functionSkills">🧩 Профиль задачи</button>
+          <p class="toolbar-menu-group-label" data-i18n="functionMenuConnectionsGroup">Подключения</p>
           <button type="button" data-action="open-function-panel" data-function="connectors" class="toolbar-menu-option" data-i18n="functionConnectors">🔌 Интеграции</button>
         </div>
       </details>
