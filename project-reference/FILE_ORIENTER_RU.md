@@ -8,12 +8,26 @@
 - PR #127 — this continuity/master-registry PR, branch `docs/continuity-master-registry-20261031`, target main. New task delta: `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md`; parent lossless inventory remains `docs/MASTER_TASK_REGISTRY_RU.md`.
 - Exact open PR queue excluding PR #127: #124, #125, #126, #128, #129, #130, #131, #132. Open issue #111 remains the only owner/live-host gate.
 - Exact snapshot marker: open PRs (8): #124, #125, #126, #128, #129, #130, #131, #132. Exact snapshot marker: open issues (1): #111.
-- PR #131 current HEAD `dfe88836eb69f06e189b7f19c150fd06d2369b54`, target main; 4 commits behind and GitHub reports mergeable=false because the four main-side commits modify the shared `docs/V1_UI_FINALIZATION_RU.md`. No rebase, merge or deployment performed.
-- PR #131 source audit: function menu already has four groups; agent panel already has execution mode, team blueprint, use cases, 64 logical roles, orchestration modes, model/resource and capability disclosures; Skills panel has chat-scoped task profiles and future library tickers. `1ИÆИT10И` roadmap items already cover local files, converters, Knowledge-to-Skill/Agent and media. Existing E2E assertions are authored; no current-head execution claim.
+- PR #131 current HEAD `4afd4f4e931afd72366a7e1f896e79d0e245c40e`, target main; GitHub reports mergeable=false because main-side checklist commits modify the shared `docs/V1_UI_FINALIZATION_RU.md`. No rebase, merge or deployment performed.
+- PR #131 source audit: Functions menu has four groups and five roadmap cards (Deep Research 2.0 plus local files, converters, Knowledge-to-Skill/Agent and media). Research Studio is not in Functions; its single working entry remains under Thorough/deep-research controls. Agent panel separates current sequential workflow, blueprint-only team settings and future role/model/permission capabilities. Skills panel has chat-scoped profiles and a planned reusable library.
+- Quality #1459 / run `41394371283` failed Integrity because Research Studio was duplicated in Functions; this is fixed. Quality #1490 / run `41395138892` passed Integrity/Jekyll/Security/Context/static analysis but failed Chromium shards on stale menu count, nested memory-panel visibility, project-move test setup/toast queue and mobile geometry. Test fixtures/selectors and CSS corrections were committed through `283b00c`, `4939393` and `4afd4f4`. Quality #1501 / run `41396107451` is pending on exact HEAD `4afd4f4`; jobs had not appeared at last check. Graphify #461 / run `41396107463` queued on the same HEAD. No exact-head pass claimed.
 - PR #131 supporting UX audit: `docs/AGENT_FUNCTIONS_MENU_INFORMATION_ARCHITECTURE_RU.md`. Continue from existing implementation; do not duplicate menu controls or represent blueprint as runtime.
 - Future research PRs remain isolated on `future-workstreams/parking-base-20261031`: #125 Agent Studio, #128 Agent Workforce, #129 Voice, #130 Deep Research. All remain Draft/HOLD.
 - New task IDs are grouped by workstream in the addendum: MENU; SF/AB/AW/VERT; AUDIO-GEN; LSV/CONV/VIDEO/ARCHIVE. These are plans, not implementation evidence.
 - Verification: PR #127 Freshness run `41394232537` failed before this refresh because main had advanced from e78a73b to 0a1f764f and PR #132 was newly open. Provenance passed on the earlier head; Quality was still running. Exact-head checks must be re-read after this refresh. No model download, local device file access, new dependency, runtime change or deployment occurred.
+
+
+
+## 0.1. 90-second orientation protocol
+
+1. Read live GitHub main SHA and the full open-PR queue; do not infer current state from this file.
+2. Read the active PR's HEAD, base SHA, mergeability and last commit file list.
+3. Query the latest Quality run for that exact HEAD; inspect failed job logs, not just the red/green badge. Confirm Graphify separately.
+4. Read root ORIENTER, this live checkpoint, PROJECT_STATE and the last VOLLEY_LOG entry.
+5. Open only the canonical task doc and source/test files needed for the next bounded change.
+6. Before writing, re-fetch the branch HEAD; update with expected SHA. After writing, re-read the PR HEAD and exact-head runs.
+
+A pending run is not a pass; a passed run on a parent SHA is not an exact-head pass; a test-authored status is not a test-executed status.
 
 ## Историческая контрольная точка — 2026-10-28
 
