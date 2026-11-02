@@ -1,13 +1,15 @@
 # aLandi — project orientation
 
-## Current working checkpoint — 2026-11-02, Landing V2 information architecture
+## Current working checkpoint — 2026-11-02, Landing V2 capability menu
 
-- **Source of truth:** `DorpNay/skills-github-pages`; GitHub is canonical.
-- **Main / PR:** main retains stable V1. PR #131 is open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`; latest code/test checkpoint `79790a018234b0f141f7ee902430165f6471a920`; docs state snapshot at `5e7faea91bb3b88384b75f68f6f5ac8ae313b3d8`; source/test HEAD is `79790a018234b0f141f7ee902430165f6471a920`. PR reports mergeable=false; four main-side checklist commits remain unsynchronized. No merge, rebase, deployment or Pages overwrite.
-- **Landing V2 IA slice:** Additional Settings are grouped into three purpose-based disclosures (Appearance/comfort; Search/instructions; Profile/backups). Function menu has Task workflow and Connections labels; structured-workflow panel separates execution mode and blueprint parameters. RU/EN labels and focused Playwright tests were added; current data IDs, storage and feature boundaries are preserved.
-- **Graphify:** run `41389386456` succeeded on exact source/test HEAD `79790a01`. Quality #1398 / run `41389870537` is pending (jobs not yet available); no exact-head Chromium/Quality pass is claimed. The previous Quality #1359 pass (134 tests on checkpoint `12803232`) is historical evidence only.
-- **Preview:** the sole GitHub Pages target is production V1; V2 preview is not configured. Vercel context exposes zero teams and project search returned zero projects. Do not overwrite Pages V1 or create a separate repository without explicit approval.
-- **Remaining acceptance:** inspect Quality run and fix regressions; screenshot review at 320/360/390/768/1024/1440px; native iPhone Safari/keyboard/VisualViewport/safe-area, VoiceOver and full component WCAG review. Obtain owner approval for an isolated preview target if a live URL is required.
+- Source of truth: GitHub repository DorpNay/skills-github-pages. Main remains the stable V1 publication.
+- Live main: 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1. PR #131 is open/unmerged on feat/landing-v1-accessibility-responsive-20261031, HEAD dfe88836eb69f06e189b7f19c150fd06d2369b54, base main. GitHub reports mergeable=false because four main-side checklist commits remain unsynchronized. No merge, rebase, force-push or deployment.
+- Latest exact-head checks: Graphify Code-Only #458 / run 41395138914 passed on dfe88836. Quality #1490 / run 41395138892 is pending; jobs had not appeared at last inspection. No exact-head Quality/Chromium pass is claimed.
+- Last Integrity finding: Quality #1459 on 0e327df failed because Research Studio was duplicated as a top-level Functions item. The duplicate menu action has been removed; Research Studio remains nested in Thorough/deep-research controls. Functions now shows a roadmap-only Deep Research 2.0 card instead. E2E assertion updated. The older #uiTheme Integrity failure was separately repaired in 74de587.
+- Current Functions UI: four groups (task workflow; research/sources; create/transform; connections), five roadmap cards (one Deep Research 2.0 plus four local-source/converter/Knowledge-to-Skill/media cards), pause controls and reduced-motion support.
+- Agents/Skills: agent panel distinguishes current sequential four-stage single-model workflow from blueprint-only team settings and future independent workers. It describes use cases, 64 logical roles, orchestration, small-model/resource policy and capability boundaries. Skills remain chat-scoped task profiles; reusable versioned Skill library is future work.
+- Cross-workstream research: PR #125 Agent Studio; #128 Agent Workforce/worker and Skill safety; #129 Voice/audio generation; #130 Deep Research/local source vault/converters. These remain isolated Draft/HOLD branches. PR #127 carries the master task addendum; PR #132 is a continuity backup. The owner-provided 60 repositories remain reference-only until individually reviewed.
+- Orientation method: verify live main + active PR HEAD/base → latest exact-head Quality jobs/logs → ORIENTER/FILE_ORIENTER/PROJECT_STATE/newest VOLLEY entry → task-specific files only. Never trust a stored SHA or pending run as current evidence.
 
 ## First-read order
 
@@ -15,7 +17,8 @@
 2. **`docs/PROJECT_STATE.yaml`** — feature/runtime status, flags, verification evidence and unresolved risks.
 3. **`docs/VOLLEY_LOG.md`** — chronological stage log; read the newest entry first.
 4. **Live GitHub main, PRs, Issues and exact-head checks** — stored SHAs and queue counts are snapshots, never live truth.
-5. Read only source, tests, architecture and operational docs relevant to the task. Use `docs/ALANDI_ARCHITECTURE_MAP_RU.md` for module boundaries and the implementation guide before VPS operations.
+5. For menu/agent/skill work, read docs/AGENT_FUNCTIONS_MENU_INFORMATION_ARCHITECTURE_RU.md; for cross-workstream tasks, read docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md on PR #127.
+6. Read only source, tests, architecture and operational docs relevant to the task. Use `docs/ALANDI_ARCHITECTURE_MAP_RU.md` for module boundaries and the implementation guide before VPS operations.
 
 ## Keeping orientation current
 
