@@ -10,7 +10,7 @@ import argparse
 import hashlib
 import json
 import re
-from collections import Counter, defaultdict
+from collections import defaultdict
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Iterable
