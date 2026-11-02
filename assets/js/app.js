@@ -356,6 +356,18 @@
       message.className = 'toast-message';
       message.textContent = item.message;
       node.replaceChildren(message);
+      if (item.action) {
+        const actionButton = document.createElement('button');
+        actionButton.type = 'button';
+        actionButton.className = 'toast-action';
+        actionButton.textContent = item.action.label;
+        actionButton.addEventListener('click', () => {
+          try { item.action.onClick(); }
+          catch (error) { showToast('Не удалось отменить действие: ' + String(error.message || error).slice(0, 140), 'error'); }
+          dismissToast();
+        }, { once: true });
+        node.appendChild(actionButton);
+      }
       if (item.persistent) {
         const close = document.createElement('button');
         close.type = 'button';
@@ -378,16 +390,18 @@
       if (!item.persistent && !document.hidden) toastLifecycle.timer = setTimeout(dismissToast, toastLifecycle.remaining);
       else if (!item.persistent) toastLifecycle.paused = true;
     }
-    function showToast(message, kind = 'success') {
+    function showToast(message, kind = 'success', action = null) {
       const text = String(message || '').trim();
       if (!text) return;
       const state = ['info', 'warning', 'success', 'error'].includes(kind) ? kind : 'success';
-      const duplicate = item => item && item.message === text && item.state === state;
+      const actionSpec = action && typeof action.label === 'string' && typeof action.onClick === 'function' ? action : null;
+      const actionKey = actionSpec?.key || '';
+      const duplicate = item => item && item.message === text && item.state === state && (item.action?.key || '') === actionKey;
       if (duplicate(toastLifecycle.active) || toastQueue.some(duplicate)) return;
       // Errors remain visible until explicitly acknowledged; transient feedback may expire.
       const persistent = state === 'error';
-      const duration = persistent ? 0 : state === 'warning' ? 5500 : 3200;
-      toastQueue.push({ message: text, state, duration, persistent });
+      const duration = persistent ? 0 : actionSpec ? Math.max(3000, Number(actionSpec.duration) || 6500) : state === 'warning' ? 5500 : 3200;
+      toastQueue.push({ message: text, state, duration, persistent, action: actionSpec });
       renderNextToast();
     }
     document.addEventListener('visibilitychange', () => {
@@ -1571,13 +1585,58 @@
       persistProjects();renderProjectUI();renderChatList();
       showToast(getUiLanguage()==='en'?'Project instructions saved.':'Инструкции проекта сохранены.');
     }
+    function moveChatToProjectWithUndo(chatId, nextProjectId, refresh) {
+      const chat = chats.find(item => item.id === chatId);
+      if (!chat) return false;
+      const previousProjectId = chat.projectId || null;
+      const nextId = nextProjectId || null;
+      if (previousProjectId === nextId) return false;
+      if (nextId && !projects.some(project => project.id === nextId)) {
+        showToast(getUiLanguage() === 'en' ? 'Project no longer exists.' : 'Проект больше не существует.', 'error');
+        return false;
+      }
+      const english = getUiLanguage() === 'en';
+      const target = nextId ? projects.find(project => project.id === nextId) : null;
+      chat.projectId = nextId;
+      persistChats();
+      refresh?.(nextId);
+      showToast(
+        target ? (english ? 'Chat moved to ' + target.name + '.' : 'Чат добавлен в проект: ' + target.name) : (english ? 'Chat detached from its project.' : 'Чат извлечён из проекта.'),
+        'success',
+        {
+          key: 'chat-move:' + chatId + ':' + (previousProjectId || 'personal') + ':' + (nextId || 'personal'),
+          label: english ? 'Undo' : 'Отменить',
+          duration: 6500,
+          onClick: () => {
+            const current = chats.find(item => item.id === chatId);
+            if (!current) {
+              showToast(english ? 'Chat no longer exists; the move was not undone.' : 'Чат больше не существует; перемещение не отменено.', 'warning');
+              return;
+            }
+            if (current.projectId !== nextId) {
+              showToast(english ? 'Chat changed again; the previous move was not restored.' : 'Чат уже изменён; предыдущее перемещение не восстановлено.', 'warning');
+              return;
+            }
+            if (previousProjectId && !projects.some(project => project.id === previousProjectId)) {
+              showToast(english ? 'The original project no longer exists.' : 'Исходный проект больше не существует.', 'error');
+              return;
+            }
+            current.projectId = previousProjectId;
+            persistChats();
+            refresh?.(previousProjectId);
+            showToast(english ? 'Chat move undone.' : 'Перемещение чата отменено.');
+          }
+        }
+      );
+      return true;
+    }
     function moveCurrentChatToProject(projectId){
       const chat=getCurrentChat(),target=projectId?projects.find(project=>project.id===projectId):null;
       if(projectId&&!target){showToast('Проект не найден.','error');renderProjectUI();return;}
-      if(chat.projectId===(target?.id||null))return;
-      chat.projectId=target?.id||null;selectedProjectForSettingsId=target?.id||null;activeChatProjectId=target?.id||null;
-      persistChats();renderProjectUI();renderChatList();
-      showToast(target?(getUiLanguage()==='en'?'Chat moved to ':'Чат добавлен в проект: ')+target.name:(getUiLanguage()==='en'?'Chat removed from its project.':'Чат извлечён из проекта.'));
+      moveChatToProjectWithUndo(chat.id, target?.id || null, nextId => {
+        selectedProjectForSettingsId=nextId;activeChatProjectId=nextId;
+        renderProjectUI();renderChatList();
+      });
     }
     function handoffProjectContextToChat(){
       const project=projects.find(item=>item.id===selectedProjectForSettingsId),chatId=$('projectContextTargetChat')?.value;
@@ -4015,9 +4074,10 @@
       }
       const projectId=$('chatActionProject').value||null;
       if(projectId&&!projects.some(project=>project.id===projectId)){showToast(english?'Project no longer exists.':'Проект больше не существует.','error');return;}
-      chat.projectId=projectId;
-      persistChats();renderChatList();renderProjectUI({preserveDraft:true});closeChatActionDialog();
-      showToast(projectId?(english?'Chat moved to project.':'Чат перемещён в проект.'):(english?'Chat detached from project.':'Чат извлечён из проекта.'));
+      moveChatToProjectWithUndo(chat.id, projectId, () => {
+        renderChatList();renderProjectUI({preserveDraft:true});
+      });
+      closeChatActionDialog();
     }
     function cloneChat(id) {
       const source=chats.find(item=>item.id===id);if(!source)return;
