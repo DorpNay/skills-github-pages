@@ -4333,3 +4333,27 @@ test('chat rename offers bounded undo and restores the exact previous title', as
     return chats.find(chat => chat.id === id)?.title || '';
   }, chatId)).toBe(previousTitle);
 });
+
+
+test('advanced appearance theme selector is present, translated, and synchronized with header toggle', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').first().click();
+  const advanced = page.locator('#additionalSettings');
+  if (!(await advanced.evaluate(element => element.open))) await advanced.locator(':scope > summary').click();
+  const appearance = page.locator('[data-settings-category="appearance"]');
+  if (!(await appearance.evaluate(element => element.open))) await appearance.locator(':scope > summary').click();
+
+  const theme = page.locator('#uiTheme');
+  await expect(theme).toBeVisible();
+  await expect(theme.locator('option[value="dark"]')).toHaveText('Тёмная');
+  await expect(theme.locator('option[value="light"]')).toHaveText('Светлая');
+  await theme.selectOption('light');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_theme_v2'))).toBe('light');
+
+  await page.locator('#settingsModal [data-action="close-settings"]').click();
+  await page.locator('#headerThemeToggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page.locator('[data-action="toggle-settings"]').first().click();
+  await expect(theme).toHaveValue('dark');
+});
