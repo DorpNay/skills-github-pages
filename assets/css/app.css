@@ -631,3 +631,10 @@ html[data-text-contrast="high"] #chatBox button:disabled {
 .toolbar-menu-group-label { margin: .15rem .55rem .25rem; padding: .35rem .25rem .15rem; border-bottom: 1px solid var(--ui-border, #334155); color: var(--ui-muted, #94a3b8); font-size: .62rem; font-weight: 750; letter-spacing: .09em; line-height: 1.35; text-transform: uppercase; }
 .toolbar-menu-group-label:not(:first-child) { margin-top: .45rem; }
 .toolbar-menu-panel .toolbar-menu-option { border-radius: .6rem; }
+
+
+/* Function panel configuration groups share the same hierarchy as advanced settings. */
+.function-config-group { min-width: 0; background: color-mix(in srgb, var(--ui-surface) 38%, transparent); }
+.function-config-group-title { color: var(--ui-text-muted, #94a3b8); font-size: .68rem; font-weight: 750; letter-spacing: .075em; line-height: 1.4; text-transform: uppercase; }
+.function-config-group label { min-width: 0; line-height: 1.45; }
+.function-config-group input, .function-config-group select, .function-config-group textarea { max-width: 100%; }
