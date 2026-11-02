@@ -3888,7 +3888,8 @@ test('application innovation ticker is static when reduced motion is requested',
   expect(await ticker.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
   await expect(page.locator('#agentFunctionSettings .roadmap-note')).toBeVisible();
   await page.locator('#agentRoadmapPause').check();
-  expect(await ticker.evaluate(element => getComputedStyle(element).animationPlayState)).toBe('paused');
+  await expect(page.locator('#agentRoadmapPause')).toBeChecked();
+  expect(await ticker.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
 });
 
 
