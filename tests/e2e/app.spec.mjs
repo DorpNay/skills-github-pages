@@ -4482,6 +4482,86 @@ test('advanced appearance theme selector is present, translated, and synchronize
   await expect(theme).toHaveValue('dark');
 });
 
+test('team blueprints can be saved, applied, restored and deleted without launching agents', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+
+  const panel = page.locator('#agentFunctionSettings');
+  const library = panel.locator('#agentBlueprintLibrary');
+  await expect(library).not.toHaveAttribute('open', '');
+  await library.locator(':scope > summary').click();
+  const select = panel.locator('#agentBlueprintSelect');
+  await expect(select).toBeVisible();
+  await expect(panel.locator('#agentBlueprintApply')).toBeDisabled();
+  await expect(panel.locator('#agentBlueprintDelete')).toBeDisabled();
+
+  await panel.locator('#agentTeamSize').evaluate(element => {
+    element.value = '7';
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await panel.locator('#agentTeamScenario').selectOption('research');
+  await panel.locator('#agentRolePreset').selectOption('software');
+  await panel.locator('#agentBlueprintName').fill('Research + software');
+  await panel.locator('#agentBlueprintSave').click();
+
+  await expect(select.locator('option')).toHaveCount(2);
+  await expect(select.locator('option').nth(1)).toHaveText('Research + software');
+  await expect(select).not.toHaveValue('');
+  await expect(panel.locator('#agentBlueprintApply')).toBeEnabled();
+  await expect(panel.locator('#agentBlueprintDelete')).toBeEnabled();
+
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_agent_team_blueprints_v1') || '[]'));
+  expect(saved).toHaveLength(1);
+  expect(Object.keys(saved[0]).sort()).toEqual(['createdAt', 'customRoles', 'customScenario', 'id', 'name', 'rolePreset', 'scenario', 'schemaVersion', 'teamSize', 'updatedAt'].sort());
+  expect(saved[0]).toMatchObject({ name: 'Research + software', teamSize: 7, scenario: 'research', rolePreset: 'software', schemaVersion: 1 });
+  expect(saved[0]).not.toHaveProperty('chatId');
+  expect(saved[0]).not.toHaveProperty('messages');
+
+  await panel.locator('#agentTeamSize').evaluate(element => {
+    element.value = '2';
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await panel.locator('#agentTeamScenario').selectOption('general');
+  await panel.locator('#agentRolePreset').selectOption('balanced');
+  await panel.locator('#agentBlueprintApply').click();
+  await expect(panel.locator('#agentTeamSize')).toHaveValue('7');
+  await expect(panel.locator('#agentTeamScenario')).toHaveValue('research');
+  await expect(panel.locator('#agentRolePreset')).toHaveValue('software');
+
+  const chatAfterApply = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const currentId = localStorage.getItem('ai_current_chat_v87');
+    return chats.find(chat => chat.id === currentId);
+  });
+  expect(chatAfterApply).toMatchObject({ agentTeamSize: 7, agentTeamScenario: 'research', agentRolePreset: 'software', multiAgentEnabled: false });
+
+  await panel.locator('#agentBlueprintName').fill('research + SOFTWARE');
+  await panel.locator('#agentBlueprintSave').click();
+  await expect(page.locator('#toast')).toContainText('уже существует');
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('ai_agent_team_blueprints_v1') || '[]'))).toHaveLength(1);
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  const restoredLibrary = page.locator('#agentFunctionSettings #agentBlueprintLibrary');
+  await restoredLibrary.locator(':scope > summary').click();
+  await expect(page.locator('#agentBlueprintSelect option')).toHaveCount(2);
+  await expect(page.locator('#agentBlueprintSelect option').nth(1)).toHaveText('Research + software');
+
+  page.once('dialog', dialog => dialog.accept());
+  await page.locator('#agentBlueprintDelete').click();
+  await expect(page.locator('#agentBlueprintSelect option')).toHaveCount(1);
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('ai_agent_team_blueprints_v1') || '[]'))).toEqual([]);
+  const finalChat = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const currentId = localStorage.getItem('ai_current_chat_v87');
+    return chats.find(chat => chat.id === currentId);
+  });
+  expect(finalChat).toMatchObject({ agentTeamSize: 7, agentTeamScenario: 'research', agentRolePreset: 'software', multiAgentEnabled: false });
+});
+
 test('planned function menu items are status cards, not fake controls, and can pause motion', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#functionsMenuSummary').click();
