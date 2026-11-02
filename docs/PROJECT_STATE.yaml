@@ -871,3 +871,19 @@ landing_v2_sidebar_gesture_2026_11_02:
   test_commit: "0a76e63df790977cd6ed0540233528e3102a7d9a"
   behavior: "sidebar gesture origin is cleared on touchcancel and pointercancel; vertical scroll does not close; deliberate horizontal swipe closes"
   manual_gate: "native iPhone Safari gesture arbitration and VoiceOver remain unverified"
+
+
+landing_v2_connectivity_status_2026_11_02:
+  status: "implemented; exact-head Quality/Chromium pending"
+  pr: 131
+  branch: "feat/landing-v1-accessibility-responsive-20261031"
+  source_test_head: "6489f5a9b6d2d3e8c68b2bad993f7b85a4521cbd"
+  requirement: "8.25"
+  behavior: "composer reports navigator.onLine false separately from offline search; online event clears warning and offers manual retry only; no automatic request replay"
+  draft_recovery: "per-chat text drafts flush on visibilitychange-hidden and pagehide; existing debounce/reload restore remain"
+  e2e: "offline-to-online/no-auto-retry and synchronous tab-hide flush tests authored; not executed yet"
+  source_checks: "V8 syntax parsing passed for app.js and app.spec.mjs; CSS brace balance passed"
+  quality_run: "41390877580 (#1405, pending)"
+  graphify_run: "41390877512 (#437, queued)"
+  limitations: "navigator.onLine is a browser hint, not API health; attachments remain non-persistent; native iOS/VoiceOver/manual review remains open"
+  safety: "no new dependency, backend route, provider integration, merge, rebase, main sync or deployment"
