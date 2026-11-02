@@ -3312,6 +3312,37 @@ test('shared control sizing uses standard desktop and touch-sized mobile variant
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
 
+test('icon-first controls keep an accessible name across header, sidebar and messages', async ({ page }) => {
+  await page.addInitScript(() => {
+    const project = { id: 'icon-project', name: 'Icon project', description: '', instructions: '', memoryScope: 'project-only', memory: [], createdAt: '', updatedAt: '' };
+    const chat = {
+      id: 'icon-chat', title: 'Icon chat', projectId: 'icon-project',
+      messages: [
+        { role: 'user', content: 'Icon accessibility fixture' },
+        { role: 'assistant', content: 'Icon controls must remain named.' }
+      ]
+    };
+    localStorage.setItem('ai_projects_v1', JSON.stringify([project]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([chat]));
+    localStorage.setItem('ai_current_chat_v87', 'icon-chat');
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
+  const projectGroup = page.locator('#projectNavigationList details[data-project-id="icon-project"]');
+  await expect(projectGroup).toBeVisible();
+  if (!(await projectGroup.evaluate(element => element.open))) await projectGroup.locator(':scope > summary').click();
+
+  const unnamedIconButtons = await page.locator('button:visible').evaluateAll(nodes => nodes
+    .filter(node => {
+      const text = (node.textContent || '').trim();
+      const symbolOnly = !text || /^[\\p{Extended_Pictographic}\\p{S}\\p{P}\\s]+$/u.test(text);
+      return symbolOnly && !node.getAttribute('aria-label') && !node.getAttribute('aria-labelledby') && !node.title;
+    })
+    .map(node => ({ action: node.dataset.action || '', text: (node.textContent || '').trim() }));
+  expect(unnamedIconButtons).toEqual([]);
+  await expect(page.locator('#chatBox .message-actions button')).toHaveCount(5);
+});
+
 test('mobile messages expose full text and retain a jump-to-latest control', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.addInitScript(() => {
