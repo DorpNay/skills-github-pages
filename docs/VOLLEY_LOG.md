@@ -835,3 +835,10 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - A repeated rename is a no-op; a later conflicting rename is never overwritten. No new storage or command-history schema.
 - Added Playwright regression for rendered and persisted title restoration. Source/test commits: `fb5ece37b2fed96635a260d41c9103d1f356c4d5`, `f7e74f41b608cded7030d1185c9b747b3190e78a`. Syntax parsing passed; Chromium execution pending.
 - Bounded Undo scope now covers chat move, delete and rename only. Project cascade/settings remain excluded; no dependency, backend, merge or deployment.
+
+
+## V-2026-11-02-UNDO-KEYBOARD-FOCUS-001
+
+- Added explicit focus restoration for Undo actions: after the inverse operation, focus returns to the affected visible chat row or falls back to the composer.
+- Added Playwright coverage that activates rename Undo with Enter and verifies both the previous title and the same chat row receives focus.
+- Source/test commits: `ccecba116a05f5e848805ad378edeffda1b0dd7a`, `45275d5ad854ccfdd73f3b24231c197eeac38c82`. Syntax parsing passed; browser execution pending.

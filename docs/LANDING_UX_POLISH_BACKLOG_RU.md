@@ -152,3 +152,9 @@
 
 - Chat-title rename now has a bounded Undo action. It restores the exact previous title only if the chat has not been renamed again; newer state is preserved.
 - E2E coverage is authored for UI and persisted title restoration. Project deletion/cascade and settings Undo remain out of scope.
+
+
+### 8.20 / 8.26 Undo keyboard focus — 2026-11-02
+
+- Undo actions now return keyboard focus to the affected visible chat row or composer fallback.
+- Added Enter-key E2E coverage for rename Undo, exact title restoration and focus return. Test authored; browser execution pending.

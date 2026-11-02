@@ -892,3 +892,10 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Added Playwright regression for rename → Undo, asserting both rendered title and persisted chat title return to the exact previous value.
 - Source commit: `fb5ece37b2fed96635a260d41c9103d1f356c4d5`; E2E: `f7e74f41b608cded7030d1185c9b747b3190e78a`. V8 syntax parsing passed; Chromium execution remains pending.
 - 8.20 now has bounded in-memory Undo for chat move, delete and rename. Project deletion/cascade and settings remain excluded; no persistent command history or external-side-effect rollback.
+
+
+## Undo keyboard focus restoration — 2026-11-02 (8.20 / 8.26)
+
+- After a successful or rejected Undo action, focus now returns to the affected chat row when it is visible; otherwise it falls back to the composer. This avoids leaving keyboard focus on a toast action that is about to be removed.
+- Added a keyboard regression that activates rename Undo with Enter, verifies the exact previous title is restored, and checks focus returns to the same chat row.
+- Source commit: `ccecba116a05f5e848805ad378edeffda1b0dd7a`; E2E: `45275d5ad854ccfdd73f3b24231c197eeac38c82`. V8 syntax parsing passed; Chromium execution remains pending.

@@ -938,3 +938,13 @@ landing_v2_chat_rename_undo_2026_11_02:
   e2e: "rename → Undo regression authored; not yet executed"
   source_checks: "V8 syntax parsing passed"
   limitations: "project deletion/cascade, settings and persistent command history remain excluded"
+
+
+landing_v2_undo_focus_2026_11_02:
+  status: "implemented; keyboard E2E authored"
+  pr: 131
+  source_test_head: "45275d5ad854ccfdd73f3b24231c197eeac38c82"
+  requirements: "8.20 and 8.26"
+  behavior: "after Undo, focus returns to the affected visible chat row or falls back to composer"
+  e2e: "rename Undo activated by Enter; asserts restored title and focus returns to same chat ID; not yet executed"
+  source_checks: "V8 syntax parsing passed"

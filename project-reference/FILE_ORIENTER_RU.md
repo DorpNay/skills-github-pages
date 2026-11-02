@@ -370,3 +370,10 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Latest source/test checkpoint: `f7e74f41b608cded7030d1185c9b747b3190e78a`.
 - Chat-title rename now has bounded Undo; the prior title is restored only if no later rename has changed it. Added Playwright regression for both UI and persisted state.
 - Syntax parsing passed; Chromium execution pending. Undo scope remains local chat move/delete/rename, not project cascade or settings.
+
+
+## Landing V2 — keyboard focus after Undo (2026-11-02)
+
+- Latest source/test checkpoint: `45275d5ad854ccfdd73f3b24231c197eeac38c82`.
+- Undo now returns keyboard focus to the affected visible chat row, with composer fallback. Added an Enter-key Playwright regression for rename Undo and focus restoration.
+- V8 syntax parsing passed; Chromium execution remains pending.

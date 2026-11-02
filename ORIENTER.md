@@ -266,3 +266,10 @@
 - Source/test HEAD: `f7e74f41b608cded7030d1185c9b747b3190e78a`.
 - Added bounded Undo for chat rename, guarded against overwriting a later rename. 8.20 now covers chat move, delete and rename with local inverse checks.
 - Playwright regression authored; V8 syntax parsing passed; Chromium execution pending. Project cascade/settings and persistent command history remain out of scope.
+
+
+### Live Landing V2 continuation — Undo keyboard focus (2026-11-02)
+
+- Source/test HEAD: `45275d5ad854ccfdd73f3b24231c197eeac38c82`.
+- Undo actions now restore keyboard focus to the affected visible chat row (or composer fallback), rather than leaving focus on the toast button that disappears. The E2E regression activates rename Undo with Enter and checks title + focus.
+- Syntax parsing passed; browser execution pending. No merge, rebase, main sync or deployment.
