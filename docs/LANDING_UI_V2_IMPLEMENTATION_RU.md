@@ -1027,3 +1027,12 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - **Current CI evidence:** Quality #41540703827 and Graphify #41540704000 passed on the prior code/test SHA `6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0`; the new E2E capture test was added later and has not yet been executed. Published Pages smoke was skipped in that Quality run.
 - **Preview boundary:** no Vercel project is connected to this repo; the existing Pages target is the stable V1 publication. Do not deploy PR #131 to it. CI-built app screenshots are the safe preview path until a separate owner-approved preview target exists.
 - **NEXT:** run the new visual E2E on an exact current PR HEAD, inspect the artifact images for overflow/cropping/hierarchy, then address only evidenced layout regressions. Keep iPhone Safari/VoiceOver and full WCAG as separate gates.
+
+
+## Agent Workforce cross-workstream alignment — 2026-11-03
+
+- **FACT / SPECIFIED:** PR #128 Agent Workforce remains research/HOLD on its parking base. Its source review and durable AgentRun architecture are recorded in `docs/DEEP_AGENT_WORKFORCE_RESEARCH_2026-10-31_RU.md` on that branch; latest research commit at this checkpoint: `8de4ada91e990295f18235b23a7d3b83f85aa7ae` (the VOLLEY evidence entry follows).
+- **UI contract:** Functions/Agents IA updated on PR #131 to align with actual multi-agent boundary. Current four-stage pipeline is sequential and one-model; local Team Blueprint is configuration, not workers. Keep profile/task counts, queued/running logical workers and inference slots distinct.
+- **Borrowed patterns (reference only):** Worktrunk isolated worktrees; Goose typed extension interface; ECC harness-neutral skills/rules/hooks/evals; SWE-agent compact ACI/evaluation; dsh-our-free-model availability/effort/routing telemetry; Scrapling controlled research adapter; Colibri model runtime candidate subject to target benchmark; GPT Pilot/Plandex/Roo Code plan/delegate/review patterns. No package or model is installed.
+- **OPEN:** Agent-desktop and Grill-me exact URLs unresolved; ECC and Taby/Tabby name normalization tentative; full 60-source catalog was not re-reviewed. Runtime remains future/specification-only.
+- **NEXT:** preserve truthful UI; PR #128 to define offline lifecycle and eval acceptance, then only owner-approved real worker slice can expose run controls.
