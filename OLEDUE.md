@@ -16,6 +16,19 @@ Treat the word as an instruction to execute this handoff protocol immediately. D
 4. **Choose the next bounded implementation slice** from the canonical owner checklist and latest recorded `NEXT`. If the latest note is stale or conflicts with code/live GitHub, reconcile from evidence and state the discrepancy briefly.
 5. **Act in the same turn whenever possible.** Make the smallest safe change, run focused checks, inspect the diff, and record the result. Do not spend a turn merely promising to work or producing a broad plan when the repository already supplies enough information.
 
+## Fast task selector — consult on every aLandi task
+
+After confirming live repository/PR/HEAD, use this selector even when the owner did not type `oledue`. Select only the lane needed for the current request; do not read or execute every backlog.
+
+1. **Safety and live truth (always):** owner scope, branch/PR, HEAD/base, exact-head checks, data scope, side effects and rollback. A stale document or green run on another SHA is not evidence for the current head.
+2. **Landing UI 2.0 (default active product lane):** start at `docs/V1_UI_FINALIZATION_RU.md` section 8.0, then read the matching row/entry in `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`. Finish the highest-priority incomplete acceptance gate; mandatory 8.1–8.17 precede optional 8.18–8.28. Do not call an item complete while its manual/device/API gate remains open.
+3. **Whole-project task inventory:** use [PR #127 — Master Task Registry](https://github.com/DorpNay/skills-github-pages/blob/docs/continuity-master-registry-20261031/docs/MASTER_TASK_REGISTRY_RU.md) and its [2026-11-02 addendum](https://github.com/DorpNay/skills-github-pages/blob/docs/continuity-master-registry-20261031/docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md). Search/select relevant stable task IDs only. The registry is lossless; cross-source deduplication is not complete. Do not copy it into another backlog.
+4. **Repository integrity/hygiene:** inspect `docs/REPOSITORY_HYGIENE_RU.md` for branch ancestry, PR ownership, file references, workflow usage, immutable Actions pins and owner-only security settings. Preserve unique/active work; deletion requires evidence and a recovery SHA.
+5. **Research/future work:** PR #125 Agent Studio, #128 Agent Workforce, #129 Voice, #130 Deep Research and #133 N₂O are separate workstreams. Stay on their declared HOLD/base boundaries; switch only when the owner asks or the current task depends on them.
+6. **Record only material outcomes:** update the existing canonical checklist/ledger/state/orienter/log. Keep one task backlog, one implementation evidence ledger and one current checkpoint; do not create parallel memory or status files.
+
+**Selection rule:** choose one bounded next action that reduces the largest relevant open risk; reuse already verified work; do not restart completed slices or promote a proposal into a runtime capability without its API, permissions, tests and owner approval.
+
 ## Session Sync Capsule (SSC)
 
 Build one compact, session-local snapshot after the first batched live GitHub read. This is a working technique, not a new state file or backlog.
