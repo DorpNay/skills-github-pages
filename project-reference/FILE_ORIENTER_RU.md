@@ -403,3 +403,13 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 
 - Quality #1431 identified the missing `#uiTheme` control; `app.js` still required it during settings initialization. Restored it in the existing advanced appearance disclosure and added RU/EN option labels.
 - Added Playwright coverage for theme selection, persistence and synchronization with the header toggle. Source/test HEAD: `74de58706b28d55f405c238b916651c26281098d`; syntax check passed; exact-head Quality pending.
+
+
+## Latest PR checkpoint — 2026-11-04 — Landing V2 memory/sidebar and visual review
+
+- **WHERE:** PR #131, branch `feat/landing-v1-accessibility-responsive-20261031`, verified code/test HEAD `04a893f87a2dacdbb5ea55c4a75fab21c6e539f1`; base main SHA `e78a73b25725bfa63370d9946887cbbacbf51b82`; compare 1009 ahead / 4 behind; mergeable=false. Stable main remains `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`.
+- **IMPLEMENTED:** `index.md` moves the compact memory status line above the title and separates wrapper `#memoryPanel` from disclosure `#memoryPanelDisclosure`; `assets/css/app.css` reduces status chips to 8px; `assets/js/app.js` collapses only memory disclosures/help when the sidebar closes.
+- **TESTS:** `tests/e2e/app.spec.mjs` asserts status/title geometry, sidebar close behavior, preserved project/chat disclosure state and captures 21 UI screenshots. `tests/e2e/privacy-memory.spec.mjs` opens the new disclosure ID for its IndexedDB privacy check. The settings-profile import regression is isolated from asynchronous provider auto-connect by seeding keys before app startup and stubbing the catalog endpoint.
+- **VERIFIED:** Quality #41688096480 / run 1696 passed exact code/test HEAD: 4/4 Chromium shards plus syntax preflight, static analysis, Jekyll, Integrity, Security and Context. Published Pages smoke skipped. The 21-image desktop visual artifact was inspected; expanded panels are not yet captured at all six responsive widths.
+- **OPEN:** 8.1–8.4 and 8.6–8.17 remain [~]; only 8.5 is [x]. Native iPhone Safari, VisualViewport/safe-area, VoiceOver, keyboard-only, full component contrast/WCAG, long-list/popover stress and live provider/gateway acceptance remain separate gates. No merge/rebase/main sync/deploy.
+- **NEXT:** extend visual captures for expanded Functions/Agents/Settings panels across 320/360/390/768/1024/1440, then continue one bounded mandatory checklist gate.

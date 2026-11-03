@@ -1037,3 +1037,16 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - **Borrowed patterns (reference only):** Worktrunk isolated worktrees; Goose typed extension interface; ECC harness-neutral skills/rules/hooks/evals; SWE-agent compact ACI/evaluation; dsh-our-free-model availability/effort/routing telemetry; Scrapling controlled research adapter; Colibri model runtime candidate subject to target benchmark; GPT Pilot/Plandex/Roo Code plan/delegate/review patterns. No package or model is installed.
 - **OPEN:** Agent-desktop and Grill-me exact URLs unresolved; ECC and Taby/Tabby name normalization tentative; full 60-source catalog was not re-reviewed. API integration, true model workers and UI controls remain future work.
 - **NEXT:** preserve truthful UI; after PR #134 exact-head CI/review, specify capability-scoped API contracts and artifact/evidence validation before a real worker slice can expose run controls.
+
+
+### 8.1 Sidebar memory status and close behavior — 2026-11-04
+
+- **IMPLEMENTED:** the memory status line is outside the disclosure and remains visible above the title while the memory controls are collapsed. Status chips use 8px text and tighter spacing.
+- **IMPLEMENTED:** `#memoryPanel` is the named sidebar group; `#memoryPanelDisclosure` is the actual native disclosure. This keeps the status line visible without making it part of the disclosure's hidden content.
+- **IMPLEMENTED:** closing the sidebar collapses `#memoryPanelDisclosure`, `#memoryToolsDetails` and the two help disclosures. It does not modify project navigation or the chat-section open state.
+- **E2E:** sidebar test verifies status visibility while collapsed, status/title vertical order, nested memory behavior and collapse after closing the sidebar while project/chat state is preserved. The IndexedDB privacy test now opens `#memoryPanelDisclosure`.
+- **TEST-HARNESS:** settings-profile import test now seeds existing custom-provider and Tavily keys before app startup and stubs the custom model catalog endpoint. This prevents the provider-selection auto-connect timer from racing the import toast; it still verifies the import does not overwrite either key.
+- **VERIFIED:** exact code/test HEAD `04a893f87a2dacdbb5ea55c4a75fab21c6e539f1`, Quality #41688096480 / run 1696: 4/4 Chromium shards (37/37/37/38), syntax preflight, static analysis, Jekyll, Integrity, Security and Context passed. Published Pages smoke skipped.
+- **VISUAL:** 21 expanded-panel screenshots at 1440px were generated and inspected. Existing responsive shell/navigation evidence covers 320/360/390/768/1024/1440px, but expanded Functions/Agents/Settings are not yet captured at all widths.
+- **LIMITS:** this closes only the evidenced sidebar behavior slice, not requirement 8.1 as a whole or the full 8.1–8.17 acceptance set. Native iPhone Safari/VisualViewport/safe-area, VoiceOver, keyboard-only, full component WCAG/contrast, long-list/popover stress and live provider/gateway checks remain open.
+- **NEXT:** extend expanded-panel visual captures to 320/360/390/768/1024/1440px; then continue the next mandatory 8.1–8.17 gate.

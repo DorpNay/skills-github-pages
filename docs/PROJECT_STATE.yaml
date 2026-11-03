@@ -1029,3 +1029,29 @@ landing_v2_roadmap_details_2026_11_03:
   exact_head_ci: "zero workflow runs and zero commit statuses returned for source/test HEAD dc82acb95c850d7821e071e16a8ab11524a459c2"
   safety: "no runtime, API, dependency, permission, merge, rebase, main sync or deployment"
   next: "inspect API-created commit workflow event behavior without manual dispatch; obtain exact-head Quality/Chromium through normal authorized push path"
+
+
+landing_v2_sidebar_memory_contract_2026_11_04:
+  status: "verified on exact code/test head"
+  pr: 131
+  branch: "feat/landing-v1-accessibility-responsive-20261031"
+  source_test_head: "04a893f87a2dacdbb5ea55c4a75fab21c6e539f1"
+  requirement: "8.1"
+  behavior:
+    - "memory status line is always visible above the collapsed memory-settings title"
+    - "status chips use compact 8px typography"
+    - "closing the sidebar collapses memory disclosure and nested help only"
+    - "project navigation and chat disclosure state remain unchanged"
+  selectors:
+    wrapper: "#memoryPanel"
+    disclosure: "#memoryPanelDisclosure"
+  e2e:
+    - "assert status line is visible while collapsed and geometrically above title"
+    - "assert sidebar close collapses memory disclosures while preserving project/chat state"
+    - "private-to-shared promotion privacy test targets #memoryPanelDisclosure"
+    - "settings-profile import seeds provider/search keys before startup and stubs model catalog to avoid auto-connect toast race"
+    - "expanded UI visual review captures 21 desktop states at 1440px"
+  exact_head_ci: "Quality #41688096480 / run 1696 passed 4/4 Chromium shards, syntax preflight, static analysis, Jekyll, Integrity, Security and Context; Published Pages smoke skipped"
+  visual_review: "21 screenshot artifact images inspected; expanded panels at 320/360/390/768/1024px remain open"
+  limitations: "native iPhone Safari, VoiceOver, keyboard-only, full component WCAG/contrast and live provider/gateway acceptance remain manual or backing-service gates"
+  next: "extend expanded Functions/Agents/Settings screenshots to 320/360/390/768/1024/1440px"
