@@ -108,3 +108,16 @@ Reviewed 45 targeted Exa queries (up to 360 requested result slots) and fetched 
 
 ### 2026-10-30 — Whole-stack integrity audit baseline recorded
 Before beginning the audit, re-read live PR #123, current main base and issue #111. Recorded baseline: PR #123 open/mergeable, HEAD `f6e67db5a7e39abc5f9351aae5ccadefc58e865e`, base `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; prior exact-head CI 6/6 passed, subject to re-run after any new commit. Issue #111 remains open for owner/environment gates. Created `docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md` with frozen stack boundaries, initial full checklist and independent reviewer handoff brief. No source code changed in this stage. Post-merge Pages and live VPS/Ollama remain unverified.
+
+
+### 2026-11-03 — Owner source review for real multi-agent runtime (PR #128)
+
+Reviewed owner-provided sources against the existing Agent Workforce research and capability safety contract. Appended source-by-source disposition and a specified durable AgentRun architecture to `docs/DEEP_AGENT_WORKFORCE_RESEARCH_2026-10-31_RU.md` (commit `8de4ada91e990295f18235b23a7d3b83f85aa7ae`).
+
+High-signal patterns: Worktrunk worktree isolation; Goose typed extension interface and UI-independent agent loop; ECC portable skills/rules/hooks/evals; SWE-agent compact ACI/evaluation; dsh-our-free-model model availability/effort/routing telemetry (not orchestrator); Scrapling as controlled research adapter; Colibri as a local inference candidate subject to target-hardware benchmark; GPT Pilot/Plandex/Roo Code plan→delegation→review patterns. Nanochat is a training/eval reference rather than immediate agent runtime. Xiryn remains architecture reference with maturity/security review. Tabby is a code-specialist candidate only.
+
+Identity caveats: Agent-desktop and Grill-me remain unresolved without canonical URLs; ECC likely affaan-m/ECC and “Taby” likely TabbyML/Tabby, both tentative. Full 60-source catalog was not re-reviewed in this pass.
+
+**Specified sequence:** durable schema/state/threat model → offline SQLite lifecycle prototype → one real worker vertical slice → 2–3 real concurrent isolated sessions → task-specific compact model bakeoff → UI only after API/permissions/evals → scale ≥5 workers behind concurrency/budget gates.
+
+**Checks:** source research and documentation review only; no code/runtime tests. No dependency/model installation, no external agent launched, no permissions changed, no merge/deploy. PR #128 remains research/HOLD. Next: owner resolves source URLs, then select the first bounded implementation slice.
