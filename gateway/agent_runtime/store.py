@@ -88,6 +88,8 @@ class AgentRunStore:
 
     def __init__(self, path: str | Path, *, busy_timeout_ms: int = 5000):
         self.path = str(path)
+        if self.path == ":memory:":
+            raise AgentRunError("AgentRunStore requires file-backed SQLite for durable state")
         if isinstance(busy_timeout_ms, bool) or not isinstance(busy_timeout_ms, int) or not 100 <= busy_timeout_ms <= 30_000:
             raise AgentRunError("busy_timeout_ms must be between 100 and 30000")
 
