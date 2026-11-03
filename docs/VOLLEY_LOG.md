@@ -152,3 +152,12 @@ The first Gateway CI run found a test fixture assuming task enqueue insertion or
 **Gateway evidence:** Lite Gateway Tests run #659 on commit `9556633cc46decbc338b9f6f7f59dd94a19a9e91` passed. Exact job result: **185 passed, 2 warnings**; compile, deploy preflight and offline six-layer eval also passed. Freshness #380 passed on the same commit; Graphify #520, Dead Code #517 and Provenance #1070 passed. Quality #1667: Jekyll, Integrity, Security, Context and Ruff/static analysis passed; real Chromium E2E was still in progress at this log update.
 
 **Source/test code checkpoint:** `60f98408f56c4a06d6a0d0ff6121f1bd3822b50a`. Later commits in this same PR were documentation-only. No model or tool execution was connected; no API route, permissions, sandbox or production flag was added.
+
+
+### 2026-11-03 — AgentRun metadata boundary hardening and final Gateway pass
+
+Added a strict metadata scalar contract for run/event metadata: keys bounded, sensitive/raw-content key patterns rejected (prompt/transcript/credentials/tokens/payload/result/content/source_text/etc.), values limited to bounded scalar data, and nested/list values rejected. Also normalized malformed scope/state/ID inputs to fail-closed errors.
+
+**CI debug record:** first run after adding the metadata regression tests returned **194 passed / 1 failed**: the test demonstrated that `source_text` was not included in the blocked-key regex. Updated the regex to reject `source_text`; subsequent Lite Gateway Tests run #671 on source/test SHA `1e327d45bfff6ca597ebbecec294f8301fa8a0cd` passed: **195 passed, 2 warnings**. Compile, deployment preflight and offline six-layer eval passed. Freshness #388, Graphify #528, Dead Code #525 and Provenance #1079 also passed on the latest code checkpoint; Quality #1675 is pending/queued at this update.
+
+The event journal is now deliberately metadata-only at this prototype boundary. Task payload/results still need typed artifact-reference contracts before any real model/tool integration. No API/runtime activation or external side effects.
