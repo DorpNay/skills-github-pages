@@ -1000,3 +1000,30 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - Exact code/test HEAD: `dc82acb95c850d7821e071e16a8ab11524a459c2`. GitHub returned zero workflow runs and zero commit statuses for that SHA. Browser/Playwright/Quality NOT RUN; no pass is claimed.
 - No dependency, backend/API, runtime, permissions, merge, rebase, main synchronization or deployment. Native iPhone Safari, VoiceOver, keyboard-only visual review and full component WCAG remain open.
 - NEXT: inspect why exact-head Actions runs are absent for API-created commits without manually dispatching workflows; then obtain normal exact-head Quality/Chromium evidence and continue the next bounded UI acceptance slice.
+
+
+## Visual audit, control typography and expanded screenshot capture — 2026-11-03
+
+### 8.2 / 8.16 — button font re-check
+
+- **FACT / IMPLEMENTED:** `assets/css/app.css` has one final shared control declaration: `body,button,input,textarea,select { font-family:"Avenir Next","Segoe UI Variable",Inter,"SF Pro Text",system-ui,-apple-system,BlinkMacSystemFont,"Noto Sans",Roboto,Arial,sans-serif; }`. The sidebar button override uses `font-family:inherit`. The aLandi wordmark retains its separate display treatment.
+- **FACT / VERIFIED on code/test SHA `6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0`:** the responsive header E2E reads computed `fontFamily` for body, button, input, textarea and select and asserts a single shared stack at 320/360/390/768/1024/1440px. Quality run #41540703827 passed 4/4 Chromium shards on that SHA.
+- **Limit:** this verifies the CSS family stack, not identical physical font files on every OS; actual glyph selection follows platform fallback. No new font dependency or font asset was added.
+
+### 8.1–8.17 — closure audit
+
+- **FACT:** `docs/V1_UI_FINALIZATION_RU.md` remains the owner requirement source; this ledger is the evidence source. Do not infer [x] from a present UI element alone.
+- **Current disposition:** 8.5 is recorded [x]. The implementation ledger keeps 8.1–8.4 and 8.6–8.17 at [~]; no blanket completion is justified. Existing source and E2E cover substantial behavior, but final acceptance still includes manual/native review and specific backing-service gates.
+- **Known intentional gate:** 8.7 Project Sources CRUD is unavailable because no scoped source-list API exists; the visible UI must remain truthful and read-only. Do not add fake CRUD.
+- **8.12/8.13:** deprecated server-memory graph bridge was removed while local/private/shared/project memory and delta sync/RAG remain; context handoff is explicit to an existing chat and one-shot. Gateway-specific exact-head verification was not run in this audit; do not transfer older gateway evidence to the new test SHA.
+- **Remaining mandatory manual gates:** actual iPhone Safari keyboard/VisualViewport/safe-area/gesture checks; VoiceOver and keyboard-only focus/navigation; full component-level contrast in both themes and states; RU/EN visual review; long-list/scroll/popover/keyboard stress; actual provider/gateway error-state verification. These prevent changing the remaining [~] statuses to [x].
+- **Optional proposals:** 8.18–8.28 are explicitly proposals, not additional mandatory release gates. Some are partially implemented (e.g. bounded Undo, per-chat text drafts/offline notice, local Team Blueprint, read-only capability details); others remain roadmap or API-dependent. They are not all complete.
+
+### Expanded real-browser visual review
+
+- **IMPLEMENTED (test source):** added `extended UI visual review captures navigation, settings, Functions, Agents and Skills` to `tests/e2e/app.spec.mjs`. It reuses the existing Playwright screenshot helper and captures 19 real UI states: sidebar/memory tools, Functions menu, Agent overview and four disclosure groups, Saved Team Blueprints/details, Skills chat profile/package library/details, aServi settings, third-party providers, Additional Settings root + appearance/context/profile, and search/system-prompt controls.
+- The earlier 8-image CI bundle covers only the app shell at 320/360/390/768/1024/1440px and sidebar-open desktop/mobile. It does **not** show the expanded menus/settings above.
+- **CHECKS:** the updated app spec has 121 declared tests; parser-only V8 syntax check passed after stripping its top-level imports. The new visual capture test is **AUTHORED / NOT RUN** on the current code/test HEAD `fd9eee63d781ca2fc8c276edafb79d97f6810c56`. No screenshots of the new panels are claimed until a Chromium run produces their artifacts.
+- **Current CI evidence:** Quality #41540703827 and Graphify #41540704000 passed on the prior code/test SHA `6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0`; the new E2E capture test was added later and has not yet been executed. Published Pages smoke was skipped in that Quality run.
+- **Preview boundary:** no Vercel project is connected to this repo; the existing Pages target is the stable V1 publication. Do not deploy PR #131 to it. CI-built app screenshots are the safe preview path until a separate owner-approved preview target exists.
+- **NEXT:** run the new visual E2E on an exact current PR HEAD, inspect the artifact images for overflow/cropping/hierarchy, then address only evidenced layout regressions. Keep iPhone Safari/VoiceOver and full WCAG as separate gates.
