@@ -29,14 +29,15 @@ permalink: /
       <div id="sidebarSearchResults" class="hidden max-h-[38vh] overflow-y-auto rounded-xl border border-gray-800 bg-gray-900/80 p-2 space-y-2" aria-label="Результаты поиска" aria-live="polite"></div>
     </section>
     
-    <details id="memoryPanel" class="mx-3 mt-2 mb-1 rounded-lg border border-gray-800 px-2 py-1.5" aria-label="Настройки памяти">
-      <summary class="flex min-h-9 items-center justify-between gap-2 cursor-pointer select-none list-none">
-        <span class="text-xs font-semibold text-gray-200" data-i18n="memoryPanelTitle">⚙ Настройки памяти</span>
-        <span class="memory-summary-indicator" aria-hidden="true"></span>
-      </summary>
-      <div class="mt-1 space-y-2">
-        <p id="memoryStatusLine" class="memory-status-line" role="status" aria-live="polite">Личная память выкл. · Общая память выкл.</p>
-        <details id="memoryToolsDetails" class="rounded-lg border border-gray-800">
+    <section id="memoryPanel" class="mx-3 mt-2 mb-1 rounded-lg border border-gray-800 px-2 py-1.5" role="group" aria-label="Настройки памяти">
+      <p id="memoryStatusLine" class="memory-status-line" role="status" aria-live="polite">Личная память выкл. · Общая память выкл.</p>
+      <details id="memoryPanelDisclosure" class="memory-panel-disclosure">
+        <summary class="memory-panel-summary flex min-h-9 items-center justify-between gap-2 cursor-pointer select-none list-none" aria-label="Настройки памяти" data-i18n-aria-label="memoryPanelTitle">
+          <span class="text-xs font-semibold text-gray-200" data-i18n="memoryPanelTitle">⚙ Настройки памяти</span>
+          <span class="memory-summary-indicator" aria-hidden="true"></span>
+        </summary>
+        <div class="mt-1 space-y-2">
+          <details id="memoryToolsDetails" class="rounded-lg border border-gray-800">
           <summary class="cursor-pointer select-none px-3 py-2 text-xs font-semibold" data-i18n="memoryPanelSummary">Личная и общая память</summary>
           <div class="p-2 space-y-3">
             <section class="space-y-2" aria-labelledby="sharedMemoryTitle">
@@ -54,9 +55,10 @@ permalink: /
             </section>
             <label class="flex items-start gap-2 border-t border-gray-800 pt-3 text-[10px] leading-relaxed text-gray-300"><input id="privateMemoryContextToggle" type="checkbox" class="mt-0.5"><span data-i18n="privateMemoryContextLabel">Разрешить использовать заметки личной памяти в контексте запросов.</span></label>
           </div>
-        </details>
-      </div>
-    </details>
+          </details>
+        </div>
+      </details>
+    </section>
     <section id="projectPanel" class="sidebar-card mx-3 my-1.5 rounded-xl border border-gray-800 p-2" aria-label="Проекты">
       <div id="projectNavigation" class="space-y-1.5">
         <button id="projectNavToggle" type="button" data-action="toggle-project-navigation" aria-expanded="false" aria-controls="projectNavigationList" class="w-full flex items-center justify-between gap-2 rounded-lg px-2 py-2 text-sm font-semibold project-nav-heading">

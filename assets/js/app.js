@@ -1942,7 +1942,7 @@
       const wasOpen=!sidebar.classList.contains('-translate-x-full');
       const open = typeof force === 'boolean' ? force : !wasOpen;
       if(open&&!wasOpen)sidebarOpener=document.activeElement;
-      if(!open&&wasOpen){$('memoryToolsDetails').open=false;$('privateMemoryHelp').open=false;$('sharedMemoryHelp').open=false;}
+      if(!open&&wasOpen){$('memoryPanelDisclosure').open=false;$('memoryToolsDetails').open=false;$('privateMemoryHelp').open=false;$('sharedMemoryHelp').open=false;}
       sidebar.classList.toggle('-translate-x-full', !open);
       overlay.classList.toggle('hidden', !open);
       if(!open&&wasOpen){

@@ -206,8 +206,8 @@ test('sidebar uses compact memory, collapsed projects, and expanded chats cards'
   await page.locator('[data-action="toggle-sidebar"]').click();
 
   const sidebar = page.locator('#sidebar');
-  await expect(page.locator('#memoryPanel')).not.toHaveAttribute('open', '');
-  await expect(page.locator('#memoryStatusLine')).toBeHidden();
+  await expect(page.locator('#memoryPanelDisclosure')).not.toHaveAttribute('open', '');
+  await expect(page.locator('#memoryStatusLine')).toBeVisible();
   await expect(page.locator('#projectPanel')).toBeVisible();
   await expect(page.locator('#projectNavigationList')).toHaveClass(/hidden/);
   await expect(page.locator('#projectPanel [data-action="open-project-create"]')).toBeVisible();
@@ -236,7 +236,10 @@ test('sidebar uses compact memory, collapsed projects, and expanded chats cards'
   expect(createPositions.projectCreateVisible).toBe(true);
   expect(createPositions.newChatBeforeList).toBe(true);
 
-  await page.locator('#memoryPanel > summary').click();
+  const memoryStatusBox = await page.locator('#memoryStatusLine').boundingBox();
+  const memoryTitleBox = await page.locator('#memoryPanelDisclosure > summary').boundingBox();
+  expect(memoryStatusBox && memoryTitleBox && memoryStatusBox.y + memoryStatusBox.height <= memoryTitleBox.y + 1).toBe(true);
+  await page.locator('#memoryPanelDisclosure > summary').click();
   await expect(page.locator('#memoryStatusLine')).toBeVisible();
   await expect(page.locator('#memoryStatusLine')).toContainText('Личная');
   await expect(page.locator('#memoryStatusLine')).toContainText('Общая');
@@ -266,7 +269,8 @@ test('sidebar uses compact memory, collapsed projects, and expanded chats cards'
   await page.locator('#sidebar [data-action="close-sidebar"]').click();
   await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
   await page.locator('[data-action="toggle-sidebar"]').click();
-  await expect(page.locator('#memoryPanel')).toHaveAttribute('open', '');
+  await expect(page.locator('#memoryPanelDisclosure')).not.toHaveAttribute('open', '');
+  await expect(page.locator('#memoryToolsDetails')).not.toHaveAttribute('open', '');
   await expect(page.locator('#projectNavigationList')).not.toHaveClass(/hidden/);
   await expect(page.locator('#chatSection')).not.toHaveAttribute('open', '');
   await page.locator('#chatSection > summary').click();
@@ -3061,7 +3065,7 @@ test('private memory is local by default and enters context only after explicit 
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
-  const memoryPanel = page.locator('#memoryPanel');
+  const memoryPanel = page.locator('#memoryPanelDisclosure');
   if (!(await memoryPanel.evaluate(element => element.open))) await memoryPanel.locator(':scope > summary').click();
   const memoryTools = page.locator('#memoryToolsDetails');
   if (!(await memoryTools.evaluate(element => element.open))) await memoryTools.locator(':scope > summary').click();
@@ -3227,9 +3231,10 @@ test('sidebar separates projects from personal chats and keeps navigation collap
   await expect(page.locator('#chatList [data-action="switch-chat"]')).toContainText('Personal chat');
   await expect(page.locator('#chatList')).not.toContainText('Alpha project chat');
   const memoryPanel = page.locator('#memoryPanel');
+  const memoryPanelDisclosure = page.locator('#memoryPanelDisclosure');
   await expect(memoryPanel).toBeVisible();
-  await expect(memoryPanel).not.toHaveAttribute('open', '');
-  await memoryPanel.locator(':scope > summary').click();
+  await expect(memoryPanelDisclosure).not.toHaveAttribute('open', '');
+  await memoryPanelDisclosure.locator(':scope > summary').click();
   await expect(page.locator('#memoryToolsDetails')).toBeVisible();
   await expect(page.locator('#memoryToolsDetails')).not.toHaveAttribute('open', '');
 
@@ -4636,7 +4641,7 @@ test('extended UI visual review captures navigation, settings, Functions, Agents
   // Sidebar / memory navigation
   await ensureSidebarOpen(page);
   await attachVisualReviewScreenshot(page, testInfo, 'ui-sidebar-overview');
-  await openDisclosure(page, '#memoryPanel');
+  await openDisclosure(page, '#memoryPanelDisclosure');
   await attachVisualReviewScreenshot(page, testInfo, 'ui-sidebar-memory-settings');
   await openDisclosure(page, '#memoryToolsDetails');
   await attachVisualReviewScreenshot(page, testInfo, 'ui-sidebar-memory-controls');
