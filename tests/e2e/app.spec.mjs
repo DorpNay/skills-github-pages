@@ -1562,16 +1562,24 @@ test('settings profile exports portable preferences but never API secrets', asyn
 });
 
 test('settings profile import restores preferences while preserving existing provider and search keys', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_api_provider', 'custom');
+    localStorage.setItem('ai_base_url', 'https://api.example.test/v1');
+    localStorage.setItem('ai_model_name', 'before-import');
+    localStorage.setItem('ai_api_key_custom', 'e2e-preserved-provider-secret');
+    localStorage.setItem('ai_tavily_key', 'e2e-preserved-tavily-secret');
+  });
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ data: [{ id: 'before-import' }] })
+  }));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await page.locator('#thirdPartyProviderSettings > summary').click();
-  await page.locator('#providerPreset').selectOption('custom');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('before-import');
-  await page.locator('#apiKey').fill('e2e-preserved-provider-secret');
+  await expect(page.locator('#providerPreset')).toHaveValue('custom');
+  await expect(page.locator('#apiKey')).toHaveValue('e2e-preserved-provider-secret');
   await openSearchToolsSettings(page);
-  await page.locator('#tavilyKey').fill('e2e-preserved-tavily-secret');
-  await page.locator('[data-action="save-settings"]').click();
+  await expect(page.locator('#tavilyKey')).toHaveValue('e2e-preserved-tavily-secret');
   await openSettingsCategory(page, 'profile');
 
   const profile = {
