@@ -496,10 +496,10 @@ agent_workforce_2026_11_03:
       - "two-thread concurrent claim regression; only one worker claims a single task"
   verification:
     gateway_ci: "PASS — 206 tests, 2 upstream warnings; compileall, deployment preflight and offline six-layer eval passed on source/test checkpoint f1ebb86f9afdc4bc7a96d87c1eed394eef89a28c. Metadata and task payload/result persistence restrict to bounded scalar metadata and bounded reference lists; raw content/nested data rejected."
-    quality_ci: "PASS — Quality Sentinels #171? on exact head f1ebb86f9afdc4bc7a96d87c1eed394eef89a28c: 98 Chromium E2E tests, 1 published-site smoke, Jekyll, Integrity, Security, Context and Ruff/static analysis passed."
+    quality_ci: "PASS — Quality Sentinels workflow run `41653211498` on exact head f1ebb86f9afdc4bc7a96d87c1eed394eef89a28c: 98 Chromium E2E tests, 1 published-site smoke, Jekyll, Integrity, Security, Context and Ruff/static analysis passed."
     freshness: "PASS — exact main SHA and open PR/issue snapshot reconciled for PR #128; snapshot excludes PR #128 itself"
     graphify_deadcode_provenance: "PASS on docs checkpoint 9556633cc46decbc338b9f7f6f7f59dd94a19a9e91"
-    latest_head: "f1ebb86f9afdc4bc7a96d87c1eed394eef89a28c — exact-head Gateway (206 passed), Quality (98 Chromium + 1 published smoke), Freshness, Graphify, Dead Code, Provenance passed."
+    latest_head: "Code/test checkpoint f1ebb86f9afdc4bc7a96d87c1eed394eef89a28c passed Gateway (206 tests) and Quality (98 Chromium + 1 published-site smoke), plus Freshness, Graphify, Dead Code, Provenance. Current docs-only head 850c1f7df5e054b766bdd22fb7856b7a2d588b5f has exact-head CI pending."
   explicit_not_implemented:
     - "FastAPI routes, auth/scope binding and AgentRun UI"
     - "real model/provider worker sessions or true independent multi-agent concurrency"
