@@ -183,3 +183,32 @@ def test_event_cursor_limit_and_metadata_bounds(tmp_path):
         store.transition_run(run_id=run["run_id"], expected_state="queued", new_state="running",
                              event_type="metadata_test", metadata={"oversized": "x" * 5000}, now=2)
     assert store.get_run(run["run_id"])["state"] == "queued"
+
+
+def test_file_backing_is_required_for_durable_store(tmp_path):
+    with pytest.raises(AgentRunError, match="file-backed"):
+        AgentRunStore(":memory:")
+    store = AgentRunStore(tmp_path / "permissions.sqlite3")
+    store.initialize()
+    assert (tmp_path / "permissions.sqlite3").stat().st_mode & 0o777 == 0o600
+
+
+def test_concurrent_workers_atomically_claim_a_single_task(tmp_path):
+    from concurrent.futures import ThreadPoolExecutor
+
+    store = AgentRunStore(tmp_path / "concurrent-claim.sqlite3")
+    store.initialize()
+    run = make_running(store)
+    task = store.enqueue_task(run_id=run["run_id"], task_key="only-task",
+                              idempotency_key="only-task-1", payload={}, now=103)
+
+    def claim(worker_id):
+        return store.claim_task(run_id=run["run_id"], worker_id=worker_id,
+                                lease_seconds=20, now=104)
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        claims = list(pool.map(claim, ("worker-a", "worker-b")))
+    actual = [item for item in claims if item is not None]
+    assert len(actual) == 1
+    assert actual[0].task_id == task["task_id"]
+    assert store.get_task(task["task_id"])["state"] == "leased"
