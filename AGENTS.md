@@ -31,6 +31,7 @@
 ## OLEDUE handoff trigger (2026-11-02)
 
 - When the owner sends the single word `oledue`, read root `OLEDUE.md` first and execute its handoff protocol before asking questions or summarizing history. It is the compact entrypoint for resuming the active owner-authorized task.
+- Build one Session Sync Capsule (SSC) from a batched live GitHub read; keep PR HEAD, code/test HEAD and tested CI SHA distinct. Follow OLEDUE's bounded Actions lookup: no repeated polling loops, no stale-SHA pass claims.
 - Keep the first response work-oriented: verify live repository state, recover the exact stopping point, and continue a bounded safe slice. Avoid progress-only turns and repeated context requests.
 
 ## Fast entry point / first-read protocol (2026-10-27)

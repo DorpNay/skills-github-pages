@@ -280,6 +280,27 @@ Keep the portable, repository-backed design rather than importing another agent 
 4. A useful checkpoint explicitly records goal/acceptance, done, in-flight/blocked, exact repo/branch/PR/HEAD/base, relevant files/commits, exact checks and tested SHA, decisions/constraints, and one next action.
 5. A checkpoint whose recorded HEAD differs from live GitHub is stale; reconstruct from the current PR, commits, diff, tests and CI before acting.
 
+### Operational technique — Session Sync Capsule (SSC), 2026-11-03
+
+**Maturity:** IMPLEMENTED as a repository handoff protocol; efficiency benefit remains EXPERIMENTAL until measured across three real resumptions.
+
+The capsule is a session-local tuple, not another persistent state store:
+- Target: repository, owner-authorized PR/branch, PR state and mergeability.
+- Refs: live PR HEAD, base HEAD, PR base SHA, merge-base and ahead/behind.
+- HEAD roles: latest code/test SHA and any proven docs-only commits after it.
+- Verification: workflow/run ID, exact tested SHA, required job/shard conclusions and skipped optional jobs.
+- Work: last verified checkpoint, current acceptance gate and one next action.
+
+**Operating rules**
+1. Batch independent live reads once. GitHub owns live refs/PR/Actions; ORIENTER is navigation, PROJECT_STATE is a snapshot, VOLLEY is the evidence trail.
+2. Match Actions by exact head_sha; fetch jobs once and logs only for failures, ambiguity or test-count evidence.
+3. Mark queued/in-progress as PENDING. Do not poll in a loop; continue useful work and recheck at most once after a meaningful task, unless the owner explicitly asks to wait.
+4. Mark older-SHA runs SUPERSEDED for current-head claims, not failed. After a new commit, refresh only the changed ref/compare/CI fields.
+5. Keep PR HEAD, code/test HEAD and tested SHA distinct. A docs-only commit can leave code/test evidence relevant, but cannot inherit the label exact current PR HEAD.
+6. At close, update the existing newest VOLLEY checkpoint; refresh ORIENTER/PROJECT_STATE only when their current snapshot changed.
+
+**Evaluation:** after three actual oledue resumptions, compare repeated reads, stale SHA corrections, duplicate work, time-to-first-useful-action and missed constraints against the previous pattern. Do not claim measured efficiency before that comparison.
+
 ### Limits and evaluation
 
 - No transcripts, private reasoning, secrets or raw user prompts are persisted.

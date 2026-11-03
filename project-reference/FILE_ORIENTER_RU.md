@@ -1,16 +1,15 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
-## Текущая контрольная точка — 2026-11-03, read-only roadmap detail windows
+## Текущая контрольная точка — 2026-11-03, Session Sync Capsule
 
-- Main V1: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; не менять.
-- PR #131 открыт, не объединён, mergeable=false; branch `feat/landing-v1-accessibility-responsive-20261031`; code/test HEAD `dc82acb95c850d7821e071e16a8ab11524a459c2`; subsequent commits are documentation-only. Resolve live branch HEAD and compare at each resume; compare at code/test HEAD: diverged, 972 ahead / 4 behind; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Четыре main-side commits меняют только общий `docs/V1_UI_FINALIZATION_RU.md`; rebase/sync запрещены без разрешения.
-- На последнем live check PR comments/reviews/threads: 0. На code/test HEAD `dc82acb` нет workflow runs и commit statuses; Playwright/Quality NOT RUN.
-- Добавлено 15 read-only Details actions и одно доступное окно для Functions, Agent/Skills, Team Blueprint, Project Sources и Integrations. Agent Profiles и Tasks & History видны как roadmap-only sections; реестр профилей, AgentRun API, queue, workers и runtime не реализованы.
-- Team Blueprint — локальный сохранённый план со статусом Blueprint only; планируемые функции — In development. Ни одна кнопка Details не запускает операцию, не меняет настройки и не выдаёт permissions.
-- Ticker app/landing: `1ИV3ИT10И`; pause/reduced-motion сохранены. App E2E: 121 тест; landing E2E: 8; authored, NOT RUN. Static V8 parse app.js/specs PASS; CSS braces balanced; duplicate HTML IDs absent; required RU/EN keys present.
-- Graphify UI bridge и selector triage сохранены в implementation ledger. Семь CSS candidates без literal references не удалялись.
-- Native iPhone Safari, VisualViewport/safe-area, VoiceOver, keyboard focus и full component-level WCAG остаются manual gates.
-- **Next:** проверить, почему API-created commits не возвращают Actions runs, не используя manual workflow_dispatch; затем получить exact-head Quality/Chromium обычным авторизованным push-путём. После этого продолжить 8.1–8.17 manual acceptance и bounded 8.28/8.19. Project Sources CRUD не открывать без настоящего scoped source-list API.
+- Main V1: 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1; не менять.
+- PR #131 открыт, не объединён, mergeable=false; branch feat/landing-v1-accessibility-responsive-20261031. Перед этим docs-only обновлением live PR/code-test HEAD: 6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0; base/merge-base e78a73b25725bfa63370d9946887cbbacbf51b82; compare 986 ahead / 4 behind main. После документационного commit live PR HEAD изменится; code/test HEAD остаётся отдельной ссылкой, пока код/тесты не изменены.
+- Exact-head Quality #41540703827 на 6d57e2b: success; 4/4 Chromium shards и все обязательные sentinels passed. Published Pages browser smoke skipped. Graphify #41540704000 на том же SHA: success. Не называть эти runs проверкой нового docs-only PR HEAD.
+- Исправлены нестабильности E2E: toast hover release; явный выбор сохранённого Blueprint перед Delete; два RAF перед заменой chat fixture в scroll/viewport test. Product runtime не менялся.
+- В OLEDUE.md введён Session Sync Capsule (SSC): один batch live reads; раздельные PR HEAD / code-test HEAD / tested SHA; exact-head run matching; no polling loops; delta refresh only when refs change. PROJECT_STATE.yaml и VOLLEY_LOG.md остаются snapshot/evidence, не источником live GitHub state.
+- UI scope: 15 read-only Details entry points, Agent Profiles и Tasks & History — roadmap-only; Team Blueprint local-only; ticker 1ИV3ИT10И. Никаких выдуманных runtime actions, permissions, AgentRuns или Project Sources CRUD без API.
+- Native iPhone Safari, VisualViewport/safe-area, VoiceOver, keyboard focus и полная WCAG-проверка остаются открытыми. No merge/rebase/main sync/deploy.
+- Next: продолжить ближайший bounded UI acceptance/implementation slice; Actions проверять по SSC один раз, не ждать бесконечно.
 
 ## Навигация и владение записями
 

@@ -2,17 +2,16 @@
 
 > **Handoff trigger:** when the owner sends `oledue`, start with root `OLEDUE.md`. It defines the short, repository-backed resume protocol; verify all live SHAs and checks before acting.
 
-## Current working checkpoint — 2026-11-03, read-only roadmap detail windows
+## Current working checkpoint — 2026-11-03, Session Sync Capsule protocol
 
-- Source of truth: `DorpNay/skills-github-pages`; `main` remains stable V1 at `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`.
-- PR #131 remains open/unmerged/mergeable=false on `feat/landing-v1-accessibility-responsive-20261031`. Code/test HEAD: `dc82acb95c850d7821e071e16a8ab11524a459c2`; subsequent commits are documentation-only. Resolve live branch HEAD and compare with main at every resume; compare at code/test HEAD: diverged, 972 ahead / 4 behind; base/merge-base: `e78a73b25725bfa63370d9946887cbbacbf51b82`. Four main-side commits modify only the shared `docs/V1_UI_FINALIZATION_RU.md`; no rebase or synchronization.
-- PR conversation comments/reviews/inline threads: 0 at the last live check. Exact code/test HEAD `dc82acb` has zero workflow runs and zero commit statuses; browser/Quality pass is not claimed.
-- Added 15 read-only Details entry points and one accessible modal across Functions, Agent/Skills, Team Blueprint, Project Sources and Integrations. Added Agent Profiles and Tasks & History roadmap slots; no profile registry, AgentRun API, workers, queue or runtime actions.
-- Team Blueprint remains a local-only saved plan and is labelled Blueprint only. Planned capabilities are In development; the detail window explains scope and limits and never starts an operation or grants permissions.
-- App/landing ticker prefix is `1ИV3ИT10И`; existing pause and reduced-motion behavior remains. App E2E spec contains 121 tests and landing spec 8; all are authored, NOT RUN. Static V8 syntax, CSS brace balance, unique IDs and RU/EN key checks passed.
-- Graphify UI surface bridge and selector triage remain documented in `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`; unmatched selector diagnostics are candidates, not defect counts.
-- No merge, deploy, rebase, main sync or destructive cleanup. Main remains stable V1.
-- **Next:** inspect why API-created commits return no Actions runs without using manual workflow_dispatch; obtain exact-head Quality/Chromium through the normal authorized push path. Then continue 8.1–8.17 manual UX/accessibility gates and bounded 8.28/8.19 work only where backed by real data/handlers. Project Sources CRUD remains blocked until a real scoped source-list API exists.
+- Source of truth: DorpNay/skills-github-pages; main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1.
+- PR #131 is open/unmerged and currently reports mergeable=false on feat/landing-v1-accessibility-responsive-20261031. Before this documentation-only protocol commit, live branch/code-test HEAD was 6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0; PR base and merge-base e78a73b25725bfa63370d9946887cbbacbf51b82; compare: 986 ahead / 4 behind main. Resolve the live branch tip after this docs commit; keep code/test HEAD separate.
+- Exact code/test SHA 6d57e2b: Quality run #41540703827 passed (4/4 Chromium shards; syntax preflight, static analysis, Jekyll, Integrity, Security and Context passed). Published Pages browser smoke was skipped. Graphify run #41540704000 passed on the same SHA. Do not transfer these claims to a later code/test SHA.
+- The test-only corrections before that run: release toast hover before asserting timed dismissal; explicitly select a persisted Team Blueprint before Delete; settle the viewport handler's animation frames before scroll-preservation fixture replacement. These are test-stability fixes, not product-runtime changes.
+- Added the Session Sync Capsule (SSC) to OLEDUE.md: one batched live snapshot; distinct PR HEAD / code-test HEAD / tested SHA; exact-head CI matching; bounded polling; delta refresh only when refs move. AGENTS.md points to the same protocol.
+- Landing UI 2.0 remains the active scope. App/landing ticker prefix is 1ИV3ИT10И; planned features must remain visibly discoverable through truthful menu/section/detail states, without fabricated runtime capability. Existing read-only detail windows and Team Blueprint boundaries remain.
+- Native iPhone Safari, VisualViewport/safe-area, VoiceOver, keyboard-only review and full component-level WCAG remain manual gates. No merge, rebase, main sync or deployment.
+- Next: use the SSC on each resume; continue the next bounded Landing UI 2.0 acceptance/implementation slice without waiting in an Actions polling loop.
 
 ## Record ownership
 

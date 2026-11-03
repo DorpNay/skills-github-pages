@@ -16,6 +16,34 @@ Treat the word as an instruction to execute this handoff protocol immediately. D
 4. **Choose the next bounded implementation slice** from the canonical owner checklist and latest recorded `NEXT`. If the latest note is stale or conflicts with code/live GitHub, reconcile from evidence and state the discrepancy briefly.
 5. **Act in the same turn whenever possible.** Make the smallest safe change, run focused checks, inspect the diff, and record the result. Do not spend a turn merely promising to work or producing a broad plan when the repository already supplies enough information.
 
+## Session Sync Capsule (SSC)
+
+Build one compact, session-local snapshot after the first batched live GitHub read. This is a working technique, not a new state file or backlog.
+
+### Capture once
+
+Record these fields together:
+- TARGET: repository, owner-authorized PR, branch, PR state, mergeability.
+- REFS: live PR HEAD, base branch HEAD, PR base SHA, merge-base, ahead/behind.
+- HEAD ROLE: latest code/test SHA; whether commits after it are proven documentation-only. Classify by inspecting commit file lists, never by assuming.
+- CHECKS: workflow/run ID, exact tested SHA, conclusion, Chromium shard outcomes, required sentinel outcomes, and skipped optional jobs.
+- WORK: last verified checkpoint, active acceptance gate, one next action.
+
+GitHub is authoritative for live refs, PR state and Actions. ORIENTER.md, PROJECT_STATE.yaml and VOLLEY_LOG.md are navigation/evidence snapshots; they do not override GitHub. Keep PR HEAD and code/test HEAD separate whenever docs-only commits follow.
+
+### Use the snapshot without looping
+
+1. Batch independent reads once: PR, compare, latest branch runs, and required orienter/state/log files. Avoid rereading the same field unless a discrepancy needs resolution.
+2. Query Actions by branch once, then match runs by exact head_sha. Read jobs for the matching Quality run once. Open logs only for a failed job, an ambiguous result, or a test-count question.
+3. queued / in_progress means PENDING, never green. Record the run ID and continue useful work; do not repeatedly poll the same run. Recheck at most once after another meaningful task, or when the owner explicitly asks to wait.
+4. A run on an older SHA is SUPERSEDED, not a failure and not evidence for the current HEAD. A new commit invalidates only the claim that the previous run verifies the new HEAD.
+5. After a docs-only commit, preserve the tested code/test SHA and its evidence, while recording the new live PR HEAD separately. Never label the older run exact PR HEAD after the docs commit.
+6. If the branch moves during the session, refresh only the changed ref/compare/CI portion of the capsule. Do not repeat the whole orientation unless PR, base or scope changed.
+
+### Close the loop
+
+At a meaningful stopping point, update the existing newest VOLLEY_LOG entry with the final live PR HEAD, code/test HEAD, exact tested SHA/run IDs, and one next action. Update ORIENTER and PROJECT_STATE only when their navigation/current snapshot materially changed. Do not create a second handoff store.
+
 ## Conversation-efficiency protocol
 
 Short chats and limited turns are normal operating conditions. Optimize for useful work per turn:
