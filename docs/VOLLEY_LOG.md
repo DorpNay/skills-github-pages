@@ -121,3 +121,18 @@ Identity caveats: Agent-desktop and Grill-me remain unresolved without canonical
 **Specified sequence:** durable schema/state/threat model → offline SQLite lifecycle prototype → one real worker vertical slice → 2–3 real concurrent isolated sessions → task-specific compact model bakeoff → UI only after API/permissions/evals → scale ≥5 workers behind concurrency/budget gates.
 
 **Checks:** source research and documentation review only; no code/runtime tests. No dependency/model installation, no external agent launched, no permissions changed, no merge/deploy. PR #128 remains research/HOLD. Next: owner resolves source URLs, then select the first bounded implementation slice.
+
+
+### 2026-11-03 — AgentRun Core first implementation slice (PR #128)
+
+**IMPLEMENTED / PROTOTYPE:** added `gateway/agent_runtime/store.py` and `gateway/tests/test_agent_run_store.py` at commit `78a153d51b4f651736d5df019f07de606531be03`.
+
+Scope: offline SQLite run/task persistence, idempotent request/task keys, versioned run state machine, atomic task claim, expiring leases with hashed token fencing, bounded retries, lease expiry recovery, run cancellation and metadata-only append-only event journal. This is durable lifecycle groundwork, not a multi-agent runtime.
+
+**Explicit non-capabilities:** no FastAPI routes, authentication integration, model sessions, tool execution, capability/policy engine, sandbox, artifact verifier, external agent launch or production flag. Current Gateway continues unchanged.
+
+**Tests authored:** request replay/conflict; invalid scope; stale/terminal transitions; task idempotency; claim/complete/event sequence; expired lease reclaim and stale token rejection; exhausted attempts; retryable failure; cancellation fences leased/queued tasks; event cursor and metadata size bound.
+
+**Exact-head CI:** workflow runs on SHA `78a153d51b4f651736d5df019f07de606531be03` started (Gateway, Freshness, Graphify, Dead Code; Quality queued at log time). Results pending. No local checkout or local pytest execution was available from this GitHub-only editing session; no test result claimed yet.
+
+**Next:** wait for exact-head Gateway + all PR required checks. If green, review SQL concurrency/rollback semantics and extend accepted EV-AGENTRUN-STORE-001 only with evidenced behavior. Then build a real worker vertical slice only after owner-approved capability contracts; no merge/deploy.
