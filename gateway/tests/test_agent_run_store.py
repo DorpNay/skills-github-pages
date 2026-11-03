@@ -245,3 +245,18 @@ def test_event_metadata_rejects_sensitive_or_nested_fields(tmp_path, metadata):
                             new_state="running", event_type="unsafe_metadata",
                             metadata=metadata, now=2)
     assert store.get_run(run["run_id"])["state"] == "queued"
+
+
+def test_unhashable_scope_and_state_inputs_fail_closed(tmp_path):
+    store = AgentRunStore(tmp_path / "input-validation.sqlite3")
+    store.initialize()
+    with pytest.raises(AgentRunError, match="scope_kind"):
+        store.create_run(idempotency_key="bad-scope", scope_kind=[], scope_id="alpha", goal="x", now=1)
+    run = store.create_run(idempotency_key="state-input", scope_kind="project",
+                           scope_id="alpha", goal="state validation", now=1)
+    with pytest.raises(InvalidTransition, match="unknown run state"):
+        store.transition_run(run_id=run["run_id"], expected_state="queued",
+                            new_state=[], event_type="bad_state", now=2)
+    with pytest.raises(AgentRunError, match="run_id"):
+        store.transition_run(run_id=[], expected_state="queued", new_state="running",
+                            event_type="bad_id", now=2)
