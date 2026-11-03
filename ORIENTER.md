@@ -2,9 +2,9 @@
 
 This is the short entry point for an assistant or engineer. Use the detailed navigation index at `project-reference/FILE_ORIENTER_RU.md`, the machine-readable state at `docs/PROJECT_STATE.yaml`, and the chronological log at `docs/VOLLEY_LOG.md`.
 
-## Current working checkpoint — 2026-10-30
+## Current working checkpoint — 2026-11-03
 
-- **Current main SHA:** `fd4f0a105183feb23e0f4e4697446235de9ffe9a` — PR #121 (first free landing V1/client UX) and PR #122 (Gateway liveness/readiness) are merged.
+- **Current main SHA:** `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1` — PR #123 is merged at `e78a73b25725bfa63370d9946887cbbacbf51b82`; current main HEAD is a documentation-only V2.0 owner-priority update (2026-10-31).
 - **PR #121:** merged at `f4d880f9648989f4fe48ddd2284220b3606c3b86`; exact head `e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b`; all six workflow groups passed, including Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code.
 - **PR #122:** merged at `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; exact head `94d871dbf76a5364ebb3c61d86cc763affa5eaa1`; Gateway, Quality/Chromium/Jekyll/published-site smoke, Graphify and Dead Code passed.
 - **Open PR queue:** PR #123 is the only active reconciliation PR; exact head `fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222` passed all six workflow groups and is ready to merge. It is excluded from its own freshness snapshot. **Open issue queue:** issue #111 only; it remains open for owner-only/live-host gates and must not be closed just to reach zero.
