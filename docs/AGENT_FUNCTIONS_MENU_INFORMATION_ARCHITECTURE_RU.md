@@ -213,4 +213,6 @@ PR #128 is the canonical research/specification home for the durable AgentRun/ta
 - Harness adapter concepts from Worktrunk/Goose/ECC/SWE-agent and model-provider patterns from dsh-our-free-model are reference-only; PR #131 introduces no dependency or runtime execution.
 - Preserve progressive disclosure and concise toolbar. Actual run history/queue is a future dedicated surface, not an inert toggle in existing Settings.
 
-Acceptance is owned by PR #128 research/eval contracts plus a future approved runtime implementation. No new runtime capabilities are implemented by this UI architecture note.
+**Runtime checkpoint:** PR #134 now contains an offline file-backed AgentRun/task lifecycle persistence prototype on a branch from `main`; its tested payload/result contract accepts bounded scalar metadata and reference lists only. This does **not** provide a durable AgentRun API, authenticated scope grants, real workers, tool execution, approvals, artifact registry/validator or UI run controls.
+
+Acceptance is owned by PR #128 research/eval contracts plus PR #134 prototype review. No runtime controls should be exposed by this UI architecture note until the missing API/permission/execution contracts are implemented and tested.
