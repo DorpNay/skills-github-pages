@@ -136,3 +136,10 @@ Scope: offline SQLite run/task persistence, idempotent request/task keys, versio
 **Exact-head CI:** workflow runs on SHA `78a153d51b4f651736d5df019f07de606531be03` started (Gateway, Freshness, Graphify, Dead Code; Quality queued at log time). Results pending. No local checkout or local pytest execution was available from this GitHub-only editing session; no test result claimed yet.
 
 **Next:** wait for exact-head Gateway + all PR required checks. If green, review SQL concurrency/rollback semantics and extend accepted EV-AGENTRUN-STORE-001 only with evidenced behavior. Then build a real worker vertical slice only after owner-approved capability contracts; no merge/deploy.
+
+
+### 2026-11-03 — Project State Freshness baseline reconciled for PR #128
+
+CI evidence on PR #128 showed the branch's inherited snapshot was stale against live main `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1` and the open-PR queue (other than PR #128 itself: #124, #125, #126, #127, #129, #130, #131, #132, #133). Open issue queue remains #111. Reconciled `docs/project-state-snapshot.json`, `ORIENTER.md`, `project-reference/FILE_ORIENTER_RU.md`, and `docs/PROJECT_STATE.yaml` together. PR #123 merged at `e78a73b25725bfa63370d9946887cbbacbf51b82`; main HEAD `0a1f764f` is docs-only, so the functional checkpoint remains PR #123 merge SHA. This is a baseline sync, not an update to main or PR #131.
+
+The freshness workflow must rerun on the exact refreshed PR HEAD. This entry records the reason and scope; it does not claim the workflow passed yet.
