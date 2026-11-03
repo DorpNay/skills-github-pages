@@ -143,3 +143,12 @@ Scope: offline SQLite run/task persistence, idempotent request/task keys, versio
 CI evidence on PR #128 showed the branch's inherited snapshot was stale against live main `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1` and the open-PR queue (other than PR #128 itself: #124, #125, #126, #127, #129, #130, #131, #132, #133). Open issue queue remains #111. Reconciled `docs/project-state-snapshot.json`, `ORIENTER.md`, `project-reference/FILE_ORIENTER_RU.md`, and `docs/PROJECT_STATE.yaml` together. PR #123 merged at `e78a73b25725bfa63370d9946887cbbacbf51b82`; main HEAD `0a1f764f` is docs-only, so the functional checkpoint remains PR #123 merge SHA. This is a baseline sync, not an update to main or PR #131.
 
 The freshness workflow must rerun on the exact refreshed PR HEAD. This entry records the reason and scope; it does not claim the workflow passed yet.
+
+
+### 2026-11-03 — AgentRun Core prototype test correction and CI evidence
+
+The first Gateway CI run found a test fixture assuming task enqueue insertion order where equal timestamps had nondeterministic UUID tie-break. Fixed claim ordering to `created_at, task_key, task_id`; also made the store fail closed for `:memory:` because each method opens a fresh SQLite connection and in-memory DB would not be durable/shared. Added tests for file-backed durability/0600 file permissions and two-thread atomic claim of one task.
+
+**Gateway evidence:** Lite Gateway Tests run #659 on commit `9556633cc46decbc338b9f6f7f59dd94a19a9e91` passed. Exact job result: **185 passed, 2 warnings**; compile, deploy preflight and offline six-layer eval also passed. Freshness #380 passed on the same commit; Graphify #520, Dead Code #517 and Provenance #1070 passed. Quality #1667: Jekyll, Integrity, Security, Context and Ruff/static analysis passed; real Chromium E2E was still in progress at this log update.
+
+**Source/test code checkpoint:** `60f98408f56c4a06d6a0d0ff6121f1bd3822b50a`. Later commits in this same PR were documentation-only. No model or tool execution was connected; no API route, permissions, sandbox or production flag was added.
