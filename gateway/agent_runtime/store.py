@@ -73,7 +73,7 @@ def _safe_metadata_json(value: object, *, max_bytes: int, field: str) -> str:
     blocked_key = re.compile(
         r"prompt|transcript|secret|credential|authorization|access[_-]?token|"
         r"lease[_-]?token|api[_-]?key|arguments?|payload|result|content|"
-        r"document|reasoning|raw[_-]?text|body",
+        r"document|reasoning|source[_-]?text|raw[_-]?text|body",
         re.IGNORECASE,
     )
     for key, item in value.items():
