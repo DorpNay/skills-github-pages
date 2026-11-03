@@ -89,6 +89,39 @@ def _safe_metadata_json(value: object, *, max_bytes: int, field: str) -> str:
     return _canonical_json(value, max_bytes=max_bytes, field=field)
 
 
+def _safe_task_json(value: object, *, max_bytes: int, field: str) -> str:
+    """Persist bounded task metadata and reference lists, never inline source/tool content."""
+    if not isinstance(value, dict):
+        raise AgentRunError(f"{field} must be an object")
+    blocked_key = re.compile(
+        r"prompt|transcript|secret|credential|authorization|access[_-]?token|"
+        r"lease[_-]?token|api[_-]?key|arguments?|payload|result|content|"
+        r"document|reasoning|source[_-]?text|raw[_-]?text|body|message|output",
+        re.IGNORECASE,
+    )
+    def validate_item(item: object, *, key: str) -> None:
+        if isinstance(item, str):
+            if len(item) > 256 or any(ord(char) < 32 for char in item):
+                raise AgentRunError(f"{field} string values must be bounded references/metadata")
+        elif type(item) in {bool, int, float} or item is None:
+            return
+        elif isinstance(item, list) and re.search(r"(?:_refs|_ids|_keys)$", key, re.IGNORECASE):
+            if len(item) > 100:
+                raise AgentRunError(f"{field} reference lists are too large")
+            for ref in item:
+                if not isinstance(ref, str) or not ref.strip() or len(ref) > 256:
+                    raise AgentRunError(f"{field} reference lists must contain bounded strings")
+        else:
+            raise AgentRunError(f"{field} supports scalar metadata and bounded reference lists only")
+    for key, item in value.items():
+        if not isinstance(key, str) or not key.strip() or len(key) > 64:
+            raise AgentRunError(f"{field} keys must be bounded non-empty strings")
+        if blocked_key.search(key):
+            raise AgentRunError(f"{field} cannot contain raw-content or sensitive fields")
+        validate_item(item, key=key)
+    return _canonical_json(value, max_bytes=max_bytes, field=field)
+
+
 def _bounded_text(value: object, *, field: str, max_chars: int, allow_empty: bool = False) -> str:
     if not isinstance(value, str) or len(value) > max_chars or (not allow_empty and not value.strip()):
         raise AgentRunError(f"{field} must be bounded non-empty text")
@@ -300,7 +333,7 @@ class AgentRunStore:
         idem = _bounded_text(idempotency_key, field="task idempotency_key", max_chars=200)
         if not isinstance(payload, dict):
             raise AgentRunError("task payload must be an object")
-        payload_json = _canonical_json(payload, max_bytes=32_000, field="task payload")
+        payload_json = _safe_task_json(payload, max_bytes=32_000, field="task payload")
         payload_hash = hashlib.sha256(payload_json.encode("utf-8")).hexdigest()
         if isinstance(max_attempts, bool) or not isinstance(max_attempts, int) or not 1 <= max_attempts <= 10:
             raise AgentRunError("max_attempts must be between 1 and 10")
@@ -409,7 +442,7 @@ class AgentRunStore:
                       now: float | None = None) -> dict[str, Any]:
         if not isinstance(result, dict):
             raise AgentRunError("task result must be an object")
-        result_json = _canonical_json(result, max_bytes=32_000, field="task result")
+        result_json = _safe_task_json(result, max_bytes=32_000, field="task result")
         timestamp = time.time() if now is None else float(now)
         with closing(self._connect()) as db:
             db.execute("BEGIN IMMEDIATE")
