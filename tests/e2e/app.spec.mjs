@@ -4273,8 +4273,9 @@ test('responsive expanded UI panels fit and capture evidence at all acceptance w
     if (await functionsMenu.evaluate(element => element.open)) await functionsSummary.click();
   };
   const closeFunctionPanel = async () => {
-    const close = page.locator('#functionPanelModal [data-action="close-function-panel"]');
-    if (await close.isVisible()) await close.click();
+    const close = page.locator('#functionPanelModal > section > header [data-action="close-function-panel"]');
+    await expect(close).toBeVisible();
+    await close.click();
     await expect(page.locator('#functionPanelModal')).toBeHidden();
   };
 
@@ -4306,6 +4307,7 @@ test('responsive expanded UI panels fit and capture evidence at all acceptance w
     await assertFits(agentPanel, 'Agents panel', width);
     await attachVisualReviewScreenshot(page, testInfo, `responsive-agents-${width}px`);
     await closeFunctionPanel();
+    await closeFunctionsMenu();
 
     await openFunctionsMenu();
     await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
@@ -4314,6 +4316,7 @@ test('responsive expanded UI panels fit and capture evidence at all acceptance w
     await assertFits(skillsPanel, 'Skills panel', width);
     await attachVisualReviewScreenshot(page, testInfo, `responsive-skills-${width}px`);
     await closeFunctionPanel();
+    await closeFunctionsMenu();
 
     await page.locator('[data-action="toggle-settings"]').click();
     await expect(page.locator('#settingsModal')).toBeVisible();
