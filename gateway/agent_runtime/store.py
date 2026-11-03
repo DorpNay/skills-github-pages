@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import secrets
 import sqlite3
 import time
@@ -61,6 +62,31 @@ def _canonical_json(value: Any, *, max_bytes: int, field: str) -> str:
     if len(encoded.encode("utf-8")) > max_bytes:
         raise AgentRunError(f"{field} exceeds the configured size limit")
     return encoded
+
+
+def _safe_metadata_json(value: object, *, max_bytes: int, field: str) -> str:
+    """Serialize metadata-only scalars; reject fields that could carry raw content/secrets."""
+    if value is None:
+        value = {}
+    if not isinstance(value, dict):
+        raise AgentRunError(f"{field} must be an object")
+    blocked_key = re.compile(
+        r"prompt|transcript|secret|credential|authorization|access[_-]?token|"
+        r"lease[_-]?token|api[_-]?key|arguments?|payload|result|content|"
+        r"document|reasoning|raw[_-]?text|body",
+        re.IGNORECASE,
+    )
+    for key, item in value.items():
+        if not isinstance(key, str) or not key.strip() or len(key) > 64:
+            raise AgentRunError(f"{field} keys must be bounded non-empty strings")
+        if blocked_key.search(key):
+            raise AgentRunError(f"{field} cannot contain sensitive or raw-content fields")
+        if isinstance(item, str):
+            if len(item) > 256 or any(ord(char) < 32 for char in item):
+                raise AgentRunError(f"{field} string values must be bounded metadata")
+        elif item is not None and type(item) not in {bool, int, float}:
+            raise AgentRunError(f"{field} values must be scalar metadata")
+    return _canonical_json(value, max_bytes=max_bytes, field=field)
 
 
 def _bounded_text(value: object, *, field: str, max_chars: int, allow_empty: bool = False) -> str:
@@ -180,7 +206,7 @@ class AgentRunStore:
                metadata: dict[str, Any] | None, now: float) -> None:
         if not isinstance(event_type, str) or not event_type or len(event_type) > 64:
             raise AgentRunError("event_type must be bounded non-empty text")
-        meta = _canonical_json(metadata or {}, max_bytes=4096, field="event metadata")
+        meta = _safe_metadata_json(metadata, max_bytes=4096, field="event metadata")
         db.execute("""INSERT INTO agent_run_events
             (run_id, task_id, event_type, from_state, to_state, metadata_json, occurred_at)
             VALUES (?, ?, ?, ?, ?, ?, ?)""",
@@ -192,10 +218,8 @@ class AgentRunStore:
         idem = _bounded_text(idempotency_key, field="idempotency_key", max_chars=200)
         kind, sid = self._scope(scope_kind, scope_id)
         checked_goal = _bounded_text(goal, field="goal", max_chars=8000)
-        meta = metadata or {}
-        if not isinstance(meta, dict):
-            raise AgentRunError("metadata must be an object")
-        meta_json = _canonical_json(meta, max_bytes=16_384, field="run metadata")
+        meta = {} if metadata is None else metadata
+        meta_json = _safe_metadata_json(meta, max_bytes=16_384, field="run metadata")
         request_json = _canonical_json(
             {"scope_kind": kind, "scope_id": sid, "goal": checked_goal, "metadata": meta},
             max_bytes=24_576, field="run request")
