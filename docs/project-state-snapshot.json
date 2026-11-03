@@ -1,20 +1,30 @@
 {
   "schema_version": 1,
   "repository": "DorpNay/skills-github-pages",
-  "captured_at": "2026-10-30",
+  "captured_at": "2026-11-03",
   "checkpoint": {
-    "main_sha": "fd4f0a105183feb23e0f4e4697446235de9ffe9a",
-    "main_commit_subject": "feat(gateway): separate process liveness and upstream readiness probes",
-    "main_commit_date": "2026-10-30",
-    "last_functional_checkpoint_sha": "fd4f0a105183feb23e0f4e4697446235de9ffe9a",
-    "last_functional_milestone": "PR #121 merged: first free static landing V1 and client UX. PR #122 merged: process-only /livez, bounded Ollama /readyz and backward-compatible /healthz.",
+    "main_sha": "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1",
+    "main_commit_subject": "docs: mark owner UI corrections as V2.0 priorities",
+    "main_commit_date": "2026-10-31",
+    "last_functional_checkpoint_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
+    "last_functional_milestone": "PR #123 merged: reconciled release state and recovered helper-model evaluation; latest main commit 0a1f764f is documentation-only owner UI priority update.",
     "main_quality_run": null,
     "main_pages_deployment_run": null,
     "functional_parent_gateway_run": null,
     "functional_parent_quality_run": null,
     "functional_parent_graphify_run": null,
     "functional_parent_pages_run": null,
-    "open_pull_requests": [],
+    "open_pull_requests": [
+      124,
+      125,
+      126,
+      127,
+      129,
+      130,
+      131,
+      132,
+      133
+    ],
     "open_issues": [
       111
     ],
@@ -30,6 +40,12 @@
         "merge_sha": "fd4f0a105183feb23e0f4e4697446235de9ffe9a",
         "head_sha": "94d871dbf76a5364ebb3c61d86cc763affa5eaa1",
         "checks": "Gateway, Quality, Graphify and Dead Code passed on exact PR head; Quality included Jekyll, Chromium and published-site smoke."
+      },
+      {
+        "number": 123,
+        "merge_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
+        "head_sha": "87d51d3e3d1e72eea6ded1297608a4224b4fc060",
+        "checks": "Gateway, Quality/Chromium/Jekyll/published-site, Freshness, Provenance, Graphify and Dead Code passed on exact PR head; main remains subject to owner/live-host gates."
       }
     ]
   },
