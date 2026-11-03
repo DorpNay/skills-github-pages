@@ -39,9 +39,10 @@
 Before any aLandi task:
 1. Read root `ORIENTER.md` first for the short entry path, then `project-reference/FILE_ORIENTER_RU.md` for the detailed canonical navigation index.
 2. Read `docs/PROJECT_STATE.yaml` and verify live GitHub `main`, open PRs and issues; stored SHAs and queue counts are checkpoints, not live truth.
-3. Read only the task-relevant source files, tests, and applicable architecture/security docs.
-4. After each meaningful stage, update the detailed orienter checkpoint, `docs/PROJECT_STATE.yaml`, and `docs/VOLLEY_LOG.md`; record what was verified, exact SHA/PR, test evidence, blockers, rollback and next action.
-5. Never leave a PR/issue untriaged. Merge only when current-head checks pass and change is safe; close stale/failed PRs with a clear reason and preserve useful ideas as small follow-up tasks. Do not close issues merely to clear the queue.
+3. On **every** task, consult the short **Fast task selector** in `OLEDUE.md` after live orientation. Use it to select one canonical work lane/task ID; the `oledue` trigger additionally runs the full handoff protocol.
+4. Read only the task-relevant source files, tests, and applicable architecture/security docs.
+5. After each meaningful stage, update the detailed orienter checkpoint, `docs/PROJECT_STATE.yaml`, and `docs/VOLLEY_LOG.md`; record what was verified, exact SHA/PR, test evidence, blockers, rollback and next action.
+6. Never leave a PR/issue untriaged. Merge only when current-head checks pass and change is safe; close stale/failed PRs with a clear reason and preserve useful ideas as small follow-up tasks. Do not close issues merely to clear the queue.
 
 ## Graph/navigation tools
 - Code/dependency graph is distinct from the product's experimental memory graph.
