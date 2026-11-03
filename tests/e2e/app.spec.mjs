@@ -4628,3 +4628,91 @@ test('planned function menu items open truthful detail windows and can pause mot
   await expect(menu.locator('.toolbar-menu-group-label').nth(1)).toContainText('Research and sources');
   await expect(cards.nth(0).locator('[data-action="open-roadmap-details"]')).toHaveText('Details');
 });
+
+test('extended UI visual review captures navigation, settings, Functions, Agents and Skills', async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 1440, height: 1200 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  // Sidebar / memory navigation
+  await ensureSidebarOpen(page);
+  await openDisclosure(page, '#memoryToolsDetails');
+  await attachVisualReviewScreenshot(page, testInfo, 'ui-sidebar-memory-open');
+  await ensureSidebarClosed(page);
+
+  // Compact Functions menu and Agent panel
+  await page.locator('#functionsMenuSummary').click();
+  await expect(page.locator('#functionsMenu')).toHaveAttribute('open', '');
+  await attachVisualReviewScreenshot(page, testInfo, 'ui-functions-menu-open');
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  const agentPanel = page.locator('#agentFunctionSettings');
+  await expect(agentPanel).toBeVisible();
+  await attachVisualReviewScreenshot(page, testInfo, 'ui-agents-overview');
+
+  const agentCategories = agentPanel.locator('.agent-future-groups > details.agent-settings-category');
+  await expect(agentCategories).toHaveCount(4);
+  for (let i = 0; i < await agentCategories.count(); i++) {
+    const category = agentCategories.nth(i);
+    if (!(await category.evaluate(element => element.open))) {
+      await category.locator(':scope > summary').click();
+    }
+    await expect(category).toHaveAttribute('open', '');
+    await category.scrollIntoViewIfNeeded();
+    await attachVisualReviewScreenshot(page, testInfo, 'ui-agents-category-' + (i + 1));
+    await category.locator(':scope > summary').click();
+  }
+
+  const blueprintLibrary = agentPanel.locator('#agentBlueprintLibrary');
+  await blueprintLibrary.locator(':scope > summary').click();
+  await expect(blueprintLibrary).toHaveAttribute('open', '');
+  await blueprintLibrary.scrollIntoViewIfNeeded();
+  await attachVisualReviewScreenshot(page, testInfo, 'ui-agents-saved-team-blueprints');
+  await blueprintLibrary.locator('[data-action="open-roadmap-details"]').click();
+  await expect(page.locator('#roadmapDetailsModal')).toBeVisible();
+  await attachVisualReviewScreenshot(page, testInfo, 'ui-agents-blueprint-details');
+  await page.locator('#roadmapDetailsModal [data-action="close-roadmap-details"]').first().click();
+  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
+
+  // Skills: current chat profile versus future package library
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
+  const skillPanel = page.locator('#skillFunctionSettings');
+  await expect(skillPanel).toBeVisible();
+  await attachVisualReviewScreenshot(page, testInfo, 'ui-skills-chat-profile');
+  const skillLibrary = skillPanel.locator('#skillLibraryDisclosure');
+  await skillLibrary.locator(':scope > summary').click();
+  await expect(skillLibrary).toHaveAttribute('open', '');
+  await skillLibrary.scrollIntoViewIfNeeded();
+  await attachVisualReviewScreenshot(page, testInfo, 'ui-skills-package-library');
+  await skillLibrary.locator('[data-action="open-roadmap-details"]').click();
+  await expect(page.locator('#roadmapDetailsModal')).toBeVisible();
+  await attachVisualReviewScreenshot(page, testInfo, 'ui-skills-library-details');
+  await page.locator('#roadmapDetailsModal [data-action="close-roadmap-details"]').first().click();
+  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
+
+  // Settings root, providers and the three Additional Settings categories
+  await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#settingsModal')).toBeVisible();
+  await attachVisualReviewScreenshot(page, testInfo, 'ui-settings-aservi');
+  await page.locator('#thirdPartyProviderSettings > summary').click();
+  await expect(page.locator('#thirdPartyProviderSettings')).toHaveAttribute('open', '');
+  await page.locator('#thirdPartyProviderSettings').scrollIntoViewIfNeeded();
+  await attachVisualReviewScreenshot(page, testInfo, 'ui-settings-third-party-providers');
+
+  await openDisclosure(page, '#additionalSettings');
+  await page.locator('#additionalSettings').scrollIntoViewIfNeeded();
+  await attachVisualReviewScreenshot(page, testInfo, 'ui-settings-additional-root');
+
+  for (const categoryName of ['appearance', 'context', 'profile']) {
+    await openSettingsCategory(page, categoryName);
+    const category = page.locator('#additionalSettings [data-settings-category="' + categoryName + '"]');
+    await category.scrollIntoViewIfNeeded();
+    await attachVisualReviewScreenshot(page, testInfo, 'ui-settings-additional-' + categoryName);
+    await category.locator(':scope > summary').click();
+  }
+
+  await openSettingsCategory(page, 'context');
+  await openDisclosure(page, '#searchToolsSettings');
+  await page.locator('#searchToolsSettings').scrollIntoViewIfNeeded();
+  await attachVisualReviewScreenshot(page, testInfo, 'ui-settings-web-search-system-prompt');
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+});
