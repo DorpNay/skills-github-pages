@@ -477,3 +477,33 @@ whole_stack_integrity_audit_2026_10_30:
   checklist: "docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md"
   subagent_handoff: "brief prepared in audit document; no independent agent execution claimed"
   deployment_boundary: "post-merge Pages deployment and live VPS/Ollama unverified"
+
+
+agent_workforce_2026_11_03:
+  status: "PROTOTYPE — offline durable AgentRun/task lifecycle persistence; not Gateway/API-integrated and not production-enabled"
+  implementation:
+    module: "gateway/agent_runtime/store.py"
+    tests: "gateway/tests/test_agent_run_store.py"
+    source_test_checkpoint: "60f98408f56c4a06d6a0d0ff6121f1bd3822b50a"
+    features:
+      - "file-backed SQLite run/task records with 0600 DB file permissions"
+      - "idempotent AgentRun and task creation with request-digest conflict detection"
+      - "versioned fail-closed run state transitions"
+      - "atomic task claims, lease expiry recovery and SHA-256 lease-token fencing"
+      - "bounded retry attempts and retryable failure handling"
+      - "run cancellation invalidates queued and leased task claims"
+      - "bounded metadata-only append-only lifecycle event journal"
+      - "two-thread concurrent claim regression; only one worker claims a single task"
+  verification:
+    gateway_ci: "PASS — 185 tests, 2 upstream warnings; compileall, deployment preflight and offline six-layer eval passed on source/test checkpoint"
+    quality_ci: "PASS — 98 Chromium tests and 1 published-site smoke passed on documentation checkpoint 9556633cc46decbc338b9f6f7f59dd94a19a9e91; Jekyll, Integrity, Security, Context and Ruff/static analysis passed"
+    freshness: "PASS — exact main SHA and open PR/issue snapshot reconciled for PR #128; snapshot excludes PR #128 itself"
+    graphify_deadcode_provenance: "PASS on docs checkpoint 9556633cc46decbc338b9f7f6f7f59dd94a19a9e91"
+    latest_head: "9720a6c8144483a2106ced2b51a561a61f5a0eae — documentation-only follow-up; latest exact-head workflows pending at state refresh"
+  explicit_not_implemented:
+    - "FastAPI routes, auth/scope binding and AgentRun UI"
+    - "real model/provider worker sessions or true independent multi-agent concurrency"
+    - "tool executor, capability/policy engine, approvals and sandbox"
+    - "artifact/evidence validator, model budgets and provider concurrency routing"
+    - "multi-host distributed queue or target-host durability/load validation"
+  next: "Wait for exact-head CI on latest docs SHA; then plan a real single-worker vertical slice only after capability/policy contracts are reviewed."
