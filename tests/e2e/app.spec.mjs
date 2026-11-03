@@ -4246,6 +4246,79 @@ test('responsive visual review captures viewport and navigation evidence', async
 });
 
 
+test('responsive expanded UI panels fit and capture evidence at all acceptance widths', async ({ page }, testInfo) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  const assertFits = async (locator, label, width) => {
+    await expect(locator, `${label} is visible at ${width}px`).toBeVisible();
+    const bounds = await locator.boundingBox();
+    expect(bounds, `${label} has a layout box at ${width}px`).not.toBeNull();
+    if (!bounds) throw new Error(`${label} has no layout box at ${width}px`);
+    expect(bounds.x, `${label} left edge at ${width}px`).toBeGreaterThanOrEqual(0);
+    expect(bounds.x + bounds.width, `${label} right edge at ${width}px`).toBeLessThanOrEqual(width + 1);
+    const horizontalOverflow = await locator.evaluate(element => element.scrollWidth > element.clientWidth + 1);
+    expect(horizontalOverflow, `${label} has no internal horizontal overflow at ${width}px`).toBe(false);
+    const documentOverflow = await page.evaluate(() =>
+      document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
+    expect(documentOverflow, `document has no horizontal overflow at ${width}px`).toBe(false);
+  };
+
+  const functionsMenu = page.locator('#functionsMenu');
+  const functionsSummary = page.locator('#functionsMenuSummary');
+  const openFunctionsMenu = async () => {
+    if (!(await functionsMenu.evaluate(element => element.open))) await functionsSummary.click();
+    await expect(functionsMenu.locator('.function-menu-content')).toBeVisible();
+  };
+  const closeFunctionsMenu = async () => {
+    if (await functionsMenu.evaluate(element => element.open)) await functionsSummary.click();
+  };
+  const closeFunctionPanel = async () => {
+    const close = page.locator('#functionPanelModal [data-action="close-function-panel"]');
+    if (await close.isVisible()) await close.click();
+    await expect(page.locator('#functionPanelModal')).toBeHidden();
+  };
+
+  for (const width of [320, 360, 390, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+
+    await ensureSidebarOpen(page);
+    await assertFits(page.locator('#sidebar'), 'sidebar', width);
+    await attachVisualReviewScreenshot(page, testInfo, `responsive-sidebar-${width}px`);
+    await ensureSidebarClosed(page);
+
+    await openFunctionsMenu();
+    const menuPanel = page.locator('#functionsMenu .function-menu-content');
+    await assertFits(menuPanel, 'Functions menu', width);
+    await attachVisualReviewScreenshot(page, testInfo, `responsive-functions-${width}px`);
+    await closeFunctionsMenu();
+
+    await openFunctionsMenu();
+    await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+    await expect(page.locator('#functionPanelModal')).toBeVisible();
+    const agentPanel = page.locator('#functionPanelModal > section');
+    await assertFits(agentPanel, 'Agents panel', width);
+    await attachVisualReviewScreenshot(page, testInfo, `responsive-agents-${width}px`);
+    await closeFunctionPanel();
+
+    await openFunctionsMenu();
+    await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
+    await expect(page.locator('#functionPanelModal')).toBeVisible();
+    const skillsPanel = page.locator('#functionPanelModal > section');
+    await assertFits(skillsPanel, 'Skills panel', width);
+    await attachVisualReviewScreenshot(page, testInfo, `responsive-skills-${width}px`);
+    await closeFunctionPanel();
+
+    await page.locator('[data-action="toggle-settings"]').click();
+    await expect(page.locator('#settingsModal')).toBeVisible();
+    const settingsPanel = page.locator('#settingsModal .settings-surface');
+    await assertFits(settingsPanel, 'Settings panel', width);
+    await attachVisualReviewScreenshot(page, testInfo, `responsive-settings-${width}px`);
+    await page.locator('#settingsModal [data-action="close-settings"]').click();
+    await expect(page.locator('#settingsModal')).toBeHidden();
+  }
+});
+
+
 test('composer text drafts stay isolated per chat and restore after reload', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await ensureSidebarOpen(page);
