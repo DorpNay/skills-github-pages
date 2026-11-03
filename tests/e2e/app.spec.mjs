@@ -4282,9 +4282,16 @@ test('responsive expanded UI panels fit and capture evidence at all acceptance w
     await page.setViewportSize({ width, height: 900 });
 
     await ensureSidebarOpen(page);
-    await assertFits(page.locator('#sidebar'), 'sidebar', width);
+    const sidebar = page.locator('#sidebar');
+    await expect.poll(async () => Math.round((await sidebar.boundingBox())?.x ?? -1))
+      .toBe(0);
+    await assertFits(sidebar, 'sidebar', width);
     await attachVisualReviewScreenshot(page, testInfo, `responsive-sidebar-${width}px`);
     await ensureSidebarClosed(page);
+    await expect.poll(async () => {
+      const bounds = await sidebar.boundingBox();
+      return bounds ? Math.round(bounds.x + bounds.width) : 1;
+    }).toBeLessThanOrEqual(0);
 
     await openFunctionsMenu();
     const menuPanel = page.locator('#functionsMenu .function-menu-content');
