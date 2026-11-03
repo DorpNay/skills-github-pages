@@ -322,7 +322,7 @@ Small model route candidates: classification, query expansion, source relevance,
 
 Recommended increments:
 1. SPECIFIED schemas/state machine/threat model/capability matrix/evals.
-2. Offline SQLite lifecycle prototype (test doubles labeled, not actual agents).
+2. **PROTOTYPE IMPLEMENTED:** file-backed SQLite lifecycle store in `gateway/agent_runtime/store.py`; offline lifecycle tests in `gateway/tests/test_agent_run_store.py`. Run/task idempotency, state revision, atomic claim, expiring lease token fencing, bounded retries/recovery, cancellation and metadata event journal are covered. Gateway CI passed 185 tests on code checkpoint `60f98408f56c4a06d6a0d0ff6121f1bd3822b50a`; production API/runtime integration is still absent.
 3. Real single-worker vertical slice: actual provider session + narrow tool + artifact + deterministic validator.
 4. Real 2–3 concurrent independent sessions; prove separate contexts/run IDs and race/retry/cancel behavior.
 5. Small-model bakeoff; route only measurable wins.
