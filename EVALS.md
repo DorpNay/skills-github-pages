@@ -123,3 +123,12 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - **Required automated gates:** Gateway contract/security run `40637641493`; Quality/Chromium/published-site run `40637641255`; dead-code report `40637641563` — all passed on PR head `c09c4db9afc3b763b4900b34712223c40b729cd7`.
 - **Limit:** these gates establish deterministic behavior and contract preservation, not production retrieval quality. No labelled >=50-query corpus or target-host latency/RSS benchmark was run. Recall@5 >=0.75 remains a proposed threshold, not an observed production result.
 - **Acceptance before quality claims:** compare baseline and RRF on identical labelled queries; report Recall@5, MRR/nDCG, citation correctness, p50/p95 latency, peak RSS, scope leakage, upsert and deletion correctness. Keep `ALANDI_RAG_ENABLED=false` until operator setup and validation.
+
+
+## EV-AGENTRUN-STORE-001 — durable AgentRun/task lifecycle prototype
+
+- **Source:** `gateway/agent_runtime/store.py`; tests: `gateway/tests/test_agent_run_store.py`.
+- **Scope:** offline SQLite persistence only; no model calls, tool execution, authorization, sandbox, API integration or production activation.
+- **Acceptance:** run creation idempotency and conflict on changed request; strict scope pairing; state transition revision/fail-closed stale state; task enqueue idempotency; atomic worker claim; expired lease recovery; lease-token fencing of stale worker; retry budget; run cancellation invalidates active task claims; ordered event cursor and bounded event metadata.
+- **Status:** tests authored; exact-head CI pending at commit `78a153d51b4f651736d5df019f07de606531be03`. Do not mark verified until Gateway tests run on exact HEAD and the full relevant CI gates finish.
+- **Limit:** SQLite behavior in CI does not prove multi-host distributed queue safety or live Gateway persistence. No concurrency/load benchmark has been run.
