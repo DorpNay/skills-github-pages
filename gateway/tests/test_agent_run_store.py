@@ -260,3 +260,53 @@ def test_unhashable_scope_and_state_inputs_fail_closed(tmp_path):
     with pytest.raises(AgentRunError, match="run_id"):
         store.transition_run(run_id=[], expected_state="queued", new_state="running",
                             event_type="bad_id", now=2)
+
+
+@pytest.mark.parametrize("payload", [
+    {"prompt": "inline source text"},
+    {"tool_arguments": {"path": "/etc/passwd"}},
+    {"document_text": "raw document"},
+    {"nested": {"source": "raw"}},
+    {"content": "raw content"},
+    {"refs": ["ok", "x" * 257]},
+])
+def test_task_payload_rejects_raw_content_and_unbounded_shapes(tmp_path, payload):
+    store = AgentRunStore(tmp_path / "safe-payload.sqlite3")
+    store.initialize()
+    run = make_running(store, key="safe-payload")
+    with pytest.raises(AgentRunError):
+        store.enqueue_task(run_id=run["run_id"], task_key="unsafe",
+                           idempotency_key="unsafe-payload", payload=payload, now=103)
+
+
+@pytest.mark.parametrize("result", [
+    {"transcript": "raw model output"},
+    {"tool_result": {"stdout": "sensitive output"}},
+    {"message": "raw answer"},
+    {"nested": {"claims": 2}},
+])
+def test_task_result_rejects_raw_content_and_nested_shapes(tmp_path, result):
+    store = AgentRunStore(tmp_path / "safe-result.sqlite3")
+    store.initialize()
+    run = make_running(store, key="safe-result")
+    task = store.enqueue_task(run_id=run["run_id"], task_key="result",
+                              idempotency_key="safe-result-task", payload={"source_refs": ["s1"]}, now=103)
+    claim = store.claim_task(run_id=run["run_id"], worker_id="worker", now=104)
+    assert claim is not None and claim.task_id == task["task_id"]
+    with pytest.raises(AgentRunError):
+        store.complete_task(claim=claim, result=result, now=105)
+    # Rejected results do not complete or release the lease.
+    assert store.get_task(task["task_id"])["state"] == "leased"
+
+
+def test_task_payload_and_result_allow_bounded_reference_metadata(tmp_path):
+    store = AgentRunStore(tmp_path / "safe-reference-data.sqlite3")
+    store.initialize()
+    run = make_running(store, key="safe-reference-data")
+    task = store.enqueue_task(run_id=run["run_id"], task_key="refs",
+                              idempotency_key="refs-task",
+                              payload={"source_refs": ["artifact:doc-1"], "priority": 2}, now=103)
+    claim = store.claim_task(run_id=run["run_id"], worker_id="worker", now=104)
+    assert claim is not None and claim.task_id == task["task_id"]
+    completed = store.complete_task(claim=claim, result={"claim_count": 2, "evidence_refs": ["artifact:ev-1"]}, now=105)
+    assert completed["result"] == {"claim_count": 2, "evidence_refs": ["artifact:ev-1"]}
