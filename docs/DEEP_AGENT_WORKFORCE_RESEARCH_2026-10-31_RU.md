@@ -243,7 +243,7 @@ Keep protocol layers distinct: [MCP](https://modelcontextprotocol.io/specificati
 
 ## 12. Owner-provided source review — 2026-11-03
 
-**Evidence addendum:** detailed source triage and proposed runtime specification are recorded in companion review [AGENT_WORKFORCE_SOURCE_REVIEW_2026-11-03_RU.md](AGENT_WORKFORCE_SOURCE_REVIEW_2026-11-03_RU.md). This pass is reference research; no runtime, dependency, model, permission or UI execution capability changed.
+**Evidence addendum:** source triage and proposed runtime specification are recorded below in this canonical research document. This pass is reference research; no runtime, dependency, model, permission or UI execution capability changed.
 
 Highest-value patterns for aLandi:
 - Worktrunk: worktree isolation and lifecycle for concurrent coding agents.
@@ -261,3 +261,81 @@ Highest-value patterns for aLandi:
 Unresolved owner source identities: Agent-desktop and Grill-me require exact canonical URLs. ECC interpreted provisionally as affaan-m/ECC (Everything Claude Code); Taby provisionally normalized to TabbyML/Tabby. “TensorFlow” is not a specific runtime choice; investigate LiteRT only with benchmark. Full owner-provided 60-source list was not re-reviewed in this addendum.
 
 **Next bounded action:** choose first offline-first AgentRun slice and approve source identities. Keep current multi-agent runtime as SPECIFIED/HOLD until schema, state machine, threat model, eval and permissions are reviewed.
+
+### 12.1 Source-level disposition
+
+| Source | Pattern worth borrowing | aLandi disposition |
+|---|---|---|
+| [dsh-our-free-model](https://github.com/Ebony-Vinyl/dsh-our-free-model) | Live model availability/capability discovery, multi-wire adapters, effort/budget normalization, fallback classification, telemetry, signed update/rollback. | Reference, not install; not an orchestrator. Never silently route private user content through “free” provider. |
+| [Worktrunk](https://github.com/max-sixty/worktrunk) | Git worktree lifecycle, hooks, status/CI aggregation, unique ports/build cache for concurrent coding agents. | High priority harness pattern: one worktree per coder, integration stage, no automatic merge/delete in owner repo. |
+| [Scrapling](https://github.com/D4Vinci/Scrapling) | Adaptive parser and MCP browser sessions/snapshots/actions/network capture. | Optional research adapter behind allowlist, SSRF/redirect/rate/terms controls. Stealth/CAPTCHA bypass not default. |
+| [Colibri](https://github.com/JustVugg/colibri) | Pure-C MoE inference, disk-stream experts, resource planning, compatible gateway. | Local model runtime candidate only; benchmark disk latency/RAM and throughput before route. Not agent framework. |
+| [Nanochat](https://github.com/karpathy/nanochat) | Minimal training pipeline covering tokenizer/pretrain/finetune/eval/inference. | Learning/eval reference, not immediate worker runtime. Training requires data/GPU; first benchmark available compact models. |
+| Agent-desktop | Exact upstream not identified. | Unresolved; no adoption or capability claim before canonical URL. |
+| [TensorFlow](https://github.com/tensorflow/tensorflow) | ML framework; LiteRT/TFLite possible deployment path on supported devices. | No core dependency. Research only if device/model benchmark proves gain. |
+| Grill-me | Canonical project/skill URL not identified; interactive requirements interrogation is only a hypothesis. | Unresolved; request exact URL. |
+| [Xiryn](https://github.com/SouravBeraAkaSpeed/xiryn) | Isolated Linux desktop per Docker agent, user model keys, agent handoffs. | Architecture reference only; audit maturity, Docker privilege, vault, retention and setup supply chain. |
+| [Goose](https://github.com/block/goose) | UI-independent agent loop and typed MCP extensions; concurrent instances. | High priority adapter pattern; enforce aLandi capabilities/approval centrally. |
+| [Tabby](https://github.com/TabbyML/tabby) | Self-hosted code assistant/completion and code Q&A. | Optional specialist, not supervisor. “Taby” tentatively normalized to Tabby. |
+| [GPT Pilot](https://github.com/Pythagora-io/gpt-pilot) | Stepwise spec/architecture/implementation/review/debug with human feedback. | Borrow workflow, not role-play; distinct agent only if separate session actually executes. |
+| [Plandex](https://github.com/plandex-ai/plandex) | Plan-first task breakdown and reviewable diffs. | Borrow diff proposal/approval/rollback; verify exact release before implementation. |
+| [SWE-agent](https://github.com/SWE-agent/SWE-agent) | Purpose-designed Agent-Computer Interface and repeatable issue/test eval. | High priority compact read/search/patch/test tool surface and benchmark reference. |
+| [Roo Code](https://github.com/RooCodeInc/Roo-Code) | Architect/Code/Debug/Ask modes and orchestrator delegation. | Modes are policy profiles, not rights. Verify context isolation in target release. |
+| [ECC](https://github.com/affaan-m/ECC) | Portable skills/rules/hooks/memory/planning/security/evals with harness adapters. | High priority: canonical shared assets + thin harness adapters + deterministic hooks and evals. ECC exact identity remains provisional. |
+
+“60 sources” remains a reference catalog; this pass does not claim a complete re-review. ECC likely means Everything Claude Code; Taby likely means TabbyML. TensorFlow is too broad to select a runtime. Agent-desktop and Grill-me need exact links.
+
+### 12.2 Proposed durable AgentRun architecture (SPECIFIED)
+
+```text
+User/UI → Gateway AgentRun API (durable run + event stream)
+        → Supervisor (main model: goal/decomposition/policy/synthesis)
+        → SQLite task board (atomic claim/lease/dependencies/idempotency)
+        → bounded worker pool (isolated contexts; model routes per task)
+        → independent validator (schema + evidence + deterministic tests)
+        → scoped artifact/provenance store → supervisor synthesis
+```
+
+Durable contracts:
+- AgentRun: owner, chat/project scope, goal, policy snapshot, state, deadline, budgets, cancellation, result refs.
+- Task: parent/dependencies, typed source refs, output schema, lease owner/expiry, idempotency, attempts/state.
+- WorkerProfile: role, model policy, skill IDs+hashes, tool/data scopes, budgets and eval.
+- ModelRoute: provider/model ID, capability/availability, context/output budgets, privacy class, latency/cost and concurrency.
+- ToolCall: typed args, run/task, effective scope, approval, result/error, redacted audit.
+- Artifact: hash, MIME, provenance, scope, validator result, retention.
+- RunEvent: append-only lifecycle journal; do not persist hidden chain-of-thought.
+
+**Logical worker concurrency is distinct from model inference concurrency.** Queue workers against measured provider/runtime slots; a local Ollama concurrency=1 must not be represented as six parallel generations.
+
+Small model route candidates: classification, query expansion, source relevance, structured extraction/schema repair, short summary/deduplication, bounded code/test/review. Each route must pass golden-set quality, schema validity, hallucination/omission, RU/EN, injection resistance, latency, peak RAM/VRAM, tokens and cost. No silent fallback to another data processor; “free” is not a privacy guarantee. Prefer deterministic code for exact transformations.
+
+### 12.3 Safeguards and implementation sequence
+
+- Capability intersection: effective = task_request ∩ worker_profile ∩ user_grant ∩ environment_policy.
+- Read-only default; write/execute/network grants separate; external side effects require approval.
+- Source IDs/offsets/hashes rather than broad chat/project context. Website/tool/Skill content is untrusted and cannot alter system policy.
+- Lease expiry, idempotency and checkpoints; categorized bounded retries; no blind side-effect retry.
+- Enforce per-task/run token, tool, time, bytes, concurrency and money budgets at dispatch/execution.
+- Pause/resume/cancel propagate; user sees lifecycle and evidence, not hidden reasoning.
+- Code workers get isolated worktrees/sandboxes; conflicts are explicit and merge is separate.
+- Typed result + evidence; validator may reject/requeue/escalate.
+
+Recommended increments:
+1. SPECIFIED schemas/state machine/threat model/capability matrix/evals.
+2. Offline SQLite lifecycle prototype (test doubles labeled, not actual agents).
+3. Real single-worker vertical slice: actual provider session + narrow tool + artifact + deterministic validator.
+4. Real 2–3 concurrent independent sessions; prove separate contexts/run IDs and race/retry/cancel behavior.
+5. Small-model bakeoff; route only measurable wins.
+6. UI states after durable API, permissions and tests exist.
+7. Scale ≥5 remote workers after load/eval/sandbox gates; 100+ logical tasks via queue; never infer 1k model processes.
+8. Thin harness adapters for aLandi/Hermes/Goose/ECC; canonical contracts stay harness-neutral.
+
+Acceptance: at least three genuinely concurrent sessions (later ≥5), distinct IDs/contexts, no cross-scope access, restart recovery, no silent write collisions, cancellation/approval prevents side effects, schema/evidence validation, budget enforcement, independent reviewer catches seeded defects. Measure completion/pass, verifier rejection, duplicate work, wall time, token/cost, RAM/VRAM, queue time, retries and human intervention against a single-model baseline on identical golden tasks. No claimed gain without repeatable comparison.
+
+### 12.4 Cross-workstream integration
+
+- PR #125 Agent Studio: profiles/roles/model bakeoff; reuse, do not duplicate.
+- PR #128 Agent Workforce: primary home for durable AgentRun/task lease/capability/eval contracts.
+- PR #129 Voice: future scoped audio artifacts.
+- PR #130 Deep Research: worker evidence references/provenance.
+- PR #131 Landing UI 2.0: existing sequential four-stage one-model pipeline and local Blueprint remain non-runtime. Expose execution only after API, permission and test gates.
