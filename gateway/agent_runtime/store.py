@@ -192,7 +192,7 @@ class AgentRunStore:
 
     @staticmethod
     def _scope(scope_kind: object, scope_id: object) -> tuple[str, str]:
-        if scope_kind not in {"conversation", "project", "global"}:
+        if not isinstance(scope_kind, str) or scope_kind not in {"conversation", "project", "global"}:
             raise AgentRunError("invalid scope_kind")
         if not isinstance(scope_id, str) or not scope_id.strip() or len(scope_id) > 160:
             raise AgentRunError("scope_id must be bounded non-empty text")
@@ -263,7 +263,9 @@ class AgentRunStore:
     def transition_run(self, *, run_id: str, expected_state: str, new_state: str,
                        event_type: str, metadata: dict[str, Any] | None = None,
                        now: float | None = None) -> dict[str, Any]:
-        if expected_state not in RUN_STATES or new_state not in RUN_STATES:
+        _bounded_text(run_id, field="run_id", max_chars=128)
+        if (not isinstance(expected_state, str) or not isinstance(new_state, str)
+                or expected_state not in RUN_STATES or new_state not in RUN_STATES):
             raise InvalidTransition("unknown run state")
         if new_state not in RUN_TRANSITIONS[expected_state]:
             raise InvalidTransition("run state transition is not allowed")
@@ -293,6 +295,7 @@ class AgentRunStore:
     def enqueue_task(self, *, run_id: str, task_key: str, idempotency_key: str,
                      payload: dict[str, Any], max_attempts: int = 3,
                      now: float | None = None) -> dict[str, Any]:
+        _bounded_text(run_id, field="run_id", max_chars=128)
         key = _bounded_text(task_key, field="task_key", max_chars=128)
         idem = _bounded_text(idempotency_key, field="task idempotency_key", max_chars=200)
         if not isinstance(payload, dict):
@@ -349,6 +352,7 @@ class AgentRunStore:
 
     def claim_task(self, *, run_id: str, worker_id: str, lease_seconds: int = 30,
                    now: float | None = None) -> TaskClaim | None:
+        _bounded_text(run_id, field="run_id", max_chars=128)
         worker = _bounded_text(worker_id, field="worker_id", max_chars=128)
         if isinstance(lease_seconds, bool) or not isinstance(lease_seconds, int) or not 1 <= lease_seconds <= 3600:
             raise AgentRunError("lease_seconds must be between 1 and 3600")
@@ -440,6 +444,7 @@ class AgentRunStore:
         return self.get_task(claim.task_id)
 
     def cancel_run(self, *, run_id: str, now: float | None = None) -> dict[str, Any]:
+        _bounded_text(run_id, field="run_id", max_chars=128)
         timestamp = time.time() if now is None else float(now)
         with closing(self._connect()) as db:
             db.execute("BEGIN IMMEDIATE")
