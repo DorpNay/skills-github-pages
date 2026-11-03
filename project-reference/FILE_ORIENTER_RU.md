@@ -1,15 +1,17 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
-## Текущая контрольная точка — 2026-11-03, Session Sync Capsule
+## Текущая контрольная точка — 2026-11-03, визуальная приёмка V2
 
-- Main V1: 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1; не менять.
-- PR #131 открыт, не объединён, mergeable=false; branch feat/landing-v1-accessibility-responsive-20261031. Перед этим docs-only обновлением live PR/code-test HEAD: 6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0; base/merge-base e78a73b25725bfa63370d9946887cbbacbf51b82; compare 986 ahead / 4 behind main. После документационного commit live PR HEAD изменится; code/test HEAD остаётся отдельной ссылкой, пока код/тесты не изменены.
-- Exact-head Quality #41540703827 на 6d57e2b: success; 4/4 Chromium shards и все обязательные sentinels passed. Published Pages browser smoke skipped. Graphify #41540704000 на том же SHA: success. Не называть эти runs проверкой нового docs-only PR HEAD.
-- Исправлены нестабильности E2E: toast hover release; явный выбор сохранённого Blueprint перед Delete; два RAF перед заменой chat fixture в scroll/viewport test. Product runtime не менялся.
-- В OLEDUE.md введён Session Sync Capsule (SSC): один batch live reads; раздельные PR HEAD / code-test HEAD / tested SHA; exact-head run matching; no polling loops; delta refresh only when refs change. PROJECT_STATE.yaml и VOLLEY_LOG.md остаются snapshot/evidence, не источником live GitHub state.
-- UI scope: 15 read-only Details entry points, Agent Profiles и Tasks & History — roadmap-only; Team Blueprint local-only; ticker 1ИV3ИT10И. Никаких выдуманных runtime actions, permissions, AgentRuns или Project Sources CRUD без API.
-- Native iPhone Safari, VisualViewport/safe-area, VoiceOver, keyboard focus и полная WCAG-проверка остаются открытыми. No merge/rebase/main sync/deploy.
-- Next: продолжить ближайший bounded UI acceptance/implementation slice; Actions проверять по SSC один раз, не ждать бесконечно.
+- Main V1: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; не менять.
+- PR #131, branch `feat/landing-v1-accessibility-responsive-20261031`. На начало аудита HEAD `fd9eee63d781ca2fc8c276edafb79d97f6810c56`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; 989 ahead / 4 behind; mergeable=false. После docs-only checkpoint commits HEAD нужно получить заново из GitHub.
+- Последний доказанно зелёный app/test SHA: `6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0`. Quality #41540703827: 4/4 Chromium shards + обязательные sentinels passed; Graphify #41540704000 passed. Published Pages smoke skipped. Это не проверка более позднего E2E capture source.
+- Шрифт кнопок перепроверен: итоговый CSS rule применяет один stack к `body,button,input,textarea,select`; responsive test сравнивает computed family на 320/360/390/768/1024/1440 px. Доказательство Quality #41540703827 относится к SHA 6d57e2b; ОС выбирает доступный font fallback.
+- Добавлен Playwright тест, который должен сохранить визуальные состояния sidebar/memory, Functions, Agent categories/Team Blueprint, Skills/library, aServi/providers/Additional Settings. Test source на `fd9eee63d781ca2fc8c276edafb79d97f6810c56`; syntax PASS, browser run NOT RUN. Старый 8-image artifact — только shell/sidebar.
+- 8.1–8.17: 8.5 [x]; остальные в implementation ledger [~], поскольку автоматическая часть не заменяет real iPhone Safari, VoiceOver, keyboard-only, full component WCAG и реальные API/провайдер gates. Project Sources CRUD остаётся заблокирован до scoped source-list API.
+- Vercel project для репозитория не найден; Pages публикует stable V1. Не использовать Pages target для V2 preview. Новые скриншоты получать из CI Chromium artifact.
+- Гигиена: 127 refs, 10 открытых PR, issue #111. Пять behind-only branch candidates и их HEAD SHA записаны в `docs/REPOSITORY_HYGIENE_RU.md`; удаление недоступно в connector. Подтверждённых бесхозных файлов нет; GitHub Skills exercise scaffold требует проверки template state/history.
+- Короткий task selector добавлен в OLEDUE и включён в AGENTS fast-entry protocol. Master Registry (544 lossless open/partial records; deduplication ещё не завершена) остаётся на PR #127.
+- NEXT: получить exact-head Chromium/Quality и полный набор снимков; провести review открытых экранов; затем закрывать один конкретный оставшийся gate.
 
 ## Навигация и владение записями
 
