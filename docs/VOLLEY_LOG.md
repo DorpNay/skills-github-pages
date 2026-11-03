@@ -161,3 +161,10 @@ Added a strict metadata scalar contract for run/event metadata: keys bounded, se
 **CI debug record:** first run after adding the metadata regression tests returned **194 passed / 1 failed**: the test demonstrated that `source_text` was not included in the blocked-key regex. Updated the regex to reject `source_text`; subsequent Lite Gateway Tests run #671 on source/test SHA `1e327d45bfff6ca597ebbecec294f8301fa8a0cd` passed: **195 passed, 2 warnings**. Compile, deployment preflight and offline six-layer eval passed. Freshness #388, Graphify #528, Dead Code #525 and Provenance #1079 also passed on the latest code checkpoint; Quality #1675 is pending/queued at this update.
 
 The event journal is now deliberately metadata-only at this prototype boundary. Task payload/results still need typed artifact-reference contracts before any real model/tool integration. No API/runtime activation or external side effects.
+
+
+### 2026-11-03 — Exact-head Quality and browser verification complete
+
+Quality Sentinels run #1677 passed on checkpoint `7896f4ef8cc4c6370c9fcc2417504a28adfea66d`: **98 Chromium E2E tests passed (2.5 min)**, **1 published-site browser smoke passed**, Jekyll, Integrity, Security, Context and Ruff/static analysis all passed. Freshness #388, Graphify #528, Dead Code #525, Provenance #1079 and Gateway #671 also passed on the associated current code/docs checkpoints. Gateway #671: **195 passed, 2 warnings** plus compileall, deploy preflight and offline six-layer evaluation.
+
+This establishes repository CI behavior for the prototype. It does not establish a deployed AgentRun API, real model workers, production sandbox, multi-host reliability or owner-host measurements.
