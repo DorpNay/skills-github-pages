@@ -239,3 +239,25 @@ Use the Agent Skills directory format as a separate future loader; preserve the 
 ### Interoperability
 
 Keep protocol layers distinct: [MCP](https://modelcontextprotocol.io/specification) exposes tools/context; [A2A 1.0.0](https://a2a-protocol.org/latest/specification/) coordinates independent agents and long-running tasks; [AG-UI 1.0](https://docs.ag-ui.com/spec/1.0) streams typed user-facing events. Do not implement all three at once or adopt a second orchestration runtime before a measured contract need.
+
+
+## 12. Owner-provided source review — 2026-11-03
+
+**Evidence addendum:** detailed source triage and proposed runtime specification are recorded in companion review [AGENT_WORKFORCE_SOURCE_REVIEW_2026-11-03_RU.md](AGENT_WORKFORCE_SOURCE_REVIEW_2026-11-03_RU.md). This pass is reference research; no runtime, dependency, model, permission or UI execution capability changed.
+
+Highest-value patterns for aLandi:
+- Worktrunk: worktree isolation and lifecycle for concurrent coding agents.
+- Goose: UI-independent agent loop + typed extension/tool contract.
+- ECC: portable skills/rules/hooks/evals with thin harness adapters.
+- SWE-agent: compact predictable Agent-Computer Interface and reproducible task evaluation.
+- dsh-our-free-model: model availability/capability discovery, effort normalization, fallback semantics and usage telemetry (not an agent orchestrator).
+- Scrapling: optional research extraction/browser adapter behind SSRF/domain/rate/terms policy.
+- Colibri: local MoE inference candidate; benchmark disk-stream latency and RAM before route adoption.
+- Nanochat: training/evaluation learning reference; not an immediate runtime.
+- GPT Pilot/Plandex/Roo Code: incremental plan → scoped implementation/delegation → diff review → human approval patterns.
+- Xiryn: isolated per-agent computer concept, but maturity/security/supply-chain review required before experiment.
+- Tabby: code-specialist helper candidate, not supervisor.
+
+Unresolved owner source identities: Agent-desktop and Grill-me require exact canonical URLs. ECC interpreted provisionally as affaan-m/ECC (Everything Claude Code); Taby provisionally normalized to TabbyML/Tabby. “TensorFlow” is not a specific runtime choice; investigate LiteRT only with benchmark. Full owner-provided 60-source list was not re-reviewed in this addendum.
+
+**Next bounded action:** choose first offline-first AgentRun slice and approve source identities. Keep current multi-agent runtime as SPECIFIED/HOLD until schema, state machine, threat model, eval and permissions are reviewed.
