@@ -348,7 +348,7 @@ class AgentRunStore:
                 self._event(db, run_id=run_id, task_id=row["task_id"], event_type="task_lease_expired",
                             from_state="leased", to_state=next_state, metadata={}, now=timestamp)
             task = db.execute("""SELECT * FROM agent_tasks WHERE run_id=? AND state='queued'
-                AND attempt < max_attempts ORDER BY created_at,task_id LIMIT 1""", (run_id,)).fetchone()
+                AND attempt < max_attempts ORDER BY created_at,task_key,task_id LIMIT 1""", (run_id,)).fetchone()
             if task is None:
                 db.commit()
                 return None
