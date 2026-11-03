@@ -168,3 +168,10 @@ The event journal is now deliberately metadata-only at this prototype boundary. 
 Quality Sentinels run #1677 passed on checkpoint `7896f4ef8cc4c6370c9fcc2417504a28adfea66d`: **98 Chromium E2E tests passed (2.5 min)**, **1 published-site browser smoke passed**, Jekyll, Integrity, Security, Context and Ruff/static analysis all passed. Freshness #388, Graphify #528, Dead Code #525, Provenance #1079 and Gateway #671 also passed on the associated current code/docs checkpoints. Gateway #671: **195 passed, 2 warnings** plus compileall, deploy preflight and offline six-layer evaluation.
 
 This establishes repository CI behavior for the prototype. It does not establish a deployed AgentRun API, real model workers, production sandbox, multi-host reliability or owner-host measurements.
+
+
+### 2026-11-03 — AgentRun task persistence contract + exact-head CI
+
+**Change:** Task payload and result persistence now uses a bounded metadata/reference-only contract. Values must be scalar metadata, or bounded string lists only for keys ending in `_refs`, `_ids`, or `_keys`; blocked raw-content/secret-like key patterns, nested objects and arbitrary arrays fail closed. Tests include prompt/tool arguments/document text/result transcripts/nested data, oversized refs and a valid reference-only task. A rejected result leaves its lease in `leased` state, so the caller may submit a corrected structured result without task completion side effects.
+
+**Verification:** exact code/docs head `f1ebb86f9afdc4bc7a96d87c1eed394eef89a28c`; Lite Gateway Tests #? **206 passed, 2 warnings**, compileall, deployment preflight and offline six-layer eval passed. Quality Sentinels **98 Chromium tests + 1 published-site smoke passed**; Jekyll, Integrity, Security, Context and Ruff/static analysis passed. Freshness, Graphify, Dead Code and Provenance passed. PR #128 is mergeable according to GitHub, but remains research HOLD; no runtime/API integration, model workers, tools, sandbox or live-host load test.
