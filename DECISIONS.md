@@ -220,3 +220,13 @@
 - **Safety and clarity:** web Off disables web tools but does not imply that cloud model APIs work offline. The existing staged workflow must not be described as an independent team of models.
 - **Acceptance:** exact-head tests cover Quick+Expanded, Thorough+Standard, Thorough+Off, per-chat settings, task-profile independence, Research Studio non-mutation, RU/EN localization and mobile control layout. See [CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md](docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md).
 - **Rollout:** preserve the current static/Jekyll architecture and existing per-chat persistence; no new runtime dependency or provider permission is introduced.
+
+
+### D-016 implementation checkpoint — offline AgentRun persistence prototype (2026-11-03)
+
+- **Status:** PROTOTYPE; not Gateway/API-integrated, not production-enabled.
+- **Implemented on PR #128 research branch:** `gateway/agent_runtime/store.py` provides durable SQLite AgentRun records, idempotent creation, explicit versioned state transitions, task enqueue idempotency, atomic claim/lease, lease-token fencing, bounded retry attempts, expiry recovery, cancellation fencing, and append-only lifecycle metadata events.
+- **Boundary:** this module stores orchestration state only. It does not call models, execute tools, grant capabilities, or provide a sandbox. Event metadata must not contain prompts, secrets, transcripts or raw tool arguments/results.
+- **Acceptance fixture:** `gateway/tests/test_agent_run_store.py` covers duplicate request behavior, scope validation, stale transitions, lease expiry/reclaim and old-token fencing, retry budget, cancellation and event cursors.
+- **Open:** Gateway routes, authenticated scope binding, model/provider worker, policy/capability engine, artifact/evidence verifier, cross-process load/race tests and target-host durability remain unimplemented/unverified.
+- **Rollback:** revert the two new source/test files and this prototype evidence. No schema migration to the existing Gateway databases; separate SQLite file is supplied by future operator integration.
