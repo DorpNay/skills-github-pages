@@ -198,3 +198,19 @@ The checkbox inputs are nested inside their visible labels. The previous CSS inp
 - App E2E spec contains 121 tests; landing E2E spec contains 8. Assertions are authored, not executed. Static V8 parsing, CSS brace balance, unique HTML IDs and RU/EN translation-key checks passed.
 - Exact code/test HEAD: `dc82acb95c850d7821e071e16a8ab11524a459c2`. GitHub returned zero workflow runs and zero commit statuses; no browser/Quality pass is claimed.
 - No runtime, API, dependency, permission or deployment changes. PR #131 remains open/unmerged and mergeable=false due the shared V1 checklist conflict; no rebase/synchronization/merge/deployment.
+
+
+## 8. Landing UI 2.0 — настоящий Agent Workforce boundary (2026-11-03)
+
+PR #128 is the canonical research/specification home for the durable AgentRun/task-board/worker runtime and the owner-source review. The Functions/Agents menu in PR #131 must remain consistent with its contracts:
+
+- Current four-stage planner/researcher/critic/final pipeline is a sequential flow using one selected provider/model; it must not be marketed as independent multi-agent execution.
+- Team Blueprint is local configuration only; role/profession count is not active worker count.
+- Display separate values for logical profiles/tasks, queued/running workers, and actual provider/model inference slots.
+- Runtime menu entries are enabled only after durable AgentRun API, scoped grants, cancellation/approval, event/artifact provenance and tests exist.
+- Worker card metadata should explain task goal, model route (when known), exact Skill versions, data scope, allowed tools, token/tool/time budget, state, validator and artifact refs. Never expose hidden chain-of-thought.
+- Small model choices are task-class routing policy behind golden-set evals, not a static “best small models” list. Route only if quality/privacy/latency/RAM/cost improves against baseline.
+- Harness adapter concepts from Worktrunk/Goose/ECC/SWE-agent and model-provider patterns from dsh-our-free-model are reference-only; PR #131 introduces no dependency or runtime execution.
+- Preserve progressive disclosure and concise toolbar. Actual run history/queue is a future dedicated surface, not an inert toggle in existing Settings.
+
+Acceptance is owned by PR #128 research/eval contracts plus a future approved runtime implementation. No new runtime capabilities are implemented by this UI architecture note.
