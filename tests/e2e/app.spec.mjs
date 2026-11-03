@@ -4635,8 +4635,11 @@ test('extended UI visual review captures navigation, settings, Functions, Agents
 
   // Sidebar / memory navigation
   await ensureSidebarOpen(page);
+  await attachVisualReviewScreenshot(page, testInfo, 'ui-sidebar-overview');
+  await openDisclosure(page, '#memoryPanel');
+  await attachVisualReviewScreenshot(page, testInfo, 'ui-sidebar-memory-settings');
   await openDisclosure(page, '#memoryToolsDetails');
-  await attachVisualReviewScreenshot(page, testInfo, 'ui-sidebar-memory-open');
+  await attachVisualReviewScreenshot(page, testInfo, 'ui-sidebar-memory-controls');
   await ensureSidebarClosed(page);
 
   // Compact Functions menu and Agent panel
