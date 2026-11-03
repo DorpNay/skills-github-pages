@@ -185,7 +185,7 @@
 ### D-016 evidence update — Gateway CI (2026-11-03)
 
 - The initial CI run found nondeterministic equal-timestamp task ordering in the test assumption. Claim ordering now uses `created_at, task_key, task_id`; the store rejects `:memory:` to prevent falsely durable behavior across per-operation SQLite connections.
-- **Gateway CI PASS:** source/test checkpoint `60f98408f56c4a06d6a0d0ff6121f1bd3822b50a`; 185 tests passed (2 upstream warnings), compile, deploy preflight and offline six-layer eval passed. Current docs checkpoint `9556633cc46decbc338b9f6f7f59dd94a19a9e91`: Freshness, Graphify, Dead Code and Provenance passed; Quality/Chromium was pending.
+- **Gateway CI PASS:** source/test checkpoint `1e327d45bfff6ca597ebbecec294f8301fa8a0cd`; 195 tests passed (2 upstream warnings), compile, deploy preflight and offline six-layer eval passed. Metadata is scalar-only with blocked raw-content/sensitive key patterns; a first 194/1 run caught an omitted `source_text` pattern, which was corrected before the passing run. Freshness #388, Graphify #528, Dead Code #525 and Provenance #1079 passed on this code checkpoint. Quality/Chromium exact-head run #1675 remained pending.
 - This verifies the file-backed lifecycle prototype’s tested scope only. It does not establish production integration, multi-host queue correctness, actual LLM workers, tool permissions or sandboxing.
 
 ## D-017 — Adaptive-minimalist interface and private autonomous work partner / Адаптивный минимализм и приватный автономный партнёр
