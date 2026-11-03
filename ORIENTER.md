@@ -2,16 +2,19 @@
 
 > **Handoff trigger:** when the owner sends `oledue`, start with root `OLEDUE.md`. It defines the short, repository-backed resume protocol; verify all live SHAs and checks before acting.
 
-## Current working checkpoint — 2026-11-03, Session Sync Capsule protocol
+## Current working checkpoint — 2026-11-03, full UI acceptance and visual capture
 
-- Source of truth: DorpNay/skills-github-pages; main remains stable V1 at 0a1f764f295f92e49e347cdc972f8c6c9a07e4c1.
-- PR #131 is open/unmerged and currently reports mergeable=false on feat/landing-v1-accessibility-responsive-20261031. Before this documentation-only protocol commit, live branch/code-test HEAD was 6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0; PR base and merge-base e78a73b25725bfa63370d9946887cbbacbf51b82; compare: 986 ahead / 4 behind main. Resolve the live branch tip after this docs commit; keep code/test HEAD separate.
-- Exact code/test SHA 6d57e2b: Quality run #41540703827 passed (4/4 Chromium shards; syntax preflight, static analysis, Jekyll, Integrity, Security and Context passed). Published Pages browser smoke was skipped. Graphify run #41540704000 passed on the same SHA. Do not transfer these claims to a later code/test SHA.
-- The test-only corrections before that run: release toast hover before asserting timed dismissal; explicitly select a persisted Team Blueprint before Delete; settle the viewport handler's animation frames before scroll-preservation fixture replacement. These are test-stability fixes, not product-runtime changes.
-- Added the Session Sync Capsule (SSC) to OLEDUE.md: one batched live snapshot; distinct PR HEAD / code-test HEAD / tested SHA; exact-head CI matching; bounded polling; delta refresh only when refs move. AGENTS.md points to the same protocol.
-- Landing UI 2.0 remains the active scope. App/landing ticker prefix is 1ИV3ИT10И; planned features must remain visibly discoverable through truthful menu/section/detail states, without fabricated runtime capability. Existing read-only detail windows and Team Blueprint boundaries remain.
-- Native iPhone Safari, VisualViewport/safe-area, VoiceOver, keyboard-only review and full component-level WCAG remain manual gates. No merge, rebase, main sync or deployment.
-- Next: use the SSC on each resume; continue the next bounded Landing UI 2.0 acceptance/implementation slice without waiting in an Actions polling loop.
+- Source of truth: DorpNay/skills-github-pages. Main V1 remains `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; do not change it.
+- PR #131 is open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`; at the start of this audit its HEAD was `fd9eee63d781ca2fc8c276edafb79d97f6810c56`, base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`, compare 989 ahead / 4 behind, mergeable=false. Documentation checkpoint commits may subsequently advance HEAD; always refresh live GitHub before acting.
+- The latest app/test change at that point adds one Playwright visual capture test (app spec: 121 declared tests). V8 parser-only syntax check passed after stripping top-level imports. The new browser test is AUTHORED / NOT RUN; do not describe its planned screenshots as captured.
+- Last verified browser/code checkpoint remains `6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0`: Quality #41540703827 passed 4/4 Chromium shards plus syntax preflight, static analysis, Jekyll, Integrity, Security and Context; Graphify #41540704000 passed. Published Pages browser smoke was skipped. These runs do not verify later test source.
+- **Button font FACT:** CSS uses one final stack for body/buttons/inputs/textarea/select; the responsive computed-style regression passed on 6d57e2b at 320/360/390/768/1024/1440px. OS font fallback may choose different installed faces.
+- **8.1–8.17 acceptance:** 8.5 is [x]; the implementation ledger keeps 8.1–8.4 and 8.6–8.17 at [~]. Do not close them by inference. Native iPhone Safari, VisualViewport/safe-area, VoiceOver, keyboard-only, full component WCAG, long-list/popover stress and live provider/gateway conditions remain open. Project Sources CRUD is intentionally blocked without a scoped source-list API.
+- The previous 8-image artifact contains shell/sidebar only. A new E2E test now targets memory/sidebar, Functions, Agent categories, Team Blueprints, Skills, aServi/provider settings and Additional Settings. Its screenshots await a Chromium artifact.
+- No Vercel preview project exists for this repo; the Pages target remains stable V1. Use CI-built screenshots; do not deploy V2 to the V1 Pages target.
+- Hygiene snapshot: 127 branch refs, 10 open PRs, issue #111. Five behind-only branch candidates are recorded in `docs/REPOSITORY_HYGIENE_RU.md`; no branch/file/tool was deleted because the connector lacks delete-ref capability and no orphan file/tool was proven. GitHub account/repository security settings remain owner-side checks.
+- Task routing: every task must consult the Fast task selector in `OLEDUE.md`; the lossless 544-row master inventory is in PR #127 and remains separate. Do not create another backlog.
+- **NEXT:** obtain exact-head Chromium/Quality for the new capture test, inspect the full visual artifact and record screenshot findings; then continue the highest-priority unclosed 8.1–8.17 gate. No merge, rebase, main sync or deployment.
 
 ## Record ownership
 
