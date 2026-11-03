@@ -484,7 +484,7 @@ agent_workforce_2026_11_03:
   implementation:
     module: "gateway/agent_runtime/store.py"
     tests: "gateway/tests/test_agent_run_store.py"
-    source_test_checkpoint: "1e327d45bfff6ca597ebbecec294f8301fa8a0cd"
+    source_test_checkpoint: "f1ebb86f9afdc4bc7a96d87c1eed394eef89a28c"
     features:
       - "file-backed SQLite run/task records with 0600 DB file permissions"
       - "idempotent AgentRun and task creation with request-digest conflict detection"
@@ -495,11 +495,11 @@ agent_workforce_2026_11_03:
       - "bounded metadata-only append-only lifecycle event journal"
       - "two-thread concurrent claim regression; only one worker claims a single task"
   verification:
-    gateway_ci: "PASS — 195 tests, 2 upstream warnings; compileall, deployment preflight and offline six-layer eval passed on source/test checkpoint 1e327d45bfff6ca597ebbecec294f8301fa8a0cd. Metadata safe-scalar/raw-content filter and malformed inputs tested."
-    quality_ci: "PASS — Quality Sentinels #1677 on checkpoint 7896f4ef8cc4c6370c9fcc2417504a28adfea66d: 98 Chromium E2E tests, 1 published-site smoke, Jekyll, Integrity, Security, Context and Ruff/static analysis passed."
+    gateway_ci: "PASS — 206 tests, 2 upstream warnings; compileall, deployment preflight and offline six-layer eval passed on source/test checkpoint f1ebb86f9afdc4bc7a96d87c1eed394eef89a28c. Metadata and task payload/result persistence restrict to bounded scalar metadata and bounded reference lists; raw content/nested data rejected."
+    quality_ci: "PASS — Quality Sentinels #171? on exact head f1ebb86f9afdc4bc7a96d87c1eed394eef89a28c: 98 Chromium E2E tests, 1 published-site smoke, Jekyll, Integrity, Security, Context and Ruff/static analysis passed."
     freshness: "PASS — exact main SHA and open PR/issue snapshot reconciled for PR #128; snapshot excludes PR #128 itself"
     graphify_deadcode_provenance: "PASS on docs checkpoint 9556633cc46decbc338b9f7f6f7f59dd94a19a9e91"
-    latest_head: "7896f4ef8cc4c6370c9fcc2417504a28adfea66d — exact Quality #1677, Freshness #388, Graphify #528, Dead Code #525, Provenance #1079 passed; Gateway #671 passed 195 tests on source/test checkpoint 1e327d45bfff6ca597ebbecec294f8301fa8a0cd. Later commits in this same PR are documentation-only."
+    latest_head: "f1ebb86f9afdc4bc7a96d87c1eed394eef89a28c — exact-head Gateway (206 passed), Quality (98 Chromium + 1 published smoke), Freshness, Graphify, Dead Code, Provenance passed."
   explicit_not_implemented:
     - "FastAPI routes, auth/scope binding and AgentRun UI"
     - "real model/provider worker sessions or true independent multi-agent concurrency"
