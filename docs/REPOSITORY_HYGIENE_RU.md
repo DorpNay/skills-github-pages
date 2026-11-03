@@ -230,3 +230,34 @@ No files, workflows, settings, branches or repository names were deleted or chan
 - Pinned reusable workflows from `skills/exercise-toolkit` were inspected at exact ref `ebf43bb96882683e03e667184c6445ed4c8074e6`. Their nested calls still use mutable tags: `actions/checkout@v4`, `actions/github-script@v7`, `EndBug/add-and-commit@v9`, `skills/action-text-variables@v2`. Upstream default branch has moved to newer tags (checkout@v6, github-script@v9, add-and-commit@v10, action-text-variables@v4), still mutable.
 - The parent reusable workflow is SHA-pinned, but this does not pin nested action refs. Full transitive supply-chain pinning is therefore **not complete**. Keep as a separate scoped issue/PR; no external repo or main workflow changed in PR #131.
 - Permission review: write scopes in exercise workflows support README commits, issue comments/closure and workflow enable/disable. Other eight repository workflows are read-only. This does not verify live repository rulesets or admin settings.
+
+
+## 14. Повторная live-сверка — 2026-11-03
+
+**Снимок на начало аудита PR #131:** `main` = `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; PR #131 открыт, HEAD `fd9eee63d781ca2fc8c276edafb79d97f6810c56`, base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`, GitHub сообщает mergeable=false; compare `main...branch` = 989 ahead / 4 behind. Поиск веток вернул 127 refs (100 + 27), открытых PR — 10 (#124–#133), открытая issue — #111.
+
+### Повторно подтверждённые branch cleanup candidates
+
+Каждая ветка по-прежнему behind-only относительно актуального main (ahead=0); SHA зафиксированы для восстановления. В текущем списке открытых PR эти ветки не являются head:
+
+| Branch | HEAD SHA | Compare main | Disposition |
+|---|---|---:|---|
+| `feat/alandi-helper-model-routing` | `55248f81585c52d7cc7ba7cfc08158a291a761ca` | 0 / 165 behind | Candidate — удалить только после последней проверки issue/reference и сохранения SHA |
+| `feat/rag-rrf-engineering-audit-rebased-20261027` | `9aa36465158c27c49ff647a6ce349b46a6e1151e` | 0 / 111 behind | Candidate — то же условие |
+| `fix/provider-model-catalogs-v2` | `e58b5d1d96a01e6a1a7a1b37b029244ea0b8dcb4` | 0 / 182 behind | Candidate — то же условие |
+| `fix/pyodide-setup` | `d9fb63bd27463399d152627d290f7ec19d2f99e1` | 0 / 270 behind | Candidate — то же условие |
+| `fix/theme-persistence-e2e-isolation` | `041c3a5448ff00b46a7583b3611892dc756a055b` | 0 / 178 behind | Candidate — то же условие |
+
+Это повторная проверка ancestry и открытых PR, но не полный поиск каждого упоминания по всем закрытым issues, внешним инструкциям и workflow. Удаление в этой сессии **не выполнено**: доступный GitHub connector не предоставляет delete-branch/delete-ref action. Не подменять удаление перемещением ref. Ветки с уникальными коммитами, активными PR и future/HOLD workstreams сохранены.
+
+### Файлы, Actions и настройки
+
+- Подтверждённых бесхозных файлов нет. Не удалять исторические research notes только по возрасту.
+- Exercise scaffold в `.github/workflows/0-start-exercise.yml`, `1-step.yml`, `2-step.yml`, `3-step.yml` и `.github/steps/` остаётся кандидатом на отдельный аудит: template state и полная история запусков не доступны через текущую интеграцию. До проверки не удалять.
+- `skills/*.txt` — реальные aLandi task profiles; не путать их с GitHub Skills exercise toolkit.
+- 33 direct GitHub Actions references ранее были проверены как full-SHA pinned. Transitive refs внутри pinned reusable exercise workflows остаются отдельным supply-chain gap.
+- Vercel project search для этого repo вернул 0 проектов. Текущий Pages target публикует stable V1; использовать его для PR preview нельзя. Нужен отдельный owner-approved preview target.
+- GitHub Rulesets/classic branch protection, secret scanning/push protection, Dependabot alerts/security updates и CodeQL остаются owner-side checks; текущая интеграция не подтверждает их состояние.
+- Issue #111 остаётся открытой консолидированной записью release gates; CI не закрывает VPS/Tunnel/Ollama, hardware, permissioned RAG data, real-device voice и account-level governance.
+
+**Итог:** 5 behind-only refs подтверждены как cleanup candidates, но не удалены из-за отсутствия безопасной delete-ref операции; бесхозных файлов/инструментов с доказанной ненужностью не найдено; 10 открытых PR сохранены в своих workstream-границах. Следующий безопасный шаг для владельца — удалить только эти пять refs через GitHub UI после последней проверки ссылок/issue и сохранения приведённых HEAD SHA.
