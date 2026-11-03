@@ -212,3 +212,36 @@ def test_concurrent_workers_atomically_claim_a_single_task(tmp_path):
     assert len(actual) == 1
     assert actual[0].task_id == task["task_id"]
     assert store.get_task(task["task_id"])["state"] == "leased"
+
+
+@pytest.mark.parametrize("metadata", [
+    {"prompt": "raw prompt text"},
+    {"lease_token": "worker secret"},
+    {"nested": {"text": "raw source"}},
+    {"values": ["unbounded nested data"]},
+    [],
+])
+def test_run_metadata_rejects_raw_content_and_non_scalar_values(tmp_path, metadata):
+    store = AgentRunStore(tmp_path / "safe-metadata.sqlite3")
+    store.initialize()
+    with pytest.raises(AgentRunError):
+        store.create_run(idempotency_key="unsafe-meta", scope_kind="project",
+                         scope_id="alpha", goal="metadata policy", metadata=metadata, now=1)
+
+
+@pytest.mark.parametrize("metadata", [
+    {"transcript": "raw transcript"},
+    {"api_key": "credential"},
+    {"source_text": "raw document text"},
+    {"worker": {"nested": "object"}},
+])
+def test_event_metadata_rejects_sensitive_or_nested_fields(tmp_path, metadata):
+    store = AgentRunStore(tmp_path / "safe-events.sqlite3")
+    store.initialize()
+    run = store.create_run(idempotency_key="event-safe", scope_kind="project",
+                           scope_id="alpha", goal="event metadata", now=1)
+    with pytest.raises(AgentRunError):
+        store.transition_run(run_id=run["run_id"], expected_state="queued",
+                            new_state="running", event_type="unsafe_metadata",
+                            metadata=metadata, now=2)
+    assert store.get_run(run["run_id"])["state"] == "queued"
