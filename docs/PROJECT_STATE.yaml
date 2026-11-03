@@ -77,7 +77,7 @@ ui_v2_track:
   status: "open_unmerged_owner_hold"
   latest_documentation_head: "At audit start PR HEAD fd9eee63d781ca2fc8c276edafb79d97f6810c56; docs checkpoint updates follow and must be resolved from live GitHub on resume."
   latest_code_test_head: "fd9eee63d781ca2fc8c276edafb79d97f6810c56: added the extended Playwright visual capture test for sidebar/memory, Functions, Agents, Team Blueprints, Skills and Settings. Test source syntax passed; browser execution is NOT RUN. Last verified app baseline is 6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0."
-  latest_quality_harness_head: "Quality #41540703827 PASS and Graphify #41540704000 PASS on 6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0; 4/4 Chromium shards and required sentinels passed; Published Pages smoke skipped. The extended visual-capture E2E was added later on fd9eee63d781ca2fc8c276edafb79d97f6810c56 and is NOT RUN; exact-head CI for that new test remains pending."
+  latest_quality_harness_head: "Quality #41540703827 PASS and Graphify #41540704000 PASS on 6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0; 4/4 Chromium shards and required sentinels passed; Published Pages smoke skipped. The extended visual-capture E2E was added later on fd9eee63d781ca2fc8c276edafb79d97f6810c56 and is NOT VERIFIED; PR-triggered run lookup returned none, commit-status lookup is empty, and push-triggered run history is not available through the connector."
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0; mandatory requirements 8.1-8.17 and optional owner proposals 8.18-8.28"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
   polish_register: "docs/LANDING_UX_POLISH_BACKLOG_RU.md (mirrors the consolidated residual list; not a separate backlog)"
@@ -90,7 +90,7 @@ ui_v2_track:
     P1: "Chromium screenshots captured/reviewed at 320/360/390/768/1024/1440px plus sidebar-open states; still require real iPhone Safari/VisualViewport/safe-area, VoiceOver, keyboard focus, RU/EN/light/dark component review and measured WCAG contrast."
     P2: "Long-list/message/scroll/popover stress; capability menu truthfulness; Tavily/keyless-search audit; provider/gateway mock error and secret-redaction checks."
   verification:
-    exact_head_ci: "Latest verified Quality/Graphify applies to code/test SHA 6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0 only. New visual screenshot E2E source fd9eee63d781ca2fc8c276edafb79d97f6810c56: syntax PASS, browser NOT RUN, no screenshot artifacts yet."
+    exact_head_ci: "Latest verified Quality/Graphify applies to code/test SHA 6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0 only. New visual screenshot E2E source fd9eee63d781ca2fc8c276edafb79d97f6810c56: syntax PASS, exact-head browser evidence NOT VERIFIED through available CI lookup; no expanded-panel screenshot artifact retrieved."
     playwright_chromium: "Quality #41540703827 completed all four real Chromium shards on code/test SHA 6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0; Published Pages smoke skipped. App E2E now declares 121 tests after adding the extended screenshot capture test on fd9eee63d781ca2fc8c276edafb79d97f6810c56; new test not yet executed."
     native_mobile_voiceover: "Not executed."
     wcag_contrast_ratios: "Automated CSS token-to-solid-surface and toast contrast measured in dark/light, standard/high modes; all checked pairs >=4.71:1 (minimum light standard success toast 4.71:1). Full component-level WCAG and native-device review remain open."
@@ -99,7 +99,7 @@ ui_v2_track:
   branch_divergence: "At audit-start live compare against main: 989 ahead / 4 behind; merge_base=e78a73b25725bfa63370d9946887cbbacbf51b82; GitHub mergeable=false. Later documentation checkpoint commits may move the PR head; refresh live compare on resume. No rebase/sync without owner approval."
   current_work_head: "fd9eee63d781ca2fc8c276edafb79d97f6810c56"
   current_work_summary: "Previous UI slice adds 15 read-only roadmap detail entry points, Agent Profiles/Tasks & History roadmap slots and local-only Team Blueprint. Latest test-only slice adds a full UI screenshot capture scenario for sidebar/memory, Functions, Agents, Blueprints, Skills, providers and Additional Settings. No runtime, AgentRun, permission or cloud-sync changes."
-  current_work_validation: "New app.spec.mjs visual capture test on fd9eee63d781ca2fc8c276edafb79d97f6810c56: parser-only V8 syntax PASS; Playwright NOT RUN. Last complete Quality/Graphify PASS remains 6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0 (4/4 shards; published Pages smoke skipped). Native iPhone Safari, VisualViewport/safe-area, VoiceOver, keyboard focus and full component WCAG remain unverified."
+  current_work_validation: "New app.spec.mjs visual capture test on fd9eee63d781ca2fc8c276edafb79d97f6810c56: parser-only V8 syntax PASS; Playwright execution NOT VERIFIED through available run lookup. Last complete Quality/Graphify PASS remains 6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0 (4/4 shards; published Pages smoke skipped). Native iPhone Safari, VisualViewport/safe-area, VoiceOver, keyboard focus and full component WCAG remain unverified."
   control_sizing:
     requirement: "8.10; reuse existing 32px compact / 40px standard / 44px touch tokens."
     desktop: "Settings header actions, toolbar/language menu options, composer tools and chat creation use at least the standard 40px token."
