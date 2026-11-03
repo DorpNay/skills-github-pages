@@ -182,6 +182,12 @@
 - **Rollout:** one bounded phase at a time, feature flags off by default, with golden-set evaluation and target-host resource measurements. No production-safety claim before sandbox validation.
 - **Links:** `gateway/tools/dag_engine.py`, `gateway/tools/validator.py`, `gateway/security/approval_gates.py`, `gateway/routing.py`, `observability/trace_context.py`, `docs/AGENT_ORCHESTRATION_RESEARCH_RU.md`.
 
+### D-016 evidence update — Gateway CI (2026-11-03)
+
+- The initial CI run found nondeterministic equal-timestamp task ordering in the test assumption. Claim ordering now uses `created_at, task_key, task_id`; the store rejects `:memory:` to prevent falsely durable behavior across per-operation SQLite connections.
+- **Gateway CI PASS:** source/test checkpoint `60f98408f56c4a06d6a0d0ff6121f1bd3822b50a`; 185 tests passed (2 upstream warnings), compile, deploy preflight and offline six-layer eval passed. Current docs checkpoint `9556633cc46decbc338b9f6f7f59dd94a19a9e91`: Freshness, Graphify, Dead Code and Provenance passed; Quality/Chromium was pending.
+- This verifies the file-backed lifecycle prototype’s tested scope only. It does not establish production integration, multi-host queue correctness, actual LLM workers, tool permissions or sandboxing.
+
 ## D-017 — Adaptive-minimalist interface and private autonomous work partner / Адаптивный минимализм и приватный автономный партнёр
 
 - **Status:** Accepted target architecture; implementation not implied.
