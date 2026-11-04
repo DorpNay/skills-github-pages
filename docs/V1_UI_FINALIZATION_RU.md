@@ -697,6 +697,23 @@ PR #122 добавил только эксплуатационную надёж�
 | 2026-10-31 | Consolidated the remaining owner-dictated UI notes: message action icons, backdrop lifecycle, unified control sizing, compact theme/language controls, removal of experimental server memory, explicit project-context transfer, touch text-selection behavior, centered/color-coded status tickers, icon-first button typography and user-adjustable text readability. Added the agreed third-party provider shortlist and BYOK/model auto-detection requirements, including V1/funding/security boundaries. | Confirmed in the current conversation; requirements only, implementation status not inferred. |
 
 
+
+
+### 8.29 OLEDUE — automatic workstream handoff (owner operational requirement, 2026-11-04)
+
+- [ ] Keep the root `OLEDUE.md` as a short single-word handoff: when the owner writes `oledue`, determine the current owner-authorized workstream, PR and branch from live GitHub and canonical project records; never ask the owner to restate the PR/branch.
+- [ ] Main must carry the stable entrypoint and route to active PR #131 by default while it is the active Landing UI 2.0 stream; update routing when that PR is closed/replaced. Reading main must not imply that implementation happens on main.
+- [ ] Preserve exact-head verification, canonical task-list-first recording and owner approval gates. No merge/rebase/deploy from the trigger alone.
+- **Acceptance:** one-word trigger reliably resumes the live authorized branch with a verified checkpoint and one next action; no duplicate task registry.
+
+### 8.30 External sources and future artifact archive (owner operational requirement, 2026-11-04)
+
+- [ ] Consolidate external upstream/source references from the main curated catalogs and research PRs into one central inventory at `INTEL.md`, with exact URL deduplication and origin/provenance back-links.
+- [ ] Preserve source research documents as contextual evidence; central inventory is the common lookup index, not a claim of adoption or license approval.
+- [ ] Archive only future-useful artifacts after a concrete task/use is identified and exact source/version, license and redistribution terms, SHA-256, size and review date are recorded. Do not bulk-download repositories, datasets, model/voice weights or assets without a justified, reviewed need.
+- [ ] Keep an archive manifest and stable storage location in repository; exclude secrets, credentials, private or user data.
+- **Acceptance:** one searchable source inventory with source provenance and a reproducible, license-aware artifact manifest; unverified links/artifacts remain explicitly pending.
+
 ### Integrated UI scope and Graphify source coverage — 2026-11-02
 
 - Execution scope remains unified: active inherited UI requirements from sections 1–7 are mapped into section 8.0 workstreams and requirements 8.1–8.17; obsolete, completed or superseded items are not reopened as a second backlog.
