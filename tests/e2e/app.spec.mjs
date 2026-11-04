@@ -1312,11 +1312,16 @@ test('long project lists keep the mobile context popover inside a short viewport
   });
   expect(metrics.top, 'context popover should not extend above the viewport').toBeGreaterThanOrEqual(0);
   expect(metrics.bottom, 'context popover should not extend below the viewport').toBeLessThanOrEqual(441);
-  expect(metrics.scrollHeight, 'long project choices should use an internal scroll area').toBeGreaterThan(metrics.clientHeight);
   expect(metrics.scrollWidth, 'long project names should not cause horizontal overflow').toBeLessThanOrEqual(metrics.clientWidth + 1);
+  const choices = menu.locator('#requestProjectChecks');
+  const choiceMetrics = await choices.evaluate(element => ({
+    scrollHeight: element.scrollHeight,
+    clientHeight: element.clientHeight
+  }));
+  expect(choiceMetrics.scrollHeight, 'long project choices should use an internal scroll area').toBeGreaterThan(choiceMetrics.clientHeight);
 
-  await menu.evaluate(element => { element.scrollTop = element.scrollHeight; });
-  await expect.poll(() => menu.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+  await choices.evaluate(element => { element.scrollTop = element.scrollHeight; });
+  await expect.poll(() => choices.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
 });
 
 test('first outside tap dismisses an open chat row menu without activating the control underneath', async ({ page }) => {
