@@ -3615,6 +3615,66 @@ test('shared control sizing uses standard desktop and touch-sized mobile variant
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
 
+test('mobile sidebar and mode controls retain 44px touch targets', async ({ page }) => {
+  await page.addInitScript(() => {
+    const project = { id: 'touch-project', name: 'Touch target project', description: '', instructions: '', memoryScope: 'project-only', memory: [], createdAt: '', updatedAt: '' };
+    const chat = {
+      id: 'touch-chat', title: 'Touch target chat', projectId: 'touch-project',
+      messages: [{ role: 'user', content: 'Touch target fixture' }]
+    };
+    localStorage.setItem('ai_projects_v1', JSON.stringify([project]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([chat]));
+    localStorage.setItem('ai_current_chat_v87', 'touch-chat');
+  });
+
+  const assert44 = async selector => {
+    const box = await page.locator(selector).first().boundingBox();
+    expect(box?.height || 0, selector + ' must retain a 44px mobile hit area').toBeGreaterThanOrEqual(44);
+  };
+  const selectors = [
+    '#projectNavToggle',
+    '#memoryPanelDisclosure > summary',
+    '#projectlessGroup > summary',
+    '#projectPanel .sidebar-create-project',
+    '#chatSection > .chat-section-summary',
+    '#chatSection .sidebar-create-chat',
+    '#chatList .chat-row',
+    '#chatList .chat-row-menu summary',
+    '#modeFast',
+    '#modeDeep'
+  ];
+
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
+  for (const selector of selectors) {
+    await expect(page.locator(selector).first()).toBeVisible();
+    await assert44(selector);
+  }
+
+  await page.locator('#projectNavToggle').click();
+  await expect(page.locator('#projectNavigationList')).toBeVisible();
+  await expect(page.locator('#projectNavigationList .project-nav-item > summary').first()).toBeVisible();
+  await assert44('#projectNavigationList .project-nav-item > summary');
+  await page.locator('#projectlessGroup > summary').click();
+  await expect(page.locator('#projectlessGroup [data-action="projectless-nav"]')).toBeVisible();
+  await assert44('#projectlessGroup [data-action="projectless-nav"]');
+
+  const jumpTarget = await page.locator('.jump-to-latest').evaluate(element => ({
+    minHeight: getComputedStyle(element).minHeight,
+    minWidth: getComputedStyle(element).minWidth
+  }));
+  expect(jumpTarget.minHeight, 'jump-to-latest must have a 44px mobile target').toBe('44px');
+  expect(jumpTarget.minWidth, 'jump-to-latest must have a 44px mobile target').toBe('44px');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const selector of selectors) await assert44(selector);
+  await assert44('#projectNavigationList .project-nav-item > summary');
+  await assert44('#projectlessGroup [data-action="projectless-nav"]');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1);
+});
+
 test('icon-first controls keep an accessible name across header, sidebar and messages', async ({ page }) => {
   await page.addInitScript(() => {
     const project = { id: 'icon-project', name: 'Icon project', description: '', instructions: '', memoryScope: 'project-only', memory: [], createdAt: '', updatedAt: '' };
