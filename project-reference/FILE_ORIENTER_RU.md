@@ -2,15 +2,15 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-## Текущая контрольная точка — 2026-11-04, main snapshot refresh / PR #135
+## Текущая контрольная точка — 2026-11-04, PR #135 merged / main state refresh
 
-- **Current main SHA:** `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. Main's four newer commits are documentation-only owner UI checklist changes.
-- **Live queue snapshot (excluding PR #135):** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issues (1): #111. Recheck live GitHub before action.
-- PR #131 is the owner-controlled Landing UI V2.0 implementation PR; open/unmerged, four commits behind main, checklist reconciliation pending. Do not merge/rebase/deploy.
-- PR #135 proposes concise root OLEDUE auto-routing and a consolidated INTEL index of 257 unique URLs from 11 curated source catalogs. The source table retains catalog provenance; links are not verified current upstream, adoption or license approvals. No artifacts downloaded.
-- Exact PR #123 quality evidence passed on its PR head before merge. The four later main commits are docs-only; exact-main Quality/Pages evidence on SHA `0a1f764...` is not claimed.
-- First PR #135 Freshness run #41776927840 failed on stale main/queue. After the five-file state refresh, Freshness #41777243590 and Provenance #41777243594 passed on `408ae5f2f05d2765154aad8dbb963d317bd77702`; Quality #41777243578 was in progress. VOLLEY_LOG and ORIENTER updates advanced PR #135 beyond that tested head; exact-head Quality/Freshness still pending on latest live head.
-- **NEXT:** verify Freshness/Quality exact-head outcomes on PR #135, fix any schema drift, and keep owner merge authority explicit.
+- **Current main SHA:** `9796067d9c6044fa96e1437a2ceac14574d1c1af`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 squash-merged; it is documentation-only.
+- **Live queue snapshot (excluding current PR #136):** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issues (1): #111. Recheck live GitHub before action.
+- **OLEDUE:** root handoff protocol is now in main. Single word `oledue` resolves the live owner-authorized PR/branch, defaulting to PR #131 while Landing V2 is active. No branch/PR clarification required.
+- **External source inventory:** `INTEL.md` contains 257 distinct URLs deduplicated from 11 curated main/research catalogs, with catalog provenance. It is a link index, not live upstream or license validation. No artifacts were downloaded.
+- **PR #131:** remains open/unmerged/owner-controlled; 4 behind main, mergeable=false. Main-only checklist additions were reviewed and reconciled into the PR canonical 8.0. Exact-head Quality is pending; compact Settings overflow at 320px was found and CSS fix is not yet browser-verified.
+- **PR #135 pre-merge checks:** Quality #41777497097, Freshness #41777497093 and Provenance #41777497169 passed exact head `0af9d123...`. Main push runs on merge SHA `9796067...` (Quality #41778101742, Freshness #41778101746, Pages #41778101349, Provenance #41778101735) were in progress at last read; no post-merge deployment pass claimed.
+- **NEXT:** finish the five-file state refresh for current main SHA/queue via PR #136; then continue PR #131 exact-head responsive Quality and screenshot review. No merge of PR #131 without explicit owner approval.
 
 ## Историческая контрольная точка — 2026-10-28
 
