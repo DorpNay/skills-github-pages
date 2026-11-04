@@ -2,20 +2,20 @@
 
 This is the short entry point for an assistant or engineer. Use the detailed navigation index at `project-reference/FILE_ORIENTER_RU.md`, the machine-readable state at `docs/PROJECT_STATE.yaml`, and the chronological log at `docs/VOLLEY_LOG.md`.
 
-## Current working checkpoint — 2026-10-30
+## Current working checkpoint — 2026-11-04, main state + source index proposal
 
-- **Current main SHA:** `fd4f0a105183feb23e0f4e4697446235de9ffe9a` — PR #121 (first free landing V1/client UX) and PR #122 (Gateway liveness/readiness) are merged.
-- **PR #121:** merged at `f4d880f9648989f4fe48ddd2284220b3606c3b86`; exact head `e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b`; all six workflow groups passed, including Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code.
-- **PR #122:** merged at `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; exact head `94d871dbf76a5364ebb3c61d86cc763affa5eaa1`; Gateway, Quality/Chromium/Jekyll/published-site smoke, Graphify and Dead Code passed.
-- **Open PR queue:** PR #123 is the only active reconciliation PR; exact head `fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222` passed all six workflow groups and is ready to merge. It is excluded from its own freshness snapshot. **Open issue queue:** issue #111 only; it remains open for owner-only/live-host gates and must not be closed just to reach zero.
-- **V1 freeze:** no new product capabilities or runtime components in the first landing. Improve only inside the selected HTML/CSS/JavaScript + Jekyll/GitHub Pages and existing FastAPI/Ollama stack: UX, polish, accessibility, reliability, performance, security, tests and documentation.
-- **Canonical UI checklist:** `docs/V1_UI_FINALIZATION_RU.md`; broader release and future backlog: `docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`; detailed remaining visual work: `docs/LANDING_UX_POLISH_BACKLOG_RU.md`.
-- **Agent/helper boundary:** 64 roles are logical profiles, not 64 processes. A manual opt-in memory helper exists behind operator-configured `ALANDI_HELPER_MODEL`; general helper dispatch/model selection is not implemented. Use the synthetic benchmark harness only as a transport/latency smoke, not quality proof.
-- **Not verified:** post-merge Pages deployment on the exact merge commit; native iPhone Safari/VoiceOver; live VPS/Tunnel/Ollama/provider credentials; target-host model RAM/latency/quality; real voice runtime; production RAG corpus; OAuth/Drive; arbitrary-code sandbox.
-- **Canonical detailed tracker:** `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`. It contains the chronology, legacy-branch triage, V1 freeze and per-step completion markers.
+- **Current main SHA:** `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1` — four commits after functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82` are documentation-only updates to `docs/V1_UI_FINALIZATION_RU.md`.
+- **Open PR queue:** #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134 (11 PRs excluding the current snapshot-refresh PR #135). **Open issues:** #111 only. Live GitHub overrides this snapshot.
+- **Active Landing UI V2:** PR #131 remains open/unmerged/owner-controlled; it is four commits behind main and the shared checklist needs reconciliation. No merge/rebase/deployment authorized.
+- **OLEDUE:** root `OLEDUE.md` is the one-word route to the live owner-authorized workstream/PR; default Landing UI #131 while active. Do not ask the owner for branch/PR. This file and its ORIENTER pointer are proposed in PR #135, not merged yet.
+- **External-source index:** PR #135 appends 257 unique URLs deduplicated from 11 curated catalogs/research docs into `INTEL.md` with source provenance. Links are not adoption/license verification. No model, voice or repository artifact has been downloaded.
+- **Quality boundary:** exact PR #123 Quality/Chromium/Pages checks passed on its PR head before merge. Four later main commits are docs-only; no exact-main CI/deployment claim for `0a1f764...`.
+- **PR #135 checks:** Freshness #41777243590 and Provenance #41777243594 passed on previous docs head `408ae5f2f05d2765154aad8dbb963d317bd77702`; Quality #41777243578 was in progress at last read. A VOLLEY_LOG-only commit advanced PR #135 to `9e441ff865746c7f02f86f30752cdce6c6c1bbe7`; exact-head Quality/Freshness must be rechecked for this current head.
+- **NEXT:** inspect current PR #135 workflow outcomes; source index coverage and current source/license conditions before any artifact archive. PR #131 merge prep remains separate and owner-controlled.
 
 ## First-read order
 
+0. **`OLEDUE.md`** — when the owner writes `oledue`, route automatically to the live active owner-authorized PR/branch; do not ask for branch or PR clarification. Read the handoff protocol first.
 1. **`project-reference/FILE_ORIENTER_RU.md`** — current checkpoint, repository map, last verified stage, blockers and next action.
 2. **`docs/PROJECT_STATE.yaml`** — feature/runtime status, flags, verification evidence and unresolved risks.
 3. **`docs/VOLLEY_LOG.md`** — chronological stage log; read the newest entry first.

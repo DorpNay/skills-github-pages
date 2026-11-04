@@ -108,3 +108,14 @@ Reviewed 45 targeted Exa queries (up to 360 requested result slots) and fetched 
 
 ### 2026-10-30 — Whole-stack integrity audit baseline recorded
 Before beginning the audit, re-read live PR #123, current main base and issue #111. Recorded baseline: PR #123 open/mergeable, HEAD `f6e67db5a7e39abc5f9351aae5ccadefc58e865e`, base `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; prior exact-head CI 6/6 passed, subject to re-run after any new commit. Issue #111 remains open for owner/environment gates. Created `docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md` with frozen stack boundaries, initial full checklist and independent reviewer handoff brief. No source code changed in this stage. Post-merge Pages and live VPS/Ollama remain unverified.
+
+
+## V-2026-11-04-OLEDUE-SOURCE-INDEX-001 — main checkpoint refresh + source inventory proposal
+
+- **GOAL:** prepare a simple single-word OLEDUE handoff on main and consolidate project external source references, while preserving exact GitHub freshness and owner merge controls.
+- **MAIN SNAPSHOT:** main SHA `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`; four subsequent commits modify only `docs/V1_UI_FINALIZATION_RU.md`. Live open PR queue excluding PR #135: #124–#134 (11); issue #111 (1).
+- **PR #135:** branch `docs/oledue-simple-source-index-20261104`, main base. OLEDUE root entrypoint, ORIENTER pointer, INTEL consolidated link table (257 unique URLs from 11 source catalogs) and state snapshot refresh are proposed. No binary/source/model/voice downloads. PR open/unmerged, mergeable currently true before the new state refresh commits; recheck live status.
+- **FRESHNESS:** first PR #135 Freshness run #41776927840 failed on stale main/queue. After refreshing the five required snapshot files together (ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG and `docs/project-state-snapshot.json`), exact-head Freshness #41777243590 PASSED and License/Artifact Provenance #41777243594 PASSED on `408ae5f2f05d2765154aad8dbb963d317bd77702`. GitHub reports PR #135 mergeable=true at that head.
+- **QUALITY:** run #41777243578 remains IN_PROGRESS on exact head `408ae5f2f05d2765154aad8dbb963d317bd77702`; no Quality pass yet. Earlier run #41776927739 on old head is superseded.
+- **SOURCE REGISTER:** central INTEL inventory deduplicates exact URLs and includes catalog-origin names. It does not validate live URLs, licenses, redistribution rights or adoption. Download/archive task remains open until concrete need, exact artifact version, rights, SHA-256, size and review date are recorded.
+- **NEXT:** fetch workflow runs for the current PR #135 HEAD after the state refresh; repair any remaining Freshness schema/queue drift, then review the inventory coverage before owner decides whether to merge this documentation PR.

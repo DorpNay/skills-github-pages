@@ -2,16 +2,15 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-## Текущая контрольная точка — 2026-10-30
+## Текущая контрольная точка — 2026-11-04, main snapshot refresh / PR #135
 
-- Текущий main: `fd4f0a105183feb23e0f4e4697446235de9ffe9a` — PR #121 и PR #122 merged.
-- PR #121 merged: `f4d880f9648989f4fe48ddd2284220b3606c3b86`, exact head `e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b`. Exact-head workflow groups passed: Gateway, Quality (Chromium/Jekyll/published-site smoke, Context/Security/Integrity), Freshness, Provenance, Graphify, Dead Code.
-- PR #122 merged: `fd4f0a105183feb23e0f4e4697446235de9ffe9a`, exact head `94d871dbf76a5364ebb3c61d86cc763affa5eaa1`. Gateway, Quality (Chromium/Jekyll/published-site smoke, Context/Security/Integrity), Graphify and Dead Code passed.
-- Очередь для freshness-сравнения (текущий PR исключается): **open PRs (0): ; open issues (1): #111**. Активный PR #123 — reconciliation документации и helper benchmark; exact head `fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222` прошёл все шесть workflow groups, PR готов к merge. После merge очередь PR должна стать нулевой. Issue #111 — единственный owner/live-host gate; не закрывать без фактических VPS, hardware, credentials, ruleset, corpus, voice, sandbox и OAuth evidence.
-- Первый бесплатный лендинг V1 зафиксирован. После PR #121 **не добавлять новые продуктовые возможности и runtime-компоненты**. Разрешены только UX polish, надёжность, безопасность, доступность, производительность, тесты и документация внутри существующего HTML/CSS/JS + Jekyll/GitHub Pages и FastAPI/Ollama стека.
-- Основные источники: `docs/V1_UI_FINALIZATION_RU.md`, `docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`, `docs/LANDING_UX_POLISH_BACKLOG_RU.md`, `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`, `docs/PROJECT_STATE.yaml`.
-- Малые модели: в main есть ручной memory-helper opt-in через операторский `ALANDI_HELPER_MODEL`; general-purpose subagent routing не реализован. 64 роли — логические контракты, не отдельные процессы. Синтетический benchmark не заменяет human-rated и target-host evaluation.
-- Не подтверждено: post-merge Pages deployment на точном merge SHA; native iPhone Safari/VoiceOver; live VPS/Tunnel/Ollama и provider credentials; target-host model RAM/latency/quality; production voice, RAG golden set, OAuth/Drive и CLI sandbox.
+- **Current main SHA:** `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. Main's four newer commits are documentation-only owner UI checklist changes.
+- **Live queue snapshot (excluding PR #135):** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issues (1): #111. Recheck live GitHub before action.
+- PR #131 is the owner-controlled Landing UI V2.0 implementation PR; open/unmerged, four commits behind main, checklist reconciliation pending. Do not merge/rebase/deploy.
+- PR #135 proposes concise root OLEDUE auto-routing and a consolidated INTEL index of 257 unique URLs from 11 curated source catalogs. The source table retains catalog provenance; links are not verified current upstream, adoption or license approvals. No artifacts downloaded.
+- Exact PR #123 quality evidence passed on its PR head before merge. The four later main commits are docs-only; exact-main Quality/Pages evidence on SHA `0a1f764...` is not claimed.
+- First PR #135 Freshness run #41776927840 failed on stale main/queue. After the five-file state refresh, Freshness #41777243590 and Provenance #41777243594 passed on `408ae5f2f05d2765154aad8dbb963d317bd77702`; Quality #41777243578 was in progress. VOLLEY_LOG and ORIENTER updates advanced PR #135 beyond that tested head; exact-head Quality/Freshness still pending on latest live head.
+- **NEXT:** verify Freshness/Quality exact-head outcomes on PR #135, fix any schema drift, and keep owner merge authority explicit.
 
 ## Историческая контрольная точка — 2026-10-28
 
