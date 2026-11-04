@@ -172,3 +172,13 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - **LIVE QUEUE:** open PRs #124–#134 (11); open issue #111. OLEDUE correctly routes to active owner-authorized PR #131 by default.
 - **PR #131 LIVE STATE:** current HEAD `859ab79269ce631bb0c0689eaf31cae574a90140`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; compare reports diverged / 6 commits behind and diverged; GitHub says mergeable=false. Code/test HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2` passed Quality #41784481921 (4/4 Chromium, Jekyll, Integrity, Security and Context; Pages smoke skipped) and Graphify #41784481966. The current HEAD adds docs/config updates; no exact-head run is surfaced for `920dff5`.
 - **LIMITS / NEXT:** no PR #131 rebase, main sync, merge or deployment performed. Continue bounded implementation/test work; obtain current exact-head CI and keep native iPhone/VoiceOver/component-WCAG gates open. Any branch synchronization remains a separate owner-approved action.
+
+
+## V-2026-11-04-OLEDUE-AGENTS-COHERENCE-001 — wire the root handoff into repository instructions
+
+- **FACT:** root `OLEDUE.md` exists in main, but main `AGENTS.md` had no `oledue` trigger. The active PR #131 branch already had the trigger and referenced a `Fast task selector` that was missing from the root file.
+- **IMPLEMENTED IN PR #137:** add the repository-level trigger to `AGENTS.md`, make the special `oledue` route take precedence over the ordinary ORIENTER-first route, and add the referenced selector to `OLEDUE.md`. The selector routes to existing canonical records only; it creates no new backlog or runtime.
+- **PARITY:** PR #131 already contains the same trigger/selector pair. PR #137 brings that handoff contract to the current main base so the next owner-approved merge can make it available to all repository agents.
+- **LIMIT:** main remains unchanged until PR #137 is explicitly merged. Fresh-session automatic routing remains unverified; this conversation's handoff was initiated by the ChatGPT Project instruction.
+- **NEXT:** verify exact-head PR #137 Quality/Freshness/Provenance; retain owner approval for merge. Keep PR #131's branch sync/merge separate.
+
