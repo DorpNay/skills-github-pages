@@ -5,7 +5,7 @@
 ## Текущая контрольная точка — 2026-11-04, PR #138 merged; first V1 public landing slice isolated
 
 - **Current main SHA:** `a7915291354d1b031ce2461b71a553f871959df3`; original V1 baseline before code promotion: `9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af`.
-- **PR #138 exact-head checks:** Quality #41797778925, Freshness #41797779149 and Provenance #41797779027 PASS on PR head `2462a7837ae9b5c243a1436ce8dbc73e40c805e7`; Jekyll, Chromium and published Pages smoke passed. Main post-merge Freshness #41798373366 and Provenance #41798373486 PASS; Quality #41798373393 and Pages #41798372381 were in progress at checkpoint.
+- **PR #138 exact-head checks:** Quality #41797778925, Freshness #41797779149 and Provenance #41797779027 PASS on PR head `2462a7837ae9b5c243a1436ce8dbc73e40c805e7`; Jekyll, Chromium and published Pages smoke passed. Main post-merge Quality #41798373393, Pages #41798372381, Freshness #41798373366 and Provenance #41798373486 all PASS on exact main SHA a7915291354d1b031ce2461b71a553f871959df3.
 - **OLEDUE:** PR #137 merged; main `AGENTS.md` contains the handoff trigger and root `OLEDUE.md` contains the Fast task selector. Main files were checked after merge; a fresh-session behavior run remains a separate check.
 - **Owner's product policy:** main is stable Landing 1.0 and can receive bounded quality improvements; PR #131 is the Landing 2.0 workbench. Promote only independently useful, V1-compatible, exact-head verified slices.
 - **Canonical sequence:** `docs/LANDING_RELEASE_STRATEGY_RU.md` — orientation first; PR #131 promotion audit; selective V1 promotion; preserve V1 baseline and consolidate workstreams; then approved model/open-source artifact acquisition; finally branch/PR/issue hygiene.
