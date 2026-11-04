@@ -11,7 +11,7 @@ artifacts:
     source_url: "https://www.w3.org/WAI/standards-guidelines/wcag/new-in-22/"
     upstream_blob_sha1: "91ba79fbf918aa1ab14202dc5b4030a1b3087d19"
     sha256: "d837a780c59ad261aaad05c31a86e195c00e71794f5b8921e01a74ba105d47a6"
-    size_bytes_utf8: 25450
+    size_bytes_utf8: 25472
     document_date: "2023-10-05"
     license: "W3C Document License 2023"
     license_url: "https://www.w3.org/copyright/document-license-2023/"
