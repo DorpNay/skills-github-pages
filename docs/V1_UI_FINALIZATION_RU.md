@@ -711,7 +711,7 @@ PR #122 добавил только эксплуатационную надёж�
 - [x] Keep the root `OLEDUE.md` as a compact single-word handoff. The owner need not name the PR or branch; the protocol reads live GitHub and canonical project records.
 - [x] Main now carries the stable entrypoint and routes to active PR #131 by default while Landing UI 2.0 is the active stream. Reading main does not imply implementation happens on main.
 - [x] Preserve exact-head verification, canonical task-list-first recording and owner approval gates. No merge/rebase/deploy from the trigger alone.
-- [~] Acceptance: the protocol is implemented in main and used in this continuation; verify its automatic routing in a fresh resumed session after PR #136 state refresh. No duplicate task registry.
+- [~] Acceptance remains partial: root `OLEDUE.md` is present in main and this continuation used its handoff. Main `AGENTS.md` still lacks the `oledue` trigger; PR #131 adds the repository-level trigger and references a Fast task selector. Add that selector to `OLEDUE.md` on the branch, then keep repository-level acceptance partial until the trigger and selector land in main and fresh-resume routing is verified. No duplicate task registry.
 
 ### 8.30 External sources and future artifact archive (owner operational requirement, 2026-11-04)
 
