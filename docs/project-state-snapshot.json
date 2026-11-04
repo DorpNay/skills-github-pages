@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-04",
   "checkpoint": {
-    "main_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
-    "main_commit_subject": "docs: reconcile main state and OLEDUE handoff after PR #136",
+    "main_sha": "a7915291354d1b031ce2461b71a553f871959df3",
+    "main_commit_subject": "docs: establish Landing V1 stability and V2 promotion plan",
     "main_commit_date": "2026-11-04",
     "last_functional_checkpoint_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
     "last_functional_milestone": "PR #123 remains the last functional checkpoint at e78a73b25725bfa63370d9946887cbbacbf51b82. PR #135 and #136 are documentation/archive/config-only; PR #137 is documentation/test-only (OLEDUE handoff and context-budget test capture). Main now points to 9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af. Exact-main Quality, Pages, Freshness, Provenance and Graphify passed on that SHA.",
-    "main_quality_run": 41793229305,
-    "main_pages_deployment_run": 41793228649,
+    "main_quality_run": 41798373393,
+    "main_pages_deployment_run": 41798372381,
     "functional_parent_gateway_run": null,
     "functional_parent_quality_run": null,
     "functional_parent_graphify_run": null,
@@ -68,8 +68,8 @@
         "checks": "Exact-head Quality #41792794176, Freshness #41792794065, Provenance #41792794038 and Graphify #41792794165 passed; merge commit reconciled orientation and OLEDUE handoff."
       }
     ],
-    "main_provenance_run": 41793229159,
-    "main_freshness_run": 41793229228,
+    "main_provenance_run": 41798373486,
+    "main_freshness_run": 41798373366,
     "main_graphify_run": 41793229272,
     "open_prs": [
       124,
@@ -102,7 +102,21 @@
     ],
     "promotion_audit": "First V1 code candidate: public Landing page accessibility/responsive slice only (landing/index.html + assets/css/landing.css + tests/e2e/landing.spec.mjs); isolated exact-head verification pending. 8.12 graph-memory removal conflicts with accepted V1 decisions/checklist and must not be promoted without owner retirement approval/live-host data review. 8.13 project context handoff stays V2 for privacy/scope. Root app extraction and agent roadmap stay V2.",
     "pr131_812_decision": "do not promote removal; previously accepted opt-in V1 feature; owner approval and live host/database review required for retirement",
-    "first_v1_code_candidate": "public landing accessibility/responsive slice; three files only; promote after isolated exact-head CI"
+    "first_v1_code_candidate": "public landing accessibility/responsive slice; three files only; promote after isolated exact-head CI",
+    "pr138_merge_sha": "a7915291354d1b031ce2461b71a553f871959df3",
+    "pr138_quality_run": 41797778925,
+    "pr138_freshness_run": 41797779149,
+    "pr138_provenance_run": 41797779027,
+    "first_v1_candidate_branch": "feat/v1-public-landing-a11y-20261104",
+    "first_v1_candidate_head": "898c2f9219efb19dc40c42d373ce7b2a25d19dcd",
+    "first_v1_candidate_files": [
+      "landing/index.html",
+      "assets/css/landing.css",
+      "tests/e2e/landing.spec.mjs"
+    ],
+    "first_v1_candidate_checks": "pending exact-head Quality/Chromium, Jekyll, Freshness and Provenance",
+    "first_v1_candidate_css_delivery_assertion": "HTTP 200 and text/css",
+    "original_v1_baseline_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": true,
@@ -110,5 +124,5 @@
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-04-V1-LANDING-A11Y-CANDIDATE-001"
+  "last_volley": "V-2026-11-04-PR138-MERGED-V1-LANDING-CANDIDATE-001"
 }
