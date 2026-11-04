@@ -287,7 +287,7 @@ current_checkpoint:
   main_graphify: "PR #121 and #122 exact-head Graphify code-only workflows passed; Graphify remains developer tooling, not a runtime component."
   main_gateway: "Live VPS/gateway/provider connectivity remains unverified; no live deployment claim."
   merged_prs: "121 first free landing V1 and client UX; 122 Gateway liveness/readiness probes; 120 sidebar hierarchy/preferences; 119 provider separation/project scope/composer preference; 118 chat import/export; 113 immutable Actions pins; 115 modal scrim; 114 empty-by-default prompt; 71 mobile composer; 84 CORS; 81 deployment preflight; 83 SQLite delta; 82 readiness audit; 106 RAG evaluator; 107 private/shared memory; 108 landing/runbook"
-  open_pull_requests: "11 open PRs excluding #131: #124–#130, #132–#134 and #137; open issue #111
+  open_pull_requests: "11 open PRs excluding #131: #124–#130, #132–#134 and #137; open issue #111"
   open_issues: "Issue #111 only: consolidated owner/live-host release gates; research-only workstreams #88–#92 and #96–#104 closed after transferring unresolved actions"
   freshness_guard: "scripts/check_project_state_freshness.py; compares exact SHA and exact queue. A refresh commit must update ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG and snapshot; it no longer requires artificial edits to checker/tests/workflow."
   runtime_boundary: "GitHub Pages is a static client; live VPS/Tunnel/Ollama, actual model performance, voice/device, OAuth/Drive and target-host measurements remain unverified"
