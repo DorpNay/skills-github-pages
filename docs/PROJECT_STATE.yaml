@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-04"
   root_orienter:
-    status: "Main is d35812af1746ccf7268b582edf45019619431e7b after PR #136 squash merge. The unchanged W3C WAI WCAG 2.2 archive, attribution/license notice, manifest and Jekyll exclusion are in main. PR #136 exact head 01566e03239daf90271da3891cff8b6b3e6b0330: Quality #41783917001 (Jekyll + Chromium) PASS, Freshness #41783917215 PASS, Provenance #41783916918 PASS. Post-merge main Quality #41784349212 (including published-site Chromium smoke), Freshness #41784349315, Provenance #41784349268 and Pages deployment #41784349032 passed on d35812af1746ccf7268b582edf45019619431e7b. Open PRs #124–#134 (11), issue #111. PR #131 remains open/unmerged/owner-controlled; current HEAD 859ab79269ce631bb0c0689eaf31cae574a90140, code/test HEAD fc01177283de472724ff92ea6507b5b8eb87ccf2 passed Quality #41784481921 and Graphify #41784481966, but the later docs/config HEAD has no exact-head run surfaced."
+    status: "Main is d35812af1746ccf7268b582edf45019619431e7b after PR #136 squash merge. W3C WAI WCAG 2.2 archive, attribution/license notice, manifest and Jekyll exclusion are in main. Exact PR #136 Quality #41783917001, Freshness #41783917215 and Provenance #41783916918 passed; post-merge main Quality #41784349212 (including published-site Chromium smoke), Freshness #41784349315, Provenance #41784349268 and Pages deployment #41784349032 passed. Open PRs #124–#134 (11), issue #111. PR #131 remains open/unmerged/owner-controlled; GitHub reports diverged, 6 commits behind and mergeable=false. Verified code/test head fc01177283de472724ff92ea6507b5b8eb87ccf2 passed Quality #41784481921 and Graphify #41784481966. Subsequent docs/config/state-only commits have no exact-head run/status surfaced; re-fetch live PR HEAD before dependent actions."
     branch: "main"
     base_main: "d35812af1746ccf7268b582edf45019619431e7b"
     open_prs_at_checkpoint: 11
@@ -178,7 +178,7 @@ latest_checkpoint:
   open_prs_at_checkpoint:
     - 70
     - 71
-  next: "finish PR #71 mobile composer docking with exact-head Chromium and all required gates; then proceed through the legacy UX audit in priority order"
+  next: "Continue PR #131 after reading the live branch head. Verified code/test checkpoint fc01177283de472724ff92ea6507b5b8eb87ccf2 passed Quality #41784481921 and Graphify #41784481966; subsequent docs/config/state-only commits have no exact-head run/status surfaced. Main is six commits ahead of merge-base e78a73b25725bfa63370d9946887cbbacbf51b82; GitHub reports diverged and mergeable=false. Reconcile eight shared files without rebase/history rewrite; any rebase/main sync requires separate owner approval. Finish native iPhone Safari, VoiceOver, keyboard-only and full component WCAG gates."
 
 architecture_map_checkpoint:
   date: "2026-10-27"
