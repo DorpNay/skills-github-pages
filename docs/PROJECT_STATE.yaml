@@ -1,10 +1,24 @@
 project_state:
   version: 4
   reviewed_on: "2026-11-04"
+  landing_release_strategy:
+    document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
+    status: "SPECIFIED"
+    owner_policy: "main remains stable Landing 1.0 with bounded quality improvements; PR #131 remains the Landing 2.0 workbench; never merge PR #131 wholesale"
+    sequence:
+      - "Reconcile orientation and preserve the current V1 baseline"
+      - "Audit PR #131 into independently verifiable promotion candidates"
+      - "Promote only fully verified V1-compatible slices to main"
+      - "Preserve a recoverable V1 baseline and consolidate development branches"
+      - "Acquire approved open-source code/models/artifacts after the promotion tranche"
+      - "Audit and reconcile every remaining PR, branch and issue"
+    main_sha_at_plan_creation: "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af"
+    pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
+    promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "Main is d35812af1746ccf7268b582edf45019619431e7b after PR #136 squash merge. W3C WAI WCAG 2.2 archive, attribution/license notice, manifest and Jekyll exclusion are in main. Exact PR #136 Quality #41783917001, Freshness #41783917215 and Provenance #41783916918 passed; post-merge main Quality #41784349212 (including published-site Chromium smoke), Freshness #41784349315, Provenance #41784349268 and Pages deployment #41784349032 passed. Open PRs #124–#134 (11), issue #111. PR #131 remains open/unmerged/owner-controlled; verified code/test head fc01177283de472724ff92ea6507b5b8eb87ccf2 passed Quality #41784481921 and Graphify #41784481966; later docs/test commits remain unverified on exact head. Main AGENTS lacked the OLEDUE trigger and OLEDUE lacked its Fast task selector; PR #137 adds both, pending merge."
+    status: "Main is 9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af after PR #137 merge. Exact-main Quality #41793229305, Pages #41793228649, Provenance #41793229159, Freshness #41793229228 and Graphify #41793229272 all passed on this SHA. PR #137 added the AGENTS OLEDUE trigger, OLEDUE Fast task selector and context-budget E2E probe-capture fix. Main is the stable Landing 1.0 line with bounded quality improvements allowed; PR #131 remains the Landing 2.0 workbench and is not a whole-PR merge candidate. Compare main to PR #131: 1,094 ahead / 7 behind, 57 changed files; reported PR HEAD 597536924ce37b17f8832aa36ea5b928f5584230 has no established exact-head verification. Canonical promotion order: docs/LANDING_RELEASE_STRATEGY_RU.md."
     branch: "main"
-    base_main: "d35812af1746ccf7268b582edf45019619431e7b"
+    base_main: "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af"
     open_prs_at_checkpoint: 11
     open_issues_at_checkpoint: 1
     merged_changes: "PR #121 first free landing V1 and client UX; PR #122 Gateway liveness/readiness probes; #120 sidebar hierarchy/theme-language sync; #119 provider separation/project scope/composer preference; #118 chat import/export; #113 immutable Actions pins; #115 modal scrim/outside-tap; #114 empty-by-default prompt/context budget; #71 mobile composer; #84/#81/#83/#82 infrastructure foundations; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
