@@ -1030,3 +1030,12 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - **VISUAL REVIEW:** artifact #13301020089 contains 51 screenshots; contact sheet and representative compact/desktop UI states reviewed. Automated overflow checks passed at 320/360/390/768/1024/1440px for the expanded Functions, Agent and Settings surfaces. No native-device claim.
 - **CURRENT PR #131 STATE:** open/unmerged; main SHA `d35812af1746ccf7268b582edf45019619431e7b`, merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`, six main commits ahead, 12 main-delta files and eight overlaps with the PR. GitHub still reports mergeable=false. No rebase, main synchronization, PR #131 merge or deployment.
 - **NEXT:** reconcile the eight overlapping docs/config files without rewriting history; then recheck mergeability and exact-head Quality/Freshness/Provenance. Continue native iPhone Safari, VoiceOver, keyboard-only and full WCAG review as separate manual gates.
+
+
+## V-2026-11-04-PR131-STATE-QUEUE-RECONCILIATION-001 — include PR #137 in PR #131 freshness snapshot
+
+- **WHERE:** main `d35812af1746ccf7268b582edf45019619431e7b`; PR #131 branch `feat/landing-v1-accessibility-responsive-20261031`; last observed PR #131 HEAD `920dff5b27e548214c86e36ba50856026ccecb34`; merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`.
+- **LIVE QUEUE:** PR #137 is now open for the separate main-state correction. For PR #131's own freshness comparison, exclude #131 and include #137: open PRs #124, #125, #126, #127, #128, #129, #130, #132, #133, #134, #137 (11); issue #111.
+- **MAIN EVIDENCE:** post-merge Quality #41784349212 (Jekyll + published-site Chromium), Freshness #41784349315, Provenance #41784349268 and Pages deployment #41784349032 passed on main `d35812af1746ccf7268b582edf45019619431e7b`.
+- **PR #131 EVIDENCE:** code/test SHA `fc01177283de472724ff92ea6507b5b8eb87ccf2` passed Quality #41784481921 and Graphify #41784481966. The later docs/config HEAD `920dff5b27e548214c86e36ba50856026ccecb34` has no exact-head workflow run surfaced. The state refresh itself will advance branch HEAD; always re-fetch live state.
+- **SAFETY:** no rebase, force-push, main synchronization, merge or deployment. The eight shared files still require careful reconciliation; GitHub reports mergeable=false.
