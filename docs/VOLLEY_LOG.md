@@ -119,3 +119,13 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - **QUALITY:** run #41777243578 remains IN_PROGRESS on exact head `408ae5f2f05d2765154aad8dbb963d317bd77702`; no Quality pass yet. Earlier run #41776927739 on old head is superseded.
 - **SOURCE REGISTER:** central INTEL inventory deduplicates exact URLs and includes catalog-origin names. It does not validate live URLs, licenses, redistribution rights or adoption. Download/archive task remains open until concrete need, exact artifact version, rights, SHA-256, size and review date are recorded.
 - **NEXT:** fetch workflow runs for the current PR #135 HEAD after the state refresh; repair any remaining Freshness schema/queue drift, then review the inventory coverage before owner decides whether to merge this documentation PR.
+
+
+## V-2026-11-04-PR135-MERGED-MAIN-STATE-REFRESH-001 — OLEDUE in main
+
+- **OWNER AUTHORIZATION / ACTION:** PR #135 was squash-merged after the owner requested moving OLEDUE to main and exact-head PR checks passed. Merge commit `9796067d9c6044fa96e1437a2ceac14574d1c1af` (parent `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`).
+- **MERGED:** minimal root `OLEDUE.md` automatic workstream/PR routing; main `ORIENTER.md` first-read pointer; `INTEL.md` consolidated external source inventory (257 unique URLs, 11 curated source catalogs, source provenance and download/rights gate). Documentation only; no artifact/model/voice/repository downloads.
+- **PRE-MERGE EXACT HEAD GATES:** PR #135 Quality #41777497097 PASS, Project State Freshness #41777497093 PASS, License/Artifact Provenance #41777497169 PASS on head `0af9d123bd29b87f68bf8618d1b1a9b978077ef6`. PR was mergeable=true before squash merge.
+- **MAIN QUEUE AFTER MERGE:** main SHA `9796067...`; last functional checkpoint `e78a73b...`; open PRs #124–#134 (11); open issue #111. Main push Quality #41778101742, Freshness #41778101746, Pages #41778101349 and Provenance #41778101735 were in progress at first read. No post-merge main pass/deployment claim.
+- **STATE REFRESH:** created branch `docs/main-state-refresh-20261104-135` from exact main merge SHA to update all five required snapshot files together: ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG, and `docs/project-state-snapshot.json`. This is proposed via PR #136; no direct main state commit.
+- **NEXT:** complete the state refresh PR #136 and its exact-head Freshness/Quality checks; continue PR #131 responsive Settings overflow acceptance separately. PR #131 stays owner-controlled, no merge/rebase/deploy.
