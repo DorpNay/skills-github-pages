@@ -2,17 +2,6 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-## Текущая контрольная точка — 2026-11-04, PR #136 merged; PR #131 UI gates verified
-
-- **Current main SHA:** `d35812af1746ccf7268b582edf45019619431e7b`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`.
-- **Post-merge main checks:** Quality #41784349212 PASS (published-site browser smoke included); Freshness #41784349315 PASS; Provenance #41784349268 PASS; Pages deployment #41784349032 PASS.
-- **PR #136:** merged at `d35812af1746ccf7268b582edf45019619431e7b`. The unchanged W3C WAI WCAG 2.2 guide, license/attribution notice, manifest and Jekyll exclusion are in main. Exact PR-head Quality #41783917001, Freshness #41783917215 and Provenance #41783916918 passed on `01566e03239daf90271da3891cff8b6b3e6b0330`.
-- **Live queue excluding PR #131:** open PRs (10): #124–#130, #132–#134; open issue #111.
-- **PR #131:** branch `feat/landing-v1-accessibility-responsive-20261031`, HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2`, merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; main is six commits ahead and the current merge state is dirty. Eight main-delta files overlap PR changes: OLEDUE, ORIENTER, _config, PROJECT_STATE, V1 checklist, VOLLEY_LOG, snapshot and FILE_ORIENTER. No rebase/main synchronization was performed.
-- **Exact PR #131 checks:** Quality #41784481921 PASS on exact HEAD (4/4 Chromium shards and required sentinels; Pages smoke skipped); Graphify #41784481966 PASS on exact HEAD.
-- **Responsive UI:** mobile jump-to-latest hit-area regression (42px instead of 44px) fixed by matching actual DOM ID `#jumpToLatest`; Quality now passes. Graphify selector query now resolves exact generated node IDs. Artifact #13301020089 contains 51 visual captures; contact sheet and representative 320px/1440px states reviewed, with no obvious overflow/clipping.
-- **NEXT:** finish remaining manual/native iPhone Safari, VoiceOver, keyboard-only and full WCAG component review; reconcile shared docs/config without rebase; recheck mergeability and exact-head checks. No PR #131 merge/deploy authorization is implied.
-
 ## Текущая контрольная точка — 2026-11-04, PR #136 merged; PR #131 state refreshed
 
 - **Current main SHA:** `d35812af1746ccf7268b582edf45019619431e7b`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`.
@@ -20,8 +9,8 @@
 - **PR #136:** merged at `d35812af1746ccf7268b582edf45019619431e7b`; unchanged W3C WAI WCAG 2.2 source, license/attribution, manifest and Jekyll exclusion are in main. Exact PR-head Quality #41783917001, Freshness #41783917215 and Provenance #41783916918 passed.
 - **Live queue excluding PR #131:** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #132, #133, #134, #137; open issues (1): #111.
 - **OLEDUE:** root one-word handoff is in main and routes to the active owner-authorized stream.
-- **PR #131:** branch `feat/landing-v1-accessibility-responsive-20261031`; last observed HEAD `920dff5b27e548214c86e36ba50856026ccecb34`, merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; main is six commits ahead, 12 main-delta files and eight overlaps; GitHub mergeable=false. This state refresh will advance the branch; re-fetch live HEAD before dependent actions.
-- **Exact code/test evidence:** Quality #41784481921 and Graphify #41784481966 passed on `fc01177283de472724ff92ea6507b5b8eb87ccf2`; 4/4 Chromium shards and required sentinels passed, Pages smoke skipped. The later docs/config HEAD `920dff5b27e548214c86e36ba50856026ccecb34` has no exact-head run surfaced.
+- **PR #131:** branch `feat/landing-v1-accessibility-responsive-20261031`; last observed pre-state-refresh HEAD `920dff5b27e548214c86e36ba50856026ccecb34`; subsequent docs/config/state-only commits have advanced the branch, so re-fetch live HEAD before dependent actions. Merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; main is six commits ahead, 12 main-delta files and eight overlaps; GitHub mergeable=false. The branch has since advanced through state-only commits; re-fetch live HEAD before dependent actions.
+- **Exact code/test evidence:** Quality #41784481921 and Graphify #41784481966 passed on `fc01177283de472724ff92ea6507b5b8eb87ccf2`; 4/4 Chromium shards and required sentinels passed, Pages smoke skipped. Subsequent docs/config/state-only commits have no exact-head run/status surfaced; the last verified code/test checkpoint remains `fc01177283de472724ff92ea6507b5b8eb87ccf2`.
 - **NEXT:** reconcile shared files without rebase/history rewrite; finish native iPhone Safari, VoiceOver, keyboard-only and full WCAG component review; recheck exact-head gates and mergeability. No merge/deploy authorization is implied.
 
 ## Историческая контрольная точка — 2026-10-28
