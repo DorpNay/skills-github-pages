@@ -1039,3 +1039,12 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - **MAIN EVIDENCE:** post-merge Quality #41784349212 (Jekyll + published-site Chromium), Freshness #41784349315, Provenance #41784349268 and Pages deployment #41784349032 passed on main `d35812af1746ccf7268b582edf45019619431e7b`.
 - **PR #131 EVIDENCE:** code/test SHA `fc01177283de472724ff92ea6507b5b8eb87ccf2` passed Quality #41784481921 and Graphify #41784481966. The later docs/config HEAD `920dff5b27e548214c86e36ba50856026ccecb34` has no exact-head workflow run surfaced. The state refresh commits have advanced branch HEAD; always re-fetch live state.
 - **SAFETY:** no rebase, force-push, main synchronization, merge or deployment. The eight shared files still require careful reconciliation; GitHub reports mergeable=false.
+
+
+## V-2026-11-04-OLEDUE-SELECTOR-COHERENCE-001 — close the dangling Fast task selector reference
+
+- **FACT:** PR #131's `AGENTS.md` contained the special `oledue` trigger and instructed agents to consult `OLEDUE.md`'s Fast task selector, but the selector was missing from the root file.
+- **IMPLEMENTED (PR #131 branch):** added the compact selector to `OLEDUE.md`; it routes the active owner task, Landing UI #131, project/release gates, open-source/model research and VPS/runtime work to existing canonical records.
+- **BOUNDARY:** main `AGENTS.md` still lacks the trigger, so repository-wide automatic routing is not yet active on main. PR #137 carries the same trigger/selector pair to the current main base; owner merge approval remains required.
+- **VERIFICATION:** document consistency checked; no runtime change. Fresh-session routing and exact-head PR #131 CI remain unverified.
+- **NEXT:** keep checklist 8.29 partial until PR #137 is merged and a fresh handoff confirms the route. Continue UI work only on the owner-authorized PR #131 branch.
