@@ -147,3 +147,38 @@ These are audit targets, not pre-approved promotions:
 | Date | Branch / PR | Change | Verification |
 |---|---|---|---|
 | 2026-11-04 | Documentation plan branch from `9b746f7` | Initial owner-directed execution order and promotion gates | Pending exact-head CI |
+
+
+## Initial PR #131 source audit — 2026-11-04
+
+**Audit basis:** live PR #131 compare and current branch source at reported HEAD `597536924ce37b17f8832aa36ea5b928f5584230`; implementation ledger, canonical §8.0 checklist, source files and Playwright tests were inspected. This is a bounded first pass, not a full line-by-line security or UX sign-off.
+
+### Current exact-head evidence for PR #131
+
+- Quality run `41787658241` PASS on exact HEAD `597536924ce37b17f8832aa36ea5b928f5584230`: 4/4 real Chromium shards, Jekyll, Integrity, Security, Context and static analysis passed. Published GitHub Pages smoke was skipped by the workflow condition.
+- Provenance run `41787658226` PASS on the same exact HEAD.
+- No Freshness or Graphify run was found for that exact SHA in the live Actions lookup.
+- Native iPhone Safari, VoiceOver, physical keyboard/long-press and full component-level contrast review are not covered by these CI results.
+- Therefore this is strong desktop-browser and provenance evidence, but not a full release acceptance result. Do not transfer older Quality #1359/#1250 evidence from earlier SHAs as proof for this current HEAD.
+
+### Candidate classification
+
+| Workstream | Observed evidence | Initial decision | Remaining gate |
+|---|---|---|---|
+| 8.1–8.11 and 8.14–8.17: responsive/accessibility/navigation/control consistency | Implementation ledger records source and regression work; current Quality #41787658241 passed all 4 Chromium shards and Jekyll. Checklist still marks these items [~]; visual/manual/device checks remain. | **KEEP IN V2; V1-compatible in principle.** Do not promote as one block while the UI refactor is entangled. | Extract a bounded patch with no unfinished dependency; exact-head visual, accessibility and regression review. |
+| 8.12: retire experimental server-memory graph UI/API | Main still exposes `/v1/memory/graph/*` routes and global-memory configuration. PR #131 removes routes/flags/UI and adds a test asserting retired endpoints return 404; ordinary local/private/shared/project memory and delta sync/RAG are intended to remain. | **PROMOTION CANDIDATE — NOT YET ACCEPTED.** This is a V1 reliability/scope cleanup if the compatibility audit confirms no supported consumer. | Run the full Gateway suite on an isolated candidate patch; inspect route consumers, env/config/deploy references, SQLite data preservation and migration behavior; verify secret redaction and rollback. |
+| 8.13: explicit project-context handoff to an existing chat | Current E2E test verifies selected existing chat, no chat creation/membership mutation/current-chat movement, sessionStorage restore across reload, one-shot consumption and absence of project instructions/memory on the next request. The current exact-head Quality run passed all four Chromium shards. | **KEEP IN V2 for now.** Implemented and desktop-browser verified, but it adds a new context-transfer capability with privacy/scope implications outside the frozen V1 baseline. | Keep explicit opt-in, session-only scope and one-shot behavior; perform a focused privacy review and request a separate V1 product decision before promotion. |
+| 8.19 notifications / operation state | Ledger documents an accessible FIFO toast and persistent acknowledged errors, but durable operation IDs, pending-to-result updates and inline recovery remain open. | **KEEP IN V2; partial implementation only.** | Finish operation lifecycle contract and failure/recovery tests; no fake progress. |
+| Functions / Agents / Skills / Research menu | Code has real configuration groups plus several roadmap-only disclosures; the UI explicitly says independent worker processes, shared Skill loader and several runtimes do not exist. | **KEEP IN V2. Do not promote roadmap-only cards or fake launch controls.** | Promote only after a real capability contract and runtime exists, if ever. |
+| Root client extraction (`index.md` → `assets/js/app.js` + `assets/css/app.css`) | Large structural refactor: root page changes from 5,228 to 597 lines; new JS asset is 5,348 lines and CSS asset 743 lines. It also changes behavior, naming, providers, settings and tests. | **KEEP IN V2; not a standalone V1 promotion.** | Complete structural/behavioral diff audit, verify asset loading/baseurl, regression and performance; split pure extraction from behavioral changes if promotion is later justified. |
+| Graphify UI surface enrichment | New `scripts/graphify_ui_surface.py` and tests link CSS/DOM/JS selector relationships; workflow changes are in the PR. | **TOOLING CANDIDATE; NOT YET ACCEPTED.** | Exact-head Graphify workflow/artifact review, source coverage and false-positive assessment; keep dev-only, never a runtime dependency. |
+| Repository hygiene and open-source reference docs | `docs/REPOSITORY_HYGIENE_RU.md`, `docs/OPEN_SOURCE_TRIAGE_RU.md` and `docs/TECHNIQUE_REGISTER_RU.md` are expanded on #131. Some inventory snapshots date from Nov 2 and are stale relative to current queue. | **DOCUMENTATION CANDIDATES AFTER REVALIDATION.** | Refresh live branch/PR/issue/ruleset facts; re-check external links, upstream revisions and license claims; avoid duplicating the new promotion plan. |
+
+### First decisions
+
+1. **No whole-PR merge.** The root UI refactor and feature additions are coupled across 57 changed files.
+2. **Investigate 8.12 first as the strongest V1-compatible code candidate**, but do not merge it until Gateway tests and data/compatibility review pass on an isolated patch.
+3. **Keep 8.13 and all new agent/menu/runtime capabilities in V2 for now.** Their implementation/test status is not permission to widen V1 scope.
+4. **Treat accessibility/navigation improvements as candidates, not accepted releases.** Desktop Chromium success is not native-device acceptance; the ledger's [~] statuses remain open.
+5. **Re-audit the docs-only candidates and research sources before promotion.** Their existence on #131 does not make their inventory or external claims current.
+
