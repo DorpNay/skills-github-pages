@@ -736,8 +736,8 @@ html[data-text-contrast="high"] #chatBox button:disabled {
   #chatList .chat-row,
   #modeFast,
   #modeDeep,
-  #jump-to-latest {
+  #jumpToLatest {
     min-height:44px;
   }
-  #jump-to-latest { min-width:44px; }
+  #jumpToLatest { min-width:44px; }
 }
