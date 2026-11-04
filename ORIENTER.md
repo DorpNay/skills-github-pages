@@ -2,15 +2,16 @@
 
 This is the short entry point for an assistant or engineer. Use the detailed navigation index at `project-reference/FILE_ORIENTER_RU.md`, the machine-readable state at `docs/PROJECT_STATE.yaml`, and the chronological log at `docs/VOLLEY_LOG.md`.
 
-## Current working checkpoint — 2026-11-04, PR #135 merged / state refresh
+## Current working checkpoint — 2026-11-04, OLEDUE main / archive + state refresh PR #136
 
-- **Current main SHA:** `9796067d9c6044fa96e1437a2ceac14574d1c1af`; last functional checkpoint remains `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 was squash-merged as a documentation-only commit.
+- **Current main SHA:** `9796067d9c6044fa96e1437a2ceac14574d1c1af`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 was squash-merged as documentation-only.
 - **Open PR queue:** #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134 (11). **Open issues:** #111 only. Live GitHub overrides this snapshot.
-- **OLEDUE is now in main:** root `OLEDUE.md` is a compact single-word handoff; it routes from live GitHub to the current owner-authorized workstream/PR, defaulting to Landing UI #131 while active. Owner should not need to name the PR or branch.
-- **External sources:** `INTEL.md` now includes a centralized inventory of 257 deduplicated URLs from 11 curated source catalogs/research documents, with catalog provenance. Link presence is not adoption/license verification. No repository/model/voice artifacts were downloaded.
-- **PR #131:** Landing UI V2.0 remains open/unmerged/owner-controlled, four commits behind main and mergeable=false. Main-side owner checklist changes were reviewed/reconciled on PR branch; exact-head Quality and 320px Settings overflow fix remain pending.
-- **PR #135 exact-head gates:** Quality #41777497097, Freshness #41777497093, Provenance #41777497169 passed on head `0af9d123...` before squash merge. Main push Quality #41778101742, Freshness #41778101746, Pages deployment #41778101349 and Provenance #41778101735 were in progress at last read; no post-merge main pass/deployment claim.
-- **NEXT:** finish the five-file main state refresh on PR #136 (main SHA/queue now changed after PR #135 merge), then continue PR #131 responsive UI gate and eventual checklist merge prep. Do not merge PR #131 without separate explicit owner approval.
+- **OLEDUE is in main:** root `OLEDUE.md` routes a one-word trigger to the live owner-authorized workstream/PR; default PR #131 while Landing V2 is active. The owner need not specify branch/PR.
+- **External source index:** `INTEL.md` has 257 unique URLs from 11 curated source catalogs, with provenance. One concrete offline source archive item is proposed in PR #136: unchanged W3C WAI WCAG 2.2 change guide, pinned upstream commit/blob, W3C Document License 2023 notice and SHA-256 manifest. It is not merged into main yet.
+- **PR #131:** Landing UI V2.0 remains open/unmerged/owner-controlled, four commits behind main, mergeable=false. Exact current-head Quality still pending; compact Settings overflow at 320px was found and a CSS fix is implemented but not browser-verified.
+- **PR #135 gates:** Quality #41777497097, Freshness #41777497093 and Provenance #41777497169 passed exact PR head before squash merge. Main push Quality #41778101742, Freshness #41778101746, Pages #41778101349 and Provenance #41778101735 were in progress at last read; no post-merge main pass/deployment claim.
+- **PR #136:** branch `docs/main-state-refresh-20261104-135` updates all five required Project State Freshness records for current main/queue and adds the initial license-checked WCAG archive item. Exact-head CI must verify; no direct-main changes.
+- **NEXT:** inspect PR #136 exact-head Quality/Freshness/Provenance, then continue PR #131 responsive acceptance and carefully select any next external artifact for archive only after license/size/purpose review. Do not merge PR #131 without separate explicit owner approval.
 
 ## First-read order
 
