@@ -2,16 +2,16 @@
 
 This is the short entry point for an assistant or engineer. Use the detailed navigation index at `project-reference/FILE_ORIENTER_RU.md`, the machine-readable state at `docs/PROJECT_STATE.yaml`, and the chronological log at `docs/VOLLEY_LOG.md`.
 
-## Current working checkpoint — 2026-11-04, PR #136 merged; main and UI gates verified
+## Current working checkpoint — 2026-11-04, Landing V1/V2 promotion plan started
 
-- **Current main SHA:** `d35812af1746ccf7268b582edf45019619431e7b`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #136 squash-merged; its changes are documentation/archive plus Jekyll configuration only.
-- **Post-merge exact-main checks:** Quality #41784349212 PASS (Jekyll and published-site Chromium smoke included); Freshness #41784349315 PASS; Provenance #41784349268 PASS; Pages deployment #41784349032 PASS on `d35812af1746ccf7268b582edf45019619431e7b`.
-- **OLEDUE integration:** root `OLEDUE.md` is in main. Main `AGENTS.md` previously lacked the trigger and the root file lacked the Fast task selector referenced by the active PR's AGENTS. This PR adds both; repository-level automatic routing is not in main until merged. PR #131 remains the active workstream.
-- **External sources/archive:** `INTEL.md` contains 257 deduplicated URLs from 11 curated catalogs. The unchanged W3C WAI WCAG 2.2 guide, attribution/license notice and manifest are in `docs/upstream-archive/`; `_config.yml` excludes the raw archive from Pages rendering.
-- **PR #136 exact-head gates:** Quality #41783917001 PASS (Jekyll and real Chromium), Freshness #41783917215 PASS, Provenance #41783916918 PASS on head `01566e03239daf90271da3891cff8b6b3e6b0330`; merged at `d35812af1746ccf7268b582edf45019619431e7b`.
-- **Open PR queue:** #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134 (11). **Open issues:** #111 only. Live GitHub overrides this snapshot.
-- **PR #131:** open/unmerged/owner-controlled; branch `feat/landing-v1-accessibility-responsive-20261031`, merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub reports diverged, 6 commits behind and mergeable=false. Re-fetch live HEAD before dependent actions. Verified code/test HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2` passed Quality #41784481921 (4/4 Chromium, Jekyll, Integrity, Security, Context; Pages smoke skipped) and Graphify #41784481966. Subsequent docs/config/state-only commits have no exact-head run/status surfaced.
-- **NEXT:** continue bounded PR #131 implementation and exact-head verification; finish native iPhone Safari, VoiceOver/keyboard-only, full component contrast and remaining interaction gates. Any branch synchronization/rebase remains a separate owner-approved action.
+- **Current main SHA:** `9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af`. PR #137 is merged; its orientation/OLEDUE handoff and context-budget E2E correction are now in main.
+- **Exact-main checks on this SHA:** Quality #41793229305 PASS (Jekyll, Context, Chromium, static analysis, Security, Integrity and published Pages browser smoke); Pages deployment #41793228649 PASS; Provenance #41793229159 PASS; Freshness #41793229228 PASS; Graphify #41793229272 PASS.
+- **Owner direction:** main remains the stable Landing 1.0 line and may receive bounded quality/orientation improvements. PR #131 remains the primary Landing 2.0 workbench; do not merge it wholesale.
+- **Canonical execution plan:** `docs/LANDING_RELEASE_STRATEGY_RU.md` — follow its ordered stages: (1) V1 baseline/orientation, (2) audit and classify PR #131 candidates, (3) promote only fully verified V1-compatible slices, (4) preserve baseline and consolidate branches, (5) acquire approved source/model artifacts after the promotion tranche, (6) reconcile PRs/branches/issues.
+- **Live queue at this checkpoint:** open PRs #124–#134 (11); open non-PR issue #111 (1). Re-check live GitHub before any dependent action.
+- **PR #131:** open/unmerged, branch `feat/landing-v1-accessibility-responsive-20261031`; GitHub reports HEAD `597536924ce37b17f8832aa36ea5b928f5584230`, 1,094 commits ahead / 7 behind main, 57 changed files, mergeable=false. Current exact-head CI for this reported SHA is not established. Do not merge the whole branch.
+- **Research:** use `INTEL.md`, `docs/OPEN_SOURCE_TRIAGE_RU.md` and `docs/TECHNIQUE_REGISTER_RU.md` as seed registers; re-verify upstream revision and artifact-specific license before adoption. No model or binary artifact was downloaded in this stage.
+- **NEXT:** finish the orientation/promotion-plan documentation tranche; then audit PR #131 source/tests into a candidate-by-candidate promotion matrix. No PR #131 sync/rebase/merge or branch deletion in this stage.
 
 ## First-read order
 
