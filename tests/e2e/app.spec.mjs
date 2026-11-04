@@ -4755,6 +4755,13 @@ test('extended UI visual review captures navigation, settings, Functions, Agents
   const agentPanel = page.locator('#agentFunctionSettings');
   await expect(agentPanel).toBeVisible();
   await attachVisualReviewScreenshot(page, testInfo, 'ui-agents-overview');
+  for (const width of [320, 360, 390, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await attachVisualReviewScreenshot(page, testInfo, 'ui-agents-overview-' + width);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow, 'horizontal overflow in Agent overview at ' + width + 'px').toBeLessThanOrEqual(1);
+  }
+  await page.setViewportSize({ width: 1440, height: 1200 });
 
   const agentCategories = agentPanel.locator('.agent-future-groups > details.agent-settings-category');
   await expect(agentCategories).toHaveCount(4);
@@ -4801,14 +4808,35 @@ test('extended UI visual review captures navigation, settings, Functions, Agents
   await page.locator('[data-action="toggle-settings"]').click();
   await expect(page.locator('#settingsModal')).toBeVisible();
   await attachVisualReviewScreenshot(page, testInfo, 'ui-settings-aservi');
+  for (const width of [320, 360, 390, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await attachVisualReviewScreenshot(page, testInfo, 'ui-settings-aservi-' + width);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow, 'horizontal overflow in aServi settings at ' + width + 'px').toBeLessThanOrEqual(1);
+  }
+  await page.setViewportSize({ width: 1440, height: 1200 });
   await page.locator('#thirdPartyProviderSettings > summary').click();
   await expect(page.locator('#thirdPartyProviderSettings')).toHaveAttribute('open', '');
   await page.locator('#thirdPartyProviderSettings').scrollIntoViewIfNeeded();
   await attachVisualReviewScreenshot(page, testInfo, 'ui-settings-third-party-providers');
+  for (const width of [320, 360, 390, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await attachVisualReviewScreenshot(page, testInfo, 'ui-settings-third-party-providers-' + width);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow, 'horizontal overflow in third-party settings at ' + width + 'px').toBeLessThanOrEqual(1);
+  }
+  await page.setViewportSize({ width: 1440, height: 1200 });
 
   await openDisclosure(page, '#additionalSettings');
   await page.locator('#additionalSettings').scrollIntoViewIfNeeded();
   await attachVisualReviewScreenshot(page, testInfo, 'ui-settings-additional-root');
+  for (const width of [320, 360, 390, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await attachVisualReviewScreenshot(page, testInfo, 'ui-settings-additional-root-' + width);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow, 'horizontal overflow in Additional Settings at ' + width + 'px').toBeLessThanOrEqual(1);
+  }
+  await page.setViewportSize({ width: 1440, height: 1200 });
 
   for (const categoryName of ['appearance', 'context', 'profile']) {
     await openSettingsCategory(page, categoryName);
