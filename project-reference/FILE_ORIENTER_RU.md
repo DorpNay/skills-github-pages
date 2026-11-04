@@ -9,7 +9,7 @@
 - PR #131 is the owner-controlled Landing UI V2.0 implementation PR; open/unmerged, four commits behind main, checklist reconciliation pending. Do not merge/rebase/deploy.
 - PR #135 proposes concise root OLEDUE auto-routing and a consolidated INTEL index of 257 unique URLs from 11 curated source catalogs. The source table retains catalog provenance; links are not verified current upstream, adoption or license approvals. No artifacts downloaded.
 - Exact PR #123 quality evidence passed on its PR head before merge. The four later main commits are docs-only; exact-main Quality/Pages evidence on SHA `0a1f764...` is not claimed.
-- Freshness run #41776927840 failed on the first PR #135 head due stale main SHA and open PR snapshot. Snapshot and human state files are being refreshed together; exact-head Freshness/Quality rerun is pending.
+- First PR #135 Freshness run #41776927840 failed on stale main/queue. After the five-file state refresh, Freshness #41777243590 and Provenance #41777243594 passed on `408ae5f2f05d2765154aad8dbb963d317bd77702`; Quality #41777243578 was in progress. VOLLEY_LOG and ORIENTER updates advanced PR #135 beyond that tested head; exact-head Quality/Freshness still pending on latest live head.
 - **NEXT:** verify Freshness/Quality exact-head outcomes on PR #135, fix any schema drift, and keep owner merge authority explicit.
 
 ## Историческая контрольная точка — 2026-10-28
