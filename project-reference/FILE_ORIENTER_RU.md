@@ -12,6 +12,17 @@
 - **PR #131:** open/unmerged/owner-controlled; main 5 commits ahead from merge-base e78a73b; seven overlapping docs files manually reconciled; mergeable=false. Quality #41778037465 PASS on tested PR head e11ec01 (4/4 Chromium + sentinels; Pages smoke skipped); Graphify #41777679201 PASS on code/test SHA dda1de91. No current PR #131 Freshness run surfaced; manual queue snapshot is aligned, no official pass claimed.
 - **NEXT:** exact-head PR #136 Quality/Freshness/Provenance after documentation refresh; continue PR #131 UI acceptance and merge prep. No merge/rebase/main sync/deployment without owner approval.
 
+## Текущая контрольная точка — 2026-11-04, PR #136 merged; archive/Jekyll verified
+
+- **Current main SHA:** `d35812af1746ccf7268b582edf45019619431e7b`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #136 squash-merged; no runtime/dependency/model changes.
+- **Live queue snapshot:** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issues (1): #111. The current state-refresh PR is excluded from its own freshness comparison.
+- **OLEDUE:** root one-word handoff and ORIENTER first-read pointer are in main. It routes to the active owner-authorized stream; Landing UI #131 remains the default.
+- **Source archive:** unchanged W3C WAI WCAG 2.2 Markdown is merged at `docs/upstream-archive/w3c-wai-wcag22-new-in-22.md`. Upstream/archive blob SHA-1 `91ba79fbf918aa1ab14202dc5b4030a1b3087d19`; SHA-256 `d837a780c59ad261aaad05c31a86e195c00e71794f5b8921e01a74ba105d47a6`; size 25,472 bytes. W3C Document License 2023 notice and manifest are present.
+- **Jekyll fix:** `_config.yml` excludes `docs/upstream-archive`, so raw upstream Markdown stays in Git and is not Liquid-rendered into Pages.
+- **PR #136:** merged at `d35812af1746ccf7268b582edf45019619431e7b` from exact head `01566e03239daf90271da3891cff8b6b3e6b0330`. Quality #41783917001 PASS (Jekyll + Chromium), Freshness #41783917215 PASS, Provenance #41783916918 PASS. These are PR-head checks; no independent post-merge main Pages/live-site smoke is claimed.
+- **PR #131:** open/unmerged/owner-controlled; current HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2`, base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; compare reports 6 commits behind and diverged; GitHub mergeable=false. No exact-head workflow run or commit status surfaced. Older checks are not current-head evidence.
+- **NEXT:** continue bounded source/test slices on #131 and obtain exact-head CI evidence. Do not rebase/synchronize, merge or deploy without separate owner approval.
+
 ## Историческая контрольная точка — 2026-10-28
 
 - **Last main action:** docs: preserve engineering and runtime readiness audits.
