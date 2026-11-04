@@ -4742,6 +4742,15 @@ test('extended UI visual review captures navigation, settings, Functions, Agents
   await page.locator('#functionsMenuSummary').click();
   await expect(page.locator('#functionsMenu')).toHaveAttribute('open', '');
   await attachVisualReviewScreenshot(page, testInfo, 'ui-functions-menu-open');
+  // Expanded-menu visual acceptance at every owner viewport. Capture the real open state;
+  // resize only the viewport, without reloading or changing application state.
+  for (const width of [320, 360, 390, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await attachVisualReviewScreenshot(page, testInfo, 'ui-functions-menu-open-' + width);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow, 'horizontal overflow in Functions menu at ' + width + 'px').toBeLessThanOrEqual(1);
+  }
+  await page.setViewportSize({ width: 1440, height: 1200 });
   await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
   const agentPanel = page.locator('#agentFunctionSettings');
   await expect(agentPanel).toBeVisible();
