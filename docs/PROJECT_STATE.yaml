@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-04"
   root_orienter:
-    status: "Main is d35812af1746ccf7268b582edf45019619431e7b after PR #136 squash merge. W3C WAI WCAG 2.2 archive, attribution/license notice, manifest and Jekyll exclusion are in main. Exact PR #136 Quality #41783917001, Freshness #41783917215 and Provenance #41783916918 passed; post-merge main Quality #41784349212 (including published-site Chromium smoke), Freshness #41784349315, Provenance #41784349268 and Pages deployment #41784349032 passed. Open PRs excluding #131: #124–#130, #132–#134 and #137 (11); issue #111. PR #131 remains open/unmerged/owner-controlled; code/test head fc01177283de472724ff92ea6507b5b8eb87ccf2 passed Quality #41784481921 and Graphify #41784481966; later docs/config head 920dff5b27e548214c86e36ba50856026ccecb34 has no exact-head run surfaced."
+    status: "Main is d35812af1746ccf7268b582edf45019619431e7b after PR #136 squash merge. W3C WAI WCAG 2.2 archive, attribution/license notice, manifest and Jekyll exclusion are in main. Exact PR #136 Quality #41783917001, Freshness #41783917215 and Provenance #41783916918 passed; post-merge main Quality #41784349212 (including published-site Chromium smoke), Freshness #41784349315, Provenance #41784349268 and Pages deployment #41784349032 passed. Open PRs excluding #131: #124–#130, #132–#134 and #137 (11); issue #111. PR #131 remains open/unmerged/owner-controlled; verified code/test head fc01177283de472724ff92ea6507b5b8eb87ccf2 passed Quality #41784481921 and Graphify #41784481966. Subsequent docs/config/state-only commits have no exact-head run/status surfaced; re-fetch the live PR HEAD before dependent actions."
     branch: "main"
     base_main: "d35812af1746ccf7268b582edf45019619431e7b"
     open_prs_at_checkpoint: 11
@@ -178,7 +178,7 @@ latest_checkpoint:
   open_prs_at_checkpoint:
     - 70
     - 71
-  next: "Continue PR #131 from its live branch after refreshing the queue snapshot. Last observed HEAD 920dff5b27e548214c86e36ba50856026ccecb34; code/test SHA fc01177283de472724ff92ea6507b5b8eb87ccf2 passed Quality #41784481921 and Graphify #41784481966, but the later docs/config HEAD has no exact-head run surfaced. Main is six commits ahead of merge-base e78a73b25725bfa63370d9946887cbbacbf51b82; GitHub mergeable=false. Reconcile eight shared files without rebase/history rewrite; any rebase/main sync requires separate owner approval. Finish native iPhone Safari, VoiceOver, keyboard-only and full component WCAG gates."
+  next: "Continue PR #131 after reading the live branch head. Verified code/test checkpoint fc01177283de472724ff92ea6507b5b8eb87ccf2 passed Quality #41784481921 and Graphify #41784481966; subsequent docs/config/state-only commits have no exact-head run/status surfaced. Main is six commits ahead of merge-base e78a73b25725bfa63370d9946887cbbacbf51b82; GitHub mergeable=false. Reconcile eight shared files without rebase/history rewrite; any rebase/main sync requires separate owner approval. Finish native iPhone Safari, VoiceOver, keyboard-only and full component WCAG gates."
 
 architecture_map_checkpoint:
   date: "2026-10-27"
