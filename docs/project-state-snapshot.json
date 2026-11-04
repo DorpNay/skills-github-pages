@@ -7,7 +7,7 @@
     "main_commit_subject": "docs: reconcile main state and OLEDUE handoff after PR #136",
     "main_commit_date": "2026-11-04",
     "last_functional_checkpoint_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
-    "last_functional_milestone": "PR #123 remains the last functional checkpoint at e78a73b25725bfa63370d9946887cbbacbf51b82. PR #135 and PR #136 are documentation/archive/config-only. PR #136 added the unchanged W3C WAI WCAG 2.2 archive and Jekyll exclusion; exact PR-head Quality/Jekyll/Chromium, Freshness and Provenance passed. Post-merge main Quality, Freshness, Provenance and Pages deployment all passed on d35812af1746ccf7268b582edf45019619431e7b.",
+    "last_functional_milestone": "PR #123 remains the last functional checkpoint at e78a73b25725bfa63370d9946887cbbacbf51b82. PR #135 and #136 are documentation/archive/config-only; PR #137 is documentation/test-only (OLEDUE handoff and context-budget test capture). Main now points to 9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af. Exact-main Quality, Pages, Freshness, Provenance and Graphify passed on that SHA.",
     "main_quality_run": 41793229305,
     "main_pages_deployment_run": 41793228649,
     "functional_parent_gateway_run": null,
@@ -60,6 +60,12 @@
         "merge_sha": "d35812af1746ccf7268b582edf45019619431e7b",
         "head_sha": "01566e03239daf90271da3891cff8b6b3e6b0330",
         "checks": "Exact PR-head Quality #41783917001 passed including Jekyll and Chromium; Freshness #41783917215 and Provenance #41783916918 passed. Post-merge main Quality #41784349212 (including published-site Chromium smoke), Freshness #41784349315, Provenance #41784349268 and Pages deployment #41784349032 all passed on merge SHA d35812af1746ccf7268b582edf45019619431e7b."
+      },
+      {
+        "number": 137,
+        "merge_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
+        "head_sha": "b4f0ec63b2c1aed00c5bdd951274db3e0530b560",
+        "checks": "Exact-head Quality #41792794176, Freshness #41792794065, Provenance #41792794038 and Graphify #41792794165 passed; merge commit reconciled orientation and OLEDUE handoff."
       }
     ],
     "main_provenance_run": 41793229159,
