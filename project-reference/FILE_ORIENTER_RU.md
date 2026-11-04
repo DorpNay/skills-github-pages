@@ -2,15 +2,16 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-## Текущая контрольная точка — 2026-11-04, PR #135 merged / main state refresh
+## Текущая контрольная точка — 2026-11-04, OLEDUE main / PR #136 archive + state refresh
 
-- **Current main SHA:** `9796067d9c6044fa96e1437a2ceac14574d1c1af`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 squash-merged; it is documentation-only.
-- **Live queue snapshot (excluding current PR #136):** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issues (1): #111. Recheck live GitHub before action.
-- **OLEDUE:** root handoff protocol is now in main. Single word `oledue` resolves the live owner-authorized PR/branch, defaulting to PR #131 while Landing V2 is active. No branch/PR clarification required.
-- **External source inventory:** `INTEL.md` contains 257 distinct URLs deduplicated from 11 curated main/research catalogs, with catalog provenance. It is a link index, not live upstream or license validation. No artifacts were downloaded.
-- **PR #131:** remains open/unmerged/owner-controlled; 4 behind main, mergeable=false. Main-only checklist additions were reviewed and reconciled into the PR canonical 8.0. Exact-head Quality is pending; compact Settings overflow at 320px was found and CSS fix is not yet browser-verified.
-- **PR #135 pre-merge checks:** Quality #41777497097, Freshness #41777497093 and Provenance #41777497169 passed exact head `0af9d123...`. Main push runs on merge SHA `9796067...` (Quality #41778101742, Freshness #41778101746, Pages #41778101349, Provenance #41778101735) were in progress at last read; no post-merge deployment pass claimed.
-- **NEXT:** finish the five-file state refresh for current main SHA/queue via PR #136; then continue PR #131 exact-head responsive Quality and screenshot review. No merge of PR #131 without explicit owner approval.
+- **Current main SHA:** `9796067d9c6044fa96e1437a2ceac14574d1c1af`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 squash-merged (docs-only).
+- **Live queue snapshot (excluding PR #136):** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issues (1): #111. Refresh live GitHub before action.
+- **OLEDUE:** root protocol is now on main; one-word trigger routes to the live owner-authorized PR/branch, defaulting to PR #131 while Landing V2 is active.
+- **External sources:** `INTEL.md` contains 257 deduplicated URLs from 11 curated catalogs, retaining provenance. First offline archive item is proposed in PR #136 at `docs/upstream-archive/w3c-wai-wcag22-new-in-22.md`: pinned W3C WAI source commit/blob, exact-copy SHA-256, 25,472-byte UTF-8 source, W3C Document License 2023 attribution notice and manifest. This archive item is not merged to main yet.
+- **PR #131:** open/unmerged/owner-controlled; 4 behind main, mergeable=false. Main checklist reconciliation is documented. Settings 320px internal overflow was found; CSS fix is implemented, but exact-head Quality remains pending.
+- **PR #135 pre-merge gates:** Quality #41777497097, Freshness #41777497093, Provenance #41777497169 passed on head `0af9d123...`. Main push runs on merge SHA `9796067...` (Quality #41778101742, Freshness #41778101746, Pages #41778101349, Provenance #41778101735) were in progress at last read.
+- **PR #136:** main-based state refresh branch `docs/main-state-refresh-20261104-135`; updates all five Project State Freshness files and includes the first license-checked archive item. Exact-head Quality/Freshness/Provenance are pending after the latest updates; no merge/deployment.
+- **NEXT:** exact-head checks for PR #136, then continue PR #131 responsive Settings and screenshot review. No merge of PR #131 without explicit owner approval.
 
 ## Историческая контрольная точка — 2026-10-28
 
