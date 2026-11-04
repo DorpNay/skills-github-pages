@@ -13,6 +13,17 @@
 - **Responsive UI:** mobile jump-to-latest hit-area regression (42px instead of 44px) fixed by matching actual DOM ID `#jumpToLatest`; Quality now passes. Graphify selector query now resolves exact generated node IDs. Artifact #13301020089 contains 51 visual captures; contact sheet and representative 320px/1440px states reviewed, with no obvious overflow/clipping.
 - **NEXT:** finish remaining manual/native iPhone Safari, VoiceOver, keyboard-only and full WCAG component review; reconcile shared docs/config without rebase; recheck mergeability and exact-head checks. No PR #131 merge/deploy authorization is implied.
 
+## Текущая контрольная точка — 2026-11-04, PR #136 merged; PR #131 state refreshed
+
+- **Current main SHA:** `d35812af1746ccf7268b582edf45019619431e7b`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`.
+- **Post-merge main checks:** Quality #41784349212 PASS (Jekyll + published-site Chromium smoke), Freshness #41784349315 PASS, Provenance #41784349268 PASS, Pages deployment #41784349032 PASS.
+- **PR #136:** merged at `d35812af1746ccf7268b582edf45019619431e7b`; unchanged W3C WAI WCAG 2.2 source, license/attribution, manifest and Jekyll exclusion are in main. Exact PR-head Quality #41783917001, Freshness #41783917215 and Provenance #41783916918 passed.
+- **Live queue excluding PR #131:** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #132, #133, #134, #137; open issues (1): #111.
+- **OLEDUE:** root one-word handoff is in main and routes to the active owner-authorized stream.
+- **PR #131:** branch `feat/landing-v1-accessibility-responsive-20261031`; last observed HEAD `920dff5b27e548214c86e36ba50856026ccecb34`, merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; main is six commits ahead, 12 main-delta files and eight overlaps; GitHub mergeable=false. This state refresh will advance the branch; re-fetch live HEAD before dependent actions.
+- **Exact code/test evidence:** Quality #41784481921 and Graphify #41784481966 passed on `fc01177283de472724ff92ea6507b5b8eb87ccf2`; 4/4 Chromium shards and required sentinels passed, Pages smoke skipped. The later docs/config HEAD `920dff5b27e548214c86e36ba50856026ccecb34` has no exact-head run surfaced.
+- **NEXT:** reconcile shared files without rebase/history rewrite; finish native iPhone Safari, VoiceOver, keyboard-only and full WCAG component review; recheck exact-head gates and mergeability. No merge/deploy authorization is implied.
+
 ## Историческая контрольная точка — 2026-10-28
 
 - **Last main action:** docs: preserve engineering and runtime readiness audits.
