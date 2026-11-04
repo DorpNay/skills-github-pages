@@ -11,7 +11,7 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - **Open PR queue:** #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134 (11 at this checkpoint; this PR is excluded). **Open issues:** #111 (1). Re-check live GitHub before any dependent action.
 - **PR #131:** open/unmerged, branch `feat/landing-v1-accessibility-responsive-20261031`; GitHub reports HEAD `597536924ce37b17f8832aa36ea5b928f5584230`, 1,094 commits ahead / 7 behind main, 57 changed files, mergeable=false. Current exact-head CI for this reported SHA is not established. Do not merge the whole branch.
 - **Research:** use `INTEL.md`, `docs/OPEN_SOURCE_TRIAGE_RU.md` and `docs/TECHNIQUE_REGISTER_RU.md` as seed registers; re-verify upstream revision and artifact-specific license before adoption. No model or binary artifact was downloaded in this stage.
-- **NEXT:** finish the orientation/promotion-plan documentation tranche; then audit PR #131 source/tests into a candidate-by-candidate promotion matrix. No PR #131 sync/rebase/merge or branch deletion in this stage.
+- **NEXT:** finish the orientation/promotion-plan documentation tranche; first promotion audit is recorded in `docs/LANDING_RELEASE_STRATEGY_RU.md`. Investigate 8.12 (retire experimental server-memory graph) as the strongest V1-compatible candidate, but require isolated Gateway tests, config/consumer audit and SQLite-preservation proof before promotion. No PR #131 sync/rebase/merge or branch deletion in this stage.
 
 ## First-read order
 
