@@ -13,6 +13,16 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - **PR #131:** Landing V2 remains open/unmerged/owner-controlled, mergeable=false. Code/test SHA dda1de91 Quality #41778037465 PASS (4/4 Chromium; Pages smoke skipped), Graphify #41777679201 PASS; Settings overflow fixed and screenshots reviewed. Seven overlap files manually reconciled with current main without rebase/sync.
 - **NEXT:** exact-head check PR #136 after latest docs refresh; continue PR #131 merge prep and remaining mandatory UI gates. No merge/deploy without explicit owner approval.
 
+## Current working checkpoint — 2026-11-04, PR #136 merged; archive and Jekyll verified
+
+- **Current main SHA:** `d35812af1746ccf7268b582edf45019619431e7b`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #136 squash-merged; its changes are documentation/archive plus Jekyll configuration only.
+- **Open PR queue:** #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134 (11). **Open issues:** #111 only. Live GitHub overrides this snapshot.
+- **OLEDUE:** root `OLEDUE.md` is in main and routes the one-word handoff to the live owner-authorized workstream; PR #131 remains the default while Landing V2 is active.
+- **External sources/archive:** `INTEL.md` contains 257 deduplicated URLs from 11 curated catalogs. The unchanged W3C WAI WCAG 2.2 guide, attribution/license notice and manifest are now in `docs/upstream-archive/`; `_config.yml` excludes the raw archive from Pages rendering.
+- **PR #136 exact-head gates:** Quality #41783917001 PASS (Jekyll build and real Chromium browser regression jobs included), Freshness #41783917215 PASS, Provenance #41783916918 PASS on head `01566e03239daf90271da3891cff8b6b3e6b0330`. Squash merge: `d35812af1746ccf7268b582edf45019619431e7b`. No separate post-merge main Pages deployment or live-site smoke is claimed.
+- **PR #131:** open/unmerged/owner-controlled; HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2`, base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; compare reports 6 commits behind and diverged; GitHub says mergeable=false. No PR workflow runs or commit statuses surfaced for this exact HEAD. Older green runs are historical only. No rebase, main sync, merge or deployment performed.
+- **NEXT:** continue bounded PR #131 implementation and exact-head verification; complete native iPhone Safari, VoiceOver/keyboard-only, full component contrast and remaining interaction gates. Any branch synchronization/rebase remains a separate owner-approved action.
+
 ## First-read order
 
 0. **`OLEDUE.md`** — when the owner writes `oledue`, route automatically to the live active owner-authorized PR/branch; do not ask for branch or PR clarification. Read the handoff protocol first.
