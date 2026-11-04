@@ -447,6 +447,7 @@ PR #122 добавил только эксплуатационную надёж�
 - Не требовать одной геометрии для всех элементов: основные кнопки, вторичные действия и иконки могут иметь разные варианты в рамках единой дизайн-системы.
 - Сохранить удобные мобильные зоны нажатия.
 - Перед реализацией провести аудит существующих CSS-токенов и переиспользовать текущую систему, а не создавать параллельный набор.
+- [~] Mobile hit-area audit: project navigation toggle, memory/projectless disclosures, project/chat section summaries, create buttons, project/chat rows and Fast/Deep controls should retain at least 44px touch targets at 320/390px; add Playwright geometry assertions while preserving the 40px desktop standard.
 
 ### 8.11 Компактная группа темы и языка в шапке
 
