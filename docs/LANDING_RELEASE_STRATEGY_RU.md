@@ -118,7 +118,7 @@ Initial research leads already present in `INTEL.md`, `docs/OPEN_SOURCE_TRIAGE_R
 - `main` HEAD: `9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af`.
 - Main exact-HEAD workflows on that SHA: Quality `41793229305` PASS; Pages deployment `41793228649` PASS; Provenance `41793229159` PASS; Freshness `41793229228` PASS; Graphify `41793229272` PASS. Quality jobs included Jekyll, Context, Chromium, static analysis, Security, Integrity and published Pages browser smoke; all completed successfully.
 - PR #131 is open, base `main`, head branch `feat/landing-v1-accessibility-responsive-20261031`, reported HEAD `597536924ce37b17f8832aa36ea5b928f5584230`. Compare against main reports diverged, 1,094 commits ahead / 7 behind, with 57 changed files. This is not a safe whole-PR merge candidate. Exact-head checks for the reported current HEAD have not been established in this review.
-- Open PRs at this snapshot: #124–#134 excluding #135–#136? Re-check live GitHub before acting; the authoritative queue is always the live API, not this note.
+- Open PRs at this snapshot: #124, #125, #126, #127, #128, #129, #130, #131, #132, #133 and #134 (11). PRs #135–#137 are not open; PR #136 and #137 are merged. Re-check live GitHub before acting.
 - Open non-PR issue: #111, owner/environment release gates. Keep open until evidence is complete.
 - Main has no verified `docs/MASTER_TASK_REGISTRY_RU.md` or `docs/REPOSITORY_HYGIENE_RU.md` at this checkpoint; do not assume similarly named files exist on main because they may exist only on PR #131.
 - The main Quality, Pages, Provenance, Freshness and Graphify results above are evidence for the current main SHA only. They do not validate PR #131 or future changes.
