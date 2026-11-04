@@ -13,6 +13,17 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - **UI fixes:** corrected the mobile `#jumpToLatest` 44px hit-area selector; resolved Graphify's duplicate-selector ambiguity by explaining exact generated node IDs. Visual artifact #13301020089 contains 51 screenshots; contact sheet and representative compact/desktop states were reviewed with no obvious clipping.
 - **NEXT:** finish manual/native accessibility and interaction gates; reconcile the eight main/PR overlap files without rewriting history; inspect current PR mergeability and exact-head checks before any owner-authorized merge. No PR #131 merge/deploy authorization is implied.
 
+## Current working checkpoint — 2026-11-04, PR #136 merged; PR #131 continues
+
+- **Current main SHA:** `d35812af1746ccf7268b582edf45019619431e7b`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`.
+- **Post-merge main checks:** Quality #41784349212 PASS (Jekyll + published-site Chromium smoke), Freshness #41784349315 PASS, Provenance #41784349268 PASS, Pages deployment #41784349032 PASS.
+- **PR #136:** merged at `d35812af1746ccf7268b582edf45019619431e7b`; unchanged W3C WAI WCAG 2.2 source, attribution/license notice, manifest and Jekyll exclusion are in main. Exact PR-head Quality #41783917001, Freshness #41783917215 and Provenance #41783916918 passed.
+- **Open PR queue excluding active PR #131:** #124, #125, #126, #127, #128, #129, #130, #132, #133, #134, #137 (11). **Open issue:** #111. Live GitHub overrides this snapshot.
+- **OLEDUE:** root handoff matches main and routes to the active owner-authorized workstream; Landing UI #131 remains active.
+- **PR #131:** branch `feat/landing-v1-accessibility-responsive-20261031`; last observed HEAD `920dff5b27e548214c86e36ba50856026ccecb34`, merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; main is six commits ahead, 12 main-delta files and eight overlaps with the PR; GitHub mergeable=false. The current state refresh will advance the branch; re-fetch live HEAD before dependent actions.
+- **Verified code/test checkpoint:** `fc01177283de472724ff92ea6507b5b8eb87ccf2` passed Quality #41784481921 (4/4 Chromium shards, Jekyll, Integrity, Security and Context; PR Pages smoke skipped) and Graphify #41784481966. Later docs/config HEAD `920dff5b27e548214c86e36ba50856026ccecb34` has no exact-head run surfaced.
+- **NEXT:** reconcile the eight shared main/PR files without rewriting history; continue remaining manual/native accessibility and interaction gates; recheck mergeability and exact-head checks. No rebase, main sync, PR #131 merge or deployment without separate owner approval.
+
 ## First-read order
 
 0. **`OLEDUE.md`** — when the owner writes `oledue`, route automatically to the live active owner-authorized PR/branch; do not ask for branch or PR clarification. Read the handoff protocol first.
