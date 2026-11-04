@@ -946,3 +946,13 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - **CHECKS:** exact code/test Quality remains only on prior SHA `04a893f87a2dacdbb5ea55c4a75fab21c6e539f1` (#41688096480 passed 4/4 Chromium shards and required sentinels; Pages smoke skipped). Responsive menu captures at `c9192673...` are authored, browser NOT RUN. No current-head Quality pass claimed.
 - **OPEN:** reconcile main-side owner UI additions with PR #131 checklist preserving both sides; inspect all 57 changed files for merge risks, exact-head Quality/Graphify and manual responsive/native accessibility gates; audit inventory coverage before licensed artifact downloads. OLEDUE/source index branch PR is not merged; owner approval required for merge.
 - **NEXT:** inspect and reconcile the four main-only checklist commits against PR #131 section 8.0, then continue responsive Agent/Settings capture test coverage.
+
+
+## PR #131 main-side owner checklist reconciliation — 2026-11-04
+
+- **DIFF FACT:** compare from merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82` to main `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1` returns exactly four commits, each modifying only `docs/V1_UI_FINALIZATION_RU.md`. PR #131 remains four commits behind, mergeable=false.
+- **OWNER DELTA REVIEWED:** sidebar/memory/projects/chats, typography/header, settings/providers/Tavily/global prompt, navigation ergonomics, Project Sources, message icons, backdrop lifecycle, unified control sizing, theme/language, experimental server-memory removal, explicit chat-context handoff, touch selection, status ticker semantics, icon-first typography, user-adjustable readability/Forced Colors, provider shortlist/BYOK/real model verification, V1 cost/security boundary and dated V2 priority heading.
+- **RECONCILED:** verified the PR #131 unified section 8.0 already carries the corresponding requirements (including Source section visibility while unsupported CRUD remains blocked); kept owner additions and the unified queue together. Repaired checklist changelog table structure and malformed ticker bullet line breaks. Added explicit 2026-10-31 owner-priority note and preserved V1 freeze. Operational OLEDUE/source tasks 8.29–8.30 are already listed first and remain unchecked.
+- **FILES:** `docs/V1_UI_FINALIZATION_RU.md`, `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
+- **CHECKS:** content/diff review only; exact-head CI and manual native gates NOT RUN. No merge/rebase/main sync/deployment.
+- **NEXT:** finish six-width screenshot/overflow test additions for Agent overview and Settings surfaces, then review exact-head CI screenshot artifacts and continue remaining acceptance.
