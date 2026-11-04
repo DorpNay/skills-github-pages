@@ -1059,3 +1059,12 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - **CHECKS:** GitHub workflow/status lookup returned no run/status for the commit; browser/Playwright execution is NOT RUN / NOT VERIFIED. The prior Quality #41688096480 remains evidence only for `04a893f87a2dacdbb5ea55c4a75fab21c6e539f1`.
 - **OPEN:** this slice covers only the compact Functions menu, not all expanded Agents/Settings panels. Native iPhone Safari, VoiceOver, keyboard-only, component WCAG and live provider/gateway gates remain open. No merge, rebase, main sync or deployment.
 - **NEXT:** extend the same responsive capture/overflow gate to Agent overview and expanded Settings surfaces, then inspect screenshots and fix only evidenced regressions.
+
+
+### Owner operational follow-up — OLEDUE routing and external source archive (2026-11-04)
+
+- **SPECIFIED in canonical checklist:** requirements 8.29–8.30 were added before implementation status changes. They require automatic one-word routing to the live owner-authorized PR (default #131 while active), a central external-source inventory with URL deduplication/provenance, and a license-aware archive manifest.
+- **PROPOSED on main-based docs PR:** branch `docs/oledue-simple-source-index-20261104` adds a compact root `OLEDUE.md` that resolves active workstream/PR from live GitHub without asking the owner to name it, and updates the main `ORIENTER.md` first-read pointer. Main OLEDUE file is not yet merged.
+- **IMPLEMENTED in proposed docs branch:** appended a consolidated inventory to `INTEL.md`, extracting/deduplicating 257 distinct URLs from 11 curated main/research catalog documents; each row records source catalog origin. This is a link/source index snapshot, not upstream validation, integration or license approval.
+- **NOT DONE:** binary/source/model/voice downloads. Archive remains gated on a concrete future use, exact upstream version, license/redistribution terms, SHA-256, size and review date. No bulk download.
+- **OPEN:** main-based docs PR needs review/merge approval; external source index still needs coverage audit against other catalogs/branches and exact links should be rechecked before artifact acquisition. 8.29/8.30 are not complete.
