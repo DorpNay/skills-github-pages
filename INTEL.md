@@ -1,6 +1,6 @@
 # aLandi Intelligence / Source Register (INTEL.md)
 
-**Review date:** 2026-10-22. Recheck upstream releases and model cards before shipping an artifact.
+**Review date:** 2026-11-04. Recheck upstream releases and model cards before shipping an artifact. Recheck upstream releases and model cards before shipping an artifact.
 
 ## Voice and model licensing
 
