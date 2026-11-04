@@ -87,7 +87,20 @@
     "owner_task": "docs/LANDING_RELEASE_STRATEGY_RU.md: stable Landing 1.0 main, selective promotion from PR #131, then artifact acquisition and repository hygiene",
     "pr131_head": "597536924ce37b17f8832aa36ea5b928f5584230",
     "pr131_exact_head_verified": false,
-    "pr131_compare": "diverged; 1094 ahead / 7 behind; 57 files"
+    "pr131_compare": "diverged; 1094 ahead / 7 behind; 57 files",
+    "pr131_quality_run": 41787658241,
+    "pr131_provenance_run": 41787658226,
+    "pr131_full_gate_verified": false,
+    "pr131_quality_scope": "4/4 real Chromium shards, Jekyll, Integrity, Security, Context and static analysis passed; published Pages smoke skipped",
+    "pr131_missing_checks": [
+      "Project State Freshness on exact PR #131 HEAD",
+      "Graphify on exact PR #131 HEAD",
+      "native iPhone Safari",
+      "VoiceOver",
+      "physical keyboard/long-press",
+      "full component-level contrast review"
+    ],
+    "promotion_audit": "8.12 server-memory graph retirement: strongest V1-compatible candidate, Gateway/config/consumer/SQLite proof pending; 8.13 project context handoff stays V2 for privacy/scope; accessibility/navigation [~] with manual gates; root app extraction and agent roadmap stay V2"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": true,
