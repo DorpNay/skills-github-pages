@@ -6,7 +6,7 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 
 - **Current main SHA:** `d35812af1746ccf7268b582edf45019619431e7b`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #136 squash-merged; its changes are documentation/archive plus Jekyll configuration only.
 - **Post-merge exact-main checks:** Quality #41784349212 PASS (Jekyll and published-site Chromium smoke included); Freshness #41784349315 PASS; Provenance #41784349268 PASS; Pages deployment #41784349032 PASS on `d35812af1746ccf7268b582edf45019619431e7b`.
-- **OLEDUE:** root `OLEDUE.md` is in main and routes the one-word handoff to the live owner-authorized workstream; PR #131 remains the default while Landing V2 is active.
+- **OLEDUE integration:** root `OLEDUE.md` is in main. Main `AGENTS.md` previously lacked the trigger and the root file lacked the Fast task selector referenced by the active PR's AGENTS. This PR adds both; repository-level automatic routing is not in main until merged. PR #131 remains the active workstream.
 - **External sources/archive:** `INTEL.md` contains 257 deduplicated URLs from 11 curated catalogs. The unchanged W3C WAI WCAG 2.2 guide, attribution/license notice and manifest are in `docs/upstream-archive/`; `_config.yml` excludes the raw archive from Pages rendering.
 - **PR #136 exact-head gates:** Quality #41783917001 PASS (Jekyll and real Chromium), Freshness #41783917215 PASS, Provenance #41783916918 PASS on head `01566e03239daf90271da3891cff8b6b3e6b0330`; merged at `d35812af1746ccf7268b582edf45019619431e7b`.
 - **Open PR queue:** #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134 (11). **Open issues:** #111 only. Live GitHub overrides this snapshot.
