@@ -100,8 +100,9 @@
       "physical keyboard/long-press",
       "full component-level contrast review"
     ],
-    "promotion_audit": "8.12 removal conflicts with main DECISIONS.md, ACCEPTED_IMPROVEMENTS.md and USER_REQUEST_CHECKLIST.md: keep the accepted opt-in graph API in V1 unless owner explicitly authorizes retirement and a live-host/SQLite data plan. 8.13 project context handoff stays V2 for privacy/scope. Accessibility/navigation [~] with manual gates. Root app extraction and agent roadmap stay V2.",
-    "pr131_812_decision": "do not promote removal; previously accepted opt-in V1 feature; owner approval and live host/database review required for retirement"
+    "promotion_audit": "First V1 code candidate: public Landing page accessibility/responsive slice only (landing/index.html + assets/css/landing.css + tests/e2e/landing.spec.mjs); isolated exact-head verification pending. 8.12 graph-memory removal conflicts with accepted V1 decisions/checklist and must not be promoted without owner retirement approval/live-host data review. 8.13 project context handoff stays V2 for privacy/scope. Root app extraction and agent roadmap stay V2.",
+    "pr131_812_decision": "do not promote removal; previously accepted opt-in V1 feature; owner approval and live host/database review required for retirement",
+    "first_v1_code_candidate": "public landing accessibility/responsive slice; three files only; promote after isolated exact-head CI"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": true,
