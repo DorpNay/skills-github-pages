@@ -985,3 +985,13 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - **CHECKS:** Graphify #41777679201 passed on exact code/test SHA dda1de91. Provenance #41777889826 was in progress then later exact current-head Quality #41777945500 is pending on documentation head 4967eff. The previous Quality attempt #41777889847 on a6d6a98 was superseded/cancelled by documentation refresh. No current post-fix Chromium pass.
 - **OPEN:** compact Settings overflow correction at 320px remains unverified; screenshot artifacts not inspected. Native iPhone Safari/VoiceOver/keyboard/WCAG and live provider/gateway gates remain open.
 - **NEXT:** inspect exact-head Quality #41777945500 after completion, confirm 320px Settings no-overflow, then inspect responsive screenshot artifacts; continue the next mandatory UI acceptance item.
+
+
+## V-2026-11-04-SETTINGS-RESPONSIVE-VERIFIED-001 — Quality + visual artifact review
+
+- **WHERE:** PR #131, branch `feat/landing-v1-accessibility-responsive-20261031`; code/test SHA `dda1de91c3ddef7c41f26f066eb66333a3ff9c25`; exact Quality-tested PR HEAD `e11ec01f1fcbc694e959440ce4f8c005131b6969`; main `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; PR remains open/unmerged/mergeable=false, four behind main.
+- **QUALITY VERIFIED:** run #41778037465 SUCCESS on exact PR HEAD e11ec. Four Chromium shards passed; syntax preflight, static analysis, Jekyll, Integrity, Security and Context passed. Published Pages browser smoke skipped. Graphify #41777679201 passed on code/test SHA dda1de91.
+- **REGRESSION CLOSED:** the Settings internal horizontal-overflow assertion passed at 320/360/390/768/1024/1440px after CSS commit `47c9841381a104de99a361fb282bda68dd088bd8`. The canonical checklist item in 8.3 is now [x]; touch-target and full accessibility remain separate 8.10/8.17 gates.
+- **VISUAL REVIEW:** downloaded artifact `playwright-diagnostics-3` (ID 13298122356); reviewed all 30 captures via contact sheet and detailed Settings at 320/360/768/1440px plus Agent/Functions at 320px. No horizontal clipping/overflow observed. Contact sheet session path: `/mnt/data/pr131-visual-review/contact-sheet.png`.
+- **OPEN:** native iPhone Safari, VisualViewport/safe-area, VoiceOver, keyboard-only, full component WCAG/contrast, long-list/popover stress and live provider/gateway remain. This closes only the responsive Settings no-overflow slice, not the full 8.1–8.17 release gate.
+- **NEXT:** continue the next bounded mandatory UI acceptance item, keep merge preparation scoped to the shared checklist, and do not merge/rebase/main-sync/deploy without explicit owner approval.
