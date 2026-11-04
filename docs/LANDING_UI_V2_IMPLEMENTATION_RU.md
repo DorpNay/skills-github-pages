@@ -1078,3 +1078,13 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - **RECONCILIATION CHANGE:** repaired the checklist changelog Markdown table separator, corrected the malformed joined ticker bullets, and explicitly restored the 2026-10-31 owner-priority note inside section 8.0 without duplicating the source backlog. Added operational requirements 8.29 OLEDUE and 8.30 source inventory/archive first; both remain unchecked.
 - **CHECKS:** source/patch review only. No exact-head Quality/Chromium or manual/native review run for this documentation change; PR #131 remains open/unmerged. No merge, rebase, main sync or deployment.
 - **NEXT:** continue responsive capture assertions for Agent/Settings and inspect exact-head Quality artifacts; merge-prep still needs full file-level interaction review and exact-head CI.
+
+
+### Responsive Settings overflow regression — 2026-11-04
+
+- **VERIFIED FAILURE (CI):** Quality runs #41777025231 on `3352433e0ffd5ca49ffe780def481dda0b88c7d2` and #41777352077 on `1943424f7f74d43b5eaaedc4e11debccfab13cf7` each failed one Chromium shard at the same assertion: `Settings panel has no internal horizontal overflow at 320px`. Other shards and sentinels passed; published Pages smoke skipped. This is an existing responsive acceptance regression, not a test-only false pass.
+- **ROOT CAUSE (source-supported hypothesis):** `index.md` gives the Settings surface `p-3 sm:p-4` (12px below Tailwind sm/640px), while `.settings-header` in `assets/css/app.css` uses a 16px negative margin/padding inset. At compact width, the sticky header's negative inset is wider than the surface's 12px content inset, creating internal scrollWidth overflow. CI screenshot artifact was listed but its bytes could not be retrieved in this connector; no visual image inspection claim.
+- **IMPLEMENTED:** `assets/css/app.css` adds a <=639px override aligning the Settings header margin/padding to `-.75rem/.75rem` (12px), matching the p-3 surface. Commit `47c9841381a104de99a361fb282bda68dd088bd8`.
+- **TEST-HARNESS:** `tests/e2e/app.spec.mjs` now reports the top ten overflowing descendants (tag/id/class/scroll/client widths/right edge) if the internal overflow assertion fails, preserving the no-overflow gate. Commit `dda1de91c3ddef7c41f26f066eb66333a3ff9c25`.
+- **CHECKS:** latest exact PR HEAD `dda1de91...` Quality #41777679175 and Graphify #41777679201 are PENDING at last read; previous failures are not yet demonstrated fixed. Do not claim the CSS regression is VERIFIED until a new Chromium run passes at 320px.
+- **NEXT:** inspect the pending exact-head Quality run and diagnostic if it fails; then review newly captured Agent/Settings screenshots at all six widths.
