@@ -23,6 +23,17 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - **PR #131:** open/unmerged/owner-controlled; HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2`, base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; compare reports 6 commits behind and diverged; GitHub says mergeable=false. No PR workflow runs or commit statuses surfaced for this exact HEAD. Older green runs are historical only. No rebase, main sync, merge or deployment performed.
 - **NEXT:** continue bounded PR #131 implementation and exact-head verification; complete native iPhone Safari, VoiceOver/keyboard-only, full component contrast and remaining interaction gates. Any branch synchronization/rebase remains a separate owner-approved action.
 
+## Current working checkpoint — 2026-11-04, PR #136 merged; main and UI gates verified
+
+- **Current main SHA:** `d35812af1746ccf7268b582edf45019619431e7b`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #136 squash-merged; its changes are documentation/archive plus Jekyll configuration only.
+- **Post-merge exact-main checks:** Quality #41784349212 PASS (Jekyll and published-site Chromium smoke included); Freshness #41784349315 PASS; Provenance #41784349268 PASS; Pages deployment #41784349032 PASS on `d35812af1746ccf7268b582edf45019619431e7b`.
+- **OLEDUE:** root `OLEDUE.md` is in main and routes the one-word handoff to the live owner-authorized workstream; PR #131 remains the default while Landing V2 is active.
+- **External sources/archive:** `INTEL.md` contains 257 deduplicated URLs from 11 curated catalogs. The unchanged W3C WAI WCAG 2.2 guide, attribution/license notice and manifest are in `docs/upstream-archive/`; `_config.yml` excludes the raw archive from Pages rendering.
+- **PR #136 exact-head gates:** Quality #41783917001 PASS (Jekyll and real Chromium), Freshness #41783917215 PASS, Provenance #41783916918 PASS on head `01566e03239daf90271da3891cff8b6b3e6b0330`; merged at `d35812af1746ccf7268b582edf45019619431e7b`.
+- **Open PR queue:** #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134 (11). **Open issues:** #111 only. Live GitHub overrides this snapshot.
+- **PR #131:** open/unmerged/owner-controlled; current HEAD `920dff5b27e548214c86e36ba50856026ccecb34`, base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; compare reports 1069 ahead / 6 behind and diverged; GitHub says mergeable=false. Code/test HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2` passed Quality #41784481921 (4/4 Chromium, Jekyll, Integrity, Security, Context; Pages smoke skipped) and Graphify #41784481966. Current HEAD `920dff5b27e548214c86e36ba50856026ccecb34` includes later docs/config changes; no exact-head run is surfaced for it.
+- **NEXT:** continue bounded PR #131 implementation and exact-head verification; finish native iPhone Safari, VoiceOver/keyboard-only, full component contrast and remaining interaction gates. Any branch synchronization/rebase remains a separate owner-approved action.
+
 ## First-read order
 
 0. **`OLEDUE.md`** — when the owner writes `oledue`, route automatically to the live active owner-authorized PR/branch; do not ask for branch or PR clarification. Read the handoff protocol first.
