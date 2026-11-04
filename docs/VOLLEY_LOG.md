@@ -154,7 +154,7 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 
 ## V-2026-11-04-WCAG-ARCHIVE-JEKYLL-VERIFIED-001 — archive build isolation
 
-- **REGRESSION:** Quality #41779579720 failed Jekyll on exact prior PR #136 head because the unchanged W3C WAI Markdown contains Liquid include directives (for example `{% include box.html %}`); the raw source should be retained in Git, not rendered into Pages.
+- **REGRESSION:** Quality #41779579720 failed Jekyll on exact prior PR #136 head because the unchanged W3C WAI Markdown contains Liquid include directives (including unresolved include references); the raw source should be retained in Git, not rendered into Pages.
 - **FIX:** added `exclude: docs/upstream-archive` to `_config.yml` (commit `ac9ab53586b576abd18eb785635a632c2ae4b757`). The archive remains in the repository and is not published as a Jekyll page; upstream content remains byte-for-byte unchanged.
 - **EXACT-HEAD VERIFICATION:** on PR #136 head `ac9ab535...`, Independent Quality Sentinels #41780155673 PASS; Project State Freshness #41780155743 PASS; License/Artifact Provenance #41780155581 PASS.
 - **ARCHIVE INTEGRITY:** upstream and archived Git blob SHA-1 match `91ba79fbf918aa1ab14202dc5b4030a1b3087d19`; SHA-256 `d837a780c59ad261aaad05c31a86e195c00e71794f5b8921e01a74ba105d47a6`; UTF-8 size 25,472 bytes; W3C Document License 2023 notice/manifest retained. No derivative or endorsement claim.
