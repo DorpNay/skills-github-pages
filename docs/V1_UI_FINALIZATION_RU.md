@@ -716,6 +716,7 @@ PR #122 добавил только эксплуатационную надёж�
 - [x] Preserve source research documents as contextual evidence; central inventory is a lookup index, not an adoption or license approval.
 - [~] Archive future-useful artifacts only after a concrete task/use and exact source/version, license/redistribution terms, SHA-256, size and review date are recorded. First candidate is the unchanged W3C WAI WCAG 2.2 change guide in PR #136; pinned upstream commit/blob, W3C Document License 2023 notice, SHA-256 and size are recorded in `docs/upstream-archive/manifest.yaml`. It is not yet merged.
 - [~] Keep an archive manifest and stable storage location in repository; the manifest and notice are proposed in PR #136. Exclude secrets, credentials, private or user data.
+- [~] Keep raw upstream Markdown archives out of the published Pages output; exclude `docs/upstream-archive` from Jekyll rendering because exact source files may contain Liquid directives. Config proposal is in PR #136; exact-head Jekyll verification pending.
 - **Acceptance [~]:** one searchable source inventory with provenance is in main; the reproducible license-aware archive manifest contains one reviewed candidate pending PR #136 merge and exact-head gates.
 
 ### Integrated UI scope and Graphify source coverage — 2026-11-02
