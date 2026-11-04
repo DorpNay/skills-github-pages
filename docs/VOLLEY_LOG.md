@@ -129,3 +129,15 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - **MAIN QUEUE AFTER MERGE:** main SHA `9796067...`; last functional checkpoint `e78a73b...`; open PRs #124–#134 (11); open issue #111. Main push Quality #41778101742, Freshness #41778101746, Pages #41778101349 and Provenance #41778101735 were in progress at first read. No post-merge main pass/deployment claim.
 - **STATE REFRESH:** created branch `docs/main-state-refresh-20261104-135` from exact main merge SHA to update all five required snapshot files together: ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG, and `docs/project-state-snapshot.json`. This is proposed via PR #136; no direct main state commit.
 - **NEXT:** complete the state refresh PR #136 and its exact-head Freshness/Quality checks; continue PR #131 responsive Settings overflow acceptance separately. PR #131 stays owner-controlled, no merge/rebase/deploy.
+
+
+## V-2026-11-04-WCAG-ARCHIVE-001 — first license-checked offline reference
+
+- **GOAL:** retain one concrete future-use source artifact in the repository as requested, without bulk-mirroring external material.
+- **ARTIFACT:** W3C WAI “What's New in WCAG 2.2” Markdown source, archived unchanged at `docs/upstream-archive/w3c-wai-wcag22-new-in-22.md`. This is a practical offline reference for Landing UI V2.0 accessibility acceptance (WCAG 2.2 new criteria).
+- **PROVENANCE:** source repo `w3c/wai-website`, pinned commit `321da62bab5c43fe44bd6f76decd547fcf76fee9`, path `pages/standards-guidelines/wcag/new-in-22.md`; official page URL https://www.w3.org/WAI/standards-guidelines/wcag/new-in-22/. Upstream Git blob SHA-1 `91ba79fbf918aa1ab14202dc5b4030a1b3087d19`; archived Git blob SHA-1 was re-read and matches exactly. UTF-8 SHA-256 `d837a780c59ad261aaad05c31a86e195c00e71794f5b8921e01a74ba105d47a6`; size 25,472 bytes.
+- **LICENSE:** W3C Document License 2023 permits copy/distribution with attribution and original URL, and generally disallows derivative works of W3C specifications. Added adjacent attribution/license notice at `docs/upstream-archive/README.md`; manifest at `docs/upstream-archive/manifest.yaml`. No W3C endorsement implied.
+- **INDEX:** added the archived item, pinned upstream, license and SHA256 to central `INTEL.md` inventory. The central external link inventory now also tracks an actual local archive record.
+- **WHERE:** PR #136 branch `docs/main-state-refresh-20261104-135`, based on main `9796067d9c6044fa96e1437a2ceac14574d1c1af`; archive and main state refresh are proposed, not merged.
+- **CHECKS:** upstream Git blob SHA equals archived file blob SHA; SHA-256 recorded in manifest. PR #136 Quality/Freshness/Provenance reruns pending after the archive additions. No runtime/dependency/model/voice changes.
+- **NEXT:** exact-head PR #136 Freshness/Quality/Provenance; then continue selecting source artifacts only where future tasks justify storage and license review.
