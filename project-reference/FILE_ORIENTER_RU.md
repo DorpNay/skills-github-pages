@@ -1,13 +1,13 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
-## Текущая контрольная точка — 2026-11-04, PR #131 merge preparation
+## Текущая контрольная точка — 2026-11-04, PR #131 responsive Settings fix
 
-- Main V1: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`. PR #131 branch `feat/landing-v1-accessibility-responsive-20261031`; latest PR HEAD `dcea4e1343102252133ccff4d74b0f80091e32e4`; code/test SHA `dda1de91c3ddef7c41f26f066eb66333a3ff9c25`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; 4 behind main, mergeable=false.
-- Main-side checklist diff (four docs-only commits) reviewed and reconciled into the PR #131 canonical 8.0 queue; the 8.1–8.17/provider requirements are represented. Added operational tasks 8.29 OLEDUE and 8.30 source inventory/archive; both open.
-- Quality #41777025231 and #41777352077 failed the Settings internal overflow assertion at 320px. CSS fix in `assets/css/app.css` commit `47c9841381a104de99a361fb282bda68dd088bd8` aligns header inset with compact p-3 surface. Test commit `dda1de91...` adds descendant diagnostics. Fix not yet verified.
-- **Checks:** Graphify #41777679201 passed on code/test SHA dda1de91; Provenance #41777779725 passed on docs head d5efa8c; Quality #41777779570 is queued on that docs head. Latest PR HEAD dcea4e134 is after an ORIENTER-only refresh; exact latest Quality result must be checked. Last known green Quality #41688096480 remains on older code/test SHA 04a893f, not current.
-- PR #135 main-based OLEDUE/source inventory docs PR remains open; Freshness #41777243590 and Provenance #41777243594 passed on earlier head 408ae5f; latest CI should be checked. It lists 257 URLs from 11 catalogs; no artifact downloads.
-- **NEXT:** inspect latest exact-head Quality for Settings 320px; if it passes, retrieve/review the new six-width screenshot artifact. Keep PR #131 open and do not merge/rebase/deploy without owner approval.
+- Main V1 `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; PR #131 branch `feat/landing-v1-accessibility-responsive-20261031`; latest HEAD after ORIENTER refresh `46b0c2f72a450ed122f9273cdcb900b31d630abd`; code/test SHA `dda1de91c3ddef7c41f26f066eb66333a3ff9c25`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; four behind main; mergeable=false.
+- Main-only four owner checklist commits reconciled with PR #131 canonical section 8.0. New operational tasks 8.29/8.30 are recorded and remain open.
+- Quality #41777025231/#41777352077 failed at 320px on Settings surface internal overflow. CSS correction `47c9841381a104de99a361fb282bda68dd088bd8` aligns mobile sticky header margin/padding to the 12px p-3 surface; test `dda1de91...` emits overflow-descendant diagnostics. Graphify #41777679201 passed on exact code/test SHA dda1de91.
+- Current Quality #41777889847 is pending and Provenance #41777889826 in progress on exact PR HEAD a6d6a98 before this orienter commit; exact current head after this commit should be refreshed. No post-fix Chromium pass yet. Prior green Quality #41688096480 is stale for the current source.
+- Separate PR #135 carries OLEDUE and INTEL's 257-URL source index; Freshness #41777243590 and Provenance #41777243594 passed on earlier head 408ae5f; current PR #135 checks pending after docs updates. No files/artifacts downloaded.
+- **NEXT:** exact-head Quality review and screenshot artifact inspection; if Settings overflow remains, use the diagnostics to make minimal correction. No merge/rebase/sync/deploy without owner approval.
 
 ## Навигация и владение записями
 
