@@ -3,11 +3,11 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-04",
   "checkpoint": {
-    "main_sha": "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1",
-    "main_commit_subject": "docs: mark owner UI corrections as V2.0 priorities",
-    "main_commit_date": "2026-10-31",
+    "main_sha": "9796067d9c6044fa96e1437a2ceac14574d1c1af",
+    "main_commit_subject": "docs: add OLEDUE handoff and consolidated source inventory",
+    "main_commit_date": "2026-11-04",
     "last_functional_checkpoint_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
-    "last_functional_milestone": "PR #123 merged at e78a73b25725bfa63370d9946887cbbacbf51b82; Gateway, Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code checks passed on exact PR head before merge. Four later main commits only update docs/V1_UI_FINALIZATION_RU.md owner requirements.",
+    "last_functional_milestone": "PR #123 merged at e78a73b25725bfa63370d9946887cbbacbf51b82; Gateway, Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code checks passed on exact PR head before merge. Main commits after this functional checkpoint are documentation-only.",
     "main_quality_run": null,
     "main_pages_deployment_run": null,
     "functional_parent_gateway_run": null,
@@ -34,6 +34,12 @@
         "merge_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
         "head_sha": "fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222",
         "checks": "Gateway, Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code passed on exact PR head."
+      },
+      {
+        "number": 135,
+        "merge_sha": "9796067d9c6044fa96e1437a2ceac14574d1c1af",
+        "head_sha": "0af9d123bd29b87f68bf8618d1b1a9b978077ef6",
+        "checks": "Independent Quality Sentinels, Project State Freshness and License/Artifact Provenance passed on exact PR head before squash merge; post-merge main Quality/Pages runs are pending."
       }
     ]
   },
