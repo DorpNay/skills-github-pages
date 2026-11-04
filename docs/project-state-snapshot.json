@@ -116,7 +116,12 @@
     ],
     "first_v1_candidate_checks": "pending exact-head Quality/Chromium, Jekyll, Freshness and Provenance",
     "first_v1_candidate_css_delivery_assertion": "HTTP 200 and text/css",
-    "original_v1_baseline_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af"
+    "original_v1_baseline_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
+    "main_quality_status": "success",
+    "main_pages_status": "success",
+    "main_freshness_status": "success",
+    "main_provenance_status": "success",
+    "main_graphify_status": "not rerun; docs-only PR #138"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": true,
