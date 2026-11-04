@@ -10,6 +10,13 @@ test('V1 landing has accurate metadata, working CTAs and honest product boundari
 
   await expect(page).toHaveTitle(/aLandi.*собственным gateway/i);
   await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
+  await expect(page.locator('link[rel="stylesheet"][href*="assets/css/landing.css"]')).toHaveCount(1);
+  const stylesheetHref = await page.locator('link[rel="stylesheet"][href*="assets/css/landing.css"]').getAttribute('href');
+  expect(stylesheetHref).toBeTruthy();
+  const stylesheetResponse = await page.request.get(new URL(stylesheetHref, page.url()).toString());
+  expect(stylesheetResponse.status()).toBe(200);
+  expect(stylesheetResponse.headers()['content-type']).toContain('text/css');
+
   await expect(page.locator('h1')).toHaveCount(1);
   await expect(page.locator('h1')).toContainText('Сохраняй контроль над средой');
   await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /бесплатная|AI-среда|gateway/i);
@@ -76,7 +83,7 @@ test('landing roadmap tickers start only when a planned item is opened', async (
   await first.locator('summary').click();
   await expect(first).toHaveAttribute('open', '');
   await expect(firstTicker).toBeVisible();
-  await expect(firstTicker).toContainText('1nv3nt10n 1n PrOc3ss');
+  await expect(firstTicker).toContainText('1ИV3ИT10И');
   expect(await firstTicker.evaluate(element => getComputedStyle(element).animationName)).toBe('innovation-marquee');
   await expect(first).toContainText('не сообщает о текущем выполнении фоновой задачи');
 
@@ -114,4 +121,44 @@ test('roadmap ticker respects reduced motion and leaves its message readable', a
   await expect(ticker).toBeVisible();
   expect(await ticker.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
   await expect(item.locator('.roadmap-disclaimer')).toContainText('Не означает');
+});
+
+test('landing provides a visible keyboard skip link to the main content', async ({ page }) => {
+  await page.goto(LANDING_PATH, { waitUntil: 'domcontentloaded' });
+
+  const skipLink = page.getByRole('link', { name: 'Перейти к содержимому' });
+  await expect(skipLink).toBeAttached();
+  await page.keyboard.press('Tab');
+  await expect(skipLink).toBeFocused();
+
+  const top = await skipLink.evaluate(element => element.getBoundingClientRect().top);
+  expect(top).toBeGreaterThanOrEqual(0);
+
+  await page.keyboard.press('Enter');
+  await expect(page.locator('main')).toBeFocused();
+  await expect(page.locator('main')).toHaveAttribute('id', 'main-content');
+});
+
+test('landing capability cards use balanced tablet and mobile columns', async ({ page }) => {
+  await page.goto(LANDING_PATH, { waitUntil: 'domcontentloaded' });
+  const grid = page.locator('#capabilities .grid');
+
+  for (const [width, expectedColumns] of [[390, 1], [768, 2], [1024, 3]]) {
+    await page.setViewportSize({ width, height: 844 });
+    const columns = await grid.evaluate(element => getComputedStyle(element).gridTemplateColumns.split(' ').length);
+    expect(columns, `unexpected capability grid at ${width}px`).toBe(expectedColumns);
+  }
+});
+
+test('landing gradient heading remains readable in forced-colors mode', async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active' });
+  await page.goto(LANDING_PATH, { waitUntil: 'domcontentloaded' });
+
+  const styles = await page.locator('.gradient').evaluate(element => {
+    const computed = getComputedStyle(element);
+    return { backgroundImage: computed.backgroundImage, textFillColor: computed.webkitTextFillColor };
+  });
+  expect(styles.backgroundImage).toBe('none');
+  expect(styles.textFillColor).not.toBe('rgba(0, 0, 0, 0)');
+  await expect(page.getByRole('group', { name: /Поток запроса/ })).toBeAttached();
 });
