@@ -4257,7 +4257,18 @@ test('responsive expanded UI panels fit and capture evidence at all acceptance w
     expect(bounds.x, `${label} left edge at ${width}px`).toBeGreaterThanOrEqual(0);
     expect(bounds.x + bounds.width, `${label} right edge at ${width}px`).toBeLessThanOrEqual(width + 1);
     const horizontalOverflow = await locator.evaluate(element => element.scrollWidth > element.clientWidth + 1);
-    expect(horizontalOverflow, `${label} has no internal horizontal overflow at ${width}px`).toBe(false);
+    const overflowDetails = horizontalOverflow ? await locator.evaluate(element =>
+      [...element.querySelectorAll('*')]
+        .filter(child => child.scrollWidth > child.clientWidth + 1)
+        .slice(0, 10)
+        .map(child => ({
+          tag: child.tagName.toLowerCase(), id: child.id || null,
+          className: typeof child.className === 'string' ? child.className.slice(0, 120) : null,
+          clientWidth: child.clientWidth, scrollWidth: child.scrollWidth,
+          right: Math.round(child.getBoundingClientRect().right)
+        }))
+    ) : [];
+    expect(horizontalOverflow, `${label} has no internal horizontal overflow at ${width}px; overflowing descendants: ${JSON.stringify(overflowDetails)}`).toBe(false);
     const documentOverflow = await page.evaluate(() =>
       document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
     expect(documentOverflow, `document has no horizontal overflow at ${width}px`).toBe(false);
