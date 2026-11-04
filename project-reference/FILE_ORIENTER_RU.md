@@ -9,7 +9,7 @@
 - **OLEDUE:** PR #137 merged; main `AGENTS.md` contains the handoff trigger and root `OLEDUE.md` contains the Fast task selector. Main files were checked after merge; a fresh-session behavior run remains a separate check.
 - **Owner's product policy:** main is stable Landing 1.0 and can receive bounded quality improvements; PR #131 is the Landing 2.0 workbench. Promote only independently useful, V1-compatible, exact-head verified slices.
 - **Canonical sequence:** `docs/LANDING_RELEASE_STRATEGY_RU.md` — orientation first; PR #131 promotion audit; selective V1 promotion; preserve V1 baseline and consolidate workstreams; then approved model/open-source artifact acquisition; finally branch/PR/issue hygiene.
-- **Live queue snapshot:** open PRs #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issue #111. Live GitHub overrides this snapshot.
+- **Live queue snapshot:** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issues (1): #111. Live GitHub overrides this snapshot.
 - **PR #131:** head branch `feat/landing-v1-accessibility-responsive-20261031`, reported HEAD `597536924ce37b17f8832aa36ea5b928f5584230`; compare main → branch: diverged, 1,094 ahead / 7 behind, 57 changed files; mergeable=false. Exact-head verification for this reported HEAD is not established. Keep PR #131 open and do not merge wholesale.
 - **NEXT:** audit the PR #131 diff and test surface into a promotion candidate matrix; leave research branches isolated until their unique value and destination are clear.
 
