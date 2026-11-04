@@ -1,98 +1,15 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
-## Текущая контрольная точка — 2026-11-04, latest PR #131 exact-head snapshot
-
-- Main V1 `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; PR #131 branch `feat/landing-v1-accessibility-responsive-20261031`; latest HEAD after current orientation/log updates `de2c2ffd2a43cdba44c6d9f9946f042ed7d68875`; code/test SHA `dda1de91c3ddef7c41f26f066eb66333a3ff9c25`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; 4 behind main; mergeable=false.
-- Four main-only owner UI checklist commits reviewed; their requirements reconciled into PR #131 unified 8.0. Tasks 8.29 OLEDUE and 8.30 external-source inventory/archive are recorded and remain open.
-- Responsive test failure: Quality #41777025231 and #41777352077 found Settings internal horizontal overflow at 320px. CSS fix `47c9841381a104de99a361fb282bda68dd088bd8` aligns sticky header inset; E2E SHA dda1de91 logs overflow-descendant diagnostics. Graphify #41777679201 passed on code/test SHA dda1de91.
-- Quality #41777945500 pending on preceding documentation HEAD 4967eff; latest PR HEAD de2c2ffd has not yet been matched to a result. No post-fix browser pass or screenshot review yet. Previous green Quality #41688096480 is only on old code/test SHA 04a893f.
-- PR #135 separate docs branch: prior Freshness #41777243590 and Provenance #41777243594 passed on head 408ae5f; exact latest PR #135 CI is not verified. Source register includes 257 URLs; no artifacts downloaded.
-- **NEXT:** query exact-head Quality on de2c2ffd, inspect 320px Settings pass/diagnostic and screenshot artifact; continue the next mandatory UI gate. No merge/rebase/main sync/deployment.
-
-## Навигация и владение записями
-
-См. `ORIENTER.md` → **Record ownership**. Здесь хранится подробная карта файлов и одна текущая контрольная точка; старые checkpoints ниже — только история. При расхождении live GitHub и сохранённых SHA всегда доверять live GitHub.
-
-## Исторические контрольные точки
-
-
-## Историческая контрольная точка — 2026-11-02, Landing V2 taxonomy slice
-
-- PR #131 открыт, не объединён; ветка `feat/landing-v1-accessibility-responsive-20261031`; docs checkpoint `5e7faea91bb3b88384b75f68f6f5ac8ae313b3d8`, source/test HEAD `79790a018234b0f141f7ee902430165f6471a920`. Main остаётся V1; merge/rebase/sync/deploy не выполнялись.
-- Additional Settings regrouped into three purpose disclosures. Function menu groups task workflow and connections. Structured-workflow configuration is divided into execution mode and blueprint parameters. RU/EN labels and E2E tests added.
-- Graphify run `41389386456` passed on exact source/test HEAD. Quality #1398 / run `41389870537` pending, jobs not yet available; no Chromium pass claim. Previous Quality #1359 result applies only to its prior checkpoint.
-- V2 live preview not configured: Pages target serves main V1; Vercel connected context/project search returned no available team/project. No new repo or deployment without owner approval.
-- Next: verify Quality/Chromium, fix regressions, gather real screenshots and continue native iPhone/VoiceOver/WCAG review.
-
-## Историческая контрольная точка — 2026-11-02, Quality #1252 green
-
-- PR #131 открыт и не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; code HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`; documentation HEAD `63f429ccf16fe7648519ebb3ecc02b9f8949ad53`. Сравнение: 653 commits ahead / 4 behind main; rebase/main synchronization без разрешения запрещены.
-- Quality #1250 на code HEAD прошёл после расширения E2E для 8.13. Quality #1252 / run `41365833770` на docs HEAD прошёл: 4/4 Chrome shards и все sentinels зелёные. Provenance #976 / run `41365833791` также success.
-- 8.13: queued project-context handoff сохраняется в tab-scoped sessionStorage как chat/project IDs; восстанавливается после reload для активного и другого target chat; после первого успешного запроса потребляется. E2E проверяет отсутствие нового чата, смены project membership и повторной инъекции.
-- Supply chain: 13 workflow files и 33 direct refs; 33/33 закреплены полными 40-character SHAs на main и PR branch. Однако вложенные action refs внутри pinned `skills/exercise-toolkit` reusable workflows остаются mutable tags; это отдельный открытый follow-up. Live branch ruleset не проверен.
-- CI автоматически запускается от push/pull_request; workflow вручную запускать не требуется.
-- Второй репозиторий по просьбе владельца пока не создавать. Единственный Pages target V1 не трогать; deployment не выполнялся.
-- Upstream triage: SGLang/Qwen3-Next (4×H100/H200; 80B total/3B active — не SLM), LightAgent, llm-apipool (cross-provider fallback не подходит), BentoML, GPTQModel, LLM Compressor и Plexor RCT. Ничего не установлено и не загружено.
-- Native iPhone Safari, VoiceOver, full composited WCAG contrast и screenshot review остаются отдельными gates.
-- Не удалять branches/files, не merge/rebase/deploy. Следующий шаг — продолжать UI scope 8.1–8.17 в PR #131 и не ждать CI без параллельной работы.
-
-
-## Историческая контрольная точка — 2026-11-02, Quality #1251 green
-
-- PR #131 открыт и не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; code HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`; documentation HEAD `61f1ae1dbac08da6c0a873bc5b72926cecb83bee`. Сравнение: 653 commits ahead / 4 behind main; rebase/main synchronization без разрешения запрещены.
-- Quality #1250 / run `41364775725` на code HEAD прошёл после расширения E2E для 8.13. Quality #1251 / run `41365456706` на docs HEAD прошёл: 4/4 Chrome shards и все sentinels зелёные. Provenance #975 / run `41365456760` также success.
-- 8.13: queued project-context handoff сохраняется в tab-scoped sessionStorage как chat/project IDs; восстанавливается после reload для активного и другого target chat; после первого успешного запроса потребляется. E2E проверяет отсутствие нового чата, смены project membership и повторной инъекции.
-- Supply chain: 13 workflow files, 33 внешних Action/reusable-workflow refs; 33/33 закреплены полными 40-character SHAs и на main, и на PR branch. Live branch ruleset этим не подтверждается.
-- CI автоматически запускается от push/pull_request; workflow вручную запускать не требуется.
-- Второй репозиторий по просьбе владельца пока не создавать. Единственный Pages target V1 не трогать; deployment не выполнялся.
-- Upstream triage: SGLang/Qwen3-Next (4×H100/H200; 80B total/3B active — не SLM), LightAgent, llm-apipool (cross-provider fallback не подходит), BentoML, GPTQModel, LLM Compressor и Plexor RCT. Ничего не установлено и не загружено.
-- Native iPhone Safari, VoiceOver, full composited WCAG contrast и screenshot review остаются отдельными gates.
-- Не удалять branches/files, не merge/rebase/deploy. Следующий шаг — продолжать UI scope 8.1–8.17 в PR #131 и не ждать CI без параллельной работы.
-
-
-## Историческая контрольная точка — 2026-11-02, Quality #1250 green
-
-- PR #131 открыт и не объединён; branch `feat/landing-v1-accessibility-responsive-20261031`; exact HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`. Main остаётся V1 baseline. Сравнение: 653 commits ahead / 4 behind main; не выполнять rebase/main synchronization без разрешения.
-- Quality #1250 / run `41364775725`: exact-head push run завершился success за 207s. Все четыре real Chrome shards passed; preflight, static analysis, Integrity, Security, Context и Jekyll — success. Published-site smoke skipped; публикация/preview не проверялись.
-- 8.13: queued project-context handoff сохраняется в tab-scoped sessionStorage как ID чата и проектов; восстанавливается после reload и для активного, и для другого target chat; после первого успешного запроса потребляется. Playwright проверяет отсутствие нового чата, смены project membership и повторной инъекции контекста.
-- CI автоматически запускается от push/pull_request; workflow вручную запускать не требуется.
-- Второй репозиторий по просьбе владельца пока не создавать. Единственный Pages target V1 не трогать; deployment не выполнялся.
-- Обновлён upstream triage: SGLang/Qwen3-Next (4×H100/H200, 80B total/3B active — не SLM), LightAgent, llm-apipool (cross-provider fallback не подходит), BentoML, GPTQModel, LLM Compressor и Plexor RCT. Ничего не установлено и не загружено.
-- Native iPhone Safari, VoiceOver, full composited WCAG contrast и визуальный screenshot review остаются отдельными gates.
-- Не удалять branches/files, не merge/rebase/deploy. Текущий следующий шаг — продолжать UI scope 8.1–8.17 в PR #131 и не ждать CI без параллельной работы.
-
-
-## Историческая контрольная точка — 2026-11-02, Quality #1234 green
-
-- PR #131 открыт, не объединён; branch feat/landing-v1-accessibility-responsive-20261031; code HEAD на момент проверки 9a23d58313da6379cb112b617daedeaa6d38f605. Main остаётся V1 baseline. Не выполнять merge, rebase или main synchronization без отдельного разрешения.
-- Quality #1234 / run 41363212486: exact-head push run завершился success за 105s. Четыре real Chrome shards прошли по 32 теста каждый: 128 passed, 0 failed. Preflight, static analysis, Integrity, Security, Context и Jekyll — success. Published-site smoke — skipped; публикация/preview не проверялись.
-- Quality #1233 выявил transient high-contrast E2E failure: #uiTextContrast был hidden на selectOption. На следующем exact-head run #1234 тест прошёл без source change; наблюдать за flakiness.
-- CI использует Playwright 1.56.1 и runner-provided stable Google Chrome через channel=chrome; локально остаётся Playwright Chromium. Нет apt-get browser dependencies и скачивания браузера в CI.
-- Baseline Quality #1197 = 1863s, но это timeout с неполным прогоном. Нельзя объявлять speedup до сопоставимого completed baseline и одинакового набора тестов.
-- V2 preview: один GitHub Pages target в этом repository. PR deployment в него заменит V1; ничего не публиковать туда. Отдельный Pages URL требует второго Pages site/repository или отдельного host. Preview пока не развёрнут.
-- Hygiene: branch inventory snapshot = 126 refs; не-head открытого PR не означает orphan. Delete-ref action отсутствует; ветки/файлы не удалялись. Сохранять уникальные commits и закрытые unmerged workstreams.
-- 60 owner-provided source repositories зафиксированы в docs/OPEN_SOURCE_TRIAGE_RU.md; это reference-only, никаких framework/runtime/model/dependencies не импортировано.
-- Canonical backlog: docs/V1_UI_FINALIZATION_RU.md section 8.0; mandatory 8.1–8.17 остаются release scope. Implementation evidence: docs/LANDING_UI_V2_IMPLEMENTATION_RU.md. Полный CI и проектный контекст — ORIENTER.md и docs/PROJECT_STATE.yaml.
-- Обновлены checkpoints: ORIENTER.md, docs/PROJECT_STATE.yaml, docs/VOLLEY_LOG.md, docs/REPOSITORY_HYGIENE_RU.md. Последующие изменения state сверять с live PR metadata, не копировать исторические SHAs.
-- Next: продолжать bounded UI slices, upstream research и branch ancestry audit; подготовить отдельный preview target и workflow без доступа к production Pages. Native iPhone Safari, VoiceOver, full component-level WCAG и live runtime остаются отдельными gates.
-
-> Исторические разделы ниже сохраняют контекст; live refs и результаты перепроверять перед каждым действием.
-
-> Исторические разделы ниже сохраняют контекст; live refs и результаты перепроверять перед каждым действием.
-
-
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-## Текущая контрольная точка — 2026-10-30
+## Текущая контрольная точка — 2026-11-04, PR #131 main reconciliation
 
-- Текущий main: `fd4f0a105183feb23e0f4e4697446235de9ffe9a` — PR #121 и PR #122 merged.
-- PR #121 merged: `f4d880f9648989f4fe48ddd2284220b3606c3b86`, exact head `e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b`. Exact-head workflow groups passed: Gateway, Quality (Chromium/Jekyll/published-site smoke, Context/Security/Integrity), Freshness, Provenance, Graphify, Dead Code.
-- PR #122 merged: `fd4f0a105183feb23e0f4e4697446235de9ffe9a`, exact head `94d871dbf76a5364ebb3c61d86cc763affa5eaa1`. Gateway, Quality (Chromium/Jekyll/published-site smoke, Context/Security/Integrity), Graphify and Dead Code passed.
-- Очередь для freshness-сравнения (текущий PR исключается): **open PRs (0): ; open issues (1): #111**. Активный PR #123 — reconciliation документации и helper benchmark; exact head `fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222` прошёл все шесть workflow groups, PR готов к merge. После merge очередь PR должна стать нулевой. Issue #111 — единственный owner/live-host gate; не закрывать без фактических VPS, hardware, credentials, ruleset, corpus, voice, sandbox и OAuth evidence.
-- Первый бесплатный лендинг V1 зафиксирован. После PR #121 **не добавлять новые продуктовые возможности и runtime-компоненты**. Разрешены только UX polish, надёжность, безопасность, доступность, производительность, тесты и документация внутри существующего HTML/CSS/JS + Jekyll/GitHub Pages и FastAPI/Ollama стека.
-- Основные источники: `docs/V1_UI_FINALIZATION_RU.md`, `docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`, `docs/LANDING_UX_POLISH_BACKLOG_RU.md`, `docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md`, `docs/PROJECT_STATE.yaml`.
-- Малые модели: в main есть ручной memory-helper opt-in через операторский `ALANDI_HELPER_MODEL`; general-purpose subagent routing не реализован. 64 роли — логические контракты, не отдельные процессы. Синтетический benchmark не заменяет human-rated и target-host evaluation.
-- Не подтверждено: post-merge Pages deployment на точном merge SHA; native iPhone Safari/VoiceOver; live VPS/Tunnel/Ollama и provider credentials; target-host model RAM/latency/quality; production voice, RAG golden set, OAuth/Drive и CLI sandbox.
+- **Current main SHA:** `9796067d9c6044fa96e1437a2ceac14574d1c1af`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 merged documentation-only; exact main Quality Sentinels #41778101742, Freshness #41778101746, Provenance #41778101735 and Pages deployment #41778101349 passed.
+- **Live queue snapshot (excluding current PR #131):** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #132, #133, #134, #136; open issues (1): #111. Refresh live GitHub before action.
+- **PR #131:** branch `feat/landing-v1-accessibility-responsive-20261031`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; main 5 commits ahead; mergeable=false. Code/test SHA `dda1de91c3ddef7c41f26f066eb66333a3ff9c25`; Quality #41778037465 PASS on tested PR HEAD e11ec01 (4/4 Chromium + sentinels; Pages smoke skipped); Graphify #41777679201 PASS on code/test SHA dda1de91. Settings 320px overflow correction verified and 30 screenshots visually reviewed.
+- **Overlap map:** main delta from merge-base is 8 files across 5 commits; seven shared docs were manually reconciled on PR #131: `OLEDUE.md`, `ORIENTER.md`, `docs/PROJECT_STATE.yaml`, `docs/V1_UI_FINALIZATION_RU.md`, `docs/VOLLEY_LOG.md`, `docs/project-state-snapshot.json`, `project-reference/FILE_ORIENTER_RU.md`. `INTEL.md` is a main-only additive file. No rebase/sync occurred.
+- **PR #136:** state refresh and first W3C WAI WCAG 2.2 archive artifact; main queue snapshot is based on 9796067, and PR #131's snapshot excludes #131 while includes #136. Exact-head Quality/Freshness/Provenance pending after latest updates.
+- **NEXT:** verify PR #131 exact-head Freshness/Quality after the seven-file reconciliation and current queue snapshot. Keep PR #131 owner-controlled; no merge/rebase/deployment.
 
 ## Историческая контрольная точка — 2026-10-28
 
@@ -136,7 +53,7 @@
 - Open PRs at index creation: #52 document attachment integration (branch `feat/document-attachment-ui-v3`), #37 mobile chat ergonomics, #36 project-memory scope regression tests. Check live PR status before assuming any remain open.
 - Local whisper.cpp ASR and Piper TTS + mini-player are code-level features, **not enabled/deployed by default**. Verify models, binary paths, flags, and target hardware before saying audio works on the user's server.
 - Search & Research Studio exists; SearXNG adapter is optional/configured-server-only, not an independently deployed search cluster.
-- Browser/local memory and conversation delta sync are separate stores. The former server-memory graph HTTP API and browser bridge were removed in PR #131; the MemoryManager module/schema remain internal to Graphify/code-evidence only. No project memory is synced to gateway.
+- Memory graph and delta-sync API are experimental/flagged off. Browser/local memory, gateway graph memory, and external storage are not one magically synchronized store.
 
 ## 3. Folder taxonomy
 
@@ -147,7 +64,7 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 ## 4. Memory: known architecture boundary
 
 - Browser chat history is stored through `localStorage`; application notes also use IndexedDB. Browser quota/eviction and clearing site data can cause loss. A localStorage fallback/backup is not a separate durable backup medium.
-- The gateway retains one opt-in conversation delta-sync API (`ALANDI_MEMORY_SYNC_ENABLED=false`). The scoped memory graph HTTP API and ALANDI_MEMORY_GRAPH_ENABLED / ALANDI_GLOBAL_MEMORY_ENABLED settings were removed in PR #131. Internal MemoryManager remains for Graphify only; it is not a gateway product API.
+- The gateway has two distinct opt-in concepts: versioned conversation delta sync (`ALANDI_MEMORY_SYNC_ENABLED=false`) and scoped memory graph (`ALANDI_MEMORY_GRAPH_ENABLED=false`). They have different schemas and are not a completed automatic sync pipeline.
 - Graph facts require source provenance, scope and status; newly uploaded facts are candidates, not automatically trusted facts. Prompt use is opt-in and should remain scope-restricted.
 - OAuth vault/Google OAuth routes exist as groundwork; real credentials, Drive Picker/UI, file import and sync are not configured. Do not promise Google Drive synchronization.
 - Do not store raw long audio, recordings or full files in the compact “memory” graph. Preserve original conversation/attachment as an immutable source, then store a short, source-linked summary/transcript plus hash and offsets. Never overwrite the only source with a summary.
@@ -348,64 +265,3 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Проверенный исходный PR #123 HEAD: `f6e67db5a7e39abc5f9351aae5ccadefc58e865e`; base main: `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; open, mergeable=true. Предыдущая проверка exact-head: 6/6 workflow groups passed. После любого нового коммита эти результаты не переносятся автоматически.
 - Единственный открытый issue #111 — owner/live-host evidence. Не закрывать по CI.
 - Сначала снимок/ориентиры, затем системная карта, сквозные взаимодействия, качество/безопасность, независимый review и только потом минимальные исправления. Архитектуру не расширять.
-
-
-## Landing V2 — live continuation checkpoint (2026-11-02)
-
-- Canonical scope remains PR #131 only, branch `feat/landing-v1-accessibility-responsive-20261031`; live source/test checkpoint for the 8.25 connectivity slice: `6489f5a9b6d2d3e8c68b2bad993f7b85a4521cbd`.
-- Added an accessible RU/EN composer warning for the browser's offline signal, explicitly not API health; reconnect asks for manual retry only. Drafts now flush on hidden-tab `visibilitychange` and `pagehide`.
-- E2E tests cover offline → online without automatic request replay and immediate draft persistence on tab hide. Source syntax and CSS brace checks passed; browser tests are authored but not yet executed.
-- Exact-head Quality #1405 (`41390877580`) pending; Graphify #437 (`41390877512`) queued. No exact-head browser pass is claimed.
-- PR #131 remains open/unmerged, mergeable=false. Main, production Pages and PR #132 are untouched; no rebase, merge or deployment. Attachments remain intentionally non-persistent.
-
-
-## Landing V2 — Undo slice (2026-11-02)
-
-- Source/test checkpoint: `ba709ac95c8896581133dfcce02234281f75fd90` on PR #131.
-- Added bounded Undo for a chat's project move through the existing toast. The inverse operation validates the chat's current assignment and the original project's existence before restoring; conflicts never overwrite later user changes.
-- Added an accessible 44px toast action and Playwright regression. V8 syntax and CSS brace checks passed; Chromium test remains unexecuted.
-- This does not yet provide persistent command history or Undo for rename/project deletion/settings. Exact-head Quality still needs a fresh completed run.
-
-
-## Landing V2 — Undo entry-point coverage (2026-11-02)
-
-- Latest source/test checkpoint: `f35f542070a261ddfe075d2cc0ee7281c0fdbe8b`.
-- Undo for chat project moves is now covered through both the current-chat project selector and the chat-row context menu. The test confirms the original project assignment and chat identity are restored.
-- V8 syntax check passed; Chromium tests remain authored, not executed. Exact-head Quality must be checked after the final documentation push.
-
-
-## Landing V2 — chat-delete Undo (2026-11-02)
-
-- Latest source/test checkpoint: `6f2863094434cd75c8794c348117cc8ea597f271`.
-- Chat deletion now offers immediate Undo through the existing last-closed-chat recovery slot, but only if that snapshot was saved and still belongs to the same chat. A newer deletion safely expires the older action.
-- Added Playwright regression; existing seven-day reload recovery remains unchanged. V8 syntax check passed; Chromium run pending.
-
-
-## Landing V2 — chat-rename Undo (2026-11-02)
-
-- Latest source/test checkpoint: `f7e74f41b608cded7030d1185c9b747b3190e78a`.
-- Chat-title rename now has bounded Undo; the prior title is restored only if no later rename has changed it. Added Playwright regression for both UI and persisted state.
-- Syntax parsing passed; Chromium execution pending. Undo scope remains local chat move/delete/rename, not project cascade or settings.
-
-
-## Landing V2 — keyboard focus after Undo (2026-11-02)
-
-- Latest source/test checkpoint: `45275d5ad854ccfdd73f3b24231c197eeac38c82`.
-- Undo now returns keyboard focus to the affected visible chat row, with composer fallback. Added an Enter-key Playwright regression for rename Undo and focus restoration.
-- V8 syntax parsing passed; Chromium execution remains pending.
-
-
-## Landing V2 — Quality Integrity repair (2026-11-02)
-
-- Quality #1431 identified the missing `#uiTheme` control; `app.js` still required it during settings initialization. Restored it in the existing advanced appearance disclosure and added RU/EN option labels.
-- Added Playwright coverage for theme selection, persistence and synchronization with the header toggle. Source/test HEAD: `74de58706b28d55f405c238b916651c26281098d`; syntax check passed; exact-head Quality pending.
-
-
-## Latest PR checkpoint — 2026-11-04 — Landing V2 memory/sidebar and visual review
-
-- **WHERE:** PR #131, branch `feat/landing-v1-accessibility-responsive-20261031`, verified code/test HEAD `04a893f87a2dacdbb5ea55c4a75fab21c6e539f1`; base/merge-base SHA `e78a73b25725bfa63370d9946887cbbacbf51b82`; compare 1009 ahead / 4 behind; mergeable=false. Stable main remains `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`.
-- **IMPLEMENTED:** `index.md` moves the compact memory status line above the title and separates wrapper `#memoryPanel` from disclosure `#memoryPanelDisclosure`; `assets/css/app.css` reduces status chips to 8px; `assets/js/app.js` collapses only memory disclosures/help when the sidebar closes.
-- **TESTS:** `tests/e2e/app.spec.mjs` asserts status/title geometry, sidebar close behavior, preserved project/chat disclosure state and captures 21 UI screenshots. `tests/e2e/privacy-memory.spec.mjs` opens the new disclosure ID for its IndexedDB privacy check. The settings-profile import regression is isolated from asynchronous provider auto-connect by seeding keys before app startup and stubbing the catalog endpoint.
-- **VERIFIED:** Quality #41688096480 / run 1696 passed exact code/test HEAD: 4/4 Chromium shards plus syntax preflight, static analysis, Jekyll, Integrity, Security and Context. Published Pages smoke skipped. The 21-image desktop visual artifact was inspected; expanded panels are not yet captured at all six responsive widths.
-- **OPEN:** 8.1–8.4 and 8.6–8.17 remain [~]; only 8.5 is [x]. Native iPhone Safari, VisualViewport/safe-area, VoiceOver, keyboard-only, full component contrast/WCAG, long-list/popover stress and live provider/gateway acceptance remain separate gates. No merge/rebase/main sync/deploy.
-- **NEXT:** extend visual captures for expanded Functions/Agents/Settings panels across 320/360/390/768/1024/1440, then continue one bounded mandatory checklist gate.
