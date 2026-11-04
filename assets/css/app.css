@@ -711,3 +711,12 @@ html[data-text-contrast="high"] #chatBox button:disabled {
     padding-bottom: max(env(safe-area-inset-bottom), 0px) !important;
   }
 }
+
+
+/* The Settings surface uses p-3 below Tailwind's sm breakpoint; align the sticky header's negative margin/padding with that 12px surface inset. */
+@media (max-width: 639px) {
+  #settingsModal > .settings-surface > .settings-header {
+    margin: -.75rem -.75rem .5rem;
+    padding: .75rem;
+  }
+}
