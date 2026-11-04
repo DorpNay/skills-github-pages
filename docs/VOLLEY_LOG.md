@@ -141,3 +141,12 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - **WHERE:** PR #136 branch `docs/main-state-refresh-20261104-135`, based on main `9796067d9c6044fa96e1437a2ceac14574d1c1af`; archive and main state refresh are proposed, not merged.
 - **CHECKS:** upstream Git blob SHA equals archived file blob SHA; SHA-256 recorded in manifest. PR #136 Quality/Freshness/Provenance reruns pending after the archive additions. No runtime/dependency/model/voice changes.
 - **NEXT:** exact-head PR #136 Freshness/Quality/Provenance; then continue selecting source artifacts only where future tasks justify storage and license review.
+
+
+## V-2026-11-04-MAIN-POSTMERGE-VERIFIED-001 — PR #135 post-merge main gates
+
+- **FACT:** PR #135 squash merge commit `9796067d9c6044fa96e1437a2ceac14574d1c1af` is the current main SHA; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 pre-merge exact Quality/Freshness/Provenance passed.
+- **POST-MERGE EXACT MAIN CHECKS:** Independent Quality Sentinels #41778101742 PASS; Project State Freshness #41778101746 PASS; License/Artifact Provenance #41778101735 PASS; GitHub Pages build/deployment #41778101349 PASS on SHA 9796067.
+- **LIMIT:** these workflow results establish CI and Pages deployment workflow success; no separate published-site browser smoke was run/claimed for the merge SHA.
+- **STATE:** refreshed `docs/PROJECT_STATE.yaml` and `docs/project-state-snapshot.json` run IDs. Open PR queue excluding PR #136 remains #124–#134 (11); issue #111 (1).
+- **NEXT:** exact-head PR #136 Freshness/Quality/Provenance after latest docs updates; state refresh branch includes the W3C archive candidate, still not merged.
