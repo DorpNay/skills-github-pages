@@ -180,7 +180,7 @@ These are audit targets, not pre-approved promotions:
 1. **First V1 code promotion candidate:** the isolated public Landing page accessibility/responsive slice (`landing/index.html` + `assets/css/landing.css` + `tests/e2e/landing.spec.mjs`). Preserve its existing five tests and add only its three new accessibility/responsive tests. Isolate from PR #131 and require exact-head CI before merge.
 2. **No whole-PR merge.** The root UI refactor and feature additions are coupled across 57 changed files.
 3. **Do not promote 8.12's removal.** It conflicts with accepted main behavior and owner checklist; keep the opt-in feature intact unless the owner explicitly chooses retirement.
-3. **Keep 8.13 and all new agent/menu/runtime capabilities in V2 for now.** Their implementation/test status is not permission to widen V1 scope.
+4. **Keep 8.13 and all new agent/menu/runtime capabilities in V2 for now.** Their implementation/test status is not permission to widen V1 scope.
 5. **Treat the root app's accessibility/navigation improvements as candidates, not accepted releases.** Desktop Chromium success is not native-device acceptance; the ledger's [~] statuses remain open.
 6. **Re-audit the docs-only candidates and research sources before promotion.** Their existence on #131 does not make their inventory or external claims current.
 
