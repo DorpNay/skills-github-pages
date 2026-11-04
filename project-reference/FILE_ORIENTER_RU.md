@@ -2,16 +2,15 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-## Текущая контрольная точка — 2026-11-04, main exact gates after PR #135
+## Текущая контрольная точка — 2026-11-04, exact archive gates passed
 
-- **Current main SHA:** `9796067d9c6044fa96e1437a2ceac14574d1c1af`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 squash-merged documentation-only.
-- **Live queue snapshot (excluding PR #136):** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issues (1): #111. Refresh from GitHub before action.
-- **OLEDUE:** root single-word handoff is in main; routes to live owner-authorized PR/branch, default #131 while Landing V2 is active.
-- **Source inventory:** `INTEL.md` contains 257 unique URLs from 11 curated catalogs. First offline artifact (W3C WAI WCAG 2.2 change guide) is proposed in PR #136 with pinned commit/blob, exact-copy SHA-256, W3C Document License 2023 notice and manifest; not merged.
-- **PR #135 pre-merge:** Quality #41777497097, Freshness #41777497093, Provenance #41777497169 passed exact PR head `0af9d123...`.
-- **POST-MERGE exact main checks:** Quality Sentinels #41778101742 PASS; Freshness #41778101746 PASS; Provenance #41778101735 PASS; Pages build/deployment #41778101349 PASS on SHA 9796067. No separate live-site smoke claimed.
-- **PR #136:** state refresh branch updates five required records and adds initial archive artifact; exact PR-head checks pending after the latest documentation refresh. Main queue snapshot excludes #136, queue #124–#134.
-- **NEXT:** verify PR #136 exact-head Freshness/Quality/Provenance; then continue PR #131 merge preparation. No merge of PR #131 without explicit owner approval.
+- **Current main SHA:** `9796067d9c6044fa96e1437a2ceac14574d1c1af`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 squash-merged docs-only.
+- **Live queue snapshot (excluding PR #136):** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issues (1): #111.
+- **OLEDUE:** root compact single-word handoff is in main. **Source index:** `INTEL.md` lists 257 unique URLs from 11 curated catalogs.
+- **PR #136 archive:** `docs/upstream-archive/w3c-wai-wcag22-new-in-22.md` preserves the W3C WAI source unchanged; upstream and archived Git blob SHA-1 match `91ba79fbf918aa1ab14202dc5b4030a1b3087d19`; SHA-256 `d837a780c59ad261aaad05c31a86e195c00e71794f5b8921e01a74ba105d47a6`; size 25,472 bytes; W3C Document License 2023 attribution/manifest present. `_config.yml` excludes `docs/upstream-archive` from Pages rendering to avoid Liquid evaluation.
+- **PR #136 exact gates:** Quality #41780155673 PASS, Freshness #41780155743 PASS, Provenance #41780155581 PASS on exact head `ac9ab53586b576abd18eb785635a632c2ae4b757`. The prior Jekyll failure #41779579720 was repaired by the exclusion; no runtime dependency/feature change. PR #136 remains open/unmerged; later docs-only updates mean recheck its live HEAD.
+- **PR #131:** open/unmerged/owner-controlled; main 5 commits ahead from merge-base e78a73b; seven overlapping docs files manually reconciled; mergeable=false. Quality #41778037465 PASS on tested PR head e11ec01 (4/4 Chromium + sentinels; Pages smoke skipped); Graphify #41777679201 PASS on code/test SHA dda1de91. No current PR #131 Freshness run surfaced; manual queue snapshot is aligned, no official pass claimed.
+- **NEXT:** exact-head PR #136 Quality/Freshness/Provenance after documentation refresh; continue PR #131 UI acceptance and merge prep. No merge/rebase/main sync/deployment without owner approval.
 
 ## Историческая контрольная точка — 2026-10-28
 
