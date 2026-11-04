@@ -4,6 +4,18 @@ const LANDING_PATH = process.env.LIVE_SITE_URL
   ? new URL('landing/', process.env.LIVE_SITE_URL.replace(/\/?$/, '/')).toString()
   : '/landing/';
 
+test.beforeEach(async ({ page }) => {
+  if (!process.env.LIVE_SITE_URL) {
+    // Production's relative_url adds the repository baseurl. The local test
+    // server exposes _site at /, so alias this one asset request to its output path.
+    await page.route('**/assets/css/landing.css', route => {
+      const url = new URL(route.request().url());
+      url.pathname = '/assets/css/landing.css';
+      return route.continue({ url: url.toString() });
+    });
+  }
+});
+
 test('V1 landing has accurate metadata, working CTAs and honest product boundaries', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(LANDING_PATH, { waitUntil: 'domcontentloaded' });
@@ -13,23 +25,14 @@ test('V1 landing has accurate metadata, working CTAs and honest product boundari
   await expect(page.locator('link[rel="stylesheet"][href*="assets/css/landing.css"]')).toHaveCount(1);
   const stylesheetHref = await page.locator('link[rel="stylesheet"][href*="assets/css/landing.css"]').getAttribute('href');
   expect(stylesheetHref).toBeTruthy();
-  const stylesheetUrl = new URL(stylesheetHref, page.url());
-  if (!process.env.LIVE_SITE_URL) {
-    // Jekyll's relative_url filter prefixes the repository baseurl in production.
-    // The local Python server exposes _site at /, so strip only that canonical
-    // site-prefix when requesting the generated file locally.
-    const canonicalUrl = new URL(await page.locator('link[rel="canonical"]').getAttribute('href'));
-    const landingSuffix = '/landing/';
-    const siteBasePath = canonicalUrl.pathname.endsWith(landingSuffix)
-      ? canonicalUrl.pathname.slice(0, -landingSuffix.length)
-      : '';
-    if (siteBasePath && stylesheetUrl.pathname.startsWith(`${siteBasePath}/`)) {
-      stylesheetUrl.pathname = stylesheetUrl.pathname.slice(siteBasePath.length);
-    }
-  }
+  const stylesheetUrl = process.env.LIVE_SITE_URL
+    ? new URL(stylesheetHref, page.url())
+    : new URL('/assets/css/landing.css', page.url());
   const stylesheetResponse = await page.request.get(stylesheetUrl.toString());
   expect(stylesheetResponse.status()).toBe(200);
   expect(stylesheetResponse.headers()['content-type']).toContain('text/css');
+  await expect.poll(() => page.locator('link[rel="stylesheet"][href*="assets/css/landing.css"]')
+    .evaluate(link => Boolean(link.sheet))).toBe(true);
 
   await expect(page.locator('h1')).toHaveCount(1);
   await expect(page.locator('h1')).toContainText('Сохраняй контроль над средой');
