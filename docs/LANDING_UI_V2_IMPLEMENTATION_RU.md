@@ -1050,3 +1050,12 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - **VISUAL:** 21 expanded-panel screenshots at 1440px were generated and inspected. Existing responsive shell/navigation evidence covers 320/360/390/768/1024/1440px, but expanded Functions/Agents/Settings are not yet captured at all widths.
 - **LIMITS:** this closes only the evidenced sidebar behavior slice, not requirement 8.1 as a whole or the full 8.1–8.17 acceptance set. Native iPhone Safari/VisualViewport/safe-area, VoiceOver, keyboard-only, full component WCAG/contrast, long-list/popover stress and live provider/gateway checks remain open.
 - **NEXT:** extend expanded-panel visual captures to 320/360/390/768/1024/1440px; then continue the next mandatory 8.1–8.17 gate.
+
+
+### 8.1 responsive expanded Functions-menu visual capture — 2026-11-04
+
+- **IMPLEMENTED (test source):** extended the existing real-browser visual-review test with screenshots of the open Functions menu at 320/360/390/768/1024/1440px. Each capture also asserts document-level horizontal overflow is <=1px; viewport resizing preserves the live menu state and does not reload the app.
+- **CODE/TEST SHA:** `c9192673f3149302e93254d39fd3c7f1716b4be1` (`tests/e2e/app.spec.mjs`).
+- **CHECKS:** GitHub workflow/status lookup returned no run/status for the commit; browser/Playwright execution is NOT RUN / NOT VERIFIED. The prior Quality #41688096480 remains evidence only for `04a893f87a2dacdbb5ea55c4a75fab21c6e539f1`.
+- **OPEN:** this slice covers only the compact Functions menu, not all expanded Agents/Settings panels. Native iPhone Safari, VoiceOver, keyboard-only, component WCAG and live provider/gateway gates remain open. No merge, rebase, main sync or deployment.
+- **NEXT:** extend the same responsive capture/overflow gate to Agent overview and expanded Settings surfaces, then inspect screenshots and fix only evidenced regressions.
