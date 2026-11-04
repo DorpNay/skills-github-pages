@@ -16,6 +16,7 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 
 ## First-read order
 
+0. **`OLEDUE.md`** — when the owner writes `oledue`, route automatically to the live active owner-authorized PR/branch; do not ask for branch or PR clarification. Read the handoff protocol first.
 1. **`project-reference/FILE_ORIENTER_RU.md`** — current checkpoint, repository map, last verified stage, blockers and next action.
 2. **`docs/PROJECT_STATE.yaml`** — feature/runtime status, flags, verification evidence and unresolved risks.
 3. **`docs/VOLLEY_LOG.md`** — chronological stage log; read the newest entry first.
