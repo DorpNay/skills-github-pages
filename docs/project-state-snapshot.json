@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-04",
   "checkpoint": {
-    "main_sha": "d35812af1746ccf7268b582edf45019619431e7b",
-    "main_commit_subject": "docs: refresh main checkpoint after OLEDUE merge (#136)",
+    "main_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
+    "main_commit_subject": "docs: reconcile main state and OLEDUE handoff after PR #136",
     "main_commit_date": "2026-11-04",
     "last_functional_checkpoint_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
-    "last_functional_milestone": "PR #123 remains the last functional checkpoint at e78a73b25725bfa63370d9946887cbbacbf51b82. PR #135 and PR #136 are documentation/archive/config-only. PR #136 added the unchanged W3C WAI WCAG 2.2 archive and Jekyll exclusion; exact PR-head Quality/Jekyll/Chromium, Freshness and Provenance passed. Post-merge main Quality, Freshness, Provenance and Pages deployment all passed on d35812af1746ccf7268b582edf45019619431e7b.",
-    "main_quality_run": 41784349212,
-    "main_pages_deployment_run": 41784349032,
+    "last_functional_milestone": "PR #123 remains the last functional checkpoint at e78a73b25725bfa63370d9946887cbbacbf51b82. PR #135 and #136 are documentation/archive/config-only; PR #137 is documentation/test-only (OLEDUE handoff and context-budget test capture). Main now points to 9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af. Exact-main Quality, Pages, Freshness, Provenance and Graphify passed on that SHA.",
+    "main_quality_run": 41793229305,
+    "main_pages_deployment_run": 41793228649,
     "functional_parent_gateway_run": null,
     "functional_parent_quality_run": null,
     "functional_parent_graphify_run": null,
@@ -60,13 +60,55 @@
         "merge_sha": "d35812af1746ccf7268b582edf45019619431e7b",
         "head_sha": "01566e03239daf90271da3891cff8b6b3e6b0330",
         "checks": "Exact PR-head Quality #41783917001 passed including Jekyll and Chromium; Freshness #41783917215 and Provenance #41783916918 passed. Post-merge main Quality #41784349212 (including published-site Chromium smoke), Freshness #41784349315, Provenance #41784349268 and Pages deployment #41784349032 all passed on merge SHA d35812af1746ccf7268b582edf45019619431e7b."
+      },
+      {
+        "number": 137,
+        "merge_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
+        "head_sha": "b4f0ec63b2c1aed00c5bdd951274db3e0530b560",
+        "checks": "Exact-head Quality #41792794176, Freshness #41792794065, Provenance #41792794038 and Graphify #41792794165 passed; merge commit reconciled orientation and OLEDUE handoff."
       }
-    ]
+    ],
+    "main_provenance_run": 41793229159,
+    "main_freshness_run": 41793229228,
+    "main_graphify_run": 41793229272,
+    "open_prs": [
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132,
+      133,
+      134
+    ],
+    "owner_task": "docs/LANDING_RELEASE_STRATEGY_RU.md: stable Landing 1.0 main, selective promotion from PR #131, then artifact acquisition and repository hygiene",
+    "pr131_head": "597536924ce37b17f8832aa36ea5b928f5584230",
+    "pr131_exact_head_verified": false,
+    "pr131_compare": "diverged; 1094 ahead / 7 behind; 57 files",
+    "pr131_quality_run": 41787658241,
+    "pr131_provenance_run": 41787658226,
+    "pr131_full_gate_verified": false,
+    "pr131_quality_scope": "4/4 real Chromium shards, Jekyll, Integrity, Security, Context and static analysis passed; published Pages smoke skipped",
+    "pr131_missing_checks": [
+      "Project State Freshness on exact PR #131 HEAD",
+      "Graphify on exact PR #131 HEAD",
+      "native iPhone Safari",
+      "VoiceOver",
+      "physical keyboard/long-press",
+      "full component-level contrast review"
+    ],
+    "promotion_audit": "First V1 code candidate: public Landing page accessibility/responsive slice only (landing/index.html + assets/css/landing.css + tests/e2e/landing.spec.mjs); isolated exact-head verification pending. 8.12 graph-memory removal conflicts with accepted V1 decisions/checklist and must not be promoted without owner retirement approval/live-host data review. 8.13 project context handoff stays V2 for privacy/scope. Root app extraction and agent roadmap stay V2.",
+    "pr131_812_decision": "do not promote removal; previously accepted opt-in V1 feature; owner approval and live host/database review required for retirement",
+    "first_v1_code_candidate": "public landing accessibility/responsive slice; three files only; promote after isolated exact-head CI"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": true,
     "live_vps_gateway_device_and_model_runtime_verified": false,
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
-  }
+  },
+  "last_volley": "V-2026-11-04-V1-LANDING-A11Y-CANDIDATE-001"
 }

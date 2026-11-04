@@ -2,15 +2,16 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-## Текущая контрольная точка — 2026-11-04, PR #136 merged; main and PR #131 evidence refreshed
+## Текущая контрольная точка — 2026-11-04, main reconciled after PR #137; V1/V2 promotion plan
 
-- **Current main SHA:** `d35812af1746ccf7268b582edf45019619431e7b`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`.
-- **Live queue snapshot:** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issues (1): #111. The current state-refresh PR is excluded from its own freshness comparison.
-- **Post-merge main checks:** Quality #41784349212 PASS (Jekyll + published-site Chromium smoke), Freshness #41784349315 PASS, Provenance #41784349268 PASS, Pages deployment #41784349032 PASS.
-- **PR #136:** merged at `d35812af1746ccf7268b582edf45019619431e7b`. Exact PR-head Quality #41783917001 (Jekyll + Chromium), Freshness #41783917215 and Provenance #41783916918 passed on `01566e03239daf90271da3891cff8b6b3e6b0330`. The unchanged W3C WAI WCAG 2.2 source, attribution/license notice, manifest and Jekyll exclusion are in main.
-- **OLEDUE integration:** root `OLEDUE.md` is in main, but main `AGENTS.md` did not invoke it and the root file lacked the referenced Fast task selector. This PR adds the AGENTS trigger and selector; repository-level automatic routing remains pending merge. PR #131 remains the active Landing UI workstream.
-- **PR #131:** open/unmerged/owner-controlled; branch `feat/landing-v1-accessibility-responsive-20261031`, merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub reports diverged, 6 commits behind and mergeable=false. Re-fetch live HEAD before dependent actions. Verified code/test HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2` passed Quality #41784481921 (4/4 Chromium shards and required sentinels; Pages smoke skipped) and Graphify #41784481966. Subsequent docs/config/state-only commits have no exact-head run/status surfaced.
-- **NEXT:** continue bounded implementation/test work and obtain exact-head Quality/Jekyll/Chromium evidence; finish native iPhone Safari, VoiceOver, keyboard-only and component-level WCAG. No rebase/main sync/merge/deploy without separate owner approval.
+- **Current main SHA:** `9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af`.
+- **Exact-main checks:** Quality #41793229305 PASS; Pages deployment #41793228649 PASS; Provenance #41793229159 PASS; Freshness #41793229228 PASS; Graphify #41793229272 PASS. Quality includes Jekyll, Context, Chromium, static analysis, Security, Integrity and published Pages smoke.
+- **OLEDUE:** PR #137 merged; main `AGENTS.md` contains the handoff trigger and root `OLEDUE.md` contains the Fast task selector. Main files were checked after merge; a fresh-session behavior run remains a separate check.
+- **Owner's product policy:** main is stable Landing 1.0 and can receive bounded quality improvements; PR #131 is the Landing 2.0 workbench. Promote only independently useful, V1-compatible, exact-head verified slices.
+- **Canonical sequence:** `docs/LANDING_RELEASE_STRATEGY_RU.md` — orientation first; PR #131 promotion audit; selective V1 promotion; preserve V1 baseline and consolidate workstreams; then approved model/open-source artifact acquisition; finally branch/PR/issue hygiene.
+- **Live queue snapshot:** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issues (1): #111. Live GitHub overrides this snapshot.
+- **PR #131:** head branch `feat/landing-v1-accessibility-responsive-20261031`, reported HEAD `597536924ce37b17f8832aa36ea5b928f5584230`; compare main → branch: diverged, 1,094 ahead / 7 behind, 57 changed files; mergeable=false. Quality #41787658241 (4/4 Chromium shards; Jekyll, Integrity, Security, Context and static analysis) and Provenance #41787658226 passed on this exact SHA; published Pages smoke was skipped and no Freshness/Graphify run was found. Keep PR #131 open and do not merge wholesale.
+- **NEXT:** follow the first candidate matrix in `docs/LANDING_RELEASE_STRATEGY_RU.md`; first isolate and verify the public Landing page accessibility/responsive slice (`landing/index.html`, `assets/css/landing.css`, `tests/e2e/landing.spec.mjs`) as the first V1 code candidate. Do not remove 8.12: main `DECISIONS.md`, `docs/ACCEPTED_IMPROVEMENTS.md` and `docs/USER_REQUEST_CHECKLIST.md` record it as an accepted opt-in capability; any retirement requires separate owner approval and data/host review. Keep 8.13 and unfinished V2 capabilities in PR #131 pending a distinct V1 scope decision.
 
 ## Историческая контрольная точка — 2026-10-28
 
