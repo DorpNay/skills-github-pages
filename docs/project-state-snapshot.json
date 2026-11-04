@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
   "repository": "DorpNay/skills-github-pages",
-  "captured_at": "2026-11-03",
+  "captured_at": "2026-11-04",
   "checkpoint": {
-    "main_sha": "0a1f764f295f92e49e347cdc972f8c6c9a07e4c1",
-    "main_commit_subject": "docs: mark owner UI corrections as V2.0 priorities",
-    "main_commit_date": "2026-10-31",
-    "last_functional_checkpoint_sha": "fd4f0a105183feb23e0f4e4697446235de9ffe9a",
-    "last_functional_milestone": "PR #121 merged: first free static landing V1 and client UX. PR #122 merged: process-only /livez, bounded Ollama /readyz and backward-compatible /healthz. Main HEAD 0a1f764 is documentation-only V2 backlog classification.",
+    "main_sha": "9796067d9c6044fa96e1437a2ceac14574d1c1af",
+    "main_commit_subject": "docs: add OLEDUE handoff and consolidated source inventory",
+    "main_commit_date": "2026-11-04",
+    "last_functional_checkpoint_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
+    "last_functional_milestone": "PR #123 merged at e78a73b25725bfa63370d9946887cbbacbf51b82; Gateway, Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code passed on exact PR head. Main commits after this functional checkpoint are documentation-only.",
     "main_quality_run": null,
     "main_pages_deployment_run": null,
     "functional_parent_gateway_run": null,
@@ -39,15 +39,27 @@
         "merge_sha": "fd4f0a105183feb23e0f4e4697446235de9ffe9a",
         "head_sha": "94d871dbf76a5364ebb3c61d86cc763affa5eaa1",
         "checks": "Gateway, Quality, Graphify and Dead Code passed on exact PR head; Quality included Jekyll, Chromium and published-site smoke."
+      },
+      {
+        "number": 123,
+        "merge_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
+        "head_sha": "fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222",
+        "checks": "Gateway, Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code passed on exact PR head."
+      },
+      {
+        "number": 135,
+        "merge_sha": "9796067d9c6044fa96e1437a2ceac14574d1c1af",
+        "head_sha": "0af9d123bd29b87f68bf8618d1b1a9b978077ef6",
+        "checks": "Independent Quality, Freshness and License/Artifact Provenance passed on exact PR head before squash merge; post-merge main runs remain pending."
       }
     ],
     "active_v2_workstream": {
       "pr": 131,
       "branch": "feat/landing-v1-accessibility-responsive-20261031",
-      "source_test_head": "dc82acb95c850d7821e071e16a8ab11524a459c2",
-      "status": "open_unmerged_mergeable_false",
-      "latest_slice": "Read-only roadmap detail windows across Functions, Agent/Skills, Team Blueprint, Project Sources and Integrations; Agent Profiles and Tasks & History roadmap slots",
-      "verification": "Static V8 syntax, CSS brace, unique-ID and RU/EN checks passed; 121 app and 8 landing E2E tests authored; zero workflow runs and zero commit statuses for exact code/test HEAD dc82acb95c850d7821e071e16a8ab11524a459c2; browser/Quality NOT RUN",
+      "source_test_head": "dda1de91c3ddef7c41f26f066eb66333a3ff9c25",
+      "status": "open_unmerged_mergeable_false_owner_hold",
+      "latest_slice": "Responsive expanded-panel captures at six widths; Settings compact header inset correction; main checklist and OLEDUE/source inventory reconciliation",
+      "verification": "Quality #41778037465 passed on exact tested PR head e11ec01 (4/4 Chromium shards and sentinels; Pages smoke skipped); Graphify #41777679201 passed on code/test SHA dda1de91. Settings overflow at 320px verified fixed and 30 screenshots visually reviewed. PR131 branch is five commits behind main with seven overlapping docs files; merge remains owner-controlled.",
       "runtime_changes": false,
       "merge_or_deploy": false
     }
