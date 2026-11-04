@@ -705,18 +705,18 @@ PR #122 добавил только эксплуатационную надёж�
 
 ### 8.29 OLEDUE — automatic workstream handoff (owner operational requirement, 2026-11-04)
 
-- [ ] Keep the root `OLEDUE.md` as a short single-word handoff: when the owner writes `oledue`, determine the current owner-authorized workstream, PR and branch from live GitHub and canonical project records; never ask the owner to restate the PR/branch.
-- [ ] Main must carry the stable entrypoint and route to active PR #131 by default while it is the active Landing UI 2.0 stream; update routing when that PR is closed/replaced. Reading main must not imply that implementation happens on main.
-- [ ] Preserve exact-head verification, canonical task-list-first recording and owner approval gates. No merge/rebase/deploy from the trigger alone.
-- **Acceptance:** one-word trigger reliably resumes the live authorized branch with a verified checkpoint and one next action; no duplicate task registry.
+- [x] Keep the root `OLEDUE.md` as a compact single-word handoff. The owner need not name the PR or branch; the protocol reads live GitHub and canonical project records.
+- [x] Main now carries the stable entrypoint and routes to active PR #131 by default while Landing UI 2.0 is the active stream. Reading main does not imply implementation happens on main.
+- [x] Preserve exact-head verification, canonical task-list-first recording and owner approval gates. No merge/rebase/deploy from the trigger alone.
+- [~] Acceptance: the protocol is implemented in main and used in this continuation; verify its automatic routing in a fresh resumed session after PR #136 state refresh. No duplicate task registry.
 
 ### 8.30 External sources and future artifact archive (owner operational requirement, 2026-11-04)
 
-- [ ] Consolidate external upstream/source references from the main curated catalogs and research PRs into one central inventory at `INTEL.md`, with exact URL deduplication and origin/provenance back-links.
-- [ ] Preserve source research documents as contextual evidence; central inventory is the common lookup index, not a claim of adoption or license approval.
-- [ ] Archive only future-useful artifacts after a concrete task/use is identified and exact source/version, license and redistribution terms, SHA-256, size and review date are recorded. Do not bulk-download repositories, datasets, model/voice weights or assets without a justified, reviewed need.
-- [ ] Keep an archive manifest and stable storage location in repository; exclude secrets, credentials, private or user data.
-- **Acceptance:** one searchable source inventory with source provenance and a reproducible, license-aware artifact manifest; unverified links/artifacts remain explicitly pending.
+- [x] Consolidate external upstream/source references from 11 curated main/research catalogs into one central inventory at `INTEL.md`: 257 distinct URLs with exact URL deduplication and catalog-origin provenance. PR #135 merged at `9796067...`.
+- [x] Preserve source research documents as contextual evidence; central inventory is a lookup index, not an adoption or license approval.
+- [~] Archive future-useful artifacts only after a concrete task/use and exact source/version, license/redistribution terms, SHA-256, size and review date are recorded. First candidate is the unchanged W3C WAI WCAG 2.2 change guide in PR #136; pinned upstream commit/blob, W3C Document License 2023 notice, SHA-256 and size are recorded in `docs/upstream-archive/manifest.yaml`. It is not yet merged.
+- [~] Keep an archive manifest and stable storage location in repository; the manifest and notice are proposed in PR #136. Exclude secrets, credentials, private or user data.
+- **Acceptance [~]:** one searchable source inventory with provenance is in main; the reproducible license-aware archive manifest contains one reviewed candidate pending PR #136 merge and exact-head gates.
 
 ### Integrated UI scope and Graphify source coverage — 2026-11-02
 
