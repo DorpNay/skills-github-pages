@@ -1,14 +1,13 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
-## Текущая контрольная точка — 2026-11-04, подготовка merge PR #131 и OLEDUE/source index
+## Текущая контрольная точка — 2026-11-04, PR #131 merge preparation
 
-- Main V1: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; не объединять PR #131 без owner approval.
-- PR #131: `feat/landing-v1-accessibility-responsive-20261031`, HEAD `0fc37632a3dddb5605be4fbfdece09b43e0559bd`, code/test SHA `2281a5acd02ccdaa709f42059e44ed635c2e7d3c`, base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`, 4 commits behind main, mergeable=false. Main-side four commits modify the shared canonical checklist only; reconcile the owner additions with PR's unified 8.0 list before eventual merge.
-- Responsive visual-review E2E source now captures the open Functions menu, Agent overview, aServi root settings, third-party provider settings and Additional Settings at 320/360/390/768/1024/1440px, asserting horizontal overflow <=1px. Source SHA `2281a5acd02ccdaa709f42059e44ed635c2e7d3c`; browser/CI NOT RUN / NOT VERIFIED.
-- Last Quality passed only on prior code/test SHA `04a893f87a2dacdbb5ea55c4a75fab21c6e539f1`, Quality #41688096480 (4/4 Chromium + sentinels; published Pages smoke skipped). No current-head pass.
-- Owner operational tasks added first to checklist: 8.29 OLEDUE auto-route, 8.30 external source inventory and license-aware archive. Separate main-based PR #135 adds compact OLEDUE and INTEL's deduplicated 257-URL source index from 11 catalogs; it remains open/unmerged. No artifact download yet.
-- Merge risk: shared `docs/V1_UI_FINALIZATION_RU.md` only on the main-side four commits; 57 PR #131 files must still be reviewed for merge interactions. No rebase, merge or deployment.
-- **NEXT:** diff main-side checklist additions against PR #131 section 8.0 and reconcile preserving owner requirements; then exact-head Quality/Graphify and screenshot artifact review. Native iPhone Safari, VoiceOver, keyboard-only and complete WCAG remain separate manual gates.
+- Main V1: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`. PR #131 branch `feat/landing-v1-accessibility-responsive-20261031`; latest PR HEAD `dcea4e1343102252133ccff4d74b0f80091e32e4`; code/test SHA `dda1de91c3ddef7c41f26f066eb66333a3ff9c25`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; 4 behind main, mergeable=false.
+- Main-side checklist diff (four docs-only commits) reviewed and reconciled into the PR #131 canonical 8.0 queue; the 8.1–8.17/provider requirements are represented. Added operational tasks 8.29 OLEDUE and 8.30 source inventory/archive; both open.
+- Quality #41777025231 and #41777352077 failed the Settings internal overflow assertion at 320px. CSS fix in `assets/css/app.css` commit `47c9841381a104de99a361fb282bda68dd088bd8` aligns header inset with compact p-3 surface. Test commit `dda1de91...` adds descendant diagnostics. Fix not yet verified.
+- **Checks:** Graphify #41777679201 passed on code/test SHA dda1de91; Provenance #41777779725 passed on docs head d5efa8c; Quality #41777779570 is queued on that docs head. Latest PR HEAD dcea4e134 is after an ORIENTER-only refresh; exact latest Quality result must be checked. Last known green Quality #41688096480 remains on older code/test SHA 04a893f, not current.
+- PR #135 main-based OLEDUE/source inventory docs PR remains open; Freshness #41777243590 and Provenance #41777243594 passed on earlier head 408ae5f; latest CI should be checked. It lists 257 URLs from 11 catalogs; no artifact downloads.
+- **NEXT:** inspect latest exact-head Quality for Settings 320px; if it passes, retrieve/review the new six-width screenshot artifact. Keep PR #131 open and do not merge/rebase/deploy without owner approval.
 
 ## Навигация и владение записями
 
