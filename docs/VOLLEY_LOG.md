@@ -1048,3 +1048,12 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - **BOUNDARY:** main `AGENTS.md` still lacks the trigger, so repository-wide automatic routing is not yet active on main. PR #137 carries the same trigger/selector pair to the current main base; owner merge approval remains required.
 - **VERIFICATION:** document consistency checked; no runtime change. Fresh-session routing and exact-head PR #131 CI remain unverified.
 - **NEXT:** keep checklist 8.29 partial until PR #137 is merged and a fresh handoff confirms the route. Continue UI work only on the owner-authorized PR #131 branch.
+
+
+## V-2026-11-04-PR131-MERGE-OVERLAP-MAP-001 — exact main/PR file reconciliation map
+
+- **BASELINE:** merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; current main `d35812af1746ccf7268b582edf45019619431e7b`. GitHub compare reports main delta 12 files and PR #131 delta 57 files; the PR is six commits behind main and `mergeable=false`.
+- **EIGHT OVERLAPS:** `OLEDUE.md`, `ORIENTER.md`, `_config.yml`, `docs/PROJECT_STATE.yaml`, `docs/V1_UI_FINALIZATION_RU.md`, `docs/VOLLEY_LOG.md`, `docs/project-state-snapshot.json`, `project-reference/FILE_ORIENTER_RU.md`.
+- **FOUR MAIN-ONLY FILES TO PRESERVE:** `INTEL.md`, `docs/upstream-archive/README.md`, `docs/upstream-archive/manifest.yaml`, `docs/upstream-archive/w3c-wai-wcag22-new-in-22.md`.
+- **RESOLUTION NOTES:** keep PR #131's Landing-specific title/description in `_config.yml` while preserving the main `docs/upstream-archive` Jekyll exclusion; retain the UI checklist and merge the archive completion evidence; rebuild the branch-specific state snapshot for the live queue excluding PR #131; align OLEDUE/AGENTS trigger and selector.
+- **SAFE NEXT:** after PR #137 is owner-approved and merged, re-read live main and PR #131, then request separate owner approval before a non-rebase merge of main into the feature branch. Resolve the eight overlaps individually and rerun exact-head Quality/Freshness/Provenance plus manual gates. No merge, rebase or deploy performed.
