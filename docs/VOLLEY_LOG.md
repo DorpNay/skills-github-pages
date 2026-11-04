@@ -160,3 +160,14 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - **ARCHIVE INTEGRITY:** upstream and archived Git blob SHA-1 match `91ba79fbf918aa1ab14202dc5b4030a1b3087d19`; SHA-256 `d837a780c59ad261aaad05c31a86e195c00e71794f5b8921e01a74ba105d47a6`; UTF-8 size 25,472 bytes; W3C Document License 2023 notice/manifest retained. No derivative or endorsement claim.
 - **LIMIT:** PR #136 is open/unmerged; docs-only checkpoint refreshes after this verified code/config head may trigger another CI cycle. No merge/deploy without owner approval.
 - **NEXT:** refresh state/orientation with the exact pass and recheck the newest PR #136 HEAD; then request owner merge approval if still green.
+
+
+## V-2026-11-04-PR136-MERGED-STATE-RECONCILIATION-001 — archive merged; current checkpoint corrected
+
+- **FACT / MERGED:** PR #136 is closed and merged at `d35812af1746ccf7268b582edf45019619431e7b`; its exact head was `01566e03239daf90271da3891cff8b6b3e6b0330`. The final merge commit contains the W3C archive, provenance manifest/attribution, `INTEL.md` registration, and `_config.yml` Jekyll exclusion.
+- **EXACT PR-HEAD GATES:** Quality #41783917001 PASS, including Jekyll build sentinel and real Chromium browser regression; Project State Freshness #41783917215 PASS; License/Artifact Provenance #41783916918 PASS. These are PR-head checks; no separate post-merge main Pages deployment or live-site smoke is claimed.
+- **ARCHIVE INTEGRITY:** source remains unchanged; upstream and archived blob SHA-1 `91ba79fbf918aa1ab14202dc5b4030a1b3087d19`; SHA-256 `d837a780c59ad261aaad05c31a86e195c00e71794f5b8921e01a74ba105d47a6`; 25,472 bytes; W3C Document License 2023 notice and manifest are present.
+- **COORDINATION CORRECTION:** the merged PR #136 state files still described #136 as open and main as `9796067...`. Current main is `d35812af1746ccf7268b582edf45019619431e7b`; the five required freshness files are being reconciled together on branch `docs/post-pr136-state-reconciliation-20261104`: ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG and project-state snapshot.
+- **LIVE QUEUE:** open PRs #124–#134 (11); open issue #111. OLEDUE correctly routes to active owner-authorized PR #131 by default.
+- **PR #131 LIVE STATE:** HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; compare reports 6 commits behind and diverged; GitHub says mergeable=false. No exact-head workflow runs or commit statuses surfaced. Older green runs are historical only.
+- **LIMITS / NEXT:** no PR #131 rebase, main sync, merge or deployment performed. Continue bounded implementation/test work; obtain current exact-head CI and keep native iPhone/VoiceOver/component-WCAG gates open. Any branch synchronization remains a separate owner-approved action.
