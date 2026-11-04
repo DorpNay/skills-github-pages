@@ -285,6 +285,8 @@ PR #122 добавил только эксплуатационную надёж�
 > **Приоритет владельца:** требования 8.1–8.17 были уточнены/зафиксированы 2026-10-31 как приоритетный пакет Landing UI V2.0. Они остаются acceptance backlog, а не статусом реализации; V1 freeze и ограничения безопасности/стека сохраняются.
 
 ### P0 — обязательная автоматическая проверка PR #131
+- [x] Exact current-head Quality #41784481921 passed on PR #131 HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2`: 4/4 Chromium shards, syntax preflight, static analysis, Jekyll, Integrity, Security and Context passed; published Pages smoke was skipped for the PR event.
+- [x] Graphify Code-Only Pilot #41784481966 passed on the same exact PR #131 HEAD after the UI selector bridge resolved repeated CSS selectors by exact generated node IDs.
 
 - [x] Exact-head Quality #1252 / run `41365833770` проверил documentation HEAD `63f429ccf16fe7648519ebb3ecc02b9f8949ad53` (кодовой HEAD `f3151472e285c7d31d46809f52337202eb15e6b3`): все четыре real Chrome shards — PASS; preflight, static analysis, Integrity, Security, Context и Jekyll — PASS. Published-site smoke skipped; это не deployment/live-preview evidence.
 - [x] Новый exact-head Quality #41411404686 на code/test HEAD `1ec4a1d338975934a9cbefa3f3a262ad97ee118f`: 4/4 Chromium shards, 147 tests PASS; syntax, Ruff/static analysis, Jekyll, Integrity, Security и Context PASS. Published-site smoke skipped; это не deployment/live-preview evidence.
@@ -447,7 +449,7 @@ PR #122 добавил только эксплуатационную надёж�
 - Не требовать одной геометрии для всех элементов: основные кнопки, вторичные действия и иконки могут иметь разные варианты в рамках единой дизайн-системы.
 - Сохранить удобные мобильные зоны нажатия.
 - Перед реализацией провести аудит существующих CSS-токенов и переиспользовать текущую систему, а не создавать параллельный набор.
-- [~] Mobile hit-area audit: project navigation toggle, memory/projectless disclosures, project/chat section summaries, create buttons, project/chat rows and Fast/Deep controls should retain at least 44px touch targets at 320/390px; add Playwright geometry assertions while preserving the 40px desktop standard.
+- [x] Mobile hit-area audit: project navigation toggle, memory/projectless disclosures, project/chat section summaries, create buttons, project/chat rows and Fast/Deep controls retain at least 44px at 320/390px; jump-to-latest now also has a 44px mobile target. Exact-head Quality #41784481921 passed the geometry assertions; the 40px desktop standard is preserved.
 
 ### 8.11 Компактная группа темы и языка в шапке
 
@@ -715,10 +717,10 @@ PR #122 добавил только эксплуатационную надёж�
 
 - [x] Consolidate external upstream/source references from 11 curated main/research catalogs into one central inventory at `INTEL.md`: 257 distinct URLs with exact URL deduplication and catalog-origin provenance. PR #135 merged at `9796067...`.
 - [x] Preserve source research documents as contextual evidence; central inventory is a lookup index, not an adoption or license approval.
-- [~] Archive future-useful artifacts only after a concrete task/use and exact source/version, license/redistribution terms, SHA-256, size and review date are recorded. First candidate is the unchanged W3C WAI WCAG 2.2 change guide in PR #136; pinned upstream commit/blob, W3C Document License 2023 notice, SHA-256 and size are recorded in `docs/upstream-archive/manifest.yaml`. It is not yet merged.
-- [~] Keep an archive manifest and stable storage location in repository; the manifest and notice are proposed in PR #136. Exclude secrets, credentials, private or user data.
-- [~] Keep raw upstream Markdown archives out of the published Pages output; exclude `docs/upstream-archive` from Jekyll rendering because exact source files may contain Liquid directives. Config proposal is in PR #136; exact-head Jekyll verification pending.
-- **Acceptance [~]:** one searchable source inventory with provenance is in main; the reproducible license-aware archive manifest contains one reviewed candidate pending PR #136 merge and exact-head gates.
+- [x] Archive the first concrete future-use artifact: unchanged W3C WAI “What's New in WCAG 2.2” guide at `docs/upstream-archive/w3c-wai-wcag22-new-in-22.md`; pinned upstream commit/blob, matching Git blob SHA-1, SHA-256, 25,472-byte size and W3C Document License 2023 attribution are recorded.
+- [x] Keep the archive manifest and adjacent attribution/license notice in main at `docs/upstream-archive/manifest.yaml` and `docs/upstream-archive/README.md`; exclude secrets, credentials, private or user data.
+- [x] Keep raw upstream Markdown archives out of published Pages output: `_config.yml` excludes `docs/upstream-archive`; exact PR #136 Jekyll build passed in Quality #41783917001.
+- **Acceptance [x]:** the searchable source inventory, provenance and first reproducible license-aware archive item are merged in PR #136 at `d35812af1746ccf7268b582edf45019619431e7b`; post-merge main Quality, Freshness, Provenance and Pages deployment passed.
 
 ### Integrated UI scope and Graphify source coverage — 2026-11-02
 

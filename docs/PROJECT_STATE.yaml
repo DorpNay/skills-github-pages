@@ -2,10 +2,10 @@ project_state:
   version: 4
   reviewed_on: "2026-11-04"
   root_orienter:
-    status: "Main is 9796067d9c6044fa96e1437a2ceac14574d1c1af after PR #135 merged (squash); OLEDUE and the 257-URL INTEL source index are in main. Last functional checkpoint remains PR #123 merge/base e78a73b25725bfa63370d9946887cbbacbf51b82. Exact-main Quality Sentinels #41778101742, Freshness #41778101746, Provenance #41778101735 and Pages deployment #41778101349 passed. Queue snapshot for current PR #131 excludes #131 and includes open PRs #124–#130, #132–#134, #136 (11); issue #111 (1). PR #131 is owner-controlled; main/branch merge reconciliation is documented."
+    status: "Main is d35812af1746ccf7268b582edf45019619431e7b after PR #136 squash merge: the unchanged W3C WAI WCAG 2.2 change guide, attribution/license notice, manifest and Jekyll exclusion are in main. Exact PR #136 Quality #41783917001, Freshness #41783917215 and Provenance #41783916918 passed on head 01566e03239daf90271da3891cff8b6b3e6b0330. Post-merge main Quality #41784349212, Freshness #41784349315, Provenance #41784349268 and Pages deployment #41784349032 passed. Queue excluding active PR #131: #124–#130, #132–#134 (10); issue #111. PR #131 remains open/unmerged/owner-controlled; exact current UI gates are recorded below."
     branch: "main"
-    base_main: "9796067d9c6044fa96e1437a2ceac14574d1c1af"
-    open_prs_at_checkpoint: 11
+    base_main: "d35812af1746ccf7268b582edf45019619431e7b"
+    open_prs_at_checkpoint: 10
     open_issues_at_checkpoint: 1
     merged_changes: "PR #121 first free landing V1 and client UX; PR #122 Gateway liveness/readiness probes; #120 sidebar hierarchy/theme-language sync; #119 provider separation/project scope/composer preference; #118 chat import/export; #113 immutable Actions pins; #115 modal scrim/outside-tap; #114 empty-by-default prompt/context budget; #71 mobile composer; #84/#81/#83/#82 infrastructure foundations; #106 RAG evaluator; #107 private/shared memory; #108 landing/runbook"
     exact_head_checks: "PR #121 head e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b: Dead Code Audit, Project State Freshness, Provenance, Lite Gateway Tests, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. PR #122 head 94d871dbf76a5364ebb3c61d86cc763affa5eaa1: Gateway Tests, Dead Code Audit, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. PR #123 head fb6f6b6f4036cfc54d5e4dc35a6e0105a9272222: Gateway Tests, Dead Code Audit, Freshness, Provenance, Graphify and Quality all passed; Quality included Jekyll, Chromium, published-site smoke, Context, Security and Integrity. Merge commits: #121 f4d880f9648989f4fe48ddd2284220b3606c3b86; #122 fd4f0a105183feb23e0f4e4697446235de9ffe9a. No independent post-merge Pages deployment result was available."
@@ -16,7 +16,7 @@ project_state:
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
     technique_register: "docs/TECHNIQUE_REGISTER_RU.md"
     upstream_archive:
-      status: "One exact W3C WAI WCAG 2.2 new-success-criteria source file is proposed in PR #136; source blob SHA-1 and SHA-256 recorded, unchanged content, W3C Document License 2023 attribution notice included. Not merged yet."
+      status: "One exact W3C WAI WCAG 2.2 change-guide source is archived unchanged in main via PR #136 at d35812af1746ccf7268b582edf45019619431e7b. Upstream and archived Git blob SHA-1 match 91ba79fbf918aa1ab14202dc5b4030a1b3087d19; SHA-256 d837a780c59ad261aaad05c31a86e195c00e71794f5b8921e01a74ba105d47a6; size 25,472 bytes. W3C Document License 2023 notice and manifest are retained; _config.yml excludes docs/upstream-archive from Pages. Exact PR-head Quality/Freshness/Provenance and post-merge main Quality/Freshness/Provenance/Pages checks passed."
       manifest: "docs/upstream-archive/manifest.yaml"
       count: 1
       next: "Select further artifacts only for concrete project tasks after exact source/version, redistribution license, checksum and storage policy review; no bulk model/voice/dataset mirrors."
@@ -29,7 +29,7 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
-  last_volley: "V-2026-11-04-PR131-MAIN-RECONCILIATION-002"
+  last_volley: "V-2026-11-04-PR136-MERGED-PR131-TOUCH-VERIFIED-001"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Browser half-duplex voice dialogue prototype is merged; CI uses mocked ASR/TTS, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; first read in new chats, then verify current main HEAD and open PRs"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
@@ -280,14 +280,14 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-04"
-  verified_main: "9796067d9c6044fa96e1437a2ceac14574d1c1af"
-  last_main_action: "PR #135 merged via squash at 9796067d9c6044fa96e1437a2ceac14574d1c1af: minimal OLEDUE automatic handoff + consolidated external-source inventory in INTEL.md; documentation-only."
+  verified_main: "d35812af1746ccf7268b582edf45019619431e7b"
+  last_main_action: "PR #136 merged via squash at d35812af1746ccf7268b582edf45019619431e7b: refreshed main state and added one unchanged, license-attributed W3C WAI WCAG 2.2 archive reference; documentation/archive-only."
   last_functional_checkpoint: "e78a73b25725bfa63370d9946887cbbacbf51b82"
-  main_quality: "Exact main SHA 9796067: Independent Quality Sentinels #41778101742 PASS; Project State Freshness #41778101746 PASS; License/Artifact Provenance #41778101735 PASS; Pages build/deployment #41778101349 PASS. No separate live-site browser smoke claimed."
+  main_quality: "Exact main SHA d35812a: Independent Quality Sentinels #41784349212 PASS (including published-site browser smoke); Project State Freshness #41784349315 PASS; License/Artifact Provenance #41784349268 PASS; Pages build/deployment #41784349032 PASS."
   main_graphify: "PR #121 and #122 exact-head Graphify code-only workflows passed; Graphify remains developer tooling, not a runtime component."
   main_gateway: "Live VPS/gateway/provider connectivity remains unverified; no live deployment claim."
   merged_prs: "121 first free landing V1 and client UX; 122 Gateway liveness/readiness probes; 120 sidebar hierarchy/preferences; 119 provider separation/project scope/composer preference; 118 chat import/export; 113 immutable Actions pins; 115 modal scrim; 114 empty-by-default prompt; 71 mobile composer; 84 CORS; 81 deployment preflight; 83 SQLite delta; 82 readiness audit; 106 RAG evaluator; 107 private/shared memory; 108 landing/runbook"
-  open_pull_requests: "11 open PRs at checkpoint for PR #131: #124–#130, #132–#134, #136; exclude PR #131 from its own comparison"
+  open_pull_requests: "10 open PRs at checkpoint for PR #131: #124–#130, #132–#134; exclude PR #131 from its own comparison"
   open_issues: "Issue #111 only: consolidated owner/live-host release gates; research-only workstreams #88–#92 and #96–#104 closed after transferring unresolved actions"
   freshness_guard: "scripts/check_project_state_freshness.py; compares exact SHA and exact queue. A refresh commit must update ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG and snapshot; it no longer requires artificial edits to checker/tests/workflow."
   runtime_boundary: "GitHub Pages is a static client; live VPS/Tunnel/Ollama, actual model performance, voice/device, OAuth/Drive and target-host measurements remain unverified"
@@ -491,19 +491,19 @@ ui_v2_track:
   status: "open_unmerged_owner_hold; mergeable=false; manual merge-preparation reconciliation in progress"
   current_main_sha: "9796067d9c6044fa96e1437a2ceac14574d1c1af"
   merge_base: "e78a73b25725bfa63370d9946887cbbacbf51b82"
-  main_commits_since_base: 5
-  main_delta_files: 8
-  overlap_files: ["OLEDUE.md", "ORIENTER.md", "docs/PROJECT_STATE.yaml", "docs/V1_UI_FINALIZATION_RU.md", "docs/VOLLEY_LOG.md", "docs/project-state-snapshot.json", "project-reference/FILE_ORIENTER_RU.md"]
-  main_only_file: "INTEL.md; PR #135 consolidated 257 external URLs from 11 catalogs, PR #135 merged at 9796067"
-  main_state_refresh_pr: 136
+  main_commits_since_base: 6
+  main_delta_files: 12
+  overlap_files: ["OLEDUE.md", "ORIENTER.md", "_config.yml", "docs/PROJECT_STATE.yaml", "docs/V1_UI_FINALIZATION_RU.md", "docs/VOLLEY_LOG.md", "docs/project-state-snapshot.json", "project-reference/FILE_ORIENTER_RU.md"]
+  main_only_file: "INTEL.md and docs/upstream-archive/*; PR #135 source inventory and PR #136 W3C archive are merged"
+  main_state_refresh_pr: "136 merged at d35812af1746ccf7268b582edf45019619431e7b"
   source_of_truth: "docs/V1_UI_FINALIZATION_RU.md section 8.0; mandatory UI requirements 8.1–8.17, owner proposals 8.18–8.28, operational tasks 8.29–8.30"
   implementation_ledger: "docs/LANDING_UI_V2_IMPLEMENTATION_RU.md"
-  last_code_test_sha: "dda1de91c3ddef7c41f26f066eb66333a3ff9c25"
-  exact_quality_pass: "Quality #41778037465 PASS on PR HEAD e11ec01f1fcbc694e959440ce4f8c005131b6969; 4/4 Chromium shards, syntax preflight, static analysis, Jekyll, Integrity, Security and Context passed; Pages browser smoke skipped"
-  graphify_pass: "Graphify #41777679201 PASS on code/test SHA dda1de91c3ddef7c41f26f066eb66333a3ff9c25"
-  responsive_visual_review: "Artifact 13298122356; 30 screenshot contact-sheet captures visually reviewed; Settings 320/360/768/1440 and Agent/Functions 320px detail review; no horizontal clipping observed"
-  verified_fix: "CSS commit 47c9841381a104de99a361fb282bda68dd088bd8 aligns compact Settings sticky-header inset; internal horizontal-overflow assertion passed at 320/360/390/768/1024/1440px"
-  checklist_progress: "8.3 Settings no-overflow [x]; 8.29 OLEDUE [x]/[~]; 8.30 source inventory [x], first archive item [~] in PR #136"
+  last_code_test_sha: "fc01177283de472724ff92ea6507b5b8eb87ccf2"
+  exact_quality_pass: "Quality #41784481921 PASS on exact PR HEAD fc01177283de472724ff92ea6507b5b8eb87ccf2; 4/4 Chromium shards, syntax preflight, static analysis, Jekyll, Integrity, Security and Context passed; Pages browser smoke skipped for PR event"
+  graphify_pass: "Graphify #41784481966 PASS on exact PR HEAD fc01177283de472724ff92ea6507b5b8eb87ccf2"
+  responsive_visual_review: "Artifact 13301020089; 51 visual captures across Functions, Agents, Settings and Skills; contact sheet reviewed plus detailed Agent/Settings/Functions compact and desktop states; no obvious clipping/overflow in reviewed states"
+  verified_fix: "Settings compact overflow fix remains verified; CSS commit 657658658fa4e59c8a78364b7defbf05f283e50b corrects the #jumpToLatest mobile selector so the 44px hit-area rule applies; Quality #41784481921 passes the 44px geometry assertion. Graphify workflow selector disambiguation fixed in fc011772."
+  checklist_progress: "8.3 Settings no-overflow [x]; 8.10 audited mobile hit targets including jump-to-latest 44px [x]; 8.29 OLEDUE [x]/[~]; 8.30 source inventory, first W3C archive item, manifest and Jekyll exclusion [x]"
   remaining_gates: "Native iPhone Safari/VisualViewport/safe-area, VoiceOver, keyboard-only, full component WCAG/contrast, long-list/popover stress and live provider/gateway remain open; mandatory 8.1–8.17 not globally complete"
   merge_policy: "No merge, rebase, main synchronization or deployment without explicit owner approval; manual docs reconciliation does not change PR base"
-  next: "Verify exact-head PR #131 Freshness/Quality after seven-file reconciliation; review PR #136 state-refresh/archive checks; then continue next mandatory UI acceptance gate"
+  next: "Reconcile eight main/PR overlap files without rebase; verify current PR #131 mergeability and freshness; continue manual/native accessibility and interaction gates"

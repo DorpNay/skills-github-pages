@@ -2,15 +2,16 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-## Текущая контрольная точка — 2026-11-04, PR #131 post-PR135 reconciliation
+## Текущая контрольная точка — 2026-11-04, PR #136 merged; PR #131 UI gates verified
 
-- **Current main SHA:** `9796067d9c6044fa96e1437a2ceac14574d1c1af`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 merged documentation-only; exact main Quality Sentinels #41778101742, Freshness #41778101746, Provenance #41778101735 and Pages deployment #41778101349 passed.
-- **Live queue snapshot (excluding current PR #131):** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #132, #133, #134, #136; open issues (1): #111. Refresh live GitHub before action.
-- **PR #131:** branch `feat/landing-v1-accessibility-responsive-20261031`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; main is 5 commits ahead; mergeable=false. The seven overlapping docs files have been manually reconciled on the PR branch without rebase/sync. Main-only `INTEL.md` is additive.
-- **Verified code/test:** SHA `dda1de91c3ddef7c41f26f066eb66333a3ff9c25`; Quality #41778037465 PASS on tested PR HEAD e11ec01 (4/4 Chromium shards + sentinels; Pages smoke skipped); Graphify #41777679201 PASS. Settings compact overflow is fixed and the 30-screenshot artifact was reviewed.
-- **Latest docs status:** the PR branch has advanced through manual merge-preparation records after tested code/test SHA dda1de91. Quality #41779920419 was pending on preceding docs HEAD b051195; provenance #41779920394 passed there. Current exact PR HEAD must be read live. Project State Freshness has not surfaced a current PR #131 run; snapshot is manually aligned to main 9796067 and queue excluding #131, but no official Freshness pass is claimed.
-- **PR #136:** main state refresh + one W3C WAI WCAG 2.2 archive. Exact-head Freshness #41780155743 and Provenance #41780155581 passed on prior head ac9ab535; Quality #41780155673 in progress after Jekyll exclusion `docs/upstream-archive` was added to `_config.yml`. No Quality pass claimed yet.
-- **NEXT:** verify current exact-head PR #131 Quality/Provenance and PR #136 Quality after their docs updates; then continue mandatory UI acceptance. No merge/rebase/main sync/deployment without owner approval.
+- **Current main SHA:** `d35812af1746ccf7268b582edf45019619431e7b`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`.
+- **Post-merge main checks:** Quality #41784349212 PASS (published-site browser smoke included); Freshness #41784349315 PASS; Provenance #41784349268 PASS; Pages deployment #41784349032 PASS.
+- **PR #136:** merged at `d35812af1746ccf7268b582edf45019619431e7b`. The unchanged W3C WAI WCAG 2.2 guide, license/attribution notice, manifest and Jekyll exclusion are in main. Exact PR-head Quality #41783917001, Freshness #41783917215 and Provenance #41783916918 passed on `01566e03239daf90271da3891cff8b6b3e6b0330`.
+- **Live queue excluding PR #131:** open PRs (10): #124–#130, #132–#134; open issue #111.
+- **PR #131:** branch `feat/landing-v1-accessibility-responsive-20261031`, HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2`, merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; main is six commits ahead and the current merge state is dirty. Eight main-delta files overlap PR changes: OLEDUE, ORIENTER, _config, PROJECT_STATE, V1 checklist, VOLLEY_LOG, snapshot and FILE_ORIENTER. No rebase/main synchronization was performed.
+- **Exact PR #131 checks:** Quality #41784481921 PASS on exact HEAD (4/4 Chromium shards and required sentinels; Pages smoke skipped); Graphify #41784481966 PASS on exact HEAD.
+- **Responsive UI:** mobile jump-to-latest hit-area regression (42px instead of 44px) fixed by matching actual DOM ID `#jumpToLatest`; Quality now passes. Graphify selector query now resolves exact generated node IDs. Artifact #13301020089 contains 51 visual captures; contact sheet and representative 320px/1440px states reviewed, with no obvious overflow/clipping.
+- **NEXT:** finish remaining manual/native iPhone Safari, VoiceOver, keyboard-only and full WCAG component review; reconcile shared docs/config without rebase; recheck mergeability and exact-head checks. No PR #131 merge/deploy authorization is implied.
 
 ## Историческая контрольная точка — 2026-10-28
 

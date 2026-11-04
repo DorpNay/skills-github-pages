@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-04",
   "checkpoint": {
-    "main_sha": "9796067d9c6044fa96e1437a2ceac14574d1c1af",
-    "main_commit_subject": "docs: add OLEDUE handoff and consolidated source inventory",
+    "main_sha": "d35812af1746ccf7268b582edf45019619431e7b",
+    "main_commit_subject": "docs: refresh main checkpoint after OLEDUE merge (#136)",
     "main_commit_date": "2026-11-04",
     "last_functional_checkpoint_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
     "last_functional_milestone": "PR #123 merged at e78a73b25725bfa63370d9946887cbbacbf51b82; Gateway, Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code passed on exact PR head. Main commits after this functional checkpoint are documentation-only.",
-    "main_quality_run": null,
-    "main_pages_deployment_run": null,
+    "main_quality_run": 41784349212,
+    "main_pages_deployment_run": 41784349032,
     "functional_parent_gateway_run": null,
     "functional_parent_quality_run": null,
     "functional_parent_graphify_run": null,
@@ -24,8 +24,7 @@
       130,
       132,
       133,
-      134,
-      136
+      134
     ],
     "open_issues": [
       111
@@ -54,15 +53,21 @@
         "merge_sha": "9796067d9c6044fa96e1437a2ceac14574d1c1af",
         "head_sha": "0af9d123bd29b87f68bf8618d1b1a9b978077ef6",
         "checks": "Independent Quality, Freshness and License/Artifact Provenance passed on exact PR head before squash merge; post-merge main runs remain pending."
+      },
+      {
+        "number": 136,
+        "merge_sha": "d35812af1746ccf7268b582edf45019619431e7b",
+        "head_sha": "01566e03239daf90271da3891cff8b6b3e6b0330",
+        "checks": "Quality #41783917001, Freshness #41783917215 and Provenance #41783916918 passed on exact PR head; post-merge main Quality #41784349212 (including published-site smoke), Freshness #41784349315, Provenance #41784349268 and Pages deployment #41784349032 passed."
       }
     ],
     "active_v2_workstream": {
       "pr": 131,
       "branch": "feat/landing-v1-accessibility-responsive-20261031",
-      "source_test_head": "dda1de91c3ddef7c41f26f066eb66333a3ff9c25",
+      "source_test_head": "fc01177283de472724ff92ea6507b5b8eb87ccf2",
       "status": "open_unmerged_mergeable_false_owner_hold",
-      "latest_slice": "Responsive expanded-panel captures at six widths; Settings compact header inset correction; main checklist and OLEDUE/source inventory reconciliation",
-      "verification": "Quality #41778037465 passed on exact tested PR head e11ec01 (4/4 Chromium shards and sentinels; Pages smoke skipped); Graphify #41777679201 passed on code/test SHA dda1de91. Settings overflow at 320px verified fixed and 30 screenshots visually reviewed. PR131 branch is five commits behind main with seven overlapping docs files; merge remains owner-controlled.",
+      "latest_slice": "Corrected 44px jump-to-latest selector; disambiguated Graphify UI selector navigation; PR #136 archive/state merged into main; 51 screenshot visual review",
+      "verification": "Quality #41784481921 passed on exact HEAD fc01177283de472724ff92ea6507b5b8eb87ccf2 (4/4 Chromium shards and required sentinels; Pages smoke skipped for PR); Graphify #41784481966 passed on the same HEAD. Artifact 13301020089 contains 51 responsive UI captures; contact sheet and representative views reviewed. PR #131 remains mergeable=false pending shared-file conflict reconciliation.",
       "runtime_changes": false,
       "merge_or_deploy": false
     }
