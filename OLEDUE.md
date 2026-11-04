@@ -14,6 +14,14 @@
 5. Do the next safe, bounded action in the same turn. Update the existing canonical task list first when a new task or result appears; then update evidence/log/orientation as materially needed.
 6. Report branch, PR, HEAD, what changed, exact checks, open limits and one next action. Do not ask the owner to repeat context.
 
+## Fast task selector
+
+- **Latest explicit owner task:** continue that workstream and its canonical task list; it takes precedence over defaults.
+- **Landing UI 2.0:** PR #131; scope/checklist in `docs/V1_UI_FINALIZATION_RU.md` §8.0; implementation evidence in `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
+- **Whole-project state and release gates:** `docs/PROJECT_STATE.yaml` and owner-controlled issue #111; do not infer production readiness from UI or CI.
+- **Open-source/model research:** `INTEL.md` → `docs/OPEN_SOURCE_TRIAGE_RU.md` → `docs/TECHNIQUE_REGISTER_RU.md`; verify exact source, version, license and target-hardware fit before adoption.
+- **VPS/runtime operations:** `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md` plus the owner-approved runbook; deployment remains a separate explicit action.
+
 **Owner approval required:** merge, deployment, rebase/main synchronization, force-push, destructive changes, secrets/permissions or consequential external actions. A green CI is not merge authorization.
 
 **Canonical records:** `docs/V1_UI_FINALIZATION_RU.md` (Landing scope); `docs/MASTER_TASK_REGISTRY_RU.md` (whole-project inventory, where present); `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md` (implementation evidence); `docs/VOLLEY_LOG.md` (continuation checkpoint). Do not create duplicate backlogs.
