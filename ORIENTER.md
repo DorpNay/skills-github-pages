@@ -2,16 +2,15 @@
 
 This is the short entry point for an assistant or engineer. Use the detailed navigation index at `project-reference/FILE_ORIENTER_RU.md`, the machine-readable state at `docs/PROJECT_STATE.yaml`, and the chronological log at `docs/VOLLEY_LOG.md`.
 
-## Current working checkpoint — 2026-11-04, main state + source index proposal
+## Current working checkpoint — 2026-11-04, PR #135 merged / state refresh
 
-- **Current main SHA:** `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1` — four commits after functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82` are documentation-only updates to `docs/V1_UI_FINALIZATION_RU.md`.
-- **Open PR queue:** #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134 (11 PRs excluding the current snapshot-refresh PR #135). **Open issues:** #111 only. Live GitHub overrides this snapshot.
-- **Active Landing UI V2:** PR #131 remains open/unmerged/owner-controlled; it is four commits behind main and the shared checklist needs reconciliation. No merge/rebase/deployment authorized.
-- **OLEDUE:** root `OLEDUE.md` is the one-word route to the live owner-authorized workstream/PR; default Landing UI #131 while active. Do not ask the owner for branch/PR. This file and its ORIENTER pointer are proposed in PR #135, not merged yet.
-- **External-source index:** PR #135 appends 257 unique URLs deduplicated from 11 curated catalogs/research docs into `INTEL.md` with source provenance. Links are not adoption/license verification. No model, voice or repository artifact has been downloaded.
-- **Quality boundary:** exact PR #123 Quality/Chromium/Pages checks passed on its PR head before merge. Four later main commits are docs-only; no exact-main CI/deployment claim for `0a1f764...`.
-- **PR #135 checks:** Freshness #41777243590 and Provenance #41777243594 passed on previous docs head `408ae5f2f05d2765154aad8dbb963d317bd77702`; Quality #41777243578 was in progress at last read. A VOLLEY_LOG-only commit advanced PR #135 to `9e441ff865746c7f02f86f30752cdce6c6c1bbe7`; exact-head Quality/Freshness must be rechecked for this current head.
-- **NEXT:** inspect current PR #135 workflow outcomes; source index coverage and current source/license conditions before any artifact archive. PR #131 merge prep remains separate and owner-controlled.
+- **Current main SHA:** `9796067d9c6044fa96e1437a2ceac14574d1c1af`; last functional checkpoint remains `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 was squash-merged as a documentation-only commit.
+- **Open PR queue:** #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134 (11). **Open issues:** #111 only. Live GitHub overrides this snapshot.
+- **OLEDUE is now in main:** root `OLEDUE.md` is a compact single-word handoff; it routes from live GitHub to the current owner-authorized workstream/PR, defaulting to Landing UI #131 while active. Owner should not need to name the PR or branch.
+- **External sources:** `INTEL.md` now includes a centralized inventory of 257 deduplicated URLs from 11 curated source catalogs/research documents, with catalog provenance. Link presence is not adoption/license verification. No repository/model/voice artifacts were downloaded.
+- **PR #131:** Landing UI V2.0 remains open/unmerged/owner-controlled, four commits behind main and mergeable=false. Main-side owner checklist changes were reviewed/reconciled on PR branch; exact-head Quality and 320px Settings overflow fix remain pending.
+- **PR #135 exact-head gates:** Quality #41777497097, Freshness #41777497093, Provenance #41777497169 passed on head `0af9d123...` before squash merge. Main push Quality #41778101742, Freshness #41778101746, Pages deployment #41778101349 and Provenance #41778101735 were in progress at last read; no post-merge main pass/deployment claim.
+- **NEXT:** finish the five-file main state refresh on PR #136 (main SHA/queue now changed after PR #135 merge), then continue PR #131 responsive UI gate and eventual checklist merge prep. Do not merge PR #131 without separate explicit owner approval.
 
 ## First-read order
 
