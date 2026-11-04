@@ -27,14 +27,21 @@
 - No git reset --hard; do not overwrite unknown user changes.
 
 
+## OLEDUE handoff trigger (2026-11-04)
+
+- When the owner sends the single word `oledue` (alone or with a task), read root `OLEDUE.md` first and execute its handoff protocol before asking questions or summarizing history.
+- Build one Session Sync Capsule from a batched live GitHub read; keep PR HEAD, code/test HEAD and tested CI SHA distinct. Avoid repeated polling and stale-SHA pass claims.
+- Keep the first response work-oriented: verify live repository state, recover the exact stopping point and continue one bounded safe slice. A green CI is not merge authorization.
+
 ## Fast entry point / first-read protocol (2026-10-27)
 
 Before any aLandi task:
-1. Read root `ORIENTER.md` first for the short entry path, then `project-reference/FILE_ORIENTER_RU.md` for the detailed canonical navigation index.
+1. If the owner sends `oledue`, read root `OLEDUE.md` first and execute its handoff; otherwise read root `ORIENTER.md` first for the short entry path. Then read `project-reference/FILE_ORIENTER_RU.md` for the detailed canonical navigation index.
 2. Read `docs/PROJECT_STATE.yaml` and verify live GitHub `main`, open PRs and issues; stored SHAs and queue counts are checkpoints, not live truth.
-3. Read only the task-relevant source files, tests, and applicable architecture/security docs.
-4. After each meaningful stage, update the detailed orienter checkpoint, `docs/PROJECT_STATE.yaml`, and `docs/VOLLEY_LOG.md`; record what was verified, exact SHA/PR, test evidence, blockers, rollback and next action.
-5. Never leave a PR/issue untriaged. Merge only when current-head checks pass and change is safe; close stale/failed PRs with a clear reason and preserve useful ideas as small follow-up tasks. Do not close issues merely to clear the queue.
+3. After live orientation, consult the short **Fast task selector** in `OLEDUE.md` and choose one canonical work lane/task ID; do not create a parallel backlog.
+4. Read only the task-relevant source files, tests, and applicable architecture/security docs.
+5. After each meaningful stage, update the detailed orienter checkpoint, `docs/PROJECT_STATE.yaml`, and `docs/VOLLEY_LOG.md`; record what was verified, exact SHA/PR, test evidence, blockers, rollback and next action.
+6. Never leave a PR/issue untriaged. Merge only when current-head checks pass and change is safe; close stale/failed PRs with a clear reason and preserve useful ideas as small follow-up tasks. Do not close issues merely to clear the queue.
 
 ## Graph/navigation tools
 - Code/dependency graph is distinct from the product's experimental memory graph.

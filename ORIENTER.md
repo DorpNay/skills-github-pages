@@ -2,16 +2,16 @@
 
 This is the short entry point for an assistant or engineer. Use the detailed navigation index at `project-reference/FILE_ORIENTER_RU.md`, the machine-readable state at `docs/PROJECT_STATE.yaml`, and the chronological log at `docs/VOLLEY_LOG.md`.
 
-## Current working checkpoint — 2026-11-04, main checks + first archive verified
+## Current working checkpoint — 2026-11-04, PR #136 merged; main and UI gates verified
 
-- **Current main SHA:** `9796067d9c6044fa96e1437a2ceac14574d1c1af`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 squash-merged as docs-only.
+- **Current main SHA:** `d35812af1746ccf7268b582edf45019619431e7b`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #136 squash-merged; its changes are documentation/archive plus Jekyll configuration only.
+- **Post-merge exact-main checks:** Quality #41784349212 PASS (Jekyll and published-site Chromium smoke included); Freshness #41784349315 PASS; Provenance #41784349268 PASS; Pages deployment #41784349032 PASS on `d35812af1746ccf7268b582edf45019619431e7b`.
+- **OLEDUE integration:** root `OLEDUE.md` is in main. Main `AGENTS.md` previously lacked the trigger and the root file lacked the Fast task selector referenced by the active PR's AGENTS. This PR adds both; repository-level automatic routing is not in main until merged. PR #131 remains the active workstream.
+- **External sources/archive:** `INTEL.md` contains 257 deduplicated URLs from 11 curated catalogs. The unchanged W3C WAI WCAG 2.2 guide, attribution/license notice and manifest are in `docs/upstream-archive/`; `_config.yml` excludes the raw archive from Pages rendering.
+- **PR #136 exact-head gates:** Quality #41783917001 PASS (Jekyll and real Chromium), Freshness #41783917215 PASS, Provenance #41783916918 PASS on head `01566e03239daf90271da3891cff8b6b3e6b0330`; merged at `d35812af1746ccf7268b582edf45019619431e7b`.
 - **Open PR queue:** #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134 (11). **Open issues:** #111 only. Live GitHub overrides this snapshot.
-- **OLEDUE is in main:** root `OLEDUE.md` is a compact one-word handoff routing to the live owner-authorized workstream/PR; default PR #131 while Landing V2 is active.
-- **External source index:** `INTEL.md` contains 257 deduplicated URLs from 11 curated catalogs with provenance. PR #136 proposes the first offline archive: unchanged W3C WAI WCAG 2.2 change guide, pinned upstream commit/blob, SHA-256/size and W3C Document License 2023 notice. It is not merged yet.
-- **Main post-merge checks:** Quality Sentinels #41778101742, Freshness #41778101746, Provenance #41778101735 and Pages deployment #41778101349 all passed on exact main SHA 9796067; no separate live-site browser smoke claimed.
-- **PR #136 exact archive gates:** on head `ac9ab53586b576abd18eb785635a632c2ae4b757`, Quality #41780155673 PASS, Freshness #41780155743 PASS, Provenance #41780155581 PASS. Raw Markdown was excluded from Jekyll Pages output after a prior Liquid-include failure; archive source itself remains unchanged. Subsequent state/log updates are docs-only; exact current PR HEAD must be rechecked.
-- **PR #131:** Landing V2 remains open/unmerged/owner-controlled, mergeable=false. Code/test SHA dda1de91 Quality #41778037465 PASS (4/4 Chromium; Pages smoke skipped), Graphify #41777679201 PASS; Settings overflow fixed and screenshots reviewed. Seven overlap files manually reconciled with current main without rebase/sync.
-- **NEXT:** exact-head check PR #136 after latest docs refresh; continue PR #131 merge prep and remaining mandatory UI gates. No merge/deploy without explicit owner approval.
+- **PR #131:** open/unmerged/owner-controlled; branch `feat/landing-v1-accessibility-responsive-20261031`, merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub reports diverged, 6 commits behind and mergeable=false. Re-fetch live HEAD before dependent actions. Verified code/test HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2` passed Quality #41784481921 (4/4 Chromium, Jekyll, Integrity, Security, Context; Pages smoke skipped) and Graphify #41784481966. Subsequent docs/config/state-only commits have no exact-head run/status surfaced.
+- **NEXT:** continue bounded PR #131 implementation and exact-head verification; finish native iPhone Safari, VoiceOver/keyboard-only, full component contrast and remaining interaction gates. Any branch synchronization/rebase remains a separate owner-approved action.
 
 ## First-read order
 
