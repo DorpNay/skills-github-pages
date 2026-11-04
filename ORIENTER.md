@@ -10,7 +10,8 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - **OLEDUE:** root `OLEDUE.md` is the one-word route to the live owner-authorized workstream/PR; default Landing UI #131 while active. Do not ask the owner for branch/PR. This file and its ORIENTER pointer are proposed in PR #135, not merged yet.
 - **External-source index:** PR #135 appends 257 unique URLs deduplicated from 11 curated catalogs/research docs into `INTEL.md` with source provenance. Links are not adoption/license verification. No model, voice or repository artifact has been downloaded.
 - **Quality boundary:** exact PR #123 Quality/Chromium/Pages checks passed on its PR head before merge. Four later main commits are docs-only; no exact-main CI/deployment claim for `0a1f764...`.
-- **NEXT:** review the freshness/state snapshot and source index in PR #135; check catalog coverage and current source/license conditions before any artifact archive. PR #131 merge prep remains separate and owner-controlled.
+- **PR #135 checks:** Freshness #41777243590 and Provenance #41777243594 passed on previous docs head `408ae5f2f05d2765154aad8dbb963d317bd77702`; Quality #41777243578 was in progress at last read. A VOLLEY_LOG-only commit advanced PR #135 to `9e441ff865746c7f02f86f30752cdce6c6c1bbe7`; exact-head Quality/Freshness must be rechecked for this current head.
+- **NEXT:** inspect current PR #135 workflow outcomes; source index coverage and current source/license conditions before any artifact archive. PR #131 merge prep remains separate and owner-controlled.
 
 ## First-read order
 
