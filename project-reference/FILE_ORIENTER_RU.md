@@ -2,16 +2,16 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-## Текущая контрольная точка — 2026-11-04, OLEDUE main / PR #136 archive + state refresh
+## Текущая контрольная точка — 2026-11-04, main exact gates after PR #135
 
-- **Current main SHA:** `9796067d9c6044fa96e1437a2ceac14574d1c1af`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 squash-merged (docs-only).
-- **Live queue snapshot (excluding PR #136):** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issues (1): #111. Refresh live GitHub before action.
-- **OLEDUE:** root protocol is now on main; one-word trigger routes to the live owner-authorized PR/branch, defaulting to PR #131 while Landing V2 is active.
-- **External sources:** `INTEL.md` contains 257 deduplicated URLs from 11 curated catalogs, retaining provenance. First offline archive item is proposed in PR #136 at `docs/upstream-archive/w3c-wai-wcag22-new-in-22.md`: pinned W3C WAI source commit/blob, exact-copy SHA-256, 25,472-byte UTF-8 source, W3C Document License 2023 attribution notice and manifest. This archive item is not merged to main yet.
-- **PR #131:** open/unmerged/owner-controlled; 4 behind main, mergeable=false. Main checklist reconciliation is documented. Settings 320px internal overflow was found; CSS fix is implemented, but exact-head Quality remains pending.
-- **PR #135 pre-merge gates:** Quality #41777497097, Freshness #41777497093, Provenance #41777497169 passed on head `0af9d123...`. Main push runs on merge SHA `9796067...` (Quality #41778101742, Freshness #41778101746, Pages #41778101349, Provenance #41778101735) were in progress at last read.
-- **PR #136:** main-based state refresh branch `docs/main-state-refresh-20261104-135`; updates all five Project State Freshness files and includes the first license-checked archive item. Exact-head Quality/Freshness/Provenance are pending after the latest updates; no merge/deployment.
-- **NEXT:** exact-head checks for PR #136, then continue PR #131 responsive Settings and screenshot review. No merge of PR #131 without explicit owner approval.
+- **Current main SHA:** `9796067d9c6044fa96e1437a2ceac14574d1c1af`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 squash-merged documentation-only.
+- **Live queue snapshot (excluding PR #136):** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issues (1): #111. Refresh from GitHub before action.
+- **OLEDUE:** root single-word handoff is in main; routes to live owner-authorized PR/branch, default #131 while Landing V2 is active.
+- **Source inventory:** `INTEL.md` contains 257 unique URLs from 11 curated catalogs. First offline artifact (W3C WAI WCAG 2.2 change guide) is proposed in PR #136 with pinned commit/blob, exact-copy SHA-256, W3C Document License 2023 notice and manifest; not merged.
+- **PR #135 pre-merge:** Quality #41777497097, Freshness #41777497093, Provenance #41777497169 passed exact PR head `0af9d123...`.
+- **POST-MERGE exact main checks:** Quality Sentinels #41778101742 PASS; Freshness #41778101746 PASS; Provenance #41778101735 PASS; Pages build/deployment #41778101349 PASS on SHA 9796067. No separate live-site smoke claimed.
+- **PR #136:** state refresh branch updates five required records and adds initial archive artifact; exact PR-head checks pending after the latest documentation refresh. Main queue snapshot excludes #136, queue #124–#134.
+- **NEXT:** verify PR #136 exact-head Freshness/Quality/Provenance; then continue PR #131 merge preparation. No merge of PR #131 without explicit owner approval.
 
 ## Историческая контрольная точка — 2026-10-28
 
