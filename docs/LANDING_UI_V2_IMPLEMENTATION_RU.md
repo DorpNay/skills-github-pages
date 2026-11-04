@@ -1112,3 +1112,11 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - **VISUAL REVIEW:** Playwright artifact #13301020089 from the CSS-tested head `657658658fa4e59c8a78364b7defbf05f283e50b` contains 51 captures across Functions, Agents, Skills and Settings. Contact sheet reviewed; detailed 320px Agent/Settings/Functions and 1440px Settings views inspected. No obvious horizontal clipping/overflow in reviewed states; automated six-width overflow assertions passed.
 - **LIMITS:** screenshots are Chromium emulation, not native iPhone Safari. Native keyboard/VisualViewport/safe-area/gestures, VoiceOver, keyboard-only navigation, full component WCAG/contrast and live provider/gateway checks remain open. This closes the evidenced 44px mobile target regression only, not the complete 8.10 or 8.1–8.17 acceptance set.
 - **NEXT:** reconcile the eight shared main/PR files without rewriting history; continue manual/native accessibility and interaction acceptance; recheck PR mergeability and exact-head gates before any owner-authorized merge.
+
+
+## 8.11 — long project-context popover stress test authored (UNVERIFIED) — 2026-11-04
+
+- **IMPLEMENTED (test only):** `tests/e2e/app.spec.mjs` adds a 44-line Playwright case at lines 1283–1325 (blob `d7d351ab337cd01d10a7848435d1e604ead29df9`). It creates ten projects including a long name at a 320×440 viewport, checks that the context popover stays within viewport bounds, verifies no horizontal overflow, and confirms the project-choice list scrolls internally.
+- **SCOPE:** this is a bounded regression for the project-context popover, not proof for long chat lists/messages, empty states, every popover edge, an open virtual keyboard, keyboard/VoiceOver focus, or native iPhone behavior.
+- **VERIFICATION:** current PR #131 HEAD at review was `38ae8dc10a1f95f76ca041a5b70c256730401d68`; no workflow runs or commit statuses were surfaced for it. The last Quality #41784481921 and Graphify #41784481966 passed on earlier code/test HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2`, before this test addition. Do not mark this regression VERIFIED until exact-head Quality/Chromium runs.
+- **NEXT:** run the full current-head Quality/Chromium gate and inspect any failure artifacts; only then extend the stress matrix to chats/messages, empty states and keyboard-open placement.
