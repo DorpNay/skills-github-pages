@@ -198,7 +198,8 @@ PR #122 добавил только эксплуатационную надёж�
 
 Это **декоративный визуальный маркер roadmap**, а не сигнал о фоновой задаче, доступности сервиса, прогрессе deploy или текущем runtime.
 
-- В лендинге анимация запускается только после раскрытия соответствующего details.- В приложении маркер находится только внутри раскрытой панели будущих agents/connectors.
+- В лендинге анимация запускается только после раскрытия соответствующего details.
+- В приложении маркер находится только внутри раскрытой панели будущих agents/connectors.
 - Движущийся текст имеет aria-hidden="true"; рядом всегда присутствует обычное текстовое пояснение.
 - При prefers-reduced-motion: reduce и пользовательском motion=off/reduced анимация выключается, остаётся неподвижная подпись.
 - Не использовать aria-live для бегущей строки и не обновлять её псевдо-процентами/фальшивыми фазами.
@@ -264,8 +265,8 @@ PR #122 добавил только эксплуатационную надёж�
 ## 7. Change log
 
 | Date | Change | Evidence |
-| 2026-11-02 | Added optional 8.28 capability-catalogue/agent-and-skill management proposal after auditing the existing Functions menu, Agent/Skills panels, tickers and Playwright assertions; existing implementation is not duplicated. | PR #131 source (`index.md`, `assets/js/app.js`, `assets/css/app.css`, `tests/e2e/app.spec.mjs`); assertions located but not executed on the current HEAD. |
 |---|---|---|
+| 2026-11-02 | Added optional 8.28 capability-catalogue/agent-and-skill management proposal after auditing the existing Functions menu, Agent/Skills panels, tickers and Playwright assertions; existing implementation is not duplicated. | PR #131 source (`index.md`, `assets/js/app.js`, `assets/css/app.css`, `tests/e2e/app.spec.mjs`); assertions located but not executed on the current HEAD. |
 | 2026-10-30 | Created V1-specific living checklist, distinct from whole-stack roadmap. | Current main/PR/issue inspection; first stack runbook and master principles. |
 | 2026-10-30 | PR #121 test blockers recorded; duplicate settings close action, integrity parser, Research Studio E2E probe count fixed in branch. | Actions run #40989456177 logs; changes must be re-verified on new exact head. |
 | 2026-10-30 | Added free UI vs inference cost boundary and staged public roadmap to landing. | Landing implementation on current feature branch; exact-head Jekyll/Chromium/Pages checks pending. |
@@ -279,7 +280,11 @@ PR #122 добавил только эксплуатационную надёж�
 
 ## 8.0. Единый список незавершённых UI-задач (сверка 2026-11-02)
 
-Этот список заменяет разрозненные «остатки» в разделах 1–7 и старом polish backlog. Разделы 1–7 сохраняются как история требований и базовый V1 release checklist, но их старые отметки [~]/[ ] **не являются отдельной очередью работ PR #131**. Если задача ниже совпадает с 8.1–8.17, она учитывается здесь один раз; подробная привязка к коду и тестам — в implementation ledger. Дополнительные предложения владельца 8.18–8.28 приведены после 8.17 отдельно: это кандидаты на развитие V2.0, а не обязательные требования и не release blockers.
+Этот список заменяет разрозненные «остатки» в разделах 1–7 и старом polish backlog. Разделы 1–7 сохраняются как история требований и базовый V1 release checklist, но их старые отметки [~]/[ ] **не являются отдельной очередью работ PR #131**. Если задача ниже совпадает с 8.1–8.17, она учитывается здесь один раз; подробная привязка к коду и тестам — в implementation ledger. Дополнительные предложения владельца 8.18–8.28 приведены после 8.17 отдельно: это кандидаты на развитие V2.0, а
+
+> **Приоритет владельца:** требования 8.1–8.17 были уточнены/зафиксированы 2026-10-31 как приоритетный пакет Landing UI V2.0. Они остаются acceptance backlog, а не статусом реализации; V1 freeze и ограничения безопасности/стека сохраняются.
+
+ не обязательные требования и не release blockers.
 
 ### P0 — обязательная автоматическая проверка PR #131
 
