@@ -19,7 +19,10 @@ test('V1 landing has accurate metadata, working CTAs and honest product boundari
     // The local Python server exposes _site at /, so strip only that canonical
     // site-prefix when requesting the generated file locally.
     const canonicalUrl = new URL(await page.locator('link[rel="canonical"]').getAttribute('href'));
-    const siteBasePath = canonicalUrl.pathname.replace(/\\/landing\\/?$/, '');
+    const landingSuffix = '/landing/';
+    const siteBasePath = canonicalUrl.pathname.endsWith(landingSuffix)
+      ? canonicalUrl.pathname.slice(0, -landingSuffix.length)
+      : '';
     if (siteBasePath && stylesheetUrl.pathname.startsWith(`${siteBasePath}/`)) {
       stylesheetUrl.pathname = stylesheetUrl.pathname.slice(siteBasePath.length);
     }
