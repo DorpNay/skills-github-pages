@@ -720,3 +720,24 @@ html[data-text-contrast="high"] #chatBox button:disabled {
     padding: .75rem;
   }
 }
+
+
+/* 8.10: preserve a consistent 44px mobile hit area for compact sidebar and mode controls. */
+@media (max-width:640px) {
+  #projectNavToggle,
+  #memoryPanelDisclosure > summary,
+  #projectlessGroup > summary,
+  #projectNavigationList .project-nav-item > summary,
+  #projectlessGroup [data-action="projectless-nav"],
+  #chatSection > .chat-section-summary,
+  #projectPanel .sidebar-create-project,
+  #chatSection .sidebar-create-chat,
+  #chatListBack,
+  #chatList .chat-row,
+  #modeFast,
+  #modeDeep,
+  #jump-to-latest {
+    min-height:44px;
+  }
+  #jump-to-latest { min-width:44px; }
+}
