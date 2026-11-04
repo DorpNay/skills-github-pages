@@ -23,6 +23,16 @@
 - **PR #131:** open/unmerged/owner-controlled; current HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2`, base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; compare reports 6 commits behind and diverged; GitHub mergeable=false. No exact-head workflow run or commit status surfaced. Older checks are not current-head evidence.
 - **NEXT:** continue bounded source/test slices on #131 and obtain exact-head CI evidence. Do not rebase/synchronize, merge or deploy without separate owner approval.
 
+## Текущая контрольная точка — 2026-11-04, PR #136 merged; main and PR #131 evidence refreshed
+
+- **Current main SHA:** `d35812af1746ccf7268b582edf45019619431e7b`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`.
+- **Live queue snapshot:** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issues (1): #111. The current state-refresh PR is excluded from its own freshness comparison.
+- **Post-merge main checks:** Quality #41784349212 PASS (Jekyll + published-site Chromium smoke), Freshness #41784349315 PASS, Provenance #41784349268 PASS, Pages deployment #41784349032 PASS.
+- **PR #136:** merged at `d35812af1746ccf7268b582edf45019619431e7b`. Exact PR-head Quality #41783917001 (Jekyll + Chromium), Freshness #41783917215 and Provenance #41783916918 passed on `01566e03239daf90271da3891cff8b6b3e6b0330`. The unchanged W3C WAI WCAG 2.2 source, attribution/license notice, manifest and Jekyll exclusion are in main.
+- **OLEDUE:** root one-word handoff is in main; it routes to the live owner-authorized stream and defaults to PR #131 while Landing V2 is active.
+- **PR #131:** current HEAD `920dff5b27e548214c86e36ba50856026ccecb34`, base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; compare reports 1069 ahead / 6 behind and diverged; GitHub mergeable=false. Code/test HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2` passed Quality #41784481921 (4/4 Chromium shards and required sentinels; Pages smoke skipped) and Graphify #41784481966. The current HEAD adds later docs/config changes and has no exact-head run surfaced.
+- **NEXT:** continue bounded implementation/test work and obtain exact-head Quality/Jekyll/Chromium evidence; finish native iPhone Safari, VoiceOver, keyboard-only and component-level WCAG. No rebase/main sync/merge/deploy without separate owner approval.
+
 ## Историческая контрольная точка — 2026-10-28
 
 - **Last main action:** docs: preserve engineering and runtime readiness audits.
