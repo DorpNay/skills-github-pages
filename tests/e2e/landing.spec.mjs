@@ -13,7 +13,18 @@ test('V1 landing has accurate metadata, working CTAs and honest product boundari
   await expect(page.locator('link[rel="stylesheet"][href*="assets/css/landing.css"]')).toHaveCount(1);
   const stylesheetHref = await page.locator('link[rel="stylesheet"][href*="assets/css/landing.css"]').getAttribute('href');
   expect(stylesheetHref).toBeTruthy();
-  const stylesheetResponse = await page.request.get(new URL(stylesheetHref, page.url()).toString());
+  const stylesheetUrl = new URL(stylesheetHref, page.url());
+  if (!process.env.LIVE_SITE_URL) {
+    // Jekyll's relative_url filter prefixes the repository baseurl in production.
+    // The local Python server exposes _site at /, so strip only that canonical
+    // site-prefix when requesting the generated file locally.
+    const canonicalUrl = new URL(await page.locator('link[rel="canonical"]').getAttribute('href'));
+    const siteBasePath = canonicalUrl.pathname.replace(/\\/landing\\/?$/, '');
+    if (siteBasePath && stylesheetUrl.pathname.startsWith(`${siteBasePath}/`)) {
+      stylesheetUrl.pathname = stylesheetUrl.pathname.slice(siteBasePath.length);
+    }
+  }
+  const stylesheetResponse = await page.request.get(stylesheetUrl.toString());
   expect(stylesheetResponse.status()).toBe(200);
   expect(stylesheetResponse.headers()['content-type']).toContain('text/css');
 
