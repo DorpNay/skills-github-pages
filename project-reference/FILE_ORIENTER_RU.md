@@ -1,17 +1,14 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
-## Текущая контрольная точка — 2026-11-03, визуальная приёмка V2
+## Текущая контрольная точка — 2026-11-04, подготовка merge PR #131 и OLEDUE/source index
 
-- Main V1: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; не менять.
-- PR #131, branch `feat/landing-v1-accessibility-responsive-20261031`. На начало аудита HEAD `fd9eee63d781ca2fc8c276edafb79d97f6810c56`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; 989 ahead / 4 behind; mergeable=false. После docs-only checkpoint commits HEAD нужно получить заново из GitHub.
-- Последний доказанно зелёный app/test SHA: `6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0`. Quality #41540703827: 4/4 Chromium shards + обязательные sentinels passed; Graphify #41540704000 passed. Published Pages smoke skipped. Это не проверка более позднего E2E capture source.
-- Шрифт кнопок перепроверен: итоговый CSS rule применяет один stack к `body,button,input,textarea,select`; responsive test сравнивает computed family на 320/360/390/768/1024/1440 px. Доказательство Quality #41540703827 относится к SHA 6d57e2b; ОС выбирает доступный font fallback.
-- Добавлен Playwright тест, который должен сохранить визуальные состояния sidebar/memory, Functions, Agent categories/Team Blueprint, Skills/library, aServi/providers/Additional Settings. Test source на `fd9eee63d781ca2fc8c276edafb79d97f6810c56`; syntax PASS, browser execution NOT VERIFIED (PR-trigger lookup empty; push-trigger runs недоступны в текущем connector). Старый 8-image artifact — только shell/sidebar.
-- 8.1–8.17: 8.5 [x]; остальные в implementation ledger [~], поскольку автоматическая часть не заменяет real iPhone Safari, VoiceOver, keyboard-only, full component WCAG и реальные API/провайдер gates. Project Sources CRUD остаётся заблокирован до scoped source-list API.
-- Vercel project для репозитория не найден; Pages публикует stable V1. Не использовать Pages target для V2 preview. Новые скриншоты получать из CI Chromium artifact.
-- Гигиена: 127 refs, 10 открытых PR, issue #111. Пять behind-only branch candidates и их HEAD SHA записаны в `docs/REPOSITORY_HYGIENE_RU.md`; удаление недоступно в connector. Подтверждённых бесхозных файлов нет; GitHub Skills exercise scaffold требует проверки template state/history.
-- Короткий task selector добавлен в OLEDUE и включён в AGENTS fast-entry protocol. Master Registry (544 lossless open/partial records; deduplication ещё не завершена) остаётся на PR #127.
-- NEXT: получить exact-head Chromium/Quality и полный набор снимков; провести review открытых экранов; затем закрывать один конкретный оставшийся gate.
+- Main V1: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; не объединять PR #131 без owner approval.
+- PR #131: `feat/landing-v1-accessibility-responsive-20261031`, HEAD `0fc37632a3dddb5605be4fbfdece09b43e0559bd`, code/test SHA `2281a5acd02ccdaa709f42059e44ed635c2e7d3c`, base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`, 4 commits behind main, mergeable=false. Main-side four commits modify the shared canonical checklist only; reconcile the owner additions with PR's unified 8.0 list before eventual merge.
+- Responsive visual-review E2E source now captures the open Functions menu, Agent overview, aServi root settings, third-party provider settings and Additional Settings at 320/360/390/768/1024/1440px, asserting horizontal overflow <=1px. Source SHA `2281a5acd02ccdaa709f42059e44ed635c2e7d3c`; browser/CI NOT RUN / NOT VERIFIED.
+- Last Quality passed only on prior code/test SHA `04a893f87a2dacdbb5ea55c4a75fab21c6e539f1`, Quality #41688096480 (4/4 Chromium + sentinels; published Pages smoke skipped). No current-head pass.
+- Owner operational tasks added first to checklist: 8.29 OLEDUE auto-route, 8.30 external source inventory and license-aware archive. Separate main-based PR #135 adds compact OLEDUE and INTEL's deduplicated 257-URL source index from 11 catalogs; it remains open/unmerged. No artifact download yet.
+- Merge risk: shared `docs/V1_UI_FINALIZATION_RU.md` only on the main-side four commits; 57 PR #131 files must still be reviewed for merge interactions. No rebase, merge or deployment.
+- **NEXT:** diff main-side checklist additions against PR #131 section 8.0 and reconcile preserving owner requirements; then exact-head Quality/Graphify and screenshot artifact review. Native iPhone Safari, VoiceOver, keyboard-only and complete WCAG remain separate manual gates.
 
 ## Навигация и владение записями
 
