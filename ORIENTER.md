@@ -1,50 +1,25 @@
-# aLandi — project orientation
+# aLandi — START HERE
 
-> **Handoff trigger:** when the owner sends `oledue`, start with root `OLEDUE.md`. It defines the short, repository-backed resume protocol; verify all live SHAs and checks before acting.
+This is the short entry point for an assistant or engineer. Use the detailed navigation index at `project-reference/FILE_ORIENTER_RU.md`, the machine-readable state at `docs/PROJECT_STATE.yaml`, and the chronological log at `docs/VOLLEY_LOG.md`.
 
-## Current working checkpoint — 2026-11-04, exact responsive Quality pending
+## Current working checkpoint — 2026-11-04, PR #131 manually reconciled with main
 
-- Source of truth: GitHub `DorpNay/skills-github-pages`; stable main/V1 `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`. PR #131 open/non-draft/unmerged/mergeable=false; branch `feat/landing-v1-accessibility-responsive-20261031`; latest PR HEAD `41d48a32e8f1eb72093a563d5f0800c60ecd159b`; code/test SHA `dda1de91c3ddef7c41f26f066eb66333a3ff9c25`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; 4 behind main.
-- **Main checklist reconciliation:** four main-only commits touch canonical checklist only. Owner requirements 8.1–8.17/provider are represented in unified PR #131 8.0; markdown fixes applied. Operational tasks 8.29 OLEDUE and 8.30 source archive/inventory remain unchecked.
-- **Responsive UI tests:** screenshots + horizontal overflow checks cover Functions menu, Agent overview, aServi Settings root, third-party Settings and Additional Settings at 320/360/390/768/1024/1440px. Quality #41777025231 and #41777352077 failed Settings internal overflow at 320px. CSS patch `47c9841381a104de99a361fb282bda68dd088bd8` aligns the compact sticky header inset with p-3; test SHA dda1de91 adds overflowing descendant diagnostics.
-- **CHECKS:** Graphify #41777679201 passed on exact code/test SHA dda1de91. Current Quality #41777945500 is pending on previous docs HEAD 4967eff; the latest VOLLEY_LOG commit advanced PR HEAD to 41d48a32, so recheck exact-head CI. No post-fix Chromium pass or screenshot artifact inspection claimed. Prior green Quality #41688096480 is old SHA 04a893f only.
-- **PR #135:** separate main-based OLEDUE/source index. Freshness #41777243590 and Provenance #41777243594 passed on old head 408ae5f; current checks after documentation refresh are not yet confirmed. INTEL lists 257 deduplicated URLs from 11 catalogs; no external artifact download occurred.
-- **NEXT:** inspect exact current-head Quality and confirm Settings 320px overflow is fixed; then review responsive screenshots and continue next mandatory UI acceptance gate. No merge/rebase/main sync/deploy without explicit owner approval.
-## Record ownership
-
-| Record | Responsibility | Not its responsibility |
-|---|---|---|
-| OLEDUE.md | Resume trigger and protocol | Live project state |
-| ORIENTER.md | Project map and authority order | Detailed history |
-| FILE_ORIENTER_RU.md | File map and one current checkpoint | Implementation evidence |
-| PROJECT_STATE.yaml | Structured status snapshot | Live GitHub truth |
-| VOLLEY_LOG.md | Chronological evidence | Second backlog |
-| V1_UI_FINALIZATION_RU.md | Requirements and acceptance | Proof of implementation |
-| LANDING_UI_V2_IMPLEMENTATION_RU.md | Implementation/test evidence | Duplicate requirements |
-| ALANDI_ARCHITECTURE_MAP_RU.md | Human-curated module boundaries | Generated call graph |
-| Graphify | Disposable code graph plus deterministic CSS/DOM/JS selector navigation | State, memory, runtime behavior or proof of computed browser styles |
-
-Owner authority wins. Live GitHub PR/branch/HEAD/base/checks override stored SHAs. The owner checklist defines acceptance; source/tests define implementation; exact-HEAD CI defines verification. PROJECT_STATE is a snapshot, VOLLEY is history, and Graphify only suggests where to inspect. If any document or graph disagrees with source/tests, verify the source and update the relevant canonical record.
-
-## Historical checkpoint — 2026-11-02, Landing V2 capability menu (superseded)
-
-- Source of truth: GitHub repository DorpNay/skills-github-pages. Main remains the stable V1 publication.
-- Live main: `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1` (documentation-only commit `docs: mark owner UI corrections as V2.0 priorities`, 2026-10-31). PR #131 is open/unmerged on `feat/landing-v1-accessibility-responsive-20261031`, latest source/test commit `d70b8a31cc8a81cafeea64f8fbb332e53b0c5af2`; orientation/state/log refresh committed through checkpoint `bb7974ce7be5cc05f2ef68ab9073225a44758ea2`, base SHA `e78a73b25725bfa63370d9946887cbbacbf51b82`. GitHub reports mergeable=false; main is four commits ahead of the PR base and the shared V1 checklist has diverged. No merge, rebase, force-push or deployment.
-- Exact-head CI: no workflow run is currently returned for PR #131 HEAD `d144dc69f8bd34da1359e38c6021ec07b162407f`. New Playwright assertions cover disclosure grouping, touch target, keyboard open/close and nested ticker pause; authored, not executed. No exact-head Quality/Chromium pass is claimed.
-- Last Integrity finding: Quality #1459 on 0e327df failed because Research Studio was duplicated as a top-level Functions item. The duplicate menu action has been removed; Research Studio remains nested in Thorough/deep-research controls. Functions now shows a roadmap-only Deep Research 2.0 card instead. E2E assertion updated. The older #uiTheme Integrity failure was separately repaired in 74de587.
-- Current Functions UI: four groups (task workflow; research/sources; create/transform; connections), five roadmap cards (one Deep Research 2.0 plus four local-source/converter/Knowledge-to-Skill/media cards), pause controls and reduced-motion support.
-- Agents/Skills: agent panel distinguishes current sequential four-stage single-model workflow from blueprint-only team settings and future independent workers. Five capability sections are now grouped into three native RU/EN disclosures (use cases/roles; orchestration/models/resources; tools/permissions), collapsed by default with 44px keyboard/touch summaries and a tested-in-source nested ticker pause assertion. Skills remain chat-scoped task profiles; reusable versioned Skill library is future work.
-- Cross-workstream research: PR #125 Agent Studio; #128 Agent Workforce/worker and Skill safety; #129 Voice/audio generation; #130 Deep Research/local source vault/converters. These remain isolated Draft/HOLD branches. PR #127 carries the master task addendum; PR #132 is a continuity backup. The owner-provided 60 repositories remain reference-only until individually reviewed.
-- Orientation method: verify live main + active PR HEAD/base → latest exact-head Quality jobs/logs → ORIENTER/FILE_ORIENTER/PROJECT_STATE/newest VOLLEY entry → task-specific files only. Never trust a stored SHA or pending run as current evidence.
+- **Current main SHA:** `9796067d9c6044fa96e1437a2ceac14574d1c1af`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 merged; exact main Quality Sentinels #41778101742, Freshness #41778101746, Provenance #41778101735 and Pages deployment #41778101349 passed.
+- **Open PR queue (excluding PR #131):** #124, #125, #126, #127, #128, #129, #130, #132, #133, #134, #136 (11). **Open issue:** #111. Live GitHub is authoritative.
+- **OLEDUE and sources:** compact root OLEDUE is in main. `INTEL.md` contains 257 deduplicated URLs from 11 catalogs; one W3C WAI WCAG 2.2 reference archive is proposed in PR #136, with exact source, license, blob SHA-1, SHA-256 and manifest; not merged.
+- **PR #131:** active branch `feat/landing-v1-accessibility-responsive-20261031`; merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; main is 5 commits ahead; GitHub reports mergeable=false. Code/test SHA `dda1de91c3ddef7c41f26f066eb66333a3ff9c25`; Quality #41778037465 PASS on tested PR HEAD e11ec01 (4/4 Chromium, required sentinels; Pages smoke skipped); Graphify #41777679201 PASS on code/test SHA dda1de91. Settings 320px overflow is verified fixed; 30 screenshots visually reviewed.
+- **Merge diff:** main delta is 8 files across 5 commits; overlap with PR #131 is 7 files (OLEDUE, ORIENTER, PROJECT_STATE, unified checklist, VOLLEY_LOG, project-state snapshot, FILE_ORIENTER). `INTEL.md` is main-only additive. These seven docs were manually reconciled on the PR branch without rebase or main synchronization; exact PR-doc HEAD checks pending.
+- **PR #136:** main state refresh + one W3C archive item; its exact-head Quality/Freshness/Provenance are pending after latest docs changes.
+- **NEXT:** verify exact-head PR #131 Freshness/Quality against the current queue/snapshot; then continue the next mandatory UI acceptance gate. No merge/rebase/main sync/deploy without explicit owner approval.
 
 ## First-read order
 
+0. **`OLEDUE.md`** — when the owner writes `oledue`, route automatically to the live active owner-authorized PR/branch; do not ask for branch or PR clarification. Read the handoff protocol first.
 1. **`project-reference/FILE_ORIENTER_RU.md`** — current checkpoint, repository map, last verified stage, blockers and next action.
 2. **`docs/PROJECT_STATE.yaml`** — feature/runtime status, flags, verification evidence and unresolved risks.
 3. **`docs/VOLLEY_LOG.md`** — chronological stage log; read the newest entry first.
 4. **Live GitHub main, PRs, Issues and exact-head checks** — stored SHAs and queue counts are snapshots, never live truth.
-5. For menu/agent/skill work, read docs/AGENT_FUNCTIONS_MENU_INFORMATION_ARCHITECTURE_RU.md; for cross-workstream tasks, read docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md on PR #127.
-6. Read only source, tests, architecture and operational docs relevant to the task. Use `docs/ALANDI_ARCHITECTURE_MAP_RU.md` for module boundaries and the implementation guide before VPS operations.
+5. Read only source, tests, architecture and operational docs relevant to the task. Use `docs/ALANDI_ARCHITECTURE_MAP_RU.md` for module boundaries and the implementation guide before VPS operations.
 
 ## Keeping orientation current
 
@@ -115,196 +90,3 @@ Owner authority wins. Live GitHub PR/branch/HEAD/base/checks override stored SHA
 - Issue #111 остаётся единственным owner/environment gate. Post-merge Pages и live VPS/Ollama не подтверждены.
 - Стек заморожен: HTML/CSS/vanilla JS + Jekyll/GitHub Pages + существующий FastAPI/Python/Ollama + SQLite/FTS5 + существующие ToolDAG/voice/document adapters и GitHub Actions. Никаких новых runtime компонентов.
 - Ведём чек-лист по каждому подтверждённому шагу; не объявлять независимый subagent review состоявшимся, пока отдельный агент реально не выполнит работу.
-
-### Landing UI V2.0 — continuation 2026-10-31
-- Sole V2 UI workstream: PR #131, branch feat/landing-v1-accessibility-responsive-20261031. Keep PR unmerged until owner explicitly requests; V1 remains in main.
-- Latest confirmed code/test checkpoint before continuity-doc commits: b12038e8ee58aba77191daa29de4a232536179f2.
-- Implemented slices include project-filtered chat navigation, memory-panel refinements, explicit project-context behavior, Cloud/provider/additional-settings grouping, shared control tokens, theme/language controls, touch ergonomics and user-adjustable readability.
-- Removed stale client dispatch for the retired experimental server-memory feature; do not delete backend routes until ownership/dependency audit proves they are exclusive to that feature.
-- Project Sources currently displays a truthful unavailable-state explanation because gateway does not expose a source-list API. No fake controls.
-- E2E assertions were added/updated, but no CI run/status is present for the latest exact head. Do not report tests as passing. Next: inspect exact-head PR checks/workflows, run Chromium + Quality and update this checkpoint.
-
-### Landing UI V2.0 — exact checkpoint refresh 2026-10-31
-- Latest verified PR #131 branch head: dfaeee97692fd65384ddc070b2b09d99875c5877; 49 ahead / 4 behind main; merge base e78a73b25725bfa63370d9946887cbbacbf51b82.
-- PR body and V2 implementation ledger refreshed to show partial implementation, remaining work and absence of exact-head CI/E2E results.
-- Continue in PR #131 only. No merge/deployment without explicit owner approval; main remains V1.
-
-
-### Landing UI V2.0 — readability refinement 2026-10-31
-- Text readability settings now include a live preview affected by the selected scale/contrast and a reset-to-default action. E2E coverage added for both; tests remain unexecuted pending CI/runtime access.
-- Current code/test head at checkpoint: 934f5f30189f8615ece8be64474da272809a53e4; 55 ahead / 4 behind main.
-- PR #131 remains isolated and unmerged; main stays V1.
-
-### Landing UI V2.0 — latest head reconciliation 2026-10-31
-- PR #131 branch head at checkpoint: 5289c2d17f1cd9d69ff1857c82942798367e1a62; 60 ahead / 4 behind main.
-- Exact-head status/workflow-run queries empty; no E2E success claimed. PR body, V2 ledger and Volley log reconciled. Continue only in PR #131; no merge.
-
-### Landing UI V2.0 — explicit project creation correction (2026-10-31)
-- PR #131 now separates project creation from full project settings; full settings remain behind the per-project gear.
-- Creating a project no longer reassigns the currently open chat or rewrites chat history. The active chat-list filter remains anchored to the current chat; a project chat is created only through the explicit project-row action.
-- Project-create back control uses a 44×44px hit area and icon-first label.
-- Latest confirmed head: `4c5c583d08d242308b9019417cb0c90bcaf264d3`; 72 ahead / 4 behind main. Exact-head CI/status queries empty; Playwright remains unexecuted.
-- Continue in PR #131 only; no merge or deployment.
-
-
-### Landing UI V2.0 — memory hierarchy and accordion persistence (2026-10-31)
-- Reordered memory settings to show shared-memory records first, personal-memory records second, and the private-memory context opt-in checkbox last. Corrected the Russian shared-memory help label.
-- Sidebar close continues to collapse only the memory settings/help disclosures; added E2E assertions that the project list, “Без проекта” group and Chats disclosure retain their state.
-- UI code commit `a541932307c764e56f81b795b940785839128338`; E2E update commit `64cfa3abfd1750751951cf1715502e7ca3409ce4`.
-- JavaScript syntax parsing passed; Playwright/Chromium has not been executed and no passing CI result is claimed.
-
-
-### Landing UI V2.0 — project-to-chat context handoff (2026-10-31)
-- Added a project-settings action that lists existing chats and queues the selected project's context for the chosen chat's next request. It does not create a chat or alter chat/project membership; it respects the five-project request-context cap and consumes the handoff on successful send.
-- Found and corrected a malformed `querySelector` for the handoff button that otherwise left the button disabled and could break `renderProjectUI()`.
-- Added E2E coverage for handing off to a non-current chat, unchanged current chat/count/membership, and one-shot context consumption. Syntax parsing passed; browser E2E and exact-head CI remain unexecuted.
-- UI fix commit `c3855c28317c5b481d59b463e4d4cb985d992dcd`; E2E commits `ccb76ea689ddb0ad6ef8d580dee06148aab6f94f` and `24004fe48e506a7d1a7e03b1538f3faed209381b`.
-
-### Landing UI V2.0 — navigation, modal and readability follow-up (2026-10-31)
-- PR #131 remains the sole V2 UI workstream; V1 in main is untouched. No merge or deployment.
-- Implemented browser Back/Escape navigation for nested project filters and modal dialogs; modal focus trapping/return and scroll lock now share one lifecycle.
-- Project settings can explicitly hand off context to an existing chat for its next request. The handoff does not create a chat or change project membership; it remains session-only until sent.
-- Expanded message view keeps copy/speech actions with accessible names; speech is hidden for user messages. Status/toast states are semantic and restrained; high-contrast text covers secondary, disabled, link, error and status content in both themes.
-- Added Playwright coverage for Back navigation, modal repetition, handoff, message viewer controls, status states and contrast tokens. Exact-head Chromium/CI has not run; do not claim these tests passed.
-- Next: obtain exact-head Quality/Chromium results, fix any regressions, then complete native iPhone Safari/VoiceOver/long-press review.
-
-### Landing UI V2.0 — browser Forward restoration (2026-10-31)
-- Browser history now stores nested project-filter and modal entries. Back closes/restores the previous level; Forward reopens the saved filter/modal; Escape uses the same stack.
-- Added Playwright assertions for Forward after project-filter and project-settings Back. E2E/Chromium has not been run on the exact head.
-- Keep PR #131 open and unmerged. Next: exact-head Quality/Chromium and native iPhone Safari/VoiceOver review.
-
-
-### Landing UI V2.0 — aServi terminology checkpoint (2026-11-01)
-- Renamed primary self-hosted server route action identifiers and JavaScript handlers to aServi terminology; updated app markup, Playwright selectors and static Quality Sentinels assertions.
-- Updated the settings group/card label to `aLandi aServi`; Cloudflare remains unchanged as a separate provider/infrastructure brand.
-- Preserved legacy `ai_alandi_cloud_*` localStorage keys deliberately for existing installations; they are compatibility identifiers, not user-facing product names.
-- No merge/deployment. Verify exact-head Quality/Chromium after the source batch.
-
-
-### Landing UI V2.0 continuation — 2026-11-01
-- Active work remains PR #131 on `feat/landing-v1-accessibility-responsive-20261031`; latest code/test checkpoint: `d65102ed5a9ba3c30586d8a52efbd5603a009e23`; latest PR branch head before this state update: `5bfc48ada9ccecf5df2beb160bae7042d2481ac6` (subsequent commits are documentation-only).
-- aLandi Cloud route naming was replaced with aLandi aServi across the UI, DOM actions, JS handlers, tests and active docs. Legacy `ai_alandi_cloud_*` localStorage keys are intentionally retained as compatibility keys. `aLandi aCloudi` is only a future storage name; Cloudflare remains unchanged.
-- Extracted 48.1 KB app CSS and 10.4 KB landing CSS to cacheable assets; app HTML reduced 109.3→61.3 KB, landing HTML 26.1→15.8 KB. Marked and DOMPurify now load in ordered `defer` before app.js.
-- Prior Quality #1126 (SHA `7cdf35d`) remains the last observed Chromium failure (101 pass/18 fail); corrected fixtures and selectors are committed but exact-head rerun is not available through current tool actions. Latest observed provenance pass predates current head.
-- No branch/file cleanup performed: PR #132 is an active continuity backup and PRs #125–130 include explicit future/hold workstreams. No merge, rebase, force-push or deployment.
-- Next: finish source audit and arrange exact-head Quality/Chromium; inspect current diagnostics before marking 8.1–8.17 complete. Native iOS Safari/VoiceOver and measured WCAG remain manual.
-
-- Current main comparison: PR branch is 415 commits ahead / 4 behind (merge base `e78a73b`); all four main-side commits touch only `docs/V1_UI_FINALIZATION_RU.md`, overlapping the V2 unified backlog edits. No code-file conflict was identified. Keep the PR open; do not rebase or merge without owner approval.
-
-### Final source checkpoint — 2026-11-01
-- UI source/test checkpoint: `d65102ed5a9ba3c30586d8a52efbd5603a009e23`; documentation-only follow-up through branch head `24e22d780c4a8311d5ea28ed96bbd78302e25414`.
-- Latest compare at that checkpoint: 430 commits ahead / 4 behind main; the only main-side changed file is the shared `docs/V1_UI_FINALIZATION_RU.md`. No code-file conflict identified; no merge/rebase performed.
-- Exact-head Quality/Chromium remains pending; last observed Chromium result is stale run #1126 (101 passed, 18 failed). No passing browser run is claimed.
-
-
-### Current continuation checkpoint — 2026-11-02
-
-- PR #131 remains the sole Landing V2 implementation branch, open and unmerged. Live PR head at this checkpoint: `ec7625c98a36f1d54a190da695391244e5eecdd3`; compare against `main`: 486 ahead / 4 behind, merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Four base-side commits overlap only the shared UI finalization checklist; do not rebase, merge, or overwrite that document automatically.
-- App identity cleanup: root Jekyll title and browser title now say `aLandi — личная AI-среда`; the app has a concise description and declares both `dark light` color schemes. Quality Sentinel and E2E assertions are added; browser execution is still pending.
-- Code/test checkpoint: `b6b4cd612e288f0ad2c0e23419a562b06b491ef5`. V8 syntax parsing passed for `assets/js/app.js`, `tests/e2e/app.spec.mjs`, and `scripts/quality-agents.mjs` (imports/shebang adapted for the parser); CSS brace balance is zero. These are source checks, not a Playwright/Quality run.
-- Current PR head has no pull-request workflow runs visible. Last observed Chromium run #1126 is stale evidence (101 passed / 18 failed) on an older SHA. Do not treat it as current.
-- The aServi rename remains consistent in active V2 UI/docs. Only the legacy `ai_alandi_cloud_*` localStorage keys remain, intentionally, for backwards compatibility. Cloudflare is unchanged; `aLandi aCloudi` remains reserved for a separate future storage product.
-- Repository hygiene is scheduled for the next major-slice boundary and governed by [docs/REPOSITORY_HYGIENE_RU.md](docs/REPOSITORY_HYGIENE_RU.md): inventory branches against open/closed PRs and ancestry, review workflows/artifacts/dependencies/docs and repository security settings, then perform only evidence-backed cleanup. No branch/file deletion, rebase, force-push, merge or deployment has been performed.
-- Next: finish the source/documentation reconciliation, refresh the parallel documentation safety copy in PR #132, then run exact-head Quality/Chromium and diagnose only confirmed failures. Native iOS Safari/VoiceOver and full component-level WCAG review remain manual gates.
-
-
-### GitHub repository hygiene — первичная инвентаризация 2026-11-02
-- API перечислил 126 веток и 9 открытых PR (#124–#132); 117 веток вне head открытых PR требуют индивидуальной проверки PR/issue/ancestry/reference. Ни одна ветка не удалялась.
-- Rulesets: 0; classic protection `main` не удалось проверить (403), поэтому статус неизвестен. Автоудаление веток после merge выключено.
-- CODEOWNERS, SECURITY.md и Dependabot config не найдены в стандартных местах; фактические security alerts/settings не проверены.
-- На PR #131 HEAD на момент аудита Provenance #41336870473 прошёл; exact-head Quality/Chromium отсутствует. Quality #1126 (101 passed / 18 failed) относится к старому SHA.
-- Подробности и безопасный план: `docs/REPOSITORY_HYGIENE_RU.md`. Удалений, изменений настроек, merge/rebase/force-push или deployment не выполнялось.
-
-
-### CSS source cleanup — 2026-11-02
-
-- Removed 504 bytes of CSS declarations that were overridden by later theme-token rules; effective font, focus, theme surface, settings shadow and backdrop behavior are preserved.
-- CSS brace balance is zero. No browser visual verification is claimed; include this change in the next exact-head Quality/Chromium run.
-
-
-
-### Latest PR #131 source/docs snapshot — 2026-11-02
-- PR #131 HEAD at this checkpoint: 77fdee629c2ef47e35fdd2d39d39070c89de53b6; compare to main: 499 ahead / 4 behind; merge base e78a73b25725bfa63370d9946887cbbacbf51b82.
-- Latest code/source checkpoint: 9679ed4d7974849f3fd02dcf8465384c8c59a9df. The CSS cascade cleanup removed 504 bytes of overridden declarations; metadata and test contracts remain as previously recorded.
-- Exact-head Quality/Chromium workflow lookup returns no runs. Browser behavior is still unverified; do not treat old #1126 output as current.
-- The independent PR #132 backup now carries the implementation ledger, aServi terminology reconciliation and repository-hygiene runbook.
-
-
-### aServi compatibility guard — 2026-11-02
-- The source now documents why ASERVI_STORAGE intentionally retains ai_alandi_cloud_* keys. They are persistence contracts, not UI naming; do not rename them without a migration plan.
-
-
-
-### UI scope and Graphify continuation — 2026-11-02
-
-- Owner scope is the integrated UI queue: applicable unfinished requirements from sections 1–7 plus 8.1–8.17, tracked once in section 8.0. Old V1 checkboxes are historical; completed/obsolete items must not be reopened.
-- Canonical requirements: `docs/V1_UI_FINALIZATION_RU.md`; concise mirror: `docs/LANDING_UX_POLISH_BACKLOG_RU.md`; technical evidence: `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
-- Latest UI source checkpoint and PR #131 head: `fed3137bae2355629a976515719f498940ad8601` (accessible notification queue slice).
-- Graphify Code-Only Pilot now watches extracted app JS/CSS and landing HTML. Its run/artifact is not yet confirmed; do not use stale graph metrics as current architecture evidence.
-- PR #131 remains open/unmerged and reports dirty/diverged against main. Do not rebase or merge until the four base-side commits and conflicts are inspected. No deployment.
-- Next: execute focused Playwright and exact-head Quality/Chromium for the notification slice; continue inherited UI + 8.1–8.17 acceptance, then implement durable operation states/IDs. PR #131 only; no PR #132 edits.
-
-
-### Repository hygiene inventory — 2026-11-02
-- Inventory snapshot: 126 branches; 9 open PRs (#124–132); 100 closed PRs inspected. All 19 closed-but-unmerged PR branches reviewed have ahead > 0 and are preserved.
-- Five no-PR branches are confirmed behind-only with no exact-name code/PR references: feat/alandi-helper-model-routing; feat/rag-rrf-engineering-audit-rebased-20261027; fix/provider-model-catalogs-v2; fix/pyodide-setup; fix/theme-persistence-e2e-isolation. They are recorded as deletion candidates in docs/REPOSITORY_HYGIENE_RU.md.
-- future-workstreams/parking-base-20261031 is intentionally reserved and retained. Other no-PR branches with ahead > 0 are retained for separate triage.
-- No branch/file deletion performed: GitHub integration has no branch-delete action; no confirmed unused file was found. SECURITY.md added in both PR branches; main still lacks it until merge. CODEOWNERS deferred pending an independent reviewer; Dependabot config deferred while PR #124 adds uv.lock. Repo security settings are not readable through current integration and remain owner-manual checks.
-
-
-### Notification queue implementation — 2026-11-02
-- Latest PR #131 HEAD must be read from live PR metadata; source checkpoint for the notification slice: `fed3137bae2355629a976515719f498940ad8601`.
-- Extended the existing toast with FIFO queueing, duplicate suppression, urgency-based durations, pause on hover/focus/hidden tab, and status/alert live-region semantics. Added Playwright assertions for sequential success/error notifications.
-- This is a partial 8.19 presentation/accessibility slice; durable operation state/IDs, pending-to-result updates, persistent errors and inline recovery actions remain unimplemented.
-- Exact-head workflow/status lookup returned no PR workflow runs or commit statuses. Browser tests were not executed; no pass is claimed.
-
-
-### Live Landing V2 continuation — 2026-11-02
-
-- PR #131 remains the sole authorized implementation branch; live source/test checkpoint for the latest 8.25 slice is `6489f5a9b6d2d3e8c68b2bad993f7b85a4521cbd`. The branch remains open/unmerged and mergeable=false.
-- Added browser connectivity feedback in the composer based only on `navigator.onLine`; the UI explicitly disclaims API health and never retries automatically. Per-chat text drafts also flush on hidden-tab `visibilitychange` and existing `pagehide`.
-- Added Playwright coverage for offline/online transitions, no automatic request replay and synchronous tab-hide draft flush. V8 syntax checks and CSS brace balance passed; tests have not yet run in Chromium.
-- Exact-head Quality #1405 / run `41390877580` is pending; Graphify #437 / run `41390877512` is queued. No passing browser/Quality claim.
-- No main synchronization, rebase, merge, deployment, dependency or backend changes. Attachment persistence and native iPhone Safari/VoiceOver remain open gates.
-
-
-### Live Landing V2 continuation — bounded Undo (2026-11-02)
-
-- PR #131 remains the authorized branch. Source/test checkpoint for the current 8.20 slice: `ba709ac95c8896581133dfcce02234281f75fd90`.
-- Implemented a bounded Undo action for moving a chat between project and personal scope using the existing toast. It restores only when the chat is unchanged since the move and the original project still exists; newer state is never overwritten.
-- Added Playwright regression and a 44px accessible action target. V8 syntax and CSS brace checks passed; browser execution remains pending.
-- This is not yet persistent Undo history and does not cover rename, project deletion/cascade or settings. No new dependency, backend, merge, rebase, main sync or deployment.
-
-
-### Live Landing V2 continuation — Undo test coverage (2026-11-02)
-
-- Source/test HEAD: `f35f542070a261ddfe075d2cc0ee7281c0fdbe8b`.
-- Bounded Undo for chat project moves now has authored E2E coverage through both the current-chat selector and chat-row context menu. The tests verify restoration of the prior project assignment without changing chat identity.
-- Syntax checks passed; Chromium execution is pending. No new dependency, backend, merge, rebase, main sync or deployment.
-
-
-### Live Landing V2 continuation — chat-delete Undo (2026-11-02)
-
-- Source/test HEAD: `6f2863094434cd75c8794c348117cc8ea597f271`.
-- Added immediate Undo for chat deletion using the existing last-closed-chat recovery slot. The action validates the slot's chat ID and expires safely if a newer deletion replaced it. Existing seven-day reload recovery remains intact.
-- Added E2E coverage; V8 syntax parsing passed, Chromium execution pending. No new storage key, dependency, backend, merge, rebase or deployment.
-
-
-### Live Landing V2 continuation — chat-rename Undo (2026-11-02)
-
-- Source/test HEAD: `f7e74f41b608cded7030d1185c9b747b3190e78a`.
-- Added bounded Undo for chat rename, guarded against overwriting a later rename. 8.20 now covers chat move, delete and rename with local inverse checks.
-- Playwright regression authored; V8 syntax parsing passed; Chromium execution pending. Project cascade/settings and persistent command history remain out of scope.
-
-
-### Live Landing V2 continuation — Undo keyboard focus (2026-11-02)
-
-- Source/test HEAD: `45275d5ad854ccfdd73f3b24231c197eeac38c82`.
-- Undo actions now restore keyboard focus to the affected visible chat row (or composer fallback), rather than leaving focus on the toast button that disappears. The E2E regression activates rename Undo with Enter and checks title + focus.
-- Syntax parsing passed; browser execution pending. No merge, rebase, main sync or deployment.
-
-
-### Live Landing V2 continuation — theme selector Integrity repair (2026-11-02)
-
-- Quality #1431 failed Integrity because the required `#uiTheme` element was missing from advanced settings while `app.js` still depended on it. Restored the selector with RU/EN labels and added persistence/synchronization E2E coverage.
-- Source/test HEAD: `74de58706b28d55f405c238b916651c26281098d`. Syntax parsing passed; exact-head Quality/Chromium must confirm the repair. No merge or deployment.
