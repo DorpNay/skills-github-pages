@@ -18,10 +18,18 @@ test('known model context window bounds retained conversation history', async ({
     body: JSON.stringify({ data: [{ id: 'small-window-model', context_length: 4096 }] })
   }));
   await page.route('https://api.example.test/v1/chat/completions', async route => {
-    sent = route.request().postDataJSON().messages;
+    const messages = route.request().postDataJSON().messages;
+    // Ignore the settings connectivity probe; only capture the actual user turn.
+    const isUserTurn = messages.some(message =>
+      message.role === 'user' && String(message.content || '').includes('LATEST_TURN')
+    );
+    if (isUserTurn) sent = messages;
     await route.fulfill({
       status: 200, contentType: 'application/json',
-      body: JSON.stringify({ model: 'small-window-model', choices: [{ message: { role: 'assistant', content: 'Context trimming verified.' } }] })
+      body: JSON.stringify({
+        model: 'small-window-model',
+        choices: [{ message: { role: 'assistant', content: isUserTurn ? 'Context trimming verified.' : 'OK' } }]
+      })
     });
   });
 
