@@ -1280,6 +1280,45 @@ test('composer popover dims the page and the first outside tap only dismisses it
   await expect(page.locator('#chatBox')).not.toContainText('SCRIM_FIRST_TAP_SENTINEL');
 });
 
+test('long project lists keep the mobile context popover inside a short viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 440 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
+
+  for (let i = 0; i < 10; i++) {
+    const name = i === 0
+      ? 'A deliberately long project name for narrow mobile screens'
+      : 'Overflow fixture project ' + String(i + 1).padStart(2, '0');
+    const id = await createProjectFromUi(page, name);
+    expect(id, 'project ' + i + ' should be created').toBeTruthy();
+  }
+
+  await ensureSidebarClosed(page);
+  await page.locator('#contextPickerButton').click();
+  const menu = page.locator('#requestContextMenu');
+  await expect(menu).toBeVisible();
+  await expect(menu.locator('input[data-request-project-id]')).toHaveCount(10);
+
+  const metrics = await menu.evaluate(element => {
+    const rect = element.getBoundingClientRect();
+    return {
+      top: rect.top,
+      bottom: rect.bottom,
+      scrollHeight: element.scrollHeight,
+      clientHeight: element.clientHeight,
+      scrollWidth: element.scrollWidth,
+      clientWidth: element.clientWidth
+    };
+  });
+  expect(metrics.top, 'context popover should not extend above the viewport').toBeGreaterThanOrEqual(0);
+  expect(metrics.bottom, 'context popover should not extend below the viewport').toBeLessThanOrEqual(441);
+  expect(metrics.scrollHeight, 'long project choices should use an internal scroll area').toBeGreaterThan(metrics.clientHeight);
+  expect(metrics.scrollWidth, 'long project names should not cause horizontal overflow').toBeLessThanOrEqual(metrics.clientWidth + 1);
+
+  await menu.evaluate(element => { element.scrollTop = element.scrollHeight; });
+  await expect.poll(() => menu.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+});
+
 test('first outside tap dismisses an open chat row menu without activating the control underneath', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
