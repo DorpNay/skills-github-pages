@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-04",
   "checkpoint": {
-    "main_sha": "d35812af1746ccf7268b582edf45019619431e7b",
-    "main_commit_subject": "docs: refresh main checkpoint after OLEDUE merge (#136)",
+    "main_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
+    "main_commit_subject": "docs: reconcile main state and OLEDUE handoff after PR #136",
     "main_commit_date": "2026-11-04",
     "last_functional_checkpoint_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
     "last_functional_milestone": "PR #123 remains the last functional checkpoint at e78a73b25725bfa63370d9946887cbbacbf51b82. PR #135 and PR #136 are documentation/archive/config-only. PR #136 added the unchanged W3C WAI WCAG 2.2 archive and Jekyll exclusion; exact PR-head Quality/Jekyll/Chromium, Freshness and Provenance passed. Post-merge main Quality, Freshness, Provenance and Pages deployment all passed on d35812af1746ccf7268b582edf45019619431e7b.",
-    "main_quality_run": 41784349212,
-    "main_pages_deployment_run": 41784349032,
+    "main_quality_run": 41793229305,
+    "main_pages_deployment_run": 41793228649,
     "functional_parent_gateway_run": null,
     "functional_parent_quality_run": null,
     "functional_parent_graphify_run": null,
@@ -61,7 +61,27 @@
         "head_sha": "01566e03239daf90271da3891cff8b6b3e6b0330",
         "checks": "Exact PR-head Quality #41783917001 passed including Jekyll and Chromium; Freshness #41783917215 and Provenance #41783916918 passed. Post-merge main Quality #41784349212 (including published-site Chromium smoke), Freshness #41784349315, Provenance #41784349268 and Pages deployment #41784349032 all passed on merge SHA d35812af1746ccf7268b582edf45019619431e7b."
       }
-    ]
+    ],
+    "main_provenance_run": 41793229159,
+    "main_freshness_run": 41793229228,
+    "main_graphify_run": 41793229272,
+    "open_prs": [
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132,
+      133,
+      134
+    ],
+    "owner_task": "docs/LANDING_RELEASE_STRATEGY_RU.md: stable Landing 1.0 main, selective promotion from PR #131, then artifact acquisition and repository hygiene",
+    "pr131_head": "597536924ce37b17f8832aa36ea5b928f5584230",
+    "pr131_exact_head_verified": false,
+    "pr131_compare": "diverged; 1094 ahead / 7 behind; 57 files"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": true,
