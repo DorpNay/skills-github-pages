@@ -977,3 +977,11 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - **MAIN DOCS PR #135:** OLEDUE/source inventory/state refresh branch separate from PR #131. Freshness #41777243590 and Provenance #41777243594 passed on prior head `408ae5f...`; latest source PR HEAD advanced with documentation records and exact latest Quality/Freshness needs recheck. 257 deduplicated URLs listed; no artifacts downloaded.
 - **OPEN:** Settings CSS fix not yet VERIFIED, visual screenshot artifacts not inspected, native iPhone Safari/VoiceOver/keyboard/WCAG/live provider gates remain. PR #131 remains owner-controlled; no merge, rebase, main sync or deployment.
 - **NEXT:** inspect exact-head Quality #41777831595 after completion; if the 320px overflow passes, retrieve/review screenshot artifacts for all six widths and continue the next mandatory UI gate.
+
+
+## Live state refresh — 2026-11-04, current responsive test checkpoint
+
+- **WHERE:** PR #131 branch `feat/landing-v1-accessibility-responsive-20261031`; latest observed HEAD `4967eff30ae962762a187c4631ab3c021c8670f8`; code/test SHA `dda1de91c3ddef7c41f26f066eb66333a3ff9c25`; main `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; 4 behind, mergeable=false.
+- **CHECKS:** Graphify #41777679201 passed on exact code/test SHA dda1de91. Provenance #41777889826 was in progress then later exact current-head Quality #41777945500 is pending on documentation head 4967eff. The previous Quality attempt #41777889847 on a6d6a98 was superseded/cancelled by documentation refresh. No current post-fix Chromium pass.
+- **OPEN:** compact Settings overflow correction at 320px remains unverified; screenshot artifacts not inspected. Native iPhone Safari/VoiceOver/keyboard/WCAG and live provider/gateway gates remain open.
+- **NEXT:** inspect exact-head Quality #41777945500 after completion, confirm 320px Settings no-overflow, then inspect responsive screenshot artifacts; continue the next mandatory UI acceptance item.
