@@ -1,0 +1,21 @@
+schema_version: 1
+reviewed_on: "2026-11-04"
+policy: "Archive only concrete future-use artifacts with exact upstream commit, license/redistribution terms, immutable source URL, SHA-256, size, and review date. Preserve source files unchanged where license prohibits derivatives."
+artifacts:
+  - id: "w3c-wai-wcag22-new-in-22"
+    path: "docs/upstream-archive/w3c-wai-wcag22-new-in-22.md"
+    purpose: "Offline reference for WCAG 2.2 success criteria introduced in 2.2 during Landing UI 2.0 accessibility review."
+    source_repository: "w3c/wai-website"
+    source_commit: "321da62bab5c43fe44bd6f76decd547fcf76fee9"
+    source_path: "pages/standards-guidelines/wcag/new-in-22.md"
+    source_url: "https://www.w3.org/WAI/standards-guidelines/wcag/new-in-22/"
+    upstream_blob_sha1: "91ba79fbf918aa1ab14202dc5b4030a1b3087d19"
+    sha256: "d837a780c59ad261aaad05c31a86e195c00e71794f5b8921e01a74ba105d47a6"
+    size_bytes_utf8: 25450
+    document_date: "2023-10-05"
+    license: "W3C Document License 2023"
+    license_url: "https://www.w3.org/copyright/document-license-2023/"
+    attribution: "Copyright © 2023 World Wide Web Consortium (W3C)"
+    modifications: "none; exact source copy"
+    redistribution: "Allowed with attribution and original URL; derivative works not permitted under W3C document license."
+    notice_path: "docs/upstream-archive/README.md"
