@@ -2,7 +2,7 @@ project_state:
   version: 4
   reviewed_on: "2026-11-04"
   root_orienter:
-    status: "Main is 9796067d9c6044fa96e1437a2ceac14574d1c1af after PR #135 merged (squash): compact root OLEDUE automatic handoff and the 257-URL consolidated INTEL source index are in main. Last functional checkpoint remains PR #123 merge/base e78a73b25725bfa63370d9946887cbbacbf51b82; PR #135 is documentation-only. Exact-main Quality Sentinels #41778101742, Project State Freshness #41778101746, License/Artifact Provenance #41778101735 and Pages deployment #41778101349 all passed on SHA 9796067. Current open PR queue excluding this state-refresh PR #136: #124–#134 (11); open issue #111. PR #131 Landing UI V2.0 remains open/unmerged/owner-controlled."
+    status: "Main is 9796067d9c6044fa96e1437a2ceac14574d1c1af after PR #135 merged (squash); OLEDUE and the 257-URL INTEL source index are in main. Last functional checkpoint remains PR #123 merge/base e78a73b25725bfa63370d9946887cbbacbf51b82. Exact-main Quality Sentinels #41778101742, Freshness #41778101746, Provenance #41778101735 and Pages deployment #41778101349 passed. Queue snapshot for current PR #131 excludes #131 and includes open PRs #124–#130, #132–#134, #136 (11); issue #111 (1). PR #131 is owner-controlled; main/branch merge reconciliation is documented."
     branch: "main"
     base_main: "9796067d9c6044fa96e1437a2ceac14574d1c1af"
     open_prs_at_checkpoint: 11
