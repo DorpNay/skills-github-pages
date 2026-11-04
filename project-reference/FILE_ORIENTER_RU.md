@@ -10,8 +10,8 @@
 - **Owner's product policy:** main is stable Landing 1.0 and can receive bounded quality improvements; PR #131 is the Landing 2.0 workbench. Promote only independently useful, V1-compatible, exact-head verified slices.
 - **Canonical sequence:** `docs/LANDING_RELEASE_STRATEGY_RU.md` — orientation first; PR #131 promotion audit; selective V1 promotion; preserve V1 baseline and consolidate workstreams; then approved model/open-source artifact acquisition; finally branch/PR/issue hygiene.
 - **Live queue snapshot:** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issues (1): #111. Live GitHub overrides this snapshot.
-- **PR #131:** head branch `feat/landing-v1-accessibility-responsive-20261031`, reported HEAD `597536924ce37b17f8832aa36ea5b928f5584230`; compare main → branch: diverged, 1,094 ahead / 7 behind, 57 changed files; mergeable=false. Exact-head verification for this reported HEAD is not established. Keep PR #131 open and do not merge wholesale.
-- **NEXT:** audit the PR #131 diff and test surface into a promotion candidate matrix; leave research branches isolated until their unique value and destination are clear.
+- **PR #131:** head branch `feat/landing-v1-accessibility-responsive-20261031`, reported HEAD `597536924ce37b17f8832aa36ea5b928f5584230`; compare main → branch: diverged, 1,094 ahead / 7 behind, 57 changed files; mergeable=false. Quality #41787658241 (4/4 Chromium shards; Jekyll, Integrity, Security, Context and static analysis) and Provenance #41787658226 passed on this exact SHA; published Pages smoke was skipped and no Freshness/Graphify run was found. Keep PR #131 open and do not merge wholesale.
+- **NEXT:** follow the first candidate matrix in `docs/LANDING_RELEASE_STRATEGY_RU.md`; investigate 8.12 only after a separate Gateway verification plan. Keep 8.13 and unfinished V2 capabilities in PR #131 pending a distinct V1 scope decision.
 
 ## Историческая контрольная точка — 2026-10-28
 
