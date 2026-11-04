@@ -924,3 +924,14 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - **WHERE:** PR #131 remains open/unmerged, branch `feat/landing-v1-accessibility-responsive-20261031`; base/merge-base SHA `e78a73b25725bfa63370d9946887cbbacbf51b82`; main HEAD `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; compare 1009 ahead / 4 behind; mergeable=false.
 - **OPEN:** mandatory 8.1–8.17 are not globally complete; 8.5 remains [x], 8.1–8.4 and 8.6–8.17 remain [~]. Native iPhone Safari/VoiceOver, keyboard-only, full component WCAG/contrast, long-list/popover stress and live provider/gateway gates remain. Expanded panel screenshots at non-desktop widths are still needed.
 - **NEXT:** add responsive visual evidence for expanded Functions/Agents/Settings at 320/360/390/768/1024/1440px, then continue one bounded mandatory UI acceptance item. No merge/rebase/main sync/deploy.
+
+
+## Landing V2 responsive visual capture — 2026-11-04
+
+- **GOAL / ACCEPTANCE:** extend expanded UI screenshot evidence across 320/360/390/768/1024/1440px and detect horizontal overflow without altering app state.
+- **DONE:** authored responsive screenshots and a `documentElement.scrollWidth - innerWidth <= 1px` assertion for the open Functions menu in `tests/e2e/app.spec.mjs`.
+- **WHERE:** PR #131, branch `feat/landing-v1-accessibility-responsive-20261031`; code/test commit `c9192673f3149302e93254d39fd3c7f1716b4be1`; base/merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; main `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; PR remains open, mergeable=false, 4 behind main.
+- **FILES:** `tests/e2e/app.spec.mjs`; implementation evidence in `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
+- **CHECKS:** GitHub PR-workflow/status lookups for exact code/test SHA returned 0 runs and 0 statuses. Playwright/browser execution NOT RUN; no pass claimed. Last Quality pass #41688096480 is on prior SHA `04a893f87a2dacdbb5ea55c4a75fab21c6e539f1` only.
+- **OPEN / CONSTRAINTS:** visual screenshots are authored but not yet inspected as rendered artifacts; coverage currently only compact Functions menu. Do not merge, rebase, synchronize main or deploy.
+- **NEXT:** add six-width capture/overflow assertions for Agent overview and expanded Settings surfaces, then retrieve and inspect actual screenshot artifacts when a normal exact-head CI run becomes available.
