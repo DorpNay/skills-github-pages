@@ -1120,3 +1120,13 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - **SCOPE:** this is a bounded regression for the project-context popover, not proof for long chat lists/messages, empty states, every popover edge, an open virtual keyboard, keyboard/VoiceOver focus, or native iPhone behavior.
 - **VERIFICATION:** current PR #131 HEAD at review was `38ae8dc10a1f95f76ca041a5b70c256730401d68`; no workflow runs or commit statuses were surfaced for it. The last Quality #41784481921 and Graphify #41784481966 passed on earlier code/test HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2`, before this test addition. Do not mark this regression VERIFIED until exact-head Quality/Chromium runs.
 - **NEXT:** run the full current-head Quality/Chromium gate and inspect any failure artifacts; only then extend the stress matrix to chats/messages, empty states and keyboard-open placement.
+
+
+## OLEDUE selector coherence — 2026-11-04 (8.29, partial)
+
+- **FACT:** main contains root `OLEDUE.md`, and the file is byte-identical on the PR #131 branch before this change. Main `AGENTS.md` does not contain the `oledue` handoff trigger; PR #131's `AGENTS.md` does.
+- **IMPLEMENTED (PR #131 branch):** added the short `Fast task selector` to `OLEDUE.md`, matching the selector reference in the branch's `AGENTS.md`. It routes the active owner task, Landing UI #131, project/release gates, source/model research and VPS/runtime operations to existing canonical records without creating another backlog.
+- **LIMIT:** this does not yet update main. Until the branch changes land, repository-level `AGENTS.md` on main still does not invoke OLEDUE automatically. The ChatGPT Project handoff did invoke it in this continuation.
+- **VERIFICATION:** content/route consistency reviewed; no runtime changes. Fresh-session automatic routing and main-level integration remain unverified.
+- **NEXT:** retain 8.29 as partial until the trigger and selector are both in main and a fresh resumed handoff confirms routing.
+
