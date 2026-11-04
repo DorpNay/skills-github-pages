@@ -3,19 +3,33 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-04",
   "checkpoint": {
-    "main_sha": "9796067d9c6044fa96e1437a2ceac14574d1c1af",
-    "main_commit_subject": "docs: add OLEDUE handoff and consolidated source inventory",
+    "main_sha": "d35812af1746ccf7268b582edf45019619431e7b",
+    "main_commit_subject": "docs: refresh main checkpoint after OLEDUE merge (#136)",
     "main_commit_date": "2026-11-04",
     "last_functional_checkpoint_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
-    "last_functional_milestone": "PR #123 merged at e78a73b25725bfa63370d9946887cbbacbf51b82; Gateway, Quality/Chromium/Jekyll/published-site smoke, Freshness, Provenance, Graphify and Dead Code checks passed on exact PR head before merge. Main commits after this functional checkpoint are documentation-only.",
-    "main_quality_run": 41778101742,
-    "main_pages_deployment_run": 41778101349,
+    "last_functional_milestone": "PR #123 remains the last functional checkpoint at e78a73b25725bfa63370d9946887cbbacbf51b82. PR #135 and PR #136 are documentation/config-only; PR #136 adds the unchanged W3C WAI WCAG 2.2 archive and Jekyll exclusion. Exact PR #136 head Quality/Jekyll/Chromium, Freshness and Provenance passed before merge.",
+    "main_quality_run": null,
+    "main_pages_deployment_run": null,
     "functional_parent_gateway_run": null,
     "functional_parent_quality_run": null,
     "functional_parent_graphify_run": null,
     "functional_parent_pages_run": null,
-    "open_pull_requests": [124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134],
-    "open_issues": [111],
+    "open_pull_requests": [
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132,
+      133,
+      134
+    ],
+    "open_issues": [
+      111
+    ],
     "merged_prs": [
       {
         "number": 121,
@@ -39,7 +53,13 @@
         "number": 135,
         "merge_sha": "9796067d9c6044fa96e1437a2ceac14574d1c1af",
         "head_sha": "0af9d123bd29b87f68bf8618d1b1a9b978077ef6",
-        "checks": "Independent Quality Sentinels, Project State Freshness and License/Artifact Provenance passed on exact PR head before squash merge; post-merge main Quality/Pages runs are pending."
+        "checks": "Exact PR-head Quality #41777497097, Freshness #41777497093 and Provenance #41777497169 passed before squash merge; post-merge main Quality #41778101742, Freshness #41778101746, Provenance #41778101735 and Pages deployment #41778101349 passed on SHA 9796067."
+      },
+      {
+        "number": 136,
+        "merge_sha": "d35812af1746ccf7268b582edf45019619431e7b",
+        "head_sha": "01566e03239daf90271da3891cff8b6b3e6b0330",
+        "checks": "Exact PR-head Quality #41783917001 passed including Jekyll and Chromium; Freshness #41783917215 and Provenance #41783916918 passed. Squash-merged; no separate post-merge main Pages/live-site smoke claimed."
       }
     ]
   },
