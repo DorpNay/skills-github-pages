@@ -956,3 +956,13 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - **FILES:** `docs/V1_UI_FINALIZATION_RU.md`, `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
 - **CHECKS:** content/diff review only; exact-head CI and manual native gates NOT RUN. No merge/rebase/main sync/deployment.
 - **NEXT:** finish six-width screenshot/overflow test additions for Agent overview and Settings surfaces, then review exact-head CI screenshot artifacts and continue remaining acceptance.
+
+
+## Settings responsive overflow regression and CSS correction — 2026-11-04
+
+- **GOAL:** close an evidenced compact Settings internal horizontal-overflow failure while preserving the responsive acceptance assertion.
+- **CI FAILURE:** Quality #41777025231 (SHA `3352433e0ffd5ca49ffe780def481dda0b88c7d2`) and #41777352077 (SHA `1943424f7f74d43b5eaaedc4e11debccfab13cf7`) each had 3/4 Chromium shards pass; shard 3 failed one assertion at 320px: Settings panel internal horizontal overflow. Jekyll, Integrity, Security, Context, static analysis and syntax preflight passed; published Pages smoke skipped.
+- **SOURCE DIAGNOSIS:** Settings surface uses `p-3 sm:p-4`; sticky `.settings-header` uses 1rem negative margin/padding. Below 640px, the 12px surface inset and 16px header inset differ. CI screenshot artifact was identified but could not be downloaded/inspected through available GitHub connector; visual evidence is not claimed.
+- **FIX:** CSS commit `47c9841381a104de99a361fb282bda68dd088bd8` aligns mobile Settings header to .75rem margin/padding. E2E diagnostics commit `dda1de91c3ddef7c41f26f066eb66333a3ff9c25` reports overflowing descendant geometry when assertion fails.
+- **CHECKS:** Quality #41777679175 and Graphify #41777679201 are pending on exact code/test SHA `dda1de91...` at last read. Fix is IMPLEMENTED, not yet VERIFIED. Do not treat the previous red run as resolved until a new Chromium pass.
+- **NEXT:** inspect exact-head Quality/Graphify outcome; if overflow remains, use the new descendant diagnostic to make the smallest CSS correction and retest.
