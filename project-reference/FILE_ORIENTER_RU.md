@@ -2,15 +2,15 @@
 
 > **Первым делом:** прочитай корневой `ORIENTER.md` как короткую точку входа, затем этот подробный индекс, `docs/PROJECT_STATE.yaml` и последнюю запись `docs/VOLLEY_LOG.md`. После этого открывай только файлы, относящиеся к текущей задаче. Этот индекс — навигация, а не доказательство того, что feature включена или развёрнута.
 
-## Текущая контрольная точка — 2026-11-04, main snapshot refresh / PR #135
+## Текущая контрольная точка — 2026-11-04, exact archive gates passed
 
-- **Current main SHA:** `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. Main's four newer commits are documentation-only owner UI checklist changes.
-- **Live queue snapshot (excluding PR #135):** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issues (1): #111. Recheck live GitHub before action.
-- PR #131 is the owner-controlled Landing UI V2.0 implementation PR; open/unmerged, four commits behind main, checklist reconciliation pending. Do not merge/rebase/deploy.
-- PR #135 proposes concise root OLEDUE auto-routing and a consolidated INTEL index of 257 unique URLs from 11 curated source catalogs. The source table retains catalog provenance; links are not verified current upstream, adoption or license approvals. No artifacts downloaded.
-- Exact PR #123 quality evidence passed on its PR head before merge. The four later main commits are docs-only; exact-main Quality/Pages evidence on SHA `0a1f764...` is not claimed.
-- First PR #135 Freshness run #41776927840 failed on stale main/queue. After the five-file state refresh, Freshness #41777243590 and Provenance #41777243594 passed on `408ae5f2f05d2765154aad8dbb963d317bd77702`; Quality #41777243578 was in progress. VOLLEY_LOG and ORIENTER updates advanced PR #135 beyond that tested head; exact-head Quality/Freshness still pending on latest live head.
-- **NEXT:** verify Freshness/Quality exact-head outcomes on PR #135, fix any schema drift, and keep owner merge authority explicit.
+- **Current main SHA:** `9796067d9c6044fa96e1437a2ceac14574d1c1af`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 squash-merged docs-only.
+- **Live queue snapshot (excluding PR #136):** open PRs (11): #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134; open issues (1): #111.
+- **OLEDUE:** root compact single-word handoff is in main. **Source index:** `INTEL.md` lists 257 unique URLs from 11 curated catalogs.
+- **PR #136 archive:** `docs/upstream-archive/w3c-wai-wcag22-new-in-22.md` preserves the W3C WAI source unchanged; upstream and archived Git blob SHA-1 match `91ba79fbf918aa1ab14202dc5b4030a1b3087d19`; SHA-256 `d837a780c59ad261aaad05c31a86e195c00e71794f5b8921e01a74ba105d47a6`; size 25,472 bytes; W3C Document License 2023 attribution/manifest present. `_config.yml` excludes `docs/upstream-archive` from Pages rendering to avoid Liquid evaluation.
+- **PR #136 exact gates:** Quality #41780155673 PASS, Freshness #41780155743 PASS, Provenance #41780155581 PASS on exact head `ac9ab53586b576abd18eb785635a632c2ae4b757`. The prior Jekyll failure #41779579720 was repaired by the exclusion; no runtime dependency/feature change. PR #136 remains open/unmerged; later docs-only updates mean recheck its live HEAD.
+- **PR #131:** open/unmerged/owner-controlled; main 5 commits ahead from merge-base e78a73b; seven overlapping docs files manually reconciled; mergeable=false. Quality #41778037465 PASS on tested PR head e11ec01 (4/4 Chromium + sentinels; Pages smoke skipped); Graphify #41777679201 PASS on code/test SHA dda1de91. No current PR #131 Freshness run surfaced; manual queue snapshot is aligned, no official pass claimed.
+- **NEXT:** exact-head PR #136 Quality/Freshness/Provenance after documentation refresh; continue PR #131 UI acceptance and merge prep. No merge/rebase/main sync/deployment without owner approval.
 
 ## Историческая контрольная точка — 2026-10-28
 

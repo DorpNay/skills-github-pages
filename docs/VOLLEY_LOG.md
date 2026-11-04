@@ -119,3 +119,44 @@ Before beginning the audit, re-read live PR #123, current main base and issue #1
 - **QUALITY:** run #41777243578 remains IN_PROGRESS on exact head `408ae5f2f05d2765154aad8dbb963d317bd77702`; no Quality pass yet. Earlier run #41776927739 on old head is superseded.
 - **SOURCE REGISTER:** central INTEL inventory deduplicates exact URLs and includes catalog-origin names. It does not validate live URLs, licenses, redistribution rights or adoption. Download/archive task remains open until concrete need, exact artifact version, rights, SHA-256, size and review date are recorded.
 - **NEXT:** fetch workflow runs for the current PR #135 HEAD after the state refresh; repair any remaining Freshness schema/queue drift, then review the inventory coverage before owner decides whether to merge this documentation PR.
+
+
+## V-2026-11-04-PR135-MERGED-MAIN-STATE-REFRESH-001 — OLEDUE in main
+
+- **OWNER AUTHORIZATION / ACTION:** PR #135 was squash-merged after the owner requested moving OLEDUE to main and exact-head PR checks passed. Merge commit `9796067d9c6044fa96e1437a2ceac14574d1c1af` (parent `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`).
+- **MERGED:** minimal root `OLEDUE.md` automatic workstream/PR routing; main `ORIENTER.md` first-read pointer; `INTEL.md` consolidated external source inventory (257 unique URLs, 11 curated source catalogs, source provenance and download/rights gate). Documentation only; no artifact/model/voice/repository downloads.
+- **PRE-MERGE EXACT HEAD GATES:** PR #135 Quality #41777497097 PASS, Project State Freshness #41777497093 PASS, License/Artifact Provenance #41777497169 PASS on head `0af9d123bd29b87f68bf8618d1b1a9b978077ef6`. PR was mergeable=true before squash merge.
+- **MAIN QUEUE AFTER MERGE:** main SHA `9796067...`; last functional checkpoint `e78a73b...`; open PRs #124–#134 (11); open issue #111. Main push Quality #41778101742, Freshness #41778101746, Pages #41778101349 and Provenance #41778101735 were in progress at first read. No post-merge main pass/deployment claim.
+- **STATE REFRESH:** created branch `docs/main-state-refresh-20261104-135` from exact main merge SHA to update all five required snapshot files together: ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG, and `docs/project-state-snapshot.json`. This is proposed via PR #136; no direct main state commit.
+- **NEXT:** complete the state refresh PR #136 and its exact-head Freshness/Quality checks; continue PR #131 responsive Settings overflow acceptance separately. PR #131 stays owner-controlled, no merge/rebase/deploy.
+
+
+## V-2026-11-04-WCAG-ARCHIVE-001 — first license-checked offline reference
+
+- **GOAL:** retain one concrete future-use source artifact in the repository as requested, without bulk-mirroring external material.
+- **ARTIFACT:** W3C WAI “What's New in WCAG 2.2” Markdown source, archived unchanged at `docs/upstream-archive/w3c-wai-wcag22-new-in-22.md`. This is a practical offline reference for Landing UI V2.0 accessibility acceptance (WCAG 2.2 new criteria).
+- **PROVENANCE:** source repo `w3c/wai-website`, pinned commit `321da62bab5c43fe44bd6f76decd547fcf76fee9`, path `pages/standards-guidelines/wcag/new-in-22.md`; official page URL https://www.w3.org/WAI/standards-guidelines/wcag/new-in-22/. Upstream Git blob SHA-1 `91ba79fbf918aa1ab14202dc5b4030a1b3087d19`; archived Git blob SHA-1 was re-read and matches exactly. UTF-8 SHA-256 `d837a780c59ad261aaad05c31a86e195c00e71794f5b8921e01a74ba105d47a6`; size 25,472 bytes.
+- **LICENSE:** W3C Document License 2023 permits copy/distribution with attribution and original URL, and generally disallows derivative works of W3C specifications. Added adjacent attribution/license notice at `docs/upstream-archive/README.md`; manifest at `docs/upstream-archive/manifest.yaml`. No W3C endorsement implied.
+- **INDEX:** added the archived item, pinned upstream, license and SHA256 to central `INTEL.md` inventory. The central external link inventory now also tracks an actual local archive record.
+- **WHERE:** PR #136 branch `docs/main-state-refresh-20261104-135`, based on main `9796067d9c6044fa96e1437a2ceac14574d1c1af`; archive and main state refresh are proposed, not merged.
+- **CHECKS:** upstream Git blob SHA equals archived file blob SHA; SHA-256 recorded in manifest. PR #136 Quality/Freshness/Provenance reruns pending after the archive additions. No runtime/dependency/model/voice changes.
+- **NEXT:** exact-head PR #136 Freshness/Quality/Provenance; then continue selecting source artifacts only where future tasks justify storage and license review.
+
+
+## V-2026-11-04-MAIN-POSTMERGE-VERIFIED-001 — PR #135 post-merge main gates
+
+- **FACT:** PR #135 squash merge commit `9796067d9c6044fa96e1437a2ceac14574d1c1af` is the current main SHA; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 pre-merge exact Quality/Freshness/Provenance passed.
+- **POST-MERGE EXACT MAIN CHECKS:** Independent Quality Sentinels #41778101742 PASS; Project State Freshness #41778101746 PASS; License/Artifact Provenance #41778101735 PASS; GitHub Pages build/deployment #41778101349 PASS on SHA 9796067.
+- **LIMIT:** these workflow results establish CI and Pages deployment workflow success; no separate published-site browser smoke was run/claimed for the merge SHA.
+- **STATE:** refreshed `docs/PROJECT_STATE.yaml` and `docs/project-state-snapshot.json` run IDs. Open PR queue excluding PR #136 remains #124–#134 (11); issue #111 (1).
+- **NEXT:** exact-head PR #136 Freshness/Quality/Provenance after latest docs updates; state refresh branch includes the W3C archive candidate, still not merged.
+
+
+## V-2026-11-04-WCAG-ARCHIVE-JEKYLL-VERIFIED-001 — archive build isolation
+
+- **REGRESSION:** Quality #41779579720 failed Jekyll on exact prior PR #136 head because the unchanged W3C WAI Markdown contains Liquid include directives (including unresolved include references); the raw source should be retained in Git, not rendered into Pages.
+- **FIX:** added `exclude: docs/upstream-archive` to `_config.yml` (commit `ac9ab53586b576abd18eb785635a632c2ae4b757`). The archive remains in the repository and is not published as a Jekyll page; upstream content remains byte-for-byte unchanged.
+- **EXACT-HEAD VERIFICATION:** on PR #136 head `ac9ab535...`, Independent Quality Sentinels #41780155673 PASS; Project State Freshness #41780155743 PASS; License/Artifact Provenance #41780155581 PASS.
+- **ARCHIVE INTEGRITY:** upstream and archived Git blob SHA-1 match `91ba79fbf918aa1ab14202dc5b4030a1b3087d19`; SHA-256 `d837a780c59ad261aaad05c31a86e195c00e71794f5b8921e01a74ba105d47a6`; UTF-8 size 25,472 bytes; W3C Document License 2023 notice/manifest retained. No derivative or endorsement claim.
+- **LIMIT:** PR #136 is open/unmerged; docs-only checkpoint refreshes after this verified code/config head may trigger another CI cycle. No merge/deploy without owner approval.
+- **NEXT:** refresh state/orientation with the exact pass and recheck the newest PR #136 HEAD; then request owner merge approval if still green.

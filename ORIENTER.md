@@ -2,16 +2,16 @@
 
 This is the short entry point for an assistant or engineer. Use the detailed navigation index at `project-reference/FILE_ORIENTER_RU.md`, the machine-readable state at `docs/PROJECT_STATE.yaml`, and the chronological log at `docs/VOLLEY_LOG.md`.
 
-## Current working checkpoint — 2026-11-04, main state + source index proposal
+## Current working checkpoint — 2026-11-04, main checks + first archive verified
 
-- **Current main SHA:** `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1` — four commits after functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82` are documentation-only updates to `docs/V1_UI_FINALIZATION_RU.md`.
-- **Open PR queue:** #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134 (11 PRs excluding the current snapshot-refresh PR #135). **Open issues:** #111 only. Live GitHub overrides this snapshot.
-- **Active Landing UI V2:** PR #131 remains open/unmerged/owner-controlled; it is four commits behind main and the shared checklist needs reconciliation. No merge/rebase/deployment authorized.
-- **OLEDUE:** root `OLEDUE.md` is the one-word route to the live owner-authorized workstream/PR; default Landing UI #131 while active. Do not ask the owner for branch/PR. This file and its ORIENTER pointer are proposed in PR #135, not merged yet.
-- **External-source index:** PR #135 appends 257 unique URLs deduplicated from 11 curated catalogs/research docs into `INTEL.md` with source provenance. Links are not adoption/license verification. No model, voice or repository artifact has been downloaded.
-- **Quality boundary:** exact PR #123 Quality/Chromium/Pages checks passed on its PR head before merge. Four later main commits are docs-only; no exact-main CI/deployment claim for `0a1f764...`.
-- **PR #135 checks:** Freshness #41777243590 and Provenance #41777243594 passed on previous docs head `408ae5f2f05d2765154aad8dbb963d317bd77702`; Quality #41777243578 was in progress at last read. A VOLLEY_LOG-only commit advanced PR #135 to `9e441ff865746c7f02f86f30752cdce6c6c1bbe7`; exact-head Quality/Freshness must be rechecked for this current head.
-- **NEXT:** inspect current PR #135 workflow outcomes; source index coverage and current source/license conditions before any artifact archive. PR #131 merge prep remains separate and owner-controlled.
+- **Current main SHA:** `9796067d9c6044fa96e1437a2ceac14574d1c1af`; last functional checkpoint `e78a73b25725bfa63370d9946887cbbacbf51b82`. PR #135 squash-merged as docs-only.
+- **Open PR queue:** #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134 (11). **Open issues:** #111 only. Live GitHub overrides this snapshot.
+- **OLEDUE is in main:** root `OLEDUE.md` is a compact one-word handoff routing to the live owner-authorized workstream/PR; default PR #131 while Landing V2 is active.
+- **External source index:** `INTEL.md` contains 257 deduplicated URLs from 11 curated catalogs with provenance. PR #136 proposes the first offline archive: unchanged W3C WAI WCAG 2.2 change guide, pinned upstream commit/blob, SHA-256/size and W3C Document License 2023 notice. It is not merged yet.
+- **Main post-merge checks:** Quality Sentinels #41778101742, Freshness #41778101746, Provenance #41778101735 and Pages deployment #41778101349 all passed on exact main SHA 9796067; no separate live-site browser smoke claimed.
+- **PR #136 exact archive gates:** on head `ac9ab53586b576abd18eb785635a632c2ae4b757`, Quality #41780155673 PASS, Freshness #41780155743 PASS, Provenance #41780155581 PASS. Raw Markdown was excluded from Jekyll Pages output after a prior Liquid-include failure; archive source itself remains unchanged. Subsequent state/log updates are docs-only; exact current PR HEAD must be rechecked.
+- **PR #131:** Landing V2 remains open/unmerged/owner-controlled, mergeable=false. Code/test SHA dda1de91 Quality #41778037465 PASS (4/4 Chromium; Pages smoke skipped), Graphify #41777679201 PASS; Settings overflow fixed and screenshots reviewed. Seven overlap files manually reconciled with current main without rebase/sync.
+- **NEXT:** exact-head check PR #136 after latest docs refresh; continue PR #131 merge prep and remaining mandatory UI gates. No merge/deploy without explicit owner approval.
 
 ## First-read order
 
