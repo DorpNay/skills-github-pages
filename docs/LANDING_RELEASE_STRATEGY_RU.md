@@ -115,13 +115,15 @@ Initial research leads already present in `INTEL.md`, `docs/OPEN_SOURCE_TRIAGE_R
 
 ## Current live baseline (verified 2026-11-05)
 
-- `main` HEAD: `a7915291354d1b031ce2461b71a553f871959df3` (PR #138 merged). Original V1 baseline before code promotion: `9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af`.
-- PR #138 exact-head workflows: Quality `41797778925` PASS, Freshness `41797779149` PASS, Provenance `41797779027` PASS on `2462a7837ae9b5c243a1436ce8dbc73e40c805e7`; Jekyll, Chromium and published Pages smoke passed. Main post-merge Quality `41798373393`, Pages deployment `41798372381`, Freshness `41798373366` and Provenance `41798373486` all PASS on exact main SHA. Graphify was not rerun because PR #138 was documentation-only.
-- PR #131 is open, base `main`, head branch `feat/landing-v1-accessibility-responsive-20261031`, reported HEAD `597536924ce37b17f8832aa36ea5b928f5584230`. Compare against main reports diverged, 1,094 commits ahead / 7 behind, with 57 changed files. This is not a safe whole-PR merge candidate. Quality #41787658241 and Provenance #41787658226 passed on this exact HEAD; Freshness and Graphify were not found for this SHA, and published Pages smoke was skipped.
-- Open PRs at the 2026-11-05 pre-merge checkpoint: 12 total — #124–#134 (11) plus current candidate #139. The state-freshness snapshot excludes the PR currently being checked. PR #138 is merged; #135–#137 are not open. Re-check live GitHub before acting.
-- Open non-PR issue: #111, owner/environment release gates. Keep open until evidence is complete.
-- Main has no verified `docs/MASTER_TASK_REGISTRY_RU.md` or `docs/REPOSITORY_HYGIENE_RU.md` at this checkpoint; do not assume similarly named files exist on main because they may exist only on PR #131.
-- The main Quality, Pages, Provenance, Freshness and Graphify results above are evidence for the current main SHA only. They do not validate PR #131 or future changes.
+- `main` HEAD: `2e11849d409a51009693af95ac3ecbf1f057a3fc` (PR #139 squash-merged). Original V1 baseline before code promotion: `9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af`.
+- PR #139 exact-head gates: Quality #41966180071, Freshness #41966180096, Provenance #41966180157 and Graphify #41966180042 PASS on exact PR HEAD `d76be1d59ed832fa638e419b542151dba277c143`. Post-merge main Quality #41967234442, Pages deployment #41967233832, Freshness #41967234558, Provenance #41967234535 and Graphify #41967234708 all PASS on exact merge SHA.
+- Production delivery: the CSS asset at `https://dorpnay.github.io/skills-github-pages/assets/css/landing.css` and published `/landing/` HTML were fetched successfully; this does not replace native device review.
+- PR #131 is open, branch `feat/landing-v1-accessibility-responsive-20261031`, HEAD `597536924ce37b17f8832aa36ea5b928f5584230`, base `e78a73b25725bfa63370d9946887cbbacbf51b82`. Current main compare is diverged 1,094 ahead / 9 behind, 57 changed files, mergeable=false. Earlier Quality #41787658241 and Provenance #41787658226 passed on that head; exact current Freshness/Graphify are not established and published Pages smoke was skipped. Do not merge whole PR or sync without separate owner approval.
+- Open PRs at this checkpoint: #124–#134 (11). Open issue #111 is the owner/environment release gate; keep it open until evidence is complete.
+- PR #139 decision: **PROMOTE / IMPLEMENTED / VERIFIED** — three-file public Landing V1 accessibility/responsive slice merged; native iPhone/VoiceOver remains unverified.
+- PR #131 Graphify UI Surface bridge: **NEEDS WORK** as candidate; inferred DOM/CSS/JS relationships and approximate JS owner mapping require explicit confidence/ambiguity handling and stronger tests before the graph is treated as authoritative.
+- **Artifact acquisition:** owner authorized downloads on 2026-11-05. Initial candidate Vosk `vosk-model-small-ru-0.22` is catalog-listed 45 MB, Apache-2.0. Official archive transfer attempt failed through the current download tool; no local bytes or SHA-256 obtained. Qwen3-ASR-0.6B supports RU/TH and is Apache-2.0, but its BF16 weights are 1.88 GB; defer until a reliable transfer route and eval hardware are available. No runtime installation, model activation or VPS deployment.
+- Exact-main Quality, Pages, Provenance, Freshness and Graphify prove the merge SHA only; they do not validate PR #131 or target hardware.
 
 ## First promotion candidates to inspect
 
