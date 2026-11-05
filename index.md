@@ -2748,19 +2748,66 @@ permalink: /
         const baseUrl = settings.provider === 'cloudflare'
           ? 'https://api.cloudflare.com/client/v4/accounts/' + settings.cloudflareAccountId + '/ai/v1'
           : settings.baseUrl.trim().replace(/\/+$/, '').replace(/\/chat\/completions$/i, '');
-        const saveResults = [
-          safeSet(STORAGE.provider, settings.provider),
-          safeSet(STORAGE.baseUrl, baseUrl),
-          safeSet(STORAGE.model, settings.model.trim()),
-          safeSet(STORAGE.mode, settings.mode === 'deep' ? 'deep' : 'fast'),
-          safeSet(STORAGE.search, String(settings.search !== false)),
-          safeSet(STORAGE.multiAgent, String(settings.multiAgent === true)),
-          safeSet(STORAGE.offline, String(settings.offline === true)),
-          safeSet(STORAGE.crossProviderFallback, String(settings.crossProviderFallback === true)),
-          safeSet(STORAGE.systemPrompt, String(settings.systemPrompt || DEFAULT_SYSTEM)),
-          ...(settings.provider === 'cloudflare' ? [safeSet(STORAGE.cloudflareAccountId, settings.cloudflareAccountId)] : [])
+        const nextChatSettings = {
+          processingMode: settings.mode === 'deep' ? 'deep' : 'fast',
+          searchMode: settings.offline === true || settings.search === false ? 'offline' : 'normal',
+          multiAgentEnabled: settings.multiAgent === true
+        };
+        const profileWrites = [
+          [STORAGE.provider, settings.provider],
+          [STORAGE.baseUrl, baseUrl],
+          [STORAGE.model, settings.model.trim()],
+          [STORAGE.mode, nextChatSettings.processingMode],
+          [STORAGE.search, String(settings.search !== false)],
+          [STORAGE.multiAgent, String(settings.multiAgent === true)],
+          [STORAGE.offline, String(settings.offline === true)],
+          [STORAGE.crossProviderFallback, String(settings.crossProviderFallback === true)],
+          [STORAGE.systemPrompt, String(settings.systemPrompt || DEFAULT_SYSTEM)],
+          ...(settings.provider === 'cloudflare' ? [[STORAGE.cloudflareAccountId, settings.cloudflareAccountId]] : []),
+          [STORAGE.searchMode, nextChatSettings.searchMode]
         ];
-        if (!saveResults.every(Boolean)) throw new Error('Не удалось сохранить все параметры в браузере.');
+        let previousStorageValues;
+        try {
+          previousStorageValues = profileWrites.map(([key]) => ({ key, value: localStorage.getItem(key) }));
+        } catch (error) {
+          throw new Error('Не удалось прочитать прежние настройки браузера; импорт отменён.');
+        }
+        const writtenStorageValues = [];
+        const rollbackProfileStorage = () => {
+          let restored = true;
+          for (let index = writtenStorageValues.length - 1; index >= 0; index -= 1) {
+            const previous = writtenStorageValues[index];
+            if (!restoreStorageValue(previous.key, previous.value)) restored = false;
+          }
+          if (!restored) showToast('Не все прежние настройки удалось восстановить. Не очищай данные сайта; сначала экспортируй доступные данные.', 'error');
+          return restored;
+        };
+        for (let index = 0; index < profileWrites.length; index += 1) {
+          const [key, value] = profileWrites[index];
+          if (!safeSet(key, value)) {
+            const restored = rollbackProfileStorage();
+            throw new Error(restored
+              ? 'Не удалось сохранить весь профиль; прежние настройки восстановлены.'
+              : 'Не удалось сохранить профиль и полностью откатить предыдущие настройки. Сначала экспортируй доступные данные.');
+          }
+          writtenStorageValues.push(previousStorageValues[index]);
+        }
+        const activeChat = getCurrentChat();
+        const previousChatSettings = {
+          processingMode: activeChat.processingMode,
+          searchMode: activeChat.searchMode,
+          multiAgentEnabled: activeChat.multiAgentEnabled,
+          skillPreset: activeChat.skillPreset
+        };
+        Object.assign(activeChat, nextChatSettings);
+        if (!VALID_SKILL_PRESETS.has(activeChat.skillPreset)) activeChat.skillPreset = 'auto';
+        if (!persistChats()) {
+          Object.assign(activeChat, previousChatSettings);
+          const restored = rollbackProfileStorage();
+          throw new Error(restored
+            ? 'Настройки чата не сохранились; импорт профиля отменён и прежние параметры восстановлены.'
+            : 'Настройки чата не сохранились, а полный откат профиля не удался. Сначала экспортируй доступные данные.');
+        }
         $('providerPreset').value = settings.provider;
         $('modelSearch').value = '';
         $('baseUrl').value = baseUrl;
@@ -2769,8 +2816,7 @@ permalink: /
         $('toggleSearch').checked = settings.search !== false;
         $('toggleMultiAgent').checked = settings.multiAgent === true;
         $('allowCrossProviderFallback').checked = settings.crossProviderFallback === true;
-        processingMode = settings.mode === 'deep' ? 'deep' : 'fast';
-        updateModeUI();
+        processingMode = nextChatSettings.processingMode;
         applyProviderPreset(settings.provider, true);
         $('modelName').value = settings.model.trim();
         $('baseUrl').value = baseUrl;
@@ -2778,14 +2824,6 @@ permalink: /
         $('toggleSearch').checked = settings.search !== false;
         $('toggleMultiAgent').checked = settings.multiAgent === true;
         $('allowCrossProviderFallback').checked = settings.crossProviderFallback === true;
-        safeSet(STORAGE.model, $('modelName').value);
-        const activeChat = getCurrentChat();
-        activeChat.processingMode = settings.mode === 'deep' ? 'deep' : 'fast';
-        activeChat.searchMode = settings.offline === true || settings.search === false ? 'offline' : 'normal';
-        activeChat.multiAgentEnabled = settings.multiAgent === true;
-        if (!VALID_SKILL_PRESETS.has(activeChat.skillPreset)) activeChat.skillPreset = 'auto';
-        safeSet(STORAGE.searchMode, activeChat.searchMode);
-        persistChats();
         updateModeUI();
         updateOfflineUI();
         safeSet('ai_provider_model_catalog_stale_v1_' + settings.provider, 'true');

@@ -2758,6 +2758,111 @@ test('browser Python snippets cannot access page globals through Pyodide js modu
 });
 
 
+test('settings profile import rolls back all earlier keys when a later storage write fails', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__failProfileKey = null;
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (window.__failProfileKey === key) {
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+      }
+      return originalSetItem.call(this, key, value);
+    };
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const keys = [
+    'ai_api_provider', 'ai_base_url', 'ai_model_name', 'ai_processing_mode',
+    'ai_web_search', 'ai_multi_agent_research', 'ai_offline_mode',
+    'ai_cross_provider_fallback', 'ai_system_prompt', 'ai_web_search_preset_v1'
+  ];
+  const before = await page.evaluate(storageKeys => {
+    const values = {};
+    for (const key of storageKeys) values[key] = localStorage.getItem(key);
+    return values;
+  }, keys);
+  await page.evaluate(() => { window.__failProfileKey = 'ai_system_prompt'; });
+  const profile = {
+    format: 'ai-mobile-agent-settings',
+    version: 1,
+    settings: {
+      provider: 'groq',
+      baseUrl: 'https://api.groq.com/openai/v1',
+      model: 'openai/gpt-oss-20b',
+      systemPrompt: 'Imported profile prompt',
+      mode: 'deep',
+      search: false,
+      multiAgent: true,
+      offline: true,
+      crossProviderFallback: false
+    }
+  };
+  await page.locator('#settingsProfileFile').setInputFiles({
+    name: 'settings-profile.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(profile))
+  });
+  await expect(page.locator('#toast')).toContainText('Импорт профиля не выполнен');
+  const after = await page.evaluate(storageKeys => {
+    const values = {};
+    for (const key of storageKeys) values[key] = localStorage.getItem(key);
+    return values;
+  }, keys);
+  expect(after).toEqual(before);
+});
+
+test('settings profile import rolls back provider keys when chat persistence fails', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__failCurrentWrite = false;
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (window.__failCurrentWrite && key === 'ai_current_chat_v87') {
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+      }
+      return originalSetItem.call(this, key, value);
+    };
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const keys = [
+    'ai_api_provider', 'ai_base_url', 'ai_model_name', 'ai_processing_mode',
+    'ai_web_search', 'ai_multi_agent_research', 'ai_offline_mode',
+    'ai_cross_provider_fallback', 'ai_system_prompt', 'ai_web_search_preset_v1',
+    'ai_chats_v87', 'ai_current_chat_v87'
+  ];
+  const before = await page.evaluate(storageKeys => {
+    const values = {};
+    for (const key of storageKeys) values[key] = localStorage.getItem(key);
+    return values;
+  }, keys);
+  await page.evaluate(() => { window.__failCurrentWrite = true; });
+  const profile = {
+    format: 'ai-mobile-agent-settings',
+    version: 1,
+    settings: {
+      provider: 'groq',
+      baseUrl: 'https://api.groq.com/openai/v1',
+      model: 'openai/gpt-oss-20b',
+      systemPrompt: 'Imported profile prompt',
+      mode: 'deep',
+      search: false,
+      multiAgent: true,
+      offline: true,
+      crossProviderFallback: false
+    }
+  };
+  await page.locator('#settingsProfileFile').setInputFiles({
+    name: 'settings-profile.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(profile))
+  });
+  await expect(page.locator('#toast')).toContainText('Импорт профиля не выполнен');
+  const after = await page.evaluate(storageKeys => {
+    const values = {};
+    for (const key of storageKeys) values[key] = localStorage.getItem(key);
+    return values;
+  }, keys);
+  expect(after).toEqual(before);
+});
+
 test('corrupt project storage is preserved and exposes a downloadable recovery backup', async ({ page }) => {
   const raw = '{"projects":';
   await page.addInitScript(value => localStorage.setItem('ai_projects_v1', value), raw);
