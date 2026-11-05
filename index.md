@@ -1012,8 +1012,17 @@ permalink: /
               ...(m.error ? { error: true } : {})
             }))
           }));
-        const hasInvalidMessages = raw.some(item => item && Array.isArray(item.messages) && item.messages.some(message => !message || !['user', 'assistant', 'tool'].includes(message.role)));
-        if (valid.length !== raw.length || hasInvalidMessages) preserveUnreadableChats(rawText);
+        const hasInvalidMessages = raw.some(item => !item || typeof item !== 'object' || typeof item.id !== 'string' || !Array.isArray(item.messages) || item.messages.some(message => !message || typeof message !== 'object' || !['user', 'assistant', 'tool'].includes(message.role) || (message.content !== undefined && typeof message.content !== 'string')));
+        const hasTruncatedChatFields = raw.some(item => item && typeof item === 'object' && (
+          (typeof item.id === 'string' && item.id.length > 128) || (typeof item.title === 'string' && item.title.length > 160) ||
+          (typeof item.customSkillName === 'string' && item.customSkillName.length > 80) ||
+          (typeof item.customSkillInstructions === 'string' && item.customSkillInstructions.length > 3000) ||
+          (typeof item.customSkillOutput === 'string' && item.customSkillOutput.length > 500) ||
+          (typeof item.agentTeamCustomScenario === 'string' && item.agentTeamCustomScenario.length > 1000) ||
+          (typeof item.agentCustomRoles === 'string' && item.agentCustomRoles.length > 1500) ||
+          (Array.isArray(item.messages) && item.messages.some(message => message && ((typeof message.content === 'string' && message.content.length > 30000) || (typeof message.tool_calls !== 'undefined' && !Array.isArray(message.tool_calls)))))
+        ));
+        if (valid.length !== raw.length || hasInvalidMessages || hasTruncatedChatFields) preserveUnreadableChats(rawText);
         return valid.length ? valid : [createChat()];
       } catch (error) {
         preserveUnreadableChats(rawText);
@@ -1042,8 +1051,8 @@ permalink: /
       return chats.find((chat) => chat.id === currentChatId) || chats[0];
     }
     function downloadRecoveryBackup() {
-      if (!chatRecoveryBackupKey) throw new Error('Резервная копия истории не найдена.');
-      const raw = chatRecoveryBackupKey ? safeGet(chatRecoveryBackupKey) : (chatStorageCorruptNotBackedUp ? safeGet(STORAGE.chats) : null);
+      if (!chatRecoveryBackupKey && !chatStorageCorruptNotBackedUp) throw new Error('Резервная копия истории не найдена.');
+      const raw = chatRecoveryBackupKey ? safeGet(chatRecoveryBackupKey) : safeGet(STORAGE.chats);
       if (raw === null) throw new Error('Резервная копия истории недоступна в этом браузере.');
       const blob = new Blob([raw], { type: 'application/json;charset=utf-8' });
       const url = URL.createObjectURL(blob);
@@ -1057,8 +1066,8 @@ permalink: /
       showToast('Резервная копия истории скачивается.');
     }
     function downloadProjectRecoveryBackup() {
-      if (!projectRecoveryBackupKey) throw new Error('Резервная копия проектов не найдена.');
-      const raw = projectRecoveryBackupKey ? safeGet(projectRecoveryBackupKey) : (projectStorageCorruptNotBackedUp ? safeGet(STORAGE.projects) : null);
+      if (!projectRecoveryBackupKey && !projectStorageCorruptNotBackedUp) throw new Error('Резервная копия проектов не найдена.');
+      const raw = projectRecoveryBackupKey ? safeGet(projectRecoveryBackupKey) : safeGet(STORAGE.projects);
       if (raw === null) throw new Error('Резервная копия проектов недоступна в этом браузере.');
       const blob = new Blob([raw], { type: 'application/json;charset=utf-8' });
       const url = URL.createObjectURL(blob);
