@@ -1696,21 +1696,36 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                                                                     "type": "rate_limit_error"}},
                                 headers={"Retry-After": "3"})
         client: httpx.AsyncClient = request.app.state.client
+        slot_released = False
+
+        def release_slot() -> None:
+            nonlocal slot_released
+            if not slot_released:
+                slot_released = True
+                semaphore.release()
+
         try:
             upstream = await client.send(client.build_request(
                 "POST", f"{config.ollama_base_url}/v1/chat/completions",
                 content=json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8"),
                 headers={"Content-Type": "application/json", "Accept": "text/event-stream" if stream else "application/json"},
             ), stream=True)
+        except asyncio.CancelledError:
+            # Client disconnect/cancellation before upstream headers must not leak the
+            # gateway-wide inference slot.
+            release_slot()
+            raise
         except (httpx.HTTPError, asyncio.TimeoutError):
-            semaphore.release()
+            release_slot()
             logger.warning("Ollama chat request failed before response; request body omitted")
             return JSONResponse(status_code=502, content={"error": {"message": "Local model backend is unavailable.",
                                                                     "type": "upstream_error"}})
         if upstream.status_code >= 400:
             status = upstream.status_code
-            await upstream.aclose()
-            semaphore.release()
+            try:
+                await upstream.aclose()
+            finally:
+                release_slot()
             logger.warning("Ollama rejected chat request with HTTP %s", status)
             error_response = upstream_error(status)
             error_response.headers["X-AI-Cache"] = "BYPASS"
@@ -1725,8 +1740,10 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                     logger.warning("Ollama stream interrupted; request body omitted")
                     yield b'data: {"error":{"message":"Local model stream interrupted","type":"upstream_error"}}\n\n'
                 finally:
-                    await upstream.aclose()
-                    semaphore.release()
+                    try:
+                        await upstream.aclose()
+                    finally:
+                        release_slot()
             return StreamingResponse(forward_stream(), status_code=upstream.status_code,
                                      media_type="text/event-stream",
                                      headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no",
@@ -1750,8 +1767,10 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                                                                     "type": "upstream_error"}},
                                 headers={"Cache-Control": "no-store", "X-AI-Cache": "BYPASS"})
         finally:
-            await upstream.aclose()
-            semaphore.release()
+            try:
+                await upstream.aclose()
+            finally:
+                release_slot()
 
     try:
         from .security.google_oauth import build_google_oauth_router
