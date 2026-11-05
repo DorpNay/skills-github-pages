@@ -36,7 +36,7 @@ artifacts:
     sha256: "961d5ff98a17f4aa6de69864d0aa71fa5bac682301d2b5d17a3f24c5c99a46d4"
     ship: false
     status: "downloaded_for_eval"
-    notes: "Acquired via Actions #41968439622/artifact #13389210196; 46,236,750 bytes. SHA-256 independently verified after transfer; ZIP CRC and path safety checks passed. No runtime integration, target-host eval or RU golden-set bake-off yet. Official catalog license listing reviewed; retain NOTICE/license attribution before any distribution."
+    notes: "Acquired via Actions #41968439622/artifact #13389210196; 46,236,750 bytes. SHA-256 independently verified after transfer; outer/inner ZIP CRC and path safety checks passed. Inner archive extracted in the working environment: 14 files / 91,289,240 bytes; no traversal paths or symlinks. Working-copy only, not repository-hosted. No runtime integration, target-host eval or RU golden-set bake-off yet. Official catalog license listing reviewed; retain NOTICE/license attribution before any distribution."
 
   - id: silero-vad-onnx
     kind: vad_model_weights
