@@ -952,7 +952,7 @@ permalink: /
       return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false, serverProjectMemoryEnabled: false, privateMemoryUsed: false, processingMode: 'fast', searchMode: 'normal', multiAgentEnabled: false, skillPreset: 'auto', customSkillName:'', customSkillInstructions:'', customSkillOutput:'', skillGoal:'planning', skillOutputMode:'summary', agentTeamSize:4, agentTeamScenario:'general', agentTeamCustomScenario:'', agentRolePreset:'balanced', agentCustomRoles:'' };
     }
     function preserveUnreadableChats(rawText) {
-      if (!rawText) return;
+      if (rawText === null) return;
       const baseKey = 'ai_chats_recovery_backup';
       let backupKey = baseKey;
       try {
@@ -977,7 +977,7 @@ permalink: /
       let rawText = null;
       try {
         rawText = localStorage.getItem(STORAGE.chats);
-        if (!rawText) return [createChat()];
+        if (rawText === null) return [createChat()];
         const raw = JSON.parse(rawText);
         if (!Array.isArray(raw)) {
           preserveUnreadableChats(rawText);
@@ -1772,7 +1772,7 @@ permalink: /
       requestAnimationFrame(updateJumpToLatest);
     }
     function preserveUnreadableProjects(rawText) {
-      if (!rawText) return;
+      if (rawText === null) return;
       const baseKey = 'ai_projects_recovery_backup';
       let backupKey = baseKey;
       try {
@@ -1792,13 +1792,18 @@ permalink: /
       let rawText = null;
       try {
         rawText = localStorage.getItem(STORAGE.projects);
-        if (!rawText) return [];
+        if (rawText === null) return [];
         const raw = JSON.parse(rawText);
         if (!Array.isArray(raw)) { preserveUnreadableProjects(rawText); return []; }
         const hasInvalidMemory = raw.some(project => project && Array.isArray(project.memory) && project.memory.some(item => !item || typeof item.id !== 'string' || typeof item.text !== 'string'));
         const hasInvalidMemoryShape = raw.some(project => project && project.memory !== undefined && !Array.isArray(project.memory));
+        const hasTruncatedFields = raw.some(project => project && typeof project === 'object' && (
+          (typeof project.id === 'string' && project.id.length > 128) || (typeof project.name === 'string' && project.name.length > 100) ||
+          (typeof project.description === 'string' && project.description.length > 1000) || (typeof project.instructions === 'string' && project.instructions.length > 6000) ||
+          (Array.isArray(project.memory) && project.memory.some(item => item && ((typeof item.id === 'string' && item.id.length > 128) || (typeof item.text === 'string' && item.text.length > 600))))
+        ));
         const structurallyValid = raw.filter(project => project && typeof project === 'object' && typeof project.id === 'string' && typeof project.name === 'string');
-        if (structurallyValid.length !== raw.length || raw.length > 200 || hasInvalidMemory || hasInvalidMemoryShape || raw.some(project => Array.isArray(project?.memory) && project.memory.length > 500)) preserveUnreadableProjects(rawText);
+        if (structurallyValid.length !== raw.length || raw.length > 200 || hasInvalidMemory || hasInvalidMemoryShape || hasTruncatedFields || raw.some(project => Array.isArray(project?.memory) && project.memory.length > 500)) preserveUnreadableProjects(rawText);
         return structurallyValid.slice(0,200).map(project => ({
           id:project.id.slice(0,128),name:project.name.slice(0,100),description:typeof project.description==='string'?project.description.slice(0,1000):'',
           instructions:typeof project.instructions==='string'?project.instructions.slice(0,6000):'',
