@@ -8,12 +8,12 @@
 - **Последние интеграции:** #146 task registry; #147 cancellation-safe Gateway semaphore; #148 UI Markdown/Pyodide security boundary; #149 state snapshot/orientation, Node 24 workflows, pypdf 6.21.4 и Vosk provenance. Merge SHA #149: `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`.
 - **PR #149 exact-head checks:** Quality #42001310270 (7 jobs), Freshness #42001309687, Provenance #42001309703, Graphify #42001311323 — PASS. Post-merge main workflow IDs не получены; не выдавать PR-head PASS за post-merge verification.
 - **Live queue snapshot:** open PRs (6): #125, #128, #129, #130, #131, #134; open issues (1): #111.
-- **PR #150 — текущий code/test HEAD:** `c1103a74cc0774380b98728fd0e5698c1afb64db`. Raw recovery backups, fail-closed persistence, project/chat rollback и transactional settings-profile import; шесть Chromium regressions. Quality #42055926804 (7 jobs), Freshness #42055926891, Provenance #42055927055, Graphify #42055927133 PASS. Freshness main-checkpoint/live-queue step skipped by PR condition. P2 follow-up: other chat-setting handlers still need rollback on persistence failure. PR open/unmerged; owner merge decision pending.
+- **PR #150 — code/test HEAD:** `54e4858ed19fb4fa1daaa55444121ff2f8c5f780`. Recovery backups/rollback, transactional settings-profile import and shared setter rollback; eight Chromium regressions. Quality #42059797507 (7 jobs), Freshness #42059797510, Provenance #42059797913, Graphify #42059797551 PASS. Freshness main/live-queue step skipped under PR condition. PR open/unmerged; owner merge decision pending.
 - **Новая conditional privacy finding:** FTS5 secure-delete доступен с SQLite 3.42.0+; MemoryManager проверяет версию, но capability не выведен в health. На более старой SQLite логическое удаление может оставить записи в FTS segments до merge. Live SQLite/feature flag/host не проверены.
 - **PR #131:** HEAD `02fb4e8986b35f55a8a3b5308704b631dfbcce80`, 1,101 ahead / 17 behind, 57 files, `mergeable=false`. Не синхронизировать и не вливать целиком.
 - **PR #134:** Draft/HOLD, HEAD `519973c793a1c998b43c60dedfe55a02b74a26a9`; review #5779912938 остаётся remediation gate.
 - **Branch cleanup:** 145 refs (143 в исходном inventory + ветка merged PR #149 + active PR #150). Пять behind-only candidates и один tree-equivalent PR #133 branch проверены; удаление не выполнено — branch-delete action отсутствует.
-- **Следующий шаг:** AUDIT-FIND-014 / FIX-012 — common rollback for chat-setting handlers that ignore `persistChats()` failure; then final manual review of PR #150. Keep FTS5 target-runtime verification, provider/storage/voice/document/RAG, bounded Pyodide Worker and PR #131 selective work queued. Issue #111 remains open.
+- **Следующий шаг:** final manual review of PR #150; then audit startup migration/privateMemoryUsed persistence and verify target-host SQLite/FTS5. Keep provider/storage/voice/document/RAG and bounded Pyodide work queued; PR #131 selective, #111 open.
 
 ## 1. Быстрый маршрут
 

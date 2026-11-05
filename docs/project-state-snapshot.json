@@ -127,7 +127,7 @@
     "main_freshness_run": null,
     "main_graphify_run": null,
     "open_prs": "6 open PRs: #125, #128, #129, #130, #131, #134",
-    "owner_task": "Resolve P2 AUDIT-FIND-014 / FIX-012: chat-setting handlers that leave in-memory state changed when persistChats() returns false. Then complete manual PR #150 review and owner merge decision; keep target-host FTS5 capability, issue #111 release gates, PR #131 selective audit and research HOLD branches queued.",
+    "owner_task": "Complete final manual PR #150 diff/call-site review, including startup migration and privateMemoryUsed persistence. Keep owner merge decision pending. Then verify target-host SQLite/FTS5 capability and continue the provider/storage/voice/document/RAG audit; preserve PR #131 selective promotion, research HOLD branches and issue #111 release gates.",
     "pr131_head": "02fb4e8986b35f55a8a3b5308704b631dfbcce80",
     "pr131_exact_head_verified": false,
     "pr131_compare": "diverged: 1,101 ahead / 17 behind; 57 files; mergeable=false; keep V2 isolated.",
@@ -179,5 +179,5 @@
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-05-SETTINGS-PROFILE-TRANSACTIONAL-001"
+  "last_volley": "V-2026-11-05-CHAT-SETTING-ROLLBACK-001"
 }
