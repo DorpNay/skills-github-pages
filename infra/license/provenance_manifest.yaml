@@ -36,7 +36,7 @@ artifacts:
     sha256: "961d5ff98a17f4aa6de69864d0aa71fa5bac682301d2b5d17a3f24c5c99a46d4"
     ship: false
     status: "downloaded_for_eval"
-    notes: "Acquired via Actions #41968439622/artifact #13389210196; 46,236,750 bytes. SHA-256 independently verified after transfer; outer/inner ZIP CRC and path safety checks passed. Inner archive extracted in the working environment: 14 files / 91,289,240 bytes; no traversal paths or symlinks. Working-copy only, not repository-hosted. No runtime integration, target-host eval or RU golden-set bake-off yet. Official catalog license listing reviewed; retain NOTICE/license attribution before any distribution."
+    notes: "Acquired via Actions #41968439622/artifact #13389210196; 46,236,750 bytes. SHA-256 independently verified after transfer; outer/inner ZIP CRC and path safety checks passed. Inner archive extracted in the working environment: 14 files / 91,289,240 bytes; no traversal paths or symlinks. Repository-hosted at models/vosk/vosk-model-small-ru-0.22.zip (46,236,750 bytes); SHA-256 is independently recorded in models/vosk/SHA256SUMS and models/vosk/LICENSE contains Apache-2.0 terms. Evaluation-only: no runtime integration, target-host eval or RU golden-set bake-off yet; ship=false."
 
   - id: silero-vad-onnx
     kind: vad_model_weights
@@ -126,7 +126,7 @@ artifacts:
   - id: pypdf-runtime
     kind: document_parser_runtime
     upstream: "https://github.com/py-pdf/pypdf"
-    source_version: "6.4.1"
+    source_version: "6.21.4"
     license_spdx: "BSD-3-Clause"
     commercial_use: "allowed_with_license_notice"
     sha256: null
