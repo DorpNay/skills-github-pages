@@ -2854,4 +2854,14 @@ test('project writes fail closed when malformed source data cannot be backed up'
     current: localStorage.getItem('ai_current_chat_v87')
   }));
   expect(after).toEqual(before);
+  await page.locator('#projectManagerDetails').evaluate(node => { node.open = true; });
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.locator('#projectRecoveryBackupButton').click()
+  ]);
+  expect(download.suggestedFilename()).toBe('ai-projects-recovery-backup.json');
+  const stream = await download.createReadStream();
+  let downloaded = '';
+  for await (const chunk of stream) downloaded += chunk.toString();
+  expect(downloaded).toBe(raw);
 });
