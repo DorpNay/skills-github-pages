@@ -2296,6 +2296,8 @@ permalink: /
       showToast('Выбранный факт добавлен в общую память. Личная копия сохранена.');
     }
     function updateState(nextChats = null, nextCurrentId = null) {
+      const previousChats = chats;
+      const previousCurrentId = currentChatId;
       if (Array.isArray(nextChats)) {
         chats = nextChats.length ? nextChats : [createChat()];
       }
@@ -2303,6 +2305,10 @@ permalink: /
       if (!chats.some((chat) => chat.id === currentChatId)) currentChatId = chats[0].id;
       if ($('modeFast')) syncCurrentChatFunctionSettings();
       const persisted = persistChats();
+      if (!persisted) {
+        chats = previousChats;
+        currentChatId = previousCurrentId;
+      }
       renderChatList(); renderActiveChat(); renderProjectUI({preserveDraft:true});
       return persisted;
     }
@@ -4313,14 +4319,17 @@ permalink: /
       const english=getUiLanguage()==='en';
       if(!confirm(english?'Clear the history of this chat?':'Очистить историю этого чата?'))return;
       if(activeChatId===id)stopGeneration();
+      const previousMessages=chat.messages,previousTitle=chat.title;
       chat.messages=[];chat.title=english?'New chat':'Новый чат';
-      updateState([...chats],currentChatId);
+      if(!updateState([...chats],currentChatId)){chat.messages=previousMessages;chat.title=previousTitle;renderChatList();renderActiveChat();renderProjectUI({preserveDraft:true});}
     }
     function clearCurrentChat() {
       if (!confirm('Очистить историю текущего чата?')) return;
       if (activeChatId === currentChatId) stopGeneration();
-      const chat = getCurrentChat(); chat.messages = []; chat.title = 'Новый чат';
-      updateState([...chats]); toggleSidebar(false);
+      const chat = getCurrentChat(),previousMessages=chat.messages,previousTitle=chat.title;
+      chat.messages = []; chat.title = 'Новый чат';
+      if(!updateState([...chats])){chat.messages=previousMessages;chat.title=previousTitle;renderChatList();renderActiveChat();renderProjectUI({preserveDraft:true});}
+      toggleSidebar(false);
     }
     function switchChat(id) {
       if (!chats.some((chat) => chat.id === id)) return;
