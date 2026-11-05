@@ -2747,3 +2747,105 @@ test('browser Python snippets cannot access page globals through Pyodide js modu
   await expect(output).toContainText('"exposesSensitiveGlobals":false');
   await expect(page.locator('#pyStatus')).toContainText('Py: готов');
 });
+
+
+test('corrupt project storage is preserved and exposes a downloadable recovery backup', async ({ page }) => {
+  const raw = '{"projects":';
+  await page.addInitScript(value => localStorage.setItem('ai_projects_v1', value), raw);
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#projectRecoveryBackupButton')).not.toHaveClass(/hidden/);
+  const values = await page.evaluate(() => ({
+    original: localStorage.getItem('ai_projects_v1'),
+    backup: localStorage.getItem('ai_projects_recovery_backup')
+  }));
+  expect(values).toEqual({ original: raw, backup: raw });
+});
+
+test('partially invalid chat history is backed up before valid records are persisted', async ({ page }) => {
+  const raw = JSON.stringify([
+    { id: 'valid-chat', title: 'Valid', messages: [{ role: 'user', content: 'keep me' }] },
+    { id: 'invalid-chat', title: 'Invalid', messages: 'not-an-array' }
+  ]);
+  await page.addInitScript(value => localStorage.setItem('ai_chats_v87', value), raw);
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_chats_recovery_backup'))).toBe(raw);
+  const persisted = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]'));
+  expect(persisted).toHaveLength(1);
+  expect(persisted[0].id).toBe('valid-chat');
+});
+
+test('project import rolls back project and chat writes when current-chat persistence fails', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__failCurrentWrite = false;
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (window.__failCurrentWrite && key === 'ai_current_chat_v87') {
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+      }
+      return originalSetItem.call(this, key, value);
+    };
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const before = await page.evaluate(() => ({
+    projects: localStorage.getItem('ai_projects_v1'),
+    chats: localStorage.getItem('ai_chats_v87'),
+    current: localStorage.getItem('ai_current_chat_v87')
+  }));
+  await page.evaluate(() => { window.__failCurrentWrite = true; });
+  const bundle = {
+    format: 'alandi-project-bundle',
+    version: 1,
+    project: { name: 'Quota rollback test', memory: [] },
+    chats: [{ id: 'imported-chat', messages: [{ role: 'user', content: 'must not persist' }] }]
+  };
+  await page.locator('#importProjectFile').setInputFiles({
+    name: 'project-bundle.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(bundle))
+  });
+  await expect(page.locator('#toast')).toContainText('Импорт проекта не выполнен');
+  const after = await page.evaluate(() => ({
+    projects: localStorage.getItem('ai_projects_v1'),
+    chats: localStorage.getItem('ai_chats_v87'),
+    current: localStorage.getItem('ai_current_chat_v87')
+  }));
+  expect(after).toEqual(before);
+});
+
+test('project writes fail closed when malformed source data cannot be backed up', async ({ page }) => {
+  const raw = '{"broken":';
+  await page.addInitScript(value => {
+    localStorage.setItem('ai_projects_v1', value);
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, nextValue) {
+      if (key.startsWith('ai_projects_recovery_backup')) {
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+      }
+      return originalSetItem.call(this, key, nextValue);
+    };
+  }, raw);
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const before = await page.evaluate(() => ({
+    projects: localStorage.getItem('ai_projects_v1'),
+    chats: localStorage.getItem('ai_chats_v87'),
+    current: localStorage.getItem('ai_current_chat_v87')
+  }));
+  const bundle = {
+    format: 'alandi-project-bundle',
+    version: 1,
+    project: { name: 'Must not overwrite corrupt data', memory: [] },
+    chats: [{ id: 'new-chat', messages: [{ role: 'user', content: 'test' }] }]
+  };
+  await page.locator('#importProjectFile').setInputFiles({
+    name: 'project-bundle.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(bundle))
+  });
+  await expect(page.locator('#toast')).toContainText('Импорт проекта не выполнен');
+  const after = await page.evaluate(() => ({
+    projects: localStorage.getItem('ai_projects_v1'),
+    chats: localStorage.getItem('ai_chats_v87'),
+    current: localStorage.getItem('ai_current_chat_v87')
+  }));
+  expect(after).toEqual(before);
+});
