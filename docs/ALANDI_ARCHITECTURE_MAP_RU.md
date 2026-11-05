@@ -1,6 +1,6 @@
 # aLandi — карта архитектуры и модулей
 
-**Срез:** main baseline `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`; PR #146 merged at `21162e858d769c23ee4907264305f792148a7fbf`, PR #147 at `3f37a8166fcbf89c5392f985e290be48ea27ef6a`, PR #148 at `4fbf16aad3f741159654950e0260aaf717653291`, PR #149 at `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`. PR #150 storage recovery slice is in review at `57a10e82198943da5e7625b26daa10d15ccafc40`; do not treat it as merged/verified. Earlier V1/Gateway foundations #121/#122 remain part of this map.  
+**Срез:** main baseline `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`; PR #146 merged at `21162e858d769c23ee4907264305f792148a7fbf`, PR #147 at `3f37a8166fcbf89c5392f985e290be48ea27ef6a`, PR #148 at `4fbf16aad3f741159654950e0260aaf717653291`, PR #149 at `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`. PR #150 storage recovery slice is in review at `5877edaa4be706376474a86c392640a7e755bb25`; do not treat it as merged/verified. Earlier V1/Gateway foundations #121/#122 remain part of this map.  
 **Тип:** кураторская схема границ модулей по дереву репозитория и фактическим route/function declarations. Это **не** автоматически извлечённый call graph и не доказательство live deployment.
 
 ## 1. Системная схема
@@ -137,4 +137,4 @@ PR #121 merged at f4d880f9648989f4fe48ddd2284220b3606c3b86 after exact-head Gate
 - Gate success UI on persistence results; add a 50,000-message aggregate import limit and a 100-tool-call cap for imported project messages.
 - Four Chromium regressions cover project backup download, partial chat recovery, project/chat rollback on quota failure, and fail-closed preservation when a recovery backup cannot be written.
 
-**Verification status:** PR #150 branch HEAD `57a10e82198943da5e7625b26daa10d15ccafc40`; exact-head Quality/Chromium/Graphify/Freshness checks pending. This section describes the candidate implementation, not main runtime state.
+**Verification status:** PR #150 branch HEAD `5877edaa4be706376474a86c392640a7e755bb25`; exact-head Quality/Chromium/Graphify/Freshness checks pending. This section describes the candidate implementation, not main runtime state.
