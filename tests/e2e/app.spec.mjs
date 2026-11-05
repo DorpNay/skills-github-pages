@@ -2792,6 +2792,8 @@ test('project import rolls back project and chat writes when current-chat persis
     };
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_chats_v87'))).not.toBeNull();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_current_chat_v87'))).not.toBeNull();
   const before = await page.evaluate(() => ({
     projects: localStorage.getItem('ai_projects_v1'),
     chats: localStorage.getItem('ai_chats_v87'),
@@ -2831,6 +2833,8 @@ test('project writes fail closed when malformed source data cannot be backed up'
     };
   }, raw);
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_chats_v87'))).not.toBeNull();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_current_chat_v87'))).not.toBeNull();
   const before = await page.evaluate(() => ({
     projects: localStorage.getItem('ai_projects_v1'),
     chats: localStorage.getItem('ai_chats_v87'),
