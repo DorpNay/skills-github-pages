@@ -8,12 +8,12 @@
 - **Последние интеграции:** #146 task registry; #147 cancellation-safe Gateway semaphore; #148 UI Markdown/Pyodide security boundary; #149 state snapshot/orientation, Node 24 workflows, pypdf 6.21.4 и Vosk provenance. Merge SHA #149: `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`.
 - **PR #149 exact-head checks:** Quality #42001310270 (7 jobs), Freshness #42001309687, Provenance #42001309703, Graphify #42001311323 — PASS. Post-merge main workflow IDs не получены; не выдавать PR-head PASS за post-merge verification.
 - **Live queue snapshot:** open PRs (6): #125, #128, #129, #130, #131, #134; open issues (1): #111.
-- **PR #150 — текущий кодовый slice:** `fix/browser-storage-recovery-atomicity-20261105`, code checkpoint `57a10e82198943da5e7625b26daa10d15ccafc40`. Исправление backup/rollback localStorage, fail-closed storage, импорт/удаление проекта как одна логическая операция, gating success UI; четыре Chromium regression tests и лимит 50 000 сообщений. Проверки ещё не завершены.
+- **PR #150 — текущий slice:** `fix/browser-storage-recovery-atomicity-20261105`, exact HEAD `0c2cf9f15c9cef6053487e5f01adadcb8917115e`. Исправление backup/rollback localStorage, fail-closed storage, импорт/удаление проекта как одна логическая операция, gating success UI; четыре Chromium regression tests и лимит 50 000 сообщений. Quality #42011984158 (7 jobs), Freshness #42011984534, Provenance #42011984243 и Graphify #42011984203 прошли на exact HEAD. PR открыт, не слит; owner merge decision pending.
 - **Новая conditional privacy finding:** FTS5 secure-delete доступен с SQLite 3.42.0+; MemoryManager проверяет версию, но capability не выведен в health. На более старой SQLite логическое удаление может оставить записи в FTS segments до merge. Live SQLite/feature flag/host не проверены.
 - **PR #131:** HEAD `02fb4e8986b35f55a8a3b5308704b631dfbcce80`, 1,101 ahead / 17 behind, 57 files, `mergeable=false`. Не синхронизировать и не вливать целиком.
 - **PR #134:** Draft/HOLD, HEAD `519973c793a1c998b43c60dedfe55a02b74a26a9`; review #5779912938 остаётся remediation gate.
 - **Branch cleanup:** 145 refs (143 в исходном inventory + ветка merged PR #149 + active PR #150). Пять behind-only candidates и один tree-equivalent PR #133 branch проверены; удаление не выполнено — branch-delete action отсутствует.
-- **Следующий шаг:** exact-head Quality/Chromium/Graphify/Freshness для PR #150; затем FTS5 capability/target SQLite check и продолжение audit provider/storage, voice, document intake, RAG и V2 slices. Issue #111 оставить открытым.
+- **Следующий шаг:** review exact-head PR #150 и всех failure paths; не считать PR merged. Затем FTS5 capability/target SQLite check и продолжение audit provider/storage, voice, document intake, RAG и V2 slices. Issue #111 оставить открытым.
 
 ## 1. Быстрый маршрут
 
