@@ -119,10 +119,10 @@
     "pr131_quality_run": 41981955002,
     "pr131_provenance_run": 41787658226,
     "pr131_full_gate_verified": false,
-    "pr131_quality_scope": "4/4 real Chromium shards, Jekyll, Integrity, Security, Context and static analysis passed; published Pages smoke skipped",
+    "pr131_quality_scope": "Final PR #131 HEAD 02fb4e8986b35f55a8a3b5308704b631dfbcce80: Quality #41981955002 passed static analysis, Jekyll, four real Chromium shards, Integrity, Security and Context; published Pages smoke was skipped.",
     "pr131_missing_checks": [
-      "Independent Quality on final PR #131 HEAD (run 41981955002 pending at snapshot)",
       "Project State Freshness on final PR #131 HEAD",
+      "Graphify on final PR #131 HEAD (latest pass is code/test HEAD c79e983a57d6cc2b87a9296a1334e6d6ed5b3479; subsequent commits were docs-only)",
       "native iPhone Safari",
       "VoiceOver",
       "physical keyboard/long-press",
