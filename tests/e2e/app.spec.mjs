@@ -2863,6 +2863,84 @@ test('settings profile import rolls back provider keys when chat persistence fai
   expect(after).toEqual(before);
 });
 
+test('chat mode setters restore chat and mirrored storage when quota blocks persistence', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__failChatWrites = false;
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (window.__failChatWrites && key === 'ai_chats_v87') {
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+      }
+      return originalSetItem.call(this, key, value);
+    };
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const keys = [
+    'ai_chats_v87', 'ai_processing_mode', 'ai_web_search_preset_v1',
+    'ai_web_search', 'ai_offline_mode', 'ai_multi_agent_research'
+  ];
+  const before = await page.evaluate(storageKeys => {
+    const values = {};
+    for (const key of storageKeys) values[key] = localStorage.getItem(key);
+    return values;
+  }, keys);
+  await page.evaluate(() => { window.__failChatWrites = true; });
+  await page.locator('#modeDeep').click();
+  await page.evaluate(() => {
+    const search = document.querySelector('#toggleSearch');
+    search.checked = !search.checked;
+    search.dispatchEvent(new Event('change', { bubbles: true }));
+    const multi = document.querySelector('#toggleMultiAgent');
+    multi.checked = !multi.checked;
+    multi.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await expect(page.locator('#toast')).toContainText('История не подтверждена');
+  const after = await page.evaluate(storageKeys => {
+    const values = {};
+    for (const key of storageKeys) values[key] = localStorage.getItem(key);
+    return values;
+  }, keys);
+  expect(after).toEqual(before);
+  await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'false');
+});
+
+test('skill and agent configuration setters restore unsaved values when chat storage fails', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__failChatWrites = false;
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (window.__failChatWrites && key === 'ai_chats_v87') {
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+      }
+      return originalSetItem.call(this, key, value);
+    };
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const before = await page.evaluate(() => localStorage.getItem('ai_chats_v87'));
+  await page.evaluate(() => { window.__failChatWrites = true; });
+  await page.evaluate(() => {
+    const goal = document.querySelector('#skillGoalSelect');
+    const option = [...goal.options].find(item => item.value && item.value !== goal.value);
+    if (option) {
+      goal.value = option.value;
+      goal.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    const size = document.querySelector('#agentTeamSize');
+    size.value = '7';
+    size.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  const after = await page.evaluate(() => localStorage.getItem('ai_chats_v87'));
+  expect(after).toBe(before);
+  const activeChat = await page.evaluate(() => {
+    const raw = localStorage.getItem('ai_chats_v87');
+    const parsed = JSON.parse(raw);
+    return parsed.find(chat => chat.id === localStorage.getItem('ai_current_chat_v87')) || parsed[0];
+  });
+  await expect(page.locator('#skillGoalSelect')).toHaveValue(activeChat.skillGoal);
+  await expect(page.locator('#agentTeamSize')).toHaveValue(String(activeChat.agentTeamSize));
+});
+
 test('corrupt project storage is preserved and exposes a downloadable recovery backup', async ({ page }) => {
   const raw = '{"projects":';
   await page.addInitScript(value => localStorage.setItem('ai_projects_v1', value), raw);

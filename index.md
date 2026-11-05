@@ -1048,6 +1048,50 @@ permalink: /
       scheduleStorageHealthCheck();
       return true;
     }
+    function persistChatMutation(chat, updates, mirroredWrites = []) {
+      if (!chat || typeof chat !== 'object' || !updates || typeof updates !== 'object') return false;
+      const previousFields = Object.keys(updates).map(key => ({
+        key,
+        existed: Object.prototype.hasOwnProperty.call(chat, key),
+        value: chat[key]
+      }));
+      let previousMirrors;
+      try {
+        previousMirrors = mirroredWrites.map(([key]) => ({ key, value: localStorage.getItem(key) }));
+      } catch (error) {
+        showToast('Не удалось прочитать прежние настройки браузера; изменение отменено.', 'error');
+        return false;
+      }
+      const restoreFields = () => {
+        for (const previous of previousFields) {
+          if (previous.existed) chat[previous.key] = previous.value;
+          else delete chat[previous.key];
+        }
+      };
+      const restoreMirrors = attempted => {
+        let restored = true;
+        for (let index = attempted.length - 1; index >= 0; index -= 1) {
+          if (!restoreStorageValue(attempted[index].key, attempted[index].value)) restored = false;
+        }
+        if (!restored) showToast('Не все прежние настройки удалось восстановить. Не очищай данные сайта; сначала экспортируй доступные данные.', 'error');
+        return restored;
+      };
+      Object.assign(chat, updates);
+      const attemptedMirrors = [];
+      for (let index = 0; index < mirroredWrites.length; index += 1) {
+        attemptedMirrors.push(previousMirrors[index]);
+        const [key, value] = mirroredWrites[index];
+        if (!safeSet(key, value)) {
+          restoreFields();
+          restoreMirrors(attemptedMirrors);
+          return false;
+        }
+      }
+      if (persistChats()) return true;
+      restoreFields();
+      restoreMirrors(attemptedMirrors);
+      return false;
+    }
     function getCurrentChat() {
       return chats.find((chat) => chat.id === currentChatId) || chats[0];
     }
@@ -2620,12 +2664,17 @@ permalink: /
       if (!VALID_SEARCH_MODES.has(mode)) return;
       const chat = getCurrentChat();
       ensureChatFunctionSettings(chat);
-      chat.searchMode = mode;
+      if (!persistChatMutation(chat, { searchMode: mode }, [
+        [STORAGE.searchMode, mode],
+        [STORAGE.search, String(mode !== 'offline')],
+        [STORAGE.offline, String(mode === 'offline')]
+      ])) {
+        $('toggleSearch').checked = chat.searchMode !== 'offline';
+        updateOfflineUI();
+        updateModeUI();
+        return;
+      }
       $('toggleSearch').checked = mode !== 'offline';
-      safeSet(STORAGE.searchMode, mode);
-      safeSet(STORAGE.search, String(mode !== 'offline'));
-      safeSet(STORAGE.offline, String(mode === 'offline'));
-      persistChats();
       $('searchModeMenu').open = false;
       updateOfflineUI();
       updateModeUI();
@@ -2633,20 +2682,30 @@ permalink: /
     function setAgentMode(enabled) {
       const chat = getCurrentChat();
       ensureChatFunctionSettings(chat);
-      chat.multiAgentEnabled = Boolean(enabled);
+      const next = Boolean(enabled);
+      if (!persistChatMutation(chat, { multiAgentEnabled: next }, [[STORAGE.multiAgent, String(next)]])) {
+        $('toggleMultiAgent').checked = chat.multiAgentEnabled;
+        if ($('agentModeControl')) $('agentModeControl').checked = chat.multiAgentEnabled;
+        updateModeUI();
+        return;
+      }
       $('toggleMultiAgent').checked = chat.multiAgentEnabled;
       if ($('agentModeControl')) $('agentModeControl').checked = chat.multiAgentEnabled;
-      safeSet(STORAGE.multiAgent, String(chat.multiAgentEnabled));
-      persistChats();
       updateModeUI();
     }
     function setSkillPreset(preset) {
       if (!VALID_SKILL_PRESETS.has(preset)) preset = 'auto';
       const chat = getCurrentChat();
       ensureChatFunctionSettings(chat);
-      chat.skillPreset = preset;
+      const updates = { skillPreset: preset };
+      if (preset === 'custom') updates.skillGoal = 'custom';
+      if (!persistChatMutation(chat, updates)) {
+        renderSkillConfiguration();
+        updateModeUI();
+        return;
+      }
       if ($('skillPresetSelect')) $('skillPresetSelect').value = preset;
-      persistChats();
+      renderSkillConfiguration();
       updateModeUI();
     }
     function updateModeUI() {
@@ -2687,10 +2746,12 @@ permalink: /
     function setProcessingMode(mode) {
       const chat = getCurrentChat();
       ensureChatFunctionSettings(chat);
-      chat.processingMode = mode === 'deep' ? 'deep' : 'fast';
+      const next = mode === 'deep' ? 'deep' : 'fast';
+      if (!persistChatMutation(chat, { processingMode: next }, [[STORAGE.mode, next]])) {
+        updateModeUI();
+        return;
+      }
       processingMode = chat.processingMode;
-      safeSet(STORAGE.mode, processingMode);
-      persistChats();
       updateModeUI();
     }
     function exportSettingsProfile() {
@@ -3344,15 +3405,28 @@ permalink: /
     }
     function persistSkillConfiguration(){
       const chat=getCurrentChat();if(!chat)return;ensureChatFunctionSettings(chat);
-      chat.customSkillName=$('customSkillName').value.slice(0,80);chat.customSkillInstructions=$('customSkillInstructions').value.slice(0,3000);chat.customSkillOutput=$('customSkillOutput').value.slice(0,500);
-      chat.skillGoal=$('skillGoalSelect').value;chat.skillOutputMode=$('skillOutputSelect').value;persistChats();renderSkillConfiguration();
+      const updates = {
+        customSkillName: $('customSkillName').value.slice(0,80),
+        customSkillInstructions: $('customSkillInstructions').value.slice(0,3000),
+        customSkillOutput: $('customSkillOutput').value.slice(0,500),
+        skillGoal: $('skillGoalSelect').value,
+        skillOutputMode: $('skillOutputSelect').value
+      };
+      if (!persistChatMutation(chat, updates)) { renderSkillConfiguration(); updateModeUI(); return; }
+      renderSkillConfiguration();
     }
     function applySkillQuiz(){
-      const goal=$('skillGoalSelect').value;const chat=getCurrentChat();if(!chat)return;
-      const previous={skillGoal:chat.skillGoal,skillOutputMode:chat.skillOutputMode,skillPreset:chat.skillPreset,customSkillName:chat.customSkillName,customSkillInstructions:chat.customSkillInstructions,customSkillOutput:chat.customSkillOutput};
-      chat.skillGoal=goal;chat.skillOutputMode=$('skillOutputSelect').value;chat.skillPreset=($('skillPresetSelect').value==='custom'||goal==='custom'||chat.skillOutputMode==='custom')?'custom':goal;
-      chat.customSkillName=$('customSkillName').value.slice(0,80);chat.customSkillInstructions=$('customSkillInstructions').value.slice(0,3000);chat.customSkillOutput=$('customSkillOutput').value.slice(0,500);
-      if(!persistChats()){Object.assign(chat,previous);renderSkillConfiguration();updateModeUI();return;}
+      const goal=$('skillGoalSelect').value;const chat=getCurrentChat();if(!chat)return;ensureChatFunctionSettings(chat);
+      const skillOutputMode=$('skillOutputSelect').value;
+      const updates = {
+        skillGoal: goal,
+        skillOutputMode,
+        skillPreset: ($('skillPresetSelect').value==='custom'||goal==='custom'||skillOutputMode==='custom')?'custom':goal,
+        customSkillName: $('customSkillName').value.slice(0,80),
+        customSkillInstructions: $('customSkillInstructions').value.slice(0,3000),
+        customSkillOutput: $('customSkillOutput').value.slice(0,500)
+      };
+      if(!persistChatMutation(chat,updates)){renderSkillConfiguration();updateModeUI();return;}
       renderSkillConfiguration();updateModeUI();showToast('Профиль навыка применён к этому чату.');
     }
     function renderAgentConfiguration(){
@@ -3365,9 +3439,15 @@ permalink: /
     }
     function persistAgentConfiguration(){
       const chat=getCurrentChat();if(!chat)return;ensureChatFunctionSettings(chat);
-      chat.agentTeamSize=Math.max(1,Math.min(50,Number($('agentTeamSize').value)||1));chat.agentTeamScenario=$('agentTeamScenario').value;
-      chat.agentRolePreset=$('agentRolePreset').value;chat.agentTeamCustomScenario=$('agentTeamCustomScenario').value.slice(0,1000);chat.agentCustomRoles=$('agentCustomRoles').value.slice(0,1500);
-      persistChats();renderAgentConfiguration();
+      const updates = {
+        agentTeamSize: Math.max(1,Math.min(50,Number($('agentTeamSize').value)||1)),
+        agentTeamScenario: $('agentTeamScenario').value,
+        agentRolePreset: $('agentRolePreset').value,
+        agentTeamCustomScenario: $('agentTeamCustomScenario').value.slice(0,1000),
+        agentCustomRoles: $('agentCustomRoles').value.slice(0,1500)
+      };
+      if (!persistChatMutation(chat, updates)) { renderAgentConfiguration(); return; }
+      renderAgentConfiguration();
     }
     function openFunctionPanel(kind) {
       $('functionsMenu').open = false;
@@ -5276,14 +5356,14 @@ permalink: /
     $('modelName').addEventListener('change',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('modeFast').addEventListener('click', () => setProcessingMode('fast'));
     $('modeDeep').addEventListener('click', () => setProcessingMode('deep'));
-    $('toggleSearch').addEventListener('change', (event) => safeSet(STORAGE.search, String(event.target.checked)));
-    $('toggleMultiAgent').addEventListener('change', (event) => safeSet(STORAGE.multiAgent, String(event.target.checked)));
+    $('toggleSearch').addEventListener('change', event => setSearchMode(event.target.checked ? 'normal' : 'offline'));
+    $('toggleMultiAgent').addEventListener('change', event => setAgentMode(event.target.checked));
     $('agentModeControl').addEventListener('change', event => setAgentMode(event.target.checked));
-    $('skillPresetSelect').addEventListener('change', event => {const chat=getCurrentChat();if(event.target.value==='custom'&&chat){chat.skillGoal='custom';persistChats();}setSkillPreset(event.target.value);renderSkillConfiguration();});
-    $('skillGoalSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat){chat.skillGoal=$('skillGoalSelect').value;persistChats();renderSkillConfiguration();}});
-    $('skillOutputSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat){chat.skillOutputMode=$('skillOutputSelect').value;persistChats();renderSkillConfiguration();}});
+    $('skillPresetSelect').addEventListener('change', event => {setSkillPreset(event.target.value);renderSkillConfiguration();});
+    $('skillGoalSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat&&persistChatMutation(chat,{skillGoal:$('skillGoalSelect').value})){renderSkillConfiguration();updateModeUI();}else{renderSkillConfiguration();updateModeUI();}});
+    $('skillOutputSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat&&persistChatMutation(chat,{skillOutputMode:$('skillOutputSelect').value})){renderSkillConfiguration();updateModeUI();}else{renderSkillConfiguration();updateModeUI();}});
     ['customSkillName','customSkillInstructions','customSkillOutput'].forEach(id=>$(id).addEventListener('change',persistSkillConfiguration));
-    $('agentTeamSize').addEventListener('input',()=>{const chat=getCurrentChat();if(chat){chat.agentTeamSize=Math.max(1,Math.min(50,Number($('agentTeamSize').value)||1));$('agentTeamSizeValue').textContent=chat.agentTeamSize+' '+(getUiLanguage()==='en'?(chat.agentTeamSize===1?'agent':'agents'):(chat.agentTeamSize===1?'агент':'агентов'));persistChats();}});
+    $('agentTeamSize').addEventListener('input',()=>{const chat=getCurrentChat();if(!chat)return;const next=Math.max(1,Math.min(50,Number($('agentTeamSize').value)||1));if(!persistChatMutation(chat,{agentTeamSize:next})){renderAgentConfiguration();return;}renderAgentConfiguration();});
     ['agentTeamScenario','agentRolePreset'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
     ['agentTeamCustomScenario','agentCustomRoles'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
     $('sidebarOverlay').addEventListener('click', () => toggleSidebar(false));
