@@ -2932,7 +2932,6 @@ test('skill and agent configuration setters restore unsaved values when chat sto
       preset.value = nextPreset.value;
       preset.dispatchEvent(new Event('change', { bubbles: true }));
     }
-    const goal = document.querySelector('#skillGoalSelect');
     const nextGoal = [...goal.options].find(item => item.value && item.value !== goal.value);
     if (nextGoal) {
       goal.value = nextGoal.value;
