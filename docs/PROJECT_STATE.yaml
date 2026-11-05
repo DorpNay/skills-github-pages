@@ -294,18 +294,18 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-05"
-  verified_main: "2e11849d409a51009693af95ac3ecbf1f057a3fc"
-  last_main_action: "PR #139 squash-merged at 2e11849d409a51009693af95ac3ecbf1f057a3fc: bounded accessible responsive public Landing V1 page; production CSS path fetched successfully."
+  verified_main: "88d230fc92fef5b884af699345fd010291107693"
+  last_main_action: "PR #145 merged at 88d230fc92fef5b884af699345fd010291107693: universal uv.lock, FastAPI/Uvicorn/pypdf refresh, Python 3.12/3.13/3.14 Gateway matrix and asyncio.to_thread document parsing. Main Quality #41982069618, Pages #41982069239, Gateway #41982069320, Provenance #41982069399 and Graphify #41982069425 all PASS on exact merge SHA."
   last_functional_checkpoint: "e78a73b25725bfa63370d9946887cbbacbf51b82"
-  main_quality: "Exact main SHA 2e11849d409a51009693af95ac3ecbf1f057a3fc: Quality #41967234442 PASS; Pages deployment #41967233832 PASS; Freshness #41967234558 PASS; Provenance #41967234535 PASS; Graphify #41967234708 PASS."
+  main_quality: "Exact main SHA 88d230fc92fef5b884af699345fd010291107693: Quality #41982069618 PASS; Pages deployment #41982069239 PASS; Gateway #41982069320 PASS; Provenance #41982069399 PASS; Graphify #41982069425 PASS."
   main_graphify: "PR #121 and #122 exact-head Graphify code-only workflows passed; Graphify remains developer tooling, not a runtime component."
   main_gateway: "Live VPS/gateway/provider connectivity remains unverified; no live deployment claim."
   merged_prs: "121 first free landing V1 and client UX; 122 Gateway liveness/readiness probes; 120 sidebar hierarchy/preferences; 119 provider separation/project scope/composer preference; 118 chat import/export; 113 immutable Actions pins; 115 modal scrim; 114 empty-by-default prompt; 71 mobile composer; 84 CORS; 81 deployment preflight; 83 SQLite delta; 82 readiness audit; 106 RAG evaluator; 107 private/shared memory; 108 landing/runbook"
-  open_pull_requests: "12 open PRs: #124, #125, #126, #127, #128, #129, #130, #131, #132, #133, #134, #141; current state-refresh PR excluded from its own PR freshness comparison"
+  open_pull_requests: "7 open PRs: #125, #127, #128, #129, #130, #131, #134; PR #146 is excluded from its own PR freshness comparison"
   open_issues: "Issue #111 only: consolidated owner/live-host release gates; research-only workstreams #88–#92 and #96–#104 closed after transferring unresolved actions"
   freshness_guard: "scripts/check_project_state_freshness.py; compares exact SHA and exact queue. A refresh commit must update ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG and snapshot; it no longer requires artificial edits to checker/tests/workflow."
   runtime_boundary: "GitHub Pages is a static client; live VPS/Tunnel/Ollama, actual model performance, voice/device, OAuth/Drive and target-host measurements remain unverified"
-  next: "PR #139 is verified on exact HEAD 167b58feab4b2d6eda85dfb4cb99eaab12e8e11a: Quality #41804378602, Freshness #41804378584, Provenance #41804378496 and Graphify #41804378533 passed. Await explicit owner merge authorization. After an authorized merge, verify the exact merge SHA, Pages deployment and production-baseurl CSS HTTP 200/text-css. Native-device visual/accessibility checks remain unclaimed. Keep the root AI app, Gateway and PR #131 V2 work untouched."
+  next: "Finish the canonical task registry/state reconciliation PR #146 after exact-head Quality, Freshness and Provenance pass. Continue PR #131 V2 candidate audit without wholesale merge; evaluate Vosk against the same RU fixtures and target hardware. Keep issue #111 open for owner-controlled deployment, ruleset, device and host gates."
 v1_ui_finalization:
   status: "merged in PR #121 at f4d880f; exact-head required workflows passed; post-merge Pages deployment not independently verified"
   register: "docs/V1_UI_FINALIZATION_RU.md"
