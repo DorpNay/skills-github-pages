@@ -193,7 +193,7 @@ def collect_dom(root: Path):
     return records
 
 
-JS_LITERAL = r"(?P<quote>['\\"])(?P<literal>[^'\\"]+)(?P=quote)"
+JS_LITERAL = r"""(?P<quote>['"])(?P<literal>[^'"]+)(?P=quote)"""
 JS_PATTERNS = (
     (re.compile(r"(?<![\\w$])\\$\\s*\\(\\s*" + JS_LITERAL), "selector", "select"),
     (re.compile(r"\\bgetElementById\\s*\\(\\s*" + JS_LITERAL), "id", "select"),
