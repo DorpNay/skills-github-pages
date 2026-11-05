@@ -962,7 +962,7 @@ permalink: /
           chatRecoveryWarning = true;
           return;
         }
-        if (existing && existing !== rawText) backupKey = baseKey + '_' + Date.now();
+        if (existing !== null && existing !== rawText) backupKey = baseKey + '_' + Date.now();
         localStorage.setItem(backupKey, rawText);
         chatRecoveryBackupKey = backupKey;
         chatRecoveryWarning = true;
@@ -1042,7 +1042,7 @@ permalink: /
     }
     function downloadRecoveryBackup() {
       if (!chatRecoveryBackupKey) throw new Error('Резервная копия истории не найдена.');
-      const raw = safeGet(chatRecoveryBackupKey);
+      const raw = chatRecoveryBackupKey ? safeGet(chatRecoveryBackupKey) : (chatStorageCorruptNotBackedUp ? safeGet(STORAGE.chats) : null);
       if (raw === null) throw new Error('Резервная копия истории недоступна в этом браузере.');
       const blob = new Blob([raw], { type: 'application/json;charset=utf-8' });
       const url = URL.createObjectURL(blob);
@@ -1057,7 +1057,7 @@ permalink: /
     }
     function downloadProjectRecoveryBackup() {
       if (!projectRecoveryBackupKey) throw new Error('Резервная копия проектов не найдена.');
-      const raw = safeGet(projectRecoveryBackupKey);
+      const raw = projectRecoveryBackupKey ? safeGet(projectRecoveryBackupKey) : (projectStorageCorruptNotBackedUp ? safeGet(STORAGE.projects) : null);
       if (raw === null) throw new Error('Резервная копия проектов недоступна в этом браузере.');
       const blob = new Blob([raw], { type: 'application/json;charset=utf-8' });
       const url = URL.createObjectURL(blob);
@@ -5327,7 +5327,7 @@ permalink: /
           chatRecoveryBackupKey = backupKeys[0] || '';
         } catch (_) {}
       }
-      if (chatRecoveryBackupKey) $('recoveryBackupButton').classList.remove('hidden');
+      if (chatRecoveryBackupKey || chatStorageCorruptNotBackedUp) $('recoveryBackupButton').classList.remove('hidden');
       if (!projectRecoveryBackupKey) {
         try {
           const backupKeys = [];
@@ -5339,7 +5339,7 @@ permalink: /
           projectRecoveryBackupKey = backupKeys[0] || '';
         } catch (_) {}
       }
-      if (projectRecoveryBackupKey) {
+      if (projectRecoveryBackupKey || projectStorageCorruptNotBackedUp) {
         const button = $('projectRecoveryBackupButton');
         button.classList.remove('hidden');
         button.textContent = getUiLanguage() === 'en' ? 'Download project recovery backup' : 'Скачать резервную копию проектов';
