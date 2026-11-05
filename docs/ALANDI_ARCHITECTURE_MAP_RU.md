@@ -137,4 +137,4 @@ PR #121 merged at f4d880f9648989f4fe48ddd2284220b3606c3b86 after exact-head Gate
 - Gate success UI on persistence results; add a 50,000-message aggregate import limit and a 100-tool-call cap for imported project messages.
 - Four Chromium regressions cover project backup download, partial chat recovery, project/chat rollback on quota failure, and fail-closed preservation when a recovery backup cannot be written.
 
-**Verification status:** PR #150 branch HEAD `5877edaa4be706376474a86c392640a7e755bb25`; exact-head Quality/Chromium/Graphify/Freshness checks pending. This section describes the candidate implementation, not main runtime state.
+**Verification status:** PR #150 branch code checkpoint `57a10e82198943da5e7625b26daa10d15ccafc40`; exact-head Quality/Chromium/Graphify/Freshness checks pending. This section describes the candidate implementation, not main runtime state.
