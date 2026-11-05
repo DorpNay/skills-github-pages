@@ -1169,6 +1169,9 @@ permalink: /
     function configureMarkedRenderer() {
       if (markedRendererConfigured || !window.marked?.Renderer || typeof window.marked.use !== 'function') return;
       const renderer = new window.marked.Renderer();
+      // Assistant output is untrusted: render raw HTML tokens as text so data-action
+      // attributes cannot manufacture delegated application controls.
+      renderer.html = (token) => escapeHtml(typeof token.text === 'string' ? token.text : '');
       renderer.code = (token) => {
         const code = typeof token.text === 'string' ? token.text : '';
         const rawLang = typeof token.lang === 'string' ? token.lang.trim().split(/\s+/)[0] : '';
@@ -4919,7 +4922,7 @@ permalink: /
 
     document.addEventListener('click', async (event) => {
       const control = event.target.closest('[data-action]');
-      if (!control) return;
+      if (!control || control.closest('#messageViewerContent')) return;
       const action = control.dataset.action;
       if (control.closest('#chatBox')) {
         const isCodeAction = ['copy-code','download-code','run-python'].includes(action) && control.classList.contains('code-action') && control.closest('.code-block');
