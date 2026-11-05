@@ -408,7 +408,7 @@ test('selected text inside one assistant message is read without sending the res
     status: 200, contentType: 'application/json',
     body: JSON.stringify({ model: 'selection-speech-model', choices: [{ finish_reason: 'stop', message: {
       role: 'assistant',
-      content: 'Only this selected passage should be read aloud. The rest must stay unspoken.'
+      content: 'Only this selected passage should be read aloud. The rest [must stay unspoken](https://example.test/ignored) after the link.'
     } }] })
   }));
   await page.route('https://api.example.test/v1/capabilities', route => route.fulfill({
@@ -458,6 +458,28 @@ test('selected text inside one assistant message is read without sending the res
   await expect(page.locator('#ttsSelectionAction')).toBeVisible();
   await page.locator('#ttsSelectionAction').click();
   await expect.poll(() => spokenText).toBe('Only this selected passage');
+  await expect(page.locator('#ttsSelectionAction')).toBeHidden();
+
+  const crossedLink = await message.evaluate(element => {
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+    let node;
+    let startNode = null;
+    let endNode = null;
+    while ((node = walker.nextNode())) {
+      if (!startNode && node.nodeValue.includes('The rest')) startNode = node;
+      if (node.nodeValue.includes('after the link')) endNode = node;
+    }
+    if (!startNode || !endNode) return false;
+    const range = document.createRange();
+    range.setStart(startNode, startNode.nodeValue.indexOf('The rest'));
+    const endText = 'after the link';
+    range.setEnd(endNode, endNode.nodeValue.indexOf(endText) + endText.length);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    return true;
+  });
+  expect(crossedLink).toBe(true);
   await expect(page.locator('#ttsSelectionAction')).toBeHidden();
 });
 
