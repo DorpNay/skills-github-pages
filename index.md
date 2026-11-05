@@ -4500,12 +4500,15 @@ permalink: /
 
     function clearSpeechQueue() {
       const wasPlaying = speechQueuePlaying;
+      const player = $('ttsAudioPlayer');
+      const otherSpeechActive = Boolean(activeSpeechController || (!player.paused && player.currentSrc));
       speechQueuePlaying = false;
       speechQueuePendingGesture = false;
       speechQueueGeneration += 1;
       if (wasPlaying) stopAssistantSpeech();
       speechQueue = [];
       updateSpeechQueueUi();
+      if (!otherSpeechActive && !voiceConversationActive) $('ttsMiniPlayer').classList.add('hidden');
       if (wasPlaying) $('ttsMiniPlayerStatus').textContent = getUiLanguage() === 'en' ? 'Speech queue cleared.' : 'Очередь озвучивания очищена.';
     }
 
