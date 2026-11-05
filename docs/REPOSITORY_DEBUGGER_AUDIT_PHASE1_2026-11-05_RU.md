@@ -2,7 +2,7 @@
 
 **Дата:** 2026-11-05  
 **Базовый main:** `4fbf16aad3f741159654950e0260aaf717653291`  
-**Статус:** PARTIALLY VERIFIED — критические сквозные поверхности проверены; полный аудит всех модулей, веток и live runtime продолжается.  
+**Статус:** PARTIALLY VERIFIED — критические сквозные поверхности проверены; PR #149 merged; новый P1 storage fix реализован в PR #150, но exact-head gates pending; полный аудит модулей и live runtime продолжается.  
 **Назначение:** независимый взгляд Debugger / Architecture Reviewer, затем превращение подтверждённых находок в инженерные задачи и исправления.
 
 ## 1. Краткий итог
@@ -36,8 +36,8 @@
 | AUDIT-FIND-001 | P1 | В `POST /v1/chat/completions` отмена во время `AsyncClient.send()` до upstream headers обходила HTTP/timeout handlers и могла оставить semaphore занятой. | **FIXED / VERIFIED.** PR #147, merge `3f37a8166fcbf89c5392f985e290be48ea27ef6a`; regression test отменяет blocking transport. Gateway #41998613130 (Python 3.12/3.13/3.14), Quality #41998613190, Graphify #41998613246 и Dead Code #41998613138 PASS на exact PR HEAD `6ef3b8e4ab19880beb5785e1e8d72295a078541d`. |
 | AUDIT-FIND-002 | P1 | Sanitized assistant Markdown сохранял `data-action`; глобальный dispatcher не ограничивал команды в `#messageViewerContent`, который находится вне `#chatBox`. Raw HTML мог имитировать app action, например `clear-chat`. | **FIXED / VERIFIED.** PR #148, merge `4fbf16aad3f741159654950e0260aaf717653291`; raw HTML tokens выводятся как текст, viewer read-only; Chromium fixture проверяет forged button в chat и viewer. Quality #41999525882 и Graphify #41999525846 PASS на exact PR HEAD `1159f30dfdfc2b76fe8b47a7fcfd8716804b7df8`. |
 | AUDIT-FIND-003 | P1 | Pyodide default `jsglobals` равен page `globalThis`; Python через `js` мог обращаться к DOM/storage globals, а API keys хранятся в browser localStorage. | **MITIGATED / VERIFIED, NOT A COMPLETE SANDBOX.** PR #148 передаёт `Object.create(null)`; Chromium test проверяет null prototype и отсутствие window/document/localStorage/fetch/globalThis в передаваемом namespace. Долгий цикл всё ещё может блокировать main thread; отдельный Worker остаётся follow-up. |
-| AUDIT-FIND-004 | P2 | `provenance_manifest.yaml` указывал pypdf 6.4.1, тогда как runtime pins в `pyproject.toml`, `gateway/requirements.txt` и `uv.lock` — 6.21.4. | **PATCHED IN PR #149; exact-head Provenance gate pending.** |
-| AUDIT-FIND-005 | P2 | Main workflows использовали Node 22, хотя закрытый PR #126 уже содержал Node 24 migration в трёх workflows; PR #145 эту часть не перенёс. | **PATCHED IN PR #149; exact-head Quality gate pending.** |
+| AUDIT-FIND-004 | P2 | `provenance_manifest.yaml` указывал pypdf 6.4.1, тогда как runtime pins в `pyproject.toml`, `gateway/requirements.txt` и `uv.lock` — 6.21.4. | **FIXED / VERIFIED.** PR #149 merge `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`; exact-head Provenance #42001309703 PASS. |
+| AUDIT-FIND-005 | P2 | Main workflows использовали Node 22, хотя закрытый PR #126 уже содержал Node 24 migration в трёх workflows; PR #145 эту часть не перенёс. | **FIXED / VERIFIED.** PR #149 merge `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`; exact-head Quality #42001310270 (7 jobs) PASS. |
 | AUDIT-FIND-006 | P2 / HYPOTHESIS | При включённом document extraction endpoint использует `asyncio.to_thread`, но отдельного явного concurrency semaphore для parse jobs нет. Feature default-off, body/archive/page bounds существуют; реальный memory-pressure сценарий пока не воспроизведён. | **OPEN.** Нужен bounded concurrency design + нагрузочный/отменный тест до изменения поведения. |
 | AUDIT-FIND-007 | P2 | Pyodide исполняется на main browser thread; бесконечный/длительный Python loop способен заморозить вкладку. | **OPEN.** Спроектировать dedicated Worker, termination/timeout, output/result bounds и отсутствие page-origin privileges. Не называть текущий runtime полной sandbox. |
 | AUDIT-FIND-008 | P2 / SUPPLY-CHAIN | Tailwind CDN не закреплён точной версией; Marked/DOMPurify/Pyodide загружаются с CDN без SRI. Текущих признаков компрометации нет. | **OPEN.** Сравнить self-hosting и SRI/immutable asset pinning; не добавлять широкую сборочную систему без измеренной пользы. |
@@ -84,10 +84,20 @@
 
 ## 7. Следующий инженерный цикл
 
-1. Завершить PR #149: exact-head Quality, Project State Freshness и Provenance; после merge отдельно проверить доступные post-merge runs.
+1. Завершить PR #150: exact-head Quality/Chromium/Graphify/Freshness; review rollback paths and storage regressions.
 2. Продолжить subsystem audit: provider routing and browser storage migrations, voice/audio lifecycle, document intake concurrency, RAG deletion lineage, V2 candidate slices.
 3. Выполнить bounded Worker design for Pyodide и concurrency limits для document extraction только после acceptance criteria/baseline.
 4. Завершить ancestry/reference audit остальных branch refs; удалять только allowlist после появления разрешённой branch-delete операции.
 5. Держать issue #111 открытым для owner-only live-host, ruleset, device and release gates.
 
-**Итог:** два P1 дефекта исправлены и merged; Pyodide page-global exposure ограничен, но Worker isolation остаётся. Текущий отчёт — verified phase 1, не заявление о завершении полного аудита.
+**Итог:** два исходных P1 дефекта исправлены и merged; Pyodide page-global exposure ограничен, но Worker isolation остаётся. Дополнительный P1 localStorage data-loss path исправлен в PR #150, verification pending. Текущий отчёт — verified phase 1 plus incremental findings, не заявление о завершении полного аудита.
+
+
+## 8. Дополнительные находки после phase-1 snapshot — 2026-11-05
+
+| ID | Severity | Наблюдение | Решение / evidence |
+|---|---|---|---|
+| AUDIT-FIND-011 | P1 | Browser persistence не сохраняла исходные данные проектов при JSON/shape corruption; частично повреждённые чаты могли фильтроваться без backup. `persistChats()` не откатывала chat-list запись при ошибке записи current-chat key. Создание/удаление/импорт проекта последовательно писали project и chat keys, могли оставить orphaned chat references и показывать success при неуспешном сохранении. | **IMPLEMENTED IN PR #150; VERIFICATION PENDING.** Branch `fix/browser-storage-recovery-atomicity-20261105`, HEAD `57a10e82198943da5e7625b26daa10d15ccafc40`. Добавлены raw recovery backups, fail-closed при неудаче backup, download исходного raw значения, rollback chat/current и project/chat, rollback in-memory state, success gating, 50k aggregate message cap и 100 tool-call cap. Четыре Chromium regressions: project backup download, partial chat corruption, rollback при quota failure, fail-closed при невозможности создать backup. |
+| AUDIT-FIND-012 | P2 (conditional) | `MemoryManager` включает FTS5 `secure-delete` только при SQLite `>=3.42.0`. При более старом runtime capability false, но логическое удаление всё равно выполняется; status не выводится через health/diagnostic API. Удалённый текст может оставаться в FTS index segments до merge. Это не доказывает проблему на target host: runtime version и MemoryGraph/RAG flags не проверены. | **SOURCE-VALIDATED / RUNTIME UNVERIFIED.** Context7/SQLite FTS5 documentation: https://www.sqlite.org/fts5.html#the_secure_delete_configuration_option. Follow-up: expose capability and verify target-host SQLite before promising secure deletion. |
+
+**PR #149 completion:** merge `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`; exact-head Quality #42001310270 (7 jobs), Freshness #42001309687, Provenance #42001309703 and Graphify #42001311323 PASS. Post-merge main workflow IDs were not retrieved. Current branch inventory is 145 refs (143 at initial inventory plus PR #149 and PR #150 refs); no branch deletion was performed.
