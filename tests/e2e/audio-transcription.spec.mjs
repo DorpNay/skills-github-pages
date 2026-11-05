@@ -640,7 +640,7 @@ test('local speech queue enforces per-item and aggregate character limits', asyn
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox .assistant-content').last()).toContainText('x'.repeat(300));
   await page.locator('#chatBox [data-action="queue-message"]').last().click();
-  await expect(page.locator('#toast')).toContainText('5 000 символов');
+  await expect(page.locator('#toast')).toContainText('5 000 символами');
   await expect(page.locator('#ttsQueueControls')).toBeHidden();
 
   await page.locator('#userInput').fill('Check the aggregate limit.');
