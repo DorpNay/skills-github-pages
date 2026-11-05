@@ -4501,7 +4501,7 @@ permalink: /
     function clearSpeechQueue() {
       const wasPlaying = speechQueuePlaying;
       const player = $('ttsAudioPlayer');
-      const otherSpeechActive = Boolean(activeSpeechController || (!player.paused && player.currentSrc));
+      const otherSpeechActive = Boolean(activeSpeechController || player.currentSrc);
       speechQueuePlaying = false;
       speechQueuePendingGesture = false;
       speechQueueGeneration += 1;
