@@ -460,3 +460,116 @@ test('selected text inside one assistant message is read without sending the res
   await expect.poll(() => spokenText).toBe('Only this selected passage');
   await expect(page.locator('#ttsSelectionAction')).toBeHidden();
 });
+
+
+test('speech queue preserves the current item when autoplay is blocked and resumes after a user gesture', async ({ page }) => {
+  await page.addInitScript(() => {
+    let allowPlayback = false;
+    window.__allowQueuedSpeechPlayback = () => { allowPlayback = true; };
+    HTMLMediaElement.prototype.play = function () {
+      if (this.id !== 'ttsAudioPlayer') return Promise.resolve();
+      if (!allowPlayback) return Promise.reject(new DOMException('Playback requires a gesture', 'NotAllowedError'));
+      setTimeout(() => this.dispatchEvent(new Event('ended')), 30);
+      return Promise.resolve();
+    };
+  });
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'speech-gesture-model' }] })
+  }));
+  await page.route('https://api.example.test/v1/capabilities', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ audio: { speech: true, speech_voices: [] } })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ model: 'speech-gesture-model', choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: 'Keep this queued until playback is allowed.' } }] })
+  }));
+  let generationCount = 0;
+  await page.route('https://api.example.test/v1/audio/speech', async route => {
+    generationCount += 1;
+    const wav = Buffer.from('524946462400000057415645' + '00'.repeat(32), 'hex');
+    await route.fulfill({ status: 200, contentType: 'audio/wav', headers: { 'Cache-Control': 'no-store' }, body: wav });
+  });
+
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#legacyProviderSettings > summary').click();
+  }
+  await page.locator('#providerPreset').selectOption('alandi');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('speech-gesture-model');
+  await page.locator('#apiKey').fill('g'.repeat(64));
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('Read this later.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Keep this queued until playback is allowed.');
+  await page.locator('#chatBox [data-action="queue-message"]').last().click();
+  await page.locator('#ttsQueueToggle').click();
+
+  await expect.poll(() => generationCount).toBe(1);
+  await expect(page.locator('#ttsMiniPlayerStatus')).toContainText('Речь готова');
+  await expect(page.locator('#ttsQueueToggle')).toContainText('Продолжить');
+  await expect(page.locator('#ttsQueueStatus')).toContainText('1/20');
+  await page.evaluate(() => window.__allowQueuedSpeechPlayback());
+  await page.locator('#ttsQueueToggle').click();
+  await expect(page.locator('#ttsMiniPlayerStatus')).toContainText('Очередь озвучивания завершена');
+  expect(generationCount).toBe(1);
+});
+
+test('pausing during local voice discovery prevents a stale queued TTS request from starting', async ({ page }) => {
+  await page.addInitScript(() => {
+    HTMLMediaElement.prototype.play = function () { return Promise.resolve(); };
+  });
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'speech-pause-race-model' }] })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ model: 'speech-pause-race-model', choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: 'This should stay queued after pausing.' } }] })
+  }));
+  let releaseCapabilities;
+  let capabilityRequestStarted = false;
+  await page.route('https://api.example.test/v1/capabilities', route => {
+    capabilityRequestStarted = true;
+    return new Promise(resolve => {
+      releaseCapabilities = async () => {
+        await route.fulfill({
+          status: 200, contentType: 'application/json',
+          body: JSON.stringify({ audio: { speech: true, speech_voices: [] } })
+        });
+        resolve();
+      };
+    });
+  });
+  let speechRequests = 0;
+  await page.route('https://api.example.test/v1/audio/speech', async route => {
+    speechRequests += 1;
+    const wav = Buffer.from('524946462400000057415645' + '00'.repeat(32), 'hex');
+    await route.fulfill({ status: 200, contentType: 'audio/wav', body: wav });
+  });
+
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#legacyProviderSettings > summary').click();
+  }
+  await page.locator('#providerPreset').selectOption('alandi');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('speech-pause-race-model');
+  await page.locator('#apiKey').fill('p'.repeat(64));
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('Queue this response.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('This should stay queued after pausing.');
+  await page.locator('#chatBox [data-action="queue-message"]').last().click();
+  await page.locator('#ttsQueueToggle').click();
+  await expect.poll(() => capabilityRequestStarted).toBe(true);
+  await page.locator('#ttsQueueToggle').click();
+  await releaseCapabilities();
+  await page.waitForTimeout(100);
+  expect(speechRequests).toBe(0);
+  await expect(page.locator('#ttsQueueStatus')).toContainText('1/20');
+  await expect(page.locator('#ttsMiniPlayer')).toBeVisible();
+});
