@@ -2759,7 +2759,8 @@ test('corrupt project storage is preserved and exposes a downloadable recovery b
     backup: localStorage.getItem('ai_projects_recovery_backup')
   }));
   expect(values).toEqual({ original: raw, backup: raw });
-  await page.locator('#projectManagerDetails').evaluate(node => { node.open = true; });
+  await page.locator('#appSidebarToggle').click();
+  await page.locator('[data-action="open-project-settings"]').click();
   const [download] = await Promise.all([
     page.waitForEvent('download'),
     page.locator('#projectRecoveryBackupButton').click()
@@ -2858,7 +2859,8 @@ test('project writes fail closed when malformed source data cannot be backed up'
     current: localStorage.getItem('ai_current_chat_v87')
   }));
   expect(after).toEqual(before);
-  await page.locator('#projectManagerDetails').evaluate(node => { node.open = true; });
+  await page.locator('#appSidebarToggle').click();
+  await page.locator('[data-action="open-project-settings"]').click();
   const [download] = await Promise.all([
     page.waitForEvent('download'),
     page.locator('#projectRecoveryBackupButton').click()
@@ -2891,7 +2893,10 @@ test('partially corrupt chat history remains downloadable when recovery backup w
   expect(await page.evaluate(() => localStorage.getItem('ai_chats_v87'))).toBe(raw);
   const [download] = await Promise.all([
     page.waitForEvent('download'),
-    page.locator('#recoveryBackupButton').click()
+    (async () => {
+      await page.locator('#appSidebarToggle').click();
+      await page.locator('#recoveryBackupButton').click();
+    })()
   ]);
   expect(download.suggestedFilename()).toBe('ai-chat-recovery-backup.json');
   const stream = await download.createReadStream();
