@@ -4540,12 +4540,15 @@ permalink: /
       selectedSpeechText = text;
       button.textContent = getUiLanguage() === 'en' ? '🔊 Read selection' : '🔊 Озвучить выделенное';
       button.setAttribute('aria-label', getUiLanguage() === 'en' ? 'Read selected text aloud' : 'Озвучить выделенный текст');
-      const width = Math.min(button.offsetWidth || 180, window.innerWidth - 16);
+      button.classList.remove('hidden');
+      const buttonRect = button.getBoundingClientRect();
+      const width = Math.min(buttonRect.width || 180, window.innerWidth - 16);
+      const height = buttonRect.height || 36;
       const left = Math.max(8, Math.min(window.innerWidth - width - 8, rect.left + (rect.width - width) / 2));
-      const top = rect.top >= 56 ? rect.top - 48 : Math.min(window.innerHeight - 48, rect.bottom + 8);
+      const preferredTop = rect.top >= height + 16 ? rect.top - height - 8 : rect.bottom + 8;
+      const top = Math.max(8, Math.min(window.innerHeight - height - 8, preferredTop));
       button.style.left = `${left}px`;
       button.style.top = `${top}px`;
-      button.classList.remove('hidden');
     }
 
     document.addEventListener('selectionchange', updateSelectionSpeechAction);
