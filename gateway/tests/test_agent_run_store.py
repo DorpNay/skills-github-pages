@@ -389,7 +389,7 @@ def test_success_transition_rejects_any_queued_or_leased_tasks(tmp_path):
     run = make_running(store, key="success-fence")
     store.enqueue_task(run_id=run["run_id"], task_key="unfinished",
                        idempotency_key="success-unfinished", payload={}, now=103)
-    with pytest.raises(InvalidTransition, match="tasks remain queued or leased"):
+    with pytest.raises(InvalidTransition, match="pause/verification transitions require an empty active task queue"):
         store.transition_run(run_id=run["run_id"], expected_state="running",
                              new_state="verifying", event_type="verification_started", now=104)
     assert store.get_run(run["run_id"])["state"] == "running"
