@@ -4545,12 +4545,8 @@ permalink: /
       const text = String(rawText || '').trim();
       if (!text) { showToast('В сообщении нет текста для озвучивания.', 'error'); return false; }
       if (text.length > SPEECH_QUEUE_MAX_ITEM_CHARS) { showToast('Для озвучивания сократи фрагмент до 5 000 символов.', 'error'); return false; }
-      if (!fromQueue && speechQueuePlaying) {
-        speechQueuePlaying = false;
-        speechQueuePendingGesture = false;
-        speechQueueGeneration += 1;
-        updateSpeechQueueUi();
-      }
+      const queueRunGeneration = speechQueueGeneration;
+      if (!fromQueue && speechQueuePlaying) pauseSpeechQueue();
       if (currentProvider() !== 'alandi') {
         showToast('Локальное озвучивание доступно через собственный aLandi gateway.', 'error');
         return false;
@@ -4561,6 +4557,7 @@ permalink: /
       const key = getConfiguredApiKey();
       if (!baseUrl || !key) { showToast('Сначала настрой собственный gateway и его ключ.', 'error'); toggleSettings(true); return false; }
       await refreshLocalSpeechVoices(baseUrl, key);
+      if (fromQueue && (!speechQueuePlaying || queueRunGeneration !== speechQueueGeneration)) return false;
       if (activeSpeechController) activeSpeechController.abort();
       const requestId = ++speechRequestGeneration;
       const controller = new AbortController();
