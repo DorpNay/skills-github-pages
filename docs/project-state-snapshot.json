@@ -127,7 +127,7 @@
     "main_freshness_run": null,
     "main_graphify_run": null,
     "open_prs": "6 open PRs: #125, #128, #129, #130, #131, #134",
-    "owner_task": "Review PR #150 exact-head verified browser localStorage recovery/atomicity diff and mutation failure paths; owner merge decision remains pending. Then verify FTS5 secure-delete capability and target SQLite runtime; continue the independent debugger audit, keep PR #131 isolated and issue #111 open.",
+    "owner_task": "Resolve AUDIT-FIND-013 / FIX-011 settings-profile partial writes and false-success in the active PR #150 branch; rerun exact-head gates and await owner merge decision. Then FTS5 secure-delete target-runtime verification, independent debugger audit, PR #131 selective audit and issue #111 release gates.",
     "pr131_head": "02fb4e8986b35f55a8a3b5308704b631dfbcce80",
     "pr131_exact_head_verified": false,
     "pr131_compare": "diverged: 1,101 ahead / 17 behind; 57 files; mergeable=false; keep V2 isolated.",
@@ -179,5 +179,5 @@
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-05-STORAGE-RECOVERY-EXACT-HEAD-001"
+  "last_volley": "V-2026-11-05-STORAGE-PROFILE-IMPORT-AUDIT-001"
 }

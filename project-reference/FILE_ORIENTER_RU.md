@@ -13,7 +13,7 @@
 - **PR #131:** HEAD `02fb4e8986b35f55a8a3b5308704b631dfbcce80`, 1,101 ahead / 17 behind, 57 files, `mergeable=false`. Не синхронизировать и не вливать целиком.
 - **PR #134:** Draft/HOLD, HEAD `519973c793a1c998b43c60dedfe55a02b74a26a9`; review #5779912938 остаётся remediation gate.
 - **Branch cleanup:** 145 refs (143 в исходном inventory + ветка merged PR #149 + active PR #150). Пять behind-only candidates и один tree-equivalent PR #133 branch проверены; удаление не выполнено — branch-delete action отсутствует.
-- **Следующий шаг:** review exact-head PR #150 и всех failure paths; не считать PR merged. Затем FTS5 capability/target SQLite check и продолжение audit provider/storage, voice, document intake, RAG и V2 slices. Issue #111 оставить открытым.
+- **Следующий шаг:** устранить AUDIT-FIND-013 / FIX-011 — partial writes и false-success при settings-profile import; затем повторить exact-head CI. После этого FTS5 capability/target SQLite check и продолжение audit provider/storage, voice, document intake, RAG и V2 slices. Issue #111 оставить открытым.
 
 ## 1. Быстрый маршрут
 
