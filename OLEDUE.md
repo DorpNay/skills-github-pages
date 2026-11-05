@@ -20,9 +20,10 @@
 - **Latest explicit owner task:** continue that workstream and its canonical task list; it takes precedence over defaults.
 - **Landing UI 2.0:** PR #131; scope/checklist in `docs/V1_UI_FINALIZATION_RU.md` §8.0; implementation evidence in `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
 - **Whole-project state and release gates:** `docs/PROJECT_STATE.yaml` and owner-controlled issue #111; do not infer production readiness from UI or CI.
+- **Master task register:** `docs/MASTER_TASK_REGISTRY_RU.md` plus append-only owner delta `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md`; preserve stable IDs and order, reconcile before closing items, and do not create a parallel backlog.
 - **Open-source/model research:** `INTEL.md` → `docs/OPEN_SOURCE_TRIAGE_RU.md` → `docs/TECHNIQUE_REGISTER_RU.md`; verify exact source, version, license and target-hardware fit before adoption.
 - **VPS/runtime operations:** `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md` plus the owner-approved runbook; deployment remains a separate explicit action.
 
 **Owner approval required:** merge, deployment, rebase/main synchronization, force-push, destructive changes, secrets/permissions or consequential external actions. A green CI is not merge authorization.
 
-**Canonical records:** `docs/V1_UI_FINALIZATION_RU.md` (Landing scope); `docs/MASTER_TASK_REGISTRY_RU.md` (whole-project inventory, where present); `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md` (implementation evidence); `docs/VOLLEY_LOG.md` (continuation checkpoint). Do not create duplicate backlogs.
+**Canonical records:** `docs/V1_UI_FINALIZATION_RU.md` (Landing scope); `docs/MASTER_TASK_REGISTRY_RU.md` + `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md` (single logical whole-project task register); `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md` (implementation evidence); `docs/VOLLEY_LOG.md` (continuation checkpoint). Do not create duplicate backlogs.

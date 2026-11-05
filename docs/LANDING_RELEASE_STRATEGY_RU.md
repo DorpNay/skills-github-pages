@@ -2,7 +2,7 @@
 
 **Created:** 2026-11-04  
 **Owner direction:** keep the public main branch as the stable, observable Landing 1.0 baseline while allowing carefully selected quality improvements; develop the substantial Landing 2.0 package in PR #131 and promote only independently verified slices.  
-**Status:** SPECIFIED — execution order is binding; individual promotions require evidence and an explicit recorded decision.
+**Status:** IN PROGRESS — V1 baseline preserved; independent V1 landing, orientation, N₂O knowledge, source triage, model artifact and Python reliability slices are merged. Landing 2.0 audit and repository hygiene remain active; each further promotion still requires evidence and an explicit recorded decision.
 
 ## Product and branch policy
 
@@ -31,7 +31,7 @@ Tasks:
 8. Run applicable exact-head documentation gates; do not require unrelated Gateway/device checks for a docs-only slice unless repository policy requires them.
 
 **Acceptance:** a normal continuation uses `OLEDUE.md`, one batched live-state read and one task-specific canonical document; detailed orientation/state/history are opened on demand. The selected branch, PR, tested SHA and next action are recovered without asking the owner to repeat context.  
-**Maturity:** IMPLEMENTED IN PR #140; exact-head verification pending. Do not mark VERIFIED until the final PR HEAD passes the applicable gates and a fresh-session handoff is observed.
+**Maturity:** IMPLEMENTED IN MAIN at PR #140 merge SHA fe43d7fbd04dd4da7b557a3dd3f6c7f3ef6a924b. Exact PR-head Quality/Freshness/Provenance and post-merge main Quality/Freshness/Provenance/Pages passed. A fresh independent-session handoff observation remains pending.
 
 ### 2. Audit PR #131 and build a promotion candidate register
 
@@ -89,7 +89,7 @@ For each candidate, record:
 
 ### 5. Acquire and package approved technologies, open-source code and small models
 
-**Timing:** begin the artifact-acquisition phase only after the V2-to-V1 promotion tranche has been decided and merged, as requested by the owner. Research and license triage may continue earlier; downloads and vendoring wait for this gate.
+**Timing:** the owner explicitly authorized acquisition and repository storage on 2026-11-05. Acquisition may proceed alongside the V2 audit when the artifact is concrete and needed for evaluation, with exact source/revision, separate code/model license review, checksum, size, provenance and rollback. Keep candidates disabled until same-fixture target evaluation and owner acceptance. Do not bulk-copy entire inspiration repositories, datasets or unselected weights.
 
 For each selected artifact:
 1. Identify the exact upstream repository, release/commit and canonical model card.
@@ -157,7 +157,11 @@ PR #134 exact HEAD `519973c793a1c998b43c60dedfe55a02b74a26a9` received COMMENT r
 | Date | Branch / PR | Change | Verification |
 |---|---|---|---|
 | 2026-11-04 | Documentation plan branch from `9b746f7` | Initial owner-directed execution order and promotion gates | Pending exact-head CI |
-| 2026-11-05 | PR #140 | Replace mandatory bulk orientation reads with OLEDUE Session Sync Capsule; detailed index/state/history become on-demand | Exact final PR HEAD has no workflow runs/statuses yet; earlier checkpoint `76dac2388223f813995a8748b67ef829dfeceed7` passed Quality, Freshness and Provenance |
+| 2026-11-05 | PR #140 | Replace mandatory bulk orientation reads with OLEDUE Session Sync Capsule; detailed index/state/history become on-demand | Exact PR HEAD `829d1eca4c3b0841d9f42a5da21ac3d5184b29fb`: Quality #41978711897, Freshness #41978711986, Provenance #41978711895 PASS; merged at `fe43d7fbd04dd4da7b557a3dd3f6c7f3ef6a924b`; post-merge Quality/Freshness/Provenance/Pages passed. |
+| 2026-11-05 | PR #142 | Integrate owner-provided N₂O Core, Knowledge Loop, Project Sources and ChatGPT instructions | Quality #41980415506 PASS; merged at `c307b7e3940e9051843befd5f77acfeaef66c91d`; three source docs byte-matched to uploads. |
+| 2026-11-05 | PR #144 | Refresh upstream architecture inspiration, license/revision triage and adoption criteria | Quality #41980666509 PASS; merged at `99c5d673cf239a1cd86b67aca101a3c0773f3761`; no new dependencies or runtime adoption. |
+| 2026-11-05 | PR #143 | Store Vosk Small Russian 0.22 as a reproducible evaluation artifact | Quality #41981477468 PASS; acquisition run #41980925294 verified size/SHA/ZIP safety; archive 46,236,750 bytes stored in `models/vosk/`; merged at `12ce75cdd6e14ae7752643bb20fc5421b177c26e`; `ship=false`. |
+| 2026-11-05 | PR #145 | Add universal Python lock, current pins, Python matrix and off-event-loop document parsing | Quality #41981377808, Gateway #41981377700 (3.12/3.13/3.14), Graphify #41981377789, Provenance #41981377775, Dead Code #41981377752 PASS; merged at `88d230fc92fef5b884af699345fd010291107693`. |
 
 
 ## Initial PR #131 source audit — 2026-11-04

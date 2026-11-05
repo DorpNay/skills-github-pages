@@ -3,30 +3,24 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-05",
   "checkpoint": {
-    "main_sha": "2e11849d409a51009693af95ac3ecbf1f057a3fc",
-    "main_commit_subject": "feat: improve public V1 landing accessibility and responsive layout",
+    "main_sha": "88d230fc92fef5b884af699345fd010291107693",
+    "main_commit_subject": "chore: lock Python stack and harden document parsing",
     "main_commit_date": "2026-11-05",
-    "last_functional_checkpoint_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
-    "last_functional_milestone": "PR #123 remains the last Gateway/root-client functional checkpoint at e78a73b25725bfa63370d9946887cbbacbf51b82; PR #139 added the isolated public Landing V1 accessibility/responsive page slice (landing/index.html, assets/css/landing.css, tests/e2e/landing.spec.mjs) and squash-merged at 2e11849d409a51009693af95ac3ecbf1f057a3fc. Exact merge-SHA main Quality, Pages, Freshness, Provenance and Graphify all passed; production CSS asset and /landing/ page fetched.",
-    "main_quality_run": 41967234442,
-    "main_pages_deployment_run": 41967233832,
+    "last_functional_checkpoint_sha": "88d230fc92fef5b884af699345fd010291107693",
+    "last_functional_milestone": "PR #145 merged at 88d230fc92fef5b884af699345fd010291107693: universal uv.lock, Python 3.12/3.13/3.14 gateway matrix, FastAPI/Uvicorn/pypdf refresh and asyncio.to_thread document parsing. PR-head Gateway/Quality/Graphify/Provenance/Dead Code passed. PR #143 stores Vosk RU archive; PR #142 N2O docs; PR #144 source triage; PR #140 compact OLEDUE handoff. Post-merge main Quality and Pages are still pending/in progress at snapshot.",
+    "main_quality_run": 41982069618,
+    "main_pages_deployment_run": 41982069239,
     "functional_parent_gateway_run": null,
     "functional_parent_quality_run": null,
     "functional_parent_graphify_run": null,
     "functional_parent_pages_run": null,
     "open_pull_requests": [
-      124,
       125,
-      126,
-      127,
       128,
       129,
       130,
       131,
-      132,
-      133,
-      134,
-      141
+      134
     ],
     "open_issues": [
       111
@@ -67,42 +61,72 @@
         "merge_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
         "head_sha": "b4f0ec63b2c1aed00c5bdd951274db3e0530b560",
         "checks": "Exact-head Quality #41792794176, Freshness #41792794065, Provenance #41792794038 and Graphify #41792794165 passed; merge commit reconciled orientation and OLEDUE handoff."
+      },
+      {
+        "number": 139,
+        "merge_sha": "2e11849d409a51009693af95ac3ecbf1f057a3fc",
+        "head_sha": "d76be1d59ed832fa638e419b542151dba277c143",
+        "checks": "Quality, Freshness, Provenance and Graphify passed on exact PR head; post-merge Quality, Pages, Freshness, Provenance and Graphify passed on exact merge SHA."
+      },
+      {
+        "number": 140,
+        "merge_sha": "fe43d7fbd04dd4da7b557a3dd3f6c7f3ef6a924b",
+        "head_sha": "829d1eca4c3b0841d9f42a5da21ac3d5184b29fb",
+        "checks": "Quality #41978711897, Freshness #41978711986 and Provenance #41978711895 passed on exact PR head; post-merge main Quality/ Freshness/Provenance and Pages passed."
+      },
+      {
+        "number": 142,
+        "merge_sha": "c307b7e3940e9051843befd5f77acfeaef66c91d",
+        "head_sha": "de145eedf935b687de53be8f0157b677f92f2eaf",
+        "checks": "Quality #41980415506 passed; four N2O operating docs added on current-main branch."
+      },
+      {
+        "number": 144,
+        "merge_sha": "99c5d673cf239a1cd86b67aca101a3c0773f3761",
+        "head_sha": "dbc552880993a9cca89a6fd95f3e183b0f05b5f1",
+        "checks": "Quality #41980666509 passed; source/license/revision triage documentation merged."
+      },
+      {
+        "number": 143,
+        "merge_sha": "12ce75cdd6e14ae7752643bb20fc5421b177c26e",
+        "head_sha": "8abf362ebb247194606fc93e87478a26114f17b3",
+        "checks": "Quality #41981477468 passed; acquisition run #41980925294 verified archive size/SHA/ZIP safety; model stored evaluation-only."
+      },
+      {
+        "number": 145,
+        "merge_sha": "88d230fc92fef5b884af699345fd010291107693",
+        "head_sha": "91ee4d706b5f92a59cf011fb86f3d3200c8f22ef",
+        "checks": "Quality #41981377808, Gateway #41981377700 (Python 3.12/3.13/3.14), Graphify #41981377789, Provenance #41981377775 and Dead Code #41981377752 passed on exact PR head."
       }
     ],
-    "main_provenance_run": 41967234535,
+    "main_provenance_run": 41982069399,
     "main_freshness_run": 41967234558,
-    "main_graphify_run": 41967234708,
+    "main_graphify_run": 41982069425,
     "open_prs": [
-      124,
       125,
-      126,
-      127,
       128,
       129,
       130,
       131,
-      132,
-      133,
-      134,
-      141
+      134
     ],
-    "owner_task": "docs/LANDING_RELEASE_STRATEGY_RU.md: stable Landing 1.0 main, selective promotion from PR #131, then artifact acquisition and repository hygiene",
-    "pr131_head": "597536924ce37b17f8832aa36ea5b928f5584230",
+    "owner_task": "docs/MASTER_TASK_REGISTRY_RU.md + append-only owner addendum; stable Landing 1.0 main with selective V2 promotion from PR #131; preserve approved artifacts and reconcile all PRs/branches/Issues",
+    "pr131_head": "02fb4e8986b35f55a8a3b5308704b631dfbcce80",
     "pr131_exact_head_verified": false,
-    "pr131_compare": "diverged; 1094 ahead / 9 behind; 57 files; mergeable=false",
-    "pr131_quality_run": 41787658241,
+    "pr131_compare": "diverged; 1101 ahead / 14 behind; 57 files; mergeable=false",
+    "pr131_quality_run": 41981955002,
     "pr131_provenance_run": 41787658226,
     "pr131_full_gate_verified": false,
-    "pr131_quality_scope": "4/4 real Chromium shards, Jekyll, Integrity, Security, Context and static analysis passed; published Pages smoke skipped",
+    "pr131_quality_scope": "Final PR #131 HEAD 02fb4e8986b35f55a8a3b5308704b631dfbcce80: Quality #41981955002 passed static analysis, Jekyll, four real Chromium shards, Integrity, Security and Context; published Pages smoke was skipped.",
     "pr131_missing_checks": [
-      "Project State Freshness on exact PR #131 HEAD",
-      "Graphify on exact PR #131 HEAD",
+      "Project State Freshness on final PR #131 HEAD",
+      "Graphify on final PR #131 HEAD (latest pass is code/test HEAD c79e983a57d6cc2b87a9296a1334e6d6ed5b3479; subsequent commits were docs-only)",
       "native iPhone Safari",
       "VoiceOver",
       "physical keyboard/long-press",
       "full component-level contrast review"
     ],
-    "promotion_audit": "PR #139 first V1 public landing accessibility/responsive slice merged at 2e11849d409a51009693af95ac3ecbf1f057a3fc; exact-main Quality/Pages/Freshness/Provenance/Graphify pass and production CSS was fetched. Graphify UI Surface bridge in PR #131 remains NEEDS WORK due inferred relations/approximate owner mapping and limited ambiguity/error tests. 8.12 removal not promoted; 8.13 context handoff stays V2; root app extraction and agent roadmap stay V2. PR #134 AgentRun prototype at exact HEAD 519973c793a1c998b43c60dedfe55a02b74a26a9 received review #5779912938 COMMENT: raw goal text is persisted, metadata denylist can allow innocuous-key raw text, terminal run transitions do not fence leased tasks, and TERMINAL_RUN_STATES is unused. Keep Draft/HOLD before API/runtime integration. PR #131 Functions/Agents/Skills/Research menu source and E2E reviewed at exact HEAD 597536924ce37b17f8832aa36ea5b928f5584230: menu grouping and roadmap-vs-real config are honest; Quality #41787658241 and Provenance #41787658226 pass, but Freshness/Graphify and published smoke absent. Keep menu UI in V2, no V1 promotion.",
+    "promotion_audit": "PR #139 public V1 landing accessibility/responsive slice merged and exact-main gates passed; PR #131 remains V2 workbench. Graphify UI Surface confidence patch implemented on PR #131 code/test HEAD c79e983a57d6cc2b87a9296a1334e6d6ed5b3479; Graphify pilot #41981885581 passed. Exact final PR Quality pending.",
     "pr131_812_decision": "do not promote removal; previously accepted opt-in V1 feature; owner approval and live host/database review required for retirement",
     "first_v1_code_candidate": "public landing accessibility/responsive slice; three functional files only; six additional PR #139 changes are orientation/state documentation",
     "pr138_merge_sha": "a7915291354d1b031ce2461b71a553f871959df3",
@@ -128,13 +152,15 @@
     "first_v1_candidate_pr_base": "a7915291354d1b031ce2461b71a553f871959df3",
     "first_v1_candidate_merge_status": "squash-merged at 2e11849d409a51009693af95ac3ecbf1f057a3fc after explicit owner authorization",
     "first_v1_candidate_post_merge_pages": "PASS on exact merge SHA; production-baseurl CSS fetch verified; native device review remains unverified",
-    "download_permission": "Owner explicitly authorized downloads on 2026-11-05. Vosk vosk-model-small-ru-0.22 acquired via GitHub Actions #41968439622 / artifact #13389210196. Exact archive size 46236750 bytes and SHA-256 961d5ff98a17f4aa6de69864d0aa71fa5bac682301d2b5d17a3f24c5c99a46d4 verified on runner; ZIP CRC/path traversal/symlink/expansion checks passed on runner and CRC/path checks independently repeated after transfer. Apache-2.0 per official catalog. ship=false, no runtime integration or target hardware eval. PR #141 draft acquisition workflow; no merge."
+    "download_permission": "Owner authorized acquisition and repository storage on 2026-11-05. Vosk Small RU 0.22 stored in main at models/vosk/vosk-model-small-ru-0.22.zip, size 46236750 bytes, SHA-256 961d5ff98a17f4aa6de69864d0aa71fa5bac682301d2b5d17a3f24c5c99a46d4; metadata, SHA256SUMS, upstream README and Apache-2.0 license notice included. Acquisition run #41980925294 passed exact pinned archive validation; read-only manual acquisition workflow. ship=false; no runtime integration, target hardware eval or RU golden-set bake-off.",
+    "pr131_graphify_run": 41981885581,
+    "pr131_graphify_code_test_sha": "c79e983a57d6cc2b87a9296a1334e6d6ed5b3479"
   },
   "interpretation": {
-    "last_main_commit_is_documentation_only": true,
+    "last_main_commit_is_documentation_only": false,
     "live_vps_gateway_device_and_model_runtime_verified": false,
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-05-VOSK-ARTIFACT-EXTRACT-001"
+  "last_volley": "V-2026-11-05-REGISTRY-CONSOLIDATION-001"
 }
