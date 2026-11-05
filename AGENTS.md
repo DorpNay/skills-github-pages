@@ -30,7 +30,7 @@
 ## OLEDUE handoff trigger (2026-11-04)
 
 - When the owner sends the single word `oledue` (alone or with a task), read root `OLEDUE.md` first and execute its handoff protocol before asking questions or summarizing history.
-- Build one Session Sync Capsule from a batched live GitHub read; keep PR HEAD, code/test HEAD and tested CI SHA distinct. Avoid repeated polling and stale-SHA pass claims.
+- Build one Session Sync Capsule from a single batched live GitHub read; keep PR HEAD, code/test HEAD and tested CI SHA distinct. Do not reread all orientation documents by default; load detailed state/history only when the selected task needs it. Avoid repeated polling and stale-SHA pass claims.
 - Keep the first response work-oriented: verify live repository state, recover the exact stopping point and continue one bounded safe slice. A green CI is not merge authorization.
 
 ## Fast entry point / first-read protocol (2026-10-27)
