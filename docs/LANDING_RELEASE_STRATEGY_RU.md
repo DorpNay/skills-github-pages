@@ -143,8 +143,12 @@ These are audit targets, not pre-approved promotions:
 | Candidate | Evidence / exact HEAD | Decision | Rationale / next gate |
 |---|---|---|---|
 | OLEDUE/orientation and release-plan docs | PR #138 head `2462a783`; Quality #41797778925, Freshness #41797779149, Provenance #41797779027 passed; merged at `a7915291` | IMPLEMENTED / CI VERIFIED | Main orientation now points to the V1/V2 plan; fresh-session behavioral handoff test remains separate.
-| PR #131 wholesale merge | Compare main vs branch: 57 files; 1,094 ahead / 7 behind; Quality #41787658241 and Provenance #41787658226 passed on current reported HEAD | REJECT AS A MERGE UNIT | Extract bounded candidates; Freshness/Graphify still missing; do not merge the whole branch. |
-| Public Landing V1 candidate / PR #139 | Exact HEAD `167b58feab4b2d6eda85dfb4cb99eaab12e8e11a`; Quality #41804378602, Freshness #41804378584, Provenance #41804378496 and Graphify #41804378533 PASS | READY FOR OWNER MERGE DECISION | Functional slice is isolated; do not merge without explicit owner authorization. Post-merge Pages deployment and production-baseurl CSS check remain required. |
+| PR #131 wholesale merge | Current live compare: 57 files; 1,094 ahead / 9 behind; mergeable=false. Exact HEAD `597536924ce37b17f8832aa36ea5b928f5584230`; Quality #41787658241 and Provenance #41787658226 passed on this SHA, but exact-head Freshness/Graphify absent. | REJECT AS A MERGE UNIT | Extract bounded candidates only; do not sync or merge the whole branch without separate owner approval. |
+| Public Landing V1 candidate / PR #139 | Exact PR HEAD `d76be1d59ed832fa638e419b542151dba277c143`: Quality #41966180071, Freshness #41966180096, Provenance #41966180157 and Graphify #41966180042 PASS. Squash-merged at `2e11849d409a51009693af95ac3ecbf1f057a3fc`; exact-main Quality #41967234442, Pages #41967233832, Freshness #41967234558, Provenance #41967234535 and Graphify #41967234708 PASS; production CSS/landing HTML fetched. | IMPLEMENTED / MERGED / VERIFIED | Native iPhone/VoiceOver and physical-device review remain unverified. |
+
+### Follow-up review — PR #134 AgentRun prototype (2026-11-05)
+
+PR #134 exact HEAD `519973c793a1c998b43c60dedfe55a02b74a26a9` received COMMENT review #5779912938. Findings: raw `goal` text is persisted; denylist-only metadata allows arbitrary short strings in innocuous keys; terminal run transitions can leave active task leases unfenced; `TERMINAL_RUN_STATES` is unused. Keep Draft/HOLD before API/runtime integration; require goal classification/retention, allowlisted metadata schemas, atomic terminal-task fencing and race regressions. No routes, auth, workers or deployment added.
 
 ## Change record
 
@@ -181,7 +185,7 @@ These are audit targets, not pre-approved promotions:
 
 ### First decisions
 
-1. **First V1 code candidate is verified:** isolated public Landing page accessibility/responsive slice on PR #139 exact HEAD `167b58feab4b2d6eda85dfb4cb99eaab12e8e11a`; Quality, Freshness, Provenance and Graphify all passed. Await explicit owner merge authorization; post-merge Pages and production CSS checks remain open.
+1. **First V1 code candidate is promoted:** isolated public Landing page accessibility/responsive slice PR #139 squash-merged at `2e11849d409a51009693af95ac3ecbf1f057a3fc`; exact PR-head and exact-main Quality/Freshness/Provenance/Graphify plus Pages deployment passed, and production CSS/HTML were fetched. Native iPhone/VoiceOver review remains open.
 2. **No whole-PR merge.** The root UI refactor and feature additions are coupled across 57 changed files.
 3. **Do not promote 8.12's removal.** It conflicts with accepted main behavior and owner checklist; keep the opt-in feature intact unless the owner explicitly chooses retirement.
 4. **Keep 8.13 and all new agent/menu/runtime capabilities in V2 for now.** Their implementation/test status is not permission to widen V1 scope.
@@ -191,5 +195,5 @@ These are audit targets, not pre-approved promotions:
 
 
 
-The first-pass upstream research findings are recorded in [INTEL.md — External-source first-pass](../INTEL.md#external-source-first-pass--2026-11-04). No source code or model weights have been downloaded.
+The first-pass upstream research findings are recorded in [INTEL.md — External-source first-pass](../INTEL.md#external-source-first-pass--2026-11-04). **Artifact acquisition update (2026-11-05):** Vosk small RU weights were downloaded and hash/ZIP-verified (SHA-256 `961d5ff98a17f4aa6de69864d0aa71fa5bac682301d2b5d17a3f24c5c99a46d4`, 46,236,750 bytes, Apache-2.0 per official catalog); they remain evaluation-only with `ship=false`. No model runtime was installed or activated.
 | 2026-11-05 | PR #139 `feat/v1-public-landing-a11y-20261104` | Verify the isolated V1-compatible public landing improvement; three functional files plus six orientation/state files | Exact HEAD `167b58feab4b2d6eda85dfb4cb99eaab12e8e11a`: Quality #41804378602, Freshness #41804378584, Provenance #41804378496 and Graphify #41804378533 PASS. Not merged; owner authorization and post-merge Pages checks remain pending. |
