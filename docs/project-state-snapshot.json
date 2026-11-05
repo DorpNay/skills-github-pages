@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
   "repository": "DorpNay/skills-github-pages",
-  "captured_at": "2026-11-04",
+  "captured_at": "2026-11-05",
   "checkpoint": {
     "main_sha": "a7915291354d1b031ce2461b71a553f871959df3",
     "main_commit_subject": "docs: establish Landing V1 stability and V2 promotion plan",
     "main_commit_date": "2026-11-04",
     "last_functional_checkpoint_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
-    "last_functional_milestone": "PR #123 remains the last functional checkpoint at e78a73b25725bfa63370d9946887cbbacbf51b82. PR #135 and #136 are documentation/archive/config-only; PR #137 is documentation/test-only (OLEDUE handoff and context-budget test capture). Main now points to 9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af. Exact-main Quality, Pages, Freshness, Provenance and Graphify passed on that SHA.",
+    "last_functional_milestone": "PR #123 remains the last functional code checkpoint at e78a73b25725bfa63370d9946887cbbacbf51b82. PR #138 is documentation-only and moved main to a7915291354d1b031ce2461b71a553f871959df3; exact-main Quality, Pages, Freshness and Provenance passed on that SHA. PR #139 is a separate, not-yet-merged public landing accessibility/responsive candidate.",
     "main_quality_run": 41798373393,
     "main_pages_deployment_run": 41798372381,
     "functional_parent_gateway_run": null,
@@ -102,26 +102,30 @@
     ],
     "promotion_audit": "First V1 code candidate: public Landing page accessibility/responsive slice only (landing/index.html + assets/css/landing.css + tests/e2e/landing.spec.mjs); isolated exact-head verification pending. 8.12 graph-memory removal conflicts with accepted V1 decisions/checklist and must not be promoted without owner retirement approval/live-host data review. 8.13 project context handoff stays V2 for privacy/scope. Root app extraction and agent roadmap stay V2.",
     "pr131_812_decision": "do not promote removal; previously accepted opt-in V1 feature; owner approval and live host/database review required for retirement",
-    "first_v1_code_candidate": "public landing accessibility/responsive slice; three files only; promote after isolated exact-head CI",
+    "first_v1_code_candidate": "public landing accessibility/responsive slice; three functional files only; six additional PR #139 changes are orientation/state documentation",
     "pr138_merge_sha": "a7915291354d1b031ce2461b71a553f871959df3",
     "pr138_quality_run": 41797778925,
     "pr138_freshness_run": 41797779149,
     "pr138_provenance_run": 41797779027,
     "first_v1_candidate_branch": "feat/v1-public-landing-a11y-20261104",
-    "first_v1_candidate_head": "898c2f9219efb19dc40c42d373ce7b2a25d19dcd",
+    "first_v1_candidate_head": "167b58feab4b2d6eda85dfb4cb99eaab12e8e11a",
     "first_v1_candidate_files": [
       "landing/index.html",
       "assets/css/landing.css",
       "tests/e2e/landing.spec.mjs"
     ],
-    "first_v1_candidate_checks": "pending exact-head Quality/Chromium, Jekyll, Freshness and Provenance",
+    "first_v1_candidate_checks": "PASS on exact PR #139 HEAD 167b58feab4b2d6eda85dfb4cb99eaab12e8e11a: Quality #41804378602 (Chromium, Jekyll, Security, Integrity, static analysis, Context and published-site smoke job), Freshness #41804378584, Provenance #41804378496, Graphify #41804378533. Owner merge authorization pending; post-merge Pages deployment and production-baseurl CSS verification pending.",
     "first_v1_candidate_css_delivery_assertion": "HTTP 200 and text/css",
     "original_v1_baseline_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
     "main_quality_status": "success",
     "main_pages_status": "success",
     "main_freshness_status": "success",
     "main_provenance_status": "success",
-    "main_graphify_status": "not rerun; docs-only PR #138"
+    "main_graphify_status": "not rerun; docs-only PR #138",
+    "first_v1_candidate_pr": 139,
+    "first_v1_candidate_pr_base": "a7915291354d1b031ce2461b71a553f871959df3",
+    "first_v1_candidate_merge_status": "open at the 2026-11-05 verification checkpoint; no merge performed; explicit owner authorization required",
+    "first_v1_candidate_post_merge_pages": "pending authorized merge; verify exact merge SHA, Pages deployment and CSS delivery on production baseurl"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": true,
@@ -129,5 +133,5 @@
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-04-PR138-MERGED-V1-LANDING-CANDIDATE-001"
+  "last_volley": "V-2026-11-05-PR139-VERIFIED-001"
 }
