@@ -10,6 +10,8 @@ Convert a portfolio of 200+ owner-requested sources into a traceable capability 
 
 ## Single source register
 
+Baseline: INTEL.md on main blob SHA 6c1d96604ccb068eb086f83831f08e6c8c0b024c reports 257 distinct URLs in its consolidated external source inventory snapshot dated 2026-11-04, deduplicated by exact URL; INTEL.md contains 275 distinct URLs overall. These are URL/resource counts, not a confirmed count of unique upstream projects or owner-mentioned candidates. Source census must reconcile coverage and resolve project identity.
+
 Each source record must retain the owner's original mention and include:
 - stable source ID; exact canonical URL and repository/project identity; aliases and ambiguity flag;
 - source provenance (owner list, Project source, repo document, prior audit); category and capability tags;
