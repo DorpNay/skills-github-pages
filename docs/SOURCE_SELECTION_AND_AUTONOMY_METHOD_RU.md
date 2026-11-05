@@ -116,14 +116,14 @@ Required tests:
 
 The inspected main workflow .github/workflows/quality-sentinels.yml uses runs-on: ubuntu-latest; installs pinned Playwright Test @playwright/test 1.64.1; then executes npx playwright install --with-deps chromium. This downloads browser and OS-level dependencies in the GitHub-hosted runner. The same job also intentionally requests the published GitHub Pages site for smoke testing on PR/main events.
 
-This is not automatically an app-runtime egress defect. It is, however, a repeatable CI bootstrap dependency and potentially slow/costly. Evaluate (do not change blindly):
+Preliminary static scan of main index.md at SHA 67c3f001b5c7d6e8f64c0977e176523ce6a0566c also found external script references for Tailwind, marked and DOMPurify, plus lazy Pyodide loading from cdn.jsdelivr.net; several direct provider/research endpoints exist behind selected online features. Static reference presence does not establish whether a request happens on every startup, what data leaves, or whether the path can be disabled. These require Playwright network trace and function-by-function audit. This is not automatically an app-runtime egress defect. It is, however, a repeatable CI bootstrap dependency and potentially slow/costly. Evaluate (do not change blindly):
 - pinned container/image with preinstalled Chromium + Linux libs and digest;
 - Playwright browser cache with integrity verification and cache-miss policy;
 - pinned self-hosted runner only if secrets/isolation/maintenance are acceptable;
 - separate online published-site smoke from offline built-app tests;
 - keep workflow actions immutable SHA-pinned and retain reproducible versions.
 
-Acceptance: fresh runner or documented local runner can execute deterministic browser checks; offline app tests do not require external product requests; cache misses fail clearly; CI bootstrap network requirements and product network requirements are separately documented.
+Acceptance: fresh runner or documented local runner can execute deterministic browser checks; offline app tests do not require external product requests; cache misses fail clearly; CI bootstrap network requirements and product network requirements are separately documented. Static scan is an initial evidence snapshot at main SHA 8e7d4aafe4b9580e9f8978c6f888e35f3fa99242 (index.md blob 67c3f001b5c7d6e8f64c0977e176523ce6a0566c); browser-level outbound audit remains OPEN.
 
 ## Artifact acquisition policy
 
