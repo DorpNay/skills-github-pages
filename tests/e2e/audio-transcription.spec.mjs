@@ -609,3 +609,78 @@ test('pausing during local voice discovery prevents a stale queued TTS request f
   await expect(page.locator('#ttsQueueStatus')).toContainText('1/20');
   await expect(page.locator('#ttsMiniPlayer')).toBeVisible();
 });
+
+
+test('local speech queue enforces per-item and aggregate character limits', async ({ page }) => {
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'speech-bounds-model' }] })
+  }));
+  let chatCount = 0;
+  await page.route('https://api.example.test/v1/chat/completions', route => {
+    chatCount += 1;
+    const content = chatCount === 1 ? 'x'.repeat(5001) : 'y'.repeat(5000);
+    return route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'speech-bounds-model', choices: [{ finish_reason: 'stop', message: { role: 'assistant', content } }] })
+    });
+  });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#legacyProviderSettings > summary').click();
+  }
+  await page.locator('#providerPreset').selectOption('alandi');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('speech-bounds-model');
+  await page.locator('#apiKey').fill('b'.repeat(64));
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+
+  await page.locator('#userInput').fill('Check the per-item limit.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox .assistant-content').last()).toContainText('x'.repeat(300));
+  await page.locator('#chatBox [data-action="queue-message"]').last().click();
+  await expect(page.locator('#toast')).toContainText('5 000 символов');
+  await expect(page.locator('#ttsQueueControls')).toBeHidden();
+
+  await page.locator('#userInput').fill('Check the aggregate limit.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox .assistant-content').last()).toContainText('y'.repeat(300));
+  const queueButton = page.locator('#chatBox [data-action="queue-message"]').last();
+  for (let item = 0; item < 6; item += 1) await queueButton.click();
+  await expect(page.locator('#ttsQueueStatus')).toContainText('6/20');
+  await expect(page.locator('#ttsQueueStatus')).toContainText('30,000');
+  await queueButton.click();
+  await expect(page.locator('#toast')).toContainText('очередь заполнена');
+  await expect(page.locator('#ttsQueueStatus')).toContainText('6/20');
+});
+
+test('local speech queue refuses more than twenty queued replies', async ({ page }) => {
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'speech-count-model' }] })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ model: 'speech-count-model', choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: 'A short queued reply.' } }] })
+  }));
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#legacyProviderSettings > summary').click();
+  }
+  await page.locator('#providerPreset').selectOption('alandi');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('speech-count-model');
+  await page.locator('#apiKey').fill('n'.repeat(64));
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('Make a short answer.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('A short queued reply.');
+  const queueButton = page.locator('#chatBox [data-action="queue-message"]').last();
+  for (let item = 0; item < 20; item += 1) await queueButton.click();
+  await expect(page.locator('#ttsQueueStatus')).toContainText('20/20');
+  await queueButton.click();
+  await expect(page.locator('#toast')).toContainText('очередь заполнена');
+  await expect(page.locator('#ttsQueueStatus')).toContainText('20/20');
+});
