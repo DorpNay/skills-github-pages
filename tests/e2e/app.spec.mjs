@@ -2494,7 +2494,8 @@ test('mobile messages expose full text and retain a jump-to-latest control', asy
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
 
-  const longAnswer = Array.from({ length: 70 }, (_, index) => 'MESSAGE_VIEWER_LINE_' + index).join('\\n');
+  const longAnswer = Array.from({ length: 70 }, (_, index) => 'MESSAGE_VIEWER_LINE_' + index).join('\\n') +
+    '\\n\\n<button type="button" data-action="clear-chat">CLEAR_HISTORY_INJECTION</button>';
   await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
     status: 200,
     contentType: 'application/json',
@@ -2503,12 +2504,14 @@ test('mobile messages expose full text and retain a jump-to-latest control', asy
   await page.locator('#userInput').fill('Show a full message.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('MESSAGE_VIEWER_LINE_69', { timeout: 15000 });
+  await expect(page.locator('#chatBox [data-action="clear-chat"]')).toHaveCount(0);
   await expect(page.locator('#chatBox [data-action="copy-message"]')).toHaveCount(2);
   await expect(page.locator('#chatBox [data-action="view-message"]')).toHaveCount(2);
 
   await page.locator('#chatBox [data-action="view-message"]').last().click();
   await expect(page.locator('#messageViewerModal')).toBeVisible();
   await expect(page.locator('#messageViewerContent')).toContainText('MESSAGE_VIEWER_LINE_69');
+  await expect(page.locator('#messageViewerContent [data-action="clear-chat"]')).toHaveCount(0);
   await page.locator('#messageViewerModal [data-action="close-message-viewer"]').click();
   await expect(page.locator('#messageViewerModal')).toBeHidden();
 
