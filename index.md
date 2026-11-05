@@ -1778,7 +1778,7 @@ permalink: /
       try {
         const existing = localStorage.getItem(baseKey);
         if (existing === rawText) { projectRecoveryBackupKey = baseKey; projectRecoveryWarning = true; return; }
-        if (existing && existing !== rawText) backupKey = baseKey + '_' + Date.now();
+        if (existing !== null && existing !== rawText) backupKey = baseKey + '_' + Date.now();
         localStorage.setItem(backupKey, rawText);
         projectRecoveryBackupKey = backupKey;
         projectRecoveryWarning = true;
