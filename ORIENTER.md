@@ -4,7 +4,7 @@ This is the short entry point for an assistant or engineer. Use `OLEDUE.md` for 
 
 ## Current working checkpoint — 2026-11-05, post-PR148
 
-- **Current main baseline SHA:** `4fbf16aad3f741159654950e0260aaf717653291`. The state-refresh PR is based on this exact SHA; its merge commit will be a documentation/state-refresh child.
+- **Current main SHA:** `4fbf16aad3f741159654950e0260aaf717653291`. The state-refresh PR is based on this exact SHA; its merge commit will be a documentation/state-refresh child.
 - **Owner policy:** main remains Landing 1.0 with bounded accessibility, reliability, security, performance and maintainability improvements. PR #131 is the substantial Landing 2.0 workbench; never merge it wholesale.
 - **Merged and preserved:** PR #146 canonical task register + owner audit/hygiene addendum (`21162e858d769c23ee4907264305f792148a7fbf`); PR #147 cancellation-safe Gateway semaphore release (`3f37a8166fcbf89c5392f985e290be48ea27ef6a`); PR #148 inert assistant raw HTML, read-only message viewer and restricted Pyodide JS globals (`4fbf16aad3f741159654950e0260aaf717653291`); earlier #139 V1 landing, #140 OLEDUE, #142 N₂O docs, #143 Vosk evaluation archive, #144 source triage and #145 Python lock/document parsing.
 - **Exact PR-head evidence:** #146 Quality #41998268074, Freshness #41998267817, Provenance #41998267937 PASS; #147 Gateway #41998613130 (Python 3.12/3.13/3.14), Quality #41998613190, Graphify #41998613246 and Dead Code #41998613138 PASS; #148 Quality #41999525882 and Graphify #41999525846 PASS. No post-merge main Quality/Pages workflow IDs were retrieved after #146–#148; do not claim post-merge checks from PR-head runs.
