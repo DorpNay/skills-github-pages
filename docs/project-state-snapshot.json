@@ -162,5 +162,5 @@
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-05-MAIN-CONSOLIDATION-001"
+  "last_volley": "V-2026-11-05-REGISTRY-CONSOLIDATION-001"
 }
