@@ -741,3 +741,12 @@ PR #122 добавил только эксплуатационную надёж�
 
 
 **Menu follow-up 2026-11-02:** the Research group now owns a single Deep Research 2.0 roadmap card; Create/Transform owns the four local-file/converter/Knowledge-to-Skill/media cards in its own container. Research Studio remains in the Thorough mode path, not a duplicate toolbar entry. Playwright now asserts this exact grouping; execution remains pending.
+
+### 8.30 — Graphify UI Surface: confidence-aware selector relationships (IMPLEMENTED / VERIFICATION PENDING)
+
+- CSS/DOM exact simple selectors are marked as inferred may_style (0.65); compound/pseudo token overlap is only may_style_candidate (0.25).
+- JavaScript selector queries distinguish exact targets from candidate-only overlap. classList mutations are not DOM selection; they produce js_class_mutation / may_affect_style edges.
+- Removed nearest-preceding-function ownership inference because lexical scope is not established by line proximity.
+- Regression tests cover exact, compound, mutation and false-owner cases.
+- **Acceptance:** exact-head Quality + Graphify pass; inspect graph artifacts for candidate/exact counts and confirm no classList mutation is reported as targets.
+- **Limit:** static extraction only; no browser cascade, runtime selector evaluation or AST-level control-flow proof.
