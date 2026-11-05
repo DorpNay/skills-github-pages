@@ -339,6 +339,7 @@ test('local voice dialogue transcribes, sends, speaks, and listens for the next 
 
 
 test('local speech queue reads multiple assistant replies in order and releases its controls when finished', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.addInitScript(() => {
     HTMLMediaElement.prototype.play = function () {
       if (this.id === 'ttsAudioPlayer') setTimeout(() => this.dispatchEvent(new Event('ended')), 30);
@@ -392,6 +393,11 @@ test('local speech queue reads multiple assistant replies in order and releases 
   await expect(page.locator('#chatBox')).toContainText('Second queued answer.');
   await page.locator('#chatBox [data-action="queue-message"]').last().click();
   await expect(page.locator('#ttsQueueStatus')).toContainText('2/20');
+  await expect(page.locator('#ttsQueueToggle')).toBeVisible();
+  await expect(page.locator('#ttsQueueClear')).toBeVisible();
+  const miniPlayerBox = await page.locator('#ttsMiniPlayer').boundingBox();
+  expect(miniPlayerBox).not.toBeNull();
+  expect(miniPlayerBox.x + miniPlayerBox.width).toBeLessThanOrEqual(390);
   await page.locator('#ttsQueueToggle').click();
 
   await expect.poll(() => spoken.length).toBe(2);
@@ -401,6 +407,7 @@ test('local speech queue reads multiple assistant replies in order and releases 
 });
 
 test('selected text inside one assistant message is read without sending the rest of the message', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.route('https://api.example.test/v1/models', route => route.fulfill({
     status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'selection-speech-model' }] })
   }));
@@ -455,8 +462,15 @@ test('selected text inside one assistant message is read without sending the res
     return false;
   });
   expect(selected).toBe(true);
-  await expect(page.locator('#ttsSelectionAction')).toBeVisible();
-  await page.locator('#ttsSelectionAction').click();
+  const selectionButton = page.locator('#ttsSelectionAction');
+  await expect(selectionButton).toBeVisible();
+  const buttonBox = await selectionButton.boundingBox();
+  expect(buttonBox).not.toBeNull();
+  expect(buttonBox.x).toBeGreaterThanOrEqual(0);
+  expect(buttonBox.y).toBeGreaterThanOrEqual(0);
+  expect(buttonBox.x + buttonBox.width).toBeLessThanOrEqual(390);
+  expect(buttonBox.y + buttonBox.height).toBeLessThanOrEqual(844);
+  await selectionButton.click();
   await expect.poll(() => spokenText).toBe('Only this selected passage');
   await expect(page.locator('#ttsSelectionAction')).toBeHidden();
 
