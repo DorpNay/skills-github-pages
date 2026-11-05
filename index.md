@@ -1043,7 +1043,7 @@ permalink: /
     function downloadRecoveryBackup() {
       if (!chatRecoveryBackupKey) throw new Error('Резервная копия истории не найдена.');
       const raw = safeGet(chatRecoveryBackupKey);
-      if (!raw) throw new Error('Резервная копия истории недоступна в этом браузере.');
+      if (raw === null) throw new Error('Резервная копия истории недоступна в этом браузере.');
       const blob = new Blob([raw], { type: 'application/json;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -1058,7 +1058,7 @@ permalink: /
     function downloadProjectRecoveryBackup() {
       if (!projectRecoveryBackupKey) throw new Error('Резервная копия проектов не найдена.');
       const raw = safeGet(projectRecoveryBackupKey);
-      if (!raw) throw new Error('Резервная копия проектов недоступна в этом браузере.');
+      if (raw === null) throw new Error('Резервная копия проектов недоступна в этом браузере.');
       const blob = new Blob([raw], { type: 'application/json;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -5318,7 +5318,7 @@ permalink: /
           const backupKeys = [];
           for (let index = 0; index < localStorage.length; index++) {
             const key = localStorage.key(index);
-            if (key && key.startsWith('ai_chats_recovery_backup') && safeGet(key)) backupKeys.push(key);
+            if (key && key.startsWith('ai_chats_recovery_backup') && safeGet(key) !== null) backupKeys.push(key);
           }
           backupKeys.sort((a, b) => {
             const time = (key) => Number(key.slice('ai_chats_recovery_backup_'.length)) || 0;
@@ -5333,7 +5333,7 @@ permalink: /
           const backupKeys = [];
           for (let index = 0; index < localStorage.length; index++) {
             const key = localStorage.key(index);
-            if (key && key.startsWith('ai_projects_recovery_backup') && safeGet(key)) backupKeys.push(key);
+            if (key && key.startsWith('ai_projects_recovery_backup') && safeGet(key) !== null) backupKeys.push(key);
           }
           backupKeys.sort((a, b) => { const time = key => Number(key.slice('ai_projects_recovery_backup_'.length)) || 0; return time(b) - time(a); });
           projectRecoveryBackupKey = backupKeys[0] || '';
