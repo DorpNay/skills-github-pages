@@ -1,6 +1,6 @@
 # aLandi — карта архитектуры и модулей
 
-**Срез:** main `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; PR #121 merged at `f4d880f9648989f4fe48ddd2284220b3606c3b86` (exact head `e3c3017`); PR #122 merged at `fd4f0a1` (exact head `94d871d`).  
+**Срез:** main baseline `4fbf16aad3f741159654950e0260aaf717653291`; PR #146 merged at `21162e858d769c23ee4907264305f792148a7fbf`, PR #147 at `3f37a8166fcbf89c5392f985e290be48ea27ef6a`, PR #148 at `4fbf16aad3f741159654950e0260aaf717653291`. Earlier V1/Gateway foundations #121/#122 remain part of this map.  
 **Тип:** кураторская схема границ модулей по дереву репозитория и фактическим route/function declarations. Это **не** автоматически извлечённый call graph и не доказательство live deployment.
 
 ## 1. Системная схема
@@ -115,3 +115,11 @@ flowchart TD
 
 ## Main synchronization — 2026-10-30
 PR #121 merged at f4d880f9648989f4fe48ddd2284220b3606c3b86 after exact-head Gateway/Quality/Chromium/Jekyll/Freshness/Provenance/Graphify/Dead Code passed. Audio subprocess cancellation cleanup is CI-verified on that PR head. PR #122 merged at fd4f0a105183feb23e0f4e4697446235de9ffe9a with /livez and /readyz; /healthz remains the readiness alias. Post-merge Pages deployment and live VPS/Ollama remain unverified.
+
+
+## 8. Проверенные security/lifecycle изменения — 2026-11-05
+
+- **Gateway chat lifecycle (PR #147):** общий inference slot освобождается при отмене до получения upstream headers, при upstream error и при завершении stream/non-stream cleanup; release идемпотентен. Это устраняет подтверждённый semaphore leak, но не доказывает live VPS behavior.
+- **Browser trust boundary (PR #148):** raw HTML tokens в assistant Markdown выводятся как текст; delegated `data-action` не исполняется из `#messageViewerContent`. Сгенерированные Markdown code-fence controls остаются отдельной функциональностью.
+- **Pyodide (PR #148):** модуль `js` получает пустой null-prototype `jsglobals`, а не page `globalThis`; DOM/localStorage/fetch globals страницы не передаются в Python namespace. Исполнение остаётся в main thread, поэтому длительный код может блокировать вкладку; Worker isolation — отдельный follow-up, не считать текущую конфигурацию полной sandbox.
+- **Достоверность:** эти изменения прошли exact PR-head checks #147/#148. Post-merge main workflow IDs и live Gateway deployment не подтверждены.
