@@ -195,12 +195,12 @@ def collect_dom(root: Path):
 
 JS_LITERAL = r"""(?P<quote>['"])(?P<literal>[^'"]+)(?P=quote)"""
 JS_PATTERNS = (
-    (re.compile(r"(?<![\\w$])\\$\\s*\\(\\s*" + JS_LITERAL), "selector", "select"),
-    (re.compile(r"\\bgetElementById\\s*\\(\\s*" + JS_LITERAL), "id", "select"),
-    (re.compile(r"\\b(?:querySelector|querySelectorAll|matches|closest)\\s*\\(\\s*" + JS_LITERAL), "selector", "select"),
-    (re.compile(r"\\bgetElementsByClassName\\s*\\(\\s*" + JS_LITERAL), "class", "select"),
+    (re.compile(r"(?<![\w$])\$\s*\(\s*" + JS_LITERAL), "selector", "select"),
+    (re.compile(r"\bgetElementById\s*\(\s*" + JS_LITERAL), "id", "select"),
+    (re.compile(r"\b(?:querySelector|querySelectorAll|matches|closest)\s*\(\s*" + JS_LITERAL), "selector", "select"),
+    (re.compile(r"\bgetElementsByClassName\s*\(\s*" + JS_LITERAL), "class", "select"),
     (re.compile(
-        r"\\bclassList\\s*\\.\\s*(?P<operation>add|remove|toggle|contains)\\s*\\(\\s*"
+        r"\bclassList\s*\.\s*(?P<operation>add|remove|toggle|contains)\s*\(\s*"
         + JS_LITERAL
     ), "class", "mutate"),
 )
