@@ -4412,9 +4412,13 @@ permalink: /
       const totalChars = speechQueue.reduce((sum, item) => sum + item.length, 0);
       controls.classList.toggle('hidden', count === 0);
       if (count) $('ttsMiniPlayer').classList.remove('hidden');
-      $('ttsQueueStatus').textContent = getUiLanguage() === 'en'
-        ? `Queue: ${count}/${SPEECH_QUEUE_MAX_ITEMS} items · ${totalChars.toLocaleString()} characters`
-        : `В очереди: ${count}/${SPEECH_QUEUE_MAX_ITEMS} · ${totalChars.toLocaleString()} знаков`;
+      $('ttsQueueStatus').textContent = count
+        ? (getUiLanguage() === 'en'
+          ? `Queue: ${count}/${SPEECH_QUEUE_MAX_ITEMS} items · ${totalChars.toLocaleString()} characters`
+          : `В очереди: ${count}/${SPEECH_QUEUE_MAX_ITEMS} · ${totalChars.toLocaleString()} знаков`)
+        : (getUiLanguage() === 'en' ? 'The queue is empty.' : 'Очередь пуста');
+      $('ttsQueueClear').textContent = getUiLanguage() === 'en' ? 'Clear' : 'Очистить';
+      $('ttsQueueClear').setAttribute('aria-label', getUiLanguage() === 'en' ? 'Clear speech queue' : 'Очистить очередь озвучивания');
       $('ttsQueueToggle').disabled = count === 0;
       $('ttsQueueClear').disabled = count === 0;
       $('ttsQueueToggle').textContent = speechQueuePlaying
@@ -4534,6 +4538,8 @@ permalink: /
       const rect = range.getBoundingClientRect();
       if (!rect || (!rect.width && !rect.height)) { hide(); return; }
       selectedSpeechText = text;
+      button.textContent = getUiLanguage() === 'en' ? '🔊 Read selection' : '🔊 Озвучить выделенное';
+      button.setAttribute('aria-label', getUiLanguage() === 'en' ? 'Read selected text aloud' : 'Озвучить выделенный текст');
       const width = Math.min(button.offsetWidth || 180, window.innerWidth - 16);
       const left = Math.max(8, Math.min(window.innerWidth - width - 8, rect.left + (rect.width - width) / 2));
       const top = rect.top >= 56 ? rect.top - 48 : Math.min(window.innerHeight - 48, rect.bottom + 8);
