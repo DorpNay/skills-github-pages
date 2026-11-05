@@ -328,6 +328,7 @@ def enrich_graph(root: Path, graph_path: Path) -> dict:
                 ))
 
     js_selector_ids = []
+    js_mutation_ids = []
     js_mutation_records = 0
     for record in js:
         file_id = ensure_file(record["path"])
@@ -338,7 +339,10 @@ def enrich_graph(root: Path, graph_path: Path) -> dict:
             expression=record["expression"], selector_text=record["selector_text"],
             operation=record["operation"],
         ))
-        js_selector_ids.append(ref_id)
+        if is_mutation:
+            js_mutation_ids.append(ref_id)
+        else:
+            js_selector_ids.append(ref_id)
         add_edge(links, known_edges, make_edge(
             file_id, ref_id, "contains", record["path"], record["line"]
         ))
@@ -374,20 +378,24 @@ def enrich_graph(root: Path, graph_path: Path) -> dict:
     css_node_count = sum(len(set(ids)) for ids in css_by_selector.values())
     dom_node_count = sum(len(set(ids)) for ids in dom_by_selector.values())
     js_node_count = len(set(js_selector_ids))
+    js_mutation_node_count = len(set(js_mutation_ids))
     return {
         "css_selector_records": len(css),
         "css_selector_nodes": css_node_count,
         "dom_selector_records": len(dom),
         "dom_selector_nodes": dom_node_count,
-        "js_selector_reference_records": len(js),
+        "js_selector_reference_records": sum(1 for item in js if item["mode"] == "select"),
         "js_selector_reference_nodes": js_node_count,
+        "js_class_mutation_nodes": js_mutation_node_count,
         "new_graph_nodes": len(nodes),
         "new_graph_edges": len(links),
         "matched_css_dom_selectors": len(set(css_by_selector) & set(dom_by_selector)),
         "exact_css_dom_matches": exact_css_dom_matches,
         "ambiguous_css_dom_matches": ambiguous_css_dom_matches,
         "js_class_mutation_records": js_mutation_records,
-        "matched_js_css_references": sum(1 for item in js if item["selector"] in css_by_selector),
+        "matched_js_css_references": sum(
+            1 for item in js if item["mode"] == "select" and item["selector"] in css_by_selector
+        ),
         "dom_selectors_without_css_count": len(set(dom_by_selector) - set(css_by_selector)),
         "css_selectors_without_dom_count": len(set(css_by_selector) - set(dom_by_selector)),
         "selectors_without_css": sorted(set(dom_by_selector) - set(css_by_selector))[:40],
