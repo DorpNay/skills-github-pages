@@ -393,9 +393,6 @@ class AgentRunStore:
                 "SELECT task_id,state FROM agent_tasks WHERE run_id=? AND state IN ('queued','leased')",
                 (run_id,),
             ).fetchall()
-            if new_state == "succeeded" and active_tasks:
-                db.rollback()
-                raise InvalidTransition("a run cannot succeed while tasks remain queued or leased")
             if new_state not in {"running"} and new_state not in TERMINAL_RUN_STATES and active_tasks:
                 db.rollback()
                 raise InvalidTransition("pause/verification transitions require an empty active task queue")
