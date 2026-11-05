@@ -32,7 +32,7 @@ artifacts:
     upstream: "https://alphacephei.com/vosk/models/vosk-model-small-ru-0.22.zip"
     source_version: "vosk-model-small-ru-0.22; mirror rhasspy/vosk-models@e7ac2109d134b5f2404ba95389b2fb51916d4cab"
     license_spdx: "Apache-2.0"
-    commercial_use: "candidate_allowed_subject_to_archive_hash_review"
+    commercial_use: "candidate_allowed_with_license_notice_subject_to_evaluation_and_distribution_review"
     sha256: "961d5ff98a17f4aa6de69864d0aa71fa5bac682301d2b5d17a3f24c5c99a46d4"
     ship: false
     status: "downloaded_for_eval"
