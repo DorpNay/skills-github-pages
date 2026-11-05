@@ -1,6 +1,6 @@
 # aLandi — карта архитектуры и модулей
 
-**Срез:** main baseline `4fbf16aad3f741159654950e0260aaf717653291`; PR #146 merged at `21162e858d769c23ee4907264305f792148a7fbf`, PR #147 at `3f37a8166fcbf89c5392f985e290be48ea27ef6a`, PR #148 at `4fbf16aad3f741159654950e0260aaf717653291`. Earlier V1/Gateway foundations #121/#122 remain part of this map.  
+**Срез:** main baseline `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`; PR #146 merged at `21162e858d769c23ee4907264305f792148a7fbf`, PR #147 at `3f37a8166fcbf89c5392f985e290be48ea27ef6a`, PR #148 at `4fbf16aad3f741159654950e0260aaf717653291`, PR #149 at `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`. PR #150 storage recovery slice is in review at `57a10e82198943da5e7625b26daa10d15ccafc40`; do not treat it as merged/verified. Earlier V1/Gateway foundations #121/#122 remain part of this map.  
 **Тип:** кураторская схема границ модулей по дереву репозитория и фактическим route/function declarations. Это **не** автоматически извлечённый call graph и не доказательство live deployment.
 
 ## 1. Системная схема
@@ -123,3 +123,18 @@ PR #121 merged at f4d880f9648989f4fe48ddd2284220b3606c3b86 after exact-head Gate
 - **Browser trust boundary (PR #148):** raw HTML tokens в assistant Markdown выводятся как текст; delegated `data-action` не исполняется из `#messageViewerContent`. Сгенерированные Markdown code-fence controls остаются отдельной функциональностью.
 - **Pyodide (PR #148):** модуль `js` получает пустой null-prototype `jsglobals`, а не page `globalThis`; DOM/localStorage/fetch globals страницы не передаются в Python namespace. Исполнение остаётся в main thread, поэтому длительный код может блокировать вкладку; Worker isolation — отдельный follow-up, не считать текущую конфигурацию полной sandbox.
 - **Достоверность:** эти изменения прошли exact PR-head checks #147/#148. Post-merge main workflow IDs и live Gateway deployment не подтверждены.
+
+
+## 9. Browser storage integrity — PR #150 in review
+
+**Current main behavior before PR #150:** browser chat/project state is stored in versioned `localStorage` keys. Chat recovery preserved the raw JSON only when the whole history was unreadable; a partially invalid chat array could lose invalid records during filtering. Project recovery had no equivalent raw backup. Chat/current-chat and project/chat writes were separate operations, so a later write failure could leave partial state while callers displayed success.
+
+**PR #150 candidate contract (IMPLEMENTED IN BRANCH, NOT YET VERIFIED):**
+- Preserve raw project payload before filtering malformed/truncated entries; preserve partial chat payloads before dropping invalid records.
+- If the raw recovery copy cannot be stored, fail closed and do not overwrite the original. Offer direct download of the original raw value so the user can recover even when quota is exhausted.
+- Treat chat list + current chat key as one logical write: if the current-chat key fails, restore the previous chat list.
+- Treat project + chat updates (create/delete/import) as one logical operation: roll back the project key if chat persistence fails, and restore in-memory state before returning failure.
+- Gate success UI on persistence results; add a 50,000-message aggregate import limit and a 100-tool-call cap for imported project messages.
+- Four Chromium regressions cover project backup download, partial chat recovery, project/chat rollback on quota failure, and fail-closed preservation when a recovery backup cannot be written.
+
+**Verification status:** PR #150 branch HEAD `57a10e82198943da5e7625b26daa10d15ccafc40`; exact-head Quality/Chromium/Graphify/Freshness checks pending. This section describes the candidate implementation, not main runtime state.
