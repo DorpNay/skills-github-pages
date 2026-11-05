@@ -2893,10 +2893,7 @@ test('partially corrupt chat history remains downloadable when recovery backup w
   expect(await page.evaluate(() => localStorage.getItem('ai_chats_v87'))).toBe(raw);
   const [download] = await Promise.all([
     page.waitForEvent('download'),
-    (async () => {
-      await page.locator('#appSidebarToggle').click();
-      await page.locator('#recoveryBackupButton').click();
-    })()
+    page.getByRole('button', { name: 'Настройки', exact: true }).then(button => button.click()).then(() => page.locator('#recoveryBackupButton').click())
   ]);
   expect(download.suggestedFilename()).toBe('ai-chat-recovery-backup.json');
   const stream = await download.createReadStream();
