@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-05",
   "checkpoint": {
-    "main_sha": "a7915291354d1b031ce2461b71a553f871959df3",
-    "main_commit_subject": "docs: establish Landing V1 stability and V2 promotion plan",
-    "main_commit_date": "2026-11-04",
+    "main_sha": "2e11849d409a51009693af95ac3ecbf1f057a3fc",
+    "main_commit_subject": "feat: improve public V1 landing accessibility and responsive layout",
+    "main_commit_date": "2026-11-05",
     "last_functional_checkpoint_sha": "e78a73b25725bfa63370d9946887cbbacbf51b82",
-    "last_functional_milestone": "PR #123 remains the last functional code checkpoint at e78a73b25725bfa63370d9946887cbbacbf51b82. PR #138 is documentation-only and moved main to a7915291354d1b031ce2461b71a553f871959df3; exact-main Quality, Pages, Freshness and Provenance passed on that SHA. PR #139 is a separate, not-yet-merged public landing accessibility/responsive candidate.",
-    "main_quality_run": 41798373393,
-    "main_pages_deployment_run": 41798372381,
+    "last_functional_milestone": "PR #123 remains the last Gateway/root-client functional checkpoint at e78a73b25725bfa63370d9946887cbbacbf51b82; PR #139 added the isolated public Landing V1 accessibility/responsive page slice (landing/index.html, assets/css/landing.css, tests/e2e/landing.spec.mjs) and squash-merged at 2e11849d409a51009693af95ac3ecbf1f057a3fc. Exact merge-SHA main Quality, Pages, Freshness, Provenance and Graphify all passed; production CSS asset and /landing/ page fetched.",
+    "main_quality_run": 41967234442,
+    "main_pages_deployment_run": 41967233832,
     "functional_parent_gateway_run": null,
     "functional_parent_quality_run": null,
     "functional_parent_graphify_run": null,
@@ -68,9 +68,9 @@
         "checks": "Exact-head Quality #41792794176, Freshness #41792794065, Provenance #41792794038 and Graphify #41792794165 passed; merge commit reconciled orientation and OLEDUE handoff."
       }
     ],
-    "main_provenance_run": 41798373486,
-    "main_freshness_run": 41798373366,
-    "main_graphify_run": 41793229272,
+    "main_provenance_run": 41967234535,
+    "main_freshness_run": 41967234558,
+    "main_graphify_run": 41967234708,
     "open_prs": [
       124,
       125,
@@ -87,7 +87,7 @@
     "owner_task": "docs/LANDING_RELEASE_STRATEGY_RU.md: stable Landing 1.0 main, selective promotion from PR #131, then artifact acquisition and repository hygiene",
     "pr131_head": "597536924ce37b17f8832aa36ea5b928f5584230",
     "pr131_exact_head_verified": false,
-    "pr131_compare": "diverged; 1094 ahead / 7 behind; 57 files",
+    "pr131_compare": "diverged; 1094 ahead / 9 behind; 57 files; mergeable=false",
     "pr131_quality_run": 41787658241,
     "pr131_provenance_run": 41787658226,
     "pr131_full_gate_verified": false,
@@ -100,7 +100,7 @@
       "physical keyboard/long-press",
       "full component-level contrast review"
     ],
-    "promotion_audit": "First V1 code candidate: public Landing page accessibility/responsive slice only (landing/index.html + assets/css/landing.css + tests/e2e/landing.spec.mjs); isolated exact-head verification pending. 8.12 graph-memory removal conflicts with accepted V1 decisions/checklist and must not be promoted without owner retirement approval/live-host data review. 8.13 project context handoff stays V2 for privacy/scope. Root app extraction and agent roadmap stay V2.",
+    "promotion_audit": "PR #139 first V1 public landing accessibility/responsive slice merged at 2e11849d409a51009693af95ac3ecbf1f057a3fc; exact-main Quality/Pages/Freshness/Provenance/Graphify pass and production CSS was fetched. Graphify UI Surface bridge in PR #131 remains NEEDS WORK due inferred relations/approximate owner mapping and limited ambiguity/error tests. 8.12 removal not promoted; 8.13 context handoff stays V2; root app extraction and agent roadmap stay V2.",
     "pr131_812_decision": "do not promote removal; previously accepted opt-in V1 feature; owner approval and live host/database review required for retirement",
     "first_v1_code_candidate": "public landing accessibility/responsive slice; three functional files only; six additional PR #139 changes are orientation/state documentation",
     "pr138_merge_sha": "a7915291354d1b031ce2461b71a553f871959df3",
@@ -114,7 +114,7 @@
       "assets/css/landing.css",
       "tests/e2e/landing.spec.mjs"
     ],
-    "first_v1_candidate_checks": "PASS on exact PR #139 HEAD 167b58feab4b2d6eda85dfb4cb99eaab12e8e11a: Quality #41804378602 (Chromium, Jekyll, Security, Integrity, static analysis, Context and published-site smoke job), Freshness #41804378584, Provenance #41804378496, Graphify #41804378533. Owner merge authorization pending; post-merge Pages deployment and production-baseurl CSS verification pending.",
+    "first_v1_candidate_checks": "PR #139 exact HEAD d76be1d59ed832fa638e419b542151dba277c143 passed Quality #41966180071, Freshness #41966180096, Provenance #41966180157 and Graphify #41966180042. Squash merged at main SHA 2e11849d409a51009693af95ac3ecbf1f057a3fc; post-merge main Quality #41967234442, Pages #41967233832, Freshness #41967234558, Provenance #41967234535, Graphify #41967234708 all PASS. Production CSS and landing HTML fetched.",
     "first_v1_candidate_css_delivery_assertion": "HTTP 200 and text/css",
     "original_v1_baseline_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
     "main_quality_status": "success",
@@ -124,8 +124,9 @@
     "main_graphify_status": "not rerun; docs-only PR #138",
     "first_v1_candidate_pr": 139,
     "first_v1_candidate_pr_base": "a7915291354d1b031ce2461b71a553f871959df3",
-    "first_v1_candidate_merge_status": "open at the 2026-11-05 verification checkpoint; no merge performed; explicit owner authorization required",
-    "first_v1_candidate_post_merge_pages": "pending authorized merge; verify exact merge SHA, Pages deployment and CSS delivery on production baseurl"
+    "first_v1_candidate_merge_status": "squash-merged at 2e11849d409a51009693af95ac3ecbf1f057a3fc after explicit owner authorization",
+    "first_v1_candidate_post_merge_pages": "PASS on exact merge SHA; production-baseurl CSS fetch verified; native device review remains unverified",
+    "download_permission": "Owner explicitly authorized downloading on 2026-11-05. Vosk small RU model 45 MB Apache-2.0 selected; official download attempt failed in available transfer tool. No artifact bytes or SHA-256 acquired. Qwen3-ASR-0.6B RU/TH (Apache-2.0, 1.88 GB BF16) remains follow-up candidate; not downloaded."
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": true,
@@ -133,5 +134,5 @@
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-05-PR139-VERIFIED-001"
+  "last_volley": "V-2026-11-05-PR139-MERGED-ARTIFACT-TRIAGE-001"
 }
