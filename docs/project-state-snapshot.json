@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-05",
   "checkpoint": {
-    "main_sha": "88d230fc92fef5b884af699345fd010291107693",
-    "main_commit_subject": "chore: lock Python stack and harden document parsing",
+    "main_sha": "4fbf16aad3f741159654950e0260aaf717653291",
+    "main_commit_subject": "security(ui): harden untrusted assistant rendering and code execution (#148)",
     "main_commit_date": "2026-11-05",
-    "last_functional_checkpoint_sha": "88d230fc92fef5b884af699345fd010291107693",
-    "last_functional_milestone": "PR #145 merged at 88d230fc92fef5b884af699345fd010291107693: universal uv.lock, Python 3.12/3.13/3.14 gateway matrix, FastAPI/Uvicorn/pypdf refresh and asyncio.to_thread document parsing. PR-head Gateway/Quality/Graphify/Provenance/Dead Code passed. PR #143 stores Vosk RU archive; PR #142 N2O docs; PR #144 source triage; PR #140 compact OLEDUE handoff. Post-merge main Quality and Pages are still pending/in progress at snapshot.",
-    "main_quality_run": 41982069618,
-    "main_pages_deployment_run": 41982069239,
+    "last_functional_checkpoint_sha": "4fbf16aad3f741159654950e0260aaf717653291",
+    "last_functional_milestone": "PR #146 merged the canonical task registry and owner audit/hygiene worklist; PR #147 fixed cancellation-safe Gateway inference slot release; PR #148 made assistant raw HTML inert, message viewer read-only and Pyodide jsglobals page-isolated. Exact PR-head gates passed. No post-merge main workflow IDs retrieved.",
+    "main_quality_run": null,
+    "main_pages_deployment_run": null,
     "functional_parent_gateway_run": null,
     "functional_parent_quality_run": null,
     "functional_parent_graphify_run": null,
@@ -97,23 +97,34 @@
         "merge_sha": "88d230fc92fef5b884af699345fd010291107693",
         "head_sha": "91ee4d706b5f92a59cf011fb86f3d3200c8f22ef",
         "checks": "Quality #41981377808, Gateway #41981377700 (Python 3.12/3.13/3.14), Graphify #41981377789, Provenance #41981377775 and Dead Code #41981377752 passed on exact PR head."
+      },
+      {
+        "number": 146,
+        "merge_sha": "21162e858d769c23ee4907264305f792148a7fbf",
+        "head_sha": "112c29eadeb788209f490b4585d3e4ac33884085",
+        "checks": "Exact-head Quality #41998268074 (7 jobs), Freshness #41998267817 and Provenance #41998267937 passed."
+      },
+      {
+        "number": 147,
+        "merge_sha": "3f37a8166fcbf89c5392f985e290be48ea27ef6a",
+        "head_sha": "6ef3b8e4ab19880beb5785e1e8d72295a078541d",
+        "checks": "Exact-head Gateway #41998613130 (Python 3.12/3.13/3.14), Quality #41998613190, Graphify #41998613246 and Dead Code #41998613138 passed."
+      },
+      {
+        "number": 148,
+        "merge_sha": "4fbf16aad3f741159654950e0260aaf717653291",
+        "head_sha": "1159f30dfdfc2b76fe8b47a7fcfd8716804b7df8",
+        "checks": "Exact-head Quality #41999525882 (7 jobs) and Graphify #41999525846 passed; Quality included Chromium, Jekyll, Security, Integrity, Context and published-site smoke."
       }
     ],
-    "main_provenance_run": 41982069399,
-    "main_freshness_run": 41967234558,
-    "main_graphify_run": 41982069425,
-    "open_prs": [
-      125,
-      128,
-      129,
-      130,
-      131,
-      134
-    ],
-    "owner_task": "docs/MASTER_TASK_REGISTRY_RU.md + append-only owner addendum; stable Landing 1.0 main with selective V2 promotion from PR #131; preserve approved artifacts and reconcile all PRs/branches/Issues",
+    "main_provenance_run": null,
+    "main_freshness_run": null,
+    "main_graphify_run": null,
+    "open_prs": "6 open PRs: #125, #128, #129, #130, #131, #134",
+    "owner_task": "Finish the independent repository debugger audit, close verified P1s, reconcile Node 24 and provenance metadata, continue the remaining subsystem audit and safe branch hygiene. Do not merge PR #131 wholesale.",
     "pr131_head": "02fb4e8986b35f55a8a3b5308704b631dfbcce80",
     "pr131_exact_head_verified": false,
-    "pr131_compare": "diverged; 1101 ahead / 14 behind; 57 files; mergeable=false",
+    "pr131_compare": "diverged: 1,101 ahead / 17 behind; 57 files; mergeable=false; keep V2 isolated.",
     "pr131_quality_run": 41981955002,
     "pr131_provenance_run": 41787658226,
     "pr131_full_gate_verified": false,
@@ -143,11 +154,11 @@
     "first_v1_candidate_checks": "PR #139 exact HEAD d76be1d59ed832fa638e419b542151dba277c143 passed Quality #41966180071, Freshness #41966180096, Provenance #41966180157 and Graphify #41966180042. Squash merged at main SHA 2e11849d409a51009693af95ac3ecbf1f057a3fc; post-merge main Quality #41967234442, Pages #41967233832, Freshness #41967234558, Provenance #41967234535, Graphify #41967234708 all PASS. Production CSS and landing HTML fetched.",
     "first_v1_candidate_css_delivery_assertion": "HTTP 200 and text/css",
     "original_v1_baseline_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
-    "main_quality_status": "success",
-    "main_pages_status": "success",
-    "main_freshness_status": "success",
-    "main_provenance_status": "success",
-    "main_graphify_status": "not rerun; docs-only PR #138",
+    "main_quality_status": "PR #148 exact-head Quality #41999525882 PASS (7 jobs); post-merge main Quality run not retrieved.",
+    "main_pages_status": "PR #148 exact-head published Pages browser smoke PASS; post-merge Pages deployment not verified.",
+    "main_freshness_status": "PR #146 exact-head Freshness #41998267817 PASS; this refresh PR reruns against current main baseline.",
+    "main_provenance_status": "PR #146 exact-head Provenance #41998267937 PASS; this refresh PR corrects manifest metadata and reruns the gate.",
+    "main_graphify_status": "PR #148 exact-head Graphify #41999525846 PASS; post-merge main Graphify run not retrieved.",
     "first_v1_candidate_pr": 139,
     "first_v1_candidate_pr_base": "a7915291354d1b031ce2461b71a553f871959df3",
     "first_v1_candidate_merge_status": "squash-merged at 2e11849d409a51009693af95ac3ecbf1f057a3fc after explicit owner authorization",
@@ -162,5 +173,5 @@
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-05-REGISTRY-CONSOLIDATION-001"
+  "last_volley": "V-2026-11-05-REPOSITORY-DEBUGGER-PHASE1-001"
 }

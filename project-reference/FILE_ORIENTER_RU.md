@@ -2,28 +2,18 @@
 
 > **Назначение:** это подробный индекс для поиска пути по репозиторию, а не обязательный стартовый пакет. Для обычного продолжения используй `OLEDUE.md` → один пакет live GitHub state → один канонический task register. Открывай этот индекс, `docs/PROJECT_STATE.yaml` и `docs/VOLLEY_LOG.md` только когда нужны навигация, системное состояние или история. Этот индекс не доказывает, что feature включена или развёрнута.
 
-## Текущая контрольная точка — 2026-11-05, consolidated main
+## Текущая контрольная точка — 2026-11-05, после PR #148
 
-- **Current main SHA:** `88d230fc92fef5b884af699345fd010291107693`. Original Landing V1 baseline is preserved at `archive/landing-v1-baseline-9b746f7-20261105` → `9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af`.
-- **Merged promotions:** #139 V1 landing accessibility/responsive; #140 compact OLEDUE handoff; #142 N₂O owner docs; #144 source/license/inspiration audit; #143 Vosk RU model archive; #145 universal Python lock and async document parsing.
-- **Exact main checks:** Quality #41982069618 PASS; Pages #41982069239 PASS; Gateway #41982069320 PASS; Provenance #41982069399 PASS; Graphify #41982069425 PASS — all on main SHA `88d230fc92fef5b884af699345fd010291107693`. No live host/device evaluation is implied.
+- **Current main baseline SHA:** `4fbf16aad3f741159654950e0260aaf717653291`. Этот PR обновляет snapshot относительно точного текущего main; его merge commit будет state-refresh child.
+- **Merged promotions:** #146 — canonical task registry и owner audit/hygiene tasks; #147 — cancellation-safe Gateway semaphore release; #148 — inert assistant raw HTML, read-only message viewer и restricted Pyodide JS globals. Merge SHAs: `21162e858d769c23ee4907264305f792148a7fbf`, `3f37a8166fcbf89c5392f985e290be48ea27ef6a`, `4fbf16aad3f741159654950e0260aaf717653291`.
+- **Exact PR-head checks:** #146 Quality #41998268074, Freshness #41998267817, Provenance #41998267937 PASS; #147 Gateway #41998613130 (Python 3.12/13/14), Quality #41998613190, Graphify #41998613246, Dead Code #41998613138 PASS; #148 Quality #41999525882 (7 jobs) and Graphify #41999525846 PASS. Post-merge main Quality/Pages IDs не получены; PR-head PASS не выдаётся за post-merge verification.
 - **Live queue snapshot:** open PRs (6): #125, #128, #129, #130, #131, #134; open issues (1): #111.
-- **PR #131:** branch `feat/landing-v1-accessibility-responsive-20261031`, HEAD `02fb4e8986b35f55a8a3b5308704b631dfbcce80`, base `e78a73b25725bfa63370d9946887cbbacbf51b82`; diverged 1,101 ahead / 14 behind, 57 files, mergeable=false. Quality #41981955002 PASS on final HEAD; Graphify #41981885581 PASS on code/test HEAD `c79e983a57d6cc2b87a9296a1334e6d6ed5b3479` before later docs-only commits. Keep V2 isolated; no wholesale merge or branch rewrite.
-- **PR #134:** Draft/HOLD. Review #5779912938 identified raw goal persistence, denylist-only metadata, missing parent-run terminal fencing and unused terminal-state constant. Require explicit goal retention/classification, allowlisted metadata, atomic terminal fencing and race tests before API/runtime integration.
-- **Vosk artifact:** `models/vosk/vosk-model-small-ru-0.22.zip`, 46,236,750 bytes, SHA-256 `961d5ff98a17f4aa6de69864d0aa71fa5bac682301d2b5d17a3f24c5c99a46d4`; metadata, SHA256SUMS, upstream README and Apache-2.0 license notice stored beside it. `ship=false`; no runtime activation or target-hardware evaluation.
-- **Superseded PRs closed:** #124/#126 → #145; #133 → #142; #141 → #143; #132 backup → active #131 and archived V1 baseline. Their branches remain pending safe deletion; do not claim deleted.
-- **Next:** merge the canonical master task register/state reconciliation after Freshness/Quality/Provenance pass; then continue V2 candidate audit and same-audio Vosk evaluation. Keep #111 open for owner-only gates.
-
-## Историческая контрольная точка — 2026-10-28
-
-- **Last main action:** docs: preserve engineering and runtime readiness audits.
-- **Baseline main SHA на историческом срезе:** `337e38690af8f22a712c6442192c5ea62d354c3d` (2026-10-28T05:36:59Z; documentation-only; parent `91557e4eab1b122341bed578cdf4775ff867007f`).
-- **Последний функциональный checkpoint:** `91557e4eab1b122341bed578cdf4775ff867007f`; на main уже находятся PR #77 (RRF), #76 (Graphify workflow) и #72 (search/functions UX).
-- **Точные проверки main:** Quality Sentinels #40639031308 и Pages deployment #40639030224 прошли на `337e38690af8f22a712c6442192c5ea62d354c3d`. На code-identical parent `91557e4eab1b122341bed578cdf4775ff867007f` прошли Gateway #40637941350, Quality #40637941308, Graphify #40637941303 и Pages #40637941951.
-- **GitHub API snapshot от 2026-10-29:** open PRs (9): #78, #80, #81, #82, #83, #84, #85, #86, #87; open issues (14): #88, #89, #90, #91, #92, #96, #97, #98, #99, #100, #101, #102, #103, #104.
-- **PR #78:** остаётся открытым; его base SHA — `91557e4eab1b122341bed578cdf4775ff867007f`, поэтому он отстаёт от актуального main на документационный коммит `337e38690af8f22a712c6442192c5ea62d354c3d`. Не считать его изменения влитым состоянием и не закрывать/сливать без проверки конфликтов и exact-head gates.
-- **Runtime boundary:** GitHub Pages и указанные CI run-ы подтверждены; live VPS/gateway, установленные model/voice artifacts, реальное микрофонное воспроизведение и performance на целевом хосте не подтверждены.
-- **Проверка актуальности:** `scripts/check_project_state_freshness.py`; ежедневный workflow `.github/workflows/project-state-freshness.yml`. Точный SHA и точные ID очереди сверяются с GitHub API; проверяемый PR исключается только из собственного сравнения. При любом ином изменении очередь/ориентир должны быть согласованно обновлены.
+- **PR #131:** HEAD `02fb4e8986b35f55a8a3b5308704b631dfbcce80`, current compare 1,101 ahead / 17 behind, 57 files, `mergeable=false`. Не синхронизировать и не вливать целиком.
+- **PR #134:** Draft/HOLD, HEAD `519973c793a1c998b43c60dedfe55a02b74a26a9`; review #5779912938 остаётся обязательным remediation gate.
+- **Vosk artifact:** `models/vosk/vosk-model-small-ru-0.22.zip`, 46,236,750 bytes, SHA-256 `961d5ff98a17f4aa6de69864d0aa71fa5bac682301d2b5d17a3f24c5c99a46d4`; README, LICENSE и SHA256SUMS находятся рядом. `ship=false`; runtime/target-hardware evaluation не проводились.
+- **Branch cleanup:** 143 refs. Пять behind-only candidates и один tree-equivalent PR #133 branch повторно проверены; удаление не выполнено — branch-delete action отсутствует. Сохранять V1 baseline archive, Future Workstreams, active PRs, V2, research и ветки с unique commits/docs/workflows.
+- **Audit status:** два P1 исправления merged (#147/#148); Node24/provenance/state reconciliation подготовлены в PR #149; документ extraction concurrency, Pyodide Worker и CDN SRI остаются follow-up.
+- **Следующий шаг:** exact-head Quality/Freshness/Provenance для PR #149, затем продолжить audit provider/storage, voice, document intake, RAG и отдельные V2 candidate slices. Issue #111 оставить открытым.
 
 ## 1. Быстрый маршрут
 

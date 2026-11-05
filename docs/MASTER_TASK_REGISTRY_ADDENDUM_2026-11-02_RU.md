@@ -133,38 +133,62 @@ Evidence status: test source changes are committed; JavaScript/Playwright syntax
 
 ### G1. Завершить ранее начатую безопасную очистку Git
 
-- [ ] **HYGIENE-001** — получить полный live inventory branches, tags, open/closed PRs и default branch; различить merged, superseded, abandoned, active research, backup и protected refs.
-- [ ] **HYGIENE-002** — для каждого кандидата на удаление проверить merged PR / equivalent tree or commit ancestry, unique commits, exact SHA, open PR/issue/release/workflow references и последний полезный код/документы.
-- [ ] **HYGIENE-003** — подготовить reviewable allowlist с доказательствами и отдельный preserve-list; не удалять main, default, active V2, future/research, backup/archive или незавершённые направления.
+- [~] **HYGIENE-001** — получить полный live inventory branches, tags, open/closed PRs и default branch; различить merged, superseded, abandoned, active research, backup и protected refs.
+- [~] **HYGIENE-002** — для каждого кандидата на удаление проверить merged PR / equivalent tree or commit ancestry, unique commits, exact SHA, open PR/issue/release/workflow references и последний полезный код/документы.
+- [~] **HYGIENE-003** — подготовить reviewable allowlist с доказательствами и отдельный preserve-list; не удалять main, default, active V2, future/research, backup/archive или незавершённые направления.
 - [ ] **HYGIENE-004** — выполнить удаление только подтверждённых merged/superseded refs после проверки доступного безопасного delete API и owner authorization; если инструмент не поддерживает branch deletion, оставить кандидатов нетронутыми и выдать точные команды/список.
 - [ ] **HYGIENE-005** — после cleanup повторно сверить branch/PR queue, защиту main, unique commits и ссылочную целостность; записать точный результат и rollback feasibility.
 
 ### G2. Независимый инженерный аудит — роль External Debugger / Architecture Reviewer
 
-- [ ] **AUDIT-001** — зафиксировать audit baseline (main SHA, active PR heads, dependency/lock/workflow versions) и scope; не смешивать состояние main с экспериментальными ветками.
-- [ ] **AUDIT-002** — проследить end-to-end продуктовые потоки UI → browser storage → API/gateway → adapters/providers → persistence/search/memory; проверить контракты, state transitions, data scope и graceful failure.
-- [ ] **AUDIT-003** — проверить Python backend: async/sync boundaries, cancellation/timeouts, subprocess lifecycle, concurrency/locking, retries/idempotency, validation, resource bounds, typing, error handling и current API/framework idioms.
-- [ ] **AUDIT-004** — проверить HTML/CSS/vanilla JS client: module boundaries, event/listener lifecycle, DOM safety/XSS, storage migrations, race/stale responses, accessibility, responsive behavior, browser compatibility и duplicated state.
-- [ ] **AUDIT-005** — проверить все integrations/connections: auth and scopes, CORS, provider isolation, secrets/logging, external API contracts, timeouts/rate limits, fallback behavior, failure recovery и tests with mocks.
-- [ ] **AUDIT-006** — проверить dependency/lockfile/CI/workflow supply chain: pinned immutable actions, permissions, caches/artifacts, Python/Node matrices, freshness policy, licenses/provenance и reproducibility.
-- [ ] **AUDIT-007** — проверить архитектурное единство: canonical source of truth, naming/API/schema compatibility, duplicated implementations, stale docs, contradictory status claims, feature flags и boundaries between V1/V2/research/prototype.
-- [ ] **AUDIT-008** — провести security/privacy pass: trust boundaries, prompt injection, local file/archive parsing, path traversal, SSRF, SQL/XSS, authorization, deletion lineage, sensitive data retention and abuse/resource exhaustion.
-- [ ] **AUDIT-009** — подготовить независимый report с FACT / HYPOTHESIS / PROPOSAL, severity P0–P3, evidence (path/line/test/SHA), impact, reproduction, confidence, owner decision needed и acceptance gate. Не объявлять «независимого агента» — аудит выполняется текущим исполнителем в отдельной роли.
+- [~] **AUDIT-001** — зафиксировать audit baseline (main SHA, active PR heads, dependency/lock/workflow versions) и scope; не смешивать состояние main с экспериментальными ветками.
+- [~] **AUDIT-002** — проследить end-to-end продуктовые потоки UI → browser storage → API/gateway → adapters/providers → persistence/search/memory; проверить контракты, state transitions, data scope и graceful failure.
+- [~] **AUDIT-003** — проверить Python backend: async/sync boundaries, cancellation/timeouts, subprocess lifecycle, concurrency/locking, retries/idempotency, validation, resource bounds, typing, error handling и current API/framework idioms.
+- [~] **AUDIT-004** — проверить HTML/CSS/vanilla JS client: module boundaries, event/listener lifecycle, DOM safety/XSS, storage migrations, race/stale responses, accessibility, responsive behavior, browser compatibility и duplicated state.
+- [~] **AUDIT-005** — проверить все integrations/connections: auth and scopes, CORS, provider isolation, secrets/logging, external API contracts, timeouts/rate limits, fallback behavior, failure recovery и tests with mocks.
+- [~] **AUDIT-006** — проверить dependency/lockfile/CI/workflow supply chain: pinned immutable actions, permissions, caches/artifacts, Python/Node matrices, freshness policy, licenses/provenance и reproducibility.
+- [~] **AUDIT-007** — проверить архитектурное единство: canonical source of truth, naming/API/schema compatibility, duplicated implementations, stale docs, contradictory status claims, feature flags и boundaries between V1/V2/research/prototype.
+- [~] **AUDIT-008** — провести security/privacy pass: trust boundaries, prompt injection, local file/archive parsing, path traversal, SSRF, SQL/XSS, authorization, deletion lineage, sensitive data retention and abuse/resource exhaustion.
+- [~] **AUDIT-009** — подготовить независимый report с FACT / HYPOTHESIS / PROPOSAL, severity P0–P3, evidence (path/line/test/SHA), impact, reproduction, confidence, owner decision needed и acceptance gate. Не объявлять «независимого агента» — аудит выполняется текущим исполнителем в отдельной роли.
 
 ### G3. Исполнение подтверждённых улучшений
 
-- [ ] **FIX-001** — преобразовать подтверждённые audit findings в дедуплицированные задачи этого реестра/существующих канонических workstreams; назначить приоритет, scope, acceptance и rollback.
-- [ ] **FIX-002** — исправлять минимальными вертикальными slices в разрешённых ветках; сначала регрессионный тест, затем patch; не менять больше одной крупной архитектурной переменной за цикл.
-- [ ] **FIX-003** — после каждого slice выполнить focused tests, статические/security checks по затронутой поверхности и полный обязательный exact-HEAD CI перед merge.
-- [ ] **FIX-004** — интегрировать в main только V1-совместимые, проверенные и одобренные изменения; PR #131 и Future/Research/Draft workstreams не вливать целиком.
+- [~] **FIX-001** — преобразовать подтверждённые audit findings в дедуплицированные задачи этого реестра/существующих канонических workstreams; назначить приоритет, scope, acceptance и rollback.
+- [~] **FIX-002** — исправлять минимальными вертикальными slices в разрешённых ветках; сначала регрессионный тест, затем patch; не менять больше одной крупной архитектурной переменной за цикл.
+- [~] **FIX-003** — после каждого slice выполнить focused tests, статические/security checks по затронутой поверхности и полный обязательный exact-HEAD CI перед merge.
+- [~] **FIX-004** — интегрировать в main только V1-совместимые, проверенные и одобренные изменения; PR #131 и Future/Research/Draft workstreams не вливать целиком.
 - [ ] **FIX-005** — после merge перепроверить post-merge main SHA/checks и обновить существующие canonical state/orientation/log записи; deployment и live-host verification остаются отдельными gates.
 
 ### G4. Целостность и функциональная приёмка
 
-- [ ] **INTEGRITY-001** — проверить связность навигации/документации/реестров и отсутствие потерянных owner requirements; подтвердить ссылки, anchors, IDs, workflow manifests и machine-readable state.
+- [~] **INTEGRITY-001** — проверить связность навигации/документации/реестров и отсутствие потерянных owner requirements; подтвердить ссылки, anchors, IDs, workflow manifests и machine-readable state.
 - [ ] **INTEGRITY-002** — выполнить regression matrix основных сценариев чата, истории, проектов, импорта/экспорта, настроек, provider routing, tools/research, memory/RAG, voice и document intake с точным разделением mocked CI и live runtime.
-- [ ] **INTEGRITY-003** — проверить schema/data compatibility и миграции browser storage / SQLite / API payloads; проверить backward compatibility и failure recovery без повреждения пользовательских данных.
-- [ ] **INTEGRITY-004** — подтвердить согласованность UI claims, feature flags, backend capabilities, tests, docs и release state; убрать/исправить только доказанные противоречия.
-- [ ] **INTEGRITY-005** — зафиксировать непроверяемые без owner device/credentials/host условия (iPhone/VoiceOver, VPS/Tunnel/Ollama, OAuth, real providers, target hardware) как OPEN, не подменяя их CI.
+- [~] **INTEGRITY-003** — проверить schema/data compatibility и миграции browser storage / SQLite / API payloads; проверить backward compatibility и failure recovery без повреждения пользовательских данных.
+- [~] **INTEGRITY-004** — подтвердить согласованность UI claims, feature flags, backend capabilities, tests, docs и release state; убрать/исправить только доказанные противоречия.
+- [~] **INTEGRITY-005** — зафиксировать непроверяемые без owner device/credentials/host условия (iPhone/VoiceOver, VPS/Tunnel/Ollama, OAuth, real providers, target hardware) как OPEN, не подменяя их CI.
 
 **Execution order:** HYGIENE inventory/allowlist → AUDIT baseline and subsystem passes → evidence-backed findings → FIX slices → INTEGRITY regression and final report. Безопасную read-only работу можно вести параллельно; destructive cleanup, deploy, secrets/permissions и runtime activation остаются отдельными protected gates.
+
+
+### G5. Evidence-backed findings and progress — 2026-11-05
+
+- **AUDIT-FIND-001 / P1 / VERIFIED FIXED:** chat cancellation could leak the single inference semaphore slot before upstream headers; fixed in PR #147, merged `3f37a8166fcbf89c5392f985e290be48ea27ef6a`. Exact-head Gateway/Quality/Graphify/Dead Code passed.
+- **AUDIT-FIND-002 / P1 / VERIFIED FIXED:** assistant raw HTML could manufacture delegated app actions in the full-message viewer; fixed in PR #148, merged `4fbf16aad3f741159654950e0260aaf717653291`. Exact-head Chromium/Quality/Graphify passed.
+- **AUDIT-FIND-003 / P1 / VERIFIED MITIGATION:** Pyodide `js` module no longer receives page `globalThis`; empty null-prototype `jsglobals` and E2E configuration regression added in PR #148. This is not full sandbox/Worker isolation.
+- **AUDIT-FIND-004 / P2 / PATCHED IN PR #149:** pypdf provenance source version reconciled from 6.4.1 to runtime pin 6.21.4; Vosk provenance corrected to repository-hosted evaluation artifact with LICENSE/SHA256SUMS.
+- **AUDIT-FIND-005 / P2 / PATCHED IN PR #149:** three CI workflows migrated from Node 22 to the previously reviewed Node 24 baseline from PR #126; exact-head CI pending.
+- **AUDIT-FIND-006 / P2 / HYPOTHESIS:** document extraction uses `asyncio.to_thread` without a dedicated parse-job semaphore. Default-off feature and size/archive/page bounds reduce exposure; reproduce memory/concurrency behavior before implementation.
+- **AUDIT-FIND-007 / P2 / OPEN:** Pyodide remains on the browser main thread; long-running snippets can block the tab. Design a dedicated Worker with termination, bounded output and restricted globals.
+- **AUDIT-FIND-008 / P2 / OPEN:** CDN supply-chain review remains; Tailwind URL is unversioned and external scripts lack SRI. Compare SRI/self-hosting without adding an unmeasured build system.
+- **AUDIT-FIND-009 / P2 / PARTIAL:** 143 branch refs enumerated; five behind-only candidates and one PR #133 tree-equivalent branch rechecked. No deletion executed because connector lacks branch-delete operation; other branches remain preserve/unverified.
+- **AUDIT-FIND-010 / INFO / REVIEWED:** Bandit B608 and Semgrep SQL/script/SRI warnings from PR #147 artifact were inspected against source; false positives documented in the phase-1 report. No scanner rule was disabled or weakened.
+
+### G6. Follow-up tasks from phase-1 report
+
+- [ ] **FIX-006** — move Pyodide execution to a dedicated Worker or isolated execution surface; add timeout/termination, memory/output bounds and tests proving no page-origin access. Do not claim complete sandbox before this gate.
+- [ ] **FIX-007** — design a bounded document-extraction concurrency gate when the feature is enabled; add cancellation, queue saturation and memory-pressure regressions.
+- [ ] **FIX-008** — pin or self-host third-party browser assets and add SRI where supported; document the CDN trust boundary.
+- [ ] **HYGIENE-006** — delete only the verified allowlist after an authorized branch-delete API/UI is available; preserve every branch HEAD SHA and recheck open references immediately before deletion.
+- [ ] **AUDIT-010** — finish subsystem review of provider routing, browser storage migrations, voice/audio lifecycle, RAG deletion lineage, V2 candidate slices and native device/runtime behavior.
+
+**Phase-1 report:** `docs/REPOSITORY_DEBUGGER_AUDIT_PHASE1_2026-11-05_RU.md`. This is a verified partial report, not closure of the full audit.
