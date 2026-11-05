@@ -1038,10 +1038,11 @@ permalink: /
       let previousChatsRaw;
       try { previousChatsRaw = localStorage.getItem(STORAGE.chats); }
       catch (error) { showToast('Не удалось прочитать прежнюю историю; запись отменена.', 'error'); return false; }
-      if (!safeSet(STORAGE.chats, JSON.stringify(chats))) return false;
-      if (!safeSet(STORAGE.current, currentChatId)) {
-        if (!restoreStorageValue(STORAGE.chats, previousChatsRaw)) showToast('Не удалось откатить частичную запись истории. Не очищай данные сайта; сначала экспортируй доступные данные.', 'error');
-        showToast('История не сохранена целиком: запись откатили. Проверь свободное место/разрешения сайта.', 'error');
+      const savedChats = safeSet(STORAGE.chats, JSON.stringify(chats));
+      const savedCurrent = savedChats && safeSet(STORAGE.current, currentChatId);
+      if (!savedChats || !savedCurrent) {
+        if (savedChats && !restoreStorageValue(STORAGE.chats, previousChatsRaw)) showToast('Не удалось откатить частичную запись истории. Не очищай данные сайта; сначала экспортируй доступные данные.', 'error');
+        showToast('История не подтверждена браузерным хранилищем. Запись откатили там, где это удалось; сразу экспортируй чаты и проверь место/разрешения сайта.', 'error');
         return false;
       }
       scheduleStorageHealthCheck();
