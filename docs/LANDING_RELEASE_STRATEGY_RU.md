@@ -21,14 +21,16 @@
 **Goal:** make main a trustworthy starting point for every future session and let the owner observe safe improvements on GitHub Pages.
 
 Tasks:
-1. Reconcile root `AGENTS.md`, `OLEDUE.md`, `ORIENTER.md`, `project-reference/FILE_ORIENTER_RU.md`, `docs/PROJECT_STATE.yaml`, `docs/VOLLEY_LOG.md` and relevant source indexes against live GitHub state.
-2. Ensure the OLEDUE handoff trigger and fast task selector agree; make main's entrypoint identify the current owner-authorized workstream and this promotion plan.
-3. Keep a single canonical task registry for Landing V1/V2 promotion. Do not create a duplicate backlog if an existing canonical register can be extended.
-4. Correct stale SHAs, PR queue, issue queue, test evidence and claims. Distinguish code HEAD, tested HEAD and merged SHA.
-5. Record current V1 main SHA and later preserve it as a recoverable baseline reference.
-6. Verify Jekyll build, real Chromium E2E, published Pages smoke, Freshness, Provenance, Integrity, Security, Context and Graphify as applicable on the exact documentation/orientation PR HEAD.
+1. Reconcile root `AGENTS.md`, `OLEDUE.md`, `ORIENTER.md`, `project-reference/FILE_ORIENTER_RU.md`, `docs/PROJECT_STATE.yaml` and `docs/VOLLEY_LOG.md` once against live GitHub state; preserve one authoritative checkpoint.
+2. Make `OLEDUE.md` the self-contained fast handoff: one batched live-state read, one selected workstream, one canonical task register.
+3. Batch independent GitHub reads: current main SHA, open PR/issue IDs, selected PR base/head/diff and exact-HEAD checks. Do not poll the same state repeatedly.
+4. Read detailed orientation, full project state and historical log only when a conflict, missing fact, system-wide task or history-dependent decision requires them.
+5. Keep one canonical task registry for Landing V1/V2 promotion; do not create a parallel backlog.
+6. Distinguish main SHA, PR HEAD, code/test HEAD and tested CI SHA; refresh queue snapshots only after live changes.
+7. Record the original V1 baseline and preserve it through a verified Git reference when the planned promotion stage reaches that gate.
+8. Run applicable exact-head documentation gates; do not require unrelated Gateway/device checks for a docs-only slice unless repository policy requires them.
 
-**Acceptance:** a new session can recover the correct branch, task and verified checkpoint from main; all orientation references agree; exact-head checks pass.  
+**Acceptance:** a normal continuation uses `OLEDUE.md`, one batched live-state read and one task-specific canonical document; detailed orientation/state/history are opened on demand. The selected branch, PR, tested SHA and next action are recovered without asking the owner to repeat context.  
 **Maturity:** SPECIFIED until implemented and checked.
 
 ### 2. Audit PR #131 and build a promotion candidate register
