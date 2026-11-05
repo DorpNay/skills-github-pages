@@ -404,8 +404,8 @@ This is a research shortlist, not an adoption decision. Model weights are not do
 - Upstream model catalog: https://alphacephei.com/vosk/models
 - Canonical official archive attempt: https://alphacephei.com/vosk/models/vosk-model-small-ru-0.22.zip
 - Catalog identifies `vosk-model-small-ru-0.22` as a lightweight mobile/Raspberry Pi model, approx. 45 MB, Apache-2.0. Catalog-reported benchmark figures vary by dataset (WER: 22.71 audiobook, 31.97 YouTube, 29.89 Sova devices, 11.79 Golos crowd); use these only as upstream-reported context, not aLandi eval.
-- **Acquisition state: BLOCKED.** The available download tool returned failure for the official archive. No local artifact bytes were received; no SHA-256, archive integrity or extracted-file scan is available. Do not record as downloaded or integrate.
-- Next: obtain from the official URL via a reliable authorized transfer route, compute SHA-256 over exact archive, validate ZIP entries/path traversal and contents, retain model/license provenance, then run a bounded RU golden-set evaluation against the current whisper.cpp baseline. This is a research/eval artifact, not a V1 runtime addition.
+- **Acquisition state: DOWNLOADED / HASH VERIFIED / EVAL PENDING.** GitHub Actions run #41968439622, artifact #13389210196 obtained the exact archive from the official URL. Size 46,236,750 bytes; SHA-256 `961d5ff98a17f4aa6de69864d0aa71fa5bac682301d2b5d17a3f24c5c99a46d4`. ZIP CRC, path traversal, symlink, member-count and expansion bounds passed in the runner; after transfer, SHA-256 was independently recomputed and matched, ZIP CRC/path safety checks were repeated. Provenance sidecar and SHA256SUMS are available alongside the archive. License Apache-2.0 per official catalog. `ship=false`; no runtime install, target-host or RU golden-set evaluation.
+- Next: run bounded RU golden-set comparison against the current whisper.cpp baseline; measure WER/CER, RTF, RAM/PSS and latency on target hardware. Keep the artifact isolated until quality, resource and product acceptance.
 
 ### Follow-up multilingual ASR candidate — Qwen3-ASR-0.6B
 
