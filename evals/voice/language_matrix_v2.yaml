@@ -16,13 +16,14 @@ languages:
         status: "adapter_in_branch_model_not_downloaded"
         eval_required: ["clean_CER", "noisy_CER", "real_time_factor", "peak_PSS", "ru_en_th_language_accuracy"]
       - id: vosk-model-small-ru-0.22
-        upstream: "https://alphacephei.com/vosk/models"
+        upstream: "https://alphacephei.com/vosk/models/vosk-model-small-ru-0.22.zip"
         api_license: "Apache-2.0"
         model_license: "Apache-2.0 per upstream model catalogue"
-        approximate_download_size_mb: 45
-        sha256: null
-        status: "candidate_not_downloaded"
+        approximate_download_size_mb: 46
+        sha256: "961d5ff98a17f4aa6de69864d0aa71fa5bac682301d2b5d17a3f24c5c99a46d4"
+        status: "downloaded_for_eval"
         eval_required: ["clean_CER", "noisy_CER", "real_time_factor", "peak_PSS"]
+
     tts_candidates:
       - id: piper-ru-voice
         upstream: "https://github.com/OHF-Voice/piper1-gpl"
