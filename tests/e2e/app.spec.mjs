@@ -735,6 +735,15 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
 test('multi-agent preference skips a greeting and shows the actual route', async ({ page }) => {
   let calls = 0;
   await page.route('https://api.example.test/v1/chat/completions', async route => {
+    const payload = route.request().postDataJSON();
+    const lastMessage = payload.messages?.at(-1)?.content;
+    // Saving a custom provider performs a connectivity probe, not a chat completion.
+    if (lastMessage === 'Reply with exactly OK. No other words.') {
+      return route.fulfill({
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({ model: payload.model, choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+      });
+    }
     calls++;
     await route.fulfill({
       status: 200, contentType: 'application/json',
