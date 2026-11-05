@@ -230,6 +230,15 @@ class AgentRunStore:
         if self.path != ":memory:":
             Path(self.path).parent.mkdir(parents=True, exist_ok=True)
         with closing(self._connect()) as db:
+            existing = db.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name='agent_runs'"
+            ).fetchone()
+            if existing is not None:
+                existing_columns = {row["name"] for row in db.execute("PRAGMA table_info(agent_runs)").fetchall()}
+                if "goal" in existing_columns or "goal_ref" not in existing_columns:
+                    raise AgentRunError(
+                        "legacy AgentRun schema stores raw goal text; create a new isolated store after preserving any required records"
+                    )
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS agent_runs (
                     run_id TEXT PRIMARY KEY,
