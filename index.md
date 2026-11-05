@@ -4400,6 +4400,10 @@ permalink: /
     let speechQueuePendingGesture = false;
     let speechQueueGeneration = 0;
     let selectedSpeechText = '';
+    let pendingSelectedSpeechText = '';
+    $('ttsSelectionAction').addEventListener('pointerdown', () => {
+      pendingSelectedSpeechText = selectedSpeechText;
+    });
 
     function updateSpeechQueueUi() {
       const controls = $('ttsQueueControls');
@@ -4523,6 +4527,8 @@ permalink: /
       if (isControl(anchor) || isControl(focus)) { hide(); return; }
       const range = selection.getRangeAt(0);
       if (!anchorMessage.contains(range.commonAncestorContainer)) { hide(); return; }
+      const interactiveNodes = anchorMessage.querySelectorAll('button,a,input,textarea,select,summary');
+      if (Array.from(interactiveNodes).some(node => range.intersectsNode(node))) { hide(); return; }
       const text = selection.toString().trim();
       if (!text || text.length > SPEECH_QUEUE_MAX_ITEM_CHARS) { hide(); return; }
       const rect = range.getBoundingClientRect();
@@ -5198,7 +5204,8 @@ permalink: /
           case 'speak-message': await playAssistantMessage(control.dataset.messageText || ''); break;
           case 'queue-message': addSpeechQueueItem(control.dataset.messageText || ''); break;
           case 'speak-selection': {
-            const selectedText = selectedSpeechText;
+            const selectedText = pendingSelectedSpeechText || selectedSpeechText;
+            pendingSelectedSpeechText = '';
             selectedSpeechText = '';
             $('ttsSelectionAction').classList.add('hidden');
             window.getSelection()?.removeAllRanges();
