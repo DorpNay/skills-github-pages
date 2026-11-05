@@ -731,6 +731,7 @@ permalink: /
   (() => {
     'use strict';
 
+    const MAX_IMPORTED_MESSAGES = 50000;
     const STORAGE = {
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
@@ -2143,7 +2144,7 @@ permalink: /
     }
     function sanitizeImportedProjectChat(chat,projectId){
       return {id:String(chat.id||projectIdNew()).slice(0,128),title:typeof chat.title==='string'?chat.title.slice(0,160):'Импортированный чат',projectId,projectMemoryEnabled:false,serverProjectMemoryEnabled:false,
-        messages:Array.isArray(chat.messages)?chat.messages.filter(m=>m&&['user','assistant','tool'].includes(m.role)).slice(0,10000).map(m=>({role:m.role,content:typeof m.content==='string'?m.content.slice(0,30000):'',...(typeof m.tool_call_id==='string'?{tool_call_id:m.tool_call_id.slice(0,200)}:{}),...(Array.isArray(m.tool_calls)?{tool_calls:m.tool_calls}:{}),...(m.error?{error:true}:{})})):[]};
+        messages:Array.isArray(chat.messages)?chat.messages.filter(m=>m&&['user','assistant','tool'].includes(m.role)).slice(0,10000).map(m=>({role:m.role,content:typeof m.content==='string'?m.content.slice(0,30000):'',...(typeof m.tool_call_id==='string'?{tool_call_id:m.tool_call_id.slice(0,200)}:{}),...(Array.isArray(m.tool_calls)?{tool_calls:m.tool_calls.slice(0,100)}:{}),...(m.error?{error:true}:{})})):[]};
     }
     async function importProjectBundle(event){
       const file=event.target.files?.[0];event.target.value='';if(!file)return;
@@ -2153,6 +2154,8 @@ permalink: /
         if(bundle?.format!=='alandi-project-bundle'||bundle?.version!==1||!bundle.project||typeof bundle.project.name!=='string'||!Array.isArray(bundle.chats)||bundle.chats.length>500)throw new Error('Неверный формат пакета проекта.');
         if(projects.length>=200)throw new Error('Достигнут предел проектов (200). Сначала удали ненужный проект.');
         const importedChats=bundle.chats.filter(chat=>chat&&typeof chat==='object'&&Array.isArray(chat.messages)).map(chat=>sanitizeImportedProjectChat(chat,''));
+         const totalMessages=importedChats.reduce((total,chat)=>total+chat.messages.length,0);
+         if(totalMessages>MAX_IMPORTED_MESSAGES)throw new Error('Пакет проекта содержит больше 50 000 сообщений; раздели экспорт на несколько пакетов.');
         if(chats.length+importedChats.length>1000)throw new Error('Импорт превысит безопасный лимит локальных чатов (1000).');
         const now=new Date().toISOString();
         const baseName=bundle.project.name.trim().slice(0,78)||'Импортированный проект';
@@ -4399,7 +4402,9 @@ permalink: /
             imported.some((chat) => !chat || typeof chat.id !== 'string' || !Array.isArray(chat.messages))) {
           throw new Error('Структура файла не похожа на экспорт чатов.');
         }
-        if (chats.length + imported.length > 1000) throw new Error('Импорт превысит лимит 1000 чатов. Сначала удали ненужные чаты.');
+        const totalMessages=imported.reduce((total,chat)=>total+chat.messages.length,0);
+         if(totalMessages>MAX_IMPORTED_MESSAGES)throw new Error('Файл содержит больше 50 000 сообщений; раздели экспорт на несколько файлов.');
+         if (chats.length + imported.length > 1000) throw new Error('Импорт превысит лимит 1000 чатов. Сначала удали ненужные чаты.');
         const seen = new Set(chats.map(chat=>chat.id));
         const clean = imported.map((chat) => ({
           id: chat.id.slice(0, 128), title: typeof chat.title === 'string' ? chat.title.slice(0, 160) : 'Импортированный чат',
