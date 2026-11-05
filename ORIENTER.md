@@ -2,18 +2,19 @@
 
 This is the short entry point for an assistant or engineer. Use `OLEDUE.md` for the compact handoff, `docs/MASTER_TASK_REGISTRY_RU.md` plus its append-only owner addendum for task order, and the detailed navigation index / machine state / chronological log only when needed.
 
-## Current working checkpoint — 2026-11-05, post-PR148
+## Current working checkpoint — 2026-11-05, after PR #149
 
-- **Current main SHA:** `4fbf16aad3f741159654950e0260aaf717653291`. The state-refresh PR is based on this exact SHA; its merge commit will be a documentation/state-refresh child.
-- **Owner policy:** main remains Landing 1.0 with bounded accessibility, reliability, security, performance and maintainability improvements. PR #131 is the substantial Landing 2.0 workbench; never merge it wholesale.
-- **Merged and preserved:** PR #146 canonical task register + owner audit/hygiene addendum (`21162e858d769c23ee4907264305f792148a7fbf`); PR #147 cancellation-safe Gateway semaphore release (`3f37a8166fcbf89c5392f985e290be48ea27ef6a`); PR #148 inert assistant raw HTML, read-only message viewer and restricted Pyodide JS globals (`4fbf16aad3f741159654950e0260aaf717653291`); earlier #139 V1 landing, #140 OLEDUE, #142 N₂O docs, #143 Vosk evaluation archive, #144 source triage and #145 Python lock/document parsing.
-- **Exact PR-head evidence:** #146 Quality #41998268074, Freshness #41998267817, Provenance #41998267937 PASS; #147 Gateway #41998613130 (Python 3.12/3.13/3.14), Quality #41998613190, Graphify #41998613246 and Dead Code #41998613138 PASS; #148 Quality #41999525882 and Graphify #41999525846 PASS. No post-merge main Quality/Pages workflow IDs were retrieved after #146–#148; do not claim post-merge checks from PR-head runs.
-- **Vosk artifact:** `models/vosk/vosk-model-small-ru-0.22.zip`, 46,236,750 bytes, SHA-256 `961d5ff98a17f4aa6de69864d0aa71fa5bac682301d2b5d17a3f24c5c99a46d4`; `README.md`, `LICENSE` and `SHA256SUMS` stored beside it. `ship=false`; no runtime activation or target-hardware evaluation.
-- **PR #131:** HEAD `02fb4e8986b35f55a8a3b5308704b631dfbcce80`; compare to current main 1,101 ahead / 17 behind, 57 files, `mergeable=false`. Keep V2 isolated; no wholesale merge or branch rewrite.
-- **PR #134:** Draft/HOLD at HEAD `519973c793a1c998b43c60dedfe55a02b74a26a9`. Review #5779912938 identified raw goal persistence, denylist-only metadata, missing parent-run terminal fencing and unused terminal-state constant. Require remediation before API/runtime integration.
+- **Current main SHA:** `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`. PR #149 is a state/configuration refresh child of the prior functional checkpoint `4fbf16aad3f741159654950e0260aaf717653291`.
+- **Last functional checkpoint:** `4fbf16aad3f741159654950e0260aaf717653291` (PR #148). The main changes in PR #149 are state/docs and CI/provenance alignment.
+- **Merged and preserved:** PR #146 canonical task register (`21162e858d769c23ee4907264305f792148a7fbf`); PR #147 cancellation-safe Gateway semaphore release (`3f37a8166fcbf89c5392f985e290be48ea27ef6a`); PR #148 inert assistant raw HTML, read-only message viewer and restricted Pyodide JS globals (`4fbf16aad3f741159654950e0260aaf717653291`); PR #149 state/toolchain/provenance refresh (`8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`).
+- **PR #149 exact-head gates:** Quality run #42001310270 (7 jobs), Project State Freshness #42001309687, License and Artifact Provenance #42001309703, Graphify #42001311323 — all PASS. These are PR-head checks; post-merge main workflow IDs were not retrieved.
+- **Current engineering slice — PR #150 branch `fix/browser-storage-recovery-atomicity-20261105`, HEAD `57a10e82198943da5e7625b26daa10d15ccafc40`:** project storage recovery backup; partial-corruption preservation for chats; fail-closed writes if backup cannot be created; rollback of partial chat/project writes; import/create/delete transaction gates; no false success toast; four deterministic Chromium regression tests; 50,000-message import cap. Exact-head checks pending.
+- **New conditional privacy finding:** FTS5 secure-delete requires SQLite 3.42.0+; the MemoryManager property records capability but is not exposed in health status. On older SQLite, logical deletion can leave FTS segment entries until merge. Feature/runtime/target-host status remains unverified; do not claim forensic deletion.
+- **PR #131:** HEAD `02fb4e8986b35f55a8a3b5308704b631dfbcce80`; compare to current main remains 1,101 ahead / 17 behind, 57 files, `mergeable=false`. Keep V2 isolated; no wholesale merge.
+- **PR #134:** Draft/HOLD at HEAD `519973c793a1c998b43c60dedfe55a02b74a26a9`; review #5779912938 remediation gate remains.
 - **Open PR queue:** #125, #128, #129, #130, #131, #134 (6). **Open issue:** #111 (owner-controlled ruleset, live-host, deployment and device gates).
-- **Branch hygiene:** 143 refs inventoried; five behind-only candidates and one tree-equivalent PR #133 branch rechecked. No branch deletion executed: current GitHub integration has no branch-delete operation. Preserve main, V1 archive, Future Workstreams, active research/V2 and all refs with unique commits or branch-only docs/workflows.
-- **Next:** finish this state/toolchain/provenance reconciliation PR on exact HEAD; continue the remaining provider/storage/voice/document/RAG audit, bounded Pyodide Worker design and safe branch ancestry review. Keep #111 open.
+- **Branch hygiene:** 145 refs now (143 at initial inventory + merged PR #149 branch + active PR #150 branch). Five behind-only candidates and one PR #133 tree-equivalent branch rechecked; no deletion executed because connector has no branch-delete operation.
+- **Next:** finish PR #150 exact-head Quality/Chromium/Graphify and state freshness; then verify FTS5 secure-delete capability and target SQLite version, continue provider/storage/voice/document/RAG audit, bounded Pyodide Worker design and branch ancestry review. Keep #111 open.
 
 ## Fast orientation
 
