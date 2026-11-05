@@ -446,6 +446,7 @@ permalink: /
                 <button type="button" data-action="import-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="importProject">Импорт проекта</button>
               </div>
               <input type="file" id="importProjectFile" class="hidden" accept="application/json,.json">
+              <button type="button" id="projectRecoveryBackupButton" data-action="download-project-recovery-backup" class="hidden w-full rounded-lg border border-amber-800 bg-amber-950/40 py-2 text-xs text-amber-100">Скачать резервную копию проектов</button>
               <button type="button" data-action="detach-current-chat" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="detachChat">Извлечь чат из проекта</button>
               <button type="button" data-action="delete-project" class="w-full bg-red-950/50 hover:bg-red-900/60 border border-red-900/50 rounded-lg py-2 text-xs text-red-200" data-i18n="deleteProject">Удалить проект и его чаты</button>
     
@@ -766,6 +767,9 @@ permalink: /
     let chatRecoveryWarning = false;
     let chatRecoveryBackupKey = '';
     let chatStorageCorruptNotBackedUp = false;
+    let projectRecoveryBackupKey = '';
+    let projectStorageCorruptNotBackedUp = false;
+    let projectRecoveryWarning = false;
     let db = null;
     let chats = loadChats();
     let projects = loadProjects();
@@ -934,6 +938,16 @@ permalink: /
         return false;
       }
     }
+    function restoreStorageValue(key, rawValue) {
+      try {
+        if (rawValue === null) localStorage.removeItem(key);
+        else localStorage.setItem(key, rawValue);
+        return true;
+      } catch (error) {
+        console.error('Не удалось откатить localStorage после частичной записи:', key, error);
+        return false;
+      }
+    }
     function createChat(title = 'Новый чат', messages = [], projectId = null) {
       return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false, serverProjectMemoryEnabled: false, privateMemoryUsed: false, processingMode: 'fast', searchMode: 'normal', multiAgentEnabled: false, skillPreset: 'auto', customSkillName:'', customSkillInstructions:'', customSkillOutput:'', skillGoal:'planning', skillOutputMode:'summary', agentTeamSize:4, agentTeamScenario:'general', agentTeamCustomScenario:'', agentRolePreset:'balanced', agentCustomRoles:'' };
     }
@@ -997,7 +1011,8 @@ permalink: /
               ...(m.error ? { error: true } : {})
             }))
           }));
-        if (!valid.length && raw.length) preserveUnreadableChats(rawText);
+        const hasInvalidMessages = raw.some(item => item && Array.isArray(item.messages) && item.messages.some(message => !message || !['user', 'assistant', 'tool'].includes(message.role)));
+        if (valid.length !== raw.length || hasInvalidMessages) preserveUnreadableChats(rawText);
         return valid.length ? valid : [createChat()];
       } catch (error) {
         preserveUnreadableChats(rawText);
@@ -1008,15 +1023,19 @@ permalink: /
     function persistChats() {
       if (chatStorageCorruptNotBackedUp) {
         showToast('Повреждённая история не была перезаписана: не удалось создать резервную копию. Освободите место в браузере и перезагрузите страницу.', 'error');
-        return;
+        return false;
       }
-      const savedChats = safeSet(STORAGE.chats, JSON.stringify(chats));
-      const savedCurrent = safeSet(STORAGE.current, currentChatId);
-      if (!savedChats || !savedCurrent) {
-        showToast('История не подтверждена браузерным хранилищем. Сразу экспортируйте чаты и проверьте свободное место/разрешения сайта.', 'error');
-      } else {
-        scheduleStorageHealthCheck();
+      let previousChatsRaw;
+      try { previousChatsRaw = localStorage.getItem(STORAGE.chats); }
+      catch (error) { showToast('Не удалось прочитать прежнюю историю; запись отменена.', 'error'); return false; }
+      if (!safeSet(STORAGE.chats, JSON.stringify(chats))) return false;
+      if (!safeSet(STORAGE.current, currentChatId)) {
+        if (!restoreStorageValue(STORAGE.chats, previousChatsRaw)) showToast('Не удалось откатить частичную запись истории. Не очищай данные сайта; сначала экспортируй доступные данные.', 'error');
+        showToast('История не сохранена целиком: запись откатили. Проверь свободное место/разрешения сайта.', 'error');
+        return false;
       }
+      scheduleStorageHealthCheck();
+      return true;
     }
     function getCurrentChat() {
       return chats.find((chat) => chat.id === currentChatId) || chats[0];
@@ -1035,6 +1054,21 @@ permalink: /
       link.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       showToast('Резервная копия истории скачивается.');
+    }
+    function downloadProjectRecoveryBackup() {
+      if (!projectRecoveryBackupKey) throw new Error('Резервная копия проектов не найдена.');
+      const raw = safeGet(projectRecoveryBackupKey);
+      if (!raw) throw new Error('Резервная копия проектов недоступна в этом браузере.');
+      const blob = new Blob([raw], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'ai-projects-recovery-backup.json';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast('Резервная копия проектов скачивается.');
     }
 
     function requestResult(request) {
@@ -1737,21 +1771,62 @@ permalink: /
       scrollToBottom(true);
       requestAnimationFrame(updateJumpToLatest);
     }
+    function preserveUnreadableProjects(rawText) {
+      if (!rawText) return;
+      const baseKey = 'ai_projects_recovery_backup';
+      let backupKey = baseKey;
+      try {
+        const existing = localStorage.getItem(baseKey);
+        if (existing === rawText) { projectRecoveryBackupKey = baseKey; projectRecoveryWarning = true; return; }
+        if (existing && existing !== rawText) backupKey = baseKey + '_' + Date.now();
+        localStorage.setItem(backupKey, rawText);
+        projectRecoveryBackupKey = backupKey;
+        projectRecoveryWarning = true;
+      } catch (error) {
+        projectRecoveryWarning = true;
+        projectStorageCorruptNotBackedUp = true;
+        console.warn('Не удалось сохранить резервную копию повреждённых проектов; исходные данные не будут перезаписаны:', error);
+      }
+    }
     function loadProjects(){
-      try{
-        const raw=JSON.parse(safeGet(STORAGE.projects)||'[]');
-        if(!Array.isArray(raw))return [];
-        return raw.filter(p=>p&&typeof p==='object'&&typeof p.id==='string'&&typeof p.name==='string').slice(0,200).map(p=>({
-          id:p.id.slice(0,128),name:p.name.slice(0,100),description:typeof p.description==='string'?p.description.slice(0,1000):'',
-          instructions:typeof p.instructions==='string'?p.instructions.slice(0,6000):'',
-          memoryScope:p.memoryScope==='project-and-global'?'project-and-global':'project-only',
-          memory:Array.isArray(p.memory)?p.memory.filter(v=>v&&typeof v.id==='string'&&typeof v.text==='string').slice(0,500).map(v=>({id:v.id.slice(0,128),text:v.text.slice(0,600),createdAt:String(v.createdAt||'')})):[],
-          createdAt:String(p.createdAt||''),updatedAt:String(p.updatedAt||'')
+      let rawText = null;
+      try {
+        rawText = localStorage.getItem(STORAGE.projects);
+        if (!rawText) return [];
+        const raw = JSON.parse(rawText);
+        if (!Array.isArray(raw)) { preserveUnreadableProjects(rawText); return []; }
+        const hasInvalidMemory = raw.some(project => project && Array.isArray(project.memory) && project.memory.some(item => !item || typeof item.id !== 'string' || typeof item.text !== 'string'));
+        const hasInvalidMemoryShape = raw.some(project => project && project.memory !== undefined && !Array.isArray(project.memory));
+        const structurallyValid = raw.filter(project => project && typeof project === 'object' && typeof project.id === 'string' && typeof project.name === 'string');
+        if (structurallyValid.length !== raw.length || raw.length > 200 || hasInvalidMemory || hasInvalidMemoryShape || raw.some(project => Array.isArray(project?.memory) && project.memory.length > 500)) preserveUnreadableProjects(rawText);
+        return structurallyValid.slice(0,200).map(project => ({
+          id:project.id.slice(0,128),name:project.name.slice(0,100),description:typeof project.description==='string'?project.description.slice(0,1000):'',
+          instructions:typeof project.instructions==='string'?project.instructions.slice(0,6000):'',
+          memoryScope:project.memoryScope==='project-and-global'?'project-and-global':'project-only',
+          memory:Array.isArray(project.memory)?project.memory.filter(item=>item&&typeof item.id==='string'&&typeof item.text==='string').slice(0,500).map(item=>({id:item.id.slice(0,128),text:item.text.slice(0,600),createdAt:String(item.createdAt||'')})):[],
+          createdAt:String(project.createdAt||''),updatedAt:String(project.updatedAt||'')
         }));
-      }catch(_){return [];}
+      } catch (error) {
+        preserveUnreadableProjects(rawText);
+        console.warn('Проекты не читаются; исходные данные сохранены для восстановления:', error);
+        return [];
+      }
     }
     function persistProjects(){
-      if(!safeSet(STORAGE.projects,JSON.stringify(projects)))showToast('Проекты не удалось сохранить в локальном хранилище. Экспортируй важные данные.','error');
+      if (projectStorageCorruptNotBackedUp) {
+        showToast('Повреждённые данные проектов не перезаписываются: резервная копия не сохранилась. Освободи место и перезагрузи страницу.', 'error');
+        return false;
+      }
+      return safeSet(STORAGE.projects, JSON.stringify(projects));
+    }
+    function persistProjectsAndChats() {
+      let previousProjectsRaw;
+      try { previousProjectsRaw = localStorage.getItem(STORAGE.projects); }
+      catch (error) { showToast('Не удалось прочитать прежние проекты; операция отменена.', 'error'); return false; }
+      if (!persistProjects()) return false;
+      if (persistChats()) return true;
+      if (!restoreStorageValue(STORAGE.projects, previousProjectsRaw)) showToast('Не удалось откатить запись проектов после ошибки истории. Проверь резервные копии и не очищай данные сайта.', 'error');
+      return false;
     }
     let selectedProjectForSettingsId=null;
     let creatingProject=false;
@@ -1991,10 +2066,13 @@ permalink: /
       const input=$('projectNameInput'),name=input.value.trim().slice(0,100);
       if(!name){input.focus();showToast(getUiLanguage()==='en'?'Enter a project name first.':'Сначала введи название проекта.','error');return;}
       if(projects.length>=200){showToast('Достигнут предел локальных проектов (200).','error');return;}
+      const previousProjects=projects.slice(),previousSelected=selectedProjectForSettingsId,previousCreating=creatingProject;
+      const chat=getCurrentChat(),previousChat={projectId:chat.projectId,projectMemoryEnabled:chat.projectMemoryEnabled,serverProjectMemoryEnabled:chat.serverProjectMemoryEnabled};
       const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectInstructionsInput').value.trim().slice(0,6000),memoryScope:$('projectMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only',memory:[],createdAt:now,updatedAt:now};
-      creatingProject=false;projects.unshift(project);selectedProjectForSettingsId=project.id;persistProjects();
-      const chat=getCurrentChat();chat.projectId=project.id;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
-      persistChats();renderProjectUI();renderChatList();
+      creatingProject=false;projects=[project,...projects];selectedProjectForSettingsId=project.id;
+      chat.projectId=project.id;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
+      if(!persistProjectsAndChats()){projects=previousProjects;selectedProjectForSettingsId=previousSelected;creatingProject=previousCreating;Object.assign(chat,previousChat);renderProjectUI();renderChatList();renderActiveChat();return;}
+      renderProjectUI();renderChatList();renderActiveChat();
       showToast((getUiLanguage()==='en'?'Project created: ':'Создан проект: ')+name);
     }
     function saveProject(){
@@ -2003,16 +2081,20 @@ permalink: /
       if(!project){showToast(getUiLanguage()==='en'?'Select a project in the Projects list or create one.':'Выбери проект в списке или создай новый.','error');return;}
       const name=$('projectNameInput').value.trim().slice(0,100);
       if(!name){showToast('Название проекта не может быть пустым.','error');return;}
+      const previous={name:project.name,instructions:project.instructions,memoryScope:project.memoryScope,updatedAt:project.updatedAt};
       project.name=name;project.instructions=$('projectInstructionsInput').value.trim().slice(0,6000);project.memoryScope=$('projectMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only';project.updatedAt=new Date().toISOString();
-      persistProjects();renderProjectUI();renderChatList();
+      if(!persistProjects()){Object.assign(project,previous);renderProjectUI();return;}
+      renderProjectUI();renderChatList();
       showToast(getUiLanguage()==='en'?'Project instructions saved.':'Инструкции проекта сохранены.');
     }
     function moveCurrentChatToProject(projectId){
       const chat=getCurrentChat(),target=projectId?projects.find(project=>project.id===projectId):null;
       if(projectId&&!target){showToast('Проект не найден.','error');renderProjectUI();return;}
       if(chat.projectId===(target?.id||null))return;
+      const previous={projectId:chat.projectId,projectMemoryEnabled:chat.projectMemoryEnabled,serverProjectMemoryEnabled:chat.serverProjectMemoryEnabled},previousSelected=selectedProjectForSettingsId;
       chat.projectId=target?.id||null;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;selectedProjectForSettingsId=target?.id||null;
-      persistChats();renderProjectUI();renderChatList();
+      if(!persistChats()){Object.assign(chat,previous);selectedProjectForSettingsId=previousSelected;renderProjectUI();renderChatList();return;}
+      renderProjectUI();renderChatList();
       showToast(target?(getUiLanguage()==='en'?'Chat moved to ':'Чат добавлен в проект: ')+target.name:(getUiLanguage()==='en'?'Chat removed from its project.':'Чат извлечён из проекта.'));
     }
     function addProjectMemory(){
@@ -2020,21 +2102,29 @@ permalink: /
       if(!project){showToast(getUiLanguage()==='en'?'Choose a project first.':'Сначала выбери проект.','error');return;}
       if(!text){input.focus();return;}
       if(project.memory.length>=500){showToast('Достигнут предел памяти проекта (500 записей).','error');return;}
+      const previousMemory=project.memory.slice(),previousUpdatedAt=project.updatedAt;
       project.memory.push({id:projectIdNew(),text,createdAt:new Date().toISOString()});project.updatedAt=new Date().toISOString();
-      input.value='';persistProjects();renderProjectUI();
+      if(!persistProjects()){project.memory=previousMemory;project.updatedAt=previousUpdatedAt;renderProjectUI();return;}
+      input.value='';renderProjectUI();
     }
     function deleteProjectMemory(id){
       const project=getProjectForChat();if(!project)return;
-      project.memory=project.memory.filter(item=>item.id!==id);project.updatedAt=new Date().toISOString();persistProjects();renderProjectUI();
+      const previousMemory=project.memory,previousUpdatedAt=project.updatedAt;
+      project.memory=project.memory.filter(item=>item.id!==id);project.updatedAt=new Date().toISOString();
+      if(!persistProjects()){project.memory=previousMemory;project.updatedAt=previousUpdatedAt;}
+      renderProjectUI();
     }
     function deleteCurrentProject(){
       const project=getProjectForChat();if(!project){showToast('Сначала выбери проект.','error');return;}
       const count=chats.filter(c=>c.projectId===project.id).length;
       const msg=getUiLanguage()==='en'?'Delete project "'+project.name+'" and '+count+' chats? This cannot be undone.':'Удалить проект «'+project.name+'» вместе с '+count+' чатами? Это действие нельзя отменить.';
       if(!confirm(msg))return;
+      const previousProjects=projects,previousChats=chats,previousCurrentId=currentChatId;
       chats=chats.filter(chat=>chat.projectId!==project.id);if(!chats.length)chats=[createChat()];
       if(!chats.some(chat=>chat.id===currentChatId))currentChatId=chats[0].id;
-      projects=projects.filter(item=>item.id!==project.id);persistProjects();updateState(null,currentChatId);renderProjectUI();
+      projects=projects.filter(item=>item.id!==project.id);
+      if(!persistProjectsAndChats()){projects=previousProjects;chats=previousChats;currentChatId=previousCurrentId;renderProjectUI();renderChatList();renderActiveChat();return;}
+      renderProjectUI();renderChatList();renderActiveChat();
       showToast(getUiLanguage()==='en'?'Project and its chats deleted.':'Проект и его чаты удалены.');
     }
     function exportProjectBundle(){
@@ -2066,10 +2156,13 @@ permalink: /
         }
         const memory=Array.isArray(bundle.project.memory)?bundle.project.memory.filter(v=>v&&typeof v.text==='string').slice(0,500).map(v=>({id:projectIdNew(),text:v.text.slice(0,600),createdAt:String(v.createdAt||now)})):[];
         const target={id:projectIdNew(),name:importedName,description:typeof bundle.project.description==='string'?bundle.project.description.slice(0,1000):'',instructions:typeof bundle.project.instructions==='string'?bundle.project.instructions.slice(0,6000):'',memoryScope:bundle.project.memoryScope==='project-and-global'?'project-and-global':'project-only',memory,createdAt:now,updatedAt:now};
-        projects.unshift(target);selectedProjectForSettingsId=target.id;
+        const previousProjects=projects,previousChats=chats,previousCurrentId=currentChatId,previousSelected=selectedProjectForSettingsId;
+        projects=[target,...projects];selectedProjectForSettingsId=target.id;
         const seen=new Set(chats.map(chat=>chat.id));
-        for(const chat of importedChats){if(seen.has(chat.id))chat.id=projectIdNew();seen.add(chat.id);chat.projectId=target.id;chats.unshift(chat);}
-        persistProjects();updateState(chats,chats[0]?.id||currentChatId);renderProjectUI();$('projectManagerDetails').open=true;
+        for(const chat of importedChats){if(seen.has(chat.id))chat.id=projectIdNew();seen.add(chat.id);chat.projectId=target.id;}
+        chats=[...importedChats,...chats];currentChatId=chats[0]?.id||currentChatId;
+        if(!persistProjectsAndChats()){projects=previousProjects;chats=previousChats;currentChatId=previousCurrentId;selectedProjectForSettingsId=previousSelected;renderProjectUI();renderChatList();renderActiveChat();throw new Error('Хранилище не подтвердило запись проекта и чатов; исходные данные восстановлены.');}
+        renderProjectUI();renderChatList();renderActiveChat();$('projectManagerDetails').open=true;
         showToast(getUiLanguage()==='en'?'Imported '+importedChats.length+' chats into '+target.name+'.':'Импортировано чатов в проект «'+target.name+'»: '+importedChats.length+'.');
       }catch(error){showToast('Импорт проекта не выполнен: '+String(error.message||error).slice(0,180),'error');}
     }
@@ -2198,7 +2291,9 @@ permalink: /
       if (nextCurrentId && chats.some((chat) => chat.id === nextCurrentId)) currentChatId = nextCurrentId;
       if (!chats.some((chat) => chat.id === currentChatId)) currentChatId = chats[0].id;
       if ($('modeFast')) syncCurrentChatFunctionSettings();
-      persistChats(); renderChatList(); renderActiveChat(); renderProjectUI({preserveDraft:true});
+      const persisted = persistChats();
+      renderChatList(); renderActiveChat(); renderProjectUI({preserveDraft:true});
+      return persisted;
     }
     function toggleSidebar(force) {
       const sidebar = $('sidebar'); const overlay = $('sidebarOverlay');
@@ -4308,7 +4403,9 @@ permalink: /
         }));
         clean.forEach((chat) => { const original=chat.id;if(seen.has(chat.id)){chat.id=projectIdNew();}seen.add(chat.id); });
         if (activeController) stopGeneration();
-        updateState([...clean,...chats], clean[0].id); toggleSidebar(false);
+        const previousChats=chats,previousCurrentId=currentChatId;
+        if(!updateState([...clean,...chats], clean[0].id)){chats=previousChats;currentChatId=previousCurrentId;renderChatList();renderActiveChat();renderProjectUI({preserveDraft:true});throw new Error('Хранилище не подтвердило импорт; исходная история восстановлена.');}
+        toggleSidebar(false);
         showToast(getUiLanguage()==='en'?'Imported chats were added without replacing existing history.':'Импортированные чаты добавлены; существующая история не заменена.');
       } catch (error) { showToast(`Ошибка импорта: ${error.message}`, 'error'); }
     }
@@ -5055,6 +5152,7 @@ permalink: /
           case 'close-settings': toggleSettings(false); break;
           case 'save-settings': saveSettings(); break;
           case 'download-recovery-backup': downloadRecoveryBackup(); break;
+        case 'download-project-recovery-backup': downloadProjectRecoveryBackup(); break;
           case 'send': await sendMessage(false); break;
           case 'stop': stopGeneration(); break;
           case 'retry': await retryLastMessage(); break;
@@ -5116,9 +5214,9 @@ permalink: /
     $('settingsProfileFile').addEventListener('change', importSettingsProfile);
     $('importProjectFile').addEventListener('change',importProjectBundle);
     $('currentProjectSelect').addEventListener('change',event=>moveCurrentChatToProject(event.target.value));
-    $('projectMemoryScopeSelect').addEventListener('change',event=>{if(creatingProject)return;const project=getProjectForChat();if(!project){event.target.value='project-only';return;}project.memoryScope=event.target.value==='project-and-global'?'project-and-global':'project-only';project.updatedAt=new Date().toISOString();persistProjects();showToast(project.memoryScope==='project-and-global'?'Для проекта разрешена общая память (если общий доступ включён).':'Общая память выключена для этого проекта.');});
-    $('projectMemoryToggle').addEventListener('change',event=>{const chat=getCurrentChat();chat.projectMemoryEnabled=Boolean(event.target.checked);persistChats();showToast(chat.projectMemoryEnabled?(getUiLanguage()==='en'?'Project memory enabled for this chat.':'Память проекта включена для этого чата.'):(getUiLanguage()==='en'?'Project memory is off for this chat.':'Память проекта отключена для этого чата.'));});
-    $('serverProjectMemoryToggle').addEventListener('change',event=>{const chat=getCurrentChat();chat.serverProjectMemoryEnabled=Boolean(event.target.checked);persistChats();showToast(chat.serverProjectMemoryEnabled?(getUiLanguage()==='en'?'Server project memory opted in for this chat.':'Серверная память разрешена для этого чата.'):(getUiLanguage()==='en'?'Server project memory is off.':'Серверная память отключена.'));});
+    $('projectMemoryScopeSelect').addEventListener('change',event=>{if(creatingProject)return;const project=getProjectForChat();if(!project){event.target.value='project-only';return;}const previousScope=project.memoryScope,previousUpdatedAt=project.updatedAt;project.memoryScope=event.target.value==='project-and-global'?'project-and-global':'project-only';project.updatedAt=new Date().toISOString();if(!persistProjects()){project.memoryScope=previousScope;project.updatedAt=previousUpdatedAt;event.target.value=previousScope;return;}showToast(project.memoryScope==='project-and-global'?'Для проекта разрешена общая память (если общий доступ включён).':'Общая память выключена для этого проекта.');});
+    $('projectMemoryToggle').addEventListener('change',event=>{const chat=getCurrentChat(),previous=chat.projectMemoryEnabled;chat.projectMemoryEnabled=Boolean(event.target.checked);if(!persistChats()){chat.projectMemoryEnabled=previous;event.target.checked=previous;return;}showToast(chat.projectMemoryEnabled?(getUiLanguage()==='en'?'Project memory enabled for this chat.':'Память проекта включена для этого чата.'):(getUiLanguage()==='en'?'Project memory is off for this chat.':'Память проекта отключена для этого чата.'));});
+    $('serverProjectMemoryToggle').addEventListener('change',event=>{const chat=getCurrentChat(),previous=chat.serverProjectMemoryEnabled;chat.serverProjectMemoryEnabled=Boolean(event.target.checked);if(!persistChats()){chat.serverProjectMemoryEnabled=previous;event.target.checked=previous;return;}showToast(chat.serverProjectMemoryEnabled?(getUiLanguage()==='en'?'Server project memory opted in for this chat.':'Серверная память разрешена для этого чата.'):(getUiLanguage()==='en'?'Server project memory is off.':'Серверная память отключена.'));});
      $('globalMemoryToggle').addEventListener('change',event=>{safeSet(STORAGE.globalMemoryEnabled,String(event.target.checked));updateMemoryStatusLine();showToast(event.target.checked?(getUiLanguage()==='en'?'Global memory enabled.':'Глобальная память включена.'):(getUiLanguage()==='en'?'Global memory disabled.':'Глобальная память отключена.'));});
     $('projectMemoryInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();document.querySelector('[data-action="add-project-memory"]').click();}});
     $('userInput').addEventListener('input', () => autoResizeTextarea($('userInput')));
@@ -5215,6 +5313,25 @@ permalink: /
         } catch (_) {}
       }
       if (chatRecoveryBackupKey) $('recoveryBackupButton').classList.remove('hidden');
+      if (!projectRecoveryBackupKey) {
+        try {
+          const backupKeys = [];
+          for (let index = 0; index < localStorage.length; index++) {
+            const key = localStorage.key(index);
+            if (key && key.startsWith('ai_projects_recovery_backup') && safeGet(key)) backupKeys.push(key);
+          }
+          backupKeys.sort((a, b) => { const time = key => Number(key.slice('ai_projects_recovery_backup_'.length)) || 0; return time(b) - time(a); });
+          projectRecoveryBackupKey = backupKeys[0] || '';
+        } catch (_) {}
+      }
+      if (projectRecoveryBackupKey) {
+        const button = $('projectRecoveryBackupButton');
+        button.classList.remove('hidden');
+        button.textContent = getUiLanguage() === 'en' ? 'Download project recovery backup' : 'Скачать резервную копию проектов';
+      }
+      if (projectRecoveryWarning) showToast(projectStorageCorruptNotBackedUp
+        ? 'Повреждённые проекты не перезаписаны: резервная копия не создалась. Освободи место и перезагрузи страницу.'
+        : 'Проекты не прочитались полностью. Исходные данные сохранены локально; скачай резервную копию проектов.', 'error');
       if (chatRecoveryWarning) showToast(chatStorageCorruptNotBackedUp
         ? 'История не прочиталась, резервная копия не создалась. Исходные данные не будут перезаписаны; освободите место и перезагрузите страницу.'
         : 'История не прочиталась. Исходные данные сохранены локально; скачайте резервную копию в настройках.', 'error');
