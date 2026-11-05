@@ -1130,3 +1130,12 @@ GitHub's repository rename guidance explicitly says project Pages URLs are not r
 - **VERIFICATION:** content/route consistency reviewed; no runtime changes. Fresh-session automatic routing and main-level integration remain unverified.
 - **NEXT:** retain 8.29 as partial until the trigger and selector are both in main and a fresh resumed handoff confirms routing.
 
+
+## Graphify UI Surface — confidence and relationship semantics (2026-11-05)
+
+- **IMPLEMENTED (PR #131 branch):** CSS/DOM relationships now distinguish exact single-token selector matches (may_style, heuristic score 0.65) from token overlap in compound/pseudo selectors (may_style_candidate, 0.25). JavaScript selector calls distinguish exact selectors from candidate-only overlap. The nearest-previous-function ownership guess was removed because line proximity does not prove lexical scope.
+- **IMPLEMENTED (PR #131 branch):** classList.add/remove/toggle/contains now creates js_class_mutation nodes and low-confidence may_affect_style links; it no longer claims the operation selects DOM nodes. Query methods remain separate selector-reference nodes.
+- **TESTS ADDED:** tests/test_graphify_ui_surface.py covers exact and compound selectors, low-confidence candidate edges, jQuery-style ID selectors, class mutation semantics and the absence of false targets / lexical-owner edges.
+- **VERIFICATION:** exact-head Quality and Graphify checks are pending on the updated PR #131 HEAD. Do not mark VERIFIED until tests and Graphify pilot pass on the same SHA.
+- **LIMIT:** this remains static source inference, not browser-computed CSS or a JavaScript AST/control-flow proof. Confidence scores are heuristic labels, not calibrated probabilities.
+- **NEXT:** inspect exact-head CI/artifacts; if clean, use the same evidence distinction in future Graphify UI Surface reports without promoting this V2 tooling into Landing V1.
