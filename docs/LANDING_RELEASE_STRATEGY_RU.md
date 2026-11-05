@@ -31,7 +31,7 @@ Tasks:
 8. Run applicable exact-head documentation gates; do not require unrelated Gateway/device checks for a docs-only slice unless repository policy requires them.
 
 **Acceptance:** a normal continuation uses `OLEDUE.md`, one batched live-state read and one task-specific canonical document; detailed orientation/state/history are opened on demand. The selected branch, PR, tested SHA and next action are recovered without asking the owner to repeat context.  
-**Maturity:** SPECIFIED until implemented and checked.
+**Maturity:** IMPLEMENTED IN PR #140; exact-head verification pending. Do not mark VERIFIED until the final PR HEAD passes the applicable gates and a fresh-session handoff is observed.
 
 ### 2. Audit PR #131 and build a promotion candidate register
 
@@ -157,6 +157,7 @@ PR #134 exact HEAD `519973c793a1c998b43c60dedfe55a02b74a26a9` received COMMENT r
 | Date | Branch / PR | Change | Verification |
 |---|---|---|---|
 | 2026-11-04 | Documentation plan branch from `9b746f7` | Initial owner-directed execution order and promotion gates | Pending exact-head CI |
+| 2026-11-05 | PR #140 | Replace mandatory bulk orientation reads with OLEDUE Session Sync Capsule; detailed index/state/history become on-demand | Exact final PR HEAD has no workflow runs/statuses yet; earlier checkpoint `76dac2388223f813995a8748b67ef829dfeceed7` passed Quality, Freshness and Provenance |
 
 
 ## Initial PR #131 source audit — 2026-11-04
