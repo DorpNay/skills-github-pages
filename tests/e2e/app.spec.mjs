@@ -2709,3 +2709,41 @@ test('application innovation ticker is static when reduced motion is requested',
   expect(await ticker.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
   await expect(page.locator('#agentFunctionSettings .roadmap-note')).toBeVisible();
 });
+
+
+test('browser Python snippets cannot access page globals through Pyodide js module', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.loadPyodide = async options => ({
+      setStdout() {},
+      setStderr() {},
+      runPythonAsync: async () => JSON.stringify({
+        nullPrototype: Object.getPrototypeOf(options.jsglobals) === null,
+        exposesSensitiveGlobals: ['window', 'document', 'localStorage', 'fetch', 'globalThis']
+          .some(name => name in options.jsglobals)
+      })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    const block = document.createElement('div');
+    block.className = 'code-block';
+    const code = document.createElement('code');
+    code.textContent = 'print("safe namespace")';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'code-action';
+    button.dataset.action = 'run-python';
+    button.textContent = 'Run Python';
+    const output = document.createElement('pre');
+    output.dataset.codeOutput = '';
+    output.classList.add('hidden');
+    block.append(code, button, output);
+    document.querySelector('#chatBox').append(block);
+  });
+
+  await page.locator('#chatBox [data-action="run-python"]').click();
+  const output = page.locator('#chatBox [data-code-output]');
+  await expect(output).toContainText('"nullPrototype":true');
+  await expect(output).toContainText('"exposesSensitiveGlobals":false');
+  await expect(page.locator('#pyStatus')).toContainText('Py: готов');
+});
