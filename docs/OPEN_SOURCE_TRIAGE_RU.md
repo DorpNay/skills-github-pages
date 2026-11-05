@@ -214,3 +214,17 @@
 - Решение: disposable dev environment, pinned version, `graphify extract . --code-only --timing`, `graphify cluster-only . --no-label`, `graphify export html`, `graphify query`; проверка exclusions, ресурсные замеры и сравнение на реальных навигационных вопросах. Не ставить в gateway и не использовать hosted Cloud для пользовательских данных.
 - Исполнение **BLOCKED**: локальный `git clone` завершился DNS-ошибкой `Could not resolve host: github.com`; CLI не установлен и граф не создан.
 - Промежуточный артефакт `docs/ALANDI_ARCHITECTURE_MAP_RU.md` — кураторская схема, не подмена AST graph.
+
+
+## 2026-11-05 — refreshed high-signal candidates (research only)
+
+| Upstream / inspected revision | Verified project/license snapshot | Reusable pattern | aLandi decision |
+|---|---|---|---|
+| [XERJ](https://github.com/xerj-org/xerj) — `83c9f0d123bac010a25ca2cf02ff093b08ee68ce` | Apache-2.0 | Local Rust binary; BM25 + vector + hybrid; code definitions; MCP; source citations. Upstream token-saving benchmark is not independently verified. `--insecure` disables auth/TLS. | Highest-priority retrieval bake-off against SQLite FTS5 + Graphify. No adoption until same-corpus quality/resource/security comparison. |
+| [Memvid](https://github.com/memvid/memvid) — `e6bd9f7b9c38cd8d5370fa0fc936ac1dcd751813` | Apache-2.0 | Append-only immutable memory frames, checksums, versioning, portable single-file capsule and temporal inspection. | Isolated export/archive prototype only; preserve SQLite as canonical store until deletion/conflict/recovery tests pass. Benchmark claims remain upstream-reported. |
+| [RAG-Anything](https://github.com/HKUDS/RAG-Anything) — `2cd2b3329c470ccb53923f8a6d320596b34e56c5` | MIT | Typed multimodal document decomposition and provenance-preserving cross-modal retrieval. Built around LightRAG and optional heavy parsers/VLM. | Borrow parser→typed fragments→provenance→retrieval architecture. Do not install the full stack on the 8-GB host before corpus and memory evaluation. |
+| [Graphify](https://github.com/Graphify-Labs/graphify) — `59b5ab1151e031fb42e39cfc9a50bf96f2d57ae0` (`v8`) | Apache-2.0 | Deterministic AST graph with explicit extracted/inferred edge labels and queryable provenance. | Keep dev-only; strengthen confidence/ambiguity reporting and artifact coverage tests in existing Graphify pilot. No runtime graph DB. |
+| [Superpowers](https://github.com/obra/superpowers) — `22f0b463e7a5e579904dd6211a520321035526f7` | MIT | Spec-first workflow, owner approval, implementation plan, red/green TDD, review/fix cycle. | Adopt selected workflow patterns into existing engineering loop; no wholesale plugin install or permission expansion. |
+| [Temporal durable execution](https://temporal.io/blog/temporal-langgraph-plugin-durable-execution) / [LangGraph checkpointers](https://docs.langchain.com/oss/python/langgraph/checkpointers) / [Pydantic AI durable execution](https://pydantic.dev/docs/ai/durable-execution/) | Official technical documentation; engine licenses vary by component | Distinguish state checkpoints from durable execution/replay, approval waits, retries and idempotent activities. | Use as design references for #134 AgentRun and future long-running workflows; no engine adoption until current lifecycle prototype and resource need are proven. |
+
+**Next evaluation:** fixed corpus + query set; report Recall@5, MRR, nDCG, citation correctness, latency, RSS, index size, deletion semantics and operational/security boundaries. Keep vendor benchmarks separate from aLandi measurements.
