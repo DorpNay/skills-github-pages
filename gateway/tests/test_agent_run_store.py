@@ -411,13 +411,13 @@ def test_task_completion_rejects_inconsistent_terminal_parent_state(tmp_path):
         store.complete_task(claim=claim, result={"status": "succeeded"}, now=105)
 
 
-def test_succeeded_transition_rejects_queued_tasks_without_mutating_run(tmp_path):
+def test_run_cannot_skip_verification_to_succeed_with_open_tasks(tmp_path):
     store = AgentRunStore(tmp_path / "success-terminal-fence.sqlite3")
     store.initialize()
     run = make_running(store, key="success-terminal-fence")
     task = store.enqueue_task(run_id=run["run_id"], task_key="unfinished",
                               idempotency_key="success-terminal-task", payload={}, now=103)
-    with pytest.raises(InvalidTransition, match="cannot succeed while tasks remain queued or leased"):
+    with pytest.raises(InvalidTransition, match="run state transition is not allowed"):
         store.transition_run(run_id=run["run_id"], expected_state="running",
                              new_state="succeeded", event_type="verification_passed", now=104)
     assert store.get_run(run["run_id"])["state"] == "running"
