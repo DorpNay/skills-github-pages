@@ -102,7 +102,7 @@
       "physical keyboard/long-press",
       "full component-level contrast review"
     ],
-    "promotion_audit": "PR #139 first V1 public landing accessibility/responsive slice merged at 2e11849d409a51009693af95ac3ecbf1f057a3fc; exact-main Quality/Pages/Freshness/Provenance/Graphify pass and production CSS was fetched. Graphify UI Surface bridge in PR #131 remains NEEDS WORK due inferred relations/approximate owner mapping and limited ambiguity/error tests. 8.12 removal not promoted; 8.13 context handoff stays V2; root app extraction and agent roadmap stay V2. PR #134 AgentRun prototype at exact HEAD 519973c793a1c998b43c60dedfe55a02b74a26a9 received review #5779912938 COMMENT: raw goal text is persisted, metadata denylist can allow innocuous-key raw text, terminal run transitions do not fence leased tasks, and TERMINAL_RUN_STATES is unused. Keep Draft/HOLD before API/runtime integration.",
+    "promotion_audit": "PR #139 first V1 public landing accessibility/responsive slice merged at 2e11849d409a51009693af95ac3ecbf1f057a3fc; exact-main Quality/Pages/Freshness/Provenance/Graphify pass and production CSS was fetched. Graphify UI Surface bridge in PR #131 remains NEEDS WORK due inferred relations/approximate owner mapping and limited ambiguity/error tests. 8.12 removal not promoted; 8.13 context handoff stays V2; root app extraction and agent roadmap stay V2. PR #134 AgentRun prototype at exact HEAD 519973c793a1c998b43c60dedfe55a02b74a26a9 received review #5779912938 COMMENT: raw goal text is persisted, metadata denylist can allow innocuous-key raw text, terminal run transitions do not fence leased tasks, and TERMINAL_RUN_STATES is unused. Keep Draft/HOLD before API/runtime integration. PR #131 Functions/Agents/Skills/Research menu source and E2E reviewed at exact HEAD 597536924ce37b17f8832aa36ea5b928f5584230: menu grouping and roadmap-vs-real config are honest; Quality #41787658241 and Provenance #41787658226 pass, but Freshness/Graphify and published smoke absent. Keep menu UI in V2, no V1 promotion.",
     "pr131_812_decision": "do not promote removal; previously accepted opt-in V1 feature; owner approval and live host/database review required for retirement",
     "first_v1_code_candidate": "public landing accessibility/responsive slice; three functional files only; six additional PR #139 changes are orientation/state documentation",
     "pr138_merge_sha": "a7915291354d1b031ce2461b71a553f871959df3",
@@ -136,5 +136,5 @@
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-05-PR134-PROTOTYPE-AUDIT-001"
+  "last_volley": "V-2026-11-05-PR131-FUNCTIONS-MENU-AUDIT-001"
 }
