@@ -4,6 +4,8 @@
 
 ## Решение
 
+**Acquisition checkpoint (2026-11-05):** the lightweight RU-only `vosk-model-small-ru-0.22` baseline is downloaded and hash-verified (`961d5ff98a17f4aa6de69864d0aa71fa5bac682301d2b5d17a3f24c5c99a46d4`, 46,236,750 bytes, Apache-2.0 per Vosk catalog). ZIP CRC and path safety checks passed. It is **not installed or benchmarked**. Keep Qwen3-ASR-0.6B as the primary multilingual RU/TH candidate; Vosk is a compact Russian baseline for the eventual same-audio bake-off, not a product/runtime decision.
+
 Не скачивать и не запускать все модели на одном сервере. Текущий продукт — статический сайт GitHub Pages AI Mobile Agent v10.0, skills по требованию и небольшой FastAPI gateway к частной Ollama. Плановый VPS имеет 8 GB RAM, а gateway ограничивает параллелизм. В текущих UI и gateway нет готовых media upload/ASR/OCR endpoints или TTS.
 
 - **Обычный OCR:** PP-OCRv6 Tiny/Medium — первый лёгкий кандидат, но только для языков из опубликованного перечня (китайские письменности, английский, японский и преимущественно латинские языки). Не считать русский и тайский поддержанными автоматически.
