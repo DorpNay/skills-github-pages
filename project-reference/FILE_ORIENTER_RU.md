@@ -2,18 +2,18 @@
 
 > **Назначение:** это подробный индекс для поиска пути по репозиторию, а не обязательный стартовый пакет. Для обычного продолжения используй `OLEDUE.md` → один пакет live GitHub state → один канонический task register. Открывай этот индекс, `docs/PROJECT_STATE.yaml` и `docs/VOLLEY_LOG.md` только когда нужны навигация, системное состояние или история. Этот индекс не доказывает, что feature включена или развёрнута.
 
-## Текущая контрольная точка — 2026-11-05, после PR #148
+## Текущая контрольная точка — 2026-11-05, после PR #149
 
-- **Current main baseline SHA:** `4fbf16aad3f741159654950e0260aaf717653291`. Этот PR обновляет snapshot относительно точного текущего main; его merge commit будет state-refresh child.
-- **Merged promotions:** #146 — canonical task registry и owner audit/hygiene tasks; #147 — cancellation-safe Gateway semaphore release; #148 — inert assistant raw HTML, read-only message viewer и restricted Pyodide JS globals. Merge SHAs: `21162e858d769c23ee4907264305f792148a7fbf`, `3f37a8166fcbf89c5392f985e290be48ea27ef6a`, `4fbf16aad3f741159654950e0260aaf717653291`.
-- **Exact PR-head checks:** #146 Quality #41998268074, Freshness #41998267817, Provenance #41998267937 PASS; #147 Gateway #41998613130 (Python 3.12/13/14), Quality #41998613190, Graphify #41998613246, Dead Code #41998613138 PASS; #148 Quality #41999525882 (7 jobs) and Graphify #41999525846 PASS. Post-merge main Quality/Pages IDs не получены; PR-head PASS не выдаётся за post-merge verification.
+- **Current main SHA:** `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`; PR #149 — state/configuration refresh child of functional checkpoint `4fbf16aad3f741159654950e0260aaf717653291`.
+- **Последние интеграции:** #146 task registry; #147 cancellation-safe Gateway semaphore; #148 UI Markdown/Pyodide security boundary; #149 state snapshot/orientation, Node 24 workflows, pypdf 6.21.4 и Vosk provenance. Merge SHA #149: `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`.
+- **PR #149 exact-head checks:** Quality #42001310270 (7 jobs), Freshness #42001309687, Provenance #42001309703, Graphify #42001311323 — PASS. Post-merge main workflow IDs не получены; не выдавать PR-head PASS за post-merge verification.
 - **Live queue snapshot:** open PRs (6): #125, #128, #129, #130, #131, #134; open issues (1): #111.
-- **PR #131:** HEAD `02fb4e8986b35f55a8a3b5308704b631dfbcce80`, current compare 1,101 ahead / 17 behind, 57 files, `mergeable=false`. Не синхронизировать и не вливать целиком.
-- **PR #134:** Draft/HOLD, HEAD `519973c793a1c998b43c60dedfe55a02b74a26a9`; review #5779912938 остаётся обязательным remediation gate.
-- **Vosk artifact:** `models/vosk/vosk-model-small-ru-0.22.zip`, 46,236,750 bytes, SHA-256 `961d5ff98a17f4aa6de69864d0aa71fa5bac682301d2b5d17a3f24c5c99a46d4`; README, LICENSE и SHA256SUMS находятся рядом. `ship=false`; runtime/target-hardware evaluation не проводились.
-- **Branch cleanup:** 143 refs. Пять behind-only candidates и один tree-equivalent PR #133 branch повторно проверены; удаление не выполнено — branch-delete action отсутствует. Сохранять V1 baseline archive, Future Workstreams, active PRs, V2, research и ветки с unique commits/docs/workflows.
-- **Audit status:** два P1 исправления merged (#147/#148); Node24/provenance/state reconciliation подготовлены в PR #149; документ extraction concurrency, Pyodide Worker и CDN SRI остаются follow-up.
-- **Следующий шаг:** exact-head Quality/Freshness/Provenance для PR #149, затем продолжить audit provider/storage, voice, document intake, RAG и отдельные V2 candidate slices. Issue #111 оставить открытым.
+- **PR #150 — текущий кодовый slice:** `fix/browser-storage-recovery-atomicity-20261105`, HEAD `57a10e82198943da5e7625b26daa10d15ccafc40`. Исправление backup/rollback localStorage, fail-closed storage, импорт/удаление проекта как одна логическая операция, gating success UI; четыре Chromium regression tests и лимит 50 000 сообщений. Проверки ещё не завершены.
+- **Новая conditional privacy finding:** FTS5 secure-delete доступен с SQLite 3.42.0+; MemoryManager проверяет версию, но capability не выведен в health. На более старой SQLite логическое удаление может оставить записи в FTS segments до merge. Live SQLite/feature flag/host не проверены.
+- **PR #131:** HEAD `02fb4e8986b35f55a8a3b5308704b631dfbcce80`, 1,101 ahead / 17 behind, 57 files, `mergeable=false`. Не синхронизировать и не вливать целиком.
+- **PR #134:** Draft/HOLD, HEAD `519973c793a1c998b43c60dedfe55a02b74a26a9`; review #5779912938 остаётся remediation gate.
+- **Branch cleanup:** 145 refs (143 в исходном inventory + ветка merged PR #149 + active PR #150). Пять behind-only candidates и один tree-equivalent PR #133 branch проверены; удаление не выполнено — branch-delete action отсутствует.
+- **Следующий шаг:** exact-head Quality/Chromium/Graphify/Freshness для PR #150; затем FTS5 capability/target SQLite check и продолжение audit provider/storage, voice, document intake, RAG и V2 slices. Issue #111 оставить открытым.
 
 ## 1. Быстрый маршрут
 
