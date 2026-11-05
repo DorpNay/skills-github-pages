@@ -2926,9 +2926,30 @@ test('skill and agent configuration setters restore unsaved values when chat sto
       goal.value = option.value;
       goal.dispatchEvent(new Event('change', { bubbles: true }));
     }
+    const preset = document.querySelector('#skillPresetSelect');
+    const nextPreset = [...preset.options].find(item => item.value && item.value !== preset.value);
+    if (nextPreset) {
+      preset.value = nextPreset.value;
+      preset.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    const goal = document.querySelector('#skillGoalSelect');
+    const nextGoal = [...goal.options].find(item => item.value && item.value !== goal.value);
+    if (nextGoal) {
+      goal.value = nextGoal.value;
+      goal.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    const customName = document.querySelector('#customSkillName');
+    customName.value = 'Unsaved skill name';
+    customName.dispatchEvent(new Event('change', { bubbles: true }));
     const size = document.querySelector('#agentTeamSize');
     size.value = '7';
     size.dispatchEvent(new Event('input', { bubbles: true }));
+    const scenario = document.querySelector('#agentTeamScenario');
+    const nextScenario = [...scenario.options].find(item => item.value && item.value !== scenario.value);
+    if (nextScenario) {
+      scenario.value = nextScenario.value;
+      scenario.dispatchEvent(new Event('change', { bubbles: true }));
+    }
   });
   const after = await page.evaluate(() => localStorage.getItem('ai_chats_v87'));
   expect(after).toBe(before);
@@ -2937,8 +2958,11 @@ test('skill and agent configuration setters restore unsaved values when chat sto
     const parsed = JSON.parse(raw);
     return parsed.find(chat => chat.id === localStorage.getItem('ai_current_chat_v87')) || parsed[0];
   });
+  await expect(page.locator('#skillPresetSelect')).toHaveValue(activeChat.skillPreset);
   await expect(page.locator('#skillGoalSelect')).toHaveValue(activeChat.skillGoal);
+  await expect(page.locator('#customSkillName')).toHaveValue(activeChat.customSkillName);
   await expect(page.locator('#agentTeamSize')).toHaveValue(String(activeChat.agentTeamSize));
+  await expect(page.locator('#agentTeamScenario')).toHaveValue(activeChat.agentTeamScenario);
 });
 
 test('corrupt project storage is preserved and exposes a downloadable recovery backup', async ({ page }) => {
