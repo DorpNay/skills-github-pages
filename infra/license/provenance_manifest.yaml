@@ -1,5 +1,5 @@
 schema_version: 1
-updated_on: "2026-10-27"
+updated_on: "2026-11-05"
 policy:
   no_model_downloads_in_git: true
   require_artifact_sha256_before_shipping: true
@@ -29,14 +29,14 @@ artifacts:
 
   - id: vosk-model-small-ru-0.22
     kind: asr_model_weights
-    upstream: "https://alphacephei.com/vosk/models"
-    source_version: "vosk-model-small-ru-0.22"
+    upstream: "https://alphacephei.com/vosk/models/vosk-model-small-ru-0.22.zip"
+    source_version: "vosk-model-small-ru-0.22; mirror rhasspy/vosk-models@e7ac2109d134b5f2404ba95389b2fb51916d4cab"
     license_spdx: "Apache-2.0"
     commercial_use: "candidate_allowed_subject_to_archive_hash_review"
-    sha256: null
+    sha256: "961d5ff98a17f4aa6de69864d0aa71fa5bac682301d2b5d17a3f24c5c99a46d4"
     ship: false
-    status: "not_downloaded"
-    notes: "Model catalogue lists Apache 2.0 and ~45 MB download; calculate SHA-256 on actual archive and unpacked artifacts."
+    status: "downloaded_for_eval"
+    notes: "Acquired via Actions #41968439622/artifact #13389210196; 46,236,750 bytes. SHA-256 independently verified after transfer; ZIP CRC and path safety checks passed. No runtime integration, target-host eval or RU golden-set bake-off yet. Official catalog license listing reviewed; retain NOTICE/license attribution before any distribution."
 
   - id: silero-vad-onnx
     kind: vad_model_weights
