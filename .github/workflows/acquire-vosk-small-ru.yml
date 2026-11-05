@@ -101,7 +101,8 @@ jobs:
           cp artifact/metadata.json models/vosk/
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add models/vosk/vosk-model-small-ru-0.22.zip models/vosk/SHA256SUMS models/vosk/metadata.json
+          git add -f models/vosk/vosk-model-small-ru-0.22.zip
+          git add models/vosk/SHA256SUMS models/vosk/metadata.json
           if ! git diff --cached --quiet; then
             git commit -m "model: vendor verified Vosk RU 0.22 archive"
             git push origin "HEAD:${GITHUB_REF_NAME}"
