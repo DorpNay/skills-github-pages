@@ -142,7 +142,7 @@ def make_selector_node(kind: str, selector: str, path: str, line: int, community
 
 
 def make_edge(source: str, target: str, relation: str, path: str, line: int,
-              confidence: str = "EXTRACTED", score: float = 1.0) -> dict:
+              confidence: str = "EXTRACTED", score: float = 1.0, **extra) -> dict:
     return {
         "source": source,
         "target": target,
@@ -153,6 +153,7 @@ def make_edge(source: str, target: str, relation: str, path: str, line: int,
         "source_file": path,
         "source_location": f"L{line}",
         "weight": score,
+        **extra,
     }
 
 
@@ -192,27 +193,23 @@ def collect_dom(root: Path):
     return records
 
 
+JS_LITERAL = r"(?P<quote>['\\"])(?P<literal>[^'\\"]+)(?P=quote)"
 JS_PATTERNS = (
-    (re.compile(r"(?<![\w$])\$\s*\(\s*(['\"])([^'\"]+)\1"), "id"),
-    (re.compile(r"\bgetElementById\s*\(\s*(['\"])([^'\"]+)\1"), "id"),
-    (re.compile(r"\b(?:querySelector|querySelectorAll|matches|closest)\s*\(\s*(['\"])([^'\"]+)\1"), "selector"),
-    (re.compile(r"\bgetElementsByClassName\s*\(\s*(['\"])([^'\"]+)\1"), "class"),
-    (re.compile(r"\bclassList\s*\.\s*(?:add|remove|toggle|contains)\s*\(\s*(['\"])([^'\"]+)\1"), "class"),
+    (re.compile(r"(?<![\\w$])\\$\\s*\\(\\s*" + JS_LITERAL), "selector", "select"),
+    (re.compile(r"\\bgetElementById\\s*\\(\\s*" + JS_LITERAL), "id", "select"),
+    (re.compile(r"\\b(?:querySelector|querySelectorAll|matches|closest)\\s*\\(\\s*" + JS_LITERAL), "selector", "select"),
+    (re.compile(r"\\bgetElementsByClassName\\s*\\(\\s*" + JS_LITERAL), "class", "select"),
+    (re.compile(
+        r"\\bclassList\\s*\\.\\s*(?P<operation>add|remove|toggle|contains)\\s*\\(\\s*"
+        + JS_LITERAL
+    ), "class", "mutate"),
 )
-SIMPLE_SELECTOR = re.compile(r"(?<![\\\w-])([.#])([-_a-zA-Z0-9]+)")
+SIMPLE_SELECTOR = re.compile(r"(?<![\\\\\\w-])([.#])([-_a-zA-Z0-9]+)")
 
 
-def collect_js(root: Path, graph_nodes: list[dict]):
+def collect_js(root: Path):
+    """Extract static selector calls and class mutations without guessing lexical owners."""
     records = []
-    function_nodes: dict[str, list[tuple[int, str]]] = defaultdict(list)
-    for node in graph_nodes:
-        if node.get("_callable") and node.get("source_file") and node.get("id"):
-            match = re.fullmatch(r"L(\d+)", str(node.get("source_location", "")))
-            if match:
-                function_nodes[node["source_file"]].append((int(match.group(1)), node["id"]))
-    for values in function_nodes.values():
-        values.sort()
-
     candidates = [root / "assets" / "js" / "app.js", *sorted((root / "assets" / "js").rglob("*.js"))]
     seen_paths = set()
     for path in candidates:
@@ -223,29 +220,33 @@ def collect_js(root: Path, graph_nodes: list[dict]):
             continue
         seen_paths.add(relative)
         source = read_text(path)
-        for pattern, selector_kind in JS_PATTERNS:
+        for pattern, selector_kind, mode in JS_PATTERNS:
             for match in pattern.finditer(source):
-                literal = match.group(2)
+                literal = match.group("literal")
                 line = source.count("\n", 0, match.start()) + 1
                 if selector_kind == "id":
                     selectors = [f"#{literal}"]
+                    selector_text = f"#{literal}"
                 elif selector_kind == "class":
-                    selectors = [f".{item}" for item in literal.split() if re.fullmatch(r"[-_a-zA-Z0-9]+", item)]
+                    selectors = [
+                        f".{item}" for item in literal.split()
+                        if re.fullmatch(r"[-_a-zA-Z0-9]+", item)
+                    ]
+                    selector_text = f".{literal}"
                 else:
                     selectors = [
                         item.group(1) + item.group(2)
                         for item in SIMPLE_SELECTOR.finditer(literal)
                     ]
+                    selector_text = literal.strip()
                 for selector in selectors:
-                    owner = None
-                    preceding = [item for item in function_nodes.get(relative, []) if item[0] <= line]
-                    if preceding:
-                        owner = preceding[-1][1]
                     records.append({
                         "path": relative,
                         "line": line,
                         "selector": selector,
-                        "owner": owner,
+                        "selector_text": selector_text,
+                        "mode": mode,
+                        "operation": match.groupdict().get("operation"),
                         "expression": match.group(0)[:180],
                     })
     return records
@@ -268,7 +269,7 @@ def enrich_graph(root: Path, graph_path: Path) -> dict:
 
     css = collect_css(root)
     dom = collect_dom(root)
-    js = collect_js(root, nodes)
+    js = collect_js(root)
 
     file_nodes: dict[str, str] = {}
     for existing in nodes:
@@ -281,7 +282,7 @@ def enrich_graph(root: Path, graph_path: Path) -> dict:
             file_nodes[path] = add_node(nodes, known_nodes, make_file_node(path, ui_community))
         return file_nodes[path]
 
-    css_by_selector: dict[str, list[str]] = defaultdict(list)
+    css_by_selector: dict[str, list[tuple[str, str]]] = defaultdict(list)
     dom_by_selector: dict[str, list[str]] = defaultdict(list)
 
     for record in css:
@@ -291,7 +292,7 @@ def enrich_graph(root: Path, graph_path: Path) -> dict:
             selector_text=record["selector_text"],
         )
         node_id = add_node(nodes, known_nodes, node)
-        css_by_selector[record["selector"]].append(node_id)
+        css_by_selector[record["selector"]].append((node_id, record["selector_text"]))
         add_edge(links, known_edges, make_edge(
             file_id, node_id, "contains", record["path"], record["line"]
         ))
@@ -306,40 +307,67 @@ def enrich_graph(root: Path, graph_path: Path) -> dict:
             file_id, node_id, "contains", record["path"], record["line"]
         ))
 
+    exact_css_dom_matches = 0
+    ambiguous_css_dom_matches = 0
     for selector in sorted(set(css_by_selector) & set(dom_by_selector)):
-        for css_id in css_by_selector[selector]:
+        for css_id, selector_text in css_by_selector[selector]:
+            exact = selector_text == selector
+            relation = "may_style" if exact else "may_style_candidate"
+            score = 0.65 if exact else 0.25
+            if exact:
+                exact_css_dom_matches += 1
+            else:
+                ambiguous_css_dom_matches += 1
+            css_node = next(node for node in nodes if node["id"] == css_id)
             for dom_id in dom_by_selector[selector]:
-                css_node = next(node for node in nodes if node["id"] == css_id)
                 add_edge(links, known_edges, make_edge(
-                    css_id, dom_id, "may_style", css_node["source_file"],
-                    int(css_node["source_location"][1:]), "INFERRED", 0.9
+                    css_id, dom_id, relation, css_node["source_file"],
+                    int(css_node["source_location"][1:]), "INFERRED", score,
+                    match_kind="exact_simple_selector" if exact else "token_overlap_only",
+                    selector_text=selector_text,
                 ))
 
     js_selector_ids = []
+    js_mutation_records = 0
     for record in js:
         file_id = ensure_file(record["path"])
+        is_mutation = record["mode"] == "mutate"
+        node_kind = "js_class_mutation" if is_mutation else "js_selector_reference"
         ref_id = add_node(nodes, known_nodes, make_selector_node(
-            "js_selector_reference", record["selector"], record["path"], record["line"], ui_community,
-            expression=record["expression"],
+            node_kind, record["selector"], record["path"], record["line"], ui_community,
+            expression=record["expression"], selector_text=record["selector_text"],
+            operation=record["operation"],
         ))
         js_selector_ids.append(ref_id)
         add_edge(links, known_edges, make_edge(
             file_id, ref_id, "contains", record["path"], record["line"]
         ))
-        if record["owner"]:
+        if is_mutation:
+            js_mutation_records += 1
+            for target, _css_text in css_by_selector.get(record["selector"], []):
+                add_edge(links, known_edges, make_edge(
+                    ref_id, target, "may_affect_style", record["path"], record["line"],
+                    "INFERRED", 0.35, match_kind="class_mutation_not_dom_selection",
+                ))
+            continue
+
+        exact = record["selector_text"] == record["selector"]
+        relation = "targets" if exact else "candidate_targets"
+        reference_relation = "references" if exact else "candidate_references"
+        score = 0.65 if exact else 0.25
+        for target, _css_text in css_by_selector.get(record["selector"], []):
             add_edge(links, known_edges, make_edge(
-                record["owner"], ref_id, "references_ui_selector",
-                record["path"], record["line"], "INFERRED", 0.85
-            ))
-        for target in css_by_selector.get(record["selector"], []):
-            add_edge(links, known_edges, make_edge(
-                ref_id, target, "references", record["path"], record["line"],
-                "INFERRED", 0.9
+                ref_id, target, reference_relation, record["path"], record["line"],
+                "INFERRED", score,
+                match_kind="exact_simple_selector" if exact else "token_overlap_only",
+                selector_text=record["selector_text"],
             ))
         for target in dom_by_selector.get(record["selector"], []):
             add_edge(links, known_edges, make_edge(
-                ref_id, target, "targets", record["path"], record["line"],
-                "INFERRED", 0.9
+                ref_id, target, relation, record["path"], record["line"],
+                "INFERRED", score,
+                match_kind="exact_simple_selector" if exact else "token_overlap_only",
+                selector_text=record["selector_text"],
             ))
 
     graph_path.write_text(json.dumps(graph, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -356,6 +384,9 @@ def enrich_graph(root: Path, graph_path: Path) -> dict:
         "new_graph_nodes": len(nodes),
         "new_graph_edges": len(links),
         "matched_css_dom_selectors": len(set(css_by_selector) & set(dom_by_selector)),
+        "exact_css_dom_matches": exact_css_dom_matches,
+        "ambiguous_css_dom_matches": ambiguous_css_dom_matches,
+        "js_class_mutation_records": js_mutation_records,
         "matched_js_css_references": sum(1 for item in js if item["selector"] in css_by_selector),
         "dom_selectors_without_css_count": len(set(dom_by_selector) - set(css_by_selector)),
         "css_selectors_without_dom_count": len(set(css_by_selector) - set(dom_by_selector)),
