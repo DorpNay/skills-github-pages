@@ -2759,6 +2759,12 @@ test('corrupt project storage is preserved and exposes a downloadable recovery b
     backup: localStorage.getItem('ai_projects_recovery_backup')
   }));
   expect(values).toEqual({ original: raw, backup: raw });
+  await page.locator('#projectManagerDetails').evaluate(node => { node.open = true; });
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.locator('#projectRecoveryBackupButton').click()
+  ]);
+  expect(download.suggestedFilename()).toBe('ai-projects-recovery-backup.json');
 });
 
 test('partially invalid chat history is backed up before valid records are persisted', async ({ page }) => {
