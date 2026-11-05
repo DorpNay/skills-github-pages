@@ -5349,12 +5349,13 @@ permalink: /
         button.classList.remove('hidden');
         button.textContent = getUiLanguage() === 'en' ? 'Download project recovery backup' : 'Скачать резервную копию проектов';
       }
-      if (projectRecoveryWarning) showToast(projectStorageCorruptNotBackedUp
-        ? 'Повреждённые проекты не перезаписаны: резервная копия не создалась. Освободи место и перезагрузи страницу.'
+      if (projectRecoveryWarning && chatRecoveryWarning) showToast('История и проекты прочитались не полностью. Исходные данные не перезаписаны; скачай обе резервные копии кнопками восстановления.', 'error');
+      else if (projectRecoveryWarning) showToast(projectStorageCorruptNotBackedUp
+        ? 'Повреждённые проекты не перезаписаны: скачай исходные данные кнопкой восстановления, освободи место и перезагрузи страницу.'
         : 'Проекты не прочитались полностью. Исходные данные сохранены локально; скачай резервную копию проектов.', 'error');
-      if (chatRecoveryWarning) showToast(chatStorageCorruptNotBackedUp
-        ? 'История не прочиталась, резервная копия не создалась. Исходные данные не будут перезаписаны; освободите место и перезагрузите страницу.'
-        : 'История не прочиталась. Исходные данные сохранены локально; скачайте резервную копию в настройках.', 'error');
+      else if (chatRecoveryWarning) showToast(chatStorageCorruptNotBackedUp
+        ? 'История не прочиталась, резервная копия не создалась. Скачай исходные данные кнопкой восстановления, освободи место и перезагрузи страницу.'
+        : 'История не прочиталась. Исходные данные сохранены локально; скачай резервную копию в настройках.', 'error');
       const match=location.hash.match(/^#trace=([^&]+)/);
       if(match){try{const id=decodeURIComponent(match[1]),raw=safeGet('ai_research_trace_'+id);if(raw)showTrace(JSON.parse(raw));}catch(error){console.warn('Не удалось открыть локальный журнал:',error);}}
       await initDB();
