@@ -336,3 +336,127 @@ test('local voice dialogue transcribes, sends, speaks, and listens for the next 
   await expect(page.locator('#voiceRecordingPanel')).toBeHidden();
   await expect(page.locator('#ttsMiniPlayer')).toBeHidden();
 });
+
+
+test('local speech queue reads multiple assistant replies in order and releases its controls when finished', async ({ page }) => {
+  await page.addInitScript(() => {
+    HTMLMediaElement.prototype.play = function () {
+      if (this.id === 'ttsAudioPlayer') setTimeout(() => this.dispatchEvent(new Event('ended')), 30);
+      return Promise.resolve();
+    };
+  });
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'speech-queue-model' }] })
+  }));
+  await page.route('https://api.example.test/v1/capabilities', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ audio: { speech: true, speech_voices: [] } })
+  }));
+  let chatCount = 0;
+  await page.route('https://api.example.test/v1/chat/completions', route => {
+    chatCount += 1;
+    const content = chatCount === 1 ? 'First queued answer.' : 'Second queued answer.';
+    return route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'speech-queue-model', choices: [{ finish_reason: 'stop', message: { role: 'assistant', content } }] })
+    });
+  });
+  const spoken = [];
+  await page.route('https://api.example.test/v1/audio/speech', async route => {
+    expect(route.request().headers().authorization).toBe('Bearer ' + 'q'.repeat(64));
+    spoken.push(route.request().postDataJSON().text);
+    const wav = Buffer.from('524946462400000057415645' + '00'.repeat(32), 'hex');
+    await route.fulfill({ status: 200, contentType: 'audio/wav', headers: { 'Cache-Control': 'no-store' }, body: wav });
+  });
+
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#legacyProviderSettings > summary').click();
+  }
+  await page.locator('#providerPreset').selectOption('alandi');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('speech-queue-model');
+  await page.locator('#apiKey').fill('q'.repeat(64));
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+
+  await page.locator('#userInput').fill('First prompt.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('First queued answer.');
+  await page.locator('#chatBox [data-action="queue-message"]').last().click();
+  await expect(page.locator('#ttsQueueStatus')).toContainText('1/20');
+
+  await page.locator('#userInput').fill('Second prompt.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Second queued answer.');
+  await page.locator('#chatBox [data-action="queue-message"]').last().click();
+  await expect(page.locator('#ttsQueueStatus')).toContainText('2/20');
+  await page.locator('#ttsQueueToggle').click();
+
+  await expect.poll(() => spoken.length).toBe(2);
+  expect(spoken).toEqual(['First queued answer.', 'Second queued answer.']);
+  await expect(page.locator('#ttsMiniPlayerStatus')).toContainText('Очередь озвучивания завершена');
+  await expect(page.locator('#ttsQueueControls')).toBeHidden();
+});
+
+test('selected text inside one assistant message is read without sending the rest of the message', async ({ page }) => {
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'selection-speech-model' }] })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ model: 'selection-speech-model', choices: [{ finish_reason: 'stop', message: {
+      role: 'assistant',
+      content: 'Only this selected passage should be read aloud. The rest must stay unspoken.'
+    } }] })
+  }));
+  await page.route('https://api.example.test/v1/capabilities', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ audio: { speech: true, speech_voices: [] } })
+  }));
+  let spokenText = '';
+  await page.route('https://api.example.test/v1/audio/speech', async route => {
+    spokenText = route.request().postDataJSON().text;
+    const wav = Buffer.from('524946462400000057415645' + '00'.repeat(32), 'hex');
+    await route.fulfill({ status: 200, contentType: 'audio/wav', headers: { 'Cache-Control': 'no-store' }, body: wav });
+  });
+
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#legacyProviderSettings > summary').click();
+  }
+  await page.locator('#providerPreset').selectOption('alandi');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('selection-speech-model');
+  await page.locator('#apiKey').fill('s'.repeat(64));
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('Give me a sentence.');
+  await page.locator('#sendBtn').click();
+  const message = page.locator('#chatBox .assistant-content').last();
+  await expect(message).toContainText('Only this selected passage');
+
+  const selected = await message.evaluate(element => {
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+    let node;
+    while ((node = walker.nextNode())) {
+      const phrase = 'Only this selected passage';
+      const start = node.nodeValue.indexOf(phrase);
+      if (start < 0) continue;
+      const range = document.createRange();
+      range.setStart(node, start);
+      range.setEnd(node, start + phrase.length);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      return true;
+    }
+    return false;
+  });
+  expect(selected).toBe(true);
+  await expect(page.locator('#ttsSelectionAction')).toBeVisible();
+  await page.locator('#ttsSelectionAction').click();
+  await expect.poll(() => spokenText).toBe('Only this selected passage');
+  await expect(page.locator('#ttsSelectionAction')).toBeHidden();
+});
