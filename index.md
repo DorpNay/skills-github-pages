@@ -1941,8 +1941,11 @@ permalink: /
         helperMemorySuggestions.splice(index,1);renderHelperMemorySuggestions();
         setHelperMemoryStatus(getUiLanguage()==='en'?'That fact already exists in this project.':'Такой факт уже есть в проекте.');return;
       }
+      const previousMemory=project.memory.slice(),previousUpdatedAt=project.updatedAt;
       project.memory.push({id:projectIdNew(),text:candidate,createdAt:new Date().toISOString()});project.updatedAt=new Date().toISOString();
-      helperMemorySuggestions.splice(index,1);persistProjects();renderProjectUI();renderHelperMemorySuggestions();setHelperMemoryStatus(memoryUiText('helperMemoryAdded'));
+      helperMemorySuggestions.splice(index,1);
+      if(!persistProjects()){project.memory=previousMemory;project.updatedAt=previousUpdatedAt;helperMemorySuggestions.splice(index,0,candidate);renderProjectUI();renderHelperMemorySuggestions();setHelperMemoryStatus(getUiLanguage()==='en'?'The fact was not saved.':'Факт не сохранён.');return;}
+      renderProjectUI();renderHelperMemorySuggestions();setHelperMemoryStatus(memoryUiText('helperMemoryAdded'));
     }
     function setServerMemoryStatus(text){const node=$('serverMemoryStatus');if(node)node.textContent=text;}
     function renderServerMemoryNodes(nodes){
@@ -3284,9 +3287,11 @@ permalink: /
     }
     function applySkillQuiz(){
       const goal=$('skillGoalSelect').value;const chat=getCurrentChat();if(!chat)return;
+      const previous={skillGoal:chat.skillGoal,skillOutputMode:chat.skillOutputMode,skillPreset:chat.skillPreset,customSkillName:chat.customSkillName,customSkillInstructions:chat.customSkillInstructions,customSkillOutput:chat.customSkillOutput};
       chat.skillGoal=goal;chat.skillOutputMode=$('skillOutputSelect').value;chat.skillPreset=($('skillPresetSelect').value==='custom'||goal==='custom'||chat.skillOutputMode==='custom')?'custom':goal;
       chat.customSkillName=$('customSkillName').value.slice(0,80);chat.customSkillInstructions=$('customSkillInstructions').value.slice(0,3000);chat.customSkillOutput=$('customSkillOutput').value.slice(0,500);
-      persistChats();renderSkillConfiguration();updateModeUI();showToast('Профиль навыка применён к этому чату.');
+      if(!persistChats()){Object.assign(chat,previous);renderSkillConfiguration();updateModeUI();return;}
+      renderSkillConfiguration();updateModeUI();showToast('Профиль навыка применён к этому чату.');
     }
     function renderAgentConfiguration(){
       const chat=getCurrentChat();if(!chat)return;ensureChatFunctionSettings(chat);
@@ -4349,19 +4354,24 @@ permalink: /
       if(mode==='rename') {
         const next=$('chatActionName').value.trim().slice(0,120);
         if(!next){showToast(english?'Chat name cannot be empty.':'Название не может быть пустым.','error');$('chatActionName').focus();return;}
-        chat.title=next;persistChats();renderChatList();renderActiveChat();closeChatActionDialog();return;
+        const previousTitle=chat.title;chat.title=next;
+        if(!persistChats()){chat.title=previousTitle;renderChatList();renderActiveChat();return;}
+        renderChatList();renderActiveChat();closeChatActionDialog();return;
       }
       const projectId=$('chatActionProject').value||null;
       if(projectId&&!projects.some(project=>project.id===projectId)){showToast(english?'Project no longer exists.':'Проект больше не существует.','error');return;}
+      const previous={projectId:chat.projectId,projectMemoryEnabled:chat.projectMemoryEnabled,serverProjectMemoryEnabled:chat.serverProjectMemoryEnabled};
       chat.projectId=projectId;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
-      persistChats();renderChatList();renderProjectUI({preserveDraft:true});closeChatActionDialog();
+      if(!persistChats()){Object.assign(chat,previous);renderChatList();renderProjectUI({preserveDraft:true});return;}
+      renderChatList();renderProjectUI({preserveDraft:true});closeChatActionDialog();
       showToast(projectId?(english?'Chat moved to project.':'Чат перемещён в проект.'):(english?'Chat detached from project.':'Чат извлечён из проекта.'));
     }
     function cloneChat(id) {
       const source=chats.find(item=>item.id===id);if(!source)return;
       const copy=createChat((source.title||'Новый чат')+' — копия',JSON.parse(JSON.stringify(source.messages||[])),source.projectId||null);
       copy.projectMemoryEnabled=false;copy.serverProjectMemoryEnabled=false;
-      updateState([copy,...chats],copy.id);
+      const previousChats=chats,previousCurrentId=currentChatId;
+      if(!updateState([copy,...chats],copy.id)){chats=previousChats;currentChatId=previousCurrentId;renderChatList();renderActiveChat();renderProjectUI({preserveDraft:true});return;}
       showToast(getUiLanguage()==='en'?'Chat cloned. Project memory is disabled in the copy.':'Чат клонирован. Память проекта отключена в копии.');
     }
     function exportChatById(id) {
