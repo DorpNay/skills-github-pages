@@ -1169,6 +1169,9 @@ permalink: /
     function configureMarkedRenderer() {
       if (markedRendererConfigured || !window.marked?.Renderer || typeof window.marked.use !== 'function') return;
       const renderer = new window.marked.Renderer();
+      // Assistant output is untrusted: render raw HTML tokens as text so data-action
+      // attributes cannot manufacture delegated application controls.
+      renderer.html = (token) => escapeHtml(typeof token.text === 'string' ? token.text : '');
       renderer.code = (token) => {
         const code = typeof token.text === 'string' ? token.text : '';
         const rawLang = typeof token.lang === 'string' ? token.lang.trim().split(/\s+/)[0] : '';
@@ -4872,10 +4875,15 @@ permalink: /
             await pyodideScriptPromise;
           }
           if (typeof window.loadPyodide !== 'function') throw new Error('Библиотека Pyodide не загрузилась.');
-          pyodideInstance = await window.loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.29.5/full/' });
+          pyodideInstance = await window.loadPyodide({
+            indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.29.5/full/',
+            // Pyodide's js module defaults to globalThis. Give untrusted snippets an
+            // empty, null-prototype namespace instead of the page DOM/storage/network APIs.
+            jsglobals: Object.create(null)
+          });
           status.textContent = 'Py: готов';
           status.className = 'text-[10px] bg-green-600/30 text-green-300 px-2 py-0.5 rounded';
-          status.title = 'Python выполняется в среде WebAssembly браузера';
+          status.title = 'Python runs in WebAssembly with no page DOM/storage globals; long-running code can still block this tab.';
           return pyodideInstance;
         } catch (error) {
           pyodidePromise = null;
@@ -4919,7 +4927,7 @@ permalink: /
 
     document.addEventListener('click', async (event) => {
       const control = event.target.closest('[data-action]');
-      if (!control) return;
+      if (!control || control.closest('#messageViewerContent')) return;
       const action = control.dataset.action;
       if (control.closest('#chatBox')) {
         const isCodeAction = ['copy-code','download-code','run-python'].includes(action) && control.classList.contains('code-action') && control.closest('.code-block');

@@ -2494,7 +2494,8 @@ test('mobile messages expose full text and retain a jump-to-latest control', asy
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
 
-  const longAnswer = Array.from({ length: 70 }, (_, index) => 'MESSAGE_VIEWER_LINE_' + index).join('\\n');
+  const longAnswer = Array.from({ length: 70 }, (_, index) => 'MESSAGE_VIEWER_LINE_' + index).join('\\n') +
+    '\\n\\n<button type="button" data-action="clear-chat">CLEAR_HISTORY_INJECTION</button>';
   await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
     status: 200,
     contentType: 'application/json',
@@ -2503,12 +2504,14 @@ test('mobile messages expose full text and retain a jump-to-latest control', asy
   await page.locator('#userInput').fill('Show a full message.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('MESSAGE_VIEWER_LINE_69', { timeout: 15000 });
+  await expect(page.locator('#chatBox [data-action="clear-chat"]')).toHaveCount(0);
   await expect(page.locator('#chatBox [data-action="copy-message"]')).toHaveCount(2);
   await expect(page.locator('#chatBox [data-action="view-message"]')).toHaveCount(2);
 
   await page.locator('#chatBox [data-action="view-message"]').last().click();
   await expect(page.locator('#messageViewerModal')).toBeVisible();
   await expect(page.locator('#messageViewerContent')).toContainText('MESSAGE_VIEWER_LINE_69');
+  await expect(page.locator('#messageViewerContent [data-action="clear-chat"]')).toHaveCount(0);
   await page.locator('#messageViewerModal [data-action="close-message-viewer"]').click();
   await expect(page.locator('#messageViewerModal')).toBeHidden();
 
@@ -2705,4 +2708,42 @@ test('application innovation ticker is static when reduced motion is requested',
   await expect(ticker).toBeVisible();
   expect(await ticker.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
   await expect(page.locator('#agentFunctionSettings .roadmap-note')).toBeVisible();
+});
+
+
+test('browser Python snippets cannot access page globals through Pyodide js module', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.loadPyodide = async options => ({
+      setStdout() {},
+      setStderr() {},
+      runPythonAsync: async () => JSON.stringify({
+        nullPrototype: Object.getPrototypeOf(options.jsglobals) === null,
+        exposesSensitiveGlobals: ['window', 'document', 'localStorage', 'fetch', 'globalThis']
+          .some(name => name in options.jsglobals)
+      })
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    const block = document.createElement('div');
+    block.className = 'code-block';
+    const code = document.createElement('code');
+    code.textContent = 'print("safe namespace")';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'code-action';
+    button.dataset.action = 'run-python';
+    button.textContent = 'Run Python';
+    const output = document.createElement('pre');
+    output.dataset.codeOutput = '';
+    output.classList.add('hidden');
+    block.append(code, button, output);
+    document.querySelector('#chatBox').append(block);
+  });
+
+  await page.locator('#chatBox [data-action="run-python"]').click();
+  const output = page.locator('#chatBox [data-code-output]');
+  await expect(output).toContainText('"nullPrototype":true');
+  await expect(output).toContainText('"exposesSensitiveGlobals":false');
+  await expect(page.locator('#pyStatus')).toContainText('Py: готов');
 });
