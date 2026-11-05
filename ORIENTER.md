@@ -17,21 +17,21 @@ This is the short entry point for an assistant or engineer. Use the detailed nav
 - **Acquisition workflow PR:** #141 (Draft) adds the pinned, reproducible one-model download/hash/ZIP-validation workflow; no merge or runtime wiring.
 - **NEXT:** (1) continue PR #131 audit on independent candidates and obtain current exact-head gates before any V2 promotion; (2) resume artifact acquisition with a working fetch path, checksum + manifest before testing; (3) keep native iPhone/VoiceOver, target-host model eval and issue #111 gates open.
 
-## First-read order
+## Fast orientation
 
-0. **`OLEDUE.md`** — when the owner writes `oledue`, route automatically to the live active owner-authorized PR/branch; do not ask for branch or PR clarification. Read the handoff protocol first.
-1. **`project-reference/FILE_ORIENTER_RU.md`** — current checkpoint, repository map, last verified stage, blockers and next action.
-2. **`docs/PROJECT_STATE.yaml`** — feature/runtime status, flags, verification evidence and unresolved risks.
-3. **`docs/VOLLEY_LOG.md`** — chronological stage log; read the newest entry first.
-4. **Live GitHub main, PRs, Issues and exact-head checks** — stored SHAs and queue counts are snapshots, never live truth.
-5. Read only source, tests, architecture and operational docs relevant to the task. Use `docs/ALANDI_ARCHITECTURE_MAP_RU.md` for module boundaries and the implementation guide before VPS operations.
+1. Read `OLEDUE.md` for the handoff contract; for ordinary tasks, this checkpoint is the short entry point.
+2. Batch live GitHub reads once: current main SHA, open PR/issue IDs, selected PR base/head/diff and exact-HEAD checks.
+3. Select one canonical task register and continue from its latest verified checkpoint.
+4. Open `project-reference/FILE_ORIENTER_RU.md`, `docs/PROJECT_STATE.yaml` and `docs/VOLLEY_LOG.md` only when navigation, system-wide state or historical evidence is needed. They are reference sources, not a mandatory startup checklist.
+5. Read only task-relevant source/tests. Use `docs/ALANDI_ARCHITECTURE_MAP_RU.md` for module boundaries and the implementation guide before VPS operations.
 
 ## Keeping orientation current
 
 - The `Project State Freshness` workflow checks this baseline and exact open PR/issue IDs on PR updates and daily.
 - The current PR is excluded from its own open-PR comparison; no other queue difference is ignored.
 - If the main SHA or queue changes, reconcile the snapshot, this file, the detailed orienter, `docs/PROJECT_STATE.yaml`, and `docs/VOLLEY_LOG.md` together. CI reports drift; it does not silently rewrite or commit state.
-- After every meaningful stage, record exact files/decisions, SHA/PR, tests actually run, risks, rollback, and next action. Never claim a green CI change is deployed on a live host.
+- Do not reread the full orientation stack on every turn. Refresh only the affected checkpoint and consult deeper records on demand; a single live-state batch supersedes repeated polling.
+- After every material stage, record exact files/decisions, SHA/PR, tests actually run, risks, rollback, and next action. Never claim a green CI change is deployed on a live host.
 
 ## Three-role audit — post-merge checkpoint
 
