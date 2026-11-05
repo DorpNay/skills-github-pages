@@ -2869,3 +2869,33 @@ test('project writes fail closed when malformed source data cannot be backed up'
   for await (const chunk of stream) downloaded += chunk.toString();
   expect(downloaded).toBe(raw);
 });
+
+
+test('partially corrupt chat history remains downloadable when recovery backup write fails', async ({ page }) => {
+  const raw = JSON.stringify([
+    { id: 'valid-chat', title: 'Valid', messages: [{ role: 'user', content: 'keep me' }] },
+    { id: 'invalid-chat', title: 'Invalid', messages: 'not-an-array' }
+  ]);
+  await page.addInitScript(value => {
+    localStorage.setItem('ai_chats_v87', value);
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, nextValue) {
+      if (key.startsWith('ai_chats_recovery_backup')) {
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+      }
+      return originalSetItem.call(this, key, nextValue);
+    };
+  }, raw);
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#recoveryBackupButton')).not.toHaveClass(/hidden/);
+  expect(await page.evaluate(() => localStorage.getItem('ai_chats_v87'))).toBe(raw);
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.locator('#recoveryBackupButton').click()
+  ]);
+  expect(download.suggestedFilename()).toBe('ai-chat-recovery-backup.json');
+  const stream = await download.createReadStream();
+  let downloaded = '';
+  for await (const chunk of stream) downloaded += chunk.toString();
+  expect(downloaded).toBe(raw);
+});
