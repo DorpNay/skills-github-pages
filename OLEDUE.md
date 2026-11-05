@@ -3,16 +3,17 @@
 **Trigger:** owner writes `oledue` (alone or with a task).
 **Goal:** resume the real active work without asking which branch or PR.
 
-1. Read this file, then root `ORIENTER.md`, `project-reference/FILE_ORIENTER_RU.md`, `docs/PROJECT_STATE.yaml`, and the newest `docs/VOLLEY_LOG.md` entry.
-2. Check live GitHub: main SHA, open owner-authorized PRs, active task/PR, branch HEAD/base, latest diff and exact-HEAD checks. Repository notes are snapshots, not live truth.
-3. Route automatically:
-   - Follow the latest explicit owner task/workstream when one exists.
-   - Otherwise continue the active Landing UI 2.0 work in PR #131.
-   - If the active PR changed or is closed/merged, choose the current owner-authorized successor from live GitHub and its canonical task list.
-   - Never assume main is the implementation branch merely because this file is read from main.
-4. Recover the latest verified checkpoint and next action from the canonical checklist, implementation ledger and VOLLEY_LOG. Distinguish implemented, verified and unrun work.
-5. Do the next safe, bounded action in the same turn. Update the existing canonical task list first when a new task or result appears; then update evidence/log/orientation as materially needed.
-6. Report branch, PR, HEAD, what changed, exact checks, open limits and one next action. Do not ask the owner to repeat context.
+1. Read this file first. Do not automatically reread every orientation document.
+2. Build one **Session Sync Capsule** from a single batched live GitHub read: current `main` SHA; open PR and issue IDs; selected active PR base, head branch, exact HEAD, mergeability and changed-file list; workflow/check results for that exact HEAD and, when relevant, current main. Keep PR HEAD, code/test HEAD and tested CI SHA distinct.
+3. Route without asking the owner to repeat context:
+   - latest explicit owner task takes priority;
+   - continue its current owner-authorized branch/PR and canonical task list;
+   - if that work is closed/merged, choose its live successor;
+   - otherwise default to Landing 2.0 in PR #131;
+   - never assume `main` is the implementation branch.
+4. Read **one canonical task register** for the selected workstream, then only the source, tests and evidence needed for the next action. Open `ORIENTER.md` only if the route/checkpoint conflicts; open `FILE_ORIENTER_RU.md` for path discovery; open `PROJECT_STATE.yaml` for system-wide flags/status; open `VOLLEY_LOG.md` only when history or a prior decision is needed.
+5. Perform the next safe bounded action in the same turn. Update the existing task register first; update state/log/orientation only when a material checkpoint or reusable fact changes.
+6. Report branch, PR, HEAD, changes, exact checks, open limits and one next action. Do not ask the owner to repeat context.
 
 ## Fast task selector
 
