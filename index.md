@@ -4875,10 +4875,15 @@ permalink: /
             await pyodideScriptPromise;
           }
           if (typeof window.loadPyodide !== 'function') throw new Error('Библиотека Pyodide не загрузилась.');
-          pyodideInstance = await window.loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.29.5/full/' });
+          pyodideInstance = await window.loadPyodide({
+            indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.29.5/full/',
+            // Pyodide's js module defaults to globalThis. Give untrusted snippets an
+            // empty, null-prototype namespace instead of the page DOM/storage/network APIs.
+            jsglobals: Object.create(null)
+          });
           status.textContent = 'Py: готов';
           status.className = 'text-[10px] bg-green-600/30 text-green-300 px-2 py-0.5 rounded';
-          status.title = 'Python выполняется в среде WebAssembly браузера';
+          status.title = 'Python runs in WebAssembly with no page DOM/storage globals; long-running code can still block this tab.';
           return pyodideInstance;
         } catch (error) {
           pyodidePromise = null;
