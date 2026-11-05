@@ -684,3 +684,48 @@ test('local speech queue refuses more than twenty queued replies', async ({ page
   await expect(page.locator('#toast')).toContainText('очередь заполнена');
   await expect(page.locator('#ttsQueueStatus')).toContainText('20/20');
 });
+
+
+test('clearing a paused speech queue closes its idle mini-player', async ({ page }) => {
+  await page.addInitScript(() => {
+    HTMLMediaElement.prototype.play = function () { return Promise.resolve(); };
+  });
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'speech-clear-model' }] })
+  }));
+  await page.route('https://api.example.test/v1/capabilities', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ audio: { speech: true, speech_voices: [] } })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ model: 'speech-clear-model', choices: [{ finish_reason: 'stop', message: { role: 'assistant', content: 'This queued speech will be cleared.' } }] })
+  }));
+  await page.route('https://api.example.test/v1/audio/speech', async route => {
+    const wav = Buffer.from('524946462400000057415645' + '00'.repeat(32), 'hex');
+    await route.fulfill({ status: 200, contentType: 'audio/wav', body: wav });
+  });
+
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#legacyProviderSettings > summary').click();
+  }
+  await page.locator('#providerPreset').selectOption('alandi');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('speech-clear-model');
+  await page.locator('#apiKey').fill('c'.repeat(64));
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#userInput').fill('Queue this for clearing.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('This queued speech will be cleared.');
+  await page.locator('#chatBox [data-action="queue-message"]').last().click();
+  await page.locator('#ttsQueueToggle').click();
+  await expect(page.locator('#ttsMiniPlayer')).toBeVisible();
+  await page.locator('#ttsQueueToggle').click();
+  await expect(page.locator('#ttsQueueStatus')).toContainText('1/20');
+  await page.locator('#ttsQueueClear').click();
+  await expect(page.locator('#ttsQueueControls')).toBeHidden();
+  await expect(page.locator('#ttsMiniPlayer')).toBeHidden();
+  await expect(page.locator('#ttsAudioPlayer')).not.toHaveAttribute('src', /^blob:/);
+});
