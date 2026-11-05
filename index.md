@@ -2153,8 +2153,8 @@ permalink: /
         const bundle=JSON.parse(await file.text());
         if(bundle?.format!=='alandi-project-bundle'||bundle?.version!==1||!bundle.project||typeof bundle.project.name!=='string'||!Array.isArray(bundle.chats)||bundle.chats.length>500)throw new Error('Неверный формат пакета проекта.');
         if(projects.length>=200)throw new Error('Достигнут предел проектов (200). Сначала удали ненужный проект.');
-        const importedChats=bundle.chats.filter(chat=>chat&&typeof chat==='object'&&Array.isArray(chat.messages)).map(chat=>sanitizeImportedProjectChat(chat,''));
-         const totalMessages=importedChats.reduce((total,chat)=>total+chat.messages.length,0);
+        const totalMessages=bundle.chats.reduce((total,chat)=>total+(Array.isArray(chat?.messages)?chat.messages.length:0),0);
+         const importedChats=bundle.chats.filter(chat=>chat&&typeof chat==='object'&&Array.isArray(chat.messages)).map(chat=>sanitizeImportedProjectChat(chat,''));
          if(totalMessages>MAX_IMPORTED_MESSAGES)throw new Error('Пакет проекта содержит больше 50 000 сообщений; раздели экспорт на несколько пакетов.');
         if(chats.length+importedChats.length>1000)throw new Error('Импорт превысит безопасный лимит локальных чатов (1000).');
         const now=new Date().toISOString();
