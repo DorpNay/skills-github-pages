@@ -12,7 +12,7 @@ from gateway.agent_runtime.store import (
 
 def make_running(store, *, now=100.0, key="run-request-1"):
     run = store.create_run(idempotency_key=key, scope_kind="project", scope_id="alpha",
-                           goal="Investigate a bounded task", metadata={"origin": "test"}, now=now)
+                           goal_ref="task:investigate-bounded", metadata={"origin": "test-runner"}, now=now)
     return store.transition_run(run_id=run["run_id"], expected_state="queued",
                                 new_state="running", event_type="run_started", now=now + 1)
 
@@ -21,14 +21,14 @@ def test_create_run_is_idempotent_and_conflicts_on_changed_request(tmp_path):
     store = AgentRunStore(tmp_path / "agent-runs.sqlite3")
     store.initialize()
     first = store.create_run(idempotency_key="request-1", scope_kind="project", scope_id="alpha",
-                             goal="Same goal", metadata={"x": 1}, now=10)
+                             goal_ref="task:same-goal", metadata={"source_count": 1}, now=10)
     replay = store.create_run(idempotency_key="request-1", scope_kind="project", scope_id="alpha",
-                              goal="Same goal", metadata={"x": 1}, now=20)
+                              goal_ref="task:same-goal", metadata={"source_count": 1}, now=20)
     assert replay["run_id"] == first["run_id"]
     assert replay["state"] == "queued"
     with pytest.raises(IdempotencyConflict):
         store.create_run(idempotency_key="request-1", scope_kind="project", scope_id="alpha",
-                         goal="Different goal", metadata={"x": 1}, now=30)
+                         goal_ref="task:different-goal", metadata={"source_count": 1}, now=30)
 
 
 @pytest.mark.parametrize(("scope_kind", "scope_id"), [
@@ -39,14 +39,14 @@ def test_run_scope_validation_fails_closed(tmp_path, scope_kind, scope_id):
     store.initialize()
     with pytest.raises(AgentRunError):
         store.create_run(idempotency_key="scope-test", scope_kind=scope_kind,
-                         scope_id=scope_id, goal="scope", now=1)
+                         scope_id=scope_id, goal_ref="task:scope-test", now=1)
 
 
 def test_run_transition_is_versioned_and_rejects_stale_or_terminal_changes(tmp_path):
     store = AgentRunStore(tmp_path / "transition.sqlite3")
     store.initialize()
     run = store.create_run(idempotency_key="transition-1", scope_kind="conversation",
-                           scope_id="chat-1", goal="Lifecycle", now=1)
+                           scope_id="chat-1", goal_ref="task:lifecycle", now=1)
     started = store.transition_run(run_id=run["run_id"], expected_state="queued",
                                    new_state="running", event_type="run_started", now=2)
     assert started["revision"] == 1
@@ -83,14 +83,14 @@ def test_claim_complete_task_and_event_journal(tmp_path):
     store.initialize()
     run = make_running(store)
     task = store.enqueue_task(run_id=run["run_id"], task_key="extract",
-                              idempotency_key="extract-1", payload={"source_id": "doc-1"}, now=103)
+                              idempotency_key="extract-1", payload={"source_ref": "source:doc-1"}, now=103)
     claim = store.claim_task(run_id=run["run_id"], worker_id="worker-a", lease_seconds=10, now=104)
     assert claim is not None
     assert claim.task_id == task["task_id"]
     assert claim.attempt == 1
-    completed = store.complete_task(claim=claim, result={"claims": 2}, now=105)
+    completed = store.complete_task(claim=claim, result={"claim_count": 2}, now=105)
     assert completed["state"] == "succeeded"
-    assert completed["result"] == {"claims": 2}
+    assert completed["result"] == {"claim_count": 2}
     assert store.claim_task(run_id=run["run_id"], worker_id="worker-b", now=106) is None
     events = store.list_events(run_id=run["run_id"], limit=20)
     assert [event["event_type"] for event in events] == [
@@ -104,7 +104,7 @@ def test_expired_lease_requeues_and_fences_old_worker_token(tmp_path):
     store.initialize()
     run = make_running(store)
     task = store.enqueue_task(run_id=run["run_id"], task_key="recover",
-                              idempotency_key="recover-1", payload={"unit": "small"},
+                              idempotency_key="recover-1", payload={"operation": "small-unit"},
                               max_attempts=3, now=103)
     old_claim = store.claim_task(run_id=run["run_id"], worker_id="worker-old",
                                 lease_seconds=5, now=104)
@@ -115,8 +115,8 @@ def test_expired_lease_requeues_and_fences_old_worker_token(tmp_path):
     assert new_claim.task_id == task["task_id"]
     assert new_claim.attempt == 2
     with pytest.raises(LeaseError):
-        store.complete_task(claim=old_claim, result={"stale": True}, now=111)
-    assert store.complete_task(claim=new_claim, result={"recovered": True}, now=112)["state"] == "succeeded"
+        store.complete_task(claim=old_claim, result={"status": "succeeded"}, now=111)
+    assert store.complete_task(claim=new_claim, result={"status": "succeeded"}, now=112)["state"] == "succeeded"
     event_types = [event["event_type"] for event in store.list_events(run_id=run["run_id"])]
     assert "task_lease_expired" in event_types
 
@@ -133,7 +133,7 @@ def test_expired_lease_exhausts_retry_budget(tmp_path):
     assert store.claim_task(run_id=run["run_id"], worker_id="worker-b", now=107) is None
     assert store.get_task(task["task_id"])["state"] == "failed"
     with pytest.raises(LeaseError):
-        store.complete_task(claim=claim, result={"late": True}, now=108)
+        store.complete_task(claim=claim, result={"status": "succeeded"}, now=108)
 
 
 def test_retryable_failure_requeues_only_with_remaining_attempts(tmp_path):
@@ -167,7 +167,7 @@ def test_cancel_run_cancels_queued_and_leased_tasks_and_fences_claim(tmp_path):
     assert store.get_task(leased["task_id"])["state"] == "cancelled"
     assert store.get_task(queued["task_id"])["state"] == "cancelled"
     with pytest.raises(LeaseError):
-        store.complete_task(claim=claim, result={"late": True}, now=106)
+        store.complete_task(claim=claim, result={"status": "succeeded"}, now=106)
     assert store.cancel_run(run_id=run["run_id"], now=107)["state"] == "cancelled"
 
 
@@ -175,7 +175,7 @@ def test_event_cursor_limit_and_metadata_bounds(tmp_path):
     store = AgentRunStore(tmp_path / "events.sqlite3")
     store.initialize()
     run = store.create_run(idempotency_key="event-1", scope_kind="global",
-                           scope_id="global", goal="Journal", now=1)
+                           scope_id="global", goal_ref="task:journal", now=1)
     all_events = store.list_events(run_id=run["run_id"], limit=10)
     assert len(all_events) == 1
     assert store.list_events(run_id=run["run_id"], after_event_id=all_events[0]["event_id"]) == []
@@ -226,7 +226,7 @@ def test_run_metadata_rejects_raw_content_and_non_scalar_values(tmp_path, metada
     store.initialize()
     with pytest.raises(AgentRunError):
         store.create_run(idempotency_key="unsafe-meta", scope_kind="project",
-                         scope_id="alpha", goal="metadata policy", metadata=metadata, now=1)
+                         scope_id="alpha", goal_ref="task:metadata-policy", metadata=metadata, now=1)
 
 
 @pytest.mark.parametrize("metadata", [
@@ -239,7 +239,7 @@ def test_event_metadata_rejects_sensitive_or_nested_fields(tmp_path, metadata):
     store = AgentRunStore(tmp_path / "safe-events.sqlite3")
     store.initialize()
     run = store.create_run(idempotency_key="event-safe", scope_kind="project",
-                           scope_id="alpha", goal="event metadata", now=1)
+                           scope_id="alpha", goal_ref="task:event-metadata", now=1)
     with pytest.raises(AgentRunError):
         store.transition_run(run_id=run["run_id"], expected_state="queued",
                             new_state="running", event_type="unsafe_metadata",
@@ -251,9 +251,9 @@ def test_unhashable_scope_and_state_inputs_fail_closed(tmp_path):
     store = AgentRunStore(tmp_path / "input-validation.sqlite3")
     store.initialize()
     with pytest.raises(AgentRunError, match="scope_kind"):
-        store.create_run(idempotency_key="bad-scope", scope_kind=[], scope_id="alpha", goal="x", now=1)
+        store.create_run(idempotency_key="bad-scope", scope_kind=[], scope_id="alpha", goal_ref="task:x", now=1)
     run = store.create_run(idempotency_key="state-input", scope_kind="project",
-                           scope_id="alpha", goal="state validation", now=1)
+                           scope_id="alpha", goal_ref="task:state-validation", now=1)
     with pytest.raises(InvalidTransition, match="unknown run state"):
         store.transition_run(run_id=run["run_id"], expected_state="queued",
                             new_state=[], event_type="bad_state", now=2)
@@ -310,3 +310,102 @@ def test_task_payload_and_result_allow_bounded_reference_metadata(tmp_path):
     assert claim is not None and claim.task_id == task["task_id"]
     completed = store.complete_task(claim=claim, result={"claim_count": 2, "evidence_refs": ["artifact:ev-1"]}, now=105)
     assert completed["result"] == {"claim_count": 2, "evidence_refs": ["artifact:ev-1"]}
+
+
+def test_goal_is_stored_only_as_an_opaque_reference(tmp_path):
+    store = AgentRunStore(tmp_path / "goal-reference.sqlite3")
+    store.initialize()
+    run = store.create_run(idempotency_key="goal-ref-1", scope_kind="project",
+                           scope_id="alpha", goal_ref="task:review-001", now=1)
+    assert run["goal_ref"] == "task:review-001"
+    assert "goal" not in run
+    with pytest.raises(AgentRunError, match="opaque identifier/reference"):
+        store.create_run(idempotency_key="goal-ref-2", scope_kind="project",
+                         scope_id="alpha", goal_ref="Please review this private prompt", now=2)
+
+
+def test_legacy_schema_with_raw_goal_column_fails_closed(tmp_path):
+    import sqlite3
+
+    path = tmp_path / "legacy-goal.sqlite3"
+    with sqlite3.connect(path) as db:
+        db.execute("CREATE TABLE agent_runs (run_id TEXT PRIMARY KEY, goal TEXT NOT NULL)")
+    store = AgentRunStore(path)
+    with pytest.raises(AgentRunError, match="legacy AgentRun schema stores raw goal text"):
+        store.initialize()
+
+
+@pytest.mark.parametrize("metadata", [
+    {"note": "summarize the user's private prompt"},
+    {"context": "raw conversation fragment"},
+    {"description": "PII copied from a document"},
+])
+def test_run_metadata_rejects_innocuous_free_text_keys(tmp_path, metadata):
+    store = AgentRunStore(tmp_path / "metadata-allowlist.sqlite3")
+    store.initialize()
+    with pytest.raises(AgentRunError, match="unapproved metadata field"):
+        store.create_run(idempotency_key="metadata-allowlist", scope_kind="project",
+                         scope_id="alpha", goal_ref="task:metadata-allowlist",
+                         metadata=metadata, now=1)
+
+
+@pytest.mark.parametrize("payload", [
+    {"note": "raw task prompt"},
+    {"context": "copied source passage"},
+    {"description": "user email and phone"},
+])
+def test_task_payload_rejects_innocuous_free_text_keys(tmp_path, payload):
+    store = AgentRunStore(tmp_path / "payload-allowlist.sqlite3")
+    store.initialize()
+    run = make_running(store, key="payload-allowlist")
+    with pytest.raises(AgentRunError, match="unapproved field"):
+        store.enqueue_task(run_id=run["run_id"], task_key="task",
+                           idempotency_key="payload-allowlist", payload=payload, now=103)
+
+
+def test_terminal_transition_fences_queued_and_leased_tasks(tmp_path):
+    store = AgentRunStore(tmp_path / "terminal-fence.sqlite3")
+    store.initialize()
+    run = make_running(store, key="terminal-fence")
+    leased = store.enqueue_task(run_id=run["run_id"], task_key="a-leased",
+                                idempotency_key="terminal-leased", payload={}, now=103)
+    queued = store.enqueue_task(run_id=run["run_id"], task_key="z-queued",
+                                idempotency_key="terminal-queued", payload={}, now=103)
+    claim = store.claim_task(run_id=run["run_id"], worker_id="worker-a", now=104)
+    assert claim is not None and claim.task_id == leased["task_id"]
+
+    failed = store.transition_run(run_id=run["run_id"], expected_state="running",
+                                  new_state="failed", event_type="run_failed", now=105)
+    assert failed["state"] == "failed"
+    assert store.get_task(leased["task_id"])["state"] == "cancelled"
+    assert store.get_task(queued["task_id"])["state"] == "cancelled"
+    with pytest.raises(LeaseError):
+        store.complete_task(claim=claim, result={"status": "succeeded"}, now=106)
+
+
+def test_success_transition_rejects_any_queued_or_leased_tasks(tmp_path):
+    store = AgentRunStore(tmp_path / "success-fence.sqlite3")
+    store.initialize()
+    run = make_running(store, key="success-fence")
+    store.enqueue_task(run_id=run["run_id"], task_key="unfinished",
+                       idempotency_key="success-unfinished", payload={}, now=103)
+    with pytest.raises(InvalidTransition, match="tasks remain queued or leased"):
+        store.transition_run(run_id=run["run_id"], expected_state="running",
+                             new_state="verifying", event_type="verification_started", now=104)
+    assert store.get_run(run["run_id"])["state"] == "running"
+
+
+def test_task_completion_rejects_inconsistent_terminal_parent_state(tmp_path):
+    import sqlite3
+
+    store = AgentRunStore(tmp_path / "parent-state-fence.sqlite3")
+    store.initialize()
+    run = make_running(store, key="parent-state-fence")
+    task = store.enqueue_task(run_id=run["run_id"], task_key="worker-task",
+                              idempotency_key="parent-state-task", payload={}, now=103)
+    claim = store.claim_task(run_id=run["run_id"], worker_id="worker-a", now=104)
+    assert claim is not None and claim.task_id == task["task_id"]
+    with sqlite3.connect(store.path) as db:
+        db.execute("UPDATE agent_runs SET state='failed' WHERE run_id=?", (run["run_id"],))
+    with pytest.raises(LeaseError, match="parent run is not running"):
+        store.complete_task(claim=claim, result={"status": "succeeded"}, now=105)
