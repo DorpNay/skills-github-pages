@@ -4,13 +4,13 @@ on:
   # Run once on the isolated acquisition branch; after merge this workflow is manually reusable.
   push:
     branches:
-      - artifact-acquisition/vosk-small-ru-20261105
+      - artifact/acquire-vosk-current-main-20261105
     paths:
       - ".github/workflows/acquire-vosk-small-ru.yml"
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   acquire:
@@ -21,6 +21,9 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.13"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
       - name: Download the pinned archive (official source, then immutable HF mirror)
         shell: bash
         run: |
@@ -87,6 +90,22 @@ jobs:
               json.dump(metadata, handle, ensure_ascii=False, indent=2)
               handle.write("\n")
           PY
+      - name: Persist the verified model archive in the repository
+        if: github.event_name == 'push' && github.ref == 'refs/heads/artifact/acquire-vosk-current-main-20261105'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p models/vosk
+          cp artifact/vosk-model-small-ru-0.22.zip models/vosk/
+          cp artifact/SHA256SUMS models/vosk/
+          cp artifact/metadata.json models/vosk/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add models/vosk/vosk-model-small-ru-0.22.zip models/vosk/SHA256SUMS models/vosk/metadata.json
+          if ! git diff --cached --quiet; then
+            git commit -m "model: vendor verified Vosk RU 0.22 archive"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
       - name: Upload the validated archive and provenance sidecars
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
