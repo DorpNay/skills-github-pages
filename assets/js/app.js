@@ -29,6 +29,7 @@
       custom: { label: 'Свой API', baseUrl: '', docsUrl: '', models: [['custom','Ввести имя модели вручную']] }
     };
     const MAX_IMPORTED_MESSAGES = 50000;
+    const MAX_AGENT_TEAM_BLUEPRINTS = 100;
     const MAX_TOOL_ROUNDS = 4;
     const MAX_TOOL_CALLS_PER_RESPONSE = 8;
     const MAX_TOOL_CALLS_PER_DEEP_ROUND = 3;
