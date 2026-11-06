@@ -30,6 +30,8 @@
     };
     const MAX_IMPORTED_MESSAGES = 50000;
     const MAX_AGENT_TEAM_BLUEPRINTS = 20;
+    const VALID_AGENT_TEAM_SCENARIOS = new Set(['general','research','software','product','due-diligence','custom']);
+    const VALID_AGENT_ROLE_PRESETS = new Set(['balanced','research','software','product','custom']);
     const MAX_TOOL_ROUNDS = 4;
     const MAX_TOOL_CALLS_PER_RESPONSE = 8;
     const MAX_TOOL_CALLS_PER_DEEP_ROUND = 3;
