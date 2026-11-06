@@ -5150,7 +5150,7 @@ permalink: /
         const isCodeAction = ['copy-code','download-code','run-python'].includes(action) && control.classList.contains('code-action') && control.closest('.code-block');
         const isRetryAction = action === 'retry' && control.classList.contains('retry-action');
         const isTraceAction = ['open-trace','copy-trace-link','download-trace','download-trace-json','close-trace'].includes(action);
-        const isMessageAction = ['copy-message','speak-message','view-message'].includes(action);
+        const isMessageAction = ['copy-message','speak-message','view-message','queue-message'].includes(action);
         if (!isCodeAction && !isRetryAction && !isTraceAction && !isMessageAction) return;
       }
       try {
