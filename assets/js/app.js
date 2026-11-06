@@ -1839,10 +1839,12 @@ function preserveUnreadableProjects(rawText) {
         messages:Array.isArray(chat.messages)?chat.messages.filter(m=>m&&['user','assistant','tool'].includes(m.role)).slice(0,10000).map(m=>({role:m.role,content:typeof m.content==='string'?m.content.slice(0,30000):'',...(typeof m.tool_call_id==='string'?{tool_call_id:m.tool_call_id.slice(0,200)}:{}),...(Array.isArray(m.tool_calls)?{tool_calls:m.tool_calls}:{}),...(m.error?{error:true}:{})})):[]};
     }
     async function importProjectBundle(event){
-      const file=event.target.files?.[0];event.target.value='';if(!file)return;
-      if(file.size>15*1024*1024){showToast('Файл проекта больше 15 МБ.','error');return;}
+      const file=event.target.files?.[0];if(!file)return;
+      if(file.size>15*1024*1024){event.target.value='';showToast('Файл проекта больше 15 МБ.','error');return;}
       try{
-        const bundle=JSON.parse(await file.text());
+        const fileText=await file.text();
+        event.target.value='';
+        const bundle=JSON.parse(fileText);
         if(bundle?.format!=='alandi-project-bundle'||bundle?.version!==1||!bundle.project||typeof bundle.project.name!=='string'||!Array.isArray(bundle.chats)||bundle.chats.length>500)throw new Error('Неверный формат пакета проекта.');
         if(projects.length>=200)throw new Error('Достигнут предел проектов (200). Сначала удали ненужный проект.');
         const totalMessages=bundle.chats.reduce((total,chat)=>total+(Array.isArray(chat?.messages)?chat.messages.length:0),0);
