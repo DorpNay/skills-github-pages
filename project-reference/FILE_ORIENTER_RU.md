@@ -25,9 +25,9 @@
 6. **Поиск и исследования:** `docs/SEARCH_RESEARCH_FEATURE_EXTRACTION_RU.md`, `docs/OPEN_SOURCE_TRIAGE_RU.md`.
 7. **Карта модулей:** `docs/ALANDI_ARCHITECTURE_MAP_RU.md` — кураторская схема, не автоматически извлечённый Graphify graph.
 8. **Лицензии и происхождение:** `infra/license/provenance_manifest.yaml`; не подключать runtime/model/voice без отдельной проверки лицензии и SHA-256.
-9. **Основной клиент:** `index.md` (HTML shell); runtime — `assets/js/app.js`, styles — `assets/css/app.css`. Browser regressions: `tests/e2e/app.spec.mjs`; quality source checks: `scripts/quality-agents.mjs`.
+9. **Клиент main на checkpoint f323:** `index.md` (монолитный HTML/JS). **Кандидат PR #154:** modular HTML shell в `index.md`, runtime `assets/js/app.js`, styles `assets/css/app.css`; E2E — `tests/e2e/app.spec.mjs`; quality checks — `scripts/quality-agents.mjs`.
 10. **V2 UI ledger:** `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`; release/promotion gates: `docs/LANDING_RELEASE_STRATEGY_RU.md`.
-12. **Backend/API:** `gateway/app.py`; тесты в `gateway/tests/`; зависимости в `gateway/requirements*.txt`.
+11. **Backend/API:** `gateway/app.py`; тесты в `gateway/tests/`; зависимости в `gateway/requirements*.txt`.
 13. **Память:** `gateway/memory/{manager.py,schema.sql,delta_sync.py,scope.py,conflict.py,temporal.py}`; браузерное хранение и экспорт — `index.md` около `safeSet`, `downloadRecoveryBackup`, `exportChats`, `exportProjectBundle`.
 14. **Голос и вложения:** `gateway/voice/`, `gateway/tests/test_audio_*.py`, `tests/e2e/audio-transcription.spec.mjs`, `tests/e2e/document-attachments.spec.mjs`.
 15. **Реальные browser checks:** `tests/e2e/`, workflow Quality Sentinels; отдельная GitHub Pages публикация не означает, что VPS gateway обновлён.
