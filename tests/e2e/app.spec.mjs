@@ -4985,6 +4985,7 @@ test('browser Python snippets cannot access page globals through Pyodide js modu
     });
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => window.__alandiAppReady === true);
   await page.evaluate(() => {
     const block = document.createElement('div');
     block.className = 'code-block';

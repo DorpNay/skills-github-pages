@@ -141,6 +141,7 @@ permalink: /
                 <button type="button" data-action="import-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="importProject">Импорт проекта</button>
               </div>
               <input type="file" id="importProjectFile" class="hidden" accept="application/json,.json">
+              <button type="button" id="projectRecoveryBackupButton" data-action="download-project-recovery-backup" class="hidden w-full rounded-lg border border-amber-800 bg-amber-950/40 py-2 text-xs text-amber-100">Скачать резервную копию проектов</button>
               <button type="button" data-action="detach-current-chat" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="detachChat">Извлечь чат из проекта</button>
               <button type="button" data-action="delete-project" class="w-full bg-red-950/50 hover:bg-red-900/60 border border-red-900/50 rounded-lg py-2 text-xs text-red-200" data-i18n="deleteProject">Удалить проект и его чаты</button>
     
