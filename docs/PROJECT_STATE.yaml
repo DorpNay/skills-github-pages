@@ -47,14 +47,20 @@ project_state:
     owner_gates: "merge, deploy, rebase, force-push, history rewrite, destructive deletion, secrets, permissions and consequential external side effects require explicit scope-specific approval"
     next_validation: "Run final exact-head Freshness/Quality/Provenance for the orchestrator catalog and guard; after owner-controlled PR #155 promotion perform ORIENT-002; then start SOURCES-2026-002 with XERJ vs FTS5+Graphify fixed-corpus evaluation and CLEANUP-2026-002 with a read-only HTML/CSS/JS candidate report."
   source_triage:
-    status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
+    status: "triage documentation merged; Graphify dev-only code pilot verified; 2026-11-06 official revalidation completed for XERJ/Memvid/RAG-Anything; no new runtime adoption or third-party artifacts archived in this batch"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
     technique_register: "docs/TECHNIQUE_REGISTER_RU.md"
+    latest_revalidation_2026_11_06:
+      xerj: "Public Apache-2.0 source candidate at 83c9f0d123bac010a25ca2cf02ff093b08ee68ce; rc.101 binary includes proprietary query crates; 408MB model bundle redistribution terms unverified; do not archive binary/model."
+      memvid: "v2.0.140 at e18fe55494379e2ab7397ce03655e8abbc5e0c31; Apache-2.0; portable export/archive prototype only."
+      rag_anything: "v1.4.1 at 0ef67b4d476b66407a03a39e5b17e756fc0aef29; MIT code; MinerU/LightRAG and optional media dependencies; source-pattern study only."
+      evals: "EVALS.md EV-XERJ-001, EV-MEMVID-001, EV-RAG-ANYTHING-001 are planned, not run."
+      artifact_status: "No third-party source snapshot or model downloaded in this batch; repository archival is preferred for selected, approved, redistributable artifacts only."
     upstream_archive:
       status: "One exact W3C WAI WCAG 2.2 change-guide source is archived unchanged and merged in PR #136 at d35812af1746ccf7268b582edf45019619431e7b. Upstream/archive Git blob SHA-1 match 91ba79fbf918aa1ab14202dc5b4030a1b3087d19; SHA-256 d837a780c59ad261aaad05c31a86e195c00e71794f5b8921e01a74ba105d47a6; size 25,472 bytes. W3C Document License 2023 notice and manifest are present. _config.yml excludes docs/upstream-archive from Pages. Exact PR-head Quality #41783917001 (Jekyll + Chromium), Freshness #41783917215 and Provenance #41783916918 passed."
       manifest: "docs/upstream-archive/manifest.yaml"
       count: 1
-      next: "Select further artifacts only for concrete project tasks after exact source/version, redistribution license, checksum and storage policy review; no bulk model/voice/dataset mirrors."
+      next: "Selected, approved and redistributable code/model artifacts should be archived in this repository with exact revision, artifact-specific license and SHA-256; no bulk download. XERJ rc.101 binary/model remains blocked pending proprietary terms."
 
     branch: "docs/source-triage-and-next-steps-20261027"
     verified_main_at_start: "529b1d0b86aef58c2b84663a44e78677a31ce9b1"
@@ -63,7 +69,7 @@ project_state:
     graphify_execution: "isolated GitHub Actions execution verified on PR head; graph output artifact-only; local container still has no repository checkout"
     open_pr_at_start: 37
     open_issue_at_start: 1
-    next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
+    next: "Run EV-XERJ-001 on public source only against FTS5+RRF; then evaluate Memvid export/restore and RAG-Anything parser patterns; keep Graphify dev-only and inspect generated artifacts for coverage/limits."
   last_volley: "V-2026-11-06-SOURCE-REVALIDATION-001"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Browser half-duplex voice dialogue prototype is merged; CI uses mocked ASR/TTS, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; detailed on-demand navigation index, not mandatory startup reading"
