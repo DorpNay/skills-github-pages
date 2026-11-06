@@ -3,7 +3,7 @@
 **Редакция:** 2026-11-06 · v2.0 (engineering uplift)  
 **Статус:** REFINED PROPOSAL IN PR #155; структура является основной proposed execution map после owner review/merge. Отдельные capability/technology decisions остаются CANDIDATE до evidence и решения владельца.  
 **Канонический порядок:** этот документ задаёт последовательность и gates; `docs/MASTER_TASK_REGISTRY_RU.md` остаётся единственным lossless inventory задач, а его owner addendum — append-only delta.  
-**Связанные каноны:** `LOOP.md`, `AGENTS.md`, `docs/ALANDI_N2O_CORE_RU.md`, `docs/ALANDI_N2O_KNOWLEDGE_LOOP_RU.md`, `docs/PROJECT_STATE.yaml`, `DECISIONS.md`, `EVALS.md`, `INTEL.md`, `docs/TECHNIQUE_REGISTER_RU.md`.
+**Связанные каноны:** `LOOP.md`, `AGENTS.md`, `docs/ALANDI_N2O_CORE_RU.md`, `docs/ALANDI_N2O_KNOWLEDGE_LOOP_RU.md`, `docs/PROJECT_STATE.yaml`, `DECISIONS.md`, `EVALS.md`, `INTEL.md`, `docs/TECHNIQUE_REGISTER_RU.md`, `PROJECT_ORCHESTRATOR_RU.md`.
 
 ## 1. Назначение и правила
 
@@ -389,7 +389,7 @@
 - `docs/LANDING_RELEASE_STRATEGY_RU.md` и `docs/V1_UI_FINALIZATION_RU.md` остаются специализированными acceptance/integration registers для V1/V2; их задачи маппятся на шаги 1–5 и 17, но не дублируются.
 - `docs/CODER_PACKET.md`, voice plans, memory/RAG specs и operational runbooks — детальные спецификации подсистем; они подчиняются этой последовательности и не образуют конкурирующий master roadmap.
 - `DECISIONS.md` хранит принятые/отклонённые архитектурные решения; `EVALS.md` — datasets, metrics, baselines и thresholds; `INTEL.md`/Technique Register — upstream evidence.
-- `docs/PROJECT_STATE.yaml` и `ORIENTER.md` — актуальный state/checkpoint, не долгосрочный backlog.
+- `docs/PROJECT_STATE.yaml` и `ORIENTER.md` — актуальный state/checkpoint, не долгосрочный backlog. `PROJECT_ORCHESTRATOR_RU.md` — центральный навигационный индекс принципов, источников, планов, оценок и артефактов; не создаёт параллельную стратегию или реестр.
 
 ## 7. Definition of Done для шага и фазы
 
