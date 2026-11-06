@@ -63,8 +63,8 @@
 - [ ] CONV-002 — validate screenshot-to-code quality with golden screenshots, no-execution review workspace.
 - [ ] CONV-003 — define image→OCR/VLM, page→HTML/CSS, audio→transcript, video→frames/transcript workflows and provenance.
 - [ ] VIDEO-001 — benchmark ComfyUI/Wan candidate only on suitable GPU hardware and with exact model/checkpoint license review.
-- [ ] ARCHIVE-001 — upstream watchlist: exact versions, SHA-256, source/model/dataset licenses, dependencies, storage size and preservation reason.
-- [ ] ARCHIVE-002 — mirror only after explicit approval and only when licenses/terms permit; never commit weights to Git.
+- [ ] ARCHIVE-001 — upstream watchlist and artifact preservation: exact versions/revisions, SHA-256, independent code/model/weights/tokenizer/dataset licenses, dependencies, storage size and preservation reason. For selected and approved useful sources, preserve the exact source-code snapshot and/or model artifact in this repository (Git-tracked files or an approved Git-native large-file mechanism), not only an external URL; keep source URL, immutable revision, LICENSE/SPDX, model card, checksums, attribution, artifact size and manifest entry beside it.
+- [ ] ARCHIVE-002 — mirror selected code/model artifacts only when source terms permit redistribution and repository/storage policy allows it; never archive a candidate merely because it appears in the watchlist. If a model/code artifact is too large, restricted, non-redistributable or unsafe, do not bypass the restriction: record the blocker and present a repository-compatible alternative for owner decision. Archiving does not activate runtime; keep evaluation-only assets disabled until target eval and release approval.
 
 **Artifact:** PR #130 `LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md`.
 
@@ -75,7 +75,7 @@
 - [ ] GATE-003 — verify code, model weights, tokenizer, voice, dataset and workflow licenses independently.
 - [ ] GATE-004 — record actual disk/RAM/VRAM/latency/quality on target hardware; no extrapolation from model size.
 - [ ] GATE-005 — add exact-head tests and update canonical project state after each bounded implementation stage.
-- [ ] GATE-006 — require explicit owner approval before model downloads, runtime/dependency changes, external sync, destructive file operations, deployment or merge.
+- [ ] GATE-006 — owner has directed that selected/adopted models and source code should be preserved in this repository when lawful and technically feasible. Before each concrete artifact acquisition, verify exact source/revision, artifact-specific license/redistribution, checksum, security, size/storage and relevance; do not bulk-download unselected candidates. Runtime/dependency activation, external sync, destructive file operations, deployment and merge remain separate owner gates.
 
 ## Cross-links
 
@@ -124,7 +124,7 @@ Evidence status: test source changes are committed; JavaScript/Playwright syntax
 - [~] **CLEANUP-2026-001** — stale PRs #124, #126, #132, #133 and #141 were closed after their replacements landed. PR #127 was closed after replacement PR #146 passed exact-head Freshness/Quality/Provenance and carried the complete registry. Keep #125/#128/#129/#130 as isolated Draft/HOLD research workstreams, #131 as active V2, #134 as prototype HOLD. GitHub connector currently exposes no direct branch-delete action; do not claim those branches are deleted. Recheck unique commits before any future deletion.
 - [ ] **OWNER-GATE-2026-001** — keep Issue #111 open for owner-controlled ruleset, live host, deployment, target-hardware, native device and credentials gates. Do not close it merely to clear the queue.
 
-**Artifact policy:** preserve only concrete project-needed code/artifacts with exact upstream URL/revision, checksum, independent license review, provenance manifest, storage rationale and rollback. Do not bulk-copy whole inspiration repositories, datasets or unselected model weights. Small approved model candidates may be stored in-repo when size/license/evaluation value justify it; keep them disabled until target evaluation and owner acceptance.
+**Artifact policy (owner direction updated 2026-11-06):** the repository is the preferred durable archive for selected/adopted source code and model artifacts, not merely a list of external links. Preserve the exact code snapshot and/or model weights when license/redistribution and repository/storage limits permit; keep upstream URL, immutable commit/tag/model revision, code and artifact-specific LICENSE/SPDX, model card, tokenizer/runtime metadata where relevant, SHA-256, attribution, size and provenance-manifest entry. Do not bulk-copy every candidate, full unrelated repositories or datasets. If legal terms or GitHub storage constraints prohibit an in-repo copy, record the exact reason and propose an owner-approved alternative (e.g. Git LFS only after repository policy review). Archive/evaluation-only never means runtime-enabled; default off until target evaluation, security/privacy checks and release gate.
 
 
 ## G. Owner task delta — 2026-11-05: repository hygiene, independent audit and corrective engineering
@@ -189,7 +189,7 @@ Evidence status: test source changes are committed; JavaScript/Playwright syntax
 - [ ] **FIX-007** — design a bounded document-extraction concurrency gate when the feature is enabled; add cancellation, queue saturation and memory-pressure regressions.
 - [ ] **FIX-008** — pin or self-host third-party browser assets and add SRI where supported; document the CDN trust boundary.
 - [ ] **HYGIENE-006** — delete only the verified allowlist after an authorized branch-delete API/UI is available; preserve every branch HEAD SHA and recheck open references immediately before deletion.
-- [ ] **AUDIT-010** — finish subsystem review of provider routing, browser storage migrations, voice/audio lifecycle, RAG deletion lineage, V2 candidate slices and native device/runtime behavior.
+- [ ] **AUDIT-010** — finish subsystem review of provider routing, browser storage migrations, voice/audio lifecycle, RAG deletion lineage, V2 candidate slices and native device/runtime behavior. Expand the same evidence-led review to HTML/Jekyll templates, CSS, vanilla JS/modules, event/listener lifecycles, asset references, build/workflow hooks, docs/plans and source/model provenance; identify confirmed dead code, duplicate paths, orphan assets, stale flags/selectors and obsolete documents. Static scanners/Graphify are candidate finders only, not deletion proof.
 
 **Phase-1 report:** `docs/REPOSITORY_DEBUGGER_AUDIT_PHASE1_2026-11-05_RU.md`. This is a verified partial report, not closure of the full audit.
 
@@ -208,3 +208,30 @@ Evidence status: test source changes are committed; JavaScript/Playwright syntax
 - [x] **FIX-012 — common chat-setting mutation rollback.** Two Chromium quota-injection regressions exercise mode/mirror rollback and skill/agent configuration UI rollback; existing storage names/schema remain unchanged.
 
 **PR #150 exact-head evidence:** setter rollback code/test HEAD `54e4858ed19fb4fa1daaa55444121ff2f8c5f780`; Quality #42059797507 (7/7 jobs), Freshness #42059797510, Provenance #42059797913 and Graphify #42059797551 PASS. Freshness main-checkpoint/live-queue substep skipped by PR condition. Earlier recovery `0c2cf9f...`, docs `d43b16c...` and settings-profile `c1103a7...` checkpoints also passed their recorded gates. PR remains open/unmerged; main SHA `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`, deployment and target-host runtime unchanged.
+
+## H. Owner task execution notes — 2026-11-06 (links to Master Registry IDs)
+
+This section supplies method and acceptance detail for the new tasks in `docs/MASTER_TASK_REGISTRY_RU.md`; it does not create a second checkbox backlog.
+
+### H1. SOURCES-2026-002 — source review and repository preservation
+
+- Start from `INTEL.md`'s consolidated external-source inventory (257 distinct URLs in the 2026-11-04 snapshot), then traverse the source catalogs in `docs/OPEN_SOURCE_TRIAGE_RU.md`, `docs/TECHNIQUE_REGISTER_RU.md`, `docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md`, `docs/SEARCH_RESEARCH_FEATURE_EXTRACTION_RU.md`, `docs/MULTIMODAL_MODEL_STACK_RU.md` and branch-specific research workstreams.
+- Review in meaningful domain batches (agent/tool protocols, coding harnesses, memory/RAG, models/voice/OCR, document/media, observability/security) rather than skimming the entire list. For each candidate capture: exact upstream, current release/commit/date, maintenance/status, license and artifact-specific terms, security/advisories, language/hardware/resource profile, integration surface, likely value, alternative, adoption status and why.
+- Distinguish **REFERENCE → CANDIDATE → VERIFIED → ACCEPTED → ARCHIVED → INTEGRATED → VERIFIED LIVE**. A research citation or archived artifact does not imply integration, and integration does not imply live deployment.
+- When a selected candidate is accepted for aLandi, preserve usable code/artifact in the repository where redistribution and storage allow; add provenance metadata and tests/evals. Preserve source LICENSE/NOTICE and model cards; keep model weights and runtime code separately versioned/digested. Do not download every catalog entry.
+- Existing artifact baseline: `models/vosk/vosk-model-small-ru-0.22.zip` is already archived with README/license/checksum metadata and `ship=false`; its presence is not proof of target-device quality or runtime activation.
+
+### H2. CLEANUP-2026-002 — safe cleanup and optimization
+
+- First create a read-only candidate report with path/line/symbol, direct and indirect references, HTML/CSS/JS/build/runtime/workflow reachability, framework/dynamic registration considerations, why it appears unused, user impact, test coverage, confidence and rollback.
+- Before removal, inspect imports/exports, dynamic imports, string-based selectors, inline HTML, CSS selectors, event handlers/listeners, Jekyll includes/layout/data files, workflows, docs links/anchors, scripts, tests, packaging and external entry points. Search all tracked source and generated references; use Git history to preserve intent.
+- Remove only candidates with converging independent evidence. Do not auto-delete on Vulture/Graphify/grep alone. Preserve compatibility shims, user-facing historical docs, licensing/provenance archives and referenced research plans unless a separate migration has proven every reference updated.
+- Performance work starts with an agreed reproducible baseline and representative workload; measure before/after output, p50/p95 latency, CPU/RAM, bundle/page weight, DOM/render or build time as relevant. One major variable per experiment; keep the faster change only if behavior/security/accessibility remain intact.
+- Each cleanup slice needs exact diff review, focused tests, regression checks, exact-head CI, rollback path and a log entry. Branch/file/history deletion remains separately owner-gated.
+
+### H3. INTAKE-001 — task deduplication and large initiatives
+
+- The Master Registry is the one logical task inventory; this addendum is append-only detail, not a separate queue. Search exact terms, synonyms and related IDs before creating anything. Prefer extending an existing stable ID with new acceptance/evidence over adding a near-duplicate.
+- Record the requirement and task ID before implementation or artifact acquisition. Mark user wording/constraints faithfully; do not silently turn suggestions into approved implementation or technology decisions.
+- For long initiatives, maintain one outcome statement, milestones, dependencies, risk/rollback, evidence checkpoints and a small number of vertical slices. Preserve the top-level goal across sessions; do not collapse it into an endless list of tiny independent tickets.
+
