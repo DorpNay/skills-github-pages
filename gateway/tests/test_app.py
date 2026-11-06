@@ -1,9 +1,12 @@
+import asyncio
 import json
 import os
 import tempfile
 from typing import AsyncIterator
 
 import httpx
+import pytest
+from starlette.requests import Request
 from fastapi.testclient import TestClient
 
 from gateway.app import Settings, create_app, validate_origin
@@ -604,3 +607,67 @@ def test_trace_context_accepts_valid_w3c_traceparent_and_drops_sensitive_attribu
                                     "component": "gateway", "outcome": "ok"}
     finally:
         reset_trace_id(token)
+
+
+
+@pytest.mark.asyncio
+async def test_chat_cancellation_before_upstream_response_releases_gateway_slot():
+    class BlockingTransport(httpx.AsyncBaseTransport):
+        def __init__(self):
+            self.started = asyncio.Event()
+
+        async def handle_async_request(self, request):
+            self.started.set()
+            await asyncio.Event().wait()
+            raise AssertionError("cancelled transport unexpectedly returned")
+
+    upstream = BlockingTransport()
+    app = create_app(settings(max_inflight_requests=1), transport=upstream)
+    endpoint = next(
+        route.endpoint for route in app.routes
+        if getattr(route, "path", None) == "/v1/chat/completions"
+    )
+    body = json.dumps({
+        "model": MODEL,
+        "messages": [{"role": "user", "content": "hello"}],
+        "stream": False,
+    }).encode("utf-8")
+    received = False
+
+    async def receive():
+        nonlocal received
+        if not received:
+            received = True
+            return {"type": "http.request", "body": body, "more_body": False}
+        await asyncio.Event().wait()
+
+    scope = {
+        "type": "http",
+        "asgi": {"version": "3.0"},
+        "http_version": "1.1",
+        "method": "POST",
+        "scheme": "http",
+        "path": "/v1/chat/completions",
+        "raw_path": b"/v1/chat/completions",
+        "query_string": b"",
+        "root_path": "",
+        "headers": [
+            (b"content-type", b"application/json"),
+            (b"content-length", str(len(body)).encode("ascii")),
+        ],
+        "server": ("test", 80),
+        "client": ("test", 12345),
+        "app": app,
+    }
+
+    async with app.router.lifespan_context(app):
+        request = Request(scope, receive)
+        task = asyncio.create_task(endpoint(request, authorization=f"Bearer {API_KEY}"))
+        await asyncio.wait_for(upstream.started.wait(), timeout=1)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+
+        assert not app.state.semaphore.locked()
+        await asyncio.wait_for(app.state.semaphore.acquire(), timeout=0.1)
+        app.state.semaphore.release()
