@@ -27,7 +27,7 @@ DEFAULT_SNAPSHOT = ROOT / "docs/project-state-snapshot.json"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 # A state refresh must update the human- and machine-readable checkpoints together.
 # The checker, its tests and workflow do not need artificial edits on every refresh.
-HANDOFF_PATHS = ("OLEDUE.md", "AGENTS.md")
+HANDOFF_PATHS = ("OLEDUE.md", "AGENTS.md", "PROJECT_ORCHESTRATOR_RU.md")
 REQUIRED_REFRESH_PATHS = {
     "OLEDUE.md",
     "AGENTS.md",
@@ -172,6 +172,7 @@ def validate_control_plane_docs(
     state: str,
     snapshot: dict[str, Any],
     volley: str,
+    orchestrator: str,
 ) -> list[str]:
     """Enforce the document-role contract and keep the last stage record linked."""
     errors: list[str] = []
@@ -181,6 +182,7 @@ def validate_control_plane_docs(
         "do not default to any pr",
         "stage-zero record before the first change",
         "owner approval gates",
+        "project_orchestrator_ru.md",
     )
     handoff = oledue.casefold()
     for marker in required_handoff:
@@ -188,14 +190,31 @@ def validate_control_plane_docs(
             errors.append(f"OLEDUE.md: missing control-plane requirement {marker!r}")
 
     agent_rules = agents.casefold()
-    for marker in ("oledue.md", "`oledue`", "latest explicit owner request", "do not default to any pr"):
+    for marker in ("oledue.md", "`oledue`", "latest explicit owner request", "do not default to any pr", "project_orchestrator_ru.md"):
         if marker not in agent_rules:
             errors.append(f"AGENTS.md: missing executor orientation requirement {marker!r}")
 
     navigation = orienter.casefold()
-    for marker in ("document roles", "open pr queue:", "github live state"):
+    for marker in ("document roles", "open pr queue:", "github live state", "project_orchestrator_ru.md"):
         if marker not in navigation:
             errors.append(f"ORIENTER.md: missing navigation/control-plane marker {marker!r}")
+
+    catalog = orchestrator.casefold()
+    for marker in (
+        "# alandi — project orchestrator",
+        "intel.md",
+        "open_source_triage_ru.md",
+        "technique_register_ru.md",
+        "implementation_roadmap_ru.md",
+        "master_task_registry_ru.md",
+        "orch-001",
+        "intake-001",
+        "task intake:",
+        "artifact preservation policy",
+        "cleanup and optimization",
+    ):
+        if marker not in catalog:
+            errors.append(f"PROJECT_ORCHESTRATOR_RU.md: missing catalog section/link {marker!r}")
 
     if not re.search(r"(?m)^  orientation_control_plane:\s*$", state):
         errors.append("docs/PROJECT_STATE.yaml: orientation_control_plane block is required")
@@ -262,6 +281,7 @@ def validate_local_docs(root: Path, snapshot: dict[str, Any]) -> list[str]:
             state,
             snapshot,
             contents.get("docs/VOLLEY_LOG.md", ""),
+            handoff_contents["PROJECT_ORCHESTRATOR_RU.md"],
         ))
     if not re.search(rf'(?m)^\s+base_main:\s*["\']{re.escape(main_sha)}["\']\s*$', state):
         errors.append("docs/PROJECT_STATE.yaml: root_orienter.base_main does not match snapshot main SHA")
