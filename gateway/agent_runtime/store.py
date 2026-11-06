@@ -229,8 +229,8 @@ class AgentRunStore:
                 or not 1 <= max_tasks_per_run <= 10_000):
             raise AgentRunError("max_tasks_per_run must be between 1 and 10000")
         if (isinstance(max_events_per_run, bool) or not isinstance(max_events_per_run, int)
-                or not max_tasks_per_run + 2 <= max_events_per_run <= 100_000):
-            raise AgentRunError("max_events_per_run must be at least max_tasks_per_run + 2 and at most 100000")
+                or not 2 * max_tasks_per_run + 3 <= max_events_per_run <= 100_000):
+            raise AgentRunError("max_events_per_run must be at least 2 * max_tasks_per_run + 3 and at most 100000")
 
         self.busy_timeout_ms = busy_timeout_ms
         self.max_tasks_per_run = max_tasks_per_run

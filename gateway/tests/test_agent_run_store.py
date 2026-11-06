@@ -465,7 +465,7 @@ def test_per_run_event_limit_rolls_back_lifecycle_transition(tmp_path):
     ({"max_tasks_per_run": 0}, "max_tasks_per_run"),
     ({"max_tasks_per_run": True}, "max_tasks_per_run"),
     ({"max_events_per_run": 0}, "max_events_per_run"),
-    ({"max_events_per_run": 501}, "max_events_per_run"),
+    ({"max_events_per_run": 1002}, "max_events_per_run"),
     ({"max_events_per_run": 100001}, "max_events_per_run"),
 ])
 def test_per_run_limits_are_validated(tmp_path, kwargs, message):
