@@ -15,7 +15,22 @@ test('live public site serves the app shell and basic chat controls', async ({ p
   const runtime = page.locator('script[src*="/assets/js/app.js"]');
   if (await runtime.count()) {
     await page.waitForFunction(() => window.__alandiAppReady === true);
-    await expect(page.locator('link[rel="stylesheet"][href*="/assets/css/app.css"]')).toHaveCount(1);
+    const stylesheet = page.locator('link[rel="stylesheet"][href*="/assets/css/app.css"]');
+    await expect(stylesheet).toHaveCount(1);
+    const jsUrl = await runtime.getAttribute('src');
+    const cssUrl = await stylesheet.getAttribute('href');
+    expect(jsUrl).toBeTruthy();
+    expect(cssUrl).toBeTruthy();
+    const [jsResponse, cssResponse] = await Promise.all([
+      page.request.get(new URL(jsUrl, page.url()).toString()),
+      page.request.get(new URL(cssUrl, page.url()).toString())
+    ]);
+    expect(jsResponse.status()).toBe(200);
+    expect((jsResponse.headers()['content-type'] || '')).toContain('javascript');
+    expect((await jsResponse.body()).length).toBeGreaterThan(0);
+    expect(cssResponse.status()).toBe(200);
+    expect((cssResponse.headers()['content-type'] || '')).toContain('text/css');
+    expect((await cssResponse.body()).length).toBeGreaterThan(0);
   }
   // This test targets the currently published main site, not the unmerged PR preview.
   // Feature-specific menu assertions belong in app.spec.mjs against the built PR artifact.
