@@ -471,3 +471,45 @@ def test_per_run_event_limit_rolls_back_lifecycle_transition(tmp_path):
 def test_per_run_limits_are_validated(tmp_path, kwargs, message):
     with pytest.raises(AgentRunError, match=message):
         AgentRunStore(tmp_path / "invalid-limits.sqlite3", **kwargs)
+
+
+def test_terminal_transition_racing_worker_completion_is_serialized(tmp_path):
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Barrier
+
+    store = AgentRunStore(tmp_path / "terminal-race.sqlite3")
+    store.initialize()
+    run = make_running(store, key="terminal-race")
+    task = store.enqueue_task(run_id=run["run_id"], task_key="race-task",
+                              idempotency_key="terminal-race-task", payload={}, now=103)
+    claim = store.claim_task(run_id=run["run_id"], worker_id="worker", now=104)
+    assert claim is not None and claim.task_id == task["task_id"]
+    barrier = Barrier(2)
+
+    def complete():
+        barrier.wait()
+        try:
+            store.complete_task(claim=claim, result={"status": "succeeded"}, now=105)
+            return "completed"
+        except LeaseError:
+            return "fenced"
+
+    def fail_run():
+        barrier.wait()
+        store.transition_run(run_id=run["run_id"], expected_state="running",
+                             new_state="failed", event_type="run_failed", now=105)
+        return "failed"
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        worker_result, run_result = list(pool.map(lambda fn: fn(), (complete, fail_run)))
+
+    assert run_result == "failed"
+    assert worker_result in {"completed", "fenced"}
+    assert store.get_run(run["run_id"])["state"] == "failed"
+    final_task = store.get_task(task["task_id"])
+    assert final_task["state"] in {"succeeded", "cancelled"}
+    events = store.list_events(run_id=run["run_id"], limit=20)
+    terminal_event = next(event for event in events if event["event_type"] == "run_failed")
+    task_terminal_event = next(event for event in events
+                               if event["event_type"] in {"task_completed", "task_cancelled"})
+    assert task_terminal_event["event_id"] < terminal_event["event_id"]
