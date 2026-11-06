@@ -43,6 +43,7 @@ Then match a PR only if its live diff/scope implements that task. A PR is not ac
 ## 3. Load minimum sufficient context
 
 - Read the one canonical task register and the roadmap section for the selected task.
+- When the owner asks where aLandi principles, external sources, plans/ideas, evaluations or model/code artifacts live, open root `PROJECT_ORCHESTRATOR_RU.md` as the navigational index, then open the canonical destination; the index is not itself a source of truth.
 - Read only relevant source, tests, contracts, security decisions and evaluation evidence.
 - Use `project-reference/FILE_ORIENTER_RU.md` only for path discovery.
 - Use `docs/PROJECT_STATE.yaml` for system flags and runtime boundaries; `docs/VOLLEY_LOG.md` for prior decisions/evidence; `DECISIONS.md` for architecture; `EVALS.md` for baselines/datasets; `INTEL.md` and `docs/TECHNIQUE_REGISTER_RU.md` for upstream research.
