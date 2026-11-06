@@ -1012,6 +1012,7 @@ test('high-contrast preference updates every important text state in both themes
   await expect(page.locator('#uiTextContrast')).toBeVisible();
   const highLight = await readStates();
   await page.locator('#uiTextContrast').selectOption('normal');
+  await expect(page.locator('html')).toHaveAttribute('data-text-contrast', 'normal');
   const normalLight = await readStates();
   for (const key of ['secondary','disabled','link','error','status']) {
     expect(highLight[key], key + ' must change in light theme').not.toBe(normalLight[key]);
