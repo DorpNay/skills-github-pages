@@ -165,6 +165,67 @@ def validate_handoff_policy(oledue: str, agents: str) -> list[str]:
     return errors
 
 
+def validate_control_plane_docs(
+    oledue: str,
+    agents: str,
+    orienter: str,
+    state: str,
+    snapshot: dict[str, Any],
+    volley: str,
+) -> list[str]:
+    """Enforce the document-role contract and keep the last stage record linked."""
+    errors: list[str] = []
+    required_handoff = (
+        "session sync capsule",
+        "latest explicit owner request",
+        "do not default to any pr",
+        "stage-zero record before the first change",
+        "owner approval gates",
+    )
+    handoff = oledue.casefold()
+    for marker in required_handoff:
+        if marker not in handoff:
+            errors.append(f"OLEDUE.md: missing control-plane requirement {marker!r}")
+
+    agent_rules = agents.casefold()
+    for marker in ("oledue.md", "`oledue`", "latest explicit owner request", "do not default to any pr"):
+        if marker not in agent_rules:
+            errors.append(f"AGENTS.md: missing executor orientation requirement {marker!r}")
+
+    navigation = orienter.casefold()
+    for marker in ("document roles", "open pr queue:", "github live state"):
+        if marker not in navigation:
+            errors.append(f"ORIENTER.md: missing navigation/control-plane marker {marker!r}")
+
+    if not re.search(r"(?m)^  orientation_control_plane:\\s*$", state):
+        errors.append("docs/PROJECT_STATE.yaml: orientation_control_plane block is required")
+    for key in (
+        "owner_handoff",
+        "quick_navigation",
+        "structured_state",
+        "machine_checkpoint",
+        "executor_contract",
+        "strategy",
+        "single_task_inventory",
+        "append_only_stage_evidence",
+        "live_repository_truth",
+    ):
+        if not re.search(rf"(?m)^      {key}:\\s*", state):
+            errors.append(f"docs/PROJECT_STATE.yaml: orientation_control_plane.{key} is required")
+
+    match = re.search(r"(?m)^last_volley:\\s*[\"']([^\"']+)[\"']\\s*$", state)
+    state_volley = match.group(1) if match else None
+    snapshot_volley = snapshot.get("last_volley")
+    if not state_volley:
+        errors.append("docs/PROJECT_STATE.yaml: last_volley is required")
+    elif snapshot_volley != state_volley:
+        errors.append("docs/project-state-snapshot.json: last_volley must match PROJECT_STATE.yaml")
+    elif state_volley not in volley:
+        errors.append("docs/VOLLEY_LOG.md: last_volley entry is missing")
+
+    return errors
+
+
 def validate_local_docs(root: Path, snapshot: dict[str, Any]) -> list[str]:
     """Ensure the four human-facing state records refer to this exact snapshot."""
     checkpoint = snapshot["checkpoint"]
@@ -193,6 +254,15 @@ def validate_local_docs(root: Path, snapshot: dict[str, Any]) -> list[str]:
         errors.extend(validate_handoff_policy(handoff_contents["OLEDUE.md"], handoff_contents["AGENTS.md"]))
 
     state = contents.get("docs/PROJECT_STATE.yaml", "")
+    if all(path in handoff_contents for path in HANDOFF_PATHS) and "ORIENTER.md" in contents:
+        errors.extend(validate_control_plane_docs(
+            handoff_contents["OLEDUE.md"],
+            handoff_contents["AGENTS.md"],
+            contents["ORIENTER.md"],
+            state,
+            snapshot,
+            contents.get("docs/VOLLEY_LOG.md", ""),
+        ))
     if not re.search(rf'(?m)^\s+base_main:\s*["\']{re.escape(main_sha)}["\']\s*$', state):
         errors.append("docs/PROJECT_STATE.yaml: root_orienter.base_main does not match snapshot main SHA")
     if not re.search(rf'(?m)^\s+verified_main:\s*["\']{re.escape(main_sha)}["\']\s*$', state):
