@@ -446,3 +446,13 @@ This is a source-and-pattern review, not an adoption decision. Upstream refs are
 - Repository SHAs above identify the inspected source snapshots, not a vendored dependency or approved release pin.
 - MIT/Apache-2.0 repo license does not automatically cover every model weight, dataset, voice, optional parser or third-party artifact. Audit those separately and preserve NOTICE/attribution before copying code.
 - No upstream source code, model weights or executable binary was copied by this research sweep.
+
+
+## 2026-11-06 — source revalidation batch (official upstream)
+
+This dated review supplements the 257-URL consolidated inventory; it does not claim that all entries were refreshed.
+
+- **XERJ public source:** xerj-org/xerj at commit 83c9f0d123bac010a25ca2cf02ff093b08ee68ce (tag v1.0.0-rc.101), Apache-2.0. The official release notes say the rc.101 binary includes proprietary xerj-infer/xerj-serve/xerj-exec crates absent from the public repository. Its 408,024,623-byte model bundle has upstream-published SHA-256 654b9b745f5efac32c71ba1a462fa082b6558d7a380fc4280a4f03ab300ee5b0, but no separate redistribution license was verified. See https://github.com/xerj-org/xerj/releases/tag/v1.0.0-rc.101. Public-source retrieval bake-off only; no rc.101 binary/model archive.
+- **Memvid:** memvid/memvid at commit e18fe55494379e2ab7397ce03655e8abbc5e0c31 (v2.0.140), Apache-2.0; Rust edition 2024, minimum Rust 1.85. Release notes fix WAL-growth corruption (#230) and a Tantivy tempdir leak (#215). Candidate for portable export/restore only, not replacement of SQLite.
+- **RAG-Anything:** HKUDS/RAG-Anything at commit 0ef67b4d476b66407a03a39e5b17e756fc0aef29 (v1.4.1), MIT. Core deps include huggingface_hub, lightrag-hku and MinerU; optional media extras have separate runtime/model costs. The pinned v1.4.1 pyproject MinerU lower-bound is less constrained than the later current README guidance; do not install without resolving this version drift.
+- Full revision, size, dependency, license-boundary and adoption records: docs/OPEN_SOURCE_TRIAGE_RU.md, docs/TECHNIQUE_REGISTER_RU.md and EVALS.md.
