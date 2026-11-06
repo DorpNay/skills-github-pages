@@ -192,3 +192,16 @@ Evidence status: test source changes are committed; JavaScript/Playwright syntax
 - [ ] **AUDIT-010** — finish subsystem review of provider routing, browser storage migrations, voice/audio lifecycle, RAG deletion lineage, V2 candidate slices and native device/runtime behavior.
 
 **Phase-1 report:** `docs/REPOSITORY_DEBUGGER_AUDIT_PHASE1_2026-11-05_RU.md`. This is a verified partial report, not closure of the full audit.
+
+
+## L. Voice Output V1 — выделенный текст и временная очередь озвучивания (2026-11-06)
+
+- [~] **VOICE-OUT-001** — озвучивать только выделенный фрагмент внутри одного сообщения ассистента; отклонять пустое/слишком длинное выделение, выделение через несколько сообщений и выделение интерактивных controls.
+- [~] **VOICE-OUT-002** — добавлять ответы ассистента во временную очередь локального TTS; обеспечить последовательное воспроизведение, паузу/продолжение, очистку и завершённое состояние.
+- [~] **VOICE-OUT-003** — ограничить очередь 20 элементами, 5 000 символов на элемент и 30 000 символов суммарно; не сохранять очередь/аудио в истории или памяти.
+- [~] **VOICE-OUT-004** — проверять отмену во время обнаружения голоса и генерации, не допускать позднего запуска TTS после паузы, учитывать browser autoplay rejection и вручную возобновлять воспроизведение по жесту пользователя.
+- [~] **VOICE-OUT-005** — покрыть queue ordering, selected-text boundary, autoplay fallback, cancellation/race и responsive UI автоматическими Chromium E2E; отдельно провести физические mobile/browser/audio tests.
+
+**Scope:** существующий авторизованный локальный POST /v1/audio/speech и уже настроенный Piper voice allowlist. Нет нового ASR/TTS backend, внешнего аудио fallback, новых зависимостей, автоматического сохранения, фоновой генерации или автоматического включения server flags. Очередь in-memory и относится только к текущей вкладке/сессии.
+
+**Implementation branch:** `feat/voice-output-queue-selection-20261106`. Код и E2E написаны; окончательный статус зависит от exact-HEAD Quality/Chromium/Provenance и последующей проверки на реальных браузерах/устройствах.

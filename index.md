@@ -606,7 +606,17 @@ permalink: /
   <div id="ttsMiniPlayer" class="hidden fixed bottom-24 right-3 z-[75] w-[min(22rem,calc(100vw-1.5rem))] rounded-xl border border-cyan-700/60 bg-gray-950 p-3 shadow-2xl" role="region" aria-label="Миниплеер озвучивания">
     <div class="mb-2 flex items-center justify-between gap-3"><p id="ttsMiniPlayerStatus" class="text-xs text-gray-300">Локальное озвучивание</p><button type="button" data-action="stop-speech" class="rounded-md border border-gray-700 px-2 py-1 text-xs">Стоп</button></div><label id="ttsVoiceChoiceWrap" class="hidden mb-2 block text-xs text-gray-300">Голос ответа<select id="ttsVoiceSelect" class="mt-1 w-full rounded-lg border border-gray-700 bg-gray-900 px-2 py-2 text-sm" aria-label="Голос локального озвучивания"></select></label>
     <audio id="ttsAudioPlayer" class="w-full" controls preload="none"></audio>
+    <div id="ttsQueueControls" class="hidden mt-2 border-t border-gray-800 pt-2">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <p id="ttsQueueStatus" class="text-xs text-gray-400" role="status" aria-live="polite">Очередь пуста</p>
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" data-action="toggle-speech-queue" id="ttsQueueToggle" class="rounded-md border border-cyan-700/60 px-2 py-1 text-xs text-cyan-200">▶ Читать очередь</button>
+          <button type="button" data-action="clear-speech-queue" id="ttsQueueClear" class="rounded-md border border-gray-700 px-2 py-1 text-xs text-gray-300">Очистить</button>
+        </div>
+      </div>
+    </div>
   </div>
+  <button id="ttsSelectionAction" type="button" data-action="speak-selection" class="hidden fixed z-[80] max-w-[calc(100vw-1rem)] rounded-xl border border-cyan-600 bg-gray-950 px-3 py-2 text-xs font-semibold text-cyan-100 shadow-xl" style="left:8px;top:8px" aria-label="Озвучить выделенный текст">🔊 Озвучить выделенное</button>
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
   <button id="jumpToLatest" type="button" data-action="jump-to-latest" class="jump-to-latest hidden" aria-label="Перейти к последнему сообщению" title="В конец чата">↓</button>
   <div id="composerPopoverScrim" class="hidden fixed inset-0 z-40 bg-black/45 backdrop-blur-[2px]" aria-hidden="true"></div>
@@ -1690,6 +1700,13 @@ permalink: /
           speak.textContent = getUiLanguage() === 'en' ? '🔊 Read aloud' : '🔊 Озвучить';
           speak.title = getUiLanguage() === 'en' ? 'Generate speech with your configured local TTS model' : 'Создать речь локальной TTS-моделью на твоём gateway';
           actions.appendChild(speak);
+          const queue = document.createElement('button');
+          queue.type = 'button'; queue.dataset.action = 'queue-message'; queue.dataset.messageText = messageActionText;
+          queue.className = 'text-xs text-cyan-300 hover:text-cyan-100 px-1.5 py-1 rounded-md';
+          queue.textContent = getUiLanguage() === 'en' ? '＋ Queue' : '＋ В очередь';
+          queue.title = getUiLanguage() === 'en' ? 'Add this answer to the temporary local speech queue' : 'Добавить ответ во временную очередь локального озвучивания';
+          queue.setAttribute('aria-label', getUiLanguage() === 'en' ? 'Add message to speech queue' : 'Добавить сообщение в очередь озвучивания');
+          actions.appendChild(queue);
         }
         row.appendChild(actions);
       }
@@ -4375,20 +4392,190 @@ permalink: /
         // Voice discovery is best-effort; the gateway still validates the default voice.
       }
     }
-    async function playAssistantMessage(rawText) {
+    const SPEECH_QUEUE_MAX_ITEMS = 20;
+    const SPEECH_QUEUE_MAX_ITEM_CHARS = 5000;
+    const SPEECH_QUEUE_MAX_TOTAL_CHARS = 30000;
+    let speechQueue = [];
+    let speechQueuePlaying = false;
+    let speechQueuePendingGesture = false;
+    let speechQueueGeneration = 0;
+    let selectedSpeechText = '';
+    let pendingSelectedSpeechText = '';
+    $('ttsSelectionAction').addEventListener('pointerdown', () => {
+      pendingSelectedSpeechText = selectedSpeechText;
+    });
+
+    function updateSpeechQueueUi() {
+      const controls = $('ttsQueueControls');
+      if (!controls) return;
+      const count = speechQueue.length;
+      const totalChars = speechQueue.reduce((sum, item) => sum + item.length, 0);
+      controls.classList.toggle('hidden', count === 0);
+      if (count) $('ttsMiniPlayer').classList.remove('hidden');
+      $('ttsQueueStatus').textContent = count
+        ? (getUiLanguage() === 'en'
+          ? `Queue: ${count}/${SPEECH_QUEUE_MAX_ITEMS} items · ${totalChars.toLocaleString()} characters`
+          : `В очереди: ${count}/${SPEECH_QUEUE_MAX_ITEMS} · ${totalChars.toLocaleString()} знаков`)
+        : (getUiLanguage() === 'en' ? 'The queue is empty.' : 'Очередь пуста');
+      $('ttsQueueClear').textContent = getUiLanguage() === 'en' ? 'Clear' : 'Очистить';
+      $('ttsQueueClear').setAttribute('aria-label', getUiLanguage() === 'en' ? 'Clear speech queue' : 'Очистить очередь озвучивания');
+      $('ttsQueueToggle').disabled = count === 0;
+      $('ttsQueueClear').disabled = count === 0;
+      $('ttsQueueToggle').textContent = speechQueuePlaying
+        ? (speechQueuePendingGesture ? (getUiLanguage() === 'en' ? '▶ Resume playback' : '▶ Продолжить') : (getUiLanguage() === 'en' ? '⏸ Pause queue' : '⏸ Пауза'))
+        : (getUiLanguage() === 'en' ? '▶ Read queue' : '▶ Читать очередь');
+    }
+
+    function addSpeechQueueItem(rawText) {
       const text = String(rawText || '').trim();
-      if (!text) { showToast('В сообщении нет текста для озвучивания.', 'error'); return; }
-      if (text.length > 5000) { showToast('Для озвучивания сократи сообщение до 5 000 символов.', 'error'); return; }
+      if (!text) { showToast(getUiLanguage() === 'en' ? 'There is no text to queue.' : 'В сообщении нет текста для очереди.', 'error'); return; }
+      if (text.length > SPEECH_QUEUE_MAX_ITEM_CHARS) {
+        showToast(getUiLanguage() === 'en' ? 'Each queued message is limited to 5,000 characters.' : 'Одно сообщение в очереди ограничено 5 000 символами.', 'error');
+        return;
+      }
+      const currentTotal = speechQueue.reduce((sum, item) => sum + item.length, 0);
+      if (speechQueue.length >= SPEECH_QUEUE_MAX_ITEMS || currentTotal + text.length > SPEECH_QUEUE_MAX_TOTAL_CHARS) {
+        showToast(getUiLanguage() === 'en' ? 'The temporary speech queue is full. Start or clear it before adding more.' : 'Временная очередь заполнена. Запусти озвучивание или очисти её перед добавлением.', 'error');
+        return;
+      }
+      speechQueue.push(text);
+      $('ttsMiniPlayerStatus').textContent = getUiLanguage() === 'en' ? 'Added to the temporary local speech queue.' : 'Добавлено во временную локальную очередь озвучивания.';
+      updateSpeechQueueUi();
+      showToast(getUiLanguage() === 'en' ? 'Added to speech queue.' : 'Добавлено в очередь озвучивания.');
+    }
+
+    async function playNextSpeechQueueItem() {
+      if (!speechQueuePlaying || !speechQueue.length) return;
+      const generation = speechQueueGeneration;
+      const started = await playAssistantMessage(speechQueue[0], { fromQueue: true });
+      if (generation !== speechQueueGeneration || !speechQueuePlaying) return;
+      if (!started) {
+        speechQueuePlaying = false;
+        speechQueuePendingGesture = false;
+        $('ttsMiniPlayerStatus').textContent = getUiLanguage() === 'en' ? 'Queue paused after a speech error. Retry to continue.' : 'Очередь приостановлена из-за ошибки озвучивания. Повтори запуск.';
+        updateSpeechQueueUi();
+      }
+    }
+
+    async function startSpeechQueue() {
+      if (speechQueuePlaying) {
+        if (speechQueuePendingGesture) {
+          try {
+            await $('ttsAudioPlayer').play();
+            speechQueuePendingGesture = false;
+            $('ttsMiniPlayerStatus').textContent = getUiLanguage() === 'en' ? 'Playing the speech queue.' : 'Воспроизводится очередь озвучивания.';
+          } catch (_) {
+            showToast(getUiLanguage() === 'en' ? 'Press Play in the audio player to begin.' : 'Нажми ▶ в аудиоплеере, чтобы начать воспроизведение.', 'error');
+          }
+          updateSpeechQueueUi();
+          return;
+        }
+        pauseSpeechQueue();
+        return;
+      }
+      if (!speechQueue.length) return;
+      if (voiceConversationActive) {
+        showToast(getUiLanguage() === 'en' ? 'Stop voice dialogue before starting a speech queue.' : 'Заверши голосовой диалог перед запуском очереди.', 'error');
+        return;
+      }
+      if (currentProvider() !== 'alandi') {
+        showToast(getUiLanguage() === 'en' ? 'The speech queue requires your own aLandi gateway.' : 'Для очереди озвучивания нужен собственный aLandi gateway.', 'error');
+        return;
+      }
+      speechQueuePlaying = true;
+      speechQueuePendingGesture = false;
+      speechQueueGeneration += 1;
+      updateSpeechQueueUi();
+      await playNextSpeechQueueItem();
+    }
+
+    function pauseSpeechQueue() {
+      if (!speechQueuePlaying && !speechQueuePendingGesture) return;
+      speechQueuePlaying = false;
+      speechQueuePendingGesture = false;
+      speechQueueGeneration += 1;
+      stopAssistantSpeech({ preserveMiniPlayer: speechQueue.length > 0 });
+      updateSpeechQueueUi();
+    }
+
+    function clearSpeechQueue() {
+      const wasPlaying = speechQueuePlaying;
+      const player = $('ttsAudioPlayer');
+      const otherSpeechActive = Boolean(activeSpeechController || player.currentSrc);
+      speechQueuePlaying = false;
+      speechQueuePendingGesture = false;
+      speechQueueGeneration += 1;
+      if (wasPlaying) stopAssistantSpeech();
+      speechQueue = [];
+      updateSpeechQueueUi();
+      if (!otherSpeechActive && !voiceConversationActive) $('ttsMiniPlayer').classList.add('hidden');
+      if (wasPlaying) $('ttsMiniPlayerStatus').textContent = getUiLanguage() === 'en' ? 'Speech queue cleared.' : 'Очередь озвучивания очищена.';
+    }
+
+    function selectionNodeElement(node) {
+      return node?.nodeType === Node.ELEMENT_NODE ? node : node?.parentElement || null;
+    }
+
+    function updateSelectionSpeechAction() {
+      const button = $('ttsSelectionAction');
+      if (!button) return;
+      const selection = window.getSelection();
+      const hide = () => {
+        selectedSpeechText = '';
+        button.classList.add('hidden');
+      };
+      if (!selection || selection.isCollapsed || selection.rangeCount !== 1) { hide(); return; }
+      const anchor = selectionNodeElement(selection.anchorNode);
+      const focus = selectionNodeElement(selection.focusNode);
+      const anchorMessage = anchor?.closest('.assistant-content');
+      const focusMessage = focus?.closest('.assistant-content');
+      if (!anchorMessage || anchorMessage !== focusMessage) { hide(); return; }
+      const isControl = (element) => Boolean(element?.closest('button,a,input,textarea,select,summary'));
+      if (isControl(anchor) || isControl(focus)) { hide(); return; }
+      const range = selection.getRangeAt(0);
+      if (!anchorMessage.contains(range.commonAncestorContainer)) { hide(); return; }
+      const interactiveNodes = anchorMessage.querySelectorAll('button,a,input,textarea,select,summary');
+      if (Array.from(interactiveNodes).some(node => range.intersectsNode(node))) { hide(); return; }
+      const text = selection.toString().trim();
+      if (!text || text.length > SPEECH_QUEUE_MAX_ITEM_CHARS) { hide(); return; }
+      const rect = range.getBoundingClientRect();
+      if (!rect || (!rect.width && !rect.height)) { hide(); return; }
+      selectedSpeechText = text;
+      button.textContent = getUiLanguage() === 'en' ? '🔊 Read selection' : '🔊 Озвучить выделенное';
+      button.setAttribute('aria-label', getUiLanguage() === 'en' ? 'Read selected text aloud' : 'Озвучить выделенный текст');
+      button.classList.remove('hidden');
+      const buttonRect = button.getBoundingClientRect();
+      const width = Math.min(buttonRect.width || 180, window.innerWidth - 16);
+      const height = buttonRect.height || 36;
+      const left = Math.max(8, Math.min(window.innerWidth - width - 8, rect.left + (rect.width - width) / 2));
+      const preferredTop = rect.top >= height + 16 ? rect.top - height - 8 : rect.bottom + 8;
+      const top = Math.max(8, Math.min(window.innerHeight - height - 8, preferredTop));
+      button.style.left = `${left}px`;
+      button.style.top = `${top}px`;
+    }
+
+    document.addEventListener('selectionchange', updateSelectionSpeechAction);
+    window.addEventListener('scroll', updateSelectionSpeechAction, true);
+    window.addEventListener('resize', updateSelectionSpeechAction);
+
+    async function playAssistantMessage(rawText, options = {}) {
+      const fromQueue = options?.fromQueue === true;
+      const text = String(rawText || '').trim();
+      if (!text) { showToast('В сообщении нет текста для озвучивания.', 'error'); return false; }
+      if (text.length > SPEECH_QUEUE_MAX_ITEM_CHARS) { showToast('Для озвучивания сократи фрагмент до 5 000 символов.', 'error'); return false; }
+      const queueRunGeneration = speechQueueGeneration;
+      if (!fromQueue && speechQueuePlaying) pauseSpeechQueue();
       if (currentProvider() !== 'alandi') {
         showToast('Локальное озвучивание доступно через собственный aLandi gateway.', 'error');
-        return;
+        return false;
       }
       let baseUrl = String(safeGet(STORAGE.baseUrl) || $('baseUrl').value || '').trim();
       while (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
       if (baseUrl.endsWith('/chat/completions')) baseUrl = baseUrl.slice(0, -'/chat/completions'.length);
       const key = getConfiguredApiKey();
-      if (!baseUrl || !key) { showToast('Сначала настрой собственный gateway и его ключ.', 'error'); toggleSettings(true); return; }
-       await refreshLocalSpeechVoices(baseUrl, key);
+      if (!baseUrl || !key) { showToast('Сначала настрой собственный gateway и его ключ.', 'error'); toggleSettings(true); return false; }
+      await refreshLocalSpeechVoices(baseUrl, key);
+      if (fromQueue && (!speechQueuePlaying || queueRunGeneration !== speechQueueGeneration)) return false;
       if (activeSpeechController) activeSpeechController.abort();
       const requestId = ++speechRequestGeneration;
       const controller = new AbortController();
@@ -4407,13 +4594,13 @@ permalink: /
           headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
           body: JSON.stringify({ text, ...($('ttsVoiceSelect')?.value ? { voice: $('ttsVoiceSelect').value } : {}) }), cache: 'no-store', signal: controller.signal
         });
-        if (requestId !== speechRequestGeneration) return;
+        if (requestId !== speechRequestGeneration) return false;
         if (!response.ok) {
           const detail = await response.text().catch(() => '');
           throw new Error(detail.slice(0, 180) || ('HTTP ' + response.status));
         }
         const audio = await response.blob();
-        if (requestId !== speechRequestGeneration) return;
+        if (requestId !== speechRequestGeneration) return false;
         if (!audio.size || audio.size > 25 * 1024 * 1024 || !audio.type.startsWith('audio/')) throw new Error('Gateway вернул некорректный аудиофайл.');
         activeSpeechObjectUrl = URL.createObjectURL(audio);
         const player = $('ttsAudioPlayer');
@@ -4422,24 +4609,34 @@ permalink: /
         status.textContent = 'Готово · локальная модель · аудио не сохраняется в истории';
         try { await player.play(); }
         catch (_) {
-          if (requestId === speechRequestGeneration) status.textContent = 'Речь готова. Нажми ▶ в миниплеере для воспроизведения.';
+          if (requestId === speechRequestGeneration) {
+            status.textContent = 'Речь готова. Нажми ▶ в миниплеере для воспроизведения.';
+            if (fromQueue) {
+              speechQueuePendingGesture = true;
+              updateSpeechQueueUi();
+            }
+          }
           if(voiceConversationActive) {
             stopVoiceConversation(false);
             showToast('Автовоспроизведение недоступно. Голосовой диалог остановлен; нажми ▶ вручную.','error');
           }
         }
+        return true;
       } catch (error) {
-        if (requestId !== speechRequestGeneration) return;
+        if (requestId !== speechRequestGeneration) return false;
         status.textContent = timedOut ? 'Озвучивание превысило лимит времени.' : 'Локальный TTS недоступен или выключен.';
         showToast(timedOut ? 'Озвучивание превысило лимит времени.' : String(error.message || 'Локальный TTS недоступен.'), 'error');
+        if (fromQueue) speechQueuePlaying = false;
         if(voiceConversationActive)stopVoiceConversation(false);
+        updateSpeechQueueUi();
+        return false;
       } finally {
         clearTimeout(timeout);
         if (activeSpeechController === controller) activeSpeechController = null;
       }
     }
 
-    function stopAssistantSpeech() {
+    function stopAssistantSpeech(options = {}) {
       speechRequestGeneration += 1;
       if (activeSpeechController) {
         activeSpeechController.abort();
@@ -4451,7 +4648,8 @@ permalink: /
       player.load();
       if (activeSpeechObjectUrl) URL.revokeObjectURL(activeSpeechObjectUrl);
       activeSpeechObjectUrl = '';
-      $('ttsMiniPlayer').classList.add('hidden');
+      if (options?.preserveMiniPlayer) $('ttsMiniPlayer').classList.remove('hidden');
+      else $('ttsMiniPlayer').classList.add('hidden');
     }
 
     let activeVoiceRecorder = null;
@@ -4708,6 +4906,25 @@ permalink: /
     }
 
     $('ttsAudioPlayer').addEventListener('ended', async () => {
+      if (speechQueuePlaying && speechQueue.length) {
+        speechQueue.shift();
+        speechQueuePendingGesture = false;
+        if (activeSpeechObjectUrl) URL.revokeObjectURL(activeSpeechObjectUrl);
+        activeSpeechObjectUrl = '';
+        const queuePlayer = $('ttsAudioPlayer');
+        queuePlayer.removeAttribute('src');
+        queuePlayer.load();
+        if (speechQueue.length) {
+          updateSpeechQueueUi();
+          await playNextSpeechQueueItem();
+        } else {
+          speechQueuePlaying = false;
+          speechQueueGeneration += 1;
+          $('ttsMiniPlayerStatus').textContent = getUiLanguage() === 'en' ? 'Speech queue finished.' : 'Очередь озвучивания завершена.';
+          updateSpeechQueueUi();
+        }
+        return;
+      }
       if(!voiceConversationActive)return;
       if(!voiceConversationRouteStillSelected()) {
         stopVoiceConversation(false);
@@ -4933,7 +5150,7 @@ permalink: /
         const isCodeAction = ['copy-code','download-code','run-python'].includes(action) && control.classList.contains('code-action') && control.closest('.code-block');
         const isRetryAction = action === 'retry' && control.classList.contains('retry-action');
         const isTraceAction = ['open-trace','copy-trace-link','download-trace','download-trace-json','close-trace'].includes(action);
-        const isMessageAction = ['copy-message','speak-message','view-message'].includes(action);
+        const isMessageAction = ['copy-message','speak-message','view-message','queue-message'].includes(action);
         if (!isCodeAction && !isRetryAction && !isTraceAction && !isMessageAction) return;
       }
       try {
@@ -4997,7 +5214,23 @@ permalink: /
           case 'close-message-viewer': $('messageViewerModal').classList.add('hidden'); break;
           case 'jump-to-latest': $('chatBox').scrollTo({top:$('chatBox').scrollHeight,behavior:document.documentElement.dataset.motion==='off'?'auto':'smooth'}); requestAnimationFrame(updateJumpToLatest); break;
           case 'speak-message': await playAssistantMessage(control.dataset.messageText || ''); break;
-          case 'stop-speech': if(voiceConversationActive)stopVoiceConversation();else stopAssistantSpeech(); break;
+          case 'queue-message': addSpeechQueueItem(control.dataset.messageText || ''); break;
+          case 'speak-selection': {
+            const selectedText = pendingSelectedSpeechText || selectedSpeechText;
+            pendingSelectedSpeechText = '';
+            selectedSpeechText = '';
+            $('ttsSelectionAction').classList.add('hidden');
+            window.getSelection()?.removeAllRanges();
+            await playAssistantMessage(selectedText);
+            break;
+          }
+          case 'toggle-speech-queue': await startSpeechQueue(); break;
+          case 'clear-speech-queue': clearSpeechQueue(); break;
+          case 'stop-speech':
+            if (voiceConversationActive) stopVoiceConversation();
+            else if (speechQueuePlaying) pauseSpeechQueue();
+            else stopAssistantSpeech({ preserveMiniPlayer: speechQueue.length > 0 });
+            break;
           case 'stop-voice-conversation': stopVoiceConversation(); break;
           case 'stop-voice-recording': stopVoiceMessageRecording(false); break;
           case 'cancel-voice-recording': stopVoiceMessageRecording(true); break;

@@ -86,3 +86,16 @@
 5. После изменения env проверить systemd service, журналы на отсутствие текста/аудио/секретов, перезапуск после reboot и rollback. Передавать только несекретные результаты: OS/архитектура, RAM/диск, health HTTP status, capability flags и доступные voice IDs, hash, задержки и пиковую RAM.
 
 **Критерий приземления:** PR merged + exact-head CI зелёный + артефакты моделей с hash/license + gateway на VPS с флагами, включёнными осознанно + реальный микрофон/звук проверены + RAM/latency записаны. GitHub Pages deployment сам по себе не разворачивает приватный gateway и модели.
+
+
+## Реализация Voice Output V1 — 2026-11-06
+
+На feature branch `feat/voice-output-queue-selection-20261106` добавлен пользовательский слой поверх существующего локального Piper TTS:
+
+- **Выделенный фрагмент:** плавающая кнопка появляется только для одного непустого выделения внутри одного `.assistant-content`; выделение через несколько сообщений, в ссылке/control или свыше 5 000 символов не озвучивается.
+- **Очередь ответов:** действие «В очередь» добавляет полный текст ответа в оперативную очередь текущей вкладки. Поддерживаются последовательное воспроизведение, пауза, продолжение, очистка и явное завершение.
+- **Bounded memory:** максимум 20 сообщений, 5 000 символов на элемент и 30 000 символов суммарно. Очередь и аудиофайлы не сериализуются в чат, localStorage или серверную память.
+- **Playback lifecycle:** остановка/пауза отменяет ожидающую генерацию, Blob URL освобождается, stale async voice-discovery result не запускает TTS после паузы. При блокировке script-initiated autoplay очередь сохраняет текущий элемент и предлагает ручное возобновление.
+- **Runtime boundary:** применяется только существующий configured aLandi gateway, локальный /audio/speech и разрешённый сервером voice ID. ASR, model binaries, feature flags и server configuration не меняются.
+
+**Статус:** IMPLEMENTED IN FEATURE BRANCH; exact-head CI и физическая проверка реального Piper/browser/mobile audio ещё не подтверждены. Это не full-duplex voice, не streaming ASR/TTS, не AEC и не barge-in. См. связанные задачи VOICE-OUT-001…005 в append-only реестре.
