@@ -213,7 +213,7 @@ def validate_control_plane_docs(
         if not re.search(rf"(?m)^      {key}:\s*", state):
             errors.append(f"docs/PROJECT_STATE.yaml: orientation_control_plane.{key} is required")
 
-    match = re.search(r"(?m)^last_volley:\s*[\"']([^\"']+)[\"']\s*$", state)
+    match = re.search(r"(?m)^\s*last_volley:\s*[\"']([^\"']+)[\"']\s*$", state)
     state_volley = match.group(1) if match else None
     snapshot_volley = snapshot.get("last_volley")
     if not state_volley:
