@@ -3,6 +3,14 @@
 This module persists orchestration state only. It does not call models, execute tools,
 grant capabilities, or provide a sandbox. Event details must contain bounded metadata,
 never prompts, secrets, transcripts, or raw tool arguments/results.
+
+Operational contract: one host/process family using a local filesystem SQLite database;
+SQLite's default DELETE journal mode is retained. The store applies bounded busy waits,
+foreign-key enforcement and secure_delete, but does not provide multi-host coordination,
+backup/restore orchestration, retention/compaction, or exactly-once external side effects.
+Use SQLite's online backup API (or a quiesced, consistent database copy) for backups;
+never copy only the main database file while a transaction is active. Lock, I/O and disk
+errors are allowed to propagate to the caller. Lease expiry uses the host wall clock.
 """
 from __future__ import annotations
 
@@ -64,61 +72,125 @@ def _canonical_json(value: Any, *, max_bytes: int, field: str) -> str:
     return encoded
 
 
+_IDENTIFIER_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$")
+
+_METADATA_ID_FIELDS = frozenset({
+    "origin", "worker_id", "task_key", "error_code", "model_id", "provider_id",
+    "skill_id", "skill_version", "stage", "reason_code", "validator_id", "queue_id",
+})
+_METADATA_INT_FIELDS = frozenset({
+    "attempt", "priority", "source_count", "artifact_count", "claim_count",
+    "citation_count", "token_count", "duration_ms", "schema_version",
+})
+_METADATA_BOOL_FIELDS = frozenset({"retryable", "passed", "valid"})
+_METADATA_REF_LIST_FIELDS = frozenset({
+    "source_refs", "artifact_refs", "task_refs", "skill_refs", "evidence_refs",
+})
+
+_TASK_PAYLOAD_ID_FIELDS = frozenset({
+    "source_ref", "artifact_ref", "task_ref", "skill_ref", "tool_ref",
+    "output_schema_ref", "goal_ref", "provider_id", "model_id",
+    "worker_profile_id", "capability_profile_id", "operation", "task_type",
+    "stage", "locale", "scope_kind", "scope_id", "idempotency_ref",
+})
+_TASK_PAYLOAD_INT_FIELDS = frozenset({
+    "priority", "token_budget", "tool_budget", "output_budget_bytes",
+    "max_output_tokens", "deadline_unix_ms", "schema_version", "task_index",
+    "retry_budget",
+})
+_TASK_PAYLOAD_BOOL_FIELDS = frozenset({"require_approval", "deterministic"})
+_TASK_PAYLOAD_REF_LIST_FIELDS = frozenset({
+    "source_refs", "artifact_refs", "task_refs", "skill_refs", "tool_refs",
+    "evidence_refs", "provider_refs", "model_refs",
+})
+
+_TASK_RESULT_ID_FIELDS = frozenset({"result_ref", "validator_id", "worker_id", "stage", "error_code"})
+_TASK_RESULT_INT_FIELDS = frozenset({
+    "claim_count", "source_count", "citation_count", "token_count", "duration_ms",
+    "output_bytes", "schema_version",
+})
+_TASK_RESULT_BOOL_FIELDS = frozenset({"valid", "passed", "retryable"})
+_TASK_RESULT_FLOAT_FIELDS = frozenset({"score", "confidence", "precision", "recall"})
+_TASK_RESULT_ENUM_FIELDS = {"status": frozenset({"succeeded", "failed", "partial", "needs_review", "validated", "rejected"})}
+_TASK_RESULT_REF_LIST_FIELDS = frozenset({
+    "evidence_refs", "source_refs", "artifact_refs", "citation_refs", "output_refs",
+})
+
+
+def _bounded_identifier(value: object, *, field: str, max_chars: int = 256) -> str:
+    text = _bounded_text(value, field=field, max_chars=max_chars)
+    if not _IDENTIFIER_RE.fullmatch(text):
+        raise AgentRunError(f"{field} must be an opaque identifier/reference, not free text")
+    return text
+
+
+def _validate_reference_list(value: object, *, field: str) -> list[str]:
+    if not isinstance(value, list) or len(value) > 100:
+        raise AgentRunError(f"{field} must be a bounded reference list")
+    return [_bounded_identifier(item, field=field, max_chars=256) for item in value]
+
+
 def _safe_metadata_json(value: object, *, max_bytes: int, field: str) -> str:
-    """Serialize metadata-only scalars; reject fields that could carry raw content/secrets."""
+    """Persist only explicitly typed metadata keys; arbitrary free-text fields are rejected."""
     if value is None:
         value = {}
     if not isinstance(value, dict):
         raise AgentRunError(f"{field} must be an object")
-    blocked_key = re.compile(
-        r"prompt|transcript|secret|credential|authorization|access[_-]?token|"
-        r"lease[_-]?token|api[_-]?key|arguments?|payload|result|content|"
-        r"document|reasoning|source[_-]?text|raw[_-]?text|body",
-        re.IGNORECASE,
-    )
     for key, item in value.items():
-        if not isinstance(key, str) or not key.strip() or len(key) > 64:
-            raise AgentRunError(f"{field} keys must be bounded non-empty strings")
-        if blocked_key.search(key):
-            raise AgentRunError(f"{field} cannot contain sensitive or raw-content fields")
-        if isinstance(item, str):
-            if len(item) > 256 or any(ord(char) < 32 for char in item):
-                raise AgentRunError(f"{field} string values must be bounded metadata")
-        elif item is not None and type(item) not in {bool, int, float}:
-            raise AgentRunError(f"{field} values must be scalar metadata")
+        if key in _METADATA_ID_FIELDS:
+            _bounded_identifier(item, field=f"{field}.{key}")
+        elif key in _METADATA_INT_FIELDS:
+            if isinstance(item, bool) or not isinstance(item, int) or not 0 <= item <= 10_000_000:
+                raise AgentRunError(f"{field}.{key} must be a bounded non-negative integer")
+        elif key in _METADATA_BOOL_FIELDS:
+            if not isinstance(item, bool):
+                raise AgentRunError(f"{field}.{key} must be boolean")
+        elif key in _METADATA_REF_LIST_FIELDS:
+            _validate_reference_list(item, field=f"{field}.{key}")
+        else:
+            raise AgentRunError(f"{field} contains an unapproved metadata field: {key!r}")
     return _canonical_json(value, max_bytes=max_bytes, field=field)
 
 
 def _safe_task_json(value: object, *, max_bytes: int, field: str) -> str:
-    """Persist bounded task metadata and reference lists, never inline source/tool content."""
+    """Persist only typed task/result metadata and bounded opaque references."""
     if not isinstance(value, dict):
         raise AgentRunError(f"{field} must be an object")
-    blocked_key = re.compile(
-        r"prompt|transcript|secret|credential|authorization|access[_-]?token|"
-        r"lease[_-]?token|api[_-]?key|arguments?|payload|result|content|"
-        r"document|reasoning|source[_-]?text|raw[_-]?text|body|message|output",
-        re.IGNORECASE,
-    )
-    def validate_item(item: object, *, key: str) -> None:
-        if isinstance(item, str):
-            if len(item) > 256 or any(ord(char) < 32 for char in item):
-                raise AgentRunError(f"{field} string values must be bounded references/metadata")
-        elif type(item) in {bool, int, float} or item is None:
-            return
-        elif isinstance(item, list) and re.search(r"(?:_refs|_ids|_keys)$", key, re.IGNORECASE):
-            if len(item) > 100:
-                raise AgentRunError(f"{field} reference lists are too large")
-            for ref in item:
-                if not isinstance(ref, str) or not ref.strip() or len(ref) > 256:
-                    raise AgentRunError(f"{field} reference lists must contain bounded strings")
-        else:
-            raise AgentRunError(f"{field} supports scalar metadata and bounded reference lists only")
+    if field == "task payload":
+        id_fields = _TASK_PAYLOAD_ID_FIELDS
+        int_fields = _TASK_PAYLOAD_INT_FIELDS
+        bool_fields = _TASK_PAYLOAD_BOOL_FIELDS
+        float_fields: frozenset[str] = frozenset()
+        enum_fields: dict[str, frozenset[str]] = {}
+        ref_list_fields = _TASK_PAYLOAD_REF_LIST_FIELDS
+    elif field == "task result":
+        id_fields = _TASK_RESULT_ID_FIELDS
+        int_fields = _TASK_RESULT_INT_FIELDS
+        bool_fields = _TASK_RESULT_BOOL_FIELDS
+        float_fields = _TASK_RESULT_FLOAT_FIELDS
+        enum_fields = _TASK_RESULT_ENUM_FIELDS
+        ref_list_fields = _TASK_RESULT_REF_LIST_FIELDS
+    else:
+        raise AgentRunError(f"{field} has no registered schema")
     for key, item in value.items():
-        if not isinstance(key, str) or not key.strip() or len(key) > 64:
-            raise AgentRunError(f"{field} keys must be bounded non-empty strings")
-        if blocked_key.search(key):
-            raise AgentRunError(f"{field} cannot contain raw-content or sensitive fields")
-        validate_item(item, key=key)
+        if key in id_fields:
+            _bounded_identifier(item, field=f"{field}.{key}")
+        elif key in int_fields:
+            if isinstance(item, bool) or not isinstance(item, int) or not 0 <= item <= 10_000_000:
+                raise AgentRunError(f"{field}.{key} must be a bounded non-negative integer")
+        elif key in bool_fields:
+            if not isinstance(item, bool):
+                raise AgentRunError(f"{field}.{key} must be boolean")
+        elif key in float_fields:
+            if isinstance(item, bool) or not isinstance(item, (int, float)) or not 0 <= float(item) <= 1:
+                raise AgentRunError(f"{field}.{key} must be a number between 0 and 1")
+        elif key in enum_fields:
+            if not isinstance(item, str) or item not in enum_fields[key]:
+                raise AgentRunError(f"{field}.{key} contains an unsupported value")
+        elif key in ref_list_fields:
+            _validate_reference_list(item, field=f"{field}.{key}")
+        else:
+            raise AgentRunError(f"{field} contains an unapproved field: {key!r}")
     return _canonical_json(value, max_bytes=max_bytes, field=field)
 
 
@@ -145,14 +217,24 @@ class TaskClaim:
 class AgentRunStore:
     """SQLite durable lifecycle journal with atomic task claims and lease fencing."""
 
-    def __init__(self, path: str | Path, *, busy_timeout_ms: int = 5000):
+    def __init__(self, path: str | Path, *, busy_timeout_ms: int = 5000,
+                 max_tasks_per_run: int = 200, max_events_per_run: int = 5000):
         self.path = str(path)
         if self.path == ":memory:":
             raise AgentRunError("AgentRunStore requires file-backed SQLite for durable state")
         if isinstance(busy_timeout_ms, bool) or not isinstance(busy_timeout_ms, int) or not 100 <= busy_timeout_ms <= 30_000:
             raise AgentRunError("busy_timeout_ms must be between 100 and 30000")
 
+        if (isinstance(max_tasks_per_run, bool) or not isinstance(max_tasks_per_run, int)
+                or not 1 <= max_tasks_per_run <= 4_000):
+            raise AgentRunError("max_tasks_per_run must be between 1 and 4000")
+        if (isinstance(max_events_per_run, bool) or not isinstance(max_events_per_run, int)
+                or not 21 * max_tasks_per_run + 3 <= max_events_per_run <= 100_000):
+            raise AgentRunError("max_events_per_run must be at least 21 * max_tasks_per_run + 3 and at most 100000")
+
         self.busy_timeout_ms = busy_timeout_ms
+        self.max_tasks_per_run = max_tasks_per_run
+        self.max_events_per_run = max_events_per_run
 
     def _connect(self) -> sqlite3.Connection:
         db = sqlite3.connect(self.path, timeout=self.busy_timeout_ms / 1000)
@@ -166,6 +248,15 @@ class AgentRunStore:
         if self.path != ":memory:":
             Path(self.path).parent.mkdir(parents=True, exist_ok=True)
         with closing(self._connect()) as db:
+            existing = db.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name='agent_runs'"
+            ).fetchone()
+            if existing is not None:
+                existing_columns = {row["name"] for row in db.execute("PRAGMA table_info(agent_runs)").fetchall()}
+                if "goal" in existing_columns or "goal_ref" not in existing_columns:
+                    raise AgentRunError(
+                        "legacy AgentRun schema stores raw goal text; create a new isolated store after preserving any required records"
+                    )
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS agent_runs (
                     run_id TEXT PRIMARY KEY,
@@ -173,7 +264,7 @@ class AgentRunStore:
                     request_sha256 TEXT NOT NULL,
                     scope_kind TEXT NOT NULL CHECK(scope_kind IN ('conversation','project','global')),
                     scope_id TEXT NOT NULL,
-                    goal TEXT NOT NULL,
+                    goal_ref TEXT NOT NULL,
                     metadata_json TEXT NOT NULL,
                     state TEXT NOT NULL CHECK(state IN
                       ('queued','running','waiting_approval','verifying','succeeded','failed',
@@ -219,6 +310,11 @@ class AgentRunStore:
                 CREATE INDEX IF NOT EXISTS idx_agent_events_run
                     ON agent_run_events(run_id, event_id);
             """)
+            columns = {row["name"] for row in db.execute("PRAGMA table_info(agent_runs)").fetchall()}
+            if "goal_ref" not in columns or "goal" in columns:
+                raise AgentRunError(
+                    "legacy AgentRun schema stores raw goal text; create a new isolated store after preserving any required records"
+                )
             db.commit()
         if self.path != ":memory:":
             os.chmod(self.path, 0o600)
@@ -227,34 +323,39 @@ class AgentRunStore:
     def _scope(scope_kind: object, scope_id: object) -> tuple[str, str]:
         if not isinstance(scope_kind, str) or scope_kind not in {"conversation", "project", "global"}:
             raise AgentRunError("invalid scope_kind")
-        if not isinstance(scope_id, str) or not scope_id.strip() or len(scope_id) > 160:
-            raise AgentRunError("scope_id must be bounded non-empty text")
+        scope_id = _bounded_identifier(scope_id, field="scope_id", max_chars=160)
         if (scope_kind == "global") != (scope_id == "global"):
             raise AgentRunError("global scope must use scope_id='global'")
         return str(scope_kind), scope_id
 
-    @staticmethod
-    def _event(db: sqlite3.Connection, *, run_id: str, task_id: str | None,
+    def _event(self, db: sqlite3.Connection, *, run_id: str, task_id: str | None,
                event_type: str, from_state: str | None, to_state: str | None,
-               metadata: dict[str, Any] | None, now: float) -> None:
-        if not isinstance(event_type, str) or not event_type or len(event_type) > 64:
-            raise AgentRunError("event_type must be bounded non-empty text")
+               metadata: dict[str, Any] | None, now: float,
+               terminal_fence: bool = False) -> None:
+        event_type = _bounded_identifier(event_type, field="event_type", max_chars=64)
         meta = _safe_metadata_json(metadata, max_bytes=4096, field="event metadata")
+        count = db.execute(
+            "SELECT COUNT(*) FROM agent_run_events WHERE run_id=?", (run_id,)
+        ).fetchone()[0]
+        normal_event_limit = self.max_events_per_run - self.max_tasks_per_run - 1
+        event_limit = self.max_events_per_run if terminal_fence else normal_event_limit
+        if count >= event_limit:
+            raise AgentRunError("AgentRun event limit reached; terminal-fence capacity is reserved")
         db.execute("""INSERT INTO agent_run_events
             (run_id, task_id, event_type, from_state, to_state, metadata_json, occurred_at)
             VALUES (?, ?, ?, ?, ?, ?, ?)""",
             (run_id, task_id, event_type, from_state, to_state, meta, now))
 
     def create_run(self, *, idempotency_key: str, scope_kind: str, scope_id: str,
-                   goal: str, metadata: dict[str, Any] | None = None,
+                   goal_ref: str, metadata: dict[str, Any] | None = None,
                    now: float | None = None) -> dict[str, Any]:
-        idem = _bounded_text(idempotency_key, field="idempotency_key", max_chars=200)
+        idem = _bounded_identifier(idempotency_key, field="idempotency_key", max_chars=200)
         kind, sid = self._scope(scope_kind, scope_id)
-        checked_goal = _bounded_text(goal, field="goal", max_chars=8000)
+        checked_goal_ref = _bounded_identifier(goal_ref, field="goal_ref", max_chars=256)
         meta = {} if metadata is None else metadata
         meta_json = _safe_metadata_json(meta, max_bytes=16_384, field="run metadata")
         request_json = _canonical_json(
-            {"scope_kind": kind, "scope_id": sid, "goal": checked_goal, "metadata": meta},
+            {"scope_kind": kind, "scope_id": sid, "goal_ref": checked_goal_ref, "metadata": meta},
             max_bytes=24_576, field="run request")
         request_hash = hashlib.sha256(request_json.encode("utf-8")).hexdigest()
         run_id = uuid.uuid4().hex
@@ -269,10 +370,10 @@ class AgentRunStore:
                 db.commit()
                 return self._run_dict(prior)
             db.execute("""INSERT INTO agent_runs
-                (run_id,idempotency_key,request_sha256,scope_kind,scope_id,goal,metadata_json,
+                (run_id,idempotency_key,request_sha256,scope_kind,scope_id,goal_ref,metadata_json,
                  state,revision,created_at,updated_at)
                 VALUES (?,?,?,?,?,?,?,'queued',0,?,?)""",
-                (run_id, idem, request_hash, kind, sid, checked_goal, meta_json, timestamp, timestamp))
+                (run_id, idem, request_hash, kind, sid, checked_goal_ref, meta_json, timestamp, timestamp))
             self._event(db, run_id=run_id, task_id=None, event_type="run_created",
                         from_state=None, to_state="queued", metadata={}, now=timestamp)
             db.commit()
@@ -313,6 +414,13 @@ class AgentRunStore:
                 db.rollback()
                 raise InvalidTransition("run state changed; expected state does not match")
             revision = int(row["revision"])
+            active_tasks = db.execute(
+                "SELECT task_id,state FROM agent_tasks WHERE run_id=? AND state IN ('queued','leased')",
+                (run_id,),
+            ).fetchall()
+            if new_state not in {"running"} and new_state not in TERMINAL_RUN_STATES and active_tasks:
+                db.rollback()
+                raise InvalidTransition("pause/verification transitions require an empty active task queue")
             updated = db.execute("""UPDATE agent_runs
                 SET state=?,revision=revision+1,updated_at=?
                 WHERE run_id=? AND state=? AND revision=?""",
@@ -320,8 +428,11 @@ class AgentRunStore:
             if updated.rowcount != 1:
                 db.rollback()
                 raise InvalidTransition("run state changed concurrently")
+            if new_state in TERMINAL_RUN_STATES and new_state != "succeeded":
+                self._fence_open_tasks(db, run_id=run_id, timestamp=timestamp, error_code="run_terminal")
             self._event(db, run_id=run_id, task_id=None, event_type=event_type,
-                        from_state=expected_state, to_state=new_state, metadata=metadata, now=timestamp)
+                        from_state=expected_state, to_state=new_state, metadata=metadata, now=timestamp,
+                        terminal_fence=new_state in TERMINAL_RUN_STATES)
             db.commit()
         return self.get_run(run_id)
 
@@ -329,8 +440,8 @@ class AgentRunStore:
                      payload: dict[str, Any], max_attempts: int = 3,
                      now: float | None = None) -> dict[str, Any]:
         _bounded_text(run_id, field="run_id", max_chars=128)
-        key = _bounded_text(task_key, field="task_key", max_chars=128)
-        idem = _bounded_text(idempotency_key, field="task idempotency_key", max_chars=200)
+        key = _bounded_identifier(task_key, field="task_key", max_chars=128)
+        idem = _bounded_identifier(idempotency_key, field="task idempotency_key", max_chars=200)
         if not isinstance(payload, dict):
             raise AgentRunError("task payload must be an object")
         payload_json = _safe_task_json(payload, max_bytes=32_000, field="task payload")
@@ -356,6 +467,12 @@ class AgentRunStore:
                     raise IdempotencyConflict("task key/idempotency key belongs to a different task")
                 db.commit()
                 return self._task_dict(prior)
+            task_count = db.execute(
+                "SELECT COUNT(*) FROM agent_tasks WHERE run_id=?", (run_id,)
+            ).fetchone()[0]
+            if task_count >= self.max_tasks_per_run:
+                db.rollback()
+                raise AgentRunError("AgentRun task limit reached")
             db.execute("""INSERT INTO agent_tasks
                 (task_id,run_id,task_key,idempotency_key,payload_sha256,payload_json,state,
                  attempt,max_attempts,created_at,updated_at)
@@ -386,7 +503,7 @@ class AgentRunStore:
     def claim_task(self, *, run_id: str, worker_id: str, lease_seconds: int = 30,
                    now: float | None = None) -> TaskClaim | None:
         _bounded_text(run_id, field="run_id", max_chars=128)
-        worker = _bounded_text(worker_id, field="worker_id", max_chars=128)
+        worker = _bounded_identifier(worker_id, field="worker_id", max_chars=128)
         if isinstance(lease_seconds, bool) or not isinstance(lease_seconds, int) or not 1 <= lease_seconds <= 3600:
             raise AgentRunError("lease_seconds must be between 1 and 3600")
         timestamp = time.time() if now is None else float(now)
@@ -431,11 +548,14 @@ class AgentRunStore:
 
     def _owned_lease(self, db: sqlite3.Connection, claim: TaskClaim, timestamp: float) -> sqlite3.Row:
         token_hash = hashlib.sha256(claim.lease_token.encode("utf-8")).hexdigest()
-        row = db.execute("SELECT * FROM agent_tasks WHERE task_id=?", (claim.task_id,)).fetchone()
+        row = db.execute("""SELECT t.*, r.state AS run_state
+            FROM agent_tasks AS t JOIN agent_runs AS r ON r.run_id=t.run_id
+            WHERE t.task_id=?""", (claim.task_id,)).fetchone()
         if (row is None or row["run_id"] != claim.run_id or row["state"] != "leased"
                 or row["worker_id"] != claim.worker_id or row["lease_token_sha256"] != token_hash
-                or row["lease_expires_at"] is None or float(row["lease_expires_at"]) <= timestamp):
-            raise LeaseError("task lease is expired or no longer owned by this worker")
+                or row["lease_expires_at"] is None or float(row["lease_expires_at"]) <= timestamp
+                or row["run_state"] != "running"):
+            raise LeaseError("task lease is expired, no longer owned, or its parent run is not running")
         return row
 
     def complete_task(self, *, claim: TaskClaim, result: dict[str, Any],
@@ -458,7 +578,7 @@ class AgentRunStore:
 
     def fail_task(self, *, claim: TaskClaim, error_code: str, retryable: bool = False,
                   now: float | None = None) -> dict[str, Any]:
-        code = _bounded_text(error_code, field="error_code", max_chars=96)
+        code = _bounded_identifier(error_code, field="error_code", max_chars=96)
         if not isinstance(retryable, bool):
             raise AgentRunError("retryable must be boolean")
         timestamp = time.time() if now is None else float(now)
@@ -475,6 +595,19 @@ class AgentRunStore:
                         now=timestamp)
             db.commit()
         return self.get_task(claim.task_id)
+
+    def _fence_open_tasks(self, db: sqlite3.Connection, *, run_id: str,
+                          timestamp: float, error_code: str) -> None:
+        tasks = db.execute("""SELECT task_id,state FROM agent_tasks WHERE run_id=?
+            AND state IN ('queued','leased')""", (run_id,)).fetchall()
+        for task in tasks:
+            db.execute("""UPDATE agent_tasks SET state='cancelled',worker_id=NULL,
+                lease_token_sha256=NULL,lease_expires_at=NULL,error_code=?,updated_at=?
+                WHERE task_id=? AND state IN ('queued','leased')""",
+                (error_code, timestamp, task["task_id"]))
+            self._event(db, run_id=run_id, task_id=task["task_id"], event_type="task_cancelled",
+                        from_state=task["state"], to_state="cancelled",
+                        metadata={"error_code": error_code}, now=timestamp, terminal_fence=True)
 
     def cancel_run(self, *, run_id: str, now: float | None = None) -> dict[str, Any]:
         _bounded_text(run_id, field="run_id", max_chars=128)
@@ -495,16 +628,10 @@ class AgentRunStore:
             db.execute("""UPDATE agent_runs SET state='cancelled',revision=revision+1,updated_at=?
                 WHERE run_id=? AND state=? AND revision=?""",
                 (timestamp, run_id, current, run["revision"]))
-            tasks = db.execute("""SELECT task_id,state FROM agent_tasks WHERE run_id=?
-                AND state IN ('queued','leased')""", (run_id,)).fetchall()
-            for task in tasks:
-                db.execute("""UPDATE agent_tasks SET state='cancelled',worker_id=NULL,
-                    lease_token_sha256=NULL,lease_expires_at=NULL,error_code='run_cancelled',updated_at=?
-                    WHERE task_id=?""", (timestamp, task["task_id"]))
-                self._event(db, run_id=run_id, task_id=task["task_id"], event_type="task_cancelled",
-                            from_state=task["state"], to_state="cancelled", metadata={}, now=timestamp)
+            self._fence_open_tasks(db, run_id=run_id, timestamp=timestamp, error_code="run_cancelled")
             self._event(db, run_id=run_id, task_id=None, event_type="run_cancelled",
-                        from_state=current, to_state="cancelled", metadata={}, now=timestamp)
+                        from_state=current, to_state="cancelled", metadata={}, now=timestamp,
+                        terminal_fence=True)
             db.commit()
         return self.get_run(run_id)
 
