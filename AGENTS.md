@@ -22,6 +22,7 @@ Before any aLandi engineering task:
 4. Route by the latest explicit owner request; otherwise validated current owner task in `docs/PROJECT_STATE.yaml`; otherwise the next eligible item in `docs/MASTER_TASK_REGISTRY_RU.md` and its append-only addendum.
 5. Match a PR only by live scope. **Do not default to any PR.** Draft/HOLD/parking PRs are not active unless explicitly selected. PR #131 is not a permanent default.
 6. Read one task register and only relevant source/tests/contracts. Use `project-reference/FILE_ORIENTER_RU.md` for path discovery; do not bulk-read the repository.
+7. Use root `PROJECT_ORCHESTRATOR_RU.md` to locate canonical principles, source catalogs, plans, evaluations and artifact records; then read the specialist source itself.
 
 Document responsibilities are intentionally non-overlapping:
 
@@ -29,6 +30,7 @@ Document responsibilities are intentionally non-overlapping:
 |---|---|
 | `OLEDUE.md` | owner-triggered handoff, authority, routing and exact evidence protocol |
 | `ORIENTER.md` | short entry point, current checkpoint and route map |
+| `PROJECT_ORCHESTRATOR_RU.md` | navigational catalog of principles, external sources, plans, evaluations and artifacts; links to canonical destinations |
 | `docs/PROJECT_STATE.yaml` | structured system flags, maturity, blockers and next owner task |
 | `docs/project-state-snapshot.json` | machine-readable main/queue checkpoint for Freshness CI |
 | `docs/MASTER_TASK_REGISTRY_RU.md` + owner addendum | one lossless task inventory; no parallel backlog |
