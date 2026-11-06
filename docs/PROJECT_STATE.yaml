@@ -24,7 +24,7 @@ project_state:
     merged_changes: "PR #153 OLEDUE/orientation repair (main f323b6f339d454dad6e820a4074fa230acc7b6df); PR #150 browser storage recovery and atomic rollback (a8afee45bb22654b220bffda857ab10c24641ef1); PR #149 state/toolchain/provenance; PR #148 untrusted assistant rendering and restricted Pyodide globals; PR #147 cancellation-safe Gateway inference slot; earlier #146 task registry, #145 dependency/document parsing, #144 source triage, #143 Vosk evaluation archive, #142 N2O docs, #140 OLEDUE handoff and #139 V1 landing."
     exact_head_checks: "PR #153 exact HEAD 2fe4872233764c4094cf092e9a7ee0a11948825b passed Quality #42148438184, Freshness #42148438229 and Provenance #42148438250; post-merge main SHA f323b6f339d454dad6e820a4074fa230acc7b6df passed Quality #42150785825, Pages #42150784695, Freshness #42150785781 and Provenance #42150785779. PR #154 is the active bounded V2 root-shell promotion; exact-head gates are in progress. PR #131 remains Draft/diverged; PR #152 remains Draft/dirty and needs independent repair."
     runtime_boundary: "GitHub Pages deployment is verified on main SHA f323b6f339d454dad6e820a4074fa230acc7b6df; this does not verify Gateway/VPS/Tunnel/Ollama, OAuth/provider credentials, native iPhone/VoiceOver, physical audio, target-hardware performance or SQLite FTS5 host capability."
-    next: "Complete exact-head PR #154 Quality/Chromium, Jekyll, Integrity, Security, Context, static analysis, Graphify and Dead Code gates. If green, merge only PR #154 and verify the new main SHA, automatic Pages deployment, live app/assets and post-merge Quality/Freshness/Provenance. Keep #131 as selective V2 workbench, inspect #152 independently, continue subsystem audit and capability delivery from the canonical task register. Keep #125 parked and issue #111 open."
+    next: "Complete exact-head PR #154 Quality/Chrome, Jekyll, Integrity, Security, Context, static analysis, Graphify and Dead Code gates. If green, merge only PR #154 and verify the new main SHA, automatic Pages deployment, live app/assets and post-merge Quality/Freshness/Provenance. Keep #131 as selective V2 workbench, inspect #152 independently, continue subsystem audit and capability delivery from the canonical task register. Keep #125 parked and issue #111 open."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -249,7 +249,7 @@ graphify_pilot_workflow:
 
 
 local_helper_memory_suggestions:
-  status: "merged in PR #69; exact-head Gateway, Quality/Chromium, published-site smoke and provenance passed; helper remains disabled by default"
+  status: "merged in PR #69; exact-head Gateway, Quality/Chrome, published-site smoke and provenance passed; helper remains disabled by default"
   pr: 69
   branch: "feat/local-helper-memory-suggestions-current-main-20261027"
   baseline_main: "9aa36465158c27c49ff647a6ce349b46a6e1151e"
