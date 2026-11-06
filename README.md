@@ -17,6 +17,11 @@
 
 Живой чек-лист требований, инженерные критерии, источники и журнал выполнения: [docs/V1_UI_FINALIZATION_RU.md](docs/V1_UI_FINALIZATION_RU.md). Он относится к статическому клиенту GitHub Pages и не подменяет roadmap gateway/runtime.
 
+## Текущий UI и promotion gates
+
+- [Стратегия Landing V1/V2](docs/LANDING_RELEASE_STRATEGY_RU.md) — правила изоляции PR #131 и owner-authorized selective promotion.
+- [Implementation ledger aLandi V2](docs/LANDING_UI_V2_IMPLEMENTATION_RU.md) — фактическая реализация, границы, тесты и состояние продвижения модульного root shell через PR #154.
+
 ## Мастер-контекст проекта
 
 **Единый контекст для ИИ-агентов и долгосрочной разработки:** [docs/ALANDI_MASTER_CONTEXT_RU.md](docs/ALANDI_MASTER_CONTEXT_RU.md). В нём собраны границы текущей реализации, целевая архитектура, техники и upstream-источники, память, роли, безопасность, roadmap и протокол исследования для @Поиск. Одобренные идеи не следует автоматически считать уже реализованными — проверяйте код, тесты и фактическое развёртывание.
