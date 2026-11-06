@@ -31,6 +31,7 @@
 |---|---|
 | `OLEDUE.md` | owner-triggered handoff, authority hierarchy, live-state sync, task routing and exact-evidence protocol |
 | `ORIENTER.md` | this short entry point, current checkpoint and route map |
+| `PROJECT_ORCHESTRATOR_RU.md` | central navigation catalog for principles, sources, plans/ideas, evaluations and saved artifacts; not a parallel source of truth |
 | `docs/PROJECT_STATE.yaml` | structured system flags, maturity, blockers and next task |
 | `docs/project-state-snapshot.json` | machine-readable main/queue checkpoint for Freshness CI |
 | `AGENTS.md` | executor invariants, project architecture/security and work protocol |
@@ -47,7 +48,7 @@
 1. For an `oledue` trigger, read root `OLEDUE.md` first. Otherwise start here.
 2. Build one batched live GitHub Session Sync Capsule: main SHA/subject/date, open PR metadata, open issue IDs, and exact-head checks for the task-matched PR.
 3. Route from the latest explicit owner request; otherwise validated current owner task in `docs/PROJECT_STATE.yaml`; otherwise the next eligible task in the one Master Task Registry. **Never default to a PR.**
-4. Read one task register and only relevant source/tests. Use `project-reference/FILE_ORIENTER_RU.md` for path discovery; state/history/evals/decisions only when relevant.
+4. For principles, external sources, plans/ideas and artifact locations, consult `PROJECT_ORCHESTRATOR_RU.md`; read only the canonical destinations relevant to the selected task. Use `project-reference/FILE_ORIENTER_RU.md` for code/path discovery.
 5. Before the first material edit, record baseline/branch/base/head/checks/risks in `docs/VOLLEY_LOG.md`. Record each material stage, then update canonical state only when facts change.
 6. Keep main/base/head/code/tested/merge/deployment SHAs separate. A check is green only for the exact final HEAD.
 7. Report WHERE / WHAT / CHECKS / OPEN / NEXT. No merge/deploy/protected action without explicit owner approval.
