@@ -28,6 +28,7 @@
       kilo: { label: 'Kilo AI Gateway · Auto Free', docsUrl: 'https://kilo.ai/docs/gateway', baseUrl: 'https://api.kilo.ai/api/gateway', models: [['kilo-auto/free','Kilo Auto Free · dynamic routing']] },
       custom: { label: 'Свой API', baseUrl: '', docsUrl: '', models: [['custom','Ввести имя модели вручную']] }
     };
+    const MAX_IMPORTED_MESSAGES = 50000;
     const MAX_TOOL_ROUNDS = 4;
     const MAX_TOOL_CALLS_PER_RESPONSE = 8;
     const MAX_TOOL_CALLS_PER_DEEP_ROUND = 3;
