@@ -10,7 +10,7 @@ Convert a portfolio of 200+ owner-requested sources into a traceable capability 
 
 ## Single source register
 
-Baseline: INTEL.md on main blob SHA 6c1d96604ccb068eb086f83831f08e6c8c0b024c reports 257 distinct URLs in its consolidated external source inventory snapshot dated 2026-11-04, deduplicated by exact URL; INTEL.md contains 275 distinct URLs overall. These are URL/resource counts, not a confirmed count of unique upstream projects or owner-mentioned candidates. Source census must reconcile coverage and resolve project identity.
+Baseline: INTEL.md on main blob SHA 6c1d96604ccb068eb086f83831f08e6c8c0b024c originally contained 257 consolidated-table URLs plus 18 narrative-only URLs (275 distinct source references overall). The 2026-11-06 review adds stable IDs EXT-001–EXT-275 and records 228 preliminary repo/model/site roots (143 GitHub repos, 16 Hugging Face models, 69 other host roots). These are not a confirmed count of unique projects; host roots can group unrelated pages.
 
 Each source record must retain the owner's original mention and include:
 - stable source ID; exact canonical URL and repository/project identity; aliases and ambiguity flag;
@@ -37,6 +37,8 @@ Do not infer that two similar names are the same project. Resolve canonical iden
 ### Pass 1 — fast screening (all resolved sources)
 
 Inspect only sufficient high-signal primary material: README/official docs, license files, release/version and maintenance, architecture, dependency/build footprint, interfaces, model/artifact requirements, test/eval evidence, data/network behavior. Record concise facts and one disposition.
+
+Score 0–5 with evidence for each implementable candidate identity (not for every URL alias). Normative standards, protocol specifications, research papers, benchmark suites, catalogues and design guides that are retained only as references receive REFERENCE-ONLY with score N/A; score the implementation candidate separately. Multiple URLs resolving to one upstream share one candidate score while preserving each URL's provenance and alias mapping.
 
 Score 0–5 with evidence for each:
 
@@ -155,3 +157,16 @@ Acquire broadly only after decision and gates:
 3. Audit local/offline network traffic in existing aLandi code and CI, beginning with Chromium/Playwright bootstrap and CDN/telemetry review.
 4. Select the first 5–10 deep dives based on source score and documented gaps.
 5. Start with a capability that has a high gap score, a small adapter seam, offline-ready artifacts and an integrated site surface; complete it to VERIFIED before expanding.
+
+
+## 2026-11-06 — portfolio review result
+
+**SOURCE-TRIAGED (Pass 0 + Pass 1):** 275 source URL references reconciled from INTEL.md (257 original inventory entries plus 18 previously prose-only references). Stable IDs EXT-001–EXT-275 are assigned in the register. Preliminary grouping gives 228 repository/model/site roots: 143 GitHub repo roots, 16 Hugging Face model roots and 69 other host roots. These roots are not a unique-project count. 274 textual/source pages were inspected; one binary Vosk archive was checked against the official catalogue but not downloaded or hashed.
+
+**Identity corrections recorded:** Piper voice-list path; stale sherpa T-one documentation path; Magentic-One shortlink; moved OpenTelemetry GenAI semantic-conventions repo; Invariant Labs MCP-Scan current Snyk Agent Scan upstream. License verification includes T-one code + converted model Apache-2.0, GigaAM model MIT, OpenViking AGPL-3.0, Claudex Loop LICENSE MIT with third-party notices, and separate model/voice terms for ASR/TTS.
+
+**Pass 2:** prioritized candidate dossiers reviewed for document conversion (MarkItDown, Docling), voice (Qwen3-ASR, GigaAM, T-one, Typhoon, Vosk, VibeASR), durable execution (PydanticAI, LangGraph, Temporal), sandboxing (gVisor, OpenShell, Firecracker), protocols/UI (MCP, AG-UI, Agent Skills, A2A/ACP), and developer workflow (Graphify, CLI-Anything). Weighted screening vectors and dispositions are recorded in INTEL.md. This is not runtime adoption or target-host verification.
+
+**Highest-value next pilots:** (1) isolated local document conversion: MarkItDown first, Docling as the richer comparison; (2) CPU ASR benchmark against the existing whisper.cpp baseline using Qwen3-ASR, GigaAM and T-one, with a separate Thai lane; (3) host compatibility check before selecting a sandbox. Keep AgentRun's SQLite store until crash/recovery tests and measured demand justify an execution-engine change.
+
+**Still OPEN:** target-host CPU/RAM/latency benchmarks; exact pinned commits for each candidate at acquisition time; model/voice artifact SHA-256 and redistribution checks; Vosk archive hash; sandbox host compatibility; per-feature UI/network controls; complete source-to-task cross-linking. No source review alone authorizes a download, install, merge or deployment.
