@@ -3770,6 +3770,18 @@ test('mobile messages expose full text and retain a jump-to-latest control', asy
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('message-viewer-model');
+  // Provider key entry schedules an asynchronous connection probe; stub it before filling the key.
+  await page.route('https://api.example.test/v1/models', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'message-viewer-model' }] })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', route => {
+    const payload = route.request().postDataJSON();
+    const isProbe = payload.messages?.at(-1)?.content === 'Reply with exactly OK. No other words.';
+    return route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ model: 'message-viewer-model', choices: [{ message: { role: 'assistant', content: isProbe ? 'OK' : 'Unexpected early request.' } }] })
+    });
+  });
   await page.locator('#apiKey').fill('e2e-message-viewer-key');
   await page.locator('[data-action="save-settings"]').click();
   await expect(page.locator('#toast')).toContainText('Провайдер и модель прошли проверку', { timeout: 15000 });
