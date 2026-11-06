@@ -168,7 +168,7 @@ last_volley: "V-TEST-001"
 
     def test_missing_role_and_stale_volley_fail_closed(self):
         oledue, agents, orienter, state, snapshot_value, volley = self.documents()
-        state = state.replace('      owner_handoff: "OLEDUE.md"\\n', "")
+        state = state.replace('      owner_handoff: "OLEDUE.md"\n', "")
         snapshot_value["last_volley"] = "V-STALE"
         errors = validate_control_plane_docs(oledue, agents, orienter, state, snapshot_value, volley)
         self.assertTrue(any("orientation_control_plane.owner_handoff" in error for error in errors))
