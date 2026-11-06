@@ -60,7 +60,7 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   await page.locator('#thirdPartyProviderSettings > summary').click();
-  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#providerPreset').selectOption('alandi');
   await expect(page.locator('#modelName')).toHaveValue('qwen3.5:4b');
   await page.locator('#baseUrl').fill('https://alandi.example.test/v1');
   await page.locator('#modelName').fill('qwen3.5:4b');
