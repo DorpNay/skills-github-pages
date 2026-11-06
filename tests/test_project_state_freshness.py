@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from urllib.request import Request
 
 from scripts.check_project_state_freshness import (
@@ -12,6 +14,7 @@ from scripts.check_project_state_freshness import (
     github_get_json,
     validate_handoff_policy,
     validate_control_plane_docs,
+    validate_orchestrator_links,
     validate_snapshot,
 )
 
@@ -136,6 +139,24 @@ class HandoffPolicyTests(unittest.TestCase):
 
 
 
+
+
+
+
+
+class OrchestratorLinkTests(unittest.TestCase):
+    def test_all_local_links_must_resolve_inside_repository(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "docs").mkdir()
+            (root / "docs" / "roadmap.md").write_text("# roadmap", encoding="utf-8")
+            valid = "[roadmap](docs/roadmap.md) [external](https://example.com)"
+            self.assertEqual(validate_orchestrator_links(root, valid), [])
+
+            invalid = "[missing](docs/missing.md) [escape](../outside.md)"
+            errors = validate_orchestrator_links(root, invalid)
+            self.assertTrue(any("does not exist" in error for error in errors))
+            self.assertTrue(any("escapes repository root" in error for error in errors))
 
 
 class ControlPlaneContractTests(unittest.TestCase):
