@@ -32,7 +32,7 @@
 - Quality #1218 / run `41360990867` was queued on the exact code commit. No test execution, pass, or speedup is claimed until that run completes and its wall-clock is compared with baseline #1197 (1863s).
 - The public Pages URL remains the main-site publication; no separate PR preview host/workflow exists. Production Pages is not changed by this CI-only patch.
 
-## Audit snapshot — current main / PR #131 baseline
+## Historical audit snapshot — PR #131 source baseline (2026-11-02)
 
 | Requirement | Observed implementation | Gap / implementation direction | Status |
 |---|---|---|---|
