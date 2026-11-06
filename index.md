@@ -446,6 +446,7 @@ permalink: /
                 <button type="button" data-action="import-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="importProject">Импорт проекта</button>
               </div>
               <input type="file" id="importProjectFile" class="hidden" accept="application/json,.json">
+              <button type="button" id="projectRecoveryBackupButton" data-action="download-project-recovery-backup" class="hidden w-full rounded-lg border border-amber-800 bg-amber-950/40 py-2 text-xs text-amber-100">Скачать резервную копию проектов</button>
               <button type="button" data-action="detach-current-chat" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="detachChat">Извлечь чат из проекта</button>
               <button type="button" data-action="delete-project" class="w-full bg-red-950/50 hover:bg-red-900/60 border border-red-900/50 rounded-lg py-2 text-xs text-red-200" data-i18n="deleteProject">Удалить проект и его чаты</button>
     
@@ -730,6 +731,7 @@ permalink: /
   (() => {
     'use strict';
 
+    const MAX_IMPORTED_MESSAGES = 50000;
     const STORAGE = {
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
@@ -766,6 +768,9 @@ permalink: /
     let chatRecoveryWarning = false;
     let chatRecoveryBackupKey = '';
     let chatStorageCorruptNotBackedUp = false;
+    let projectRecoveryBackupKey = '';
+    let projectStorageCorruptNotBackedUp = false;
+    let projectRecoveryWarning = false;
     let db = null;
     let chats = loadChats();
     let projects = loadProjects();
@@ -934,11 +939,21 @@ permalink: /
         return false;
       }
     }
+    function restoreStorageValue(key, rawValue) {
+      try {
+        if (rawValue === null) localStorage.removeItem(key);
+        else localStorage.setItem(key, rawValue);
+        return true;
+      } catch (error) {
+        console.error('Не удалось откатить localStorage после частичной записи:', key, error);
+        return false;
+      }
+    }
     function createChat(title = 'Новый чат', messages = [], projectId = null) {
       return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false, serverProjectMemoryEnabled: false, privateMemoryUsed: false, processingMode: 'fast', searchMode: 'normal', multiAgentEnabled: false, skillPreset: 'auto', customSkillName:'', customSkillInstructions:'', customSkillOutput:'', skillGoal:'planning', skillOutputMode:'summary', agentTeamSize:4, agentTeamScenario:'general', agentTeamCustomScenario:'', agentRolePreset:'balanced', agentCustomRoles:'' };
     }
     function preserveUnreadableChats(rawText) {
-      if (!rawText) return;
+      if (rawText === null) return;
       const baseKey = 'ai_chats_recovery_backup';
       let backupKey = baseKey;
       try {
@@ -948,7 +963,7 @@ permalink: /
           chatRecoveryWarning = true;
           return;
         }
-        if (existing && existing !== rawText) backupKey = baseKey + '_' + Date.now();
+        if (existing !== null && existing !== rawText) backupKey = baseKey + '_' + Date.now();
         localStorage.setItem(backupKey, rawText);
         chatRecoveryBackupKey = backupKey;
         chatRecoveryWarning = true;
@@ -963,7 +978,7 @@ permalink: /
       let rawText = null;
       try {
         rawText = localStorage.getItem(STORAGE.chats);
-        if (!rawText) return [createChat()];
+        if (rawText === null) return [createChat()];
         const raw = JSON.parse(rawText);
         if (!Array.isArray(raw)) {
           preserveUnreadableChats(rawText);
@@ -997,7 +1012,17 @@ permalink: /
               ...(m.error ? { error: true } : {})
             }))
           }));
-        if (!valid.length && raw.length) preserveUnreadableChats(rawText);
+        const hasInvalidMessages = raw.some(item => !item || typeof item !== 'object' || typeof item.id !== 'string' || !Array.isArray(item.messages) || item.messages.some(message => !message || typeof message !== 'object' || !['user', 'assistant', 'tool'].includes(message.role) || (message.content !== undefined && typeof message.content !== 'string')));
+        const hasTruncatedChatFields = raw.some(item => item && typeof item === 'object' && (
+          (typeof item.id === 'string' && item.id.length > 128) || (typeof item.title === 'string' && item.title.length > 160) ||
+          (typeof item.customSkillName === 'string' && item.customSkillName.length > 80) ||
+          (typeof item.customSkillInstructions === 'string' && item.customSkillInstructions.length > 3000) ||
+          (typeof item.customSkillOutput === 'string' && item.customSkillOutput.length > 500) ||
+          (typeof item.agentTeamCustomScenario === 'string' && item.agentTeamCustomScenario.length > 1000) ||
+          (typeof item.agentCustomRoles === 'string' && item.agentCustomRoles.length > 1500) ||
+          (Array.isArray(item.messages) && item.messages.some(message => message && ((typeof message.content === 'string' && message.content.length > 30000) || (typeof message.tool_calls !== 'undefined' && !Array.isArray(message.tool_calls)))))
+        ));
+        if (valid.length !== raw.length || hasInvalidMessages || hasTruncatedChatFields) preserveUnreadableChats(rawText);
         return valid.length ? valid : [createChat()];
       } catch (error) {
         preserveUnreadableChats(rawText);
@@ -1008,23 +1033,72 @@ permalink: /
     function persistChats() {
       if (chatStorageCorruptNotBackedUp) {
         showToast('Повреждённая история не была перезаписана: не удалось создать резервную копию. Освободите место в браузере и перезагрузите страницу.', 'error');
-        return;
+        return false;
       }
+      let previousChatsRaw;
+      try { previousChatsRaw = localStorage.getItem(STORAGE.chats); }
+      catch (error) { showToast('Не удалось прочитать прежнюю историю; запись отменена.', 'error'); return false; }
       const savedChats = safeSet(STORAGE.chats, JSON.stringify(chats));
-      const savedCurrent = safeSet(STORAGE.current, currentChatId);
+      const savedCurrent = savedChats && safeSet(STORAGE.current, currentChatId);
       if (!savedChats || !savedCurrent) {
-        showToast('История не подтверждена браузерным хранилищем. Сразу экспортируйте чаты и проверьте свободное место/разрешения сайта.', 'error');
-      } else {
-        scheduleStorageHealthCheck();
+        if (savedChats && !restoreStorageValue(STORAGE.chats, previousChatsRaw)) showToast('Не удалось откатить частичную запись истории. Не очищай данные сайта; сначала экспортируй доступные данные.', 'error');
+        showToast('История не подтверждена браузерным хранилищем. Запись откатили там, где это удалось; сразу экспортируй чаты и проверь место/разрешения сайта.', 'error');
+        return false;
       }
+      scheduleStorageHealthCheck();
+      return true;
+    }
+    function persistChatMutation(chat, updates, mirroredWrites = []) {
+      if (!chat || typeof chat !== 'object' || !updates || typeof updates !== 'object') return false;
+      const previousFields = Object.keys(updates).map(key => ({
+        key,
+        existed: Object.prototype.hasOwnProperty.call(chat, key),
+        value: chat[key]
+      }));
+      let previousMirrors;
+      try {
+        previousMirrors = mirroredWrites.map(([key]) => ({ key, value: localStorage.getItem(key) }));
+      } catch (error) {
+        showToast('Не удалось прочитать прежние настройки браузера; изменение отменено.', 'error');
+        return false;
+      }
+      const restoreFields = () => {
+        for (const previous of previousFields) {
+          if (previous.existed) chat[previous.key] = previous.value;
+          else delete chat[previous.key];
+        }
+      };
+      const restoreMirrors = attempted => {
+        let restored = true;
+        for (let index = attempted.length - 1; index >= 0; index -= 1) {
+          if (!restoreStorageValue(attempted[index].key, attempted[index].value)) restored = false;
+        }
+        if (!restored) showToast('Не все прежние настройки удалось восстановить. Не очищай данные сайта; сначала экспортируй доступные данные.', 'error');
+        return restored;
+      };
+      Object.assign(chat, updates);
+      const attemptedMirrors = [];
+      for (let index = 0; index < mirroredWrites.length; index += 1) {
+        attemptedMirrors.push(previousMirrors[index]);
+        const [key, value] = mirroredWrites[index];
+        if (!safeSet(key, value)) {
+          restoreFields();
+          restoreMirrors(attemptedMirrors);
+          return false;
+        }
+      }
+      if (persistChats()) return true;
+      restoreFields();
+      restoreMirrors(attemptedMirrors);
+      return false;
     }
     function getCurrentChat() {
       return chats.find((chat) => chat.id === currentChatId) || chats[0];
     }
     function downloadRecoveryBackup() {
-      if (!chatRecoveryBackupKey) throw new Error('Резервная копия истории не найдена.');
-      const raw = safeGet(chatRecoveryBackupKey);
-      if (!raw) throw new Error('Резервная копия истории недоступна в этом браузере.');
+      if (!chatRecoveryBackupKey && !chatStorageCorruptNotBackedUp) throw new Error('Резервная копия истории не найдена.');
+      const raw = chatRecoveryBackupKey ? safeGet(chatRecoveryBackupKey) : safeGet(STORAGE.chats);
+      if (raw === null) throw new Error('Резервная копия истории недоступна в этом браузере.');
       const blob = new Blob([raw], { type: 'application/json;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -1035,6 +1109,21 @@ permalink: /
       link.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       showToast('Резервная копия истории скачивается.');
+    }
+    function downloadProjectRecoveryBackup() {
+      if (!projectRecoveryBackupKey && !projectStorageCorruptNotBackedUp) throw new Error('Резервная копия проектов не найдена.');
+      const raw = projectRecoveryBackupKey ? safeGet(projectRecoveryBackupKey) : safeGet(STORAGE.projects);
+      if (raw === null) throw new Error('Резервная копия проектов недоступна в этом браузере.');
+      const blob = new Blob([raw], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'ai-projects-recovery-backup.json';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast('Резервная копия проектов скачивается.');
     }
 
     function requestResult(request) {
@@ -1737,21 +1826,67 @@ permalink: /
       scrollToBottom(true);
       requestAnimationFrame(updateJumpToLatest);
     }
+    function preserveUnreadableProjects(rawText) {
+      if (rawText === null) return;
+      const baseKey = 'ai_projects_recovery_backup';
+      let backupKey = baseKey;
+      try {
+        const existing = localStorage.getItem(baseKey);
+        if (existing === rawText) { projectRecoveryBackupKey = baseKey; projectRecoveryWarning = true; return; }
+        if (existing !== null && existing !== rawText) backupKey = baseKey + '_' + Date.now();
+        localStorage.setItem(backupKey, rawText);
+        projectRecoveryBackupKey = backupKey;
+        projectRecoveryWarning = true;
+      } catch (error) {
+        projectRecoveryWarning = true;
+        projectStorageCorruptNotBackedUp = true;
+        console.warn('Не удалось сохранить резервную копию повреждённых проектов; исходные данные не будут перезаписаны:', error);
+      }
+    }
     function loadProjects(){
-      try{
-        const raw=JSON.parse(safeGet(STORAGE.projects)||'[]');
-        if(!Array.isArray(raw))return [];
-        return raw.filter(p=>p&&typeof p==='object'&&typeof p.id==='string'&&typeof p.name==='string').slice(0,200).map(p=>({
-          id:p.id.slice(0,128),name:p.name.slice(0,100),description:typeof p.description==='string'?p.description.slice(0,1000):'',
-          instructions:typeof p.instructions==='string'?p.instructions.slice(0,6000):'',
-          memoryScope:p.memoryScope==='project-and-global'?'project-and-global':'project-only',
-          memory:Array.isArray(p.memory)?p.memory.filter(v=>v&&typeof v.id==='string'&&typeof v.text==='string').slice(0,500).map(v=>({id:v.id.slice(0,128),text:v.text.slice(0,600),createdAt:String(v.createdAt||'')})):[],
-          createdAt:String(p.createdAt||''),updatedAt:String(p.updatedAt||'')
+      let rawText = null;
+      try {
+        rawText = localStorage.getItem(STORAGE.projects);
+        if (rawText === null) return [];
+        const raw = JSON.parse(rawText);
+        if (!Array.isArray(raw)) { preserveUnreadableProjects(rawText); return []; }
+        const hasInvalidMemory = raw.some(project => project && Array.isArray(project.memory) && project.memory.some(item => !item || typeof item.id !== 'string' || typeof item.text !== 'string'));
+        const hasInvalidMemoryShape = raw.some(project => project && project.memory !== undefined && !Array.isArray(project.memory));
+        const hasTruncatedFields = raw.some(project => project && typeof project === 'object' && (
+          (typeof project.id === 'string' && project.id.length > 128) || (typeof project.name === 'string' && project.name.length > 100) ||
+          (typeof project.description === 'string' && project.description.length > 1000) || (typeof project.instructions === 'string' && project.instructions.length > 6000) ||
+          (Array.isArray(project.memory) && project.memory.some(item => item && ((typeof item.id === 'string' && item.id.length > 128) || (typeof item.text === 'string' && item.text.length > 600))))
+        ));
+        const structurallyValid = raw.filter(project => project && typeof project === 'object' && typeof project.id === 'string' && typeof project.name === 'string');
+        if (structurallyValid.length !== raw.length || raw.length > 200 || hasInvalidMemory || hasInvalidMemoryShape || hasTruncatedFields || raw.some(project => Array.isArray(project?.memory) && project.memory.length > 500)) preserveUnreadableProjects(rawText);
+        return structurallyValid.slice(0,200).map(project => ({
+          id:project.id.slice(0,128),name:project.name.slice(0,100),description:typeof project.description==='string'?project.description.slice(0,1000):'',
+          instructions:typeof project.instructions==='string'?project.instructions.slice(0,6000):'',
+          memoryScope:project.memoryScope==='project-and-global'?'project-and-global':'project-only',
+          memory:Array.isArray(project.memory)?project.memory.filter(item=>item&&typeof item.id==='string'&&typeof item.text==='string').slice(0,500).map(item=>({id:item.id.slice(0,128),text:item.text.slice(0,600),createdAt:String(item.createdAt||'')})):[],
+          createdAt:String(project.createdAt||''),updatedAt:String(project.updatedAt||'')
         }));
-      }catch(_){return [];}
+      } catch (error) {
+        preserveUnreadableProjects(rawText);
+        console.warn('Проекты не читаются; исходные данные сохранены для восстановления:', error);
+        return [];
+      }
     }
     function persistProjects(){
-      if(!safeSet(STORAGE.projects,JSON.stringify(projects)))showToast('Проекты не удалось сохранить в локальном хранилище. Экспортируй важные данные.','error');
+      if (projectStorageCorruptNotBackedUp) {
+        showToast('Повреждённые данные проектов не перезаписываются: резервная копия не сохранилась. Освободи место и перезагрузи страницу.', 'error');
+        return false;
+      }
+      return safeSet(STORAGE.projects, JSON.stringify(projects));
+    }
+    function persistProjectsAndChats() {
+      let previousProjectsRaw;
+      try { previousProjectsRaw = localStorage.getItem(STORAGE.projects); }
+      catch (error) { showToast('Не удалось прочитать прежние проекты; операция отменена.', 'error'); return false; }
+      if (!persistProjects()) return false;
+      if (persistChats()) return true;
+      if (!restoreStorageValue(STORAGE.projects, previousProjectsRaw)) showToast('Не удалось откатить запись проектов после ошибки истории. Проверь резервные копии и не очищай данные сайта.', 'error');
+      return false;
     }
     let selectedProjectForSettingsId=null;
     let creatingProject=false;
@@ -1866,8 +2001,11 @@ permalink: /
         helperMemorySuggestions.splice(index,1);renderHelperMemorySuggestions();
         setHelperMemoryStatus(getUiLanguage()==='en'?'That fact already exists in this project.':'Такой факт уже есть в проекте.');return;
       }
+      const previousMemory=project.memory.slice(),previousUpdatedAt=project.updatedAt;
       project.memory.push({id:projectIdNew(),text:candidate,createdAt:new Date().toISOString()});project.updatedAt=new Date().toISOString();
-      helperMemorySuggestions.splice(index,1);persistProjects();renderProjectUI();renderHelperMemorySuggestions();setHelperMemoryStatus(memoryUiText('helperMemoryAdded'));
+      helperMemorySuggestions.splice(index,1);
+      if(!persistProjects()){project.memory=previousMemory;project.updatedAt=previousUpdatedAt;helperMemorySuggestions.splice(index,0,candidate);renderProjectUI();renderHelperMemorySuggestions();setHelperMemoryStatus(getUiLanguage()==='en'?'The fact was not saved.':'Факт не сохранён.');return;}
+      renderProjectUI();renderHelperMemorySuggestions();setHelperMemoryStatus(memoryUiText('helperMemoryAdded'));
     }
     function setServerMemoryStatus(text){const node=$('serverMemoryStatus');if(node)node.textContent=text;}
     function renderServerMemoryNodes(nodes){
@@ -1991,10 +2129,13 @@ permalink: /
       const input=$('projectNameInput'),name=input.value.trim().slice(0,100);
       if(!name){input.focus();showToast(getUiLanguage()==='en'?'Enter a project name first.':'Сначала введи название проекта.','error');return;}
       if(projects.length>=200){showToast('Достигнут предел локальных проектов (200).','error');return;}
+      const previousProjects=projects.slice(),previousSelected=selectedProjectForSettingsId,previousCreating=creatingProject;
+      const chat=getCurrentChat(),previousChat={projectId:chat.projectId,projectMemoryEnabled:chat.projectMemoryEnabled,serverProjectMemoryEnabled:chat.serverProjectMemoryEnabled};
       const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectInstructionsInput').value.trim().slice(0,6000),memoryScope:$('projectMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only',memory:[],createdAt:now,updatedAt:now};
-      creatingProject=false;projects.unshift(project);selectedProjectForSettingsId=project.id;persistProjects();
-      const chat=getCurrentChat();chat.projectId=project.id;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
-      persistChats();renderProjectUI();renderChatList();
+      creatingProject=false;projects=[project,...projects];selectedProjectForSettingsId=project.id;
+      chat.projectId=project.id;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
+      if(!persistProjectsAndChats()){projects=previousProjects;selectedProjectForSettingsId=previousSelected;creatingProject=previousCreating;Object.assign(chat,previousChat);renderProjectUI();renderChatList();renderActiveChat();return;}
+      renderProjectUI();renderChatList();renderActiveChat();
       showToast((getUiLanguage()==='en'?'Project created: ':'Создан проект: ')+name);
     }
     function saveProject(){
@@ -2003,16 +2144,20 @@ permalink: /
       if(!project){showToast(getUiLanguage()==='en'?'Select a project in the Projects list or create one.':'Выбери проект в списке или создай новый.','error');return;}
       const name=$('projectNameInput').value.trim().slice(0,100);
       if(!name){showToast('Название проекта не может быть пустым.','error');return;}
+      const previous={name:project.name,instructions:project.instructions,memoryScope:project.memoryScope,updatedAt:project.updatedAt};
       project.name=name;project.instructions=$('projectInstructionsInput').value.trim().slice(0,6000);project.memoryScope=$('projectMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only';project.updatedAt=new Date().toISOString();
-      persistProjects();renderProjectUI();renderChatList();
+      if(!persistProjects()){Object.assign(project,previous);renderProjectUI();return;}
+      renderProjectUI();renderChatList();
       showToast(getUiLanguage()==='en'?'Project instructions saved.':'Инструкции проекта сохранены.');
     }
     function moveCurrentChatToProject(projectId){
       const chat=getCurrentChat(),target=projectId?projects.find(project=>project.id===projectId):null;
       if(projectId&&!target){showToast('Проект не найден.','error');renderProjectUI();return;}
       if(chat.projectId===(target?.id||null))return;
+      const previous={projectId:chat.projectId,projectMemoryEnabled:chat.projectMemoryEnabled,serverProjectMemoryEnabled:chat.serverProjectMemoryEnabled},previousSelected=selectedProjectForSettingsId;
       chat.projectId=target?.id||null;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;selectedProjectForSettingsId=target?.id||null;
-      persistChats();renderProjectUI();renderChatList();
+      if(!persistChats()){Object.assign(chat,previous);selectedProjectForSettingsId=previousSelected;renderProjectUI();renderChatList();return;}
+      renderProjectUI();renderChatList();
       showToast(target?(getUiLanguage()==='en'?'Chat moved to ':'Чат добавлен в проект: ')+target.name:(getUiLanguage()==='en'?'Chat removed from its project.':'Чат извлечён из проекта.'));
     }
     function addProjectMemory(){
@@ -2020,21 +2165,29 @@ permalink: /
       if(!project){showToast(getUiLanguage()==='en'?'Choose a project first.':'Сначала выбери проект.','error');return;}
       if(!text){input.focus();return;}
       if(project.memory.length>=500){showToast('Достигнут предел памяти проекта (500 записей).','error');return;}
+      const previousMemory=project.memory.slice(),previousUpdatedAt=project.updatedAt;
       project.memory.push({id:projectIdNew(),text,createdAt:new Date().toISOString()});project.updatedAt=new Date().toISOString();
-      input.value='';persistProjects();renderProjectUI();
+      if(!persistProjects()){project.memory=previousMemory;project.updatedAt=previousUpdatedAt;renderProjectUI();return;}
+      input.value='';renderProjectUI();
     }
     function deleteProjectMemory(id){
       const project=getProjectForChat();if(!project)return;
-      project.memory=project.memory.filter(item=>item.id!==id);project.updatedAt=new Date().toISOString();persistProjects();renderProjectUI();
+      const previousMemory=project.memory,previousUpdatedAt=project.updatedAt;
+      project.memory=project.memory.filter(item=>item.id!==id);project.updatedAt=new Date().toISOString();
+      if(!persistProjects()){project.memory=previousMemory;project.updatedAt=previousUpdatedAt;}
+      renderProjectUI();
     }
     function deleteCurrentProject(){
       const project=getProjectForChat();if(!project){showToast('Сначала выбери проект.','error');return;}
       const count=chats.filter(c=>c.projectId===project.id).length;
       const msg=getUiLanguage()==='en'?'Delete project "'+project.name+'" and '+count+' chats? This cannot be undone.':'Удалить проект «'+project.name+'» вместе с '+count+' чатами? Это действие нельзя отменить.';
       if(!confirm(msg))return;
+      const previousProjects=projects,previousChats=chats,previousCurrentId=currentChatId;
       chats=chats.filter(chat=>chat.projectId!==project.id);if(!chats.length)chats=[createChat()];
       if(!chats.some(chat=>chat.id===currentChatId))currentChatId=chats[0].id;
-      projects=projects.filter(item=>item.id!==project.id);persistProjects();updateState(null,currentChatId);renderProjectUI();
+      projects=projects.filter(item=>item.id!==project.id);
+      if(!persistProjectsAndChats()){projects=previousProjects;chats=previousChats;currentChatId=previousCurrentId;renderProjectUI();renderChatList();renderActiveChat();return;}
+      renderProjectUI();renderChatList();renderActiveChat();
       showToast(getUiLanguage()==='en'?'Project and its chats deleted.':'Проект и его чаты удалены.');
     }
     function exportProjectBundle(){
@@ -2045,7 +2198,7 @@ permalink: /
     }
     function sanitizeImportedProjectChat(chat,projectId){
       return {id:String(chat.id||projectIdNew()).slice(0,128),title:typeof chat.title==='string'?chat.title.slice(0,160):'Импортированный чат',projectId,projectMemoryEnabled:false,serverProjectMemoryEnabled:false,
-        messages:Array.isArray(chat.messages)?chat.messages.filter(m=>m&&['user','assistant','tool'].includes(m.role)).slice(0,10000).map(m=>({role:m.role,content:typeof m.content==='string'?m.content.slice(0,30000):'',...(typeof m.tool_call_id==='string'?{tool_call_id:m.tool_call_id.slice(0,200)}:{}),...(Array.isArray(m.tool_calls)?{tool_calls:m.tool_calls}:{}),...(m.error?{error:true}:{})})):[]};
+        messages:Array.isArray(chat.messages)?chat.messages.filter(m=>m&&['user','assistant','tool'].includes(m.role)).slice(0,10000).map(m=>({role:m.role,content:typeof m.content==='string'?m.content.slice(0,30000):'',...(typeof m.tool_call_id==='string'?{tool_call_id:m.tool_call_id.slice(0,200)}:{}),...(Array.isArray(m.tool_calls)?{tool_calls:m.tool_calls.slice(0,100)}:{}),...(m.error?{error:true}:{})})):[]};
     }
     async function importProjectBundle(event){
       const file=event.target.files?.[0];event.target.value='';if(!file)return;
@@ -2054,7 +2207,9 @@ permalink: /
         const bundle=JSON.parse(await file.text());
         if(bundle?.format!=='alandi-project-bundle'||bundle?.version!==1||!bundle.project||typeof bundle.project.name!=='string'||!Array.isArray(bundle.chats)||bundle.chats.length>500)throw new Error('Неверный формат пакета проекта.');
         if(projects.length>=200)throw new Error('Достигнут предел проектов (200). Сначала удали ненужный проект.');
-        const importedChats=bundle.chats.filter(chat=>chat&&typeof chat==='object'&&Array.isArray(chat.messages)).map(chat=>sanitizeImportedProjectChat(chat,''));
+        const totalMessages=bundle.chats.reduce((total,chat)=>total+(Array.isArray(chat?.messages)?chat.messages.length:0),0);
+         const importedChats=bundle.chats.filter(chat=>chat&&typeof chat==='object'&&Array.isArray(chat.messages)).map(chat=>sanitizeImportedProjectChat(chat,''));
+         if(totalMessages>MAX_IMPORTED_MESSAGES)throw new Error('Пакет проекта содержит больше 50 000 сообщений; раздели экспорт на несколько пакетов.');
         if(chats.length+importedChats.length>1000)throw new Error('Импорт превысит безопасный лимит локальных чатов (1000).');
         const now=new Date().toISOString();
         const baseName=bundle.project.name.trim().slice(0,78)||'Импортированный проект';
@@ -2066,10 +2221,13 @@ permalink: /
         }
         const memory=Array.isArray(bundle.project.memory)?bundle.project.memory.filter(v=>v&&typeof v.text==='string').slice(0,500).map(v=>({id:projectIdNew(),text:v.text.slice(0,600),createdAt:String(v.createdAt||now)})):[];
         const target={id:projectIdNew(),name:importedName,description:typeof bundle.project.description==='string'?bundle.project.description.slice(0,1000):'',instructions:typeof bundle.project.instructions==='string'?bundle.project.instructions.slice(0,6000):'',memoryScope:bundle.project.memoryScope==='project-and-global'?'project-and-global':'project-only',memory,createdAt:now,updatedAt:now};
-        projects.unshift(target);selectedProjectForSettingsId=target.id;
+        const previousProjects=projects,previousChats=chats,previousCurrentId=currentChatId,previousSelected=selectedProjectForSettingsId;
+        projects=[target,...projects];selectedProjectForSettingsId=target.id;
         const seen=new Set(chats.map(chat=>chat.id));
-        for(const chat of importedChats){if(seen.has(chat.id))chat.id=projectIdNew();seen.add(chat.id);chat.projectId=target.id;chats.unshift(chat);}
-        persistProjects();updateState(chats,chats[0]?.id||currentChatId);renderProjectUI();$('projectManagerDetails').open=true;
+        for(const chat of importedChats){if(seen.has(chat.id))chat.id=projectIdNew();seen.add(chat.id);chat.projectId=target.id;}
+        chats=[...importedChats,...chats];currentChatId=chats[0]?.id||currentChatId;
+        if(!persistProjectsAndChats()){projects=previousProjects;chats=previousChats;currentChatId=previousCurrentId;selectedProjectForSettingsId=previousSelected;renderProjectUI();renderChatList();renderActiveChat();throw new Error('Хранилище не подтвердило запись проекта и чатов; исходные данные восстановлены.');}
+        renderProjectUI();renderChatList();renderActiveChat();$('projectManagerDetails').open=true;
         showToast(getUiLanguage()==='en'?'Imported '+importedChats.length+' chats into '+target.name+'.':'Импортировано чатов в проект «'+target.name+'»: '+importedChats.length+'.');
       }catch(error){showToast('Импорт проекта не выполнен: '+String(error.message||error).slice(0,180),'error');}
     }
@@ -2192,13 +2350,21 @@ permalink: /
       showToast('Выбранный факт добавлен в общую память. Личная копия сохранена.');
     }
     function updateState(nextChats = null, nextCurrentId = null) {
+      const previousChats = chats;
+      const previousCurrentId = currentChatId;
       if (Array.isArray(nextChats)) {
         chats = nextChats.length ? nextChats : [createChat()];
       }
       if (nextCurrentId && chats.some((chat) => chat.id === nextCurrentId)) currentChatId = nextCurrentId;
       if (!chats.some((chat) => chat.id === currentChatId)) currentChatId = chats[0].id;
       if ($('modeFast')) syncCurrentChatFunctionSettings();
-      persistChats(); renderChatList(); renderActiveChat(); renderProjectUI({preserveDraft:true});
+      const persisted = persistChats();
+      if (!persisted) {
+        chats = previousChats;
+        currentChatId = previousCurrentId;
+      }
+      renderChatList(); renderActiveChat(); renderProjectUI({preserveDraft:true});
+      return persisted;
     }
     function toggleSidebar(force) {
       const sidebar = $('sidebar'); const overlay = $('sidebarOverlay');
@@ -2498,12 +2664,17 @@ permalink: /
       if (!VALID_SEARCH_MODES.has(mode)) return;
       const chat = getCurrentChat();
       ensureChatFunctionSettings(chat);
-      chat.searchMode = mode;
+      if (!persistChatMutation(chat, { searchMode: mode }, [
+        [STORAGE.searchMode, mode],
+        [STORAGE.search, String(mode !== 'offline')],
+        [STORAGE.offline, String(mode === 'offline')]
+      ])) {
+        $('toggleSearch').checked = chat.searchMode !== 'offline';
+        updateOfflineUI();
+        updateModeUI();
+        return;
+      }
       $('toggleSearch').checked = mode !== 'offline';
-      safeSet(STORAGE.searchMode, mode);
-      safeSet(STORAGE.search, String(mode !== 'offline'));
-      safeSet(STORAGE.offline, String(mode === 'offline'));
-      persistChats();
       $('searchModeMenu').open = false;
       updateOfflineUI();
       updateModeUI();
@@ -2511,20 +2682,30 @@ permalink: /
     function setAgentMode(enabled) {
       const chat = getCurrentChat();
       ensureChatFunctionSettings(chat);
-      chat.multiAgentEnabled = Boolean(enabled);
+      const next = Boolean(enabled);
+      if (!persistChatMutation(chat, { multiAgentEnabled: next }, [[STORAGE.multiAgent, String(next)]])) {
+        $('toggleMultiAgent').checked = chat.multiAgentEnabled;
+        if ($('agentModeControl')) $('agentModeControl').checked = chat.multiAgentEnabled;
+        updateModeUI();
+        return;
+      }
       $('toggleMultiAgent').checked = chat.multiAgentEnabled;
       if ($('agentModeControl')) $('agentModeControl').checked = chat.multiAgentEnabled;
-      safeSet(STORAGE.multiAgent, String(chat.multiAgentEnabled));
-      persistChats();
       updateModeUI();
     }
     function setSkillPreset(preset) {
       if (!VALID_SKILL_PRESETS.has(preset)) preset = 'auto';
       const chat = getCurrentChat();
       ensureChatFunctionSettings(chat);
-      chat.skillPreset = preset;
+      const updates = { skillPreset: preset };
+      if (preset === 'custom') updates.skillGoal = 'custom';
+      if (!persistChatMutation(chat, updates)) {
+        renderSkillConfiguration();
+        updateModeUI();
+        return;
+      }
       if ($('skillPresetSelect')) $('skillPresetSelect').value = preset;
-      persistChats();
+      renderSkillConfiguration();
       updateModeUI();
     }
     function updateModeUI() {
@@ -2565,10 +2746,12 @@ permalink: /
     function setProcessingMode(mode) {
       const chat = getCurrentChat();
       ensureChatFunctionSettings(chat);
-      chat.processingMode = mode === 'deep' ? 'deep' : 'fast';
+      const next = mode === 'deep' ? 'deep' : 'fast';
+      if (!persistChatMutation(chat, { processingMode: next }, [[STORAGE.mode, next]])) {
+        updateModeUI();
+        return;
+      }
       processingMode = chat.processingMode;
-      safeSet(STORAGE.mode, processingMode);
-      persistChats();
       updateModeUI();
     }
     function exportSettingsProfile() {
@@ -2626,19 +2809,66 @@ permalink: /
         const baseUrl = settings.provider === 'cloudflare'
           ? 'https://api.cloudflare.com/client/v4/accounts/' + settings.cloudflareAccountId + '/ai/v1'
           : settings.baseUrl.trim().replace(/\/+$/, '').replace(/\/chat\/completions$/i, '');
-        const saveResults = [
-          safeSet(STORAGE.provider, settings.provider),
-          safeSet(STORAGE.baseUrl, baseUrl),
-          safeSet(STORAGE.model, settings.model.trim()),
-          safeSet(STORAGE.mode, settings.mode === 'deep' ? 'deep' : 'fast'),
-          safeSet(STORAGE.search, String(settings.search !== false)),
-          safeSet(STORAGE.multiAgent, String(settings.multiAgent === true)),
-          safeSet(STORAGE.offline, String(settings.offline === true)),
-          safeSet(STORAGE.crossProviderFallback, String(settings.crossProviderFallback === true)),
-          safeSet(STORAGE.systemPrompt, String(settings.systemPrompt || DEFAULT_SYSTEM)),
-          ...(settings.provider === 'cloudflare' ? [safeSet(STORAGE.cloudflareAccountId, settings.cloudflareAccountId)] : [])
+        const nextChatSettings = {
+          processingMode: settings.mode === 'deep' ? 'deep' : 'fast',
+          searchMode: settings.offline === true || settings.search === false ? 'offline' : 'normal',
+          multiAgentEnabled: settings.multiAgent === true
+        };
+        const profileWrites = [
+          [STORAGE.provider, settings.provider],
+          [STORAGE.baseUrl, baseUrl],
+          [STORAGE.model, settings.model.trim()],
+          [STORAGE.mode, nextChatSettings.processingMode],
+          [STORAGE.search, String(settings.search !== false)],
+          [STORAGE.multiAgent, String(settings.multiAgent === true)],
+          [STORAGE.offline, String(settings.offline === true)],
+          [STORAGE.crossProviderFallback, String(settings.crossProviderFallback === true)],
+          [STORAGE.systemPrompt, String(settings.systemPrompt || DEFAULT_SYSTEM)],
+          ...(settings.provider === 'cloudflare' ? [[STORAGE.cloudflareAccountId, settings.cloudflareAccountId]] : []),
+          [STORAGE.searchMode, nextChatSettings.searchMode]
         ];
-        if (!saveResults.every(Boolean)) throw new Error('Не удалось сохранить все параметры в браузере.');
+        let previousStorageValues;
+        try {
+          previousStorageValues = profileWrites.map(([key]) => ({ key, value: localStorage.getItem(key) }));
+        } catch (error) {
+          throw new Error('Не удалось прочитать прежние настройки браузера; импорт отменён.');
+        }
+        const writtenStorageValues = [];
+        const rollbackProfileStorage = () => {
+          let restored = true;
+          for (let index = writtenStorageValues.length - 1; index >= 0; index -= 1) {
+            const previous = writtenStorageValues[index];
+            if (!restoreStorageValue(previous.key, previous.value)) restored = false;
+          }
+          if (!restored) showToast('Не все прежние настройки удалось восстановить. Не очищай данные сайта; сначала экспортируй доступные данные.', 'error');
+          return restored;
+        };
+        for (let index = 0; index < profileWrites.length; index += 1) {
+          const [key, value] = profileWrites[index];
+          if (!safeSet(key, value)) {
+            const restored = rollbackProfileStorage();
+            throw new Error(restored
+              ? 'Не удалось сохранить весь профиль; прежние настройки восстановлены.'
+              : 'Не удалось сохранить профиль и полностью откатить предыдущие настройки. Сначала экспортируй доступные данные.');
+          }
+          writtenStorageValues.push(previousStorageValues[index]);
+        }
+        const activeChat = getCurrentChat();
+        const previousChatSettings = {
+          processingMode: activeChat.processingMode,
+          searchMode: activeChat.searchMode,
+          multiAgentEnabled: activeChat.multiAgentEnabled,
+          skillPreset: activeChat.skillPreset
+        };
+        Object.assign(activeChat, nextChatSettings);
+        if (!VALID_SKILL_PRESETS.has(activeChat.skillPreset)) activeChat.skillPreset = 'auto';
+        if (!persistChats()) {
+          Object.assign(activeChat, previousChatSettings);
+          const restored = rollbackProfileStorage();
+          throw new Error(restored
+            ? 'Настройки чата не сохранились; импорт профиля отменён и прежние параметры восстановлены.'
+            : 'Настройки чата не сохранились, а полный откат профиля не удался. Сначала экспортируй доступные данные.');
+        }
         $('providerPreset').value = settings.provider;
         $('modelSearch').value = '';
         $('baseUrl').value = baseUrl;
@@ -2647,8 +2877,7 @@ permalink: /
         $('toggleSearch').checked = settings.search !== false;
         $('toggleMultiAgent').checked = settings.multiAgent === true;
         $('allowCrossProviderFallback').checked = settings.crossProviderFallback === true;
-        processingMode = settings.mode === 'deep' ? 'deep' : 'fast';
-        updateModeUI();
+        processingMode = nextChatSettings.processingMode;
         applyProviderPreset(settings.provider, true);
         $('modelName').value = settings.model.trim();
         $('baseUrl').value = baseUrl;
@@ -2656,14 +2885,6 @@ permalink: /
         $('toggleSearch').checked = settings.search !== false;
         $('toggleMultiAgent').checked = settings.multiAgent === true;
         $('allowCrossProviderFallback').checked = settings.crossProviderFallback === true;
-        safeSet(STORAGE.model, $('modelName').value);
-        const activeChat = getCurrentChat();
-        activeChat.processingMode = settings.mode === 'deep' ? 'deep' : 'fast';
-        activeChat.searchMode = settings.offline === true || settings.search === false ? 'offline' : 'normal';
-        activeChat.multiAgentEnabled = settings.multiAgent === true;
-        if (!VALID_SKILL_PRESETS.has(activeChat.skillPreset)) activeChat.skillPreset = 'auto';
-        safeSet(STORAGE.searchMode, activeChat.searchMode);
-        persistChats();
         updateModeUI();
         updateOfflineUI();
         safeSet('ai_provider_model_catalog_stale_v1_' + settings.provider, 'true');
@@ -3184,14 +3405,29 @@ permalink: /
     }
     function persistSkillConfiguration(){
       const chat=getCurrentChat();if(!chat)return;ensureChatFunctionSettings(chat);
-      chat.customSkillName=$('customSkillName').value.slice(0,80);chat.customSkillInstructions=$('customSkillInstructions').value.slice(0,3000);chat.customSkillOutput=$('customSkillOutput').value.slice(0,500);
-      chat.skillGoal=$('skillGoalSelect').value;chat.skillOutputMode=$('skillOutputSelect').value;persistChats();renderSkillConfiguration();
+      const updates = {
+        customSkillName: $('customSkillName').value.slice(0,80),
+        customSkillInstructions: $('customSkillInstructions').value.slice(0,3000),
+        customSkillOutput: $('customSkillOutput').value.slice(0,500),
+        skillGoal: $('skillGoalSelect').value,
+        skillOutputMode: $('skillOutputSelect').value
+      };
+      if (!persistChatMutation(chat, updates)) { renderSkillConfiguration(); updateModeUI(); return; }
+      renderSkillConfiguration();
     }
     function applySkillQuiz(){
-      const goal=$('skillGoalSelect').value;const chat=getCurrentChat();if(!chat)return;
-      chat.skillGoal=goal;chat.skillOutputMode=$('skillOutputSelect').value;chat.skillPreset=($('skillPresetSelect').value==='custom'||goal==='custom'||chat.skillOutputMode==='custom')?'custom':goal;
-      chat.customSkillName=$('customSkillName').value.slice(0,80);chat.customSkillInstructions=$('customSkillInstructions').value.slice(0,3000);chat.customSkillOutput=$('customSkillOutput').value.slice(0,500);
-      persistChats();renderSkillConfiguration();updateModeUI();showToast('Профиль навыка применён к этому чату.');
+      const goal=$('skillGoalSelect').value;const chat=getCurrentChat();if(!chat)return;ensureChatFunctionSettings(chat);
+      const skillOutputMode=$('skillOutputSelect').value;
+      const updates = {
+        skillGoal: goal,
+        skillOutputMode,
+        skillPreset: ($('skillPresetSelect').value==='custom'||goal==='custom'||skillOutputMode==='custom')?'custom':goal,
+        customSkillName: $('customSkillName').value.slice(0,80),
+        customSkillInstructions: $('customSkillInstructions').value.slice(0,3000),
+        customSkillOutput: $('customSkillOutput').value.slice(0,500)
+      };
+      if(!persistChatMutation(chat,updates)){renderSkillConfiguration();updateModeUI();return;}
+      renderSkillConfiguration();updateModeUI();showToast('Профиль навыка применён к этому чату.');
     }
     function renderAgentConfiguration(){
       const chat=getCurrentChat();if(!chat)return;ensureChatFunctionSettings(chat);
@@ -3203,9 +3439,15 @@ permalink: /
     }
     function persistAgentConfiguration(){
       const chat=getCurrentChat();if(!chat)return;ensureChatFunctionSettings(chat);
-      chat.agentTeamSize=Math.max(1,Math.min(50,Number($('agentTeamSize').value)||1));chat.agentTeamScenario=$('agentTeamScenario').value;
-      chat.agentRolePreset=$('agentRolePreset').value;chat.agentTeamCustomScenario=$('agentTeamCustomScenario').value.slice(0,1000);chat.agentCustomRoles=$('agentCustomRoles').value.slice(0,1500);
-      persistChats();renderAgentConfiguration();
+      const updates = {
+        agentTeamSize: Math.max(1,Math.min(50,Number($('agentTeamSize').value)||1)),
+        agentTeamScenario: $('agentTeamScenario').value,
+        agentRolePreset: $('agentRolePreset').value,
+        agentTeamCustomScenario: $('agentTeamCustomScenario').value.slice(0,1000),
+        agentCustomRoles: $('agentCustomRoles').value.slice(0,1500)
+      };
+      if (!persistChatMutation(chat, updates)) { renderAgentConfiguration(); return; }
+      renderAgentConfiguration();
     }
     function openFunctionPanel(kind) {
       $('functionsMenu').open = false;
@@ -4205,14 +4447,17 @@ permalink: /
       const english=getUiLanguage()==='en';
       if(!confirm(english?'Clear the history of this chat?':'Очистить историю этого чата?'))return;
       if(activeChatId===id)stopGeneration();
+      const previousMessages=chat.messages,previousTitle=chat.title;
       chat.messages=[];chat.title=english?'New chat':'Новый чат';
-      updateState([...chats],currentChatId);
+      if(!updateState([...chats],currentChatId)){chat.messages=previousMessages;chat.title=previousTitle;renderChatList();renderActiveChat();renderProjectUI({preserveDraft:true});}
     }
     function clearCurrentChat() {
       if (!confirm('Очистить историю текущего чата?')) return;
       if (activeChatId === currentChatId) stopGeneration();
-      const chat = getCurrentChat(); chat.messages = []; chat.title = 'Новый чат';
-      updateState([...chats]); toggleSidebar(false);
+      const chat = getCurrentChat(),previousMessages=chat.messages,previousTitle=chat.title;
+      chat.messages = []; chat.title = 'Новый чат';
+      if(!updateState([...chats])){chat.messages=previousMessages;chat.title=previousTitle;renderChatList();renderActiveChat();renderProjectUI({preserveDraft:true});}
+      toggleSidebar(false);
     }
     function switchChat(id) {
       if (!chats.some((chat) => chat.id === id)) return;
@@ -4254,19 +4499,24 @@ permalink: /
       if(mode==='rename') {
         const next=$('chatActionName').value.trim().slice(0,120);
         if(!next){showToast(english?'Chat name cannot be empty.':'Название не может быть пустым.','error');$('chatActionName').focus();return;}
-        chat.title=next;persistChats();renderChatList();renderActiveChat();closeChatActionDialog();return;
+        const previousTitle=chat.title;chat.title=next;
+        if(!persistChats()){chat.title=previousTitle;renderChatList();renderActiveChat();return;}
+        renderChatList();renderActiveChat();closeChatActionDialog();return;
       }
       const projectId=$('chatActionProject').value||null;
       if(projectId&&!projects.some(project=>project.id===projectId)){showToast(english?'Project no longer exists.':'Проект больше не существует.','error');return;}
+      const previous={projectId:chat.projectId,projectMemoryEnabled:chat.projectMemoryEnabled,serverProjectMemoryEnabled:chat.serverProjectMemoryEnabled};
       chat.projectId=projectId;chat.projectMemoryEnabled=false;chat.serverProjectMemoryEnabled=false;
-      persistChats();renderChatList();renderProjectUI({preserveDraft:true});closeChatActionDialog();
+      if(!persistChats()){Object.assign(chat,previous);renderChatList();renderProjectUI({preserveDraft:true});return;}
+      renderChatList();renderProjectUI({preserveDraft:true});closeChatActionDialog();
       showToast(projectId?(english?'Chat moved to project.':'Чат перемещён в проект.'):(english?'Chat detached from project.':'Чат извлечён из проекта.'));
     }
     function cloneChat(id) {
       const source=chats.find(item=>item.id===id);if(!source)return;
       const copy=createChat((source.title||'Новый чат')+' — копия',JSON.parse(JSON.stringify(source.messages||[])),source.projectId||null);
       copy.projectMemoryEnabled=false;copy.serverProjectMemoryEnabled=false;
-      updateState([copy,...chats],copy.id);
+      const previousChats=chats,previousCurrentId=currentChatId;
+      if(!updateState([copy,...chats],copy.id)){chats=previousChats;currentChatId=previousCurrentId;renderChatList();renderActiveChat();renderProjectUI({preserveDraft:true});return;}
       showToast(getUiLanguage()==='en'?'Chat cloned. Project memory is disabled in the copy.':'Чат клонирован. Память проекта отключена в копии.');
     }
     function exportChatById(id) {
@@ -4289,7 +4539,9 @@ permalink: /
             imported.some((chat) => !chat || typeof chat.id !== 'string' || !Array.isArray(chat.messages))) {
           throw new Error('Структура файла не похожа на экспорт чатов.');
         }
-        if (chats.length + imported.length > 1000) throw new Error('Импорт превысит лимит 1000 чатов. Сначала удали ненужные чаты.');
+        const totalMessages=imported.reduce((total,chat)=>total+chat.messages.length,0);
+         if(totalMessages>MAX_IMPORTED_MESSAGES)throw new Error('Файл содержит больше 50 000 сообщений; раздели экспорт на несколько файлов.');
+         if (chats.length + imported.length > 1000) throw new Error('Импорт превысит лимит 1000 чатов. Сначала удали ненужные чаты.');
         const seen = new Set(chats.map(chat=>chat.id));
         const clean = imported.map((chat) => ({
           id: chat.id.slice(0, 128), title: typeof chat.title === 'string' ? chat.title.slice(0, 160) : 'Импортированный чат',
@@ -4308,7 +4560,9 @@ permalink: /
         }));
         clean.forEach((chat) => { const original=chat.id;if(seen.has(chat.id)){chat.id=projectIdNew();}seen.add(chat.id); });
         if (activeController) stopGeneration();
-        updateState([...clean,...chats], clean[0].id); toggleSidebar(false);
+        const previousChats=chats,previousCurrentId=currentChatId;
+        if(!updateState([...clean,...chats], clean[0].id)){chats=previousChats;currentChatId=previousCurrentId;renderChatList();renderActiveChat();renderProjectUI({preserveDraft:true});throw new Error('Хранилище не подтвердило импорт; исходная история восстановлена.');}
+        toggleSidebar(false);
         showToast(getUiLanguage()==='en'?'Imported chats were added without replacing existing history.':'Импортированные чаты добавлены; существующая история не заменена.');
       } catch (error) { showToast(`Ошибка импорта: ${error.message}`, 'error'); }
     }
@@ -5055,6 +5309,7 @@ permalink: /
           case 'close-settings': toggleSettings(false); break;
           case 'save-settings': saveSettings(); break;
           case 'download-recovery-backup': downloadRecoveryBackup(); break;
+        case 'download-project-recovery-backup': downloadProjectRecoveryBackup(); break;
           case 'send': await sendMessage(false); break;
           case 'stop': stopGeneration(); break;
           case 'retry': await retryLastMessage(); break;
@@ -5101,14 +5356,14 @@ permalink: /
     $('modelName').addEventListener('change',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('modeFast').addEventListener('click', () => setProcessingMode('fast'));
     $('modeDeep').addEventListener('click', () => setProcessingMode('deep'));
-    $('toggleSearch').addEventListener('change', (event) => safeSet(STORAGE.search, String(event.target.checked)));
-    $('toggleMultiAgent').addEventListener('change', (event) => safeSet(STORAGE.multiAgent, String(event.target.checked)));
+    $('toggleSearch').addEventListener('change', event => setSearchMode(event.target.checked ? 'normal' : 'offline'));
+    $('toggleMultiAgent').addEventListener('change', event => setAgentMode(event.target.checked));
     $('agentModeControl').addEventListener('change', event => setAgentMode(event.target.checked));
-    $('skillPresetSelect').addEventListener('change', event => {const chat=getCurrentChat();if(event.target.value==='custom'&&chat){chat.skillGoal='custom';persistChats();}setSkillPreset(event.target.value);renderSkillConfiguration();});
-    $('skillGoalSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat){chat.skillGoal=$('skillGoalSelect').value;persistChats();renderSkillConfiguration();}});
-    $('skillOutputSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat){chat.skillOutputMode=$('skillOutputSelect').value;persistChats();renderSkillConfiguration();}});
+    $('skillPresetSelect').addEventListener('change', event => {setSkillPreset(event.target.value);renderSkillConfiguration();});
+    $('skillGoalSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat&&persistChatMutation(chat,{skillGoal:$('skillGoalSelect').value})){renderSkillConfiguration();updateModeUI();}else{renderSkillConfiguration();updateModeUI();}});
+    $('skillOutputSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat&&persistChatMutation(chat,{skillOutputMode:$('skillOutputSelect').value})){renderSkillConfiguration();updateModeUI();}else{renderSkillConfiguration();updateModeUI();}});
     ['customSkillName','customSkillInstructions','customSkillOutput'].forEach(id=>$(id).addEventListener('change',persistSkillConfiguration));
-    $('agentTeamSize').addEventListener('input',()=>{const chat=getCurrentChat();if(chat){chat.agentTeamSize=Math.max(1,Math.min(50,Number($('agentTeamSize').value)||1));$('agentTeamSizeValue').textContent=chat.agentTeamSize+' '+(getUiLanguage()==='en'?(chat.agentTeamSize===1?'agent':'agents'):(chat.agentTeamSize===1?'агент':'агентов'));persistChats();}});
+    $('agentTeamSize').addEventListener('input',()=>{const chat=getCurrentChat();if(!chat)return;const next=Math.max(1,Math.min(50,Number($('agentTeamSize').value)||1));if(!persistChatMutation(chat,{agentTeamSize:next})){renderAgentConfiguration();return;}renderAgentConfiguration();});
     ['agentTeamScenario','agentRolePreset'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
     ['agentTeamCustomScenario','agentCustomRoles'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
     $('sidebarOverlay').addEventListener('click', () => toggleSidebar(false));
@@ -5116,10 +5371,10 @@ permalink: /
     $('settingsProfileFile').addEventListener('change', importSettingsProfile);
     $('importProjectFile').addEventListener('change',importProjectBundle);
     $('currentProjectSelect').addEventListener('change',event=>moveCurrentChatToProject(event.target.value));
-    $('projectMemoryScopeSelect').addEventListener('change',event=>{if(creatingProject)return;const project=getProjectForChat();if(!project){event.target.value='project-only';return;}project.memoryScope=event.target.value==='project-and-global'?'project-and-global':'project-only';project.updatedAt=new Date().toISOString();persistProjects();showToast(project.memoryScope==='project-and-global'?'Для проекта разрешена общая память (если общий доступ включён).':'Общая память выключена для этого проекта.');});
-    $('projectMemoryToggle').addEventListener('change',event=>{const chat=getCurrentChat();chat.projectMemoryEnabled=Boolean(event.target.checked);persistChats();showToast(chat.projectMemoryEnabled?(getUiLanguage()==='en'?'Project memory enabled for this chat.':'Память проекта включена для этого чата.'):(getUiLanguage()==='en'?'Project memory is off for this chat.':'Память проекта отключена для этого чата.'));});
-    $('serverProjectMemoryToggle').addEventListener('change',event=>{const chat=getCurrentChat();chat.serverProjectMemoryEnabled=Boolean(event.target.checked);persistChats();showToast(chat.serverProjectMemoryEnabled?(getUiLanguage()==='en'?'Server project memory opted in for this chat.':'Серверная память разрешена для этого чата.'):(getUiLanguage()==='en'?'Server project memory is off.':'Серверная память отключена.'));});
-     $('globalMemoryToggle').addEventListener('change',event=>{safeSet(STORAGE.globalMemoryEnabled,String(event.target.checked));updateMemoryStatusLine();showToast(event.target.checked?(getUiLanguage()==='en'?'Global memory enabled.':'Глобальная память включена.'):(getUiLanguage()==='en'?'Global memory disabled.':'Глобальная память отключена.'));});
+    $('projectMemoryScopeSelect').addEventListener('change',event=>{if(creatingProject)return;const project=getProjectForChat();if(!project){event.target.value='project-only';return;}const previousScope=project.memoryScope,previousUpdatedAt=project.updatedAt;project.memoryScope=event.target.value==='project-and-global'?'project-and-global':'project-only';project.updatedAt=new Date().toISOString();if(!persistProjects()){project.memoryScope=previousScope;project.updatedAt=previousUpdatedAt;event.target.value=previousScope;return;}showToast(project.memoryScope==='project-and-global'?'Для проекта разрешена общая память (если общий доступ включён).':'Общая память выключена для этого проекта.');});
+    $('projectMemoryToggle').addEventListener('change',event=>{const chat=getCurrentChat(),previous=chat.projectMemoryEnabled;chat.projectMemoryEnabled=Boolean(event.target.checked);if(!persistChats()){chat.projectMemoryEnabled=previous;event.target.checked=previous;return;}showToast(chat.projectMemoryEnabled?(getUiLanguage()==='en'?'Project memory enabled for this chat.':'Память проекта включена для этого чата.'):(getUiLanguage()==='en'?'Project memory is off for this chat.':'Память проекта отключена для этого чата.'));});
+    $('serverProjectMemoryToggle').addEventListener('change',event=>{const chat=getCurrentChat(),previous=chat.serverProjectMemoryEnabled;chat.serverProjectMemoryEnabled=Boolean(event.target.checked);if(!persistChats()){chat.serverProjectMemoryEnabled=previous;event.target.checked=previous;return;}showToast(chat.serverProjectMemoryEnabled?(getUiLanguage()==='en'?'Server project memory opted in for this chat.':'Серверная память разрешена для этого чата.'):(getUiLanguage()==='en'?'Server project memory is off.':'Серверная память отключена.'));});
+     $('globalMemoryToggle').addEventListener('change',event=>{const previous=!event.target.checked;if(!safeSet(STORAGE.globalMemoryEnabled,String(event.target.checked))){event.target.checked=previous;updateMemoryStatusLine();return;}updateMemoryStatusLine();showToast(event.target.checked?(getUiLanguage()==='en'?'Global memory enabled.':'Глобальная память включена.'):(getUiLanguage()==='en'?'Global memory disabled.':'Глобальная память отключена.'));});
     $('projectMemoryInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();document.querySelector('[data-action="add-project-memory"]').click();}});
     $('userInput').addEventListener('input', () => autoResizeTextarea($('userInput')));
     let voiceHoldTimer=null,voiceHoldOpened=false;
@@ -5205,7 +5460,7 @@ permalink: /
           const backupKeys = [];
           for (let index = 0; index < localStorage.length; index++) {
             const key = localStorage.key(index);
-            if (key && key.startsWith('ai_chats_recovery_backup') && safeGet(key)) backupKeys.push(key);
+            if (key && key.startsWith('ai_chats_recovery_backup') && safeGet(key) !== null) backupKeys.push(key);
           }
           backupKeys.sort((a, b) => {
             const time = (key) => Number(key.slice('ai_chats_recovery_backup_'.length)) || 0;
@@ -5214,10 +5469,30 @@ permalink: /
           chatRecoveryBackupKey = backupKeys[0] || '';
         } catch (_) {}
       }
-      if (chatRecoveryBackupKey) $('recoveryBackupButton').classList.remove('hidden');
-      if (chatRecoveryWarning) showToast(chatStorageCorruptNotBackedUp
-        ? 'История не прочиталась, резервная копия не создалась. Исходные данные не будут перезаписаны; освободите место и перезагрузите страницу.'
-        : 'История не прочиталась. Исходные данные сохранены локально; скачайте резервную копию в настройках.', 'error');
+      if (chatRecoveryBackupKey || chatStorageCorruptNotBackedUp) $('recoveryBackupButton').classList.remove('hidden');
+      if (!projectRecoveryBackupKey) {
+        try {
+          const backupKeys = [];
+          for (let index = 0; index < localStorage.length; index++) {
+            const key = localStorage.key(index);
+            if (key && key.startsWith('ai_projects_recovery_backup') && safeGet(key) !== null) backupKeys.push(key);
+          }
+          backupKeys.sort((a, b) => { const time = key => Number(key.slice('ai_projects_recovery_backup_'.length)) || 0; return time(b) - time(a); });
+          projectRecoveryBackupKey = backupKeys[0] || '';
+        } catch (_) {}
+      }
+      if (projectRecoveryBackupKey || projectStorageCorruptNotBackedUp) {
+        const button = $('projectRecoveryBackupButton');
+        button.classList.remove('hidden');
+        button.textContent = getUiLanguage() === 'en' ? 'Download project recovery backup' : 'Скачать резервную копию проектов';
+      }
+      if (projectRecoveryWarning && chatRecoveryWarning) showToast('История и проекты прочитались не полностью. Исходные данные не перезаписаны; скачай обе резервные копии кнопками восстановления.', 'error');
+      else if (projectRecoveryWarning) showToast(projectStorageCorruptNotBackedUp
+        ? 'Повреждённые проекты не перезаписаны: скачай исходные данные кнопкой восстановления, освободи место и перезагрузи страницу.'
+        : 'Проекты не прочитались полностью. Исходные данные сохранены локально; скачай резервную копию проектов.', 'error');
+      else if (chatRecoveryWarning) showToast(chatStorageCorruptNotBackedUp
+        ? 'История не прочиталась, резервная копия не создалась. Скачай исходные данные кнопкой восстановления, освободи место и перезагрузи страницу.'
+        : 'История не прочиталась. Исходные данные сохранены локально; скачай резервную копию в настройках.', 'error');
       const match=location.hash.match(/^#trace=([^&]+)/);
       if(match){try{const id=decodeURIComponent(match[1]),raw=safeGet('ai_research_trace_'+id);if(raw)showTrace(JSON.parse(raw));}catch(error){console.warn('Не удалось открыть локальный журнал:',error);}}
       await initDB();

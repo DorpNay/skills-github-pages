@@ -3,11 +3,11 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-05",
   "checkpoint": {
-    "main_sha": "4fbf16aad3f741159654950e0260aaf717653291",
-    "main_commit_subject": "security(ui): harden untrusted assistant rendering and code execution (#148)",
+    "main_sha": "8e7d4aafe4b9580e9f8978c6f888e35f3fa99242",
+    "main_commit_subject": "docs(ci): reconcile audit checkpoint, provenance and Node 24 (#149)",
     "main_commit_date": "2026-11-05",
     "last_functional_checkpoint_sha": "4fbf16aad3f741159654950e0260aaf717653291",
-    "last_functional_milestone": "PR #146 merged the canonical task registry and owner audit/hygiene worklist; PR #147 fixed cancellation-safe Gateway inference slot release; PR #148 made assistant raw HTML inert, message viewer read-only and Pyodide jsglobals page-isolated. Exact PR-head gates passed. No post-merge main workflow IDs retrieved.",
+    "last_functional_milestone": "PR #148 is the last functional main change: Gateway cancellation semaphore fix and UI/Pyodide security boundary. PR #149 is a documentation/configuration state-refresh child; exact-head Quality/Freshness/Provenance/Graphify all passed.",
     "main_quality_run": null,
     "main_pages_deployment_run": null,
     "functional_parent_gateway_run": null,
@@ -115,13 +115,19 @@
         "merge_sha": "4fbf16aad3f741159654950e0260aaf717653291",
         "head_sha": "1159f30dfdfc2b76fe8b47a7fcfd8716804b7df8",
         "checks": "Exact-head Quality #41999525882 (7 jobs) and Graphify #41999525846 passed; Quality included Chromium, Jekyll, Security, Integrity, Context and published-site smoke."
+      },
+      {
+        "number": 149,
+        "merge_sha": "8e7d4aafe4b9580e9f8978c6f888e35f3fa99242",
+        "head_sha": "e775516ed204530982962754c305c4bebb0bf43d",
+        "checks": "Exact-head Quality #42001310270 (7 jobs), Freshness #42001309687, Provenance #42001309703 and Graphify #42001311323 passed."
       }
     ],
     "main_provenance_run": null,
     "main_freshness_run": null,
     "main_graphify_run": null,
     "open_prs": "6 open PRs: #125, #128, #129, #130, #131, #134",
-    "owner_task": "Finish the independent repository debugger audit, close verified P1s, reconcile Node 24 and provenance metadata, continue the remaining subsystem audit and safe branch hygiene. Do not merge PR #131 wholesale.",
+    "owner_task": "Complete final manual PR #150 diff/call-site review, including startup migration and privateMemoryUsed persistence. Keep owner merge decision pending. Then verify target-host SQLite/FTS5 capability and continue the provider/storage/voice/document/RAG audit; preserve PR #131 selective promotion, research HOLD branches and issue #111 release gates.",
     "pr131_head": "02fb4e8986b35f55a8a3b5308704b631dfbcce80",
     "pr131_exact_head_verified": false,
     "pr131_compare": "diverged: 1,101 ahead / 17 behind; 57 files; mergeable=false; keep V2 isolated.",
@@ -154,11 +160,11 @@
     "first_v1_candidate_checks": "PR #139 exact HEAD d76be1d59ed832fa638e419b542151dba277c143 passed Quality #41966180071, Freshness #41966180096, Provenance #41966180157 and Graphify #41966180042. Squash merged at main SHA 2e11849d409a51009693af95ac3ecbf1f057a3fc; post-merge main Quality #41967234442, Pages #41967233832, Freshness #41967234558, Provenance #41967234535, Graphify #41967234708 all PASS. Production CSS and landing HTML fetched.",
     "first_v1_candidate_css_delivery_assertion": "HTTP 200 and text/css",
     "original_v1_baseline_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
-    "main_quality_status": "PR #148 exact-head Quality #41999525882 PASS (7 jobs); post-merge main Quality run not retrieved.",
-    "main_pages_status": "PR #148 exact-head published Pages browser smoke PASS; post-merge Pages deployment not verified.",
-    "main_freshness_status": "PR #146 exact-head Freshness #41998267817 PASS; this refresh PR reruns against current main baseline.",
-    "main_provenance_status": "PR #146 exact-head Provenance #41998267937 PASS; this refresh PR corrects manifest metadata and reruns the gate.",
-    "main_graphify_status": "PR #148 exact-head Graphify #41999525846 PASS; post-merge main Graphify run not retrieved.",
+    "main_quality_status": "PR #149 exact-head Quality run #42001310270 PASS (7 jobs, including Chromium and published Pages smoke); no post-merge main Quality run retrieved.",
+    "main_pages_status": "PR #149 exact-head published Pages browser smoke PASS; post-merge Pages deployment not verified.",
+    "main_freshness_status": "PR #149 exact-head Project State Freshness #42001309687 PASS; merge SHA 8e7d4aafe4b9580e9f8978c6f888e35f3fa99242 is the state-refresh child.",
+    "main_provenance_status": "PR #149 exact-head Provenance #42001309703 PASS; pypdf and Vosk metadata reconciled.",
+    "main_graphify_status": "PR #149 exact-head Graphify #42001311323 PASS; post-merge main Graphify run not retrieved.",
     "first_v1_candidate_pr": 139,
     "first_v1_candidate_pr_base": "a7915291354d1b031ce2461b71a553f871959df3",
     "first_v1_candidate_merge_status": "squash-merged at 2e11849d409a51009693af95ac3ecbf1f057a3fc after explicit owner authorization",
@@ -168,10 +174,10 @@
     "pr131_graphify_code_test_sha": "c79e983a57d6cc2b87a9296a1334e6d6ed5b3479"
   },
   "interpretation": {
-    "last_main_commit_is_documentation_only": false,
+    "last_main_commit_is_documentation_only": true,
     "live_vps_gateway_device_and_model_runtime_verified": false,
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-05-REPOSITORY-DEBUGGER-PHASE1-001"
+  "last_volley": "V-2026-11-05-CHAT-SETTING-ROLLBACK-001"
 }

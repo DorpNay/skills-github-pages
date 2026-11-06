@@ -735,6 +735,15 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
 test('multi-agent preference skips a greeting and shows the actual route', async ({ page }) => {
   let calls = 0;
   await page.route('https://api.example.test/v1/chat/completions', async route => {
+    const payload = route.request().postDataJSON();
+    const lastMessage = payload.messages?.at(-1)?.content;
+    // Saving a custom provider performs a connectivity probe, not a chat completion.
+    if (lastMessage === 'Reply with exactly OK. No other words.') {
+      return route.fulfill({
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({ model: payload.model, choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+      });
+    }
     calls++;
     await route.fulfill({
       status: 200, contentType: 'application/json',
@@ -2746,4 +2755,365 @@ test('browser Python snippets cannot access page globals through Pyodide js modu
   await expect(output).toContainText('"nullPrototype":true');
   await expect(output).toContainText('"exposesSensitiveGlobals":false');
   await expect(page.locator('#pyStatus')).toContainText('Py: готов');
+});
+
+
+test('settings profile import rolls back all earlier keys when a later storage write fails', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__failProfileKey = null;
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (window.__failProfileKey === key) {
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+      }
+      return originalSetItem.call(this, key, value);
+    };
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const keys = [
+    'ai_api_provider', 'ai_base_url', 'ai_model_name', 'ai_processing_mode',
+    'ai_web_search', 'ai_multi_agent_research', 'ai_offline_mode',
+    'ai_cross_provider_fallback', 'ai_system_prompt', 'ai_web_search_preset_v1'
+  ];
+  const before = await page.evaluate(storageKeys => {
+    const values = {};
+    for (const key of storageKeys) values[key] = localStorage.getItem(key);
+    return values;
+  }, keys);
+  await page.evaluate(() => { window.__failProfileKey = 'ai_system_prompt'; });
+  const profile = {
+    format: 'ai-mobile-agent-settings',
+    version: 1,
+    settings: {
+      provider: 'groq',
+      baseUrl: 'https://api.groq.com/openai/v1',
+      model: 'openai/gpt-oss-20b',
+      systemPrompt: 'Imported profile prompt',
+      mode: 'deep',
+      search: false,
+      multiAgent: true,
+      offline: true,
+      crossProviderFallback: false
+    }
+  };
+  await page.locator('#settingsProfileFile').setInputFiles({
+    name: 'settings-profile.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(profile))
+  });
+  await expect(page.locator('#toast')).toContainText('Импорт профиля не выполнен');
+  const after = await page.evaluate(storageKeys => {
+    const values = {};
+    for (const key of storageKeys) values[key] = localStorage.getItem(key);
+    return values;
+  }, keys);
+  expect(after).toEqual(before);
+});
+
+test('settings profile import rolls back provider keys when chat persistence fails', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__failCurrentWrite = false;
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (window.__failCurrentWrite && key === 'ai_current_chat_v87') {
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+      }
+      return originalSetItem.call(this, key, value);
+    };
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const keys = [
+    'ai_api_provider', 'ai_base_url', 'ai_model_name', 'ai_processing_mode',
+    'ai_web_search', 'ai_multi_agent_research', 'ai_offline_mode',
+    'ai_cross_provider_fallback', 'ai_system_prompt', 'ai_web_search_preset_v1',
+    'ai_chats_v87', 'ai_current_chat_v87'
+  ];
+  const before = await page.evaluate(storageKeys => {
+    const values = {};
+    for (const key of storageKeys) values[key] = localStorage.getItem(key);
+    return values;
+  }, keys);
+  await page.evaluate(() => { window.__failCurrentWrite = true; });
+  const profile = {
+    format: 'ai-mobile-agent-settings',
+    version: 1,
+    settings: {
+      provider: 'groq',
+      baseUrl: 'https://api.groq.com/openai/v1',
+      model: 'openai/gpt-oss-20b',
+      systemPrompt: 'Imported profile prompt',
+      mode: 'deep',
+      search: false,
+      multiAgent: true,
+      offline: true,
+      crossProviderFallback: false
+    }
+  };
+  await page.locator('#settingsProfileFile').setInputFiles({
+    name: 'settings-profile.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(profile))
+  });
+  await expect(page.locator('#toast')).toContainText('Импорт профиля не выполнен');
+  const after = await page.evaluate(storageKeys => {
+    const values = {};
+    for (const key of storageKeys) values[key] = localStorage.getItem(key);
+    return values;
+  }, keys);
+  expect(after).toEqual(before);
+});
+
+test('chat mode setters restore chat and mirrored storage when quota blocks persistence', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__failChatWrites = false;
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (window.__failChatWrites && key === 'ai_chats_v87') {
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+      }
+      return originalSetItem.call(this, key, value);
+    };
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const keys = [
+    'ai_chats_v87', 'ai_processing_mode', 'ai_web_search_preset_v1',
+    'ai_web_search', 'ai_offline_mode', 'ai_multi_agent_research'
+  ];
+  const before = await page.evaluate(storageKeys => {
+    const values = {};
+    for (const key of storageKeys) values[key] = localStorage.getItem(key);
+    return values;
+  }, keys);
+  await page.evaluate(() => { window.__failChatWrites = true; });
+  await page.locator('#modeDeep').click();
+  await page.evaluate(() => {
+    const search = document.querySelector('#toggleSearch');
+    search.checked = !search.checked;
+    search.dispatchEvent(new Event('change', { bubbles: true }));
+    const multi = document.querySelector('#toggleMultiAgent');
+    multi.checked = !multi.checked;
+    multi.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await expect(page.locator('#toast')).toContainText('История не подтверждена');
+  const after = await page.evaluate(storageKeys => {
+    const values = {};
+    for (const key of storageKeys) values[key] = localStorage.getItem(key);
+    return values;
+  }, keys);
+  expect(after).toEqual(before);
+  await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'false');
+});
+
+test('skill and agent configuration setters restore unsaved values when chat storage fails', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__failChatWrites = false;
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (window.__failChatWrites && key === 'ai_chats_v87') {
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+      }
+      return originalSetItem.call(this, key, value);
+    };
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const before = await page.evaluate(() => localStorage.getItem('ai_chats_v87'));
+  await page.evaluate(() => { window.__failChatWrites = true; });
+  await page.evaluate(() => {
+    const goal = document.querySelector('#skillGoalSelect');
+    const option = [...goal.options].find(item => item.value && item.value !== goal.value);
+    if (option) {
+      goal.value = option.value;
+      goal.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    const preset = document.querySelector('#skillPresetSelect');
+    const nextPreset = [...preset.options].find(item => item.value && item.value !== preset.value);
+    if (nextPreset) {
+      preset.value = nextPreset.value;
+      preset.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    const nextGoal = [...goal.options].find(item => item.value && item.value !== goal.value);
+    if (nextGoal) {
+      goal.value = nextGoal.value;
+      goal.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    const customName = document.querySelector('#customSkillName');
+    customName.value = 'Unsaved skill name';
+    customName.dispatchEvent(new Event('change', { bubbles: true }));
+    const size = document.querySelector('#agentTeamSize');
+    size.value = '7';
+    size.dispatchEvent(new Event('input', { bubbles: true }));
+    const scenario = document.querySelector('#agentTeamScenario');
+    const nextScenario = [...scenario.options].find(item => item.value && item.value !== scenario.value);
+    if (nextScenario) {
+      scenario.value = nextScenario.value;
+      scenario.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  });
+  const after = await page.evaluate(() => localStorage.getItem('ai_chats_v87'));
+  expect(after).toBe(before);
+  const activeChat = await page.evaluate(() => {
+    const raw = localStorage.getItem('ai_chats_v87');
+    const parsed = JSON.parse(raw);
+    return parsed.find(chat => chat.id === localStorage.getItem('ai_current_chat_v87')) || parsed[0];
+  });
+  await expect(page.locator('#skillPresetSelect')).toHaveValue(activeChat.skillPreset);
+  await expect(page.locator('#skillGoalSelect')).toHaveValue(activeChat.skillGoal);
+  await expect(page.locator('#customSkillName')).toHaveValue(activeChat.customSkillName);
+  await expect(page.locator('#agentTeamSize')).toHaveValue(String(activeChat.agentTeamSize));
+  await expect(page.locator('#agentTeamScenario')).toHaveValue(activeChat.agentTeamScenario);
+});
+
+test('corrupt project storage is preserved and exposes a downloadable recovery backup', async ({ page }) => {
+  const raw = '{"projects":';
+  await page.addInitScript(value => localStorage.setItem('ai_projects_v1', value), raw);
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#projectRecoveryBackupButton')).not.toHaveClass(/hidden/);
+  const values = await page.evaluate(() => ({
+    original: localStorage.getItem('ai_projects_v1'),
+    backup: localStorage.getItem('ai_projects_recovery_backup')
+  }));
+  expect(values).toEqual({ original: raw, backup: raw });
+  await page.locator('#appSidebarToggle').click();
+  await page.locator('[data-action="open-project-settings"]').click();
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.locator('#projectRecoveryBackupButton').click()
+  ]);
+  expect(download.suggestedFilename()).toBe('ai-projects-recovery-backup.json');
+});
+
+test('partially invalid chat history is backed up before valid records are persisted', async ({ page }) => {
+  const raw = JSON.stringify([
+    { id: 'valid-chat', title: 'Valid', messages: [{ role: 'user', content: 'keep me' }] },
+    { id: 'invalid-chat', title: 'Invalid', messages: 'not-an-array' }
+  ]);
+  await page.addInitScript(value => localStorage.setItem('ai_chats_v87', value), raw);
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_chats_recovery_backup'))).toBe(raw);
+  const persisted = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]'));
+  expect(persisted).toHaveLength(1);
+  expect(persisted[0].id).toBe('valid-chat');
+});
+
+test('project import rolls back project and chat writes when current-chat persistence fails', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__failCurrentWrite = false;
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (window.__failCurrentWrite && key === 'ai_current_chat_v87') {
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+      }
+      return originalSetItem.call(this, key, value);
+    };
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_chats_v87'))).not.toBeNull();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_current_chat_v87'))).not.toBeNull();
+  const before = await page.evaluate(() => ({
+    projects: localStorage.getItem('ai_projects_v1'),
+    chats: localStorage.getItem('ai_chats_v87'),
+    current: localStorage.getItem('ai_current_chat_v87')
+  }));
+  await page.evaluate(() => { window.__failCurrentWrite = true; });
+  const bundle = {
+    format: 'alandi-project-bundle',
+    version: 1,
+    project: { name: 'Quota rollback test', memory: [] },
+    chats: [{ id: 'imported-chat', messages: [{ role: 'user', content: 'must not persist' }] }]
+  };
+  await page.locator('#importProjectFile').setInputFiles({
+    name: 'project-bundle.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(bundle))
+  });
+  await expect(page.locator('#toast')).toContainText('Импорт проекта не выполнен');
+  const after = await page.evaluate(() => ({
+    projects: localStorage.getItem('ai_projects_v1'),
+    chats: localStorage.getItem('ai_chats_v87'),
+    current: localStorage.getItem('ai_current_chat_v87')
+  }));
+  expect(after).toEqual(before);
+});
+
+test('project writes fail closed when malformed source data cannot be backed up', async ({ page }) => {
+  const raw = '{"broken":';
+  await page.addInitScript(value => {
+    localStorage.setItem('ai_projects_v1', value);
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, nextValue) {
+      if (key.startsWith('ai_projects_recovery_backup')) {
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+      }
+      return originalSetItem.call(this, key, nextValue);
+    };
+  }, raw);
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_chats_v87'))).not.toBeNull();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_current_chat_v87'))).not.toBeNull();
+  const before = await page.evaluate(() => ({
+    projects: localStorage.getItem('ai_projects_v1'),
+    chats: localStorage.getItem('ai_chats_v87'),
+    current: localStorage.getItem('ai_current_chat_v87')
+  }));
+  const bundle = {
+    format: 'alandi-project-bundle',
+    version: 1,
+    project: { name: 'Must not overwrite corrupt data', memory: [] },
+    chats: [{ id: 'new-chat', messages: [{ role: 'user', content: 'test' }] }]
+  };
+  await page.locator('#importProjectFile').setInputFiles({
+    name: 'project-bundle.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(bundle))
+  });
+  await expect(page.locator('#toast')).toContainText('Импорт проекта не выполнен');
+  const after = await page.evaluate(() => ({
+    projects: localStorage.getItem('ai_projects_v1'),
+    chats: localStorage.getItem('ai_chats_v87'),
+    current: localStorage.getItem('ai_current_chat_v87')
+  }));
+  expect(after).toEqual(before);
+  await page.locator('#appSidebarToggle').click();
+  await page.locator('[data-action="open-project-settings"]').click();
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.locator('#projectRecoveryBackupButton').click()
+  ]);
+  expect(download.suggestedFilename()).toBe('ai-projects-recovery-backup.json');
+  const stream = await download.createReadStream();
+  let downloaded = '';
+  for await (const chunk of stream) downloaded += chunk.toString();
+  expect(downloaded).toBe(raw);
+});
+
+
+test('partially corrupt chat history remains downloadable when recovery backup write fails', async ({ page }) => {
+  const raw = JSON.stringify([
+    { id: 'valid-chat', title: 'Valid', messages: [{ role: 'user', content: 'keep me' }] },
+    { id: 'invalid-chat', title: 'Invalid', messages: 'not-an-array' }
+  ]);
+  await page.addInitScript(value => {
+    localStorage.setItem('ai_chats_v87', value);
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, nextValue) {
+      if (key.startsWith('ai_chats_recovery_backup')) {
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+      }
+      return originalSetItem.call(this, key, nextValue);
+    };
+  }, raw);
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#recoveryBackupButton')).not.toHaveClass(/hidden/);
+  expect(await page.evaluate(() => localStorage.getItem('ai_chats_v87'))).toBe(raw);
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.locator('#recoveryBackupButton').click()
+  ]);
+  expect(download.suggestedFilename()).toBe('ai-chat-recovery-backup.json');
+  const stream = await download.createReadStream();
+  let downloaded = '';
+  for await (const chunk of stream) downloaded += chunk.toString();
+  expect(downloaded).toBe(raw);
 });
