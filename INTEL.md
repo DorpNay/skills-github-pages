@@ -77,264 +77,264 @@ This is the single navigational inventory for external upstreams referenced by t
 **Snapshot extraction:** 275 distinct source URL references across INTEL.md. The original consolidated table contains 257; 18 additional references were previously present only in INTEL prose and are now captured in the supplemental table below. These are URL/resource references, not a count of unique upstream projects. A preliminary grouping yields 228 repo/model/site roots (143 GitHub repository roots, 16 Hugging Face model roots, 69 other host roots); host-level grouping can contain multiple unrelated resources and must not be read as a unique-project count.
 
 | ID | Source / resource | URL as cited | Found in |
-|---|---|---|
-| EXT-001  - Browser audio: MDN MediaRecorder is broadly supported for recording a MediaStream, while getUserMedia requires HTTPS and explicit microphone permission. Web Speech recognition is not consistently supported; default recognition may send audio to a remote service. On-device recognition requires supported browser/language packs. Sources: | <https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder> | INTEL.md |
-| EXT-002  - Browser audio: MDN MediaRecorder is broadly supported for recording a MediaStream, while getUserMedia requires HTTPS and explicit microphone permission. Web Speech recognition is not consistently supported; default recognition may send audio to a remote service. On-device recognition requires supported browser/language packs. Sources: | <https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia> | INTEL.md |
-| EXT-003  - Browser audio: MDN MediaRecorder is broadly supported for recording a MediaStream, while getUserMedia requires HTTPS and explicit microphone permission. Web Speech recognition is not consistently supported; default recognition may send audio to a remote service. On-device recognition requires supported browser/language packs. Sources: | <https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API/Using_the_Web_Speech_API> | INTEL.md |
-| EXT-004  - Current Piper engine:  and | <https://github.com/OHF-Voice/piper1-gpl> | INTEL.md |
-| EXT-005  - Current Piper engine:  and | <https://github.com/OHF-Voice/piper1-gpl/blob/main/docs/VOICES.md> | INTEL.md |
-| EXT-006  - DigitalPlat Dev / FreeDomain terms: | <https://www.digitalplat.org/> | INTEL.md |
-| EXT-007  - Google OAuth web-server flow: | <https://developers.google.com/identity/protocols/oauth2/web-server> | INTEL.md |
-| EXT-008  - Google Vertex AI Veo: official API reference lists Veo 3.1 models and long-running video generation; needs Google Cloud project, IAM and billing/storage setup. Source: | <https://docs.cloud.google.com/vertex-ai/generative-ai/docs/model-reference/veo-video-generation> | INTEL.md |
-| EXT-009  - JSON Patch: | <https://www.rfc-editor.org/rfc/rfc6902.html> | INTEL.md |
-| EXT-010  - JSON Schema validator, version/license:  (MIT; current pinned dependency is 4.26.0 in gateway requirements). | <https://pypi.org/project/jsonschema/> | INTEL.md |
-| EXT-011  - Luma Agents API: current docs describe Ray 3.2 video generation/edit/reframe. Source: | <https://docs.agents.lumalabs.ai/guides/videos/> | INTEL.md |
-| EXT-012  - MDN documents pointer lifecycle events including pointerdown, pointerup, and pointercancel. Long-press UIs should clear timers on cancel and keep targets large enough for touch. Source: | <https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events> | INTEL.md |
-| EXT-013  - MDN documents that omitting the HTML file input accept attribute leaves the picker unrestricted; multiple allows multi-file selection. The accept attribute is only a selection hint and is not a security or type-validation boundary. Sources:  and | <https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/file> | INTEL.md |
-| EXT-014  - MDN documents that omitting the HTML file input accept attribute leaves the picker unrestricted; multiple allows multi-file selection. The accept attribute is only a selection hint and is not a security or type-validation boundary. Sources:  and | <https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/accept> | INTEL.md |
-| EXT-015  - Microsoft LazyGraphRAG: | <https://www.microsoft.com/en-us/research/blog/lazygraphrag-setting-a-new-standard-for-quality-and-cost/> | INTEL.md |
-| EXT-016  - Mobile viewport: VisualViewport reports visual viewport dimensions/offset/scale and resize events; keyboard behavior differs between visual and layout viewport. Keep zoom accessibility enabled; use responsive viewport and 16px mobile input, not maximum-scale/user-scalable=no. Sources:  and | <https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport> | INTEL.md |
-| EXT-017  - Mobile viewport: VisualViewport reports visual viewport dimensions/offset/scale and resize events; keyboard behavior differs between visual and layout viewport. Keep zoom accessibility enabled; use responsive viewport and 16px mobile input, not maximum-scale/user-scalable=no. Sources:  and | <https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name/viewport> | INTEL.md |
-| EXT-018  - Moonshine upstream license terms: | <https://github.com/moonshine-ai/moonshine/blob/main/LICENSE> | INTEL.md |
-| EXT-019  - OAuth security BCP: | <https://www.rfc-editor.org/rfc/rfc9700.html> | INTEL.md |
-| EXT-020  - OCI shape/product details and availability:  and | <https://www.oracle.com/cloud/compute/> | INTEL.md |
-| EXT-021  - OCI shape/product details and availability:  and | <https://www.oracle.com/cloud/free/> | INTEL.md |
-| EXT-022  - ONNX standard:  (Apache-2.0). Runtime and model artifact licenses are tracked separately from the ONNX format. | <https://github.com/onnx/onnx> | INTEL.md |
-| EXT-023  - OpenAI Image API / Responses image_generation tool: current official guide describes image generations and edits through the Image API, and multi-turn image tool through Responses. This is not the existing chat-completions endpoint; requires server-side secret handling and may require organization verification. Sources:  and | <https://developers.openai.com/api/docs/guides/image-generation> | INTEL.md |
-| EXT-024  - OpenAI Image API / Responses image_generation tool: current official guide describes image generations and edits through the Image API, and multi-turn image tool through Responses. This is not the existing chat-completions endpoint; requires server-side secret handling and may require organization verification. Sources:  and | <https://developers.openai.com/api/docs/guides/tools-image-generation> | INTEL.md |
-| EXT-025  - OpenAI Sora 2 / Videos API: official current API pages state the models and Videos API were shut down on 2026-09-24 and no one-to-one replacement API is available. Do not implement the retired endpoint. Source: | <https://developers.openai.com/api/docs/guides/video-generation> | INTEL.md |
-| EXT-026  - OpenTelemetry Python official docs: | <https://opentelemetry.io/docs/languages/python/instrumentation/> | INTEL.md |
-| EXT-027  - orjson:  and | <https://github.com/ijl/orjson> | INTEL.md |
-| EXT-028  - orjson:  and | <https://pypi.org/project/orjson/> | INTEL.md |
-| EXT-029  - PyO3 native bridge:  (dual MIT/Apache-2.0). | <https://github.com/PyO3/pyo3> | INTEL.md |
-| EXT-030  - Runway Dev API: official docs list async generation tasks, including Gen-4.5 text-to-video and image-to-video; requires API key and required X-Runway-Version header. Source:  and | <https://docs.dev.runwayml.com/api/> | INTEL.md |
-| EXT-031  - Runway Dev API: official docs list async generation tasks, including Gen-4.5 text-to-video and image-to-video; requires API key and required X-Runway-Version header. Source:  and | <https://docs.dev.runwayml.com/guides/using-the-api/> | INTEL.md |
-| EXT-032  - Silero TTS/model collection:  and | <https://github.com/snakers4/silero-models> | INTEL.md |
-| EXT-033  - Silero TTS/model collection:  and | <https://github.com/snakers4/silero-models/wiki/Licensing-and-Tiers> | INTEL.md |
-| EXT-034  - Silero VAD:  and | <https://github.com/snakers4/silero-vad> | INTEL.md |
-| EXT-035  - Silero VAD:  and | <https://github.com/snakers4/silero-vad/blob/master/LICENSE> | INTEL.md |
-| EXT-036  - SSRF guidance: | <https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html> | INTEL.md |
-| EXT-037  - uv:  and | <https://docs.astral.sh/uv/> | INTEL.md |
-| EXT-038  - uv:  and | <https://github.com/astral-sh/uv> | INTEL.md |
-| EXT-039  - Vosk API source:  (Apache-2.0 code). | <https://github.com/alphacep/vosk-api> | INTEL.md |
-| EXT-040  - Vosk model catalogue: | <https://alphacephei.com/vosk/models> | INTEL.md |
-| EXT-041  - Vulture project:  and | <https://github.com/jendrikseipp/vulture> | INTEL.md |
-| EXT-042  - Vulture project:  and | <https://pypi.org/project/vulture/> | INTEL.md |
-| EXT-043  A2A | <https://a2a-protocol.org/latest/specification/> | PR #125 · Agent Studio research; PR #128 · Agent Workforce research; PR #130 · Deep Research research |
-| EXT-044  ACP | <https://agentclientprotocol.com/protocol/v2/overview> | PR #125 · Agent Studio research |
-| EXT-045  AG-UI | <https://docs.ag-ui.com/spec/1.0> | PR #125 · Agent Studio research; PR #128 · Agent Workforce research; PR #130 · Deep Research research |
-| EXT-046  AG-UI spec | <https://docs.ag-ui.com/> | PR #128 · Agent Workforce research |
-| EXT-047  AG2 | <https://github.com/ag2ai/ag2> | PR #125 · Agent Studio research |
-| EXT-048  Agent Skills | <https://agentskills.io/> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
-| EXT-049  Agent Skills specification | <https://agentskills.io/specification> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research; PR #128 · Agent Workforce research; PR #130 · Deep Research research |
-| EXT-050  Agent-Reach | <https://github.com/Panniantong/Agent-Reach> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
-| EXT-051  AgentScope | <https://github.com/agentscope-ai/agentscope> | PR #125 · Agent Studio research |
-| EXT-052  AgentTeams | <https://github.com/agentscope-ai/AgentTeams> | PR #128 · Agent Workforce research |
-| EXT-053  AI Engineering from Scratch | <https://github.com/rohitg00/ai-engineering-from-scratch> | docs/TECHNIQUE_REGISTER_RU.md |
-| EXT-054  AirLLM | <https://github.com/lyogavin/airllm> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
-| EXT-055  Alertmanager | <https://github.com/prometheus/alertmanager> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-056  Anything-to-Skill | <https://github.com/asale-ai/anything-to-skill> | PR #125 · Agent Studio research |
-| EXT-057  AppFlowy | <https://github.com/AppFlowy-IO/AppFlowy> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-058  Argo CD | <https://github.com/argoproj/argo-cd> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-059  ASR4ALL-L | <https://huggingface.co/futo-org/asr4all-l> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
-| EXT-060  ASR4ALL-S | <https://huggingface.co/futo-org/asr4all-s> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
-| EXT-061  AutoGen → Microsoft Agent Framework migration | <https://learn.microsoft.com/en-us/agent-framework/migration-guide/from-autogen/> | PR #125 · Agent Studio research |
-| EXT-062  AutoGPT | <https://github.com/Significant-Gravitas/AutoGPT> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-063  Awesome Agentic Patterns | <https://github.com/nibzard/awesome-agentic-patterns> | PR #125 · Agent Studio research |
-| EXT-064  Awesome Agentic Patterns | <https://agentic-patterns.com/> | PR #125 · Agent Studio research |
-| EXT-065  Awesome Agents | <https://github.com/kyrolabs/awesome-agents> | PR #125 · Agent Studio research |
-| EXT-066  Awesome Compose | <https://github.com/docker/awesome-compose> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-067  Awesome Harness Engineering | <https://github.com/ai-boost/awesome-harness-engineering> | PR #125 · Agent Studio research |
-| EXT-068  Berkeley Function-Calling Leaderboard | <https://gorilla.cs.berkeley.edu/leaderboard.html> | PR #125 · Agent Studio research |
-| EXT-069  Book-to-Skill | <https://github.com/virgiliojr94/book-to-skill> | PR #125 · Agent Studio research |
-| EXT-070  book-to-skill v1.3.0 | <https://github.com/virgiliojr94/book-to-skill/releases/tag/v1.3.0> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
-| EXT-071  Browser Use | <https://github.com/browser-use/browser-use> | PR #125 · Agent Studio research |
-| EXT-072  Bruno | <https://github.com/usebruno/bruno> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-073  Cactus Needle | <https://github.com/cactus-compute/needle> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
-| EXT-074  CAMEL-AI | <https://github.com/camel-ai/camel> | PR #125 · Agent Studio research |
-| EXT-075  Canary 180M Flash | <https://huggingface.co/nvidia/canary-180m-flash> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
-| EXT-076  Cedar | <https://docs.cedarpolicy.com/> | PR #125 · Agent Studio research |
-| EXT-077  checkpointers | <https://docs.langchain.com/oss/python/langgraph/checkpointers> | PR #125 · Agent Studio research |
-| EXT-078  Claudex Loop | <https://github.com/chaseai-yt/claudex-loop> | docs/TECHNIQUE_REGISTER_RU.md |
-| EXT-079  CLI-Anything | <https://github.com/HKUDS/CLI-Anything> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
-| EXT-080  Colibri | <https://github.com/JustVugg/colibri> | PR #128 · Agent Workforce research |
-| EXT-081  Comfy API v2 | <https://docs.comfy.org/api-reference/v2/overview> | PR #130 · Deep Research research |
-| EXT-082  Coucou | <https://github.com/Louis-CFM/coucou> | PR #125 · Agent Studio research |
-| EXT-083  CrewAI | <https://docs.crewai.com/en/index> | PR #125 · Agent Studio research |
-| EXT-084  DBOS | <https://docs.dbos.dev/architecture> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md; PR #125 · Agent Studio research |
-| EXT-085  DBOS Durable Execution | <https://docs.dbos.dev/> | PR #128 · Agent Workforce research |
-| EXT-086  DBX | <https://github.com/t8y2/dbx> | PR #125 · Agent Studio research |
-| EXT-087  DeepSeek-OCR / DeepSeek-OCR2 | <https://github.com/deepseek-ai/DeepSeek-OCR> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
-| EXT-088  DeerFlow 2.0 | <https://github.com/bytedance/deer-flow> | PR #128 · Agent Workforce research |
-| EXT-089  Developer Roadmap | <https://github.com/kamranahmedse/developer-roadmap> | docs/TECHNIQUE_REGISTER_RU.md |
-| EXT-090  DevOps Exercises | <https://github.com/bregman-arie/devops-exercises> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-091  Distil-Whisper | <https://github.com/huggingface/distil-whisper> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
-| EXT-092  Docker sandbox | <https://docs.openhands.dev/openhands/usage/sandboxes/docker> | PR #125 · Agent Studio research |
-| EXT-093  Docling supported formats | <https://docling-project.github.io/docling/usage/supported_formats/> | PR #130 · Deep Research research |
-| EXT-094  dots.ocr → dots.mocr | <https://github.com/studio-dots-ai/dots.ocr> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
-| EXT-095  DrawDB | <https://github.com/drawdb-io/drawdb> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-096  dsh-our-free-model | <https://github.com/ebony-vinyl/dsh-our-free-model> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
-| EXT-097  dsh-our-free-model | <https://github.com/Ebony-Vinyl/dsh-our-free-model> | PR #128 · Agent Workforce research |
-| EXT-098  EoT Bench | <https://github.com/livekit/eot-bench> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
-| EXT-099  Every App | <https://github.com/every-app/every-app> | docs/TECHNIQUE_REGISTER_RU.md |
-| EXT-100  Everything Claude Code / ECC | <https://github.com/affaan-m/ECC> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research; PR #128 · Agent Workforce research |
-| EXT-101  File System Access API draft | <https://wicg.github.io/file-system-access/> | PR #130 · Deep Research research |
-| EXT-102  Firecracker jailer | <https://github.com/firecracker-microvm/firecracker/blob/master/docs/jailer.md> | PR #125 · Agent Studio research |
-| EXT-103  Free Programming Books | <https://github.com/EbookFoundation/free-programming-books> | docs/TECHNIQUE_REGISTER_RU.md |
-| EXT-104  GAIA | <https://huggingface.co/gaia-benchmark> | PR #125 · Agent Studio research |
-| EXT-105  garak | <https://docs.garak.ai/garak/> | PR #125 · Agent Studio research |
-| EXT-106  GitIngest | <https://github.com/coderamp-labs/gitingest> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-107  GitMCP | <https://github.com/idosal/git-mcp> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-108  GitReverse | <https://github.com/filiksyos/gitreverse> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-109  GLM-OCR | <https://github.com/zai-org/glm-ocr> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
-| EXT-110  Google ADK | <https://google.github.io/adk-docs/> | PR #125 · Agent Studio research |
-| EXT-111  Google Online Boutique | <https://github.com/GoogleCloudPlatform/microservices-demo> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-112  google/adk-python | <https://github.com/google/adk-python> | PR #125 · Agent Studio research |
-| EXT-113  Goose | <https://github.com/block/goose> | PR #128 · Agent Workforce research |
-| EXT-114  GOT-OCR 2.0 | <https://github.com/Ucas-HaoranWei/GOT-OCR2.0> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
-| EXT-115  GPT Pilot | <https://github.com/Pythagora-io/gpt-pilot> | PR #128 · Agent Workforce research |
-| EXT-116  Graphify | <https://github.com/Graphify-Labs/graphify> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-117  Graphiti | <https://github.com/getzep/graphiti> | PR #125 · Agent Studio research |
-| EXT-118  Grok Register | <https://github.com/AaronL725/grok-register> | PR #125 · Agent Studio research |
-| EXT-119  gVisor security model | <https://gvisor.dev/docs/architecture_guide/security/> | PR #125 · Agent Studio research |
-| EXT-120  Harness² | <https://github.com/google-research/harness2> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
-| EXT-121  Harper | <https://github.com/Automattic/harper> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-122  Hatchet durable tasks | <https://docs.hatchet.run/v1/durable-tasks> | PR #125 · Agent Studio research |
-| EXT-123  Hermes Agent | <https://github.com/NousResearch/hermes-agent> | PR #125 · Agent Studio research |
-| EXT-124  Hive | <https://github.com/aden-hive/hive> | PR #128 · Agent Workforce research |
-| EXT-125  Hive Apache-2.0 license | <https://github.com/aden-hive/hive/blob/main/LICENSE> | PR #128 · Agent Workforce research |
-| EXT-126  Hono | <https://github.com/honojs/hono> | docs/TECHNIQUE_REGISTER_RU.md |
-| EXT-127  Hugging Face smolagents | <https://huggingface.co/docs/smolagents/examples/multiagents> | PR #125 · Agent Studio research |
-| EXT-128  Hugging Face Transformers | <https://github.com/huggingface/transformers> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-129  HunyuanOCR-1.5 | <https://github.com/Tencent-Hunyuan/HunyuanOCR> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
-| EXT-130  HyperFrames | <https://github.com/heygen-com/hyperframes> | PR #125 · Agent Studio research |
-| EXT-131  Impeccable | <https://github.com/pbakaus/impeccable> | PR #125 · Agent Studio research |
-| EXT-132  Inspect AI | <https://inspect.aisi.org.uk/> | PR #125 · Agent Studio research |
-| EXT-133  Jev Ultrafast | <https://github.com/browser-use/jev-ultrafast> | PR #125 · Agent Studio research |
-| EXT-134  josstei/maestro-orchestrate | <https://github.com/josstei/maestro-orchestrate> | PR #125 · Agent Studio research |
-| EXT-135  Kev-4B | <https://benchlm.ai/compare/glm-5-3-flash-vs-kev-4b> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-136  Kubernetes Examples | <https://github.com/kubernetes/examples> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-137  Langfuse tracing | <https://langfuse.com/docs/observability/get-started> | PR #125 · Agent Studio research |
-| EXT-138  LangGraph | <https://docs.langchain.com/oss/python/langgraph/graph-api> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
-| EXT-139  LangGraph docs | <https://docs.langchain.com/oss/python/langgraph/overview> | PR #125 · Agent Studio research; PR #128 · Agent Workforce research |
-| EXT-140  Letta | <https://docs.letta.com/> | PR #125 · Agent Studio research |
-| EXT-141  LightOnOCR-3-4B | <https://huggingface.co/lightonai/LightOnOCR-3-4B> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
-| EXT-142  LiveKit Agent speech/audio | <https://docs.livekit.io/agents/multimodality/audio/> | PR #129 · Voice research; PR #130 · Deep Research research |
-| EXT-143  LiveKit Agents | <https://github.com/livekit/agents> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md; PR #129 · Voice research |
-| EXT-144  LiveKit turn handling | <https://docs.livekit.io/agents/logic/turns/> | PR #129 · Voice research; PR #130 · Deep Research research |
-| EXT-145  llama.cpp server | <https://github.com/ggml-org/llama.cpp> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
-| EXT-146  Magentic-One paper | <https://arxiv.org/html/2411.04468> | PR #125 · Agent Studio research |
-| EXT-147  MagpieTTS 357M | <https://huggingface.co/nvidia/magpie_tts_multilingual_357m> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
-| EXT-148  MarkItDown | <https://github.com/microsoft/markitdown> | PR #130 · Deep Research research |
-| EXT-149  MCP | <https://modelcontextprotocol.io/specification/2026-07-28> | PR #125 · Agent Studio research |
-| EXT-150  MCP specification | <https://modelcontextprotocol.io/specification> | PR #125 · Agent Studio research; PR #128 · Agent Workforce research; PR #130 · Deep Research research |
-| EXT-151  MCP-Scan | <https://invariantlabs-ai.github.io/docs/mcp-scan/> | PR #125 · Agent Studio research |
-| EXT-152  MDN OPFS | <https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system> | PR #130 · Deep Research research |
-| EXT-153  Mem0 | <https://docs.mem0.ai/> | PR #125 · Agent Studio research |
-| EXT-154  memvid | <https://github.com/memvid/memvid> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-155  MetaGPT | <https://github.com/FoundationAgents/MetaGPT> | PR #125 · Agent Studio research |
-| EXT-156  Microsoft Agensh | <https://github.com/microsoft/Agensh> | PR #128 · Agent Workforce research |
-| EXT-157  Microsoft Agent Framework | <https://github.com/microsoft/agent-framework> | PR #125 · Agent Studio research |
-| EXT-158  Microsoft Research project | <https://aka.ms/magentic-one> | PR #125 · Agent Studio research |
-| EXT-159  Minikube | <https://github.com/kubernetes/minikube> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-160  MIT license | <https://github.com/bytedance/deer-flow/blob/main/LICENSE> | PR #128 · Agent Workforce research |
-| EXT-161  Moonshine Voice | <https://github.com/moonshine-ai/moonshine> | docs/TECHNIQUE_REGISTER_RU.md; docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
-| EXT-162  multi-agent routing | <https://docs.openclaw.ai/concepts/multi-agent/> | PR #125 · Agent Studio research |
-| EXT-163  NaiboWang/EasySpider | <https://github.com/NaiboWang/EasySpider> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-164  Nanochat | <https://github.com/karpathy/nanochat> | PR #128 · Agent Workforce research |
-| EXT-165  Nemotron 3.5 ASR 0.6B | <https://huggingface.co/nvidia/nemotron-3.5-asr-streaming-0.6b> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md; PR #129 · Voice research |
-| EXT-166  NemotronLabs VoiceChat 11B | <https://huggingface.co/nvidia/NVIDIA-NemotronLabs-VoiceChat-11B> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md; PR #129 · Voice research |
-| EXT-167  NVIDIA Nemotron Streaming ASR | <https://build.nvidia.com/nvidia/nemotron-asr-streaming/modelcard> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
-| EXT-168  NVIDIA OpenShell | <https://github.com/NVIDIA/OpenShell> | PR #125 · Agent Studio research |
-| EXT-169  obra/superpowers | <https://github.com/obra/superpowers> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-170  Octos | <https://github.com/octos-org/octos> | PR #128 · Agent Workforce research |
-| EXT-171  official notice | <https://github.blog/changelog/2026-09-23-node-20-is-no-longer-available-in-github-actions/> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
-| EXT-172  Official runtime | <https://github.com/NVIDIA/NeMo-Speech.cpp> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
-| EXT-173  Open Multi-Agent (OMA) | <https://github.com/open-multi-agent/open-multi-agent> | PR #128 · Agent Workforce research |
-| EXT-174  Open Notebook | <https://github.com/lfnovo/open-notebook> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-175  Open Policy Agent | <https://openpolicyagent.org/docs> | PR #125 · Agent Studio research |
-| EXT-176  Open-Generative-AI | <https://github.com/Anil-matcha/Open-Generative-AI> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
-| EXT-177  OpenAI Agents SDK | <https://openai.github.io/openai-agents-python/> | PR #125 · Agent Studio research; PR #128 · Agent Workforce research |
-| EXT-178  OpenClaw skills and channels | <https://docs.openclaw.ai/concepts/features> | PR #125 · Agent Studio research |
-| EXT-179  OpenClaw subagents | <https://docs.openclaw.ai/subagents> | PR #125 · Agent Studio research |
-| EXT-180  OpenHands SDK | <https://docs.openhands.dev/sdk/arch/overview> | PR #125 · Agent Studio research |
-| EXT-181  OpenMAIC | <https://github.com/THU-MAIC/OpenMAIC> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
-| EXT-182  OpenTelemetry GenAI conventions | <https://opentelemetry.io/docs/specs/semconv/gen-ai/> | PR #125 · Agent Studio research |
-| EXT-183  OpenWOP v2 | <https://openwop.dev/spec/v2/> | PR #125 · Agent Studio research |
-| EXT-184  orchestration guide | <https://developers.openai.com/api/docs/guides/agents/orchestration> | PR #125 · Agent Studio research |
-| EXT-185  OWASP Agentic Top 10 2026 | <https://genai.owasp.org/download/52117/> | PR #125 · Agent Studio research |
-| EXT-186  PaddleOCR-VL-1.6 | <https://huggingface.co/PaddlePaddle/PaddleOCR-VL-1.6> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
-| EXT-187  paper | <https://arxiv.org/pdf/2609.21967.pdf> | PR #129 · Voice research |
-| EXT-188  paper arXiv:2609.26781 | <https://arxiv.org/abs/2609.26781> | PR #128 · Agent Workforce research |
-| EXT-189  Paperclip | <https://github.com/paperclipai/paperclip> | PR #125 · Agent Studio research |
-| EXT-190  PentAGI | <https://github.com/vxcontrol/pentagi> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-191  PinchTab | <https://github.com/pinchtab/pinchtab> | PR #125 · Agent Studio research |
-| EXT-192  Pipecat | <https://github.com/pipecat-ai/pipecat> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md; PR #129 · Voice research |
-| EXT-193  Pipecat documentation | <https://docs.pipecat.ai/> | PR #129 · Voice research; PR #130 · Deep Research research |
-| EXT-194  Plandex | <https://github.com/plandex-ai/plandex> | PR #128 · Agent Workforce research |
-| EXT-195  Pliny / L1B3RT4S | <https://github.com/elder-plinius/L1B3RT4S> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
-| EXT-196  policy schema | <https://docs.nvidia.com/openshell/how-it-works/policies/schema> | PR #125 · Agent Studio research |
-| EXT-197  Ponytail | <https://github.com/DietrichGebert/ponytail> | docs/TECHNIQUE_REGISTER_RU.md |
-| EXT-198  PP-OCRv6 Tiny / Medium | <https://github.com/PaddlePaddle/PaddleOCR/blob/main/docs/version3.x/algorithm/PP-OCRv6/PP-OCRv6.en.md> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
-| EXT-199  Promptfoo eval guides | <https://www.promptfoo.dev/docs/guides/> | PR #125 · Agent Studio research |
-| EXT-200  public-api сервер | <https://github.com/davemachado/public-api> | docs/TECHNIQUE_REGISTER_RU.md |
-| EXT-201  public-apis/public-apis | <https://github.com/public-apis/public-apis> | docs/OPEN_SOURCE_TRIAGE_RU.md; docs/TECHNIQUE_REGISTER_RU.md |
-| EXT-202  punkpeye/awesome-mcp-servers | <https://github.com/punkpeye/awesome-mcp-servers> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-203  PydanticAI multi-agent | <https://pydantic.dev/docs/ai/guides/multi-agent-applications> | PR #125 · Agent Studio research |
-| EXT-204  pyproject.toml | <https://github.com/Graphify-Labs/graphify/blob/v8/pyproject.toml> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-205  PyThaiNLP romanize | <https://pythainlp.org/dev-docs/api/transliterate.html> | PR #129 · Voice research |
-| EXT-206  quickstart | <https://docs.graphify.com/quickstart> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-207  Qwen3-ASR-0.6B | <https://github.com/QwenLM/Qwen3-ASR> | docs/MULTIMODAL_MODEL_STACK_RU.md; PR #129 · Voice research; Multimodal stack research branch |
-| EXT-208  RAG-Anything | <https://github.com/HKUDS/RAG-Anything> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
-| EXT-209  reproduction guide | <https://github.com/microsoft/Agensh/blob/main/REPRODUCE.md> | PR #128 · Agent Workforce research |
-| EXT-210  research repo | <https://github.com/warit-s/typhoon-asr-streaming> | PR #129 · Voice research |
-| EXT-211  Restate actions | <https://docs.restate.dev/foundations/actions> | PR #125 · Agent Studio research |
-| EXT-212  ripienaar/free-for-dev | <https://github.com/ripienaar/free-for-dev> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-213  roadmap.sh | <https://roadmap.sh> | docs/TECHNIQUE_REGISTER_RU.md |
-| EXT-214  Roo Code | <https://github.com/RooCodeInc/Roo-Code> | PR #128 · Agent Workforce research |
-| EXT-215  RuFlo | <https://github.com/ruvnet/ruflo> | PR #125 · Agent Studio research |
-| EXT-216  RunMaestro/Maestro | <https://github.com/RunMaestro/Maestro> | PR #125 · Agent Studio research |
-| EXT-217  Scrapling | <https://github.com/D4Vinci/Scrapling> | PR #128 · Agent Workforce research |
-| EXT-218  screenshot-to-code | <https://github.com/abi/screenshot-to-code> | PR #130 · Deep Research research |
-| EXT-219  security | <https://docs.openclaw.ai/security/> | PR #125 · Agent Studio research |
-| EXT-220  sherpa-onnx streaming T-One Russian | <https://github.com/k2-fsa/sherpa-onnx/blob/master/docs/source/onnx/pretrained_models/online-ctc/t-one-ctc-models.rst> | PR #129 · Voice research |
-| EXT-221  slee-persis/GVS5H | <https://github.com/slee-persis/GVS5H> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-222  slvDev/esp32-ai | <https://github.com/slvDev/esp32-ai> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-223  Starter Workflows | <https://github.com/actions/starter-workflows> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-224  Strix | <https://github.com/usestrix/strix> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-225  Surya 2 | <https://github.com/datalab-to/surya> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
-| EXT-226  SWE-agent | <https://github.com/SWE-agent/SWE-agent> | PR #128 · Agent Workforce research |
-| EXT-227  SWE-bench | <https://www.swebench.com/> | PR #125 · Agent Studio research |
-| EXT-228  Tabby | <https://github.com/TabbyML/tabby> | PR #128 · Agent Workforce research |
-| EXT-229  taste-skill | <https://github.com/Leonxlnx/taste-skill> | docs/TECHNIQUE_REGISTER_RU.md |
-| EXT-230  Temporal | <https://docs.temporal.io/ai> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md; PR #125 · Agent Studio research |
-| EXT-231  TensorFlow | <https://github.com/tensorflow/tensorflow> | PR #128 · Agent Workforce research |
-| EXT-232  Trail-Code | <https://github.com/trailhq/Trail-Code> | docs/TECHNIQUE_REGISTER_RU.md |
-| EXT-233  TurnBench | <https://github.com/SesameAILabs/turnbench> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
-| EXT-234  Turnitout-Humanizer | <https://github.com/AhmadHassan-BTed/Turnitout-Humanizer> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-235  Typhoon ASR Real-time paper | <https://arxiv.org/html/2601.13044> | PR #129 · Voice research |
-| EXT-236  Typhoon ASR Streaming 115M | <https://huggingface.co/typhoon-ai/typhoon-asr-streaming-115m> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md; PR #129 · Voice research |
-| EXT-237  Unicode CLDR transliteration guidelines | <https://cldr.unicode.org/index/cldr-spec/transliteration-guidelines> | PR #129 · Voice research |
-| EXT-238  Unicode ICU transforms | <https://unicode-org.github.io/icu/userguide/transforms/general/> | PR #129 · Voice research |
-| EXT-239  Unidecode | <https://pypi.org/project/Unidecode/> | PR #129 · Voice research |
-| EXT-240  upstream | <https://github.com/invariantlabs-ai/mcp-scan> | PR #125 · Agent Studio research |
-| EXT-241  upstream | <https://github.com/openwop/openwop> | PR #125 · Agent Studio research |
-| EXT-242  uroman | <https://github.com/isi-nlp/uroman> | PR #129 · Voice research |
-| EXT-243  Utopia OS | <https://github.com/0xUrsanomics/utopia-os> | PR #125 · Agent Studio research |
-| EXT-244  UVR5 / Ultimate Vocal Remover GUI | <https://github.com/Anjok07/ultimatevocalremovergui> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-245  VibeVoice ASR Streaming 1.5B | <https://huggingface.co/microsoft/VibeVoice-ASR-Streaming-1.5B> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
-| EXT-246  voicebench | <https://pypi.org/project/voicebench/> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
-| EXT-247  VoxCPM2 | <https://huggingface.co/openbmb/VoxCPM2> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
-| EXT-248  whisper.cpp | <https://github.com/ggml-org/whisper.cpp> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
-| EXT-249  witr | <https://github.com/pranshuparmar/witr> | PR #125 · Agent Studio research |
-| EXT-250  Worktrunk | <https://github.com/max-sixty/worktrunk> | PR #128 · Agent Workforce research |
-| EXT-251  xerj-org/xerj | <https://github.com/xerj-org/xerj> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-252  Xiryn | <https://github.com/SouravBeraAkaSpeed/xiryn> | PR #128 · Agent Workforce research |
-| EXT-253  xtool-org/xtool | <https://github.com/xtool-org/xtool> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-254  Zagitta/gpu-unlock | <https://github.com/Zagitta/gpu-unlock> | docs/OPEN_SOURCE_TRIAGE_RU.md |
-| EXT-255  ZIPFORMER VI / sherpa-onnx | <https://github.com/k2-fsa/sherpa/blob/master/docs/source/onnx/pretrained_models/offline-transducer/zipformer-transducer-models.rst> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
-| EXT-256  τ-bench | <https://github.com/sierra-research/tau-bench> | PR #125 · Agent Studio research |
-| EXT-257  веса dots.mocr | <https://huggingface.co/dots-studio/dots.mocr> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
+|---|---|---|---|
+| EXT-001 | - Browser audio: MDN MediaRecorder is broadly supported for recording a MediaStream, while getUserMedia requires HTTPS and explicit microphone permission. Web Speech recognition is not consistently supported; default recognition may send audio to a remote service. On-device recognition requires supported browser/language packs. Sources: | <https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder> | INTEL.md |
+| EXT-002 | - Browser audio: MDN MediaRecorder is broadly supported for recording a MediaStream, while getUserMedia requires HTTPS and explicit microphone permission. Web Speech recognition is not consistently supported; default recognition may send audio to a remote service. On-device recognition requires supported browser/language packs. Sources: | <https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia> | INTEL.md |
+| EXT-003 | - Browser audio: MDN MediaRecorder is broadly supported for recording a MediaStream, while getUserMedia requires HTTPS and explicit microphone permission. Web Speech recognition is not consistently supported; default recognition may send audio to a remote service. On-device recognition requires supported browser/language packs. Sources: | <https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API/Using_the_Web_Speech_API> | INTEL.md |
+| EXT-004 | - Current Piper engine:  and | <https://github.com/OHF-Voice/piper1-gpl> | INTEL.md |
+| EXT-005 | - Current Piper engine:  and | <https://github.com/OHF-Voice/piper1-gpl/blob/main/docs/VOICES.md> | INTEL.md |
+| EXT-006 | - DigitalPlat Dev / FreeDomain terms: | <https://www.digitalplat.org/> | INTEL.md |
+| EXT-007 | - Google OAuth web-server flow: | <https://developers.google.com/identity/protocols/oauth2/web-server> | INTEL.md |
+| EXT-008 | - Google Vertex AI Veo: official API reference lists Veo 3.1 models and long-running video generation; needs Google Cloud project, IAM and billing/storage setup. Source: | <https://docs.cloud.google.com/vertex-ai/generative-ai/docs/model-reference/veo-video-generation> | INTEL.md |
+| EXT-009 | - JSON Patch: | <https://www.rfc-editor.org/rfc/rfc6902.html> | INTEL.md |
+| EXT-010 | - JSON Schema validator, version/license:  (MIT; current pinned dependency is 4.26.0 in gateway requirements). | <https://pypi.org/project/jsonschema/> | INTEL.md |
+| EXT-011 | - Luma Agents API: current docs describe Ray 3.2 video generation/edit/reframe. Source: | <https://docs.agents.lumalabs.ai/guides/videos/> | INTEL.md |
+| EXT-012 | - MDN documents pointer lifecycle events including pointerdown, pointerup, and pointercancel. Long-press UIs should clear timers on cancel and keep targets large enough for touch. Source: | <https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events> | INTEL.md |
+| EXT-013 | - MDN documents that omitting the HTML file input accept attribute leaves the picker unrestricted; multiple allows multi-file selection. The accept attribute is only a selection hint and is not a security or type-validation boundary. Sources:  and | <https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/file> | INTEL.md |
+| EXT-014 | - MDN documents that omitting the HTML file input accept attribute leaves the picker unrestricted; multiple allows multi-file selection. The accept attribute is only a selection hint and is not a security or type-validation boundary. Sources:  and | <https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/accept> | INTEL.md |
+| EXT-015 | - Microsoft LazyGraphRAG: | <https://www.microsoft.com/en-us/research/blog/lazygraphrag-setting-a-new-standard-for-quality-and-cost/> | INTEL.md |
+| EXT-016 | - Mobile viewport: VisualViewport reports visual viewport dimensions/offset/scale and resize events; keyboard behavior differs between visual and layout viewport. Keep zoom accessibility enabled; use responsive viewport and 16px mobile input, not maximum-scale/user-scalable=no. Sources:  and | <https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport> | INTEL.md |
+| EXT-017 | - Mobile viewport: VisualViewport reports visual viewport dimensions/offset/scale and resize events; keyboard behavior differs between visual and layout viewport. Keep zoom accessibility enabled; use responsive viewport and 16px mobile input, not maximum-scale/user-scalable=no. Sources:  and | <https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name/viewport> | INTEL.md |
+| EXT-018 | - Moonshine upstream license terms: | <https://github.com/moonshine-ai/moonshine/blob/main/LICENSE> | INTEL.md |
+| EXT-019 | - OAuth security BCP: | <https://www.rfc-editor.org/rfc/rfc9700.html> | INTEL.md |
+| EXT-020 | - OCI shape/product details and availability:  and | <https://www.oracle.com/cloud/compute/> | INTEL.md |
+| EXT-021 | - OCI shape/product details and availability:  and | <https://www.oracle.com/cloud/free/> | INTEL.md |
+| EXT-022 | - ONNX standard:  (Apache-2.0). Runtime and model artifact licenses are tracked separately from the ONNX format. | <https://github.com/onnx/onnx> | INTEL.md |
+| EXT-023 | - OpenAI Image API / Responses image_generation tool: current official guide describes image generations and edits through the Image API, and multi-turn image tool through Responses. This is not the existing chat-completions endpoint; requires server-side secret handling and may require organization verification. Sources:  and | <https://developers.openai.com/api/docs/guides/image-generation> | INTEL.md |
+| EXT-024 | - OpenAI Image API / Responses image_generation tool: current official guide describes image generations and edits through the Image API, and multi-turn image tool through Responses. This is not the existing chat-completions endpoint; requires server-side secret handling and may require organization verification. Sources:  and | <https://developers.openai.com/api/docs/guides/tools-image-generation> | INTEL.md |
+| EXT-025 | - OpenAI Sora 2 / Videos API: official current API pages state the models and Videos API were shut down on 2026-09-24 and no one-to-one replacement API is available. Do not implement the retired endpoint. Source: | <https://developers.openai.com/api/docs/guides/video-generation> | INTEL.md |
+| EXT-026 | - OpenTelemetry Python official docs: | <https://opentelemetry.io/docs/languages/python/instrumentation/> | INTEL.md |
+| EXT-027 | - orjson:  and | <https://github.com/ijl/orjson> | INTEL.md |
+| EXT-028 | - orjson:  and | <https://pypi.org/project/orjson/> | INTEL.md |
+| EXT-029 | - PyO3 native bridge:  (dual MIT/Apache-2.0). | <https://github.com/PyO3/pyo3> | INTEL.md |
+| EXT-030 | - Runway Dev API: official docs list async generation tasks, including Gen-4.5 text-to-video and image-to-video; requires API key and required X-Runway-Version header. Source:  and | <https://docs.dev.runwayml.com/api/> | INTEL.md |
+| EXT-031 | - Runway Dev API: official docs list async generation tasks, including Gen-4.5 text-to-video and image-to-video; requires API key and required X-Runway-Version header. Source:  and | <https://docs.dev.runwayml.com/guides/using-the-api/> | INTEL.md |
+| EXT-032 | - Silero TTS/model collection:  and | <https://github.com/snakers4/silero-models> | INTEL.md |
+| EXT-033 | - Silero TTS/model collection:  and | <https://github.com/snakers4/silero-models/wiki/Licensing-and-Tiers> | INTEL.md |
+| EXT-034 | - Silero VAD:  and | <https://github.com/snakers4/silero-vad> | INTEL.md |
+| EXT-035 | - Silero VAD:  and | <https://github.com/snakers4/silero-vad/blob/master/LICENSE> | INTEL.md |
+| EXT-036 | - SSRF guidance: | <https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html> | INTEL.md |
+| EXT-037 | - uv:  and | <https://docs.astral.sh/uv/> | INTEL.md |
+| EXT-038 | - uv:  and | <https://github.com/astral-sh/uv> | INTEL.md |
+| EXT-039 | - Vosk API source:  (Apache-2.0 code). | <https://github.com/alphacep/vosk-api> | INTEL.md |
+| EXT-040 | - Vosk model catalogue: | <https://alphacephei.com/vosk/models> | INTEL.md |
+| EXT-041 | - Vulture project:  and | <https://github.com/jendrikseipp/vulture> | INTEL.md |
+| EXT-042 | - Vulture project:  and | <https://pypi.org/project/vulture/> | INTEL.md |
+| EXT-043 | A2A | <https://a2a-protocol.org/latest/specification/> | PR #125 · Agent Studio research; PR #128 · Agent Workforce research; PR #130 · Deep Research research |
+| EXT-044 | ACP | <https://agentclientprotocol.com/protocol/v2/overview> | PR #125 · Agent Studio research |
+| EXT-045 | AG-UI | <https://docs.ag-ui.com/spec/1.0> | PR #125 · Agent Studio research; PR #128 · Agent Workforce research; PR #130 · Deep Research research |
+| EXT-046 | AG-UI spec | <https://docs.ag-ui.com/> | PR #128 · Agent Workforce research |
+| EXT-047 | AG2 | <https://github.com/ag2ai/ag2> | PR #125 · Agent Studio research |
+| EXT-048 | Agent Skills | <https://agentskills.io/> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
+| EXT-049 | Agent Skills specification | <https://agentskills.io/specification> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research; PR #128 · Agent Workforce research; PR #130 · Deep Research research |
+| EXT-050 | Agent-Reach | <https://github.com/Panniantong/Agent-Reach> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
+| EXT-051 | AgentScope | <https://github.com/agentscope-ai/agentscope> | PR #125 · Agent Studio research |
+| EXT-052 | AgentTeams | <https://github.com/agentscope-ai/AgentTeams> | PR #128 · Agent Workforce research |
+| EXT-053 | AI Engineering from Scratch | <https://github.com/rohitg00/ai-engineering-from-scratch> | docs/TECHNIQUE_REGISTER_RU.md |
+| EXT-054 | AirLLM | <https://github.com/lyogavin/airllm> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
+| EXT-055 | Alertmanager | <https://github.com/prometheus/alertmanager> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-056 | Anything-to-Skill | <https://github.com/asale-ai/anything-to-skill> | PR #125 · Agent Studio research |
+| EXT-057 | AppFlowy | <https://github.com/AppFlowy-IO/AppFlowy> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-058 | Argo CD | <https://github.com/argoproj/argo-cd> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-059 | ASR4ALL-L | <https://huggingface.co/futo-org/asr4all-l> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
+| EXT-060 | ASR4ALL-S | <https://huggingface.co/futo-org/asr4all-s> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
+| EXT-061 | AutoGen → Microsoft Agent Framework migration | <https://learn.microsoft.com/en-us/agent-framework/migration-guide/from-autogen/> | PR #125 · Agent Studio research |
+| EXT-062 | AutoGPT | <https://github.com/Significant-Gravitas/AutoGPT> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-063 | Awesome Agentic Patterns | <https://github.com/nibzard/awesome-agentic-patterns> | PR #125 · Agent Studio research |
+| EXT-064 | Awesome Agentic Patterns | <https://agentic-patterns.com/> | PR #125 · Agent Studio research |
+| EXT-065 | Awesome Agents | <https://github.com/kyrolabs/awesome-agents> | PR #125 · Agent Studio research |
+| EXT-066 | Awesome Compose | <https://github.com/docker/awesome-compose> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-067 | Awesome Harness Engineering | <https://github.com/ai-boost/awesome-harness-engineering> | PR #125 · Agent Studio research |
+| EXT-068 | Berkeley Function-Calling Leaderboard | <https://gorilla.cs.berkeley.edu/leaderboard.html> | PR #125 · Agent Studio research |
+| EXT-069 | Book-to-Skill | <https://github.com/virgiliojr94/book-to-skill> | PR #125 · Agent Studio research |
+| EXT-070 | book-to-skill v1.3.0 | <https://github.com/virgiliojr94/book-to-skill/releases/tag/v1.3.0> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
+| EXT-071 | Browser Use | <https://github.com/browser-use/browser-use> | PR #125 · Agent Studio research |
+| EXT-072 | Bruno | <https://github.com/usebruno/bruno> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-073 | Cactus Needle | <https://github.com/cactus-compute/needle> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
+| EXT-074 | CAMEL-AI | <https://github.com/camel-ai/camel> | PR #125 · Agent Studio research |
+| EXT-075 | Canary 180M Flash | <https://huggingface.co/nvidia/canary-180m-flash> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
+| EXT-076 | Cedar | <https://docs.cedarpolicy.com/> | PR #125 · Agent Studio research |
+| EXT-077 | checkpointers | <https://docs.langchain.com/oss/python/langgraph/checkpointers> | PR #125 · Agent Studio research |
+| EXT-078 | Claudex Loop | <https://github.com/chaseai-yt/claudex-loop> | docs/TECHNIQUE_REGISTER_RU.md |
+| EXT-079 | CLI-Anything | <https://github.com/HKUDS/CLI-Anything> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
+| EXT-080 | Colibri | <https://github.com/JustVugg/colibri> | PR #128 · Agent Workforce research |
+| EXT-081 | Comfy API v2 | <https://docs.comfy.org/api-reference/v2/overview> | PR #130 · Deep Research research |
+| EXT-082 | Coucou | <https://github.com/Louis-CFM/coucou> | PR #125 · Agent Studio research |
+| EXT-083 | CrewAI | <https://docs.crewai.com/en/index> | PR #125 · Agent Studio research |
+| EXT-084 | DBOS | <https://docs.dbos.dev/architecture> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md; PR #125 · Agent Studio research |
+| EXT-085 | DBOS Durable Execution | <https://docs.dbos.dev/> | PR #128 · Agent Workforce research |
+| EXT-086 | DBX | <https://github.com/t8y2/dbx> | PR #125 · Agent Studio research |
+| EXT-087 | DeepSeek-OCR / DeepSeek-OCR2 | <https://github.com/deepseek-ai/DeepSeek-OCR> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
+| EXT-088 | DeerFlow 2.0 | <https://github.com/bytedance/deer-flow> | PR #128 · Agent Workforce research |
+| EXT-089 | Developer Roadmap | <https://github.com/kamranahmedse/developer-roadmap> | docs/TECHNIQUE_REGISTER_RU.md |
+| EXT-090 | DevOps Exercises | <https://github.com/bregman-arie/devops-exercises> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-091 | Distil-Whisper | <https://github.com/huggingface/distil-whisper> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
+| EXT-092 | Docker sandbox | <https://docs.openhands.dev/openhands/usage/sandboxes/docker> | PR #125 · Agent Studio research |
+| EXT-093 | Docling supported formats | <https://docling-project.github.io/docling/usage/supported_formats/> | PR #130 · Deep Research research |
+| EXT-094 | dots.ocr → dots.mocr | <https://github.com/studio-dots-ai/dots.ocr> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
+| EXT-095 | DrawDB | <https://github.com/drawdb-io/drawdb> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-096 | dsh-our-free-model | <https://github.com/ebony-vinyl/dsh-our-free-model> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
+| EXT-097 | dsh-our-free-model | <https://github.com/Ebony-Vinyl/dsh-our-free-model> | PR #128 · Agent Workforce research |
+| EXT-098 | EoT Bench | <https://github.com/livekit/eot-bench> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
+| EXT-099 | Every App | <https://github.com/every-app/every-app> | docs/TECHNIQUE_REGISTER_RU.md |
+| EXT-100 | Everything Claude Code / ECC | <https://github.com/affaan-m/ECC> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research; PR #128 · Agent Workforce research |
+| EXT-101 | File System Access API draft | <https://wicg.github.io/file-system-access/> | PR #130 · Deep Research research |
+| EXT-102 | Firecracker jailer | <https://github.com/firecracker-microvm/firecracker/blob/master/docs/jailer.md> | PR #125 · Agent Studio research |
+| EXT-103 | Free Programming Books | <https://github.com/EbookFoundation/free-programming-books> | docs/TECHNIQUE_REGISTER_RU.md |
+| EXT-104 | GAIA | <https://huggingface.co/gaia-benchmark> | PR #125 · Agent Studio research |
+| EXT-105 | garak | <https://docs.garak.ai/garak/> | PR #125 · Agent Studio research |
+| EXT-106 | GitIngest | <https://github.com/coderamp-labs/gitingest> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-107 | GitMCP | <https://github.com/idosal/git-mcp> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-108 | GitReverse | <https://github.com/filiksyos/gitreverse> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-109 | GLM-OCR | <https://github.com/zai-org/glm-ocr> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
+| EXT-110 | Google ADK | <https://google.github.io/adk-docs/> | PR #125 · Agent Studio research |
+| EXT-111 | Google Online Boutique | <https://github.com/GoogleCloudPlatform/microservices-demo> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-112 | google/adk-python | <https://github.com/google/adk-python> | PR #125 · Agent Studio research |
+| EXT-113 | Goose | <https://github.com/block/goose> | PR #128 · Agent Workforce research |
+| EXT-114 | GOT-OCR 2.0 | <https://github.com/Ucas-HaoranWei/GOT-OCR2.0> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
+| EXT-115 | GPT Pilot | <https://github.com/Pythagora-io/gpt-pilot> | PR #128 · Agent Workforce research |
+| EXT-116 | Graphify | <https://github.com/Graphify-Labs/graphify> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-117 | Graphiti | <https://github.com/getzep/graphiti> | PR #125 · Agent Studio research |
+| EXT-118 | Grok Register | <https://github.com/AaronL725/grok-register> | PR #125 · Agent Studio research |
+| EXT-119 | gVisor security model | <https://gvisor.dev/docs/architecture_guide/security/> | PR #125 · Agent Studio research |
+| EXT-120 | Harness² | <https://github.com/google-research/harness2> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
+| EXT-121 | Harper | <https://github.com/Automattic/harper> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-122 | Hatchet durable tasks | <https://docs.hatchet.run/v1/durable-tasks> | PR #125 · Agent Studio research |
+| EXT-123 | Hermes Agent | <https://github.com/NousResearch/hermes-agent> | PR #125 · Agent Studio research |
+| EXT-124 | Hive | <https://github.com/aden-hive/hive> | PR #128 · Agent Workforce research |
+| EXT-125 | Hive Apache-2.0 license | <https://github.com/aden-hive/hive/blob/main/LICENSE> | PR #128 · Agent Workforce research |
+| EXT-126 | Hono | <https://github.com/honojs/hono> | docs/TECHNIQUE_REGISTER_RU.md |
+| EXT-127 | Hugging Face smolagents | <https://huggingface.co/docs/smolagents/examples/multiagents> | PR #125 · Agent Studio research |
+| EXT-128 | Hugging Face Transformers | <https://github.com/huggingface/transformers> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-129 | HunyuanOCR-1.5 | <https://github.com/Tencent-Hunyuan/HunyuanOCR> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
+| EXT-130 | HyperFrames | <https://github.com/heygen-com/hyperframes> | PR #125 · Agent Studio research |
+| EXT-131 | Impeccable | <https://github.com/pbakaus/impeccable> | PR #125 · Agent Studio research |
+| EXT-132 | Inspect AI | <https://inspect.aisi.org.uk/> | PR #125 · Agent Studio research |
+| EXT-133 | Jev Ultrafast | <https://github.com/browser-use/jev-ultrafast> | PR #125 · Agent Studio research |
+| EXT-134 | josstei/maestro-orchestrate | <https://github.com/josstei/maestro-orchestrate> | PR #125 · Agent Studio research |
+| EXT-135 | Kev-4B | <https://benchlm.ai/compare/glm-5-3-flash-vs-kev-4b> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-136 | Kubernetes Examples | <https://github.com/kubernetes/examples> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-137 | Langfuse tracing | <https://langfuse.com/docs/observability/get-started> | PR #125 · Agent Studio research |
+| EXT-138 | LangGraph | <https://docs.langchain.com/oss/python/langgraph/graph-api> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
+| EXT-139 | LangGraph docs | <https://docs.langchain.com/oss/python/langgraph/overview> | PR #125 · Agent Studio research; PR #128 · Agent Workforce research |
+| EXT-140 | Letta | <https://docs.letta.com/> | PR #125 · Agent Studio research |
+| EXT-141 | LightOnOCR-3-4B | <https://huggingface.co/lightonai/LightOnOCR-3-4B> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
+| EXT-142 | LiveKit Agent speech/audio | <https://docs.livekit.io/agents/multimodality/audio/> | PR #129 · Voice research; PR #130 · Deep Research research |
+| EXT-143 | LiveKit Agents | <https://github.com/livekit/agents> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md; PR #129 · Voice research |
+| EXT-144 | LiveKit turn handling | <https://docs.livekit.io/agents/logic/turns/> | PR #129 · Voice research; PR #130 · Deep Research research |
+| EXT-145 | llama.cpp server | <https://github.com/ggml-org/llama.cpp> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
+| EXT-146 | Magentic-One paper | <https://arxiv.org/html/2411.04468> | PR #125 · Agent Studio research |
+| EXT-147 | MagpieTTS 357M | <https://huggingface.co/nvidia/magpie_tts_multilingual_357m> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
+| EXT-148 | MarkItDown | <https://github.com/microsoft/markitdown> | PR #130 · Deep Research research |
+| EXT-149 | MCP | <https://modelcontextprotocol.io/specification/2026-07-28> | PR #125 · Agent Studio research |
+| EXT-150 | MCP specification | <https://modelcontextprotocol.io/specification> | PR #125 · Agent Studio research; PR #128 · Agent Workforce research; PR #130 · Deep Research research |
+| EXT-151 | MCP-Scan | <https://invariantlabs-ai.github.io/docs/mcp-scan/> | PR #125 · Agent Studio research |
+| EXT-152 | MDN OPFS | <https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system> | PR #130 · Deep Research research |
+| EXT-153 | Mem0 | <https://docs.mem0.ai/> | PR #125 · Agent Studio research |
+| EXT-154 | memvid | <https://github.com/memvid/memvid> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-155 | MetaGPT | <https://github.com/FoundationAgents/MetaGPT> | PR #125 · Agent Studio research |
+| EXT-156 | Microsoft Agensh | <https://github.com/microsoft/Agensh> | PR #128 · Agent Workforce research |
+| EXT-157 | Microsoft Agent Framework | <https://github.com/microsoft/agent-framework> | PR #125 · Agent Studio research |
+| EXT-158 | Microsoft Research project | <https://aka.ms/magentic-one> | PR #125 · Agent Studio research |
+| EXT-159 | Minikube | <https://github.com/kubernetes/minikube> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-160 | MIT license | <https://github.com/bytedance/deer-flow/blob/main/LICENSE> | PR #128 · Agent Workforce research |
+| EXT-161 | Moonshine Voice | <https://github.com/moonshine-ai/moonshine> | docs/TECHNIQUE_REGISTER_RU.md; docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
+| EXT-162 | multi-agent routing | <https://docs.openclaw.ai/concepts/multi-agent/> | PR #125 · Agent Studio research |
+| EXT-163 | NaiboWang/EasySpider | <https://github.com/NaiboWang/EasySpider> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-164 | Nanochat | <https://github.com/karpathy/nanochat> | PR #128 · Agent Workforce research |
+| EXT-165 | Nemotron 3.5 ASR 0.6B | <https://huggingface.co/nvidia/nemotron-3.5-asr-streaming-0.6b> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md; PR #129 · Voice research |
+| EXT-166 | NemotronLabs VoiceChat 11B | <https://huggingface.co/nvidia/NVIDIA-NemotronLabs-VoiceChat-11B> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md; PR #129 · Voice research |
+| EXT-167 | NVIDIA Nemotron Streaming ASR | <https://build.nvidia.com/nvidia/nemotron-asr-streaming/modelcard> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
+| EXT-168 | NVIDIA OpenShell | <https://github.com/NVIDIA/OpenShell> | PR #125 · Agent Studio research |
+| EXT-169 | obra/superpowers | <https://github.com/obra/superpowers> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-170 | Octos | <https://github.com/octos-org/octos> | PR #128 · Agent Workforce research |
+| EXT-171 | official notice | <https://github.blog/changelog/2026-09-23-node-20-is-no-longer-available-in-github-actions/> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
+| EXT-172 | Official runtime | <https://github.com/NVIDIA/NeMo-Speech.cpp> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
+| EXT-173 | Open Multi-Agent (OMA) | <https://github.com/open-multi-agent/open-multi-agent> | PR #128 · Agent Workforce research |
+| EXT-174 | Open Notebook | <https://github.com/lfnovo/open-notebook> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-175 | Open Policy Agent | <https://openpolicyagent.org/docs> | PR #125 · Agent Studio research |
+| EXT-176 | Open-Generative-AI | <https://github.com/Anil-matcha/Open-Generative-AI> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
+| EXT-177 | OpenAI Agents SDK | <https://openai.github.io/openai-agents-python/> | PR #125 · Agent Studio research; PR #128 · Agent Workforce research |
+| EXT-178 | OpenClaw skills and channels | <https://docs.openclaw.ai/concepts/features> | PR #125 · Agent Studio research |
+| EXT-179 | OpenClaw subagents | <https://docs.openclaw.ai/subagents> | PR #125 · Agent Studio research |
+| EXT-180 | OpenHands SDK | <https://docs.openhands.dev/sdk/arch/overview> | PR #125 · Agent Studio research |
+| EXT-181 | OpenMAIC | <https://github.com/THU-MAIC/OpenMAIC> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
+| EXT-182 | OpenTelemetry GenAI conventions | <https://opentelemetry.io/docs/specs/semconv/gen-ai/> | PR #125 · Agent Studio research |
+| EXT-183 | OpenWOP v2 | <https://openwop.dev/spec/v2/> | PR #125 · Agent Studio research |
+| EXT-184 | orchestration guide | <https://developers.openai.com/api/docs/guides/agents/orchestration> | PR #125 · Agent Studio research |
+| EXT-185 | OWASP Agentic Top 10 2026 | <https://genai.owasp.org/download/52117/> | PR #125 · Agent Studio research |
+| EXT-186 | PaddleOCR-VL-1.6 | <https://huggingface.co/PaddlePaddle/PaddleOCR-VL-1.6> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
+| EXT-187 | paper | <https://arxiv.org/pdf/2609.21967.pdf> | PR #129 · Voice research |
+| EXT-188 | paper arXiv:2609.26781 | <https://arxiv.org/abs/2609.26781> | PR #128 · Agent Workforce research |
+| EXT-189 | Paperclip | <https://github.com/paperclipai/paperclip> | PR #125 · Agent Studio research |
+| EXT-190 | PentAGI | <https://github.com/vxcontrol/pentagi> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-191 | PinchTab | <https://github.com/pinchtab/pinchtab> | PR #125 · Agent Studio research |
+| EXT-192 | Pipecat | <https://github.com/pipecat-ai/pipecat> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md; PR #129 · Voice research |
+| EXT-193 | Pipecat documentation | <https://docs.pipecat.ai/> | PR #129 · Voice research; PR #130 · Deep Research research |
+| EXT-194 | Plandex | <https://github.com/plandex-ai/plandex> | PR #128 · Agent Workforce research |
+| EXT-195 | Pliny / L1B3RT4S | <https://github.com/elder-plinius/L1B3RT4S> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
+| EXT-196 | policy schema | <https://docs.nvidia.com/openshell/how-it-works/policies/schema> | PR #125 · Agent Studio research |
+| EXT-197 | Ponytail | <https://github.com/DietrichGebert/ponytail> | docs/TECHNIQUE_REGISTER_RU.md |
+| EXT-198 | PP-OCRv6 Tiny / Medium | <https://github.com/PaddlePaddle/PaddleOCR/blob/main/docs/version3.x/algorithm/PP-OCRv6/PP-OCRv6.en.md> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
+| EXT-199 | Promptfoo eval guides | <https://www.promptfoo.dev/docs/guides/> | PR #125 · Agent Studio research |
+| EXT-200 | public-api сервер | <https://github.com/davemachado/public-api> | docs/TECHNIQUE_REGISTER_RU.md |
+| EXT-201 | public-apis/public-apis | <https://github.com/public-apis/public-apis> | docs/OPEN_SOURCE_TRIAGE_RU.md; docs/TECHNIQUE_REGISTER_RU.md |
+| EXT-202 | punkpeye/awesome-mcp-servers | <https://github.com/punkpeye/awesome-mcp-servers> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-203 | PydanticAI multi-agent | <https://pydantic.dev/docs/ai/guides/multi-agent-applications> | PR #125 · Agent Studio research |
+| EXT-204 | pyproject.toml | <https://github.com/Graphify-Labs/graphify/blob/v8/pyproject.toml> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-205 | PyThaiNLP romanize | <https://pythainlp.org/dev-docs/api/transliterate.html> | PR #129 · Voice research |
+| EXT-206 | quickstart | <https://docs.graphify.com/quickstart> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-207 | Qwen3-ASR-0.6B | <https://github.com/QwenLM/Qwen3-ASR> | docs/MULTIMODAL_MODEL_STACK_RU.md; PR #129 · Voice research; Multimodal stack research branch |
+| EXT-208 | RAG-Anything | <https://github.com/HKUDS/RAG-Anything> | docs/TECHNIQUE_REGISTER_RU.md; PR #125 · Agent Studio research |
+| EXT-209 | reproduction guide | <https://github.com/microsoft/Agensh/blob/main/REPRODUCE.md> | PR #128 · Agent Workforce research |
+| EXT-210 | research repo | <https://github.com/warit-s/typhoon-asr-streaming> | PR #129 · Voice research |
+| EXT-211 | Restate actions | <https://docs.restate.dev/foundations/actions> | PR #125 · Agent Studio research |
+| EXT-212 | ripienaar/free-for-dev | <https://github.com/ripienaar/free-for-dev> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-213 | roadmap.sh | <https://roadmap.sh> | docs/TECHNIQUE_REGISTER_RU.md |
+| EXT-214 | Roo Code | <https://github.com/RooCodeInc/Roo-Code> | PR #128 · Agent Workforce research |
+| EXT-215 | RuFlo | <https://github.com/ruvnet/ruflo> | PR #125 · Agent Studio research |
+| EXT-216 | RunMaestro/Maestro | <https://github.com/RunMaestro/Maestro> | PR #125 · Agent Studio research |
+| EXT-217 | Scrapling | <https://github.com/D4Vinci/Scrapling> | PR #128 · Agent Workforce research |
+| EXT-218 | screenshot-to-code | <https://github.com/abi/screenshot-to-code> | PR #130 · Deep Research research |
+| EXT-219 | security | <https://docs.openclaw.ai/security/> | PR #125 · Agent Studio research |
+| EXT-220 | sherpa-onnx streaming T-One Russian | <https://github.com/k2-fsa/sherpa-onnx/blob/master/docs/source/onnx/pretrained_models/online-ctc/t-one-ctc-models.rst> | PR #129 · Voice research |
+| EXT-221 | slee-persis/GVS5H | <https://github.com/slee-persis/GVS5H> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-222 | slvDev/esp32-ai | <https://github.com/slvDev/esp32-ai> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-223 | Starter Workflows | <https://github.com/actions/starter-workflows> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-224 | Strix | <https://github.com/usestrix/strix> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-225 | Surya 2 | <https://github.com/datalab-to/surya> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
+| EXT-226 | SWE-agent | <https://github.com/SWE-agent/SWE-agent> | PR #128 · Agent Workforce research |
+| EXT-227 | SWE-bench | <https://www.swebench.com/> | PR #125 · Agent Studio research |
+| EXT-228 | Tabby | <https://github.com/TabbyML/tabby> | PR #128 · Agent Workforce research |
+| EXT-229 | taste-skill | <https://github.com/Leonxlnx/taste-skill> | docs/TECHNIQUE_REGISTER_RU.md |
+| EXT-230 | Temporal | <https://docs.temporal.io/ai> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md; PR #125 · Agent Studio research |
+| EXT-231 | TensorFlow | <https://github.com/tensorflow/tensorflow> | PR #128 · Agent Workforce research |
+| EXT-232 | Trail-Code | <https://github.com/trailhq/Trail-Code> | docs/TECHNIQUE_REGISTER_RU.md |
+| EXT-233 | TurnBench | <https://github.com/SesameAILabs/turnbench> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
+| EXT-234 | Turnitout-Humanizer | <https://github.com/AhmadHassan-BTed/Turnitout-Humanizer> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-235 | Typhoon ASR Real-time paper | <https://arxiv.org/html/2601.13044> | PR #129 · Voice research |
+| EXT-236 | Typhoon ASR Streaming 115M | <https://huggingface.co/typhoon-ai/typhoon-asr-streaming-115m> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md; PR #129 · Voice research |
+| EXT-237 | Unicode CLDR transliteration guidelines | <https://cldr.unicode.org/index/cldr-spec/transliteration-guidelines> | PR #129 · Voice research |
+| EXT-238 | Unicode ICU transforms | <https://unicode-org.github.io/icu/userguide/transforms/general/> | PR #129 · Voice research |
+| EXT-239 | Unidecode | <https://pypi.org/project/Unidecode/> | PR #129 · Voice research |
+| EXT-240 | upstream | <https://github.com/invariantlabs-ai/mcp-scan> | PR #125 · Agent Studio research |
+| EXT-241 | upstream | <https://github.com/openwop/openwop> | PR #125 · Agent Studio research |
+| EXT-242 | uroman | <https://github.com/isi-nlp/uroman> | PR #129 · Voice research |
+| EXT-243 | Utopia OS | <https://github.com/0xUrsanomics/utopia-os> | PR #125 · Agent Studio research |
+| EXT-244 | UVR5 / Ultimate Vocal Remover GUI | <https://github.com/Anjok07/ultimatevocalremovergui> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-245 | VibeVoice ASR Streaming 1.5B | <https://huggingface.co/microsoft/VibeVoice-ASR-Streaming-1.5B> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
+| EXT-246 | voicebench | <https://pypi.org/project/voicebench/> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
+| EXT-247 | VoxCPM2 | <https://huggingface.co/openbmb/VoxCPM2> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
+| EXT-248 | whisper.cpp | <https://github.com/ggml-org/whisper.cpp> | docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md |
+| EXT-249 | witr | <https://github.com/pranshuparmar/witr> | PR #125 · Agent Studio research |
+| EXT-250 | Worktrunk | <https://github.com/max-sixty/worktrunk> | PR #128 · Agent Workforce research |
+| EXT-251 | xerj-org/xerj | <https://github.com/xerj-org/xerj> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-252 | Xiryn | <https://github.com/SouravBeraAkaSpeed/xiryn> | PR #128 · Agent Workforce research |
+| EXT-253 | xtool-org/xtool | <https://github.com/xtool-org/xtool> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-254 | Zagitta/gpu-unlock | <https://github.com/Zagitta/gpu-unlock> | docs/OPEN_SOURCE_TRIAGE_RU.md |
+| EXT-255 | ZIPFORMER VI / sherpa-onnx | <https://github.com/k2-fsa/sherpa/blob/master/docs/source/onnx/pretrained_models/offline-transducer/zipformer-transducer-models.rst> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
+| EXT-256 | τ-bench | <https://github.com/sierra-research/tau-bench> | PR #125 · Agent Studio research |
+| EXT-257 | веса dots.mocr | <https://huggingface.co/dots-studio/dots.mocr> | docs/MULTIMODAL_MODEL_STACK_RU.md; Multimodal stack research branch |
 
 
 ### Supplemental references previously present only in INTEL prose (18)
