@@ -17,6 +17,13 @@
 
 Живой чек-лист требований, инженерные критерии, источники и журнал выполнения: [docs/V1_UI_FINALIZATION_RU.md](docs/V1_UI_FINALIZATION_RU.md). Он относится к статическому клиенту GitHub Pages и не подменяет roadmap gateway/runtime.
 
+## Единый реестр задач и источников
+
+- [Мастер-реестр задач aLandi](docs/MASTER_TASK_REGISTRY_RU.md) — единый список приоритетов, acceptance criteria и незавершённых задач.
+- [Append-only owner addendum](docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md) — решения владельца, evidence и история продвижения.
+- [INTEL.md](INTEL.md) — проверяемые внешние источники, upstream-проекты, версии и технические выводы.
+- [Open-source triage](docs/OPEN_SOURCE_TRIAGE_RU.md) и [Technique Register](docs/TECHNIQUE_REGISTER_RU.md) — лицензии, provenance и отобранные инженерные техники.
+
 ## Текущий UI и promotion gates
 
 - [Стратегия Landing V1/V2](docs/LANDING_RELEASE_STRATEGY_RU.md) — правила изоляции PR #131 и owner-authorized selective promotion.
