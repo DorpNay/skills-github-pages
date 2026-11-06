@@ -4,14 +4,15 @@
 
 ## Контрольная точка — 2026-11-06 (проверена по GitHub)
 
-- **main:** `a8afee45bb22654b220bffda857ab10c24641ef1` — PR #150 merged; storage recovery/atomic rollback is part of main.
-- **open PRs (3): #125, #131, #152.** **open issues (1): #111.** Это снимок; перед использованием сверять live.
-- **#131:** Draft, head `5f71b97f3c85ab8544431b496ceb7c9ccf8c0c3e`, base `e78a73b25725bfa63370d9946887cbbacbf51b82`, 1,125 ahead / 19 behind, 76 files, dirty. Selective reconciliation only.
-- **#152:** Draft, head `99a0b530b335e7e19833c4ce66138dcc576a09fa`, base `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`, 17 ahead / 1 behind, 4 files, dirty; Quality failed and Graphify passed on that exact head.
+- **main:** `f323b6f339d454dad6e820a4074fa230acc7b6df` — PR #153 merged; post-merge Quality #42150785825, Pages #42150784695, Freshness #42150785781 and Provenance #42150785779 all PASS on this exact SHA.
+- **open PRs (3): #125, #131, #152.** **open issues (1): #111.** Active promotion PR #154 is excluded from the freshness queue while its own checks run.
+- **#154:** owner-authorized bounded promotion of the modular V2 root app shell from #131; base main is `f323b6f339d454dad6e820a4074fa230acc7b6df`. Resolve mutable HEAD and exact checks live; do not merge #131 wholesale.
+- **#131:** Draft, head `55d2ea792d11587a508d77aa9274f24105dafa79`, base `e78a73b25725bfa63370d9946887cbbacbf51b82`, 1,129 ahead / 20 behind, 76 files, mergeable=false. Selective reconciliation only.
+- **#152:** Draft, head `99a0b530b335e7e19833c4ce66138dcc576a09fa`, base `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`, 17 ahead / 2 behind, 4 files, dirty; prior Quality failed and Graphify passed. Recheck live before acting.
 - **#125:** future-workstream parking; not active unless owner asks.
 - **Main protections:** #147 Gateway cancellation; #148 untrusted rendering/Pyodide restrictions; #150 browser storage recovery/rollback.
-- **Current direction:** finish orientation repair; then reconcile #131 against current main without dropping protections; inspect #152 separately; continue research and capability work from the master register.
-- PR #128/#134/#151 were closed without merging to main; selected material was copied to #131. PR #129/#130 were merged into #131, not main.
+- **Publication:** GitHub Pages automatically publishes this repository's `main` to https://dorpnay.github.io/skills-github-pages/; Gateway/VPS is a separate deployment.
+- **Current direction:** finish PR #154 exact-head gates, merge only this bounded app-shell promotion if green, then verify post-merge Pages and main checks. Keep #131 as the V2 workbench and #152 separate. Issue #111 remains open for owner-only release gates.
 
 ## 1. Быстрый маршрут
 
@@ -24,8 +25,9 @@
 6. **Поиск и исследования:** `docs/SEARCH_RESEARCH_FEATURE_EXTRACTION_RU.md`, `docs/OPEN_SOURCE_TRIAGE_RU.md`.
 7. **Карта модулей:** `docs/ALANDI_ARCHITECTURE_MAP_RU.md` — кураторская схема, не автоматически извлечённый Graphify graph.
 8. **Лицензии и происхождение:** `infra/license/provenance_manifest.yaml`; не подключать runtime/model/voice без отдельной проверки лицензии и SHA-256.
-9. **Основной клиент:** `index.md` (большой единый HTML/JS файл). Перед правками найди точные функции/якоря, не делай широких замен без проверки единственности.
-10. **Backend/API:** `gateway/app.py`; тесты в `gateway/tests/`; зависимости в `gateway/requirements*.txt`.
+9. **Основной клиент:** `index.md` (HTML shell); runtime — `assets/js/app.js`, styles — `assets/css/app.css`. Browser regressions: `tests/e2e/app.spec.mjs`; quality source checks: `scripts/quality-agents.mjs`.
+10. **V2 UI ledger:** `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`; release/promotion gates: `docs/LANDING_RELEASE_STRATEGY_RU.md`.
+11. **Backend/API:** `gateway/app.py`; тесты в `gateway/tests/`; зависимости в `gateway/requirements*.txt`.
 11. **Память:** `gateway/memory/{manager.py,schema.sql,delta_sync.py,scope.py,conflict.py,temporal.py}`; браузерное хранение и экспорт — `index.md` около `safeSet`, `downloadRecoveryBackup`, `exportChats`, `exportProjectBundle`.
 12. **Голос и вложения:** `gateway/voice/`, `gateway/tests/test_audio_*.py`, `tests/e2e/audio-transcription.spec.mjs`, `tests/e2e/document-attachments.spec.mjs`.
 13. **Реальные browser checks:** `tests/e2e/`, workflow Quality Sentinels; отдельная GitHub Pages публикация не означает, что VPS gateway обновлён.
