@@ -845,3 +845,9 @@
 - [ ] **DR2-006A**: После owner review подготовить отдельные минимальные implementation PR; не переносить будущие функции напрямую из holding branch.
 
 **PR #130:** `[RESEARCH — HOLD] Deep Research 2.0 — local knowledge, evidence and multimodal research`. Base: `future-workstreams/parking-base-20261031`. No runtime changes.
+
+
+## G. Session orientation and handoff reliability
+
+- [~] **ORIENT-001** — Make `oledue` recover the active task from the latest explicit owner request plus one batched live GitHub state read; remove all hard-coded PR defaults; distinguish main/base/head/tested/merge SHAs; keep detailed navigation and history on demand; enforce the contract through freshness CI. **Acceptance:** a fresh session does not select PR #131 unless the owner's task actually maps to it; exact live queue and handoff policy are tested. **Evidence:** PR #153 is ready for owner review. Full code Quality passed on tested code SHA `5665e60ebdbb704f9fa95cadba610984ca1da60b` (4/4 Chromium, published-Pages smoke and required sentinels); subsequent docs-only Freshness/Provenance/Dead Code checks passed. Live PR HEAD is intentionally resolved from GitHub, not pinned here. Owner merge decision pending.
+- [ ] **ORIENT-002** — After ORIENT-001 is merged, perform a fresh-session handoff test using only OLEDUE + one live-state batch; record whether task/PR/HEAD/checks are recovered correctly without reading the full orientation stack or asking the owner to repeat context.

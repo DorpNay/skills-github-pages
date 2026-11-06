@@ -10,6 +10,7 @@ from scripts.check_project_state_freshness import (
     compare_queues,
     validate_github_api_url,
     github_get_json,
+    validate_handoff_policy,
     validate_snapshot,
 )
 
@@ -112,6 +113,25 @@ class QueueComparisonTests(unittest.TestCase):
         expected = [78, 80]
         compare_queues(expected, [], [78, 80, 105], [], exclude_pr=105)
         self.assertEqual(expected, [78, 80])
+
+
+class HandoffPolicyTests(unittest.TestCase):
+    def test_owner_intent_drives_routing_without_a_default_pr(self):
+        oledue = "The latest explicit owner request takes priority. Do not default to any PR. Match an open PR only when its scope matches."
+        agents = "Read OLEDUE.md when the owner sends `oledue`."
+        self.assertEqual(validate_handoff_policy(oledue, agents), [])
+
+    def test_rejects_hard_coded_pr_131_fallback(self):
+        oledue = "Otherwise default to Landing 2.0 in PR #131."
+        agents = "Read OLEDUE.md when the owner sends `oledue`."
+        errors = validate_handoff_policy(oledue, agents)
+        self.assertTrue(any("hard-coded PR #131 fallback" in error for error in errors))
+
+    def test_requires_owner_intent_and_agents_entrypoint(self):
+        errors = validate_handoff_policy("Choose the default branch.", "No handoff trigger here.")
+        self.assertTrue(any("latest explicit owner request" in error for error in errors))
+        self.assertTrue(any("no-default-PR" in error for error in errors))
+        self.assertTrue(any("AGENTS.md" in error for error in errors))
 
 
 class MainCheckpointTests(unittest.TestCase):

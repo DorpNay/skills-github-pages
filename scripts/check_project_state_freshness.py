@@ -27,7 +27,10 @@ DEFAULT_SNAPSHOT = ROOT / "docs/project-state-snapshot.json"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 # A state refresh must update the human- and machine-readable checkpoints together.
 # The checker, its tests and workflow do not need artificial edits on every refresh.
+HANDOFF_PATHS = ("OLEDUE.md", "AGENTS.md")
 REQUIRED_REFRESH_PATHS = {
+    "OLEDUE.md",
+    "AGENTS.md",
     "ORIENTER.md",
     "project-reference/FILE_ORIENTER_RU.md",
     "docs/PROJECT_STATE.yaml",
@@ -147,6 +150,21 @@ def check_main_checkpoint(snapshot: dict[str, Any], live_commit: dict[str, Any],
     ]
 
 
+def validate_handoff_policy(oledue: str, agents: str) -> list[str]:
+    """Keep the session handoff owner-driven and prevent a hard-coded PR fallback."""
+    errors: list[str] = []
+    handoff = oledue.casefold()
+    if "latest explicit owner request" not in handoff:
+        errors.append("OLEDUE.md: latest explicit owner request must drive task routing")
+    if "do not default to any pr" not in handoff:
+        errors.append("OLEDUE.md: explicit no-default-PR rule is missing")
+    if "otherwise default to landing 2.0 in pr #131" in handoff or "default to landing 2.0 in pr #131" in handoff:
+        errors.append("OLEDUE.md: stale hard-coded PR #131 fallback is forbidden")
+    if "oledue.md" not in agents.casefold() or "`oledue`" not in agents.casefold():
+        errors.append("AGENTS.md: engineering entry protocol must point to OLEDUE.md and its trigger")
+    return errors
+
+
 def validate_local_docs(root: Path, snapshot: dict[str, Any]) -> list[str]:
     """Ensure the four human-facing state records refer to this exact snapshot."""
     checkpoint = snapshot["checkpoint"]
@@ -164,6 +182,15 @@ def validate_local_docs(root: Path, snapshot: dict[str, Any]) -> list[str]:
             continue
         if main_sha not in contents[relative]:
             errors.append(f"{relative}: missing checkpoint main SHA {main_sha}")
+
+    handoff_contents: dict[str, str] = {}
+    for relative in HANDOFF_PATHS:
+        try:
+            handoff_contents[relative] = (root / relative).read_text(encoding="utf-8")
+        except OSError as exc:
+            errors.append(f"{relative}: cannot read ({type(exc).__name__})")
+    if all(path in handoff_contents for path in HANDOFF_PATHS):
+        errors.extend(validate_handoff_policy(handoff_contents["OLEDUE.md"], handoff_contents["AGENTS.md"]))
 
     state = contents.get("docs/PROJECT_STATE.yaml", "")
     if not re.search(rf'(?m)^\s+base_main:\s*["\']{re.escape(main_sha)}["\']\s*$', state):
@@ -309,7 +336,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print("PROJECT STATE FRESHNESS FAILED")
         for error in errors:
             print(f"- {error}")
-        print("Refresh the snapshot, orienter, PROJECT_STATE.yaml and VOLLEY_LOG.md together; do not auto-rewrite state from CI.")
+        print("Refresh OLEDUE.md, AGENTS.md, the snapshot, orienter, PROJECT_STATE.yaml and VOLLEY_LOG.md together; do not auto-rewrite state from CI.")
         return 1
 
     checkpoint = snapshot["checkpoint"]

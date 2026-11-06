@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
   "repository": "DorpNay/skills-github-pages",
-  "captured_at": "2026-11-05",
+  "captured_at": "2026-11-06",
   "checkpoint": {
-    "main_sha": "8e7d4aafe4b9580e9f8978c6f888e35f3fa99242",
-    "main_commit_subject": "docs(ci): reconcile audit checkpoint, provenance and Node 24 (#149)",
-    "main_commit_date": "2026-11-05",
-    "last_functional_checkpoint_sha": "4fbf16aad3f741159654950e0260aaf717653291",
-    "last_functional_milestone": "PR #148 is the last functional main change: Gateway cancellation semaphore fix and UI/Pyodide security boundary. PR #149 is a documentation/configuration state-refresh child; exact-head Quality/Freshness/Provenance/Graphify all passed.",
+    "main_sha": "a8afee45bb22654b220bffda857ab10c24641ef1",
+    "main_commit_subject": "fix(storage): preserve browser data and roll back partial writes",
+    "main_commit_date": "2026-11-06",
+    "last_functional_checkpoint_sha": "a8afee45bb22654b220bffda857ab10c24641ef1",
+    "last_functional_milestone": "PR #150 merged at a8afee45bb22654b220bffda857ab10c24641ef1 and contains browser-storage recovery, fail-closed writes and atomic rollback.",
     "main_quality_run": null,
     "main_pages_deployment_run": null,
     "functional_parent_gateway_run": null,
@@ -16,11 +16,8 @@
     "functional_parent_pages_run": null,
     "open_pull_requests": [
       125,
-      128,
-      129,
-      130,
       131,
-      134
+      152
     ],
     "open_issues": [
       111
@@ -121,18 +118,24 @@
         "merge_sha": "8e7d4aafe4b9580e9f8978c6f888e35f3fa99242",
         "head_sha": "e775516ed204530982962754c305c4bebb0bf43d",
         "checks": "Exact-head Quality #42001310270 (7 jobs), Freshness #42001309687, Provenance #42001309703 and Graphify #42001311323 passed."
+      },
+      {
+        "number": 150,
+        "merge_sha": "a8afee45bb22654b220bffda857ab10c24641ef1",
+        "head_sha": "ae5600718a1a301434a465a4934833a496a07838",
+        "checks": "Merged to main; current-main post-merge workflow IDs were not retrieved."
       }
     ],
     "main_provenance_run": null,
     "main_freshness_run": null,
     "main_graphify_run": null,
-    "open_prs": "6 open PRs: #125, #128, #129, #130, #131, #134",
-    "owner_task": "Complete final manual PR #150 diff/call-site review, including startup migration and privateMemoryUsed persistence. Keep owner merge decision pending. Then verify target-host SQLite/FTS5 capability and continue the provider/storage/voice/document/RAG audit; preserve PR #131 selective promotion, research HOLD branches and issue #111 release gates.",
-    "pr131_head": "02fb4e8986b35f55a8a3b5308704b631dfbcce80",
+    "open_prs": "3 open PRs: #125, #131, #152",
+    "owner_task": "PR #153 orientation repair is implemented and ready for owner review; full code Quality passed on tested code SHA 5665e60ebdbb704f9fa95cadba610984ca1da60b, and docs-only follow-up Freshness/Provenance/Dead Code checks passed. Check live PR #153 for its current HEAD. After owner-approved merge, execute ORIENT-002 fresh-session handoff test using only OLEDUE + one batched live GitHub state read. Then resume owner-authorized PR #131 reconciliation preserving #147/#148/#150; inspect PR #152 separately after failed Quality and stale base; continue grouped primary-source research and capability implementation from the canonical registry.",
+    "pr131_head": "5f71b97f3c85ab8544431b496ceb7c9ccf8c0c3e",
     "pr131_exact_head_verified": false,
-    "pr131_compare": "diverged: 1,101 ahead / 17 behind; 57 files; mergeable=false; keep V2 isolated.",
-    "pr131_quality_run": 41981955002,
-    "pr131_provenance_run": 41787658226,
+    "pr131_compare": "diverged: 1,125 ahead / 19 behind current main; 76 files; mergeable=false; selective reconciliation only.",
+    "pr131_quality_run": null,
+    "pr131_provenance_run": null,
     "pr131_full_gate_verified": false,
     "pr131_quality_scope": "Final PR #131 HEAD 02fb4e8986b35f55a8a3b5308704b631dfbcce80: Quality #41981955002 passed static analysis, Jekyll, four real Chromium shards, Integrity, Security and Context; published Pages smoke was skipped.",
     "pr131_missing_checks": [
@@ -171,10 +174,12 @@
     "first_v1_candidate_post_merge_pages": "PASS on exact merge SHA; production-baseurl CSS fetch verified; native device review remains unverified",
     "download_permission": "Owner authorized acquisition and repository storage on 2026-11-05. Vosk Small RU 0.22 stored in main at models/vosk/vosk-model-small-ru-0.22.zip, size 46236750 bytes, SHA-256 961d5ff98a17f4aa6de69864d0aa71fa5bac682301d2b5d17a3f24c5c99a46d4; metadata, SHA256SUMS, upstream README and Apache-2.0 license notice included. Acquisition run #41980925294 passed exact pinned archive validation; read-only manual acquisition workflow. ship=false; no runtime integration, target hardware eval or RU golden-set bake-off.",
     "pr131_graphify_run": 41981885581,
-    "pr131_graphify_code_test_sha": "c79e983a57d6cc2b87a9296a1334e6d6ed5b3479"
+    "pr131_graphify_code_test_sha": "c79e983a57d6cc2b87a9296a1334e6d6ed5b3479",
+    "pr152_head": "99a0b530b335e7e19833c4ce66138dcc576a09fa",
+    "pr152_compare": "diverged: 17 ahead / 1 behind current main; 4 files; mergeable=false; Draft; Quality #42141899337 failed, Graphify #42141899316 passed on exact head."
   },
   "interpretation": {
-    "last_main_commit_is_documentation_only": true,
+    "last_main_commit_is_documentation_only": false,
     "live_vps_gateway_device_and_model_runtime_verified": false,
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
