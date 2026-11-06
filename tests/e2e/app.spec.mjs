@@ -2331,6 +2331,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await openProjectSettingsForId(page, betaId);
   await page.locator('#projectSettingsModal [data-action="import-project"]').click();
   await page.locator('#importProjectFile').setInputFiles(alphaPath);
+  await expect(page.locator('#toast')).toContainText('Импортировано чатов в проект', { timeout: 15000 });
   await expect(page.locator('#projectNameInput')).toHaveValue('Alpha Project (импорт)');
   const importedId = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]').find(project => project.name === 'Alpha Project (импорт)')?.id || '');
   expect(importedId).not.toBe(alphaId);
