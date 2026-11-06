@@ -249,7 +249,7 @@ def validate_orchestrator_links(root: Path, orchestrator: str) -> list[str]:
     """Require every local Markdown link in the project orchestrator to resolve."""
     errors: list[str] = []
     root_path = root.resolve()
-    for target in re.findall(r"\\]\\(([^)]+)\\)", orchestrator):
+    for target in re.findall(r"\]\(([^)]+)\)", orchestrator):
         parsed = urlsplit(target.strip())
         if parsed.scheme or parsed.netloc:
             continue
