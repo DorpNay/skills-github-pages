@@ -130,7 +130,7 @@
     "main_freshness_run": null,
     "main_graphify_run": null,
     "open_prs": "3 open PRs: #125, #131, #152",
-    "owner_task": "Repair OLEDUE/AGENTS/ORIENTER routing and freshness guard in a dedicated branch from current main. Then resume owner-authorized PR #131 reconciliation preserving #147/#148/#150; inspect PR #152 separately after failed Quality and stale base; continue grouped primary-source research and capability implementation from the canonical registry.",
+    "owner_task": "PR #153 orientation repair is implemented and all exact-head gates passed at 5665e60ebdbb704f9fa95cadba610984ca1da60b; owner review/merge decision pending. After merge, execute ORIENT-002 fresh-session handoff test using only OLEDUE + one batched live GitHub state read. Then resume owner-authorized PR #131 reconciliation preserving #147/#148/#150; inspect PR #152 separately after failed Quality and stale base; continue grouped primary-source research and capability implementation from the canonical registry.",
     "pr131_head": "5f71b97f3c85ab8544431b496ceb7c9ccf8c0c3e",
     "pr131_exact_head_verified": false,
     "pr131_compare": "diverged: 1,125 ahead / 19 behind current main; 76 files; mergeable=false; selective reconciliation only.",
