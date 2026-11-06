@@ -45,7 +45,7 @@ project_state:
   wip_policy: "one primary implementation slice; independent read-only work may be batched"
   owner_gates: "merge, deploy, rebase, force-push, history rewrite, destructive deletion, secrets, permissions and consequential external side effects require explicit scope-specific approval"
   next_validation: "ORIENT-002 fresh-session handoff test after owner-controlled PR #155 promotion"
-source_triage:
+  source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
     technique_register: "docs/TECHNIQUE_REGISTER_RU.md"
