@@ -21,6 +21,9 @@ The prior gateway baseline passed 37 tests and the deterministic six-layer smoke
 
 | Eval ID | Scope | Current fixture / command | Acceptance | Status |
 |---|---|---|---|---|
+| EV-XERJ-001 | Public XERJ retrieval engine vs SQLite FTS5 + lexical graph/RRF | fixed corpus + labelled RU/EN/TH queries; public source revision 83c9f0d123bac010a25ca2cf02ff093b08ee68ce only | Recall@5, MRR/nDCG, citation/source offsets, p50/p95 query latency, ingest time, peak RSS, index bytes, deletion/restore, scope leakage=0; same hardware/corpus/config | planned; XERJ-Query rc.101 private crates/model excluded |
+| EV-MEMVID-001 | Portable memory export/archive | fixed synthetic conversations + project facts with provenance/scope/time/conflicts; compare existing SQLite/export path with Memvid v2.0.140 | 100% round-trip of required IDs/provenance/scope/temporal metadata; integrity checks, archive size, export/import latency; verify deletion lineage and access-scope behavior | planned; archive/export prototype only, no canonical store replacement |
+| EV-RAG-ANYTHING-001 | Multimodal document pipeline patterns | fixed PDF/DOCX/XLSX/MD/image/audio/video corpus; compare current aLandi parser stack with selected RAG-Anything processing path/patterns | text/table/figure coverage, page+bbox+timestamp provenance, citation correctness, OCR/ASR metrics where used, peak RSS, install footprint, cold start, parse p50/p95 | planned; source-pattern study only, no package install |
 | EV-VOICE-001 | Native voice core | Future tests/voice/test_native_hotpath_contract.py | No PCM in public event payload; native backend reports bounded metadata | not yet an actual native runtime |
 | EV-CPOCKET-001 | Transactional leases | gateway/tests/test_coder_packet.py | Bounded cleanup registrations; cleanup continues after RuntimeError/CancelledError; concurrent rollback runs handlers exactly once; TTL/commit/caller-cancel semantics remain covered | PR #28 merged; Gateway contract/security tests passed on post-merge main e424d353; live voice runtime and target-host FD/task soak absent |
 | EV-VOICE-002 | Latency contracts | docs/LATENCY_CONTRACT.md | p50/p95 and false cut from actual 8GB CPU host, >=100 labelled utterances initially | unmeasured |
@@ -123,3 +126,30 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - **Required automated gates:** Gateway contract/security run `40637641493`; Quality/Chromium/published-site run `40637641255`; dead-code report `40637641563` — all passed on PR head `c09c4db9afc3b763b4900b34712223c40b729cd7`.
 - **Limit:** these gates establish deterministic behavior and contract preservation, not production retrieval quality. No labelled >=50-query corpus or target-host latency/RSS benchmark was run. Recall@5 >=0.75 remains a proposed threshold, not an observed production result.
 - **Acceptance before quality claims:** compare baseline and RRF on identical labelled queries; report Recall@5, MRR/nDCG, citation correctness, p50/p95 latency, peak RSS, scope leakage, upsert and deletion correctness. Keep `ALANDI_RAG_ENABLED=false` until operator setup and validation.
+
+## EV-XERJ-001 — public retrieval-engine bake-off (planned)
+
+- **Question:** does the public XERJ retrieval engine produce enough measurable improvement over aLandi's SQLite FTS5/BM25 + lexical-concept graph/RRF baseline to justify a separate Rust search service?
+- **Scope boundary:** evaluate public engine source only. XERJ v1.0.0-rc.101 release binary is built from a private tree and includes xerj-infer, xerj-serve, xerj-exec crates marked proprietary in the release notes. The separately published 408,024,623-byte model bundle has no independently verified redistribution license in the reviewed release metadata; it is excluded from acquisition and this eval. Do not confuse the Apache-2.0 license of the public repository with the proprietary release-only components.
+- **Dataset:** one deterministic copy of the same aLandi corpus and at least 50 labelled queries, stratified RU/EN/TH, code/docs/logs and exact-answer/source-location cases. Freeze corpus/query hashes.
+- **Metrics:** Recall@5, MRR, nDCG@10, citation/source-offset correctness, exact-match where applicable, p50/p95 query latency, ingest throughput, peak RSS, index disk bytes, cold startup and delete/reindex behavior. Scope leakage must remain zero.
+- **Method:** compare identical hardware, resource limits, corpus and query set. Run FTS5 baseline first; test XERJ public engine with lexical/offline defaults before considering optional neural embeddings. One variable per experiment. Record exact revision, build features, OS/Rust versions and raw aggregate report.
+- **Kill criteria:** no stable retrieval gain after resource/operational cost; no safe deletion/scope story; public source cannot be built reproducibly; binary/source provenance mismatch; or required model has unresolved license/redistribution. Status **PLANNED / NOT RUN**.
+
+## EV-MEMVID-001 — portable memory archive/export prototype (planned)
+
+- **Question:** can a portable single-file archive improve backup/transfer without replacing the canonical SQLite memory store?
+- **Scope:** export/import only; no active retrieval routing or write-through runtime integration.
+- **Fixture:** synthetic conversations and project facts with stable IDs, owner/scope, source/provenance, valid-time/recorded-time, disputed status, derived-from links and deletion markers.
+- **Acceptance:** byte integrity and deterministic manifest; 100% round-trip of required metadata; restore isolation by project; explicit behavior for revoked/deleted and disputed items; archive size, export/import p50/p95 and cold-open RSS. A format that cannot represent scope/deletion semantics remains archive-only and cannot become canonical memory.
+- **Candidate:** Memvid v2.0.140, public Apache-2.0 source; verify its optional feature/dependency profile before building. Upstream performance claims are not treated as measured aLandi outcomes.
+- **Status:** **PLANNED / NOT RUN**.
+
+## EV-RAG-ANYTHING-001 — multimodal document pipeline patterns (planned)
+
+- **Question:** do typed content blocks, structured multimodal chunks and page/bbox/time provenance improve aLandi's current document pipeline enough to justify selective adaptation?
+- **Scope:** evaluate schemas/algorithms first; do not install the full package or all extras into the 8-GB runtime.
+- **Fixture:** identical representative PDFs, DOCX, XLSX, Markdown with local images, plus a small legally usable audio/video corpus. Preserve source IDs and expected page/offset/segment references.
+- **Metrics:** extraction coverage, table structure accuracy, figure/chart caption grounding, page/bbox and timestamps, citation correctness, audio WER/CER, video segment recall, peak RSS, install footprint and parse latency.
+- **Candidate:** RAG-Anything v1.4.1 (MIT code); its core dependency includes LightRAG and MinerU, while audio/video add faster-whisper, PyAV, SceneDetect, MoviePy, OpenCV and ffmpeg requirements. Audit transitive/model licenses separately.
+- **Status:** **PLANNED / NOT RUN**.
