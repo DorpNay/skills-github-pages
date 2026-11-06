@@ -16,6 +16,8 @@ export default defineConfig({
     baseURL: (process.env.LIVE_SITE_URL ? process.env.LIVE_SITE_URL.replace(/\/?$/, '/') : 'http://127.0.0.1:4173'),
     browserName: 'chromium',
     headless: true,
+    // GitHub-hosted ubuntu-latest includes stable Google Chrome; local runs use Playwright Chromium.
+    channel: process.env.CI ? 'chrome' : undefined,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure'
