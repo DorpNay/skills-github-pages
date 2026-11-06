@@ -86,3 +86,8 @@
 5. После изменения env проверить systemd service, журналы на отсутствие текста/аудио/секретов, перезапуск после reboot и rollback. Передавать только несекретные результаты: OS/архитектура, RAM/диск, health HTTP status, capability flags и доступные voice IDs, hash, задержки и пиковую RAM.
 
 **Критерий приземления:** PR merged + exact-head CI зелёный + артефакты моделей с hash/license + gateway на VPS с флагами, включёнными осознанно + реальный микрофон/звук проверены + RAM/latency записаны. GitHub Pages deployment сам по себе не разворачивает приватный gateway и модели.
+
+
+## 2026-11-02 — Voice UI and audio generation
+
+Existing local transcription and local speech playback are foundations, not full-duplex conversation, selected-text TTS, multi-message queue or general sound/music generation. Keep each user intent separate in UI and acceptance tests. See `VOICE-011…018` and [LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md](LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md). No dependencies or model weights are added by this research update.
