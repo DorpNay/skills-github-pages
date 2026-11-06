@@ -1,15 +1,15 @@
 # Landing V1 stability and V2 promotion plan
 
 **Created:** 2026-11-04  
-**Owner direction:** keep the public main branch as the stable, observable Landing 1.0 baseline while allowing carefully selected quality improvements; develop the substantial Landing 2.0 package in PR #131 and promote only independently verified slices.  
-**Status:** IN PROGRESS — V1 baseline preserved; independent V1 landing, orientation, N₂O knowledge, source triage, model artifact and Python reliability slices are merged. Landing 2.0 audit and repository hygiene remain active; each further promotion still requires evidence and an explicit recorded decision.
+**Owner direction (updated 2026-11-06):** preserve the independently published V1 marketing landing at `/landing/`, but promote the modular V2 root application shell through a bounded, explicitly authorized PR #154. PR #131 remains the substantial V2 workbench; it must not be merged wholesale.  
+**Status:** IN PROGRESS — PR #153 orientation repair is merged and post-merge Quality/Pages/Freshness/Provenance passed on main SHA `f323b6f339d454dad6e820a4074fa230acc7b6df`. The root-app V2 shell is under exact-head verification in PR #154; PR #131 and research/voice workstreams remain isolated.
 
 ## Product and branch policy
 
-- `main` is the stable Landing 1.0 line. It is not frozen against improvements to orientation, documentation, accessibility, reliability, performance, security, maintainability or owner convenience when those changes preserve the V1 product boundary.
-- Landing 1.0 means the currently approved product surface and behavior, not a ban on local modernization. Do not silently introduce V2 product scope, new runtime capabilities, paid services, new dependencies or infrastructure changes into V1.
-- PR #131 is the primary Landing 2.0 development workbench. Do not merge the PR wholesale. Extract coherent, independently useful slices; decide each slice on its own merits.
-- Preserve the ability to reproduce the V1 baseline before substantial promotion: record the exact main SHA and create a durable Git reference (tag or archival branch) only after verifying the desired baseline and checking repository naming conventions. Do not create the reference prematurely or rewrite history.
+- `main` is the public GitHub Pages line: the marketing landing at `/landing/` remains a separate V1 surface; the root application is moving to the modular V2 shell through PR #154 after exact-head gates. The pre-promotion root-client baseline is recoverable from the parent main SHA `f323b6f339d454dad6e820a4074fa230acc7b6df` and Git history.
+- The owner explicitly authorized this root-client V2 product-scope change on 2026-11-06. This does not authorize new backend routes, hosted services, paid services, infrastructure changes or unimplemented runtime claims; preserve local-first storage, user-data contracts and the existing Gateway boundary.
+- PR #131 remains the primary Landing 2.0 development workbench. Do not merge it wholesale. PR #154 selectively promotes only the modular root HTML/CSS/JS shell and its aligned test/quality/build support; future Gateway, AgentRun, Voice, research and other PR #131 changes require separate review.
+- Preserve the ability to reproduce the pre-promotion root client: exact parent main SHA `f323b6f339d454dad6e820a4074fa230acc7b6df` is recorded, and rollback is a revert of the bounded promotion commit (no data migration). Keep the existing `/landing/` V1 marketing surface. Create no new baseline tag until the owner selects and verifies one.
 - Prefer a small number of coherent promotion batches over a proliferation of tiny PRs. A batch may contain several related, separately gated improvements. Keep owner review, exact-head CI and rollback clear.
 - Research branches remain isolated until their work is either accepted into the V2 workbench, promoted as a verified V1-compatible slice, or explicitly rejected/deferred.
 - Repository cleanup is a final evidence-based phase, not a reason to delete useful history or unresolved work.
@@ -58,7 +58,7 @@ For each candidate, record:
 7. A rollback/revert is straightforward and no irreversible migration is required.
 8. The candidate is documented in this register with evidence and a reasoned decision.
 
-**Do not promote:** roadmap-only cards, mock controls, speculative runtime, unfinished agent orchestration, unsupported source CRUD, experimental server-memory graph functionality, unverified model integrations, or UI that implies a capability not implemented.
+**Do not promote:** active controls that imply an unimplemented capability, speculative runtime, unfinished agent orchestration, unsupported source CRUD, experimental server-memory graph functionality or unverified model integrations. Read-only roadmap disclosures are allowed in the V2 shell only when clearly marked future/non-operational and covered by UI-integrity tests.
 
 ### 3. Promote accepted V1-compatible improvements to main
 
@@ -68,7 +68,7 @@ For each candidate, record:
 - Preserve existing contracts and avoid broad refactors.
 - Run exact-head checks for each batch; inspect the final diff and published Pages result.
 - Update the candidate register with merged SHA, test run IDs and residual limits.
-- Keep V2-only work in PR #131.
+- Keep PR #131 as the V2 workbench; PR #154 is the sole currently authorized bounded root-shell promotion.
 - Do not merge PR #131 as a whole as a shortcut.
 
 **Acceptance:** every promoted slice has a traceable decision, exact-head verification, merge SHA and rollback route; the public site reflects only accepted changes.
@@ -115,7 +115,17 @@ Initial research leads already present in `INTEL.md`, `docs/OPEN_SOURCE_TRIAGE_R
 
 **Acceptance:** every remaining branch, PR and issue has a documented purpose; no unique changes or unresolved owner gates are lost.
 
-## Current live baseline (verified 2026-11-05)
+## Current checkpoint — 2026-11-06
+
+- Main SHA: `f323b6f339d454dad6e820a4074fa230acc7b6df` (PR #153 merge).
+- Exact-main gates: Quality #42150785825 PASS; Pages deployment #42150784695 PASS; Freshness #42150785781 PASS; Provenance #42150785779 PASS.
+- Automatic publication is verified for this repository: `DorpNay/skills-github-pages` → https://dorpnay.github.io/skills-github-pages/. This is GitHub Pages only; Gateway/VPS remains separate.
+- PR #154 is the owner-authorized selective modular V2 root-app promotion from PR #131. It includes root `index.md`, `assets/css/app.css`, `assets/js/app.js`, and matching E2E/quality/baseurl/Graphify checks. It excludes Gateway/AgentRun, Voice and research prototypes.
+- PR #131 remains Draft, diverged 1,129 ahead / 20 behind, 76 files, mergeable=false. Do not merge or synchronize wholesale.
+- PR #152 remains a separate Draft voice workstream (17 ahead / 2 behind, 4 files, dirty). Issue #111 remains open for owner-controlled VPS, device, credential and runtime gates.
+- PR #154 has no production deployment until merge; after merge verify exact main SHA, Pages deployment, root HTML/CSS/JS HTTP delivery and post-merge Quality/Freshness/Provenance.
+
+## Historical live baseline — 2026-11-05
 
 - `main` HEAD: `2e11849d409a51009693af95ac3ecbf1f057a3fc` (PR #139 squash-merged). Original V1 baseline before code promotion: `9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af`.
 - PR #139 exact-head gates: Quality #41966180071, Freshness #41966180096, Provenance #41966180157 and Graphify #41966180042 PASS on exact PR HEAD `d76be1d59ed832fa638e419b542151dba277c143`. Post-merge main Quality #41967234442, Pages deployment #41967233832, Freshness #41967234558, Provenance #41967234535 and Graphify #41967234708 all PASS on exact merge SHA.
@@ -147,6 +157,7 @@ These are audit targets, not pre-approved promotions:
 | OLEDUE/orientation and release-plan docs | PR #138 head `2462a783`; Quality #41797778925, Freshness #41797779149, Provenance #41797779027 passed; merged at `a7915291` | IMPLEMENTED / CI VERIFIED | Main orientation now points to the V1/V2 plan; fresh-session behavioral handoff test remains separate.
 | PR #131 wholesale merge | Current live compare: 57 files; 1,094 ahead / 9 behind; mergeable=false. Exact HEAD `597536924ce37b17f8832aa36ea5b928f5584230`; Quality #41787658241 and Provenance #41787658226 passed on this SHA, but exact-head Freshness/Graphify absent. | REJECT AS A MERGE UNIT | Extract bounded candidates only; do not sync or merge the whole branch without separate owner approval. |
 | Public Landing V1 candidate / PR #139 | Exact PR HEAD `d76be1d59ed832fa638e419b542151dba277c143`: Quality #41966180071, Freshness #41966180096, Provenance #41966180157 and Graphify #41966180042 PASS. Squash-merged at `2e11849d409a51009693af95ac3ecbf1f057a3fc`; exact-main Quality #41967234442, Pages #41967233832, Freshness #41967234558, Provenance #41967234535 and Graphify #41967234708 PASS; production CSS/landing HTML fetched. | IMPLEMENTED / MERGED / VERIFIED | Native iPhone/VoiceOver and physical-device review remain unverified. |
+| Modular V2 root application shell / PR #154 | Owner-authorized selective promotion from PR #131; base main `f323b6f339d454dad6e820a4074fa230acc7b6df`; exact PR-head Quality/Freshness/Provenance pending; Graphify and Dead Code passed on intermediate head `7cf4ef0eebdb583b89c984634352270b22c2484f`. | PROMOTE BOUNDED SLICE, GATES PENDING | Do not merge until final exact-head CI passes; post-merge Pages and asset delivery are mandatory. |
 
 ### Follow-up review — PR #134 AgentRun prototype (2026-11-05)
 
