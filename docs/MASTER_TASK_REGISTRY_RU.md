@@ -1,12 +1,23 @@
 # aLandi — MASTER TASK REGISTRY
 
 **Created:** 2026-10-31; integrated into main on 2026-11-05.  
-**Purpose:** единый канонический инвентарь всех явных открытых/частичных checkbox-задач из основных, operational, privacy, voice, architecture и research чек-листов проекта. При продолжении работ сначала сверяться с этим файлом; исторические источники сохраняются как provenance.  
-**Rule:** исходные чек-листы остаются нетронутыми и сохраняют историческую роль. Этот реестр зеркалирует все открытые checkbox-пункты со стабильными ID; задачи нельзя молча удалять или объявлять выполненными.
+**Purpose:** единый канонический lossless inventory всех открытых/частичных задач проекта. Последовательность исполнения теперь задаётся [единой инженерной дорожной картой](IMPLEMENTATION_ROADMAP_RU.md) (20 шагов / P0–P3); этот реестр хранит стабильные task IDs, исходные источники, статусы и evidence.  
+**Rule:** сначала выбрать следующий допустимый шаг по дорожной карте, затем продолжить существующий task ID в этом реестре/его owner addendum. Не создавать параллельные backlog и не переписывать исторические checkbox-источники; закрытие задачи требует evidence и exact tested SHA.
 
-**Snapshot warning (2026-11-05):** the 544-row count below is the lossless migration baseline from 2026-10-31, not a live count of outstanding work. Statuses and branch-only source paths require reconciliation against current main/PRs before marking complete. The 2026-11-05 owner delta is appended in the companion addendum; do not create another backlog.
+**Snapshot warning:** row counts and statuses below are migration/history snapshots, not a live count of outstanding work. Перед выбором следующей задачи сверять relevant code, tests, PR/issue state and canonical state. Старые branch-only источники и evidence не считать актуальными без повторной проверки.
 
-**Owner addendum (2026-11-02):** новые capability/menu/local-source/converter/Skill Factory/agent/SLM/voice/media задачи ведутся append-only в [MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md](MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md); исходный lossless inventory не переписывается.
+**Owner addendum (2026-11-02):** новые capability/menu/local-source/converter/Skill Factory/agent/SLM/voice/media требования остаются append-only в [MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md](MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md). Он является частью одного логического реестра, а не отдельным backlog.
+
+## Канонический execution order
+
+1. **P0 / Steps 1–5:** shell/voice regressions, live state, capability contracts, quality/evals, browser data recovery.
+2. **P1 / Steps 6–10:** deterministic permissions, intent/approval, isolation, injection/exfiltration, transactional side effects.
+3. **P2 / Steps 11–15:** product Memory, RAG/retrieval, eval framework, Document Intelligence, model routing/budgets.
+4. **P3 / Steps 16–20:** Voice service, UX/accessibility, observability, aServi operations, controlled Skills/Agents/Workflows evolution.
+
+**Selection rule:** один основной implementation WIP; следующий task — первый незакрытый блокирующий пункт в текущем шаге, с учётом owner direction, live PR/issue dependencies and safety. Исследование другого шага допустимо без переключения implementation WIP. Все старые IDs сохраняются; задачи получают phase/step mapping в описании или cross-link при следующем затрагивании, а не массовой недоказанной миграцией.
+
+## Сохранение исходного реестра
 
 ## Статусы
 
