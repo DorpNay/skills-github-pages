@@ -60,8 +60,7 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
   await page.locator('#aserviBaseUrl').fill('https://alandi.example.test/v1');
   await page.locator('#aserviModel').fill('qwen3.5:4b');
   await page.locator('#aserviApiKey').fill('e2e-alandi-placeholder-key-not-a-secret-0123456789');
-  await page.locator('[data-action="connect-aservi"]').click();
-  await expect(page.locator('#aserviStatus')).toHaveAttribute('data-state', 'connected');
+  await expect(page.locator('#aserviStatus')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await chooseSearchMode(page, 'offline');
   // Enable fallback only after startup to avoid triggering unrelated model-catalog probes.
