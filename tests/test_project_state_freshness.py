@@ -170,6 +170,7 @@ class ControlPlaneContractTests(unittest.TestCase):
         state = """  orientation_control_plane:
     responsibilities:
       owner_handoff: "OLEDUE.md"
+      project_catalog: "PROJECT_ORCHESTRATOR_RU.md"
       quick_navigation: "ORIENTER.md"
       structured_state: "docs/PROJECT_STATE.yaml"
       machine_checkpoint: "docs/project-state-snapshot.json"
