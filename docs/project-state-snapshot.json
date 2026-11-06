@@ -3,11 +3,11 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-06",
   "checkpoint": {
-    "main_sha": "a8afee45bb22654b220bffda857ab10c24641ef1",
-    "main_commit_subject": "fix(storage): preserve browser data and roll back partial writes",
+    "main_sha": "f323b6f339d454dad6e820a4074fa230acc7b6df",
+    "main_commit_subject": "fix(orientation): make OLEDUE owner-driven and live-state verified",
     "main_commit_date": "2026-11-06",
     "last_functional_checkpoint_sha": "a8afee45bb22654b220bffda857ab10c24641ef1",
-    "last_functional_milestone": "PR #150 merged at a8afee45bb22654b220bffda857ab10c24641ef1 and contains browser-storage recovery, fail-closed writes and atomic rollback.",
+    "last_functional_milestone": "PR #150 merged at a8afee45bb22654b220bffda857ab10c24641ef1 and contains browser-storage recovery, fail-closed writes and atomic rollback; PR #153 then added a documentation-only owner-driven handoff repair at f323b6f339d454dad6e820a4074fa230acc7b6df.",
     "main_quality_run": null,
     "main_pages_deployment_run": null,
     "functional_parent_gateway_run": null,
@@ -17,7 +17,8 @@
     "open_pull_requests": [
       125,
       131,
-      152
+      152,
+      154
     ],
     "open_issues": [
       111
@@ -179,10 +180,10 @@
     "pr152_compare": "diverged: 17 ahead / 1 behind current main; 4 files; mergeable=false; Draft; Quality #42141899337 failed, Graphify #42141899316 passed on exact head."
   },
   "interpretation": {
-    "last_main_commit_is_documentation_only": false,
+    "last_main_commit_is_documentation_only": true,
     "live_vps_gateway_device_and_model_runtime_verified": false,
-    "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
-    "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
+    "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift; current documentation PR #155 is named separately in ORIENTER",
+    "pr_check_policy": "exclude only the PR currently running this check; snapshot lists other open PRs; human-readable orientation separately identifies active PR #155"
   },
-  "last_volley": "V-2026-11-05-CHAT-SETTING-ROLLBACK-001"
+  "last_volley": "V-2026-11-06-ROADMAP-ORIENTATION-REFINEMENT-START-001"
 }
