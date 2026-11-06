@@ -3771,6 +3771,8 @@ test('mobile messages expose full text and retain a jump-to-latest control', asy
   await page.locator('#modelName').fill('message-viewer-model');
   await page.locator('#apiKey').fill('e2e-message-viewer-key');
   await page.locator('[data-action="save-settings"]').click();
+  await expect(page.locator('#toast')).toContainText('Провайдер и модель прошли проверку', { timeout: 15000 });
+  await expect(page.locator('#toast')).toBeHidden({ timeout: 10000 });
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
 
   const longAnswer = Array.from({ length: 70 }, (_, index) => 'MESSAGE_VIEWER_LINE_' + index).join('\\n') +
