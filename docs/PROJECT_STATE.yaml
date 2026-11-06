@@ -26,7 +26,7 @@ project_state:
     runtime_boundary: "PR-head CI and published-site smoke do not prove post-merge Pages deployment or live VPS/Tunnel/Ollama. OAuth/provider credentials, native iPhone/VoiceOver, physical audio, target-hardware performance and SQLite FTS5 host capability remain unverified."
     next: "Finish roadmap v2.0 and unified orientation/control-plane changes in PR #155; verify Freshness/Quality/Provenance on its final exact HEAD. After owner-controlled promotion, execute ORIENT-002 fresh-session test using only OLEDUE plus one batched live-state read. Continue PR #154 against its live exact HEAD as a separate shell workstream; inspect PR #152 independently; keep #131 selective, #125 parked and issue #111 owner-controlled."
   orientation_control_plane:
-    status: "PROPOSED_IN_PR_155; final exact-head Freshness/Quality/Provenance pending"
+    status: "IMPLEMENTED_IN_PR_155; final exact-head Freshness/Quality/Provenance pending"
     responsibilities:
       owner_handoff: "OLEDUE.md"
       quick_navigation: "ORIENTER.md"
