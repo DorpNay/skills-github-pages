@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-06",
   "checkpoint": {
-    "main_sha": "a8afee45bb22654b220bffda857ab10c24641ef1",
-    "main_commit_subject": "fix(storage): preserve browser data and roll back partial writes",
+    "main_sha": "f323b6f339d454dad6e820a4074fa230acc7b6df",
+    "main_commit_subject": "fix(orientation): make OLEDUE owner-driven and live-state verified",
     "main_commit_date": "2026-11-06",
     "last_functional_checkpoint_sha": "a8afee45bb22654b220bffda857ab10c24641ef1",
-    "last_functional_milestone": "PR #150 merged at a8afee45bb22654b220bffda857ab10c24641ef1 and contains browser-storage recovery, fail-closed writes and atomic rollback.",
-    "main_quality_run": null,
-    "main_pages_deployment_run": null,
+    "last_functional_milestone": "PR #150 at a8afee45bb22654b220bffda857ab10c24641ef1 remains the latest functional application/storage milestone; PR #153 adds verified owner-driven orientation and handoff behavior.",
+    "main_quality_run": 42150785825,
+    "main_pages_deployment_run": 42150784695,
     "functional_parent_gateway_run": null,
     "functional_parent_quality_run": null,
     "functional_parent_graphify_run": null,
@@ -124,20 +124,26 @@
         "merge_sha": "a8afee45bb22654b220bffda857ab10c24641ef1",
         "head_sha": "ae5600718a1a301434a465a4934833a496a07838",
         "checks": "Merged to main; current-main post-merge workflow IDs were not retrieved."
+      },
+      {
+        "number": 153,
+        "merge_sha": "f323b6f339d454dad6e820a4074fa230acc7b6df",
+        "head_sha": "2fe4872233764c4094cf092e9a7ee0a11948825b",
+        "checks": "Exact PR-head Quality #42148438184, Freshness #42148438229 and Provenance #42148438250 passed; post-merge main Quality #42150785825, Pages deployment #42150784695, Freshness #42150785781 and Provenance #42150785779 all passed on exact merge SHA."
       }
     ],
-    "main_provenance_run": null,
-    "main_freshness_run": null,
+    "main_provenance_run": 42150785779,
+    "main_freshness_run": 42150785781,
     "main_graphify_run": null,
     "open_prs": "3 open PRs: #125, #131, #152",
-    "owner_task": "PR #153 orientation repair is implemented and ready for owner review; full code Quality passed on tested code SHA 5665e60ebdbb704f9fa95cadba610984ca1da60b, and docs-only follow-up Freshness/Provenance/Dead Code checks passed. Check live PR #153 for its current HEAD. After owner-approved merge, execute ORIENT-002 fresh-session handoff test using only OLEDUE + one batched live GitHub state read. Then resume owner-authorized PR #131 reconciliation preserving #147/#148/#150; inspect PR #152 separately after failed Quality and stale base; continue grouped primary-source research and capability implementation from the canonical registry.",
-    "pr131_head": "5f71b97f3c85ab8544431b496ceb7c9ccf8c0c3e",
+    "owner_task": "PR #153 is merged and post-merge main gates passed. ORIENT-002 handoff was exercised in this fresh session by reading OLEDUE first, then one batched live-state read; the explicit owner request selected bounded PR #154 and did not default to #131. Finish PR #154 exact-head gates; if green, merge only its modular V2 root app shell and verify post-merge Pages/main checks. Keep PR #131 as a selective workbench, inspect #152 independently, and preserve issue #111 for owner-only release gates.",
+    "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
     "pr131_exact_head_verified": false,
-    "pr131_compare": "diverged: 1,125 ahead / 19 behind current main; 76 files; mergeable=false; selective reconciliation only.",
+    "pr131_compare": "diverged: 1,129 ahead / 20 behind current main; 76 files; mergeable=false; Draft; selective reconciliation only.",
     "pr131_quality_run": null,
     "pr131_provenance_run": null,
     "pr131_full_gate_verified": false,
-    "pr131_quality_scope": "Final PR #131 HEAD 02fb4e8986b35f55a8a3b5308704b631dfbcce80: Quality #41981955002 passed static analysis, Jekyll, four real Chromium shards, Integrity, Security and Context; published Pages smoke was skipped.",
+    "pr131_quality_scope": "Latest observed Quality run #42150140408 was pending on push at exact PR #131 head 55d2ea792d11587a508d77aa9274f24105dafa79; no full exact-head gate claim. PR #131 remains Draft and merge-conflicted.",
     "pr131_missing_checks": [
       "Project State Freshness on final PR #131 HEAD",
       "Graphify on final PR #131 HEAD (latest pass is code/test HEAD c79e983a57d6cc2b87a9296a1334e6d6ed5b3479; subsequent commits were docs-only)",
@@ -146,7 +152,7 @@
       "physical keyboard/long-press",
       "full component-level contrast review"
     ],
-    "promotion_audit": "PR #139 public V1 landing accessibility/responsive slice merged and exact-main gates passed; PR #131 remains V2 workbench. Graphify UI Surface confidence patch implemented on PR #131 code/test HEAD c79e983a57d6cc2b87a9296a1334e6d6ed5b3479; Graphify pilot #41981885581 passed. Exact final PR Quality pending.",
+    "promotion_audit": "PR #139 public V1 landing accessibility/responsive slice is merged and verified. PR #131 remains the V2 workbench and is not safe to merge wholesale. Owner explicitly authorized a bounded modular root-app shell promotion through PR #154, which copies index.md, assets/css/app.css and assets/js/app.js plus aligned quality/E2E/Graphify coverage. PR #154 exact-head checks are pending; no main change or PR preview deployment is claimed until merge.",
     "pr131_812_decision": "do not promote removal; previously accepted opt-in V1 feature; owner approval and live host/database review required for retirement",
     "first_v1_code_candidate": "public landing accessibility/responsive slice; three functional files only; six additional PR #139 changes are orientation/state documentation",
     "pr138_merge_sha": "a7915291354d1b031ce2461b71a553f871959df3",
@@ -163,11 +169,11 @@
     "first_v1_candidate_checks": "PR #139 exact HEAD d76be1d59ed832fa638e419b542151dba277c143 passed Quality #41966180071, Freshness #41966180096, Provenance #41966180157 and Graphify #41966180042. Squash merged at main SHA 2e11849d409a51009693af95ac3ecbf1f057a3fc; post-merge main Quality #41967234442, Pages #41967233832, Freshness #41967234558, Provenance #41967234535, Graphify #41967234708 all PASS. Production CSS and landing HTML fetched.",
     "first_v1_candidate_css_delivery_assertion": "HTTP 200 and text/css",
     "original_v1_baseline_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
-    "main_quality_status": "PR #149 exact-head Quality run #42001310270 PASS (7 jobs, including Chromium and published Pages smoke); no post-merge main Quality run retrieved.",
-    "main_pages_status": "PR #149 exact-head published Pages browser smoke PASS; post-merge Pages deployment not verified.",
-    "main_freshness_status": "PR #149 exact-head Project State Freshness #42001309687 PASS; merge SHA 8e7d4aafe4b9580e9f8978c6f888e35f3fa99242 is the state-refresh child.",
-    "main_provenance_status": "PR #149 exact-head Provenance #42001309703 PASS; pypdf and Vosk metadata reconciled.",
-    "main_graphify_status": "PR #149 exact-head Graphify #42001311323 PASS; post-merge main Graphify run not retrieved.",
+    "main_quality_status": "PASS — main Quality #42150785825 on exact merge SHA f323b6f339d454dad6e820a4074fa230acc7b6df.",
+    "main_pages_status": "PASS — automatic GitHub Pages deployment #42150784695 on exact merge SHA f323b6f339d454dad6e820a4074fa230acc7b6df.",
+    "main_freshness_status": "PASS — Project State Freshness #42150785781 on exact merge SHA f323b6f339d454dad6e820a4074fa230acc7b6df.",
+    "main_provenance_status": "PASS — License/Artifact Provenance #42150785779 on exact merge SHA f323b6f339d454dad6e820a4074fa230acc7b6df.",
+    "main_graphify_status": "No post-merge main Graphify run retrieved or required for PR #153; PR #154 Graphify runs on its exact PR HEAD.",
     "first_v1_candidate_pr": 139,
     "first_v1_candidate_pr_base": "a7915291354d1b031ce2461b71a553f871959df3",
     "first_v1_candidate_merge_status": "squash-merged at 2e11849d409a51009693af95ac3ecbf1f057a3fc after explicit owner authorization",
@@ -176,7 +182,7 @@
     "pr131_graphify_run": 41981885581,
     "pr131_graphify_code_test_sha": "c79e983a57d6cc2b87a9296a1334e6d6ed5b3479",
     "pr152_head": "99a0b530b335e7e19833c4ce66138dcc576a09fa",
-    "pr152_compare": "diverged: 17 ahead / 1 behind current main; 4 files; mergeable=false; Draft; Quality #42141899337 failed, Graphify #42141899316 passed on exact head."
+    "pr152_compare": "diverged: 17 ahead / 2 behind current main; 4 files; mergeable=false; Draft; previous Quality #42141899337 failed and Graphify #42141899316 passed on exact PR head."
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
@@ -184,5 +190,9 @@
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-05-CHAT-SETTING-ROLLBACK-001"
+  "last_volley": "V-2026-11-06-PR154-V2-SHELL-PROMOTION-001",
+  "active_promotion_pr": 154,
+  "active_promotion_branch": "promote/landing-v2-shell-20261106",
+  "active_promotion_scope": "Bounded root application HTML/CSS/JS plus matching E2E, quality, baseurl and Graphify updates; excludes the rest of PR #131, Gateway/AgentRun, research and voice changes.",
+  "active_promotion_base": "f323b6f339d454dad6e820a4074fa230acc7b6df"
 }
