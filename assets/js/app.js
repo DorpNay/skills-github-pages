@@ -135,6 +135,7 @@
     let pinnedChatIds = loadPinnedChatIds();
     let chatSortPreference = loadChatSortPreference();
     let projects = loadProjects();
+    let selectedProjectForSettingsId = null;
     let currentChatId = safeGet(STORAGE.current) || chats[0].id;
     if (!chats.some((chat) => chat.id === currentChatId)) currentChatId = chats[0].id;
     let activeChatSortSnapshotId = currentChatId;
