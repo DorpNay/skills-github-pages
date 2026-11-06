@@ -449,11 +449,10 @@ def test_per_run_event_limit_rolls_back_lifecycle_transition(tmp_path):
                                new_state="running", event_type="run_started", now=2)
     task = store.enqueue_task(run_id=run["run_id"], task_key="pending",
                               idempotency_key="event-cap-task", payload={}, now=3)
-    # Ordinary events stop at the non-reserved budget.
+    # Ordinary task events stop at the non-reserved budget and roll back the claim.
     with pytest.raises(AgentRunError, match="terminal-fence capacity is reserved"):
-        store.transition_run(run_id=run["run_id"], expected_state="running",
-                             new_state="needs_human", event_type="needs_human", now=4)
-    assert store.get_run(run["run_id"])["state"] == "running"
+        store.claim_task(run_id=run["run_id"], worker_id="worker", now=4)
+    assert store.get_task(task["task_id"])["state"] == "queued"
     # Terminal transitions may consume the reserved task-cancellation + run event slots.
     failed = store.transition_run(run_id=run["run_id"], expected_state="running",
                                   new_state="failed", event_type="run_failed", now=5)
