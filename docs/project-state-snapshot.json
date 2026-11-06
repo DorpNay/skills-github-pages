@@ -185,5 +185,5 @@
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift; current documentation PR #155 is named separately in ORIENTER",
     "pr_check_policy": "exclude only the PR currently running this check; snapshot lists other open PRs; human-readable orientation separately identifies active PR #155"
   },
-  "last_volley": "V-2026-11-06-PROJECT-ORCHESTRATOR-INTAKE-001"
+  "last_volley": "V-2026-11-06-ORCHESTRATOR-GUARD-LINKS-002"
 }
