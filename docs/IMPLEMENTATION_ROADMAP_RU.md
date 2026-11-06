@@ -1,7 +1,7 @@
 # aLandi — единая инженерная дорожная карта исполнения
 
-**Редакция:** 2026-11-06  
-**Статус:** ACCEPTED AS PLANNING STRUCTURE; отдельные capability/technology decisions остаются CANDIDATE до evidence и решения владельца.  
+**Редакция:** 2026-11-06 · v2.0 (engineering uplift)  
+**Статус:** REFINED PROPOSAL IN PR #155; структура является основной proposed execution map после owner review/merge. Отдельные capability/technology decisions остаются CANDIDATE до evidence и решения владельца.  
 **Канонический порядок:** этот документ задаёт последовательность и gates; `docs/MASTER_TASK_REGISTRY_RU.md` остаётся единственным lossless inventory задач, а его owner addendum — append-only delta.  
 **Связанные каноны:** `LOOP.md`, `AGENTS.md`, `docs/ALANDI_N2O_CORE_RU.md`, `docs/ALANDI_N2O_KNOWLEDGE_LOOP_RU.md`, `docs/PROJECT_STATE.yaml`, `DECISIONS.md`, `EVALS.md`, `INTEL.md`, `docs/TECHNIQUE_REGISTER_RU.md`.
 
@@ -10,6 +10,74 @@
 Это единый порядок исполнения оставшейся работы, а не обещание сроков и не утверждение, что все перечисленные capabilities уже существуют. План объединяет 20 последовательных шагов в четыре фазы. Переход к следующей фазе разрешён после закрытия её blocking gates; независимые безопасные задачи можно исследовать, но WIP implementation остаётся равным одному.
 
 **Приоритеты:** P0 — доказать целостность основы; P1 — детерминированная безопасность и side-effect control; P2 — память, retrieval, evaluation и document intelligence; P3 — пользовательская/операционная зрелость и управляемая эволюция. Никакой автономности или новых тяжёлых компонентов до измеримости, ограничений и восстановления базовых контуров.
+
+### 1.1. Что улучшено в редакции v2.0
+
+Редакция усиливает план не количеством технологий, а качеством инженерного контура:
+
+- **От feature-first к outcome-first:** каждая задача начинается с user journey, измеримого baseline и проверяемого изменения, а не с выбора библиотеки.
+- **От «модель решила» к trusted execution:** модель предлагает намерение; отдельный policy/validation слой проверяет actor, resource, scope, arguments, budget и approval до handler.
+- **От prompt engineering к context engineering:** контекст собирается по задаче, scope, доверию, свежести и token budget; источники и derived facts сохраняют lineage.
+- **От демо-eval к data-centric eval:** версии datasets, срезы RU/EN/TH, adversarial/negative cases, детерминированные метрики, калибровка judge и human review.
+- **От «агент работает» к bounded workflow:** конечные состояния, лимиты шагов/времени/стоимости, cancellation propagation, idempotency, checkpoints и восстановление только там, где это необходимо.
+- **От tool integration к supply-chain governance:** происхождение кода, моделей, weights, tokenizer, datasets, MCP servers, Skills и GitHub Actions проверяется до принятия.
+- **От наблюдаемости логов к privacy-safe traces:** измеряем этапы и outcome, но не сохраняем prompts, секреты, аргументы инструментов и содержимое пользовательских файлов.
+- **От «новая технология лучше» к доказанному выигрышу:** новый компонент принимается только при измеримом преимуществе над текущим baseline с учётом качества, безопасности, ресурсов, лицензии и стоимости сопровождения.
+
+### 1.2. Сквозная архитектура AI capability
+
+Для новых AI-функций применять одну логическую цепочку, не обязательно превращая её в отдельные сервисы:
+
+`User intent → trusted context assembly → model inference/planning → typed proposal → policy enforcement → capability handler → result validation → user-visible outcome → evidence`
+
+Обязательные границы:
+
+1. **Model is untrusted input/output.** Ни текст модели, ни tool output, ни retrieved document, ни memory candidate не являются полномочиями или инструкциями для execution layer.
+2. **Structured output is a contract, not a guarantee.** Парсинг, schema validation, bounds, semantic validation и authorization выполняются после ответа модели. Неизвестные поля/версии отклоняются или проходят явную compatibility policy.
+3. **Tool registry is authoritative.** Модель видит только разрешённые описания tools; сервер проверяет tool ID, actor, scope, resource, schema, rate/budget и risk tier независимо от prompt.
+4. **Context has provenance and trust.** Для каждого фрагмента известны source ID, scope, source class, timestamp/freshness, trust label и retrieval path. Внешний текст никогда не повышается до system/developer instruction.
+5. **Provider routing preserves data policy.** Fallback не должен незаметно отправлять private/project data в другой trust domain/provider. Provider, retention, region и training policy учитываются до маршрута.
+6. **Every loop is bounded.** Максимум шагов, wall time, tokens, tool calls, output bytes, retries, concurrency и cost задаются execution layer; модель не может увеличивать собственный бюджет.
+7. **Side effects have explicit states.** Для внешней записи различать PENDING / COMMITTED / FAILED / UNKNOWN; timeout и cancellation не доказывают rollback или отсутствие действия.
+8. **Human approval is payload-bound.** Подтверждение относится к конкретному actor + operation + canonical arguments hash + resource + expiry/nonce; изменение payload требует нового подтверждения.
+
+### 1.3. Context engineering и управление контекстным окном
+
+Контекст — ограниченный ресурс и поверхность атаки, а не свалка истории.
+
+- Собирай минимально достаточный контекст по текущей задаче: owner instructions → актуальный проектный контракт → relevant code/tests → source evidence → нужная история. Не загружай весь репозиторий/чат по умолчанию.
+- Разделяй trusted instructions, user data, retrieved content, tool outputs и memory candidates; сохраняй границы в сериализации и шаблонах prompts.
+- Веди бюджет контекста по категориям (instructions, history, retrieved chunks, tool results, output reserve); измеряй токены/байты и качество, а не только размер окна модели.
+- Summarization/compaction сохраняет IDs, ссылки на первоисточники, scope, uncertainty, unresolved questions и deletion lineage; summary не заменяет исходник.
+- Версионируй system/developer prompt templates и routing policy; regression eval запускается при изменении prompt, model, tokenizer, retrieval или tool schema.
+- Cache допускается только при явной модели ключа, tenant/scope isolation, TTL/invalidation и доказанном отсутствии cross-user leakage. Различай browser cache, inference prefix/KV reuse и exact response cache.
+
+### 1.4. Engineering quality: код, контракты и отказоустойчивость
+
+- Сначала расширять существующие API/schema/test harness; не создавать параллельный contract registry, router, memory store или observability stack.
+- На границах использовать typed DTO / strict schema, explicit versioning, validation of unknown fields, bounded parsing и predictable error taxonomy.
+- Для критичных state transitions добавлять property-based или table-driven tests, failure injection, concurrency/race tests и mutation testing только там, где он проверяет реальные инварианты.
+- Для файлов/архивов/документов применять parser isolation, byte/page/depth/expansion/time/output limits, cleanup и fuzz corpus; не считать MIME или extension доверенным.
+- Для зависимостей и actions фиксировать exact version/digest, license, provenance, SBOM/artifact origin; автоматические scanners дополняют, но не заменяют review.
+- Не внедрять общий coverage threshold как vanity metric. Покрывать критичные контракты, отказные ветки, security boundaries и пользовательские journeys.
+- При изменении схемы предусматривать migration, compatibility window, backup/restore и rollback rehearsal до promotion.
+
+### 1.5. Decision scorecard для новых технологий и методов
+
+Каждый кандидат проходит короткую карточку в `DECISIONS.md` или существующем source/technique register:
+
+| Критерий | Проверка |
+|---|---|
+| Problem fit | Какой измеренный дефект/ограничение baseline устраняет кандидат? |
+| Quality | Улучшает ли task success, groundedness, retrieval или UX на одинаковом наборе? |
+| Security/privacy | Не расширяет ли доступ, egress, trust boundary или retention? |
+| Resource fit | RAM/PSS/VRAM, CPU, disk, cold start, p95 latency, concurrency и энергозатраты на целевой среде |
+| Operational cost | Новые сервисы, migrations, backups, monitoring, upgrades, incident burden |
+| Supply chain | Upstream activity, exact version, license, model/data terms, checksums and provenance |
+| Reversibility | Feature flag, data export, compatibility, rollback and removal cost |
+| Net value | Достаточно ли преимущество, чтобы оправдать полную стоимость владения? |
+
+Сравнение выполняется на одинаковом dataset, prompt/config, hardware и методике. Кандидат может быть лучше по одному измерению и хуже в целом; агрегированный score не должен скрывать критичный security/privacy failure. Если baseline не измерен или результат статистически/операционно неубедителен — DEFER, не INSTALL.
 
 ### Нормативный execution contract
 
@@ -81,8 +149,8 @@
 **Цель:** описать реальные границы и гарантии UI → Cloudflare Tunnel → FastAPI gateway → private Ollama и локальных/внешних adapters.
 
 - **3.1 Data/API contracts.** Инвентаризировать существующие browser storage, gateway/OpenAPI, inference, memory, retrieval, voice и tool interfaces до решения о schema-first/generation. Не создавать второй OpenAPI source of truth, если актуальный contract уже генерируется/поддерживается иначе.
-- **3.2 Capability contract.** Стабильный ID, purpose, version, inputs/outputs, data scope, actor/permissions, side effects, dependencies, timeout/budget, retry/idempotency, failure/recovery, maturity, owner и evidence. Для read-only helper допускается сокращённый контракт.
-- **3.3 Contract tests.** Привязать contract fixtures к фактическому API и CI. Pact, Schemathesis, openapi-diff, JSON Schema/AJV — кандидаты, не обязательные установки; выбирать после проверки существующего tooling и стоимости сопровождения.
+- **3.2 Capability contract.** Стабильный ID, purpose, version/schema, inputs/outputs, data classification/scope, actor/permissions, trust boundary, side effects, dependencies, timeout/budget, cancellation semantics, retry/idempotency, observability, failure/recovery, maturity, owner и evidence. Для read-only helper допускается сокращённый контракт.
+- **3.3 Contract tests.** Привязать contract fixtures к фактическому API и CI; добавить compatibility tests для старых/новых schema versions и негативные тесты unknown fields, oversized payloads, invalid enum, stale IDs и malformed tool outputs. Pact, Schemathesis, openapi-diff, JSON Schema/AJV — кандидаты, не обязательные установки; выбирать после проверки существующего tooling и стоимости сопровождения.
 
 **Acceptance:** для каждого capability, который UI показывает как доступный, существует реальный runtime/API и проверяемый contract; unavailable/spec-only не имеет ложной кнопки/обещания.  
 **Kill:** breaking contract без миграции/compatibility path блокирует продвижение.
@@ -92,8 +160,8 @@
 **Цель:** доказательство качества привязано к коду, сценарию и SHA.
 
 - **4.1 Test layers.** Разделить unit, integration, contract, security, privacy, accessibility, browser E2E и live/host checks. Выбрать критические journeys, а не максимизировать число E2E.
-- **4.2 Golden fixtures.** Для каждого важного capability хранить deterministic input/expected invariants; обновление fixture требует review и причины. Hash фиксирует целостность fixture, но не заменяет читаемые expected assertions.
-- **4.3 Flaky policy.** Классифицировать инфраструктурный шум и продуктовый дефект; quarantine только с owner, сроком и запретом считать gate зелёным, если quarantined test критичен. Не вводить произвольный SLA 72h без доступной capacity.
+- **4.2 Golden fixtures.** Для каждого важного capability хранить versioned dataset manifest (source, license, language, scope, split, expected invariants, exclusions); избегать leakage между train/dev/test и случайного попадания private data. Hash фиксирует целостность fixture, но не заменяет читаемые expected assertions.
+- **4.3 Flaky policy.** Классифицировать инфраструктурный шум и продуктовый дефект; quarantine только с owner, сроком и запретом считать gate зелёным, если quarantined test критичен. Judge model калибровать против human-labeled slice; отслеживать inter-rater agreement, variance и false acceptance. Не вводить произвольный SLA 72h без доступной capacity.
 
 **Acceptance:** PR quality report перечисляет suites, SHA, run IDs, failures/quarantine и непроверенные среды; regression в затронутом контракте блокирует продвижение.  
 **Kill:** если тест не детерминирован или eval set недостаточен, статус UNVERIFIED, не PASS.
@@ -117,7 +185,7 @@
 
 - **6.1 Authorization model.** Сверить текущие auth/scope primitives в gateway/tools/memory. Формализовать actor → project → resource → operation и least privilege без дублирующего policy engine.
 - **6.2 Capability grants.** Ограниченные, короткоживущие grants/opaque handles; модель не получает raw credentials и не может расширить scope.
-- **6.3 Adversarial tests.** Prompt claims, fake tool permission, cross-project resource IDs, expired grants, confused deputy, revoked access и concurrency races.
+- **6.3 Adversarial tests.** Prompt claims, fake tool permission, cross-project resource IDs, expired grants, confused deputy, revoked access, replay, stale approval, tool substitution и concurrency races. Проверять identity отдельно для user, model session, agent role, integration и конкретного tool server.
 
 **Acceptance:** unauthorized operations deny-by-default; scope leak/escalation tests = 0; latency измерена на целевой среде.  
 **Technology gate:** OpenFGA/ReBAC, OPA/OPAL, CASL или собственный policy layer сравнивать только после code audit и workload benchmark. Цель <5ms и fallback >10ms — кандидаты, не заранее принятые SLA.  
@@ -141,6 +209,7 @@
 - **8.1 Read / draft / write.** Read-only APIs отдельно; draft не исполняет side effects; write только через проверенный capability API.
 - **8.2 Sandbox boundary.** Сначала инвентаризировать текущие Pyodide/security ограничения и отсутствие произвольного shell. Для code execution провести threat model и bounded pilot (WASM, gVisor, Firecracker, container seccomp/AppArmor/Landlock) по реальной модели угроз.
 - **8.3 Egress/secrets.** Explicit domain allowlist, DNS/redirect/SSRF checks, env/vault separation; secrets остаются на серверной стороне и не попадают в model context/logs.
+- **8.4 Protocol adapters.** MCP/A2A и иные tool protocols — только адаптеры транспорта/обнаружения, не permission engine. При внедрении pin protocol revision, проверять server identity, tool metadata/schema, OAuth audience/resource binding, token lifecycle, redirect/SSRF, tool output trust и supply chain. Не делать token passthrough и не доверять tool annotations как authorization.
 
 **Acceptance:** negative tests подтверждают запрет path traversal, private-IP SSRF, secret reads, cross-tenant access и unbounded execution; resource limits реально enforced.  
 **Kill:** если изоляция только декларативная или обходится через /tmp/network/shared mounts — capability не включать. Не добавлять Vault/CoreDNS/Firecracker без deployment fit и owner approval.
@@ -151,7 +220,7 @@
 
 - **9.1 Provenance/trust labels.** Repository, documents, web, memory и tool outputs явно недоверенные; сохранять source, owner/scope и provenance.
 - **9.2 Flow controls.** Проверять private-read → external-send цепочки, tool output instruction override, memory poisoning и cross-scope retrieval. Deterministic policy precedes any classifier.
-- **9.3 Red-team.** Начать с тестов OWASP Agentic/LLM threat scenarios; расширять corpus по найденным классам дефектов. Classifier/dual-model guard — только defence-in-depth, не authority engine.
+- **9.3 Red-team.** Начать с OWASP Top 10 for Agentic Applications 2026 и OWASP GenAI LLM Top 10 2026; расширять corpus по найденным классам дефектов. Покрыть goal hijack, tool misuse, identity/privilege abuse, supply-chain poisoning, unexpected code execution, memory/context poisoning, inter-agent spoofing, cascading failures, human trust exploitation и rogue-agent behavior. Classifier/dual-model guard — только defence-in-depth, не authority engine.
 
 **Acceptance:** запрещённые потоки блокируются детерминированно; adversarial suite не выявляет подтверждённых escalation/exfiltration paths; false positives и latency измерены.  
 **Kill:** LLM classifier не может быть единственным security gate; при неопределённости fail closed для tool actions, ordinary chat сохраняется.
@@ -174,7 +243,7 @@
 **Цель:** сохранить scope, provenance, temporal validity, conflict и deletion semantics, не смешивая продуктовую Memory с N₂O.
 
 - **11.1 Audit current graph.** Проверить существующие SQLite memory manager/schema/scope/conflict/temporal/delta sync и browser bridge; N₂O остаётся governance layer, не новый memory runtime.
-- **11.2 Data contract.** Owner, scope (personal/conversation/project/shared), source/provenance, confidence, valid-time/recorded-time, status, expiry/review trigger и deletion lineage.
+- **11.2 Data contract.** Owner, scope (personal/conversation/project/shared), source/provenance, confidence, valid-time/recorded-time, status, expiry/review trigger, sensitivity/classification, derived-from lineage и deletion lineage. Разделять explicit user memory, extracted candidates, system facts и transient context.
 - **11.3 Conflict/review.** Противоречия остаются disputed/pending review; не auto-overwrite и не auto-resolve. Проверить scoped recursive delete, export/restore и retention.
 
 **Acceptance:** cross-scope read/write/delete deny; provenance обязательна; conflicts traceable; deletion покрывает derived records в заявленном scope.  
@@ -185,8 +254,8 @@
 **Цель:** каждый retrieved chunk доступен по scope и может быть прослежен до источника.
 
 - **12.1 Pipeline audit.** Ingestion → normalization → chunking → indexing → retrieval → reranking → grounding/citations. Начальный baseline — существующий FTS5 + lexical graph/RRF, не подменять его абстрактной схемой.
-- **12.2 Access-aware retrieval.** Permission/scope filtering до выдачи кандидатов; hybrid BM25+dense и reranking — сравнительные варианты.
-- **12.3 Citation integrity.** chunk/source/page/offset/hash/score; citation должна ссылаться на реально извлечённый текст и проверяемый source offset. Relevance score не равен confidence или source integrity.
+- **12.2 Access-aware retrieval.** Permission/scope filtering до выдачи кандидатов и до reranking; hybrid BM25+dense, query expansion, parent-child/contextual chunking и reranking — сравнительные варианты. Retrieval не может повышать доверие к источнику или расширять scope.
+- **12.3 Citation integrity.** chunk/source/page/offset/hash/score + extraction version; citation должна ссылаться на реально извлечённый текст и проверяемый source offset. Dedup, deletion propagation, re-index idempotency и stale-index detection включить в lifecycle. Relevance score не равен confidence или source integrity.
 
 **Acceptance:** golden set с labelled corpus; Recall@5/MRR/nDCG/citation correctness/latency/RSS; scope leakage = 0; citations воспроизводимы.  
 **Kill:** precision@10 target не принят без baseline; если hybrid/reranker не выигрывает на одинаковом наборе с учётом RAM/latency — оставить baseline. Docling не является RAG prerequisite.
@@ -196,7 +265,7 @@
 **Цель:** качество моделей, prompts, memory и retrieval сравнивается на одной версии datasets и методики.
 
 - **13.1 Golden datasets.** RU/EN/TH для QA, extraction, reasoning, tool use, documents, retrieval и adversarial cases; начинать с 50–100 качественно размеченных примеров на конкретный capability, затем наращивать до статистически оправданного объёма. 500 на язык — долгосрочная цель-кандидат, не входной блокер для всех задач.
-- **13.2 Metrics.** Task success, factual/source accuracy, groundedness, retrieval P/R@k, citation integrity, adversarial outcomes, latency, tokens, cost и resource usage по типу задачи.
+- **13.2 Metrics.** Task success, factual/source accuracy, groundedness, retrieval P/R@k, MRR/nDCG, citation integrity, calibration, refusal/abstention quality, adversarial outcomes, latency, tokens, cost и resource usage по типу задачи. Отдельно показывать критичные срезы RU/EN/TH и не маскировать провал среднего баллом.
 - **13.3 CI eval gate.** PR запускает только affected capability sample; полный corpus — nightly/on-demand. Judge model дополняется deterministic checks и human review; regression threshold фиксируется после noise/baseline analysis.
 
 **Acceptance:** каждый eval report привязан к dataset version, code/model/prompt config, environment и SHA; regression beyond agreed tolerance blocks promotion.  
@@ -219,7 +288,7 @@
 **Цель:** выбор модели/back-end основан на качестве, бюджете и target hardware, а не размере/названии модели.
 
 - **15.1 Task routing.** Сначала правила на известных типах задач; helper models только для узких bounded tasks и только после bake-off против main-only.
-- **15.2 Budget enforcement.** Per-turn/session tokens, context bytes, concurrency, retries, timeout, RAM/VRAM, queue depth, latency/cost; отказ или downgrade должен быть явным и безопасным.
+- **15.2 Budget enforcement.** Per-turn/session tokens, context bytes, model calls, tool calls, concurrency, retries, timeout, RAM/VRAM, queue depth, latency/cost; отказ или downgrade должен быть явным и безопасным. Fallback разрешён только внутри той же data/trust policy и не должен быть скрытой передачей приватных данных.
 - **15.3 Quantization/runtime.** Сравнить GGUF/AWQ/другие варианты только на совместимом hardware и одинаковом golden set; quality degradation, memory, cold/warm latency и license фиксируются.
 
 **Acceptance:** router улучшает success/cost/latency без security/quality regression; fallback не раскрывает секреты и не отправляет private data в неразрешённый provider.  
@@ -254,7 +323,7 @@
 **Цель:** диагностировать цепочку без записи prompts, secrets и private content.
 
 - **18.1 Correlation.** request ID → conversation ID → model call → retrieval → tool execution → response; W3C Trace Context propagation.
-- **18.2 Metrics.** Stage latency, TTFT, tokens, retries, queue depth, errors, resource usage и outcome codes.
+- **18.2 Metrics.** Stage latency, TTFT, time-per-output-token, tokens, retries, queue depth, tool/model outcomes, cancellation, cache hit/miss и resource usage; использовать версионированные OpenTelemetry GenAI semantic conventions после проверки их maturity.
 - **18.3 Redaction/retention.** Allowlisted attributes, PII/secret redaction, bounded retention/access; не логировать raw prompts, tool arguments, file/media contents или bearer headers.
 
 **Acceptance:** трасса связывает stages и позволяет локализовать bottleneck; negative tests подтверждают отсутствие sensitive payloads; collector недоступен — chat не падает.  
@@ -276,7 +345,7 @@
 **Цель:** расширять capabilities без бесконтрольной автономии и без превращения skills в permissions.
 
 - **20.1 Versioned contracts.** Role/skill/integration/workflow имеет owner, version, dependencies, scope, permissions, budget, maturity и tests. Skill — procedure/package, не executable authority.
-- **20.2 Bounded workflows.** Явные DAG/state transitions/checkpoints, max steps/time/results/concurrency, cancellation, idempotency, stop conditions и durable resume только если требуется.
+- **20.2 Bounded workflows.** Явные DAG/state transitions/checkpoints, max steps/time/results/concurrency, cancellation propagation, idempotency, cycle detection, stop conditions и durable resume только если требуется. Межагентные сообщения подписывать/привязывать к actor, workflow/run ID и schema; не доверять self-reported identity.
 - **20.3 Owner gates.** Pilot → evaluation → owner decision → release. Write/external/protected actions требуют соответствующего явного разрешения; автоматическое изменение skills/policies/permissions запрещено.
 
 **Acceptance:** каждый workflow ограничен, воспроизводим и восстанавливаем; permissions проверяются execution layer; eval/regression/security suite проходит до release.  
@@ -302,6 +371,16 @@
 - Не вводить two-phase commit для API, которые его не поддерживают; не обещать exactly-once, если достижим только idempotent retry + reconciliation.
 - Не включать модельный классификатор как единственную защиту от injection/PII; deterministic authorization и data-flow constraints обязательны.
 - Не считать test.fixme/quarantine/retries приемлемым решением первопричины.
+
+## 5.1. Актуальные внешние ориентиры (не обязательный стек)
+
+Эти источники уточняют security/evaluation/interop подходы; они не означают, что соответствующие runtime-компоненты уже установлены или должны быть добавлены.
+
+- [OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) — threat taxonomy для goal hijack, tool misuse, identity/privilege abuse, supply chain, memory poisoning, inter-agent communication и cascading failures.
+- [OWASP GenAI LLM Top 10 2026](https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/) и [Agent Control Standard announcement](https://genai.owasp.org/2026/09/01/owasp-genai-security-project-unveils-2026-top-10-for-llm-applications-new-agent-control-standard-and-sponsors-as-community-tops-30000-members/) — использовать как контрольные списки для risk review, не как сертификат безопасности.
+- [MCP Specification 2026-07-28](https://blog.modelcontextprotocol.io/posts/2026-07-28/) и [MCP authorization security considerations](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2026-07-28/basic/authorization/security-considerations.mdx) — актуальный reference только если проекту действительно нужен MCP adapter; protocol ≠ authorization policy.
+- [NIST AI RMF Generative AI Profile (AI 600-1)](https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence) — governance/risk lifecycle reference; применять пропорционально размеру и риску aLandi.
+- [OpenTelemetry semantic conventions](https://opentelemetry.io/docs/concepts/semantic-conventions/) и [GenAI metrics draft](https://github.com/microsoft/opentelemetry-semantic-conventions/blob/main/docs/gen-ai/gen-ai-metrics.md) — использовать совместимые атрибуты, но pin revision и учитывать draft status GenAI-specific metrics.
 
 ## 6. Связь с существующим backlog и реестрами
 
@@ -329,8 +408,9 @@
 ## 8. Текущая стартовая точка (снимок при принятии плана)
 
 **Repository:** `DorpNay/skills-github-pages`  
-**Verified base for this planning branch:** `f323b6f339d454dad6e820a4074fa230acc7b6df` (PR #154 base SHA; перепроверить live перед дальнейшим execution).  
-**Live PR context observed:** PR #154 targets this base and promotes modular V2 shell; PR #152 is a separate Draft voice queue/selection workstream; PR #131 remains large V2 workbench; PR #125 is explicitly FUTURE/HOLD. Historical ORIENTER/PROJECT_STATE snapshots may lag this newer base and must be reconciled by live checks before dependent work.
+**Verified main at refinement start:** `f323b6f339d454dad6e820a4074fa230acc7b6df`; this is a documentation-only orientation handoff commit. Last functional checkpoint remains `a8afee45bb22654b220bffda857ab10c24641ef1`. PR #153 is merged at `f323b6f...`; PR #155 is the current documentation workstream.
 
-**Next execution order:** (1) reconcile current live queue/state and exact-head checks; (2) finish the highest-priority P0 shell blocker on its authorized PR; (3) inspect PR #152 separately; (4) define a small evaluation baseline for the next capability pilot. Do not merge, deploy, rebase, force-push or change protected runtime as part of adopting this planning document.
+**Live queue at refinement start:** open PRs #125 (FUTURE/HOLD), #131 (large V2 draft/workbench), #152 (separate voice draft, stale base), #154 (active modular shell promotion candidate), #155 (this roadmap/orientation documentation PR); open issue #111 (owner-controlled release gates). PR #154 current head at read time: `796b5d54a7acb94b3d993dd4a662f721e9e2c902`, base `f323b6f...`, mergeable=true; Freshness failed because the checkpoint snapshot was stale, Provenance/Graphify/Dead Code passed, Quality was still running. PR #152 current head at read time: `b802f7a152eadbbbb65a2e1c8013f42617aa62ce`, draft and mergeable=false. All mutable PR state must be re-read before action.
+
+**Next execution order:** (1) finish and verify this roadmap/orientation refinement in PR #155; (2) after owner-controlled promotion, perform ORIENT-002 fresh-session handoff test using OLEDUE + one batched live-state read; (3) continue PR #154 only against its current exact HEAD and checks; (4) inspect PR #152 independently; (5) establish the first small golden-set/evaluation baseline before choosing new AI runtime technologies. No merge, deploy, rebase, force-push or protected runtime change is authorized by this planning PR.
 
