@@ -220,6 +220,7 @@ def validate_control_plane_docs(
         errors.append("docs/PROJECT_STATE.yaml: orientation_control_plane block is required")
     for key in (
         "owner_handoff",
+        "project_catalog",
         "quick_navigation",
         "structured_state",
         "machine_checkpoint",
