@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "OLEDUE.md"
+      - "PROJECT_ORCHESTRATOR_RU.md"
       - "AGENTS.md"
       - "ORIENTER.md"
       - "project-reference/FILE_ORIENTER_RU.md"
@@ -17,6 +18,7 @@ on:
     branches: [main]
     paths:
       - "OLEDUE.md"
+      - "PROJECT_ORCHESTRATOR_RU.md"
       - "AGENTS.md"
       - "ORIENTER.md"
       - "project-reference/FILE_ORIENTER_RU.md"

@@ -1,7 +1,11 @@
 schema_version: 1
-updated_on: "2026-11-05"
+updated_on: "2026-11-06"
 policy:
-  no_model_downloads_in_git: true
+  prefer_repository_archival_for_selected_approved_artifacts: true
+  require_artifact_specific_license_review_before_download: true
+  require_sha256_for_archived_artifacts: true
+  no_bulk_downloads_of_unselected_candidates: true
+  archived_artifacts_default_ship_false: true
   require_artifact_sha256_before_shipping: true
   engine_and_voice_licenses_are_separate: true
   unknown_or_blocked_license_means_ship_false: true
@@ -133,3 +137,48 @@ artifacts:
     ship: false
     status: "dependency_pinned_not_bundled"
     notes: "Runtime dependency pinned for local PDF text extraction; package artifacts are resolved by the Python package manager and are not vendored in this repository."
+
+  - id: xerj-rc101-public-engine-source-candidate
+    kind: source_code
+    upstream: "https://github.com/xerj-org/xerj"
+    source_version: "v1.0.0-rc.101 public tag commit 83c9f0d123bac010a25ca2cf02ff093b08ee68ce"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_notice_subject_to_subtree_and_fixture_license_review"
+    sha256: null
+    ship: false
+    status: "candidate_not_archived"
+    notes: "Public repository LICENSE is Apache-2.0, but the exact rc.101 release binary is built from a private tree and includes three proprietary crates. Public tree has 3,600 blobs / 230,029,430 bytes; do not mirror wholesale. No source snapshot copied in the 2026-11-06 review."
+
+  - id: xerj-rc101-facts-model-bundle
+    kind: ai_model_weights
+    upstream: "https://github.com/xerj-org/xerj/releases/tag/v1.0.0-rc.101"
+    source_version: "xerj-model-bundle-v1-v1.0.0-rc.101.tar.gz; 408024623 bytes"
+    license_spdx: "UNVERIFIED_ARTIFACT_SPECIFIC_TERMS"
+    commercial_use: "blocked_until_model_license_and_redistribution_terms_are_verified"
+    sha256: null
+    upstream_published_sha256: "654b9b745f5efac32c71ba1a462fa082b6558d7a380fc4280a4f03ab300ee5b0"
+    ship: false
+    status: "blocked_not_downloaded"
+    notes: "Release notes identify proprietary XERJ-Query crates and describe the bundle as part of the private release build. No independently verified model-weight redistribution license was found. Upstream digest is recorded for reference only, not locally verified."
+
+  - id: memvid-source-v2.0.140-candidate
+    kind: source_code
+    upstream: "https://github.com/memvid/memvid"
+    source_version: "v2.0.140; commit e18fe55494379e2ab7397ce03655e8abbc5e0c31"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice_subject_to_dependency_review"
+    sha256: null
+    ship: false
+    status: "candidate_not_archived"
+    notes: "Exact source tree 217 blobs / 9,554,086 bytes. No snapshot copied; candidate for export/archive prototype only. Core Rust edition 2024 / rust-version 1.85."
+
+  - id: rag-anything-source-v1.4.1-candidate
+    kind: source_code
+    upstream: "https://github.com/HKUDS/RAG-Anything"
+    source_version: "v1.4.1; commit 0ef67b4d476b66407a03a39e5b17e756fc0aef29"
+    license_spdx: "MIT"
+    commercial_use: "candidate_allowed_with_notice_subject_to_transitive_license_and_model_review"
+    sha256: null
+    ship: false
+    status: "candidate_not_archived"
+    notes: "Exact source tree 107 blobs / 4,100,660 bytes. Project code is MIT; MinerU, LightRAG, OCR, ASR, VLM, model and dataset terms are separate. No snapshot or optional dependency downloaded."

@@ -101,3 +101,24 @@
 - No schema/API/dependency change; source/page provenance and scope filtering remain intact; `ALANDI_RAG_ENABLED=false` stays the default.
 - The score is only for ordering, not confidence/probability. Automated tests passed on exact PR head; no production-quality improvement is claimed until a labelled >=50-query golden set compares Recall@5, MRR/nDCG, citation correctness, latency and peak RSS.
 - Full criteria: `docs/RAG_RRF_EVALUATION_RU.md`, `EVALS.md` EV-RAG-RRF-001, `DECISIONS.md` D-018.
+
+
+## Внешние техники — повторная проверка 2026-11-06 (кандидаты)
+
+### XERJ — локальный поиск для агентов
+- Паттерны: Rust search node, BM25 + optional vector/hybrid retrieval, typed search API, source citations, MCP adapter and code indexing.
+- Сценарий проверки: сравнить public source engine с SQLite FTS5 + lexical graph/RRF на одинаковом RU/EN/TH корпусе и query set.
+- Граница: XERJ rc.101 binary is built from a private tree and includes three proprietary query crates; its separate model bundle has no verified redistribution license. Keep public source and private binary/model separate. Release counting path also documents stable subject_id requirements and noun mismatch limits.
+- Решение: read-only/public-source bake-off only; no rc.101 binary/weights, no integration.
+
+### Memvid — portable single-file archive
+- Паттерн: append-only frames, embedded WAL, checksums, temporal index, compressed data and single-file portability.
+- Сценарий проверки: disaster-recovery/export capsule for project memory, not the live canonical store.
+- Обязательные gates: stable IDs, project scope, provenance, conflicts, revocation/deletion lineage, restore and file corruption.
+- Решение: export/import prototype only; SQLite remains canonical.
+
+### RAG-Anything — multimodal content representation
+- Паттерны: typed blocks for text, tables, equations, images, audio and video; retain page/bounding-box/timestamp data; bounded chunking for long media.
+- Сценарий проверки: compare structure/provenance quality against current parser stack on the same files/media corpus.
+- Cost boundary: full default stack brings MinerU/LightRAG, optional OCR/audio/video engines and external ffmpeg; each parser/model/data license must be reviewed independently.
+- Решение: source-pattern study and same-corpus parser comparison; do not install the full stack into the base 8-GB runtime.

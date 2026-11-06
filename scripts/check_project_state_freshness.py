@@ -9,7 +9,7 @@ import re
 from pathlib import Path
 from typing import Any, Iterable, Sequence
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlsplit
+from urllib.parse import unquote, urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 class RejectRedirectHandler(HTTPRedirectHandler):
@@ -27,7 +27,7 @@ DEFAULT_SNAPSHOT = ROOT / "docs/project-state-snapshot.json"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 # A state refresh must update the human- and machine-readable checkpoints together.
 # The checker, its tests and workflow do not need artificial edits on every refresh.
-HANDOFF_PATHS = ("OLEDUE.md", "AGENTS.md")
+HANDOFF_PATHS = ("OLEDUE.md", "AGENTS.md", "PROJECT_ORCHESTRATOR_RU.md")
 REQUIRED_REFRESH_PATHS = {
     "OLEDUE.md",
     "AGENTS.md",
@@ -165,6 +165,109 @@ def validate_handoff_policy(oledue: str, agents: str) -> list[str]:
     return errors
 
 
+def validate_control_plane_docs(
+    oledue: str,
+    agents: str,
+    orienter: str,
+    state: str,
+    snapshot: dict[str, Any],
+    volley: str,
+    orchestrator: str,
+) -> list[str]:
+    """Enforce the document-role contract and keep the last stage record linked."""
+    errors: list[str] = []
+    required_handoff = (
+        "session sync capsule",
+        "latest explicit owner request",
+        "do not default to any pr",
+        "stage-zero record before the first change",
+        "owner approval gates",
+        "project_orchestrator_ru.md",
+    )
+    handoff = oledue.casefold()
+    for marker in required_handoff:
+        if marker not in handoff:
+            errors.append(f"OLEDUE.md: missing control-plane requirement {marker!r}")
+
+    agent_rules = agents.casefold()
+    for marker in ("oledue.md", "`oledue`", "latest explicit owner request", "do not default to any pr", "project_orchestrator_ru.md"):
+        if marker not in agent_rules:
+            errors.append(f"AGENTS.md: missing executor orientation requirement {marker!r}")
+
+    navigation = orienter.casefold()
+    for marker in ("document roles", "open pr queue:", "github live state", "project_orchestrator_ru.md"):
+        if marker not in navigation:
+            errors.append(f"ORIENTER.md: missing navigation/control-plane marker {marker!r}")
+
+    catalog = orchestrator.casefold()
+    for marker in (
+        "# alandi — project orchestrator",
+        "intel.md",
+        "open_source_triage_ru.md",
+        "technique_register_ru.md",
+        "implementation_roadmap_ru.md",
+        "master_task_registry_ru.md",
+        "orch-001",
+        "intake-001",
+        "task intake:",
+        "artifact preservation policy",
+        "cleanup and optimization",
+    ):
+        if marker not in catalog:
+            errors.append(f"PROJECT_ORCHESTRATOR_RU.md: missing catalog section/link {marker!r}")
+
+    if not re.search(r"(?m)^  orientation_control_plane:\s*$", state):
+        errors.append("docs/PROJECT_STATE.yaml: orientation_control_plane block is required")
+    for key in (
+        "owner_handoff",
+        "project_catalog",
+        "quick_navigation",
+        "structured_state",
+        "machine_checkpoint",
+        "executor_contract",
+        "strategy",
+        "single_task_inventory",
+        "append_only_stage_evidence",
+        "live_repository_truth",
+    ):
+        if not re.search(rf"(?m)^      {key}:\s*", state):
+            errors.append(f"docs/PROJECT_STATE.yaml: orientation_control_plane.{key} is required")
+
+    match = re.search(r"(?m)^\s*last_volley:\s*[\"']([^\"']+)[\"']\s*$", state)
+    state_volley = match.group(1) if match else None
+    snapshot_volley = snapshot.get("last_volley")
+    if not state_volley:
+        errors.append("docs/PROJECT_STATE.yaml: last_volley is required")
+    elif snapshot_volley != state_volley:
+        errors.append("docs/project-state-snapshot.json: last_volley must match PROJECT_STATE.yaml")
+    elif state_volley not in volley:
+        errors.append("docs/VOLLEY_LOG.md: last_volley entry is missing")
+
+    return errors
+
+
+def validate_orchestrator_links(root: Path, orchestrator: str) -> list[str]:
+    """Require every local Markdown link in the project orchestrator to resolve."""
+    errors: list[str] = []
+    root_path = root.resolve()
+    for target in re.findall(r"\]\(([^)]+)\)", orchestrator):
+        parsed = urlsplit(target.strip())
+        if parsed.scheme or parsed.netloc:
+            continue
+        relative_path = unquote(parsed.path)
+        if not relative_path:
+            continue
+        resolved = (root_path / relative_path).resolve()
+        try:
+            resolved.relative_to(root_path)
+        except ValueError:
+            errors.append(f"PROJECT_ORCHESTRATOR_RU.md: local link escapes repository root: {target!r}")
+            continue
+        if not resolved.is_file():
+            errors.append(f"PROJECT_ORCHESTRATOR_RU.md: local link target does not exist: {target!r}")
+    return errors
+
+
 def validate_local_docs(root: Path, snapshot: dict[str, Any]) -> list[str]:
     """Ensure the four human-facing state records refer to this exact snapshot."""
     checkpoint = snapshot["checkpoint"]
@@ -191,8 +294,19 @@ def validate_local_docs(root: Path, snapshot: dict[str, Any]) -> list[str]:
             errors.append(f"{relative}: cannot read ({type(exc).__name__})")
     if all(path in handoff_contents for path in HANDOFF_PATHS):
         errors.extend(validate_handoff_policy(handoff_contents["OLEDUE.md"], handoff_contents["AGENTS.md"]))
+        errors.extend(validate_orchestrator_links(root, handoff_contents["PROJECT_ORCHESTRATOR_RU.md"]))
 
     state = contents.get("docs/PROJECT_STATE.yaml", "")
+    if all(path in handoff_contents for path in HANDOFF_PATHS) and "ORIENTER.md" in contents:
+        errors.extend(validate_control_plane_docs(
+            handoff_contents["OLEDUE.md"],
+            handoff_contents["AGENTS.md"],
+            contents["ORIENTER.md"],
+            state,
+            snapshot,
+            contents.get("docs/VOLLEY_LOG.md", ""),
+            handoff_contents["PROJECT_ORCHESTRATOR_RU.md"],
+        ))
     if not re.search(rf'(?m)^\s+base_main:\s*["\']{re.escape(main_sha)}["\']\s*$', state):
         errors.append("docs/PROJECT_STATE.yaml: root_orienter.base_main does not match snapshot main SHA")
     if not re.search(rf'(?m)^\s+verified_main:\s*["\']{re.escape(main_sha)}["\']\s*$', state):

@@ -1,34 +1,33 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
-> Подробный индекс навигации. Это не источник live-статуса и не обязательный стартовый пакет. Для `oledue` сначала читай корневой OLEDUE.md, затем выполняй один batched live GitHub read. Используй этот файл только для поиска конкретного пути.
+> Подробный индекс путей и границ подсистем. Не является источником live-статуса и не обязателен при каждой задаче. Для триггера `oledue` сначала прочитать корневой `OLEDUE.md`; в остальных случаях начать с `ORIENTER.md`. Затем выполнить один batched live GitHub read и открыть только нужные разделы.
 
-## Контрольная точка — 2026-11-06 (проверена по GitHub)
+> Для каталога принципов, внешних источников, research catalogs, планов/идей и артефактов сначала откройте корневой `PROJECT_ORCHESTRATOR_RU.md`; этот файл отвечает за точные пути к исходникам и подсистемам.
 
-- **main:** `a8afee45bb22654b220bffda857ab10c24641ef1` — PR #150 merged; storage recovery/atomic rollback is part of main.
-- **open PRs (3): #125, #131, #152.** **open issues (1): #111.** Это снимок; перед использованием сверять live.
-- **#131:** Draft, head `5f71b97f3c85ab8544431b496ceb7c9ccf8c0c3e`, base `e78a73b25725bfa63370d9946887cbbacbf51b82`, 1,125 ahead / 19 behind, 76 files, dirty. Selective reconciliation only.
-- **#152:** Draft, head `99a0b530b335e7e19833c4ce66138dcc576a09fa`, base `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`, 17 ahead / 1 behind, 4 files, dirty; Quality failed and Graphify passed on that exact head.
-- **#125:** future-workstream parking; not active unless owner asks.
-- **Main protections:** #147 Gateway cancellation; #148 untrusted rendering/Pyodide restrictions; #150 browser storage recovery/rollback.
-- **Current direction:** finish orientation repair; then reconcile #131 against current main without dropping protections; inspect #152 separately; continue research and capability work from the master register.
-- PR #128/#134/#151 were closed without merging to main; selected material was copied to #131. PR #129/#130 were merged into #131, not main.
+## Контрольная точка — 2026-11-06 (GitHub live snapshot)
+
+- **main:** `f323b6f339d454dad6e820a4074fa230acc7b6df` — документационный commit PR #153, handoff/orientation repair merged.
+- **Последний функциональный checkpoint:** `a8afee45bb22654b220bffda857ab10c24641ef1` — PR #150 storage recovery и atomic rollback.
+- **open PRs (4): #125, #131, #152, #154.** **open issues (1): #111.** Эти ID составляют Freshness snapshot для PR #155; текущий PR #155 исключается из собственного сравнения очереди.
+- **Текущий documentation PR:** #155 — roadmap v2.0 + unified orientation/control plane; проверять его mutable head live.
+- **#154:** активный modular shell promotion candidate, base `f323b6f...`, mergeable=true на момент чтения. Head на момент чтения `796b5d54a7acb94b3d993dd4a662f721e9e2c902`; Freshness падал из-за устаревшего snapshot, Provenance/Graphify/Dead Code прошли, Quality ещё выполнялся. Перепроверить live.
+- **#152:** отдельный Draft voice workstream, base устарел, mergeable=false; head на момент чтения `b802f7a152eadbbbb65a2e1c8013f42617aa62ce`. Не смешивать с shell без зависимости.
+- **#131:** крупный Draft V2 workbench, diverged/mergeable=false; только выборочная сверка, не wholesale merge.
+- **#125:** FUTURE/HOLD parking; не активировать без прямого выбора владельца.
+- **Основные защиты main:** #147 cancellation-safe Gateway; #148 untrusted rendering / restricted Pyodide globals; #150 browser storage recovery / atomic rollback.
+- **PR #153:** merged в `f323b6f...`; ORIENT-001 реализован, ORIENT-002 fresh-session handoff test остаётся открытым.
+- **Live-host boundary:** current-main post-merge Quality/Gateway/Pages/Provenance run IDs не retrieved; VPS/Tunnel/Ollama, OAuth, native device/VoiceOver, physical audio, target hardware and SQLite FTS5 capability остаются UNVERIFIED.
 
 ## 1. Быстрый маршрут
 
-0. **Короткая точка входа:** корневой `ORIENTER.md`.
-1. **Текущий статус и флаги:** `docs/PROJECT_STATE.yaml`.
-2. **Архитектура и границы:** `docs/ALANDI_MASTER_CONTEXT_RU.md`.
-3. **Что пользователь просил и что осталось:** `docs/USER_REQUEST_CHECKLIST.md` и живой V1 release gate `docs/V1_UI_FINALIZATION_RU.md`.
-4. **Порядок внедрения:** `docs/IMPLEMENTATION_ROADMAP_RU.md`, `docs/CODER_PACKET.md`.
-5. **Решения / eval / цикл:** корневые `DECISIONS.md`, `EVALS.md`, `LOOP.md`, `INTEL.md`, `IMPROVEMENT_SELECTION.md`.
-6. **Поиск и исследования:** `docs/SEARCH_RESEARCH_FEATURE_EXTRACTION_RU.md`, `docs/OPEN_SOURCE_TRIAGE_RU.md`.
-7. **Карта модулей:** `docs/ALANDI_ARCHITECTURE_MAP_RU.md` — кураторская схема, не автоматически извлечённый Graphify graph.
-8. **Лицензии и происхождение:** `infra/license/provenance_manifest.yaml`; не подключать runtime/model/voice без отдельной проверки лицензии и SHA-256.
-9. **Основной клиент:** `index.md` (большой единый HTML/JS файл). Перед правками найди точные функции/якоря, не делай широких замен без проверки единственности.
-10. **Backend/API:** `gateway/app.py`; тесты в `gateway/tests/`; зависимости в `gateway/requirements*.txt`.
-11. **Память:** `gateway/memory/{manager.py,schema.sql,delta_sync.py,scope.py,conflict.py,temporal.py}`; браузерное хранение и экспорт — `index.md` около `safeSet`, `downloadRecoveryBackup`, `exportChats`, `exportProjectBundle`.
-12. **Голос и вложения:** `gateway/voice/`, `gateway/tests/test_audio_*.py`, `tests/e2e/audio-transcription.spec.mjs`, `tests/e2e/document-attachments.spec.mjs`.
-13. **Реальные browser checks:** `tests/e2e/`, workflow Quality Sentinels; отдельная GitHub Pages публикация не означает, что VPS gateway обновлён.
+0. **Триггер:** если owner написал `oledue`, первым прочитать корневой `OLEDUE.md`; иначе начать с `ORIENTER.md`.
+1. **Одна live-сверка:** main SHA/subject/date; все open PRs с draft/base/head/mergeability; open issues (отфильтровать PR-shaped issues); exact-head checks/statuses только для выбранного workstream.
+2. **Выбор задачи:** latest explicit owner request → validated current owner task in `docs/PROJECT_STATE.yaml` → next eligible item in едином `docs/MASTER_TASK_REGISTRY_RU.md` + owner addendum. Никогда не выбирать PR по привычке/возрасту/размеру.
+3. **Контекст:** открыть roadmap section и один task register; затем точечные source/tests/contracts. Этот файл использовать как индекс путей, а не как обязательный пакет.
+4. **Stage zero:** перед первым существенным edit записать baseline в `docs/VOLLEY_LOG.md`: owner goal, branch/base/head, live checks, blockers, acceptance, rollback. На каждом материальном этапе добавить evidence.
+5. **Проверка:** final diff и HEAD; check зелёный только при совпадении tested SHA с финальным HEAD. Отдельно различать PR checks, merge SHA, post-merge main, Pages deployment и live runtime.
+6. **Checkpoint refresh:** синхронно обновить OLEDUE, AGENTS, ORIENTER, этот индекс, PROJECT_STATE, VOLLEY_LOG и JSON snapshot; Freshness CI только обнаруживает drift, не исправляет owner state.
+7. **Owner gates:** merge/deploy/rebase/force-push/delete/secrets/permissions/protected external actions — только после явного разрешения на конкретный scope.
 
 ## 2. Исторические milestones реализации (не current queue/status)
 
