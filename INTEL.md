@@ -2,6 +2,8 @@
 
 **Review date:** 2026-11-04. Recheck upstream releases and model cards before shipping an artifact. Recheck upstream releases and model cards before shipping an artifact.
 
+**Navigation:** for the complete index of principles, source catalogs, plans, research workstreams and artifact records, see [`PROJECT_ORCHESTRATOR_RU.md`](PROJECT_ORCHESTRATOR_RU.md). This register remains the detailed external-source evidence catalog.
+
 ## Voice and model licensing
 
 - Moonshine upstream license terms: https://github.com/moonshine-ai/moonshine/blob/main/LICENSE
