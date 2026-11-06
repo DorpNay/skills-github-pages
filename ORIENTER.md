@@ -10,14 +10,16 @@ This is the short repository entry point. **Live GitHub state is authoritative**
 - **PR #131:** head `5f71b97f3c85ab8544431b496ceb7c9ccf8c0c3e`, base `e78a73b25725bfa63370d9946887cbbacbf51b82`; 1,125 ahead / 19 behind current main, 76 files, mergeable=false. Draft; selective reconciliation only. #129/#130 were merged into this workbench; selected #128/#134/#151 content was copied here, but those PRs were closed without merging to main.
 - **PR #152:** head `99a0b530b335e7e19833c4ce66138dcc576a09fa`, base `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`; 17 ahead / 1 behind, 4 files, dirty. Draft. Exact-head Quality failed (#42141899337); Graphify passed (#42141899316).
 - **PR #125:** Draft future-workstream parking; not active unless explicitly requested.
+- **PR #153 orientation repair:** head `a613d2974fb4ba2256b053fb3127dab9bbdb4432`, ready for review; exact-head freshness, security, integrity, context, Jekyll, Ruff/static, 4/4 Chromium, provenance and published-Pages smoke passed. Not merged; main does not yet contain this handoff repair.
 - **Main post-merge checks:** current-main Quality/Pages/Gateway/Provenance run IDs were not retrieved. PR-head passes are not post-merge verification.
 
 ## Active owner direction
 
-1. Repair orientation so `oledue` selects work from owner intent + live GitHub state, never a hard-coded default PR.
-2. After that repair is merged, resume the owner-authorized PR #131 reconciliation; preserve #147/#148/#150, resolve architecture conflicts deliberately, run exact-head gates, merge only when safe.
-3. Inspect Voice #152 separately after its failed checks and stale base.
-4. Continue grouped external-source research and capability implementation from the canonical task registry.
+1. PR #153 implements the orientation/handoff repair and passed exact-head checks; owner review/merge decision is pending.
+2. After #153 is merged, perform ORIENT-002 fresh-session handoff test using only OLEDUE + one batched live-state read.
+3. Then resume the owner-authorized PR #131 reconciliation: preserve #147/#148/#150 protections, resolve architecture conflicts deliberately, run exact-head gates, and merge only when safe.
+4. Inspect Voice #152 separately after its failed checks and stale base; do not mix it into #131 without a clear dependency/benefit.
+5. Continue grouped external-source research and capability implementation from the canonical task registry; promote evidence-backed findings, not speculative dependencies or UI-only claims.
 
 ## Fast route
 
