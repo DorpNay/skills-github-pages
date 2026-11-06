@@ -472,7 +472,7 @@
      .toast[data-state="success"] { border-color:color-mix(in srgb,var(--ui-success) 55%,var(--ui-border));color:var(--ui-success); }
      .toast[data-state="error"] { border-color:color-mix(in srgb,var(--ui-danger) 60%,var(--ui-border));color:var(--ui-danger); }
      html[data-text-contrast="high"] { --ui-text-muted:#d0dce6; --ui-disabled-text:#aebdca; --ui-info:#a9caff; --ui-warning:#f2c77c; --ui-success:#72e3bb; --ui-danger:#ff969d; }
-     html[data-theme="light"][data-text-contrast="high"] { --ui-text-muted:#344e5e; --ui-disabled-text:#5b7280; --ui-info:#174ea6; --ui-warning:#805400; --ui-success:#006b5e; --ui-danger:#a51f32; }
+     html[data-theme="light"][data-text-contrast="high"] { --ui-text-muted:#344e5e; --ui-disabled-text:#344e5e; --ui-info:#174ea6; --ui-warning:#805400; --ui-success:#006b5e; --ui-danger:#a51f32; }
      html[data-text-contrast="high"] .text-gray-400,html[data-text-contrast="high"] .text-gray-500,html[data-text-contrast="high"] .text-gray-600,html[data-text-contrast="high"] #memoryStatusLine,html[data-text-contrast="high"] #projectStatusLine { color:var(--ui-text-muted)!important; }
      html[data-text-contrast="high"] button:disabled,html[data-text-contrast="high"] input:disabled,html[data-text-contrast="high"] select:disabled,html[data-text-contrast="high"] textarea:disabled { color:var(--ui-disabled-text)!important;opacity:.9; }
      html[data-text-contrast="high"] #chatBox button:disabled { color:var(--ui-disabled-text)!important; }
