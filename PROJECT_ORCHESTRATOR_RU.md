@@ -93,6 +93,8 @@ These remain in their domain documents; this index connects them without merging
 - [MULTIMODAL_MODEL_STACK_RU.md](docs/MULTIMODAL_MODEL_STACK_RU.md) — multimodal models and stack candidates.
 - [ALANDI_N2O_CHATGPT_SOURCES_RU.md](docs/ALANDI_N2O_CHATGPT_SOURCES_RU.md) — source-use and context principles.
 
+**Следующий high-signal batch (triage snapshot 2026-11-05; не adoption):** в [OPEN_SOURCE_TRIAGE_RU.md](docs/OPEN_SOURCE_TRIAGE_RU.md#2026-11-05--refreshed-high-signal-candidates-research-only) уже выделен XERJ retrieval bake-off против SQLite FTS5 + Graphify на фиксированном корпусе; затем Memvid как изолированный archive/export prototype и RAG-Anything как источник typed multimodal/provenance patterns. Graphify остаётся dev-only, Superpowers — процессные практики, Temporal — design reference. Перед acquisition заново проверить точный upstream/revision и artifact-specific license.
+
 ### 3.2 Research workstreams that are not automatically adopted
 
 - PR #125 — Agent Studio / Skill Factory research, FUTURE/HOLD.
