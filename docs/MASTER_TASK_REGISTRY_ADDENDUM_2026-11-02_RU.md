@@ -229,6 +229,12 @@ This section supplies method and acceptance detail for the new tasks in `docs/MA
 - Performance work starts with an agreed reproducible baseline and representative workload; measure before/after output, p50/p95 latency, CPU/RAM, bundle/page weight, DOM/render or build time as relevant. One major variable per experiment; keep the faster change only if behavior/security/accessibility remain intact.
 - Each cleanup slice needs exact diff review, focused tests, regression checks, exact-head CI, rollback path and a log entry. Branch/file/history deletion remains separately owner-gated.
 
+**First report-only cleanup evidence (2026-11-06):** Vulture artifact from run #42195354357 on code/test HEAD `5b33109aa1c89e07e193ae8a34ed2625cc080379` listed:
+- `gateway/app.py:425` — `_RejectDoctypeTreeBuilder.doctype(name, pubid, system)`; required ElementTree callback signature, keep.
+- `gateway/evals/run_local_model_benchmark.py:41` — `NoRedirectHandler.redirect_request(req, fp, code, msg, headers, newurl)`; required urllib override signature, keep.
+- `gateway/voice/speculative_transaction.py:39` — `BufferedTTS.synthesize_prefix(..., max_duration_ms, ...)`; Protocol contract parameter passed by caller and already recorded as intentional in prior architecture/state evidence, keep.
+All seven Vulture warnings are parameters of these three contract methods, not safe dead code. No deletion was made. This is a small backend scan only; HTML/Jekyll, CSS/JS reachability, asset references and broader cleanup remain OPEN.
+
 ### H3. INTAKE-001 — task deduplication and large initiatives
 
 - The Master Registry is the one logical task inventory; this addendum is append-only detail, not a separate queue. Search exact terms, synonyms and related IDs before creating anything. Prefer extending an existing stable ID with new acceptance/evidence over adding a near-duplicate.
