@@ -237,6 +237,8 @@ This section supplies method and acceptance detail for the new tasks in `docs/MA
 - `gateway/voice/speculative_transaction.py:39` — `BufferedTTS.synthesize_prefix(..., max_duration_ms, ...)`; Protocol contract parameter passed by caller and already recorded as intentional in prior architecture/state evidence, keep.
 All seven Vulture warnings are parameters of these three contract methods, not safe dead code. No deletion was made. This is a small backend scan only; HTML/Jekyll, CSS/JS reachability, asset references and broader cleanup remain OPEN.
 
+**Confirmed frontend cleanup slice 2026-11-06:** `assets/css/landing.css` had a `.pill` rule with no consumers. Checked the complete static `landing/index.html`, absence of inline/external JavaScript for that page, no classList/dynamic class construction, and repository-wide code search for `.pill` / `class="pill"` / `class='pill'` (only the CSS declaration matched). Removed that one CSS rule; 40 other classes were present in the landing markup. No JS/HTML behavior changed. Keep this as a verified single-slice cleanup; broader client `index.md` remains a separate reachability audit.
+
 ### H3. INTAKE-001 — task deduplication and large initiatives
 
 - The Master Registry is the one logical task inventory; this addendum is append-only detail, not a separate queue. Search exact terms, synonyms and related IDs before creating anything. Prefer extending an existing stable ID with new acceptance/evidence over adding a near-duplicate.
