@@ -136,6 +136,9 @@
     let chatSortPreference = loadChatSortPreference();
     let projects = loadProjects();
     let selectedProjectForSettingsId = null;
+    let activeChatProjectId = null;
+    let projectCreateOpener = null;
+    let projectSettingsOpener = null;
     let currentChatId = safeGet(STORAGE.current) || chats[0].id;
     if (!chats.some((chat) => chat.id === currentChatId)) currentChatId = chats[0].id;
     let activeChatSortSnapshotId = currentChatId;
@@ -3200,6 +3203,7 @@ function preserveUnreadableProjects(rawText) {
       if(!persistChatMutation(chat,updates)){renderSkillConfiguration();updateModeUI();return;}
       renderSkillConfiguration();updateModeUI();showToast('Профиль навыка применён к этому чату.');
     }
+    let agentTeamBlueprintStorageValid = true;
     function loadAgentTeamBlueprints(){
       const raw=safeGet(STORAGE.agentTeamBlueprints);
       if(!raw)return [];
