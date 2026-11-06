@@ -422,3 +422,41 @@ def test_run_cannot_skip_verification_to_succeed_with_open_tasks(tmp_path):
                              new_state="succeeded", event_type="verification_passed", now=104)
     assert store.get_run(run["run_id"])["state"] == "running"
     assert store.get_task(task["task_id"])["state"] == "queued"
+
+
+def test_per_run_task_limit_is_atomic_and_idempotent_replay_still_works(tmp_path):
+    store = AgentRunStore(tmp_path / "task-cap.sqlite3", max_tasks_per_run=1)
+    store.initialize()
+    run = make_running(store, key="task-cap")
+    first = store.enqueue_task(run_id=run["run_id"], task_key="one",
+                               idempotency_key="task-cap-one", payload={}, now=103)
+    replay = store.enqueue_task(run_id=run["run_id"], task_key="one",
+                                idempotency_key="task-cap-one", payload={}, now=104)
+    assert replay["task_id"] == first["task_id"]
+    with pytest.raises(AgentRunError, match="task limit reached"):
+        store.enqueue_task(run_id=run["run_id"], task_key="two",
+                           idempotency_key="task-cap-two", payload={}, now=105)
+    assert len(store.list_events(run_id=run["run_id"], limit=20)) == 3
+
+
+def test_per_run_event_limit_rolls_back_lifecycle_transition(tmp_path):
+    store = AgentRunStore(tmp_path / "event-cap.sqlite3", max_events_per_run=1)
+    store.initialize()
+    run = store.create_run(idempotency_key="event-cap", scope_kind="project",
+                           scope_id="alpha", goal_ref="task:event-cap", now=1)
+    with pytest.raises(AgentRunError, match="event limit reached"):
+        store.transition_run(run_id=run["run_id"], expected_state="queued",
+                             new_state="running", event_type="run_started", now=2)
+    assert store.get_run(run["run_id"])["state"] == "queued"
+    assert len(store.list_events(run_id=run["run_id"], limit=10)) == 1
+
+
+@pytest.mark.parametrize(("kwargs", "message"), [
+    ({"max_tasks_per_run": 0}, "max_tasks_per_run"),
+    ({"max_tasks_per_run": True}, "max_tasks_per_run"),
+    ({"max_events_per_run": 0}, "max_events_per_run"),
+    ({"max_events_per_run": 100001}, "max_events_per_run"),
+])
+def test_per_run_limits_are_validated(tmp_path, kwargs, message):
+    with pytest.raises(AgentRunError, match=message):
+        AgentRunStore(tmp_path / "invalid-limits.sqlite3", **kwargs)

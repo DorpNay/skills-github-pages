@@ -3,6 +3,14 @@
 This module persists orchestration state only. It does not call models, execute tools,
 grant capabilities, or provide a sandbox. Event details must contain bounded metadata,
 never prompts, secrets, transcripts, or raw tool arguments/results.
+
+Operational contract: one host/process family using a local filesystem SQLite database;
+SQLite's default DELETE journal mode is retained. The store applies bounded busy waits,
+foreign-key enforcement and secure_delete, but does not provide multi-host coordination,
+backup/restore orchestration, retention/compaction, or exactly-once external side effects.
+Use SQLite's online backup API (or a quiesced, consistent database copy) for backups;
+never copy only the main database file while a transaction is active. Lock, I/O and disk
+errors are allowed to propagate to the caller. Lease expiry uses the host wall clock.
 """
 from __future__ import annotations
 
@@ -209,14 +217,24 @@ class TaskClaim:
 class AgentRunStore:
     """SQLite durable lifecycle journal with atomic task claims and lease fencing."""
 
-    def __init__(self, path: str | Path, *, busy_timeout_ms: int = 5000):
+    def __init__(self, path: str | Path, *, busy_timeout_ms: int = 5000,
+                 max_tasks_per_run: int = 500, max_events_per_run: int = 5000):
         self.path = str(path)
         if self.path == ":memory:":
             raise AgentRunError("AgentRunStore requires file-backed SQLite for durable state")
         if isinstance(busy_timeout_ms, bool) or not isinstance(busy_timeout_ms, int) or not 100 <= busy_timeout_ms <= 30_000:
             raise AgentRunError("busy_timeout_ms must be between 100 and 30000")
 
+        if (isinstance(max_tasks_per_run, bool) or not isinstance(max_tasks_per_run, int)
+                or not 1 <= max_tasks_per_run <= 10_000):
+            raise AgentRunError("max_tasks_per_run must be between 1 and 10000")
+        if (isinstance(max_events_per_run, bool) or not isinstance(max_events_per_run, int)
+                or not 1 <= max_events_per_run <= 100_000):
+            raise AgentRunError("max_events_per_run must be between 1 and 100000")
+
         self.busy_timeout_ms = busy_timeout_ms
+        self.max_tasks_per_run = max_tasks_per_run
+        self.max_events_per_run = max_events_per_run
 
     def _connect(self) -> sqlite3.Connection:
         db = sqlite3.connect(self.path, timeout=self.busy_timeout_ms / 1000)
@@ -310,12 +328,16 @@ class AgentRunStore:
             raise AgentRunError("global scope must use scope_id='global'")
         return str(scope_kind), scope_id
 
-    @staticmethod
-    def _event(db: sqlite3.Connection, *, run_id: str, task_id: str | None,
+    def _event(self, db: sqlite3.Connection, *, run_id: str, task_id: str | None,
                event_type: str, from_state: str | None, to_state: str | None,
                metadata: dict[str, Any] | None, now: float) -> None:
         event_type = _bounded_identifier(event_type, field="event_type", max_chars=64)
         meta = _safe_metadata_json(metadata, max_bytes=4096, field="event metadata")
+        count = db.execute(
+            "SELECT COUNT(*) FROM agent_run_events WHERE run_id=?", (run_id,)
+        ).fetchone()[0]
+        if count >= self.max_events_per_run:
+            raise AgentRunError("AgentRun event limit reached")
         db.execute("""INSERT INTO agent_run_events
             (run_id, task_id, event_type, from_state, to_state, metadata_json, occurred_at)
             VALUES (?, ?, ?, ?, ?, ?, ?)""",
@@ -441,6 +463,12 @@ class AgentRunStore:
                     raise IdempotencyConflict("task key/idempotency key belongs to a different task")
                 db.commit()
                 return self._task_dict(prior)
+            task_count = db.execute(
+                "SELECT COUNT(*) FROM agent_tasks WHERE run_id=?", (run_id,)
+            ).fetchone()[0]
+            if task_count >= self.max_tasks_per_run:
+                db.rollback()
+                raise AgentRunError("AgentRun task limit reached")
             db.execute("""INSERT INTO agent_tasks
                 (task_id,run_id,task_key,idempotency_key,payload_sha256,payload_json,state,
                  attempt,max_attempts,created_at,updated_at)
