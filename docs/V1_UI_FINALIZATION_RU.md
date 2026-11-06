@@ -750,3 +750,25 @@ PR #122 добавил только эксплуатационную надёж�
 - Regression tests cover exact, compound, mutation and false-owner cases.
 - **Acceptance:** exact-head Quality + Graphify pass; inspect graph artifacts for candidate/exact counts and confirm no classList mutation is reported as targets.
 - **Limit:** static extraction only; no browser cascade, runtime selector evaluation or AST-level control-flow proof.
+
+
+## 12. Main-side owner notes preserved during branch reconciliation (2026-11-06)
+
+The following owner notes were present on live `main` after the feature branch diverged. They are preserved here so the unified V2 checklist does not lose main-side requirements. Existing implementation status must still be verified against code/tests; these lines are requirements/history, not claims of completion.
+
+### Historical owner-note headings retained
+
+## 8. Дополнительные заметки владельца по интерфейсу (2026-10-31)
+## 8. Поправки владельца от 2026-10-31 — приоритет V2.0
+
+### Additional requirements reconciled from main
+
+- В лендинге анимация запускается только после раскрытия соответствующего details
+- В приложении маркер находится только внутри раскрытой панели будущих agents/connectors.
+- Добавить закрытие левого меню жестом свайпа.
+- Организовать настройки в три сворачиваемых столбца/раздела: «aLandi Cloud», «Сторонние провайдеры», «Дополнительные настройки».
+- При открытии «aLandi Cloud» два остальных раздела сворачиваются и недоступны для открытия, пока Cloud открыт.
+- Предусмотреть обратное взаимоисключение: при открытии одного из остальных разделов «aLandi Cloud» закрыт/недоступен. Детали поведения двух остальных разделов уточнить при проектировании, не вводя дополнительных ограничений без необходимости.
+- Не показывать aLandi Cloud в списке сторонних провайдеров.
+- До аудита не обещать неподдерживаемые типы источников и не добавлять фиктивные элементы управления. Не дублировать существующие механизмы хранения, загрузки или подключения.
+- Если механизм пока не реализован, сначала проверить архитектуру; не показывать фиктивный переключатель или действие.
