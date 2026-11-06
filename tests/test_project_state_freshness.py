@@ -163,10 +163,10 @@ class ControlPlaneContractTests(unittest.TestCase):
     def documents(self):
         oledue = (
             "Session Sync Capsule. Latest explicit owner request. Do not default to any PR. "
-            "Stage-zero record before the first change. Owner approval gates."
+            "Stage-zero record before the first change. Owner approval gates. See PROJECT_ORCHESTRATOR_RU.md."
         )
-        agents = "Read OLEDUE.md when the owner sends `oledue`. Latest explicit owner request. Do not default to any PR."
-        orienter = "Document roles. Open PR queue: #1. GitHub live state is authoritative."
+        agents = "Read OLEDUE.md when the owner sends `oledue`. Latest explicit owner request. Do not default to any PR. PROJECT_ORCHESTRATOR_RU.md is the project catalog."
+        orienter = "Document roles. Open PR queue: #1. GitHub live state is authoritative. PROJECT_ORCHESTRATOR_RU.md is the source and plan index."
         state = """  orientation_control_plane:
     responsibilities:
       owner_handoff: "OLEDUE.md"
