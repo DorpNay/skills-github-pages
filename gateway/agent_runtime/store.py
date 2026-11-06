@@ -218,7 +218,7 @@ class AgentRunStore:
     """SQLite durable lifecycle journal with atomic task claims and lease fencing."""
 
     def __init__(self, path: str | Path, *, busy_timeout_ms: int = 5000,
-                 max_tasks_per_run: int = 500, max_events_per_run: int = 5000):
+                 max_tasks_per_run: int = 200, max_events_per_run: int = 5000):
         self.path = str(path)
         if self.path == ":memory:":
             raise AgentRunError("AgentRunStore requires file-backed SQLite for durable state")
@@ -226,11 +226,11 @@ class AgentRunStore:
             raise AgentRunError("busy_timeout_ms must be between 100 and 30000")
 
         if (isinstance(max_tasks_per_run, bool) or not isinstance(max_tasks_per_run, int)
-                or not 1 <= max_tasks_per_run <= 10_000):
-            raise AgentRunError("max_tasks_per_run must be between 1 and 10000")
+                or not 1 <= max_tasks_per_run <= 4_000):
+            raise AgentRunError("max_tasks_per_run must be between 1 and 4000")
         if (isinstance(max_events_per_run, bool) or not isinstance(max_events_per_run, int)
-                or not 2 * max_tasks_per_run + 3 <= max_events_per_run <= 100_000):
-            raise AgentRunError("max_events_per_run must be at least 2 * max_tasks_per_run + 3 and at most 100000")
+                or not 21 * max_tasks_per_run + 3 <= max_events_per_run <= 100_000):
+            raise AgentRunError("max_events_per_run must be at least 21 * max_tasks_per_run + 3 and at most 100000")
 
         self.busy_timeout_ms = busy_timeout_ms
         self.max_tasks_per_run = max_tasks_per_run
