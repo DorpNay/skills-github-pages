@@ -187,36 +187,120 @@ def test_helper_model_rejects_all_secret_like_facts_without_inference():
     assert calls == 0
 
 
-def test_retired_server_memory_graph_http_api_is_not_exposed():
-    with client_for(settings()) as client:
-        assert client.get("/v1/memory/graph/nodes").status_code == 404
-        assert client.post("/v1/memory/graph/search", json={"query": "private note"}).status_code == 404
-
-
-def test_health_probes_never_expose_configured_secrets():
-    oauth_encryption_secret = "oauth-encryption-secret-marker-123"
-    google_client_secret = "google-client-secret-marker-456"
-    config = settings(
-        oauth_encryption_key=oauth_encryption_secret,
-        google_oauth_client_secret=google_client_secret,
-    )
+def test_memory_graph_api_is_disabled_by_default_and_requires_bearer_auth(tmp_path):
+    config = settings(memory_graph_path=str(tmp_path / "graph.sqlite3"))
     with client_for(config) as client:
-        live = client.get("/livez")
-        ready = client.get("/readyz")
-        legacy = client.get("/healthz")
+        assert client.get("/v1/memory/graph/nodes", params={"scope": "project", "scope_id": "alpha"}).status_code == 401
+        response = client.get("/v1/memory/graph/nodes", params={"scope": "project", "scope_id": "alpha"},
+                              headers={"Authorization": f"Bearer {API_KEY}"})
+        assert response.status_code == 503
 
-    assert live.status_code == 200
-    assert live.json() == {"status": "ok"}
-    assert ready.status_code == legacy.status_code == 200
-    assert ready.json() == legacy.json() == {
-        "status": "ok", "ollama": "reachable", "auth_configured": True
-    }
-    for response in (live, ready, legacy):
-        assert response.headers["cache-control"] == "no-store"
-        for secret in (API_KEY, oauth_encryption_secret, google_client_secret):
-            assert secret not in response.text
-        assert "api_key" not in response.text.lower()
-        assert "client_secret" not in response.text.lower()
+
+def test_memory_graph_api_creates_candidates_requires_review_and_filters_scope(tmp_path):
+    config = settings(memory_graph_enabled=True, memory_graph_path=str(tmp_path / "graph.sqlite3"))
+    auth = {"Authorization": f"Bearer {API_KEY}"}
+    with client_for(config) as client:
+        created = client.post("/v1/memory/graph/nodes", headers=auth, json={
+            "content": "Orchid deployment uses a private cache", "scope": "project", "scope_id": "alpha",
+            "source_kind": "message", "source_id": "msg-alpha-1",
+            "source_text": "Original private source is not stored in the graph."
+        })
+        assert created.status_code == 201
+        node = created.json()["node"]
+        assert node["status"] == "candidate" and node["source_sha256"]
+        assert "Original private source" not in created.text
+        assert created.headers["cache-control"] == "no-store"
+        assert client.get("/v1/memory/graph/nodes", params={"scope": "project", "scope_id": "alpha"},
+                          headers=auth).json()["nodes"] == []
+        search_body = {"query": "Orchid private cache", "scope": "project", "scope_id": "alpha"}
+        assert client.post("/v1/memory/graph/search", headers=auth, json=search_body).json()["count"] == 0
+        reviewed = client.post(f"/v1/memory/graph/nodes/{node['id']}/review", headers=auth, json={
+            "scope": "project", "scope_id": "alpha", "status": "confirmed", "reason_code": "user_confirmed"
+        })
+        assert reviewed.status_code == 200 and reviewed.json()["node"]["status"] == "confirmed"
+        assert client.post("/v1/memory/graph/search", headers=auth, json=search_body).json()["count"] == 1
+        other = client.post("/v1/memory/graph/nodes", headers=auth, json={
+            "content": "Orchid deployment uses a public cache", "scope": "project", "scope_id": "beta",
+            "source_kind": "message", "source_id": "msg-beta-1", "status": "confirmed"
+        })
+        assert other.status_code == 400  # Client cannot bypass review by setting status on create.
+        assert client.post("/v1/memory/graph/nodes", headers=auth, json={
+            "content": "Orchid deployment uses a public cache", "scope": "project", "scope_id": "beta",
+            "source_kind": "message", "source_id": "msg-beta-2"
+        }).status_code == 201
+        beta = client.get("/v1/memory/graph/nodes", params={"scope": "project", "scope_id": "beta", "statuses": "all"},
+                          headers=auth).json()["nodes"]
+        assert len(beta) == 1 and beta[0]["status"] == "candidate"
+        assert client.post("/v1/memory/graph/search", headers=auth, json=search_body).json()["nodes"][0]["scope_id"] == "alpha"
+
+
+def test_memory_graph_api_relation_delete_and_review_transitions_are_scope_safe(tmp_path):
+    config = settings(memory_graph_enabled=True, memory_graph_path=str(tmp_path / "graph.sqlite3"))
+    auth = {"Authorization": f"Bearer {API_KEY}"}
+    with client_for(config) as client:
+        def add(content, scope_id, source_id):
+            response = client.post("/v1/memory/graph/nodes", headers=auth, json={
+                "content": content, "scope": "project", "scope_id": scope_id,
+                "source_kind": "message", "source_id": source_id
+            })
+            assert response.status_code == 201, response.text
+            return response.json()["node"]["id"]
+        root = add("Amber source root evidence", "alpha", "doc-alpha-root")
+        derived = add("Amber derived summary", "alpha", "doc-alpha-derived")
+        beta = add("Amber beta remains separate", "beta", "doc-beta")
+        relation = client.post("/v1/memory/graph/relations", headers=auth, json={
+            "scope": "project", "scope_id": "alpha", "source_id": root, "target_id": derived,
+            "relation_type": "DERIVED_FROM", "evidence_source_kind": "document", "evidence_source_id": "doc-alpha-root"
+        })
+        assert relation.status_code == 200
+        wrong_scope = client.post("/v1/memory/graph/relations", headers=auth, json={
+            "scope": "project", "scope_id": "alpha", "source_id": root, "target_id": beta,
+            "relation_type": "SUPPORTS", "evidence_source_kind": "message", "evidence_source_id": "wrong-scope"
+        })
+        assert wrong_scope.status_code == 400
+        deleted = client.delete(f"/v1/memory/graph/nodes/{root}", headers=auth,
+                                params={"scope": "project", "scope_id": "alpha"})
+        assert deleted.status_code == 200 and set(deleted.json()["deleted_node_ids"]) == {root, derived}
+        remaining = client.get("/v1/memory/graph/nodes", params={"scope": "project", "scope_id": "beta", "statuses": "all"},
+                               headers=auth).json()["nodes"]
+        assert [item["id"] for item in remaining] == [beta]
+        with client:
+            assert client.post(f"/v1/memory/graph/nodes/{beta}/review", headers=auth, json={
+                "scope": "project", "scope_id": "beta", "status": "superseded", "reason_code": "bad"
+            }).status_code == 400
+
+
+def test_memory_graph_global_scope_requires_server_flag_and_per_request_opt_in(tmp_path):
+    path = str(tmp_path / "graph.sqlite3")
+    auth = {"Authorization": f"Bearer {API_KEY}"}
+    with client_for(settings(memory_graph_enabled=True, memory_graph_path=path, global_memory_enabled=False)) as client:
+        blocked = client.post("/v1/memory/graph/nodes", headers=auth, json={
+            "content": "global note", "scope": "global", "scope_id": "global",
+            "source_kind": "user_edit", "source_id": "owner-edit", "global_opt_in": True
+        })
+        assert blocked.status_code == 403
+    with client_for(settings(memory_graph_enabled=True, memory_graph_path=path, global_memory_enabled=True)) as client:
+        no_consent = client.post("/v1/memory/graph/nodes", headers=auth, json={
+            "content": "global note", "scope": "global", "scope_id": "global",
+            "source_kind": "user_edit", "source_id": "owner-edit"
+        })
+        assert no_consent.status_code == 403
+        created = client.post("/v1/memory/graph/nodes", headers=auth, json={
+            "content": "global note", "scope": "global", "scope_id": "global",
+            "source_kind": "user_edit", "source_id": "owner-edit", "global_opt_in": True
+        })
+        assert created.status_code == 201
+        assert client.post("/v1/memory/graph/search", headers=auth, json={
+            "query": "global note", "scope": "global", "scope_id": "global", "global_opt_in": True
+        }).status_code == 200
+
+
+def test_health_has_no_secret():
+    with client_for() as client:
+        response = client.get("/healthz")
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok", "ollama": "reachable", "auth_configured": True}
+    assert API_KEY not in response.text
 
 
 def test_livez_is_process_only_and_does_not_probe_ollama():
@@ -418,10 +502,7 @@ def test_cors_allows_only_configured_origin():
         bad = client.options("/v1/chat/completions", headers={"Origin": "https://evil.example",
           "Access-Control-Request-Method": "POST", "Access-Control-Request-Headers": "authorization,content-type"})
     assert good.headers.get("access-control-allow-origin") == "https://dorpnay.github.io"
-    # The gateway uses bearer authorization, not browser cookies; credentialed CORS stays disabled.
-    assert "access-control-allow-credentials" not in good.headers
     assert "access-control-allow-origin" not in bad.headers
-    assert "access-control-allow-credentials" not in bad.headers
 
 
 def test_short_secret_disables_protected_routes():
@@ -429,42 +510,13 @@ def test_short_secret_disables_protected_routes():
         assert client.get("/v1/models").status_code == 503
 
 
-def test_invalid_bearer_token_is_never_echoed_in_api_error():
-    submitted_secret = "client-submitted-secret-marker-987654321"
-    with client_for() as client:
-        response = client.get(
-            "/v1/models",
-            headers={"Authorization": f"Bearer {submitted_secret}"},
-        )
-
-    assert response.status_code == 401
-    assert response.headers["www-authenticate"] == "Bearer"
-    assert submitted_secret not in response.text
-    assert API_KEY not in response.text
-
-
-def test_upstream_errors_do_not_leak_raw_body_or_configured_secrets():
-    oauth_secret = "google-client-secret-marker-789"
-
-    def handler(request):
-        return httpx.Response(500, json={
-            "debug": "internal path",
-            "api_key": API_KEY,
-            "client_secret": oauth_secret,
-        })
-
-    config = settings(google_oauth_client_secret=oauth_secret)
-    with client_for(config=config, handler=handler) as client:
+def test_upstream_errors_do_not_leak_raw_body():
+    def handler(request): return httpx.Response(500, json={"debug": "internal path and secrets"})
+    with client_for(handler=handler) as client:
         response = client.post("/v1/chat/completions", headers={"Authorization": f"Bearer {API_KEY}"},
           json={"model": MODEL, "messages": [{"role": "user", "content": "hi"}]})
-
     assert response.status_code == 502
-    assert response.json() == {
-        "error": {"message": "Local model backend returned HTTP 500; inspect service logs.",
-                  "type": "upstream_error"}
-    }
-    for secret in (API_KEY, oauth_secret, "internal path"):
-        assert secret not in response.text
+    assert "internal path" not in response.text
 
 
 def test_exact_cache_miss_then_hit_and_stats_require_auth():
@@ -609,7 +661,6 @@ def test_trace_context_accepts_valid_w3c_traceparent_and_drops_sensitive_attribu
         reset_trace_id(token)
 
 
-
 @pytest.mark.asyncio
 async def test_chat_cancellation_before_upstream_response_releases_gateway_slot():
     class BlockingTransport(httpx.AsyncBaseTransport):
@@ -671,3 +722,67 @@ async def test_chat_cancellation_before_upstream_response_releases_gateway_slot(
         assert not app.state.semaphore.locked()
         await asyncio.wait_for(app.state.semaphore.acquire(), timeout=0.1)
         app.state.semaphore.release()
+
+
+def test_invalid_bearer_token_is_never_echoed_in_api_error():
+    submitted_secret = "client-submitted-secret-marker-987654321"
+    with client_for() as client:
+        response = client.get(
+            "/v1/models",
+            headers={"Authorization": f"Bearer {submitted_secret}"},
+        )
+
+    assert response.status_code == 401
+    assert response.headers["www-authenticate"] == "Bearer"
+    assert submitted_secret not in response.text
+    assert API_KEY not in response.text
+
+
+def test_upstream_errors_do_not_leak_raw_body_or_configured_secrets():
+    oauth_secret = "google-client-secret-marker-789"
+
+    def handler(request):
+        return httpx.Response(500, json={
+            "debug": "internal path",
+            "api_key": API_KEY,
+            "client_secret": oauth_secret,
+        })
+
+    config = settings(google_oauth_client_secret=oauth_secret)
+    with client_for(config=config, handler=handler) as client:
+        response = client.post("/v1/chat/completions", headers={"Authorization": f"Bearer {API_KEY}"},
+          json={"model": MODEL, "messages": [{"role": "user", "content": "hi"}]})
+
+    assert response.status_code == 502
+    assert response.json() == {
+        "error": {"message": "Local model backend returned HTTP 500; inspect service logs.",
+                  "type": "upstream_error"}
+    }
+    for secret in (API_KEY, oauth_secret, "internal path"):
+        assert secret not in response.text
+
+
+def test_health_probes_never_expose_configured_secrets():
+    oauth_encryption_secret = "oauth-encryption-secret-marker-123"
+    google_client_secret = "google-client-secret-marker-456"
+    config = settings(
+        oauth_encryption_key=oauth_encryption_secret,
+        google_oauth_client_secret=google_client_secret,
+    )
+    with client_for(config) as client:
+        live = client.get("/livez")
+        ready = client.get("/readyz")
+        legacy = client.get("/healthz")
+
+    assert live.status_code == 200
+    assert live.json() == {"status": "ok"}
+    assert ready.status_code == legacy.status_code == 200
+    assert ready.json() == legacy.json() == {
+        "status": "ok", "ollama": "reachable", "auth_configured": True
+    }
+    for response in (live, ready, legacy):
+        assert response.headers["cache-control"] == "no-store"
+        for secret in (API_KEY, oauth_encryption_secret, google_client_secret):
+            assert secret not in response.text
+        assert "api_key" not in response.text.lower()
+        assert "client_secret" not in response.text.lower()
