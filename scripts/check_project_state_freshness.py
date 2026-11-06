@@ -9,7 +9,7 @@ import re
 from pathlib import Path
 from typing import Any, Iterable, Sequence
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlsplit
+from urllib.parse import unquote, urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 class RejectRedirectHandler(HTTPRedirectHandler):
@@ -245,6 +245,28 @@ def validate_control_plane_docs(
     return errors
 
 
+def validate_orchestrator_links(root: Path, orchestrator: str) -> list[str]:
+    """Require every local Markdown link in the project orchestrator to resolve."""
+    errors: list[str] = []
+    root_path = root.resolve()
+    for target in re.findall(r"\\]\\(([^)]+)\\)", orchestrator):
+        parsed = urlsplit(target.strip())
+        if parsed.scheme or parsed.netloc:
+            continue
+        relative_path = unquote(parsed.path)
+        if not relative_path:
+            continue
+        resolved = (root_path / relative_path).resolve()
+        try:
+            resolved.relative_to(root_path)
+        except ValueError:
+            errors.append(f"PROJECT_ORCHESTRATOR_RU.md: local link escapes repository root: {target!r}")
+            continue
+        if not resolved.is_file():
+            errors.append(f"PROJECT_ORCHESTRATOR_RU.md: local link target does not exist: {target!r}")
+    return errors
+
+
 def validate_local_docs(root: Path, snapshot: dict[str, Any]) -> list[str]:
     """Ensure the four human-facing state records refer to this exact snapshot."""
     checkpoint = snapshot["checkpoint"]
@@ -271,6 +293,7 @@ def validate_local_docs(root: Path, snapshot: dict[str, Any]) -> list[str]:
             errors.append(f"{relative}: cannot read ({type(exc).__name__})")
     if all(path in handoff_contents for path in HANDOFF_PATHS):
         errors.extend(validate_handoff_policy(handoff_contents["OLEDUE.md"], handoff_contents["AGENTS.md"]))
+        errors.extend(validate_orchestrator_links(root, handoff_contents["PROJECT_ORCHESTRATOR_RU.md"]))
 
     state = contents.get("docs/PROJECT_STATE.yaml", "")
     if all(path in handoff_contents for path in HANDOFF_PATHS) and "ORIENTER.md" in contents:
