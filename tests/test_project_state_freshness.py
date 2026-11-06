@@ -11,6 +11,7 @@ from scripts.check_project_state_freshness import (
     validate_github_api_url,
     github_get_json,
     validate_handoff_policy,
+    validate_control_plane_docs,
     validate_snapshot,
 )
 
@@ -132,6 +133,46 @@ class HandoffPolicyTests(unittest.TestCase):
         self.assertTrue(any("latest explicit owner request" in error for error in errors))
         self.assertTrue(any("no-default-PR" in error for error in errors))
         self.assertTrue(any("AGENTS.md" in error for error in errors))
+
+
+
+
+
+class ControlPlaneContractTests(unittest.TestCase):
+    def documents(self):
+        oledue = (
+            "Session Sync Capsule. Latest explicit owner request. Do not default to any PR. "
+            "Stage-zero record before the first change. Owner approval gates."
+        )
+        agents = "Read OLEDUE.md when the owner sends `oledue`. Latest explicit owner request. Do not default to any PR."
+        orienter = "Document roles. Open PR queue: #1. GitHub live state is authoritative."
+        state = """  orientation_control_plane:
+    responsibilities:
+      owner_handoff: "OLEDUE.md"
+      quick_navigation: "ORIENTER.md"
+      structured_state: "docs/PROJECT_STATE.yaml"
+      machine_checkpoint: "docs/project-state-snapshot.json"
+      executor_contract: "AGENTS.md"
+      strategy: "docs/IMPLEMENTATION_ROADMAP_RU.md"
+      single_task_inventory: "docs/MASTER_TASK_REGISTRY_RU.md"
+      append_only_stage_evidence: "docs/VOLLEY_LOG.md"
+      live_repository_truth: "GitHub API"
+last_volley: "V-TEST-001"
+"""
+        snapshot_value = {"last_volley": "V-TEST-001"}
+        volley = "V-TEST-001"
+        return oledue, agents, orienter, state, snapshot_value, volley
+
+    def test_complete_control_plane_and_stage_record_pass(self):
+        self.assertEqual(validate_control_plane_docs(*self.documents()), [])
+
+    def test_missing_role_and_stale_volley_fail_closed(self):
+        oledue, agents, orienter, state, snapshot_value, volley = self.documents()
+        state = state.replace('      owner_handoff: "OLEDUE.md"\\n', "")
+        snapshot_value["last_volley"] = "V-STALE"
+        errors = validate_control_plane_docs(oledue, agents, orienter, state, snapshot_value, volley)
+        self.assertTrue(any("orientation_control_plane.owner_handoff" in error for error in errors))
+        self.assertTrue(any("last_volley must match" in error for error in errors))
 
 
 class MainCheckpointTests(unittest.TestCase):
