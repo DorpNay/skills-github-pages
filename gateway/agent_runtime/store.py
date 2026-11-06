@@ -229,8 +229,8 @@ class AgentRunStore:
                 or not 1 <= max_tasks_per_run <= 10_000):
             raise AgentRunError("max_tasks_per_run must be between 1 and 10000")
         if (isinstance(max_events_per_run, bool) or not isinstance(max_events_per_run, int)
-                or not 1 <= max_events_per_run <= 100_000):
-            raise AgentRunError("max_events_per_run must be between 1 and 100000")
+                or not max_tasks_per_run + 2 <= max_events_per_run <= 100_000):
+            raise AgentRunError("max_events_per_run must be at least max_tasks_per_run + 2 and at most 100000")
 
         self.busy_timeout_ms = busy_timeout_ms
         self.max_tasks_per_run = max_tasks_per_run
@@ -330,14 +330,17 @@ class AgentRunStore:
 
     def _event(self, db: sqlite3.Connection, *, run_id: str, task_id: str | None,
                event_type: str, from_state: str | None, to_state: str | None,
-               metadata: dict[str, Any] | None, now: float) -> None:
+               metadata: dict[str, Any] | None, now: float,
+               terminal_fence: bool = False) -> None:
         event_type = _bounded_identifier(event_type, field="event_type", max_chars=64)
         meta = _safe_metadata_json(metadata, max_bytes=4096, field="event metadata")
         count = db.execute(
             "SELECT COUNT(*) FROM agent_run_events WHERE run_id=?", (run_id,)
         ).fetchone()[0]
-        if count >= self.max_events_per_run:
-            raise AgentRunError("AgentRun event limit reached")
+        normal_event_limit = self.max_events_per_run - self.max_tasks_per_run - 1
+        event_limit = self.max_events_per_run if terminal_fence else normal_event_limit
+        if count >= event_limit:
+            raise AgentRunError("AgentRun event limit reached; terminal-fence capacity is reserved")
         db.execute("""INSERT INTO agent_run_events
             (run_id, task_id, event_type, from_state, to_state, metadata_json, occurred_at)
             VALUES (?, ?, ?, ?, ?, ?, ?)""",
@@ -428,7 +431,8 @@ class AgentRunStore:
             if new_state in TERMINAL_RUN_STATES and new_state != "succeeded":
                 self._fence_open_tasks(db, run_id=run_id, timestamp=timestamp, error_code="run_terminal")
             self._event(db, run_id=run_id, task_id=None, event_type=event_type,
-                        from_state=expected_state, to_state=new_state, metadata=metadata, now=timestamp)
+                        from_state=expected_state, to_state=new_state, metadata=metadata, now=timestamp,
+                        terminal_fence=new_state in TERMINAL_RUN_STATES)
             db.commit()
         return self.get_run(run_id)
 
@@ -603,7 +607,7 @@ class AgentRunStore:
                 (error_code, timestamp, task["task_id"]))
             self._event(db, run_id=run_id, task_id=task["task_id"], event_type="task_cancelled",
                         from_state=task["state"], to_state="cancelled",
-                        metadata={"error_code": error_code}, now=timestamp)
+                        metadata={"error_code": error_code}, now=timestamp, terminal_fence=True)
 
     def cancel_run(self, *, run_id: str, now: float | None = None) -> dict[str, Any]:
         _bounded_text(run_id, field="run_id", max_chars=128)
@@ -626,7 +630,8 @@ class AgentRunStore:
                 (timestamp, run_id, current, run["revision"]))
             self._fence_open_tasks(db, run_id=run_id, timestamp=timestamp, error_code="run_cancelled")
             self._event(db, run_id=run_id, task_id=None, event_type="run_cancelled",
-                        from_state=current, to_state="cancelled", metadata={}, now=timestamp)
+                        from_state=current, to_state="cancelled", metadata={}, now=timestamp,
+                        terminal_fence=True)
             db.commit()
         return self.get_run(run_id)
 

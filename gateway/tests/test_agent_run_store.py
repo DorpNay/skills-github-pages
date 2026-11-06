@@ -440,21 +440,33 @@ def test_per_run_task_limit_is_atomic_and_idempotent_replay_still_works(tmp_path
 
 
 def test_per_run_event_limit_rolls_back_lifecycle_transition(tmp_path):
-    store = AgentRunStore(tmp_path / "event-cap.sqlite3", max_events_per_run=1)
+    store = AgentRunStore(tmp_path / "event-cap.sqlite3", max_tasks_per_run=1,
+                          max_events_per_run=5)
     store.initialize()
     run = store.create_run(idempotency_key="event-cap", scope_kind="project",
                            scope_id="alpha", goal_ref="task:event-cap", now=1)
-    with pytest.raises(AgentRunError, match="event limit reached"):
-        store.transition_run(run_id=run["run_id"], expected_state="queued",
-                             new_state="running", event_type="run_started", now=2)
-    assert store.get_run(run["run_id"])["state"] == "queued"
-    assert len(store.list_events(run_id=run["run_id"], limit=10)) == 1
+    run = store.transition_run(run_id=run["run_id"], expected_state="queued",
+                               new_state="running", event_type="run_started", now=2)
+    task = store.enqueue_task(run_id=run["run_id"], task_key="pending",
+                              idempotency_key="event-cap-task", payload={}, now=3)
+    # Ordinary events stop at the non-reserved budget.
+    with pytest.raises(AgentRunError, match="terminal-fence capacity is reserved"):
+        store.transition_run(run_id=run["run_id"], expected_state="running",
+                             new_state="needs_human", event_type="needs_human", now=4)
+    assert store.get_run(run["run_id"])["state"] == "running"
+    # Terminal transitions may consume the reserved task-cancellation + run event slots.
+    failed = store.transition_run(run_id=run["run_id"], expected_state="running",
+                                  new_state="failed", event_type="run_failed", now=5)
+    assert failed["state"] == "failed"
+    assert store.get_task(task["task_id"])["state"] == "cancelled"
+    assert len(store.list_events(run_id=run["run_id"], limit=10)) == 5
 
 
 @pytest.mark.parametrize(("kwargs", "message"), [
     ({"max_tasks_per_run": 0}, "max_tasks_per_run"),
     ({"max_tasks_per_run": True}, "max_tasks_per_run"),
     ({"max_events_per_run": 0}, "max_events_per_run"),
+    ({"max_events_per_run": 501}, "max_events_per_run"),
     ({"max_events_per_run": 100001}, "max_events_per_run"),
 ])
 def test_per_run_limits_are_validated(tmp_path, kwargs, message):
