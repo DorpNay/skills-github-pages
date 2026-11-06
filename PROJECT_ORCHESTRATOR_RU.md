@@ -93,7 +93,12 @@ These remain in their domain documents; this index connects them without merging
 - [MULTIMODAL_MODEL_STACK_RU.md](docs/MULTIMODAL_MODEL_STACK_RU.md) — multimodal models and stack candidates.
 - [ALANDI_N2O_CHATGPT_SOURCES_RU.md](docs/ALANDI_N2O_CHATGPT_SOURCES_RU.md) — source-use and context principles.
 
-**Следующий high-signal batch (triage snapshot 2026-11-05; не adoption):** в [OPEN_SOURCE_TRIAGE_RU.md](docs/OPEN_SOURCE_TRIAGE_RU.md#2026-11-05--refreshed-high-signal-candidates-research-only) уже выделен XERJ retrieval bake-off против SQLite FTS5 + Graphify на фиксированном корпусе; затем Memvid как изолированный archive/export prototype и RAG-Anything как источник typed multimodal/provenance patterns. Graphify остаётся dev-only, Superpowers — процессные практики, Temporal — design reference. Перед acquisition заново проверить точный upstream/revision и artifact-specific license.
+**Проверенный batch 2026-11-06 (CANDIDATE / NOT ADOPTED):**
+- **XERJ:** public source v1.0.0-rc.101 / 83c9f0d... — Apache-2.0; exact release binary is built from a private tree with three proprietary query crates. Its 408,024,623-byte model bundle has no verified redistribution terms. Do not archive rc.101 binary/weights; public-source retrieval bake-off only.
+- **Memvid:** v2.0.140 / e18fe554... — Apache-2.0; evaluate a portable export/archive capsule, not a SQLite replacement.
+- **RAG-Anything:** v1.4.1 / 0ef67b4... — MIT code, but MinerU/LightRAG and optional audio/video dependency/model terms require separate review. Borrow patterns only; no full install.
+- Exact revisions, repository sizes, dependency findings and eval gates are in docs/OPEN_SOURCE_TRIAGE_RU.md, INTEL.md, docs/TECHNIQUE_REGISTER_RU.md and EVALS.md.
+
 
 ### 3.2 Research workstreams that are not automatically adopted
 
