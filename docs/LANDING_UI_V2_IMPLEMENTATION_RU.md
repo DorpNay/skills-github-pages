@@ -1,0 +1,1153 @@
+# aLandi Landing UI v2.0 — implementation ledger
+
+**Owner priority source:** docs/V1_UI_FINALIZATION_RU.md, unified section 8.0; mandatory owner scope 8.1–8.17 plus optional proposals 8.18–8.27 (2026-11-02).  
+**Implementation workbench:** [#131 — aLandi Landing UI v2.0](https://github.com/DorpNay/skills-github-pages/pull/131).  
+**Selective root-shell promotion:** [#154 — modular aLandi V2 shell](https://github.com/DorpNay/skills-github-pages/pull/154).  
+**Owner decision (2026-11-06):** explicitly authorize promoting only the modular root application shell from #131 to current main through #154. PR #131 remains Draft/diverged and is not merged wholesale. The `/landing/` V1 marketing page remains separate; Gateway/AgentRun, Voice and research prototypes are excluded.
+
+## Owner-authorized selective promotion — 2026-11-06
+
+- **Candidate:** PR #154, based on exact main `f323b6f339d454dad6e820a4074fa230acc7b6df`; source is the current PR #131 workbench.
+- **Included:** root HTML shell `index.md`, `assets/css/app.css`, `assets/js/app.js`, matching static quality checks, E2E suite, baseurl-aware Playwright server, live-site smoke compatibility, four Chromium shards and Graphify external-runtime support.
+- **Excluded:** Gateway/AgentRun prototype, Voice PR #152, future/research PRs, backend routes, model activation and unrelated PR #131 changes.
+- **Compatibility:** keep local-first storage and existing localStorage keys/schema; preserve #147 cancellation, #148 rendering/Pyodide security and #150 recovery/rollback protections. Read-only roadmap disclosures must remain explicitly future/non-operational.
+- **CI runtime:** current repository baseline is Node 24 and Playwright 1.64.1 with Playwright-managed Chromium; four shards use one worker each. The older PR #131 Google Chrome/Playwright 1.56.1 optimization is historical and is not copied.
+- **Static analysis adaptation:** after modularization, Semgrep must scan `assets/js/app.js` and must not require an inline-script wildcard to expand. Graphify now indexes `assets/js/app.js` directly when no substantial inline script exists.
+- **Evidence checkpoint:** Graphify #42151473212 and Dead Code #42151473530 passed on intermediate PR HEAD `7cf4ef0eebdb583b89c984634352270b22c2484f`; exact final Quality/Freshness/Provenance are still required before merge.
+- **Post-merge acceptance:** exact main SHA, automatic GitHub Pages deployment, production root HTML, CSS/JS HTTP delivery, published-site Chromium smoke, main Quality/Freshness/Provenance and rollback route. Gateway/VPS is separate.
+
+## Scope and constraints
+
+- Keep the approved client stack: `index.md` (static HTML/CSS/JavaScript) + Jekyll/GitHub Pages; use existing FastAPI gateway contracts only where already supported.
+- No framework migration, new runtime, new dependency, new backend route, hosted service or provider integration without explicit approval.
+- Preserve local-first storage, per-project boundaries, explicit user consent, provider isolation, secret handling, keyboard access and reduced-motion behavior.
+- Never render a control for a capability that does not exist. For project sources, first establish a real source contract and only then expose supported operations.
+- The pre-promotion root client baseline is main SHA `f323b6f339d454dad6e820a4074fa230acc7b6df`. PR #154 changes only the root browser client `/`; the `/landing/` V1 marketing page remains unchanged. Rollback is a revert of the bounded promotion commit; no data migration is intended.
+
+## CI browser runtime optimization — 2026-11-02
+
+- Commit `c5f79b46d09b71fbf06ccc4da137707ac5709e40` keeps the Playwright 1.56.1 test API and Chromium engine but selects the runner-provided stable Google Chrome in CI via `channel: 'chrome'`.
+- Removed the per-run `npx playwright install --with-deps chromium` download and the `apt-get` workaround for its dependency installation. CI now verifies `google-chrome` exists and prints its version; local development keeps Playwright's default Chromium.
+- Rationale: GitHub-hosted Ubuntu runner images already include Google Chrome. This avoids a redundant browser download and system-package installation without dropping real browser coverage.
+- Quality #1218 / run `41360990867` was queued on the exact code commit. No test execution, pass, or speedup is claimed until that run completes and its wall-clock is compared with baseline #1197 (1863s).
+- The public Pages URL remains the main-site publication; no separate PR preview host/workflow exists. Production Pages is not changed by this CI-only patch.
+
+## Audit snapshot — current main / PR #131 baseline
+
+| Requirement | Observed implementation | Gap / implementation direction | Status |
+|---|---|---|---|
+| **8.1 Sidebar, memory, projects, chats** | Memory status precedes the title; shared facts → personal facts → private-context opt-in; explanations collapsed; sidebar close preserves project/chat disclosure state; project-filtered chats, explicit project chat creation, per-project gear, separate create dialog, unchanged current-chat membership and local last-closed-chat restore. | Added Playwright coverage that horizontal touch swipe closes the sidebar while vertical movement does not; verifies project disclosure remains open after close/reopen. Existing accordion/restore regression and real-device checks remain. | [~] |
+| **8.2 Typography/header/main surface** | Dedicated wordmark/chat-title styling, one shared system font stack for body/form controls, compact theme/language group, clock and mode controls. | Removed the obsolete earlier font-family declaration; responsive coverage at 320/360/390/768/1024/1440px asserts one computed stack for body/buttons/inputs/textarea/select. Passed in Quality #1359 on exact checkpoint 12803232; visual screenshot review remains. | [~] |
+| **8.3 Settings/providers** | aServi remains exclusive; third-party provider and additional-settings disclosures can remain open together. | Extended the exclusivity regression to 390px, 44px hit areas, Enter/Space toggling and no horizontal overflow. Passed in Quality #1359 on exact checkpoint 12803232; physical-device keyboard review remains. | [~] |
+| **8.4 Tavily/system prompt** | Tavily key remains in a web-tools disclosure; system prompt is global `localStorage` state and is normalized against the legacy built-in prompt. | Verify the empty-by-default behavior against `DEFAULT_SYSTEM` and migration; decide Tavily only after comparing the existing keyless search fallback and live adapter requirements. No premature deletion. | [~] |
+| **8.5 Living notes** | Source document already says new owner UI requirements belong in the matching subsection and statuses require code/test evidence. | Keep the source checklist as the owner requirements record; implementation status and evidence live in this ledger and PR. | [x] |
+| **8.6 Navigation and visual hierarchy** | Shared history stack preserves nested project-filter and modal depth; Back/Forward restore the prior filter or dialog; Escape uses the same modal lifecycle. | Source/test audit covers Back through nested project filters, Back/Forward for project settings and chat-action dialogs, and Escape focus restoration. Browser regressions passed in Quality #1359 on exact checkpoint 12803232; screenshot review of heading/list hierarchy and native keyboard/device behavior remain. | [~] |
+| **8.7 Project settings / Sources** | Project settings retain name/instructions/local memory/scope/import/export/delete; Sources shows a truthful unsupported-state explanation; project settings can explicitly hand project context to an existing chat. | Gateway still lacks a source-list API; do not add CRUD until project-scoped list/delete semantics exist. | [~] |
+| **8.8 Message action icons** | Copy and speech controls remain available in the expanded viewer; user messages expose copy but not speech; controls carry accessible names/tooltips and 44px hit targets. | Execute compact/expanded viewer regressions and verify speech/copy on target devices. | [~] |
+| **8.9 Backdrop lifecycle** | Modal stack covers settings, project settings/create, message viewer, chat actions, research, function panel and trace; Back/Escape, focus return, Tab trap and body scroll lock share one lifecycle. | Repeated-cycle/focus/keyboard coverage plus backdrop-dismissal regression for settings, project-create, function-panel and Research Studio passed in Quality #1359 on exact checkpoint 12803232. Native mobile review remains. | [~] |
+| **8.10 Control sizing system** | Shared 32/40/44px compact/standard/touch tokens; message actions and header icons retain 44px targets. | Removed duplicate message-action declarations; standard controls use 40px desktop and 44px touch. Desktop/mobile sizing regression passed in Quality #1359 on exact checkpoint 12803232; remaining one-off controls and manual viewport review remain. | [~] |
+| **8.11 Theme/language group** | Theme and language controls are grouped in the header, persistent and sized for touch/keyboard use. | Narrow viewport and keyboard review. | [~] |
+| **8.12 Remove “Серверная память (Эксперимент)”** | Browser UI/client dispatch, per-chat opt-in and `/v1/memory/graph/*` routes/flags removed; local/private/shared/project-local memory, conversation delta sync and RAG remain. Internal `MemoryManager` is Graphify-only; existing SQLite data is untouched. | Execute exact-head Gateway + Chromium regressions; confirm no legacy UI or client calls. | [~] |
+| **8.13 Explicit project context handoff** | Project settings list existing chats and queue the selected project's context for the chosen chat's next request; no new chat or project-membership change; five-project cap and one-shot consumption retained. Pending handoff is session-only until sent. | Execute non-current-chat/no-cross-chat/one-shot E2E and decide whether pending handoff should survive reload. | [~] |
+| **8.14 Touch selection** | Targeted user-select/-webkit-user-select/touch-action rules keep controls from selecting the whole interface while message text, expanded viewer content and editable fields remain selectable; horizontal sidebar swipe is separated from vertical scrolling. | Chromium regression checks buttons, disclosures, inputs, assistant text and expanded viewer selection styles; it passed in Quality #1359 on exact checkpoint 12803232. Native iOS Safari long-press, VoiceOver and gesture tests remain. | [~] |
+| **8.15 Status/progress** | Status and toast elements expose neutral/info/success/warning/error data states with restrained semantic colors; status text and ticker are centered; no synthetic progress added. | Playwright coverage for all five status colors, toast semantics, centered alignment and reduced-motion behavior passed in Quality #1359 on exact checkpoint 12803232. Automated base-token/toast contrast ratios also pass AA; full component-level manual review remains. | [~] |
+| **8.16 Button typography/icon-first** | Shared control typography/spacing and 44px message-action targets; copy/view/speech actions are icon-first. Inline message-action labels/tooltips use matching `title` and `aria-label`. | Static audit of 82 root-page buttons found no unlabeled symbol-only action; dynamic message/project/memory controls were inspected. Icon-only accessible-name regression passed in Quality #1359 on exact checkpoint 12803232; broader panel review remains. | [~] |
+| **8.17 Adjustable text readability** | Persistent text scale and standard/high-contrast preference apply in light/dark themes; high contrast adjusts secondary, disabled, link, error and status text. | Added Playwright coverage for standard/high-contrast secondary, disabled, links, errors and status in both themes while confirming primary text remains stable. The exact-head browser test and automated WCAG token/surface calculations passed in Quality #1359; full component-level manual audit and native-device review remain. | [~] |
+
+### 8.17 — preliminary base-token contrast calculation
+
+A deterministic E2E check now calculates WCAG relative luminance/contrast from the actual CSS custom properties against the solid theme surface, in standard/high-contrast mode. Current base-token calculations (rounded to 2 decimals):
+
+| Theme / mode | Primary | Secondary | Disabled | Info | Success | Warning | Error |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Dark / standard · #0f1b2b | 15.93:1 | 8.26:1 | — | 10.38:1 | 9.02:1 | 10.92:1 | 6.59:1 |
+| Dark / high · #0f1b2b | 15.93:1 | 12.43:1 | 9.02:1 | 10.38:1 | 11.07:1 | 10.92:1 | 8.33:1 |
+| Light / standard · #ffffff | 15.48:1 | 5.91:1 | — | 7.85:1 | 4.90:1 | 6.59:1 | 5.26:1 |
+| Light / high · #ffffff | 15.48:1 | 8.76:1 | 5.04:1 | 7.85:1 | 6.43:1 | 6.59:1 | 7.39:1 |
+
+Toast foreground contrast against its raised surface:
+
+| Theme / mode | Info | Warning | Success | Error |
+|---|---:|---:|---:|---:|
+| Dark / standard | 9.39:1 | 9.88:1 | 8.17:1 | 5.96:1 |
+| Dark / high | 9.39:1 | 9.88:1 | 10.02:1 | 7.54:1 |
+| Light / standard | 7.54:1 | 6.34:1 | **4.71:1** | 5.05:1 |
+| Light / high | 7.54:1 | 6.34:1 | 6.19:1 | 7.11:1 |
+
+All measured token/surface pairs meet the 4.5:1 WCAG AA threshold for normal text; the lowest measured ratio is 4.71:1 (light-theme standard success toast). These are **token-to-solid-surface measurements**, not a complete WCAG audit: actual cards, gradient/translucent surfaces, small text, hover/focus states, disabled controls and non-text contrast still require component inspection and native-device review.
+
+## Cross-cutting inherited UI work (requirements before section 8)
+
+The original V1 document contains 18 inherited control directions before section 8 (not merely seven numbered lines). Their exact titles, current [x]/[~] statuses, remaining acceptance and links into 8.1–8.17 are enumerated in the matrix in docs/V1_UI_FINALIZATION_RU.md. The summary below is a grouping, not a replacement checklist. The pre-8 checklist is not a second backlog.
+
+| Inherited requirement | Remaining outcome | Linked V2 items |
+|---|---|---|
+| Overall visual polish | Responsive screenshot review, typography, contrast, spacing, empty/error states and secondary controls. | 8.2, 8.6, 8.10, 8.15–8.17 |
+| Composer/mobile keyboard | VisualViewport, safe-area, top/bottom composer, long input, nested scroll and scroll-position retention. | 8.2, 8.6, 8.9, 8.14 |
+| Provider routes and catalog | Legacy route migration, RU/EN labels, model catalog persistence/failure, auth errors and no cross-provider leakage. | 8.3, 8.11 |
+| Inline validation and gateway status | Required fields, URL/model errors, CORS/401/5xx, redaction, model completion + /healthz, stale-response handling. | 8.3, 8.9, 8.17 |
+| Global prompt editing | Empty default + legacy migration, keyboard-visible edit affordance, accessible name and readonly restoration. | 8.4, 8.10, 8.16, 8.17 |
+| Provider instructions and Tavily | Remove duplicate copy, verify upstream links/privacy notes, test key lifecycle and keyless fallback before any removal decision. | 8.3, 8.4 |
+| Modal, scroll and secondary controls | Escape/Back/Forward, focus return, scroll lock, long chats/attachments, nested scroll and stale controls. | 8.1, 8.6, 8.9, 8.10 |
+| RU/EN and theme completeness | Dialogs, statuses, errors, tooltips, Roadmap, empty states and both themes. | 8.11, 8.15, 8.17 |
+| Research/skills/agents honesty | Preserve draft and chat settings, test mobile/Escape/no-auto-send; don't label a four-stage single-model pipeline as independent agents. | 8.6, 8.15, 8.16 |
+
+### 8.6 / 8.9 — modal keyboard containment
+
+The modal keyboard trap now selects the actually topmost visible dialog by computed z-index instead of relying on a fixed modal array order. It filters disabled, hidden, inert, aria-hidden and visibility-hidden controls; Tab/Shift+Tab wrap between the first and last usable controls, and a dialog with no focusable descendants receives programmatic focus. A dedicated E2E verifies both wrap directions and recovery when focus starts outside the dialog. This complements the existing Escape/Back/Forward, backdrop and focus-return paths; screen-reader/native-device validation remains outstanding.
+
+### Runtime source-of-truth
+
+The active Jekyll app shell, markup and CSS are in index.md; browser runtime logic is extracted to assets/js/app.js (refactor commit 9e5cf6465c8be4908ada83f1806bcd82a8907149). Runtime IDs/actions use the aServi naming family (aserviBaseUrl, aserviModel, aserviApiKey, paste-aservi-key, aserviStatus); E2E must target those current controls and not superseded selector contracts. Keep HTML structure in index.md, application CSS in assets/css/app.css, public landing CSS in assets/css/landing.css, and browser runtime logic in assets/js/app.js.
+
+### Work completed in this cross-cutting pass (not yet browser-verified)
+
+- aServi URL validation now has RU/EN messages, required URL/model/key errors, aria-invalid and aria-describedby linkage; aServi field labels, paste action and connection status are localized. Theme-aware semantic info/warning tokens were added, and the checking state uses the warning token in both themes.
+- aServi health refresh now checks that URL/model/key still match after asynchronous fingerprint and /healthz work, so an old response cannot restore a green state after credentials change.
+- The global system-prompt edit pencil now localizes its title/accessibility name and edit-state announcement; E2E covers keyboard focus and the return to read-only.
+- Mobile viewport resize now captures whether the chat was near the bottom before layout changes: users reading older messages keep their position, while users at the latest message stay anchored. E2E coverage was added.
+- Playwright CI diagnostics changed to trace on first retry, screenshot on failure and no video. CI uses one worker and a 30-minute Playwright global timeout inside a 35-minute Actions job, allowing the test runner to finish and flush reports. The high-contrast E2E also verifies that the aServi checking-state color follows the selected theme.
+- The browser package remains pinned at @playwright/test 1.56.1 for the current stabilization baseline. Upgrade is deliberately separated from UI debugging: issue #38489 documents a 1.57 Chrome-for-Testing memory spike report, while issue #41562 documents a distinct 1.61.1/Chromium 149 view-transition stability regression fixed in later upstream builds. Neither is proven to be the cause of aLandi's failures; avoid changing browser and application variables simultaneously.
+
+## aLandi aServi naming, asset optimization and modal focus — 2026-11-01
+
+- Renamed the first-party self-hosted endpoint surface to **aLandi aServi** in UI labels, RU/EN copy, status messages, DOM IDs, CSS classes and related E2E selectors. Cloudflare remains a separate infrastructure/provider name and was not renamed.
+- Extracted the 361 KB inline application runtime into assets/js/app.js with defer, and externalized the 48.1 KB app stylesheet plus 10.4 KB landing stylesheet into assets/css/app.css and assets/css/landing.css. The app HTML fell from about 468.6 KB to 61.3 KB; landing HTML fell from 26.1 KB to 15.8 KB. Jekyll relative_url keeps project-site paths correct and the assets can be cached independently. No framework, build step or dependency was added.
+- Marked and DOMPurify now use ordered defer loading before the application runtime, avoiding the prior async execution-order race. CSS declarations were moved without minification or cascade reordering. Repeated selectors remain intentionally untouched until a measured, bounded cleanup can preserve cascade behavior.
+- Kept the persisted ai_alandi_cloud_* localStorage keys unchanged behind the new ASERVI_STORAGE code contract. These keys are internal compatibility identifiers, not user-facing product names; retaining them avoids breaking existing saved server URL/model/connection state. No storage migration or data deletion is performed.
+- Modal focus containment was corrected to select the actual topmost visible dialog; E2E now checks Shift+Tab and Tab wrap using rendered focusable elements. V8 parse-only syntax check passed for assets/js/app.js and all 11 E2E modules; extracted CSS brace counts are balanced. These are source checks only, not browser execution.
+- No branch or source file was deleted: no ownership/usage proof established an orphan.
+
+## Chromium / Playwright reliability findings (research snapshot 2026-11-01)
+
+1. **Worker contention is a real CI variable.** Playwright's current CI guide recommends one worker on constrained CI runners; parallel workers are an opt-in for powerful self-hosted systems. aLandi previously used two workers after a three-worker run timed out. This pass switches the hosted CI suite to one worker, sets a 30-minute runner-level global timeout and leaves five extra minutes at the Actions job level for teardown/report upload. If runtime proves too long, shard independent suites across separate jobs rather than immediately increasing workers.
+2. **Retries are diagnostics, not a cure.** Keep one CI retry to classify intermittent failures, but do not treat a retry pass as a clean pass. A test that passes only on retry remains flaky and must be investigated.
+3. **Capture actionable evidence, not maximum artifacts.** Trace on first retry is the Playwright-recommended CI pattern; video is disabled and screenshots remain only-on-failure. The trace is the primary source for DOM snapshots, actionability checks, network and console state.
+4. **Do not synchronize with sleeps or forced clicks.** Prefer role/label/user-visible locators and web-first assertions. locator.click() already waits for unique resolution, visibility, stability, event reception and enabled state. A timeout should be diagnosed as an unmet actionability condition, not bypassed with force:true unless the test explicitly targets a gesture/overlay behavior.
+   - Current E2E audit found one forced sidebar-close click that ran after the preceding New Chat action had already closed the sidebar. The test now reopens the sidebar and uses a normal click; all audited E2E files contain zero force:true, waitForTimeout and networkidle usages.
+5. **Treat browser-version regressions separately from app regressions.** Public issue #41562 describes locator.click() hanging in the stability check with Chromium 149 and active MPA View Transitions; it was reproduced on Playwright 1.61.1 and fixed on later tip-of-tree. aLandi does not currently declare MPA View Transitions, so this is a cautionary example, not an attribution. Public issue #38489 reports high memory use with Playwright 1.57 Chrome for Testing under parallel execution; this reinforces the choice to keep a pinned baseline until UI behavior is stable.
+6. **Keep test state independent.** Every test must own its local/session storage, network mocks and project/chat fixtures. No test should rely on a preceding test, ordering within a file, external provider uptime or a real credential.
+7. **Pin and report the browser runtime.** Keep Playwright and its browser install version aligned; record Playwright/Chromium versions in CI diagnostics before a future controlled upgrade. Never silently bump only the npm package while reusing a mismatched browser binary.
+
+Primary references:
+- Playwright [Best Practices](https://playwright.dev/docs/best-practices), [CI](https://playwright.dev/docs/ci), [Isolation](https://playwright.dev/docs/browser-contexts), [Retries](https://playwright.dev/docs/test-retries), [Trace Viewer](https://playwright.dev/docs/trace-viewer-intro), [Auto-waiting](https://playwright.dev/docs/actionability), [Timeouts](https://playwright.dev/docs/test-timeouts).
+- Upstream reports: [microsoft/playwright#41562](https://github.com/microsoft/playwright/issues/41562) (Chromium 149 view-transition stability check); [#38489](https://github.com/microsoft/playwright/issues/38489) (reported 1.57 memory pressure under parallel execution); [#28705](https://github.com/microsoft/playwright/issues/28705) (CI-only Chromium flakiness report).
+
+## Acceptance and test plan
+
+1. Keep all existing V1 regression tests unless a test asserts behavior explicitly superseded by owner requirements 8.1–8.17; replace those assertions with the new acceptance contract rather than simply deleting coverage.
+2. Add Playwright coverage for:
+   - sidebar order, accordion defaults/state retention, projectless/project chat filtering, project gear actions, back-to-general navigation and swipe-close;
+   - mutually exclusive settings sections and aServi/provider separation;
+   - global empty system prompt migration and no implicit project-memory injection;
+   - project-source UI only when a real scoped source contract exists;
+   - icon actions in compact and expanded message views;
+   - modal close paths, focus restoration, scroll lock and rapid repeated cycles;
+   - compact control geometry, header theme/language controls, touch selection;
+   - status colors/centering/reduced motion and user readability preferences in both themes.
+3. Run focused Chromium tests per slice, then the full Quality workflow (Security, Integrity, Context, Jekyll, static analysis, Chromium), Freshness, Provenance and Graphify on the exact PR head.
+4. Manual gates: real iPhone Safari, VoiceOver, long-press/gesture behavior, safe-area and virtual keyboard. Do not claim these from desktop Chromium.
+5. No merge, retarget to a release branch, or deployment without explicit owner approval.
+
+## Work sequence
+
+- [x] Rename PR #131 and reserve it as the sole V2 UI workstream; keep V1 in main.
+- [~] Complete source-code and gateway-contract audit for 8.1–8.17.
+- [~] Implement shared UI tokens, selected modal/focus paths, accessible message actions and touch ergonomics.
+- [~] Implement sidebar/projects/chats and memory UX, including project-filtered chats and explicit request context.
+- [~] Implement header theme/language controls and aServi/provider/additional-settings grouping.
+- [x] Remove deprecated server-memory UI/client dispatch and graph HTTP API/flags; preserve independent local/private/shared/project-local memory, conversation delta sync and RAG. Existing graph SQLite files are not deleted.
+- [~] Execute exact-head Gateway and Chromium regressions for the removal and local-memory preservation.
+- [~] Resolve project Sources contract: show an explicit unsupported-state explanation; do not present fake source-management actions.
+- [~] Implement initial status, button and text-readability system.
+- [~] Update superseded E2E tests and add focused V2 regression coverage.
+- [ ] Execute focused Chromium tests and exact-head CI; PR remains unmerged.
+- [ ] Manual device review (iPhone Safari, VoiceOver, long-press, safe-area and virtual keyboard).
+
+## Current implementation state — 2026-10-31
+
+| Requirement | Verified in branch source | Remaining gap | Status |
+|---|---|---|---|
+| 8.1 Sidebar/memory/projects/chats | Shared memory before personal memory; private-context opt-in last; sidebar closes only memory disclosures; project/chat accordion state retained; create dialog separate; existing chat membership preserved; last-closed-chat restore from local storage. | Execute accordion/restore E2E and review spacing/keyboard navigation. | [~] |
+| 8.2 Typography/header | Wordmark and chat title have dedicated styling; theme/language grouped; compact clock breakpoints and header controls. | Final responsive/visual iteration and font-system review. | [~] |
+| 8.3 Settings/providers | aServi, third-party providers and additional settings are separate disclosures. aServi closes peer groups; peer groups cannot open while aServi is open. | Execute E2E; review keyboard and narrow-screen behavior. | [~] |
+| 8.4 Tavily/system prompt | Global prompt defaults to empty; Tavily remains under web-tools settings with a documented decision note. | Complete current search-path audit before any removal or change. | [~] |
+| 8.5 Living notes | Owner checklist remains source of requirements; this ledger tracks implementation separately. | Keep statuses evidence-based. | [x] |
+| 8.6 Navigation | Project filtering, back-to-unassigned and per-project settings are present. | Browser history/back behavior across nested panels remains incomplete. | [~] |
+| 8.7 Project sources | Project settings show a clear unsupported-state explanation: gateway can index/delete/search scoped documents but has no source-list API; chat attachments are not misrepresented as saved project sources. | Implement CRUD only after a real project-scoped source-list contract exists. | [~] |
+| 8.8 Message actions | Message actions use accessible labels and touch-sized controls; viewer close path has focus-return assertions. | Finish icon consistency/tooltips and verify every compact/expanded action. | [~] |
+| 8.9 Backdrop lifecycle | Settings backdrop and project/message modal keyboard/focus paths have targeted E2E assertions. | Audit every dialog, scroll lock, backdrop transition and repeated open/close cycle. | [~] |
+| 8.10 Control sizing | Shared radius, control-height, gap, font and icon tokens; advanced fields, summaries, menus, composer tools and chat-create control consume shared rules. | Apply consistently to remaining controls; run viewport tests. | [~] |
+| 8.11 Theme/language | Header controls are grouped, persistent and tested for 44px hit targets. | Narrow viewport and keyboard review. | [~] |
+| 8.12 Experimental server memory | Removed feature UI, per-chat/server opt-in, automatic project-memory retrieval and stale delegated action cases. Ordinary local/private/shared memory and project-local facts remain. | Audit gateway/backend route ownership and legacy migration references before deleting backend code. | [~] |
+| 8.13 Project context | Project settings expose an existing-chat selector and explicit handoff action. Context is queued for the selected chat's next request, with a five-project cap; chat membership/current chat remain unchanged and no new chat is created. | Run E2E for a non-current target chat and one-shot consumption; pending handoff is currently in-memory/session-only and is lost on reload before sending. | [~] |
+| 8.14 Touch selection | Targeted user-select, -webkit-user-select, touch-action; message text remains selectable; sidebar swipe distinguishes horizontal close from vertical scroll. | Native iOS Safari/long-press testing still required. | [~] |
+| 8.15 Status | Status row is centered and uses neutral, non-gradient text rather than decorative sheen. | Add semantic information/success/warning/error states without fabricated progress; verify reduced motion. | [~] |
+| 8.16 Button typography/icon-first | Shared control typography/spacing and icon-first message actions with accessible names. | Normalize remaining one-off button classes and tooltip coverage. | [~] |
+| 8.17 Readability | Persistent 90–120% text scale and standard/high contrast preference apply in light/dark themes. | Expand contrast handling to links, secondary/disabled/error/status text and add visual contrast checks. | [~] |
+
+### Latest checkpoint — 2026-10-31, browser Back/Forward and modal lifecycle
+
+- PR #131 branch: `feat/landing-v1-accessibility-responsive-20261031`; verified code/test head: `60fb9838d9080fad8420d9bfd97c78faf233b039`.
+- Comparison with `main`: 110 commits ahead / 4 behind; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`.
+- 8.6: browser history now stores nested project-filter and modal entries. Back restores the previous project filter or closes the top modal; Forward restores the saved project filter/modal (including chat-action target/mode); Escape follows the same navigation stack.
+- 8.9: modal lifecycle includes focus entry/return, Tab trapping, body scroll/overscroll lock and shared backdrop cleanup.
+- 8.8/8.16: expanded message view retains accessible copy/speech icon actions, with speech hidden for user-authored messages.
+- 8.13: project settings can hand off context to an explicitly selected existing chat for its next request; no new chat or project-membership change, five-project cap retained, pending state session-only.
+- 8.15/8.17: semantic status/toast states and high-contrast text for secondary/disabled/link/error/status content in both themes.
+- E2E coverage includes nested Back/Forward, modal Back/Forward/repeated lifecycle, chat-action modal Forward restoration, one-shot handoff, viewer controls, semantic status and high-contrast tokens. Playwright/Chromium has not been executed on this exact head.
+- Exact-head combined status and workflow-run queries for `60fb9838d9080fad8420d9bfd97c78faf233b039` returned no entries. No passing CI result is claimed.
+- No merge, deployment, framework migration or dependency addition performed.
+
+## Decision log
+
+- 2026-10-31: V1 is the stable main baseline. PR #131 is renamed **aLandi Landing UI v2.0** and reserved for ongoing V2 interface work. The owner sections 8.1–8.17 are priority requirements, not presumed completed.
+- 2026-10-31: Project sources are not to be represented by placeholder controls. First establish whether existing document/RAG storage has project ownership and supported list/delete semantics.
+- 2026-10-31: Removal of the experimental server-memory UI must not delete ordinary local/private/shared memory.
+
+
+### Follow-up — memory hierarchy and sidebar accordion state
+
+- Requirement 8.1 memory layout now follows shared → personal → personal-context opt-in. Sidebar close collapses only memory disclosures; project/chat accordion state is retained.
+- E2E assertions cover memory block order and preservation of project navigation, projectless and Chats state. Syntax parsing passed; actual Playwright execution remains pending.
+
+
+### Follow-up — last-closed-chat restore coverage
+
+- Added a Playwright scenario that deletes a chat, reloads the application and restores the chat from local storage. The existing restore implementation is now covered for the reload path.
+- Test commit: `2bfc6c080abeef00ed2566e54e0b847f40c11e2d`. Syntax parsing passed; E2E execution remains pending.
+
+
+### Follow-up — project context handoff (8.13)
+
+- Project settings now allow explicit selection of an existing target chat and queue the selected project's context for its next request. The handoff does not change the active chat, create a chat or mutate `projectId`; the request-context cap remains five projects.
+- Fixed the handoff button selector typo in `renderProjectUI()` and added a non-current-chat one-shot E2E scenario. Pending context is currently session-only and does not survive a page reload before the next send.
+- Syntax parsing passed; Playwright execution remains pending.
+
+
+### Follow-up — browser navigation and modal lifecycle (8.6, 8.9)
+
+- Browser history records project-filter depth and every top-level modal. Browser Back and Escape close the top modal or restore the preceding project filter without navigating away from the app.
+- Modal lifecycle now includes focus entry/return, Tab trapping, body scroll lock and shared cleanup for settings, project, viewer, chat-action, research, function and trace dialogs.
+- Added E2E scenarios for nested project Back, project-settings Back and repeated settings/create-dialog open-close. Exact-head Chromium remains pending.
+
+### Follow-up — expanded message actions and semantic status (8.8, 8.15, 8.16)
+
+- Expanded message view now retains copy and speech controls; speech is hidden for user-authored messages. Icon controls have accessible names/tooltips and touch-sized targets.
+- Status and toast elements expose neutral/information/success/warning/error states with restrained theme-aware colors; ticker/status alignment is centered.
+- Added viewer and status E2E assertions. Browser execution remains pending.
+
+### Follow-up — adjustable text contrast (8.17)
+
+- High-contrast preference now adjusts secondary, disabled, link, error and status text in both light and dark themes, while preserving the existing scale preview and reset.
+- Added computed-style assertions for the high-contrast tokens. Visual contrast acceptance and device review remain pending.
+
+
+### Follow-up — browser Forward restoration (8.6)
+
+- Navigation entries are now stored in the browser history state. Forward restores the previously selected project filter or reopens the modal that was dismissed with Back.
+- Added E2E assertions for Forward after both nested project navigation and project-settings Back. Browser execution remains pending.
+
+
+### Follow-up — chat-action modal Forward restoration (8.6, 8.9)
+
+- Browser history entries for chat-action dialogs now retain the target chat and action mode. Forward reconstructs the dialog against the existing chat instead of reopening an empty shell.
+- Added an E2E scenario for Back → Forward → Back on a project-assignment dialog. Exact-head Chromium remains pending.
+
+
+### Follow-up — touch selection regression (8.14, 2026-11-01)
+
+- Expanded the Playwright computed-style regression beyond the send button: it now checks button/disclosure non-selection and manipulation touch action, while input, assistant message text and expanded message viewer remain selectable (including the WebKit-prefixed property).
+- Test commit: `64a1a811bd5531d8095245d649829fd838486821`. This is source-level coverage only; Chromium and native iOS Safari/VoiceOver have not been executed.
+- 8.13 source audit confirms explicit project-to-existing-chat handoff, no automatic project injection based on membership, unchanged chat membership/current chat, five-project cap, and one-shot consumption after successful send. Pending handoff is deliberately session-only; persistence across reload is not required by owner section 8.13 and is not being added without a product decision.
+- PR #131 remains open and unmerged; no deployment.
+
+
+### Follow-up — semantic status and reduced motion regression (8.15, 2026-11-01)
+
+- Added a focused Playwright scenario checking that all five status states resolve to distinct text colors, toast semantic states have visible color/border styling, status and roadmap ticker are centered, and the roadmap marquee is disabled when the browser requests reduced motion.
+- Test commit: `9a6cbe71e3c433bd20b1d0fbddfbd799834019d5`. This is regression source only; Chromium has not been executed and no pass is claimed.
+- Existing implementation already avoids synthetic progress; status timer reports elapsed time and a historical estimate only when available.
+
+
+### Follow-up — icon-first message action consistency (8.16, 2026-11-01)
+
+- Fixed inconsistent duplicate `aria-label` assignments on inline message actions. Copy, open-full-message and local-speech controls now each set one label and use the same value for the tooltip and accessible name.
+- Extended the message-viewer Playwright scenario to verify all inline and expanded-view action labels/tooltips match and all inline message-action targets are at least 44×44px.
+- Code commit: `f1b7792dd6c38af08cf4e3f8979660890a3bea0a`; test commit: `a6ce9eed87d6c239b9f5ea394ab04359939479e2`. Browser execution remains pending.
+
+
+### Follow-up — high-contrast text-state regression (8.17, 2026-11-01)
+
+- Added a focused Playwright scenario for normal, secondary, disabled, link, error and status text. It checks that high contrast changes the five secondary semantic states in both dark and light themes while leaving primary message text unchanged.
+- Test commit: `787c9aaf6026559da31daf51d82f884abdc78c1d`. This adds browser assertions only; Playwright has not been run and no contrast ratio or WCAG conformance is claimed.
+
+
+### Follow-up — sidebar swipe acceptance (8.1, 2026-11-01)
+
+- Added a Playwright regression at mobile viewport size: vertical touch movement must not close the sidebar; a leftward horizontal swipe beyond the close threshold must close it; reopening must preserve the expanded project navigation list.
+- Test commit: `d388a02445ddc1ebccbaec58fd8515b8d0b9adfa`. The event-level regression is added but has not been executed in Chromium or on a physical touch device.
+- Requirements 8.3 and 8.7 already have focused source/E2E coverage: aServi/provider disclosure exclusivity and truthful project-source unsupported state (no fake CRUD controls). Do not duplicate these implementations.
+
+
+### Follow-up — responsive header acceptance (8.2, 2026-11-01)
+
+- Added a Playwright layout regression across 320, 360, 390, 768, 1024 and 1440 CSS px. It checks that the header does not horizontally overflow, the active chat title remains a distinct bordered surface, the clock remains present, the wordmark retains its expressive treatment, and Fast/Thorough controls stay compact.
+- Test commit: `9ff326d40ac0567c1c62c293cb396bcd9c4eba82`. The test is added but not executed; it is not a substitute for screenshot review on real devices.
+
+
+## Legacy checklist reconciliation — 2026-11-01
+
+The older open items from sections 1–7 of V1_UI_FINALIZATION_RU.md and the previous LANDING_UX_POLISH_BACKLOG_RU.md were compared with the current PR #131 source and owner requirements 8.1–8.17. The older audit tables above are historical snapshots; where they disagree with this reconciliation, this section and the latest checkpoint below are authoritative.
+
+| Legacy area | Current disposition | Active follow-up |
+|---|---|---|
+| Composer position, responsive layout and header controls | Implemented in earlier PRs and refined in 8.1/8.2. Do not restore old duplicate composer/header tasks. | Execute responsive E2E; native keyboard/safe-area review. |
+| Provider routing and aServi/third-party separation | Implemented and refined under 8.3; no aServi entry in third-party picker. | Execute disclosure tests; verify error/redaction paths and live status only with owner-approved credentials. |
+| Global system prompt | Empty-by-default and global, not chat-scoped. | Recheck legacy migration and no-default regression; no duplicate implementation. |
+| Tavily/web search | Tavily remains under web-tools settings; keyless fallback and adapter capability must be audited before any removal. | Contract-test fallback/error states; do not remove by assumption. |
+| Dialogs, popovers, focus and backdrop | Shared modal lifecycle and browser Back/Forward/Escape are implemented under 8.6/8.9. | Run repeated-cycle/focus/scroll regressions and native screen-reader review. |
+| Sidebar/projects/chats/import-export | Earlier navigation/import-export slices are retained; current hierarchy is 8.1. | Run accordion/restore/swipe E2E; long-list and native gesture review. |
+| Research Studio, agents, skills and connectors | Existing Research Studio uses active-chat settings; no independent agent swarm or fake marketplace is claimed. | Audit capability labels, registered entities and permissions; verify no mode conflation. |
+| Landing page visual polish and ticker | Landing structure, pause controls and reduced-motion behavior exist. | Screenshot, keyboard/screen-reader and published Pages review. |
+| Project Sources | No source-list API exists in the gateway. | Keep unsupported-state; no CRUD until a real scoped API is available. |
+
+### Unified remaining work — current priority
+
+1. **P0 — execute exact-head checks:** focused Playwright/Chromium for 8.1–8.17; Gateway tests including secret redaction and graph-bridge retirement; then full Quality, Freshness, Provenance, Graphify and Dead Code where available. Tests currently exist as source but have not been executed on the current head.
+2. **P1 — device/accessibility acceptance:** native iPhone Safari keyboard/VisualViewport/safe-area/touch/rotation; VoiceOver and keyboard-only; real WCAG contrast-ratio audit in both themes.
+3. **P1 — visual acceptance:** screenshots at 320/360/390/768/1024/1440 px; review header, sidebar, composer, dialogs, long labels, empty/error states, typography and spacing; complete RU/EN and light/dark review.
+4. **P2 — interaction stress:** long project/chat lists and messages, nested scrolling, popover edge placement, rapid modal cycles and focus restoration.
+5. **P2 — truthful feature surfaces:** verify Research/Agents/Skills/Connectors labels and permissions; distinguish web-search breadth, offline and sequential pipeline from independent agent runtime; finish Tavily/keyless fallback decision and provider/gateway mock error states.
+
+Not active UI work: project-source CRUD without a gateway list contract; persistence of the 8.13 pending handoff across reload (not required); adding providers/connectors/OAuth/cloud sync or runtime capabilities without owner approval.
+
+### Current checkpoint — 2026-11-01, after checklist reconciliation
+
+- PR #131 branch: feat/landing-v1-accessibility-responsive-20261031; PR remains open and unmerged; V1 in main is unchanged.
+- Current known code/test head before these documentation-only reconciliation commits: 8f68c2cc4b4b01a1917e32f75f7d5016517d41c3.
+- Requirement 8.12 graph bridge/UI removal and gateway secret-redaction regressions are implemented in source; their tests are not executed.
+- Requirements 8.1–8.17 have implementation and/or focused regression source, but exact-head Playwright/Chromium and full CI results are absent. Native iPhone/VoiceOver and WCAG ratio checks remain manual.
+- Do not claim CI/E2E pass, merge or deploy. Continue from P0 exact-head verification, then resolve confirmed failures before more UI scope.
+
+
+### Documentation reconciliation follow-up — 2026-11-01
+
+- Canonical owner queue is section 8.0 in V1_UI_FINALIZATION_RU.md; the older pre-8.1 checklist is historical V1 context, not a parallel active queue.
+- The concise polish register, project state, orienter, Volley log and PR body now point to the same residual work.
+- Latest code/test head remains 8f68c2cc4b4b01a1917e32f75f7d5016517d41c3; subsequent commits are documentation-only. The latest documentation head is intentionally read from live PR #131 metadata because documentation-only commits may advance it.
+- P0 exact-head verification remains the next action; workflow/status queries returned no entries. No test pass, merge or deployment is claimed.
+
+
+### Source audit follow-up — 8.4 and capability-menu truthfulness (2026-11-01)
+
+- Re-read the current PR branch index.md around settings, search-mode controls, function panels, localization strings and prompt migration.
+- Confirmed the search menu distinguishes standard coverage, expanded result/source coverage and offline web-tools; the copy explicitly says expanded search does not change execution budget and offline does not make a cloud API local.
+- Confirmed the function panel describes the agent mode as four sequential stages on the selected model; the 1–50 role/team setting is explicitly a saved blueprint, not 50 independent agents. The connector panel says no external integrations are connected and exposes no placeholder switches. RU and EN descriptions are present.
+- Confirmed Tavily remains optional with an explicit pending decision note, while the global user prompt is empty by default and the legacy built-in prompt is normalized to empty. No duplicate prompt implementation or premature Tavily removal is needed.
+- No source-level contradiction was found in these inspected surfaces. The Tavily/keyless-search decision and runtime/provider error tests remain open; this source review is not browser or live-provider verification.
+- Relevant source: index.md (searchToolsSettings, searchModeMenu, functionsMenu, functionPanelModal, DEFAULT_SYSTEM and legacy prompt normalization).
+
+
+### P0 source inventory — exact-head verification preparation (2026-11-01)
+
+- Inspected the current branch workflow definitions. `.github/workflows/quality-sentinels.yml` runs on every pull request and contains integrity, security, context, Jekyll build, Chromium browser E2E, published-site smoke and static-analysis jobs. `.github/workflows/gateway-tests.yml` runs on pull requests that change `gateway/**` (this PR does) and defines compileall, manifest/INTEL checks, `pytest gateway/tests`, deploy-preflight and offline six-layer evaluation.
+- Source inventory on the branch: `tests/e2e/app.spec.mjs` contains 90 Playwright test declarations; `tests/e2e/landing.spec.mjs` contains 8; `gateway/tests/test_app.py` contains 36 pytest test functions.
+- Confirmed `gateway/app.py` contains no graph-memory HTTP route/flag references. Gateway regression source includes health-probe secret checks, invalid Bearer token non-echo, and upstream error-body redaction.
+- Exact current PR head after the change-log correction: 1ea321ddcd8e81379d572565636b6d0ee1424772. GitHub workflow-run and combined-status lookups return zero entries for this head. The workflow YAML is configured to trigger on PRs, but no run result is currently visible; do not infer pass/fail or treat source inventory as execution.
+- Execution blocker: this environment has GitHub read/write repository operations but no workflow-dispatch action and no outbound network for a local clone. Therefore Gateway pytest, Playwright/Chromium and Quality jobs cannot be executed from this session. Continue by obtaining an actual GitHub Actions run through the repository's normal PR workflow; do not replace execution with syntax/source inspection.
+
+
+### Gateway verification evidence update — 2026-11-01
+
+The earlier note that Gateway tests were unexecuted is superseded by the subsequent exact workflow inspection:
+
+- GitHub Actions run **#640** (`Lite Gateway Tests`, run ID `41280622385`) completed successfully on commit `6f7fde485b2b13aecc50523b20785e0ac615d2ad`.
+- Every step passed: dependency install, Python compileall, manifest/INTEL validation, `pytest gateway/tests`, deployment preflight and six-layer offline evaluation.
+- A compare from that tested commit through the current PR documentation head `579666d45964f56a4e68e3997293a288d7fd1553` shows **no changes under gateway/**. Therefore the current Gateway source and Gateway test files are identical to the successfully tested state.
+- This is valid evidence for the current Gateway code, although the workflow did not run on the latest documentation-only HEAD. It does not verify current Playwright/Chromium or full Quality behavior.
+
+
+### P0 browser-workflow audit and branch safety — 2026-11-01
+
+- Inspected `.github/workflows/quality-sentinels.yml`, `playwright.config.mjs` and `tests/e2e/landing.spec.mjs`.
+- Confirmed the PR browser job builds the branch with Jekyll and runs `npx playwright test --grep-invert "live public site serves the app shell and basic chat controls"`. Without `LIVE_SITE_URL`, Playwright serves the built `_site` locally at `http://127.0.0.1:4173`; therefore the 8 landing tests are included against the PR build, not only after deployment. The separate live-site smoke tests the published V1 site and is not evidence that V2 has been deployed.
+- Gateway run #640 is a verified pass and remains applicable to current Gateway code because no `gateway/**` files changed after the tested commit. This closes the Gateway P0 sub-gate; it does not close Quality/Chromium.
+- Current PR #131 compare against main: 197 commits ahead / 4 behind; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub reports `mergeable=false`. Main-side changes are confined to `docs/V1_UI_FINALIZATION_RU.md`; line-level content comparison shows the PR branch already contains the substantive new main-side requirement lines, while replacing the older polish wording and adding section 8.0. Still, do not merge/rebase/sync automatically: inspect the four main-side commits and preserve both histories before any pre-merge operation.
+- Exact PR-head Quality/Chromium run and combined status remain unavailable through the current Actions lookup. The workflow YAML has a PR trigger; no pass is inferred from configuration. The next verification is to obtain an actual Quality Sentinels run on the current PR head and inspect the browser job result/logs.
+
+
+### Current PR checkpoint — 2026-11-01
+
+- PR #131 remains open and unmerged. Live branch compare: 199 commits ahead / 4 behind `main`; merge base `e78a73b25725bfa63370d9946887cbbacbf51b82`; GitHub currently reports `mergeable=false`.
+- The four main-side commits modify only `docs/V1_UI_FINALIZATION_RU.md`. A line-level comparison confirms the PR branch contains the substantive current main-side requirement lines plus its consolidated section 8.0; however, no branch sync/rebase/merge has been performed.
+- Gateway P0 sub-gate is closed by Actions run #640. Browser/Quality exact-head evidence remains unavailable; the workflow definition is not a test result.
+- Separate continuity backup is staged as draft PR #132, changing only `ORIENTER.md`, `docs/PROJECT_STATE.yaml` and `docs/VOLLEY_LOG.md` outside PR #131. It is not merged.
+- Owner rule: no merge, close, retarget, force update or deployment of either PR without explicit owner instruction.
+
+
+### CI separation and current verification — 2026-11-01
+
+- Separate safety PR #132 has completed its own checks on its own documentation-only branch: Quality run #1114 passed all jobs, including Jekyll, Integrity, Security, Context, Ruff/static analysis, and Chromium; browser log reports **98 passed** against the main/V1 tree. Published GitHub Pages smoke also passed (**1 passed**). Freshness #258 passed the 16 deterministic unit tests and exact live queue check (main `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`, 8 open PRs excluding #132, issue #111); Provenance #798 passed.
+- These runs validate main/V1 plus the documentation backup only. They are **not** evidence for Landing V2 code in PR #131 and must not close its browser gate.
+- PR #131's current head `5a5b6636bd5878c597e1d25926b58a43771836ab` has no Actions runs exposed by the current exact-SHA lookup. Gateway run #640 remains applicable to its unchanged `gateway/**` tree.
+- Next bounded step: create a documentation-only PR-head checkpoint to request the normal `pull_request` Quality workflow for PR #131; then inspect the exact run, Chromium test count/log and all required sentinels. No main→feature sync, rebase, merge or deployment is authorized/performed.
+
+
+### P0 Quality Sentinel diagnosis — 2026-11-01
+
+- Inspected the owner-dispatched run [#41285658893](https://github.com/DorpNay/skills-github-pages/actions/runs/41285658893), which executed on older PR SHA `d822cb623b2a72642921654a04e6c9d988091834`, not the latest branch head.
+- Confirmed passing jobs: Security sentinel, Jekyll build sentinel and independent static analysis (Ruff gate; Bandit/Semgrep advisory). The Chromium job remained in progress at the last status read.
+- Context and Integrity failed because `scripts/quality-agents.mjs` still asserted removed/renamed UI controls and the retired server-memory graph bridge, and expected old memory-context wording. These were test-harness drift, not evidence of a regression in the current UI/memory implementation.
+- Corrected the sentinel expectations: current project memory-scope selector and private-memory opt-in; explicit shared-memory scope gating; absence of the retired graph HTTP bridge; current shared/private context wording; current required UI element IDs. A second stale assertion expected a hidden internal `providerPrimaryGroup`; the current UI intentionally has an external-only provider picker and a separate first-party aLandi card, so the sentinel now verifies that separation and the saved-provider fallback. No application code or security guard was weakened.
+- Harness commits: `1b30cae806469fa5ef1cf8325a41094c54d042a2`, `5d01a7da02207665ce480a68eba99ce7efbc08a9` and `d94d842608c07aa8def4b5fdc89ed95b80524034`. Static source audit against the latest app source confirms all 189 literal `includes(...)` expectations in the quality sentinel are present, and all current required UI IDs exist. This is a source-level cross-check, not an executed CI result.
+- Exact-head Quality/Chromium rerun is still required; the latest quality-harness commit at this checkpoint is `d94d842608c07aa8def4b5fdc89ed95b80524034`. Freshness, Provenance, Graphify and Dead Code gates remain to be checked where available. PR #131 stays open/unmerged; no deployment.
+- Next: run Independent Quality Sentinels on the latest PR head, inspect all job conclusions and Chromium output, then continue P1 device/accessibility acceptance.
+
+### P0 Chromium runtime correction — 2026-11-01
+
+- Exact-head Quality run #1124 / run ID `41287868283` executed on `b6a3db77fb9bbf8375f8b9d9010365a0e9010158`. Jekyll, Security, static analysis, Context and Integrity passed. Chromium was cancelled when the job reached its configured 15-minute timeout; the local Jekyll server remained healthy and Playwright had started 118 tests, but no final per-test summary was emitted. The progress stream contains failures/timeouts; their identities are not recoverable from this interrupted run, so no individual test is marked passed or failed.
+- The suite was serialized by `fullyParallel: false` and `workers: 1`, which made the 15-minute job budget inadequate. Updated `playwright.config.mjs`: independent tests run fully parallel with 3 CI workers and both GitHub/list reporters. Each test receives its own Playwright context and the app test setup clears browser storage; no shared mutable browser context is used.
+- Updated the Chromium job timeout to 20 minutes and changed diagnostics upload to `always()` so traces/results can be retained after interruption. Commits: `6bba3e8`, `d0d38d8`, `14d9dc9`.
+- These are test-infrastructure corrections only. The current branch head is `14d9dc9789dfc958d99685d36a7649ada8ce5120`; a new exact-head Quality/Chromium run is still required. Native iPhone Safari, VoiceOver and measured WCAG contrast remain manual gates.
+
+### 8.10 shared touch-target normalization — 2026-11-01
+
+- Source audit found several compact controls below the project's 44px touch target: chat-row action summaries (36px, and 30px in project chat rows), language-menu options (36px), settings header actions (36px override), project disclosures and toolbar summaries without a shared minimum, and memory-item action buttons.
+- Added a final shared CSS sizing rule using `--ui-control-touch` for those controls. Existing layout and action behavior are preserved; no new controls or runtime features were added.
+- Extended the mobile Playwright touch-target regression to create a chat and measure its row-menu summary, and to open the language menu and measure an option. Existing sidebar/settings/project modal target checks remain.
+- Code/test commits: `6e75dbf368b71ccd1660873d5cd0f9870cf58119`, `441d5da57b80399228c0a520d7a867ae3fc5371b`, `2d25b12f100b246a929fc6921dfb44971f7d50e3`. Browser execution is pending; the prior Chromium run was cancelled before its final report. Re-run the full suite on the latest branch head before marking 8.10 complete.
+
+### Current code/test head after 8.10 touch-target work — 2026-11-01
+
+- Latest UI/test commit: `2d25b12f100b246a929fc6921dfb44971f7d50e3`; documentation and continuity updates follow it.
+- The only Quality run on the branch remains #41287868283 on older SHA `b6a3db77fb9bbf8375f8b9d9010365a0e9010158`, where Chromium was cancelled by the 15-minute job timeout. Later pushes have produced Provenance runs, but no Quality run on the current code/test head is visible.
+- Request an `Independent Quality Sentinels` workflow-dispatch run on the current branch head. Do not mark the new 8.10 assertions or the full Chromium suite passed until that run completes.
+
+### Chromium run #1125 diagnosis and correction batch — 2026-11-01
+
+- Exact-head Quality run #1125 (`41289724442`) on `e0e0f80e678e6b418690ba9f33b808a29fe22fef`: Jekyll, Security, Static Analysis, Context and Integrity PASS. Chromium completed in 11 minutes and reported 78 passed, 38 failed, 2 flaky. Diagnostics were uploaded as artifact `playwright-diagnostics` (artifact ID `13077550536`). The published-site smoke steps were skipped because local Chromium failed.
+- Confirmed stale E2E contracts corrected: provider settings are `#thirdPartyProviderSettings` (not retired `#legacyProviderSettings`); Research Studio is opened from `#functionsMenu` (not the sidebar); language changes use the visible header language menu (the backing `#uiLanguage` select is intentionally hidden); the aServi group is open by default; the Research menu has four options; the new-chat action is outside `#chatSection`.
+- Provider connectivity checks send `Reply with exactly OK. No other words.` before a real chat. Test fixtures for multi-agent, 401, model fallback and web-search budgets now distinguish this probe from user requests so call counts assert the intended behavior.
+- Confirmed source fixes: preserve a 54px clock face at <=360px instead of shrinking to 42px; ensure `.message-actions button.hidden` is actually hidden so the message-viewer speech action is absent for user messages.
+- Additional test/CI corrections: project chat navigation now returns to the personal-chat scope before creating a personal chat; the status fixture answers connectivity probes immediately and only blocks the actual user request; the semantic ticker assertion uses the first matching track; CI uses 1 worker, a 30-minute Playwright global timeout and a 35-minute Chromium job timeout to reduce resource contention while retaining the full suite.
+- Code/test commits in this correction batch include `003f2f3`, `7ff1e28`, `6fea65d`, `dfde158`, `6aca858`, `ffd5d7c`, `174747f`, `4f3e387`, `984de39`, `b91988d`, `2735e31`, `cbb6282`, `b59ac0f`, `7060ba6`, `b42797c`. These changes have not yet been exercised by a new Quality run.
+- Remaining failures to verify after rerun: high-contrast disabled text state; aServi/provider/additional disclosure transitions; project/chat scope and handoff flows; message viewer actions; same-provider model fallback and 401 request count; new 44px touch targets. Native iPhone Safari, VoiceOver and measured WCAG contrast remain manual gates.
+- PR #131 is still open and unmerged. GitHub currently reports `mergeable_state=dirty`; treat this as a merge-conflict blocker to investigate separately before any merge. No deployment was performed.
+
+### 8.11 compact, separate theme and language controls — 2026-11-01
+
+- Replaced the combined `☼ RU` dropdown with two adjacent controls: a compact icon-only theme toggle and a language selector showing the current locale. Both reuse the existing `.header-icon` design token, preserving equal 44px touch targets; language menu now contains language choices only.
+- Updated `updateHomeThemeButton()` to localize accessible names/tooltips and expose the current theme with `aria-pressed`; theme switching remains immediate and persistent, language selection remains in the existing menu.
+- Updated the shared theme-toggle helper and added E2E coverage for equal geometry, accessible names, narrow 320px overflow, theme switching, and language selection. A prior compact-group test now checks both controls separately.
+- Code/test commits: `9433cca`, `6b7236e`, `669b808`, `652c3b4`. Browser execution remains pending; 8.11 is not marked complete until exact-head Quality/Chromium passes.
+
+
+### Chromium run #1126 diagnosis and corrective batch — 2026-11-01
+
+- Exact-head Quality run #1126 (`41291438804`) on `7cdf35d581d9d6bca39256e67a0b0db6083e486c`: Jekyll, Security, Static Analysis, Context and Integrity PASS. Chromium completed with 101 passed and 18 failed; diagnostics artifact ID `13077583320`. Published-site smoke was skipped after local Chromium failed.
+- Confirmed contract drift in the remaining local-gateway tests: aLandi is configured in the separate aServi card, not the third-party provider preset. The aLandi provider, audio and PDF fixtures now configure aServi fields, answer the exact connectivity probe, and return a successful `/healthz` response before the user-path assertion.
+- Corrected E2E assumptions: project settings leave the sidebar open; private memory controls require expanding `#memoryToolsDetails`; the project-create modal has two close actions; header language selection does not open the settings modal. Research Studio checkbox coverage now clicks its visible label.
+- Source corrections: narrow 320px header uses reduced horizontal padding and compact wordmark; disabled text in the chat fixture receives the high-contrast token despite the chat container's ID-level styles; Research Studio close hides immediately and then cleans its matching browser-history entry.
+- Corrective code/test commits include `53c384a`, `54e90c3`, `a793f5d`, `8302b8f`, `ecc5118`, `c9c1df9`, `929ebcf`, `6845b8a`, `e64cfad`. Current code/test head: `929ebcf20db87eca949c6f5a386c16e75f2856a1`; exact-head rerun is required before closing 8.11 or declaring the suite green.
+- Remaining manual gates unchanged: native iPhone Safari/VoiceOver, multi-breakpoint screenshot review, and measured WCAG contrast ratios. PR remains open/unmerged; no deployment.
+
+
+### aServi naming and deterministic script loading — 2026-11-01
+
+- Renamed primary-route action identifiers and JS handlers to aServi; aligned app markup, Playwright selectors and Quality Sentinels static contracts. The first-party server card and status indicator use the `aservi*` DOM contract.
+- Preserved existing `ai_alandi_cloud_*` localStorage keys as backwards-compatible storage identifiers. They are not user-facing labels; migration/deletion is deliberately avoided to protect existing connections.
+- Updated the card/group label to `aLandi aServi`; Cloudflare remains a separate provider/infrastructure brand. `aLandi aCloudi` is reserved only as a possible future information-storage product name.
+- Externalized the 48.1 KB app stylesheet and 10.4 KB public landing stylesheet into cacheable `assets/css/app.css` and `assets/css/landing.css`. This reduced `index.md` from 109.3 KB to 61.3 KB and `landing/index.html` from 26.1 KB to 15.8 KB without changing CSS rules.
+- Changed Marked and DOMPurify script loading from `async` to ordered `defer`, ensuring both utilities execute in document order before the deferred application runtime. The app runtime remains external in `assets/js/app.js`; no inline executable JavaScript, framework, dependency or new build step was introduced.
+- Static assertions were updated, but this is not a substitute for exact-head Chromium. Browser verification remains pending.
+
+
+### Research Studio placement clarification — 2026-11-01
+
+- Research Studio is not a standalone product area, sidebar item or top-level Functions entry. Its single entry point is nested directly under the effort/deep-research controls (`#deepResearchStudioButton`).
+- The window remains a helper for configuring the active chat's research settings; it preserves the composer draft and does not start a request on open/close. The existing E2E suite follows this entry point.
+- Roadmap visibility is intentional: planned sections/windows remain visible and can be configured ahead of runtime delivery. Under-development areas use the shared ticker; unavailable actions must not pretend to succeed or mutate user data.
+
+- Project source management remains visible inside project settings and now has the shared roadmap ticker plus localized explanation; it does not expose fake source actions while the gateway source-list API is absent.
+### Chromium contract correction — Research Studio and cancelled sidebar gestures (2026-11-01)
+
+- Reconciled an E2E assertion left behind by the earlier navigation layout: `index.md` exposes Research Studio only through `#deepResearchStudioButton` under the deep-research controls; it is absent from both the sidebar and the Functions menu. The sidebar-order test now asserts that exact contract instead of expecting the retired Functions-menu entry.
+- Extended the sidebar swipe regression: a vertical gesture must not close the sidebar; a horizontal gesture cancelled by `touchcancel` must also leave it open; only a completed deliberate horizontal swipe closes it. This preserves the browser's right to cancel touch input when it takes over scrolling or viewport manipulation.
+- Test commits: `df4faa9ee8c57a458fef3804db2153297c325375` (Research Studio selector contract), `69ff6ad8b574fdcd05e9c292db2a6f02448996aa` (cancelled swipe coverage).
+- Source research: Playwright recommends one CI worker for reproducibility, a bounded global timeout, and traces on the first retry rather than tracing every test. Modern Chrome Headless shares the browser implementation with headful Chrome. VisualViewport and touch/pointer cancellation remain distinct mobile behaviors; Chromium does not replace native iOS Safari/VoiceOver acceptance.
+- Official references: https://playwright.dev/docs/ci ; https://playwright.dev/docs/best-practices ; https://playwright.dev/docs/trace-viewer-intro ; https://developer.chrome.com/docs/automation-and-testing/headless/ ; https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport ; https://developer.mozilla.org/en-US/docs/Web/API/Element/pointercancel_event ; https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/touch-action
+- Validation boundary: the test source was updated and reviewed against the current markup/handler. No Playwright/Chromium run has been executed on this new head; this is not a test pass. Native iPhone Safari remains unverified.
+
+
+### App identity and native theme metadata — 2026-11-02
+
+- Replaced the stale root-app title `AI Mobile Agent v10.0` with `aLandi — личная AI-среда` in Jekyll front matter and the browser document title.
+- Aligned the site-wide Jekyll title/description with aLandi and added a concise app description for browser/search metadata.
+- Changed the app's `color-scheme` hint to `dark light`, matching the existing user-selectable light/dark themes instead of advertising dark-only controls.
+- Added deterministic Quality Sentinel and Playwright assertions for the page title, description and color-scheme metadata. These assertions are committed but not yet executed in Chromium.
+- No JavaScript runtime behavior, provider routing, stored data, dependencies or deployment settings were changed.
+
+
+### GitHub repository hygiene checkpoint — 2026-11-02
+- Read-only inventory at the major-slice boundary: main `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; PR #131 was `5b9aa7abcc70fc1fa6f3c0fba402e025cb44c772` at the inventory snapshot.
+- 126 branch refs and 9 open PRs; 117 refs are not open-PR heads and require individual PR/issue/ancestry/reference review before cleanup.
+- Rulesets endpoint returned 0; classic main protection unknown (integration 403); delete-branch-on-merge disabled.
+- Standard CODEOWNERS, SECURITY.md and Dependabot config files were not found; account-level security settings unverified.
+- Provenance passed on the audit snapshot; exact-head Quality/Chromium absent. Previous Quality #1126 (101 passed / 18 failed) is stale.
+- No deletion, settings mutation, rebase, force-push, merge or deployment. See `docs/REPOSITORY_HYGIENE_RU.md`.
+
+
+### CSS cascade cleanup — 2026-11-02
+
+- Removed 504 bytes of legacy CSS declarations that were unconditionally overridden later in the same stylesheet: the old body gradient, duplicate body font-family, the earlier focus outline rule and settings-surface background/border declarations superseded by theme tokens.
+- Kept the effective system UI font stack, Tiffany focus-visible tokens, theme-driven surface colors, settings shadow and backdrop blur unchanged.
+- Static CSS brace balance remains zero. This is a cascade/source cleanup; no browser visual regression run has been executed yet.
+
+
+
+### aServi persistence compatibility note — 2026-11-02
+
+- Added an inline source comment above ASERVI_STORAGE explaining that the ai_alandi_cloud_* localStorage names are intentionally retained persistence identifiers, not current product/UI labels.
+- This prevents a future cleanup from silently renaming keys and disconnecting existing saved server settings. No migration or storage mutation was performed.
+
+
+
+### Integrated UI and Graphify checkpoint — 2026-11-02
+
+- Reconfirmed owner scope: finish the remaining applicable requirements inherited from sections 1–7 together with 8.1–8.17. Section 8.0 is the single open-work register; old V1 statuses remain historical and must not create a parallel queue.
+- The existing polish register is a concise mirror, not an independent source of tasks. Detailed implementation/test evidence remains here; owner requirements remain in `V1_UI_FINALIZATION_RU.md`.
+- Latest UI source checkpoint: `9aa74853478a6a680cdd36ab0f84c851721405a4`. Latest PR #131 branch head after the Graphify workflow change: `c8facdac2eebc7d2217b807f1b7e314ae3abf2dd`. The new workflow commit changes only path filters; it does not change app runtime behavior.
+- Found and fixed a Graphify coverage gap: the code-only pilot now watches `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html` in both PR and main-push path filters. This is important because the app runtime and landing/app CSS are externalized from the original Markdown/HTML sources.
+- Graphify has not yet been confirmed on this new head; inspect the run and artifact before recording graph metrics or architecture findings.
+- Exact-head Quality/Chromium is still pending. No browser pass, merge or deployment is claimed.
+- The next implementation pass must remain cross-cutting: sidebar/chat restoration, responsive header/composer, provider and settings state, modal/browser history/focus, message actions, explicit project handoff, touch behavior, semantic status/reduced motion, readable theme states, and truthful Research/Agents/Skills/Connectors surfaces.
+
+
+### Windows Forced Colors accessibility — 2026-11-02
+
+- Added a forced-colors media override: keyboard focus uses the system Highlight color, interactive controls use ButtonText borders, invalid controls use Mark, and status dots retain a CanvasText outline.
+- Added a Playwright E2E contract using page.emulateMedia({ forcedColors: 'active' }) to verify the media mode and a visible 2px keyboard focus outline.
+- The API is supported by the project's pinned Playwright 1.56.1 (forcedColors emulation has been available since Playwright 1.15). This test has been added but not executed yet.
+- This complements the app's existing user-selectable high-contrast text preference; it does not claim native Windows assistive-technology acceptance.
+
+
+## Product proposal audit — 2026-11-02
+
+**Scope:** owner proposals 8.18–8.27 were compared with the current PR #131 source. They remain candidate improvements, not mandatory requirements. This is a source inspection, not a browser verification. The latest known runtime/source checkpoint remains 9aa74853478a6a680cdd36ab0f84c851721405a4; current PR branch head is later because of documentation/workflow commits.
+
+| Proposal | Existing mechanism found in source | Actual gap / conflict to avoid | Recommendation |
+|---|---|---|---|
+| Unified interaction lifecycle | uiNavigationStack + History API; modal ids and individual closers; popstate restores project filters/modals; shared body scroll lock; topmost modal selection and focus handling. | Close paths and per-modal cleanup remain distributed. A second router/history stack would conflict with the existing one. | Consolidate behind the current manager in a bounded refactor; test outside-click, rapid cycles, focus return and scroll restoration before changing markup. |
+| Notifications / operation states | One global toast node now has FIFO queueing, duplicate suppression, urgency-based durations, pause on hover/focus/hidden tab, polite/status vs assertive/alert semantics and optional bounded action buttons; searchStatus still reports active generation timing. | Durable operation records/IDs, pending-to-result updates, inline recovery and one shared operation lifecycle remain absent. | Extend the existing toast/status APIs with stable operation IDs and real pending/success/failure/cancel states; retain inline field errors and do not add another notification library. |
+| Undo | Last deleted chat retains seven-day recovery plus immediate toast Undo; project/personal chat moves and chat rename have bounded toast Undo with conflict checks. | No persistent command history; project deletion/cascade and settings still have no Undo. | Extend the existing recovery model only for safe local inverse operations. Do not promise undo for external provider calls. |
+| Chat/project organization | Separate projectless/project chats; project filtering and back-to-all; project gear; chat menu with rename/clone/export/move/clear/delete. First user message sets initial title once; manual rename exists. Project memory is stored on project and has project-only/project-and-global scope. | No title search, pinning or user-defined folders were found. Avoid auto-renaming after manual rename and avoid a second memory store. | Start with local title search, pinning and stable sort. Defer folders until the flat collection model proves insufficient. |
+| Adaptive workspace | Responsive single chat surface; mobile sidebar drawer; modal panels for project/settings/research. | No docked project/source inspector or multi-model comparison surface was found. | Use one DOM and CSS Grid with one optional desktop inspector as the first slice. Tablet gets a switchable panel; phone remains sequential. Model comparison requires explicit cost/privacy/concurrency design. |
+| Files and sources | Composer stores pending File objects and data URLs in in-memory state; supports images/video frames/audio/docs and local-gateway extraction; chat/project export exists. Project Sources explicitly explains missing source-list API. Research trace can retain source URLs and metadata. | No persistent unified file library, reusable project-source list or first-class generated-file registry was found. A local OS path cannot be treated as a durable browser permission. | Define file metadata and provenance first. Separate origin from processing state. Keep Project Sources CRUD blocked until a real scoped source-list API exists. File System Access API is progressive enhancement only. |
+| Contextual actions | Chat-row action menu, project gear, message copy/speech/view actions; provider/model selection and search are present. | File/model contextual action surfaces are incomplete. Global settings should not become a second object-action menu. | Extend existing object menus only when the action is real and supported. Keep primary actions visible and rare/destructive actions under ⋯. |
+| Offline recovery | Chats/current chat persist to localStorage; corrupt history is backed up; text drafts persist per chat and flush on debounce, hidden-tab visibilitychange and pagehide; composer shows a separate navigator.onLine warning and offers manual retry only. isGenerating/isPreparingDocumentAttachments guard duplicate local invocation. | Attachments remain in memory; navigator.onLine is not API health; no provider-wide idempotency contract or persistent attachment recovery exists. | Design IndexedDB-backed attachment recovery with quota/privacy bounds; preserve explicit retry and explain uncertain remote acceptance on timeout. Add idempotency only where gateway/provider contract supports it. |
+| Accessibility / one hand | 44px targets on several primary controls; reduced-motion CSS and user setting; readability scale/contrast; modal keyboard/history handling; sidebar swipe and touch-selection rules. | Full VoiceOver/iPhone Safari/Forced Colors and all-component hit-area/contrast review remain open. | Treat as a continuous acceptance gate, not a final cosmetic pass. Keep gestures local and cancel-safe; one-handed placement is lower priority. |
+| Scenario-first UX | Thorough/deep research and nested Research Studio; project settings, explicit context handoff, composer attachment flow. | No dedicated end-to-end scenario entry points for research/file/project work were found. | Build around existing composer and contextual surfaces; avoid a new dashboard or wizard. Research Studio remains nested under deep research. |
+
+### Important implementation facts
+
+- showToast() uses one shared node with FIFO/deduplication, differentiated durations, pause-on-attention/hidden-tab, ARIA urgency and optional bounded action buttons; it is still not a durable operation lifecycle manager.
+- showStatus() is tied to generation timing, but the toast system is separate. The new design must unify their semantics without hiding the useful elapsed-generation status.
+- deleteChat() stores the deleted chat in the existing last-closed-chat recovery slot and exposes an immediate Undo action only while that slot still points to the same chat; the seven-day sidebar restore remains intact.
+- deleteCurrentProject() deletes its project chats after confirmation. It currently has no transactional restore.
+- moveChatToProjectWithUndo() guards stale inverses by checking the chat's current project assignment and original project existence. Chat-delete Undo similarly checks the last-closed slot's chat ID.
+- Chat rename Undo restores the previous title only while the current title still matches the value written by that rename; a later rename is never overwritten.
+- sendMessage() exits while generation/document preparation is active; this prevents local double invocation. It does not establish exactly-once delivery after an ambiguous network timeout to arbitrary third-party providers.
+- Chat history is stored in localStorage. Draft text is not saved as a recoverable per-chat draft in the inspected runtime; pending attachment state is in memory.
+- updateOfflineUI() describes the web-search mode. It is not a reliable online/offline connectivity indicator.
+- Project Sources CRUD remains unsupported because the gateway lacks a scoped source-list API. Existing attachment handling must not be represented as persistent project sources.
+- Existing source code keeps ai_alandi_cloud_* storage keys for compatibility. Repository/product branding cleanup must not rename persisted keys or break saved provider state.
+
+### Repository identity audit
+
+The repository still contains four GitHub Skills exercise workflows: .github/workflows/0-start-exercise.yml, 1-step.yml, 2-step.yml, 3-step.yml. They reference skills/exercise-toolkit and skills/action-*. The first workflow listens to pushes on main, has contents: write, and its dependent job creates/replaces _config.yml and index.md if the exercise workflow proceeds. The repository template flag and actual run history were not available in this audit, so the workflows were not removed. Verify both before cleanup. The associated .github/steps/1-step.md–4-step.md are exercise instructions; temp/1 and temp/2 are historical research notes with some GitHub Skills template references and must be reconciled/archived before any deletion. Issue #1 is already documented as a closed historical exercise.
+
+Keep the actual aLandi task-profile files under skills/*.txt; they are not the GitHub Skills exercise scaffold. Preserve the Jekyll/Pages publishing mechanism and current Quality/Security/Graphify/deploy automation.
+
+GitHub's repository rename guidance explicitly says project Pages URLs are not redirected by a rename. Therefore a rename to aLandi/alandi must wait for a stable custom domain and a migration checklist covering Jekyll baseurl, canonical/OG URLs, absolute links, OAuth redirect URIs, Pages publishing and published-site smoke.
+
+### Open-source patterns reviewed — no dependencies added
+
+- [KittyGiraudel/a11y-dialog](https://github.com/KittyGiraudel/a11y-dialog) — MIT, small framework-agnostic dialog helper; useful for focus/ARIA/close behavior. Reference only: current modal manager already exists and should be improved rather than replaced blindly.
+- [nathancahill/split](https://github.com/nathancahill/split) — MIT, zero-dependency split-view sizing utilities; candidate only if the desktop inspector slice is approved and CSS Grid alone is insufficient.
+- [agrinko/js-undo-manager](https://github.com/agrinko/js-undo-manager) — MIT, no-dependency command/transaction pattern; design reference, not a package recommendation without a current maintenance and integration review.
+- [vscarpenter/scratchpad](https://github.com/vscarpenter/scratchpad) — useful local-first patterns for IndexedDB drafts, recovery and trash; repository license was not verified in this pass, so do not copy/vendor its code.
+- [kea0811/headless-toast](https://github.com/kea0811/headless-toast) — useful state-store pattern for stable IDs, loading-to-success replacement, pause-on-focus and ARIA roles; its React-oriented API is not a reason to add React to aLandi.
+- [MDN IndexedDB API](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) — browser-native storage for structured data and Blob/File objects; suitable for larger drafts/attachments than localStorage.
+- [MDN File System API](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API) — explicit picker/permission/handle model; secure-context and browser-support constraints mean this is an optional enhancement, not universal file-path access.
+- [GitHub — Renaming a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository) — project Pages URLs are not automatically redirected; custom domain is recommended before rename.
+
+**Dependency decision:** no external UI package was installed or vendored. First implement the smallest compatible patterns with the existing HTML/CSS/JavaScript stack. A library may be adopted only after license, maintenance, browser support, bundle impact and integration tests are checked.
+
+### Recommended execution order
+
+1. Close current 8.1–8.17 and inherited UI acceptance gaps; do not let optional features delay correctness of existing flows.
+2. Implement one interaction contract and operation-state notifications (8.18–8.19).
+3. Add draft recovery and connectivity/retry clarity (8.25), then focused long-chat performance work based on measurements.
+4. Add chat title search, pinning and stable sorting (8.21); then extend contextual actions (8.24).
+5. Add bounded Undo for the safest local operations (8.20).
+6. Design file registry/provenance and obtain a real source-list API before file-library CRUD (8.23).
+7. Prototype a single optional desktop inspector; only then evaluate multi-model comparison (8.22).
+8. Refine scenario entry points without a new dashboard (8.27). Keep accessibility and real-device review continuous (8.26).
+
+### 8.19 implementation slice — accessible notification queue (2026-11-02)
+
+- Extended the existing `showToast()` mechanism; no third notification subsystem or dependency was added.
+- Toast messages now enter a FIFO queue. Identical message/state pairs are deduplicated while active or queued, preventing rapid repeated events from silently replacing one another.
+- Success/info, warning and error messages use differentiated visible durations (3.2s / 5.5s / 7s). The timer pauses while the toast is hovered, focused or the document is hidden; it resumes only when the user can see/interact with the page again.
+- The existing toast remains non-modal and does not move focus. It is now keyboard-focusable so keyboard users can pause its timeout; CSS permits pointer interaction.
+- Live-region semantics switch by urgency: ordinary notifications use `role=status` / `aria-live=polite`; errors use `role=alert` / `aria-live=assertive`. The live region is atomic.
+- Focused Playwright assertions were added to the existing semantic-status scenario, including the FIFO transition from a success message to a subsequent error and the corresponding ARIA semantics.
+- **Scope boundary:** this is only the notification presentation sub-slice of optional 8.19. It does not yet implement durable operation records/states, stable operation IDs, pending-to-result replacement, persistent unacknowledged errors, inline recovery actions or keyboard/composer-aware placement. Do not mark 8.19 complete.
+- **Verification:** source changes and test assertions are committed; browser tests have not been executed in this environment. Exact-head workflow/status lookup returned no PR workflow runs and no commit statuses for the current source checkpoint. No test pass is claimed.
+- Source files: `assets/js/app.js`, `assets/css/app.css`, `index.md`, `tests/e2e/app.spec.mjs`.
+- Current source checkpoint at time of this note: `fed3137bae2355629a976515719f498940ad8601`.
+
+
+### 2026-11-02 — Quality harness triage after split runtime extraction
+
+- Investigated Independent Quality Sentinels run #1192 (ID `41348586700`) on old PR SHA `777fdcab442c9b8ebd8483e7bca7d776a022a260`.
+- Integrity, Security, Context and Jekyll Build sentinels still searched the pre-extraction monolithic `index.md` for runtime code. The product runtime had already moved to `assets/js/app.js`; styles are in `assets/css/app.css` and `assets/css/landing.css`. Updated `scripts/quality-agents.mjs` to inspect the split assets, parse external JS without executing it, and verify sanitizer presence in the built runtime asset.
+- The old Semgrep invocation passed `audit-reports/ui-inline-*.js` even when extraction produced zero inline scripts. Semgrep returned exit 2 with `Invalid scanning root`. Updated `.github/workflows/quality-sentinels.yml` to use Bash `nullglob`, a target array, and include `assets/js/app.js` in SAST.
+- Static inspection confirms the positive source assertions now resolve against the intended HTML/JS/CSS assets. The repaired script/workflow have not yet run on the current HEAD.
+- Ruff passed on old SHA `777fdcab442c9b8ebd8483e7bca7d776a022a260`. Bandit reported two low-confidence B608 medium-severity advisory findings: placeholder-only dynamic SQL clauses in `gateway/memory/manager.py` and bounded placeholder-count construction in `gateway/rag/lazy_graph_rag.py`; all user values remain bound parameters. No SQL change was justified.
+- Old run #1192 Chromium remains in progress; it is not evidence for the newer HEAD. Current branch HEAD at time of this note: `515b3f62271027e69acc2d76f4ef40289fa9cfb8`; exact-head Quality/Chromium rerun is pending. No merge, rebase, deployment or destructive cleanup.
+
+
+
+
+## 8.19 follow-up — persistent, acknowledged error notifications (2026-11-02)
+
+- Extended the existing FIFO toast queue; no second notification manager or dependency was introduced.
+- Error notifications now remain visible until explicit acknowledgement instead of expiring after seven seconds. This prevents an actionable failure from disappearing while the user is reading, switching tabs or completing another task.
+- Persistent errors expose a dedicated keyboard-accessible dismiss button with a localized accessible name. The existing alert/assertive semantics remain; ordinary success/info/warning notifications retain their timed durations and pause-on-hover/focus/hidden-tab behavior.
+- The existing toast queue, duplicate suppression and single live-region node are preserved. Dismissal uses the existing transition/queue lifecycle, so the next queued notification is rendered normally.
+- Added Playwright assertions for the persistent state, localized dismiss control and explicit dismissal.
+- **Status:** source and regression assertions committed; exact-head Quality/Chromium execution is pending. No browser test pass is claimed yet. This closes the persistent-error acknowledgement slice only; durable operation IDs/states, pending-to-result replacement and inline recovery actions remain open.
+- Files: `assets/js/app.js`, `assets/css/app.css`, `tests/e2e/app.spec.mjs`.
+- Commits: `7bc7cea` (runtime), `2ef819a` (styles), `91be4fd` (E2E).
+
+## Quality harness repair and owner-recommended reference audit — 2026-11-02
+
+### Exact-head workflow triage
+
+- User-started Quality run #1193 (ID 41349570822) was dispatched on SHA 5c45de5e728cb280ef9524ac1c45ee500f210138, not the later PR HEAD. Static analysis passed; Integrity, Security, Context and Jekyll sentinels failed at module parse time because the sanitizer assertion regex was over-escaped and invalid. Chromium was still in progress when inspected.
+- Corrected the assertion to match whitespace and safeMarkdown call syntax in commit 37996b80300272f2d0e62f87e653f0840390f12a. This strengthens the intended assertion; it does not relax sanitizer checks.
+- The first PROJECT_STATE YAML indentation correction exposed a second schema issue: owner_proposals and repository_identity_cleanup had been nested inside improvements, whose values must each carry a status. Commit 84948798d4fdcce1257dbaaddae0c4b39a754ffe restores them as sibling mappings. Provenance run #960 passed on that SHA.
+- Current branch HEAD after the research/documentation batch is recorded in ORIENTER.md and project-reference/FILE_ORIENTER_RU.md. No Quality run exists for that current HEAD; no exact-head Quality/Chromium pass is claimed. Manually dispatch the workflow on the branch and inspect the full run before treating these fixes as verified.
+
+### External references
+
+- Evaluated Hermes Agent v0.22.2, ECC 2.2.3, screenshot-to-code, scroll-craft, ThinkRail, DeepTutor v1.7.1, Hallmark v2, qybaihe/bla, Qwenputer and Orbit candidates.
+- Decisions and source links are in docs/TECHNIQUE_REGISTER_RU.md and docs/OPEN_SOURCE_TRIAGE_RU.md. Adopt only process patterns: TDD/fresh-context review, deny-by-default approvals, isolated worktrees, screenshot-based review, browser contrast/scroll QA and inspectable evidence.
+- No package, service, model or runtime was installed. BLA anti-analysis/decoy behavior is explicitly excluded. Qwenputer is not a computer-use agent. agent.sys and the intended Orbit AI Agents project remain ambiguous.
+- Product architecture remains static HTML/CSS/JavaScript + Jekyll/GitHub Pages + existing FastAPI gateway. No framework migration or new dependency.
+
+
+
+## Latest state after harness/reference audit — 2026-11-02
+
+- Current PR #131 HEAD: `9fc0948fee9d26390545748287475b3cc597d6da`; compare 587 ahead / 4 behind main; PR open/unmerged and mergeable=false.
+- Provenance #962 passed on the prior state checkpoint SHA `21a8317d36c7ca4c66f04d5ada56553b3db75094`. It validates project metadata/provenance, not UI runtime.
+- Quality #1193 is still associated with old SHA `5c45de5e728cb280ef9524ac1c45ee500f210138`; current HEAD has no Quality run. The next gate is a manual workflow_dispatch on the latest branch HEAD.
+- No product runtime code was changed in this research/repair slice. No dependencies, agent runtimes or services were installed.
+
+
+
+## Harness research and visual evidence update — 2026-11-02
+
+### Current implementation checkpoint
+
+- Latest code/test HEAD before this documentation-only checkpoint: `3e6af80aecda329a6f63d5196d67d3c6abc23ec1`; PR #131 remains open/unmerged, compare 590 ahead / 4 behind main, GitHub mergeable=false.
+- New test `2869ff3c5edcdc366a22d56972a903f47a14dcb6` in `tests/e2e/app.spec.mjs` checks no horizontal overflow at 320/360/390/768/1024/1440 px and attaches screenshots for each viewport plus mobile and desktop sidebar-open states. The screenshots are review evidence, not pixel-perfect regression baselines. Test authored, not yet executed on the latest HEAD.
+- Quality #41351093423 checked older SHA `11ffc0bbbe01a068490ca32dd1ea4029517a3120`. Integrity, Security, Context and Jekyll failed at module parse because two build sentinel regex literals were over-escaped. Both were corrected in `3e6af80aecda329a6f63d5196d67d3c6abc23ec1`. Chromium and static analysis were still in progress on the old SHA at last inspection; no exact-head Quality pass is claimed.
+- Product runtime files were not changed in this slice; no new dependency or framework added.
+
+### Harness² and upstream techniques
+
+- Current `google-research/harness2` main was last updated 2026-10-14 (three commits; no semver release). Its eight editable agent-harness components and bounded Propose–Probe–Compose cycle are documented in the technique register.
+- Apply the cycle to UI work: record hypothesis and baseline, probe one bounded change on the same deterministic fixtures/viewports, compare actual test/browser evidence, keep or revert, then record the transferable lesson. Do not use an LLM judge as a replacement for Playwright assertions or accessibility checks.
+- Hallmark v2 contributes preflight, preserved wiring checks and eight-width browser review; screenshot-to-code contributes screenshot-as-visual-spec; scroll-craft contributes real scroll-state and composited-contrast inspection; ThinkRail contributes isolated worktrees and approval-aware tools.
+- Hermes v0.22.5 and ECC v2.2.3 are process/security references, not dependencies. Harness²'s benchmark executor is not suitable for production use: README documents unrestricted executor network access and disabled Codex sandbox by default.
+- `mukiwu/orbit-agents` is a desktop cron scheduler; `constellation-works/orbit` is a distinct coding-agent task runtime. Neither is needed for the current UI scope. `agent.sys` remains unresolved.
+- Continue 8.1–8.17 as the release queue; optional 8.18–8.27 remain proposals. Visual screenshots support review but do not close iPhone Safari, VoiceOver or WCAG manual gates.
+
+
+
+### Quality harness preflight
+
+- Added `quality-harness-preflight` to `.github/workflows/quality-sentinels.yml` in `e98347708eb02de48913bb4d90eca7b39f9e6473`. It runs `node --check scripts/quality-agents.mjs` before Integrity, Security, Context and Jekyll build sentinels.
+- Those four jobs now depend on the shared syntax preflight; a parser failure is surfaced once rather than repeated as four apparent independent failures. Chromium E2E and static analysis remain independent.
+- This workflow topology change is authored but not yet exercised by an exact-head run. Quality #41351093423 still targets older SHA `11ffc0bbbe01a068490ca32dd1ea4029517a3120`.
+
+
+
+## Chromium CI performance and local Pages harness — 2026-11-02
+
+### Verified baseline
+
+- Exact baseline PR #131 HEAD: `e75e608bb1b9f588ccc26f575602113037f44039`.
+- Quality #1197 / run `41352153636` was push-triggered and completed failed after 1863s. The Chromium job took 1847s; its Playwright step reached the 1800s global timeout. Jekyll build took 7s and pinned browser runtime installation took 23s.
+- 132 test definitions; 99 reside in `tests/e2e/app.spec.mjs`. The suite has no serial groups, `.only` or `.skip`; `fullyParallel: true` was already enabled, but CI used one worker.
+- Browser logs show the local server returned 404 for the CSS and JS assets under `/skills-github-pages/assets/...`. Jekyll config sets `baseurl: /skills-github-pages`, but the local Python server exposed `_site/` only at `/`. The resulting 43 failures / 83 not run / 1 pass and suite timeouts are not accepted as product regression evidence.
+
+### Bounded correction
+
+- Keep the real Chromium engine and pinned Playwright 1.56.1.
+- Map `_site/skills-github-pages` to `_site` in the local Playwright webServer command; do not change production `baseurl`.
+- Add an E2E regression requiring both `app.css` and `app.js` to return HTTP 200 through the configured Pages prefix.
+- Run four Playwright shards on four independent GitHub-hosted runners, one worker per runner, `fail-fast: false`. Run live published-site checks once in shard 1 and upload uniquely named diagnostics per shard.
+- Set Quality concurrency to `cancel-in-progress: false`: an active run completes and the newest pending push remains queued.
+- Push and pull_request already trigger Quality automatically. No manual workflow dispatch is required; the commit-run helper filters PR events, so monitor the full Actions runs collection for the branch.
+
+### Performance acceptance
+
+- Baseline Quality wall-clock: 1863s. A 3x speedup requires a comparable exact-head run in at most 621s.
+- The new run must pass all four Chromium shards and the remaining Quality jobs. Do not claim the speed target until measured. If the benchmark is slower than 621s, continue with evidence-based optimization; do not replace Chromium with a DOM simulator.
+
+
+
+### Follow-up: read-only Jekyll artifact — 2026-11-02
+
+- First sharded run #1198 confirmed four concurrent runners but failed before test execution: the Jekyll build output _site is not writable by the runner, so creating the baseurl symlink inside it fails with Permission denied.
+- Corrected the server mapping to use a writable mktemp document root. Root-level entries from _site are symlinked into that root; /skills-github-pages points to the original _site. The built artifact and production baseurl remain untouched.
+- The new exact-head run must verify that the webServer starts, the asset regression returns HTTP 200 for both CSS and JS, and all four shards execute. No speedup is claimed yet.
+
+## Exact-head verification update — 2026-11-02 (Quality #1241)
+
+- PR #131 exact HEAD: `7c3b99a2c8473d8bb120132c49549fff189dbf4c`; PR remains open and unmerged.
+- Quality run #1241 (`41363967095`, push event on that exact SHA) completed successfully. Four real Chrome shards completed successfully (32 tests per shard; 128/128), and preflight, static analysis, Integrity, Security, Context and Jekyll jobs passed. Published Pages smoke was skipped by workflow conditions; no deployment/preview claim follows.
+- **8.14 touch selection:** current CSS applies `user-select:none`, `-webkit-user-select:none`, `-webkit-touch-callout:none` and `touch-action:manipulation` to interactive controls, while inputs and message content explicitly remain text-selectable. E2E checks computed styles for controls, disclosures, composer input, message content and expanded viewer. Desktop Chromium evidence is green; native iPhone Safari long-press remains a manual acceptance gate.
+- **8.15 status presentation:** the E2E suite exercises five semantic status states, four toast states, centering and reduced-motion behavior; this coverage passed in #1241. Full composited contrast review across real surfaces and native devices remains open.
+- **8.19 persistent errors:** the existing FIFO toast now exposes an error with `role=alert`, assertive live-region semantics, `data-persistent=true` and a localized explicit dismiss action. The E2E test asserts visibility, semantics and acknowledgement; it passed as part of #1241. This verifies persistent presentation/acknowledgement only, not durable operation IDs, pending-to-result updates or inline recovery actions.
+- No product runtime code, dependency, workflow or deployment was changed in this evidence-only update.
+
+## Project-context handoff persistence — 2026-11-02 (8.13)
+
+- Replaced the in-memory-only pending context queue with a tab-scoped `sessionStorage` record. The record contains only existing target chat IDs and selected project IDs (maximum five); it does not copy project instructions, memory content, API keys or chat messages into session storage.
+- On application restore, queued IDs are validated against the currently loaded chats/projects. A handoff for the active chat is hydrated into composer state on the first sync; handoffs for another chat are hydrated when that chat is selected.
+- The handoff remains explicit and one-shot. It does not create a chat, move a chat between projects, or attach project memory merely because a chat belongs to a project. A successful request consumes the pending selection; a failed request restores it for retry. Storage access uses the existing guarded session-storage helpers.
+- Playwright coverage now exercises both cases: reload while the target is a different chat, and reload while the target chat is already active. It checks that project instructions and project memory appear in the first request only, that the second request receives neither, and that chat count/current selection/project membership remain unchanged.
+- Quality #1250 / run `41364775725` on exact HEAD `f3151472e285c7d31d46809f52337202eb15e6b3` completed successfully. All four real Chrome shards passed; preflight, static analysis, Integrity, Security, Context and Jekyll passed. Published Pages smoke was skipped by workflow conditions; no preview or deployment is claimed.
+- Intermediate exact-head Quality #1248 (`41364562814`) and #1249 (`41364772027`) also passed on earlier revisions. #1250 is the acceptance result for the final active-chat reload coverage.
+- Native iPhone Safari, VoiceOver and real-device long-press remain separate manual acceptance gates. No runtime dependency or new service was added.
+
+## Documentation/supply-chain verification — 2026-11-02
+
+- Quality #1251 / run `41365456706` passed on documentation-only HEAD `61f1ae1dbac08da6c0a873bc5b72926cecb83bee`; code-bearing HEAD remains `f3151472e285c7d31d46809f52337202eb15e6b3`. Four Chrome shards and all non-browser Quality sentinels passed. Published-site smoke skipped.
+- Project State Provenance #975 / run `41365456760` passed on the same documentation HEAD.
+- Independent workflow inventory: 13 workflow files and 33 external GitHub Action/reusable-workflow references on both `main` and PR #131 branch; all 33 use full 40-character commit SHAs. No mutable tag reference was found.
+- The 8.13 code/test acceptance result remains Quality #1250 on `f3151472e285c7d31d46809f52337202eb15e6b3`; #1251 verifies that the synchronized documentation and provenance state remain green.
+- This documentation-only update does not change runtime code, CI behavior, dependencies or deployment.
+
+## Latest documentation-head verification and transitive workflow review — 2026-11-02
+
+- Quality #1252 / run `41365833770` passed on documentation HEAD `63f429ccf16fe7648519ebb3ecc02b9f8949ad53`; code-bearing HEAD remains `f3151472e285c7d31d46809f52337202eb15e6b3`. Four Chrome shards and all non-browser Quality sentinels passed. Published Pages smoke skipped.
+- Provenance #976 / run `41365833791` passed on the same SHA.
+- Direct repository workflow audit remains 33/33 external refs pinned to full SHAs across 13 files on both `main` and PR branch.
+- Residual supply-chain finding: the pinned reusable workflows in `skills/exercise-toolkit` contain nested mutable action tags (`checkout@v6`, `github-script@v9`, `add-and-commit@v10`, `action-text-variables@v4`). Pinning the reusable workflow does not pin those nested action refs. This is recorded as a separate supply-chain follow-up; no changes made outside PR #131.
+- Exercise workflow permissions were reviewed: write scopes are used for issue comments/closure, workflow enable/disable and README updates. The exercise-toolkit reusable workflows' nested action pinning remains the unresolved part.
+- No runtime code, dependencies, providers, models or deployments changed in this documentation update.
+
+## Per-chat text draft recovery — 2026-11-02 (optional proposal 8.25)
+
+- Added local, text-only composer draft persistence keyed by existing chat ID in `ai_chat_drafts_v1`; the existing chat-history schema and storage key are unchanged.
+- Switching chats saves the outgoing draft and restores only the destination chat's draft. The active draft is persisted after a short input debounce and synchronously on `pagehide`; a reload restores the active chat's draft.
+- Draft storage is bounded to 100 chat entries without silently truncating draft text. Empty drafts are removed. Invalid stored data is ignored without modifying chat history; existing guarded storage writes surface quota/permission failures through the existing warning path. If the browser quota is exhausted, the in-memory composer remains intact but durable saving is not guaranteed.
+- A draft is cleared when the user explicitly submits it into the chat history, or completes a local memory-save command. Validation/preparation failures that occur before submission leave the text in the composer. Requests are never auto-resubmitted after reload.
+- File attachments are intentionally not persisted: File objects, data URLs and extracted document/audio state remain in memory. Persistent attachment recovery requires a separate IndexedDB quota, lifecycle and privacy design.
+- Added Playwright coverage for two chats, per-chat isolation, reload restoration and the absence of implicit message submission. The test is authored but has not yet executed on this HEAD.
+- Source/test commits: `a2db7904d1a18609f467829c4339ccd52dfa8883`, `2257010cef98c3afcf093eb73728a8b90d2c869f`; follow-up fixes `9b190d1ebb521cc8f30c8fe13c15c224b89facca`, `7d447c34e37c20f75fc3c1da5f163ece93a2b04a`. No browser pass is claimed; await the automatically triggered exact-head Quality workflow.
+- No new dependency, backend endpoint, provider route or deployment.
+
+### 8.1 / 8.26 — cancellable sidebar swipe (2026-11-02)
+
+- The sidebar's horizontal close gesture now clears its pending touch origin on both `touchcancel` and `pointercancel`. This keeps a cancelled system/browser gesture from being misinterpreted as a later intentional close.
+- Playwright regression covers vertical scrolling (must remain open), touch cancellation (must remain open), pointer cancellation (must remain open), and a subsequent deliberate horizontal swipe (must close). Project disclosure remains open after close/reopen.
+- Source commit: `050f25ef41942b2f522607cc117d15af2b373043`; regression commit: `0a76e63df790977cd6ed0540233528e3102a7d9a`.
+- This is authored coverage only until exact-head Chromium CI runs. Native iPhone Safari gesture arbitration remains a manual gate.
+
+### 8.21 — local name-only sidebar search audit (2026-11-02)
+
+- Verified the existing sidebar search indexes project names and chat titles only; it does not inspect message bodies. Results are separated into Projects/Chats, use textContent for labels, expose real project/chat IDs as action targets, and cap each group at eight visible matches with an explicit overflow note.
+- Playwright regression `sidebar search finds project and chat names locally without indexing message contents` is present in the current suite.
+- At the time of this audit, only the name-search slice was implemented. The subsequent bounded implementation below adds pinning and persistent date-based sorting; 8.21 remains partial until exact-head browser verification and the remaining acceptance gates are complete.
+- Evidence: `assets/js/app.js` `renderSidebarSearchResults()`; `tests/e2e/app.spec.mjs` test beginning near line 262 on the audited HEAD.
+
+
+### 8.21 implementation slice — persistent pinning and date sorting (2026-11-02)
+
+- Added a separate local pinned-chat ID store (ai_pinned_chats_v1) and persistent sort preference (ai_chat_sort_v1). Pinning is an overlay on the existing chat/project model; it does not reassign chats or duplicate chat data.
+- Chat rows expose Pin / Unpin in the existing contextual menu. Pinned chats appear before unpinned chats in the personal list, project lists and search results.
+- Added two newest-first sort modes: last activity and creation date. Equal timestamps retain the prior source-array order as a stable tie-breaker.
+- New chats receive createdAt / updatedAt; legacy chat records get order-preserving fallback timestamps at load; imported project chats receive validated timestamps. Activity metadata changes when the message sequence changes, not for unrelated sidebar/settings rerenders.
+- The active chat's activity sort timestamp is held at its current position until the user switches chats. Explicitly changing the sort mode resets that snapshot; pin/unpin remains an intentional user-triggered reorder.
+- Added Playwright regression for pin persistence, both sort modes, ordering and reload restoration. The test is authored but has not executed on the exact HEAD.
+- Source commits: 9520ab6c4de7a47ac9be1b5525727346e6ea4c4d, 94cd406a4c5c36cec6a676fa9670e8d62bc739fc, 2b58b98e88b0746c6d523e753ebb662d23605600, dc3762b436d2bdc54d6607bc65d09529602a1687; markup commit: ffb5c026e9d87d2e69d8654b9716872d505a2107; regression commit: 1a5872e67f188b8e04613273f57d1b0d34b53f4a.
+- Exact-head workflow-run lookup and combined status currently return no records. No browser test pass is claimed.
+
+
+### 8.10 implementation slice — shared desktop/touch control sizing (2026-11-02)
+
+- Reused the existing CSS tokens: compact 32px, standard 40px, touch 44px. No second token system or dependency was introduced.
+- Removed the duplicate late `.message-actions` rules so the existing 44px icon controls have one canonical declaration and the action row no longer advertises a contradictory 28px minimum.
+- Standard desktop sizing now uses the existing 40px token for settings-header actions, toolbar options, language options, composer tools and chat creation/restore actions.
+- Touch viewports (max-width: 639px) raise those same controls to the existing 44px token. Header icons and message actions remain 44px at every width.
+- Added Playwright coverage for visible settings actions, chat creation, search/language menu options and composer tools at 1024px and 390px, plus horizontal overflow guard.
+- Source commit: `a71dd925f5152387f559d8673ea83dbc219fd14f`; focused E2E follow-ups: `5d8b3adff61450917203909d835766d152316246`, `1bb8780d5e3223c0cb11e01039350c074e5f6587`, `179adfb6e51f04b57fc538aa927f22272d13d8ab`.
+- The regression is authored but not executed on the exact HEAD. Native iPhone Safari/VoiceOver and screenshot review remain separate acceptance gates.
+
+
+### 8.9 implementation slice — backdrop cleanup regression (2026-11-02)
+
+- Source audit confirmed all eight modal IDs use the shared modal stack and `syncModalEnvironment()` derives `body.ui-modal-open` from currently visible modal elements. No source change was justified by inspection alone.
+- Added a focused Playwright regression that dismisses settings, project creation, function panel and Research Studio by clicking the backdrop. After each dismissal it checks that no modal remains visible, `body.ui-modal-open` is removed, and the sidebar can immediately open and close (no residual click-blocking layer).
+- Existing tests continue to cover repeated settings cycles, Escape, focus containment, browser Back/Forward and keyboard scroll isolation. This new test complements rather than duplicates those checks.
+- E2E commit: `b0b18ea65393471600c8c3804163d0dca2fb75a3`. Test authored; exact-head browser execution remains pending. No runtime code, dependency or backend change.
+
+
+### 8.16 implementation slice — icon-only accessible-name audit (2026-11-02)
+
+- Audited 82 static buttons in `index.md`; no symbol-only button without a visible text label, `title` or accessible name was found. Text buttons were not given redundant `aria-label` attributes.
+- Inspected dynamically created controls for toast dismissal, attachment removal, message copy/view/speech, chat selection, project settings, local-memory actions and project navigation. Symbol-only actions carry an accessible name or tooltip; text actions retain their visible wording.
+- Added Playwright regression that seeds a project/chat with user and assistant messages, opens the sidebar/project group, and fails if any visible symbol-only or empty button lacks `aria-label`, `aria-labelledby` or `title`. It also asserts the five inline message actions render.
+- E2E commits: `a3a46682365c0688aa00ee136e8b9003e13c22bb`, `09dd9ebadde220d9e98ee844246d38ea5aabdb72`. Test authored; exact-head execution pending. No UI dependency or runtime change.
+
+
+### 8.2 implementation slice — one shared UI font stack (2026-11-02)
+
+- Removed the obsolete early `body,button,input,textarea,select` font-family declaration; retained the established final Avenir Next / platform system fallback stack as the single source for body and form controls.
+- Extended the existing 320/360/390/768/1024/1440px header regression to assert computed font-family equality for body, button, input, textarea and select at every viewport.
+- CSS commit: `a3613f7246823d96d8b544234a1da1e53447679a`; E2E commit: `4720695d6c4f9860f1d2d5983f7b605ba3cd14c6`.
+- This is a bounded consistency cleanup, not a full typography or screenshot acceptance. Test authored; exact-head execution and visual review remain pending.
+
+
+### 8.3 implementation slice — mobile disclosure and keyboard interaction (2026-11-02)
+
+- Kept the existing aServi exclusivity rule and the intentional ability to keep third-party provider settings and additional settings open together; no provider state or persistence behavior changed.
+- Extended the existing Playwright regression at 390px to verify 44px summary hit areas, native Enter/Space keyboard toggling, exclusivity transitions and no horizontal overflow.
+- E2E commit: `f9ffad34ad067db4b3ce944f1811f4e8621a73e9`. Authored only; exact-head browser execution and physical-device keyboard review remain pending.
+
+
+### 8.6 implementation audit — nested navigation evidence (2026-11-02)
+
+- Re-read the shared navigation stack (`pushUiNavigation`, `requestUiNavigationBack`, `popstate`) and focused Playwright coverage.
+- Existing regressions cover Back through two nested project filters without leaving the app, Back/Forward for project settings and chat-action dialogs while preserving the dialog target, and Escape focus restoration for project creation/settings.
+- No source change was justified by this audit. Remaining acceptance: screenshot review of heading/list visual grouping and physical-device/browser keyboard behavior. Exact-head tests have not been run in this continuation.
+
+
+### Exact-head Quality checkpoint — 2026-11-02
+
+- Quality run **#1359** (`41381374196`) passed on exact PR checkpoint `12803232a5b4afc67a3ab4d87f04bff3eeb38e3e`: all four real-Chromium shards passed (**134 tests total: 34 + 34 + 33 + 33**), with no flaky retries. Syntax preflight, independent static analysis, Jekyll, Integrity, Context and Security sentinels also passed.
+- 8.17's computed-style failure was a test-timing issue: the fixture button's normal 140ms CSS color transition meant the assertion sampled the old intermediate value. The test fixture now sets `transition:none`; production UI transitions and color tokens are unchanged.
+- The chat export/import draft regression read `ai_current_chat_v87` before asynchronous app initialization persisted it. The test now waits for the current-chat key before capturing the ID; no production draft-storage code changed. The exact-head run passed the corrected test without retries.
+- This is automated Chromium evidence only. Native iPhone Safari, VoiceOver and complete component-level WCAG review remain open; no merge or deployment occurred.
+
+## Advanced settings and function-menu taxonomy — 2026-11-02
+
+- Code checkpoint before this ledger-only update: `79790a018234b0f141f7ee902430165f6471a920`; PR #131 remains open/unmerged, main remains stable V1. No deployment.
+- Additional Settings now groups existing controls into three closed-by-default, purpose-labeled disclosures: appearance/comfort, search/instructions, and profile/backups. Existing element IDs, settings storage, secret handling, profile import/export actions and current provider/search behavior are preserved.
+- Function menu now separates task workflow from integrations with compact group labels. Structured-workflow panel separates the mode toggle from blueprint team configuration; no new agent runtime or permissions were introduced.
+- Added RU/EN translations and Playwright coverage for advanced-settings hierarchy, mobile touch target/overflow, keyboard toggling, function-menu taxonomy/localization, and structured-workflow configuration grouping.
+- Graphify Code-Only run `41389386456` succeeded on exact code/test HEAD `79790a018234b0f141f7ee902430165f6471a920`. Quality run `41389386442` was pending with zero jobs listed at time of update; Chromium/Quality passes are not claimed. Prior Quality #1359 success is a separate earlier checkpoint, not evidence for this change.
+- Preview: only the main GitHub Pages target exists and it serves V1; no V2 preview host is configured. Vercel deployment context returned zero teams and project search returned zero projects. Do not overwrite Pages V1 or create another repository without owner approval.
+- Next: wait for exact-head Quality/Chromium; inspect failures and fix; then screenshot review and request explicit owner authorization for a separate preview host/repository if required.
+
+
+## Browser connectivity and tab-suspension recovery — 2026-11-02 (8.25)
+
+- Added a compact, accessible RU/EN composer status when the browser reports `navigator.onLine === false`. The copy explicitly distinguishes browser connectivity from gateway/provider health and from the offline web-search preference.
+- On the browser `online` event, the warning is cleared and the user is told to retry manually; no request is queued, replayed or automatically resubmitted.
+- Text-only per-chat drafts now flush synchronously on `visibilitychange` when the document becomes hidden, in addition to the existing `pagehide` flush and 250ms input debounce.
+- Added Playwright regressions for offline → online transitions, preservation of the draft and unchanged chat message count, plus synchronous draft persistence on tab hide.
+- Source commits: `63d5ae45b5e1d2dda5fb1b4fb1c7b00dd3b107c9`, `fd8685d5eb26645ee8163bd91354aa193b66e7c9`; markup `59d15702b750fdffc620be96a5e2f3ebd229b780`; CSS `74292526951d41980014141b274c44b7b1940def`; E2E commits `7bb2313fb55834d6748f71cb1baf3a581e8ff195`, `6489f5a9b6d2d3e8c68b2bad993f7b85a4521cbd`.
+- V8 syntax parsing passed for the changed application and E2E source; CSS brace balance passed. These are source-level checks only. Quality #1405 (`41390877580`) is pending and Graphify #437 (`41390877512`) is queued on exact HEAD `6489f5a9b6d2d3e8c68b2bad993f7b85a4521cbd`; browser execution is not yet confirmed.
+- No new dependency, backend route, provider integration, automatic retry, merge or deployment. Attachment/File-object persistence remains a separate IndexedDB/privacy/quota design gate.
+
+
+## Bounded Undo for chat project moves — 2026-11-02 (8.20)
+
+- Extended the existing toast queue with an optional, accessible action button; no parallel notification system was introduced. Action toasts have a bounded 6.5s lifetime (with the existing hover/focus/hidden-tab pause behavior) and a 44px minimum action target.
+- Added one reversible local command: moving a chat between a project and the personal scope. Undo restores the previous `projectId` only if the chat still exists, its project assignment has not changed again, and the original project still exists. Conflicts are reported instead of overwriting newer user changes.
+- Wired the same undo helper to both the current-chat project selector and the existing chat-row move dialog.
+- Added Playwright coverage for moving the current chat to a project and undoing it through the toast action, including the touch target.
+- Source commit: `065451fe3501b0b2a90b6cd93e4161f1dd541849`; CSS: `31b816dd045ee1e6ad2d73caf5b160bd06ad58de`; E2E: `ba709ac95c8896581133dfcce02234281f75fd90`. V8 syntax parsing and CSS brace balance passed; Chromium execution remains pending.
+- Scope limitation: this is a one-action, in-memory undo window, not a persistent command history. Chat deletion still uses its existing last-closed-chat recovery; rename, project deletion/cascade and settings undo remain open. No new dependency or storage schema.
+
+
+## Bounded Undo — regression coverage for both entry points (2026-11-02)
+
+- Added a second Playwright scenario for the chat-row context-menu move path. Together with the existing current-chat project-selector test, both entry points now have explicit Undo coverage.
+- The regression verifies that Undo restores the original project assignment and preserves the same chat ID/current-chat identity.
+- Test commit: `f35f542070a261ddfe075d2cc0ee7281c0fdbe8b`. V8 syntax parsing passed; browser execution remains pending. No runtime behavior changed in this test-only extension.
+
+
+## Bounded Undo — chat deletion (2026-11-02, 8.20)
+
+- Reused the existing `ai_last_closed_chat_v1` recovery slot; no second snapshot store or command-history schema was introduced.
+- When the recovery snapshot is successfully persisted, chat deletion now exposes an Undo action in the existing toast. The action restores only if the recovery slot still contains the same deleted chat; if a newer deletion replaced the slot, Undo reports expiry and does not restore the wrong chat.
+- Existing sidebar “Restore last closed chat” remains available across reloads for up to seven days. The toast action is immediate and bounded by its visible lifetime.
+- Added Playwright regression for delete → Undo, verifying the same chat ID is restored as current. Existing reload-recovery test remains unchanged.
+- Source commit: `3f85837ab31005c3b722f76e13f9d78570aef1da`; E2E: `6f2863094434cd75c8794c348117cc8ea597f271`. V8 syntax parsing passed; Chromium execution remains pending.
+- The bounded Undo scope now covers chat move and chat delete only. Project cascade, rename and settings are still excluded; no automatic rollback of external effects.
+
+
+## Bounded Undo — chat rename (2026-11-02, 8.20)
+
+- Added Undo for a local chat-title rename through the existing toast action. The inverse restores the exact prior title only if the chat still exists and its current title still equals the value written by the original rename.
+- A later rename is treated as a conflict and is not overwritten. Renaming to the existing title is a no-op and does not create an Undo entry.
+- Added Playwright regression for rename → Undo, asserting both rendered title and persisted chat title return to the exact previous value.
+- Source commit: `fb5ece37b2fed96635a260d41c9103d1f356c4d5`; E2E: `f7e74f41b608cded7030d1185c9b747b3190e78a`. V8 syntax parsing passed; Chromium execution remains pending.
+- 8.20 now has bounded in-memory Undo for chat move, delete and rename. Project deletion/cascade and settings remain excluded; no persistent command history or external-side-effect rollback.
+
+
+## Undo keyboard focus restoration — 2026-11-02 (8.20 / 8.26)
+
+- After a successful or rejected Undo action, focus now returns to the affected chat row when it is visible; otherwise it falls back to the composer. This avoids leaving keyboard focus on a toast action that is about to be removed.
+- Added a keyboard regression that activates rename Undo with Enter, verifies the exact previous title is restored, and checks focus returns to the same chat row.
+- Source commit: `ccecba116a05f5e848805ad378edeffda1b0dd7a`; E2E: `45275d5ad854ccfdd73f3b24231c197eeac38c82`. V8 syntax parsing passed; Chromium execution remains pending.
+
+
+## Quality Integrity repair — restore advanced theme selector (2026-11-02)
+
+- Quality #1431 identified a real source/UI contract mismatch: `scripts/quality-agents.mjs` requires `#uiTheme`, and application initialization plus theme persistence still reads and listens to that control, but the advanced-settings markup no longer contained it.
+- Restored the theme selector inside the existing “Appearance and comfort” disclosure, with RU/EN option labels. The existing header theme toggle remains the quick action and stays synchronized with the selector through the established `applyAppearance()` path.
+- Added Playwright coverage for selector presence, visible localized options, theme persistence and synchronization after using the header toggle.
+- Markup commit: `6a690ddf5dc6a792f929a4a1ae349df6b9d12042`; translation commit: `df5e1bd2de1fa924eb97da2958adafc32da1e38f`; E2E: `74de58706b28d55f405c238b916651c26281098d`. V8 syntax parsing passed; exact-head Quality/Chromium pending.
+- This fixes the observed `Missing required UI element #uiTheme` Integrity failure. Do not claim the gate passed until a new run on a head containing this repair completes.
+
+
+## Functions menu / Agent and Skills source audit — 2026-11-02
+
+- Audited `index.md`, `assets/js/app.js`, `assets/css/app.css` and `tests/e2e/app.spec.mjs` before proposing more menu work.
+- Existing Functions menu has four groups and working entry points for structured workflow, task profile and integrations status. Research Studio remains available from Thorough mode; the menu now shows a roadmap-only Deep Research 2.0 item under Research & Sources.
+- Existing roadmap disclosures cover Deep Research 2.0, local files/folders, converters/extraction, Knowledge-to-Skill/Agent and audio/image/video. Existing agent panel already includes execution mode, team blueprint, use cases, 64 logical roles, orchestration modes, model/resource notes and capability boundaries. Existing Skills panel is a chat-scoped task profile, not a reusable Skill package loader.
+- Existing Playwright tests assert the four menu groups and bilingual labels, agent configuration grouping, future tickers, non-runtime disclosure, reduced-motion and pause. The latest test additionally asserts two distinct roadmap containers (Research: 1 card; Create/Transform: 4 cards) and no Research Studio action in the compact menu. These tests were not executed in this session.
+- Added optional canonical checklist item 8.28 to clarify remaining gaps: registry/lifecycle for Agent Profiles and Skills, explicit capability status, task/run history only after durable AgentRun API, and no duplicate menu controls.
+- A minimal UI markup correction now keeps the Research and Create/Transform group labels outside their own card grids; a Playwright regression was added. No runtime, dependency or feature flag changed. Current PR #131 head requires fresh exact-head CI; native iPhone/VoiceOver and screenshot review remain separate gates.
+
+
+## Follow-up menu markup correction — 2026-11-02
+
+- Split the Research roadmap and Create/Transform roadmap into separate sibling containers so the group label is not rendered inside the preceding card grid.
+- The pause checkbox remains a preceding sibling of both containers, so the existing CSS sibling selector pauses both groups.
+- Added Playwright assertions for two containers, one Deep Research 2.0 card in the first, four conversion/media cards in the second, and the absence of a fake Research Studio menu action.
+- Not executed locally in this session; exact-head GitHub Quality result is pending.
+
+
+## Agent panel progressive disclosure — 2026-11-02
+
+- In PR #131, grouped the five existing future capability sections into three native collapsible categories: use cases/roles; orchestration/models/resources; tools/permissions.
+- Categories are collapsed by default, use native `details/summary`, have a 44px minimum summary target and visible focus style, and have RU/EN labels.
+- Preserved the two real configuration groups and the explicit single-model/four-stage runtime boundary. No worker, model registry, skill package loader, permission API or other runtime capability was added.
+- Updated the roadmap pause CSS selector for the nested disclosure structure.
+- Added Playwright assertions for category count/order, touch target, Enter/Space behavior and nested ticker pause. Tests are authored but not executed on the current HEAD.
+
+
+## Skills panel — chat profile and package library separation (2026-11-02)
+
+- Reworked the existing Skills panel without adding a second Functions menu entry or duplicating Settings controls.
+- The available part is explicitly scoped to the current chat: task profile, goal, output format and optional custom instructions. Existing chat persistence and apply behavior are retained.
+- The future Skill package library is a separate collapsed native disclosure. It exposes the planned lifecycle and security boundary without fake import/create/run controls.
+- RU/EN translations were added for the new labels and lifecycle copy. Native disclosure semantics preserve keyboard interaction; the existing shared ticker pause mechanism is reused.
+- Added Playwright coverage for scope labels, disclosure collapsed/open behavior, 44px summary target, lifecycle/safety copy, absence of fake buttons, ticker pause and EN localization.
+- Source commit: `478de2144433ffeda18fd60f63a03c336802ab1b`; i18n commit: `63de572e354ff9380a4c35448d48abaa5805838b`; initial test commit: `d3a44807d9c9eb0dade5a3e0bf80065fa5ebfd45`; follow-up test correction: `baf6a96705a15466384ab2c9f1efce977e83d087`. The stylesheet pause selector was corrected to use the containing label's `:has()` state for all three roadmap pause controls; the language assertion now changes locale only after closing the modal.
+- Exact-head workflow lookup for source/test HEAD `baf6a96705a15466384ab2c9f1efce977e83d087` returned no runs. Playwright test is authored, not executed; no pass is claimed.
+- No Skill registry, import endpoint, package loader, script runtime, permission API, dependency, backend route, merge, rebase, main sync or deployment.
+
+## Exact-head verification and sidebar icon recovery — 2026-11-02
+
+- Updated Playwright helpers to open actual nested Settings categories (appearance/context/profile/search tools) and Agent capability disclosure before interacting with descendants. Sidebar ordering now checks semantic document order rather than requiring a specific direct-child DOM shape.
+- Reduced-motion test asserts the ticker animation is disabled (`animation-name: none`) and the pause control remains checked; it does not require a paused play-state for an animation that does not exist.
+- Visual review found missing-glyph squares in Projects/create/new-chat controls. Replaced the project glyph with an aria-hidden inline SVG folder; plus marks are ASCII and hidden from accessible names; RU/EN translations no longer reintroduce legacy glyphs; dynamic project-chat label updates the inner label rather than replacing icon markup.
+- Added Playwright accessible-name assertions for Projects, Create project and New personal chat, plus a regression assertion against the legacy square glyph.
+- Exact code/test HEAD: `1ec4a1d338975934a9cbefa3f3a262ad97ee118f`. Quality #41411404686: all four Chromium shards passed, 147 tests; syntax, Ruff/static analysis, Jekyll, Integrity, Security and Context passed. Published-site smoke skipped. No flaky tests in this final run.
+- Graphify #41411404736: 1,209 nodes / 3,322 edges / 60 communities; code-only manifest covers JavaScript/Python code, not HTML/CSS. Use direct source and screenshot/DOM evidence for visual layout.
+- Screenshots reviewed: 320/360/390/768/1024/1440 px and desktop/mobile sidebar-open. No horizontal overflow observed in these Chromium captures. Real iPhone Safari, VoiceOver, keyboard focus and full component-level WCAG remain unverified.
+
+ 
+## Graphify UI surface bridge — 2026-11-02
+
+- Closed the Graphify coverage gap without changing the frontend: added `scripts/graphify_ui_surface.py` plus `tests/test_graphify_ui_surface.py`. The CI-only bridge adds CSS selectors, DOM ids/classes and JavaScript selector references to the disposable Graphify graph.
+- Exact source/test HEAD: `8f4a0a532639586f557c85156ede41810d4cc79b`. Graphify run #41415488412 passed: 3,198 nodes, 8,559 edges, 61 groups; 77 source files; no model calls. UI coverage: 776 CSS selector occurrences / 732 unique nodes, 536 DOM selector nodes, 780 JS reference occurrences / 717 unique nodes, 184 CSS↔DOM name matches and 306 JS→CSS matches.
+- 351 DOM selector names without static CSS-name matches and 43 CSS names without static DOM-name matches are diagnostic candidates only; dynamic rendering and conditional/scoped CSS can explain them. Edges preserve `EXTRACTED` vs `INFERRED` provenance.
+- Exact source/test HEAD `8f4a0a532639586f557c85156ede41810d4cc79b`; Quality #41415488420 passed 4/4 Chromium shards (146 tests) plus all required sentinels; published-site smoke skipped. Exact documentation HEAD `d4ceaf84e945ddee0401ec615416ebaba5361c98` was then rechecked: Quality #41416369361 passed 4/4 shards (147 tests), static analysis, Jekyll, Integrity, Security and Context; Graphify #41416369353 and provenance #41416369253 passed. Published-site smoke skipped.
+- Astria was evaluated but not installed or adopted. The bridge adds only a CI-time parser dependency; no browser runtime, backend, VPS service, model call or persistent graph store changed.
+
+
+## Graphify UI selector diagnostic triage — 2026-11-03
+
+- Reviewed the downloadable Graphify artifact from run #41415788526 (artifact SHA-256 `8ad2dd23ed6275b2b5c7c4239b02608654bf55e915588db08e397a6aa8cc7adc`), generated from documentation HEAD `7214672eac324a8afc75cf983d37d44f2807e3a4`; the underlying source/test checkpoint is `8f4a0a532639586f557c85156ede41810d4cc79b`. A later Graphify run #41416369353 passed on docs HEAD `d4ceaf84e945ddee0401ec615416ebaba5361c98` with the same graph size; its artifact was not separately downloaded in this triage.
+- The artifact reports 351 DOM selector names without a static CSS-name match and 43 CSS selector names without a static DOM-name match. These are static cross-file name-join diagnostics, not runtime DOM coverage or defect counts. The 40 DOM-name examples included in the summary are predominantly ID hooks; sampled markup uses semantic/utility classes and JS references, so a missing dedicated `#id` CSS rule is not itself a defect.
+- Cross-checked all 43 CSS selector names against `index.md`, `assets/js/app.js`, `assets/css/app.css`, `landing/index.html` and `assets/css/landing.css` at source/test HEAD `8f4a0a532639586f557c85156ede41810d4cc79b`. 36 have a literal markup or JavaScript reference, commonly because their nodes are generated dynamically (chat rows, message/code blocks, attachments, project navigation, memory and toast UI).
+- Seven selectors had no literal markup/JS reference in those inspected files: `.ambient-control`, `.brand-subtitle`, `.pill`, `.project-nav-unassigned`, `.settings-actions`, `.status-dot` and `.text-gray-600`. Treat them only as cleanup candidates: no selector was removed because dynamic/runtime coverage and historical compatibility were not proven by this static pass.
+- No application source or tests changed in this triage. No test was run by the triage itself. Quality #41416369361 passed on prior docs HEAD `d4ceaf84e945ddee0401ec615416ebaba5361c98` (147 Chromium tests and required sentinels); Graphify #41416369353 and provenance #41416369253 passed there. The live branch HEAD before this documentation record, `ea0457ec38931e7a0a1cff788970d1ac4a292acc`, had zero workflow runs and zero commit statuses; it is a docs-only continuation after `d4ceaf8`.
+- No merge, rebase, main synchronization or deployment. Native iPhone Safari, VoiceOver, keyboard-only focus and full component-level WCAG remain separate acceptance gates.
+
+## Local Team Blueprint library — 2026-11-03 (optional proposal 8.28)
+
+- Added a collapsed Saved team blueprints disclosure inside the existing Agent panel; no second Functions entry or duplicate Settings control. Users can save the current chat team plan under a unique name, select and apply a saved plan to the current chat, or delete it after confirmation.
+- Stored in the browser-local ai_agent_team_blueprints_v1 collection (schema v1), capped at 20 entries. Each record contains only a bounded name, team size (1–50), scenario, role preset, custom scenario/roles and timestamps. It does not store chat IDs, messages, prompts, credentials, model/provider settings or permissions. Malformed/unknown-version storage is preserved and writes are blocked rather than overwriting it; duplicate names are rejected case-insensitively.
+- Applying a blueprint updates only the current chat existing Team Blueprint fields. It does not enable structured workflow, create AgentRuns, launch workers, grant tools/permissions, change Skills, or move chats/projects. Profession/Role remains a template; Team Blueprint remains a saved composition plan. Local-only storage is not exported or cloud-synced.
+- Added RU/EN copy, a native collapsed disclosure, visible focus, and 44px mobile targets for selector/input/actions. The UI explicitly says that the library is local to this browser and does not launch agents.
+- Added Playwright coverage for collapsed-by-default disclosure, save, schema/scope boundaries, duplicate-name rejection, apply to the current chat, persistence after reload, delete confirmation, preservation of the applied chat configuration, and no implicit runtime enablement. Test suite now contains 120 tests.
+- Static checks in the repository-connected V8 environment: assets/js/app.js syntax PASS; E2E spec syntax PASS after stripping its top-level import for parser-only compilation; CSS brace balance PASS; no duplicate HTML IDs; all 11 new markup translation keys exist in both RU and EN. These are static checks, not browser execution.
+- Exact code/test HEAD: 765138e74e141aaf1471c6351193d98dda8a0df8. GitHub returned no workflow runs and no commit statuses for this exact SHA; the new Playwright test and full Quality workflow are NOT RUN / NOT VERIFIED. Earlier Quality #41411404686 on 1ec4a1d is not evidence for this change.
+- No new dependency, backend/API, shared registry, Skill package loader, Agent Profile registry, AgentRun API, runtime permission or execution capability. No merge, rebase, main sync or deployment.
+- NEXT: obtain exact-head Quality/Chromium evidence for 765138e; then continue the 8.28 capability-status and 8.19 operation-state work only where real handlers/data exist. Native iPhone Safari, VoiceOver and full component WCAG remain manual gates.
+
+## Roadmap detail windows and Agent capability slots — 2026-11-03
+
+- Added 15 read-only “Details / Подробнее” entry points across five Functions roadmap cards, seven Agent/Skills roadmap sections, the local Team Blueprint library, Project Sources and Integrations.
+- All entry points open one shared accessible modal. It derives title/description from the existing localized section, displays status, supports Escape/backdrop/close, uses the existing modal navigation stack/focus trap and restores focus to the opener.
+- Status mapping supports Available, Blueprint only, In development and Unavailable in this environment. The current UI marks planned cards In development and the saved local Team Blueprint library Blueprint only. The other states are not assigned without verified backing runtime state.
+- Added separate roadmap-only Agent Profiles and Tasks & History sections. They are explanatory navigation surfaces only: no Agent Profile registry, durable AgentRun API, queue, worker, run ID, permissions, execution or artifacts were implemented.
+- Standardized active app and landing ticker prefix to `1ИV3ИT10И`; existing pause and reduced-motion support retained.
+- App E2E spec: 121 tests; landing E2E spec: 8 tests. Static V8 parsing passed for app.js and both E2E specs (imports removed for parser-only compilation); CSS brace balance passed; HTML IDs are unique; required RU/EN keys are present; no legacy ticker prefix remains in active UI files.
+- Exact code/test HEAD: `dc82acb95c850d7821e071e16a8ab11524a459c2`. GitHub returned zero workflow runs and zero commit statuses for that SHA. Browser/Playwright/Quality NOT RUN; no pass is claimed.
+- No dependency, backend/API, runtime, permissions, merge, rebase, main synchronization or deployment. Native iPhone Safari, VoiceOver, keyboard-only visual review and full component WCAG remain open.
+- NEXT: inspect why exact-head Actions runs are absent for API-created commits without manually dispatching workflows; then obtain normal exact-head Quality/Chromium evidence and continue the next bounded UI acceptance slice.
+
+
+## Visual audit, control typography and expanded screenshot capture — 2026-11-03
+
+### 8.2 / 8.16 — button font re-check
+
+- **FACT / IMPLEMENTED:** `assets/css/app.css` has one final shared control declaration: `body,button,input,textarea,select { font-family:"Avenir Next","Segoe UI Variable",Inter,"SF Pro Text",system-ui,-apple-system,BlinkMacSystemFont,"Noto Sans",Roboto,Arial,sans-serif; }`. The sidebar button override uses `font-family:inherit`. The aLandi wordmark retains its separate display treatment.
+- **FACT / VERIFIED on code/test SHA `6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0`:** the responsive header E2E reads computed `fontFamily` for body, button, input, textarea and select and asserts a single shared stack at 320/360/390/768/1024/1440px. Quality run #41540703827 passed 4/4 Chromium shards on that SHA.
+- **Limit:** this verifies the CSS family stack, not identical physical font files on every OS; actual glyph selection follows platform fallback. No new font dependency or font asset was added.
+
+### 8.1–8.17 — closure audit
+
+- **FACT:** `docs/V1_UI_FINALIZATION_RU.md` remains the owner requirement source; this ledger is the evidence source. Do not infer [x] from a present UI element alone.
+- **Current disposition:** 8.5 is recorded [x]. The implementation ledger keeps 8.1–8.4 and 8.6–8.17 at [~]; no blanket completion is justified. Existing source and E2E cover substantial behavior, but final acceptance still includes manual/native review and specific backing-service gates.
+- **Known intentional gate:** 8.7 Project Sources CRUD is unavailable because no scoped source-list API exists; the visible UI must remain truthful and read-only. Do not add fake CRUD.
+- **8.12/8.13:** deprecated server-memory graph bridge was removed while local/private/shared/project memory and delta sync/RAG remain; context handoff is explicit to an existing chat and one-shot. Gateway-specific exact-head verification was not run in this audit; do not transfer older gateway evidence to the new test SHA.
+- **Remaining mandatory manual gates:** actual iPhone Safari keyboard/VisualViewport/safe-area/gesture checks; VoiceOver and keyboard-only focus/navigation; full component-level contrast in both themes and states; RU/EN visual review; long-list/scroll/popover/keyboard stress; actual provider/gateway error-state verification. These prevent changing the remaining [~] statuses to [x].
+- **Optional proposals:** 8.18–8.28 are explicitly proposals, not additional mandatory release gates. Some are partially implemented (e.g. bounded Undo, per-chat text drafts/offline notice, local Team Blueprint, read-only capability details); others remain roadmap or API-dependent. They are not all complete.
+
+### Expanded real-browser visual review
+
+- **IMPLEMENTED (test source):** added `extended UI visual review captures navigation, settings, Functions, Agents and Skills` to `tests/e2e/app.spec.mjs`. It reuses the existing Playwright screenshot helper and captures 19 real UI states: sidebar/memory tools, Functions menu, Agent overview and four disclosure groups, Saved Team Blueprints/details, Skills chat profile/package library/details, aServi settings, third-party providers, Additional Settings root + appearance/context/profile, and search/system-prompt controls.
+- The earlier 8-image CI bundle covers only the app shell at 320/360/390/768/1024/1440px and sidebar-open desktop/mobile. It does **not** show the expanded menus/settings above.
+- **CHECKS:** the updated app spec has 121 declared tests; parser-only V8 syntax check passed after stripping its top-level imports. The new visual capture test is **AUTHORED / NOT VERIFIED** on code/test HEAD `fd9eee63d781ca2fc8c276edafb79d97f6810c56`: the available workflow lookup filters PR-triggered runs and returned none; commit-status lookup is empty. Push-triggered run history is not independently enumerable through the current connector. No expanded-panel screenshot artifact has been retrieved; do not infer either a pass or a definite non-run.
+- **Current CI evidence:** Quality #41540703827 and Graphify #41540704000 passed on the prior code/test SHA `6d57e2b7130a75db3b7a1aadfbac9c0b0d2734b0`; the new E2E capture test was added later and has not yet been executed. Published Pages smoke was skipped in that Quality run.
+- **Preview boundary:** no Vercel project is connected to this repo; the existing Pages target is the stable V1 publication. Do not deploy PR #131 to it. CI-built app screenshots are the safe preview path until a separate owner-approved preview target exists.
+- **NEXT:** run the new visual E2E on an exact current PR HEAD, inspect the artifact images for overflow/cropping/hierarchy, then address only evidenced layout regressions. Keep iPhone Safari/VoiceOver and full WCAG as separate gates.
+
+
+## Agent Workforce cross-workstream alignment — 2026-11-03
+
+- **FACT / SPECIFIED:** PR #128 Agent Workforce remains Draft/research/HOLD on its parking base. Its source review and architecture are recorded in `docs/DEEP_AGENT_WORKFORCE_RESEARCH_2026-10-31_RU.md`.
+- **PROTOTYPE IMPLEMENTED:** PR #134, branched from current `main`, isolates the file-backed SQLite AgentRun/task lifecycle store and safe task-reference persistence contract (`gateway/agent_runtime/store.py`, offline tests). Exact code head `519973c793a1c998b43c60dedfe55a02b74a26a9`; Gateway CI passed 206 tests. Quality/Chromium is still running at this update. This is storage-only: no FastAPI route, UI, provider workers, tool executor, permissions, sandbox or production activation.
+- **UI contract:** Functions/Agents IA updated on PR #131 to align with actual multi-agent boundary. Current four-stage pipeline is sequential and one-model; local Team Blueprint is configuration, not workers. Keep profile/task counts, queued/running logical workers and inference slots distinct.
+- **Borrowed patterns (reference only):** Worktrunk isolated worktrees; Goose typed extension interface; ECC harness-neutral skills/rules/hooks/evals; SWE-agent compact ACI/evaluation; dsh-our-free-model availability/effort/routing telemetry; Scrapling controlled research adapter; Colibri model runtime candidate subject to target benchmark; GPT Pilot/Plandex/Roo Code plan/delegate/review patterns. No package or model is installed.
+- **OPEN:** Agent-desktop and Grill-me exact URLs unresolved; ECC and Taby/Tabby name normalization tentative; full 60-source catalog was not re-reviewed. API integration, true model workers and UI controls remain future work.
+- **NEXT:** preserve truthful UI; after PR #134 exact-head CI/review, specify capability-scoped API contracts and artifact/evidence validation before a real worker slice can expose run controls.
+
+
+### 8.1 Sidebar memory status and close behavior — 2026-11-04
+
+- **IMPLEMENTED:** the memory status line is outside the disclosure and remains visible above the title while the memory controls are collapsed. Status chips use 8px text and tighter spacing.
+- **IMPLEMENTED:** `#memoryPanel` is the named sidebar group; `#memoryPanelDisclosure` is the actual native disclosure. This keeps the status line visible without making it part of the disclosure's hidden content.
+- **IMPLEMENTED:** closing the sidebar collapses `#memoryPanelDisclosure`, `#memoryToolsDetails` and the two help disclosures. It does not modify project navigation or the chat-section open state.
+- **E2E:** sidebar test verifies status visibility while collapsed, status/title vertical order, nested memory behavior and collapse after closing the sidebar while project/chat state is preserved. The IndexedDB privacy test now opens `#memoryPanelDisclosure`.
+- **TEST-HARNESS:** settings-profile import test now seeds existing custom-provider and Tavily keys before app startup and stubs the custom model catalog endpoint. This prevents the provider-selection auto-connect timer from racing the import toast; it still verifies the import does not overwrite either key.
+- **VERIFIED:** exact code/test HEAD `04a893f87a2dacdbb5ea55c4a75fab21c6e539f1`, Quality #41688096480 / run 1696: 4/4 Chromium shards (37/37/37/38), syntax preflight, static analysis, Jekyll, Integrity, Security and Context passed. Published Pages smoke skipped.
+- **VISUAL:** 21 expanded-panel screenshots at 1440px were generated and inspected. Existing responsive shell/navigation evidence covers 320/360/390/768/1024/1440px, but expanded Functions/Agents/Settings are not yet captured at all widths.
+- **LIMITS:** this closes only the evidenced sidebar behavior slice, not requirement 8.1 as a whole or the full 8.1–8.17 acceptance set. Native iPhone Safari/VisualViewport/safe-area, VoiceOver, keyboard-only, full component WCAG/contrast, long-list/popover stress and live provider/gateway checks remain open.
+- **NEXT:** extend expanded-panel visual captures to 320/360/390/768/1024/1440px; then continue the next mandatory 8.1–8.17 gate.
+
+
+### 8.1 responsive expanded Functions-menu visual capture — 2026-11-04
+
+- **IMPLEMENTED (test source):** extended the existing real-browser visual-review test with screenshots of the open Functions menu at 320/360/390/768/1024/1440px. Each capture also asserts document-level horizontal overflow is <=1px; viewport resizing preserves the live menu state and does not reload the app.
+- **CODE/TEST SHA:** `c9192673f3149302e93254d39fd3c7f1716b4be1` (`tests/e2e/app.spec.mjs`).
+- **CHECKS:** GitHub workflow/status lookup returned no run/status for the commit; browser/Playwright execution is NOT RUN / NOT VERIFIED. The prior Quality #41688096480 remains evidence only for `04a893f87a2dacdbb5ea55c4a75fab21c6e539f1`.
+- **OPEN:** this slice covers only the compact Functions menu, not all expanded Agents/Settings panels. Native iPhone Safari, VoiceOver, keyboard-only, component WCAG and live provider/gateway gates remain open. No merge, rebase, main sync or deployment.
+- **NEXT:** extend the same responsive capture/overflow gate to Agent overview and expanded Settings surfaces, then inspect screenshots and fix only evidenced regressions.
+
+
+### Owner operational follow-up — OLEDUE routing and external source archive (2026-11-04)
+
+- **SPECIFIED in canonical checklist:** requirements 8.29–8.30 were added before implementation status changes. They require automatic one-word routing to the live owner-authorized PR (default #131 while active), a central external-source inventory with URL deduplication/provenance, and a license-aware archive manifest.
+- **PROPOSED on main-based docs PR:** branch `docs/oledue-simple-source-index-20261104` adds a compact root `OLEDUE.md` that resolves active workstream/PR from live GitHub without asking the owner to name it, and updates the main `ORIENTER.md` first-read pointer. Main OLEDUE file is not yet merged.
+- **IMPLEMENTED in proposed docs branch:** appended a consolidated inventory to `INTEL.md`, extracting/deduplicating 257 distinct URLs from 11 curated main/research catalog documents; each row records source catalog origin. This is a link/source index snapshot, not upstream validation, integration or license approval.
+- **NOT DONE:** binary/source/model/voice downloads. Archive remains gated on a concrete future use, exact upstream version, license/redistribution terms, SHA-256, size and review date. No bulk download.
+- **OPEN:** main-based docs PR needs review/merge approval; external source index still needs coverage audit against other catalogs/branches and exact links should be rechecked before artifact acquisition. 8.29/8.30 are not complete.
+
+
+### Main ↔ PR #131 checklist reconciliation review — 2026-11-04
+
+- **FACT — live refs:** main `0a1f764f295f92e49e347cdc972f8c6c9a07e4c1`; PR #131 HEAD before this reconciliation slice `3352433e0ffd5ca49ffe780def481dda0b88c7d2`; merge-base `e78a73b25725bfa63370d9946887cbbacbf51b82`; main is 4 commits ahead, PR #131 mergeable=false. Four main-side commits all modify only `docs/V1_UI_FINALIZATION_RU.md`.
+- **MAIN-ONLY OWNER DELTA (reviewed):** initial sidebar/memory/projects/chats and typography/header/settings/provider/Tavily/system-prompt notes; navigation ergonomics; project Sources section; message action icons; backdrop lifecycle; control sizing; compact theme/language; removal of experimental server memory; explicit context handoff; touch selection; centered/color-coded tickers; icon-first typography; user-adjustable readability/Forced Colors; provider shortlist (Gemini, Kilo, Grok, OpenRouter, Hugging Face, Anthropic, NVIDIA; Kimi candidate), BYOK and actual model availability/testing/ordering; V1/security/price boundary; dated priority marker for 8.1–8.17.
+- **COVERAGE:** the PR #131 unified 8.0 checklist already contains corresponding requirement content for 8.1–8.17 and provider items; phrase-level source comparison confirmed sidebar swipe, memory order, last-closed chat, unassigned chats, sources, message icons, backdrop, touch-select, Forced Colors and provider shortlist are represented. Project Sources CRUD remains explicitly blocked until a real scoped source-list API. No status promoted from SPECIFIED to IMPLEMENTED.
+- **RECONCILIATION CHANGE:** repaired the checklist changelog Markdown table separator, corrected the malformed joined ticker bullets, and explicitly restored the 2026-10-31 owner-priority note inside section 8.0 without duplicating the source backlog. Added operational requirements 8.29 OLEDUE and 8.30 source inventory/archive first; both remain unchecked.
+- **CHECKS:** source/patch review only. No exact-head Quality/Chromium or manual/native review run for this documentation change; PR #131 remains open/unmerged. No merge, rebase, main sync or deployment.
+- **NEXT:** continue responsive capture assertions for Agent/Settings and inspect exact-head Quality artifacts; merge-prep still needs full file-level interaction review and exact-head CI.
+
+
+### Responsive Settings overflow regression — 2026-11-04
+
+- **VERIFIED FAILURE (CI):** Quality runs #41777025231 on `3352433e0ffd5ca49ffe780def481dda0b88c7d2` and #41777352077 on `1943424f7f74d43b5eaaedc4e11debccfab13cf7` each failed one Chromium shard at the same assertion: `Settings panel has no internal horizontal overflow at 320px`. Other shards and sentinels passed; published Pages smoke skipped. This is an existing responsive acceptance regression, not a test-only false pass.
+- **ROOT CAUSE (source-supported hypothesis):** `index.md` gives the Settings surface `p-3 sm:p-4` (12px below Tailwind sm/640px), while `.settings-header` in `assets/css/app.css` uses a 16px negative margin/padding inset. At compact width, the sticky header's negative inset is wider than the surface's 12px content inset, creating internal scrollWidth overflow. CI screenshot artifact was listed but its bytes could not be retrieved in this connector; no visual image inspection claim.
+- **IMPLEMENTED:** `assets/css/app.css` adds a <=639px override aligning the Settings header margin/padding to `-.75rem/.75rem` (12px), matching the p-3 surface. Commit `47c9841381a104de99a361fb282bda68dd088bd8`.
+- **TEST-HARNESS:** `tests/e2e/app.spec.mjs` now reports the top ten overflowing descendants (tag/id/class/scroll/client widths/right edge) if the internal overflow assertion fails, preserving the no-overflow gate. Commit `dda1de91c3ddef7c41f26f066eb66333a3ff9c25`.
+- **VERIFIED:** Quality run #41778037465 passed on exact PR HEAD `e11ec01f1fcbc694e959440ce4f8c005131b6969` with all four Chromium shards, syntax preflight, static analysis, Jekyll, Integrity, Security and Context passing; published Pages browser smoke skipped. Graphify #41777679201 passed on code/test SHA `dda1de91c3ddef7c41f26f066eb66333a3ff9c25`. The Settings no-overflow assertion passed at 320/360/390/768/1024/1440px; this verifies the CSS correction. No failure diagnostics were emitted.
+- **VISUAL REVIEW:** downloaded Playwright artifact `playwright-diagnostics-3` (artifact 13298122356), reviewed the 30-panel contact sheet and detailed Settings 320/360/768/1440px plus Agent and Functions 320px screenshots. No horizontal clipping/overflow observed in the reviewed states. Contact sheet is available at `/mnt/data/pr131-visual-review/contact-sheet.png` in this session.
+- **NEXT:** continue the next mandatory UI gate; native iPhone Safari/VisualViewport/safe-area, VoiceOver, keyboard-only, full component WCAG/contrast, stress and live provider/gateway checks remain open.
+
+
+### Post-PR135 main merge — seven-file manual reconciliation snapshot (2026-11-04)
+
+- **FACT:** main is now `9796067d9c6044fa96e1437a2ceac14574d1c1af` after PR #135 squash merge; main's exact Quality Sentinels #41778101742, Freshness #41778101746, Provenance #41778101735 and Pages deployment #41778101349 passed. Last functional checkpoint remains `e78a73b25725bfa63370d9946887cbbacbf51b82`.
+- **CURRENT DIFF:** main is 5 commits after PR #131 merge-base; main delta 8 files. Seven overlap PR #131's 57 changed files: `OLEDUE.md`, `ORIENTER.md`, `docs/PROJECT_STATE.yaml`, `docs/V1_UI_FINALIZATION_RU.md`, `docs/VOLLEY_LOG.md`, `docs/project-state-snapshot.json`, `project-reference/FILE_ORIENTER_RU.md`. `INTEL.md` is a main-only additive source index, not modified by PR #131.
+- **MANUAL RECONCILIATION (not a rebase or sync):** PR #131 `OLEDUE.md` now matches main byte-for-byte; ORIENTER/FILE_ORIENTER retain main SHA/queue and current PR #131 checkpoint; PROJECT_STATE is based on the refreshed main snapshot with root `ui_v2_track`; checklist marks OLEDUE and 257-URL inventory completed, first WCAG archive item and Jekyll exclusion [~]; project-state snapshot main SHA 9796067 and open queue excluding #131: #124–#130, #132–#134, #136 (11), issue #111. VOLLEY_LOG was three-way reconciled from base e78, current main and PR branch: main's source-index entry and PR branch history were combined with zero overlapping hunks at the insertion points.
+- **MERGE STATE:** GitHub still reports mergeable=false; the base is not advanced and no rebase, main synchronization, merge or deployment was performed. The manual file reconciliation is preparation only.
+- **PR #131 CHECKS:** Quality #41778037465 passed on tested PR head e11ec01 (4/4 Chromium shards, required sentinels; Pages smoke skipped); Graphify #41777679201 passed on code/test SHA dda1de91. Current docs-only HEAD is b051195; Quality #41779920419 pending, Provenance #41779920394 passed. Project State Freshness did not surface a current PR #131 run; exact branch snapshot is manually aligned, but no official Freshness pass claimed.
+- **PR #136 SOURCE ARCHIVE:** exact W3C WAI WCAG 2.2 source is preserved unchanged in the state-refresh branch; its first Quality run #41779579720 failed Jekyll because the raw source contains Liquid include `box.html`. PR #136 added `exclude: docs/upstream-archive` to `_config.yml`; latest exact-head Quality #41780155673 is in progress, while Freshness #41780155743 and Provenance #41780155581 passed on PR #136 HEAD ac9ab535. The archive item is not merged.
+- **NEXT:** verify current exact-head PR #131 Quality and PR #136 Quality after the Jekyll exclusion; then continue remaining mandatory UI acceptance gates. No owner merge approval is implied.
+
+
+
+## 8.10 mobile hit-area regression + Graphify selector navigation — 2026-11-04
+
+- **CI FAILURE / ROOT CAUSE:** Quality #41781047437 on PR #131 HEAD `a303eb81c2133e07b0892ccb1ce7e18e15ca2178` failed one Chromium test: `jump-to-latest` computed min-height was 42px instead of 44px. The DOM ID is `jumpToLatest`, while the mobile CSS override targeted the nonexistent `#jump-to-latest`.
+- **IMPLEMENTED:** CSS commit `657658658fa4e59c8a78364b7defbf05f283e50b` changes the mobile selector to the actual `#jumpToLatest` ID. Existing E2E geometry assertions now verify the 44px minimum; no desktop dimensions were changed.
+- **GRAPHIFY FAILURE / FIX:** repeated `#projectNavToggle` rules at separate CSS locations made `graphify explain "path::selector"` ambiguous. The CI workflow now reads matching generated graph nodes and calls `graphify explain` with exact node IDs. A first attempt exposed a Python heredoc indentation error; commit `fc01177283de472724ff92ea6507b5b8eb87ccf2` corrected it.
+- **EXACT-HEAD VERIFICATION:** Quality #41784481921 PASS on exact PR HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2`: all 4 Chromium shards, syntax preflight, static analysis, Jekyll, Integrity, Security and Context passed. Published Pages smoke skipped for PR event. Graphify #41784481966 PASS on the same exact HEAD.
+- **VISUAL REVIEW:** Playwright artifact #13301020089 from the CSS-tested head `657658658fa4e59c8a78364b7defbf05f283e50b` contains 51 captures across Functions, Agents, Skills and Settings. Contact sheet reviewed; detailed 320px Agent/Settings/Functions and 1440px Settings views inspected. No obvious horizontal clipping/overflow in reviewed states; automated six-width overflow assertions passed.
+- **LIMITS:** screenshots are Chromium emulation, not native iPhone Safari. Native keyboard/VisualViewport/safe-area/gestures, VoiceOver, keyboard-only navigation, full component WCAG/contrast and live provider/gateway checks remain open. This closes the evidenced 44px mobile target regression only, not the complete 8.10 or 8.1–8.17 acceptance set.
+- **NEXT:** reconcile the eight shared main/PR files without rewriting history; continue manual/native accessibility and interaction acceptance; recheck PR mergeability and exact-head gates before any owner-authorized merge.
+
+
+## 8.11 — long project-context popover stress test authored (UNVERIFIED) — 2026-11-04
+
+- **IMPLEMENTED (test only):** `tests/e2e/app.spec.mjs` adds a 44-line Playwright case at lines 1283–1325 (blob `d7d351ab337cd01d10a7848435d1e604ead29df9`). It creates ten projects including a long name at a 320×440 viewport, checks that the context popover stays within viewport bounds, verifies no horizontal overflow, and confirms the project-choice list scrolls internally.
+- **SCOPE:** this is a bounded regression for the project-context popover, not proof for long chat lists/messages, empty states, every popover edge, an open virtual keyboard, keyboard/VoiceOver focus, or native iPhone behavior.
+- **VERIFICATION:** current PR #131 HEAD at review was `38ae8dc10a1f95f76ca041a5b70c256730401d68`; no workflow runs or commit statuses were surfaced for it. The last Quality #41784481921 and Graphify #41784481966 passed on earlier code/test HEAD `fc01177283de472724ff92ea6507b5b8eb87ccf2`, before this test addition. Do not mark this regression VERIFIED until exact-head Quality/Chromium runs.
+- **NEXT:** run the full current-head Quality/Chromium gate and inspect any failure artifacts; only then extend the stress matrix to chats/messages, empty states and keyboard-open placement.
+
+
+## OLEDUE selector coherence — 2026-11-04 (8.29, partial)
+
+- **FACT:** main contains root `OLEDUE.md`, and the file is byte-identical on the PR #131 branch before this change. Main `AGENTS.md` does not contain the `oledue` handoff trigger; PR #131's `AGENTS.md` does.
+- **IMPLEMENTED (PR #131 branch):** added the short `Fast task selector` to `OLEDUE.md`, matching the selector reference in the branch's `AGENTS.md`. It routes the active owner task, Landing UI #131, project/release gates, source/model research and VPS/runtime operations to existing canonical records without creating another backlog.
+- **LIMIT:** this does not yet update main. Until the branch changes land, repository-level `AGENTS.md` on main still does not invoke OLEDUE automatically. The ChatGPT Project handoff did invoke it in this continuation.
+- **VERIFICATION:** content/route consistency reviewed; no runtime changes. Fresh-session automatic routing and main-level integration remain unverified.
+- **NEXT:** retain 8.29 as partial until the trigger and selector are both in main and a fresh resumed handoff confirms routing.
+
+
+## Graphify UI Surface — confidence and relationship semantics (2026-11-05)
+
+- **IMPLEMENTED (PR #131 branch):** CSS/DOM relationships now distinguish exact single-token selector matches (may_style, heuristic score 0.65) from token overlap in compound/pseudo selectors (may_style_candidate, 0.25). JavaScript selector calls distinguish exact selectors from candidate-only overlap. The nearest-previous-function ownership guess was removed because line proximity does not prove lexical scope.
+- **IMPLEMENTED (PR #131 branch):** classList.add/remove/toggle/contains now creates js_class_mutation nodes and low-confidence may_affect_style links; it no longer claims the operation selects DOM nodes. Query methods remain separate selector-reference nodes.
+- **TESTS ADDED:** tests/test_graphify_ui_surface.py covers exact and compound selectors, low-confidence candidate edges, jQuery-style ID selectors, class mutation semantics and the absence of false targets / lexical-owner edges.
+- **VERIFICATION:** exact-head Quality and Graphify checks are pending on the updated PR #131 HEAD. Do not mark VERIFIED until tests and Graphify pilot pass on the same SHA.
+- **LIMIT:** this remains static source inference, not browser-computed CSS or a JavaScript AST/control-flow proof. Confidence scores are heuristic labels, not calibrated probabilities.
+- **NEXT:** inspect exact-head CI/artifacts; if clean, use the same evidence distinction in future Graphify UI Surface reports without promoting this V2 tooling into Landing V1.
