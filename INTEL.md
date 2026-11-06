@@ -74,7 +74,7 @@ This is the single navigational inventory for external upstreams referenced by t
 
 **Catalog coverage:** `INTEL.md`; `docs/OPEN_SOURCE_TRIAGE_RU.md`; `docs/TECHNIQUE_REGISTER_RU.md`; `docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md`; `docs/MULTIMODAL_MODEL_STACK_RU.md`; research catalogs in PR #125 (Agent Studio), #128 (Agent Workforce/VERT), #129 (Voice 2.0), #130 (Deep Research 2.0), plus open-source feature extraction and multimodal research branches. Source docs are not merged into main by this register.
 
-**Snapshot extraction:** 275 distinct source URL references across INTEL.md. The original consolidated table contains 257; 18 additional references were previously present only in INTEL prose and are now captured in the supplemental table below. These are URL/resource references, not a count of unique upstream projects. A preliminary grouping yields 228 repo/model/site roots (143 GitHub repository roots, 16 Hugging Face model roots, 69 other host roots); host-level grouping can contain multiple unrelated resources and must not be read as a unique-project count.
+**Snapshot extraction:** 275 source records (EXT-001–EXT-275) across INTEL.md. The original consolidated table contains 257; 18 additional references were previously present only in INTEL prose and are now captured in the supplemental table below. Two canonical URL targets are also recorded for alias resolution, so the document contains 277 distinct URL strings. These are URL/resource references, not a count of unique upstream projects. A preliminary grouping yields 228 repo/model/site roots (143 GitHub repository roots, 16 Hugging Face model roots, 69 other host roots); host-level grouping can contain multiple unrelated resources and must not be read as a unique-project count.
 
 | ID | Source / resource | URL as cited | Found in |
 |---|---|---|---|
@@ -474,7 +474,7 @@ This is a source-and-pattern review, not an adoption decision. Upstream refs are
 
 ### Census and resolution
 
-- **275 source URL references** are now represented in this register: 257 original consolidated-table entries plus 18 references previously present only in INTEL narrative. Stable IDs are EXT-001–EXT-275.
+- **275 source records** are now represented in this register: 257 original consolidated-table entries plus 18 references previously present only in INTEL narrative. Stable IDs are EXT-001–EXT-275. Two canonical alias-resolution targets are additionally linked in the review notes; the full file therefore contains 277 distinct URL strings.
 - Preliminary canonical grouping: **228 roots** — 143 GitHub repository roots, 16 Hugging Face model roots, and 69 other host roots. This is a navigation/deduplication aid, not a unique-project count; non-GitHub host roots may contain unrelated standards, papers, APIs and documentation.
 - **274 text/source pages were inspected** across repositories, READMEs, official docs and model cards. The remaining URL is the binary Vosk small-RU archive: it was not downloaded in this review; the official Vosk catalogue identifies the artifact as about 45 MB and Apache-2.0. Its archive SHA-256 remains unverified.
 - The inventory is a source census, not an adoption list. Standards, papers, benchmarks, catalogues and design guides are retained as REFERENCE-ONLY; scores below apply to implementable candidates or reusable technical components.

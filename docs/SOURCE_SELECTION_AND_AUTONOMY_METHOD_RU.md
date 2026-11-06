@@ -10,7 +10,7 @@ Convert a portfolio of 200+ owner-requested sources into a traceable capability 
 
 ## Single source register
 
-Baseline: INTEL.md on main blob SHA 6c1d96604ccb068eb086f83831f08e6c8c0b024c originally contained 257 consolidated-table URLs plus 18 narrative-only URLs (275 distinct source references overall). The 2026-11-06 review adds stable IDs EXT-001–EXT-275 and records 228 preliminary repo/model/site roots (143 GitHub repos, 16 Hugging Face models, 69 other host roots). These are not a confirmed count of unique projects; host roots can group unrelated pages.
+Baseline: INTEL.md on main blob SHA 6c1d96604ccb068eb086f83831f08e6c8c0b024c originally contained 257 consolidated-table URLs plus 18 narrative-only URLs (275 source records). The 2026-11-06 review adds stable IDs EXT-001–EXT-275 and two canonical alias-resolution targets (277 distinct URL strings in the updated file), and records 228 preliminary repo/model/site roots (143 GitHub repos, 16 Hugging Face models, 69 other host roots). These are not a confirmed count of unique projects; host roots can group unrelated pages.
 
 Each source record must retain the owner's original mention and include:
 - stable source ID; exact canonical URL and repository/project identity; aliases and ambiguity flag;
@@ -161,7 +161,7 @@ Acquire broadly only after decision and gates:
 
 ## 2026-11-06 — portfolio review result
 
-**SOURCE-TRIAGED (Pass 0 + Pass 1):** 275 source URL references reconciled from INTEL.md (257 original inventory entries plus 18 previously prose-only references). Stable IDs EXT-001–EXT-275 are assigned in the register. Preliminary grouping gives 228 repository/model/site roots: 143 GitHub repo roots, 16 Hugging Face model roots and 69 other host roots. These roots are not a unique-project count. 274 textual/source pages were inspected; one binary Vosk archive was checked against the official catalogue but not downloaded or hashed.
+**SOURCE-TRIAGED (Pass 0 + Pass 1):** 275 source records reconciled from INTEL.md (257 original inventory entries plus 18 previously prose-only references). Stable IDs EXT-001–EXT-275 are assigned in the register; two canonical alias-resolution targets bring the updated document to 277 distinct URL strings. Preliminary grouping gives 228 repository/model/site roots: 143 GitHub repo roots, 16 Hugging Face model roots and 69 other host roots. These roots are not a unique-project count. 274 textual/source pages were inspected; one binary Vosk archive was checked against the official catalogue but not downloaded or hashed.
 
 **Identity corrections recorded:** Piper voice-list path; stale sherpa T-one documentation path; Magentic-One shortlink; moved OpenTelemetry GenAI semantic-conventions repo; Invariant Labs MCP-Scan current Snyk Agent Scan upstream. License verification includes T-one code + converted model Apache-2.0, GigaAM model MIT, OpenViking AGPL-3.0, Claudex Loop LICENSE MIT with third-party notices, and separate model/voice terms for ASR/TTS.
 
