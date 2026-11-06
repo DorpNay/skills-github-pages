@@ -92,6 +92,7 @@ jobs:
         run: |
           npm install --no-save --no-package-lock @playwright/test@1.64.1
           google-chrome --version
+          npx playwright install ffmpeg
           npx playwright --version
       - name: Exercise the built app in stable Chrome
         run: npx playwright test --shard=${{ matrix.shard }}/4 --grep-invert "live public site serves the app shell and basic chat controls"
