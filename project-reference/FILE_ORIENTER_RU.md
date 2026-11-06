@@ -1,19 +1,17 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
-> **Назначение:** это подробный индекс для поиска пути по репозиторию, а не обязательный стартовый пакет. Для обычного продолжения используй `OLEDUE.md` → один пакет live GitHub state → один канонический task register. Открывай этот индекс, `docs/PROJECT_STATE.yaml` и `docs/VOLLEY_LOG.md` только когда нужны навигация, системное состояние или история. Этот индекс не доказывает, что feature включена или развёрнута.
+> Подробный индекс навигации. Это не источник live-статуса и не обязательный стартовый пакет. Для `oledue` сначала читай корневой OLEDUE.md, затем выполняй один batched live GitHub read. Используй этот файл только для поиска конкретного пути.
 
-## Текущая контрольная точка — 2026-11-05, после PR #149
+## Контрольная точка — 2026-11-06 (проверена по GitHub)
 
-- **Current main SHA:** `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`; PR #149 — state/configuration refresh child of functional checkpoint `4fbf16aad3f741159654950e0260aaf717653291`.
-- **Последние интеграции:** #146 task registry; #147 cancellation-safe Gateway semaphore; #148 UI Markdown/Pyodide security boundary; #149 state snapshot/orientation, Node 24 workflows, pypdf 6.21.4 и Vosk provenance. Merge SHA #149: `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`.
-- **PR #149 exact-head checks:** Quality #42001310270 (7 jobs), Freshness #42001309687, Provenance #42001309703, Graphify #42001311323 — PASS. Post-merge main workflow IDs не получены; не выдавать PR-head PASS за post-merge verification.
-- **Live queue snapshot:** open PRs (6): #125, #128, #129, #130, #131, #134; open issues (1): #111.
-- **PR #150 — code/test HEAD:** `54e4858ed19fb4fa1daaa55444121ff2f8c5f780`. Recovery backups/rollback, transactional settings-profile import and shared setter rollback; eight Chromium regressions. Quality #42059797507 (7 jobs), Freshness #42059797510, Provenance #42059797913, Graphify #42059797551 PASS. Freshness main/live-queue step skipped under PR condition. PR open/unmerged; owner merge decision pending.
-- **Новая conditional privacy finding:** FTS5 secure-delete доступен с SQLite 3.42.0+; MemoryManager проверяет версию, но capability не выведен в health. На более старой SQLite логическое удаление может оставить записи в FTS segments до merge. Live SQLite/feature flag/host не проверены.
-- **PR #131:** HEAD `02fb4e8986b35f55a8a3b5308704b631dfbcce80`, 1,101 ahead / 17 behind, 57 files, `mergeable=false`. Не синхронизировать и не вливать целиком.
-- **PR #134:** Draft/HOLD, HEAD `519973c793a1c998b43c60dedfe55a02b74a26a9`; review #5779912938 остаётся remediation gate.
-- **Branch cleanup:** 145 refs (143 в исходном inventory + ветка merged PR #149 + active PR #150). Пять behind-only candidates и один tree-equivalent PR #133 branch проверены; удаление не выполнено — branch-delete action отсутствует.
-- **Следующий шаг:** final manual review of PR #150; then audit startup migration/privateMemoryUsed persistence and verify target-host SQLite/FTS5. Keep provider/storage/voice/document/RAG and bounded Pyodide work queued; PR #131 selective, #111 open.
+- **main:** `a8afee45bb22654b220bffda857ab10c24641ef1` — PR #150 merged; storage recovery/atomic rollback is part of main.
+- **open PRs (3): #125, #131, #152.** **open issues (1): #111.** Это снимок; перед использованием сверять live.
+- **#131:** Draft, head `5f71b97f3c85ab8544431b496ceb7c9ccf8c0c3e`, base `e78a73b25725bfa63370d9946887cbbacbf51b82`, 1,125 ahead / 19 behind, 76 files, dirty. Selective reconciliation only.
+- **#152:** Draft, head `99a0b530b335e7e19833c4ce66138dcc576a09fa`, base `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`, 17 ahead / 1 behind, 4 files, dirty; Quality failed and Graphify passed on that exact head.
+- **#125:** future-workstream parking; not active unless owner asks.
+- **Main protections:** #147 Gateway cancellation; #148 untrusted rendering/Pyodide restrictions; #150 browser storage recovery/rollback.
+- **Current direction:** finish orientation repair; then reconcile #131 against current main without dropping protections; inspect #152 separately; continue research and capability work from the master register.
+- PR #128/#134/#151 were closed without merging to main; selected material was copied to #131. PR #129/#130 were merged into #131, not main.
 
 ## 1. Быстрый маршрут
 

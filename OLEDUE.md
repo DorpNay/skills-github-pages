@@ -1,29 +1,27 @@
 # aLandi — OLEDUE
 
 **Trigger:** owner writes `oledue` (alone or with a task).
-**Goal:** resume the real active work without asking which branch or PR.
+**Purpose:** recover the real task and exact repository state, then continue work in the same turn. GitHub live state is authoritative.
 
-1. Read this file first. Do not automatically reread every orientation document.
-2. Build one **Session Sync Capsule** from a single batched live GitHub read: current `main` SHA; open PR and issue IDs; selected active PR base, head branch, exact HEAD, mergeability and changed-file list; workflow/check results for that exact HEAD and, when relevant, current main. Keep PR HEAD, code/test HEAD and tested CI SHA distinct.
-3. Route without asking the owner to repeat context:
-   - latest explicit owner task takes priority;
-   - continue its current owner-authorized branch/PR and canonical task list;
-   - if that work is closed/merged, choose its live successor;
-   - otherwise default to Landing 2.0 in PR #131;
-   - never assume `main` is the implementation branch.
-4. Read **one canonical task register** for the selected workstream, then only the source, tests and evidence needed for the next action. Open `ORIENTER.md` only if the route/checkpoint conflicts; open `FILE_ORIENTER_RU.md` for path discovery; open `PROJECT_STATE.yaml` for system-wide flags/status; open `VOLLEY_LOG.md` only when history or a prior decision is needed.
-5. Perform the next safe bounded action in the same turn. Update the existing task register first; update state/log/orientation only when a material checkpoint or reusable fact changes.
-6. Report branch, PR, HEAD, changes, exact checks, open limits and one next action. Do not ask the owner to repeat context.
+## Handoff protocol
 
-## Fast task selector
+1. Read this file first. Do not start from chat memory, an old SHA, a remembered branch, or a previous PR number.
+2. Build one **Session Sync Capsule** in one batched live read: current `main` SHA/subject/date; all open PR IDs/titles/draft/base/head refs and SHAs/mergeability; open issue IDs/titles; and exact-head check-runs/statuses for the task-matched PR. Keep main SHA, PR base SHA, PR head SHA, code/test SHA, tested CI SHA and merge SHA distinct. Do not enumerate every branch unless branch hygiene is the task.
+3. Route the task: latest explicit owner request in this conversation first; otherwise the current owner task in canonical project state after live validation; otherwise the next incomplete task in the single canonical register with no unresolved prerequisite. Match a PR only when its scope matches that task. Draft/HOLD/parking PRs are not active unless explicitly requested. If no matching branch exists, create a small branch from verified current main. **Do not default to any PR.** PR #131 is not a permanent default merely because it was once the Landing 2.0 workbench.
+4. Read one canonical task register and only relevant source/tests/evidence. Open ORIENTER.md only to resolve routing conflicts; use project-reference/FILE_ORIENTER_RU.md for path discovery; docs/PROJECT_STATE.yaml for system flags; docs/VOLLEY_LOG.md only for history/decisions.
+5. Execute the next safe bounded action in the same turn. For multi-direction work, keep one active implementation slice and preserve the rest in the existing register. Batch independent reads; sequence dependent writes.
+6. Verify the final diff and exact current HEAD. Never call a check green unless its tested SHA equals the reported SHA. A green or mergeable PR does not itself authorize merge.
+7. Report WHERE branch/PR/HEAD, WHAT, CHECKS exact commands/run IDs/SHA, OPEN limits, and one NEXT action.
 
-- **Latest explicit owner task:** continue that workstream and its canonical task list; it takes precedence over defaults.
-- **Landing UI 2.0:** PR #131; scope/checklist in `docs/V1_UI_FINALIZATION_RU.md` §8.0; implementation evidence in `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md`.
-- **Whole-project state and release gates:** `docs/PROJECT_STATE.yaml` and owner-controlled issue #111; do not infer production readiness from UI or CI.
-- **Master task register:** `docs/MASTER_TASK_REGISTRY_RU.md` plus append-only owner delta `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md`; preserve stable IDs and order, reconcile before closing items, and do not create a parallel backlog.
-- **Open-source/model research:** `INTEL.md` → `docs/OPEN_SOURCE_TRIAGE_RU.md` → `docs/TECHNIQUE_REGISTER_RU.md`; verify exact source, version, license and target-hardware fit before adoption.
-- **VPS/runtime operations:** `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md` plus the owner-approved runbook; deployment remains a separate explicit action.
+## Canonical routing
 
-**Owner approval required:** merge, deployment, rebase/main synchronization, force-push, destructive changes, secrets/permissions or consequential external actions. A green CI is not merge authorization.
+- Whole-project task order: docs/MASTER_TASK_REGISTRY_RU.md + append-only docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md. One logical register; no parallel backlog.
+- Landing V1/V2: docs/LANDING_RELEASE_STRATEGY_RU.md + docs/V1_UI_FINALIZATION_RU.md. PR #131 is a selective integration workbench, not a wholesale merge instruction.
+- Voice: Voice tasks in the master registry/addendum; inspect current code and exact-head evidence before adopting a voice branch.
+- Research/source intake: INTEL.md → docs/OPEN_SOURCE_TRIAGE_RU.md → docs/TECHNIQUE_REGISTER_RU.md; verify primary source, exact version, license, provenance and target fit.
+- Whole-project release gates: docs/PROJECT_STATE.yaml and owner-controlled issue #111.
+- VPS/runtime operations: docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md and the owner-approved runbook. Deployment is separate from merge.
 
-**Canonical records:** `docs/V1_UI_FINALIZATION_RU.md` (Landing scope); `docs/MASTER_TASK_REGISTRY_RU.md` + `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md` (single logical whole-project task register); `docs/LANDING_UI_V2_IMPLEMENTATION_RU.md` (implementation evidence); `docs/VOLLEY_LOG.md` (continuation checkpoint). Do not create duplicate backlogs.
+## Authority and safety
+
+Merge, deployment, rebase/main synchronization, force-push, destructive changes, secrets/permissions and consequential external actions require explicit owner authorization for the relevant scope. Previously granted authorization applies only while PR, diff and risk remain within that scope; material scope changes require renewed review. Never discard main-side security, cancellation, storage recovery or user-data protections to make a merge clean.

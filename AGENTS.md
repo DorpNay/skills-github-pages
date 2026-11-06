@@ -27,11 +27,13 @@
 - No git reset --hard; do not overwrite unknown user changes.
 
 
-## OLEDUE handoff trigger (2026-11-04)
+## OLEDUE handoff trigger
 
-- When the owner sends the single word `oledue` (alone or with a task), read root `OLEDUE.md` first and execute its handoff protocol before asking questions or summarizing history.
-- Build one Session Sync Capsule from a single batched live GitHub read; keep PR HEAD, code/test HEAD and tested CI SHA distinct. Do not reread all orientation documents by default; load detailed state/history only when the selected task needs it. Avoid repeated polling and stale-SHA pass claims.
-- Keep the first response work-oriented: verify live repository state, recover the exact stopping point and continue one bounded safe slice. A green CI is not merge authorization.
+- When the owner sends `oledue` (alone or with a task), read root `OLEDUE.md` first and execute its handoff protocol before asking questions or summarizing history.
+- Build one batched live GitHub Session Sync Capsule. Never select a PR from chat memory or a hard-coded fallback; the latest explicit owner task and live repository state determine the workstream.
+- Treat PR/base/head/tested SHAs separately. Draft/HOLD PRs are not active unless explicitly requested. A branch is not the source of truth merely because it was used previously.
+- Continue one bounded safe slice in the same turn; consult detailed navigation/state/history only when the selected task requires them.
+- Keep the first response work-oriented and report exact branch, PR, HEAD, checks and blockers.
 
 ## Fast entry point / first-read protocol (2026-10-27)
 
