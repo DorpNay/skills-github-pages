@@ -4830,6 +4830,35 @@ test('team blueprints can be saved, applied, restored and deleted without launch
   expect(finalChat).toMatchObject({ agentTeamSize: 7, agentTeamScenario: 'research', agentRolePreset: 'software', multiAgentEnabled: false });
 });
 
+
+test('team blueprint library enforces its documented 20-item cap', async ({ page }) => {
+  await page.addInitScript(() => {
+    const timestamp = '2026-01-01T00:00:00.000Z';
+    const blueprints = Array.from({ length: 20 }, (_, index) => ({
+      schemaVersion: 1,
+      id: 'seed-blueprint-' + index,
+      name: 'Seed blueprint ' + index,
+      teamSize: 7,
+      scenario: 'research',
+      customScenario: '',
+      rolePreset: 'software',
+      customRoles: '',
+      createdAt: timestamp,
+      updatedAt: timestamp
+    }));
+    localStorage.setItem('ai_agent_team_blueprints_v1', JSON.stringify(blueprints));
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  const panel = page.locator('#agentFunctionSettings');
+  const library = panel.locator('#agentBlueprintLibrary');
+  if (!(await library.evaluate(element => element.open))) await library.locator(':scope > summary').click();
+  await panel.locator('#agentBlueprintName').fill('One too many');
+  await panel.locator('#agentBlueprintSave').click();
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('ai_agent_team_blueprints_v1') || '[]').length)).toBe(20);
+  await expect(panel.locator('#agentBlueprintSelect option')).toHaveCount(21);
+});
 test('planned function menu items open truthful detail windows and can pause motion', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#functionsMenuSummary').click();
