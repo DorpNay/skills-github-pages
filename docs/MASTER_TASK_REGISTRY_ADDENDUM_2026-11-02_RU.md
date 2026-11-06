@@ -221,6 +221,8 @@ This section supplies method and acceptance detail for the new tasks in `docs/MA
 - When a selected candidate is accepted for aLandi, preserve usable code/artifact in the repository where redistribution and storage allow; add provenance metadata and tests/evals. Preserve source LICENSE/NOTICE and model cards; keep model weights and runtime code separately versioned/digested. Do not download every catalog entry.
 - Existing artifact baseline: `models/vosk/vosk-model-small-ru-0.22.zip` is already archived with README/license/checksum metadata and `ship=false`; its presence is not proof of target-device quality or runtime activation.
 
+**Official upstream revalidation 2026-11-06:** XERJ v1.0.0-rc.101 → 83c9f0d... (Apache-2.0 public source) is not equivalent to its release binary: notes state three proprietary query crates and its 408,024,623-byte model bundle has no independently verified redistribution terms. Do not archive the bundle/binary. Memvid v2.0.140 → e18fe554... is Apache-2.0 and a candidate for portable export only. RAG-Anything v1.4.1 → 0ef67b4... is MIT, but core dependencies include LightRAG/MinerU and optional audio/video dependencies are heavy. Full findings and evals: docs/OPEN_SOURCE_TRIAGE_RU.md, INTEL.md, docs/TECHNIQUE_REGISTER_RU.md and EVALS.md. No third-party artifact copied in this review.
+
 ### H2. CLEANUP-2026-002 — safe cleanup and optimization
 
 - First create a read-only candidate report with path/line/symbol, direct and indirect references, HTML/CSS/JS/build/runtime/workflow reachability, framework/dynamic registration considerations, why it appears unused, user impact, test coverage, confidence and rollback.
