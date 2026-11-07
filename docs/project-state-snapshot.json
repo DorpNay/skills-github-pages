@@ -215,7 +215,7 @@
     "pr158_head": "4da559cf6abc21bfa3920b5e0297a2abb84e7453",
     "pr158_compare": "Merged at d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c; exact-head Quality #42349540173 passed; exact-main root title Quality #42349853526 remains in progress.",
     "pr166_head": "571a68dec8f68ecfa62e7ef05f75f32c21b342de",
-    "pr166_compare": "Open PR #166, base main 69645ff. Exact heads 7c065c1, a79cb6b and dddc613 failed one dark/high disabled/link semantic-role assertion (115 passed, 1 failed). Current diagnostic head 571a68d adds selector match and inherited/computed color diagnostics; Quality #42367459092 and Graphify #42367459077 were in progress at capture."
+    "pr166_compare": "Open PR #166, base main 69645ff. Exact heads 7c065c1, a79cb6b and dddc613 failed one dark/high disabled/link semantic-role assertion (115 passed, 1 failed). Current diagnostic head 571a68d adds selector match and inherited/computed color diagnostics; Quality #42367459092 and Graphify #42367459077 were in progress at capture. Live root and /landing return v10.0; main index blob 227223d78bb3be1d07422767a29a5ec3fd8df42a lacks ai_ui_readability_v1/readingFontSize while PR blob 0220270b86e17e719310933678bbbdf52551486b contains them. This confirms the §8.17 absence is because PR #166 is unmerged, not because Pages failed."
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": true,
