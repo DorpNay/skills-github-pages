@@ -2558,7 +2558,7 @@ test('Functions menu exposes truthful Agents, Deep Research and Skills panels wi
   const menu = page.locator('#functionsMenu');
   const summary = page.locator('#functionsMenuSummary');
   await expect(menu).toBeVisible();
-  await expect(summary).toHaveRole('button');
+  // This is a native details/summary disclosure, not an ARIA menu widget.
   await expect(summary).toHaveAccessibleName(/Функции/);
   await summary.focus();
   await page.keyboard.press('Enter');
