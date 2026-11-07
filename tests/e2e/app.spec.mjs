@@ -2558,6 +2558,8 @@ test('Functions menu exposes truthful Agents, Deep Research and Skills panels wi
   const menu = page.locator('#functionsMenu');
   const summary = page.locator('#functionsMenuSummary');
   await expect(menu).toBeVisible();
+  await expect(summary).toHaveRole('button');
+  await expect(summary).toHaveAccessibleName(/Функции/);
   await summary.focus();
   await page.keyboard.press('Enter');
   await expect(menu).toHaveAttribute('open', '');
@@ -2581,7 +2583,10 @@ test('Functions menu exposes truthful Agents, Deep Research and Skills panels wi
   const modal = page.locator('#functionPanelModal');
   await expect(modal).toBeVisible();
   await expect(page.locator('#agentFunctionSettings')).toBeVisible();
+  await expect(modal).toHaveRole('dialog');
+  await expect(modal).toHaveAttribute('aria-modal', 'true');
   const closePanel = modal.locator('[data-action="close-function-panel"]').first();
+  await expect(closePanel).toHaveAccessibleName('Закрыть');
   await expect(closePanel).toBeFocused();
   const visibleFocusables = modal.locator('a[href]:visible, button:visible, input:visible, select:visible, textarea:visible, [tabindex]:visible');
   const firstFocusable = visibleFocusables.first();
@@ -2637,6 +2642,15 @@ test('Functions menu exposes truthful Agents, Deep Research and Skills panels wi
   await expect.poll(() => modal.evaluate(element => getComputedStyle(element).backdropFilter)).toBe('blur(4px)');
   await expect(page.locator('#skillFunctionSettings')).toBeVisible();
   await modal.locator('[data-action="close-function-panel"]').first().click();
+  await expect(modal).toBeHidden();
+
+  await selectLanguage(page, 'en');
+  await expect(summary).toHaveAccessibleName(/Functions/);
+  await summary.click();
+  await expect(menu.locator('[data-function="agents"]')).toHaveAccessibleName(/Structured analysis/);
+  await menu.locator('[data-function="agents"]').click();
+  await expect(closePanel).toHaveAccessibleName('Close');
+  await closePanel.click();
   await expect(modal).toBeHidden();
 });
 
