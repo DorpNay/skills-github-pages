@@ -278,3 +278,17 @@ No files, workflows, settings, branches or repository names were deleted or chan
 - The pinned upstream `start-exercise.yml` requests `contents: write`, `actions: write`, and `issues: write`; `finish-exercise.yml` requests `contents: write` and `issues: write`; `find-exercise-issue.yml` requests `issues: read`. This is upstream workflow authority, not a permission granted by our local pin checker.
 - **Repository governance evidence:** `GET /repos/DorpNay/skills-github-pages/rulesets?includes_parents=true` returned an empty list (`[]`). The `GET /branches/main/protection` endpoint returned HTTP 403 `Resource not accessible by integration`; therefore classic branch protection is **UNVERIFIED**, not absent.
 - **Conclusion:** direct repository pinning is VERIFIED (62/62), but the transitive reusable-workflow dependency chain, least-privilege review and repository governance are OPEN under issue #111. Do not mark the supply-chain gate complete. A bounded follow-up should replace or fork the exercise workflows with locally reviewed equivalents or otherwise pin their nested dependencies and reduce permissions; preserve behavior and test triggers before changing them.
+
+## 15. Browser asset supply-chain review — 2026-11-08
+
+**Scope:** current `index.md` script references on the PR #174 work branch. This is a source inventory, not a runtime network capture.
+
+| Asset | Current reference | Finding | Safe disposition |
+|---|---|---|---|
+| Tailwind Play CDN | `https://cdn.tailwindcss.com` | Mutable/unversioned browser-executed code; no SRI. Official Tailwind v3 documentation explicitly says Play CDN is for development and is not intended for production. | Replace with a reproducible build-time Tailwind CLI/PostCSS step and committed/generated static CSS. Do not guess a versioned Play CDN URL or fabricate an integrity hash. |
+| marked | `https://cdn.jsdelivr.net/npm/marked@18.0.14/marked.min.js` | Package version is explicit, but no SRI and runtime still trusts jsDelivr delivery. | Prefer a reviewed local artifact or add SRI only after hashing the exact served bytes and pinning the expected file. |
+| DOMPurify | `https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js` | Package version is explicit, but no SRI and runtime still trusts cdnjs delivery. | Prefer a reviewed local artifact or add SRI only after hashing the exact served bytes and pinning the expected file. |
+
+Primary reference: Tailwind CSS v3.4.17 Play CDN documentation, https://v3.tailwindcss.com/docs/installation/play-cdn — explicitly classifies Play CDN as development-only. This makes static Tailwind compilation the preferred production fix, not merely changing the unversioned CDN URL.
+
+**Status:** inventory and production-boundary decision are **VERIFIED** from repository source + official documentation. No CDN URL, dependency, build workflow or generated CSS was changed in this review. Exact SRI hashes have not been obtained; do not add guessed hashes. Remaining work: establish a reproducible static CSS build, compare generated CSS against current rendered pages and all responsive states, then self-host/version marked and DOMPurify or verify exact-byte SRI with Chromium regression coverage.
