@@ -101,7 +101,7 @@
 
 ## D-010 — Scoped FTS5 retrieval for the memory graph; no crypto-erasure claims
 
-- **Status:** Accepted for prototype; public UI/API wiring and physical-erasure SLA deferred.
+- **Status:** **SUPERSEDED BY OWNER 2026-11-07 (D-021).** Historical prototype decision only; do not restore the server-memory graph.
 - **Problem:** Search the existing SQLite memory graph without a new embedding/vector dependency or crossing chat/project/global boundaries.
 - **Decision:** Use an external-content FTS5 index with insert/update/delete triggers. `search_nodes()` bounds and quotes literal terms, filters exact `(scope, scope_id)`, defaults to confirmed nodes and supports temporal filters. Recursive deletion updates FTS through delete triggers.
 - **Deletion boundary:** `PRAGMA secure_delete=ON` applies to ordinary SQLite b-tree pages; FTS5 `secure-delete=1` is enabled only with SQLite >= 3.42.0 and a verified setting. These are defense-in-depth settings, not cryptographic erasure and do not clear external copies, WAL/journal files, snapshots or backups.
@@ -115,7 +115,7 @@
 
 ## D-011 — Authenticated opt-in API for the structured memory graph
 
-- **Status:** Accepted for single-owner gateway prototype; disabled by default and not yet wired to the static-site project memory UI.
+- **Status:** **SUPERSEDED BY OWNER 2026-11-07 (D-021).** The API, flags, store and routes are removed from the current product.
 - **Problem:** the graph and FTS5 search had no authenticated API surface, so only direct module users could create, review, search or delete facts.
 - **Decision:** expose bounded Bearer-authenticated routes for candidate creation, scope-filtered listing/search, explicit relation creation, owner review and recursive deletion. Reject unknown JSON keys, use no-store responses, and bound request bodies.
 - **Truth/lifecycle rule:** API-created facts always start as `candidate`; only the explicit review route may set `confirmed` or `rejected`, with an audit code. Superseded/rejected nodes are immutable through review.
@@ -135,7 +135,7 @@
 
 ## D-013 — Browser-to-server project memory bridge is explicit and candidate-first
 
-- **Status:** Merged in PR #29 at `55248f81585c52d7cc7ba7cfc08158a291a761ca`; PR-head and post-merge Quality/Chromium/provenance/Pages checks passed. Live gateway activation remains pending.
+- **Status:** **RETIRED BY OWNER 2026-11-07 (D-021).** PR #29 is historical implementation/CI evidence only; its browser bridge, UI actions, gateway routes and flags are removed.
 - **Decision:** browser-local project facts remain local until the owner clicks “Send local facts”. Upload creates server-side candidate nodes; UI can list, confirm/reject and delete them. No automatic migration or global-memory write occurs.
 - **Retrieval gate:** server search runs only when the current chat has both project memory and server project memory opted in. Query scope is exactly `scope=project, scope_id=currentProject.id`; only `confirmed` nodes enter the prompt. Retrieval is capped at six facts and 1200 total characters; manual uploads are bounded to 100 new candidates per click, query up to 100 recent server nodes (the API limit), and keep a bounded local source-ID ledger for idempotency across batches. A failed lookup degrades to local-only context and is shown in the UI.
 - **Activation:** the browser uses the configured aLandi gateway URL ending in `/v1` and the aLandi bearer key. Gateway requires `ALANDI_MEMORY_GRAPH_ENABLED=true`; keep `ALANDI_GLOBAL_MEMORY_ENABLED=false`. CORS must allow the Pages origin. This is still a single-owner gateway, not multi-user ACL.
@@ -229,3 +229,14 @@
 - **Compatibility:** Preserve existing `ai_alandi_cloud_*` localStorage keys as internal compatibility identifiers until a separately designed and tested migration. The provider value `alandi` remains an internal route identifier; do not expose it as a third-party provider. `aLandi aCloudi` is reserved for a future information-storage product. Cloudflare remains the infrastructure/provider name.
 - **Acceptance:** exact-head checks assert the current product label and route actions, reject the retired visible label/actions, and retain compatibility-key behavior.
 - **Rollback:** revert the bounded naming patch without changing stored keys or provider routing semantics.
+
+
+## D-021 — Retire experimental server-memory graph and browser bridge
+
+- **Status:** **OWNER DECISION — effective 2026-11-07; implemented in PR #169 branch, pending exact-head CI and owner-authorized merge.**
+- **Decision:** Remove the experimental server-side structured-memory graph from the current product: API routes, feature flags, SQLite graph store/schema, graph-only temporal/conflict modules, browser bridge/actions, per-chat server-memory state, and their tests/setup instructions. Do not recreate this subsystem under a renamed UI.
+- **Preserve:** browser-local personal/project notes and their explicit local controls; conversation delta sync as its separate contract; independent scoped RAG retrieval, source storage/deletion, citations and evidence ledger. Do not conflate these with server graph memory.
+- **Isolation evidence:** RAG retrieval and deletion are bound to exact `(scope, scope_id)`; Evidence Ledger reads are scope-filtered; exact-response cache keys include the full request payload. A separate browser-global-memory multi-project prompt-leak test and a dedicated project-ID cache namespace contract remain open.
+- **Data retention:** code removal must not delete an existing gateway `memory-graph.sqlite3`, WAL/journal, snapshots or backups. Target host was not inspected; preserve existing data until the owner makes a separate backup/export/retention decision.
+- **Rollback:** do not revert to the retired graph. If local memory/RAG behavior regresses, fix the affected independent contract without restoring server graph storage or its API.
+- **Links:** `gateway/app.py`, `gateway/memory/scope.py`, `gateway/rag/lazy_graph_rag.py`, `gateway/rag/evidence_ledger.py`, `tests/e2e/app.spec.mjs`, EV-MEM-001–007, EV-RAG-005, EV-MEM-003.
