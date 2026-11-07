@@ -7,6 +7,7 @@ upstream_license: MIT
 license_file: LICENSE
 archive_scope: selected source snapshot; not a complete upstream checkout
 purpose: research/reference only; not an active aLandi runtime dependency
+graphify_excluded: true
 verified_at: 2026-11-08
 verified_files:
   - path: raganything/parser.py
