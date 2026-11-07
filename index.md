@@ -5352,7 +5352,9 @@ permalink: /
      const aserviSettingsGroup=$('aserviSettingsGroup');
      const peerSettingsGroups=[$('legacyProviderSettings'),$('additionalSettings')];
      peerSettingsGroups.forEach(group=>group?.addEventListener('toggle',()=>{
-       if(group.open&&aserviSettingsGroup?.open)aserviSettingsGroup.open=false;
+       if(!group.open)return;
+       if(aserviSettingsGroup?.open)aserviSettingsGroup.open=false;
+       peerSettingsGroups.forEach(peer=>{if(peer&&peer!==group)peer.open=false;});
      }));
      aserviSettingsGroup?.addEventListener('toggle',()=>{
        if(!aserviSettingsGroup.open)return;
