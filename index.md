@@ -503,11 +503,11 @@ permalink: /
     <div class="settings-surface bg-gray-800 p-3 sm:p-4 rounded-xl max-w-2xl mx-auto w-full border border-gray-700 space-y-3 my-auto max-h-[94dvh] overflow-y-auto overscroll-contain">
       <header class="settings-header"><h2 id="settingsTitle" class="text-base font-bold" data-i18n="settingsTitle">⚙️ Настройки</h2><div class="settings-header-actions"><button type="button" data-action="save-settings" data-i18n="saveSettings">Сохранить</button><button type="button" data-action="close-settings" data-i18n-aria-label="closeSettings" aria-label="Закрыть" title="Закрыть">✕</button></div></header>
       <section id="cloudSettingsCard" class="cloud-card rounded-2xl border p-4 space-y-3" aria-labelledby="cloudCardTitle">
-        <div class="flex items-center justify-between gap-3"><div class="min-w-0 flex-1"><p class="text-lg uppercase tracking-[.18em] text-cyan-300 font-extrabold leading-none">aLandi · cloud</p><h3 id="cloudCardTitle" data-i18n="cloudCardTitle" class="text-2xl font-bold mt-2">Мой сервер</h3></div><span class="cloud-status-indicator" id="cloudStatusDot" data-state="disconnected" aria-hidden="true"></span></div>
+        <div class="flex items-center justify-between gap-3"><div class="min-w-0 flex-1"><p class="text-lg uppercase tracking-[.18em] text-cyan-300 font-extrabold leading-none">aLandi aServi</p><h3 id="cloudCardTitle" data-i18n="cloudCardTitle" class="text-2xl font-bold mt-2">Мой сервер</h3></div><span class="cloud-status-indicator" id="cloudStatusDot" data-state="disconnected" aria-hidden="true"></span></div>
         <div class="grid grid-cols-1 gap-2">
           <input id="cloudBaseUrl" type="url" autocomplete="url" aria-label="URL моего сервера" class="w-full p-3 rounded-xl border text-sm" placeholder="URL моего сервера · https://…/v1"><p id="cloudBaseUrlError" class="field-error hidden" role="alert"></p>
           <input id="cloudModel" type="text" autocomplete="off" aria-label="Модель моего сервера" class="w-full p-3 rounded-xl border text-sm" placeholder="Модель gateway · точный ID"><p id="cloudModelError" class="field-error hidden" role="alert"></p>
-          <div class="cloud-key-row flex gap-2"><input id="cloudApiKey" type="password" autocomplete="off" aria-label="Ключ доступа к серверу" class="min-w-0 flex-1 p-3 rounded-xl border text-sm" placeholder="Ключ доступа"><button type="button" data-action="paste-cloud-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ">↓</button></div><p id="cloudApiKeyError" class="field-error hidden" role="alert"></p>
+          <div class="cloud-key-row flex gap-2"><input id="cloudApiKey" type="password" autocomplete="off" aria-label="Ключ доступа к серверу" class="min-w-0 flex-1 p-3 rounded-xl border text-sm" placeholder="Ключ доступа"><button type="button" data-action="paste-aservi-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ">↓</button></div><p id="cloudApiKeyError" class="field-error hidden" role="alert"></p>
         </div>
         <p id="cloudStatus" class="cloud-status-copy text-[10px]" data-state="disconnected" role="status" aria-live="polite">Не подключено</p>
       </section>
@@ -529,8 +529,8 @@ permalink: /
             <button type="button" data-action="toggle-theme-cycle" class="advanced-control self-end rounded border border-gray-700 bg-gray-900 text-left text-gray-300" aria-label="Сменить тему">☼ Тема</button>
           </div>
        <label for="providerPreset" data-i18n="providerLabel" class="sr-only">Маршрут подключения</label>
-       <select id="providerPreset" aria-label="Маршрут подключения" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"><option value="" selected disabled>Сторонний API</option><optgroup id="providerPrimaryGroup" label="aLandi Cloud · внутренний маршрут" hidden><option value="alandi">aLandi Cloud</option></optgroup><optgroup id="providerExternalGroup" label="Сторонние провайдеры"><option value="kilo">Kilo</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai</option><option value="cloudflare">Cloudflare Workers AI</option><option value="openrouter">OpenRouter</option><option value="nvidia">NVIDIA NIM</option><option value="huggingface">Hugging Face</option><option value="custom">Свой OpenAI-совместимый API</option></optgroup></select>
-       <button type="button" id="selectAlandiCloudRoute" data-action="select-alandi-cloud" class="w-full rounded-lg border border-cyan-800 bg-cyan-950/30 px-3 py-2 text-xs text-cyan-100 hidden">Использовать aLandi Cloud</button>
+       <select id="providerPreset" aria-label="Маршрут подключения" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"><option value="" selected disabled>Сторонний API</option><optgroup id="providerPrimaryGroup" label="aLandi aServi · внутренний маршрут" hidden><option value="alandi">aLandi aServi</option></optgroup><optgroup id="providerExternalGroup" label="Сторонние провайдеры"><option value="kilo">Kilo</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai</option><option value="cloudflare">Cloudflare Workers AI</option><option value="openrouter">OpenRouter</option><option value="nvidia">NVIDIA NIM</option><option value="huggingface">Hugging Face</option><option value="custom">Свой OpenAI-совместимый API</option></optgroup></select>
+       <button type="button" id="selectAlandiCloudRoute" data-action="select-alandi-aservi" class="w-full rounded-lg border border-cyan-800 bg-cyan-950/30 px-3 py-2 text-xs text-cyan-100 hidden">Использовать aLandi aServi</button>
        <div id="providerExternalSettings" class="space-y-3">
        <input type="search" id="modelSearch" aria-label="Поиск модели" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="Поиск модели">
        <select id="modelPreset" aria-label="Каталог моделей" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"></select>
@@ -776,7 +776,7 @@ permalink: /
       openrouter: { label: 'OpenRouter', docsUrl: 'https://openrouter.ai/settings/keys', baseUrl: 'https://openrouter.ai/api/v1', models: [['openrouter/free','Автовыбор бесплатной модели'], ['deepseek/deepseek-r1:free','DeepSeek R1 · free (если доступна)']] },
       nvidia: { label: 'NVIDIA NIM', docsUrl: 'https://build.nvidia.com/settings', baseUrl: 'https://integrate.api.nvidia.com/v1', models: [['z-ai/glm-5.3','GLM-5.3 · reasoning/coding'], ['openai/gpt-oss-20b','GPT-OSS 20B · reasoning']] },
       huggingface: { label: 'Hugging Face Inference Providers', docsUrl: 'https://huggingface.co/settings/tokens', baseUrl: 'https://router.huggingface.co/v1', models: [['openai/gpt-oss-120b:fastest','GPT-OSS 120B · fastest'], ['deepseek-ai/DeepSeek-R1:fastest','DeepSeek R1 · fastest'], ['openai/gpt-oss-120b:cheapest','GPT-OSS 120B · cheapest']] },
-      alandi: { label: 'aLandi Self-hosted Gateway', docsUrl: 'https://github.com/DorpNay/skills-github-pages/blob/main/docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md', baseUrl: '', models: [['qwen3.5:4b','Qwen3.5 4B · локальный сервер']] },
+      alandi: { label: 'aLandi aServi', docsUrl: 'https://github.com/DorpNay/skills-github-pages/blob/main/docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md', baseUrl: '', models: [['qwen3.5:4b','Qwen3.5 4B · локальный сервер']] },
       kilo: { label: 'Kilo AI Gateway · Auto Free', docsUrl: 'https://kilo.ai/docs/gateway', baseUrl: 'https://api.kilo.ai/api/gateway', models: [['kilo-auto/free','Kilo Auto Free · dynamic routing']] },
       custom: { label: 'Свой API', baseUrl: '', docsUrl: '', models: [['custom','Ввести имя модели вручную']] }
     };
@@ -1383,7 +1383,7 @@ permalink: /
       ru:{
         settingsTitle:'⚙️ Настройки',sidebarTitle:'💬 Проекты и чаты',chatsTitle:'Чаты',newChat:'＋ Новый чат',clearChat:'🗑 Очистить чат',newPersonalChat:'＋ Новый личный чат',
         memoryLabel:'🧠 Долгосрочная память',memoryPlaceholder:'Факт, который нужно запомнить',exportChats:'Экспорт',importChats:'Импорт',
-        appearanceTitle:'Внешний вид',languageLabel:'Язык',languageRussian:'Русский',languageEnglish:'English',themeLabel:'Тема',motionLabel:'Анимации',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',providerGroupPrimary:'aLandi Cloud · основной маршрут',providerGroupExternal:'Сторонние провайдеры',cloudRouteChoiceHelp:'Выбери один маршрут в поле «Провайдер API»: aLandi Cloud или один сторонний провайдер.',cloudCardTitle:'Мой сервер',cloudCardCopy:'',cloudBaseUrl:'URL моего сервера',cloudModel:'Модель моего сервера',cloudApiKey:'Ключ доступа к серверу',cloudConnect:'',providerLabel:'Сторонний API',
+        appearanceTitle:'Внешний вид',languageLabel:'Язык',languageRussian:'Русский',languageEnglish:'English',themeLabel:'Тема',motionLabel:'Анимации',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',providerGroupPrimary:'aLandi aServi · основной маршрут',providerGroupExternal:'Сторонние провайдеры',cloudRouteChoiceHelp:'Выбери один маршрут в поле «Провайдер API»: aLandi aServi или один сторонний провайдер.',cloudCardTitle:'Мой сервер',cloudCardCopy:'',cloudBaseUrl:'URL моего сервера',cloudModel:'Модель моего сервера',cloudApiKey:'Ключ доступа к серверу',cloudConnect:'',providerLabel:'Сторонний API',
         modelSearchLabel:'Поиск по каталогу моделей',modelPresetLabel:'Быстрый выбор модели · список обновляется из API',
         baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',
         legacySettings:'Дополнительные настройки',composerPlaceholder:'Напиши сообщение...',
@@ -1404,7 +1404,7 @@ permalink: /
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Projects & chats',chatsTitle:'Chats',newChat:'＋ New chat',clearChat:'🗑 Clear chat',newPersonalChat:'＋ New personal chat',
         memoryLabel:'🧠 Long-term memory',memoryPlaceholder:'A fact to remember',exportChats:'Export',importChats:'Import',
-        appearanceTitle:'Appearance',languageLabel:'Language',languageRussian:'Russian',languageEnglish:'English',themeLabel:'Theme',motionLabel:'Motion',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',providerGroupPrimary:'aLandi Cloud · primary route',providerGroupExternal:'Third-party providers',cloudRouteChoiceHelp:'Choose one route in the API provider field: aLandi Cloud or one third-party provider.',cloudCardTitle:'My server',cloudCardCopy:'',cloudBaseUrl:'My server URL',cloudModel:'My server model',cloudApiKey:'Server access key',cloudConnect:'',providerLabel:'Third-party API',
+        appearanceTitle:'Appearance',languageLabel:'Language',languageRussian:'Russian',languageEnglish:'English',themeLabel:'Theme',motionLabel:'Motion',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',providerGroupPrimary:'aLandi aServi · primary route',providerGroupExternal:'Third-party providers',cloudRouteChoiceHelp:'Choose one route in the API provider field: aLandi aServi or one third-party provider.',cloudCardTitle:'My server',cloudCardCopy:'',cloudBaseUrl:'My server URL',cloudModel:'My server model',cloudApiKey:'Server access key',cloudConnect:'',providerLabel:'Third-party API',
         modelSearchLabel:'Search model catalog',modelPresetLabel:'Quick model pick · list loads from API',
         baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',
         legacySettings:'Additional settings',composerPlaceholder:'Write a message...',
@@ -1418,7 +1418,7 @@ permalink: /
         skillPresetLabel:'Task profile for this chat',skillAuto:'Auto (thorough/structured)',skillPlanning:'Planning',skillResearch:'Research',skillCodeReview:'Code and review',skillDataAnalysis:'Data analysis',skillAgentSystems:'Agent systems',skillMultimodal:'Multimodal tasks',skillPresetHelp:'Auto selects a profile for Thorough or structured requests; quick direct answers stay lean. A manual profile changes instructions only, not tools or data access. This choice applies to this chat; new chats start with Auto.',
         
         
-        kiloPrivacyNotice:'Kilo Auto Free is an ordinary alternative provider in the API list, not part of the primary aLandi cloud. Requests go to Kilo and its selected models, which may log prompts or use them to improve services. Do not send confidential data. No silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',saveSettings:'Save settings',closeSettings:'Close',
+        kiloPrivacyNotice:'Kilo Auto Free is an ordinary alternative provider in the API list, not part of the primary aLandi aServi. Requests go to Kilo and its selected models, which may log prompts or use them to improve services. Do not send confidential data. No silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',saveSettings:'Save settings',closeSettings:'Close',
          readingSettingsTitle:'Text readability',readingSettingsHelp:'Adjust message text size, spacing and color contrast. Changes are saved automatically and apply in both themes.',readingFontSizeLabel:'Message text size',readingLineHeightLabel:'Line spacing',readingContrastLabel:'Color scheme contrast',readingContrastStandard:'Standard',readingContrastHigh:'High',readingSettingsSaved:'Readability settings are saved on this device.',
         globalMemoryOptIn:'Allow relevant shared-memory notes to be included in prompts.',noProjectNav:'No project',projectMemoryScopeLabel:'Project memory scope',projectMemoryScopeOnly:'Memory inside this project only',projectMemoryScopeGlobal:'Project memory + shared memory (when enabled)',selectAlandiPrimary:'Use aLandi as the primary route',alandiPrimaryCopy:'aLandi is the built-in primary route. External providers are listed separately below.',attachMediaTitle:'Photo or video',attachMediaHelp:'Images or sampled frames from a video',attachAnyFileTitle:'Any file format',attachAnyFileHelp:'Native multi-file picker; parsing depends on file type.',requestContextTitle:'Context for this request',requestContextHelp:'Selected projects apply only to the next send. The active chat and its project do not change.',clearRequestContext:'Clear selection',skillsAutoHint:'Skills: automatically selected for the task; a manual catalog is not connected yet.',requestContextLimitHint:'Context is limited to five projects and a shared size budget.',projectsTitle:'▣ Projects',currentProjectLabel:'Project for this chat',projectMemoryOptIn:'Use the selected project memory in this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'＋ Create project',saveProject:'Save changes',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats',serverMemoryTitle:'Server memory · experimental',serverMemoryDescription:'A separate graph on your aLandi gateway. Transfer is manual; new facts start as candidates. Enable ALANDI_MEMORY_GRAPH_ENABLED on the server.',serverMemoryOptIn:'Allow confirmed server facts in this chat context. Also enable project memory above.',serverMemoryRefresh:'Refresh list',serverMemoryUpload:'Send local facts',serverMemoryInitial:'Server memory is off. Select a project and click “Refresh list”.',serverMemoryNoProject:'Select or create a project first.',serverMemoryNoConfig:'aLandi gateway /v1 URL or key is missing. Configure your cloud in Settings.',serverMemoryLoading:'Contacting server memory…',serverMemoryLoaded:'Server facts: ',serverMemoryEmpty:'No server facts for this project yet.',serverMemoryCandidate:'Candidate',serverMemoryConfirmed:'Confirmed',serverMemoryRejected:'Rejected',serverMemoryConfirm:'Confirm',serverMemoryReject:'Reject',serverMemoryDelete:'Delete',serverMemoryUploadDone:'Transfer complete. New facts remain candidates until reviewed.',serverMemoryContextLoaded:'Confirmed server facts added to context: ',serverMemoryUnavailable:'Server memory is unavailable; continuing without it.',helperMemoryDescription:'An optional model on the configured aLandi gateway can suggest compact facts. Sending is manual; facts are saved only after you choose them.',helperMemorySuggest:'Suggest compact facts',helperMemoryInitial:'Helper is off until ALANDI_HELPER_MODEL is configured.',helperMemoryLoading:'The helper model is preparing suggestions…',helperMemoryEmpty:'The helper found no new facts.',helperMemoryAdd:'Add to project',helperMemoryAdded:'Fact added to local project memory.',helperMemoryNoFacts:'Add facts to the selected project memory first.',helperMemoryNotConfigured:'Helper model is not configured. Set ALANDI_HELPER_MODEL and install that exact Ollama tag.',helperMemoryTimeout:'The helper timed out; memory was not changed.',helperMemoryFailed:'Could not get suggestions. Check the gateway and Ollama.',helperMemorySkippedSensitive:'Potentially sensitive facts skipped:',helperMemoryOnlySensitive:'All facts looked secret-like and were not sent to the helper.'
       }
@@ -1447,7 +1447,7 @@ permalink: /
       const lang=language==='en'?'en':'ru';safeSet('ai_ui_language_v1',lang);document.documentElement.lang=lang;
       const text=UI_TEXT[lang];
       const primaryGroup=$('providerPrimaryGroup'),externalGroup=$('providerExternalGroup');
-      if(primaryGroup)primaryGroup.label=lang==='en'?'aLandi Cloud · primary route':'aLandi Cloud · основной маршрут';
+      if(primaryGroup)primaryGroup.label=lang==='en'?'aLandi aServi · primary route':'aLandi aServi · основной маршрут';
       if(externalGroup)externalGroup.label=lang==='en'?'Third-party providers':'Сторонние провайдеры';
       document.querySelectorAll('[data-i18n]').forEach(node=>{const value=text[node.dataset.i18n];if(typeof value==='string')node.textContent=value;});
       document.querySelectorAll('[data-i18n-placeholder]').forEach(node=>{const value=text[node.dataset.i18nPlaceholder];if(typeof value==='string')node.placeholder=value;});
@@ -1847,7 +1847,7 @@ permalink: /
       if (!chat.messages.length) {
         const welcome = document.createElement('div');
         welcome.className = 'text-center text-gray-500 mt-10';
-        welcome.textContent = getUiLanguage()==='en' ? 'Welcome. Connect aLandi Cloud or choose an API provider in settings.' : 'Привет! Подключи aLandi Cloud или выбери провайдера в настройках.';
+        welcome.textContent = getUiLanguage()==='en' ? 'Welcome. Connect aLandi aServi or choose an API provider in settings.' : 'Привет! Подключи aLandi aServi или выбери провайдера в настройках.';
         box.appendChild(welcome);
         updateJumpToLatest();
         return;
@@ -3377,7 +3377,7 @@ permalink: /
         hideStatus();if(provider==='alandi')void refreshCloudStatus();
       }
     }
-    async function connectAlandiCloud(){
+    async function connectAlandiAServi(){
       if(isTestingProviderConnection)return;
       const {baseUrl,model,key}=getCloudSettings();
       const cloudSettingsStillCurrent=()=>{const current=getCloudSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
@@ -3385,7 +3385,7 @@ permalink: /
       const formatError=validateCloudBaseUrl(baseUrl);if(formatError){setCloudFieldError('cloudBaseUrl',formatError);setCloudStatus('disconnected');return;}
       setCloudFieldError('cloudBaseUrl');setCloudFieldError('cloudModel');setCloudFieldError('cloudApiKey');
       isTestingProviderConnection=true;
-      const button=document.querySelector('[data-action="connect-alandi-cloud"]');
+      const button=document.querySelector('[data-action="connect-alandi-aservi"]');
       if(button){button.disabled=true;button.textContent='Проверяю…';}
       setCloudStatus('checking');
       const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
@@ -3422,7 +3422,7 @@ permalink: /
         safeSet('ai_provider_connection_alandi',JSON.stringify(verified));
         $('providerPreset').value='';applyProviderPreset('alandi',true);$('baseUrl').value=baseUrl;$('modelName').value=model;$('apiKey').value=key;
         setCloudFieldConnection('connected');setCloudStatus('connected');
-        showToast('aLandi Cloud подключён и проверен.');
+        showToast('aLandi aServi подключён и проверен.');
       }catch(error){
         if(!cloudSettingsStillCurrent()){
           setCloudStatus('disconnected','Настройки изменились во время проверки. Результат не сохранён.');
@@ -3466,7 +3466,7 @@ permalink: /
     }
     function scheduleCloudAutoConnect(){
       if(cloudAutoConnectTimer)clearTimeout(cloudAutoConnectTimer);
-      cloudAutoConnectTimer=setTimeout(()=>{cloudAutoConnectTimer=null;const cfg=getCloudSettings();if(!cfg.baseUrl||!cfg.model||!cfg.key){setCloudStatus('disconnected');return;}const error=validateCloudBaseUrl(cfg.baseUrl);if(error){setCloudFieldError('cloudBaseUrl',error);setCloudStatus('disconnected');return;}if(isTestingProviderConnection){scheduleCloudAutoConnect();return;}void connectAlandiCloud();},850);
+      cloudAutoConnectTimer=setTimeout(()=>{cloudAutoConnectTimer=null;const cfg=getCloudSettings();if(!cfg.baseUrl||!cfg.model||!cfg.key){setCloudStatus('disconnected');return;}const error=validateCloudBaseUrl(cfg.baseUrl);if(error){setCloudFieldError('cloudBaseUrl',error);setCloudStatus('disconnected');return;}if(isTestingProviderConnection){scheduleCloudAutoConnect();return;}void connectAlandiAServi();},850);
     }
     function clearProviderKey(){
       const provider=currentProvider();safeSet(providerKeyStorage(provider),'');
@@ -5280,10 +5280,10 @@ permalink: /
           case 'apply-skill-quiz': applySkillQuiz();break;
           case 'toggle-theme-cycle': toggleHomeTheme();break;
           case 'paste-provider-key': await pasteIntoField('apiKey');break;
-          case 'paste-cloud-key': await pasteIntoField('cloudApiKey');break;
+          case 'paste-aservi-key': await pasteIntoField('cloudApiKey');break;
           case 'paste-tavily-key': await pasteIntoField('tavilyKey');break;
-          case 'connect-alandi-cloud': await connectAlandiCloud();break;
-          case 'select-alandi-cloud': $('providerPreset').value='';applyProviderPreset('alandi');refreshApiKeyLamp();void refreshCloudStatus();scheduleCloudAutoConnect();break;
+          case 'connect-alandi-aservi': await connectAlandiAServi();break;
+          case 'select-alandi-aservi': $('providerPreset').value='';applyProviderPreset('alandi');refreshApiKeyLamp();void refreshCloudStatus();scheduleCloudAutoConnect();break;
           case 'attach-text-file': {
             const menu=$('attachmentMenu'),open=menu.classList.contains('hidden');hideVoiceMenu();closeComposerPopovers();if(open){menu.classList.remove('hidden');$('attachTextButton').setAttribute('aria-expanded','true');syncComposerPopoverScrim();}break;
           }
