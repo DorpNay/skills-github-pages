@@ -1,32 +1,23 @@
 # aLandi — START HERE
 
-**Live GitHub is mutable truth.** This is a compact checkpoint, not a substitute for a fresh read of main, PRs, checks and Pages deployment.
+**Live GitHub is mutable truth.** This is a concise checkpoint, not a substitute for a fresh batched live-state read.
 
-## Current checkpoint — 2026-11-07
+## Current checkpoint — 2026-11-07 (live main)
 
-- **main:** `c4f23e03f563d03213eb87002863da630fc8b833`.
-- **Pages — VERIFIED LIVE:** deployment #42372745873 published that exact main SHA; Quality #42372746360 verified the deployed `alandi-build-revision` equals it.
-- **Important boundary:** the live site is still the main version above. The new owner UI corrections in PR #169 are not live until that PR is merged and a new Pages deployment passes the release contract.
-- **Active UI task:** existing `UI-PROMO-001`, PR #169, branch `feat/ui-sidebar-81-polish-20261107`, based on current main. It separates aServi from third-party providers/fallback, restructures settings, removes retired Research Studio and the unapproved Functions menu, simplifies sidebar/header controls, neutralizes stop styling and adds an exact-SHA live UI gate. Read the live PR diff and current head/checks before continuing.
-- **Do not merge wholesale:** PR #154 is a stale/conflicted V2 shell workbench; use only selectively audited ideas. PR #168 is an older docs checkpoint and must not be treated as current state.
-- **Pages warning:** Node 20 / upload-artifact@v4 warning comes from GitHub-managed branch-based Pages publishing. This repo's own artifact action is v7.0.2. The upstream `skills/github-pages` tutorial has no custom deploy workflow to copy. Changing Pages source to GitHub Actions requires a separate Settings change and explicit approval.
-- **Remaining goals:** `SRC-001` source evaluation is research-only; `CHAT-001`, `HYGIENE-007` and the rest of the Master Task Registry remain open unless fresh evidence closes them.
-
-## Canonical navigation
-
-1. **Principles and handoff:** `OLEDUE.md`, `AGENTS.md`, `LOOP.md`, `docs/ALANDI_N2O_CORE_RU.md`, `docs/ALANDI_N2O_KNOWLEDGE_LOOP_RU.md`.
-2. **One task inventory:** `docs/MASTER_TASK_REGISTRY_RU.md` + append-only `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md`.
-3. **UI acceptance:** `docs/V1_UI_FINALIZATION_RU.md`. Provider/privacy routing: `docs/ALANDI_REQUIREMENTS_REGISTER_RU.md`.
-4. **Release and current state:** `docs/LANDING_RELEASE_STRATEGY_RU.md`, `docs/PROJECT_STATE.yaml`, `docs/VOLLEY_LOG.md`.
-5. **External-source evidence:** `INTEL.md`, `docs/OPEN_SOURCE_TRIAGE_RU.md`, `docs/TECHNIQUE_REGISTER_RU.md`.
-
-`docs/USER_REQUEST_CHECKLIST.md` is historical provenance. `docs/LANDING_UX_POLISH_BACKLOG_RU.md` is archived; do not use it as a second active backlog. `project-reference/FILE_ORIENTER_RU.md` is a detailed historical path index, not mandatory startup reading.
+- **Current main SHA:** `c4f23e03f563d03213eb87002863da630fc8b833` — `feat(ui): add adjustable message readability`.
+- **Pages VERIFIED LIVE:** GitHub-managed deployment #42372745873 SUCCESS on this exact SHA. Build, artifact upload and deploy passed using official Jekyll builder v1.0.13.
+- **Exact-main Quality VERIFIED:** run #42372746360 SUCCESS on the same SHA. Seven required groups/checks passed; Chromium: 116 app tests, published root smoke 1/1, landing suite 8/8. The run verified the exact `alandi-build-revision` on both normal canonical URLs (root and `/landing/`) without cache-busting query strings.
+- **Graphify:** run #42372746441 SUCCESS on exact main SHA.
+- **PR #166 §8.17 MERGED:** merge SHA `c4f23e03f563d03213eb87002863da630fc8b833`; message size (14–22 px), line height (1.4–2.0) and standard/high contrast controls are in the root app. Find them in the global gear/settings under “Читаемость текста”, not in the open project/chat sidebar. PR #167, which added exact-build metadata and canonical URL publication gates plus the upstream sweep, merged at `3cee60c7a72decee1d715d8a68c0c49539e17c58`.
+- **Open PR queue:** #125, #131, #152, #154, #155, #168 (state/orientation sync), #169 (current UI slice). **Open issue:** #111.
+- **External-source sweep:** documented in INTEL and OPEN_SOURCE_TRIAGE; research only. No code/model/Skill was installed or copied.
+- **Current UI PR #169:** base `c4f23e03f563d03213eb87002863da630fc8b833`, current head `current head resolved from live GitHub`; implements first-party aServi/provider separation, no cross-provider fallback, sidebar cleanup, retired Research Studio removal, removal of the unapproved 3-item Functions menu, neutral stop control and exact-SHA Pages release checks. Quality/Chromium and Graphify are pending; not merged or published yet.
+- **Open limits:** native iPhone Safari/VoiceOver and VPS/Tunnel/Ollama are not verified. PR #154 remains stale/diverged and is not the active baseline; do not merge it as-is or weaken assertions.
 
 ## Fast route
 
-1. If the owner says `oledue`, read root `OLEDUE.md) first and execute its handoff protocol.
-2. Read the current main SHA, open PR base/head/diff and exact-head checks in one batched live-state pass.
-3. Route the request to an existing task ID; enrich it rather than creating duplicates.
-4. Make one coherent reversible change on the authorized PR branch; preserve unrelated work.
-5. Run focused tests, then required exact-head gates. After merge, verify the Pages deployment SHA and the canonical public site content—not just build success.
-6. Record material evidence in the existing task/state/log destinations. Report IMPLEMENTED and VERIFIED LIVE separately.
+1. On `oledue`, read root OLEDUE.md first; then one batched live GitHub state read.
+2. Route the latest explicit owner request to one existing registry ID; enrich rather than duplicate. Never default to a PR.
+3. Open only task-specific source/tests; detailed paths: project-reference/FILE_ORIENTER_RU.md; state: docs/PROJECT_STATE.yaml; evidence: docs/VOLLEY_LOG.md.
+4. Keep main/base/head/code/tested/check/deployment/merge SHAs distinct.
+5. Execute one bounded safe slice in the same turn; update only material canonical state and report exact checks and OPEN limits.
