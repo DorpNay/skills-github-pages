@@ -6,8 +6,8 @@
     "main_sha": "c4f23e03f563d03213eb87002863da630fc8b833",
     "main_commit_subject": "feat(ui): add adjustable message readability",
     "main_commit_date": "2026-11-07",
-    "last_functional_checkpoint_sha": "df3a95f43820c747c97e94b8dd353b9f18a17359",
-    "last_functional_milestone": "PR #169 owner-directed Functions/aServi UI plus governed selected source archives: Memvid v2.0.140 and RAG-Anything v1.4.1 source subsets pinned to exact upstream commits; imported source Git blob SHA-1s matched. Research-only, ship=false, no runtime/dependency/weights installed. On state/log HEAD 1e0e0ba Freshness failed only missing exact Open PR queue marker (fixing); Provenance passed after duplicate RAG record removed; other checks in progress/pending. No merge/deploy claim.",
+    "last_functional_checkpoint_sha": "08a73a7594695b8a74fa88d90db07832a8373665",
+    "last_functional_milestone": "PR #169 owner-directed Functions menu now has dedicated Agents, Deep Research and Skills panels. Deep Research panel reports Quick/Thorough, Web breadth and pipeline state, provides actions to open Web settings/navigate Agents, and labels Deep Research 2.0 roadmap-only. E2E authored for 390×844, modal blur, effort change, Web menu/focus, panel navigation and clean close. Five canonical IA/safety/research specs from #131/#125 preserved as SPECIFIED/research artifacts. Code/test head 08a73a all non-Quality gates passed; Quality Chromium still in progress. Docs/state head 161964 checks pending/in progress. No merge/deploy claim.",
     "main_quality_run": 42372746360,
     "main_pages_deployment_run": 42372745873,
     "functional_parent_gateway_run": null,
@@ -229,8 +229,8 @@
     "active_ui_pr": {
       "number": 169,
       "base_sha": "c4f23e03f563d03213eb87002863da630fc8b833",
-      "head_sha": "1e0e0ba879a2fc98875277757fef270ad569d17f",
-      "status": "open; Freshness marker fix and final state/log sync in progress; re-fetch exact-head gates",
+      "head_sha": "16196423d9d308bf057dc65df89a3cbfd93f26f1",
+      "status": "open; final doc/state head 161964 exact checks queued/in progress; code/test head 08a73a Quality Chromium in progress",
       "owner_scope": [
         "aServi is first-party; provider routes mutually exclusive; no silent cross-provider fallback",
         "Functions menu: Agents/structured analysis, Deep Research via Thorough, Skills/task profile; no placeholder connectors",
@@ -240,7 +240,7 @@
     },
     "open_prs": "7 open PRs excluding current PR #169: #125, #131, #152, #154, #155, #168, #171",
     "open_prs_at_checkpoint": 5,
-    "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-009"
+    "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-010"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
