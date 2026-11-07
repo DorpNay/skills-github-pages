@@ -212,10 +212,10 @@
 
 ## D-019 — Orthogonal chat settings and progressive disclosure
 
-- **Status:** Accepted for implementation in the 2026-10-30 chat-settings slice.
-- **Primary surface:** expose only work effort (Quick/Thorough) and web-search scope (Off/Standard/Expanded). Keep structured workflow, task profile and integrations in the advanced Functions menu.
+- **Status:** Superseded in part by explicit owner direction on 2026-11-07; retain the independent processing/search contracts, but remove the advanced Functions menu and Research Studio UI.
+- **Primary surface:** expose work effort (Quick/Thorough) and web-search scope (Off/Standard/Expanded) directly. Do not restore the three historical Functions menu entries (structured analysis, task profile, integrations) unless the owner explicitly requests a replacement surface.
 - **Independent contracts:** `processingMode` controls only the model/tool execution budget; `searchMode` controls only web-tool availability and search-result breadth; `multiAgentEnabled` enables the existing four-stage planner/researcher/critic/synthesizer pipeline only when the complexity gate allows it; Quick/Thorough limits the tool budget inside the researcher stage, while the other stages are separate text calls on the selected model; `skillPreset` adds instructions only and grants no tools or data permissions.
-- **Research Studio:** it is a prompt-preparation workspace, not a second execution mode. It displays and uses the active chat's settings without mutating them. It remains a single entry point in the sidebar, not duplicated in the Functions menu.
+- **Research Studio:** explicitly retired by the owner on 2026-11-07 and removed from UI/app. Do not restore its shortcut, modal, or menu entry from historical requirements. The four-stage research pipeline remains a separate chat capability.
 - **No redundant selector:** response format remains part of the user's natural-language request. Do not add a separate table/report/code/concise selector unless a distinct, non-overlapping behavior is proven.
 - **Safety and clarity:** web Off disables web tools but does not imply that cloud model APIs work offline. The existing staged workflow must not be described as an independent team of models.
 - **Acceptance:** exact-head tests cover Quick+Expanded, Thorough+Standard, Thorough+Off, per-chat settings, task-profile independence, Research Studio non-mutation, RU/EN localization and mobile control layout. See [CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md](docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md).
