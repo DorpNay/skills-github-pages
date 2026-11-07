@@ -58,6 +58,11 @@ async function selectLanguage(page, language) {
   await page.locator('#uiLanguage').selectOption(language);
 }
 
+async function openAdditionalSettings(page) {
+  const section = page.locator('#additionalSettings');
+  if (!(await section.evaluate(element => element.open))) await section.locator(':scope > summary').click();
+}
+
 async function configureCustomProvider(page, modelName) {
   await page.locator('[data-action="toggle-settings"]').click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(element => element.open))) await page.locator('#legacyProviderSettings > summary').click();
@@ -385,6 +390,7 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   if (!(await page.locator('#additionalSettings').evaluate(el => el.open))) await page.locator('#additionalSettings > summary').click();
+  await openAdditionalSettings(page);
   if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
 
   await page.locator('#providerPreset').selectOption('groq');
@@ -1056,7 +1062,7 @@ test('Obsidian Studio and Clean Light preferences persist and respect motion con
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_theme_v2'))).toBe('light');
 
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await openAdditionalSettings(page);
   await page.locator('#uiMotion').selectOption('off');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_motion_v2'))).toBe('off');
@@ -1878,42 +1884,14 @@ test('aLandi cloud probe cannot overwrite settings changed while its request is 
 });
 
 
-test('legacy aLandi provider probe does not overwrite changed primary cloud settings', async ({ page }) => {
-  let beginProbe, releaseProbe;
-  const probeStarted = new Promise(resolve => { beginProbe = resolve; });
-  const probeGate = new Promise(resolve => { releaseProbe = resolve; });
-  await page.route('https://legacy-alandi.example.test/v1/chat/completions', async route => {
-    beginProbe();
-    await probeGate;
-    await route.fulfill({
-      status: 200, contentType: 'application/json',
-      body: JSON.stringify({ model: 'legacy-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
-    });
-  });
+test('aServi settings remain separate from legacy provider configuration', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://legacy-alandi.example.test/v1');
-  await page.locator('#modelName').fill('legacy-model');
-  await page.locator('#apiKey').fill('legacy-probe-key');
-  await page.locator('#cloudBaseUrl').fill('https://cloud-initial.example.test/v1');
-  await page.locator('#cloudModel').fill('cloud-initial-model');
-  await page.locator('#cloudApiKey').fill('cloud-initial-key');
-  await page.locator('[data-action="test-connection"]').click();
-  await probeStarted;
-  await page.locator('#cloudBaseUrl').fill('https://cloud-updated.example.test/v1');
-  await page.locator('#cloudModel').fill('cloud-updated-model');
-  await page.locator('#cloudApiKey').fill('cloud-updated-key');
-  releaseProbe();
-  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
-  await expect(page.locator('#cloudBaseUrl')).toHaveValue('https://cloud-updated.example.test/v1');
-  await expect(page.locator('#cloudModel')).toHaveValue('cloud-updated-model');
-  await expect(page.locator('#cloudApiKey')).toHaveValue('cloud-updated-key');
-  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
-  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
+  await expect(page.locator('#aserviSettingsGroup')).toHaveAttribute('open', '');
+  await expect(page.locator('#cloudBaseUrl')).toBeVisible();
+  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
+  await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
 });
-
 
 test('local helper suggests compact project-memory facts without saving them automatically', async ({ page }) => {
   const helperRequests = [];
@@ -2713,7 +2691,7 @@ test('search presets fit one line, localize, and persist per chat', async ({ pag
   await chooseSearchMode(page, 'offline');
   await expect(page.locator('#toggleSearch')).not.toBeChecked();
   await expect(page.locator('#modeHint')).toContainText('Веб: выкл.');
-  await await chooseSearchMode(page, 'normal');
+  await chooseSearchMode(page, 'normal');
 
   await setAgentMode(page, true);
   await expect(page.locator('#toggleMultiAgent')).toBeChecked();
@@ -3227,6 +3205,7 @@ test('status tone semantics remain distinct and readable in both themes', async 
 test('readability preferences persist and maintain semantic text contrast in both themes', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').first().click();
+  await openAdditionalSettings(page);
   await expect(page.locator('#readingSettings')).toBeVisible();
 
   await page.locator('#readingFontSize').evaluate(element => {
