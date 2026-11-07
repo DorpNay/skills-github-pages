@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-07",
   "checkpoint": {
-    "main_sha": "69645ff357067f3656aa77cc67336ff423c26944",
-    "main_commit_subject": "docs(ui): record verified touch and status work (#165)",
+    "main_sha": "c4f23e03f563d03213eb87002863da630fc8b833",
+    "main_commit_subject": "feat(ui): add adjustable message readability",
     "main_commit_date": "2026-11-07",
-    "last_functional_checkpoint_sha": "a8afee45bb22654b220bffda857ab10c24641ef1",
-    "last_functional_milestone": "PR #165 is documentation-only; last functional baseline remains a8afee45 (#150 storage recovery/atomic rollback). Main 69645ff has exact-main Pages and Quality verification; PR #166 §8.17 remains open and its Chromium semantic-role contrast assertion is not yet passing.",
-    "main_quality_run": 42362476858,
-    "main_pages_deployment_run": 42362476364,
+    "last_functional_checkpoint_sha": "c4f23e03f563d03213eb87002863da630fc8b833",
+    "last_functional_milestone": "PR #166 §8.17 readability controls merged and published on main. Pages #42372745873 and exact-main Quality #42372746360 passed on c4f23e03f563d03213eb87002863da630fc8b833; 116 Chromium app tests, root smoke 1/1, landing 8/8, and canonical root + /landing/ exact build-revision assertions passed. Current owner UI slice is PR #169; resolve its exact head live; exact-head checks pending, not merged or published.",
+    "main_quality_run": 42372746360,
+    "main_pages_deployment_run": 42372745873,
     "functional_parent_gateway_run": null,
     "functional_parent_quality_run": null,
     "functional_parent_graphify_run": null,
@@ -20,7 +20,7 @@
       152,
       154,
       155,
-      166
+      168
     ],
     "open_issues": [
       111
@@ -151,13 +151,24 @@
         "merge_sha": "d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c",
         "head_sha": "4da559cf6abc21bfa3920b5e0297a2abb84e7453",
         "checks": "Exact-head Quality #42349540173 passed; fixed ERE title extraction in the main-push live Pages guard. Main Pages #42349853247 succeeded and public cache-busting root returned v10.0; main Quality #42349853526 is in progress."
+      },
+      {
+        "number": 167,
+        "merge_sha": "3cee60c7a72decee1d715d8a68c0c49539e17c58",
+        "head_sha": "6c0b2b7cefba8e6efd74e87bb48b21b4f786772a",
+        "checks": "Exact-head Quality #42371697371 PASS, Freshness #42371697409 PASS, Provenance #42371697477 PASS and Graphify #42371697398 PASS; added canonical URL exact SHA guards and source triage."
+      },
+      {
+        "number": 166,
+        "merge_sha": "c4f23e03f563d03213eb87002863da630fc8b833",
+        "head_sha": "683ec28310a68dc0126a715a04f3ddc613e817b6",
+        "checks": "Exact-head Quality #42368514164 PASS 7/7 and Graphify #42368514210 PASS; merged after clean-base revalidation and owner instruction. Post-merge main Quality #42372746360 PASS and Pages #42372745873 PASS."
       }
     ],
     "main_provenance_run": null,
     "main_freshness_run": null,
-    "main_graphify_run": null,
-    "open_prs": "6 open PRs excluding current PR #167: #125, #131, #152, #154, #155, #166",
-    "owner_task": "PR #166 §8.17 exact-head gates are green on 683ec28; await explicit owner merge authorization. After merge, verify a new Pages deployment on the merge SHA and confirm ai_ui_readability_v1/readingFontSize on the public site. External-source sweep is documented in SRC-001 and remains research-only.",
+    "main_graphify_run": 42372746441,
+    "owner_task": "PAGES-001 VERIFIED LIVE on exact main c4f23e03f563d03213eb87002863da630fc8b833 (Pages #42372745873, Quality #42372746360; canonical root and /landing/ exact SHA checks pass). UI §8.17 merged via PR #166 and is published. Continue PR #169: owner UI sidebar/settings/provider route, Research Studio retirement and removal of the unapproved Functions menu; exact-head gates pending. Preserve SRC-001 and all remaining register goals.",
     "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
     "pr131_exact_head_verified": false,
     "pr131_compare": "Large Draft V2 workbench, stale/diverged and mergeable_state dirty; selective reconciliation only.",
@@ -215,13 +226,26 @@
     "pr158_head": "4da559cf6abc21bfa3920b5e0297a2abb84e7453",
     "pr158_compare": "Merged at d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c; exact-head Quality #42349540173 passed; exact-main root title Quality #42349853526 remains in progress.",
     "pr166_head": "683ec28310a68dc0126a715a04f3ddc613e817b6",
-    "pr166_compare": "Open PR #166, base main 69645ff. Current exact head 683ec28: Quality #42368514164 PASS 7/7 (Context, Security, Integrity, Jekyll, Static Analysis, Chromium, Published Pages smoke); Graphify #42368514210 PASS. Final test forces descendant style recalculation before 320ms wait and uses an isolated checking-status fixture; assertions unchanged. PR is ready for owner-authorized merge, but main remains unchanged and Pages does not yet include §8.17."
+    "pr166_compare": "Merged PR #166 at main SHA c4f23e03f563d03213eb87002863da630fc8b833; §8.17 message readability controls are included in published root app. Exact-head Quality #42368514164 and Graphify #42368514210 passed; post-merge main Quality #42372746360 and Pages #42372745873 passed.",
+    "active_ui_pr": {
+      "number": 169,
+      "base_sha": "c4f23e03f563d03213eb87002863da630fc8b833",
+      "status": "open; current head resolved from live GitHub; exact-head Quality/Chromium and Graphify pending; not merged or published",
+      "owner_scope": [
+        "retire Research Studio entirely",
+        "remove unapproved three-item Functions menu pending explicit capability inventory",
+        "separate aLandi aServi from third-party providers and prevent silent cross-provider fallback",
+        "clean sidebar and neutralize contextual stop control",
+        "verify canonical and cache-busted Pages URLs against exact main SHA after merge"
+      ]
+    },
+    "open_prs": "6 open PRs excluding current PR #169: #125, #131, #152, #154, #155, #168"
   },
   "interpretation": {
-    "last_main_commit_is_documentation_only": true,
+    "last_main_commit_is_documentation_only": false,
     "live_vps_gateway_device_and_model_runtime_verified": false,
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-07-PR166-CHROMIUM-GREEN-001"
+  "last_volley": "V-2026-11-07-UI-PROMO-001-ASERVI-SIDEBAR-001"
 }
