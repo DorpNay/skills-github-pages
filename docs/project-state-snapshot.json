@@ -234,7 +234,7 @@
     },
     "open_prs": "0 open PRs excluding current PR #169; current live queue is only #169",
     "open_prs_at_checkpoint": 0,
-    "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-012"
+    "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-013"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
@@ -242,5 +242,5 @@
     "queue_policy": "Exact IDs; snapshot expected queue is [] after excluding the currently checked PR #169 from the live open queue [169]. Human orientation records the active PR separately. Closed non-merged #125/#131/#152/#154/#155 remain registry scope.",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-012"
+  "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-013"
 }
