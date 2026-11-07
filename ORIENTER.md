@@ -4,14 +4,13 @@
 
 ## Current checkpoint — 2026-11-07
 
-- **Current main SHA:** `daad47da0c5ec07c6200d6d38bf6bb33c2290860`.
-- **Last functional checkpoint:** `a8afee45bb22654b220bffda857ab10c24641ef1`; preserve #147 cancellation-safe Gateway, #148 rendering/Pyodide security and #150 storage recovery/atomic rollback.
-- **Pages VERIFIED LIVE:** deployment #42350650890 SUCCESS and Quality #42350651114 SUCCESS on exact main; Quality checked deployed root/version and public-site Chromium smoke for root and /landing/. Freshness #42350651042 and Provenance #42350651035 also PASS.
-- **UI §8.8 VERIFIED / MERGED:** PR #157; Quality #42349368043 and Graphify #42349368086 passed. Remaining §§8.1–8.17 and later menus/panels/functions/minimization remain OPEN.
-- **Open PR queue:** #125, #131, #152, #154, #155, #161 (snapshot excludes this documentation PR #160). **Open issue:** #111.
-- **#154:** head `6ca47522d7d6998916b1b01931c217d8b7e76c75`, stale base f323b6f, dirty. Quality #42349173942 FAILED 17 E2E + 1 flaky (22 passed); Freshness #42349173878 FAILED. Failures include #150 storage/recovery, voice/document, multimodal and privacy-memory. Provenance #42349173871, Graphify #42349173908, Dead Code #42349173914 PASSED. Do not merge as-is or weaken assertions.
-- **#161:** bounded §8.1 sidebar swipe implementation, exact-head Quality/Graphify in progress.
-- **Owner priority:** N₂O/OLEDUE handoff verified; Pages verified; remaining UI through bounded exact-head-tested slices; preserve all other registry goals.
+- **Current main SHA:** `69645ff357067f3656aa77cc67336ff423c26944` (live `main` branch read).
+- **Pages VERIFIED LIVE:** GitHub-managed `pages build and deployment` run #42362476364 SUCCESS on this exact SHA. Quality #42362476858 SUCCESS, all 7 jobs; its Chromium job checked the published root, client version, and `/landing/`.
+- **Jekyll upstream:** repository Quality/Chromium use `actions/jekyll-build-pages` pinned to `44a6e6beabd48582f863aeeb6cb2151cc1716697` (v1); runner pulled official image `v1.0.13`. No workflow replacement is indicated by current evidence.
+- **PR #166 §8.17:** open, base `69645ff...`, head `a79cb6b3fde04985b31217d9ae952e5d53cdec2f`. Prior exact head `7c065c1...` failed one Chromium semantic-color assertion (115 passed, 1 failed). A narrow CSS specificity patch is on the new head; Graphify #42366669754 PASS; Quality #42366669769 was IN_PROGRESS at this checkpoint. Do not merge until exact-head Quality/Chromium and all other required gates pass.
+- **Open PR queue:** #125, #131, #152, #154, #155, #166. **Open issue:** #111.
+- **Owner priority:** finish §8.17 with strict contrast assertions; after owner-authorized merge, verify a fresh Pages deployment and live version. Keep other workstreams and registry goals intact.
+
 
 ## Fast route
 
