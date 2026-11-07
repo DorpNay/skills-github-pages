@@ -46,7 +46,7 @@
 
 ## C. Voice и audio generation — PR #129
 
-- [ ] **AUDIO-GEN-001…009** — исследовать Agent Audio; проверить модельные terms, hardware, WAV quality, latency, integration and security.
+> **AUDIO-GEN-001…009 cross-link:** the nine atomic Agent Audio tasks are now tracked individually in `docs/MASTER_TASK_REGISTRY_RU.md`; retain this source-group reference without counting a second task.
 - [ ] **AUDIO-UI-001** — разделить ASR, TTS/voice conversation, non-speech audio generation и post-processing.
 - [ ] **AUDIO-UI-002** — preview/accept/reject, artifact provenance, project attach only after explicit approval.
 - [ ] **AUDIO-SKILL-001** — описать media-production Skill с cue sheet, sound generation, audition, sync and export.
@@ -319,7 +319,7 @@ Append-only owner intake; enrich existing orientation/UI/source lanes and preser
 
 - [x] **REGISTRY-003** — inventory and normalize stable task IDs across the master registry and append-only addendum. As of 2026-11-08: main 605 unique IDs; addendum 129 unique IDs; REGISTRY-002 is the only cross-file shared ID; no duplicate IDs remain within either file and no unnumbered checklist rows remain in this addendum. Source-description reconciliation continues under REGISTRY-002.
 - [ ] **REGISTRY-002 source reconciliation:** candidate source drift is recorded in the main registry section H. Current count deltas after source corrections: USER_REQUEST 113 open/partial vs 112 UR open/partial IDs (+1 candidate); V016 aligned 27/27; Landing UX 24 vs 23 UX open/partial IDs (+1 candidate); V1 30 source open/partial vs 37 registry open/partial; LAUNCH 46 source open vs 51 registry rows; VOICE2 17 source open/partial vs 8 VOICE2 IDs, with overlap against VOICE/VOICEAUDIT/LAUNCH. CHATSET and GUIDE now align after retirement updates. V1/LAUNCH/VOICE still need content-level mapping before status changes.
-- [~] **VOICE-DEDUP-001** — confirmed duplicate cross-links: VOICE2-106…112 map to VOICE-004…010 (VOICE-TRACK-003…009); VOICE2EXT-080…087 duplicate VOICE-EXT-001…008; USER126-254…258 duplicate USER125-254…258. Preserve source provenance but count each shared goal once. VOICE2-113 (VOICE-TRACK-010 security/privacy + owner approval), VOICE-011…018 and AUDIO-GEN-001…009 still require mapping against VOICEAUDIT/LAUNCH/other IDs.
+- [x] **VOICE-DEDUP-001** — completed source crosswalk: VOICE2-106…112 → VOICE-004…010 (VOICE-TRACK-003…009); VOICE2-113 → VOICE-TRACK-010; VOICE2EXT-080…087 → VOICE-EXT-001…008; USER126-254…258 → USER125-254…258. The distinct VOICE-011…018 and AUDIO-GEN-001…009 tasks are now atomized in the master registry; source references are preserved as cross-links, not duplicate tasks.
 > **Owner override reconciliation evidence:** V1 §§16–17 and Landing UX backlog now reflect D-022; CHATSET-111 and GUIDE-553 are explicitly retired with Research Studio and the server-memory graph respectively.
 - [x] **ACTION-PIN-001** — 14 repository workflow files contain 62 direct external references; all 62/62 are full 40-character SHAs. Main Integrity job #128516358240 passed the action-pinning step.
 - [ ] **ACTION-TRANSITIVE-001** — the pinned `skills/exercise-toolkit` reusable workflow revision `ebf43bb96882683e03e667184c6445ed4c8074e6` has 14 nested mutable action references across three workflows and broad write permissions (`contents/actions/issues: write`). Local pin checker does not recurse into upstream dependencies. Replace/fork with reviewed local equivalents or pin nested dependencies and reduce permissions before closing #111.
