@@ -2576,6 +2576,13 @@ test('Functions menu exposes truthful Agents, Deep Research and Skills panels wi
     expect(box?.height || 0, 'Functions menu option should have a 44px mobile hit target').toBeGreaterThanOrEqual(44);
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  const functionsPanelBox = await menu.locator('.toolbar-menu-panel').boundingBox();
+  expect(functionsPanelBox).not.toBeNull();
+  expect(functionsPanelBox.x).toBeGreaterThanOrEqual(0);
+  expect(functionsPanelBox.x + functionsPanelBox.width).toBeLessThanOrEqual(320);
+  await expect(page.locator('#stopBtn')).toBeHidden();
+  const composerInputBox = await page.locator('#userInput').boundingBox();
+  expect(composerInputBox?.width || 0, 'Composer input should remain usable at 320px').toBeGreaterThanOrEqual(44);
   await page.setViewportSize({ width: 390, height: 844 });
 
   await menu.locator('[data-function="agents"]').focus();
