@@ -234,7 +234,7 @@ test('aServi and third-party settings are separate mutually exclusive modes', as
   await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
   await expect(page.locator('#additionalSettings')).not.toHaveAttribute('open');
   await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
-  await expect(page.locator('#providerExternalGroup')).not.toHaveAttribute('hidden', '');
+  await expect(page.locator('#providerPreset')).toBeVisible();
 
   await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#aserviSettingsGroup')).not.toHaveAttribute('open');
@@ -1892,7 +1892,7 @@ test('aLandi cloud probe cannot overwrite settings changed while its request is 
 });
 
 
-test('aServi settings remain separate from legacy provider configuration', async ({ page }) => {
+test('aServi settings remain separate from third-party provider settings', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
   await expect(page.locator('#aserviSettingsGroup')).toHaveAttribute('open', '');
