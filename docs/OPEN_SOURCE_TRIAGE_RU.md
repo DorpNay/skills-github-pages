@@ -273,3 +273,10 @@ Exact upstream HEADs and declared license/capability evidence are recorded in [I
 | GitHub Releases / Pages artifact model | Git LFS unsupported by Pages; Pages site ≤1 GB; release asset <2 GiB | **ACCEPT acquisition boundary:** weights outside Pages tree, manifest + SHA in Git |
 
 Ни один новый runtime, модель или крупный артефакт в этом проходе не скачан, установлен или активирован. Решения по источникам не означают реализацию. Ссылки и первичные ограничения внесены в `INTEL.md`.
+
+
+## 2026-11-08 — selected upstream source snapshots archived (PR #169, not yet merged)
+
+- **Memvid v2.0.140** — Apache-2.0, upstream commit `e18fe55494379e2ab7397ce03655e8abbc5e0c31`. Imported curated 22-file / 727,588-byte source/license subset from reviewed PR #155; all source Git blob SHA-1 values matched the pinned upstream commit or current main. Per-file SHA-256 values are retained from upstream manifest but not recomputed in this pass. Excludes binaries, model/filter assets, external dictionaries and third-party dependency source; not a complete/buildable mirror.
+- **RAG-Anything v1.4.1** — MIT, upstream commit `0ef67b4d476b66407a03a39e5b17e756fc0aef29`. Imported 17 selected source/docs/tests and retained the previously archived `raganything/parser.py`; all 18 source file Git blob SHA-1s and MIT LICENSE SHA-1 independently matched the exact upstream commit. UPSTREAM-MANIFEST now enumerates all verified files.
+- Both are research/reference-only, `ship=false`, excluded from runtime; no dependencies/model weights installed. Whole selected archive SHA-256 remains OPEN, recorded as null in provenance; per-file Git blob evidence is exact.

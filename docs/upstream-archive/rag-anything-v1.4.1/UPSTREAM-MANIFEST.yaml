@@ -8,7 +8,7 @@ license_file: LICENSE
 archive_scope: selected source snapshot; not a complete upstream checkout
 purpose: research/reference only; not an active aLandi runtime dependency
 graphify_excluded: true
-verification_scope: only the explicitly listed file blobs were independently matched; archive is a selected source snapshot, not a full checkout
+verification_scope: all selected source Git blob SHA-1 values and the MIT LICENSE blob SHA-1 were independently matched against the exact pinned upstream commit; not a full checkout
 reviewed_in_pr: 169
 reviewed_at: 2026-11-08
 verified_at: 2026-11-08

@@ -91,3 +91,8 @@ GitHub Pages is the public client release surface. The Tunnel, VPS, Ollama runti
 - Decisions/evaluations: `DECISIONS.md`, `EVALS.md`
 - One task inventory: `docs/MASTER_TASK_REGISTRY_RU.md` + existing addendum
 - Live checkpoint / event evidence: `ORIENTER.md`, `docs/PROJECT_STATE.yaml`, `docs/VOLLEY_LOG.md`
+
+
+### 2026-11-08 source snapshot admission note
+
+- Memvid v2.0.140 and RAG-Anything v1.4.1 selected source snapshots are archived under `docs/upstream-archive/` for reference/evaluation only. They are not part of aLandi's runtime dependency graph; archive presence does not upgrade any memory/RAG system maturity. Per-source licenses, pinned upstream commit and per-file Git blob evidence are recorded in the manifests/provenance.

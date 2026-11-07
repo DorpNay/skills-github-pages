@@ -558,3 +558,8 @@ This pass covers the owner-supplied names. Revisions below are exact upstream br
 8. **Source and artifact admission:** source exact revision, code/model/data licenses separately, integrity hash, provenance, maintenance, security, resource fit, isolated pilot and rollback. No mass model downloads and no weights in Pages source tree/Git LFS.
 
 **Adoption status:** operating-method proposal applied to the PR #169 English AGENTS contract and append-only owner task register; not yet merged/verified on main. No orchestration engine, model, plugin, or dependency was installed/adopted in this research batch.
+
+
+### Artifact acquisition checkpoint — pinned source snapshots (2026-11-08)
+
+Owner-authorized, license/provenance-gated source import in PR #169: Memvid v2.0.140 curated 22-file subset under Apache-2.0 (upstream commit e18fe55494379e2ab7397ce03655e8abbc5e0c31) and RAG-Anything v1.4.1 selected 18 source files plus exact MIT license (upstream commit 0ef67b4d476b66407a03a39e5b17e756fc0aef29). Each selected source file Git blob SHA-1 was matched to its pinned upstream commit; Memvid upstream per-file SHA-256 values retained but not recomputed. The snapshots are incomplete research references, not buildable mirrors; transitive libraries/models/datasets are separately licensed. `ship=false`, no runtime dependency/model installed, no deployment. Whole selected archive SHA-256 remains OPEN.
