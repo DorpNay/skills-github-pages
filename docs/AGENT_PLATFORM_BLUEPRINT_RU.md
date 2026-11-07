@@ -506,3 +506,9 @@ Group role profiles by work domain rather than a flat 64-row wall: orchestration
 ### Protocol boundary
 
 Use MCP for tool/data access, A2A for independent agent-to-agent task exchange, and AG-UI for typed UI event streams. They solve different layers; protocol adoption is conditional on a concrete integration boundary and must not introduce a second orchestration runtime.
+
+
+## 2026-11-08 — current AgentRun prototype boundary
+
+- PR #169 branch contains `gateway/agent_runtime/store.py` plus `gateway/tests/test_agent_run_store.py`, preserved from PR #131 after source-level review. It is a local SQLite persistence primitive only; tests/Gateway CI pending. No runtime endpoint or independent worker is activated.
+- This prototype may be evaluated as the persistence layer for a future Agent Blueprint, but does not grant capabilities or implement model/tool orchestration. Use the separate typed capability contract, policy intersection, approval and trace/eval gates before any runtime integration.

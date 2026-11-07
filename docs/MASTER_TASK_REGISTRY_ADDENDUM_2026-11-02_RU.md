@@ -301,3 +301,10 @@ Append-only owner intake; enrich existing orientation/UI/source lanes and preser
 - [x] Ported `scripts/graphify_ui_surface.py` + its unit test and Graphify workflow integration: deterministic CSS/DOM/JS selector relations with source provenance and conservative inferred-edge scores. It is CI-only and does not prove browser-computed styling.
 - [x] Ported the PR #131 SECURITY.md reporting policy and selectively updated Pages title/description while retaining the current Jekyll metadata plugin and upstream archive exclusions.
 - [~] PR #131/#125 are still under file-by-file disposition. V2 shell/runtime code, model weights and agent workforce runtime are not merged in this source-doc tranche; their current statuses and acceptance remain in the canonical registry/system map.
+
+
+## J.4 AgentRun state persistence prototype — 2026-11-08 (PR #169, not merged)
+
+- [~] Preserved the PR #131 SQLite `AgentRunStore` and offline tests as a bounded **PROTOTYPE**: idempotent run/task creation, versioned transitions, typed bounded metadata, task leases/fencing, retry budget, cancellation and event journal.
+- [~] Exact-head Gateway CI must pass before merge. No HTTP route, model/tool invocation, worker scheduler, permission grant, sandbox, approval engine or multi-host runtime is wired. Storage-only prototype does not satisfy AB-001…AB-005 runtime acceptance.
+- [~] Added EV-AGENT-RUN-STORE-001 evaluation definition; backup/restore, retention, multi-host, recovery semantics and adversarial runtime tests remain OPEN.

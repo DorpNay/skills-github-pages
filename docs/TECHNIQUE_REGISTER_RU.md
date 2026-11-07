@@ -149,3 +149,8 @@
 ## 2026-11-08 — research intake disposition
 
 The PR #131/#125 research-doc sweep added 103 distinct URL refs to `INTEL.md` as **prior-research candidates / current upstream recheck pending**. They are not promoted to adopted techniques. Source admission still requires current version, exact upstream pin, license/provenance, security and hardware/storage fit, measurable baseline, reproducible evaluation and rollback. The single-source catalog policy is preserved; the duplicate 88-URL `AGENT_RESEARCH_CATALOG_RU.md` was not copied as a second register.
+
+
+## 2026-11-08 — AgentRun SQLite state store prototype (PR #169 candidate)
+
+**Status: PROTOTYPE / offline persistence only; exact Gateway CI pending.** `gateway/agent_runtime/store.py` provides a bounded local SQLite run/task state journal with idempotency keys, explicit run transitions, typed metadata schemas, task leases/fencing, retry budgets, cancellation, immutable event records, scope checks, SQLite busy timeout/foreign keys/secure_delete and restrictive DB file mode. It deliberately does not call models, execute tools, grant capabilities, schedule workers, coordinate multiple hosts, provide sandbox/approval enforcement or guarantee exactly-once external side effects. Backup/restore and retention are operationally out of scope; use SQLite online backup or quiesced consistent copies. The tests are isolated offline in `gateway/tests/test_agent_run_store.py`. This is a storage building block; Agent Blueprint/Worker Capability contract remains separate and DEFERRED until runtime policy, trace, approval, recovery and adversarial evals are implemented.

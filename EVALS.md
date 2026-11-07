@@ -150,3 +150,12 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - **Fixture:** `gateway/tests/test_app.py` tests use marker secrets for API key, OAuth encryption/client secret and raw upstream error text. `test_upstream_errors_do_not_leak_raw_body_or_configured_secrets` already exists on current branch; invalid Bearer and health-probe redaction tests are ported from the PR #131 security review.
 - **Acceptance:** /livez returns only `{status: ok}`; /readyz and legacy /healthz return bounded readiness fields only; responses are `Cache-Control: no-store`; submitted/configured secrets and upstream raw body never appear. Invalid Bearer returns 401 with `WWW-Authenticate: Bearer` and no echo.
 - **Status:** tests added to PR #169 branch; Gateway exact-head CI pending. This is regression coverage, not proof of live VPS/provider secret handling.
+
+
+## EV-AGENT-RUN-STORE-001 — bounded durable run/task state prototype
+
+- **Question:** can a local SQLite store provide idempotent run/task state, explicit transitions, event journal, lease fencing and cancellation without introducing an orchestration framework or model/tool runtime?
+- **Scope:** persistence primitives only. The store does not call models, execute tools, grant capabilities, provide sandboxing, scheduler, multi-host coordination, backup/restore or exactly-once external side effects.
+- **Fixture:** offline unit tests in `gateway/tests/test_agent_run_store.py` cover idempotency/conflict, scope validation, versioned transitions, task claim/lease expiry/fencing, retry budgets, cancellation, event journal, bounded typed metadata, prompt/secret/free-text rejection, SQLite constraints, concurrency, migration and file permissions.
+- **Acceptance:** deterministic exact-head Gateway tests; no unbounded free text or raw prompts/secrets in event metadata; scope fails closed; expired lease cannot complete with stale fencing token; terminal state cannot reopen; SQLite file mode 0600; operational limitations are explicit.
+- **Status:** PROTOTYPE in PR #169 candidate, exact-head Gateway CI pending. No API route or worker runtime is wired to the store. Do not mark Agent Workforce implemented from this prototype alone.
