@@ -10,6 +10,11 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 - Never force-push, rebase, reset, rewrite history, delete branches/data, weaken safeguards, or deploy/alter live infrastructure without explicit authorization. Preserve owner changes.
 - Keep main/base/head/tested/merge/deployed SHAs distinct. CI green is not merge; merge is not deploy; Pages is not VPS.
 
+## Live checkpoint (2026-11-08)
+- Verified main: `c4f23e03f563d03213eb87002863da630fc8b833`; Pages #42372745873, Quality #42372746360, Graphify #42372746441 passed on exact main SHA.
+- Only live open PR is #169 (base c4f23e0, latest code/test HEAD `1d32e3d3c6718e3d04efce312eac018596518f9f`); issue #111 remains open. PR #169 exact-final-head CI is pending after fixing the prior Chromium regressions and refreshing the stale queue snapshot. Previous head `54a2401` Quality #42404826459: 106 Chromium passed, 7 failed; Freshness #42404826540 failed stale queue (#155 missing from live queue). Do not merge until all current exact-head required gates pass.
+- Closed non-merged PRs #125/#131/#152/#154/#155 remain reconciled through the canonical task registry; preserve their still-open goals and do not merge wholesale.
+
 ## Resume and orient
 - `oledue`: read root `OLEDUE.md` first and execute its handoff.
 - Otherwise read `ORIENTER.md`; batch live main, PR/issue queue, matched diff and exact-head checks. Do not select a PR from memory.
