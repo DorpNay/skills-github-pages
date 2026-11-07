@@ -3,12 +3,12 @@ project_state:
   reviewed_on: "2026-11-08"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Main c4f23e03f563d03213eb87002863da630fc8b833 remains VERIFIED LIVE: Pages #42372745873 and Quality #42372746360 passed exact SHA. Public root cache-busted fetch returns AI Mobile Agent v10.0; use exact SHA/cache-busting to avoid stale edge cache. PR #169 is the current UI implementation (head current head resolved from live GitHub), exact-head Quality/Chromium and Graphify pending; no merge or new deployment yet. PR #169 carries the current orientation/system-map/20-step roadmap and source provenance refresh; PR #168 remains under unique-diff reconciliation."
+    status: "Main c4f23e03f563d03213eb87002863da630fc8b833 remains VERIFIED LIVE: Pages #42372745873, Quality #42372746360 and Graphify #42372746441 passed exact main SHA. PR #169 is the active owner-directed integration slice; live head must be fetched after state updates. It includes aServi route isolation, the detailed Agents/Deep Research/Skills menu, modal blur lifecycle, systems map, English executor contract and source-backed orchestration review. PR #168/#171/#172 are reconciled closed; no PR #169 merge or deployment claim."
     owner_policy: "main is the only durable product baseline. PRs are temporary exact-head verification/integration vehicles and must be merged promptly after required gates pass. PR #131 is not a durable workbench; audit and selectively port only approved compatible deltas; never merge it wholesale."
     sequence:
-      - "Finish PR #169 exact-head gates and merge only after all required checks pass"
+      - "Refresh live queue state and finish PR #169 exact-head gates; merge only when all required checks pass"
       - "Verify post-merge main SHA and GitHub Pages deployment/public content against that exact SHA"
-      - "Reconcile PR #168 and #171 file-by-file; port unique approved value and close superseded PRs with reasons"
+      - "Audit open PRs #155/#154/#152/#131/#125 file-by-file; port compatible approved value only and close reconciled work with reasons"
       - "Audit #152/#154/#155/#131/#125; port only bounded compatible slices, never merge stale/future V2 wholesale"
       - "Refresh ORIENTER, PROJECT_STATE, snapshot and VOLLEY_LOG on the new main checkpoint"
       - "Continue system-by-system audit and 8–15-source thematic batches; measure before adoption"
@@ -16,17 +16,17 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "Main c4f23e03f563d03213eb87002863da630fc8b833 and Pages exact-SHA publication are verified. PR #169 is the active integration slice; resolve its current head live (last recorded checkpoint 53d3103546901231c6dc2953bf2c88c64c7b38f6). #168 and #171 overlap by file but have not yet passed unique-diff reconciliation. Open queue: #125/#131/#152/#154/#155/#168/#169/#171; issue #111. Main is the only durable product baseline; all other PRs require an explicit merge/close disposition. VPS/Tunnel/Ollama and native iPhone/VoiceOver remain unverified."
+    status: "Main c4f23e03f563d03213eb87002863da630fc8b833 and Pages exact-SHA publication are verified. PR #169 is active; fetch its current head live. Reconciled closures: #168/#171/#172. Open queue including active #169: #125/#131/#152/#154/#155/#169; issue #111. Main is the sole durable baseline. VPS/Tunnel/Ollama and native iPhone/VoiceOver remain unverified."
     branch: "main"
     base_main: "c4f23e03f563d03213eb87002863da630fc8b833"
-    open_prs_at_checkpoint: 7
+    open_prs_at_checkpoint: 5
     open_issues_at_checkpoint: 1
     merged_changes: "PR #167 publication SHA/canonical URL guard and owner upstream research merged at 3cee60c7a72decee1d715d8a68c0c49539e17c58; PR #166 message readability controls merged at c4f23e03f563d03213eb87002863da630fc8b833; PR #161 sidebar swipe-to-close merged at 094e249860b651166d4d1029f175e97a5cea2345; PR #158 Pages root-title guard; PR #157 icon-first message actions; PR #156 task intake/orchestrator; earlier #153/#150/#149/#148/#147 protections preserved."
-    exact_head_checks: "Main c4f23e03f563d03213eb87002863da630fc8b833: Pages #42372745873 SUCCESS; Quality #42372746360 SUCCESS (all jobs), 116 app Chromium tests, root smoke 1/1, canonical root + /landing/ SHA assertions PASS, landing 8/8; Graphify #42372746441 PASS. PR #169 head b3d987ef05230c5dc7b33e8e368b6515f623053b: Gateway #42398736764 PENDING; Graphify #42398736820 PENDING; Dead Code #42398736761 IN_PROGRESS; Provenance #42398736766 IN_PROGRESS; Quality #42398736879 PENDING; Freshness #42398736835 QUEUED. Earlier Graphify #42398472267 passed on head 8fae35e after upstream archive exclusion. Prior Quality #42396442500 passed on intermediate head 5d31f2d4e70df7a4ee5b54d058ff6fa27cba00e5 only."
+    exact_head_checks: "Main c4f23e03f563d03213eb87002863da630fc8b833: Pages #42372745873 SUCCESS; Quality #42372746360 SUCCESS (116 app Chromium tests, root smoke 1/1, landing 8/8 and exact canonical root + /landing/ build-SHA checks); Graphify #42372746441 PASS. PR #169 latest before state sync head 2d816fb066d68bd58da226abf25c4332c0306085: Gateway #42401796690 PASS; Graphify #42401796661 PASS; Freshness #42401796658 PASS before #168/#171 closures (must rerun on refreshed queue); Provenance #42401796829 PASS; Dead Code #42401796716 PASS; Quality #42401796689 IN_PROGRESS. Earlier intermediate-head check results do not transfer."
     runtime_boundary: "GitHub Pages root app and /landing/ are VERIFIED LIVE on exact main c4f23e03f563d03213eb87002863da630fc8b833 via deployment #42372745873 and Quality #42372746360 canonical URL SHA assertions. §8.17 readability is merged and published. PR #169 is not merged/published. VPS/Tunnel/Ollama, credentials, native iPhone/VoiceOver and target-host model performance remain unverified."
-    next: "Resolve the current PR #169 head live and finish all six exact-head gates; if green, update PR body and merge with expected SHA. Verify Pages on exact merge SHA. Then reconcile #168/#171 unique diffs and audit #152/#154/#155/#131/#125, port only approved slices and close superseded PRs with reasons. Continue SRC-001, system map review and all lower-priority tasks. Native iPhone/VoiceOver and VPS checks remain open."
+    next: "Refresh exact-head checks and snapshot after PR #168/#171/#172 closures; inspect Quality failures and resolve without weakening assertions. If all required gates pass, merge PR #169 with expected head SHA, then verify main integrity/quality, GitHub Pages deployment and cache-busted canonical URLs on exact merge SHA. Audit #155/#154/#152/#131/#125 selectively; continue SRC-001 and system map review. Native iPhone/VoiceOver and VPS remain open."
     source_triage:
-    status: "Live main c4f23e03f563d03213eb87002863da630fc8b833 and Pages exact-SHA publication verified. PR #169 is the active UI/provider and §8.12 retirement slice (resolve live head); PR #168 is a docs sync candidate superseded by the newer #169 checkpoint. PR #154 remains stale/diverged and must not be merged wholesale. Open queue: #125/#131/#152/#154/#155/#168/#169; issue #111. VPS/Tunnel/Ollama and native iPhone/VoiceOver remain unverified."
+    status: "Live main c4f23e03f563d03213eb87002863da630fc8b833 and Pages exact-SHA publication verified. PR #169 is active owner-directed Functions/aServi UI slice; #168/#171/#172 closed reconciled. Open queue #125/#131/#152/#154/#155/#169; issue #111. PR #154 stale/diverged and must not be merged wholesale. VPS/Tunnel/Ollama and native iPhone/VoiceOver remain unverified."
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
     technique_register: "docs/TECHNIQUE_REGISTER_RU.md"
     upstream_archive:
@@ -176,23 +176,23 @@ blocked_items:
     reason: "No tested container/seccomp/Landlock implementation or escape test evidence."
 
 latest_checkpoint:
-  date: "2026-11-07"
-  main_sha: "69645ff357067f3656aa77cc67336ff423c26944"
-  open_prs: 2
-  open_issues: 0
-  merged_pr_69_sha: "4c9096999fbb3e1265150c420b136066c555285b"
-  main_quality_run_id: 40543594371
+  date: "2026-11-08"
+  main_sha: "c4f23e03f563d03213eb87002863da630fc8b833"
+  open_prs: 6
+  open_issues: 1
+  active_pr: 169
+  active_pr_base_sha: "c4f23e03f563d03213eb87002863da630fc8b833"
+  active_pr_head_at_checkpoint: "2d816fb066d68bd58da226abf25c4332c0306085"
+  reconciled_closed_prs: [168, 171, 172]
+  main_quality_run_id: 42372746360
   main_quality_status: "success"
-  main_gateway_run_id: 40543594098
-  main_gateway_status: "success"
-  main_provenance_run_id: 40543594296
-  main_provenance_status: "success"
-  main_pages_run_id: 40543593819
+  main_graphify_run_id: 42372746441
+  main_graphify_status: "success"
+  main_pages_run_id: 42372745873
   main_pages_status: "success"
-  open_prs_at_checkpoint:
-    - 70
-    - 71
-  next: "PR #166 exact-head gates are green; await explicit owner authorization to merge. After authorized merge, verify the new Pages deployment on the merge SHA and public content keys. Then resume the remaining UI and source-evaluation registry tasks."
+  open_prs_at_checkpoint: [125, 131, 152, 154, 155, 169]
+  open_issues_at_checkpoint: [111]
+  next: "Refresh PR #169 exact-head gates and live queue snapshot after reconciled PR closures. Merge only after all required checks pass; then verify main integrity/quality and Pages against exact merge SHA. Audit #155/#154/#152/#131/#125 selectively; continue system-by-system review and thematic source intake."
 
 architecture_map_checkpoint:
   date: "2026-10-27"
