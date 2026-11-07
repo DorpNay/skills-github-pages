@@ -8,6 +8,11 @@ on:
       - ".graphifyignore"
       - "docs/ALANDI_ARCHITECTURE_MAP_RU.md"
       - "index.md"
+      - "assets/js/**/*.js"
+      - "assets/css/**/*.css"
+      - "landing/**/*.html"
+      - "scripts/**/*.py"
+      - "tests/test_graphify_ui_surface.py"
       - "gateway/**/*.py"
       - "gateway/**/*.sql"
       - "scripts/**/*.mjs"
@@ -20,6 +25,11 @@ on:
       - ".graphifyignore"
       - "docs/ALANDI_ARCHITECTURE_MAP_RU.md"
       - "index.md"
+      - "assets/js/**/*.js"
+      - "assets/css/**/*.css"
+      - "landing/**/*.html"
+      - "scripts/**/*.py"
+      - "tests/test_graphify_ui_surface.py"
       - "gateway/**/*.py"
       - "gateway/**/*.sql"
       - "scripts/**/*.mjs"
@@ -59,8 +69,10 @@ jobs:
       - name: Install pinned Graphify CLI
         run: |
           python -m pip install --upgrade pip
-          python -m pip install "graphifyy[sql]==0.9.97"
+          python -m pip install "graphifyy[sql]==0.9.97" "tinycss2==1.4.0"
           graphify --version
+          python -c "import tinycss2; print(f'tinycss2 {tinycss2.__version__}')"
+          PYTHONPATH=scripts python -m unittest discover -s tests -p 'test_graphify_ui_surface.py' -v
       - name: Create a tracked-files-only staging copy
         env:
           STAGING: ${{ runner.temp }}/alandirepo
@@ -68,6 +80,8 @@ jobs:
           set -euo pipefail
           mkdir -p "$STAGING"
           git archive "$GITHUB_SHA" | tar -x -C "$STAGING"
+          # Keep the deterministic UI bridge and its unit test out of the code graph itself.
+          rm -f "$STAGING/scripts/graphify_ui_surface.py" "$STAGING/tests/test_graphify_ui_surface.py"
           # Defense in depth: never feed credentials, local databases, model weights,
           # user uploads, or generated/dependency directories to the graph builder.
           find "$STAGING" -type f \( \
@@ -142,10 +156,13 @@ jobs:
             echo "### Cluster"
             graphify cluster-only . --no-label
             echo
+            echo "### Deterministic CSS / DOM / JavaScript surface bridge"
+            python "$GITHUB_WORKSPACE/scripts/graphify_ui_surface.py" --root . --graph graphify-out/graph.json | tee "${{ runner.temp }}/graphify-ui-surface-summary.json"
+            echo
             echo "### HTML export"
             graphify export html
             echo
-            echo "### Ten focused navigation queries plus private-memory route trace"
+            echo "### Twelve focused navigation queries plus private-memory route trace"
             while IFS='|' read -r label query; do
               [ -z "$label" ] && continue
               echo
@@ -153,10 +170,12 @@ jobs:
               graphify query "$query" --context call --budget 700
             done <<'EOF'
           UI aServi provider route|applyProviderPreset connectAlandiAServi
+          Functions Deep Research panel|openFunctionPanel renderResearchConfiguration
+          Agents structured pipeline|renderAgentConfiguration setAgentMode
           UI send path|sendMessage runAssistant
           Gateway auth/provider client|authorize client_for
           Bounded request parsing|read_limited_body completions
-          RAG retrieval|LazyGraphRAG retrieve
+          Scoped memory|MemoryManager search_nodes
           RAG retrieval|LazyGraphRAG retrieve
           Audio generation|synthesize_speech
           Audio transcription|transcribe_audio
@@ -204,5 +223,6 @@ jobs:
             ${{ runner.temp }}/alandirepo/graphify-out/graph.html
             ${{ runner.temp }}/alandirepo/graphify-out/manifest.json
             ${{ runner.temp }}/graphify-pilot-summary.txt
+            ${{ runner.temp }}/graphify-ui-surface-summary.json
           if-no-files-found: warn
           retention-days: 7
