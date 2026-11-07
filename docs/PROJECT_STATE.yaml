@@ -22,7 +22,7 @@ project_state:
     open_prs_at_checkpoint: 5
     open_issues_at_checkpoint: 1
     merged_changes: "PR #167 publication SHA/canonical URL guard and owner upstream research merged at 3cee60c7a72decee1d715d8a68c0c49539e17c58; PR #166 message readability controls merged at c4f23e03f563d03213eb87002863da630fc8b833; PR #161 sidebar swipe-to-close merged at 094e249860b651166d4d1029f175e97a5cea2345; PR #158 Pages root-title guard; PR #157 icon-first message actions; PR #156 task intake/orchestrator; earlier #153/#150/#149/#148/#147 protections preserved."
-    exact_head_checks: "Main c4f23e03f563d03213eb87002863da630fc8b833: Pages #42372745873 SUCCESS; Quality #42372746360 SUCCESS (116 app Chromium, root smoke 1/1, landing 8/8 and exact canonical URL SHA); Graphify #42372746441 PASS. PR #169 code/test head df3a95f43820c747c97e94b8dd353b9f18a17359: Freshness #42402738727 PASS; Provenance #42402738722 FAIL duplicate RAG artifact ID (removed in final state tree); Graphify #42402738721 IN_PROGRESS; Gateway #42402738753 IN_PROGRESS; Dead Code #42402738804 IN_PROGRESS; Quality #42402738730 QUEUED. Re-run all gates on final state/log HEAD."
+    exact_head_checks: "Main c4f23e03f563d03213eb87002863da630fc8b833: Pages #42372745873 SUCCESS; Quality #42372746360 SUCCESS (116 app Chromium, root smoke 1/1, landing 8/8 and exact canonical URL SHA); Graphify #42372746441 PASS. PR #169 state/log head 1e0e0ba879a2fc98875277757fef270ad569d17f: Freshness #42403066836 FAIL only because ORIENTER missed exact Open PR queue marker (fixed in this checkpoint); Provenance #42403066709 PASS after duplicate RAG ID removal; Graphify #42403066730 IN_PROGRESS; Gateway #42403066761 IN_PROGRESS; Dead Code #42403066755 IN_PROGRESS; Quality #42403066807 PENDING. Re-run all gates on final state/log HEAD."
     runtime_boundary: "GitHub Pages root app and /landing/ are VERIFIED LIVE on exact main c4f23e03f563d03213eb87002863da630fc8b833 via deployment #42372745873 and Quality #42372746360 canonical URL SHA assertions. §8.17 readability is merged and published. PR #169 is not merged/published. VPS/Tunnel/Ollama, credentials, native iPhone/VoiceOver and target-host model performance remain unverified."
     next: "Re-fetch all six exact-head checks after the final orientation/log commit; inspect Quality and Provenance failures without weakening tests. If all required gates pass, merge PR #169 with expected SHA, then verify main integrity/Quality/Graphify/Freshness/Provenance and Pages deployment/root + /landing/ on exact merge SHA. Audit #155/#154/#152/#131/#125 selectively; continue source batches and systems map. Native iPhone/VoiceOver and VPS remain open."
     source_triage:
@@ -326,7 +326,7 @@ ui_owner_override_2026_11_08:
   status: "IMPLEMENTED IN PR #169 BRANCH; exact-head gates must be refreshed after latest source archive/state/log commits; not merged/published."
   main_sha_at_checkpoint: "c4f23e03f563d03213eb87002863da630fc8b833"
   pr_169_base: "c4f23e03f563d03213eb87002863da630fc8b833"
-  pr_169_head_at_checkpoint: "df3a95f43820c747c97e94b8dd353b9f18a17359"
+  pr_169_head_at_checkpoint: "1e0e0ba879a2fc98875277757fef270ad569d17f"
   owner_decisions:
     - "Research Studio retired entirely."
     - "Functions surface: Agents/structured analysis, Deep Research via Thorough, Skills/task profile; placeholder connectors absent."
@@ -339,7 +339,7 @@ ui_owner_override_2026_11_08:
     - "Curated Memvid v2.0.140 Apache-2.0 and RAG-Anything v1.4.1 MIT source snapshots imported with pinned commits and per-file Git blob SHA-1 verification; reference-only, ship=false, no runtime."
     - "PR #168/#171/#172 reconciled and closed with recorded dispositions."
   pending:
-    - "Remove duplicate RAG source provenance record; exact-head Provenance gate failed on df3a for duplicate artifact ID."
+    - "Provenance passed on 1e0e0ba after duplicate RAG artifact ID removal; Freshness marker fix required on current checkpoint."
     - "Refresh Quality/Chromium, Graphify, Gateway, Dead Code and Freshness on final exact SHA."
     - "Merge only after required gates pass; verify main + Pages exact merge SHA."
     - "Whole selected archive SHA-256 is uncomputed; native iPhone/VoiceOver, VPS/Tunnel/Ollama and target hardware remain unverified."
