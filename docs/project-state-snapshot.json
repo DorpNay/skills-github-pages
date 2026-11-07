@@ -7,7 +7,7 @@
     "main_commit_subject": "feat(ui): reconcile owner UI contracts and aServi routing (#169)",
     "main_commit_date": "2026-11-07",
     "last_functional_checkpoint_sha": "72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2",
-    "last_functional_milestone": "PR #169 merged by squash at 72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2. Pages build/deploy #42408492764 SUCCESS on exact SHA (artifact #13588178210, SHA-256 cf02ff975f0813ee37cfa0a5aa8de7d562852500a964da85c1a387f5fa539748); main Freshness #42408493553, Gateway #42408493562, Graphify #42408493571 and Provenance #42408493536 PASS. Main Quality #42408500881 failed 2 Chromium assertions (111 passed); public root/landing exact-SHA smoke skipped. Follow-up PR #173 code/test HEAD b614954ada5f86f8221a270ecd3d251283aa0642 fixes exclusive settings assertion and pending aServi probe; exact code/test Quality #42408845013 PASS 113/113, Graphify #42408844985 PASS. Canonical state/task registry sync is included on PR #173; final exact-head Freshness/Quality recheck pending. Live open PR queue #173 only; issue #111. PR #173 remains unmerged and owner authorization required.",
+    "last_functional_milestone": "PR #169 merged at main 72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2; Pages deploy #42408492764 success exact SHA; main Freshness/Gateway/Graphify/Provenance pass, Quality #42408500881 fails 2 Chromium assertions (111 passed), public root/landing exact-SHA smoke skipped. Active PR #173 code/test HEAD b614954ada5f86f8221a270ecd3d251283aa0642 fixes these; exact code/test Quality #42408845013 113/113 and Graphify #42408844985 pass. Freshness #42409451004 unit tests PASS 19/19 but failed local current_checkpoint.verified_main mismatch (c4f23e0 vs snapshot 72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2); corrected together in current state commit. Final exact-head Freshness/Quality pending; owner approval required for PR173 merge. Live open PR queue #173; issue #111.",
     "main_quality_run": 42408500881,
     "main_pages_deployment_run": 42408492764,
     "functional_parent_gateway_run": null,
@@ -240,7 +240,7 @@
     },
     "open_prs": "0 live open PRs excluding current PR #173; current live queue is only #173",
     "open_prs_at_checkpoint": 0,
-    "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-016"
+    "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-017"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
@@ -248,5 +248,5 @@
     "queue_policy": "Exact IDs; snapshot expected queue [] after excluding current checked PR #173 from live open queue [173]. PR #169 is merged; closed non-merged #125/#131/#152/#154/#155/#168/#171/#172 retain remaining task scopes in the canonical registry.",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-016"
+  "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-017"
 }

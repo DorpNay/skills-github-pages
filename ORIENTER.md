@@ -11,7 +11,7 @@
 ## Active bounded PR
 - **PR #173** · `fix/aservi-connect-probe-e2e-20261108` · base `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2` · code/test HEAD `b614954ada5f86f8221a270ecd3d251283aa0642`.
 - Fixes: opening Additional Settings closes Legacy Provider Settings; explicit aServi connection cancels pending scheduled probe; E2E expects one connect probe + one user completion.
-- Exact code/test Quality #42408845013 PASS (113/113 Chromium; published baseline smoke PASS, main-release contract skipped on PR), Graphify #42408844985 PASS. Canonical state/task-register sync is included in this PR; exact final-head Freshness/Quality recheck pending.
+- Exact code/test Quality #42408845013 PASS (113/113 Chromium; published baseline smoke PASS, main-release contract skipped on PR), Graphify #42408844985 PASS. Canonical state/task-register sync is included in this PR; Freshness #42409451004 unit tests passed 19/19 but failed because current_checkpoint.verified_main remained c4f23e0 while snapshot main SHA is 72bcd; aligned now, exact final-head Freshness/Quality recheck pending.
 - **Open PR queue:** #173. Issue #111 remains owner-controlled. PRs #125/#131/#152/#154/#155/#168/#171/#172 are closed non-merged; preserve remaining goals and research in the canonical registry.
 - **Not merged / not fully live-verified.** Owner approval is required for PR #173; after merge, run main Quality and Pages public root + `/landing/` exact merge SHA.
 
