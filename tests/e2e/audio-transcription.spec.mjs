@@ -218,7 +218,8 @@ test('attached audio remains in the draft when local ASR is disabled', async ({ 
     body: JSON.stringify({ audio: { transcription: false }, documents: { extraction: false }, search: { searxng: false } })
   }));
   await page.route('https://api.example.test/v1/chat/completions', route => {
-    chatSubmitted = true;
+    const payload = route.request().postDataJSON();
+    if (payload.messages?.at(-1)?.content !== 'Reply with exactly OK.') chatSubmitted = true;
     return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'Should not be reached.' } }] }) });
   });
   await page.goto('/', { waitUntil: 'domcontentloaded' });
