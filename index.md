@@ -532,7 +532,8 @@ permalink: /
             <button type="button" data-action="toggle-theme-cycle" class="advanced-control self-end rounded border border-gray-700 bg-gray-900 text-left text-gray-300" aria-label="Сменить тему">☼ Тема</button>
           </div>
        <label for="providerPreset" data-i18n="providerLabel" class="sr-only">Маршрут подключения</label>
-       <select id="providerPreset" aria-label="Маршрут подключения" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"><option value="" selected disabled>Сторонний API</option><optgroup id="providerPrimaryGroup" label="aLandi Cloud · внутренний маршрут"><option value="alandi">aLandi Cloud</option></optgroup><optgroup id="providerExternalGroup" label="Сторонние провайдеры"><option value="kilo">Kilo</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai</option><option value="cloudflare">Cloudflare Workers AI</option><option value="openrouter">OpenRouter</option><option value="nvidia">NVIDIA NIM</option><option value="huggingface">Hugging Face</option><option value="custom">Свой OpenAI-совместимый API</option></optgroup></select>
+       <select id="providerPreset" aria-label="Маршрут подключения" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"><option value="" selected disabled>Сторонний API</option><optgroup id="providerPrimaryGroup" label="aLandi Cloud · внутренний маршрут" hidden><option value="alandi">aLandi Cloud</option></optgroup><button type="button" id="selectAlandiCloudRoute" data-action="select-alandi-cloud" class="w-full rounded-lg border border-cyan-800 bg-cyan-950/30 px-3 py-2 text-xs text-cyan-100 hidden">Использовать aLandi Cloud</button>
+       <optgroup id="providerExternalGroup" label="Сторонние провайдеры"><option value="kilo">Kilo</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai</option><option value="cloudflare">Cloudflare Workers AI</option><option value="openrouter">OpenRouter</option><option value="nvidia">NVIDIA NIM</option><option value="huggingface">Hugging Face</option><option value="custom">Свой OpenAI-совместимый API</option></optgroup></select>
        <div id="providerExternalSettings" class="space-y-3">
        <input type="search" id="modelSearch" aria-label="Поиск модели" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="Поиск модели">
        <select id="modelPreset" aria-label="Каталог моделей" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"></select>
@@ -2607,6 +2608,7 @@ permalink: /
       const isAlandiRoute = provider === 'alandi';
       $('cloudSettingsCard')?.classList.toggle('hidden', !isAlandiRoute);
       $('providerExternalSettings')?.classList.toggle('hidden', isAlandiRoute);
+      $('selectAlandiCloudRoute')?.classList.toggle('hidden', isAlandiRoute);
       if(!initial){
         const oldProvider=safeGet(STORAGE.provider)||'gemini',oldKey=$('apiKey').value.trim();
         if(oldKey)safeSet(providerKeyStorage(oldProvider),oldKey);
@@ -5341,6 +5343,7 @@ permalink: /
           case 'paste-cloud-key': await pasteIntoField('cloudApiKey');break;
           case 'paste-tavily-key': await pasteIntoField('tavilyKey');break;
           case 'connect-alandi-cloud': await connectAlandiCloud();break;
+          case 'select-alandi-cloud': $('providerPreset').value='';applyProviderPreset('alandi');refreshApiKeyLamp();void refreshCloudStatus();scheduleCloudAutoConnect();break;
           case 'attach-text-file': {
             const menu=$('attachmentMenu'),open=menu.classList.contains('hidden');hideVoiceMenu();closeComposerPopovers();if(open){menu.classList.remove('hidden');$('attachTextButton').setAttribute('aria-expanded','true');syncComposerPopoverScrim();}break;
           }
