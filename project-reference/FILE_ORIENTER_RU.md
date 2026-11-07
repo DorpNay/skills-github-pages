@@ -2,20 +2,15 @@
 
 > Подробный индекс навигации. Это не источник live-статуса и не обязательный стартовый пакет. Для `oledue` сначала читай корневой OLEDUE.md, затем выполняй один batched live GitHub read. Используй этот файл только для поиска конкретного пути.
 
-## Контрольная точка — 2026-11-07 (GitHub live snapshot)
+## Контрольная точка — 2026-11-07 (live state)
 
-- **main:** `d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c` — Pages live-version guard regex fix merged in PR #158.
-- **Последний функциональный checkpoint:** `a8afee45bb22654b220bffda857ab10c24641ef1` — PR #150 browser-storage recovery/atomic rollback.
-- **Main protections:** #147 cancellation-safe Gateway; #148 untrusted rendering/restricted Pyodide globals; #150 storage recovery/fail-closed rollback.
-- **Pages:** deployment #42349853247 SUCCESS on exact main d83eea8; cache-busting public root fetch returned AI Mobile Agent v10.0. Exact-main Quality #42349853526 (root title guard) is IN_PROGRESS. Earlier guard run #42349250430 failed from an over-escaped ERE; PR #158 fixed it and exact-head Quality #42349540173 passed.
-- **UI §8.8:** PR #157 merged at main SHA `40540f6d75a90877ff9cbec5bbfacb48ee6f775c`; exact Quality #42349368043 and Graphify #42349368086 PASS. Icon-first copy/open/speak, accessible names, 44×44 target and full-message copy/speak controls.
-- **Freshness snapshot for PR #159:** open PRs (5): #125, #131, #152, #154, #155. open issues (1): #111. PR #160 itself is excluded by the checker.
-- **#154:** modular shell workbench, base f323b6f stale and mergeable_state=dirty. Current head `6ca47522d7d6998916b1b01931c217d8b7e76c75`; Quality #42349173942 had shards 1–3 PASS and shard4 IN_PROGRESS at last read. Older Quality #42193618745 failed 23 tests/17 passed due stale selectors plus storage/error-copy and privacy-memory assertion issues. Freshness #42193618668 failed queue drift. Keep #147/#148/#150 and Pages guard; do not weaken failure-path tests.
-- **#155:** Draft roadmap/control-plane; last known head `4e03d55d4d3c546ffe28bc61f4b0be23455333d9`; Freshness/Provenance/Dead Code PASS, final Quality requires live recheck.
-- **#131:** large Draft V2 workbench, diverged; selective promotion only. **#152:** Draft Voice, stale base and old Quality failure, separate. **#125:** FUTURE/HOLD.
-- **Owner direction:** OLEDUE/principles/task intake merged #156 (ORIENT-002 fresh-session test OPEN); Pages v10.0 live verified with root guard fix merged #158 (exact main Quality pending); UI §8.8 merged #157; next promote remaining §§8.1–8.17 and subsequent menu/panel/function/minimization slices, starting with selective reconciliation of #154.
-- **Project catalog:** root `PROJECT_ORCHESTRATOR_RU.md` indexes principles, INTEL/source catalogs, plans, decisions, task register, artifact policy and evidence.
-- **Main owner task intake:** search existing ID in Master Registry/UI checklist; enrich or append one stable ID. Never duplicate or silently drop requirements.
+- Current main SHA: `daad47da0c5ec07c6200d6d38bf6bb33c2290860`.
+- Last functional checkpoint: `a8afee45bb22654b220bffda857ab10c24641ef1`; protections #147 cancellation-safe Gateway, #148 rendering/Pyodide boundary and #150 storage recovery/atomic rollback remain mandatory.
+- Pages: deployment #42350650890 SUCCESS on exact main; Quality #42350651114 SUCCESS on exact main with deployed-root version guard, public-root Chromium smoke and /landing/ smoke. Freshness #42350651042 and Provenance #42350651035 also PASS.
+- UI §8.8: PR #157 merged and exact Quality/Graphify passed. Remaining §§8.1–8.17 and later menus/panels/functions/minimization remain open; PR #154 is not in main.
+- PR #154 current head `6ca47522d7d6998916b1b01931c217d8b7e76c75`, stale base f323b6f, mergeable_state=dirty. Quality #42349173942 failed 17 E2E + 1 flaky (22 passed); Freshness #42349173878 failed. Provenance #42349173871, Graphify #42349173908, Dead Code #42349173914 passed. Restore main protections and fix behavior; do not weaken tests.
+- Open PRs: #125, #131, #152, #154, #155. Open owner-controlled issue: #111.
+- Owner sequence: OLEDUE/N₂O/task intake; Pages reverified; remaining UI in bounded exact-head-tested slices; preserve and resume all other registry goals. One orchestrator and one Master Task Registry remain canonical.
 
 ## 1. Быстрый маршрут
 
