@@ -22,7 +22,7 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 | AI-OBS-003 | Agent timeline | observability/events.schema.json | Schema first; UI deferred |
 | AI-MEM-001 | SQLite graph/provenance | retired gateway memory graph | **RETIRED BY OWNER 2026-11-07**; schema and graph store removed. Historical implementation evidence is retained only in this record. |
 | AI-MEM-002 | Bitemporal graph memory | retired gateway memory graph | **RETIRED BY OWNER 2026-11-07**; graph-specific temporal module removed. |
-| AI-MEM-003 | Scope isolation | gateway/memory/scope.py | Prototype; no public graph API |
+| AI-MEM-003 | Strict scope-pair validation for RAG | gateway/memory/scope.py + gateway/rag/lazy_graph_rag.py | **Retained RAG-only primitive**; graph-memory manager/API retired. Cross-project retrieval/delete tests cover exact scope IDs. |
 | AI-MEM-004 | Conflict/supersede graph lifecycle | retired gateway memory graph | **RETIRED BY OWNER 2026-11-07**; graph-specific conflict module removed. |
 | AI-MEM-005 | Scoped FTS5 graph-memory retrieval | retired gateway memory graph | **RETIRED BY OWNER 2026-11-07**; graph manager and tests removed. RAG's separate FTS5 store remains. |
 | AI-MEM-006 | Authenticated structured-memory graph API | retired gateway memory graph | **RETIRED BY OWNER 2026-11-07**; API routes, flags, store and browser bridge removed. |
@@ -37,7 +37,7 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 | AI-TOOLS-004 | SSRF controls | gateway/security/ssrf_protection.py | Validation primitive only; no arbitrary fetch endpoint |
 | AI-TOOLS-005 | Approval gates | gateway/security/approval_gates.py | One-time scoped ticket; no approval UI/endpoint |
 | AI-LICENSE-001 | Model provenance CI gate | infra/license/provenance_manifest.yaml | Proposed gate; no audio model shipped |
-| AI-UI-001 | Projects + local project notes UI | index.md + tests/e2e/app.spec.mjs | **Frontend implementation** — browser-local CRUD, instructions, chat attach/detach and JSON bundle import/export; no server memory graph bridge. |
+| AI-UI-001 | Projects + local project notes UI | index.md + tests/e2e/app.spec.mjs | **Frontend implementation** — browser-local CRUD, instructions, chat attach/detach and JSON bundle import/export; no server memory graph bridge. Current branch adds regression coverage for one-shot context without mutating the active chat project. |
 | AI-UI-002 | Authenticated server-memory/source viewer | retired server memory experiment | **RETIRED BY OWNER 2026-11-07**; no active viewer or server-memory bridge. Project sources remain a separate future contract. |
 | AI-UI-003 | Home UX, bilingual controls, clock/theme and adaptive composer | index.md | **Partial** — Chromium E2E passed for core controls; voice menu remains preview-only; full translation/accessibility/mobile matrix still pending |
 | AI-PROVIDER-001 | Cloud-first settings and provider recovery | index.md + tests/e2e/app.spec.mjs | **Frontend implementation** — real completion probe, stale-state invalidation, single-flight probe, paste-triggered model catalog check and bounded same-provider model fallback; PR #21 full Chromium E2E passed |
@@ -59,7 +59,7 @@ Canonical machine-readable details live in PROJECT_STATE.yaml. Statuses below re
 4. Each implementation updates PROJECT_STATE.yaml, EVALS.md, LOOP.md, DECISIONS.md and the relevant report.
 
 
-## AI-MEM-007 — Opt-in browser-to-server project memory bridge
+## AI-MEM-007 — Opt-in browser-to-server project memory bridge (RETIRED)
 
 - **Status:** **RETIRED BY OWNER 2026-11-07.** PR #29's historical implementation and CI evidence remain in the record, but the current gateway API, flags and browser bridge are removed.
 - **Scope now:** browser-local project notes only. No upload, review, retrieval or deletion of server graph facts.
