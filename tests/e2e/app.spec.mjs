@@ -2581,8 +2581,23 @@ test('Functions menu exposes truthful Agents, Deep Research and Skills panels wi
   const modal = page.locator('#functionPanelModal');
   await expect(modal).toBeVisible();
   await expect(page.locator('#agentFunctionSettings')).toBeVisible();
+  const closePanel = modal.locator('[data-action="close-function-panel"]').first();
+  await expect(closePanel).toBeFocused();
+  const visibleFocusables = modal.locator('a[href]:visible, button:visible, input:visible, select:visible, textarea:visible, [tabindex]:visible');
+  const firstFocusable = visibleFocusables.first();
+  const lastFocusable = visibleFocusables.last();
+  await page.keyboard.press('Shift+Tab');
+  await expect(lastFocusable).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(firstFocusable).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(modal).toBeHidden();
+  await expect(summary).toBeFocused();
+
+  await summary.press('Enter');
+  await expect(menu).toHaveAttribute('open', '');
+  await page.keyboard.press('Escape');
+  await expect(menu).not.toHaveAttribute('open', '');
   await expect(summary).toBeFocused();
 
   await summary.click();
