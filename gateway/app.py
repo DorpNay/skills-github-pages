@@ -965,7 +965,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             raise HTTPException(503, "Local runtime inventory is unavailable") from None
         return JSONResponse(result, headers={"Cache-Control": "no-store"})
 
-    # Conversation delta sync is independent of the retired server-memory graph; keep GET/DELETE covered by gateway tests.
+    # Conversation delta sync is independent of the retired server-memory graph; gateway tests keep GET/DELETE while graph paths remain 404.
     @app.get("/v1/memory/state/{conversation_id}")
     async def memory_state(conversation_id: str, request: Request,
                            authorization: str | None = Header(default=None)) -> JSONResponse:

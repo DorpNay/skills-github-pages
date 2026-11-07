@@ -7,7 +7,7 @@
     "main_commit_subject": "feat(ui): add adjustable message readability",
     "main_commit_date": "2026-11-07",
     "last_functional_checkpoint_sha": "c4f23e03f563d03213eb87002863da630fc8b833",
-    "last_functional_milestone": "Main c4f23e03f563d03213eb87002863da630fc8b833 remains Pages-verified (Pages #42372745873, Quality #42372746360, Graphify #42372746441). PR #169 is the active integration slice; latest recorded checkpoint 2069fb6ac60ac251f3550a5ca533eae2c6fe6b9a adds aServi connect/provider isolation fixes, server-memory graph removal, systems map, AGENTS contract and source/technique triage. Exact-head gates are running; no merge or deployment claim.",
+    "last_functional_milestone": "Main c4f23e03f563d03213eb87002863da630fc8b833 remains Pages-verified (Pages #42372745873, Quality #42372746360, Graphify #42372746441). PR #169 is the active integration slice; last recorded pre-checkpoint HEAD b3d987ef05230c5dc7b33e8e368b6515f623053b. It includes explicit aServi connect/provider isolation, §8.12 retirement with delta-sync/RAG preserved, 20-step roadmap, system/architecture maps, source triage, licensed upstream manifests and Graphify vendor exclusion. Exact-head gates pending/in progress; no merge or deployment claim.",
     "main_quality_run": 42372746360,
     "main_pages_deployment_run": 42372745873,
     "functional_parent_gateway_run": null,
