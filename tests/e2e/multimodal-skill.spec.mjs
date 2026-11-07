@@ -25,7 +25,7 @@ test('deep multimodal prompts load specialist skill and preserve the v10 UI', as
   });
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await expect(page).toHaveTitle(/AI Mobile Agent/);
+  await expect(page).toHaveTitle('aLandi — личная AI-среда');
   await expect(page.locator('#chatBox')).toBeVisible();
 
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
