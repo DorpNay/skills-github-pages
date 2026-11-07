@@ -200,7 +200,12 @@ test('canceling private-to-shared promotion keeps the fact private', async ({ pa
     if (projectDetails) projectDetails.open = true;
     if (memoryDetails) memoryDetails.open = true;
   });
+  await expect(page.locator('#memoryPanelDisclosure')).toHaveAttribute('open', '');
+  await expect(page.locator('#memoryToolsDetails')).toHaveAttribute('open', '');
   await expect(page.locator('#memoryBox')).toContainText('cancelled promotion stays private');
+  const promoteButton = page.locator('[data-action="promote-memory"][data-memory-id="cancel-promotion"]');
+  await expect(promoteButton).toBeVisible();
+  await promoteButton.scrollIntoViewIfNeeded();
 
   page.once('dialog', dialog => dialog.dismiss());
   await page.locator('[data-action="promote-memory"][data-memory-id="cancel-promotion"]').click();
