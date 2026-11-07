@@ -3264,7 +3264,7 @@ test('status tone semantics remain distinct and readable in both themes', async 
         return normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
       };
       const luminance = color => {
-        const [red, green, blue] = color.match(/\\d+(?=,|\\))/g).slice(0, 3).map(Number).map(channel);
+        const [red, green, blue] = color.match(/\d+(?=,|\))/g).slice(0, 3).map(Number).map(channel);
         return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
       };
       const foreground = luminance(state.color);
