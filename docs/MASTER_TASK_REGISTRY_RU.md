@@ -512,7 +512,7 @@
 - [ ] **GUIDE-550** (строка 550; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Прямой JSON-запрос даёт L2 MISS → HIT; bypass header работает.
 - [ ] **GUIDE-551** (строка 551; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Gateway tests, quality sentinels, Jekyll build и Chromium E2E прошли на текущем main SHA.
 - [ ] **GUIDE-552** (строка 552; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Experimental memory/RAG/OAuth/voice flags remain off until their own gates and rollback are reviewed.
-- [ ] **GUIDE-553** (строка 553; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Если graph API включался для теста, проверены Bearer auth, candidate-first review, scope isolation, cascade delete и double opt-in global scope.
+- [x] **GUIDE-553 — RETIRED BY OWNER 2026-11-07** (строка 553; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Owner removed the server-memory graph; this auth/scope/cascade-delete gate is obsolete. Do not restore the graph.
 - [ ] **GUIDE-554** (строка 554; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Есть резервная копия env, команда отключения L2 и процедура отката.
 - [ ] **GUIDE-555** (строка 555; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Известно, как остановить/удалить платные ресурсы до истечения кредита.
 
@@ -812,7 +812,7 @@
 ### F4. Исторический общий backlog
 
 - [x] **REGISTRY-001**: Найти прежний большой список незавершённых задач. **Result:** PR #127 / `docs/MASTER_TASK_REGISTRY_RU.md` — lossless inventory of **544 open/partial rows** across 20 unique checklist documents plus two branch-only snapshots (470 unchecked + 74 partial), including main operational/privacy/voice/architecture lists and active PR #125/#126/#129/#130 task deltas. Duplicates intentionally preserved; no original source was modified.
-- [ ] **REGISTRY-002**: Свести дубли и cross-link исторические пункты с текущими кодом, PR, tests and owner gates. Ничего не удалять до reconciliation.
+- [ ] **REGISTRY-002**: Свести дубли и cross-link исторические пункты с текущим кодом, PR, tests and owner gates. Ничего не удалять до reconciliation. **Progress 2026-11-08:** full inventory audit recorded in section H: 607 stable IDs in this register (487 open / 97 partial / 23 done); addendum 86 IDs (18 open / 50 partial / 18 done), one shared UX-044 cross-link and 57 unnumbered sub-checklist rows. Source drift candidates include UR (+4 partial), V016 (+1 open), UX (+1 partial), V1/LAUNCH historical status deltas, VOICE2 cross-links, CHATSET-111 and GUIDE-553 retirement reconciliation. Preserve every source row until content-level mapping is complete.
 
 
 ### F5. Voice 2.0 — независимый research pass (2026-10-31)
@@ -858,3 +858,15 @@
 - [x] **UX-044 / Functions menu (owner override 2026-11-08, D-022):** PR #169 merged at main `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2`; only Agents/structured analysis (existing four-stage same-model pipeline), Deep Research (Thorough-mode shortcut), and Skills/task profile (instruction profile only) are shown. Integrations/connectors stay absent until real capability registry/status/permission contracts exist. Research Studio remains retired. Exact PR Quality #42408172737 passed 113/113; public root/landing exact-SHA smoke remains pending due separate main Quality failures.
 - [x] **Research Studio:** Owner retired the feature entirely; PR #169 removes its UI surface and exact PR Quality #42408172737 passed 113/113. Public root/landing exact-SHA smoke remains pending.
 - [~] **Provider routing:** PR #169 merged first-party aServi separation and mutually exclusive settings; main Quality #42408500881 failed two provider E2E assertions (111 passed). PR #173 code/test HEAD `b614954ada5f86f8221a270ecd3d251283aa0642` corrects exclusivity expectations and scheduled probe; exact code/test Quality #42408845013 and Graphify #42408844985 pass. Final state-head verification and owner-authorized merge remain.
+
+
+## H. Current source-checklist reconciliation audit — 2026-11-08
+
+This section records a count and provenance audit; it does **not** silently close or delete source tasks.
+
+- Main registry: **607 stable task IDs** — 487 unchecked, 97 partial, 23 checked. The original `REGISTRY-001` count of 544 open/partial rows (470 unchecked + 74 partial) is the historical migration baseline; it is not the current total.
+- Existing append-only addendum: **86 stable task IDs** — 18 unchecked, 50 partial, 18 checked; it also contains 57 unnumbered checkbox subitems. One ID, `UX-044`, is cross-linked in both files and must not become two independent tasks.
+- Source documents are not all synchronized with the migration snapshot. Current candidate deltas to reconcile by task text and evidence (not by line number alone): `USER_REQUEST_CHECKLIST.md` has 116 open/partial boxes vs 112 UR IDs (+4 partial); `V016_IMPLEMENTATION_CHECKLIST.md` has 28 open/partial vs 27 V016 IDs (+1); `LANDING_UX_POLISH_BACKLOG_RU.md` has 24 open/partial vs 23 UX IDs (+1). `FIRST_FREE_LAUNCH_BACKLOG_RU.md`, `V1_UI_FINALIZATION_RU.md`, `VOICE_2_RESEARCH_RU.md`, `CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md` and `ALANDI_IMPLEMENTATION_GUIDE_RU.md` contain later owner/status changes or task slices that require content-level reconciliation against existing IDs.
+- Explicitly reconciled in this branch: V1 §§16–17 now reflect D-022 Agents/Skills menu approval; the Landing UX backlog no longer says the Functions menu is unapproved/removed; CHATSET-111 is marked retired with Research Studio; GUIDE-553 is marked retired with the server-memory graph.
+- Voice research has two overlapping namespaces: `VOICE2-106…113` tracks VOICE-TRACK-003…010, while `VOICE-001…010` records the broader Voice workstream. Map `VOICE-011…018` and `AUDIO-GEN-001…009` to existing IDs before creating any new ones.
+- Continue REGISTRY-002 with description-level crosswalk, exact source provenance, current code/test evidence and owner gates. Keep original source checklists intact; do not delete or flatten them.
