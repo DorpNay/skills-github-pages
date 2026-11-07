@@ -53,9 +53,9 @@ permalink: /
     .advanced-field,.advanced-control { font-size:11px!important;padding:.42rem .55rem!important;min-height:30px; }
     #cloudStatus { margin:0;font-size:10px;line-height:1.2; }
     #cloudStatusDot { margin-top:0; }
-    .message-model-meta { color: #93a4bd; font-size: .67rem; line-height: 1.3; padding: .15rem .25rem; opacity: .9; }
+    .message-model-meta { color: var(--ui-text-muted); font-size: .67rem; line-height: 1.3; padding: .15rem .25rem; opacity: .9; }
     .message-model-meta::before { content: "●"; display: inline-block; margin-right: .4rem; color: #4ade80; font-size: .58rem; text-shadow: 0 0 8px rgb(74 222 128 / 45%); }
-    #thinkingTime { color: #a5b4fc; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    #thinkingTime { color: var(--ui-info); font-variant-numeric: tabular-nums; white-space: nowrap; }
     #statusText { color: var(--ui-info); }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100dvh; min-height: 0; overflow: hidden; }
     button, input, textarea { font: inherit; }
@@ -338,7 +338,7 @@ permalink: /
     html[data-theme="light"] .assistant-content a { color:var(--ui-link)!important; }
     html[data-reading-contrast="high"] .text-gray-300, html[data-reading-contrast="high"] .text-gray-400, html[data-reading-contrast="high"] .text-gray-500,
     html[data-reading-contrast="high"] .assistant-content blockquote, html[data-reading-contrast="high"] .message-model-meta { color:var(--ui-text-muted)!important; }
-    html[data-reading-contrast="high"] :is(button,input,select,textarea):disabled, html[data-reading-contrast="high"] [aria-disabled="true"] { color:var(--ui-text-muted)!important; opacity:.9!important; }
+    :is(button,input,select,textarea):disabled, [aria-disabled="true"] { color:var(--ui-text-muted)!important; }
     .field-error, .toast.toast-error { color:var(--ui-danger); }
     .assistant-content blockquote { color:var(--ui-text-muted); border-color:var(--ui-border); }
     @media (max-width:639px) {
