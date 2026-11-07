@@ -118,29 +118,67 @@ jobs:
           for attempt in $(seq 1 18); do
             if curl --fail --silent --show-error --location --max-time 15 "$client_url" -o /tmp/live-client.html &&
                grep --fixed-strings --quiet "$expected_title" /tmp/live-client.html; then
-              echo "Published client matches main source title: $expected_title"
-              exit 0
+              echo "Published client matches main source title via cache-busted URL: $expected_title"
+              break
             fi
-            echo "Published client does not yet match ($expected_title; attempt $attempt/18); retrying in 10 seconds."
+            if [ "$attempt" -eq 18 ]; then
+              echo "Cache-busted published client did not match main source title: $expected_title"
+              exit 1
+            fi
+            echo "Cache-busted client does not yet match ($expected_title; attempt $attempt/18); retrying in 10 seconds."
             sleep 10
           done
-          echo "Published client did not match main source title: $expected_title"
+
+          # Also test the exact canonical URL visitors use. No query string or
+          # Cache-Control override: this catches a stale GitHub Pages edge response.
+          canonical_url="https://dorpnay.github.io/skills-github-pages/"
+          for attempt in $(seq 1 18); do
+            if curl --fail --silent --show-error --location --max-time 15 \
+                 --dump-header /tmp/live-client-canonical.headers \
+                 "$canonical_url" -o /tmp/live-client-canonical.html &&
+               grep --fixed-strings --quiet "$expected_title" /tmp/live-client-canonical.html; then
+              echo "Canonical published client matches current main without cache-busting: $expected_title"
+              exit 0
+            fi
+            echo "Canonical URL is not yet serving current main ($expected_title; attempt $attempt/18); retrying in 10 seconds."
+            sleep 10
+          done
+          echo "Canonical published URL remained stale or mismatched: expected $expected_title"
+          grep -Ei '^(HTTP/|date:|age:|cache-control:|etag:|last-modified:|via:|x-cache:)' /tmp/live-client-canonical.headers || true
           exit 1
 
-      - name: Wait for the new landing content after a main deployment
+      - name: Verify the published landing content on canonical URL after main deployment
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           landing_url="https://dorpnay.github.io/skills-github-pages/landing/?smoke=$GITHUB_SHA"
           for attempt in $(seq 1 18); do
             if curl --fail --silent --show-error --location --max-time 15 "$landing_url" -o /tmp/alandi-landing.html &&
                grep --fixed-strings --quiet "Сохраняй контроль над средой" /tmp/alandi-landing.html; then
-              echo "The current landing content is published."
-              exit 0
+              echo "The current landing content is published via cache-busted URL."
+              break
             fi
-            echo "The new landing content is not available yet (attempt $attempt/18); retrying in 10 seconds."
+            if [ "$attempt" -eq 18 ]; then
+              echo "The current landing content was not published in time."
+              exit 1
+            fi
+            echo "The cache-busted landing content is not available yet (attempt $attempt/18); retrying in 10 seconds."
             sleep 10
           done
-          echo "The current landing content was not published in time."
+
+          canonical_landing_url="https://dorpnay.github.io/skills-github-pages/landing/"
+          for attempt in $(seq 1 18); do
+            if curl --fail --silent --show-error --location --max-time 15 \
+                 --dump-header /tmp/alandi-landing-canonical.headers \
+                 "$canonical_landing_url" -o /tmp/alandi-landing-canonical.html &&
+               grep --fixed-strings --quiet "Сохраняй контроль над средой" /tmp/alandi-landing-canonical.html; then
+              echo "The canonical /landing/ URL serves the current content without cache-busting."
+              exit 0
+            fi
+            echo "The canonical landing URL is not yet serving current content (attempt $attempt/18); retrying in 10 seconds."
+            sleep 10
+          done
+          echo "The canonical /landing/ URL remained stale or mismatched."
+          grep -Ei '^(HTTP/|date:|age:|cache-control:|etag:|last-modified:|via:|x-cache:)' /tmp/alandi-landing-canonical.headers || true
           exit 1
       - name: Test the published aLandi landing page in Chromium
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
