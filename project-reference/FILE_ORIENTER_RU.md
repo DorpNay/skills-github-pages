@@ -4,14 +4,13 @@
 
 ## Контрольная точка — 2026-11-07 (live state)
 
-- Current main SHA: `daad47da0c5ec07c6200d6d38bf6bb33c2290860`.
-- Last functional checkpoint: `a8afee45bb22654b220bffda857ab10c24641ef1`; protections #147 cancellation-safe Gateway, #148 rendering/Pyodide boundary and #150 storage recovery/atomic rollback remain mandatory.
-- Pages: deployment #42350650890 SUCCESS on exact main; Quality #42350651114 SUCCESS on exact main with deployed-root version guard, public-root Chromium smoke and /landing/ smoke. Freshness #42350651042 and Provenance #42350651035 also PASS.
-- UI §8.8: PR #157 merged and exact Quality/Graphify passed. Remaining §§8.1–8.17 and later menus/panels/functions/minimization remain open; PR #154 is not in main.
-- PR #154 current head `6ca47522d7d6998916b1b01931c217d8b7e76c75`, stale base f323b6f, mergeable_state=dirty. Quality #42349173942 failed 17 E2E + 1 flaky (22 passed); Freshness #42349173878 failed. Provenance #42349173871, Graphify #42349173908, Dead Code #42349173914 passed. Restore main protections and fix behavior; do not weaken tests.
-- open PRs (6): #125, #131, #152, #154, #155, #161
-- open issues (1): #111
-- Owner sequence: OLEDUE/N₂O/task intake; Pages reverified; remaining UI in bounded exact-head-tested slices; preserve and resume all other registry goals. One orchestrator and one Master Task Registry remain canonical.
+- Current main SHA: `69645ff357067f3656aa77cc67336ff423c26944`.
+- GitHub Pages: deployment #42362476364 SUCCESS on exact main; Quality #42362476858 PASS 7/7 including published root/client-version and /landing/ Chromium checks.
+- Official Jekyll builder: `actions/jekyll-build-pages` pinned at `44a6e6beabd48582f863aeeb6cb2151cc1716697`; runner resolved official image v1.0.13. The current main-push deployment path is functioning; no replacement workflow is justified.
+- PR #166 §8.17: open, base 69645ff, head `a79cb6b3fde04985b31217d9ae952e5d53cdec2f`. Previous exact head 7c065c1 failed one dark/high semantic-role color assertion (115 passed, 1 failed); CSS specificity patch committed to current head. Graphify #42366669754 PASS; Quality #42366669769 was IN_PROGRESS at checkpoint. Do not merge before all exact-head gates pass.
+- Live open PRs: #125, #131, #152, #154, #155, #166. Open issue #111.
+- New upstream review is recorded in INTEL.md and docs/OPEN_SOURCE_TRIAGE_RU.md (2026-11-07); research only, no downloads, installs, code copies or runtime changes.
+
 
 ## 1. Быстрый маршрут
 
