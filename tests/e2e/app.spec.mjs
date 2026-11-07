@@ -5273,7 +5273,7 @@ test('corrupt project storage is preserved and exposes a downloadable recovery b
   }));
   expect(values).toEqual({ original: raw, backup: raw });
   await page.locator('#appSidebarToggle').click();
-  await page.locator('[data-action="open-project-settings"]').click();
+  await expect(page.locator('#projectRecoveryBackupButton')).toBeVisible();
   const [download] = await Promise.all([
     page.waitForEvent('download'),
     page.locator('#projectRecoveryBackupButton').click()
