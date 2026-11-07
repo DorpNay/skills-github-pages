@@ -334,7 +334,7 @@ test('first outside tap dismisses an open chat row menu without activating the c
   await expect(page.locator('#sidebarOverlay')).toBeVisible();
 });
 
-test('published app boots and core controls are interactive', async ({ page }) => {
+test('published app boots with aServi selected and concise navigation', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
@@ -344,29 +344,33 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await expect(page.locator('#searchModeSummary')).toBeVisible();
   await expect(page.locator('#searchModeSummary')).toContainText('Обычный');
   await expect(page.locator('#toggleSearch')).toBeChecked();
-  await expect(page.locator('#functionsMenuSummary')).toBeVisible();
-  await expect(page.locator('#toggleMultiAgent')).not.toBeChecked();
+  await expect(page.locator('#functionsMenu')).toHaveCount(0);
+  await expect(page.locator('#aserviSettingsGroup')).toHaveAttribute('open', '');
+  await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
+  await expect(page.locator('#additionalSettings')).not.toHaveAttribute('open');
 
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#settingsModal')).toBeVisible();
-  await expect(page.locator('#providerPreset')).toHaveValue('alandi');
+  await expect(page.locator('#providerPreset')).toHaveValue('');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_provider'))).toBe('alandi');
+  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
   await expect(page.locator('#apiKey')).toHaveAttribute('type', 'password');
   await expect(page.locator('#baseUrl')).not.toBeFocused();
+  await page.locator('#additionalSettings > summary').click();
   await expect(page.locator('#systemPromptInput')).toHaveAttribute('readonly', '');
   await page.locator('#editSystemPrompt').click();
   await expect(page.locator('#systemPromptInput')).not.toHaveAttribute('readonly', '');
   await page.locator('#editSystemPrompt').click();
   await expect(page.locator('#systemPromptInput')).toHaveAttribute('readonly', '');
+  await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('gemini');
   await page.locator('#modelPreset').selectOption('gemini-3.6-flash');
   await expect(page.locator('#modelName')).toHaveValue('gemini-3.6-flash');
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await chooseSearchMode(page, 'offline');
-  await expect(page.locator('#searchModeSummary')).toContainText(/выкл\./i);
+  await expect(page.locator('#searchModeSummary')).toContainText(/выкл./i);
   await page.reload();
-  await expect(page.locator('#searchModeSummary')).toContainText(/выкл\./i);
+  await expect(page.locator('#searchModeSummary')).toContainText(/выкл./i);
   await chooseSearchMode(page, 'normal');
   await expect(page.locator('#searchModeSummary')).toContainText(/обычный/i);
   await page.locator('#modeDeep').click();
@@ -380,6 +384,7 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#additionalSettings').evaluate(el => el.open))) await page.locator('#additionalSettings > summary').click();
   if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
 
   await page.locator('#providerPreset').selectOption('groq');
@@ -1062,7 +1067,7 @@ test('Obsidian Studio and Clean Light preferences persist and respect motion con
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
 
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#additionalSettings > summary').click();
   await page.locator('#uiMotion').selectOption('auto');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'auto');
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
@@ -1121,7 +1126,7 @@ test('aLandi cloud status only turns green after a real model response, and core
   await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
   await page.locator('#homeThemeToggle').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await page.locator('#legacyProviderSettings [data-action="toggle-theme-cycle"]').click();
+  await page.locator('#homeThemeToggle').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 });
 
@@ -2678,23 +2683,19 @@ test('mobile composer stays visible at the bottom in new chats across viewport r
   await assertDocked();
 });
 
-test('search presets and function settings fit one line, localize, and persist per chat', async ({ page }) => {
+test('search presets fit one line, localize, and persist per chat', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
 
   const searchRect = await page.locator('#searchModeMenu').boundingBox();
-  const functionsRect = await page.locator('#functionsMenu').boundingBox();
   expect(searchRect).not.toBeNull();
-  expect(functionsRect).not.toBeNull();
-  expect(Math.abs(searchRect.y - functionsRect.y)).toBeLessThan(5);
-  expect(searchRect.x + searchRect.width).toBeLessThanOrEqual(functionsRect.x + 3);
-  for (const selector of ['#modeFast', '#modeDeep', '#searchModeSummary', '#functionsMenuSummary']) {
+  for (const selector of ['#modeFast', '#modeDeep', '#searchModeSummary']) {
     const box = await page.locator(selector).boundingBox();
     expect(box?.height || 0, selector + ' should have a 44px mobile hit target').toBeGreaterThanOrEqual(44);
   }
-  const headerTargetHeights = await page.locator('.app-header .header-icon').evaluateAll(elements => elements.map(element => element.getBoundingClientRect().height));
-  expect(headerTargetHeights.length).toBeGreaterThan(0);
-  expect(headerTargetHeights.every(height => height >= 44)).toBe(true);
+  const headerTargetHeights = await page.locator('.app-header .header-icon, .header-language-select').evaluateAll(elements => elements.map(element => element.getBoundingClientRect().height));
+  expect(headerTargetHeights.length).toBeGreaterThanOrEqual(3);
+  expect(headerTargetHeights.every(height => height >= 40)).toBe(true);
   for (const selector of ['#contextPickerButton', '#attachTextButton', '#voiceUnavailableButton', '#sendBtn', '#userInput']) {
     const box = await page.locator(selector).boundingBox();
     expect(box?.height || 0, selector + ' should have a 44px mobile hit target').toBeGreaterThanOrEqual(44);
@@ -2712,13 +2713,7 @@ test('search presets and function settings fit one line, localize, and persist p
   await chooseSearchMode(page, 'offline');
   await expect(page.locator('#toggleSearch')).not.toBeChecked();
   await expect(page.locator('#modeHint')).toContainText('Веб: выкл.');
-  await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
-  await chooseSearchMode(page, 'normal');
-
-  await page.locator('#functionsMenuSummary').click();
-  await expect(page.locator('#functionsMenu [data-function="research"]')).toHaveCount(0);
-  await expect(page.locator('#functionsMenu .toolbar-menu-option')).toHaveCount(3);
-  await page.locator('#functionsMenuSummary').click();
+  await await chooseSearchMode(page, 'normal');
 
   await setAgentMode(page, true);
   await expect(page.locator('#toggleMultiAgent')).toBeChecked();
@@ -2732,13 +2727,6 @@ test('search presets and function settings fit one line, localize, and persist p
     return chats.find(chat => chat.id === current)?.skillPreset;
   })).toBe('code-review');
 
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="connectors"]').click();
-  await expect(page.locator('#functionPanelModal')).toBeVisible();
-  await expect(page.locator('#functionPanelDescription')).toContainText('интеграции');
-  await expect(page.locator('#functionPanelDescription')).toContainText('не подключены');
-  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
-
   const sidebar = page.locator('#sidebar');
   if (await sidebar.evaluate(element => element.classList.contains('-translate-x-full'))) {
     await page.locator('[data-action="toggle-sidebar"]').click();
@@ -2748,67 +2736,23 @@ test('search presets and function settings fit one line, localize, and persist p
   await expect(page.locator('#toggleSearch')).toBeChecked();
   await expect(page.locator('#toggleMultiAgent')).not.toBeChecked();
   await expect(page.locator('#searchModeSummary')).toContainText(/обычный/i);
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
-  await expect(page.locator('#skillPresetSelect')).toHaveValue('auto');
-  await expect(page.locator('#functionPanelTitle')).toContainText('Профиль задачи');
-  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
 
   await selectLanguage(page, 'en');
   await expect(page.locator('#modeDeep')).toContainText('Thorough');
   await expect(page.locator('#modeToolbar [role="group"]')).toHaveAttribute('aria-label', 'Effort');
-  await expect(page.locator('#functionsMenuSummary')).toContainText('Functions');
+  await expect(page.locator('#functionsMenu')).toHaveCount(0);
   await expect(page.locator('#searchModeSummary')).toContainText('Web');
   await expect(page.locator('#modeHint')).toContainText('Quick · Web: standard · Direct · Auto');
-  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
-
-  // The first tap outside an open toolbar menu must only close it.
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('#modeFast').click();
-  await expect(page.locator('#functionsMenu')).not.toHaveAttribute('open', '');
-  await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
 });
 
-
-test('planned agent and connector directions show a clearly non-runtime innovation cue', async ({ page }) => {
+test('unrequested Functions and Research Studio entrypoints are absent', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('#functionPanelModal')).toBeHidden();
-
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
-  const agentPanel = page.locator('#agentFunctionSettings');
-  await expect(agentPanel).toBeVisible();
-  const agentTicker = agentPanel.locator('.roadmap-ticker-track');
-  await expect(agentTicker).toBeVisible();
-  await expect(agentTicker).toContainText('1nv3nt10n 1n PrOc3ss');
-  await expect(agentTicker).toHaveAttribute('aria-hidden', 'true');
-  await expect(agentPanel.locator('.roadmap-note')).toContainText('не активный runtime');
-  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
-  await expect(agentTicker).toBeHidden();
-
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="connectors"]').click();
-  const connectorPanel = page.locator('#connectorFunctionStatus');
-  await expect(connectorPanel).toBeVisible();
-  const connectorTicker = connectorPanel.locator('.roadmap-ticker-track');
-  await expect(connectorTicker).toBeVisible();
-  await expect(connectorTicker).toContainText('1nv3nt10n 1n PrOc3ss');
-  await expect(connectorPanel.locator('.roadmap-note')).toContainText('не означает, что сервис уже выполняет работу');
-  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
-  await expect(connectorTicker).toBeHidden();
+  await expect(page.locator('#functionsMenu')).toHaveCount(0);
+  await expect(page.locator('#functionsMenuSummary')).toHaveCount(0);
+  await expect(page.locator('[data-action="open-research-studio"]')).toHaveCount(0);
+  await expect(page.locator('#researchStudioModal')).toBeHidden();
+  await expect(page.locator('#searchModeSummary')).toBeVisible();
 });
-
-test('application innovation ticker is static when reduced motion is requested', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
-  const ticker = page.locator('#agentFunctionSettings .roadmap-ticker-track');
-  await expect(ticker).toBeVisible();
-  expect(await ticker.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
-  await expect(page.locator('#agentFunctionSettings .roadmap-note')).toBeVisible();
-});
-
 
 test('browser Python snippets cannot access page globals through Pyodide js module', async ({ page }) => {
   await page.addInitScript(() => {
