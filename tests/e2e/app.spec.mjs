@@ -234,7 +234,7 @@ test('aServi and third-party settings are separate mutually exclusive modes', as
   await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
   await expect(page.locator('#additionalSettings')).not.toHaveAttribute('open');
   await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
-  await expect(page.locator('#providerPreset')).toBeVisible();
+  await expect(page.locator('#providerPreset')).toHaveCount(1);
 
   await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#aserviSettingsGroup')).not.toHaveAttribute('open');
@@ -1784,7 +1784,7 @@ test('aLandi cloud probe rejects HTTP 200 proxy text as proof of a model connect
   await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected', { timeout: 15000 });
   await expect(page.locator('#cloudApiKeyError')).toContainText('Не удалось подтвердить соединение');
-  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_provider_connection_alandi'))).toBeNull();
 });
 
 
@@ -1826,7 +1826,7 @@ test('aLandi cloud remains disconnected when the model answers but gateway healt
   await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected', { timeout: 15000 });
   await expect(page.locator('#cloudApiKeyError')).toContainText('Не удалось подтвердить соединение');
-  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_provider_connection_alandi'))).toBeNull();
 });
 
 test('provider probe cannot mark changed credentials connected after an in-flight response', async ({ page }) => {
@@ -1888,7 +1888,7 @@ test('aLandi cloud probe cannot overwrite settings changed while its request is 
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
   await expect(page.locator('#cloudModel')).toHaveValue('');
   await expect(page.locator('#cloudApiKey')).toHaveValue('first-cloud-race-key');
-  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_provider_connection_alandi'))).toBeNull();
 });
 
 
@@ -1950,8 +1950,7 @@ test('retired Server Memory experiment has no UI or request path', async ({ page
   await expect(page.locator('#serverProjectMemoryToggle')).toHaveCount(0);
   await expect(page.locator('#serverMemoryStatus, #serverMemoryBox')).toHaveCount(0);
   await expect(page.locator('[data-action="refresh-server-memory"], [data-action="upload-server-memory"], [data-action="review-server-memory"], [data-action="delete-server-memory"]')).toHaveCount(0);
-  await expect(page.locator('#projectMemoryHelperDetails')).toHaveCount(1);
-  await page.locator('#projectMemoryHelperDetails > summary').click();
+  // Local project memory and helper suggestions are independent of the retired server-memory graph.
   await expect(page.locator('[data-action="suggest-helper-memory"]')).toBeVisible();
   expect(graphRequests).toHaveLength(0);
 });
