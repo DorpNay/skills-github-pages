@@ -371,11 +371,11 @@ permalink: /
     .header-chat-title { padding:5px 9px;border:1px solid var(--ui-border);border-radius:12px;background:color-mix(in srgb,var(--ui-surface-raised) 78%,transparent); }
     .brand-wordmark { font-family:ui-rounded,"Arial Rounded MT Bold",system-ui,sans-serif;font-weight:900;letter-spacing:-.075em;transform:rotate(-2deg) skewX(-3deg);text-shadow:1px 1px 0 color-mix(in srgb,var(--ui-tiffany) 20%,transparent); }
     .clock-face { width:58px;height:58px; }
-    .header-language-select { min-width:48px;min-height:40px;padding:0 5px;border:1px solid var(--ui-border);border-radius:10px;background:var(--ui-surface-raised);color:var(--ui-text);font-size:11px;font-weight:700;text-align:center; }
+    .header-language-select { min-width:48px;min-height:44px;padding:0 5px;border:1px solid var(--ui-border);border-radius:10px;background:var(--ui-surface-raised);color:var(--ui-text);font-size:11px;font-weight:700;text-align:center; }
     .composer-stop:not(.hidden) { background:var(--ui-surface-raised)!important;color:var(--ui-text)!important;border:1px solid var(--ui-border)!important; }
     .composer-stop:not(.hidden):hover { background:var(--ui-tiffany-soft)!important;border-color:var(--ui-tiffany)!important;color:var(--ui-tiffany)!important; }
-    #modeToolbar [role="group"] > button,#modeToolbar .toolbar-menu > summary { min-height:40px; }
-    @media (max-width:420px) { .header-preferences { gap:3px; } .header-language-select { min-width:44px;padding:0 3px; } .brand-wordmark { font-size:16px; } .clock-face { width:50px;height:50px; } }
+    #modeToolbar [role="group"] > button,#modeToolbar .toolbar-menu > summary { min-height:44px; }
+    @media (max-width:420px) { .header-preferences { gap:3px; } .header-language-select { min-width:44px;min-height:44px;padding:0 3px; } .brand-wordmark { font-size:16px; } .clock-face { width:50px;height:50px; } }
 
 
     /* UI §8.14: prevent long-press selection on controls without disabling copyable content. */
@@ -813,7 +813,7 @@ permalink: /
       openrouter: { label: 'OpenRouter', docsUrl: 'https://openrouter.ai/settings/keys', baseUrl: 'https://openrouter.ai/api/v1', models: [['openrouter/free','Автовыбор бесплатной модели'], ['deepseek/deepseek-r1:free','DeepSeek R1 · free (если доступна)']] },
       nvidia: { label: 'NVIDIA NIM', docsUrl: 'https://build.nvidia.com/settings', baseUrl: 'https://integrate.api.nvidia.com/v1', models: [['z-ai/glm-5.3','GLM-5.3 · reasoning/coding'], ['openai/gpt-oss-20b','GPT-OSS 20B · reasoning']] },
       huggingface: { label: 'Hugging Face Inference Providers', docsUrl: 'https://huggingface.co/settings/tokens', baseUrl: 'https://router.huggingface.co/v1', models: [['openai/gpt-oss-120b:fastest','GPT-OSS 120B · fastest'], ['deepseek-ai/DeepSeek-R1:fastest','DeepSeek R1 · fastest'], ['openai/gpt-oss-120b:cheapest','GPT-OSS 120B · cheapest']] },
-      alandi: { label: 'aLandi Self-hosted Gateway', docsUrl: 'https://github.com/DorpNay/skills-github-pages/blob/main/docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md', baseUrl: '', models: [['qwen3.5:4b','Qwen3.5 4B · локальный сервер']] },
+      alandi: { label: 'aServi', docsUrl: 'https://github.com/DorpNay/skills-github-pages/blob/main/docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md', baseUrl: '', models: [['qwen3.5:4b','Qwen3.5 4B · локальный сервер']] },
       kilo: { label: 'Kilo AI Gateway · Auto Free', docsUrl: 'https://kilo.ai/docs/gateway', baseUrl: 'https://api.kilo.ai/api/gateway', models: [['kilo-auto/free','Kilo Auto Free · dynamic routing']] },
       custom: { label: 'Свой API', baseUrl: '', docsUrl: '', models: [['custom','Ввести имя модели вручную']] }
     };
@@ -1885,7 +1885,7 @@ permalink: /
       if (!chat.messages.length) {
         const welcome = document.createElement('div');
         welcome.className = 'text-center text-gray-500 mt-10';
-        welcome.textContent = getUiLanguage()==='en' ? 'Welcome. Connect aLandi Cloud or choose an API provider in settings.' : 'Привет! Подключи aLandi Cloud или выбери провайдера в настройках.';
+        welcome.textContent = getUiLanguage()==='en' ? 'Welcome. Connect aServi or choose a third-party provider in settings.' : 'Привет! Подключи aServi или выбери стороннего провайдера в настройках.';
         box.appendChild(welcome);
         updateJumpToLatest();
         return;
@@ -3462,7 +3462,7 @@ permalink: /
         safeSet('ai_provider_connection_alandi',JSON.stringify(verified));
         $('providerPreset').value='';applyProviderPreset('alandi',true);$('baseUrl').value=baseUrl;$('modelName').value=model;$('apiKey').value=key;
         setCloudFieldConnection('connected');setCloudStatus('connected');
-        showToast('aLandi Cloud подключён и проверен.');
+        showToast('aServi подключён и проверен.');
       }catch(error){
         if(!cloudSettingsStillCurrent()){
           setCloudStatus('disconnected','Настройки изменились во время проверки. Результат не сохранён.');
