@@ -921,7 +921,6 @@ test('dynamic chat catalog is used for bounded same-provider model fallback', as
   await page.locator('#modelName').fill('e2e-primary-model');
   await page.locator('#apiKey').fill('e2e-dynamic-catalog-key');
   await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="refresh-model-catalog"]').click();
   catalogEnabled = true;
   await page.locator('[data-action="refresh-model-catalog"]').click();
   await expect(page.locator('#modelPreset option[value="e2e-dynamic-fallback"]')).toHaveCount(1);
