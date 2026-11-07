@@ -157,7 +157,7 @@
     "main_freshness_run": null,
     "main_graphify_run": null,
     "open_prs": "6 open PRs excluding current PR #167: #125, #131, #152, #154, #155, #166",
-    "owner_task": "Finish UI §8.17 PR #166 on head 8589607; Graphify PASS and Quality/Chromium pending. The test now waits after forcing descendant transition start and uses an isolated status fixture. After all gates and explicit owner approval, merge and verify Pages. External source sweep remains research-only.",
+    "owner_task": "Finish UI §8.17 PR #166 on head 683ec28; Graphify PASS and Quality/Chromium pending. The test now forces descendant style recalculation, waits 320ms, and uses an isolated status fixture. After all gates and explicit owner approval, merge and verify Pages. External source sweep remains research-only.",
     "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
     "pr131_exact_head_verified": false,
     "pr131_compare": "Large Draft V2 workbench, stale/diverged and mergeable_state dirty; selective reconciliation only.",
@@ -214,8 +214,8 @@
     "pr157_compare": "Merged at 40540f6d75a90877ff9cbec5bbfacb48ee6f775c; exact-head Quality #42349368043 and Graphify #42349368086 passed.",
     "pr158_head": "4da559cf6abc21bfa3920b5e0297a2abb84e7453",
     "pr158_compare": "Merged at d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c; exact-head Quality #42349540173 passed; exact-main root title Quality #42349853526 remains in progress.",
-    "pr166_head": "858960744d4fae879ed936dd0b17ddd58cf1d8b6",
-    "pr166_compare": "Open PR #166, base main 69645ff. Prior exact heads 7c065c1/a79cb6b/dddc613/97fa73c failed the semantic-role test due to transition timing and a live status element changed by async connection refresh. Current head 8589607 forces descendant style recalculation before waiting 180ms and uses an isolated checking-status fixture. Graphify #42368174266 PASS; Quality #42368174315 IN_PROGRESS. Main index blob 227223d78bb3be1d07422767a29a5ec3fd8df42a lacks ai_ui_readability_v1/readingFontSize; PR blob 8f36175b9b906d835c1aeea89bf3a516157d0388 contains them."
+    "pr166_head": "683ec28310a68dc0126a715a04f3ddc613e817b6",
+    "pr166_compare": "Open PR #166, base main 69645ff. Previous head 8589607 still sampled color transitions before they fully settled at 180ms and used a live status node subject to async connection refresh. Current head 683ec28 forces descendant style recalculation before a 320ms wait and uses an isolated checking-status fixture. Graphify #42368514210 PASS; Quality #42368514164 IN_PROGRESS. Main index blob 227223d78bb3be1d07422767a29a5ec3fd8df42a lacks ai_ui_readability_v1/readingFontSize; PR blob 8f36175b9b906d835c1aeea89bf3a516157d0388 contains them."
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": true,
