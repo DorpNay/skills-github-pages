@@ -3361,6 +3361,7 @@ test('readability preferences persist and maintain semantic text contrast in bot
       return color;
     };
     const cloudStatus = document.querySelector('#cloudStatus');
+    const settingsError = document.querySelector('#cloudBaseUrlError');
     const statusRow = document.querySelector('#searchStatus');
     const statusText = document.querySelector('#statusText');
     const actual = () => ({
@@ -3368,6 +3369,7 @@ test('readability preferences persist and maintain semantic text contrast in bot
       disabled:getComputedStyle(sample.querySelector('#disabled')).color,
       link:getComputedStyle(sample.querySelector('#link')).color,
       error:getComputedStyle(sample.querySelector('#error')).color,
+      settingsError:getComputedStyle(settingsError).color,
       cloudChecking:getComputedStyle(cloudStatus).color,
       statusInfo:getComputedStyle(statusText).color
     });
@@ -3385,6 +3387,7 @@ test('readability preferences persist and maintain semantic text contrast in bot
             disabled:colorFor('--ui-text-muted'),
             link:colorFor('--ui-link'),
             error:colorFor('--ui-danger'),
+            settingsError:colorFor('--ui-danger'),
             cloudChecking:colorFor('--ui-warning'),
             statusInfo:colorFor('--ui-info')
           }
