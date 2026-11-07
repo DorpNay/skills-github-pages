@@ -4,7 +4,7 @@
 
 ## Current checkpoint — 2026-11-08
 
-- **Canonical main:** `c4f23e03f563d03213eb87002863da630fc8b833`.
+- **Current main SHA:** `c4f23e03f563d03213eb87002863da630fc8b833`.
 - **Pages VERIFIED LIVE on that exact main SHA:** GitHub-managed deployment #42372745873 SUCCESS; exact-main Quality #42372746360 SUCCESS; Graphify #42372746441 PASS. Canonical root and `/landing/` were checked against the build revision. This says nothing about VPS/Tunnel/Ollama.
 - **Active integration slice — PR #169:** branch `feat/ui-sidebar-81-polish-20261107`; base `c4f23e03f563d03213eb87002863da630fc8b833`; current head at this checkpoint `ae04cf8ff299954a70d530684d4cf0713ad1c809`; open, mergeable, 50 changed files. Implements aServi/provider separation, sidebar and retired-surface cleanup, explicit aServi connect action, no aServi auto-probe in third-party mode, updated E2E contracts, concise English `AGENTS.md`, `docs/ALANDI_SYSTEMS_MAP_RU.md`, orchestrator and source/technique updates. **Not merged or published.**
 - **PR #169 exact-head checks at `ae04cf8`:** Freshness #42396875595 in progress; Provenance #42396875531 in progress; Dead Code #42396875627 in progress; Graphify #42396875542 in progress; Gateway #42396875550 queued; Quality #42396875528 queued. Intermediate Quality #42396442500 passed all jobs (including Chromium) on earlier head `5d31f2d`; do not transfer that result to `ae04cf8`.
