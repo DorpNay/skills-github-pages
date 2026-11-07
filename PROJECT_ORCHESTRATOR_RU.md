@@ -58,7 +58,7 @@ For every newly stated owner goal:
 
 ## Current owner priority override — 2026-11-08
 
-1. **Baseline:** main `bf039f887e29137b627b06fc2bb107c2793d6b69`, PR #173 merged. No open PRs; issue #111 remains the sole owner-controlled release-gate issue.
+1. **Baseline:** main `bf039f887e29137b627b06fc2bb107c2793d6b69`, PR #173 merged. PR #174 is the only open PR; issue #111 remains the sole owner-controlled release-gate issue.
 2. **Pages / Quality:** deployment #42410162803 PASS exact SHA. Quality #42410163178 passed build, Context, Static Analysis, Security, Integrity and Chromium; Chromium confirmed the live root revision, canonical landing content and landing Chromium 8/8. Separate release-contract job #128517290166 failed because it still forbids the owner-approved `functionsMenu`; the UI menu must remain Agents / Deep Research / Skills. Fix the CI contract, not the product.
 3. **Current bounded branch:** `fix/pages-functions-contract-and-state-20261108` from exact main; correct required/forbidden published markers and synchronize live checkpoint records. Do not merge this follow-up without separate owner authorization.
 4. **Issue #111:** open and owner-controlled. Remaining gates include main ruleset/settings, private VPS/Tunnel/Ollama evidence, permissioned RU/EN/TH RAG corpus, real device/voice evaluation, sandbox and deletion/OAuth controls.
