@@ -491,3 +491,6 @@ PR #122 добавил только эксплуатационную надёж�
 - **Controls:** theme + language в header; 44px touch targets; stop-generation action сохраняется, но не оформляется красной заливкой.
 - **Release:** статус UI changes — IMPLEMENTED IN PR #169 only until exact-head checks pass, merge is authorized by this explicit publication request, and the post-merge Pages deployment plus live-site contract smoke verify the exact merge SHA and UI markers.
 
+
+
+**Progress 2026-11-08 / PR #169 (branch only):** added a dedicated localized `Check and connect` action inside the aServi settings disclosure. The connection function and scheduled probe now exit when the selected provider is not `alandi`, preventing third-party mode from sending any aServi connectivity request. Voice/document E2E setup now uses the explicit first-party connection flow; probe traffic is excluded from user-chat assertions. Exact-head gates are still required; this is not live main until merge.
