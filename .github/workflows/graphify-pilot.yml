@@ -152,7 +152,7 @@ jobs:
               echo "#### $label"
               graphify query "$query" --context call --budget 700
             done <<'EOF'
-          UI Research Studio|startResearchStudio
+          UI aServi provider route|applyProviderPreset connectAlandiAServi
           UI send path|sendMessage runAssistant
           Gateway auth/provider client|authorize client_for
           Bounded request parsing|read_limited_body completions
