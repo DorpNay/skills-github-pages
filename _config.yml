@@ -7,6 +7,7 @@ baseurl: "/skills-github-pages"
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
+  - jekyll-github-metadata
 
 # Preserve upstream reference copies in Git, but do not render/publish them as Pages content.
 exclude:
