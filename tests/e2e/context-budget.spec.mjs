@@ -43,6 +43,7 @@ test('known model context window bounds retained conversation history', async ({
     localStorage.setItem('ai_current_chat_v87', 'budget-chat');
   }, messages);
   await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#chatBox')).toContainText('OLD_TURN_7');
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   await page.locator('#thirdPartyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
