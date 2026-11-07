@@ -3380,6 +3380,8 @@ test('readability preferences persist and maintain semantic text contrast in bot
         document.documentElement.dataset.readingContrast = contrast;
         cloudStatus.dataset.state = 'checking';
         statusRow.dataset.tone = 'info';
+        // Force the root custom-property style to resolve before reading descendant colors.
+        getComputedStyle(document.documentElement).getPropertyValue('--ui-text-muted');
         results[theme + '-' + contrast] = {
           actual:actual(),
           expected:{
