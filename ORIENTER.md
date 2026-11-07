@@ -4,14 +4,13 @@
 
 ## Current checkpoint — 2026-11-07
 
-- **Current main SHA:** `daad47da0c5ec07c6200d6d38bf6bb33c2290860`.
-- **Last functional checkpoint:** `a8afee45bb22654b220bffda857ab10c24641ef1`; preserve #147 cancellation-safe Gateway, #148 rendering/Pyodide security and #150 storage recovery/atomic rollback.
-- **Pages VERIFIED LIVE:** deployment #42350650890 SUCCESS and Quality #42350651114 SUCCESS on exact main; Quality checked deployed root/version and public-site Chromium smoke for root and /landing/. Freshness #42350651042 and Provenance #42350651035 also PASS.
-- **UI §8.8 VERIFIED / MERGED:** PR #157; Quality #42349368043 and Graphify #42349368086 passed. Remaining §§8.1–8.17 and later menus/panels/functions/minimization remain OPEN.
-- **Open PR queue:** #125, #131, #152, #154, #155, #161 (snapshot excludes this documentation PR #160). **Open issue:** #111.
-- **#154:** head `6ca47522d7d6998916b1b01931c217d8b7e76c75`, stale base f323b6f, dirty. Quality #42349173942 FAILED 17 E2E + 1 flaky (22 passed); Freshness #42349173878 FAILED. Failures include #150 storage/recovery, voice/document, multimodal and privacy-memory. Provenance #42349173871, Graphify #42349173908, Dead Code #42349173914 PASSED. Do not merge as-is or weaken assertions.
-- **#161:** bounded §8.1 sidebar swipe implementation, exact-head Quality/Graphify in progress.
-- **Owner priority:** N₂O/OLEDUE handoff verified; Pages verified; remaining UI through bounded exact-head-tested slices; preserve all other registry goals.
+- **Current main SHA:** `69645ff357067f3656aa77cc67336ff423c26944` (live `main` branch read).
+- **Pages VERIFIED LIVE:** GitHub-managed `pages build and deployment` run #42362476364 SUCCESS on this exact SHA. Quality #42362476858 SUCCESS, all 7 jobs; its Chromium job checked the published root, client version, and `/landing/`.
+- **Production Jekyll path:** Pages run #42362476364 is GitHub-managed `dynamic/pages/pages-build-deployment`; its build job pulled `ghcr.io/actions/jekyll-build-pages:v1.0.13`, `Build with Jekyll` and `Deploy to GitHub Pages` both PASS. Upstream latest release remains v1.0.13 (2024-08-06); the Quality sentinel pins commit `44a6e6beabd48582f863aeeb6cb2151cc1716697`. No custom workflow replacement or action upgrade is indicated.
+- **PR #166 §8.17:** open, base `69645ff...`, current head `683ec28310a68dc0126a715a04f3ddc613e817b6`. Final test forces descendant style reads before a 320ms wait and uses an isolated `.cloud-status-copy[data-state=checking]` fixture; exact assertions remain strict. Quality #42368514164 PASS 7/7 (Context, Security, Integrity, Jekyll, Static Analysis, Chromium, Published Pages smoke); Graphify #42368514210 PASS. PR #166 is ready for owner-authorized merge, but remains open and unpublished. Do not merge until root cause is fixed and exact-head gates pass.
+- **Open PR queue:** #125, #131, #152, #154, #155, #166. **Open issue:** #111.
+- **Owner priority:** finish §8.17 with strict contrast assertions; after owner-authorized merge, verify a fresh Pages deployment and live version. Keep other workstreams and registry goals intact.
+
 
 ## Fast route
 
