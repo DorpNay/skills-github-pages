@@ -191,7 +191,7 @@
     "original_v1_baseline_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
     "main_quality_status": "PASS on exact main d83eea8: Quality #42349853526 completed all 7 jobs, including Jekyll, Security, Integrity, Context, static analysis, Real Chromium browser regression, published-site smoke and deployed-main-client-version guard.",
     "main_pages_status": "SUCCESS on exact main d83eea8: Pages deployment #42349853247 and cache-busting public root verified AI Mobile Agent v10.0.",
-    "main_freshness_status": "Main Freshness #42349250485 failed before PR #159 state refresh due checkpoint/queue drift; exact PR #159 Freshness on the refreshed current head is pending.",
+    "main_freshness_status": "Main Freshness #42349250485 failed before PR #159 state refresh due checkpoint/queue drift; exact-head Freshness #42350354469 passed on the earlier PR159 checkpoint d6472e1, but the branch has since updated main Quality status and ORIENTER markers, so rerun Freshness on current exact PR HEAD.",
     "main_provenance_status": "PASS run #42349250512 on functional parent f6f3896; no artifact/dependency changes in PR #157/#158.",
     "main_graphify_status": "PR #149 exact-head Graphify #42001311323 PASS; post-merge main Graphify run not retrieved.",
     "first_v1_candidate_pr": 139,
