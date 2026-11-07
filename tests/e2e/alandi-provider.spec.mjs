@@ -28,6 +28,9 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
     if (request.method() === 'OPTIONS') {
       return route.fulfill({ status: 204, headers: corsHeaders, body: '' });
     }
+    if (request.url().endsWith('/healthz')) {
+      return route.fulfill({ status: 200, headers: corsHeaders, contentType: 'application/json', body: JSON.stringify({ status: 'ok' }) });
+    }
     if (request.url().includes('/v1/models')) {
       return route.fulfill({
         status: 200, headers: corsHeaders, contentType: 'application/json',
@@ -36,14 +39,15 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
     }
     if (request.url().includes('/v1/chat/completions')) {
       const payload = request.postDataJSON();
-      chatPayloads.push(payload);
+      const isCloudProbe = payload.max_tokens === 8 && payload.messages?.[0]?.content === 'Reply with exactly OK.';
+      if (!isCloudProbe) chatPayloads.push(payload);
       return route.fulfill({
         status: 200,
-        headers: { ...corsHeaders, 'x-ai-cache': 'MISS', 'cache-control': 'no-store' },
+        headers: { ...corsHeaders, ...(isCloudProbe ? {} : { 'x-ai-cache': 'MISS', 'cache-control': 'no-store' }) },
         contentType: 'application/json',
         body: JSON.stringify({
-          id: 'local-chatcmpl-test', object: 'chat.completion', model: 'qwen3.5:4b',
-          choices: [{ index: 0, message: { role: 'assistant', content: 'aLandi local gateway works.' }, finish_reason: 'stop' }]
+          id: isCloudProbe ? 'local-cloud-probe' : 'local-chatcmpl-test', object: 'chat.completion', model: 'qwen3.5:4b',
+          choices: [{ index: 0, message: { role: 'assistant', content: isCloudProbe ? 'OK' : 'aLandi local gateway works.' }, finish_reason: 'stop' }]
         })
       });
     }
@@ -59,12 +63,12 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await page.locator('#legacyProviderSettings > summary').click();
-  await page.locator('#providerPreset').selectOption('alandi');
-  await expect(page.locator('#modelName')).toHaveValue('qwen3.5:4b');
-  await page.locator('#baseUrl').fill('https://alandi.example.test/v1');
-  await page.locator('#modelName').fill('qwen3.5:4b');
-  await page.locator('#apiKey').fill('e2e-alandi-placeholder-key-not-a-secret-0123456789');
+  await expect(page.locator('#cloudSettingsCard')).toBeVisible();
+  await expect(page.locator('#providerExternalSettings')).toBeHidden();
+  await page.locator('#cloudBaseUrl').fill('https://alandi.example.test/v1');
+  await page.locator('#cloudModel').fill('qwen3.5:4b');
+  await page.locator('#cloudApiKey').fill('e2e-alandi-placeholder-key-not-a-secret-0123456789');
+  await expect(page.locator('#cloudStatus')).toContainText('Подключено', { timeout: 15000 });
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
   await chooseSearchMode(page, 'offline');
