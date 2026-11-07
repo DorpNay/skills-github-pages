@@ -173,7 +173,7 @@
     "main_provenance_run": null,
     "main_freshness_run": null,
     "main_graphify_run": 42372746441,
-    "owner_task": "PR #174 corrects the false-negative published UI contract sentinel and synchronizes the source checklist audit. Preserve owner-approved Functions menu. Continue issue #111 supply-chain transitive pinning, ruleset, VPS/RAG/voice/sandbox/deletion/OAuth gates.",
+    "owner_task": "PR #174 corrects the published UI contract sentinel and records checklist/source drift. Next: content-level REGISTRY-002 crosswalk and issue #111 transitive supply-chain mitigation (62 direct refs pinned; 16 nested mutable upstream refs).",
     "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
     "pr131_exact_head_verified": false,
     "pr131_compare": "Large Draft V2 workbench, stale/diverged and mergeable_state dirty; selective reconciliation only.",
@@ -235,7 +235,7 @@
     "active_ui_pr": 174,
     "open_prs": "1 live open PR #174; current PR excluded from freshness snapshot; no other open PRs.",
     "open_prs_at_checkpoint": 0,
-    "last_volley": "V-2026-11-08-POSTMERGE-QUALITY-RELEASE-CONTRACT-001"
+    "last_volley": "V-2026-11-08-CHECKLIST-SUPPLYCHAIN-AUDIT-002"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
@@ -243,5 +243,5 @@
     "queue_policy": "Live open PR #174 is the current bounded follow-up and is excluded from the expected queue snapshot; no other open PRs. Issue #111 remains owner-controlled. Closed non-merged #125/#131/#152/#154/#155/#168/#171/#172 retain task scope.",
     "pr_check_policy": "No active PR is excluded from the snapshot."
   },
-  "last_volley": "V-2026-11-08-POSTMERGE-QUALITY-RELEASE-CONTRACT-001"
+  "last_volley": "V-2026-11-08-CHECKLIST-SUPPLYCHAIN-AUDIT-002"
 }
