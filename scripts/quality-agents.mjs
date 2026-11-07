@@ -41,9 +41,13 @@ const suites = {
       includes('const evidenceSection = document.createElement', 'Research evidence must be rendered with DOM nodes rather than HTML strings.');
       includes('const MAX_RESEARCH_EVIDENCE = 40;', 'Research evidence must have a deterministic size cap.');
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
-      includes("alandi: { label: 'aLandi Self-hosted Gateway'", 'The aLandi private gateway must be a first-class provider.');
+      includes("alandi: { label: 'aLandi aServi'", 'The aLandi aServi route must be a first-class provider.');
       includes("allowCrossProvider&&selectedProvider!=='alandi'", 'Selecting aLandi must never silently route private prompts to another provider even if global fallback is enabled.');
       includes('<section id="cloudSettingsCard"', 'aLandi must have a dedicated first-party server card.');
+      includes('aLandi aServi', 'The first-party server route must use the current aLandi aServi product name.');
+      assert.equal(source.includes('aLandi Cloud'), false, 'Do not reintroduce the retired aLandi Cloud product label.');
+      includes('data-action="select-alandi-aservi"', 'The first-party route action must use the aServi identifier.');
+      assert.equal(source.includes('data-action="select-alandi-cloud"'), false, 'Do not expose the retired Cloud route action.');
       includes('<h3 id="cloudCardTitle"', 'The private server card must have its own heading.');
       includes('<optgroup id="providerExternalGroup" label="Сторонние провайдеры">', 'The external provider picker must contain only third-party providers.');
       const pickerStart = source.indexOf('<select id="providerPreset"');
