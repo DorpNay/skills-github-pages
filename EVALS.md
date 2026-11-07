@@ -33,13 +33,13 @@ The prior gateway baseline passed 37 tests and the deterministic six-layer smoke
 | EV-CODE-003 | uv | pyproject.toml + reviewed uv.lock | uv sync --locked reproducible on CI and target host | lockfile pending registry access |
 | EV-OBS-001 | Trace context | gateway/tests/test_app.py | malformed incoming trace ID not echoed; response always has validated ID; context reset | CI pending |
 | EV-OBS-002 | OpenTelemetry | observability/otel_config.py | exporter off by default, no remote endpoint without explicit policy | optional follow-up |
-| EV-MEM-001 | Graph schema | gateway/tests/test_coder_packet.py | every node has provenance; sqlite foreign keys and permissions; scoped queries | CI pending |
-| EV-MEM-002 | Temporal memory | gateway/tests/test_coder_packet.py | UTC offset required; valid-time interval semantics correct | CI pending |
-| EV-MEM-003 | Memory scope | gateway/tests/test_coder_packet.py | cross-project read/edge/delete denied | CI pending |
-| EV-MEM-004 | Conflicts | gateway/tests/test_coder_packet.py | contradictory items become disputed; no automatic winner | graph prototype; broader conflict eval pending |
-| EV-MEM-005 | Scoped memory FTS5 retrieval | gateway/memory/manager.py + gateway/tests/test_coder_packet.py | exact-scope retrieval; confirmed-only default; bounded terms; deletion propagation; legacy index rebuild; capability-gated FTS5 secure-delete | PR #26 merged; PR-head Gateway, provenance and full quality/Pages smoke passed |
-| EV-MEM-006 | Authenticated structured-memory API | gateway/app.py + gateway/memory/manager.py + gateway/tests/test_app.py | feature flag off by default; candidate-only create; confirmed-only search; audit-backed review; exact scope isolation; relation/delete propagation; global double opt-in | PR #27 merged at 653febb; post-merge Gateway/provenance/quality/Pages passed; activation still requires gateway config |
-| EV-MEM-007 | Browser-to-server project memory bridge | index.md + tests/e2e/app.spec.mjs + /v1/memory/graph/* | no auto-migration; candidate-first upload; per-chat opt-in; only confirmed facts; both project and server toggles required; exact project scope | PR #29 merged at 55248f8; PR-head and post-merge Chromium/Quality/provenance/Pages smoke passed; gateway tests passed on unchanged base e424d35; live gateway activation unverified |
+| EV-MEM-001 | Graph schema | retired server-memory graph | **RETIRED BY OWNER 2026-11-07**; schema/store removed. Historical CI evidence is not a current product capability. |
+| EV-MEM-002 | Temporal graph memory | retired server-memory graph | **RETIRED BY OWNER 2026-11-07**; graph-specific temporal module and tests removed. |
+| EV-MEM-003 | Shared RAG scope validation | gateway/memory/scope.py + gateway/rag/lazy_graph_rag.py | RAG reads/deletes remain bound to exact scope; graph-memory manager is retired | retain focused RAG scope tests; do not restore server-memory graph API |
+| EV-MEM-004 | Graph-memory conflicts | retired server-memory graph | **RETIRED BY OWNER 2026-11-07**; graph-specific conflict module/tests removed. |
+| EV-MEM-005 | Scoped FTS5 graph-memory retrieval | retired server-memory graph | **RETIRED BY OWNER 2026-11-07**; graph manager/schema/tests removed. RAG's independent FTS5 index remains. |
+| EV-MEM-006 | Authenticated structured-memory API | retired server-memory graph | **RETIRED BY OWNER 2026-11-07**; routes, flags, store and API tests removed; retired paths now return 404. |
+| EV-MEM-007 | Browser-to-server project memory bridge | retired server-memory graph | **RETIRED BY OWNER 2026-11-07**; UI, actions and per-chat server-memory state removed. Browser-local project notes remain. |
 | EV-RAG-003 | Citations | gateway/tests/test_coder_packet.py | quote equals source[start:end], source SHA matches, malformed offsets rejected | CI pending |
 | EV-RAG-004 | Evidence ledger | gateway/tests/test_coder_packet.py | scope isolation, source/page/offset/hash retained | CI pending |
 | EV-TOOLS-002 | JSON Schema | gateway/tests/test_coder_packet.py | rejects invalid types, unknown keys, remote refs and oversized bodies | CI pending |
