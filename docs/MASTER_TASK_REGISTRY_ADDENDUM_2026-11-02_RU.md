@@ -248,7 +248,7 @@ This owner override changes execution order and release discipline; it does not 
 
 ## J. Live PR queue reconciliation — 2026-11-08
 
-Live GitHub now shows **zero open PRs** and one open issue, #111. PR #173 was squash-merged at `bf039f887e29137b627b06fc2bb107c2793d6b69`; do not reselect it as active work.
+Live GitHub now shows **one open PR, #174**, and one open issue, #111. PR #174 is the bounded sentinel/state-audit follow-up; no other PR is open. PR #173 was squash-merged at `bf039f887e29137b627b06fc2bb107c2793d6b69`; do not reselect it as active work.
 
 - **#173 — MERGED.** The aServi pending-probe cancellation and mutually-exclusive settings E2E repair are in main. Exact PR Quality #42409661645 (113/113 Chromium), Freshness #42409661506, Graphify #42409661481 and Provenance #42409661536 passed. Post-merge Pages #42410162803 passed; Quality #42410163178 verified public root and landing but exposed a stale release-contract assertion.
 - **#168/#171/#172 — CLOSED NON-MERGED.** Their unique disposition is recorded in the PR bodies and VOLLEY_LOG; preserve accepted work in the registry.
