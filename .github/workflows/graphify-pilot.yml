@@ -156,7 +156,7 @@ jobs:
           UI send path|sendMessage runAssistant
           Gateway auth/provider client|authorize client_for
           Bounded request parsing|read_limited_body completions
-          Scoped memory|MemoryManager search_nodes
+          RAG retrieval|LazyGraphRAG retrieve
           RAG retrieval|LazyGraphRAG retrieve
           Audio generation|synthesize_speech
           Audio transcription|transcribe_audio
