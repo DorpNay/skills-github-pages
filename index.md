@@ -431,6 +431,7 @@ permalink: /
       <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
     </details>
 
+    <div class="px-3 py-2 border-b border-gray-800"><button type="button" data-action="open-research-studio" class="w-full flex items-center gap-2 rounded-xl border border-cyan-800/70 bg-cyan-950/30 hover:bg-cyan-900/40 px-3 py-2.5 text-left text-xs font-semibold text-cyan-100"><span aria-hidden="true">⌕</span><span data-i18n="researchStudio">Search &amp; Research Studio</span><span class="ml-auto text-[10px] text-cyan-300/80">↗</span></button></div>
     <div id="sidebarPreferences" class="sticky bottom-0 mt-auto border-t border-gray-800 bg-gray-950/95 backdrop-blur px-3 py-2"><button id="sidebarThemeToggle" type="button" data-action="toggle-theme-cycle" class="rounded-lg border border-gray-700 px-2 py-1.5 text-[11px] text-left" aria-label="Сменить тему">☼ Тема</button></div>
      <div id="chatRowMenuSidebarScrim" aria-hidden="true"></div>
     <input id="importFile" type="file" class="hidden" accept="application/json,.json">
