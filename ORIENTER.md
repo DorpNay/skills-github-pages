@@ -3,7 +3,8 @@
 **Live GitHub is mutable truth.** This file is a resume capsule, not a substitute for a fresh batched state read.
 
 ## Verified baseline
-- **main:** `c4f23e03f563d03213eb87002863da630fc8b833`.
+- **Current main SHA:** `c4f23e03f563d03213eb87002863da630fc8b833`.
+- Open PR queue: #125, #131, #152, #154, #155, #169. Open issues: #111.
 - **Pages live:** deployment #42372745873 SUCCESS; exact-main Quality #42372746360 SUCCESS; Graphify #42372746441 PASS. Public root and `/landing/` were checked against the exact build SHA. VPS/Tunnel/Ollama remain outside this evidence.
 
 ## Current bounded slice
