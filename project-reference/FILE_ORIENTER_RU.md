@@ -14,6 +14,9 @@
 - Main-only delivery contract, single register and per-step durable Volley log are encoded in AGENTS/OLEDUE/ORIENTER and the owner addendum. Exact latest SHA/check IDs must be re-fetched live; docs here are checkpoint context.
 - Still unverified: native iPhone Safari/VoiceOver, physical keyboard, visual inspection, VPS/Tunnel/Ollama, credentialed provider runtime, target hardware/model benchmarks.
 
+open PRs (5): #125, #131, #152, #154, #155
+open issues (1): #111
+
 ## 1. Быстрый маршрут
 
 0. **Короткая точка входа:** корневой `ORIENTER.md`.
