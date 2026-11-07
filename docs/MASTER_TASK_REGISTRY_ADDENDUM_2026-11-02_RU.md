@@ -313,7 +313,7 @@ Append-only owner intake; enrich existing orientation/UI/source lanes and preser
 > **PAGES-LIVE-001 follow-up:** separate job #128517290166 failed because `.github/workflows/quality-sentinels.yml` still listed `id="functionsMenu"` as forbidden. PR #174 changes the contract to require the three owner-approved menu actions and continue forbidding Research Studio, legacy provider selection and removed sidebar controls.
 > **PR queue snapshot (2026-11-08):** live GitHub shows one open PR #174 (this bounded sentinel/state-audit follow-up) and no other open PRs. Closed non-merged #125/#131/#152/#154/#155/#168/#171/#172 remain preserved as deferred research/task scope; do not wholesale merge them.
 > **Issue #111 owner/environment gates remain open:** repository ruleset/settings; private VPS/Tunnel/Ollama and authenticated completion; permissioned RU/EN/TH RAG corpus; real microphone/device voice and document artifact/license/resource gates; fail-closed sandbox; scoped deletion/WAL/backup handling; optional OAuth/Drive credentials/PKCE/scopes.
-- **Next:** finish the bounded sentinel repair and exact-head checks; in parallel continue independent checklist/system/source audits. The follow-up branch is not merged and requires separate owner authorization.
+- **Next:** finish the bounded sentinel repair, backdrop-dismissal slice and exact-head checks; in parallel continue independent checklist/system/source audits. Merge PR #174 once all required exact-head checks pass under the owner's explicit 2026-11-08 instruction.
 
 
 ## J.6 Full checklist and supply-chain audit — 2026-11-08
