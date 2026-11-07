@@ -188,7 +188,7 @@ Evidence status: test source changes are committed; JavaScript/Playwright syntax
 
 - [ ] **FIX-006** — move Pyodide execution to a dedicated Worker or isolated execution surface; add timeout/termination, memory/output bounds and tests proving no page-origin access. Do not claim complete sandbox before this gate.
 - [ ] **FIX-007** — design a bounded document-extraction concurrency gate when the feature is enabled; add cancellation, queue saturation and memory-pressure regressions.
-- [ ] **FIX-008** — pin or self-host third-party browser assets and add SRI where supported; document the CDN trust boundary.
+- [~] **FIX-008** — browser asset inventory recorded in `docs/REPOSITORY_HYGIENE_RU.md` §15: Tailwind Play CDN is mutable and officially development-only; marked 18.0.14 and DOMPurify 3.4.16 are versioned but lack SRI. Static Tailwind build + local/versioned vendor assets recommended. No guessed hashes or runtime/build changes; implementation and exact-head visual regression remain OPEN.
 - [ ] **HYGIENE-006** — delete only the verified allowlist after an authorized branch-delete API/UI is available; preserve every branch HEAD SHA and recheck open references immediately before deletion.
 - [ ] **AUDIT-010** — finish subsystem review of provider routing, browser storage migrations, voice/audio lifecycle, RAG deletion lineage, V2 candidate slices and native device/runtime behavior.
 
