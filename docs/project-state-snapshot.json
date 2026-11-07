@@ -7,7 +7,7 @@
     "main_commit_subject": "feat(ui): add adjustable message readability",
     "main_commit_date": "2026-11-07",
     "last_functional_checkpoint_sha": "c4f23e03f563d03213eb87002863da630fc8b833",
-    "last_functional_milestone": "Main c4f23e03f563d03213eb87002863da630fc8b833 remains Pages-verified (Pages #42372745873, Quality #42372746360, Graphify #42372746441). Active PR #169 at head ae04cf8ff299954a70d530684d4cf0713ad1c809 includes aServi route/UI regression fixes and the new systems/agent/source orientation; exact-head gates are running. No merge or deployment claim for PR #169.",
+    "last_functional_milestone": "Main c4f23e03f563d03213eb87002863da630fc8b833 remains Pages-verified (Pages #42372745873, Quality #42372746360, Graphify #42372746441). PR #169 is the active integration slice; latest recorded checkpoint 2069fb6ac60ac251f3550a5ca533eae2c6fe6b9a adds aServi connect/provider isolation fixes, server-memory graph removal, systems map, AGENTS contract and source/technique triage. Exact-head gates are running; no merge or deployment claim.",
     "main_quality_run": 42372746360,
     "main_pages_deployment_run": 42372745873,
     "functional_parent_gateway_run": null,
