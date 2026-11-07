@@ -649,3 +649,43 @@ async def test_chat_cancellation_before_upstream_response_releases_gateway_slot(
         assert not app.state.semaphore.locked()
         await asyncio.wait_for(app.state.semaphore.acquire(), timeout=0.1)
         app.state.semaphore.release()
+
+
+def test_invalid_bearer_token_is_never_echoed_in_api_error():
+    submitted_secret = "client-submitted-secret-marker-987654321"
+    with client_for() as client:
+        response = client.get(
+            "/v1/models",
+            headers={"Authorization": f"Bearer {submitted_secret}"},
+        )
+
+    assert response.status_code == 401
+    assert response.headers["www-authenticate"] == "Bearer"
+    assert submitted_secret not in response.text
+    assert API_KEY not in response.text
+
+
+def test_health_probes_never_expose_configured_secrets():
+    oauth_encryption_secret = "oauth-encryption-secret-marker-123"
+    google_client_secret = "google-client-secret-marker-456"
+    config = settings(
+        oauth_encryption_key=oauth_encryption_secret,
+        google_oauth_client_secret=google_client_secret,
+    )
+    with client_for(config) as client:
+        live = client.get("/livez")
+        ready = client.get("/readyz")
+        legacy = client.get("/healthz")
+
+    assert live.status_code == 200
+    assert live.json() == {"status": "ok"}
+    assert ready.status_code == legacy.status_code == 200
+    assert ready.json() == legacy.json() == {
+        "status": "ok", "ollama": "reachable", "auth_configured": True
+    }
+    for response in (live, ready, legacy):
+        assert response.headers["cache-control"] == "no-store"
+        for secret in (API_KEY, oauth_encryption_secret, google_client_secret):
+            assert secret not in response.text
+        assert "api_key" not in response.text.lower()
+        assert "client_secret" not in response.text.lower()

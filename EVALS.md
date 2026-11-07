@@ -142,3 +142,11 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - **Metrics:** extraction coverage, table structure accuracy, figure/chart caption grounding, page/bbox and timestamps, citation correctness, audio WER/CER, video segment recall, peak RSS, install footprint and parse latency.
 - **Candidate:** RAG-Anything v1.4.1 (MIT code), source commit `0ef67b4d476b66407a03a39e5b17e756fc0aef29`; selected source snapshot archived under `docs/upstream-archive/rag-anything-v1.4.1/`. Its core dependency includes LightRAG and MinerU, while audio/video add faster-whisper, PyAV, SceneDetect, MoviePy, OpenCV and ffmpeg requirements. Audit transitive/model licenses separately.
 - **Status:** PLANNED / NOT RUN. Source license/blob provenance checked; no runtime, dependency or model weights installed.
+
+
+## EV-SEC-003 — Gateway secret non-disclosure
+
+- **Scope:** health/readiness/liveness response redaction, invalid Bearer token non-echo, and bounded/sanitized upstream error body.
+- **Fixture:** `gateway/tests/test_app.py` tests use marker secrets for API key, OAuth encryption/client secret and raw upstream error text. `test_upstream_errors_do_not_leak_raw_body_or_configured_secrets` already exists on current branch; invalid Bearer and health-probe redaction tests are ported from the PR #131 security review.
+- **Acceptance:** /livez returns only `{status: ok}`; /readyz and legacy /healthz return bounded readiness fields only; responses are `Cache-Control: no-store`; submitted/configured secrets and upstream raw body never appear. Invalid Bearer returns 401 with `WWW-Authenticate: Bearer` and no echo.
+- **Status:** tests added to PR #169 branch; Gateway exact-head CI pending. This is regression coverage, not proof of live VPS/provider secret handling.
