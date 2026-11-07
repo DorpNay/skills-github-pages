@@ -5,14 +5,11 @@
 ## Контрольная точка — 2026-11-08 (live main / PR queue reconciled)
 
 - Main `c4f23e03f563d03213eb87002863da630fc8b833`; exact-main Pages #42372745873 SUCCESS, Quality #42372746360 SUCCESS (116 app Chromium, root smoke 1/1, landing 8/8, canonical root + /landing/ build SHA), Graphify #42372746441 PASS.
-- open PRs (5): #125, #131, #152, #154, #155
-- open issues (1): #111
-- Active PR #169, base c4f23e0, code/test checkpoint `08a73a7594695b8a74fa88d90db07832a8373665`; latest documentation/state HEAD `16196423d9d308bf057dc65df89a3cbfd93f26f1`; latest source archive import and detailed Deep Research panel includes curated Memvid v2.0.140 (Apache-2.0, 22 source/license files) and RAG-Anything v1.4.1 (MIT, 18 source files) pinned to upstream commits. Every imported source Git blob SHA-1 matched upstream; Memvid per-file SHA-256s recorded but not recomputed. Reference-only, ship=false, no runtime/dependencies/weights installed. Whole archive SHA-256 OPEN.
-- Code/test HEAD 08a73a: Gateway #42403417058 PASS, Freshness #42403417029 PASS, Provenance #42403417057 PASS, Graphify #42403417105 PASS, Dead Code #42403417051 PASS; Quality #42403417044 IN_PROGRESS (Chromium active). Docs/state HEAD 161964: Gateway #42403597871 QUEUED, Provenance #42403597849 QUEUED, Dead Code #42403597795 QUEUED, Graphify #42403597837 IN_PROGRESS, Freshness #42403597785 IN_PROGRESS, Quality #42403597788 PENDING. Re-fetch all exact final HEAD.
-- PR #172/#171/#168 closed reconciled. Their PR bodies and VOLLEY_LOG contain reasons and preserved scope. Open queue including active PR: #125/#131/#152/#154/#155/#169; issue #111.
-- Functions owner contract: Agents/four-stage same-model structured analysis; Deep Research dedicated panel shows effort, Web breadth and pipeline state and links to existing Web/Agents controls; Skills/task profile instruction-only. Research Studio retired; no placeholder Connectors. Modal blur/clean close and aServi provider separation/exclusivity are tested.
-- `INTEL.md` contains 310 distinct URL refs / 183 GitHub repos; not all reviewed. Orchestration/repo-navigation source tranche and selected source acquisition evidence are in INTEL/TECHNIQUE_REGISTER/OPEN_SOURCE_TRIAGE.
-- Systems map has 18 systems; archive presence does not upgrade runtime maturity. Native iPhone/VoiceOver, physical keyboard/visual review, VPS/Tunnel/Ollama, credentials and target model hardware remain unverified.
+- **Live open PR queue (1): #169**; open issue (1): #111.
+- PR #169 base c4f23e0; latest code/test HEAD `1d32e3d3c6718e3d04efce312eac018596518f9f`. Previous exact head `54a2401`: Quality #42404826459 failed 7 Chromium tests (106 passed); Freshness #42404826540 failed stale queue because #155 was no longer open. Current branch includes aServi marker read fix and E2E updates to correctly open the exclusive provider/advanced disclosures and Functions menu; final exact-head rerun pending.
+- PRs #125/#131/#152/#154/#155 are closed without merge on live GitHub. Preserve still-open goal IDs and selected ideas in the Master Task Registry; no wholesale merge of those branches. #168/#171/#172 also closed/reconciled per existing Volley evidence.
+- PR #169 remains unmerged/unpublished. After all exact-head gates pass, merge expected SHA and verify main + Pages root and /landing on exact merge SHA.
+- `INTEL.md` contains 310 distinct URL refs / 183 GitHub repositories; not all reviewed. Source archives remain research-only. Native iPhone/VoiceOver, VPS/Tunnel/Ollama and target hardware remain unverified.
 
 ## 1. Быстрый маршрут
 
