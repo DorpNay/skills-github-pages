@@ -9,7 +9,7 @@ import pytest
 from starlette.requests import Request
 from fastapi.testclient import TestClient
 
-from gateway.app import Settings, create_app, validate_origin
+from gateway.app import Settings, canonical_cache_key, create_app, validate_origin
 
 API_KEY = "a" * 64
 MODEL = "qwen3.5:4b"
@@ -421,6 +421,21 @@ def test_upstream_errors_do_not_leak_raw_body():
           json={"model": MODEL, "messages": [{"role": "user", "content": "hi"}]})
     assert response.status_code == 502
     assert "internal path" not in response.text
+
+
+def test_exact_cache_key_separates_project_specific_prompt_context():
+    config = settings(cache_enabled=True)
+    alpha = {"model": MODEL, "temperature": 0, "messages": [
+        {"role": "system", "content": "Project Alpha private instruction."},
+        {"role": "user", "content": "Summarize this project."},
+    ]}
+    beta = {"model": MODEL, "temperature": 0, "messages": [
+        {"role": "system", "content": "Project Beta private instruction."},
+        {"role": "user", "content": "Summarize this project."},
+    ]}
+    alpha_key = canonical_cache_key(config, alpha, method="POST", path="/v1/chat/completions")
+    assert alpha_key == canonical_cache_key(config, alpha, method="POST", path="/v1/chat/completions")
+    assert alpha_key != canonical_cache_key(config, beta, method="POST", path="/v1/chat/completions")
 
 
 def test_exact_cache_miss_then_hit_and_stats_require_auth():
