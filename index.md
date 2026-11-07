@@ -56,8 +56,7 @@ permalink: /
     .message-model-meta { color: #93a4bd; font-size: .67rem; line-height: 1.3; padding: .15rem .25rem; opacity: .9; }
     .message-model-meta::before { content: "●"; display: inline-block; margin-right: .4rem; color: #4ade80; font-size: .58rem; text-shadow: 0 0 8px rgb(74 222 128 / 45%); }
     #thinkingTime { color: #a5b4fc; font-variant-numeric: tabular-nums; white-space: nowrap; }
-    #statusText { color: transparent; background: linear-gradient(100deg, #bfdbfe 5%, #c4b5fd 42%, #6ee7b7 70%, #bfdbfe 95%); background-size: 220% 100%; background-clip: text; -webkit-background-clip: text; animation: status-sheen 4.5s ease-in-out infinite; }
-    @keyframes status-sheen { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+    #statusText { color: var(--ui-info); }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100dvh; min-height: 0; overflow: hidden; }
     button, input, textarea { font: inherit; }
     button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; }
@@ -105,6 +104,7 @@ permalink: /
       --ui-bg:#08111d; --ui-surface:#0f1b2b; --ui-surface-raised:#142438;
       --ui-border:#26384b; --ui-text:#f1f6fa; --ui-text-muted:#a4b5c7;
       --ui-primary:#3b82f6; --ui-success:#35d39a; --ui-danger:#ff737a;
+      --ui-info:#93c5fd; --ui-warning:#fbbf24;
       --ui-tiffany:#68e8d0; --ui-tiffany-bright:#a3fff0; --ui-tiffany-soft:rgba(104,232,208,.13);
       --motion-fast:140ms; --motion-normal:190ms; --motion-panel:220ms;
       --motion-ease:cubic-bezier(.2,.7,.2,1);
@@ -114,6 +114,7 @@ permalink: /
       --ui-bg:#f4f7f8; --ui-surface:#ffffff; --ui-surface-raised:#f8fbfc;
       --ui-border:#d9e4e8; --ui-text:#152633; --ui-text-muted:#526775;
       --ui-primary:#2563eb; --ui-success:#087f72; --ui-danger:#c83244;
+      --ui-info:#1d4ed8; --ui-warning:#92400e;
       --ui-tiffany:#087f72; --ui-tiffany-bright:#25a995; --ui-tiffany-soft:rgba(8,127,114,.10);
     }
     body { background:var(--ui-bg)!important; color:var(--ui-text)!important; }
@@ -298,6 +299,11 @@ permalink: /
     /* UI §8.15: center status messaging without faking progress or overriding reduced motion. */
     #searchStatus { justify-content: center; flex-wrap: wrap; text-align: center; }
     #statusText { text-align: center; }
+    #searchStatus[data-tone="neutral"] #statusText { color:var(--ui-text-muted); }
+    #searchStatus[data-tone="info"] #statusText { color:var(--ui-info); }
+    #searchStatus[data-tone="success"] #statusText { color:var(--ui-success); }
+    #searchStatus[data-tone="warning"] #statusText { color:var(--ui-warning); }
+    #searchStatus[data-tone="error"] #statusText { color:var(--ui-danger); }
     #thinkingTime { margin-left: 0 !important; }
     .roadmap-ticker { display: flex; justify-content: center; text-align: center; }
     .roadmap-ticker-track { text-align: center; }
@@ -590,7 +596,7 @@ permalink: /
   </div>
 
   <main id="chatBox" class="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-sm" aria-live="polite" aria-label="Сообщения чата"></main>
-  <div id="searchStatus" class="hidden px-4 py-2 bg-gray-800/80 border-t border-gray-700 text-xs text-blue-300 flex items-center gap-2 shrink-0" role="status" aria-live="polite">
+  <div id="searchStatus" data-tone="info" class="hidden px-4 py-2 bg-gray-800/80 border-t border-gray-700 text-xs text-blue-300 flex items-center gap-2 shrink-0" role="status" aria-live="polite">
     <span class="animate-spin" aria-hidden="true">⏳</span><span id="statusText">Выполняется запрос...</span><span class="status-thinking-dots" aria-hidden="true"><span></span><span></span><span></span></span><span id="thinkingTime" class="ml-auto text-[10px]">Прошло 00:00</span>
   </div>
   <footer id="composerFooter" class="px-3 py-2 bg-gray-800/95 border-t border-gray-700 shrink-0 safe-bottom">
@@ -3607,7 +3613,7 @@ permalink: /
     function formatElapsed(ms){const n=Math.max(0,Math.floor(ms/1000));return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}
     function getRunEstimateMs(){if(!activeRunTelemetry)return null;const key=[activeRunTelemetry.provider,activeRunTelemetry.model,activeRunTelemetry.workflow].join('|');try{const all=JSON.parse(safeGet('ai_request_timing_v1')||'{}'),values=(Array.isArray(all[key])?all[key].slice(-7):[]).filter(Number.isFinite).sort((a,b)=>a-b);return values.length?values[Math.floor(values.length/2)]:null;}catch(_){return null;}}
     function updateStatusTimer(){if(!activeRunStartedAt||$('searchStatus').classList.contains('hidden'))return;const elapsed=Date.now()-activeRunStartedAt,estimate=getRunEstimateMs();$('thinkingTime').textContent=estimate?'Прошло '+formatElapsed(elapsed)+' · ориентир '+formatElapsed(Math.max(elapsed,estimate)):'Прошло '+formatElapsed(elapsed)+' · собираю оценку';}
-    function showStatus(message){$('statusText').textContent=message;$('searchStatus').classList.add('motion-accent','motion-active');$('searchStatus').classList.remove('hidden');$('searchStatus').querySelector('.status-thinking-dots')?.classList.add('is-active');if(!statusTimerId&&activeRunStartedAt)statusTimerId=setInterval(updateStatusTimer,1000);updateStatusTimer();}
+    function showStatus(message,tone='info'){const allowedTones=['neutral','info','success','warning','error'];$('searchStatus').dataset.tone=allowedTones.includes(tone)?tone:'info';$('statusText').textContent=message;$('searchStatus').classList.add('motion-accent','motion-active');$('searchStatus').classList.remove('hidden');$('searchStatus').querySelector('.status-thinking-dots')?.classList.add('is-active');if(!statusTimerId&&activeRunStartedAt)statusTimerId=setInterval(updateStatusTimer,1000);updateStatusTimer();}
     function hideStatus(){$('searchStatus').classList.remove('motion-active');$('searchStatus').querySelector('.status-thinking-dots')?.classList.remove('is-active');$('searchStatus').classList.add('hidden');if(!isGenerating&&statusTimerId){clearInterval(statusTimerId);statusTimerId=null;}}
     function saveRunDuration(){if(!activeRunTelemetry||!activeRunStartedAt)return;const key=[activeRunTelemetry.provider,activeRunTelemetry.model,activeRunTelemetry.workflow].join('|'),elapsed=Date.now()-activeRunStartedAt;try{const all=JSON.parse(safeGet('ai_request_timing_v1')||'{}'),values=Array.isArray(all[key])?all[key]:[];values.push(elapsed);all[key]=values.slice(-8);safeSet('ai_request_timing_v1',JSON.stringify(all));}catch(_){} }
     function abortError() { return new DOMException('Запрос отменён', 'AbortError'); }
@@ -3663,7 +3669,7 @@ permalink: /
     }
     async function performOpenWebFallback(query, signal, mode = 'fast', reason = '') {
       const sources = mode === 'deep' ? ['wikipedia','github','hackernews','arxiv','stackexchange'] : ['wikipedia','github','hackernews'];
-      showStatus('🔎 Tavily недоступен — переключаюсь на открытые источники…');
+      showStatus('🔎 Tavily недоступен — переключаюсь на открытые источники…','warning');
       const attempts = await Promise.all(sources.map(async source => {
         try {
           const result = await performPublicKnowledgeSearch(source, query, signal, mode);
@@ -3942,7 +3948,7 @@ permalink: /
           // Only a clearly model-specific error justifies choosing another model. Auth, quota,
           // network, malformed endpoint, and transient 5xx errors are not model-selection signals.
           if(!modelError)break;
-          if(i<candidates.length-1){const next=candidates[i+1];showStatus(next.provider===candidate.provider?'Модель недоступна; пробую другую модель этого провайдера…':(allowCross?'Провайдер недоступен; пробую разрешённый резерв…':''));}
+          if(i<candidates.length-1){const next=candidates[i+1],fallbackMessage=next.provider===candidate.provider?'Модель недоступна; пробую другую модель этого провайдера…':(allowCross?'Провайдер недоступен; пробую разрешённый резерв…':'');if(fallbackMessage)showStatus(fallbackMessage,'warning');}
         }
       }
       throw new Error('Запрос не выполнен. Исходный текст сохранён. Последняя ошибка: '+(lastError?.message||'неизвестная ошибка')+(lastError?.status===401?' · Проверьте API-ключ.':lastError?.status===403?' · Проверьте права и доступность модели.':lastError?.status===429?' · Превышен лимит или квота. Не переключаю модели/провайдеры автоматически.':lastError?.status===404?' · Проверьте точный ID модели и Base URL.':' · Проверьте диагностический статус, модель и Base URL.')+(lastError?.retryAfter?' Провайдер прислал Retry-After: '+lastError.retryAfter+'. Не повторяйте запрос раньше указанного времени.':'')+(lastError?.status===429&&!lastError?.retryAfter?' Повторите вручную после паузы; автоматический резерв не запускается.':''));
