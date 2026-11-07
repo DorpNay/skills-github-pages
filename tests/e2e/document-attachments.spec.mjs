@@ -1,3 +1,24 @@
+async function configureAServi(page, model, key) {
+  const group = page.locator('#aserviSettingsGroup');
+  if (!(await group.evaluate(element => element.open))) await group.locator(':scope > summary').click();
+  await page.locator('#cloudBaseUrl').fill('https://api.example.test/v1');
+  await page.locator('#cloudModel').fill(model);
+  await page.locator('#cloudApiKey').fill(key);
+  await page.locator('[data-action="connect-alandi-aservi"]').click();
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'connected');
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+}
+
+test.beforeEach(async ({ page }) => {
+  await page.route('https://api.example.test/healthz', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ model: 'e2e-probe-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+  }));
+});
+
 import { test, expect } from '@playwright/test';
 
 async function chooseSearchMode(page, mode) {
@@ -46,15 +67,7 @@ test('PDF attachment is extracted only by the configured aLandi gateway before m
 
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
-    await page.locator('#legacyProviderSettings > summary').click();
-  }
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('e2e-local-model');
-  await page.locator('#apiKey').fill('d'.repeat(64));
-  await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await configureAServi(page, 'e2e-local-model', 'd'.repeat(64));
   await chooseSearchMode(page, 'offline');
 
   await page.locator('[data-action="attach-text-file"]').click();
