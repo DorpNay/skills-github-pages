@@ -76,7 +76,7 @@ test('aServi private gateway route works, stays local, and exposes cache status'
   await page.locator('#userInput').fill('Проверь локальный маршрут.');
   await page.locator('#sendBtn').click();
 
-  await expect(page.locator('#chatBox')).toContainText('aLandi local gateway works.', { timeout: 15000 });
+  await expect(page.locator('#chatBox')).toContainText('aServi local gateway works.', { timeout: 15000 });
   await expect(page.locator('#chatBox .message-model-meta').last()).toContainText('кэш MISS');
   expect(chatPayloads).toHaveLength(1);
   expect(chatPayloads[0].model).toBe('qwen3.5:4b');
