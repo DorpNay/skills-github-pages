@@ -243,7 +243,7 @@ test('aServi and third-party settings are separate mutually exclusive modes', as
 
   await page.locator('#additionalSettings > summary').click();
   await expect(page.locator('#aserviSettingsGroup')).not.toHaveAttribute('open');
-  await expect(page.locator('#legacyProviderSettings')).toHaveAttribute('open', '');
+  await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
   await expect(page.locator('#additionalSettings')).toHaveAttribute('open', '');
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
 
@@ -1139,11 +1139,10 @@ test('aServi status only turns green after a real model response, and core UX co
   await page.locator('#userInput').fill('Verify the primary chat uses my aLandi cloud.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('OK', { timeout: 15000 });
-  expect(cloudRequests).toHaveLength(3); // connect probe, user completion, post-response probe
+  expect(cloudRequests).toHaveLength(2); // explicit connect probe + user completion; no duplicate auto-probe
   expect(cloudRequests[1].messages.at(-1).content).toBe('Verify the primary chat uses my aLandi cloud.');
   expect(cloudRequests.every(request => request.model === 'qwen3.5:4b')).toBe(true);
   expect(cloudRequests[0].max_tokens).toBe(8);
-  expect(cloudRequests[2].max_tokens).toBe(8);
   await selectLanguage(page, 'en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');

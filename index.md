@@ -3359,6 +3359,7 @@ permalink: /
     }
     async function connectAlandiAServi(){
       if(currentProvider()!=='alandi'){setCloudStatus('disconnected');return;}
+      if(cloudAutoConnectTimer){clearTimeout(cloudAutoConnectTimer);cloudAutoConnectTimer=null;}
       if(isTestingProviderConnection)return;
       const {baseUrl,model,key}=getCloudSettings();
       const cloudSettingsStillCurrent=()=>{const current=getCloudSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
