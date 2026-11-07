@@ -190,6 +190,14 @@ def test_helper_model_rejects_all_secret_like_facts_without_inference():
 def test_retired_server_memory_graph_routes_are_not_registered():
     auth = {"Authorization": f"Bearer {API_KEY}"}
     with client_for(settings()) as client:
+        route_methods = {
+            (route.path, method)
+            for route in client.app.routes
+            for method in getattr(route, "methods", set())
+        }
+        assert ("/v1/memory/state/{conversation_id}", "GET") in route_methods
+        assert ("/v1/memory/state/{conversation_id}", "DELETE") in route_methods
+        assert not any(path.startswith("/v1/memory/graph") for path, _ in route_methods)
         assert client.get("/v1/memory/graph/nodes", params={"scope": "project", "scope_id": "alpha"}).status_code == 404
         assert client.post("/v1/memory/graph/nodes", headers=auth, json={}).status_code == 404
         assert client.post("/v1/memory/graph/search", headers=auth, json={}).status_code == 404
