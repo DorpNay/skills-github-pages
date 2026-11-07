@@ -59,3 +59,4 @@ Before any aLandi task:
 - Normative aLandi principles and evidence rules: docs/ALANDI_N2O_CORE_RU.md. Knowledge promotion: docs/ALANDI_N2O_KNOWLEDGE_LOOP_RU.md. Concise work cycle: LOOP.md.
 - Use PROJECT_ORCHESTRATOR_RU.md as the navigation index for principles, external source catalog, plans, decisions and task register; it is an index, not a parallel backlog.
 - Favor a safe, bounded implementation or verification in the same turn; keep handoff/checkpoint concise and update only canonical records whose material state changed.
+- Current owner UI progress: checklist §8.8 icon-first message actions (UI-ICON-001) is merged in PR #157 and exact-head Quality/Graphify passed. The wider §§8.1–8.17 and later menu/panel/function/minimization backlog remains open; reconcile PR #154 against current main selectively and preserve #147/#148/#150 plus the Pages live-version guard. Do not weaken storage/privacy/security E2E assertions to obtain a green run.
