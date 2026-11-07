@@ -287,6 +287,8 @@ PR #122 добавил только эксплуатационную надёж�
 - Добавить самостоятельную категорию «Без проекта» — это не проект. Она располагается первой, перед проектами, и раскрывается/сворачивается по аналогичным правилам.
 - Чаты, принадлежащие проектам, не показывать в общем списке. При выборе проекта в блоке «Чаты» показывать только чаты этого проекта; «Новый чат» в этом режиме создаёт чат внутри выбранного проекта.
 - Добавить стрелку «Назад» для возврата к общему режиму чатов, где доступны чаты без проекта и создание нового чата без проекта.
+
+**Code reconciliation 2026-11-08:** current main still renders project chats as nested rows inside each project accordion, while the main `#chatList` shows only unassigned chats. This does **not** yet implement the requested selected-project chat-list view or its explicit «Назад» action. Keep this requirement OPEN under `UX-040`; selecting a project must change the navigation/list view only and must not silently reassign or mutate the currently active chat.
 - Соблюдать иерархию размеров: отдельный чат меньше блока «Чаты», отдельный проект меньше блока «Проекты»; не расходовать лишнюю ширину и не оставлять пустое пространство.
 
 ### 8.2 Типографика, шапка и главная поверхность
