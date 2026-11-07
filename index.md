@@ -329,8 +329,9 @@ permalink: /
       #sendBtn,#stopBtn { padding:.7rem .8rem!important; }
     }
       .message-actions{display:flex;align-items:center;gap:6px;margin-top:1px;min-height:28px;opacity:.9}
-    .message-actions button{min-width:32px;min-height:30px;padding:4px 8px;border:1px solid var(--ui-border);border-radius:9px;color:var(--ui-text-muted);background:var(--ui-surface-raised);font-size:13px}
-    .message-actions button:hover{color:var(--ui-tiffany);border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft)}
+    .message-actions button,.message-viewer-actions button{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:6px;border:1px solid var(--ui-border);border-radius:12px;color:var(--ui-text-muted);background:var(--ui-surface-raised);font-size:18px;line-height:1}
+    .message-actions button:hover,.message-viewer-actions button:hover{color:var(--ui-tiffany);border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft)}
+    .message-viewer-actions button[hidden]{display:none!important}
     .message-viewer-surface{background:var(--ui-surface);border:1px solid var(--ui-border);box-shadow:0 24px 80px rgb(0 0 0 / 50%);color:var(--ui-text)}
     .message-viewer-content{min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain;user-select:text;-webkit-user-select:text;overflow-wrap:anywhere;white-space:normal;padding:8px 4px 16px;line-height:1.65;font-size:14px;color:var(--ui-text)}
     .message-viewer-content pre,.message-viewer-content table{max-width:100%;overflow:auto}
@@ -616,6 +617,10 @@ permalink: /
       <header class="flex items-center gap-3 border-b border-gray-700 pb-3 mb-3 shrink-0">
         <button type="button" data-action="close-message-viewer" class="rounded-xl border px-3 py-2 text-xl" aria-label="Вернуться в чат" title="Вернуться в чат">←</button>
         <div class="min-w-0"><h2 id="messageViewerTitle" class="font-semibold text-base">Сообщение</h2><p id="messageViewerRole" class="text-xs text-gray-400"></p></div>
+        <div id="messageViewerActions" class="message-viewer-actions flex items-center gap-1 ml-auto">
+          <button type="button" data-action="copy-viewer-message" data-message-text="" aria-label="Скопировать сообщение" title="Скопировать сообщение">⧉</button>
+          <button type="button" data-action="speak-viewer-message" data-message-text="" aria-label="Озвучить сообщение" title="Озвучить сообщение">🔊</button>
+        </div>
       </header>
       <div id="messageViewerContent" class="message-viewer-content" tabindex="0" aria-label="Полный текст сообщения"></div>
     </section>
@@ -1721,6 +1726,15 @@ permalink: /
         plain.textContent = text;
         target.appendChild(plain);
       } else target.innerHTML = safeMarkdown(text);
+      const copyAction = $('messageViewerActions').querySelector('[data-action="copy-viewer-message"]');
+      const speakAction = $('messageViewerActions').querySelector('[data-action="speak-viewer-message"]');
+      copyAction.dataset.messageText = text;
+      speakAction.dataset.messageText = text;
+      speakAction.hidden = role === 'user';
+      copyAction.setAttribute('aria-label', en ? 'Copy message' : 'Скопировать сообщение');
+      copyAction.title = copyAction.getAttribute('aria-label');
+      speakAction.setAttribute('aria-label', en ? 'Read message aloud' : 'Озвучить сообщение');
+      speakAction.title = speakAction.getAttribute('aria-label');
       $('messageViewerModal').classList.remove('hidden');
       requestAnimationFrame(() => target.focus({ preventScroll: true }));
     }
@@ -1763,20 +1777,23 @@ permalink: /
         actions.className = 'message-actions flex flex-wrap items-center gap-2 mt-1';
         const copy = document.createElement('button');
         copy.type = 'button'; copy.dataset.action = 'copy-message'; copy.dataset.messageText = messageActionText;
-        copy.className = 'text-xs text-gray-400 hover:text-gray-100 px-1.5 py-1 rounded-md';
-        copy.textContent = getUiLanguage() === 'en' ? 'Copy' : 'Копировать';
+        copy.className = 'message-action-icon';
+        copy.textContent = '⧉';
         copy.setAttribute('aria-label', getUiLanguage() === 'en' ? 'Copy message' : 'Скопировать сообщение');
+        copy.title = copy.getAttribute('aria-label');
         const view = document.createElement('button');
         view.type = 'button'; view.dataset.action = 'view-message'; view.dataset.messageRole = message.role; view.dataset.messageText = messageActionText;
-        view.className = 'text-xs text-gray-400 hover:text-gray-100 px-1.5 py-1 rounded-md';
-        view.textContent = getUiLanguage() === 'en' ? 'Read full message' : 'Открыть целиком';
+        view.className = 'message-action-icon';
+        view.textContent = '⤢';
         view.setAttribute('aria-label', getUiLanguage() === 'en' ? 'Open readable message view' : 'Открыть полный текст сообщения');
+        view.title = view.getAttribute('aria-label');
         actions.append(copy, view);
         if (!isUser) {
           const speak = document.createElement('button');
           speak.type = 'button'; speak.dataset.action = 'speak-message'; speak.dataset.messageText = messageActionText;
-          speak.className = 'text-xs text-cyan-300 hover:text-cyan-100 px-1.5 py-1 rounded-md';
-          speak.textContent = getUiLanguage() === 'en' ? '🔊 Read aloud' : '🔊 Озвучить';
+          speak.className = 'message-action-icon';
+          speak.textContent = '🔊';
+          speak.setAttribute('aria-label', getUiLanguage() === 'en' ? 'Read message aloud' : 'Озвучить сообщение');
           speak.title = getUiLanguage() === 'en' ? 'Generate speech with your configured local TTS model' : 'Создать речь локальной TTS-моделью на твоём gateway';
           actions.appendChild(speak);
         }
@@ -5248,6 +5265,8 @@ permalink: /
           case 'voice-message-preview': await startVoiceMessageRecording(); break;
           case 'copy-message': await copyText(control.dataset.messageText || ''); showToast(getUiLanguage()==='en'?'Message copied.':'Сообщение скопировано.'); break;
           case 'view-message': showMessageViewer(control.dataset.messageRole, control.dataset.messageText || ''); break;
+          case 'copy-viewer-message': await copyText(control.dataset.messageText || ''); showToast(getUiLanguage()==='en'?'Message copied.':'Сообщение скопировано.'); break;
+          case 'speak-viewer-message': await playAssistantMessage(control.dataset.messageText || ''); break;
           case 'close-message-viewer': $('messageViewerModal').classList.add('hidden'); break;
           case 'jump-to-latest': $('chatBox').scrollTo({top:$('chatBox').scrollHeight,behavior:document.documentElement.dataset.motion==='off'?'auto':'smooth'}); requestAnimationFrame(updateJumpToLatest); break;
           case 'speak-message': await playAssistantMessage(control.dataset.messageText || ''); break;
