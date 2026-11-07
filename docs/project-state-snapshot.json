@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-07",
   "checkpoint": {
-    "main_sha": "d4a2fac093abff4a7d14c4826ec7445250dd5278",
-    "main_commit_subject": "archive: preserve RAG-Anything v1.4.1 source",
+    "main_sha": "d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c",
+    "main_commit_subject": "fix(ci): repair GitHub Pages live version assertion",
     "main_commit_date": "2026-11-07",
     "last_functional_checkpoint_sha": "a8afee45bb22654b220bffda857ab10c24641ef1",
-    "last_functional_milestone": "PR #150 merged at a8afee45bb22654b220bffda857ab10c24641ef1 and contains browser-storage recovery, fail-closed writes and atomic rollback. PR #153 orientation/handoff repair merged at f323b6f339d454dad6e820a4074fa230acc7b6df; latest main d4a2fac is a source-archive commit.",
-    "main_quality_run": 42204178841,
-    "main_pages_deployment_run": 42204178239,
+    "last_functional_milestone": "PR #150 storage recovery/atomic rollback remains the latest functional checkpoint. PR #156 owner-priority/orchestrator merged at f6f3896; PR #157 UI §8.8 icon-first message actions merged at 40540f6; PR #158 Pages root title guard fix merged at d83eea8.",
+    "main_quality_run": 42349853526,
+    "main_pages_deployment_run": 42349853247,
     "functional_parent_gateway_run": null,
     "functional_parent_quality_run": null,
     "functional_parent_graphify_run": null,
@@ -132,16 +132,34 @@
         "merge_sha": "f323b6f339d454dad6e820a4074fa230acc7b6df",
         "head_sha": "2fe4872233764c4094cf092e9a7ee0a11948825b",
         "checks": "Exact code/test SHA 5665e60ebdbb704f9fa95cadba610984ca1da60b: Quality #42146863697, Freshness #42146863750, Provenance #42146863811, Dead Code #42146863778 all passed; merged at f323b6f339d454dad6e820a4074fa230acc7b6df."
+      },
+      {
+        "number": 156,
+        "merge_sha": "f6f3896bf3989f9c88e3764f848b84e90b601a65",
+        "head_sha": "215086e397e69da70f64490dd12abcbe293c388f",
+        "checks": "Exact-head Freshness #42348838242, Provenance #42348838120 and Quality #42348838246 passed; main Pages #42349250037 succeeded and cache-busting public root returned v10.0. Post-merge Quality #42349250430 exposed over-escaped title regex, fixed in PR #158."
+      },
+      {
+        "number": 157,
+        "merge_sha": "40540f6d75a90877ff9cbec5bbfacb48ee6f775c",
+        "head_sha": "e065f967f2dbca938ba71c41dcad57aa47877a0a",
+        "checks": "Exact-head Quality #42349368043 and Graphify #42349368086 passed; owner UI checklist §8.8 icon-first copy/open/speak actions, 44×44 touch targets and full-view copy/speak merged. Main Pages #42349735507 succeeded; public root returned v10.0."
+      },
+      {
+        "number": 158,
+        "merge_sha": "d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c",
+        "head_sha": "4da559cf6abc21bfa3920b5e0297a2abb84e7453",
+        "checks": "Exact-head Quality #42349540173 passed; fixed ERE title extraction in the main-push live Pages guard. Main Pages #42349853247 succeeded and public cache-busting root returned v10.0; main Quality #42349853526 is in progress."
       }
     ],
-    "main_provenance_run": null,
-    "main_freshness_run": 42233829658,
-    "main_graphify_run": null,
-    "open_prs": "5 open PRs excluding the current PR #156 freshness check: #125, #131, #152, #154, #155",
+    "main_provenance_run": 42349250512,
+    "main_freshness_run": 42349250485,
+    "main_graphify_run": 42349735791,
+    "open_prs": "5 open PRs excluding the current PR #160 freshness check: #125, #131, #152, #154, #155",
     "owner_task": "PR #153 orientation repair is implemented and ready for owner review; full code Quality passed on tested code SHA 5665e60ebdbb704f9fa95cadba610984ca1da60b, and docs-only follow-up Freshness/Provenance/Dead Code checks passed. Check live PR #153 for its current HEAD. After owner-approved merge, execute ORIENT-002 fresh-session handoff test using only OLEDUE + one batched live GitHub state read. Then resume owner-authorized PR #131 reconciliation preserving #147/#148/#150; inspect PR #152 separately after failed Quality and stale base; continue grouped primary-source research and capability implementation from the canonical registry.",
     "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
     "pr131_exact_head_verified": false,
-    "pr131_compare": "Large Draft V2 workbench; current main d4a2fac differs from branch base e78a73b; mergeable=false; selective reconciliation only.",
+    "pr131_compare": "Large Draft V2 workbench, stale/diverged and mergeable_state dirty; selective reconciliation only.",
     "pr131_quality_run": null,
     "pr131_provenance_run": null,
     "pr131_full_gate_verified": false,
@@ -171,10 +189,10 @@
     "first_v1_candidate_checks": "PR #139 exact HEAD d76be1d59ed832fa638e419b542151dba277c143 passed Quality #41966180071, Freshness #41966180096, Provenance #41966180157 and Graphify #41966180042. Squash merged at main SHA 2e11849d409a51009693af95ac3ecbf1f057a3fc; post-merge main Quality #41967234442, Pages #41967233832, Freshness #41967234558, Provenance #41967234535, Graphify #41967234708 all PASS. Production CSS and landing HTML fetched.",
     "first_v1_candidate_css_delivery_assertion": "HTTP 200 and text/css",
     "original_v1_baseline_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
-    "main_quality_status": "PR #149 exact-head Quality run #42001310270 PASS (7 jobs, including Chromium and published Pages smoke); no post-merge main Quality run retrieved.",
-    "main_pages_status": "PR #149 exact-head published Pages browser smoke PASS; post-merge Pages deployment not verified.",
-    "main_freshness_status": "PR #149 exact-head Project State Freshness #42001309687 PASS; merge SHA 8e7d4aafe4b9580e9f8978c6f888e35f3fa99242 is the state-refresh child.",
-    "main_provenance_status": "PR #149 exact-head Provenance #42001309703 PASS; pypdf and Vosk metadata reconciled.",
+    "main_quality_status": "IN_PROGRESS on exact main d83eea8; Chromium browser regression tests are running, live root title guard not yet executed.",
+    "main_pages_status": "SUCCESS on exact main d83eea8; cache-busting public root verified AI Mobile Agent v10.0.",
+    "main_freshness_status": "FAILED run #42349250485 due snapshot/main queue drift before PR #160 refresh.",
+    "main_provenance_status": "PASS run #42349250512 on functional parent f6f3896; no artifact/dependency changes in PR #157/#158.",
     "main_graphify_status": "PR #149 exact-head Graphify #42001311323 PASS; post-merge main Graphify run not retrieved.",
     "first_v1_candidate_pr": 139,
     "first_v1_candidate_pr_base": "a7915291354d1b031ce2461b71a553f871959df3",
@@ -184,13 +202,17 @@
     "pr131_graphify_run": 41981885581,
     "pr131_graphify_code_test_sha": "c79e983a57d6cc2b87a9296a1334e6d6ed5b3479",
     "pr152_head": "b802f7a152eadbbbb65a2e1c8013f42617aa62ce",
-    "pr152_compare": "Draft Voice branch stale base 8e7d4a; mergeable=false. Exact-head Quality on latest SHA not retrieved; previous known Quality failed #42141899337 on older SHA, Graphify passed #42141899316.",
-    "pr154_head": "796b5d54a7acb94b3d993dd4a662f721e9e2c902",
-    "pr154_compare": "Open UI shell promotion, base f323b6f; Quality #42193618745 failed with 23 Chromium shard-4 selector timeouts; Freshness #42193618668 failed due queue drift; Provenance/Graphify/Dead Code passed.",
+    "pr152_compare": "Draft Voice stale base 8e7d4a; mergeable_state dirty. Previous exact-head Quality failed #42141899337 on an older SHA; keep separate.",
+    "pr154_head": "6ca47522d7d6998916b1b01931c217d8b7e76c75",
+    "pr154_compare": "Draft modular UI shell stale base f323b6f; mergeable_state dirty. Quality #42349173942 has shards 1–3 PASS and shard4 IN_PROGRESS; old Quality #42193618745 failed 23 tests/17 passed (stale selectors plus storage/error-copy/privacy-memory assertions). Freshness #42193618668 failed queue drift. No test weakening authorized.",
     "pr155_head": "4e03d55d4d3c546ffe28bc61f4b0be23455333d9",
-    "pr155_compare": "Open Draft roadmap/control-plane; Freshness/Provenance/Dead Code pass on current known head; Quality final exact-head outcome not captured.",
-    "pr156_head": "53229c5e35c75de58046c9535022ef72c5bf6453",
-    "pr156_compare": "Open Draft owner priorities + Pages live guard. Freshness #42348613091 failed on stale snapshot; Quality #42348613094 was in progress at last read. Head may move."
+    "pr155_compare": "Draft roadmap/control-plane refinement; Freshness/Provenance/Dead Code passed on last known head, final Quality needs live recheck.",
+    "pr156_head": "215086e397e69da70f64490dd12abcbe293c388f",
+    "pr156_compare": "Merged at f6f3896bf3989f9c88e3764f848b84e90b601a65; exact-head Freshness/Provenance/Quality passed.",
+    "pr157_head": "e065f967f2dbca938ba71c41dcad57aa47877a0a",
+    "pr157_compare": "Merged at 40540f6d75a90877ff9cbec5bbfacb48ee6f775c; exact-head Quality #42349368043 and Graphify #42349368086 passed.",
+    "pr158_head": "4da559cf6abc21bfa3920b5e0297a2abb84e7453",
+    "pr158_compare": "Merged at d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c; exact-head Quality #42349540173 passed; exact-main root title Quality #42349853526 remains in progress."
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
@@ -198,5 +220,5 @@
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-07-OWNER-PRIORITIES-PAGES-UI-001"
+  "last_volley": "V-2026-11-07-OWNER-PRIORITIES-PAGES-UI-002"
 }
