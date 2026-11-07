@@ -697,7 +697,7 @@ permalink: /
     <section class="w-full max-w-lg max-h-[88dvh] overflow-y-auto rounded-2xl border border-gray-700 bg-gray-950 p-4 sm:p-5 shadow-2xl space-y-4">
       <header class="flex items-start justify-between gap-3">
         <div class="min-w-0"><h2 id="functionPanelTitle" class="font-bold text-base">Функции</h2><p id="functionPanelDescription" class="mt-1 text-xs leading-relaxed text-gray-400"></p></div>
-        <button type="button" data-action="close-function-panel" class="shrink-0 rounded-lg px-2 py-1 text-gray-400 hover:text-white" aria-label="Закрыть">✕</button>
+        <button type="button" data-action="close-function-panel" class="shrink-0 rounded-lg px-2 py-1 text-gray-400 hover:text-white" data-i18n-aria-label="functionPanelClose" aria-label="Закрыть">✕</button>
       </header>
       <section id="researchFunctionSettings" class="hidden space-y-3">
         <div class="rounded-xl border border-gray-800 bg-gray-900/50 p-3">
