@@ -54,6 +54,11 @@ const suites = {
       };
       const externalRouteGroup = extractGroup('providerExternalGroup');
       assert.ok(source.includes('<details id="aserviSettingsGroup"'), 'aLandi aServi must have a dedicated settings disclosure.');
+      assert.ok(source.includes('aLandi aServi'), 'The first-party server route must use the current aLandi aServi product name.');
+      assert.equal(source.includes('aLandi Cloud'), false, 'Do not reintroduce the retired aLandi Cloud product label.');
+      includes('data-action="paste-aservi-key"', 'The first-party key action must use the aServi identifier.');
+      assert.equal(source.includes('data-action="paste-cloud-key"'), false, 'Do not reintroduce the retired Cloud DOM action.');
+      assert.equal(source.includes('data-action="connect-alandi-cloud"'), false, 'Do not reintroduce the retired Cloud connection action.');
       assert.ok(source.includes('<details id="legacyProviderSettings"'), 'Third-party providers must have a separate settings disclosure.');
       assert.ok(source.includes('<details id="additionalSettings"'), 'Additional settings must have a separate disclosure.');
       assert.equal(providerPicker.includes('<option value="alandi"'), false, 'The private aLandi route must never appear in the third-party provider picker.');
@@ -61,7 +66,7 @@ const suites = {
       assert.ok(externalRouteGroup.includes('<option value="gemini">') && externalRouteGroup.includes('<option value="custom">'), 'External providers must remain selectable.');
       includes("const peerSettingsGroups=[$('legacyProviderSettings'),$('additionalSettings')]", 'aServi must be mutually exclusive with third-party and additional settings; those two sections may coexist.');
       assert.equal((source.match(/id="cloudConnect"/g) || []).length, 0, 'The private server must connect automatically, without a permanent manual-check button.');
-      includes('function connectAlandiCloud()', 'The cloud UI must verify a real model response before showing connected.');
+      includes('function connectAlandiAServi()', 'The aServi UI must verify a real model response before showing connected.');
       includes('function scheduleCloudAutoConnect()', 'Changes to private server settings must trigger a bounded automatic connection check.');
       includes('function setCloudFieldError(id,message', 'Invalid server fields must show an inline field-specific error.');
       includes("setCloudFieldConnection('connected')", 'The server fields must only turn green after the connection and health checks pass.');
@@ -139,7 +144,7 @@ const suites = {
       assert.ok(!source.includes("safeGet(STORAGE.model) === 'gemini-3.8-flash'"), 'A valid Gemini 3.8 model must not be downgraded on load.');
       includes('function getApiCandidates(requestedModel)', 'Provider failover must discover only configured credentials.');
       includes("if(!key && provider!=='kilo') continue;", 'Only the explicitly selected Kilo Free route may omit an API key.');
-      includes('function connectAlandiCloud()', 'The primary cloud status must be verified with a real completion.');
+      includes('function connectAlandiAServi()', 'The primary aServi route status must be verified with a real completion.');
       includes('id="cloudStatusDot" data-state="disconnected"', 'Cloud connection must begin unconfirmed.');
       includes('if(error.modelUnavailable)', 'Only a model-specific provider failure may trigger same-provider model selection.');
       includes('function applyUiLanguage(language)', 'The main UI must support a persisted language choice.');
