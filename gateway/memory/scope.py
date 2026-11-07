@@ -1,4 +1,4 @@
-"""Memory-scope validation shared by graph and retrieval layers."""
+"""Strict scope-pair validation shared by scoped RAG retrieval operations."""
 from __future__ import annotations
 
 from dataclasses import dataclass
