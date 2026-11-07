@@ -1,5 +1,6 @@
 # Graphify inputs must stay source-only and bounded.
 # Vendored upstream snapshots are research artifacts, not first-party architecture.
+# Verified on PR #169 Graphify run #42398472267: 1,122 nodes / 3,014 edges / 69 first-party source files.
 docs/upstream-archive/
 # Keep secrets, local state, generated output and model/media artifacts out of the graph.
 .env
