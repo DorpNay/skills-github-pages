@@ -58,7 +58,9 @@ test('PDF attachment is extracted only by the configured aLandi gateway before m
   });
   await page.route('https://api.example.test/v1/chat/completions', async route => {
     const payload = route.request().postDataJSON();
-    submittedUserContent = payload.messages.filter(message => message.role === 'user').map(message => message.content).join('\n');
+    if (payload.messages?.at(-1)?.content !== 'Reply with exactly OK.') {
+      submittedUserContent = payload.messages.filter(message => message.role === 'user').map(message => message.content).join('\n');
+    }
     await route.fulfill({
       status: 200, contentType: 'application/json',
       body: JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'Document summary ready.' }, finish_reason: 'stop' }] })
