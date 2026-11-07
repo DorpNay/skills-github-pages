@@ -113,6 +113,7 @@ test('third-party provider fallback never switches to aServi', async ({ page }) 
     const url = route.request().url();
     if (/generateContent|streamGenerateContent|chat\/completions|\/responses/.test(url)) {
       geminiChatRequests.push(url);
+      await new Promise(resolve => setTimeout(resolve, 250));
       return route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ error: { message: 'Gemini unavailable for fallback isolation.' } }) });
     }
     return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ models: [] }) });
@@ -126,6 +127,7 @@ test('third-party provider fallback never switches to aServi', async ({ page }) 
   );
   await page.locator('#userInput').fill('Проверь запрет автоматического переключения на aServi.');
   await page.locator('#sendBtn').click();
+  await expect(page.locator('#stopBtn')).toBeVisible({ timeout: 5000 });
   await failedGeminiRequest;
   await expect(page.locator('#stopBtn')).toBeHidden({ timeout: 15000 });
   expect(geminiChatRequests.length).toBeGreaterThan(0);
