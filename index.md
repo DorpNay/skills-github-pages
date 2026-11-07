@@ -5513,6 +5513,8 @@ permalink: /
     });
     $('chatActionForm').addEventListener('submit',event=>{event.preventDefault();saveChatActionDialog();});
     $('chatActionModal').addEventListener('click',event=>{if(event.target===$('chatActionModal'))closeChatActionDialog();});
+    $('settingsModal').addEventListener('click', event => { if (event.target === $('settingsModal')) toggleSettings(false); });
+    $('functionPanelModal').addEventListener('click', event => { if (event.target === $('functionPanelModal')) closeFunctionPanel(); });
     document.addEventListener('keydown', (event) => {
       const functionModal = $('functionPanelModal');
       if (event.key === 'Tab' && functionModal && !functionModal.classList.contains('hidden')) {
