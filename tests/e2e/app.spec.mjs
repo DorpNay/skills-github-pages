@@ -3276,3 +3276,83 @@ test('status tone semantics remain distinct and readable in both themes', async 
     expect(new Set(colors).size).toBe(5);
   }
 });
+
+
+test('readability preferences persist and maintain semantic text contrast in both themes', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#readingSettings')).toBeVisible();
+
+  await page.locator('#readingFontSize').evaluate(element => {
+    element.value = '20';
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await page.locator('#readingLineHeight').evaluate(element => {
+    element.value = '1.9';
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await page.locator('#readingContrast').selectOption('high');
+  await expect(page.locator('#readingFontSizeValue')).toHaveText('20 px');
+  await expect(page.locator('#readingLineHeightValue')).toHaveText('1.9');
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('ai_ui_readability_v1') || '{}'))).toEqual({
+    fontSize: 20, lineHeight: 1.9, contrast: 'high'
+  });
+
+  const ratios = await page.evaluate(() => {
+    const parse = value => {
+      const match = value.match(/#([0-9a-f]{6})/i);
+      if (match) return [0,2,4].map(offset => parseInt(match[1].slice(offset, offset + 2), 16));
+      return value.match(/\\d+(?=,|\\))/g).slice(0, 3).map(Number);
+    };
+    const luminance = color => {
+      const channels = parse(color).map(value => {
+        const normalized = value / 255;
+        return normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+      });
+      return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+    };
+    const ratio = (foreground, background) => {
+      const a = luminance(foreground), b = luminance(background);
+      return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+    };
+    const results = {};
+    for (const theme of ['dark', 'light']) {
+      document.documentElement.dataset.theme = theme;
+      for (const contrast of ['standard', 'high']) {
+        document.documentElement.dataset.readingContrast = contrast;
+        const styles = getComputedStyle(document.documentElement);
+        const background = styles.getPropertyValue('--ui-surface').trim();
+        const tokens = ['--ui-text','--ui-text-muted','--ui-success','--ui-danger','--ui-info','--ui-warning','--ui-link'];
+        results[theme + '-' + contrast] = Object.fromEntries(tokens.map(token => [token, ratio(styles.getPropertyValue(token).trim(), background)]));
+      }
+    }
+    document.documentElement.dataset.theme = 'dark';
+    document.documentElement.dataset.readingContrast = 'high';
+    return results;
+  });
+  for (const [scheme, tokens] of Object.entries(ratios)) {
+    for (const [token, value] of Object.entries(tokens)) {
+      expect(value, scheme + ' ' + token).toBeGreaterThanOrEqual(4.5);
+    }
+  }
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#readingFontSize')).toHaveValue('20');
+  await expect(page.locator('#readingLineHeight')).toHaveValue('1.9');
+  await expect(page.locator('#readingContrast')).toHaveValue('high');
+  const applied = await page.evaluate(() => {
+    const sample = document.createElement('div');
+    sample.className = 'assistant-content';
+    sample.innerHTML = '<p>Readability sample</p>';
+    document.body.appendChild(sample);
+    return {
+      fontSize: getComputedStyle(sample).fontSize,
+      lineHeight: getComputedStyle(sample).lineHeight,
+      contrast: document.documentElement.dataset.readingContrast
+    };
+  });
+  expect(applied.fontSize).toBe('20px');
+  expect(applied.lineHeight).toBe('38px');
+  expect(applied.contrast).toBe('high');
+});
