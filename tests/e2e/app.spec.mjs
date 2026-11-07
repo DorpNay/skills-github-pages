@@ -26,6 +26,7 @@ async function openProjectSettingsForId(page, projectId) {
   if (await sidebar.evaluate(element => element.classList.contains('-translate-x-full'))) {
     await page.locator('[data-action="toggle-sidebar"]').click();
   }
+  await expect(page.locator('#projectPanel [data-action="open-project-settings"]:not([data-project-id])')).toHaveCount(0);
   const navigation = page.locator('#projectNavigationList');
   if (await navigation.evaluate(element => element.classList.contains('hidden'))) {
     await page.locator('#projectNavToggle').click();
@@ -136,7 +137,7 @@ test('global system prompt is empty by default and obsolete Gemini reset is abse
   await expect(page.locator('[data-action="restore-defaults"]')).toHaveCount(0);
 });
 
-test('sidebar order separates memory, projects, status, chats, and research', async ({ page }) => {
+test('sidebar order keeps memory above projects and omits the research shortcut', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
   const positions = await page.locator('#sidebar').evaluate(sidebar => [
@@ -144,11 +145,17 @@ test('sidebar order separates memory, projects, status, chats, and research', as
     sidebar.querySelector('#projectPanel'),
     sidebar.querySelector('#projectStatusLine'),
     sidebar.querySelector('#chatSection'),
-    sidebar.querySelector('[data-action="open-research-studio"]')?.parentElement,
     sidebar.querySelector('#sidebarPreferences')
   ].map(el => Array.prototype.indexOf.call(sidebar.children, el)));
   expect(positions.every(Number.isInteger)).toBe(true);
   expect(positions).toEqual([...positions].sort((a, b) => a - b));
+  await expect(page.locator('[data-action="open-research-studio"]')).toHaveCount(0);
+  await expect(page.locator('#projectPanel [data-action="open-project-create"]')).toBeVisible();
+  const memoryOrder = await page.locator('#memoryPanel').evaluate(panel => [
+    Array.prototype.indexOf.call(panel.children, panel.querySelector('#memoryStatusLine')),
+    Array.prototype.indexOf.call(panel.children, panel.querySelector('#memoryToolsDetails'))
+  ]);
+  expect(memoryOrder[0]).toBeLessThan(memoryOrder[1]);
   await expect(page.locator('#projectPanel')).toContainText('Проект');
   await expect(page.locator('#chatSection')).toContainText('Новый личный чат');
   await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте выкл.');
@@ -2200,8 +2207,10 @@ test('sidebar closes on a horizontal touch swipe without consuming vertical scro
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await ensureSidebarOpen(page);
+  await page.locator('#memoryToolsDetails > summary').click();
   await page.locator('#projectNavToggle').click();
   await expect(page.locator('#projectNavigationList')).toBeVisible();
+  await expect(page.locator('#chatSection')).toHaveAttribute('open', '');
 
   const dispatchSwipe = (start, end, cancelled = false) => page.locator('#sidebar').evaluate((sidebar, points) => {
     const dispatch = (type, point, property) => {
@@ -2238,9 +2247,13 @@ test('sidebar closes on a horizontal touch swipe without consuming vertical scro
   await dispatchSwipe({ x: 300, y: 420 }, { x: 190, y: 425 });
   await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
   await expect(page.locator('#sidebarOverlay')).toBeHidden();
+  await expect(page.locator('#memoryToolsDetails')).not.toHaveAttribute('open', '');
+  await expect(page.locator('#projectNavigationList')).toBeVisible();
+  await expect(page.locator('#chatSection')).toHaveAttribute('open', '');
 
   await ensureSidebarOpen(page);
   await expect(page.locator('#projectNavigationList')).toBeVisible();
+  await expect(page.locator('#chatSection')).toHaveAttribute('open', '');
 });
 
 test('composer offers unrestricted file picking but blocks unsupported formats until removed', async ({ page }) => {
@@ -3071,7 +3084,7 @@ test('corrupt project storage is preserved and exposes a downloadable recovery b
   }));
   expect(values).toEqual({ original: raw, backup: raw });
   await page.locator('#appSidebarToggle').click();
-  await page.locator('[data-action="open-project-settings"]').click();
+  await expect(page.locator('#projectRecoveryBackupButton')).toBeVisible();
   const [download] = await Promise.all([
     page.waitForEvent('download'),
     page.locator('#projectRecoveryBackupButton').click()
@@ -3171,7 +3184,7 @@ test('project writes fail closed when malformed source data cannot be backed up'
   }));
   expect(after).toEqual(before);
   await page.locator('#appSidebarToggle').click();
-  await page.locator('[data-action="open-project-settings"]').click();
+  await expect(page.locator('#projectRecoveryBackupButton')).toBeVisible();
   const [download] = await Promise.all([
     page.waitForEvent('download'),
     page.locator('#projectRecoveryBackupButton').click()
