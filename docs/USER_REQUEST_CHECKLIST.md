@@ -59,14 +59,14 @@
 - [~] Текущий чат можно привязать/отвязать от проекта; проектная принадлежность видна в интерфейсе.
 - [~] Есть экспорт/импорт project bundle с чатом, инструкциями и памятью; проверить схему, duplicate IDs, limits, malicious content.
 - [~] Global memory и project memory имеют отдельные явные toggles; default выключен; подтвердить, что global facts не утекут в другой project scope.
-- [~] Server memory graph API and opt-in browser bridge are implemented and CI-verified. Browser projects remain local-first; only a manual upload sends facts as server-side candidates, and only confirmed facts in the exact project scope can be retrieved when both per-chat toggles are enabled. Multi-device project sync and live gateway activation remain unverified.
+- [x] **RETIRED BY OWNER 2026-11-07:** server-memory graph API and browser bridge are removed from the product. Browser-local project notes remain; conversation delta sync and RAG are separate and preserved. Existing server DB files are not deleted by code; live host is unverified.
 - [ ] Реализовать authenticated API/индексацию project sources только после согласованного backend contract; не имитировать работающий индекс на пустой заглушке.
-- [ ] Добавить/проверить тест cross-project leak на серверной памяти, RAG, evidence, cache и deletion — где соответствующие слои существуют.
+- [ ] Добавить/проверить тест cross-project leak для RAG, evidence, cache и deletion — server-memory graph больше не существует в runtime.
 - [~] RAG source deletion is scope-checked and removes chunk/concept/FTS rows; SQLite `secure_delete` plus version-gated FTS5 `secure-delete` regression tests passed on PR #24 HEAD and post-merge main. This still does **not** erase evidence-ledger copies, WAL/journals, backups or browser-local source copies; system-wide crypto-erasure remains open.
 - [ ] Проверить экспорт, исправление и удаление пользовательских фактов и связанные derived records.
 - [ ] Реализовать удаление/криптостирание по всем реальным слоям; не обещать SLA ≤60 секунд без измерения.
-- [x] Scoped memory FTS5 `search_nodes()` is merged and passed Gateway/provenance/full quality/Chromium/Pages PR-head checks. The index is scope-filtered; terms are bounded/literal; confirmed-only is default; deletes propagate and legacy index is backfilled. PR #27 adds opt-in authenticated routes, but the static UI still uses browser-local memory.
-- [x] PR #27 merged with Gateway, provenance and full Quality/Chromium/published Pages CI green on HEAD `e961a67d…`. Memory graph API remains feature-flagged, single-owner and not wired to browser UI.
+- [x] **RETIRED BY OWNER 2026-11-07:** scoped FTS5 `search_nodes()` belonged to the removed server-memory graph. RAG retains its independent scoped FTS5 store.
+- [x] Historical PR #27 Gateway/provenance/Quality/Pages evidence retained. Its server-memory graph API is now retired by owner; do not enable or restore it.
 - [ ] Протестировать valid_from, valid_until, recorded_at, конфликты, supersede и scoped recursive delete в gateway memory prototypes.
 - [ ] Полноценный viewer источников/индекса, citation lineage и cross-device project memory остаются задачами последующих фаз.
 
@@ -141,9 +141,9 @@
 | **AI-MEM-001** | sqlite_prototype | gateway/memory/schema.sql | EV-MEM-001 |
 | **AI-MEM-002** | bitemporal_primitives_not_in_frontend | gateway/memory/temporal.py | EV-MEM-002 |
 | **AI-MEM-003** | scoped_manager_prototype | gateway/memory/scope.py | EV-MEM-003 |
-| **AI-MEM-004** | explicit_conflicts_no_auto_winner | gateway/memory/conflict.py | EV-MEM-004 |
-| **AI-MEM-005** | scoped_fts5_memory_search_prototype_merged_not_ui_wired | gateway/memory/manager.py; gateway/memory/schema.sql | EV-MEM-005 |
-| **AI-MEM-006** | authenticated_single_owner_graph_api_and_manual_candidate_first_browser_bridge_ci_passed_live_activation_pending | gateway/app.py; gateway/memory/manager.py; index.md; tests/e2e/app.spec.mjs | EV-MEM-006 |
+| **AI-MEM-004** | retired_server_graph_conflict_module | removed by owner 2026-11-07 | EV-MEM-004 RETIRED |
+| **AI-MEM-005** | retired_server_graph_fts5_store | removed by owner 2026-11-07; RAG FTS5 retained | EV-MEM-005 RETIRED |
+| **AI-MEM-006** | retired_server_memory_graph_api_and_browser_bridge | routes, flags, store and UI removed by owner 2026-11-07 | EV-MEM-006 RETIRED |
 | **AI-RAG-001** | fts5_lexical_graph_not_full_lazygraphrag | gateway/rag/lazy_graph_rag.py | EV-RAG-001 |
 | **AI-RAG-002** | conditional_not_installed | gateway/rag/rag_anything.py | EV-RAG-002 |
 | **AI-RAG-003** | citation_hash_offset_primitives | gateway/rag/citations.py | EV-RAG-003 |
@@ -195,10 +195,10 @@
 
 ## I. Следующие продуктовые вертикали
 
-- [x] Связать браузерные проекты с серверным memory graph без автоматической миграции: ручная передача локальных фактов как candidate, ручное подтверждение/отклонение/удаление, scope по ID проекта. PR #29 merged; PR-head and post-merge Chromium/Quality checks passed.
-- [x] Добавить per-chat opt-in серверной памяти; retrieval только confirmed и только при одновременно включённой памяти проекта и серверной памяти. Chromium mock E2E passed on PR #29 head and merged main.
+- [x] **RETIRED BY OWNER 2026-11-07:** PR #29's browser-to-server project memory bridge, API actions and settings removed; project notes remain browser-local.
+- [x] **RETIRED BY OWNER 2026-11-07:** per-chat server-memory toggle and retrieval path removed; do not confuse this with local project notes or conversation delta sync.
 - [x] PR #29 head checks passed: Quality/Chromium, provenance and published Pages smoke. Post-merge main Quality/Chromium, provenance and Pages deployment passed at `55248f81585c52d7cc7ba7cfc08158a291a761ca`; gateway contract/security tests passed on unchanged base `e424d353418cad62981eb269b4082d2925592708`.
-- [ ] На целевом gateway включить ALANDI_MEMORY_GRAPH_ENABLED=true только после резервной копии и smoke-test; ALANDI_GLOBAL_MEMORY_ENABLED оставить false.
+- [x] **RETIRED BY OWNER 2026-11-07:** do not configure old graph/global-memory flags; API code is removed. Existing server SQLite files/backups remain untouched pending a separate owner decision.
 - [ ] Первый месяц не создавать платные ресурсы автоматически: GitHub Pages + уже имеющееся железо + Ollama локально; free-tier API считать квотируемым и внешним, не гарантированно бесплатным.
 - [ ] Оценить одну маленькую helper-модель для классификации, извлечения фактов, кратких сводок и чернового ранжирования. Главная модель остаётся для планирования, сложного reasoning и синтеза. Сравнить качество, latency и RAM перед включением.
 - [ ] Добавить генерацию изображений отдельным модулем после выбора реального backend (локальный ComfyUI/API или явно выбранный внешний провайдер), проверки точной модели/лицензии/VRAM и mock E2E.
