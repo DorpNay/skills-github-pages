@@ -14,6 +14,8 @@ archive_scope: selected Rust source snapshot; not a complete upstream checkout
 purpose: research/reference only; not an active aLandi runtime dependency
 graphify_excluded: true
 verification_scope: only the explicitly listed file blobs were independently matched; archive is a selected source snapshot, not a full checkout
+reviewed_in_pr: 169
+reviewed_at: 2026-11-08
 verified_at: 2026-11-08
 verified_files:
   - path: src/types/manifest.rs
