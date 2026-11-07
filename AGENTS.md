@@ -11,7 +11,7 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 - Keep main/base/head/tested/merge/deployed SHAs distinct. CI green is not merge; merge is not deploy; Pages is not VPS.
 
 ## Live checkpoint (2026-11-08)
-- Verified main: `bf039f887e29137b627b06fc2bb107c2793d6b69`; PR #173 is squash-merged. No open PRs; issue #111 is the only open issue.
+- Verified main: `bf039f887e29137b627b06fc2bb107c2793d6b69`; PR #173 is squash-merged. PR #174 is the only open PR (this bounded follow-up); issue #111 is the only open issue.
 - Pages deployment #42410162803 passed on the exact main SHA.
 - Main Quality #42410163178: Context, Jekyll, Static Analysis, Security, Integrity and Chromium jobs passed. Chromium verified the built app, public root revision, canonical landing content and landing Chromium (8/8).
 - Published release-contract job #128517290166 failed only because a stale forbidden marker rejects the owner-approved Functions menu (`functionsMenu`). Correct the sentinel to require Agents/Deep Research/Skills while still forbidding Research Studio, legacy provider selection and removed sidebar controls.
