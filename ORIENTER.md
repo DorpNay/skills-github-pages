@@ -16,9 +16,9 @@
 ## Active bounded work
 
 - Branch: `fix/pages-functions-contract-and-state-20261108`, based on exact main `bf039f887e29137b627b06fc2bb107c2793d6b69`.
-- Scope: correct the published UI contract sentinel; isolate the delayed provider auto-connect probe in E2E; complete the Functions keyboard/focus trap, localized accessible name and 320px hit-target coverage; normalize all stable IDs/cross-links in both registries; audit browser asset trust boundaries and system maturity; synchronize orientation/state/checkpoint records.
+- Scope: correct the published UI contract sentinel; isolate the delayed provider auto-connect probe in E2E; complete the Functions keyboard/focus trap, localized accessible name, 320px hit-target coverage and Settings/Functions backdrop dismissal; normalize all stable IDs/cross-links in both registries; audit browser asset trust boundaries and system maturity; synchronize orientation/state/checkpoint records.
 - Acceptance: Quality/Freshness/Provenance/Graphify on the exact PR head; post-merge Quality must verify exact public root + `/landing/` SHA and approved Functions menu without restoring Research Studio. Native VoiceOver/iPhone Safari remains a manual acceptance item, not a CI claim.
-- The earlier PR #173 approval does not authorize merging or deploying this follow-up.
+- The owner explicitly instructed on 2026-11-08 to merge all currently open PRs into `main` after their final exact-head required checks pass; PR #174 is covered once green. This does not authorize wholesale merging of closed/stale/HOLD PRs or deployment.
 
 ## Canonical navigation and next steps
 
