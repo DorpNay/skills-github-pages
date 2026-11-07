@@ -3396,15 +3396,23 @@ test('readability preferences persist and maintain semantic text contrast in bot
   const applied = await page.evaluate(() => {
     const sample = document.createElement('div');
     sample.className = 'assistant-content';
-    sample.innerHTML = '<p>Readability sample</p>';
+    sample.innerHTML = '<p>Assistant readability sample</p>';
     document.body.appendChild(sample);
+    const userSample = document.createElement('div');
+    userSample.className = 'chat-bubble';
+    userSample.textContent = 'User readability sample';
+    document.body.appendChild(userSample);
     return {
       fontSize: getComputedStyle(sample).fontSize,
       lineHeight: getComputedStyle(sample).lineHeight,
+      userFontSize: getComputedStyle(userSample).fontSize,
+      userLineHeight: getComputedStyle(userSample).lineHeight,
       contrast: document.documentElement.dataset.readingContrast
     };
   });
   expect(applied.fontSize).toBe('20px');
   expect(applied.lineHeight).toBe('38px');
+  expect(applied.userFontSize).toBe('20px');
+  expect(applied.userLineHeight).toBe('38px');
   expect(applied.contrast).toBe('high');
 });
