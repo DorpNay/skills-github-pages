@@ -2542,31 +2542,56 @@ test('search presets fit one line, localize, and persist per chat', async ({ pag
   await expect(page.locator('#modeHint')).toContainText('Quick · Web: standard · Direct · Auto');
 });
 
-test('Functions menu exposes truthful Agents, Deep Research and Skills actions with blurred panels', async ({ page }) => {
+test('Functions menu exposes truthful Agents, Deep Research and Skills panels with blurred backdrop', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const menu = page.locator('#functionsMenu');
   await expect(menu).toBeVisible();
   await expect(menu.locator('.toolbar-menu-option')).toHaveCount(3);
   await expect(menu.locator('[data-function="agents"]')).toBeVisible();
-  await expect(menu.locator('[data-processing-mode="deep"]')).toBeVisible();
+  await expect(menu.locator('[data-function="research"]')).toBeVisible();
   await expect(menu.locator('[data-function="skills"]')).toBeVisible();
   await expect(page.locator('[data-action="open-research-studio"]')).toHaveCount(0);
   await expect(page.locator('#researchStudioModal')).toHaveCount(0);
 
-  await menu.locator('[data-processing-mode="deep"]').click();
-  await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
-  await expect(menu).not.toHaveAttribute('open', '');
+  await menu.locator('[data-function="research"]').click();
+  const modal = page.locator('#functionPanelModal');
+  await expect(modal).toBeVisible();
+  await expect.poll(() => modal.evaluate(element => getComputedStyle(element).backdropFilter)).toBe('blur(4px)');
+  const researchPanel = page.locator('#researchFunctionSettings');
+  await expect(researchPanel).toBeVisible();
+  await expect(researchPanel.locator('#researchModeSummary')).toContainText(/Quick|Быстро/);
+  await expect(researchPanel.locator('#researchSearchModeSummary')).toContainText(/Web: standard|Веб: обычный/);
+  await expect(researchPanel.locator('#researchWorkflowSummary')).toContainText(/Direct|Прямой/);
 
-  for (const panel of ['agents', 'skills']) {
-    await page.locator('#functionsMenuSummary').click();
-    await page.locator('[data-action="open-function-panel"][data-function="' + panel + '"]').click();
-    const modal = page.locator('#functionPanelModal');
-    await expect(modal).toBeVisible();
-    await expect.poll(() => modal.evaluate(element => getComputedStyle(element).backdropFilter)).toBe('blur(4px)');
-    await modal.locator('[data-action="close-function-panel"]').click();
-    await expect(modal).toBeHidden();
-  }
+  await researchPanel.locator('[data-action="select-processing-mode"][data-processing-mode="deep"]').click();
+  await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
+  await expect(researchPanel.locator('#researchModeSummary')).toContainText(/Thorough|Тщательно/);
+
+  await researchPanel.locator('[data-action="open-search-mode-settings"]').click();
+  await expect(modal).toBeHidden();
+  const searchMenu = page.locator('#searchModeMenu');
+  await expect(searchMenu).toHaveAttribute('open', '');
+  await expect(page.locator('#searchModeSummary')).toBeFocused();
+  await page.locator('#searchModeSummary').click();
+  await expect(searchMenu).not.toHaveAttribute('open', '');
+
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-function="research"]').click();
+  await expect(modal).toBeVisible();
+  await modal.locator('[data-action="researchOpenAgentSettings"]').click();
+  await expect(page.locator('#agentFunctionSettings')).toBeVisible();
+  await expect(page.locator('#researchFunctionSettings')).toBeHidden();
+  await modal.locator('[data-action="close-function-panel"]').first().click();
+  await expect(modal).toBeHidden();
+
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-function="skills"]').click();
+  await expect(modal).toBeVisible();
+  await expect.poll(() => modal.evaluate(element => getComputedStyle(element).backdropFilter)).toBe('blur(4px)');
+  await expect(page.locator('#skillFunctionSettings')).toBeVisible();
+  await modal.locator('[data-action="close-function-panel"]').first().click();
+  await expect(modal).toBeHidden();
 });
 
 test('browser Python snippets cannot access page globals through Pyodide js module', async ({ page }) => {
