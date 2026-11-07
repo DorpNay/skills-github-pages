@@ -204,3 +204,28 @@ PR #134 exact HEAD `519973c793a1c998b43c60dedfe55a02b74a26a9` received COMMENT r
 
 The first-pass upstream research findings are recorded in [INTEL.md — External-source first-pass](../INTEL.md#external-source-first-pass--2026-11-04). **Artifact acquisition update (2026-11-05):** Vosk small RU weights were downloaded and hash/ZIP-verified (SHA-256 `961d5ff98a17f4aa6de69864d0aa71fa5bac682301d2b5d17a3f24c5c99a46d4`, 46,236,750 bytes, Apache-2.0 per official catalog); they remain evaluation-only with `ship=false`. No model runtime was installed or activated.
 | 2026-11-05 | PR #139 `feat/v1-public-landing-a11y-20261104` | Promote the isolated V1-compatible public landing improvement; three functional files plus six orientation/state files | Exact PR HEAD `d76be1d59ed832fa638e419b542151dba277c143`: Quality #41966180071, Freshness #41966180096, Provenance #41966180157 and Graphify #41966180042 PASS. Squash-merged at `2e11849d409a51009693af95ac3ecbf1f057a3fc`; exact-main gates and Pages deployment passed; production CSS/HTML fetched. Native iPhone/VoiceOver remains open. |
+## Owner publication correction — 2026-11-07
+
+### What is actually publishing the site
+
+- **FACT:** current Pages source is GitHub's branch-based publishing path. GitHub runs the managed dynamic/pages/pages-build-deployment workflow for pushes to main; the repository does not contain a custom Pages deployment function.
+- **FACT:** the upstream skills/github-pages repository used as the tutorial/source reference contains no .github/workflows deployment workflow and no reusable publish/deploy function to copy. It relies on the GitHub Pages product configuration.
+- **FACT:** this repository's own workflows already use actions/upload-artifact@v7.0.2; the Node.js 20 deprecation warning for actions/upload-artifact@v4 comes from the GitHub-managed Pages build workflow, not from the repository's Quality workflow. It is a compatibility warning, not evidence that the deployed site is stale or incomplete.
+- **PROPOSAL:** eliminating that platform warning requires changing Pages source to GitHub Actions in repository Settings and then using the official actions/upload-pages-artifact + actions/deploy-pages actions. This is a repository setting change; do not silently switch the publication mechanism. The current branch-based publisher is verified and should remain until the owner approves that migration.
+
+### Actual release acceptance (not a no-op)
+
+- live-site-smoke is now an actual main-push release contract gate, not an echo of the prerequisite browser job.
+- It polls both a cache-busted URL and the canonical public URL until alandi-build-revision equals the exact pushed GITHUB_SHA.
+- It then checks the published aServi / third-party / additional-settings groups, header language control, memory/sidebar ordering and recovery action; it rejects the retired Functions menu, Research Studio entrypoint, alandi provider option, duplicate sidebar theme footer and red stop-button styling.
+- A PR branch is not the live site. It becomes publishable only after its exact-head tests pass and the owner-authorized merge triggers a new Pages deployment; the live gate must then verify the merge SHA and actual UI contract.
+
+### Current verified checkpoint before PR #169
+
+- **main:** c4f23e03f563d03213eb87002863da630fc8b833.
+- **Pages:** deployment #42372745873 SUCCESS on exact main SHA.
+- **Quality:** #42372746360 confirmed the deployed alandi-build-revision equals that exact main SHA.
+- **UI:** §8.17 is already merged and published. The new owner corrections in PR #169 are not yet live until that PR is merged and the new release gate passes.
+- **PR #154:** stale V2 workbench, conflicted against current main and with an earlier failing Chromium run; use only as a source for selectively audited ideas, never merge wholesale.
+- **PR #168:** documentation checkpoint was prepared against an older PR queue; refresh or supersede it after the current UI batch rather than treating its snapshot as live.
+
