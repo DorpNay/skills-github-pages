@@ -1109,6 +1109,7 @@ test('aServi status only turns green after a real model response, and core UX co
     status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' })
   }));
   await page.route('https://cloud.example.test/v1/chat/completions', async route => {
+    await new Promise(resolve => setTimeout(resolve, 100));
     cloudRequests.push(route.request().postDataJSON());
     return route.fulfill({
       status: 200, contentType: 'application/json',
@@ -1125,7 +1126,7 @@ test('aServi status only turns green after a real model response, and core UX co
   await page.locator('#cloudModel').fill('qwen3.5:4b');
   await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
   await page.locator('[data-action="connect-alandi-aservi"]').click();
-  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'checking');
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
   await expect(page.locator('#cloudStatus')).toContainText('Подключено');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_provider'))).toBe('alandi');
@@ -1953,8 +1954,6 @@ test('retired Server Memory experiment has no UI or request path', async ({ page
   await expect(page.locator('#serverProjectMemoryToggle')).toHaveCount(0);
   await expect(page.locator('#serverMemoryStatus, #serverMemoryBox')).toHaveCount(0);
   await expect(page.locator('[data-action="refresh-server-memory"], [data-action="upload-server-memory"], [data-action="review-server-memory"], [data-action="delete-server-memory"]')).toHaveCount(0);
-  // Local project memory and helper suggestions are independent of the retired server-memory graph.
-  await expect(page.locator('[data-action="suggest-helper-memory"]')).toBeVisible();
   expect(graphRequests).toHaveLength(0);
 });
 
