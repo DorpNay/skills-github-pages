@@ -343,7 +343,9 @@ permalink: /
     html[data-theme="light"] .assistant-content a { color:var(--ui-link)!important; }
     html[data-reading-contrast="high"] .text-gray-300, html[data-reading-contrast="high"] .text-gray-400, html[data-reading-contrast="high"] .text-gray-500,
     html[data-reading-contrast="high"] .assistant-content blockquote, html[data-reading-contrast="high"] .message-model-meta { color:var(--ui-text-muted)!important; }
+    html[data-reading-contrast="high"] .assistant-content a { color:var(--ui-link)!important; }
     :is(button,input,select,textarea):disabled, [aria-disabled="true"] { color:var(--ui-text-muted)!important; }
+    html[data-reading-contrast="high"] :is(button,input,select,textarea):disabled, html[data-reading-contrast="high"] [aria-disabled="true"] { color:var(--ui-text-muted)!important; }
     .field-error { color:var(--ui-danger); }
     .assistant-content blockquote { color:var(--ui-text-muted); border-color:var(--ui-border); }
     @media (max-width:639px) {
