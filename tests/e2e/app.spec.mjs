@@ -2587,7 +2587,6 @@ test('Functions menu exposes truthful Agents, Deep Research and Skills panels wi
 
   await summary.click();
   await menu.locator('[data-function="research"]').click();
-  const modal = page.locator('#functionPanelModal');
   await expect(modal).toBeVisible();
   await expect.poll(() => modal.evaluate(element => getComputedStyle(element).backdropFilter)).toBe('blur(4px)');
   const researchPanel = page.locator('#researchFunctionSettings');
