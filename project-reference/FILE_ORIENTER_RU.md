@@ -5,7 +5,7 @@
 ## Контрольная точка — 2026-11-08 (live main / PR queue reconciled)
 
 - Main `c4f23e03f563d03213eb87002863da630fc8b833`; exact-main Pages #42372745873 SUCCESS, Quality #42372746360 SUCCESS (116 app Chromium, root smoke 1/1, landing 8/8, canonical root + /landing/ build SHA), Graphify #42372746441 PASS.
-- **Snapshot marker:** open PRs (0):; open issues (1): #111. (The active checked PR #169 is excluded from the freshness comparison.)
+- **Snapshot marker:** open PRs (0): open issues (1): #111. (The active checked PR #169 is excluded from the freshness comparison.)
 - **Live open PR queue (1): #169**; open issue (1): #111.
 - PR #169 base c4f23e0; latest code/test HEAD `1d32e3d3c6718e3d04efce312eac018596518f9f`. Previous exact head `54a2401`: Quality #42404826459 failed 7 Chromium tests (106 passed); Freshness #42404826540 failed stale queue because #155 was no longer open. Current branch includes aServi marker read fix and E2E updates to correctly open the exclusive provider/advanced disclosures and Functions menu; final exact-head rerun pending.
 - PRs #125/#131/#152/#154/#155 are closed without merge on live GitHub. Preserve still-open goal IDs and selected ideas in the Master Task Registry; no wholesale merge of those branches. #168/#171/#172 also closed/reconciled per existing Volley evidence.
