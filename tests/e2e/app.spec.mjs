@@ -349,6 +349,13 @@ test('published app boots with aServi selected and concise navigation', async ({
   await expect(page.locator('#searchModeSummary')).toContainText('Обычный');
   await expect(page.locator('#toggleSearch')).toBeChecked();
   await expect(page.locator('#functionsMenu')).toHaveCount(0);
+  const stopButtonBackground = await page.locator('#stopBtn').evaluate(element => {
+    element.classList.remove('hidden');
+    const color = getComputedStyle(element).backgroundColor;
+    element.classList.add('hidden');
+    return color;
+  });
+  expect(stopButtonBackground).not.toBe('rgb(220, 38, 38)');
   await expect(page.locator('#aserviSettingsGroup')).toHaveAttribute('open', '');
   await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
   await expect(page.locator('#additionalSettings')).not.toHaveAttribute('open');
