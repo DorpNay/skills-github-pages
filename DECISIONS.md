@@ -107,6 +107,13 @@
 - **Data boundary:** no claim of cryptographic erasure. Existing DB files, WAL/journals and backups were not inspected or deleted.
 - **Historical links:** old `gateway/memory/manager.py`, `gateway/memory/schema.sql`, prior CI and EV-MEM-005 are historical evidence only.
 
+## D-011 — Authenticated structured memory graph API (HISTORICAL / RETIRED)
+
+- **Historical status:** single-owner authenticated graph API prototype was implemented and its prior API tests passed.
+- **Owner decision 2026-11-07:** superseded by D-021; all graph routes, feature flags, storage and API tests were removed. There is no current activation procedure.
+- **Preserved:** conversation delta sync and scoped RAG are independent; neither is a server-memory graph API.
+- **Historical evidence:** previous implementation and CI records remain in git history and prior EV-MEM-006 entry only.
+
 ## D-012 — cPocket cleanup is bounded and failure-resilient
 
 - **Status:** Accepted for voice prototype; there is no live microphone/native audio runtime.
