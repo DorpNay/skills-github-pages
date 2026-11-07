@@ -52,12 +52,14 @@ const suites = {
         const close = providerPicker.indexOf('</optgroup>', start);
         return start >= 0 && close > start ? providerPicker.slice(start, close + '</optgroup>'.length) : '';
       };
-      const internalRouteGroup = extractGroup('providerPrimaryGroup');
       const externalRouteGroup = extractGroup('providerExternalGroup');
-      assert.ok(internalRouteGroup.includes(' hidden'), 'The private compatibility route must remain hidden from users.');
-      assert.equal(internalRouteGroup.split('<option value="alandi"').length - 1, 1, 'Keep exactly one hidden internal route for saved-chat migration and routing.');
-      assert.equal(externalRouteGroup.includes('<option value="alandi"'), false, 'The private aLandi route must not appear among third-party providers.');
+      assert.ok(source.includes('<details id="aserviSettingsGroup"'), 'aLandi aServi must have a dedicated settings disclosure.');
+      assert.ok(source.includes('<details id="legacyProviderSettings"'), 'Third-party providers must have a separate settings disclosure.');
+      assert.ok(source.includes('<details id="additionalSettings"'), 'Additional settings must have a separate disclosure.');
+      assert.equal(providerPicker.includes('<option value="alandi"'), false, 'The private aLandi route must never appear in the third-party provider picker.');
+      assert.equal(source.includes('providerPrimaryGroup'), false, 'The obsolete hidden primary-provider optgroup must be removed.');
       assert.ok(externalRouteGroup.includes('<option value="gemini">') && externalRouteGroup.includes('<option value="custom">'), 'External providers must remain selectable.');
+      includes("const peerSettingsGroups=[$('legacyProviderSettings'),$('additionalSettings')]", 'aServi must be mutually exclusive with third-party and additional settings; those two sections may coexist.');
       assert.equal((source.match(/id="cloudConnect"/g) || []).length, 0, 'The private server must connect automatically, without a permanent manual-check button.');
       includes('function connectAlandiCloud()', 'The cloud UI must verify a real model response before showing connected.');
       includes('function scheduleCloudAutoConnect()', 'Changes to private server settings must trigger a bounded automatic connection check.');
