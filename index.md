@@ -2641,9 +2641,11 @@ permalink: /
         if (strict) throw new Error('Настройки читаемости в профиле должны быть объектом.');
         return { ...DEFAULT_READABILITY_SETTINGS };
       }
-      const fontSize = Number(value.fontSize), lineHeight = Math.round(Number(value.lineHeight) * 10) / 10;
-      const valid = Number.isInteger(fontSize) && fontSize >= 14 && fontSize <= 22
-        && Number.isFinite(lineHeight) && lineHeight >= 1.4 && lineHeight <= 2
+      const fontSize = Number(value.fontSize), rawLineHeight = Number(value.lineHeight);
+      const lineHeight = Math.round(rawLineHeight * 10) / 10;
+      const valid = (!strict || (typeof value.fontSize === 'number' && typeof value.lineHeight === 'number'))
+        && Number.isInteger(fontSize) && fontSize >= 14 && fontSize <= 22
+        && Number.isFinite(rawLineHeight) && Math.abs(rawLineHeight - lineHeight) < 0.001 && lineHeight >= 1.4 && lineHeight <= 2
         && ['standard','high'].includes(value.contrast);
       if (!valid) {
         if (strict) throw new Error('Профиль содержит недопустимые параметры читаемости.');
