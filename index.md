@@ -136,7 +136,7 @@ permalink: /
     .cloud-status-indicator[data-state="checking"] { background:#f59e0b;box-shadow:0 0 0 5px rgba(245,158,11,.12),0 0 18px rgba(245,158,11,.45); }
     .cloud-status-copy { color:var(--ui-danger); }
     .cloud-status-copy[data-state="connected"] { color:var(--ui-success); }
-    .cloud-status-copy[data-state="checking"] { color:#f59e0b; }
+    .cloud-status-copy[data-state="checking"] { color:var(--ui-warning); }
     .cloud-key-row button,.composer-tool,.header-icon { border-color:var(--ui-border);background:var(--ui-surface-raised);color:var(--ui-text); }
     .cloud-key-row button:hover,.composer-tool:hover:not(:disabled),.header-icon:hover { border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
     .app-header { background:var(--ui-surface)!important;border-color:var(--ui-border)!important; }
