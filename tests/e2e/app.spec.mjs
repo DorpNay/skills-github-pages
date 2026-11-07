@@ -3280,6 +3280,7 @@ test('status tone semantics remain distinct and readable in both themes', async 
 
 test('readability preferences persist and maintain semantic text contrast in both themes', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').first().click();
   await expect(page.locator('#readingSettings')).toBeVisible();
 
   await page.locator('#readingFontSize').evaluate(element => {
