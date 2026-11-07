@@ -160,8 +160,8 @@ permalink: /
     .clock-second { height:22px;width:1px;background:#f59e0b; }
     .clock-pin { position:absolute;left:calc(50% - 2px);top:calc(50% - 2px);width:4px;height:4px;border-radius:50%;background:#f59e0b;z-index:3; }
     .voice-menu { position:absolute;right:10px;bottom:calc(100% + 9px);z-index:70;width:min(92vw,330px);padding:8px;border:1px solid var(--ui-border);border-radius:20px;background:color-mix(in srgb,var(--ui-surface) 90%,transparent);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 16px 48px rgba(0,0,0,.28);transform-origin:bottom right;animation:voice-pop 170ms cubic-bezier(.2,.7,.2,1); }
-    #settingsModal,#messageViewerModal,#chatActionModal,#researchStudioModal,#functionPanelModal,#traceModal { backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px); }
-    @media (prefers-reduced-transparency:reduce) { #settingsModal,#messageViewerModal,#chatActionModal,#researchStudioModal,#functionPanelModal,#traceModal { backdrop-filter:none;-webkit-backdrop-filter:none; } }
+
+
     .voice-menu-option { width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:13px 12px;border-radius:14px; }
     .voice-menu-option:hover { background:var(--ui-tiffany-soft); }
     .voice-menu-option strong { display:block;font-size:11px;letter-spacing:.04em; }
@@ -208,8 +208,6 @@ permalink: /
       #modeToolbar .toolbar-menu > summary { display:flex;align-items:center; }
       #inputArea .composer-tool,#inputArea #sendBtn,#inputArea #stopBtn { min-width:44px;min-height:44px;display:grid;place-items:center; }
       #inputArea #userInput { min-height:44px; }
-      #researchStudioModal [data-action="close-research-studio"],#researchStudioModal [data-action="start-research-studio"] { min-height:44px; }
-      #researchStudioModal header [data-action="close-research-studio"] { min-width:44px; }
     }
     @media (prefers-reduced-transparency:reduce) { .toolbar-menu-panel { background:var(--ui-surface);backdrop-filter:none;-webkit-backdrop-filter:none; } }
 
@@ -431,7 +429,6 @@ permalink: /
       <div class="px-2 pt-2"><button type="button" data-action="new-chat" data-i18n="newPersonalChat" class="w-full rounded-lg border border-blue-500/25 bg-blue-600/10 hover:bg-blue-600/20 py-2 text-xs font-semibold text-blue-200">＋ Новый личный чат</button></div>
       <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
     </details>
-    <div class="px-3 py-2 border-b border-gray-800"><button type="button" data-action="open-research-studio" class="w-full flex items-center gap-2 rounded-xl border border-cyan-800/70 bg-cyan-950/30 hover:bg-cyan-900/40 px-3 py-2.5 text-left text-xs font-semibold text-cyan-100"><span aria-hidden="true">⌕</span><span data-i18n="researchStudio">Search &amp; Research Studio</span><span class="ml-auto text-[10px] text-cyan-300/80">↗</span></button></div>
 
     <div id="sidebarPreferences" class="sticky bottom-0 mt-auto border-t border-gray-800 bg-gray-950/95 backdrop-blur px-3 py-2"><button id="sidebarThemeToggle" type="button" data-action="toggle-theme-cycle" class="rounded-lg border border-gray-700 px-2 py-1.5 text-[11px] text-left" aria-label="Сменить тему">☼ Тема</button></div>
      <div id="chatRowMenuSidebarScrim" aria-hidden="true"></div>
@@ -609,14 +606,6 @@ permalink: /
           <button type="button" data-action="select-search-mode" data-search-mode="offline" class="toolbar-menu-option"><strong data-i18n="searchModeOffline">Выкл.</strong><small data-i18n="searchModeOfflineHelp">Веб-инструменты выключены; облачному API всё ещё может требоваться интернет.</small></button>
         </div>
       </details>
-      <details id="functionsMenu" class="toolbar-menu flex-1 min-w-0">
-        <summary id="functionsMenuSummary" class="toolbar-menu-summary" data-i18n="functionsMenuLabel">Функции ▾</summary>
-        <div class="toolbar-menu-panel toolbar-menu-panel-right">
-          <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option" data-i18n="functionAgents">🧭 Структурированный разбор</button>
-          <button type="button" data-action="open-function-panel" data-function="skills" class="toolbar-menu-option" data-i18n="functionSkills">🧩 Профиль задачи</button>
-          <button type="button" data-action="open-function-panel" data-function="connectors" class="toolbar-menu-option" data-i18n="functionConnectors">🔌 Интеграции</button>
-        </div>
-      </details>
     </div>
     <input type="checkbox" id="toggleSearch" class="hidden" checked>
     <input type="checkbox" id="toggleMultiAgent" class="hidden">
@@ -692,30 +681,6 @@ permalink: /
     </section>
   </div>
 
-  <div id="researchStudioModal" class="hidden fixed inset-0 z-[65] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="researchStudioTitle">
-    <section class="w-full max-w-2xl max-h-[92dvh] overflow-y-auto rounded-2xl border border-cyan-800/60 bg-gray-950 p-4 sm:p-6 shadow-2xl space-y-4">
-      <header class="flex items-start justify-between gap-3"><div><p class="text-[10px] uppercase tracking-[.22em] font-bold text-cyan-300">aLandi · Studio</p><h2 id="researchStudioTitle" class="mt-1 text-lg font-bold" data-i18n="researchStudioTitle">Студия исследования</h2><p class="mt-1 text-xs leading-relaxed text-gray-400" data-i18n="researchStudioDescription">Окно подготовки исследовательского запроса. Запуск использует текущие параметры этого чата.</p></div><button type="button" data-action="close-research-studio" class="rounded-lg px-2 py-1 text-gray-400 hover:text-white" aria-label="Закрыть студию" data-i18n-aria-label="researchStudioClose">✕</button></header>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <label class="block text-xs text-gray-400">Усилие
-          <select id="researchStudioEffort" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="fast">Быстро</option><option value="deep">Тщательно</option></select>
-        </label>
-        <label class="block text-xs text-gray-400">Веб-поиск
-          <select id="researchStudioSearchMode" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="normal">Обычный</option><option value="more">Расширенный</option><option value="offline">Выкл.</option></select>
-        </label>
-      </div>
-      <label class="flex items-center gap-2 rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-xs text-gray-300">
-        <input id="researchStudioStructured" type="checkbox" class="rounded">
-        <span><strong class="block">Структурированный разбор</strong><span class="mt-0.5 block text-[10px] text-gray-500">Четыре последовательных этапа на выбранной модели.</span></span>
-      </label>
-      <div class="rounded-xl border border-cyan-900/50 bg-cyan-950/20 p-3 space-y-1.5">
-        <p id="researchStudioSettingsSummary" class="text-xs font-semibold text-gray-200" aria-live="polite">Текущие параметры чата</p>
-        <p class="text-[11px] leading-relaxed text-gray-400">Текст задачи вводи в основном поле сообщения. Это окно меняет только режимы.</p>
-      </div>
-      <p class="text-[10px] leading-relaxed text-gray-500">Прикрепи документы в чате. Внешние источники остаются недоверенными данными, а не инструкциями.</p>
-      <div class="flex flex-wrap justify-end gap-2"><button type="button" data-action="close-research-studio" class="rounded-xl border border-gray-700 px-3 py-2 text-sm text-gray-300 hover:bg-gray-800">Отмена</button><button type="button" data-action="start-research-studio" class="rounded-xl bg-cyan-600 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-500">Применить режим</button></div>
-      <p id="researchStudioStatus" class="text-[11px] text-gray-500" role="status" aria-live="polite">Параметры ещё не изменены.</p>
-    </section>
-  </div>
   <div id="functionPanelModal" class="hidden fixed inset-0 z-[66] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="functionPanelTitle">
     <section class="w-full max-w-lg max-h-[88dvh] overflow-y-auto rounded-2xl border border-gray-700 bg-gray-950 p-4 sm:p-5 shadow-2xl space-y-4">
       <header class="flex items-start justify-between gap-3">
@@ -2870,8 +2835,6 @@ permalink: /
       ].join(' ');
       $('modeHint').textContent = summary;
       $('modeHint').title = title;
-      const studioSummary = $('researchStudioSettingsSummary');
-      if (studioSummary) studioSummary.textContent = summary;
     }
     function setProcessingMode(mode) {
       const chat = getCurrentChat();
@@ -4722,25 +4685,6 @@ permalink: /
       if (!ok) throw new Error('Браузер не разрешил копирование.');
     }
     let activeTrace = null;
-    function openResearchStudio() {
-      const chat=getCurrentChat();ensureChatFunctionSettings(chat);
-      $('researchStudioEffort').value=chat.processingMode;
-      $('researchStudioSearchMode').value=chat.searchMode;
-      $('researchStudioStructured').checked=chat.multiAgentEnabled===true;
-      updateModeUI();
-      $('researchStudioStatus').textContent=getUiLanguage()==='en'?'Choose a research mode. Your prompt stays in the main composer.':'Выбери режим. Текст задачи остаётся в основном поле.';
-      $('researchStudioModal').classList.remove('hidden');
-    }
-    function closeResearchStudio() { $('researchStudioModal').classList.add('hidden'); }
-    function startResearchStudio() {
-      setProcessingMode($('researchStudioEffort').value);
-      setSearchMode($('researchStudioSearchMode').value);
-      setAgentMode($('researchStudioStructured').checked);
-      closeResearchStudio();
-      $('userInput').focus({preventScroll:true});
-      showToast(getUiLanguage()==='en'?'Research mode applied. Enter your task in the composer.':'Режим исследования включён. Введи задачу в основном поле.');
-    }
-
     let activeSpeechObjectUrl = '';
     let activeSpeechController = null;
     let speechRequestGeneration = 0;
@@ -5399,9 +5343,6 @@ permalink: /
           case 'stop-voice-conversation': stopVoiceConversation(); break;
           case 'stop-voice-recording': stopVoiceMessageRecording(false); break;
           case 'cancel-voice-recording': stopVoiceMessageRecording(true); break;
-          case 'open-research-studio': openResearchStudio(); break;
-          case 'close-research-studio': closeResearchStudio(); break;
-          case 'start-research-studio': await startResearchStudio(); break;
           case 'toggle-sidebar': toggleSidebar(); break;
           case 'close-sidebar': toggleSidebar(false); break;
           case 'new-chat': if(voiceConversationActive)stopVoiceConversation(false);createNewChat(); break;
@@ -5492,7 +5433,6 @@ permalink: /
     $('providerPreset').addEventListener('change',()=>{safeSet('ai_alandi_cloud_connection_v1','');if(currentProvider()==='alandi'){const url=$('baseUrl').value.trim();if(url)$('cloudBaseUrl').value=url;}});
     $('modelSearch').addEventListener('input',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
-    $('researchStudioModal').addEventListener('click', (event) => { if (event.target === $('researchStudioModal')) closeResearchStudio(); });
     $('projectSettingsModal').addEventListener('click', (event) => { if (event.target === $('projectSettingsModal')) closeProjectSettings(); });
     // Escape is handled centrally so every modal shares the same close and focus-return path.
     $('modelPreset').addEventListener('change',()=>{const value=$('modelPreset').value;if(value!=='__custom__')$('modelName').value=value;safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
@@ -5587,7 +5527,6 @@ permalink: /
         if (!$('chatActionModal').classList.contains('hidden')) closeChatActionDialog();
         else if (!$('traceModal').classList.contains('hidden')) closeTrace();
         else if (!$('projectSettingsModal').classList.contains('hidden')) closeProjectSettings();
-        else if (!$('researchStudioModal').classList.contains('hidden')) closeResearchStudio();
         else if (!$('settingsModal').classList.contains('hidden')) toggleSettings(false);
         else if (!$('sidebar').classList.contains('-translate-x-full')) toggleSidebar(false);
       }
