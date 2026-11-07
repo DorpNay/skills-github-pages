@@ -3382,6 +3382,20 @@ test('readability preferences persist and maintain semantic text contrast in bot
         statusRow.dataset.tone = 'info';
         // Force the root custom-property style to resolve before reading descendant colors.
         getComputedStyle(document.documentElement).getPropertyValue('--ui-text-muted');
+        const debugLink = sample.querySelector('#link');
+        const debugDisabled = sample.querySelector('#disabled');
+        console.log('READABILITY_DEBUG', JSON.stringify({
+          theme, contrast,
+          rootLink:getComputedStyle(document.documentElement).getPropertyValue('--ui-link').trim(),
+          bodyLink:getComputedStyle(document.body).getPropertyValue('--ui-link').trim(),
+          sampleLink:getComputedStyle(sample).getPropertyValue('--ui-link').trim(),
+          rootMuted:getComputedStyle(document.documentElement).getPropertyValue('--ui-text-muted').trim(),
+          sampleMuted:getComputedStyle(sample).getPropertyValue('--ui-text-muted').trim(),
+          linkColor:getComputedStyle(debugLink).color,
+          disabledColor:getComputedStyle(debugDisabled).color,
+          linkMatches:debugLink.matches('html[data-theme][data-reading-contrast="high"] .assistant-content a'),
+          disabledMatches:debugDisabled.matches('html[data-theme][data-reading-contrast="high"] .assistant-content :is(button,input,select,textarea):disabled')
+        }));
         results[theme + '-' + contrast] = {
           actual:actual(),
           expected:{
