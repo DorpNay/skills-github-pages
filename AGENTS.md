@@ -25,6 +25,7 @@
 - Record what was actually tested. A green GitHub Pages deployment is not proof that a live VPS/Tunnel was deployed.
 - Update user-facing runbook and troubleshooting alongside operational code.
 - No git reset --hard; do not overwrite unknown user changes.
+- When refreshing a live main/queue checkpoint, update OLEDUE.md, AGENTS.md, docs/project-state-snapshot.json, ORIENTER.md, project-reference/FILE_ORIENTER_RU.md, docs/PROJECT_STATE.yaml and docs/VOLLEY_LOG.md together; keep exact SHA and queue IDs aligned.
 
 
 ## OLEDUE handoff trigger
