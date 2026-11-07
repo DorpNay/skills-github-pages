@@ -489,7 +489,7 @@ PR #122 добавил только эксплуатационную надёж�
 - **aServi/provider separation:** aServi — собственный режим, не внешний провайдер. Внешний selector и fallback не включают aServi. Переключение между режимами только вручную.
 - **Sidebar:** единственный порядок — память → проекты → чаты; память компактная и закрыта по умолчанию, проекты закрыты по умолчанию при видимой кнопке создания, чаты открыты по умолчанию. Настройки проекта — только шестерёнка конкретного проекта; дублирующий theme footer удалён.
 - **Controls:** theme + language в header; 44px touch targets; stop-generation action сохраняется, но не оформляется красной заливкой.
-- **Release:** статус UI changes — IMPLEMENTED IN PR #169 only until exact-head checks pass, merge is authorized by this explicit publication request, and the post-merge Pages deployment plus live-site contract smoke verify the exact merge SHA and UI markers.
+- **Release:** статус UI changes — IMPLEMENTED IN PR #169 merged at `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2`; PR #173 merged at `bf039f887e29137b627b06fc2bb107c2793d6b69`. Pages deploy #42410162803 and public root/landing exact-SHA Chromium checks passed. The remaining release-contract failure is a stale CI assertion that forbids the owner-approved Functions menu; correct the sentinel, do not remove the menu.
 
 
 
