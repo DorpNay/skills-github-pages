@@ -1959,7 +1959,7 @@ test('retired Server Memory experiment has no UI or request path', async ({ page
 test('sidebar separates projects from personal chats and keeps navigation collapsible', async ({ page }) => {
   await page.addInitScript(() => {
     const project = (id, name) => ({ id, name, description: '', instructions: '', memoryScope: 'project-only', memory: [], createdAt: '', updatedAt: '' });
-    const chat = (id, title, projectId) => ({ id, title, projectId, projectMemoryEnabled: false messages: [] });
+    const chat = (id, title, projectId) => ({ id, title, projectId, projectMemoryEnabled: false, messages: [] });
     localStorage.setItem('ai_projects_v1', JSON.stringify([project('project-alpha','Alpha project'), project('project-beta','Beta project')]));
     localStorage.setItem('ai_chats_v87', JSON.stringify([chat('chat-personal','Personal chat',null),chat('chat-alpha','Alpha project chat','project-alpha'),chat('chat-beta','Beta project chat','project-beta')]));
     localStorage.setItem('ai_current_chat_v87','chat-alpha');
@@ -2203,7 +2203,7 @@ test('project memory scope edits the selected project, not the active chat proje
       memory: [], createdAt: '', updatedAt: ''
     });
     const chat = (id, title, projectId) => ({
-      id, title, projectId, projectMemoryEnabled: false messages: []
+      id, title, projectId, projectMemoryEnabled: false, messages: []
     });
     localStorage.setItem('ai_projects_v1', JSON.stringify([
       project('project-alpha', 'Alpha project'),
