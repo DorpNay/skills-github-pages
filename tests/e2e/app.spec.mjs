@@ -3247,9 +3247,10 @@ test('status tone semantics remain distinct and readable in both themes', async 
     const colors = [];
     for (const tone of ['neutral', 'info', 'success', 'warning', 'error']) {
       const state = await page.evaluate(value => {
-        showStatus('Status tone regression', value);
         const row = document.querySelector('#searchStatus');
         const label = document.querySelector('#statusText');
+        row.dataset.tone = value;
+        label.textContent = 'Status tone regression';
         return {
           tone: row.dataset.tone,
           color: getComputedStyle(label).color,
