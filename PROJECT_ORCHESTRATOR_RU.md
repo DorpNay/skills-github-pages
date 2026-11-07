@@ -14,11 +14,8 @@
 
 - **Master task registry:** [docs/MASTER_TASK_REGISTRY_RU.md](docs/MASTER_TASK_REGISTRY_RU.md) — lossless historical inventory with stable IDs.
 - **Append-only owner/capability additions:** [docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md](docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md).
-- **UI requirements and acceptance:** [docs/V1_UI_FINALIZATION_RU.md](docs/V1_UI_FINALIZATION_RU.md) — the only active UI acceptance checklist.
-- **Provider/privacy routing requirements:** [docs/ALANDI_REQUIREMENTS_REGISTER_RU.md](docs/ALANDI_REQUIREMENTS_REGISTER_RU.md) — aServi isolation, third-party fallback and memory boundaries.
-- **Historical broad owner request:** [docs/USER_REQUEST_CHECKLIST.md](docs/USER_REQUEST_CHECKLIST.md); later owner supersessions are recorded at its end.
+- **UI requirements and acceptance:** [docs/V1_UI_FINALIZATION_RU.md](docs/V1_UI_FINALIZATION_RU.md), especially owner corrections §§8.1–8.17 and subsequent sections.
 - **Current release sequencing:** [docs/LANDING_RELEASE_STRATEGY_RU.md](docs/LANDING_RELEASE_STRATEGY_RU.md) and [docs/IMPLEMENTATION_ROADMAP_RU.md](docs/IMPLEMENTATION_ROADMAP_RU.md).
-- **Archived UX snapshot:** [docs/LANDING_UX_POLISH_BACKLOG_RU.md](docs/LANDING_UX_POLISH_BACKLOG_RU.md) is historical only; do not treat it as an active backlog or create duplicate tasks.
 - **Release gates:** owner-controlled [Issue #111](https://github.com/DorpNay/skills-github-pages/issues/111).
 
 ## External-source catalogs and adoption evidence
@@ -53,11 +50,8 @@ For every newly stated owner goal:
 
 ## Current owner priority override — 2026-11-07
 
-1. **Single intake / no duplicate lists:** keep `MASTER_TASK_REGISTRY_RU.md` and its append-only addendum as the only task inventory. `V1_UI_FINALIZATION_RU.md` is the UI acceptance list; `ALANDI_REQUIREMENTS_REGISTER_RU.md` owns provider/privacy routing. `USER_REQUEST_CHECKLIST.md` is historical provenance. `LANDING_UX_POLISH_BACKLOG_RU.md` is archived.
-2. **Pages — VERIFIED LIVE:** main `c4f23e03f563d03213eb87002863da630fc8b833` was published by GitHub Pages deployment #42372745873; Quality #42372746360 verified the deployed revision equals that exact SHA. The Node 20 warning is from GitHub-managed Pages upload-artifact@v4; repository workflows already use upload-artifact@v7.0.2. The upstream skills/github-pages tutorial has no custom deploy workflow to copy. Do not switch Pages source to Actions without a separate owner-approved settings change.
-3. **UI-PROMO-001 — ACTIVE, PR #169:** branch `feat/ui-sidebar-81-polish-20261107`, base main `c4f23e03...`. This single coherent batch separates aServi from third-party providers and fallback, restructures settings, removes the retired Research Studio and unapproved Functions menu, simplifies the sidebar/header, neutralizes the stop action and replaces the no-op live smoke with an exact-SHA UI contract gate. It is IMPLEMENTED IN BRANCH only until exact-head CI passes. The owner's explicit request to publish the corrected UI authorizes release of this bounded PR after all gates pass; it does not authorize changing repository Pages settings or wholesale-merging other PRs.
-4. **PR #154:** stale V2 shell workbench with conflicts against current main and previously failing Chromium coverage. Use only for selective, audited ideas; never merge wholesale.
-5. **PR #168:** earlier docs-only checkpoint is stale relative to the current PR queue; current canonical corrections are being recorded with PR #169.
-6. **Research Studio / Functions menu:** Research Studio is retired; the visible Agents / Skills / Integrations menu was not owner-approved. Do not reintroduce either without a new explicit request.
-7. **SRC-001:** owner source sweep is documented in `INTEL.md` and `docs/OPEN_SOURCE_TRIAGE_RU.md`; research only, no bulk download/install/runtime adoption. Continue bounded baseline evaluations after the UI release.
-8. Preserve remaining tasks `CHAT-001`, `HYGIENE-007` and the rest of the existing registry. Priority changes do not delete lower-priority goals.
+1. **N₂O/task-intake:** principles, owner authority and single task register remain canonical; GitHub live state wins over historical checkpoint text.
+2. **GitHub Pages — VERIFIED LIVE:** exact main `c4f23e03f563d03213eb87002863da630fc8b833`; deployment #42372745873 SUCCESS; official managed Jekyll build v1.0.13, artifact upload and Deploy passed. Quality #42372746360 SUCCESS on the same SHA; 116 Chromium app tests, published root smoke 1/1, landing 8/8, and exact build-revision checks passed on ordinary canonical root and `/landing/` URLs without cache-busting. No duplicate deployment workflow is needed.
+3. **UI / UI-PROMO-001:** §8.17 is merged via #166; §8.14/#162 touch selection, §8.15/#164 status tones, §8.16/#157 icon-first actions and §8.1 swipe-close/#161 are already merged. PR #169 is the current main-based UI slice (head `current head resolved from live GitHub`, base `c4f23e03f563d03213eb87002863da630fc8b833`): aServi/provider separation and no-fallback routing, sidebar cleanup, retired Research Studio removal, removal of the unapproved 3-item Functions menu, neutral stop control, header sizing and a post-merge exact-SHA Pages release contract. Quality/Chromium and Graphify are pending on the exact head; do not call it published until merge + Pages live verification. PR #154 is a stale/diverged implementation source, not the active baseline; no wholesale merge.
+4. **External sources — DOCUMENTED / RESEARCH ONLY:** owner list and exact upstream/licensing/security triage are in `INTEL.md` and `docs/OPEN_SOURCE_TRIAGE_RU.md`; no download/install/code copy/runtime adoption was authorized.
+5. Continue all remaining registry goals (bounded source evaluations, voice/document work, continuity and verified cleanup) without erasing lower-priority scope or creating a parallel backlog.
