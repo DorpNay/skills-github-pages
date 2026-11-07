@@ -138,3 +138,28 @@ test('third-party provider fallback never switches to aServi', async ({ page }) 
   expect(geminiChatRequests.length).toBeGreaterThan(0);
   expect(aServiChatRequests).toEqual([]);
 });
+
+
+test('aServi and third-party settings disclosures are mutually exclusive', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+
+  const aservi = page.locator('#aserviSettingsGroup');
+  const thirdParty = page.locator('#legacyProviderSettings');
+  const additional = page.locator('#additionalSettings');
+
+  if (!(await aservi.evaluate(element => element.open))) await aservi.locator(':scope > summary').click();
+  await expect(aservi).toHaveAttribute('open', '');
+  await thirdParty.locator(':scope > summary').click();
+  await expect(thirdParty).toHaveAttribute('open', '');
+  await expect(aservi).not.toHaveAttribute('open', '');
+
+  await additional.locator(':scope > summary').click();
+  await expect(additional).toHaveAttribute('open', '');
+  await expect(thirdParty).not.toHaveAttribute('open', '');
+  await expect(aservi).not.toHaveAttribute('open', '');
+
+  await aservi.locator(':scope > summary').click();
+  await expect(aservi).toHaveAttribute('open', '');
+  await expect(additional).not.toHaveAttribute('open', '');
+});
