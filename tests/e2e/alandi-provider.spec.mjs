@@ -12,7 +12,7 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => { localStorage.clear(); sessionStorage.clear(); });
 });
 
-test('aLandi private gateway route works, stays local, and exposes cache status', async ({ page }) => {
+test('aServi private gateway route works, stays local, and exposes cache status', async ({ page }) => {
   const chatPayloads = [];
   const cloudChatRequests = [];
   await page.route('https://alandi.example.test/**', async route => {
@@ -59,12 +59,12 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await page.locator('#legacyProviderSettings > summary').click();
-  await page.locator('#providerPreset').selectOption('alandi');
-  await expect(page.locator('#modelName')).toHaveValue('qwen3.5:4b');
-  await page.locator('#baseUrl').fill('https://alandi.example.test/v1');
-  await page.locator('#modelName').fill('qwen3.5:4b');
-  await page.locator('#apiKey').fill('e2e-alandi-placeholder-key-not-a-secret-0123456789');
+  await expect(page.locator('#aserviSettingsGroup')).toHaveAttribute('open', '');
+  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_provider'))).toBe('alandi');
+  await page.locator('#cloudBaseUrl').fill('https://alandi.example.test/v1');
+  await page.locator('#cloudModel').fill('qwen3.5:4b');
+  await page.locator('#cloudApiKey').fill('e2e-alandi-placeholder-key-not-a-secret-0123456789');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
   await chooseSearchMode(page, 'offline');
