@@ -112,7 +112,7 @@ jobs:
       - name: Verify the deployed main client version after a main deployment
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          expected_title=$(grep -m1 -E '^title: AI Mobile Agent v[0-9]+\\.[0-9]+' index.md | sed 's/^title: //')
+          expected_title=$(grep -m1 -E '^title: AI Mobile Agent v[0-9]+[.][0-9]+' index.md | sed 's/^title: //')
           test -n "$expected_title"
           client_url="https://dorpnay.github.io/skills-github-pages/?smoke=$GITHUB_SHA"
           for attempt in $(seq 1 18); do
