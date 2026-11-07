@@ -5517,6 +5517,8 @@ permalink: /
         if (!$('chatActionModal').classList.contains('hidden')) closeChatActionDialog();
         else if (!$('traceModal').classList.contains('hidden')) closeTrace();
         else if (!$('projectSettingsModal').classList.contains('hidden')) closeProjectSettings();
+        else if (!$('functionPanelModal').classList.contains('hidden')) closeFunctionPanel();
+        else if ($('functionsMenu')?.open) { $('functionsMenu').open = false; $('functionsMenuSummary')?.focus(); }
         else if (!$('settingsModal').classList.contains('hidden')) toggleSettings(false);
         else if (!$('sidebar').classList.contains('-translate-x-full')) toggleSidebar(false);
       }
