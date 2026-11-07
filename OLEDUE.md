@@ -25,3 +25,20 @@
 ## Authority and safety
 
 Merge, deployment, rebase/main synchronization, force-push, destructive changes, secrets/permissions and consequential external actions require explicit owner authorization for the relevant scope. Previously granted authorization applies only while PR, diff and risk remain within that scope; material scope changes require renewed review. Never discard main-side security, cancellation, storage recovery or user-data protections to make a merge clean.
+
+## Owner priorities and continuity contract (2026-11-07)
+
+**Normative principles:** consult `docs/ALANDI_N2O_CORE_RU.md` (owner-approved aLandi principles) and `docs/ALANDI_N2O_KNOWLEDGE_LOOP_RU.md` before substantive work; `LOOP.md` is the concise execution method. GitHub is canonical; Project Sources/chat context are manually synced aids.
+
+**Owner's repeated requirements — carry forward, do not lose or silently close:**
+- First record each new request in the existing Master Task Registry; search for overlap and enrich the existing ID rather than duplicating it. Preserve lower-priority goals while temporarily superseding their execution order.
+- Keep a single orchestrator/roadmap pointer that locates principles, external-source inventory, decisions, plans and task registry. No parallel backlogs.
+- For each safe, bounded change, favor progress in the same turn and concise evidence reports; do not inflate orientation/handoff into a ritual or block implementation on repeated documentation-only cycles.
+- UI: actively promote the owner's existing UI work from `docs/V1_UI_FINALIZATION_RU.md`, especially §§8.1–8.17 and subsequent interface/menu/panel/function/minimize requirements, as coherent tested slices. No wholesale PR #131 merge; preserve main protections and mark runtime claims honestly.
+- GitHub Pages: verify publication end-to-end (main commit → Actions → Pages deployment → actual public URL/content). If it is not publishing, diagnose the current workflow/settings and repair the existing mechanism; only if the mechanism is irrecoverable, study and selectively reproduce the exact upstream publishing workflow from the original source repository, with provenance. Do not claim deploy from CI build alone.
+- Continue approved grouped external-source review from `INTEL.md`; acquire code/models/artifacts only with version, license, checksum, provenance and owner-approved storage policy.
+- Carefully remove verified obsolete code/HTML/CSS/docs and optimize only after call-site/dependency/test review; preserve rollback and user data.
+- Keep useful PR work consolidated into the V2 workbench or main by selective slices; retain only backup, orientation, active-scope and evidence-bearing branches/PRs. Never delete history/branches without explicit approval and live reference checks.
+- Recurring conversation failure concern: reduce oversized/duplicative handoffs, capture durable checkpoints and the next exact action in canonical docs, avoid needless chat repetition. This is a workflow mitigation, not a claim to fix ChatGPT client history/loading failures.
+
+**Current owner execution order (overrides stale checkpoint ordering):** (1) finish a compact OLEDUE/control-plane sync including principles pointer and task capture; (2) investigate/verify Pages publishing and repair it; (3) promote UI requirements §§8.1–8.17 and subsequent interface requirements through coherent implementation/test slices; (4) preserve and resume remaining previously recorded goals. See the single Master Task Registry and `docs/IMPLEMENTATION_ROADMAP_RU.md`.
