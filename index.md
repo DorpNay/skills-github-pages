@@ -3196,6 +3196,7 @@ permalink: /
       if(!baseUrl||!model||!key){setCloudStatus('disconnected');return;}
       const formatError=validateCloudBaseUrl(baseUrl);if(formatError){setCloudFieldError('cloudBaseUrl',formatError);setCloudStatus('disconnected');return;}
       const fingerprint=await providerKeyFingerprint(key);
+      let marker=null;try{marker=JSON.parse(safeGet('ai_provider_connection_alandi')||'null');}catch(_){}
       if(!marker?.ok||marker.baseUrl!==baseUrl||marker.model!==model||marker.keyFingerprint!==fingerprint){setCloudStatus('disconnected');return;}
       try{
         const health=new URL(baseUrl);health.pathname=health.pathname.replace(/\/v1\/?$/,'').replace(/\/$/,'')+'/healthz';health.search='';health.hash='';
