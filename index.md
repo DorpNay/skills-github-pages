@@ -372,8 +372,8 @@ permalink: /
       -webkit-touch-callout: default;
     }
     /* UI §8.17: user-controlled message typography; semantic colors stay theme-aware. */
-    .assistant-content, .message-viewer-content { font-size:var(--reading-font-size,15px)!important; line-height:var(--reading-line-height,1.6)!important; }
-    .assistant-content :where(p,li,blockquote,td,th), .message-viewer-content :where(p,li,blockquote,td,th) { font-size:inherit!important; line-height:inherit!important; }
+    .chat-bubble, .assistant-content, .message-viewer-content { font-size:var(--reading-font-size,15px)!important; line-height:var(--reading-line-height,1.6)!important; }
+    .chat-bubble :where(p,li,blockquote,td,th), .assistant-content :where(p,li,blockquote,td,th), .message-viewer-content :where(p,li,blockquote,td,th) { font-size:inherit!important; line-height:inherit!important; }
   </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
