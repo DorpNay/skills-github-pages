@@ -7,8 +7,8 @@
 - Main `bf039f887e29137b627b06fc2bb107c2793d6b69`; PR #173 squash-merged. Pages deployment #42410162803 SUCCESS on exact SHA.
 - Main Quality #42410163178: build, Context, Static Analysis, Security, Integrity and Chromium jobs PASS. Chromium validated the built app, public root revision, canonical landing content and landing Chromium 8/8.
 - Published release-contract job #128517290166 FAILED because its forbidden list incorrectly rejects owner-approved `id="functionsMenu"`. This is a stale sentinel; the menu with Agents/Deep Research/Skills is required. Research Studio, legacy aLandi provider option and removed sidebar controls remain forbidden.
-- **Snapshot marker:** open PRs (0): open issues (1): #111.
-- **Live open PR queue (0):** none. **Live open issue (1):** #111, owner/environment controlled.
+- **Snapshot marker:** open PRs (0): open issues (1): #111. The current PR #174 is excluded from the other-PR snapshot count by the freshness gate.
+- **Live open PR queue:** #174 (this bounded follow-up only); no other open PRs. **Live open issue (1):** #111, owner/environment controlled.
 - Follow-up branch `fix/pages-functions-contract-and-state-20261108` is based on exact main `bf039f887e29137b627b06fc2bb107c2793d6b69`; its CI/merge status must be read live.
 - PRs #125/#131/#152/#154/#155/#168/#171/#172 remain closed non-merged; retain their still-open registry goals and selected research. VPS/Tunnel/Ollama, target hardware and native iPhone/VoiceOver remain unverified.
 
