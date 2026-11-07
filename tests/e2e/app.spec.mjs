@@ -2736,7 +2736,7 @@ test('unrequested Functions and Research Studio entrypoints are absent', async (
   await expect(page.locator('#functionsMenu')).toHaveCount(0);
   await expect(page.locator('#functionsMenuSummary')).toHaveCount(0);
   await expect(page.locator('[data-action="open-research-studio"]')).toHaveCount(0);
-  await expect(page.locator('#researchStudioModal')).toBeHidden();
+  await expect(page.locator('#researchStudioModal')).toHaveCount(0);
   await expect(page.locator('#searchModeSummary')).toBeVisible();
 });
 
