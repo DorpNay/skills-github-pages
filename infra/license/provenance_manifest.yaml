@@ -133,3 +133,26 @@ artifacts:
     ship: false
     status: "dependency_pinned_not_bundled"
     notes: "Runtime dependency pinned for local PDF text extraction; package artifacts are resolved by the Python package manager and are not vendored in this repository."
+
+
+  - id: memvid-source-v2.0.140-curated-archive
+    kind: source_code
+    upstream: "https://github.com/memvid/memvid"
+    source_version: "v2.0.140; commit e18fe55494379e2ab7397ce03655e8abbc5e0c31"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice_subject_to_dependency_review"
+    sha256: null
+    ship: false
+    status: "archived_curated_source_snapshot; exact_upstream_git_blob_sha1_verified; whole_archive_sha256_not_computed"
+    notes: "22-file curated source/license subset, 727,588 bytes per UPSTREAM-MANIFEST.yaml; exact pinned upstream Git blob SHA-1s matched. Excludes binaries, filter/model assets, external dictionaries and dependency source; not complete/buildable and not runtime-integrated. Per-file SHA-256 values are recorded from upstream manifest but were not independently recomputed in this pass."
+
+  - id: rag-anything-source-v1.4.1-curated-archive
+    kind: source_code
+    upstream: "https://github.com/HKUDS/RAG-Anything"
+    source_version: "v1.4.1; commit 0ef67b4d476b66407a03a39e5b17e756fc0aef29"
+    license_spdx: "MIT"
+    commercial_use: "candidate_allowed_with_notice_subject_to_transitive_license_and_model_review"
+    sha256: null
+    ship: false
+    status: "archived_selected_source_snapshot; 18_source_files_and_LICENSE_exact_upstream_git_blob_sha1_verified; whole_archive_sha256_not_computed"
+    notes: "Selected 18 source files including parser.py, plus exact MIT LICENSE; not a complete checkout. MinerU, LightRAG, OCR/ASR/VLM model, dataset and transitive dependency terms are separate; no runtime or optional dependency installed."

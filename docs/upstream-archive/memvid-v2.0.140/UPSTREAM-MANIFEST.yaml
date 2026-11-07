@@ -1,24 +1,128 @@
-schema_version: 1
-name: Memvid
-upstream_repository: https://github.com/memvid/memvid
-upstream_tag: v2.0.140
+archive_id: memvid-v2.0.140-curated-source
+upstream: https://github.com/memvid/memvid
+tag: v2.0.140
 upstream_commit: e18fe55494379e2ab7397ce03655e8abbc5e0c31
-upstream_license: Apache-2.0
+license: Apache-2.0
 license_file: LICENSE
-package_metadata:
-  manifest: Cargo.toml
-  crate: memvid-core
-  version: 2.0.140
-  license: Apache-2.0
-archive_scope: selected Rust source snapshot; not a complete upstream checkout
-purpose: research/reference only; not an active aLandi runtime dependency
-graphify_excluded: true
-verification_scope: only the explicitly listed file blobs were independently matched; archive is a selected source snapshot, not a full checkout
-reviewed_in_pr: 169
-reviewed_at: 2026-11-08
-verified_at: 2026-11-08
-verified_files:
-  - path: src/types/manifest.rs
-    upstream_git_blob_sha1: 1882f4c82a480c212c94209b0c51da352f614d16
-    local_git_blob_sha1: 1882f4c82a480c212c94209b0c51da352f614d16
-    status: exact_blob_match
+snapshot_date: 2026-11-08
+snapshot_scope: curated source subset; not a complete/buildable upstream mirror
+runtime_status: evaluation-only; not installed or wired into aLandi
+canonical_memory_decision: SQLite remains canonical; this source is for export/archive prototype research only
+excluded:
+  - binary model/filter assets (*.bytes)
+  - external frequency dictionaries under data/
+  - compiled binaries and binary .mv2e fixtures
+  - third-party dependency source and model weights
+file_count: 22
+total_bytes: 727588
+files:
+  - path: "LICENSE"
+    bytes_utf8: 10755
+    upstream_git_blob_sha1: "b261ce12f3c79d32ab8aeb9f793f23cfb0bca521"
+    archived_git_blob_sha1: "b261ce12f3c79d32ab8aeb9f793f23cfb0bca521"
+    sha256: "fd64d7380c9889373ec5e3d99ee0e154c8f1707c036054090dc2437eb765cb98"
+  - path: "README.md"
+    bytes_utf8: 16320
+    upstream_git_blob_sha1: "98c426b76c203bad9130784350ba2cc1494f0ce1"
+    archived_git_blob_sha1: "98c426b76c203bad9130784350ba2cc1494f0ce1"
+    sha256: "d7ada68cd159da5e83e722852ad0ee43b36c46f9d354aef5222c122959015ad6"
+  - path: "Cargo.toml"
+    bytes_utf8: 6766
+    upstream_git_blob_sha1: "c548bc5764d1fc3e00e65de1694d45af9ffcb3b1"
+    archived_git_blob_sha1: "c548bc5764d1fc3e00e65de1694d45af9ffcb3b1"
+    sha256: "57ebd4a661792c7e30380fc2edf350d6e7fb926684627b01e5ae6ab13c298795"
+  - path: "Cargo.lock"
+    bytes_utf8: 166514
+    upstream_git_blob_sha1: "2183aa777ee57affff2ad273fc05fbc5d6ef4ae4"
+    archived_git_blob_sha1: "2183aa777ee57affff2ad273fc05fbc5d6ef4ae4"
+    sha256: "dcbc498fb8be49ecc06300802131a7ae13bb2e165910472cc16a9a6a350c80ea"
+  - path: "rust-toolchain.toml"
+    bytes_utf8: 143
+    upstream_git_blob_sha1: "fb109b75a48dfd3da57a56f74b7b0cec5e3722e8"
+    archived_git_blob_sha1: "fb109b75a48dfd3da57a56f74b7b0cec5e3722e8"
+    sha256: "8dcd31ce75b55f6d4c90ebe3b0ace05084aa44fbcfcefdd63d5a13f288ddd9cc"
+  - path: "src/lib.rs"
+    bytes_utf8: 52167
+    upstream_git_blob_sha1: "cc90ea608ef1da694bda1bb773df58138c381096"
+    archived_git_blob_sha1: "cc90ea608ef1da694bda1bb773df58138c381096"
+    sha256: "a7f219e0fc616f097696f9f3dfb7404c45a26524a5caaa703e33cdbb1462d1de"
+  - path: "src/memvid/builder.rs"
+    bytes_utf8: 17526
+    upstream_git_blob_sha1: "e80b94d769f9deffa72d55d2489aa5a7a80e4f1a"
+    archived_git_blob_sha1: "e80b94d769f9deffa72d55d2489aa5a7a80e4f1a"
+    sha256: "27f3b1ac6f0cb0666624c0f131d3da3cf7d76aa76eff0a0c5ce9ea1fb69048bd"
+  - path: "src/memvid/frame.rs"
+    bytes_utf8: 24415
+    upstream_git_blob_sha1: "dfbcf1916f589a853705e080de86084e5e03d52d"
+    archived_git_blob_sha1: "dfbcf1916f589a853705e080de86084e5e03d52d"
+    sha256: "37620c64d112d962f0f259fd76491b13fdf73b600ea682df78caa86b1de83536"
+  - path: "src/memvid/memory.rs"
+    bytes_utf8: 29508
+    upstream_git_blob_sha1: "404043b3dd838d13aa9f899ba41dc1f34cc01193"
+    archived_git_blob_sha1: "404043b3dd838d13aa9f899ba41dc1f34cc01193"
+    sha256: "56a9e261de8d5937dfcda1668bf280d7dc52cc541b55e7712bd28cf9e9102118"
+  - path: "src/memvid/lifecycle.rs"
+    bytes_utf8: 57851
+    upstream_git_blob_sha1: "b937db6f92a31a3e31ddc4176ee1a936a552020f"
+    archived_git_blob_sha1: "b937db6f92a31a3e31ddc4176ee1a936a552020f"
+    sha256: "42f20ec06ec81fbe906d5c421ed63f79f52901fb7d8798bcf0240714045d55c9"
+  - path: "src/memvid/mutation.rs"
+    bytes_utf8: 164204
+    upstream_git_blob_sha1: "117eb013b2fc4851716ef8c647dd11a68b8782e6"
+    archived_git_blob_sha1: "117eb013b2fc4851716ef8c647dd11a68b8782e6"
+    sha256: "bbd2725b8b944c8aba2341eb4dd04554df46436a8f810707845c101a04073ebd"
+  - path: "src/memvid/acl.rs"
+    bytes_utf8: 10060
+    upstream_git_blob_sha1: "348a61bc09e828dd4a9fe1039b4ec7f506c0b034"
+    archived_git_blob_sha1: "348a61bc09e828dd4a9fe1039b4ec7f506c0b034"
+    sha256: "2a4c1df0bc2bb425ab13e34b43f868adc888917b35b03ad7ab401867d12ec9dc"
+  - path: "src/io/wal.rs"
+    bytes_utf8: 17723
+    upstream_git_blob_sha1: "66a04254d2c8e5c51eda7f5ebd3e345052239a41"
+    archived_git_blob_sha1: "66a04254d2c8e5c51eda7f5ebd3e345052239a41"
+    sha256: "917c1b09cd3dbb69a0ab47fd397814b545beb110c8fa952cab6d14940208a18c"
+  - path: "src/io/manifest_wal.rs"
+    bytes_utf8: 10153
+    upstream_git_blob_sha1: "43a8730be318740bb4055257193d5aa217c10c04"
+    archived_git_blob_sha1: "43a8730be318740bb4055257193d5aa217c10c04"
+    sha256: "4ead639ef4ac3d51eb151b0b287f0f857bec63639e21fdd33da2242630cd023b"
+  - path: "src/memvid/search/api.rs"
+    bytes_utf8: 38497
+    upstream_git_blob_sha1: "c597dc8a8dad400a24cd054d886bd7e2e74dea39"
+    archived_git_blob_sha1: "c597dc8a8dad400a24cd054d886bd7e2e74dea39"
+    sha256: "bf5f7c0667f659659238e930dc208b918ba8a5dff26874d21494774febc77690"
+  - path: "src/memvid/search/tantivy.rs"
+    bytes_utf8: 22173
+    upstream_git_blob_sha1: "cbb12ffa8ff68d7d22bb5949f7f8002bf0cfb37e"
+    archived_git_blob_sha1: "cbb12ffa8ff68d7d22bb5949f7f8002bf0cfb37e"
+    sha256: "edccb7ec1ac66b06d972c33f141982038b0c258f1bec5b020a67fca1f0f2b3b0"
+  - path: "src/types/manifest.rs"
+    bytes_utf8: 30330
+    upstream_git_blob_sha1: "1882f4c82a480c212c94209b0c51da352f614d16"
+    archived_git_blob_sha1: "1882f4c82a480c212c94209b0c51da352f614d16"
+    sha256: "8ec1383f71d8c4c95cf59c5c048d02a4d7ee9d401047c3eae63c5516163a33eb"
+  - path: "src/types/acl.rs"
+    bytes_utf8: 2021
+    upstream_git_blob_sha1: "ec39e00b315053da1b06706227d4a828d5328e5f"
+    archived_git_blob_sha1: "ec39e00b315053da1b06706227d4a828d5328e5f"
+    sha256: "0606f13a33dbf0309dd8ac93c73d21dcef12931920a02ea4c80ed292dd26eb1e"
+  - path: "src/types/memory_card.rs"
+    bytes_utf8: 18876
+    upstream_git_blob_sha1: "f8ce6280b01b271b2d0870cd516879debd77ab22"
+    archived_git_blob_sha1: "f8ce6280b01b271b2d0870cd516879debd77ab22"
+    sha256: "70ba120eddb9fa8cafe3abcb82dc5cbb933d0873661eafefd9f7b7449c39ca64"
+  - path: "tests/single_file.rs"
+    bytes_utf8: 11988
+    upstream_git_blob_sha1: "1633c9e37528d3b71fccd5ddca37e5b34c898be0"
+    archived_git_blob_sha1: "1633c9e37528d3b71fccd5ddca37e5b34c898be0"
+    sha256: "b653eea57b1629abd6918d6ee94ad256ca84a60859d7e89824c472f93137cd88"
+  - path: "tests/crash_recovery.rs"
+    bytes_utf8: 2367
+    upstream_git_blob_sha1: "d116f84971b034333c497839443b95c7aa2a11f6"
+    archived_git_blob_sha1: "d116f84971b034333c497839443b95c7aa2a11f6"
+    sha256: "3a000ff8e5f2620f9078c6190179ae0f55a6e90c2f7467e13aa8b901c4a37962"
+  - path: "tests/mutation.rs"
+    bytes_utf8: 17231
+    upstream_git_blob_sha1: "13992e898da78121eaf513b4138987d748b91984"
+    archived_git_blob_sha1: "13992e898da78121eaf513b4138987d748b91984"
+    sha256: "ac1dbbff3299e519f6ea2cb470f81d8e116ce984573b19098734af851df22700"
