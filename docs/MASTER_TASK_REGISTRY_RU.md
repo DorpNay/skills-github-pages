@@ -285,8 +285,8 @@
 - [ ] **V1-140** (строка 140; 13. Каталог моделей и provider state — [~]): Live provider smoke остаётся опциональным и требует явного согласия; mock E2E не выдавать за доступность реального аккаунта.
 - [~] **V1-147** (строка 147; 14. Project settings — [~]): В PR #121 E2E должен подтвердить modal close, persistence, создание и переключение проекта после текущих исправлений.
 - [ ] **V1-148** (строка 148; 14. Project settings — [~]): Реальный multi-device sync/source indexing не входит в V1; не изображать его включённым.
-- [~] **V1-154** (строка 154; 15. Search & Research Studio — [~]): PR #121 удалил дублирующие prompt/depth/web selectors и показывает текущие настройки чата. Исправлена проверка E2E, которая считала первичную provider connectivity probe отправкой пользовательского сообщения; exact-head run ещё требуется.
-- [ ] **V1-155** (строка 155; 15. Search & Research Studio — [~]): Проверить на 390×844, клавиатуре, RU/EN, Escape, сохранение draft и отсутствие автоматической отправки.
+- [x] **V1-154** (строка 154; 15. Research Studio — RETIRED): По прямому указанию владельца Research Studio удалена из интерфейса и приложения; не восстанавливать из старых PR/документации. Исследовательский pipeline как capability чата не удалён.
+- [x] **V1-155** (строка 155; 15. Research Studio — RETIRED): UI-проверки модального окна больше не применимы; regression test подтверждает отсутствие удалённого shortcut/modal и отсутствие горизонтального overflow на 390px.
 - [ ] **V1-156** (строка 156; 15. Search & Research Studio — [~]): Исследовательский pipeline остаётся четырёхэтапным на одной модели; UI не называть независимой swarm-командой.
 - [~] **V1-163** (строка 163; 16. Task profiles / skills — [~]): Проверить quiz flow, кастомный профиль, формат результата, переключение чата и сохранение.
 - [ ] **V1-164** (строка 164; 16. Task profiles / skills — [~]): Не показывать несуществующие навыки как доступные runtime-пакеты.
@@ -493,7 +493,7 @@
 - [ ] **CHATSET-108** (строка 108; `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`): Offline не предлагает веб-инструменты даже в тщательном/структурированном режиме.
 - [ ] **CHATSET-109** (строка 109; `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`): Смена профиля не включает веб-поиск и не включает структурированный конвейер.
 - [ ] **CHATSET-110** (строка 110; `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`): Структурированный разбор не называется «командой независимых агентов».
-- [ ] **CHATSET-111** (строка 111; `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`): Research Studio не меняет настройки чата и показывает их текущую сводку.
+- [x] **CHATSET-111** (строка 111; `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`): Research Studio снята владельцем и удалена; прежний контракт модального окна больше не действует. Сами настройки чата остаются отдельными.
 - [ ] **CHATSET-112** (строка 112; `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`): Настройки сохраняются отдельно для каждого чата; импорт/экспорт не теряет значения.
 - [ ] **CHATSET-113** (строка 113; `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`): Русские и английские подписи и подсказки согласованы.
 - [ ] **CHATSET-114** (строка 114; `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`): На мобильном экране базовые контролы остаются читаемыми и доступны для касания.
