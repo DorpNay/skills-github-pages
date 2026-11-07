@@ -3280,3 +3280,23 @@ test('readability preferences persist and maintain semantic text contrast in bot
   expect(applied.userLineHeight).toBe('38px');
   expect(applied.contrast).toBe('high');
 });
+
+test('settings and function panels close on backdrop click without leaving a stale overlay', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  const settings = page.locator('#settingsModal');
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  await expect(settings).toBeVisible();
+  await settings.click({ position: { x: 4, y: 4 } });
+  await expect(settings).toBeHidden();
+
+  const summary = page.locator('#functionsMenuSummary');
+  await summary.click();
+  await page.locator('#functionsMenu [data-function="agents"]').click();
+  const modal = page.locator('#functionPanelModal');
+  await expect(modal).toBeVisible();
+  await modal.click({ position: { x: 4, y: 4 } });
+  await expect(modal).toBeHidden();
+  await expect(summary).toBeFocused();
+  await expect(page.locator('#chatBox')).toBeVisible();
+});
