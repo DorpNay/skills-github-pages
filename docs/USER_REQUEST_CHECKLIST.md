@@ -301,3 +301,17 @@
 - [x] Landing and in-app roadmap E2E coverage passed on PR #121 exact head, including published-site browser smoke. Post-merge Pages deployment remains a separate check.
 - [ ] Native iPhone Safari, keyboard, safe-area, screen-reader and touch verification remain manual gates.
 - [ ] Issue #111 remains open for owner-only ruleset, VPS/hardware, live gateway/model, RAG corpus, voice/device and sandbox gates. CI alone cannot close it.
+
+## Owner supersession — 2026-11-07
+
+The following clarifications supersede older UI notes above where they conflict. The original checklist remains historical provenance; active UI acceptance is in `docs/V1_UI_FINALIZATION_RU.md` and task status remains in the Master Task Registry.
+
+- **aServi is a first-party mode, not a third-party provider.** The internal compatibility key `alandi` may remain in routing/storage, but must never appear in the third-party selector, including as a hidden option.
+- **Mode switching is manual.** Third-party fallback may move only among third-party providers; it must never fall back to aServi. Returning to aServi requires an explicit user action.
+- **Settings hierarchy:** separate collapsible sections for aServi, third-party providers, and additional settings. Opening aServi closes both other sections; opening either other section closes aServi. The third-party and additional sections may coexist open.
+- **Research Studio is retired.** No sidebar shortcut, modal, JS entrypoint, or renamed replacement.
+- **The visible Functions menu with Agents / Skills / Integrations was not owner-approved.** Do not expose or reintroduce it without a new explicit request.
+- **Sidebar order:** memory → projects → chats; no global project-settings button and no duplicate theme button in the sidebar. Per-project settings remain on that project's gear.
+- **Header controls:** theme and language are grouped in the header. Stop-generation remains available but must not be styled as an unsolicited red action.
+- **Publication is not accepted from CI alone.** Verify exact main SHA on the canonical public URL, then assert the expected UI markers and absence of retired elements. PR branch code is not live until merged and post-merge Pages deployment is verified.
+
