@@ -3918,7 +3918,7 @@ permalink: /
     }
     function getApiCandidates(requestedModel) {
       const selectedProvider=safeGet(STORAGE.provider)||'alandi',allowCrossProvider=safeGet(STORAGE.crossProviderFallback)==='true';
-      const order=[selectedProvider,...(allowCrossProvider&&selectedProvider!=='alandi'?Object.keys(PROVIDERS).filter(provider=>provider!==selectedProvider&&provider!=='custom'):[])];
+      const order=[selectedProvider,...(allowCrossProvider&&selectedProvider!=='alandi'?Object.keys(PROVIDERS).filter(provider=>provider!==selectedProvider&&provider!=='custom'&&provider!=='alandi'):[])];
       const candidates = [], seen = new Set();
       const maxRouterCandidates = 16;
       for (const provider of order) {
