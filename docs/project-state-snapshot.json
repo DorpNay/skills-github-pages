@@ -157,7 +157,7 @@
     "main_freshness_run": null,
     "main_graphify_run": null,
     "open_prs": "6 open PRs excluding current PR #167: #125, #131, #152, #154, #155, #166",
-    "owner_task": "Finish UI §8.17 PR #166 by diagnosing and correcting dark/high semantic-role colors without weakening the regression test; after exact-head gates and explicit owner approval, merge and verify a new Pages deployment. External-source sweep is documented as research-only; preserve all other registry goals.",
+    "owner_task": "Finish UI §8.17 PR #166 by diagnosing and correcting dark/high semantic-role colors without weakening the regression test; current diagnostic head 571a68d has exact-head Quality and Graphify in progress. After all gates and explicit owner approval, merge and verify a new Pages deployment. External-source sweep is documented in SRC-001 and remains research-only.",
     "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
     "pr131_exact_head_verified": false,
     "pr131_compare": "Large Draft V2 workbench, stale/diverged and mergeable_state dirty; selective reconciliation only.",
@@ -214,8 +214,8 @@
     "pr157_compare": "Merged at 40540f6d75a90877ff9cbec5bbfacb48ee6f775c; exact-head Quality #42349368043 and Graphify #42349368086 passed.",
     "pr158_head": "4da559cf6abc21bfa3920b5e0297a2abb84e7453",
     "pr158_compare": "Merged at d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c; exact-head Quality #42349540173 passed; exact-main root title Quality #42349853526 remains in progress.",
-    "pr166_head": "dddc6138fda4d9e50bcd8b48404c339280f2e0c5",
-    "pr166_compare": "Open PR #166, base main 69645ff. Previous Quality runs #42363750968 and #42366669769 failed one Chromium assertion for dark/high disabled/link colors (115 passed, 1 failed). Current diagnostic Quality #42367174162 and Graphify #42367174123 were in progress when captured."
+    "pr166_head": "571a68dec8f68ecfa62e7ef05f75f32c21b342de",
+    "pr166_compare": "Open PR #166, base main 69645ff. Exact heads 7c065c1, a79cb6b and dddc613 failed one dark/high disabled/link semantic-role assertion (115 passed, 1 failed). Current diagnostic head 571a68d adds selector match and inherited/computed color diagnostics; Quality #42367459092 and Graphify #42367459077 were in progress at capture."
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": true,
