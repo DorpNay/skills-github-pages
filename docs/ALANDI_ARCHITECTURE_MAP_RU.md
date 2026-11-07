@@ -1,6 +1,6 @@
 # aLandi — карта архитектуры и модулей
 
-**Срез:** main baseline `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`; PR #146 merged at `21162e858d769c23ee4907264305f792148a7fbf`, PR #147 at `3f37a8166fcbf89c5392f985e290be48ea27ef6a`, PR #148 at `4fbf16aad3f741159654950e0260aaf717653291`, PR #149 at `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`. PR #150 storage recovery slice is in review at exact HEAD `0c2cf9f15c9cef6053487e5f01adadcb8917115e`; exact-head Quality #42011984158, Freshness #42011984534, Provenance #42011984243 and Graphify #42011984203 passed. Do not treat it as merged or deployed. Earlier V1/Gateway foundations #121/#122 remain part of this map.  
+**Срез main:** `c4f23e03f563d03213eb87002863da630fc8b833` (2026-11-08). Ранее указанные PR #146–#150 — исторические milestones; не использовать их SHA/очередь как текущие. PR #169 — активная интеграционная ветка: в ней удаляется server-memory graph (§8.12), но main до merge всё ещё содержит старую реализацию. После merge обновить route/module snapshot и повторно построить Graphify. VPS/Tunnel/Ollama не подтверждены live.  
 **Тип:** кураторская схема границ модулей по дереву репозитория и фактическим route/function declarations. Это **не** автоматически извлечённый call graph и не доказательство live deployment.
 
 ## 1. Системная схема
@@ -35,9 +35,9 @@ flowchart TD
 | Контур | Точки входа | Что важно |
 |---|---|---|
 | Клиент | `index.md` | Большой статический HTML/JS; история и настройки в браузере. Browser API keys не являются server-side vault. |
-| Gateway | `gateway/app.py`, `gateway/README_RU.md` | FastAPI: health/capabilities/models/chat, admin, conversation delta sync, RAG, search, documents, audio. Server-memory graph API retired by owner 2026-11-07. VPS не подтверждён live. |
+| Gateway | `gateway/app.py`, `gateway/README_RU.md` | FastAPI: health/capabilities/models/chat, admin, conversation delta sync, RAG, search, documents, audio. Owner decision D-021 retires server-memory graph; PR #169 removes its API/modules. Main still has the old implementation until merge. VPS не подтверждён live. |
 | Routing | `gateway/routing.py` | Детерминированная allowlist-политика; общий helper-model cascade не считать включённым. |
-| Browser-local notes | `index.md` | Personal/project notes remain in browser storage with explicit local scope controls; no server graph bridge. |
+| Browser-local notes | `index.md` | Personal/project notes remain in browser storage with explicit local scope controls. PR #169 removes the old server-graph bridge; main remains on the previous implementation until merge. |
 | Conversation delta sync | `gateway/memory/delta_sync.py` | Versioned patch/revision conflict; separate from browser-local project notes and retired server-memory graph. |
 | Retrieval/RAG | `gateway/rag/lazy_graph_rag.py` | SQLite FTS5 + lexical concepts; baseline, не dense vector RAG и не полный LazyGraphRAG. |
 | Evidence | `gateway/rag/evidence_ledger.py`, `citations.py` | Source URI, offsets/hash и scope должны сохранять проверяемую связь с источником. |
@@ -45,7 +45,7 @@ flowchart TD
 | SSRF | `gateway/security/ssrf_protection.py` | Helper destination validation; важно корректно вызывать после DNS resolution и перепроверять redirect chain. |
 | Documents | `gateway/app.py`, `gateway/tests/test_document_extraction.py` | Ограниченное извлечение; не обещать универсальную поддержку форматов. |
 | Voice | `gateway/voice/`, `gateway/tests/test_audio_*.py`, `tests/e2e/audio-transcription.spec.mjs` | ASR/TTS adapters и UI есть в коде, но нужны бинарники/модели/flags; качество и latency на целевом устройстве не измерены. |
-| Search | `index.md`, `gateway/app.py` | Web-search adapters remain independent; Research Studio UI/modal is retired and must not be restored from historical docs. |
+| Search | `index.md`, `gateway/app.py` | Web-search adapters remain independent. PR #169 removes the Research Studio UI/modal while retaining the independent four-stage research pipeline; main remains unchanged until merge. |
 | Quality | `.github/workflows/`, `scripts/check_project_metadata.py`, `scripts/check_license_manifest.py` | Проверки относятся к точному SHA; зелёный CI не подтверждает runtime на VPS. |
 
 ## 3. Маршруты gateway, проверенные в `gateway/app.py`
@@ -65,7 +65,7 @@ flowchart TD
 - UI: `tests/e2e/app.spec.mjs`, `alandi-provider.spec.mjs`, `document-attachments.spec.mjs`, `audio-transcription.spec.mjs`, `research-evidence.spec.mjs`, `context-budget.spec.mjs`. Research Studio regression is covered by the retired-surface test in `app.spec.mjs`.
 - Gateway: `gateway/tests/test_app.py`, `test_six_layers.py`, `test_v016_foundation.py`, `test_document_extraction.py`, `test_audio_*.py`, `test_searxng_search.py`.
 - Release: Quality Sentinels, Pages deployment/browser smoke, provenance gate. Проверять exact PR HEAD, затем post-merge main.
-- Для memory/privacy: browser-local project scope, conversation delta sync boundaries, RAG exact-scope retrieval/deletion and evidence scope. Server graph candidate/confirmed lifecycle is retired.
+- Для memory/privacy: browser-local project scope, conversation delta sync boundaries, RAG exact-scope retrieval/deletion and evidence scope. Server graph candidate/confirmed lifecycle is retired by owner decision; code removal is pending PR #169 merge.
 
 ## 5. Graphify — dev-only code navigation, не runtime-интеграция
 
@@ -104,7 +104,7 @@ flowchart TD
 ## 7. Graphify inspection — PR #121 audit (2026-10-30)
 
 - Artifact from Graphify workflow #262, commit `f9d5afaae983675d2c616e3fbc70942840d314e5`: 1,109 nodes, 3,103 edges, 53 communities; report detects no import cycles.
-- Main hubs: `create_app()` 66 edges; `showToast()` 51; `getUiLanguage()` 45; `safeGet()` 42; `Settings` 32; `LazyGraphRAG` 31; `authorize()` 31; `safeSet()` 29; `MemoryManager` 28; `client_for()` 28.
+- Historical Graphify snapshot from the earlier main graph: `create_app()` 66 edges; `showToast()` 51; `getUiLanguage()` 45; `safeGet()` 42; `Settings` 32; `LazyGraphRAG` 31; `authorize()` 31; `safeSet()` 29; `MemoryManager` 28; `client_for()` 28. `MemoryManager` is still present on main c4f but removed on PR #169; regenerate this snapshot after merge.
 - The centrality confirms integration hotspots, not defects. Keep current architecture; refactor only with a bounded contract-preserving change and regression coverage.
 - PR #121 exact-head Graphify workflow completed successfully; PR #122 exact-head Graphify workflow also passed. The inspected artifact contains 1,109 nodes, 3,103 edges and 53 communities with no import cycles. Graphify remains a dev-only navigation artifact, not a runtime dependency.
 - Dead-code report #389 had one Vulture warning at `gateway/voice/speculative_transaction.py:39` for the `BufferedTTS.synthesize_prefix(max_duration_ms=...)` protocol parameter. It is part of the adapter contract and is a false positive; no file or code deletion is justified.
