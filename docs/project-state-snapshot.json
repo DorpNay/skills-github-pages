@@ -6,8 +6,8 @@
     "main_sha": "c4f23e03f563d03213eb87002863da630fc8b833",
     "main_commit_subject": "feat(ui): add adjustable message readability",
     "main_commit_date": "2026-11-07",
-    "last_functional_checkpoint_sha": "08a73a7594695b8a74fa88d90db07832a8373665",
-    "last_functional_milestone": "PR #169 owner-directed Functions menu now has dedicated Agents, Deep Research and Skills panels. Deep Research panel reports Quick/Thorough, Web breadth and pipeline state, provides actions to open Web settings/navigate Agents, and labels Deep Research 2.0 roadmap-only. E2E authored for 390×844, modal blur, effort change, Web menu/focus, panel navigation and clean close. Five canonical IA/safety/research specs from #131/#125 preserved as SPECIFIED/research artifacts. Code/test head 08a73a all non-Quality gates passed; Quality Chromium still in progress. Docs/state head 161964 checks pending/in progress. No merge/deploy claim.",
+    "last_functional_checkpoint_sha": "1d32e3d3c6718e3d04efce312eac018596518f9f",
+    "last_functional_milestone": "PR #169 current code/test HEAD 1d32e3d3c6718e3d04efce312eac018596518f9f includes aServi connection-marker fix (refreshCloudStatus reads persisted ai_provider_connection_alandi safely), and E2E fixes for exclusive settings disclosures and the collapsed Functions menu. Previous exact head 54a2401 Quality #42404826459 failed 7 Chromium tests (106 passed); Freshness #42404826540 failed stale queue snapshot (closed PR #155 still listed). Current live open PR queue is #169 only; issue #111 remains owner-controlled. Exact final gates pending; no merge/deploy claim.",
     "main_quality_run": 42372746360,
     "main_pages_deployment_run": 42372745873,
     "functional_parent_gateway_run": null,
@@ -15,11 +15,7 @@
     "functional_parent_graphify_run": null,
     "functional_parent_pages_run": null,
     "open_pull_requests": [
-      125,
-      131,
-      152,
-      154,
-      155
+      169
     ],
     "open_issues": [
       111
@@ -238,15 +234,17 @@
         "system map, concise English executor contract, source-backed orchestration method, durable Volley checkpoints"
       ]
     },
-    "open_prs": "7 open PRs excluding current PR #169: #125, #131, #152, #154, #155, #168, #171",
-    "open_prs_at_checkpoint": 5,
-    "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-010"
+    "open_prs": [
+      169
+    ],
+    "open_prs_at_checkpoint": 1,
+    "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-011"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
     "live_vps_gateway_device_and_model_runtime_verified": false,
-    "queue_policy": "exact IDs; exclude current PR #169 from queue comparison; live open queue is #125/#131/#152/#154/#155 after reconciled closures",
+    "queue_policy": "exact IDs; snapshot records live open queue [169]; PR check excludes only current PR #169, yielding an empty comparison queue. Closed non-merged #125/#131/#152/#154/#155 retain their task scopes in the canonical registry.",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-07-UI-PROMO-001-ASERVI-SIDEBAR-001"
+  "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-011"
 }
