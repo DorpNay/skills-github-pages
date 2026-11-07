@@ -308,7 +308,7 @@ current_checkpoint:
   open_issues: "Issue #111 only; owner-controlled release gates."
   freshness_guard: "scripts/check_project_state_freshness.py; update OLEDUE/AGENTS/ORIENTER/FILE_ORIENTER/PROJECT_STATE/VOLLEY_LOG/snapshot together after live queue/state changes."
   runtime_boundary: "GitHub Pages deployment and public root + /landing/ are VERIFIED on exact main bf039f887e29137b627b06fc2bb107c2793d6b69. The release-contract sentinel is currently false-negative due outdated Functions menu prohibition. VPS/Tunnel/Ollama, provider credentials, native iPhone/VoiceOver and target-host model performance remain unverified."
-  next: "Finish the bounded published UI contract sentinel correction and live checkpoint synchronization on fix/pages-functions-contract-and-state-20261108; run exact-head Quality/Freshness/Provenance. After separate owner authorization to merge, verify main Quality and Pages root + /landing/ against the exact follow-up merge SHA. In parallel continue issue #111 gates and remaining registry/system/UI/source audits."
+  next: "Finish the bounded published UI contract sentinel correction and backdrop-dismissal E2E on fix/pages-functions-contract-and-state-20261108; run exact-head Quality/Freshness/Provenance/Graphify. Owner explicitly authorized merging all currently open PRs after required exact-head checks pass; merge PR #174 when green, then verify main Quality and Pages root + /landing/ against the exact merge SHA. In parallel continue issue #111 gates and remaining registry/system/UI/source audits."
 
 v1_ui_finalization:
   status: "merged in PR #121 at f4d880f; exact-head required workflows passed; post-merge Pages deployment not independently verified"
