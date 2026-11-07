@@ -9,7 +9,8 @@
 - Pages: deployment #42350650890 SUCCESS on exact main; Quality #42350651114 SUCCESS on exact main with deployed-root version guard, public-root Chromium smoke and /landing/ smoke. Freshness #42350651042 and Provenance #42350651035 also PASS.
 - UI §8.8: PR #157 merged and exact Quality/Graphify passed. Remaining §§8.1–8.17 and later menus/panels/functions/minimization remain open; PR #154 is not in main.
 - PR #154 current head `6ca47522d7d6998916b1b01931c217d8b7e76c75`, stale base f323b6f, mergeable_state=dirty. Quality #42349173942 failed 17 E2E + 1 flaky (22 passed); Freshness #42349173878 failed. Provenance #42349173871, Graphify #42349173908, Dead Code #42349173914 passed. Restore main protections and fix behavior; do not weaken tests.
-- Open PRs: #125, #131, #152, #154, #155. Open owner-controlled issue: #111.
+- open PRs (6): #125, #131, #152, #154, #155, #161
+- open issues (1): #111
 - Owner sequence: OLEDUE/N₂O/task intake; Pages reverified; remaining UI in bounded exact-head-tested slices; preserve and resume all other registry goals. One orchestrator and one Master Task Registry remain canonical.
 
 ## 1. Быстрый маршрут
