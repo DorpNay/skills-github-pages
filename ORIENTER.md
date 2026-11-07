@@ -6,7 +6,7 @@
 
 - **Current main SHA:** `69645ff357067f3656aa77cc67336ff423c26944` (live `main` branch read).
 - **Pages VERIFIED LIVE:** GitHub-managed `pages build and deployment` run #42362476364 SUCCESS on this exact SHA. Quality #42362476858 SUCCESS, all 7 jobs; its Chromium job checked the published root, client version, and `/landing/`.
-- **Jekyll upstream:** repository Quality/Chromium use `actions/jekyll-build-pages` pinned to `44a6e6beabd48582f863aeeb6cb2151cc1716697` (v1); runner pulled official image `v1.0.13`. No workflow replacement is indicated by current evidence.
+- **Production Jekyll path:** Pages run #42362476364 is GitHub-managed `dynamic/pages/pages-build-deployment`; its build job pulled `ghcr.io/actions/jekyll-build-pages:v1.0.13`, `Build with Jekyll` and `Deploy to GitHub Pages` both PASS. No custom workflow replacement is indicated. The separate Quality Jekyll sentinel pins `actions/jekyll-build-pages` at `44a6e6beabd48582f863aeeb6cb2151cc1716697`.
 - **PR #166 §8.17:** open, base `69645ff...`, head `a79cb6b3fde04985b31217d9ae952e5d53cdec2f`. Prior exact head `7c065c1...` failed one Chromium semantic-color assertion (115 passed, 1 failed). A narrow CSS specificity patch is on the new head; Graphify #42366669754 PASS; Quality #42366669769 was IN_PROGRESS at this checkpoint. Do not merge until exact-head Quality/Chromium and all other required gates pass.
 - **Open PR queue:** #125, #131, #152, #154, #155, #166. **Open issue:** #111.
 - **Owner priority:** finish §8.17 with strict contrast assertions; after owner-authorized merge, verify a fresh Pages deployment and live version. Keep other workstreams and registry goals intact.
