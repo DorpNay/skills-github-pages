@@ -65,7 +65,7 @@ const suites = {
       assert.equal(externalRouteGroup.includes('<option value="alandi"'), false, 'The private aLandi route must not appear among third-party providers.');
       assert.ok(externalRouteGroup.includes('<option value="gemini">') && externalRouteGroup.includes('<option value="custom">'), 'External providers must remain selectable.');
       assert.equal((source.match(/id="cloudConnect"/g) || []).length, 0, 'The private server must connect automatically, without a permanent manual-check button.');
-      includes('function connectAlandiCloud()', 'The cloud UI must verify a real model response before showing connected.');
+      includes('function connectAlandiAServi()', 'The aServi UI must verify a real model response before showing connected.');
       includes('function scheduleCloudAutoConnect()', 'Changes to private server settings must trigger a bounded automatic connection check.');
       includes('function setCloudFieldError(id,message', 'Invalid server fields must show an inline field-specific error.');
       includes("setCloudFieldConnection('connected')", 'The server fields must only turn green after the connection and health checks pass.');
@@ -143,7 +143,7 @@ const suites = {
       assert.ok(!source.includes("safeGet(STORAGE.model) === 'gemini-3.8-flash'"), 'A valid Gemini 3.8 model must not be downgraded on load.');
       includes('function getApiCandidates(requestedModel)', 'Provider failover must discover only configured credentials.');
       includes("if(!key && provider!=='kilo') continue;", 'Only the explicitly selected Kilo Free route may omit an API key.');
-      includes('function connectAlandiCloud()', 'The primary cloud status must be verified with a real completion.');
+      includes('function connectAlandiAServi()', 'The primary aServi route status must be verified with a real completion.');
       includes('id="cloudStatusDot" data-state="disconnected"', 'Cloud connection must begin unconfirmed.');
       includes('if(error.modelUnavailable)', 'Only a model-specific provider failure may trigger same-provider model selection.');
       includes('function applyUiLanguage(language)', 'The main UI must support a persisted language choice.');
