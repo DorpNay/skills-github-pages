@@ -1124,6 +1124,7 @@ test('aServi status only turns green after a real model response, and core UX co
   await page.locator('#cloudBaseUrl').fill('https://cloud.example.test/v1');
   await page.locator('#cloudModel').fill('qwen3.5:4b');
   await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
+  await page.locator('[data-action="connect-alandi-aservi"]').click();
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
   await expect(page.locator('#cloudStatus')).toContainText('Подключено');
@@ -1782,6 +1783,7 @@ test('aLandi cloud probe rejects HTTP 200 proxy text as proof of a model connect
   await page.locator('#cloudBaseUrl').fill('https://cloud.example.test/v1');
   await page.locator('#cloudModel').fill('qwen3.5:4b');
   await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
+  await page.locator('[data-action="connect-alandi-aservi"]').click();
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected', { timeout: 15000 });
   await expect(page.locator('#cloudApiKeyError')).toContainText('Не удалось подтвердить соединение');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_provider_connection_alandi'))).toBeNull();
@@ -1882,6 +1884,7 @@ test('aLandi cloud probe cannot overwrite settings changed while its request is 
   await page.locator('#cloudBaseUrl').fill('https://race-cloud.example.test/v1');
   await page.locator('#cloudModel').fill('race-cloud-model');
   await page.locator('#cloudApiKey').fill('first-cloud-race-key');
+  await page.locator('[data-action="connect-alandi-aservi"]').click();
   await probeStarted;
   await page.locator('#cloudModel').fill('');
   releaseProbe();
