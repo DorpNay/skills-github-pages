@@ -1,39 +1,34 @@
 # aLandi — START HERE
 
-This is the short repository entry point. **Live GitHub state is authoritative**; every SHA, PR number and queue below is a dated checkpoint, not a substitute for a fresh read.
+**Live GitHub is mutable truth.** This is a concise checkpoint, not a substitute for live API state.
 
-## Current checkpoint — 2026-11-06
+## Current checkpoint — 2026-11-07
 
-- **Current main SHA:** `a8afee45bb22654b220bffda857ab10c24641ef1` — `fix(storage): preserve browser data and roll back partial writes`. PR #150 is merged; this is a functional main checkpoint.
-- **Preserved main protections:** PR #147 cancellation-safe Gateway semaphore; PR #148 untrusted assistant-rendering/Pyodide security boundary; PR #150 browser-storage recovery and atomic rollback.
-- **Open PR queue:** #125, #131, #152. **Open issue:** #111. Recheck live before using this snapshot.
-- **PR #131:** head `5f71b97f3c85ab8544431b496ceb7c9ccf8c0c3e`, base `e78a73b25725bfa63370d9946887cbbacbf51b82`; 1,125 ahead / 19 behind current main, 76 files, mergeable=false. Draft; selective reconciliation only. #129/#130 were merged into this workbench; selected #128/#134/#151 content was copied here, but those PRs were closed without merging to main.
-- **PR #152:** head `99a0b530b335e7e19833c4ce66138dcc576a09fa`, base `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`; 17 ahead / 1 behind, 4 files, dirty. Draft. Exact-head Quality failed (#42141899337); Graphify passed (#42141899316).
-- **PR #125:** Draft future-workstream parking; not active unless explicitly requested.
-- **PR #153 orientation repair:** ready for review, not merged. Full code Quality passed on tested code SHA `5665e60ebdbb704f9fa95cadba610984ca1da60b` (4/4 Chromium, published-Pages smoke, Jekyll, Security, Integrity, Context, Ruff/static); later docs-only follow-up checks for Freshness, Provenance and Dead Code also passed. Check live PR #153 for its current head; this checkpoint deliberately does not pin a mutable PR HEAD.
-- **PR #153 orientation repair:** head `a613d2974fb4ba2256b053fb3127dab9bbdb4432`, ready for review; exact-head freshness, security, integrity, context, Jekyll, Ruff/static, 4/4 Chromium, provenance and published-Pages smoke passed. Not merged; main does not yet contain this handoff repair.
-- **Main post-merge checks:** current-main Quality/Pages/Gateway/Provenance run IDs were not retrieved. PR-head passes are not post-merge verification.
+- **Current main SHA:** `d4a2fac093abff4a7d14c4826ec7445250dd5278` — `archive: preserve RAG-Anything v1.4.1 source`.
+- **Last functional checkpoint:** `a8afee45bb22654b220bffda857ab10c24641ef1` (PR #150 browser-storage recovery/rollback). PR #153 orientation repair merged at `f323b6f339d454dad6e820a4074fa230acc7b6df`.
+- **Preserved main protections:** #147 cancellation-safe Gateway; #148 assistant-rendering/Pyodide security boundaries; #150 browser data recovery/atomic rollback.
+- **Pages VERIFIED LIVE:** deployment #42204178239 succeeded on exact main d4a2fac; main Quality #42204178841 passed. Cache-busting public fetch of https://dorpnay.github.io/skills-github-pages/ returned AI Mobile Agent v10.0. Plain external retrieval returned stale cached v9.0. PR #156 adds a root-version live smoke guard; its exact-head checks must be refreshed.
+- **Open PR queue:** #125, #131, #152, #154, #155, #156. **Open issue:** #111.
+  - #125 — FUTURE/HOLD; do not merge absent direct owner choice.
+  - #131 — large Draft V2 workbench, diverged; selective slices only.
+  - #152 — Draft Voice, stale base and previous exact Quality failure; inspect separately.
+  - #154 — modular UI shell candidate. Quality #42193618745 failed with 23 Chromium shard-4 selector timeouts; Freshness #42193618668 failed because the queue snapshot was stale. Other three shards and Security/Integrity/Context/Jekyll/static checks passed. Current head/base/checks must be refreshed live.
+  - #155 — Draft roadmap/control-plane refinement; current head/checks must be refreshed live.
+  - #156 — Draft owner priorities, aLandi principles pointer, task intake and Pages live-version guard. Current branch head/checks are mutable; run exact-head CI after state refresh.
+- **Owner priority:** (1) compact OLEDUE/principles/task capture; (2) Pages live verified; (3) promote UI requirements §§8.1–8.17 and subsequent menus/panels/functions/minimization as coherent tested slices; (4) resume all remaining registry goals.
+- **Canonical navigation index:** [PROJECT_ORCHESTRATOR_RU.md](PROJECT_ORCHESTRATOR_RU.md) — principles, external sources, plans, decisions, registry and evidence. One inventory: docs/MASTER_TASK_REGISTRY_RU.md + append-only addendum.
 
-## Active owner direction
+## Active direction
 
-1. PR #153 implements the orientation/handoff repair and passed exact-head checks; owner review/merge decision is pending.
-2. After #153 is merged, perform ORIENT-002 fresh-session handoff test using only OLEDUE + one batched live-state read.
-3. Then resume the owner-authorized PR #131 reconciliation: preserve #147/#148/#150 protections, resolve architecture conflicts deliberately, run exact-head gates, and merge only when safe.
-4. Inspect Voice #152 separately after its failed checks and stale base; do not mix it into #131 without a clear dependency/benefit.
-5. Continue grouped external-source research and capability implementation from the canonical task registry; promote evidence-backed findings, not speculative dependencies or UI-only claims.
+1. Finish exact live-state refresh for PR #156 and verify Freshness/Quality/Provenance on its exact HEAD.
+2. Investigate/repair PR #154's selector regressions against current code and owner UI checklist; no whole-PR/#131 merge.
+3. Preserve #147/#148/#150 protections, all lower-priority task IDs, source/license boundaries and owner-only runtime gates.
+4. Continue external-source research from INTEL and artifact preservation only after exact upstream revision/license/checksum review.
 
 ## Fast route
 
-1. On `oledue`: read root OLEDUE.md first, then one batched live GitHub state read.
-2. Match the latest owner request to one canonical task register; never infer the active PR from age, size or historical role.
-3. Read only task-specific source/tests. Detailed navigation: project-reference/FILE_ORIENTER_RU.md; system state: docs/PROJECT_STATE.yaml; history: docs/VOLLEY_LOG.md.
-4. Keep main SHA, PR base/head, tested SHA and merge SHA separate. Verify exact-head checks and current-main diff before promotion.
-5. Record material changes in the existing task register/state/log. No duplicate backlog or routine full-stack reread.
-
-## Keeping orientation reliable
-
-- OLEDUE.md is the handoff contract; this file is the short navigation/checkpoint.
-- Project State Freshness checks the snapshot, exact live PR/issue IDs and orientation consistency. CI reports drift; it does not rewrite state.
-- Checkpoint changes update ORIENTER.md, project-reference/FILE_ORIENTER_RU.md, docs/PROJECT_STATE.yaml, docs/VOLLEY_LOG.md and docs/project-state-snapshot.json together.
-- Handoff-contract changes also update OLEDUE.md and AGENTS.md; freshness CI enforces this.
-- A merge or PR-head smoke does not prove live deployment, VPS, native device or target-hardware behavior.
+1. On `oledue`, read root OLEDUE.md first; then one batched live GitHub state read.
+2. Route latest explicit owner request to one existing registry ID; enrich rather than duplicate. Never default to a PR.
+3. Open only the task-specific sources/tests; detailed paths: project-reference/FILE_ORIENTER_RU.md; state: docs/PROJECT_STATE.yaml; history/evidence: docs/VOLLEY_LOG.md.
+4. Keep main/base/head/code/tested/check/deployment/merge SHAs distinct.
+5. Execute one bounded safe slice in the same turn; update only material canonical state and report exact checks and OPEN limits.

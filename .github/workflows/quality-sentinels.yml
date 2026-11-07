@@ -109,6 +109,24 @@ jobs:
         env:
           LIVE_SITE_URL: https://dorpnay.github.io/skills-github-pages/
         run: npx playwright test tests/e2e/live-site.spec.mjs
+      - name: Verify the deployed main client version after a main deployment
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          expected_title=$(grep -m1 -E '^title: AI Mobile Agent v[0-9]+\\.[0-9]+' index.md | sed 's/^title: //')
+          test -n "$expected_title"
+          client_url="https://dorpnay.github.io/skills-github-pages/?smoke=$GITHUB_SHA"
+          for attempt in $(seq 1 18); do
+            if curl --fail --silent --show-error --location --max-time 15 "$client_url" -o /tmp/live-client.html &&
+               grep --fixed-strings --quiet "$expected_title" /tmp/live-client.html; then
+              echo "Published client matches main source title: $expected_title"
+              exit 0
+            fi
+            echo "Published client does not yet match ($expected_title; attempt $attempt/18); retrying in 10 seconds."
+            sleep 10
+          done
+          echo "Published client did not match main source title: $expected_title"
+          exit 1
+
       - name: Wait for the new landing content after a main deployment
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
