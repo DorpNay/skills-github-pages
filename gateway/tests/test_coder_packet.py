@@ -208,11 +208,18 @@ def test_evidence_ledger_stores_scoped_provenance_and_exact_quote(tmp_path):
     evidence_id = ledger.add_quote(scope="project", scope_id="alpha", source_id="doc-1",
         source_uri="https://example.test/gateway", source_text=text, chunk_id="chunk-1",
         start_offset=start, end_offset=len(text), page_number=5, claim_text="The gateway returns trace IDs.")
-    record = ledger.list_evidence(scope="project", scope_id="alpha")[0]
-    assert record["evidence_id"] == evidence_id
-    assert record["quote_text"] == "return a trace ID."
-    assert record["page_number"] == 5
-    assert ledger.list_evidence(scope="project", scope_id="other") == []
+    other_evidence_id = ledger.add_quote(scope="project", scope_id="other", source_id="doc-1",
+        source_uri="https://example.test/other-gateway", source_text=text, chunk_id="chunk-1",
+        start_offset=start, end_offset=len(text), page_number=6, claim_text="Other project trace IDs.")
+    alpha_records = ledger.list_evidence(scope="project", scope_id="alpha")
+    other_records = ledger.list_evidence(scope="project", scope_id="other")
+    assert len(alpha_records) == len(other_records) == 1
+    assert alpha_records[0]["evidence_id"] == evidence_id
+    assert alpha_records[0]["quote_text"] == "return a trace ID."
+    assert alpha_records[0]["page_number"] == 5
+    assert other_records[0]["evidence_id"] == other_evidence_id
+    assert other_records[0]["source_uri"] == "https://example.test/other-gateway"
+    assert other_records[0]["page_number"] == 6
     assert path.stat().st_mode & 0o077 == 0
     with pytest.raises(EvidenceLedgerError):
         ledger.add_quote(scope="global", scope_id="wrong", source_id="doc-2",
