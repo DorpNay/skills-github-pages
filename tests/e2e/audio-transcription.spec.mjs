@@ -1,3 +1,24 @@
+async function configureAServi(page, model, key) {
+  const group = page.locator('#aserviSettingsGroup');
+  if (!(await group.evaluate(element => element.open))) await group.locator(':scope > summary').click();
+  await page.locator('#cloudBaseUrl').fill('https://api.example.test/v1');
+  await page.locator('#cloudModel').fill(model);
+  await page.locator('#cloudApiKey').fill(key);
+  await page.locator('[data-action="connect-alandi-aservi"]').click();
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'connected');
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+}
+
+test.beforeEach(async ({ page }) => {
+  await page.route('https://api.example.test/healthz', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' })
+  }));
+  await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ model: 'e2e-probe-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+  }));
+});
+
 import { test, expect } from '@playwright/test';
 
 test('voice recording is sent to the configured gateway and transcript stays editable', async ({ page }) => {
@@ -36,15 +57,7 @@ test('voice recording is sent to the configured gateway and transcript stays edi
   });
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
-    await page.locator('#legacyProviderSettings > summary').click();
-  }
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('e2e-model');
-  await page.locator('#apiKey').fill('v'.repeat(64));
-  await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await configureAServi(page, 'e2e-model', 'v'.repeat(64));
   await page.locator('#voiceMenu').evaluate(el => el.classList.remove('hidden'));
   await page.locator('[data-action="voice-message-preview"]').click();
   await expect(page.locator('#voiceRecordingPanel')).toBeVisible();
@@ -79,15 +92,7 @@ test('assistant message offers copy and local TTS controls with a mini-player', 
   });
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
-    await page.locator('#legacyProviderSettings > summary').click();
-  }
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('e2e-model');
-  await page.locator('#apiKey').fill('w'.repeat(64));
-  await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await configureAServi(page, 'e2e-model', 'w'.repeat(64));
   await page.locator('#userInput').fill('Please answer so I can test the audio player.');
   await page.locator('#sendBtn').click();
   const assistant = page.locator('#chatBox .assistant-content').filter({ hasText: 'A local response to read aloud.' });
@@ -132,15 +137,7 @@ test('stopping local TTS cancels generation and prevents late playback', async (
   }));
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
-    await page.locator('#legacyProviderSettings > summary').click();
-  }
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('e2e-model');
-  await page.locator('#apiKey').fill('x'.repeat(64));
-  await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await configureAServi(page, 'e2e-model', 'x'.repeat(64));
   await page.locator('#userInput').fill('Test cancellation.');
   await page.locator('#sendBtn').click();
   const assistant = page.locator('#chatBox .assistant-content').filter({ hasText: 'A response whose speech will be cancelled.' });
@@ -189,15 +186,7 @@ test('attached audio is transcribed locally before model submission', async ({ p
 
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
-    await page.locator('#legacyProviderSettings > summary').click();
-  }
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('audio-attachment-model');
-  await page.locator('#apiKey').fill('a'.repeat(64));
-  await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await configureAServi(page, 'audio-attachment-model', 'a'.repeat(64));
   await page.locator('#attachTextButton').click();
   await page.locator('[data-action="choose-any-file"]').click();
   await page.locator('#textAttachmentInput').setInputFiles({
@@ -234,15 +223,7 @@ test('attached audio remains in the draft when local ASR is disabled', async ({ 
   });
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
-    await page.locator('#legacyProviderSettings > summary').click();
-  }
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('audio-disabled-model');
-  await page.locator('#apiKey').fill('b'.repeat(64));
-  await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await configureAServi(page, 'audio-disabled-model', 'b'.repeat(64));
   await page.locator('#attachTextButton').click();
   await page.locator('[data-action="choose-any-file"]').click();
   await page.locator('#textAttachmentInput').setInputFiles({
@@ -310,15 +291,7 @@ test('local voice dialogue transcribes, sends, speaks, and listens for the next 
 
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
-    await page.locator('#legacyProviderSettings > summary').click();
-  }
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('voice-dialogue-model');
-  await page.locator('#apiKey').fill('c'.repeat(64));
-  await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await configureAServi(page, 'voice-dialogue-model', 'c'.repeat(64));
   await page.locator('#voiceMenu').evaluate(el => el.classList.remove('hidden'));
   await page.locator('[data-action="voice-chat-preview"]').click();
 
