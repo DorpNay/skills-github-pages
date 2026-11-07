@@ -173,7 +173,7 @@
     "main_provenance_run": null,
     "main_freshness_run": null,
     "main_graphify_run": 42372746441,
-    "owner_task": "PR #174 repairs the published Functions menu contract; parallel work covers MENU-008 keyboard/focus/mobile checks, FIX-008 browser asset inventory, REGISTRY-002 source-description crosswalk and GATE-001 capability maturity. Main task registry: 605 stable IDs; addendum: 129 stable IDs; both are internally unique and share only REGISTRY-002. Issue #111 remains owner/environment gated; 62 direct action refs are pinned but 16 nested upstream refs remain mutable.",
+    "owner_task": "PR #174 repairs the published Functions menu contract; parallel work covers MENU-008 keyboard/focus/mobile checks, FIX-008 browser asset inventory, REGISTRY-002 source-description crosswalk and GATE-001 capability maturity. Main task registry: 605 stable IDs; addendum: 129 stable IDs; both are internally unique and share only REGISTRY-002. Issue #111 remains owner/environment gated; 62 direct action refs are pinned but 14 nested upstream refs remain mutable.",
     "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
     "pr131_exact_head_verified": false,
     "pr131_compare": "Large Draft V2 workbench, stale/diverged and mergeable_state dirty; selective reconciliation only.",
