@@ -99,30 +99,20 @@
 - **Rollback:** вернуть `performTavilySearch` к явной ошибке без fallback; `public_knowledge_search` остаётся отдельным инструментом.
 - **Связи:** `index.md`, `tests/e2e/app.spec.mjs`, EV-SEARCH-001.
 
-## D-010 — Scoped FTS5 retrieval for the memory graph; no crypto-erasure claims
+## D-010 — Scoped FTS5 retrieval for the memory graph (HISTORICAL / RETIRED)
 
-- **Status:** Accepted for prototype; public UI/API wiring and physical-erasure SLA deferred.
-- **Problem:** Search the existing SQLite memory graph without a new embedding/vector dependency or crossing chat/project/global boundaries.
-- **Decision:** Use an external-content FTS5 index with insert/update/delete triggers. `search_nodes()` bounds and quotes literal terms, filters exact `(scope, scope_id)`, defaults to confirmed nodes and supports temporal filters. Recursive deletion updates FTS through delete triggers.
-- **Deletion boundary:** `PRAGMA secure_delete=ON` applies to ordinary SQLite b-tree pages; FTS5 `secure-delete=1` is enabled only with SQLite >= 3.42.0 and a verified setting. These are defense-in-depth settings, not cryptographic erasure and do not clear external copies, WAL/journal files, snapshots or backups.
-- **Acceptance:** CI covers scope isolation, confirmed-only defaults, query parsing, index/delete consistency, legacy index rebuild and capability-gated secure-delete.
-- **Alternatives rejected:** embeddings before a representative quality/performance bake-off; rebuilding the entire index on every startup.
-- **Reversal cost:** medium; schema and query adapter can be reverted, index rebuilt from canonical nodes.
-- **Owner:** aLandi project owner / agent implementer.
-- **Kill criteria:** stale scoped results, unavailable FTS5, or resource cost outside the target profile. Disable search while retaining canonical rows and scoped list APIs.
-- **Rollback:** revert query/triggers in a reviewed migration; preserve canonical memory nodes.
-- **Links:** `gateway/memory/manager.py`, `gateway/memory/schema.sql`, `gateway/tests/test_coder_packet.py`, EV-MEM-005.
+- **Historical status:** implemented as a server-memory graph prototype and previously CI-tested.
+- **Owner decision 2026-11-07:** superseded by D-021; the graph store/schema/manager and graph-specific FTS5 retrieval were removed. Do not use this decision as an implementation or deployment instruction.
+- **Preserved distinction:** independent RAG has its own scoped FTS5 store, citations and deletion path; it is not the retired memory graph.
+- **Data boundary:** no claim of cryptographic erasure. Existing DB files, WAL/journals and backups were not inspected or deleted.
+- **Historical links:** old `gateway/memory/manager.py`, `gateway/memory/schema.sql`, prior CI and EV-MEM-005 are historical evidence only.
 
-## D-011 — Authenticated opt-in API for the structured memory graph
+## D-011 — Authenticated structured memory graph API (HISTORICAL / RETIRED)
 
-- **Status:** Accepted for single-owner gateway prototype; disabled by default and not yet wired to the static-site project memory UI.
-- **Problem:** the graph and FTS5 search had no authenticated API surface, so only direct module users could create, review, search or delete facts.
-- **Decision:** expose bounded Bearer-authenticated routes for candidate creation, scope-filtered listing/search, explicit relation creation, owner review and recursive deletion. Reject unknown JSON keys, use no-store responses, and bound request bodies.
-- **Truth/lifecycle rule:** API-created facts always start as `candidate`; only the explicit review route may set `confirmed` or `rejected`, with an audit code. Superseded/rejected nodes are immutable through review.
-- **Privacy boundary:** `ALANDI_MEMORY_GRAPH_ENABLED=false` by default. Global memory is behind a second server flag and a per-request `global_opt_in=true`. The service remains a single-owner personal gateway, not a multi-tenant permission system; do not reuse one bearer key across users.
-- **Rollback:** keep the graph flag off or revert the route/config change. The existing conversation-delta and RAG stores remain separate databases and contracts.
-- **Acceptance:** tests prove disabled-by-default behaviour, Bearer auth, candidate-first lifecycle, confirmed-only default search, scope isolation, relation/delete propagation and global double opt-in.
-- **Links:** `gateway/app.py`, `gateway/memory/manager.py`, `gateway/tests/test_app.py`, EV-MEM-006.
+- **Historical status:** single-owner authenticated graph API prototype was implemented and its prior API tests passed.
+- **Owner decision 2026-11-07:** superseded by D-021; all graph routes, feature flags, storage and API tests were removed. There is no current activation procedure.
+- **Preserved:** conversation delta sync and scoped RAG are independent; neither is a server-memory graph API.
+- **Historical evidence:** previous implementation and CI records remain in git history and prior EV-MEM-006 entry only.
 
 ## D-012 — cPocket cleanup is bounded and failure-resilient
 
@@ -133,16 +123,13 @@
 - **Remaining evidence:** current-head CI, followed later by a target-host resource/file-descriptor soak and integration with real audio adapters.
 - **Rollback:** revert this helper change or leave voice callers disabled.
 
-## D-013 — Browser-to-server project memory bridge is explicit and candidate-first
+## D-013 — Browser-to-server project memory bridge (HISTORICAL / RETIRED)
 
-- **Status:** Merged in PR #29 at `55248f81585c52d7cc7ba7cfc08158a291a761ca`; PR-head and post-merge Quality/Chromium/provenance/Pages checks passed. Live gateway activation remains pending.
-- **Decision:** browser-local project facts remain local until the owner clicks “Send local facts”. Upload creates server-side candidate nodes; UI can list, confirm/reject and delete them. No automatic migration or global-memory write occurs.
-- **Retrieval gate:** server search runs only when the current chat has both project memory and server project memory opted in. Query scope is exactly `scope=project, scope_id=currentProject.id`; only `confirmed` nodes enter the prompt. Retrieval is capped at six facts and 1200 total characters; manual uploads are bounded to 100 new candidates per click, query up to 100 recent server nodes (the API limit), and keep a bounded local source-ID ledger for idempotency across batches. A failed lookup degrades to local-only context and is shown in the UI.
-- **Activation:** the browser uses the configured aLandi gateway URL ending in `/v1` and the aLandi bearer key. Gateway requires `ALANDI_MEMORY_GRAPH_ENABLED=true`; keep `ALANDI_GLOBAL_MEMORY_ENABLED=false`. CORS must allow the Pages origin. This is still a single-owner gateway, not multi-user ACL.
-- **Deletion:** deleting a browser project does not silently delete server facts. Delete server facts explicitly in the memory panel before deleting the local project if they are no longer needed.
-- **Acceptance:** Chromium mock proves no auto-upload, candidate-first upload, review, no context inclusion when either toggle is off, and scoped retrieval with both on. Live gateway proof is separate.
-- **Rollback:** turn off the per-chat server-memory toggle or revert the UI bridge; leave the graph flag off if not needed.
-- **Links:** `index.md`, `gateway/app.py`, `gateway/memory/manager.py`, EV-MEM-007.
+- **Historical status:** implemented in PR #29 and previously passed its recorded Chromium/Quality/provenance/Pages checks.
+- **Owner decision 2026-11-07:** superseded by D-021. The bridge, upload/review/delete actions, per-chat server-memory state, API routes and activation flags were removed from the current product.
+- **Preserved:** project notes remain browser-local; conversation delta sync and independent RAG remain separate contracts.
+- **Data boundary:** deleting the code does not delete any existing server database or backup. The target host has not been inspected.
+- **Historical evidence:** PR #29 and EV-MEM-007 describe the former implementation only; do not restore it from this record.
 
 ## D-014 — Free-first stack and local model autonomy
 
@@ -213,10 +200,30 @@
 ## D-019 — Orthogonal chat settings and progressive disclosure
 
 - **Status:** Accepted for implementation in the 2026-10-30 chat-settings slice.
-- **Primary surface:** expose only work effort (Quick/Thorough) and web-search scope (Off/Standard/Expanded). Keep structured workflow, task profile and integrations in the advanced Functions menu.
+- **Primary surface:** expose work effort (Quick/Thorough) and web-search scope (Off/Standard/Expanded) directly. Do not restore the three historical Functions menu entries (structured analysis, task profile, integrations) or invent a replacement catalog without explicit owner approval.
 - **Independent contracts:** `processingMode` controls only the model/tool execution budget; `searchMode` controls only web-tool availability and search-result breadth; `multiAgentEnabled` enables the existing four-stage planner/researcher/critic/synthesizer pipeline only when the complexity gate allows it; Quick/Thorough limits the tool budget inside the researcher stage, while the other stages are separate text calls on the selected model; `skillPreset` adds instructions only and grants no tools or data permissions.
-- **Research Studio:** it is a prompt-preparation workspace, not a second execution mode. It displays and uses the active chat's settings without mutating them. It remains a single entry point in the sidebar, not duplicated in the Functions menu.
+- **Research Studio:** explicitly retired by the owner on 2026-11-07 and removed from UI/app. Do not restore its shortcut, modal, or menu entry. The four-stage chat research pipeline remains a separate capability.
 - **No redundant selector:** response format remains part of the user's natural-language request. Do not add a separate table/report/code/concise selector unless a distinct, non-overlapping behavior is proven.
 - **Safety and clarity:** web Off disables web tools but does not imply that cloud model APIs work offline. The existing staged workflow must not be described as an independent team of models.
 - **Acceptance:** exact-head tests cover Quick+Expanded, Thorough+Standard, Thorough+Off, per-chat settings, task-profile independence, Research Studio non-mutation, RU/EN localization and mobile control layout. See [CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md](docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md).
 - **Rollout:** preserve the current static/Jekyll architecture and existing per-chat persistence; no new runtime dependency or provider permission is introduced.
+
+## D-020 — First-party server route naming: aLandi aServi
+
+- **Date:** 2026-11-07
+- **Status:** ACCEPTED — explicit owner instruction, reflected in the uploaded current `AGENTS.md`.
+- **Decision:** Name the first-party server route **aLandi aServi** in user-facing UI, DOM actions, documentation and tests. Do not reintroduce the retired product label “aLandi Cloud”.
+- **Compatibility:** Preserve existing `ai_alandi_cloud_*` localStorage keys as internal compatibility identifiers until a separately designed and tested migration. The provider value `alandi` remains an internal route identifier; do not expose it as a third-party provider. `aLandi aCloudi` is reserved for a future information-storage product. Cloudflare remains the infrastructure/provider name.
+- **Acceptance:** exact-head checks assert the current product label and route actions, reject the retired visible label/actions, and retain compatibility-key behavior.
+- **Rollback:** revert the bounded naming patch without changing stored keys or provider routing semantics.
+
+
+## D-021 — Retire experimental server-memory graph and browser bridge
+
+- **Status:** **OWNER DECISION — effective 2026-11-07; implemented in PR #169 branch, pending exact-head CI and owner-authorized merge.**
+- **Decision:** Remove the experimental server-side structured-memory graph from the current product: API routes, feature flags, SQLite graph store/schema, graph-only temporal/conflict modules, browser bridge/actions, per-chat server-memory state, and their tests/setup instructions. Do not recreate this subsystem under a renamed UI.
+- **Preserve:** browser-local personal/project notes and their explicit local controls; conversation delta sync as its separate contract; independent scoped RAG retrieval, source storage/deletion, citations and evidence ledger. Do not conflate these with server graph memory.
+- **Isolation evidence:** RAG retrieval and deletion are bound to exact `(scope, scope_id)`; Evidence Ledger reads are scope-filtered; exact-response cache keys include the full request payload. A separate browser-global-memory multi-project prompt-leak test and a dedicated project-ID cache namespace contract remain open.
+- **Data retention:** code removal must not delete an existing gateway `memory-graph.sqlite3`, WAL/journal, snapshots or backups. Target host was not inspected; preserve existing data until the owner makes a separate backup/export/retention decision.
+- **Rollback:** do not revert to the retired graph. If local memory/RAG behavior regresses, fix the affected independent contract without restoring server graph storage or its API.
+- **Links:** `gateway/app.py`, `gateway/memory/scope.py`, `gateway/rag/lazy_graph_rag.py`, `gateway/rag/evidence_ledger.py`, `tests/e2e/app.spec.mjs`, EV-MEM-001–007, EV-RAG-005, EV-MEM-003.

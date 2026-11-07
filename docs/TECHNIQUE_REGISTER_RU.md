@@ -101,3 +101,16 @@
 - No schema/API/dependency change; source/page provenance and scope filtering remain intact; `ALANDI_RAG_ENABLED=false` stays the default.
 - The score is only for ordering, not confidence/probability. Automated tests passed on exact PR head; no production-quality improvement is claimed until a labelled >=50-query golden set compares Recall@5, MRR/nDCG, citation correctness, latency and peak RSS.
 - Full criteria: `docs/RAG_RRF_EVALUATION_RU.md`, `EVALS.md` EV-RAG-RRF-001, `DECISIONS.md` D-018.
+
+
+## 2026-11-08 — обновление техник после нового upstream-прохода
+
+| Technique | Status | Применение в aLandi | Ограничение / gate |
+|---|---|---|---|
+| **Durable execution semantics** (Conductor / Temporal) | ACCEPT — principles only | Idempotency keys for side effects; explicit timeout/retry/cancellation; persisted checkpoints for long jobs; durable approval state; recovery drill | At-least-once means a tool can execute twice; no runtime adoption without real long-running workload and storage/ops budget |
+| **Single-instruction + task-routing manifest** | ACCEPT | One concise `AGENTS.md`; `PROJECT_ORCHESTRATOR_RU.md` routes to one system map, one task register, one source inventory and relevant validators | Do not create another agent runtime, routing database or parallel backlog |
+| **Modality-specific RAG probes** | ACCEPT | Add image-only/table-only questions, layout/table integrity checks, page/bbox lineage and citation support tests; select OCR by document class (born-digital vs scanned) and profile per-stage latency | Docling 2.148.0 vendor run: 6.6 s/page default vs 1.8 no-OCR on 4 vCPU / 15 GB; scanned OCR ~15 s/page. This is not a target-host benchmark; parser success does not prove retrieval or answer correctness |
+| **Local ASR candidate evaluation** | PILOT CANDIDATE | Benchmark Qwen3-ASR-0.6B int8 via sherpa-onnx against the current baseline for Russian/Thai; record WER/CER, RTF, p50/p95 latency, peak RSS, cancellation | Verify exact model artifact and license; no install/promotion until target hardware and privacy tests pass |
+| **Inference runtime tuning** | SOURCE-VALIDATED | Use llama.cpp docs for KV cache, batching, thread/CPU affinity and speculative decoding comparison | Keep Ollama baseline; only switch after same-model/same-hardware benchmark and rollback |
+| **Code graph selection** | PILOT CANDIDATE | Graphify stays current dev-only baseline; exclude vendored upstream snapshots from `.graphifyignore`. Current PR #169 graph: 1,122 nodes / 3,014 edges / 69 source files after vendor exclusion. CodeGraph (Apache-2.0, local SQLite/tree-sitter, 34 MCP tools, architecture CI gate) merits a disposable 10-task comparison | Upstream zero-telemetry claim needs code review; compare task accuracy, source coverage, index/update time and peak RAM; no runtime dependency |
+| **Model/source artifact provenance** | ACCEPT | Keep manifest, upstream revision/tag/full commit, exact license, artifact hash, size, downloader and verification procedure in Git. Vendored source snapshots require LICENSE + UPSTREAM-MANIFEST; exclude third-party trees from first-party Graphify indexing | Never place model weights in Pages source tree; use model cache/registry or governed Release assets if legal and within limits. Git blob SHA-1 proves file identity, not a substitute for SHA-256 on downloaded binaries |

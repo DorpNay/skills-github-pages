@@ -255,3 +255,21 @@ Exact upstream HEADs and declared license/capability evidence are recorded in [I
 | [sammyZi/pdf-tools](https://github.com/sammyZi/pdf-tools) | **MOBILE UX REFERENCE** | Android scanner/PDF tools and on-device OCR; app MIT but Google ML Kit and bundled model terms remain separate. No runtime copy. |
 
 **Decision:** source-validated candidates only. No dependency, Skill, model, binary, dataset or code was downloaded, installed, copied or deployed. Any pilot requires a separate bounded proposal with pinned upstream revision, dependency/license manifest, threat model, baseline, acceptance metrics, rollback and explicit owner approval.
+
+
+## 2026-11-08 — повторный тематический проход: orchestration / RAG / local inference / voice / code navigation
+
+| Кандидат | Evidence / ограничение | Решение для aLandi |
+|---|---|---|
+| Conductor durable execution | Официальная семантика at-least-once; side effects могут повторяться после сбоя worker | **ACCEPT principles only:** idempotency, retry budget, checkpoint, durable approval, recovery drill. Runtime DEFERRED |
+| Temporal LangGraph plugin | Public Preview на 2026-07-16; решает durable recovery/human interrupts, но добавляет отдельную инфраструктуру | **DEFER** до реальной потребности в multi-hour/day workflow |
+| CodeGraph | Apache-2.0, SQLite/tree-sitter, 34 MCP tools, architecture rules/CI gate; upstream claims local/zero telemetry, но нет aLandi baseline | **PILOT CANDIDATE**; сначала disposable 10-task comparison с Graphify и grep, без установки в runtime |
+| Docling | MIT; structured document model с page/bbox provenance; 2.148.0 vendor benchmark: 6.6 s/page default, 1.8 s/page no-OCR on 4 vCPU / 15 GB; scanned OCR ~15 s/page | **ACCEPT architecture**, не runtime на 8-GB serving VPS; отдельный corpus-specific offline benchmark |
+| RAG-Anything | Полезные failure-mode probes для таблиц/картинок/OCR; full install может быть тяжёлым | **ACCEPT test patterns**, не устанавливать framework |
+| llama.cpp server | Continuous batching, parallel decode, KV quantization и OpenAI-compatible API | **DEFER runtime replacement**; сравнивать с Ollama только при измеренном bottleneck |
+| Qwen3-ASR-0.6B int8 via sherpa-onnx | RU/TH в language list; upstream streaming limitation and exact artifact/license need verification | **PILOT CANDIDATE**; compare WER/CER, RAM, latency and cancellation against current ASR baseline |
+| Moonshine streaming | Current MIT streaming table does not list RU/TH; some older non-English models use Community License | **NOT SELECTED** for RU/TH default |
+| OpenVoiceStream | MIT; hardware-first Jetson/Rockchip/Hailo/Raspberry Pi and per-accelerator quantization | **EDGE REFERENCE ONLY**; not generic x86 VPS candidate |
+| GitHub Releases / Pages artifact model | Git LFS unsupported by Pages; Pages site ≤1 GB; release asset <2 GiB | **ACCEPT acquisition boundary:** weights outside Pages tree, manifest + SHA in Git |
+
+Ни один новый runtime, модель или крупный артефакт в этом проходе не скачан, установлен или активирован. Решения по источникам не означают реализацию. Ссылки и первичные ограничения внесены в `INTEL.md`.

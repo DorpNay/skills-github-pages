@@ -58,16 +58,16 @@
 - [~] Проектные инструкции редактируются и добавляются в контекст как предпочтения, не как политика безопасности; подтвердить тестами precedence.
 - [~] Текущий чат можно привязать/отвязать от проекта; проектная принадлежность видна в интерфейсе.
 - [~] Есть экспорт/импорт project bundle с чатом, инструкциями и памятью; проверить схему, duplicate IDs, limits, malicious content.
-- [~] Global memory и project memory имеют отдельные явные toggles; default выключен; подтвердить, что global facts не утекут в другой project scope.
-- [~] Server memory graph API and opt-in browser bridge are implemented and CI-verified. Browser projects remain local-first; only a manual upload sends facts as server-side candidates, and only confirmed facts in the exact project scope can be retrieved when both per-chat toggles are enabled. Multi-device project sync and live gateway activation remain unverified.
+- [~] Browser-local global/project memory имеют отдельные явные toggles; global context по умолчанию выключен. E2E проверяет состояние переключателя, но отдельный multi-project prompt-leak test для browser-local global facts ещё не закрыт.
+- [x] **RETIRED BY OWNER 2026-11-07:** server-memory graph API and browser bridge are removed from the product. Browser-local project notes remain; conversation delta sync and RAG are separate and preserved. Existing server DB files are not deleted by code; live host is unverified.
 - [ ] Реализовать authenticated API/индексацию project sources только после согласованного backend contract; не имитировать работающий индекс на пустой заглушке.
-- [ ] Добавить/проверить тест cross-project leak на серверной памяти, RAG, evidence, cache и deletion — где соответствующие слои существуют.
+- [~] Межпроектные проверки: RAG retrieval/delete — `gateway/tests/test_six_layers.py::test_rag_retrieval_preserves_citations_and_isolates_scopes` и `test_rag_scope_bound_ids_allow_same_document_name_without_leak_or_cross_delete`; Evidence Ledger — `gateway/tests/test_coder_packet.py::test_evidence_ledger_stores_scoped_provenance_and_exact_quote`; exact-response cache — `gateway/tests/test_app.py::test_exact_cache_key_separates_project_specific_prompt_context`. Cache key зависит от полного payload, а не от отдельного project-ID ACL; browser-global memory leak test и отдельный cache project-scope contract остаются открытыми. Серверная graph-memory изоляция retired.
 - [~] RAG source deletion is scope-checked and removes chunk/concept/FTS rows; SQLite `secure_delete` plus version-gated FTS5 `secure-delete` regression tests passed on PR #24 HEAD and post-merge main. This still does **not** erase evidence-ledger copies, WAL/journals, backups or browser-local source copies; system-wide crypto-erasure remains open.
 - [ ] Проверить экспорт, исправление и удаление пользовательских фактов и связанные derived records.
 - [ ] Реализовать удаление/криптостирание по всем реальным слоям; не обещать SLA ≤60 секунд без измерения.
-- [x] Scoped memory FTS5 `search_nodes()` is merged and passed Gateway/provenance/full quality/Chromium/Pages PR-head checks. The index is scope-filtered; terms are bounded/literal; confirmed-only is default; deletes propagate and legacy index is backfilled. PR #27 adds opt-in authenticated routes, but the static UI still uses browser-local memory.
-- [x] PR #27 merged with Gateway, provenance and full Quality/Chromium/published Pages CI green on HEAD `e961a67d…`. Memory graph API remains feature-flagged, single-owner and not wired to browser UI.
-- [ ] Протестировать valid_from, valid_until, recorded_at, конфликты, supersede и scoped recursive delete в gateway memory prototypes.
+- [x] **RETIRED BY OWNER 2026-11-07:** scoped FTS5 `search_nodes()` belonged to the removed server-memory graph. RAG retains its independent scoped FTS5 store.
+- [x] Historical PR #27 Gateway/provenance/Quality/Pages evidence retained. Its server-memory graph API is now retired by owner; do not enable or restore it.
+- [x] **RETIRED BY OWNER 2026-11-07:** temporal/conflict/recursive-delete tests belonged to the removed server-memory graph prototypes; do not rebuild them as a hidden backend memory subsystem.
 - [ ] Полноценный viewer источников/индекса, citation lineage и cross-device project memory остаются задачами последующих фаз.
 
 ## E. Инструменты, маршрутизация, веб-поиск и отказы
@@ -114,7 +114,7 @@
 ### Part I — CODER_PACKET.md: архитектура, обязательные контракты, фазы 0–8
 - [x] Прочитаны разделы 1–8: канонические источники, non-negotiable contracts, текущая архитектура, план фаз 0–8, voice latency, model/license policy, eval/release gates и non-goals.
 - [x] Зафиксированы ограничения: не выдавать prototype за live, не обещать p95 без измерения, no fake sandbox, no fake citation checks, tool approval/SSRF, scoped deletion, локальный аудиотракт и отсутствие автоматического cloud provisioning.
-- [~] Фазы 0–4: gateway/trace, scoped temporal memory, FTS5/evidence/citations и tool safety имеют foundations/prototypes; у каждого остаются отдельные eval-гейты.
+- [~] Фазы 0–4: gateway/trace, scoped RAG FTS5/evidence/citations и tool safety имеют foundations/prototypes; experimental server-memory graph/temporal/conflict layer retired by owner 2026-11-07.
 - [ ] Фазы 5–6: подключить настоящий voice runtime и native ASR/VAD/TTS только после лицензий и воспроизводимого hardware benchmark.
 - [ ] Фазы 7–8: подключить реальную telemetry timeline, authenticated UI API и cloud integration только после backend contract/security review.
 
@@ -138,12 +138,12 @@
 | **AI-OBS-001** | prototype_integrated_in_gateway | observability/trace_context.py | EV-OBS-001 |
 | **AI-OBS-002** | optional_disabled | observability/otel_config.py | EV-OBS-002 |
 | **AI-OBS-003** | event_schema_only_ui_deferred | observability/events.schema.json | EV-UI-001 |
-| **AI-MEM-001** | sqlite_prototype | gateway/memory/schema.sql | EV-MEM-001 |
-| **AI-MEM-002** | bitemporal_primitives_not_in_frontend | gateway/memory/temporal.py | EV-MEM-002 |
-| **AI-MEM-003** | scoped_manager_prototype | gateway/memory/scope.py | EV-MEM-003 |
-| **AI-MEM-004** | explicit_conflicts_no_auto_winner | gateway/memory/conflict.py | EV-MEM-004 |
-| **AI-MEM-005** | scoped_fts5_memory_search_prototype_merged_not_ui_wired | gateway/memory/manager.py; gateway/memory/schema.sql | EV-MEM-005 |
-| **AI-MEM-006** | authenticated_single_owner_graph_api_and_manual_candidate_first_browser_bridge_ci_passed_live_activation_pending | gateway/app.py; gateway/memory/manager.py; index.md; tests/e2e/app.spec.mjs | EV-MEM-006 |
+| **AI-MEM-001** | retired_server_memory_graph_schema | removed by owner 2026-11-07 | EV-MEM-001 RETIRED |
+| **AI-MEM-002** | retired_server_memory_temporal_module | removed by owner 2026-11-07 | EV-MEM-002 RETIRED |
+| **AI-MEM-003** | shared_RAG_scope_pair_validator_only | gateway/memory/scope.py + gateway/rag/lazy_graph_rag.py | EV-MEM-003 |
+| **AI-MEM-004** | retired_server_graph_conflict_module | removed by owner 2026-11-07 | EV-MEM-004 RETIRED |
+| **AI-MEM-005** | retired_server_graph_fts5_store | removed by owner 2026-11-07; RAG FTS5 retained | EV-MEM-005 RETIRED |
+| **AI-MEM-006** | retired_server_memory_graph_api_and_browser_bridge | routes, flags, store and UI removed by owner 2026-11-07 | EV-MEM-006 RETIRED |
 | **AI-RAG-001** | fts5_lexical_graph_not_full_lazygraphrag | gateway/rag/lazy_graph_rag.py | EV-RAG-001 |
 | **AI-RAG-002** | conditional_not_installed | gateway/rag/rag_anything.py | EV-RAG-002 |
 | **AI-RAG-003** | citation_hash_offset_primitives | gateway/rag/citations.py | EV-RAG-003 |
@@ -154,8 +154,8 @@
 | **AI-TOOLS-004** | ssrf_policy_helper_only | gateway/security/ssrf_protection.py | EV-SEC-001 |
 | **AI-TOOLS-005** | approval_ticket_primitive_no_ui | gateway/security/approval_gates.py | EV-SEC-002 |
 | **AI-LICENSE-001** | manifest_and_ci_gate_prototype_no_voice_shipped | infra/license/provenance_manifest.yaml | EV-LICENSE-001 |
-| **AI-UI-001** | browser_project_prototype_e2e_pending | index.md; docs/V016_IMPLEMENTATION_CHECKLIST.md | EV-UI-002 |
-| **AI-UI-002** | manual_candidate_first_project_memory_bridge_e2e_passed_gateway_opt_in_live_unverified | index.md; gateway/app.py; tests/e2e/app.spec.mjs | EV-UI-003 |
+| **AI-UI-001** | browser_local_projects_and_notes_ui_implemented | index.md; tests/e2e/app.spec.mjs | EV-UI-002 |
+| **AI-UI-002** | retired_server_memory_source_viewer_and_bridge | removed by owner 2026-11-07 | EV-UI-003 RETIRED |
 | **AI-UI-003** | partial_bilingual_theme_clock_composer_voice_preview_e2e_pending | index.md | EV-UI-004 |
 | **AI-AGENT-001** | logical_roles_not_process_swarm | docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md | EV-AGENT-001 |
 | **AI-AGENT-002** | limited_existing_routing | gateway/tools/dag_engine.py | EV-AGENT-002 |
@@ -195,10 +195,10 @@
 
 ## I. Следующие продуктовые вертикали
 
-- [x] Связать браузерные проекты с серверным memory graph без автоматической миграции: ручная передача локальных фактов как candidate, ручное подтверждение/отклонение/удаление, scope по ID проекта. PR #29 merged; PR-head and post-merge Chromium/Quality checks passed.
-- [x] Добавить per-chat opt-in серверной памяти; retrieval только confirmed и только при одновременно включённой памяти проекта и серверной памяти. Chromium mock E2E passed on PR #29 head and merged main.
+- [x] **RETIRED BY OWNER 2026-11-07:** PR #29's browser-to-server project memory bridge, API actions and settings removed; project notes remain browser-local.
+- [x] **RETIRED BY OWNER 2026-11-07:** per-chat server-memory toggle and retrieval path removed; do not confuse this with local project notes or conversation delta sync.
 - [x] PR #29 head checks passed: Quality/Chromium, provenance and published Pages smoke. Post-merge main Quality/Chromium, provenance and Pages deployment passed at `55248f81585c52d7cc7ba7cfc08158a291a761ca`; gateway contract/security tests passed on unchanged base `e424d353418cad62981eb269b4082d2925592708`.
-- [ ] На целевом gateway включить ALANDI_MEMORY_GRAPH_ENABLED=true только после резервной копии и smoke-test; ALANDI_GLOBAL_MEMORY_ENABLED оставить false.
+- [x] **RETIRED BY OWNER 2026-11-07:** do not configure old graph/global-memory flags; API code is removed. Existing server SQLite files/backups remain untouched pending a separate owner decision.
 - [ ] Первый месяц не создавать платные ресурсы автоматически: GitHub Pages + уже имеющееся железо + Ollama локально; free-tier API считать квотируемым и внешним, не гарантированно бесплатным.
 - [ ] Оценить одну маленькую helper-модель для классификации, извлечения фактов, кратких сводок и чернового ранжирования. Главная модель остаётся для планирования, сложного reasoning и синтеза. Сравнить качество, latency и RAM перед включением.
 - [ ] Добавить генерацию изображений отдельным модулем после выбора реального backend (локальный ComfyUI/API или явно выбранный внешний провайдер), проверки точной модели/лицензии/VRAM и mock E2E.
@@ -301,3 +301,10 @@
 - [x] Landing and in-app roadmap E2E coverage passed on PR #121 exact head, including published-site browser smoke. Post-merge Pages deployment remains a separate check.
 - [ ] Native iPhone Safari, keyboard, safe-area, screen-reader and touch verification remain manual gates.
 - [ ] Issue #111 remains open for owner-only ruleset, VPS/hardware, live gateway/model, RAG corpus, voice/device and sandbox gates. CI alone cannot close it.
+
+## Owner override — 2026-11-07
+
+- [~] **Research Studio retired.** This supersedes the earlier historical note that kept it as a Thorough-mode helper. Remove the complete Research Studio product surface: sidebar/Functions/Thorough entrypoints, modal, UI handlers and obsolete copy. Do not restore it. PR #169 implements the removal; exact-head CI, merge and live Pages verification are pending.
+- [~] **The previous three-item Functions menu was not owner-approved.** PR #169 removes the visible menu rather than preserving placeholder actions. Do not restore the three entries or invent a replacement catalog. Rebuild only from an explicit owner-approved capability inventory; expose no fake marketplace.
+- [~] **First-party routing is separate.** aLandi aServi is a dedicated settings section, never a third-party provider option. aServi and third-party/additional sections follow the exclusivity rule; no silent auto-fallback between aServi and external providers. PR #169 implements this; exact-head verification is pending.
+- [~] **Stop control styling.** Retain the contextual ability to stop an active generation, but use a neutral compact control rather than a red persistent/floating button. PR #169 implements this; live verification is pending.

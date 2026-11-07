@@ -1,0 +1,24 @@
+schema_version: 1
+name: Memvid
+upstream_repository: https://github.com/memvid/memvid
+upstream_tag: v2.0.140
+upstream_commit: e18fe55494379e2ab7397ce03655e8abbc5e0c31
+upstream_license: Apache-2.0
+license_file: LICENSE
+package_metadata:
+  manifest: Cargo.toml
+  crate: memvid-core
+  version: 2.0.140
+  license: Apache-2.0
+archive_scope: selected Rust source snapshot; not a complete upstream checkout
+purpose: research/reference only; not an active aLandi runtime dependency
+graphify_excluded: true
+verification_scope: only the explicitly listed file blobs were independently matched; archive is a selected source snapshot, not a full checkout
+reviewed_in_pr: 169
+reviewed_at: 2026-11-08
+verified_at: 2026-11-08
+verified_files:
+  - path: src/types/manifest.rs
+    upstream_git_blob_sha1: 1882f4c82a480c212c94209b0c51da352f614d16
+    local_git_blob_sha1: 1882f4c82a480c212c94209b0c51da352f614d16
+    status: exact_blob_match

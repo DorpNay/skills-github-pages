@@ -30,7 +30,7 @@ Ollama → одна активная модель → VPS 8 GB RAM
   └─ внутреннее переиспользование модельного префикса/KV (L1)
 ~~~
 
-Это базовая архитектура для уже существующего приложения: статический UI остаётся на GitHub Pages, весами модели и серверными секретами управляет VPS, gateway обеспечивает единый API. Внешнему миру доступен только HTTPS hostname туннеля. Ollama и gateway не должны слушать публичный интерфейс. PR #29 добавил и CI проверил ручной мост браузерной project memory к server memory graph: загрузка candidate выполняется только по действию владельца, а retrieval ограничен подтверждёнными фактами точного project scope и двумя per-chat opt-in. Сам graph API и мост выключены до настройки и включения gateway flags; живой сервер не проверен.
+Это базовая архитектура для уже существующего приложения: статический UI остаётся на GitHub Pages, весами модели и серверными секретами управляет VPS, gateway обеспечивает единый API. Внешнему миру доступен только HTTPS hostname туннеля. Ollama и gateway не должны слушать публичный интерфейс. Экспериментальная серверная графовая память и browser-to-server bridge удалены владельцем 2026-11-07. Локальная память браузера, conversation delta sync и RAG остаются раздельными механизмами. Код не удаляет существующие graph SQLite-файлы на VPS; live host и резервные копии не проверены.
 
 **В первом проходе не ставим Dify, PostgreSQL, Redis/Valkey, Qdrant/Weaviate, embedding-сервис и несколько агентных runtime.** В AI Mobile Agent уже есть история, память, skills, поиск и многоэтапное исследование. Dify — отдельный необязательный модуль, если позже понадобится самостоятельная визуальная платформа workflow/RAG. Его минимальные требования не гарантируют, что сама платформа и локальная модель стабильно поместятся в 8 GB RAM. Если Dify уже используется, не удаляй контейнеры/базу и не меняй сетевые настройки без аудита зависимостей.
 
@@ -240,8 +240,6 @@ ALANDI_CACHE_MAX_RESPONSE_BYTES=1000000
 # Experimental capabilities stay disabled during initial bring-up.
 ALANDI_FAST_ROUTING_ENABLED=false
 ALANDI_MEMORY_SYNC_ENABLED=false
-ALANDI_MEMORY_GRAPH_ENABLED=false
-ALANDI_GLOBAL_MEMORY_ENABLED=false
 ALANDI_RAG_ENABLED=false
 OAUTH_ENABLED=false
 ~~~
@@ -440,7 +438,7 @@ systemctl --no-pager --full status alandi-gateway
 
 ## 9.1. Проверка обновлённой версии и экспериментальных прототипов
 
-Новые модули из [CODER_PACKET.md](CODER_PACKET.md) добавляют основу трассировки, scoped memory graph, FTS5-поиска, цитат, voice orchestration и tool contracts. PR #27 добавил authenticated memory-graph API, а PR #29 интегрировал с ним opt-in UI мост браузерной памяти: ручная передача фактов как candidate, list/review/delete и retrieval только confirmed-фактов точного проекта при двух per-chat opt-in. Chromium mock E2E и текущие post-merge Quality/Chromium/provenance/Pages checks прошли; gateway tests passed on unchanged base SHA e424d35. API и bridge остаются выключенными до реальной настройки. Микрофон/ASR/TTS/AEC, production CLI sandbox, подключённое исполнение tool DAG и Google Drive Picker UI пока не готовы. Все необязательные flags остаются выключенными.
+В исторических PR #27/#29 были реализованы и проверены scoped server memory graph API и browser bridge; по решению владельца от 2026-11-07 этот эксперимент полностью удалён из текущего продукта и gateway. Исторические CI-результаты не означают, что capability доступна сейчас. Обычная локальная память, conversation delta sync и RAG остаются независимыми. Микрофон/ASR/TTS/AEC, production CLI sandbox, подключённое исполнение tool DAG и Google Drive Picker UI пока не готовы. Все оставшиеся необязательные flags остаются выключенными.
 
 После merge, из корня проверенной копии репозитория, сначала выполни локальную проверку:
 
@@ -467,22 +465,9 @@ PYTHONPATH=/opt/alandi/skills-github-pages /opt/alandi/venv/bin/uvicorn app:app 
 
 После установленного релиза проверяй `/livez`, `/readyz`, `/v1/models` и один обычный чат с Bearer auth; `/healthz` остаётся совместимым alias readiness. Не устанавливай сразу native voice dependencies и не скачивай голосовые модели: manifest пока содержит кандидатов с `ship=false`, hashes не записаны. Никакие voice/OTel/CLI feature flags не включай без целевых eval и отдельного rollback.
 
-## 9.2. Опциональный API структурированной памяти
+## 9.2. Серверная память (эксперимент) — удалена владельцем 2026-11-07
 
-По умолчанию оставь `ALANDI_MEMORY_GRAPH_ENABLED=false`: это правильный режим для первого запуска. Backend graph API не является хранилищем браузерной памяти проектов — та по-прежнему локальная в браузере.
-
-Если отдельно тестируешь graph API с одного доверенного компьютера:
-
-1. Сделай закрытую резервную копию `/var/lib/alandi-gateway` и `/etc/alandi-gateway.env`.
-2. В `/etc/alandi-gateway.env` выставь `ALANDI_MEMORY_GRAPH_ENABLED=true`; БД по умолчанию — `/var/lib/alandi-gateway/memory-graph.sqlite3`.
-3. Оставь `ALANDI_GLOBAL_MEMORY_ENABLED=false`, если глобальная память не нужна. Перезапусти службу и проверь `systemctl status alandi-gateway`.
-4. Все `/v1/memory/graph/*` routes требуют `Authorization: Bearer <ALANDI_API_KEY>`; ответы используют `Cache-Control: no-store`, body ограничен, неизвестные поля отклоняются.
-5. `POST /v1/memory/graph/nodes` принимает `content`, `scope`, `scope_id`, `source_kind`, `source_id` и необязательные provenance/temporal поля. Созданный факт всегда `candidate`; нельзя передать `status=confirmed` при создании.
-6. Только `/v1/memory/graph/nodes/{id}/review` может поставить `confirmed` или `rejected`; review пишет audit entry с reason code. `POST /v1/memory/graph/search` по умолчанию ищет только confirmed узлы; всегда передавай `scope` и `scope_id`.
-7. `POST /v1/memory/graph/relations` создаёт отношения только внутри одного scope. `SUPERSEDES` использует `old_node_id` и `new_node_id`. `DELETE /v1/memory/graph/nodes/{id}?scope=project&scope_id=...` удаляет узел и `DERIVED_FROM` descendants в этой же области.
-8. Global scope требует двойного opt-in: серверный `ALANDI_GLOBAL_MEMORY_ENABLED=true` и `global_opt_in=true` в каждом запросе.
-
-Это single-owner прототип, не multi-user ACL: не раздавай один Bearer key другим пользователям. До подключения к UI нужны per-user identity/ACL, migration/backup strategy и сквозное удаление из evidence/cache/source stores. SQLite/FTS5 secure-delete не гарантирует очистку WAL, backups, browser storage и других БД и не является crypto-erasure SLA. Чтобы выключить эксперимент, выставь оба graph-флага в `false` и перезапусти службу.
+Не настраивай и не включай прежний server memory graph API: его routes, flags, manager, schema, browser bridge и per-chat toggles удалены из текущего продукта. Обычная локальная память браузера, conversation delta sync и RAG остаются отдельными механизмами. Изменение кода не удаляет существующий `/var/lib/alandi-gateway/memory-graph.sqlite3` или резервные копии; целевой VPS не проверен. Сохрани данные до отдельного решения о backup/export/retention; автоматического удаления нет.
 
 ## 10. Диагностика
 
@@ -499,17 +484,9 @@ PYTHONPATH=/opt/alandi/skills-github-pages /opt/alandi/venv/bin/uvicorn app:app 
 | OOM/зависание | free -h, ollama ps, systemd logs; уменьши context/output; оставь concurrency=1 |
 | UI выглядит старым | Проверь Pages deployment workflow, правильный репозиторий и затем hard reload |
 
-## 10.5. Связать проектную память браузера с gateway (опционально)
+## 10.5. Проектная память
 
-1. В `/etc/alandi-gateway.env` включи `ALANDI_MEMORY_GRAPH_ENABLED=true`; оставь `ALANDI_GLOBAL_MEMORY_ENABLED=false`. Перезапусти службу и проверь `/livez` и `/readyz`.
-2. CORS allowlist gateway должен содержать `https://dorpnay.github.io`. Не открывай Ollama и порт gateway напрямую в интернет.
-3. В настройках сайта подключи собственный gateway: Base URL с окончанием `/v1`, точный model ID и bearer key. Серверная память использует именно aLandi gateway/key, не ключ текущего стороннего провайдера.
-4. Боковое меню → нужный проект → «Серверная память» → «Обновить список». При 503 проверь feature flag и журнал службы; при CORS-ошибке — origin и URL.
-5. «Передать локальные факты» отправляет факты вручную. Они создаются как `candidate`, а не становятся автоматически достоверными. Подтверди только проверенное; отклоняй устаревшее.
-6. Для включения в конкретный чат поставь обе галочки: «Использовать память выбранного проекта» и «Разрешить подтверждённые факты серверной памяти». Без любой из них серверный поиск не выполняется. Global memory для этого не требуется.
-7. Удаление серверного факта — отдельное действие и удаляет связанные производные узлы. Удаление локального проекта само по себе не стирает серверную память.
-
-**Граница:** это single-owner gateway, не multi-user ACL. Автоматической миграции нет. Если API недоступен, приложение продолжает без серверной памяти и показывает статус.
+Проектные заметки остаются локальными в браузере и не передаются в удалённый server memory graph: соответствующий API и UI bridge удалены владельцем 2026-11-07. Не добавляй фиктивные переключатели или инструкции по включению старых flags. Conversation delta sync, если отдельно настроен, синхронизирует состояние беседы и не является серверной графовой памятью проекта.
 
 ## 10.6. Бесплатный первый месяц, маленькие модели и генерация изображений
 
@@ -549,8 +526,8 @@ PYTHONPATH=/opt/alandi/skills-github-pages /opt/alandi/venv/bin/uvicorn app:app 
 - [ ] Межпровайдерный fallback выключен для приватных запросов.
 - [ ] Прямой JSON-запрос даёт L2 MISS → HIT; bypass header работает.
 - [ ] Gateway tests, quality sentinels, Jekyll build и Chromium E2E прошли на текущем main SHA.
-- [ ] Experimental memory/RAG/OAuth/voice flags remain off until their own gates and rollback are reviewed.
-- [ ] Если graph API включался для теста, проверены Bearer auth, candidate-first review, scope isolation, cascade delete и double opt-in global scope.
+- [ ] RAG/OAuth/voice flags remain off until their own gates and rollback are reviewed; retired server-memory graph flags are not configured.
+- [x] Server-memory graph code/UI/API retired by owner; existing DB files are not automatically deleted and the live host remains uninspected.
 - [ ] Есть резервная копия env, команда отключения L2 и процедура отката.
 - [ ] Известно, как остановить/удалить платные ресурсы до истечения кредита.
 

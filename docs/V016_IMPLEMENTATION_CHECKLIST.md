@@ -181,8 +181,8 @@ The following items cover the initial fixation document plus manifesto sections 
 
 ## Supplement: product work after the original V-016 checklist (not part of its original 81 items)
 
-- [x] **AI-MEM-006 — Server graph API + browser bridge:** API remains feature-flagged and single-owner; browser can manually upload project-local facts as candidates, review/reject/delete them and list scoped nodes. PR #29 merged; PR-head and post-merge Quality/Chromium/provenance/Pages checks passed. Gateway activation remains a separate step.
-- [x] **AI-MEM-007 — Prompt retrieval gate:** server retrieval is scoped to the active project, confirmed-only, max 6 nodes / 1200 characters, and requires both per-chat project-memory toggles. Browser mock E2E passed on PR #29 head and merged main; live gateway behavior remains unverified.
+- [x] **AI-MEM-006 — RETIRED BY OWNER 2026-11-07:** server graph API, feature flags, storage and browser bridge were removed in the current PR #169 implementation. PR #27/#29 and their CI results remain historical evidence only; do not enable or restore this capability.
+- [x] **AI-MEM-007 — RETIRED BY OWNER 2026-11-07:** per-chat server-memory retrieval gate and UI state removed with the graph bridge. Browser-local project notes remain; conversation delta sync and independent scoped RAG are separate and preserved.
 - [~] **AI-AGENT-004 — Small helper model:** design plus synthetic RU/EN/TH response/latency smoke harness (`gateway/evals/run_local_model_benchmark.py`); Gateway Tests passed on PR #123 code head. Target-host quality/RAM/PSS/cold-warm benchmark and model selection remain pending. No general helper/subagent dispatch is wired into runtime.
 - [ ] **AI-IMAGE-001 — Image generation:** no working image-generation UI/runtime exists yet. Select local ComfyUI or explicit external provider, verify exact checkpoint/license/hash/VRAM and add request-to-image E2E before marking implemented.
 - [ ] **AI-OPS-001 — Free-first month:** no automatic paid resource provisioning. Use existing hardware and optional free-tier APIs with explicit quota/privacy caveats; paid hosting only after benchmark and owner decision.

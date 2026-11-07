@@ -10,6 +10,10 @@ Every iteration must reduce a named risk or improve a measured outcome. A model/
 - **Knowledge promotion:** use `docs/ALANDI_N2O_KNOWLEDGE_LOOP_RU.md` only when work yields reusable evidence, a repeated error, a material decision or an upstream-contract change.
 - **One navigation index and one task inventory:** `PROJECT_ORCHESTRATOR_RU.md` locates sources/plans/decisions; `docs/MASTER_TASK_REGISTRY_RU.md` plus its existing addendum hold goals. Search and enrich a matching ID before adding one; never create a parallel backlog.
 - **Priority changes reorder, not erase:** retain lower-priority goals and their status while executing the highest current owner priority. Keep checkpoints small and continue one safe bounded slice in the same turn.
+- **Main-first delivery:** `main` is the only durable product baseline. A PR is a temporary verification vehicle; merge promptly only after every required gate passes on its exact HEAD. Do not park completed work. Reconcile stale/future/conflicting PRs selectively, preserve useful evidence in the existing registry, and close superseded PRs only with a recorded reason.
+- **Durable continuity:** after every material stage append a concise `docs/VOLLEY_LOG.md` record with branch/PR/HEAD, exact check IDs/results, changed decisions/files, unverified limits, rollback and next step. Refresh `ORIENTER.md` and `docs/PROJECT_STATE.yaml` whenever live state or next action changes. Do not store transcripts or private reasoning.
+- **Source batches:** continue the existing `INTEL.md` inventory in 8–15-source thematic batches; occasionally run a cross-cutting sweep. Prefer primary evidence and record exact revision, license, security, resource fit, decision and limits.
+- **Artifact boundary:** keep source manifests, license notices, downloader/verification scripts and SHA-256 provenance in Git. Do not place model weights in the GitHub Pages source tree; use a model cache/registry or governed Release assets when size and redistribution rights allow.
 
 ## State machine
 
