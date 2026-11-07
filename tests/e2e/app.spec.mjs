@@ -3181,3 +3181,34 @@ test('partially corrupt chat history remains downloadable when recovery backup w
   for await (const chunk of stream) downloaded += chunk.toString();
   expect(downloaded).toBe(raw);
 });
+
+test('status text and roadmap tickers stay centered, including reduced-motion mode', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  const alignment = await page.evaluate(() => {
+    const status = document.querySelector('#searchStatus');
+    const ticker = document.createElement('div');
+    ticker.className = 'roadmap-ticker';
+    ticker.innerHTML = '<span class="roadmap-ticker-track">Roadmap status</span>';
+    document.body.append(ticker);
+    return {
+      statusJustify: getComputedStyle(status).justifyContent,
+      statusWrap: getComputedStyle(status).flexWrap,
+      statusTextAlign: getComputedStyle(document.querySelector('#statusText')).textAlign,
+      timeMarginLeft: getComputedStyle(document.querySelector('#thinkingTime')).marginLeft,
+      tickerJustify: getComputedStyle(ticker).justifyContent,
+      tickerTextAlign: getComputedStyle(ticker.querySelector('.roadmap-ticker-track')).textAlign,
+      tickerAnimation: getComputedStyle(ticker.querySelector('.roadmap-ticker-track')).animationName
+    };
+  });
+  expect(alignment.statusJustify).toBe('center');
+  expect(alignment.statusWrap).toBe('wrap');
+  expect(alignment.statusTextAlign).toBe('center');
+  expect(alignment.timeMarginLeft).toBe('0px');
+  expect(alignment.tickerJustify).toBe('center');
+  expect(alignment.tickerTextAlign).toBe('center');
+  expect(alignment.tickerAnimation).toBe('none');
+});
+
