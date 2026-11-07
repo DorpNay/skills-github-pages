@@ -4554,7 +4554,7 @@ permalink: /
       if(oldProvider!==provider) {
         $('providerPreset').value=provider==='alandi'?'':provider;
         applyProviderPreset(provider,false);
-      } else $('providerPreset').value=provider;
+      } else $('providerPreset').value=provider==='alandi'?'':provider;
       $('modelName').value=model;
       populateModelPresets(provider,model);
       const baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'');
