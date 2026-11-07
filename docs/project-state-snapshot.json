@@ -157,7 +157,7 @@
     "main_freshness_run": null,
     "main_graphify_run": null,
     "open_prs": "6 open PRs excluding current PR #167: #125, #131, #152, #154, #155, #166",
-    "owner_task": "Finish UI §8.17 PR #166 on head 683ec28; Graphify PASS and Quality/Chromium pending. The test now forces descendant style recalculation, waits 320ms, and uses an isolated status fixture. After all gates and explicit owner approval, merge and verify Pages. External source sweep remains research-only.",
+    "owner_task": "PR #166 §8.17 exact-head gates are green on 683ec28; await explicit owner merge authorization. After merge, verify a new Pages deployment on the merge SHA and confirm ai_ui_readability_v1/readingFontSize on the public site. External-source sweep is documented in SRC-001 and remains research-only.",
     "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
     "pr131_exact_head_verified": false,
     "pr131_compare": "Large Draft V2 workbench, stale/diverged and mergeable_state dirty; selective reconciliation only.",
@@ -215,7 +215,7 @@
     "pr158_head": "4da559cf6abc21bfa3920b5e0297a2abb84e7453",
     "pr158_compare": "Merged at d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c; exact-head Quality #42349540173 passed; exact-main root title Quality #42349853526 remains in progress.",
     "pr166_head": "683ec28310a68dc0126a715a04f3ddc613e817b6",
-    "pr166_compare": "Open PR #166, base main 69645ff. Previous head 8589607 still sampled color transitions before they fully settled at 180ms and used a live status node subject to async connection refresh. Current head 683ec28 forces descendant style recalculation before a 320ms wait and uses an isolated checking-status fixture. Graphify #42368514210 PASS; Quality #42368514164 IN_PROGRESS. Main index blob 227223d78bb3be1d07422767a29a5ec3fd8df42a lacks ai_ui_readability_v1/readingFontSize; PR blob 8f36175b9b906d835c1aeea89bf3a516157d0388 contains them."
+    "pr166_compare": "Open PR #166, base main 69645ff. Current exact head 683ec28: Quality #42368514164 PASS 7/7 (Context, Security, Integrity, Jekyll, Static Analysis, Chromium, Published Pages smoke); Graphify #42368514210 PASS. Final test forces descendant style recalculation before 320ms wait and uses an isolated checking-status fixture; assertions unchanged. PR is ready for owner-authorized merge, but main remains unchanged and Pages does not yet include §8.17."
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": true,
@@ -223,5 +223,5 @@
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-07-OWNER-UPSTREAM-SWEEP-001"
+  "last_volley": "V-2026-11-07-PR166-CHROMIUM-GREEN-001"
 }
