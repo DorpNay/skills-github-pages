@@ -147,29 +147,20 @@ PR #122 добавил только эксплуатационную надёж�
 
 **Приёмка:** настройки проекта не занимают постоянно sidebar; данные соседних проектов и личных чатов не смешиваются.
 
-### 15. Search & Research Studio — [~]
-- [x] Studio вынесена в отдельное окно; основная задача остаётся в composer.
-- [~] PR #121 удалил дублирующие prompt/depth/web selectors и показывает текущие настройки чата. Исправлена проверка E2E, которая считала первичную provider connectivity probe отправкой пользовательского сообщения; exact-head run ещё требуется.
-- [ ] Проверить на 390×844, клавиатуре, RU/EN, Escape, сохранение draft и отсутствие автоматической отправки.
-- [ ] Исследовательский pipeline остаётся четырёхэтапным на одной модели; UI не называть независимой swarm-командой.
+### 15. Search & Research Studio — [DEPRECATED / REMOVED BY OWNER 2026-11-07]
+- Историческая реализация PR #121 больше не является частью утверждённого интерфейса.
+- Владелец явно подтвердил удаление Research Studio: не должно быть пункта меню, кнопки, модального окна, JS entrypoint или повторного добавления под другим названием.
+- Проверка удаления включена в PR #169 E2E и live-site release contract; до merge это IMPLEMENTED IN BRANCH, не VERIFIED LIVE.
 
-**Приёмка:** открытие/закрытие не меняет режимы; применение настроек меняет только режимы; текст запроса не дублируется в модалке.
+### 16. Task profiles / skills — [DEFERRED: UI NOT OWNER-APPROVED]
+- Исторические внутренние настройки и тесты не дают разрешения выводить их в отдельное пользовательское меню.
+- Владелец уточнил 2026-11-07: видимые пункты «Агенты», «Навыки» и «Интеграции» в разделе «Функции» не заказывались. Не показывать эти пункты и не создавать им замену без отдельного запроса.
+- Существующий внутренний код может оставаться скрытым, пока не затрагивает обычный пользовательский поток; новые UI entrypoints и маркетинговые обещания запрещены до явного одобрения.
 
-### 16. Task profiles / skills — [~]
-- [x] Профиль задачи привязан к чату и добавляет инструкции; он не выдаёт web/tools/data permissions.
-- [x] Есть пресеты и собственные поля; навыки загружаются по требованию.
-- [~] Проверить quiz flow, кастомный профиль, формат результата, переключение чата и сохранение.
-- [ ] Не показывать несуществующие навыки как доступные runtime-пакеты.
-
-**Приёмка:** выбранный профиль влияет на system/task guidance текущего чата, не активируя инструменты и не расширяя права.
-
-### 17. Agents / team blueprint — [~]
-- [x] Реальный четырёхэтапный pipeline прозрачно описан; конфигурация blueprint до 50 ролей может сохраняться.
-- [x] UI предупреждает, что blueprint не создаёт 50 независимых агентов.
-- [~] Внутри соответствующей открытой панели добавлен декоративный маркер 1nv3nt10n 1n PrOc3ss… с пояснением, что это не runtime/фоновой статус.
-- [ ] Независимые роли, scheduler, policy engine, sandbox, approval и durable recovery — будущая реализация с отдельными tests/evals; не входят в V1.
-
-**Приёмка:** не называть blueprint работающей командой; если команда появится — обязателен ограниченный orchestration contract, permission matrix, trace, cancel/retry и adversarial tests.
+### 17. Agents / team blueprint — [DEFERRED: NO VISIBLE MENU]
+- Любые agent/team/connector controls остаются вне пользовательской навигации до отдельного owner-approved scope.
+- Не показывать три неподтверждённых пункта «Агенты / Навыки / Интеграции» и не выдавать blueprint за работающую команду.
+- Независимые роли, scheduler, policy engine, sandbox, approval и durable recovery не входят в текущую поставку.
 
 ### 18. Финальный release gate — [~]
 - [x] Основной код имеет Quality sentinels, Jekyll, Chromium E2E, published-site smoke и отдельные gateway/provenance workflows.
@@ -279,7 +270,7 @@ PR #122 добавил только эксплуатационную надёж�
 
 ### 8.1 Левое меню, память, проекты и чаты
 
-- Удалить из левого выдвижного меню кнопку «Поиск исследований».
+- Удалить из левого выдвижного меню кнопку «Поиск исследований». **Уточнение 2026-11-07:** удалить полностью и сам Research Studio UI/JS entrypoint, не только sidebar shortcut.
 - Добавить закрытие левого меню жестом свайпа.
 - Блок «Настройки памяти» разместить над «Проектами»; по умолчанию он свёрнут, компактный и малозаметный. Строку состояния поставить над названием блока и сделать существенно меньше.
 - Раскрытые настройки памяти оформить в стиле основного меню, без визуального мусора.
@@ -306,12 +297,16 @@ PR #122 добавил только эксплуатационную надёж�
 - Кнопки «Быстро» и «Тщательно» сделать ниже и компактнее по вертикали, современнее и аккуратнее; не создавать дублирующие элементы.
 - Циферблат сделать немного шире шапки, чтобы он слегка выступал за её края.
 
+**Progress 2026-11-07 / PR #169 (branch only):** header chat title получила отдельную capsule-поверхность; wordmark получил более характерную типографику; clock face увеличен до 58px desktop / 50px narrow mobile; theme + language сгруппированы в header; desktop effort controls компактнее, mobile targets остаются 44px. Exact visual/device acceptance pending.
+
 ### 8.3 Настройки и провайдеры
 
 - Организовать настройки в три сворачиваемых столбца/раздела: «aLandi Cloud», «Сторонние провайдеры», «Дополнительные настройки».
 - При открытии «aLandi Cloud» два остальных раздела сворачиваются и недоступны для открытия, пока Cloud открыт.
 - Предусмотреть обратное взаимоисключение: при открытии одного из остальных разделов «aLandi Cloud» закрыт/недоступен. Детали поведения двух остальных разделов уточнить при проектировании, не вводя дополнительных ограничений без необходимости.
-- Не показывать aLandi Cloud в списке сторонних провайдеров.
+- Не показывать aLandi aServi в списке сторонних провайдеров даже как скрытый option; third-party fallback никогда не должен автоматически переключаться на aServi.
+
+**Progress 2026-11-07 / PR #169 (branch only):** aServi вынесен в отдельную collapsible section; third-party selector содержит только внешних провайдеров; aServi взаимоисключается с двумя остальными settings sections. Third-party и Additional могут оставаться открытыми вместе. Fallback-кандидаты исключают aServi. Exact-head E2E and live-site verification pending.
 
 ### 8.4 Tavily и системный промпт
 
@@ -482,3 +477,15 @@ PR #122 добавил только эксплуатационную надёж�
 | 2026-10-31 | Consolidated the remaining owner-dictated UI notes: message action icons, backdrop lifecycle, unified control sizing, compact theme/language controls, removal of experimental server memory, explicit project-context transfer, touch text-selection behavior, centered/color-coded status tickers, icon-first button typography and user-adjustable text readability. Added the agreed third-party provider shortlist and BYOK/model auto-detection requirements, including V1/funding/security boundaries. | Confirmed in the current conversation; requirements only, implementation status not inferred. |
 
 | 2026-11-07 | Implemented an icon-first message action slice for owner requirement 8.8: copy/open/speak controls, 44×44 hit area, accessible names/tooltips, and copy/speak actions in full-message view (speak hidden for user messages). | PR branch feat/ui-message-actions-icon-first-20261107; implementation SHA 18faba30800376fea146769a14ef1e4323fc3ccb; E2E test SHA 55b38b0e8e61dc152f8a354174d43f9e483e7347; Exact-head Quality #42349078380 passed on code/test SHA 350c01513ec6dc147cd5b26e7b8e3bfa17a26d0e; the follow-up docs-only status commit is awaiting its own exact-head gate. |
+
+## Owner correction and implementation checkpoint — 2026-11-07
+
+Этот блок уточняет исторические пункты выше и является актуальным приоритетом при конфликте формулировок:
+
+- **Research Studio:** полностью удалён из интерфейса и клиентского JS; не возвращать.
+- **Functions menu:** удалено меню с неподтверждёнными пунктами «Агенты / Навыки / Интеграции». Не восстанавливать без отдельного явного запроса.
+- **aServi/provider separation:** aServi — собственный режим, не внешний провайдер. Внешний selector и fallback не включают aServi. Переключение между режимами только вручную.
+- **Sidebar:** единственный порядок — память → проекты → чаты; память компактная и закрыта по умолчанию, проекты закрыты по умолчанию при видимой кнопке создания, чаты открыты по умолчанию. Настройки проекта — только шестерёнка конкретного проекта; дублирующий theme footer удалён.
+- **Controls:** theme + language в header; 44px touch targets; stop-generation action сохраняется, но не оформляется красной заливкой.
+- **Release:** статус UI changes — IMPLEMENTED IN PR #169 only until exact-head checks pass, merge is authorized by this explicit publication request, and the post-merge Pages deployment plus live-site contract smoke verify the exact merge SHA and UI markers.
+
