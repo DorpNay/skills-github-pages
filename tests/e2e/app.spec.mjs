@@ -587,10 +587,10 @@ test('settings profile exports portable preferences but never API secrets', asyn
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#modelName').fill('openai/gpt-oss-120b');
   await page.locator('#apiKey').fill('e2e-private-provider-secret-value');
-  await page.locator('#allowCrossProviderFallback').check();
   await page.locator('[data-action="save-settings"]').click();
 
   await openAdditionalSettings(page);
+  await page.locator('#allowCrossProviderFallback').check();
   if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#tavilyKey').fill('e2e-private-search-secret-value');
   await page.locator('#readingFontSize').evaluate(element => { element.value = '18'; element.dispatchEvent(new Event('input', { bubbles: true })); element.dispatchEvent(new Event('change', { bubbles: true })); });
