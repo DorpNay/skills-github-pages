@@ -3346,7 +3346,7 @@ test('readability preferences persist and maintain semantic text contrast in bot
     }
   }
 
-  const semanticRoles = await page.evaluate(() => {
+  const semanticRoles = await page.evaluate(async () => {
     const sample = document.createElement('div');
     sample.className = 'assistant-content';
     sample.style.backgroundColor = 'var(--ui-surface)';
@@ -3374,7 +3374,6 @@ test('readability preferences persist and maintain semantic text contrast in bot
       statusInfo:getComputedStyle(statusText).color
     });
     const results = {};
-    const diagnostics = [];
     for (const theme of ['dark','light']) {
       document.documentElement.dataset.theme = theme;
       for (const contrast of ['standard','high']) {
@@ -3383,35 +3382,9 @@ test('readability preferences persist and maintain semantic text contrast in bot
         statusRow.dataset.tone = 'info';
         // Force the root custom-property style to resolve before reading descendant colors.
         getComputedStyle(document.documentElement).getPropertyValue('--ui-text-muted');
-        const debugLink = sample.querySelector('#link');
-        const debugDisabled = sample.querySelector('#disabled');
-        const matchedRules = [];
-        for (const sheet of Array.from(document.styleSheets)) {
-          try {
-            for (const rule of Array.from(sheet.cssRules || [])) {
-              if (!rule.selectorText || !/(assistant-content a|:disabled)/.test(rule.selectorText)) continue;
-              try {
-                if (debugLink.matches(rule.selectorText) || debugDisabled.matches(rule.selectorText)) {
-                  matchedRules.push({ selector:rule.selectorText, color:rule.style?.color || '' });
-                }
-              } catch {}
-            }
-          } catch {}
-        }
-        diagnostics.push({
-          theme, contrast,
-          htmlTheme:document.documentElement.getAttribute('data-theme'),
-          htmlContrast:document.documentElement.getAttribute('data-reading-contrast'),
-          rootLink:getComputedStyle(document.documentElement).getPropertyValue('--ui-link').trim(),
-          sampleLink:getComputedStyle(sample).getPropertyValue('--ui-link').trim(),
-          rootMuted:getComputedStyle(document.documentElement).getPropertyValue('--ui-text-muted').trim(),
-          sampleMuted:getComputedStyle(sample).getPropertyValue('--ui-text-muted').trim(),
-          linkColor:getComputedStyle(debugLink).color,
-          disabledColor:getComputedStyle(debugDisabled).color,
-          linkMatches:debugLink.matches('html[data-theme][data-reading-contrast="high"] .assistant-content a'),
-          disabledMatches:debugDisabled.matches('html[data-theme][data-reading-contrast="high"] .assistant-content :is(button,input,select,textarea):disabled'),
-          matchedRules
-        });
+        // The app transitions control/link colors for 140ms; sample only after the final cascade settles.
+        await new Promise(resolve => setTimeout(resolve, 180));
+
         results[theme + '-' + contrast] = {
           actual:actual(),
           expected:{
@@ -3427,10 +3400,9 @@ test('readability preferences persist and maintain semantic text contrast in bot
       }
     }
     sample.remove();
-    return { results, diagnostics };
+    return results;
   });
-  console.log('READABILITY_DEBUG', JSON.stringify(semanticRoles.diagnostics));
-  for (const [scheme, roles] of Object.entries(semanticRoles.results)) {
+  for (const [scheme, roles] of Object.entries(semanticRoles)) {
     expect(roles.actual, scheme).toEqual(roles.expected);
   }
 
