@@ -1,17 +1,17 @@
 # Landing V1 stability and V2 promotion plan
 
 **Created:** 2026-11-04  
-**Owner direction:** keep the public main branch as the stable, observable Landing 1.0 baseline while allowing carefully selected quality improvements; develop the substantial Landing 2.0 package in PR #131 and promote only independently verified slices.  
-**Status:** IN PROGRESS — V1 baseline preserved; independent V1 landing, orientation, N₂O knowledge, source triage, model artifact and Python reliability slices are merged. Landing 2.0 audit and repository hygiene remain active; each further promotion still requires evidence and an explicit recorded decision.
+**Owner direction (updated 2026-11-06):** preserve the independently published V1 marketing landing at `/landing/`, but promote the modular V2 root application shell through a bounded, explicitly authorized PR #154. PR #131 remains the substantial V2 workbench; it must not be merged wholesale.  
+**Status:** IN PROGRESS — PR #153 orientation repair is merged and post-merge Quality/Pages/Freshness/Provenance passed on main SHA `f323b6f339d454dad6e820a4074fa230acc7b6df`. The root-app V2 shell is under exact-head verification in PR #154; PR #131 and research/voice workstreams remain isolated.
 
 ## Product and branch policy
 
-- `main` is the stable Landing 1.0 line. It is not frozen against improvements to orientation, documentation, accessibility, reliability, performance, security, maintainability or owner convenience when those changes preserve the V1 product boundary.
-- Landing 1.0 means the currently approved product surface and behavior, not a ban on local modernization. Do not silently introduce V2 product scope, new runtime capabilities, paid services, new dependencies or infrastructure changes into V1.
-- PR #131 is the primary Landing 2.0 development workbench. Do not merge the PR wholesale. Extract coherent, independently useful slices; decide each slice on its own merits.
-- Preserve the ability to reproduce the V1 baseline before substantial promotion: record the exact main SHA and create a durable Git reference (tag or archival branch) only after verifying the desired baseline and checking repository naming conventions. Do not create the reference prematurely or rewrite history.
+- `main` is the public GitHub Pages line: the marketing landing at `/landing/` remains a separate V1 surface; the root application is moving to the modular V2 shell through PR #154 after exact-head gates. The pre-promotion root-client baseline is recoverable from the parent main SHA `f323b6f339d454dad6e820a4074fa230acc7b6df` and Git history.
+- The owner explicitly authorized this root-client V2 product-scope change on 2026-11-06. This does not authorize new backend routes, hosted services, paid services, infrastructure changes or unimplemented runtime claims; preserve local-first storage, user-data contracts and the existing Gateway boundary.
+- PR #131 remains the primary Landing 2.0 development workbench. Do not merge it wholesale. PR #154 selectively promotes only the modular root HTML/CSS/JS shell and its aligned test/quality/build support; future Gateway, AgentRun, Voice, research and other PR #131 changes require separate review.
+- Preserve the ability to reproduce the pre-promotion root client: exact parent main SHA `f323b6f339d454dad6e820a4074fa230acc7b6df` is recorded, and rollback is a revert of the bounded promotion commit (no data migration). Keep the existing `/landing/` V1 marketing surface. Create no new baseline tag until the owner selects and verifies one.
 - Prefer a small number of coherent promotion batches over a proliferation of tiny PRs. A batch may contain several related, separately gated improvements. Keep owner review, exact-head CI and rollback clear.
-- Research branches remain isolated until their work is either accepted into the V2 workbench, promoted as a verified V1-compatible slice, or explicitly rejected/deferred.
+- Research branches remain isolated until their work is accepted into the V2 workbench, promoted as an explicitly owner-approved bounded slice, or rejected/deferred.
 - Repository cleanup is a final evidence-based phase, not a reason to delete useful history or unresolved work.
 
 ## Execution order
@@ -31,11 +31,11 @@ Tasks:
 8. Run applicable exact-head documentation gates; do not require unrelated Gateway/device checks for a docs-only slice unless repository policy requires them.
 
 **Acceptance:** a normal continuation uses `OLEDUE.md`, one batched live-state read and one task-specific canonical document; detailed orientation/state/history are opened on demand. The selected branch, PR, tested SHA and next action are recovered without asking the owner to repeat context.  
-**Maturity:** IMPLEMENTED IN MAIN at PR #140 merge SHA fe43d7fbd04dd4da7b557a3dd3f6c7f3ef6a924b. Exact PR-head Quality/Freshness/Provenance and post-merge main Quality/Freshness/Provenance/Pages passed. A fresh independent-session handoff observation remains pending.
+**Maturity:** IMPLEMENTED / VERIFIED IN MAIN. PR #153 merged at `f323b6f339d454dad6e820a4074fa230acc7b6df`; post-merge Quality #42150785825, Pages #42150784695, Freshness #42150785781 and Provenance #42150785779 passed. Fresh-session handoff exercise completed 2026-11-06 using OLEDUE first and one batched live-state read; owner request selected PR #154 rather than defaulting to #131. This is an operational exercise, not an independent user study.
 
 ### 2. Audit PR #131 and build a promotion candidate register
 
-**Goal:** find the small set of V2 work that is already complete, internally coherent and safe/useful on the V1 line.
+**Goal:** audit PR #131 into coherent, independently verifiable V2 capabilities and promote only the slices explicitly authorized by the owner.
 
 For each candidate, record:
 - stable capability/change ID and user-visible outcome;
@@ -50,7 +50,7 @@ For each candidate, record:
 
 **Promotion gate (all required):**
 1. The change is bounded and independently useful.
-2. It preserves the V1 product boundary and current user-data contracts.
+2. It stays within the explicitly authorized product slice, preserves local-first storage/user-data contracts, and does not imply unfinished backend/runtime capabilities.
 3. It has no hidden dependency on unfinished V2 architecture or another unmerged branch.
 4. Tests cover the behavior and important failure paths; test assertions alone are not a pass.
 5. Exact-head Quality/Chromium and applicable Gateway/Jekyll/Integrity/Security/Context/Freshness/Provenance checks pass.
@@ -58,27 +58,27 @@ For each candidate, record:
 7. A rollback/revert is straightforward and no irreversible migration is required.
 8. The candidate is documented in this register with evidence and a reasoned decision.
 
-**Do not promote:** roadmap-only cards, mock controls, speculative runtime, unfinished agent orchestration, unsupported source CRUD, experimental server-memory graph functionality, unverified model integrations, or UI that implies a capability not implemented.
+**Do not promote:** active controls that imply an unimplemented capability, speculative runtime, unfinished agent orchestration, unsupported source CRUD, experimental server-memory graph functionality or unverified model integrations. Read-only roadmap disclosures are allowed in the V2 shell only when clearly marked future/non-operational and covered by UI-integrity tests.
 
-### 3. Promote accepted V1-compatible improvements to main
+### 3. Promote owner-approved bounded product slices to main
 
-**Goal:** improve the live V1 site incrementally without absorbing the whole V2 branch.
+**Goal:** improve the live product deliberately while keeping the V1 marketing landing and unrelated V2 workstreams isolated.
 
 - Group accepted candidates into coherent promotion batches.
 - Preserve existing contracts and avoid broad refactors.
 - Run exact-head checks for each batch; inspect the final diff and published Pages result.
 - Update the candidate register with merged SHA, test run IDs and residual limits.
-- Keep V2-only work in PR #131.
+- Keep PR #131 as the V2 workbench; PR #154 is the sole currently authorized bounded root-shell promotion.
 - Do not merge PR #131 as a whole as a shortcut.
 
 **Acceptance:** every promoted slice has a traceable decision, exact-head verification, merge SHA and rollback route; the public site reflects only accepted changes.
 
-### 4. Preserve V1 baseline and consolidate development topology
+### 4. Preserve rollback baseline and consolidate development topology
 
 **Goal:** leave a simple, understandable repository structure after the V1 promotion tranche.
 
 - Record the chosen stable V1 baseline SHA and create a recoverable tag or archival branch after verification.
-- Keep `main` as the current improved V1 line.
+- Keep `main` as the public Pages line; after PR #154 it carries the modular V2 root app, while `/landing/` remains the separate V1 marketing surface.
 - Keep PR #131 as the single primary Landing 2.0 integration workbench.
 - Keep only genuinely independent research workstreams as separate branches/PRs; otherwise consolidate their findings into #131 or the canonical research register.
 - Audit every open PR and branch by ancestry, unique commits, linked issue, owner intent and reusable evidence before closing or deleting anything.
@@ -115,7 +115,17 @@ Initial research leads already present in `INTEL.md`, `docs/OPEN_SOURCE_TRIAGE_R
 
 **Acceptance:** every remaining branch, PR and issue has a documented purpose; no unique changes or unresolved owner gates are lost.
 
-## Current live baseline (verified 2026-11-05)
+## Current checkpoint — 2026-11-06
+
+- Main SHA: `f323b6f339d454dad6e820a4074fa230acc7b6df` (PR #153 merge).
+- Exact-main gates: Quality #42150785825 PASS; Pages deployment #42150784695 PASS; Freshness #42150785781 PASS; Provenance #42150785779 PASS.
+- Automatic publication is verified for this repository: `DorpNay/skills-github-pages` → https://dorpnay.github.io/skills-github-pages/. This is GitHub Pages only; Gateway/VPS remains separate.
+- PR #154 is the owner-authorized selective modular V2 root-app promotion from PR #131. It includes root `index.md`, `assets/css/app.css`, `assets/js/app.js`, and matching E2E/quality/baseurl/Graphify checks. It excludes Gateway/AgentRun, Voice and research prototypes.
+- PR #131 remains Draft, diverged 1,129 ahead / 20 behind, 76 files, mergeable=false. Do not merge or synchronize wholesale.
+- PR #152 remains a separate Draft voice workstream (17 ahead / 2 behind, 4 files, dirty). Issue #111 remains open for owner-controlled VPS, device, credential and runtime gates.
+- PR #154 has no production deployment until merge; after merge verify exact main SHA, Pages deployment, root HTML/CSS/JS HTTP delivery and post-merge Quality/Freshness/Provenance.
+
+## Historical live baseline — 2026-11-05
 
 - `main` HEAD: `2e11849d409a51009693af95ac3ecbf1f057a3fc` (PR #139 squash-merged). Original V1 baseline before code promotion: `9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af`.
 - PR #139 exact-head gates: Quality #41966180071, Freshness #41966180096, Provenance #41966180157 and Graphify #41966180042 PASS on exact PR HEAD `d76be1d59ed832fa638e419b542151dba277c143`. Post-merge main Quality #41967234442, Pages deployment #41967233832, Freshness #41967234558, Provenance #41967234535 and Graphify #41967234708 all PASS on exact merge SHA.
@@ -137,7 +147,7 @@ These are audit targets, not pre-approved promotions:
 3. Navigation/history, modal lifecycle, focus restoration and keyboard behavior — inspect for existing main equivalents before deciding.
 4. Toast/operation status behavior — promote only if the behavior is complete, tested and not dependent on V2 operation IDs/state infrastructure.
 5. Context handoff and project/chat scope — high sensitivity; require explicit scope tests and exact-head regression.
-6. Agent/Skills/Research menus and roadmap disclosures — likely V2 product surface; do not promote roadmap-only UI into V1 without a deliberate product decision.
+6. Agent/Skills/Research menus and roadmap disclosures — V2 product surface. PR #154 includes only the owner-authorized root shell; keep roadmap disclosures read-only, clearly future/non-operational, and never present them as implemented controls.
 7. Gateway/model/runtime changes — evaluate separately; do not bundle with UI promotion.
 
 ## Decision log
@@ -147,6 +157,7 @@ These are audit targets, not pre-approved promotions:
 | OLEDUE/orientation and release-plan docs | PR #138 head `2462a783`; Quality #41797778925, Freshness #41797779149, Provenance #41797779027 passed; merged at `a7915291` | IMPLEMENTED / CI VERIFIED | Main orientation now points to the V1/V2 plan; fresh-session behavioral handoff test remains separate.
 | PR #131 wholesale merge | Current live compare: 57 files; 1,094 ahead / 9 behind; mergeable=false. Exact HEAD `597536924ce37b17f8832aa36ea5b928f5584230`; Quality #41787658241 and Provenance #41787658226 passed on this SHA, but exact-head Freshness/Graphify absent. | REJECT AS A MERGE UNIT | Extract bounded candidates only; do not sync or merge the whole branch without separate owner approval. |
 | Public Landing V1 candidate / PR #139 | Exact PR HEAD `d76be1d59ed832fa638e419b542151dba277c143`: Quality #41966180071, Freshness #41966180096, Provenance #41966180157 and Graphify #41966180042 PASS. Squash-merged at `2e11849d409a51009693af95ac3ecbf1f057a3fc`; exact-main Quality #41967234442, Pages #41967233832, Freshness #41967234558, Provenance #41967234535 and Graphify #41967234708 PASS; production CSS/landing HTML fetched. | IMPLEMENTED / MERGED / VERIFIED | Native iPhone/VoiceOver and physical-device review remain unverified. |
+| Modular V2 root application shell / PR #154 | Owner-authorized selective promotion from PR #131; base main `f323b6f339d454dad6e820a4074fa230acc7b6df`; final observed PR HEAD `4aee19b3244b6b518b98edb03454b5422c61d0da`: Freshness #42152494374, Graphify #42152494385, Dead Code #42152494387 and Provenance #42152494353 PASS; Quality #42152494365 pending. | PROMOTE BOUNDED SLICE, QUALITY GATE PENDING | Do not merge until exact-head Quality/4-shard Chrome passes; post-merge Pages and asset HTTP delivery are mandatory. |
 
 ### Follow-up review — PR #134 AgentRun prototype (2026-11-05)
 
@@ -183,7 +194,7 @@ PR #134 exact HEAD `519973c793a1c998b43c60dedfe55a02b74a26a9` received COMMENT r
 | 8.1–8.11 and 8.14–8.17: responsive/accessibility/navigation/control consistency | Implementation ledger records source and regression work; current Quality #41787658241 passed all 4 Chromium shards and Jekyll. Checklist still marks these items [~]; visual/manual/device checks remain. | **KEEP IN V2; V1-compatible in principle.** Do not promote as one block while the UI refactor is entangled. | Extract a bounded patch with no unfinished dependency; exact-head visual, accessibility and regression review. |
 | Public Landing page accessibility/responsive slice | `landing/index.html`, `assets/css/landing.css`, `tests/e2e/landing.spec.mjs`; five original E2E tests preserved, three accessibility/responsive tests added, plus CSS HTTP 200 / `text/css` and browser stylesheet-load assertions. Exact PR #139 HEAD `d76be1d59ed832fa638e419b542151dba277c143`: Quality #41966180071, Freshness #41966180096, Provenance #41966180157 and Graphify #41966180042 all PASS. Squash-merged at `2e11849d409a51009693af95ac3ecbf1f057a3fc`; exact-main Quality #41967234442, Pages #41967233832, Freshness #41967234558, Provenance #41967234535 and Graphify #41967234708 all PASS; production CSS and landing HTML fetched. | **IMPLEMENTED / MERGED / VERIFIED.** Bounded public-site improvement independent of root AI client and Gateway; V1 product boundary preserved. | Native-device visual/assistive-technology checks remain unverified. Do not include root `index.md`, Gateway or broader app refactor. |
 | 8.12: retire experimental server-memory graph UI/API | Main still exposes `/v1/memory/graph/*` routes and global-memory configuration. PR #131 removes routes/flags/UI and adds a test asserting retired endpoints return 404; ordinary local/private/shared/project memory and delta sync/RAG are intended to remain. | **DO NOT PROMOTE AS A V1 REMOVAL.** Main's `DECISIONS.md`, `docs/ACCEPTED_IMPROVEMENTS.md`, `docs/USER_REQUEST_CHECKLIST.md`, `README.md` and Gateway runbook record this as a previously accepted, deliberately opt-in capability. Removing it is a product-scope reversal, not a quality-only improvement. | If retirement is ever reconsidered, first obtain an explicit owner decision; inventory live host flags and existing graph SQLite data; define export/backup/migration and client compatibility; then use a separate deprecation/removal proposal and full Gateway tests. |
-| 8.13: explicit project-context handoff to an existing chat | Current E2E test verifies selected existing chat, no chat creation/membership mutation/current-chat movement, sessionStorage restore across reload, one-shot consumption and absence of project instructions/memory on the next request. The current exact-head Quality run passed all four Chromium shards. | **KEEP IN V2 for now.** Implemented and desktop-browser verified, but it adds a new context-transfer capability with privacy/scope implications outside the frozen V1 baseline. | Keep explicit opt-in, session-only scope and one-shot behavior; perform a focused privacy review and request a separate V1 product decision before promotion. |
+| 8.13: explicit project-context handoff to an existing chat | Current E2E test verifies selected existing chat, no chat creation/membership mutation/current-chat movement, sessionStorage restore across reload, one-shot consumption and absence of project instructions/memory on the next request. The current exact-head Quality run passed all four stable Chrome shards. | **KEEP IN V2 for now.** Implemented and desktop-browser verified, but it adds a new context-transfer capability with privacy/scope implications outside the frozen V1 baseline. | Keep explicit opt-in, session-only scope and one-shot behavior; perform a focused privacy review and request a separate V1 product decision before promotion. |
 | 8.19 notifications / operation state | Ledger documents an accessible FIFO toast and persistent acknowledged errors, but durable operation IDs, pending-to-result updates and inline recovery remain open. | **KEEP IN V2; partial implementation only.** | Finish operation lifecycle contract and failure/recovery tests; no fake progress. |
 | Functions / Agents / Skills / Research menu | Exact PR #131 HEAD `597536924ce37b17f8832aa36ea5b928f5584230`: four menu groups; two real function-panel entries (Agents/Skills), connectors status, five roadmap-only cards with read-only Details. Agent panel exposes real sequential workflow + local Team Blueprint controls, and four native future-capability disclosures; copy explicitly says one selected model runs the four-stage pipeline and no independent agents/queue/AgentRun UI exists. Exact Quality #41787658241 (4/4 Chromium + Jekyll) and Provenance #41787658226 passed; published Pages smoke skipped, Freshness/Graphify absent. | **KEEP IN V2; desktop UI-integrity VERIFIED.** No V1 promotion of roadmap cards or fake launch controls. | Native iPhone/VoiceOver/physical keyboard and published-site smoke remain gates. Promote only a real independently scoped capability after contract/runtime and tests exist, if ever. |
 | Root client extraction (`index.md` → `assets/js/app.js` + `assets/css/app.css`) | Large structural refactor: root page changes from 5,228 to 597 lines; new JS asset is 5,348 lines and CSS asset 743 lines. It also changes behavior, naming, providers, settings and tests. | **KEEP IN V2; not a standalone V1 promotion.** | Complete structural/behavioral diff audit, verify asset loading/baseurl, regression and performance; split pure extraction from behavioral changes if promotion is later justified. |

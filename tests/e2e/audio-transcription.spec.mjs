@@ -36,8 +36,8 @@ test('voice recording is sent to the configured gateway and transcript stays edi
   });
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
-    await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#thirdPartyProviderSettings > summary').click();
   }
   await page.locator('#providerPreset').selectOption('alandi');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -79,8 +79,8 @@ test('assistant message offers copy and local TTS controls with a mini-player', 
   });
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
-    await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#thirdPartyProviderSettings > summary').click();
   }
   await page.locator('#providerPreset').selectOption('alandi');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -132,8 +132,8 @@ test('stopping local TTS cancels generation and prevents late playback', async (
   }));
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
-    await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#thirdPartyProviderSettings > summary').click();
   }
   await page.locator('#providerPreset').selectOption('alandi');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -189,8 +189,8 @@ test('attached audio is transcribed locally before model submission', async ({ p
 
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
-    await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#thirdPartyProviderSettings > summary').click();
   }
   await page.locator('#providerPreset').selectOption('alandi');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -234,8 +234,8 @@ test('attached audio remains in the draft when local ASR is disabled', async ({ 
   });
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
-    await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#thirdPartyProviderSettings > summary').click();
   }
   await page.locator('#providerPreset').selectOption('alandi');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -310,8 +310,8 @@ test('local voice dialogue transcribes, sends, speaks, and listens for the next 
 
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) {
-    await page.locator('#legacyProviderSettings > summary').click();
+  if (!(await page.locator('#thirdPartyProviderSettings').evaluate(el => el.open))) {
+    await page.locator('#thirdPartyProviderSettings > summary').click();
   }
   await page.locator('#providerPreset').selectOption('alandi');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');

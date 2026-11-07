@@ -7,7 +7,7 @@
 - [Первый стек и предпусковой чек-лист](docs/PRE_LAUNCH_STACK_RU.md) — рекомендуемая конфигурация и пошаговые gates владельца перед VPS/Tunnel и закрытым пилотом.
 - [Карта потоков данных и вводные для Privacy Notice](docs/LAUNCH_PRIVACY_REVIEW_RU.md) — внутренний checklist перед публикацией политики; это ещё не готовый юридический документ.
 
-**Статус:** PR #121 merged at `f4d880f` (первый бесплатный лендинг V1 и клиентский UX), PR #122 merged at `fd4f0a1` (Gateway liveness/readiness). Exact-head CI обоих PR прошёл. Post-merge Pages deployment на точном merge commit отдельно не подтверждён; считать публикацию проверенной можно только после успешного Pages deployment и smoke фактического URL.
+**Статус на 2026-11-06:** PR #153 merged в `main` на SHA `f323b6f339d454dad6e820a4074fa230acc7b6df`; post-merge Quality #42150785825, Pages deployment #42150784695, Freshness #42150785781 и Provenance #42150785779 прошли на этом точном SHA. GitHub Pages автоматически публикует этот репозиторий. Модульная оболочка root-приложения V2 проходит выборочную проверку в PR #154; PR #131 целиком не вливается. Gateway/VPS — отдельный release gate, не часть Pages deployment.
 
 ## Объединённый backlog первого бесплатного релиза
 
@@ -16,6 +16,18 @@
 ## Финализация UI первой бесплатной версии
 
 Живой чек-лист требований, инженерные критерии, источники и журнал выполнения: [docs/V1_UI_FINALIZATION_RU.md](docs/V1_UI_FINALIZATION_RU.md). Он относится к статическому клиенту GitHub Pages и не подменяет roadmap gateway/runtime.
+
+## Единый реестр задач и источников
+
+- [Мастер-реестр задач aLandi](docs/MASTER_TASK_REGISTRY_RU.md) — единый список приоритетов, acceptance criteria и незавершённых задач.
+- [Append-only owner addendum](docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md) — решения владельца, evidence и история продвижения.
+- [INTEL.md](INTEL.md) — проверяемые внешние источники, upstream-проекты, версии и технические выводы.
+- [Open-source triage](docs/OPEN_SOURCE_TRIAGE_RU.md) и [Technique Register](docs/TECHNIQUE_REGISTER_RU.md) — лицензии, provenance и отобранные инженерные техники.
+
+## Текущий UI и promotion gates
+
+- [Стратегия Landing V1/V2](docs/LANDING_RELEASE_STRATEGY_RU.md) — правила изоляции PR #131 и owner-authorized selective promotion.
+- [Implementation ledger aLandi V2](docs/LANDING_UI_V2_IMPLEMENTATION_RU.md) — фактическая реализация, границы, тесты и состояние продвижения модульного root shell через PR #154.
 
 ## Мастер-контекст проекта
 

@@ -71,9 +71,14 @@ jobs:
         run: node scripts/quality-agents.mjs build
 
   browser-e2e:
-    name: Real Chromium browser regression tests
+    name: Real Chrome browser regression tests (shard ${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -85,14 +90,14 @@ jobs:
           destination: ./_site
       - name: Install pinned browser test runtime
         run: |
-          # Avoid the known Ubuntu man-db trigger stall during Playwright --with-deps.
-          sudo apt-get --yes remove --purge man-db
           npm install --no-save --no-package-lock @playwright/test@1.64.1
-          npx playwright install --with-deps chromium
-      - name: Exercise the built app in Chromium
-        run: npx playwright test --grep-invert "live public site serves the app shell and basic chat controls"
+          google-chrome --version
+          npx playwright install ffmpeg
+          npx playwright --version
+      - name: Exercise the built app in stable Chrome
+        run: npx playwright test --shard=${{ matrix.shard }}/4 --grep-invert "live public site serves the app shell and basic chat controls"
       - name: Wait for the published site to respond
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request'
+        if: matrix.shard == 1 && ((github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request')
         run: |
           for attempt in $(seq 1 18); do
             if curl --fail --silent --show-error --location --max-time 15 "https://dorpnay.github.io/skills-github-pages/?smoke=$GITHUB_SHA" -o /dev/null; then
@@ -105,12 +110,12 @@ jobs:
           echo "Published GitHub Pages did not become available in time."
           exit 1
       - name: Test the actual published site in Chromium
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request'
+        if: matrix.shard == 1 && ((github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request')
         env:
           LIVE_SITE_URL: https://dorpnay.github.io/skills-github-pages/
         run: npx playwright test tests/e2e/live-site.spec.mjs
       - name: Wait for the new landing content after a main deployment
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: matrix.shard == 1 && github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           landing_url="https://dorpnay.github.io/skills-github-pages/landing/?smoke=$GITHUB_SHA"
           for attempt in $(seq 1 18); do
@@ -125,7 +130,7 @@ jobs:
           echo "The current landing content was not published in time."
           exit 1
       - name: Test the published aLandi landing page in Chromium
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: matrix.shard == 1 && github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           LIVE_SITE_URL: https://dorpnay.github.io/skills-github-pages/
         run: npx playwright test tests/e2e/landing.spec.mjs
@@ -133,7 +138,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: playwright-diagnostics
+          name: playwright-diagnostics-${{ matrix.shard }}
           path: test-results/
           if-no-files-found: ignore
           retention-days: 7
@@ -218,7 +223,11 @@ jobs:
           Path("audit-reports/landing-page.html").write_text(landing, encoding="utf-8")
           print(f"Extracted {len(extractor.scripts)} inline UI scripts and normalized the Jekyll landing page for SAST.")
           PY
-          semgrep scan --config p/default --json gateway scripts router observability intel latency gateway/tests tests audit-reports/ui-inline-*.js audit-reports/landing-page.html \
+          semgrep_targets=(gateway scripts router observability intel latency gateway/tests tests assets/js/app.js audit-reports/landing-page.html)
+          while IFS= read -r -d '' inline_script; do
+            semgrep_targets+=("$inline_script")
+          done < <(find audit-reports -maxdepth 1 -type f -name 'ui-inline-*.js' -print0)
+          semgrep scan --config p/default --json "${semgrep_targets[@]}" \
             > audit-reports/semgrep.json 2> audit-reports/semgrep.stderr
           echo "$?" > audit-reports/semgrep.exit
           echo "Findings are report-only at this stage; scanner/runtime errors are checked separately."

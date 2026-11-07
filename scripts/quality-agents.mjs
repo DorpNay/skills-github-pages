@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Deterministic quality sentinels for the static AI Mobile Agent.
+ * Deterministic quality sentinels for the static aLandi browser client.
  * No LLM, API key, runtime dependency, network access, or user-device work.
  * Inspired by deterministic-before-LLM and evidence-first review practices.
  */
@@ -13,8 +13,14 @@ import { dirname, resolve } from 'node:path';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sourcePath = resolve(root, 'index.md');
 const source = readFileSync(sourcePath, 'utf8');
+const appPath = resolve(root, 'assets/js/app.js');
+const appSource = readFileSync(appPath, 'utf8');
+const appCss = readFileSync(resolve(root, 'assets/css/app.css'), 'utf8');
+const landingCss = readFileSync(resolve(root, 'assets/css/landing.css'), 'utf8');
+const combinedSource = [source, appSource, appCss, landingCss].join('\n');
 const fail = (message) => { throw new Error(message); };
-const includes = (needle, message) => assert.ok(source.includes(needle), message);
+// Keep HTML-structure checks on index.md; runtime checks span the split app asset.
+const includes = (needle, message) => assert.ok(combinedSource.includes(needle), message);
 const matches = (pattern, message) => assert.match(source, pattern, message);
 const suites = {
   integrity: [
@@ -22,10 +28,14 @@ const suites = {
       matches(/^---\s*\n[\s\S]*?layout:\s*null[\s\S]*?---\s*\n/, 'Expected layout: null front matter.');
       matches(/<html\s+lang="ru">/i, 'Russian document language is missing.');
       matches(/<meta\s+name="viewport"[^>]*>/i, 'Mobile viewport metadata is missing.');
+      includes('title: aLandi — личная AI-среда', 'Jekyll page title must use the current aLandi product identity.');
+      includes('<title>aLandi — личная AI-среда</title>', 'Browser document title must use the current aLandi product identity.');
+      includes('<meta name="description" content="aLandi — личная AI-среда для чатов, проектов и работы с контекстом.">', 'The app page must expose a concise product description.');
+      includes('<meta name="color-scheme" content="dark light">', 'Browser-native controls must be informed that both themes are supported.');
       matches(/<\/html>\s*$/, 'Document must close its html element.');
     }],
     ['critical UI controls exist', () => {
-      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'apiKeyShell', 'apiKeyStatus', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiLanguage', 'uiMotion', 'cloudSettingsCard', 'cloudStatusDot', 'cloudStatus', 'cloudBaseUrl', 'cloudBaseUrlError', 'cloudModel', 'cloudModelError', 'cloudApiKey', 'cloudApiKeyError', 'sidebarThemeToggle', 'clockDigital', 'homeThemeToggle', 'brandWordmark', 'projectPanel', 'projectSettingsModal', 'currentProjectSelect', 'projectMemoryToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'researchStudioModal', 'researchStudioSettingsSummary', 'researchStudioEffort', 'researchStudioSearchMode', 'researchStudioStructured', 'functionPanelModal', 'skillPresetSelect', 'agentModeControl', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
+      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'apiKeyShell', 'apiKeyStatus', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiLanguage', 'uiMotion', 'aserviSettingsCard', 'aserviCardTitle', 'aserviStatusDot', 'aserviStatus', 'aserviBaseUrl', 'aserviBaseUrlError', 'aserviModel', 'aserviModelError', 'aserviApiKey', 'aserviApiKeyError',  'clockDigital',  'brandWordmark', 'projectPanel', 'projectSettingsModal', 'currentProjectSelect', 'projectMemoryScopeSelect', 'privateMemoryContextToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'researchStudioModal', 'researchStudioSettingsSummary', 'researchStudioEffort', 'researchStudioSearchMode', 'researchStudioStructured', 'functionPanelModal', 'skillPresetSelect', 'agentModeControl', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
         matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
       }
     }],
@@ -39,10 +49,14 @@ const suites = {
       includes('const evidenceSection = document.createElement', 'Research evidence must be rendered with DOM nodes rather than HTML strings.');
       includes('const MAX_RESEARCH_EVIDENCE = 40;', 'Research evidence must have a deterministic size cap.');
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
-      includes("alandi: { label: 'aLandi Self-hosted Gateway'", 'The aLandi private gateway must be a first-class provider.');
+      includes("alandi: { label: 'aLandi aServi · Self-hosted Gateway'", 'The aLandi private gateway must be a first-class provider.');
       includes("allowCrossProvider&&selectedProvider!=='alandi'", 'Selecting aLandi must never silently route private prompts to another provider even if global fallback is enabled.');
-      includes('<section id="cloudSettingsCard"', 'aLandi must have a dedicated first-party server card.');
-      includes('<h3 id="cloudCardTitle"', 'The private server card must have its own heading.');
+      includes('<script id="markedRuntime" defer', 'Marked and DOMPurify must load in document order before the deferred app runtime.');
+      includes('<link rel="stylesheet" href="{{ \'/assets/css/app.css\' | relative_url }}">', 'App styles must be a cacheable external asset.');
+      assert.equal((source.match(/<style\b/gi) || []).length, 0, 'The app page must not carry a large inline style block.');
+      includes('<script defer src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js"', 'DOMPurify must load before the deferred app runtime.');
+      includes('<section id="aserviSettingsCard"', 'aLandi aServi must have a dedicated first-party server card.');
+      includes('<h3 id="aserviCardTitle"', 'The aServi server card must have its own heading.');
       includes('<optgroup id="providerExternalGroup" label="Сторонние провайдеры">', 'The external provider picker must contain only third-party providers.');
       const pickerStart = source.indexOf('<select id="providerPreset"');
       const pickerClose = source.indexOf('</select>', pickerStart);
@@ -52,23 +66,22 @@ const suites = {
         const close = providerPicker.indexOf('</optgroup>', start);
         return start >= 0 && close > start ? providerPicker.slice(start, close + '</optgroup>'.length) : '';
       };
-      const internalRouteGroup = extractGroup('providerPrimaryGroup');
       const externalRouteGroup = extractGroup('providerExternalGroup');
-      assert.ok(internalRouteGroup.includes(' hidden'), 'The private compatibility route must remain hidden from users.');
-      assert.equal(internalRouteGroup.split('<option value="alandi"').length - 1, 1, 'Keep exactly one hidden internal route for saved-chat migration and routing.');
-      assert.equal(externalRouteGroup.includes('<option value="alandi"'), false, 'The private aLandi route must not appear among third-party providers.');
+      assert.ok(externalRouteGroup, 'The third-party provider picker must have its own explicit group.');
+      assert.equal(externalRouteGroup.includes('<option value="alandi"'), false, 'The private aLandi route must stay in its dedicated first-party card, not the third-party picker.');
       assert.ok(externalRouteGroup.includes('<option value="gemini">') && externalRouteGroup.includes('<option value="custom">'), 'External providers must remain selectable.');
+      includes("const value = $('providerPreset')?.value || safeGet(STORAGE.provider) || 'alandi';", 'An empty third-party picker must preserve the separately selected first-party aLandi route.');
       assert.equal((source.match(/id="cloudConnect"/g) || []).length, 0, 'The private server must connect automatically, without a permanent manual-check button.');
-      includes('function connectAlandiCloud()', 'The cloud UI must verify a real model response before showing connected.');
-      includes('function scheduleCloudAutoConnect()', 'Changes to private server settings must trigger a bounded automatic connection check.');
-      includes('function setCloudFieldError(id,message', 'Invalid server fields must show an inline field-specific error.');
-      includes("setCloudFieldConnection('connected')", 'The server fields must only turn green after the connection and health checks pass.');
+      includes('function connectAServi()', 'The aServi UI must verify a real model response before showing connected.');
+      includes('function scheduleAServiAutoConnect()', 'Changes to private server settings must trigger a bounded automatic connection check.');
+      includes('function setAServiFieldError(id,message', 'Invalid server fields must show an inline field-specific error.');
+      includes("setAServiFieldConnection('connected')", 'The server fields must only turn green after the connection and health checks pass.');
       includes('Never show a green connection lamp for proxy text, HTML, or an unknown error body.', 'HTTP 200 with unrecognized text must not be considered a successful model probe.');
       includes("globalMemoryEnabled=safeGet(STORAGE.globalMemoryEnabled)==='true'", 'Global memory must be explicitly enabled, not added to every request by default.');
       includes("indexedDB.open('AI_Agent_DB_v87', 2)", 'Memory schema migration must create a separate shared store without deleting legacy private notes.');
       includes("database.createObjectStore('sharedMemory')", 'Shared memory must use a distinct IndexedDB object store.');
-      includes("const privateMemories=selectedProviderForMemory==='alandi'?await MemoryDB.getAll():[]", 'Private notes must only be read for the local aLandi route.');
-      includes("if((safeGet(STORAGE.provider)||'alandi')!=='alandi')return [];", 'Server graph memory must never be included in third-party prompts.');
+      includes("const privateMemories=selectedProviderForMemory==='alandi'&&safeGet(STORAGE.privateMemoryEnabled)==='true'?await MemoryDB.getAll():[]", 'Private notes must only be read for the local aLandi route after explicit opt-in.');
+      assert.ok(!combinedSource.includes('/v1/memory/graph') && !combinedSource.includes('ALANDI_MEMORY_GRAPH_ENABLED'), 'Retired server memory graph API must not return to the browser client.');
       includes("let candidates=getApiCandidates(preferredModel)", 'Provider candidate routing must be filterable before a request is sent.');
       includes("if(containsPrivateMemory)candidates=candidates.filter(candidate=>candidate.provider==='alandi')", 'A request carrying private memory must never fall back to a third-party provider.');
       includes("activeChatForPrivacy?.privateMemoryUsed && selectedProvider!=='alandi'", 'Chats that consumed private memory must not later upload their history to a third-party provider.');
@@ -77,7 +90,7 @@ const suites = {
       includes("promote.dataset.action", 'Private-to-shared promotion must be a per-fact user action.');
       includes("data-action=\"save-shared-memory\"", 'The user must be able to save a fact directly to the separate shared store.');
       includes('function loadProjects()', 'Project data must have a bounded and validated loader.');
-      includes('chat.projectMemoryEnabled&&activeProject', 'Project memory must be opt-in at chat scope.');
+      includes("projectScopes.every(project=>project.memoryScope==='project-and-global')", 'Project scope must explicitly permit shared-memory context before it is included.');
       includes('data-action="export-project"', 'Project bundle export must be available.');
       includes('chat.projectId', 'Project associations must be modeled on chats.');
       includes('projectInstructionContext', 'Project instructions must be included only for the selected project.');
@@ -115,8 +128,8 @@ const suites = {
       includes("token: 'ai_pollinations_access_token_v1'", 'Pollinations access token storage must be session-scoped.');
       includes("https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1", 'Cloudflare endpoint must include the validated account ID.');
       includes("nvidia: { label: 'NVIDIA NIM'", 'NVIDIA NIM should be included as an active alternative.');
-      assert.ok(!source.includes('cerebras: {') && !source.includes('value="cerebras"'), 'Cerebras must remain removed per product decision.');
-      assert.ok(!source.includes('value="github">GitHub Models'), 'Retired GitHub Models must not be offered as a provider.');
+      assert.ok(!combinedSource.includes('cerebras: {') && !combinedSource.includes('value="cerebras"'), 'Cerebras must remain removed per product decision.');
+      assert.ok(!combinedSource.includes('value="github">GitHub Models'), 'Retired GitHub Models must not be offered as a provider.');
       const allSmokeWorkflow = readFileSync(resolve(root, '.github/workflows/provider-smoke-all.yml'), 'utf8');
       const allSmokeRunner = readFileSync(resolve(root, 'scripts/provider-smoke-all.mjs'), 'utf8');
       assert.ok(allSmokeRunner.includes("config.id === 'pollinations' && /^pk_/i.test(secret)"), 'Pollinations browser App Keys must not be used as server smoke credentials.');
@@ -134,11 +147,11 @@ const suites = {
       includes('function exportSettingsProfile()', 'Portable settings profile export must remain available.');
       includes('async function importSettingsProfile(event)', 'Portable settings profile import must remain available.');
       includes('function downloadTraceJson()', 'Research trace JSON export must remain available.');
-      assert.ok(!source.includes("safeGet(STORAGE.model) === 'gemini-3.8-flash'"), 'A valid Gemini 3.8 model must not be downgraded on load.');
+      assert.ok(!combinedSource.includes("safeGet(STORAGE.model) === 'gemini-3.8-flash'"), 'A valid Gemini 3.8 model must not be downgraded on load.');
       includes('function getApiCandidates(requestedModel)', 'Provider failover must discover only configured credentials.');
       includes("if(!key && provider!=='kilo') continue;", 'Only the explicitly selected Kilo Free route may omit an API key.');
-      includes('function connectAlandiCloud()', 'The primary cloud status must be verified with a real completion.');
-      includes('id="cloudStatusDot" data-state="disconnected"', 'Cloud connection must begin unconfirmed.');
+      includes('function connectAServi()', 'The aServi status must be verified with a real completion.');
+      includes('id="aserviStatusDot" data-state="disconnected"', 'aServi connection must begin unconfirmed.');
       includes('if(error.modelUnavailable)', 'Only a model-specific provider failure may trigger same-provider model selection.');
       includes('function applyUiLanguage(language)', 'The main UI must support a persisted language choice.');
       includes('function updateClockFace()', 'The branded local clock must use real local time.');
@@ -204,17 +217,19 @@ const suites = {
       includes("performTavilySearch(args.query.trim().slice(0, 500), signal, searchResultMode)", 'Tavily result breadth must use the independent search scope.');
       includes("performPublicKnowledgeSearch(args.source, args.query.trim().slice(0, 300), signal, searchResultMode)", 'Public search breadth must use the independent search scope.');
       includes("readPublicWebpage(args.url.trim().slice(0, 1500), signal, searchResultMode)", 'Webpage extraction depth must use the independent search scope.');
-      assert.ok(!source.includes("const extendedToolBudget = mode === 'deep' || extendedSearch;"), 'Search scope must not increase execution budget.');
-      assert.ok(!source.includes("mode === 'fast' && index > 0 && !extendedSearch"), 'Fast-mode tool limits must not depend on search scope.');
-      assert.ok(!source.includes('id="researchStudioDepth"') && !source.includes('id="researchStudioWeb"'), 'Research Studio must not duplicate chat settings.');
-      assert.ok(!source.includes('data-function="research"'), 'Research Studio must have a single entry point.');
-      assert.ok(!source.includes("setProcessingMode(depth)") && !source.includes("setSearchMode(webEnabled ?"), 'Research Studio must not mutate active chat settings.');
+      assert.ok(!combinedSource.includes("const extendedToolBudget = mode === 'deep' || extendedSearch;"), 'Search scope must not increase execution budget.');
+      assert.ok(!combinedSource.includes("mode === 'fast' && index > 0 && !extendedSearch"), 'Fast-mode tool limits must not depend on search scope.');
+      assert.ok(!combinedSource.includes('id="researchStudioDepth"') && !combinedSource.includes('id="researchStudioWeb"'), 'Research Studio must not duplicate chat settings.');
+      assert.ok(!combinedSource.includes('data-function="research"'), 'Research Studio must not become an independent function category.');
+      includes('id="deepResearchStudioButton" type="button" data-action="open-research-studio"', 'Research Studio must be nested in the deep-research controls.');
+      assert.ok(!combinedSource.includes('id="functionsMenu"') || !combinedSource.includes('data-action="open-research-studio" class="toolbar-menu-option"'), 'Research Studio must not appear as a top-level Functions menu item.');
+      assert.ok(!combinedSource.includes("setProcessingMode(depth)") && !combinedSource.includes("setSearchMode(webEnabled ?"), 'Research Studio must not mutate active chat settings.');
       includes("await runAssistant(workChat, signal, useSearch, false, mode, true,", 'The structured workflow must honor the selected effort budget in its research stage.');
       includes("const studioSummary = $('researchStudioSettingsSummary');", 'Research Studio must show the active chat settings.');
       includes("if (mode !== 'deep' && !useMultiAgent && chosenSkill === 'auto') return '';", 'Automatic skills must not load in fast mode unless research is explicitly enabled.');
       includes("chosenSkill !== 'auto' ? chosenSkill", 'A manually selected skill must be usable in fast mode.');
       includes("new URL('skills/' + selectedSkill + '.txt', document.baseURI)", 'Task skills should load from repository assets only on demand.');
-      assert.ok(!source.includes('<script src="https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js"'), 'Pyodide must not load on initial page render.');
+      assert.ok(!combinedSource.includes('<script src="https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js"'), 'Pyodide must not load on initial page render.');
       includes("script.src = 'https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js'", 'Pyodide should load only when requested.');
       includes("const isMultimodalTask = /", 'Multimodal task classifier must be explicit and reviewable.');
       includes("const skill = isMultimodalTask ? 'multimodal'", 'Multimodal prompts must select the specialist skill before generic research.');
@@ -222,26 +237,22 @@ const suites = {
         assert.ok(existsSync(resolve(root, 'skills/' + skill + '.txt')), 'Missing on-demand skill: ' + skill);
       }
     }],
-    ['inline JavaScript parses without executing', () => {
-      const blocks = [...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
-        .filter((match) => !/\bsrc\s*=/i.test(match[1]));
-      assert.ok(blocks.length > 0, 'No inline application script found.');
-      blocks.forEach((block, index) => {
-        // nosemgrep: javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag -- vm.Script parses source only; it never inserts a DOM script element.
-        try { new Script(block[2], { filename: 'index.md:inline-script-' + index }); } // nosemgrep: javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag -- vm.Script parses source; it does not create a DOM script element.
-        catch (error) { console.error(error.stack || String(error)); throw error; }
-      });
+    ['external application JavaScript parses without executing', () => {
+      includes('<script defer src="{{ \'/assets/js/app.js\' | relative_url }}"></script>', 'The HTML shell must load the external application runtime.');
+      // vm.Script parses the application source only; it never executes browser code.
+      try { new Script(appSource, { filename: 'assets/js/app.js' }); }
+      catch (error) { console.error(error.stack || String(error)); throw error; }
     }],
     ['markdown rendering has an explicit sanitizer', () => {
-      includes('DOMPurify.sanitize', 'DOMPurify sanitization is required.');
-      matches(/innerHTML\s*=\s*safeMarkdown\(/, 'Rendered assistant HTML must pass through safeMarkdown.');
+      assert.ok(appSource.includes('DOMPurify.sanitize'), 'DOMPurify sanitization is required in the external runtime.');
+      assert.match(appSource, /innerHTML\s*=\s*safeMarkdown\(/, 'Rendered assistant HTML must pass through safeMarkdown.');
     }]
   ],
   security: [
     ['no obvious API keys committed in source', () => {
-      assert.doesNotMatch(source, /AIza[0-9A-Za-z_-]{30,}/, 'Possible Google API key found in source.');
-      assert.doesNotMatch(source, /\bsk-[A-Za-z0-9]{24,}/, 'Possible secret API key found in source.');
-      assert.doesNotMatch(source, /\btvly-[A-Za-z0-9_-]{20,}/, 'Possible Tavily key found in source.');
+      assert.doesNotMatch(combinedSource, /AIza[0-9A-Za-z_-]{30,}/, 'Possible Google API key found in source.');
+      assert.doesNotMatch(combinedSource, /\bsk-[A-Za-z0-9]{24,}/, 'Possible secret API key found in source.');
+      assert.doesNotMatch(combinedSource, /\btvly-[A-Za-z0-9_-]{20,}/, 'Possible Tavily key found in source.');
     }],
     ['API credentials are user-configured, not hard-coded', () => {
       includes("apiKey: 'ai_api_key'", 'API key storage slot is missing.');
@@ -252,13 +263,13 @@ const suites = {
     ['untrusted output is not inserted as raw HTML', () => {
       includes("bubble.textContent = message.content || ''", 'User message should use textContent.');
       includes('DOMPurify.sanitize', 'DOMPurify sanitizer must remain enabled.');
-      const assignments = [...source.matchAll(/\.innerHTML\s*=\s*([^;\n]+)/g)].map((m) => m[1].trim());
+      const assignments = [...appSource.matchAll(/\.innerHTML\s*=\s*([^;\n]+)/g)].map((m) => m[1].trim());
       assert.ok(assignments.length > 0, 'Expected the one sanitized markdown rendering assignment.');
       assert.ok(assignments.every((value) => value.startsWith('safeMarkdown(')), 'Found an innerHTML assignment that bypasses safeMarkdown: ' + assignments.join(' | '));
     }],
     ['no dynamic code evaluation primitives', () => {
-      assert.doesNotMatch(source, /\beval\s*\(/, 'eval() is not allowed in the application shell.');
-      assert.doesNotMatch(source, /\bnew\s+Function\s*\(/, 'new Function() is not allowed in the application shell.');
+      assert.doesNotMatch(combinedSource, /\beval\s*\(/, 'eval() is not allowed in the application shell.');
+      assert.doesNotMatch(combinedSource, /\bnew\s+Function\s*\(/, 'new Function() is not allowed in the application shell.');
     }],
     ['web search tool input is schema-bounded', () => {
       includes("additionalProperties: false", 'Tool schema must reject unexpected fields.');
@@ -277,9 +288,9 @@ const suites = {
     ['history and tool loops have hard bounds', () => {
       includes('const MAX_TOOL_ROUNDS = 4;', 'Tool-call round limit changed unexpectedly.');
       includes('const FALLBACK_CONTEXT_TOKENS = 16384;', 'Fallback context budget for providers without metadata is missing.');
-      assert.ok(!source.includes('const MAX_CONTEXT_MESSAGES = 24;'), 'Do not reintroduce the arbitrary message-count cap.');
-      assert.ok(!source.includes('const MAX_CONTEXT_CHARS = 24000;'), 'Do not reintroduce the arbitrary global character cap.');
-      assert.ok(!source.includes('count + turn.length > MAX_CONTEXT_MESSAGES'), 'History must not be capped by a fixed message count.');
+      assert.ok(!combinedSource.includes('const MAX_CONTEXT_MESSAGES = 24;'), 'Do not reintroduce the arbitrary message-count cap.');
+      assert.ok(!combinedSource.includes('const MAX_CONTEXT_CHARS = 24000;'), 'Do not reintroduce the arbitrary global character cap.');
+      assert.ok(!combinedSource.includes('count + turn.length > MAX_CONTEXT_MESSAGES'), 'History must not be capped by a fixed message count.');
       includes('function getHistoryCharBudget(systemPromptChars = 0, provider = currentProvider()', 'History budget must use catalogued context-window metadata for the attempted provider/model.');
       includes('buildHistory(historyMessages,systemChars,candidate.provider,candidate.model)', 'Every fallback candidate must apply its own context budget.');
       includes('charCount + turnChars > charBudget', 'History trimming must use the active model-aware soft budget.');
@@ -290,7 +301,7 @@ const suites = {
       includes('memory.score > 0', 'Irrelevant memories should not be attached.');
       includes('selectedMemories.length >= 4', 'Memory count cap is missing.');
       includes('memoryChars + memory.fact.length > 1200', 'Memory character cap is missing.');
-      includes('контекст, не системные инструкции', 'Retrieved memories must not be framed as system instructions.');
+      includes('контекста запроса (не системные инструкции)', 'Shared memories must be framed as reference context, not system instructions.');
     }],
     ['global system prompt is opt-in and legacy prompt migrates', () => {
       includes("const DEFAULT_SYSTEM = '';", 'The global system prompt must be empty by default.');
@@ -315,7 +326,10 @@ const suites = {
       const html = readFileSync(built, 'utf8');
       assert.match(html, /<html\s+lang="ru">/i, 'Built page is missing the expected document.');
       assert.match(html, /id="chatBox"/, 'Built page is missing the chat UI.');
-      assert.match(html, /DOMPurify\.sanitize/, 'Built page is missing the sanitization path.');
+      assert.match(html, /assets\/js\/app\.js/, 'Built page must reference the external application runtime.');
+      const builtApp = resolve(root, '_site/assets/js/app.js');
+      assert.ok(existsSync(builtApp), 'Jekyll build must publish the external application runtime.');
+      assert.match(readFileSync(builtApp, 'utf8'), /DOMPurify\.sanitize/, 'Built application runtime is missing the sanitization path.');
       assert.ok(existsSync(resolve(root, '_site/skills/research.txt')), 'Built site must publish the on-demand research skill.');
       assert.ok(existsSync(resolve(root, '_site/skills/multimodal.txt')), 'Built site must publish the on-demand multimodal skill.');
     }]

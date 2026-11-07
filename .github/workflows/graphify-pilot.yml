@@ -8,6 +8,7 @@ on:
       - ".graphifyignore"
       - "docs/ALANDI_ARCHITECTURE_MAP_RU.md"
       - "index.md"
+      - "assets/js/**/*.js"
       - "gateway/**/*.py"
       - "gateway/**/*.sql"
       - "scripts/**/*.mjs"
@@ -86,9 +87,8 @@ jobs:
           # Graphify's generic YAML/TOML parser creates config-key nodes rather than useful
           # call relationships; keep those contracts in the curated architecture map instead.
           find "$STAGING" -type f \( -name '*.yaml' -o -name '*.yml' -o -name '*.toml' \) -delete
-          # index.md is the primary client and contains one large inline JavaScript block.
-          # Extract executable inline JS while preserving every source newline so line numbers
-          # map directly back to the original index.md.
+          # Older clients keep executable JS inline in index.md; extract it while preserving
+          # source line numbers. Modular clients are indexed directly from assets/js/app.js.
           python - <<'PY'
           from pathlib import Path
           import os
@@ -110,11 +110,15 @@ jobs:
                   continue
               masked[start:end] = source[start:end]
               extracted += len(body.strip())
-          if extracted < 1000:
-              raise SystemExit(f"Refusing to graph an empty or unexpected inline script ({extracted} chars)")
-          target = Path(os.environ["STAGING"]) / "index-inline.js"
-          target.write_text("".join(masked), encoding="utf-8")
-          print(f"Extracted {extracted} inline JavaScript characters to {target}; source line numbers preserved from index.md")
+          if extracted >= 1000:
+              target = Path(os.environ["STAGING"]) / "index-inline.js"
+              target.write_text("".join(masked), encoding="utf-8")
+              print(f"Extracted {extracted} inline JavaScript characters to {target}; source line numbers preserved from index.md")
+          else:
+              runtime = Path(os.environ["STAGING"]) / "assets/js/app.js"
+              if not runtime.is_file() or runtime.stat().st_size < 1000:
+                  raise SystemExit(f"No substantial inline or external application runtime found (inline={extracted})")
+              print(f"No substantial inline script; Graphify will index the external runtime at {runtime.relative_to(Path(os.environ['STAGING']))}")
           PY
           test -f "$STAGING/.graphifyignore"
           printf 'Tracked files in source commit: '
@@ -182,8 +186,9 @@ jobs:
           print("Top source files by node count:")
           for path, count in collections.Counter(node.get("source_file") for node in nodes if node.get("source_file")).most_common(12):
               print(f"  {count:4d}  {path}")
-          if not any(node.get("source_file") == "index-inline.js" for node in nodes):
-              raise SystemExit("Graphify did not include the extracted inline JavaScript from index.md")
+          expected_runtime = "index-inline.js" if Path("index-inline.js").is_file() else "assets/js/app.js"
+          if not any(node.get("source_file") == expected_runtime for node in nodes):
+              raise SystemExit(f"Graphify did not include the expected application runtime: {expected_runtime}")
           PY
             echo
             echo "### Generated artifacts"

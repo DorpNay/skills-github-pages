@@ -3,28 +3,28 @@ project_state:
   reviewed_on: "2026-11-06"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "IN_PROGRESS; V1 baseline preserved, V1 public slice promoted, orientation and N2O/source docs integrated, model artifact and Python lock stored; V2 audit and cleanup continue"
-    owner_policy: "main remains stable Landing 1.0 with bounded quality improvements; PR #131 remains the Landing 2.0 workbench; never merge PR #131 wholesale"
+    status: "IN_PROGRESS; PR #153 orientation repair merged and post-merge gates passed; owner-authorized modular V2 root app shell promotion is isolated in PR #154; PR #131 remains the selective V2 workbench; native device and owner-host release gates remain open"
+    owner_policy: "main hosts the V1 marketing landing at /landing/ and the active root application; owner authorized a bounded modular V2 root-shell promotion via PR #154; PR #131 remains a workbench and must never be merged wholesale"
     sequence:
       - "Reconcile orientation and preserve the current V1 baseline"
       - "Audit PR #131 into independently verifiable promotion candidates"
-      - "Promote only fully verified V1-compatible slices to main"
+      - "Promote owner-approved, bounded V2 root-shell slices only after exact-head CI and rollback review"
       - "Preserve a recoverable V1 baseline and consolidate development branches"
       - "Acquire approved open-source code/models/artifacts after the promotion tranche"
       - "Audit and reconcile every remaining PR, branch and issue"
     main_sha_at_plan_creation: "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af"
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
-    promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
+    promotion_gate: "bounded scope, explicit owner authorization, no unfinished backend/runtime dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "Live checkpoint 2026-11-06: main a8afee45bb22654b220bffda857ab10c24641ef1 includes merged PR #150 storage recovery/atomic rollback; #147 cancellation-safe Gateway and #148 rendering/Pyodide security protections remain preserved. Live open PRs #125 (future parking), #131 (V2 workbench, dirty/diverged) and #152 (voice, stale base/dirty); issue #111 remains owner-controlled. Orientation implementation PR #153 is ready for review, not merged. Full code Quality passed on tested code SHA 5665e60ebdbb704f9fa95cadba610984ca1da60b (4/4 Chromium, published-Pages smoke and all required sentinels); later docs-only follow-up Freshness/Provenance/Dead Code checks also passed. Check live PR #153 for its current head; do not pin a mutable PR HEAD in this state file. After owner-approved merge, execute ORIENT-002 fresh-session test. Main post-merge workflow run IDs were not retrieved."
+    status: "Live checkpoint 2026-11-06: main f323b6f339d454dad6e820a4074fa230acc7b6df includes merged PR #153 OLEDUE/orientation repair. Post-merge Quality #42150785825, GitHub Pages deployment #42150784695, Freshness #42150785781 and Provenance #42150785779 all PASS on this exact SHA. Fresh-session handoff exercise: read OLEDUE first, then one batched live-state read; the explicit owner request routed to bounded PR #154 rather than defaulting to #131. Open PR queue excluding active PR #154 is #125, #131 and #152; issue #111 remains owner-controlled. PR #131 is Draft and diverged (1,129 ahead / 20 behind, 76 files); PR #152 is Draft and dirty (17 ahead / 2 behind, 4 files); #125 remains future parking. PR #154 selectively promotes the modular V2 root shell from #131; resolve its mutable HEAD live. Main protections #147 cancellation-safe Gateway, #148 rendering/Pyodide security and #150 storage recovery/rollback remain preserved. Gateway/VPS, OAuth, native iPhone/VoiceOver, physical audio, target hardware and SQLite FTS5 host capability remain unverified."
     branch: "main"
-    base_main: "a8afee45bb22654b220bffda857ab10c24641ef1"
+    base_main: "f323b6f339d454dad6e820a4074fa230acc7b6df"
     open_prs_at_checkpoint: 3
     open_issues_at_checkpoint: 1
-    merged_changes: "PR #150 browser storage recovery and atomic rollback (main a8afee45bb22654b220bffda857ab10c24641ef1); PR #149 state/toolchain/provenance; PR #148 untrusted assistant rendering and restricted Pyodide globals; PR #147 cancellation-safe Gateway inference slot; earlier #146 task registry, #145 dependency/document parsing, #144 source triage, #143 Vosk evaluation archive, #142 N2O docs, #140 OLEDUE handoff and #139 V1 landing."
-    exact_head_checks: "PR #150 merged at a8afee45bb22654b220bffda857ab10c24641ef1; current-main post-merge workflow IDs were not retrieved. PR #131 exact head 5f71b97f3c85ab8544431b496ceb7c9ccf8c0c3e: no PR-triggered workflow runs returned; exact-head checks unverified. PR #152 exact head 99a0b530b335e7e19833c4ce66138dcc576a09fa: Quality #42141899337 FAILED; Graphify #42141899316 PASSED."
-    runtime_boundary: "No current-main post-merge Quality/Pages/Gateway/Provenance run IDs retrieved. PR-head CI does not prove post-merge deployment. Live VPS/Tunnel/Ollama, OAuth/provider credentials, native iPhone/VoiceOver, physical audio, target-hardware performance and SQLite FTS5 host capability remain unverified."
-    next: "Review/merge PR #153 (orientation repair) only with owner approval; then execute ORIENT-002 fresh-session handoff test using OLEDUE + one batched live-state read. After that resume owner-authorized PR #131 reconciliation against a8afee45bb22654b220bffda857ab10c24641ef1, preserving #147/#148/#150; inspect #152 separately and repair its failed exact-head Quality/stale base. Continue grouped primary-source research and capability delivery from the canonical task register. Keep #125 parked and issue #111 open."
+    merged_changes: "PR #153 OLEDUE/orientation repair (main f323b6f339d454dad6e820a4074fa230acc7b6df); PR #150 browser storage recovery and atomic rollback (a8afee45bb22654b220bffda857ab10c24641ef1); PR #149 state/toolchain/provenance; PR #148 untrusted assistant rendering and restricted Pyodide globals; PR #147 cancellation-safe Gateway inference slot; earlier #146 task registry, #145 dependency/document parsing, #144 source triage, #143 Vosk evaluation archive, #142 N2O docs, #140 OLEDUE handoff and #139 V1 landing."
+    exact_head_checks: "PR #153 exact HEAD 2fe4872233764c4094cf092e9a7ee0a11948825b passed Quality #42148438184, Freshness #42148438229 and Provenance #42148438250; post-merge main SHA f323b6f339d454dad6e820a4074fa230acc7b6df passed Quality #42150785825, Pages #42150784695, Freshness #42150785781 and Provenance #42150785779. PR #154 is the active bounded V2 root-shell promotion; exact-head gates are in progress. PR #131 remains Draft/diverged; PR #152 remains Draft/dirty and needs independent repair."
+    runtime_boundary: "GitHub Pages deployment is verified on main SHA f323b6f339d454dad6e820a4074fa230acc7b6df; this does not verify Gateway/VPS/Tunnel/Ollama, OAuth/provider credentials, native iPhone/VoiceOver, physical audio, target-hardware performance or SQLite FTS5 host capability."
+    next: "Complete exact-head PR #154 Quality/Chrome, Jekyll, Integrity, Security, Context, static analysis, Graphify and Dead Code gates. If green, merge only PR #154 and verify the new main SHA, automatic Pages deployment, live app/assets and post-merge Quality/Freshness/Provenance. Keep #131 as selective V2 workbench, inspect #152 independently, continue subsystem audit and capability delivery from the canonical task register. Keep #125 parked and issue #111 open."
   source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; PR61_mobile_slice_merged; additional PR37 ideas remain selectively deferred"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -43,7 +43,7 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
-  last_volley: "V-2026-11-06-ORIENTATION-REPAIR-001"
+  last_volley: "V-2026-11-06-PR154-V2-SHELL-PROMOTION-001"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Browser half-duplex voice dialogue prototype is merged; CI uses mocked ASR/TTS, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; detailed on-demand navigation index, not mandatory startup reading"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
@@ -249,7 +249,7 @@ graphify_pilot_workflow:
 
 
 local_helper_memory_suggestions:
-  status: "merged in PR #69; exact-head Gateway, Quality/Chromium, published-site smoke and provenance passed; helper remains disabled by default"
+  status: "merged in PR #69; exact-head Gateway, Quality/Chrome, published-site smoke and provenance passed; helper remains disabled by default"
   pr: 69
   branch: "feat/local-helper-memory-suggestions-current-main-20261027"
   baseline_main: "9aa36465158c27c49ff647a6ce349b46a6e1151e"
@@ -294,21 +294,21 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-06"
-  verified_main: "a8afee45bb22654b220bffda857ab10c24641ef1"
-  last_main_action: "PR #150 merged at a8afee45bb22654b220bffda857ab10c24641ef1: browser storage recovery, fail-closed storage writes and atomic rollback. This is the latest functional main checkpoint."
+  verified_main: "f323b6f339d454dad6e820a4074fa230acc7b6df"
+  last_main_action: "PR #153 merged at f323b6f339d454dad6e820a4074fa230acc7b6df: OLEDUE owner-driven handoff and live-state verification. Previous functional application checkpoint remains PR #150 at a8afee45bb22654b220bffda857ab10c24641ef1."
   last_functional_checkpoint: "a8afee45bb22654b220bffda857ab10c24641ef1"
-  main_quality: "Current main a8afee45bb22654b220bffda857ab10c24641ef1: post-merge Quality run ID not retrieved; do not infer from PR #150 checks."
-  main_graphify: "Current main a8afee45bb22654b220bffda857ab10c24641ef1: post-merge Graphify run ID not retrieved."
+  main_quality: "PASS — run #42150785825 on exact main SHA f323b6f339d454dad6e820a4074fa230acc7b6df."
+  main_graphify: "No post-merge main Graphify run was required or retrieved for the orientation/handoff merge."
   main_gateway: "PR #147 exact-head Gateway tests passed on Python 3.12/3.13/3.14; current main post-merge Gateway run ID not retrieved."
-  main_freshness: "Current main a8afee45bb22654b220bffda857ab10c24641ef1: Project State Freshness must be rerun after this orientation checkpoint; previous run #42001309687 applied to the older 8e7d4aafe4b9580e9f8978c6f888e35f3fa99242 checkpoint."
-  main_provenance: "Current main a8afee45bb22654b220bffda857ab10c24641ef1: post-merge provenance run ID not retrieved."
-  main_pages: "Current main a8afee45bb22654b220bffda857ab10c24641ef1: post-merge GitHub Pages deployment run ID not retrieved."
-  merged_prs: "150 browser storage recovery/atomic rollback; 149 state snapshot/toolchain/provenance; 148 rendering/Pyodide security; 147 Gateway cancellation; 146 task registry; 145 Python lock/document parsing; 144 source triage; 143 Vosk archive; 142 N2O docs; 140 OLEDUE handoff; 139 V1 landing; earlier #121/#122/#123 foundations."
-  open_pull_requests: "6 open PRs: #125, #128, #129, #130, #131, #134"
-  open_issues: "Issue #111 only: consolidated owner/live-host release gates; keep open until owner-controlled deployment, ruleset and device checks"
+  main_freshness: "PASS — run #42150785781 on exact main SHA f323b6f339d454dad6e820a4074fa230acc7b6df."
+  main_provenance: "PASS — run #42150785779 on exact main SHA f323b6f339d454dad6e820a4074fa230acc7b6df."
+  main_pages: "PASS — GitHub Pages deployment #42150784695 on exact main SHA f323b6f339d454dad6e820a4074fa230acc7b6df; Gateway/VPS deployment remains separate."
+  merged_prs: "153 OLEDUE orientation/handoff repair; 150 browser storage recovery/atomic rollback; 149 state snapshot/toolchain/provenance; 148 rendering/Pyodide security; 147 Gateway cancellation; 146 task registry; 145 Python lock/document parsing; 144 source triage; 143 Vosk archive; 142 N2O docs; 140 OLEDUE handoff; 139 V1 landing; earlier #121/#122/#123 foundations."
+  open_pull_requests: "4 open PRs: #125, #131, #152, #154"
+  open_issues: "Issue #111 only: consolidated owner/live-host release gates; keep open until owner-controlled VPS, ruleset, native-device and runtime checks"
   freshness_guard: "scripts/check_project_state_freshness.py; compares exact main SHA and exact open PR/issue IDs. This refresh PR updates ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG and snapshot together."
   runtime_boundary: "PR-head CI and published-site smoke do not prove post-merge Pages deployment or live VPS/Tunnel/Ollama. OAuth/Drive, real providers, native iPhone/VoiceOver, voice/device, target-host model measurements and runtime SQLite FTS5 capability remain unverified."
-  next: "Finish PR #150 localStorage recovery/atomicity changes on exact HEAD; then address FTS5 secure-delete capability reporting and target SQLite version, continue provider/storage, voice/audio, document extraction concurrency, RAG deletion lineage and PR #131 V2 candidate audit without wholesale merge. Keep #111 open."
+  next: "Complete bounded PR #154 root-shell promotion, then continue PR #131 selective V2 audit, PR #152 voice repair, FTS5/SQLite target-host checks, provider/storage, voice/audio, document-extraction concurrency and RAG deletion-lineage audit. Keep #111 open."
 v1_ui_finalization:
   status: "merged in PR #121 at f4d880f; exact-head required workflows passed; post-merge Pages deployment not independently verified"
   register: "docs/V1_UI_FINALIZATION_RU.md"

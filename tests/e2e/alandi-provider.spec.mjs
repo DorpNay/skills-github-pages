@@ -28,22 +28,20 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
     if (request.method() === 'OPTIONS') {
       return route.fulfill({ status: 204, headers: corsHeaders, body: '' });
     }
-    if (request.url().includes('/v1/models')) {
-      return route.fulfill({
-        status: 200, headers: corsHeaders, contentType: 'application/json',
-        body: JSON.stringify({ data: [{ id: 'qwen3.5:4b', context_length: 4096 }] })
-      });
+    if (request.url().includes('/healthz')) {
+      return route.fulfill({ status: 200, headers: corsHeaders, contentType: 'application/json', body: JSON.stringify({ status: 'ok' }) });
     }
     if (request.url().includes('/v1/chat/completions')) {
       const payload = request.postDataJSON();
       chatPayloads.push(payload);
+      const isConnectionProbe = payload.messages?.at(-1)?.content === 'Reply with exactly OK.';
       return route.fulfill({
         status: 200,
-        headers: { ...corsHeaders, 'x-ai-cache': 'MISS', 'cache-control': 'no-store' },
+        headers: { ...corsHeaders, ...(isConnectionProbe ? {} : { 'x-ai-cache': 'MISS', 'cache-control': 'no-store' }) },
         contentType: 'application/json',
         body: JSON.stringify({
           id: 'local-chatcmpl-test', object: 'chat.completion', model: 'qwen3.5:4b',
-          choices: [{ index: 0, message: { role: 'assistant', content: 'aLandi local gateway works.' }, finish_reason: 'stop' }]
+          choices: [{ index: 0, message: { role: 'assistant', content: isConnectionProbe ? 'OK' : 'aLandi local gateway works.' }, finish_reason: 'stop' }]
         })
       });
     }
@@ -59,14 +57,11 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await page.locator('#legacyProviderSettings > summary').click();
-  await page.locator('#providerPreset').selectOption('alandi');
-  await expect(page.locator('#modelName')).toHaveValue('qwen3.5:4b');
-  await page.locator('#baseUrl').fill('https://alandi.example.test/v1');
-  await page.locator('#modelName').fill('qwen3.5:4b');
-  await page.locator('#apiKey').fill('e2e-alandi-placeholder-key-not-a-secret-0123456789');
-  await page.locator('[data-action="save-settings"]').click();
-  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#aserviBaseUrl').fill('https://alandi.example.test/v1');
+  await page.locator('#aserviModel').fill('qwen3.5:4b');
+  await page.locator('#aserviApiKey').fill('e2e-alandi-placeholder-key-not-a-secret-0123456789');
+  await expect(page.locator('#aserviStatus')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await chooseSearchMode(page, 'offline');
   // Enable fallback only after startup to avoid triggering unrelated model-catalog probes.
   await page.evaluate(() => {
@@ -78,8 +73,10 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
 
   await expect(page.locator('#chatBox')).toContainText('aLandi local gateway works.', { timeout: 15000 });
   await expect(page.locator('#chatBox .message-model-meta').last()).toContainText('кэш MISS');
-  expect(chatPayloads).toHaveLength(1);
-  expect(chatPayloads[0].model).toBe('qwen3.5:4b');
-  expect(chatPayloads[0].temperature).toBe(0);
+  const userRequests = chatPayloads.filter(payload => payload.messages?.at(-1)?.content === 'Проверь локальный маршрут.');
+  expect(chatPayloads).toHaveLength(2);
+  expect(userRequests).toHaveLength(1);
+  expect(userRequests[0].model).toBe('qwen3.5:4b');
+  expect(userRequests[0].temperature).toBe(0);
   expect(cloudChatRequests).toEqual([]);
 });
