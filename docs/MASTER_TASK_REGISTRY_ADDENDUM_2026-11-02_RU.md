@@ -308,3 +308,12 @@ Append-only owner intake; enrich existing orientation/UI/source lanes and preser
 - [~] Preserved the PR #131 SQLite `AgentRunStore` and offline tests as a bounded **PROTOTYPE**: idempotent run/task creation, versioned transitions, typed bounded metadata, task leases/fencing, retry budget, cancellation and event journal.
 - [x] Exact PR #169 Gateway #42408172642 passed. No HTTP route, model/tool invocation, worker scheduler, permission grant, sandbox, approval engine or multi-host runtime is wired; storage-only prototype does not satisfy AB-001…AB-005 runtime acceptance, which remains OPEN.
 - [~] Added EV-AGENT-RUN-STORE-001 evaluation definition; backup/restore, retention, multi-host, recovery semantics and adversarial runtime tests remain OPEN.
+
+
+## J.5 Post-merge main Quality and published UI contract — 2026-11-08
+
+- [x] **PAGES-LIVE-001 — main publication recheck:** PR #173 merged at `bf039f887e29137b627b06fc2bb107c2793d6b69`; Pages deployment #42410162803 SUCCESS. Main Quality #42410163178 Chromium job #128516358225 passed the built app, live root revision, canonical landing content and landing Chromium (8/8). This confirms public root + `/landing/` on the exact merge SHA.
+- [ ] **PAGES-LIVE-001 — stale release sentinel correction:** separate job #128517290166 failed because `.github/workflows/quality-sentinels.yml` still listed `id="functionsMenu"` as forbidden. This contradicts owner-approved D-022 / FUNCTIONS-DETAIL-001. Correct the sentinel to require the three menu actions (Agents, Deep Research, Skills) and continue forbidding Research Studio, legacy provider selector and removed sidebar controls. Do not remove the approved menu to get green CI.
+- [x] **PR queue reconciliation:** live GitHub shows zero open PRs. Closed non-merged #125/#131/#152/#154/#155/#168/#171/#172 remain preserved as deferred research/task scope; do not wholesale merge them.
+- [ ] **Issue #111 — owner/environment gates remain open:** repository ruleset/settings; private VPS/Tunnel/Ollama and authenticated completion; permissioned RU/EN/TH RAG corpus; real microphone/device voice and document artifact/license/resource gates; fail-closed sandbox; scoped deletion/WAL/backup handling; optional OAuth/Drive credentials/PKCE/scopes.
+- **Next:** finish the bounded sentinel repair and exact-head checks; in parallel continue independent checklist/system/source audits. The follow-up branch is not merged and requires separate owner authorization.
