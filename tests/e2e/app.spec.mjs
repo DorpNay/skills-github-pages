@@ -5365,7 +5365,7 @@ test('project writes fail closed when malformed source data cannot be backed up'
     mimeType: 'application/json',
     buffer: Buffer.from(JSON.stringify(bundle))
   });
-  await expect(page.locator('#toast')).toContainText('Импорт проекта не выполнен');
+  await expect(page.locator('#toast')).toContainText('Повреждённые проекты не удалось сохранить в резервную копию');
   const after = await page.evaluate(() => ({
     projects: localStorage.getItem('ai_projects_v1'),
     chats: localStorage.getItem('ai_chats_v87'),
@@ -5373,7 +5373,7 @@ test('project writes fail closed when malformed source data cannot be backed up'
   }));
   expect(after).toEqual(before);
   await page.locator('#appSidebarToggle').click();
-  await page.locator('[data-action="open-project-settings"]').click();
+  await expect(page.locator('#projectRecoveryBackupButton')).toBeVisible();
   const [download] = await Promise.all([
     page.waitForEvent('download'),
     page.locator('#projectRecoveryBackupButton').click()
