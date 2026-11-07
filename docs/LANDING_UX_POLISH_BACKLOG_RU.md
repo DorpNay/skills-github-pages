@@ -1,7 +1,5 @@
 # aLandi — остаток оформления и UX-оптимизации сайта
 
-> **ARCHIVED 2026-11-07 — не активный backlog.** Это исторический UX-инвентарь. Актуальные требования и acceptance находятся только в [V1_UI_FINALIZATION_RU.md](V1_UI_FINALIZATION_RU.md); стабильные task IDs и порядок исполнения — в [MASTER_TASK_REGISTRY_RU.md](MASTER_TASK_REGISTRY_RU.md) и его addendum; live status — в [PROJECT_STATE.yaml](PROJECT_STATE.yaml). Не создавать задачи и не реализовывать пункты отсюда без сверки с этими каноническими источниками.
-
 **Срез:** 2026-10-30  
 **Текущая база:** main после merge PR #121 и #122.  
 **Назначение:** единый реестр незавершённого визуального/интерактивного polish после PR #121. Это продолжение `V1_UI_FINALIZATION_RU.md` и `LEGACY_UX_REQUEST_AUDIT_RU.md`, не замена им.
@@ -41,10 +39,11 @@
 - [~] Проверить, что общий импорт/экспорт не дублируется в sidebar и project settings; chat actions остаются в chat menu, project bundle — в project settings.
 - [ ] Длинные названия проектов/чатов, пустые списки, большое количество проектов/чатов, keyboard navigation и mobile scroll.
 
-### Research / functions / agents — [ARCHIVED / SUPERSEDED BY OWNER 2026-11-07]
-- Исторический PR #121 ранее содержал Research Studio; владелец позже явно удалил эту поверхность. Не возвращать кнопку, модалку или JS entrypoint.
-- Видимое меню «Функции» с пунктами «Агенты / Навыки / Интеграции» не было заказано владельцем; оно удалено. Не восстанавливать без нового явного запроса.
-- Старые заметки о визуальной проверке этих меню не являются активными acceptance criteria.
+### Research / functions / agents
+- [x] Owner override 2026-11-07: Research Studio retired entirely; supersedes the older PR #121 active-chat helper scope. PR #169 removes the modal, UI wiring and entrypoints; exact-head CI and live absence check pending.
+- [~] Functions menu: the previous three-item menu was not owner-approved and is removed by PR #169. Replacement deferred until an explicit owner-approved capability inventory exists; do not restore placeholders or a fake marketplace.
+- [ ] Развести семантику web search breadth, offline mode и multi-agent orchestration в copy и UI.
+- [ ] В roadmap/agent panels сохранять чёткое различие между blueprint, sequential pipeline и независимым agent runtime.
 
 ### Мобильность и доступность
 - [~] Chromium responsive matrix 320/360/390/768/1024/1440 и no-overflow tests.
@@ -80,3 +79,5 @@
 |---|---|---|
 | 2026-10-30 | Consolidated remaining visual/interaction tasks from legacy UX audit, V1 UI checklist and landing source. | `LEGACY_UX_REQUEST_AUDIT_RU.md`, `V1_UI_FINALIZATION_RU.md`, `landing/index.html`, `tests/e2e/landing.spec.mjs` |
 | 2026-10-30 | Added explicit pause controls to landing roadmap tickers and Playwright pause/resume test. | Commits `f42c42d`, `b213c8a`; PR #121 exact-head Chromium/Quality passed; native keyboard/screen-reader confirmation pending |
+
+- [~] Provider settings: aLandi aServi is a first-party section, not a third-party provider option; aServi excludes both peer sections, and no silent cross-provider fallback is allowed. PR #169 implements; exact-head CI and live check pending.
