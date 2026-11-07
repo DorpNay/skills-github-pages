@@ -173,7 +173,7 @@
     "main_provenance_run": null,
     "main_freshness_run": null,
     "main_graphify_run": 42372746441,
-    "owner_task": "Correct the published UI contract sentinel on fix/pages-functions-contract-and-state-20261108. Preserve owner-approved Functions menu (Agents/Deep Research/Skills); forbid Research Studio and legacy provider/sidebar controls. Continue issue #111 and remaining registry audits in parallel.",
+    "owner_task": "PR #174 corrects the false-negative published UI contract sentinel and synchronizes the source checklist audit. Preserve owner-approved Functions menu. Continue issue #111 supply-chain transitive pinning, ruleset, VPS/RAG/voice/sandbox/deletion/OAuth gates.",
     "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
     "pr131_exact_head_verified": false,
     "pr131_compare": "Large Draft V2 workbench, stale/diverged and mergeable_state dirty; selective reconciliation only.",
@@ -232,15 +232,15 @@
     "pr158_compare": "Merged at d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c; exact-head Quality #42349540173 passed; exact-main root title Quality #42349853526 remains in progress.",
     "pr166_head": "683ec28310a68dc0126a715a04f3ddc613e817b6",
     "pr166_compare": "Merged PR #166 at main SHA c4f23e03f563d03213eb87002863da630fc8b833; §8.17 message readability controls are included in published root app. Exact-head Quality #42368514164 and Graphify #42368514210 passed; post-merge main Quality #42372746360 and Pages #42372745873 passed.",
-    "active_ui_pr": null,
-    "open_prs": "0 live open PRs; no active PR excluded.",
+    "active_ui_pr": 174,
+    "open_prs": "1 live open PR #174; current PR excluded from freshness snapshot; no other open PRs.",
     "open_prs_at_checkpoint": 0,
     "last_volley": "V-2026-11-08-POSTMERGE-QUALITY-RELEASE-CONTRACT-001"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
     "live_vps_gateway_device_and_model_runtime_verified": false,
-    "queue_policy": "No open PRs; issue #111 remains owner-controlled. Closed non-merged #125/#131/#152/#154/#155/#168/#171/#172 retain remaining task scopes in the canonical registry.",
+    "queue_policy": "Live open PR #174 is the current bounded follow-up and is excluded from the expected queue snapshot; no other open PRs. Issue #111 remains owner-controlled. Closed non-merged #125/#131/#152/#154/#155/#168/#171/#172 retain task scope.",
     "pr_check_policy": "No active PR is excluded from the snapshot."
   },
   "last_volley": "V-2026-11-08-POSTMERGE-QUALITY-RELEASE-CONTRACT-001"
