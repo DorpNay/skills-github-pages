@@ -583,6 +583,9 @@ test('settings profile exports portable preferences but never API secrets', asyn
   await page.locator('#apiKey').fill('e2e-private-provider-secret-value');
   await page.locator('#tavilyKey').fill('e2e-private-search-secret-value');
   await page.locator('#allowCrossProviderFallback').check();
+  await page.locator('#readingFontSize').evaluate(element => { element.value = '18'; element.dispatchEvent(new Event('input', { bubbles: true })); element.dispatchEvent(new Event('change', { bubbles: true })); });
+  await page.locator('#readingLineHeight').evaluate(element => { element.value = '1.8'; element.dispatchEvent(new Event('input', { bubbles: true })); element.dispatchEvent(new Event('change', { bubbles: true })); });
+  await page.locator('#readingContrast').selectOption('high');
   await page.locator('[data-action="save-settings"]').click();
 
   const downloadPromise = page.waitForEvent('download');
@@ -595,6 +598,7 @@ test('settings profile exports portable preferences but never API secrets', asyn
   expect(profile.settings.provider).toBe('groq');
   expect(profile.settings.model).toBe('openai/gpt-oss-120b');
   expect(profile.settings.crossProviderFallback).toBe(true);
+  expect(profile.settings.readability).toEqual({ fontSize:18, lineHeight:1.8, contrast:'high' });
   expect(json).not.toContain('e2e-private-provider-secret-value');
   expect(json).not.toContain('e2e-private-search-secret-value');
   expect(json).not.toContain('ai_api_key_');
@@ -625,7 +629,8 @@ test('settings profile import restores preferences while preserving existing pro
       search: false,
       multiAgent: true,
       offline: true,
-      crossProviderFallback: false
+      crossProviderFallback: false,
+      readability: { fontSize:19, lineHeight:1.7, contrast:'high' }
     }
   };
   await page.locator('#settingsProfileFile').setInputFiles({
@@ -642,6 +647,9 @@ test('settings profile import restores preferences while preserving existing pro
   await expect(page.locator('#toggleMultiAgent')).toBeChecked();
   await expect(page.locator('#offlineToggle')).toContainText('Веб-поиск выключен');
   await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#readingFontSize')).toHaveValue('19');
+  await expect(page.locator('#readingLineHeight')).toHaveValue('1.7');
+  await expect(page.locator('#readingContrast')).toHaveValue('high');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-preserved-provider-secret');
   await expect(page.locator('#tavilyKey')).toHaveValue('e2e-preserved-tavily-secret');
   expect(await page.evaluate(() => localStorage.getItem('ai_api_key_custom'))).toBe('e2e-preserved-provider-secret');
