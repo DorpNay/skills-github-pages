@@ -139,3 +139,33 @@ PR #53 merged opt-in local transcription for audio files attached from disk; no 
 - **PR #77 merged:** RRF combines FTS5/BM25 and lexical-concept-graph candidate ranks with deterministic ordering. Exact-head Gateway tests, Quality/Chromium/published-site smoke passed. RAG remains disabled by default; no production relevance improvement is claimed without a labelled >=50-query set.
 - **Post-merge gate:** code SHA `91557e4eab1b122341bed578cdf4775ff867007f` passed Gateway, Quality/Chromium, Graphify and Pages; subsequent docs-only main `337e38690af8f22a712c6442192c5ea62d354c3d` passed Quality and Pages. Re-run these gates for the next source change; live VPS/device gates remain separate.
 - **Next priorities:** complete PR #78 documentation reconciliation and close it after exact-head gates; then select one bounded next gap (delta-sync conflict/recovery UX or safe static-asset/CSP groundwork) after tracing current integration points and applicable decisions. Do not add a parallel framework, vector database or model runtime without measured need.
+
+## Owner-directed execution sequence — 2026-11-07 (priority override, not scope deletion)
+
+This section is the current execution order; earlier roadmap stages and registry entries remain preserved. Normative owner principles: `docs/ALANDI_N2O_CORE_RU.md`; method: `LOOP.md` and `docs/ALANDI_N2O_KNOWLEDGE_LOOP_RU.md`. Orchestrator: `OLEDUE.md`.
+
+### P0-A — compact OLEDUE and durable task capture
+- Keep OLEDUE self-contained enough to resolve principles, sources, external research, plans and the single task registry.
+- Every fresh owner request: find an existing task ID first, append/enrich once; do not create a second backlog.
+- Batch live state once, route the latest explicit owner request and complete one bounded action in the same turn when safe. Handoff is not a substitute for implementation.
+
+### P0-B — verify and restore GitHub Pages publishing
+1. Identify current default main SHA and the actual Pages source/configuration/workflow; do not rely on stale PROJECT_STATE.
+2. Inspect exact-main workflow runs and their triggering commit, build artifact and deploy job outcomes.
+3. Check Pages deployment status/commit and fetch the actual public page; compare its rendered assets/content with the expected main SHA.
+4. Distinguish build green, deployment success and live URL freshness. Identify Jekyll baseurl/cache/trigger/permissions/configuration failure precisely.
+5. Repair the smallest existing mechanism and add an exact-SHA smoke. If the current mechanism is irrecoverable, locate the original upstream repo used by the owner and port its publishing mechanism selectively with source/license/provenance evidence. No speculative wholesale replacement.
+6. Record deployed SHA and live URL verification; if tool access does not expose deployment details, state this blocker rather than claiming verified publication.
+
+### P1 — UI backlog promotion from V2 workbench
+- Read `docs/V1_UI_FINALIZATION_RU.md` §§8.1–8.17 and subsequent UI subsections as owner requirements; compare against current main and PR #131, and the canonical task registry.
+- Promote coherent, useful changes in bounded batches: menus, panels, functions, chat controls, minimization, responsive/keyboard/touch/accessibility and visual hierarchy. Avoid redundant controls and duplicate state.
+- Preserve the existing HTML/CSS/JS + Jekyll/Pages stack; use the existing CSS tokens and current event/data contracts. No new framework without measured necessity.
+- Acceptance per slice: source/call-site review, focused regression, static quality/security checks applicable to scope, exact-head Quality/Chromium, Pages smoke and rollback notes. Merge only under explicit owner authorization and current scope; then verify Pages live URL.
+- Track all not-yet-implemented owner requirements in the existing UI checklist and Master Task Registry; do not mark requested as implemented.
+
+### P2 — retain and resume previously stated goals
+- Continue INTEL external-source groups and carefully preserve approved code/models with immutable revision, provenance, licenses and checksum.
+- Selectively consolidate useful research/feature PRs into PR #131 or main; do not wholesale merge #131. Preserve security/data-integrity protections.
+- Finish integrity/debugger audit, targeted optimization and verified obsolete-code cleanup. Preserve all lower-priority backlog items and owner/device/runtime gates.
+- Keep owner reports short, durable and SHA/check-specific; ChatGPT client history/loading failures are outside repo capability, but canonical checkpoints should make recovery possible.
