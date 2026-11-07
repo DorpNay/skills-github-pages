@@ -154,12 +154,12 @@ PR #122 добавил только эксплуатационную надёж�
 
 ### 16. Task profiles / skills — [DEFERRED: UI NOT OWNER-APPROVED]
 - Исторические внутренние настройки и тесты не дают разрешения выводить их в отдельное пользовательское меню.
-- Владелец уточнил 2026-11-07: видимые пункты «Агенты», «Навыки» и «Интеграции» в разделе «Функции» не заказывались. Не показывать эти пункты и не создавать им замену без отдельного запроса.
+- **Owner override 2026-11-08:** restore a concise, truthful Functions menu with only three explicitly requested entries: structured analysis (existing four-stage same-model pipeline), Deep Research (shortcut to Thorough mode; web scope remains independently selectable), and task profile/Skills (instruction profile only; no tool/data permissions). Do not show Integrations or a connector marketplace until real connectors are registered and permission/status contracts exist. This supersedes the 2026-11-07 blanket removal instruction.
 - Существующий внутренний код может оставаться скрытым, пока не затрагивает обычный пользовательский поток; новые UI entrypoints и маркетинговые обещания запрещены до явного одобрения.
 
 ### 17. Agents / team blueprint — [DEFERRED: NO VISIBLE MENU]
 - Любые agent/team/connector controls остаются вне пользовательской навигации до отдельного owner-approved scope.
-- Не показывать три неподтверждённых пункта «Агенты / Навыки / Интеграции» и не выдавать blueprint за работающую команду.
+- Keep only owner-approved Functions entries: Agents/structured analysis, Deep Research (sets Thorough), and Skills/task profile. Integrations remain absent. Do not present the team-size blueprint as a runtime independent-agent team.
 - Независимые роли, scheduler, policy engine, sandbox, approval и durable recovery не входят в текущую поставку.
 
 ### 18. Финальный release gate — [~]
@@ -485,7 +485,7 @@ PR #122 добавил только эксплуатационную надёж�
 Этот блок уточняет исторические пункты выше и является актуальным приоритетом при конфликте формулировок:
 
 - **Research Studio:** полностью удалён из интерфейса и клиентского JS; не возвращать.
-- **Functions menu:** удалено меню с неподтверждёнными пунктами «Агенты / Навыки / Интеграции». Не восстанавливать без отдельного явного запроса.
+- **Functions menu (owner override 2026-11-08):** the menu is restored with Agents/structured analysis, Deep Research (Thorough-mode shortcut) and Skills/task profile. Integrations/connectors remain absent until a real registry and permissions exist. Research Studio itself remains retired.
 - **aServi/provider separation:** aServi — собственный режим, не внешний провайдер. Внешний selector и fallback не включают aServi. Переключение между режимами только вручную.
 - **Sidebar:** единственный порядок — память → проекты → чаты; память компактная и закрыта по умолчанию, проекты закрыты по умолчанию при видимой кнопке создания, чаты открыты по умолчанию. Настройки проекта — только шестерёнка конкретного проекта; дублирующий theme footer удалён.
 - **Controls:** theme + language в header; 44px touch targets; stop-generation action сохраняется, но не оформляется красной заливкой.
