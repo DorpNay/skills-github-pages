@@ -20,7 +20,8 @@
       152,
       154,
       155,
-      168
+      168,
+      171
     ],
     "open_issues": [
       111
@@ -239,7 +240,7 @@
         "verify canonical and cache-busted Pages URLs against exact main SHA after merge"
       ]
     },
-    "open_prs": "6 open PRs excluding current PR #169: #125, #131, #152, #154, #155, #168"
+    "open_prs": "7 open PRs excluding current PR #169: #125, #131, #152, #154, #155, #168, #171"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
