@@ -2674,7 +2674,7 @@ test('search presets fit one line, localize, and persist per chat', async ({ pag
   }
   const headerTargetHeights = await page.locator('.app-header .header-icon, .header-language-select').evaluateAll(elements => elements.map(element => element.getBoundingClientRect().height));
   expect(headerTargetHeights.length).toBeGreaterThanOrEqual(3);
-  expect(headerTargetHeights.every(height => height >= 40)).toBe(true);
+  expect(headerTargetHeights.every(height => height >= 44)).toBe(true);
   for (const selector of ['#contextPickerButton', '#attachTextButton', '#voiceUnavailableButton', '#sendBtn', '#userInput']) {
     const box = await page.locator(selector).boundingBox();
     expect(box?.height || 0, selector + ' should have a 44px mobile hit target').toBeGreaterThanOrEqual(44);
