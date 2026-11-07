@@ -13,24 +13,24 @@
 
 ## A. Functions / Agents menu — PR #131
 
-- [~] MENU-001 — инвентаризация первично выполнена по `index.md`, `assets/js/app.js`, `assets/css/app.css` и E2E; полную матрицу handler/permission/data scope/evidence завершить.
-- [~] MENU-002 — базовая иерархия уже существует как 4 группы (task workflow, research/sources, create/transform, connections); расширить вложенные категории Agents/Skills/Files/Media/Models/Tasks без дублирования.
-- [~] MENU-003 — текущие roadmap items уже показывают non-runtime ticker и пояснение; формализовать единый status model для всех карточек.
-- [~] MENU-004 — текущий agent panel уже показывает mode, team blueprint, use cases, 64 roles, orchestration, models/resources and capabilities; добавить Skill binding, data scope, budgets, approvals and outputs по мере появления реальных handlers.
-- [~] MENU-005 — сейчас доступны direct response и sequential four-stage workflow; остальные режимы оставить roadmap-only до независимого runtime.
-- [~] MENU-006 — текущие chat profile/team blueprint controls существуют; расширенные model/skill/data/permission/resource/history controls требуют реальных backing APIs.
-- [~] MENU-007 — `1ИÆИT10И` tickers, pause controls, reduced-motion CSS and non-runtime notes exist; E2E assertions are authored, but exact-head execution is pending.
-- [~] MENU-008 — RU/EN labels and Chromium keyboard path now covered: native summary opens on Enter; panel/menu close on Escape and focus returns to summary; modal moves focus to Close and traps Tab/Shift+Tab; close-button accessible name localizes RU/EN; 320px mobile options assert ≥44px hit targets and no horizontal overflow. Duplicate-control inventory: exactly three top-level actions; the Agents link inside Deep Research is intentional contextual navigation to the same panel, not a fourth menu entry. Exact-head Quality is pending; VoiceOver still requires manual iPhone/Safari verification.
-- [x] MENU-009 — supporting UX contract создан; source audit and remaining gaps синхронизированы с canonical UI checklist section 8.28.
-- [x] UI-ICON-001 — owner UI requirement 8.8: icon-first copy/open/speak message actions with accessible labels/tooltips and 44×44 hit area; retain copy/speak in full-message view, with speak unavailable for user messages. Exact-head Quality #42349078380 passed (Jekyll, Chromium and all Quality sentinels) on implementation/test SHA 350c01513ec6dc147cd5b26e7b8e3bfa17a26d0e; status-only documentation follow-up SHA e41b1f40a0ea121a759bd0080ffc63dd2cde09c6 is awaiting recheck.
+- [~] **MENU-001** — inventory the Functions menu against `index.md`, `assets/css/landing.css` and `tests/e2e/app.spec.mjs`; finish the handler/permission/data-scope/evidence matrix.
+- [~] **MENU-002** — базовая иерархия уже существует как 4 группы (task workflow, research/sources, create/transform, connections); расширить вложенные категории Agents/Skills/Files/Media/Models/Tasks без дублирования.
+- [~] **MENU-003** — текущие roadmap items уже показывают non-runtime ticker и пояснение; формализовать единый status model для всех карточек.
+- [~] **MENU-004** — текущий agent panel уже показывает mode, team blueprint, use cases, 64 roles, orchestration, models/resources and capabilities; добавить Skill binding, data scope, budgets, approvals and outputs по мере появления реальных handlers.
+- [~] **MENU-005** — сейчас доступны direct response и sequential four-stage workflow; остальные режимы оставить roadmap-only до независимого runtime.
+- [~] **MENU-006** — текущие chat profile/team blueprint controls существуют; расширенные model/skill/data/permission/resource/history controls требуют реальных backing APIs.
+- [~] **MENU-007** — `1ИÆИT10И` tickers, pause controls, reduced-motion CSS and non-runtime notes exist; E2E assertions are authored, but exact-head execution is pending.
+- [~] **MENU-008** — RU/EN labels and Chromium keyboard path now covered: native summary opens on Enter; panel/menu close on Escape and focus returns to summary; modal moves focus to Close and traps Tab/Shift+Tab; close-button accessible name localizes RU/EN; 320px mobile options assert ≥44px hit targets and no horizontal overflow. Duplicate-control inventory: exactly three top-level actions; the Agents link inside Deep Research is intentional contextual navigation to the same panel, not a fourth menu entry. Exact-head Quality is pending; VoiceOver still requires manual iPhone/Safari verification.
+- [x] **MENU-009** — supporting UX contract создан; source audit and remaining gaps синхронизированы с canonical UI checklist section 8.28.
+- [x] **UI-ICON-001** — owner UI requirement 8.8: icon-first copy/open/speak message actions with accessible labels/tooltips and 44×44 hit area; retain copy/speak in full-message view, with speak unavailable for user messages. Exact-head Quality #42349078380 passed (Jekyll, Chromium and all Quality sentinels) on implementation/test SHA 350c01513ec6dc147cd5b26e7b8e3bfa17a26d0e; status-only documentation follow-up SHA e41b1f40a0ea121a759bd0080ffc63dd2cde09c6 is awaiting recheck.
 
 ## B. Skill Factory и Agent Builder — PR #125 / PR #128
 
-- [ ] SF-001…SF-007 — Skill lifecycle: source ingestion, evidence/provenance, manifest, license/security scans, generated evals, human review, versioning/rollback.
-- [ ] AB-001…AB-005 — Agent blueprint: role, Skill versions, model policy, capability scopes, data scope, budgets, approvals, dry-run/evals.
-- [ ] AW-SK-001…AW-SK-005 — threat model и adversarial tests для imported Skills; inert-by-default scripts.
-- [ ] AW-UI-001…AW-UI-002 — отображать реальные worker states/concurrency отдельно от inference slots.
-- [ ] VERT-001 — универсальный pipeline «материал → Skill draft / Agent blueprint / Task template»; три типа артефактов не смешивать.
+- [ ] **SF-001…SF-007** — Skill lifecycle: source ingestion, evidence/provenance, manifest, license/security scans, generated evals, human review, versioning/rollback.
+- [ ] **AB-001…AB-005** — Agent blueprint: role, Skill versions, model policy, capability scopes, data scope, budgets, approvals, dry-run/evals.
+- [ ] **AW-SK-001…AW-SK-005** — threat model и adversarial tests для imported Skills; inert-by-default scripts.
+- [ ] **AW-UI-001…AW-UI-002** — отображать реальные worker states/concurrency отдельно от inference slots.
+ > Cross-link to master registry: VERT-001…003 are already tracked as stable IDs in `docs/MASTER_TASK_REGISTRY_RU.md`; do not create duplicate addendum tasks. Preserve these source references.
 - [ ] VERT-002 — source spans/evidence сохранять на всех этапах преобразования.
 - [ ] VERT-003 — не выполнять scripts и не наследовать права из Skill/Agent metadata.
 
@@ -38,45 +38,45 @@
 
 ## C. Компактные модели / SLM — PR #125
 
-- [x] SLM-001 — определить task-based bake-off вместо рейтинга по числу параметров; роли: classification/routing, structured extraction, reranking, summarization, memory candidate generation, Skill synthesis. **Artifact:** `docs/AGENT_MODEL_BAKEOFF_RU.md`, раздел “2026-11-02 — Task-based small-model evaluation contract”.
-- [ ] SLM-002 — подготовить одинаковый RU/EN/TH golden set и схемы для каждого узкого сценария.
-- [ ] SLM-003 — измерить cold load, RAM/PSS, VRAM, TTFT, p50/p95, tokens/sec, concurrency and cancellation на целевом хосте.
-- [ ] SLM-004 — зафиксировать immutable model digest, quantization, tokenizer/template, runtime, code/weights/dataset licenses.
-- [ ] SLM-005 — сравнить с main-only baseline и включать не более одного helper model за раз; default remains off until owner approval.
+- [x] **SLM-001** — определить task-based bake-off вместо рейтинга по числу параметров; роли: classification/routing, structured extraction, reranking, summarization, memory candidate generation, Skill synthesis. **Artifact:** `docs/AGENT_MODEL_BAKEOFF_RU.md`, раздел “2026-11-02 — Task-based small-model evaluation contract”.
+- [ ] **SLM-002** — подготовить одинаковый RU/EN/TH golden set и схемы для каждого узкого сценария.
+- [ ] **SLM-003** — измерить cold load, RAM/PSS, VRAM, TTFT, p50/p95, tokens/sec, concurrency and cancellation на целевом хосте.
+- [ ] **SLM-004** — зафиксировать immutable model digest, quantization, tokenizer/template, runtime, code/weights/dataset licenses.
+- [ ] **SLM-005** — сравнить с main-only baseline и включать не более одного helper model за раз; default remains off until owner approval.
 
 ## C. Voice и audio generation — PR #129
 
-- [ ] AUDIO-GEN-001…009 — исследовать Agent Audio; проверить модельные terms, hardware, WAV quality, latency, integration and security.
-- [ ] AUDIO-UI-001 — разделить ASR, TTS/voice conversation, non-speech audio generation и post-processing.
-- [ ] AUDIO-UI-002 — preview/accept/reject, artifact provenance, project attach only after explicit approval.
-- [ ] AUDIO-SKILL-001 — описать media-production Skill с cue sheet, sound generation, audition, sync and export.
-- [ ] AUDIO-SMALL-001 — сравнить компактные модели/backends с baseline на target hardware; не принимать parameter count за benchmark.
+- [ ] **AUDIO-GEN-001…009** — исследовать Agent Audio; проверить модельные terms, hardware, WAV quality, latency, integration and security.
+- [ ] **AUDIO-UI-001** — разделить ASR, TTS/voice conversation, non-speech audio generation и post-processing.
+- [ ] **AUDIO-UI-002** — preview/accept/reject, artifact provenance, project attach only after explicit approval.
+- [ ] **AUDIO-SKILL-001** — описать media-production Skill с cue sheet, sound generation, audition, sync and export.
+- [ ] **AUDIO-SMALL-001** — сравнить компактные модели/backends с baseline на target hardware; не принимать parameter count за benchmark.
 
 **Artifact:** PR #129 `LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md`. Agent Audio remains early-preview candidate; no install/download performed.
 
 ## D. Deep Research, local files, conversion, video — PR #130
 
-- [ ] LSV-001…LSV-014 — browser permissions, local Source Vault, consent/storage modes, extraction, deletion lineage, screenshot-to-code, video workflows and archive policy.
-- [ ] LSV-015 — capability matrix File System Access across desktop/mobile browsers.
-- [ ] LSV-016 — fallback upload/drag-drop for unsupported browsers.
-- [ ] LSV-017 — decide if persistent directory watchers require a local companion; no public filesystem endpoint.
-- [ ] CONV-001 — compare Docling with existing parser on RU/EN/TH corpus and resource budgets.
-- [ ] CONV-002 — validate screenshot-to-code quality with golden screenshots, no-execution review workspace.
-- [ ] CONV-003 — define image→OCR/VLM, page→HTML/CSS, audio→transcript, video→frames/transcript workflows and provenance.
-- [ ] VIDEO-001 — benchmark ComfyUI/Wan candidate only on suitable GPU hardware and with exact model/checkpoint license review.
-- [ ] ARCHIVE-001 — upstream watchlist: exact versions, SHA-256, source/model/dataset licenses, dependencies, storage size and preservation reason.
-- [ ] ARCHIVE-002 — mirror only after explicit approval and only when licenses/terms permit; never commit weights to Git.
+- [ ] **LSV-001…LSV-014** — browser permissions, local Source Vault, consent/storage modes, extraction, deletion lineage, screenshot-to-code, video workflows and archive policy.
+- [ ] **LSV-015** — capability matrix File System Access across desktop/mobile browsers.
+- [ ] **LSV-016** — fallback upload/drag-drop for unsupported browsers.
+- [ ] **LSV-017** — decide if persistent directory watchers require a local companion; no public filesystem endpoint.
+- [ ] **CONV-001** — compare Docling with existing parser on RU/EN/TH corpus and resource budgets.
+- [ ] **CONV-002** — validate screenshot-to-code quality with golden screenshots, no-execution review workspace.
+- [ ] **CONV-003** — define image→OCR/VLM, page→HTML/CSS, audio→transcript, video→frames/transcript workflows and provenance.
+- [ ] **VIDEO-001** — benchmark ComfyUI/Wan candidate only on suitable GPU hardware and with exact model/checkpoint license review.
+- [ ] **ARCHIVE-001** — upstream watchlist: exact versions, SHA-256, source/model/dataset licenses, dependencies, storage size and preservation reason.
+- [ ] **ARCHIVE-002** — mirror only after explicit approval and only when licenses/terms permit; never commit weights to Git.
 
 **Artifact:** PR #130 `LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md`.
 
 ## E. Общие acceptance gates
 
-- [ ] GATE-001 — classify each capability as current / partial / blueprint / not implemented using source code and tests.
-- [ ] GATE-002 — threat model for local file access, untrusted documents, archive bombs, prompt injection, path traversal, malicious scripts and generated code.
-- [ ] GATE-003 — verify code, model weights, tokenizer, voice, dataset and workflow licenses independently.
-- [ ] GATE-004 — record actual disk/RAM/VRAM/latency/quality on target hardware; no extrapolation from model size.
-- [ ] GATE-005 — add exact-head tests and update canonical project state after each bounded implementation stage.
-- [ ] GATE-006 — require explicit owner approval before model downloads, runtime/dependency changes, external sync, destructive file operations, deployment or merge.
+- [ ] **GATE-001** — classify each capability as current / partial / blueprint / not implemented using source code and tests.
+- [ ] **GATE-002** — threat model for local file access, untrusted documents, archive bombs, prompt injection, path traversal, malicious scripts and generated code.
+- [ ] **GATE-003** — verify code, model weights, tokenizer, voice, dataset and workflow licenses independently.
+- [ ] **GATE-004** — record actual disk/RAM/VRAM/latency/quality on target hardware; no extrapolation from model size.
+- [ ] **GATE-005** — add exact-head tests and update canonical project state after each bounded implementation stage.
+- [ ] **GATE-006** — require explicit owner approval before model downloads, runtime/dependency changes, external sync, destructive file operations, deployment or merge.
 
 ## Cross-links
 
@@ -98,7 +98,7 @@ Quality #1490 passed Integrity, Jekyll, Security, Context and static analysis on
 - [~] **E2E-UI-001** — project settings test now opens the actual project settings modal before using the current-chat project selector.
 - [~] **E2E-UI-002** — chat-row move/Undo test seeds two projects and one chat, avoiding unrelated queued creation toasts; asserts restored project and stable chat ID.
 - [~] **E2E-UI-003** — memory tests now open the outer Memory disclosure before interacting with nested Memory tools; privacy opt-in assertions remain unchanged.
-- [x] **MENU-010** — Research Studio remains retired and outside Functions/Thorough controls; PR #169 merged at main `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2`, exact PR Quality #42408172737 passed 113/113 Chromium.
+- [x] **MENU-010** — Research Studio is retired entirely by the owner. PR #169 removes the Research Studio surface and entrypoints; exact PR Quality #42408172737 passed 113/113 Chromium.
 - [~] **A11Y-UI-001** — scope ticker locators to the first intended ticker where multiple cards exist; retain reduced-motion and explicit pause checks.
 - [~] **MOBILE-001** — restore 44px new-chat target on mobile despite later sidebar overrides.
 - [~] **MOBILE-002** — remove extra 12px composer-footer padding on short mobile viewports while preserving the device safe-area inset.
@@ -227,9 +227,9 @@ Owner's latest direction is an execution-priority override, **not cancellation**
 
 ## Owner override — 2026-11-07: Functions menu and Research Studio
 
-- [x] MENU-002 / MENU-003 (owner override D-022): PR #169 restores exactly Agents/structured analysis, Deep Research and Skills/task profile; integrations/connectors remain absent until real registry/status/permission contracts exist. Exact PR Quality #42408172737 passed 113/113 Chromium.
-- [x] MENU-010: Research Studio is retired entirely by the owner. PR #169 removes the Research Studio surface and entrypoints; exact PR Quality #42408172737 passed 113/113 Chromium.
-- [~] UI-PROMO-001 / PR #169: aServi is a dedicated first-party settings section; provider exclusivity, explicit connection and no silent fallback are implemented. Research Studio/server-memory graph are retired. Owner override D-022 restores exactly three Functions actions (Agents/structured analysis, Deep Research, Skills/task profile); the menu is not removed. Main public root + `/landing/` were Chromium-verified on exact merge SHA `bf039f887e29137b627b06fc2bb107c2793d6b69`. Final neutral-stop-control screenshot/accessibility review remains open under UR-310.
+> **MENU-002 / MENU-003 evidence:** owner override D-022 restored exactly Agents/structured analysis, Deep Research and Skills/task profile; integrations/connectors remain absent until real registry/status/permission contracts exist. PR #169 merged and exact PR Quality #42408172737 passed 113/113 Chromium.
+- [x] **MENU-010**: Research Studio is retired entirely by the owner. PR #169 removes the Research Studio surface and entrypoints; exact PR Quality #42408172737 passed 113/113 Chromium.
+- [~] **UI-PROMO-001** / PR #169: aServi is a dedicated first-party settings section; provider exclusivity, explicit connection and no silent fallback are implemented. Research Studio/server-memory graph are retired. Owner override D-022 restores exactly three Functions actions (Agents/structured analysis, Deep Research, Skills/task profile); the menu is not removed. Main public root + `/landing/` were Chromium-verified on exact merge SHA `bf039f887e29137b627b06fc2bb107c2793d6b69`. Final neutral-stop-control screenshot/accessibility review remains open under UR-310.
 
 
 ## I. Owner execution contract — 2026-11-08 (append-only)
@@ -285,25 +285,25 @@ Append-only owner intake; enrich existing orientation/UI/source lanes and preser
 ## J.2 Functions detailed-menu implementation checkpoint — 2026-11-08 (PR #169 merged at main `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2`)
 
 > **FUNCTIONS-DETAIL-001 evidence update:** the owner-directed Functions top-level menu remains exactly three truthful actions. Agents opens its existing bounded four-stage same-model panel; Deep Research opens a dedicated settings/navigation panel (Quick/Thorough effort, Web breadth status + open existing Web settings, structured-pipeline status + navigate to Agents, Deep Research 2.0 roadmap-only); Skills opens chat-scoped task profiles. PR #169 merged at main `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2`; exact PR Quality #42408172737 passed 113/113 Chromium. Post-merge Quality #42410163178 verified public root + /landing/ exact SHA and landing Chromium 8/8; its separate release-contract job failed only on a stale forbidden `functionsMenu` marker, now corrected by PR #174.
-- [x] E2E on 390×844 opened all three panels, verified backdrop blur, changed Thorough, opened Web menu, navigated Research→Agents and closed without stale overlay. Exact PR Quality #42408172737 passed 113/113 Chromium.
-- [~] Canonical specs preserved: docs/AGENT_FUNCTIONS_MENU_INFORMATION_ARCHITECTURE_RU.md; docs/AGENT_WORKER_CAPABILITY_AND_SKILL_SAFETY_RU.md; docs/AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md; docs/DEEP_RESEARCH_2_CURRENT_STATE_AUDIT_RU.md; docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md. These are SPECIFIED/research artifacts; they do not assert runtime implementation or permissions.
+> **Functions E2E evidence:** on 390×844, all three panels opened, backdrop blur was verified, Thorough changed, Web settings opened, Research navigated to Agents and closed without stale overlay. Exact PR Quality #42408172737 passed 113/113 Chromium. New 320px keyboard/focus coverage is pending exact-head CI.
+> **Canonical specifications preserved:** `docs/AGENT_FUNCTIONS_MENU_INFORMATION_ARCHITECTURE_RU.md`; `docs/AGENT_WORKER_CAPABILITY_AND_SKILL_SAFETY_RU.md`; `docs/AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md`; `docs/DEEP_RESEARCH_2_CURRENT_STATE_AUDIT_RU.md`; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md`. These remain SPECIFIED/research artifacts; they do not assert runtime implementation or permissions.
 
 
 ## J.3 Branch research reconciliation and source intake — 2026-11-08
 
-- [x] Preserved high-value PR #131/#125 research/spec artifacts into canonical docs: agent workforce research, Deep Research external research/audit/plan, source selection/autonomy method, output-budget/orchestration audit, local source vault/multimodal conversion, voice/audio research/spec, repository/workstream governance, model bakeoff, Agent Platform Blueprint, Skill Factory/Agent Builder and worker capability/Skill safety.
-- [x] Added 103 distinct URL references absent from prior `INTEL.md` inventory as candidate rows, each linked to its origin research doc. Current upstream recheck is still pending; source presence is not adoption.
-- [x] Kept `docs/AGENT_RESEARCH_CATALOG_RU.md` out of main as a duplicate source catalog: its 88 URL references already exist in INTEL. INTEL remains the single source register.
-- [x] Ported `scripts/graphify_ui_surface.py` + its unit test and Graphify workflow integration: deterministic CSS/DOM/JS selector relations with source provenance and conservative inferred-edge scores. It is CI-only and does not prove browser-computed styling.
-- [x] Ported the PR #131 SECURITY.md reporting policy and selectively updated Pages title/description while retaining the current Jekyll metadata plugin and upstream archive exclusions.
-- [~] PR #131/#125 are still under file-by-file disposition. V2 shell/runtime code, model weights and agent workforce runtime are not merged in this source-doc tranche; their current statuses and acceptance remain in the canonical registry/system map.
+> **PR #131/#125 research disposition evidence:** preserved high-value agent workforce, Deep Research, source selection/autonomy, orchestration, local Source Vault/multimodal conversion, voice/audio, governance, model bakeoff, Agent Platform Blueprint, Skill Factory/Agent Builder and worker capability/Skill safety artifacts in canonical docs.
+> **INTEL provenance evidence:** added 103 distinct URL references absent from the prior inventory as candidate rows, each linked to its origin research doc. Upstream recheck remains pending; source presence is not adoption.
+> **Duplicate catalog disposition:** kept `docs/AGENT_RESEARCH_CATALOG_RU.md` out of main as a duplicate source catalog; its 88 URL references already exist in INTEL. INTEL remains the single source register.
+> **Graphify implementation evidence:** ported `scripts/graphify_ui_surface.py`, its unit test and workflow integration. It builds deterministic CSS/DOM/JS selector relations with provenance and conservative inferred-edge scores; it does not prove browser-computed styling.
+> **Repository policy evidence:** ported the PR #131 SECURITY.md reporting policy and selectively updated Pages title/description while retaining the Jekyll metadata plugin and upstream archive exclusions.
+> **PR #131/#125 disposition remains:** V2 shell/runtime code, model weights and agent workforce runtime are not merged in this source-doc tranche; their acceptance remains OPEN in the canonical registry/system map.
 
 
 ## J.4 AgentRun state persistence prototype — 2026-11-08 (PR #169 merged at main `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2`; prototype only)
 
-- [~] Preserved the PR #131 SQLite `AgentRunStore` and offline tests as a bounded **PROTOTYPE**: idempotent run/task creation, versioned transitions, typed bounded metadata, task leases/fencing, retry budget, cancellation and event journal.
-- [x] Exact PR #169 Gateway #42408172642 passed. No HTTP route, model/tool invocation, worker scheduler, permission grant, sandbox, approval engine or multi-host runtime is wired; storage-only prototype does not satisfy AB-001…AB-005 runtime acceptance, which remains OPEN.
-- [~] Added EV-AGENT-RUN-STORE-001 evaluation definition; backup/restore, retention, multi-host, recovery semantics and adversarial runtime tests remain OPEN.
+> **AgentRunStore maturity evidence:** preserved the PR #131 SQLite `AgentRunStore` and offline tests as a bounded PROTOTYPE: idempotent run/task creation, versioned transitions, typed bounded metadata, leases/fencing, retry budget, cancellation and event journal.
+> **Agent runtime boundary evidence:** exact PR #169 Gateway #42408172642 passed. No HTTP route, model/tool invocation, worker scheduler, permission grant, sandbox, approval engine or multi-host runtime is wired; storage-only prototype does not satisfy AB-001…AB-005 runtime acceptance.
+- [~] Added **EV-AGENT-RUN-STORE-001** evaluation definition; backup/restore, retention, multi-host, recovery semantics and adversarial runtime tests remain OPEN.
 
 
 ## J.5 Post-merge main Quality and published UI contract — 2026-11-08
