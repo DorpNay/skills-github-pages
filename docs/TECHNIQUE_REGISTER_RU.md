@@ -101,3 +101,16 @@
 - No schema/API/dependency change; source/page provenance and scope filtering remain intact; `ALANDI_RAG_ENABLED=false` stays the default.
 - The score is only for ordering, not confidence/probability. Automated tests passed on exact PR head; no production-quality improvement is claimed until a labelled >=50-query golden set compares Recall@5, MRR/nDCG, citation correctness, latency and peak RSS.
 - Full criteria: `docs/RAG_RRF_EVALUATION_RU.md`, `EVALS.md` EV-RAG-RRF-001, `DECISIONS.md` D-018.
+
+
+## 2026-11-08 — обновление техник после нового upstream-прохода
+
+| Technique | Status | Применение в aLandi | Ограничение / gate |
+|---|---|---|---|
+| **Durable execution semantics** (Conductor / Temporal) | ACCEPT — principles only | Idempotency keys for side effects; explicit timeout/retry/cancellation; persisted checkpoints for long jobs; durable approval state; recovery drill | At-least-once means a tool can execute twice; no runtime adoption without real long-running workload and storage/ops budget |
+| **Single-instruction + task-routing manifest** | ACCEPT | One concise `AGENTS.md`; `PROJECT_ORCHESTRATOR_RU.md` routes to one system map, one task register, one source inventory and relevant validators | Do not create another agent runtime, routing database or parallel backlog |
+| **Modality-specific RAG probes** | ACCEPT | Add image-only/table-only questions, layout/table integrity checks, page/bbox lineage and citation support tests | Parser success does not prove retrieval or answer correctness; maintain human-adjudicated evals |
+| **Local ASR candidate evaluation** | PILOT CANDIDATE | Benchmark Qwen3-ASR-0.6B int8 via sherpa-onnx against the current baseline for Russian/Thai; record WER/CER, RTF, p50/p95 latency, peak RSS, cancellation | Verify exact model artifact and license; no install/promotion until target hardware and privacy tests pass |
+| **Inference runtime tuning** | SOURCE-VALIDATED | Use llama.cpp docs for KV cache, batching, thread/CPU affinity and speculative decoding comparison | Keep Ollama baseline; only switch after same-model/same-hardware benchmark and rollback |
+| **Code graph selection** | REASSESS, no replacement | Graphify stays dev-only; direct source/call-site inspection remains authoritative; consider CodeGraph only if measured navigation gaps persist | Small external benchmarks and vendor comparisons are not enough to justify a new tool |
+| **Model artifact provenance** | ACCEPT | Keep model manifest, upstream revision, exact license, artifact SHA-256, size, downloader and verification procedure in Git | Never place model weights in Pages source tree; use model cache/registry or governed Release assets if legal and within limits |
