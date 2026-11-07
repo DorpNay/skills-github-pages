@@ -634,7 +634,7 @@ function restoreStorageValue(key, rawValue) {
         ? (isPinned ? 'Chat unpinned.' : 'Chat pinned.')
         : (isPinned ? 'Чат откреплён.' : 'Чат закреплён.'));
     }
-    function persistChats({ suppressWarning = false } = {}) {
+    function persistChats({ suppressWarning = true } = {}) {
       if (chatStorageCorruptNotBackedUp) {
         showToast('Повреждённая история не была перезаписана: не удалось создать резервную копию. Освободите место в браузере и перезагрузите страницу.', 'error');
         return false;
@@ -5364,7 +5364,7 @@ function preserveUnreadableProjects(rawText) {
     $('skillGoalSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat){chat.skillGoal=$('skillGoalSelect').value;persistChats();renderSkillConfiguration();}});
     $('skillOutputSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat){chat.skillOutputMode=$('skillOutputSelect').value;persistChats();renderSkillConfiguration();}});
     ['customSkillName','customSkillInstructions','customSkillOutput'].forEach(id=>$(id).addEventListener('change',persistSkillConfiguration));
-    $('agentTeamSize').addEventListener('input',()=>{const chat=getCurrentChat();if(chat){chat.agentTeamSize=Math.max(1,Math.min(50,Number($('agentTeamSize').value)||1));$('agentTeamSizeValue').textContent=chat.agentTeamSize+' '+(getUiLanguage()==='en'?(chat.agentTeamSize===1?'agent':'agents'):(chat.agentTeamSize===1?'агент':'агентов'));persistChats();}});
+    $('agentTeamSize').addEventListener('input',()=>{const chat=getCurrentChat();if(!chat)return;const next=Math.max(1,Math.min(50,Number($('agentTeamSize').value)||1));if(!persistChatMutation(chat,{agentTeamSize:next}))$('agentTeamSize').value=String(chat.agentTeamSize);const value=Number($('agentTeamSize').value)||chat.agentTeamSize;$('agentTeamSizeValue').textContent=value+' '+(getUiLanguage()==='en'?(value===1?'agent':'agents'):(value===1?'агент':'агентов'));});
     ['agentTeamScenario','agentRolePreset'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
     ['agentTeamCustomScenario','agentCustomRoles'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
     $('agentBlueprintSelect').addEventListener('change',()=>renderAgentBlueprintLibrary());
