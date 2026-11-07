@@ -3346,6 +3346,49 @@ test('readability preferences persist and maintain semantic text contrast in bot
     }
   }
 
+  const semanticRoles = await page.evaluate(() => {
+    const sample = document.createElement('div');
+    sample.className = 'assistant-content';
+    sample.style.backgroundColor = 'var(--ui-surface)';
+    sample.innerHTML = '<span id="secondary" class="text-gray-500">Secondary</span><button id="disabled" disabled>Disabled</button><a id="link" href="#">Link</a><p id="error" class="field-error">Error</p>';
+    document.body.appendChild(sample);
+    const colorFor = token => {
+      const probe = document.createElement('span');
+      probe.style.color = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+      sample.appendChild(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    };
+    const actual = () => ({
+      secondary:getComputedStyle(sample.querySelector('#secondary')).color,
+      disabled:getComputedStyle(sample.querySelector('#disabled')).color,
+      link:getComputedStyle(sample.querySelector('#link')).color,
+      error:getComputedStyle(sample.querySelector('#error')).color
+    });
+    const results = {};
+    for (const theme of ['dark','light']) {
+      document.documentElement.dataset.theme = theme;
+      for (const contrast of ['standard','high']) {
+        document.documentElement.dataset.readingContrast = contrast;
+        results[theme + '-' + contrast] = {
+          actual:actual(),
+          expected:{
+            secondary:colorFor('--ui-text-muted'),
+            disabled:colorFor('--ui-text-muted'),
+            link:colorFor('--ui-link'),
+            error:colorFor('--ui-danger')
+          }
+        };
+      }
+    }
+    sample.remove();
+    return results;
+  });
+  for (const [scheme, roles] of Object.entries(semanticRoles)) {
+    expect(roles.actual, scheme).toEqual(roles.expected);
+  }
+
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(page.locator('#readingFontSize')).toHaveValue('20');
   await expect(page.locator('#readingLineHeight')).toHaveValue('1.9');
