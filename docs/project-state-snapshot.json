@@ -7,7 +7,7 @@
     "main_commit_subject": "feat(ui): add adjustable message readability",
     "main_commit_date": "2026-11-07",
     "last_functional_checkpoint_sha": "c4f23e03f563d03213eb87002863da630fc8b833",
-    "last_functional_milestone": "PR #166 §8.17 readability controls merged and published on main. GitHub Pages deployment #42372745873 and exact-main Quality #42372746360 passed on c4f23e03f563d03213eb87002863da630fc8b833; 116 Chromium app tests, root smoke 1/1, landing 8/8, and canonical root + /landing/ exact build-revision assertions passed.",
+    "last_functional_milestone": "PR #166 §8.17 readability controls merged and published on main. GitHub Pages deployment #42372745873 and exact-main Quality #42372746360 passed on c4f23e03f563d03213eb87002863da630fc8b833; 116 Chromium app tests, root smoke 1/1, landing 8/8, and canonical root + /landing/ exact build-revision assertions passed. Current owner UI slice is PR #169 (base c4f23e03, head 115f8fac); exact-head checks pending, not merged or published.",
     "main_quality_run": 42372746360,
     "main_pages_deployment_run": 42372745873,
     "functional_parent_gateway_run": null,
@@ -19,7 +19,9 @@
       131,
       152,
       154,
-      155
+      155,
+      168,
+      169
     ],
     "open_issues": [
       111
@@ -225,7 +227,20 @@
     "pr158_head": "4da559cf6abc21bfa3920b5e0297a2abb84e7453",
     "pr158_compare": "Merged at d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c; exact-head Quality #42349540173 passed; exact-main root title Quality #42349853526 remains in progress.",
     "pr166_head": "683ec28310a68dc0126a715a04f3ddc613e817b6",
-    "pr166_compare": "Merged PR #166 at main SHA c4f23e03f563d03213eb87002863da630fc8b833; §8.17 message readability controls are included in published root app. Exact-head Quality #42368514164 and Graphify #42368514210 passed; post-merge main Quality #42372746360 and Pages #42372745873 passed."
+    "pr166_compare": "Merged PR #166 at main SHA c4f23e03f563d03213eb87002863da630fc8b833; §8.17 message readability controls are included in published root app. Exact-head Quality #42368514164 and Graphify #42368514210 passed; post-merge main Quality #42372746360 and Pages #42372745873 passed.",
+    "active_ui_pr": {
+      "number": 169,
+      "base_sha": "c4f23e03f563d03213eb87002863da630fc8b833",
+      "head_sha": "115f8facaf36ba0efbbd0ef7f0865dfe7971db6b",
+      "status": "open; exact-head Quality/Chromium and Graphify pending; not merged or published",
+      "owner_scope": [
+        "retire Research Studio entirely",
+        "remove unapproved three-item Functions menu pending explicit capability inventory",
+        "separate aLandi aServi from third-party providers and prevent silent cross-provider fallback",
+        "clean sidebar and neutralize contextual stop control",
+        "verify canonical and cache-busted Pages URLs against exact main SHA after merge"
+      ]
+    }
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
