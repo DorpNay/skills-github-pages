@@ -583,6 +583,9 @@ test('settings profile exports portable preferences but never API secrets', asyn
   await page.locator('#apiKey').fill('e2e-private-provider-secret-value');
   await page.locator('#tavilyKey').fill('e2e-private-search-secret-value');
   await page.locator('#allowCrossProviderFallback').check();
+  await page.locator('#readingFontSize').evaluate(element => { element.value = '18'; element.dispatchEvent(new Event('input', { bubbles: true })); element.dispatchEvent(new Event('change', { bubbles: true })); });
+  await page.locator('#readingLineHeight').evaluate(element => { element.value = '1.8'; element.dispatchEvent(new Event('input', { bubbles: true })); element.dispatchEvent(new Event('change', { bubbles: true })); });
+  await page.locator('#readingContrast').selectOption('high');
   await page.locator('[data-action="save-settings"]').click();
 
   const downloadPromise = page.waitForEvent('download');
@@ -595,6 +598,7 @@ test('settings profile exports portable preferences but never API secrets', asyn
   expect(profile.settings.provider).toBe('groq');
   expect(profile.settings.model).toBe('openai/gpt-oss-120b');
   expect(profile.settings.crossProviderFallback).toBe(true);
+  expect(profile.settings.readability).toEqual({ fontSize:18, lineHeight:1.8, contrast:'high' });
   expect(json).not.toContain('e2e-private-provider-secret-value');
   expect(json).not.toContain('e2e-private-search-secret-value');
   expect(json).not.toContain('ai_api_key_');
@@ -625,7 +629,8 @@ test('settings profile import restores preferences while preserving existing pro
       search: false,
       multiAgent: true,
       offline: true,
-      crossProviderFallback: false
+      crossProviderFallback: false,
+      readability: { fontSize:19, lineHeight:1.7, contrast:'high' }
     }
   };
   await page.locator('#settingsProfileFile').setInputFiles({
@@ -642,6 +647,9 @@ test('settings profile import restores preferences while preserving existing pro
   await expect(page.locator('#toggleMultiAgent')).toBeChecked();
   await expect(page.locator('#offlineToggle')).toContainText('Веб-поиск выключен');
   await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#readingFontSize')).toHaveValue('19');
+  await expect(page.locator('#readingLineHeight')).toHaveValue('1.7');
+  await expect(page.locator('#readingContrast')).toHaveValue('high');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-preserved-provider-secret');
   await expect(page.locator('#tavilyKey')).toHaveValue('e2e-preserved-tavily-secret');
   expect(await page.evaluate(() => localStorage.getItem('ai_api_key_custom'))).toBe('e2e-preserved-provider-secret');
@@ -3275,4 +3283,161 @@ test('status tone semantics remain distinct and readable in both themes', async 
     }
     expect(new Set(colors).size).toBe(5);
   }
+});
+
+
+test('readability preferences persist and maintain semantic text contrast in both themes', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').first().click();
+  await expect(page.locator('#readingSettings')).toBeVisible();
+
+  await page.locator('#readingFontSize').evaluate(element => {
+    element.value = '20';
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await page.locator('#readingLineHeight').evaluate(element => {
+    element.value = '1.9';
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await page.locator('#readingContrast').selectOption('high');
+  await expect(page.locator('#readingFontSizeValue')).toHaveText('20 px');
+  await expect(page.locator('#readingLineHeightValue')).toHaveText('1.9');
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('ai_ui_readability_v1') || '{}'))).toEqual({
+    fontSize: 20, lineHeight: 1.9, contrast: 'high'
+  });
+
+  const ratios = await page.evaluate(() => {
+    const parse = value => {
+      const match = value.match(/^#([0-9a-f]{6})$/i);
+      if (!match) throw new Error('Unexpected computed color token: ' + value);
+      return [0,2,4].map(offset => parseInt(match[1].slice(offset, offset + 2), 16));
+    };
+    const luminance = color => {
+      const channels = parse(color).map(value => {
+        const normalized = value / 255;
+        return normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+      });
+      return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+    };
+    const ratio = (foreground, background) => {
+      const a = luminance(foreground), b = luminance(background);
+      return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+    };
+    const results = {};
+    for (const theme of ['dark', 'light']) {
+      document.documentElement.dataset.theme = theme;
+      for (const contrast of ['standard', 'high']) {
+        document.documentElement.dataset.readingContrast = contrast;
+        const styles = getComputedStyle(document.documentElement);
+        const background = styles.getPropertyValue('--ui-surface').trim();
+        const tokens = ['--ui-text','--ui-text-muted','--ui-success','--ui-danger','--ui-info','--ui-warning','--ui-link'];
+        results[theme + '-' + contrast] = Object.fromEntries(tokens.map(token => [token, ratio(styles.getPropertyValue(token).trim(), background)]));
+      }
+    }
+    document.documentElement.dataset.theme = 'dark';
+    document.documentElement.dataset.readingContrast = 'high';
+    return results;
+  });
+  for (const [scheme, tokens] of Object.entries(ratios)) {
+    for (const [token, value] of Object.entries(tokens)) {
+      expect(value, scheme + ' ' + token).toBeGreaterThanOrEqual(4.5);
+    }
+  }
+
+  const semanticRoles = await page.evaluate(async () => {
+    const sample = document.createElement('div');
+    sample.className = 'assistant-content';
+    sample.style.backgroundColor = 'var(--ui-surface)';
+    sample.innerHTML = '<span id="secondary" class="text-gray-500">Secondary</span><button id="disabled" disabled>Disabled</button><a id="link" href="#">Link</a><p id="error" class="field-error">Error</p>';
+    document.body.appendChild(sample);
+    const colorFor = token => {
+      const probe = document.createElement('span');
+      probe.style.color = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+      sample.appendChild(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    };
+    const cloudStatus = document.createElement('p');
+    cloudStatus.className = 'cloud-status-copy';
+    cloudStatus.dataset.state = 'checking';
+    cloudStatus.textContent = 'Checking';
+    document.querySelector('#settingsModal').appendChild(cloudStatus);
+    const settingsError = document.querySelector('#cloudBaseUrlError');
+    const statusRow = document.querySelector('#searchStatus');
+    const statusText = document.querySelector('#statusText');
+    const actual = () => ({
+      secondary:getComputedStyle(sample.querySelector('#secondary')).color,
+      disabled:getComputedStyle(sample.querySelector('#disabled')).color,
+      link:getComputedStyle(sample.querySelector('#link')).color,
+      error:getComputedStyle(sample.querySelector('#error')).color,
+      settingsError:getComputedStyle(settingsError).color,
+      cloudChecking:getComputedStyle(cloudStatus).color,
+      statusInfo:getComputedStyle(statusText).color
+    });
+    const results = {};
+    for (const theme of ['dark','light']) {
+      document.documentElement.dataset.theme = theme;
+      for (const contrast of ['standard','high']) {
+        document.documentElement.dataset.readingContrast = contrast;
+        cloudStatus.dataset.state = 'checking';
+        statusRow.dataset.tone = 'info';
+        // Resolve descendant styles first so the 140ms color transitions start before waiting.
+        getComputedStyle(document.documentElement).getPropertyValue('--ui-text-muted');
+        getComputedStyle(sample.querySelector('#link')).color;
+        getComputedStyle(sample.querySelector('#disabled')).color;
+        getComputedStyle(sample.querySelector('#secondary')).color;
+        // Sample only after the final cascade settles.
+        await new Promise(resolve => setTimeout(resolve, 320));
+
+        results[theme + '-' + contrast] = {
+          actual:actual(),
+          expected:{
+            secondary:colorFor('--ui-text-muted'),
+            disabled:colorFor('--ui-text-muted'),
+            link:colorFor('--ui-link'),
+            error:colorFor('--ui-danger'),
+            settingsError:colorFor('--ui-danger'),
+            cloudChecking:colorFor('--ui-warning'),
+            statusInfo:colorFor('--ui-info')
+          }
+        };
+      }
+    }
+    sample.remove();
+    cloudStatus.remove();
+    return results;
+  });
+  for (const [scheme, roles] of Object.entries(semanticRoles)) {
+    expect(roles.actual, scheme).toEqual(roles.expected);
+  }
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#readingFontSize')).toHaveValue('20');
+  await expect(page.locator('#readingLineHeight')).toHaveValue('1.9');
+  await expect(page.locator('#readingContrast')).toHaveValue('high');
+  const applied = await page.evaluate(() => {
+    const sample = document.createElement('div');
+    sample.className = 'assistant-content';
+    sample.innerHTML = '<p>Assistant readability sample</p>';
+    document.body.appendChild(sample);
+    const userSample = document.createElement('div');
+    userSample.className = 'chat-bubble';
+    userSample.textContent = 'User readability sample';
+    document.body.appendChild(userSample);
+    return {
+      fontSize: getComputedStyle(sample).fontSize,
+      lineHeight: getComputedStyle(sample).lineHeight,
+      userFontSize: getComputedStyle(userSample).fontSize,
+      userLineHeight: getComputedStyle(userSample).lineHeight,
+      contrast: document.documentElement.dataset.readingContrast
+    };
+  });
+  expect(applied.fontSize).toBe('20px');
+  expect(applied.lineHeight).toBe('38px');
+  expect(applied.userFontSize).toBe('20px');
+  expect(applied.userLineHeight).toBe('38px');
+  expect(applied.contrast).toBe('high');
 });
