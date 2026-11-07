@@ -365,6 +365,18 @@ permalink: /
     .message-viewer-content pre,.message-viewer-content table{max-width:100%;overflow:auto}
     .message-viewer-content .plain-message{white-space:pre-wrap;overflow-wrap:anywhere;user-select:text;-webkit-user-select:text}
     .jump-to-latest{position:fixed;z-index:35;right:14px;bottom:max(calc(env(safe-area-inset-bottom) + 6.5rem),6.5rem);min-width:42px;min-height:42px;border-radius:14px;border:1px solid color-mix(in srgb,var(--ui-tiffany) 42%,var(--ui-border));background:var(--ui-surface-raised);color:var(--ui-tiffany);font-size:24px;box-shadow:0 5px 22px rgb(0 0 0 / 24%)}
+    :root { --ui-control-compact:32px; --ui-control-standard:40px; --ui-control-touch:44px; --ui-control-gap:8px; --ui-control-font:12px; --ui-control-icon:18px; }
+    .header-icon { display:inline-flex;align-items:center;justify-content:center;min-width:var(--ui-control-touch);min-height:var(--ui-control-touch);padding:.35rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm);font-size:var(--ui-control-icon);line-height:1; }
+    .header-preferences { display:flex;align-items:center;gap:4px;flex:0 0 auto; }
+    .header-chat-title { padding:5px 9px;border:1px solid var(--ui-border);border-radius:12px;background:color-mix(in srgb,var(--ui-surface-raised) 78%,transparent); }
+    .brand-wordmark { font-family:ui-rounded,"Arial Rounded MT Bold",system-ui,sans-serif;font-weight:900;letter-spacing:-.075em;transform:rotate(-2deg) skewX(-3deg);text-shadow:1px 1px 0 color-mix(in srgb,var(--ui-tiffany) 20%,transparent); }
+    .clock-face { width:58px;height:58px; }
+    .header-language-select { min-width:48px;min-height:40px;padding:0 5px;border:1px solid var(--ui-border);border-radius:10px;background:var(--ui-surface-raised);color:var(--ui-text);font-size:11px;font-weight:700;text-align:center; }
+    .composer-stop:not(.hidden) { background:var(--ui-surface-raised)!important;color:var(--ui-text)!important;border:1px solid var(--ui-border)!important; }
+    .composer-stop:not(.hidden):hover { background:var(--ui-tiffany-soft)!important;border-color:var(--ui-tiffany)!important;color:var(--ui-tiffany)!important; }
+    #modeToolbar [role="group"] > button,#modeToolbar .toolbar-menu > summary { min-height:40px; }
+    @media (max-width:420px) { .header-preferences { gap:3px; } .header-language-select { min-width:44px;padding:0 3px; } .brand-wordmark { font-size:16px; } .clock-face { width:50px;height:50px; } }
+
 
     /* UI §8.14: prevent long-press selection on controls without disabling copyable content. */
     button, [role="button"], summary {
@@ -502,34 +514,22 @@ permalink: /
   <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 p-2 sm:p-4 z-50 overflow-y-auto overscroll-contain" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="settings-surface bg-gray-800 p-3 sm:p-4 rounded-xl max-w-2xl mx-auto w-full border border-gray-700 space-y-3 my-auto max-h-[94dvh] overflow-y-auto overscroll-contain">
       <header class="settings-header"><h2 id="settingsTitle" class="text-base font-bold" data-i18n="settingsTitle">⚙️ Настройки</h2><div class="settings-header-actions"><button type="button" data-action="save-settings" data-i18n="saveSettings">Сохранить</button><button type="button" data-action="close-settings" data-i18n-aria-label="closeSettings" aria-label="Закрыть" title="Закрыть">✕</button></div></header>
-      <section id="cloudSettingsCard" class="cloud-card rounded-2xl border p-4 space-y-3" aria-labelledby="cloudCardTitle">
-        <div class="flex items-center justify-between gap-3"><div class="min-w-0 flex-1"><p class="text-lg uppercase tracking-[.18em] text-cyan-300 font-extrabold leading-none">aLandi · cloud</p><h3 id="cloudCardTitle" data-i18n="cloudCardTitle" class="text-2xl font-bold mt-2">Мой сервер</h3></div><span class="cloud-status-indicator" id="cloudStatusDot" data-state="disconnected" aria-hidden="true"></span></div>
+      <details id="aserviSettingsGroup" class="settings-subpanel rounded-xl border border-gray-700">
+        <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none" data-i18n="aserviGroupTitle">aLandi aServi</summary>
+        <div class="p-3"><section id="cloudSettingsCard" class="cloud-card rounded-2xl border p-4 space-y-3" aria-labelledby="cloudCardTitle">
+        <div class="flex items-center justify-between gap-3"><div class="min-w-0 flex-1"><p class="text-lg uppercase tracking-[.18em] text-cyan-300 font-extrabold leading-none">aLandi aServi</p><h3 id="cloudCardTitle" data-i18n="cloudCardTitle" class="text-2xl font-bold mt-2">Мой сервер</h3></div><span class="cloud-status-indicator" id="cloudStatusDot" data-state="disconnected" aria-hidden="true"></span></div>
         <div class="grid grid-cols-1 gap-2">
           <input id="cloudBaseUrl" type="url" autocomplete="url" aria-label="URL моего сервера" class="w-full p-3 rounded-xl border text-sm" placeholder="URL моего сервера · https://…/v1"><p id="cloudBaseUrlError" class="field-error hidden" role="alert"></p>
           <input id="cloudModel" type="text" autocomplete="off" aria-label="Модель моего сервера" class="w-full p-3 rounded-xl border text-sm" placeholder="Модель gateway · точный ID"><p id="cloudModelError" class="field-error hidden" role="alert"></p>
           <div class="cloud-key-row flex gap-2"><input id="cloudApiKey" type="password" autocomplete="off" aria-label="Ключ доступа к серверу" class="min-w-0 flex-1 p-3 rounded-xl border text-sm" placeholder="Ключ доступа"><button type="button" data-action="paste-cloud-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ">↓</button></div><p id="cloudApiKeyError" class="field-error hidden" role="alert"></p>
         </div>
         <p id="cloudStatus" class="cloud-status-copy text-[10px]" data-state="disconnected" role="status" aria-live="polite">Не подключено</p>
-      </section>
-      <section id="readingSettings" class="rounded-xl border border-gray-700 p-3 space-y-3" aria-labelledby="readingSettingsTitle">
-        <div><h3 id="readingSettingsTitle" class="text-sm font-semibold" data-i18n="readingSettingsTitle">Читаемость текста</h3><p class="mt-1 text-xs leading-relaxed" data-i18n="readingSettingsHelp">Настрой размер, интервалы и контраст текста сообщений. Изменения сохраняются автоматически и действуют в обеих темах.</p></div>
-        <label for="readingFontSize" class="block text-xs"><span data-i18n="readingFontSizeLabel">Размер текста сообщений</span><output id="readingFontSizeValue" class="float-right font-semibold tabular-nums">15 px</output><input id="readingFontSize" type="range" min="14" max="22" step="1" value="15" class="mt-2 w-full" aria-describedby="readingSettingsHelp"></label>
-        <label for="readingLineHeight" class="block text-xs"><span data-i18n="readingLineHeightLabel">Межстрочный интервал</span><output id="readingLineHeightValue" class="float-right font-semibold tabular-nums">1.6</output><input id="readingLineHeight" type="range" min="1.4" max="2" step="0.1" value="1.6" class="mt-2 w-full" aria-describedby="readingSettingsHelp"></label>
-        <label for="readingContrast" class="block text-xs"><span data-i18n="readingContrastLabel">Контраст цветовой схемы</span><select id="readingContrast" class="advanced-control mt-1 w-full rounded border border-gray-700 bg-gray-900"><option value="standard" data-i18n="readingContrastStandard">Стандартный</option><option value="high" data-i18n="readingContrastHigh">Повышенный</option></select></label>
-        <p id="readingSettingsStatus" class="text-xs" role="status" aria-live="polite" data-i18n="readingSettingsSaved">Настройки читаемости сохраняются на этом устройстве.</p>
-      </section>
+      </section></div>
+      </details>
       <details id="legacyProviderSettings" class="settings-subpanel rounded-xl border border-gray-700">
-        <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none" data-i18n="legacySettings">Дополнительные настройки</summary>
-        <div class="p-3 space-y-3">
-          <input type="hidden" id="uiTheme" value="dark">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 border-b border-gray-800 pb-3">
-            <label class="text-[11px] text-gray-400">Язык<select id="uiLanguage" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="ru">Русский</option><option value="en">English</option></select></label>
-            <label class="text-[11px] text-gray-400">Анимация<select id="uiMotion" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="auto">Авто</option><option value="reduced">Уменьшить</option><option value="off">Выкл.</option></select></label>
-            <label class="text-[11px] text-gray-400">Поле ввода<select id="composerPosition" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="bottom" data-i18n="composerBottom">Снизу</option><option value="top" data-i18n="composerTop">Сверху</option></select></label>
-            <button type="button" data-action="toggle-theme-cycle" class="advanced-control self-end rounded border border-gray-700 bg-gray-900 text-left text-gray-300" aria-label="Сменить тему">☼ Тема</button>
-          </div>
-       <label for="providerPreset" data-i18n="providerLabel" class="sr-only">Сторонний API</label>
-       <select id="providerPreset" aria-label="Сторонний API-провайдер" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"><option value="" selected disabled>Сторонний API</option><optgroup id="providerPrimaryGroup" label="aLandi Cloud · внутренний маршрут" hidden><option value="alandi">aLandi Cloud</option></optgroup><optgroup id="providerExternalGroup" label="Сторонние провайдеры"><option value="kilo">Kilo</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai</option><option value="cloudflare">Cloudflare Workers AI</option><option value="openrouter">OpenRouter</option><option value="nvidia">NVIDIA NIM</option><option value="huggingface">Hugging Face</option><option value="custom">Свой OpenAI-совместимый API</option></optgroup></select>
+        <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none" data-i18n="thirdPartySettingsTitle">Сторонние провайдеры</summary>
+        <div class="p-3 space-y-3"><label for="providerPreset" data-i18n="providerLabel" class="sr-only">Сторонний API</label>
+       <select id="providerPreset" aria-label="Сторонний API-провайдер" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"><option value="" selected disabled>Выберите стороннего провайдера</option><optgroup id="providerExternalGroup" label="Сторонние провайдеры"><option value="kilo">Kilo</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai</option><option value="cloudflare">Cloudflare Workers AI</option><option value="openrouter">OpenRouter</option><option value="nvidia">NVIDIA NIM</option><option value="huggingface">Hugging Face</option><option value="custom">Свой OpenAI-совместимый API</option></optgroup></select>
        <input type="search" id="modelSearch" aria-label="Поиск модели" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="Поиск модели">
        <select id="modelPreset" aria-label="Каталог моделей" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"></select>
 <div class="flex items-start justify-between gap-2">
@@ -553,8 +553,25 @@ permalink: /
         <button type="button" data-action="disconnect-pollinations" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 py-1.5 rounded-lg text-[11px] text-gray-300">Завершить сессию Pollinations</button>
       </div>
       <div class="flex gap-2"><button type="button" data-action="test-connection" class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение и модель</button><button type="button" data-action="clear-provider-key" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
-             <input type="text" id="modelName" aria-label="Модель" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="ID модели">
-       <details id="searchToolsSettings" class="rounded-xl border border-gray-700"><summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">Инструменты и веб-поиск</summary><div class="px-3 pb-3 space-y-2"><div class="flex gap-2"><input type="password" id="tavilyKey" aria-label="Ключ Tavily" autocomplete="off" class="min-w-0 flex-1 p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="ключ Tavily"><button type="button" data-action="paste-tavily-key" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Вставить ключ Tavily">↓</button></div></div></details>
+             <input type="text" id="modelName" aria-label="Модель" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="ID модели"></div>
+      </details>
+      <details id="additionalSettings" class="settings-subpanel rounded-xl border border-gray-700">
+        <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none" data-i18n="legacySettings">Дополнительные настройки</summary>
+        <div class="p-3 space-y-3"><input type="hidden" id="uiTheme" value="dark">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 border-b border-gray-800 pb-3">
+            
+            <label class="text-[11px] text-gray-400">Анимация<select id="uiMotion" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="auto">Авто</option><option value="reduced">Уменьшить</option><option value="off">Выкл.</option></select></label>
+            <label class="text-[11px] text-gray-400">Поле ввода<select id="composerPosition" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="bottom" data-i18n="composerBottom">Снизу</option><option value="top" data-i18n="composerTop">Сверху</option></select></label>
+            
+          </div>
+<section id="readingSettings" class="rounded-xl border border-gray-700 p-3 space-y-3" aria-labelledby="readingSettingsTitle">
+        <div><h3 id="readingSettingsTitle" class="text-sm font-semibold" data-i18n="readingSettingsTitle">Читаемость текста</h3><p class="mt-1 text-xs leading-relaxed" data-i18n="readingSettingsHelp">Настрой размер, интервалы и контраст текста сообщений. Изменения сохраняются автоматически и действуют в обеих темах.</p></div>
+        <label for="readingFontSize" class="block text-xs"><span data-i18n="readingFontSizeLabel">Размер текста сообщений</span><output id="readingFontSizeValue" class="float-right font-semibold tabular-nums">15 px</output><input id="readingFontSize" type="range" min="14" max="22" step="1" value="15" class="mt-2 w-full" aria-describedby="readingSettingsHelp"></label>
+        <label for="readingLineHeight" class="block text-xs"><span data-i18n="readingLineHeightLabel">Межстрочный интервал</span><output id="readingLineHeightValue" class="float-right font-semibold tabular-nums">1.6</output><input id="readingLineHeight" type="range" min="1.4" max="2" step="0.1" value="1.6" class="mt-2 w-full" aria-describedby="readingSettingsHelp"></label>
+        <label for="readingContrast" class="block text-xs"><span data-i18n="readingContrastLabel">Контраст цветовой схемы</span><select id="readingContrast" class="advanced-control mt-1 w-full rounded border border-gray-700 bg-gray-900"><option value="standard" data-i18n="readingContrastStandard">Стандартный</option><option value="high" data-i18n="readingContrastHigh">Повышенный</option></select></label>
+        <p id="readingSettingsStatus" class="text-xs" role="status" aria-live="polite" data-i18n="readingSettingsSaved">Настройки читаемости сохраняются на этом устройстве.</p>
+      </section>
+<details id="searchToolsSettings" class="rounded-xl border border-gray-700"><summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">Инструменты и веб-поиск</summary><div class="px-3 pb-3 space-y-2"><div class="flex gap-2"><input type="password" id="tavilyKey" aria-label="Ключ Tavily" autocomplete="off" class="min-w-0 flex-1 p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="ключ Tavily"><button type="button" data-action="paste-tavily-key" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Вставить ключ Tavily">↓</button></div></div></details>
        <label for="systemPromptInput" data-i18n="systemPromptLabel" class="block text-xs text-gray-400">Системный промпт</label>
        <div class="prompt-editor"><textarea id="systemPromptInput" rows="4" readonly class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y" placeholder="Свои правила для всех запросов"></textarea><button type="button" id="editSystemPrompt" data-action="edit-system-prompt" class="prompt-pencil" aria-pressed="false" aria-label="Редактировать системный промпт" title="Редактировать">✎</button></div><p id="promptEditHint" class="sr-only" aria-live="polite"></p>
        <label class="flex items-start gap-2 text-xs text-gray-300 mt-2"><input id="allowCrossProviderFallback" type="checkbox" class="mt-0.5 rounded bg-gray-800 border-gray-700"><span><strong>Разрешить резерв у другого провайдера</strong><span class="block text-[11px] leading-relaxed text-amber-200/80">По умолчанию выключено. При включении текст запроса и контекст могут передаваться другому сервису. Сначала система пробует модели выбранного провайдера.</span></span></label>
@@ -564,8 +581,7 @@ permalink: /
         <button type="button" data-action="import-settings-profile" class="bg-gray-700 hover:bg-gray-600 py-2 px-2 rounded text-xs text-gray-200">Импорт профиля</button>
       </div>
       <input type="file" id="settingsProfileFile" class="hidden" accept="application/json,.json">
-      <p class="text-[10px] leading-relaxed text-gray-500">Профиль переносит настройки, но намеренно не содержит API-ключи и токены. Импорт не меняет уже сохранённые секреты.</p>
-        </div>
+      <p class="text-[10px] leading-relaxed text-gray-500">Профиль переносит настройки, но намеренно не содержит API-ключи и токены. Импорт не меняет уже сохранённые секреты.</p></div>
       </details>
       <button type="button" id="recoveryBackupButton" data-action="download-recovery-backup" class="hidden w-full bg-amber-800 hover:bg-amber-700 py-2 rounded text-xs text-amber-50">Скачать резервную копию истории</button>
     </div>
@@ -582,7 +598,7 @@ permalink: /
       <span id="clockAccessible" class="sr-only" aria-live="off">Местное время</span>
     </div>
     <span id="brandWordmark" class="brand-wordmark font-bold text-lg tracking-tight shrink-0">aLandi</span>
-    <div class="flex items-center gap-1.5 shrink-0"><button type="button" data-action="toggle-theme-cycle" id="homeThemeToggle" aria-label="Сменить тему" title="Сменить тему" class="header-icon px-2 py-1.5">☼</button><button type="button" data-action="toggle-settings" aria-label="Настройки" class="header-icon px-2.5 py-1.5 rounded-xl">⚙️</button></div>
+    <div class="header-preferences flex items-center gap-1.5 shrink-0"><button type="button" data-action="toggle-theme-cycle" id="homeThemeToggle" aria-label="Сменить тему" title="Сменить тему" class="header-icon">☼</button><label class="header-language" aria-label="Язык"><select id="uiLanguage" class="header-language-select" aria-label="Язык"><option value="ru">RU</option><option value="en">EN</option></select></label><button type="button" data-action="toggle-settings" aria-label="Настройки" class="header-icon">⚙️</button></div>
   </header>
 
   <div id="modeToolbar" class="bg-gray-950 px-3 py-2 border-b border-gray-800 shrink-0 space-y-1.5">
@@ -603,14 +619,7 @@ permalink: /
           <button type="button" data-action="select-search-mode" data-search-mode="offline" class="toolbar-menu-option"><strong data-i18n="searchModeOffline">Выкл.</strong><small data-i18n="searchModeOfflineHelp">Веб-инструменты выключены; облачному API всё ещё может требоваться интернет.</small></button>
         </div>
       </details>
-      <details id="functionsMenu" class="toolbar-menu flex-1 min-w-0">
-        <summary id="functionsMenuSummary" class="toolbar-menu-summary" data-i18n="functionsMenuLabel">Функции ▾</summary>
-        <div class="toolbar-menu-panel toolbar-menu-panel-right">
-          <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option" data-i18n="functionAgents">🧭 Структурированный разбор</button>
-          <button type="button" data-action="open-function-panel" data-function="skills" class="toolbar-menu-option" data-i18n="functionSkills">🧩 Профиль задачи</button>
-          <button type="button" data-action="open-function-panel" data-function="connectors" class="toolbar-menu-option" data-i18n="functionConnectors">🔌 Интеграции</button>
-        </div>
-      </details>
+
     </div>
     <input type="checkbox" id="toggleSearch" class="hidden" checked>
     <input type="checkbox" id="toggleMultiAgent" class="hidden">
@@ -631,7 +640,7 @@ permalink: /
       <textarea id="userInput" rows="1" maxlength="30000" placeholder="Напиши сообщение..." aria-label="Сообщение" data-i18n-placeholder="composerPlaceholder" class="flex-1 min-w-0 bg-gray-900 border border-gray-700 px-3 py-2.5 rounded-xl text-base outline-none resize-none max-h-32"></textarea>
       <button id="voiceUnavailableButton" type="button" aria-label="Зажми, чтобы открыть режимы голоса" aria-expanded="false" title="Удерживай, чтобы открыть голосовое меню; обычное нажатие ничего не открывает" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">◉</button>
       <button id="sendBtn" type="button" data-action="send" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Отправить сообщение">➤</button>
-      <button id="stopBtn" type="button" data-action="stop" class="hidden bg-red-600 hover:bg-red-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Остановить генерацию">⏹</button>
+      <button id="stopBtn" type="button" data-action="stop" class="hidden composer-stop px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Остановить генерацию">⏹</button>
     </div>
     <div id="attachmentMenu" class="composer-popover hidden" role="group" aria-label="Добавить вложение">
       <button type="button" data-action="choose-media" class="composer-popover-option"><span aria-hidden="true">▧</span><span><strong data-i18n="attachMediaTitle">Фото или видео</strong><small data-i18n="attachMediaHelp">Изображения и выбор кадров из ролика</small></span></button>
@@ -1421,6 +1430,7 @@ permalink: /
         searchModeSummaryPrefix:'🌐 Веб',searchModeNormal:'Обычный',searchModeNormalShort:'Веб: обычный',searchModeNormalHelp:'Стандартный охват результатов и источников; не меняет бюджет обработки.',searchModeMore:'Расширенный',searchModeMoreShort:'Веб: расширенный',searchModeMoreHelp:'Больше результатов, источников и извлечённого текста на один поиск; не увеличивает число раундов.',searchModeOffline:'Выкл.',searchModeOfflineShort:'Веб: выкл.',searchModeOfflineHelp:'Веб-инструменты выключены; облачному API всё ещё может требоваться интернет.',
         workflowDirectShort:'Прямой',workflowStructuredShort:'Конвейер',workflowDirectHelp:'Прямой способ выполнения: модель использует доступные инструменты в пределах выбранного бюджета.',workflowStructuredHelp:'Для подходящих сложных запросов запускает планировщик → исследователь → критик → синтезатор на выбранной модели. Быстро/Тщательно задаёт бюджет инструментов внутри исследовательского этапа.',
         skillAutoShort:'Авто',skillPlanningShort:'План',skillResearchShort:'Исслед.',skillCodeReviewShort:'Код',skillDataAnalysisShort:'Данные',skillAgentSystemsShort:'Агентные',skillMultimodalShort:'Мультимод.',taskProfileHelp:'Профиль меняет только инструкции и не включает инструменты или доступ к данным.',
+        aserviGroupTitle:'aLandi aServi',thirdPartySettingsTitle:'Сторонние провайдеры',
         functionsMenuLabel:'Функции ▾',functionAgents:'🧭 Структурированный разбор',functionSkills:'🧩 Профиль задачи',functionConnectors:'🔌 Интеграции',functionPanelClose:'Закрыть',
         functionAgentsTitle:'Структурированный разбор',functionAgentsDescription:'Для подходящих сложных задач aLandi использует четыре этапа: планирование, исследование, критика и синтез. Все этапы работают на выбранной модели; режим Быстро/Тщательно задаёт бюджет инструментов в исследовательском этапе. Это не независимая команда агентов.',agentModeOption:'Разрешить структурированный разбор сложных задач',agentModeHelp:'Планировщик → исследователь → критик → синтезатор. Все этапы используют выбранную модель; Быстро/Тщательно ограничивает инструменты в исследовательском этапе. Конвейер запускается только для подходящих сложных запросов; отдельная команда моделей не создаётся.',
         functionSkillsTitle:'Профиль задачи',functionSkillsDescription:'Профиль добавляет специализированные инструкции для этого чата. Он не включает инструменты, веб-поиск или дополнительные разрешения.',skillPresetLabel:'Профиль этого чата',skillAuto:'Авто (тщательно/структурно)',skillPlanning:'Планирование',skillResearch:'Исследование',skillCodeReview:'Код и ревью',skillDataAnalysis:'Анализ данных',skillAgentSystems:'Системы агентов',skillMultimodal:'Мультимодальные задачи',skillPresetHelp:'Авто подбирает профиль в тщательном или структурированном разборе; быстрые прямые ответы остаются лёгкими. Ручной профиль меняет только инструкции, не включает инструменты или доступ к данным. Выбор действует в этом чате; новый чат начинает с Авто.',
@@ -1442,6 +1452,7 @@ permalink: /
         searchModeSummaryPrefix:'🌐 Web',searchModeNormal:'Standard',searchModeNormalShort:'Web: standard',searchModeNormalHelp:'Standard result and source coverage; does not change the execution budget.',searchModeMore:'Expanded',searchModeMoreShort:'Web: expanded',searchModeMoreHelp:'More results, sources and extracted text per search; does not increase execution rounds.',searchModeOffline:'Off',searchModeOfflineShort:'Web: off',searchModeOfflineHelp:'Web tools are off; cloud APIs may still need internet.',
         workflowDirectShort:'Direct',workflowStructuredShort:'Pipeline',workflowDirectHelp:'Direct execution: the model can still use available tools within the selected effort budget.',workflowStructuredHelp:'Eligible complex requests use the planner → researcher → critic → synthesizer pipeline on the selected model. Quick/Thorough controls the tool budget within the research stage.',
         skillAutoShort:'Auto',skillPlanningShort:'Plan',skillResearchShort:'Research',skillCodeReviewShort:'Code',skillDataAnalysisShort:'Data',skillAgentSystemsShort:'Agents',skillMultimodalShort:'Multimodal',taskProfileHelp:'A task profile changes instructions only; it does not enable tools or data access.',
+        aserviGroupTitle:'aLandi aServi',thirdPartySettingsTitle:'Third-party providers',
         functionsMenuLabel:'Functions ▾',functionAgents:'🧭 Structured workflow',functionSkills:'🧩 Task profile',functionConnectors:'🔌 Integrations',functionPanelClose:'Close',
         functionAgentsTitle:'Structured workflow',functionAgentsDescription:'For suitable complex tasks, aLandi uses four stages: planning, research, critique and synthesis. All stages use the selected model; Quick/Thorough controls the tool budget in the research stage. This is not an independent team of agents.',agentModeOption:'Allow structured workflow for complex tasks',agentModeHelp:'Planner → researcher → critic → synthesizer. All stages use the selected model; Quick/Thorough limits tools in the research stage. The pipeline runs only for suitable complex requests; no separate model team is created.',
         functionSkillsTitle:'Task profile',functionSkillsDescription:'A profile adds task-specific instructions for this chat. It does not enable tools, web search or additional permissions.',skillPresetLabel:'Task profile for this chat',skillAuto:'Auto (thorough/structured)',skillPlanning:'Planning',skillResearch:'Research',skillCodeReview:'Code and review',skillDataAnalysis:'Data analysis',skillAgentSystems:'Agent systems',skillMultimodal:'Multimodal tasks',skillPresetHelp:'Auto selects a profile for Thorough or structured requests; quick direct answers stay lean. A manual profile changes instructions only, not tools or data access. This choice applies to this chat; new chats start with Auto.',
