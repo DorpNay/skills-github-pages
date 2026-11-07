@@ -613,7 +613,7 @@ permalink: /
         <summary id="functionsMenuSummary" class="toolbar-menu-summary" data-i18n="functionsMenuLabel">Функции ▾</summary>
         <div class="toolbar-menu-panel toolbar-menu-panel-right">
           <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option" data-i18n="functionAgents">🧭 Структурированный разбор</button>
-          <button type="button" data-action="select-processing-mode" data-processing-mode="deep" class="toolbar-menu-option" data-i18n="functionDeepResearch">🔬 Глубокое исследование</button>
+          <button type="button" data-action="open-function-panel" data-function="research" class="toolbar-menu-option" data-i18n="functionDeepResearch">🔬 Глубокое исследование</button>
           <button type="button" data-action="open-function-panel" data-function="skills" class="toolbar-menu-option" data-i18n="functionSkills">🧩 Профиль задачи</button>
         </div>
       </details>
@@ -699,6 +699,27 @@ permalink: /
         <div class="min-w-0"><h2 id="functionPanelTitle" class="font-bold text-base">Функции</h2><p id="functionPanelDescription" class="mt-1 text-xs leading-relaxed text-gray-400"></p></div>
         <button type="button" data-action="close-function-panel" class="shrink-0 rounded-lg px-2 py-1 text-gray-400 hover:text-white" aria-label="Закрыть">✕</button>
       </header>
+      <section id="researchFunctionSettings" class="hidden space-y-3">
+        <div class="rounded-xl border border-gray-800 bg-gray-900/50 p-3">
+          <div class="flex items-center justify-between gap-3"><strong class="text-xs" data-i18n="researchModeStatusLabel">Режим обработки</strong><span id="researchModeSummary" class="rounded-lg border border-gray-700 px-2 py-1 text-[11px] font-semibold text-cyan-200">Тщательно</span></div>
+          <p class="mt-2 text-[11px] leading-relaxed text-gray-400" data-i18n="researchModeStatusHelp">Быстро и Тщательно управляют бюджетом инструментов текущего запроса.</p>
+          <button type="button" data-action="select-processing-mode" data-processing-mode="deep" class="mt-3 min-h-[44px] w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-2 text-xs font-semibold text-cyan-200" data-i18n="researchUseThorough">Включить режим «Тщательно»</button>
+        </div>
+        <div class="rounded-xl border border-gray-800 p-3">
+          <div class="flex items-center justify-between gap-3"><strong class="text-xs" data-i18n="researchSearchStatusLabel">Веб-поиск</strong><span id="researchSearchModeSummary" class="text-[11px] text-gray-300">Веб: обычный</span></div>
+          <p class="mt-2 text-[11px] leading-relaxed text-gray-400" data-i18n="researchSearchStatusHelp">Охват результатов настраивается отдельно и не увеличивает число раундов.</p>
+          <button type="button" data-action="open-search-mode-settings" class="mt-3 min-h-[44px] w-full rounded-lg border border-gray-700 px-3 py-2 text-xs font-semibold" data-i18n="researchOpenSearchSettings">Настроить охват веб-поиска</button>
+        </div>
+        <div class="rounded-xl border border-gray-800 p-3">
+          <div class="flex items-center justify-between gap-3"><strong class="text-xs" data-i18n="researchWorkflowStatusLabel">Структурированный pipeline</strong><span id="researchWorkflowSummary" class="text-[11px] text-gray-300">Прямой</span></div>
+          <p class="mt-2 text-[11px] leading-relaxed text-gray-400" data-i18n="researchWorkflowStatusHelp">Четыре последовательных этапа используют выбранную модель; blueprint не запускает независимых workers.</p>
+          <button type="button" data-action="open-function-panel" data-function="agents" class="mt-3 min-h-[44px] w-full rounded-lg border border-gray-700 px-3 py-2 text-xs font-semibold" data-i18n="researchOpenAgentSettings">Настроить Agents / structured analysis</button>
+        </div>
+        <div class="rounded-xl border border-amber-900/50 bg-amber-950/20 p-3">
+          <strong class="block text-xs text-amber-100" data-i18n="research2RoadmapLabel">Deep Research 2.0 — в разработке</strong>
+          <p class="mt-2 text-[11px] leading-relaxed text-amber-100/70" data-i18n="research2RoadmapHelp">Планируемые функции: возобновляемые runs, коллекции источников, evidence ledger и проверка цитат. Это не активный runtime.</p>
+        </div>
+      </section>
       <section id="agentFunctionSettings" class="hidden space-y-3">
         <label class="flex items-start gap-2 rounded-xl border border-gray-800 p-3 text-sm"><input type="checkbox" id="agentModeControl" class="mt-1 rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span><strong class="block" data-i18n="agentModeOption">Использовать структурированный разбор</strong><span class="mt-1 block text-[11px] leading-relaxed text-gray-500" data-i18n="agentModeHelp">Четыре последовательных этапа на выбранной модели.</span></span></label>
         <div class="grid grid-cols-2 gap-3">
@@ -1406,7 +1427,11 @@ permalink: /
         skillAutoShort:'Авто',skillPlanningShort:'План',skillResearchShort:'Исслед.',skillCodeReviewShort:'Код',skillDataAnalysisShort:'Данные',skillAgentSystemsShort:'Агентные',skillMultimodalShort:'Мультимод.',taskProfileHelp:'Профиль меняет только инструкции и не включает инструменты или доступ к данным.',
         aserviGroupTitle:'aLandi aServi',thirdPartySettingsTitle:'Сторонние провайдеры',
         functionsMenuLabel:'Функции ▾',functionAgents:'🧭 Структурированный разбор',functionDeepResearch:'🔬 Глубокое исследование',functionSkills:'🧩 Профиль задачи',functionConnectors:'🔌 Интеграции',functionPanelClose:'Закрыть',
-        functionAgentsTitle:'Структурированный разбор',functionAgentsDescription:'Для подходящих сложных задач aLandi использует четыре этапа: планирование, исследование, критика и синтез. Все этапы работают на выбранной модели; режим Быстро/Тщательно задаёт бюджет инструментов в исследовательском этапе. Это не независимая команда агентов.',agentModeOption:'Разрешить структурированный разбор сложных задач',agentModeHelp:'Планировщик → исследователь → критик → синтезатор. Все этапы используют выбранную модель; Быстро/Тщательно ограничивает инструменты в исследовательском этапе. Конвейер запускается только для подходящих сложных запросов; отдельная команда моделей не создаётся.',
+        functionAgentsTitle:'Структурированный разбор',functionAgentsDescription:'Для подходящих сложных задач aLandi использует четыре этапа: планирование, исследование, критика и синтез. Все этапы работают на выбранной модели; режим Быстро/Тщательно задаёт бюджет инструментов в исследовательском этапе. Это не независимая команда агентов.',functionDeepResearchTitle:'Глубокое исследование',functionDeepResearchDescription:'Панель показывает текущие режимы тщательного запроса. Отдельный автономный Research Studio не используется.',
+        researchModeStatusLabel:'Режим обработки',researchModeStatusHelp:'Быстро ограничивает прямой запрос одним раундом и одним вызовом инструмента; Тщательно — до 4 раундов, 3 вызовов за раунд и 8 за запуск. В структурированном pipeline лимит относится к этапу исследования.',researchUseThorough:'Включить режим «Тщательно»',
+        researchSearchStatusLabel:'Веб-поиск',researchSearchStatusHelp:'Охват результатов задаётся отдельно в меню Веб: обычный, расширенный или выключен. Он не увеличивает число раундов.',researchOpenSearchSettings:'Настроить охват веб-поиска',
+        researchWorkflowStatusLabel:'Структурированный pipeline',researchWorkflowStatusHelp:'Четыре последовательных этапа используют выбранную модель. Сохранённый team blueprint не запускает независимых workers.',researchOpenAgentSettings:'Настроить Agents / structured analysis',
+        research2RoadmapLabel:'Deep Research 2.0 — в разработке',research2RoadmapHelp:'Планируемые: возобновляемые runs, коллекции источников, evidence ledger, проверка claim-to-citation и анализ противоречий. Это не активный runtime.',agentModeOption:'Разрешить структурированный разбор сложных задач',agentModeHelp:'Планировщик → исследователь → критик → синтезатор. Все этапы используют выбранную модель; Быстро/Тщательно ограничивает инструменты в исследовательском этапе. Конвейер запускается только для подходящих сложных запросов; отдельная команда моделей не создаётся.',
         functionSkillsTitle:'Профиль задачи',functionSkillsDescription:'Профиль добавляет специализированные инструкции для этого чата. Он не включает инструменты, веб-поиск или дополнительные разрешения.',skillPresetLabel:'Профиль этого чата',skillAuto:'Авто (тщательно/структурно)',skillPlanning:'Планирование',skillResearch:'Исследование',skillCodeReview:'Код и ревью',skillDataAnalysis:'Анализ данных',skillAgentSystems:'Системы агентов',skillMultimodal:'Мультимодальные задачи',skillPresetHelp:'Авто подбирает профиль в тщательном или структурированном разборе; быстрые прямые ответы остаются лёгкими. Ручной профиль меняет только инструкции, не включает инструменты или доступ к данным. Выбор действует в этом чате; новый чат начинает с Авто.',
         functionConnectorsTitle:'Интеграции',functionConnectorsDescription:'Показываем только реально подключённые интеграции. Сейчас внешние источники не подключены; переключателей-заглушек нет.',
         
@@ -1428,7 +1453,11 @@ permalink: /
         skillAutoShort:'Auto',skillPlanningShort:'Plan',skillResearchShort:'Research',skillCodeReviewShort:'Code',skillDataAnalysisShort:'Data',skillAgentSystemsShort:'Agents',skillMultimodalShort:'Multimodal',taskProfileHelp:'A task profile changes instructions only; it does not enable tools or data access.',
         aserviGroupTitle:'aLandi aServi',thirdPartySettingsTitle:'Third-party providers',
         functionsMenuLabel:'Functions ▾',functionAgents:'🧭 Structured analysis',functionDeepResearch:'🔬 Deep research',functionSkills:'🧩 Task profile',functionConnectors:'🔌 Integrations',functionPanelClose:'Close',
-        functionAgentsTitle:'Structured workflow',functionAgentsDescription:'For suitable complex tasks, aLandi uses four stages: planning, research, critique and synthesis. All stages use the selected model; Quick/Thorough controls the tool budget in the research stage. This is not an independent team of agents.',agentModeOption:'Allow structured workflow for complex tasks',agentModeHelp:'Planner → researcher → critic → synthesizer. All stages use the selected model; Quick/Thorough limits tools in the research stage. The pipeline runs only for suitable complex requests; no separate model team is created.',
+        functionAgentsTitle:'Structured workflow',functionAgentsDescription:'For suitable complex tasks, aLandi uses four stages: planning, research, critique and synthesis. All stages use the selected model; Quick/Thorough controls the tool budget in the research stage. This is not an independent team of agents.',functionDeepResearchTitle:'Deep research',functionDeepResearchDescription:'This panel shows the current Thorough request settings. A separate autonomous Research Studio is not used.',
+        researchModeStatusLabel:'Processing effort',researchModeStatusHelp:'Quick limits a direct request to one round and one tool call; Thorough allows up to 4 rounds, 3 calls per round and 8 calls per run. In the structured pipeline, the budget applies to the research stage.',researchUseThorough:'Enable Thorough mode',
+        researchSearchStatusLabel:'Web search',researchSearchStatusHelp:'Result breadth is configured separately in the Web menu: standard, expanded or off. It does not increase the number of rounds.',researchOpenSearchSettings:'Configure web search breadth',
+        researchWorkflowStatusLabel:'Structured pipeline',researchWorkflowStatusHelp:'Four sequential stages use the selected model. A saved team blueprint does not launch independent workers.',researchOpenAgentSettings:'Configure Agents / structured analysis',
+        research2RoadmapLabel:'Deep Research 2.0 — in development',research2RoadmapHelp:'Planned: resumable runs, source collections, an evidence ledger, claim-to-citation validation and contradiction analysis. This is not active runtime.',agentModeOption:'Allow structured workflow for complex tasks',agentModeHelp:'Planner → researcher → critic → synthesizer. All stages use the selected model; Quick/Thorough limits tools in the research stage. The pipeline runs only for suitable complex requests; no separate model team is created.',
         functionSkillsTitle:'Task profile',functionSkillsDescription:'A profile adds task-specific instructions for this chat. It does not enable tools, web search or additional permissions.',skillPresetLabel:'Task profile for this chat',skillAuto:'Auto (thorough/structured)',skillPlanning:'Planning',skillResearch:'Research',skillCodeReview:'Code and review',skillDataAnalysis:'Data analysis',skillAgentSystems:'Agent systems',skillMultimodal:'Multimodal tasks',skillPresetHelp:'Auto selects a profile for Thorough or structured requests; quick direct answers stay lean. A manual profile changes instructions only, not tools or data access. This choice applies to this chat; new chats start with Auto.',
         functionConnectorsTitle:'Integrations',functionConnectorsDescription:'Only real connected integrations are listed. No external sources are connected yet; there are no placeholder switches.',
         
@@ -2721,6 +2750,7 @@ permalink: /
       $('searchModeMenu').open = false;
       updateOfflineUI();
       updateModeUI();
+      if ($('researchFunctionSettings') && !$('researchFunctionSettings').classList.contains('hidden')) renderResearchConfiguration();
     }
     function setAgentMode(enabled) {
       const chat = getCurrentChat();
@@ -2735,6 +2765,7 @@ permalink: /
       $('toggleMultiAgent').checked = chat.multiAgentEnabled;
       if ($('agentModeControl')) $('agentModeControl').checked = chat.multiAgentEnabled;
       updateModeUI();
+      if ($('researchFunctionSettings') && !$('researchFunctionSettings').classList.contains('hidden')) renderResearchConfiguration();
     }
     function setSkillPreset(preset) {
       if (!VALID_SKILL_PRESETS.has(preset)) preset = 'auto';
@@ -2794,6 +2825,7 @@ permalink: /
       }
       processingMode = chat.processingMode;
       updateModeUI();
+      if ($('researchFunctionSettings') && !$('researchFunctionSettings').classList.contains('hidden')) renderResearchConfiguration();
     }
     function exportSettingsProfile() {
       const profile = {
@@ -3496,21 +3528,32 @@ permalink: /
       if (!persistChatMutation(chat, updates)) { renderAgentConfiguration(); return; }
       renderAgentConfiguration();
     }
+    function renderResearchConfiguration() {
+      const chat=getCurrentChat(); if(!chat)return;
+      ensureChatFunctionSettings(chat);
+      const text=UI_TEXT[getUiLanguage()];
+      $('researchModeSummary').textContent=text[chat.processingMode==='deep'?'modeDeepShort':'modeFastShort'];
+      const searchKey=chat.searchMode==='offline'?'searchModeOfflineShort':chat.searchMode==='more'?'searchModeMoreShort':'searchModeNormalShort';
+      $('researchSearchModeSummary').textContent=text[searchKey];
+      $('researchWorkflowSummary').textContent=text[chat.multiAgentEnabled?'workflowStructuredShort':'workflowDirectShort'];
+    }
     function openFunctionPanel(kind) {
       const functionsMenu=$('functionsMenu'); if(functionsMenu) functionsMenu.open=false;
       const views = {
         agents: ['agentFunctionSettings','functionAgentsTitle','functionAgentsDescription'],
+        research: ['researchFunctionSettings','functionDeepResearchTitle','functionDeepResearchDescription'],
         skills: ['skillFunctionSettings','functionSkillsTitle','functionSkillsDescription'],
         connectors: ['connectorFunctionStatus','functionConnectorsTitle','functionConnectorsDescription']
       };
       const view = views[kind];
       if (!view) return;
       const text = UI_TEXT[getUiLanguage()];
-      ['agentFunctionSettings','skillFunctionSettings','connectorFunctionStatus'].forEach(id => $(id).classList.add('hidden'));
+      ['agentFunctionSettings','researchFunctionSettings','skillFunctionSettings','connectorFunctionStatus'].forEach(id => $(id).classList.add('hidden'));
       $('functionPanelTitle').textContent = text[view[1]];
       $('functionPanelDescription').textContent = text[view[2]];
       $(view[0]).classList.remove('hidden');
       if (kind === 'agents') { $('agentModeControl').checked = getCurrentChat().multiAgentEnabled === true;renderAgentConfiguration(); }
+      if (kind === 'research') renderResearchConfiguration();
       if (kind === 'skills') renderSkillConfiguration();
       $('functionPanelModal').classList.remove('hidden');
     }
@@ -5221,6 +5264,7 @@ permalink: /
           case 'set-language': applyUiLanguage(control.dataset.language);if($('languageMenu'))$('languageMenu').open=false;if($('languageMenuSidebar'))$('languageMenuSidebar').open=false;break;
           case 'select-search-mode': setSearchMode(control.dataset.searchMode);break;
           case 'select-processing-mode': setProcessingMode(control.dataset.processingMode);if($('functionsMenu'))$('functionsMenu').open=false;break;
+          case 'open-search-mode-settings': closeFunctionPanel();$('searchModeMenu').open=true;$('searchModeSummary').focus();break;
           case 'open-function-panel': openFunctionPanel(control.dataset.function);break;
           case 'close-function-panel': closeFunctionPanel();break;
           case 'apply-skill-quiz': applySkillQuiz();break;
