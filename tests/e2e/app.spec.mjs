@@ -395,15 +395,11 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
-  if (!(await page.locator('#additionalSettings').evaluate(el => el.open))) await page.locator('#additionalSettings > summary').click();
-  await openAdditionalSettings(page);
-  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
 
   await page.locator('#providerPreset').selectOption('groq');
   await expect(page.locator('#apiKey')).toHaveValue('');
   await page.locator('#apiKey').fill('e2e-groq-placeholder-not-a-real-key');
   await page.locator('#modelName').fill('openai/gpt-oss-120b');
-  await page.locator('#tavilyKey').fill('e2e-tavily-placeholder-not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('#apiKey').fill('');
   await page.locator('[data-action="save-settings"]').click();
@@ -416,7 +412,14 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
 
   await page.locator('#providerPreset').selectOption('groq');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-groq-placeholder-not-a-real-key');
-  await expect(page.locator('#tavilyKey')).toHaveValue('e2e-tavily-placeholder-not-a-real-key');
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  await openAdditionalSettings(page);
+  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
+  await page.locator('#tavilyKey').fill('e2e-tavily-placeholder-not-a-real-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_tavily_key'))).toBe('e2e-tavily-placeholder-not-a-real-key');
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
 
   await page.reload();
@@ -424,11 +427,10 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#providerPreset')).toHaveValue('groq');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-groq-placeholder-not-a-real-key');
-  await expect(page.locator('#tavilyKey')).toHaveValue('e2e-tavily-placeholder-not-a-real-key');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_tavily_key'))).toBe('e2e-tavily-placeholder-not-a-real-key');
   await page.locator('#providerPreset').selectOption('openrouter');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-openrouter-placeholder-not-a-real-key');
 });
-
 test('chat creation persists after reload without calling a model', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
@@ -2537,7 +2539,7 @@ test('search presets fit one line, localize, and persist per chat', async ({ pag
   await selectLanguage(page, 'en');
   await expect(page.locator('#modeDeep')).toContainText('Thorough');
   await expect(page.locator('#modeToolbar [role="group"]')).toHaveAttribute('aria-label', 'Effort');
-  await expect(page.locator('#functionsMenu')).toHaveCount(0);
+  await expect(page.locator('#functionsMenu')).toHaveCount(1);
   await expect(page.locator('#searchModeSummary')).toContainText('Web');
   await expect(page.locator('#modeHint')).toContainText('Quick · Web: standard · Direct · Auto');
 });
@@ -2547,6 +2549,7 @@ test('Functions menu exposes truthful Agents, Deep Research and Skills panels wi
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const menu = page.locator('#functionsMenu');
   await expect(menu).toBeVisible();
+  await page.locator('#functionsMenuSummary').click();
   await expect(menu.locator('.toolbar-menu-option')).toHaveCount(3);
   await expect(menu.locator('[data-function="agents"]')).toBeVisible();
   await expect(menu.locator('[data-function="research"]')).toBeVisible();
