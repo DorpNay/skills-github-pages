@@ -135,3 +135,13 @@ PR #121 merged at f4d880f9648989f4fe48ddd2284220b3606c3b86 after exact-head Gate
 - Eight Chromium regressions cover four recovery/atomicity cases, two settings-profile rollback failures, and two chat-setting rollback/UI restoration cases across the setter families.
 
 **Verification status:** PR #150 code/test HEAD `54e4858ed19fb4fa1daaa55444121ff2f8c5f780`: Quality #42059797507 (7 jobs), Freshness #42059797510, Provenance #42059797913 and Graphify #42059797551 PASS. Freshness main-checkpoint/live-queue step skipped by PR condition. Quality smoke tested built-app Chromium and the existing published site; not a PR preview or deployment. Settings-profile and chat-setting mutations now snapshot/rollback memory and mirrored keys on failed browser writes; AUDIT-FIND-011/013/014 are branch-verified. Startup migration/privateMemoryUsed marker remain outside this bounded slice. This describes branch code only, not main or live Gateway state.
+
+
+## 7.1. Current PR #169 code-only Graphify snapshot — 2026-11-08
+
+- Exact source checkpoint: PR #169 head `8fae35e91ae6a7e54582cdad4aacadfec0732a0f`; Graphify run #42398472267 PASS. The run is a PR-branch snapshot, not main/live deployment evidence.
+- Coverage: **1,122 nodes / 3,014 edges / 69 source files**; extensions: `.js=1`, `.mjs=16`, `.py=50`, `.sh=2`.
+- Largest source files: `index-inline.js` 237 nodes; `gateway/app.py` 64; `gateway/tests/test_app.py` 63; `gateway/tests/test_coder_packet.py` 39; `gateway/tests/test_six_layers.py` 30; `gateway/memory/delta_sync.py` 27; `tests/test_project_state_freshness.py` 26; `scripts/check_project_state_freshness.py` 24; `gateway/rag/lazy_graph_rag.py` 23.
+- The graph was reduced from 2,102 nodes / 4,960 edges / 91 files on the earlier run after excluding vendored upstream snapshots via `.graphifyignore`. The new graph is first-party focused; selected RAG-Anything/Memvid archives remain in the repository with license/provenance manifests but are not architecture nodes.
+- Artifact #13583874333; SHA-256 `4af473c232adffae306c432756712ed51ba3747afc6d937422233699dc42da2b`. No model calls; artifact retention 7 days.
+- After PR #169 merges, rerun Graphify on the resulting main SHA and replace this PR-branch snapshot. Graphify remains a dev-only navigation hint; source/call-site inspection remains authoritative.
