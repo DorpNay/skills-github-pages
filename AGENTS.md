@@ -7,6 +7,8 @@
 
 ## Architecture and budget
 - Base path: GitHub Pages UI → HTTPS Cloudflare Tunnel → FastAPI aLandi gateway → private Ollama.
+- The first-party server route in the UI is named **aLandi aServi**. Use this name in UI copy, DOM actions, docs and tests; do not reintroduce the old product label **aLandi Cloud**.
+- Preserve existing `ai_alandi_cloud_*` localStorage keys as compatibility identifiers until an explicit, tested migration is designed. The internal provider value `alandi` may remain hidden for saved-state compatibility; it is not a third-party provider. `aLandi aCloudi` is reserved for a future information-storage product. Cloudflare remains the infrastructure/provider name.
 - Keep gateway and Ollama on loopback for a new host; never publish port 11434. On a host with existing Docker/Dify clients, inspect the established network before changing bind.
 - Start with one model and concurrency=1 on the 8-GB VPS. Dify, Redis/Valkey, vector databases and secondary workers are optional modules gated by a measured need.
 - L0 browser cache, L1 inference prefix/KV reuse and L2 exact response cache are distinct. Do not claim that one is another.
@@ -49,6 +51,7 @@ Before any aLandi task:
 ## Graph/navigation tools
 - Code/dependency graph is distinct from the product's experimental memory graph.
 - Graphify is a dev-only navigation tool, not a runtime dependency. The pinned code-only workflow runs on relevant source/architecture changes and weekly. Latest main run `40637941303` built 988 nodes / 2780 edges across 60 source files (224 inline UI JS nodes, 14 SQL schema nodes, 23 RAG-module nodes); ten focused queries returned neighborhoods. Inspect the artifact/report and record coverage/limits on each use: some results truncate at the 700-token budget, nine Playwright E2E files yielded no symbols, and community labels are generic. Artifacts expire after seven days and are not committed.
+- Graphify path coverage includes extracted UI assets: `.github/workflows/graphify-pilot.yml` watches `assets/js/**/*.js`, `assets/css/**/*.css` and `landing/**/*.html` for PR and main-push events. Verify the artifact manifest includes the current app runtime and styles before using its graph for architecture conclusions; an untriggered or partial graph is not current evidence.
 - Do not commit generated graph artifacts or add runtime dependencies unless measured benefit is clear.
 - GitIngest = text snapshot; GitMCP = MCP access to a specific upstream; GitReverse = synthetic repository prompt. These are not interchangeable.
 
