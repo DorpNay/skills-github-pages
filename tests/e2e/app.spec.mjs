@@ -2565,8 +2565,14 @@ test('Functions menu exposes truthful Agents, Deep Research and Skills panels wi
   await expect(menu).toHaveAttribute('open', '');
   await expect(menu.locator('.toolbar-menu-option')).toHaveCount(3);
   await expect(menu.locator('[data-function="agents"]')).toBeVisible();
+  await expect(menu.locator('[data-function="agents"]')).toContainText('Агенты');
+  await expect(menu.locator('[data-function="agents"]')).toContainText('4 этапа на одной модели');
   await expect(menu.locator('[data-function="research"]')).toBeVisible();
+  await expect(menu.locator('[data-function="research"]')).toContainText('Исследования');
+  await expect(menu.locator('[data-function="research"]')).toContainText('веб-поиск отдельно');
   await expect(menu.locator('[data-function="skills"]')).toBeVisible();
+  await expect(menu.locator('[data-function="skills"]')).toContainText('Скиллы');
+  await expect(menu.locator('[data-function="skills"]')).toContainText('только для этого чата');
   await expect(page.locator('[data-action="open-research-studio"]')).toHaveCount(0);
   await expect(page.locator('#researchStudioModal')).toHaveCount(0);
 
