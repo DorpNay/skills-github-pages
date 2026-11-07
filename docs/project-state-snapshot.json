@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-07",
   "checkpoint": {
-    "main_sha": "daad47da0c5ec07c6200d6d38bf6bb33c2290860",
-    "main_commit_subject": "docs(state): refresh exact main and owner UI/Pages checkpoint",
+    "main_sha": "69645ff357067f3656aa77cc67336ff423c26944",
+    "main_commit_subject": "docs(ui): record verified touch and status work (#165)",
     "main_commit_date": "2026-11-07",
     "last_functional_checkpoint_sha": "a8afee45bb22654b220bffda857ab10c24641ef1",
-    "last_functional_milestone": "PR #150 storage recovery/atomic rollback remains the functional baseline; PR #156 task-intake/orchestrator, #157 UI §8.8 and #158 Pages root-title guard remain merged. Current main state refresh daad47... has exact-main Pages deployment and all Quality/Freshness/Provenance gates passing.",
-    "main_quality_run": 42350651114,
-    "main_pages_deployment_run": 42350650890,
+    "last_functional_milestone": "PR #165 is documentation-only; last functional baseline remains a8afee45 (#150 storage recovery/atomic rollback). Main 69645ff has exact-main Pages and Quality verification; PR #166 §8.17 remains open and its Chromium semantic-role contrast assertion is not yet passing.",
+    "main_quality_run": 42362476858,
+    "main_pages_deployment_run": 42362476364,
     "functional_parent_gateway_run": null,
     "functional_parent_quality_run": null,
     "functional_parent_graphify_run": null,
@@ -20,7 +20,7 @@
       152,
       154,
       155,
-      161
+      166
     ],
     "open_issues": [
       111
@@ -153,11 +153,11 @@
         "checks": "Exact-head Quality #42349540173 passed; fixed ERE title extraction in the main-push live Pages guard. Main Pages #42349853247 succeeded and public cache-busting root returned v10.0; main Quality #42349853526 is in progress."
       }
     ],
-    "main_provenance_run": 42349250512,
-    "main_freshness_run": 42349250485,
-    "main_graphify_run": 42349735791,
-    "open_prs": "5 open PRs excluding the current PR #160 freshness check: #125, #131, #152, #154, #155",
-    "owner_task": "PR #153 orientation repair is implemented and ready for owner review; full code Quality passed on tested code SHA 5665e60ebdbb704f9fa95cadba610984ca1da60b, and docs-only follow-up Freshness/Provenance/Dead Code checks passed. Check live PR #153 for its current HEAD. After owner-approved merge, execute ORIENT-002 fresh-session handoff test using only OLEDUE + one batched live GitHub state read. Then resume owner-authorized PR #131 reconciliation preserving #147/#148/#150; inspect PR #152 separately after failed Quality and stale base; continue grouped primary-source research and capability implementation from the canonical registry.",
+    "main_provenance_run": null,
+    "main_freshness_run": null,
+    "main_graphify_run": null,
+    "open_prs": "6 open PRs excluding current PR #167: #125, #131, #152, #154, #155, #166",
+    "owner_task": "Finish UI §8.17 PR #166 by diagnosing and correcting dark/high semantic-role colors without weakening the regression test; after exact-head gates and explicit owner approval, merge and verify a new Pages deployment. External-source sweep is documented as research-only; preserve all other registry goals.",
     "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
     "pr131_exact_head_verified": false,
     "pr131_compare": "Large Draft V2 workbench, stale/diverged and mergeable_state dirty; selective reconciliation only.",
@@ -213,13 +213,15 @@
     "pr157_head": "e065f967f2dbca938ba71c41dcad57aa47877a0a",
     "pr157_compare": "Merged at 40540f6d75a90877ff9cbec5bbfacb48ee6f775c; exact-head Quality #42349368043 and Graphify #42349368086 passed.",
     "pr158_head": "4da559cf6abc21bfa3920b5e0297a2abb84e7453",
-    "pr158_compare": "Merged at d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c; exact-head Quality #42349540173 passed; exact-main root title Quality #42349853526 remains in progress."
+    "pr158_compare": "Merged at d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c; exact-head Quality #42349540173 passed; exact-main root title Quality #42349853526 remains in progress.",
+    "pr166_head": "dddc6138fda4d9e50bcd8b48404c339280f2e0c5",
+    "pr166_compare": "Open PR #166, base main 69645ff. Previous Quality runs #42363750968 and #42366669769 failed one Chromium assertion for dark/high disabled/link colors (115 passed, 1 failed). Current diagnostic Quality #42367174162 and Graphify #42367174123 were in progress when captured."
   },
   "interpretation": {
-    "last_main_commit_is_documentation_only": false,
+    "last_main_commit_is_documentation_only": true,
     "live_vps_gateway_device_and_model_runtime_verified": false,
     "queue_policy": "exact IDs; the PR being checked is excluded from the PR comparison; unrelated additions/removals are drift",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-07-OWNER-PRIORITIES-PAGES-UI-002"
+  "last_volley": "V-2026-11-07-OWNER-UPSTREAM-SWEEP-001"
 }
