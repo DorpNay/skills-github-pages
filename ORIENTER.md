@@ -5,7 +5,7 @@
 ## Verified baseline — 2026-11-08
 
 - **Current main SHA:** `bf039f887e29137b627b06fc2bb107c2793d6b69` (`fix(ui): stabilize explicit aServi connection probes (#173)`).
-- PR #173 is squash-merged. No open PRs; the only open issue is #111 (owner/environment release gates).
+- PR #173 is squash-merged. **Open PR queue:** none (0 open PRs). The only open issue is #111 (owner/environment release gates).
 - Pages deployment #42410162803 completed SUCCESS on the exact main SHA.
 - Main Quality run #42410163178: build, Context, Static Analysis, Security, Integrity and Chromium jobs passed. Chromium passed built-app tests, live root revision verification, canonical landing content verification and landing Chromium (8/8).
 - The separate **Published GitHub Pages release contract** job #128517290166 failed only because its forbidden-marker list still rejected `id="functionsMenu"`. The owner-approved menu must remain: Agents, Deep Research, Skills. This is a stale CI assertion, not a reason to remove the menu.
