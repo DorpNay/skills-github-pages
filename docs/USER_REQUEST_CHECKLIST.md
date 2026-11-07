@@ -298,13 +298,13 @@
 - [x] Landing copy now distinguishes a free static interface from inference/API/hosting cost; public hosted AI endpoint is not provided by GitHub Pages.
 - [x] Added staged roadmap disclosures; the "1nv3nt10n 1n PrOc3ss…" ticker is decorative, appears only for unfinished directions, is hidden from assistive technology and respects reduced-motion.
 - [x] PR #121 merged: duplicate settings close action removed; integrity provider-group assertion uses deterministic parsing; Research Studio E2E excludes the expected provider connectivity probe from user-send count.
-- [x] Landing and in-app roadmap E2E coverage passed on PR #121 exact head, including published-site browser smoke. Post-merge Pages deployment remains a separate check.
+- [x] Landing and in-app roadmap E2E coverage passed on PR #121 exact head. Post-merge Pages deployment and public root + /landing/ exact-SHA Chromium checks passed on PR #173 merge SHA `bf039f887e29137b627b06fc2bb107c2793d6b69`; the remaining PR #174 failure is a stale release-contract sentinel, not a site failure.
 - [ ] Native iPhone Safari, keyboard, safe-area, screen-reader and touch verification remain manual gates.
 - [ ] Issue #111 remains open for owner-only ruleset, VPS/hardware, live gateway/model, RAG corpus, voice/device and sandbox gates. CI alone cannot close it.
 
 ## Owner override — 2026-11-07
 
-- [~] **Research Studio retired.** This supersedes the earlier historical note that kept it as a Thorough-mode helper. Remove the complete Research Studio product surface: sidebar/Functions/Thorough entrypoints, modal, UI handlers and obsolete copy. Do not restore it. PR #169 implements the removal; exact-head CI, merge and live Pages verification are pending.
-- [~] **The previous three-item Functions menu was not owner-approved.** PR #169 removes the visible menu rather than preserving placeholder actions. Do not restore the three entries or invent a replacement catalog. Rebuild only from an explicit owner-approved capability inventory; expose no fake marketplace.
-- [~] **First-party routing is separate.** aLandi aServi is a dedicated settings section, never a third-party provider option. aServi and third-party/additional sections follow the exclusivity rule; no silent auto-fallback between aServi and external providers. PR #169 implements this; exact-head verification is pending.
-- [~] **Stop control styling.** Retain the contextual ability to stop an active generation, but use a neutral compact control rather than a red persistent/floating button. PR #169 implements this; live verification is pending.
+- [x] **Research Studio retired.** PR #169 removed the complete product surface; post-merge public root/landing Chromium verified the absence on exact main SHA. Do not restore it.
+- [x] **Owner override D-022 (2026-11-08) supersedes the previous menu prohibition:** restore only three truthful Functions entries — Agents/structured analysis, Deep Research, and Skills/task profile. PR #169 implements the menu and post-merge public Chromium verified it. Integrations/connectors remain absent until real capability registry/status/permission contracts exist. PR #174 corrects the stale release-contract assertion.
+- [x] **First-party routing is separate.** aLandi aServi is a dedicated settings section, never a third-party provider option. PR #169 implements the exclusivity rule; PR #173 and post-merge public Chromium checks passed. No silent auto-fallback between aServi and external providers.
+- [~] **Stop control styling.** Retain the contextual ability to stop an active generation, using a neutral compact control; final screenshot/accessibility review remains open.
