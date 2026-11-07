@@ -2,16 +2,15 @@
 
 > Подробный индекс навигации. Это не источник live-статуса и не обязательный стартовый пакет. Для `oledue` сначала читай корневой OLEDUE.md, затем выполняй один batched live GitHub read. Используй этот файл только для поиска конкретного пути.
 
-## Контрольная точка — 2026-11-07 (live state)
+## Текущая навигационная поправка — 2026-11-07
 
-- Current main SHA: `69645ff357067f3656aa77cc67336ff423c26944`.
-- GitHub Pages: deployment #42362476364 SUCCESS on exact main; Quality #42362476858 PASS 7/7 including published root/client-version and /landing/ Chromium checks.
-- Production Pages run #42362476364 is GitHub-managed `dynamic/pages/pages-build-deployment`: build pulled `ghcr.io/actions/jekyll-build-pages:v1.0.13`; `Build with Jekyll`, artifact upload and `Deploy to GitHub Pages` passed. Quality's separate Jekyll sentinel pins `actions/jekyll-build-pages` at `44a6e6beabd48582f863aeeb6cb2151cc1716697`. The main-push deployment path is functioning; no replacement workflow is justified.
-- PR #166 §8.17: open, base 69645ff, current head `683ec28310a68dc0126a715a04f3ddc613e817b6`. Final test forces descendant style recalculation before a 320ms wait and uses an isolated checking-status fixture; production CSS overrides remain removed and assertions are unchanged. Quality #42368514164 PASS 7/7 including Chromium and published Pages smoke; Graphify #42368514210 PASS. PR #166 is ready for owner-authorized merge, not yet published. Live root and /landing return v10.0; main index blob `227223d78bb3be1d07422767a29a5ec3fd8df42a` lacks §8.17 keys while PR #166 blob `0220270b86e17e719310933678bbbdf52551486b` contains them, so §8.17 is not merged/published yet. Do not merge before all exact-head gates pass.
-- open PRs (6): #125, #131, #152, #154, #155, #166
-- open issues (1): #111.
-- New upstream review is recorded in INTEL.md and docs/OPEN_SOURCE_TRIAGE_RU.md (2026-11-07); research only, no downloads, installs, code copies or runtime changes.
-
+- Для быстрого старта использовать корневой ORIENTER.md; для handoff по слову oledue сначала читать OLEDUE.md.
+- Этот файл — подробный path/history index. Его старые queue/status snapshots ниже не являются live truth.
+- Последний проверенный main перед текущим UI PR: c4f23e03f563d03213eb87002863da630fc8b833; Pages deployment #42372745873 и Quality #42372746360 подтвердили публикацию exact main SHA.
+- PR #169 — текущая bounded UI batch на ветке feat/ui-sidebar-81-polish-20261107; проверить его live head, diff и exact-head checks перед продолжением. Его изменения ещё не являются live до merge и post-merge Pages verification.
+- PR #154 — stale/conflicted V2 shell; не merge wholesale. PR #168 — устаревший docs checkpoint.
+- Research Studio полностью удалён по указанию владельца. Видимое Functions menu с Agents / Skills / Integrations не одобрено и не должно возвращаться.
+- aServi — отдельный first-party режим; не включать его в third-party selector или third-party fallback.
 
 ## 1. Быстрый маршрут
 
@@ -43,7 +42,7 @@
 - PR #63: root orienter + AGENTS first-read protocol — merged at `623f1865ee4021debade9000bbecf6004c6b4cfa`; main has since advanced with docs-only commit `b91aab316c224588baea99fbb9b966b8865de0a6`.
 - Open PRs at index creation: #52 document attachment integration (branch `feat/document-attachment-ui-v3`), #37 mobile chat ergonomics, #36 project-memory scope regression tests. Check live PR status before assuming any remain open.
 - Local whisper.cpp ASR and Piper TTS + mini-player are code-level features, **not enabled/deployed by default**. Verify models, binary paths, flags, and target hardware before saying audio works on the user's server.
-- Search & Research Studio exists; SearXNG adapter is optional/configured-server-only, not an independently deployed search cluster.
+- Research Studio was retired by owner on 2026-11-07; no UI entrypoint/modal/JS action should remain. SearXNG adapter is optional/configured-server-only, not an independently deployed search cluster.
 - Memory graph and delta-sync API are experimental/flagged off. Browser/local memory, gateway graph memory, and external storage are not one magically synchronized store.
 
 ## 3. Folder taxonomy
