@@ -3390,7 +3390,7 @@ test('readability preferences persist and maintain semantic text contrast in bot
         getComputedStyle(sample.querySelector('#disabled')).color;
         getComputedStyle(sample.querySelector('#secondary')).color;
         // Sample only after the final cascade settles.
-        await new Promise(resolve => setTimeout(resolve, 180));
+        await new Promise(resolve => setTimeout(resolve, 320));
 
         results[theme + '-' + contrast] = {
           actual:actual(),
