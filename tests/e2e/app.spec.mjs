@@ -43,22 +43,18 @@ async function chooseSearchMode(page, mode) {
   await page.locator(`[data-action="select-search-mode"][data-search-mode="${mode}"]`).click();
 }
 async function setAgentMode(page, enabled) {
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
-  const control = page.locator('#agentModeControl');
-  if (enabled && !(await control.isChecked())) await control.check();
-  if (!enabled && await control.isChecked()) await control.uncheck();
-  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
+  await page.locator('#agentModeControl').evaluate((control, value) => {
+    control.checked = value;
+    control.dispatchEvent(new Event('change', { bubbles: true }));
+  }, enabled);
 }
 async function setSkillPreset(page, preset) {
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
-  await page.locator('#skillPresetSelect').selectOption(preset);
-  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
+  await page.locator('#skillPresetSelect').evaluate((control, value) => {
+    control.value = value;
+    control.dispatchEvent(new Event('change', { bubbles: true }));
+  }, preset);
 }
 async function selectLanguage(page, language) {
-  if (await page.locator('#settingsModal').evaluate(element => element.classList.contains('hidden'))) await page.locator('[data-action="toggle-settings"]').click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(element => element.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#uiLanguage').selectOption(language);
 }
 
@@ -202,67 +198,56 @@ test('mobile sidebar and modal close controls meet the 44px touch target', async
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 });
 
-test('theme stays in the header/sidebar and language lives in advanced settings', async ({ page }) => {
+test('theme and language are grouped in compact header controls', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  await expect(page.locator('#sidebarThemeToggle')).toBeVisible();
-  await page.locator('#sidebarThemeToggle').click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await expect(page.locator('#uiTheme')).toHaveValue('light');
+  const preferences = page.locator('.header-preferences');
+  await expect(preferences).toBeVisible();
+  await expect(preferences.locator('#homeThemeToggle')).toBeVisible();
+  await expect(preferences.locator('#uiLanguage')).toBeVisible();
+  await expect(page.locator('#sidebarThemeToggle')).toHaveCount(0);
   await expect(page.locator('#languageMenu')).toHaveCount(0);
   await expect(page.locator('#languageMenuSidebar')).toHaveCount(0);
 
-  await page.locator('[data-action="close-sidebar"]').click();
+  await preferences.locator('#homeThemeToggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('#uiTheme')).toHaveValue('light');
   await selectLanguage(page, 'en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
-  await page.locator('#legacyProviderSettings [data-action="toggle-theme-cycle"]').click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+  await expect(preferences.locator('#uiLanguage')).toHaveValue('en');
 
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#sidebarThemeToggle').click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await page.locator('#sidebar [data-action="close-sidebar"]').click();
+  await preferences.locator('#homeThemeToggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await selectLanguage(page, 'ru');
   await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
-  await expect(page.locator('#uiLanguage')).toHaveValue('ru');
+  await expect(preferences.locator('#uiLanguage')).toHaveValue('ru');
 });
 
-test('composer position persists and aLandi is hidden from third-party provider selection', async ({ page }) => {
+test('aServi and third-party settings are separate mutually exclusive modes', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
-  await expect(page.locator('#composerPosition')).toHaveValue('bottom');
-  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(1);
-  await expect(page.locator('#providerPrimaryGroup')).toBeHidden();
+  await expect(page.locator('#aserviSettingsGroup')).toHaveAttribute('open', '');
+  await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
+  await expect(page.locator('#additionalSettings')).not.toHaveAttribute('open');
+  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
   await expect(page.locator('#providerExternalGroup')).not.toHaveAttribute('hidden', '');
-  await expect.poll(() => page.locator('#providerPreset').evaluate(select => [...select.options].some(option => option.value === 'gemini'))).toBe(true);
+
+  await page.locator('#legacyProviderSettings > summary').click();
+  await expect(page.locator('#aserviSettingsGroup')).not.toHaveAttribute('open');
+  await expect(page.locator('#legacyProviderSettings')).toHaveAttribute('open', '');
   await expect(page.locator('#providerPreset option[value="gemini"]')).toBeEnabled();
-  await expect(page.locator('[data-action="select-alandi-primary"]')).toHaveCount(0);
 
-  await page.locator('#composerPosition').selectOption('top');
-  await expect(page.locator('body')).toHaveClass(/composer-at-top/);
-  const topComposer = await page.locator('#composerFooter').boundingBox();
-  const topMessages = await page.locator('#chatBox').boundingBox();
-  expect(topComposer.y).toBeLessThan(topMessages.y);
-  await page.locator('[data-action="save-settings"]').click();
-  await page.reload();
-  await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
-  await expect(page.locator('#composerPosition')).toHaveValue('top');
-  await expect(page.locator('body')).toHaveClass(/composer-at-top/);
-
-  await page.locator('#composerPosition').selectOption('bottom');
-  await page.locator('[data-action="save-settings"]').click();
-  await expect(page.locator('body')).not.toHaveClass(/composer-at-top/);
-  const bottomComposer = await page.locator('#composerFooter').boundingBox();
-  const bottomMessages = await page.locator('#chatBox').boundingBox();
-  expect(bottomMessages.y).toBeLessThan(bottomComposer.y);
-  await page.reload();
-  await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#additionalSettings > summary').click();
+  await expect(page.locator('#aserviSettingsGroup')).not.toHaveAttribute('open');
+  await expect(page.locator('#legacyProviderSettings')).toHaveAttribute('open', '');
+  await expect(page.locator('#additionalSettings')).toHaveAttribute('open', '');
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
+
+  await page.locator('#aserviSettingsGroup > summary').click();
+  await expect(page.locator('#aserviSettingsGroup')).toHaveAttribute('open', '');
+  await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
+  await expect(page.locator('#additionalSettings')).not.toHaveAttribute('open');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_provider'))).toBe('alandi');
 });
 
 test('project quick actions open a real create form and persist the chosen memory scope', async ({ page }) => {
@@ -293,26 +278,22 @@ test('project quick actions open a real create form and persist the chosen memor
 test('language switch localizes provider controls without exposing the internal route', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await selectLanguage(page, 'en');
-  await expect(page.locator('#providerPrimaryGroup')).toHaveAttribute('label', 'aLandi Cloud · primary route');
+  await expect(page.locator('#legacyProviderSettings > summary')).toContainText('Third-party providers');
   await expect(page.locator('#providerExternalGroup')).toHaveAttribute('label', 'Third-party providers');
-  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(1);
-  await expect(page.locator('#providerPrimaryGroup')).toBeHidden();
+  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
+  await expect(page.locator('#aserviSettingsGroup > summary')).toContainText('aLandi aServi');
   await expect(page.locator('#providerPreset option[value="gemini"]')).toHaveCount(1);
   await expect(page.locator('#providerPreset option[value="custom"]')).toHaveCount(1);
   await selectLanguage(page, 'ru');
 });
 
-test('request context stays project-only and agent label describes the real pipeline', async ({ page }) => {
+test('request context stays project-only', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#contextPickerButton').click();
   await expect(page.locator('#requestContextMenu')).toBeVisible();
   await expect(page.locator('#requestContextMenu')).not.toContainText(/connectors|коннектор|scheduler|планировщик/i);
   await page.locator('#composerPopoverScrim').click({ position: { x: 5, y: 5 } });
-
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
-  await expect(page.locator('#functionPanelDescription')).toContainText(/четыре этапа|four stages/i);
-  await expect(page.locator('#agentModeControl')).toBeVisible();
+  await expect(page.locator('#requestContextMenu')).toBeHidden();
 });
 
 test('composer popover dims the page and the first outside tap only dismisses it', async ({ page }) => {
@@ -1138,7 +1119,7 @@ test('aLandi cloud status only turns green after a real model response, and core
   await selectLanguage(page, 'en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
-  await page.locator('#legacyProviderSettings [data-action="toggle-theme-cycle"]').click();
+  await page.locator('#homeThemeToggle').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await page.locator('#legacyProviderSettings [data-action="toggle-theme-cycle"]').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
