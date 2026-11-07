@@ -339,7 +339,7 @@ permalink: /
     html[data-reading-contrast="high"] .text-gray-300, html[data-reading-contrast="high"] .text-gray-400, html[data-reading-contrast="high"] .text-gray-500,
     html[data-reading-contrast="high"] .assistant-content blockquote, html[data-reading-contrast="high"] .message-model-meta { color:var(--ui-text-muted)!important; }
     :is(button,input,select,textarea):disabled, [aria-disabled="true"] { color:var(--ui-text-muted)!important; }
-    .field-error, .toast.toast-error { color:var(--ui-danger); }
+    .field-error { color:var(--ui-danger); }
     .assistant-content blockquote { color:var(--ui-text-muted); border-color:var(--ui-border); }
     @media (max-width:639px) {
       #settingsModal { padding:max(env(safe-area-inset-top),.5rem) .5rem max(env(safe-area-inset-bottom),.5rem)!important; }
