@@ -161,7 +161,6 @@ permalink: /
     .clock-pin { position:absolute;left:calc(50% - 2px);top:calc(50% - 2px);width:4px;height:4px;border-radius:50%;background:#f59e0b;z-index:3; }
     .voice-menu { position:absolute;right:10px;bottom:calc(100% + 9px);z-index:70;width:min(92vw,330px);padding:8px;border:1px solid var(--ui-border);border-radius:20px;background:color-mix(in srgb,var(--ui-surface) 90%,transparent);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 16px 48px rgba(0,0,0,.28);transform-origin:bottom right;animation:voice-pop 170ms cubic-bezier(.2,.7,.2,1); }
     #settingsModal,#messageViewerModal,#chatActionModal,#functionPanelModal,#traceModal { backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px); }
-    @media (prefers-reduced-transparency:reduce) { #settingsModal,#messageViewerModal,#chatActionModal,#researchStudioModal,#functionPanelModal,#traceModal { backdrop-filter:none;-webkit-backdrop-filter:none; } }
     .voice-menu-option { width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:13px 12px;border-radius:14px; }
     .voice-menu-option:hover { background:var(--ui-tiffany-soft); }
     .voice-menu-option strong { display:block;font-size:11px;letter-spacing:.04em; }
@@ -208,8 +207,6 @@ permalink: /
       #modeToolbar .toolbar-menu > summary { display:flex;align-items:center; }
       #inputArea .composer-tool,#inputArea #sendBtn,#inputArea #stopBtn { min-width:44px;min-height:44px;display:grid;place-items:center; }
       #inputArea #userInput { min-height:44px; }
-      #researchStudioModal [data-action="close-research-studio"],#researchStudioModal [data-action="start-research-studio"] { min-height:44px; }
-      #researchStudioModal header [data-action="close-research-studio"] { min-width:44px; }
     }
     @media (prefers-reduced-transparency:reduce) { .toolbar-menu-panel { background:var(--ui-surface);backdrop-filter:none;-webkit-backdrop-filter:none; } }
 
@@ -1457,8 +1454,6 @@ permalink: /
       const quizButton=document.querySelector('[data-action="apply-skill-quiz"]');if(quizButton)quizButton.textContent=en?'Apply skill profile':'Подобрать навык';
       const skillFields=$('skillCustomFields');if(skillFields)skillFields.setAttribute('aria-label',en?'Custom skill settings':'Настройки своего навыка');
       const size=$('agentTeamSizeValue');if(size){const value=Number($('agentTeamSize')?.value||4);size.textContent=value+' '+(en?(value===1?'agent':'agents'):(value===1?'агент':'агентов'));}
-      const researchLabels=document.querySelectorAll('#researchStudioModal label.block');if(researchLabels[0]?.firstChild)researchLabels[0].firstChild.textContent=(en?'Effort':'Усилие')+' ';if(researchLabels[1]?.firstChild)researchLabels[1].firstChild.textContent=(en?'Web search':'Веб-поиск')+' ';
-      const structured=$('researchStudioStructured')?.closest('label');if(structured){const strong=structured.querySelector('strong'),help=structured.querySelector('span span');if(strong)strong.textContent=en?'Structured analysis':'Структурированный разбор';if(help)help.textContent=en?'Four sequential stages using the selected model.':'Четыре последовательных этапа на выбранной модели.';}
       const mainSkill=$('skillPresetSelect')?.querySelector('option[value="custom"]');if(mainSkill)mainSkill.textContent=en?'Custom option':'Свой вариант';
     }
     function applyUiLanguage(language){
@@ -2848,8 +2843,6 @@ permalink: /
       ].join(' ');
       $('modeHint').textContent = summary;
       $('modeHint').title = title;
-      const studioSummary = $('researchStudioSettingsSummary');
-      if (studioSummary) studioSummary.textContent = summary;
     }
     function setProcessingMode(mode) {
       const chat = getCurrentChat();
@@ -3230,7 +3223,6 @@ permalink: /
       const {baseUrl,model,key}=getCloudSettings();
       if(!baseUrl||!model||!key){setCloudStatus('disconnected');return;}
       const formatError=validateCloudBaseUrl(baseUrl);if(formatError){setCloudFieldError('cloudBaseUrl',formatError);setCloudStatus('disconnected');return;}
-      let marker=null;try{marker=JSON.parse(safeGet('ai_alandi_cloud_connection_v1')||'null');}catch(_){}
       const fingerprint=await providerKeyFingerprint(key);
       if(!marker?.ok||marker.baseUrl!==baseUrl||marker.model!==model||marker.keyFingerprint!==fingerprint){setCloudStatus('disconnected');return;}
       try{
@@ -3369,7 +3361,6 @@ permalink: /
         safeSet('ai_provider_connection_'+provider,JSON.stringify({ok:true,baseUrl,model:result.candidateModel,keyFingerprint:fingerprint,requestedModel:model,testedAt:new Date().toISOString()}));
         if(provider==='alandi'&&key&&isPrimaryCloudSettingsCurrent()){
           safeSet('ai_alandi_cloud_base_url',baseUrl);safeSet('ai_alandi_cloud_model',result.candidateModel);
-          safeSet('ai_alandi_cloud_connection_v1',JSON.stringify({ok:true,baseUrl,model:result.candidateModel,keyFingerprint:fingerprint,testedAt:new Date().toISOString()}));
           if($('cloudBaseUrl')){$('cloudBaseUrl').value=baseUrl;$('cloudModel').value=result.candidateModel;$('cloudApiKey').value=key;}
           // A model probe alone is not the full cloud-card health check; never show green before refreshCloudStatus validates /healthz.
           setCloudStatus('checking','Модель ответила. Проверяю health-check gateway…');
@@ -3385,7 +3376,6 @@ permalink: /
           return;
         }
         safeSet('ai_provider_connection_'+provider,'');
-        if(provider==='alandi'&&isPrimaryCloudSettingsCurrent())safeSet('ai_alandi_cloud_connection_v1','');
         updateApiKeyLamp('error','Проверка не удалась: '+String(error?.message||error).slice(0,220));
         showToast('Проверка не удалась: сеть, CORS или формат ответа.','error');
       }finally{
@@ -3435,7 +3425,6 @@ permalink: /
         safeSet('ai_alandi_cloud_model',model);safeSet(providerKeyStorage('alandi'),key);
         safeSet(STORAGE.provider,'alandi');safeSet(STORAGE.baseUrl,baseUrl);safeSet(STORAGE.model,model);
         const verified={ok:true,baseUrl,model,keyFingerprint:fingerprint,testedAt:new Date().toISOString()};
-        safeSet('ai_alandi_cloud_connection_v1',JSON.stringify(verified));
         safeSet('ai_provider_connection_alandi',JSON.stringify(verified));
         $('providerPreset').value='';applyProviderPreset('alandi',true);$('baseUrl').value=baseUrl;$('modelName').value=model;$('apiKey').value=key;
         setCloudFieldConnection('connected');setCloudStatus('connected');
@@ -3445,7 +3434,6 @@ permalink: /
           setCloudStatus('disconnected','Настройки изменились во время проверки. Результат не сохранён.');
           return;
         }
-        safeSet('ai_alandi_cloud_connection_v1','');safeSet('ai_provider_connection_alandi','');
         setCloudStatus('disconnected');
         setCloudFieldError('cloudApiKey',getUiLanguage()==='en'?'Connection failed. Check server URL and key.':'Не удалось подтвердить соединение. Проверь URL сервера и ключ.');
       }finally{
@@ -3462,7 +3450,6 @@ permalink: /
         field.value=text.trim();field.dispatchEvent(new Event('input',{bubbles:true}));
         field.focus();field.setSelectionRange?.(field.value.length,field.value.length);
         if(id==='apiKey')scheduleProviderAutoConnect();
-        else if(id==='cloudApiKey'){safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('cloudApiKey');setCloudStatus('disconnected');scheduleCloudAutoConnect();}
         showToast('Текст вставлен.');
       }catch(_){field.focus();showToast('Браузер не разрешил чтение буфера. Нажми Ctrl+V в поле.','error');}
     }
@@ -4700,25 +4687,6 @@ permalink: /
       if (!ok) throw new Error('Браузер не разрешил копирование.');
     }
     let activeTrace = null;
-    function openResearchStudio() {
-      const chat=getCurrentChat();ensureChatFunctionSettings(chat);
-      $('researchStudioEffort').value=chat.processingMode;
-      $('researchStudioSearchMode').value=chat.searchMode;
-      $('researchStudioStructured').checked=chat.multiAgentEnabled===true;
-      updateModeUI();
-      $('researchStudioStatus').textContent=getUiLanguage()==='en'?'Choose a research mode. Your prompt stays in the main composer.':'Выбери режим. Текст задачи остаётся в основном поле.';
-      $('researchStudioModal').classList.remove('hidden');
-    }
-    function closeResearchStudio() { $('researchStudioModal').classList.add('hidden'); }
-    function startResearchStudio() {
-      setProcessingMode($('researchStudioEffort').value);
-      setSearchMode($('researchStudioSearchMode').value);
-      setAgentMode($('researchStudioStructured').checked);
-      closeResearchStudio();
-      $('userInput').focus({preventScroll:true});
-      showToast(getUiLanguage()==='en'?'Research mode applied. Enter your task in the composer.':'Режим исследования включён. Введи задачу в основном поле.');
-    }
-
     let activeSpeechObjectUrl = '';
     let activeSpeechController = null;
     let speechRequestGeneration = 0;
@@ -5376,9 +5344,6 @@ permalink: /
           case 'stop-voice-conversation': stopVoiceConversation(); break;
           case 'stop-voice-recording': stopVoiceMessageRecording(false); break;
           case 'cancel-voice-recording': stopVoiceMessageRecording(true); break;
-          case 'open-research-studio': openResearchStudio(); break;
-          case 'close-research-studio': closeResearchStudio(); break;
-          case 'start-research-studio': await startResearchStudio(); break;
           case 'toggle-sidebar': toggleSidebar(); break;
           case 'close-sidebar': toggleSidebar(false); break;
           case 'new-chat': if(voiceConversationActive)stopVoiceConversation(false);createNewChat(); break;
@@ -5467,19 +5432,14 @@ permalink: /
     });
     $('apiKey').addEventListener('input',()=>{if(currentProvider()!=='pollinations')safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();scheduleProviderAutoConnect();});
     $('baseUrl').addEventListener('input',()=>{safeSet(providerModelCatalogStaleKey(currentProvider()),'true');updateModelCatalogStatus(currentProvider());safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();scheduleProviderAutoConnect();});
-    $('cloudBaseUrl').addEventListener('input',()=>{const value=$('cloudBaseUrl').value.trim();safeSet('ai_alandi_cloud_base_url',value);safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('cloudBaseUrl',validateCloudBaseUrl(value));setCloudStatus('disconnected');scheduleCloudAutoConnect();});
-    $('cloudModel').addEventListener('input',()=>{safeSet('ai_alandi_cloud_model',$('cloudModel').value.trim());safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('cloudModel');setCloudStatus('disconnected');scheduleCloudAutoConnect();});
-    $('cloudApiKey').addEventListener('input',()=>{safeSet('ai_alandi_cloud_connection_v1','');setCloudFieldError('cloudApiKey');setCloudStatus('disconnected');scheduleCloudAutoConnect();});
     $('textAttachmentInput').addEventListener('change',handleTextAttachment);
     $('mediaAttachmentInput').addEventListener('change',handleMediaAttachment);
     document.addEventListener('pointerdown',event=>{
       if(!$('attachmentMenu').classList.contains('hidden')&&!$('attachmentMenu').contains(event.target)&&!$('attachTextButton').contains(event.target))closeComposerPopovers();
       if(!$('requestContextMenu').classList.contains('hidden')&&!$('requestContextMenu').contains(event.target)&&!$('contextPickerButton').contains(event.target))closeComposerPopovers();
     });
-    $('providerPreset').addEventListener('change',()=>{safeSet('ai_alandi_cloud_connection_v1','');if(currentProvider()==='alandi'){const url=$('baseUrl').value.trim();if(url)$('cloudBaseUrl').value=url;}});
     $('modelSearch').addEventListener('input',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
-    $('researchStudioModal').addEventListener('click', (event) => { if (event.target === $('researchStudioModal')) closeResearchStudio(); });
     $('projectSettingsModal').addEventListener('click', (event) => { if (event.target === $('projectSettingsModal')) closeProjectSettings(); });
     // Escape is handled centrally so every modal shares the same close and focus-return path.
     $('modelPreset').addEventListener('change',()=>{const value=$('modelPreset').value;if(value!=='__custom__')$('modelName').value=value;safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
@@ -5574,7 +5534,6 @@ permalink: /
         if (!$('chatActionModal').classList.contains('hidden')) closeChatActionDialog();
         else if (!$('traceModal').classList.contains('hidden')) closeTrace();
         else if (!$('projectSettingsModal').classList.contains('hidden')) closeProjectSettings();
-        else if (!$('researchStudioModal').classList.contains('hidden')) closeResearchStudio();
         else if (!$('settingsModal').classList.contains('hidden')) toggleSettings(false);
         else if (!$('sidebar').classList.contains('-translate-x-full')) toggleSidebar(false);
       }
