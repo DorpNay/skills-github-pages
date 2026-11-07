@@ -1513,8 +1513,6 @@ permalink: /
       const english=getUiLanguage()==='en';
       const button=$('homeThemeToggle');
       if(button){button.textContent=light?'☾':'☼';button.title=english?'Switch theme':'Сменить тему';button.setAttribute('aria-label',button.title);}
-      const sidebarButton=$('sidebarThemeToggle');
-      if(sidebarButton){sidebarButton.textContent=light?(english?'☾ Theme: light':'☾ Тема: светлая'):(english?'☼ Theme: dark':'☼ Тема: тёмная');sidebarButton.title=english?'Switch theme':'Сменить тему';sidebarButton.setAttribute('aria-label',sidebarButton.title);}
     }
     function toggleHomeTheme(){
       const next=document.documentElement.dataset.theme==='light'?'dark':'light';
@@ -3595,7 +3593,7 @@ permalink: /
       renderAgentConfiguration();
     }
     function openFunctionPanel(kind) {
-      $('functionsMenu').open = false;
+      const functionsMenu=$('functionsMenu'); if(functionsMenu) functionsMenu.open=false;
       const views = {
         agents: ['agentFunctionSettings','functionAgentsTitle','functionAgentsDescription'],
         skills: ['skillFunctionSettings','functionSkillsTitle','functionSkillsDescription'],
@@ -4554,7 +4552,7 @@ permalink: /
       if(oldProvider===provider&&oldModel===model)return;
       // Settings change only after the entire answer/research chain completes, never mid-run.
       if(oldProvider!==provider) {
-        $('providerPreset').value=provider;
+        $('providerPreset').value=provider==='alandi'?'':provider;
         applyProviderPreset(provider,false);
       } else $('providerPreset').value=provider;
       $('modelName').value=model;
