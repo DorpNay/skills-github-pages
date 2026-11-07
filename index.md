@@ -337,6 +337,19 @@ permalink: /
     .message-viewer-content pre,.message-viewer-content table{max-width:100%;overflow:auto}
     .message-viewer-content .plain-message{white-space:pre-wrap;overflow-wrap:anywhere;user-select:text;-webkit-user-select:text}
     .jump-to-latest{position:fixed;z-index:35;right:14px;bottom:max(calc(env(safe-area-inset-bottom) + 6.5rem),6.5rem);min-width:42px;min-height:42px;border-radius:14px;border:1px solid color-mix(in srgb,var(--ui-tiffany) 42%,var(--ui-border));background:var(--ui-surface-raised);color:var(--ui-tiffany);font-size:24px;box-shadow:0 5px 22px rgb(0 0 0 / 24%)}
+
+    /* UI §8.14: prevent long-press selection on controls without disabling copyable content. */
+    button, [role="button"], summary {
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+      touch-action: manipulation;
+    }
+    input, textarea, select, [contenteditable="true"], .assistant-content, .chat-bubble, .message-viewer-content {
+      -webkit-user-select: text;
+      user-select: text;
+      -webkit-touch-callout: default;
+    }
   </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
