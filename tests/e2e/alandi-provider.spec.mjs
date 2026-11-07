@@ -43,7 +43,7 @@ test('aServi private gateway route works, stays local, and exposes cache status'
         contentType: 'application/json',
         body: JSON.stringify({
           id: 'local-chatcmpl-test', object: 'chat.completion', model: 'qwen3.5:4b',
-          choices: [{ index: 0, message: { role: 'assistant', content: 'aLandi local gateway works.' }, finish_reason: 'stop' }]
+          choices: [{ index: 0, message: { role: 'assistant', content: 'aServi local gateway works.' }, finish_reason: 'stop' }]
         })
       });
     }
