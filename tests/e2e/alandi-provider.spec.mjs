@@ -83,3 +83,23 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
   expect(chatPayloads[0].temperature).toBe(0);
   expect(cloudChatRequests).toEqual([]);
 });
+
+test('aLandi Cloud and external provider settings are mutually exclusive', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+
+  const cloudRoute = page.locator('#cloudSettingsCard');
+  const externalSettings = page.locator('#providerExternalSettings');
+  const routePicker = page.locator('#providerPreset');
+
+  await expect(cloudRoute).toBeVisible();
+  await expect(externalSettings).toBeHidden();
+
+  await routePicker.selectOption('gemini');
+  await expect(cloudRoute).toBeHidden();
+  await expect(externalSettings).toBeVisible();
+
+  await routePicker.selectOption('alandi');
+  await expect(cloudRoute).toBeVisible();
+  await expect(externalSettings).toBeHidden();
+});
