@@ -1487,8 +1487,7 @@ permalink: /
     function applyUiLanguage(language){
       const lang=language==='en'?'en':'ru';safeSet('ai_ui_language_v1',lang);document.documentElement.lang=lang;
       const text=UI_TEXT[lang];
-      const primaryGroup=$('providerPrimaryGroup'),externalGroup=$('providerExternalGroup');
-      if(primaryGroup)primaryGroup.label=lang==='en'?'aLandi Cloud · primary route':'aLandi Cloud · основной маршрут';
+      const externalGroup=$('providerExternalGroup');
       if(externalGroup)externalGroup.label=lang==='en'?'Third-party providers':'Сторонние провайдеры';
       document.querySelectorAll('[data-i18n]').forEach(node=>{const value=text[node.dataset.i18n];if(typeof value==='string')node.textContent=value;});
       document.querySelectorAll('[data-i18n-placeholder]').forEach(node=>{const value=text[node.dataset.i18nPlaceholder];if(typeof value==='string')node.placeholder=value;});
