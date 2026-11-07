@@ -351,7 +351,7 @@ PR #122 добавил только эксплуатационную надёж�
 - Сохранять удобную touch-area на мобильных устройствах.
 - В полном/развёрнутом представлении сообщения действия «Копировать» и «Озвучить» также должны оставаться доступными в виде иконок.
 - Не допускать расхождения между компактным и полным представлением по доступности этих действий.
-- [~] Реализован icon-first вариант для copy/open/speak с aria-label/title и 44×44 CSS px touch targets; в полном просмотре добавлены copy/speak actions, а для пользовательского сообщения озвучивание скрывается. Acceptance ожидает exact-head Chromium CI.
+- [x] Реализован icon-first вариант для copy/open/speak с aria-label/title и 44×44 CSS px touch targets; в полном просмотре добавлены copy/speak actions, а для пользовательского сообщения озвучивание скрывается. Exact-head Quality #42349078380 passed (Chromium + Jekyll + sentinels) on code/test SHA 350c01513ec6dc147cd5b26e7b8e3bfa17a26d0e; this SHA is the pre-status-update implementation checkpoint.
 
 ### 8.9 Жизненный цикл backdrop и затемнения окон
 
@@ -477,4 +477,4 @@ PR #122 добавил только эксплуатационную надёж�
 |---|---|---|
 | 2026-10-31 | Consolidated the remaining owner-dictated UI notes: message action icons, backdrop lifecycle, unified control sizing, compact theme/language controls, removal of experimental server memory, explicit project-context transfer, touch text-selection behavior, centered/color-coded status tickers, icon-first button typography and user-adjustable text readability. Added the agreed third-party provider shortlist and BYOK/model auto-detection requirements, including V1/funding/security boundaries. | Confirmed in the current conversation; requirements only, implementation status not inferred. |
 
-| 2026-11-07 | Implemented an icon-first message action slice for owner requirement 8.8: copy/open/speak controls, 44×44 hit area, accessible names/tooltips, and copy/speak actions in full-message view (speak hidden for user messages). | PR branch feat/ui-message-actions-icon-first-20261107; implementation SHA 18faba30800376fea146769a14ef1e4323fc3ccb; E2E test SHA 55b38b0e8e61dc152f8a354174d43f9e483e7347; exact-head CI pending. |
+| 2026-11-07 | Implemented an icon-first message action slice for owner requirement 8.8: copy/open/speak controls, 44×44 hit area, accessible names/tooltips, and copy/speak actions in full-message view (speak hidden for user messages). | PR branch feat/ui-message-actions-icon-first-20261107; implementation SHA 18faba30800376fea146769a14ef1e4323fc3ccb; E2E test SHA 55b38b0e8e61dc152f8a354174d43f9e483e7347; Exact-head Quality #42349078380 passed on code/test SHA 350c01513ec6dc147cd5b26e7b8e3bfa17a26d0e; the follow-up docs-only status commit is awaiting its own exact-head gate. |
