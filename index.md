@@ -512,6 +512,7 @@ permalink: /
           <input id="cloudModel" type="text" autocomplete="off" aria-label="Модель моего сервера" class="w-full p-3 rounded-xl border text-sm" placeholder="Модель gateway · точный ID"><p id="cloudModelError" class="field-error hidden" role="alert"></p>
           <div class="cloud-key-row flex gap-2"><input id="cloudApiKey" type="password" autocomplete="off" aria-label="Ключ доступа к серверу" class="min-w-0 flex-1 p-3 rounded-xl border text-sm" placeholder="Ключ доступа"><button type="button" data-action="paste-aservi-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ">↓</button></div><p id="cloudApiKeyError" class="field-error hidden" role="alert"></p>
         </div>
+        <button type="button" data-action="connect-alandi-aservi" data-i18n="cloudConnect" class="w-full rounded-xl border border-cyan-700 bg-cyan-950/50 px-3 py-2.5 text-sm font-semibold text-cyan-100">Проверить и подключить</button>
         <p id="cloudStatus" class="cloud-status-copy text-[10px]" data-state="disconnected" role="status" aria-live="polite">Не подключено</p>
       </section></div>
       </details>
@@ -1387,7 +1388,7 @@ permalink: /
       ru:{
         settingsTitle:'⚙️ Настройки',sidebarTitle:'💬 Проекты и чаты',chatsTitle:'Чаты',newChat:'＋ Новый чат',clearChat:'🗑 Очистить чат',newPersonalChat:'＋ Новый личный чат',
         memoryLabel:'🧠 Долгосрочная память',memoryPlaceholder:'Факт, который нужно запомнить',exportChats:'Экспорт',importChats:'Импорт',
-        appearanceTitle:'Внешний вид',languageLabel:'Язык',languageRussian:'Русский',languageEnglish:'English',themeLabel:'Тема',motionLabel:'Анимации',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',cloudCardTitle:'Мой сервер',cloudCardCopy:'',cloudBaseUrl:'URL моего сервера',cloudModel:'Модель моего сервера',cloudApiKey:'Ключ доступа к серверу',cloudConnect:'',providerLabel:'Сторонний API',
+        appearanceTitle:'Внешний вид',languageLabel:'Язык',languageRussian:'Русский',languageEnglish:'English',themeLabel:'Тема',motionLabel:'Анимации',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',cloudCardTitle:'Мой сервер',cloudCardCopy:'',cloudBaseUrl:'URL моего сервера',cloudModel:'Модель моего сервера',cloudApiKey:'Ключ доступа к серверу',cloudConnect:'Проверить и подключить',providerLabel:'Сторонний API',
         modelSearchLabel:'Поиск по каталогу моделей',modelPresetLabel:'Быстрый выбор модели · список обновляется из API',
         baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',
         legacySettings:'Дополнительные настройки',composerPlaceholder:'Напиши сообщение...',
@@ -1409,7 +1410,7 @@ permalink: /
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Projects & chats',chatsTitle:'Chats',newChat:'＋ New chat',clearChat:'🗑 Clear chat',newPersonalChat:'＋ New personal chat',
         memoryLabel:'🧠 Long-term memory',memoryPlaceholder:'A fact to remember',exportChats:'Export',importChats:'Import',
-        appearanceTitle:'Appearance',languageLabel:'Language',languageRussian:'Russian',languageEnglish:'English',themeLabel:'Theme',motionLabel:'Motion',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',cloudCardTitle:'My server',cloudCardCopy:'',cloudBaseUrl:'My server URL',cloudModel:'My server model',cloudApiKey:'Server access key',cloudConnect:'',providerLabel:'Third-party API',
+        appearanceTitle:'Appearance',languageLabel:'Language',languageRussian:'Russian',languageEnglish:'English',themeLabel:'Theme',motionLabel:'Motion',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',cloudCardTitle:'My server',cloudCardCopy:'',cloudBaseUrl:'My server URL',cloudModel:'My server model',cloudApiKey:'Server access key',cloudConnect:'Check and connect',providerLabel:'Third-party API',
         modelSearchLabel:'Search model catalog',modelPresetLabel:'Quick model pick · list loads from API',
         baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',
         legacySettings:'Additional settings',composerPlaceholder:'Write a message...',
