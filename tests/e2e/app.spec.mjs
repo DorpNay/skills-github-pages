@@ -3302,9 +3302,9 @@ test('readability preferences persist and maintain semantic text contrast in bot
 
   const ratios = await page.evaluate(() => {
     const parse = value => {
-      const match = value.match(/#([0-9a-f]{6})/i);
-      if (match) return [0,2,4].map(offset => parseInt(match[1].slice(offset, offset + 2), 16));
-      return value.match(/\\d+(?=,|\\))/g).slice(0, 3).map(Number);
+      const match = value.match(/^#([0-9a-f]{6})$/i);
+      if (!match) throw new Error('Unexpected computed color token: ' + value);
+      return [0,2,4].map(offset => parseInt(match[1].slice(offset, offset + 2), 16));
     };
     const luminance = color => {
       const channels = parse(color).map(value => {
