@@ -348,7 +348,7 @@ test('published app boots with aServi selected and concise navigation', async ({
   await expect(page.locator('#searchModeSummary')).toBeVisible();
   await expect(page.locator('#searchModeSummary')).toContainText('Обычный');
   await expect(page.locator('#toggleSearch')).toBeChecked();
-  await expect(page.locator('#functionsMenu')).toHaveCount(0);
+  await expect(page.locator('#functionsMenu .toolbar-menu-option')).toHaveCount(3);
   const stopButtonBackground = await page.locator('#stopBtn').evaluate(element => {
     element.classList.remove('hidden');
     const color = getComputedStyle(element).backgroundColor;
@@ -1134,9 +1134,9 @@ test('aServi status only turns green after a real model response, and core UX co
   await page.locator('#userInput').fill('Verify the primary chat uses my aLandi cloud.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('OK', { timeout: 15000 });
-  expect(cloudRequests).toHaveLength(2);
+  expect(cloudRequests).toHaveLength(3); // connect probe, user completion, post-response probe
   expect(cloudRequests[1].messages.at(-1).content).toBe('Verify the primary chat uses my aLandi cloud.');
-  expect(cloudRequests.every(request => request.model === 'qwen3.5:4b')).toBe(true);
+  expect(cloudRequests.every(request => request.model === 'qwen3.5:4b')).toBe(true);\n  expect(cloudRequests[0].max_tokens).toBe(8);\n  expect(cloudRequests[2].max_tokens).toBe(8);
   await selectLanguage(page, 'en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
@@ -2538,13 +2538,31 @@ test('search presets fit one line, localize, and persist per chat', async ({ pag
   await expect(page.locator('#modeHint')).toContainText('Quick · Web: standard · Direct · Auto');
 });
 
-test('unrequested Functions and Research Studio entrypoints are absent', async ({ page }) => {
+test('Functions menu exposes truthful Agents, Deep Research and Skills actions with blurred panels', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('#functionsMenu')).toHaveCount(0);
-  await expect(page.locator('#functionsMenuSummary')).toHaveCount(0);
+  const menu = page.locator('#functionsMenu');
+  await expect(menu).toBeVisible();
+  await expect(menu.locator('.toolbar-menu-option')).toHaveCount(3);
+  await expect(menu.locator('[data-function="agents"]')).toBeVisible();
+  await expect(menu.locator('[data-processing-mode="deep"]')).toBeVisible();
+  await expect(menu.locator('[data-function="skills"]')).toBeVisible();
   await expect(page.locator('[data-action="open-research-studio"]')).toHaveCount(0);
   await expect(page.locator('#researchStudioModal')).toHaveCount(0);
-  await expect(page.locator('#searchModeSummary')).toBeVisible();
+
+  await menu.locator('[data-processing-mode="deep"]').click();
+  await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
+  await expect(menu).not.toHaveAttribute('open', '');
+
+  for (const panel of ['agents', 'skills']) {
+    await page.locator('#functionsMenuSummary').click();
+    await page.locator('[data-action="open-function-panel"][data-function="' + panel + '"]').click();
+    const modal = page.locator('#functionPanelModal');
+    await expect(modal).toBeVisible();
+    await expect.poll(() => modal.evaluate(element => getComputedStyle(element).backdropFilter)).toBe('blur(4px)');
+    await modal.locator('[data-action="close-function-panel"]').click();
+    await expect(modal).toBeHidden();
+  }
 });
 
 test('browser Python snippets cannot access page globals through Pyodide js module', async ({ page }) => {
