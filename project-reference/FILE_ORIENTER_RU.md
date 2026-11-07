@@ -8,7 +8,8 @@
 - GitHub Pages: deployment #42362476364 SUCCESS on exact main; Quality #42362476858 PASS 7/7 including published root/client-version and /landing/ Chromium checks.
 - Production Pages run #42362476364 is GitHub-managed `dynamic/pages/pages-build-deployment`: build pulled `ghcr.io/actions/jekyll-build-pages:v1.0.13`; `Build with Jekyll`, artifact upload and `Deploy to GitHub Pages` passed. Quality's separate Jekyll sentinel pins `actions/jekyll-build-pages` at `44a6e6beabd48582f863aeeb6cb2151cc1716697`. The main-push deployment path is functioning; no replacement workflow is justified.
 - PR #166 §8.17: open, base 69645ff, head `a79cb6b3fde04985b31217d9ae952e5d53cdec2f`. Previous exact head 7c065c1 failed one dark/high semantic-role color assertion (115 passed, 1 failed); CSS specificity patch committed to current head. Graphify #42366669754 PASS; Quality #42366669769 was IN_PROGRESS at checkpoint. Do not merge before all exact-head gates pass.
-- Live open PRs: #125, #131, #152, #154, #155, #166. Open issue #111.
+- open PRs (6): #125, #131, #152, #154, #155, #166
+- open issues (1): #111.
 - New upstream review is recorded in INTEL.md and docs/OPEN_SOURCE_TRIAGE_RU.md (2026-11-07); research only, no downloads, installs, code copies or runtime changes.
 
 
