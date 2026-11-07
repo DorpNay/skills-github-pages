@@ -50,3 +50,12 @@ Before any aLandi task:
 - Graphify is a dev-only navigation tool, not a runtime dependency. The pinned code-only workflow runs on relevant source/architecture changes and weekly. Latest main run `40637941303` built 988 nodes / 2780 edges across 60 source files (224 inline UI JS nodes, 14 SQL schema nodes, 23 RAG-module nodes); ten focused queries returned neighborhoods. Inspect the artifact/report and record coverage/limits on each use: some results truncate at the 700-token budget, nine Playwright E2E files yielded no symbols, and community labels are generic. Artifacts expire after seven days and are not committed.
 - Do not commit generated graph artifacts or add runtime dependencies unless measured benefit is clear.
 - GitIngest = text snapshot; GitMCP = MCP access to a specific upstream; GitReverse = synthetic repository prompt. These are not interchangeable.
+
+
+## Owner goal capture and aLandi principles (2026-11-07)
+
+- Before implementing each newly stated owner goal, search the single canonical Master Task Registry and the existing UI checklist for an equivalent ID; enrich the existing item if it matches, otherwise append a stable ID to the existing addendum. Never silently drop, duplicate or mark a request complete without evidence.
+- Preserve all previously recorded goals and their status when the owner changes priority order. Priority override changes sequencing, not scope cancellation.
+- Normative aLandi principles and evidence rules: docs/ALANDI_N2O_CORE_RU.md. Knowledge promotion: docs/ALANDI_N2O_KNOWLEDGE_LOOP_RU.md. Concise work cycle: LOOP.md.
+- Use PROJECT_ORCHESTRATOR_RU.md as the navigation index for principles, external source catalog, plans, decisions and task register; it is an index, not a parallel backlog.
+- Favor a safe, bounded implementation or verification in the same turn; keep handoff/checkpoint concise and update only canonical records whose material state changed.
