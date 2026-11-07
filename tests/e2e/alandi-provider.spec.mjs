@@ -14,7 +14,7 @@ test.beforeEach(async ({ page }) => {
 
 test('aLandi private gateway route works, stays local, and exposes cache status', async ({ page }) => {
   const chatPayloads = [];
-  const cloudChatRequests = [];
+  const externalProviderRequests = [];
   await page.route('https://alandi.example.test/**', async route => {
     const request = route.request();
     const origin = request.headers().origin || 'https://dorpnay.github.io';
@@ -28,6 +28,9 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
     if (request.method() === 'OPTIONS') {
       return route.fulfill({ status: 204, headers: corsHeaders, body: '' });
     }
+    if (request.url().endsWith('/healthz')) {
+      return route.fulfill({ status: 200, headers: corsHeaders, contentType: 'application/json', body: JSON.stringify({ status: 'ok' }) });
+    }
     if (request.url().includes('/v1/models')) {
       return route.fulfill({
         status: 200, headers: corsHeaders, contentType: 'application/json',
@@ -36,35 +39,36 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
     }
     if (request.url().includes('/v1/chat/completions')) {
       const payload = request.postDataJSON();
-      chatPayloads.push(payload);
+      const isAserviProbe = payload.max_tokens === 8 && payload.messages?.[0]?.content === 'Reply with exactly OK.';
+      if (!isAserviProbe) chatPayloads.push(payload);
       return route.fulfill({
         status: 200,
-        headers: { ...corsHeaders, 'x-ai-cache': 'MISS', 'cache-control': 'no-store' },
+        headers: { ...corsHeaders, ...(isAserviProbe ? {} : { 'x-ai-cache': 'MISS', 'cache-control': 'no-store' }) },
         contentType: 'application/json',
         body: JSON.stringify({
-          id: 'local-chatcmpl-test', object: 'chat.completion', model: 'qwen3.5:4b',
-          choices: [{ index: 0, message: { role: 'assistant', content: 'aLandi local gateway works.' }, finish_reason: 'stop' }]
+          id: isAserviProbe ? 'local-aservi-probe' : 'local-chatcmpl-test', object: 'chat.completion', model: 'qwen3.5:4b',
+          choices: [{ index: 0, message: { role: 'assistant', content: isAserviProbe ? 'OK' : 'aLandi local gateway works.' }, finish_reason: 'stop' }]
         })
       });
     }
     return route.fulfill({ status: 404, headers: corsHeaders, contentType: 'application/json', body: '{}' });
   });
   await page.route('https://generativelanguage.googleapis.com/**', async route => {
-    if (/\/chat\/completions|\/responses|:generateContent|:streamGenerateContent/.test(route.request().url())) cloudChatRequests.push(route.request().url());
+    if (/\/chat\/completions|\/responses|:generateContent|:streamGenerateContent/.test(route.request().url())) externalProviderRequests.push(route.request().url());
     return route.fulfill({
       status: 503, contentType: 'application/json',
-      body: JSON.stringify({ error: { message: 'Cloud fallback must not be used in this test.' } })
+      body: JSON.stringify({ error: { message: 'external-provider fallback must not be used in this test.' } })
     });
   });
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await page.locator('#legacyProviderSettings > summary').click();
-  await page.locator('#providerPreset').selectOption('alandi');
-  await expect(page.locator('#modelName')).toHaveValue('qwen3.5:4b');
-  await page.locator('#baseUrl').fill('https://alandi.example.test/v1');
-  await page.locator('#modelName').fill('qwen3.5:4b');
-  await page.locator('#apiKey').fill('e2e-alandi-placeholder-key-not-a-secret-0123456789');
+  await expect(page.locator('#cloudSettingsCard')).toBeVisible();
+  await expect(page.locator('#providerExternalSettings')).toBeHidden();
+  await page.locator('#cloudBaseUrl').fill('https://alandi.example.test/v1');
+  await page.locator('#cloudModel').fill('qwen3.5:4b');
+  await page.locator('#cloudApiKey').fill('e2e-alandi-placeholder-key-not-a-secret-0123456789');
+  await expect(page.locator('#cloudStatus')).toContainText('Подключено', { timeout: 15000 });
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('[data-action="close-settings"]').click();
   await chooseSearchMode(page, 'offline');
@@ -81,5 +85,26 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
   expect(chatPayloads).toHaveLength(1);
   expect(chatPayloads[0].model).toBe('qwen3.5:4b');
   expect(chatPayloads[0].temperature).toBe(0);
-  expect(cloudChatRequests).toEqual([]);
+  expect(externalProviderRequests).toEqual([]);
+});
+
+
+test('aLandi aServi and external provider settings are mutually exclusive', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+
+  const aserviRoute = page.locator('#cloudSettingsCard');
+  const externalSettings = page.locator('#providerExternalSettings');
+  const routePicker = page.locator('#providerPreset');
+
+  await expect(aserviRoute).toBeVisible();
+  await expect(externalSettings).toBeHidden();
+
+  await routePicker.selectOption('gemini');
+  await expect(aserviRoute).toBeHidden();
+  await expect(externalSettings).toBeVisible();
+
+  await page.locator('#selectAlandiCloudRoute').click();
+  await expect(aserviRoute).toBeVisible();
+  await expect(externalSettings).toBeHidden();
 });
