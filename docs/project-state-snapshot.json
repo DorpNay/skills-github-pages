@@ -173,7 +173,7 @@
     "main_provenance_run": null,
     "main_freshness_run": null,
     "main_graphify_run": 42372746441,
-    "owner_task": "PR #174 repairs the published Functions menu contract; parallel work covers MENU-008 keyboard/focus/mobile checks, FIX-008 browser asset inventory, REGISTRY-002 source-description crosswalk and GATE-001 capability maturity. Main task registry: 599 stable IDs; addendum: 128 stable IDs; both are internally unique and share only REGISTRY-002. Issue #111 remains owner/environment gated; 62 direct action refs are pinned but 14 nested upstream refs remain mutable.",
+    "owner_task": "PR #174 repairs the published Functions menu contract; Voice source crosswalk is complete (VOICE2 aliases mapped, VOICE-TRACK-010/VOICE-011…018 and AUDIO-GEN-001…009 atomized); repeated LAUNCH release/device references cross-linked. Main registry: 599 stable rows; addendum: 128 stable rows; both unique and share only REGISTRY-002. Remaining: V1/LAUNCH description-level crosswalk, MENU-008 native VoiceOver, FIX-008 static Tailwind/vendor hardening, GATE-001 fine-grained capability evidence. Issue #111 remains owner/environment gated; 62 direct action refs are pinned, 14 nested upstream refs remain mutable.",
     "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
     "pr131_exact_head_verified": false,
     "pr131_compare": "Large Draft V2 workbench, stale/diverged and mergeable_state dirty; selective reconciliation only.",
@@ -235,7 +235,7 @@
     "active_ui_pr": 174,
     "open_prs": "1 live open PR #174; current PR excluded from freshness snapshot; no other open PRs.",
     "open_prs_at_checkpoint": 0,
-    "last_volley": "V-2026-11-08-CHECKLIST-A11Y-ASSET-REGISTRY-004"
+    "last_volley": "V-2026-11-08-REGISTRY-VOICE-LAUNCH-CROSSWALK-005"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
@@ -243,5 +243,5 @@
     "queue_policy": "Live open PR #174 is the current bounded follow-up and is excluded from the expected queue snapshot; no other open PRs. Issue #111 remains owner-controlled. Closed non-merged #125/#131/#152/#154/#155/#168/#171/#172 retain task scope.",
     "pr_check_policy": "Current PR #174 is the bounded follow-up and is intentionally excluded from the expected main-checkpoint queue snapshot; live queue is one PR (#174), with no other open PRs."
   },
-  "last_volley": "V-2026-11-08-CHECKLIST-A11Y-ASSET-REGISTRY-004"
+  "last_volley": "V-2026-11-08-REGISTRY-VOICE-LAUNCH-CROSSWALK-005"
 }
