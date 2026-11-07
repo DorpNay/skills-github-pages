@@ -280,3 +280,11 @@ Exact upstream HEADs and declared license/capability evidence are recorded in [I
 - **Memvid v2.0.140** — Apache-2.0, upstream commit `e18fe55494379e2ab7397ce03655e8abbc5e0c31`. Imported curated 22-file / 727,588-byte source/license subset from reviewed PR #155; all source Git blob SHA-1 values matched the pinned upstream commit or current main. Per-file SHA-256 values are retained from upstream manifest but not recomputed in this pass. Excludes binaries, model/filter assets, external dictionaries and third-party dependency source; not a complete/buildable mirror.
 - **RAG-Anything v1.4.1** — MIT, upstream commit `0ef67b4d476b66407a03a39e5b17e756fc0aef29`. Imported 17 selected source/docs/tests and retained the previously archived `raganything/parser.py`; all 18 source file Git blob SHA-1s and MIT LICENSE SHA-1 independently matched the exact upstream commit. UPSTREAM-MANIFEST now enumerates all verified files.
 - Both are research/reference-only, `ship=false`, excluded from runtime; no dependencies/model weights installed. Whole selected archive SHA-256 remains OPEN, recorded as null in provenance; per-file Git blob evidence is exact.
+
+
+## 2026-11-08 — PR #131/#125 branch research reconciliation
+
+- Preserved 17 non-duplicate research/spec snapshots and their 103 unique candidate URL refs in INTEL. These documents have a historical snapshot banner and a current main/PR boundary; old status claims are not promoted to live facts.
+- `AGENT_RESEARCH_CATALOG_RU.md` was not copied as a parallel source register because all 88 URLs are already in INTEL. Source candidate table links to the origin research docs and marks current-version review pending.
+- The Graphify UI Surface bridge is CI-only, deterministic and source-provenanced; no UI runtime code or model calls are introduced by the bridge.
+- SECURITY.md is now available for responsible disclosure. Jekyll title/description branding is updated while retaining `jekyll-github-metadata` and source archive exclusions.

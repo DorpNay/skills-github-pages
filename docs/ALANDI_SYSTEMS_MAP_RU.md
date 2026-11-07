@@ -110,3 +110,12 @@ GitHub Pages is the public client release surface. The Tunnel, VPS, Ollama runti
 | Integrations | No external connectors currently registered/connected; no fake switches | Unavailable until real registry, status, permission and action handler exist | Functions IA |
 
 **Guard:** this crosswalk does not upgrade any system maturity from archived upstream source code. Source snapshots under docs/upstream-archive remain research-only, ship=false.
+
+
+## Repository-orientation / Graphify bridge — 2026-11-08
+
+| Technique | Role | Maturity/evidence | Guard |
+|---|---|---|---|
+| Graphify code-only architecture pilot | Deterministic AST/source graph, focused queries and coverage artifacts | Existing CI workflow; source-only, no model calls | Generated graph is evidence for navigation, not runtime truth or full behavioral coverage |
+| Graphify UI Surface bridge | CSS/DOM/JS selector relationships with file/line provenance, stable IDs and confidence scores | Implemented in PR #169 candidate; `scripts/graphify_ui_surface.py`, unittest and pinned tinycss2 CI integration; exact workflow run pending | Inferred selector edges are candidate links, not computed-style assertions; browser E2E remains authoritative |
+| Durable orientation contract | OLEDUE → ORIENTER → PROJECT_STATE/snapshot → VOLLEY_LOG; one active writer and parallel read-only discovery | SPECIFIED/maintained in canonical docs; exact freshness sentinel gates queue/sha consistency | Live GitHub is truth; every material change records exact SHA/checks and next step |

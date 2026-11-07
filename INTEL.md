@@ -563,3 +563,114 @@ This pass covers the owner-supplied names. Revisions below are exact upstream br
 ### Artifact acquisition checkpoint — pinned source snapshots (2026-11-08)
 
 Owner-authorized, license/provenance-gated source import in PR #169: Memvid v2.0.140 curated 22-file subset under Apache-2.0 (upstream commit e18fe55494379e2ab7397ce03655e8abbc5e0c31) and RAG-Anything v1.4.1 selected 18 source files plus exact MIT license (upstream commit 0ef67b4d476b66407a03a39e5b17e756fc0aef29). Each selected source file Git blob SHA-1 was matched to its pinned upstream commit; Memvid upstream per-file SHA-256 values retained but not recomputed. The snapshots are incomplete research references, not buildable mirrors; transitive libraries/models/datasets are separately licensed. `ship=false`, no runtime dependency/model installed, no deployment. Whole selected archive SHA-256 remains OPEN.
+
+
+## PR #131 / #125 source intake — 2026-11-08 (candidate batch; not yet current-version reviewed)
+
+The following 103 distinct URL references were absent from the existing INTEL register and were found in the preserved research/spec snapshots from PR #131 and PR #125. They are retained for source-by-source thematic review; source presence is not endorsement/adoption. See the linked canonical research documents under `docs/`. Review in 8–15 source batches, record exact version/license/provenance and baseline comparisons before adoption.
+
+| URL | Origin research document | Review status |
+|---|---|---|
+| `https://ai.google.dev/gemini-api/docs/veo` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://ai.google.dev/gemma/docs/core/model_card_3` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://developer.chrome.com/docs/capabilities/web-apis/file-system-access` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md, LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://developer.mozilla.org/en-US/docs/Web/API/FileSystemFileHandle` | LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.cloud.google.com/vertex-ai/generative-ai/docs/video/generate-videos-from-text` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.comfy.org/api-reference/v2/jobs/job-status-the-polling-workhorse` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.comfy.org/api-reference/v2/jobs/request-cancellation` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.comfy.org/api-reference/v2/jobs/submit-a-workflow-for-execution` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.dev.runwayml.com/llms.txt` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.github.com/en/code-security/getting-started/quickstart-for-securing-your-repository` | REPOSITORY_HYGIENE_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reference/managing-and-standardizing-pull-requests` | REPOSITORY_HYGIENE_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches` | REPOSITORY_HYGIENE_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets` | FIRST_FREE_LAUNCH_BACKLOG_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets` | FIRST_FREE_LAUNCH_BACKLOG_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.github.com/en/repositories/creating-and-managing-repositories/best-practices-for-repositories` | REPOSITORY_HYGIENE_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners` | REPOSITORY_HYGIENE_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.letta.com/v1-sdk/memory/archival-memory/index.md` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.letta.com/v1-sdk/memory/memory-blocks/index.md` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.livekit.io/agents/logic/turns/vad/` | FIRST_FREE_LAUNCH_BACKLOG_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.mistral.ai/models/ministral-3-3b-25-12` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.ollama.com/api/tags` | FIRST_FREE_LAUNCH_BACKLOG_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.openhands.dev/openhands/usage/sandboxes/overview` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.openhands.dev/openhands/usage/sandboxes/process` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.openhands.dev/sdk/guides/agent-server/docker-sandbox` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.openviking.ai/en/getting-started/02-quickstart` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://fastapi.tiangolo.com/reference/security/` | FIRST_FREE_LAUNCH_BACKLOG_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://ffmpeg.org/` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/a2aproject/A2A` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/AIEGOBOT/agent-audio` | LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/AnotiaWang/deep-research-web-ui` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/cedar-policy/cedar` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/Comfy-Org/ComfyUI` | LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md, LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/Comfy-Org/workflow_templates` | LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/crewAIInc/crewAI` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/dbos-inc/dbos-transact` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/docling-project/docling` | LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md, VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/docling-project/docling/blob/main/LICENSE` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/DorpNay/skills-github-pages/blob/main/gateway/app.py` | OUTPUT_LIMITS_AND_AGENT_ORCHESTRATION_AUDIT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/DorpNay/skills-github-pages/blob/main/gateway/routing.py` | OUTPUT_LIMITS_AND_AGENT_ORCHESTRATION_AUDIT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/DorpNay/skills-github-pages/blob/main/gateway/tests/test_app.py` | OUTPUT_LIMITS_AND_AGENT_ORCHESTRATION_AUDIT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/DorpNay/skills-github-pages/blob/main/gateway/tests/test_document_extraction.py` | OUTPUT_LIMITS_AND_AGENT_ORCHESTRATION_AUDIT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/DorpNay/skills-github-pages/blob/main/index.md` | OUTPUT_LIMITS_AND_AGENT_ORCHESTRATION_AUDIT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/DorpNay/skills-github-pages/blob/main/tests/e2e/document-attachments.spec.mjs` | OUTPUT_LIMITS_AND_AGENT_ORCHESTRATION_AUDIT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/DorpNay/skills-github-pages/issues/111` | FIRST_FREE_LAUNCH_BACKLOG_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/firecracker-microvm/firecracker` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/ggerganov/whisper.cpp` | VOICE_IMPLEMENTATION_PLAN_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/google/gvisor` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/hatchet-dev/hatchet` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/jgm/pandoc` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/khoj-ai/khoj` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/langchain-ai/open_deep_research` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/LearningCircuit/local-deep-research` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/letta-ai/letta` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/mem0ai/mem0` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/meta-llama/llama-models/blob/main/models/llama3_2/MODEL_CARD.md` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/microsoft/markitdown/blob/main/LICENSE` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/microsoft/semantic-kernel` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/modelcontextprotocol/registry` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/nats-io/nats-server` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/NVIDIA/garak` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/open-policy-agent/OPA` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/promptfoo/promptfoo` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/pydantic/pydantic-ai` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/PyThaiNLP/pythainlp/blob/dev/LICENSE` | VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/restatedev/restate` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/samsgates/doc-parse` | LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/UKGovernmentBEIS/inspect_ai` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/unicode-org/icu/blob/main/LICENSE` | VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/Unstructured-IO/unstructured` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/VERT-sh/VERT` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/VERT-sh/VERT/blob/main/docs/FAQ.md` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/VERT-sh/VERT/blob/main/docs/GETTING_STARTED.md` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/VERT-sh/VERT/blob/main/docs/VIDEO_CONVERSION.md` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/VERT-sh/VERT/blob/main/LICENSE` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/VERT-sh/VERT/blob/main/README.md` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/VERT-sh/vertd` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/VERT-sh/vertd/blob/main/LICENSE` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/Wan-Video/Wan2.2` | LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/google/functiongemma-270m-it` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/google/gemma-4-E2B-it` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/google/gemma-4-E4B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/HuggingFaceTB/SmolLM2-1.7B-Instruct` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/HuggingFaceTB/SmolLM3-3B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/ibm-granite/granite-3.3-2b-instruct` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/ibm-granite/granite-4.2-3b` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/LiquidAI/LFM2.5-1.2B-Instruct` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/microsoft/Phi-4-mini-instruct` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/openbmb/MiniCPM5-2B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/Qwen/Qwen2.5-Coder-1.5B-Instruct` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/Qwen/Qwen3-0.6B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/Qwen/Qwen3-1.7B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/Qwen/Qwen3.5-0.8B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/Qwen/Qwen3.5-2B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/Qwen/Qwen3.5-4B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/tiiuae/Falcon-H1-1.5B-Instruct` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://microsoft.github.io/graphrag/query/overview/` | FIRST_FREE_LAUNCH_BACKLOG_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://openvoiceindex.com/` | LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://playwright.dev/docs/browsers` | SOURCE_SELECTION_AND_AUTONOMY_METHOD_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://playwright.dev/docs/ci` | SOURCE_SELECTION_AND_AUTONOMY_METHOD_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://stability.ai/license` | LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://web.dev/articles/storage-for-the-web` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://www.libreoffice.org/` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |

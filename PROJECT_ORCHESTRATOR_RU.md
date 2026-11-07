@@ -73,3 +73,11 @@ For every newly stated owner goal:
 - `docs/AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md` — Skill Factory / Agent Builder lifecycle, SPECIFIED only.
 - `docs/DEEP_RESEARCH_2_CURRENT_STATE_AUDIT_RU.md` — historical code audit plus 2026-11-08 owner-directed current delta.
 - `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` — research scope, evidence, acceptance and deferred runtime contract.
+
+
+### Preserved research/spec snapshots from PR #131 and #125 (2026-11-08)
+- Agent/runtime: `docs/DEEP_AGENT_WORKFORCE_RESEARCH_2026-10-31_RU.md`, `docs/AGENT_MODEL_BAKEOFF_RU.md`, `docs/AGENT_ORCHESTRATION_RESEARCH_RU.md`, `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` (SPECIFIED/FUTURE, not independent runtime).
+- Deep Research: `docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md`, `docs/DEEP_RESEARCH_2_CURRENT_STATE_AUDIT_RU.md`, `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` (current menu boundary vs 2.0 roadmap is explicit).
+- Source/media/voice: `docs/SOURCE_SELECTION_AND_AUTONOMY_METHOD_RU.md`, `docs/LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md`, `docs/VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md`, `docs/LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md`, `docs/VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md`, `docs/VOICE_2_RESEARCH_RU.md`, `docs/VOICE_IMPLEMENTATION_PLAN_RU.md`.
+- Budget/governance/hygiene snapshots: `docs/OUTPUT_LIMITS_AND_AGENT_ORCHESTRATION_AUDIT_2026-10-31_RU.md`, `docs/WORKSTREAM_GOVERNANCE_RU.md`, `docs/REPOSITORY_HYGIENE_RU.md`, `docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`, `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md`. Historical backlog snapshots are not canonical active queues; current owner tasks remain in MASTER_TASK_REGISTRY.
+- Candidate URL intake from these snapshots is indexed once in `INTEL.md` (103 new refs; recheck pending). The 88-ref PR #125 catalog was not duplicated.

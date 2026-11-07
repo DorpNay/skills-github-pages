@@ -140,3 +140,12 @@
 - A Skill is inert instructions/resources, not credentials or a policy grant. Import/preview does not execute scripts; provenance/license, prompt injection, secrets, path traversal, executable/dependency inventory, version/hash and eval review precede admission.
 - Binding a Skill to a worker pins a specific version and minimal excerpts; Skill instructions cannot widen tool allowlists, bypass approvals, increase budgets or reveal credentials.
 - Blueprint-only state may be edited/saved; it must not display a Run/worker status unless an independently permissioned, traced, cancellable and eval-gated runtime exists.
+
+
+## 2026-11-08 — Graphify UI Surface bridge (CI-only)
+
+**Status: IMPLEMENTED IN PR #169 branch / exact Graphify workflow verification pending.** `scripts/graphify_ui_surface.py` adds deterministic CSS selector, DOM ID/class and JavaScript selector/mutation relationships to the Graphify JSON graph. It uses stable SHA-256-derived node IDs, source-file/line provenance, `tinycss2==1.4.0` pinned in the workflow, and explicit `EXTRACTED` vs `INFERRED` confidence. Exact simple-selector matches score 0.65; token-overlap candidates score 0.25; class mutation edges score 0.35. The graph labels are candidates, not proof of runtime/computed style. Unit tests cover deterministic relations, provenance, confidence bounds and selector mismatches. The Graphify workflow runs the unit test before graph extraction and executes the bridge only on the disposable tracked-file staging graph; script/test are excluded from the graph input itself.
+
+## 2026-11-08 — research intake disposition
+
+The PR #131/#125 research-doc sweep added 103 distinct URL refs to `INTEL.md` as **prior-research candidates / current upstream recheck pending**. They are not promoted to adopted techniques. Source admission still requires current version, exact upstream pin, license/provenance, security and hardware/storage fit, measurable baseline, reproducible evaluation and rollback. The single-source catalog policy is preserved; the duplicate 88-URL `AGENT_RESEARCH_CATALOG_RU.md` was not copied as a second register.
