@@ -192,6 +192,8 @@ test('canceling private-to-shared promotion keeps the fact private', async ({ pa
   await page.reload();
 
   await page.evaluate(() => {
+    const outer = document.getElementById('memoryPanelDisclosure');
+    if (outer && !outer.open) outer.open = true;
     document.getElementById('sidebar')?.classList.remove('-translate-x-full');
     const projectDetails = document.getElementById('projectManagerDetails');
     const memoryDetails = document.getElementById('memoryToolsDetails');
