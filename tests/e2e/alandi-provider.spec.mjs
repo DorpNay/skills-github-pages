@@ -15,6 +15,9 @@ test.beforeEach(async ({ page }) => {
 test('aServi private gateway route works, stays local, and exposes cache status', async ({ page }) => {
   const chatPayloads = [];
   const cloudChatRequests = [];
+  await page.route('https://alandi.example.test/healthz', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' })
+  }));
   await page.route('https://alandi.example.test/**', async route => {
     const request = route.request();
     const origin = request.headers().origin || 'https://dorpnay.github.io';
@@ -36,7 +39,7 @@ test('aServi private gateway route works, stays local, and exposes cache status'
     }
     if (request.url().includes('/v1/chat/completions')) {
       const payload = request.postDataJSON();
-      chatPayloads.push(payload);
+      if (payload.messages?.at(-1)?.content !== 'Reply with exactly OK.') chatPayloads.push(payload);
       return route.fulfill({
         status: 200,
         headers: { ...corsHeaders, 'x-ai-cache': 'MISS', 'cache-control': 'no-store' },
@@ -65,7 +68,8 @@ test('aServi private gateway route works, stays local, and exposes cache status'
   await page.locator('#cloudBaseUrl').fill('https://alandi.example.test/v1');
   await page.locator('#cloudModel').fill('qwen3.5:4b');
   await page.locator('#cloudApiKey').fill('e2e-alandi-placeholder-key-not-a-secret-0123456789');
-  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="connect-alandi-aservi"]').click();
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'connected');
   await page.locator('[data-action="close-settings"]').click();
   await chooseSearchMode(page, 'offline');
   // Enable fallback only after startup to avoid triggering unrelated model-catalog probes.
@@ -123,7 +127,7 @@ test('third-party provider fallback never switches to aServi', async ({ page }) 
   await expect(page.locator('#providerPreset')).toHaveValue('gemini');
   await chooseSearchMode(page, 'offline');
   const failedGeminiRequest = page.waitForResponse(response =>
-    response.url().includes('generativelanguage.googleapis.com') && /generateContent|streamGenerateContent/.test(response.url())
+    response.url().includes('generativelanguage.googleapis.com') && /generateContent|streamGenerateContent|chat\/completions/.test(response.url())
   );
   await page.locator('#userInput').fill('Проверь запрет автоматического переключения на aServi.');
   await page.locator('#sendBtn').click();
