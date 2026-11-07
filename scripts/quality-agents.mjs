@@ -75,7 +75,11 @@ const suites = {
       includes("indexedDB.open('AI_Agent_DB_v87', 2)", 'Memory schema migration must create a separate shared store without deleting legacy private notes.');
       includes("database.createObjectStore('sharedMemory')", 'Shared memory must use a distinct IndexedDB object store.');
       includes("const privateMemories=selectedProviderForMemory==='alandi'?await MemoryDB.getAll():[]", 'Private notes must only be read for the local aLandi route.');
-      includes("if((safeGet(STORAGE.provider)||'alandi')!=='alandi')return [];", 'Server graph memory must never be included in third-party prompts.');
+      assert.equal(source.includes('serverMemoryDetails'), false, 'The retired experimental server-memory UI must be fully removed.');
+      assert.equal(source.includes('getServerProjectMemories'), false, 'The retired server graph-memory feature must not remain callable.');
+      assert.equal(source.includes('serverProjectMemoryEnabled'), false, 'The retired server-memory opt-in state must not remain in chat contracts.');
+      includes("const privateMemories=selectedProviderForMemory==='alandi'?await MemoryDB.getAll():[]", 'Personal notes may only be read for the first-party aLandi route.');
+      includes("if(containsPrivateMemory)candidates=candidates.filter(candidate=>candidate.provider==='alandi')", 'Requests carrying personal memory must never fall back to a third-party provider.');
       includes("let candidates=getApiCandidates(preferredModel)", 'Provider candidate routing must be filterable before a request is sent.');
       includes("if(containsPrivateMemory)candidates=candidates.filter(candidate=>candidate.provider==='alandi')", 'A request carrying private memory must never fall back to a third-party provider.');
       includes("activeChatForPrivacy?.privateMemoryUsed && selectedProvider!=='alandi'", 'Chats that consumed private memory must not later upload their history to a third-party provider.');
