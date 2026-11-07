@@ -5552,7 +5552,7 @@ function preserveUnreadableProjects(rawText) {
           chatRecoveryBackupKey = backupKeys[0] || '';
         } catch (_) {}
       }
-      if (chatRecoveryBackupKey) $('recoveryBackupButton').classList.remove('hidden');
+      if (chatRecoveryBackupKey || chatStorageCorruptNotBackedUp) $('recoveryBackupButton').classList.remove('hidden');
       if (projectRecoveryBackupKey || projectStorageCorruptNotBackedUp) $('projectRecoveryBackupButton').classList.remove('hidden');
       if (projectRecoveryWarning) showToast(projectStorageCorruptNotBackedUp ? 'Повреждённые проекты не удалось сохранить в резервную копию; исходные данные не будут перезаписаны. Освободите место и скачайте доступные данные.' : 'Данные проектов повреждены; исходная копия сохранена локально. Скачайте резервную копию перед продолжением.', 'error');
       if (chatRecoveryWarning) showToast(chatStorageCorruptNotBackedUp
