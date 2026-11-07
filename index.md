@@ -3552,7 +3552,7 @@ permalink: /
       renderAgentConfiguration();
     }
     function openFunctionPanel(kind) {
-      $('functionsMenu').open = false;
+      const functionsMenu = $('functionsMenu'); if (functionsMenu) functionsMenu.open = false;
       const views = {
         agents: ['agentFunctionSettings','functionAgentsTitle','functionAgentsDescription'],
         skills: ['skillFunctionSettings','functionSkillsTitle','functionSkillsDescription'],
@@ -3571,13 +3571,13 @@ permalink: /
     }
     function closeFunctionPanel() {
       $('functionPanelModal').classList.add('hidden');
-      $('functionsMenuSummary')?.focus();
+
     }
     document.addEventListener('click', (event) => {
-      const toolbarMenus = ['searchModeMenu','functionsMenu','languageMenu'].map(id => $(id)).filter(menu => menu?.open);
+      const toolbarMenus = ['searchModeMenu','languageMenu'].map(id => $(id)).filter(menu => menu?.open);
       const chatMenus = [...document.querySelectorAll('.chat-row-menu[open]')];
       if (!toolbarMenus.length && !chatMenus.length) return;
-      if (event.target.closest('#searchModeMenu, #functionsMenu, #languageMenu, .chat-row-menu')) return;
+      if (event.target.closest('#searchModeMenu, #languageMenu, .chat-row-menu')) return;
       toolbarMenus.forEach(menu => { menu.open = false; });
       chatMenus.forEach(menu => { menu.open = false; });
       event.preventDefault();
@@ -5277,8 +5277,6 @@ permalink: /
         switch (action) {
           case 'set-language': applyUiLanguage(control.dataset.language);if($('languageMenu'))$('languageMenu').open=false;if($('languageMenuSidebar'))$('languageMenuSidebar').open=false;break;
           case 'select-search-mode': setSearchMode(control.dataset.searchMode);break;
-          case 'open-function-panel': openFunctionPanel(control.dataset.function);break;
-          case 'close-function-panel': closeFunctionPanel();break;
           case 'apply-skill-quiz': applySkillQuiz();break;
           case 'toggle-theme-cycle': toggleHomeTheme();break;
           case 'paste-provider-key': await pasteIntoField('apiKey');break;
