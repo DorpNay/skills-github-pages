@@ -302,16 +302,9 @@
 - [ ] Native iPhone Safari, keyboard, safe-area, screen-reader and touch verification remain manual gates.
 - [ ] Issue #111 remains open for owner-only ruleset, VPS/hardware, live gateway/model, RAG corpus, voice/device and sandbox gates. CI alone cannot close it.
 
-## Owner supersession — 2026-11-07
+## Owner override — 2026-11-07
 
-The following clarifications supersede older UI notes above where they conflict. The original checklist remains historical provenance; active UI acceptance is in `docs/V1_UI_FINALIZATION_RU.md` and task status remains in the Master Task Registry.
-
-- **aServi is a first-party mode, not a third-party provider.** The internal compatibility key `alandi` may remain in routing/storage, but must never appear in the third-party selector, including as a hidden option.
-- **Mode switching is manual.** Third-party fallback may move only among third-party providers; it must never fall back to aServi. Returning to aServi requires an explicit user action.
-- **Settings hierarchy:** separate collapsible sections for aServi, third-party providers, and additional settings. Opening aServi closes both other sections; opening either other section closes aServi. The third-party and additional sections may coexist open.
-- **Research Studio is retired.** No sidebar shortcut, modal, JS entrypoint, or renamed replacement.
-- **The visible Functions menu with Agents / Skills / Integrations was not owner-approved.** Do not expose or reintroduce it without a new explicit request.
-- **Sidebar order:** memory → projects → chats; no global project-settings button and no duplicate theme button in the sidebar. Per-project settings remain on that project's gear.
-- **Header controls:** theme and language are grouped in the header. Stop-generation remains available but must not be styled as an unsolicited red action.
-- **Publication is not accepted from CI alone.** Verify exact main SHA on the canonical public URL, then assert the expected UI markers and absence of retired elements. PR branch code is not live until merged and post-merge Pages deployment is verified.
-
+- [~] **Research Studio retired.** This supersedes the earlier historical note that kept it as a Thorough-mode helper. Remove the complete Research Studio product surface: sidebar/Functions/Thorough entrypoints, modal, UI handlers and obsolete copy. Do not restore it. PR #169 implements the removal; exact-head CI, merge and live Pages verification are pending.
+- [~] **The previous three-item Functions menu was not owner-approved.** PR #169 removes the visible menu rather than preserving placeholder actions. Do not restore the three entries or invent a replacement catalog. Rebuild only from an explicit owner-approved capability inventory; expose no fake marketplace.
+- [~] **First-party routing is separate.** aLandi aServi is a dedicated settings section, never a third-party provider option. aServi and third-party/additional sections follow the exclusivity rule; no silent auto-fallback between aServi and external providers. PR #169 implements this; exact-head verification is pending.
+- [~] **Stop control styling.** Retain the contextual ability to stop an active generation, but use a neutral compact control rather than a red persistent/floating button. PR #169 implements this; live verification is pending.
