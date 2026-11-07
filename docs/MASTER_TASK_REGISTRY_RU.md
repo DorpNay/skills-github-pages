@@ -855,6 +855,6 @@
 
 ## Owner override — 2026-11-07
 
-- [~] **UX-044 / Functions menu:** The previous three-item menu is not owner-approved and is removed by PR #169. Keep any replacement deferred until an explicit owner-approved capability inventory exists. Do not restore placeholders or a fake marketplace; when rebuilt, show only verified registered capabilities, status and permissions.
+- [~] **UX-044 / Functions menu (owner override 2026-11-08, D-022):** Restore only Agents/structured analysis (existing four-stage same-model pipeline), Deep Research (Thorough-mode shortcut), and Skills/task profile (instruction profile only). Integrations/connectors stay absent until real capability registry/status/permission contracts exist. Research Studio remains retired. PR #169 now carries the UI and focused E2E; exact-head gates must re-run.
 - [~] **Research Studio:** Owner retired the feature entirely; this supersedes older references that kept it as a Thorough-mode helper. PR #169 removes its UI surface; exact-head CI and live verification are pending.
 - [~] **Provider routing:** aLandi aServi is first-party and separate from the third-party provider selector; settings sections are mutually exclusive as specified and silent cross-provider fallback is forbidden. PR #169 implements; exact-head verification pending.
