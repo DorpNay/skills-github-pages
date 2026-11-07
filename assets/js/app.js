@@ -634,19 +634,19 @@ function restoreStorageValue(key, rawValue) {
         ? (isPinned ? 'Chat unpinned.' : 'Chat pinned.')
         : (isPinned ? 'Чат откреплён.' : 'Чат закреплён.'));
     }
-    function persistChats({ suppressWarning = true } = {}) {
+    function persistChats({ suppressWarning = true, suppressFeedback = false } = {}) {
       if (chatStorageCorruptNotBackedUp) {
-        showToast('Повреждённая история не была перезаписана: не удалось создать резервную копию. Освободите место в браузере и перезагрузите страницу.', 'error');
+        if (!suppressFeedback) showToast('Повреждённая история не была перезаписана: не удалось создать резервную копию. Освободите место в браузере и перезагрузите страницу.', 'error');
         return false;
       }
       let previousChatsRaw;
       try { previousChatsRaw = localStorage.getItem(STORAGE.chats); }
-      catch (error) { showToast('Не удалось прочитать прежнюю историю; запись отменена.', 'error'); return false; }
+      catch (error) { if (!suppressFeedback) showToast('Не удалось прочитать прежнюю историю; запись отменена.', 'error'); return false; }
       const savedChats = safeSet(STORAGE.chats, JSON.stringify(chats), { suppressWarning });
       const savedCurrent = savedChats && safeSet(STORAGE.current, currentChatId, { suppressWarning });
       if (!savedChats || !savedCurrent) {
-        if (savedChats && !restoreStorageValue(STORAGE.chats, previousChatsRaw)) showToast('Не удалось откатить частичную запись истории. Не очищай данные сайта; сначала экспортируй доступные данные.', 'error');
-        showToast('История не подтверждена браузерным хранилищем. Запись откатили там, где это удалось; сразу экспортируй чаты и проверь место/разрешения сайта.', 'error');
+        if (savedChats && !restoreStorageValue(STORAGE.chats, previousChatsRaw) && !suppressFeedback) showToast('Не удалось откатить частичную запись истории. Не очищай данные сайта; сначала экспортируй доступные данные.', 'error');
+        if (!suppressFeedback) showToast('История не подтверждена браузерным хранилищем. Запись откатили там, где это удалось; сразу экспортируй чаты и проверь место/разрешения сайта.', 'error');
         return false;
       }
       scheduleStorageHealthCheck();
@@ -1576,7 +1576,7 @@ function preserveUnreadableProjects(rawText) {
       try { previousProjectsRaw = localStorage.getItem(STORAGE.projects); }
       catch (error) { showToast('Не удалось прочитать прежние проекты; операция отменена.', 'error'); return false; }
       if (!persistProjects({ suppressWarning: true })) return false;
-      if (persistChats({ suppressWarning: true })) return true;
+      if (persistChats({ suppressWarning: true, suppressFeedback: true })) return true;
       if (!restoreStorageValue(STORAGE.projects, previousProjectsRaw)) showToast('Не удалось откатить запись проектов после ошибки истории. Проверь резервные копии и не очищай данные сайта.', 'error');
       return false;
     }
@@ -2597,7 +2597,7 @@ function preserveUnreadableProjects(rawText) {
         };
         Object.assign(activeChat, nextChatSettings);
         if (!VALID_SKILL_PRESETS.has(activeChat.skillPreset)) activeChat.skillPreset = 'auto';
-        if (!persistChats()) {
+        if (!persistChats({ suppressWarning: true, suppressFeedback: true })) {
           Object.assign(activeChat, previousChatSettings);
           const restored = rollbackProfileStorage();
           throw new Error(restored
