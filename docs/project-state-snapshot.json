@@ -167,7 +167,6 @@
     "main_provenance_run": null,
     "main_freshness_run": null,
     "main_graphify_run": 42372746441,
-    "open_prs": "5 open PRs excluding the state-refresh PR: #125, #131, #152, #154, #155",
     "owner_task": "PAGES-001 VERIFIED LIVE on exact main c4f23e03f563d03213eb87002863da630fc8b833 (Pages #42372745873, Quality #42372746360; canonical root and /landing/ exact SHA checks pass). UI §8.17 merged via PR #166 and is published; users find message size/line-height/contrast controls in the app's global gear/settings → Читаемость текста. Continue bounded reconciliation of stale PR #154 without weakening tests; preserve SRC-001 and all other register goals.",
     "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
     "pr131_exact_head_verified": false,

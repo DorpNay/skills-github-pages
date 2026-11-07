@@ -13,6 +13,9 @@
 - Owner upstream research is recorded in INTEL and OPEN_SOURCE_TRIAGE; research-only, no installs/downloads/runtime adoption.
 - Native iPhone Safari/VoiceOver and VPS/Tunnel/Ollama are not verified. PR #154 is stale/diverged and must be reconciled in bounded slices; do not merge as-is or weaken tests.
 
+- open PRs (5): #125, #131, #152, #154, #155.
+- open issues (1): #111.
+
 ## 1. Быстрый маршрут
 
 0. **Короткая точка входа:** корневой `ORIENTER.md`.
