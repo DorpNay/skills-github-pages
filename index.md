@@ -371,7 +371,8 @@ permalink: /
     .header-language-select { min-width:48px;min-height:44px;padding:0 5px;border:1px solid var(--ui-border);border-radius:10px;background:var(--ui-surface-raised);color:var(--ui-text);font-size:11px;font-weight:700;text-align:center; }
     .composer-stop:not(.hidden) { background:var(--ui-surface-raised)!important;color:var(--ui-text)!important;border:1px solid var(--ui-border)!important; }
     .composer-stop:not(.hidden):hover { background:var(--ui-tiffany-soft)!important;border-color:var(--ui-tiffany)!important;color:var(--ui-tiffany)!important; }
-    #modeToolbar [role="group"] > button,#modeToolbar .toolbar-menu > summary { min-height:44px; }
+    #modeToolbar [role="group"] > button,#modeToolbar .toolbar-menu > summary { min-height:38px;padding-block:.35rem; }
+    @media (max-width:768px) { #modeToolbar [role="group"] > button,#modeToolbar .toolbar-menu > summary { min-height:44px; } }
     @media (max-width:420px) { .header-preferences { gap:3px; } .header-language-select { min-width:44px;min-height:44px;padding:0 3px; } .brand-wordmark { font-size:16px; } .clock-face { width:50px;height:50px; } }
 
 
