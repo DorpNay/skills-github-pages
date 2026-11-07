@@ -22,7 +22,7 @@
 - [~] MENU-007 — `1ИÆИT10И` tickers, pause controls, reduced-motion CSS and non-runtime notes exist; E2E assertions are authored, but exact-head execution is pending.
 - [ ] MENU-008 — завершить mobile/keyboard/VoiceOver and duplicate-control review; RU/EN menu labels and initial Playwright assertions already exist.
 - [x] MENU-009 — supporting UX contract создан; source audit and remaining gaps синхронизированы с canonical UI checklist section 8.28.
-- [~] UI-ICON-001 — реализовать owner UI requirement 8.8: icon-first copy/open/speak message actions with accessible labels/tooltips and 44×44 hit area; retain copy/speak in full-message view, with speak unavailable for user messages. Implementation/test exists in PR branch feat/ui-message-actions-icon-first-20261107; exact-head Chromium/Quality acceptance is pending.
+- [x] UI-ICON-001 — owner UI requirement 8.8: icon-first copy/open/speak message actions with accessible labels/tooltips and 44×44 hit area; retain copy/speak in full-message view, with speak unavailable for user messages. Exact-head Quality #42349078380 passed (Jekyll, Chromium and all Quality sentinels) on implementation/test SHA 350c01513ec6dc147cd5b26e7b8e3bfa17a26d0e; status-only documentation follow-up SHA e41b1f40a0ea121a759bd0080ffc63dd2cde09c6 is awaiting recheck.
 
 ## B. Skill Factory и Agent Builder — PR #125 / PR #128
 
