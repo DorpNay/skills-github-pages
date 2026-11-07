@@ -2556,8 +2556,11 @@ test('Functions menu exposes truthful Agents, Deep Research and Skills panels wi
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const menu = page.locator('#functionsMenu');
+  const summary = page.locator('#functionsMenuSummary');
   await expect(menu).toBeVisible();
-  await page.locator('#functionsMenuSummary').click();
+  await summary.focus();
+  await page.keyboard.press('Enter');
+  await expect(menu).toHaveAttribute('open', '');
   await expect(menu.locator('.toolbar-menu-option')).toHaveCount(3);
   await expect(menu.locator('[data-function="agents"]')).toBeVisible();
   await expect(menu.locator('[data-function="research"]')).toBeVisible();
@@ -2565,6 +2568,24 @@ test('Functions menu exposes truthful Agents, Deep Research and Skills panels wi
   await expect(page.locator('[data-action="open-research-studio"]')).toHaveCount(0);
   await expect(page.locator('#researchStudioModal')).toHaveCount(0);
 
+  await page.setViewportSize({ width: 320, height: 740 });
+  for (const option of await menu.locator('.toolbar-menu-option').all()) {
+    const box = await option.boundingBox();
+    expect(box?.height || 0, 'Functions menu option should have a 44px mobile hit target').toBeGreaterThanOrEqual(44);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.setViewportSize({ width: 390, height: 844 });
+
+  await menu.locator('[data-function="agents"]').focus();
+  await page.keyboard.press('Enter');
+  const modal = page.locator('#functionPanelModal');
+  await expect(modal).toBeVisible();
+  await expect(page.locator('#agentFunctionSettings')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(modal).toBeHidden();
+  await expect(summary).toBeFocused();
+
+  await summary.click();
   await menu.locator('[data-function="research"]').click();
   const modal = page.locator('#functionPanelModal');
   await expect(modal).toBeVisible();
