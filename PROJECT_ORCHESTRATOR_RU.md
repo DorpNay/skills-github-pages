@@ -50,7 +50,7 @@ For every newly stated owner goal:
 
 ## Current owner priority override — 2026-11-07
 
-1. OLEDUE and principle/task-intake contract — captured in PR #156.
-2. Pages live publication — verified on main SHA d4a2fac093abff4a7d14c4826ec7445250dd5278: Pages deployment #42204178239 passed and cache-busted public root returned AI Mobile Agent v10.0; stale unparameterized web cache returned v9.0. PR #156 adds root-title live regression check.
-3. Promote owner UI §§8.1–8.17 and later interface/menu/panel/function/minimization requirements by coherent, accessible, exact-head-tested slices. PR #131 is a workbench, not a whole-branch merge.
+1. OLEDUE, aLandi N₂O principles and task-intake contract — implemented and merged in PR #156; ORIENT-002 fresh-session acceptance remains OPEN.
+2. Pages live publication — VERIFIED on main SHA d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c: Pages deployment #42349853247 passed and cache-busting public root returned AI Mobile Agent v10.0. The root-title regression guard was fixed in PR #158; exact-main Quality #42349853526 PASS on d83eea8, including the live root title guard and published-site Chromium smoke.
+3. UI §8.8 icon-first message actions — IMPLEMENTED, exact-head Quality #42349368043 and Graphify #42349368086 passed, merged in PR #157 at main SHA 40540f6d75a90877ff9cbec5bbfacb48ee6f775c. Continue the remaining §§8.1–8.17 and subsequent menus/panels/functions/minimization by bounded slices. PR #154 modular shell remains dirty/stale; selector repairs are underway but full Quality/Freshness and selective main reconciliation are still OPEN. PR #131 remains a workbench, not a whole-branch merge.
 4. Continue external-source groups, artifact acquisition after license/provenance review, bounded cleanup/optimization, and all remaining registry items without erasure or duplicate tracking.

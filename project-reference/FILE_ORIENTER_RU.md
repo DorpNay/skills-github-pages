@@ -4,18 +4,18 @@
 
 ## Контрольная точка — 2026-11-07 (GitHub live snapshot)
 
-- **main:** `d4a2fac093abff4a7d14c4826ec7445250dd5278` — source-archive commit after PR #153 orientation repair merged at `f323b6f339d454dad6e820a4074fa230acc7b6df`.
+- **main:** `d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c` — Pages live-version guard regex fix merged in PR #158.
 - **Последний функциональный checkpoint:** `a8afee45bb22654b220bffda857ab10c24641ef1` — PR #150 browser-storage recovery/atomic rollback.
 - **Main protections:** #147 cancellation-safe Gateway; #148 untrusted rendering/restricted Pyodide globals; #150 storage recovery/fail-closed rollback.
-- **Pages:** deployment #42204178239 SUCCESS and Quality #42204178841 SUCCESS on exact main d4a2fac. Cache-busting public URL fetch confirmed AI Mobile Agent v10.0; a plain web retrieval had stale cached v9.0. PR #156 adds a live root title guard.
-- **Freshness snapshot for PR #156:** open PRs (5): #125, #131, #152, #154, #155. open issues (1): #111. PR #156 itself is excluded by the checker. Full live queue also includes #156.
-- **#154:** modular UI shell promotion, head `796b5d54a7acb94b3d993dd4a662f721e9e2c902`, base `f323b6f...`; Quality #42193618745 failed (23 Chromium shard-4 selector timeouts; other three shards passed); Freshness #42193618668 failed on queue drift; Provenance/Graphify/Dead Code passed. Refresh live head/base before work.
-- **#155:** Draft roadmap/control-plane refinement; head `4e03d55d4d3c546ffe28bc61f4b0be23455333d9` at last read; Freshness/Provenance/Dead Code passed, Quality final status needs live recheck.
-- **#156:** owner priority reset + orchestrator + Pages guard; current mutable head/checks must be fetched live. Previous Freshness #42348613091 failed because snapshot main/queue stale.
-- **#131:** large Draft V2 workbench, diverged; selective slices only. **#152:** Draft Voice, stale base, keep separate. **#125:** FUTURE/HOLD.
-- **Owner direction:** first OLEDUE/principles/task intake, second Pages (now verified), third UI requirements §§8.1–8.17 and later menus/panels/functions/minimization, then resume every retained lower-priority registry task.
-- **Project catalog:** root `PROJECT_ORCHESTRATOR_RU.md` indexes principles, INTEL/external source catalogs, plans, decisions, task register, artifact preservation and evidence.
-- **Main owner task intake:** search existing ID in Master Registry and UI checklist; enrich or append one stable ID. Do not duplicate or silently drop requirements.
+- **Pages:** deployment #42349853247 SUCCESS on exact main d83eea8; cache-busting public root fetch returned AI Mobile Agent v10.0. Exact-main Quality #42349853526 (root title guard) is IN_PROGRESS. Earlier guard run #42349250430 failed from an over-escaped ERE; PR #158 fixed it and exact-head Quality #42349540173 passed.
+- **UI §8.8:** PR #157 merged at main SHA `40540f6d75a90877ff9cbec5bbfacb48ee6f775c`; exact Quality #42349368043 and Graphify #42349368086 PASS. Icon-first copy/open/speak, accessible names, 44×44 target and full-message copy/speak controls.
+- **Freshness snapshot for PR #159:** open PRs (5): #125, #131, #152, #154, #155. open issues (1): #111. PR #160 itself is excluded by the checker.
+- **#154:** modular shell workbench, base f323b6f stale and mergeable_state=dirty. Current head `6ca47522d7d6998916b1b01931c217d8b7e76c75`; Quality #42349173942 had shards 1–3 PASS and shard4 IN_PROGRESS at last read. Older Quality #42193618745 failed 23 tests/17 passed due stale selectors plus storage/error-copy and privacy-memory assertion issues. Freshness #42193618668 failed queue drift. Keep #147/#148/#150 and Pages guard; do not weaken failure-path tests.
+- **#155:** Draft roadmap/control-plane; last known head `4e03d55d4d3c546ffe28bc61f4b0be23455333d9`; Freshness/Provenance/Dead Code PASS, final Quality requires live recheck.
+- **#131:** large Draft V2 workbench, diverged; selective promotion only. **#152:** Draft Voice, stale base and old Quality failure, separate. **#125:** FUTURE/HOLD.
+- **Owner direction:** OLEDUE/principles/task intake merged #156 (ORIENT-002 fresh-session test OPEN); Pages v10.0 live verified with root guard fix merged #158 (exact main Quality pending); UI §8.8 merged #157; next promote remaining §§8.1–8.17 and subsequent menu/panel/function/minimization slices, starting with selective reconciliation of #154.
+- **Project catalog:** root `PROJECT_ORCHESTRATOR_RU.md` indexes principles, INTEL/source catalogs, plans, decisions, task register, artifact policy and evidence.
+- **Main owner task intake:** search existing ID in Master Registry/UI checklist; enrich or append one stable ID. Never duplicate or silently drop requirements.
 
 ## 1. Быстрый маршрут
 
