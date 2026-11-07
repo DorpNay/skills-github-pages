@@ -478,3 +478,10 @@ This pass covers the owner-supplied names. Revisions below are exact upstream br
 - **Do not promote by popularity or upstream claims:** MiroFish forecasts, Ponytail/img2threejs/Marker benchmark claims, and repo star counts are not aLandi eval evidence.
 - **License gates:** AGPL (DashBeam, SearXNG, MiroFish), GPL (Sound Center), separate model-weight terms (Datalab/Surya, PocketPal) and third-party CLI terms (HarnessRouter) need explicit legal/provenance decisions before code or artifact reuse.
 - **No automatic installation:** Skills and repos are untrusted inputs. Inspect scripts/hooks/network access, dependency manifests, permissions and licenses first; use pinned commits and isolated pilots.
+
+### GitHub Pages / Jekyll production baseline — 2026-11-07
+
+- GitHub's latest release for [actions/jekyll-build-pages](https://github.com/actions/jekyll-build-pages/releases) is still **v1.0.13** (published 2024-08-06); tag `v1` resolves to commit `44a6e6beabd48582f863aeeb6cb2151cc1716697`. No newer upstream release was found on 2026-11-07.
+- Production main deployment #42362476364 is the GitHub-managed dynamic workflow `dynamic/pages/pages-build-deployment`, not a repository-authored deploy workflow. Its jobs explicitly pulled `ghcr.io/actions/jekyll-build-pages:v1.0.13`, passed **Build with Jekyll**, uploaded the artifact and passed **Deploy to GitHub Pages** on main `69645ff357067f3656aa77cc67336ff423c26944`.
+- The separate [actions/deploy-pages](https://github.com/actions/deploy-pages/releases) latest release is v5.0.1 (2026-09-01), but this repository's current production path is GitHub-managed dynamic Pages; do not add a parallel deploy workflow or replace the working path without evidence.
+- Live cache-busting fetch returned **AI Mobile Agent v10.0** for both root and `/landing/`. The current main `index.md` blob `227223d78bb3be1d07422767a29a5ec3fd8df42a` does **not** contain `ai_ui_readability_v1` or `readingFontSize`; PR #166 branch blob `0220270b86e17e719310933678bbbdf52551486b` contains both. Therefore Pages is publishing current main correctly, but the specific §8.17 change is not on main because PR #166 is still open.
