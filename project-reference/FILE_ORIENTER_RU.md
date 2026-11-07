@@ -2,19 +2,17 @@
 
 > Подробный индекс навигации. Это не источник live-статуса и не обязательный стартовый пакет. Для `oledue` сначала читай корневой OLEDUE.md, затем выполняй один batched live GitHub read. Используй этот файл только для поиска конкретного пути.
 
-## Контрольная точка — 2026-11-08 (live main)
+## Контрольная точка — 2026-11-08 (live main / PR queue reconciled)
 
-- Current main SHA: `c4f23e03f563d03213eb87002863da630fc8b833`.
-- GitHub Pages deployment #42372745873 SUCCESS on exact main; official GitHub-managed Pages path used `ghcr.io/actions/jekyll-build-pages:v1.0.13`; Build with Jekyll, artifact upload and Deploy all passed.
-- Exact-main Quality #42372746360 SUCCESS: 116 Chromium app tests, published root smoke 1/1, landing Chromium 8/8, exact source SHA verified on both ordinary canonical public URLs (root and `/landing/`).
-- Graphify run #42372746441 SUCCESS on exact main.
-- PR #166 §8.17 merged at `c4f23e03f563d03213eb87002863da630fc8b833`. Root app settings now include message font size, line spacing and standard/high contrast; access via global gear/settings → “Читаемость текста”. PR #167 merged at `3cee60c7a72decee1d715d8a68c0c49539e17c58` and added exact build-revision metadata plus canonical URL deploy gates and upstream source research.
-- Open PRs: #125, #131, #152, #154, #155, #168, #169. Open issue: #111.
-- Source inventory: 310 distinct URL references / 183 GitHub repositories in `INTEL.md`. The 2026-11-08 batch added evidence-backed candidates/techniques; no model weights or third-party runtime was downloaded/installed.
-- PR #169 is the active main-based integration slice (current head resolved live from GitHub, base c4f); explicit aServi connect action and provider-mode isolation are added, alongside sidebar cleanup, Research Studio/Functions UI retirement, server-memory graph retirement, tests and the new systems/agent/source map. Last recorded checkpoint before this final verification commit: `53d3103546901231c6dc2953bf2c88c64c7b38f6`. Checks on that exact head: Gateway #42398736764 pending; Graphify #42398736820 pending; Freshness #42398736835 queued; Dead Code #42398736761 in progress; Provenance #42398736766 in progress; Quality #42398736879 pending. Earlier Graphify #42398472267 passed with vendor archives excluded. PR is not merged or published. PR #168/#171 file names overlap #169 but contents differ; unique diffs still need reconciliation. PR #154 is stale/diverged and not the active baseline. Native iPhone Safari/VoiceOver and VPS/Tunnel/Ollama remain unverified.
-
-- open PRs (7): #125, #131, #152, #154, #155, #168, #171.
-- open issues (1): #111.
+- Main remains `c4f23e03f563d03213eb87002863da630fc8b833`; exact-main Pages #42372745873 SUCCESS, Quality #42372746360 SUCCESS (116 app Chromium, root smoke 1/1, landing 8/8 and canonical URL SHA checks), Graphify #42372746441 PASS.
+- PR #169 is the only active implementation lane, base c4f23e0. Last code/test checkpoint `2d816fb066d68bd58da226abf25c4332c0306085`; state/orientation records are being refreshed after PR queue cleanup, so re-fetch the live branch HEAD and all exact-head gates before merging. At 2d816: Gateway #42401796690 PASS, Graphify #42401796661 PASS, Freshness #42401796658 PASS before closures (queue needs rerun), Provenance #42401796829 PASS, Dead Code #42401796716 PASS, Quality #42401796689 was IN_PROGRESS. A syntax defect in an E2E assertion was found by Quality on the preceding head and corrected in commit 2d816; check latest Quality logs and final exact SHA.
+- Owner-approved UI contract on #169: Agents/structured analysis (four-stage same-model pipeline), Deep Research via Thorough/tool budget, Skills/task profile (instructions only); no placeholder Integrations. Research Studio is retired. Modal blur + clean close and provider settings exclusivity have targeted E2E assertions.
+- **Reconciled closed PRs:** #172 (obsolete Research Studio blur test, Functions modal blur acceptance preserved), #171 (older owner directive removed Functions; newest request supersedes; aServi route ideas preserved), #168 (state sync superseded by fresher #169 snapshot). Their PR bodies explain dispositions; no merges.
+- **Open queue including active:** #125, #131, #152, #154, #155, #169. Issue #111 owner-controlled. #125 is FUTURE/DO NOT MERGE; #131 V2 workbench; #152 draft voice; #154 stale/diverged V2; #155 draft roadmap/archive. File-by-file selective reconciliation only.
+- `INTEL.md`: 310 distinct URL refs / 183 GitHub repositories; not all reviewed. The 2026-11-08 source tranche on durable orchestration, code graph navigation, exact-head CI and Pages publication is recorded in INTEL/TECHNIQUE_REGISTER; no runtime engine/model/dependency installed.
+- Systems inventory `docs/ALANDI_SYSTEMS_MAP_RU.md`: 18 systems and subsystem methods/maturity; map is a navigation/contract artifact, not evidence all listed functionality is verified. Detailed map `docs/ALANDI_ARCHITECTURE_MAP_RU.md`.
+- Main-only delivery contract, single register and per-step durable Volley log are encoded in AGENTS/OLEDUE/ORIENTER and the owner addendum. Exact latest SHA/check IDs must be re-fetched live; docs here are checkpoint context.
+- Still unverified: native iPhone Safari/VoiceOver, physical keyboard, visual inspection, VPS/Tunnel/Ollama, credentialed provider runtime, target hardware/model benchmarks.
 
 ## 1. Быстрый маршрут
 
