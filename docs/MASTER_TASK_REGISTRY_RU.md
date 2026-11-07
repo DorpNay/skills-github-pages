@@ -227,7 +227,7 @@
 - [ ] **LAUNCH-131** (строка 131; Ручные/owner gates): Valid/invalid Bearer key, allowlisted model, completion, SSE, cache HIT/BYPASS, timeout and reboot tested.
 - [ ] **LAUNCH-132** (строка 132; Ручные/owner gates): No prompt, user file/media body, secret or private memory in logs/traces/artifacts by default.
 - [ ] **LAUNCH-133** (строка 133; Ручные/owner gates): Owner has confirmed whether the first deployment is personal/limited access; never imply public multi-user auth.
-- [ ] **LAUNCH-217** (строка 217; Порядок после PR #121/#122): Проверить post-merge Pages deployment и опубликованные root/`landing/` URL на фактическом merge commit.
+> **LAUNCH-217 source cross-link:** (строка 217; Порядок после PR #121/#122): Проверить post-merge Pages deployment и опубликованные root/`landing/` URL на фактическом merge commit. Canonical task: `LAUNCH-122`; preserve this source reference but do not count it as a second task.
 - [ ] **LAUNCH-218** (строка 218; Порядок после PR #121/#122): Завершить visual screenshot-review, native iPhone Safari, keyboard/safe-area, VoiceOver и touch checks.
 - [ ] **LAUNCH-219** (строка 219; Порядок после PR #121/#122): Закрыть только оставшиеся polish/security/reliability задачи внутри текущего стека; не добавлять новые продуктовые функции в первый лендинг.
 - [ ] **LAUNCH-220** (строка 220; Порядок после PR #121/#122): Owner gates issue #111: main ruleset, VPS/Tunnel/Ollama, provider credentials, hardware/model benchmark, RAG corpus, voice/device, sandbox и OAuth. Закрывать только после фактического evidence.
@@ -248,14 +248,14 @@
 - [ ] **LAUNCH-256** (строка 256; P1 — internal notebook / Knowledge-to-Skill): **P1-17. Safe ingestion:** MIME sniffing, archive/path traversal defense, XXE/bomb limits, parser timeout, temp cleanup, invisible Unicode scan, prompt injection scan and no automatic external provider fallback.
 - [ ] **LAUNCH-269** (строка 269; 8. Остаток landing/app polish из актуального main): Скриншоты и визуальная проверка landing на 320/360/390/768/1024/1440 px; hero, карточки, CTA, spacing, contrast, footer.
 - [ ] **LAUNCH-270** (строка 270; 8. Остаток landing/app polish из актуального main): Keyboard-only и screen-reader проверка трёх раскрываемых roadmap секций и pause controls.
-- [ ] **LAUNCH-271** (строка 271; 8. Остаток landing/app polish из актуального main): Published Pages smoke после merge; canonical, ссылки и реальный deployment.
+> **LAUNCH-271 source cross-link:** (строка 271; 8. Остаток landing/app polish из актуального main): Published Pages smoke после merge; canonical, ссылки и реальный deployment. Canonical task: `LAUNCH-122`; preserve this source reference but do not count it as a second task.
 - [ ] **LAUNCH-272** (строка 272; 8. Остаток landing/app polish из актуального main): App screenshot pass desktop/mobile; typography, contrast, spacing, empty/error states, RU/EN, light/dark.
 - [ ] **LAUNCH-273** (строка 273; 8. Остаток landing/app polish из актуального main): Все composer popovers на краях viewport, коротком viewport, с клавиатурой и nested scroll.
 - [ ] **LAUNCH-274** (строка 274; 8. Остаток landing/app polish из актуального main): Dialog Escape/focus trap/return/scroll lock/background inert; sticky Settings actions.
 - [ ] **LAUNCH-275** (строка 275; 8. Остаток landing/app polish из актуального main): Проверка дублирования chat import/export и project bundle actions.
 - [ ] **LAUNCH-276** (строка 276; 8. Остаток landing/app polish из актуального main): Long names, large lists, keyboard navigation, 44px touch targets.
 - [ ] **LAUNCH-277** (строка 277; 8. Остаток landing/app polish из актуального main): Functional menu отражает только реально зарегистрированные skills/agents/connectors and permissions.
-- [ ] **LAUNCH-278** (строка 278; 8. Остаток landing/app polish из актуального main): Native iPhone Safari, VoiceOver, safe-area, keyboard, rotation and touch cancellation — owner gate.
+> **LAUNCH-278 source cross-link:** (строка 278; 8. Остаток landing/app polish из актуального main): Native iPhone Safari, VoiceOver, safe-area, keyboard, rotation and touch cancellation — owner gate. Canonical task: `LAUNCH-126`; preserve this source reference but do not count it as a second task.
 - [ ] **LAUNCH-279** (строка 279; 8. Остаток landing/app polish из актуального main): Keep Native Popover API/CSS Anchor Positioning progressive enhancement only; preserve JS fallback.
 
 ### V1 — Канонический чек-лист V1 UI
