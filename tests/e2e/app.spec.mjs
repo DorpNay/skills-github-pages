@@ -2257,7 +2257,7 @@ test('clear history preserves the chat and other project data', async ({ page })
       memory: [], createdAt: '', updatedAt: ''
     });
     const chat = (id, title, projectId, sentinel) => ({
-      id, title, projectId, projectMemoryEnabled: false
+      id, title, projectId, projectMemoryEnabled: false,
       messages: [{ role: 'user', content: sentinel }]
     });
     localStorage.setItem('ai_projects_v1', JSON.stringify([
