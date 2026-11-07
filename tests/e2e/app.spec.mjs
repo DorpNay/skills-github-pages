@@ -2516,16 +2516,33 @@ test('mobile messages expose full text and retain a jump-to-latest control', asy
   await expect(page.locator('#chatBox [data-action="clear-chat"]')).toHaveCount(0);
   await expect(page.locator('#chatBox [data-action="copy-message"]')).toHaveCount(2);
   await expect(page.locator('#chatBox [data-action="view-message"]')).toHaveCount(2);
+  await expect(page.locator('#chatBox [data-action="speak-message"]')).toHaveCount(1);
+  await expect(page.locator('#chatBox [data-action="copy-message"]').last()).toHaveAccessibleName('Скопировать сообщение');
+  await expect(page.locator('#chatBox [data-action="view-message"]').last()).toHaveAccessibleName('Открыть полный текст сообщения');
+  await expect(page.locator('#chatBox [data-action="speak-message"]').last()).toHaveAccessibleName('Озвучить сообщение');
+  const iconTargets = await page.locator('#chatBox [data-action="copy-message"]').last().evaluate(el => {
+    const rect = el.getBoundingClientRect();
+    return { width: rect.width, height: rect.height, text: el.textContent.trim() };
+  });
+  expect(iconTargets.width).toBeGreaterThanOrEqual(44);
+  expect(iconTargets.height).toBeGreaterThanOrEqual(44);
+  expect(iconTargets.text).toBe('⧉');
 
   await page.locator('#chatBox [data-action="view-message"]').last().click();
   await expect(page.locator('#messageViewerModal')).toBeVisible();
   await expect(page.locator('#messageViewerContent')).toContainText('MESSAGE_VIEWER_LINE_69');
   await expect(page.locator('#messageViewerContent [data-action="clear-chat"]')).toHaveCount(0);
+  await expect(page.locator('#messageViewerActions [data-action="copy-viewer-message"]')).toHaveAccessibleName('Скопировать сообщение');
+  await expect(page.locator('#messageViewerActions [data-action="speak-viewer-message"]')).toHaveAccessibleName('Озвучить сообщение');
+  await page.locator('#messageViewerActions [data-action="copy-viewer-message"]').click();
+  await expect(page.locator('#toast')).toContainText('Сообщение скопировано');
   await page.locator('#messageViewerModal [data-action="close-message-viewer"]').click();
   await expect(page.locator('#messageViewerModal')).toBeHidden();
 
   await page.locator('#chatBox [data-action="view-message"]').first().click();
   await expect(page.locator('#messageViewerContent')).toContainText('Show a full message.');
+  await expect(page.locator('#messageViewerActions [data-action="copy-viewer-message"]')).toBeVisible();
+  await expect(page.locator('#messageViewerActions [data-action="speak-viewer-message"]')).toBeHidden();
   await page.locator('#messageViewerModal [data-action="close-message-viewer"]').click();
 
   await page.locator('#chatBox [data-action="copy-message"]').last().click();
