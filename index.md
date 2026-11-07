@@ -531,8 +531,9 @@ permalink: /
             <label class="text-[11px] text-gray-400">Поле ввода<select id="composerPosition" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="bottom" data-i18n="composerBottom">Снизу</option><option value="top" data-i18n="composerTop">Сверху</option></select></label>
             <button type="button" data-action="toggle-theme-cycle" class="advanced-control self-end rounded border border-gray-700 bg-gray-900 text-left text-gray-300" aria-label="Сменить тему">☼ Тема</button>
           </div>
-       <label for="providerPreset" data-i18n="providerLabel" class="sr-only">Сторонний API</label>
-       <select id="providerPreset" aria-label="Сторонний API-провайдер" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"><option value="" selected disabled>Сторонний API</option><optgroup id="providerPrimaryGroup" label="aLandi Cloud · внутренний маршрут" hidden><option value="alandi">aLandi Cloud</option></optgroup><optgroup id="providerExternalGroup" label="Сторонние провайдеры"><option value="kilo">Kilo</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai</option><option value="cloudflare">Cloudflare Workers AI</option><option value="openrouter">OpenRouter</option><option value="nvidia">NVIDIA NIM</option><option value="huggingface">Hugging Face</option><option value="custom">Свой OpenAI-совместимый API</option></optgroup></select>
+       <label for="providerPreset" data-i18n="providerLabel" class="sr-only">Маршрут подключения</label>
+       <select id="providerPreset" aria-label="Маршрут подключения" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"><option value="" selected disabled>Сторонний API</option><optgroup id="providerPrimaryGroup" label="aLandi Cloud · внутренний маршрут"><option value="alandi">aLandi Cloud</option></optgroup><optgroup id="providerExternalGroup" label="Сторонние провайдеры"><option value="kilo">Kilo</option><option value="gemini">Google AI Studio · Gemini</option><option value="groq">Groq</option><option value="xai">xAI · Grok</option><option value="pollinations">Pollinations.ai</option><option value="cloudflare">Cloudflare Workers AI</option><option value="openrouter">OpenRouter</option><option value="nvidia">NVIDIA NIM</option><option value="huggingface">Hugging Face</option><option value="custom">Свой OpenAI-совместимый API</option></optgroup></select>
+       <div id="providerExternalSettings" class="space-y-3">
        <input type="search" id="modelSearch" aria-label="Поиск модели" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="Поиск модели">
        <select id="modelPreset" aria-label="Каталог моделей" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm advanced-field"></select>
 <div class="flex items-start justify-between gap-2">
@@ -557,6 +558,7 @@ permalink: /
       </div>
       <div class="flex gap-2"><button type="button" data-action="test-connection" class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение и модель</button><button type="button" data-action="clear-provider-key" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
              <input type="text" id="modelName" aria-label="Модель" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="ID модели">
+       </div>
        <details id="searchToolsSettings" class="rounded-xl border border-gray-700"><summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">Инструменты и веб-поиск</summary><div class="px-3 pb-3 space-y-2"><div class="flex gap-2"><input type="password" id="tavilyKey" aria-label="Ключ Tavily" autocomplete="off" class="min-w-0 flex-1 p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="ключ Tavily"><button type="button" data-action="paste-tavily-key" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Вставить ключ Tavily">↓</button></div></div></details>
        <label for="systemPromptInput" data-i18n="systemPromptLabel" class="block text-xs text-gray-400">Системный промпт</label>
        <div class="prompt-editor"><textarea id="systemPromptInput" rows="4" readonly class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y" placeholder="Свои правила для всех запросов"></textarea><button type="button" id="editSystemPrompt" data-action="edit-system-prompt" class="prompt-pencil" aria-pressed="false" aria-label="Редактировать системный промпт" title="Редактировать">✎</button></div><p id="promptEditHint" class="sr-only" aria-live="polite"></p>
@@ -2602,6 +2604,9 @@ permalink: /
     }
     function applyProviderPreset(provider, initial = false) {
       const config=PROVIDERS[provider]||PROVIDERS.custom;
+      const isAlandiRoute = provider === 'alandi';
+      $('cloudSettingsCard')?.classList.toggle('hidden', !isAlandiRoute);
+      $('providerExternalSettings')?.classList.toggle('hidden', isAlandiRoute);
       if(!initial){
         const oldProvider=safeGet(STORAGE.provider)||'gemini',oldKey=$('apiKey').value.trim();
         if(oldKey)safeSet(providerKeyStorage(oldProvider),oldKey);
