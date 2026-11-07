@@ -11,13 +11,17 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 - Keep main/base/head/tested/merge/deployed SHAs distinct. CI green is not merge; merge is not deploy; Pages is not VPS.
 
 ## Live checkpoint (2026-11-08)
-- Verified main: `c4f23e03f563d03213eb87002863da630fc8b833`; Pages #42372745873, Quality #42372746360, Graphify #42372746441 passed on exact main SHA.
-- Main checkpoint `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2` after PR #169 squash merge. Pages deployment #42408492764 PASS (artifact #13588178210, SHA-256 `cf02ff975f0813ee37cfa0a5aa8de7d562852500a964da85c1a387f5fa539748`); main Freshness #42408493553, Gateway #42408493562, Graphify #42408493571 and Provenance #42408493536 PASS. Main Quality #42408500881 FAIL: 111 passed / 2 failed; public root/landing exact-SHA smoke skipped. Active PR #173 (base `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2`, code/test HEAD `b614954ada5f86f8221a270ecd3d251283aa0642`) fixes the exclusive settings assertion and scheduled aServi probe; exact code/test Quality #42408845013 PASS (113/113), Graphify #42408844985 PASS. Canonical state sync is now in PR #173; Freshness #42409451004 passed 19 unit tests but failed because docs/PROJECT_STATE.yaml current_checkpoint.verified_main remained c4f23e0 while snapshot main_sha is 72bcd; this field is now aligned to 72bcd. Exact final-head Freshness/Quality recheck pending. Owner approval is required to merge #173. Issue #111 remains open.
-- Closed non-merged PRs #125/#131/#152/#154/#155 remain reconciled through the canonical task registry; preserve their still-open goals and do not merge wholesale.
+- Verified main: `bf039f887e29137b627b06fc2bb107c2793d6b69`; PR #173 is squash-merged. No open PRs; issue #111 is the only open issue.
+- Pages deployment #42410162803 passed on the exact main SHA.
+- Main Quality #42410163178: Context, Jekyll, Static Analysis, Security, Integrity and Chromium jobs passed. Chromium verified the built app, public root revision, canonical landing content and landing Chromium (8/8).
+- Published release-contract job #128517290166 failed only because a stale forbidden marker rejects the owner-approved Functions menu (`functionsMenu`). Correct the sentinel to require Agents/Deep Research/Skills while still forbidding Research Studio, legacy provider selection and removed sidebar controls.
+- Follow-up branch `fix/pages-functions-contract-and-state-20261108` is a bounded CI-contract/state-sync repair based on this exact main. It is not merged; separate owner authorization is required.
+- Issue #111 retains owner/environment gates. VPS/Tunnel/Ollama, target hardware, native iPhone/VoiceOver and real provider credentials remain unverified.
+- Closed non-merged PRs #125/#131/#152/#154/#155/#168/#171/#172 retain deferred task scope; do not merge wholesale.
 
 ## Resume and orient
 - `oledue`: read root `OLEDUE.md` first and execute its handoff.
-- Otherwise read `ORIENTER.md`; batch live main, PR/issue queue, matched diff and exact-head checks. Do not select a PR from memory.
+- Otherwise read `ORIENTER.md`; batch live main, PR/issue queue, matched diff and exact-head checks. Parallelize independent read-only discovery/checks while a bounded job runs; one pending job must never block unrelated checklist, source, issue or documentation audits. Do not select a PR from memory.
 - Route latest owner request to an existing ID in the single Master Task Registry; enrich it, never duplicate/drop goals. Read `PROJECT_ORCHESTRATOR_RU.md` as index, `docs/ALANDI_SYSTEMS_MAP_RU.md` for whole-product scope, then only task-relevant files.
 - Use Graphify/code graph and file navigation to trace entry points, dependencies, call sites and test coverage; inspect graph artifacts/limits, not just PASS badges.
 
