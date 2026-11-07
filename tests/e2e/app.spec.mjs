@@ -2579,7 +2579,7 @@ test('Functions menu exposes truthful Agents, Deep Research and Skills panels wi
   await page.locator('#functionsMenuSummary').click();
   await page.locator('[data-function="research"]').click();
   await expect(modal).toBeVisible();
-  await modal.locator('[data-action="researchOpenAgentSettings"]').click();
+  await modal.locator('[data-action="open-function-panel"][data-function="agents"]').click();
   await expect(page.locator('#agentFunctionSettings')).toBeVisible();
   await expect(page.locator('#researchFunctionSettings')).toBeHidden();
   await modal.locator('[data-action="close-function-panel"]').first().click();
