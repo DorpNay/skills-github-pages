@@ -359,6 +359,8 @@ PR #122 добавил только эксплуатационную надёж�
 - Проверить мобильные viewport и повторные циклы открытия/закрытия.
 - Критерий приёмки: после штатного закрытия интерфейс сразу полностью интерактивен и не затемнён.
 
+**Implementation follow-up (PR #174, exact-head verification pending):** settings and Functions panels now close when the user clicks the backdrop; closing the Functions panel restores focus to its menu trigger. Dedicated Chromium coverage checks both dismissals and verifies that no overlay remains.
+
 ### 8.10 Единая система размеров интерактивных элементов
 
 - Унифицировать размеры кнопок, полей, переключателей, выпадающих списков, меню и других контролов: высоту/ширину, padding, радиусы, интервалы и hit-area.
