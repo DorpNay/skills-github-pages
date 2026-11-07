@@ -13,7 +13,7 @@
 - Owner upstream research is recorded in INTEL and OPEN_SOURCE_TRIAGE; research-only, no installs/downloads/runtime adoption.
 - PR #169 is the active main-based UI slice (head 115f8facaf36ba0efbbd0ef7f0865dfe7971db6b); exact-head Quality/Chromium and Graphify pending. It retires Research Studio, removes the unapproved three-item Functions menu, separates aServi/provider settings and cleans the sidebar. PR #154 is stale/diverged and is not the active baseline. Native iPhone Safari/VoiceOver and VPS/Tunnel/Ollama remain unverified.
 
-- open PRs (7): #125, #131, #152, #154, #155, #168, #169.
+- open PRs (7): #125, #131, #152, #154, #155, #168, #171.
 - open issues (1): #111.
 
 ## 1. Быстрый маршрут
