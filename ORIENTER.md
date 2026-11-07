@@ -4,20 +4,14 @@
 
 ## Verified baseline
 - **Current main SHA:** `c4f23e03f563d03213eb87002863da630fc8b833`.
-- Pages deployment #42372745873 SUCCESS; exact-main Quality #42372746360 SUCCESS (116 app Chromium, root smoke 1/1, landing 8/8 and canonical build-SHA checks); Graphify #42372746441 PASS. Public root and `/landing/` were checked. VPS/Tunnel/Ollama are not covered.
+- Pages deployment #42372745873 SUCCESS; exact-main Quality #42372746360 SUCCESS (116 app Chromium, root smoke 1/1, landing 8/8 and canonical build-SHA checks); Graphify #42372746441 PASS. VPS/Tunnel/Ollama remain outside these checks.
 
 ## Active bounded PR
-- **PR #169** · `feat/ui-sidebar-81-polish-20261107` · base `c4f23e03f563d03213eb87002863da630fc8b833`.
-- Latest code/test checkpoint `08a73a7594695b8a74fa88d90db07832a8373665`; latest documentation/state HEAD `16196423d9d308bf057dc65df89a3cbfd93f26f1`; re-fetch HEAD after this handoff update.
-- Scope: first-party aServi vs third-party provider isolation/no silent fallback; Agents/structured analysis (four-stage same-model pipeline), dedicated Deep Research panel (Quick/Thorough, web breadth status/settings navigation, structured pipeline status/navigation), Skills/task profile (instructions only); modal blur/clean-close; Research Studio retired; placeholder connectors absent; compact English AGENTS; 18-system map; source-backed orchestration method.
-- **Acquisition added:** curated Memvid v2.0.140 Apache-2.0 (22-file source/license subset, upstream commit `e18fe55494379e2ab7397ce03655e8abbc5e0c31`) and RAG-Anything v1.4.1 MIT (18 selected source files plus license, upstream commit `0ef67b4d476b66407a03a39e5b17e756fc0aef29`). All selected source file Git blob SHA-1s match pinned upstream; Memvid per-file SHA-256s are recorded but not recomputed. Both are incomplete research snapshots, `ship=false`, no runtime/dependency/weights installed; whole archive SHA-256 remains OPEN.
-- Code/test head `08a73a` gates: Gateway #42403417058 PASS, Freshness #42403417029 PASS, Provenance #42403417057 PASS, Graphify #42403417105 PASS, Dead Code #42403417051 PASS; Quality #42403417044 IN_PROGRESS (Chromium active). Latest docs/state head `161964`: Gateway #42403597871 QUEUED, Provenance #42403597849 QUEUED, Dead Code #42403597795 QUEUED, Graphify #42403597837 IN_PROGRESS, Freshness #42403597785 IN_PROGRESS, Quality #42403597788 PENDING. Refresh all exact final HEAD.
+- **PR #169** · `feat/ui-sidebar-81-polish-20261107` · base `c4f23e03f563d03213eb87002863da630fc8b833` · current code/test HEAD `1d32e3d3c6718e3d04efce312eac018596518f9f`.
+- Scope remains owner-directed aServi/provider isolation, sidebar/settings, truthful Agents/Deep Research/Skills Functions entries, Research Studio retirement, §8.12 graph retirement, system/roadmap/orientation refresh and reference-only pinned source artifacts. Memvid/RAG snapshots remain incomplete, research-only, ship=false; no runtime/dependency/weights installed.
+- Previous HEAD `54a2401cd3acb7850a618808b0fc767ed4a1cd53`: Quality #42404826459 Chromium 106 passed / 7 failed. Logs identified missing stored connection marker in `refreshCloudStatus`, tests operating hidden controls due mutually exclusive provider/advanced disclosures, collapsed Functions menu assumptions, and outdated selector expectations. Freshness #42404826540 failed stale queue snapshot (PR #155 no longer open). These fixes and state synchronization are committed through current HEAD; all exact-head checks must be rerun.
+- **Open PR queue:** #169. Open issue #111 remains owner-controlled. Closed non-merged #125/#131/#152/#154/#155 must retain valuable goals in the canonical task registry; no wholesale branch merge.
 - **Not merged / not published.**
-
-## PR queue and dispositions
-- **Open PR queue:** #125, #131, #152, #154, #155, #169. Open issue #111 remains owner-controlled.
-- Closed reconciled: #172 (old Research Studio blur target superseded; Functions modal blur preserved), #171 (older Functions-absent direction superseded by newest owner request; provider ideas preserved), #168 (state sync superseded by fresh #169 snapshot). PR bodies and VOLLEY_LOG record why.
-- #125 FUTURE/HOLD; #131 large V2 workbench; #152 draft voice; #154 stale/diverged V2 shell; #155 draft roadmap/source archives. Selective file/source audit only; no wholesale merge.
 
 ## Canonical navigation and next steps
 - Handoff: `OLEDUE.md`; English executor contract: `AGENTS.md`; navigation index: `PROJECT_ORCHESTRATOR_RU.md`.
