@@ -25,9 +25,14 @@ const suites = {
       matches(/<\/html>\s*$/, 'Document must close its html element.');
     }],
     ['critical UI controls exist', () => {
-      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'apiKeyShell', 'apiKeyStatus', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiLanguage', 'uiMotion', 'cloudSettingsCard', 'cloudStatusDot', 'cloudStatus', 'cloudBaseUrl', 'cloudBaseUrlError', 'cloudModel', 'cloudModelError', 'cloudApiKey', 'cloudApiKeyError', 'clockDigital', 'homeThemeToggle', 'brandWordmark', 'projectPanel', 'projectSettingsModal', 'currentProjectSelect', 'projectMemoryToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'functionPanelModal', 'skillPresetSelect', 'agentModeControl', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
+      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'apiKeyShell', 'apiKeyStatus', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiLanguage', 'uiMotion', 'cloudSettingsCard', 'cloudStatusDot', 'cloudStatus', 'cloudBaseUrl', 'cloudBaseUrlError', 'cloudModel', 'cloudModelError', 'cloudApiKey', 'cloudApiKeyError', 'clockDigital', 'homeThemeToggle', 'brandWordmark', 'projectPanel', 'projectSettingsModal', 'currentProjectSelect', 'projectMemoryToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'functionsMenu', 'functionsMenuSummary', 'functionPanelModal', 'skillPresetSelect', 'agentModeControl', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
         matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
       }
+      assert.ok(source.includes('<details id="functionsMenu"'), 'The owner-approved Functions menu must exist.');
+      assert.ok(source.includes('data-function="agents"'), 'Functions must expose structured analysis.');
+      assert.ok(source.includes('data-action="select-processing-mode" data-processing-mode="deep"'), 'Functions must expose Deep Research as a Thorough-mode shortcut.');
+      assert.ok(source.includes('data-function="skills"'), 'Functions must expose task profiles/Skills.');
+      assert.equal(source.includes('data-function="connectors"'), false, 'Do not expose placeholder Integrations without registered connectors.');
     }],
     ['independent processing controls and on-demand resources', () => {
       includes('async function runMultiAgentResearch', 'Multi-agent research needs its own staged pipeline.');
@@ -225,7 +230,7 @@ const suites = {
       assert.ok(!source.includes("mode === 'fast' && index > 0 && !extendedSearch"), 'Fast-mode tool limits must not depend on search scope.');
       assert.equal(source.includes('researchStudio'), false, 'Retired Research Studio source and UI must be absent.');
       assert.equal(source.includes('open-research-studio'), false, 'Retired Research Studio actions must be absent.');
-      assert.equal(source.includes('id="functionsMenu"'), false, 'The unapproved three-item Functions menu must remain absent.');
+      assert.ok(source.includes('data-action="select-processing-mode" data-processing-mode="deep"'), 'Deep Research must set Thorough mode through a bounded UI action.');
       assert.equal(source.includes('serverMemory'), false, 'Retired Server Memory experiment code and copy must be absent.');
       assert.equal(source.includes('serverProjectMemory'), false, 'Retired server project-memory flags must be absent.');
       assert.equal(source.includes('/memory/graph/'), false, 'The static app must not call the retired server-memory graph API.');
