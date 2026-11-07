@@ -609,7 +609,14 @@ permalink: /
           <button type="button" data-action="select-search-mode" data-search-mode="offline" class="toolbar-menu-option"><strong data-i18n="searchModeOffline">Выкл.</strong><small data-i18n="searchModeOfflineHelp">Веб-инструменты выключены; облачному API всё ещё может требоваться интернет.</small></button>
         </div>
       </details>
-
+      <details id="functionsMenu" class="toolbar-menu flex-1 min-w-0">
+        <summary id="functionsMenuSummary" class="toolbar-menu-summary" data-i18n="functionsMenuLabel">Функции ▾</summary>
+        <div class="toolbar-menu-panel toolbar-menu-panel-right">
+          <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option" data-i18n="functionAgents">🧭 Структурированный разбор</button>
+          <button type="button" data-action="select-processing-mode" data-processing-mode="deep" class="toolbar-menu-option" data-i18n="functionDeepResearch">🔬 Глубокое исследование</button>
+          <button type="button" data-action="open-function-panel" data-function="skills" class="toolbar-menu-option" data-i18n="functionSkills">🧩 Профиль задачи</button>
+        </div>
+      </details>
     </div>
     <input type="checkbox" id="toggleSearch" class="hidden" checked>
     <input type="checkbox" id="toggleMultiAgent" class="hidden">
@@ -1398,7 +1405,7 @@ permalink: /
         workflowDirectShort:'Прямой',workflowStructuredShort:'Конвейер',workflowDirectHelp:'Прямой способ выполнения: модель использует доступные инструменты в пределах выбранного бюджета.',workflowStructuredHelp:'Для подходящих сложных запросов запускает планировщик → исследователь → критик → синтезатор на выбранной модели. Быстро/Тщательно задаёт бюджет инструментов внутри исследовательского этапа.',
         skillAutoShort:'Авто',skillPlanningShort:'План',skillResearchShort:'Исслед.',skillCodeReviewShort:'Код',skillDataAnalysisShort:'Данные',skillAgentSystemsShort:'Агентные',skillMultimodalShort:'Мультимод.',taskProfileHelp:'Профиль меняет только инструкции и не включает инструменты или доступ к данным.',
         aserviGroupTitle:'aLandi aServi',thirdPartySettingsTitle:'Сторонние провайдеры',
-        functionsMenuLabel:'Функции ▾',functionAgents:'🧭 Структурированный разбор',functionSkills:'🧩 Профиль задачи',functionConnectors:'🔌 Интеграции',functionPanelClose:'Закрыть',
+        functionsMenuLabel:'Функции ▾',functionAgents:'🧭 Структурированный разбор',functionDeepResearch:'🔬 Глубокое исследование',functionSkills:'🧩 Профиль задачи',functionConnectors:'🔌 Интеграции',functionPanelClose:'Закрыть',
         functionAgentsTitle:'Структурированный разбор',functionAgentsDescription:'Для подходящих сложных задач aLandi использует четыре этапа: планирование, исследование, критика и синтез. Все этапы работают на выбранной модели; режим Быстро/Тщательно задаёт бюджет инструментов в исследовательском этапе. Это не независимая команда агентов.',agentModeOption:'Разрешить структурированный разбор сложных задач',agentModeHelp:'Планировщик → исследователь → критик → синтезатор. Все этапы используют выбранную модель; Быстро/Тщательно ограничивает инструменты в исследовательском этапе. Конвейер запускается только для подходящих сложных запросов; отдельная команда моделей не создаётся.',
         functionSkillsTitle:'Профиль задачи',functionSkillsDescription:'Профиль добавляет специализированные инструкции для этого чата. Он не включает инструменты, веб-поиск или дополнительные разрешения.',skillPresetLabel:'Профиль этого чата',skillAuto:'Авто (тщательно/структурно)',skillPlanning:'Планирование',skillResearch:'Исследование',skillCodeReview:'Код и ревью',skillDataAnalysis:'Анализ данных',skillAgentSystems:'Системы агентов',skillMultimodal:'Мультимодальные задачи',skillPresetHelp:'Авто подбирает профиль в тщательном или структурированном разборе; быстрые прямые ответы остаются лёгкими. Ручной профиль меняет только инструкции, не включает инструменты или доступ к данным. Выбор действует в этом чате; новый чат начинает с Авто.',
         functionConnectorsTitle:'Интеграции',functionConnectorsDescription:'Показываем только реально подключённые интеграции. Сейчас внешние источники не подключены; переключателей-заглушек нет.',
@@ -1420,7 +1427,7 @@ permalink: /
         workflowDirectShort:'Direct',workflowStructuredShort:'Pipeline',workflowDirectHelp:'Direct execution: the model can still use available tools within the selected effort budget.',workflowStructuredHelp:'Eligible complex requests use the planner → researcher → critic → synthesizer pipeline on the selected model. Quick/Thorough controls the tool budget within the research stage.',
         skillAutoShort:'Auto',skillPlanningShort:'Plan',skillResearchShort:'Research',skillCodeReviewShort:'Code',skillDataAnalysisShort:'Data',skillAgentSystemsShort:'Agents',skillMultimodalShort:'Multimodal',taskProfileHelp:'A task profile changes instructions only; it does not enable tools or data access.',
         aserviGroupTitle:'aLandi aServi',thirdPartySettingsTitle:'Third-party providers',
-        functionsMenuLabel:'Functions ▾',functionAgents:'🧭 Structured workflow',functionSkills:'🧩 Task profile',functionConnectors:'🔌 Integrations',functionPanelClose:'Close',
+        functionsMenuLabel:'Functions ▾',functionAgents:'🧭 Structured analysis',functionDeepResearch:'🔬 Deep research',functionSkills:'🧩 Task profile',functionConnectors:'🔌 Integrations',functionPanelClose:'Close',
         functionAgentsTitle:'Structured workflow',functionAgentsDescription:'For suitable complex tasks, aLandi uses four stages: planning, research, critique and synthesis. All stages use the selected model; Quick/Thorough controls the tool budget in the research stage. This is not an independent team of agents.',agentModeOption:'Allow structured workflow for complex tasks',agentModeHelp:'Planner → researcher → critic → synthesizer. All stages use the selected model; Quick/Thorough limits tools in the research stage. The pipeline runs only for suitable complex requests; no separate model team is created.',
         functionSkillsTitle:'Task profile',functionSkillsDescription:'A profile adds task-specific instructions for this chat. It does not enable tools, web search or additional permissions.',skillPresetLabel:'Task profile for this chat',skillAuto:'Auto (thorough/structured)',skillPlanning:'Planning',skillResearch:'Research',skillCodeReview:'Code and review',skillDataAnalysis:'Data analysis',skillAgentSystems:'Agent systems',skillMultimodal:'Multimodal tasks',skillPresetHelp:'Auto selects a profile for Thorough or structured requests; quick direct answers stay lean. A manual profile changes instructions only, not tools or data access. This choice applies to this chat; new chats start with Auto.',
         functionConnectorsTitle:'Integrations',functionConnectorsDescription:'Only real connected integrations are listed. No external sources are connected yet; there are no placeholder switches.',
@@ -5213,6 +5220,7 @@ permalink: /
         switch (action) {
           case 'set-language': applyUiLanguage(control.dataset.language);if($('languageMenu'))$('languageMenu').open=false;if($('languageMenuSidebar'))$('languageMenuSidebar').open=false;break;
           case 'select-search-mode': setSearchMode(control.dataset.searchMode);break;
+          case 'select-processing-mode': setProcessingMode(control.dataset.processingMode);if($('functionsMenu'))$('functionsMenu').open=false;break;
           case 'open-function-panel': openFunctionPanel(control.dataset.function);break;
           case 'close-function-panel': closeFunctionPanel();break;
           case 'apply-skill-quiz': applySkillQuiz();break;
