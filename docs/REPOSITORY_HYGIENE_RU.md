@@ -1,4 +1,4 @@
-> **Historical research snapshot — PR #131 / 2026-10-31; imported 2026-11-08.** Main baseline is now `c4f23e03f563d03213eb87002863da630fc8b833`. This file preserves source-derived findings and requirements; it does not assert current runtime implementation. The canonical active task register is `docs/MASTER_TASK_REGISTRY_RU.md` plus its existing addendum. Current source admission/review status is tracked in `INTEL.md`.
+> **Historical research snapshot — PR #131 / 2026-10-31; imported 2026-11-08.** Main baseline at this audit is `bf039f887e29137b627b06fc2bb107c2793d6b69` (PR #173 merged). This file preserves source-derived findings and requirements; it does not assert current runtime implementation. The canonical active task register is `docs/MASTER_TASK_REGISTRY_RU.md` plus its existing addendum. Current source admission/review status is tracked in `INTEL.md`.
 > **Current boundary:** Any branch/PR inventory below is a historical snapshot. Always use live GitHub state; the current owner policy is main-only, with one temporary exact-head PR at a time and immediate merge/closure after required gates pass.
 
 ---
@@ -266,3 +266,14 @@ No files, workflows, settings, branches or repository names were deleted or chan
 - Issue #111 остаётся открытой консолидированной записью release gates; CI не закрывает VPS/Tunnel/Ollama, hardware, permissioned RAG data, real-device voice и account-level governance.
 
 **Итог:** 5 behind-only refs подтверждены как cleanup candidates, но не удалены из-за отсутствия безопасной delete-ref операции; бесхозных файлов/инструментов с доказанной ненужностью не найдено; 10 открытых PR сохранены в своих workstream-границах. Следующий безопасный шаг для владельца — удалить только эти пять refs через GitHub UI после последней проверки ссылок/issue и сохранения приведённых HEAD SHA.
+
+
+## 10. Supply-chain revalidation — 2026-11-08
+
+**Main evidence:** exact main `bf039f887e29137b627b06fc2bb107c2793d6b69`; Quality run #42410163178, Integrity job #128516358240. Step **Enforce immutable GitHub Action references** passed and reported 14 workflow files inspected.
+
+- Independently fetched all 14 current `.github/workflows/*.yml` files and counted **62 direct external `uses:` references**. All **62/62** resolve syntactically to full 40-character commit SHAs; zero mutable direct refs were found.
+- The local checker `scripts/check-action-pinning.mjs` enforces full-SHA syntax in the repository's workflow files. It does **not** recursively inspect dependencies inside third-party reusable workflows.
+- The five exercise workflows call `skills/exercise-toolkit` reusable workflows pinned to exact commit `ebf43bb96882683e03e667184c6445ed4c8074e6`. At that pinned upstream commit, three nested workflow files contain **16 mutable action references**: `actions/checkout@v4`, `actions/github-script@v7`, `skills/action-text-variables@v2`, and `EndBug/add-and-commit@v9`.
+- The pinned upstream `start-exercise.yml` requests `contents: write`, `actions: write`, and `issues: write`; `finish-exercise.yml` requests `contents: write` and `issues: write`; `find-exercise-issue.yml` requests `issues: read`. This is upstream workflow authority, not a permission granted by our local pin checker.
+- **Conclusion:** direct repository pinning is VERIFIED (62/62), but the transitive reusable-workflow dependency chain and least-privilege review are OPEN under issue #111. Do not mark the supply-chain gate complete. A bounded follow-up should replace or fork the exercise workflows with locally reviewed equivalents or otherwise pin their nested dependencies and reduce permissions; preserve behavior and test triggers before changing them.
