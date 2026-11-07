@@ -294,6 +294,13 @@ permalink: /
     .roadmap-ticker { overflow:hidden; border:1px solid var(--ui-border); border-radius:999px; background:var(--ui-surface); color:var(--ui-tiffany); }
     .roadmap-ticker-track { display:inline-block; min-width:max-content; padding:4px 1.5rem; animation:roadmap-marquee 22s linear infinite; will-change:transform; }
     @keyframes roadmap-marquee { from { transform:translateX(100%); } to { transform:translateX(-100%); } }
+
+    /* UI §8.15: center status messaging without faking progress or overriding reduced motion. */
+    #searchStatus { justify-content: center; flex-wrap: wrap; text-align: center; }
+    #statusText { text-align: center; }
+    #thinkingTime { margin-left: 0 !important; }
+    .roadmap-ticker { display: flex; justify-content: center; text-align: center; }
+    .roadmap-ticker-track { text-align: center; }
     .roadmap-note { margin:.35rem 0 0; color:var(--ui-text-muted); font-size:10px; line-height:1.45; }
     html[data-motion="reduced"] .roadmap-ticker-track, html[data-motion="off"] .roadmap-ticker-track { animation:none!important; transform:none!important; }
     @media (prefers-reduced-motion:reduce) { .roadmap-ticker-track { animation:none!important; transform:none!important; padding-inline:.75rem; white-space:normal; } }
