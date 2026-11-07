@@ -74,7 +74,7 @@ permalink: /
     .assistant-content blockquote { border-left: 3px solid #4b5563; padding-left: .8rem; color: #d1d5db; margin: .6rem 0; }
     .assistant-content table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; margin: .7rem 0; }
     .assistant-content th, .assistant-content td { border: 1px solid #4b5563; padding: .35rem .55rem; }
-    .assistant-content a { color: #93c5fd; text-decoration: underline; overflow-wrap: anywhere; }
+    .assistant-content a { color: var(--ui-link); text-decoration: underline; overflow-wrap: anywhere; }
     .assistant-content pre { max-width: 100%; overflow-x: auto; }
     .code-block pre { background: #090d16; padding: .8rem; border-radius: .6rem; margin: .5rem 0; }
     .code-block code { white-space: pre; }
@@ -104,7 +104,7 @@ permalink: /
       --ui-bg:#08111d; --ui-surface:#0f1b2b; --ui-surface-raised:#142438;
       --ui-border:#26384b; --ui-text:#f1f6fa; --ui-text-muted:#a4b5c7;
       --ui-primary:#3b82f6; --ui-success:#35d39a; --ui-danger:#ff737a;
-      --ui-info:#93c5fd; --ui-warning:#fbbf24;
+      --ui-info:#93c5fd; --ui-warning:#fbbf24; --ui-link:#93c5fd;
       --ui-tiffany:#68e8d0; --ui-tiffany-bright:#a3fff0; --ui-tiffany-soft:rgba(104,232,208,.13);
       --motion-fast:140ms; --motion-normal:190ms; --motion-panel:220ms;
       --motion-ease:cubic-bezier(.2,.7,.2,1);
@@ -114,9 +114,11 @@ permalink: /
       --ui-bg:#f4f7f8; --ui-surface:#ffffff; --ui-surface-raised:#f8fbfc;
       --ui-border:#d9e4e8; --ui-text:#152633; --ui-text-muted:#526775;
       --ui-primary:#2563eb; --ui-success:#087f72; --ui-danger:#c83244;
-      --ui-info:#1d4ed8; --ui-warning:#92400e;
+      --ui-info:#1d4ed8; --ui-warning:#92400e; --ui-link:#1d4ed8;
       --ui-tiffany:#087f72; --ui-tiffany-bright:#25a995; --ui-tiffany-soft:rgba(8,127,114,.10);
     }
+    html[data-theme="dark"][data-reading-contrast="high"] { --ui-text:#ffffff; --ui-text-muted:#d5e2ef; --ui-success:#72f0be; --ui-danger:#ff9da2; --ui-info:#b7d8ff; --ui-warning:#ffdf80; --ui-link:#b7d8ff; }
+    html[data-theme="light"][data-reading-contrast="high"] { --ui-text:#0b1720; --ui-text-muted:#344b5b; --ui-success:#006b55; --ui-danger:#a51127; --ui-info:#1245b8; --ui-warning:#7a3600; --ui-link:#1245b8; }
     body { background:var(--ui-bg)!important; color:var(--ui-text)!important; }
     #sidebar, header, #searchStatus, footer { background:var(--ui-surface)!important; border-color:var(--ui-border)!important; }
     #settingsModal > .settings-surface { background:var(--ui-surface)!important; border-color:var(--ui-border)!important; }
@@ -333,7 +335,12 @@ permalink: /
     html[data-theme="light"] .assistant-content blockquote { color:var(--ui-text-muted)!important; border-color:var(--ui-border)!important; }
     html[data-theme="light"] .assistant-content th, html[data-theme="light"] .assistant-content td { border-color:var(--ui-border)!important; }
     html[data-theme="light"] .code-block pre, html[data-theme="light"] .code-output { background:var(--ui-surface-raised)!important; color:var(--ui-text)!important; border-color:var(--ui-border)!important; }
-    html[data-theme="light"] .assistant-content a { color:#1d4ed8!important; }
+    html[data-theme="light"] .assistant-content a { color:var(--ui-link)!important; }
+    html[data-reading-contrast="high"] .text-gray-300, html[data-reading-contrast="high"] .text-gray-400, html[data-reading-contrast="high"] .text-gray-500,
+    html[data-reading-contrast="high"] .assistant-content blockquote, html[data-reading-contrast="high"] .message-model-meta { color:var(--ui-text-muted)!important; }
+    html[data-reading-contrast="high"] :is(button,input,select,textarea):disabled, html[data-reading-contrast="high"] [aria-disabled="true"] { color:var(--ui-text-muted)!important; opacity:.9!important; }
+    .field-error, .toast.toast-error { color:var(--ui-danger); }
+    .assistant-content blockquote { color:var(--ui-text-muted); border-color:var(--ui-border); }
     @media (max-width:639px) {
       #settingsModal { padding:max(env(safe-area-inset-top),.5rem) .5rem max(env(safe-area-inset-bottom),.5rem)!important; }
       #settingsModal > .settings-surface { max-height:calc(100dvh - 1rem)!important; max-width:none!important; border-radius:14px!important; }
@@ -363,6 +370,9 @@ permalink: /
       user-select: text;
       -webkit-touch-callout: default;
     }
+    /* UI §8.17: user-controlled message typography; semantic colors stay theme-aware. */
+    .assistant-content, .message-viewer-content { font-size:var(--reading-font-size,15px)!important; line-height:var(--reading-line-height,1.6)!important; }
+    .assistant-content :where(p,li,blockquote,td,th), .message-viewer-content :where(p,li,blockquote,td,th) { font-size:inherit!important; line-height:inherit!important; }
   </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
@@ -495,6 +505,13 @@ permalink: /
           <div class="cloud-key-row flex gap-2"><input id="cloudApiKey" type="password" autocomplete="off" aria-label="Ключ доступа к серверу" class="min-w-0 flex-1 p-3 rounded-xl border text-sm" placeholder="Ключ доступа"><button type="button" data-action="paste-cloud-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ">↓</button></div><p id="cloudApiKeyError" class="field-error hidden" role="alert"></p>
         </div>
         <p id="cloudStatus" class="cloud-status-copy text-[10px]" data-state="disconnected" role="status" aria-live="polite">Не подключено</p>
+      </section>
+      <section id="readingSettings" class="rounded-xl border border-gray-700 p-3 space-y-3" aria-labelledby="readingSettingsTitle">
+        <div><h3 id="readingSettingsTitle" class="text-sm font-semibold" data-i18n="readingSettingsTitle">Читаемость текста</h3><p class="mt-1 text-xs leading-relaxed" data-i18n="readingSettingsHelp">Настрой размер, интервалы и контраст текста сообщений. Изменения сохраняются автоматически и действуют в обеих темах.</p></div>
+        <label for="readingFontSize" class="block text-xs"><span data-i18n="readingFontSizeLabel">Размер текста сообщений</span><output id="readingFontSizeValue" class="float-right font-semibold tabular-nums">15 px</output><input id="readingFontSize" type="range" min="14" max="22" step="1" value="15" class="mt-2 w-full" aria-describedby="readingSettingsHelp"></label>
+        <label for="readingLineHeight" class="block text-xs"><span data-i18n="readingLineHeightLabel">Межстрочный интервал</span><output id="readingLineHeightValue" class="float-right font-semibold tabular-nums">1.6</output><input id="readingLineHeight" type="range" min="1.4" max="2" step="0.1" value="1.6" class="mt-2 w-full" aria-describedby="readingSettingsHelp"></label>
+        <label for="readingContrast" class="block text-xs"><span data-i18n="readingContrastLabel">Контраст цветовой схемы</span><select id="readingContrast" class="advanced-control mt-1 w-full rounded border border-gray-700 bg-gray-900"><option value="standard" data-i18n="readingContrastStandard">Стандартный</option><option value="high" data-i18n="readingContrastHigh">Повышенный</option></select></label>
+        <p id="readingSettingsStatus" class="text-xs" role="status" aria-live="polite" data-i18n="readingSettingsSaved">Настройки читаемости сохраняются на этом устройстве.</p>
       </section>
       <details id="legacyProviderSettings" class="settings-subpanel rounded-xl border border-gray-700">
         <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none" data-i18n="legacySettings">Дополнительные настройки</summary>
@@ -1405,6 +1422,7 @@ permalink: /
         functionConnectorsTitle:'Интеграции',functionConnectorsDescription:'Показываем только реально подключённые интеграции. Сейчас внешние источники не подключены; переключателей-заглушек нет.',
         researchStudioTitle:'Студия исследования',researchStudioDescription:'Окно подготовки исследовательского запроса. Запуск использует текущие параметры этого чата.',researchStudioPromptLabel:'Что нужно исследовать?',researchStudioPromptPlaceholder:'Например: сравни первичные источники, проверь спорные утверждения и подготовь выводы со ссылками.',researchStudioCurrentSettingsLabel:'Текущие параметры чата',researchStudioSettingsHelp:'Студия использует эти параметры и не изменяет их. Чтобы изменить их, закрой окно и настрой панель чата.',researchStudioContextHelp:'Для исследования своих документов прикрепи материалы в чате или явно выбери контекст проекта. Студия не загружает файлы и не подключает внешние сервисы сама. Найденные страницы считаются недоверенными источниками, а не инструкциями.',researchStudioCancel:'Отмена',researchStudioStart:'Начать исследование ↗',researchStudioClose:'Закрыть студию',researchStudioStatusDefault:'Студия использует текущие параметры чата и не изменяет их.',researchStudioPromptRequired:'Сначала напиши вопрос или задачу исследования.',
         kiloPrivacyNotice:'Kilo Auto Free — обычный альтернативный провайдер в общем списке API, не часть основного облака aLandi. Запросы передаются Kilo и назначенным им моделям; они могут сохранять запросы для улучшения сервисов. Не отправляй конфиденциальные данные. Скрытого резервирования нет.',languageLabel:'Язык интерфейса',clockLabel:'Местное время',saveSettings:'Сохранить',closeSettings:'Закрыть',
+         readingSettingsTitle:'Читаемость текста',readingSettingsHelp:'Настрой размер, интервалы и контраст текста сообщений. Изменения сохраняются автоматически и действуют в обеих темах.',readingFontSizeLabel:'Размер текста сообщений',readingLineHeightLabel:'Межстрочный интервал',readingContrastLabel:'Контраст цветовой схемы',readingContrastStandard:'Стандартный',readingContrastHigh:'Повышенный',readingSettingsSaved:'Настройки читаемости сохраняются на этом устройстве.',
         globalMemoryOptIn:'Разрешить подходящим заметкам общей памяти попадать в контекст запросов.',noProjectNav:'Без проекта',projectMemoryScopeLabel:'Режим памяти проекта',projectMemoryScopeOnly:'Память только внутри проекта',projectMemoryScopeGlobal:'Память проекта + общая память (если она разрешена)',selectAlandiPrimary:'Использовать aLandi как основной маршрут',alandiPrimaryCopy:'aLandi — встроенный основной маршрут. Внешние провайдеры находятся ниже в отдельном меню.',attachMediaTitle:'Фото или видео',attachMediaHelp:'Изображения и выбор кадров из ролика',attachAnyFileTitle:'Файл любого формата',attachAnyFileHelp:'Системный выбор нескольких файлов; доступность разбора зависит от формата.',requestContextTitle:'Контекст этого запроса',requestContextHelp:'Выбранные проекты будут учтены только при следующей отправке. Сам чат и его проект не изменятся.',clearRequestContext:'Сбросить',skillsAutoHint:'Навыки: автоматический подбор по задаче; отдельный каталог выбора пока не подключён.',requestContextLimitHint:'Контекст ограничен пятью проектами и общим лимитом, чтобы не переполнять запрос.',projectsTitle:'▣ Проекты',currentProjectLabel:'Проект текущего чата',projectMemoryOptIn:'Использовать память выбранного проекта в этом чате',manageProject:'Создать или настроить проект',projectNameLabel:'Название',projectInstructionsLabel:'Инструкции проекта',createProject:'＋ Создать проект',saveProject:'Сохранить изменения',projectMemoryLabel:'Добавить факт в память проекта',exportProject:'Экспорт проекта',importProject:'Импорт проекта',detachChat:'Извлечь чат из проекта',deleteProject:'Удалить проект и его чаты',serverMemoryTitle:'Серверная память · эксперимент',serverMemoryDescription:'Отдельный граф на твоём aLandi gateway. Перенос только вручную; новые факты сначала становятся кандидатами. Нужен включённый ALANDI_MEMORY_GRAPH_ENABLED.',serverMemoryOptIn:'Разрешить подтверждённым фактам сервера попадать в контекст этого чата. Также включи память проекта выше.',serverMemoryRefresh:'Обновить список',serverMemoryUpload:'Передать локальные факты',serverMemoryInitial:'Серверная память выключена. Выбери проект и нажми «Обновить список».',serverMemoryNoProject:'Сначала выбери или создай проект.',serverMemoryNoConfig:'Не найдены URL /v1 и ключ aLandi gateway. Подключи своё облако в настройках.',serverMemoryLoading:'Обращаюсь к серверной памяти…',serverMemoryLoaded:'Фактов на сервере: ',serverMemoryEmpty:'В серверной памяти этого проекта пока нет фактов.',serverMemoryCandidate:'Кандидат',serverMemoryConfirmed:'Подтверждён',serverMemoryRejected:'Отклонён',serverMemoryConfirm:'Подтвердить',serverMemoryReject:'Отклонить',serverMemoryDelete:'Удалить',serverMemoryUploadDone:'Передача завершена. Новые факты остаются кандидатами до подтверждения.',serverMemoryContextLoaded:'В контекст добавлено подтверждённых серверных фактов: ',serverMemoryUnavailable:'Серверная память недоступна; продолжаю без неё.',helperMemoryDescription:'Необязательная модель на настроенном aLandi gateway предложит компактные факты. Отправка только по кнопке; сохранение — только после выбора.',helperMemorySuggest:'Предложить компактные факты',helperMemoryInitial:'Помощник выключен, пока не настроен ALANDI_HELPER_MODEL.',helperMemoryLoading:'Модель-помощник готовит предложения…',helperMemoryEmpty:'Помощник не нашёл новых фактов.',helperMemoryAdd:'Добавить в проект',helperMemoryAdded:'Факт добавлен в локальную память проекта.',helperMemoryNoFacts:'Сначала добавь факты в память выбранного проекта.',helperMemoryNotConfigured:'Модель-помощник не настроена. Укажи ALANDI_HELPER_MODEL и установи этот тег в Ollama.',helperMemoryTimeout:'Помощник не ответил вовремя; память не менялась.',helperMemoryFailed:'Не удалось получить предложения. Проверь gateway и Ollama.',helperMemorySkippedSensitive:'Пропущены потенциально чувствительные факты:',helperMemoryOnlySensitive:'Все факты похожи на секреты и не были отправлены помощнику.'
       },
       en:{
@@ -1425,6 +1443,7 @@ permalink: /
         functionConnectorsTitle:'Integrations',functionConnectorsDescription:'Only real connected integrations are listed. No external sources are connected yet; there are no placeholder switches.',
         researchStudioTitle:'Research Studio',researchStudioDescription:'A workspace for preparing a research request. Running it uses this chat’s current settings.',researchStudioPromptLabel:'What should be researched?',researchStudioPromptPlaceholder:'For example: compare primary sources, verify disputed claims and prepare cited conclusions.',researchStudioCurrentSettingsLabel:'Current chat settings',researchStudioSettingsHelp:'The Studio uses these settings without changing them. Close this window and use the chat controls to change them.',researchStudioContextHelp:'To research your own documents, attach them in the chat or explicitly select project context. The Studio does not upload files or connect external services by itself. Retrieved pages are untrusted sources, not instructions.',researchStudioCancel:'Cancel',researchStudioStart:'Start research ↗',researchStudioClose:'Close Studio',researchStudioStatusDefault:'The Studio uses the current chat settings and does not change them.',researchStudioPromptRequired:'Enter a research question or task first.',
         kiloPrivacyNotice:'Kilo Auto Free is an ordinary alternative provider in the API list, not part of the primary aLandi cloud. Requests go to Kilo and its selected models, which may log prompts or use them to improve services. Do not send confidential data. No silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',saveSettings:'Save settings',closeSettings:'Close',
+         readingSettingsTitle:'Text readability',readingSettingsHelp:'Adjust message text size, spacing and color contrast. Changes are saved automatically and apply in both themes.',readingFontSizeLabel:'Message text size',readingLineHeightLabel:'Line spacing',readingContrastLabel:'Color scheme contrast',readingContrastStandard:'Standard',readingContrastHigh:'High',readingSettingsSaved:'Readability settings are saved on this device.',
         globalMemoryOptIn:'Allow relevant shared-memory notes to be included in prompts.',noProjectNav:'No project',projectMemoryScopeLabel:'Project memory scope',projectMemoryScopeOnly:'Memory inside this project only',projectMemoryScopeGlobal:'Project memory + shared memory (when enabled)',selectAlandiPrimary:'Use aLandi as the primary route',alandiPrimaryCopy:'aLandi is the built-in primary route. External providers are listed separately below.',attachMediaTitle:'Photo or video',attachMediaHelp:'Images or sampled frames from a video',attachAnyFileTitle:'Any file format',attachAnyFileHelp:'Native multi-file picker; parsing depends on file type.',requestContextTitle:'Context for this request',requestContextHelp:'Selected projects apply only to the next send. The active chat and its project do not change.',clearRequestContext:'Clear selection',skillsAutoHint:'Skills: automatically selected for the task; a manual catalog is not connected yet.',requestContextLimitHint:'Context is limited to five projects and a shared size budget.',projectsTitle:'▣ Projects',currentProjectLabel:'Project for this chat',projectMemoryOptIn:'Use the selected project memory in this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'＋ Create project',saveProject:'Save changes',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats',serverMemoryTitle:'Server memory · experimental',serverMemoryDescription:'A separate graph on your aLandi gateway. Transfer is manual; new facts start as candidates. Enable ALANDI_MEMORY_GRAPH_ENABLED on the server.',serverMemoryOptIn:'Allow confirmed server facts in this chat context. Also enable project memory above.',serverMemoryRefresh:'Refresh list',serverMemoryUpload:'Send local facts',serverMemoryInitial:'Server memory is off. Select a project and click “Refresh list”.',serverMemoryNoProject:'Select or create a project first.',serverMemoryNoConfig:'aLandi gateway /v1 URL or key is missing. Configure your cloud in Settings.',serverMemoryLoading:'Contacting server memory…',serverMemoryLoaded:'Server facts: ',serverMemoryEmpty:'No server facts for this project yet.',serverMemoryCandidate:'Candidate',serverMemoryConfirmed:'Confirmed',serverMemoryRejected:'Rejected',serverMemoryConfirm:'Confirm',serverMemoryReject:'Reject',serverMemoryDelete:'Delete',serverMemoryUploadDone:'Transfer complete. New facts remain candidates until reviewed.',serverMemoryContextLoaded:'Confirmed server facts added to context: ',serverMemoryUnavailable:'Server memory is unavailable; continuing without it.',helperMemoryDescription:'An optional model on the configured aLandi gateway can suggest compact facts. Sending is manual; facts are saved only after you choose them.',helperMemorySuggest:'Suggest compact facts',helperMemoryInitial:'Helper is off until ALANDI_HELPER_MODEL is configured.',helperMemoryLoading:'The helper model is preparing suggestions…',helperMemoryEmpty:'The helper found no new facts.',helperMemoryAdd:'Add to project',helperMemoryAdded:'Fact added to local project memory.',helperMemoryNoFacts:'Add facts to the selected project memory first.',helperMemoryNotConfigured:'Helper model is not configured. Set ALANDI_HELPER_MODEL and install that exact Ollama tag.',helperMemoryTimeout:'The helper timed out; memory was not changed.',helperMemoryFailed:'Could not get suggestions. Check the gateway and Ollama.',helperMemorySkippedSensitive:'Potentially sensitive facts skipped:',helperMemoryOnlySensitive:'All facts looked secret-like and were not sent to the helper.'
       }
     };
@@ -2615,7 +2634,58 @@ permalink: /
       if ($('composerPosition')) $('composerPosition').value = normalized;
       return normalized;
     }
+    const READABILITY_STORAGE_KEY = 'ai_ui_readability_v1';
+    const DEFAULT_READABILITY_SETTINGS = Object.freeze({ fontSize:15, lineHeight:1.6, contrast:'standard' });
+    function normalizeReadabilitySettings(value, strict = false) {
+      if (!value || typeof value !== 'object' || Array.isArray(value)) {
+        if (strict) throw new Error('Настройки читаемости в профиле должны быть объектом.');
+        return { ...DEFAULT_READABILITY_SETTINGS };
+      }
+      const fontSize = Number(value.fontSize), lineHeight = Math.round(Number(value.lineHeight) * 10) / 10;
+      const valid = Number.isInteger(fontSize) && fontSize >= 14 && fontSize <= 22
+        && Number.isFinite(lineHeight) && lineHeight >= 1.4 && lineHeight <= 2
+        && ['standard','high'].includes(value.contrast);
+      if (!valid) {
+        if (strict) throw new Error('Профиль содержит недопустимые параметры читаемости.');
+        return { ...DEFAULT_READABILITY_SETTINGS };
+      }
+      return { fontSize, lineHeight, contrast:value.contrast };
+    }
+    function getReadabilitySettings() {
+      try {
+        const raw = safeGet(READABILITY_STORAGE_KEY);
+        return raw ? normalizeReadabilitySettings(JSON.parse(raw)) : { ...DEFAULT_READABILITY_SETTINGS };
+      } catch (_) { return { ...DEFAULT_READABILITY_SETTINGS }; }
+    }
+    function applyReadabilitySettings(value) {
+      const settings = normalizeReadabilitySettings(value);
+      const root = document.documentElement;
+      root.dataset.readingContrast = settings.contrast;
+      root.style.setProperty('--reading-font-size', settings.fontSize + 'px');
+      root.style.setProperty('--reading-line-height', String(settings.lineHeight));
+      if ($('readingFontSize')) $('readingFontSize').value = String(settings.fontSize);
+      if ($('readingLineHeight')) $('readingLineHeight').value = String(settings.lineHeight);
+      if ($('readingContrast')) $('readingContrast').value = settings.contrast;
+      if ($('readingFontSizeValue')) $('readingFontSizeValue').textContent = settings.fontSize + ' px';
+      if ($('readingLineHeightValue')) $('readingLineHeightValue').textContent = settings.lineHeight.toFixed(1);
+      return settings;
+    }
+    function persistReadabilitySettings() {
+      const settings = normalizeReadabilitySettings({
+        fontSize:$('readingFontSize').value,
+        lineHeight:$('readingLineHeight').value,
+        contrast:$('readingContrast').value
+      });
+      if (!safeSet(READABILITY_STORAGE_KEY, JSON.stringify(settings))) {
+        showToast('Не удалось сохранить настройки читаемости; восстановлены прежние значения.', 'error');
+        applyReadabilitySettings(getReadabilitySettings());
+        return false;
+      }
+      applyReadabilitySettings(settings);
+      return true;
+    }
     function initializeSettings() {
+      applyReadabilitySettings(getReadabilitySettings());
       const savedTheme = safeGet('ai_ui_theme_v2') || 'dark';
       const savedMotion = safeGet('ai_ui_motion_v2') || 'auto';
       applyComposerPosition(safeGet(STORAGE.composerPosition) || 'bottom');
@@ -2812,7 +2882,8 @@ permalink: /
           search: $('toggleSearch').checked,
           multiAgent: $('toggleMultiAgent').checked,
           offline: safeGet(STORAGE.offline) === 'true',
-          crossProviderFallback: $('allowCrossProviderFallback').checked
+          crossProviderFallback: $('allowCrossProviderFallback').checked,
+          readability: getReadabilitySettings()
         }
       };
       const body = JSON.stringify(profile, null, 2);
@@ -2849,6 +2920,7 @@ permalink: /
         for (const key of ['search', 'multiAgent', 'offline', 'crossProviderFallback']) {
           if (settings[key] !== undefined && typeof settings[key] !== 'boolean') throw new Error('Параметр ' + key + ' должен быть логическим значением.');
         }
+        const nextReadability = settings.readability === undefined ? null : normalizeReadabilitySettings(settings.readability, true);
         const baseUrl = settings.provider === 'cloudflare'
           ? 'https://api.cloudflare.com/client/v4/accounts/' + settings.cloudflareAccountId + '/ai/v1'
           : settings.baseUrl.trim().replace(/\/+$/, '').replace(/\/chat\/completions$/i, '');
@@ -2868,7 +2940,8 @@ permalink: /
           [STORAGE.crossProviderFallback, String(settings.crossProviderFallback === true)],
           [STORAGE.systemPrompt, String(settings.systemPrompt || DEFAULT_SYSTEM)],
           ...(settings.provider === 'cloudflare' ? [[STORAGE.cloudflareAccountId, settings.cloudflareAccountId]] : []),
-          [STORAGE.searchMode, nextChatSettings.searchMode]
+          [STORAGE.searchMode, nextChatSettings.searchMode],
+          ...(nextReadability ? [[READABILITY_STORAGE_KEY, JSON.stringify(nextReadability)]] : [])
         ];
         let previousStorageValues;
         try {
@@ -2928,6 +3001,7 @@ permalink: /
         $('toggleSearch').checked = settings.search !== false;
         $('toggleMultiAgent').checked = settings.multiAgent === true;
         $('allowCrossProviderFallback').checked = settings.crossProviderFallback === true;
+        if (nextReadability) applyReadabilitySettings(nextReadability);
         updateModeUI();
         updateOfflineUI();
         safeSet('ai_provider_model_catalog_stale_v1_' + settings.provider, 'true');
@@ -2962,6 +3036,13 @@ permalink: /
     $('composerPosition').addEventListener('change', () => {
       // Apply immediately for a clear preview; Save persists it across reloads.
       applyComposerPosition($('composerPosition').value);
+    });
+    ['readingFontSize','readingLineHeight','readingContrast'].forEach(id => {
+      const control = $(id);
+      control.addEventListener('input', () => applyReadabilitySettings({
+        fontSize:$('readingFontSize').value, lineHeight:$('readingLineHeight').value, contrast:$('readingContrast').value
+      }));
+      control.addEventListener('change', persistReadabilitySettings);
     });
 
     function saveSettings() {
