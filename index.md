@@ -1470,7 +1470,7 @@ permalink: /
       setOptions('skillOutputSelect',en?['Summary','Checklist','Step by step','Table','Report','Custom option']:['Краткое резюме','Чек-лист','Пошагово','Таблица','Отчёт','Свой вариант']);
       setOptions('agentTeamScenario',en?['General','Research','Software','Product','Due diligence','Custom option']:['Общий','Исследование','Разработка','Продукт','Due diligence','Свой вариант']);
       setOptions('agentRolePreset',en?['Balanced','Research team','Software team','Product team','Custom option']:['Сбалансированные','Исследовательская команда','Разработка ПО','Продуктовая команда','Свой вариант']);
-      setOptions('uiLanguage',en?['Русский','English']:['Русский','English']);
+      setOptions('uiLanguage',['RU','EN']);
       setOptions('uiMotion',en?['Auto','Reduce motion','Off']:['Авто','Уменьшить','Выкл.']);
       setOptions('composerPosition',en?['Bottom','Top']:['Снизу','Сверху']);
       const fieldTexts={customSkillName:en?'Custom skill name':'Название своего навыка',customSkillInstructions:en?'Instructions for this task':'Свои инструкции для задачи',customSkillOutput:en?'Custom output format (optional)':'Свой формат результата (необязательно)',agentTeamCustomScenario:en?'Describe the team scenario':'Опиши сценарий команды',agentCustomRoles:en?'Roles and responsibilities, one per line':'Роли и обязанности, по одной на строку',cloudBaseUrl:en?'My server URL · https://…/v1':'URL моего сервера · https://…/v1',cloudModel:en?'Gateway model · exact model ID':'Модель gateway · точный ID',cloudApiKey:en?'Access key':'Ключ доступа',tavilyKey:en?'Tavily key':'ключ Tavily'};
@@ -1495,7 +1495,7 @@ permalink: /
       applyFunctionPanelLanguage(lang);
       const languageSummary=$('languageSummary');if(languageSummary)languageSummary.textContent=lang==='en'?'EN ▾':'RU ▾';
       const sidebarLanguageSummary=$('languageSummarySidebar');if(sidebarLanguageSummary)sidebarLanguageSummary.textContent=lang==='en'?'EN ▾':'RU ▾';
-      const languageSelect=$('uiLanguage');if(languageSelect)languageSelect.value=lang;
+      const languageSelect=$('uiLanguage');if(languageSelect){languageSelect.value=lang;languageSelect.setAttribute('aria-label',lang==='en'?'Language':'Язык');}
       $('sidebar')?.setAttribute('aria-label',lang==='en'?'Projects and chats':'Проекты и чаты');
       $('memoryPanel')?.setAttribute('aria-label',lang==='en'?'Memory settings':'Настройки памяти');
       $('projectPanel')?.setAttribute('aria-label',lang==='en'?'Projects and project settings':'Проекты и настройки проекта');
