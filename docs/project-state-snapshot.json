@@ -235,7 +235,7 @@
     "active_ui_pr": 174,
     "open_prs": "1 live open PR #174; current PR excluded from freshness snapshot; no other open PRs.",
     "open_prs_at_checkpoint": 0,
-    "last_volley": "V-2026-11-08-CHECKLIST-A11Y-ASSET-REGISTRY-003"
+    "last_volley": "V-2026-11-08-CHECKLIST-A11Y-ASSET-REGISTRY-004"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
@@ -243,5 +243,5 @@
     "queue_policy": "Live open PR #174 is the current bounded follow-up and is excluded from the expected queue snapshot; no other open PRs. Issue #111 remains owner-controlled. Closed non-merged #125/#131/#152/#154/#155/#168/#171/#172 retain task scope.",
     "pr_check_policy": "Current PR #174 is the bounded follow-up and is intentionally excluded from the expected main-checkpoint queue snapshot; live queue is one PR (#174), with no other open PRs."
   },
-  "last_volley": "V-2026-11-08-CHECKLIST-A11Y-ASSET-REGISTRY-003"
+  "last_volley": "V-2026-11-08-CHECKLIST-A11Y-ASSET-REGISTRY-004"
 }
