@@ -262,3 +262,9 @@ This is a disposition record, not authorization to merge any stale branch wholes
 - **#111** remains owner-controlled; do not close or resolve without a separate evidence-backed decision.
 
 **End state:** after the audit, `main` remains the only durable product baseline; no completed PR remains parked. Any unimplemented future idea remains a task/source record in main, not an open implementation PR.
+
+
+## Owner override — 2026-11-08: Functions menu capability slice (D-022)
+
+- [~] **UX-044 / MENU-002 / MENU-003:** Owner explicitly requests a concise Functions section containing Agents/structured analysis, Deep Research and Skills/task profile. PR #169 restores exactly these three entry points. Deep Research selects Thorough processing mode only; web-search breadth stays orthogonal. Agent mode is the current four-stage same-model pipeline, not a swarm. Skills are prompt/profile guidance only and grant no permissions. Integrations/connectors remain hidden until their real registry/status/permission contracts exist. Research Studio remains retired; this is not its reintroduction.
+- [~] **PR #169:** focused RU/EN and Chromium coverage added for the Functions menu and each action. Re-run all exact-head gates after this owner-directed UI amendment; no merge/deployment claim until green and public Pages SHA is verified.
