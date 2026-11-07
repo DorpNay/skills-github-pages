@@ -50,6 +50,10 @@ permalink: /
     .cloud-card input[data-state="connected"] { border-color:#35d39a!important;box-shadow:0 0 0 1px rgb(53 211 154 / 14%),0 0 13px rgb(53 211 154 / 8%); }
     .cloud-card input[data-state="error"] { border-color:#ff737a!important;box-shadow:0 0 0 1px rgb(255 115 122 / 14%); }
     .field-error { margin-top:-.35rem;font-size:10px;line-height:1.25;color:var(--ui-danger); }
+    #settingsModal .field-error { color:var(--ui-danger)!important; }
+    #settingsModal .cloud-status-copy { color:var(--ui-danger)!important; }
+    #settingsModal .cloud-status-copy[data-state="connected"] { color:var(--ui-success)!important; }
+    #settingsModal .cloud-status-copy[data-state="checking"] { color:var(--ui-warning)!important; }
     .advanced-field,.advanced-control { font-size:11px!important;padding:.42rem .55rem!important;min-height:30px; }
     #cloudStatus { margin:0;font-size:10px;line-height:1.2; }
     #cloudStatusDot { margin-top:0; }
