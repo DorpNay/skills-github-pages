@@ -15,7 +15,7 @@
 
 ## Canonical routing
 
-- Whole-project task order: docs/MASTER_TASK_REGISTRY_RU.md + append-only docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md. One logical register; no parallel backlog.
+- Whole-project principles/source/plan navigation: PROJECT_ORCHESTRATOR_RU.md (index only; not a second backlog). Normative principles: docs/ALANDI_N2O_CORE_RU.md; knowledge cycle: docs/ALANDI_N2O_KNOWLEDGE_LOOP_RU.md; concise method: LOOP.md.\n- Whole-project task order: docs/MASTER_TASK_REGISTRY_RU.md + append-only docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md. One logical register; no parallel backlog. For every owner goal, search existing IDs and enrich before adding.
 - Landing V1/V2: docs/LANDING_RELEASE_STRATEGY_RU.md + docs/V1_UI_FINALIZATION_RU.md. PR #131 is a selective integration workbench, not a wholesale merge instruction.
 - Voice: Voice tasks in the master registry/addendum; inspect current code and exact-head evidence before adopting a voice branch.
 - Research/source intake: INTEL.md → docs/OPEN_SOURCE_TRIAGE_RU.md → docs/TECHNIQUE_REGISTER_RU.md; verify primary source, exact version, license, provenance and target fit.
