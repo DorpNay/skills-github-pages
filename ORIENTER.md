@@ -16,8 +16,8 @@
 ## Active bounded work
 
 - Branch: `fix/pages-functions-contract-and-state-20261108`, based on exact main `bf039f887e29137b627b06fc2bb107c2793d6b69`.
-- Scope: correct the published UI contract sentinel; synchronize stale orientation/state/checkpoint records with verified post-merge facts.
-- Acceptance: Quality/Freshness/Provenance on the exact PR head; post-merge Quality must verify exact public root + `/landing/` SHA and approved Functions menu without restoring Research Studio.
+- Scope: correct the published UI contract sentinel; isolate the delayed provider auto-connect probe in E2E; complete the Functions keyboard/focus trap, localized accessible name and 320px hit-target coverage; normalize all stable IDs/cross-links in both registries; audit browser asset trust boundaries and system maturity; synchronize orientation/state/checkpoint records.
+- Acceptance: Quality/Freshness/Provenance/Graphify on the exact PR head; post-merge Quality must verify exact public root + `/landing/` SHA and approved Functions menu without restoring Research Studio. Native VoiceOver/iPhone Safari remains a manual acceptance item, not a CI claim.
 - The earlier PR #173 approval does not authorize merging or deploying this follow-up.
 
 ## Canonical navigation and next steps
