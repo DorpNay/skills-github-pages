@@ -123,3 +123,22 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - **Required automated gates:** Gateway contract/security run `40637641493`; Quality/Chromium/published-site run `40637641255`; dead-code report `40637641563` — all passed on PR head `c09c4db9afc3b763b4900b34712223c40b729cd7`.
 - **Limit:** these gates establish deterministic behavior and contract preservation, not production retrieval quality. No labelled >=50-query corpus or target-host latency/RSS benchmark was run. Recall@5 >=0.75 remains a proposed threshold, not an observed production result.
 - **Acceptance before quality claims:** compare baseline and RRF on identical labelled queries; report Recall@5, MRR/nDCG, citation correctness, p50/p95 latency, peak RSS, scope leakage, upsert and deletion correctness. Keep `ALANDI_RAG_ENABLED=false` until operator setup and validation.
+
+
+## EV-MEMVID-001 — portable memory archive/export prototype (planned; source snapshot archived in PR #169)
+
+- **Question:** can a portable single-file archive improve backup/transfer without replacing the canonical SQLite memory store?
+- **Scope:** export/import only; no active retrieval routing or write-through runtime integration.
+- **Fixture:** synthetic conversations and project facts with stable IDs, owner/scope, source/provenance, valid-time/recorded-time, disputed status, derived-from links and deletion markers.
+- **Acceptance:** byte integrity and deterministic manifest; 100% round-trip of required metadata; restore isolation by project; explicit behavior for revoked/deleted and disputed items; archive size, export/import p50/p95 and cold-open RSS. A format that cannot represent scope/deletion semantics remains archive-only and cannot become canonical memory.
+- **Candidate:** Memvid v2.0.140, public Apache-2.0 source pinned to commit `e18fe55494379e2ab7397ce03655e8abbc5e0c31`; selected source subset archived under `docs/upstream-archive/memvid-v2.0.140/`. Verify optional feature/dependency profile before building. Upstream performance claims are not aLandi measurements.
+- **Status:** PLANNED / NOT RUN. Source license/blob provenance checked; no dependency/build/runtime adopted.
+
+## EV-RAG-ANYTHING-001 — multimodal document pipeline patterns (planned; source snapshot archived in PR #169)
+
+- **Question:** do typed content blocks, structured multimodal chunks and page/bbox/time provenance improve aLandi's current document pipeline enough to justify selective adaptation?
+- **Scope:** evaluate schemas/algorithms first; do not install the full package or all extras into the 8-GB runtime.
+- **Fixture:** identical representative PDFs, DOCX, XLSX, Markdown with local images, plus a small legally usable audio/video corpus. Preserve source IDs and expected page/offset/segment references.
+- **Metrics:** extraction coverage, table structure accuracy, figure/chart caption grounding, page/bbox and timestamps, citation correctness, audio WER/CER, video segment recall, peak RSS, install footprint and parse latency.
+- **Candidate:** RAG-Anything v1.4.1 (MIT code), source commit `0ef67b4d476b66407a03a39e5b17e756fc0aef29`; selected source snapshot archived under `docs/upstream-archive/rag-anything-v1.4.1/`. Its core dependency includes LightRAG and MinerU, while audio/video add faster-whisper, PyAV, SceneDetect, MoviePy, OpenCV and ffmpeg requirements. Audit transitive/model licenses separately.
+- **Status:** PLANNED / NOT RUN. Source license/blob provenance checked; no runtime, dependency or model weights installed.
