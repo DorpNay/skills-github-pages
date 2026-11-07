@@ -9,11 +9,11 @@
 - Exact-main Quality #42372746360 SUCCESS: 116 Chromium app tests, published root smoke 1/1, landing Chromium 8/8, exact source SHA verified on both ordinary canonical public URLs (root and `/landing/`).
 - Graphify run #42372746441 SUCCESS on exact main.
 - PR #166 §8.17 merged at `c4f23e03f563d03213eb87002863da630fc8b833`. Root app settings now include message font size, line spacing and standard/high contrast; access via global gear/settings → “Читаемость текста”. PR #167 merged at `3cee60c7a72decee1d715d8a68c0c49539e17c58` and added exact build-revision metadata plus canonical URL deploy gates and upstream source research.
-- Open PRs: #125, #131, #152, #154, #155. Open issue: #111.
+- Open PRs: #125, #131, #152, #154, #155, #168, #169. Open issue: #111.
 - Owner upstream research is recorded in INTEL and OPEN_SOURCE_TRIAGE; research-only, no installs/downloads/runtime adoption.
-- Native iPhone Safari/VoiceOver and VPS/Tunnel/Ollama are not verified. PR #154 is stale/diverged and must be reconciled in bounded slices; do not merge as-is or weaken tests.
+- PR #169 is the active main-based UI slice (head 115f8facaf36ba0efbbd0ef7f0865dfe7971db6b); exact-head Quality/Chromium and Graphify pending. It retires Research Studio, removes the unapproved three-item Functions menu, separates aServi/provider settings and cleans the sidebar. PR #154 is stale/diverged and is not the active baseline. Native iPhone Safari/VoiceOver and VPS/Tunnel/Ollama remain unverified.
 
-- open PRs (5): #125, #131, #152, #154, #155.
+- open PRs (7): #125, #131, #152, #154, #155, #168, #169.
 - open issues (1): #111.
 
 ## 1. Быстрый маршрут
