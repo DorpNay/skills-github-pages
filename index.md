@@ -332,6 +332,7 @@ permalink: /
     html[data-theme="light"] .text-white, html[data-theme="light"] .text-gray-100,
     html[data-theme="light"] .text-gray-200, html[data-theme="light"] .text-gray-300 { color:var(--ui-text)!important; }
     html[data-theme="light"] .text-gray-400, html[data-theme="light"] .text-gray-500 { color:var(--ui-text-muted)!important; }
+    html[data-theme="dark"] .text-gray-500 { color:var(--ui-text-muted)!important; }
     html[data-theme="light"] .assistant-content blockquote { color:var(--ui-text-muted)!important; border-color:var(--ui-border)!important; }
     html[data-theme="light"] .assistant-content th, html[data-theme="light"] .assistant-content td { border-color:var(--ui-border)!important; }
     html[data-theme="light"] .code-block pre, html[data-theme="light"] .code-output { background:var(--ui-surface-raised)!important; color:var(--ui-text)!important; border-color:var(--ui-border)!important; }
