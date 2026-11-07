@@ -892,13 +892,14 @@ test('model-specific failure tries another model on the same provider first', as
 
 test('dynamic chat catalog is used for bounded same-provider model fallback', async ({ page }) => {
   const attemptedModels = [];
+  let catalogEnabled = false;
   await page.route('https://api.example.test/v1/models', route => route.fulfill({
     status: 200, contentType: 'application/json',
-    body: JSON.stringify({ data: [
+    body: JSON.stringify({ data: catalogEnabled ? [
       { id: 'e2e-primary-model' },
       { id: 'e2e-dynamic-fallback' },
       { id: 'e2e-text-embedding' }
-    ] })
+    ] : [] })
   }));
   await page.route('https://api.example.test/v1/chat/completions', async route => {
     const model = route.request().postDataJSON().model;
@@ -920,6 +921,8 @@ test('dynamic chat catalog is used for bounded same-provider model fallback', as
   await page.locator('#modelName').fill('e2e-primary-model');
   await page.locator('#apiKey').fill('e2e-dynamic-catalog-key');
   await page.locator('[data-action="save-settings"]').click();
+  await page.locator('[data-action="refresh-model-catalog"]').click();
+  catalogEnabled = true;
   await page.locator('[data-action="refresh-model-catalog"]').click();
   await expect(page.locator('#modelPreset option[value="e2e-dynamic-fallback"]')).toHaveCount(1);
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
