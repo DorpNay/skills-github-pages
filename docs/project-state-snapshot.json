@@ -6,8 +6,8 @@
     "main_sha": "c4f23e03f563d03213eb87002863da630fc8b833",
     "main_commit_subject": "feat(ui): add adjustable message readability",
     "main_commit_date": "2026-11-07",
-    "last_functional_checkpoint_sha": "1d32e3d3c6718e3d04efce312eac018596518f9f",
-    "last_functional_milestone": "PR #169 current code/test HEAD 1d32e3d3c6718e3d04efce312eac018596518f9f includes aServi connection-marker fix (refreshCloudStatus reads persisted ai_provider_connection_alandi safely), and E2E fixes for exclusive settings disclosures and the collapsed Functions menu. Previous exact head 54a2401 Quality #42404826459 failed 7 Chromium tests (106 passed); Freshness #42404826540 failed stale queue snapshot (closed PR #155 still listed). Current live open PR queue is #169 only; issue #111 remains owner-controlled. Exact final gates pending; no merge/deploy claim.",
+    "last_functional_checkpoint_sha": "1a426d571a7fda157f98e1225fcf0494ec673fe9",
+    "last_functional_milestone": "PR #169 code/test HEAD 1a426d571a7fda157f98e1225fcf0494ec673fe9: fixes persisted aServi connection marker read and E2E coverage for exclusive settings disclosures/Functions menu; follow-up moved the fallback checkbox action into the advanced-settings disclosure before interacting with it, avoiding a hidden-control test timeout. Prior exact HEAD 54a2401 Quality #42404826459 failed 7 Chromium tests; freshness failures were stale queue and exact marker format, both corrected. Latest exact-head CI on final documentation/state commit is pending. Live queue only #169; issue #111. No merge/deploy claim.",
     "main_quality_run": 42372746360,
     "main_pages_deployment_run": 42372745873,
     "functional_parent_gateway_run": null,
@@ -234,7 +234,7 @@
     },
     "open_prs": "0 open PRs excluding current PR #169; current live queue is only #169",
     "open_prs_at_checkpoint": 0,
-    "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-013"
+    "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-014"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
@@ -242,5 +242,5 @@
     "queue_policy": "Exact IDs; snapshot expected queue is [] after excluding the currently checked PR #169 from the live open queue [169]. Human orientation records the active PR separately. Closed non-merged #125/#131/#152/#154/#155 remain registry scope.",
     "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
   },
-  "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-013"
+  "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-014"
 }
