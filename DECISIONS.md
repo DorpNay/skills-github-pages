@@ -213,10 +213,19 @@
 ## D-019 — Orthogonal chat settings and progressive disclosure
 
 - **Status:** Accepted for implementation in the 2026-10-30 chat-settings slice.
-- **Primary surface:** expose only work effort (Quick/Thorough) and web-search scope (Off/Standard/Expanded). Keep structured workflow, task profile and integrations in the advanced Functions menu.
+- **Primary surface:** expose work effort (Quick/Thorough) and web-search scope (Off/Standard/Expanded) directly. Do not restore the three historical Functions menu entries (structured analysis, task profile, integrations) or invent a replacement catalog without explicit owner approval.
 - **Independent contracts:** `processingMode` controls only the model/tool execution budget; `searchMode` controls only web-tool availability and search-result breadth; `multiAgentEnabled` enables the existing four-stage planner/researcher/critic/synthesizer pipeline only when the complexity gate allows it; Quick/Thorough limits the tool budget inside the researcher stage, while the other stages are separate text calls on the selected model; `skillPreset` adds instructions only and grants no tools or data permissions.
-- **Research Studio:** it is a prompt-preparation workspace, not a second execution mode. It displays and uses the active chat's settings without mutating them. It remains a single entry point in the sidebar, not duplicated in the Functions menu.
+- **Research Studio:** explicitly retired by the owner on 2026-11-07 and removed from UI/app. Do not restore its shortcut, modal, or menu entry. The four-stage chat research pipeline remains a separate capability.
 - **No redundant selector:** response format remains part of the user's natural-language request. Do not add a separate table/report/code/concise selector unless a distinct, non-overlapping behavior is proven.
 - **Safety and clarity:** web Off disables web tools but does not imply that cloud model APIs work offline. The existing staged workflow must not be described as an independent team of models.
 - **Acceptance:** exact-head tests cover Quick+Expanded, Thorough+Standard, Thorough+Off, per-chat settings, task-profile independence, Research Studio non-mutation, RU/EN localization and mobile control layout. See [CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md](docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md).
 - **Rollout:** preserve the current static/Jekyll architecture and existing per-chat persistence; no new runtime dependency or provider permission is introduced.
+
+## D-020 — First-party server route naming: aLandi aServi
+
+- **Date:** 2026-11-07
+- **Status:** ACCEPTED — explicit owner instruction, reflected in the uploaded current `AGENTS.md`.
+- **Decision:** Name the first-party server route **aLandi aServi** in user-facing UI, DOM actions, documentation and tests. Do not reintroduce the retired product label “aLandi Cloud”.
+- **Compatibility:** Preserve existing `ai_alandi_cloud_*` localStorage keys as internal compatibility identifiers until a separately designed and tested migration. The provider value `alandi` remains an internal route identifier; do not expose it as a third-party provider. `aLandi aCloudi` is reserved for a future information-storage product. Cloudflare remains the infrastructure/provider name.
+- **Acceptance:** exact-head checks assert the current product label and route actions, reject the retired visible label/actions, and retain compatibility-key behavior.
+- **Rollback:** revert the bounded naming patch without changing stored keys or provider routing semantics.
