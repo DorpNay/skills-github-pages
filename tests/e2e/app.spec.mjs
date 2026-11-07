@@ -3360,24 +3360,33 @@ test('readability preferences persist and maintain semantic text contrast in bot
       probe.remove();
       return color;
     };
+    const cloudStatus = document.querySelector('#cloudStatus');
+    const statusRow = document.querySelector('#searchStatus');
+    const statusText = document.querySelector('#statusText');
     const actual = () => ({
       secondary:getComputedStyle(sample.querySelector('#secondary')).color,
       disabled:getComputedStyle(sample.querySelector('#disabled')).color,
       link:getComputedStyle(sample.querySelector('#link')).color,
-      error:getComputedStyle(sample.querySelector('#error')).color
+      error:getComputedStyle(sample.querySelector('#error')).color,
+      cloudChecking:getComputedStyle(cloudStatus).color,
+      statusInfo:getComputedStyle(statusText).color
     });
     const results = {};
     for (const theme of ['dark','light']) {
       document.documentElement.dataset.theme = theme;
       for (const contrast of ['standard','high']) {
         document.documentElement.dataset.readingContrast = contrast;
+        cloudStatus.dataset.state = 'checking';
+        statusRow.dataset.tone = 'info';
         results[theme + '-' + contrast] = {
           actual:actual(),
           expected:{
             secondary:colorFor('--ui-text-muted'),
             disabled:colorFor('--ui-text-muted'),
             link:colorFor('--ui-link'),
-            error:colorFor('--ui-danger')
+            error:colorFor('--ui-danger'),
+            cloudChecking:colorFor('--ui-warning'),
+            statusInfo:colorFor('--ui-info')
           }
         };
       }
