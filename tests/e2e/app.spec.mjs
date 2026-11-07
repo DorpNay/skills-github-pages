@@ -3441,3 +3441,27 @@ test('readability preferences persist and maintain semantic text contrast in bot
   expect(applied.userLineHeight).toBe('38px');
   expect(applied.contrast).toBe('high');
 });
+
+
+test('Research Studio and Functions windows apply the shared backdrop blur and cleanly close', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  const assertBackdropBlur = async selector => {
+    const modal = page.locator(selector);
+    await expect(modal).toBeVisible();
+    await expect.poll(() => modal.evaluate(element => getComputedStyle(element).backdropFilter)).toBe('blur(4px)');
+  };
+
+  await page.locator('#sidebar [data-action="open-research-studio"]').click();
+  await assertBackdropBlur('#researchStudioModal');
+  await page.locator('#researchStudioModal [data-action="close-research-studio"]').click();
+  await expect(page.locator('#researchStudioModal')).toBeHidden();
+
+  for (const panel of ['agents', 'skills', 'connectors']) {
+    await page.locator('#functionsMenuSummary').click();
+    await page.locator('[data-action="open-function-panel"][data-function="' + panel + '"]').click();
+    await assertBackdropBlur('#functionPanelModal');
+    await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
+    await expect(page.locator('#functionPanelModal')).toBeHidden();
+  }
+});
