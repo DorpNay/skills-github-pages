@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
   "repository": "DorpNay/skills-github-pages",
-  "captured_at": "2026-11-07",
+  "captured_at": "2026-11-08",
   "checkpoint": {
     "main_sha": "c4f23e03f563d03213eb87002863da630fc8b833",
     "main_commit_subject": "feat(ui): add adjustable message readability",
     "main_commit_date": "2026-11-07",
     "last_functional_checkpoint_sha": "c4f23e03f563d03213eb87002863da630fc8b833",
-    "last_functional_milestone": "PR #166 §8.17 readability controls merged and published on main. Pages #42372745873 and exact-main Quality #42372746360 passed on c4f23e03f563d03213eb87002863da630fc8b833; 116 Chromium app tests, root smoke 1/1, landing 8/8, and canonical root + /landing/ exact build-revision assertions passed. Current owner UI slice is PR #169; resolve its exact head live; exact-head checks pending, not merged or published.",
+    "last_functional_milestone": "Main c4f23e03f563d03213eb87002863da630fc8b833 remains Pages-verified (Pages #42372745873, Quality #42372746360, Graphify #42372746441). Active PR #169 at head ae04cf8ff299954a70d530684d4cf0713ad1c809 includes aServi route/UI regression fixes and the new systems/agent/source orientation; exact-head gates are running. No merge or deployment claim for PR #169.",
     "main_quality_run": 42372746360,
     "main_pages_deployment_run": 42372745873,
     "functional_parent_gateway_run": null,
