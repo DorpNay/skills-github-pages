@@ -69,7 +69,7 @@ project_state:
     status: "Live main c4f23e03f563d03213eb87002863da630fc8b833 and Pages exact-SHA publication verified. PR #169 is the active UI slice (head current head resolved from live GitHub); PR #168 is the docs/orientation sync. PR #154 remains stale/diverged and must not be merged wholesale. Open queue: #125/#131/#152/#154/#155/#168/#169; issue #111. VPS/Tunnel/Ollama and native iPhone/VoiceOver remain unverified."
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback; PR114 leaves the optional global system prompt empty by default and removes the obsolete Gemini reset"
-    projects: "PR35 merged and Chromium E2E passed: collapsed project list with per-project chat children; top-level unassigned chats only; project memory scope project-only vs project-and-global; one-shot project context scoped by chat. Server graph bridge remains experimental and disabled by default."
+    projects: "PR35 merged and Chromium E2E passed: collapsed project list with per-project chat children; top-level unassigned chats only; browser-local project notes with project-only vs project-and-global scope; one-shot project context scoped by chat. Experimental server-memory graph/API/browser bridge retired by owner 2026-11-07; conversation delta sync and independent RAG remain separate contracts."
     voice_ui: "PR44 merged at 9145b5f; gateway/security/context/integrity/Jekyll/Chromium/live-site checks passed; local whisper.cpp ASR, Piper TTS and message mini-player are implemented but disabled by default; target device/model quality and VPS setup remain unverified"
     chat_actions: "PR33+34+35 merged; PR71 stable bottom composer; PR115 composer popover scrim, modal backdrop blur and inert first outside tap for toolbar/language/chat-row menus; exact-head Chromium and published-site smoke passed on PR head d7f57d0abfba46a5764e6a1182bcc9a847f7a6ef"
     detailed_ledger: "docs/V016_IMPLEMENTATION_CHECKLIST.md"
@@ -518,3 +518,13 @@ whole_stack_integrity_audit_2026_10_30:
   checklist: "docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md"
   subagent_handoff: "brief prepared in audit document; no independent agent execution claimed"
   deployment_boundary: "post-merge Pages deployment and live VPS/Ollama unverified"
+
+
+memory_retirement_2026_11_07:
+  status: "OWNER DECISION; implementation in PR #169 branch; exact-head CI pending; not merged or published."
+  removed: "Experimental server-memory graph API/routes, flags, SQLite schema/store, graph-only temporal/conflict modules, browser bridge/actions and per-chat server-memory state."
+  preserved: "Browser-local personal/project notes; conversation delta sync; independent scoped RAG, citations and evidence ledger."
+  isolation_evidence: "RAG exact-scope retrieval/delete and Evidence Ledger scope filtering are covered by gateway tests; exact-response cache key includes full payload and a regression now distinguishes project-specific prompt context."
+  open: "Browser-global-memory multi-project prompt-leak E2E and a dedicated project-ID cache namespace contract are not yet proven."
+  data_retention: "No server DB, WAL/journal, snapshot or backup deletion was performed. Live VPS was not inspected; preserve existing data pending separate owner backup/export/retention decision."
+  canonical_record: "DECISIONS.md D-021; docs/USER_REQUEST_CHECKLIST.md UR-061/UR-064; docs/MASTER_TASK_REGISTRY_RU.md; EVALS.md EV-MEM-003."
