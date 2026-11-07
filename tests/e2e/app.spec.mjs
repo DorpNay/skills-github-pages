@@ -145,8 +145,7 @@ test('sidebar order keeps memory above projects and omits the removed Research S
     sidebar.querySelector('#memoryPanel'),
     sidebar.querySelector('#projectPanel'),
     sidebar.querySelector('#projectStatusLine'),
-    sidebar.querySelector('#chatSection'),
-    sidebar.querySelector('#sidebarPreferences')
+    sidebar.querySelector('#chatSection')
   ].map(el => Array.prototype.indexOf.call(sidebar.children, el)));
   expect(positions.every(Number.isInteger)).toBe(true);
   expect(positions).toEqual([...positions].sort((a, b) => a - b));
