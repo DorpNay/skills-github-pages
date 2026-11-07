@@ -21,6 +21,7 @@ test('aServi private gateway route works, stays local, and exposes cache status'
   await page.route('https://alandi.example.test/**', async route => {
     const request = route.request();
     const origin = request.headers().origin || 'https://dorpnay.github.io';
+    if (request.url().endsWith('/healthz')) return route.fulfill({ status: 200, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ status: 'ok' }) });
     const corsHeaders = {
       'access-control-allow-origin': origin,
       'access-control-allow-methods': 'GET, POST, OPTIONS',
