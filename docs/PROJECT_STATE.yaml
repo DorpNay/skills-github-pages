@@ -19,12 +19,12 @@ project_state:
     status: "Live main checkpoint 2026-11-07: c4f23e03f563d03213eb87002863da630fc8b833. Pages #42372745873 SUCCESS; Quality #42372746360 SUCCESS on exact same SHA, including exact canonical root and /landing/ source-revision checks, 116 app Chromium tests and landing 8/8. Production Pages path is GitHub-managed dynamic/pages/pages-build-deployment; official builder v1.0.13 tag v1 resolves to 44a6e6beabd48582f863aeeb6cb2151cc1716697. PR #166 merged; readability controls are part of root app, accessible via global settings gear. PR #167 merged with canonical build SHA verification and source sweep. PR #154 remains stale/diverged; previous Quality #42349173942 failed 17 E2E + 1 flaky, Freshness #42349173878 failed; do not merge as-is or weaken tests. Open queue #125/#131/#152/#154/#155; issue #111. VPS/Tunnel/Ollama and native iPhone/VoiceOver remain unverified."
     branch: "main"
     base_main: "c4f23e03f563d03213eb87002863da630fc8b833"
-    open_prs_at_checkpoint: 5
+    open_prs_at_checkpoint: 7
     open_issues_at_checkpoint: 1
     merged_changes: "PR #167 publication SHA/canonical URL guard and owner upstream research merged at 3cee60c7a72decee1d715d8a68c0c49539e17c58; PR #166 message readability controls merged at c4f23e03f563d03213eb87002863da630fc8b833; PR #161 sidebar swipe-to-close merged at 094e249860b651166d4d1029f175e97a5cea2345; PR #158 Pages root-title guard; PR #157 icon-first message actions; PR #156 task intake/orchestrator; earlier #153/#150/#149/#148/#147 protections preserved."
     exact_head_checks: "Exact main c4f23e03f563d03213eb87002863da630fc8b833: Pages #42372745873 SUCCESS; Quality #42372746360 SUCCESS (all jobs), 116 app Chromium tests, root smoke 1/1, canonical root + /landing/ SHA assertions PASS, landing 8/8; Graphify #42372746441 PASS. PR #166 pre-merge exact head 683ec28310a68dc0126a715a04f3ddc613e817b6: Quality #42368514164 PASS and Graphify #42368514210 PASS."
     runtime_boundary: "GitHub Pages root app and /landing/ are VERIFIED LIVE on exact main c4f23e03f563d03213eb87002863da630fc8b833 via deployment #42372745873 and Quality #42372746360 canonical URL SHA assertions. §8.17 readability is merged and published. VPS/Tunnel/Ollama, credentials, native iPhone/VoiceOver and target-host model performance remain unverified."
-    next: "Continue UI-PROMO-001 by reconciling useful PR #154 work against current main in bounded slices; base is stale f323b6f and prior Quality #42349173942/Freshness #42349173878 failed. Preserve #147/#148/#150, repair failing behavior/tests without weakening assertions, and rerun exact-head Quality/Freshness/Provenance/Graphify. Keep #131 selective, #152 separate, #125 FUTURE/HOLD, #155 triaged, #111 owner-controlled; preserve SRC-001 and all lower-priority register items. Native iPhone/VoiceOver and VPS checks remain open."
+    next: "Finish exact-head Quality/Chromium and Graphify on PR #169 head 115f8facaf36ba0efbbd0ef7f0865dfe7971db6b; after owner-authorized merge, verify Pages deployment and the public root on the exact merge SHA through the release-contract job and a cache-busted fetch. Then refresh the canonical checkpoint and continue remaining UI requirements; PR #154 remains a stale reference only, not the active baseline. Keep #131 selective, #152 separate, #125 FUTURE/HOLD, #155 triaged, #111 owner-controlled; preserve SRC-001 and all lower-priority register items. Native iPhone/VoiceOver and VPS checks remain open."
     source_triage:
     status: "triage_documentation_merged; Graphify isolated code-only pilot verified; 2026-11-07 owner-source sweep added to INTEL and OPEN_SOURCE_TRIAGE; 21 upstream repository revisions/source records checked; research only, no install/download/runtime adoption"
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -304,7 +304,7 @@ current_checkpoint:
   main_provenance: "Exact-main push did not run separate License/Artifact Provenance; the PR #167 source/provenance review passed before merge, and no artifact/dependency was added by PR #166."
   main_pages: "GitHub-managed Pages deployment #42372745873 SUCCESS on exact main c4f23e03f563d03213eb87002863da630fc8b833; official Jekyll v1.0.13 build, artifact upload and Deploy passed. Quality #42372746360 independently confirms exact build SHA on ordinary root and /landing/ canonical URLs."
   merged_prs: "167 Pages source-revision/canonical URL guard, source triage and owner state refresh (merge 3cee60c7a72decee1d715d8a68c0c49539e17c58); 166 §8.17 adjustable text readability (merge c4f23e03f563d03213eb87002863da630fc8b833); 161 §8.1 sidebar swipe-to-close (merge 094e249860b651166d4d1029f175e97a5cea2345); 158 Pages title guard; 157 icon-first message actions; 156 task-intake/orchestrator; prior main protections #147/#148/#150 preserved."
-  open_pull_requests: "5 live open PRs: #125, #131, #152, #154, #155."
+  open_pull_requests: "7 live open PRs: #125, #131, #152, #154, #155, #168, #169."
   open_issues: "Issue #111 only: consolidated owner/live-host release gates; remains owner-controlled."
   freshness_guard: "scripts/check_project_state_freshness.py; this checkpoint refreshes OLEDUE, ORIENTER, detailed FILE_ORIENTER, project state, machine snapshot, owner task register and VOLLEY_LOG together from exact main c4f23e03f563d03213eb87002863da630fc8b833 after PR #166/#167 merge."
   runtime_boundary: "Pages root app and /landing/ VERIFIED LIVE on exact main c4f23e03f563d03213eb87002863da630fc8b833 via deployment #42372745873 and Quality #42372746360 canonical SHA checks. §8.17 is merged/published. VPS/Tunnel/Ollama, credentials, native iPhone/VoiceOver, physical audio and target-host performance remain OPEN."
@@ -321,6 +321,24 @@ v1_ui_finalization:
   pending: "post-merge Pages deployment smoke; native iPhone Safari/manual checks; owner-only issue #111"
   status_boundary: "ticker is decorative roadmap copy, not a background task indicator; independent agents, integrations, voice and document extraction remain gated/unverified"
 
+ui_owner_override_2026_11_07:
+  status: "IMPLEMENTED IN PR #169 BRANCH; exact-head Quality/Chromium and Graphify pending; not merged/published."
+  main_sha_at_checkpoint: "c4f23e03f563d03213eb87002863da630fc8b833"
+  pr_169_base: "c4f23e03f563d03213eb87002863da630fc8b833"
+  pr_169_head: "115f8facaf36ba0efbbd0ef7f0865dfe7971db6b"
+  owner_decisions:
+    - "Research Studio retired entirely; supersedes older notes that kept a Thorough-mode helper."
+    - "The previous three-item Functions menu was not owner-approved; visible menu removed; replacement deferred until explicit capability inventory."
+    - "aLandi aServi is first-party and absent from the third-party provider picker; settings disclosures are mutually exclusive as specified."
+    - "No automatic fallback between aServi and third-party providers."
+    - "Stop-generation remains contextual but is styled neutral, not as a persistent red floating control."
+  implementation:
+    - "PR #169 also cleans sidebar hierarchy, removes redundant controls, and adds exact-SHA Pages release verification for canonical and cache-busted URLs."
+  public_site_checkpoint: "Cache-busted public root returned AI Mobile Agent v10.0; un-busted Exa fetch returned stale v9.0 cache, so exact SHA/cache-busting is required."
+  pending:
+    - "Exact-head Quality/Chromium and Graphify on PR #169."
+    - "Owner-authorized merge, Pages deployment and live public-site verification on exact merge SHA."
+    - "Remaining visual review and open UI requirements must be resumed from V1_UI_FINALIZATION_RU.md; do not treat PR #169 as full UI completion."
 three_role_audit_2026_10_30:
   tracker: "docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md"
   status: "PR #121 and PR #122 merged; exact-head CI passed. Historical source branch is retained as an audit reference only."
