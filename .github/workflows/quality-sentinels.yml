@@ -64,6 +64,13 @@ jobs:
         with:
           source: ./
           destination: ./_site
+      - name: Verify generated Pages artifacts carry the exact commit SHA
+        run: |
+          expected_revision="$GITHUB_SHA"
+          test -s ./_site/index.html
+          test -s ./_site/landing/index.html
+          grep --fixed-strings --quiet "name=\"alandi-build-revision\" content=\"$expected_revision\"" ./_site/index.html
+          grep --fixed-strings --quiet "name=\"alandi-build-revision\" content=\"$expected_revision\"" ./_site/landing/index.html
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
