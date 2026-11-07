@@ -403,6 +403,8 @@ PR #122 добавил только эксплуатационную надёж�
 - Проверить мобильные браузеры, long-press, свайпы, кнопки и поля ввода.
 - Критерий приёмки: удержание на интерактивном элементе не выделяет весь экран; выделение пользовательского содержимого продолжает работать.
 
+**Implementation evidence (2026-11-07):** [IMPLEMENTED] PR #162 merged as `41c4657a63bf594b6cbc1cf904d90275264921f6`; targeted `user-select` / `touch-action` rules preserve selectable message/input content, with Chromium regression coverage. [PENDING] Native iPhone Safari long-press, swipe and assistive-technology review are not established by CI.
+
 ### 8.15 Строки состояния и бегущие строки
 
 - Строки состояния и бегущие строки визуально центрировать.
@@ -410,6 +412,8 @@ PR #122 добавил только эксплуатационную надёж�
 - Не применять чрезмерно яркие оттенки и не ухудшать контраст.
 - Сохранять читаемость в светлой и тёмной темах, на мобильных экранах и при отключённой анимации.
 - Не подменять реальное состояние декоративной анимацией или фиктивным прогрессом; соблюдать уже установленные правила reduced-motion и доступности.
+
+**Implementation evidence (2026-11-07):** [IMPLEMENTED] PR #163 merged as `c599e97b4ea1e75d17011c87b0bf8a01f6bdb8f1` (tested head `f03ba6fc61992ee325d3af67e7dbb4e41a73e681`); centered status/ticker layout, mobile wrapping and reduced-motion behavior passed post-merge Quality run `42361174052`, including published Pages Chromium smoke. [IMPLEMENTED] Semantic tone colors merged in PR #164 as `a8ff942653622c73347ef64a11dd06ff7d849ad6` (tested head `be4aef823280af4491c08847cc4d06423cff3c2f`); exact-head Quality run `42361612473` passed all 7 jobs, Graphify run `42361612453` passed, including Chromium contrast assertions and published Pages smoke. [PENDING] Native mobile/browser visual review remains outstanding.
 
 ### 8.16 Типографика и содержимое кнопок: единый стандарт и icon-first
 
