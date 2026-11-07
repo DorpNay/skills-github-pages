@@ -156,15 +156,3 @@ artifacts:
     ship: false
     status: "archived_selected_source_snapshot; 18_source_files_and_LICENSE_exact_upstream_git_blob_sha1_verified; whole_archive_sha256_not_computed"
     notes: "Selected 18 source files including parser.py, plus exact MIT LICENSE; not a complete checkout. MinerU, LightRAG, OCR/ASR/VLM model, dataset and transitive dependency terms are separate; no runtime or optional dependency installed."
-
-
-  - id: rag-anything-source-v1.4.1-curated-archive
-    kind: source_code
-    upstream: "https://github.com/HKUDS/RAG-Anything"
-    source_version: "v1.4.1; commit 0ef67b4d476b66407a03a39e5b17e756fc0aef29"
-    license_spdx: "MIT"
-    commercial_use: "candidate_allowed_with_notice_subject_to_transitive_license_and_model_review"
-    sha256: null
-    ship: false
-    status: "archived_selected_source_snapshot; 18_source_files_and_LICENSE_exact_upstream_git_blob_sha1_verified; whole_archive_sha256_not_computed"
-    notes: "Selected 18 source files including parser.py, plus exact MIT LICENSE; not a complete checkout. MinerU, LightRAG, OCR/ASR/VLM model, dataset and transitive dependency terms are separate; no runtime or optional dependency installed."

@@ -4,18 +4,15 @@
 
 ## Контрольная точка — 2026-11-08 (live main / PR queue reconciled)
 
-- Main remains `c4f23e03f563d03213eb87002863da630fc8b833`; exact-main Pages #42372745873 SUCCESS, Quality #42372746360 SUCCESS (116 app Chromium, root smoke 1/1, landing 8/8 and canonical URL SHA checks), Graphify #42372746441 PASS.
-- PR #169 is the only active implementation lane, base c4f23e0. Last code/test checkpoint `2d816fb066d68bd58da226abf25c4332c0306085`; state/orientation records are being refreshed after PR queue cleanup, so re-fetch the live branch HEAD and all exact-head gates before merging. At 2d816: Gateway #42401796690 PASS, Graphify #42401796661 PASS, Freshness #42401796658 PASS before closures (queue needs rerun), Provenance #42401796829 PASS, Dead Code #42401796716 PASS, Quality #42401796689 was IN_PROGRESS. A syntax defect in an E2E assertion was found by Quality on the preceding head and corrected in commit 2d816; check latest Quality logs and final exact SHA.
-- Owner-approved UI contract on #169: Agents/structured analysis (four-stage same-model pipeline), Deep Research via Thorough/tool budget, Skills/task profile (instructions only); no placeholder Integrations. Research Studio is retired. Modal blur + clean close and provider settings exclusivity have targeted E2E assertions.
-- **Reconciled closed PRs:** #172 (obsolete Research Studio blur test, Functions modal blur acceptance preserved), #171 (older owner directive removed Functions; newest request supersedes; aServi route ideas preserved), #168 (state sync superseded by fresher #169 snapshot). Their PR bodies explain dispositions; no merges.
-- **Open queue including active:** #125, #131, #152, #154, #155, #169. Issue #111 owner-controlled. #125 is FUTURE/DO NOT MERGE; #131 V2 workbench; #152 draft voice; #154 stale/diverged V2; #155 draft roadmap/archive. File-by-file selective reconciliation only.
-- `INTEL.md`: 310 distinct URL refs / 183 GitHub repositories; not all reviewed. The 2026-11-08 source tranche on durable orchestration, code graph navigation, exact-head CI and Pages publication is recorded in INTEL/TECHNIQUE_REGISTER; no runtime engine/model/dependency installed.
-- Systems inventory `docs/ALANDI_SYSTEMS_MAP_RU.md`: 18 systems and subsystem methods/maturity; map is a navigation/contract artifact, not evidence all listed functionality is verified. Detailed map `docs/ALANDI_ARCHITECTURE_MAP_RU.md`.
-- Main-only delivery contract, single register and per-step durable Volley log are encoded in AGENTS/OLEDUE/ORIENTER and the owner addendum. Exact latest SHA/check IDs must be re-fetched live; docs here are checkpoint context.
-- Still unverified: native iPhone Safari/VoiceOver, physical keyboard, visual inspection, VPS/Tunnel/Ollama, credentialed provider runtime, target hardware/model benchmarks.
-
-open PRs (5): #125, #131, #152, #154, #155
-open issues (1): #111
+- Main `c4f23e03f563d03213eb87002863da630fc8b833`; exact-main Pages #42372745873 SUCCESS, Quality #42372746360 SUCCESS (116 app Chromium, root smoke 1/1, landing 8/8, canonical root + /landing/ build SHA), Graphify #42372746441 PASS.
+- open PRs (5): #125, #131, #152, #154, #155
+- open issues (1): #111
+- Active PR #169, base c4f23e0, code/test checkpoint `df3a95f43820c747c97e94b8dd353b9f18a17359`; latest source archive import includes curated Memvid v2.0.140 (Apache-2.0, 22 source/license files) and RAG-Anything v1.4.1 (MIT, 18 source files) pinned to upstream commits. Every imported source Git blob SHA-1 matched upstream; Memvid per-file SHA-256s recorded but not recomputed. Reference-only, ship=false, no runtime/dependencies/weights installed. Whole archive SHA-256 OPEN.
+- Exact checks on df3a: Freshness #42402738727 PASS; Provenance #42402738722 FAIL duplicate RAG artifact ID (fixed in final state tree); Graphify #42402738721 IN_PROGRESS; Gateway #42402738753 IN_PROGRESS; Dead Code #42402738804 IN_PROGRESS; Quality #42402738730 QUEUED. Re-fetch all exact final HEAD.
+- PR #172/#171/#168 closed reconciled. Their PR bodies and VOLLEY_LOG contain reasons and preserved scope. Open queue including active PR: #125/#131/#152/#154/#155/#169; issue #111.
+- Functions owner contract: Agents/four-stage same-model structured analysis, Deep Research via Thorough/tool budget, Skills/task profile instruction-only. Research Studio retired; no placeholder Connectors. Modal blur/clean close and aServi provider separation/exclusivity are tested.
+- `INTEL.md` contains 310 distinct URL refs / 183 GitHub repos; not all reviewed. Orchestration/repo-navigation source tranche and selected source acquisition evidence are in INTEL/TECHNIQUE_REGISTER/OPEN_SOURCE_TRIAGE.
+- Systems map has 18 systems; archive presence does not upgrade runtime maturity. Native iPhone/VoiceOver, physical keyboard/visual review, VPS/Tunnel/Ollama, credentials and target model hardware remain unverified.
 
 ## 1. Быстрый маршрут
 

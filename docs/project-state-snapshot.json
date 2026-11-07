@@ -6,8 +6,8 @@
     "main_sha": "c4f23e03f563d03213eb87002863da630fc8b833",
     "main_commit_subject": "feat(ui): add adjustable message readability",
     "main_commit_date": "2026-11-07",
-    "last_functional_checkpoint_sha": "2d816fb066d68bd58da226abf25c4332c0306085",
-    "last_functional_milestone": "PR #169 is the owner-directed active slice: aServi/third-party route isolation, detailed truthful Functions menu (Agents/Deep Research/Skills), modal blur/clean-close and provider settings disclosure exclusivity; systems inventory, concise English executor contract, durable main-first checkpoints and source-backed orchestration research are recorded. PR #172/#171/#168 closed as reconciled superseded. Exact-head Quality is still being evaluated; no merge or deployment claim.",
+    "last_functional_checkpoint_sha": "df3a95f43820c747c97e94b8dd353b9f18a17359",
+    "last_functional_milestone": "PR #169 owner-directed Functions/aServi UI plus governed selected source archives: Memvid v2.0.140 and RAG-Anything v1.4.1 source subsets pinned to exact upstream commits; imported source Git blob SHA-1s matched. Research-only, ship=false, no runtime/dependency/weights installed. Exact-head Freshness passed, Provenance found a duplicate RAG ID now removed; other gates were in progress/queued. No merge/deploy claim.",
     "main_quality_run": 42372746360,
     "main_pages_deployment_run": 42372745873,
     "functional_parent_gateway_run": null,
@@ -229,8 +229,8 @@
     "active_ui_pr": {
       "number": 169,
       "base_sha": "c4f23e03f563d03213eb87002863da630fc8b833",
-      "head_sha": "2d816fb066d68bd58da226abf25c4332c0306085",
-      "status": "open; exact-head checks refreshed after latest state sync; Quality status to be re-fetched live",
+      "head_sha": "df3a95f43820c747c97e94b8dd353b9f18a17359",
+      "status": "open; final orientation/state/log refresh pending and exact-head gates must be re-fetched",
       "owner_scope": [
         "aServi is first-party; provider routes mutually exclusive; no silent cross-provider fallback",
         "Functions menu: Agents/structured analysis, Deep Research via Thorough, Skills/task profile; no placeholder connectors",
@@ -240,7 +240,7 @@
     },
     "open_prs": "7 open PRs excluding current PR #169: #125, #131, #152, #154, #155, #168, #171",
     "open_prs_at_checkpoint": 5,
-    "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-007"
+    "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-008"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
