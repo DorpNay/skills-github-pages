@@ -9,7 +9,7 @@
 - **Preserved main protections:** #147 cancellation-safe Gateway; #148 assistant-rendering/Pyodide security boundaries; #150 browser data recovery/atomic rollback.
 - **Pages VERIFIED LIVE:** deployment #42349853247 SUCCESS on exact main d83eea8; cache-busting public root returned AI Mobile Agent v10.0. PR #158 fixed the main-push root-title regex guard; exact-main Quality #42349853526 is IN_PROGRESS at this checkpoint. Do not replace GitHub-managed Pages with a duplicate workflow.
 - **UI §8.8 VERIFIED / MERGED:** PR #157 at main SHA `40540f6d75a90877ff9cbec5bbfacb48ee6f775c`; exact-head Quality #42349368043 and Graphify #42349368086 passed. Icon-first copy/open/speak actions, accessible names/tooltips, 44×44 touch targets and full-view copy/speak actions.
-- **Open PR queue:** #125, #131, #152, #154, #155. **Open issue:** #111.
+- **Open PR queue:** #125, #131, #152, #154, #155, #159 (current state-refresh PR). The freshness snapshot in this PR excludes #159 and expects #125, #131, #152, #154, #155. **Open issue:** #111.
   - #125 — FUTURE/HOLD; do not merge absent direct owner choice.
   - #131 — large Draft V2 workbench, diverged; selective slices only.
   - #152 — Draft Voice, stale base and previous exact Quality failure; inspect separately.
