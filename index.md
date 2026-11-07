@@ -391,6 +391,7 @@ permalink: /
     </div>
     
     <section id="memoryPanel" class="mx-3 my-2 rounded-xl border border-gray-800 p-2 space-y-2" aria-label="Настройки памяти">
+      <p id="memoryStatusLine" class="px-2 pb-1 text-[9px] leading-tight text-gray-500" role="status" aria-live="polite">Память · личных 0 · общих 0 · общая в контексте выкл.</p>
       <details id="memoryToolsDetails" class="rounded-xl border border-gray-800">
             <summary class="cursor-pointer select-none px-3 py-2 text-xs font-semibold">🧠 Общая память и факты</summary>
             <div class="p-2 space-y-2">
@@ -405,12 +406,10 @@ permalink: /
               <div id="sharedMemoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет общих заметок.</div>
             </div>
           </details>
-      <p id="memoryStatusLine" class="px-2 pb-1 text-[10px] leading-relaxed text-gray-500" role="status" aria-live="polite">Память · личных 0 · общих 0 · общая в контексте выкл.</p>
     </section>
     <section id="projectPanel" class="px-3 py-2 border-t border-gray-800 space-y-2" aria-label="Проекты и настройки проекта">
-      <div class="grid grid-cols-2 gap-2 mb-2">
-        <button type="button" data-action="open-project-create" data-i18n="createProject" class="rounded-lg border border-cyan-800 bg-cyan-950/40 px-2 py-2 text-left text-xs font-semibold">＋ Создать проект</button>
-        <button type="button" data-action="open-project-settings" data-i18n="projectSettingsAction" class="rounded-lg border border-gray-700 px-2 py-2 text-left text-xs">⚙ Настройки проекта</button>
+      <div class="mb-2">
+        <button type="button" data-action="open-project-create" data-i18n="createProject" class="w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-2 py-2 text-left text-xs font-semibold">＋ Создать проект</button>
       </div>
       <div id="projectNavigation" class="space-y-1.5">
         <button id="projectNavToggle" type="button" data-action="toggle-project-navigation" aria-expanded="false" aria-controls="projectNavigationList" class="w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold project-nav-heading">
@@ -421,7 +420,7 @@ permalink: /
         </button>
         <div id="projectNavigationList" class="hidden pl-2 space-y-1" aria-label="Список проектов"></div>
       </div>
-
+      <button type="button" id="projectRecoveryBackupButton" data-action="download-project-recovery-backup" class="hidden w-full rounded-lg border border-amber-800 bg-amber-950/40 py-2 text-xs text-amber-100">Скачать резервную копию проектов</button>
     </section>
     <p id="projectStatusLine" class="mx-3 -mt-1 mb-1 px-2 text-[10px] leading-relaxed text-gray-500" role="status" aria-live="polite">Личный чат · без проекта</p>
     <details id="chatSection" open class="mx-3 my-2 rounded-xl border border-gray-800">
@@ -431,7 +430,6 @@ permalink: /
       <div class="px-2 pt-2"><button type="button" data-action="new-chat" data-i18n="newPersonalChat" class="w-full rounded-lg border border-blue-500/25 bg-blue-600/10 hover:bg-blue-600/20 py-2 text-xs font-semibold text-blue-200">＋ Новый личный чат</button></div>
       <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
     </details>
-    <div class="px-3 py-2 border-b border-gray-800"><button type="button" data-action="open-research-studio" class="w-full flex items-center gap-2 rounded-xl border border-cyan-800/70 bg-cyan-950/30 hover:bg-cyan-900/40 px-3 py-2.5 text-left text-xs font-semibold text-cyan-100"><span aria-hidden="true">⌕</span><span data-i18n="researchStudio">Search &amp; Research Studio</span><span class="ml-auto text-[10px] text-cyan-300/80">↗</span></button></div>
 
     <div id="sidebarPreferences" class="sticky bottom-0 mt-auto border-t border-gray-800 bg-gray-950/95 backdrop-blur px-3 py-2"><button id="sidebarThemeToggle" type="button" data-action="toggle-theme-cycle" class="rounded-lg border border-gray-700 px-2 py-1.5 text-[11px] text-left" aria-label="Сменить тему">☼ Тема</button></div>
      <div id="chatRowMenuSidebarScrim" aria-hidden="true"></div>
@@ -491,7 +489,6 @@ permalink: /
                 <button type="button" data-action="import-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="importProject">Импорт проекта</button>
               </div>
               <input type="file" id="importProjectFile" class="hidden" accept="application/json,.json">
-              <button type="button" id="projectRecoveryBackupButton" data-action="download-project-recovery-backup" class="hidden w-full rounded-lg border border-amber-800 bg-amber-950/40 py-2 text-xs text-amber-100">Скачать резервную копию проектов</button>
               <button type="button" data-action="detach-current-chat" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="detachChat">Извлечь чат из проекта</button>
               <button type="button" data-action="delete-project" class="w-full bg-red-950/50 hover:bg-red-900/60 border border-red-900/50 rounded-lg py-2 text-xs text-red-200" data-i18n="deleteProject">Удалить проект и его чаты</button>
     
@@ -2439,6 +2436,7 @@ permalink: /
     function toggleSidebar(force) {
       const sidebar = $('sidebar'); const overlay = $('sidebarOverlay');
       const open = typeof force === 'boolean' ? force : sidebar.classList.contains('-translate-x-full');
+      if (!open) $('memoryToolsDetails').open = false;
       sidebar.classList.toggle('-translate-x-full', !open);
       overlay.classList.toggle('hidden', !open);
     }
