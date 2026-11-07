@@ -83,3 +83,51 @@ test('aServi private gateway route works, stays local, and exposes cache status'
   expect(chatPayloads[0].temperature).toBe(0);
   expect(cloudChatRequests).toEqual([]);
 });
+
+test('third-party provider fallback never switches to aServi', async ({ page }) => {
+  const aServiChatRequests = [];
+  const geminiChatRequests = [];
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_api_provider', 'gemini');
+    localStorage.setItem('ai_api_key_gemini', 'e2e-gemini-placeholder-key');
+    localStorage.setItem('ai_api_key_alandi', 'e2e-aservi-placeholder-key');
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://alandi.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_model', 'qwen3.5:4b');
+    localStorage.setItem('ai_cross_provider_fallback', 'true');
+  });
+  await page.route('https://alandi.example.test/**', async route => {
+    const request = route.request();
+    if (request.url().includes('/v1/chat/completions')) {
+      aServiChatRequests.push(request.url());
+      return route.fulfill({
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'aServi fallback must not run.' } }] })
+      });
+    }
+    return route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ data: [{ id: 'qwen3.5:4b', context_length: 4096 }] })
+    });
+  });
+  await page.route('https://generativelanguage.googleapis.com/**', async route => {
+    const url = route.request().url();
+    if (/generateContent|streamGenerateContent|chat\/completions|\/responses/.test(url)) {
+      geminiChatRequests.push(url);
+      return route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ error: { message: 'Gemini unavailable for fallback isolation.' } }) });
+    }
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ models: [] }) });
+  });
+
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#providerPreset')).toHaveValue('gemini');
+  await chooseSearchMode(page, 'offline');
+  const failedGeminiRequest = page.waitForResponse(response =>
+    response.url().includes('generativelanguage.googleapis.com') && /generateContent|streamGenerateContent/.test(response.url())
+  );
+  await page.locator('#userInput').fill('Проверь запрет автоматического переключения на aServi.');
+  await page.locator('#sendBtn').click();
+  await failedGeminiRequest;
+  await expect(page.locator('#stopBtn')).toBeHidden({ timeout: 15000 });
+  expect(geminiChatRequests.length).toBeGreaterThan(0);
+  expect(aServiChatRequests).toEqual([]);
+});
