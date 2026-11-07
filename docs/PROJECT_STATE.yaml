@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-08"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Main bf039f887e29137b627b06fc2bb107c2793d6b69 after PR #173 merge. Pages #42410162803 SUCCESS exact SHA. Quality #42410163178 Chromium and public root/landing checks PASS; published release-contract job #128517290166 fails only because stale forbidden marker rejects owner-approved functionsMenu. Follow-up branch fix/pages-functions-contract-and-state-20261108 repairs the sentinel. No open PRs; issue #111 remains owner/environment controlled."
+    status: "Main bf039f887e29137b627b06fc2bb107c2793d6b69 after PR #173 merge. Pages #42410162803 SUCCESS exact SHA. Quality #42410163178 Chromium and public root/landing checks PASS; published release-contract job #128517290166 fails only because stale forbidden marker rejects owner-approved functionsMenu. Follow-up branch fix/pages-functions-contract-and-state-20261108 repairs the sentinel. PR #174 is the only open PR; issue #111 remains owner/environment controlled."
     owner_policy: "main is the only durable product baseline. PRs are temporary exact-head verification/integration vehicles and must be merged promptly after required gates pass. PR #131 is not a durable workbench; audit and selectively port only approved compatible deltas; never merge it wholesale."
     sequence:
       - "PR #173 merged at bf039f887e29137b627b06fc2bb107c2793d6b69; repair the false-negative published UI contract sentinel in a separate bounded PR"
@@ -180,7 +180,7 @@ latest_checkpoint:
   main_sha: "c4f23e03f563d03213eb87002863da630fc8b833"
   open_prs: 0
   open_issues: 1
-  active_pr: null
+  active_pr: 174
   active_pr_base_sha: "c4f23e03f563d03213eb87002863da630fc8b833"
   active_pr_head_at_checkpoint: "2d816fb066d68bd58da226abf25c4332c0306085"
   reconciled_closed_prs: [168, 171, 172]
@@ -304,7 +304,7 @@ current_checkpoint:
   main_provenance: "Provenance #42408493536 PASS on exact main."
   main_pages: "Pages deployment #42410162803 SUCCESS on exact main SHA bf039f887e29137b627b06fc2bb107c2793d6b69; public root + /landing/ exact-SHA content and Chromium checks passed in Quality #42410163178."
   merged_prs: "169 owner UI/aServi provider isolation, §8.12 retirement and reference-source tranche; 167 Pages publication SHA guard/source triage; 166 §8.17 readability; 161 sidebar swipe-close; 158 Pages title guard; 157 icon-first actions; 156 owner intake; #147/#148/#150 protections preserved."
-  open_pull_requests: "0 live open PRs."
+  open_pull_requests: "1 live open PR #174; current PR excluded from freshness snapshot; no other open PRs."
   open_issues: "Issue #111 only; owner-controlled release gates."
   freshness_guard: "scripts/check_project_state_freshness.py; update OLEDUE/AGENTS/ORIENTER/FILE_ORIENTER/PROJECT_STATE/VOLLEY_LOG/snapshot together after live queue/state changes."
   runtime_boundary: "GitHub Pages deployment and public root + /landing/ are VERIFIED on exact main bf039f887e29137b627b06fc2bb107c2793d6b69. The release-contract sentinel is currently false-negative due outdated Functions menu prohibition. VPS/Tunnel/Ollama, provider credentials, native iPhone/VoiceOver and target-host model performance remain unverified."
