@@ -105,6 +105,30 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
+
+test('touch selection is disabled on controls but preserved for message text and inputs', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  const styles = await page.evaluate(() => {
+    const button = document.querySelector('[data-action="toggle-settings"]');
+    const input = document.querySelector('#userInput');
+    const message = document.createElement('div');
+    message.className = 'assistant-content chat-bubble';
+    message.textContent = 'Selectable assistant message';
+    document.querySelector('#chatBox').append(message);
+    return {
+      button: { userSelect: getComputedStyle(button).userSelect, touchAction: getComputedStyle(button).touchAction },
+      input: getComputedStyle(input).userSelect,
+      message: getComputedStyle(message).userSelect
+    };
+  });
+  expect(styles.button.userSelect).toBe('none');
+  expect(styles.button.touchAction).toBe('manipulation');
+  expect(styles.input).toBe('text');
+  expect(styles.message).toBe('text');
+});
+
 test('global system prompt is empty by default and obsolete Gemini reset is absent', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
