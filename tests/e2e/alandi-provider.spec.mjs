@@ -104,7 +104,7 @@ test('aLandi Cloud and external provider settings are mutually exclusive', async
   await expect(cloudRoute).toBeHidden();
   await expect(externalSettings).toBeVisible();
 
-  await routePicker.selectOption('alandi');
+  await page.locator('#selectAlandiCloudRoute').click();
   await expect(cloudRoute).toBeVisible();
   await expect(externalSettings).toBeHidden();
 });
