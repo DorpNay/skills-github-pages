@@ -4,6 +4,13 @@
 
 Every iteration must reduce a named risk or improve a measured outcome. A model/agent may propose changes, but production state changes only through explicit code review, test/eval gates and rollback planning. No hidden reasoning transcripts are stored; audit artifacts record actions, cited evidence, concise rationale and outcomes.
 
+## Owner principles and task intake
+
+- **Normative principles:** `docs/ALANDI_N2O_CORE_RU.md` governs owner authority, evidence, safety, capability boundaries and status semantics. Read it for substantive work; this loop does not override it.
+- **Knowledge promotion:** use `docs/ALANDI_N2O_KNOWLEDGE_LOOP_RU.md` only when work yields reusable evidence, a repeated error, a material decision or an upstream-contract change.
+- **One navigation index and one task inventory:** `PROJECT_ORCHESTRATOR_RU.md` locates sources/plans/decisions; `docs/MASTER_TASK_REGISTRY_RU.md` plus its existing addendum hold goals. Search and enrich a matching ID before adding one; never create a parallel backlog.
+- **Priority changes reorder, not erase:** retain lower-priority goals and their status while executing the highest current owner priority. Keep checkpoints small and continue one safe bounded slice in the same turn.
+
 ## State machine
 
 1. **Observe:** find actual code path, live status, relevant test, upstream source and current failure. Mark IMPLEMENTED / VERIFIED LIVE / PROTOTYPE / SPECIFIED / DEFERRED honestly.
