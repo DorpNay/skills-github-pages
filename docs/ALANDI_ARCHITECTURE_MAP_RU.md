@@ -13,13 +13,11 @@ flowchart TD
   Tunnel --> GW[FastAPI gateway/app.py]
   GW -->|OpenAI-compatible API| Ollama[Ollama / выбранная модель / runtime не подтверждён]
   GW --> Cache[SQLite exact-response cache / L2 optional]
-  GW --> Memory[Memory subsystem]
   GW --> RAG[RAG + evidence]
   GW --> Search[Web search adapters]
   GW --> Docs[Local document extraction]
   GW --> Audio[Local ASR / TTS adapters]
-  Memory --> Delta[gateway/memory/delta_sync.py]
-  Memory --> Graph[gateway/memory/manager.py]
+  GW --> Delta[gateway/memory/delta_sync.py / conversation delta sync]
   RAG --> Lazy[gateway/rag/lazy_graph_rag.py]
   RAG --> Ledger[gateway/rag/evidence_ledger.py]
   Ledger --> Citations[gateway/rag/citations.py]
@@ -37,17 +35,17 @@ flowchart TD
 | Контур | Точки входа | Что важно |
 |---|---|---|
 | Клиент | `index.md` | Большой статический HTML/JS; история и настройки в браузере. Browser API keys не являются server-side vault. |
-| Gateway | `gateway/app.py`, `gateway/README_RU.md` | FastAPI: health/capabilities/models/chat, admin, memory, RAG, search, documents, audio. VPS не подтверждён live. |
+| Gateway | `gateway/app.py`, `gateway/README_RU.md` | FastAPI: health/capabilities/models/chat, admin, conversation delta sync, RAG, search, documents, audio. Server-memory graph API retired by owner 2026-11-07. VPS не подтверждён live. |
 | Routing | `gateway/routing.py` | Детерминированная allowlist-политика; общий helper-model cascade не считать включённым. |
-| Memory graph | `gateway/memory/manager.py`, `scope.py`, `conflict.py`, `temporal.py` | SQLite, scope, provenance, статусы фактов; API opt-in. Это граф памяти продукта, не граф исходного кода. |
-| Delta sync | `gateway/memory/delta_sync.py` | Versioned patch/revision conflict; не автоматическая синхронизация всех browser records. |
+| Browser-local notes | `index.md` | Personal/project notes remain in browser storage with explicit local scope controls; no server graph bridge. |
+| Conversation delta sync | `gateway/memory/delta_sync.py` | Versioned patch/revision conflict; separate from browser-local project notes and retired server-memory graph. |
 | Retrieval/RAG | `gateway/rag/lazy_graph_rag.py` | SQLite FTS5 + lexical concepts; baseline, не dense vector RAG и не полный LazyGraphRAG. |
 | Evidence | `gateway/rag/evidence_ledger.py`, `citations.py` | Source URI, offsets/hash и scope должны сохранять проверяемую связь с источником. |
 | Tool DAG | `gateway/tools/dag_engine.py`, `validator.py`, `gateway/security/approval_gates.py` | Bounded prototype; не production shell sandbox. |
 | SSRF | `gateway/security/ssrf_protection.py` | Helper destination validation; важно корректно вызывать после DNS resolution и перепроверять redirect chain. |
 | Documents | `gateway/app.py`, `gateway/tests/test_document_extraction.py` | Ограниченное извлечение; не обещать универсальную поддержку форматов. |
 | Voice | `gateway/voice/`, `gateway/tests/test_audio_*.py`, `tests/e2e/audio-transcription.spec.mjs` | ASR/TTS adapters и UI есть в коде, но нужны бинарники/модели/flags; качество и latency на целевом устройстве не измерены. |
-| Research UI | `index.md`, `tests/e2e/research-*.spec.mjs` | Search & Research Studio; внешний поиск зависит от CORS, лимитов и настроенного адаптера. |
+| Search | `index.md`, `gateway/app.py` | Web-search adapters remain independent; Research Studio UI/modal is retired and must not be restored from historical docs. |
 | Quality | `.github/workflows/`, `scripts/check_project_metadata.py`, `scripts/check_license_manifest.py` | Проверки относятся к точному SHA; зелёный CI не подтверждает runtime на VPS. |
 
 ## 3. Маршруты gateway, проверенные в `gateway/app.py`
@@ -56,7 +54,6 @@ flowchart TD
 - `GET /v1/capabilities`, `GET /v1/models`
 - `GET /admin/cache/stats`, `GET /admin/runtime`
 - `GET/DELETE /v1/memory/state/{conversation_id}`, `POST /v1/memory/delta`
-- `GET/POST /v1/memory/graph/nodes`, `POST /v1/memory/graph/search`, `POST /v1/memory/graph/relations`, review/delete routes
 - `POST /v1/rag/ingest`, `POST /v1/rag/retrieve`, `DELETE /v1/rag/documents/{document_id}`
 - `GET /v1/search/web`, `POST /v1/documents/extract`
 - `POST /v1/audio/transcriptions`, `POST /v1/audio/speech`, `POST /v1/chat/completions`
@@ -65,10 +62,10 @@ flowchart TD
 
 ## 4. Где проверять
 
-- UI: `tests/e2e/app.spec.mjs`, `alandi-provider.spec.mjs`, `document-attachments.spec.mjs`, `audio-transcription.spec.mjs`, `research-studio.spec.mjs`, `research-evidence.spec.mjs`, `context-budget.spec.mjs`.
+- UI: `tests/e2e/app.spec.mjs`, `alandi-provider.spec.mjs`, `document-attachments.spec.mjs`, `audio-transcription.spec.mjs`, `research-evidence.spec.mjs`, `context-budget.spec.mjs`. Research Studio regression is covered by the retired-surface test in `app.spec.mjs`.
 - Gateway: `gateway/tests/test_app.py`, `test_six_layers.py`, `test_v016_foundation.py`, `test_document_extraction.py`, `test_audio_*.py`, `test_searxng_search.py`.
 - Release: Quality Sentinels, Pages deployment/browser smoke, provenance gate. Проверять exact PR HEAD, затем post-merge main.
-- Для memory: project scope, candidate/confirmed, deletion propagation и recovery semantics.
+- Для memory/privacy: browser-local project scope, conversation delta sync boundaries, RAG exact-scope retrieval/deletion and evidence scope. Server graph candidate/confirmed lifecycle is retired.
 
 ## 5. Graphify — dev-only code navigation, не runtime-интеграция
 
