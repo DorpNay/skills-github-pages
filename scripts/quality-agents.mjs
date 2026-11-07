@@ -53,7 +53,12 @@ const suites = {
         return start >= 0 && close > start ? providerPicker.slice(start, close + '</optgroup>'.length) : '';
       };
       const externalRouteGroup = extractGroup('providerExternalGroup');
+      const aserviStart = source.indexOf('<details id="aserviSettingsGroup"');
+      const aserviClose = source.indexOf('</details>', aserviStart);
+      const aserviSettings = aserviStart >= 0 && aserviClose > aserviStart ? source.slice(aserviStart, aserviClose + '</details>'.length) : '';
       assert.ok(source.includes('<details id="aserviSettingsGroup"'), 'aLandi aServi must have a dedicated settings disclosure.');
+      assert.ok(aserviSettings.includes('data-action="connect-alandi-aservi"'), 'aServi must expose an explicit connection action inside its own settings group.');
+      includes("if(currentProvider()!=='alandi'){setCloudStatus('disconnected');return;}", 'aServi probes must not run while a third-party provider is selected.');
       assert.ok(source.includes('aLandi aServi'), 'The first-party server route must use the current aLandi aServi product name.');
       assert.equal(source.includes('aLandi Cloud'), false, 'Do not reintroduce the retired aLandi Cloud product label.');
       includes('data-action="paste-aservi-key"', 'The first-party key action must use the aServi identifier.');
@@ -65,7 +70,7 @@ const suites = {
       assert.equal(source.includes('providerPrimaryGroup'), false, 'The obsolete hidden primary-provider optgroup must be removed.');
       assert.ok(externalRouteGroup.includes('<option value="gemini">') && externalRouteGroup.includes('<option value="custom">'), 'External providers must remain selectable.');
       includes("const peerSettingsGroups=[$('legacyProviderSettings'),$('additionalSettings')]", 'aServi must be mutually exclusive with third-party and additional settings; those two sections may coexist.');
-      assert.equal((source.match(/id="cloudConnect"/g) || []).length, 0, 'The private server must connect automatically, without a permanent manual-check button.');
+      assert.equal((source.match(/id="cloudConnect"/g) || []).length, 0, 'The retired cloud connection element ID must remain absent.');
       includes('function connectAlandiAServi()', 'The aServi UI must verify a real model response before showing connected.');
       includes('function scheduleCloudAutoConnect()', 'Changes to private server settings must trigger a bounded automatic connection check.');
       includes('function setCloudFieldError(id,message', 'Invalid server fields must show an inline field-specific error.');
