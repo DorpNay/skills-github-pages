@@ -2,16 +2,20 @@
 
 > Подробный индекс навигации. Это не источник live-статуса и не обязательный стартовый пакет. Для `oledue` сначала читай корневой OLEDUE.md, затем выполняй один batched live GitHub read. Используй этот файл только для поиска конкретного пути.
 
-## Контрольная точка — 2026-11-06 (проверена по GitHub)
+## Контрольная точка — 2026-11-07 (GitHub live snapshot)
 
-- **main:** `a8afee45bb22654b220bffda857ab10c24641ef1` — PR #150 merged; storage recovery/atomic rollback is part of main.
-- **open PRs (3): #125, #131, #152.** **open issues (1): #111.** Это снимок; перед использованием сверять live.
-- **#131:** Draft, head `5f71b97f3c85ab8544431b496ceb7c9ccf8c0c3e`, base `e78a73b25725bfa63370d9946887cbbacbf51b82`, 1,125 ahead / 19 behind, 76 files, dirty. Selective reconciliation only.
-- **#152:** Draft, head `99a0b530b335e7e19833c4ce66138dcc576a09fa`, base `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`, 17 ahead / 1 behind, 4 files, dirty; Quality failed and Graphify passed on that exact head.
-- **#125:** future-workstream parking; not active unless owner asks.
-- **Main protections:** #147 Gateway cancellation; #148 untrusted rendering/Pyodide restrictions; #150 browser storage recovery/rollback.
-- **Current direction:** finish orientation repair; then reconcile #131 against current main without dropping protections; inspect #152 separately; continue research and capability work from the master register.
-- PR #128/#134/#151 were closed without merging to main; selected material was copied to #131. PR #129/#130 were merged into #131, not main.
+- **main:** `d4a2fac093abff4a7d14c4826ec7445250dd5278` — source-archive commit after PR #153 orientation repair merged at `f323b6f339d454dad6e820a4074fa230acc7b6df`.
+- **Последний функциональный checkpoint:** `a8afee45bb22654b220bffda857ab10c24641ef1` — PR #150 browser-storage recovery/atomic rollback.
+- **Main protections:** #147 cancellation-safe Gateway; #148 untrusted rendering/restricted Pyodide globals; #150 storage recovery/fail-closed rollback.
+- **Pages:** deployment #42204178239 SUCCESS and Quality #42204178841 SUCCESS on exact main d4a2fac. Cache-busting public URL fetch confirmed AI Mobile Agent v10.0; a plain web retrieval had stale cached v9.0. PR #156 adds a live root title guard.
+- **Freshness snapshot for PR #156:** open PRs (5): #125, #131, #152, #154, #155. open issues (1): #111. PR #156 itself is excluded by the checker. Full live queue also includes #156.
+- **#154:** modular UI shell promotion, head `796b5d54a7acb94b3d993dd4a662f721e9e2c902`, base `f323b6f...`; Quality #42193618745 failed (23 Chromium shard-4 selector timeouts; other three shards passed); Freshness #42193618668 failed on queue drift; Provenance/Graphify/Dead Code passed. Refresh live head/base before work.
+- **#155:** Draft roadmap/control-plane refinement; head `4e03d55d4d3c546ffe28bc61f4b0be23455333d9` at last read; Freshness/Provenance/Dead Code passed, Quality final status needs live recheck.
+- **#156:** owner priority reset + orchestrator + Pages guard; current mutable head/checks must be fetched live. Previous Freshness #42348613091 failed because snapshot main/queue stale.
+- **#131:** large Draft V2 workbench, diverged; selective slices only. **#152:** Draft Voice, stale base, keep separate. **#125:** FUTURE/HOLD.
+- **Owner direction:** first OLEDUE/principles/task intake, second Pages (now verified), third UI requirements §§8.1–8.17 and later menus/panels/functions/minimization, then resume every retained lower-priority registry task.
+- **Project catalog:** root `PROJECT_ORCHESTRATOR_RU.md` indexes principles, INTEL/external source catalogs, plans, decisions, task register, artifact preservation and evidence.
+- **Main owner task intake:** search existing ID in Master Registry and UI checklist; enrich or append one stable ID. Do not duplicate or silently drop requirements.
 
 ## 1. Быстрый маршрут
 
