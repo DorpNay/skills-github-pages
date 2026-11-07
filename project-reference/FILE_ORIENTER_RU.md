@@ -2,15 +2,19 @@
 
 > Подробный индекс навигации. Это не источник live-статуса и не обязательный стартовый пакет. Для `oledue` сначала читай корневой OLEDUE.md, затем выполняй один batched live GitHub read. Используй этот файл только для поиска конкретного пути.
 
-## Текущая навигационная поправка — 2026-11-07
+## Контрольная точка — 2026-11-07 (live main)
 
-- Для быстрого старта использовать корневой ORIENTER.md; для handoff по слову oledue сначала читать OLEDUE.md.
-- Этот файл — подробный path/history index. Его старые queue/status snapshots ниже не являются live truth.
-- Последний проверенный main перед текущим UI PR: c4f23e03f563d03213eb87002863da630fc8b833; Pages deployment #42372745873 и Quality #42372746360 подтвердили публикацию exact main SHA.
-- PR #169 — текущая bounded UI batch на ветке feat/ui-sidebar-81-polish-20261107; проверить его live head, diff и exact-head checks перед продолжением. Его изменения ещё не являются live до merge и post-merge Pages verification.
-- PR #154 — stale/conflicted V2 shell; не merge wholesale. PR #168 — устаревший docs checkpoint.
-- Research Studio полностью удалён по указанию владельца. Видимое Functions menu с Agents / Skills / Integrations не одобрено и не должно возвращаться.
-- aServi — отдельный first-party режим; не включать его в third-party selector или third-party fallback.
+- Current main SHA: `c4f23e03f563d03213eb87002863da630fc8b833`.
+- GitHub Pages deployment #42372745873 SUCCESS on exact main; official GitHub-managed Pages path used `ghcr.io/actions/jekyll-build-pages:v1.0.13`; Build with Jekyll, artifact upload and Deploy all passed.
+- Exact-main Quality #42372746360 SUCCESS: 116 Chromium app tests, published root smoke 1/1, landing Chromium 8/8, exact source SHA verified on both ordinary canonical public URLs (root and `/landing/`).
+- Graphify run #42372746441 SUCCESS on exact main.
+- PR #166 §8.17 merged at `c4f23e03f563d03213eb87002863da630fc8b833`. Root app settings now include message font size, line spacing and standard/high contrast; access via global gear/settings → “Читаемость текста”. PR #167 merged at `3cee60c7a72decee1d715d8a68c0c49539e17c58` and added exact build-revision metadata plus canonical URL deploy gates and upstream source research.
+- Open PRs: #125, #131, #152, #154, #155, #168, #169. Open issue: #111.
+- Owner upstream research is recorded in INTEL and OPEN_SOURCE_TRIAGE; research-only, no installs/downloads/runtime adoption.
+- PR #169 is the active main-based UI slice (head 115f8facaf36ba0efbbd0ef7f0865dfe7971db6b); exact-head Quality/Chromium and Graphify pending. It retires Research Studio, removes the unapproved three-item Functions menu, separates aServi/provider settings and cleans the sidebar. PR #154 is stale/diverged and is not the active baseline. Native iPhone Safari/VoiceOver and VPS/Tunnel/Ollama remain unverified.
+
+- open PRs (7): #125, #131, #152, #154, #155, #168, #169.
+- open issues (1): #111.
 
 ## 1. Быстрый маршрут
 
@@ -42,7 +46,7 @@
 - PR #63: root orienter + AGENTS first-read protocol — merged at `623f1865ee4021debade9000bbecf6004c6b4cfa`; main has since advanced with docs-only commit `b91aab316c224588baea99fbb9b966b8865de0a6`.
 - Open PRs at index creation: #52 document attachment integration (branch `feat/document-attachment-ui-v3`), #37 mobile chat ergonomics, #36 project-memory scope regression tests. Check live PR status before assuming any remain open.
 - Local whisper.cpp ASR and Piper TTS + mini-player are code-level features, **not enabled/deployed by default**. Verify models, binary paths, flags, and target hardware before saying audio works on the user's server.
-- Research Studio was retired by owner on 2026-11-07; no UI entrypoint/modal/JS action should remain. SearXNG adapter is optional/configured-server-only, not an independently deployed search cluster.
+- Search & Research Studio exists; SearXNG adapter is optional/configured-server-only, not an independently deployed search cluster.
 - Memory graph and delta-sync API are experimental/flagged off. Browser/local memory, gateway graph memory, and external storage are not one magically synchronized store.
 
 ## 3. Folder taxonomy
