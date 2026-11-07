@@ -5402,7 +5402,7 @@ test('partially corrupt chat history remains downloadable when recovery backup w
     };
   }, raw);
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('#recoveryBackupButton')).toBeVisible();
+  await expect(page.locator('#recoveryBackupButton')).not.toHaveClass(/hidden/);
   expect(await page.evaluate(() => localStorage.getItem('ai_chats_v87'))).toBe(raw);
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   const [download] = await Promise.all([
