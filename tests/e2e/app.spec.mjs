@@ -1138,7 +1138,9 @@ test('aServi status only turns green after a real model response, and core UX co
   await expect(page.locator('#chatBox')).toContainText('OK', { timeout: 15000 });
   expect(cloudRequests).toHaveLength(3); // connect probe, user completion, post-response probe
   expect(cloudRequests[1].messages.at(-1).content).toBe('Verify the primary chat uses my aLandi cloud.');
-  expect(cloudRequests.every(request => request.model === 'qwen3.5:4b')).toBe(true);\n  expect(cloudRequests[0].max_tokens).toBe(8);\n  expect(cloudRequests[2].max_tokens).toBe(8);
+  expect(cloudRequests.every(request => request.model === 'qwen3.5:4b')).toBe(true);
+  expect(cloudRequests[0].max_tokens).toBe(8);
+  expect(cloudRequests[2].max_tokens).toBe(8);
   await selectLanguage(page, 'en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
