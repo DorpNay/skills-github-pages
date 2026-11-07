@@ -263,13 +263,13 @@ Exact upstream HEADs and declared license/capability evidence are recorded in [I
 |---|---|---|
 | Conductor durable execution | Официальная семантика at-least-once; side effects могут повторяться после сбоя worker | **ACCEPT principles only:** idempotency, retry budget, checkpoint, durable approval, recovery drill. Runtime DEFERRED |
 | Temporal LangGraph plugin | Public Preview на 2026-07-16; решает durable recovery/human interrupts, но добавляет отдельную инфраструктуру | **DEFER** до реальной потребности в multi-hour/day workflow |
-| CodeGraph | Альтернативный tree-sitter graph; сравнительные источники не дают достаточного независимого преимущества на нашем репозитории | **DEFER**; оставить Graphify dev-only и прямую проверку исходников |
+| CodeGraph | Apache-2.0, SQLite/tree-sitter, 34 MCP tools, architecture rules/CI gate; upstream claims local/zero telemetry, но нет aLandi baseline | **PILOT CANDIDATE**; сначала disposable 10-task comparison с Graphify и grep, без установки в runtime |
 | Docling | MIT; structured document model с page/bbox provenance; CPU OCR может быть дорогим | **ACCEPT architecture**, не runtime на VPS; отдельный offline benchmark |
 | RAG-Anything | Полезные failure-mode probes для таблиц/картинок/OCR; full install может быть тяжёлым | **ACCEPT test patterns**, не устанавливать framework |
 | llama.cpp server | Continuous batching, parallel decode, KV quantization и OpenAI-compatible API | **DEFER runtime replacement**; сравнивать с Ollama только при измеренном bottleneck |
 | Qwen3-ASR-0.6B int8 via sherpa-onnx | RU/TH в language list; upstream streaming limitation and exact artifact/license need verification | **PILOT CANDIDATE**; compare WER/CER, RAM, latency and cancellation against current ASR baseline |
 | Moonshine streaming | Current MIT streaming table does not list RU/TH; some older non-English models use Community License | **NOT SELECTED** for RU/TH default |
-| OpenVoiceStream | Hardware-specific edge backends and benchmark claims; not directly portable to generic x86 VPS | **REFERENCE ONLY** |
+| OpenVoiceStream | MIT; hardware-first Jetson/Rockchip/Hailo/Raspberry Pi and per-accelerator quantization | **EDGE REFERENCE ONLY**; not generic x86 VPS candidate |
 | GitHub Releases / Pages artifact model | Git LFS unsupported by Pages; Pages site ≤1 GB; release asset <2 GiB | **ACCEPT acquisition boundary:** weights outside Pages tree, manifest + SHA in Git |
 
 Ни один новый runtime, модель или крупный артефакт в этом проходе не скачан, установлен или активирован. Решения по источникам не означают реализацию. Ссылки и первичные ограничения внесены в `INTEL.md`.
