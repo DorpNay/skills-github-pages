@@ -150,6 +150,9 @@ This section is the current execution order; earlier roadmap stages and registry
 - Batch live state once, route the latest explicit owner request and complete one bounded action in the same turn when safe. Handoff is not a substitute for implementation.
 
 ### P0-B — verify and restore GitHub Pages publishing
+
+**Investigation outcome (2026-11-07): VERIFIED LIVE; no mechanism replacement needed.** Main SHA `d4a2fac093abff4a7d14c4826ec7445250dd5278` contains `AI Mobile Agent v10.0`; Pages dynamic deployment run #42204178239 succeeded (build/deploy/report jobs); Quality run #42204178841 passed and executed published browser/landing smoke. Cache-busting fetch of public root returned v10.0. Earlier plain fetch had stale cached v9.0; do not mistake cached response for publication lag. The PR adds an exact-source-title root smoke to Quality on main pushes. Keep the existing GitHub-managed Pages publishing configuration; avoid adding a competing custom deploy workflow.
+
 1. Identify current default main SHA and the actual Pages source/configuration/workflow; do not rely on stale PROJECT_STATE.
 2. Inspect exact-main workflow runs and their triggering commit, build artifact and deploy job outcomes.
 3. Check Pages deployment status/commit and fetch the actual public page; compare its rendered assets/content with the expected main SHA.
