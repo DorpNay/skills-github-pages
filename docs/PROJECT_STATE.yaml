@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-07"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Live checkpoint 2026-11-07: main c4f23e03f563d03213eb87002863da630fc8b833. GitHub-managed Pages deployment #42372745873 SUCCESS using actions/jekyll-build-pages v1.0.13; build, artifact upload and Deploy passed. Exact-main Quality #42372746360 SUCCESS: 116 Chromium app tests, published root smoke 1/1, landing Chromium 8/8, exact build SHA passed on ordinary canonical root and /landing/ URLs without cache-busting. PR #166 §8.17 merged at c4f23e03f563d03213eb87002863da630fc8b833; message size 14–22 px, line height 1.4–2.0, and standard/high contrast controls are available at global gear/settings → Читаемость текста. PR #167 publication guard/upstream triage merged at 3cee60c7a72decee1d715d8a68c0c49539e17c58. Graphify #42372746441 SUCCESS. Open PRs #125/#131/#152/#154/#155; issue #111. Owner source sweep remains research only. Native iPhone/Safari/VoiceOver and VPS/Tunnel/Ollama are not verified."
+    status: "Main c4f23e03f563d03213eb87002863da630fc8b833 remains VERIFIED LIVE: Pages #42372745873 and Quality #42372746360 passed exact SHA. Public root cache-busted fetch returns AI Mobile Agent v10.0; use exact SHA/cache-busting to avoid stale edge cache. PR #169 is the current UI implementation (head 115f8facaf36ba0efbbd0ef7f0865dfe7971db6b), exact-head Quality/Chromium and Graphify pending; no merge or new deployment yet. PR #168 carries the refreshed orientation/state docs."
     owner_policy: "main remains stable Landing 1.0 with bounded quality improvements; PR #131 remains the Landing 2.0 workbench; never merge PR #131 wholesale"
     sequence:
       - "Reconcile orientation and preserve the current V1 baseline"
@@ -16,7 +16,7 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "Live main checkpoint 2026-11-07: c4f23e03f563d03213eb87002863da630fc8b833. Pages #42372745873 SUCCESS; Quality #42372746360 SUCCESS on exact same SHA, including exact canonical root and /landing/ source-revision checks, 116 app Chromium tests and landing 8/8. Production Pages path is GitHub-managed dynamic/pages/pages-build-deployment; official builder v1.0.13 tag v1 resolves to 44a6e6beabd48582f863aeeb6cb2151cc1716697. PR #166 merged; readability controls are part of root app, accessible via global settings gear. PR #167 merged with canonical build SHA verification and source sweep. PR #154 remains stale/diverged; previous Quality #42349173942 failed 17 E2E + 1 flaky, Freshness #42349173878 failed; do not merge as-is or weaken tests. Open queue #125/#131/#152/#154/#155; issue #111. VPS/Tunnel/Ollama and native iPhone/VoiceOver remain unverified."
+    status: "Live main c4f23e03f563d03213eb87002863da630fc8b833 and Pages exact-SHA publication verified. PR #169 is the active UI slice (head 115f8facaf36ba0efbbd0ef7f0865dfe7971db6b); PR #168 is the docs/orientation sync. PR #154 remains stale/diverged and must not be merged wholesale. Open queue: #125/#131/#152/#154/#155/#168/#169; issue #111. VPS/Tunnel/Ollama and native iPhone/VoiceOver remain unverified."
     branch: "main"
     base_main: "c4f23e03f563d03213eb87002863da630fc8b833"
     open_prs_at_checkpoint: 7
@@ -26,7 +26,7 @@ project_state:
     runtime_boundary: "GitHub Pages root app and /landing/ are VERIFIED LIVE on exact main c4f23e03f563d03213eb87002863da630fc8b833 via deployment #42372745873 and Quality #42372746360 canonical URL SHA assertions. §8.17 readability is merged and published. VPS/Tunnel/Ollama, credentials, native iPhone/VoiceOver and target-host model performance remain unverified."
     next: "Finish exact-head Quality/Chromium and Graphify on PR #169 head 115f8facaf36ba0efbbd0ef7f0865dfe7971db6b; after owner-authorized merge, verify Pages deployment and the public root on the exact merge SHA through the release-contract job and a cache-busted fetch. Then refresh the canonical checkpoint and continue remaining UI requirements; PR #154 remains a stale reference only, not the active baseline. Keep #131 selective, #152 separate, #125 FUTURE/HOLD, #155 triaged, #111 owner-controlled; preserve SRC-001 and all lower-priority register items. Native iPhone/VoiceOver and VPS checks remain open."
     source_triage:
-    status: "triage_documentation_merged; Graphify isolated code-only pilot verified; 2026-11-07 owner-source sweep added to INTEL and OPEN_SOURCE_TRIAGE; 21 upstream repository revisions/source records checked; research only, no install/download/runtime adoption"
+    status: "Live main c4f23e03f563d03213eb87002863da630fc8b833 and Pages exact-SHA publication verified. PR #169 is the active UI slice (head 115f8facaf36ba0efbbd0ef7f0865dfe7971db6b); PR #168 is the docs/orientation sync. PR #154 remains stale/diverged and must not be merged wholesale. Open queue: #125/#131/#152/#154/#155/#168/#169; issue #111. VPS/Tunnel/Ollama and native iPhone/VoiceOver remain unverified."
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
     technique_register: "docs/TECHNIQUE_REGISTER_RU.md"
     upstream_archive:
@@ -66,7 +66,7 @@ project_state:
   current_ui_track:
     branch: "main"
     merged_pr: 121
-    status: "PR #121 merged at f4d880f; first free landing V1 and root client UX are in main. PR #122 merged at fd4f0a1 with distinct process liveness/readiness probes. Exact-head CI passed on both PRs; post-merge Pages deployment and live runtime remain unverified."
+    status: "Live main c4f23e03f563d03213eb87002863da630fc8b833 and Pages exact-SHA publication verified. PR #169 is the active UI slice (head 115f8facaf36ba0efbbd0ef7f0865dfe7971db6b); PR #168 is the docs/orientation sync. PR #154 remains stale/diverged and must not be merged wholesale. Open queue: #125/#131/#152/#154/#155/#168/#169; issue #111. VPS/Tunnel/Ollama and native iPhone/VoiceOver remain unverified."
     primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
     providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback; PR114 leaves the optional global system prompt empty by default and removes the obsolete Gemini reset"
     projects: "PR35 merged and Chromium E2E passed: collapsed project list with per-project chat children; top-level unassigned chats only; project memory scope project-only vs project-and-global; one-shot project context scoped by chat. Server graph bridge remains experimental and disabled by default."
