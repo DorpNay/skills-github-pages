@@ -3558,6 +3558,7 @@ permalink: /
       if (kind === 'research') renderResearchConfiguration();
       if (kind === 'skills') renderSkillConfiguration();
       $('functionPanelModal').classList.remove('hidden');
+      $('functionPanelModal').querySelector('[data-action="close-function-panel"]')?.focus();
     }
     function closeFunctionPanel() {
       $('functionPanelModal').classList.add('hidden');
@@ -5513,6 +5514,19 @@ permalink: /
     $('chatActionForm').addEventListener('submit',event=>{event.preventDefault();saveChatActionDialog();});
     $('chatActionModal').addEventListener('click',event=>{if(event.target===$('chatActionModal'))closeChatActionDialog();});
     document.addEventListener('keydown', (event) => {
+      const functionModal = $('functionPanelModal');
+      if (event.key === 'Tab' && functionModal && !functionModal.classList.contains('hidden')) {
+        const focusable = Array.from(functionModal.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'))
+          .filter(element => element.getClientRects().length > 0 && getComputedStyle(element).visibility !== 'hidden');
+        const first = focusable[0], last = focusable[focusable.length - 1];
+        if (first && last) {
+          if (event.shiftKey && (document.activeElement === first || !functionModal.contains(document.activeElement))) {
+            event.preventDefault(); last.focus();
+          } else if (!event.shiftKey && (document.activeElement === last || !functionModal.contains(document.activeElement))) {
+            event.preventDefault(); first.focus();
+          }
+        }
+      }
       if (event.key === 'Escape') {
         if (!$('chatActionModal').classList.contains('hidden')) closeChatActionDialog();
         else if (!$('traceModal').classList.contains('hidden')) closeTrace();
