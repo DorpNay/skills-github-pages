@@ -391,6 +391,17 @@ permalink: /
     /* UI §8.17: user-controlled message typography; semantic colors stay theme-aware. */
     .chat-bubble, .assistant-content, .message-viewer-content { font-size:var(--reading-font-size,15px)!important; line-height:var(--reading-line-height,1.6)!important; }
     .chat-bubble :where(p,li,blockquote,td,th), .assistant-content :where(p,li,blockquote,td,th), .message-viewer-content :where(p,li,blockquote,td,th) { font-size:inherit!important; line-height:inherit!important; }
+    /* 320px mobile polish: keep the full header reachable and don't render idle Stop. */
+    @media (max-width:360px) {
+      .app-header { gap:2px!important;padding-inline:4px!important; }
+      .app-header .clock-face { width:36px!important;height:36px!important; }
+      .app-header .brand-wordmark { font-size:14px!important; }
+      .app-header .header-preferences { gap:1px!important; }
+      .app-header .header-chat-title { min-width:0;padding:2px 4px!important; }
+    }
+    @media (max-width:640px) {
+      #inputArea #stopBtn.hidden { display:none!important; }
+    }
   </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
