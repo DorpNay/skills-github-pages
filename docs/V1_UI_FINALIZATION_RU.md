@@ -489,7 +489,7 @@ PR #122 добавил только эксплуатационную надёж�
 Этот блок уточняет исторические пункты выше и является актуальным приоритетом при конфликте формулировок:
 
 - **Research Studio:** полностью удалён из интерфейса и клиентского JS; не возвращать.
-- **Functions menu (owner override 2026-11-08):** the menu is restored with Agents/structured analysis, Deep Research (Thorough-mode shortcut) and Skills/task profile. Integrations/connectors remain absent until a real registry and permissions exist. Research Studio itself remains retired.
+- **Functions menu (owner override 2026-11-08):** the menu contains exactly three concise visible entries — **Agents**, **Research**, **Skills** — with one-line explanations: Agents is the existing four-stage same-model structured workflow; Research opens the Deep Research configuration/navigation panel (Thorough effort remains independent from web-search breadth); Skills configures a chat-scoped instruction profile only. Integrations/connectors remain absent until a real registry and permissions exist. Research Studio itself remains retired.
 - **aServi/provider separation:** aServi — собственный режим, не внешний провайдер. Внешний selector и fallback не включают aServi. Переключение между режимами только вручную.
 - **Sidebar:** единственный порядок — память → проекты → чаты; память компактная и закрыта по умолчанию, проекты закрыты по умолчанию при видимой кнопке создания, чаты открыты по умолчанию. Настройки проекта — только шестерёнка конкретного проекта; дублирующий theme footer удалён.
 - **Controls:** theme + language в header; 44px touch targets; stop-generation action сохраняется, но не оформляется красной заливкой.
