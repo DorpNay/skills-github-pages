@@ -58,16 +58,16 @@
 - [~] Проектные инструкции редактируются и добавляются в контекст как предпочтения, не как политика безопасности; подтвердить тестами precedence.
 - [~] Текущий чат можно привязать/отвязать от проекта; проектная принадлежность видна в интерфейсе.
 - [~] Есть экспорт/импорт project bundle с чатом, инструкциями и памятью; проверить схему, duplicate IDs, limits, malicious content.
-- [~] Global memory и project memory имеют отдельные явные toggles; default выключен; подтвердить, что global facts не утекут в другой project scope.
+- [~] Browser-local global/project memory имеют отдельные явные toggles; global context по умолчанию выключен. E2E проверяет состояние переключателя, но отдельный multi-project prompt-leak test для browser-local global facts ещё не закрыт.
 - [x] **RETIRED BY OWNER 2026-11-07:** server-memory graph API and browser bridge are removed from the product. Browser-local project notes remain; conversation delta sync and RAG are separate and preserved. Existing server DB files are not deleted by code; live host is unverified.
 - [ ] Реализовать authenticated API/индексацию project sources только после согласованного backend contract; не имитировать работающий индекс на пустой заглушке.
-- [ ] Добавить/проверить тест cross-project leak для RAG, evidence, cache и deletion — server-memory graph больше не существует в runtime.
+- [~] Межпроектные проверки: RAG retrieval/delete — `gateway/tests/test_six_layers.py::test_rag_retrieval_preserves_citations_and_isolates_scopes` и `test_rag_scope_bound_ids_allow_same_document_name_without_leak_or_cross_delete`; Evidence Ledger — `gateway/tests/test_coder_packet.py::test_evidence_ledger_stores_scoped_provenance_and_exact_quote`; exact-response cache — `gateway/tests/test_app.py::test_exact_cache_key_separates_project_specific_prompt_context`. Cache key зависит от полного payload, а не от отдельного project-ID ACL; browser-global memory leak test и отдельный cache project-scope contract остаются открытыми. Серверная graph-memory изоляция retired.
 - [~] RAG source deletion is scope-checked and removes chunk/concept/FTS rows; SQLite `secure_delete` plus version-gated FTS5 `secure-delete` regression tests passed on PR #24 HEAD and post-merge main. This still does **not** erase evidence-ledger copies, WAL/journals, backups or browser-local source copies; system-wide crypto-erasure remains open.
 - [ ] Проверить экспорт, исправление и удаление пользовательских фактов и связанные derived records.
 - [ ] Реализовать удаление/криптостирание по всем реальным слоям; не обещать SLA ≤60 секунд без измерения.
 - [x] **RETIRED BY OWNER 2026-11-07:** scoped FTS5 `search_nodes()` belonged to the removed server-memory graph. RAG retains its independent scoped FTS5 store.
 - [x] Historical PR #27 Gateway/provenance/Quality/Pages evidence retained. Its server-memory graph API is now retired by owner; do not enable or restore it.
-- [ ] Протестировать valid_from, valid_until, recorded_at, конфликты, supersede и scoped recursive delete в gateway memory prototypes.
+- [x] **RETIRED BY OWNER 2026-11-07:** temporal/conflict/recursive-delete tests belonged to the removed server-memory graph prototypes; do not rebuild them as a hidden backend memory subsystem.
 - [ ] Полноценный viewer источников/индекса, citation lineage и cross-device project memory остаются задачами последующих фаз.
 
 ## E. Инструменты, маршрутизация, веб-поиск и отказы
@@ -114,7 +114,7 @@
 ### Part I — CODER_PACKET.md: архитектура, обязательные контракты, фазы 0–8
 - [x] Прочитаны разделы 1–8: канонические источники, non-negotiable contracts, текущая архитектура, план фаз 0–8, voice latency, model/license policy, eval/release gates и non-goals.
 - [x] Зафиксированы ограничения: не выдавать prototype за live, не обещать p95 без измерения, no fake sandbox, no fake citation checks, tool approval/SSRF, scoped deletion, локальный аудиотракт и отсутствие автоматического cloud provisioning.
-- [~] Фазы 0–4: gateway/trace, scoped temporal memory, FTS5/evidence/citations и tool safety имеют foundations/prototypes; у каждого остаются отдельные eval-гейты.
+- [~] Фазы 0–4: gateway/trace, scoped RAG FTS5/evidence/citations и tool safety имеют foundations/prototypes; experimental server-memory graph/temporal/conflict layer retired by owner 2026-11-07.
 - [ ] Фазы 5–6: подключить настоящий voice runtime и native ASR/VAD/TTS только после лицензий и воспроизводимого hardware benchmark.
 - [ ] Фазы 7–8: подключить реальную telemetry timeline, authenticated UI API и cloud integration только после backend contract/security review.
 
@@ -138,9 +138,9 @@
 | **AI-OBS-001** | prototype_integrated_in_gateway | observability/trace_context.py | EV-OBS-001 |
 | **AI-OBS-002** | optional_disabled | observability/otel_config.py | EV-OBS-002 |
 | **AI-OBS-003** | event_schema_only_ui_deferred | observability/events.schema.json | EV-UI-001 |
-| **AI-MEM-001** | sqlite_prototype | gateway/memory/schema.sql | EV-MEM-001 |
-| **AI-MEM-002** | bitemporal_primitives_not_in_frontend | gateway/memory/temporal.py | EV-MEM-002 |
-| **AI-MEM-003** | scoped_manager_prototype | gateway/memory/scope.py | EV-MEM-003 |
+| **AI-MEM-001** | retired_server_memory_graph_schema | removed by owner 2026-11-07 | EV-MEM-001 RETIRED |
+| **AI-MEM-002** | retired_server_memory_temporal_module | removed by owner 2026-11-07 | EV-MEM-002 RETIRED |
+| **AI-MEM-003** | shared_RAG_scope_pair_validator_only | gateway/memory/scope.py + gateway/rag/lazy_graph_rag.py | EV-MEM-003 |
 | **AI-MEM-004** | retired_server_graph_conflict_module | removed by owner 2026-11-07 | EV-MEM-004 RETIRED |
 | **AI-MEM-005** | retired_server_graph_fts5_store | removed by owner 2026-11-07; RAG FTS5 retained | EV-MEM-005 RETIRED |
 | **AI-MEM-006** | retired_server_memory_graph_api_and_browser_bridge | routes, flags, store and UI removed by owner 2026-11-07 | EV-MEM-006 RETIRED |
@@ -154,8 +154,8 @@
 | **AI-TOOLS-004** | ssrf_policy_helper_only | gateway/security/ssrf_protection.py | EV-SEC-001 |
 | **AI-TOOLS-005** | approval_ticket_primitive_no_ui | gateway/security/approval_gates.py | EV-SEC-002 |
 | **AI-LICENSE-001** | manifest_and_ci_gate_prototype_no_voice_shipped | infra/license/provenance_manifest.yaml | EV-LICENSE-001 |
-| **AI-UI-001** | browser_project_prototype_e2e_pending | index.md; docs/V016_IMPLEMENTATION_CHECKLIST.md | EV-UI-002 |
-| **AI-UI-002** | manual_candidate_first_project_memory_bridge_e2e_passed_gateway_opt_in_live_unverified | index.md; gateway/app.py; tests/e2e/app.spec.mjs | EV-UI-003 |
+| **AI-UI-001** | browser_local_projects_and_notes_ui_implemented | index.md; tests/e2e/app.spec.mjs | EV-UI-002 |
+| **AI-UI-002** | retired_server_memory_source_viewer_and_bridge | removed by owner 2026-11-07 | EV-UI-003 RETIRED |
 | **AI-UI-003** | partial_bilingual_theme_clock_composer_voice_preview_e2e_pending | index.md | EV-UI-004 |
 | **AI-AGENT-001** | logical_roles_not_process_swarm | docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md | EV-AGENT-001 |
 | **AI-AGENT-002** | limited_existing_routing | gateway/tools/dag_engine.py | EV-AGENT-002 |
