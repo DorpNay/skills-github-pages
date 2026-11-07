@@ -1,12 +1,10 @@
 
 import asyncio
-import sqlite3
 import time
 from pathlib import Path
 
 import pytest
 
-from gateway.memory.manager import MemoryGraphError, MemoryManager
 from gateway.rag.citations import CitationManager
 from gateway.rag.evidence_ledger import EvidenceLedger, EvidenceLedgerError
 from gateway.security.approval_gates import ApprovalError, ApprovalRegistry, canonical_action_digest
@@ -21,152 +19,6 @@ from gateway.voice.speculative_transaction import (
     ReadOnlyIntent, SpeculativeResponse, SpeculativeVoiceTransaction,
 )
 from gateway.voice.tier_router import VoiceTierRouter
-
-
-def test_memory_graph_requires_provenance_and_isolates_scopes(tmp_path):
-    manager = MemoryManager(tmp_path / "memory.sqlite3")
-    manager.initialize()
-    with pytest.raises(MemoryGraphError):
-        manager.add_fact("orphan fact", scope="project", scope_id="alpha",
-                         source_kind="message", source_id="")
-    a = manager.add_fact("alpha project fact", scope="project", scope_id="alpha",
-                         source_kind="message", source_id="message-1", node_id="node-alpha",
-                         source_text="The original evidence source.")
-    b = manager.add_fact("beta project fact", scope="project", scope_id="beta",
-                         source_kind="message", source_id="message-2", node_id="node-beta")
-    assert a.source_sha256
-    assert manager.list_nodes(scope="project", scope_id="alpha", statuses=("candidate",))[0].id == "node-alpha"
-    assert manager.list_nodes(scope="project", scope_id="alpha", statuses=("candidate",))[0].content != b.content
-    with pytest.raises(MemoryGraphError):
-        manager.get_node("node-beta", scope="project", scope_id="alpha")
-    with pytest.raises(MemoryGraphError):
-        manager.add_fact("bad global", scope="global", scope_id="alpha",
-                         source_kind="message", source_id="message-x")
-
-
-def test_memory_graph_temporal_conflicts_supersedes_and_delete_propagation(tmp_path):
-    manager = MemoryManager(tmp_path / "graph.sqlite3")
-    manager.initialize()
-    manager.add_fact("The deadline is Friday.", scope="project", scope_id="alpha",
-        source_kind="message", source_id="m1", status="confirmed",
-        valid_from="2026-01-01T00:00:00Z", valid_until="2026-12-01T00:00:00Z", node_id="old")
-    manager.add_fact("The deadline is Monday.", scope="project", scope_id="alpha",
-        source_kind="user_edit", source_id="edit-1", status="candidate", node_id="new")
-    manager.relate("old", "new", scope="project", scope_id="alpha",
-        relation_type="CONTRADICTS", evidence_source_kind="user_edit", evidence_source_id="edit-1")
-    assert manager.get_node("old", scope="project", scope_id="alpha").status == "disputed"
-    assert manager.get_node("new", scope="project", scope_id="alpha").status == "disputed"
-    manager.supersede("old", "new", scope="project", scope_id="alpha",
-        evidence_source_kind="user_edit", evidence_source_id="edit-2")
-    assert manager.get_node("old", scope="project", scope_id="alpha").status == "superseded"
-
-    manager.add_fact("Root source", scope="project", scope_id="alpha",
-        source_kind="document", source_id="doc-1", node_id="root")
-    manager.add_fact("Derived summary", scope="project", scope_id="alpha",
-        source_kind="tool_result", source_id="summary-1", node_id="derived")
-    manager.relate("root", "derived", scope="project", scope_id="alpha",
-        relation_type="DERIVED_FROM", evidence_source_kind="document", evidence_source_id="doc-1")
-    deleted = manager.delete_with_propagation("root", scope="project", scope_id="alpha")
-    assert set(deleted) == {"root", "derived"}
-    with pytest.raises(MemoryGraphError):
-        manager.get_node("derived", scope="project", scope_id="alpha")
-
-def test_memory_fts_search_is_scope_safe_and_defaults_to_confirmed_nodes(tmp_path):
-    manager = MemoryManager(tmp_path / "memory-search.sqlite3")
-    manager.initialize()
-    alpha = manager.add_fact(
-        "Orchid deployment cache boundary", scope="project", scope_id="alpha",
-        source_kind="message", source_id="alpha-1", status="confirmed", node_id="alpha-confirmed")
-    beta = manager.add_fact(
-        "Orchid deployment cache boundary", scope="project", scope_id="beta",
-        source_kind="message", source_id="beta-1", status="confirmed", node_id="beta-confirmed")
-    candidate = manager.add_fact(
-        "Orchid deployment candidate note", scope="project", scope_id="alpha",
-        source_kind="message", source_id="alpha-2", status="candidate", node_id="alpha-candidate")
-
-    alpha_results = manager.search_nodes("Orchid deployment", scope="project", scope_id="alpha")
-    assert [node.id for node in alpha_results] == [alpha.id]
-    beta_results = manager.search_nodes("Orchid deployment", scope="project", scope_id="beta")
-    assert [node.id for node in beta_results] == [beta.id]
-    candidate_results = manager.search_nodes(
-        "candidate note", scope="project", scope_id="alpha", statuses=("candidate",))
-    assert [node.id for node in candidate_results] == [candidate.id]
-    assert manager.search_nodes("x", scope="project", scope_id="alpha") == []
-    # User text resembling FTS syntax is tokenized, never passed through as operators.
-    manager.search_nodes('" OR * MATCH', scope="project", scope_id="alpha")
-    with pytest.raises(MemoryGraphError, match="4000 characters"):
-        manager.search_nodes("z" * 4001, scope="project", scope_id="alpha")
-
-
-def test_memory_fts_index_tracks_delete_propagation_without_cross_scope_leaks(tmp_path):
-    manager = MemoryManager(tmp_path / "memory-delete-search.sqlite3")
-    manager.initialize()
-    root = manager.add_fact(
-        "Cobalt deletiontoken original evidence", scope="project", scope_id="alpha",
-        source_kind="document", source_id="source-1", status="confirmed", node_id="delete-root")
-    derived = manager.add_fact(
-        "Cobalt deletiontoken derived summary", scope="project", scope_id="alpha",
-        source_kind="tool_result", source_id="summary-1", status="confirmed", node_id="delete-derived")
-    retained = manager.add_fact(
-        "Cobalt deletiontoken independent fact", scope="project", scope_id="alpha",
-        source_kind="message", source_id="message-1", status="confirmed", node_id="delete-retained")
-    beta = manager.add_fact(
-        "Cobalt deletiontoken beta project", scope="project", scope_id="beta",
-        source_kind="message", source_id="message-2", status="confirmed", node_id="delete-beta")
-    manager.relate("delete-root", "delete-derived", scope="project", scope_id="alpha",
-        relation_type="DERIVED_FROM", evidence_source_kind="document", evidence_source_id="source-1")
-
-    assert {node.id for node in manager.search_nodes("deletiontoken", scope="project", scope_id="alpha")} == {
-        root.id, derived.id, retained.id
-    }
-    assert {node.id for node in manager.search_nodes("deletiontoken", scope="project", scope_id="beta")} == {beta.id}
-    assert set(manager.delete_with_propagation("delete-root", scope="project", scope_id="alpha")) == {
-        "delete-root", "delete-derived"
-    }
-    assert {node.id for node in manager.search_nodes("deletiontoken", scope="project", scope_id="alpha")} == {retained.id}
-    assert {node.id for node in manager.search_nodes("deletiontoken", scope="project", scope_id="beta")} == {beta.id}
-
-
-def test_memory_fts_migration_backfills_existing_rows_and_enables_secure_delete(tmp_path):
-    manager = MemoryManager(tmp_path / "memory-fts-migration.sqlite3")
-    manager.initialize()
-    # Simulate an older graph database that contains rows but no FTS table or triggers.
-    db = manager._connect()
-    try:
-        db.execute("DROP TRIGGER trg_memory_nodes_fts_insert")
-        db.execute("DROP TRIGGER trg_memory_nodes_fts_delete")
-        db.execute("DROP TRIGGER trg_memory_nodes_fts_update")
-        db.execute("DROP TABLE fts_memory")
-        db.commit()
-    finally:
-        db.close()
-    legacy = manager.add_fact(
-        "LegacyIndexBackfill phrase remains searchable", scope="project", scope_id="legacy",
-        source_kind="message", source_id="old-row", status="confirmed", node_id="legacy-index-row")
-    manager.initialize()
-    assert [node.id for node in manager.search_nodes(
-        "LegacyIndexBackfill", scope="project", scope_id="legacy")] == [legacy.id]
-
-    db = manager._connect()
-    try:
-        assert db.execute("PRAGMA secure_delete").fetchone()[0] == 1
-        if sqlite3.sqlite_version_info >= (3, 42, 0):
-            row = db.execute("SELECT v FROM fts_memory_config WHERE k='secure-delete'").fetchone()
-            assert row is not None and str(row["v"]) == "1"
-            assert manager.fts5_secure_delete_enabled is True
-        else:
-            assert manager.fts5_secure_delete_enabled is False
-    finally:
-        db.close()
-
-def test_memory_temporal_window_rejects_naive_and_invalid_intervals():
-    from gateway.memory.temporal import TemporalError, is_valid_at, validate_validity_window
-    with pytest.raises(TemporalError):
-        validate_validity_window("2026-01-01T00:00:00", None)
-    with pytest.raises(TemporalError):
-        validate_validity_window("2026-02-01T00:00:00Z", "2026-01-01T00:00:00Z")
-    assert is_valid_at("2026-01-01T00:00:00Z", "2026-02-01T00:00:00Z", "2026-01-15T00:00:00Z")
-    assert not is_valid_at("2026-01-01T00:00:00Z", "2026-02-01T00:00:00Z", "2026-02-01T00:00:00Z")
 
 
 def test_ssrf_policy_rejects_private_addresses_and_only_accepts_public_https():
@@ -356,11 +208,18 @@ def test_evidence_ledger_stores_scoped_provenance_and_exact_quote(tmp_path):
     evidence_id = ledger.add_quote(scope="project", scope_id="alpha", source_id="doc-1",
         source_uri="https://example.test/gateway", source_text=text, chunk_id="chunk-1",
         start_offset=start, end_offset=len(text), page_number=5, claim_text="The gateway returns trace IDs.")
-    record = ledger.list_evidence(scope="project", scope_id="alpha")[0]
-    assert record["evidence_id"] == evidence_id
-    assert record["quote_text"] == "return a trace ID."
-    assert record["page_number"] == 5
-    assert ledger.list_evidence(scope="project", scope_id="other") == []
+    other_evidence_id = ledger.add_quote(scope="project", scope_id="other", source_id="doc-1",
+        source_uri="https://example.test/other-gateway", source_text=text, chunk_id="chunk-1",
+        start_offset=start, end_offset=len(text), page_number=6, claim_text="Other project trace IDs.")
+    alpha_records = ledger.list_evidence(scope="project", scope_id="alpha")
+    other_records = ledger.list_evidence(scope="project", scope_id="other")
+    assert len(alpha_records) == len(other_records) == 1
+    assert alpha_records[0]["evidence_id"] == evidence_id
+    assert alpha_records[0]["quote_text"] == "return a trace ID."
+    assert alpha_records[0]["page_number"] == 5
+    assert other_records[0]["evidence_id"] == other_evidence_id
+    assert other_records[0]["source_uri"] == "https://example.test/other-gateway"
+    assert other_records[0]["page_number"] == 6
     assert path.stat().st_mode & 0o077 == 0
     with pytest.raises(EvidenceLedgerError):
         ledger.add_quote(scope="global", scope_id="wrong", source_id="doc-2",

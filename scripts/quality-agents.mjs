@@ -25,9 +25,14 @@ const suites = {
       matches(/<\/html>\s*$/, 'Document must close its html element.');
     }],
     ['critical UI controls exist', () => {
-      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'apiKeyShell', 'apiKeyStatus', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiLanguage', 'uiMotion', 'cloudSettingsCard', 'cloudStatusDot', 'cloudStatus', 'cloudBaseUrl', 'cloudBaseUrlError', 'cloudModel', 'cloudModelError', 'cloudApiKey', 'cloudApiKeyError', 'sidebarThemeToggle', 'clockDigital', 'homeThemeToggle', 'brandWordmark', 'projectPanel', 'projectSettingsModal', 'currentProjectSelect', 'projectMemoryToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'researchStudioModal', 'researchStudioSettingsSummary', 'researchStudioEffort', 'researchStudioSearchMode', 'researchStudioStructured', 'functionPanelModal', 'skillPresetSelect', 'agentModeControl', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
+      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'apiKeyShell', 'apiKeyStatus', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiLanguage', 'uiMotion', 'cloudSettingsCard', 'cloudStatusDot', 'cloudStatus', 'cloudBaseUrl', 'cloudBaseUrlError', 'cloudModel', 'cloudModelError', 'cloudApiKey', 'cloudApiKeyError', 'clockDigital', 'homeThemeToggle', 'brandWordmark', 'projectPanel', 'projectSettingsModal', 'currentProjectSelect', 'projectMemoryToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'functionsMenu', 'functionsMenuSummary', 'functionPanelModal', 'skillPresetSelect', 'agentModeControl', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
         matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
       }
+      assert.ok(source.includes('<details id="functionsMenu"'), 'The owner-approved Functions menu must exist.');
+      assert.ok(source.includes('data-function="agents"'), 'Functions must expose structured analysis.');
+      assert.ok(source.includes('data-action="select-processing-mode" data-processing-mode="deep"'), 'Functions must expose Deep Research as a Thorough-mode shortcut.');
+      assert.ok(source.includes('data-function="skills"'), 'Functions must expose task profiles/Skills.');
+      assert.equal(source.includes('data-function="connectors"'), false, 'Do not expose placeholder Integrations without registered connectors.');
     }],
     ['independent processing controls and on-demand resources', () => {
       includes('async function runMultiAgentResearch', 'Multi-agent research needs its own staged pipeline.');
@@ -39,7 +44,7 @@ const suites = {
       includes('const evidenceSection = document.createElement', 'Research evidence must be rendered with DOM nodes rather than HTML strings.');
       includes('const MAX_RESEARCH_EVIDENCE = 40;', 'Research evidence must have a deterministic size cap.');
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
-      includes("alandi: { label: 'aLandi Self-hosted Gateway'", 'The aLandi private gateway must be a first-class provider.');
+      includes("alandi: { label: 'aServi'", 'The aLandi private gateway must be a first-class provider.');
       includes("allowCrossProvider&&selectedProvider!=='alandi'", 'Selecting aLandi must never silently route private prompts to another provider even if global fallback is enabled.');
       includes('<section id="cloudSettingsCard"', 'aLandi must have a dedicated first-party server card.');
       includes('<h3 id="cloudCardTitle"', 'The private server card must have its own heading.');
@@ -52,14 +57,26 @@ const suites = {
         const close = providerPicker.indexOf('</optgroup>', start);
         return start >= 0 && close > start ? providerPicker.slice(start, close + '</optgroup>'.length) : '';
       };
-      const internalRouteGroup = extractGroup('providerPrimaryGroup');
       const externalRouteGroup = extractGroup('providerExternalGroup');
-      assert.ok(internalRouteGroup.includes(' hidden'), 'The private compatibility route must remain hidden from users.');
-      assert.equal(internalRouteGroup.split('<option value="alandi"').length - 1, 1, 'Keep exactly one hidden internal route for saved-chat migration and routing.');
-      assert.equal(externalRouteGroup.includes('<option value="alandi"'), false, 'The private aLandi route must not appear among third-party providers.');
+      const aserviStart = source.indexOf('<details id="aserviSettingsGroup"');
+      const aserviClose = source.indexOf('</details>', aserviStart);
+      const aserviSettings = aserviStart >= 0 && aserviClose > aserviStart ? source.slice(aserviStart, aserviClose + '</details>'.length) : '';
+      assert.ok(source.includes('<details id="aserviSettingsGroup"'), 'aLandi aServi must have a dedicated settings disclosure.');
+      assert.ok(aserviSettings.includes('data-action="connect-alandi-aservi"'), 'aServi must expose an explicit connection action inside its own settings group.');
+      includes("if(currentProvider()!=='alandi'){setCloudStatus('disconnected');return;}", 'aServi probes must not run while a third-party provider is selected.');
+      assert.ok(source.includes('aLandi aServi'), 'The first-party server route must use the current aLandi aServi product name.');
+      assert.equal(source.includes('aLandi Cloud'), false, 'Do not reintroduce the retired aLandi Cloud product label.');
+      includes('data-action="paste-aservi-key"', 'The first-party key action must use the aServi identifier.');
+      assert.equal(source.includes('data-action="paste-cloud-key"'), false, 'Do not reintroduce the retired Cloud DOM action.');
+      assert.equal(source.includes('data-action="connect-alandi-cloud"'), false, 'Do not reintroduce the retired Cloud connection action.');
+      assert.ok(source.includes('<details id="legacyProviderSettings"'), 'Third-party providers must have a separate settings disclosure.');
+      assert.ok(source.includes('<details id="additionalSettings"'), 'Additional settings must have a separate disclosure.');
+      assert.equal(providerPicker.includes('<option value="alandi"'), false, 'The private aLandi route must never appear in the third-party provider picker.');
+      assert.equal(source.includes('providerPrimaryGroup'), false, 'The obsolete hidden primary-provider optgroup must be removed.');
       assert.ok(externalRouteGroup.includes('<option value="gemini">') && externalRouteGroup.includes('<option value="custom">'), 'External providers must remain selectable.');
-      assert.equal((source.match(/id="cloudConnect"/g) || []).length, 0, 'The private server must connect automatically, without a permanent manual-check button.');
-      includes('function connectAlandiCloud()', 'The cloud UI must verify a real model response before showing connected.');
+      includes("const peerSettingsGroups=[$('legacyProviderSettings'),$('additionalSettings')]", 'aServi must be mutually exclusive with third-party and additional settings; those two sections may coexist.');
+      assert.equal((source.match(/id="cloudConnect"/g) || []).length, 0, 'The retired cloud connection element ID must remain absent.');
+      includes('function connectAlandiAServi()', 'The aServi UI must verify a real model response before showing connected.');
       includes('function scheduleCloudAutoConnect()', 'Changes to private server settings must trigger a bounded automatic connection check.');
       includes('function setCloudFieldError(id,message', 'Invalid server fields must show an inline field-specific error.');
       includes("setCloudFieldConnection('connected')", 'The server fields must only turn green after the connection and health checks pass.');
@@ -68,7 +85,12 @@ const suites = {
       includes("indexedDB.open('AI_Agent_DB_v87', 2)", 'Memory schema migration must create a separate shared store without deleting legacy private notes.');
       includes("database.createObjectStore('sharedMemory')", 'Shared memory must use a distinct IndexedDB object store.');
       includes("const privateMemories=selectedProviderForMemory==='alandi'?await MemoryDB.getAll():[]", 'Private notes must only be read for the local aLandi route.');
-      includes("if((safeGet(STORAGE.provider)||'alandi')!=='alandi')return [];", 'Server graph memory must never be included in third-party prompts.');
+      assert.equal(source.includes('serverMemoryDetails'), false, 'The retired experimental server-memory UI must be fully removed.');
+      assert.equal(source.includes('getServerProjectMemories'), false, 'The retired server graph-memory feature must not remain callable.');
+      assert.equal(source.includes('serverProjectMemoryEnabled'), false, 'The retired server-memory opt-in state must not remain in chat contracts.');
+      includes("const containsPrivateMemory=Array.isArray(body.messages)", 'Private-memory requests must be detected before provider fallback.');
+      includes("if(containsPrivateMemory)candidates=candidates.filter(candidate=>candidate.provider==='alandi')", 'Private-memory requests must never fall back to a third-party provider.');
+      includes("if(containsPrivateMemory)candidates=candidates.filter(candidate=>candidate.provider==='alandi')", 'Requests carrying personal memory must never fall back to a third-party provider.');
       includes("let candidates=getApiCandidates(preferredModel)", 'Provider candidate routing must be filterable before a request is sent.');
       includes("if(containsPrivateMemory)candidates=candidates.filter(candidate=>candidate.provider==='alandi')", 'A request carrying private memory must never fall back to a third-party provider.');
       includes("activeChatForPrivacy?.privateMemoryUsed && selectedProvider!=='alandi'", 'Chats that consumed private memory must not later upload their history to a third-party provider.');
@@ -137,7 +159,7 @@ const suites = {
       assert.ok(!source.includes("safeGet(STORAGE.model) === 'gemini-3.8-flash'"), 'A valid Gemini 3.8 model must not be downgraded on load.');
       includes('function getApiCandidates(requestedModel)', 'Provider failover must discover only configured credentials.');
       includes("if(!key && provider!=='kilo') continue;", 'Only the explicitly selected Kilo Free route may omit an API key.');
-      includes('function connectAlandiCloud()', 'The primary cloud status must be verified with a real completion.');
+      includes('function connectAlandiAServi()', 'The primary aServi route status must be verified with a real completion.');
       includes('id="cloudStatusDot" data-state="disconnected"', 'Cloud connection must begin unconfirmed.');
       includes('if(error.modelUnavailable)', 'Only a model-specific provider failure may trigger same-provider model selection.');
       includes('function applyUiLanguage(language)', 'The main UI must support a persisted language choice.');
@@ -206,11 +228,14 @@ const suites = {
       includes("readPublicWebpage(args.url.trim().slice(0, 1500), signal, searchResultMode)", 'Webpage extraction depth must use the independent search scope.');
       assert.ok(!source.includes("const extendedToolBudget = mode === 'deep' || extendedSearch;"), 'Search scope must not increase execution budget.');
       assert.ok(!source.includes("mode === 'fast' && index > 0 && !extendedSearch"), 'Fast-mode tool limits must not depend on search scope.');
-      assert.ok(!source.includes('id="researchStudioDepth"') && !source.includes('id="researchStudioWeb"'), 'Research Studio must not duplicate chat settings.');
-      assert.ok(!source.includes('data-function="research"'), 'Research Studio must have a single entry point.');
-      assert.ok(!source.includes("setProcessingMode(depth)") && !source.includes("setSearchMode(webEnabled ?"), 'Research Studio must not mutate active chat settings.');
+      assert.equal(source.includes('researchStudio'), false, 'Retired Research Studio source and UI must be absent.');
+      assert.equal(source.includes('open-research-studio'), false, 'Retired Research Studio actions must be absent.');
+      assert.ok(source.includes('data-action="select-processing-mode" data-processing-mode="deep"'), 'Deep Research must set Thorough mode through a bounded UI action.');
+      assert.equal(source.includes('serverMemory'), false, 'Retired Server Memory experiment code and copy must be absent.');
+      assert.equal(source.includes('serverProjectMemory'), false, 'Retired server project-memory flags must be absent.');
+      assert.equal(source.includes('/memory/graph/'), false, 'The static app must not call the retired server-memory graph API.');
+      assert.ok(source.includes('id="projectMemoryHelperDetails"') && source.includes('suggestProjectMemoryWithHelper'), 'Independent manual local-project helper must remain available.');
       includes("await runAssistant(workChat, signal, useSearch, false, mode, true,", 'The structured workflow must honor the selected effort budget in its research stage.');
-      includes("const studioSummary = $('researchStudioSettingsSummary');", 'Research Studio must show the active chat settings.');
       includes("if (mode !== 'deep' && !useMultiAgent && chosenSkill === 'auto') return '';", 'Automatic skills must not load in fast mode unless research is explicitly enabled.');
       includes("chosenSkill !== 'auto' ? chosenSkill", 'A manually selected skill must be usable in fast mode.');
       includes("new URL('skills/' + selectedSkill + '.txt', document.baseURI)", 'Task skills should load from repository assets only on demand.');

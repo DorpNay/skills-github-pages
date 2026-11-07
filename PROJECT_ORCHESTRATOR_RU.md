@@ -29,6 +29,14 @@
 
 External research records do not mean code/model weights were downloaded, licensed for redistribution, adopted, or enabled. Preserve only owner-approved artifacts with exact upstream revision, applicable code/weight/data license, SHA-256, provenance and storage policy.
 
+## Systems map and execution contract
+
+- **Compact product inventory:** [docs/ALANDI_SYSTEMS_MAP_RU.md](docs/ALANDI_SYSTEMS_MAP_RU.md) — 18 systems, boundaries, implementation methods and maturity.
+- **Detailed code map:** [docs/ALANDI_ARCHITECTURE_MAP_RU.md](docs/ALANDI_ARCHITECTURE_MAP_RU.md).
+- **Execution roadmap:** [docs/IMPLEMENTATION_ROADMAP_RU.md](docs/IMPLEMENTATION_ROADMAP_RU.md) — 20 gated steps, four phases and preserved product capability goals.
+- **Agent operating contract:** [AGENTS.md](AGENTS.md), English and intentionally short.
+- `main` is the only durable product baseline. PRs are temporary; finish one bounded slice, pass exact-head gates, merge promptly, then verify the resulting Pages SHA. Future/failed/conflicting work is reconciled selectively, never merged wholesale.
+
 ## Live state and navigation
 
 - **Current mutable truth:** GitHub main/PR/issues/workflow/deployment APIs, checked fresh at task start.
@@ -48,10 +56,28 @@ For every newly stated owner goal:
 4. Begin one safe bounded implementation/check in the same work cycle whenever possible. Record exact SHA, checks, limits and next step.
 5. Update only the canonical records whose material facts changed. Keep the checkpoint compact to reduce repeated work and handoff burden.
 
-## Current owner priority override — 2026-11-07
+## Current owner priority override — 2026-11-08
 
-1. **N₂O/task-intake:** canonical principles and owner-driven routing are in main; preserve the single task register and explicit merge/deploy authorization.
-2. **GitHub Pages — VERIFIED LIVE:** exact main `69645ff357067f3656aa77cc67336ff423c26944`; GitHub-managed Pages run #42362476364 passed the official `ghcr.io/actions/jekyll-build-pages:v1.0.13` build, artifact upload and deploy; Quality #42362476858 passed 7/7 including public root/client-version and `/landing/` Chromium checks. No deployment workflow replacement or Jekyll bump is indicated.
-3. **UI §8.17 — ACTIVE / NOT ACCEPTED:** PR #166 remains open on current head `683ec28310a68dc0126a715a04f3ddc613e817b6`, base main 69645ff. Two exact-head runs failed the same dark/high disabled/link semantic-color assertion (115 passed, 1 failed); a temporary diagnostic capture is in progress. Keep the assertion strict; do not merge until root cause is fixed and all exact-head gates pass. Changes in #166 are not published until merge and new Pages deployment.
-4. **External sources — DOCUMENTED / RESEARCH ONLY:** owner-supplied sweep is recorded in `INTEL.md` and `docs/OPEN_SOURCE_TRIAGE_RU.md`, with exact upstream refs, license distinctions and risk notes. No download/install/code copy/runtime adoption. Flint remains ambiguous between two different repos.
-5. Continue all remaining registry goals (bounded source evaluations, continuity, cleanup and other UI work) without erasing lower-priority scope or creating a parallel backlog.
+1. **Baseline:** main `c4f23e03f563d03213eb87002863da630fc8b833` VERIFIED LIVE by Pages #42372745873, Quality #42372746360, Graphify #42372746441. Main is sole durable baseline; PRs are temporary exact-head delivery gates.
+2. **Active PR #169:** aServi/provider isolation; Functions surface (Agents/structured analysis, dedicated Deep Research panel for effort/Web breadth/pipeline state and navigation, Skills/task profile); modal blur/clean close; Research Studio retired; placeholder Connectors hidden. Code/test checkpoint `08a73a7594695b8a74fa88d90db07832a8373665`; docs/state HEAD `16196423d9d308bf057dc65df89a3cbfd93f26f1`. Code/test Gateway/Freshness/Provenance/Graphify/Dead Code passed; Quality Chromium active. Final docs/state gates queued/in progress; re-fetch all exact-head checks. No merge/deploy claim.
+3. **Governed acquisition:** selected Memvid v2.0.140 (Apache-2.0, upstream e18fe55494379e2ab7397ce03655e8abbc5e0c31) and RAG-Anything v1.4.1 (MIT, upstream 0ef67b4d476b66407a03a39e5b17e756fc0aef29) source subsets archived under docs/upstream-archive for research only. Source Git blob SHA-1s matched exact upstream commits; Memvid per-file SHA-256s preserved from upstream manifest, not recomputed. Both incomplete, ship=false; whole archive SHA-256 uncomputed; no dependencies/models/runtime installed.
+4. **Reconciled closed PRs:** #172 (Research Studio blur target superseded, Functions modal blur preserved), #171 (old Functions-absent override superseded), #168 (stale state checkpoint superseded). Bodies and Volley records preserve disposition.
+5. **Open queue:** #125 FUTURE/HOLD, #131 V2 workbench, #152 draft voice, #154 divergent V2 shell, #155 draft roadmap/archive, #169 active. Selective source/file audit only; issue #111 owner-controlled.
+6. **Systems and research:** 18-system map remains canonical; trace each row to code/contracts/tests/maturity. INTEL snapshot 310 distinct URLs / 183 GitHub repositories is inventory, not all-reviewed status. Continue 8–15 source thematic batches and cross-cutting sweeps. Current orchestration method: one active writer/bounded slice, parallel read-only discovery, external durable checkpoints, executable CI invariants, exact SHA gates.
+7. **Completion:** final PR #169 exact-head green → merge expected SHA → verify main integrity/Quality/Graphify/Freshness/Provenance and Pages deployment/public root + /landing/ → update state → audit #155/#154/#152/#131/#125 selectively → continue every remaining registry goal. Native iPhone/VoiceOver, VPS/Tunnel/Ollama and target hardware remain open.
+
+
+### Functions / Agents / Deep Research / Skills canonical specifications
+- `docs/AGENT_FUNCTIONS_MENU_INFORMATION_ARCHITECTURE_RU.md` — current PR #169 UI snapshot plus future menu/agent IA; current three actions vs roadmap is explicit.
+- `docs/AGENT_WORKER_CAPABILITY_AND_SKILL_SAFETY_RU.md` — typed worker task contract and inert Skill safety boundary.
+- `docs/AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md` — Skill Factory / Agent Builder lifecycle, SPECIFIED only.
+- `docs/DEEP_RESEARCH_2_CURRENT_STATE_AUDIT_RU.md` — historical code audit plus 2026-11-08 owner-directed current delta.
+- `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` — research scope, evidence, acceptance and deferred runtime contract.
+
+
+### Preserved research/spec snapshots from PR #131 and #125 (2026-11-08)
+- Agent/runtime: `docs/DEEP_AGENT_WORKFORCE_RESEARCH_2026-10-31_RU.md`, `docs/AGENT_MODEL_BAKEOFF_RU.md`, `docs/AGENT_ORCHESTRATION_RESEARCH_RU.md`, `docs/AGENT_PLATFORM_BLUEPRINT_RU.md` (SPECIFIED/FUTURE, not independent runtime).
+- Deep Research: `docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md`, `docs/DEEP_RESEARCH_2_CURRENT_STATE_AUDIT_RU.md`, `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` (current menu boundary vs 2.0 roadmap is explicit).
+- Source/media/voice: `docs/SOURCE_SELECTION_AND_AUTONOMY_METHOD_RU.md`, `docs/LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md`, `docs/VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md`, `docs/LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md`, `docs/VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md`, `docs/VOICE_2_RESEARCH_RU.md`, `docs/VOICE_IMPLEMENTATION_PLAN_RU.md`.
+- Budget/governance/hygiene snapshots: `docs/OUTPUT_LIMITS_AND_AGENT_ORCHESTRATION_AUDIT_2026-10-31_RU.md`, `docs/WORKSTREAM_GOVERNANCE_RU.md`, `docs/REPOSITORY_HYGIENE_RU.md`, `docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md`, `docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md`. Historical backlog snapshots are not canonical active queues; current owner tasks remain in MASTER_TASK_REGISTRY.
+- Candidate URL intake from these snapshots is indexed once in `INTEL.md` (103 new refs; recheck pending). The 88-ref PR #125 catalog was not duplicated.

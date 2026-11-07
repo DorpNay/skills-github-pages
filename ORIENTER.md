@@ -1,21 +1,24 @@
 # aLandi — START HERE
 
-**Live GitHub is mutable truth.** This is a concise checkpoint, not a substitute for a fresh batched live-state read.
+**Live GitHub is mutable truth.** Re-fetch main, PR queue, exact HEAD/checks and deployment before acting.
 
-## Current checkpoint — 2026-11-07
+## Verified baseline
+- **Current main SHA:** `c4f23e03f563d03213eb87002863da630fc8b833`.
+- Pages deployment #42372745873 SUCCESS; exact-main Quality #42372746360 SUCCESS (116 app Chromium, root smoke 1/1, landing 8/8 and canonical build-SHA checks); Graphify #42372746441 PASS. VPS/Tunnel/Ollama remain outside these checks.
 
-- **Current main SHA:** `69645ff357067f3656aa77cc67336ff423c26944` (live `main` branch read).
-- **Pages VERIFIED LIVE:** GitHub-managed `pages build and deployment` run #42362476364 SUCCESS on this exact SHA. Quality #42362476858 SUCCESS, all 7 jobs; its Chromium job checked the published root, client version, and `/landing/`.
-- **Production Jekyll path:** Pages run #42362476364 is GitHub-managed `dynamic/pages/pages-build-deployment`; its build job pulled `ghcr.io/actions/jekyll-build-pages:v1.0.13`, `Build with Jekyll` and `Deploy to GitHub Pages` both PASS. Upstream latest release remains v1.0.13 (2024-08-06); the Quality sentinel pins commit `44a6e6beabd48582f863aeeb6cb2151cc1716697`. No custom workflow replacement or action upgrade is indicated.
-- **PR #166 §8.17:** open, base `69645ff...`, current head `683ec28310a68dc0126a715a04f3ddc613e817b6`. Final test forces descendant style reads before a 320ms wait and uses an isolated `.cloud-status-copy[data-state=checking]` fixture; exact assertions remain strict. Quality #42368514164 PASS 7/7 (Context, Security, Integrity, Jekyll, Static Analysis, Chromium, Published Pages smoke); Graphify #42368514210 PASS. PR #166 is ready for owner-authorized merge, but remains open and unpublished. Do not merge until root cause is fixed and exact-head gates pass.
-- **Open PR queue:** #125, #131, #152, #154, #155, #166. **Open issue:** #111.
-- **Owner priority:** finish §8.17 with strict contrast assertions; after owner-authorized merge, verify a fresh Pages deployment and live version. Keep other workstreams and registry goals intact.
+## Active bounded PR
+- **PR #169** · `feat/ui-sidebar-81-polish-20261107` · base `c4f23e03f563d03213eb87002863da630fc8b833` · current code/test HEAD `1a426d571a7fda157f98e1225fcf0494ec673fe9`.
+- Scope remains owner-directed aServi/provider isolation, sidebar/settings, truthful Agents/Deep Research/Skills Functions entries, Research Studio retirement, §8.12 graph retirement, system/roadmap/orientation refresh and reference-only pinned source artifacts. Memvid/RAG snapshots remain incomplete, research-only, ship=false; no runtime/dependency/weights installed.
+- Previous HEAD `54a2401cd3acb7850a618808b0fc767ed4a1cd53`: Quality #42404826459 Chromium 106 passed / 7 failed. Logs identified missing stored connection marker in `refreshCloudStatus`, tests operating hidden controls due mutually exclusive provider/advanced disclosures, collapsed Functions menu assumptions, and outdated selector expectations. Freshness #42407804181 passed 19 checker unit tests but failed FILE_ORIENTER exact snapshot markers; Freshness #42407892034 then failed only because the open-PR marker lacked the exact trailing separator space. The marker now matches literal `open PRs (0): `; final exact-head rerun pending. Earlier Freshness #42404826540 failed stale queue snapshot (PR #155 no longer open).
+- **Open PR queue:** #169. Open issue #111 remains owner-controlled. Closed non-merged #125/#131/#152/#154/#155 must retain valuable goals in the canonical task registry; no wholesale branch merge.
+- **Not merged / not published.**
 
-
-## Fast route
-
-1. On `oledue`, read root OLEDUE.md first; then one batched live GitHub state read.
-2. Route the latest explicit owner request to one existing registry ID; enrich rather than duplicate. Never default to a PR.
-3. Open only task-specific source/tests; detailed paths: project-reference/FILE_ORIENTER_RU.md; state: docs/PROJECT_STATE.yaml; evidence: docs/VOLLEY_LOG.md.
-4. Keep main/base/head/code/tested/check/deployment/merge SHAs distinct.
-5. Execute one bounded safe slice in the same turn; update only material canonical state and report exact checks and OPEN limits.
+## Canonical navigation and next steps
+- Handoff: `OLEDUE.md`; English executor contract: `AGENTS.md`; navigation index: `PROJECT_ORCHESTRATOR_RU.md`.
+- Systems inventory: `docs/ALANDI_SYSTEMS_MAP_RU.md` (18 systems); detailed code map: `docs/ALANDI_ARCHITECTURE_MAP_RU.md`.
+- One task registry: `docs/MASTER_TASK_REGISTRY_RU.md` + existing addendum. Durable step log: `docs/VOLLEY_LOG.md`. State: `docs/PROJECT_STATE.yaml` and `docs/project-state-snapshot.json`.
+- Source catalog: `INTEL.md` (310 distinct URLs / 183 GitHub repositories; not all reviewed); continue thematic 8–15-source batches and cross-cutting sweeps.
+1. Refresh exact-head Quality/Chromium, Provenance, Graphify, Gateway, Dead Code and Freshness on the final state/log commit; inspect failures, never weaken assertions.
+2. If all required checks pass, merge PR #169 with expected SHA; immediately verify main integrity/quality and Pages deployment + cache-busted root/`/landing/` on exact merge SHA.
+3. Audit #155/#154/#152/#131/#125 selectively, close each only after value/disposition is recorded; preserve issue #111 owner gates.
+4. Continue system-by-system implementation/method review and source research. Native iPhone Safari/VoiceOver, VPS/Tunnel/Ollama and hardware remain unverified.

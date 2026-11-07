@@ -101,3 +101,56 @@
 - No schema/API/dependency change; source/page provenance and scope filtering remain intact; `ALANDI_RAG_ENABLED=false` stays the default.
 - The score is only for ordering, not confidence/probability. Automated tests passed on exact PR head; no production-quality improvement is claimed until a labelled >=50-query golden set compares Recall@5, MRR/nDCG, citation correctness, latency and peak RSS.
 - Full criteria: `docs/RAG_RRF_EVALUATION_RU.md`, `EVALS.md` EV-RAG-RRF-001, `DECISIONS.md` D-018.
+
+
+## 2026-11-08 — обновление техник после нового upstream-прохода
+
+| Technique | Status | Применение в aLandi | Ограничение / gate |
+|---|---|---|---|
+| **Durable execution semantics** (Conductor / Temporal) | ACCEPT — principles only | Idempotency keys for side effects; explicit timeout/retry/cancellation; persisted checkpoints for long jobs; durable approval state; recovery drill | At-least-once means a tool can execute twice; no runtime adoption without real long-running workload and storage/ops budget |
+| **Single-instruction + task-routing manifest** | ACCEPT | One concise `AGENTS.md`; `PROJECT_ORCHESTRATOR_RU.md` routes to one system map, one task register, one source inventory and relevant validators | Do not create another agent runtime, routing database or parallel backlog |
+| **Modality-specific RAG probes** | ACCEPT | Add image-only/table-only questions, layout/table integrity checks, page/bbox lineage and citation support tests; select OCR by document class (born-digital vs scanned) and profile per-stage latency | Docling 2.148.0 vendor run: 6.6 s/page default vs 1.8 no-OCR on 4 vCPU / 15 GB; scanned OCR ~15 s/page. This is not a target-host benchmark; parser success does not prove retrieval or answer correctness |
+| **Local ASR candidate evaluation** | PILOT CANDIDATE | Benchmark Qwen3-ASR-0.6B int8 via sherpa-onnx against the current baseline for Russian/Thai; record WER/CER, RTF, p50/p95 latency, peak RSS, cancellation | Verify exact model artifact and license; no install/promotion until target hardware and privacy tests pass |
+| **Inference runtime tuning** | SOURCE-VALIDATED | Use llama.cpp docs for KV cache, batching, thread/CPU affinity and speculative decoding comparison | Keep Ollama baseline; only switch after same-model/same-hardware benchmark and rollback |
+| **Code graph selection** | PILOT CANDIDATE | Graphify stays current dev-only baseline; exclude vendored upstream snapshots from `.graphifyignore`. Current PR #169 graph: 1,122 nodes / 3,014 edges / 69 source files after vendor exclusion. CodeGraph (Apache-2.0, local SQLite/tree-sitter, 34 MCP tools, architecture CI gate) merits a disposable 10-task comparison | Upstream zero-telemetry claim needs code review; compare task accuracy, source coverage, index/update time and peak RAM; no runtime dependency |
+| **Model/source artifact provenance** | ACCEPT | Keep manifest, upstream revision/tag/full commit, exact license, artifact hash, size, downloader and verification procedure in Git. Vendored source snapshots require LICENSE + UPSTREAM-MANIFEST; exclude third-party trees from first-party Graphify indexing | Never place model weights in Pages source tree; use model cache/registry or governed Release assets if legal and within limits. Git blob SHA-1 proves file identity, not a substitute for SHA-256 on downloaded binaries |
+
+
+## Дополнение 2026-11-08 — Evidence-driven main-first orchestration
+
+**Статус: ACCEPTED AS OPERATING METHOD; runtime adoption not implied.** Source batch is recorded in INTEL.md.
+
+- **Session Sync Capsule:** one batched live snapshot of main SHA/subject, all open PR IDs/title/base/head/draft/mergeability, open issues, selected exact-head check runs/statuses, and current Pages deployment. Treat snapshot as ephemeral until logged; never route by remembered PR number.
+- **Single active writer / parallel read-only:** one PR branch may receive dependent writes; independent source/code reads may fan out. Each bounded slice completes exact-head checks → guarded merge → main integrity/quality → Pages live verification → immediate closure/disposition before selecting next slice. If the slice is blocked, checkpoint the reason and exact next action; do not open a speculative successor PR.
+- **Durable handoff record:** append VOLLEY checkpoint with owner task ID, branch/PR, full main/base/head/tested/merge/deploy SHAs, changed paths, run IDs and outcomes, source/eval decisions, rollback, unresolved risk and next exact step. Refresh OLEDUE/ORIENTER/PROJECT_STATE/snapshot/registry when live facts change. No transcripts/private reasoning.
+- **Graph-aided orientation:** Graphify/code graph + FILE_ORIENTER discover likely nodes/callers/tests, then verify findings against exact source and tests. Mark extracted/inferred links and graph limitations; never treat graph as proof.
+- **Acceptance as executable constraint:** for owner invariants, add structural/freshness/E2E checks where stable; root AGENTS is concise routing, deeper canonical docs hold detail. Never weaken test assertions for a green run.
+- **Decision threshold for durable workflow engines:** continue the current simple deterministic pipeline unless measured long-running jobs, recovery/approval requirements and injected-failure tests demonstrate a need; compare operational footprint and idempotency semantics before adopting Temporal/LangGraph/Restate/DBOS.
+- **Knowledge loop:** batch ~300 source catalog by themes, cross-check primary source and failure evidence, capture version/license/provenance and aLandi-fit decision in existing INTEL/triage/technique/DECISIONS/EVALS destinations. Acquire artifacts only after isolated pilot, baseline comparison, integrity checks and owner-visible approval.
+
+**Primary source anchors:** OpenAI Agents SDK runner/multi-agent docs; Temporal durable execution docs/blog; LangGraph workflows/checkpointers; GitLab AI-assisted development handbook; Graphify architecture docs; GitHub exact-head status/merge queue/Pages docs; OWASP Agentic Top 10 2026; NIST AI RMF GenAI Profile. URLs and evidence summary are in INTEL.md.
+
+
+## 2026-11-08 — typed worker capability contract and inert Skill boundary
+
+**Status: SPECIFIED / safety contract; independent runtime remains DEFERRED.** Detailed canonical contract: `docs/AGENT_WORKER_CAPABILITY_AND_SKILL_SAFETY_RU.md`; lifecycle/Builder design: `docs/AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md`.
+
+- Each worker task must receive a minimal typed packet: run/task/parent IDs, idempotency key, objective, bounded input refs, output schema, model policy, deadline, token/tool/output budgets, explicit read/write/network/memory/execute scopes, approval, cancellation and evaluation contract. No implicit full chat/project history.
+- Effective capability is the intersection `task_request ∩ agent_profile ∩ user_grant ∩ environment_policy`; empty intersection fails closed, never falls back.
+- A Skill is inert instructions/resources, not credentials or a policy grant. Import/preview does not execute scripts; provenance/license, prompt injection, secrets, path traversal, executable/dependency inventory, version/hash and eval review precede admission.
+- Binding a Skill to a worker pins a specific version and minimal excerpts; Skill instructions cannot widen tool allowlists, bypass approvals, increase budgets or reveal credentials.
+- Blueprint-only state may be edited/saved; it must not display a Run/worker status unless an independently permissioned, traced, cancellable and eval-gated runtime exists.
+
+
+## 2026-11-08 — Graphify UI Surface bridge (CI-only)
+
+**Status: IMPLEMENTED IN PR #169 branch / exact Graphify workflow verification pending.** `scripts/graphify_ui_surface.py` adds deterministic CSS selector, DOM ID/class and JavaScript selector/mutation relationships to the Graphify JSON graph. It uses stable SHA-256-derived node IDs, source-file/line provenance, `tinycss2==1.4.0` pinned in the workflow, and explicit `EXTRACTED` vs `INFERRED` confidence. Exact simple-selector matches score 0.65; token-overlap candidates score 0.25; class mutation edges score 0.35. The graph labels are candidates, not proof of runtime/computed style. Unit tests cover deterministic relations, provenance, confidence bounds and selector mismatches. The Graphify workflow runs the unit test before graph extraction and executes the bridge only on the disposable tracked-file staging graph; script/test are excluded from the graph input itself.
+
+## 2026-11-08 — research intake disposition
+
+The PR #131/#125 research-doc sweep added 103 distinct URL refs to `INTEL.md` as **prior-research candidates / current upstream recheck pending**. They are not promoted to adopted techniques. Source admission still requires current version, exact upstream pin, license/provenance, security and hardware/storage fit, measurable baseline, reproducible evaluation and rollback. The single-source catalog policy is preserved; the duplicate 88-URL `AGENT_RESEARCH_CATALOG_RU.md` was not copied as a second register.
+
+
+## 2026-11-08 — AgentRun SQLite state store prototype (PR #169 candidate)
+
+**Status: PROTOTYPE / offline persistence only; exact Gateway CI pending.** `gateway/agent_runtime/store.py` provides a bounded local SQLite run/task state journal with idempotency keys, explicit run transitions, typed metadata schemas, task leases/fencing, retry budgets, cancellation, immutable event records, scope checks, SQLite busy timeout/foreign keys/secure_delete and restrictive DB file mode. It deliberately does not call models, execute tools, grant capabilities, schedule workers, coordinate multiple hosts, provide sandbox/approval enforcement or guarantee exactly-once external side effects. Backup/restore and retention are operationally out of scope; use SQLite online backup or quiesced consistent copies. The tests are isolated offline in `gateway/tests/test_agent_run_store.py`. This is a storage building block; Agent Blueprint/Worker Capability contract remains separate and DEFERRED until runtime policy, trace, approval, recovery and adversarial evals are implemented.

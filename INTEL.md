@@ -485,3 +485,192 @@ This pass covers the owner-supplied names. Revisions below are exact upstream br
 - Production main deployment #42362476364 is the GitHub-managed dynamic workflow `dynamic/pages/pages-build-deployment`, not a repository-authored deploy workflow. Its jobs explicitly pulled `ghcr.io/actions/jekyll-build-pages:v1.0.13`, passed **Build with Jekyll**, uploaded the artifact and passed **Deploy to GitHub Pages** on main `69645ff357067f3656aa77cc67336ff423c26944`.
 - The separate [actions/deploy-pages](https://github.com/actions/deploy-pages/releases) latest release is v5.0.1 (2026-09-01), but this repository's current production path is GitHub-managed dynamic Pages; do not add a parallel deploy workflow or replace the working path without evidence.
 - Live cache-busting fetch returned **AI Mobile Agent v10.0** for both root and `/landing/`. The current main `index.md` blob `227223d78bb3be1d07422767a29a5ec3fd8df42a` does **not** contain `ai_ui_readability_v1` or `readingFontSize`; PR #166 current branch blob `8f36175b9b906d835c1aeea89bf3a516157d0388` contains both. Therefore Pages is publishing current main correctly, but the specific §8.17 change is not on main because PR #166 is still open.
+
+
+## 2026-11-08 — orchestration, retrieval, local inference, voice and artifact-hosting sweep
+
+**Inventory baseline:** this file contains 296 distinct URL references and 175 distinct GitHub repository URLs at this snapshot. These are references, not 296 validated products. Results below were reviewed as candidates against primary docs/repositories and the aLandi target profile.
+
+### Durable agent execution and approvals
+
+- [Conductor durable execution semantics](https://conductor-oss.github.io/conductor/architecture/durable-execution.html): persists workflow definitions, state, task executions and queues; task delivery is at-least-once. A side effect can run twice after a worker crash, so workers need idempotency or redelivery detection. **Decision:** adopt the engineering patterns (idempotency keys, explicit retries/timeouts, bounded budgets, durable approval checkpoints and recovery drills); do not add Conductor/Temporal as another runtime to the initial 8-GB stack.
+- [Temporal LangGraph plugin announcement](https://temporal.io/blog/temporal-langgraph-plugin-durable-execution), 2026-07-16: public-preview integration runs graph nodes as durable activities and supports durable human interrupts. **Decision:** source-validated; not a current dependency. Revisit only if aLandi has long-running workflows that cannot be safely resumed by its existing gateway lifecycle.
+- **Scope:** aLandi's current four-stage planner → researcher → critic → synthesizer pipeline remains bounded and uses the selected model. This research does not authorize an independent multi-agent fleet or a new orchestration database.
+
+### Code navigation and repository harness
+
+- [Graphify](https://github.com/Graphify-Labs/graphify) remains the existing dev-only code-navigation pilot. [CodeGraph](https://github.com/optave/ops-codegraph-tool/) was verified at upstream HEAD `580aaa97e9e87fa65b4560f91113904fe75291bd`; its LICENSE is Apache-2.0 (`8b8a2fece4804db74af7474d6664a28964b0cab7`). Its README describes a local SQLite/tree-sitter graph, 34 MCP tools, architecture rules/CI gate, incremental indexing and optional local embeddings; it claims zero network calls/telemetry for the local path. Those are upstream claims, not yet independently verified. **Decision:** promote CodeGraph to PILOT CANDIDATE, not replacement. Compare 10 real aLandi navigation tasks against Graphify and direct grep/source reading; measure correct entry-point recall, call-site precision, false edges, index time, peak RAM, incremental update time and reproducibility. Do not install until the disposable pilot is ready. For critical edits, graph output remains a navigation hint; verify source and callers directly.
+- [AI-native repository architecture](https://www.vikramrao.me/architecture/ai-native-repository), 2026-10-05, and [GitLab AI-assisted development playbook](https://handbook.gitlab.com/handbook/engineering/workflow/ai-assisted-development/): practitioner guidance favors one behavioral instruction file, a task-routing index, bounded read-only discovery, restricted implementation scope and deterministic CI validators. **Decision:** incorporate these principles in `AGENTS.md` and the existing orchestrator; do not copy a separate multi-agent harness or create a second backlog.
+
+### RAG and document processing
+
+- [Docling technical report](https://arxiv.org/html/2408.09869v4): MIT-licensed structured document representation supports text, tables, pictures, hierarchy, page and bounding-box provenance. The report's older x86 CPU benchmark measured 0.79 s/page median and 16.3 s/page p95; OCR averaged 13 s/page in that setup. A separate [Docling 2.148.0 performance measurement](https://docling.org/performance/) (2026-11-06, one 9-page PDF on 4 vCPUs / 15 GB RAM) reports 6.6 s/page default, 1.8 s/page with OCR disabled, and ~15 s/page for scanned input. These are different datasets/configurations, not directly comparable. **Decision:** retain parser → structured elements → provenance → retrieval → citations as the design pattern; gate OCR by document type and budget; benchmark a representative aLandi corpus before choosing an ingestion worker.
+- [RAG-Anything failure-mode guide](https://github.com/HKUDS/RAG-Anything/blob/main/docs/multimodal_rag_failure_modes.md): useful failure probes include merged/flattened tables, retrieval biased toward surrounding text instead of images/tables, and confusing slow OCR with a hang. **Decision:** add these as evaluation cases when multimodal ingestion is next changed; do not install the full framework.
+- Keep the existing scoped RAG, evidence ledger, citations and retrieval evaluation. A multimodal parser is not proof of multimodal retrieval quality; probe each modality independently.
+
+### Local inference and speech
+
+- [llama.cpp server documentation](https://github.com/ggml-org/llama.cpp/blob/HEAD/tools/server/README.md): OpenAI-compatible APIs, parallel decoding, continuous batching, speculative decoding, CPU/GPU offload and quantized KV cache are supported. **Decision:** retain Ollama for the current runtime; benchmark llama.cpp only if a measured bottleneck (memory, concurrency, throughput or API capability) justifies a controlled alternative.
+- [Qwen3-ASR upstream](https://github.com/QwenLM/Qwen3-ASR) supports 0.6B/1.7B models and 52 languages/dialects including Russian and Thai; the [official Hugging Face 0.6B model card](https://huggingface.co/Qwen/Qwen3-ASR-0.6B) declares Apache-2.0 and lists 1.88 GB unquantized weights. The upstream Python streaming example uses vLLM; [sherpa-onnx Qwen3-ASR docs](https://k2-fsa.github.io/sherpa/onnx/qwen3-asr/index.html) separately provide an int8 0.6B export and CPU/mobile streaming paths. **Decision:** high-priority ASR candidate for a bounded RU/TH benchmark, not installed or selected yet. Pin the exact sherpa artifact/revision/hash; measure peak RSS, RTF, p50/p95 latency, WER/CER and cancellation before promotion.
+- [Moonshine available models](https://moonshine-voice.readthedocs.io/en/latest/models/available-models/): current streaming MIT models cover several languages, but the current table does not include Russian or Thai; older non-streaming non-English models can carry the Community License. **Decision:** not the default RU/TH candidate; check each exact model/license separately.
+- [OpenVoiceStream](https://github.com/Seeed-Solution/openvoicestream) was verified at upstream HEAD `151b156dee2eb67f710df8347d1b4ddb449f2787`; LICENSE is MIT (`5d684641646a1cc872cd9a9f040a37b77ec618bc`). Its README is hardware-first (Jetson, Rockchip, Hailo, Raspberry Pi), with per-accelerator quantization and target-specific runtimes. **Decision:** useful edge-voice reference if a dedicated device is selected; not a generic 8-GB x86 VPS stack and not installed.
+
+### Model and binary acquisition policy — hard platform constraint
+
+- [GitHub repository limits](https://docs.github.com/en/repositories/creating-and-managing-repositories/repository-limits): regular Git objects above 100 MiB are blocked; GitHub recommends Git LFS for large binaries and keeping repository health manageable.
+- [Git LFS documentation](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-git-large-file-storage): Git LFS stores pointer files, not the model bytes, and **Git LFS cannot be used with GitHub Pages sites**.
+- [GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits): Pages source repositories are recommended at ≤1 GB and published sites are limited to 1 GB.
+- [GitHub Releases](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases): each release asset must be under 2 GiB.
+- **Decision:** keep code, manifests, downloader/verification scripts, licenses and SHA-256 provenance in the repository. Store weights in a dedicated model cache/registry or a governed Release asset when per-file size and redistribution rights allow. Never put weights into the Pages-published tree or commit an unbounded model corpus. User authorization to acquire useful artifacts does not waive license, size, security or target-hardware checks.
+
+- **Existing source snapshots:** selected RAG-Anything v1.4.1 and Memvid v2.0.140 source files already exist under `docs/upstream-archive/` on main. Their archived `raganything/parser.py` and `src/types/manifest.rs` Git blob SHA-1 values exactly match the official upstream tags. PR #169 adds the exact upstream MIT / Apache-2.0 LICENSE files and `UPSTREAM-MANIFEST.yaml` records (tag, full commit SHA, package license, archive scope and verified file hashes). These snapshots are research/reference only, not runtime dependencies. `.graphifyignore` now excludes them from the first-party architecture graph.
+
+**Batch outcome:** techniques accepted for bounded use: idempotent side effects, durable checkpoints/approval records where needed, modality-specific RAG probes, source/page/bbox provenance, exact model artifact pinning and measured model evaluation. Framework/runtime replacements remain DEFERRED pending a concrete baseline failure.
+
+
+## Source review — repository orchestration and durable handoff (2026-11-08)
+
+**Research batch:** owner-requested cross-cutting sweep across agent execution, repository orientation, CI/release controls and security. Findings are source-derived; product adoption below is a separate aLandi proposal.
+
+### Primary / practitioner references
+
+- [OpenAI Agents SDK — Running agents](https://developers.openai.com/api/docs/guides/agents/running-agents): explicit runner loop, select one state continuation strategy per conversation, await stream completion, resume paused approval from state rather than treating it as a new turn, distinguish expected pauses from runtime/validation failure.
+- [OpenAI Agents SDK — Multi-agent orchestration](https://openai.github.io/openai-agents-python/multi_agent/): manager-as-tools vs handoff are distinct ownership contracts; use structured outputs/code routing for deterministic control where appropriate; invest in specialized tasks, monitoring and evals.
+- [Temporal — LangGraph plugin durable execution (2026-07-16)](https://temporal.io/blog/temporal-langgraph-plugin-durable-execution) and [Temporal AI durable orchestration](https://docs.temporal.io/ai): checkpointing state is not itself durable execution; recovery requires an execution journal/runner, retries, durable waits/approval and trace propagation. Temporal is vendor documentation; infrastructure cost/operational fit must be evaluated, not assumed.
+- [LangGraph — workflows and agents](https://docs.langchain.com/oss/python/langgraph/workflows-agents) and [checkpointers](https://docs.langchain.com/oss/python/langgraph/checkpointers): explicit graph/checkpoint boundaries aid inspection and resume, but replayed nodes and side effects need idempotency and intentional durability modes.
+- [GitLab AI-assisted development playbook](https://handbook.gitlab.com/handbook/engineering/workflow/ai-assisted-development/): tests and structural constraints should persist in CI/repository rather than prompt-only; use characterization tests before refactors; root instructions route to canonical detail.
+- [GitHub — Beyond code generation: agentic engineering (2026-11-06)](https://github.blog/ai-and-ml/github-copilot/beyond-code-generation-a-developers-guide-to-agentic-engineering/): agree requirements/acceptance first, break into bounded issue/task work, plan/review before implementation.
+- [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify) and [Graphify architecture docs](https://docs.graphify.com/concepts/architecture): code-only AST extraction can be deterministic/local, while semantic docs/media indexing may call a model; extracted vs inferred edges should be distinguished. Graph output is a navigation aid, not proof or complete static analysis.
+- [GitHub — required status checks](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks): required checks must match latest SHA; earlier SHA success does not satisfy current HEAD.
+- [GitHub — merge queue](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue): queue checks run on the combined latest-base commit and need merge_group event support. Useful if concurrent PR throughput increases; not a reason to add a queue without validating repo settings/workflow triggers.
+- [GitHub Pages publishing source](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site): Pages Actions publication has build → artifact → deployment steps; verify actual deployment/public content separately from CI build.
+- [OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) and [NIST AI RMF / GenAI profile](https://www.nist.gov/itl/ai-risk-management-framework): risk framework references for agency, data disclosure, injection, supply chain and governance; use as threat/eval coverage, not as runtime permission engine.
+
+### Reusable findings and aLandi fit
+
+1. **One writer, bounded slice; parallelize read-only discovery.** Shared repo writes and sequential dependent updates otherwise cause PR proliferation, stale snapshots and conflicting checkpoints.
+2. **External durable state is the recovery contract.** Persist task ID, current main/base/head/tested SHA, exact run IDs/results, diff summary, blocker, rollback and next action in GitHub canonical records; never depend on chat memory.
+3. **One canonical task inventory + one systems map + one navigation index.** Root instructions stay concise and route to deeper source files; do not clone the backlog into agent memories.
+4. **Tests/CI encode invariants.** Owner rules like no dangling completed PR, exact-head gating, provider exclusivity, Pages live-SHA verification and permission boundaries should be executable checks where feasible, not prompt-only wishes.
+5. **Checkpointing vs durable execution is a distinct architectural decision.** Current bounded same-model pipeline/AgentRun prototype does not yet require Temporal/LangGraph runtime. Adopt a durable engine only after measured long-running recovery/approval demand, failure-injection evals, idempotency contract and target-host budget justify operations.
+6. **Graphify supports navigation, not authority.** Read the graph/report plus source/test call sites; label inferred links; account for parser gaps, excluded test files and token-budget truncation. Never mark feature implemented from graph output.
+7. **Merge discipline:** exact current-head required checks, compatibility/diff review, guarded merge, post-merge main checks and Pages deployment/content check; completed PR is closed immediately. Draft/HOLD/future work remains parked only by explicit scope/owner decision and durable recorded disposition.
+8. **Source and artifact admission:** source exact revision, code/model/data licenses separately, integrity hash, provenance, maintenance, security, resource fit, isolated pilot and rollback. No mass model downloads and no weights in Pages source tree/Git LFS.
+
+**Adoption status:** operating-method proposal applied to the PR #169 English AGENTS contract and append-only owner task register; not yet merged/verified on main. No orchestration engine, model, plugin, or dependency was installed/adopted in this research batch.
+
+
+### Artifact acquisition checkpoint — pinned source snapshots (2026-11-08)
+
+Owner-authorized, license/provenance-gated source import in PR #169: Memvid v2.0.140 curated 22-file subset under Apache-2.0 (upstream commit e18fe55494379e2ab7397ce03655e8abbc5e0c31) and RAG-Anything v1.4.1 selected 18 source files plus exact MIT license (upstream commit 0ef67b4d476b66407a03a39e5b17e756fc0aef29). Each selected source file Git blob SHA-1 was matched to its pinned upstream commit; Memvid upstream per-file SHA-256 values retained but not recomputed. The snapshots are incomplete research references, not buildable mirrors; transitive libraries/models/datasets are separately licensed. `ship=false`, no runtime dependency/model installed, no deployment. Whole selected archive SHA-256 remains OPEN.
+
+
+## PR #131 / #125 source intake — 2026-11-08 (candidate batch; not yet current-version reviewed)
+
+The following 103 distinct URL references were absent from the existing INTEL register and were found in the preserved research/spec snapshots from PR #131 and PR #125. They are retained for source-by-source thematic review; source presence is not endorsement/adoption. See the linked canonical research documents under `docs/`. Review in 8–15 source batches, record exact version/license/provenance and baseline comparisons before adoption.
+
+| URL | Origin research document | Review status |
+|---|---|---|
+| `https://ai.google.dev/gemini-api/docs/veo` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://ai.google.dev/gemma/docs/core/model_card_3` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://developer.chrome.com/docs/capabilities/web-apis/file-system-access` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md, LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://developer.mozilla.org/en-US/docs/Web/API/FileSystemFileHandle` | LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.cloud.google.com/vertex-ai/generative-ai/docs/video/generate-videos-from-text` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.comfy.org/api-reference/v2/jobs/job-status-the-polling-workhorse` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.comfy.org/api-reference/v2/jobs/request-cancellation` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.comfy.org/api-reference/v2/jobs/submit-a-workflow-for-execution` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.dev.runwayml.com/llms.txt` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.github.com/en/code-security/getting-started/quickstart-for-securing-your-repository` | REPOSITORY_HYGIENE_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reference/managing-and-standardizing-pull-requests` | REPOSITORY_HYGIENE_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches` | REPOSITORY_HYGIENE_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets` | FIRST_FREE_LAUNCH_BACKLOG_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets` | FIRST_FREE_LAUNCH_BACKLOG_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.github.com/en/repositories/creating-and-managing-repositories/best-practices-for-repositories` | REPOSITORY_HYGIENE_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners` | REPOSITORY_HYGIENE_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.letta.com/v1-sdk/memory/archival-memory/index.md` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.letta.com/v1-sdk/memory/memory-blocks/index.md` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.livekit.io/agents/logic/turns/vad/` | FIRST_FREE_LAUNCH_BACKLOG_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.mistral.ai/models/ministral-3-3b-25-12` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.ollama.com/api/tags` | FIRST_FREE_LAUNCH_BACKLOG_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.openhands.dev/openhands/usage/sandboxes/overview` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.openhands.dev/openhands/usage/sandboxes/process` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.openhands.dev/sdk/guides/agent-server/docker-sandbox` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://docs.openviking.ai/en/getting-started/02-quickstart` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://fastapi.tiangolo.com/reference/security/` | FIRST_FREE_LAUNCH_BACKLOG_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://ffmpeg.org/` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/a2aproject/A2A` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/AIEGOBOT/agent-audio` | LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/AnotiaWang/deep-research-web-ui` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/cedar-policy/cedar` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/Comfy-Org/ComfyUI` | LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md, LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/Comfy-Org/workflow_templates` | LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/crewAIInc/crewAI` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/dbos-inc/dbos-transact` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/docling-project/docling` | LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md, VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/docling-project/docling/blob/main/LICENSE` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/DorpNay/skills-github-pages/blob/main/gateway/app.py` | OUTPUT_LIMITS_AND_AGENT_ORCHESTRATION_AUDIT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/DorpNay/skills-github-pages/blob/main/gateway/routing.py` | OUTPUT_LIMITS_AND_AGENT_ORCHESTRATION_AUDIT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/DorpNay/skills-github-pages/blob/main/gateway/tests/test_app.py` | OUTPUT_LIMITS_AND_AGENT_ORCHESTRATION_AUDIT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/DorpNay/skills-github-pages/blob/main/gateway/tests/test_document_extraction.py` | OUTPUT_LIMITS_AND_AGENT_ORCHESTRATION_AUDIT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/DorpNay/skills-github-pages/blob/main/index.md` | OUTPUT_LIMITS_AND_AGENT_ORCHESTRATION_AUDIT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/DorpNay/skills-github-pages/blob/main/tests/e2e/document-attachments.spec.mjs` | OUTPUT_LIMITS_AND_AGENT_ORCHESTRATION_AUDIT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/DorpNay/skills-github-pages/issues/111` | FIRST_FREE_LAUNCH_BACKLOG_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/firecracker-microvm/firecracker` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/ggerganov/whisper.cpp` | VOICE_IMPLEMENTATION_PLAN_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/google/gvisor` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/hatchet-dev/hatchet` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/jgm/pandoc` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/khoj-ai/khoj` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/langchain-ai/open_deep_research` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/LearningCircuit/local-deep-research` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/letta-ai/letta` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/mem0ai/mem0` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/meta-llama/llama-models/blob/main/models/llama3_2/MODEL_CARD.md` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/microsoft/markitdown/blob/main/LICENSE` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/microsoft/semantic-kernel` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/modelcontextprotocol/registry` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/nats-io/nats-server` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/NVIDIA/garak` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/open-policy-agent/OPA` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/promptfoo/promptfoo` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/pydantic/pydantic-ai` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/PyThaiNLP/pythainlp/blob/dev/LICENSE` | VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/restatedev/restate` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/samsgates/doc-parse` | LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/UKGovernmentBEIS/inspect_ai` | AGENT_ORCHESTRATION_RESEARCH_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/unicode-org/icu/blob/main/LICENSE` | VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/Unstructured-IO/unstructured` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/VERT-sh/VERT` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/VERT-sh/VERT/blob/main/docs/FAQ.md` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/VERT-sh/VERT/blob/main/docs/GETTING_STARTED.md` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/VERT-sh/VERT/blob/main/docs/VIDEO_CONVERSION.md` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/VERT-sh/VERT/blob/main/LICENSE` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/VERT-sh/VERT/blob/main/README.md` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/VERT-sh/vertd` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/VERT-sh/vertd/blob/main/LICENSE` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://github.com/Wan-Video/Wan2.2` | LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/google/functiongemma-270m-it` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/google/gemma-4-E2B-it` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/google/gemma-4-E4B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/HuggingFaceTB/SmolLM2-1.7B-Instruct` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/HuggingFaceTB/SmolLM3-3B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/ibm-granite/granite-3.3-2b-instruct` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/ibm-granite/granite-4.2-3b` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/LiquidAI/LFM2.5-1.2B-Instruct` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/microsoft/Phi-4-mini-instruct` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/openbmb/MiniCPM5-2B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/Qwen/Qwen2.5-Coder-1.5B-Instruct` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/Qwen/Qwen3-0.6B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/Qwen/Qwen3-1.7B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/Qwen/Qwen3.5-0.8B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/Qwen/Qwen3.5-2B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/Qwen/Qwen3.5-4B` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://huggingface.co/tiiuae/Falcon-H1-1.5B-Instruct` | AGENT_MODEL_BAKEOFF_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://microsoft.github.io/graphrag/query/overview/` | FIRST_FREE_LAUNCH_BACKLOG_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://openvoiceindex.com/` | LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://playwright.dev/docs/browsers` | SOURCE_SELECTION_AND_AUTONOMY_METHOD_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://playwright.dev/docs/ci` | SOURCE_SELECTION_AND_AUTONOMY_METHOD_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://stability.ai/license` | LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://web.dev/articles/storage-for-the-web` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+| `https://www.libreoffice.org/` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |

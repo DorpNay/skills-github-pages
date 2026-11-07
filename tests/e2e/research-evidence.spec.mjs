@@ -2,12 +2,10 @@ import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
 async function setAgentMode(page, enabled) {
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
-  const control = page.locator('#agentModeControl');
-  if (enabled && !(await control.isChecked())) await control.check();
-  if (!enabled && await control.isChecked()) await control.uncheck();
-  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
+  await page.locator('#agentModeControl').evaluate((control, value) => {
+    control.checked = value;
+    control.dispatchEvent(new Event('change', { bubbles: true }));
+  }, enabled);
 }
 
 

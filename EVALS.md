@@ -33,13 +33,13 @@ The prior gateway baseline passed 37 tests and the deterministic six-layer smoke
 | EV-CODE-003 | uv | pyproject.toml + reviewed uv.lock | uv sync --locked reproducible on CI and target host | lockfile pending registry access |
 | EV-OBS-001 | Trace context | gateway/tests/test_app.py | malformed incoming trace ID not echoed; response always has validated ID; context reset | CI pending |
 | EV-OBS-002 | OpenTelemetry | observability/otel_config.py | exporter off by default, no remote endpoint without explicit policy | optional follow-up |
-| EV-MEM-001 | Graph schema | gateway/tests/test_coder_packet.py | every node has provenance; sqlite foreign keys and permissions; scoped queries | CI pending |
-| EV-MEM-002 | Temporal memory | gateway/tests/test_coder_packet.py | UTC offset required; valid-time interval semantics correct | CI pending |
-| EV-MEM-003 | Memory scope | gateway/tests/test_coder_packet.py | cross-project read/edge/delete denied | CI pending |
-| EV-MEM-004 | Conflicts | gateway/tests/test_coder_packet.py | contradictory items become disputed; no automatic winner | graph prototype; broader conflict eval pending |
-| EV-MEM-005 | Scoped memory FTS5 retrieval | gateway/memory/manager.py + gateway/tests/test_coder_packet.py | exact-scope retrieval; confirmed-only default; bounded terms; deletion propagation; legacy index rebuild; capability-gated FTS5 secure-delete | PR #26 merged; PR-head Gateway, provenance and full quality/Pages smoke passed |
-| EV-MEM-006 | Authenticated structured-memory API | gateway/app.py + gateway/memory/manager.py + gateway/tests/test_app.py | feature flag off by default; candidate-only create; confirmed-only search; audit-backed review; exact scope isolation; relation/delete propagation; global double opt-in | PR #27 merged at 653febb; post-merge Gateway/provenance/quality/Pages passed; activation still requires gateway config |
-| EV-MEM-007 | Browser-to-server project memory bridge | index.md + tests/e2e/app.spec.mjs + /v1/memory/graph/* | no auto-migration; candidate-first upload; per-chat opt-in; only confirmed facts; both project and server toggles required; exact project scope | PR #29 merged at 55248f8; PR-head and post-merge Chromium/Quality/provenance/Pages smoke passed; gateway tests passed on unchanged base e424d35; live gateway activation unverified |
+| EV-MEM-001 | Graph schema | retired server-memory graph | **RETIRED BY OWNER 2026-11-07**; schema/store removed. Historical CI evidence is not a current product capability. |
+| EV-MEM-002 | Temporal graph memory | retired server-memory graph | **RETIRED BY OWNER 2026-11-07**; graph-specific temporal module and tests removed. |
+| EV-MEM-003 | RAG + evidence + exact-payload cache isolation | gateway/tests/test_six_layers.py; gateway/tests/test_coder_packet.py; gateway/tests/test_app.py | Same document/chunk IDs remain isolated by exact project scope; scoped deletion cannot delete another project's document; evidence lists are isolated; different project-specific prompt payloads produce different cache keys. Browser-global memory leakage and a separate project-ID cache namespace are not yet proven. | Keep UR-061/UR-064 partial until browser-global multi-project E2E and cache-scope contract are tested; do not restore server-memory graph API. |
+| EV-MEM-004 | Graph-memory conflicts | retired server-memory graph | **RETIRED BY OWNER 2026-11-07**; graph-specific conflict module/tests removed. |
+| EV-MEM-005 | Scoped FTS5 graph-memory retrieval | retired server-memory graph | **RETIRED BY OWNER 2026-11-07**; graph manager/schema/tests removed. RAG's independent FTS5 index remains. |
+| EV-MEM-006 | Authenticated structured-memory API | retired server-memory graph | **RETIRED BY OWNER 2026-11-07**; routes, flags, store and API tests removed; retired paths now return 404. |
+| EV-MEM-007 | Browser-to-server project memory bridge | retired server-memory graph | **RETIRED BY OWNER 2026-11-07**; UI, actions and per-chat server-memory state removed. Browser-local project notes remain. |
 | EV-RAG-003 | Citations | gateway/tests/test_coder_packet.py | quote equals source[start:end], source SHA matches, malformed offsets rejected | CI pending |
 | EV-RAG-004 | Evidence ledger | gateway/tests/test_coder_packet.py | scope isolation, source/page/offset/hash retained | CI pending |
 | EV-TOOLS-002 | JSON Schema | gateway/tests/test_coder_packet.py | rejects invalid types, unknown keys, remote refs and oversized bodies | CI pending |
@@ -123,3 +123,39 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - **Required automated gates:** Gateway contract/security run `40637641493`; Quality/Chromium/published-site run `40637641255`; dead-code report `40637641563` — all passed on PR head `c09c4db9afc3b763b4900b34712223c40b729cd7`.
 - **Limit:** these gates establish deterministic behavior and contract preservation, not production retrieval quality. No labelled >=50-query corpus or target-host latency/RSS benchmark was run. Recall@5 >=0.75 remains a proposed threshold, not an observed production result.
 - **Acceptance before quality claims:** compare baseline and RRF on identical labelled queries; report Recall@5, MRR/nDCG, citation correctness, p50/p95 latency, peak RSS, scope leakage, upsert and deletion correctness. Keep `ALANDI_RAG_ENABLED=false` until operator setup and validation.
+
+
+## EV-MEMVID-001 — portable memory archive/export prototype (planned; source snapshot archived in PR #169)
+
+- **Question:** can a portable single-file archive improve backup/transfer without replacing the canonical SQLite memory store?
+- **Scope:** export/import only; no active retrieval routing or write-through runtime integration.
+- **Fixture:** synthetic conversations and project facts with stable IDs, owner/scope, source/provenance, valid-time/recorded-time, disputed status, derived-from links and deletion markers.
+- **Acceptance:** byte integrity and deterministic manifest; 100% round-trip of required metadata; restore isolation by project; explicit behavior for revoked/deleted and disputed items; archive size, export/import p50/p95 and cold-open RSS. A format that cannot represent scope/deletion semantics remains archive-only and cannot become canonical memory.
+- **Candidate:** Memvid v2.0.140, public Apache-2.0 source pinned to commit `e18fe55494379e2ab7397ce03655e8abbc5e0c31`; selected source subset archived under `docs/upstream-archive/memvid-v2.0.140/`. Verify optional feature/dependency profile before building. Upstream performance claims are not aLandi measurements.
+- **Status:** PLANNED / NOT RUN. Source license/blob provenance checked; no dependency/build/runtime adopted.
+
+## EV-RAG-ANYTHING-001 — multimodal document pipeline patterns (planned; source snapshot archived in PR #169)
+
+- **Question:** do typed content blocks, structured multimodal chunks and page/bbox/time provenance improve aLandi's current document pipeline enough to justify selective adaptation?
+- **Scope:** evaluate schemas/algorithms first; do not install the full package or all extras into the 8-GB runtime.
+- **Fixture:** identical representative PDFs, DOCX, XLSX, Markdown with local images, plus a small legally usable audio/video corpus. Preserve source IDs and expected page/offset/segment references.
+- **Metrics:** extraction coverage, table structure accuracy, figure/chart caption grounding, page/bbox and timestamps, citation correctness, audio WER/CER, video segment recall, peak RSS, install footprint and parse latency.
+- **Candidate:** RAG-Anything v1.4.1 (MIT code), source commit `0ef67b4d476b66407a03a39e5b17e756fc0aef29`; selected source snapshot archived under `docs/upstream-archive/rag-anything-v1.4.1/`. Its core dependency includes LightRAG and MinerU, while audio/video add faster-whisper, PyAV, SceneDetect, MoviePy, OpenCV and ffmpeg requirements. Audit transitive/model licenses separately.
+- **Status:** PLANNED / NOT RUN. Source license/blob provenance checked; no runtime, dependency or model weights installed.
+
+
+## EV-SEC-003 — Gateway secret non-disclosure
+
+- **Scope:** health/readiness/liveness response redaction, invalid Bearer token non-echo, and bounded/sanitized upstream error body.
+- **Fixture:** `gateway/tests/test_app.py` tests use marker secrets for API key, OAuth encryption/client secret and raw upstream error text. `test_upstream_errors_do_not_leak_raw_body_or_configured_secrets` already exists on current branch; invalid Bearer and health-probe redaction tests are ported from the PR #131 security review.
+- **Acceptance:** /livez returns only `{status: ok}`; /readyz and legacy /healthz return bounded readiness fields only; responses are `Cache-Control: no-store`; submitted/configured secrets and upstream raw body never appear. Invalid Bearer returns 401 with `WWW-Authenticate: Bearer` and no echo.
+- **Status:** tests added to PR #169 branch; Gateway exact-head CI pending. This is regression coverage, not proof of live VPS/provider secret handling.
+
+
+## EV-AGENT-RUN-STORE-001 — bounded durable run/task state prototype
+
+- **Question:** can a local SQLite store provide idempotent run/task state, explicit transitions, event journal, lease fencing and cancellation without introducing an orchestration framework or model/tool runtime?
+- **Scope:** persistence primitives only. The store does not call models, execute tools, grant capabilities, provide sandboxing, scheduler, multi-host coordination, backup/restore or exactly-once external side effects.
+- **Fixture:** offline unit tests in `gateway/tests/test_agent_run_store.py` cover idempotency/conflict, scope validation, versioned transitions, task claim/lease expiry/fencing, retry budgets, cancellation, event journal, bounded typed metadata, prompt/secret/free-text rejection, SQLite constraints, concurrency, migration and file permissions.
+- **Acceptance:** deterministic exact-head Gateway tests; no unbounded free text or raw prompts/secrets in event metadata; scope fails closed; expired lease cannot complete with stale fencing token; terminal state cannot reopen; SQLite file mode 0600; operational limitations are explicit.
+- **Status:** PROTOTYPE in PR #169 candidate, exact-head Gateway CI pending. No API route or worker runtime is wired to the store. Do not mark Agent Workforce implemented from this prototype alone.

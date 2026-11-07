@@ -2,16 +2,15 @@
 
 > Подробный индекс навигации. Это не источник live-статуса и не обязательный стартовый пакет. Для `oledue` сначала читай корневой OLEDUE.md, затем выполняй один batched live GitHub read. Используй этот файл только для поиска конкретного пути.
 
-## Контрольная точка — 2026-11-07 (live state)
+## Контрольная точка — 2026-11-08 (live main / PR queue reconciled)
 
-- Current main SHA: `69645ff357067f3656aa77cc67336ff423c26944`.
-- GitHub Pages: deployment #42362476364 SUCCESS on exact main; Quality #42362476858 PASS 7/7 including published root/client-version and /landing/ Chromium checks.
-- Production Pages run #42362476364 is GitHub-managed `dynamic/pages/pages-build-deployment`: build pulled `ghcr.io/actions/jekyll-build-pages:v1.0.13`; `Build with Jekyll`, artifact upload and `Deploy to GitHub Pages` passed. Quality's separate Jekyll sentinel pins `actions/jekyll-build-pages` at `44a6e6beabd48582f863aeeb6cb2151cc1716697`. The main-push deployment path is functioning; no replacement workflow is justified.
-- PR #166 §8.17: open, base 69645ff, current head `683ec28310a68dc0126a715a04f3ddc613e817b6`. Final test forces descendant style recalculation before a 320ms wait and uses an isolated checking-status fixture; production CSS overrides remain removed and assertions are unchanged. Quality #42368514164 PASS 7/7 including Chromium and published Pages smoke; Graphify #42368514210 PASS. PR #166 is ready for owner-authorized merge, not yet published. Live root and /landing return v10.0; main index blob `227223d78bb3be1d07422767a29a5ec3fd8df42a` lacks §8.17 keys while PR #166 blob `0220270b86e17e719310933678bbbdf52551486b` contains them, so §8.17 is not merged/published yet. Do not merge before all exact-head gates pass.
-- open PRs (6): #125, #131, #152, #154, #155, #166
-- open issues (1): #111.
-- New upstream review is recorded in INTEL.md and docs/OPEN_SOURCE_TRIAGE_RU.md (2026-11-07); research only, no downloads, installs, code copies or runtime changes.
-
+- Main `c4f23e03f563d03213eb87002863da630fc8b833`; exact-main Pages #42372745873 SUCCESS, Quality #42372746360 SUCCESS (116 app Chromium, root smoke 1/1, landing 8/8, canonical root + /landing/ build SHA), Graphify #42372746441 PASS.
+- **Snapshot marker:** open PRs (0): open issues (1): #111. (The active checked PR #169 is excluded from the freshness comparison.)
+- **Live open PR queue (1): #169**; open issue (1): #111.
+- PR #169 base c4f23e0; latest code/test HEAD `1a426d571a7fda157f98e1225fcf0494ec673fe9`. Previous exact head `54a2401`: Quality #42404826459 failed 7 Chromium tests (106 passed); Freshness #42404826540 failed stale queue because #155 was no longer open. Current branch includes aServi marker read fix and E2E updates to correctly open the exclusive provider/advanced disclosures and Functions menu; final exact-head rerun pending.
+- PRs #125/#131/#152/#154/#155 are closed without merge on live GitHub. Preserve still-open goal IDs and selected ideas in the Master Task Registry; no wholesale merge of those branches. #168/#171/#172 also closed/reconciled per existing Volley evidence.
+- PR #169 remains unmerged/unpublished. After all exact-head gates pass, merge expected SHA and verify main + Pages root and /landing on exact merge SHA.
+- `INTEL.md` contains 310 distinct URL refs / 183 GitHub repositories; not all reviewed. Source archives remain research-only. Native iPhone/VoiceOver, VPS/Tunnel/Ollama and target hardware remain unverified.
 
 ## 1. Быстрый маршрут
 
@@ -22,11 +21,11 @@
 4. **Порядок внедрения:** `docs/IMPLEMENTATION_ROADMAP_RU.md`, `docs/CODER_PACKET.md`.
 5. **Решения / eval / цикл:** корневые `DECISIONS.md`, `EVALS.md`, `LOOP.md`, `INTEL.md`, `IMPROVEMENT_SELECTION.md`.
 6. **Поиск и исследования:** `docs/SEARCH_RESEARCH_FEATURE_EXTRACTION_RU.md`, `docs/OPEN_SOURCE_TRIAGE_RU.md`.
-7. **Карта модулей:** `docs/ALANDI_ARCHITECTURE_MAP_RU.md` — кураторская схема, не автоматически извлечённый Graphify graph.
+7. **Карта систем:** `docs/ALANDI_SYSTEMS_MAP_RU.md` — короткий каталог систем/подсистем, методов и зрелости; **детальная карта кода:** `docs/ALANDI_ARCHITECTURE_MAP_RU.md` — кураторская схема, не автоматически извлечённый Graphify graph.
 8. **Лицензии и происхождение:** `infra/license/provenance_manifest.yaml`; не подключать runtime/model/voice без отдельной проверки лицензии и SHA-256.
 9. **Основной клиент:** `index.md` (большой единый HTML/JS файл). Перед правками найди точные функции/якоря, не делай широких замен без проверки единственности.
 10. **Backend/API:** `gateway/app.py`; тесты в `gateway/tests/`; зависимости в `gateway/requirements*.txt`.
-11. **Память:** `gateway/memory/{manager.py,schema.sql,delta_sync.py,scope.py,conflict.py,temporal.py}`; браузерное хранение и экспорт — `index.md` около `safeSet`, `downloadRecoveryBackup`, `exportChats`, `exportProjectBundle`.
+11. **Память и sync:** в PR #169 остаются `gateway/memory/{delta_sync.py,scope.py}`; server-memory graph manager/schema/conflict/temporal и graph API удаляются. `scope.py` используется RAG и сохраняется. Browser-local memory, project memory, helper suggestions и conversation delta sync — отдельные системы; браузерное хранение/экспорт — `index.md` около `safeSet`, `downloadRecoveryBackup`, `exportChats`, `exportProjectBundle`.
 12. **Голос и вложения:** `gateway/voice/`, `gateway/tests/test_audio_*.py`, `tests/e2e/audio-transcription.spec.mjs`, `tests/e2e/document-attachments.spec.mjs`.
 13. **Реальные browser checks:** `tests/e2e/`, workflow Quality Sentinels; отдельная GitHub Pages публикация не означает, что VPS gateway обновлён.
 
@@ -43,8 +42,8 @@
 - PR #63: root orienter + AGENTS first-read protocol — merged at `623f1865ee4021debade9000bbecf6004c6b4cfa`; main has since advanced with docs-only commit `b91aab316c224588baea99fbb9b966b8865de0a6`.
 - Open PRs at index creation: #52 document attachment integration (branch `feat/document-attachment-ui-v3`), #37 mobile chat ergonomics, #36 project-memory scope regression tests. Check live PR status before assuming any remain open.
 - Local whisper.cpp ASR and Piper TTS + mini-player are code-level features, **not enabled/deployed by default**. Verify models, binary paths, flags, and target hardware before saying audio works on the user's server.
-- Search & Research Studio exists; SearXNG adapter is optional/configured-server-only, not an independently deployed search cluster.
-- Memory graph and delta-sync API are experimental/flagged off. Browser/local memory, gateway graph memory, and external storage are not one magically synchronized store.
+- Historical note (superseded 2026-11-08): Research Studio UI existed; PR #169 removes its surface, while the independent four-stage research pipeline remains. SearXNG adapter is optional/configured-server-only, not an independently deployed search cluster.
+- Historical note (superseded 2026-11-08): the server-memory graph was previously experimental/flagged off. Owner decision D-021 retires that graph; PR #169 removes its gateway routes, manager/schema/feature flags/tests. Conversation delta sync remains separate. Browser-local personal memory, shared opt-in, project memory and RAG remain; no existing VPS DB/WAL/backup files are auto-deleted.
 
 ## 3. Folder taxonomy
 
@@ -52,14 +51,16 @@
 
 Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`, `INTEL.md`, `LOOP.md`, `PROVIDER_SETUP.md`) are reference documentation, not runtime modules, but CI and docs link to them. Keep compatibility paths if relocating them. This index is the single recommended entry point; preserve current paths until a link-aware migration can be tested.
 
-## 4. Memory: known architecture boundary
+## 4. Memory and sync: current architecture boundary
 
-- Browser chat history is stored through `localStorage`; application notes also use IndexedDB. Browser quota/eviction and clearing site data can cause loss. A localStorage fallback/backup is not a separate durable backup medium.
-- The gateway has two distinct opt-in concepts: versioned conversation delta sync (`ALANDI_MEMORY_SYNC_ENABLED=false`) and scoped memory graph (`ALANDI_MEMORY_GRAPH_ENABLED=false`). They have different schemas and are not a completed automatic sync pipeline.
-- Graph facts require source provenance, scope and status; newly uploaded facts are candidates, not automatically trusted facts. Prompt use is opt-in and should remain scope-restricted.
-- OAuth vault/Google OAuth routes exist as groundwork; real credentials, Drive Picker/UI, file import and sync are not configured. Do not promise Google Drive synchronization.
-- Do not store raw long audio, recordings or full files in the compact “memory” graph. Preserve original conversation/attachment as an immutable source, then store a short, source-linked summary/transcript plus hash and offsets. Never overwrite the only source with a summary.
-- Compression can reduce archival size, but is not a substitute for retention, integrity hashes, version history, backups and restore tests. Encrypted data cannot be compressed efficiently; compress before encryption. Never silently discard history when limits are reached.
+- Browser chat history is stored through `localStorage`; application notes/personal memory also use IndexedDB. Browser quota/eviction and clearing site data can cause loss. A local export is not a separate durable backup medium.
+- **Server-memory graph (§8.12) is retired by owner decision D-021.** PR #169 removes its graph routes, manager/schema/conflict/temporal modules, feature flags and graph-specific tests. Until PR #169 merges, main still contains the previous implementation; do not claim retirement is live before merge.
+- **Conversation delta sync remains separate:** versioned bounded patches, revision/conflict checks and explicit deletion. It is not the retired graph and is not an automatic synchronization of every browser store.
+- `gateway/memory/scope.py` remains because RAG uses it for scope isolation. Do not delete or replace it as part of server-graph retirement.
+- Browser-local personal memory, explicit shared-memory opt-in, project memory and helper suggestions remain distinct. Suggestions require user review/selection before saving; project scope must never leak into global memory.
+- OAuth vault/Google OAuth routes are groundwork; real credentials, Drive Picker/UI, file import and sync are not configured. Do not promise Google Drive synchronization.
+- Do not store raw long audio, recordings or full files as compact memory. Preserve original conversation/attachment as the source; summaries/transcripts need source IDs, hashes and offsets. Never overwrite the only source with a summary.
+- Compression is not a substitute for retention, integrity hashes, version history, backups and restore tests. Never silently discard history when limits are reached.
 
 ## 5. Working protocol
 

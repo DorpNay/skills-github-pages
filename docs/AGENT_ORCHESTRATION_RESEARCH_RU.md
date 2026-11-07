@@ -1,7 +1,14 @@
+> **Historical research/spec snapshot — PR #125; imported 2026-11-08.** Main baseline is `c4f23e03f563d03213eb87002863da630fc8b833`. Preserve source context; no runtime implementation is inferred. Canonical active task register: `docs/MASTER_TASK_REGISTRY_RU.md` plus addendum; source review status in `INTEL.md`.
+> **Current boundary:** Historical research snapshot from PR #125. Current technique register/INTEL source review is the operative method; all external sources listed here require current-version recheck before adoption. No orchestration framework/runtime installed by this document.
+
+---
+
 # aLandi — ресерч по автономной оркестрации агентов
 
 **Дата обзора:** 2026-10-28  
 **Статус:** исследовательская записка и инженерное предложение; это не свидетельство реализации.
+
+> **Обновление 2026-10-30:** расширенный синтез вынесен в [Agent Platform Blueprint](AGENT_PLATFORM_BLUEPRINT_RU.md), [аннотированный каталог источников](AGENT_RESEARCH_CATALOG_RU.md) и [матрицу small-model bake-off](AGENT_MODEL_BAKEOFF_RU.md). Эти документы не выбирают framework dependency и не меняют runtime. LangGraph и другие системы остаются кандидатами для сравнительного прототипа; D-016 и текущий V1 freeze имеют приоритет.
 
 ## Вывод
 

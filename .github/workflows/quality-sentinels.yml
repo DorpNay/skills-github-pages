@@ -208,13 +208,51 @@ jobs:
           retention-days: 7
 
   live-site-smoke:
-    name: Published GitHub Pages browser smoke test
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request'
+    name: Published GitHub Pages release contract
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [browser-e2e]
     runs-on: ubuntu-latest
+    timeout-minutes: 8
     steps:
-      - name: Confirm published-site Chromium smoke ran in the prerequisite browser job
-        run: echo "Published GitHub Pages browser smoke passed in browser-e2e; browser runtime is installed only once."
+      - name: Verify exact main revision and owner-approved UI contract on the live site
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+          PUBLISHED_URL: https://dorpnay.github.io/skills-github-pages/
+        run: |
+          set -euo pipefail
+          cache_url="${PUBLISHED_URL}?smoke=${EXPECTED_SHA}"
+          cache_sha=""
+          canonical_sha=""
+          for attempt in $(seq 1 18); do
+            if curl --fail --silent --show-error --location --max-time 20 "$cache_url" -o /tmp/alandi-cache.html; then
+              cache_sha="$(grep -oE '<meta name="alandi-build-revision" content="[0-9a-f]+"' /tmp/alandi-cache.html | sed -E 's/.*content="([^"]+)".*/\1/' | head -n 1 || true)"
+            fi
+            if curl --fail --silent --show-error --location --max-time 20 "$PUBLISHED_URL" -o /tmp/alandi-canonical.html; then
+              canonical_sha="$(grep -oE '<meta name="alandi-build-revision" content="[0-9a-f]+"' /tmp/alandi-canonical.html | sed -E 's/.*content="([^"]+)".*/\1/' | head -n 1 || true)"
+            fi
+            if [ "$cache_sha" = "$EXPECTED_SHA" ] && [ "$canonical_sha" = "$EXPECTED_SHA" ]; then
+              break
+            fi
+            echo "Published revision not current yet (attempt $attempt/18): cache=$cache_sha canonical=$canonical_sha expected=$EXPECTED_SHA"
+            sleep 10
+          done
+          test "$cache_sha" = "$EXPECTED_SHA"
+          test "$canonical_sha" = "$EXPECTED_SHA"
+
+          html=/tmp/alandi-canonical.html
+          for required in 'id="aserviSettingsGroup"' 'data-i18n="thirdPartySettingsTitle"' 'id="additionalSettings"' 'id="uiLanguage"' 'id="memoryStatusLine"' 'id="projectRecoveryBackupButton"' 'class="hidden composer-stop'; do
+            grep -Fq "$required" "$html" || { echo "Missing published UI contract marker: $required"; exit 1; }
+          done
+          for forbidden in 'id="functionsMenu"' 'data-action="open-research-studio"' '<option value="alandi"' 'id="sidebarPreferences"' 'id="sidebarThemeToggle"'; do
+            if grep -Fq "$forbidden" "$html"; then
+              echo "Forbidden published UI element is still present: $forbidden"
+              exit 1
+            fi
+          done
+          status_line="$(grep -bo 'id="memoryStatusLine"' "$html" | head -n 1 | cut -d: -f1)"
+          memory_details="$(grep -bo 'id="memoryToolsDetails"' "$html" | head -n 1 | cut -d: -f1)"
+          test -n "$status_line" && test -n "$memory_details" && test "$status_line" -lt "$memory_details"
+          echo "Live Pages serves exact main SHA $EXPECTED_SHA and the owner-approved UI contract."
 
 
   static-analysis:

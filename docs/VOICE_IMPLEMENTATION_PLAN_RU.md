@@ -1,3 +1,8 @@
+> **Historical research/spec snapshot — imported 2026-11-08.** Main baseline is `c4f23e03f563d03213eb87002863da630fc8b833`. Preserve original findings/source context; runtime implementation is not inferred. Canonical active task register: `docs/MASTER_TASK_REGISTRY_RU.md` plus its addendum. Source intake/review status: `INTEL.md`.
+> **Current boundary:** Voice work remains a staged specification; no live VPS/provider/device changes or model weights are implied. Keep provider/device capabilities honest and gated by exact evals.
+
+---
+
 # aLandi — план реализации голосового помощника
 
 **Срез:** 2026-10-28. Документ сводит уже существующие решения проекта; ссылки на upstream и записи в реестре кандидатов не означают, что runtime установлен или включён.
@@ -86,3 +91,8 @@
 5. После изменения env проверить systemd service, журналы на отсутствие текста/аудио/секретов, перезапуск после reboot и rollback. Передавать только несекретные результаты: OS/архитектура, RAM/диск, health HTTP status, capability flags и доступные voice IDs, hash, задержки и пиковую RAM.
 
 **Критерий приземления:** PR merged + exact-head CI зелёный + артефакты моделей с hash/license + gateway на VPS с флагами, включёнными осознанно + реальный микрофон/звук проверены + RAM/latency записаны. GitHub Pages deployment сам по себе не разворачивает приватный gateway и модели.
+
+
+## 2026-11-02 — Voice UI and audio generation
+
+Existing local transcription and local speech playback are foundations, not full-duplex conversation, selected-text TTS, multi-message queue or general sound/music generation. Keep each user intent separate in UI and acceptance tests. See `VOICE-011…018` and [LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md](LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md). No dependencies or model weights are added by this research update.

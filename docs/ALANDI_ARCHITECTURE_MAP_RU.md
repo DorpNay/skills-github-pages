@@ -1,6 +1,6 @@
 # aLandi — карта архитектуры и модулей
 
-**Срез:** main baseline `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`; PR #146 merged at `21162e858d769c23ee4907264305f792148a7fbf`, PR #147 at `3f37a8166fcbf89c5392f985e290be48ea27ef6a`, PR #148 at `4fbf16aad3f741159654950e0260aaf717653291`, PR #149 at `8e7d4aafe4b9580e9f8978c6f888e35f3fa99242`. PR #150 storage recovery slice is in review at exact HEAD `0c2cf9f15c9cef6053487e5f01adadcb8917115e`; exact-head Quality #42011984158, Freshness #42011984534, Provenance #42011984243 and Graphify #42011984203 passed. Do not treat it as merged or deployed. Earlier V1/Gateway foundations #121/#122 remain part of this map.  
+**Срез main:** `c4f23e03f563d03213eb87002863da630fc8b833` (2026-11-08). Ранее указанные PR #146–#150 — исторические milestones; не использовать их SHA/очередь как текущие. PR #169 — активная интеграционная ветка: в ней удаляется server-memory graph (§8.12), но main до merge всё ещё содержит старую реализацию. После merge обновить route/module snapshot и повторно построить Graphify. VPS/Tunnel/Ollama не подтверждены live.  
 **Тип:** кураторская схема границ модулей по дереву репозитория и фактическим route/function declarations. Это **не** автоматически извлечённый call graph и не доказательство live deployment.
 
 ## 1. Системная схема
@@ -13,13 +13,11 @@ flowchart TD
   Tunnel --> GW[FastAPI gateway/app.py]
   GW -->|OpenAI-compatible API| Ollama[Ollama / выбранная модель / runtime не подтверждён]
   GW --> Cache[SQLite exact-response cache / L2 optional]
-  GW --> Memory[Memory subsystem]
   GW --> RAG[RAG + evidence]
   GW --> Search[Web search adapters]
   GW --> Docs[Local document extraction]
   GW --> Audio[Local ASR / TTS adapters]
-  Memory --> Delta[gateway/memory/delta_sync.py]
-  Memory --> Graph[gateway/memory/manager.py]
+  GW --> Delta[gateway/memory/delta_sync.py / conversation delta sync]
   RAG --> Lazy[gateway/rag/lazy_graph_rag.py]
   RAG --> Ledger[gateway/rag/evidence_ledger.py]
   Ledger --> Citations[gateway/rag/citations.py]
@@ -37,17 +35,17 @@ flowchart TD
 | Контур | Точки входа | Что важно |
 |---|---|---|
 | Клиент | `index.md` | Большой статический HTML/JS; история и настройки в браузере. Browser API keys не являются server-side vault. |
-| Gateway | `gateway/app.py`, `gateway/README_RU.md` | FastAPI: health/capabilities/models/chat, admin, memory, RAG, search, documents, audio. VPS не подтверждён live. |
+| Gateway | `gateway/app.py`, `gateway/README_RU.md` | FastAPI: health/capabilities/models/chat, admin, conversation delta sync, RAG, search, documents, audio. Owner decision D-021 retires server-memory graph; PR #169 removes its API/modules. Main still has the old implementation until merge. VPS не подтверждён live. |
 | Routing | `gateway/routing.py` | Детерминированная allowlist-политика; общий helper-model cascade не считать включённым. |
-| Memory graph | `gateway/memory/manager.py`, `scope.py`, `conflict.py`, `temporal.py` | SQLite, scope, provenance, статусы фактов; API opt-in. Это граф памяти продукта, не граф исходного кода. |
-| Delta sync | `gateway/memory/delta_sync.py` | Versioned patch/revision conflict; не автоматическая синхронизация всех browser records. |
+| Browser-local notes | `index.md` | Personal/project notes remain in browser storage with explicit local scope controls. PR #169 removes the old server-graph bridge; main remains on the previous implementation until merge. |
+| Conversation delta sync | `gateway/memory/delta_sync.py` | Versioned patch/revision conflict; separate from browser-local project notes and retired server-memory graph. |
 | Retrieval/RAG | `gateway/rag/lazy_graph_rag.py` | SQLite FTS5 + lexical concepts; baseline, не dense vector RAG и не полный LazyGraphRAG. |
 | Evidence | `gateway/rag/evidence_ledger.py`, `citations.py` | Source URI, offsets/hash и scope должны сохранять проверяемую связь с источником. |
 | Tool DAG | `gateway/tools/dag_engine.py`, `validator.py`, `gateway/security/approval_gates.py` | Bounded prototype; не production shell sandbox. |
 | SSRF | `gateway/security/ssrf_protection.py` | Helper destination validation; важно корректно вызывать после DNS resolution и перепроверять redirect chain. |
 | Documents | `gateway/app.py`, `gateway/tests/test_document_extraction.py` | Ограниченное извлечение; не обещать универсальную поддержку форматов. |
 | Voice | `gateway/voice/`, `gateway/tests/test_audio_*.py`, `tests/e2e/audio-transcription.spec.mjs` | ASR/TTS adapters и UI есть в коде, но нужны бинарники/модели/flags; качество и latency на целевом устройстве не измерены. |
-| Research UI | `index.md`, `tests/e2e/research-*.spec.mjs` | Search & Research Studio; внешний поиск зависит от CORS, лимитов и настроенного адаптера. |
+| Search | `index.md`, `gateway/app.py` | Web-search adapters remain independent. PR #169 removes the Research Studio UI/modal while retaining the independent four-stage research pipeline; main remains unchanged until merge. |
 | Quality | `.github/workflows/`, `scripts/check_project_metadata.py`, `scripts/check_license_manifest.py` | Проверки относятся к точному SHA; зелёный CI не подтверждает runtime на VPS. |
 
 ## 3. Маршруты gateway, проверенные в `gateway/app.py`
@@ -56,7 +54,6 @@ flowchart TD
 - `GET /v1/capabilities`, `GET /v1/models`
 - `GET /admin/cache/stats`, `GET /admin/runtime`
 - `GET/DELETE /v1/memory/state/{conversation_id}`, `POST /v1/memory/delta`
-- `GET/POST /v1/memory/graph/nodes`, `POST /v1/memory/graph/search`, `POST /v1/memory/graph/relations`, review/delete routes
 - `POST /v1/rag/ingest`, `POST /v1/rag/retrieve`, `DELETE /v1/rag/documents/{document_id}`
 - `GET /v1/search/web`, `POST /v1/documents/extract`
 - `POST /v1/audio/transcriptions`, `POST /v1/audio/speech`, `POST /v1/chat/completions`
@@ -65,10 +62,10 @@ flowchart TD
 
 ## 4. Где проверять
 
-- UI: `tests/e2e/app.spec.mjs`, `alandi-provider.spec.mjs`, `document-attachments.spec.mjs`, `audio-transcription.spec.mjs`, `research-studio.spec.mjs`, `research-evidence.spec.mjs`, `context-budget.spec.mjs`.
+- UI: `tests/e2e/app.spec.mjs`, `alandi-provider.spec.mjs`, `document-attachments.spec.mjs`, `audio-transcription.spec.mjs`, `research-evidence.spec.mjs`, `context-budget.spec.mjs`. Research Studio regression is covered by the retired-surface test in `app.spec.mjs`.
 - Gateway: `gateway/tests/test_app.py`, `test_six_layers.py`, `test_v016_foundation.py`, `test_document_extraction.py`, `test_audio_*.py`, `test_searxng_search.py`.
 - Release: Quality Sentinels, Pages deployment/browser smoke, provenance gate. Проверять exact PR HEAD, затем post-merge main.
-- Для memory: project scope, candidate/confirmed, deletion propagation и recovery semantics.
+- Для memory/privacy: browser-local project scope, conversation delta sync boundaries, RAG exact-scope retrieval/deletion and evidence scope. Server graph candidate/confirmed lifecycle is retired by owner decision; code removal is pending PR #169 merge.
 
 ## 5. Graphify — dev-only code navigation, не runtime-интеграция
 
@@ -107,7 +104,7 @@ flowchart TD
 ## 7. Graphify inspection — PR #121 audit (2026-10-30)
 
 - Artifact from Graphify workflow #262, commit `f9d5afaae983675d2c616e3fbc70942840d314e5`: 1,109 nodes, 3,103 edges, 53 communities; report detects no import cycles.
-- Main hubs: `create_app()` 66 edges; `showToast()` 51; `getUiLanguage()` 45; `safeGet()` 42; `Settings` 32; `LazyGraphRAG` 31; `authorize()` 31; `safeSet()` 29; `MemoryManager` 28; `client_for()` 28.
+- Historical Graphify snapshot from the earlier main graph: `create_app()` 66 edges; `showToast()` 51; `getUiLanguage()` 45; `safeGet()` 42; `Settings` 32; `LazyGraphRAG` 31; `authorize()` 31; `safeSet()` 29; `MemoryManager` 28; `client_for()` 28. `MemoryManager` is still present on main c4f but removed on PR #169; regenerate this snapshot after merge.
 - The centrality confirms integration hotspots, not defects. Keep current architecture; refactor only with a bounded contract-preserving change and regression coverage.
 - PR #121 exact-head Graphify workflow completed successfully; PR #122 exact-head Graphify workflow also passed. The inspected artifact contains 1,109 nodes, 3,103 edges and 53 communities with no import cycles. Graphify remains a dev-only navigation artifact, not a runtime dependency.
 - Dead-code report #389 had one Vulture warning at `gateway/voice/speculative_transaction.py:39` for the `BufferedTTS.synthesize_prefix(max_duration_ms=...)` protocol parameter. It is part of the adapter contract and is a false positive; no file or code deletion is justified.
@@ -138,3 +135,13 @@ PR #121 merged at f4d880f9648989f4fe48ddd2284220b3606c3b86 after exact-head Gate
 - Eight Chromium regressions cover four recovery/atomicity cases, two settings-profile rollback failures, and two chat-setting rollback/UI restoration cases across the setter families.
 
 **Verification status:** PR #150 code/test HEAD `54e4858ed19fb4fa1daaa55444121ff2f8c5f780`: Quality #42059797507 (7 jobs), Freshness #42059797510, Provenance #42059797913 and Graphify #42059797551 PASS. Freshness main-checkpoint/live-queue step skipped by PR condition. Quality smoke tested built-app Chromium and the existing published site; not a PR preview or deployment. Settings-profile and chat-setting mutations now snapshot/rollback memory and mirrored keys on failed browser writes; AUDIT-FIND-011/013/014 are branch-verified. Startup migration/privateMemoryUsed marker remain outside this bounded slice. This describes branch code only, not main or live Gateway state.
+
+
+## 7.1. Current PR #169 code-only Graphify snapshot — 2026-11-08
+
+- Exact source checkpoint: PR #169 head `8fae35e91ae6a7e54582cdad4aacadfec0732a0f`; Graphify run #42398472267 PASS. The run is a PR-branch snapshot, not main/live deployment evidence.
+- Coverage: **1,122 nodes / 3,014 edges / 69 source files**; extensions: `.js=1`, `.mjs=16`, `.py=50`, `.sh=2`.
+- Largest source files: `index-inline.js` 237 nodes; `gateway/app.py` 64; `gateway/tests/test_app.py` 63; `gateway/tests/test_coder_packet.py` 39; `gateway/tests/test_six_layers.py` 30; `gateway/memory/delta_sync.py` 27; `tests/test_project_state_freshness.py` 26; `scripts/check_project_state_freshness.py` 24; `gateway/rag/lazy_graph_rag.py` 23.
+- The graph was reduced from 2,102 nodes / 4,960 edges / 91 files on the earlier run after excluding vendored upstream snapshots via `.graphifyignore`. The new graph is first-party focused; selected RAG-Anything/Memvid archives remain in the repository with license/provenance manifests but are not architecture nodes.
+- Artifact #13583874333; SHA-256 `4af473c232adffae306c432756712ed51ba3747afc6d937422233699dc42da2b`. No model calls; artifact retention 7 days.
+- After PR #169 merges, rerun Graphify on the resulting main SHA and replace this PR-branch snapshot. Graphify remains a dev-only navigation hint; source/call-site inspection remains authoritative.

@@ -26,6 +26,7 @@ async function openProjectSettingsForId(page, projectId) {
   if (await sidebar.evaluate(element => element.classList.contains('-translate-x-full'))) {
     await page.locator('[data-action="toggle-sidebar"]').click();
   }
+  await expect(page.locator('#projectPanel [data-action="open-project-settings"]:not([data-project-id])')).toHaveCount(0);
   const navigation = page.locator('#projectNavigationList');
   if (await navigation.evaluate(element => element.classList.contains('hidden'))) {
     await page.locator('#projectNavToggle').click();
@@ -42,23 +43,24 @@ async function chooseSearchMode(page, mode) {
   await page.locator(`[data-action="select-search-mode"][data-search-mode="${mode}"]`).click();
 }
 async function setAgentMode(page, enabled) {
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
-  const control = page.locator('#agentModeControl');
-  if (enabled && !(await control.isChecked())) await control.check();
-  if (!enabled && await control.isChecked()) await control.uncheck();
-  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
+  await page.locator('#agentModeControl').evaluate((control, value) => {
+    control.checked = value;
+    control.dispatchEvent(new Event('change', { bubbles: true }));
+  }, enabled);
 }
 async function setSkillPreset(page, preset) {
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
-  await page.locator('#skillPresetSelect').selectOption(preset);
-  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
+  await page.locator('#skillPresetSelect').evaluate((control, value) => {
+    control.value = value;
+    control.dispatchEvent(new Event('change', { bubbles: true }));
+  }, preset);
 }
 async function selectLanguage(page, language) {
-  if (await page.locator('#settingsModal').evaluate(element => element.classList.contains('hidden'))) await page.locator('[data-action="toggle-settings"]').click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(element => element.open))) await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#uiLanguage').selectOption(language);
+}
+
+async function openAdditionalSettings(page) {
+  const section = page.locator('#additionalSettings');
+  if (!(await section.evaluate(element => element.open))) await section.locator(':scope > summary').click();
 }
 
 async function configureCustomProvider(page, modelName) {
@@ -136,19 +138,24 @@ test('global system prompt is empty by default and obsolete Gemini reset is abse
   await expect(page.locator('[data-action="restore-defaults"]')).toHaveCount(0);
 });
 
-test('sidebar order separates memory, projects, status, chats, and research', async ({ page }) => {
+test('sidebar order keeps memory above projects and omits the removed Research Studio shortcut', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
   const positions = await page.locator('#sidebar').evaluate(sidebar => [
     sidebar.querySelector('#memoryPanel'),
     sidebar.querySelector('#projectPanel'),
     sidebar.querySelector('#projectStatusLine'),
-    sidebar.querySelector('#chatSection'),
-    sidebar.querySelector('[data-action="open-research-studio"]')?.parentElement,
-    sidebar.querySelector('#sidebarPreferences')
+    sidebar.querySelector('#chatSection')
   ].map(el => Array.prototype.indexOf.call(sidebar.children, el)));
   expect(positions.every(Number.isInteger)).toBe(true);
   expect(positions).toEqual([...positions].sort((a, b) => a - b));
+  await expect(page.locator('#sidebar [data-action="open-research-studio"]')).toHaveCount(0);
+  await expect(page.locator('#projectPanel [data-action="open-project-create"]')).toBeVisible();
+  const memoryOrder = await page.locator('#memoryPanel').evaluate(panel => [
+    Array.prototype.indexOf.call(panel.children, panel.querySelector('#memoryStatusLine')),
+    Array.prototype.indexOf.call(panel.children, panel.querySelector('#memoryToolsDetails'))
+  ]);
+  expect(memoryOrder[0]).toBeLessThan(memoryOrder[1]);
   await expect(page.locator('#projectPanel')).toContainText('Проект');
   await expect(page.locator('#chatSection')).toContainText('Новый личный чат');
   await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте выкл.');
@@ -195,67 +202,56 @@ test('mobile sidebar and modal close controls meet the 44px touch target', async
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 });
 
-test('theme stays in the header/sidebar and language lives in advanced settings', async ({ page }) => {
+test('theme and language are grouped in compact header controls', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  await expect(page.locator('#sidebarThemeToggle')).toBeVisible();
-  await page.locator('#sidebarThemeToggle').click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await expect(page.locator('#uiTheme')).toHaveValue('light');
+  const preferences = page.locator('.header-preferences');
+  await expect(preferences).toBeVisible();
+  await expect(preferences.locator('#homeThemeToggle')).toBeVisible();
+  await expect(preferences.locator('#uiLanguage')).toBeVisible();
+  await expect(page.locator('#sidebarThemeToggle')).toHaveCount(0);
   await expect(page.locator('#languageMenu')).toHaveCount(0);
   await expect(page.locator('#languageMenuSidebar')).toHaveCount(0);
 
-  await page.locator('[data-action="close-sidebar"]').click();
+  await preferences.locator('#homeThemeToggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('#uiTheme')).toHaveValue('light');
   await selectLanguage(page, 'en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
-  await page.locator('#legacyProviderSettings [data-action="toggle-theme-cycle"]').click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+  await expect(preferences.locator('#uiLanguage')).toHaveValue('en');
 
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#sidebarThemeToggle').click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await page.locator('#sidebar [data-action="close-sidebar"]').click();
+  await preferences.locator('#homeThemeToggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await selectLanguage(page, 'ru');
   await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
-  await expect(page.locator('#uiLanguage')).toHaveValue('ru');
+  await expect(preferences.locator('#uiLanguage')).toHaveValue('ru');
 });
 
-test('composer position persists and aLandi is hidden from third-party provider selection', async ({ page }) => {
+test('aServi and third-party settings are separate mutually exclusive modes', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#aserviSettingsGroup')).toHaveAttribute('open', '');
+  await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
+  await expect(page.locator('#additionalSettings')).not.toHaveAttribute('open');
+  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
+  await expect(page.locator('#providerPreset')).toHaveCount(1);
+
   await page.locator('#legacyProviderSettings > summary').click();
-  await expect(page.locator('#composerPosition')).toHaveValue('bottom');
-  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(1);
-  await expect(page.locator('#providerPrimaryGroup')).toBeHidden();
-  await expect(page.locator('#providerExternalGroup')).not.toHaveAttribute('hidden', '');
-  await expect.poll(() => page.locator('#providerPreset').evaluate(select => [...select.options].some(option => option.value === 'gemini'))).toBe(true);
+  await expect(page.locator('#aserviSettingsGroup')).not.toHaveAttribute('open');
+  await expect(page.locator('#legacyProviderSettings')).toHaveAttribute('open', '');
   await expect(page.locator('#providerPreset option[value="gemini"]')).toBeEnabled();
-  await expect(page.locator('[data-action="select-alandi-primary"]')).toHaveCount(0);
 
-  await page.locator('#composerPosition').selectOption('top');
-  await expect(page.locator('body')).toHaveClass(/composer-at-top/);
-  const topComposer = await page.locator('#composerFooter').boundingBox();
-  const topMessages = await page.locator('#chatBox').boundingBox();
-  expect(topComposer.y).toBeLessThan(topMessages.y);
-  await page.locator('[data-action="save-settings"]').click();
-  await page.reload();
-  await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
-  await expect(page.locator('#composerPosition')).toHaveValue('top');
-  await expect(page.locator('body')).toHaveClass(/composer-at-top/);
-
-  await page.locator('#composerPosition').selectOption('bottom');
-  await page.locator('[data-action="save-settings"]').click();
-  await expect(page.locator('body')).not.toHaveClass(/composer-at-top/);
-  const bottomComposer = await page.locator('#composerFooter').boundingBox();
-  const bottomMessages = await page.locator('#chatBox').boundingBox();
-  expect(bottomMessages.y).toBeLessThan(bottomComposer.y);
-  await page.reload();
-  await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#additionalSettings > summary').click();
+  await expect(page.locator('#aserviSettingsGroup')).not.toHaveAttribute('open');
+  await expect(page.locator('#legacyProviderSettings')).toHaveAttribute('open', '');
+  await expect(page.locator('#additionalSettings')).toHaveAttribute('open', '');
   await expect(page.locator('#composerPosition')).toHaveValue('bottom');
+
+  await page.locator('#aserviSettingsGroup > summary').click();
+  await expect(page.locator('#aserviSettingsGroup')).toHaveAttribute('open', '');
+  await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
+  await expect(page.locator('#additionalSettings')).not.toHaveAttribute('open');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_provider'))).toBe('alandi');
 });
 
 test('project quick actions open a real create form and persist the chosen memory scope', async ({ page }) => {
@@ -286,26 +282,22 @@ test('project quick actions open a real create form and persist the chosen memor
 test('language switch localizes provider controls without exposing the internal route', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await selectLanguage(page, 'en');
-  await expect(page.locator('#providerPrimaryGroup')).toHaveAttribute('label', 'aLandi Cloud · primary route');
+  await expect(page.locator('#legacyProviderSettings > summary')).toContainText('Third-party providers');
   await expect(page.locator('#providerExternalGroup')).toHaveAttribute('label', 'Third-party providers');
-  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(1);
-  await expect(page.locator('#providerPrimaryGroup')).toBeHidden();
+  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
+  await expect(page.locator('#aserviSettingsGroup > summary')).toContainText('aLandi aServi');
   await expect(page.locator('#providerPreset option[value="gemini"]')).toHaveCount(1);
   await expect(page.locator('#providerPreset option[value="custom"]')).toHaveCount(1);
   await selectLanguage(page, 'ru');
 });
 
-test('request context stays project-only and agent label describes the real pipeline', async ({ page }) => {
+test('request context stays project-only', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#contextPickerButton').click();
   await expect(page.locator('#requestContextMenu')).toBeVisible();
   await expect(page.locator('#requestContextMenu')).not.toContainText(/connectors|коннектор|scheduler|планировщик/i);
   await page.locator('#composerPopoverScrim').click({ position: { x: 5, y: 5 } });
-
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
-  await expect(page.locator('#functionPanelDescription')).toContainText(/четыре этапа|four stages/i);
-  await expect(page.locator('#agentModeControl')).toBeVisible();
+  await expect(page.locator('#requestContextMenu')).toBeHidden();
 });
 
 test('composer popover dims the page and the first outside tap only dismisses it', async ({ page }) => {
@@ -346,7 +338,7 @@ test('first outside tap dismisses an open chat row menu without activating the c
   await expect(page.locator('#sidebarOverlay')).toBeVisible();
 });
 
-test('published app boots and core controls are interactive', async ({ page }) => {
+test('published app boots with aServi selected and concise navigation', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
@@ -356,29 +348,40 @@ test('published app boots and core controls are interactive', async ({ page }) =
   await expect(page.locator('#searchModeSummary')).toBeVisible();
   await expect(page.locator('#searchModeSummary')).toContainText('Обычный');
   await expect(page.locator('#toggleSearch')).toBeChecked();
-  await expect(page.locator('#functionsMenuSummary')).toBeVisible();
-  await expect(page.locator('#toggleMultiAgent')).not.toBeChecked();
+  await expect(page.locator('#functionsMenu .toolbar-menu-option')).toHaveCount(3);
+  const stopButtonBackground = await page.locator('#stopBtn').evaluate(element => {
+    element.classList.remove('hidden');
+    const color = getComputedStyle(element).backgroundColor;
+    element.classList.add('hidden');
+    return color;
+  });
+  expect(stopButtonBackground).not.toBe('rgb(220, 38, 38)');
+  await expect(page.locator('#aserviSettingsGroup')).toHaveAttribute('open', '');
+  await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
+  await expect(page.locator('#additionalSettings')).not.toHaveAttribute('open');
 
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#settingsModal')).toBeVisible();
-  await expect(page.locator('#providerPreset')).toHaveValue('alandi');
+  await expect(page.locator('#providerPreset')).toHaveValue('');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_provider'))).toBe('alandi');
+  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
   await expect(page.locator('#apiKey')).toHaveAttribute('type', 'password');
   await expect(page.locator('#baseUrl')).not.toBeFocused();
+  await page.locator('#additionalSettings > summary').click();
   await expect(page.locator('#systemPromptInput')).toHaveAttribute('readonly', '');
   await page.locator('#editSystemPrompt').click();
   await expect(page.locator('#systemPromptInput')).not.toHaveAttribute('readonly', '');
   await page.locator('#editSystemPrompt').click();
   await expect(page.locator('#systemPromptInput')).toHaveAttribute('readonly', '');
+  await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('gemini');
   await page.locator('#modelPreset').selectOption('gemini-3.6-flash');
   await expect(page.locator('#modelName')).toHaveValue('gemini-3.6-flash');
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await chooseSearchMode(page, 'offline');
-  await expect(page.locator('#searchModeSummary')).toContainText(/выкл\./i);
+  await expect(page.locator('#searchModeSummary')).toContainText(/выкл./i);
   await page.reload();
-  await expect(page.locator('#searchModeSummary')).toContainText(/выкл\./i);
+  await expect(page.locator('#searchModeSummary')).toContainText(/выкл./i);
   await chooseSearchMode(page, 'normal');
   await expect(page.locator('#searchModeSummary')).toContainText(/обычный/i);
   await page.locator('#modeDeep').click();
@@ -392,13 +395,11 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
-  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
 
   await page.locator('#providerPreset').selectOption('groq');
   await expect(page.locator('#apiKey')).toHaveValue('');
   await page.locator('#apiKey').fill('e2e-groq-placeholder-not-a-real-key');
   await page.locator('#modelName').fill('openai/gpt-oss-120b');
-  await page.locator('#tavilyKey').fill('e2e-tavily-placeholder-not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('#apiKey').fill('');
   await page.locator('[data-action="save-settings"]').click();
@@ -411,7 +412,14 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
 
   await page.locator('#providerPreset').selectOption('groq');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-groq-placeholder-not-a-real-key');
-  await expect(page.locator('#tavilyKey')).toHaveValue('e2e-tavily-placeholder-not-a-real-key');
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  await openAdditionalSettings(page);
+  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
+  await page.locator('#tavilyKey').fill('e2e-tavily-placeholder-not-a-real-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_tavily_key'))).toBe('e2e-tavily-placeholder-not-a-real-key');
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
 
   await page.reload();
@@ -419,11 +427,10 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
   await expect(page.locator('#providerPreset')).toHaveValue('groq');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-groq-placeholder-not-a-real-key');
-  await expect(page.locator('#tavilyKey')).toHaveValue('e2e-tavily-placeholder-not-a-real-key');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_tavily_key'))).toBe('e2e-tavily-placeholder-not-a-real-key');
   await page.locator('#providerPreset').selectOption('openrouter');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-openrouter-placeholder-not-a-real-key');
 });
-
 test('chat creation persists after reload without calling a model', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
@@ -577,12 +584,15 @@ test('settings profile exports portable preferences but never API secrets', asyn
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
-  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#modelName').fill('openai/gpt-oss-120b');
   await page.locator('#apiKey').fill('e2e-private-provider-secret-value');
-  await page.locator('#tavilyKey').fill('e2e-private-search-secret-value');
+  await page.locator('[data-action="save-settings"]').click();
+
+  await openAdditionalSettings(page);
   await page.locator('#allowCrossProviderFallback').check();
+  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
+  await page.locator('#tavilyKey').fill('e2e-private-search-secret-value');
   await page.locator('#readingFontSize').evaluate(element => { element.value = '18'; element.dispatchEvent(new Event('input', { bubbles: true })); element.dispatchEvent(new Event('change', { bubbles: true })); });
   await page.locator('#readingLineHeight').evaluate(element => { element.value = '1.8'; element.dispatchEvent(new Event('input', { bubbles: true })); element.dispatchEvent(new Event('change', { bubbles: true })); });
   await page.locator('#readingContrast').selectOption('high');
@@ -604,16 +614,18 @@ test('settings profile exports portable preferences but never API secrets', asyn
   expect(json).not.toContain('ai_api_key_');
   expect(json).not.toContain('apiKey');
 });
-
 test('settings profile import restores preferences while preserving existing provider and search keys', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
-  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('before-import');
   await page.locator('#apiKey').fill('e2e-preserved-provider-secret');
+  await page.locator('[data-action="save-settings"]').click();
+
+  await openAdditionalSettings(page);
+  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#tavilyKey').fill('e2e-preserved-tavily-secret');
   await page.locator('[data-action="save-settings"]').click();
 
@@ -646,7 +658,6 @@ test('settings profile import restores preferences while preserving existing pro
   await expect(page.locator('#toggleSearch')).not.toBeChecked();
   await expect(page.locator('#toggleMultiAgent')).toBeChecked();
   await expect(page.locator('#offlineToggle')).toContainText('Веб-поиск выключен');
-  await page.locator('[data-action="toggle-settings"]').click();
   await expect(page.locator('#readingFontSize')).toHaveValue('19');
   await expect(page.locator('#readingLineHeight')).toHaveValue('1.7');
   await expect(page.locator('#readingContrast')).toHaveValue('high');
@@ -655,7 +666,6 @@ test('settings profile import restores preferences while preserving existing pro
   expect(await page.evaluate(() => localStorage.getItem('ai_api_key_custom'))).toBe('e2e-preserved-provider-secret');
   expect(await page.evaluate(() => localStorage.getItem('ai_tavily_key'))).toBe('e2e-preserved-tavily-secret');
 });
-
 test('research trace supports a structured JSON download', async ({ page }) => {
   const trace = {
     schemaVersion: 2, id: 'e2e-json-trace', createdAt: '2026-10-15T00:00:00.000Z',
@@ -885,13 +895,14 @@ test('model-specific failure tries another model on the same provider first', as
 
 test('dynamic chat catalog is used for bounded same-provider model fallback', async ({ page }) => {
   const attemptedModels = [];
+  let catalogEnabled = false;
   await page.route('https://api.example.test/v1/models', route => route.fulfill({
     status: 200, contentType: 'application/json',
-    body: JSON.stringify({ data: [
+    body: JSON.stringify({ data: catalogEnabled ? [
       { id: 'e2e-primary-model' },
       { id: 'e2e-dynamic-fallback' },
       { id: 'e2e-text-embedding' }
-    ] })
+    ] : [] })
   }));
   await page.route('https://api.example.test/v1/chat/completions', async route => {
     const model = route.request().postDataJSON().model;
@@ -913,6 +924,7 @@ test('dynamic chat catalog is used for bounded same-provider model fallback', as
   await page.locator('#modelName').fill('e2e-primary-model');
   await page.locator('#apiKey').fill('e2e-dynamic-catalog-key');
   await page.locator('[data-action="save-settings"]').click();
+  catalogEnabled = true;
   await page.locator('[data-action="refresh-model-catalog"]').click();
   await expect(page.locator('#modelPreset option[value="e2e-dynamic-fallback"]')).toHaveCount(1);
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
@@ -1063,7 +1075,7 @@ test('Obsidian Studio and Clean Light preferences persist and respect motion con
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_theme_v2'))).toBe('light');
 
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await openAdditionalSettings(page);
   await page.locator('#uiMotion').selectOption('off');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_ui_motion_v2'))).toBe('off');
@@ -1074,7 +1086,7 @@ test('Obsidian Studio and Clean Light preferences persist and respect motion con
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
 
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#additionalSettings > summary').click();
   await page.locator('#uiMotion').selectOption('auto');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'auto');
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
@@ -1096,12 +1108,13 @@ test('agent systems skill is routed on demand and its safety contract stays avai
 });
 
 
-test('aLandi cloud status only turns green after a real model response, and core UX controls work', async ({ page }) => {
+test('aServi status only turns green after a real model response, and core UX controls work', async ({ page }) => {
   const cloudRequests = [];
   await page.route('https://cloud.example.test/healthz', async route => route.fulfill({
     status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' })
   }));
   await page.route('https://cloud.example.test/v1/chat/completions', async route => {
+    await new Promise(resolve => setTimeout(resolve, 100));
     cloudRequests.push(route.request().postDataJSON());
     return route.fulfill({
       status: 200, contentType: 'application/json',
@@ -1117,7 +1130,8 @@ test('aLandi cloud status only turns green after a real model response, and core
   await page.locator('#cloudBaseUrl').fill('https://cloud.example.test/v1');
   await page.locator('#cloudModel').fill('qwen3.5:4b');
   await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
-  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await page.locator('[data-action="connect-alandi-aservi"]').click();
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'checking');
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
   await expect(page.locator('#cloudStatus')).toContainText('Подключено');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_provider'))).toBe('alandi');
@@ -1125,15 +1139,17 @@ test('aLandi cloud status only turns green after a real model response, and core
   await page.locator('#userInput').fill('Verify the primary chat uses my aLandi cloud.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('OK', { timeout: 15000 });
-  expect(cloudRequests).toHaveLength(2);
+  expect(cloudRequests).toHaveLength(3); // connect probe, user completion, post-response probe
   expect(cloudRequests[1].messages.at(-1).content).toBe('Verify the primary chat uses my aLandi cloud.');
   expect(cloudRequests.every(request => request.model === 'qwen3.5:4b')).toBe(true);
+  expect(cloudRequests[0].max_tokens).toBe(8);
+  expect(cloudRequests[2].max_tokens).toBe(8);
   await selectLanguage(page, 'en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
-  await page.locator('#legacyProviderSettings [data-action="toggle-theme-cycle"]').click();
+  await page.locator('#homeThemeToggle').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await page.locator('#legacyProviderSettings [data-action="toggle-theme-cycle"]').click();
+  await page.locator('#homeThemeToggle').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 });
 
@@ -1775,9 +1791,10 @@ test('aLandi cloud probe rejects HTTP 200 proxy text as proof of a model connect
   await page.locator('#cloudBaseUrl').fill('https://cloud.example.test/v1');
   await page.locator('#cloudModel').fill('qwen3.5:4b');
   await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
+  await page.locator('[data-action="connect-alandi-aservi"]').click();
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected', { timeout: 15000 });
   await expect(page.locator('#cloudApiKeyError')).toContainText('Не удалось подтвердить соединение');
-  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_provider_connection_alandi'))).toBeNull();
 });
 
 
@@ -1819,7 +1836,7 @@ test('aLandi cloud remains disconnected when the model answers but gateway healt
   await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected', { timeout: 15000 });
   await expect(page.locator('#cloudApiKeyError')).toContainText('Не удалось подтвердить соединение');
-  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_provider_connection_alandi'))).toBeNull();
 });
 
 test('provider probe cannot mark changed credentials connected after an in-flight response', async ({ page }) => {
@@ -1875,52 +1892,25 @@ test('aLandi cloud probe cannot overwrite settings changed while its request is 
   await page.locator('#cloudBaseUrl').fill('https://race-cloud.example.test/v1');
   await page.locator('#cloudModel').fill('race-cloud-model');
   await page.locator('#cloudApiKey').fill('first-cloud-race-key');
+  await page.locator('[data-action="connect-alandi-aservi"]').click();
   await probeStarted;
   await page.locator('#cloudModel').fill('');
   releaseProbe();
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
   await expect(page.locator('#cloudModel')).toHaveValue('');
   await expect(page.locator('#cloudApiKey')).toHaveValue('first-cloud-race-key');
-  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_provider_connection_alandi'))).toBeNull();
 });
 
 
-test('legacy aLandi provider probe does not overwrite changed primary cloud settings', async ({ page }) => {
-  let beginProbe, releaseProbe;
-  const probeStarted = new Promise(resolve => { beginProbe = resolve; });
-  const probeGate = new Promise(resolve => { releaseProbe = resolve; });
-  await page.route('https://legacy-alandi.example.test/v1/chat/completions', async route => {
-    beginProbe();
-    await probeGate;
-    await route.fulfill({
-      status: 200, contentType: 'application/json',
-      body: JSON.stringify({ model: 'legacy-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
-    });
-  });
+test('aServi settings remain separate from third-party provider settings', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
-  await page.locator('#legacyProviderSettings > summary').click();
-  await page.locator('#providerPreset').selectOption('alandi');
-  await page.locator('#baseUrl').fill('https://legacy-alandi.example.test/v1');
-  await page.locator('#modelName').fill('legacy-model');
-  await page.locator('#apiKey').fill('legacy-probe-key');
-  await page.locator('#cloudBaseUrl').fill('https://cloud-initial.example.test/v1');
-  await page.locator('#cloudModel').fill('cloud-initial-model');
-  await page.locator('#cloudApiKey').fill('cloud-initial-key');
-  await page.locator('[data-action="test-connection"]').click();
-  await probeStarted;
-  await page.locator('#cloudBaseUrl').fill('https://cloud-updated.example.test/v1');
-  await page.locator('#cloudModel').fill('cloud-updated-model');
-  await page.locator('#cloudApiKey').fill('cloud-updated-key');
-  releaseProbe();
-  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected', { timeout: 15000 });
-  await expect(page.locator('#cloudBaseUrl')).toHaveValue('https://cloud-updated.example.test/v1');
-  await expect(page.locator('#cloudModel')).toHaveValue('cloud-updated-model');
-  await expect(page.locator('#cloudApiKey')).toHaveValue('cloud-updated-key');
-  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
-  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_alandi_cloud_connection_v1'))).toBe('');
+  await expect(page.locator('#aserviSettingsGroup')).toHaveAttribute('open', '');
+  await expect(page.locator('#cloudBaseUrl')).toBeVisible();
+  await expect(page.locator('#providerPreset option[value="alandi"]')).toHaveCount(0);
+  await expect(page.locator('#legacyProviderSettings')).not.toHaveAttribute('open');
 });
-
 
 test('local helper suggests compact project-memory facts without saving them automatically', async ({ page }) => {
   const helperRequests = [];
@@ -1948,7 +1938,7 @@ test('local helper suggests compact project-memory facts without saving them aut
   await page.locator('[data-action="create-project"]').click();
   await page.locator('#projectMemoryInput').fill('Keep the main model for synthesis and use small helpers for bounded extraction.');
   await page.locator('[data-action="add-project-memory"]').click();
-  await page.locator('#serverMemoryDetails > summary').click();
+  await page.locator('#projectMemoryHelperDetails > summary').click();
   await page.locator('[data-action="suggest-helper-memory"]').click();
   await expect.poll(() => helperRequests.length).toBe(1);
   expect(helperRequests[0].facts).toEqual(['Keep the main model for synthesis and use small helpers for bounded extraction.']);
@@ -1959,219 +1949,25 @@ test('local helper suggests compact project-memory facts without saving them aut
   expect(helperRequests).toHaveLength(1);
 });
 
-test('server project memory bridge is manual and requires both chat opt-ins', async ({ page }) => {
-  const serverNodes = [];
-  const capturedBodies = [];
-  let searchCalls = 0;
-  const corsHeaders = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Content-Type': 'application/json' };
 
-  await page.route('https://gateway.example.test/v1/memory/graph/**', async route => {
-    const request = route.request();
-    const url = new URL(request.url());
-    const method = request.method();
-    const scopeId = url.searchParams.get('scope_id');
-    if (method === 'OPTIONS') return route.fulfill({ status: 204, headers: corsHeaders });
-    if (url.pathname.endsWith('/nodes') && method === 'GET') {
-      return route.fulfill({ status: 200, headers: corsHeaders,
-        body: JSON.stringify({ nodes: serverNodes.filter(node => node.scope_id === scopeId), count: serverNodes.length }) });
-    }
-    if (url.pathname.endsWith('/nodes') && method === 'POST') {
-      const body = request.postDataJSON();
-      const node = { id: 'server-node-' + (serverNodes.length + 1), status: 'candidate', ...body };
-      serverNodes.push(node);
-      return route.fulfill({ status: 201, headers: corsHeaders, body: JSON.stringify({ node }) });
-    }
-    if (url.pathname.endsWith('/search') && method === 'POST') {
-      searchCalls++;
-      const body = request.postDataJSON();
-      const nodes = serverNodes.filter(node => node.scope === body.scope && node.scope_id === body.scope_id &&
-        node.status === 'confirmed' && node.content.includes('SERVER_MEMORY_SENTINEL'));
-      return route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({ nodes, count: nodes.length }) });
-    }
-    if (url.pathname.endsWith('/review') && method === 'POST') {
-      const id = url.pathname.split('/').slice(-2)[0];
-      const body = request.postDataJSON();
-      const node = serverNodes.find(item => item.id === id);
-      if (node) node.status = body.status;
-      return route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({ node }) });
-    }
-    return route.fulfill({ status: 404, headers: corsHeaders, body: JSON.stringify({ detail: 'Unmocked graph route' }) });
+test('retired Server Memory experiment has no UI or request path', async ({ page }) => {
+  const graphRequests = [];
+  await page.route('**/v1/memory/graph/**', async route => {
+    graphRequests.push(route.request().url());
+    await route.fulfill({ status: 410, body: 'retired' });
   });
-  await page.route('https://gateway.example.test/v1/chat/completions', async route => {
-    if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: corsHeaders });
-    const body = route.request().postDataJSON();
-    const requestText = body.messages?.at(-1)?.content;
-    if ([
-      'Summarize this project.',
-      'Use only local project memory.',
-      'Server memory is opted in but project memory is not.',
-      'Use the approved server project memory.'
-    ].includes(requestText)) capturedBodies.push(body);
-    return route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({
-      model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'Bridge response.' }, finish_reason: 'stop' }]
-    }) });
-  });
-
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.evaluate(() => {
-    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
-    localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
-    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
-    localStorage.setItem('ai_api_provider', 'alandi');
-    localStorage.setItem('ai_model_name', 'qwen3.5:4b');
-    localStorage.setItem('ai_alandi_cloud_model', 'qwen3.5:4b');
-  });
-  await page.reload({ waitUntil: 'domcontentloaded' });
-  await chooseSearchMode(page, 'offline');
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#projectPanel [data-action="open-project-create"]').click();
-  await page.locator('#projectNameInput').fill('Server bridge project');
-  await page.locator('[data-action="create-project"]').click();
-  const serverMemoryProjectId = await page.locator('#currentProjectSelect').inputValue();
-  expect(serverMemoryProjectId).not.toBe('');
-  await page.locator('#projectMemoryInput').fill('SERVER_MEMORY_SENTINEL is a local project fact.');
-  await page.locator('[data-action="add-project-memory"]').click();
-  await expect(page.locator('#projectMemoryBox')).toContainText('SERVER_MEMORY_SENTINEL');
-  await expect(page.locator('#serverProjectMemoryToggle')).not.toBeChecked();
-  expect(serverNodes).toHaveLength(0); // Local facts are never uploaded automatically.
-
-  await page.locator('#serverMemoryDetails > summary').click();
-  await page.locator('[data-action="upload-server-memory"]').click();
-  await expect.poll(() => serverNodes.length).toBe(1);
-  await expect(page.locator('#serverMemoryBox')).toContainText(/Кандидат|Candidate/);
-  await page.locator('[data-action="review-server-memory"][data-review-status="confirmed"]').click();
-  await expect.poll(() => serverNodes[0]?.status).toBe('confirmed');
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-
-  // Opening project settings already closes the sidebar.
-  await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
-  await page.locator('#userInput').fill('Summarize this project.');
-  await page.locator('#sendBtn').click();
-  await expect.poll(() => capturedBodies.length).toBe(1);
-  expect(searchCalls).toBe(0);
-  expect(capturedBodies[0].messages[0].content).not.toContain('SERVER_MEMORY_SENTINEL');
-
-  // Project-memory opt-in alone must not invoke the server graph.
-  await openProjectSettingsForId(page, serverMemoryProjectId);
-  await page.locator('#projectMemoryToggle').check();
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-  await page.locator('#userInput').fill('Use only local project memory.');
-  await page.locator('#sendBtn').click();
-  await expect.poll(() => capturedBodies.length).toBe(2);
-  expect(searchCalls).toBe(0);
-  expect(capturedBodies[1].messages[0].content).toContain('SERVER_MEMORY_SENTINEL');
-
-  // Server-memory opt-in alone must not retrieve server context or bypass project opt-in.
-  await openProjectSettingsForId(page, serverMemoryProjectId);
-  await page.locator('#projectMemoryToggle').uncheck();
-  await page.locator('#serverProjectMemoryToggle').check();
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-  await page.locator('#userInput').fill('Server memory is opted in but project memory is not.');
-  await page.locator('#sendBtn').click();
-  await expect.poll(() => capturedBodies.length).toBe(3);
-  expect(searchCalls).toBe(0);
-  expect(capturedBodies[2].messages[0].content).not.toContain('SERVER_MEMORY_SENTINEL');
-
-  // Only both opt-ins together allow retrieval of confirmed server facts.
-  await openProjectSettingsForId(page, serverMemoryProjectId);
-  await page.locator('#projectMemoryToggle').check();
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-  await page.locator('#userInput').fill('Use the approved server project memory.');
-  await page.locator('#sendBtn').click();
-  await expect.poll(() => capturedBodies.length).toBe(4);
-  expect(searchCalls).toBe(1);
-  expect(capturedBodies[3].messages[0].content).toContain('SERVER_MEMORY_SENTINEL');
-});
-
-test('Markdown fallback preserves tables and escapes HTML when renderer CDNs are unavailable', async ({ page }) => {
-  await page.route('https://cdn.jsdelivr.net/npm/marked@18.0.14/marked.min.js', route => route.abort());
-  await page.route('https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js', route => route.abort());
-  await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
-    status: 200,
-    contentType: 'application/json',
-    body: JSON.stringify({
-      model: 'e2e-markdown-model',
-      choices: [{ message: { role: 'assistant', content: '# Fallback check\n\n| Feature | Status |\n| --- | --- |\n| **Tables** | `readable` |\n\n<img src=x onerror=alert(1)>' } }]
-    })
-  }));
-  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
-  await page.locator('#providerPreset').selectOption('custom');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('e2e-markdown-model');
-  await page.locator('#apiKey').fill('not-a-real-key');
-  await page.locator('[data-action="save-settings"]').click();
-  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
-  await page.locator('#userInput').fill('Show the fallback formatting');
-  await page.locator('#sendBtn').click();
-
-  const assistantMessage = page.locator('#chatBox .assistant-content').filter({ hasText: 'Fallback check' }).last();
-  await expect(assistantMessage.locator('h1')).toHaveText('Fallback check');
-  await expect(assistantMessage.locator('table th')).toHaveCount(2);
-  await expect(assistantMessage.locator('table td strong')).toHaveText('Tables');
-  await expect(assistantMessage.locator('table td code')).toHaveText('readable');
-  await expect(assistantMessage.locator('img')).toHaveCount(0);
-  await expect(assistantMessage).toContainText('<img src=x onerror=alert(1)>');
-});
-
-test('chat row actions are grouped in the right-side menu and rename/clone work', async ({ page }) => {
-  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  const row = page.locator('#chatList .chat-row').first();
-  await expect(row.locator('details.chat-row-menu')).toBeVisible();
-  await expect(row.locator('button[data-action="delete-chat"]')).toBeHidden();
-  await row.locator('summary[aria-label="Действия чата"]').click();
-  await expect(row.locator('.chat-row-menu-panel button')).toHaveCount(7);
-
-  await row.locator('[data-action="chat-rename"]').click();
-  await expect(page.locator('#chatActionModal')).toBeVisible();
-  await page.locator('#chatActionName').fill('Renamed from menu');
-  await page.locator('[data-action="chat-action-save"]').click();
-  await expect(row.locator('button[data-action="switch-chat"]')).toHaveText('Renamed from menu');
-
-  await row.locator('summary[aria-label="Действия чата"]').click();
-  await row.locator('[data-action="chat-clone"]').click();
-  await expect(page.locator('#chatList .chat-row')).toHaveCount(2);
-  await expect(page.locator('#chatList button[data-action="switch-chat"]').first()).toContainText('Renamed from menu — копия');
-  await expect(page.locator('#userInput')).toHaveCSS('font-size', '16px');
-});
-
-test('chat menu export is scoped and chat import merges without replacing history', async ({ page }) => {
-  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.locator('#userInput').fill('Keep this existing chat');
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  const row = page.locator('#chatList .chat-row').first();
-  await row.locator('summary[aria-label="Действия чата"]').click();
-
-  const downloadPromise = page.waitForEvent('download');
-  await row.locator('[data-action="export-chat"]').click();
-  const download = await downloadPromise;
-  expect(download.suggestedFilename()).toContain('alandi-chat-');
-
-  await page.locator('#importFile').setInputFiles({
-    name: 'imported-chats.json',
-    mimeType: 'application/json',
-    buffer: Buffer.from(JSON.stringify([{
-      id: 'imported-chat-test',
-      title: 'Imported chat',
-      messages: [{ role: 'user', content: 'Imported content' }],
-      processingMode: 'deep',
-      searchMode: 'more',
-      multiAgentEnabled: true,
-      skillPreset: 'research'
-    }]))
-  });
-  await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(2);
-  await expect(page.locator('#chatList')).toContainText('Imported chat');
-  await expect(page.locator('#chatBox')).toContainText('Imported content');
-  await expect(page.locator('#userInput')).toHaveValue('Keep this existing chat');
+  await expect(page.locator('#serverMemoryDetails')).toHaveCount(0);
+  await expect(page.locator('#serverProjectMemoryToggle')).toHaveCount(0);
+  await expect(page.locator('#serverMemoryStatus, #serverMemoryBox')).toHaveCount(0);
+  await expect(page.locator('[data-action="refresh-server-memory"], [data-action="upload-server-memory"], [data-action="review-server-memory"], [data-action="delete-server-memory"]')).toHaveCount(0);
+  expect(graphRequests).toHaveLength(0);
 });
 
 test('sidebar separates projects from personal chats and keeps navigation collapsible', async ({ page }) => {
   await page.addInitScript(() => {
     const project = (id, name) => ({ id, name, description: '', instructions: '', memoryScope: 'project-only', memory: [], createdAt: '', updatedAt: '' });
-    const chat = (id, title, projectId) => ({ id, title, projectId, projectMemoryEnabled: false, serverProjectMemoryEnabled: false, messages: [] });
+    const chat = (id, title, projectId) => ({ id, title, projectId, projectMemoryEnabled: false, messages: [] });
     localStorage.setItem('ai_projects_v1', JSON.stringify([project('project-alpha','Alpha project'), project('project-beta','Beta project')]));
     localStorage.setItem('ai_chats_v87', JSON.stringify([chat('chat-personal','Personal chat',null),chat('chat-alpha','Alpha project chat','project-alpha'),chat('chat-beta','Beta project chat','project-beta')]));
     localStorage.setItem('ai_current_chat_v87','chat-alpha');
@@ -2200,8 +1996,10 @@ test('sidebar closes on a horizontal touch swipe without consuming vertical scro
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await ensureSidebarOpen(page);
+  await page.locator('#memoryToolsDetails > summary').click();
   await page.locator('#projectNavToggle').click();
   await expect(page.locator('#projectNavigationList')).toBeVisible();
+  await expect(page.locator('#chatSection')).toHaveAttribute('open', '');
 
   const dispatchSwipe = (start, end, cancelled = false) => page.locator('#sidebar').evaluate((sidebar, points) => {
     const dispatch = (type, point, property) => {
@@ -2238,9 +2036,13 @@ test('sidebar closes on a horizontal touch swipe without consuming vertical scro
   await dispatchSwipe({ x: 300, y: 420 }, { x: 190, y: 425 });
   await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
   await expect(page.locator('#sidebarOverlay')).toBeHidden();
+  await expect(page.locator('#memoryToolsDetails')).not.toHaveAttribute('open', '');
+  await expect(page.locator('#projectNavigationList')).toBeVisible();
+  await expect(page.locator('#chatSection')).toHaveAttribute('open', '');
 
   await ensureSidebarOpen(page);
   await expect(page.locator('#projectNavigationList')).toBeVisible();
+  await expect(page.locator('#chatSection')).toHaveAttribute('open', '');
 });
 
 test('composer offers unrestricted file picking but blocks unsupported formats until removed', async ({ page }) => {
@@ -2276,7 +2078,7 @@ test('request-only project context is sent once and does not change the active c
   });
   await page.addInitScript(() => {
     const project=(id,name,instructions)=>({id,name,description:'',instructions,memoryScope:'project-only',memory:[{id:id+'-memory',text:name+' memory sentinel',createdAt:''}],createdAt:'',updatedAt:''});
-    const chat=(id,title,projectId)=>({id,title,projectId,projectMemoryEnabled:true,serverProjectMemoryEnabled:false,messages:[]});
+    const chat=(id,title,projectId)=>({id,title,projectId,projectMemoryEnabled:true,messages:[]});
     localStorage.setItem('ai_projects_v1',JSON.stringify([project('project-alpha','Alpha project','ALPHA_ONLY_INSTRUCTION'),project('project-beta','Beta project','BETA_ONE_SHOT_INSTRUCTION')]));
     localStorage.setItem('ai_chats_v87',JSON.stringify([chat('chat-alpha','Alpha chat','project-alpha'),chat('chat-beta','Beta chat','project-beta')]));
     localStorage.setItem('ai_current_chat_v87','chat-alpha');
@@ -2409,8 +2211,7 @@ test('project memory scope edits the selected project, not the active chat proje
       memory: [], createdAt: '', updatedAt: ''
     });
     const chat = (id, title, projectId) => ({
-      id, title, projectId, projectMemoryEnabled: false,
-      serverProjectMemoryEnabled: false, messages: []
+      id, title, projectId, projectMemoryEnabled: false, messages: []
     });
     localStorage.setItem('ai_projects_v1', JSON.stringify([
       project('project-alpha', 'Alpha project'),
@@ -2465,7 +2266,6 @@ test('clear history preserves the chat and other project data', async ({ page })
     });
     const chat = (id, title, projectId, sentinel) => ({
       id, title, projectId, projectMemoryEnabled: false,
-      serverProjectMemoryEnabled: false,
       messages: [{ role: 'user', content: sentinel }]
     });
     localStorage.setItem('ai_projects_v1', JSON.stringify([
@@ -2516,7 +2316,6 @@ test('clearing a non-active project chat preserves the active chat and both proj
     });
     const chat = (id, title, projectId, sentinel) => ({
       id, title, projectId, projectMemoryEnabled: false,
-      serverProjectMemoryEnabled: false,
       messages: [{ role: 'user', content: sentinel }]
     });
     localStorage.setItem('ai_projects_v1', JSON.stringify([
@@ -2684,22 +2483,18 @@ test('mobile composer stays visible at the bottom in new chats across viewport r
   await assertDocked();
 });
 
-test('search presets and function settings fit one line, localize, and persist per chat', async ({ page }) => {
+test('search presets fit one line, localize, and persist per chat', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
 
   const searchRect = await page.locator('#searchModeMenu').boundingBox();
-  const functionsRect = await page.locator('#functionsMenu').boundingBox();
   expect(searchRect).not.toBeNull();
-  expect(functionsRect).not.toBeNull();
-  expect(Math.abs(searchRect.y - functionsRect.y)).toBeLessThan(5);
-  expect(searchRect.x + searchRect.width).toBeLessThanOrEqual(functionsRect.x + 3);
-  for (const selector of ['#modeFast', '#modeDeep', '#searchModeSummary', '#functionsMenuSummary']) {
+  for (const selector of ['#modeFast', '#modeDeep', '#searchModeSummary']) {
     const box = await page.locator(selector).boundingBox();
     expect(box?.height || 0, selector + ' should have a 44px mobile hit target').toBeGreaterThanOrEqual(44);
   }
-  const headerTargetHeights = await page.locator('.app-header .header-icon').evaluateAll(elements => elements.map(element => element.getBoundingClientRect().height));
-  expect(headerTargetHeights.length).toBeGreaterThan(0);
+  const headerTargetHeights = await page.locator('.app-header .header-icon, .header-language-select').evaluateAll(elements => elements.map(element => element.getBoundingClientRect().height));
+  expect(headerTargetHeights.length).toBeGreaterThanOrEqual(3);
   expect(headerTargetHeights.every(height => height >= 44)).toBe(true);
   for (const selector of ['#contextPickerButton', '#attachTextButton', '#voiceUnavailableButton', '#sendBtn', '#userInput']) {
     const box = await page.locator(selector).boundingBox();
@@ -2718,13 +2513,7 @@ test('search presets and function settings fit one line, localize, and persist p
   await chooseSearchMode(page, 'offline');
   await expect(page.locator('#toggleSearch')).not.toBeChecked();
   await expect(page.locator('#modeHint')).toContainText('Веб: выкл.');
-  await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
   await chooseSearchMode(page, 'normal');
-
-  await page.locator('#functionsMenuSummary').click();
-  await expect(page.locator('#functionsMenu [data-function="research"]')).toHaveCount(0);
-  await expect(page.locator('#functionsMenu .toolbar-menu-option')).toHaveCount(3);
-  await page.locator('#functionsMenuSummary').click();
 
   await setAgentMode(page, true);
   await expect(page.locator('#toggleMultiAgent')).toBeChecked();
@@ -2738,13 +2527,6 @@ test('search presets and function settings fit one line, localize, and persist p
     return chats.find(chat => chat.id === current)?.skillPreset;
   })).toBe('code-review');
 
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="connectors"]').click();
-  await expect(page.locator('#functionPanelModal')).toBeVisible();
-  await expect(page.locator('#functionPanelDescription')).toContainText('интеграции');
-  await expect(page.locator('#functionPanelDescription')).toContainText('не подключены');
-  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
-
   const sidebar = page.locator('#sidebar');
   if (await sidebar.evaluate(element => element.classList.contains('-translate-x-full'))) {
     await page.locator('[data-action="toggle-sidebar"]').click();
@@ -2754,67 +2536,67 @@ test('search presets and function settings fit one line, localize, and persist p
   await expect(page.locator('#toggleSearch')).toBeChecked();
   await expect(page.locator('#toggleMultiAgent')).not.toBeChecked();
   await expect(page.locator('#searchModeSummary')).toContainText(/обычный/i);
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
-  await expect(page.locator('#skillPresetSelect')).toHaveValue('auto');
-  await expect(page.locator('#functionPanelTitle')).toContainText('Профиль задачи');
-  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
 
   await selectLanguage(page, 'en');
   await expect(page.locator('#modeDeep')).toContainText('Thorough');
   await expect(page.locator('#modeToolbar [role="group"]')).toHaveAttribute('aria-label', 'Effort');
-  await expect(page.locator('#functionsMenuSummary')).toContainText('Functions');
+  await expect(page.locator('#functionsMenu')).toHaveCount(1);
   await expect(page.locator('#searchModeSummary')).toContainText('Web');
   await expect(page.locator('#modeHint')).toContainText('Quick · Web: standard · Direct · Auto');
-  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
-
-  // The first tap outside an open toolbar menu must only close it.
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('#modeFast').click();
-  await expect(page.locator('#functionsMenu')).not.toHaveAttribute('open', '');
-  await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
 });
 
-
-test('planned agent and connector directions show a clearly non-runtime innovation cue', async ({ page }) => {
+test('Functions menu exposes truthful Agents, Deep Research and Skills panels with blurred backdrop', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('#functionPanelModal')).toBeHidden();
+  const menu = page.locator('#functionsMenu');
+  await expect(menu).toBeVisible();
+  await page.locator('#functionsMenuSummary').click();
+  await expect(menu.locator('.toolbar-menu-option')).toHaveCount(3);
+  await expect(menu.locator('[data-function="agents"]')).toBeVisible();
+  await expect(menu.locator('[data-function="research"]')).toBeVisible();
+  await expect(menu.locator('[data-function="skills"]')).toBeVisible();
+  await expect(page.locator('[data-action="open-research-studio"]')).toHaveCount(0);
+  await expect(page.locator('#researchStudioModal')).toHaveCount(0);
+
+  await menu.locator('[data-function="research"]').click();
+  const modal = page.locator('#functionPanelModal');
+  await expect(modal).toBeVisible();
+  await expect.poll(() => modal.evaluate(element => getComputedStyle(element).backdropFilter)).toBe('blur(4px)');
+  const researchPanel = page.locator('#researchFunctionSettings');
+  await expect(researchPanel).toBeVisible();
+  await expect(researchPanel.locator('#researchModeSummary')).toContainText(/Quick|Быстро/);
+  await expect(researchPanel.locator('#researchSearchModeSummary')).toContainText(/Web: standard|Веб: обычный/);
+  await expect(researchPanel.locator('#researchWorkflowSummary')).toContainText(/Direct|Прямой/);
+
+  await researchPanel.locator('[data-action="select-processing-mode"][data-processing-mode="deep"]').click();
+  await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
+  await expect(researchPanel.locator('#researchModeSummary')).toContainText(/Thorough|Тщательно/);
+
+  await researchPanel.locator('[data-action="open-search-mode-settings"]').click();
+  await expect(modal).toBeHidden();
+  const searchMenu = page.locator('#searchModeMenu');
+  await expect(searchMenu).toHaveAttribute('open', '');
+  await expect(page.locator('#searchModeSummary')).toBeFocused();
+  await page.locator('#searchModeSummary').click();
+  await expect(searchMenu).not.toHaveAttribute('open', '');
 
   await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
-  const agentPanel = page.locator('#agentFunctionSettings');
-  await expect(agentPanel).toBeVisible();
-  const agentTicker = agentPanel.locator('.roadmap-ticker-track');
-  await expect(agentTicker).toBeVisible();
-  await expect(agentTicker).toContainText('1nv3nt10n 1n PrOc3ss');
-  await expect(agentTicker).toHaveAttribute('aria-hidden', 'true');
-  await expect(agentPanel.locator('.roadmap-note')).toContainText('не активный runtime');
-  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
-  await expect(agentTicker).toBeHidden();
+  await page.locator('[data-function="research"]').click();
+  await expect(modal).toBeVisible();
+  await modal.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  await expect(page.locator('#agentFunctionSettings')).toBeVisible();
+  await expect(page.locator('#researchFunctionSettings')).toBeHidden();
+  await modal.locator('[data-action="close-function-panel"]').first().click();
+  await expect(modal).toBeHidden();
 
   await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="connectors"]').click();
-  const connectorPanel = page.locator('#connectorFunctionStatus');
-  await expect(connectorPanel).toBeVisible();
-  const connectorTicker = connectorPanel.locator('.roadmap-ticker-track');
-  await expect(connectorTicker).toBeVisible();
-  await expect(connectorTicker).toContainText('1nv3nt10n 1n PrOc3ss');
-  await expect(connectorPanel.locator('.roadmap-note')).toContainText('не означает, что сервис уже выполняет работу');
-  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
-  await expect(connectorTicker).toBeHidden();
+  await page.locator('[data-function="skills"]').click();
+  await expect(modal).toBeVisible();
+  await expect.poll(() => modal.evaluate(element => getComputedStyle(element).backdropFilter)).toBe('blur(4px)');
+  await expect(page.locator('#skillFunctionSettings')).toBeVisible();
+  await modal.locator('[data-action="close-function-panel"]').first().click();
+  await expect(modal).toBeHidden();
 });
-
-test('application innovation ticker is static when reduced motion is requested', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
-  const ticker = page.locator('#agentFunctionSettings .roadmap-ticker-track');
-  await expect(ticker).toBeVisible();
-  expect(await ticker.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
-  await expect(page.locator('#agentFunctionSettings .roadmap-note')).toBeVisible();
-});
-
 
 test('browser Python snippets cannot access page globals through Pyodide js module', async ({ page }) => {
   await page.addInitScript(() => {
@@ -3071,7 +2853,7 @@ test('corrupt project storage is preserved and exposes a downloadable recovery b
   }));
   expect(values).toEqual({ original: raw, backup: raw });
   await page.locator('#appSidebarToggle').click();
-  await page.locator('[data-action="open-project-settings"]').click();
+  await expect(page.locator('#projectRecoveryBackupButton')).toBeVisible();
   const [download] = await Promise.all([
     page.waitForEvent('download'),
     page.locator('#projectRecoveryBackupButton').click()
@@ -3171,7 +2953,7 @@ test('project writes fail closed when malformed source data cannot be backed up'
   }));
   expect(after).toEqual(before);
   await page.locator('#appSidebarToggle').click();
-  await page.locator('[data-action="open-project-settings"]').click();
+  await expect(page.locator('#projectRecoveryBackupButton')).toBeVisible();
   const [download] = await Promise.all([
     page.waitForEvent('download'),
     page.locator('#projectRecoveryBackupButton').click()
@@ -3289,6 +3071,7 @@ test('status tone semantics remain distinct and readable in both themes', async 
 test('readability preferences persist and maintain semantic text contrast in both themes', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').first().click();
+  await openAdditionalSettings(page);
   await expect(page.locator('#readingSettings')).toBeVisible();
 
   await page.locator('#readingFontSize').evaluate(element => {
