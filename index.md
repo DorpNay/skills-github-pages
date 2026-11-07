@@ -346,6 +346,9 @@ permalink: /
     html[data-reading-contrast="high"] .assistant-content a { color:var(--ui-link)!important; }
     :is(button,input,select,textarea):disabled, [aria-disabled="true"] { color:var(--ui-text-muted)!important; }
     html[data-reading-contrast="high"] :is(button,input,select,textarea):disabled, html[data-reading-contrast="high"] [aria-disabled="true"] { color:var(--ui-text-muted)!important; }
+    /* Keep high-contrast semantic roles above theme and utility selectors in both themes. */
+    html[data-theme][data-reading-contrast="high"] .assistant-content a { color:var(--ui-link)!important; }
+    html[data-theme][data-reading-contrast="high"] .assistant-content :is(button,input,select,textarea):disabled { color:var(--ui-text-muted)!important; opacity:1!important; }
     .field-error { color:var(--ui-danger); }
     .assistant-content blockquote { color:var(--ui-text-muted); border-color:var(--ui-border); }
     @media (max-width:639px) {
