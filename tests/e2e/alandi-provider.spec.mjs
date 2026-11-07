@@ -14,7 +14,7 @@ test.beforeEach(async ({ page }) => {
 
 test('aLandi private gateway route works, stays local, and exposes cache status', async ({ page }) => {
   const chatPayloads = [];
-  const cloudChatRequests = [];
+  const externalProviderRequests = [];
   await page.route('https://alandi.example.test/**', async route => {
     const request = route.request();
     const origin = request.headers().origin || 'https://dorpnay.github.io';
@@ -39,25 +39,25 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
     }
     if (request.url().includes('/v1/chat/completions')) {
       const payload = request.postDataJSON();
-      const isCloudProbe = payload.max_tokens === 8 && payload.messages?.[0]?.content === 'Reply with exactly OK.';
-      if (!isCloudProbe) chatPayloads.push(payload);
+      const isAserviProbe = payload.max_tokens === 8 && payload.messages?.[0]?.content === 'Reply with exactly OK.';
+      if (!isAserviProbe) chatPayloads.push(payload);
       return route.fulfill({
         status: 200,
-        headers: { ...corsHeaders, ...(isCloudProbe ? {} : { 'x-ai-cache': 'MISS', 'cache-control': 'no-store' }) },
+        headers: { ...corsHeaders, ...(isAserviProbe ? {} : { 'x-ai-cache': 'MISS', 'cache-control': 'no-store' }) },
         contentType: 'application/json',
         body: JSON.stringify({
-          id: isCloudProbe ? 'local-cloud-probe' : 'local-chatcmpl-test', object: 'chat.completion', model: 'qwen3.5:4b',
-          choices: [{ index: 0, message: { role: 'assistant', content: isCloudProbe ? 'OK' : 'aLandi local gateway works.' }, finish_reason: 'stop' }]
+          id: isAserviProbe ? 'local-aservi-probe' : 'local-chatcmpl-test', object: 'chat.completion', model: 'qwen3.5:4b',
+          choices: [{ index: 0, message: { role: 'assistant', content: isAserviProbe ? 'OK' : 'aLandi local gateway works.' }, finish_reason: 'stop' }]
         })
       });
     }
     return route.fulfill({ status: 404, headers: corsHeaders, contentType: 'application/json', body: '{}' });
   });
   await page.route('https://generativelanguage.googleapis.com/**', async route => {
-    if (/\/chat\/completions|\/responses|:generateContent|:streamGenerateContent/.test(route.request().url())) cloudChatRequests.push(route.request().url());
+    if (/\/chat\/completions|\/responses|:generateContent|:streamGenerateContent/.test(route.request().url())) externalProviderRequests.push(route.request().url());
     return route.fulfill({
       status: 503, contentType: 'application/json',
-      body: JSON.stringify({ error: { message: 'Cloud fallback must not be used in this test.' } })
+      body: JSON.stringify({ error: { message: 'external-provider fallback must not be used in this test.' } })
     });
   });
 
@@ -85,26 +85,26 @@ test('aLandi private gateway route works, stays local, and exposes cache status'
   expect(chatPayloads).toHaveLength(1);
   expect(chatPayloads[0].model).toBe('qwen3.5:4b');
   expect(chatPayloads[0].temperature).toBe(0);
-  expect(cloudChatRequests).toEqual([]);
+  expect(externalProviderRequests).toEqual([]);
 });
 
 
-test('aLandi Cloud and external provider settings are mutually exclusive', async ({ page }) => {
+test('aLandi aServi and external provider settings are mutually exclusive', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
 
-  const cloudRoute = page.locator('#cloudSettingsCard');
+  const aserviRoute = page.locator('#cloudSettingsCard');
   const externalSettings = page.locator('#providerExternalSettings');
   const routePicker = page.locator('#providerPreset');
 
-  await expect(cloudRoute).toBeVisible();
+  await expect(aserviRoute).toBeVisible();
   await expect(externalSettings).toBeHidden();
 
   await routePicker.selectOption('gemini');
-  await expect(cloudRoute).toBeHidden();
+  await expect(aserviRoute).toBeHidden();
   await expect(externalSettings).toBeVisible();
 
   await page.locator('#selectAlandiCloudRoute').click();
-  await expect(cloudRoute).toBeVisible();
+  await expect(aserviRoute).toBeVisible();
   await expect(externalSettings).toBeHidden();
 });
