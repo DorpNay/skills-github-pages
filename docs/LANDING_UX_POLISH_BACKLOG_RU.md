@@ -40,8 +40,8 @@
 - [ ] Длинные названия проектов/чатов, пустые списки, большое количество проектов/чатов, keyboard navigation и mobile scroll.
 
 ### Research / functions / agents
-- [x] PR #121 merged; exact-head Chromium/Quality passed for Research Studio active-chat settings and non-mutation. Ручная проверка текста, доступности и всех комбинаций остаётся отдельным polish gate.
-- [ ] Функциональное меню «Исследование / Агенты / Навыки / Коннекторы» должно показывать только реально зарегистрированные сущности, статусы и permissions. Не рисовать fake marketplace.
+- [x] Owner override 2026-11-07: Research Studio retired entirely; supersedes the older PR #121 active-chat helper scope. PR #169 removes the modal, UI wiring and entrypoints; exact-head CI and live absence check pending.
+- [~] Functions menu: the previous three-item menu was not owner-approved and is removed by PR #169. Replacement deferred until an explicit owner-approved capability inventory exists; do not restore placeholders or a fake marketplace.
 - [ ] Развести семантику web search breadth, offline mode и multi-agent orchestration в copy и UI.
 - [ ] В roadmap/agent panels сохранять чёткое различие между blueprint, sequential pipeline и независимым agent runtime.
 
@@ -79,3 +79,5 @@
 |---|---|---|
 | 2026-10-30 | Consolidated remaining visual/interaction tasks from legacy UX audit, V1 UI checklist and landing source. | `LEGACY_UX_REQUEST_AUDIT_RU.md`, `V1_UI_FINALIZATION_RU.md`, `landing/index.html`, `tests/e2e/landing.spec.mjs` |
 | 2026-10-30 | Added explicit pause controls to landing roadmap tickers and Playwright pause/resume test. | Commits `f42c42d`, `b213c8a`; PR #121 exact-head Chromium/Quality passed; native keyboard/screen-reader confirmation pending |
+
+- [~] Provider settings: aLandi aServi is a first-party section, not a third-party provider option; aServi excludes both peer sections, and no silent cross-provider fallback is allowed. PR #169 implements; exact-head CI and live check pending.

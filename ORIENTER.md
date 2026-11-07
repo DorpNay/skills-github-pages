@@ -2,15 +2,17 @@
 
 **Live GitHub is mutable truth.** This is a concise checkpoint, not a substitute for a fresh batched live-state read.
 
-## Current checkpoint — 2026-11-07
+## Current checkpoint — 2026-11-07 (live main)
 
-- **Current main SHA:** `69645ff357067f3656aa77cc67336ff423c26944` (live `main` branch read).
-- **Pages VERIFIED LIVE:** GitHub-managed `pages build and deployment` run #42362476364 SUCCESS on this exact SHA. Quality #42362476858 SUCCESS, all 7 jobs; its Chromium job checked the published root, client version, and `/landing/`.
-- **Production Jekyll path:** Pages run #42362476364 is GitHub-managed `dynamic/pages/pages-build-deployment`; its build job pulled `ghcr.io/actions/jekyll-build-pages:v1.0.13`, `Build with Jekyll` and `Deploy to GitHub Pages` both PASS. Upstream latest release remains v1.0.13 (2024-08-06); the Quality sentinel pins commit `44a6e6beabd48582f863aeeb6cb2151cc1716697`. No custom workflow replacement or action upgrade is indicated.
-- **PR #166 §8.17:** open, base `69645ff...`, current head `683ec28310a68dc0126a715a04f3ddc613e817b6`. Final test forces descendant style reads before a 320ms wait and uses an isolated `.cloud-status-copy[data-state=checking]` fixture; exact assertions remain strict. Quality #42368514164 PASS 7/7 (Context, Security, Integrity, Jekyll, Static Analysis, Chromium, Published Pages smoke); Graphify #42368514210 PASS. PR #166 is ready for owner-authorized merge, but remains open and unpublished. Do not merge until root cause is fixed and exact-head gates pass.
-- **Open PR queue:** #125, #131, #152, #154, #155, #166. **Open issue:** #111.
-- **Owner priority:** finish §8.17 with strict contrast assertions; after owner-authorized merge, verify a fresh Pages deployment and live version. Keep other workstreams and registry goals intact.
-
+- **Current main SHA:** `c4f23e03f563d03213eb87002863da630fc8b833` — `feat(ui): add adjustable message readability`.
+- **Pages VERIFIED LIVE:** GitHub-managed deployment #42372745873 SUCCESS on this exact SHA. Build, artifact upload and deploy passed using official Jekyll builder v1.0.13.
+- **Exact-main Quality VERIFIED:** run #42372746360 SUCCESS on the same SHA. Seven required groups/checks passed; Chromium: 116 app tests, published root smoke 1/1, landing suite 8/8. The run verified the exact `alandi-build-revision` on both normal canonical URLs (root and `/landing/`) without cache-busting query strings.
+- **Graphify:** run #42372746441 SUCCESS on exact main SHA.
+- **PR #166 §8.17 MERGED:** merge SHA `c4f23e03f563d03213eb87002863da630fc8b833`; message size (14–22 px), line height (1.4–2.0) and standard/high contrast controls are in the root app. Find them in the global gear/settings under “Читаемость текста”, not in the open project/chat sidebar. PR #167, which added exact-build metadata and canonical URL publication gates plus the upstream sweep, merged at `3cee60c7a72decee1d715d8a68c0c49539e17c58`.
+- **Open PR queue:** #125, #131, #152, #154, #155, #168 (state/orientation sync), #169 (current UI slice). **Open issue:** #111.
+- **External-source sweep:** documented in INTEL and OPEN_SOURCE_TRIAGE; research only. No code/model/Skill was installed or copied.
+- **Current UI PR #169:** base `c4f23e03f563d03213eb87002863da630fc8b833`, current head `115f8facaf36ba0efbbd0ef7f0865dfe7971db6b`; implements first-party aServi/provider separation, no cross-provider fallback, sidebar cleanup, retired Research Studio removal, removal of the unapproved 3-item Functions menu, neutral stop control and exact-SHA Pages release checks. Quality/Chromium and Graphify are pending; not merged or published yet.
+- **Open limits:** native iPhone Safari/VoiceOver and VPS/Tunnel/Ollama are not verified. PR #154 remains stale/diverged and is not the active baseline; do not merge it as-is or weaken assertions.
 
 ## Fast route
 
