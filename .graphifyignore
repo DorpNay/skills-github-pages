@@ -1,4 +1,6 @@
 # Graphify inputs must stay source-only and bounded.
+# Vendored upstream snapshots are research artifacts, not first-party architecture.
+docs/upstream-archive/
 # Keep secrets, local state, generated output and model/media artifacts out of the graph.
 .env
 **/.env
