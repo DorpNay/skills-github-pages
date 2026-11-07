@@ -90,9 +90,9 @@
 - [~] **UR-059** (строка 59; D. Чаты, проекты, инструкции и память): Текущий чат можно привязать/отвязать от проекта; проектная принадлежность видна в интерфейсе.
 - [~] **UR-060** (строка 60; D. Чаты, проекты, инструкции и память): Есть экспорт/импорт project bundle с чатом, инструкциями и памятью; проверить схему, duplicate IDs, limits, malicious content.
 - [~] **UR-061** (строка 61; D. Чаты, проекты, инструкции и память): Global memory и project memory имеют отдельные явные toggles; default выключен; подтвердить, что global facts не утекут в другой project scope.
-- [~] **UR-062** (строка 62; D. Чаты, проекты, инструкции и память): Server memory graph API and opt-in browser bridge are implemented and CI-verified. Browser projects remain local-first; only a manual upload sends facts as server-side candidates, and only confirmed facts in the exact project scope can be retrieved when both per-chat toggles are enabled. Multi-device project sync and live gateway activation remain unverified.
+- [x] **UR-062 — RETIRED BY OWNER 2026-11-07** (строка 62; D. Чаты, проекты, инструкции и память): experimental server-memory graph API and opt-in browser bridge removed from UI and gateway. Preserve browser-local memory, conversation delta sync and independent RAG. Existing server DB files are not deleted; live host is unverified.
 - [ ] **UR-063** (строка 63; D. Чаты, проекты, инструкции и память): Реализовать authenticated API/индексацию project sources только после согласованного backend contract; не имитировать работающий индекс на пустой заглушке.
-- [ ] **UR-064** (строка 64; D. Чаты, проекты, инструкции и память): Добавить/проверить тест cross-project leak на серверной памяти, RAG, evidence, cache и deletion — где соответствующие слои существуют.
+- [ ] **UR-064** (строка 64; D. Чаты, проекты, инструкции и память): Добавить/проверить cross-project leak tests for RAG, evidence, cache and deletion where those layers exist; server-memory graph is retired and excluded.
 - [~] **UR-065** (строка 65; D. Чаты, проекты, инструкции и память): RAG source deletion is scope-checked and removes chunk/concept/FTS rows; SQLite `secure_delete` plus version-gated FTS5 `secure-delete` regression tests passed on PR #24 HEAD and post-merge main. This still does **not** erase evidence-ledger copies, WAL/journals, backups or browser-local source copies; system-wide crypto-erasure remains open.
 - [ ] **UR-066** (строка 66; D. Чаты, проекты, инструкции и память): Проверить экспорт, исправление и удаление пользовательских фактов и связанные derived records.
 - [ ] **UR-067** (строка 67; D. Чаты, проекты, инструкции и память): Реализовать удаление/криптостирание по всем реальным слоям; не обещать SLA ≤60 секунд без измерения.
@@ -136,7 +136,7 @@
 - [ ] **UR-191** (строка 191; Gate перед финальным ответом): Пересверить весь этот To do и таблицу ID с текущим HEAD после завершения всех workflows; подробный аудит четырёх частей манифеста — `docs/V016_IMPLEMENTATION_CHECKLIST.md` (81 пункт, §§0–40).
 - [ ] **UR-192** (строка 192; Gate перед финальным ответом): Указать раздельно: фактически внедрено, проверено CI, подтверждено live, измерено benchmark, осталось prototype/deferred/blocked.
 - [ ] **UR-193** (строка 193; Gate перед финальным ответом): Не объединять PR и не сообщать о публикации до зелёных релевантных workflow и проверки merge result.
-- [ ] **UR-201** (строка 201; I. Следующие продуктовые вертикали): На целевом gateway включить ALANDI_MEMORY_GRAPH_ENABLED=true только после резервной копии и smoke-test; ALANDI_GLOBAL_MEMORY_ENABLED оставить false.
+- [x] **UR-201 — RETIRED BY OWNER 2026-11-07** (строка 201; I. Следующие продуктовые вертикали): do not enable retired server-memory graph/global flags; API code removed. Preserve any existing DB file until a separate backup/retention decision.
 - [ ] **UR-202** (строка 202; I. Следующие продуктовые вертикали): Первый месяц не создавать платные ресурсы автоматически: GitHub Pages + уже имеющееся железо + Ollama локально; free-tier API считать квотируемым и внешним, не гарантированно бесплатным.
 - [ ] **UR-203** (строка 203; I. Следующие продуктовые вертикали): Оценить одну маленькую helper-модель для классификации, извлечения фактов, кратких сводок и чернового ранжирования. Главная модель остаётся для планирования, сложного reasoning и синтеза. Сравнить качество, latency и RAM перед включением.
 - [ ] **UR-204** (строка 204; I. Следующие продуктовые вертикали): Добавить генерацию изображений отдельным модулем после выбора реального backend (локальный ComfyUI/API или явно выбранный внешний провайдер), проверки точной модели/лицензии/VRAM и mock E2E.
@@ -172,7 +172,7 @@
 
 Источник: [`docs/V016_IMPLEMENTATION_CHECKLIST.md`](../docs/V016_IMPLEMENTATION_CHECKLIST.md)
 
-- [ ] **V016-152** (строка 152; P1 — required next implementation slices): Add automated two-project isolation, deletion propagation, global opt-in and export/import tests against the backend memory graph.
+- [x] **V016-152 — RETIRED BY OWNER 2026-11-07** (строка 152; P1 — required next implementation slices): backend server-memory graph removed; its isolation/deletion/global-opt-in test scope is no longer applicable. Keep separate RAG scope/deletion tests.
 - [ ] **V016-153** (строка 153; P1 — required next implementation slices): Add a formal safety-first prompt composer (safety/workspace/project/profile/user), with prompt-injection regression tests.
 - [ ] **V016-154** (строка 154; P1 — required next implementation slices): Add a privacy-only/local-only routing policy that blocks remote APIs and makes refusal explicit.
 - [ ] **V016-155** (строка 155; P1 — required next implementation slices): Add route/router error tests for Grok/xAI, Kilo keyless route, 401/403/429/5xx, CORS failures, abort and malformed bodies.
