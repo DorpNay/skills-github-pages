@@ -199,8 +199,8 @@
 
 ## D-019 — Orthogonal chat settings and progressive disclosure
 
-- **Status:** Accepted for implementation in the 2026-10-30 chat-settings slice.
-- **Primary surface:** expose work effort (Quick/Thorough) and web-search scope (Off/Standard/Expanded) directly. Do not restore the three historical Functions menu entries (structured analysis, task profile, integrations) or invent a replacement catalog without explicit owner approval.
+- **Status:** Superseded in part by explicit owner direction on 2026-11-08 (D-022); retain the independent processing/search contracts and restore a narrowly defined Functions menu. Research Studio remains retired.
+- **Primary surface:** expose work effort (Quick/Thorough) and web-search scope (Off/Standard/Expanded) directly. Functions menu contains only structured analysis (existing four-stage same-model pipeline), Deep Research (shortcut to Thorough mode), and task profile/Skills (instructions only). Integrations/connectors stay absent until a real registry/status/permission contract is implemented.
 - **Independent contracts:** `processingMode` controls only the model/tool execution budget; `searchMode` controls only web-tool availability and search-result breadth; `multiAgentEnabled` enables the existing four-stage planner/researcher/critic/synthesizer pipeline only when the complexity gate allows it; Quick/Thorough limits the tool budget inside the researcher stage, while the other stages are separate text calls on the selected model; `skillPreset` adds instructions only and grants no tools or data permissions.
 - **Research Studio:** explicitly retired by the owner on 2026-11-07 and removed from UI/app. Do not restore its shortcut, modal, or menu entry. The four-stage chat research pipeline remains a separate capability.
 - **No redundant selector:** response format remains part of the user's natural-language request. Do not add a separate table/report/code/concise selector unless a distinct, non-overlapping behavior is proven.
@@ -227,3 +227,13 @@
 - **Data retention:** code removal must not delete an existing gateway `memory-graph.sqlite3`, WAL/journal, snapshots or backups. Target host was not inspected; preserve existing data until the owner makes a separate backup/export/retention decision.
 - **Rollback:** do not revert to the retired graph. If local memory/RAG behavior regresses, fix the affected independent contract without restoring server graph storage or its API.
 - **Links:** `gateway/app.py`, `gateway/memory/scope.py`, `gateway/rag/lazy_graph_rag.py`, `gateway/rag/evidence_ledger.py`, `tests/e2e/app.spec.mjs`, EV-MEM-001–007, EV-RAG-005, EV-MEM-003.
+
+
+## D-022 — Owner-approved Functions menu: Agents, Deep Research, Skills
+
+- **Date:** 2026-11-08
+- **Status:** ACCEPTED — explicit owner direction; implementation and exact-head verification are pending on PR #169.
+- **Decision:** Restore the compact Functions menu with three entries only: (1) Agents / structured analysis, which invokes the existing four-stage planner → researcher → critic → synthesizer pipeline on the selected model; (2) Deep Research, which is a shortcut to Thorough processing mode and does not claim an independent swarm; (3) Skills / task profile, which adds task-specific instructions only.
+- **Boundaries:** Keep the Quick/Thorough selector and web-search scope selector independently visible and authoritative. Deep Research must not silently change web-search scope, provider, permissions or data scope. Skills do not grant tools/data permissions. The agent-team size/scenario fields are a saved blueprint, not an independent-agent runtime. Integrations/connectors remain absent until actual registered capabilities, status and permissions are available. Research Studio remains retired; this menu is not its replacement modal.
+- **Acceptance:** RU/EN labels; exact selectors for the three menu items; selecting Deep Research sets Thorough and closes menu without sending a user request; Agents and Skills open their existing configuration panels; no Integrations placeholder; mobile layout remains overflow-free. Exact-head Quality/Chromium required before merge.
+- **Rollback:** remove the Functions menu entry points and their focused E2E tests without altering the underlying per-chat workflow/profile state.
