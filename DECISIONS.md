@@ -220,3 +220,12 @@
 - **Safety and clarity:** web Off disables web tools but does not imply that cloud model APIs work offline. The existing staged workflow must not be described as an independent team of models.
 - **Acceptance:** exact-head tests cover Quick+Expanded, Thorough+Standard, Thorough+Off, per-chat settings, task-profile independence, Research Studio non-mutation, RU/EN localization and mobile control layout. See [CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md](docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md).
 - **Rollout:** preserve the current static/Jekyll architecture and existing per-chat persistence; no new runtime dependency or provider permission is introduced.
+
+## D-020 — First-party server route naming: aLandi aServi
+
+- **Date:** 2026-11-07
+- **Status:** ACCEPTED — explicit owner instruction, reflected in the uploaded current `AGENTS.md`.
+- **Decision:** Name the first-party server route **aLandi aServi** in user-facing UI, DOM actions, documentation and tests. Do not reintroduce the retired product label “aLandi Cloud”.
+- **Compatibility:** Preserve existing `ai_alandi_cloud_*` localStorage keys as internal compatibility identifiers until a separately designed and tested migration. The provider value `alandi` remains an internal route identifier; do not expose it as a third-party provider. `aLandi aCloudi` is reserved for a future information-storage product. Cloudflare remains the infrastructure/provider name.
+- **Acceptance:** exact-head checks assert the current product label and route action, reject the retired visible label/action, and retain compatibility-key behavior.
+- **Rollback:** revert the bounded naming patch without changing stored keys or provider routing semantics.
