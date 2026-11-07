@@ -584,13 +584,15 @@ test('settings profile exports portable preferences but never API secrets', asyn
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
-  await openAdditionalSettings(page);
-  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#providerPreset').selectOption('groq');
   await page.locator('#modelName').fill('openai/gpt-oss-120b');
   await page.locator('#apiKey').fill('e2e-private-provider-secret-value');
-  await page.locator('#tavilyKey').fill('e2e-private-search-secret-value');
   await page.locator('#allowCrossProviderFallback').check();
+  await page.locator('[data-action="save-settings"]').click();
+
+  await openAdditionalSettings(page);
+  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
+  await page.locator('#tavilyKey').fill('e2e-private-search-secret-value');
   await page.locator('#readingFontSize').evaluate(element => { element.value = '18'; element.dispatchEvent(new Event('input', { bubbles: true })); element.dispatchEvent(new Event('change', { bubbles: true })); });
   await page.locator('#readingLineHeight').evaluate(element => { element.value = '1.8'; element.dispatchEvent(new Event('input', { bubbles: true })); element.dispatchEvent(new Event('change', { bubbles: true })); });
   await page.locator('#readingContrast').selectOption('high');
@@ -612,17 +614,18 @@ test('settings profile exports portable preferences but never API secrets', asyn
   expect(json).not.toContain('ai_api_key_');
   expect(json).not.toContain('apiKey');
 });
-
 test('settings profile import restores preferences while preserving existing provider and search keys', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
-  await openAdditionalSettings(page);
-  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
   await page.locator('#modelName').fill('before-import');
   await page.locator('#apiKey').fill('e2e-preserved-provider-secret');
+  await page.locator('[data-action="save-settings"]').click();
+
+  await openAdditionalSettings(page);
+  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
   await page.locator('#tavilyKey').fill('e2e-preserved-tavily-secret');
   await page.locator('[data-action="save-settings"]').click();
 
@@ -655,7 +658,6 @@ test('settings profile import restores preferences while preserving existing pro
   await expect(page.locator('#toggleSearch')).not.toBeChecked();
   await expect(page.locator('#toggleMultiAgent')).toBeChecked();
   await expect(page.locator('#offlineToggle')).toContainText('Веб-поиск выключен');
-  await page.locator('[data-action="toggle-settings"]').click();
   await expect(page.locator('#readingFontSize')).toHaveValue('19');
   await expect(page.locator('#readingLineHeight')).toHaveValue('1.7');
   await expect(page.locator('#readingContrast')).toHaveValue('high');
@@ -664,7 +666,6 @@ test('settings profile import restores preferences while preserving existing pro
   expect(await page.evaluate(() => localStorage.getItem('ai_api_key_custom'))).toBe('e2e-preserved-provider-secret');
   expect(await page.evaluate(() => localStorage.getItem('ai_tavily_key'))).toBe('e2e-preserved-tavily-secret');
 });
-
 test('research trace supports a structured JSON download', async ({ page }) => {
   const trace = {
     schemaVersion: 2, id: 'e2e-json-trace', createdAt: '2026-10-15T00:00:00.000Z',
