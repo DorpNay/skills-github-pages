@@ -3236,3 +3236,30 @@ test('status text and roadmap tickers stay centered, including reduced-motion mo
   expect(alignment.tickerAnimation).toBe('none');
 });
 
+
+test('status tone semantics remain distinct and readable in both themes', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  for (const theme of ['dark', 'light']) {
+    await page.evaluate(value => {
+      document.documentElement.dataset.theme = value;
+    }, theme);
+    const colors = [];
+    for (const tone of ['neutral', 'info', 'success', 'warning', 'error']) {
+      const state = await page.evaluate(value => {
+        showStatus('Status tone regression', value);
+        const row = document.querySelector('#searchStatus');
+        const label = document.querySelector('#statusText');
+        return {
+          tone: row.dataset.tone,
+          color: getComputedStyle(label).color,
+          animation: getComputedStyle(label).animationName
+        };
+      }, tone);
+      expect(state.tone).toBe(tone);
+      expect(state.animation).toBe('none');
+      colors.push(state.color);
+    }
+    expect(new Set(colors).size).toBe(5);
+  }
+});
