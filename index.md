@@ -443,7 +443,6 @@ permalink: /
       <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
     </details>
 
-    <div id="sidebarPreferences" class="sticky bottom-0 mt-auto border-t border-gray-800 bg-gray-950/95 backdrop-blur px-3 py-2"><button id="sidebarThemeToggle" type="button" data-action="toggle-theme-cycle" class="rounded-lg border border-gray-700 px-2 py-1.5 text-[11px] text-left" aria-label="Сменить тему">☼ Тема</button></div>
      <div id="chatRowMenuSidebarScrim" aria-hidden="true"></div>
     <input id="importFile" type="file" class="hidden" accept="application/json,.json">
   </aside>
@@ -1421,7 +1420,7 @@ permalink: /
       ru:{
         settingsTitle:'⚙️ Настройки',sidebarTitle:'💬 Проекты и чаты',chatsTitle:'Чаты',newChat:'＋ Новый чат',clearChat:'🗑 Очистить чат',newPersonalChat:'＋ Новый личный чат',
         memoryLabel:'🧠 Долгосрочная память',memoryPlaceholder:'Факт, который нужно запомнить',exportChats:'Экспорт',importChats:'Импорт',
-        appearanceTitle:'Внешний вид',languageLabel:'Язык',languageRussian:'Русский',languageEnglish:'English',researchStudio:'Поиск и исследование',themeLabel:'Тема',motionLabel:'Анимации',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',providerGroupPrimary:'aLandi Cloud · основной маршрут',providerGroupExternal:'Сторонние провайдеры',cloudRouteChoiceHelp:'Выбери один маршрут в поле «Провайдер API»: aLandi Cloud или один сторонний провайдер.',cloudCardTitle:'Мой сервер',cloudCardCopy:'',cloudBaseUrl:'URL моего сервера',cloudModel:'Модель моего сервера',cloudApiKey:'Ключ доступа к серверу',cloudConnect:'',providerLabel:'Сторонний API',
+        appearanceTitle:'Внешний вид',languageLabel:'Язык',languageRussian:'Русский',languageEnglish:'English',researchStudio:'Поиск и исследование',themeLabel:'Тема',motionLabel:'Анимации',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',providerGroupPrimary:'aLandi aServi · собственный маршрут',providerGroupExternal:'Сторонние провайдеры',cloudRouteChoiceHelp:'aLandi aServi и сторонние провайдеры — отдельные режимы; переключение выполняется вручную.',cloudCardTitle:'Мой сервер',cloudCardCopy:'',cloudBaseUrl:'URL моего сервера',cloudModel:'Модель моего сервера',cloudApiKey:'Ключ доступа к серверу',cloudConnect:'',providerLabel:'Сторонний API',
         modelSearchLabel:'Поиск по каталогу моделей',modelPresetLabel:'Быстрый выбор модели · список обновляется из API',
         baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',
         legacySettings:'Дополнительные настройки',composerPlaceholder:'Напиши сообщение...',
@@ -1443,7 +1442,7 @@ permalink: /
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Projects & chats',chatsTitle:'Chats',newChat:'＋ New chat',clearChat:'🗑 Clear chat',newPersonalChat:'＋ New personal chat',
         memoryLabel:'🧠 Long-term memory',memoryPlaceholder:'A fact to remember',exportChats:'Export',importChats:'Import',
-        appearanceTitle:'Appearance',languageLabel:'Language',languageRussian:'Russian',languageEnglish:'English',researchStudio:'Search & Research Studio',themeLabel:'Theme',motionLabel:'Motion',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',providerGroupPrimary:'aLandi Cloud · primary route',providerGroupExternal:'Third-party providers',cloudRouteChoiceHelp:'Choose one route in the API provider field: aLandi Cloud or one third-party provider.',cloudCardTitle:'My server',cloudCardCopy:'',cloudBaseUrl:'My server URL',cloudModel:'My server model',cloudApiKey:'Server access key',cloudConnect:'',providerLabel:'Third-party API',
+        appearanceTitle:'Appearance',languageLabel:'Language',languageRussian:'Russian',languageEnglish:'English',researchStudio:'Search & Research Studio',themeLabel:'Theme',motionLabel:'Motion',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',providerGroupPrimary:'aLandi aServi · first-party route',providerGroupExternal:'Third-party providers',cloudRouteChoiceHelp:'aLandi aServi and third-party providers are separate modes; switching is manual.',cloudCardTitle:'My server',cloudCardCopy:'',cloudBaseUrl:'My server URL',cloudModel:'My server model',cloudApiKey:'Server access key',cloudConnect:'',providerLabel:'Third-party API',
         modelSearchLabel:'Search model catalog',modelPresetLabel:'Quick model pick · list loads from API',
         baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',
         legacySettings:'Additional settings',composerPlaceholder:'Write a message...',
@@ -2616,6 +2615,7 @@ permalink: /
         if(oldKey)safeSet(providerKeyStorage(oldProvider),oldKey);
       }
       safeSet(STORAGE.provider,provider);
+      if ($('providerPreset')) $('providerPreset').value = provider === 'alandi' ? '' : provider;
       $('cloudflareAccountGroup').classList.toggle('hidden',provider!=='cloudflare');
       $('pollinationsAuthGroup').classList.toggle('hidden',provider!=='pollinations');
       $('apiKeyLabel').textContent=provider==='pollinations'?'Pollinations App Key · pk_… (OAuth client ID)':'API Key · ключ провайдера';
@@ -2729,7 +2729,9 @@ permalink: /
         safeSet(STORAGE.model, 'qwen3.5:4b');
       }
 
-      $('providerPreset').value=provider;
+      $('providerPreset').value=provider==='alandi'?'':provider;
+      $('aserviSettingsGroup').open=provider==='alandi';
+      $('legacyProviderSettings').open=provider!=='alandi';
       const storedBaseUrl=safeGet(STORAGE.baseUrl);
       $('baseUrl').value=storedBaseUrl||(provider==='alandi'||provider==='custom'||provider==='cloudflare'?'':(PROVIDERS[provider]?.baseUrl||DEFAULT_BASE_URL));
       $('modelName').value=safeGet(STORAGE.model)||(PROVIDERS[provider]?.models[0]?.[0]||DEFAULT_MODEL);
@@ -3004,7 +3006,7 @@ permalink: /
             ? 'Настройки чата не сохранились; импорт профиля отменён и прежние параметры восстановлены.'
             : 'Настройки чата не сохранились, а полный откат профиля не удался. Сначала экспортируй доступные данные.');
         }
-        $('providerPreset').value = settings.provider;
+        $('providerPreset').value = settings.provider === 'alandi' ? '' : settings.provider;
         $('modelSearch').value = '';
         $('baseUrl').value = baseUrl;
         $('modelName').value = settings.model.trim();
@@ -5472,7 +5474,17 @@ permalink: /
         }
       } catch (error) { console.error('Ошибка действия интерфейса:', error); showToast(error.message || 'Не удалось выполнить действие.', 'error'); }
     });
-    $('providerPreset').addEventListener('change',()=>{const selected=$('providerPreset').value;if(!selected)return;applyProviderPreset(selected);safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();if(currentProvider()==='pollinations'||currentProvider()==='kilo'||getProviderRequestKey(currentProvider()))void refreshModelCatalog({quiet:true,force:false,provider:currentProvider()});scheduleProviderAutoConnect();});
+     const aserviSettingsGroup=$('aserviSettingsGroup');
+     const peerSettingsGroups=[$('legacyProviderSettings'),$('additionalSettings')];
+     peerSettingsGroups.forEach(group=>group?.addEventListener('toggle',()=>{
+       if(group.open&&aserviSettingsGroup?.open)aserviSettingsGroup.open=false;
+     }));
+     aserviSettingsGroup?.addEventListener('toggle',()=>{
+       if(!aserviSettingsGroup.open)return;
+       peerSettingsGroups.forEach(group=>{if(group)group.open=false;});
+       applyProviderPreset('alandi',true);
+     });
+    $('providerPreset').addEventListener('change',()=>{const selected=$('providerPreset').value;if(!selected)return;applyProviderPreset(selected);$('aserviSettingsGroup').open=false;safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();if(currentProvider()==='pollinations'||currentProvider()==='kilo'||getProviderRequestKey(currentProvider()))void refreshModelCatalog({quiet:true,force:false,provider:currentProvider()});scheduleProviderAutoConnect();});
     $('cloudflareAccountId').addEventListener('input',()=>{
       const id=$('cloudflareAccountId').value.trim();safeSet(STORAGE.cloudflareAccountId,id);
       if(currentProvider()==='cloudflare')$('baseUrl').value=getProviderBaseUrl('cloudflare');
