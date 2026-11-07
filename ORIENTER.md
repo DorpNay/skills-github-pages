@@ -3,15 +3,17 @@
 **Live GitHub is mutable truth.** Re-fetch main, PR queue, exact HEAD/checks and deployment before acting.
 
 ## Verified baseline
-- **Current main SHA:** `c4f23e03f563d03213eb87002863da630fc8b833`.
-- Pages deployment #42372745873 SUCCESS; exact-main Quality #42372746360 SUCCESS (116 app Chromium, root smoke 1/1, landing 8/8 and canonical build-SHA checks); Graphify #42372746441 PASS. VPS/Tunnel/Ollama remain outside these checks.
+- **Current main SHA:** `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2`.
+- PR #169 merged by squash; GitHub Pages build/deploy #42408492764 SUCCESS on exact SHA, artifact #13588178210 SHA-256 `cf02ff975f0813ee37cfa0a5aa8de7d562852500a964da85c1a387f5fa539748`.
+- Main Freshness #42408493553 PASS; Gateway #42408493562 PASS (Python 3.12/13/14); Graphify #42408493571 PASS; Provenance #42408493536 PASS.
+- Main Quality #42408500881 FAIL: 111 passed / 2 failed. The failures are stale E2E expectations around mutually exclusive settings and aServi connection-probe count; public root/landing exact-SHA smoke was skipped.
 
 ## Active bounded PR
-- **PR #169** · `feat/ui-sidebar-81-polish-20261107` · base `c4f23e03f563d03213eb87002863da630fc8b833` · current code/test HEAD `1a426d571a7fda157f98e1225fcf0494ec673fe9`.
-- Scope remains owner-directed aServi/provider isolation, sidebar/settings, truthful Agents/Deep Research/Skills Functions entries, Research Studio retirement, §8.12 graph retirement, system/roadmap/orientation refresh and reference-only pinned source artifacts. Memvid/RAG snapshots remain incomplete, research-only, ship=false; no runtime/dependency/weights installed.
-- Previous HEAD `54a2401cd3acb7850a618808b0fc767ed4a1cd53`: Quality #42404826459 Chromium 106 passed / 7 failed. Logs identified missing stored connection marker in `refreshCloudStatus`, tests operating hidden controls due mutually exclusive provider/advanced disclosures, collapsed Functions menu assumptions, and outdated selector expectations. Freshness #42407804181 passed 19 checker unit tests but failed FILE_ORIENTER exact snapshot markers; Freshness #42407892034 then failed only because the open-PR marker lacked the exact trailing separator space. The marker now matches literal `open PRs (0): `; final exact-head rerun pending. Earlier Freshness #42404826540 failed stale queue snapshot (PR #155 no longer open).
-- **Open PR queue:** #169. Open issue #111 remains owner-controlled. Closed non-merged #125/#131/#152/#154/#155 must retain valuable goals in the canonical task registry; no wholesale branch merge.
-- **Not merged / not published.**
+- **PR #173** · `fix/aservi-connect-probe-e2e-20261108` · base `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2` · code/test HEAD `b614954ada5f86f8221a270ecd3d251283aa0642`.
+- Fixes: opening Additional Settings closes Legacy Provider Settings; explicit aServi connection cancels pending scheduled probe; E2E expects one connect probe + one user completion.
+- Exact code/test Quality #42408845013 PASS (113/113 Chromium; published baseline smoke PASS, main-release contract skipped on PR), Graphify #42408844985 PASS. Canonical state/task-register sync is included in this PR; exact final-head Freshness/Quality recheck pending.
+- **Open PR queue:** #173. Issue #111 remains owner-controlled. PRs #125/#131/#152/#154/#155/#168/#171/#172 are closed non-merged; preserve remaining goals and research in the canonical registry.
+- **Not merged / not fully live-verified.** Owner approval is required for PR #173; after merge, run main Quality and Pages public root + `/landing/` exact merge SHA.
 
 ## Canonical navigation and next steps
 - Handoff: `OLEDUE.md`; English executor contract: `AGENTS.md`; navigation index: `PROJECT_ORCHESTRATOR_RU.md`.

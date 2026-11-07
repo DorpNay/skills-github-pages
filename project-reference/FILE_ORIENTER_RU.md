@@ -2,15 +2,15 @@
 
 > Подробный индекс навигации. Это не источник live-статуса и не обязательный стартовый пакет. Для `oledue` сначала читай корневой OLEDUE.md, затем выполняй один batched live GitHub read. Используй этот файл только для поиска конкретного пути.
 
-## Контрольная точка — 2026-11-08 (live main / PR queue reconciled)
+## Контрольная точка — 2026-11-08 (post-merge main / active follow-up)
 
-- Main `c4f23e03f563d03213eb87002863da630fc8b833`; exact-main Pages #42372745873 SUCCESS, Quality #42372746360 SUCCESS (116 app Chromium, root smoke 1/1, landing 8/8, canonical root + /landing/ build SHA), Graphify #42372746441 PASS.
-- **Snapshot marker:** open PRs (0): open issues (1): #111. (The active checked PR #169 is excluded from the freshness comparison.)
-- **Live open PR queue (1): #169**; open issue (1): #111.
-- PR #169 base c4f23e0; latest code/test HEAD `1a426d571a7fda157f98e1225fcf0494ec673fe9`. Previous exact head `54a2401`: Quality #42404826459 failed 7 Chromium tests (106 passed); Freshness #42404826540 failed stale queue because #155 was no longer open. Current branch includes aServi marker read fix and E2E updates to correctly open the exclusive provider/advanced disclosures and Functions menu; final exact-head rerun pending.
-- PRs #125/#131/#152/#154/#155 are closed without merge on live GitHub. Preserve still-open goal IDs and selected ideas in the Master Task Registry; no wholesale merge of those branches. #168/#171/#172 also closed/reconciled per existing Volley evidence.
-- PR #169 remains unmerged/unpublished. After all exact-head gates pass, merge expected SHA and verify main + Pages root and /landing on exact merge SHA.
-- `INTEL.md` contains 310 distinct URL refs / 183 GitHub repositories; not all reviewed. Source archives remain research-only. Native iPhone/VoiceOver, VPS/Tunnel/Ollama and target hardware remain unverified.
+- Main `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2`; PR #169 merged via squash. Pages deployment #42408492764 SUCCESS on exact SHA (artifact #13588178210, SHA-256 `cf02ff975f0813ee37cfa0a5aa8de7d562852500a964da85c1a387f5fa539748`).
+- Main Freshness #42408493553, Gateway #42408493562, Graphify #42408493571 and Provenance #42408493536 PASS. Main Quality #42408500881 FAIL (111 passed / 2 failed); public root + `/landing/` exact-SHA smoke was skipped.
+- **Snapshot marker:** open PRs (0): open issues (1): #111. (Active checked PR #173 is excluded from the Freshness comparison.)
+- **Live open PR queue (1): #173**; issue #111 remains open.
+- PR #173 base main `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2`; code/test HEAD `b614954ada5f86f8221a270ecd3d251283aa0642`. Exact code/test Quality #42408845013 PASS (113/113 Chromium, published baseline smoke PASS) and Graphify #42408844985 PASS. It fixes the two post-merge E2E failures; canonical state synchronization is included and final exact-head checks pending.
+- PRs #125/#131/#152/#154/#155/#168/#171/#172 closed non-merged; preserve remaining registry goals and selected research. PR #173 remains unmerged and requires owner authorization after exact final-head gates pass.
+- After authorized merge, verify main Quality and Pages public root + `/landing/` on exact merge SHA. VPS/Tunnel/Ollama, native iPhone/VoiceOver and target hardware remain unverified.
 
 ## 1. Быстрый маршрут
 
