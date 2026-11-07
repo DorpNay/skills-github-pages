@@ -5386,6 +5386,24 @@ permalink: /
     ['agentTeamScenario','agentRolePreset'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
     ['agentTeamCustomScenario','agentCustomRoles'].forEach(id=>$(id).addEventListener('change',persistAgentConfiguration));
     $('sidebarOverlay').addEventListener('click', () => toggleSidebar(false));
+    // A deliberate leftward touch swipe closes the drawer; vertical scrolling stays native.
+    let sidebarTouchStart = null;
+    $('sidebar').addEventListener('touchstart', event => {
+      if (event.touches.length !== 1) { sidebarTouchStart = null; return; }
+      const touch = event.touches[0];
+      sidebarTouchStart = { x: touch.clientX, y: touch.clientY };
+    }, { passive: true });
+    $('sidebar').addEventListener('touchend', event => {
+      if (!sidebarTouchStart || event.changedTouches.length !== 1) { sidebarTouchStart = null; return; }
+      const touch = event.changedTouches[0];
+      const dx = touch.clientX - sidebarTouchStart.x;
+      const dy = touch.clientY - sidebarTouchStart.y;
+      sidebarTouchStart = null;
+      if (dx <= -72 && Math.abs(dx) > Math.abs(dy) * 1.35) toggleSidebar(false);
+    }, { passive: true });
+    const resetSidebarTouch = () => { sidebarTouchStart = null; };
+    $('sidebar').addEventListener('touchcancel', resetSidebarTouch, { passive: true });
+    $('sidebar').addEventListener('pointercancel', resetSidebarTouch, { passive: true });
     $('importFile').addEventListener('change', importChats);
     $('settingsProfileFile').addEventListener('change', importSettingsProfile);
     $('importProjectFile').addEventListener('change',importProjectBundle);
