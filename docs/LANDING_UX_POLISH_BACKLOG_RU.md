@@ -1,5 +1,7 @@
 # aLandi — остаток оформления и UX-оптимизации сайта
 
+> **ARCHIVED 2026-11-07 — не активный backlog.** Это исторический UX-инвентарь. Актуальные требования и acceptance находятся только в [V1_UI_FINALIZATION_RU.md](V1_UI_FINALIZATION_RU.md); стабильные task IDs и порядок исполнения — в [MASTER_TASK_REGISTRY_RU.md](MASTER_TASK_REGISTRY_RU.md) и его addendum; live status — в [PROJECT_STATE.yaml](PROJECT_STATE.yaml). Не создавать задачи и не реализовывать пункты отсюда без сверки с этими каноническими источниками.
+
 **Срез:** 2026-10-30  
 **Текущая база:** main после merge PR #121 и #122.  
 **Назначение:** единый реестр незавершённого визуального/интерактивного polish после PR #121. Это продолжение `V1_UI_FINALIZATION_RU.md` и `LEGACY_UX_REQUEST_AUDIT_RU.md`, не замена им.
@@ -39,11 +41,10 @@
 - [~] Проверить, что общий импорт/экспорт не дублируется в sidebar и project settings; chat actions остаются в chat menu, project bundle — в project settings.
 - [ ] Длинные названия проектов/чатов, пустые списки, большое количество проектов/чатов, keyboard navigation и mobile scroll.
 
-### Research / functions / agents
-- [x] PR #121 merged; exact-head Chromium/Quality passed for Research Studio active-chat settings and non-mutation. Ручная проверка текста, доступности и всех комбинаций остаётся отдельным polish gate.
-- [ ] Функциональное меню «Исследование / Агенты / Навыки / Коннекторы» должно показывать только реально зарегистрированные сущности, статусы и permissions. Не рисовать fake marketplace.
-- [ ] Развести семантику web search breadth, offline mode и multi-agent orchestration в copy и UI.
-- [ ] В roadmap/agent panels сохранять чёткое различие между blueprint, sequential pipeline и независимым agent runtime.
+### Research / functions / agents — [ARCHIVED / SUPERSEDED BY OWNER 2026-11-07]
+- Исторический PR #121 ранее содержал Research Studio; владелец позже явно удалил эту поверхность. Не возвращать кнопку, модалку или JS entrypoint.
+- Видимое меню «Функции» с пунктами «Агенты / Навыки / Интеграции» не было заказано владельцем; оно удалено. Не восстанавливать без нового явного запроса.
+- Старые заметки о визуальной проверке этих меню не являются активными acceptance criteria.
 
 ### Мобильность и доступность
 - [~] Chromium responsive matrix 320/360/390/768/1024/1440 и no-overflow tests.
