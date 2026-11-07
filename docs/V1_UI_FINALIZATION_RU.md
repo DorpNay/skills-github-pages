@@ -413,7 +413,7 @@ PR #122 добавил только эксплуатационную надёж�
 - Сохранять читаемость в светлой и тёмной темах, на мобильных экранах и при отключённой анимации.
 - Не подменять реальное состояние декоративной анимацией или фиктивным прогрессом; соблюдать уже установленные правила reduced-motion и доступности.
 
-**Implementation evidence (2026-11-07):** [IMPLEMENTED] PR #163 merged as `c599e97b4ea1e75d17011c87b0bf8a01f6bdb8f1` (tested head `f03ba6fc61992ee325d3af67e7dbb4e41a73e681`); centered status/ticker layout, mobile wrapping and reduced-motion behavior passed post-merge Quality run `42361174052`, including published Pages Chromium smoke. [IN PROGRESS] Semantic tone colors are isolated in PR #164; they are not yet part of `main` at this snapshot.
+**Implementation evidence (2026-11-07):** [IMPLEMENTED] PR #163 merged as `c599e97b4ea1e75d17011c87b0bf8a01f6bdb8f1` (tested head `f03ba6fc61992ee325d3af67e7dbb4e41a73e681`); centered status/ticker layout, mobile wrapping and reduced-motion behavior passed post-merge Quality run `42361174052`, including published Pages Chromium smoke. [IMPLEMENTED] Semantic tone colors merged in PR #164 as `a8ff942653622c73347ef64a11dd06ff7d849ad6` (tested head `be4aef823280af4491c08847cc4d06423cff3c2f`); exact-head Quality run `42361612473` passed all 7 jobs, Graphify run `42361612453` passed, including Chromium contrast assertions and published Pages smoke. [PENDING] Native mobile/browser visual review remains outstanding.
 
 ### 8.16 Типографика и содержимое кнопок: единый стандарт и icon-first
 
