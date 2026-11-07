@@ -3253,11 +3253,23 @@ test('status tone semantics remain distinct and readable in both themes', async 
         return {
           tone: row.dataset.tone,
           color: getComputedStyle(label).color,
+          background: getComputedStyle(row).backgroundColor,
           animation: getComputedStyle(label).animationName
         };
       }, tone);
       expect(state.tone).toBe(tone);
       expect(state.animation).toBe('none');
+      const channel = value => {
+        const normalized = value / 255;
+        return normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+      };
+      const luminance = color => {
+        const [red, green, blue] = color.match(/\\d+(?=,|\\))/g).slice(0, 3).map(Number).map(channel);
+        return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+      };
+      const foreground = luminance(state.color);
+      const background = luminance(state.background);
+      expect((Math.max(foreground, background) + 0.05) / (Math.min(foreground, background) + 0.05)).toBeGreaterThanOrEqual(4.5);
       colors.push(state.color);
     }
     expect(new Set(colors).size).toBe(5);
