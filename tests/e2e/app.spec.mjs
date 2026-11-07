@@ -1508,6 +1508,14 @@ test('expanded web search does not expand the quick execution budget', async ({ 
   let tavilyMaxResults = 0;
   await page.route('https://api.example.test/v1/chat/completions', async route => {
     const body = route.request().postDataJSON();
+    // configureCustomProvider() fills the key field, which intentionally schedules a
+    // delayed connection probe. Keep that probe out of the conversation-round assertions.
+    if (body.messages?.some(message => message.role === 'user' && message.content === 'Reply with exactly OK. No other words.')) {
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+        model: 'effort-search-model',
+        choices: [{ message: { role: 'assistant', content: 'OK' } }]
+      }) });
+    }
     modelCalls++;
     toolAvailability.push(Array.isArray(body.tools) && body.tools.length > 0);
     if (modelCalls === 1) {
