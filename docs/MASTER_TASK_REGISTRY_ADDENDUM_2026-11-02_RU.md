@@ -31,8 +31,8 @@
 - [ ] **AW-SK-001…AW-SK-005** — threat model и adversarial tests для imported Skills; inert-by-default scripts.
 - [ ] **AW-UI-001…AW-UI-002** — отображать реальные worker states/concurrency отдельно от inference slots.
  > Cross-link to master registry: VERT-001…003 are already tracked as stable IDs in `docs/MASTER_TASK_REGISTRY_RU.md`; do not create duplicate addendum tasks. Preserve these source references.
-- [ ] VERT-002 — source spans/evidence сохранять на всех этапах преобразования.
-- [ ] VERT-003 — не выполнять scripts и не наследовать права из Skill/Agent metadata.
+> Cross-link to master registry: VERT-002 is already tracked as a stable ID in `docs/MASTER_TASK_REGISTRY_RU.md`; preserve this source reference.
+> Cross-link to master registry: VERT-003 is already tracked as a stable ID in `docs/MASTER_TASK_REGISTRY_RU.md`; preserve this source reference.
 
 **Artifacts:** PR #125 `AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md`; PR #128 `AGENT_WORKER_CAPABILITY_AND_SKILL_SAFETY_RU.md`.
 
@@ -71,7 +71,7 @@
 
 ## E. Общие acceptance gates
 
-- [ ] **GATE-001** — classify each capability as current / partial / blueprint / not implemented using source code and tests.
+- [~] **GATE-001** — capability maturity matrix partially recorded in `docs/ALANDI_SYSTEMS_MAP_RU.md` (18 systems; current/partial/prototype/specified boundaries). Recent correction: aServi, Functions/Deep Research/Skills and AgentRunStore now reflect merged-main maturity. Fine-grained per-capability evidence and full subsystem sweep remain OPEN.
 - [ ] **GATE-002** — threat model for local file access, untrusted documents, archive bombs, prompt injection, path traversal, malicious scripts and generated code.
 - [ ] **GATE-003** — verify code, model weights, tokenizer, voice, dataset and workflow licenses independently.
 - [ ] **GATE-004** — record actual disk/RAM/VRAM/latency/quality on target hardware; no extrapolation from model size.
@@ -228,8 +228,8 @@ Owner's latest direction is an execution-priority override, **not cancellation**
 ## Owner override — 2026-11-07: Functions menu and Research Studio
 
 > **MENU-002 / MENU-003 evidence:** owner override D-022 restored exactly Agents/structured analysis, Deep Research and Skills/task profile; integrations/connectors remain absent until real registry/status/permission contracts exist. PR #169 merged and exact PR Quality #42408172737 passed 113/113 Chromium.
-- [x] **MENU-010**: Research Studio is retired entirely by the owner. PR #169 removes the Research Studio surface and entrypoints; exact PR Quality #42408172737 passed 113/113 Chromium.
-- [~] **UI-PROMO-001** / PR #169: aServi is a dedicated first-party settings section; provider exclusivity, explicit connection and no silent fallback are implemented. Research Studio/server-memory graph are retired. Owner override D-022 restores exactly three Functions actions (Agents/structured analysis, Deep Research, Skills/task profile); the menu is not removed. Main public root + `/landing/` were Chromium-verified on exact merge SHA `bf039f887e29137b627b06fc2bb107c2793d6b69`. Final neutral-stop-control screenshot/accessibility review remains open under UR-310.
+> **MENU-010 evidence:** Research Studio is retired entirely by the owner. PR #169 removed the Research Studio surface and entrypoints; exact PR Quality #42408172737 passed 113/113 Chromium.
+> **UI-PROMO-001 evidence update:** aServi is a dedicated first-party settings section; provider exclusivity, explicit connection and no silent fallback are implemented. Research Studio/server-memory graph are retired. Owner override D-022 restores exactly three Functions actions (Agents/structured analysis, Deep Research, Skills/task profile); the menu is not removed. Main public root + `/landing/` were Chromium-verified on exact merge SHA `bf039f887e29137b627b06fc2bb107c2793d6b69`. Final neutral-stop-control screenshot/accessibility review remains open under UR-310.
 
 
 ## I. Owner execution contract — 2026-11-08 (append-only)
@@ -263,7 +263,7 @@ Live GitHub now shows **one open PR, #174**, and one open issue, #111. PR #174 i
 ## Owner override — 2026-11-08: Functions menu capability slice (D-022)
 
 - [x] **FUNCTIONS-DETAIL-001 / MENU-002 / MENU-003:** Owner explicitly requests a concise Functions section containing Agents/structured analysis, Deep Research and Skills/task profile. PR #169 merged at main `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2` and exact PR Quality #42408172737 passed 113/113 Chromium. Deep Research selects Thorough processing mode only; web-search breadth stays orthogonal. Agent mode is the current four-stage same-model pipeline, not a swarm. Skills are prompt/profile guidance only and grant no permissions. Integrations/connectors remain hidden until real registry/status/permission contracts exist. Research Studio remains retired.
-- [x] **PR #169 evidence:** focused RU/EN and Chromium coverage for the owner-approved Functions menu and each action passed exact PR Quality #42408172737 (113/113); merged at main `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2`. After PR #173, public root + `/landing/` exact-SHA smoke and landing Chromium 8/8 passed on `bf039f887e29137b627b06fc2bb107c2793d6b69`; the separate published release-contract sentinel failed only because it still forbade the approved `functionsMenu`, which PR #174 corrects.
+> **PR #169 evidence:** focused RU/EN and Chromium coverage for the owner-approved Functions menu and each action passed exact PR Quality #42408172737 (113/113); merged at main `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2`. After PR #173, public root + `/landing/` exact-SHA smoke and landing Chromium 8/8 passed on `bf039f887e29137b627b06fc2bb107c2793d6b69`; the separate published release-contract sentinel failed only because it still forbade the approved `functionsMenu`, which PR #174 corrects.
 
 
 ## J. Owner directive — orchestration, main-only delivery, systems inventory and source loop (2026-11-08)
@@ -303,7 +303,7 @@ Append-only owner intake; enrich existing orientation/UI/source lanes and preser
 
 > **AgentRunStore maturity evidence:** preserved the PR #131 SQLite `AgentRunStore` and offline tests as a bounded PROTOTYPE: idempotent run/task creation, versioned transitions, typed bounded metadata, leases/fencing, retry budget, cancellation and event journal.
 > **Agent runtime boundary evidence:** exact PR #169 Gateway #42408172642 passed. No HTTP route, model/tool invocation, worker scheduler, permission grant, sandbox, approval engine or multi-host runtime is wired; storage-only prototype does not satisfy AB-001…AB-005 runtime acceptance.
-- [~] Added **EV-AGENT-RUN-STORE-001** evaluation definition; backup/restore, retention, multi-host, recovery semantics and adversarial runtime tests remain OPEN.
+- [~] **EV-AGENT-RUN-STORE-001** — evaluation definition exists; backup/restore, retention, multi-host, recovery semantics and adversarial runtime tests remain OPEN.
 
 
 ## J.5 Post-merge main Quality and published UI contract — 2026-11-08
