@@ -3360,7 +3360,11 @@ test('readability preferences persist and maintain semantic text contrast in bot
       probe.remove();
       return color;
     };
-    const cloudStatus = document.querySelector('#cloudStatus');
+    const cloudStatus = document.createElement('p');
+    cloudStatus.className = 'cloud-status-copy';
+    cloudStatus.dataset.state = 'checking';
+    cloudStatus.textContent = 'Checking';
+    document.querySelector('#settingsModal').appendChild(cloudStatus);
     const settingsError = document.querySelector('#cloudBaseUrlError');
     const statusRow = document.querySelector('#searchStatus');
     const statusText = document.querySelector('#statusText');
@@ -3380,9 +3384,12 @@ test('readability preferences persist and maintain semantic text contrast in bot
         document.documentElement.dataset.readingContrast = contrast;
         cloudStatus.dataset.state = 'checking';
         statusRow.dataset.tone = 'info';
-        // Force the root custom-property style to resolve before reading descendant colors.
+        // Resolve descendant styles first so the 140ms color transitions start before waiting.
         getComputedStyle(document.documentElement).getPropertyValue('--ui-text-muted');
-        // The app transitions control/link colors for 140ms; sample only after the final cascade settles.
+        getComputedStyle(sample.querySelector('#link')).color;
+        getComputedStyle(sample.querySelector('#disabled')).color;
+        getComputedStyle(sample.querySelector('#secondary')).color;
+        // Sample only after the final cascade settles.
         await new Promise(resolve => setTimeout(resolve, 180));
 
         results[theme + '-' + contrast] = {
@@ -3400,6 +3407,7 @@ test('readability preferences persist and maintain semantic text contrast in bot
       }
     }
     sample.remove();
+    cloudStatus.remove();
     return results;
   });
   for (const [scheme, roles] of Object.entries(semanticRoles)) {
