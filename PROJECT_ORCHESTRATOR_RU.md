@@ -65,3 +65,11 @@ For every newly stated owner goal:
 5. **Open queue:** #125 FUTURE/HOLD, #131 V2 workbench, #152 draft voice, #154 divergent V2 shell, #155 draft roadmap/archive, #169 active. Selective source/file audit only; issue #111 owner-controlled.
 6. **Systems and research:** 18-system map remains canonical; trace each row to code/contracts/tests/maturity. INTEL snapshot 310 distinct URLs / 183 GitHub repositories is inventory, not all-reviewed status. Continue 8–15 source thematic batches and cross-cutting sweeps. Current orchestration method: one active writer/bounded slice, parallel read-only discovery, external durable checkpoints, executable CI invariants, exact SHA gates.
 7. **Completion:** final PR #169 exact-head green → merge expected SHA → verify main integrity/Quality/Graphify/Freshness/Provenance and Pages deployment/public root + /landing/ → update state → audit #155/#154/#152/#131/#125 selectively → continue every remaining registry goal. Native iPhone/VoiceOver, VPS/Tunnel/Ollama and target hardware remain open.
+
+
+### Functions / Agents / Deep Research / Skills canonical specifications
+- `docs/AGENT_FUNCTIONS_MENU_INFORMATION_ARCHITECTURE_RU.md` — current PR #169 UI snapshot plus future menu/agent IA; current three actions vs roadmap is explicit.
+- `docs/AGENT_WORKER_CAPABILITY_AND_SKILL_SAFETY_RU.md` — typed worker task contract and inert Skill safety boundary.
+- `docs/AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md` — Skill Factory / Agent Builder lifecycle, SPECIFIED only.
+- `docs/DEEP_RESEARCH_2_CURRENT_STATE_AUDIT_RU.md` — historical code audit plus 2026-11-08 owner-directed current delta.
+- `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` — research scope, evidence, acceptance and deferred runtime contract.

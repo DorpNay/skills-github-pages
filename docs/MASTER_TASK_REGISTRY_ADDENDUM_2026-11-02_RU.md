@@ -284,3 +284,10 @@ Append-only owner intake; enrich existing orientation/UI/source lanes and preser
 - [~] **PR-QUEUE-001 — reconcile nine open PRs.** Inspect scope, branch/base drift, dependencies, exact-head evidence and provenance. Selectively port unique compatible changes to current main, then merge/close each PR with recorded disposition. Explicit FUTURE/HOLD PR #125 must remain research-only unless separately reviewed; never merge wholesale.
 
 **Execution order:** (1) stabilize control-plane/instruction and reconcile queue; (2) main integrity + Pages live check; (3) systems map/source technique review; (4) Functions/Agents/Research/Skills UI slice; (5) continue thematic source batches and governed acquisition; (6) continue remaining roadmap tasks without dropping them.
+
+
+## J.2 Functions detailed-menu implementation checkpoint — 2026-11-08 (PR #169, not merged)
+
+- [~] **FUNCTIONS-DETAIL-001:** the owner-directed Functions top-level menu remains exactly three truthful actions. Agents opens its existing bounded four-stage same-model panel; Deep Research now opens a dedicated settings/navigation panel (Quick/Thorough effort, Web breadth status + open existing Web settings, structured-pipeline status + navigate to Agents, Deep Research 2.0 roadmap-only); Skills opens chat-scoped task profiles. All three use shared modal backdrop blur and clean-close lifecycle. Research Studio remains retired; connectors remain absent until real registry/status/permissions exist.
+- [~] E2E authored on 390×844 to open all three panels, verify backdrop blur, change Thorough, open Web menu, navigate Research→Agents, and close without stale overlay. Exact-head Quality result is pending; authored test is not verification.
+- [~] Canonical specs preserved: docs/AGENT_FUNCTIONS_MENU_INFORMATION_ARCHITECTURE_RU.md; docs/AGENT_WORKER_CAPABILITY_AND_SKILL_SAFETY_RU.md; docs/AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md; docs/DEEP_RESEARCH_2_CURRENT_STATE_AUDIT_RU.md; docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md. These are SPECIFIED/research artifacts; they do not assert runtime implementation or permissions.

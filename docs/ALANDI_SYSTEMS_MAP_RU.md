@@ -96,3 +96,17 @@ GitHub Pages is the public client release surface. The Tunnel, VPS, Ollama runti
 ### 2026-11-08 source snapshot admission note
 
 - Memvid v2.0.140 and RAG-Anything v1.4.1 selected source snapshots are archived under `docs/upstream-archive/` for reference/evaluation only. They are not part of aLandi's runtime dependency graph; archive presence does not upgrade any memory/RAG system maturity. Per-source licenses, pinned upstream commit and per-file Git blob evidence are recorded in the manifests/provenance.
+
+
+## Functions detail crosswalk — owner-directed 2026-11-08
+
+| Surface/system | Current truthful boundary | Maturity/evidence | Canonical detail |
+|---|---|---|---|
+| Agents / structured analysis | Four sequential stages on one selected model; saved team blueprint is not independent workers | Current UI/pipeline baseline; latest detailed panel change is PR #169 candidate, exact-head Quality pending | `index.md`; Functions IA; worker capability contract |
+| Deep Research settings | PR #169 adds a dedicated panel for Quick/Thorough, Web breadth status/navigation and pipeline status/navigation; separate Research Studio retired | IMPLEMENTED IN PR #169 candidate, NOT on main until merge and exact-head checks | Functions IA; Deep Research current-state audit/plan |
+| Deep Research 2.0 engine | Durable/resumable research, evidence ledger, citation validation, contradiction analysis, source refresh, report artifacts | SPECIFIED / DEFERRED; not current runtime | `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` |
+| Skills / task profile | Chat-scoped presets/custom instructions; adds task guidance only, no tools/permissions/data scope | Implemented UI boundary; verify current main/provider exact HEAD separately | Functions IA; Skill Factory spec |
+| Skill Factory / Agent Builder | source-to-Skill lifecycle, package manifest/provenance/evals and agent blueprint | SPECIFIED / FUTURE; no runtime grant or execution | `docs/AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md`; worker capability contract |
+| Integrations | No external connectors currently registered/connected; no fake switches | Unavailable until real registry, status, permission and action handler exist | Functions IA |
+
+**Guard:** this crosswalk does not upgrade any system maturity from archived upstream source code. Source snapshots under docs/upstream-archive remain research-only, ship=false.

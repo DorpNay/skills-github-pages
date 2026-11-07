@@ -129,3 +129,14 @@
 - **Knowledge loop:** batch ~300 source catalog by themes, cross-check primary source and failure evidence, capture version/license/provenance and aLandi-fit decision in existing INTEL/triage/technique/DECISIONS/EVALS destinations. Acquire artifacts only after isolated pilot, baseline comparison, integrity checks and owner-visible approval.
 
 **Primary source anchors:** OpenAI Agents SDK runner/multi-agent docs; Temporal durable execution docs/blog; LangGraph workflows/checkpointers; GitLab AI-assisted development handbook; Graphify architecture docs; GitHub exact-head status/merge queue/Pages docs; OWASP Agentic Top 10 2026; NIST AI RMF GenAI Profile. URLs and evidence summary are in INTEL.md.
+
+
+## 2026-11-08 — typed worker capability contract and inert Skill boundary
+
+**Status: SPECIFIED / safety contract; independent runtime remains DEFERRED.** Detailed canonical contract: `docs/AGENT_WORKER_CAPABILITY_AND_SKILL_SAFETY_RU.md`; lifecycle/Builder design: `docs/AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md`.
+
+- Each worker task must receive a minimal typed packet: run/task/parent IDs, idempotency key, objective, bounded input refs, output schema, model policy, deadline, token/tool/output budgets, explicit read/write/network/memory/execute scopes, approval, cancellation and evaluation contract. No implicit full chat/project history.
+- Effective capability is the intersection `task_request ∩ agent_profile ∩ user_grant ∩ environment_policy`; empty intersection fails closed, never falls back.
+- A Skill is inert instructions/resources, not credentials or a policy grant. Import/preview does not execute scripts; provenance/license, prompt injection, secrets, path traversal, executable/dependency inventory, version/hash and eval review precede admission.
+- Binding a Skill to a worker pins a specific version and minimal excerpts; Skill instructions cannot widen tool allowlists, bypass approvals, increase budgets or reveal credentials.
+- Blueprint-only state may be edited/saved; it must not display a Run/worker status unless an independently permissioned, traced, cancellable and eval-gated runtime exists.
