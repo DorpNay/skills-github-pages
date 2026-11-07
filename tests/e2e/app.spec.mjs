@@ -1927,7 +1927,7 @@ test('local helper suggests compact project-memory facts without saving them aut
   await page.locator('[data-action="create-project"]').click();
   await page.locator('#projectMemoryInput').fill('Keep the main model for synthesis and use small helpers for bounded extraction.');
   await page.locator('[data-action="add-project-memory"]').click();
-  await page.locator('#serverMemoryDetails > summary').click();
+  await page.locator('#projectMemoryHelperDetails > summary').click();
   await page.locator('[data-action="suggest-helper-memory"]').click();
   await expect.poll(() => helperRequests.length).toBe(1);
   expect(helperRequests[0].facts).toEqual(['Keep the main model for synthesis and use small helpers for bounded extraction.']);
@@ -1938,219 +1938,28 @@ test('local helper suggests compact project-memory facts without saving them aut
   expect(helperRequests).toHaveLength(1);
 });
 
-test('server project memory bridge is manual and requires both chat opt-ins', async ({ page }) => {
-  const serverNodes = [];
-  const capturedBodies = [];
-  let searchCalls = 0;
-  const corsHeaders = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Content-Type': 'application/json' };
 
-  await page.route('https://gateway.example.test/v1/memory/graph/**', async route => {
-    const request = route.request();
-    const url = new URL(request.url());
-    const method = request.method();
-    const scopeId = url.searchParams.get('scope_id');
-    if (method === 'OPTIONS') return route.fulfill({ status: 204, headers: corsHeaders });
-    if (url.pathname.endsWith('/nodes') && method === 'GET') {
-      return route.fulfill({ status: 200, headers: corsHeaders,
-        body: JSON.stringify({ nodes: serverNodes.filter(node => node.scope_id === scopeId), count: serverNodes.length }) });
-    }
-    if (url.pathname.endsWith('/nodes') && method === 'POST') {
-      const body = request.postDataJSON();
-      const node = { id: 'server-node-' + (serverNodes.length + 1), status: 'candidate', ...body };
-      serverNodes.push(node);
-      return route.fulfill({ status: 201, headers: corsHeaders, body: JSON.stringify({ node }) });
-    }
-    if (url.pathname.endsWith('/search') && method === 'POST') {
-      searchCalls++;
-      const body = request.postDataJSON();
-      const nodes = serverNodes.filter(node => node.scope === body.scope && node.scope_id === body.scope_id &&
-        node.status === 'confirmed' && node.content.includes('SERVER_MEMORY_SENTINEL'));
-      return route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({ nodes, count: nodes.length }) });
-    }
-    if (url.pathname.endsWith('/review') && method === 'POST') {
-      const id = url.pathname.split('/').slice(-2)[0];
-      const body = request.postDataJSON();
-      const node = serverNodes.find(item => item.id === id);
-      if (node) node.status = body.status;
-      return route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({ node }) });
-    }
-    return route.fulfill({ status: 404, headers: corsHeaders, body: JSON.stringify({ detail: 'Unmocked graph route' }) });
+test('retired Server Memory experiment has no UI or request path', async ({ page }) => {
+  const graphRequests = [];
+  await page.route('**/v1/memory/graph/**', async route => {
+    graphRequests.push(route.request().url());
+    await route.fulfill({ status: 410, body: 'retired' });
   });
-  await page.route('https://gateway.example.test/v1/chat/completions', async route => {
-    if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: corsHeaders });
-    const body = route.request().postDataJSON();
-    const requestText = body.messages?.at(-1)?.content;
-    if ([
-      'Summarize this project.',
-      'Use only local project memory.',
-      'Server memory is opted in but project memory is not.',
-      'Use the approved server project memory.'
-    ].includes(requestText)) capturedBodies.push(body);
-    return route.fulfill({ status: 200, headers: corsHeaders, body: JSON.stringify({
-      model: 'qwen3.5:4b', choices: [{ message: { role: 'assistant', content: 'Bridge response.' }, finish_reason: 'stop' }]
-    }) });
-  });
-
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.evaluate(() => {
-    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
-    localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
-    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
-    localStorage.setItem('ai_api_provider', 'alandi');
-    localStorage.setItem('ai_model_name', 'qwen3.5:4b');
-    localStorage.setItem('ai_alandi_cloud_model', 'qwen3.5:4b');
-  });
-  await page.reload({ waitUntil: 'domcontentloaded' });
-  await chooseSearchMode(page, 'offline');
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  await page.locator('#projectPanel [data-action="open-project-create"]').click();
-  await page.locator('#projectNameInput').fill('Server bridge project');
-  await page.locator('[data-action="create-project"]').click();
-  const serverMemoryProjectId = await page.locator('#currentProjectSelect').inputValue();
-  expect(serverMemoryProjectId).not.toBe('');
-  await page.locator('#projectMemoryInput').fill('SERVER_MEMORY_SENTINEL is a local project fact.');
-  await page.locator('[data-action="add-project-memory"]').click();
-  await expect(page.locator('#projectMemoryBox')).toContainText('SERVER_MEMORY_SENTINEL');
-  await expect(page.locator('#serverProjectMemoryToggle')).not.toBeChecked();
-  expect(serverNodes).toHaveLength(0); // Local facts are never uploaded automatically.
-
-  await page.locator('#serverMemoryDetails > summary').click();
-  await page.locator('[data-action="upload-server-memory"]').click();
-  await expect.poll(() => serverNodes.length).toBe(1);
-  await expect(page.locator('#serverMemoryBox')).toContainText(/Кандидат|Candidate/);
-  await page.locator('[data-action="review-server-memory"][data-review-status="confirmed"]').click();
-  await expect.poll(() => serverNodes[0]?.status).toBe('confirmed');
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-
-  // Opening project settings already closes the sidebar.
-  await expect(page.locator('#sidebar')).toHaveClass(/-translate-x-full/);
-  await page.locator('#userInput').fill('Summarize this project.');
-  await page.locator('#sendBtn').click();
-  await expect.poll(() => capturedBodies.length).toBe(1);
-  expect(searchCalls).toBe(0);
-  expect(capturedBodies[0].messages[0].content).not.toContain('SERVER_MEMORY_SENTINEL');
-
-  // Project-memory opt-in alone must not invoke the server graph.
-  await openProjectSettingsForId(page, serverMemoryProjectId);
-  await page.locator('#projectMemoryToggle').check();
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-  await page.locator('#userInput').fill('Use only local project memory.');
-  await page.locator('#sendBtn').click();
-  await expect.poll(() => capturedBodies.length).toBe(2);
-  expect(searchCalls).toBe(0);
-  expect(capturedBodies[1].messages[0].content).toContain('SERVER_MEMORY_SENTINEL');
-
-  // Server-memory opt-in alone must not retrieve server context or bypass project opt-in.
-  await openProjectSettingsForId(page, serverMemoryProjectId);
-  await page.locator('#projectMemoryToggle').uncheck();
-  await page.locator('#serverProjectMemoryToggle').check();
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-  await page.locator('#userInput').fill('Server memory is opted in but project memory is not.');
-  await page.locator('#sendBtn').click();
-  await expect.poll(() => capturedBodies.length).toBe(3);
-  expect(searchCalls).toBe(0);
-  expect(capturedBodies[2].messages[0].content).not.toContain('SERVER_MEMORY_SENTINEL');
-
-  // Only both opt-ins together allow retrieval of confirmed server facts.
-  await openProjectSettingsForId(page, serverMemoryProjectId);
-  await page.locator('#projectMemoryToggle').check();
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-  await page.locator('#userInput').fill('Use the approved server project memory.');
-  await page.locator('#sendBtn').click();
-  await expect.poll(() => capturedBodies.length).toBe(4);
-  expect(searchCalls).toBe(1);
-  expect(capturedBodies[3].messages[0].content).toContain('SERVER_MEMORY_SENTINEL');
-});
-
-test('Markdown fallback preserves tables and escapes HTML when renderer CDNs are unavailable', async ({ page }) => {
-  await page.route('https://cdn.jsdelivr.net/npm/marked@18.0.14/marked.min.js', route => route.abort());
-  await page.route('https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js', route => route.abort());
-  await page.route('https://api.example.test/v1/chat/completions', route => route.fulfill({
-    status: 200,
-    contentType: 'application/json',
-    body: JSON.stringify({
-      model: 'e2e-markdown-model',
-      choices: [{ message: { role: 'assistant', content: '# Fallback check\n\n| Feature | Status |\n| --- | --- |\n| **Tables** | `readable` |\n\n<img src=x onerror=alert(1)>' } }]
-    })
-  }));
-  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  if (!(await page.locator('#legacyProviderSettings').evaluate(el => el.open))) await page.locator('#legacyProviderSettings > summary').click();
-  await page.locator('#providerPreset').selectOption('custom');
-  await page.locator('#baseUrl').fill('https://api.example.test/v1');
-  await page.locator('#modelName').fill('e2e-markdown-model');
-  await page.locator('#apiKey').fill('not-a-real-key');
-  await page.locator('[data-action="save-settings"]').click();
-  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
-  await page.locator('#userInput').fill('Show the fallback formatting');
-  await page.locator('#sendBtn').click();
-
-  const assistantMessage = page.locator('#chatBox .assistant-content').filter({ hasText: 'Fallback check' }).last();
-  await expect(assistantMessage.locator('h1')).toHaveText('Fallback check');
-  await expect(assistantMessage.locator('table th')).toHaveCount(2);
-  await expect(assistantMessage.locator('table td strong')).toHaveText('Tables');
-  await expect(assistantMessage.locator('table td code')).toHaveText('readable');
-  await expect(assistantMessage.locator('img')).toHaveCount(0);
-  await expect(assistantMessage).toContainText('<img src=x onerror=alert(1)>');
-});
-
-test('chat row actions are grouped in the right-side menu and rename/clone work', async ({ page }) => {
-  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  const row = page.locator('#chatList .chat-row').first();
-  await expect(row.locator('details.chat-row-menu')).toBeVisible();
-  await expect(row.locator('button[data-action="delete-chat"]')).toBeHidden();
-  await row.locator('summary[aria-label="Действия чата"]').click();
-  await expect(row.locator('.chat-row-menu-panel button')).toHaveCount(7);
-
-  await row.locator('[data-action="chat-rename"]').click();
-  await expect(page.locator('#chatActionModal')).toBeVisible();
-  await page.locator('#chatActionName').fill('Renamed from menu');
-  await page.locator('[data-action="chat-action-save"]').click();
-  await expect(row.locator('button[data-action="switch-chat"]')).toHaveText('Renamed from menu');
-
-  await row.locator('summary[aria-label="Действия чата"]').click();
-  await row.locator('[data-action="chat-clone"]').click();
-  await expect(page.locator('#chatList .chat-row')).toHaveCount(2);
-  await expect(page.locator('#chatList button[data-action="switch-chat"]').first()).toContainText('Renamed from menu — копия');
-  await expect(page.locator('#userInput')).toHaveCSS('font-size', '16px');
-});
-
-test('chat menu export is scoped and chat import merges without replacing history', async ({ page }) => {
-  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.locator('#userInput').fill('Keep this existing chat');
-  await page.locator('[data-action="toggle-sidebar"]').click();
-  const row = page.locator('#chatList .chat-row').first();
-  await row.locator('summary[aria-label="Действия чата"]').click();
-
-  const downloadPromise = page.waitForEvent('download');
-  await row.locator('[data-action="export-chat"]').click();
-  const download = await downloadPromise;
-  expect(download.suggestedFilename()).toContain('alandi-chat-');
-
-  await page.locator('#importFile').setInputFiles({
-    name: 'imported-chats.json',
-    mimeType: 'application/json',
-    buffer: Buffer.from(JSON.stringify([{
-      id: 'imported-chat-test',
-      title: 'Imported chat',
-      messages: [{ role: 'user', content: 'Imported content' }],
-      processingMode: 'deep',
-      searchMode: 'more',
-      multiAgentEnabled: true,
-      skillPreset: 'research'
-    }]))
-  });
-  await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(2);
-  await expect(page.locator('#chatList')).toContainText('Imported chat');
-  await expect(page.locator('#chatBox')).toContainText('Imported content');
-  await expect(page.locator('#userInput')).toHaveValue('Keep this existing chat');
+  await expect(page.locator('#serverMemoryDetails')).toHaveCount(0);
+  await expect(page.locator('#serverProjectMemoryToggle')).toHaveCount(0);
+  await expect(page.locator('#serverMemoryStatus, #serverMemoryBox')).toHaveCount(0);
+  await expect(page.locator('[data-action="refresh-server-memory"], [data-action="upload-server-memory"], [data-action="review-server-memory"], [data-action="delete-server-memory"]')).toHaveCount(0);
+  await expect(page.locator('#projectMemoryHelperDetails')).toHaveCount(1);
+  await page.locator('#projectMemoryHelperDetails > summary').click();
+  await expect(page.locator('[data-action="suggest-helper-memory"]')).toBeVisible();
+  expect(graphRequests).toHaveLength(0);
 });
 
 test('sidebar separates projects from personal chats and keeps navigation collapsible', async ({ page }) => {
   await page.addInitScript(() => {
     const project = (id, name) => ({ id, name, description: '', instructions: '', memoryScope: 'project-only', memory: [], createdAt: '', updatedAt: '' });
-    const chat = (id, title, projectId) => ({ id, title, projectId, projectMemoryEnabled: false, serverProjectMemoryEnabled: false, messages: [] });
+    const chat = (id, title, projectId) => ({ id, title, projectId, projectMemoryEnabled: false messages: [] });
     localStorage.setItem('ai_projects_v1', JSON.stringify([project('project-alpha','Alpha project'), project('project-beta','Beta project')]));
     localStorage.setItem('ai_chats_v87', JSON.stringify([chat('chat-personal','Personal chat',null),chat('chat-alpha','Alpha project chat','project-alpha'),chat('chat-beta','Beta project chat','project-beta')]));
     localStorage.setItem('ai_current_chat_v87','chat-alpha');
@@ -2261,7 +2070,7 @@ test('request-only project context is sent once and does not change the active c
   });
   await page.addInitScript(() => {
     const project=(id,name,instructions)=>({id,name,description:'',instructions,memoryScope:'project-only',memory:[{id:id+'-memory',text:name+' memory sentinel',createdAt:''}],createdAt:'',updatedAt:''});
-    const chat=(id,title,projectId)=>({id,title,projectId,projectMemoryEnabled:true,serverProjectMemoryEnabled:false,messages:[]});
+    const chat=(id,title,projectId)=>({id,title,projectId,projectMemoryEnabled:truemessages:[]});
     localStorage.setItem('ai_projects_v1',JSON.stringify([project('project-alpha','Alpha project','ALPHA_ONLY_INSTRUCTION'),project('project-beta','Beta project','BETA_ONE_SHOT_INSTRUCTION')]));
     localStorage.setItem('ai_chats_v87',JSON.stringify([chat('chat-alpha','Alpha chat','project-alpha'),chat('chat-beta','Beta chat','project-beta')]));
     localStorage.setItem('ai_current_chat_v87','chat-alpha');
@@ -2394,8 +2203,7 @@ test('project memory scope edits the selected project, not the active chat proje
       memory: [], createdAt: '', updatedAt: ''
     });
     const chat = (id, title, projectId) => ({
-      id, title, projectId, projectMemoryEnabled: false,
-      serverProjectMemoryEnabled: false, messages: []
+      id, title, projectId, projectMemoryEnabled: false messages: []
     });
     localStorage.setItem('ai_projects_v1', JSON.stringify([
       project('project-alpha', 'Alpha project'),
@@ -2449,8 +2257,7 @@ test('clear history preserves the chat and other project data', async ({ page })
       memory: [], createdAt: '', updatedAt: ''
     });
     const chat = (id, title, projectId, sentinel) => ({
-      id, title, projectId, projectMemoryEnabled: false,
-      serverProjectMemoryEnabled: false,
+      id, title, projectId, projectMemoryEnabled: false
       messages: [{ role: 'user', content: sentinel }]
     });
     localStorage.setItem('ai_projects_v1', JSON.stringify([
@@ -2500,8 +2307,7 @@ test('clearing a non-active project chat preserves the active chat and both proj
       memory: [], createdAt: '', updatedAt: ''
     });
     const chat = (id, title, projectId, sentinel) => ({
-      id, title, projectId, projectMemoryEnabled: false,
-      serverProjectMemoryEnabled: false,
+      id, title, projectId, projectMemoryEnabled: false
       messages: [{ role: 'user', content: sentinel }]
     });
     localStorage.setItem('ai_projects_v1', JSON.stringify([
