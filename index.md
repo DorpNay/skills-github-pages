@@ -327,28 +327,9 @@ permalink: /
           <button type="button" data-action="select-search-mode" data-search-mode="offline" class="toolbar-menu-option"><strong data-i18n="searchModeOffline">Выкл.</strong><small data-i18n="searchModeOfflineHelp">Веб-инструменты выключены; облачному API всё ещё может требоваться интернет.</small></button>
         </div>
       </details>
-      <details id="functionsMenu" class="toolbar-menu flex-1 min-w-0">
-        <summary id="functionsMenuSummary" class="toolbar-menu-summary" data-i18n="functionsMenuLabel">Функции ▾</summary>
-        <div class="toolbar-menu-panel toolbar-menu-panel-right function-menu-content">
-          <p class="toolbar-menu-group-label" data-i18n="functionMenuWorkGroup">Работа с задачей</p>
-          <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option" data-i18n="functionAgents">🧭 Агенты и структурированный разбор</button>
-          <button type="button" data-action="open-function-panel" data-function="skills" class="toolbar-menu-option" data-i18n="functionSkills">🧩 Профиль и навыки</button>
-          <p class="toolbar-menu-group-label" data-i18n="functionMenuResearchGroup">Исследование и источники</p>
-          <label class="roadmap-pause-control"><input id="functionsRoadmapPause" type="checkbox"><span data-i18n="functionRoadmapPause">Остановить бегущие строки</span></label>
-          <div class="function-roadmap-items">
-            <div class="function-roadmap-item"><strong data-i18n="functionMenuDeepResearch">Глубокое исследование 2.0</strong><div class="roadmap-ticker" aria-label="Планируемая функция"><span class="roadmap-ticker-track" aria-hidden="true">1ИV3ИT10И · Evidence graph, source collections, claim verification and research runs</span></div><p class="roadmap-note" data-i18n="functionMenuDeepResearchNote">Студия исследования уже доступна в блоке «Тщательно»; расширенный конвейер, коллекции источников и восстановление долгих задач ещё проектируются.</p><button type="button" class="roadmap-details-button" data-action="open-roadmap-details" data-roadmap-status="in-development" data-i18n="roadmapDetailsButton">Подробнее</button></div>
-          </div>
-          <p class="toolbar-menu-group-label" data-i18n="functionMenuCreateGroup">Создание и преобразование</p>
-          <div class="function-roadmap-items">
-            <div class="function-roadmap-item"><strong data-i18n="functionMenuLocalFiles">Локальные файлы и папки</strong><div class="roadmap-ticker" aria-label="Планируемая функция"><span class="roadmap-ticker-track" aria-hidden="true">1ИV3ИT10И · Каталог локальных источников и папок</span></div><p class="roadmap-note" data-i18n="functionMenuLocalFilesNote">Выбор файла в чате уже доступен; постоянная библиотека, разрешённые папки и повторная индексация ещё проектируются.</p><button type="button" class="roadmap-details-button" data-action="open-roadmap-details" data-roadmap-status="in-development" data-i18n="roadmapDetailsButton">Подробнее</button></div>
-            <div class="function-roadmap-item"><strong data-i18n="functionMenuConverters">Конвертеры и извлечение</strong><div class="roadmap-ticker" aria-label="Планируемая функция"><span class="roadmap-ticker-track" aria-hidden="true">1ИV3ИT10И · Страницы, изображения, PDF и медиа → структурированные данные</span></div><p class="roadmap-note" data-i18n="functionMenuConvertersNote">Часть извлечения документов существует; универсальная конвертация, OCR, screenshot-to-code и VERT-подобные профили не подключены.</p><button type="button" class="roadmap-details-button" data-action="open-roadmap-details" data-roadmap-status="in-development" data-i18n="roadmapDetailsButton">Подробнее</button></div>
-            <div class="function-roadmap-item"><strong data-i18n="functionMenuKnowledgeSkill">Знания → навык или агент</strong><div class="roadmap-ticker" aria-label="Планируемая функция"><span class="roadmap-ticker-track" aria-hidden="true">1ИV3ИT10И · Knowledge-to-Skill / Knowledge-to-Agent</span></div><p class="roadmap-note" data-i18n="functionMenuKnowledgeSkillNote">Будущий конвейер с происхождением источников, лицензией, проверкой инъекций, человеческим подтверждением и версиями.</p><button type="button" class="roadmap-details-button" data-action="open-roadmap-details" data-roadmap-status="in-development" data-i18n="roadmapDetailsButton">Подробнее</button></div>
-            <div class="function-roadmap-item"><strong data-i18n="functionMenuMedia">Аудио, изображения и видео</strong><div class="roadmap-ticker" aria-label="Планируемая функция"><span class="roadmap-ticker-track" aria-hidden="true">1ИV3ИT10И · Генерация, монтаж и мультимодальные конвейеры</span></div><p class="roadmap-note" data-i18n="functionMenuMediaNote">Локальная транскрипция и озвучивание частично существуют; генерация изображений/видео и полноценный потоковый голос не включены.</p><button type="button" class="roadmap-details-button" data-action="open-roadmap-details" data-roadmap-status="in-development" data-i18n="roadmapDetailsButton">Подробнее</button></div>
-          </div>
-          <p class="toolbar-menu-group-label" data-i18n="functionMenuConnectionsGroup">Подключения</p>
-          <button type="button" data-action="open-function-panel" data-function="connectors" class="toolbar-menu-option" data-i18n="functionConnectors">🔌 Интеграции</button>
-        </div>
-      </details>
+      <div id="functionsMenu" class="toolbar-menu flex-1 min-w-0">
+        <button type="button" id="functionsMenuSummary" data-action="open-functions-drawer" class="toolbar-menu-summary w-full" data-i18n="functionsMenuLabel" aria-haspopup="dialog" aria-controls="functionPanelModal" aria-expanded="false">Функции ↗</button>
+      </div>
     </div>
     <input type="checkbox" id="toggleSearch" class="hidden" checked>
     <input type="checkbox" id="toggleMultiAgent" class="hidden">
@@ -449,20 +430,42 @@ permalink: /
       <p id="researchStudioStatus" class="text-[11px] text-gray-500" role="status" aria-live="polite">Параметры ещё не изменены.</p>
     </section>
   </div>
-  <div id="functionPanelModal" class="hidden fixed inset-0 z-[66] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="functionPanelTitle">
-    <section class="w-full max-w-lg max-h-[88dvh] overflow-y-auto rounded-2xl border border-gray-700 bg-gray-950 p-4 sm:p-5 shadow-2xl space-y-4">
+  <div id="functionPanelModal" class="hidden fixed inset-0 z-[120] bg-black/65 flex justify-end overscroll-none" role="dialog" aria-modal="true" aria-labelledby="functionPanelTitle">
+    <section class="functions-drawer-surface space-y-3">
       <header class="flex items-start justify-between gap-3">
         <div class="min-w-0"><h2 id="functionPanelTitle" class="font-bold text-base">Функции</h2><p id="functionPanelDescription" class="mt-1 text-xs leading-relaxed text-gray-400"></p></div>
-        <button type="button" data-action="close-function-panel" class="shrink-0 rounded-lg px-2 py-1 text-gray-400 hover:text-white" aria-label="Закрыть">✕</button>
+        <button type="button" data-action="close-function-panel" class="shrink-0 rounded-lg px-2 py-1 text-gray-400 hover:text-white" data-i18n-aria-label="functionPanelClose" aria-label="Закрыть">✕</button>
       </header>
+      <nav id="functionsDrawerNav" class="functions-drawer-nav" aria-label="Разделы функций" data-i18n-aria-label="functionsDrawerNavLabel">
+        <button type="button" data-action="open-function-panel" data-function="agents" aria-current="page">🧭 <span data-i18n="functionAgents">Агенты</span><small data-i18n="functionAgentsHelp">4 этапа · одна модель</small></button>
+        <button type="button" data-action="open-function-panel" data-function="research">🔬 <span data-i18n="functionDeepResearch">Исследования</span><small data-i18n="functionResearchHelp">Deep Research · effort / web</small></button>
+        <button type="button" data-action="open-function-panel" data-function="notebook">📓 <span data-i18n="functionNotebook">Notebook</span><small data-i18n="functionNotebookHelp">Тетради и источники</small></button>
+        <button type="button" data-action="open-function-panel" data-function="skills">🧩 <span data-i18n="functionSkills">Скиллы</span><small data-i18n="functionSkillsHelp">Профили инструкций</small></button>
+      </nav>
+      <section id="researchFunctionSettings" class="hidden space-y-3">
+        <div class="rounded-xl border border-gray-800 bg-gray-900/50 p-3">
+          <div class="flex items-center justify-between gap-3"><strong class="text-xs" data-i18n="researchModeStatusLabel">Режим обработки</strong><span id="researchModeSummary" class="rounded-lg border border-gray-700 px-2 py-1 text-[11px] font-semibold text-cyan-200">Тщательно</span></div>
+          <p class="mt-2 text-[11px] leading-relaxed text-gray-400" data-i18n="researchModeStatusHelp">Быстро и Тщательно управляют бюджетом инструментов текущего запроса.</p>
+          <button type="button" data-action="select-processing-mode" data-processing-mode="deep" class="mt-3 min-h-[44px] w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-2 text-xs font-semibold text-cyan-200" data-i18n="researchUseThorough">Включить режим «Тщательно»</button>
+        </div>
+        <div class="rounded-xl border border-gray-800 p-3">
+          <div class="flex items-center justify-between gap-3"><strong class="text-xs" data-i18n="researchSearchStatusLabel">Веб-поиск</strong><span id="researchSearchModeSummary" class="text-[11px] text-gray-300">Веб: обычный</span></div>
+          <p class="mt-2 text-[11px] leading-relaxed text-gray-400" data-i18n="researchSearchStatusHelp">Охват результатов настраивается отдельно и не увеличивает число раундов.</p>
+          <button type="button" data-action="open-search-mode-settings" class="mt-3 min-h-[44px] w-full rounded-lg border border-gray-700 px-3 py-2 text-xs font-semibold" data-i18n="researchOpenSearchSettings">Настроить охват веб-поиска</button>
+        </div>
+        <div class="rounded-xl border border-gray-800 p-3">
+          <div class="flex items-center justify-between gap-3"><strong class="text-xs" data-i18n="researchWorkflowStatusLabel">Структурированный pipeline</strong><span id="researchWorkflowSummary" class="text-[11px] text-gray-300">Прямой</span></div>
+          <p class="mt-2 text-[11px] leading-relaxed text-gray-400" data-i18n="researchWorkflowStatusHelp">Четыре последовательных этапа используют выбранную модель; blueprint не запускает независимых workers.</p>
+          <button type="button" data-action="open-function-panel" data-function="agents" class="mt-3 min-h-[44px] w-full rounded-lg border border-gray-700 px-3 py-2 text-xs font-semibold" data-i18n="researchOpenAgentSettings">Настроить Agents / structured analysis</button>
+        </div>
+        <div class="rounded-xl border border-amber-900/50 bg-amber-950/20 p-3">
+          <strong class="block text-xs text-amber-100" data-i18n="research2RoadmapLabel">Deep Research 2.0 — в разработке</strong>
+          <p class="mt-2 text-[11px] leading-relaxed text-amber-100/70" data-i18n="research2RoadmapHelp">Планируемые функции: возобновляемые runs, коллекции источников, evidence ledger и проверка цитат. Это не активный runtime.</p>
+        </div>
+      </section>
       <section id="agentFunctionSettings" class="hidden space-y-3">
-        <section class="function-config-group rounded-xl border border-gray-800 p-3 space-y-3" aria-labelledby="agentModeGroupTitle">
-          <h3 id="agentModeGroupTitle" class="function-config-group-title" data-i18n="agentModeGroupTitle">Режим выполнения</h3>
-          <label class="flex items-start gap-2 rounded-xl border border-gray-800 p-3 text-sm"><input type="checkbox" id="agentModeControl" class="mt-1 rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span><strong class="block" data-i18n="agentModeOption">Использовать структурированный разбор</strong><span class="mt-1 block text-[11px] leading-relaxed text-gray-500" data-i18n="agentModeHelp">Четыре последовательных этапа на выбранной модели.</span></span></label>
-        </section>
-        <section class="function-config-group rounded-xl border border-gray-800 p-3 space-y-3" aria-labelledby="agentBlueprintGroupTitle">
-          <h3 id="agentBlueprintGroupTitle" class="function-config-group-title" data-i18n="agentBlueprintGroupTitle">Черновик команды</h3>
-          <div class="grid grid-cols-2 gap-3">
+        <label class="flex items-start gap-2 rounded-xl border border-gray-800 p-3 text-sm"><input type="checkbox" id="agentModeControl" class="mt-1 rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span><strong class="block" data-i18n="agentModeOption">Использовать структурированный разбор</strong><span class="mt-1 block text-[11px] leading-relaxed text-gray-500" data-i18n="agentModeHelp">Четыре последовательных этапа на выбранной модели.</span></span></label>
+        <div class="grid grid-cols-2 gap-3">
           <label class="block text-xs text-gray-400">Размер команды · blueprint
             <input id="agentTeamSize" type="range" min="1" max="50" step="1" value="4" class="mt-2 w-full"><span id="agentTeamSizeValue" class="text-[11px] font-semibold text-cyan-300">4 агента</span>
           </label>
@@ -473,103 +476,75 @@ permalink: /
             <select id="agentRolePreset" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="balanced">Сбалансированные</option><option value="research">Исследовательская команда</option><option value="software">Разработка ПО</option><option value="product">Продуктовая команда</option><option value="custom">Свой вариант</option></select>
           </label>
         </div>
-        </section>
-        <details id="agentBlueprintLibrary" class="agent-settings-category">
-          <summary data-i18n="agentBlueprintLibraryTitle">Сохранённые черновики команд</summary>
-          <section class="agent-future-section space-y-2">
-            <p data-i18n="agentBlueprintLibraryHelp">Сохраняй повторно используемые планы состава команды в этом браузере. Это не запускает агентов и не синхронизируется между устройствами.</p>
-            <label class="block text-xs font-semibold" for="agentBlueprintSelect" data-i18n="agentBlueprintSelectLabel">Мои черновики</label>
-            <select id="agentBlueprintSelect" class="agent-blueprint-select advanced-control w-full rounded-lg border border-gray-700 bg-gray-900">
-              <option value="" data-i18n="agentBlueprintSelectPlaceholder">Выбери черновик</option>
-            </select>
-            <div class="agent-blueprint-actions">
-              <button type="button" id="agentBlueprintApply" class="agent-blueprint-action" data-i18n="agentBlueprintApply" disabled>Применить к этому чату</button>
-              <button type="button" id="agentBlueprintDelete" class="agent-blueprint-action" data-i18n="agentBlueprintDelete" disabled>Удалить выбранный</button>
-            </div>
-            <label class="block text-xs font-semibold" for="agentBlueprintName" data-i18n="agentBlueprintNameLabel">Название нового черновика</label>
-            <input id="agentBlueprintName" type="text" maxlength="60" autocomplete="off" class="agent-blueprint-name advanced-control rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-xs" data-i18n-placeholder="agentBlueprintNamePlaceholder" placeholder="Например, Исследование продукта">
-            <button type="button" id="agentBlueprintSave" class="agent-blueprint-action w-full" data-i18n="agentBlueprintSave">Сохранить текущий черновик</button>
-            <p class="text-[10px] leading-relaxed text-gray-500" data-i18n="agentBlueprintStorageNote">До 20 шаблонов хранятся только в локальном браузере; экспорт и облачная синхронизация не включены.</p>
-            <button type="button" class="roadmap-details-button" data-action="open-roadmap-details" data-roadmap-status="blueprint-only" data-i18n="roadmapDetailsButton">Подробнее</button>
-          </section>
-        </details>
         <div id="agentCustomFields" class="hidden space-y-2 rounded-xl border border-gray-800 p-3">
           <textarea id="agentTeamCustomScenario" maxlength="1000" rows="2" class="advanced-control w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Опиши сценарий команды"></textarea>
           <textarea id="agentCustomRoles" maxlength="1500" rows="3" class="advanced-control w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Роли и обязанности, по одной на строку"></textarea>
         </div>
-        <p class="rounded-lg border border-amber-900/50 bg-amber-950/20 p-2 text-[10px] leading-relaxed text-amber-100/80" data-i18n="agentRuntimeBoundary">Параметры ниже сохраняют черновик команды для этого чата. Runtime сейчас выполняет четыре фиксированных этапа на одной выбранной модели; независимые процессы агентов не запускаются.</p>
-        <label class="roadmap-pause-control"><input id="agentRoadmapPause" type="checkbox"><span data-i18n="functionRoadmapPause">Остановить бегущие строки</span></label>
-        <div class="agent-future-groups space-y-2">
-          <details class="agent-settings-category">
-            <summary data-i18n="agentCategoryUsage">Применение и роли</summary>
-            <section class="agent-future-section space-y-2"><h3 data-i18n="agentUseCasesTitle">Способы применения</h3><p data-i18n="agentUseCasesText">Текущий конвейер подходит для сложного исследования, проверки источников, планирования разработки и критики решения. Это последовательные роли одной модели, а не параллельные исполнители.</p></section>
-            <section class="agent-future-section space-y-2"><h3 data-i18n="agentProfilesTitle">Мои агенты и профили</h3><p data-i18n="agentProfilesText">Реестр профилей агентов ещё не подключён. Здесь будут отдельные конфигурации с версией, назначением, модельной политикой, областью данных и привязками навыков; сохранённый Team Blueprint не является профилем агента.</p><div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИV3ИT10И · Agent profiles, versions and capability bindings</span></div><button type="button" class="roadmap-details-button" data-action="open-roadmap-details" data-roadmap-status="in-development" data-i18n="roadmapDetailsButton">Подробнее</button></section>
-            <section class="agent-future-section space-y-2"><h3 data-i18n="agentRolesTitle">Профессии и каталог ролей</h3><p data-i18n="agentRolesText">В проектной карте описаны 64 логические профессии и роли. Это каталог проектирования, не 64 работающих агента и не ограничение будущего числа ролей.</p><div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИV3ИT10И · Реестр профессий, специализаций и контрактов ролей</span></div><button type="button" class="roadmap-details-button" data-action="open-roadmap-details" data-roadmap-status="in-development" data-i18n="roadmapDetailsButton">Подробнее</button></section>
-          </details>
-          <details class="agent-settings-category">
-            <summary data-i18n="agentCategoryExecution">Оркестрация, модели и ресурсы</summary>
-            <section class="agent-future-section space-y-2"><h3 data-i18n="agentOrchestrationTitle">Режимы оркестрации</h3><ul class="agent-capability-list"><li data-i18n="agentOrchestrationCurrent">Доступно: прямой ответ и последовательный четырёхэтапный разбор.</li><li data-i18n="agentOrchestrationFuture">В проектировании: независимые субагенты, параллельные команды, fan-out/fan-in и долговременные задания с восстановлением.</li></ul><div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИV3ИT10И · Параллельные workers, очередь, checkpoints и отмена</span></div><button type="button" class="roadmap-details-button" data-action="open-roadmap-details" data-roadmap-status="in-development" data-i18n="roadmapDetailsButton">Подробнее</button></section>
-            <section class="agent-future-section space-y-2"><h3 data-i18n="agentModelsTitle">Модели и ресурсы</h3><p data-i18n="agentModelsText">Будущий реестр малых моделей: классификация, извлечение, reranking, краткое резюме, memory candidates и синтез навыков. Выбор — только по проверенному ID, лицензии, digest и результатам RU/EN/TH eval.</p><div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИV3ИT10И · SLM registry, benchmark, VRAM/RAM и latency budgets</span></div><button type="button" class="roadmap-details-button" data-action="open-roadmap-details" data-roadmap-status="in-development" data-i18n="roadmapDetailsButton">Подробнее</button></section>
-          </details>
-          <details class="agent-settings-category">
-            <summary data-i18n="agentCategoryPermissions">Инструменты и разрешения</summary>
-            <section class="agent-future-section space-y-2"><h3 data-i18n="agentPermissionsTitle">Инструменты и разрешения</h3><p data-i18n="agentPermissionsText">Каждая будущая роль получает только явно выданные capabilities: файлы, сеть, память, shell и внешние действия не наследуются от названия роли или навыка.</p><div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИV3ИT10И · Capability scopes, approval gates и audit trail</span></div><button type="button" class="roadmap-details-button" data-action="open-roadmap-details" data-roadmap-status="in-development" data-i18n="roadmapDetailsButton">Подробнее</button></section>
-          </details>
-          <details class="agent-settings-category">
-            <summary data-i18n="agentCategoryTasksHistory">Задачи и история</summary>
-            <section class="agent-future-section space-y-2"><h3 data-i18n="agentTasksHistoryTitle">Запуски и история</h3><p data-i18n="agentTasksHistoryText">Этот раздел станет рабочим после появления durable AgentRun API. До этого здесь не отображаются фиктивные очереди, запуски, run ID или результаты.</p><div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИV3ИT10И · Run IDs, queue, approvals, artifacts and recovery</span></div><button type="button" class="roadmap-details-button" data-action="open-roadmap-details" data-roadmap-status="in-development" data-i18n="roadmapDetailsButton">Подробнее</button></section>
-          </details>
-        </div>
-        <p class="roadmap-note" data-i18n="agentRoadmapNote">Бегущие строки обозначают проектируемые возможности, а не фоновые процессы. Уменьшение движения системы отключает анимацию.</p>
+        <p class="rounded-lg border border-amber-900/50 bg-amber-950/20 p-2 text-[10px] leading-relaxed text-amber-100/80">Команда — сохраняемый blueprint. Runtime сейчас выполняет четыре фиксированных этапа на одной выбранной модели; создание 50 независимых агентов ещё не реализовано.</p>
+        <div class="roadmap-ticker mt-2" aria-label="Планируемое улучшение"><span class="roadmap-ticker-track" aria-hidden="true">1nv3nt10n 1n PrOc3ss… · Независимое исполнение ролей — в дорожной карте</span></div>
+        <p class="roadmap-note">Это планируемое направление, а не активный runtime или индикатор фоновой работы.</p>
         <p id="agentConfigSummary" class="text-[10px] text-gray-500" aria-live="polite"></p>
       </section>
-      <section id="skillFunctionSettings" class="hidden space-y-3">
-        <section class="function-config-group rounded-xl border border-gray-800 p-3 space-y-3" aria-labelledby="skillTaskProfileTitle">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <h3 id="skillTaskProfileTitle" class="function-config-group-title" data-i18n="skillTaskProfileTitle">Профиль текущего чата</h3>
-            <span class="rounded-full border border-emerald-800/70 bg-emerald-950/30 px-2 py-1 text-[10px] font-semibold text-emerald-200" data-i18n="skillScopeBadge">Работает · только этот чат</span>
-          </div>
-          <label for="skillPresetSelect" class="block text-xs font-semibold" data-i18n="skillPresetLabel">Профиль задачи</label>
-          <select id="skillPresetSelect" class="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm">
-            <option value="auto" data-i18n="skillAuto">Автоматически по задаче</option>
-            <option value="planning" data-i18n="skillPlanning">Планирование</option>
-            <option value="research" data-i18n="skillResearch">Исследование</option>
-            <option value="code-review" data-i18n="skillCodeReview">Код и ревью</option>
-            <option value="data-analysis" data-i18n="skillDataAnalysis">Анализ данных</option>
-            <option value="agent-systems" data-i18n="skillAgentSystems">Системы агентов</option>
-            <option value="multimodal" data-i18n="skillMultimodal">Мультимодальные задачи</option>
-            <option value="custom">Свой вариант</option>
-          </select>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <label class="block text-[11px] text-gray-400"><span data-i18n="skillGoalLabel">Задача по ответам</span>
-              <select id="skillGoalSelect" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="planning">Планирование</option><option value="research">Исследование</option><option value="code-review">Код и ревью</option><option value="data-analysis">Анализ данных</option><option value="agent-systems">Системы агентов</option><option value="multimodal">Мультимодальные задачи</option><option value="custom">Свой вариант</option></select>
-            </label>
-            <label class="block text-[11px] text-gray-400"><span data-i18n="skillOutputLabel">Формат результата</span>
-              <select id="skillOutputSelect" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="summary">Краткое резюме</option><option value="checklist">Чек-лист</option><option value="steps">Пошагово</option><option value="table">Таблица</option><option value="report">Отчёт</option><option value="custom">Свой вариант</option></select>
-            </label>
-          </div>
-          <div id="skillCustomFields" class="hidden space-y-2 rounded-xl border border-cyan-900/50 bg-cyan-950/15 p-3">
-            <input id="customSkillName" maxlength="80" class="advanced-field w-full rounded-lg border border-gray-700 bg-gray-900" placeholder="Название своего навыка">
-            <textarea id="customSkillInstructions" rows="3" maxlength="3000" class="advanced-field w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Свои инструкции для задачи"></textarea>
-            <textarea id="customSkillOutput" rows="2" maxlength="500" class="advanced-field w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Свой формат результата (необязательно)"></textarea>
-          </div>
-          <button type="button" data-action="apply-skill-quiz" class="w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-2 text-xs font-semibold text-cyan-200">Подобрать навык</button>
-          <p id="skillConfigSummary" class="text-[10px] text-gray-500" aria-live="polite"></p>
-          <p class="text-[11px] leading-relaxed text-gray-500" data-i18n="skillPresetHelp">Профиль добавляет инструкции, но не открывает инструменты или данные.</p>
-        </section>
-        <details id="skillLibraryDisclosure" class="agent-settings-category">
-          <summary data-i18n="skillLibraryTitle">Библиотека навыков · планируется</summary>
-          <section class="agent-future-section space-y-2">
-            <p data-i18n="skillLibraryText">Общая библиотека Skill packages пока не подключена. Текущий профиль хранится в настройках чата; импортированные пакеты не запускаются.</p>
-            <p class="font-semibold text-gray-300" data-i18n="skillLibraryWorkflow">Будущий процесс: источник → извлечение → проверка происхождения и лицензии → черновик → тесты → проверка безопасности → ручное утверждение → версия.</p>
-            <p data-i18n="skillLibrarySafety">Импорт не будет автоматически давать доступ к файлам, сети, памяти, shell или внешним действиям. Запуск скриптов требует отдельного runtime и разрешений.</p>
-            <label class="roadmap-pause-control"><input id="skillRoadmapPause" type="checkbox"><span data-i18n="functionRoadmapPause">Остановить бегущие строки</span></label>
-            <div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИV3ИT10И · Каталог, импорт, проверка, версии, сравнение и откат Skill packages</span></div>
-            <div class="roadmap-ticker"><span class="roadmap-ticker-track" aria-hidden="true">1ИV3ИT10И · Книга / документ / сайт / репозиторий → Skill или Agent blueprint</span></div><button type="button" class="roadmap-details-button" data-action="open-roadmap-details" data-roadmap-status="in-development" data-i18n="roadmapDetailsButton">Подробнее</button>
-          </section>
-        </details>
+      <section id="skillFunctionSettings" class="hidden space-y-2">
+        <label for="skillPresetSelect" class="block text-xs font-semibold" data-i18n="skillPresetLabel">Навык этого чата</label>
+        <select id="skillPresetSelect" class="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm">
+          <option value="auto" data-i18n="skillAuto">Автоматически по задаче</option>
+          <option value="planning" data-i18n="skillPlanning">Планирование</option>
+          <option value="research" data-i18n="skillResearch">Исследование</option>
+          <option value="code-review" data-i18n="skillCodeReview">Код и ревью</option>
+          <option value="data-analysis" data-i18n="skillDataAnalysis">Анализ данных</option>
+          <option value="agent-systems" data-i18n="skillAgentSystems">Системы агентов</option>
+          <option value="multimodal" data-i18n="skillMultimodal">Мультимодальные задачи</option>
+          <option value="custom">Свой вариант</option>
+        </select>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <label class="block text-[11px] text-gray-400">Задача по ответам
+            <select id="skillGoalSelect" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="planning">Планирование</option><option value="research">Исследование</option><option value="code-review">Код и ревью</option><option value="data-analysis">Анализ данных</option><option value="agent-systems">Системы агентов</option><option value="multimodal">Мультимодальные задачи</option><option value="custom">Свой вариант</option></select>
+          </label>
+          <label class="block text-[11px] text-gray-400">Формат результата
+            <select id="skillOutputSelect" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="summary">Краткое резюме</option><option value="checklist">Чек-лист</option><option value="steps">Пошагово</option><option value="table">Таблица</option><option value="report">Отчёт</option><option value="custom">Свой вариант</option></select>
+          </label>
+        </div>
+        <div id="skillCustomFields" class="hidden space-y-2 rounded-xl border border-cyan-900/50 bg-cyan-950/15 p-3">
+          <input id="customSkillName" maxlength="80" class="advanced-field w-full rounded-lg border border-gray-700 bg-gray-900" placeholder="Название своего навыка">
+          <textarea id="customSkillInstructions" rows="3" maxlength="3000" class="advanced-field w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Свои инструкции для задачи"></textarea>
+          <textarea id="customSkillOutput" rows="2" maxlength="500" class="advanced-field w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Свой формат результата (необязательно)"></textarea>
+        </div>
+        <button type="button" data-action="apply-skill-quiz" class="w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-2 text-xs font-semibold text-cyan-200">Подобрать навык</button>
+        <p id="skillConfigSummary" class="text-[10px] text-gray-500" aria-live="polite"></p>
+        <p class="text-[11px] leading-relaxed text-gray-500" data-i18n="skillPresetHelp">Профиль добавляет инструкции, но не открывает инструменты или данные.</p>
       </section>
-      <section id="connectorFunctionStatus" class="hidden rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-sm leading-relaxed text-gray-300"><p data-i18n="functionConnectorsDescription">Показываем только реально подключённые источники. Внешние коннекторы пока не подключены; они не будут имитироваться переключателями.</p><div class="roadmap-ticker mt-3" aria-label="Планируемое улучшение"><span class="roadmap-ticker-track" aria-hidden="true">1ИV3ИT10И · Интеграции с контролируемыми разрешениями</span></div><p class="roadmap-note">Подключение источников появится только после проверки прав, границ данных и реального соединения. Анимация декоративная и не означает, что сервис уже выполняет работу.</p><button type="button" class="roadmap-details-button" data-action="open-roadmap-details" data-roadmap-status="in-development" data-roadmap-title="Интеграции" data-i18n="roadmapDetailsButton">Подробнее</button></section>
+      <section id="notebookFunctionSettings" class="hidden space-y-3">
+        <div class="rounded-xl border border-cyan-900/50 bg-cyan-950/15 p-3">
+          <div class="flex items-center justify-between gap-2"><strong class="text-sm" data-i18n="notebookTitle">Исследовательская тетрадь</strong><span class="text-[10px] text-cyan-200" data-i18n="notebookLocal">Локально</span></div>
+          <p class="mt-2 text-[11px] text-gray-400" data-i18n="notebookPrivacy">Тетрадь хранится отдельно от памяти чата. Данные не отправляются модели без отдельного выбора.</p>
+        </div>
+        <div class="rounded-xl border border-gray-800 p-3 space-y-2">
+          <h3 class="text-xs font-semibold" data-i18n="notebookNew">Новая тетрадь</h3>
+          <input id="notebookNewTitle" class="notebook-field" maxlength="100" placeholder="Название тетради" data-i18n-placeholder="notebookNamePlaceholder">
+          <select id="notebookNewScope" class="notebook-field" aria-label="Область тетради" data-i18n-aria-label="notebookScopeAria"><option value="personal" data-i18n="notebookPersonal">Личная · этот браузер</option><option value="project" data-i18n="notebookProject">Текущий проект</option></select>
+          <button type="button" data-action="create-notebook" class="notebook-primary w-full" data-i18n="notebookCreate">＋ Создать</button>
+        </div>
+        <section id="notebookWorkspace" class="hidden space-y-3">
+          <div class="rounded-xl border border-gray-800 p-3 space-y-2">
+            <div class="flex flex-wrap gap-2"><select id="notebookSelect" class="notebook-field min-w-0 flex-1" aria-label="Выбранная тетрадь" data-i18n-aria-label="notebookSelectAria"></select><button type="button" data-action="export-notebook" class="min-h-11 border border-gray-700 rounded-lg px-3 text-xs" data-i18n="notebookExport">Экспорт</button><button type="button" data-action="delete-notebook" class="min-h-11 border border-red-900 rounded-lg px-3 text-xs" data-i18n="notebookDelete">Удалить</button></div>
+            <div class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-2"><input id="notebookSearch" type="search" class="notebook-field" placeholder="Поиск" data-i18n-placeholder="notebookSearch"><select id="notebookSort" class="notebook-field sm:max-w-48" aria-label="Сортировка" data-i18n-aria-label="notebookSortAria"><option value="updated-desc" data-i18n="notebookSortUpdated">Сначала новые</option><option value="title-asc" data-i18n="notebookSortTitle">По названию</option><option value="created-asc" data-i18n="notebookSortCreated">Сначала старые</option></select></div>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <section class="rounded-xl border border-gray-800 p-3 space-y-2"><h3 class="text-xs font-semibold" data-i18n="notebookNote">Заметка</h3><input id="notebookNoteTitle" class="notebook-field" maxlength="120" placeholder="Название"><textarea id="notebookNoteBody" class="notebook-field min-h-28" rows="4" maxlength="12000" placeholder="Текст, выводы или план"></textarea><button type="button" data-action="save-notebook-note" class="notebook-primary w-full" data-i18n="notebookSave">Сохранить заметку</button></section>
+            <section class="rounded-xl border border-gray-800 p-3 space-y-2"><h3 class="text-xs font-semibold" data-i18n="notebookSource">Источник</h3><input id="notebookSourceTitle" class="notebook-field" maxlength="120" placeholder="Название источника"><input id="notebookSourceUrl" type="url" class="notebook-field" placeholder="https://…"><button type="button" data-action="save-notebook-source" class="notebook-primary w-full" data-i18n="notebookAddLink">Добавить ссылку</button>
+              <input id="notebookTextFile" type="file" class="hidden" accept=".txt,.md,.markdown,text/plain,text/markdown,text/x-markdown">
+              <label class="flex items-start gap-2 text-[10px] text-gray-400"><input id="notebookRightsConsent" type="checkbox"><span data-i18n="notebookRights">У меня есть права на импорт и анализ этого текста.</span></label>
+              <button type="button" data-action="choose-notebook-text-file" class="min-h-11 w-full rounded-lg border border-gray-700 px-3 text-xs" data-i18n="notebookImport">Импорт TXT / Markdown</button>
+              <p class="text-[10px] text-gray-500" data-i18n="notebookLimits">TXT/Markdown до 2 МБ. URL сохраняются как ссылки, не загружаются. PDF/EPUB/Office требуют защищённого парсера.</p>
+            </section>
+          </div>
+          <div class="space-y-2"><h3 class="text-xs font-semibold" data-i18n="notebookEntries">Заметки и источники</h3><span id="notebookEntryCount" class="text-[10px] text-gray-500"></span><div id="notebookEntries" class="space-y-2" aria-live="polite"></div></div>
+        </section>
+        <p id="notebookEmptyState" class="rounded-xl border border-dashed border-gray-700 p-4 text-center text-xs text-gray-400" data-i18n="notebookEmpty">Создай личную тетрадь или тетрадь текущего проекта.</p>
+        <p id="notebookStatus" class="text-[10px] text-gray-500" role="status" aria-live="polite" data-i18n="notebookLocalOnly">Хранится локально. Не является памятью чата.</p>
+      </section>
+      <section id="connectorFunctionStatus" class="hidden rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-sm leading-relaxed text-gray-300"><p data-i18n="functionConnectorsDescription">Показываем только реально подключённые источники. Внешние коннекторы пока не подключены; они не будут имитироваться переключателями.</p><div class="roadmap-ticker mt-3" aria-label="Планируемое улучшение"><span class="roadmap-ticker-track" aria-hidden="true">1nv3nt10n 1n PrOc3ss… · Интеграции с контролируемыми разрешениями — в дорожной карте</span></div><p class="roadmap-note">Подключение источников появится только после проверки прав, границ данных и реального соединения. Анимация декоративная и не означает, что сервис уже выполняет работу.</p></section>
       <footer class="flex justify-end border-t border-gray-800 pt-3"><button type="button" data-action="close-function-panel" data-i18n="functionPanelClose" class="rounded-xl border border-gray-700 px-4 py-2 text-sm">Закрыть</button></footer>
     </section>
   </div>
