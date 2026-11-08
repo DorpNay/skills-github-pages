@@ -207,3 +207,31 @@ PR #128 is the canonical research/specification home for the durable AgentRun/ta
 **Runtime checkpoint:** PR #134 now contains an offline file-backed AgentRun/task lifecycle persistence prototype on a branch from `main`; its tested payload/result contract accepts bounded scalar metadata and reference lists only. This does **not** provide a durable AgentRun API, authenticated scope grants, real workers, tool execution, approvals, artifact registry/validator or UI run controls.
 
 Acceptance is owned by PR #128 research/eval contracts plus PR #134 prototype review. No runtime controls should be exposed by this UI architecture note until the missing API/permission/execution contracts are implemented and tested.
+
+
+## 9. Owner-directed Functions drawer and Notebook MVP — 2026-11-08
+
+**Implementation candidate:** branch `feat/functions-drawer-notebook-20261108`, based on main `9033c6ad708a993cba5d1b27442f53651ad71c0f`. Until exact-head CI passes and the change is merged, treat this section as IMPLEMENTED IN BRANCH / UNVERIFIED, not a main/live claim.
+
+### Functions drawer — current candidate
+
+- The toolbar entry opens a right-side, full-height drawer; the drawer contains section navigation for **Agents**, **Research**, **Notebook**, and **Skills**. Desktop uses a bounded wide panel; narrow screens use a full-width drawer and a 2×2 navigation grid.
+- Existing Agents, Research and Skills handlers are reused. Their contracts do not change: Agents is the four-stage same-model pipeline; Research reports effort separately from web breadth and navigates to existing controls; Skills remains chat-scoped prompt guidance only.
+- Notebook is a local-first research workspace. It stores personal-browser and active-project notebooks in separate IndexedDB stores, distinct from private/shared chat Memory. It supports notebook CRUD, notes, URL references, search, sorting and JSON export.
+- Text import in this MVP is limited to user-authorized TXT/Markdown files up to 2 MiB. The source hash and user-declared rights status are recorded. URLs are saved as references only; the page is not fetched. PDF/EPUB/Office/archive/repository extraction is not implemented.
+- Source-to-Skill exports a **structure draft** with headings/provenance/checklist, not a semantically generated or validated Skill. Agent Blueprint export is an inert JSON skeleton. Both grant no tools, memory, filesystem, network, execution or external-action permissions.
+
+### Settings information architecture
+
+Keep controls in their existing owners; the drawer must not duplicate them:
+- **Toolbar / per-request:** processing effort (Quick/Thorough), web-search breadth, current route and chat-scoped task profile.
+- **Global Settings:** appearance, language, readability, providers/aServi, privacy and shared-memory preferences.
+- **Project settings/navigation:** project instructions, project-scoped memory and project membership.
+- **Notebook:** independent source/notes workspace; never silently promote notebook content into chat/project/shared Memory.
+- **Agents:** bounded pipeline settings and local Team Blueprint; no independent worker controls until real durable runtime, scoped policy, approvals, cancellation and trace contracts are implemented.
+
+### Acceptance and limits
+
+- Drawer: dialog semantics, focus trap/restore, Escape/backdrop close, responsive bounds, no horizontal overflow, RU/EN and 44px targets.
+- Notebook: IndexedDB v2→v3 migration without replacing Memory stores; personal/project scope filtering; explicit rights acknowledgement; HTML-escaped rendering; bounded file size; no automatic fetch or prompt submission; separate export artifacts.
+- Semantic extraction, PDF/EPUB/Office parsers, MIME/signature sniffing, archive/XXE/zip-bomb protection, injection/license/security scanners, claim-level citations, Skill tests/review/versioning and real Agent runtime remain open under LAUNCH-254…256, SF-001…007, AB-001…005, AW-SK-001…005 and VERT-001…003.
