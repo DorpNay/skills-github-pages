@@ -3638,7 +3638,7 @@ permalink: /
     function getNotebookProjectId(){const id=getCurrentChat()?.projectId;return id&&projects.some(p=>String(p.id)===String(id))?String(id):null;}
     function nbText(ru,en){return getUiLanguage()==='en'?en:ru;}
     function nbStatus(message,error=false){const el=$('notebookStatus');el.textContent=message;el.classList.toggle('text-red-300',error);}
-    function nbDownload(name,value,type){const url=URL.createObjectURL(new Blob([value],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
+    function nbDownload(name,value,type){const url=URL.createObjectURL(new Blob([value],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
     function nbSlug(value){return String(value||'source').normalize('NFKD').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48)||'source';}
     async function renderNotebookPanel(){
       const visible=await NotebookDB.listVisible(),selected=visible.find(n=>n.id===notebookSelectedId)||visible[0]||null;notebookSelectedId=selected?.id||null;
@@ -3681,14 +3681,14 @@ permalink: /
     async function getNotebookEntry(id){return (await NotebookDB.entries(notebookSelectedId)).find(e=>e.id===id);}
     async function exportSkillDraft(id){const e=await getNotebookEntry(id);if(!e)return;const headings=String(e.body||'').split(/\r?\n/).filter(x=>/^#{1,4}\s/.test(x)).slice(0,30).map((x,i)=>(i+1)+'. Validate section '+x.replace(/^#{1,4}\s/,'').slice(0,100)+'.').join('\n')||'1. Read the source and write one verified reusable procedure.';const md='---\nname: '+nbSlug(e.title)+'\ndescription: Draft only; human review required.\n---\n\n# '+e.title+'\n\n> DRAFT ONLY. Not a validated Skill. No source paragraphs or executable scripts are copied.\n\n## Purpose\n[Define task and scope]\n\n## Procedure outline\n'+headings+'\n\n## Evidence and provenance\n- Source ID: '+e.id+'\n- SHA-256: '+(e.sourceHash||'not available')+'\n- Rights: '+(e.licenseStatus||'not reviewed')+'\n\n## Review\n- [ ] Confirm rights and license\n- [ ] Verify every instruction against source\n- [ ] Add positive, negative and boundary evals\n- [ ] Scan injection, secrets, scripts and dependencies\n- [ ] Human approve and version before use\n\n## Permissions\nNo shell, filesystem, network, memory, connector or external-action permissions.\n';nbDownload(nbSlug(e.title)+'-SKILL-DRAFT.md',md,'text/markdown');nbStatus(nbText('Скачан черновик Skill; требуется проверка.','Skill draft downloaded; review required.'));}
     async function exportAgentBlueprint(id){const e=await getNotebookEntry(id);if(!e)return;const blueprint={schemaVersion:1,status:'draft',name:e.title,purpose:'[Define task and acceptance criteria]',sourceReferences:[{id:e.id,title:e.title,sha256:e.sourceHash||null,licenseStatus:e.licenseStatus||'not-reviewed'}],role:{name:'[Role]',responsibilities:[],limitations:[]},skills:[],modelPolicy:{fallback:'none'},dataScope:{notebookId:notebookSelectedId,read:'selected sources only'},capabilities:{read:false,write:false,network:false,execute:false,memory:false,connectors:false},approvalPolicy:{humanReviewRequired:true,sideEffectsDisabled:true},budget:{maxSteps:8,maxInputBytes:2000000,maxOutputBytes:50000,timeoutSeconds:60},evaluations:{positive:[],negative:[],boundary:[]},notes:'Blueprint only: no agent runtime or permissions created.'};nbDownload(nbSlug(e.title)+'-AGENT-BLUEPRINT.json',JSON.stringify(blueprint,null,2),'application/json');}
-    function openFunctionPanel(kind){
+    async function openFunctionPanel(kind){
       const views={agents:['agentFunctionSettings','functionAgentsTitle','functionAgentsDescription'],research:['researchFunctionSettings','functionDeepResearchTitle','functionDeepResearchDescription'],notebook:['notebookFunctionSettings','functionNotebookTitle','functionNotebookDescription'],skills:['skillFunctionSettings','functionSkillsTitle','functionSkillsDescription'],connectors:['connectorFunctionStatus','functionConnectorsTitle','functionConnectorsDescription']};
       const view=views[kind];if(!view)return;const text=UI_TEXT[getUiLanguage()];
       ['agentFunctionSettings','researchFunctionSettings','notebookFunctionSettings','skillFunctionSettings','connectorFunctionStatus'].forEach(id=>$(id).classList.add('hidden'));
       $('functionPanelTitle').textContent=text[view[1]];$('functionPanelDescription').textContent=text[view[2]];$(view[0]).classList.remove('hidden');
       $('functionsDrawerNav').querySelectorAll('[data-function]').forEach(button=>{if(button.dataset.function===kind)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
       if(kind==='agents'){$('agentModeControl').checked=getCurrentChat().multiAgentEnabled===true;renderAgentConfiguration();}
-      if(kind==='research')renderResearchConfiguration();if(kind==='notebook')renderNotebookPanel();if(kind==='skills')renderSkillConfiguration();
+      if(kind==='research')renderResearchConfiguration();if(kind==='notebook')await renderNotebookPanel();if(kind==='skills')renderSkillConfiguration();
       $('functionPanelModal').classList.remove('hidden');$('functionsMenuSummary').setAttribute('aria-expanded','true');$('functionPanelModal').querySelector('[data-action="close-function-panel"]')?.focus();
     }
     function closeFunctionPanel(){$('functionPanelModal').classList.add('hidden');$('functionsMenuSummary').setAttribute('aria-expanded','false');$('functionsMenuSummary')?.focus();}
@@ -5396,8 +5396,8 @@ permalink: /
           case 'select-search-mode': setSearchMode(control.dataset.searchMode);break;
           case 'select-processing-mode': setProcessingMode(control.dataset.processingMode);break;
           case 'open-search-mode-settings': closeFunctionPanel();$('searchModeMenu').open=true;$('searchModeSummary').focus();break;
-          case 'open-functions-drawer': openFunctionPanel('agents');break;
-          case 'open-function-panel': openFunctionPanel(control.dataset.function);break;
+          case 'open-functions-drawer': await openFunctionPanel('agents');break;
+          case 'open-function-panel': await openFunctionPanel(control.dataset.function);break;
           case 'create-notebook': await createNotebookFromForm();break;
           case 'save-notebook-note': await saveNotebookNote();break;
           case 'save-notebook-source': await saveNotebookSource();break;
