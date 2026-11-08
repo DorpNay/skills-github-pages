@@ -171,7 +171,7 @@ const suites = {
       includes('function getApiCandidates(requestedModel)', 'Provider failover must discover only configured credentials.');
       includes("if(!key && provider!=='kilo') continue;", 'Only the explicitly selected Kilo Free route may omit an API key.');
       includes('async function connectAServi()', 'The primary aServi route status must be verified with a real completion.');
-      includes('id="cloudStatusDot" data-state="disconnected"', 'Cloud connection must begin unconfirmed.');
+      includes('id="aserviStatusDot" data-state="disconnected"', 'aServi connection must begin unconfirmed.');
       includes('if(error.modelUnavailable)', 'Only a model-specific provider failure may trigger same-provider model selection.');
       includes('function applyUiLanguage(language)', 'The main UI must support a persisted language choice.');
       includes('function updateClockFace()', 'The branded local clock must use real local time.');
