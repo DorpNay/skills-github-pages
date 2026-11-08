@@ -2559,6 +2559,8 @@ test('Functions drawer exposes truthful sections, keyboard navigation and respon
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const trigger=page.locator('#functionsMenuSummary'),drawer=page.locator('#functionPanelModal');
   await expect(trigger).toHaveAccessibleName(/Функции/);
+  const triggerBox=await trigger.boundingBox();
+  expect(triggerBox?.height||0,'Functions drawer launcher must have a 44px touch target').toBeGreaterThanOrEqual(44);
   await trigger.focus();await page.keyboard.press('Enter');
   await expect(drawer).toBeVisible();
   await expect(drawer).toHaveRole('dialog');
