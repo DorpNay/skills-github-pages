@@ -274,8 +274,8 @@ const suites = {
   security: [
     ['no obvious API keys committed in source', () => {
       assert.doesNotMatch(combinedSource, /AIza[0-9A-Za-z_-]{30,}/, 'Possible Google API key found in source.');
-      assert.doesNotMatch(source, /\bsk-[A-Za-z0-9]{24,}/, 'Possible secret API key found in source.');
-      assert.doesNotMatch(source, /\btvly-[A-Za-z0-9_-]{20,}/, 'Possible Tavily key found in source.');
+      assert.doesNotMatch(combinedSource, /\bsk-[A-Za-z0-9]{24,}/, 'Possible secret API key found in source.');
+      assert.doesNotMatch(combinedSource, /\btvly-[A-Za-z0-9_-]{20,}/, 'Possible Tavily key found in source.');
     }],
     ['API credentials are user-configured, not hard-coded', () => {
       includes("apiKey: 'ai_api_key'", 'API key storage slot is missing.');
@@ -291,7 +291,7 @@ const suites = {
       assert.ok(assignments.every((value) => value.startsWith('safeMarkdown(')), 'Found an innerHTML assignment that bypasses safeMarkdown: ' + assignments.join(' | '));
     }],
     ['no dynamic code evaluation primitives', () => {
-      assert.doesNotMatch(source, /\beval\s*\(/, 'eval() is not allowed in the application shell.');
+      assert.doesNotMatch(combinedSource, /\beval\s*\(/, 'eval() is not allowed in the application shell.');
       assert.doesNotMatch(source, /\bnew\s+Function\s*\(/, 'new Function() is not allowed in the application shell.');
     }],
     ['web search tool input is schema-bounded', () => {
