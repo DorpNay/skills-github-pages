@@ -2406,6 +2406,16 @@ permalink: /
       backButton.classList.toggle('hidden',!activeProjectChatListFilterId);
       backButton.classList.toggle('flex',Boolean(activeProjectChatListFilterId));
       backButton.setAttribute('aria-label',english?'Back to personal chats without a project':'Назад к личным чатам без проекта');
+      const selectedProject=activeProjectChatListFilterId?projects.find(item=>item.id===activeProjectChatListFilterId):null;
+      const createButton=$('chatSection')?.querySelector('[data-action="new-chat"]');
+      if(createButton){
+        createButton.textContent=selectedProject
+          ? (english?'＋ New chat · '+selectedProject.name:'＋ Новый чат · '+selectedProject.name)
+          : memoryUiText('newPersonalChat');
+        createButton.setAttribute('aria-label',selectedProject
+          ? (english?'Create a new chat in '+selectedProject.name:'Создать чат в проекте '+selectedProject.name)
+          : (english?'Create a new personal chat':'Создать новый личный чат'));
+      }
       for(const project of projects) {
         const group=document.createElement('details');group.className='project-nav-item';group.dataset.projectId=project.id;group.open=expanded.has(project.id);
         const summary=document.createElement('summary');
@@ -2437,16 +2447,7 @@ permalink: /
         : (english?'No personal chats yet.':'Нет личных чатов без проекта');
       list.classList.toggle('is-empty',visibleChats.length===0);
       visibleChats.forEach(chat=>list.appendChild(createChatRow(chat,false)));
-      const createButton=$('chatSection')?.querySelector('[data-action="new-chat"]');
-      if(createButton){
-        createButton.textContent=project
-          ? (english?'＋ New chat · '+project.name:'＋ Новый чат · '+project.name)
-          : memoryUiText('newPersonalChat');
-        createButton.setAttribute('aria-label',project
-          ? (english?'Create a new chat in '+project.name:'Создать чат в проекте '+project.name)
-          : (english?'Create a new personal chat':'Создать новый личный чат'));
-      }
-    }
+remove duplicate render block    }
     function updateMemoryStatusLine(){
       const line=$('memoryStatusLine');if(!line)return;
       const personalCount=$('memoryBox')?.querySelectorAll('.memory-item').length||0;
