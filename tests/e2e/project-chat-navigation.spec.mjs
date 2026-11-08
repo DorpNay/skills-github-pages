@@ -10,8 +10,21 @@ async function openSidebar(page) {
   await expect(sidebar).not.toHaveClass(/-translate-x-full/);
 }
 
+async function revealSidebarElement(page, locator) {
+  await locator.evaluate(element => {
+    const sidebar = document.querySelector('#sidebar');
+    const target = element.getBoundingClientRect();
+    const viewport = sidebar.getBoundingClientRect();
+    if (target.top < viewport.top) sidebar.scrollTop -= viewport.top - target.top;
+    else if (target.bottom > viewport.bottom) sidebar.scrollTop += target.bottom - viewport.bottom;
+  });
+  await expect(locator).toBeInViewport();
+}
+
 async function createProject(page, name) {
-  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  const createButton = page.locator('#projectPanel [data-action="open-project-create"]');
+  await revealSidebarElement(page, createButton);
+  await createButton.click();
   await expect(page.locator('#projectSettingsModal')).toBeVisible();
   await page.locator('#projectNameInput').fill(name);
   await page.locator('#createProjectSubmit').click();
@@ -33,18 +46,22 @@ async function projectId(page, name) {
 async function openProjectGroup(page, id) {
   const navigation = page.locator('#projectNavigationList');
   if (await navigation.evaluate(element => element.classList.contains('hidden'))) {
-    await page.locator('#projectNavToggle').click();
+    const toggle = page.locator('#projectNavToggle');
+    await revealSidebarElement(page, toggle);
+    await toggle.click();
   }
   const group = navigation.locator('details.project-nav-item[data-project-id="' + id + '"]');
-  if (!(await group.evaluate(element => element.open))) {
-    await group.locator(':scope > summary').click();
-  }
+  const summary = group.locator(':scope > summary');
+  await revealSidebarElement(page, summary);
+  if (!(await group.evaluate(element => element.open))) await summary.click();
   return group;
 }
 
 async function selectProject(page, id) {
   const group = await openProjectGroup(page, id);
-  await group.locator('[data-action="select-project"]').click();
+  const selectButton = group.locator('[data-action="select-project"]');
+  await revealSidebarElement(page, selectButton);
+  await selectButton.click();
   await expect(page.locator('#chatListBack')).toBeVisible();
 }
 
