@@ -240,7 +240,7 @@ jobs:
           test "$canonical_sha" = "$EXPECTED_SHA"
 
           html=/tmp/alandi-canonical.html
-          for required in 'id="aserviSettingsGroup"' 'data-i18n="thirdPartySettingsTitle"' 'id="additionalSettings"' 'id="uiLanguage"' 'id="memoryStatusLine"' 'id="projectRecoveryBackupButton"' 'id="stopBtn"' 'id="functionsMenu"' 'id="functionsDrawerNav"' 'id="notebookFunctionSettings"' 'id="notebookWorkspace"' 'id="chatSectionTitle"' 'id="chatListBack"' 'id="projectNavigationList"' 'id="sidebarSearchInput"' 'id="brandWordmark"' 'data-action="open-function-panel" data-function="agents"' 'data-action="open-function-panel" data-function="research"' 'data-action="open-function-panel" data-function="skills"'; do
+          for required in 'id="aserviSettingsGroup"' 'id="aserviSettingsCard"' 'id="aserviStatusDot"' 'data-action="connect-aservi"' 'data-i18n="thirdPartySettingsTitle"' 'id="additionalSettings"' 'id="uiLanguage"' 'id="memoryStatusLine"' 'id="projectRecoveryBackupButton"' 'id="stopBtn"' 'id="functionsMenu"' 'id="functionsDrawerNav"' 'id="notebookFunctionSettings"' 'id="notebookWorkspace"' 'id="chatSectionTitle"' 'id="chatListBack"' 'id="projectNavigationList"' 'id="sidebarSearchInput"' 'id="brandWordmark"' 'data-action="open-function-panel" data-function="agents"' 'data-action="open-function-panel" data-function="research"' 'data-action="open-function-panel" data-function="skills"'; do
             grep -Fq "$required" "$html" || { echo "Missing published UI contract marker: $required"; exit 1; }
           done
           for forbidden in 'data-action="open-research-studio"' '<option value="alandi"' 'id="sidebarPreferences"' 'id="sidebarThemeToggle"'; do
@@ -254,7 +254,7 @@ jobs:
           test -n "$status_line" && test -n "$memory_details" && test "$status_line" -lt "$memory_details"
           runtime_url="${PUBLISHED_URL}assets/js/app.js"
           curl --fail --silent --show-error --location --max-time 20 "$runtime_url" -o /tmp/alandi-app.js
-          for required_runtime in "function renderChatList()" "function renderNotebookPanel()" "async function openFunctionPanel(kind)" "dataset.action='select-project'"; do
+          for required_runtime in "function renderChatList()" "function renderNotebookPanel()" "async function openFunctionPanel(kind)" "async function connectAServi()" "function scheduleAServiAutoConnect()" "dataset.action='select-project'"; do
             grep -Fq "$required_runtime" /tmp/alandi-app.js || { echo "Missing published runtime contract marker: $required_runtime"; exit 1; }
           done
           echo "Live Pages serves exact main SHA $EXPECTED_SHA and the owner-approved UI contract."
