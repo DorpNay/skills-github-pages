@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test('live public site serves the app shell and basic chat controls', async ({ page }) => {
   test.skip(!process.env.LIVE_SITE_URL, 'Runs only in the published Pages smoke job.');
-  const LIVE_SITE = process.env.LIVE_SITE_URL.replace(/\\/?$/, '/');
+  const LIVE_SITE = process.env.LIVE_SITE_URL.endsWith('/') ? process.env.LIVE_SITE_URL : process.env.LIVE_SITE_URL + '/';
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
   const response = await page.goto(LIVE_SITE, { waitUntil: 'domcontentloaded', timeout: 30000 });
