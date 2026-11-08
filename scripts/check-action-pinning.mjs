@@ -19,7 +19,6 @@ const immutableSha = /^[0-9a-f]{40}$/i;
 export function findUnpinnedActionRefs(source, filename = "<workflow>") {
   const problems = [];
   for (const match of source.matchAll(useLine)) {
-    const indentation = match[1].length;
     const line = source.slice(0, match.index).split("\n").length;
     let ref = match[2].trim();
 
