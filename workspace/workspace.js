@@ -207,7 +207,7 @@
       renderFiles();
       editors = [];
       renderEditors();
-      status('Выбрано файлов: ' + selected.length + '. Разрешение записи запрашивается браузером отдельно.', 'success');
+      status('Выбрано файлов: ' + selected.length + '. Разрешение на запись браузер запросит при подготовке изменений.', 'success');
     } catch (error) {
       status(error.name === 'AbortError' ? 'Выбор отменён.' : error.message, error.name === 'AbortError' ? '' : 'error');
     }
