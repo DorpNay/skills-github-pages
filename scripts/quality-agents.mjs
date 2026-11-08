@@ -53,10 +53,10 @@ const suites = {
       includes('const evidenceSection = document.createElement', 'Research evidence must be rendered with DOM nodes rather than HTML strings.');
       includes('const MAX_RESEARCH_EVIDENCE = 40;', 'Research evidence must have a deterministic size cap.');
       includes('const PROVIDERS = {', 'Provider/model presets must be available.');
-      includes("alandi: { label: 'aServi'", 'The aLandi private gateway must be a first-class provider.');
+      includes("alandi: { label: 'aLandi aServi · Self-hosted Gateway'", 'The aLandi private gateway must be a first-class provider.');
       includes("allowCrossProvider&&selectedProvider!=='alandi'", 'Selecting aLandi must never silently route private prompts to another provider even if global fallback is enabled.');
-      includes('<section id="cloudSettingsCard"', 'aLandi must have a dedicated first-party server card.');
-      includes('<h3 id="cloudCardTitle"', 'The private server card must have its own heading.');
+      includes('<section id="aserviSettingsCard"', 'aLandi must have a dedicated first-party server card.');
+      includes('<h3 id="aserviCardTitle"', 'The private server card must have its own heading.');
       includes('<optgroup id="providerExternalGroup" label="Сторонние провайдеры">', 'The external provider picker must contain only third-party providers.');
       const pickerStart = source.indexOf('<select id="providerPreset"');
       const pickerClose = source.indexOf('</select>', pickerStart);
@@ -71,8 +71,8 @@ const suites = {
       const aserviClose = source.indexOf('</details>', aserviStart);
       const aserviSettings = aserviStart >= 0 && aserviClose > aserviStart ? source.slice(aserviStart, aserviClose + '</details>'.length) : '';
       assert.ok(source.includes('<details id="aserviSettingsGroup"'), 'aLandi aServi must have a dedicated settings disclosure.');
-      assert.ok(aserviSettings.includes('data-action="connect-alandi-aservi"'), 'aServi must expose an explicit connection action inside its own settings group.');
-      includes("if(currentProvider()!=='alandi'){setCloudStatus('disconnected');return;}", 'aServi probes must not run while a third-party provider is selected.');
+      assert.ok(aserviSettings.includes('data-action="connect-aservi"'), 'aServi must expose an explicit connection action inside its own settings group.');
+      includes("if(currentProvider()!=='alandi'){setAServiStatus('disconnected');return;}", 'aServi probes must not run while a third-party provider is selected.');
       assert.ok(source.includes('aLandi aServi'), 'The first-party server route must use the current aLandi aServi product name.');
       assert.equal(source.includes('aLandi Cloud'), false, 'Do not reintroduce the retired aLandi Cloud product label.');
       includes('data-action="paste-aservi-key"', 'The first-party key action must use the aServi identifier.');
@@ -85,10 +85,10 @@ const suites = {
       assert.ok(externalRouteGroup.includes('<option value="gemini">') && externalRouteGroup.includes('<option value="custom">'), 'External providers must remain selectable.');
       includes("const peerSettingsGroups=[$('legacyProviderSettings'),$('additionalSettings')]", 'aServi must be mutually exclusive with third-party and additional settings; those two sections may coexist.');
       assert.equal((source.match(/id="cloudConnect"/g) || []).length, 0, 'The retired cloud connection element ID must remain absent.');
-      includes('function connectAlandiAServi()', 'The aServi UI must verify a real model response before showing connected.');
-      includes('function scheduleCloudAutoConnect()', 'Changes to private server settings must trigger a bounded automatic connection check.');
-      includes('function setCloudFieldError(id,message', 'Invalid server fields must show an inline field-specific error.');
-      includes("setCloudFieldConnection('connected')", 'The server fields must only turn green after the connection and health checks pass.');
+      includes('async function connectAServi()', 'The aServi UI must verify a real model response before showing connected.');
+      includes('function scheduleAServiAutoConnect()', 'Changes to private server settings must trigger a bounded automatic connection check.');
+      includes('function setAServiFieldError(id,message', 'Invalid server fields must show an inline field-specific error.');
+      includes("setAServiFieldConnection('connected')", 'The server fields must only turn green after the connection and health checks pass.');
       includes('Never show a green connection lamp for proxy text, HTML, or an unknown error body.', 'HTTP 200 with unrecognized text must not be considered a successful model probe.');
       includes("globalMemoryEnabled=safeGet(STORAGE.globalMemoryEnabled)==='true'", 'Global memory must be explicitly enabled, not added to every request by default.');
       includes("indexedDB.open('AI_Agent_DB_v87', 3)", 'Memory schema migration must create a separate shared store without deleting legacy private notes.');
@@ -170,7 +170,7 @@ const suites = {
       assert.ok(!combinedSource.includes("safeGet(STORAGE.model) === 'gemini-3.8-flash'"), 'A valid Gemini 3.8 model must not be downgraded on load.');
       includes('function getApiCandidates(requestedModel)', 'Provider failover must discover only configured credentials.');
       includes("if(!key && provider!=='kilo') continue;", 'Only the explicitly selected Kilo Free route may omit an API key.');
-      includes('function connectAlandiAServi()', 'The primary aServi route status must be verified with a real completion.');
+      includes('async function connectAServi()', 'The primary aServi route status must be verified with a real completion.');
       includes('id="cloudStatusDot" data-state="disconnected"', 'Cloud connection must begin unconfirmed.');
       includes('if(error.modelUnavailable)', 'Only a model-specific provider failure may trigger same-provider model selection.');
       includes('function applyUiLanguage(language)', 'The main UI must support a persisted language choice.');
@@ -259,8 +259,8 @@ const suites = {
       }
     }],
     ['external JavaScript parses without executing', () => {
-      assert.match(source, /<script[^>]+src=["'][^"']*assets\/js\/app\.js["']/i, 'The app runtime must be loaded as an external asset.');
-      assert.match(source, /<link[^>]+href=["'][^"']*assets\/css\/app\.css["']/i, 'The app stylesheet must be loaded as an external asset.');
+      assert.match(source, /<script[^>]*assets\/js\/app\.js[^>]*>/i, 'The app runtime must be loaded as an external asset.');
+      assert.match(source, /<link[^>]*assets\/css\/app\.css[^>]*>/i, 'The app stylesheet must be loaded as an external asset.');
       assert.equal((source.match(/<script\b(?![^>]*\bsrc=)[^>]*>/gi) || []).length, 0, 'The app page must not carry an inline application script.');
       // nosemgrep: javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag -- vm.Script parses source only; it never inserts a DOM script element.
       try { new Script(appSource, { filename: 'assets/js/app.js' }); } // nosemgrep: javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag -- vm.Script parses source; it does not create a DOM script element.
