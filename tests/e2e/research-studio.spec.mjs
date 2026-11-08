@@ -30,7 +30,7 @@ test('Functions drawer opens Agents, Skills and Research controls without sendin
   await trigger.click();
   await expect(drawer).toBeVisible();
   await expect(page.locator('#agentFunctionSettings')).toBeVisible();
-  await drawer.locator('[data-function="agents"]').click();
+  await nav.locator('[data-function="agents"]').click();
   await expect(page.locator('#agentFunctionSettings')).toBeVisible();
   await drawer.locator('[data-action="close-function-panel"]').first().click();
   await expect(drawer).toBeHidden();
