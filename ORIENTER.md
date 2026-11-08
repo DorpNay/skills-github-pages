@@ -4,22 +4,13 @@
 
 ## Verified baseline — 2026-11-08
 
-- **Current main SHA:** `bf039f887e29137b627b06fc2bb107c2793d6b69` (`fix(ui): stabilize explicit aServi connection probes (#173)`).
-- PR #173 is squash-merged. **Open PR queue:** #174 (this bounded follow-up only); no other open PRs. The only open issue is #111 (owner/environment release gates).
-- Pages deployment #42410162803 completed SUCCESS on the exact main SHA.
-- Main Quality run #42410163178: build, Context, Static Analysis, Security, Integrity and Chromium jobs passed. Chromium passed built-app tests, live root revision verification, canonical landing content verification and landing Chromium (8/8).
-- The separate **Published GitHub Pages release contract** job #128517290166 failed only because its forbidden-marker list still rejected `id="functionsMenu"`. The owner-approved menu must remain: Agents, Deep Research, Skills. This is a stale CI assertion, not a reason to remove the menu.
-- Public root and `/landing/` served the exact merge revision; published landing content and its 8 Chromium checks passed. Correct the sentinel to require the approved menu while continuing to forbid retired Research Studio/provider/sidebar elements.
-- PRs #125/#131/#152/#154/#155/#168/#171/#172 remain closed non-merged; preserve their still-open goals and selected research in the canonical registry. Issue #111 remains owner-controlled.
-- VPS/Tunnel/Ollama, target-host hardware, native iPhone Safari/VoiceOver and live provider credentials remain unverified.
-
-## Active bounded work
-
-- Branch: `fix/pages-functions-contract-and-state-20261108`, based on exact main `bf039f887e29137b627b06fc2bb107c2793d6b69`.
-- Scope: correct the published UI contract sentinel; isolate the delayed provider auto-connect probe in E2E; complete the Functions keyboard/focus trap, localized accessible name, 320px hit-target coverage and Settings/Functions backdrop dismissal; normalize all stable IDs/cross-links in both registries; audit browser asset trust boundaries and system maturity; synchronize orientation/state/checkpoint records.
-- Acceptance: Quality/Freshness/Provenance/Graphify on the exact PR head; post-merge Quality must verify exact public root + `/landing/` SHA and approved Functions menu without restoring Research Studio. Native VoiceOver/iPhone Safari remains a manual acceptance item, not a CI claim.
-- The owner explicitly instructed on 2026-11-08 to merge all currently open PRs into `main` after their final exact-head required checks pass; PR #174 is covered once green. This does not authorize wholesale merging of closed/stale/HOLD PRs or deployment.
-
+- **Current main SHA:** `9033c6ad708a993cba5d1b27442f53651ad71c0f` (`fix(ci/ui): align Pages contract and modal backdrop dismissal (#174)`).
+- PR #174 is squash-merged. Exact-main Quality #42430269155, Freshness #42430269156, Provenance #42430269144, Graphify #42430269131 and Pages #42430269181 passed. Public root and `/landing/` were verified on the exact main SHA.
+- **Open PR queue:** #175 — `feat(ui): Functions drawer and local Notebook MVP`; branch `feat/functions-drawer-notebook-20261108`; base `9033c6ad708a993cba5d1b27442f53651ad71c0f`; head at checkpoint `f78a3ae7f25ae76cb6bd87461b76a5860ec9f3b6`. No other open PRs. **Open issue:** #111 only (owner/environment release gates).
+- PR #175 changes the static UI, E2E/security sentinels and existing canonical task/architecture docs. It adds a sliding drawer with Agents, Research, Notebook and Skills; Notebook is local-first and separate from Memory. Exact-head CI is pending; cancelled or superseded results do not count.
+- Owner authorizes merging the currently open PR only after complete diff review and all required exact-head checks pass. Merge the expected HEAD only, then verify post-merge main Quality and Pages. Deployment beyond Pages is separate.
+- Semantic book conversion, PDF/EPUB/Office parsers, source/license/injection scans, versioned Skill lifecycle and independent Agent runtime remain open under the existing LAUNCH/SF/AB/AW-SK/VERT/DR2 register items.
+- UX-040 project-scoped Chats navigation, issue #111, native iPhone Safari/VoiceOver, VPS/Tunnel/Ollama and target-host performance remain separate open/manual gates.
 ## Canonical navigation and next steps
 
 - Handoff: `OLEDUE.md`; executor contract: `AGENTS.md`; orchestrator: `PROJECT_ORCHESTRATOR_RU.md`.
