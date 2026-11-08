@@ -740,13 +740,15 @@ function downloadProjectRecoveryBackup() {
       if (!('indexedDB' in window)) return null;
       try {
         db = await new Promise((resolve, reject) => {
-          const request = indexedDB.open('AI_Agent_DB_v87', 2);
+          const request = indexedDB.open('AI_Agent_DB_v87', 3);
           request.onupgradeneeded = (event) => {
             const database = event.target.result;
             if (!database.objectStoreNames.contains('cache')) database.createObjectStore('cache');
             // Existing v1 memory remains private; never migrate it into shared memory.
             if (!database.objectStoreNames.contains('memory')) database.createObjectStore('memory');
             if (!database.objectStoreNames.contains('sharedMemory')) database.createObjectStore('sharedMemory');
+            if (!database.objectStoreNames.contains('notebooks')) database.createObjectStore('notebooks');
+            if (!database.objectStoreNames.contains('notebookEntries')) database.createObjectStore('notebookEntries');
           };
           request.onsuccess = () => resolve(request.result);
           request.onerror = () => reject(request.error || new Error('Не удалось открыть IndexedDB'));
@@ -978,6 +980,8 @@ function downloadProjectRecoveryBackup() {
         researchStudioTitle:'Студия исследования',researchStudioDescription:'Окно настройки глубокого исследования для этого чата. Изменения применятся только после нажатия «Применить».',researchStudioPromptLabel:'Что нужно исследовать?',researchStudioPromptPlaceholder:'Например: сравни первичные источники, проверь спорные утверждения и подготовь выводы со ссылками.',researchStudioCurrentSettingsLabel:'Текущие параметры чата',researchStudioSettingsHelp:'Выбери усилие, веб-поиск и структурированный разбор. Новые параметры применятся к этому чату только после нажатия «Применить».',researchStudioContextHelp:'Для исследования своих документов прикрепи материалы в чате или явно выбери контекст проекта. Студия не загружает файлы и не подключает внешние сервисы сама. Найденные страницы считаются недоверенными источниками, а не инструкциями.',researchStudioCancel:'Отмена',researchStudioStart:'Начать исследование ↗',researchStudioClose:'Закрыть студию',researchStudioStatusDefault:'Параметры чата не изменятся, пока ты не нажмёшь «Применить».',researchStudioPromptRequired:'Сначала напиши вопрос или задачу исследования.',
         kiloPrivacyNotice:'Kilo Auto Free — обычный альтернативный провайдер в общем списке API, не часть основного облака aLandi. Запросы передаются Kilo и назначенным им моделям; они могут сохранять запросы для улучшения сервисов. Не отправляй конфиденциальные данные. Скрытого резервирования нет.',languageLabel:'Язык интерфейса',clockLabel:'Местное время',saveSettings:'Сохранить',closeSettings:'Закрыть',
         privateMemoryHelpSummary:'О личной памяти',sharedMemoryHelpSummary:'Об общей памяти',readabilityTitle:'Читаемость текста',readabilityReset:'Сбросить',readabilityScaleLabel:'Размер текста',readabilityContrastLabel:'Контраст текста',readabilityContrastNormal:'Стандартный',readabilityContrastHigh:'Повышенный',readabilityPreview:'Пример текста — так будут выглядеть сообщения.',memoryPanelTitle:'Настройки памяти',memoryPanelSummary:'Личная и общая память',privateMemoryTitle:'Личная память',privateMemoryHelp:'Хранится локально в IndexedDB этого браузера. По умолчанию заметки не передаются в запросы; разрешение можно включить ниже.',sharedMemoryTitle:'Общая память',sharedMemoryHelp:'Общие факты могут попасть внешнему провайдеру только при отдельном разрешении и если это допускает область памяти проекта.',privateMemoryContextLabel:'Разрешить использовать заметки личной памяти в контексте запросов.',globalMemoryOptIn:'Разрешить подходящим заметкам общей памяти попадать в контекст запросов.',noProjectNav:'Без проекта',projectMemoryScopeLabel:'Режим памяти проекта',projectMemoryScopeOnly:'Память только внутри проекта',projectMemoryScopeGlobal:'Память проекта + общая память (если она разрешена)',attachMediaTitle:'Фото или видео',attachMediaHelp:'Изображения и выбор кадров из ролика',attachAnyFileTitle:'Файл любого формата',attachAnyFileHelp:'Системный выбор нескольких файлов; доступность разбора зависит от формата.',requestContextTitle:'Контекст этого запроса',requestContextHelp:'Выбранные проекты будут учтены только при следующей отправке. Сам чат и его проект не изменятся.',clearRequestContext:'Сбросить',skillsAutoHint:'Навыки: автоматический подбор по задаче; отдельный каталог выбора пока не подключён.',requestContextLimitHint:'Контекст ограничен пятью проектами и общим лимитом, чтобы не переполнять запрос.',projectsTitle:'Проекты',currentProjectLabel:'Проект текущего чата',manageProject:'Создать или настроить проект',projectNameLabel:'Название',projectInstructionsLabel:'Инструкции проекта',createProject:'Создать проект',saveProject:'Сохранить изменения',projectContextHandoffTitle:'Передать контекст в чат',projectContextHandoffLabel:'Существующий чат',projectContextHandoffButton:'Передать для следующего запроса',projectSourcesTitle:'Источники проекта',projectSourcesUnavailable:'Управление источниками пока не подключено: gateway умеет индексировать, удалять и искать документы в рамках scope, но не предоставляет API списка источников. Вложения чата не считаются сохранёнными источниками проекта.',projectSourcesRoadmap:'1ИV3ИT10И · Управление источниками проекта — в разработке',projectSourcesRoadmapNote:'Раздел и его место в проекте уже предусмотрены; управление списком станет доступно после появления API источников. Пока никаких действий с источниками не имитируется.',projectMemoryLabel:'Добавить факт в память проекта',exportProject:'Экспорт проекта',importProject:'Импорт проекта',detachChat:'Извлечь чат из проекта',deleteProject:'Удалить проект и его чаты'
+,
+        functionNotebook:'📓 Notebook',functionNotebookHelp:'Локальные тетради и источники',functionsDrawerNavLabel:'Разделы функций',notebookScopeAria:'Область тетради',notebookSelectAria:'Выбранная тетрадь',notebookSortAria:'Сортировка записей',functionPanelClose:'Закрыть',functionNotebookTitle:'Notebook',functionNotebookDescription:'Локальные исследовательские тетради с личной и проектной областью.',notebookTitle:'Исследовательская тетрадь',notebookLocal:'Локально в браузере',notebookPrivacy:'Тетрадь хранится отдельно от памяти чата. Данные не отправляются модели без отдельного выбора.',notebookNew:'Новая тетрадь',notebookNamePlaceholder:'Название тетради',notebookPersonal:'Личная · этот браузер',notebookProject:'Текущий проект',notebookCreate:'＋ Создать тетрадь',notebookExport:'Экспорт',notebookDelete:'Удалить',notebookSearch:'Поиск по заметкам и источникам',notebookSortUpdated:'Сначала обновлённые',notebookSortTitle:'По названию',notebookSortCreated:'Сначала старые',notebookNote:'Новая заметка',notebookSave:'Сохранить заметку',notebookSource:'Ссылка на источник',notebookAddLink:'Добавить ссылку',notebookRights:'У меня есть права на импорт и анализ этого текста.',notebookImport:'Импорт TXT / Markdown',notebookLimits:'TXT/Markdown до 2 МБ. URL сохраняются как ссылки, не загружаются. PDF/EPUB/Office требуют защищённого парсера.',notebookEntries:'Заметки и источники',notebookEmpty:'Создай личную тетрадь или тетрадь текущего проекта.',notebookLocalOnly:'Хранится локально. Не является памятью чата.'
       },
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Projects & chats',chatsTitle:'Chats',newChat:'New chat',clearChat:'🗑 Clear chat',newPersonalChat:'New personal chat',
@@ -997,7 +1001,8 @@ function downloadProjectRecoveryBackup() {
         functionConnectorsTitle:'Integrations',functionConnectorsDescription:'Only real connected integrations are listed. No external sources are connected yet; there are no placeholder switches.',
         projectCreateTitle:'Create project',projectCreateHelp:'Creating a project does not move the current chat. You can create a new chat separately from the project row.',projectCreateNameLabel:'Project name',projectCreateInstructionsLabel:'Short instructions (optional)',cancel:'Cancel',researchStudioTitle:'Research Studio',researchStudioDescription:'Configure deep-research settings for this chat. Changes are applied only when you select Apply.',researchStudioPromptLabel:'What should be researched?',researchStudioPromptPlaceholder:'For example: compare primary sources, verify disputed claims and prepare cited conclusions.',researchStudioCurrentSettingsLabel:'Current chat settings',researchStudioSettingsHelp:'Choose effort, web-search scope and structured workflow. New settings apply to this chat only when you select Apply.',researchStudioContextHelp:'To research your own documents, attach them in the chat or explicitly select project context. The Studio does not upload files or connect external services by itself. Retrieved pages are untrusted sources, not instructions.',researchStudioCancel:'Cancel',researchStudioStart:'Start research ↗',researchStudioClose:'Close Studio',researchStudioStatusDefault:'Chat settings will remain unchanged until you select Apply.',researchStudioPromptRequired:'Enter a research question or task first.',
         kiloPrivacyNotice:'Kilo Auto Free is an ordinary alternative provider in the API list, not part of the primary aLandi aServi. Requests go to Kilo and its selected models, which may log prompts or use them to improve services. Do not send confidential data. No silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',saveSettings:'Save settings',closeSettings:'Close',
-        privateMemoryHelpSummary:'About private memory',sharedMemoryHelpSummary:'About shared memory',readabilityTitle:'Text readability',readabilityReset:'Reset',readabilityScaleLabel:'Text size',readabilityContrastLabel:'Text contrast',readabilityContrastNormal:'Standard',readabilityContrastHigh:'Higher',readabilityPreview:'Preview text — this is how messages will look.',memoryPanelTitle:'Memory settings',memoryPanelSummary:'Private and shared memory',privateMemoryTitle:'Private memory',privateMemoryHelp:'Stored locally in this browser’s IndexedDB. Notes are not sent with requests by default; you can opt in below.',sharedMemoryTitle:'Shared memory',sharedMemoryHelp:'Shared facts may be sent to an external provider only with separate consent and when the project memory scope allows it.',privateMemoryContextLabel:'Allow private-memory notes to be included in request context.',globalMemoryOptIn:'Allow relevant shared-memory notes to be included in prompts.',noProjectNav:'No project',projectMemoryScopeLabel:'Project memory scope',projectMemoryScopeOnly:'Memory inside this project only',projectMemoryScopeGlobal:'Project memory + shared memory (when enabled)',attachMediaTitle:'Photo or video',attachMediaHelp:'Images or sampled frames from a video',attachAnyFileTitle:'Any file format',attachAnyFileHelp:'Native multi-file picker; parsing depends on file type.',requestContextTitle:'Context for this request',requestContextHelp:'Selected projects apply only to the next send. The active chat and its project do not change.',clearRequestContext:'Clear selection',skillsAutoHint:'Skills: automatically selected for the task; a manual catalog is not connected yet.',requestContextLimitHint:'Context is limited to five projects and a shared size budget.',projectsTitle:'Projects',currentProjectLabel:'Project for this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'Create project',saveProject:'Save changes',projectContextHandoffTitle:'Hand off context to a chat',projectContextHandoffLabel:'Existing chat',projectContextHandoffButton:'Queue for next request',projectSourcesTitle:'Project sources',projectSourcesUnavailable:'Source management is not connected yet: the gateway can ingest, delete and retrieve documents by scope, but it has no source-list API. Chat attachments are not treated as saved project sources.',projectSourcesRoadmap:'1ИV3ИT10И · Project source management is in development',projectSourcesRoadmapNote:'The section and its place in the project are already defined; source management will become available when a source-list API exists. No source actions are simulated in the meantime.',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats'
+        privateMemoryHelpSummary:'About private memory',sharedMemoryHelpSummary:'About shared memory',readabilityTitle:'Text readability',readabilityReset:'Reset',readabilityScaleLabel:'Text size',readabilityContrastLabel:'Text contrast',readabilityContrastNormal:'Standard',readabilityContrastHigh:'Higher',readabilityPreview:'Preview text — this is how messages will look.',memoryPanelTitle:'Memory settings',memoryPanelSummary:'Private and shared memory',privateMemoryTitle:'Private memory',privateMemoryHelp:'Stored locally in this browser’s IndexedDB. Notes are not sent with requests by default; you can opt in below.',sharedMemoryTitle:'Shared memory',sharedMemoryHelp:'Shared facts may be sent to an external provider only with separate consent and when the project memory scope allows it.',privateMemoryContextLabel:'Allow private-memory notes to be included in request context.',globalMemoryOptIn:'Allow relevant shared-memory notes to be included in prompts.',noProjectNav:'No project',projectMemoryScopeLabel:'Project memory scope',projectMemoryScopeOnly:'Memory inside this project only',projectMemoryScopeGlobal:'Project memory + shared memory (when enabled)',attachMediaTitle:'Photo or video',attachMediaHelp:'Images or sampled frames from a video',attachAnyFileTitle:'Any file format',attachAnyFileHelp:'Native multi-file picker; parsing depends on file type.',requestContextTitle:'Context for this request',requestContextHelp:'Selected projects apply only to the next send. The active chat and its project do not change.',clearRequestContext:'Clear selection',skillsAutoHint:'Skills: automatically selected for the task; a manual catalog is not connected yet.',requestContextLimitHint:'Context is limited to five projects and a shared size budget.',projectsTitle:'Projects',currentProjectLabel:'Project for this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'Create project',saveProject:'Save changes',projectContextHandoffTitle:'Hand off context to a chat',projectContextHandoffLabel:'Existing chat',projectContextHandoffButton:'Queue for next request',projectSourcesTitle:'Project sources',projectSourcesUnavailable:'Source management is not connected yet: the gateway can ingest, delete and retrieve documents by scope, but it has no source-list API. Chat attachments are not treated as saved project sources.',projectSourcesRoadmap:'1ИV3ИT10И · Project source management is in development',projectSourcesRoadmapNote:'The section and its place in the project are already defined; source management will become available when a source-list API exists. No source actions are simulated in the meantime.',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats',
+        functionNotebook:'📓 Notebook',functionNotebookHelp:'Local notebooks and sources',functionsDrawerNavLabel:'Function sections',notebookScopeAria:'Notebook scope',notebookSelectAria:'Selected notebook',notebookSortAria:'Sort notebook entries',functionPanelClose:'Close',functionNotebookTitle:'Notebook',functionNotebookDescription:'Local research notebooks with personal and project scopes.',notebookTitle:'Research notebook',notebookLocal:'Stored locally',notebookPrivacy:'Notebooks are separate from chat memory. Content is not sent to a model unless explicitly selected.',notebookNew:'New notebook',notebookNamePlaceholder:'Notebook name',notebookPersonal:'Personal · this browser',notebookProject:'Current project',notebookCreate:'＋ Create notebook',notebookExport:'Export',notebookDelete:'Delete',notebookSearch:'Search notes and sources',notebookSortUpdated:'Recently updated',notebookSortTitle:'Title',notebookSortCreated:'Oldest first',notebookNote:'New note',notebookSave:'Save note',notebookSource:'Source link',notebookAddLink:'Add link',notebookRights:'I have the right to import and analyse this text.',notebookImport:'Import TXT / Markdown',notebookLimits:'TXT/Markdown up to 2 MB. URLs are references only, not fetched. PDF/EPUB/Office require a secure parser.',notebookEntries:'Notes and sources',notebookEmpty:'Create a personal notebook or one for the current project.',notebookLocalOnly:'Stored locally. Not chat memory.'
       }
     };
     const ASERVI_TEXT={
@@ -3316,27 +3321,113 @@ function preserveUnreadableProjects(rawText) {
       if (!persistChatMutation(chat, updates)) { renderAgentConfiguration(); return; }
       renderAgentConfiguration();
     }
-    function openFunctionPanel(kind) {
-      $('functionsMenu').open = false;
-      const views = {
-        agents: ['agentFunctionSettings','functionAgentsTitle','functionAgentsDescription'],
-        skills: ['skillFunctionSettings','functionSkillsTitle','functionSkillsDescription'],
-        connectors: ['connectorFunctionStatus','functionConnectorsTitle','functionConnectorsDescription']
+    function renderResearchConfiguration() {
+      const chat=getCurrentChat(); if(!chat)return;
+      ensureChatFunctionSettings(chat);
+      const text=UI_TEXT[getUiLanguage()];
+      $('researchModeSummary').textContent=text[chat.processingMode==='deep'?'modeDeepShort':'modeFastShort'];
+      const searchKey=chat.searchMode==='offline'?'searchModeOfflineShort':chat.searchMode==='more'?'searchModeMoreShort':'searchModeNormalShort';
+      $('researchSearchModeSummary').textContent=text[searchKey];
+      $('researchWorkflowSummary').textContent=text[chat.multiAgentEnabled?'workflowStructuredShort':'workflowDirectShort'];
+    }
+    let notebookSelectedId=null;
+    function getNotebookProjectId(){const id=getCurrentChat()?.projectId;return id&&projects.some(p=>String(p.id)===String(id))?String(id):null;}
+    function nbText(ru,en){return getUiLanguage()==='en'?en:ru;}
+    function nbStatus(message,error=false){const el=$('notebookStatus');el.textContent=message;el.classList.toggle('text-red-300',error);}
+    function nbDownload(name,value,type){const url=URL.createObjectURL(new Blob([value],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
+    function nbSlug(value){return String(value||'source').normalize('NFKD').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48)||'source';}
+    async function renderNotebookPanel(){
+      const visible=await NotebookDB.listVisible(),selected=visible.find(n=>n.id===notebookSelectedId)||visible[0]||null;notebookSelectedId=selected?.id||null;
+      $('notebookWorkspace').classList.toggle('hidden',!selected);$('notebookEmptyState').classList.toggle('hidden',Boolean(selected));
+      $('notebookNewScope').querySelector('option[value="project"]').disabled=!getNotebookProjectId();
+      if(!selected){$('notebookSelect').replaceChildren();$('notebookEntries').replaceChildren();return;}
+      const options=visible.map(n=>{const option=document.createElement('option');option.value=n.id;option.textContent=n.title+' · '+(n.scope==='project'?nbText('проект','project'):nbText('личная','personal'));return option;});
+      $('notebookSelect').replaceChildren(...options);$('notebookSelect').value=selected.id;
+      let all=await NotebookDB.entries(selected.id),q=$('notebookSearch').value.trim().toLowerCase(),sort=$('notebookSort').value;
+      const total=all.length;
+      all=all.filter(e=>!q||[e.title,e.body,e.url].some(v=>String(v||'').toLowerCase().includes(q)));
+      all.sort((a,b)=>sort==='title-asc'?String(a.title).localeCompare(String(b.title)):sort==='created-asc'?a.createdAt-b.createdAt:b.updatedAt-a.updatedAt);
+      $('notebookEntryCount').textContent=all.length+' / '+total;
+      const cards=all.map(e=>{
+        const article=document.createElement('article');article.className='notebook-entry';
+        const row=document.createElement('div');row.className='flex justify-between gap-2';
+        const body=document.createElement('div');body.className='min-w-0';
+        const kind=document.createElement('small');kind.className='text-cyan-300';kind.textContent=e.kind==='source'?'SOURCE':'NOTE';
+        const title=document.createElement('h4');title.className='text-xs font-semibold break-words';title.textContent=e.title||'Untitled';
+        const excerpt=document.createElement('p');excerpt.className='mt-1 text-[11px] text-gray-400 whitespace-pre-wrap';excerpt.textContent=e.url||String(e.body||'').slice(0,300);
+        body.append(kind,title,excerpt);
+        const remove=document.createElement('button');remove.type='button';remove.dataset.action='delete-notebook-entry';remove.dataset.notebookEntryId=e.id;remove.className='min-w-11 min-h-11';remove.textContent='✕';remove.setAttribute('aria-label',nbText('Удалить запись','Delete entry'));
+        row.append(body,remove);article.append(row);
+        const actions=document.createElement('div');actions.className='notebook-entry-actions';
+        for(const [action,label] of [['export-skill-draft','Skill draft'],['export-agent-blueprint','Agent blueprint']]){
+          const button=document.createElement('button');button.type='button';button.dataset.action=action;button.dataset.notebookEntryId=e.id;button.textContent=action==='export-skill-draft'?nbText('Черновик Skill','Skill draft'):nbText('Схема Agent','Agent blueprint');actions.append(button);
+        }
+        article.append(actions);return article;
+      });
+      if(!cards.length){const empty=document.createElement('p');empty.className='text-xs text-gray-500';empty.textContent=nbText('Записей пока нет.','No entries yet.');cards.push(empty);}
+      $('notebookEntries').replaceChildren(...cards);
+    }
+    async function createNotebookFromForm(){const title=$('notebookNewTitle').value.trim();if(!title){nbStatus(nbText('Укажи название.','Enter a name.'),true);return;}try{const n=await NotebookDB.create(title,$('notebookNewScope').value);notebookSelectedId=n.id;$('notebookNewTitle').value='';await renderNotebookPanel();nbStatus(nbText('Тетрадь сохранена локально.','Notebook saved locally.'));}catch(e){nbStatus(e.message,true);}}
+    async function saveNotebookNote(){const title=$('notebookNoteTitle').value.trim(),body=$('notebookNoteBody').value.trim();if(!notebookSelectedId||!title||!body){nbStatus(nbText('Выбери тетрадь и заполни название и текст.','Select a notebook and enter a title and body.'),true);return;}try{await NotebookDB.addEntry(notebookSelectedId,{kind:'note',title:title.slice(0,120),body:body.slice(0,12000)});$('notebookNoteTitle').value='';$('notebookNoteBody').value='';await renderNotebookPanel();nbStatus(nbText('Заметка сохранена.','Note saved.'));}catch(e){nbStatus(e.message,true);}}
+    async function saveNotebookSource(){let url;try{url=new URL($('notebookSourceUrl').value.trim());}catch(_){nbStatus(nbText('Нужна корректная ссылка http(s).','Enter a valid http(s) URL.'),true);return;}if(!['http:','https:'].includes(url.protocol)||url.username||url.password){nbStatus(nbText('Разрешены только http(s) ссылки без встроенных логина и пароля.','Only http(s) URLs without embedded credentials are allowed.'),true);return;}if(!notebookSelectedId){nbStatus('Select a notebook first.',true);return;}try{await NotebookDB.addEntry(notebookSelectedId,{kind:'source',sourceType:'url-reference',title:($('notebookSourceTitle').value.trim()||url.hostname).slice(0,120),url:url.href,licenseStatus:'not-reviewed'});$('notebookSourceTitle').value='';$('notebookSourceUrl').value='';await renderNotebookPanel();nbStatus(nbText('Ссылка сохранена; страница не загружалась.','Link saved; the page was not fetched.'));}catch(e){nbStatus(e.message,true);}}
+    async function importNotebookTextFile(file){
+      if(!file)return;
+      const ext=String(file.name||'').toLowerCase().split('.').pop(),mime=String(file.type||'').toLowerCase().split(';')[0].trim();
+      if(!['txt','md','markdown'].includes(ext)||file.size>2*1024*1024){nbStatus(nbText('Поддерживаются TXT/Markdown до 2 МБ.','Only TXT/Markdown files up to 2 MB are supported.'),true);return;}
+      if(mime&&!['text/plain','text/markdown','text/x-markdown'].includes(mime)){nbStatus(nbText('Разрешены только TXT/Markdown с допустимым MIME.','Only TXT/Markdown with an accepted MIME type are supported.'),true);return;}
+      if(!$('notebookRightsConsent').checked||!notebookSelectedId){nbStatus(nbText('Подтверди права и выбери тетрадь.','Confirm rights and select a notebook.'),true);return;}
+      try{
+        const bytes=new Uint8Array(await file.arrayBuffer());
+        let body;
+        try{body=new TextDecoder('utf-8',{fatal:true}).decode(bytes);}catch(_){throw new Error(nbText('Файл должен содержать корректный UTF-8 текст.','File must contain valid UTF-8 text.'));}
+        if(!body.trim())throw new Error(nbText('Файл пуст.','File is empty.'));
+        const digest=await crypto.subtle.digest('SHA-256',bytes),hash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
+        await NotebookDB.addEntry(notebookSelectedId,{kind:'source',sourceType:'local-text-file',title:file.name.slice(0,120),body,sourceHash:hash,licenseStatus:'user-confirmed-rights',byteSize:bytes.byteLength});
+        $('notebookRightsConsent').checked=false;
+        await renderNotebookPanel();nbStatus(nbText('Файл сохранён локально; модели он не отправлялся.','File stored locally; it was not sent to a model.'));
+      }catch(e){nbStatus(e.message,true);}
+    }
+    async function exportNotebook(){const n=(await NotebookDB.listVisible()).find(x=>x.id===notebookSelectedId);if(!n)return;nbDownload(nbSlug(n.title)+'.json',JSON.stringify({schemaVersion:1,exportedAt:new Date().toISOString(),notebook:n,entries:await NotebookDB.entries(n.id)},null,2),'application/json');}
+    async function deleteNotebook(){if(!notebookSelectedId||!confirm(nbText('Удалить тетрадь и все записи?','Delete this notebook and all entries?')))return;await NotebookDB.remove(notebookSelectedId);notebookSelectedId=null;await renderNotebookPanel();}
+    async function deleteNotebookEntry(id){await NotebookDB.deleteEntry(notebookSelectedId,id);await renderNotebookPanel();}
+    async function getNotebookEntry(id){return (await NotebookDB.entries(notebookSelectedId)).find(e=>e.id===id);}
+    async function exportSkillDraft(id){const e=await getNotebookEntry(id);if(!e)return;const headings=String(e.body||'').split(/\r?\n/).filter(x=>/^#{1,4}\s/.test(x)).slice(0,30).map((x,i)=>(i+1)+'. Validate section '+x.replace(/^#{1,4}\s/,'').slice(0,100)+'.').join('\n')||'1. Read the source and write one verified reusable procedure.';const md='---\nname: '+nbSlug(e.title)+'\ndescription: Draft only; human review required.\n---\n\n# '+e.title+'\n\n> DRAFT ONLY. Not a validated Skill. No source paragraphs or executable scripts are copied.\n\n## Purpose\n[Define task and scope]\n\n## Procedure outline\n'+headings+'\n\n## Evidence and provenance\n- Source ID: '+e.id+'\n- SHA-256: '+(e.sourceHash||'not available')+'\n- Rights: '+(e.licenseStatus||'not reviewed')+'\n\n## Review\n- [ ] Confirm rights and license\n- [ ] Verify every instruction against source\n- [ ] Add positive, negative and boundary evals\n- [ ] Scan injection, secrets, scripts and dependencies\n- [ ] Human approve and version before use\n\n## Permissions\nNo shell, filesystem, network, memory, connector or external-action permissions.\n';nbDownload(nbSlug(e.title)+'-SKILL-DRAFT.md',md,'text/markdown');nbStatus(nbText('Скачан черновик Skill; требуется проверка.','Skill draft downloaded; review required.'));}
+    async function exportAgentBlueprint(id){const e=await getNotebookEntry(id);if(!e)return;const blueprint={schemaVersion:1,status:'draft',name:e.title,purpose:'[Define task and acceptance criteria]',sourceReferences:[{id:e.id,title:e.title,sha256:e.sourceHash||null,licenseStatus:e.licenseStatus||'not-reviewed'}],role:{name:'[Role]',responsibilities:[],limitations:[]},skills:[],modelPolicy:{fallback:'none'},dataScope:{notebookId:notebookSelectedId,read:'selected sources only'},capabilities:{read:false,write:false,network:false,execute:false,memory:false,connectors:false},approvalPolicy:{humanReviewRequired:true,sideEffectsDisabled:true},budget:{maxSteps:8,maxInputBytes:2000000,maxOutputBytes:50000,timeoutSeconds:60},evaluations:{positive:[],negative:[],boundary:[]},notes:'Blueprint only: no agent runtime or permissions created.'};nbDownload(nbSlug(e.title)+'-AGENT-BLUEPRINT.json',JSON.stringify(blueprint,null,2),'application/json');}
+    async function openFunctionPanel(kind) {
+      ['searchModeMenu','functionsMenu','languageMenu','languageMenuSidebar'].forEach(id=>{const menu=$(id);if(menu?.open)menu.open=false;});
+      document.querySelectorAll('.chat-row-menu[open]').forEach(menu=>{menu.open=false;});
+      const views={
+        agents:['agentFunctionSettings','functionAgentsTitle','functionAgentsDescription'],
+        research:['researchFunctionSettings','functionDeepResearchTitle','functionDeepResearchDescription'],
+        notebook:['notebookFunctionSettings','functionNotebookTitle','functionNotebookDescription'],
+        skills:['skillFunctionSettings','functionSkillsTitle','functionSkillsDescription'],
+        connectors:['connectorFunctionStatus','functionConnectorsTitle','functionConnectorsDescription']
       };
-      const view = views[kind];
-      if (!view) return;
-      const text = UI_TEXT[getUiLanguage()];
-      ['agentFunctionSettings','skillFunctionSettings','connectorFunctionStatus'].forEach(id => $(id).classList.add('hidden'));
-      $('functionPanelTitle').textContent = text[view[1]];
-      $('functionPanelDescription').textContent = text[view[2]];
+      const view=views[kind];if(!view)return;
+      const text=UI_TEXT[getUiLanguage()]||UI_TEXT.ru;
+      ['agentFunctionSettings','researchFunctionSettings','notebookFunctionSettings','skillFunctionSettings','connectorFunctionStatus'].forEach(id=>$(id)?.classList.add('hidden'));
+      $('functionPanelTitle').textContent=text[view[1]]||'Functions';
+      $('functionPanelDescription').textContent=text[view[2]]||'';
       $(view[0]).classList.remove('hidden');
-      if (kind === 'agents') { $('agentModeControl').checked = getCurrentChat().multiAgentEnabled === true;renderAgentConfiguration(); }
-      if (kind === 'skills') renderSkillConfiguration();
-      $('functionPanelModal').classList.remove('hidden');openUiModal('functionPanelModal');
+      $('functionsDrawerNav').querySelectorAll('[data-function]').forEach(button=>{
+        if(button.dataset.function===kind)button.setAttribute('aria-current','page');
+        else button.removeAttribute('aria-current');
+      });
+      if(kind==='agents'){$('agentModeControl').checked=getCurrentChat().multiAgentEnabled===true;renderAgentConfiguration();}
+      if(kind==='research')renderResearchConfiguration();
+      if(kind==='notebook')await renderNotebookPanel();
+      if(kind==='skills')renderSkillConfiguration();
+      const modal=$('functionPanelModal'),wasHidden=modal.classList.contains('hidden');
+      modal.classList.remove('hidden');
+      $('functionsMenuSummary').setAttribute('aria-expanded','true');
+      if(wasHidden)openUiModal('functionPanelModal');
+      modal.querySelector('[data-action="close-function-panel"]')?.focus();
     }
     function closeFunctionPanel() {
       if(requestUiModalBack('functionPanelModal'))return;
-      $('functionPanelModal').classList.add('hidden');syncModalEnvironment();
+      $('functionPanelModal').classList.add('hidden');
+      $('functionsMenuSummary').setAttribute('aria-expanded','false');
+      syncModalEnvironment();
       $('functionsMenuSummary')?.focus();
     }
     function openRoadmapDetails(button) {
@@ -5158,7 +5249,17 @@ function preserveUnreadableProjects(rawText) {
         switch (action) {
           case 'set-language': applyUiLanguage(control.dataset.language);if($('languageMenu'))$('languageMenu').open=false;if($('languageMenuSidebar'))$('languageMenuSidebar').open=false;break;
           case 'select-search-mode': setSearchMode(control.dataset.searchMode);break;
-          case 'open-function-panel': openFunctionPanel(control.dataset.function);break;
+          case 'open-functions-drawer': await openFunctionPanel('agents');break;
+          case 'open-function-panel': await openFunctionPanel(control.dataset.function);break;
+          case 'create-notebook': await createNotebookFromForm();break;
+          case 'save-notebook-note': await saveNotebookNote();break;
+          case 'save-notebook-source': await saveNotebookSource();break;
+          case 'choose-notebook-text-file': $('notebookTextFile').click();break;
+          case 'export-notebook': await exportNotebook();break;
+          case 'delete-notebook': await deleteNotebook();break;
+          case 'delete-notebook-entry': await deleteNotebookEntry(control.dataset.notebookEntryId);break;
+          case 'export-skill-draft': await exportSkillDraft(control.dataset.notebookEntryId);break;
+          case 'export-agent-blueprint': await exportAgentBlueprint(control.dataset.notebookEntryId);break;
           case 'open-roadmap-details': openRoadmapDetails(control);break;
           case 'close-roadmap-details': closeRoadmapDetails();break;
           case 'close-function-panel': closeFunctionPanel();break;
@@ -5346,6 +5447,10 @@ function preserveUnreadableProjects(rawText) {
     });
     $('settingsModal').addEventListener('click',event=>{if(event.target===$('settingsModal'))toggleSettings(false);});
     $('functionPanelModal').addEventListener('click',event=>{if(event.target===$('functionPanelModal'))closeFunctionPanel();});
+    $('notebookSelect').addEventListener('change',event=>{notebookSelectedId=event.target.value||null;renderNotebookPanel();});
+    $('notebookSearch').addEventListener('input',()=>renderNotebookPanel());
+    $('notebookSort').addEventListener('change',()=>renderNotebookPanel());
+    $('notebookTextFile').addEventListener('change',async event=>{const file=event.target.files?.[0];event.target.value='';await importNotebookTextFile(file);});
     $('roadmapDetailsModal').addEventListener('click',event=>{if(event.target===$('roadmapDetailsModal'))closeRoadmapDetails();});
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
     $('researchStudioModal').addEventListener('click', (event) => { if (event.target === $('researchStudioModal')) closeResearchStudio(); });
