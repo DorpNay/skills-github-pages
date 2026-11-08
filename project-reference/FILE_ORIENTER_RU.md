@@ -1,16 +1,16 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
-> Подробный индекс навигации. Это не источник live-статуса и не обязательный стартовый пакет. Для `oledue` сначала читай корневой OLEDUE.md, затем выполняй один batched live GitHub read. Используй этот файл только для поиска конкретного пути.
+> Подробный индекс навигации. Это не источник live-статуса и не обязательный стартовый пакет. Для `oledue` сначала читай корневой OLEDUE.md, затем выполняй один batched live GitHub read. Используй этот файл для поиска конкретного пути.
 
-## Контрольная точка — 2026-11-08 (post-merge main / active follow-up)
+## Контрольная точка — 2026-11-08 (post-merge main)
 
-- Main `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2`; PR #169 merged via squash. Pages deployment #42408492764 SUCCESS on exact SHA (artifact #13588178210, SHA-256 `cf02ff975f0813ee37cfa0a5aa8de7d562852500a964da85c1a387f5fa539748`).
-- Main Freshness #42408493553, Gateway #42408493562, Graphify #42408493571 and Provenance #42408493536 PASS. Main Quality #42408500881 FAIL (111 passed / 2 failed); public root + `/landing/` exact-SHA smoke was skipped.
-- **Snapshot marker:** open PRs (0): open issues (1): #111. (Active checked PR #173 is excluded from the Freshness comparison.)
-- **Live open PR queue (1): #173**; issue #111 remains open.
-- PR #173 base main `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2`; code/test HEAD `b614954ada5f86f8221a270ecd3d251283aa0642`. Exact code/test Quality #42408845013 PASS (113/113 Chromium, published baseline smoke PASS) and Graphify #42408844985 PASS. It fixes the two post-merge E2E failures; canonical state synchronization is included. Freshness #42409451004 unit tests passed 19/19 but found current_checkpoint.verified_main stale at c4f23e0; aligned to snapshot main SHA 72bcd, final exact-head Freshness/Quality pending.
-- PRs #125/#131/#152/#154/#155/#168/#171/#172 closed non-merged; preserve remaining registry goals and selected research. PR #173 remains unmerged and requires owner authorization after exact final-head gates pass.
-- After authorized merge, verify main Quality and Pages public root + `/landing/` on exact merge SHA. VPS/Tunnel/Ollama, native iPhone/VoiceOver and target hardware remain unverified.
+- Main `bf039f887e29137b627b06fc2bb107c2793d6b69`; PR #173 squash-merged. Pages deployment #42410162803 SUCCESS on exact SHA.
+- Main Quality #42410163178: build, Context, Static Analysis, Security, Integrity and Chromium jobs PASS. Chromium validated the built app, public root revision, canonical landing content and landing Chromium 8/8.
+- Published release-contract job #128517290166 FAILED because its forbidden list incorrectly rejects owner-approved `id="functionsMenu"`. This is a stale sentinel; the menu with Agents/Deep Research/Skills is required. Research Studio, legacy aLandi provider option and removed sidebar controls remain forbidden.
+- **Snapshot marker:** open PRs (0): open issues (1): #111. The current PR #174 is excluded from the other-PR snapshot count by the freshness gate.
+- **Live open PR queue:** #174 (this bounded follow-up only); no other open PRs. **Live open issue (1):** #111, owner/environment controlled.
+- Follow-up branch `fix/pages-functions-contract-and-state-20261108` is based on exact main `bf039f887e29137b627b06fc2bb107c2793d6b69`; its CI/merge status must be read live.
+- PRs #125/#131/#152/#154/#155/#168/#171/#172 remain closed non-merged; retain their still-open registry goals and selected research. VPS/Tunnel/Ollama, target hardware and native iPhone/VoiceOver remain unverified.
 
 ## 1. Быстрый маршрут
 

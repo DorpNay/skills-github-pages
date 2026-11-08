@@ -1,4 +1,4 @@
-> **Historical research snapshot — PR #131 / 2026-10-31; imported 2026-11-08.** Main baseline is now `c4f23e03f563d03213eb87002863da630fc8b833`. This file preserves source-derived findings and requirements; it does not assert current runtime implementation. The canonical active task register is `docs/MASTER_TASK_REGISTRY_RU.md` plus its existing addendum. Current source admission/review status is tracked in `INTEL.md`.
+> **Historical research snapshot — PR #131 / 2026-10-31; imported 2026-11-08.** Main baseline at this audit is `bf039f887e29137b627b06fc2bb107c2793d6b69` (PR #173 merged). This file preserves source-derived findings and requirements; it does not assert current runtime implementation. The canonical active task register is `docs/MASTER_TASK_REGISTRY_RU.md` plus its existing addendum. Current source admission/review status is tracked in `INTEL.md`.
 > **Current boundary:** Any branch/PR inventory below is a historical snapshot. Always use live GitHub state; the current owner policy is main-only, with one temporary exact-head PR at a time and immediate merge/closure after required gates pass.
 
 ---
@@ -266,3 +266,29 @@ No files, workflows, settings, branches or repository names were deleted or chan
 - Issue #111 остаётся открытой консолидированной записью release gates; CI не закрывает VPS/Tunnel/Ollama, hardware, permissioned RAG data, real-device voice и account-level governance.
 
 **Итог:** 5 behind-only refs подтверждены как cleanup candidates, но не удалены из-за отсутствия безопасной delete-ref операции; бесхозных файлов/инструментов с доказанной ненужностью не найдено; 10 открытых PR сохранены в своих workstream-границах. Следующий безопасный шаг для владельца — удалить только эти пять refs через GitHub UI после последней проверки ссылок/issue и сохранения приведённых HEAD SHA.
+
+
+## 10. Supply-chain revalidation — 2026-11-08
+
+**Main evidence:** exact main `bf039f887e29137b627b06fc2bb107c2793d6b69`; Quality run #42410163178, Integrity job #128516358240. Step **Enforce immutable GitHub Action references** passed and reported 14 workflow files inspected.
+
+- Independently fetched all 14 current `.github/workflows/*.yml` files and counted **62 direct external `uses:` references**. All **62/62** resolve syntactically to full 40-character commit SHAs; zero mutable direct refs were found.
+- The local checker `scripts/check-action-pinning.mjs` enforces full-SHA syntax in the repository's workflow files. It does **not** recursively inspect dependencies inside third-party reusable workflows.
+- The five exercise workflows call `skills/exercise-toolkit` reusable workflows pinned to exact commit `ebf43bb96882683e03e667184c6445ed4c8074e6`. At that pinned upstream commit, the three called workflow files contain **14 mutable action references**: `actions/checkout@v4` (5), `actions/github-script@v7` (3), `skills/action-text-variables@v2` (4), and `EndBug/add-and-commit@v9` (2). This is a direct line-by-line count of all `uses:` statements in those three files.
+- The pinned upstream `start-exercise.yml` declares workflow-wide `contents: write`, `actions: write`, and `issues: write`; however, job-level review shows only `disable_workflows` needs `actions: write`, `create_exercise` needs `issues: write`, and `update_readme` needs `contents: write`. Job-level permissions could reduce cross-job authority without changing behavior. `finish-exercise.yml` has one job that updates README and closes/comments on the issue, so it needs `contents: write` + `issues: write`; `find-exercise-issue.yml` needs only `issues: read`. These are upstream workflow permissions, not permissions granted by our local pin checker.
+- **Repository governance evidence:** `GET /repos/DorpNay/skills-github-pages/rulesets?includes_parents=true` returned an empty list (`[]`). The `GET /branches/main/protection` endpoint returned HTTP 403 `Resource not accessible by integration`; therefore classic branch protection is **UNVERIFIED**, not absent.
+- **Conclusion:** direct repository pinning is VERIFIED (62/62), but the transitive reusable-workflow dependency chain, least-privilege review and repository governance are OPEN under issue #111. Do not mark the supply-chain gate complete. A bounded follow-up should replace or fork the exercise workflows with locally reviewed equivalents or otherwise pin their nested dependencies and reduce permissions; preserve behavior and test triggers before changing them.
+
+## 15. Browser asset supply-chain review — 2026-11-08
+
+**Scope:** current `index.md` script references on the PR #174 work branch. This is a source inventory, not a runtime network capture.
+
+| Asset | Current reference | Finding | Safe disposition |
+|---|---|---|---|
+| Tailwind Play CDN | `https://cdn.tailwindcss.com` | Mutable/unversioned browser-executed code; no SRI. Official Tailwind v3 documentation explicitly says Play CDN is for development and is not intended for production. | Replace with a reproducible build-time Tailwind CLI/PostCSS step and committed/generated static CSS. Do not guess a versioned Play CDN URL or fabricate an integrity hash. |
+| marked | `https://cdn.jsdelivr.net/npm/marked@18.0.14/marked.min.js` | Package version is explicit, but no SRI and runtime still trusts jsDelivr delivery. | Prefer a reviewed local artifact or add SRI only after hashing the exact served bytes and pinning the expected file. |
+| DOMPurify | `https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js` | Package version is explicit, but no SRI and runtime still trusts cdnjs delivery. | Prefer a reviewed local artifact or add SRI only after hashing the exact served bytes and pinning the expected file. |
+
+Primary reference: Tailwind CSS v3.4.17 Play CDN documentation, https://v3.tailwindcss.com/docs/installation/play-cdn — explicitly classifies Play CDN as development-only. This makes static Tailwind compilation the preferred production fix, not merely changing the unversioned CDN URL.
+
+**Status:** inventory and production-boundary decision are **VERIFIED** from repository source + official documentation. No CDN URL, dependency, build workflow or generated CSS was changed in this review. Exact SRI hashes have not been obtained; do not add guessed hashes. Remaining work: establish a reproducible static CSS build, compare generated CSS against current rendered pages and all responsive states, then self-host/version marked and DOMPurify or verify exact-byte SRI with Chromium regression coverage.

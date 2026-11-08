@@ -40,8 +40,9 @@
 - [ ] Длинные названия проектов/чатов, пустые списки, большое количество проектов/чатов, keyboard navigation и mobile scroll.
 
 ### Research / functions / agents
-- [x] Owner override 2026-11-07: Research Studio retired entirely; supersedes the older PR #121 active-chat helper scope. PR #169 removes the modal, UI wiring and entrypoints; exact-head CI and live absence check pending.
-- [~] Functions menu: the previous three-item menu was not owner-approved and is removed by PR #169. Replacement deferred until an explicit owner-approved capability inventory exists; do not restore placeholders or a fake marketplace.
+- [x] Owner override 2026-11-08 (D-022): Research Studio remains retired; PR #169 removed the modal, wiring and entrypoints. Post-merge public root/landing Chromium verified the absence on exact main SHA.
+- [x] Functions menu: owner-approved three-entry subset (Agents/structured analysis, Deep Research, Skills/task profile) was restored and implemented in PR #169; public Chromium confirmed it. This supersedes the 2026-11-07 blanket removal/defer instruction. Integrations/connectors remain absent until real registry/status/permission contracts exist.
+- [ ] Release-contract sentinel correction: PR #174 changes the published marker list to require the approved menu and forbid only retired Research Studio, legacy provider selection and removed sidebar controls.
 - [ ] Развести семантику web search breadth, offline mode и multi-agent orchestration в copy и UI.
 - [ ] В roadmap/agent panels сохранять чёткое различие между blueprint, sequential pipeline и независимым agent runtime.
 

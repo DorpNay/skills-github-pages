@@ -240,10 +240,10 @@ jobs:
           test "$canonical_sha" = "$EXPECTED_SHA"
 
           html=/tmp/alandi-canonical.html
-          for required in 'id="aserviSettingsGroup"' 'data-i18n="thirdPartySettingsTitle"' 'id="additionalSettings"' 'id="uiLanguage"' 'id="memoryStatusLine"' 'id="projectRecoveryBackupButton"' 'class="hidden composer-stop'; do
+          for required in 'id="aserviSettingsGroup"' 'data-i18n="thirdPartySettingsTitle"' 'id="additionalSettings"' 'id="uiLanguage"' 'id="memoryStatusLine"' 'id="projectRecoveryBackupButton"' 'class="hidden composer-stop' 'id="functionsMenu"' 'data-action="open-function-panel" data-function="agents"' 'data-action="open-function-panel" data-function="research"' 'data-action="open-function-panel" data-function="skills"'; do
             grep -Fq "$required" "$html" || { echo "Missing published UI contract marker: $required"; exit 1; }
           done
-          for forbidden in 'id="functionsMenu"' 'data-action="open-research-studio"' '<option value="alandi"' 'id="sidebarPreferences"' 'id="sidebarThemeToggle"'; do
+          for forbidden in 'data-action="open-research-studio"' '<option value="alandi"' 'id="sidebarPreferences"' 'id="sidebarThemeToggle"'; do
             if grep -Fq "$forbidden" "$html"; then
               echo "Forbidden published UI element is still present: $forbidden"
               exit 1

@@ -149,7 +149,7 @@ The following items cover the initial fixation document plus manifesto sections 
 - [x] Memory bridge merge state and all available workflow results reconciled. No live gateway/VPS, real provider smoke or target-hardware result is claimed.
 
 ### P1 — required next implementation slices
-- [ ] Add automated two-project isolation, deletion propagation, global opt-in and export/import tests against the backend memory graph.
+- [x] RETIRED BY OWNER 2026-11-07: backend server-memory graph and browser bridge removed in PR #169. Its two-project graph isolation/deletion/global-opt-in test scope is obsolete; preserve independent browser-local memory and RAG scope tests.
 - [ ] Add a formal safety-first prompt composer (safety/workspace/project/profile/user), with prompt-injection regression tests.
 - [ ] Add a privacy-only/local-only routing policy that blocks remote APIs and makes refusal explicit.
 - [ ] Add route/router error tests for Grok/xAI, Kilo keyless route, 401/403/429/5xx, CORS failures, abort and malformed bodies.

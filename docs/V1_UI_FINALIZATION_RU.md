@@ -38,7 +38,7 @@ PR #122 добавил только эксплуатационную надёж�
 
 ## 1. Требования владельца — 18 контрольных направлений
 
-Статусы: **[x]** подтверждено кодом/тестом; **[~]** частично или ждёт exact-head/ручной проверки; **[ ]** не реализовано; **[!]** найден блокер/регрессия. Статусы ниже актуализированы после merge PR #121. Exact-head CI прошёл; post-merge Pages deployment, нативный iPhone и live Gateway остаются отдельными проверками.
+Статусы: **[x]** подтверждено кодом/тестом; **[~]** частично или ждёт exact-head/ручной проверки; **[ ]** не реализовано; **[!]** найден блокер/регрессия. Статусы ниже уточнены owner overrides и live main после PR #173. Pages deployment и публичные root + /landing/ exact-SHA Chromium checks подтверждены; release-contract sentinel содержит известный false-negative и исправляется отдельно. Нативный iPhone и live Gateway остаются отдельными проверками.
 
 ### 1. Общий UI/UX — [~]
 - [x] Сохранить индивидуальный визуальный язык aLandi и не переписывать интерфейс на новый framework.
@@ -150,22 +150,22 @@ PR #122 добавил только эксплуатационную надёж�
 ### 15. Search & Research Studio — [DEPRECATED / REMOVED BY OWNER 2026-11-07]
 - Историческая реализация PR #121 больше не является частью утверждённого интерфейса.
 - Владелец явно подтвердил удаление Research Studio: не должно быть пункта меню, кнопки, модального окна, JS entrypoint или повторного добавления под другим названием.
-- Проверка удаления включена в PR #169 E2E и live-site release contract; до merge это IMPLEMENTED IN BRANCH, не VERIFIED LIVE.
+- Удаление подтверждено после PR #169 merge и post-merge public Chromium на exact main SHA; отдельный release-contract sentinel теперь должен запрещать только возврат Research Studio, не утверждённое Functions menu.
 
-### 16. Task profiles / skills — [DEFERRED: UI NOT OWNER-APPROVED]
-- Исторические внутренние настройки и тесты не дают разрешения выводить их в отдельное пользовательское меню.
+### 16. Task profiles / skills — [~: OWNER-APPROVED MENU ENTRYPOINT IMPLEMENTED]
+- Owner override D-022 разрешил entrypoint Skills/task profile в Functions menu; PR #169 реализовал и post-merge Chromium подтвердил entrypoint. Полная Skill Factory/Agent Builder остаётся deferred/research.
 - **Owner override 2026-11-08:** restore a concise, truthful Functions menu with only three explicitly requested entries: structured analysis (existing four-stage same-model pipeline), Deep Research (shortcut to Thorough mode; web scope remains independently selectable), and task profile/Skills (instruction profile only; no tool/data permissions). Do not show Integrations or a connector marketplace until real connectors are registered and permission/status contracts exist. This supersedes the 2026-11-07 blanket removal instruction.
 - Существующий внутренний код может оставаться скрытым, пока не затрагивает обычный пользовательский поток; новые UI entrypoints и маркетинговые обещания запрещены до явного одобрения.
 
-### 17. Agents / team blueprint — [DEFERRED: NO VISIBLE MENU]
-- Любые agent/team/connector controls остаются вне пользовательской навигации до отдельного owner-approved scope.
+### 17. Agents / team blueprint — [~: OWNER-APPROVED ENTRYPOINT IMPLEMENTED; WORKER RUNTIME DEFERRED]
+- Owner override D-022 разрешил Agents/structured analysis entrypoint; PR #169 реализовал и post-merge Chromium подтвердил entrypoint. Независимые workers/team runtime остаются deferred.
 - Keep only owner-approved Functions entries: Agents/structured analysis, Deep Research (sets Thorough), and Skills/task profile. Integrations remain absent. Do not present the team-size blueprint as a runtime independent-agent team.
 - Независимые роли, scheduler, policy engine, sandbox, approval и durable recovery не входят в текущую поставку.
 
 ### 18. Финальный release gate — [~]
 - [x] Основной код имеет Quality sentinels, Jekyll, Chromium E2E, published-site smoke и отдельные gateway/provenance workflows.
 - [~] PR #121 был красным: duplicate settings close selectors, invalid regex in integrity sentinel и один неверный assertion around settings probe. Исправления внесены; повторный exact-head CI нужен.
-- [ ] Проверить точный merge SHA, post-merge Pages deploy, опубликованный лендинг и приложение.
+- [x] PR #173 merge SHA `bf039f887e29137b627b06fc2bb107c2793d6b69`, Pages #42410162803 и публичные root + /landing/ exact-SHA Chromium checks подтверждены. [ ] Исправить stale release-contract sentinel в PR #174 и повторно проверить после merge.
 - [ ] Выполнить native iPhone Safari/keyboard/touch test вручную.
 - [ ] Пересверить PR/Issues. Issue #111 остаётся открытым до реальных owner-only gates (ruleset/main governance, VPS, hardware/model, voice/device, licensed data corpus); не закрывать только ради нулевой очереди.
 
@@ -287,6 +287,8 @@ PR #122 добавил только эксплуатационную надёж�
 - Добавить самостоятельную категорию «Без проекта» — это не проект. Она располагается первой, перед проектами, и раскрывается/сворачивается по аналогичным правилам.
 - Чаты, принадлежащие проектам, не показывать в общем списке. При выборе проекта в блоке «Чаты» показывать только чаты этого проекта; «Новый чат» в этом режиме создаёт чат внутри выбранного проекта.
 - Добавить стрелку «Назад» для возврата к общему режиму чатов, где доступны чаты без проекта и создание нового чата без проекта.
+
+**Code reconciliation 2026-11-08:** current main still renders project chats as nested rows inside each project accordion, while the main `#chatList` shows only unassigned chats. This does **not** yet implement the requested selected-project chat-list view or its explicit «Назад» action. Keep this requirement OPEN under `UX-040`; selecting a project must change the navigation/list view only and must not silently reassign or mutate the currently active chat.
 - Соблюдать иерархию размеров: отдельный чат меньше блока «Чаты», отдельный проект меньше блока «Проекты»; не расходовать лишнюю ширину и не оставлять пустое пространство.
 
 ### 8.2 Типографика, шапка и главная поверхность
@@ -358,6 +360,8 @@ PR #122 добавил только эксплуатационную надёж�
 - Исключить конфликты нескольких окон, дублирующиеся backdrop и зависшие состояния.
 - Проверить мобильные viewport и повторные циклы открытия/закрытия.
 - Критерий приёмки: после штатного закрытия интерфейс сразу полностью интерактивен и не затемнён.
+
+**Implementation follow-up (PR #174, exact-head verification pending):** settings and Functions panels now close when the user clicks the backdrop; closing the Functions panel restores focus to its menu trigger. Dedicated Chromium coverage checks both dismissals and verifies that no overlay remains.
 
 ### 8.10 Единая система размеров интерактивных элементов
 
@@ -485,11 +489,11 @@ PR #122 добавил только эксплуатационную надёж�
 Этот блок уточняет исторические пункты выше и является актуальным приоритетом при конфликте формулировок:
 
 - **Research Studio:** полностью удалён из интерфейса и клиентского JS; не возвращать.
-- **Functions menu (owner override 2026-11-08):** the menu is restored with Agents/structured analysis, Deep Research (Thorough-mode shortcut) and Skills/task profile. Integrations/connectors remain absent until a real registry and permissions exist. Research Studio itself remains retired.
+- **Functions menu (owner override 2026-11-08):** the menu contains exactly three concise visible entries — **Agents**, **Research**, **Skills** — with one-line explanations: Agents is the existing four-stage same-model structured workflow; Research opens the Deep Research configuration/navigation panel (Thorough effort remains independent from web-search breadth); Skills configures a chat-scoped instruction profile only. Integrations/connectors remain absent until a real registry and permissions exist. Research Studio itself remains retired.
 - **aServi/provider separation:** aServi — собственный режим, не внешний провайдер. Внешний selector и fallback не включают aServi. Переключение между режимами только вручную.
 - **Sidebar:** единственный порядок — память → проекты → чаты; память компактная и закрыта по умолчанию, проекты закрыты по умолчанию при видимой кнопке создания, чаты открыты по умолчанию. Настройки проекта — только шестерёнка конкретного проекта; дублирующий theme footer удалён.
 - **Controls:** theme + language в header; 44px touch targets; stop-generation action сохраняется, но не оформляется красной заливкой.
-- **Release:** статус UI changes — IMPLEMENTED IN PR #169 only until exact-head checks pass, merge is authorized by this explicit publication request, and the post-merge Pages deployment plus live-site contract smoke verify the exact merge SHA and UI markers.
+- **Release:** статус UI changes — IMPLEMENTED IN PR #169 merged at `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2`; PR #173 merged at `bf039f887e29137b627b06fc2bb107c2793d6b69`. Pages deploy #42410162803 and public root/landing exact-SHA Chromium checks passed. The remaining release-contract failure is a stale CI assertion that forbids the owner-approved Functions menu; correct the sentinel, do not remove the menu.
 
 
 

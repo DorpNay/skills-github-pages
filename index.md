@@ -391,6 +391,17 @@ permalink: /
     /* UI §8.17: user-controlled message typography; semantic colors stay theme-aware. */
     .chat-bubble, .assistant-content, .message-viewer-content { font-size:var(--reading-font-size,15px)!important; line-height:var(--reading-line-height,1.6)!important; }
     .chat-bubble :where(p,li,blockquote,td,th), .assistant-content :where(p,li,blockquote,td,th), .message-viewer-content :where(p,li,blockquote,td,th) { font-size:inherit!important; line-height:inherit!important; }
+    /* 320px mobile polish: keep the full header reachable and don't render idle Stop. */
+    @media (max-width:360px) {
+      .app-header { gap:2px!important;padding-inline:4px!important; }
+      .app-header .clock-face { width:36px!important;height:36px!important; }
+      .app-header .brand-wordmark { font-size:14px!important; }
+      .app-header .header-preferences { gap:1px!important; }
+      .app-header .header-chat-title { min-width:0;padding:2px 4px!important; }
+    }
+    @media (max-width:640px) {
+      #inputArea #stopBtn.hidden { display:none!important; }
+    }
   </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
@@ -612,9 +623,9 @@ permalink: /
       <details id="functionsMenu" class="toolbar-menu flex-1 min-w-0">
         <summary id="functionsMenuSummary" class="toolbar-menu-summary" data-i18n="functionsMenuLabel">Функции ▾</summary>
         <div class="toolbar-menu-panel toolbar-menu-panel-right">
-          <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option" data-i18n="functionAgents">🧭 Структурированный разбор</button>
-          <button type="button" data-action="open-function-panel" data-function="research" class="toolbar-menu-option" data-i18n="functionDeepResearch">🔬 Глубокое исследование</button>
-          <button type="button" data-action="open-function-panel" data-function="skills" class="toolbar-menu-option" data-i18n="functionSkills">🧩 Профиль задачи</button>
+          <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option"><strong data-i18n="functionAgents">🧭 Агенты</strong><small data-i18n="functionAgentsHelp">Структурированный разбор · 4 этапа на одной модели</small></button>
+          <button type="button" data-action="open-function-panel" data-function="research" class="toolbar-menu-option"><strong data-i18n="functionDeepResearch">🔬 Исследования</strong><small data-i18n="functionResearchHelp">Deep Research · тщательность и веб-поиск отдельно</small></button>
+          <button type="button" data-action="open-function-panel" data-function="skills" class="toolbar-menu-option"><strong data-i18n="functionSkills">🧩 Скиллы</strong><small data-i18n="functionSkillsHelp">Профиль задачи · инструкции только для этого чата</small></button>
         </div>
       </details>
     </div>
@@ -697,7 +708,7 @@ permalink: /
     <section class="w-full max-w-lg max-h-[88dvh] overflow-y-auto rounded-2xl border border-gray-700 bg-gray-950 p-4 sm:p-5 shadow-2xl space-y-4">
       <header class="flex items-start justify-between gap-3">
         <div class="min-w-0"><h2 id="functionPanelTitle" class="font-bold text-base">Функции</h2><p id="functionPanelDescription" class="mt-1 text-xs leading-relaxed text-gray-400"></p></div>
-        <button type="button" data-action="close-function-panel" class="shrink-0 rounded-lg px-2 py-1 text-gray-400 hover:text-white" aria-label="Закрыть">✕</button>
+        <button type="button" data-action="close-function-panel" class="shrink-0 rounded-lg px-2 py-1 text-gray-400 hover:text-white" data-i18n-aria-label="functionPanelClose" aria-label="Закрыть">✕</button>
       </header>
       <section id="researchFunctionSettings" class="hidden space-y-3">
         <div class="rounded-xl border border-gray-800 bg-gray-900/50 p-3">
@@ -1426,7 +1437,7 @@ permalink: /
         workflowDirectShort:'Прямой',workflowStructuredShort:'Конвейер',workflowDirectHelp:'Прямой способ выполнения: модель использует доступные инструменты в пределах выбранного бюджета.',workflowStructuredHelp:'Для подходящих сложных запросов запускает планировщик → исследователь → критик → синтезатор на выбранной модели. Быстро/Тщательно задаёт бюджет инструментов внутри исследовательского этапа.',
         skillAutoShort:'Авто',skillPlanningShort:'План',skillResearchShort:'Исслед.',skillCodeReviewShort:'Код',skillDataAnalysisShort:'Данные',skillAgentSystemsShort:'Агентные',skillMultimodalShort:'Мультимод.',taskProfileHelp:'Профиль меняет только инструкции и не включает инструменты или доступ к данным.',
         aserviGroupTitle:'aLandi aServi',thirdPartySettingsTitle:'Сторонние провайдеры',
-        functionsMenuLabel:'Функции ▾',functionAgents:'🧭 Структурированный разбор',functionDeepResearch:'🔬 Глубокое исследование',functionSkills:'🧩 Профиль задачи',functionConnectors:'🔌 Интеграции',functionPanelClose:'Закрыть',
+        functionsMenuLabel:'Функции ▾',functionAgents:'🧭 Агенты',functionAgentsHelp:'Структурированный разбор · 4 этапа на одной модели',functionDeepResearch:'🔬 Исследования',functionResearchHelp:'Deep Research · тщательность и веб-поиск отдельно',functionSkills:'🧩 Скиллы',functionSkillsHelp:'Профиль задачи · инструкции только для этого чата',functionConnectors:'🔌 Интеграции',functionPanelClose:'Закрыть',
         functionAgentsTitle:'Структурированный разбор',functionAgentsDescription:'Для подходящих сложных задач aLandi использует четыре этапа: планирование, исследование, критика и синтез. Все этапы работают на выбранной модели; режим Быстро/Тщательно задаёт бюджет инструментов в исследовательском этапе. Это не независимая команда агентов.',functionDeepResearchTitle:'Глубокое исследование',functionDeepResearchDescription:'Панель показывает текущие режимы тщательного запроса. Отдельный автономный Research Studio не используется.',
         researchModeStatusLabel:'Режим обработки',researchModeStatusHelp:'Быстро ограничивает прямой запрос одним раундом и одним вызовом инструмента; Тщательно — до 4 раундов, 3 вызовов за раунд и 8 за запуск. В структурированном pipeline лимит относится к этапу исследования.',researchUseThorough:'Включить режим «Тщательно»',
         researchSearchStatusLabel:'Веб-поиск',researchSearchStatusHelp:'Охват результатов задаётся отдельно в меню Веб: обычный, расширенный или выключен. Он не увеличивает число раундов.',researchOpenSearchSettings:'Настроить охват веб-поиска',
@@ -1452,7 +1463,7 @@ permalink: /
         workflowDirectShort:'Direct',workflowStructuredShort:'Pipeline',workflowDirectHelp:'Direct execution: the model can still use available tools within the selected effort budget.',workflowStructuredHelp:'Eligible complex requests use the planner → researcher → critic → synthesizer pipeline on the selected model. Quick/Thorough controls the tool budget within the research stage.',
         skillAutoShort:'Auto',skillPlanningShort:'Plan',skillResearchShort:'Research',skillCodeReviewShort:'Code',skillDataAnalysisShort:'Data',skillAgentSystemsShort:'Agents',skillMultimodalShort:'Multimodal',taskProfileHelp:'A task profile changes instructions only; it does not enable tools or data access.',
         aserviGroupTitle:'aLandi aServi',thirdPartySettingsTitle:'Third-party providers',
-        functionsMenuLabel:'Functions ▾',functionAgents:'🧭 Structured analysis',functionDeepResearch:'🔬 Deep research',functionSkills:'🧩 Task profile',functionConnectors:'🔌 Integrations',functionPanelClose:'Close',
+        functionsMenuLabel:'Functions ▾',functionAgents:'🧭 Agents',functionAgentsHelp:'Structured analysis · four stages, one model',functionDeepResearch:'🔬 Research',functionResearchHelp:'Deep Research · effort and web search stay separate',functionSkills:'🧩 Skills',functionSkillsHelp:'Task profile · instructions for this chat only',functionConnectors:'🔌 Integrations',functionPanelClose:'Close',
         functionAgentsTitle:'Structured workflow',functionAgentsDescription:'For suitable complex tasks, aLandi uses four stages: planning, research, critique and synthesis. All stages use the selected model; Quick/Thorough controls the tool budget in the research stage. This is not an independent team of agents.',functionDeepResearchTitle:'Deep research',functionDeepResearchDescription:'This panel shows the current Thorough request settings. A separate autonomous Research Studio is not used.',
         researchModeStatusLabel:'Processing effort',researchModeStatusHelp:'Quick limits a direct request to one round and one tool call; Thorough allows up to 4 rounds, 3 calls per round and 8 calls per run. In the structured pipeline, the budget applies to the research stage.',researchUseThorough:'Enable Thorough mode',
         researchSearchStatusLabel:'Web search',researchSearchStatusHelp:'Result breadth is configured separately in the Web menu: standard, expanded or off. It does not increase the number of rounds.',researchOpenSearchSettings:'Configure web search breadth',
@@ -3558,6 +3569,7 @@ permalink: /
       if (kind === 'research') renderResearchConfiguration();
       if (kind === 'skills') renderSkillConfiguration();
       $('functionPanelModal').classList.remove('hidden');
+      $('functionPanelModal').querySelector('[data-action="close-function-panel"]')?.focus();
     }
     function closeFunctionPanel() {
       $('functionPanelModal').classList.add('hidden');
@@ -5512,11 +5524,28 @@ permalink: /
     });
     $('chatActionForm').addEventListener('submit',event=>{event.preventDefault();saveChatActionDialog();});
     $('chatActionModal').addEventListener('click',event=>{if(event.target===$('chatActionModal'))closeChatActionDialog();});
+    $('settingsModal').addEventListener('click', event => { if (event.target === $('settingsModal')) toggleSettings(false); });
+    $('functionPanelModal').addEventListener('click', event => { if (event.target === $('functionPanelModal')) closeFunctionPanel(); });
     document.addEventListener('keydown', (event) => {
+      const functionModal = $('functionPanelModal');
+      if (event.key === 'Tab' && functionModal && !functionModal.classList.contains('hidden')) {
+        const focusable = Array.from(functionModal.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'))
+          .filter(element => element.getClientRects().length > 0 && getComputedStyle(element).visibility !== 'hidden');
+        const first = focusable[0], last = focusable[focusable.length - 1];
+        if (first && last) {
+          if (event.shiftKey && (document.activeElement === first || !functionModal.contains(document.activeElement))) {
+            event.preventDefault(); last.focus();
+          } else if (!event.shiftKey && (document.activeElement === last || !functionModal.contains(document.activeElement))) {
+            event.preventDefault(); first.focus();
+          }
+        }
+      }
       if (event.key === 'Escape') {
         if (!$('chatActionModal').classList.contains('hidden')) closeChatActionDialog();
         else if (!$('traceModal').classList.contains('hidden')) closeTrace();
         else if (!$('projectSettingsModal').classList.contains('hidden')) closeProjectSettings();
+        else if (!$('functionPanelModal').classList.contains('hidden')) closeFunctionPanel();
+        else if ($('functionsMenu')?.open) { $('functionsMenu').open = false; $('functionsMenuSummary')?.focus(); }
         else if (!$('settingsModal').classList.contains('hidden')) toggleSettings(false);
         else if (!$('sidebar').classList.contains('-translate-x-full')) toggleSidebar(false);
       }

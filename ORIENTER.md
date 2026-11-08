@@ -2,25 +2,29 @@
 
 **Live GitHub is mutable truth.** Re-fetch main, PR queue, exact HEAD/checks and deployment before acting.
 
-## Verified baseline
-- **Current main SHA:** `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2`.
-- PR #169 merged by squash; GitHub Pages build/deploy #42408492764 SUCCESS on exact SHA, artifact #13588178210 SHA-256 `cf02ff975f0813ee37cfa0a5aa8de7d562852500a964da85c1a387f5fa539748`.
-- Main Freshness #42408493553 PASS; Gateway #42408493562 PASS (Python 3.12/13/14); Graphify #42408493571 PASS; Provenance #42408493536 PASS.
-- Main Quality #42408500881 FAIL: 111 passed / 2 failed. The failures are stale E2E expectations around mutually exclusive settings and aServi connection-probe count; public root/landing exact-SHA smoke was skipped.
+## Verified baseline — 2026-11-08
 
-## Active bounded PR
-- **PR #173** · `fix/aservi-connect-probe-e2e-20261108` · base `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2` · code/test HEAD `b614954ada5f86f8221a270ecd3d251283aa0642`.
-- Fixes: opening Additional Settings closes Legacy Provider Settings; explicit aServi connection cancels pending scheduled probe; E2E expects one connect probe + one user completion.
-- Exact code/test Quality #42408845013 PASS (113/113 Chromium; published baseline smoke PASS, main-release contract skipped on PR), Graphify #42408844985 PASS. Canonical state/task-register sync is included in this PR; Freshness #42409451004 unit tests passed 19/19 but failed because current_checkpoint.verified_main remained c4f23e0 while snapshot main SHA is 72bcd; aligned now, exact final-head Freshness/Quality recheck pending.
-- **Open PR queue:** #173. Issue #111 remains owner-controlled. PRs #125/#131/#152/#154/#155/#168/#171/#172 are closed non-merged; preserve remaining goals and research in the canonical registry.
-- **Not merged / not fully live-verified.** Owner approval is required for PR #173; after merge, run main Quality and Pages public root + `/landing/` exact merge SHA.
+- **Current main SHA:** `bf039f887e29137b627b06fc2bb107c2793d6b69` (`fix(ui): stabilize explicit aServi connection probes (#173)`).
+- PR #173 is squash-merged. **Open PR queue:** #174 (this bounded follow-up only); no other open PRs. The only open issue is #111 (owner/environment release gates).
+- Pages deployment #42410162803 completed SUCCESS on the exact main SHA.
+- Main Quality run #42410163178: build, Context, Static Analysis, Security, Integrity and Chromium jobs passed. Chromium passed built-app tests, live root revision verification, canonical landing content verification and landing Chromium (8/8).
+- The separate **Published GitHub Pages release contract** job #128517290166 failed only because its forbidden-marker list still rejected `id="functionsMenu"`. The owner-approved menu must remain: Agents, Deep Research, Skills. This is a stale CI assertion, not a reason to remove the menu.
+- Public root and `/landing/` served the exact merge revision; published landing content and its 8 Chromium checks passed. Correct the sentinel to require the approved menu while continuing to forbid retired Research Studio/provider/sidebar elements.
+- PRs #125/#131/#152/#154/#155/#168/#171/#172 remain closed non-merged; preserve their still-open goals and selected research in the canonical registry. Issue #111 remains owner-controlled.
+- VPS/Tunnel/Ollama, target-host hardware, native iPhone Safari/VoiceOver and live provider credentials remain unverified.
+
+## Active bounded work
+
+- Branch: `fix/pages-functions-contract-and-state-20261108`, based on exact main `bf039f887e29137b627b06fc2bb107c2793d6b69`.
+- Scope: correct the published UI contract sentinel; isolate the delayed provider auto-connect probe in E2E; complete the Functions keyboard/focus trap, localized accessible name, 320px hit-target coverage and Settings/Functions backdrop dismissal; normalize all stable IDs/cross-links in both registries; audit browser asset trust boundaries and system maturity; synchronize orientation/state/checkpoint records.
+- Acceptance: Quality/Freshness/Provenance/Graphify on the exact PR head; post-merge Quality must verify exact public root + `/landing/` SHA and approved Functions menu without restoring Research Studio. Native VoiceOver/iPhone Safari remains a manual acceptance item, not a CI claim.
+- The owner explicitly instructed on 2026-11-08 to merge all currently open PRs into `main` after their final exact-head required checks pass; PR #174 is covered once green. This does not authorize wholesale merging of closed/stale/HOLD PRs or deployment.
 
 ## Canonical navigation and next steps
-- Handoff: `OLEDUE.md`; English executor contract: `AGENTS.md`; navigation index: `PROJECT_ORCHESTRATOR_RU.md`.
-- Systems inventory: `docs/ALANDI_SYSTEMS_MAP_RU.md` (18 systems); detailed code map: `docs/ALANDI_ARCHITECTURE_MAP_RU.md`.
-- One task registry: `docs/MASTER_TASK_REGISTRY_RU.md` + existing addendum. Durable step log: `docs/VOLLEY_LOG.md`. State: `docs/PROJECT_STATE.yaml` and `docs/project-state-snapshot.json`.
-- Source catalog: `INTEL.md` (310 distinct URLs / 183 GitHub repositories; not all reviewed); continue thematic 8–15-source batches and cross-cutting sweeps.
-1. Refresh exact-head Quality/Chromium, Provenance, Graphify, Gateway, Dead Code and Freshness on the final state/log commit; inspect failures, never weaken assertions.
-2. If all required checks pass, merge PR #169 with expected SHA; immediately verify main integrity/quality and Pages deployment + cache-busted root/`/landing/` on exact merge SHA.
-3. Audit #155/#154/#152/#131/#125 selectively, close each only after value/disposition is recorded; preserve issue #111 owner gates.
-4. Continue system-by-system implementation/method review and source research. Native iPhone Safari/VoiceOver, VPS/Tunnel/Ollama and hardware remain unverified.
+
+- Handoff: `OLEDUE.md`; executor contract: `AGENTS.md`; orchestrator: `PROJECT_ORCHESTRATOR_RU.md`.
+- Task order: `docs/MASTER_TASK_REGISTRY_RU.md` + append-only `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md`.
+- Systems: `docs/ALANDI_SYSTEMS_MAP_RU.md` (18 systems); detailed code map: `docs/ALANDI_ARCHITECTURE_MAP_RU.md`.
+- One release gate remains owner-controlled: issue #111 (ruleset/settings, private VPS/Tunnel/Ollama, permissioned RAG corpus, real-device voice, sandbox and deletion/OAuth evidence).
+- Continue independent read-only checklist/system/source audits while exact-head CI runs; do not let one pending job block unrelated work.
+- Preserve main-side security, cancellation, data recovery and provider isolation. Do not merge, deploy, delete branches or alter owner-only infrastructure without fresh scope-specific authorization.

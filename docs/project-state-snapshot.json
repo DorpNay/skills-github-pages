@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-08",
   "checkpoint": {
-    "main_sha": "72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2",
-    "main_commit_subject": "feat(ui): reconcile owner UI contracts and aServi routing (#169)",
+    "main_sha": "bf039f887e29137b627b06fc2bb107c2793d6b69",
+    "main_commit_subject": "fix(ui): stabilize explicit aServi connection probes (#173)",
     "main_commit_date": "2026-11-07",
-    "last_functional_checkpoint_sha": "72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2",
-    "last_functional_milestone": "PR #169 merged at main 72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2; Pages deploy #42408492764 success exact SHA; main Freshness/Gateway/Graphify/Provenance pass, Quality #42408500881 fails 2 Chromium assertions (111 passed), public root/landing exact-SHA smoke skipped. Active PR #173 code/test HEAD b614954ada5f86f8221a270ecd3d251283aa0642 fixes these; exact code/test Quality #42408845013 113/113 and Graphify #42408844985 pass. Freshness #42409451004 unit tests PASS 19/19 but failed local current_checkpoint.verified_main mismatch (c4f23e0 vs snapshot 72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2); corrected together in current state commit. Final exact-head Freshness/Quality pending; owner approval required for PR173 merge. Live open PR queue #173; issue #111.",
-    "main_quality_run": 42408500881,
-    "main_pages_deployment_run": 42408492764,
+    "last_functional_checkpoint_sha": "bf039f887e29137b627b06fc2bb107c2793d6b69",
+    "last_functional_milestone": "PR #173 merged at main bf039f887e29137b627b06fc2bb107c2793d6b69. Pages deployment #42410162803 SUCCESS exact SHA. Quality #42410163178: built-app Chromium, live root revision, canonical landing content and landing Chromium 8/8 PASS; published release-contract job #128517290166 FAILS only because stale forbidden marker rejects owner-approved functionsMenu. Follow-up branch fix/pages-functions-contract-and-state-20261108 corrects the CI assertion; no open PRs, issue #111 remains owner-controlled.",
+    "main_quality_run": 42410163178,
+    "main_pages_deployment_run": 42410162803,
     "functional_parent_gateway_run": null,
     "functional_parent_quality_run": null,
     "functional_parent_graphify_run": null,
@@ -162,12 +162,18 @@
         "merge_sha": "72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2",
         "head_sha": "eee32bc0dcd0f61fe7e1345c1738685d1ddf7db6",
         "checks": "PR exact-head Quality #42408172737 (113/113 Chromium), Gateway #42408172642, Freshness #42408172618, Graphify #42408172706, Provenance #42408172620 and Dead Code #42408172653 all passed. Post-merge Pages deployment #42408492764 passed; main Quality #42408500881 subsequently failed 2 Chromium assertions, so public root/landing exact-SHA smoke was skipped."
+      },
+      {
+        "number": 173,
+        "merge_sha": "bf039f887e29137b627b06fc2bb107c2793d6b69",
+        "head_sha": "14a5941b064e9a093557f8ddaefcbdb34fecca6e",
+        "checks": "Pre-merge exact PR Quality #42409661645 PASS (113/113 Chromium), Freshness #42409661506 PASS, Graphify #42409661481 PASS, Provenance #42409661536 PASS. Post-merge Pages #42410162803 SUCCESS. Post-merge Quality #42410163178 Chromium + public root/landing PASS; release-contract job #128517290166 false-negative due stale functionsMenu prohibition."
       }
     ],
     "main_provenance_run": null,
     "main_freshness_run": null,
     "main_graphify_run": 42372746441,
-    "owner_task": "PR #169 merged at main 72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2. Main Quality #42408500881 has 2 E2E failures (111 passed); follow-up PR #173 code/test HEAD b614954ada5f86f8221a270ecd3d251283aa0642 fixes them and exact code/test Quality #42408845013 + Graphify #42408844985 pass. State sync is being added to PR #173; final exact-head checks pending. Owner approval required to merge #173. Issue #111 remains owner-controlled.",
+    "owner_task": "PR #174 repairs the published Functions menu contract; Voice source crosswalk is complete (VOICE2 aliases mapped, VOICE-TRACK-010/VOICE-011…018 and AUDIO-GEN-001…009 atomized); repeated LAUNCH release/device references cross-linked. Main registry: 599 stable rows; addendum: 128 stable rows; both unique and share only REGISTRY-002. Remaining: V1/LAUNCH description-level crosswalk, MENU-008 native VoiceOver, FIX-008 static Tailwind/vendor hardening, GATE-001 fine-grained capability evidence. Issue #111 remains owner/environment gated; 62 direct action refs are pinned, 14 nested upstream refs remain mutable.",
     "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
     "pr131_exact_head_verified": false,
     "pr131_compare": "Large Draft V2 workbench, stale/diverged and mergeable_state dirty; selective reconciliation only.",
@@ -200,8 +206,8 @@
     "first_v1_candidate_checks": "PR #139 exact HEAD d76be1d59ed832fa638e419b542151dba277c143 passed Quality #41966180071, Freshness #41966180096, Provenance #41966180157 and Graphify #41966180042. Squash merged at main SHA 2e11849d409a51009693af95ac3ecbf1f057a3fc; post-merge main Quality #41967234442, Pages #41967233832, Freshness #41967234558, Provenance #41967234535, Graphify #41967234708 all PASS. Production CSS and landing HTML fetched.",
     "first_v1_candidate_css_delivery_assertion": "HTTP 200 and text/css",
     "original_v1_baseline_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
-    "main_quality_status": "PASS on exact main d83eea8: Quality #42349853526 completed all 7 jobs, including Jekyll, Security, Integrity, Context, static analysis, Real Chromium browser regression, published-site smoke and deployed-main-client-version guard.",
-    "main_pages_status": "SUCCESS on exact main d83eea8: Pages deployment #42349853247 and cache-busting public root verified AI Mobile Agent v10.0.",
+    "main_quality_status": "PARTIAL: Chromium and published root/landing pass; release-contract false-negative due obsolete functionsMenu prohibition.",
+    "main_pages_status": "SUCCESS on exact main SHA bf039f887e29137b627b06fc2bb107c2793d6b69.",
     "main_freshness_status": "Main Freshness #42349250485 failed before PR #159 state refresh due checkpoint/queue drift; exact-head Freshness #42350354469 passed on the earlier PR159 checkpoint d6472e1, but the branch has since updated main Quality status and ORIENTER markers, so rerun Freshness on current exact PR HEAD.",
     "main_provenance_status": "PASS run #42349250512 on functional parent f6f3896; no artifact/dependency changes in PR #157/#158.",
     "main_graphify_status": "PR #149 exact-head Graphify #42001311323 PASS; post-merge main Graphify run not retrieved.",
@@ -226,27 +232,16 @@
     "pr158_compare": "Merged at d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c; exact-head Quality #42349540173 passed; exact-main root title Quality #42349853526 remains in progress.",
     "pr166_head": "683ec28310a68dc0126a715a04f3ddc613e817b6",
     "pr166_compare": "Merged PR #166 at main SHA c4f23e03f563d03213eb87002863da630fc8b833; §8.17 message readability controls are included in published root app. Exact-head Quality #42368514164 and Graphify #42368514210 passed; post-merge main Quality #42372746360 and Pages #42372745873 passed.",
-    "active_ui_pr": {
-      "number": 169,
-      "base_sha": "c4f23e03f563d03213eb87002863da630fc8b833",
-      "head_sha": "16196423d9d308bf057dc65df89a3cbfd93f26f1",
-      "status": "open; final doc/state head 161964 exact checks queued/in progress; code/test head 08a73a Quality Chromium in progress",
-      "owner_scope": [
-        "aServi is first-party; provider routes mutually exclusive; no silent cross-provider fallback",
-        "Functions menu: Agents/structured analysis, Deep Research via Thorough, Skills/task profile; no placeholder connectors",
-        "Research Studio retired; Functions modal blur and clean-close lifecycle",
-        "system map, concise English executor contract, source-backed orchestration method, durable Volley checkpoints"
-      ]
-    },
-    "open_prs": "0 live open PRs excluding current PR #173; current live queue is only #173",
+    "active_ui_pr": 174,
+    "open_prs": "1 live open PR #174; current PR excluded from freshness snapshot; no other open PRs.",
     "open_prs_at_checkpoint": 0,
-    "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-017"
+    "last_volley": "V-2026-11-08-REGISTRY-VOICE-LAUNCH-CROSSWALK-005"
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
     "live_vps_gateway_device_and_model_runtime_verified": false,
-    "queue_policy": "Exact IDs; snapshot expected queue [] after excluding current checked PR #173 from live open queue [173]. PR #169 is merged; closed non-merged #125/#131/#152/#154/#155/#168/#171/#172 retain remaining task scopes in the canonical registry.",
-    "pr_check_policy": "exclude only the PR currently running this check; document the active PR separately in human-readable orientation files"
+    "queue_policy": "Live open PR #174 is the current bounded follow-up and is excluded from the expected queue snapshot; no other open PRs. Issue #111 remains owner-controlled. Closed non-merged #125/#131/#152/#154/#155/#168/#171/#172 retain task scope.",
+    "pr_check_policy": "Current PR #174 is the bounded follow-up and is intentionally excluded from the expected main-checkpoint queue snapshot; live queue is one PR (#174), with no other open PRs."
   },
-  "last_volley": "V-2026-11-08-OWNER-ORCHESTRATION-017"
+  "last_volley": "V-2026-11-08-REGISTRY-VOICE-LAUNCH-CROSSWALK-005"
 }

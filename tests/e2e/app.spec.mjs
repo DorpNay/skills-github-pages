@@ -1508,6 +1508,14 @@ test('expanded web search does not expand the quick execution budget', async ({ 
   let tavilyMaxResults = 0;
   await page.route('https://api.example.test/v1/chat/completions', async route => {
     const body = route.request().postDataJSON();
+    // configureCustomProvider() fills the key field, which intentionally schedules a
+    // delayed connection probe. Keep that probe out of the conversation-round assertions.
+    if (body.messages?.some(message => message.role === 'user' && message.content === 'Reply with exactly OK. No other words.')) {
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+        model: 'effort-search-model',
+        choices: [{ message: { role: 'assistant', content: 'OK' } }]
+      }) });
+    }
     modelCalls++;
     toolAvailability.push(Array.isArray(body.tools) && body.tools.length > 0);
     if (modelCalls === 1) {
@@ -2548,17 +2556,70 @@ test('Functions menu exposes truthful Agents, Deep Research and Skills panels wi
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const menu = page.locator('#functionsMenu');
+  const summary = page.locator('#functionsMenuSummary');
   await expect(menu).toBeVisible();
-  await page.locator('#functionsMenuSummary').click();
+  // This is a native details/summary disclosure, not an ARIA menu widget.
+  await expect(summary).toHaveAccessibleName(/Функции/);
+  await summary.focus();
+  await page.keyboard.press('Enter');
+  await expect(menu).toHaveAttribute('open', '');
   await expect(menu.locator('.toolbar-menu-option')).toHaveCount(3);
   await expect(menu.locator('[data-function="agents"]')).toBeVisible();
+  await expect(menu.locator('[data-function="agents"]')).toContainText('Агенты');
+  await expect(menu.locator('[data-function="agents"]')).toContainText('4 этапа на одной модели');
   await expect(menu.locator('[data-function="research"]')).toBeVisible();
+  await expect(menu.locator('[data-function="research"]')).toContainText('Исследования');
+  await expect(menu.locator('[data-function="research"]')).toContainText('веб-поиск отдельно');
   await expect(menu.locator('[data-function="skills"]')).toBeVisible();
+  await expect(menu.locator('[data-function="skills"]')).toContainText('Скиллы');
+  await expect(menu.locator('[data-function="skills"]')).toContainText('только для этого чата');
   await expect(page.locator('[data-action="open-research-studio"]')).toHaveCount(0);
   await expect(page.locator('#researchStudioModal')).toHaveCount(0);
 
-  await menu.locator('[data-function="research"]').click();
+  await page.setViewportSize({ width: 320, height: 740 });
+  for (const option of await menu.locator('.toolbar-menu-option').all()) {
+    const box = await option.boundingBox();
+    expect(box?.height || 0, 'Functions menu option should have a 44px mobile hit target').toBeGreaterThanOrEqual(44);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  const functionsPanelBox = await menu.locator('.toolbar-menu-panel').boundingBox();
+  expect(functionsPanelBox).not.toBeNull();
+  expect(functionsPanelBox.x).toBeGreaterThanOrEqual(0);
+  expect(functionsPanelBox.x + functionsPanelBox.width).toBeLessThanOrEqual(320);
+  await expect(page.locator('#stopBtn')).toBeHidden();
+  const composerInputBox = await page.locator('#userInput').boundingBox();
+  expect(composerInputBox?.width || 0, 'Composer input should remain usable at 320px').toBeGreaterThanOrEqual(44);
+  await page.setViewportSize({ width: 390, height: 844 });
+
+  await menu.locator('[data-function="agents"]').focus();
+  await page.keyboard.press('Enter');
   const modal = page.locator('#functionPanelModal');
+  await expect(modal).toBeVisible();
+  await expect(page.locator('#agentFunctionSettings')).toBeVisible();
+  await expect(modal).toHaveRole('dialog');
+  await expect(modal).toHaveAttribute('aria-modal', 'true');
+  const closePanel = modal.locator('[data-action="close-function-panel"]').first();
+  await expect(closePanel).toHaveAccessibleName('Закрыть');
+  await expect(closePanel).toBeFocused();
+  const visibleFocusables = modal.locator('a[href]:visible, button:visible, input:visible, select:visible, textarea:visible, [tabindex]:visible');
+  const firstFocusable = visibleFocusables.first();
+  const lastFocusable = visibleFocusables.last();
+  await page.keyboard.press('Shift+Tab');
+  await expect(lastFocusable).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(firstFocusable).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(modal).toBeHidden();
+  await expect(summary).toBeFocused();
+
+  await summary.press('Enter');
+  await expect(menu).toHaveAttribute('open', '');
+  await page.keyboard.press('Escape');
+  await expect(menu).not.toHaveAttribute('open', '');
+  await expect(summary).toBeFocused();
+
+  await summary.click();
+  await menu.locator('[data-function="research"]').click();
   await expect(modal).toBeVisible();
   await expect.poll(() => modal.evaluate(element => getComputedStyle(element).backdropFilter)).toBe('blur(4px)');
   const researchPanel = page.locator('#researchFunctionSettings');
@@ -2594,6 +2655,15 @@ test('Functions menu exposes truthful Agents, Deep Research and Skills panels wi
   await expect.poll(() => modal.evaluate(element => getComputedStyle(element).backdropFilter)).toBe('blur(4px)');
   await expect(page.locator('#skillFunctionSettings')).toBeVisible();
   await modal.locator('[data-action="close-function-panel"]').first().click();
+  await expect(modal).toBeHidden();
+
+  await selectLanguage(page, 'en');
+  await expect(summary).toHaveAccessibleName(/Functions/);
+  await summary.click();
+  await expect(menu.locator('[data-function="agents"]')).toHaveAccessibleName(/Structured analysis/);
+  await menu.locator('[data-function="agents"]').click();
+  await expect(closePanel).toHaveAccessibleName('Close');
+  await closePanel.click();
   await expect(modal).toBeHidden();
 });
 
@@ -3222,4 +3292,24 @@ test('readability preferences persist and maintain semantic text contrast in bot
   expect(applied.userFontSize).toBe('20px');
   expect(applied.userLineHeight).toBe('38px');
   expect(applied.contrast).toBe('high');
+});
+
+test('settings and function panels close on backdrop click without leaving a stale overlay', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  const settings = page.locator('#settingsModal');
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  await expect(settings).toBeVisible();
+  await settings.click({ position: { x: 4, y: 4 } });
+  await expect(settings).toBeHidden();
+
+  const summary = page.locator('#functionsMenuSummary');
+  await summary.click();
+  await page.locator('#functionsMenu [data-function="agents"]').click();
+  const modal = page.locator('#functionPanelModal');
+  await expect(modal).toBeVisible();
+  await modal.click({ position: { x: 4, y: 4 } });
+  await expect(modal).toBeHidden();
+  await expect(summary).toBeFocused();
+  await expect(page.locator('#chatBox')).toBeVisible();
 });
