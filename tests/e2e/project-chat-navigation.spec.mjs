@@ -96,6 +96,12 @@ test('project selection filters the Chats pane without changing chat membership;
 
   await selectProject(page, alphaId);
   await expect(page.locator('#chatSectionTitle')).toContainText('Alpha workspace');
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(page.locator('#chatSectionTitle')).toContainText('Chats · Alpha workspace');
+  await expect(page.locator('#chatListNewButton')).toContainText('New chat in project');
+  await expect(page.locator('#chatListBack')).toContainText('All chats');
+  await page.locator('#uiLanguage').selectOption('ru');
+  await expect(page.locator('#chatSectionTitle')).toContainText('Чаты · Alpha workspace');
   await expect(page.locator('#chatList .chat-row')).toHaveCount(0);
 
   const currentBeforeFilter = (await readLocalState(page)).currentId;
