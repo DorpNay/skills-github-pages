@@ -17,7 +17,7 @@ const appPath = resolve(root, 'assets/js/app.js');
 const appSource = readFileSync(appPath, 'utf8');
 const appCss = readFileSync(resolve(root, 'assets/css/app.css'), 'utf8');
 const landingCss = readFileSync(resolve(root, 'assets/css/landing.css'), 'utf8');
-const combinedSource = [source, appSource, appCss, landingCss].join('\\n');
+const combinedSource = [source, appSource, appCss, landingCss].join('\n');
 const fail = (message) => { throw new Error(message); };
 // Keep HTML structure checks on index.md; runtime checks span the external app assets.
 const includes = (needle, message) => assert.ok(combinedSource.includes(needle), message);
@@ -259,16 +259,16 @@ const suites = {
       }
     }],
     ['external JavaScript parses without executing', () => {
-      assert.match(source, /<script[^>]+src=["'][^"']*assets\\/js\\/app\\.js["']/i, 'The app runtime must be loaded as an external asset.');
-      assert.match(source, /<link[^>]+href=["'][^"']*assets\\/css\\/app\\.css["']/i, 'The app stylesheet must be loaded as an external asset.');
-      assert.equal((source.match(/<script\\b(?![^>]*\\bsrc=)[^>]*>/gi) || []).length, 0, 'The app page must not carry an inline application script.');
+      assert.match(source, /<script[^>]+src=["'][^"']*assets\/js\/app\.js["']/i, 'The app runtime must be loaded as an external asset.');
+      assert.match(source, /<link[^>]+href=["'][^"']*assets\/css\/app\.css["']/i, 'The app stylesheet must be loaded as an external asset.');
+      assert.equal((source.match(/<script\b(?![^>]*\bsrc=)[^>]*>/gi) || []).length, 0, 'The app page must not carry an inline application script.');
       // nosemgrep: javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag -- vm.Script parses source only; it never inserts a DOM script element.
       try { new Script(appSource, { filename: 'assets/js/app.js' }); } // nosemgrep: javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag -- vm.Script parses source; it does not create a DOM script element.
       catch (error) { console.error(error.stack || String(error)); throw error; }
     }],
     ['markdown rendering has an explicit sanitizer', () => {
       includes('DOMPurify.sanitize', 'DOMPurify sanitization is required.');
-      matches(/innerHTML\s*=\s*safeMarkdown\(/, 'Rendered assistant HTML must pass through safeMarkdown.');
+      assert.match(appSource, /innerHTML\s*=\s*safeMarkdown\(/, 'Rendered assistant HTML must pass through safeMarkdown.');
     }]
   ],
   security: [
@@ -286,7 +286,7 @@ const suites = {
     ['untrusted output is not inserted as raw HTML', () => {
       includes("bubble.textContent = message.content || ''", 'User message should use textContent.');
       includes('DOMPurify.sanitize', 'DOMPurify sanitizer must remain enabled.');
-      const assignments = [...source.matchAll(/\.innerHTML\s*=\s*([^;\n]+)/g)].map((m) => m[1].trim());
+      const assignments = [...appSource.matchAll(/\.innerHTML\s*=\s*([^;\n]+)/g)].map((m) => m[1].trim());
       assert.ok(assignments.length > 0, 'Expected the one sanitized markdown rendering assignment.');
       assert.ok(assignments.every((value) => value.startsWith('safeMarkdown(')), 'Found an innerHTML assignment that bypasses safeMarkdown: ' + assignments.join(' | '));
     }],
@@ -352,11 +352,11 @@ const suites = {
       assert.ok(existsSync(builtCss), 'Jekyll build did not publish the external app stylesheet.');
       const html = readFileSync(built, 'utf8');
       const runtime = readFileSync(builtApp, 'utf8');
-      assert.match(html, /<html\\s+lang="ru">/i, 'Built page is missing the expected document.');
+      assert.match(html, /<html\s+lang="ru">/i, 'Built page is missing the expected document.');
       assert.match(html, /id="chatBox"/, 'Built page is missing the chat UI.');
-      assert.match(html, /assets\\/js\\/app\\.js/, 'Built page must reference the external runtime.');
-      assert.match(html, /assets\\/css\\/app\\.css/, 'Built page must reference the external stylesheet.');
-      assert.match(runtime, /DOMPurify\\.sanitize/, 'Built app runtime is missing the sanitization path.');
+      assert.match(html, /assets\/js\/app\.js/, 'Built page must reference the external runtime.');
+      assert.match(html, /assets\/css\/app\.css/, 'Built page must reference the external stylesheet.');
+      assert.match(runtime, /DOMPurify\.sanitize/, 'Built app runtime is missing the sanitization path.');
       assert.ok(existsSync(resolve(root, '_site/skills/research.txt')), 'Built site must publish the on-demand research skill.');
       assert.ok(existsSync(resolve(root, '_site/skills/multimodal.txt')), 'Built site must publish the on-demand multimodal skill.');
     }]
