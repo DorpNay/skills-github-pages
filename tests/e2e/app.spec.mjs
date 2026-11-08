@@ -1247,9 +1247,9 @@ test('project instructions, project memory, and project bundles stay scoped to t
   expect(JSON.stringify(alphaBundle)).not.toContain('apiKey');
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 
-  // Project settings close the sidebar. Reopen it before selecting a personal chat.
+  // Return to the personal scope before creating an intentionally unassigned chat.
   await page.locator('[data-action="toggle-sidebar"]').click();
-  // A new chat from the top-level Chats section is personal unless created inside a project group.
+  if (await page.locator('#chatScopeBackButton').isVisible()) await page.locator('#chatScopeBackButton').click();
   await page.locator('#sidebar [data-action="new-chat"]').click();
   await page.locator('[data-action="toggle-sidebar"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue('');
@@ -1342,8 +1342,9 @@ test('deleting a project removes its chats but preserves other projects and chat
 
   // Project creation closes the sidebar; reopen it to detach the current chat.
   await ensureSidebarOpen(page);
-  // Detach the current chat before creating a separate project. The original chat
-  // remains in Disposable Project and must be deleted with that project.
+  // Return to the personal scope before creating an unassigned chat.
+  // The original chat remains in Disposable Project and must be deleted with that project.
+  if (await page.locator('#chatScopeBackButton').isVisible()) await page.locator('#chatScopeBackButton').click();
   await page.locator('#sidebar [data-action="new-chat"]').click();
   await ensureSidebarOpen(page);
   // createNewChat() already creates an unassigned personal chat; the project selector
@@ -1971,7 +1972,7 @@ test('retired Server Memory experiment has no UI or request path', async ({ page
   expect(graphRequests).toHaveLength(0);
 });
 
-test('sidebar separates projects from personal chats and keeps navigation collapsible', async ({ page }) => {
+test('sidebar filters the Chats list by project without switching or moving the active chat', async ({ page }) => {
   await page.addInitScript(() => {
     const project = (id, name) => ({ id, name, description: '', instructions: '', memoryScope: 'project-only', memory: [], createdAt: '', updatedAt: '' });
     const chat = (id, title, projectId) => ({ id, title, projectId, projectMemoryEnabled: false, messages: [] });
@@ -1987,16 +1988,46 @@ test('sidebar separates projects from personal chats and keeps navigation collap
   await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(1);
   await expect(page.locator('#chatList [data-action="switch-chat"]')).toContainText('Personal chat');
   await expect(page.locator('#chatList')).not.toContainText('Alpha project chat');
+  await expect(page.locator('#chatScopeBackButton')).toBeHidden();
   await expect(page.locator('#memoryToolsDetails')).toBeVisible();
   await expect(page.locator('#memoryToolsDetails')).not.toHaveAttribute('open', '');
+  const activeChatBeforeNavigation = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
 
   await page.locator('#projectNavToggle').click();
   await expect(page.locator('#projectNavigationList')).toBeVisible();
+  const beta=page.locator('#projectNavigationList details[data-project-id="project-beta"]');
+  await beta.locator(':scope > summary').click();
+  await expect(beta.locator('[data-action="switch-chat"]')).toHaveCount(1);
+  await expect(beta.locator('[data-action="switch-chat"]')).toContainText('Beta project chat');
+  await expect(page.locator('#chatScopeLabel')).toContainText('Beta project');
+  await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(1);
+  await expect(page.locator('#chatList')).toContainText('Beta project chat');
+  await expect(page.locator('#chatList')).not.toContainText('Personal chat');
+  await expect(page.locator('#chatList')).not.toContainText('Alpha project chat');
+  await expect(page.locator('#chatScopeBackButton')).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'))).toBe(activeChatBeforeNavigation);
+  const persistedChats = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]'));
+  expect(persistedChats.find(chat => chat.id === 'chat-alpha')?.projectId).toBe('project-alpha');
+
+  await page.locator('#chatScopeBackButton').click();
+  await expect(page.locator('#chatList')).toContainText('Personal chat');
+  await expect(page.locator('#chatList')).not.toContainText('Beta project chat');
+  await expect(page.locator('#chatScopeBackButton')).toBeHidden();
+  expect(await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'))).toBe(activeChatBeforeNavigation);
+
   const alpha=page.locator('#projectNavigationList details[data-project-id="project-alpha"]');
   await alpha.locator(':scope > summary').click();
-  await expect(alpha.locator('[data-action="switch-chat"]')).toHaveCount(1);
-  await expect(alpha.locator('[data-action="switch-chat"]')).toContainText('Alpha project chat');
-  await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(1);
+  await expect(page.locator('#chatScopeLabel')).toContainText('Alpha project');
+  await expect(page.locator('#chatList')).toContainText('Alpha project chat');
+  await expect(page.locator('#chatList')).not.toContainText('Personal chat');
+  await expect(page.locator('#newChatButton')).toContainText('Новый чат в проекте');
+  await page.locator('#newChatButton').click();
+  const scopedChat = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const id = localStorage.getItem('ai_current_chat_v87');
+    return chats.find(chat => chat.id === id);
+  });
+  expect(scopedChat.projectId).toBe('project-alpha');
 });
 
 test('sidebar closes on a horizontal touch swipe without consuming vertical scrolling', async ({ page }) => {
