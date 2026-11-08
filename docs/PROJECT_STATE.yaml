@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-08"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Main 9033c6ad708a993cba5d1b27442f53651ad71c0f after PR #174 merge. Exact-main Quality #42430269155, Freshness #42430269156, Provenance #42430269144, Graphify #42430269131 and Pages #42430269181 passed; public root/landing verified. Active PR #175 is based on this main; additional live open PRs are #176–#181 (six entries excluding #175 for the Freshness snapshot). Issue #111 remains owner/environment controlled."
+    status: "Main 9033c6ad708a993cba5d1b27442f53651ad71c0f after PR #174 merge. Exact-main Quality #42430269155, Freshness #42430269156, Provenance #42430269144, Graphify #42430269131 and Pages #42430269181 passed; public root/landing verified. Active PR #175 is based on this main; additional live open PRs are #176–#182 (seven entries excluding #175 for the Freshness snapshot). Issue #111 remains owner/environment controlled."
     owner_policy: "main is the only durable product baseline. PRs are temporary exact-head verification/integration vehicles and must be merged promptly after required gates pass. PR #131 is not a durable workbench; audit and selectively port only approved compatible deltas; never merge it wholesale."
     sequence:
       - "PR #173 merged at bf039f887e29137b627b06fc2bb107c2793d6b69; repair the false-negative published UI contract sentinel in a separate bounded PR"
@@ -16,13 +16,13 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "Main 9033c6ad708a993cba5d1b27442f53651ad71c0f verified after PR #174. Active PR #175 (feat/functions-drawer-notebook-20261108) current head is 1e6556f466e637417db2e2ec1e6e938282aaf935. Other live open PRs: #176, #177, #178, #179, #180, #181; #179 owns UX-040 and #180 is stacked on #179 at a base behind its current head. Issue #111 remains owner-controlled. PR #175 test-only Notebook-label assertion fix is implemented; exact-head checks are being rerun after checkpoint synchronization. Semantic conversion/parsing, Skill lifecycle and independent Agent runtime remain open. VPS/Tunnel/Ollama and native iPhone/VoiceOver remain unverified."
+    status: "Main 9033c6ad708a993cba5d1b27442f53651ad71c0f verified after PR #174. Active PR #175 (feat/functions-drawer-notebook-20261108) current head is 62c159c94c1acc54bcadc7fbe1bd9e66412d1746. Other live open PRs: #176–#182; #179 and #182 both claim UX-040 as child PRs of #175 and overlap; #180 is stacked on #179 at a base behind its current head. Issue #111 remains owner-controlled. PR #175 test-only Notebook-label assertion fix is implemented; exact-head checks must be rerun after checkpoint synchronization. Semantic conversion/parsing, Skill lifecycle and independent Agent runtime remain open. VPS/Tunnel/Ollama and native iPhone/VoiceOver remain unverified."
     branch: "main"
     base_main: "9033c6ad708a993cba5d1b27442f53651ad71c0f"
-    open_prs_at_checkpoint: 6
+    open_prs_at_checkpoint: 7
     open_issues_at_checkpoint: 1
     merged_changes: "PR #169/#173 prior UI/aServi changes; PR #174 release-contract and backdrop-dismissal fixes merged at 9033c6ad708a993cba5d1b27442f53651ad71c0f. Exact-main Quality/Freshness/Provenance/Graphify/Pages all passed; public root/landing verified. PR #175 is the new owner-directed drawer/Notebook candidate and is not merged."
-    exact_head_checks: "Main 9033c6ad708a993cba5d1b27442f53651ad71c0f: Quality #42430269155 PASS, Freshness #42430269156 PASS, Provenance #42430269144 PASS, Graphify #42430269131 PASS, Pages #42430269181 SUCCESS. PR #175 test SHA 1e6556f466e637417db2e2ec1e6e938282aaf935: Quality #42466540609 Chromium IN_PROGRESS (other five jobs PASS at last read); Freshness #42466540628 FAIL due newly opened PR queue #176–#181; Provenance #42466540631 PASS; Graphify #42466540635 PASS; Dead Code #42466540716 PASS. All PR results are superseded by the state-sync commits and must be rerun on the final exact HEAD."
+    exact_head_checks: "Main 9033c6ad708a993cba5d1b27442f53651ad71c0f: Quality #42430269155 PASS, Freshness #42430269156 PASS, Provenance #42430269144 PASS, Graphify #42430269131 PASS, Pages #42430269181 SUCCESS. PR #175 checkpoint SHA 62c159c94c1acc54bcadc7fbe1bd9e66412d1746: Freshness #42466847919 FAIL because PR #182 was opened during the run; Quality #42466847954 QUEUED at last read; Provenance #42466847989 IN_PROGRESS; Graphify #42466847841 PENDING; Dead Code #42466848146 PASS. These pre-refresh results are superseded by the next queue-sync commits and must be rerun on the final exact HEAD."
     runtime_boundary: "GitHub Pages and public root + /landing/ are VERIFIED on exact main 9033c6ad708a993cba5d1b27442f53651ad71c0f. PR #175 is not live/deployed until merged and Pages is verified. VPS/Tunnel/Ollama, credentials, native iPhone/VoiceOver and target-host model performance remain unverified."
     next: "Complete final exact-head Quality/Chromium, Freshness and Graphify for PR #175; inspect the diff and merge only after all required checks pass under the owner authorization. Verify post-merge main Quality and Pages exact SHA. Continue existing LAUNCH/SF/AB/AW-SK/VERT/DR2 tasks; keep issue #111 open."
     source_triage:
@@ -194,7 +194,7 @@ latest_checkpoint:
   main_freshness_status: "success"
   main_provenance_run_id: 42430269144
   main_provenance_status: "success"
-  open_prs_at_checkpoint: [176, 177, 178, 179, 180, 181]
+  open_prs_at_checkpoint: [176, 177, 178, 179, 180, 181, 182]
   open_issues_at_checkpoint: [111]
   next: "Verify every required check on the final exact PR #175 head; merge only when green, then verify main and Pages against the exact merge SHA. Continue all existing registry work without duplicate backlogs."
 architecture_map_checkpoint:
@@ -307,11 +307,11 @@ current_checkpoint:
   main_provenance: "Provenance #42430269144 PASS on exact main."
   main_pages: "Pages deployment #42430269181 SUCCESS on exact main SHA 9033c6ad708a993cba5d1b27442f53651ad71c0f; public root + /landing/ verified in main Quality #42430269155."
   merged_prs: "174 release-contract and backdrop-dismissal fix; 169/173 provider and aServi UI; prior safeguards preserved."
-  open_pull_requests: "7 live open PRs: #175 active candidate plus #176–#181. Freshness snapshot excludes current PR #175 and records #176–#181. PR #179 owns UX-040; #180 is stacked on #179 at a base behind its current head."
+  open_pull_requests: "8 live open PRs: #175 active candidate plus #176–#182. Freshness snapshot excludes current PR #175 and records #176–#182. PRs #179/#182 overlap in UX-040; #180 is stacked on #179 at a base behind its current head."
   open_issues: "Issue #111 only; owner-controlled release gates."
   freshness_guard: "scripts/check_project_state_freshness.py; update OLEDUE/AGENTS/ORIENTER/FILE_ORIENTER/PROJECT_STATE/VOLLEY_LOG/snapshot together after live queue/state changes."
   runtime_boundary: "GitHub Pages and public root + /landing/ are VERIFIED on exact main 9033c6ad708a993cba5d1b27442f53651ad71c0f. PR #175 is not deployed. VPS/Tunnel/Ollama, provider credentials, native iPhone/VoiceOver and target-host model performance remain unverified."
-  next: "Finish the coordinated checkpoint refresh across OLEDUE, AGENTS, ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG and snapshot; then rerun all required PR #175 gates on the resulting exact HEAD. Do not duplicate UX-040 from PR #179 or reconcile PR #180 stack without owner coordination. Merge/deploy remain separate owner decisions; keep issue #111 owner-controlled."
+  next: "Finish the coordinated checkpoint refresh across OLEDUE, AGENTS, ORIENTER, FILE_ORIENTER, PROJECT_STATE, VOLLEY_LOG and snapshot; then rerun all required PR #175 gates on the resulting exact HEAD. Do not duplicate or independently integrate overlapping UX-040 PRs #179/#182; reconcile PR #180 stack only with owner coordination. Merge/deploy remain separate owner decisions; keep issue #111 owner-controlled."
 v1_ui_finalization:
   status: "merged in PR #121 at f4d880f; exact-head required workflows passed; post-merge Pages deployment not independently verified"
   register: "docs/V1_UI_FINALIZATION_RU.md"
