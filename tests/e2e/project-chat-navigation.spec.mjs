@@ -12,15 +12,15 @@ async function openSidebar(page) {
 
 async function createProject(page, name) {
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
-  await expect(page.locator('#projectSettingsModal')).toBeVisible();
-  await page.locator('#projectNameInput').fill(name);
-  await page.locator('#createProjectSubmit').click();
+  await expect(page.locator('#projectCreateModal')).toBeVisible();
+  await page.locator('#projectCreateNameInput').fill(name);
+  await page.locator('[data-action="create-project"]').click();
   await expect.poll(() => page.evaluate(projectName => {
     const projects = JSON.parse(localStorage.getItem('ai_projects_v1') || '[]');
     return projects.some(project => project.name === projectName);
   }, name)).toBe(true);
-  await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
-  await expect(page.locator('#projectSettingsModal')).toBeHidden();
+  await page.locator('#projectCreateModal [data-action="close-project-settings"]').click();
+  await expect(page.locator('#projectCreateModal')).toBeHidden();
 }
 
 async function projectId(page, name) {
