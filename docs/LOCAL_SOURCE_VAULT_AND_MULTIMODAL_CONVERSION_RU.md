@@ -205,7 +205,7 @@ Capabilities объявляются явно: `list/read/writeAtomic/rename/dele
 
 ### 5. Image / Video Factory — уточнение границы
 
-ComfyUI остаётся кандидатом для локального GPU adapter, но не для базового 8-GB CPU gateway. API v2 подходит под будущий общий `MediaJob` contract: submit workflow → durable job ID → poll/status → outputs → cancel. Статус job должен быть авторитетным; UI не должен считать исчезновение polling ответа успешной генерацией. Модель, checkpoint, LoRA, custom node, dataset и workflow имеют независимые лицензии/условия.
+ComfyUI остаётся кандидатом для локального GPU adapter, но не для базового 8-GB CPU gateway. API v2 подходит под будущий общий `MediaJob` contract: submit workflow → job ID → poll/status (основной polling endpoint) → outputs → cancel. API response содержит `expires_at` для job и output URL; не считать job ID или output URL бессрочными и не считать пропавший polling response успешной генерацией. Модель, checkpoint, LoRA, custom node, dataset и workflow имеют независимые лицензии/условия.
 
 Порядок: **Image Factory сначала**, затем Video Factory после отдельного GPU benchmark и оценки хранения/стоимости. Hosted provider допустим только после явного выбора, account/region/pricing/privacy review; никаких auto-download моделей или включения платных API.
 
