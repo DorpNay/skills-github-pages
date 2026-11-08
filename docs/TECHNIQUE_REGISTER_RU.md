@@ -154,3 +154,19 @@ The PR #131/#125 research-doc sweep added 103 distinct URL refs to `INTEL.md` as
 ## 2026-11-08 — AgentRun SQLite state store prototype (PR #169 candidate)
 
 **Status: PROTOTYPE / offline persistence only; exact Gateway CI pending.** `gateway/agent_runtime/store.py` provides a bounded local SQLite run/task state journal with idempotency keys, explicit run transitions, typed metadata schemas, task leases/fencing, retry budgets, cancellation, immutable event records, scope checks, SQLite busy timeout/foreign keys/secure_delete and restrictive DB file mode. It deliberately does not call models, execute tools, grant capabilities, schedule workers, coordinate multiple hosts, provide sandbox/approval enforcement or guarantee exactly-once external side effects. Backup/restore and retention are operationally out of scope; use SQLite online backup or quiesced consistent copies. The tests are isolated offline in `gateway/tests/test_agent_run_store.py`. This is a storage building block; Agent Blueprint/Worker Capability contract remains separate and DEFERRED until runtime policy, trace, approval, recovery and adversarial evals are implemented.
+
+
+## 2026-11-08 — local Notebook and Knowledge-to-Skill admission
+
+**Status: IMPLEMENTED IN PR #175 CANDIDATE / exact-head verification pending; broader capabilities remain DEFERRED.**
+
+- The current UI slice is a local-first Notebook surface, not a full Jupyter runtime. It uses existing IndexedDB with separate notebooks and notebookEntries stores and keeps Notebook content distinct from chat Memory. Personal notebooks remain visible; project notebooks are filtered to the active project's scope.
+- Current source intake is limited to TXT/Markdown ≤2 MiB with explicit user-rights acknowledgement, extension/MIME allowlist, strict UTF-8 decode and SHA-256 over original bytes. These checks are a narrow text-input contract, not file-signature validation, arbitrary parser security or legal-rights determination.
+- URL entries are reference-only and not fetched. No SSRF protection is implied for a future fetcher; if fetching is added, the gateway must apply the existing DNS/redirect/IP/size/time protections from the source vault and SSRF threat model.
+- Search/sort and aLandi JSON export are present in the candidate. .ipynb import/export, code cells, execution, outputs, PDF/EPUB/Office/archive/repository parsing and cross-device storage are not implemented.
+- Skill export currently creates an inert outline with provenance/rights/review prompts; it is not semantic book-to-Skill conversion and does not create an approved/versioned reusable Skill. Agent Blueprint export is a disabled-permissions JSON skeleton, not a worker runtime.
+- OWASP indirect prompt injection guidance is adopted as a threat-model input: source content remains untrusted data. No script is executed on import/preview and no source is silently submitted to a model.
+- JupyterLite storage and nbformat are reference architectures only. The current static client does not add JupyterLite/SurrealDB/another notebook server; consider .ipynb compatibility separately after schema/eval and target-browser storage tests.
+- A future code-cell runner requires a module Worker, timeout/termination, cancellation, output/resource limits, explicit network/import policy and adversarial tests; a Worker alone is not a sandbox.
+- Accessibility contract: drawer is a modal dialog with focus containment/restore and Escape/backdrop close; preserve keyboard interaction. 44×44 CSS px remains the project touch target; WCAG 2.2 AA SC 2.5.8 is 24×24 CSS px or the spacing exception.
+- Detailed IA and primary-source evidence are in docs/AGENT_FUNCTIONS_MENU_INFORMATION_ARCHITECTURE_RU.md §9 and INTEL.md — “Source review — local Notebook and Knowledge-to-Skill UI”.
