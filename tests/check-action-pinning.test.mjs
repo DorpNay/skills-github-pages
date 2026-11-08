@@ -25,6 +25,21 @@ test("rejects unpinned references in folded and literal YAML scalars", () => {
   ]);
 });
 
+test("accepts pinned folded and literal scalars before sibling step keys", () => {
+  const source = [
+    "steps:",
+    "  - uses: >-",
+    `      actions/checkout@${sha}`,
+    "    with:",
+    "      fetch-depth: 0",
+    "  - uses: |2-",
+    `      actions/setup-node@${sha}`,
+    "    with:",
+    "      node-version: 24",
+  ].join("\n");
+  assert.deepEqual(findUnpinnedActionRefs(source, "fixture.yml"), []);
+});
+
 test("keeps local and Docker actions outside Git SHA pinning", () => {
   assert.deepEqual(findUnpinnedActionRefs([
     "- uses: ./actions/local",
