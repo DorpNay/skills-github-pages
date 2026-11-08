@@ -65,6 +65,11 @@ async function selectProject(page, id) {
   await expect(page.locator('#chatListBack')).toBeVisible();
 }
 
+async function clickSidebarControl(page, locator) {
+  await revealSidebarElement(page, locator);
+  await locator.click();
+}
+
 async function readLocalState(page) {
   return page.evaluate(() => ({
     chats: JSON.parse(localStorage.getItem('ai_chats_v87') || '[]'),
@@ -122,7 +127,7 @@ test('project selection filters the Chats pane without changing chat membership;
   await expect(page.locator('#chatList .chat-row')).toHaveCount(0);
 
   const currentBeforeFilter = (await readLocalState(page)).currentId;
-  await page.locator('#chatListNewButton').click();
+  await clickSidebarControl(page, page.locator('#chatListNewButton'));
   await expect(page.locator('#chatList .chat-row')).toHaveCount(1);
   state = await readLocalState(page);
   expect(state.currentId).not.toBe(currentBeforeFilter);
@@ -130,7 +135,7 @@ test('project selection filters the Chats pane without changing chat membership;
 
   await selectProject(page, betaId);
   await expect(page.locator('#chatSectionTitle')).toContainText('Beta workspace');
-  await page.locator('#chatListNewButton').click();
+  await clickSidebarControl(page, page.locator('#chatListNewButton'));
   await expect(page.locator('#chatList .chat-row')).toHaveCount(1);
   state = await readLocalState(page);
   expect(state.chats.find(chat => chat.id === state.currentId)?.projectId).toBe(betaId);
@@ -142,13 +147,13 @@ test('project selection filters the Chats pane without changing chat membership;
   await expect(page.locator('#chatList')).toContainText('Alpha workspace');
   await expect(page.locator('#chatList')).not.toContainText('Beta workspace');
 
-  await page.locator('#chatListNewButton').click();
+  await clickSidebarControl(page, page.locator('#chatListNewButton'));
   await expect(page.locator('#chatList .chat-row')).toHaveCount(2);
   state = await readLocalState(page);
   expect(state.chats.filter(chat => chat.projectId === alphaId)).toHaveLength(2);
   expect(state.chats.filter(chat => chat.projectId === betaId)).toHaveLength(1);
 
-  await page.locator('#chatListBack').click();
+  await clickSidebarControl(page, page.locator('#chatListBack'));
   await expect(page.locator('#chatListBack')).toBeHidden();
   await expect(page.locator('#chatSectionTitle')).toContainText('Без проекта');
   await expect(page.locator('#chatList .chat-row')).toHaveCount(1);
@@ -176,9 +181,9 @@ test('project-filter and Back controls remain usable at 320px', async ({ page })
   const backBox = await page.locator('#chatListBack').boundingBox();
   expect(backBox?.height || 0).toBeGreaterThanOrEqual(40);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-  await page.locator('#chatListNewButton').click();
+  await clickSidebarControl(page, page.locator('#chatListNewButton'));
   await expect(page.locator('#chatList .chat-row')).toHaveCount(1);
-  await page.locator('#chatListBack').click();
+  await clickSidebarControl(page, page.locator('#chatListBack'));
   await expect(page.locator('#chatListBack')).toBeHidden();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
