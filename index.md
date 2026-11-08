@@ -196,6 +196,28 @@ permalink: /
     .toolbar-menu[open] > summary,.toolbar-menu > summary:hover { background:var(--ui-tiffany-soft);border-color:var(--ui-tiffany); }
     .toolbar-menu-panel { position:absolute;left:0;top:calc(100% + 6px);z-index:110;width:min(92vw,340px);max-height:min(58dvh,420px);overflow-y:auto;padding:6px;border:1px solid var(--ui-border);border-radius:14px;background:var(--ui-surface);color:var(--ui-text);box-shadow:0 18px 48px rgb(0 0 0 / 38%); }
     .toolbar-menu-panel-right { left:auto;right:0; }
+    .functions-drawer-surface { width:min(100vw,760px);height:100dvh;max-height:100dvh;display:flex;flex-direction:column;overflow:hidden;background:var(--ui-surface);color:var(--ui-text);border-left:1px solid var(--ui-border);box-shadow:-24px 0 72px rgb(0 0 0 / 38%);animation:functions-drawer-in 190ms cubic-bezier(.2,.75,.25,1); }
+    .functions-drawer-nav { display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:12px;border-bottom:1px solid var(--ui-border);background:var(--ui-surface-raised); }
+    .functions-drawer-nav button { min-width:0;min-height:48px;padding:8px 10px;border:1px solid var(--ui-border);border-radius:11px;text-align:left;font-size:11px;color:var(--ui-text-muted); }
+    .functions-drawer-nav button:hover,.functions-drawer-nav button:focus-visible { background:var(--ui-tiffany-soft);color:var(--ui-text);outline-color:var(--ui-tiffany); }
+    .functions-drawer-nav button[aria-current="page"] { color:var(--ui-text);background:var(--ui-tiffany-soft);border-color:var(--ui-tiffany); }
+    .functions-drawer-nav small { display:block;margin-top:3px;font-size:9px;line-height:1.3;color:var(--ui-text-muted); }
+    .functions-drawer-surface > section[id$="FunctionSettings"],.functions-drawer-surface > section#connectorFunctionStatus { flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:16px 20px; }
+    .notebook-field { width:100%;min-width:0;border:1px solid var(--ui-border);border-radius:10px;background:var(--ui-surface);color:var(--ui-text);padding:10px 11px;font-size:12px; }
+    .notebook-entry { min-width:0;border:1px solid var(--ui-border);border-radius:12px;padding:11px;background:color-mix(in srgb,var(--ui-surface-raised) 70%,transparent); }
+    .notebook-entry p { overflow-wrap:anywhere; }
+    .notebook-entry-actions { display:flex;flex-wrap:wrap;gap:6px;margin-top:10px; }
+    .notebook-entry-actions button { min-height:40px;padding:8px 10px;border:1px solid var(--ui-border);border-radius:9px;font-size:10px; }
+    .notebook-entry-actions button:hover,.notebook-entry-actions button:focus-visible { border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
+    .notebook-primary { min-height:44px;border:1px solid var(--ui-tiffany);border-radius:10px;background:var(--ui-tiffany-soft);color:var(--ui-text);padding:9px 12px;font-size:12px;font-weight:650; }
+    @keyframes functions-drawer-in { from { opacity:.82;transform:translateX(28px); } to { opacity:1;transform:translateX(0); } }
+    @media (max-width:640px) {
+      .functions-drawer-surface { width:100vw;border-left:0; }
+      .functions-drawer-nav { grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:9px; }
+      .functions-drawer-nav button { min-height:48px;font-size:11px; }
+      .functions-drawer-surface > section[id$="FunctionSettings"],.functions-drawer-surface > section#connectorFunctionStatus { padding:12px; }
+    }
+    @media (prefers-reduced-motion:reduce) { .functions-drawer-surface { animation:none!important; } }
     .toolbar-menu-option { display:block;width:100%;padding:10px;text-align:left;border-radius:9px;font-size:12px; }
     .toolbar-menu-option:hover,.toolbar-menu-option:focus-visible { background:var(--ui-tiffany-soft);outline-color:var(--ui-tiffany); }
     .toolbar-menu-option strong { display:block;font-size:12px; }
@@ -620,14 +642,9 @@ permalink: /
           <button type="button" data-action="select-search-mode" data-search-mode="offline" class="toolbar-menu-option"><strong data-i18n="searchModeOffline">Выкл.</strong><small data-i18n="searchModeOfflineHelp">Веб-инструменты выключены; облачному API всё ещё может требоваться интернет.</small></button>
         </div>
       </details>
-      <details id="functionsMenu" class="toolbar-menu flex-1 min-w-0">
-        <summary id="functionsMenuSummary" class="toolbar-menu-summary" data-i18n="functionsMenuLabel">Функции ▾</summary>
-        <div class="toolbar-menu-panel toolbar-menu-panel-right">
-          <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option"><strong data-i18n="functionAgents">🧭 Агенты</strong><small data-i18n="functionAgentsHelp">Структурированный разбор · 4 этапа на одной модели</small></button>
-          <button type="button" data-action="open-function-panel" data-function="research" class="toolbar-menu-option"><strong data-i18n="functionDeepResearch">🔬 Исследования</strong><small data-i18n="functionResearchHelp">Deep Research · тщательность и веб-поиск отдельно</small></button>
-          <button type="button" data-action="open-function-panel" data-function="skills" class="toolbar-menu-option"><strong data-i18n="functionSkills">🧩 Скиллы</strong><small data-i18n="functionSkillsHelp">Профиль задачи · инструкции только для этого чата</small></button>
-        </div>
-      </details>
+      <div id="functionsMenu" class="toolbar-menu flex-1 min-w-0">
+        <button type="button" id="functionsMenuSummary" data-action="open-functions-drawer" class="toolbar-menu-summary w-full" data-i18n="functionsMenuLabel" aria-haspopup="dialog" aria-controls="functionPanelModal" aria-expanded="false">Функции ↗</button>
+      </div>
     </div>
     <input type="checkbox" id="toggleSearch" class="hidden" checked>
     <input type="checkbox" id="toggleMultiAgent" class="hidden">
@@ -704,12 +721,18 @@ permalink: /
   </div>
 
   
-  <div id="functionPanelModal" class="hidden fixed inset-0 z-[66] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="functionPanelTitle">
-    <section class="w-full max-w-lg max-h-[88dvh] overflow-y-auto rounded-2xl border border-gray-700 bg-gray-950 p-4 sm:p-5 shadow-2xl space-y-4">
+  <div id="functionPanelModal" class="hidden fixed inset-0 z-[66] bg-black/65 flex justify-end overscroll-none" role="dialog" aria-modal="true" aria-labelledby="functionPanelTitle">
+    <section class="functions-drawer-surface space-y-3">
       <header class="flex items-start justify-between gap-3">
         <div class="min-w-0"><h2 id="functionPanelTitle" class="font-bold text-base">Функции</h2><p id="functionPanelDescription" class="mt-1 text-xs leading-relaxed text-gray-400"></p></div>
         <button type="button" data-action="close-function-panel" class="shrink-0 rounded-lg px-2 py-1 text-gray-400 hover:text-white" data-i18n-aria-label="functionPanelClose" aria-label="Закрыть">✕</button>
       </header>
+      <nav id="functionsDrawerNav" class="functions-drawer-nav" aria-label="Разделы функций">
+        <button type="button" data-action="open-function-panel" data-function="agents" aria-current="page">🧭 <span data-i18n="functionAgents">Агенты</span><small data-i18n="functionAgentsHelp">4 этапа · одна модель</small></button>
+        <button type="button" data-action="open-function-panel" data-function="research">🔬 <span data-i18n="functionDeepResearch">Исследования</span><small data-i18n="functionResearchHelp">Deep Research · effort / web</small></button>
+        <button type="button" data-action="open-function-panel" data-function="notebook">📓 <span data-i18n="functionNotebook">Notebook</span><small data-i18n="functionNotebookHelp">Тетради и источники</small></button>
+        <button type="button" data-action="open-function-panel" data-function="skills">🧩 <span data-i18n="functionSkills">Скиллы</span><small data-i18n="functionSkillsHelp">Профили инструкций</small></button>
+      </nav>
       <section id="researchFunctionSettings" class="hidden space-y-3">
         <div class="rounded-xl border border-gray-800 bg-gray-900/50 p-3">
           <div class="flex items-center justify-between gap-3"><strong class="text-xs" data-i18n="researchModeStatusLabel">Режим обработки</strong><span id="researchModeSummary" class="rounded-lg border border-gray-700 px-2 py-1 text-[11px] font-semibold text-cyan-200">Тщательно</span></div>
@@ -781,6 +804,36 @@ permalink: /
         <button type="button" data-action="apply-skill-quiz" class="w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-2 text-xs font-semibold text-cyan-200">Подобрать навык</button>
         <p id="skillConfigSummary" class="text-[10px] text-gray-500" aria-live="polite"></p>
         <p class="text-[11px] leading-relaxed text-gray-500" data-i18n="skillPresetHelp">Профиль добавляет инструкции, но не открывает инструменты или данные.</p>
+      </section>
+      <section id="notebookFunctionSettings" class="hidden space-y-3">
+        <div class="rounded-xl border border-cyan-900/50 bg-cyan-950/15 p-3">
+          <div class="flex items-center justify-between gap-2"><strong class="text-sm" data-i18n="notebookTitle">Исследовательская тетрадь</strong><span class="text-[10px] text-cyan-200" data-i18n="notebookLocal">Локально</span></div>
+          <p class="mt-2 text-[11px] text-gray-400" data-i18n="notebookPrivacy">Тетрадь хранится отдельно от памяти чата. Данные не отправляются модели без отдельного выбора.</p>
+        </div>
+        <div class="rounded-xl border border-gray-800 p-3 space-y-2">
+          <h3 class="text-xs font-semibold" data-i18n="notebookNew">Новая тетрадь</h3>
+          <input id="notebookNewTitle" class="notebook-field" maxlength="100" placeholder="Название тетради" data-i18n-placeholder="notebookNamePlaceholder">
+          <select id="notebookNewScope" class="notebook-field" aria-label="Область тетради"><option value="personal" data-i18n="notebookPersonal">Личная · этот браузер</option><option value="project" data-i18n="notebookProject">Текущий проект</option></select>
+          <button type="button" data-action="create-notebook" class="notebook-primary w-full" data-i18n="notebookCreate">＋ Создать</button>
+        </div>
+        <section id="notebookWorkspace" class="hidden space-y-3">
+          <div class="rounded-xl border border-gray-800 p-3 space-y-2">
+            <div class="flex flex-wrap gap-2"><select id="notebookSelect" class="notebook-field min-w-0 flex-1" aria-label="Выбранная тетрадь"></select><button type="button" data-action="export-notebook" class="min-h-11 border border-gray-700 rounded-lg px-3 text-xs" data-i18n="notebookExport">Экспорт</button><button type="button" data-action="delete-notebook" class="min-h-11 border border-red-900 rounded-lg px-3 text-xs" data-i18n="notebookDelete">Удалить</button></div>
+            <div class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-2"><input id="notebookSearch" type="search" class="notebook-field" placeholder="Поиск" data-i18n-placeholder="notebookSearch"><select id="notebookSort" class="notebook-field sm:max-w-48" aria-label="Сортировка"><option value="updated-desc" data-i18n="notebookSortUpdated">Сначала новые</option><option value="title-asc" data-i18n="notebookSortTitle">По названию</option><option value="created-asc" data-i18n="notebookSortCreated">Сначала старые</option></select></div>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <section class="rounded-xl border border-gray-800 p-3 space-y-2"><h3 class="text-xs font-semibold" data-i18n="notebookNote">Заметка</h3><input id="notebookNoteTitle" class="notebook-field" maxlength="120" placeholder="Название"><textarea id="notebookNoteBody" class="notebook-field min-h-28" rows="4" maxlength="12000" placeholder="Текст, выводы или план"></textarea><button type="button" data-action="save-notebook-note" class="notebook-primary w-full" data-i18n="notebookSave">Сохранить заметку</button></section>
+            <section class="rounded-xl border border-gray-800 p-3 space-y-2"><h3 class="text-xs font-semibold" data-i18n="notebookSource">Источник</h3><input id="notebookSourceTitle" class="notebook-field" maxlength="120" placeholder="Название источника"><input id="notebookSourceUrl" type="url" class="notebook-field" placeholder="https://…"><button type="button" data-action="save-notebook-source" class="notebook-primary w-full" data-i18n="notebookAddLink">Добавить ссылку</button>
+              <input id="notebookTextFile" type="file" class="hidden" accept=".txt,.md,text/plain,text/markdown">
+              <label class="flex items-start gap-2 text-[10px] text-gray-400"><input id="notebookRightsConsent" type="checkbox"><span data-i18n="notebookRights">У меня есть права на импорт и анализ этого текста.</span></label>
+              <button type="button" data-action="choose-notebook-text-file" class="min-h-11 w-full rounded-lg border border-gray-700 px-3 text-xs" data-i18n="notebookImport">Импорт TXT / Markdown</button>
+              <p class="text-[10px] text-gray-500" data-i18n="notebookLimits">TXT/Markdown до 2 МБ. URL сохраняются как ссылки, не загружаются. PDF/EPUB/Office требуют защищённого парсера.</p>
+            </section>
+          </div>
+          <div class="space-y-2"><h3 class="text-xs font-semibold" data-i18n="notebookEntries">Заметки и источники</h3><span id="notebookEntryCount" class="text-[10px] text-gray-500"></span><div id="notebookEntries" class="space-y-2" aria-live="polite"></div></div>
+        </section>
+        <p id="notebookEmptyState" class="rounded-xl border border-dashed border-gray-700 p-4 text-center text-xs text-gray-400" data-i18n="notebookEmpty">Создай личную тетрадь или тетрадь текущего проекта.</p>
+        <p id="notebookStatus" class="text-[10px] text-gray-500" role="status" aria-live="polite" data-i18n="notebookLocalOnly">Хранится локально. Не является памятью чата.</p>
       </section>
       <section id="connectorFunctionStatus" class="hidden rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-sm leading-relaxed text-gray-300"><p data-i18n="functionConnectorsDescription">Показываем только реально подключённые источники. Внешние коннекторы пока не подключены; они не будут имитироваться переключателями.</p><div class="roadmap-ticker mt-3" aria-label="Планируемое улучшение"><span class="roadmap-ticker-track" aria-hidden="true">1nv3nt10n 1n PrOc3ss… · Интеграции с контролируемыми разрешениями — в дорожной карте</span></div><p class="roadmap-note">Подключение источников появится только после проверки прав, границ данных и реального соединения. Анимация декоративная и не означает, что сервис уже выполняет работу.</p></section>
       <footer class="flex justify-end border-t border-gray-800 pt-3"><button type="button" data-action="close-function-panel" data-i18n="functionPanelClose" class="rounded-xl border border-gray-700 px-4 py-2 text-sm">Закрыть</button></footer>
@@ -1204,13 +1257,15 @@ permalink: /
       if (!('indexedDB' in window)) return null;
       try {
         db = await new Promise((resolve, reject) => {
-          const request = indexedDB.open('AI_Agent_DB_v87', 2);
+          const request = indexedDB.open('AI_Agent_DB_v87', 3);
           request.onupgradeneeded = (event) => {
             const database = event.target.result;
             if (!database.objectStoreNames.contains('cache')) database.createObjectStore('cache');
             // Existing v1 memory remains private; never migrate it into shared memory.
             if (!database.objectStoreNames.contains('memory')) database.createObjectStore('memory');
             if (!database.objectStoreNames.contains('sharedMemory')) database.createObjectStore('sharedMemory');
+            if (!database.objectStoreNames.contains('notebooks')) database.createObjectStore('notebooks');
+            if (!database.objectStoreNames.contains('notebookEntries')) database.createObjectStore('notebookEntries');
           };
           request.onsuccess = () => resolve(request.result);
           request.onerror = () => reject(request.error || new Error('Не удалось открыть IndexedDB'));
@@ -1320,6 +1375,35 @@ permalink: /
         });
         await renderSharedMemory();
       }
+    };
+
+
+    const NotebookDB = {
+      async listVisible() {
+        if(!db) throw new Error('IndexedDB недоступна.');
+        const all=await requestResult(db.transaction('notebooks','readonly').objectStore('notebooks').getAll());
+        const projectId=getNotebookProjectId();
+        return all.filter(n=>n&&typeof n.id==='string'&&(n.scope==='personal'||(n.scope==='project'&&projectId&&n.projectId===projectId)));
+      },
+      async create(title,scope) {
+        const projectId=scope==='project'?getNotebookProjectId():null;
+        if(!db||!['personal','project'].includes(scope)||(scope==='project'&&!projectId))throw new Error('Сначала выбери проект для проектной тетради.');
+        const now=Date.now(),id=crypto.randomUUID?.()||'notebook-'+now+'-'+Math.random().toString(36).slice(2),item={id,title:title.slice(0,100),scope,projectId,createdAt:now,updatedAt:now,schemaVersion:1};
+        await new Promise((resolve,reject)=>{const tx=db.transaction('notebooks','readwrite');tx.objectStore('notebooks').put(item,id);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||new Error('Save failed'));tx.onabort=()=>reject(tx.error||new Error('Save aborted'));});
+        return item;
+      },
+      async entries(notebookId) {
+        const visible=await this.listVisible();if(!visible.some(n=>n.id===notebookId))throw new Error('Notebook outside current scope.');
+        const all=await requestResult(db.transaction('notebookEntries','readonly').objectStore('notebookEntries').getAll());
+        return all.filter(e=>e?.notebookId===notebookId);
+      },
+      async addEntry(notebookId,entry) {
+        const notebooks=await this.listVisible(),notebook=notebooks.find(n=>n.id===notebookId);if(!notebook)throw new Error('Notebook outside current scope.');
+        const now=Date.now(),id=crypto.randomUUID?.()||'entry-'+now+'-'+Math.random().toString(36).slice(2),record={...entry,id,notebookId,createdAt:now,updatedAt:now,schemaVersion:1};
+        await new Promise((resolve,reject)=>{const tx=db.transaction(['notebookEntries','notebooks'],'readwrite');tx.objectStore('notebookEntries').put(record,id);tx.objectStore('notebooks').put({...notebook,updatedAt:now},notebookId);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||new Error('Save failed'));tx.onabort=()=>reject(tx.error||new Error('Save aborted'));});return record;
+      },
+      async deleteEntry(notebookId,entryId){await this.entries(notebookId);await new Promise((resolve,reject)=>{const tx=db.transaction('notebookEntries','readwrite');tx.objectStore('notebookEntries').delete(entryId);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});},
+      async remove(notebookId){await this.entries(notebookId);await new Promise((resolve,reject)=>{const tx=db.transaction(['notebooks','notebookEntries'],'readwrite'),store=tx.objectStore('notebookEntries'),req=store.openCursor();req.onsuccess=()=>{const cursor=req.result;if(cursor){if(cursor.value?.notebookId===notebookId)cursor.delete();cursor.continue();}};tx.objectStore('notebooks').delete(notebookId);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);});}
     };
 
     let markedRendererConfigured = false;
@@ -1437,7 +1521,7 @@ permalink: /
         workflowDirectShort:'Прямой',workflowStructuredShort:'Конвейер',workflowDirectHelp:'Прямой способ выполнения: модель использует доступные инструменты в пределах выбранного бюджета.',workflowStructuredHelp:'Для подходящих сложных запросов запускает планировщик → исследователь → критик → синтезатор на выбранной модели. Быстро/Тщательно задаёт бюджет инструментов внутри исследовательского этапа.',
         skillAutoShort:'Авто',skillPlanningShort:'План',skillResearchShort:'Исслед.',skillCodeReviewShort:'Код',skillDataAnalysisShort:'Данные',skillAgentSystemsShort:'Агентные',skillMultimodalShort:'Мультимод.',taskProfileHelp:'Профиль меняет только инструкции и не включает инструменты или доступ к данным.',
         aserviGroupTitle:'aLandi aServi',thirdPartySettingsTitle:'Сторонние провайдеры',
-        functionsMenuLabel:'Функции ▾',functionAgents:'🧭 Агенты',functionAgentsHelp:'Структурированный разбор · 4 этапа на одной модели',functionDeepResearch:'🔬 Исследования',functionResearchHelp:'Deep Research · тщательность и веб-поиск отдельно',functionSkills:'🧩 Скиллы',functionSkillsHelp:'Профиль задачи · инструкции только для этого чата',functionConnectors:'🔌 Интеграции',functionPanelClose:'Закрыть',
+        functionsMenuLabel:'Функции ▾',functionAgents:'🧭 Агенты',functionAgentsHelp:'Структурированный разбор · 4 этапа на одной модели',functionDeepResearch:'🔬 Исследования',functionResearchHelp:'Deep Research · тщательность и веб-поиск отдельно',functionSkills:'🧩 Скиллы',functionSkillsHelp:'Профиль задачи · инструкции только для этого чата',functionConnectors:'🔌 Интеграции',functionNotebook:'📓 Notebook',functionNotebookHelp:'Локальные тетради и источники',functionPanelClose:'Закрыть',functionNotebookTitle:'Notebook',functionNotebookDescription:'Локальные исследовательские тетради с личной и проектной областью.',notebookTitle:'Исследовательская тетрадь',notebookLocal:'Локально в браузере',notebookPrivacy:'Тетрадь хранится отдельно от памяти чата. Данные не отправляются модели без отдельного выбора.',notebookNew:'Новая тетрадь',notebookNamePlaceholder:'Название тетради',notebookPersonal:'Личная · этот браузер',notebookProject:'Текущий проект',notebookCreate:'＋ Создать тетрадь',notebookExport:'Экспорт',notebookDelete:'Удалить',notebookSearch:'Поиск по заметкам и источникам',notebookSortUpdated:'Сначала обновлённые',notebookSortTitle:'По названию',notebookSortCreated:'Сначала старые',notebookNote:'Новая заметка',notebookSave:'Сохранить заметку',notebookSource:'Ссылка на источник',notebookAddLink:'Добавить ссылку',notebookRights:'У меня есть права на импорт и анализ этого текста.',notebookImport:'Импорт TXT / Markdown',notebookLimits:'TXT/Markdown до 2 МБ. URL сохраняются как ссылки, не загружаются. PDF/EPUB/Office требуют защищённого парсера.',notebookEntries:'Заметки и источники',notebookEmpty:'Создай личную тетрадь или тетрадь текущего проекта.',notebookLocalOnly:'Хранится локально. Не является памятью чата.',
         functionAgentsTitle:'Структурированный разбор',functionAgentsDescription:'Для подходящих сложных задач aLandi использует четыре этапа: планирование, исследование, критика и синтез. Все этапы работают на выбранной модели; режим Быстро/Тщательно задаёт бюджет инструментов в исследовательском этапе. Это не независимая команда агентов.',functionDeepResearchTitle:'Глубокое исследование',functionDeepResearchDescription:'Панель показывает текущие режимы тщательного запроса. Отдельный автономный Research Studio не используется.',
         researchModeStatusLabel:'Режим обработки',researchModeStatusHelp:'Быстро ограничивает прямой запрос одним раундом и одним вызовом инструмента; Тщательно — до 4 раундов, 3 вызовов за раунд и 8 за запуск. В структурированном pipeline лимит относится к этапу исследования.',researchUseThorough:'Включить режим «Тщательно»',
         researchSearchStatusLabel:'Веб-поиск',researchSearchStatusHelp:'Охват результатов задаётся отдельно в меню Веб: обычный, расширенный или выключен. Он не увеличивает число раундов.',researchOpenSearchSettings:'Настроить охват веб-поиска',
@@ -1463,7 +1547,7 @@ permalink: /
         workflowDirectShort:'Direct',workflowStructuredShort:'Pipeline',workflowDirectHelp:'Direct execution: the model can still use available tools within the selected effort budget.',workflowStructuredHelp:'Eligible complex requests use the planner → researcher → critic → synthesizer pipeline on the selected model. Quick/Thorough controls the tool budget within the research stage.',
         skillAutoShort:'Auto',skillPlanningShort:'Plan',skillResearchShort:'Research',skillCodeReviewShort:'Code',skillDataAnalysisShort:'Data',skillAgentSystemsShort:'Agents',skillMultimodalShort:'Multimodal',taskProfileHelp:'A task profile changes instructions only; it does not enable tools or data access.',
         aserviGroupTitle:'aLandi aServi',thirdPartySettingsTitle:'Third-party providers',
-        functionsMenuLabel:'Functions ▾',functionAgents:'🧭 Agents',functionAgentsHelp:'Structured analysis · four stages, one model',functionDeepResearch:'🔬 Research',functionResearchHelp:'Deep Research · effort and web search stay separate',functionSkills:'🧩 Skills',functionSkillsHelp:'Task profile · instructions for this chat only',functionConnectors:'🔌 Integrations',functionPanelClose:'Close',
+        functionsMenuLabel:'Functions ▾',functionAgents:'🧭 Agents',functionAgentsHelp:'Structured analysis · four stages, one model',functionDeepResearch:'🔬 Research',functionResearchHelp:'Deep Research · effort and web search stay separate',functionSkills:'🧩 Skills',functionSkillsHelp:'Task profile · instructions for this chat only',functionConnectors:'🔌 Integrations',functionNotebook:'📓 Notebook',functionNotebookHelp:'Local notebooks and sources',functionPanelClose:'Close',functionNotebookTitle:'Notebook',functionNotebookDescription:'Local research notebooks with personal and project scopes.',notebookTitle:'Research notebook',notebookLocal:'Stored locally',notebookPrivacy:'Notebooks are separate from chat memory. Content is not sent to a model unless explicitly selected.',notebookNew:'New notebook',notebookNamePlaceholder:'Notebook name',notebookPersonal:'Personal · this browser',notebookProject:'Current project',notebookCreate:'＋ Create notebook',notebookExport:'Export',notebookDelete:'Delete',notebookSearch:'Search notes and sources',notebookSortUpdated:'Recently updated',notebookSortTitle:'Title',notebookSortCreated:'Oldest first',notebookNote:'New note',notebookSave:'Save note',notebookSource:'Source link',notebookAddLink:'Add link',notebookRights:'I have the right to import and analyse this text.',notebookImport:'Import TXT / Markdown',notebookLimits:'TXT/Markdown up to 2 MB. URLs are references only, not fetched. PDF/EPUB/Office require a secure parser.',notebookEntries:'Notes and sources',notebookEmpty:'Create a personal notebook or one for the current project.',notebookLocalOnly:'Stored locally. Not chat memory.',
         functionAgentsTitle:'Structured workflow',functionAgentsDescription:'For suitable complex tasks, aLandi uses four stages: planning, research, critique and synthesis. All stages use the selected model; Quick/Thorough controls the tool budget in the research stage. This is not an independent team of agents.',functionDeepResearchTitle:'Deep research',functionDeepResearchDescription:'This panel shows the current Thorough request settings. A separate autonomous Research Studio is not used.',
         researchModeStatusLabel:'Processing effort',researchModeStatusHelp:'Quick limits a direct request to one round and one tool call; Thorough allows up to 4 rounds, 3 calls per round and 8 calls per run. In the structured pipeline, the budget applies to the research stage.',researchUseThorough:'Enable Thorough mode',
         researchSearchStatusLabel:'Web search',researchSearchStatusHelp:'Result breadth is configured separately in the Web menu: standard, expanded or off. It does not increase the number of rounds.',researchOpenSearchSettings:'Configure web search breadth',
@@ -3550,31 +3634,45 @@ permalink: /
       $('researchSearchModeSummary').textContent=text[searchKey];
       $('researchWorkflowSummary').textContent=text[chat.multiAgentEnabled?'workflowStructuredShort':'workflowDirectShort'];
     }
-    function openFunctionPanel(kind) {
-      const functionsMenu=$('functionsMenu'); if(functionsMenu) functionsMenu.open=false;
-      const views = {
-        agents: ['agentFunctionSettings','functionAgentsTitle','functionAgentsDescription'],
-        research: ['researchFunctionSettings','functionDeepResearchTitle','functionDeepResearchDescription'],
-        skills: ['skillFunctionSettings','functionSkillsTitle','functionSkillsDescription'],
-        connectors: ['connectorFunctionStatus','functionConnectorsTitle','functionConnectorsDescription']
-      };
-      const view = views[kind];
-      if (!view) return;
-      const text = UI_TEXT[getUiLanguage()];
-      ['agentFunctionSettings','researchFunctionSettings','skillFunctionSettings','connectorFunctionStatus'].forEach(id => $(id).classList.add('hidden'));
-      $('functionPanelTitle').textContent = text[view[1]];
-      $('functionPanelDescription').textContent = text[view[2]];
-      $(view[0]).classList.remove('hidden');
-      if (kind === 'agents') { $('agentModeControl').checked = getCurrentChat().multiAgentEnabled === true;renderAgentConfiguration(); }
-      if (kind === 'research') renderResearchConfiguration();
-      if (kind === 'skills') renderSkillConfiguration();
-      $('functionPanelModal').classList.remove('hidden');
-      $('functionPanelModal').querySelector('[data-action="close-function-panel"]')?.focus();
+    let notebookSelectedId=null;
+    function getNotebookProjectId(){const id=getCurrentChat()?.projectId;return id&&projects.some(p=>String(p.id)===String(id))?String(id):null;}
+    function nbText(ru,en){return getUiLanguage()==='en'?en:ru;}
+    function nbStatus(message,error=false){const el=$('notebookStatus');el.textContent=message;el.classList.toggle('text-red-300',error);}
+    function nbDownload(name,value,type){const url=URL.createObjectURL(new Blob([value],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
+    function nbSlug(value){return String(value||'source').normalize('NFKD').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48)||'source';}
+    async function renderNotebookPanel(){
+      const visible=await NotebookDB.listVisible(),selected=visible.find(n=>n.id===notebookSelectedId)||visible[0]||null;notebookSelectedId=selected?.id||null;
+      $('notebookWorkspace').classList.toggle('hidden',!selected);$('notebookEmptyState').classList.toggle('hidden',Boolean(selected));
+      $('notebookNewScope').querySelector('option[value="project"]').disabled=!getNotebookProjectId();
+      if(!selected){$('notebookSelect').innerHTML='';return;}
+      $('notebookSelect').innerHTML=visible.map(n=>'<option value="'+escapeHtml(n.id)+'">'+escapeHtml(n.title)+'</option>').join('');$('notebookSelect').value=selected.id;
+      let entries=await NotebookDB.entries(selected.id),q=$('notebookSearch').value.trim().toLowerCase(),sort=$('notebookSort').value;
+      entries=entries.filter(e=>!q||[e.title,e.body,e.url].some(v=>String(v||'').toLowerCase().includes(q)));
+      entries.sort((a,b)=>sort==='title-asc'?String(a.title).localeCompare(String(b.title)):sort==='created-asc'?a.createdAt-b.createdAt:b.updatedAt-a.updatedAt);
+      $('notebookEntryCount').textContent=entries.length+' / '+(await NotebookDB.entries(selected.id)).length;
+      $('notebookEntries').innerHTML=entries.map(e=>'<article class="notebook-entry"><div class="flex justify-between gap-2"><div class="min-w-0"><small class="text-cyan-300">'+(e.kind==='source'?'SOURCE':'NOTE')+'</small><h4 class="text-xs font-semibold break-words">'+escapeHtml(e.title)+'</h4><p class="mt-1 text-[11px] text-gray-400 whitespace-pre-wrap">'+escapeHtml(e.url||String(e.body||'').slice(0,300))+'</p></div><button type="button" data-action="delete-notebook-entry" data-notebook-entry-id="'+escapeHtml(e.id)+'" class="min-w-10 min-h-10">✕</button></div><div class="notebook-entry-actions"><button type="button" data-action="export-skill-draft" data-notebook-entry-id="'+escapeHtml(e.id)+'">Skill draft</button><button type="button" data-action="export-agent-blueprint" data-notebook-entry-id="'+escapeHtml(e.id)+'">Agent blueprint</button></div></article>').join('')||'<p class="text-xs text-gray-500">'+nbText('Записей пока нет.','No entries yet.')+'</p>';
     }
-    function closeFunctionPanel() {
-      $('functionPanelModal').classList.add('hidden');
-      $('functionsMenuSummary')?.focus();
+    async function createNotebookFromForm(){const title=$('notebookNewTitle').value.trim();if(!title){nbStatus(nbText('Укажи название.','Enter a name.'),true);return;}try{const n=await NotebookDB.create(title,$('notebookNewScope').value);notebookSelectedId=n.id;$('notebookNewTitle').value='';await renderNotebookPanel();nbStatus(nbText('Тетрадь сохранена локально.','Notebook saved locally.'));}catch(e){nbStatus(e.message,true);}}
+    async function saveNotebookNote(){const title=$('notebookNoteTitle').value.trim(),body=$('notebookNoteBody').value.trim();if(!notebookSelectedId||!title||!body){nbStatus(nbText('Выбери тетрадь и заполни название и текст.','Select a notebook and enter a title and body.'),true);return;}try{await NotebookDB.addEntry(notebookSelectedId,{kind:'note',title:title.slice(0,120),body:body.slice(0,12000)});$('notebookNoteTitle').value='';$('notebookNoteBody').value='';await renderNotebookPanel();nbStatus(nbText('Заметка сохранена.','Note saved.'));}catch(e){nbStatus(e.message,true);}}
+    async function saveNotebookSource(){let url;try{url=new URL($('notebookSourceUrl').value.trim());}catch(_){nbStatus(nbText('Нужна корректная ссылка http(s).','Enter a valid http(s) URL.'),true);return;}if(!['http:','https:'].includes(url.protocol)){nbStatus('Only http(s) URLs are supported.',true);return;}if(!notebookSelectedId){nbStatus('Select a notebook first.',true);return;}try{await NotebookDB.addEntry(notebookSelectedId,{kind:'source',sourceType:'url-reference',title:($('notebookSourceTitle').value.trim()||url.hostname).slice(0,120),url:url.href,licenseStatus:'not-reviewed'});$('notebookSourceTitle').value='';$('notebookSourceUrl').value='';await renderNotebookPanel();nbStatus(nbText('Ссылка сохранена; страница не загружалась.','Link saved; the page was not fetched.'));}catch(e){nbStatus(e.message,true);}}
+    async function importNotebookTextFile(file){if(!file)return;const ext=file.name.toLowerCase().split('.').pop();if(!['txt','md','markdown'].includes(ext)||file.size>2*1024*1024){nbStatus(nbText('Поддерживается TXT/Markdown до 2 МБ.','TXT/Markdown up to 2 MB only.'),true);return;}if(!$('notebookRightsConsent').checked||!notebookSelectedId){nbStatus(nbText('Подтверди права и выбери тетрадь.','Confirm rights and select a notebook.'),true);return;}try{const body=await file.text();if(!body.trim())throw new Error('Empty file');const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(body)),hash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');await NotebookDB.addEntry(notebookSelectedId,{kind:'source',sourceType:'local-text-file',title:file.name.slice(0,120),body,sourceHash:hash,licenseStatus:'user-confirmed-rights',byteSize:file.size});$('notebookRightsConsent').checked=false;await renderNotebookPanel();nbStatus(nbText('Файл сохранён локально; модели он не отправлялся.','File stored locally; not sent to a model.'));}catch(e){nbStatus(e.message,true);}}
+    async function exportNotebook(){const n=(await NotebookDB.listVisible()).find(x=>x.id===notebookSelectedId);if(!n)return;nbDownload(nbSlug(n.title)+'.json',JSON.stringify({schemaVersion:1,exportedAt:new Date().toISOString(),notebook:n,entries:await NotebookDB.entries(n.id)},null,2),'application/json');}
+    async function deleteNotebook(){if(!notebookSelectedId||!confirm(nbText('Удалить тетрадь и все записи?','Delete this notebook and all entries?')))return;await NotebookDB.remove(notebookSelectedId);notebookSelectedId=null;await renderNotebookPanel();}
+    async function deleteNotebookEntry(id){await NotebookDB.deleteEntry(notebookSelectedId,id);await renderNotebookPanel();}
+    async function getNotebookEntry(id){return (await NotebookDB.entries(notebookSelectedId)).find(e=>e.id===id);}
+    async function exportSkillDraft(id){const e=await getNotebookEntry(id);if(!e)return;const headings=String(e.body||'').split(/\r?\n/).filter(x=>/^#{1,4}\s/.test(x)).slice(0,30).map((x,i)=>(i+1)+'. Validate section '+x.replace(/^#{1,4}\s/,'').slice(0,100)+'.').join('\n')||'1. Read the source and write one verified reusable procedure.';const md='---\nname: '+nbSlug(e.title)+'\ndescription: Draft only; human review required.\n---\n\n# '+e.title+'\n\n> DRAFT ONLY. Not a validated Skill. No source paragraphs or executable scripts are copied.\n\n## Purpose\n[Define task and scope]\n\n## Procedure outline\n'+headings+'\n\n## Evidence and provenance\n- Source ID: '+e.id+'\n- SHA-256: '+(e.sourceHash||'not available')+'\n- Rights: '+(e.licenseStatus||'not reviewed')+'\n\n## Review\n- [ ] Confirm rights and license\n- [ ] Verify every instruction against source\n- [ ] Add positive, negative and boundary evals\n- [ ] Scan injection, secrets, scripts and dependencies\n- [ ] Human approve and version before use\n\n## Permissions\nNo shell, filesystem, network, memory, connector or external-action permissions.\n';nbDownload(nbSlug(e.title)+'-SKILL-DRAFT.md',md,'text/markdown');nbStatus(nbText('Скачан черновик Skill; требуется проверка.','Skill draft downloaded; review required.'));}
+    async function exportAgentBlueprint(id){const e=await getNotebookEntry(id);if(!e)return;const blueprint={schemaVersion:1,status:'draft',name:e.title,purpose:'[Define task and acceptance criteria]',sourceReferences:[{id:e.id,title:e.title,sha256:e.sourceHash||null,licenseStatus:e.licenseStatus||'not-reviewed'}],role:{name:'[Role]',responsibilities:[],limitations:[]},skills:[],modelPolicy:{fallback:'none'},dataScope:{notebookId:notebookSelectedId,read:'selected sources only'},capabilities:{read:false,write:false,network:false,execute:false,memory:false,connectors:false},approvalPolicy:{humanReviewRequired:true,sideEffectsDisabled:true},budget:{maxSteps:8,maxInputBytes:2000000,maxOutputBytes:50000,timeoutSeconds:60},evaluations:{positive:[],negative:[],boundary:[]},notes:'Blueprint only: no agent runtime or permissions created.'};nbDownload(nbSlug(e.title)+'-AGENT-BLUEPRINT.json',JSON.stringify(blueprint,null,2),'application/json');}
+    function openFunctionPanel(kind){
+      const views={agents:['agentFunctionSettings','functionAgentsTitle','functionAgentsDescription'],research:['researchFunctionSettings','functionDeepResearchTitle','functionDeepResearchDescription'],notebook:['notebookFunctionSettings','functionNotebookTitle','functionNotebookDescription'],skills:['skillFunctionSettings','functionSkillsTitle','functionSkillsDescription'],connectors:['connectorFunctionStatus','functionConnectorsTitle','functionConnectorsDescription']};
+      const view=views[kind];if(!view)return;const text=UI_TEXT[getUiLanguage()];
+      ['agentFunctionSettings','researchFunctionSettings','notebookFunctionSettings','skillFunctionSettings','connectorFunctionStatus'].forEach(id=>$(id).classList.add('hidden'));
+      $('functionPanelTitle').textContent=text[view[1]];$('functionPanelDescription').textContent=text[view[2]];$(view[0]).classList.remove('hidden');
+      $('functionsDrawerNav').querySelectorAll('[data-function]').forEach(button=>{if(button.dataset.function===kind)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
+      if(kind==='agents'){$('agentModeControl').checked=getCurrentChat().multiAgentEnabled===true;renderAgentConfiguration();}
+      if(kind==='research')renderResearchConfiguration();if(kind==='notebook')renderNotebookPanel();if(kind==='skills')renderSkillConfiguration();
+      $('functionPanelModal').classList.remove('hidden');$('functionsMenuSummary').setAttribute('aria-expanded','true');$('functionPanelModal').querySelector('[data-action="close-function-panel"]')?.focus();
     }
+    function closeFunctionPanel(){$('functionPanelModal').classList.add('hidden');$('functionsMenuSummary').setAttribute('aria-expanded','false');$('functionsMenuSummary')?.focus();}
     document.addEventListener('click', (event) => {
       const toolbarMenus = ['searchModeMenu','functionsMenu','languageMenu'].map(id => $(id)).filter(menu => menu?.open);
       const chatMenus = [...document.querySelectorAll('.chat-row-menu[open]')];
@@ -5277,9 +5375,19 @@ permalink: /
         switch (action) {
           case 'set-language': applyUiLanguage(control.dataset.language);if($('languageMenu'))$('languageMenu').open=false;if($('languageMenuSidebar'))$('languageMenuSidebar').open=false;break;
           case 'select-search-mode': setSearchMode(control.dataset.searchMode);break;
-          case 'select-processing-mode': setProcessingMode(control.dataset.processingMode);if($('functionsMenu'))$('functionsMenu').open=false;break;
+          case 'select-processing-mode': setProcessingMode(control.dataset.processingMode);break;
           case 'open-search-mode-settings': closeFunctionPanel();$('searchModeMenu').open=true;$('searchModeSummary').focus();break;
+          case 'open-functions-drawer': openFunctionPanel('agents');break;
           case 'open-function-panel': openFunctionPanel(control.dataset.function);break;
+          case 'create-notebook': await createNotebookFromForm();break;
+          case 'save-notebook-note': await saveNotebookNote();break;
+          case 'save-notebook-source': await saveNotebookSource();break;
+          case 'choose-notebook-text-file': $('notebookTextFile').click();break;
+          case 'export-notebook': await exportNotebook();break;
+          case 'delete-notebook': await deleteNotebook();break;
+          case 'delete-notebook-entry': await deleteNotebookEntry(control.dataset.notebookEntryId);break;
+          case 'export-skill-draft': await exportSkillDraft(control.dataset.notebookEntryId);break;
+          case 'export-agent-blueprint': await exportAgentBlueprint(control.dataset.notebookEntryId);break;
           case 'close-function-panel': closeFunctionPanel();break;
           case 'apply-skill-quiz': applySkillQuiz();break;
           case 'toggle-theme-cycle': toggleHomeTheme();break;
@@ -5526,6 +5634,10 @@ permalink: /
     $('chatActionModal').addEventListener('click',event=>{if(event.target===$('chatActionModal'))closeChatActionDialog();});
     $('settingsModal').addEventListener('click', event => { if (event.target === $('settingsModal')) toggleSettings(false); });
     $('functionPanelModal').addEventListener('click', event => { if (event.target === $('functionPanelModal')) closeFunctionPanel(); });
+    $('notebookSelect').addEventListener('change',event=>{notebookSelectedId=event.target.value||null;renderNotebookPanel();});
+    $('notebookSearch').addEventListener('input',()=>renderNotebookPanel());
+    $('notebookSort').addEventListener('change',()=>renderNotebookPanel());
+    $('notebookTextFile').addEventListener('change',async event=>{const file=event.target.files?.[0];event.target.value='';await importNotebookTextFile(file);});
     document.addEventListener('keydown', (event) => {
       const functionModal = $('functionPanelModal');
       if (event.key === 'Tab' && functionModal && !functionModal.classList.contains('hidden')) {
