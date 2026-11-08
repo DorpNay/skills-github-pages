@@ -3,6 +3,14 @@
 **Trigger:** owner writes `oledue` (alone or with a task).
 **Purpose:** recover the real task and exact repository state, then continue work in the same turn. GitHub live state is authoritative.
 
+## Latest explicit owner request — live checkpoint 2026-11-08
+
+- **latest explicit owner request:** implement the sliding Functions drawer with Agents, Research, Notebook and Skills; organize settings/function ownership, responsive layout, controls, sorting and sizing; implement Notebook and a safe source/book-to-Skill/Agent workflow. Preserve every other goal in the existing master register.
+- **Verified main:** `9033c6ad708a993cba5d1b27442f53651ad71c0f` — fix(ci/ui): align Pages contract and modal backdrop dismissal (#174). PR #174 is merged. Exact-main Quality #42430269155, Freshness #42430269156, Provenance #42430269144, Graphify #42430269131 and Pages #42430269181 passed; public root and landing were verified on this SHA.
+- **Current bounded candidate:** PR #175, branch `feat/functions-drawer-notebook-20261108`, base `9033c6ad708a993cba5d1b27442f53651ad71c0f`, head at this checkpoint `f78a3ae7f25ae76cb6bd87461b76a5860ec9f3b6`. PR #175 is the only open PR. Issue #111 is the only open issue and remains owner/environment controlled.
+- **Merge authorization:** the owner explicitly authorizes merging currently open PRs only after complete diff review and required checks pass on the exact current HEAD. Do not merge a superseded or cancelled result. Do not merge stale/closed/HOLD PRs wholesale. Deployment remains separate.
+- **Capability boundary:** Notebook is local and separate from chat Memory. Semantic book conversion, PDF/EPUB/Office parsers, source/license/injection scanning, versioned Skill lifecycle and independent Agent runtime remain open until implemented and evaluated. Imported text grants no permissions.
+- **Do not default to any PR.** Route from the latest explicit owner request and live task match.
 ## Handoff protocol
 
 1. Read this file first. Do not start from chat memory, an old SHA, a remembered branch, or a previous PR number.
