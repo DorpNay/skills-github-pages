@@ -95,7 +95,7 @@ const suites = {
       includes("database.createObjectStore('sharedMemory')", 'Shared memory must use a distinct IndexedDB object store.');
       includes("database.createObjectStore('notebooks')", 'Research notebooks must use a separate object store.');
       includes("database.createObjectStore('notebookEntries')", 'Notebook entries must use a separate object store.');
-      includes("const privateMemories=selectedProviderForMemory==='alandi'?await MemoryDB.getAll():[]", 'Private notes must only be read for the local aLandi route.');
+      includes("const privateMemories=selectedProviderForMemory==='alandi'&&safeGet(STORAGE.privateMemoryEnabled)==='true'?await MemoryDB.getAll():[]", 'Private notes must be explicitly enabled and only read for the local aLandi route.');
       assert.equal(combinedSource.includes('serverMemoryDetails'), false, 'The retired experimental server-memory UI must be fully removed.');
       assert.equal(combinedSource.includes('getServerProjectMemories'), false, 'The retired server graph-memory feature must not remain callable.');
       assert.equal(combinedSource.includes('serverProjectMemoryEnabled'), false, 'The retired server-memory opt-in state must not remain in chat contracts.');
