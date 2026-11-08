@@ -23,13 +23,18 @@ export function findUnpinnedActionRefs(source, filename = "<workflow>") {
     const line = source.slice(0, match.index).split("\n").length;
     let ref = match[2].trim();
 
-    if (/^[>|][+-]?$/.test(ref)) {
+    const blockHeader = ref.match(/^([>|])([+-]?[1-9]?|[1-9][+-]?)?$/);
+    if (blockHeader) {
       const afterKey = match.index + match[0].length;
+      const keyIndent = match[0].indexOf("uses:");
+      const explicitIndent = blockHeader[2]?.match(/[1-9]/)?.[0];
+      let contentIndent = explicitIndent ? keyIndent + Number(explicitIndent) : null;
       const blockLines = [];
       for (const blockLine of source.slice(afterKey).split("\n")) {
         if (!blockLine.trim()) continue;
         const blockIndent = blockLine.match(/^[ \t]*/)[0].length;
-        if (blockIndent <= indentation) break;
+        if (contentIndent === null) contentIndent = blockIndent;
+        if (blockIndent < contentIndent) break;
         blockLines.push(blockLine.trim());
       }
       ref = blockLines.join(" ").trim();
