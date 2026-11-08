@@ -7,7 +7,7 @@
     "main_commit_subject": "fix(ci/ui): align Pages contract and modal backdrop dismissal (#174)",
     "main_commit_date": "2026-11-08",
     "last_functional_checkpoint_sha": "9033c6ad708a993cba5d1b27442f53651ad71c0f",
-    "last_functional_milestone": "PR #174 merged at main 9033c6ad708a993cba5d1b27442f53651ad71c0f. Exact-main Quality #42430269155, Freshness #42430269156, Provenance #42430269144, Graphify #42430269131 and Pages #42430269181 passed; public root/landing verified. Active PR #175 is the Functions drawer/Notebook candidate at test-fix HEAD 1e6556f466e637417db2e2ec1e6e938282aaf935. The other live open PRs are #176–#181; issue #111 remains owner-controlled.",
+    "last_functional_milestone": "PR #174 merged at main 9033c6ad708a993cba5d1b27442f53651ad71c0f. Exact-main Quality #42430269155, Freshness #42430269156, Provenance #42430269144, Graphify #42430269131 and Pages #42430269181 passed; public root/landing verified. Active PR #175 is the Functions drawer/Notebook candidate at checkpoint SHA 62c159c94c1acc54bcadc7fbe1bd9e66412d1746. The other live open PRs are #176–#182; #179 and #182 overlap in UX-040; #180 is stacked on #179; issue #111 remains owner-controlled.",
     "main_quality_run": 42430269155,
     "main_pages_deployment_run": 42430269181,
     "functional_parent_gateway_run": null,
@@ -20,7 +20,8 @@
       178,
       179,
       180,
-      181
+      181,
+      182
     ],
     "open_issues": [
       111
@@ -253,8 +254,8 @@
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
     "live_vps_gateway_device_and_model_runtime_verified": false,
-    "queue_policy": "Live open PR #175 is the current owner-authorized bounded Functions drawer/Notebook candidate and is excluded from the expected queue snapshot; six other open PRs are #176–#181. PR #179 owns UX-040 and is stacked on #175's previous HEAD; PR #180 is stacked on an older #179 base and requires owner coordination before integration. PRs #176/#177/#178/#181 remain independent main-based lanes. Issue #111 remains owner-controlled.",
-    "pr_check_policy": "Current PR #175 is intentionally excluded from the expected queue snapshot by --exclude-pr 175; expected open PRs are #176, #177, #178, #179, #180, #181, with open issue #111."
+    "queue_policy": "Live open PR #175 is the current owner-authorized bounded Functions drawer/Notebook candidate and is excluded from the expected queue snapshot; seven other open PRs are #176–#182. PRs #179 and #182 both claim UX-040 as child PRs of #175 and overlap; owner reconciliation is required. PR #180 is stacked on #179 at a base behind its current HEAD. PRs #176/#177/#178/#181 remain independent main-based lanes. Issue #111 remains owner-controlled.",
+    "pr_check_policy": "Current PR #175 is intentionally excluded from the expected queue snapshot by --exclude-pr 175; expected open PRs are #176, #177, #178, #179, #180, #181, #182, with open issue #111."
   },
-  "last_volley": "V-2026-11-08-PR175-NOTEBOOK-LABEL-FIX-001"
+  "last_volley": "V-2026-11-08-PR175-QUEUE-RACE-002"
 }
