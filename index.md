@@ -203,6 +203,8 @@ permalink: /
     .functions-drawer-nav button[aria-current="page"] { color:var(--ui-text);background:var(--ui-tiffany-soft);border-color:var(--ui-tiffany); }
     .functions-drawer-nav small { display:block;margin-top:3px;font-size:9px;line-height:1.3;color:var(--ui-text-muted); }
     .functions-drawer-surface > section[id$="FunctionSettings"],.functions-drawer-surface > section#connectorFunctionStatus { flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:16px 20px; }
+    .notebook-field { min-height:44px; }
+    .notebook-entry-actions button { min-height:44px; }
     .notebook-field { width:100%;min-width:0;border:1px solid var(--ui-border);border-radius:10px;background:var(--ui-surface);color:var(--ui-text);padding:10px 11px;font-size:12px; }
     .notebook-entry { min-width:0;border:1px solid var(--ui-border);border-radius:12px;padding:11px;background:color-mix(in srgb,var(--ui-surface-raised) 70%,transparent); }
     .notebook-entry p { overflow-wrap:anywhere; }
@@ -3660,7 +3662,7 @@ permalink: /
         const title=document.createElement('h4');title.className='text-xs font-semibold break-words';title.textContent=e.title||'Untitled';
         const excerpt=document.createElement('p');excerpt.className='mt-1 text-[11px] text-gray-400 whitespace-pre-wrap';excerpt.textContent=e.url||String(e.body||'').slice(0,300);
         body.append(kind,title,excerpt);
-        const remove=document.createElement('button');remove.type='button';remove.dataset.action='delete-notebook-entry';remove.dataset.notebookEntryId=e.id;remove.className='min-w-10 min-h-10';remove.textContent='✕';remove.setAttribute('aria-label',nbText('Удалить запись','Delete entry'));
+        const remove=document.createElement('button');remove.type='button';remove.dataset.action='delete-notebook-entry';remove.dataset.notebookEntryId=e.id;remove.className='min-w-11 min-h-11';remove.textContent='✕';remove.setAttribute('aria-label',nbText('Удалить запись','Delete entry'));
         row.append(body,remove);article.append(row);
         const actions=document.createElement('div');actions.className='notebook-entry-actions';
         for(const [action,label] of [['export-skill-draft','Skill draft'],['export-agent-blueprint','Agent blueprint']]){
