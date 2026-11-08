@@ -53,6 +53,11 @@ test('V1 landing has accurate metadata, working CTAs and honest product boundari
   await expect(page.locator('.hero .note')).toContainText('бесплатная статическая страница');
   await expect(page.locator('.hero .note')).toContainText('публичный hosted AI endpoint этим сайтом не предоставляется');
   await expect(page.locator('#stack')).toContainText('Это целевая схема развёртывания');
+  await expect(page.locator('#capabilities')).toContainText('Функции чата: агенты, исследования и скиллы');
+  await expect(page.locator('#capabilities')).toContainText('фиксированный четырёхэтапный разбор на одной выбранной модели');
+  await expect(page.locator('#capabilities')).toContainText('тщательность работы и ширину веб-поиска');
+  await expect(page.locator('#capabilities')).toContainText('только в текущий чат');
+  await expect(page.locator('#capabilities')).toContainText('независимая команда агентов пока не реализована');
   await expect(page.locator('#capabilities')).toContainText('Голосовой интерфейс');
   await expect(page.locator('#readiness')).toContainText('обязательная часть первого функционального обновления');
   await expect(page.locator('#capabilities')).toContainText('транскрипция речи с редактированием');
