@@ -2252,11 +2252,9 @@ permalink: /
       if(!name){input.focus();showToast(getUiLanguage()==='en'?'Enter a project name first.':'Сначала введи название проекта.','error');return;}
       if(projects.length>=200){showToast('Достигнут предел локальных проектов (200).','error');return;}
       const previousProjects=projects.slice(),previousSelected=selectedProjectForSettingsId,previousCreating=creatingProject;
-      const chat=getCurrentChat(),previousChat={projectId:chat.projectId,projectMemoryEnabled:chat.projectMemoryEnabled};
       const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectInstructionsInput').value.trim().slice(0,6000),memoryScope:$('projectMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only',memory:[],createdAt:now,updatedAt:now};
       creatingProject=false;projects=[project,...projects];selectedProjectForSettingsId=project.id;
-      chat.projectId=project.id;chat.projectMemoryEnabled=false
-      if(!persistProjectsAndChats()){projects=previousProjects;selectedProjectForSettingsId=previousSelected;creatingProject=previousCreating;Object.assign(chat,previousChat);renderProjectUI();renderChatList();renderActiveChat();return;}
+      if(!persistProjectsAndChats()){projects=previousProjects;selectedProjectForSettingsId=previousSelected;creatingProject=previousCreating;renderProjectUI();renderChatList();renderActiveChat();return;}
       renderProjectUI();renderChatList();renderActiveChat();
       showToast((getUiLanguage()==='en'?'Project created: ':'Создан проект: ')+name);
     }
@@ -2394,7 +2392,6 @@ permalink: /
       const unassigned=chats.filter(chat=>!chat.projectId);
       $('projectlessChatCount').textContent=String(unassigned.length);
       $('chatSectionCount').textContent=String(unassigned.length);
-      const current=getCurrentChat();
       $('projectlessNavButton').classList.toggle('is-active',activeChatProjectId===null);
       const english=getUiLanguage()==='en';
       for(const project of projects) {
@@ -4713,6 +4710,7 @@ permalink: /
     }
     function createNewChatInProject(projectId) {
       const project=projects.find(item=>item.id===projectId);if(!project){showToast('Проект больше не существует.','error');return;}
+      if(activeChatProjectId!==project.id)history.pushState({...history.state,__aLandiChatProjectId:project.id},'',location.href);
       activeChatProjectId=project.id;
       const chat=createChat('Новый чат · '+project.name,[],project.id);
       updateState([chat,...chats],chat.id);toggleSidebar(false);
@@ -5500,12 +5498,11 @@ permalink: /
           case 'select-project': {
             const id=control.dataset.projectId;if(!projects.some(project=>project.id===id))break;
             if(activeChatProjectId!==id)history.pushState({...history.state,__aLandiChatProjectId:id},'',location.href);
-            activeChatProjectId=id;renderProjectNavigation();renderChatList();$('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});break;
+            activeChatProjectId=id;renderChatList();$('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});break;
           }
           case 'chat-list-back': {
-            if(history.state?.__aLandiChatProjectId===activeChatProjectId)history.back();
-            else {activeChatProjectId=null;renderChatList();}
-            $('chatSection').querySelector('summary')?.focus();break;
+            if(activeChatProjectId!==null)history.pushState({...history.state,__aLandiChatProjectId:null},'',location.href);
+            activeChatProjectId=null;renderChatList();$('chatSection').querySelector('summary')?.focus();break;
           }
           case 'open-project-settings': {
             projectSettingsOpener=control;
