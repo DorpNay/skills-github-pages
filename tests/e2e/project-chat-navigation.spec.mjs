@@ -22,6 +22,7 @@ async function revealSidebarElement(page, locator) {
 }
 
 async function createProject(page, name) {
+  await openSidebar(page);
   const createButton = page.locator('#projectPanel [data-action="open-project-create"]');
   await revealSidebarElement(page, createButton);
   await createButton.click();
@@ -44,6 +45,7 @@ async function projectId(page, name) {
 }
 
 async function openProjectGroup(page, id) {
+  await openSidebar(page);
   const navigation = page.locator('#projectNavigationList');
   if (await navigation.evaluate(element => element.classList.contains('hidden'))) {
     const toggle = page.locator('#projectNavToggle');
@@ -66,6 +68,7 @@ async function selectProject(page, id) {
 }
 
 async function clickSidebarControl(page, locator) {
+  await openSidebar(page);
   await revealSidebarElement(page, locator);
   await locator.click();
 }
