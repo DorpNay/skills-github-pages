@@ -2729,6 +2729,8 @@ test('project notebooks stay isolated by active project while personal notebooks
   await expect(page.locator('#notebookNewScope option[value="project"]')).toBeDisabled();
   await page.locator('[data-action="close-function-panel"]').click();
   const switchToProjectChat=async(projectId,chatId,title)=>{
+    const navigation=page.locator('#projectNavigationList');
+    if(await navigation.evaluate(el=>el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
     const group=page.locator('details.project-nav-item[data-project-id="'+projectId+'"]');
     if(!(await group.evaluate(el=>el.open))) await group.locator('summary').click();
     await group.locator('[data-action="switch-chat"][data-chat-id="'+chatId+'"]').click();
