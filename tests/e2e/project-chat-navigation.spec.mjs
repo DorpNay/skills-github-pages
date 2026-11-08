@@ -48,6 +48,12 @@ async function selectProject(page, id) {
   await expect(page.locator('#chatListBack')).toBeVisible();
 }
 
+async function selectLanguage(page, language) {
+  const menu = page.locator('#languageMenu');
+  if (!(await menu.evaluate(element => element.open))) await menu.locator(':scope > summary').click();
+  await menu.locator('[data-language="' + language + '"]').click();
+}
+
 async function readLocalState(page) {
   return page.evaluate(() => ({
     chats: JSON.parse(localStorage.getItem('ai_chats_v87') || '[]'),
@@ -96,11 +102,11 @@ test('project selection filters the Chats pane without changing chat membership;
 
   await selectProject(page, alphaId);
   await expect(page.locator('#chatSectionTitle')).toContainText('Alpha workspace');
-  await page.locator('#uiLanguage').selectOption('en');
+  await selectLanguage(page, 'en');
   await expect(page.locator('#chatSectionTitle')).toContainText('Chats · Alpha workspace');
   await expect(page.locator('#chatListNewButton')).toContainText('New chat in project');
   await expect(page.locator('#chatListBack')).toContainText('All chats');
-  await page.locator('#uiLanguage').selectOption('ru');
+  await selectLanguage(page, 'ru');
   await expect(page.locator('#chatSectionTitle')).toContainText('Чаты · Alpha workspace');
   await expect(page.locator('#chatList .chat-row')).toHaveCount(0);
 
