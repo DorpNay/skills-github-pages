@@ -114,11 +114,13 @@
       // Invoke directly from a user gesture; selected files are not copied into app storage.
       const handles = await window.showOpenFilePicker({ multiple: true });
       const selected = [];
-      for (let i = 0; i < handles.length; i++) {
-        const handle = handles[i];
+      const seenNames = new Set();
+      for (const handle of handles) {
         await this.ensurePermission(handle, 'read', true);
-        const file = await handle.getFile();
-        const path = '@selected/' + encodeURIComponent(handle.name) + '/' + file.size + '-' + file.lastModified;
+        const path = '@selected/' + encodeURIComponent(handle.name);
+        assert(!seenNames.has(path),
+          'Two selected files share the same name. Choose their parent folder to preserve unique paths.');
+        seenNames.add(path);
         this.fileHandles.set(path, handle);
         selected.push({ path, name: handle.name, kind: handle.kind });
       }
