@@ -2001,6 +2001,75 @@ test('sidebar separates projects from personal chats and keeps navigation collap
   await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(1);
 });
 
+
+test('project chat navigation filters the list without moving the active chat and creates in the selected scope', async ({ page }) => {
+  await page.addInitScript(() => {
+    const project = (id, name) => ({ id, name, description: '', instructions: '', memoryScope: 'project-only', memory: [], createdAt: '', updatedAt: '' });
+    const chat = (id, title, projectId) => ({ id, title, projectId, projectMemoryEnabled: false, messages: [] });
+    localStorage.setItem('ai_projects_v1', JSON.stringify([
+      project('project-alpha', 'Alpha project with a deliberately long navigation name'),
+      project('project-beta', 'Beta project')
+    ]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([
+      chat('chat-personal', 'Personal chat', null),
+      chat('chat-alpha', 'Alpha project chat', 'project-alpha'),
+      chat('chat-beta', 'Beta project chat', 'project-beta')
+    ]));
+    localStorage.setItem('ai_current_chat_v87', 'chat-alpha');
+  });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
+  await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(1);
+  await expect(page.locator('#chatList')).toContainText('Personal chat');
+  await expect(page.locator('#projectlessNavButton')).toBeHidden();
+
+  await page.locator('#projectNavToggle').click();
+  const alpha = page.locator('#projectNavigationList details[data-project-id="project-alpha"]');
+  await alpha.locator(':scope > summary').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(1);
+  await expect(page.locator('#chatList')).toContainText('Alpha project chat');
+  await expect(page.locator('#chatList')).not.toContainText('Personal chat');
+  await expect(page.locator('#projectlessNavButton')).toBeVisible();
+  await expect(page.locator('#projectlessNavButton')).toContainText('Назад');
+  await expect(alpha.locator('[data-action="project-chat-scope"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(alpha.locator(':scope > summary span').nth(1)).toHaveAttribute('title', 'Alpha project with a deliberately long navigation name');
+
+  const activeBefore = await page.evaluate(() => ({
+    id: localStorage.getItem('ai_current_chat_v87'),
+    projectId: JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').find(chat => chat.id === localStorage.getItem('ai_current_chat_v87'))?.projectId
+  }));
+  expect(activeBefore).toEqual({ id: 'chat-alpha', projectId: 'project-alpha' });
+
+  const beta = page.locator('#projectNavigationList details[data-project-id="project-beta"]');
+  await beta.locator(':scope > summary').click();
+  await expect(page.locator('#chatList')).toContainText('Beta project chat');
+  await expect(page.locator('#chatList')).not.toContainText('Alpha project chat');
+  const activeAfterFilter = await page.evaluate(() => ({
+    id: localStorage.getItem('ai_current_chat_v87'),
+    projectId: JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').find(chat => chat.id === localStorage.getItem('ai_current_chat_v87'))?.projectId
+  }));
+  expect(activeAfterFilter).toEqual(activeBefore);
+
+  await page.locator('#projectlessNavButton').click();
+  await expect(page.locator('#chatList')).toContainText('Personal chat');
+  await expect(page.locator('#chatList')).not.toContainText('Beta project chat');
+
+  await alpha.locator('[data-action="project-chat-scope"]').click();
+  await expect(page.locator('#chatSection [data-action="new-chat"]')).toContainText('Alpha project');
+  await page.locator('#chatSection [data-action="new-chat"]').click();
+  await ensureSidebarOpen(page);
+  await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(2);
+  const created = await page.evaluate(() => {
+    const id = localStorage.getItem('ai_current_chat_v87');
+    return JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').find(chat => chat.id === id);
+  });
+  expect(created?.projectId).toBe('project-alpha');
+  await expect(page.locator('#chatList')).toContainText('Новый чат · Alpha project with a deliberately long navigation name');
+});
+
 test('sidebar closes on a horizontal touch swipe without consuming vertical scrolling', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
