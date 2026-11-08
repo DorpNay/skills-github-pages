@@ -106,32 +106,32 @@ jobs:
           from pathlib import Path
           import os
           import re
-          
+
           source_path = Path(os.environ["STAGING"]) / "index.md"
           source = source_path.read_text(encoding="utf-8")
           masked = ["\n" if char == "\n" else "\r" if char == "\r" else " " for char in source]
           extracted = 0
           for match in re.finditer(r"<script\b([^>]*)>([\s\S]*?)</script\s*>", source, re.IGNORECASE):
-          attrs, body = match.group(1), match.group(2)
-          if re.search(r"\bsrc\s*=", attrs, re.IGNORECASE):
-          continue
-          kind = re.search(r"""\btype\s*=\s*["']?([^"'\s>]+)""", attrs, re.IGNORECASE)
-          if kind and kind.group(1).lower() not in {"text/javascript", "application/javascript", "module"}:
-          continue
-          start, end = match.span(2)
-          if not body.strip():
-          continue
-          masked[start:end] = source[start:end]
-          extracted += len(body.strip())
+              attrs, body = match.group(1), match.group(2)
+              if re.search(r"\bsrc\s*=", attrs, re.IGNORECASE):
+                  continue
+              kind = re.search(r"""\btype\s*=\s*["']?([^"'\s>]+)""", attrs, re.IGNORECASE)
+              if kind and kind.group(1).lower() not in {"text/javascript", "application/javascript", "module"}:
+                  continue
+              start, end = match.span(2)
+              if not body.strip():
+                  continue
+              masked[start:end] = source[start:end]
+              extracted += len(body.strip())
           if extracted >= 1000:
-          target = Path(os.environ["STAGING"]) / "index-inline.js"
-          target.write_text("".join(masked), encoding="utf-8")
-          print(f"Extracted {extracted} inline JavaScript characters to {target}; source line numbers preserved from index.md")
+              target = Path(os.environ["STAGING"]) / "index-inline.js"
+              target.write_text("".join(masked), encoding="utf-8")
+              print(f"Extracted {extracted} inline JavaScript characters to {target}; source line numbers preserved from index.md")
           else:
-          runtime = Path(os.environ["STAGING"]) / "assets/js/app.js"
-          if not runtime.is_file() or runtime.stat().st_size < 1000:
-          raise SystemExit(f"No substantial inline or external application runtime found (inline={extracted})")
-          print(f"No substantial inline script; Graphify will index the external runtime at {runtime.relative_to(Path(os.environ['STAGING']))}")
+              runtime = Path(os.environ["STAGING"]) / "assets/js/app.js"
+              if not runtime.is_file() or runtime.stat().st_size < 1000:
+                  raise SystemExit(f"No substantial inline or external application runtime found (inline={extracted})")
+              print(f"No substantial inline script; Graphify will index the external runtime at {runtime.relative_to(Path(os.environ['STAGING']))}")
           PY
           test -f "$STAGING/.graphifyignore"
           printf 'Tracked files in source commit: '
