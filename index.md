@@ -316,7 +316,7 @@ permalink: /
       </div>
     </div>
     <div class="flex justify-end">
-      <button id="deepResearchStudioButton" type="button" data-action="open-research-studio" data-i18n="deepResearchStudioButton" class="rounded-lg px-2 py-1 text-[11px] text-cyan-300 hover:bg-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400">⌕ Настроить исследование</button>
+      
     </div>
     <div class="flex items-center gap-2 text-xs">
       <details id="searchModeMenu" class="toolbar-menu flex-1 min-w-0">
@@ -406,30 +406,7 @@ permalink: /
     </section>
   </div>
 
-  <div id="researchStudioModal" class="hidden fixed inset-0 z-[65] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="researchStudioTitle">
-    <section class="w-full max-w-2xl max-h-[92dvh] overflow-y-auto rounded-2xl border border-cyan-800/60 bg-gray-950 p-4 sm:p-6 shadow-2xl space-y-4">
-      <header class="flex items-start justify-between gap-3"><div><p class="text-[10px] uppercase tracking-[.22em] font-bold text-cyan-300">aLandi · Studio</p><h2 id="researchStudioTitle" class="mt-1 text-lg font-bold" data-i18n="researchStudioTitle">Студия исследования</h2><p class="mt-1 text-xs leading-relaxed text-gray-400" data-i18n="researchStudioDescription">Окно подготовки исследовательского запроса. Запуск использует текущие параметры этого чата.</p></div><button type="button" data-action="close-research-studio" class="rounded-lg px-2 py-1 text-gray-400 hover:text-white" aria-label="Закрыть студию" data-i18n-aria-label="researchStudioClose">✕</button></header>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <label class="block text-xs text-gray-400">Усилие
-          <select id="researchStudioEffort" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="fast">Быстро</option><option value="deep">Тщательно</option></select>
-        </label>
-        <label class="block text-xs text-gray-400">Веб-поиск
-          <select id="researchStudioSearchMode" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="normal">Обычный</option><option value="more">Расширенный</option><option value="offline">Выкл.</option></select>
-        </label>
-      </div>
-      <label class="flex items-center gap-2 rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-xs text-gray-300">
-        <input id="researchStudioStructured" type="checkbox" class="rounded">
-        <span><strong class="block">Структурированный разбор</strong><span class="mt-0.5 block text-[10px] text-gray-500">Четыре последовательных этапа на выбранной модели.</span></span>
-      </label>
-      <div class="rounded-xl border border-cyan-900/50 bg-cyan-950/20 p-3 space-y-1.5">
-        <p id="researchStudioSettingsSummary" class="text-xs font-semibold text-gray-200" aria-live="polite">Текущие параметры чата</p>
-        <p class="text-[11px] leading-relaxed text-gray-400">Текст задачи вводи в основном поле сообщения. Это окно меняет только режимы.</p>
-      </div>
-      <p class="text-[10px] leading-relaxed text-gray-500">Прикрепи документы в чате. Внешние источники остаются недоверенными данными, а не инструкциями.</p>
-      <div class="flex flex-wrap justify-end gap-2"><button type="button" data-action="close-research-studio" class="rounded-xl border border-gray-700 px-3 py-2 text-sm text-gray-300 hover:bg-gray-800">Отмена</button><button type="button" data-action="start-research-studio" class="rounded-xl bg-cyan-600 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-500">Применить режим</button></div>
-      <p id="researchStudioStatus" class="text-[11px] text-gray-500" role="status" aria-live="polite">Параметры ещё не изменены.</p>
-    </section>
-  </div>
+  
   <div id="functionPanelModal" class="hidden fixed inset-0 z-[120] bg-black/65 flex justify-end overscroll-none" role="dialog" aria-modal="true" aria-labelledby="functionPanelTitle">
     <section class="functions-drawer-surface space-y-3">
       <header class="flex items-start justify-between gap-3">
