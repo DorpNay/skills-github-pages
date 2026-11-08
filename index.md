@@ -2393,6 +2393,7 @@ permalink: /
       $('projectlessChatCount').textContent=String(unassigned.length);
       $('chatSectionCount').textContent=String(unassigned.length);
       $('projectlessNavButton').classList.toggle('is-active',activeChatProjectId===null);
+      $('projectlessNavButton').setAttribute('aria-pressed',String(activeChatProjectId===null));
       const english=getUiLanguage()==='en';
       for(const project of projects) {
         const group=document.createElement('details');group.className='project-nav-item';group.dataset.projectId=project.id;group.open=expanded.has(project.id);group.classList.toggle('is-active',activeChatProjectId===project.id);
@@ -2406,7 +2407,7 @@ permalink: /
         const assigned=chats.filter(chat=>chat.projectId===project.id);
         if(!assigned.length){const empty=document.createElement('p');empty.className='px-2 py-2 text-[10px] text-gray-500';empty.textContent=english?'No chats in this project yet.':'В проекте пока нет чатов.';children.appendChild(empty);}
         assigned.forEach(chat=>children.appendChild(createChatRow(chat,true)));
-        const toolbar=document.createElement('div');toolbar.className='flex gap-1 px-1 pt-1';const showChats=document.createElement('button');showChats.type='button';showChats.dataset.action='select-project';showChats.dataset.projectId=project.id;showChats.className='flex-1 rounded-lg border border-gray-700 px-2 py-1.5 text-[10px] text-gray-300 hover:bg-white/5';showChats.textContent=english?'Show chats':'Показать чаты';const addChat=document.createElement('button');addChat.type='button';addChat.dataset.action='new-chat-in-project';addChat.dataset.projectId=project.id;addChat.className='flex-1 rounded-lg border border-cyan-900/50 px-2 py-1.5 text-[10px] text-cyan-200 hover:bg-cyan-950/40';addChat.textContent=english?'＋ New chat':'＋ Новый чат';const settings=document.createElement('button');settings.type='button';settings.dataset.action='open-project-settings';settings.dataset.projectId=project.id;settings.className='rounded-lg px-2 py-1.5 text-[10px] text-gray-500 hover:text-cyan-300';settings.textContent=english?'⚙ Settings':'⚙ Настройки';toolbar.append(showChats,addChat,settings);children.appendChild(toolbar);
+        const toolbar=document.createElement('div');toolbar.className='flex gap-1 px-1 pt-1';const showChats=document.createElement('button');showChats.type='button';showChats.dataset.action='select-project';showChats.dataset.projectId=project.id;showChats.className='flex-1 rounded-lg border border-gray-700 px-2 py-1.5 text-[10px] text-gray-300 hover:bg-white/5';showChats.textContent=english?'Show chats':'Показать чаты';showChats.setAttribute('aria-pressed',String(activeChatProjectId===project.id));const addChat=document.createElement('button');addChat.type='button';addChat.dataset.action='new-chat-in-project';addChat.dataset.projectId=project.id;addChat.className='flex-1 rounded-lg border border-cyan-900/50 px-2 py-1.5 text-[10px] text-cyan-200 hover:bg-cyan-950/40';addChat.textContent=english?'＋ New chat':'＋ Новый чат';const settings=document.createElement('button');settings.type='button';settings.dataset.action='open-project-settings';settings.dataset.projectId=project.id;settings.className='rounded-lg px-2 py-1.5 text-[10px] text-gray-500 hover:text-cyan-300';settings.textContent=english?'⚙ Settings':'⚙ Настройки';toolbar.append(showChats,addChat,settings);children.appendChild(toolbar);
         group.appendChild(children);list.appendChild(group);
       }
       if(!projects.length){const empty=document.createElement('p');empty.className='px-2 py-2 text-[11px] text-gray-500';empty.textContent=english?'No projects yet.':'Проектов пока нет.';list.appendChild(empty);}
@@ -2415,6 +2416,7 @@ permalink: /
       renderProjectUI({preserveDraft:true});
       const list=$('chatList');list.replaceChildren();
       const english=getUiLanguage()==='en';
+      list.setAttribute('aria-label',english?'Chat list':'Список чатов');
       const activeProject=activeChatProjectId?projects.find(project=>project.id===activeChatProjectId):null;
       if(activeChatProjectId&&!activeProject)activeChatProjectId=null;
       const visibleChats=activeChatProjectId
