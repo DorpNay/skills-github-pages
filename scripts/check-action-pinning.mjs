@@ -9,7 +9,7 @@ import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
 const workflowDir = ".github/workflows";
-const useLine = /^([ \t]*)(?:-\\s*)?uses:\\s*(.*)$/gm;
+const useLine = /^([ \t]*)(?:-\s*)?uses:\s*(.*)$/gm;
 const immutableSha = /^[0-9a-f]{40}$/i;
 
 /**
@@ -34,14 +34,14 @@ export function findUnpinnedActionRefs(source, filename = "<workflow>") {
       }
       ref = blockLines.join(" ").trim();
     } else {
-      ref = ref.replace(/\\s+#.*$/, "").trim();
-      if (/^(['"]).*\\1$/.test(ref)) ref = ref.slice(1, -1);
+      ref = ref.replace(/\s+#.*$/, "").trim();
+      if (/^(['"]).*\1$/.test(ref)) ref = ref.slice(1, -1);
     }
 
     if (!ref || ref.startsWith("./") || ref.startsWith("docker://")) continue;
     const at = ref.lastIndexOf("@");
     const revision = at >= 0 ? ref.slice(at + 1) : "";
-    if (!immutableSha.test(revision)) problems.push(`${filename}:${line}: ${ref}`);
+    if (!immutableSha.test(revision)) problems.push(filename + ":" + line + ": " + ref);
   }
   return problems;
 }
@@ -58,10 +58,10 @@ function run() {
 
   if (problems.length) {
     console.error("External actions and reusable workflows must be pinned to a full 40-character commit SHA:");
-    for (const problem of problems) console.error(`  - ${problem}`);
+    for (const problem of problems) console.error("  - " + problem);
     process.exitCode = 1;
   } else {
-    console.log(`Action pinning check passed: ${workflowFiles.length} workflow files inspected.`);
+    console.log("Action pinning check passed: " + workflowFiles.length + " workflow files inspected.");
   }
 }
 

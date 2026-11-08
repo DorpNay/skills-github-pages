@@ -24,7 +24,9 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
-      - name: Test immutable action reference parser\n        run: node --test tests/check-action-pinning.test.mjs\n      - name: Parse app JavaScript and check UI structure
+      - name: Test immutable action reference parser
+        run: node --test tests/check-action-pinning.test.mjs
+      - name: Parse app JavaScript and check UI structure
         run: node scripts/quality-agents.mjs integrity
       - name: Syntax-check the secret-safe live provider probes
         run: |
