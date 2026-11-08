@@ -236,7 +236,9 @@ permalink: /
     .project-nav-heading { color:var(--ui-text);background:var(--ui-surface-raised);border:1px solid var(--ui-border); }
     .project-nav-heading:hover { background:var(--ui-tiffany-soft);border-color:var(--ui-tiffany); }
     .project-nav-unassigned { color:var(--ui-text-muted);background:color-mix(in srgb,var(--ui-surface) 82%,transparent); }
-    .project-nav-unassigned:hover,.project-nav-unassigned.is-active { color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
+    .project-nav-unassigned:hover,.project-nav-unassigned.is-active,.project-nav-scope.is-active { color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
+    .project-nav-scope { min-height:32px;border:1px solid var(--ui-border);border-radius:8px;padding:6px 8px;font-size:10px; }
+    .project-nav-scope:hover,.project-nav-scope:focus-visible { border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
     .project-nav-item { border:1px solid var(--ui-border);border-radius:11px;overflow:hidden;background:color-mix(in srgb,var(--ui-surface) 86%,transparent); }
     .project-nav-item[open] { border-color:color-mix(in srgb,var(--ui-tiffany) 55%,var(--ui-border)); }
     .project-nav-item > summary { display:flex;align-items:center;gap:8px;padding:10px 9px;cursor:pointer;list-style:none;font-size:12px; }
@@ -459,8 +461,8 @@ permalink: /
         <button id="projectNavToggle" type="button" data-action="toggle-project-navigation" aria-expanded="false" aria-controls="projectNavigationList" class="w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold project-nav-heading">
           <span>▣ <span data-i18n="projectsTitle">Проекты</span></span><span id="projectNavChevron" aria-hidden="true">⌄</span>
         </button>
-        <button id="projectlessNavButton" type="button" data-action="projectless-nav" class="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-xs project-nav-unassigned" aria-label="Показать чаты без проекта">
-          <span aria-hidden="true">○</span><span data-i18n="noProjectNav">Без проекта</span><span id="projectlessChatCount" class="ml-auto text-[10px] text-gray-500">0</span>
+        <button id="projectlessNavButton" type="button" data-action="projectless-nav" class="hidden w-full flex items-center gap-2 rounded-lg px-3 py-2 text-xs project-nav-unassigned" aria-label="Назад к личным чатам без проекта">
+          <span aria-hidden="true">←</span><span data-i18n="noProjectNav">← Назад к личным чатам</span><span id="projectlessChatCount" class="ml-auto text-[10px] text-gray-500">0</span>
         </button>
         <div id="projectNavigationList" class="hidden pl-2 space-y-1" aria-label="Список проектов"></div>
       </div>
@@ -898,6 +900,8 @@ permalink: /
     let projects = loadProjects();
     let currentChatId = safeGet(STORAGE.current) || chats[0].id;
     if (!chats.some((chat) => chat.id === currentChatId)) currentChatId = chats[0].id;
+    // The project selector filters navigation only; it never changes the active chat's project.
+    let activeProjectChatListFilterId = null;
     let pyodideInstance = null;
     let activeController = null;
     let activeChatId = null;
@@ -1533,7 +1537,7 @@ permalink: /
         
         kiloPrivacyNotice:'Kilo Auto Free — обычный альтернативный провайдер в общем списке API, не часть основного маршрута aLandi aServi. Запросы передаются Kilo и назначенным им моделям; они могут сохранять запросы для улучшения сервисов. Не отправляй конфиденциальные данные. Скрытого резервирования нет.',languageLabel:'Язык интерфейса',clockLabel:'Местное время',saveSettings:'Сохранить',closeSettings:'Закрыть',
          readingSettingsTitle:'Читаемость текста',readingSettingsHelp:'Настрой размер, интервалы и контраст текста сообщений. Изменения сохраняются автоматически и действуют в обеих темах.',readingFontSizeLabel:'Размер текста сообщений',readingLineHeightLabel:'Межстрочный интервал',readingContrastLabel:'Контраст цветовой схемы',readingContrastStandard:'Стандартный',readingContrastHigh:'Повышенный',readingSettingsSaved:'Настройки читаемости сохраняются на этом устройстве.',
-        globalMemoryOptIn:'Разрешить подходящим заметкам общей памяти попадать в контекст запросов.',noProjectNav:'Без проекта',projectMemoryScopeLabel:'Режим памяти проекта',projectMemoryScopeOnly:'Память только внутри проекта',projectMemoryScopeGlobal:'Память проекта + общая память (если она разрешена)',attachMediaTitle:'Фото или видео',attachMediaHelp:'Изображения и выбор кадров из ролика',attachAnyFileTitle:'Файл любого формата',attachAnyFileHelp:'Системный выбор нескольких файлов; доступность разбора зависит от формата.',requestContextTitle:'Контекст этого запроса',requestContextHelp:'Выбранные проекты будут учтены только при следующей отправке. Сам чат и его проект не изменятся.',clearRequestContext:'Сбросить',skillsAutoHint:'Навыки: автоматический подбор по задаче; отдельный каталог выбора пока не подключён.',requestContextLimitHint:'Контекст ограничен пятью проектами и общим лимитом, чтобы не переполнять запрос.',projectsTitle:'▣ Проекты',currentProjectLabel:'Проект текущего чата',projectMemoryOptIn:'Использовать память выбранного проекта в этом чате',manageProject:'Создать или настроить проект',projectNameLabel:'Название',projectInstructionsLabel:'Инструкции проекта',createProject:'＋ Создать проект',saveProject:'Сохранить изменения',projectMemoryLabel:'Добавить факт в память проекта',exportProject:'Экспорт проекта',importProject:'Импорт проекта',detachChat:'Извлечь чат из проекта',deleteProject:'Удалить проект и его чаты',helperMemoryNoProject:'Сначала выбери или создай проект.',helperMemoryNoConfig:'Не найдены URL /v1 и ключ aLandi gateway. Подключи своё облако в настройках.',helperMemoryTitle:'Помощник памяти проекта',helperMemoryDescription:'Предложить короткие факты из памяти проекта. Ничего не сохраняется без твоего выбора.',helperMemoryNoProject:'Сначала выбери проект.',helperMemoryNoConfig:'Настрой URL и ключ aLandi aServi в параметрах облака.',helperMemorySuggest:'Предложить компактные факты',helperMemoryInitial:'Помощник выключен, пока не настроен ALANDI_HELPER_MODEL.',helperMemoryLoading:'Модель-помощник готовит предложения…',helperMemoryEmpty:'Помощник не нашёл новых фактов.',helperMemoryAdd:'Добавить в проект',helperMemoryAdded:'Факт добавлен в локальную память проекта.',helperMemoryNoFacts:'Сначала добавь факты в память выбранного проекта.',helperMemoryNotConfigured:'Модель-помощник не настроена. Укажи ALANDI_HELPER_MODEL и установи этот тег в Ollama.',helperMemoryTimeout:'Помощник не ответил вовремя; память не менялась.',helperMemoryFailed:'Не удалось получить предложения. Проверь gateway и Ollama.',helperMemorySkippedSensitive:'Пропущены потенциально чувствительные факты:',helperMemoryOnlySensitive:'Все факты похожи на секреты и не были отправлены помощнику.'
+        globalMemoryOptIn:'Разрешить подходящим заметкам общей памяти попадать в контекст запросов.',noProjectNav:'← Назад к личным чатам',projectMemoryScopeLabel:'Режим памяти проекта',projectMemoryScopeOnly:'Память только внутри проекта',projectMemoryScopeGlobal:'Память проекта + общая память (если она разрешена)',attachMediaTitle:'Фото или видео',attachMediaHelp:'Изображения и выбор кадров из ролика',attachAnyFileTitle:'Файл любого формата',attachAnyFileHelp:'Системный выбор нескольких файлов; доступность разбора зависит от формата.',requestContextTitle:'Контекст этого запроса',requestContextHelp:'Выбранные проекты будут учтены только при следующей отправке. Сам чат и его проект не изменятся.',clearRequestContext:'Сбросить',skillsAutoHint:'Навыки: автоматический подбор по задаче; отдельный каталог выбора пока не подключён.',requestContextLimitHint:'Контекст ограничен пятью проектами и общим лимитом, чтобы не переполнять запрос.',projectsTitle:'▣ Проекты',currentProjectLabel:'Проект текущего чата',projectMemoryOptIn:'Использовать память выбранного проекта в этом чате',manageProject:'Создать или настроить проект',projectNameLabel:'Название',projectInstructionsLabel:'Инструкции проекта',createProject:'＋ Создать проект',saveProject:'Сохранить изменения',projectMemoryLabel:'Добавить факт в память проекта',exportProject:'Экспорт проекта',importProject:'Импорт проекта',detachChat:'Извлечь чат из проекта',deleteProject:'Удалить проект и его чаты',helperMemoryNoProject:'Сначала выбери или создай проект.',helperMemoryNoConfig:'Не найдены URL /v1 и ключ aLandi gateway. Подключи своё облако в настройках.',helperMemoryTitle:'Помощник памяти проекта',helperMemoryDescription:'Предложить короткие факты из памяти проекта. Ничего не сохраняется без твоего выбора.',helperMemoryNoProject:'Сначала выбери проект.',helperMemoryNoConfig:'Настрой URL и ключ aLandi aServi в параметрах облака.',helperMemorySuggest:'Предложить компактные факты',helperMemoryInitial:'Помощник выключен, пока не настроен ALANDI_HELPER_MODEL.',helperMemoryLoading:'Модель-помощник готовит предложения…',helperMemoryEmpty:'Помощник не нашёл новых фактов.',helperMemoryAdd:'Добавить в проект',helperMemoryAdded:'Факт добавлен в локальную память проекта.',helperMemoryNoFacts:'Сначала добавь факты в память выбранного проекта.',helperMemoryNotConfigured:'Модель-помощник не настроена. Укажи ALANDI_HELPER_MODEL и установи этот тег в Ollama.',helperMemoryTimeout:'Помощник не ответил вовремя; память не менялась.',helperMemoryFailed:'Не удалось получить предложения. Проверь gateway и Ollama.',helperMemorySkippedSensitive:'Пропущены потенциально чувствительные факты:',helperMemoryOnlySensitive:'Все факты похожи на секреты и не были отправлены помощнику.'
       },
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Projects & chats',chatsTitle:'Chats',newChat:'＋ New chat',clearChat:'🗑 Clear chat',newPersonalChat:'＋ New personal chat',
@@ -1559,7 +1563,7 @@ permalink: /
         
         kiloPrivacyNotice:'Kilo Auto Free is an ordinary alternative provider in the API list, not part of the primary aLandi aServi route. Requests go to Kilo and its selected models, which may log prompts or use them to improve services. Do not send confidential data. No silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',saveSettings:'Save settings',closeSettings:'Close',
          readingSettingsTitle:'Text readability',readingSettingsHelp:'Adjust message text size, spacing and color contrast. Changes are saved automatically and apply in both themes.',readingFontSizeLabel:'Message text size',readingLineHeightLabel:'Line spacing',readingContrastLabel:'Color scheme contrast',readingContrastStandard:'Standard',readingContrastHigh:'High',readingSettingsSaved:'Readability settings are saved on this device.',
-        globalMemoryOptIn:'Allow relevant shared-memory notes to be included in prompts.',noProjectNav:'No project',projectMemoryScopeLabel:'Project memory scope',projectMemoryScopeOnly:'Memory inside this project only',projectMemoryScopeGlobal:'Project memory + shared memory (when enabled)',attachMediaTitle:'Photo or video',attachMediaHelp:'Images or sampled frames from a video',attachAnyFileTitle:'Any file format',attachAnyFileHelp:'Native multi-file picker; parsing depends on file type.',requestContextTitle:'Context for this request',requestContextHelp:'Selected projects apply only to the next send. The active chat and its project do not change.',clearRequestContext:'Clear selection',skillsAutoHint:'Skills: automatically selected for the task; a manual catalog is not connected yet.',requestContextLimitHint:'Context is limited to five projects and a shared size budget.',projectsTitle:'▣ Projects',currentProjectLabel:'Project for this chat',projectMemoryOptIn:'Use the selected project memory in this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'＋ Create project',saveProject:'Save changes',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats',helperMemoryNoProject:'Select or create a project first.',helperMemoryNoConfig:'aLandi gateway /v1 URL or key is missing. Configure your cloud in Settings.',helperMemoryTitle:'Project memory helper',helperMemoryDescription:'Suggest short facts from project memory. Nothing is saved until you choose.',helperMemoryNoProject:'Choose a project first.',helperMemoryNoConfig:'Configure the aLandi aServi URL and key in cloud settings.',helperMemorySuggest:'Suggest compact facts',helperMemoryInitial:'Helper is off until ALANDI_HELPER_MODEL is configured.',helperMemoryLoading:'The helper model is preparing suggestions…',helperMemoryEmpty:'The helper found no new facts.',helperMemoryAdd:'Add to project',helperMemoryAdded:'Fact added to local project memory.',helperMemoryNoFacts:'Add facts to the selected project memory first.',helperMemoryNotConfigured:'Helper model is not configured. Set ALANDI_HELPER_MODEL and install that exact Ollama tag.',helperMemoryTimeout:'The helper timed out; memory was not changed.',helperMemoryFailed:'Could not get suggestions. Check the gateway and Ollama.',helperMemorySkippedSensitive:'Potentially sensitive facts skipped:',helperMemoryOnlySensitive:'All facts looked secret-like and were not sent to the helper.'
+        globalMemoryOptIn:'Allow relevant shared-memory notes to be included in prompts.',noProjectNav:'← Back to personal chats',projectMemoryScopeLabel:'Project memory scope',projectMemoryScopeOnly:'Memory inside this project only',projectMemoryScopeGlobal:'Project memory + shared memory (when enabled)',attachMediaTitle:'Photo or video',attachMediaHelp:'Images or sampled frames from a video',attachAnyFileTitle:'Any file format',attachAnyFileHelp:'Native multi-file picker; parsing depends on file type.',requestContextTitle:'Context for this request',requestContextHelp:'Selected projects apply only to the next send. The active chat and its project do not change.',clearRequestContext:'Clear selection',skillsAutoHint:'Skills: automatically selected for the task; a manual catalog is not connected yet.',requestContextLimitHint:'Context is limited to five projects and a shared size budget.',projectsTitle:'▣ Projects',currentProjectLabel:'Project for this chat',projectMemoryOptIn:'Use the selected project memory in this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'＋ Create project',saveProject:'Save changes',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats',helperMemoryNoProject:'Select or create a project first.',helperMemoryNoConfig:'aLandi gateway /v1 URL or key is missing. Configure your cloud in Settings.',helperMemoryTitle:'Project memory helper',helperMemoryDescription:'Suggest short facts from project memory. Nothing is saved until you choose.',helperMemoryNoProject:'Choose a project first.',helperMemoryNoConfig:'Configure the aLandi aServi URL and key in cloud settings.',helperMemorySuggest:'Suggest compact facts',helperMemoryInitial:'Helper is off until ALANDI_HELPER_MODEL is configured.',helperMemoryLoading:'The helper model is preparing suggestions…',helperMemoryEmpty:'The helper found no new facts.',helperMemoryAdd:'Add to project',helperMemoryAdded:'Fact added to local project memory.',helperMemoryNoFacts:'Add facts to the selected project memory first.',helperMemoryNotConfigured:'Helper model is not configured. Set ALANDI_HELPER_MODEL and install that exact Ollama tag.',helperMemoryTimeout:'The helper timed out; memory was not changed.',helperMemoryFailed:'Could not get suggestions. Check the gateway and Ollama.',helperMemorySkippedSensitive:'Potentially sensitive facts skipped:',helperMemoryOnlySensitive:'All facts looked secret-like and were not sent to the helper.'
       }
     };
     function getUiLanguage(){return safeGet('ai_ui_language_v1')==='en'?'en':'ru';}
@@ -2082,6 +2086,15 @@ permalink: /
       if(arguments.length===0) return projects.find(project=>project.id===selectedProjectForSettingsId)||null;
       return chat?.projectId ? projects.find(project=>project.id===chat.projectId)||null : null;
     }
+    function setProjectChatListFilter(projectId){
+      if(projectId&&!projects.some(project=>project.id===projectId))return;
+      activeProjectChatListFilterId=projectId||null;
+      renderChatList();
+      const target=projectId
+        ? Array.from(document.querySelectorAll('[data-action="project-chat-scope"]')).find(button=>button.dataset.projectId===projectId)
+        : $('chatSection')?.querySelector('summary');
+      if(target)requestAnimationFrame(()=>target.focus({preventScroll:true}));
+    }
     function projectIdNew(){return globalThis.crypto?.randomUUID?.()||('p-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10));}
     let helperMemorySuggestions=[];
     let helperMemorySuggestionsProjectId=null;
@@ -2240,12 +2253,13 @@ permalink: /
       const input=$('projectNameInput'),name=input.value.trim().slice(0,100);
       if(!name){input.focus();showToast(getUiLanguage()==='en'?'Enter a project name first.':'Сначала введи название проекта.','error');return;}
       if(projects.length>=200){showToast('Достигнут предел локальных проектов (200).','error');return;}
-      const previousProjects=projects.slice(),previousSelected=selectedProjectForSettingsId,previousCreating=creatingProject;
+      const previousProjects=projects.slice(),previousSelected=selectedProjectForSettingsId,previousCreating=creatingProject,previousFilter=activeProjectChatListFilterId;
       const chat=getCurrentChat(),previousChat={projectId:chat.projectId,projectMemoryEnabled:chat.projectMemoryEnabled};
       const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectInstructionsInput').value.trim().slice(0,6000),memoryScope:$('projectMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only',memory:[],createdAt:now,updatedAt:now};
       creatingProject=false;projects=[project,...projects];selectedProjectForSettingsId=project.id;
       chat.projectId=project.id;chat.projectMemoryEnabled=false
-      if(!persistProjectsAndChats()){projects=previousProjects;selectedProjectForSettingsId=previousSelected;creatingProject=previousCreating;Object.assign(chat,previousChat);renderProjectUI();renderChatList();renderActiveChat();return;}
+      if(!persistProjectsAndChats()){projects=previousProjects;selectedProjectForSettingsId=previousSelected;creatingProject=previousCreating;activeProjectChatListFilterId=previousFilter;Object.assign(chat,previousChat);renderProjectUI();renderChatList();renderActiveChat();return;}
+      activeProjectChatListFilterId=project.id;
       renderProjectUI();renderChatList();renderActiveChat();
       showToast((getUiLanguage()==='en'?'Project created: ':'Создан проект: ')+name);
     }
@@ -2297,6 +2311,7 @@ permalink: /
       chats=chats.filter(chat=>chat.projectId!==project.id);if(!chats.length)chats=[createChat()];
       if(!chats.some(chat=>chat.id===currentChatId))currentChatId=chats[0].id;
       projects=projects.filter(item=>item.id!==project.id);
+      if(activeProjectChatListFilterId===project.id)activeProjectChatListFilterId=null;
       if(!persistProjectsAndChats()){projects=previousProjects;chats=previousChats;currentChatId=previousCurrentId;renderProjectUI();renderChatList();renderActiveChat();return;}
       renderProjectUI();renderChatList();renderActiveChat();
       showToast(getUiLanguage()==='en'?'Project and its chats deleted.':'Проект и его чаты удалены.');
@@ -2382,23 +2397,30 @@ permalink: /
       list.replaceChildren();
       const unassigned=chats.filter(chat=>!chat.projectId);
       $('projectlessChatCount').textContent=String(unassigned.length);
-      $('chatSectionCount').textContent=String(unassigned.length);
-      const current=getCurrentChat();
-      $('projectlessNavButton').classList.toggle('is-active',!current?.projectId);
+      const visibleChats=activeProjectChatListFilterId
+        ? chats.filter(chat=>chat.projectId===activeProjectChatListFilterId)
+        : unassigned;
+      $('chatSectionCount').textContent=String(visibleChats.length);
       const english=getUiLanguage()==='en';
+      const backButton=$('projectlessNavButton');
+      backButton.classList.toggle('hidden',!activeProjectChatListFilterId);
+      backButton.setAttribute('aria-label',english?'Back to personal chats without a project':'Назад к личным чатам без проекта');
       for(const project of projects) {
         const group=document.createElement('details');group.className='project-nav-item';group.dataset.projectId=project.id;group.open=expanded.has(project.id);
         const summary=document.createElement('summary');
         const caret=document.createElement('span');caret.className='project-nav-caret';caret.textContent=group.open?'⌄':'›';caret.setAttribute('aria-hidden','true');
-        const title=document.createElement('span');title.className='min-w-0 flex-1 truncate';title.textContent=project.name;
+        const title=document.createElement('span');title.className='min-w-0 flex-1 truncate';title.textContent=project.name;title.title=project.name;
         const count=document.createElement('span');count.className='text-[10px] text-gray-500';count.textContent=String(chats.filter(chat=>chat.projectId===project.id).length);
         summary.append(caret,title,count);group.appendChild(summary);
-        group.addEventListener('toggle',()=>{caret.textContent=group.open?'⌄':'›';});
+        group.addEventListener('toggle',()=>{
+          caret.textContent=group.open?'⌄':'›';
+          if(group.open&&activeProjectChatListFilterId!==project.id)setProjectChatListFilter(project.id);
+        });
         const children=document.createElement('div');children.className='project-nav-chats';
         const assigned=chats.filter(chat=>chat.projectId===project.id);
         if(!assigned.length){const empty=document.createElement('p');empty.className='px-2 py-2 text-[10px] text-gray-500';empty.textContent=english?'No chats in this project yet.':'В проекте пока нет чатов.';children.appendChild(empty);}
         assigned.forEach(chat=>children.appendChild(createChatRow(chat,true)));
-        const toolbar=document.createElement('div');toolbar.className='flex gap-1 px-1 pt-1';const addChat=document.createElement('button');addChat.type='button';addChat.dataset.action='new-chat-in-project';addChat.dataset.projectId=project.id;addChat.className='flex-1 rounded-lg border border-cyan-900/50 px-2 py-1.5 text-[10px] text-cyan-200 hover:bg-cyan-950/40';addChat.textContent=english?'＋ New chat':'＋ Новый чат';const settings=document.createElement('button');settings.type='button';settings.dataset.action='open-project-settings';settings.dataset.projectId=project.id;settings.className='rounded-lg px-2 py-1.5 text-[10px] text-gray-500 hover:text-cyan-300';settings.textContent=english?'⚙ Settings':'⚙ Настройки';toolbar.append(addChat,settings);children.appendChild(toolbar);
+        const toolbar=document.createElement('div');toolbar.className='flex gap-1 px-1 pt-1';const addChat=document.createElement('button');addChat.type='button';addChat.dataset.action='new-chat-in-project';addChat.dataset.projectId=project.id;addChat.className='flex-1 rounded-lg border border-cyan-900/50 px-2 py-1.5 text-[10px] text-cyan-200 hover:bg-cyan-950/40';addChat.textContent=english?'＋ New chat':'＋ Новый чат';const showChats=document.createElement('button');showChats.type='button';showChats.dataset.action='project-chat-scope';showChats.dataset.projectId=project.id;showChats.className='project-nav-scope'+(activeProjectChatListFilterId===project.id?' is-active':'');showChats.textContent=english?'Show chats':'Показать чаты';showChats.setAttribute('aria-label',english?'Show chats in '+project.name:'Показать чаты проекта '+project.name);showChats.setAttribute('aria-pressed',String(activeProjectChatListFilterId===project.id));const settings=document.createElement('button');settings.type='button';settings.dataset.action='open-project-settings';settings.dataset.projectId=project.id;settings.className='rounded-lg px-2 py-1.5 text-[10px] text-gray-500 hover:text-cyan-300';settings.textContent=english?'⚙ Settings':'⚙ Настройки';toolbar.append(addChat,showChats,settings);children.appendChild(toolbar);
         group.appendChild(children);list.appendChild(group);
       }
       if(!projects.length){const empty=document.createElement('p');empty.className='px-2 py-2 text-[11px] text-gray-500';empty.textContent=english?'No projects yet.':'Проектов пока нет.';list.appendChild(empty);}
@@ -2406,8 +2428,23 @@ permalink: /
     function renderChatList() {
       renderProjectUI({preserveDraft:true});
       const list=$('chatList');list.replaceChildren();
-      const personalChats=chats.filter(chat=>!chat.projectId);list.dataset.emptyLabel=getUiLanguage()==='en'?'No personal chats yet.':'Нет личных чатов без проекта';list.classList.toggle('is-empty',personalChats.length===0);
-      personalChats.forEach(chat=>list.appendChild(createChatRow(chat,false)));
+      const project=activeProjectChatListFilterId?projects.find(item=>item.id===activeProjectChatListFilterId):null;
+      const visibleChats=project?chats.filter(chat=>chat.projectId===project.id):chats.filter(chat=>!chat.projectId);
+      const english=getUiLanguage()==='en';
+      list.dataset.emptyLabel=project
+        ? (english?'No chats in '+project.name+' yet.':'В проекте «'+project.name+'» пока нет чатов.')
+        : (english?'No personal chats yet.':'Нет личных чатов без проекта');
+      list.classList.toggle('is-empty',visibleChats.length===0);
+      visibleChats.forEach(chat=>list.appendChild(createChatRow(chat,false)));
+      const createButton=$('chatSection')?.querySelector('[data-action="new-chat"]');
+      if(createButton){
+        createButton.textContent=project
+          ? (english?'＋ New chat · '+project.name:'＋ Новый чат · '+project.name)
+          : memoryUiText('newPersonalChat');
+        createButton.setAttribute('aria-label',project
+          ? (english?'Create a new chat in '+project.name:'Создать чат в проекте '+project.name)
+          : (english?'Create a new personal chat':'Создать новый личный чат'));
+      }
     }
     function updateMemoryStatusLine(){
       const line=$('memoryStatusLine');if(!line)return;
@@ -4673,14 +4710,18 @@ permalink: /
       sendMessage(true);
     }
     function createNewChat() {
+      if(activeProjectChatListFilterId){createNewChatInProject(activeProjectChatListFilterId);return;}
       const chat=createChat('Новый личный чат',[],null);
       updateState([chat,...chats],chat.id);
       toggleSidebar(false);
     }
     function createNewChatInProject(projectId) {
       const project=projects.find(item=>item.id===projectId);if(!project){showToast('Проект больше не существует.','error');return;}
+      const previousFilter=activeProjectChatListFilterId;
+      activeProjectChatListFilterId=project.id;
       const chat=createChat('Новый чат · '+project.name,[],project.id);
-      updateState([chat,...chats],chat.id);toggleSidebar(false);
+      if(!updateState([chat,...chats],chat.id)){activeProjectChatListFilterId=previousFilter;renderChatList();return;}
+      toggleSidebar(false);
     }
     function clearChatById(id) {
       const chat=chats.find(item=>item.id===id);if(!chat)return;
@@ -5457,9 +5498,11 @@ permalink: /
             $('projectNavToggle').setAttribute('aria-expanded',String(open));$('projectNavChevron').textContent=open?'⌃':'⌄';break;
           }
           case 'projectless-nav': {
+            setProjectChatListFilter(null);
             $('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});
             $('chatSection').querySelector('summary')?.focus();break;
           }
+          case 'project-chat-scope': setProjectChatListFilter(control.dataset.projectId);break;
           case 'open-project-settings': {
             projectSettingsOpener=control;
             creatingProject=false;selectedProjectForSettingsId=projects.some(project=>project.id===control.dataset.projectId)?control.dataset.projectId:null;
