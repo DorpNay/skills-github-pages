@@ -292,7 +292,7 @@ const suites = {
     }],
     ['no dynamic code evaluation primitives', () => {
       assert.doesNotMatch(combinedSource, /\beval\s*\(/, 'eval() is not allowed in the application shell.');
-      assert.doesNotMatch(source, /\bnew\s+Function\s*\(/, 'new Function() is not allowed in the application shell.');
+      assert.doesNotMatch(combinedSource, /\bnew\s+Function\s*\(/, 'new Function() is not allowed in the application shell.');
     }],
     ['web search tool input is schema-bounded', () => {
       includes("additionalProperties: false", 'Tool schema must reject unexpected fields.');
