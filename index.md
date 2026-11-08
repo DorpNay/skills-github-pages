@@ -204,12 +204,11 @@ permalink: /
     .functions-drawer-nav small { display:block;margin-top:3px;font-size:9px;line-height:1.3;color:var(--ui-text-muted); }
     .functions-drawer-surface > section[id$="FunctionSettings"],.functions-drawer-surface > section#connectorFunctionStatus { flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:16px 20px; }
     .notebook-field { min-height:44px; }
-    .notebook-entry-actions button { min-height:44px; }
     .notebook-field { width:100%;min-width:0;border:1px solid var(--ui-border);border-radius:10px;background:var(--ui-surface);color:var(--ui-text);padding:10px 11px;font-size:12px; }
     .notebook-entry { min-width:0;border:1px solid var(--ui-border);border-radius:12px;padding:11px;background:color-mix(in srgb,var(--ui-surface-raised) 70%,transparent); }
     .notebook-entry p { overflow-wrap:anywhere; }
     .notebook-entry-actions { display:flex;flex-wrap:wrap;gap:6px;margin-top:10px; }
-    .notebook-entry-actions button { min-height:40px;padding:8px 10px;border:1px solid var(--ui-border);border-radius:9px;font-size:10px; }
+    .notebook-entry-actions button { min-height:44px;padding:8px 10px;border:1px solid var(--ui-border);border-radius:9px;font-size:10px; }
     .notebook-entry-actions button:hover,.notebook-entry-actions button:focus-visible { border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
     .notebook-primary { min-height:44px;border:1px solid var(--ui-tiffany);border-radius:10px;background:var(--ui-tiffany-soft);color:var(--ui-text);padding:9px 12px;font-size:12px;font-weight:650; }
     @keyframes functions-drawer-in { from { opacity:.82;transform:translateX(28px); } to { opacity:1;transform:translateX(0); } }
