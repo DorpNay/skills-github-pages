@@ -245,7 +245,7 @@ const suites = {
       assert.equal(combinedSource.includes('serverMemory'), false, 'Retired Server Memory experiment code and copy must be absent.');
       assert.equal(combinedSource.includes('serverProjectMemory'), false, 'Retired server project-memory flags must be absent.');
       assert.equal(combinedSource.includes('/memory/graph/'), false, 'The static app must not call the retired server-memory graph API.');
-      assert.ok(combinedSource.includes('id="projectMemoryHelperDetails"') && source.includes('suggestProjectMemoryWithHelper'), 'Independent manual local-project helper must remain available.');
+      assert.ok(combinedSource.includes('id="projectMemoryHelperDetails"') && combinedSource.includes('suggestProjectMemoryWithHelper'), 'Independent manual local-project helper must remain available.');
       includes("await runAssistant(workChat, signal, useSearch, false, mode, true,", 'The structured workflow must honor the selected effort budget in its research stage.');
       includes("if (mode !== 'deep' && !useMultiAgent && chosenSkill === 'auto') return '';", 'Automatic skills must not load in fast mode unless research is explicitly enabled.');
       includes("chosenSkill !== 'auto' ? chosenSkill", 'A manually selected skill must be usable in fast mode.');
