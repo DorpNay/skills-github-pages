@@ -10,7 +10,7 @@ test('explicit remember commands stay in browser memory stores and do not call a
 
   await page.goto('/');
   await expect(page.locator('#userInput')).toBeEditable();
-  await page.waitForFunction(async () => (await indexedDB.databases()).some(item => item.name === 'AI_Agent_DB_v87' && item.version === 2));
+  await page.waitForFunction(async () => (await indexedDB.databases()).some(item => item.name === 'AI_Agent_DB_v87' && item.version === 3));
 
   await page.locator('#userInput').fill('Запомни: тестовый личный факт только для локального aLandi');
   await page.locator('#sendBtn').click();
@@ -49,7 +49,7 @@ test('explicit shared-memory command requires confirmation and uses a separate s
   page.on('dialog', dialog => dialog.accept());
 
   await page.goto('/');
-  await page.waitForFunction(async () => (await indexedDB.databases()).some(item => item.name === 'AI_Agent_DB_v87' && item.version === 2));
+  await page.waitForFunction(async () => (await indexedDB.databases()).some(item => item.name === 'AI_Agent_DB_v87' && item.version === 3));
   await page.locator('#userInput').fill('Сохрани в общую память: синтетический общий факт для теста');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Сохранил указанный факт в общую память');
@@ -85,7 +85,7 @@ test('a chat marked private cannot be sent to an external provider after reload'
   });
 
   await page.goto('/');
-  await page.waitForFunction(async () => (await indexedDB.databases()).some(item => item.name === 'AI_Agent_DB_v87' && item.version === 2));
+  await page.waitForFunction(async () => (await indexedDB.databases()).some(item => item.name === 'AI_Agent_DB_v87' && item.version === 3));
   await page.locator('#userInput').fill('Запомни: приватный тестовый маркер чата');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Сохранил указанный факт в личную память локальной модели');
@@ -95,7 +95,7 @@ test('a chat marked private cannot be sent to an external provider after reload'
     localStorage.setItem('ai_cross_provider_fallback', 'true');
   });
   await page.reload();
-  await page.waitForFunction(async () => (await indexedDB.databases()).some(item => item.name === 'AI_Agent_DB_v87' && item.version === 2));
+  await page.waitForFunction(async () => (await indexedDB.databases()).some(item => item.name === 'AI_Agent_DB_v87' && item.version === 3));
   await page.locator('#userInput').fill('Проверь приватность этого чата');
   await page.locator('#sendBtn').click();
 
@@ -138,7 +138,7 @@ test('upgrading an existing v1 database preserves private facts and leaves share
   await page.unroute('**/');
   await page.goto('/');
   await page.waitForFunction(async () => (await indexedDB.databases())
-    .some(item => item.name === 'AI_Agent_DB_v87' && item.version === 2));
+    .some(item => item.name === 'AI_Agent_DB_v87' && item.version === 3));
 
   const stores = await page.evaluate(async () => {
     const database = await new Promise((resolve, reject) => {
@@ -167,7 +167,7 @@ test('upgrading an existing v1 database preserves private facts and leaves share
 test('canceling private-to-shared promotion keeps the fact private', async ({ page }) => {
   await page.goto('/');
   await page.waitForFunction(async () => (await indexedDB.databases())
-    .some(item => item.name === 'AI_Agent_DB_v87' && item.version === 2));
+    .some(item => item.name === 'AI_Agent_DB_v87' && item.version === 3));
 
   await page.evaluate(async () => {
     const database = await new Promise((resolve, reject) => {
