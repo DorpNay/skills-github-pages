@@ -13,8 +13,14 @@ import { dirname, resolve } from 'node:path';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sourcePath = resolve(root, 'index.md');
 const source = readFileSync(sourcePath, 'utf8');
+const appPath = resolve(root, 'assets/js/app.js');
+const appSource = readFileSync(appPath, 'utf8');
+const appCss = readFileSync(resolve(root, 'assets/css/app.css'), 'utf8');
+const landingCss = readFileSync(resolve(root, 'assets/css/landing.css'), 'utf8');
+const combinedSource = [source, appSource, appCss, landingCss].join('\\n');
 const fail = (message) => { throw new Error(message); };
-const includes = (needle, message) => assert.ok(source.includes(needle), message);
+// Keep HTML structure checks on index.md; runtime checks span the external app assets.
+const includes = (needle, message) => assert.ok(combinedSource.includes(needle), message);
 const matches = (pattern, message) => assert.match(source, pattern, message);
 const suites = {
   integrity: [
@@ -25,7 +31,7 @@ const suites = {
       matches(/<\/html>\s*$/, 'Document must close its html element.');
     }],
     ['critical UI controls exist', () => {
-      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'apiKeyShell', 'apiKeyStatus', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiLanguage', 'uiMotion', 'cloudSettingsCard', 'cloudStatusDot', 'cloudStatus', 'cloudBaseUrl', 'cloudBaseUrlError', 'cloudModel', 'cloudModelError', 'cloudApiKey', 'cloudApiKeyError', 'clockDigital', 'homeThemeToggle', 'brandWordmark', 'projectPanel', 'projectSettingsModal', 'currentProjectSelect', 'projectMemoryToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'functionsMenu', 'functionsMenuSummary', 'functionPanelModal', 'functionsDrawerNav', 'notebookFunctionSettings', 'notebookWorkspace', 'notebookTextFile', 'notebookRightsConsent', 'skillPresetSelect', 'agentModeControl', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
+      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'apiKeyShell', 'apiKeyStatus', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiLanguage', 'uiMotion', 'aserviSettingsCard', 'aserviCardTitle', 'aserviStatusDot', 'aserviStatus', 'aserviBaseUrl', 'aserviBaseUrlError', 'aserviModel', 'aserviModelError', 'aserviApiKey', 'aserviApiKeyError', 'clockDigital', 'brandWordmark', 'projectPanel', 'projectSettingsModal', 'projectCreateModal', 'currentProjectSelect', 'projectMemoryScopeSelect', 'privateMemoryContextToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'functionsMenu', 'functionsMenuSummary', 'functionPanelModal', 'functionsDrawerNav', 'notebookFunctionSettings', 'notebookWorkspace', 'notebookTextFile', 'notebookRightsConsent', 'skillPresetSelect', 'agentModeControl', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
         matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
       }
       assert.ok(source.includes('<div id="functionsMenu"'), 'The owner-approved Functions drawer launcher must exist.');
@@ -34,7 +40,7 @@ const suites = {
         assert.ok(source.includes('data-action="open-function-panel" data-function="' + section + '"'), 'Functions drawer must expose the ' + section + ' section.');
       }
       assert.ok(source.includes('data-action="open-functions-drawer"'), 'Functions drawer must have an explicit opener.');
-      assert.ok(source.includes('data-action="select-processing-mode" data-processing-mode="deep"'), 'Deep Research must expose the Thorough-mode shortcut.');
+      assert.ok(combinedSource.includes('data-action="select-processing-mode" data-processing-mode="deep"'), 'Deep Research must expose the Thorough-mode shortcut.');
       assert.equal(source.includes('data-function="connectors"'), false, 'Do not expose placeholder Integrations without registered connectors.');
     }],
     ['independent processing controls and on-demand resources', () => {
@@ -90,9 +96,9 @@ const suites = {
       includes("database.createObjectStore('notebooks')", 'Research notebooks must use a separate object store.');
       includes("database.createObjectStore('notebookEntries')", 'Notebook entries must use a separate object store.');
       includes("const privateMemories=selectedProviderForMemory==='alandi'?await MemoryDB.getAll():[]", 'Private notes must only be read for the local aLandi route.');
-      assert.equal(source.includes('serverMemoryDetails'), false, 'The retired experimental server-memory UI must be fully removed.');
-      assert.equal(source.includes('getServerProjectMemories'), false, 'The retired server graph-memory feature must not remain callable.');
-      assert.equal(source.includes('serverProjectMemoryEnabled'), false, 'The retired server-memory opt-in state must not remain in chat contracts.');
+      assert.equal(combinedSource.includes('serverMemoryDetails'), false, 'The retired experimental server-memory UI must be fully removed.');
+      assert.equal(combinedSource.includes('getServerProjectMemories'), false, 'The retired server graph-memory feature must not remain callable.');
+      assert.equal(combinedSource.includes('serverProjectMemoryEnabled'), false, 'The retired server-memory opt-in state must not remain in chat contracts.');
       includes("const containsPrivateMemory=Array.isArray(body.messages)", 'Private-memory requests must be detected before provider fallback.');
       includes("if(containsPrivateMemory)candidates=candidates.filter(candidate=>candidate.provider==='alandi')", 'Private-memory requests must never fall back to a third-party provider.');
       includes("if(containsPrivateMemory)candidates=candidates.filter(candidate=>candidate.provider==='alandi')", 'Requests carrying personal memory must never fall back to a third-party provider.');
@@ -231,14 +237,14 @@ const suites = {
       includes("performTavilySearch(args.query.trim().slice(0, 500), signal, searchResultMode)", 'Tavily result breadth must use the independent search scope.');
       includes("performPublicKnowledgeSearch(args.source, args.query.trim().slice(0, 300), signal, searchResultMode)", 'Public search breadth must use the independent search scope.');
       includes("readPublicWebpage(args.url.trim().slice(0, 1500), signal, searchResultMode)", 'Webpage extraction depth must use the independent search scope.');
-      assert.ok(!source.includes("const extendedToolBudget = mode === 'deep' || extendedSearch;"), 'Search scope must not increase execution budget.');
-      assert.ok(!source.includes("mode === 'fast' && index > 0 && !extendedSearch"), 'Fast-mode tool limits must not depend on search scope.');
-      assert.equal(source.includes('researchStudio'), false, 'Retired Research Studio source and UI must be absent.');
-      assert.equal(source.includes('open-research-studio'), false, 'Retired Research Studio actions must be absent.');
+      assert.ok(!combinedSource.includes("const extendedToolBudget = mode === 'deep' || extendedSearch;"), 'Search scope must not increase execution budget.');
+      assert.ok(!combinedSource.includes("mode === 'fast' && index > 0 && !extendedSearch"), 'Fast-mode tool limits must not depend on search scope.');
+      assert.equal(combinedSource.includes('researchStudio'), false, 'Retired Research Studio source and UI must be absent.');
+      assert.equal(combinedSource.includes('open-research-studio'), false, 'Retired Research Studio actions must be absent.');
       assert.ok(source.includes('data-action="select-processing-mode" data-processing-mode="deep"'), 'Deep Research must set Thorough mode through a bounded UI action.');
-      assert.equal(source.includes('serverMemory'), false, 'Retired Server Memory experiment code and copy must be absent.');
-      assert.equal(source.includes('serverProjectMemory'), false, 'Retired server project-memory flags must be absent.');
-      assert.equal(source.includes('/memory/graph/'), false, 'The static app must not call the retired server-memory graph API.');
+      assert.equal(combinedSource.includes('serverMemory'), false, 'Retired Server Memory experiment code and copy must be absent.');
+      assert.equal(combinedSource.includes('serverProjectMemory'), false, 'Retired server project-memory flags must be absent.');
+      assert.equal(combinedSource.includes('/memory/graph/'), false, 'The static app must not call the retired server-memory graph API.');
       assert.ok(source.includes('id="projectMemoryHelperDetails"') && source.includes('suggestProjectMemoryWithHelper'), 'Independent manual local-project helper must remain available.');
       includes("await runAssistant(workChat, signal, useSearch, false, mode, true,", 'The structured workflow must honor the selected effort budget in its research stage.');
       includes("if (mode !== 'deep' && !useMultiAgent && chosenSkill === 'auto') return '';", 'Automatic skills must not load in fast mode unless research is explicitly enabled.');
@@ -252,15 +258,13 @@ const suites = {
         assert.ok(existsSync(resolve(root, 'skills/' + skill + '.txt')), 'Missing on-demand skill: ' + skill);
       }
     }],
-    ['inline JavaScript parses without executing', () => {
-      const blocks = [...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
-        .filter((match) => !/\bsrc\s*=/i.test(match[1]));
-      assert.ok(blocks.length > 0, 'No inline application script found.');
-      blocks.forEach((block, index) => {
-        // nosemgrep: javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag -- vm.Script parses source only; it never inserts a DOM script element.
-        try { new Script(block[2], { filename: 'index.md:inline-script-' + index }); } // nosemgrep: javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag -- vm.Script parses source; it does not create a DOM script element.
-        catch (error) { console.error(error.stack || String(error)); throw error; }
-      });
+    ['external JavaScript parses without executing', () => {
+      assert.match(source, /<script[^>]+src=["'][^"']*assets\\/js\\/app\\.js["']/i, 'The app runtime must be loaded as an external asset.');
+      assert.match(source, /<link[^>]+href=["'][^"']*assets\\/css\\/app\\.css["']/i, 'The app stylesheet must be loaded as an external asset.');
+      assert.equal((source.match(/<script\\b(?![^>]*\\bsrc=)[^>]*>/gi) || []).length, 0, 'The app page must not carry an inline application script.');
+      // nosemgrep: javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag -- vm.Script parses source only; it never inserts a DOM script element.
+      try { new Script(appSource, { filename: 'assets/js/app.js' }); } // nosemgrep: javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag -- vm.Script parses source; it does not create a DOM script element.
+      catch (error) { console.error(error.stack || String(error)); throw error; }
     }],
     ['markdown rendering has an explicit sanitizer', () => {
       includes('DOMPurify.sanitize', 'DOMPurify sanitization is required.');
@@ -269,7 +273,7 @@ const suites = {
   ],
   security: [
     ['no obvious API keys committed in source', () => {
-      assert.doesNotMatch(source, /AIza[0-9A-Za-z_-]{30,}/, 'Possible Google API key found in source.');
+      assert.doesNotMatch(combinedSource, /AIza[0-9A-Za-z_-]{30,}/, 'Possible Google API key found in source.');
       assert.doesNotMatch(source, /\bsk-[A-Za-z0-9]{24,}/, 'Possible secret API key found in source.');
       assert.doesNotMatch(source, /\btvly-[A-Za-z0-9_-]{20,}/, 'Possible Tavily key found in source.');
     }],
@@ -341,14 +345,22 @@ const suites = {
   build: [
     ['Jekyll output contains the deployed app', () => {
       const built = resolve(root, '_site/index.html');
+      const builtApp = resolve(root, '_site/assets/js/app.js');
+      const builtCss = resolve(root, '_site/assets/css/app.css');
       assert.ok(existsSync(built), 'Jekyll build did not produce _site/index.html.');
+      assert.ok(existsSync(builtApp), 'Jekyll build did not publish the external app runtime.');
+      assert.ok(existsSync(builtCss), 'Jekyll build did not publish the external app stylesheet.');
       const html = readFileSync(built, 'utf8');
-      assert.match(html, /<html\s+lang="ru">/i, 'Built page is missing the expected document.');
+      const runtime = readFileSync(builtApp, 'utf8');
+      assert.match(html, /<html\\s+lang="ru">/i, 'Built page is missing the expected document.');
       assert.match(html, /id="chatBox"/, 'Built page is missing the chat UI.');
-      assert.match(html, /DOMPurify\.sanitize/, 'Built page is missing the sanitization path.');
+      assert.match(html, /assets\\/js\\/app\\.js/, 'Built page must reference the external runtime.');
+      assert.match(html, /assets\\/css\\/app\\.css/, 'Built page must reference the external stylesheet.');
+      assert.match(runtime, /DOMPurify\\.sanitize/, 'Built app runtime is missing the sanitization path.');
       assert.ok(existsSync(resolve(root, '_site/skills/research.txt')), 'Built site must publish the on-demand research skill.');
       assert.ok(existsSync(resolve(root, '_site/skills/multimodal.txt')), 'Built site must publish the on-demand multimodal skill.');
     }]
+
   ]
 };
 
