@@ -154,13 +154,14 @@ PR #122 добавил только эксплуатационную надёж�
 
 ### 16. Task profiles / skills — [~: OWNER-APPROVED MENU ENTRYPOINT IMPLEMENTED]
 - Owner override D-022 разрешил entrypoint Skills/task profile в Functions menu; PR #169 реализовал и post-merge Chromium подтвердил entrypoint. Полная Skill Factory/Agent Builder остаётся deferred/research.
-- **Owner override 2026-11-08:** restore a concise, truthful Functions menu with only three explicitly requested entries: structured analysis (existing four-stage same-model pipeline), Deep Research (shortcut to Thorough mode; web scope remains independently selectable), and task profile/Skills (instruction profile only; no tool/data permissions). Do not show Integrations or a connector marketplace until real connectors are registered and permission/status contracts exist. This supersedes the 2026-11-07 blanket removal instruction.
+- **Owner override 2026-11-08 (latest request):** replace the compact three-entry disclosure with a sliding Functions drawer. Candidate section navigation: Agents, Research, Notebook and Skills. Reuse existing Agents/Research/Skills handlers without changing their contracts; add Notebook as a local-first workspace, separate from Memory. Keep future Integrations/connectors hidden until a real registry and permission/status contracts exist. Research Studio remains retired. This supersedes the compact-menu presentation, not the truthful capability boundaries.
 - Существующий внутренний код может оставаться скрытым, пока не затрагивает обычный пользовательский поток; новые UI entrypoints и маркетинговые обещания запрещены до явного одобрения.
 
 ### 17. Agents / team blueprint — [~: OWNER-APPROVED ENTRYPOINT IMPLEMENTED; WORKER RUNTIME DEFERRED]
 - Owner override D-022 разрешил Agents/structured analysis entrypoint; PR #169 реализовал и post-merge Chromium подтвердил entrypoint. Независимые workers/team runtime остаются deferred.
 - Keep only owner-approved Functions entries: Agents/structured analysis, Deep Research (sets Thorough), and Skills/task profile. Integrations remain absent. Do not present the team-size blueprint as a runtime independent-agent team.
 - Независимые роли, scheduler, policy engine, sandbox, approval и durable recovery не входят в текущую поставку.
+- Notebook MVP candidate is local-only: IndexedDB notebooks, notes/source links, bounded TXT/Markdown import with user-declared rights, search/sort/export and inert Skill/Agent outline exports. Semantic book conversion, PDF/EPUB/Office extraction, parser security gates, Skill versioning and independent agent execution remain open/specification work.
 
 ### 18. Финальный release gate — [~]
 - [x] Основной код имеет Quality sentinels, Jekyll, Chromium E2E, published-site smoke и отдельные gateway/provenance workflows.
