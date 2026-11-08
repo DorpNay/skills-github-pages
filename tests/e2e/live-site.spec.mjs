@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 
-const LIVE_SITE = process.env.LIVE_SITE_URL || 'https://dorpnay.github.io/skills-github-pages/';
-
 test('live public site serves the app shell and basic chat controls', async ({ page }) => {
+  test.skip(!process.env.LIVE_SITE_URL, 'Runs only in the published Pages smoke job.');
+  const LIVE_SITE = process.env.LIVE_SITE_URL.replace(/\\/?$/, '/');
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
   const response = await page.goto(LIVE_SITE, { waitUntil: 'domcontentloaded', timeout: 30000 });
