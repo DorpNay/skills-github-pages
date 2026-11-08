@@ -461,7 +461,7 @@ permalink: /
         <button id="projectNavToggle" type="button" data-action="toggle-project-navigation" aria-expanded="false" aria-controls="projectNavigationList" class="w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold project-nav-heading">
           <span>▣ <span data-i18n="projectsTitle">Проекты</span></span><span id="projectNavChevron" aria-hidden="true">⌄</span>
         </button>
-        <button id="projectlessNavButton" type="button" data-action="projectless-nav" class="hidden w-full flex items-center gap-2 rounded-lg px-3 py-2 text-xs project-nav-unassigned" aria-label="Назад к личным чатам без проекта">
+        <button id="projectlessNavButton" type="button" data-action="projectless-nav" class="hidden w-full items-center gap-2 rounded-lg px-3 py-2 text-xs project-nav-unassigned" aria-label="Назад к личным чатам без проекта">
           <span aria-hidden="true">←</span><span data-i18n="noProjectNav">← Назад к личным чатам</span><span id="projectlessChatCount" class="ml-auto text-[10px] text-gray-500">0</span>
         </button>
         <div id="projectNavigationList" class="hidden pl-2 space-y-1" aria-label="Список проектов"></div>
@@ -2307,12 +2307,12 @@ permalink: /
       const count=chats.filter(c=>c.projectId===project.id).length;
       const msg=getUiLanguage()==='en'?'Delete project "'+project.name+'" and '+count+' chats? This cannot be undone.':'Удалить проект «'+project.name+'» вместе с '+count+' чатами? Это действие нельзя отменить.';
       if(!confirm(msg))return;
-      const previousProjects=projects,previousChats=chats,previousCurrentId=currentChatId;
+      const previousProjects=projects,previousChats=chats,previousCurrentId=currentChatId,previousFilter=activeProjectChatListFilterId;
       chats=chats.filter(chat=>chat.projectId!==project.id);if(!chats.length)chats=[createChat()];
       if(!chats.some(chat=>chat.id===currentChatId))currentChatId=chats[0].id;
       projects=projects.filter(item=>item.id!==project.id);
       if(activeProjectChatListFilterId===project.id)activeProjectChatListFilterId=null;
-      if(!persistProjectsAndChats()){projects=previousProjects;chats=previousChats;currentChatId=previousCurrentId;renderProjectUI();renderChatList();renderActiveChat();return;}
+      if(!persistProjectsAndChats()){projects=previousProjects;chats=previousChats;currentChatId=previousCurrentId;activeProjectChatListFilterId=previousFilter;renderProjectUI();renderChatList();renderActiveChat();return;}
       renderProjectUI();renderChatList();renderActiveChat();
       showToast(getUiLanguage()==='en'?'Project and its chats deleted.':'Проект и его чаты удалены.');
     }
@@ -2404,6 +2404,7 @@ permalink: /
       const english=getUiLanguage()==='en';
       const backButton=$('projectlessNavButton');
       backButton.classList.toggle('hidden',!activeProjectChatListFilterId);
+      backButton.classList.toggle('flex',Boolean(activeProjectChatListFilterId));
       backButton.setAttribute('aria-label',english?'Back to personal chats without a project':'Назад к личным чатам без проекта');
       for(const project of projects) {
         const group=document.createElement('details');group.className='project-nav-item';group.dataset.projectId=project.id;group.open=expanded.has(project.id);
