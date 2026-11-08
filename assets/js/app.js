@@ -2911,6 +2911,7 @@ function preserveUnreadableProjects(rawText) {
       };
     }
     async function refreshAServiStatus(){
+      if(currentProvider()!=='alandi'){setAServiStatus('disconnected');return;}
       const {baseUrl,model,key}=getAServiSettings();
       const settingsStillCurrent=()=>{const current=getAServiSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
       if(!baseUrl||!model||!key){setAServiStatus('disconnected');return;}
@@ -3082,6 +3083,7 @@ function preserveUnreadableProjects(rawText) {
       }
     }
     async function connectAServi(){
+      if(currentProvider()!=='alandi'){setAServiStatus('disconnected');return;}
       if(isTestingProviderConnection)return;
       const {baseUrl,model,key}=getAServiSettings();
       const aserviSettingsStillCurrent=()=>{const current=getAServiSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
@@ -3175,6 +3177,7 @@ function preserveUnreadableProjects(rawText) {
     }
     function scheduleAServiAutoConnect(){
       if(aserviAutoConnectTimer)clearTimeout(aserviAutoConnectTimer);
+      if(currentProvider()!=='alandi'){aserviAutoConnectTimer=null;setAServiStatus('disconnected');return;}
       aserviAutoConnectTimer=setTimeout(()=>{aserviAutoConnectTimer=null;const cfg=getAServiSettings();if(!cfg.baseUrl||!cfg.model||!cfg.key){setAServiStatus('disconnected');return;}const error=validateAServiBaseUrl(cfg.baseUrl);if(error){setAServiFieldError('aserviBaseUrl',error);setAServiStatus('disconnected');return;}if(isTestingProviderConnection){scheduleAServiAutoConnect();return;}void connectAServi();},850);
     }
     function clearProviderKey(){
