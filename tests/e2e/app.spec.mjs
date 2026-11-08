@@ -2641,6 +2641,9 @@ test('Notebook persists local notes and sources, supports import/export and crea
   await page.locator('#notebookTextFile').setInputFiles({name:'spoofed-notes.md',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.7')});
   await expect(page.locator('#notebookStatus')).toContainText('Разрешены только TXT/Markdown');
   await expect(page.locator('#notebookEntries')).not.toContainText('spoofed-notes.md');
+  await page.locator('#notebookTextFile').setInputFiles({name:'invalid-utf8.md',mimeType:'text/markdown',buffer:Buffer.from([0xc3,0x28])});
+  await expect(page.locator('#notebookStatus')).toContainText('UTF-8');
+  await expect(page.locator('#notebookEntries')).not.toContainText('invalid-utf8.md');
   const sourceBytes=Buffer.from('# Chapter One\nVerified source procedure.\n');
   await page.locator('#notebookTextFile').setInputFiles({name:'licensed-notes.md',mimeType:'text/markdown',buffer:sourceBytes});
   await expect(page.locator('#notebookEntries')).toContainText('licensed-notes.md');
