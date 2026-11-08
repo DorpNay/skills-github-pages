@@ -2590,6 +2590,7 @@ test('Functions drawer exposes truthful sections, keyboard navigation and respon
   await expect(drawer).toBeHidden();
   await expect(page.locator('#searchModeMenu')).toHaveAttribute('open','');
   await page.keyboard.press('Escape');
+  await expect(page.locator('#searchModeMenu')).not.toHaveAttribute('open','');
 
   await trigger.click();
   await drawer.locator('#functionsDrawerNav [data-function="skills"]').click();
@@ -2708,7 +2709,7 @@ test('project notebooks stay isolated by active project while personal notebooks
     await page.locator('#notebookNewTitle').fill(title);
     await page.locator('#notebookNewScope').selectOption(scope);
     await page.locator('[data-action="create-notebook"]').click();
-    await expect(page.locator('#notebookSelect option')).toContainText(title);
+    await expect(page.locator('#notebookSelect')).toContainText(title);
   };
   await openNotebook();
   await createNotebook('Alpha private research','project');
