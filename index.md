@@ -3644,13 +3644,32 @@ permalink: /
       const visible=await NotebookDB.listVisible(),selected=visible.find(n=>n.id===notebookSelectedId)||visible[0]||null;notebookSelectedId=selected?.id||null;
       $('notebookWorkspace').classList.toggle('hidden',!selected);$('notebookEmptyState').classList.toggle('hidden',Boolean(selected));
       $('notebookNewScope').querySelector('option[value="project"]').disabled=!getNotebookProjectId();
-      if(!selected){$('notebookSelect').innerHTML='';return;}
-      $('notebookSelect').innerHTML=visible.map(n=>'<option value="'+escapeHtml(n.id)+'">'+escapeHtml(n.title)+'</option>').join('');$('notebookSelect').value=selected.id;
-      let entries=await NotebookDB.entries(selected.id),q=$('notebookSearch').value.trim().toLowerCase(),sort=$('notebookSort').value;
-      entries=entries.filter(e=>!q||[e.title,e.body,e.url].some(v=>String(v||'').toLowerCase().includes(q)));
-      entries.sort((a,b)=>sort==='title-asc'?String(a.title).localeCompare(String(b.title)):sort==='created-asc'?a.createdAt-b.createdAt:b.updatedAt-a.updatedAt);
-      $('notebookEntryCount').textContent=entries.length+' / '+(await NotebookDB.entries(selected.id)).length;
-      $('notebookEntries').innerHTML=entries.map(e=>'<article class="notebook-entry"><div class="flex justify-between gap-2"><div class="min-w-0"><small class="text-cyan-300">'+(e.kind==='source'?'SOURCE':'NOTE')+'</small><h4 class="text-xs font-semibold break-words">'+escapeHtml(e.title)+'</h4><p class="mt-1 text-[11px] text-gray-400 whitespace-pre-wrap">'+escapeHtml(e.url||String(e.body||'').slice(0,300))+'</p></div><button type="button" data-action="delete-notebook-entry" data-notebook-entry-id="'+escapeHtml(e.id)+'" class="min-w-10 min-h-10">✕</button></div><div class="notebook-entry-actions"><button type="button" data-action="export-skill-draft" data-notebook-entry-id="'+escapeHtml(e.id)+'">Skill draft</button><button type="button" data-action="export-agent-blueprint" data-notebook-entry-id="'+escapeHtml(e.id)+'">Agent blueprint</button></div></article>').join('')||'<p class="text-xs text-gray-500">'+nbText('Записей пока нет.','No entries yet.')+'</p>';
+      if(!selected){$('notebookSelect').replaceChildren();$('notebookEntries').replaceChildren();return;}
+      const options=visible.map(n=>{const option=document.createElement('option');option.value=n.id;option.textContent=n.title;return option;});
+      $('notebookSelect').replaceChildren(...options);$('notebookSelect').value=selected.id;
+      let all=await NotebookDB.entries(selected.id),q=$('notebookSearch').value.trim().toLowerCase(),sort=$('notebookSort').value;
+      const total=all.length;
+      all=all.filter(e=>!q||[e.title,e.body,e.url].some(v=>String(v||'').toLowerCase().includes(q)));
+      all.sort((a,b)=>sort==='title-asc'?String(a.title).localeCompare(String(b.title)):sort==='created-asc'?a.createdAt-b.createdAt:b.updatedAt-a.updatedAt);
+      $('notebookEntryCount').textContent=all.length+' / '+total;
+      const cards=all.map(e=>{
+        const article=document.createElement('article');article.className='notebook-entry';
+        const row=document.createElement('div');row.className='flex justify-between gap-2';
+        const body=document.createElement('div');body.className='min-w-0';
+        const kind=document.createElement('small');kind.className='text-cyan-300';kind.textContent=e.kind==='source'?'SOURCE':'NOTE';
+        const title=document.createElement('h4');title.className='text-xs font-semibold break-words';title.textContent=e.title||'Untitled';
+        const excerpt=document.createElement('p');excerpt.className='mt-1 text-[11px] text-gray-400 whitespace-pre-wrap';excerpt.textContent=e.url||String(e.body||'').slice(0,300);
+        body.append(kind,title,excerpt);
+        const remove=document.createElement('button');remove.type='button';remove.dataset.action='delete-notebook-entry';remove.dataset.notebookEntryId=e.id;remove.className='min-w-10 min-h-10';remove.textContent='✕';remove.setAttribute('aria-label',nbText('Удалить запись','Delete entry'));
+        row.append(body,remove);article.append(row);
+        const actions=document.createElement('div');actions.className='notebook-entry-actions';
+        for(const [action,label] of [['export-skill-draft','Skill draft'],['export-agent-blueprint','Agent blueprint']]){
+          const button=document.createElement('button');button.type='button';button.dataset.action=action;button.dataset.notebookEntryId=e.id;button.textContent=label;actions.append(button);
+        }
+        article.append(actions);return article;
+      });
+      if(!cards.length){const empty=document.createElement('p');empty.className='text-xs text-gray-500';empty.textContent=nbText('Записей пока нет.','No entries yet.');cards.push(empty);}
+      $('notebookEntries').replaceChildren(...cards);
     }
     async function createNotebookFromForm(){const title=$('notebookNewTitle').value.trim();if(!title){nbStatus(nbText('Укажи название.','Enter a name.'),true);return;}try{const n=await NotebookDB.create(title,$('notebookNewScope').value);notebookSelectedId=n.id;$('notebookNewTitle').value='';await renderNotebookPanel();nbStatus(nbText('Тетрадь сохранена локально.','Notebook saved locally.'));}catch(e){nbStatus(e.message,true);}}
     async function saveNotebookNote(){const title=$('notebookNoteTitle').value.trim(),body=$('notebookNoteBody').value.trim();if(!notebookSelectedId||!title||!body){nbStatus(nbText('Выбери тетрадь и заполни название и текст.','Select a notebook and enter a title and body.'),true);return;}try{await NotebookDB.addEntry(notebookSelectedId,{kind:'note',title:title.slice(0,120),body:body.slice(0,12000)});$('notebookNoteTitle').value='';$('notebookNoteBody').value='';await renderNotebookPanel();nbStatus(nbText('Заметка сохранена.','Note saved.'));}catch(e){nbStatus(e.message,true);}}
