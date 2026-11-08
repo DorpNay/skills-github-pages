@@ -1230,8 +1230,13 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('#projectNameInput').fill('Alpha Project');
   await page.locator('#projectInstructionsInput').fill('ALPHA_PROJECT_INSTRUCTION_SENTINEL');
   await page.locator('[data-action="create-project"]').click();
-  const alphaId = await page.locator('#currentProjectSelect').inputValue();
+  const alphaId = await page.evaluate(() => {
+    const projects = JSON.parse(localStorage.getItem('ai_projects_v1') || '[]');
+    return projects.find(project => project.name === 'Alpha Project')?.id || '';
+  });
   expect(alphaId).not.toBe('');
+  // Project creation does not silently reassign the active chat; assignment is explicit.
+  await page.locator('#currentProjectSelect').selectOption(alphaId);
   await page.locator('#projectMemoryInput').fill('ALPHA_PROJECT_MEMORY_SENTINEL');
   await page.locator('[data-action="add-project-memory"]').click();
   await expect(page.locator('#projectMemoryBox')).toContainText('ALPHA_PROJECT_MEMORY_SENTINEL');
@@ -1262,8 +1267,13 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('#projectMemoryInput').fill('BETA_PROJECT_MEMORY_SENTINEL');
   await page.locator('[data-action="add-project-memory"]').click();
   await page.locator('#projectMemoryToggle').check();
-  const betaId = await page.locator('#currentProjectSelect').inputValue();
+  const betaId = await page.evaluate(() => {
+    const projects = JSON.parse(localStorage.getItem('ai_projects_v1') || '[]');
+    return projects.find(project => project.name === 'Beta Project')?.id || '';
+  });
+  expect(betaId).not.toBe('');
   expect(betaId).not.toBe(alphaId);
+  await page.locator('#currentProjectSelect').selectOption(betaId);
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
 
   const sidebar=page.locator('#sidebar');
@@ -1333,8 +1343,12 @@ test('deleting a project removes its chats but preserves other projects and chat
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectNameInput').fill('Disposable Project');
   await page.locator('[data-action="create-project"]').click();
-  const disposableId = await page.locator('#currentProjectSelect').inputValue();
+  const disposableId = await page.evaluate(() => {
+    const projects = JSON.parse(localStorage.getItem('ai_projects_v1') || '[]');
+    return projects.find(project => project.name === 'Disposable Project')?.id || '';
+  });
   expect(disposableId).not.toBe('');
+  await page.locator('#currentProjectSelect').selectOption(disposableId);
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
   const disposableChatId = await page.evaluate(() => {
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
@@ -1359,8 +1373,13 @@ test('deleting a project removes its chats but preserves other projects and chat
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectNameInput').fill('Keep Project');
   await page.locator('[data-action="create-project"]').click();
-  const keepId = await page.locator('#currentProjectSelect').inputValue();
+  const keepId = await page.evaluate(() => {
+    const projects = JSON.parse(localStorage.getItem('ai_projects_v1') || '[]');
+    return projects.find(project => project.name === 'Keep Project')?.id || '';
+  });
+  expect(keepId).not.toBe('');
   expect(keepId).not.toBe(disposableId);
+  await page.locator('#currentProjectSelect').selectOption(keepId);
   await page.locator('#projectSettingsModal [data-action="close-project-settings"]').click();
   const keepChatId = await page.evaluate((id) => {
     const chats=JSON.parse(localStorage.getItem('ai_chats_v87')||'[]');
