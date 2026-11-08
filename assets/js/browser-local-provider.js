@@ -64,8 +64,11 @@
       return await new Promise((resolve, reject) => {
         const tx = db.transaction(STORE, mode);
         const request = value === undefined ? tx.objectStore(STORE)[method]() : tx.objectStore(STORE)[method](value);
-        request.onsuccess = () => resolve(request.result);
+        let result;
+        request.onsuccess = () => { result = request.result; };
         request.onerror = () => reject(request.error || new Error('Local recovery storage request failed.'));
+        tx.oncomplete = () => resolve(result);
+        tx.onerror = () => reject(tx.error || new Error('Local recovery transaction failed.'));
         tx.onabort = () => reject(tx.error || new Error('Local recovery transaction aborted.'));
       });
     } finally { db.close(); }
@@ -113,7 +116,7 @@
       const selected = [];
       for (let i = 0; i < handles.length; i++) {
         const handle = handles[i];
-        await this.ensurePermission(handle, 'read', true);
+        await this.ensurePermission(handle, 'readwrite', true);
         const path = '@selected/' + i + '/' + handle.name;
         this.fileHandles.set(path, handle);
         selected.push({ path, name: handle.name, kind: handle.kind });
@@ -258,14 +261,22 @@
       const snapshot = await dbRequest('readonly', 'get', snapshotId);
       assert(snapshot, 'Recovery snapshot was not found.');
       const root = options.rootHandle || this.rootHandle;
-      assert(root && root.kind === 'directory', 'Select the original workspace folder before restoring.');
-      await this.ensurePermission(root, 'readwrite');
+      if (root) {
+        assert(root.kind === 'directory', 'The selected workspace root is not a directory.');
+        await this.ensurePermission(root, 'readwrite');
+      }
       const targets = [];
       for (const item of snapshot.files) {
-        let directory = root;
-        const parts = normalizePath(item.path).split('/');
-        for (const segment of parts.slice(0, -1)) directory = await directory.getDirectoryHandle(segment);
-        const handle = await directory.getFileHandle(parts[parts.length - 1]);
+        let handle;
+        if (root) {
+          let directory = root;
+          const parts = normalizePath(item.path).split('/');
+          for (const segment of parts.slice(0, -1)) directory = await directory.getDirectoryHandle(segment);
+          handle = await directory.getFileHandle(parts[parts.length - 1]);
+        } else {
+          handle = this.fileHandles.get(item.path);
+        }
+        assert(handle, 'Re-select the original file before restoring: ' + item.path);
         await this.ensurePermission(handle, 'readwrite');
         const file = await handle.getFile();
         const current = decodeText(new Uint8Array(await file.arrayBuffer()));
