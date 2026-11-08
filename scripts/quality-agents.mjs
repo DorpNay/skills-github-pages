@@ -167,7 +167,7 @@ const suites = {
       includes('function exportSettingsProfile()', 'Portable settings profile export must remain available.');
       includes('async function importSettingsProfile(event)', 'Portable settings profile import must remain available.');
       includes('function downloadTraceJson()', 'Research trace JSON export must remain available.');
-      assert.ok(!source.includes("safeGet(STORAGE.model) === 'gemini-3.8-flash'"), 'A valid Gemini 3.8 model must not be downgraded on load.');
+      assert.ok(!combinedSource.includes("safeGet(STORAGE.model) === 'gemini-3.8-flash'"), 'A valid Gemini 3.8 model must not be downgraded on load.');
       includes('function getApiCandidates(requestedModel)', 'Provider failover must discover only configured credentials.');
       includes("if(!key && provider!=='kilo') continue;", 'Only the explicitly selected Kilo Free route may omit an API key.');
       includes('function connectAlandiAServi()', 'The primary aServi route status must be verified with a real completion.');
@@ -245,7 +245,7 @@ const suites = {
       assert.equal(combinedSource.includes('serverMemory'), false, 'Retired Server Memory experiment code and copy must be absent.');
       assert.equal(combinedSource.includes('serverProjectMemory'), false, 'Retired server project-memory flags must be absent.');
       assert.equal(combinedSource.includes('/memory/graph/'), false, 'The static app must not call the retired server-memory graph API.');
-      assert.ok(source.includes('id="projectMemoryHelperDetails"') && source.includes('suggestProjectMemoryWithHelper'), 'Independent manual local-project helper must remain available.');
+      assert.ok(combinedSource.includes('id="projectMemoryHelperDetails"') && source.includes('suggestProjectMemoryWithHelper'), 'Independent manual local-project helper must remain available.');
       includes("await runAssistant(workChat, signal, useSearch, false, mode, true,", 'The structured workflow must honor the selected effort budget in its research stage.');
       includes("if (mode !== 'deep' && !useMultiAgent && chosenSkill === 'auto') return '';", 'Automatic skills must not load in fast mode unless research is explicitly enabled.');
       includes("chosenSkill !== 'auto' ? chosenSkill", 'A manually selected skill must be usable in fast mode.');
@@ -311,9 +311,9 @@ const suites = {
     ['history and tool loops have hard bounds', () => {
       includes('const MAX_TOOL_ROUNDS = 4;', 'Tool-call round limit changed unexpectedly.');
       includes('const FALLBACK_CONTEXT_TOKENS = 16384;', 'Fallback context budget for providers without metadata is missing.');
-      assert.ok(!source.includes('const MAX_CONTEXT_MESSAGES = 24;'), 'Do not reintroduce the arbitrary message-count cap.');
-      assert.ok(!source.includes('const MAX_CONTEXT_CHARS = 24000;'), 'Do not reintroduce the arbitrary global character cap.');
-      assert.ok(!source.includes('count + turn.length > MAX_CONTEXT_MESSAGES'), 'History must not be capped by a fixed message count.');
+      assert.ok(!combinedSource.includes('const MAX_CONTEXT_MESSAGES = 24;'), 'Do not reintroduce the arbitrary message-count cap.');
+      assert.ok(!combinedSource.includes('const MAX_CONTEXT_CHARS = 24000;'), 'Do not reintroduce the arbitrary global character cap.');
+      assert.ok(!combinedSource.includes('count + turn.length > MAX_CONTEXT_MESSAGES'), 'History must not be capped by a fixed message count.');
       includes('function getHistoryCharBudget(systemPromptChars = 0, provider = currentProvider()', 'History budget must use catalogued context-window metadata for the attempted provider/model.');
       includes('buildHistory(historyMessages,systemChars,candidate.provider,candidate.model)', 'Every fallback candidate must apply its own context budget.');
       includes('charCount + turnChars > charBudget', 'History trimming must use the active model-aware soft budget.');
