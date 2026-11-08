@@ -3678,7 +3678,7 @@ permalink: /
       if(!file)return;
       const ext=String(file.name||'').toLowerCase().split('.').pop(),mime=String(file.type||'').toLowerCase().split(';')[0].trim();
       if(!['txt','md','markdown'].includes(ext)||file.size>2*1024*1024){nbStatus(nbText('Поддерживаются TXT/Markdown до 2 МБ.','Only TXT/Markdown files up to 2 MB are supported.'),true);return;}
-      if(mime&&!['text/plain','text/markdown','text/x-markdown'].includes(mime)){nbStatus(nbText('Тип файла не похож на текстовый TXT/Markdown.','File MIME metadata is not an accepted text type.'),true);return;}
+      if(mime&&!['text/plain','text/markdown','text/x-markdown'].includes(mime)){nbStatus(nbText('Разрешены только TXT/Markdown с допустимым MIME.','Only TXT/Markdown with an accepted MIME type are supported.'),true);return;}
       if(!$('notebookRightsConsent').checked||!notebookSelectedId){nbStatus(nbText('Подтверди права и выбери тетрадь.','Confirm rights and select a notebook.'),true);return;}
       try{
         const bytes=new Uint8Array(await file.arrayBuffer());
