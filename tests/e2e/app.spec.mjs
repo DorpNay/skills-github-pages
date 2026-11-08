@@ -2719,6 +2719,7 @@ test('project notebooks stay isolated by active project while personal notebooks
   let titles=await page.locator('#notebookSelect option').allTextContents();
   expect(titles).toContain('Alpha private research · проект');
   expect(titles).toContain('Personal library · личная');
+  await page.locator('[data-action="close-function-panel"]').click();
   await page.locator('[data-action="switch-chat"][data-chat-id="personal-chat"]').click();
   await expect(page.locator('#activeChatTitle')).toHaveText('Personal');
   await openNotebook();
