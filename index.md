@@ -722,7 +722,7 @@ permalink: /
   </div>
 
   
-  <div id="functionPanelModal" class="hidden fixed inset-0 z-[66] bg-black/65 flex justify-end overscroll-none" role="dialog" aria-modal="true" aria-labelledby="functionPanelTitle">
+  <div id="functionPanelModal" class="hidden fixed inset-0 z-[120] bg-black/65 flex justify-end overscroll-none" role="dialog" aria-modal="true" aria-labelledby="functionPanelTitle">
     <section class="functions-drawer-surface space-y-3">
       <header class="flex items-start justify-between gap-3">
         <div class="min-w-0"><h2 id="functionPanelTitle" class="font-bold text-base">Функции</h2><p id="functionPanelDescription" class="mt-1 text-xs leading-relaxed text-gray-400"></p></div>
@@ -3699,6 +3699,10 @@ permalink: /
     async function exportSkillDraft(id){const e=await getNotebookEntry(id);if(!e)return;const headings=String(e.body||'').split(/\r?\n/).filter(x=>/^#{1,4}\s/.test(x)).slice(0,30).map((x,i)=>(i+1)+'. Validate section '+x.replace(/^#{1,4}\s/,'').slice(0,100)+'.').join('\n')||'1. Read the source and write one verified reusable procedure.';const md='---\nname: '+nbSlug(e.title)+'\ndescription: Draft only; human review required.\n---\n\n# '+e.title+'\n\n> DRAFT ONLY. Not a validated Skill. No source paragraphs or executable scripts are copied.\n\n## Purpose\n[Define task and scope]\n\n## Procedure outline\n'+headings+'\n\n## Evidence and provenance\n- Source ID: '+e.id+'\n- SHA-256: '+(e.sourceHash||'not available')+'\n- Rights: '+(e.licenseStatus||'not reviewed')+'\n\n## Review\n- [ ] Confirm rights and license\n- [ ] Verify every instruction against source\n- [ ] Add positive, negative and boundary evals\n- [ ] Scan injection, secrets, scripts and dependencies\n- [ ] Human approve and version before use\n\n## Permissions\nNo shell, filesystem, network, memory, connector or external-action permissions.\n';nbDownload(nbSlug(e.title)+'-SKILL-DRAFT.md',md,'text/markdown');nbStatus(nbText('Скачан черновик Skill; требуется проверка.','Skill draft downloaded; review required.'));}
     async function exportAgentBlueprint(id){const e=await getNotebookEntry(id);if(!e)return;const blueprint={schemaVersion:1,status:'draft',name:e.title,purpose:'[Define task and acceptance criteria]',sourceReferences:[{id:e.id,title:e.title,sha256:e.sourceHash||null,licenseStatus:e.licenseStatus||'not-reviewed'}],role:{name:'[Role]',responsibilities:[],limitations:[]},skills:[],modelPolicy:{fallback:'none'},dataScope:{notebookId:notebookSelectedId,read:'selected sources only'},capabilities:{read:false,write:false,network:false,execute:false,memory:false,connectors:false},approvalPolicy:{humanReviewRequired:true,sideEffectsDisabled:true},budget:{maxSteps:8,maxInputBytes:2000000,maxOutputBytes:50000,timeoutSeconds:60},evaluations:{positive:[],negative:[],boundary:[]},notes:'Blueprint only: no agent runtime or permissions created.'};nbDownload(nbSlug(e.title)+'-AGENT-BLUEPRINT.json',JSON.stringify(blueprint,null,2),'application/json');}
     async function openFunctionPanel(kind){
+      // A modal drawer supersedes transient toolbar/chat popovers; never leave a
+      // higher-z-index menu intercepting clicks above the active dialog.
+      ['searchModeMenu','functionsMenu','languageMenu','languageMenuSidebar'].forEach(id=>{const menu=$(id);if(menu?.open)menu.open=false;});
+      document.querySelectorAll('.chat-row-menu[open]').forEach(menu=>{menu.open=false;});
       const views={agents:['agentFunctionSettings','functionAgentsTitle','functionAgentsDescription'],research:['researchFunctionSettings','functionDeepResearchTitle','functionDeepResearchDescription'],notebook:['notebookFunctionSettings','functionNotebookTitle','functionNotebookDescription'],skills:['skillFunctionSettings','functionSkillsTitle','functionSkillsDescription'],connectors:['connectorFunctionStatus','functionConnectorsTitle','functionConnectorsDescription']};
       const view=views[kind];if(!view)return;const text=UI_TEXT[getUiLanguage()];
       ['agentFunctionSettings','researchFunctionSettings','notebookFunctionSettings','skillFunctionSettings','connectorFunctionStatus'].forEach(id=>$(id).classList.add('hidden'));
@@ -5693,6 +5697,7 @@ permalink: /
         else if (!$('traceModal').classList.contains('hidden')) closeTrace();
         else if (!$('projectSettingsModal').classList.contains('hidden')) closeProjectSettings();
         else if (!$('functionPanelModal').classList.contains('hidden')) closeFunctionPanel();
+        else if ($('searchModeMenu')?.open) { $('searchModeMenu').open = false; $('searchModeSummary')?.focus(); }
         else if ($('functionsMenu')?.open) { $('functionsMenu').open = false; $('functionsMenuSummary')?.focus(); }
         else if (!$('settingsModal').classList.contains('hidden')) toggleSettings(false);
         else if (!$('sidebar').classList.contains('-translate-x-full')) toggleSidebar(false);
