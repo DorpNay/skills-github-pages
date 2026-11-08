@@ -700,31 +700,65 @@ test('sidebar closes on a horizontal touch swipe without consuming vertical scro
   await expect(page.locator('#projectNavigationList')).toBeVisible();
 });
 
-test('function menu separates task workflow from integrations in both languages', async ({ page }) => {
+test('Functions drawer exposes truthful sections, keyboard navigation and responsive layout', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  const menu = page.locator('#functionsMenu');
-  await menu.locator(':scope > summary').click();
-  await expect(menu.locator('.toolbar-menu-group-label')).toHaveCount(4);
-  await expect(menu.locator('.toolbar-menu-group-label').nth(0)).toContainText('Работа с задачей');
-  await expect(menu.locator('.toolbar-menu-group-label').nth(1)).toContainText('Исследование и источники');
-  await expect(menu.locator('.toolbar-menu-group-label').nth(2)).toContainText('Создание и преобразование');
-  await expect(menu.locator('.toolbar-menu-group-label').nth(3)).toContainText('Подключения');
-  await expect(menu.locator('[data-action="open-function-panel"]')).toHaveCount(3);
-  await expect(menu.locator('[data-action="open-research-studio"]')).toHaveCount(0);
-  await expect(menu.locator('.function-roadmap-items')).toHaveCount(2);
-  await expect(menu.locator('.function-roadmap-items').nth(0).locator('.function-roadmap-item')).toHaveCount(1);
-  await expect(menu.locator('.function-roadmap-items').nth(0).locator('.function-roadmap-item').first()).toContainText('Глубокое исследование 2.0');
-  await expect(menu.locator('.toolbar-menu-group-label').nth(2).locator('xpath=following-sibling::*[1]')).toHaveClass(/function-roadmap-items/);
-  await expect(menu.locator('.function-roadmap-items').nth(1).locator('.function-roadmap-item')).toHaveCount(4);
-  await expect(menu.locator('.function-roadmap-item')).toHaveCount(5);
-  await expect(menu.locator('.function-roadmap-item .roadmap-ticker-track').first()).toContainText('1ИV3ИT10И');
-  await expect(menu.locator('.function-roadmap-item button[data-action="open-roadmap-details"]')).toHaveCount(5);
-  await selectLanguage(page, 'en');
-  if (!(await menu.evaluate(element => element.open))) await menu.locator(':scope > summary').click();
-  await expect(menu.locator('.toolbar-menu-group-label').nth(0)).toContainText('Task workflow');
-  await expect(menu.locator('.toolbar-menu-group-label').nth(1)).toContainText('Research and sources');
-  await expect(menu.locator('.toolbar-menu-group-label').nth(2)).toContainText('Create and transform');
-  await expect(menu.locator('.toolbar-menu-group-label').nth(3)).toContainText('Connections');
+  const trigger=page.locator('#functionsMenuSummary'),drawer=page.locator('#functionPanelModal');
+  await expect(trigger).toHaveAccessibleName(/Функции/);
+  const triggerBox=await trigger.boundingBox();
+  expect(triggerBox?.height||0,'Functions drawer launcher must have a 44px touch target').toBeGreaterThanOrEqual(44);
+  await trigger.focus();await page.keyboard.press('Enter');
+  await expect(drawer).toBeVisible();
+  await expect(drawer).toHaveRole('dialog');
+  await expect(drawer).toHaveAttribute('aria-modal','true');
+  await expect(drawer.locator('#functionsDrawerNav [data-function]')).toHaveCount(4);
+  for(const [kind,label] of [['agents','Агенты'],['research','Исследования'],['notebook','Notebook'],['skills','Скиллы']]){
+    const tab=drawer.locator('#functionsDrawerNav [data-function="'+kind+'"]');
+    await expect(tab).toBeVisible();
+    await expect(tab).toContainText(label);
+  }
+  await expect(drawer.locator('#agentFunctionSettings')).toBeVisible();
+  await expect(page.locator('[data-action="open-research-studio"]')).toHaveCount(0);
+  await expect(page.locator('#researchStudioModal')).toHaveCount(0);
+  await expect.poll(()=>drawer.evaluate(el=>getComputedStyle(el).backdropFilter)).toBe('blur(4px)');
+  const close=drawer.locator('[data-action="close-function-panel"]').first();
+  await expect(close).toBeFocused();
+  const focusables=drawer.locator('button:visible,input:visible,select:visible,textarea:visible');
+  const first=focusables.first(),last=focusables.last();
+  await page.keyboard.press('Shift+Tab');await expect(last).toBeFocused();
+  await page.keyboard.press('Tab');await expect(first).toBeFocused();
+  await page.keyboard.press('Escape');await expect(drawer).toBeHidden();await expect(trigger).toBeFocused();
+
+  await trigger.click();
+  await drawer.locator('#functionsDrawerNav [data-function="research"]').click();
+  await expect(drawer.locator('#researchFunctionSettings')).toBeVisible();
+  await drawer.locator('[data-action="select-processing-mode"][data-processing-mode="deep"]').click();
+  await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed','true');
+  await drawer.locator('[data-action="open-search-mode-settings"]').click();
+  await expect(drawer).toBeHidden();
+  await expect(page.locator('#searchModeMenu')).toHaveAttribute('open','');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#searchModeMenu')).not.toHaveAttribute('open','');
+
+  await trigger.click();
+  await drawer.locator('#functionsDrawerNav [data-function="skills"]').click();
+  await expect(drawer.locator('#skillFunctionSettings')).toBeVisible();
+  await drawer.locator('[data-action="close-function-panel"]').first().click();
+  await expect(drawer).toBeHidden();
+
+  await page.setViewportSize({ width:320,height:740 });
+  await trigger.click();
+  await expect(drawer).toBeVisible();
+  const drawerBox=await drawer.locator('.functions-drawer-surface').boundingBox();
+  expect(drawerBox?.width||0).toBeLessThanOrEqual(320);
+  expect(drawerBox?.x||0).toBeGreaterThanOrEqual(0);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+  for(const tab of await drawer.locator('#functionsDrawerNav button').all()){
+    const box=await tab.boundingBox();expect(box?.height||0,'Drawer tab must have a 44px hit target').toBeGreaterThanOrEqual(44);
+  }
+  await drawer.locator('#functionsDrawerNav [data-function="notebook"]').click();
+  await expect(drawer.locator('#notebookFunctionSettings')).toBeVisible();
+  await expect(drawer.locator('#notebookNewScope option[value="project"]')).toBeDisabled();
 });
 
 test('Skills panel separates the active chat profile from the planned package library', async ({ page }) => {
@@ -3957,9 +3991,10 @@ test('search presets and function settings fit one line, localize, and persist p
   await chooseSearchMode(page, 'normal');
 
   await page.locator('#functionsMenuSummary').click();
-  await expect(page.locator('#functionsMenu [data-function="research"]')).toHaveCount(0);
-  await expect(page.locator('#functionsMenu .toolbar-menu-option')).toHaveCount(3);
-  await page.locator('#functionsMenuSummary').click();
+  await expect(page.locator('#functionPanelModal')).toBeVisible();
+  await expect(page.locator('#functionsDrawerNav [data-function]')).toHaveCount(4);
+  await expect(page.locator('#functionsDrawerNav [data-function="connectors"]')).toHaveCount(0);
+  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
 
   await setAgentMode(page, true);
   await expect(page.locator('#toggleMultiAgent')).toBeChecked();
@@ -3974,10 +4009,9 @@ test('search presets and function settings fit one line, localize, and persist p
   })).toBe('code-review');
 
   await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="connectors"]').click();
-  await expect(page.locator('#functionPanelModal')).toBeVisible();
-  await expect(page.locator('#functionPanelDescription')).toContainText('интеграции');
-  await expect(page.locator('#functionPanelDescription')).toContainText('не подключены');
+  await page.locator('#functionsDrawerNav [data-function="research"]').click();
+  await expect(page.locator('#researchFunctionSettings')).toBeVisible();
+  await expect(page.locator('#functionsDrawerNav [data-function="connectors"]')).toHaveCount(0);
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
 
   const sidebar = page.locator('#sidebar');
@@ -4003,10 +4037,11 @@ test('search presets and function settings fit one line, localize, and persist p
   await expect(page.locator('#modeHint')).toContainText('Quick · Web: standard · Direct · Auto');
   // Language selection is a standalone header control; the settings dialog is not open here.
 
-  // The first tap outside an open toolbar menu must only close it.
   await page.locator('#functionsMenuSummary').click();
-  await page.locator('#modeFast').click();
-  await expect(page.locator('#functionsMenu')).not.toHaveAttribute('open', '');
+  await expect(page.locator('#functionPanelModal')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#functionPanelModal')).toBeHidden();
+  await expect(page.locator('#functionsMenuSummary')).toHaveAttribute('aria-expanded', 'false');
   await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
 });
 
@@ -4028,20 +4063,8 @@ test('planned agent and connector directions show a clearly non-runtime innovati
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
   await expect(agentTicker).toBeHidden();
 
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-action="open-function-panel"][data-function="connectors"]').click();
-  const connectorPanel = page.locator('#connectorFunctionStatus');
-  await expect(connectorPanel).toBeVisible();
-  const connectorTicker = connectorPanel.locator('.roadmap-ticker-track');
-  await expect(connectorTicker).toBeVisible();
-  await expect(connectorTicker).toContainText('1ИV3ИT10И');
-  await connectorPanel.locator('[data-action="open-roadmap-details"]').click();
-  await expect(page.locator('#roadmapDetailsTitle')).toHaveText('Интеграции');
-  await expect(page.locator('#roadmapDetailsStatus')).toHaveText('В разработке');
-  await page.locator('#roadmapDetailsModal [data-action="close-roadmap-details"]').first().click();
-  await expect(connectorPanel.locator('.roadmap-note')).toContainText('не означает, что сервис уже выполняет работу');
-  await page.locator('#functionPanelModal [data-action="close-function-panel"]').first().click();
-  await expect(connectorTicker).toBeHidden();
+  await expect(page.locator('#functionsDrawerNav [data-function="connectors"]')).toHaveCount(0);
+  await expect(page.locator('#connectorFunctionStatus')).toBeHidden();
 });
 
 test('application innovation ticker is static when reduced motion is requested', async ({ page }) => {
@@ -4397,21 +4420,19 @@ test('responsive expanded UI panels fit and capture evidence at all acceptance w
     expect(documentOverflow, `document has no horizontal overflow at ${width}px`).toBe(false);
   };
 
-  const functionsMenu = page.locator('#functionsMenu');
   const functionsSummary = page.locator('#functionsMenuSummary');
+  const drawer = page.locator('#functionPanelModal');
   const openFunctionsMenu = async () => {
-    if (!(await functionsMenu.evaluate(element => element.open))) await functionsSummary.click();
-    await expect(functionsMenu.locator('.function-menu-content')).toBeVisible();
+    if (!(await drawer.isVisible())) await functionsSummary.click();
+    await expect(drawer).toBeVisible();
   };
   const closeFunctionsMenu = async () => {
-    if (await functionsMenu.evaluate(element => element.open)) await functionsSummary.click();
+    if (await drawer.isVisible()) {
+      await drawer.locator('[data-action="close-function-panel"]').first().click();
+      await expect(drawer).toBeHidden();
+    }
   };
-  const closeFunctionPanel = async () => {
-    const close = page.locator('#functionPanelModal > section > header [data-action="close-function-panel"]');
-    await expect(close).toBeVisible();
-    await close.click();
-    await expect(page.locator('#functionPanelModal')).toBeHidden();
-  };
+  const closeFunctionPanel = closeFunctionsMenu;
 
   for (const width of [320, 360, 390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
@@ -4429,7 +4450,7 @@ test('responsive expanded UI panels fit and capture evidence at all acceptance w
     }).toBeLessThanOrEqual(0);
 
     await openFunctionsMenu();
-    const menuPanel = page.locator('#functionsMenu .function-menu-content');
+    const menuPanel = page.locator('#functionPanelModal .functions-drawer-surface');
     await assertFits(menuPanel, 'Functions menu', width);
     await attachVisualReviewScreenshot(page, testInfo, `responsive-functions-${width}px`);
     await closeFunctionsMenu();
@@ -4437,7 +4458,7 @@ test('responsive expanded UI panels fit and capture evidence at all acceptance w
     await openFunctionsMenu();
     await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
     await expect(page.locator('#functionPanelModal')).toBeVisible();
-    const agentPanel = page.locator('#functionPanelModal > section');
+    const agentPanel = page.locator('#agentFunctionSettings');
     await assertFits(agentPanel, 'Agents panel', width);
     await attachVisualReviewScreenshot(page, testInfo, `responsive-agents-${width}px`);
     await closeFunctionPanel();
@@ -4446,7 +4467,7 @@ test('responsive expanded UI panels fit and capture evidence at all acceptance w
     await openFunctionsMenu();
     await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
     await expect(page.locator('#functionPanelModal')).toBeVisible();
-    const skillsPanel = page.locator('#functionPanelModal > section');
+    const skillsPanel = page.locator('#skillFunctionSettings');
     await assertFits(skillsPanel, 'Skills panel', width);
     await attachVisualReviewScreenshot(page, testInfo, `responsive-skills-${width}px`);
     await closeFunctionPanel();
@@ -4860,34 +4881,6 @@ test('team blueprint library enforces its documented 20-item cap', async ({ page
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('ai_agent_team_blueprints_v1') || '[]').length)).toBe(20);
   await expect(panel.locator('#agentBlueprintSelect option')).toHaveCount(21);
 });
-test('planned function menu items open truthful detail windows and can pause motion', async ({ page }) => {
-  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.locator('#functionsMenuSummary').click();
-  const menu = page.locator('#functionsMenu');
-  const cards = menu.locator('.function-roadmap-item');
-  await expect(cards).toHaveCount(5);
-  await expect(cards.nth(0)).toContainText('Глубокое исследование 2.0');
-  await expect(cards.nth(1)).toContainText('постоянная библиотека');
-  await expect(cards.nth(2)).toContainText('screenshot-to-code');
-  await expect(cards.nth(3)).toContainText('Knowledge-to-Skill');
-  await expect(cards.nth(4)).toContainText('генерация изображений/видео');
-  await expect(cards.locator('button[data-action="open-roadmap-details"]')).toHaveCount(5);
-  await cards.nth(0).locator('[data-action="open-roadmap-details"]').click();
-  await expect(page.locator('#roadmapDetailsModal')).toBeVisible();
-  await expect(page.locator('#roadmapDetailsTitle')).toHaveText('Глубокое исследование 2.0');
-  await expect(page.locator('#roadmapDetailsStatus')).toHaveText('В разработке');
-  await expect(page.locator('#roadmapDetailsBoundary')).toContainText('не запускает операцию');
-  await page.keyboard.press('Escape');
-  await expect(page.locator('#roadmapDetailsModal')).toBeHidden();
-  const ticker = cards.nth(0).locator('.roadmap-ticker-track');
-  await expect(ticker).toContainText('1ИV3ИT10И');
-  await page.locator('#functionsRoadmapPause').check();
-  expect(await ticker.evaluate(element => getComputedStyle(element).animationPlayState)).toBe('paused');
-  await selectLanguage(page, 'en');
-  await expect(menu.locator('.toolbar-menu-group-label').nth(1)).toContainText('Research and sources');
-  await expect(cards.nth(0).locator('[data-action="open-roadmap-details"]')).toHaveText('Details');
-});
-
 test('extended UI visual review captures navigation, settings, Functions, Agents and Skills', async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 1440, height: 1200 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
@@ -4901,15 +4894,15 @@ test('extended UI visual review captures navigation, settings, Functions, Agents
   await attachVisualReviewScreenshot(page, testInfo, 'ui-sidebar-memory-controls');
   await ensureSidebarClosed(page);
 
-  // Compact Functions menu and Agent panel
+  // Owner-designed Functions drawer and Agent panel
   await page.locator('#functionsMenuSummary').click();
-  await expect(page.locator('#functionsMenu')).toHaveAttribute('open', '');
-  await attachVisualReviewScreenshot(page, testInfo, 'ui-functions-menu-open');
+  await expect(page.locator('#functionPanelModal')).toBeVisible();
+  await attachVisualReviewScreenshot(page, testInfo, 'ui-functions-drawer-open');
   // Expanded-menu visual acceptance at every owner viewport. Capture the real open state;
   // resize only the viewport, without reloading or changing application state.
   for (const width of [320, 360, 390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
-    await attachVisualReviewScreenshot(page, testInfo, 'ui-functions-menu-open-' + width);
+    await attachVisualReviewScreenshot(page, testInfo, 'ui-functions-drawer-open-' + width);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow, 'horizontal overflow in Functions menu at ' + width + 'px').toBeLessThanOrEqual(1);
   }
@@ -5016,6 +5009,132 @@ test('extended UI visual review captures navigation, settings, Functions, Agents
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
 });
 
+
+test('Notebook persists local notes and sources, supports import/export and creates inert Skill/Agent drafts', async ({ page }) => {
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(async()=> (await indexedDB.databases()).some(db=>db.name==='AI_Agent_DB_v87'&&db.version===3));
+  await page.locator('#functionsMenuSummary').click();
+  const drawer=page.locator('#functionPanelModal');
+  await drawer.locator('#functionsDrawerNav [data-function="notebook"]').click();
+  await page.locator('#notebookNewTitle').fill('Local research');
+  await page.locator('[data-action="create-notebook"]').click();
+  await expect(page.locator('#notebookWorkspace')).toBeVisible();
+
+  await page.locator('#notebookNoteTitle').fill('Key finding');
+  await page.locator('#notebookNoteBody').fill('# Evidence\nA useful finding to verify.');
+  await page.locator('[data-action="save-notebook-note"]').click();
+  await expect(page.locator('#notebookEntries')).toContainText('Key finding');
+
+  await page.locator('#notebookSourceTitle').fill('Reference');
+  await page.locator('#notebookSourceUrl').fill('https://example.org/research');
+  await page.locator('[data-action="save-notebook-source"]').click();
+  await expect(page.locator('#notebookEntries')).toContainText('example.org/research');
+
+  await page.locator('#notebookSearch').fill('Key finding');
+  await expect(page.locator('#notebookEntries')).toContainText('Key finding');
+  await expect(page.locator('#notebookEntries')).not.toContainText('example.org/research');
+  await page.locator('#notebookSearch').fill('');
+
+  await page.locator('#notebookRightsConsent').check();
+  await page.locator('#notebookTextFile').setInputFiles({name:'spoofed-notes.md',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.7')});
+  await expect(page.locator('#notebookStatus')).toContainText('Разрешены только TXT/Markdown');
+  await expect(page.locator('#notebookEntries')).not.toContainText('spoofed-notes.md');
+  await page.locator('#notebookTextFile').setInputFiles({name:'invalid-utf8.md',mimeType:'text/markdown',buffer:Buffer.from([0xc3,0x28])});
+  await expect(page.locator('#notebookStatus')).toContainText('UTF-8');
+  await expect(page.locator('#notebookEntries')).not.toContainText('invalid-utf8.md');
+  const sourceBytes=Buffer.from('# Chapter One\nVerified source procedure.\n');
+  await page.locator('#notebookTextFile').setInputFiles({name:'licensed-notes.md',mimeType:'text/markdown',buffer:sourceBytes});
+  await expect(page.locator('#notebookEntries')).toContainText('licensed-notes.md');
+  const expectedSourceHash=await page.evaluate(async()=>{
+    const bytes=new TextEncoder().encode('# Chapter One\nVerified source procedure.\n');
+    const digest=await crypto.subtle.digest('SHA-256',bytes);
+    return Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
+  });
+  const storedSourceHash=await page.evaluate(async()=>{
+    const database=await new Promise((resolve,reject)=>{const request=indexedDB.open('AI_Agent_DB_v87');request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
+    const entries=await new Promise((resolve,reject)=>{const request=database.transaction('notebookEntries','readonly').objectStore('notebookEntries').getAll();request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
+    database.close();return entries.find(entry=>entry.title==='licensed-notes.md')?.sourceHash||null;
+  });
+  expect(storedSourceHash).toBe(expectedSourceHash);
+
+  const skillDownload=page.waitForEvent('download');
+  await page.locator('#notebookEntries [data-action="export-skill-draft"]').last().click();
+  const skill=await skillDownload;
+  expect(skill.suggestedFilename()).toContain('SKILL-DRAFT.md');
+  const blueprintDownload=page.waitForEvent('download');
+  await page.locator('#notebookEntries [data-action="export-agent-blueprint"]').last().click();
+  expect((await blueprintDownload).suggestedFilename()).toContain('AGENT-BLUEPRINT.json');
+
+  const bundleDownload=page.waitForEvent('download');
+  await page.locator('[data-action="export-notebook"]').click();
+  expect((await bundleDownload).suggestedFilename()).toContain('local-research.json');
+
+  const stores=await page.evaluate(async()=>{
+    const database=await new Promise((resolve,reject)=>{const request=indexedDB.open('AI_Agent_DB_v87');request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
+    const names=Array.from(database.objectStoreNames);
+    const count=name=>new Promise((resolve,reject)=>{const request=database.transaction(name,'readonly').objectStore(name).count();request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
+    const result={names,notebooks:await count('notebooks'),entries:await count('notebookEntries'),privateMemory:await count('memory'),sharedMemory:await count('sharedMemory')};
+    database.close();return result;
+  });
+  expect(stores.names).toContain('notebooks');
+  expect(stores.names).toContain('notebookEntries');
+  expect(stores.notebooks).toBe(1);
+  expect(stores.entries).toBe(3);
+  expect(stores.privateMemory).toBe(0);
+  expect(stores.sharedMemory).toBe(0);
+
+  page.on('dialog',dialog=>dialog.accept());
+  await page.locator('[data-action="delete-notebook"]').click();
+  await expect(page.locator('#notebookWorkspace')).toBeHidden();
+});
+
+test('project notebooks stay isolated by active project while personal notebooks remain visible', async ({ page }) => {
+  await page.addInitScript(() => {
+    const project=(id,name)=>({id,name,description:'',instructions:'',memoryScope:'project-only',memory:[],createdAt:Date.now(),updatedAt:Date.now()});
+    const chat=(id,title,projectId)=>({id,title,projectId,projectMemoryEnabled:false,messages:[]});
+    localStorage.setItem('ai_projects_v1',JSON.stringify([project('alpha-project','Alpha'),project('beta-project','Beta')]));
+    localStorage.setItem('ai_chats_v87',JSON.stringify([chat('personal-chat','Personal',null),chat('alpha-chat','Alpha chat','alpha-project'),chat('beta-chat','Beta chat','beta-project')]));
+    localStorage.setItem('ai_current_chat_v87','alpha-chat');
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(async()=> (await indexedDB.databases()).some(db=>db.name==='AI_Agent_DB_v87'&&db.version===3));
+  const openNotebook=async()=>{
+    await page.locator('#functionsMenuSummary').click();
+    await page.locator('#functionsDrawerNav [data-function="notebook"]').click();
+    await expect(page.locator('#notebookFunctionSettings')).toBeVisible();
+  };
+  const createNotebook=async(title,scope)=>{
+    await page.locator('#notebookNewTitle').fill(title);
+    await page.locator('#notebookNewScope').selectOption(scope);
+    await page.locator('[data-action="create-notebook"]').click();
+    await expect(page.locator('#notebookSelect')).toContainText(title);
+  };
+  await openNotebook();
+  await createNotebook('Alpha private research','project');
+  await createNotebook('Personal library','personal');
+  let titles=await page.locator('#notebookSelect option').allTextContents();
+  expect(titles).toContain('Alpha private research');
+  expect(titles).toContain('Personal library');
+  await page.evaluate(()=>localStorage.setItem('ai_current_chat_v87','personal-chat'));
+  await page.reload();
+  await openNotebook();
+  titles=await page.locator('#notebookSelect option').allTextContents();
+  expect(titles).toContain('Personal library');
+  expect(titles).not.toContain('Alpha private research');
+  await expect(page.locator('#notebookNewScope option[value="project"]')).toBeDisabled();
+  await page.locator('[data-action="close-function-panel"]').click();
+  await page.evaluate(()=>localStorage.setItem('ai_current_chat_v87','beta-chat'));
+  await page.reload();
+  await openNotebook();
+  await createNotebook('Beta private research','project');
+  await page.evaluate(()=>localStorage.setItem('ai_current_chat_v87','alpha-chat'));
+  await page.reload();
+  await openNotebook();
+  titles=await page.locator('#notebookSelect option').allTextContents();
+  expect(titles).toContain('Alpha private research');
+  expect(titles).toContain('Personal library');
+  expect(titles).not.toContain('Beta private research');
+});
 
 test('browser Python snippets cannot access page globals through Pyodide js module', async ({ page }) => {
   await page.addInitScript(() => {
