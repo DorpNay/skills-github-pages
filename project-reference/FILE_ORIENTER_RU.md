@@ -1,17 +1,15 @@
 # aLandi — ФАЙЛ-ОРИЕНТИР ДЛЯ ПРОДОЛЖЕНИЯ РАБОТЫ
 
-> Подробный индекс навигации. Это не источник live-статуса и не обязательный стартовый пакет. Для `oledue` сначала читай корневой OLEDUE.md, затем выполняй один batched live GitHub read. Используй этот файл для поиска конкретного пути.
+> Подробный индекс навигации. Это не источник live-статуса. Для `oledue` сначала читай корневой OLEDUE.md, затем выполняй batched live GitHub sync.
 
-## Контрольная точка — 2026-11-08 (post-merge main)
+## Контрольная точка — 2026-11-08
 
-- Main `bf039f887e29137b627b06fc2bb107c2793d6b69`; PR #173 squash-merged. Pages deployment #42410162803 SUCCESS on exact SHA.
-- Main Quality #42410163178: build, Context, Static Analysis, Security, Integrity and Chromium jobs PASS. Chromium validated the built app, public root revision, canonical landing content and landing Chromium 8/8.
-- Published release-contract job #128517290166 FAILED because its forbidden list incorrectly rejects owner-approved `id="functionsMenu"`. This is a stale sentinel; the menu with Agents/Deep Research/Skills is required. Research Studio, legacy aLandi provider option and removed sidebar controls remain forbidden.
-- **Snapshot marker:** open PRs (0): open issues (1): #111. The current PR #174 is excluded from the other-PR snapshot count by the freshness gate.
-- **Live open PR queue:** #174 (this bounded follow-up only); no other open PRs. **Live open issue (1):** #111, owner/environment controlled.
-- Follow-up branch `fix/pages-functions-contract-and-state-20261108` is based on exact main `bf039f887e29137b627b06fc2bb107c2793d6b69`; its CI/merge status must be read live.
-- PRs #125/#131/#152/#154/#155/#168/#171/#172 remain closed non-merged; retain their still-open registry goals and selected research. VPS/Tunnel/Ollama, target hardware and native iPhone/VoiceOver remain unverified.
-
+- Main `9033c6ad708a993cba5d1b27442f53651ad71c0f` — fix(ci/ui): align Pages contract and modal backdrop dismissal (#174); PR #174 merged. Exact-main Quality #42430269155, Freshness #42430269156, Provenance #42430269144, Graphify #42430269131 and Pages #42430269181 passed; public root/landing verified.
+- **Snapshot marker:** open PRs (0): open issues (1): #111. Active PR #175 is intentionally excluded from the expected main-checkpoint queue snapshot by the freshness checker.
+- **Live open PR queue:** #175 (`feat/functions-drawer-notebook-20261108`), base `9033c6ad708a993cba5d1b27442f53651ad71c0f`, head at checkpoint `f78a3ae7f25ae76cb6bd87461b76a5860ec9f3b6`; no other open PRs. **Live open issue (1):** #111, owner/environment controlled.
+- PR #175 implements the sliding Functions drawer and local Notebook MVP. Its final exact-head Quality/Chromium, Freshness and Graphify checks must be read live.
+- Preserve existing LAUNCH-254…256, SF-001…007, AB-001…005, AW-SK-001…005, VERT-001…003 and DR2 work. Semantic book conversion, secure PDF/EPUB/Office parsing, provenance scans, Skill lifecycle and independent Agent runtime are not implemented.
+- Issue #111, native iPhone Safari/VoiceOver, private VPS/Tunnel/Ollama and target-host performance remain owner/environment/manual gates.
 ## 1. Быстрый маршрут
 
 0. **Короткая точка входа:** корневой `ORIENTER.md`.
