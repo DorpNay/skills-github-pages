@@ -453,7 +453,7 @@ permalink: /
         <span id="chatSectionCount" class="text-[10px] text-gray-500">0</span>
       </summary>
       <div id="chatScopeBackRow" class="hidden px-2 pt-2"><button type="button" id="chatScopeBackButton" data-action="projectless-nav" class="min-h-[44px] w-full rounded-lg border border-gray-700 px-3 py-2 text-left text-xs text-gray-300 hover:bg-gray-800">← Все личные чаты</button></div>
-      <div class="px-2 pt-2"><button type="button" id="newChatButton" data-action="new-chat" data-i18n="newPersonalChat" class="min-h-[44px] w-full rounded-lg border border-blue-500/25 bg-blue-600/10 hover:bg-blue-600/20 py-2 text-xs font-semibold text-blue-200">＋ Новый личный чат</button></div>
+      <div class="px-2 pt-2"><button type="button" id="newChatButton" data-action="new-chat" class="min-h-[44px] w-full rounded-lg border border-blue-500/25 bg-blue-600/10 hover:bg-blue-600/20 py-2 text-xs font-semibold text-blue-200">＋ Новый личный чат</button></div>
       <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
     </details>
 
