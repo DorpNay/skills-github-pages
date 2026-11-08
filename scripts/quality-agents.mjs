@@ -74,14 +74,14 @@ const suites = {
       assert.ok(aserviSettings.includes('data-action="connect-aservi"'), 'aServi must expose an explicit connection action inside its own settings group.');
       includes("if(currentProvider()!=='alandi'){setAServiStatus('disconnected');return;}", 'aServi probes must not run while a third-party provider is selected.');
       assert.ok(source.includes('aLandi aServi'), 'The first-party server route must use the current aLandi aServi product name.');
-      assert.equal(source.includes('aLandi Cloud'), false, 'Do not reintroduce the retired aLandi Cloud product label.');
+      assert.equal(combinedSource.includes('aLandi Cloud'), false, 'Do not reintroduce the retired aLandi Cloud product label.');
       includes('data-action="paste-aservi-key"', 'The first-party key action must use the aServi identifier.');
       assert.equal(source.includes('data-action="paste-cloud-key"'), false, 'Do not reintroduce the retired Cloud DOM action.');
       assert.equal(source.includes('data-action="connect-alandi-cloud"'), false, 'Do not reintroduce the retired Cloud connection action.');
       assert.match(source, /<details[^>]*id="thirdPartyProviderSettings"/, 'Third-party providers must have a separate settings disclosure.');
       assert.ok(source.includes('<details id="additionalSettings"'), 'Additional settings must have a separate disclosure.');
       assert.equal(providerPicker.includes('<option value="alandi"'), false, 'The private aLandi route must never appear in the third-party provider picker.');
-      assert.equal(source.includes('providerPrimaryGroup'), false, 'The obsolete hidden primary-provider optgroup must be removed.');
+      assert.equal(combinedSource.includes('providerPrimaryGroup'), false, 'The obsolete hidden primary-provider optgroup must be removed.');
       assert.ok(externalRouteGroup.includes('<option value="gemini">') && externalRouteGroup.includes('<option value="custom">'), 'External providers must remain selectable.');
       includes("const peerSettingsGroups=[$('thirdPartyProviderSettings'),$('additionalSettings')]", 'aServi must be mutually exclusive with third-party and additional settings; those two sections may coexist.');
       assert.equal((source.match(/id="cloudConnect"/g) || []).length, 0, 'The retired cloud connection element ID must remain absent.');
@@ -148,8 +148,8 @@ const suites = {
       includes("token: 'ai_pollinations_access_token_v1'", 'Pollinations access token storage must be session-scoped.');
       includes("https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1", 'Cloudflare endpoint must include the validated account ID.');
       includes("nvidia: { label: 'NVIDIA NIM'", 'NVIDIA NIM should be included as an active alternative.');
-      assert.ok(!source.includes('cerebras: {') && !source.includes('value="cerebras"'), 'Cerebras must remain removed per product decision.');
-      assert.ok(!source.includes('value="github">GitHub Models'), 'Retired GitHub Models must not be offered as a provider.');
+      assert.ok(!combinedSource.includes('cerebras: {') && !combinedSource.includes('value="cerebras"'), 'Cerebras must remain removed per product decision.');
+      assert.ok(!combinedSource.includes('value="github">GitHub Models'), 'Retired GitHub Models must not be offered as a provider.');
       const allSmokeWorkflow = readFileSync(resolve(root, '.github/workflows/provider-smoke-all.yml'), 'utf8');
       const allSmokeRunner = readFileSync(resolve(root, 'scripts/provider-smoke-all.mjs'), 'utf8');
       assert.ok(allSmokeRunner.includes("config.id === 'pollinations' && /^pk_/i.test(secret)"), 'Pollinations browser App Keys must not be used as server smoke credentials.');
