@@ -674,3 +674,32 @@ The following 103 distinct URL references were absent from the existing INTEL re
 | `https://stability.ai/license` | LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md | prior research snapshot; current upstream recheck pending |
 | `https://web.dev/articles/storage-for-the-web` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
 | `https://www.libreoffice.org/` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+
+
+## Source review — local Notebook and Knowledge-to-Skill UI (2026-11-08)
+
+**Research batch:** primary-source review for the owner-requested Functions drawer and local Notebook MVP. External projects are references; presence in this register does not imply code/dependency adoption.
+
+### Primary sources and what they establish
+
+- [JupyterLite — storage configuration](https://jupyterlite.readthedocs.io/en/stable/howto/configure/storage.html): JupyterLite separates storage drivers; its IndexedDB-backed persistent driver is intended for browser persistence while the memory driver is volatile. Browser storage still depends on browser profile/quota/eviction rules.
+- [JupyterLite — using files](https://jupyterlite.readthedocs.io/en/stable/quickstart/using.html): browser file workflows remain local to the browser and are subject to local storage constraints. This is an architectural reference, not a guarantee of permanent or cross-device backup.
+- [Jupyter notebook format / nbformat](https://nbformat.readthedocs.io/en/latest/): notebook documents are JSON with ordered cells, source text, outputs, execution counts and metadata. Standard cell types are code, markdown and raw; aLandi-specific source/evidence cells need namespaced metadata or a separate sidecar if/when .ipynb interoperability is implemented.
+- [Pyodide — Web Workers](https://pyodide.org/en/latest/usage/webworker.html): long synchronous computations on the browser main thread can block interaction; a module Worker moves the interpreter into a separate worker context. Worker separation is not a complete sandbox and does not independently define network/import permissions.
+- [Agent Skills specification](https://agentskills.io/specification): defines portable Skill packages centred on SKILL.md, YAML metadata and optional supporting resources, with progressive disclosure. The experimental allowed-tools metadata is not aLandi authorization.
+- [OWASP LLM Prompt Injection Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html): retrieved documents, websites and attachments can carry indirect prompt injection; untrusted content must remain data and controls must be enforced at the tool/execution boundary, not by a text filter alone.
+- [W3C APG — Disclosure pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/): native/semantic disclosure controls should retain predictable keyboard activation and expanded state. The current drawer is a dialog, not an ARIA menu.
+- [WCAG 2.2 — Target Size (Minimum), SC 2.5.8](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html): AA minimum is 24×24 CSS px or a qualifying spacing exception. The aLandi 44×44 CSS px primary touch target remains a stronger project requirement, not the WCAG AA minimum.
+- [book-to-skill v1.3.0](https://github.com/virgiliojr94/book-to-skill/releases/tag/v1.3.0): external workflow reference. GitHub release points to tag commit e087255f187c4fd3a5cdbb1cf1a11e09cdb84b46; GitHub's commit verification was false. Repository metadata declares MIT and the README distinguishes converter licensing from rights in processed books. Release notes' injection/invisible-Unicode hardening are upstream self-reports, not independently audited aLandi evidence.
+
+### aLandi disposition (separate from source claims)
+
+1. **Borrow local persistence, not the whole Jupyter runtime.** Current Notebook MVP uses the existing browser IndexedDB database with separate notebooks and notebookEntries stores; no JupyterLite, kernel, Pyodide Worker or third-party dependency is installed.
+2. **Interoperability is future work.** Current Notebook export is an aLandi JSON bundle, not .ipynb. Code cells, Jupyter outputs and standard Notebook execution are not implemented.
+3. **Source import is intentionally narrow.** Current UI accepts TXT/Markdown up to 2 MiB after explicit rights acknowledgement, validates extension/MIME and strict UTF-8, hashes original bytes with SHA-256 and keeps the content local. MIME/extension checks are not signature proof or a hostile-parser sandbox. PDF/EPUB/Office/archive/repository parsing, archive-bomb/XXE protection and page-level provenance remain open.
+4. **URL is a reference only.** The MVP stores an HTTP(S) URL without fetching it; no web page extraction or remote source analysis is implied.
+5. **Knowledge-to-Skill is a scaffold, not semantic conversion.** Export is an inert draft outline with provenance/rights/review checklist; it does not transform arbitrary book content, validate claims against source spans, run evaluations or activate scripts. The MIT converter upstream is not installed or copied.
+6. **Agent output is blueprint only.** Exported Agent Blueprint is JSON configuration with capabilities disabled; it does not start a worker or grant permissions.
+7. **Code execution remains excluded from Notebook.** A future code-cell runner needs a dedicated module Worker, termination/cancellation, output/time/memory bounds, import/network policy and security/evaluation evidence. The existence of a Worker alone is not a security sandbox.
+
+**Status:** sources reviewed for this bounded UI slice; JupyterLite/nbformat/Pyodide are not dependencies. The current branch implementation remains subject to exact-head Quality/Chromium, Freshness, Graphify and Provenance gates.
