@@ -2570,7 +2570,7 @@ test('Functions drawer exposes truthful sections, keyboard navigation and respon
   await expect(drawer.locator('#agentFunctionSettings')).toBeVisible();
   await expect(page.locator('[data-action="open-research-studio"]')).toHaveCount(0);
   await expect(page.locator('#researchStudioModal')).toHaveCount(0);
-  await expect.poll(()=>drawer.evaluate(el=>getComputedStyle(el.querySelector('.functions-drawer-surface')).backdropFilter)).toBe('blur(4px)');
+  await expect.poll(()=>drawer.evaluate(el=>getComputedStyle(el).backdropFilter)).toBe('blur(4px)');
   const close=drawer.locator('[data-action="close-function-panel"]').first();
   await expect(close).toBeFocused();
   const focusables=drawer.locator('button:visible,input:visible,select:visible,textarea:visible');
