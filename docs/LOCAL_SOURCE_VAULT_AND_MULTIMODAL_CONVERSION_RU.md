@@ -149,3 +149,73 @@ A second path creates an Agent blueprint by combining a task scenario with a rol
 - [Wan 2.2](https://github.com/Wan-Video/Wan2.2)
 
 **Status:** research/design only. No files were read from the owner's device, no model was downloaded, no new dependency/runtime was installed, and no production route was changed.
+
+
+---
+
+## 2026-11-08 — Coder Workspace и прямой доступ к локальным файлам
+
+**Статус:** PROPOSAL / research-backed; runtime не выбран и не установлен. Проверка выполнена по main `9033c6ad708a993cba5d1b27442f53651ad71c0f` и upstream snapshots ниже. Требования Coder должны быть reconciled в едином Master Task Registry после завершения PR #175; этот раздел не создаёт второй backlog.
+
+### 1. Вывод по платформам
+
+- **Desktop Chromium / Android Chromium:** File System Access API позволяет открыть выбранный файл/каталог в HTTPS-контексте после явного действия пользователя. Хранение handle не заменяет проверку permission при каждом возобновлении операции.
+- **Safari на iOS/iPadOS и Safari desktop:** `showDirectoryPicker()` не поддерживается в текущей проверенной матрице. Обычный web upload/drag-and-drop остаётся fallback, но не эквивалентен постоянному доступу к папке.
+- **iOS native:** `UIDocumentPickerViewController` умеет открыть каталог через security-scoped URL; приложение должно использовать `startAccessingSecurityScopedResource()`, file coordination и корректно сохранять/обновлять security-scoped bookmark.
+- **Android native:** Storage Access Framework `ACTION_OPEN_DOCUMENT_TREE` даёт доступ к выбранному дереву; persistable URI permission можно сохранить, но доступ теряется, если документ перемещён/удалён. Android ограничивает некоторые системные каталоги.
+
+**Следствие:** один static Pages/PWA client не может обеспечить одинаковый прямой доступ к папкам на всех устройствах. Не обещать iOS folder access через Safari. Для него потребуется native iOS shell/document-provider integration; для Android — native SAF provider или поддерживаемый Chromium File System Access API.
+
+### 2. Рекомендуемая архитектура: Workspace Provider
+
+Единый UI и editor должны работать через capability-based interface, а не считать все workspace одним filesystem:
+
+| Provider | Где работает | Контракт и ограничения |
+|---|---|---|
+| `DirectLocalProvider` | Поддерживаемый browser | Только явно выбранные файлы/папка; permission revalidation; read/write отдельно; no arbitrary path access; upload/export fallback |
+| `DesktopCompanionProvider` | Windows/macOS/Linux companion | Loopback-only authenticated API; pairing + origin allowlist; явные folder grants; canonical path/root confinement; revoke/audit; без произвольного shell |
+| `MobileDocumentProvider` | Native iOS / Android | iOS security-scoped URLs/bookmarks; Android SAF URI grants; системный picker и повторная авторизация при потере доступа |
+| `RemoteWorkspaceProvider` | aServi / удалённая машина | Отдельная аутентифицированная API-сессия, явный remote data scope; не выдавать за local files |
+| `IsolatedVirtualWorkspaceProvider` | Изолированная среда исполнения | Ephemeral workspace, quotas/timeouts, restricted egress, sandbox; host mounts только по явному grant |
+
+Capabilities объявляются явно: `list/read/writeAtomic/rename/delete/watch/git/terminal`. Отсутствующая capability должна быть disabled/unsupported, а не симулироваться. Watcher и terminal не включать в browser-only provider.
+
+### 3. Coder UX и безопасность
+
+- Monaco — только editor surface. File provider, persistence, Git, terminal, approval и sandbox остаются отдельными слоями.
+- Изменения модели/агента — staged patch: multi-file diff → пользовательский review → approve конкретных файлов/операций → atomic write → проверка результата. Не исполнять generated code автоматически.
+- Перед записью: сохранить recovery snapshot/undo point; показывать конфликт при изменении файла извне; не затирать чужие изменения. Rename/delete и массовые операции требуют отдельного подтверждения.
+- Не следовать symlink за пределы разрешённого root; проверять canonical path после разрешения ссылки и повторно непосредственно перед операцией; ограничить размер/число файлов и глубину обхода.
+- Локальный файл не означает локальную обработку: перед отправкой содержимого внешнему provider явно показать маршрут и объём данных. Local-only policy должна блокировать outbound provider calls, а не только менять надпись в UI.
+- Terminal/CLI — отдельная capability. Пока нет проверенного sandbox с filesystem/network isolation, resource limits, cancellation и escape tests, host shell не предоставлять. `subprocess.run` не является sandbox.
+- OPFS/IndexedDB подходят для локального индекса, cache и metadata, но не являются заменой пользовательской папки, backup или cross-device sync.
+
+### 4. Open-source shortlist — результат первичного аудита
+
+| Upstream snapshot | Лицензия / назначение | Решение для aLandi |
+|---|---|---|
+| [Monaco Editor](https://github.com/microsoft/monaco-editor) — `5359a3330383137dfdf8897ba1d93d943fec4027` | MIT; browser editor models/URIs, без filesystem provider и runtime | **Кандидат для editor layer**, если отдельный прототип докажет multi-file editing, accessibility и bundle/performance fit |
+| [Co-do](https://github.com/PaulKinlan/Co-do) — `d3ebdbd5066f16a2bb8a2b8cb8af4b57c8ae324a` | File System Access PWA, IndexedDB handles, permission controls, WASM workers. README/package.json говорят MIT, но root `LICENSE` содержит Apache-2.0 — **лицензионное противоречие** | **Только UX/security reference** до upstream clarification; Safari iOS не решает; зависимости и WASM tool surface слишком велики для слепого переноса |
+| [code-server](https://github.com/coder/code-server) — `fcd14dceb7f60195d6925ec5d0716e08a6e04b22` | MIT; полноценный browser VS Code server с terminal/runtime | **Опциональный RemoteWorkspace adapter**, не встроенный editor. Никогда не публиковать напрямую: upstream требует auth + TLS; default localhost/password не заменяет hardening |
+| [OpenHands / Agent Canvas](https://github.com/OpenHands/OpenHands) — `c90c6199dcf57e9208ad2adfac2aef5b41e04ec8` | MIT; frontend control plane для Agent Server и разных backends; Docker sandbox — отдельная граница исполнения | **Архитектурный reference** для backend adapters, run state и sandbox; не импортировать целиком и не выдавать host access за безопасный режим |
+| [ComfyUI](https://github.com/Comfy-Org/ComfyUI) — `bdb0816a292d221efeb6ec4ae41bcdff3f91fc86` | GPL-3.0; локальный node/workflow engine, image/video/media | **Отдельный optional media provider** через API; не встраивать код без GPL review. Лицензии моделей/checkpoints/nodes проверять отдельно |
+| [Comfy Desktop](https://github.com/Comfy-Org/Comfy-Desktop) — `47e414e84a5fbb3f912602b5ba371f30b9be3af3` | AGPL-3.0-or-later или коммерческая лицензия; standalone desktop manager | **Не vendoring/hosting** без отдельного legal decision; не является лёгкой библиотекой для aLandi |
+
+Не устанавливать все кандидаты. Наиболее узкий стек: существующий UI + один editor (Monaco, если eval оправдает) + наши provider adapters. Companion/native file bridge и isolated execution — отдельные компоненты с независимыми threat models.
+
+### 5. Image / Video Factory — уточнение границы
+
+ComfyUI остаётся кандидатом для локального GPU adapter, но не для базового 8-GB CPU gateway. API v2 подходит под будущий общий `MediaJob` contract: submit workflow → durable job ID → poll/status → outputs → cancel. Статус job должен быть авторитетным; UI не должен считать исчезновение polling ответа успешной генерацией. Модель, checkpoint, LoRA, custom node, dataset и workflow имеют независимые лицензии/условия.
+
+Порядок: **Image Factory сначала**, затем Video Factory после отдельного GPU benchmark и оценки хранения/стоимости. Hosted provider допустим только после явного выбора, account/region/pricing/privacy review; никаких auto-download моделей или включения платных API.
+
+### 6. Evidence и ограничения этого прохода
+
+- Browser API: [MDN File System API](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API), [MDN showDirectoryPicker](https://developer.mozilla.org/en-US/docs/Web/API/Window/showDirectoryPicker), [browser support matrix](https://web-platform-dx.github.io/web-features-explorer/features/file-system-access/).
+- Native files: [Apple directory access](https://developer.apple.com/documentation/uikit/providing-access-to-directories), [Apple document picker](https://developer.apple.com/documentation/uikit/uidocumentpickerviewcontroller), [Android Storage Access Framework](https://developer.android.com/training/data-storage/shared/documents-files).
+- Security/runtime: [code-server secure exposure](https://github.com/coder/code-server/blob/main/docs/guide.md), [OpenHands Docker sandbox](https://docs.openhands.dev/openhands/usage/sandboxes/docker).
+- Media API: [ComfyUI API v2](https://docs.comfy.org/api-reference/v2/overview), [submit workflow](https://docs.comfy.org/api-reference/v2/jobs/submit-a-workflow-for-execution), [job status](https://docs.comfy.org/api-reference/v2/jobs/job-status-the-polling-workhorse), [cancellation](https://docs.comfy.org/api-reference/v2/jobs/request-cancellation).
+
+**Не проверялось:** физические устройства владельца, iOS/Android native prototype, browser permission persistence на реальных профилях, companion threat-model tests, sandbox escape, target GPU/VRAM, media quality/latency и актуальные цены hosted providers. Upstream README/metadata не заменяют юридическое заключение; противоречие Co-do license оставлено открытым.
+
+**Next:** после PR #175 повторно прочитать Master Task Registry и добавить/связать конкретные Coder acceptance tasks без дублирования LSV-001…017; затем подготовить отдельный ограниченный prototype plan для Monaco + provider contract.
