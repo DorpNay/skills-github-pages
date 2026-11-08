@@ -121,3 +121,66 @@ test('Browser Local refuses a write when a file changes after diff preview', asy
   expect(result.message).toContain('changed after diff preview');
   expect(result.content).toBe('changed elsewhere');
 });
+
+
+test('Coder Workspace UI edits a user-selected file only after diff and recovery approval', async ({ page }) => {
+  await page.addInitScript(() => {
+    class MockFileHandle {
+      constructor(name, content) { this.kind = 'file'; this.name = name; this.content = content; }
+      async queryPermission() { return 'granted'; }
+      async getFile() { return new File([this.content], this.name, { type: 'text/plain' }); }
+      async createWritable() {
+        let staged = '';
+        return {
+          write: async value => { staged = String(value); },
+          close: async () => { this.content = staged; },
+          abort: async () => {}
+        };
+      }
+    }
+    class MockDirectoryHandle {
+      constructor(entries) { this.kind = 'directory'; this.name = 'owner-selected'; this.items = entries; }
+      async queryPermission() { return 'granted'; }
+      async *entries() { for (const entry of this.items) yield entry; }
+      async getFileHandle(name) { return this.items.find(([key]) => key === name)?.[1]; }
+      async getDirectoryHandle(name) { return this.items.find(([key]) => key === name)?.[1]; }
+    }
+    const file = new MockFileHandle('notes.md', '# Original\\nKeep this line.\\n');
+    const root = new MockDirectoryHandle([['notes.md', file]]);
+    window.__mockWorkspace = { file, root };
+    window.FileSystemFileHandle = MockFileHandle;
+    window.showDirectoryPicker = async () => root;
+  });
+
+  await page.goto('/workspace/', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Выбрать папку' }).click();
+  await expect(page.locator('#fileList')).toContainText('notes.md');
+  await page.locator('#fileList input[data-path="notes.md"]').check();
+  await page.getByRole('button', { name: 'Открыть выбранные' }).click();
+
+  const editor = page.locator('textarea[data-path="notes.md"]');
+  await expect(editor).toHaveValue('# Original\\nKeep this line.\\n');
+  await editor.fill('# Updated\\nKeep this line.\\n');
+  await page.getByRole('button', { name: 'Подготовить diff' }).click();
+  await expect(page.locator('#diffPanel')).toBeVisible();
+  await expect(page.locator('#diffList')).toContainText('-# Original');
+  await expect(page.locator('#diffList')).toContainText('+# Updated');
+  await expect.poll(() => page.evaluate(() => window.__mockWorkspace.file.content))
+    .toBe('# Original\\nKeep this line.\\n');
+
+  await page.locator('#recoveryConsent').check();
+  await page.getByRole('button', { name: 'Подтвердить запись файлов' }).click();
+  await expect(page.locator('#approvalDialog')).toBeVisible();
+  await expect(page.locator('#approvalDiffs')).toContainText('-# Original');
+  await page.getByRole('button', { name: 'Записать файлы' }).click();
+  await expect(page.locator('#workspaceStatus')).toContainText('Записано файлов: 1');
+  await expect.poll(() => page.evaluate(() => window.__mockWorkspace.file.content))
+    .toBe('# Updated\\nKeep this line.\\n');
+
+  await page.getByRole('button', { name: 'Восстановить' }).click();
+  await expect(page.locator('#approvalDialog')).toBeVisible();
+  await page.getByRole('button', { name: 'Восстановить файлы' }).click();
+  await expect(page.locator('#workspaceStatus')).toContainText('Восстановлено файлов: 1');
+  await expect.poll(() => page.evaluate(() => window.__mockWorkspace.file.content))
+    .toBe('# Original\\nKeep this line.\\n');
+});
