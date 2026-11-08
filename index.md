@@ -216,6 +216,8 @@ permalink: /
     .project-nav-unassigned:hover,.project-nav-unassigned.is-active { color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
     .project-nav-item { border:1px solid var(--ui-border);border-radius:11px;overflow:hidden;background:color-mix(in srgb,var(--ui-surface) 86%,transparent); }
     .project-nav-item[open] { border-color:color-mix(in srgb,var(--ui-tiffany) 55%,var(--ui-border)); }
+    .project-nav-item.is-selected { border-color:var(--ui-tiffany);box-shadow:inset 2px 0 0 var(--ui-tiffany); }
+    .project-nav-item.is-selected > summary { color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
     .project-nav-item > summary { display:flex;align-items:center;gap:8px;padding:10px 9px;cursor:pointer;list-style:none;font-size:12px; }
     .project-nav-item > summary::-webkit-details-marker { display:none; }
     .project-nav-item > summary:hover { background:var(--ui-tiffany-soft); }
@@ -446,9 +448,12 @@ permalink: /
     <p id="projectStatusLine" class="mx-3 -mt-1 mb-1 px-2 text-[10px] leading-relaxed text-gray-500" role="status" aria-live="polite">Личный чат · без проекта</p>
     <details id="chatSection" open class="mx-3 my-2 rounded-xl border border-gray-800">
       <summary class="chat-section-summary flex items-center justify-between gap-2 px-3 py-2.5 text-sm font-semibold cursor-pointer select-none" aria-controls="chatList">
-        <span>💬 <span data-i18n="chatsTitle">Чаты</span></span><span id="chatSectionCount" class="text-[10px] text-gray-500">0</span>
+        <span>💬 <span data-i18n="chatsTitle">Чаты</span></span>
+        <span id="chatScopeLabel" class="min-w-0 flex-1 truncate text-right text-[10px] font-normal text-gray-500"></span>
+        <span id="chatSectionCount" class="text-[10px] text-gray-500">0</span>
       </summary>
-      <div class="px-2 pt-2"><button type="button" data-action="new-chat" data-i18n="newPersonalChat" class="w-full rounded-lg border border-blue-500/25 bg-blue-600/10 hover:bg-blue-600/20 py-2 text-xs font-semibold text-blue-200">＋ Новый личный чат</button></div>
+      <div id="chatScopeBackRow" class="hidden px-2 pt-2"><button type="button" id="chatScopeBackButton" data-action="projectless-nav" class="min-h-[44px] w-full rounded-lg border border-gray-700 px-3 py-2 text-left text-xs text-gray-300 hover:bg-gray-800">← Все личные чаты</button></div>
+      <div class="px-2 pt-2"><button type="button" id="newChatButton" data-action="new-chat" data-i18n="newPersonalChat" class="min-h-[44px] w-full rounded-lg border border-blue-500/25 bg-blue-600/10 hover:bg-blue-600/20 py-2 text-xs font-semibold text-blue-200">＋ Новый личный чат</button></div>
       <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
     </details>
 
@@ -1976,6 +1981,7 @@ permalink: /
       return false;
     }
     let selectedProjectForSettingsId=null;
+    let selectedProjectNavigationId=null;
     let creatingProject=false;
     let projectSettingsOpener=null;
     function closeProjectSettings(){
@@ -2293,17 +2299,16 @@ permalink: /
     }
     function renderProjectNavigation() {
       const list=$('projectNavigationList');if(!list)return;
+      if(selectedProjectNavigationId&&!projects.some(project=>project.id===selectedProjectNavigationId))selectedProjectNavigationId=null;
       const expanded=new Set([...list.querySelectorAll('details.project-nav-item[open]')].map(item=>item.dataset.projectId));
       list.replaceChildren();
       const unassigned=chats.filter(chat=>!chat.projectId);
       $('projectlessChatCount').textContent=String(unassigned.length);
-      $('chatSectionCount').textContent=String(unassigned.length);
-      const current=getCurrentChat();
-      $('projectlessNavButton').classList.toggle('is-active',!current?.projectId);
+      $('projectlessNavButton').classList.toggle('is-active',selectedProjectNavigationId===null);
       const english=getUiLanguage()==='en';
       for(const project of projects) {
-        const group=document.createElement('details');group.className='project-nav-item';group.dataset.projectId=project.id;group.open=expanded.has(project.id);
-        const summary=document.createElement('summary');
+        const group=document.createElement('details');group.className='project-nav-item'+(selectedProjectNavigationId===project.id?' is-selected':'');group.dataset.projectId=project.id;group.open=expanded.has(project.id);
+        const summary=document.createElement('summary');summary.dataset.action='select-project-navigation';summary.dataset.projectId=project.id;
         const caret=document.createElement('span');caret.className='project-nav-caret';caret.textContent=group.open?'⌄':'›';caret.setAttribute('aria-hidden','true');
         const title=document.createElement('span');title.className='min-w-0 flex-1 truncate';title.textContent=project.name;
         const count=document.createElement('span');count.className='text-[10px] text-gray-500';count.textContent=String(chats.filter(chat=>chat.projectId===project.id).length);
@@ -2318,11 +2323,27 @@ permalink: /
       }
       if(!projects.length){const empty=document.createElement('p');empty.className='px-2 py-2 text-[11px] text-gray-500';empty.textContent=english?'No projects yet.':'Проектов пока нет.';list.appendChild(empty);}
     }
-    function renderChatList() {
-      renderProjectUI({preserveDraft:true});
+    function renderChatList(options={}) {
+      if(options.skipProjectUI!==true)renderProjectUI({preserveDraft:true});
+      if(selectedProjectNavigationId&&!projects.some(project=>project.id===selectedProjectNavigationId))selectedProjectNavigationId=null;
+      const selectedProject=selectedProjectNavigationId?projects.find(project=>project.id===selectedProjectNavigationId):null;
       const list=$('chatList');list.replaceChildren();
-      const personalChats=chats.filter(chat=>!chat.projectId);list.dataset.emptyLabel=getUiLanguage()==='en'?'No personal chats yet.':'Нет личных чатов без проекта';list.classList.toggle('is-empty',personalChats.length===0);
-      personalChats.forEach(chat=>list.appendChild(createChatRow(chat,false)));
+      const visibleChats=selectedProject?chats.filter(chat=>chat.projectId===selectedProject.id):chats.filter(chat=>!chat.projectId);
+      const english=getUiLanguage()==='en';
+      list.dataset.emptyLabel=selectedProject
+        ?(english?'No chats in this project yet.':'В этом проекте пока нет чатов.')
+        :(english?'No personal chats yet.':'Нет личных чатов без проекта');
+      list.classList.toggle('is-empty',visibleChats.length===0);
+      visibleChats.forEach(chat=>list.appendChild(createChatRow(chat,!!selectedProject)));
+      $('chatSectionCount').textContent=String(visibleChats.length);
+      $('chatScopeLabel').textContent=selectedProject?'· '+selectedProject.name:'';
+      $('chatScopeBackRow').classList.toggle('hidden',!selectedProject);
+      $('chatScopeBackButton').textContent=english?'← All personal chats':'← Все личные чаты';
+      $('newChatButton').textContent=selectedProject
+        ?(english?'＋ New chat in project':'＋ Новый чат в проекте')
+        :(english?'＋ New personal chat':'＋ Новый личный чат');
+      $('projectlessNavButton').classList.toggle('is-active',!selectedProject);
+      document.querySelectorAll('#projectNavigationList .project-nav-item').forEach(group=>group.classList.toggle('is-selected',group.dataset.projectId===selectedProject?.id));
     }
     function updateMemoryStatusLine(){
       const line=$('memoryStatusLine');if(!line)return;
@@ -4535,7 +4556,9 @@ permalink: /
       sendMessage(true);
     }
     function createNewChat() {
-      const chat=createChat('Новый личный чат',[],null);
+      const project=selectedProjectNavigationId?projects.find(item=>item.id===selectedProjectNavigationId):null;
+      const english=getUiLanguage()==='en';
+      const chat=createChat(project?(english?'New chat · '+project.name:'Новый чат · '+project.name):(english?'New personal chat':'Новый личный чат'),[],project?.id||null);
       updateState([chat,...chats],chat.id);
       toggleSidebar(false);
     }
@@ -5308,8 +5331,19 @@ permalink: /
             const list=$('projectNavigationList'),open=list.classList.toggle('hidden')===false;
             $('projectNavToggle').setAttribute('aria-expanded',String(open));$('projectNavChevron').textContent=open?'⌃':'⌄';break;
           }
+          case 'select-project-navigation': {
+            const projectId=control.dataset.projectId;
+            selectedProjectNavigationId=projects.some(project=>project.id===projectId)?projectId:null;
+            renderChatList({skipProjectUI:true});
+            $('chatSection').open=true;
+            $('chatSection').scrollIntoView({block:'nearest',behavior:document.documentElement.dataset.motion==='off'?'auto':'smooth'});
+            $('chatSection').querySelector('summary')?.focus();
+            break;
+          }
           case 'projectless-nav': {
-            $('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});
+            selectedProjectNavigationId=null;
+            renderChatList({skipProjectUI:true});
+            $('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:document.documentElement.dataset.motion==='off'?'auto':'smooth'});
             $('chatSection').querySelector('summary')?.focus();break;
           }
           case 'open-project-settings': {
