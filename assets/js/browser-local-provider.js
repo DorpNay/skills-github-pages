@@ -116,8 +116,9 @@
       const selected = [];
       for (let i = 0; i < handles.length; i++) {
         const handle = handles[i];
-        await this.ensurePermission(handle, 'readwrite', true);
-        const path = '@selected/' + i + '/' + handle.name;
+        await this.ensurePermission(handle, 'read', true);
+        const file = await handle.getFile();
+        const path = '@selected/' + encodeURIComponent(handle.name) + '/' + file.size + '-' + file.lastModified;
         this.fileHandles.set(path, handle);
         selected.push({ path, name: handle.name, kind: handle.kind });
       }
@@ -171,7 +172,7 @@
         const handle = change.handle || this.fileHandles.get(path);
         assert(handle && handle.kind === 'file' && typeof handle.createWritable === 'function',
           'No selected writable file handle for ' + path);
-        await this.ensurePermission(handle, 'readwrite');
+        await this.ensurePermission(handle, 'readwrite', true);
         const file = await handle.getFile();
         assert(file.size <= this.limits.maxFileBytes, 'File exceeds the size limit: ' + path);
         const before = decodeText(new Uint8Array(await file.arrayBuffer()));
@@ -277,7 +278,7 @@
           handle = this.fileHandles.get(item.path);
         }
         assert(handle, 'Re-select the original file before restoring: ' + item.path);
-        await this.ensurePermission(handle, 'readwrite');
+        await this.ensurePermission(handle, 'readwrite', true);
         const file = await handle.getFile();
         const current = decodeText(new Uint8Array(await file.arrayBuffer()));
         assert(await hashText(current) === item.afterHash,
