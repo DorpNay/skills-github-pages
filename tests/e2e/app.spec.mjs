@@ -2717,14 +2717,14 @@ test('project notebooks stay isolated by active project while personal notebooks
   await createNotebook('Alpha private research','project');
   await createNotebook('Personal library','personal');
   let titles=await page.locator('#notebookSelect option').allTextContents();
-  expect(titles).toContain('Alpha private research');
-  expect(titles).toContain('Personal library');
+  expect(titles).toContain('Alpha private research · проект');
+  expect(titles).toContain('Personal library · личная');
   await page.evaluate(()=>localStorage.setItem('ai_current_chat_v87','personal-chat'));
   await page.reload();
   await openNotebook();
   titles=await page.locator('#notebookSelect option').allTextContents();
-  expect(titles).toContain('Personal library');
-  expect(titles).not.toContain('Alpha private research');
+  expect(titles).toContain('Personal library · личная');
+  expect(titles).not.toContain('Alpha private research · проект');
   await expect(page.locator('#notebookNewScope option[value="project"]')).toBeDisabled();
   await page.locator('[data-action="close-function-panel"]').click();
   await page.evaluate(()=>localStorage.setItem('ai_current_chat_v87','beta-chat'));
@@ -2735,9 +2735,9 @@ test('project notebooks stay isolated by active project while personal notebooks
   await page.reload();
   await openNotebook();
   titles=await page.locator('#notebookSelect option').allTextContents();
-  expect(titles).toContain('Alpha private research');
-  expect(titles).toContain('Personal library');
-  expect(titles).not.toContain('Beta private research');
+  expect(titles).toContain('Alpha private research · проект');
+  expect(titles).toContain('Personal library · личная');
+  expect(titles).not.toContain('Beta private research · проект');
 });
 
 test('browser Python snippets cannot access page globals through Pyodide js module', async ({ page }) => {
