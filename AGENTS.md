@@ -11,14 +11,12 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 - Keep main/base/head/tested/merge/deployed SHAs distinct. CI green is not merge; merge is not deploy; Pages is not VPS.
 
 ## Live checkpoint (2026-11-08)
-- Verified main: `bf039f887e29137b627b06fc2bb107c2793d6b69`; PR #173 is squash-merged. PR #174 is the only open PR (this bounded follow-up); issue #111 is the only open issue.
-- Pages deployment #42410162803 passed on the exact main SHA.
-- Main Quality #42410163178: Context, Jekyll, Static Analysis, Security, Integrity and Chromium jobs passed. Chromium verified the built app, public root revision, canonical landing content and landing Chromium (8/8).
-- Published release-contract job #128517290166 failed only because a stale forbidden marker rejects the owner-approved Functions menu (`functionsMenu`). Correct the sentinel to require Agents/Deep Research/Skills while still forbidding Research Studio, legacy provider selection and removed sidebar controls.
-- Follow-up branch `fix/pages-functions-contract-and-state-20261108` is a bounded CI-contract/state-sync repair based on this exact main. It is not merged; separate owner authorization is required.
-- Issue #111 retains owner/environment gates. VPS/Tunnel/Ollama, target hardware, native iPhone/VoiceOver and real provider credentials remain unverified.
-- Closed non-merged PRs #125/#131/#152/#154/#155/#168/#171/#172 retain deferred task scope; do not merge wholesale.
 
+- Verified main: `9033c6ad708a993cba5d1b27442f53651ad71c0f` — fix(ci/ui): align Pages contract and modal backdrop dismissal (#174); PR #174 is squash-merged. Exact-main Quality #42430269155, Freshness #42430269156, Provenance #42430269144, Graphify #42430269131 and Pages #42430269181 passed. Pages and public root/landing were verified on this exact SHA.
+- Active owner-authorized candidate: PR #175 `feat/functions-drawer-notebook-20261108`, base `9033c6ad708a993cba5d1b27442f53651ad71c0f`, head at checkpoint `f78a3ae7f25ae76cb6bd87461b76a5860ec9f3b6`. It is the only open PR; issue #111 is the only open issue and remains owner/environment gated.
+- Scope: responsive Functions drawer (Agents / Research / Notebook / Skills), local Notebook MVP with personal/project scopes, notes/source links, bounded TXT/Markdown import, search/sort/export, and inert Skill/Agent draft exports. Existing Agents/Research/Skills handlers are reused; no independent runtime is added.
+- PR #175 exact-head gates are pending at this checkpoint. Re-fetch after the final state-sync commit. Merge only the exact current HEAD once all required checks pass under the owner's explicit authorization; then verify main Quality and Pages on the exact merge SHA. VPS/Tunnel/Ollama deployment remains separate.
+- Semantic book conversion, PDF/EPUB/Office parsers, licensing/injection/security scans, versioned Skill lifecycle, independent agents, native iPhone/VoiceOver and issue #111 remain open/unverified.
 ## Resume and orient
 - `oledue`: read root `OLEDUE.md` first and execute its handoff.
 - Otherwise read `ORIENTER.md`; batch live main, PR/issue queue, matched diff and exact-head checks. Parallelize independent read-only discovery/checks while a bounded job runs; one pending job must never block unrelated checklist, source, issue or documentation audits. Do not select a PR from memory.
