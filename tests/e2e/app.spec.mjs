@@ -222,7 +222,7 @@ test('sidebar uses compact memory, collapsed projects, and expanded chats cards'
   await expect(page.locator('#projectStatusLine')).toContainText('Личный');
   await expect(page.locator('#sidebar [data-action="open-research-studio"]')).toHaveCount(0);
   await expect(page.locator('#functionsMenu [data-action="open-research-studio"]')).toHaveCount(0);
-  await expect(page.locator('#deepResearchStudioButton[data-action="open-research-studio"]')).toHaveCount(1);
+  await expect(page.locator('#deepResearchStudioButton')).toHaveCount(0);
 
   const createPositions = await sidebar.evaluate(root => {
     const projectCreate = root.querySelector('#projectPanel [data-action="open-project-create"]');
@@ -4296,9 +4296,6 @@ test('modal backdrop dismissal leaves no click-blocking layer across core dialog
   await page.locator('#functionPanelModal').click({ position: { x: 4, y: 4 } });
   await assertBackdropCleared('#functionPanelModal');
 
-  await page.locator('#deepResearchStudioButton').click();
-  await page.locator('#researchStudioModal').click({ position: { x: 4, y: 4 } });
-  await assertBackdropCleared('#researchStudioModal');
 });
 
 test('modal lifecycle keeps keyboard focus and page scroll isolated across core dialogs', async ({ page }) => {
@@ -4329,8 +4326,6 @@ test('modal lifecycle keeps keyboard focus and page scroll isolated across core 
   await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
   await assertModalLifecycle('functionPanelModal');
 
-  await page.locator('#deepResearchStudioButton').click();
-  await assertModalLifecycle('researchStudioModal');
 });
 
 test('responsive visual review captures viewport and navigation evidence', async ({ page }, testInfo) => {
