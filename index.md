@@ -2447,7 +2447,7 @@ permalink: /
         : (english?'No personal chats yet.':'Нет личных чатов без проекта');
       list.classList.toggle('is-empty',visibleChats.length===0);
       visibleChats.forEach(chat=>list.appendChild(createChatRow(chat,false)));
-remove duplicate render block    }
+    }
     function updateMemoryStatusLine(){
       const line=$('memoryStatusLine');if(!line)return;
       const personalCount=$('memoryBox')?.querySelectorAll('.memory-item').length||0;
