@@ -9,6 +9,7 @@ permalink: /
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0a1220">
+  <meta name="alandi-build-revision" content="{{ site.github.build_revision }}">
   <meta name="description" content="aLandi — личная AI-среда для чатов, проектов и работы с контекстом.">
   <meta name="color-scheme" content="dark light">
   <title>aLandi — личная AI-среда</title>
