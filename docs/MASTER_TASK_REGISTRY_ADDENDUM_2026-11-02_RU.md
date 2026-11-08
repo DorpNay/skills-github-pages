@@ -260,11 +260,14 @@ Live GitHub now shows **one open PR, #174**, and one open issue, #111. PR #174 i
 - **#111** remains owner-controlled and cannot be closed by repository CI alone.
 
 
-## Owner override — 2026-11-08: Functions menu capability slice (D-022)
+## Owner override — 2026-11-08: Functions drawer and Notebook capability slice (D-022)
 
-- [x] **FUNCTIONS-DETAIL-001 / MENU-002 / MENU-003:** Owner explicitly requests a concise Functions section containing Agents/structured analysis, Deep Research and Skills/task profile. PR #169 merged at main `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2` and exact PR Quality #42408172737 passed 113/113 Chromium. Deep Research selects Thorough processing mode only; web-search breadth stays orthogonal. Agent mode is the current four-stage same-model pipeline, not a swarm. Skills are prompt/profile guidance only and grant no permissions. Integrations/connectors remain hidden until real registry/status/permission contracts exist. Research Studio remains retired.
-> **PR #169 evidence:** focused RU/EN and Chromium coverage for the owner-approved Functions menu and each action passed exact PR Quality #42408172737 (113/113); merged at main `72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2`. After PR #173, public root + `/landing/` exact-SHA smoke and landing Chromium 8/8 passed on `bf039f887e29137b627b06fc2bb107c2793d6b69`; the separate published release-contract sentinel failed only because it still forbade the approved `functionsMenu`, which PR #174 corrects.
-
+- [~] **FUNCTIONS-DETAIL-001 / MENU-002 / MENU-003:** Owner's latest instruction expands the compact three-action menu into a sliding Functions drawer with Agents, Research, Notebook and Skills sections. Candidate implementation exists on `feat/functions-drawer-notebook-20261108` from exact main `9033c6ad708a993cba5d1b27442f53651ad71c0f`; exact-head CI is pending. Existing Agents/Research/Skills handlers are reused; their truthful boundaries remain unchanged.
+- **Notebook MVP (branch-only, not yet merged):** local IndexedDB notebooks, separated personal/current-project scopes, notes, URL references (no fetching), TXT/Markdown import ≤2 MiB after rights acknowledgement, SHA-256 provenance, search/sort, JSON export, and inert Skill/Agent draft exports.
+- **Not implemented:** semantic source-to-Skill generation, PDF/EPUB/Office/web/repository extraction, parser hardening/scans, evidence/page citations, Skill tests/versions/rollback, durable AgentRun/independent workers, connector registry and new permissions. Preserve LAUNCH-254…256, SF-001…007, AB-001…005, AW-SK-001…005 and VERT-001…003 as partial/open until their own acceptance gates pass.
+- **Research Studio remains retired.** Research is the existing mode/settings panel, not an independent autonomous studio. Agent mode remains four sequential stages on one selected model; Skills profiles remain instructions only. No fake connector/worker controls.
+- Settings ownership stays split: global preferences/providers/privacy in Settings; effort and search breadth in the toolbar; project instructions/memory in Project settings; Notebook content is separate from Memory and is never implicitly sent to a model.
+- Earlier PR #174 release correction merged at main `9033c6ad708a993cba5d1b27442f53651ad71c0f`; Quality #42430269155, Pages #42430269181, Freshness #42430269156, Graphify #42430269131 and Provenance #42430269144 succeeded on the exact merge SHA. This does not verify the new drawer/Notebook branch.
 
 ## J. Owner directive — orchestration, main-only delivery, systems inventory and source loop (2026-11-08)
 
