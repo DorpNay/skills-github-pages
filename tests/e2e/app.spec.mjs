@@ -2008,7 +2008,8 @@ test('project chat navigation filters the list without moving the active chat an
     const chat = (id, title, projectId) => ({ id, title, projectId, projectMemoryEnabled: false, messages: [] });
     localStorage.setItem('ai_projects_v1', JSON.stringify([
       project('project-alpha', 'Alpha project with a deliberately long navigation name'),
-      project('project-beta', 'Beta project')
+      project('project-beta', 'Beta project'),
+      project('project-gamma', 'Gamma empty project')
     ]));
     localStorage.setItem('ai_chats_v87', JSON.stringify([
       chat('chat-personal', 'Personal chat', null),
@@ -2052,6 +2053,11 @@ test('project chat navigation filters the list without moving the active chat an
     projectId: JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').find(chat => chat.id === localStorage.getItem('ai_current_chat_v87'))?.projectId
   }));
   expect(activeAfterFilter).toEqual(activeBefore);
+
+  const gamma = page.locator('#projectNavigationList details[data-project-id="project-gamma"]');
+  await gamma.locator(':scope > summary').click();
+  await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(0);
+  await expect(page.locator('#chatList')).toHaveAttribute('data-empty-label', 'В проекте «Gamma empty project» пока нет чатов.');
 
   await page.locator('#projectlessNavButton').click();
   await expect(page.locator('#chatList')).toContainText('Personal chat');
