@@ -78,12 +78,12 @@ const suites = {
       includes('data-action="paste-aservi-key"', 'The first-party key action must use the aServi identifier.');
       assert.equal(source.includes('data-action="paste-cloud-key"'), false, 'Do not reintroduce the retired Cloud DOM action.');
       assert.equal(source.includes('data-action="connect-alandi-cloud"'), false, 'Do not reintroduce the retired Cloud connection action.');
-      assert.ok(source.includes('<details id="legacyProviderSettings"'), 'Third-party providers must have a separate settings disclosure.');
+      assert.ok(source.includes('<details id="thirdPartyProviderSettings"'), 'Third-party providers must have a separate settings disclosure.');
       assert.ok(source.includes('<details id="additionalSettings"'), 'Additional settings must have a separate disclosure.');
       assert.equal(providerPicker.includes('<option value="alandi"'), false, 'The private aLandi route must never appear in the third-party provider picker.');
       assert.equal(source.includes('providerPrimaryGroup'), false, 'The obsolete hidden primary-provider optgroup must be removed.');
       assert.ok(externalRouteGroup.includes('<option value="gemini">') && externalRouteGroup.includes('<option value="custom">'), 'External providers must remain selectable.');
-      includes("const peerSettingsGroups=[$('legacyProviderSettings'),$('additionalSettings')]", 'aServi must be mutually exclusive with third-party and additional settings; those two sections may coexist.');
+      includes("const peerSettingsGroups=[$('thirdPartyProviderSettings'),$('additionalSettings')]", 'aServi must be mutually exclusive with third-party and additional settings; those two sections may coexist.');
       assert.equal((source.match(/id="cloudConnect"/g) || []).length, 0, 'The retired cloud connection element ID must remain absent.');
       includes('async function connectAServi()', 'The aServi UI must verify a real model response before showing connected.');
       includes('function scheduleAServiAutoConnect()', 'Changes to private server settings must trigger a bounded automatic connection check.');
