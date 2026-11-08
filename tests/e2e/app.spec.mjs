@@ -348,7 +348,9 @@ test('published app boots with aServi selected and concise navigation', async ({
   await expect(page.locator('#searchModeSummary')).toBeVisible();
   await expect(page.locator('#searchModeSummary')).toContainText('Обычный');
   await expect(page.locator('#toggleSearch')).toBeChecked();
-  await expect(page.locator('#functionsMenu .toolbar-menu-option')).toHaveCount(3);
+  await expect(page.locator('#functionsMenuSummary')).toBeVisible();
+  await expect(page.locator('#functionPanelModal')).toBeHidden();
+  await expect(page.locator('#functionsDrawerNav [data-function]')).toHaveCount(4);
   const stopButtonBackground = await page.locator('#stopBtn').evaluate(element => {
     element.classList.remove('hidden');
     const color = getComputedStyle(element).backgroundColor;
@@ -2636,8 +2638,23 @@ test('Notebook persists local notes and sources, supports import/export and crea
   await page.locator('#notebookSearch').fill('');
 
   await page.locator('#notebookRightsConsent').check();
-  await page.locator('#notebookTextFile').setInputFiles({name:'licensed-notes.md',mimeType:'text/markdown',buffer:Buffer.from('# Chapter One\nVerified source procedure.\n')});
+  await page.locator('#notebookTextFile').setInputFiles({name:'spoofed-notes.md',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.7')});
+  await expect(page.locator('#notebookStatus')).toContainText('Разрешены только TXT/Markdown');
+  await expect(page.locator('#notebookEntries')).not.toContainText('spoofed-notes.md');
+  const sourceBytes=Buffer.from('# Chapter One\nVerified source procedure.\n');
+  await page.locator('#notebookTextFile').setInputFiles({name:'licensed-notes.md',mimeType:'text/markdown',buffer:sourceBytes});
   await expect(page.locator('#notebookEntries')).toContainText('licensed-notes.md');
+  const expectedSourceHash=await page.evaluate(async()=>{
+    const bytes=new TextEncoder().encode('# Chapter One\nVerified source procedure.\n');
+    const digest=await crypto.subtle.digest('SHA-256',bytes);
+    return Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
+  });
+  const storedSourceHash=await page.evaluate(async()=>{
+    const database=await new Promise((resolve,reject)=>{const request=indexedDB.open('AI_Agent_DB_v87');request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
+    const entries=await new Promise((resolve,reject)=>{const request=database.transaction('notebookEntries','readonly').objectStore('notebookEntries').getAll();request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
+    database.close();return entries.find(entry=>entry.title==='licensed-notes.md')?.sourceHash||null;
+  });
+  expect(storedSourceHash).toBe(expectedSourceHash);
 
   const skillDownload=page.waitForEvent('download');
   await page.locator('#notebookEntries [data-action="export-skill-draft"]').last().click();
@@ -2669,6 +2686,54 @@ test('Notebook persists local notes and sources, supports import/export and crea
   await page.locator('[data-action="delete-notebook"]').click();
   await expect(page.locator('#notebookWorkspace')).toBeHidden();
 });
+test('project notebooks stay isolated by active project while personal notebooks remain visible', async ({ page }) => {
+  await page.addInitScript(() => {
+    const project=(id,name)=>({id,name,description:'',instructions:'',memoryScope:'project-only',memory:[],createdAt:Date.now(),updatedAt:Date.now()});
+    const chat=(id,title,projectId)=>({id,title,projectId,projectMemoryEnabled:false,messages:[]});
+    localStorage.setItem('ai_projects_v1',JSON.stringify([project('alpha-project','Alpha'),project('beta-project','Beta')]));
+    localStorage.setItem('ai_chats_v87',JSON.stringify([chat('personal-chat','Personal',null),chat('alpha-chat','Alpha chat','alpha-project'),chat('beta-chat','Beta chat','beta-project')]));
+    localStorage.setItem('ai_current_chat_v87','alpha-chat');
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(async()=> (await indexedDB.databases()).some(db=>db.name==='AI_Agent_DB_v87'&&db.version===3));
+  const openNotebook=async()=>{
+    await page.locator('#functionsMenuSummary').click();
+    await page.locator('#functionsDrawerNav [data-function="notebook"]').click();
+    await expect(page.locator('#notebookFunctionSettings')).toBeVisible();
+  };
+  const createNotebook=async(title,scope)=>{
+    await page.locator('#notebookNewTitle').fill(title);
+    await page.locator('#notebookNewScope').selectOption(scope);
+    await page.locator('[data-action="create-notebook"]').click();
+    await expect(page.locator('#notebookSelect option')).toContainText(title);
+  };
+  await openNotebook();
+  await createNotebook('Alpha private research','project');
+  await createNotebook('Personal library','personal');
+  let titles=await page.locator('#notebookSelect option').allTextContents();
+  expect(titles).toContain('Alpha private research');
+  expect(titles).toContain('Personal library');
+  await page.evaluate(()=>localStorage.setItem('ai_current_chat_v87','personal-chat'));
+  await page.reload();
+  await openNotebook();
+  titles=await page.locator('#notebookSelect option').allTextContents();
+  expect(titles).toContain('Personal library');
+  expect(titles).not.toContain('Alpha private research');
+  await expect(page.locator('#notebookNewScope option[value="project"]')).toBeDisabled();
+  await page.locator('[data-action="close-function-panel"]').click();
+  await page.evaluate(()=>localStorage.setItem('ai_current_chat_v87','beta-chat'));
+  await page.reload();
+  await openNotebook();
+  await createNotebook('Beta private research','project');
+  await page.evaluate(()=>localStorage.setItem('ai_current_chat_v87','alpha-chat'));
+  await page.reload();
+  await openNotebook();
+  titles=await page.locator('#notebookSelect option').allTextContents();
+  expect(titles).toContain('Alpha private research');
+  expect(titles).toContain('Personal library');
+  expect(titles).not.toContain('Beta private research');
+});
+
 test('browser Python snippets cannot access page globals through Pyodide js module', async ({ page }) => {
   await page.addInitScript(() => {
     window.loadPyodide = async options => ({
@@ -3307,7 +3372,7 @@ test('settings and function panels close on backdrop click without leaving a sta
 
   const summary = page.locator('#functionsMenuSummary');
   await summary.click();
-  await page.locator('#functionsMenu [data-function="agents"]').click();
+  await page.locator('#functionPanelModal #functionsDrawerNav [data-function="agents"]').click();
   const modal = page.locator('#functionPanelModal');
   await expect(modal).toBeVisible();
   await modal.click({ position: { x: 4, y: 4 } });
