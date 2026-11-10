@@ -2719,7 +2719,7 @@ test('project notebooks stay isolated by active project while personal notebooks
   let titles=await page.locator('#notebookSelect option').allTextContents();
   expect(titles).toContain('Alpha private research · проект');
   expect(titles).toContain('Personal library · личная');
-  await page.locator('[data-action="close-function-panel"]').click();
+  await page.locator('#functionPanelModal footer [data-action="close-function-panel"]').click();
   await page.locator('[data-action="switch-chat"][data-chat-id="personal-chat"]').click();
   await expect(page.locator('#activeChatTitle')).toHaveText('Personal');
   await openNotebook();
@@ -2727,7 +2727,7 @@ test('project notebooks stay isolated by active project while personal notebooks
   expect(titles).toContain('Personal library · личная');
   expect(titles).not.toContain('Alpha private research · проект');
   await expect(page.locator('#notebookNewScope option[value="project"]')).toBeDisabled();
-  await page.locator('[data-action="close-function-panel"]').click();
+  await page.locator('#functionPanelModal footer [data-action="close-function-panel"]').click();
   const switchToProjectChat=async(projectId,chatId,title)=>{
     const navigation=page.locator('#projectNavigationList');
     if(await navigation.evaluate(el=>el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
@@ -2739,7 +2739,7 @@ test('project notebooks stay isolated by active project while personal notebooks
   await switchToProjectChat('beta-project','beta-chat','Beta chat');
   await openNotebook();
   await createNotebook('Beta private research','project');
-  await page.locator('[data-action="close-function-panel"]').click();
+  await page.locator('#functionPanelModal footer [data-action="close-function-panel"]').click();
   await switchToProjectChat('alpha-project','alpha-chat','Alpha chat');
   await openNotebook();
   titles=await page.locator('#notebookSelect option').allTextContents();
