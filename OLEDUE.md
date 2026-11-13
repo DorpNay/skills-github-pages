@@ -74,15 +74,14 @@ Merge, deployment, rebase/main synchronization, force-push, destructive changes,
 **Next routing:** work from LANDING-V2-2026-001 and section K; first reconcile the eight-PR queue and main/state freshness, then finish owner UI/four-panel surface, freeze the evidence-backed model/runtime/database plan, and deliver bounded runtime capabilities in the priority order recorded in section K. Keep issue #111 open until real owner/environment release gates are evidenced.
 
 
-## Current owner execution checkpoint — 2026-11-13 (main-only, metadata repair)
+## Current owner execution checkpoint — 2026-11-13 (main-only, final freshness correction)
 
-**Resume rule:** current main checkpoint is `a535ab652a2a69dc1feeb9b73125bf10bf1e7e6b`. On the next `oledue`, read this block, batch-fetch live main SHA + open PR/issue queue + exact-head Actions once, then continue at NEXT. The latest explicit owner request drives routing; do not default to any PR or re-scan historical files.
+**Resume rule:** current main checkpoint parent is `72f77aebd0a2cfdbd6de5bb7dc78ee7a4eba85f2`. On the next `oledue`, read this block, batch-fetch live main SHA + open PR/issue queue + exact-head Actions once, then continue at NEXT. The latest explicit owner request drives routing; do not default to any PR or re-scan historical files.
 
-- **The 15 priorities are verified:** K.1 has 14 required product-surface items; K.2 is the 15th model/API/library/database/license/resource decision pack. K.1 item 14 is the owner-facing tested installation/backup/troubleshooting/rollback runbook; K.4 is the final end-to-end completion gate.
+- **15 priorities verified:** 14 K.1 product requirements + K.2 model/API/library/database/license/resource decision pack. K.1 item 14 is the owner runbook; K.4 is the completion gate.
 - **Main-only:** open PRs = 0; issue #111 only. PR #185/#184 merged; #176 research ported; stale #175/#178/#179/#180/#182 closed with dispositions.
-- **Artifacts acquired:** external run #43420046411 (6,054,442,377 bytes) + Ollama run #43418126506 (7,728,830,475 bytes) = 13,783,272,852 bytes; SHA-verified; expire 2026-12-13. Not installed on VPS; owner-supplied uncensored primary checkpoint excluded.
-- **Dependencies:** `pyproject.toml`/`uv.lock` pin gateway packages; no offline wheelhouse or target install yet. OS packages and services wait for host inventory.
-- **Security:** code #692a2df provider-binds PKCE state, preserves single-use/expiry, migrates legacy rows to `google_drive`, and keeps token encryption. Gateway tests #43421709910 PASS on that code SHA.
-- **Incident and repair:** Provenance #43422026430 caught my previous broad PROJECT_STATE replacement deleting the required `improvements` mapping and explicit VPS-unverified declaration. Both are restored from owner baseline d88e464 in this commit. No checker was weakened. Freshness/Provenance must pass on the resulting SHA.
-- **Current connectors:** Google OAuth is groundwork only; no Drive Picker/actions or GitHub App connector. Do not expose Connectors until real handlers and tests exist.
-- **NEXT:** verify final exact-main Quality/Gateway/Freshness/Provenance/Pages; then build the read-only GitHub App connector; then inspect target host and stage/install the platform-matched stack. Keep ordinary chat direct and helper models conditional.
+- **Artifacts:** external #43420046411 (6,054,442,377 bytes) + Ollama #43418126506 (7,728,830,475 bytes) = 13,783,272,852 bytes, verified in Actions; expire 2026-12-13. Not installed on VPS; owner-supplied uncensored primary excluded.
+- **Dependencies:** `pyproject.toml`/`uv.lock` pin gateway packages; no offline wheelhouse or target install yet. OS packages/services wait for host inventory.
+- **Security:** #692a2df provider-binds PKCE, preserves single-use/expiry, migrates legacy rows to `google_drive`, keeps token encryption. Lite Gateway Tests #43421709910 PASS.
+- **Metadata repair:** Provenance #43422778379 PASS on #72f77aeb; owner-authored `improvements` mapping and explicit VPS-unverified metadata restored. Freshness #43422778432 failed only because VOLLEY_LOG omitted parent SHA `a535ab6`; this commit records it and refreshes all seven files. No gate was weakened.
+- **NEXT:** verify final exact-main Freshness/Provenance/Quality/Pages; then build the read-only GitHub App connector; then inspect target host and stage/install the platform-matched stack. Keep ordinary chat direct and helper models conditional.

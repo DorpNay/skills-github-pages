@@ -81,3 +81,7 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 
 ## Project-state metadata preservation (2026-11-13)
 - When refreshing `docs/PROJECT_STATE.yaml`, patch individual fields/known sections; do not slice broad spans across top-level sections. Preserve the non-empty `improvements` mapping, explicit `project_state.deployment.gateway_vps: not verified by this change; do not claim deployed`, and all other owner-authored project metadata. Run the existing metadata/provenance checker; never weaken it to accommodate a malformed state file.
+
+
+## Checkpoint log invariant (2026-11-13)
+- Every atomic state refresh must include the exact `snapshot.main_sha` parent SHA in `docs/VOLLEY_LOG.md`; update OLEDUE, AGENTS, ORIENTER, FILE_ORIENTER, PROJECT_STATE, snapshot and VOLLEY_LOG together. Preserve project metadata and do not weaken Freshness/Provenance gates.

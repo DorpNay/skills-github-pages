@@ -16,13 +16,13 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "Main checkpoint parent a535ab652a2a69dc1feeb9b73125bf10bf1e7e6b; provider-bound OAuth PKCE is implemented in #692a2df. Provenance #43422026430 failed because a prior state rewrite removed the required improvements mapping and explicit VPS-unverified status; both are restored from the owner-authored baseline in this commit. No gate is weakened. Exact-head CI is pending. Zero open PRs; issue #111 remains owner-gated."
+    status: "Main checkpoint parent 72f77aebd0a2cfdbd6de5bb7dc78ee7a4eba85f2; Provenance #43422778379 PASS confirms project metadata is restored. Freshness #43422778432 failed only because VOLLEY_LOG lacked parent SHA a535ab6; this atomic refresh adds it and updates all required handoff files. No gate is weakened. Zero open PRs; issue #111 remains owner-gated."
     branch: "main"
-    base_main: "a535ab652a2a69dc1feeb9b73125bf10bf1e7e6b"
+    base_main: "72f77aebd0a2cfdbd6de5bb7dc78ee7a4eba85f2"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
-    exact_head_checks: "Parent d88e464: Quality #43420261793 PASS, Pages #43420261025 SUCCESS, Freshness #43420261792 PASS and Provenance #43420261795 PASS. PKCE code #692a2df passed Lite Gateway Tests #43421709910; current Quality #43422084339 and Pages #43422085331 are in progress. Provenance #43422026430 exposed missing project metadata; restored from baseline here; rerun."
+    exact_head_checks: "Code #692a2df Lite Gateway Tests #43421709910 PASS. On parent 72f77aeb Provenance #43422778379 PASS; Freshness #43422778432 FAILED only the VOLLEY_LOG parent-SHA assertion; Quality #43422778445 and Pages #43422778231 were in progress. This commit records the exact parent SHA in VOLLEY_LOG and refreshes the required files; rerun Freshness/Quality/Pages."
     runtime_boundary: "13,783,272,852 bytes of auxiliary model/runtime artifacts are downloaded and SHA-verified in Actions (#43420046411 external; #43418126506 Ollama); expire 2026-12-13; not installed on VPS. Owner-supplied primary checkpoint excluded. Gateway deps are pinned in uv.lock but not installed/offline-cached. Target OS/architecture, RAM/VRAM, Ollama, Piper, Whisper, OCR binary, API wiring and RU/EN/TH eval remain unverified."
     next: "Verify exact-main Quality/Gateway/Freshness/Provenance/Pages after the metadata repair. Then implement a real read-only GitHub App connector before exposing Connectors; inspect target host and stage uv-locked dependencies before installation."
 
@@ -297,15 +297,15 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-13"
-  verified_main: "a535ab652a2a69dc1feeb9b73125bf10bf1e7e6b"
-  last_main_action: "Provider-bound OAuth PKCE commit #692a2df on main; model artifact runbook synced in a535ab6; open PRs 0; issue #111 remains open and owner-gated."
+  verified_main: "72f77aebd0a2cfdbd6de5bb7dc78ee7a4eba85f2"
+  last_main_action: "Provider-bound OAuth PKCE #692a2df; model artifact runbook sync #a535ab6; project metadata repair #72f77ae; current Freshness log-marker correction in progress. Open PRs 0; issue #111 owner-gated."
   last_functional_checkpoint: "692a2df264951320b4264e5c39e42d35f5cdeab3"
-  main_quality: "Quality #43422084339 in progress on main parent a535ab6; Lite Gateway Tests #43421709910 PASS on code commit #692a2df. Exact final-head Quality/Gateway matrix pending."
-  main_freshness: "Freshness #43422026395 PASS on previous state commit ad2ec80. Provenance #43422026430 FAILED on that commit because improvements mapping and VPS-unverified status were removed by an over-broad state replacement; restored from d88e464 owner baseline in this commit. Exact-head Freshness/Provenance rerun pending."
+  main_quality: "Quality #43422778445 in progress on parent 72f77aeb; Lite Gateway Tests #43421709910 PASS on code commit #692a2df. Exact final-head Quality/Gateway matrix pending."
+  main_freshness: "Freshness #43422778432 FAILED only because VOLLEY_LOG did not contain checkpoint parent SHA a535ab6. All 19 unit tests passed. This commit adds the missing parent SHA and refreshes all required files; exact-head rerun pending."
   main_graphify: "PR #184 exact-head Graphify #43389169751 PASS; no separate Graphify main push run claimed."
   main_gateway: "Lite Gateway Tests #43421709910 PASS on code commit #692a2df; full exact-head Quality/Gateway matrix pending."
-  main_provenance: "Provenance #43422026430 FAILED on ad2ec80 due to missing PROJECT_STATE improvements mapping and explicit VPS-unverified status; restored from owner baseline. Rerun exact-head gate; do not weaken it."
-  main_pages: "Pages #43422085331 in progress on parent a535ab6; this slice does not alter public UI. Verify final deployment run."
+  main_provenance: "Provenance #43422778379 PASS on parent 72f77aeb after restoring the non-empty improvements map and explicit project_state.deployment.gateway_vps unverified status. Rerun after this log-marker refresh."
+  main_pages: "Pages #43422778231 in progress on parent 72f77aeb; this slice does not alter public UI. Verify final deployment run."
   merged_prs: "185 model/runtime artifact pack; 184 Browser Local Coder workspace; 176 unique Coder research appendix ported directly to main."
   open_pull_requests: "0 live open PRs."
   open_issues: "Issue #111 only; owner-controlled release gates."
@@ -546,7 +546,7 @@ owner_priority_2026_11_13:
   efficiency: "Direct main-model path by default; no unconditional planner/agent/helper/model call. Helpers and orchestration only for evaluated task classes."
   priority_count: "14 K.1 product requirements plus K.2 model/API/library/database/license/resource decision pack = 15 owner priorities."
   stack_status: "Auxiliary model/runtime artifacts 13,783,272,852 bytes downloaded and SHA-verified in Actions (external #43420046411; Ollama #43418126506); primary uncensored Qwen3.5-4B checkpoint is owner-supplied and excluded. Target runtime not installed. Gateway deps pinned in uv.lock but not installed/offline-cached; host OS/architecture and RU/EN/TH eval remain open."
-  live_main: "a535ab652a2a69dc1feeb9b73125bf10bf1e7e6b"
+  live_main: "72f77aebd0a2cfdbd6de5bb7dc78ee7a4eba85f2"
   open_prs: []
   open_issues: [111]
   target_pr_hygiene: "Main only, zero open PRs. Do not create new PRs unless the owner changes this explicit directive."

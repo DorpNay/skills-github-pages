@@ -4,12 +4,11 @@
 
 ## Контрольная точка — 2026-11-13 (live GitHub)
 
-- Main checkpoint parent `a535ab652a2a69dc1feeb9b73125bf10bf1e7e6b`; this state repair restores owner-authored `PROJECT_STATE.yaml` metadata after Provenance caught missing `improvements` and VPS-unverified declarations.
+- Main checkpoint parent `72f77aebd0a2cfdbd6de5bb7dc78ee7a4eba85f2`; exact SHA is recorded in VOLLEY_LOG for the Freshness sentinel.
 - **Snapshot marker:** open PRs (0): ; open issues (1): #111.
-- PR #185/#184 merged; #176 research ported; #175/#178/#179/#180/#182 closed with dispositions.
-- Artifacts: external #43420046411 (6,054,442,377 bytes) + Ollama #43418126506 (7,728,830,475 bytes); total 13,783,272,852 bytes. Not installed on target.
-- OAuth PKCE provider-bound and single-use in #692a2df; Gateway Tests #43421709910 PASS.
-- Provenance #43422026430 failure root cause documented and corrected; re-run Provenance/Freshness on this exact main.
+- Provenance #43422778379 PASS; Freshness #43422778432 failed only the missing VOLLEY parent SHA a535ab6, now recorded and corrected.
+- Provider-bound PKCE #692a2df; Lite Gateway Tests #43421709910 PASS.
+- Model artifacts #43420046411/#43418126506 acquired and verified; target install remains unverified.
 - Continue section K on main only; no new PRs under current owner directive.
 
 ## 1. Быстрый маршрут

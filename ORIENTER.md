@@ -4,13 +4,13 @@
 
 ## Verified baseline — 2026-11-13
 
-- **Current main SHA:** `a535ab652a2a69dc1feeb9b73125bf10bf1e7e6b` (parent of this metadata repair/state refresh; fetch live ref on resume).
-- **Open PR queue:** 0. **Open issue:** #111 only (owner/environment release gates).
-- **Merged/ported:** PR #185 model/runtime pack; PR #184 Browser Local workspace; PR #176 research ported. Stale #175/#178/#179/#180/#182 closed with dispositions; branches retained.
-- **Artifacts:** external run #43420046411 (6,054,442,377 bytes) + Ollama #43418126506 (7,728,830,475 bytes) = 13,783,272,852 bytes, verified in Actions, not installed on target.
-- **OAuth:** provider-bound single-use PKCE in #692a2df; Lite Gateway Tests #43421709910 PASS. GitHub App connector not implemented.
-- **Metadata incident:** Provenance #43422026430 exposed removed `improvements` and VPS-unverified declarations; restored from d88e464 baseline, no gate weakened. Re-run exact-head Provenance/Freshness.
-- **Current checks:** Quality #43422084339 and Pages #43422085331 were in progress on parent a535ab6; exact final-head checks pending.
+- **Current main SHA:** `72f77aebd0a2cfdbd6de5bb7dc78ee7a4eba85f2` (parent of this final Freshness correction; fetch live ref on resume).
+- **Open PR queue:** 0. **Open issue:** #111 only.
+- **Model artifacts:** external #43420046411 + Ollama #43418126506 = 13,783,272,852 verified bytes; not installed on target.
+- **OAuth:** provider-bound PKCE in #692a2df; Lite Gateway Tests #43421709910 PASS.
+- **Project metadata:** Provenance #43422778379 PASS on parent #72f77aeb; `improvements` and VPS-unverified declaration preserved.
+- **Freshness:** #43422778432 failed only because VOLLEY_LOG omitted the snapshot parent SHA a535ab6; this commit adds it and refreshes all required files. Exact-head rerun pending.
+- **Quality/Pages:** #43422778445 and #43422778231 were in progress on parent #72f77aeb; exact final-head checks pending.
 
 ## Current owner priority
 
