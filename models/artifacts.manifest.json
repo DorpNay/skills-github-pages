@@ -1,0 +1,243 @@
+{
+  "schema_version": 1,
+  "updated_on": "2026-11-13",
+  "purpose": "Pinned aLandi model/runtime artifacts for local evaluation and later VPS installation. Model binaries are never committed to the GitHub Pages source repository.",
+  "repository_policy": {
+    "store_weights_in_git": false,
+    "default_cache": "~/.cache/alandi/models",
+    "primary_model_owner_supplied": true
+  },
+  "expected_download_bytes": 5645657360,
+  "packages": [
+    {
+      "id": "qwen35_uncensored_main",
+      "role": "primary_chat_model",
+      "source": "huggingface",
+      "repo_id": "HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive",
+      "revision": "c09cdbcdb1fefad6d335809d445621b5f5ba0c6e",
+      "license": "Apache-2.0 (model card metadata; base model Qwen3.5-4B Apache-2.0)",
+      "download": false,
+      "owner_supplied": true,
+      "files": [
+        {
+          "path": "Qwen3.5-4B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf",
+          "size_bytes": 2707513696,
+          "sha256": "79e28ecacf84e75b6056cf4059636d435aa9eb67795780f7b7dbc7d32a962741"
+        }
+      ],
+      "notes": "Largest/main checkpoint is deliberately excluded. Owner uploads it directly to the server. Author's refusal benchmark is not independent."
+    },
+    {
+      "id": "qwen35_vision_projector",
+      "role": "primary_model_vision_companion",
+      "source": "huggingface",
+      "repo_id": "HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive",
+      "revision": "c09cdbcdb1fefad6d335809d445621b5f5ba0c6e",
+      "license": "Apache-2.0 lineage; verify with main model card before redistribution",
+      "download": true,
+      "allow_patterns": [
+        "mmproj-Qwen3.5-4B-Uncensored-HauhauCS-Aggressive-BF16.gguf"
+      ],
+      "files": [
+        {
+          "path": "mmproj-Qwen3.5-4B-Uncensored-HauhauCS-Aggressive-BF16.gguf",
+          "size_bytes": 675568768,
+          "sha256": "a1e32e86ea99aa7a56f3dcfe7e63c1d0be9439d31fd07087099f15bc0fda0f22"
+        }
+      ],
+      "notes": "Companion projector for image input. Downloaded separately; install only with a compatible Qwen3.5 GGUF runtime."
+    },
+    {
+      "id": "qwen3_embedding_06b",
+      "role": "rag_embedding",
+      "source": "huggingface",
+      "repo_id": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "license": "Apache-2.0",
+      "download": true,
+      "allow_patterns": [
+        "*.json",
+        "*.txt",
+        "README.md",
+        "model.safetensors",
+        "1_Pooling/**"
+      ],
+      "files": [
+        {
+          "path": "model.safetensors",
+          "size_bytes": 1191586416,
+          "sha256": "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd"
+        }
+      ],
+      "notes": "100+ language family; use only during RAG ingest/query. Do not load on every normal chat request."
+    },
+    {
+      "id": "qwen3_reranker_06b",
+      "role": "rag_reranker",
+      "source": "huggingface",
+      "repo_id": "Qwen/Qwen3-Reranker-0.6B",
+      "revision": "e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "license": "Apache-2.0",
+      "download": true,
+      "allow_patterns": [
+        "*.json",
+        "*.txt",
+        "*.jinja",
+        "README.md",
+        "model.safetensors",
+        "1_LogitScore/**"
+      ],
+      "files": [
+        {
+          "path": "model.safetensors",
+          "size_bytes": 1191588280,
+          "sha256": "27cd75a405b9c1b46b59abfd88aaa209e6fed2a1972cde9b70e7659537c5e65b"
+        }
+      ],
+      "notes": "Only after first-stage retrieval, and only if Recall@k/MRR/nDCG improves. Not part of the default chat hot path."
+    },
+    {
+      "id": "qwen3_asr_06b",
+      "role": "asr_evaluation_candidate",
+      "source": "huggingface",
+      "repo_id": "Qwen/Qwen3-ASR-0.6B",
+      "revision": "5eb144179a02acc5e5ba31e748d22b0cf3e303b0",
+      "license": "Apache-2.0",
+      "download": true,
+      "allow_patterns": [
+        "*.json",
+        "*.txt",
+        "README.md",
+        "model.safetensors"
+      ],
+      "files": [
+        {
+          "path": "model.safetensors",
+          "size_bytes": 1876091704,
+          "sha256": "79d6cbd4c98c7bbffe9db2edac07f56cd6637d0d5944b27f6c2b8353840323ea"
+        }
+      ],
+      "notes": "Official model card lists 52 languages/dialects including Russian and Thai. Evaluate separately against the already-implemented whisper.cpp path; not yet wired into gateway."
+    },
+    {
+      "id": "whisper_large_v3_turbo_q5_0",
+      "role": "required_asr_runtime_model",
+      "source": "huggingface",
+      "repo_id": "ggerganov/whisper.cpp",
+      "revision": "98aa99a0a9db05ae2342309f5096248665f7cba3",
+      "license": "MIT (whisper.cpp conversion); upstream OpenAI Whisper model terms also apply",
+      "download": true,
+      "allow_patterns": [
+        "ggml-large-v3-turbo-q5_0.bin"
+      ],
+      "files": [
+        {
+          "path": "ggml-large-v3-turbo-q5_0.bin",
+          "size_bytes": 574041195,
+          "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+        }
+      ],
+      "notes": "Required baseline because gateway already has a whisper.cpp CLI adapter. Install whisper-cli and ffmpeg/ffprobe separately."
+    },
+    {
+      "id": "silero_vad_16k_op15",
+      "role": "voice_activity_detection",
+      "source": "github_raw",
+      "revision": "066409f3d9db45a30d21dfcbf9147826ffdd7052",
+      "license": "MIT",
+      "download": true,
+      "files": [
+        {
+          "path": "silero_vad_16k_op15.onnx",
+          "url": "https://raw.githubusercontent.com/snakers4/silero-vad/066409f3d9db45a30d21dfcbf9147826ffdd7052/src/silero_vad/data/silero_vad_16k_op15.onnx",
+          "size_bytes": 1289603,
+          "git_blob_sha1": "625ad8909b1abdba2292f3a9a10db6864fd5d561"
+        }
+      ],
+      "notes": "16 kHz ONNX VAD; used only in voice session path. Git blob SHA-1 and size are verified against upstream API; downloader also records SHA-256 locally."
+    },
+    {
+      "id": "piper_ru_dmitri_medium",
+      "role": "tts_ru_voice",
+      "source": "huggingface",
+      "repo_id": "rhasspy/piper-voices",
+      "revision": "2f358b6a560e3a913ebf509b2f3344f20b367f94",
+      "license": "Voice dataset CC0; retrained from hifi_tts_92 base (CC-BY-4.0 attribution chain); Piper engine GPL-3.0-or-later",
+      "download": true,
+      "allow_patterns": [
+        "ru/ru_RU/dmitri/medium/MODEL_CARD",
+        "ru/ru_RU/dmitri/medium/ru_RU-dmitri-medium.onnx",
+        "ru/ru_RU/dmitri/medium/ru_RU-dmitri-medium.onnx.json"
+      ],
+      "files": [
+        {
+          "path": "ru/ru_RU/dmitri/medium/ru_RU-dmitri-medium.onnx",
+          "size_bytes": 63221984,
+          "sha256": "9ed9941bac7373f2ec1be36627e0e71a349a59ca5522d4363fd50701db05193a"
+        }
+      ],
+      "notes": "Use the retrained model at this exact revision. The older 2023 dmitri checkpoint was Lessac-derived and research-only; do not substitute it."
+    },
+    {
+      "id": "piper_en_joe_medium",
+      "role": "tts_en_voice",
+      "source": "huggingface",
+      "repo_id": "rhasspy/piper-voices",
+      "revision": "2f358b6a560e3a913ebf509b2f3344f20b367f94",
+      "license": "Voice dataset CC0; rdh base CC0; Piper engine GPL-3.0-or-later",
+      "download": true,
+      "allow_patterns": [
+        "en/en_US/joe/medium/MODEL_CARD",
+        "en/en_US/joe/medium/en_US-joe-medium.onnx",
+        "en/en_US/joe/medium/en_US-joe-medium.onnx.json"
+      ],
+      "files": [
+        {
+          "path": "en/en_US/joe/medium/en_US-joe-medium.onnx",
+          "size_bytes": 63221984,
+          "sha256": "abf4b998e34045cbd00eaf050de2de620f81ded6eb8b85a24b022a1c2b3f08d2"
+        }
+      ],
+      "notes": "Chosen over Lessac-derived voices. Preserve MODEL_CARD and attribution/provenance metadata."
+    },
+    {
+      "id": "tesseract_fast_ru_en_th",
+      "role": "cpu_ocr_language_data",
+      "source": "github_raw",
+      "revision": "87416418657359cb625c412a48b6e1d6d41c29bd",
+      "license": "Apache-2.0",
+      "download": true,
+      "files": [
+        {
+          "path": "eng.traineddata",
+          "url": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/87416418657359cb625c412a48b6e1d6d41c29bd/eng.traineddata",
+          "size_bytes": 4113088,
+          "git_blob_sha1": "bbef4675053b5b468cdb477053e28b1c698ba08e"
+        },
+        {
+          "path": "rus.traineddata",
+          "url": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/87416418657359cb625c412a48b6e1d6d41c29bd/rus.traineddata",
+          "size_bytes": 3861738,
+          "git_blob_sha1": "b146cb2263acbc6383f8e92ea0ce759537687bb8"
+        },
+        {
+          "path": "tha.traineddata",
+          "url": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/87416418657359cb625c412a48b6e1d6d41c29bd/tha.traineddata",
+          "size_bytes": 1072600,
+          "git_blob_sha1": "ea28de3985668cac00d261c5b91f023ea66e19cd"
+        }
+      ],
+      "notes": "Fast integer LSTM models; Tesseract 4/5, use --oem 1. CPU-first OCR fallback. Benchmark against tessdata_best only if accuracy is insufficient."
+    },
+    {
+      "id": "thai_tts_f5_candidate",
+      "role": "thai_tts_candidate",
+      "source": "huggingface",
+      "repo_id": "VIZINTZOR/F5-TTS-THAI",
+      "revision": "af023c707f4208e5fc1fce59c1fd1501cfc3fc22",
+      "license": "Model card metadata CC-BY-4.0; upstream base SWivid/F5-TTS checkpoints CC-BY-NC-4.0",
+      "download": false,
+      "notes": "DEFERRED: derivative checkpoint licensing is unresolved because upstream F5 base weights are non-commercial. Do not ship or use in a commercial deployment without written rights clarification."
+    }
+  ]
+}
