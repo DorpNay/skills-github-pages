@@ -1,5 +1,5 @@
 > **Historical research/spec snapshot — PR #125; imported 2026-11-08.** Main baseline is `c4f23e03f563d03213eb87002863da630fc8b833`. Preserve source context; no runtime implementation is inferred. Canonical active task register: `docs/MASTER_TASK_REGISTRY_RU.md` plus addendum; source review status in `INTEL.md`.
-> **Current boundary:** Historical model shortlist/evaluation plan. Benchmark figures are upstream claims or prior research, not aLandi measurements. No model weights downloaded/installed; current source/license/hash and hardware/storage fit remain required.
+> **Current boundary:** Historical model shortlist/evaluation plan. Benchmark figures are upstream claims or prior research, not aLandi measurements. Non-primary model weights are downloaded and hash-verified as GitHub Actions artifacts; no weights are installed. The primary Qwen remains owner-server-only. Current source/license/hash and target-host fit remain required.
 
 ---
 
@@ -140,3 +140,12 @@ Do not select helper models by parameter count or leaderboard rank. Evaluate one
 | Skill synthesis | executable instruction validity, injection resistance, held-out task success |
 
 Record exact model ID, immutable digest, code and weight licenses, quantization, context length, runtime version, prompt/schema version, RU/EN/TH scores, p50/p95 latency, TTFT, RAM/PSS, VRAM, cold load, concurrency and failure rate. No helper is promoted until it improves one role without degrading the main model or exhausting the target device. Keep only one optional helper resident unless measurements justify otherwise.
+
+
+## 2026-11-13 — acquisition checkpoint
+
+The preferred main candidate is HauhauCS Qwen3.5-4B Uncensored Aggressive Q4_K_M (2,707,513,696 bytes, Apache-2.0 declared by derivative repo). This is a candidate, not a production selection; author refusal claims are not independent measurements. The main file is excluded from repository downloads and is reserved for the owner-managed server.
+
+The verified non-primary artifact batch is in Actions run 43393099472 (6.01 GiB); Thai F5-TTS V1 500k FP16 + Vocos evaluation batch is in run 43393859216 (0.68 GiB). Exact artifact hashes and licenses are in models/manifest.json, models/manifest-thai-tts.json, and docs/MODEL_ARTIFACT_ACQUISITION_RU.md.
+
+No weights are installed or benchmarked on the target host. Continue the task-based bake-off with the exact RU/EN/TH golden set, main-only baseline, tool/JSON tests, memory and latency measurements. The helper lane remains conditional and must not authorize tools.
