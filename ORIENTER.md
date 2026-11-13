@@ -38,7 +38,7 @@
 
 ## Model stack acquisition checkpoint — 2026-11-13
 
-- PR #185: docs/infra model-artifact pack, head ce693569ad109fbfd900fbebb85ce0feaa73af4e, base 6a366125720453193c82a7385f8c088224a5928e. Exact-head CI is running; no merge requested.
+- PR #185: docs/infra model-artifact pack, head 2ad5dc8d25b0f0f1028c0c7582efdae0d3a4b372, base 6a366125720453193c82a7385f8c088224a5928e. Exact-head CI is running; no merge requested.
 - Primary candidate: HauhauCS Qwen3.5-4B-Uncensored Q4_K_M, 2,707,513,696 bytes, SHA-256 pinned; intentionally excluded from the downloader for owner upload.
 - Auxiliary payload pinned at 5,645,657,360 bytes before tokenizer/config overhead. Includes Qwen vision projector, Qwen embeddings/reranker/ASR, Whisper, Silero VAD, Piper RU/EN and Tesseract RU/EN/TH.
 - Actual downloads are blocked in this execution environment by outbound DNS failure. The downloader is ready for a network-enabled workstation/server. No artifact is claimed downloaded, installed or runtime-verified.
