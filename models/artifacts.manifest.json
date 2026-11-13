@@ -28,6 +28,17 @@
       "notes": "Largest/main checkpoint is deliberately excluded. Owner uploads it directly to the server. Author's refusal benchmark is not independent."
     },
     {
+      "id": "qwen35_4b_base_reference",
+      "role": "uncensored_model_quality_baseline",
+      "source": "ollama_cli",
+      "model_tag": "qwen3.5:4b",
+      "expected_digest_prefix": "d8b0f5e9760c",
+      "estimated_size_bytes": 3300000000,
+      "license": "Apache-2.0",
+      "download": true,
+      "notes": "Official Ollama Qwen3.5-4B Q4_K_M baseline (4.21B parameters, model plus vision projector, approx 3.3GB). Pull into the Ollama model store on the server/workstation; compare sequentially against the owner-supplied uncensored checkpoint. The registry tag digest prefix is pinned; the CLI verifies the locally listed digest after pull."
+    },
+    {
       "id": "qwen35_vision_projector",
       "role": "primary_model_vision_companion",
       "source": "huggingface",
@@ -239,5 +250,7 @@
       "download": false,
       "notes": "DEFERRED: derivative checkpoint licensing is unresolved because upstream F5 base weights are non-commercial. Do not ship or use in a commercial deployment without written rights clarification."
     }
-  ]
+  ],
+  "expected_ollama_reference_bytes_estimate": 3300000000,
+  "expected_total_with_ollama_reference_estimate": 8945657360
 }
