@@ -260,7 +260,7 @@
     "status": "SPECIFIED_PINNED_NOT_DOWNLOADED",
     "pr": 185,
     "branch": "feat/model-stack-artifact-pack-20261113",
-    "head_sha": "ce693569ad109fbfd900fbebb85ce0feaa73af4e",
+    "head_sha": "2ad5dc8d25b0f0f1028c0c7582efdae0d3a4b372",
     "primary_candidate": "HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive Q4_K_M; main weights excluded for owner upload",
     "auxiliary_payload_bytes": 5645657360,
     "manifest": "models/artifacts.manifest.json",
