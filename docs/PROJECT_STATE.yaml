@@ -308,7 +308,7 @@ current_checkpoint:
   open_issues: "Issue #111 only; owner-controlled release gates."
   freshness_guard: "scripts/check_project_state_freshness.py; update OLEDUE/AGENTS/ORIENTER/FILE_ORIENTER/PROJECT_STATE/VOLLEY_LOG/snapshot together after live queue/state changes."
   runtime_boundary: "Pages exact-SHA publication VERIFIED on 6a366125720453193c82a7385f8c088224a5928e; VPS/Tunnel/Ollama, installed model/voice artifacts, target hardware, native device and live connectors UNVERIFIED. PR #185 model weights are pinned but not downloaded due outbound DNS failure."
-  next: "Pass Freshness on exact PR #185 HEAD after refreshing all handoff/state files; finish Quality/Gateway/Graphify, then acquire the pinned model artifacts from a network-enabled environment. Reconcile the eight-PR queue and continue owner UI/Agents/RAG/connectors/voice implementation."trix, cache/observability/N2O and owner runbook per addendum section K."
+  next: "Pass Freshness on exact PR #185 HEAD after refreshing all handoff/state files; finish Quality/Gateway/Graphify, then acquire the pinned model artifacts from a network-enabled environment. Reconcile the eight-PR queue and continue owner UI, Agents, RAG, connectors, OCR/voice and mode gates."
 
 v1_ui_finalization:
   status: "merged in PR #121 at f4d880f; exact-head required workflows passed; post-merge Pages deployment not independently verified"
