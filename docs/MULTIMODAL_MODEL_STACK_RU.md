@@ -131,3 +131,8 @@ Pin Piper engine v1.8.0 (GPL-3.0-or-later). Its voice licensing guide requires f
 Existing gateway routes are /v1/audio/transcriptions (whisper.cpp CLI), /v1/audio/speech (Piper CLI), and /v1/documents/extract (bounded text extraction). /v1/rag/ingest and /v1/rag/retrieve already exist. Embedding/reranking and scanned-page OCR workers are not yet implemented; the proposed internal /v1/embeddings, /v1/rerank and OCR adapter must remain conditional and must not add model calls to ordinary chat.
 
 The current container has no outbound DNS/network route, so pinned downloads were not acquired in this pass. The downloader and manifest are ready for a network-enabled host. Downloaded ≠ installed ≠ integrated ≠ verified.
+
+
+### Matched main-model baseline
+
+The official Ollama qwen3.5:4b Q4_K_M reference is also acquired for comparison (registry digest prefix d8b0f5e9760c; about 3.3 GB; Apache-2.0). The downloader uses Ollama CLI and verifies the installed tag before reporting success. Keep it unloaded while evaluating the uncensored candidate; no concurrent residency is assumed.
