@@ -306,3 +306,15 @@ artifacts:
     ship: false
     status: "deferred_license_review"
     notes: "Do not download for production or redistribute. Piper 1.8.0 now has Thai phonemization support, but no official Thai voice is published in the current Piper voice catalog."
+
+
+  - id: qwen35-4b-official-ollama-reference
+    kind: base_model_evaluation_reference
+    upstream: "https://ollama.com/library/qwen3.5:4b"
+    source_version: "qwen3.5:4b; registry digest prefix d8b0f5e9760c; Q4_K_M; approx 3.3 GB"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice"
+    sha256: null
+    ship: false
+    status: "tag_digest_prefix_pinned_not_pulled"
+    notes: "Benchmark comparator only. Ollama CLI pull verifies the locally listed digest prefix; full registry manifest digest was not retrievable in this network-restricted environment."
