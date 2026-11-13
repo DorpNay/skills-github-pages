@@ -2,15 +2,14 @@
 
 > Подробный индекс навигации. Это не источник live-статуса и не обязательный стартовый пакет. Для `oledue` сначала читай корневой OLEDUE.md, затем выполняй один batched live GitHub read. Используй этот файл для поиска конкретного пути.
 
-## Контрольная точка — 2026-11-08 (post-merge main)
+## Контрольная точка — 2026-11-13 (live GitHub)
 
-- Main `bf039f887e29137b627b06fc2bb107c2793d6b69`; PR #173 squash-merged. Pages deployment #42410162803 SUCCESS on exact SHA.
-- Main Quality #42410163178: build, Context, Static Analysis, Security, Integrity and Chromium jobs PASS. Chromium validated the built app, public root revision, canonical landing content and landing Chromium 8/8.
-- Published release-contract job #128517290166 FAILED because its forbidden list incorrectly rejects owner-approved `id="functionsMenu"`. This is a stale sentinel; the menu with Agents/Deep Research/Skills is required. Research Studio, legacy aLandi provider option and removed sidebar controls remain forbidden.
-- **Snapshot marker:** open PRs (0): open issues (1): #111. The current PR #174 is excluded from the other-PR snapshot count by the freshness gate.
-- **Live open PR queue:** #174 (this bounded follow-up only); no other open PRs. **Live open issue (1):** #111, owner/environment controlled.
-- Follow-up branch `fix/pages-functions-contract-and-state-20261108` is based on exact main `bf039f887e29137b627b06fc2bb107c2793d6b69`; its CI/merge status must be read live.
-- PRs #125/#131/#152/#154/#155/#168/#171/#172 remain closed non-merged; retain their still-open registry goals and selected research. VPS/Tunnel/Ollama, target hardware and native iPhone/VoiceOver remain unverified.
+- Main `9033c6ad708a993cba5d1b27442f53651ad71c0f`; PR #174 merged. Main Quality #42430269155, Pages #42430269181 and Provenance #42430269144 PASS exact SHA; Graphify #42629163792 PASS. Scheduled Freshness #43247857963 failed because saved queue is stale.
+- **Snapshot marker:** open PRs (8): #175, #176, #177, #178, #179, #180, #181, #182; open issues (1): #111.
+- PR exact-head visible state: #181 visible checks pass; #176/#177/#178 visible Chromium/Jekyll/security/integrity/context pass; #175 Chromium fails on Notebook/project isolation; #179 Chromium + Freshness fail; #182 Chromium fails on project/personal scope; #180 Integrity fails and Chromium is cancelled. Re-fetch all heads/checks before action.
+- Dependencies: #179/#182 are stacked on older #175 state; #180 is stacked on older #179 state. #175 is the main-based Functions/Notebook workbench, #177 Browser Local Coder candidate, #178 landing content, #176 workspace audit, #181 action-pinning security.
+- Owner priority: LANDING-V2-2026-001, section K in the addendum. Target complete local-first workstation, not marketing-only Pages. Required: full owner UI; four separate Functions panels (Deep Research, Agents, Skills, Connectors); real agents/live status; mandatory local coding workspace; desired GitHub repo access; installed Whisper/ASR + TTS/VAD; full RAG; document/book/web/OCR parsers and converters; mode matrix; lean conditional model routing; cache/observability/N₂O in main; detailed tested VPS runbook.
+- Stack reality: qwen3.5:4b is an example, not final selected model; whisper.cpp/Piper paths require separate binary/model installation; Vosk archive is evaluation-only; RAG is FTS5/lexical baseline; AgentRunStore is storage-only prototype. VPS/Tunnel/Ollama and real device/connector runtime are unverified.
 
 ## 1. Быстрый маршрут
 
