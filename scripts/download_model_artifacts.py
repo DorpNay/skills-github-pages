@@ -103,27 +103,38 @@ def verify_file(path: Path, item: dict[str, Any]) -> tuple[bool, str]:
 
 
 def download_url(url: str, target: Path, expected_size: int | None) -> None:
-    if not url.startswith("https://"):
-        raise ValueError(f"Only HTTPS artifact URLs are allowed: {url!r}")
+    initial = urlsplit(url)
+    if initial.scheme != "https" or initial.hostname not in {"github.com", "raw.githubusercontent.com"}:
+        raise ValueError(f"Unexpected GitHub artifact source URL: {url!r}")
     target.parent.mkdir(parents=True, exist_ok=True)
     partial = target.with_name(target.name + ".partial")
     request = urllib.request.Request(url, headers={"User-Agent": "aLandi-model-artifact-fetcher/1.0"})
-    with urllib.request.urlopen(request, timeout=90) as response, partial.open("wb") as output:
-        final_url = response.geturl()
-        final = urlsplit(final_url)
-        if final.scheme != "https" or not final.hostname:
-            raise ValueError("Artifact redirect downgraded transport")
-        if final.hostname != "raw.githubusercontent.com" and not final.hostname.endswith(".githubusercontent.com"):
-            raise ValueError(f"Unexpected GitHub artifact redirect host: {final.hostname}")
-        while True:
-            block = response.read(1024 * 1024)
-            if not block:
-                break
-            output.write(block)
-    if expected_size is not None and partial.stat().st_size != expected_size:
-        raise ValueError(f"Downloaded size mismatch for {target.name}: expected {expected_size}, got {partial.stat().st_size}")
-    partial.replace(target)
-
+    try:
+        with urllib.request.urlopen(request, timeout=90) as response, partial.open("wb") as output:
+            final = urlsplit(response.geturl())
+            allowed_final_hosts = {
+                "github.com",
+                "raw.githubusercontent.com",
+                "release-assets.githubusercontent.com",
+                "objects.githubusercontent.com",
+            }
+            if final.scheme != "https" or final.hostname not in allowed_final_hosts:
+                raise ValueError(f"Unexpected GitHub artifact redirect host: {final.hostname}")
+            total = 0
+            while True:
+                block = response.read(1024 * 1024)
+                if not block:
+                    break
+                total += len(block)
+                if expected_size is not None and total > expected_size:
+                    raise ValueError("Artifact download exceeded its pinned size")
+                output.write(block)
+        if expected_size is not None and partial.stat().st_size != expected_size:
+            raise ValueError(f"Downloaded size mismatch for {target.name}: expected {expected_size}, got {partial.stat().st_size}")
+        partial.replace(target)
+    except Exception:
+        partial.unlink(missing_ok=True)
+        raise
 
 def ollama_digest_matches(output: str, package: dict[str, Any]) -> tuple[bool, str]:
     expected_name = package["model_tag"]
