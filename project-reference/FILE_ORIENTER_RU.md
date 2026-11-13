@@ -4,7 +4,7 @@
 
 ## Контрольная точка — 2026-11-13 (live GitHub)
 
-- Main checkpoint parent `8c684b113faa71a6ecf053da736ccc7a07ef2d62`; current main advances by one atomic state-refresh commit directly after it. Fetch the live SHA on resume.
+- Main checkpoint parent `189c54f9845b9180aa59c369cb89e09863b72620`; current main advances by one atomic state-refresh commit directly after it. Fetch the live SHA on resume.
 - **Snapshot marker:** open PRs (0): ; open issues (1): #111.
 - PR #185 merged at `f1fc73783a46bf38014acd0a8019914d5a3f14d4`; PR #184 merged at `f7cc9a4b878d995d46a6df7cb4af9d5e60d16e00`; PR #176 research ported into main at `e79e70db61255755c26ebb4a0ceaad55688b0a4c`. #175/#178/#179/#180/#182 closed with dispositions; branches retained.
 - Model artifacts verified: external run #43417527347 (6,054,440,341 bytes); Ollama run #43417305393 (7,728,830,475 bytes); combined 13,783,270,816 bytes. Artifacts expire 2026-12-13. The primary uncensored main checkpoint is owner-supplied and excluded.

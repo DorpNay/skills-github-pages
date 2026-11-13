@@ -3,8 +3,8 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-13",
   "checkpoint": {
-    "main_sha": "8c684b113faa71a6ecf053da736ccc7a07ef2d62",
-    "main_commit_subject": "docs(models): distinguish verified downloads from install state",
+    "main_sha": "189c54f9845b9180aa59c369cb89e09863b72620",
+    "main_commit_subject": "docs(state): checkpoint main-only model acquisition and zero PR queue",
     "main_commit_date": "2026-11-13",
     "last_functional_checkpoint_sha": "f7cc9a4b878d995d46a6df7cb4af9d5e60d16e00",
     "last_functional_milestone": "PR #184 Browser Local Coder workspace merged at f7cc9a4; PR #185 model/runtime artifact pack merged at f1fc737; PR #176 research ported into main. External and Ollama model/runtime artifacts downloaded and SHA-verified in Actions (13,783,270,816 bytes total), not installed on target host. No open PRs; issue #111 remains open.",
@@ -257,7 +257,7 @@
     "queue_policy": "Zero open PRs. Main is the only durable baseline; old PR branches are retained as source references and must not be reopened by default.",
     "pr_check_policy": "No open PRs. New work is delivered directly to main in bounded, verified commits under the owner's explicit main-only instruction.",
     "note": "Main #174 includes UI and contract changes; Pages PASS is not proof of VPS/Tunnel/Ollama or installed local model/voice artifacts.",
-    "last_volley": "V-2026-11-13-MAIN-ACQUISITION-PR-RECONCILIATION-002",
+    "last_volley": "V-2026-11-13-FRESHNESS-MARKER-CORRECTION-001",
     "active_ui_pr": 184,
     "open_prs": "8 live open PRs #175, #176, #178, #179, #180, #182, #184, #185; current PR #185 is excluded from freshness snapshot.",
     "open_prs_at_checkpoint": 7,
@@ -308,7 +308,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-13",
-    "checkpoint_parent_sha": "8c684b113faa71a6ecf053da736ccc7a07ef2d62",
+    "checkpoint_parent_sha": "189c54f9845b9180aa59c369cb89e09863b72620",
     "merged_prs": [
       184,
       185
@@ -344,6 +344,6 @@
       "expires": "2026-12-13",
       "state": "VERIFIED_DOWNLOADED_NOT_INSTALLED"
     },
-    "next": "Download artifacts before expiry; inspect target host; continue four-panel UI and API/library/database inventory on main."
+    "next": "Verify main Freshness/Quality on the atomic correction commit; then continue API/library/database inventory and four-panel UI on main."
   }
 }

@@ -86,7 +86,7 @@ Merge, deployment, rebase/main synchronization, force-push, destructive changes,
 
 ## Current owner execution checkpoint — 2026-11-13 (main-only delivery)
 
-**Resume rule:** the last live checkpoint parent is `8c684b113faa71a6ecf053da736ccc7a07ef2d62`; this state-refresh commit is a single atomic documentation commit directly on main. On the next `oledue`, read this section, fetch current main + open PR/issue queue once, then continue from the NEXT item below. Do not re-open the old PR branches or re-scan the whole repository.
+**Resume rule:** the last live checkpoint parent is `189c54f9845b9180aa59c369cb89e09863b72620`; this state-refresh commit is a single atomic documentation commit directly on main. On the next `oledue`, read this section, fetch current main + open PR/issue queue once, then continue from the NEXT item below. Do not re-open the old PR branches or re-scan the whole repository.
 
 - **Owner scope:** `LANDING-V2-2026-001`, addendum section K. The requested 15-point scope is recovered: K.1 contains 14 required product-surface capabilities; K.2 adds the 15th stack decision/inventory requirement (models, APIs, libraries, databases, weights, licenses, sizes, target fit). K.3 P0–P7 is the execution order. P7 ends with the tested owner runbook: exact account/server/domain, install, API/database, first completion, backup, troubleshooting and rollback instructions for the owner.
 - **Main-only state:** PR #185 merged at `f1fc73783a46bf38014acd0a8019914d5a3f14d4`; PR #184 merged at `f7cc9a4b878d995d46a6df7cb4af9d5e60d16e00`. PR #176's unique cross-device Coder research was ported into main at `e79e70db61255755c26ebb4a0ceaad55688b0a4c` and closed. Stale/stacked #175, #178, #179, #180, #182 were closed with dispositions; source branches remain intact. **Live open PR count: 0.** Issue #111 remains the only open issue and is owner/environment gated.
@@ -96,3 +96,7 @@ Merge, deployment, rebase/main synchronization, force-push, destructive changes,
 - **Acquisition fix:** first external-cache run #43417300222 failed because Qwen3-ASR's pinned upstream revision has no `tokenizer.json`. Verified the exact upstream file listing, removed only that invalid required path in main commit `6fbd4a86c9fc1e1f685793426e5b9ed2b8f9094a`, and reran successfully as #43417527347.
 - **NEXT:** (1) owner downloads the six named artifacts via the commands in `models/runtime-install.md` before 2026-12-13; (2) collect target-host OS/architecture, disk, RAM/VRAM and network facts before installation; (3) continue section K on main with the four-panel Functions/UI slice, selectively using the retained #175/#179/#180/#182 branches only as source material; (4) build the API/database/library inventory and integrate only measured dependencies. Keep ordinary chat direct and helper models conditional.
 
+
+
+### Freshness correction — 2026-11-13
+The first atomic state refresh (#43418866025) passed all 19 checker unit tests and validated the direct-parent/required-path contract, but the live-document check found a missing literal marker: `ORIENTER.md` must contain `**Current main SHA:**` and `Open PR queue:`. This correction restores both markers and advances the snapshot parent to `189c54f9845b9180aa59c369cb89e09863b72620`; all seven required handoff/state files are rewritten together in one direct-main commit. No product code changed.

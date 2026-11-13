@@ -4,8 +4,8 @@
 
 ## Verified baseline — 2026-11-13
 
-- **Current checkpoint parent SHA:** `8c684b113faa71a6ecf053da736ccc7a07ef2d62`; the current main ref advances by one atomic state-refresh commit directly after it. Fetch the live main SHA when resuming.
-- **Open PR queue:** 0. **Open issue:** #111 only (owner/environment release gates).
+- **Current main SHA:** `189c54f9845b9180aa59c369cb89e09863b72620`; the current main ref advances by one atomic state-refresh commit directly after it. Fetch the live main SHA when resuming.
+- Open PR queue: 0. **Open issue:** #111 only (owner/environment release gates).
 - **Merged:** PR #185 model/runtime artifact pack at `f1fc73783a46bf38014acd0a8019914d5a3f14d4`; PR #184 Browser Local Coder workspace at `f7cc9a4b878d995d46a6df7cb4af9d5e60d16e00`. PR #176's unique research was ported at `e79e70db61255755c26ebb4a0ceaad55688b0a4c`. Stale/stacked #175/#178/#179/#180/#182 are closed with dispositions; branches are retained.
 - **Model acquisition:** external artifact run [#43417527347](https://github.com/DorpNay/skills-github-pages/actions/runs/43417527347) verified 10 external model/runtime packages (6,054,440,341 bytes); Ollama run [#43417305393](https://github.com/DorpNay/skills-github-pages/actions/runs/43417305393) verified four model packages + lock (7,728,830,475 bytes). Total 13,783,270,816 bytes; artifact expiry 2026-12-13. Main uncensored primary model remains owner-supplied and excluded.
 - **CI:** Quality run #43418176179 was in progress on the checkpoint parent; state refresh changes the HEAD, so verify the new exact-main Quality/Freshness runs before claiming a final green baseline. Freshness must compare the atomic snapshot against the live queue.

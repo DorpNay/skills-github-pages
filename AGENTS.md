@@ -12,7 +12,7 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 
 ## Live checkpoint (2026-11-13)
 
-- **Main checkpoint parent:** `8c684b113faa71a6ecf053da736ccc7a07ef2d62`; an atomic state-refresh commit follows it on main. Fetch the actual current HEAD on resume.
+- **Main checkpoint parent:** `189c54f9845b9180aa59c369cb89e09863b72620`; an atomic state-refresh commit follows it on main. Fetch the actual current HEAD on resume. The prior Freshness run #43418866025 failed only because ORIENTER lacked the exact `**Current main SHA:**` and `Open PR queue:` markers; this correction restores them.
 - **Open PR queue:** 0. **Open issue:** #111 only (owner/environment release gates).
 - PR #185 merged at `f1fc73783a46bf38014acd0a8019914d5a3f14d4`; PR #184 merged at `f7cc9a4b878d995d46a6df7cb4af9d5e60d16e00`. PR #176 research ported at `e79e70db61255755c26ebb4a0ceaad55688b0a4c`; #175/#178/#179/#180/#182 closed as stale/stacked with branches retained.
 - Model acquisition verified: external cache run #43417527347 (artifact 6,054,440,341 bytes) and Ollama run #43417305393 (four packages + lock, 7,728,830,475 bytes). Combined 13,783,270,816 bytes; expires 2026-12-13. The owner-supplied primary checkpoint is excluded.

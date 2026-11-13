@@ -16,9 +16,9 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "Main checkpoint parent 8c684b113faa71a6ecf053da736ccc7a07ef2d62; atomic state refresh follows. Zero open PRs; issue #111 remains owner/environment gated. PR #185 and #184 merged; #176 research ported; stale stacked UI PRs closed with branches retained."
+    status: "Main checkpoint parent 189c54f9845b9180aa59c369cb89e09863b72620; atomic state refresh follows. Zero open PRs; issue #111 remains owner/environment gated. PR #185 and #184 merged; #176 research ported; stale stacked UI PRs closed with branches retained."
     branch: "main"
-    base_main: "8c684b113faa71a6ecf053da736ccc7a07ef2d62"
+    base_main: "189c54f9845b9180aa59c369cb89e09863b72620"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
@@ -295,10 +295,10 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-13"
-  verified_main: "8c684b113faa71a6ecf053da736ccc7a07ef2d62"
+  verified_main: "189c54f9845b9180aa59c369cb89e09863b72620"
   last_main_action: "PR #185 merged at f1fc737 and PR #184 merged at f7cc9a4; PR #176 research ported to main; stale/stacked UI PRs closed. Open PRs: 0. Issue #111 remains open."
   last_functional_checkpoint: "f7cc9a4b878d995d46a6df7cb4af9d5e60d16e00"
-  main_quality: "Quality #43418176179 was in progress on parent SHA 8c684b113faa71a6ecf053da736ccc7a07ef2d62; rerun after the atomic state-refresh commit and record only exact-head result."
+  main_quality: "Quality #43418176179 was in progress on parent SHA 189c54f9845b9180aa59c369cb89e09863b72620; rerun after the atomic state-refresh commit and record only exact-head result."
   main_graphify: "PR #184 exact-head Graphify #43389169751 PASS; no post-refresh main Graphify result claimed."
   main_gateway: "PR #185 Gateway #43402260215 passed Python 3.12/13/14 on exact PR head; no new main Gateway run claimed."
   main_freshness: "Freshness #43417183312 passed on merge SHA f1fc737 before subsequent state/docs commits; final state-refresh commit must trigger and pass main Freshness."
