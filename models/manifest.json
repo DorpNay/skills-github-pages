@@ -116,7 +116,7 @@
       "source_url": "https://raw.githubusercontent.com/snakers4/silero-vad/066409f3d9db45a30d21dfcbf9147826/src/silero_vad/data/silero_vad.onnx",
       "size_bytes": 2327524,
       "max_bytes": 3000000,
-      "sha256": null,
+      "sha256": "1a153a22f4509e292a94e67d6f9b85e8deb25b4988682b7e174c65279d8788e3",
       "format": "ONNX",
       "license": "MIT",
       "runtime": "ONNX Runtime CPU",
@@ -136,7 +136,8 @@
       "license": "MIT per upstream model repository",
       "runtime": "whisper.cpp whisper-cli",
       "notes": "Upstream card says approximately 547 MiB and publishes SHA-1. Downloader verifies SHA-1 and records SHA-256. Pin by recorded content hashes after first acquisition.",
-      "size_bytes": 574041195
+      "size_bytes": 574041195,
+      "sha256": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
     },
     {
       "id": "piper_ru_dmitri_medium",
@@ -165,7 +166,8 @@
       "max_bytes": 100000,
       "format": "JSON voice config",
       "license": "MIT voice repository card",
-      "size_bytes": 4824
+      "size_bytes": 4824,
+      "sha256": "667ef3117bc642c2892dff7690d8bdc8ca4228aeaa783b2dc1416df632855e0d"
     },
     {
       "id": "piper_ru_dmitri_medium_card",
@@ -178,7 +180,8 @@
       "max_bytes": 20000,
       "format": "Model card",
       "license": "MIT voice repository card",
-      "size_bytes": 276
+      "size_bytes": 276,
+      "sha256": "56440cd6a7f0789669f53989b1c0ea244e335c2533fdb1fa8bac60e57205908e"
     },
     {
       "id": "sherpa_qwen3_asr_06b_int8",
