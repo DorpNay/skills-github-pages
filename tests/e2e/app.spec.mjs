@@ -3388,6 +3388,9 @@ test('settings and function panels close on backdrop click without leaving a sta
 
   const summary = page.locator('#functionsMenuSummary');
   await summary.click();
+  await page.locator('#functionPanelModal #functionsDrawerNav [data-function="connectors"]').click();
+  await expect(page.locator('#connectorFunctionStatus')).toBeVisible();
+  await expect(page.locator('#connectorFunctionStatus')).toContainText('Внешние источники');
   await page.locator('#functionPanelModal #functionsDrawerNav [data-function="agents"]').click();
   const modal = page.locator('#functionPanelModal');
   await expect(modal).toBeVisible();
