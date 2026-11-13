@@ -4,12 +4,12 @@
 
 ## Контрольная точка — 2026-11-13 (live GitHub)
 
-- Main `9033c6ad708a993cba5d1b27442f53651ad71c0f`; PR #174 merged. Main Quality #42430269155, Pages #42430269181 and Provenance #42430269144 PASS exact SHA; Graphify #42629163792 PASS. Scheduled Freshness #43247857963 failed because saved queue is stale.
-- **Snapshot marker:** open PRs (8): #175, #176, #177, #178, #179, #180, #181, #182; open issues (1): #111.
-- PR exact-head visible state: #181 visible checks pass; #176/#177/#178 visible Chromium/Jekyll/security/integrity/context pass; #175 Chromium fails on Notebook/project isolation; #179 Chromium + Freshness fail; #182 Chromium fails on project/personal scope; #180 Integrity fails and Chromium is cancelled. Re-fetch all heads/checks before action.
-- Dependencies: #179/#182 are stacked on older #175 state; #180 is stacked on older #179 state. #175 is the main-based Functions/Notebook workbench, #177 Browser Local Coder candidate, #178 landing content, #176 workspace audit, #181 action-pinning security.
+- Main `6a366125720453193c82a7385f8c088224a5928e`; PR #181 merged. Main Quality #43387599840, Pages #43387599298 and Graphify #43387599792 PASS exact SHA.
+- **Snapshot marker:** open PRs (8): #175, #176, #178, #179, #180, #182, #184, #185; open issues (1): #111.
+- PR exact-head visible state: #181 merged; #185 provenance/dead-code passed, Quality/Gateway/Graphify in progress, Freshness failed on missing FILE_ORIENTER/current_checkpoint refresh and is being repaired; #184 remains open. Earlier failures remain on #175/#179/#180/#182. Re-fetch all heads/checks before action.
+- Dependencies: #179/#182 are stacked on older #175 state; #180 is stacked on older #179 state. #175 is the main-based Functions/Notebook workbench, #184 Browser Local recovery guard, #178 landing content, #176 workspace audit, #185 model artifact pack.
 - Owner priority: LANDING-V2-2026-001, section K in the addendum. Target complete local-first workstation, not marketing-only Pages. Required: full owner UI; four separate Functions panels (Deep Research, Agents, Skills, Connectors); real agents/live status; mandatory local coding workspace; desired GitHub repo access; installed Whisper/ASR + TTS/VAD; full RAG; document/book/web/OCR parsers and converters; mode matrix; lean conditional model routing; cache/observability/N₂O in main; detailed tested VPS runbook.
-- Stack reality: qwen3.5:4b is an example, not final selected model; whisper.cpp/Piper paths require separate binary/model installation; Vosk archive is evaluation-only; RAG is FTS5/lexical baseline; AgentRunStore is storage-only prototype. VPS/Tunnel/Ollama and real device/connector runtime are unverified.
+- Stack reality: HauhauCS Qwen3.5-4B-Uncensored Q4_K_M is source-pinned as the owner-preferred primary candidate, not production-verified; main weights are excluded for owner upload. Auxiliary manifest pins 5.645 GB but downloads are blocked by outbound DNS. Whisper/Piper paths still require installed artifacts; RAG is FTS5/lexical baseline; AgentRunStore is storage-only prototype. VPS/Tunnel/Ollama and real device/connector runtime are unverified.
 
 ## 1. Быстрый маршрут
 
@@ -256,3 +256,11 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Проверенный исходный PR #123 HEAD: `f6e67db5a7e39abc5f9351aae5ccadefc58e865e`; base main: `fd4f0a105183feb23e0f4e4697446235de9ffe9a`; open, mergeable=true. Предыдущая проверка exact-head: 6/6 workflow groups passed. После любого нового коммита эти результаты не переносятся автоматически.
 - Единственный открытый issue #111 — owner/live-host evidence. Не закрывать по CI.
 - Сначала снимок/ориентиры, затем системная карта, сквозные взаимодействия, качество/безопасность, независимый review и только потом минимальные исправления. Архитектуру не расширять.
+
+
+## Model artifact checkpoint — 2026-11-13
+
+- PR #185 pins the main uncensored Qwen candidate and auxiliary model/voice/OCR artifacts. Current branch head is tracked in ORIENTER.md and docs/PROJECT_STATE.yaml.
+- Main Q4_K_M weights are not downloaded by the repository tool; owner supplies them to the server. Auxiliary payload is 5,645,657,360 bytes before tokenizer/config overhead.
+- The downloader is models/../scripts/download_model_artifacts.py; it verifies SHA-256 or upstream Git blob SHA-1 and stages outside Git. Current environment DNS prevented actual acquisition.
+- Thai TTS remains deferred: Piper 1.8.0 includes Thai phonemization but no official Thai voice; F5-TTS-THAI base-model license is non-commercial.
